@@ -1,0 +1,40 @@
+{
+  "name": "recharts",
+  "version": "0.0.1",
+  "description": "React charts",
+  "main": "src/index.js",
+  "keywords": [
+    "react",
+    "reactjs",
+    "chart"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/recharts/recharts.git"
+  },
+  "author": "recharts group",
+  "bugs": {
+    "url": "https://github.com/recharts/recharts/issues"
+  },
+  "homepage": "https://github.com/recharts/recharts",
+  "dependencies": {
+    "invariant": "^2.0.0"
+  },
+  "devDependencies": {
+    "babel": "^5.8.21",
+    "babel-core": "^5.8.22",
+    "babel-eslint": "^4.0.10",
+    "chai": "^3.2.0",
+    "eslint": "^1.2.1",
+    "eslint-config-airbnb": "^0.0.8",
+    "eslint-plugin-react": "^3.2.3",
+    "istanbul": "^0.3.18",
+    "mocha": "^2.2.5"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --compilers js:babel/register --recursive",
+    "test-cov": "./node_modules/.bin/istanbul cover _mocha",
+    "lint": "./node_modules/.bin/eslint src test"
+  },
+  "license": "MIT"
+}
