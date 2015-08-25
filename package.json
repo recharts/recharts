@@ -28,12 +28,12 @@
     "eslint": "^1.2.1",
     "eslint-config-airbnb": "^0.0.8",
     "eslint-plugin-react": "^3.2.3",
-    "istanbul": "^0.3.18",
+    "isparta": "^3.0.3",
     "mocha": "^2.2.5"
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha --compilers js:babel/register --recursive",
-    "test-cov": "./node_modules/.bin/istanbul cover _mocha",
+    "test-cov": "./node_modules/.bin/babel-node ./node_modules/.bin/isparta --report html cover _mocha -- --recursive",
     "lint": "./node_modules/.bin/eslint src test"
   },
   "license": "MIT"
