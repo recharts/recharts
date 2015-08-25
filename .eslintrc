@@ -1,52 +1,25 @@
 {
-  "parser": "babel-eslint",
-  "plugins": ["react"],
-  "ecmaFeatures": {
-    "jsx": true,
-    "objectLiteralShorthandMethods": true
-  },
+  "extends": "eslint-config-airbnb",
   "env": {
     "browser": true,
-    "node": true,
-    "es6": true
+    "mocha": true,
+    "node": true
   },
   "rules": {
-    "quotes": [0],
-    "new-parens": [1],
-    "no-alert": [1],
-    "handle-callback-err": [1],
-    "no-extra-strict": [1],
-    "no-script-url": [0],
-    "space-unary-ops": [0],
-    "consistent-return": [0],
-    "comma-dangle": [0],
-    "no-mixed-requires": [0],
-    "no-underscore-dangle": [0],
-    "no-multi-spaces": [0],
-    "no-unused-vars": [0],
-    "key-spacing": [0],
-    "no-empty": [0],
-    "no-shadow": [0],
-    "no-use-before-define": [0],
-    "no-unused-expressions": [0],
-    "no-new-func": [0],
-    "new-cap": [0],
-    "eqeqeq": [0],
-    "curly": [0],
-    "strict": [0],
-    "no-new": [1],
-    "eol-last": [1],
-    "space-infix-ops": [1],
-    "no-return-assign": [1],
-    "comma-spacing": [1],
-    "no-extra-boolean-cast": [1],
-    "no-constant-condition": [1]
+    "valid-jsdoc": 2,
+
+    "react/jsx-uses-react": 2,
+    "react/jsx-uses-vars": 2,
+    "react/react-in-jsx-scope": 2,
+
+    // Disable until Flow supports let and const
+    "no-var": 0,
+    "vars-on-top": 0,
+
+    // Temporarily disabled for test/* until babel/babel-eslint#33 is resolved
+    "padded-blocks": 0
   },
-  "globals": {
-    "describe": false,
-    "chai": false,
-    "beforeEach": false,
-    "afterEach": false,
-    "it": false
-  }
+  "plugins": [
+    "react"
+  ]
 }
