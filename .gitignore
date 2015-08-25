@@ -1,0 +1,9 @@
+!.gitkeep
+node_modules/
+.DS_Store
+.idea
+watch/
+.sass-cache/
+.settings/
+.project
+npm-debug.log
