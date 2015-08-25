@@ -1,38 +1,40 @@
 {
-  "name": "react-chart",
-  "version": "1.0.0",
-  "description": "Chart Library of SVG in React.js",
-  "main": "index.js",
+  "name": "recharts",
+  "version": "0.0.1",
+  "description": "React charts",
+  "main": "src/index.js",
   "keywords": [
-    "SVG",
-    "react"
+    "react",
+    "reactjs",
+    "chart"
   ],
-  "author": "",
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/recharts/recharts.git"
+  },
+  "author": "recharts group",
+  "bugs": {
+    "url": "https://github.com/recharts/recharts/issues"
+  },
+  "homepage": "https://github.com/recharts/recharts",
   "dependencies": {
-    "react": "~0.13.3"
+    "invariant": "^2.0.0"
   },
   "devDependencies": {
-    "babel-core": "~5.6.18",
-    "babel-eslint": "~3.1.23",
-    "babel-loader": "~5.3.1",
-    "bundle-loader": "~0.5.4",
-    "del": "~1.2.1",
-    "eslint": "~0.24.1",
-    "eslint-loader": "~0.14.1",
-    "eslint-plugin-react": "~2.7.1",
-    "glob": "~5.0.13",
-    "gulp": "~3.9.0",
-    "gulp-autoprefixer": "~2.3.1",
-    "gulp-cssmin": "~0.1.7",
-    "gulp-load-plugins": "~1.0.0-rc.1",
-    "gulp-plumber": "~1.0.1",
-    "gulp-sass": "~2.0.3",
-    "gulp-util": "~3.0.6",
-    "node-libs-browser": "~0.5.2",
-    "webpack": "~1.10.1"
+    "babel": "^5.8.21",
+    "babel-core": "^5.8.22",
+    "babel-eslint": "^4.0.10",
+    "chai": "^3.2.0",
+    "eslint": "^1.2.1",
+    "eslint-config-airbnb": "^0.0.8",
+    "eslint-plugin-react": "^3.2.3",
+    "istanbul": "^0.3.18",
+    "mocha": "^2.2.5"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  }
+    "test": "./node_modules/.bin/mocha --compilers js:babel/register --recursive",
+    "test-cov": "./node_modules/.bin/istanbul cover _mocha",
+    "lint": "./node_modules/.bin/eslint src test"
+  },
+  "license": "MIT"
 }
