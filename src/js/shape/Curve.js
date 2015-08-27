@@ -2,7 +2,7 @@
 
 import React from 'react/addons';
 import Interpolation from '../util/interpolation';
-import ShapeMixin from './ShapeMixin';
+import ShapeMixin from '../mixin/ShapeMixin';
 
 const Curve = React.createClass({
 
