@@ -48,11 +48,7 @@ const Rectangle = React.createClass({
       path = `M${x},${y + newRadius[0]}`;
 
       if (newRadius[0] > 0) {
-<<<<<<< HEAD
         path += `A ${newRadius[0]},${newRadius[0]},0,0,1,${x + newRadius[0]},${y}`;
-=======
-        path += `A ${newRadius[0]},${newRadius},0,0,1,${x + newRadius[0]},${y}`;
->>>>>>> d8c98793939ca2388810345112b3f74cac6f8380
       }
 
       path += `L ${x + width - newRadius[1]},${y}`;
