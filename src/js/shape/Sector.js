@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react/addons';
-import ShapeMixin from './ShapeMixin';
+import ShapeMixin from '../mixin/ShapeMixin';
 
 const RADIAN = Math.PI / 180;
 

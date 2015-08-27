@@ -2,10 +2,10 @@
 
 import React from 'react/addons';
 import Sector from '../shape/Sector';
-import PolarChartMixin from './PolarChartMixin';
+import PolarCoordinateMixin from '../mixin/PolarCoordinateMixin';
 
 const Pie = React.createClass({
-  mixins: [PolarChartMixin],
+  mixins: [PolarCoordinateMixin],
 
   propTypes: {
     data: React.PropTypes.array,

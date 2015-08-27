@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react/addons';
-import ShapeMixin from './ShapeMixin';
+import ShapeMixin from '../mixin/ShapeMixin';
 
 const Rectangle = React.createClass({
 
@@ -48,7 +48,7 @@ const Rectangle = React.createClass({
       path = `M${x},${y + newRadius[0]}`;
 
       if (newRadius[0] > 0) {
-        path += `A ${newRadius[0]},${newRadius},0,0,1,${x + newRadius[0]},${y}`;
+        path += `A ${newRadius[0]},${newRadius[0]},0,0,1,${x + newRadius[0]},${y}`;
       }
 
       path += `L ${x + width - newRadius[1]},${y}`;

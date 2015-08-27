@@ -24,7 +24,7 @@ export default {
       // 极点的纵坐标
       cy: 0,
       // 起始角度
-      startAngle: 90,
+      startAngle: 0,
       // 内径
       innerRadius: 0,
       // 外径
