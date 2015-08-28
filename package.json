@@ -18,7 +18,8 @@
   },
   "homepage": "https://github.com/recharts/recharts",
   "dependencies": {
-    "invariant": "^2.0.0"
+    "invariant": "^2.0.0",
+    "recharts-scale": "0.1.0-beta"
   },
   "devDependencies": {
     "babel": "^5.8.21",
