@@ -12,7 +12,7 @@ const PolarGrid = React.createClass({
   propTypes: {
     polarAngles: PropTypes.arrayOf(PropTypes.number),
     polarRadius: PropTypes.arrayOf(PropTypes.number),
-    concentricAxisType: PropTypes.oneOf(['polygon', 'circle'])
+    concentricPathType: PropTypes.oneOf(['polygon', 'circle'])
   },
 
   getDefaultProps () {
@@ -78,9 +78,9 @@ const PolarGrid = React.createClass({
 
     polarAngles.forEach((angle, i) => {
       if (i) {
-        path += `L ${cx + radius * Math.cos(-angle * RADIAN)},${cx + radius * Math.sin(-angle * RADIAN)}`;
+        path += `L ${cx + radius * Math.cos(-angle * RADIAN)},${cy + radius * Math.sin(-angle * RADIAN)}`;
       } else {
-        path += `M ${cx + radius * Math.cos(-angle * RADIAN)},${cx + radius * Math.sin(-angle * RADIAN)}`;
+        path += `M ${cx + radius * Math.cos(-angle * RADIAN)},${cy + radius * Math.sin(-angle * RADIAN)}`;
       }
     });
 

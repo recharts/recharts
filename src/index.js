@@ -7,6 +7,8 @@ import CartesianAxis from './js/component/CartesianAxis';
 import CartesianGrid from './js/component/CartesianGrid';
 import Legend from './js/component/Legend';
 import PolarGrid from './js/component/PolarGrid';
+import PolarRadiusAxis from './js/component/PolarRadiusAxis';
+import PolarAngleAxis from './js/component/PolarAngleAxis';
 
 import Sector from './js/shape/Sector';
 import Curve from './js/shape/Curve';
@@ -26,6 +28,8 @@ export default {
   CartesianGrid,
   Legend,
   PolarGrid,
+  PolarRadiusAxis,
+  PolarAngleAxis,
 
   // shape
   Sector,

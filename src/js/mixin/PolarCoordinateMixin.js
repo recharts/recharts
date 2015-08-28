@@ -30,7 +30,7 @@ export default {
       // 外径
       outerRadius: 0,
       // 极坐标一般取逆时针为正方向，但饼图等一般默认为顺时针
-      clockWise: false
+      clockWise: true
     };
   }
 

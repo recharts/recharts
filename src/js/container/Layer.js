@@ -4,17 +4,17 @@ import React from 'react/addons';
 
 const PropTypes = React.PropTypes;
 
-const Surface = React.createClass({
+const Layer = React.createClass({
 
   render () {
     let {children, ...others} = this.props;
 
     return (
-      <svg className='recharts-surface' {...others} xmlns="http://www.w3.org/2000/svg" version="1.1">
+      <g className='recharts-layer' {...others}>
         {children}
-      </svg>
+      </g>
     );
   }
 });
 
-export default Surface;
+export default Layer;
