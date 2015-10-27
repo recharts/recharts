@@ -1,8 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
 
-console.log(__dirname, 'dirname');
-console.log(path.join(__dirname,  '..', 'src'), 'join');
 module.exports = {
   devtool: 'eval',
   entry: [

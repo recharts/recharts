@@ -14,6 +14,11 @@ import Sector from './js/shape/Sector';
 import Curve from './js/shape/Curve';
 import Rectangle from './js/shape/Rectangle';
 
+import LineChart from './js/chart/LineChart/LineChart';
+import LineItem from './js/chart/LineChart/LineItem';
+import XAxis from './js/chart/LineChart/XAxis';
+import YAxis from './js/chart/LineChart/YAxis';
+
 
 export default {
   // container
@@ -34,5 +39,10 @@ export default {
   // shape
   Sector,
   Curve,
-  Rectangle
+  Rectangle,
+
+  LineChart,
+  LineItem,
+  XAxis,
+  YAxis
 };

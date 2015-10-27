@@ -1,0 +1,15 @@
+/**
+ * @fileOverview 最基础的一些样式
+ */
+
+circle, ellipse, line, path, polygon, polyline, rect {
+  stroke: #000;
+  fill: none;
+}
+
+text, tspan {
+  fill: #000;
+  stroke: none;
+}
+
+
