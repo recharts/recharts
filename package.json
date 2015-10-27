@@ -18,8 +18,9 @@
   },
   "homepage": "https://github.com/recharts/recharts",
   "dependencies": {
+    "d3-scale": "^0.1.2",
     "invariant": "^2.0.0",
-    "recharts-scale": "0.1.0-beta"
+    "ramda": "^0.18.0"
   },
   "devDependencies": {
     "babel": "^5.8.21",

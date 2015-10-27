@@ -12,18 +12,30 @@ import Curve from './Curve';
 import Rectangle from './Rectangle';
 import Sector from './Sector';
 
+import LineChart from './LineChart';
+
 export default {
-  Pie,
-  Radar,
+  chart: {
+    Pie,
+    Radar
+  },
 
-  CartesianAxis,
-  CartesianGrid,
-  Legend,
-  PolarGrid,
-  PolarRadiusAxis,
-  PolarAngleAxis,
+  component: {
+    CartesianAxis,
+    CartesianGrid,
+    Legend,
+    PolarGrid,
+    PolarRadiusAxis,
+    PolarAngleAxis,
+  },
 
-  Curve,
-  Rectangle,
-  Sector
+  shape: {
+    Curve,
+    Rectangle,
+    Sector
+  },
+
+  lineChart: {
+    LineChart
+  }
 };

@@ -9,7 +9,7 @@ const CartesianAxis = React.createClass({
   mixins: [CartesianCoordinateMixin],
 
   propTypes: {
-    orientation: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
+    orient: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
     ticks: PropTypes.array,
     tickSize: PropTypes.number,
     tickValueFormat: PropTypes.func
@@ -18,7 +18,7 @@ const CartesianAxis = React.createClass({
   getDefaultProps () {
     return {
       // 坐标轴所在的方位
-      orientation: 'bottom',
+      orient: 'bottom',
       // 刻度数据，格式为 {value: "展示的刻度值", coord: 12, size: 8}
       ticks: [],
       // 刻度的大小
@@ -31,12 +31,12 @@ const CartesianAxis = React.createClass({
    * @return {Object} (x1, y1)为靠近文字的端点坐标，(x2, y2)为靠近轴的端点坐标
    */
   getTickLineCoord (data) {
-    let {x, y, width, height, orientation, tickSize} = this.props,
+    let {x, y, width, height, orient, tickSize} = this.props,
         x1, x2, y1, y2;
 
     tickSize = data.tickSize || tickSize || 6;
 
-    switch (orientation) {
+    switch (orient) {
       case 'top':
         x1 = x2 = data.coord;
         y1 = height - tickSize;
@@ -63,10 +63,10 @@ const CartesianAxis = React.createClass({
   },
 
   getBaseline () {
-    let {orientation} = this.props,
+    let {orient} = this.props,
         baseline;
 
-    switch (orientation) {
+    switch (orient) {
       case 'top':
         baseline = 'auto';
         break;
@@ -82,10 +82,10 @@ const CartesianAxis = React.createClass({
   },
 
   getTickTextAnchor () {
-    let {orientation} = this.props,
+    let {orient} = this.props,
         textAnchor;
 
-    switch (orientation) {
+    switch (orient) {
       case 'left':
         textAnchor = 'end';
         break;
@@ -100,11 +100,31 @@ const CartesianAxis = React.createClass({
     return textAnchor;
   },
 
+  getDy () {
+    let {orient} = this.props;
+    let dy = 0;
+
+    switch (orient) {
+      case 'left':
+      case 'right':
+        dy = 8;
+        break;
+      case 'top':
+        dy = -15;
+        break;
+      case 'bottom':
+        dy = 15;
+        break;
+    }
+
+    return dy;
+  },
+
   renderAxis () {
-    let {x, y, width, height, orientation} = this.props,
+    let {x, y, width, height, orient} = this.props,
         axis;
 
-    switch (orientation) {
+    switch (orient) {
       case 'top':
         axis = <line className='axis-line' stroke='#000' x1={x} y1={height} x2={x + width} y2={height}/>;
         break;
@@ -123,7 +143,7 @@ const CartesianAxis = React.createClass({
   },
 
   renderTicks () {
-    let {ticks, orientation} = this.props;
+    let {ticks, orient} = this.props;
 
     if (!ticks || !ticks.length) { return ; }
 
@@ -143,6 +163,7 @@ const CartesianAxis = React.createClass({
             x2={lineCoord.x2}
             y2={lineCoord.y2}/>
           <text
+            dy={this.getDy(entry)}
             x={lineCoord.x1}
             y={lineCoord.y1}
             textAnchor={textAnchor}
@@ -162,7 +183,7 @@ const CartesianAxis = React.createClass({
     let {width, height, ticks} = this.props;
 
     if (width <= 0 || height <= 0 || !ticks || !ticks.length) {
-      return;
+      return null;
     }
 
     return (

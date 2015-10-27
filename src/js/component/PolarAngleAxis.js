@@ -12,6 +12,7 @@ import PolarCoordinateMixin from '../mixin/PolarCoordinateMixin';
 const PropTypes = React.PropTypes;
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
+const offset = 8;
 
 const PolarAngleAxis = React.createClass({
   mixins: [PolarCoordinateMixin],
@@ -37,32 +38,37 @@ const PolarAngleAxis = React.createClass({
   /**
    * 获取tick线段的端点坐标
    * @param  {Object} data tick数据
-   * @return {Object} (x1, y1)为靠近文字的端点坐标，(x2, y2)为靠近轴的端点坐标
+   * @return {Object} (x0, y0) 为文字的起点坐标，(x1, y1)为靠近文字的端点坐标，(x2, y2)为靠近轴的端点坐标
    */
   getTickLineCoord (data) {
     let {cx, cy, outerRadius, orientation, tickSize} = this.props,
         sin = Math.sin(-data.angle * RADIAN),
         cos = Math.cos(-data.angle * RADIAN),
-        x1, x2, y1, y2;
+        x0, x1, x2, y0, y1, y2;
 
     tickSize = data.tickSize || tickSize || 6;
 
+    x2 = cx + outerRadius * cos;
+    y2 = cy + outerRadius * sin;
+
     switch (orientation) {
       case 'inner':
+        x0 = cx + (outerRadius - tickSize - offset) * cos;
+        y0 = cy + (outerRadius - tickSize - offset) * sin;
+
         x1 = cx + (outerRadius - tickSize) * cos;
         y1 = cy + (outerRadius - tickSize) * sin;
-        x2 = cx + outerRadius * cos;
-        y2 = cy + outerRadius * sin;
         break;
       case 'outer':
-        x1 = cx + outerRadius * cos;
-        y1 = cy + outerRadius * sin;
-        x2 = cx + (outerRadius + tickSize) * cos;
-        y2 = cy + (outerRadius + tickSize) * sin;
+        x0 = cx + (outerRadius + tickSize + offset) * cos;
+        y0 = cy + (outerRadius + tickSize + offset) * sin;
+
+        x1 = cx + (outerRadius + tickSize) * cos;
+        y1 = cy + (outerRadius + tickSize) * sin;
         break;
     }
 
-    return {x1, y1, x2, y2}
+    return {x0, y0, x1, y1, x2, y2}
   },
   /**
    * 计算文字的对齐方式
@@ -70,13 +76,14 @@ const PolarAngleAxis = React.createClass({
    * @return {String} middle - 居中对齐，start - 左对齐，right - 右对齐
    */
   getTickTextAnchor (data) {
-    let cos = Math.cos(-data * RADIAN),
+    let orientation = this.props.orientation,
+        cos = Math.cos(- data.angle * RADIAN),
         textAnchor;
 
     if (cos > eps) {
-      textAnchor = 'start'
+      textAnchor = orientation === 'outer' ? 'start' : 'end';
     } else if (cos < -eps) {
-      textAnchor = 'end';
+      textAnchor = orientation === 'outer' ? 'end' : 'start';
     } else {
       textAnchor = 'middle';
     }
@@ -102,14 +109,14 @@ const PolarAngleAxis = React.createClass({
         <g className='axis-tick' key={'tick-' + i}>
           <line
             className='tick-line'
-            stroke='#000'
+            stroke='#ff7300'
             x1={lineCoord.x1}
             y1={lineCoord.y1}
             x2={lineCoord.x2}
             y2={lineCoord.y2}/>
           <text
-            x={lineCoord.x1}
-            y={lineCoord.y1}
+            x={lineCoord.x0}
+            y={lineCoord.y0}
             textAnchor={textAnchor}
             className='tick-value'>{entry.value}</text>
         </g>

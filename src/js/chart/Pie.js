@@ -1,3 +1,7 @@
+/**
+ * @fileOverview 饼图
+ */
+
 'use strict';
 
 import React from 'react/addons';
