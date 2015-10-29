@@ -13,6 +13,8 @@ import Line from '../Line';
 import LineItem from './LineItem';
 import XAxis from './XAxis';
 import YAxis from './YAxis';
+import Legend from '../../component/Legend';
+import Tooltip from '../../component/Tooltip';
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
@@ -51,6 +53,12 @@ const LineChart = React.createClass({
     return {
       layout: 'horizontal',
       margin: {top: 20, right: 20, bottom: 20, left: 20}
+    };
+  },
+
+  getInitialState () {
+    return {
+      isTooltipActive: false
     };
   },
   /**
@@ -159,7 +167,7 @@ const LineChart = React.createClass({
               axisType,
               type: 'number',
               width: axisType === 'yAxis' ? 60 : 0,
-              height: axisType === 'xAxis' ? 50 : 0,
+              height: axisType === 'xAxis' ? 20 : 0,
               tickCount: 5,
               orient: ORIENT_MAP[axisType][index % 2],
               domain: axisType === 'xAxis' ? Tool.range(0, len) : this.getDomainOfItems(
@@ -209,7 +217,11 @@ const LineChart = React.createClass({
       height: height - offsetV.top - offsetV.bottom
     };
   },
-
+  /**
+   * 设置刻度函数的刻度
+   * @param {Object} scale 刻度对象
+   * @param {Object} opts  配置
+   */
   setTicksOfScale (scale, opts) {
     if (opts.ticks && opts.ticks) {
       scale.domain(this.getDomainOfTicks(opts.ticks, opts.type))
@@ -271,7 +283,13 @@ const LineChart = React.createClass({
       return result;
     }, {});
   },
-
+  /**
+   * 组装曲线数据
+   * @param  {Object} xAxis   x轴刻度
+   * @param  {Object} yAxis   y轴刻度
+   * @param  {String} dataKey 该组数据所对应的key
+   * @return {Array}
+   */
   getComposeData (xAxis, yAxis, dataKey) {
     let {data, layout} = this.props;
     let xTicks = this.getTicks(xAxis);
@@ -448,6 +466,35 @@ const LineChart = React.createClass({
     }, this);
   },
 
+  renderLegend (offset) {
+    const {children} = this.props;
+
+    const legendData = ReactUtils.findAllByType(children, LineItem).map((child, i) => {
+      let {dataKey, stroke} = child.props;
+
+      return {
+        type: 'line',
+        color: stroke,
+        value: dataKey
+      };
+    }, this);
+
+    return <Legend width={offset.width} height={40} data={legendData}/>
+  },
+
+  renderTooltipTrigger () {
+  },
+
+  renderTooltip () {
+    let {isTooltipActive} = this.state;
+
+    return (
+      <Tooltip active={isTooltipActive}>
+        <p>test</p>
+      </Tooltip>
+    );
+  },
+
   render () {
     let xAxisMap = this.getAxisMap('xAxis', LineItem);
     let yAxisMap = this.getAxisMap('yAxis', LineItem);
@@ -457,12 +504,17 @@ const LineChart = React.createClass({
     yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
 
     return (
-      <Surface {...this.props}>
-        {this.renderXAxis(xAxisMap)}
-        {this.renderYAxis(yAxisMap)}
-        {this.renderGrid(xAxisMap, yAxisMap, offset)}
-        {this.renderItems(xAxisMap, yAxisMap, offset)}
-      </Surface>
+      <div className='recharts-wrapper' style={{position: 'relative'}}>
+        <Surface {...this.props}>
+          {this.renderXAxis(xAxisMap)}
+          {this.renderYAxis(yAxisMap)}
+          {this.renderGrid(xAxisMap, yAxisMap, offset)}
+          {this.renderItems(xAxisMap, yAxisMap, offset)}
+        </Surface>
+        {this.renderLegend(offset)}
+        {this.renderTooltipTrigger()}
+        {this.renderTooltip()}
+      </div>
     );
   }
 });
