@@ -19,7 +19,7 @@ const XAxis = React.createClass({
   getDefaultProps () {
     return {
       orient: 'bottom',
-      height: 50,
+      height: 20,
       xAxisId: 0,
       type: 'category'
     };

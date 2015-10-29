@@ -1,31 +1,32 @@
-import React from 'react/addons';
+import React, {PropTypes} from 'react/addons';
 
 const Tooltip = React.createClass({
   propTypes: {
-    top: React.PropTypes.number.isRequired,
-    left: React.PropTypes.number.isRequired,
-    html: React.PropTypes.string
+    active: PropTypes.bool.isRequired,
+    top: PropTypes.number.isRequired,
+    left: PropTypes.number.isRequired
   },
 
   getDefaultProps() {
     return {
-      top: 150,
-      left: 100,
-      html: ''
+      top: 0,
+      left: 0
     };
   },
 
   render() {
-    let {top, left, hidden, html} = this.props,
+    let {top, left, active, children} = this.props,
         style = {
-          display: hidden ? 'none' : 'block',
+          display: active ? 'block' : 'none',
           position: 'absolute',
           top: top,
           left: left
         };
 
     return (
-        <div className='tooltip' style={style}>{html}</div>
+        <div className='tooltip' style={style}>
+          {children}
+        </div>
     );
   }
 });
