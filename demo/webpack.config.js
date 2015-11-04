@@ -2,21 +2,19 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
+  context: __dirname,
   debug: true,
   devtool: '#inline-source-map',
   entry: [
-    'webpack-dev-server/client?http://localhost:3000',
-    'webpack/hot/only-dev-server',
-    './index'
+    './index.js'
   ],
   output: {
-    path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js',
-    publicPath: 'http://localhost:3000/build/'
+    path: __dirname + '/build',
+    filename: 'bundle.js'
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    //new webpack.HotModuleReplacementPlugin(),
+    //new webpack.NoErrorsPlugin()
   ],
   resolve: {
     alias: {
