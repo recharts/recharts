@@ -5,9 +5,13 @@ import CartesianAxis from '../../component/CartesianAxis';
 import CartesianGrid from '../../component/CartesianGrid';
 import Surface from '../../container/Surface';
 import Layer from '../../container/Layer';
+
 import ReactUtils from '../../util/ReactUtils';
 import TickUtils from '../../util/TickUtils';
+import EventUtils from '../../util/EventUtils';
+import DOMUtils from '../../util/DOMUtils';
 import Tool from '../../util/tool';
+
 import {linear, ordinal} from 'd3-scale';
 import Line from '../Line';
 import LineItem from './LineItem';
@@ -58,7 +62,12 @@ const LineChart = React.createClass({
 
   getInitialState () {
     return {
-      isTooltipActive: false
+      activeTooltipIndex: -1,
+      activeTooltipLabel: '',
+      activeTooltipPosition: 'left-bottom',
+      activeTooltipCoord: {x: 0, y: 0},
+      isTooltipActive: false,
+      activeLineKey: null
     };
   },
   /**
@@ -360,6 +369,121 @@ const LineChart = React.createClass({
     });
   },
   /**
+   * 判断鼠标是否在图表的图形区域
+   * @param  {Object}  offset 图形区域距离容器的偏移量
+   * @param  {Object}  e      事件对象
+   * @return {Boolean}
+   */
+  getMouseInfo (xAxisMap, yAxisMap, offset, e) {
+    let isIn = e.chartX >= offset.left && e.chartX <= offset.left + offset.width
+      && e.chartY >= offset.top && e.chartY <= offset.top + offset.height;
+
+    if (!isIn) {return null};
+
+    let {layout} = this.props;
+    let axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
+    let pos = layout === 'horizontal' ? e.chartX : e.chartY;
+    let ids = Object.keys(axisMap);
+    let axis = axisMap[ids[0]];
+    let ticks = this.getTicks(axis);
+    let index = 0;
+
+    for (let i = 0, len = ticks.length; i < len; i++) {
+      if ((i === 0 && pos <= (ticks[i].coord + ticks[i + 1].coord) / 2)
+        || (i > 0 && i < len -1 && pos > (ticks[i].coord + ticks[i - 1].coord) / 2
+          && pos <= (ticks[i].coord + ticks[i + 1].coord) / 2 )
+        || (i === len - 1 && pos > (ticks[i].coord + ticks[i - 1].coord) / 2) ) {
+        index = i;
+        break;
+      }
+    }
+    return {
+      activeTooltipIndex: index,
+      activeTooltipLabel: ticks[index].value,
+      activeTooltipPosition: (e.chartX > offset.left + offset.width / 2 ? 'right' : 'left')
+                  + '-' + (e.chartY > offset.top + offset.height / 2 ? 'bottom' : 'top'),
+      activeTooltipCoord: {
+        x: layout === 'horizontal' ? ticks[index].coord : e.chartX,
+        y: layout === 'horizontal' ? e.chartY : ticks[index].coord
+      }
+    };
+  },
+  /**
+   * 鼠标进入图形区域
+   * @param  {Object} offset   图形区域距离容器的偏移量
+   * @param  {Object} xAxisMap x轴刻度
+   * @param  {Object} yAxisMap y轴刻度
+   * @param  {Object} e        事件对象
+   */
+  handleMouseEnter (offset, xAxisMap, yAxisMap, e) {
+    let container = React.findDOMNode(this);
+    let containerOffset = DOMUtils.offset(container);
+    let ne = EventUtils.normalize(e, containerOffset);
+    let mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);
+
+    if (mouse) {
+      this.setState({
+        ...mouse,
+        isTooltipActive: true,
+        chartX: ne.chartX,
+        chartY: ne.chartY
+      });
+    }
+  },
+  /**
+   * 鼠标在图形区域移动
+   * @param  {Object} offset   图形区域距离容器的偏移量
+   * @param  {Object} xAxisMap x轴刻度
+   * @param  {Object} yAxisMap y轴刻度
+   * @param  {Object} e        事件对象
+   */
+  handleMouseMove (offset, xAxisMap, yAxisMap, e) {
+    let container = React.findDOMNode(this);
+    let containerOffset = DOMUtils.offset(container);
+    let ne = EventUtils.normalize(e, containerOffset);
+    let mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);
+
+    if (mouse) {
+      this.setState({
+        ...mouse,
+        isTooltipActive: true,
+        chartX: ne.chartX,
+        chartY: ne.chartY
+      });
+    } else {
+      this.setState({
+        isTooltipActive: false
+      });
+    }
+  },
+  /**
+   * 鼠标离开图形区域的响应事件
+   * @param  {Object} e 事件对象
+   */
+  handleMouseLeave (e) {
+    this.setState({
+      isTooltipActive: false
+    });
+  },
+  /**
+   * 鼠标进入曲线的响应事件
+   * @param {String} key 曲线唯一对应的key
+   * @param {Object} e   事件对象
+   */
+  handleLineMouseEnter (key, e) {
+    this.setState({
+      activeLineKey: key
+    });
+  },
+  /**
+   * 鼠标离开曲线的响应事件
+   */
+  handleLineMouseLeave () {
+    this.setState({
+      activeLineKey: null
+    });
+  },
+  /**
    * 渲染x轴部分
    * @return {[type]} [description]
    */
@@ -447,9 +571,13 @@ const LineChart = React.createClass({
    */
   renderItems (xAxisMap, yAxisMap, offset) {
     const {children} = this.props;
+    const {activeLineKey} = this.state;
 
     return ReactUtils.findAllByType(children, LineItem).map((child, i) => {
-      let {xAxisId, yAxisId, dataKey, ...other} = child.props;
+      let {xAxisId, yAxisId, dataKey, strokeWidth, ...other} = child.props;
+
+      strokeWidth = strokeWidth === +strokeWidth ? strokeWidth : 1;
+      strokeWidth = activeLineKey === dataKey ? strokeWidth + 2 : strokeWidth;
 
       return (
         <Line
@@ -459,13 +587,20 @@ const LineChart = React.createClass({
           y={offset.y}
           width={offset.width}
           height={offset.height}
-          data={this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey)}
           xScale={xAxisMap[xAxisId]}
-          yScale={yAxisMap[yAxisId]}/>
+          yScale={yAxisMap[yAxisId]}
+          strokeWidth={strokeWidth}
+          onMouseLeave={this.handleLineMouseLeave}
+          onMouseEnter={this.handleLineMouseEnter.bind(null, dataKey)}
+          data={this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey)}/>
       );
     }, this);
   },
-
+  /**
+   * 绘制图例部分
+   * @param  {Object} offset 图形区域的偏移量
+   * @return {ReactComponent}
+   */
   renderLegend (offset) {
     const {children} = this.props;
 
@@ -482,16 +617,47 @@ const LineChart = React.createClass({
     return <Legend width={offset.width} height={40} data={legendData}/>
   },
 
-  renderTooltipTrigger () {
-  },
+  getTooltipContent () {
+    let {children, data} = this.props;
+    let {activeLineKey, activeTooltipIndex} = this.state;
+    let items = ReactUtils.findAllByType(children, LineItem);
 
+    if (activeTooltipIndex < 0 || !items || !items.length) {
+      return;
+    }
+
+    items = activeLineKey ?
+            items.filter(item => item.props.dataKey === activeLineKey) :
+            items;
+
+    return items.map((item, index) => {
+      let {dataKey, stroke} = item.props;
+
+      return {
+        color: stroke,
+        key: dataKey,
+        value: data[activeTooltipIndex][dataKey]
+      };
+    });
+  },
+  /**
+   * 渲染浮层
+   * @return {ReactComponent}
+   */
   renderTooltip () {
-    let {isTooltipActive} = this.state;
+    let {chartX, chartY, isTooltipActive, activeTooltipIndex,
+          activeTooltipLabel, activeTooltipCoord,
+          activeTooltipPosition} = this.state;
 
     return (
-      <Tooltip active={isTooltipActive}>
-        <p>test</p>
-      </Tooltip>
+      <Tooltip
+        position={activeTooltipPosition}
+        active={isTooltipActive}
+        label={activeTooltipLabel}
+        data={this.getTooltipContent()}
+        coordinate={activeTooltipCoord}
+        mouseX={chartX}
+        mouseY={chartY}/>
     );
   },
 
@@ -504,15 +670,20 @@ const LineChart = React.createClass({
     yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
 
     return (
-      <div className='recharts-wrapper' style={{position: 'relative'}}>
+      <div className='recharts-wrapper'
+        style={{position: 'relative'}}
+        onMouseEnter={this.handleMouseEnter.bind(null, offset, xAxisMap, yAxisMap)}
+        onMouseMove={this.handleMouseMove.bind(null, offset, xAxisMap, yAxisMap)}
+        onMouseLeave={this.handleMouseLeave}>
+
         <Surface {...this.props}>
           {this.renderXAxis(xAxisMap)}
           {this.renderYAxis(yAxisMap)}
           {this.renderGrid(xAxisMap, yAxisMap, offset)}
           {this.renderItems(xAxisMap, yAxisMap, offset)}
         </Surface>
+
         {this.renderLegend(offset)}
-        {this.renderTooltipTrigger()}
         {this.renderTooltip()}
       </div>
     );

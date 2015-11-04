@@ -19,7 +19,6 @@ import LineItem from './js/chart/LineChart/LineItem';
 import XAxis from './js/chart/LineChart/XAxis';
 import YAxis from './js/chart/LineChart/YAxis';
 
-
 export default {
   // container
   Surface,

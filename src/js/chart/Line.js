@@ -19,13 +19,20 @@ const Line = React.createClass({
     strokeWidth: PropTypes.number,
     strokeDashArray: PropTypes.string,
     className: PropTypes.string,
-    data: React.PropTypes.array
+    data: React.PropTypes.array,
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
+    onClick: PropTypes.func
   },
 
   getDefaultProps () {
     return {
+      strokeWidth: 1,
       // 数据
-      data: []
+      data: [],
+      onClick () {},
+      onMouseEnter () {},
+      onMouseLeave () {}
     };
   },
 
@@ -46,10 +53,15 @@ const Line = React.createClass({
       return;
     }
 
-      console.log(other);
     return (
       <Layer>
-        <Curve {...other} fill='none' points={data}/>
+        <Curve
+          {...other}
+          fill='none'
+          onMouseEnter={this.props.onMouseEnter}
+          onMouseLeave={this.props.onMouseLeave}
+          onClick={this.props.onClick}
+          points={data}/>
         {this.renderDots()}
       </Layer>
     );

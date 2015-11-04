@@ -2,7 +2,8 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-  devtool: 'eval',
+  debug: true,
+  devtool: '#inline-source-map',
   entry: [
     'webpack-dev-server/client?http://localhost:3000',
     'webpack/hot/only-dev-server',
@@ -11,7 +12,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/static/'
+    publicPath: 'http://localhost:3000/build/'
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
@@ -19,19 +20,20 @@ module.exports = {
   ],
   resolve: {
     alias: {
-      'recharts': path.join(__dirname, '..', 'src')
+      'recharts': path.join(__dirname, '..', 'src/index.js')
     },
     extensions: ['', '.js']
   },
   module: {
     loaders: [{
       test: /\.js$/,
-      loaders: ['babel', 'react-hot'],
+      loaders: ['react-hot', 'babel-loader'],
       exclude: /node_modules/,
       include: __dirname
     }, {
       test: /\.js$/,
-      loaders: ['babel'],
+      loaders: ['babel-loader'],
+      exclude: /node_modules/,
       include: path.join(__dirname,  '..', 'src')
     }]
   }
