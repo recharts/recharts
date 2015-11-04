@@ -11,18 +11,22 @@ export default React.createClass({
 
     return (
       <div className='line-charts'>
-        <LineChart width={400} height={400} data={data}>
-          <XAxis dataKey='name'/>
-          <LineItem dataKey='uv' yAxisId={0}/>
-          <LineItem dataKey='pv' yAxisId={1}/>
-        </LineChart>
-        <LineChart width={400} height={400} data={data}>
-          <YAxis type='category' yAxisId={0}/>
-          <YAxis type='number' orient='right' yAxisId={1}/>
-          <XAxis dataKey='name'/>
-          <LineItem dataKey='uv' stroke='#ff7300' strokeWidth={2} yAxisId={0}/>
-          <LineItem dataKey='pv' stroke='#387908' strokeWidth={2} yAxisId={1}/>
-        </LineChart>
+        <div className='line-chart-wrapper' style={{padding: 20}}>
+          <LineChart width={400} height={400} data={data}>
+            <XAxis dataKey='name'/>
+            <LineItem dataKey='uv' yAxisId={0}/>
+            <LineItem dataKey='pv' yAxisId={1}/>
+          </LineChart>
+        </div>
+        <div className='line-chart-wrapper' style={{margin: 40}}>
+          <LineChart width={400} height={400} data={data}>
+            <YAxis type='category' yAxisId={0}/>
+            <YAxis type='number' orient='right' yAxisId={1}/>
+            <XAxis dataKey='name'/>
+            <LineItem dataKey='uv' stroke='#ff7300' strokeWidth={2} yAxisId={0}/>
+            <LineItem dataKey='pv' stroke='#387908' strokeWidth={2} yAxisId={1}/>
+          </LineChart>
+        </div>
       </div>
     );
   }

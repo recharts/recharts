@@ -17,12 +17,16 @@
     "url": "https://github.com/recharts/recharts/issues"
   },
   "homepage": "https://github.com/recharts/recharts",
+  "peerDependencies": {
+    "react": "^0.13.3"
+  },
   "dependencies": {
     "d3-scale": "^0.1.2",
     "invariant": "^2.0.0",
     "ramda": "^0.18.0"
   },
   "devDependencies": {
+    "react": "^0.13.3",
     "babel": "^5.8.21",
     "babel-core": "^5.8.22",
     "babel-eslint": "^4.0.10",
@@ -33,7 +37,7 @@
     "eslint-plugin-react": "^3.2.3",
     "isparta": "^3.0.3",
     "mocha": "^2.2.5",
-    "react": "^0.13.3",
+    "react-hot-loader": "^1.3.0",
     "webpack": "^1.12.0"
   },
   "scripts": {

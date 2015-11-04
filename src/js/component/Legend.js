@@ -77,7 +77,7 @@ const Legend = React.createClass({
 
     return data.map((entry, i) => {
       return (
-        <li className={'legend-item legend-item-' + i} style={itemStyle}>
+        <li className={'legend-item legend-item-' + i} style={itemStyle} key={'legend-item-' + i}>
           <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
             {this.renderIcon(entry)}
           </Surface>

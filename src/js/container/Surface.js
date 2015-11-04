@@ -5,7 +5,6 @@ import React from 'react/addons';
 const PropTypes = React.PropTypes;
 
 const Surface = React.createClass({
-
   render () {
     let {children, width, height, viewBox, padding, className, style} = this.props;
     let svgView = viewBox || {width: width, height: height, x: 0, y: 0};

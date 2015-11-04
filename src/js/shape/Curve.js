@@ -15,6 +15,9 @@ const Curve = React.createClass({
     strokeWidth: PropTypes.number,
     strokeDashArray: PropTypes.string,
     className: PropTypes.string,
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
+    onClick: PropTypes.func,
     points: PropTypes.arrayOf(PropTypes.object)
   },
 
@@ -29,6 +32,9 @@ const Curve = React.createClass({
       strokeDashArray: 'none',
       // 点坐标
       points: [],
+      onClick () {},
+      onMouseEnter () {},
+      onMouseLeave () {}
     };
   },
   /**
@@ -46,7 +52,8 @@ const Curve = React.createClass({
   },
 
   render () {
-    let {className, strokeDashArray, points, type, ...others} = this.props;
+    let {className, strokeDashArray, points, type,
+      onClick, onMouseEnter, onMouseLeave, ...others} = this.props;
 
     if (!points || !points.length) {
       return null;
@@ -57,6 +64,9 @@ const Curve = React.createClass({
         {...others}
         className={'recharts-line' + (className || '')}
         strokeDasharray={strokeDashArray}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onClick={onClick}
         d={this.getPath(type, points)}/>
     );
   }
