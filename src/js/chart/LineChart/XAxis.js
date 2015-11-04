@@ -21,6 +21,7 @@ const XAxis = React.createClass({
       orient: 'bottom',
       height: 20,
       xAxisId: 0,
+      tickCount: 5,
       type: 'category'
     };
   },

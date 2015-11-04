@@ -39,8 +39,8 @@ const CartesianAxis = React.createClass({
     switch (orient) {
       case 'top':
         x1 = x2 = data.coord;
-        y1 = height - tickSize;
-        y2 = height;
+        y1 = y + height - tickSize;
+        y2 = y + height;
         break;
       case 'bottom':
         x1 = x2 = data.coord;
@@ -110,7 +110,7 @@ const CartesianAxis = React.createClass({
         dy = 8;
         break;
       case 'top':
-        dy = -15;
+        dy = -2;
         break;
       case 'bottom':
         dy = 15;
@@ -126,7 +126,7 @@ const CartesianAxis = React.createClass({
 
     switch (orient) {
       case 'top':
-        axis = <line className='axis-line' stroke='#000' x1={x} y1={height} x2={x + width} y2={height}/>;
+        axis = <line className='axis-line' stroke='#000' x1={x} y1={y + height} x2={x + width} y2={y + height}/>;
         break;
       case 'bottom':
         axis = <line className='axis-line' stroke='#000' x1={x} y1={y} x2={x + width} y2={y}/>;

@@ -23,7 +23,7 @@
   "dependencies": {
     "d3-scale": "^0.1.2",
     "invariant": "^2.0.0",
-    "ramda": "^0.18.0"
+    "recharts-scale": "^0.1.2-beta"
   },
   "devDependencies": {
     "react": "^0.13.3",

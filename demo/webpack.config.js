@@ -33,6 +33,10 @@ module.exports = {
       loaders: ['babel-loader'],
       exclude: /node_modules/,
       include: path.join(__dirname,  '..', 'src')
+    }, {
+      test: /\.js$/,
+      loaders: ['babel-loader'],
+      include: path.join(__dirname,  '..', 'node_modules', 'recharts-scale')
     }]
   }
 };

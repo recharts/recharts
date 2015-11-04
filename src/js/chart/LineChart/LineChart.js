@@ -7,7 +7,7 @@ import Surface from '../../container/Surface';
 import Layer from '../../container/Layer';
 
 import ReactUtils from '../../util/ReactUtils';
-import TickUtils from '../../util/TickUtils';
+import {getNiceTickValues} from 'recharts-scale';
 import EventUtils from '../../util/EventUtils';
 import DOMUtils from '../../util/DOMUtils';
 import Tool from '../../util/tool';
@@ -50,11 +50,13 @@ const LineChart = React.createClass({
       bottom: PropTypes.number,
       left: PropTypes.number
     }),
-    title: PropTypes.string
+    title: PropTypes.string,
+    style: PropTypes.object
   },
 
   getDefaultProps() {
     return {
+      style: {},
       layout: 'horizontal',
       margin: {top: 20, right: 20, bottom: 20, left: 20}
     };
@@ -241,14 +243,20 @@ const LineChart = React.createClass({
 
     if (opts.tickCount && opts.type === 'number') {
       let domain = scale.domain();
-      let tickValues = TickUtils.getTickValues(domain, opts.tickCount)
+      let tickValues = getNiceTickValues(domain, opts.tickCount)
 
       opts.ticks = tickValues;
       scale.domain(this.getDomainOfTicks(tickValues, opts.type))
           .ticks(opts.tickCount);
     }
   },
-
+  /**
+   * 计算轴的刻度函数，位置，大小等信息
+   * @param  {Object} axisMap  刻度对象
+   * @param  {Object} offset   图形区域的偏移量
+   * @param  {Object} axisType 刻度类型，x轴或者y轴
+   * @return {Object}
+   */
   getFormatAxisMap (axisMap, offset, axisType) {
     const {width, height} = this.props;
     const ids = Object.keys(axisMap);
@@ -264,7 +272,7 @@ const LineChart = React.createClass({
       let {orient, type, domain, tickCount, tickFormat} = axis;
       let range = axisType === 'xAxis' ?
                   [offset.left, offset.left + offset.width] :
-                  [offset.top + offset.height, offset.top];
+                  [offset.top, offset.top + offset.height];
       let scale;
 
       // 数值类型的刻度使用 linear刻度，类目轴使用 ordinal刻度
@@ -662,6 +670,7 @@ const LineChart = React.createClass({
   },
 
   render () {
+    const {style} = this.props;
     let xAxisMap = this.getAxisMap('xAxis', LineItem);
     let yAxisMap = this.getAxisMap('yAxis', LineItem);
     let offset = this.getOffset(xAxisMap, yAxisMap);
@@ -671,7 +680,7 @@ const LineChart = React.createClass({
 
     return (
       <div className='recharts-wrapper'
-        style={{position: 'relative'}}
+        style={{position: 'relative', cursor: 'default', ...style}}
         onMouseEnter={this.handleMouseEnter.bind(null, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(null, offset, xAxisMap, yAxisMap)}
         onMouseLeave={this.handleMouseLeave}>
