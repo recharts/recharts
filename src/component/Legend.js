@@ -19,8 +19,9 @@ const Legend = React.createClass({
     align: PropTypes.oneOf(['center', 'left', 'right']),
     verticalAlign: PropTypes.oneOf(['top', 'bottom', 'middle']),
     data: PropTypes.arrayOf(PropTypes.shape({
-      value: PropTypes.string,
-      id: PropTypes.string
+      value: PropTypes.any,
+      id: PropTypes.any,
+      type: PropTypes.oneOf(['line', 'scatter', 'square', 'rect'])
     }))
   },
 
@@ -48,7 +49,6 @@ const Legend = React.createClass({
     let sixthSize = SIZE / 6;
     let thirdSize = SIZE / 3;
     let path, fill = data.color, stroke = data.color;
-
     switch (data.type) {
       case 'line':
         fill = 'none';
@@ -58,9 +58,13 @@ const Legend = React.createClass({
         stroke = 'none';
         path = `M${halfSize},0A${halfSize},${halfSize},0,1,1,${halfSize},${SIZE}A${halfSize},${halfSize},0,1,1,${halfSize},0Z`;
         break;
+      case 'rect':
+        stroke = 'none';
+        path = `M0,${SIZE / 8}h${SIZE}v${SIZE * 3 / 4}h${-SIZE}z`;
+        break;
       default:
         stroke = 'none';
-        path = `M0,0h${SIZE}v${SIZE}h${-SIZE}z`;
+        path = `M0,0h${SIZE}v${SIZE}h${-SIZE}z`
         break;
     }
 

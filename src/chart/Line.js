@@ -19,7 +19,11 @@ const Line = React.createClass({
     strokeWidth: PropTypes.number,
     strokeDashArray: PropTypes.string,
     className: PropTypes.string,
-    data: React.PropTypes.array,
+    data: PropTypes.arrayOf(PropTypes.shape({
+      x: PropTypes.number,
+      y: PropTypes.number,
+      value: PropTypes.value
+    })),
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func
@@ -47,14 +51,14 @@ const Line = React.createClass({
   },
 
   render () {
-    let {data, ...other} = this.props;
+    let {data, className, ...other} = this.props;
 
     if (!data || !data.length) {
       return;
     }
 
     return (
-      <Layer>
+      <Layer className={'recharts-line ' + (className || '')}>
         <Curve
           {...other}
           fill='none'

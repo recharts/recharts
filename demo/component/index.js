@@ -13,6 +13,7 @@ import Rectangle from './Rectangle';
 import Sector from './Sector';
 
 import LineChart from './LineChart';
+import BarChart from './BarChart';
 
 export default {
   chart: {
@@ -35,7 +36,8 @@ export default {
     Sector
   },
 
-  lineChart: {
-    LineChart
+  chartWrapper: {
+    LineChart,
+    BarChart
   }
 };

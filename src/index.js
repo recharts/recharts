@@ -1,23 +1,27 @@
-import Surface from './js/container/Surface';
+import Surface from './container/Surface';
 
-import Pie from './js/chart/Pie';
-import Radar from './js/chart/Radar';
+import Pie from './chart/Pie';
+import Radar from './chart/Radar';
 
-import CartesianAxis from './js/component/CartesianAxis';
-import CartesianGrid from './js/component/CartesianGrid';
-import Legend from './js/component/Legend';
-import PolarGrid from './js/component/PolarGrid';
-import PolarRadiusAxis from './js/component/PolarRadiusAxis';
-import PolarAngleAxis from './js/component/PolarAngleAxis';
+import CartesianAxis from './component/CartesianAxis';
+import CartesianGrid from './component/CartesianGrid';
+import Legend from './component/Legend';
+import PolarGrid from './component/PolarGrid';
+import PolarRadiusAxis from './component/PolarRadiusAxis';
+import PolarAngleAxis from './component/PolarAngleAxis';
 
-import Sector from './js/shape/Sector';
-import Curve from './js/shape/Curve';
-import Rectangle from './js/shape/Rectangle';
+import Sector from './shape/Sector';
+import Curve from './shape/Curve';
+import Rectangle from './shape/Rectangle';
 
-import LineChart from './js/chart/LineChart/LineChart';
-import LineItem from './js/chart/LineChart/LineItem';
-import XAxis from './js/chart/LineChart/XAxis';
-import YAxis from './js/chart/LineChart/YAxis';
+import LineChart from './chartWrapper/LineChart';
+import LineItem from './chartWrapper/LineItem';
+
+import BarChart from './chartWrapper/BarChart';
+import BarItem from './chartWrapper/BarItem';
+
+import XAxis from './chartWrapper/XAxis';
+import YAxis from './chartWrapper/YAxis';
 
 export default {
   // container
@@ -40,8 +44,9 @@ export default {
   Curve,
   Rectangle,
 
-  LineChart,
-  LineItem,
+  LineChart, LineItem,
+  BarChart, BarItem,
+
   XAxis,
   YAxis
 };

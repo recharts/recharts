@@ -1,6 +1,6 @@
 'use strict';
 
-import Tool from './tool';
+import LodashUtils from './LodashUtils';
 
 export default {
   /**
@@ -175,7 +175,7 @@ export default {
         j = 0;
 
     points.forEach((entry, i) => {
-      if (!Tool.isNumber(points[i].x) || !Tool.isNumber(points[i].y)) {
+      if (!LodashUtils.isNumber(points[i].x) || !LodashUtils.isNumber(points[i].y)) {
         // 至少有一个点
         if (i > j) {
           group.push(points.slice(j, i));
