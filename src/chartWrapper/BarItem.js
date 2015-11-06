@@ -1,8 +1,8 @@
 import React, {PropTypes} from 'react/addons';
 
-const LineItem = React.createClass({
+const BarItem = React.createClass({
   propTypes: {
-    type: PropTypes.string,
+    barSize: PropTypes.number,
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
@@ -11,15 +11,16 @@ const LineItem = React.createClass({
     dataKey: PropTypes.string.isRequired,
     yAxisId: PropTypes.number,
     xAxisId: PropTypes.number,
+    legendType: PropTypes.string,
     isActive: PropTypes.bool
   },
 
   getDefaultProps () {
     return {
-      stroke: '#3182bd',
       fill: '#fff',
       xAxisId: 0,
       yAxisId: 0,
+      legendType: 'rect',
       isActive: true
     };
   },
@@ -29,4 +30,4 @@ const LineItem = React.createClass({
   }
 });
 
-export default LineItem;
+export default BarItem;

@@ -1,21 +1,28 @@
 'use strict';
 
-import React from 'react/addons';
-import ShapeMixin from '../mixin/ShapeMixin';
+import React, {PropTypes, PureRenderMixin} from 'react/addons';
 
 const Rectangle = React.createClass({
 
-  mixins: [ShapeMixin],
+  mixins: [PureRenderMixin],
 
   propTypes: {
-    x: React.PropTypes.number,
-    y: React.PropTypes.number,
-    width: React.PropTypes.number,
-    height: React.PropTypes.number,
-    radius: React.PropTypes.oneOfType([
-            React.PropTypes.number,
-            React.PropTypes.array
-          ])
+    x: PropTypes.number,
+    y: PropTypes.number,
+    width: PropTypes.number,
+    height: PropTypes.number,
+    radius: PropTypes.oneOfType([
+            PropTypes.number,
+            PropTypes.array
+          ]),
+    fill: PropTypes.string,
+    stroke: PropTypes.string,
+    strokeWidth: PropTypes.number,
+    strokeDashArray: PropTypes.string,
+    className: PropTypes.string,
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
+    onClick: PropTypes.func,
   },
 
   getDefaultProps () {
@@ -31,7 +38,14 @@ const Rectangle = React.createClass({
       // 圆角半径
       // 当radius为数值类型时，矩形的四个角的圆角半径都设置为该值
       // 当radius为数组时，分别设置左上角、右上角、右下角、左下角的圆角半径
-      radius: 0
+      radius: 0,
+      stroke: 'none',
+      strokeWidth: 1,
+      strokeDashArray: 'none',
+      fill: '#000',
+      onMouseEnter () {},
+      onMouseLeave () {},
+      onClick () {}
     };
   },
 
@@ -84,10 +98,15 @@ const Rectangle = React.createClass({
   },
 
   render () {
-    let {x, y, width, height, radius, ...others} = this.props;
+    let {x, y, width, height, radius,
+        strokeDashArray, className, ...others} = this.props;
 
     return (
-     <path {...others} d={this.getPath(x, y, width, height, radius)}/>
+      <path
+        {...others}
+        className={'recharts-rectangle ' + (className || '')}
+        strokeDasharray={strokeDashArray}
+        d={this.getPath(x, y, width, height, radius)}/>
     );
   }
 });

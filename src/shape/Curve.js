@@ -2,7 +2,6 @@
 
 import React, {PropTypes, PureRenderMixin} from 'react/addons';
 import Interpolation from '../util/interpolation';
-import ShapeMixin from '../mixin/ShapeMixin';
 
 const Curve = React.createClass({
 
@@ -27,6 +26,7 @@ const Curve = React.createClass({
       // stepBefore - 节点靠前的阶梯曲线, stepMiddle - 节点居中的阶梯曲线, stepAfter - 节点靠后的阶梯曲线
       // smooth - 光滑曲线
       type: 'linear',
+      stroke: '#000',
       fill: 'none',
       strokeWidth: 1,
       strokeDashArray: 'none',
@@ -62,7 +62,7 @@ const Curve = React.createClass({
     return (
       <path
         {...others}
-        className={'recharts-line' + (className || '')}
+        className={'recharts-curve' + (className || '')}
         strokeDasharray={strokeDashArray}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}

@@ -64,6 +64,34 @@ const range = (from, to) => {
   return result;
 };
 
+/**
+ * 获取百分比宽度
+ * @param {Number} totalValue 100%所对应的值
+ * @param {Number|String} percent 百分比
+ * @return {Number}
+ */
+const getPercentValue = (totalValue, percent) => {
+  let str = '' + percent;
+  let index = str.indexOf('%');
+  let value;
+
+  if (index > 0) {
+    value = totalValue * parseFloat(str.slice(0, index)) / 100;
+  } else {
+    value = parseFloat(percent);
+  }
+
+  if (isNaN(value) || value > totalValue) {
+    value = totalValue
+  }
+
+  return value;
+};
+const getElementOfObject = (obj) => {
+  const keys = Object.keys(obj);
+
+  return keys.length ? obj[keys[0]] : null;
+};
 
 
 export default {

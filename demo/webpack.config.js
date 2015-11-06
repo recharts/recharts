@@ -25,18 +25,12 @@ module.exports = {
   module: {
     loaders: [{
       test: /\.js$/,
-      loaders: ['react-hot', 'babel-loader'],
-      exclude: /node_modules/,
-      include: __dirname
-    }, {
-      test: /\.js$/,
-      loaders: ['babel-loader'],
-      exclude: /node_modules/,
-      include: path.join(__dirname,  '..', 'src')
-    }, {
-      test: /\.js$/,
-      loaders: ['babel-loader'],
-      include: path.join(__dirname,  '..', 'node_modules', 'recharts-scale')
+      loaders: ['react-hot', 'babel-loader?stage=0'],
+      include: [
+        __dirname,
+        path.join(__dirname,  '..', 'src'),
+        path.join(__dirname,  '..', 'node_modules', 'recharts-scale')
+      ]
     }]
   }
 };
