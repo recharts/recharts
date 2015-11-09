@@ -15,6 +15,8 @@ import Sector from './Sector';
 import LineChart from './LineChart';
 import BarChart from './BarChart';
 
+import ColorPick from './ColorPick';
+
 export default {
   chart: {
     Pie,
@@ -39,5 +41,9 @@ export default {
   chartWrapper: {
     LineChart,
     BarChart
+  },
+
+  Util: {
+    ColorPick
   }
 };

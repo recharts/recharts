@@ -38,9 +38,9 @@ export default class ColorUtils {
     return R.repeat({}, 3).map((o, i) => vals[indices[i]]);
   }
 
-  static gradient(n, ...colors) {
-    return colors.map(v => v + n).map(v => v < 0 ? 0).map(v => v > 255 ? 255);
-  }
+  // static gradient(n, ...colors) {
+  //   return colors.map(v => v + n).map(v => v < 0 ? 0).map(v => v > 255 ? 255);
+  // }
 
   static hypot(...args) {
     return Math.sqrt(args.map(v => v*v).reduce((res, curr) => res + curr));
@@ -53,20 +53,6 @@ export default class ColorUtils {
     return ColorUtils._hsv2rgb(hue, saturation, newValue);
   }
 
-  static _lab2rgb(s, v) {
-    const r = Math.ceil(s * 64);
-    const l = Math.ceil(v * 100);
-    return h => {
-      const a = r * Math.sin(Math.PI * h / 180);
-      const b = r * Math.cos(Math.PI * h / 180);
-      return new lab(l, a, b).rgb().toString()
-    };
-  },
-
-  static lab2rgb(h, s, v) {
-    return ColorUtils._lab2rgb(s, v)(h);
-  }
-
   static getColorGroups(h, schema) {
     switch(schema) {
       case 'complementary': //生成互补色
@@ -76,5 +62,21 @@ export default class ColorUtils {
       case 'split-complementary': //生成分散互补色系
         return [h, h+60, h+180, h+240]
     }
-  },
+  }
+
+  static getLabColor(h, s, v, schema) {
+    return this.getColorGroups(h, schema).map(
+      this.getLabColorCircle(s, v)
+    );
+  }
+  
+  static getLabColorCircle(s, v) {
+    const r = Math.ceil(s * 64);
+    const l = Math.ceil(v * 100);
+    return h => {
+      const a = r * Math.sin(Math.PI * h / 180);
+      const b = r * Math.cos(Math.PI * h / 180);
+      return new lab(l, a, b).rgb().toString()
+    };
+  }
 }

@@ -23,6 +23,8 @@ import BarItem from './chartWrapper/BarItem';
 import XAxis from './chartWrapper/XAxis';
 import YAxis from './chartWrapper/YAxis';
 
+import ColorUtils from './util/ColorUtils'
+
 export default {
   // container
   Surface,
@@ -48,5 +50,7 @@ export default {
   BarChart, BarItem,
 
   XAxis,
-  YAxis
+  YAxis,
+
+  ColorUtils
 };
