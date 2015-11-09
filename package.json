@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "d3-scale": "^0.1.2",
+    "d3-color": "^0.2.7",
     "invariant": "^2.0.0",
     "recharts-scale": "^0.1.2-beta"
   },
