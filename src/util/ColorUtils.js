@@ -1,4 +1,5 @@
 import R from 'ramda';
+import {lab} from 'd3-color';
 
 export default class ColorUtils {
   constructor(saturation, brightness) {
@@ -51,4 +52,29 @@ export default class ColorUtils {
 
     return ColorUtils._hsv2rgb(hue, saturation, newValue);
   }
+
+  static _lab2rgb(s, v) {
+    const r = Math.ceil(s * 64);
+    const l = Math.ceil(v * 100);
+    return h => {
+      const a = r * Math.sin(Math.PI * h / 180);
+      const b = r * Math.cos(Math.PI * h / 180);
+      return new lab(l, a, b).rgb().toString()
+    };
+  },
+
+  static lab2rgb(h, s, v) {
+    return ColorUtils._lab2rgb(s, v)(h);
+  }
+
+  static getColorGroups(h, schema) {
+    switch(schema) {
+      case 'complementary': //生成互补色
+        return [h, h+180]
+      case 'triadic': //生成三色系
+        return [h, h+120, h+240]
+      case 'split-complementary': //生成分散互补色系
+        return [h, h+60, h+180, h+240]
+    }
+  },
 }
