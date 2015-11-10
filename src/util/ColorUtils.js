@@ -8,7 +8,32 @@ export default class ColorUtils {
   }
 
   getColor = hue => ColorUtils.hsv2rgb(hue, this.saturation, this.value)
+  
+  getLabColor = hue => {
+    const r = Math.ceil(this.saturation * 64);
+    const l = Math.ceil(this.value * 100);
+    const a = r * Math.sin(Math.PI * hue / 180);
+    const b = r * Math.cos(Math.PI * hue / 180);
+    return new lab(l, a, b).rgb().toString();
+  }
+  
+  getColorGroups = (h, schema, type) => {
+    let arr = [];
 
+    switch(schema) {
+      case 'complementary': //生成互补色
+        arr = [h, h+180];
+        break;
+      case 'triadic': //生成三色系
+        arr = [h, h+120, h+240];
+        break;
+      case 'split-complementary': //生成分散互补色系
+        arr = [h, h+60, h+180, h+240];
+        break;
+    }
+
+    return arr.map(this.getLabColor)
+  }
   /*
    * @param hue 色度，0~360
    * @param saturation 饱和度， 0~1小数
@@ -51,32 +76,5 @@ export default class ColorUtils {
     const newValue = ColorUtils.hypot(max, min, min)/ColorUtils.hypot(max, min, mid)*value;
 
     return ColorUtils._hsv2rgb(hue, saturation, newValue);
-  }
-
-  static getColorGroups(h, schema) {
-    switch(schema) {
-      case 'complementary': //生成互补色
-        return [h, h+180]
-      case 'triadic': //生成三色系
-        return [h, h+120, h+240]
-      case 'split-complementary': //生成分散互补色系
-        return [h, h+60, h+180, h+240]
-    }
-  }
-
-  static getLabColor(h, s, v, schema) {
-    return this.getColorGroups(h, schema).map(
-      this.getLabColorCircle(s, v)
-    );
-  }
-  
-  static getLabColorCircle(s, v) {
-    const r = Math.ceil(s * 64);
-    const l = Math.ceil(v * 100);
-    return h => {
-      const a = r * Math.sin(Math.PI * h / 180);
-      const b = r * Math.cos(Math.PI * h / 180);
-      return new lab(l, a, b).rgb().toString()
-    };
   }
 }
