@@ -16,19 +16,28 @@ export default class ColorUtils {
     const b = r * Math.cos(Math.PI * hue / 180);
     return new lab(l, a, b).rgb().toString();
   }
-  
-  getColorGroups = (h, schema, type) => {
+
+  getColorGroups = (h, scheme, type) => {
     let arr = [];
 
-    switch(schema) {
+    switch(scheme) {
       case 'complementary': //生成互补色
         arr = [h, h+180];
+        break;
+      case 'analogous':
+        arr = [h, h+30, h+330]
+        break;
+      case 'split-complementary':
+        arr = [h, h+150, h+210]
         break;
       case 'triadic': //生成三色系
         arr = [h, h+120, h+240];
         break;
-      case 'split-complementary': //生成分散互补色系
+      case 'rectangle': //生成分散互补色系
         arr = [h, h+60, h+180, h+240];
+        break;
+      case 'square':
+        arr = [h, h+90, h+180, h+270]
         break;
     }
 

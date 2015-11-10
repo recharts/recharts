@@ -15,14 +15,20 @@ export default React.createClass({
   },
 
   handleR(e) {
+    let n = e.target.value;
+    if (n < 0) {n = 0;}
+    else if (n > 100) {n=100};
     this.setState({
-      r: parseInt(e.target.value)
+      r: parseInt(n)
     });
   },
 
   handleL(e) {
+    let n = e.target.value;
+    if (n < 0) {n = 0;}
+    else if (n > 100) {n=100};
     this.setState({
-      l: parseInt(e.target.value)
+      l: parseInt(n)
     });
   },
 
@@ -77,11 +83,11 @@ export default React.createClass({
         <br/>
         <div>
           {
-            ['complementary','triadic','split-complementary']
-            .map((schema, index) => (
+            ['complementary','analogous','split-complementary','triadic','rectangle','square']
+            .map((scheme, index) => (
               <div key={index} style={{marginBottom: '40px'}}>
                 {
-                  cu.getColorGroups(h, schema, type).map((v, i) => (
+                  cu.getColorGroups(h, scheme, type).map((v, i) => (
                     <div key={i} style={{
                       background: v,
                       display: 'inline-block',
@@ -91,7 +97,7 @@ export default React.createClass({
                     }}></div>
                   ))
                 }
-                <span>&nbsp;{schema}</span>
+                <span>&nbsp;{scheme}</span>
               </div>
             ))
           }
