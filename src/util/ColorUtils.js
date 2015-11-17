@@ -1,5 +1,5 @@
 import R from 'ramda';
-import {lab} from 'd3-color';
+import {hcl} from 'd3-color';
 
 export default class ColorUtils {
   constructor(saturation, brightness) {
@@ -8,16 +8,8 @@ export default class ColorUtils {
   }
 
   getColor = hue => ColorUtils.hsv2rgb(hue, this.saturation, this.value)
-  
-  getLabColor = hue => {
-    const r = Math.ceil(this.saturation * 64);
-    const l = Math.ceil(this.value * 100);
-    const a = r * Math.sin(Math.PI * hue / 180);
-    const b = r * Math.cos(Math.PI * hue / 180);
-    return new lab(l, a, b).rgb().toString();
-  }
 
-  getColorGroups = (h, scheme, type) => {
+  getColorGroups = (h, scheme) => {
     let arr = [];
 
     switch(scheme) {
@@ -41,7 +33,36 @@ export default class ColorUtils {
         break;
     }
 
-    return arr.map(this.getLabColor)
+    return arr.map(this.getColor)
+  }
+
+  getHclColor = (hue, dc = 0, dl = 0) => new hcl(hue, this.saturation * 64 + dc, this.value * 100 + dl).rgb().toString()
+
+  getHclColorGroups = (h, scheme) => {
+    let arr = [];
+
+    switch(scheme) {
+      case 'complementary': //生成互补色
+        arr = [[h+0], [h+180,0,0]];
+        break;
+      case 'analogous':
+        arr = [[h+0], [h+30,0,0], [h+330,0,0]]
+        break;
+      case 'split-complementary':
+        arr = [[h+0], [h+150], [h+210]]
+        break;
+      case 'triadic': //生成三色系
+        arr = [[h+0], [h+120], [h+240]];
+        break;
+      case 'rectangle': //生成分散互补色系
+        arr = [[h+0], [h+60], [h+180], [h+240]];
+        break;
+      case 'square':
+        arr = [[h+0], [h+90], [h+180], [h+270]]
+        break;
+    }
+
+    return arr.map(v => this.getHclColor(...v))
   }
   /*
    * @param hue 色度，0~360
