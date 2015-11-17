@@ -1,6 +1,4 @@
- 'use strict';
-
-import React from 'react/addons';
+import React from 'react';
 import PolarCoordinateMixin from '../mixin/PolarCoordinateMixin';
 
 const RADIAN = Math.PI / 180;

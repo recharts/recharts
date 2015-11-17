@@ -1,10 +1,9 @@
-'use strict';
-
-import React from 'react/addons';
-
-const PropTypes = React.PropTypes;
+import React, {PropTypes} from 'react';
 
 const Layer = React.createClass({
+  propTypes: {
+    className: PropTypes.string
+  },
 
   render () {
     let {children, ...others} = this.props;

@@ -93,6 +93,10 @@ const getElementOfObject = (obj) => {
   return keys.length ? obj[keys[0]] : null;
 };
 
+const maxBy = (fn, a, b) => {
+  return fn(a) > fn(b) ? a : b;
+};
+
 
 export default {
   isArray, isNumber, isString,

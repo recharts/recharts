@@ -1,21 +1,27 @@
-'use strict';
-
-import React from 'react/addons';
-import ShapeMixin from '../mixin/ShapeMixin';
+import React, {PropTypes} from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 const RADIAN = Math.PI / 180;
 
 const Sector = React.createClass({
 
-  mixins: [ShapeMixin],
+  mixins: [PureRenderMixin],
 
   propTypes: {
-    cx: React.PropTypes.number,
-    cy: React.PropTypes.number,
-    innerRadius: React.PropTypes.number,
-    outerRadius: React.PropTypes.number,
-    startAngle: React.PropTypes.number,
-    endAngle: React.PropTypes.number
+    cx: PropTypes.number,
+    cy: PropTypes.number,
+    innerRadius: PropTypes.number,
+    outerRadius: PropTypes.number,
+    startAngle: PropTypes.number,
+    endAngle: PropTypes.number,
+    fill: PropTypes.string,
+    stroke: PropTypes.string,
+    strokeWidth: PropTypes.number,
+    strokeDasharray: PropTypes.string,
+    className: PropTypes.string,
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
+    onClick: PropTypes.func
   },
 
   getDefaultProps () {
@@ -62,14 +68,22 @@ const Sector = React.createClass({
   },
 
   render () {
-    let {cx, cy, innerRadius, outerRadius, startAngle, endAngle, ...others} = this.props;
+    const {cx, cy, innerRadius, outerRadius, startAngle, endAngle,
+          onClick, onMouseEnter, onMouseLeave, className,
+          ...others} = this.props;
 
     if (outerRadius < innerRadius || startAngle === endAngle) {
       return null;
     }
 
     return (
-     <path {...others} d={this.getPath(cx, cy, innerRadius, outerRadius, startAngle, endAngle)}/>
+     <path
+      {...others}
+      className={'recharts-sector' + (className || '')}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onClick={onClick}
+      d={this.getPath(cx, cy, innerRadius, outerRadius, startAngle, endAngle)}/>
     );
   }
 });

@@ -1,10 +1,19 @@
-'use strict';
-
-import React from 'react/addons';
-
-const PropTypes = React.PropTypes;
+import React, {PropTypes} from 'react';
 
 const Surface = React.createClass({
+  propTypes: {
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    viewBox: PropTypes.shape({
+      x: PropTypes.number,
+      y: PropTypes.number,
+      width: PropTypes.number,
+      height: PropTypes.number
+    }),
+    className: PropTypes.string,
+    style: PropTypes.object
+  },
+
   render () {
     let {children, width, height, viewBox, padding, className, style} = this.props;
     let svgView = viewBox || {width: width, height: height, x: 0, y: 0};

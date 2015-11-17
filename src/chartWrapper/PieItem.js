@@ -1,28 +1,33 @@
 import React, {PropTypes} from 'react';
 
-const BarItem = React.createClass({
+const PieItem = React.createClass({
   propTypes: {
-    barSize: PropTypes.number,
+    cx: PropTypes.number,
+    cy: PropTypes.number,
+    innerRadius: PropTypes.number,
+    outerRadius: PropTypes.number,
+    type: PropTypes.string,
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
     strokeDasharray: PropTypes.string,
     className: PropTypes.string,
-    dataKey: PropTypes.string.isRequired,
+    data: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.any,
+      value: PropTypes.number
+    })),
     yAxisId: PropTypes.number,
     xAxisId: PropTypes.number,
     legendType: PropTypes.string,
-    isActive: PropTypes.bool,
-    stack: PropTypes.string,
-    stackType: PropTypes.string
+    isActive: PropTypes.bool
   },
 
   getDefaultProps () {
     return {
+      innerRadius: 0,
+      stroke: '#fff',
       fill: '#fff',
-      xAxisId: 0,
-      yAxisId: 0,
-      legendType: 'rect',
+      legendType: 'line',
       isActive: true
     };
   },
@@ -32,4 +37,4 @@ const BarItem = React.createClass({
   }
 });
 
-export default BarItem;
+export default PieItem;

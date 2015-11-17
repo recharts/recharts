@@ -1,10 +1,7 @@
 /**
  * @fileOverview 饼图
  */
-
-'use strict';
-
-import React, {PropTypes} from 'react/addons';
+import React, {PropTypes} from 'react';
 import Curve from '../shape/Curve';
 import Layer from '../container/Layer';
 import CartesianCoordinateMixin from '../mixin/CartesianCoordinateMixin';
@@ -17,7 +14,7 @@ const Line = React.createClass({
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
-    strokeDashArray: PropTypes.string,
+    strokeDasharray: PropTypes.string,
     className: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,

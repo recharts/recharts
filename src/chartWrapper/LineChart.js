@@ -1,6 +1,4 @@
-'use strict';
-
-import React, {PropTypes} from 'react/addons';
+import React, {PropTypes} from 'react';
 import CartesianChart from './CartesianChart';
 
 import Surface from '../container/Surface';
@@ -64,7 +62,6 @@ class LineChart extends CartesianChart {
    * @return {ReactComponent}
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
-    const {children} = this.props;
     const {activeLineKey} = this.state;
 
     return items.map((child, i) => {

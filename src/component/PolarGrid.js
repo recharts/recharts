@@ -1,6 +1,5 @@
-'use strict';
-
-import React from 'react/addons';
+import React from 'react';
+import createFragment from 'react-addons-create-fragment';
 import PolarCoordinateMixin from '../mixin/PolarCoordinateMixin';
 
 const PropTypes = React.PropTypes;
@@ -52,7 +51,7 @@ const PolarGrid = React.createClass({
 
     return (
       <g className='layer-grid-angle'>
-        {React.addons.createFragment(items)}
+        {createFragment(items)}
       </g>
     );
   },
@@ -107,7 +106,7 @@ const PolarGrid = React.createClass({
 
     return (
       <g className='layer-grid-concentric'>
-        {React.addons.createFragment(items)}
+        {createFragment(items)}
       </g>
     );
   },

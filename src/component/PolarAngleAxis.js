@@ -3,10 +3,8 @@
  * @author xile611
  * @Date 2015-08-28
  */
-
-'use strict';
-
-import React from 'react/addons';
+import React from 'react';
+import createFragment from 'react-addons-create-fragment';
 import PolarCoordinateMixin from '../mixin/PolarCoordinateMixin';
 
 const PropTypes = React.PropTypes;
@@ -125,7 +123,7 @@ const PolarAngleAxis = React.createClass({
 
     return (
       <g className='axis-ticks'>
-        {React.addons.createFragment(items)}
+        {createFragment(items)}
       </g>
     );
   },

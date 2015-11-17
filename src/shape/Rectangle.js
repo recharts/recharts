@@ -1,6 +1,5 @@
-'use strict';
-
-import React, {PropTypes, PureRenderMixin} from 'react/addons';
+import React, {PropTypes} from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 const Rectangle = React.createClass({
 
@@ -18,11 +17,11 @@ const Rectangle = React.createClass({
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
-    strokeDashArray: PropTypes.string,
+    strokeDasharray: PropTypes.string,
     className: PropTypes.string,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func,
+    onClick: PropTypes.func
   },
 
   getDefaultProps () {
@@ -41,7 +40,7 @@ const Rectangle = React.createClass({
       radius: 0,
       stroke: 'none',
       strokeWidth: 1,
-      strokeDashArray: 'none',
+      strokeDasharray: 'none',
       fill: '#000',
       onMouseEnter () {},
       onMouseLeave () {},
@@ -99,13 +98,16 @@ const Rectangle = React.createClass({
 
   render () {
     let {x, y, width, height, radius,
-        strokeDashArray, className, ...others} = this.props;
+        onClick, onMouseEnter, onMouseLeave,
+        className, ...others} = this.props;
 
     return (
       <path
         {...others}
         className={'recharts-rectangle ' + (className || '')}
-        strokeDasharray={strokeDashArray}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onClick={onClick}
         d={this.getPath(x, y, width, height, radius)}/>
     );
   }

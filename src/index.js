@@ -20,8 +20,15 @@ import LineItem from './chartWrapper/LineItem';
 import BarChart from './chartWrapper/BarChart';
 import BarItem from './chartWrapper/BarItem';
 
+import PieChart from './chartWrapper/PieChart';
+import PieItem from './chartWrapper/PieItem';
+
+import ScatterChart from './chartWrapper/ScatterChart';
+import ScatterItem from './chartWrapper/ScatterItem';
+
 import XAxis from './chartWrapper/XAxis';
 import YAxis from './chartWrapper/YAxis';
+import ZAxis from './chartWrapper/ZAxis';
 
 export default {
   // container
@@ -46,7 +53,8 @@ export default {
 
   LineChart, LineItem,
   BarChart, BarItem,
+  PieChart, PieItem,
+  ScatterChart, ScatterItem,
 
-  XAxis,
-  YAxis
+  XAxis, YAxis, ZAxis
 };

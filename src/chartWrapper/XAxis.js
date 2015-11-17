@@ -1,7 +1,13 @@
-import React, {PropTypes} from 'react/addons';
+import React, {PropTypes} from 'react';
 
-const XAxis = React.createClass({
-  propTypes: {
+class XAxis extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  static displayName = 'XAxis';
+
+  static propTypes = {
     xAxisId: PropTypes.number,
     // 类目轴需要传入此属性
     dataKey: PropTypes.string,
@@ -9,26 +15,28 @@ const XAxis = React.createClass({
     // 当为类目轴时，可以是任何类型的刻度
     // 当为数值轴时，需要传入Number类型的刻度
     ticks: PropTypes.array,
+    // x轴占的宽度，一般计算得到，不需要设置
+    width: PropTypes.number,
     // x轴占的高度
     height: PropTypes.number,
     // 轴的方位
     orient: PropTypes.oneOf(['top', 'bottom']),
-    type: PropTypes.oneOf(['number', 'category'])
-  },
+    type: PropTypes.oneOf(['number', 'category']),
+    tickCount: PropTypes.number
+  };
 
-  getDefaultProps () {
-    return {
-      orient: 'bottom',
-      height: 20,
-      xAxisId: 0,
-      tickCount: 5,
-      type: 'category'
-    };
-  },
+  static defaultProps = {
+    orient: 'bottom',
+    width: 0,
+    height: 20,
+    xAxisId: 0,
+    tickCount: 5,
+    type: 'category'
+  };
 
   render () {
     return null;
   }
-});
+};
 
 export default XAxis;

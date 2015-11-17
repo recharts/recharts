@@ -1,7 +1,13 @@
-import React, {PropTypes} from 'react/addons';
+import React, {PropTypes} from 'react';
 
-const YAxis = React.createClass({
-  propTypes: {
+class YAxis extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  static displayName = 'YAxis';
+
+  static propTypes = {
     yAxisId: PropTypes.number,
     // 当y轴为类目轴时，需要传入此属性
     dataKey: PropTypes.string,
@@ -12,24 +18,25 @@ const YAxis = React.createClass({
     tickCount: PropTypes.number,
     // y轴占的宽度
     width: PropTypes.number,
+    // y轴占的高度，一般计算而得，不需要设置
+    height: PropTypes.number,
     // 轴的方位
     orient: PropTypes.oneOf(['left', 'right']),
     type: PropTypes.oneOf(['number', 'category'])
-  },
+  };
 
-  getDefaultProps () {
-    return {
-      orient: 'left',
-      width: 60,
-      yAxisId: 0,
-      tickCount: 5,
-      type: 'number'
-    };
-  },
+  static defaultProps = {
+    orient: 'left',
+    width: 60,
+    height: 0,
+    yAxisId: 0,
+    tickCount: 5,
+    type: 'number'
+  };
 
   render () {
     return null;
   }
-});
+};
 
 export default YAxis;

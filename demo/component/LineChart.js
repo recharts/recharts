@@ -1,6 +1,4 @@
-'use strict';
-
-import React from 'react/addons';
+import React from 'react';
 import {LineChart, LineItem, XAxis, YAxis} from 'recharts';
 
 export default React.createClass({

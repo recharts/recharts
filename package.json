@@ -18,17 +18,21 @@
   },
   "homepage": "https://github.com/recharts/recharts",
   "peerDependencies": {
-    "react": "^0.13.3"
+    "react": "^0.14.2",
+    "react-dom": "^0.14.2"
   },
   "dependencies": {
     "d3-scale": "^0.1.2",
     "invariant": "^2.0.0",
+    "react-addons-create-fragment": "^0.14.2",
+    "react-addons-pure-render-mixin": "^0.14.2",
     "recharts-scale": "^0.1.2-beta"
   },
   "devDependencies": {
-    "react": "^0.13.3",
-    "react-router": "^0.13.3",
-    "react-router-ie8": "^0.13.4",
+    "history": "^1.12.0",
+    "react": "^0.14.2",
+    "react-dom": "^0.14.2",
+    "react-router": "^1.0.0",
     "node-libs-browser": "^0.5.2",
     "react-hot-loader": "^1.3.0",
     "require-dir": "^0.3.0",

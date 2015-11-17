@@ -1,4 +1,5 @@
-import React, {PropTypes} from 'react/addons';
+import React, {PropTypes} from 'react';
+import ReactDOM from 'react-dom';
 import {getNiceTickValues} from 'recharts-scale';
 import {linear, ordinal} from 'd3-scale';
 
@@ -47,6 +48,7 @@ class CartesianChart extends React.Component {
       bottom: PropTypes.number,
       left: PropTypes.number
     }),
+    stackType: PropTypes.oneOf(['value', 'percent']),
     title: PropTypes.string,
     style: PropTypes.object,
     barGap: PropTypes.number,
@@ -71,7 +73,7 @@ class CartesianChart extends React.Component {
     activeBarKey: null
   };
 
-    /**
+  /**
    * 取ticks的定义域
    * @param  {Array} ticks
    * @param  {String} type  刻度类型
@@ -84,8 +86,7 @@ class CartesianChart extends React.Component {
 
     return ticks;
   }
-
-    /**
+  /**
    * 根据指标名称获取 定义域
    * @param  {String} key
    * @param  {String} type 刻度类型
@@ -153,7 +154,7 @@ class CartesianChart extends React.Component {
     if (axes && axes.length) {
       axisMap = this.getAxisMapByAxes(axes, items, axisType, axisIdKey);
     } else if (items && items.length) {
-      axisMap = this.getAxisMapByItems(items, axisType, axisIdKey)
+      axisMap = this.getAxisMapByItems(items, Axis, axisType, axisIdKey)
     }
 
     return axisMap;
@@ -191,11 +192,12 @@ class CartesianChart extends React.Component {
   /**
    * 根据用户显性配置的轴来计算轴的配置
    * @param  {Array[ReactComponet]} items 线图元素或者柱图元素
+   * @param  {ReactComponent} Axis 轴对象
    * @param  {String} axes 轴的类型, xAxis - x轴, yAxis - y轴
    * @param  {String} axisIdKey 标识轴的id的key
    * @return {Object}      刻度配置对象
    */
-  getAxisMapByItems (items, axisType, axisIdKey) {
+  getAxisMapByItems (items, Axis, axisType, axisIdKey) {
     const {data} = this.props;
     const len = data.length;
     let index = -1;
@@ -212,9 +214,9 @@ class CartesianChart extends React.Component {
           [axisId]: {
             axisType,
             type: 'number',
-            width: axisType === 'yAxis' ? 60 : 0,
-            height: axisType === 'xAxis' ? 20 : 0,
-            tickCount: 5,
+            width: Axis.defaultProps.width,
+            height: Axis.defaultProps.height,
+            tickCount: Axis.defaultProps.tickCount,
             orient: ORIENT_MAP[axisType][index % 2],
             domain: axisType === 'xAxis' ? LodashUtils.range(0, len) : this.getDomainOfItems(
               items.filter(entry => entry.props[axisIdKey] === axisId), 'number'
@@ -468,7 +470,7 @@ class CartesianChart extends React.Component {
    * @param  {Object} e        事件对象
    */
   handleMouseEnter = (offset, xAxisMap, yAxisMap, e) => {
-    let container = React.findDOMNode(this);
+    let container = ReactDOM.findDOMNode(this);
     let containerOffset = DOMUtils.offset(container);
     let ne = EventUtils.normalize(e, containerOffset);
     let mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);
@@ -490,7 +492,7 @@ class CartesianChart extends React.Component {
    * @param  {Object} e        事件对象
    */
   handleMouseMove = (offset, xAxisMap, yAxisMap, e) => {
-    let container = React.findDOMNode(this);
+    let container = ReactDOM.findDOMNode(this);
     let containerOffset = DOMUtils.offset(container);
     let ne = EventUtils.normalize(e, containerOffset);
     let mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);

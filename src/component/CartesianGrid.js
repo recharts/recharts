@@ -1,6 +1,5 @@
-'use strict';
-
-import React from 'react/addons';
+import React from 'react';
+import createFragment from 'react-addons-create-fragment';
 import CartesianCoordinateMixin from '../mixin/CartesianCoordinateMixin';
 
 const PropTypes = React.PropTypes;
@@ -40,7 +39,7 @@ const CartesianGrid = React.createClass({
 
     return (
       <g className='layer-grid-horizontal'>
-        {React.addons.createFragment(items)}
+        {createFragment(items)}
       </g>
     );
   },
@@ -63,7 +62,7 @@ const CartesianGrid = React.createClass({
 
     return (
       <g className='layer-grid-vertical'>
-        {React.addons.createFragment(items)}
+        {createFragment(items)}
       </g>
     );
   },

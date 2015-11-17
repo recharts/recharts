@@ -1,12 +1,13 @@
 /**
- * @fileOverview 柱图
+ * @fileOverview 散点图
  */
+
 import React, {PropTypes} from 'react';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import CartesianCoordinateMixin from '../mixin/CartesianCoordinateMixin';
 
-const Bar = React.createClass({
+const Scatter = React.createClass({
   mixins: [CartesianCoordinateMixin],
 
   propTypes: {
@@ -16,15 +17,14 @@ const Bar = React.createClass({
     strokeDasharray: PropTypes.string,
     className: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.shape({
-      x: PropTypes.number,
-      y: PropTypes.number,
-      width: PropTypes.number,
-      height: PropTypes.number,
-      radius: PropTypes.oneOfType([
-                PropTypes.number,
-                PropTypes.array
-              ]),
-      value: PropTypes.value
+      cx: PropTypes.number,
+      cy: PropTypes.number,
+      r: PropTypes.number,
+      value: PropTypes.shape({
+        x: PropTypes.number,
+        y: PropTypes.number,
+        z: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+      })
     })),
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
@@ -41,17 +41,17 @@ const Bar = React.createClass({
     };
   },
 
-  renderRectangles () {
-    let {data, className, ...others} = this.props;
+  renderCircles () {
+    let {data, className,  ...others} = this.props;
 
     return data.map((entry, i) => {
       let {value, ...rest} = entry;
 
       return (
-        <Rectangle
+        <circle
           {...others}
           {...rest}
-          key={'rectangle-' + i}/>
+          key={'circle-' + i}/>
       );
     });
   },
@@ -64,11 +64,11 @@ const Bar = React.createClass({
     }
 
     return (
-      <Layer className={'layer-bar ' + (className || '')}>
-        {this.renderRectangles()}
+      <Layer className={'layer-scatter ' + (className || '')}>
+        {this.renderCircles()}
       </Layer>
     );
   }
 });
 
-export default Bar;
+export default Scatter;

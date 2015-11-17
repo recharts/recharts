@@ -1,63 +1,76 @@
 /**
  * @fileOverview 饼图
  */
-
-'use strict';
-
-import React from 'react/addons';
+import React, {PropTypes} from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Sector from '../shape/Sector';
-import PolarCoordinateMixin from '../mixin/PolarCoordinateMixin';
 
 const Pie = React.createClass({
-  mixins: [PolarCoordinateMixin],
+  mixins: [PureRenderMixin],
 
   propTypes: {
-    data: React.PropTypes.array,
-    keys: React.PropTypes.object,
-    minAngle: React.PropTypes.number
+    cx: PropTypes.number,
+    cy: PropTypes.number,
+    startAngle: PropTypes.number,
+    innerRadius: PropTypes.number,
+    outerRadius: PropTypes.number,
+    clockWise: PropTypes.bool,
+    data: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.any,
+      value: PropTypes.number
+    })),
+    minAngle: PropTypes.number,
+    fill: PropTypes.string,
+    stroke: PropTypes.string,
+    strokeWidth: PropTypes.number,
+    strokeDasharray: PropTypes.string
   },
 
   getDefaultProps () {
     return {
+      // 极点的横坐标
+      cx: 0,
+      // 极点的纵坐标
+      cy: 0,
+      // 起始角度
+      startAngle: 0,
+      // 内径
+      innerRadius: 0,
+      // 外径
+      outerRadius: 0,
+      // 极坐标一般取逆时针为正方向，但饼图等一般默认为顺时针
+      clockWise: true,
       // 数据
       data: [],
-      keys: {
-        name: 'name',
-        value: 'value'
-      },
       minAngle: 0
     };
   },
 
   getSectors () {
-    let {cx, cy, innerRadius, outerRadius, startAngle, data, keys, minAngle, clockWise} = this.props;
+    const {cx, cy, innerRadius, outerRadius, startAngle, data, minAngle, clockWise} = this.props;
+    const len = data.length;
 
-    let valueKey = keys.value,
-        len = data.length,
-        sectors = [],
-        sum = 0,
-        percent,
-        _startAngle,
-        _endAngle;
+    const sum = data.reduce((result, entry) => {
+      return result + entry.value
+    }, 0);
 
-    data.forEach((entry) => {
-      sum += entry[valueKey];
-    });
+    let sectors = [], prev;
 
     if (sum > 0) {
-
-      data.forEach((entry, i) => {
-        percent = entry[valueKey] / sum;
+      sectors = data.map((entry, i) => {
+        const percent = entry.value / sum;
+        let _startAngle, _endAngle;
 
         if (i) {
-          _startAngle = clockWise ? sectors[i - 1].endAngle : sectors[i - 1].startAngle;
+          _startAngle = clockWise ? prev.endAngle : prev.startAngle;
         } else {
           _startAngle = startAngle;
         }
 
         _endAngle = _startAngle + (clockWise ? 1 : -1) * (minAngle + percent * (360 - len * minAngle));
 
-        sectors.push({
+        prev = {
+          ...entry,
           fill: entry.fill,
           cx: cx,
           cy: cy,
@@ -65,7 +78,9 @@ const Pie = React.createClass({
           outerRadius: outerRadius,
           startAngle: clockWise ? _startAngle : _endAngle,
           endAngle: clockWise ? _endAngle : _startAngle
-        });
+        };
+
+        return prev;
       });
     }
 
@@ -73,27 +88,19 @@ const Pie = React.createClass({
   },
 
   renderSectors () {
-    let {cx, cy, innerRadius, outerRadius, data, keys, minAngle, clockWise, ...others} = this.props;
-    let sectors = this.getSectors();
+    const sectors = this.getSectors();
 
     return sectors.map((entry, i) => {
       return (
         <Sector
-          {...others}
-          cx={entry.cx}
-          cy={entry.cy}
-          fill={entry.fill}
-          innerRadius={entry.innerRadius}
-          outerRadius={entry.outerRadius}
-          startAngle={entry.startAngle}
-          endAngle={entry.endAngle}
+          {...entry}
           key={'sector-' + i}/>
       );
     });
   },
 
   render () {
-    let data = this.props.data;
+    const data = this.props.data;
 
     if (!data || !data.length) {
       return;

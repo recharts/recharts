@@ -1,6 +1,4 @@
-'use strict';
-
-import React from 'react/addons';
+import React from 'react';
 import {BarChart, BarItem, XAxis, YAxis} from 'recharts';
 
 export default React.createClass({
@@ -22,7 +20,7 @@ export default React.createClass({
 
         <p>水平朝向的柱图</p>
         <div className='line-chart-wrapper'>
-          <BarChart width={400} height={400} data={data} layout='vertial'>
+          <BarChart width={400} height={400} data={data} layout='vertical'>
             <XAxis type='number'/>
             <YAxis dataKey='name' type='category'/>
             <BarItem dataKey='uv' fill='#ff7300'/>
