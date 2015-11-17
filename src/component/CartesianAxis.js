@@ -1,6 +1,5 @@
-'use strict';
-
-import React from 'react/addons';
+import React from 'react';
+import createFragment from 'react-addons-create-fragment';
 import CartesianCoordinateMixin from '../mixin/CartesianCoordinateMixin';
 
 const PropTypes = React.PropTypes;
@@ -174,7 +173,7 @@ const CartesianAxis = React.createClass({
 
     return (
       <g className='axis-ticks'>
-        {React.addons.createFragment(items)}
+        {createFragment(items)}
       </g>
     );
   },

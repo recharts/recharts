@@ -1,20 +1,17 @@
 import React, {PropTypes} from 'react';
 
-const BarItem = React.createClass({
+const ScatterItem = React.createClass({
   propTypes: {
-    barSize: PropTypes.number,
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
     strokeDasharray: PropTypes.string,
     className: PropTypes.string,
-    dataKey: PropTypes.string.isRequired,
-    yAxisId: PropTypes.number,
-    xAxisId: PropTypes.number,
     legendType: PropTypes.string,
-    isActive: PropTypes.bool,
-    stack: PropTypes.string,
-    stackType: PropTypes.string
+    xAxisId: PropTypes.number,
+    yAxisId: PropTypes.number,
+    zAxisId: PropTypes.number,
+    data: PropTypes.arrayOf(PropTypes.object).isRequired
   },
 
   getDefaultProps () {
@@ -22,8 +19,8 @@ const BarItem = React.createClass({
       fill: '#fff',
       xAxisId: 0,
       yAxisId: 0,
-      legendType: 'rect',
-      isActive: true
+      zAxisId: 0,
+      legendType: 'scatter'
     };
   },
 
@@ -32,4 +29,4 @@ const BarItem = React.createClass({
   }
 });
 
-export default BarItem;
+export default ScatterItem;

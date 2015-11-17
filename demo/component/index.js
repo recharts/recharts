@@ -14,6 +14,8 @@ import Sector from './Sector';
 
 import LineChart from './LineChart';
 import BarChart from './BarChart';
+import PieChart from './PieChart';
+import ScatterChart from './ScatterChart';
 
 export default {
   chart: {
@@ -38,6 +40,8 @@ export default {
 
   chartWrapper: {
     LineChart,
-    BarChart
+    BarChart,
+    ScatterChart,
+    PieChart
   }
 };

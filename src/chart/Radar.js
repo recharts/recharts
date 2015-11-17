@@ -1,8 +1,4 @@
-
-
-'use strict';
-
-import React from 'react/addons';
+import React from 'react';
 import Sector from '../shape/Sector';
 import PolarGrid from '../component/PolarGrid';
 import PolarAngleAxis from '../component/PolarAngleAxis';

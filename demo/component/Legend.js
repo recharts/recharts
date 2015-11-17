@@ -1,6 +1,4 @@
-'use strict';
-
-import React from 'react/addons';
+import React from 'react';
 import {Surface, Legend} from 'recharts';
 
 export default React.createClass({

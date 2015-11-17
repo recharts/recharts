@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react/addons';
+import React, {PropTypes} from 'react';
 
 const Tooltip = React.createClass({
   propTypes: {

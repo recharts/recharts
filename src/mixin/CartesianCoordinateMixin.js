@@ -1,9 +1,5 @@
-'use strict';
-
-import React from 'react/addons';
-
-const PropTypes = React.PropTypes;
-const PureRenderMixin = React.addons.PureRenderMixin;
+import React, {PropTypes} from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 export default {
   mixins: [PureRenderMixin],

@@ -1,11 +1,11 @@
-import React, {PropTypes} from 'react/addons';
+import React, {PropTypes} from 'react';
 import Router, {Route, Link} from 'react-router';
 import components from '../component/index';
 
 
 const App = React.createClass({
   propTypes: {
-    query: PropTypes.object
+    params: PropTypes.object
   },
 
   renderList () {
@@ -16,7 +16,7 @@ const App = React.createClass({
 
             return (
               <li key={'component-' + c}>
-                <Link to='app' query={{page: c, group: key}}>{c}</Link>
+                <Link to='/' query={{page: c, group: key}}>{c}</Link>
               </li>
             );
           });
@@ -40,23 +40,23 @@ const App = React.createClass({
   },
 
   renderPageDetail () {
-    let {query} = this.props,
-        group = query.group,
-        page = query.page;
+    let {params, location} = this.props;
+    let {query} = location;
+    let {group, page} = query;
 
     return (
       <div className='component-wrapper'>
-        <p className='back'><Link to='app' query={{}}>回到首页</Link></p>
-        <p className='title'>{query.page}</p>
+        <p className='back'><Link to='/' params={{}}>回到首页</Link></p>
+        <p className='title'>{page}</p>
         {components[group] && components[group][page] ? React.createElement(components[group][page]) : null}
       </div>
     );
   },
 
   render () {
-    let {query} = this.props;
+    let {location, params, query} = this.props;
 
-    if (!query.page) {
+    if (!location.query || !location.query.page) {
       return this.renderList();
     }
 

@@ -1,6 +1,5 @@
-'use strict';
-
-import React, {PropTypes, PureRenderMixin} from 'react/addons';
+import React, {PropTypes} from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Interpolation from '../util/interpolation';
 
 const Curve = React.createClass({
@@ -12,7 +11,7 @@ const Curve = React.createClass({
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
-    strokeDashArray: PropTypes.string,
+    strokeDasharray: PropTypes.string,
     className: PropTypes.string,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
@@ -29,7 +28,7 @@ const Curve = React.createClass({
       stroke: '#000',
       fill: 'none',
       strokeWidth: 1,
-      strokeDashArray: 'none',
+      strokeDasharray: 'none',
       // 点坐标
       points: [],
       onClick () {},
@@ -52,8 +51,8 @@ const Curve = React.createClass({
   },
 
   render () {
-    let {className, strokeDashArray, points, type,
-      onClick, onMouseEnter, onMouseLeave, ...others} = this.props;
+    let {className, points, type, onClick,
+        onMouseEnter, onMouseLeave, ...others} = this.props;
 
     if (!points || !points.length) {
       return null;
@@ -63,7 +62,6 @@ const Curve = React.createClass({
       <path
         {...others}
         className={'recharts-curve' + (className || '')}
-        strokeDasharray={strokeDashArray}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}

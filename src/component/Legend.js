@@ -1,17 +1,13 @@
-'use strict';
-
-import React, {PropTypes} from 'react/addons';
+import React, {PropTypes} from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Surface from '../container/Surface';
 
-const PureRenderMixin = React.addons.PureRenderMixin;
 const SIZE = 32;
 
 const Legend = React.createClass({
   mixins: [PureRenderMixin],
 
   propTypes: {
-    x: PropTypes.number,
-    y: PropTypes.number,
     width: PropTypes.number,
     height: PropTypes.number,
     iconSize: PropTypes.number,
@@ -27,8 +23,6 @@ const Legend = React.createClass({
 
   getDefaultProps () {
     return {
-      x: 0,
-      y: 0,
       width: 0,
       height: 0,
       iconSize: 14,

@@ -1,5 +1,5 @@
 /* eslint no-unused-expressions: 0 */
-import React from 'react/addons';
+import React from 'react';
 
 export default {
   /*
@@ -27,7 +27,9 @@ export default {
    * `type` can be a React element class or string.
    */
   findChildByType(children, type) {
-    this.findAllByType(children, type)[0];
+    const result = this.findAllByType(children, type);
+
+    return result && result[0];
   },
 
   /*

@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react/addons';
+import React, {PropTypes} from 'react';
 
 const LineItem = React.createClass({
   propTypes: {
@@ -6,13 +6,12 @@ const LineItem = React.createClass({
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
-    strokeDashArray: PropTypes.string,
+    strokeDasharray: PropTypes.string,
     className: PropTypes.string,
     dataKey: PropTypes.string.isRequired,
     yAxisId: PropTypes.number,
     xAxisId: PropTypes.number,
-    legendType: PropTypes.string,
-    isActive: PropTypes.bool
+    legendType: PropTypes.string
   },
 
   getDefaultProps () {
@@ -21,8 +20,7 @@ const LineItem = React.createClass({
       fill: '#fff',
       xAxisId: 0,
       yAxisId: 0,
-      legendType: 'line',
-      isActive: true
+      legendType: 'line'
     };
   },
 
