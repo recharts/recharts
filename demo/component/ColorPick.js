@@ -1,6 +1,6 @@
 'use strict';
 
-import React from 'react/addons';
+import React from 'react';
 import R from 'ramda';
 import {ColorUtils} from 'recharts'
 import {LineChart, LineItem, XAxis, YAxis} from 'recharts';
@@ -79,8 +79,8 @@ export default React.createClass({
           <div style={{width: '2px',height: '6px',background:'#f33',marginBottom:'6px',marginLeft:2*h+'px'}}></div>
           <div>
             {
-              R.repeat({}, 13).map(()=>(
-                <div style={{width: '2px',height: '2px',background:'#000',marginRight:'58px',display:'inline-block'}}></div>
+              R.repeat({}, 13).map((v,i)=>(
+                <div key={i} style={{width: '2px',height: '2px',background:'#000',marginRight:'58px',display:'inline-block'}}></div>
               ))
             }
           </div>
@@ -102,7 +102,7 @@ export default React.createClass({
               <XAxis dataKey='name'/>
               {
                 cu.getHclColorGroups(h, currentScheme).map((v, i) => (
-                  <LineItem type='smooth' dataKey={'v'+i} stroke={v} strokeWidth={3}/>
+                  <LineItem key={i} type='smooth' dataKey={'v'+i} stroke={v} strokeWidth={3}/>
                 ))
               }
             </LineChart>
