@@ -43,26 +43,26 @@ export default class ColorUtils {
 
     switch(scheme) {
       case 'complementary': //生成互补色
-        arr = [[h+0], [h+180,0,0]];
+        arr = [[h+0,0,0], [h+180,0,0],];
         break;
       case 'analogous':
-        arr = [[h+0], [h+30,0,0], [h+330,0,0]]
+        arr = [[h+0,0,0], [h+30,0,0], [h+330,0,0],];
         break;
       case 'split-complementary':
-        arr = [[h+0], [h+150], [h+210]]
+        arr = [[h+0,0,0], [h+150,0,0], [h+210,0,0],];
         break;
       case 'triadic': //生成三色系
-        arr = [[h+0], [h+120], [h+240]];
+        arr = [[h+0,0,0], [h+120,0,0], [h+240,0,0],];
         break;
       case 'rectangle': //生成分散互补色系
-        arr = [[h+0], [h+60], [h+180], [h+240]];
+        arr = [[h+0,0,0], [h+60,0,0], [h+180,0,0], [h+240,0,0],];
         break;
       case 'square':
-        arr = [[h+0], [h+90], [h+180], [h+270]]
+        arr = [[h+0,0,0], [h+90,0,0], [h+180,0,0], [h+270,0,0],];
         break;
     }
 
-    return arr.map(v => this.getHclColor(...v))
+    return arr.map(v => this.getHclColor(...v));
   }
   /*
    * @param hue 色度，0~360
