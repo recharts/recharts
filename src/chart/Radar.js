@@ -1,26 +1,38 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 import Sector from '../shape/Sector';
 import PolarGrid from '../component/PolarGrid';
 import PolarAngleAxis from '../component/PolarAngleAxis';
 import PolarRadiusAxis from '../component/PolarRadiusAxis';
-import PolarCoordinateMixin from '../mixin/PolarCoordinateMixin';
-
 
 const perigon = 360;
 const RADIAN = Math.PI / 180;
 
 const Pie = React.createClass({
-  mixins: [PolarCoordinateMixin],
+  mixins: [PureRenderMixin],
 
   propTypes: {
-    concentricPathType: React.PropTypes.oneOf(['polygon', 'circle']),
-    gridNumber: React.PropTypes.number,
-    data: React.PropTypes.array,
-    keys: React.PropTypes.object
+    cx: PropTypes.number,
+    cy: PropTypes.number,
+    startAngle: PropTypes.number,
+    innerRadius: PropTypes.number,
+    outerRadius: PropTypes.number,
+    clockWise: PropTypes.bool,
+    concentricPathType: PropTypes.oneOf(['polygon', 'circle']),
+    gridNumber: PropTypes.number,
+    data: PropTypes.array,
+    keys: PropTypes.object
   },
 
   getDefaultProps () {
     return {
+      cx: 0,
+      cy: 0,
+      innerRadius: 0,
+      outerRadius: 0,
+      startAngle: 0,
+      clockWise: true,
       // 网格分段数
       gridNumber: 2,
       // 数据
@@ -96,7 +108,7 @@ const Pie = React.createClass({
         value: data[i].name
       });
     }
-
+    console.log(result);
     return result;
   },
 
@@ -120,7 +132,6 @@ const Pie = React.createClass({
     if (outerRadius <= 0 || !data || !data.length) {
       return;
     }
-
     let angleTicks = this.getAngleTicks(),
         radius = this.getGridRadius(),
         angles = angleTicks.map(entry => {

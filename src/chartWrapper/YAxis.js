@@ -8,6 +8,8 @@ class YAxis extends React.Component {
   static displayName = 'YAxis';
 
   static propTypes = {
+     //轴所对应的数据的名称
+    name: PropTypes.any,
     yAxisId: PropTypes.number,
     // 当y轴为类目轴时，需要传入此属性
     dataKey: PropTypes.string,

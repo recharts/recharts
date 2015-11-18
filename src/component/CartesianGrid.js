@@ -1,13 +1,17 @@
 import React from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import createFragment from 'react-addons-create-fragment';
-import CartesianCoordinateMixin from '../mixin/CartesianCoordinateMixin';
 
 const PropTypes = React.PropTypes;
 
 const CartesianGrid = React.createClass({
-  mixins: [CartesianCoordinateMixin],
+  mixins: [PureRenderMixin],
 
   propTypes: {
+    x: PropTypes.number,
+    y: PropTypes.number,
+    width: PropTypes.number,
+    height: PropTypes.number,
     horizontalPoints: PropTypes.arrayOf(PropTypes.number),
     verticalPoints: PropTypes.arrayOf(PropTypes.number)
   },

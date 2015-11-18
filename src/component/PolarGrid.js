@@ -1,14 +1,19 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import createFragment from 'react-addons-create-fragment';
-import PolarCoordinateMixin from '../mixin/PolarCoordinateMixin';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-const PropTypes = React.PropTypes;
 const RADIAN = Math.PI / 180;
 
 const PolarGrid = React.createClass({
-  mixins: [PolarCoordinateMixin],
+  mixins: [PureRenderMixin],
 
   propTypes: {
+    cx: PropTypes.number,
+    cy: PropTypes.number,
+    startAngle: PropTypes.number,
+    innerRadius: PropTypes.number,
+    outerRadius: PropTypes.number,
+    clockWise: PropTypes.bool,
     polarAngles: PropTypes.arrayOf(PropTypes.number),
     polarRadius: PropTypes.arrayOf(PropTypes.number),
     concentricPathType: PropTypes.oneOf(['polygon', 'circle'])

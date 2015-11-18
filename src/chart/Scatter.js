@@ -1,14 +1,13 @@
 /**
  * @fileOverview 散点图
  */
-
 import React, {PropTypes} from 'react';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
-import CartesianCoordinateMixin from '../mixin/CartesianCoordinateMixin';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 const Scatter = React.createClass({
-  mixins: [CartesianCoordinateMixin],
+  mixins: [PureRenderMixin],
 
   propTypes: {
     fill: PropTypes.string,
@@ -16,6 +15,7 @@ const Scatter = React.createClass({
     strokeWidth: PropTypes.number,
     strokeDasharray: PropTypes.string,
     className: PropTypes.string,
+    groupId: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.shape({
       cx: PropTypes.number,
       cy: PropTypes.number,
@@ -41,8 +41,14 @@ const Scatter = React.createClass({
     };
   },
 
+  handleCircleMouseEnter (data, e) {
+    const {onMouseEnter, groupId} = this.props;
+
+    this.props.onMouseEnter(groupId, data, e);
+  },
+
   renderCircles () {
-    let {data, className,  ...others} = this.props;
+    const {data, className, onMouseEnter,  ...others} = this.props;
 
     return data.map((entry, i) => {
       let {value, ...rest} = entry;
@@ -51,6 +57,7 @@ const Scatter = React.createClass({
         <circle
           {...others}
           {...rest}
+          onMouseEnter={this.handleCircleMouseEnter.bind(null, entry)}
           key={'circle-' + i}/>
       );
     });

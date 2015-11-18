@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import createFragment from 'react-addons-create-fragment';
-import PolarCoordinateMixin from '../mixin/PolarCoordinateMixin';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 const PropTypes = React.PropTypes;
 const RADIAN = Math.PI / 180;
@@ -13,9 +13,15 @@ const eps = 1e-5;
 const offset = 8;
 
 const PolarAngleAxis = React.createClass({
-  mixins: [PolarCoordinateMixin],
+  mixins: [PureRenderMixin],
 
   propTypes: {
+    cx: PropTypes.number,
+    cy: PropTypes.number,
+    startAngle: PropTypes.number,
+    innerRadius: PropTypes.number,
+    outerRadius: PropTypes.number,
+    clockWise: PropTypes.bool,
     ticks: PropTypes.array,
     tickSize: PropTypes.number,
     tickValueFormat: PropTypes.func,

@@ -3,17 +3,22 @@
  * @author xile611
  * @Date 2015-08-28
  */
-import React from 'react';
+import React, {PropTypes} from 'react';
 import createFragment from 'react-addons-create-fragment';
-import PolarCoordinateMixin from '../mixin/PolarCoordinateMixin';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-const PropTypes = React.PropTypes;
 const RADIAN = Math.PI / 180;
 
 const PolarRadiusAxis = React.createClass({
-  mixins: [PolarCoordinateMixin],
+  mixins: [PureRenderMixin],
 
   propTypes: {
+    cx: PropTypes.number,
+    cy: PropTypes.number,
+    startAngle: PropTypes.number,
+    innerRadius: PropTypes.number,
+    outerRadius: PropTypes.number,
+    clockWise: PropTypes.bool,
     angle: PropTypes.number,
     ticks: PropTypes.array,
     tickValueFormat: PropTypes.func
@@ -21,6 +26,7 @@ const PolarRadiusAxis = React.createClass({
 
   getDefaultProps () {
     return {
+
       // 坐标轴所在的方位
       orientation: 'bottom',
       // 刻度数据，格式为 {value: "展示的刻度值", radius: 50}

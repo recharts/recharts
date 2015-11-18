@@ -1,12 +1,18 @@
 import React from 'react';
-import PolarCoordinateMixin from '../mixin/PolarCoordinateMixin';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 const RADIAN = Math.PI / 180;
 
 const Radar = React.createClass({
-  mixins: [PolarCoordinateMixin],
+  mixins: [PureRenderMixin],
 
   propTypes: {
+    cx: PropTypes.number,
+    cy: PropTypes.number,
+    startAngle: PropTypes.number,
+    innerRadius: PropTypes.number,
+    outerRadius: PropTypes.number,
+    clockWise: PropTypes.bool,
     // 角度的scale函数
     polarAngleScale: React.PropTypes.func,
     // 径向scale函数

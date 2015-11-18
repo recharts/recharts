@@ -2,12 +2,12 @@
  * @fileOverview 柱图
  */
 import React, {PropTypes} from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
-import CartesianCoordinateMixin from '../mixin/CartesianCoordinateMixin';
 
 const Bar = React.createClass({
-  mixins: [CartesianCoordinateMixin],
+  mixins: [PureRenderMixin],
 
   propTypes: {
     fill: PropTypes.string,

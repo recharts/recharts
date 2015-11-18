@@ -15,8 +15,8 @@ export default React.createClass({
         <p>最简单的散点图</p>
         <div className='scatter-chart-wrapper'>
           <ScatterChart width={400} height={400}>
-            <XAxis dataKey={'x'}/>
-            <YAxis dataKey={'y'}/>
+            <XAxis dataKey={'x'} name='身高'/>
+            <YAxis dataKey={'y'} name='体重'/>
             <ScatterItem name='上海中学生' data={data01} fill='#ff7300'/>
           </ScatterChart>
         </div>
@@ -24,9 +24,9 @@ export default React.createClass({
         <p>最简单的散点图</p>
         <div className='scatter-chart-wrapper'>
           <ScatterChart width={400} height={400}>
-            <XAxis dataKey={'x'}/>
-            <YAxis dataKey={'y'}/>
-            <ZAxis dataKey={'z'} range={[4, 20]}/>
+            <XAxis dataKey={'x'} name='身高'/>
+            <YAxis dataKey={'y'} name='体重'/>
+            <ZAxis dataKey={'z'} range={[4, 20]} name='离家距离'/>
             <ScatterItem name='上海中学生' data={data01} fillOpactity={0.3} fill='#ff7300'/>
             <ScatterItem name='北京中学生' data={data02} fill='#347300'/>
           </ScatterChart>
