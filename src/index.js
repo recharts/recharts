@@ -30,6 +30,8 @@ import XAxis from './chartWrapper/XAxis';
 import YAxis from './chartWrapper/YAxis';
 import ZAxis from './chartWrapper/ZAxis';
 
+import ColorUtils from './util/ColorUtils'
+
 export default {
   // container
   Surface,
@@ -56,5 +58,7 @@ export default {
   PieChart, PieItem,
   ScatterChart, ScatterItem,
 
-  XAxis, YAxis, ZAxis
+  XAxis, YAxis, ZAxis,
+
+  ColorUtils
 };

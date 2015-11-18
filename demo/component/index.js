@@ -17,6 +17,8 @@ import BarChart from './BarChart';
 import PieChart from './PieChart';
 import ScatterChart from './ScatterChart';
 
+import ColorPick from './ColorPick';
+
 export default {
   chart: {
     Pie,
@@ -43,5 +45,9 @@ export default {
     BarChart,
     ScatterChart,
     PieChart
+  },
+
+  Util: {
+    ColorPick
   }
 };
