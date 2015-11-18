@@ -1,7 +1,13 @@
 import React, {PropTypes} from 'react';
 
-const PieItem = React.createClass({
-  propTypes: {
+class PieItem extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  static displayName = 'PieItem';
+
+  static propTypes = {
     cx: PropTypes.number,
     cy: PropTypes.number,
     innerRadius: PropTypes.number,
@@ -20,21 +26,19 @@ const PieItem = React.createClass({
     xAxisId: PropTypes.number,
     legendType: PropTypes.string,
     isActive: PropTypes.bool
-  },
+  };
 
-  getDefaultProps () {
-    return {
-      innerRadius: 0,
-      stroke: '#fff',
-      fill: '#fff',
-      legendType: 'line',
-      isActive: true
-    };
-  },
+  static defaultProps = {
+    innerRadius: 0,
+    stroke: '#fff',
+    fill: '#fff',
+    legendType: 'line',
+    isActive: true
+  };
 
   render () {
     return null;
   }
-});
+};
 
 export default PieItem;

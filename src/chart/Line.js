@@ -2,12 +2,12 @@
  * @fileOverview 饼图
  */
 import React, {PropTypes} from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Curve from '../shape/Curve';
 import Layer from '../container/Layer';
-import CartesianCoordinateMixin from '../mixin/CartesianCoordinateMixin';
 
 const Line = React.createClass({
-  mixins: [CartesianCoordinateMixin],
+  mixins: [PureRenderMixin],
 
   propTypes: {
     type: PropTypes.string,

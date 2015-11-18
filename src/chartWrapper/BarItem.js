@@ -1,7 +1,13 @@
 import React, {PropTypes} from 'react';
 
-const BarItem = React.createClass({
-  propTypes: {
+class BarItem extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  static displayName = 'BarItem';
+
+  static propTypes = {
     barSize: PropTypes.number,
     fill: PropTypes.string,
     stroke: PropTypes.string,
@@ -15,21 +21,19 @@ const BarItem = React.createClass({
     isActive: PropTypes.bool,
     stack: PropTypes.string,
     stackType: PropTypes.string
-  },
+  };
 
-  getDefaultProps () {
-    return {
-      fill: '#fff',
-      xAxisId: 0,
-      yAxisId: 0,
-      legendType: 'rect',
-      isActive: true
-    };
-  },
+  static defaultProps = {
+    fill: '#fff',
+    xAxisId: 0,
+    yAxisId: 0,
+    legendType: 'rect',
+    isActive: true
+  };
 
   render () {
     return null;
   }
-});
+};
 
 export default BarItem;

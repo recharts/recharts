@@ -8,6 +8,8 @@ class XAxis extends React.Component {
   static displayName = 'XAxis';
 
   static propTypes = {
+    //轴所对应的数据的名称
+    name: PropTypes.any,
     xAxisId: PropTypes.number,
     // 类目轴需要传入此属性
     dataKey: PropTypes.string,

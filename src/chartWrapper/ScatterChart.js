@@ -49,12 +49,11 @@ class ScatterChart extends React.Component {
   };
 
   state = {
-    activeTooltipIndex: -1,
-    activeTooltipLabel: '',
     activeTooltipPosition: 'left-bottom',
     activeTooltipCoord: {x: 0, y: 0},
     isTooltipActive: false,
-    activeScatterKey: null
+    activeGroupId: null,
+    activeItem: null
   };
     /**
    * 组装曲线数据
@@ -67,7 +66,7 @@ class ScatterChart extends React.Component {
     const xAxisDataKey = xAxis.dataKey;
     const yAxisDataKey = yAxis.dataKey;
     const zAxisDataKey = zAxis.dataKey;
-
+    console.log(xAxis);
     return data.map((entry, index) => {
       return {
         cx: xAxis.scale(entry[xAxisDataKey]),
@@ -258,20 +257,24 @@ class ScatterChart extends React.Component {
   }
   /**
    * 鼠标进入曲线的响应事件
-   * @param {String} key 曲线唯一对应的key
+   * @param {String} groupId 散点所对应的组
+   * @param {Object} el  散点对象
    * @param {Object} e   事件对象
    */
-  handleScatterMouseEnter = (key, e) => {
+  handleScatterMouseEnter = (groupId, el, e) => {
     this.setState({
-      activeScatterKey: key
+      isTooltipActive: true,
+      activeGroupId: groupId,
+      activeItem: el,
+      activeTooltipCoord: {x: el.cx, y: el.cy}
     });
   }
   /**
-   * 鼠标离开曲线的响应事件
+   * 鼠标离开散点的响应事件
    */
   handleScatterMouseLeave = () => {
     this.setState({
-      activeScatterKey: null
+      isTooltipActive: false
     });
   }
     /**
@@ -337,26 +340,7 @@ class ScatterChart extends React.Component {
    * @return {Array}
    */
   getTooltipContent(items) {
-    let {data} = this.props;
-    let {activeLineKey, activeTooltipIndex} = this.state;
 
-    if (activeTooltipIndex < 0 || !items || !items.length) {
-      return;
-    }
-
-    items = activeLineKey ?
-            items.filter(item => item.props.dataKey === activeLineKey) :
-            items;
-
-    return items.map((child, index) => {
-      let {dataKey} = child.props;
-
-      return {
-        key: dataKey,
-        color: this.getMainColorOfItem(child),
-        value: data[activeTooltipIndex][dataKey]
-      };
-    });
   }
   /**
    * 渲染浮层
@@ -364,7 +348,7 @@ class ScatterChart extends React.Component {
    * @return {ReactComponent}
    */
   renderTooltip(items) {
-    let {chartX, chartY, isTooltipActive, activeTooltipIndex,
+    let {chartX, chartY, isTooltipActive,
           activeTooltipLabel, activeTooltipCoord,
           activeTooltipPosition} = this.state;
 
@@ -372,8 +356,8 @@ class ScatterChart extends React.Component {
       <Tooltip
         position={activeTooltipPosition}
         active={isTooltipActive}
-        label={activeTooltipLabel}
-        data={this.getTooltipContent(items)}
+        label=''
+        data={[]}
         coordinate={activeTooltipCoord}
         mouseX={chartX}
         mouseY={chartY}/>
@@ -400,9 +384,10 @@ class ScatterChart extends React.Component {
         <Scatter
           {...other}
           key={'scatter-' + i}
+          groupId={'scatter-' + i}
           strokeWidth={strokeWidth}
           onMouseLeave={this.handleScatterMouseLeave}
-          onMouseEnter={this.handleScatterMouseEnter.bind(null, i)}
+          onMouseEnter={this.handleScatterMouseEnter}
           data={this.getComposeData(data, xAxis, yAxis, zAxis)}/>
       );
     }, this);
