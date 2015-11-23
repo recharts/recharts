@@ -37,7 +37,10 @@ const Sector = React.createClass({
       // 起始角度
       startAngle: 0,
       // 终点角度
-      endAngle: 0
+      endAngle: 0,
+      onMouseEnter () {},
+      onMouseLeave () {},
+      onClick () {}
     };
   },
 
@@ -75,6 +78,7 @@ const Sector = React.createClass({
     if (outerRadius < innerRadius || startAngle === endAngle) {
       return null;
     }
+    const events = {};
 
     return (
      <path

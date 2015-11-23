@@ -18,7 +18,8 @@ const Tooltip = React.createClass({
     label: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.shape({
       key: PropTypes.any,
-      value: PropTypes.number
+      value: PropTypes.number,
+      unit: PropTypes.any
     }))
   },
 
@@ -34,6 +35,7 @@ const Tooltip = React.createClass({
       mouseY: 0
     };
   },
+
   getMargin () {
     let {position} = this.props;
     let ary = position.split('-');
@@ -52,24 +54,26 @@ const Tooltip = React.createClass({
   },
 
   renderContent () {
-    let {data, separator, formatter, itemStyle} = this.props;
+    const {data, separator, formatter, itemStyle} = this.props;
 
     if (data && data.length) {
-      let listStyle = {padding: 0, margin: 0};
-      let items = data.map((entry, i) => {
-        let finalItemStyle = {
+      const listStyle = {padding: 0, margin: 0};
+      const items = data.map((entry, i) => {
+        const finalItemStyle = {
           display: 'block',
           paddingTop: 4,
           paddingBottom: 4,
           color: entry.color || '#000',
           ...itemStyle
         };
+        const finalFormatter = entry.formatter || formatter;
 
         return (
           <li className='tooltip-item' key={'tooltip-item-' + i} style={finalItemStyle}>
             <span className='name'>{entry.key}</span>
             <span className='separator'>{separator}</span>
-            <span className='value'>{formatter ? formatter(entry.value) : entry.value}</span>
+            <span className='value'>{finalFormatter ? finalFormatter(entry.value, entry.key) : entry.value}</span>
+            <span className='unit'>{entry.unit || ''}</span>
           </li>
         );
       });

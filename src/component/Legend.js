@@ -43,6 +43,7 @@ const Legend = React.createClass({
     let sixthSize = SIZE / 6;
     let thirdSize = SIZE / 3;
     let path, fill = data.color, stroke = data.color;
+
     switch (data.type) {
       case 'line':
         fill = 'none';

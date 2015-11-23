@@ -8,11 +8,14 @@ class PieItem extends React.Component {
   static displayName = 'PieItem';
 
   static propTypes = {
+    // 饼图的圆心的x坐标
     cx: PropTypes.number,
+    // 饼图的圆心的y坐标
     cy: PropTypes.number,
+    // 饼图内径
     innerRadius: PropTypes.number,
+    // 饼图外径
     outerRadius: PropTypes.number,
-    type: PropTypes.string,
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
@@ -22,14 +25,12 @@ class PieItem extends React.Component {
       name: PropTypes.any,
       value: PropTypes.number
     })),
-    yAxisId: PropTypes.number,
-    xAxisId: PropTypes.number,
-    legendType: PropTypes.string,
-    isActive: PropTypes.bool
+    legendType: PropTypes.string
   };
 
   static defaultProps = {
     innerRadius: 0,
+    outerRadius: 0,
     stroke: '#fff',
     fill: '#fff',
     legendType: 'line',
