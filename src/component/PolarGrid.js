@@ -21,6 +21,12 @@ const PolarGrid = React.createClass({
 
   getDefaultProps () {
     return {
+      cx: 0,
+      cy: 0,
+      startAngle: 0,
+      innerRadius: 0,
+      outerRadius: 0,
+      clockWise: true,
       // 水平线条的纵坐标
       polarAngles: [],
       // 竖直线条的横坐标

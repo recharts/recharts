@@ -327,7 +327,7 @@ class CartesianChart extends React.Component {
 
     return ids.reduce((result, id) => {
       let axis = axisMap[id];
-      let {orient, type, domain, tickCount, tickFormat} = axis;
+      let {orient, type, domain, tickCount, tickFormatter} = axis;
       let range = axisType === 'xAxis' ?
                   [offset.left, offset.left + offset.width] :
                   (
@@ -345,7 +345,7 @@ class CartesianChart extends React.Component {
       }
 
       this.setTicksOfScale(scale, axis);
-      tickFormat && scale.tickFormat(tickFormat);
+      tickFormatter && scale.tickFormat(tickFormatter);
 
       result[id] = {...axis,
         x: axisType === 'xAxis' ? offset.left : ( orient === 'left' ? steps[orient] - axis.width : steps[orient]),
@@ -636,12 +636,14 @@ class CartesianChart extends React.Component {
             items;
 
     return items.map((child, index) => {
-      let {dataKey} = child.props;
+      let {dataKey, name, unit, formatter} = child.props;
 
       return {
-        key: dataKey,
+        key: name || dataKey,
+        unit: unit || '',
         color: this.getMainColorOfItem(child),
-        value: data[activeTooltipIndex][dataKey]
+        value: data[activeTooltipIndex][dataKey],
+        formatter: formatter
       };
     });
   }

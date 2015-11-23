@@ -37,7 +37,10 @@ class PieChart extends React.Component {
       left: PropTypes.number
     }),
     title: PropTypes.string,
-    style: PropTypes.object
+    style: PropTypes.object,
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
+    onClick: PropTypes.func
   };
 
 
@@ -47,7 +50,6 @@ class PieChart extends React.Component {
   };
 
   state = {
-    activeTooltipIndex: -1,
     activeTooltipLabel: '',
     activeTooltipPosition: 'left-bottom',
     activeTooltipCoord: {x: 0, y: 0},
@@ -64,6 +66,26 @@ class PieChart extends React.Component {
       };
     });
   }
+
+  handleMouseEnter = (el, e) => {
+    this.setState({
+      isTooltipActive: true
+    }, () => {
+      if (this.props.onMouseEnter) {
+        this.props.onMouseEnter(el, e);
+      }
+    });
+  }
+
+  handleMouseLeave = (e) => {
+    this.setState({
+      isTooltipActive: false
+    }, () => {
+      if (this.props.onMouseEnter) {
+        this.props.onMouseLeave(e);
+      }
+    });
+  }
   /**
    * 渲染图形部分
    * @param  {Array[ReactComponet]} items 线图元素
@@ -77,9 +99,11 @@ class PieChart extends React.Component {
       const data = this.getComposeData(child);
 
       return result.concat(data.map((entry, i) => {
-        return {id: i, value: entry.name, ...entry};
+        const {name, value, ...rest} = entry;
+
+        return {value: entry.name, color: entry.fill, ...rest};
       }));
-    }, [])
+    }, []);
 
     return <Legend width={width} height={40} data={legendData}/>;
   }
@@ -107,6 +131,8 @@ class PieChart extends React.Component {
           cy={cy || height / 2}
           key={'recharts-pie-' + i}
           data={this.getComposeData(child)}
+          onMouseEnter={this.handleMouseEnter}
+          onMouseLeave={this.handleMouseLeave}
           outerRadius={outerRadius || maxRadius * 0.8}/>
       );
     });

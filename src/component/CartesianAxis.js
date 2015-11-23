@@ -20,6 +20,10 @@ const CartesianAxis = React.createClass({
 
   getDefaultProps () {
     return {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
       // 坐标轴所在的方位
       orient: 'bottom',
       // 刻度数据，格式为 {value: "展示的刻度值", coord: 12, size: 8}

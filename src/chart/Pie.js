@@ -19,11 +19,15 @@ const Pie = React.createClass({
       name: PropTypes.any,
       value: PropTypes.number
     })),
+    className: PropTypes.string,
     minAngle: PropTypes.number,
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
-    strokeDasharray: PropTypes.string
+    strokeDasharray: PropTypes.string,
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
+    onMouseClick: PropTypes.func
   },
 
   getDefaultProps () {
@@ -42,7 +46,10 @@ const Pie = React.createClass({
       clockWise: true,
       // 数据
       data: [],
-      minAngle: 0
+      minAngle: 0,
+      onMouseEnter () {},
+      onMouseLeave () {},
+      onClick () {}
     };
   },
 
@@ -87,27 +94,35 @@ const Pie = React.createClass({
     return sectors;
   },
 
+  handleSectorEnter (data, e) {
+    this.props.onMouseEnter(data, e);
+  },
+
   renderSectors () {
     const sectors = this.getSectors();
+    const {onMouseEnter, onMouseLeave, onClick} = this.props;
 
     return sectors.map((entry, i) => {
       return (
         <Sector
           {...entry}
+          onMouseEnter={this.handleSectorEnter.bind(null, entry)}
+          onMouseLeave={onMouseLeave}
+          onClick={onClick}
           key={'sector-' + i}/>
       );
     });
   },
 
   render () {
-    const data = this.props.data;
+    const {data, className} = this.props;
 
     if (!data || !data.length) {
       return;
     }
 
     return (
-      <g className='layer-pie'>
+      <g className={'layer-pie ' + (className || '')}>
         {this.renderSectors()}
       </g>
     );

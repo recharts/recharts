@@ -22,7 +22,7 @@ const Pie = React.createClass({
     concentricPathType: PropTypes.oneOf(['polygon', 'circle']),
     gridNumber: PropTypes.number,
     data: PropTypes.array,
-    keys: PropTypes.object
+    className: PropTypes.string
   },
 
   getDefaultProps () {
@@ -108,7 +108,7 @@ const Pie = React.createClass({
         value: data[i].name
       });
     }
-    console.log(result);
+
     return result;
   },
 

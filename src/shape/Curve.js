@@ -7,7 +7,7 @@ const Curve = React.createClass({
   mixins: [PureRenderMixin],
 
   propTypes: {
-    type: PropTypes.string,
+    type: PropTypes.oneOf(['linear', 'smooth', 'stepMiddle', 'stepBefore', 'stepAfter']),
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,

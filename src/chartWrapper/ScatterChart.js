@@ -66,7 +66,7 @@ class ScatterChart extends React.Component {
     const xAxisDataKey = xAxis.dataKey;
     const yAxisDataKey = yAxis.dataKey;
     const zAxisDataKey = zAxis.dataKey;
-    console.log(xAxis);
+
     return data.map((entry, index) => {
       return {
         cx: xAxis.scale(entry[xAxisDataKey]),
@@ -339,17 +339,37 @@ class ScatterChart extends React.Component {
    * @param  {Array[ReactComponet]} items 线图元素或者柱图元素
    * @return {Array}
    */
-  getTooltipContent(items) {
+  getTooltipContent(data, xAxis, yAxis, zAxis) {
+    if (!data) {return;}
 
+    const content = [{
+      key: xAxis.name || xAxis.dataKey,
+      unit: xAxis.unit || '',
+      value: data.x
+    }, {
+      key: yAxis.name || yAxis.dataKey,
+      unit: yAxis.unit || '',
+      value: data.y
+    }];
+
+    if (data.z && data.z !== '-') {
+      content.push({
+        key: zAxis.name || zAxis.dataKey,
+        unit: zAxis.unit || '',
+        value: data.z
+      });
+    }
+
+    return content;
   }
   /**
    * 渲染浮层
    * @param  {Array[ReactComponet]} items 线图元素或者柱图元素
    * @return {ReactComponent}
    */
-  renderTooltip(items) {
+  renderTooltip(items, xAxis, yAxis, zAxis) {
     let {chartX, chartY, isTooltipActive,
-          activeTooltipLabel, activeTooltipCoord,
+          activeItem, activeTooltipCoord,
           activeTooltipPosition} = this.state;
 
     return (
@@ -357,7 +377,7 @@ class ScatterChart extends React.Component {
         position={activeTooltipPosition}
         active={isTooltipActive}
         label=''
-        data={[]}
+        data={this.getTooltipContent(activeItem && activeItem.value, xAxis, yAxis, zAxis)}
         coordinate={activeTooltipCoord}
         mouseX={chartX}
         mouseY={chartY}/>
@@ -416,7 +436,7 @@ class ScatterChart extends React.Component {
         </Surface>
 
         {this.renderLegend(items, offset)}
-        {this.renderTooltip(items)}
+        {this.renderTooltip(items, xAxis, yAxis, zAxis)}
       </div>
     );
   }
