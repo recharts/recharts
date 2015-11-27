@@ -3,6 +3,7 @@ import CartesianChart from './CartesianChart';
 
 import Surface from '../container/Surface';
 import ReactUtils from '../util/ReactUtils';
+import Legend from '../component/Legend';
 import Line from '../chart/Line';
 import LineItem from './LineItem';
 
@@ -15,7 +16,7 @@ import LineItem from './LineItem';
 
 class LineChart extends CartesianChart {
   displayName = 'LineChart';
-    /**
+  /**
    * 组装曲线数据
    * @param  {Object} xAxis   x轴刻度
    * @param  {Object} yAxis   y轴刻度
@@ -89,6 +90,7 @@ class LineChart extends CartesianChart {
   render() {
     const {style, children} = this.props;
     const items = ReactUtils.findAllByType(children, LineItem);
+    const legendItem = ReactUtils.findChildByType(children, Legend);
 
     let xAxisMap = this.getAxisMap('xAxis', items);
     let yAxisMap = this.getAxisMap('yAxis', items);
@@ -104,6 +106,11 @@ class LineChart extends CartesianChart {
         onMouseMove={this.handleMouseMove.bind(null, offset, xAxisMap, yAxisMap)}
         onMouseLeave={this.handleMouseLeave}>
 
+        {legendItem && legendItem.props.layout === 'horizontal'
+          && legendItem.props.verticalAlign === 'top'
+          && this.renderLegend(items, offset, legendItem)
+        }
+
         <Surface {...this.props}>
           {this.renderXAxis(xAxisMap)}
           {this.renderYAxis(yAxisMap)}
@@ -111,7 +118,9 @@ class LineChart extends CartesianChart {
           {this.renderItems(items, xAxisMap, yAxisMap, offset)}
         </Surface>
 
-        {this.renderLegend(items, offset)}
+        {legendItem && (legendItem.props.layout !== 'horizontal'
+          || legendItem.props.verticalAlign !== 'top')
+        && this.renderLegend(items, offset, legendItem)}
         {this.renderTooltip(items)}
       </div>
     );

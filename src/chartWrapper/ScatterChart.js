@@ -321,7 +321,7 @@ class ScatterChart extends React.Component {
    * @param  {Object} offset 图形区域的偏移量
    * @return {ReactComponent}
    */
-  renderLegend(items, offset) {
+  renderLegend(items, offset, legendItem) {
     const legendData = items.map((child, i) => {
       let {name, stroke, fill, legendType} = child.props;
 
@@ -332,7 +332,10 @@ class ScatterChart extends React.Component {
       };
     }, this);
 
-    return <Legend width={offset.width} height={40} data={legendData}/>
+    return React.cloneElement(legendItem, {
+      width: offset.width,
+      data: legendData
+    });
   }
   /**
    * 更具图形元素计算tooltip的显示内容
@@ -368,20 +371,26 @@ class ScatterChart extends React.Component {
    * @return {ReactComponent}
    */
   renderTooltip(items, xAxis, yAxis, zAxis) {
-    let {chartX, chartY, isTooltipActive,
+    const {children} = this.props;
+    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+
+    if (!tooltipItem) {
+      return;
+    }
+
+    const {chartX, chartY, isTooltipActive,
           activeItem, activeTooltipCoord,
           activeTooltipPosition} = this.state;
 
-    return (
-      <Tooltip
-        position={activeTooltipPosition}
-        active={isTooltipActive}
-        label=''
-        data={this.getTooltipContent(activeItem && activeItem.value, xAxis, yAxis, zAxis)}
-        coordinate={activeTooltipCoord}
-        mouseX={chartX}
-        mouseY={chartY}/>
-    );
+    return React.cloneElement(tooltipItem, {
+        position: activeTooltipPosition,
+        active: isTooltipActive,
+        label: '',
+        data: this.getTooltipContent(activeItem && activeItem.value, xAxis, yAxis, zAxis),
+        coordinate: activeTooltipCoord,
+        mouseX: chartX,
+        mouseY: chartY
+    });
   }
   /**
    * 绘制图形部分
@@ -416,6 +425,7 @@ class ScatterChart extends React.Component {
   render() {
     const {style, children} = this.props;
     const items = ReactUtils.findAllByType(children, ScatterItem);
+    const legendItem = ReactUtils.findChildByType(children, Legend);
     const zAxis = this.getZAxis(items);
     let xAxis = this.getAxis('xAxis', items);
     let yAxis = this.getAxis('yAxis', items);
@@ -428,6 +438,11 @@ class ScatterChart extends React.Component {
       <div className='recharts-wrapper'
         style={{position: 'relative', cursor: 'default', ...style}}>
 
+        {legendItem && legendItem.props.layout === 'horizontal'
+          && legendItem.props.verticalAlign === 'top'
+          && this.renderLegend(items, offset, legendItem)
+        }
+
         <Surface {...this.props}>
           {this.renderAxis(xAxis, 'x-axis-layer')}
           {this.renderAxis(yAxis, 'y-axis-layer')}
@@ -435,7 +450,9 @@ class ScatterChart extends React.Component {
           {this.renderItems(items, xAxis, yAxis, zAxis, offset)}
         </Surface>
 
-        {this.renderLegend(items, offset)}
+        {legendItem && (legendItem.props.layout !== 'horizontal'
+          || legendItem.props.verticalAlign !== 'top')
+        && this.renderLegend(items, offset, legendItem)}
         {this.renderTooltip(items, xAxis, yAxis, zAxis)}
       </div>
     );

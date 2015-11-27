@@ -32,7 +32,7 @@ class PieItem extends React.Component {
     innerRadius: 0,
     outerRadius: 0,
     stroke: '#fff',
-    fill: '#fff',
+    fill: '#808080',
     legendType: 'line',
     isActive: true
   };

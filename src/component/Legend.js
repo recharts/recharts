@@ -24,7 +24,7 @@ const Legend = React.createClass({
   getDefaultProps () {
     return {
       width: 0,
-      height: 0,
+      height: 40,
       iconSize: 14,
       layout: 'horizontal',
       align: 'center',

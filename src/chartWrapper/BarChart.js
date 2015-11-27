@@ -3,6 +3,7 @@ import CartesianChart from './CartesianChart';
 
 import Surface from '../container/Surface';
 import ReactUtils from '../util/ReactUtils';
+import Legend from '../component/Legend';
 import Bar from '../chart/Bar';
 import BarItem from './BarItem';
 /**
@@ -13,6 +14,7 @@ import BarItem from './BarItem';
  */
 
 class BarChart extends CartesianChart {
+
   displayName = 'BarChart';
     /**
    * 组装曲线数据
@@ -199,6 +201,7 @@ class BarChart extends CartesianChart {
   render() {
     const {style, children} = this.props;
     const items = ReactUtils.findAllByType(children, BarItem);
+    const legendItem = ReactUtils.findChildByType(children, Legend);
 
     let xAxisMap = this.getAxisMap('xAxis', items);
     let yAxisMap = this.getAxisMap('yAxis', items);
@@ -214,6 +217,11 @@ class BarChart extends CartesianChart {
         onMouseMove={this.handleMouseMove.bind(null, offset, xAxisMap, yAxisMap)}
         onMouseLeave={this.handleMouseLeave}>
 
+        {legendItem && legendItem.props.layout === 'horizontal'
+          && legendItem.props.verticalAlign === 'top'
+          && this.renderLegend(items, offset, legendItem)
+        }
+
         <Surface {...this.props}>
           {this.renderXAxis(xAxisMap)}
           {this.renderYAxis(yAxisMap)}
@@ -221,7 +229,9 @@ class BarChart extends CartesianChart {
           {this.renderItems(items, xAxisMap, yAxisMap, offset)}
         </Surface>
 
-        {this.renderLegend(items, offset)}
+        {legendItem && (legendItem.props.layout !== 'horizontal'
+          || legendItem.props.verticalAlign !== 'top')
+        && this.renderLegend(items, offset, legendItem)}
         {this.renderTooltip(items)}
       </div>
     );

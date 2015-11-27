@@ -35,7 +35,7 @@ class XAxis extends React.Component {
   static defaultProps = {
     orient: 'bottom',
     width: 0,
-    height: 20,
+    height: 30,
     xAxisId: 0,
     tickCount: 5,
     type: 'category'

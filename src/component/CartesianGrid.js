@@ -12,12 +12,20 @@ const CartesianGrid = React.createClass({
     y: PropTypes.number,
     width: PropTypes.number,
     height: PropTypes.number,
+    horizontal: PropTypes.bool,
+    vertical: PropTypes.bool,
     horizontalPoints: PropTypes.arrayOf(PropTypes.number),
     verticalPoints: PropTypes.arrayOf(PropTypes.number)
   },
 
   getDefaultProps () {
     return {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      horizontal: true,
+      vertical: true,
       // 水平线条的纵坐标
       horizontalPoints: [],
       // 竖直线条的横坐标
@@ -31,7 +39,7 @@ const CartesianGrid = React.createClass({
   renderHorizontal () {
     let {x, width, horizontalPoints} = this.props;
 
-    if (!horizontalPoints || !horizontalPoints.length) { return ; }
+    if (!horizontalPoints || !horizontalPoints.length) { return null; }
 
     let items = {};
 
@@ -54,7 +62,7 @@ const CartesianGrid = React.createClass({
   renderVertical () {
     let {y, height, verticalPoints} = this.props;
 
-    if (!verticalPoints || !verticalPoints.length) { return ; }
+    if (!verticalPoints || !verticalPoints.length) { return null; }
 
     let items = {};
 
@@ -72,16 +80,16 @@ const CartesianGrid = React.createClass({
   },
 
   render () {
-    let {width, height} = this.props;
+    let {width, height, horizontal, vertical} = this.props;
 
     if (width <= 0 || height <= 0) {
-      return;
+      return null;
     }
 
     return (
       <g className='layer-grid layer-cartesian-grid'>
-        {this.renderHorizontal()}
-        {this.renderVertical()}
+        {horizontal && this.renderHorizontal()}
+        {vertical && this.renderVertical()}
       </g>
     );
   }

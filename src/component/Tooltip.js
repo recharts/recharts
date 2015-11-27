@@ -2,7 +2,8 @@ import React, {PropTypes} from 'react';
 
 const Tooltip = React.createClass({
   propTypes: {
-    active: PropTypes.bool.isRequired,
+    component: PropTypes.element,
+    active: PropTypes.bool,
     position: PropTypes.string,
     separator: PropTypes.string,
     formatter: PropTypes.func,
@@ -15,7 +16,7 @@ const Tooltip = React.createClass({
       x: PropTypes.number,
       y: PropTypes.number
     }),
-    label: PropTypes.string,
+    label: PropTypes.any,
     data: PropTypes.arrayOf(PropTypes.shape({
       key: PropTypes.any,
       value: PropTypes.number,
@@ -25,6 +26,7 @@ const Tooltip = React.createClass({
 
   getDefaultProps() {
     return {
+      active: false,
       position: 'left-bottom',
       coordinate: {x: 0, y: 0},
       separator: ' : ',
