@@ -1,5 +1,5 @@
 import React from 'react';
-import {BarChart, BarItem, XAxis, YAxis} from 'recharts';
+import {BarChart, BarItem, CartesianGrid, XAxis, YAxis} from 'recharts';
 
 export default React.createClass({
   render () {
@@ -13,6 +13,8 @@ export default React.createClass({
         <div className='line-chart-wrapper'>
           <BarChart width={400} height={400} data={data}>
             <XAxis dataKey='name'/>
+            <YAxis/>
+            <CartesianGrid vertical={false}/>
             <BarItem dataKey='uv' fill='#ff7300'/>
             <BarItem dataKey='pv' fill='#387908'/>
           </BarChart>
@@ -23,8 +25,16 @@ export default React.createClass({
           <BarChart width={400} height={400} data={data} layout='vertical'>
             <XAxis type='number'/>
             <YAxis dataKey='name' type='category'/>
+            <CartesianGrid horizontal={false}/>
             <BarItem dataKey='uv' fill='#ff7300'/>
             <BarItem dataKey='pv' fill='#387908'/>
+          </BarChart>
+        </div>
+
+        <p>微型图表－柱图</p>
+        <div className='line-chart-wrapper'>
+          <BarChart width={150} height={40} data={data}>
+            <BarItem dataKey='uv' fill='#ff7300'/>
           </BarChart>
         </div>
       </div>

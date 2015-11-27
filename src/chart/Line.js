@@ -16,6 +16,10 @@ const Line = React.createClass({
     strokeWidth: PropTypes.number,
     strokeDasharray: PropTypes.string,
     className: PropTypes.string,
+    // 是否展示曲线上的点
+    dot: PropTypes.bool,
+    // 是否展示填充面积
+    area: PropTypes.bool,
     data: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -29,6 +33,7 @@ const Line = React.createClass({
   getDefaultProps () {
     return {
       strokeWidth: 1,
+      area: true,
       // 数据
       data: [],
       onClick () {},
@@ -48,7 +53,7 @@ const Line = React.createClass({
   },
 
   render () {
-    let {data, className, ...other} = this.props;
+    let {dot, data, className, ...other} = this.props;
 
     if (!data || !data.length) {
       return;
@@ -63,7 +68,7 @@ const Line = React.createClass({
           onMouseLeave={this.props.onMouseLeave}
           onClick={this.props.onClick}
           points={data}/>
-        {this.renderDots()}
+        {dot && this.renderDots()}
       </Layer>
     );
   }

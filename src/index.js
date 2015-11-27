@@ -6,6 +6,7 @@ import Radar from './chart/Radar';
 import CartesianAxis from './component/CartesianAxis';
 import CartesianGrid from './component/CartesianGrid';
 import Legend from './component/Legend';
+import Tooltip from './component/Tooltip';
 import PolarGrid from './component/PolarGrid';
 import PolarRadiusAxis from './component/PolarRadiusAxis';
 import PolarAngleAxis from './component/PolarAngleAxis';
@@ -44,6 +45,7 @@ export default {
   CartesianAxis,
   CartesianGrid,
   Legend,
+  Tooltip,
   PolarGrid,
   PolarRadiusAxis,
   PolarAngleAxis,

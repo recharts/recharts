@@ -5,6 +5,7 @@ import ReactUtils from '../util/ReactUtils';
 import Pie from '../chart/Pie';
 import PieItem from './PieItem';
 import Legend from '../component/Legend';
+import Tooltip from '../component/Tooltip';
 
 /**
  *  <PieChart className="my-pie-cahrt">
@@ -92,7 +93,7 @@ class PieChart extends React.Component {
    * @param  {Object} offset   图形区域的偏移量
    * @return {ReactComponent}
    */
-  renderLegend (items) {
+  renderLegend (items, legendItem) {
     const {width} = this.props;
 
     const legendData = items.reduce((result, child) => {
@@ -105,11 +106,19 @@ class PieChart extends React.Component {
       }));
     }, []);
 
-    return <Legend width={width} height={40} data={legendData}/>;
+    return React.cloneElement(legendItem, {
+      width,
+      data: legendData
+    });
   }
 
   renderTooltip () {
-    return null;
+    const {children} = this.props;
+    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+
+    if (!tooltipItem) {
+      return;
+    }
   }
   /**
    * 渲染图形部分
@@ -141,16 +150,24 @@ class PieChart extends React.Component {
   render () {
     const {style, children} = this.props;
     const items = ReactUtils.findAllByType(children, PieItem);
+    const legendItem = ReactUtils.findChildByType(children, Legend);
 
     return (
       <div className='recharts-wrapper'
         style={{position: 'relative', cursor: 'default', ...style}}>
 
+        {legendItem && legendItem.props.layout === 'horizontal'
+          && legendItem.props.verticalAlign === 'top'
+          && this.renderLegend(items, legendItem)
+        }
+
         <Surface {...this.props}>
           {this.renderItems(items)}
         </Surface>
 
-        {this.renderLegend(items)}
+        {legendItem && (legendItem.props.layout !== 'horizontal'
+          || legendItem.props.verticalAlign !== 'top')
+        && this.renderLegend(items, legendItem)}
         {this.renderTooltip(items)}
       </div>
     );

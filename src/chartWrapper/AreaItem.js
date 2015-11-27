@@ -1,11 +1,11 @@
 import React, {PropTypes} from 'react';
 
-class LineItem extends React.Component {
+class AreaItem extends React.Component {
   constructor(props) {
     super(props);
   }
 
-  static displayName = 'LineItem';
+  static displayName = 'AreaItem';
 
   static propTypes = {
     // 数据对应的单位
@@ -24,7 +24,6 @@ class LineItem extends React.Component {
     yAxisId: PropTypes.number,
     xAxisId: PropTypes.number,
     legendType: PropTypes.string,
-    dot: PropTypes.bool,
     // 数据格式化函数
     formatter: PropTypes.func
   };
@@ -34,7 +33,6 @@ class LineItem extends React.Component {
     fill: '#fff',
     xAxisId: 0,
     yAxisId: 0,
-    dot: true,
     legendType: 'line'
   };
 
@@ -43,4 +41,4 @@ class LineItem extends React.Component {
   }
 };
 
-export default LineItem;
+export default AreaItem;
