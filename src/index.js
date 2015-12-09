@@ -27,6 +27,9 @@ import PieItem from './chartWrapper/PieItem';
 import ScatterChart from './chartWrapper/ScatterChart';
 import ScatterItem from './chartWrapper/ScatterItem';
 
+import AreaChart from './chartWrapper/AreaChart';
+import AreaItem from './chartWrapper/AreaItem';
+
 import XAxis from './chartWrapper/XAxis';
 import YAxis from './chartWrapper/YAxis';
 import ZAxis from './chartWrapper/ZAxis';
@@ -56,6 +59,7 @@ export default {
   Rectangle,
 
   LineChart, LineItem,
+  AreaChart, AreaItem,
   BarChart, BarItem,
   PieChart, PieItem,
   ScatterChart, ScatterItem,

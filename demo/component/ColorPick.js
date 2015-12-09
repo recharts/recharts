@@ -102,7 +102,7 @@ export default React.createClass({
               <XAxis dataKey='name'/>
               {
                 cu.getHclColorGroups(h, currentScheme).map((v, i) => (
-                  <LineItem key={i} type='smooth' dataKey={'v'+i} stroke={v} strokeWidth={3}/>
+                  <LineItem key={i} type='monotone' dataKey={'v'+i} stroke={v} strokeWidth={3}/>
                 ))
               }
             </LineChart>

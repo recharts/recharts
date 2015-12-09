@@ -13,6 +13,7 @@ import Rectangle from './Rectangle';
 import Sector from './Sector';
 
 import LineChart from './LineChart';
+import AreaChart from './AreaChart';
 import BarChart from './BarChart';
 import PieChart from './PieChart';
 import ScatterChart from './ScatterChart';
@@ -42,6 +43,7 @@ export default {
 
   chartWrapper: {
     LineChart,
+    AreaChart,
     BarChart,
     ScatterChart,
     PieChart

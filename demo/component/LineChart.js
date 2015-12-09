@@ -17,7 +17,7 @@ export default React.createClass({
         <p>最简单的线图（线图默认是水平方向的）</p>
         <div className='line-chart-wrapper'>
           <LineChart width={400} height={400} data={data}>
-            <LineItem type='smooth' dataKey='uv' stroke='#ff7300'/>
+            <LineItem type='monotone' dataKey='uv' stroke='#ff7300'/>
           </LineChart>
         </div>
 
@@ -27,8 +27,8 @@ export default React.createClass({
             margin={{top: 5, right: 20, left: 10, bottom: 5}}>
             <XAxis dataKey='name'/>
             <Tooltip/>
-            <LineItem type='smooth' dataKey='uv' stroke='#ff7300' yAxisId={0}/>
-            <LineItem type='smooth' dataKey='pv' stroke='#387908' yAxisId={1}/>
+            <LineItem type='monotone' dataKey='uv' stroke='#ff7300' yAxisId={0}/>
+            <LineItem type='monotone' dataKey='pv' stroke='#387908' yAxisId={1}/>
           </LineChart>
         </div>
 
@@ -59,4 +59,3 @@ export default React.createClass({
     );
   }
 });
-
