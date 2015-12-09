@@ -15,7 +15,7 @@ class LineItem extends React.Component {
     // 线对应的数据key
     dataKey: PropTypes.string.isRequired,
     // 线的类型
-    type: PropTypes.oneOf(['linear', 'smooth', 'stepMiddle', 'stepBefore', 'stepAfter']),
+    type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
     className: PropTypes.string,
     fill: PropTypes.string,
     stroke: PropTypes.string,

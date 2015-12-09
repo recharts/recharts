@@ -1,8 +1,6 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import createFragment from 'react-addons-create-fragment';
-
-const PropTypes = React.PropTypes;
 
 const CartesianAxis = React.createClass({
   mixins: [PureRenderMixin],

@@ -7,7 +7,7 @@ export default React.createClass({
 
     return (
       <Surface width={400} height={400}>
-        <Curve stroke='#000' fill='none' type='smooth' points={points} />
+        <Curve stroke='#000' fill='none' type='monotone' points={points} />
       </Surface>
     );
   }

@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import d3Shape from 'd3-shape';
 
 const RADIAN = Math.PI / 180;
 

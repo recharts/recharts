@@ -7,12 +7,6 @@ import Legend from '../component/Legend';
 import Line from '../chart/Line';
 import LineItem from './LineItem';
 
-/**
- *  <LineChart className="my-line-cahrt">
- *    <LineItem data={} yAxis={0}/>
- *    <LineItem data={} yAxis={1}>
- *  </LineChart>
- */
 
 class LineChart extends CartesianChart {
   displayName = 'LineChart';

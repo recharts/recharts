@@ -1,13 +1,13 @@
 import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import Interpolation from '../util/interpolation';
+import d3Shape from 'd3-shape';
 
 const Curve = React.createClass({
 
   mixins: [PureRenderMixin],
 
   propTypes: {
-    type: PropTypes.oneOf(['linear', 'smooth', 'stepMiddle', 'stepBefore', 'stepAfter']),
+    type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
@@ -23,7 +23,7 @@ const Curve = React.createClass({
     return {
       // 曲线类型，linear - 折线
       // stepBefore - 节点靠前的阶梯曲线, stepMiddle - 节点居中的阶梯曲线, stepAfter - 节点靠后的阶梯曲线
-      // smooth - 光滑曲线
+      // monotone - 光滑曲线
       type: 'linear',
       stroke: '#000',
       fill: 'none',
@@ -43,11 +43,12 @@ const Curve = React.createClass({
    * @return {String} 路径
    */
   getPath (type, points) {
-    if (Interpolation[type]) {
-      return Interpolation[type](points);
-    }
+    const l = d3Shape.line().x(p => p.x)
+                    .y(p => p.y)
+                    .defined(p => p.x && p.x === +p.x && p.y && p.y === + p.y)
+                    .curve(d3Shape[type]);
 
-    return Interpolation.linear(points);
+    return l(points);
   },
 
   render () {
