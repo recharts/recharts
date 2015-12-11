@@ -14,6 +14,7 @@ import PolarAngleAxis from './component/PolarAngleAxis';
 import Sector from './shape/Sector';
 import Curve from './shape/Curve';
 import Rectangle from './shape/Rectangle';
+import Triangle from './shape/Triangle';
 
 import LineChart from './chartWrapper/LineChart';
 import LineItem from './chartWrapper/LineItem';
@@ -30,6 +31,9 @@ import ScatterItem from './chartWrapper/ScatterItem';
 import AreaChart from './chartWrapper/AreaChart';
 import AreaItem from './chartWrapper/AreaItem';
 
+import TriangleChart from './chartWrapper/TriangleChart';
+import TriangleItem from './chartWrapper/TriangleItem';
+
 import XAxis from './chartWrapper/XAxis';
 import YAxis from './chartWrapper/YAxis';
 import ZAxis from './chartWrapper/ZAxis';
@@ -41,28 +45,22 @@ export default {
   Surface,
 
   // chart
-  Pie,
-  Radar,
+  Pie, Radar,
 
   //componnet
-  CartesianAxis,
-  CartesianGrid,
-  Legend,
-  Tooltip,
-  PolarGrid,
-  PolarRadiusAxis,
-  PolarAngleAxis,
+  CartesianAxis, CartesianGrid,
+  Legend, Tooltip,
+  PolarGrid, PolarRadiusAxis, PolarAngleAxis,
 
   // shape
-  Sector,
-  Curve,
-  Rectangle,
+  Sector, Curve, Rectangle, Triangle,
 
   LineChart, LineItem,
   AreaChart, AreaItem,
   BarChart, BarItem,
   PieChart, PieItem,
   ScatterChart, ScatterItem,
+  TriangleChart, TriangleItem,
 
   XAxis, YAxis, ZAxis,
 
