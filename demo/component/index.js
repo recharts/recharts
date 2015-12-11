@@ -11,12 +11,14 @@ import PolarAngleAxis from './PolarAngleAxis';
 import Curve from './Curve';
 import Rectangle from './Rectangle';
 import Sector from './Sector';
+import Triangle from './Triangle';
 
 import LineChart from './LineChart';
 import AreaChart from './AreaChart';
 import BarChart from './BarChart';
 import PieChart from './PieChart';
 import ScatterChart from './ScatterChart';
+import TriangleChart from './TriangleChart';
 
 import ColorPick from './ColorPick';
 
@@ -38,7 +40,8 @@ export default {
   shape: {
     Curve,
     Rectangle,
-    Sector
+    Sector,
+    Triangle
   },
 
   chartWrapper: {
@@ -46,7 +49,8 @@ export default {
     AreaChart,
     BarChart,
     ScatterChart,
-    PieChart
+    PieChart,
+    TriangleChart
   },
 
   Util: {
