@@ -20,6 +20,7 @@ import BarChart from './BarChart';
 import PieChart from './PieChart';
 import ScatterChart from './ScatterChart';
 import RadialBarChart from './RadialBarChart';
+import TreemapChart from './TreemapChart';
 
 import ColorPick from './ColorPick';
 
@@ -52,7 +53,11 @@ export default {
     BarChart,
     ScatterChart,
     PieChart,
+<<<<<<< HEAD
     RadialBarChart
+=======
+    TreemapChart
+>>>>>>> init Treemap
   },
 
   Util: {

@@ -27,6 +27,8 @@ import BarItem from './chartWrapper/BarItem';
 import PieChart from './chartWrapper/PieChart';
 import PieItem from './chartWrapper/PieItem';
 
+import TreemapChart from './chartWrapper/TreemapChart';
+
 import ScatterChart from './chartWrapper/ScatterChart';
 import ScatterItem from './chartWrapper/ScatterItem';
 
@@ -61,7 +63,11 @@ export default {
   BarChart, BarItem,
   PieChart, PieItem,
   ScatterChart, ScatterItem,
+<<<<<<< HEAD
   RadialBarChart, RadialBarItem,
+=======
+  TreemapChart,
+>>>>>>> init Treemap
 
   XAxis, YAxis, ZAxis,
 
