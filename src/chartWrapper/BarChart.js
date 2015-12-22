@@ -1,9 +1,11 @@
 import React, {PropTypes} from 'react';
 import CartesianChart from './CartesianChart';
+import LodashUtils from '../util/LodashUtils';
 
 import Surface from '../container/Surface';
 import ReactUtils from '../util/ReactUtils';
 import Legend from '../component/Legend';
+import Tooltip from '../component/Tooltip';
 import Bar from '../chart/Bar';
 import BarItem from './BarItem';
 /**
@@ -26,27 +28,31 @@ class BarChart extends CartesianChart {
    * @return {Array}
    */
   getComposeData(barPosition, xAxis, yAxis, offset, dataKey) {
-    const {barSize, barGap, data, layout} = this.props;
+    const {barSize, barGap, layout} = this.props;
+    const {dataStartIndex, dataEndIndex} = this.state;
+    const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
     const pos = barPosition[dataKey];
     const xTicks = this.getAxisTicks(xAxis);
     const yTicks = this.getAxisTicks(yAxis);
+    const baseline = this.getBaseLine(xAxis, yAxis);
 
     return data.map((entry, index) => {
       const value = entry[dataKey];
       const width = layout === 'horizontal' ?
                     pos.size :
                     (yAxis.orient === 'left' ?
-                      xAxis.scale(value) - offset.left :
-                      offset.left + offset.width - xAxis.scale(value)
+                      xAxis.scale(value) - baseline :
+                      baseline - xAxis.scale(value)
                     );
       const height = layout === 'horizontal' ?
               (xAxis.orient === 'top' ?
-                yAxis.scale(value) - offset.left :
-                offset.top + offset.height - yAxis.scale(value)
+                yAxis.scale(value) - baseline :
+                baseline - yAxis.scale(value)
               ) :
               pos.size;
 
       return {
+        ...entry,
         x: layout === 'horizontal' ?
             xTicks[index].coord + pos.offset :
             (yAxis.orient === 'left' ?
@@ -63,6 +69,15 @@ class BarChart extends CartesianChart {
       };
     });
   }
+
+  getBaseLine (xAxis, yAxis) {
+    const {layout} = this.props;
+    const scale = layout === 'horizontal' ? yAxis.scale : xAxis.scale;
+    const domain = scale.domain();
+    const min = Math.max(Math.min(domain[0], domain[1]), 0);
+
+    return scale(min);
+  }
   /**
    * 获取柱子的宽度以及柱子间的间距
    * @param  {Number}   bandSize 每一个类别所占的宽度或者高度
@@ -70,7 +85,7 @@ class BarChart extends CartesianChart {
    * @return {Number}
    */
   getBarPosition (bandSize, sizeList) {
-    const {barGap} = this.props;
+    const {barGap, barOffset} = this.props;
     const len = sizeList.length;
     let result;
 
@@ -93,9 +108,9 @@ class BarChart extends CartesianChart {
         return result;
       }, {});
     } else {
-      let offset = bandSize * 0.1 >> 0;
+      let offset = LodashUtils.getPercentValue(barOffset, bandSize);
       let size = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
-      offset = -bandSize * 0.4;
+      offset = -Math.max(((size * len + (len - 1) * barGap) / 2) >> 0, 0);
 
       result = sizeList.reduce((result, entry, i) => {
         result[entry.dataKey] = {
@@ -160,6 +175,32 @@ class BarChart extends CartesianChart {
       activeBarKey: null
     });
   }
+
+  renderCursor (xAxisMap, yAxisMap, offset) {
+    const {children} = this.props;
+    const {isTooltipActive} = this.state;
+    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+
+    if (!tooltipItem || !isTooltipActive) {return;}
+
+    const {layout} = this.props;
+    const {activeTooltipIndex} = this.state;
+    const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
+    const ids = Object.keys(axisMap);
+    const axis = xAxisMap[ids[0]];
+    const bandSize = this.getBandSize(axis.scale);
+    const ticks = this.getAxisTicks(axis);
+    const start = ticks[activeTooltipIndex].coord - bandSize / 2;
+
+    return (
+      <rect
+        fill='#f1f1f1'
+        x={layout === 'horizontal' ? start : offset.left + 0.5}
+        y={layout === 'horizontal' ? offset.top + 0.5 : start}
+        width={layout === 'horizontal' ? bandSize : offset.width - 1}
+        height={layout === 'horizontal' ? offset.height - 1 : bandSize}/>
+    );
+  }
   /**
    * 绘制图形部分
    * @param  {Array[ReactComponet]} items 柱图元素
@@ -223,10 +264,13 @@ class BarChart extends CartesianChart {
         }
 
         <Surface {...this.props}>
+          {this.renderGrid(xAxisMap, yAxisMap, offset)}
+          {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
           {this.renderXAxis(xAxisMap)}
           {this.renderYAxis(yAxisMap)}
-          {this.renderGrid(xAxisMap, yAxisMap, offset)}
+          {this.renderCursor(xAxisMap, yAxisMap, offset)}
           {this.renderItems(items, xAxisMap, yAxisMap, offset)}
+          {this.renderBrush(xAxisMap, yAxisMap, offset)}
         </Surface>
 
         {legendItem && (legendItem.props.layout !== 'horizontal'

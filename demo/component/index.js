@@ -7,6 +7,7 @@ import Legend from './Legend';
 import PolarGrid from './PolarGrid';
 import PolarRadiusAxis from './PolarRadiusAxis';
 import PolarAngleAxis from './PolarAngleAxis';
+import Brush from './BrushDemo';
 
 import Curve from './Curve';
 import Rectangle from './Rectangle';
@@ -18,7 +19,7 @@ import AreaChart from './AreaChart';
 import BarChart from './BarChart';
 import PieChart from './PieChart';
 import ScatterChart from './ScatterChart';
-import TriangleChart from './TriangleChart';
+import RadialBarChart from './RadialBarChart';
 
 import ColorPick from './ColorPick';
 
@@ -29,6 +30,7 @@ export default {
   },
 
   component: {
+    Brush,
     CartesianAxis,
     CartesianGrid,
     Legend,
@@ -50,7 +52,7 @@ export default {
     BarChart,
     ScatterChart,
     PieChart,
-    TriangleChart
+    RadialBarChart
   },
 
   Util: {

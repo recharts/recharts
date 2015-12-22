@@ -10,6 +10,8 @@ import Tooltip from './component/Tooltip';
 import PolarGrid from './component/PolarGrid';
 import PolarRadiusAxis from './component/PolarRadiusAxis';
 import PolarAngleAxis from './component/PolarAngleAxis';
+import Brush from './component/Brush';
+import ReferenceLine from './component/ReferenceLine';
 
 import Sector from './shape/Sector';
 import Curve from './shape/Curve';
@@ -31,13 +33,12 @@ import ScatterItem from './chartWrapper/ScatterItem';
 import AreaChart from './chartWrapper/AreaChart';
 import AreaItem from './chartWrapper/AreaItem';
 
-import TriangleChart from './chartWrapper/TriangleChart';
-import TriangleItem from './chartWrapper/TriangleItem';
+import RadialBarChart from './chartWrapper/RadialBarChart';
+import RadialBarItem from './chartWrapper/RadialBarItem';
 
 import XAxis from './chartWrapper/XAxis';
 import YAxis from './chartWrapper/YAxis';
 import ZAxis from './chartWrapper/ZAxis';
-
 import ColorUtils from './util/ColorUtils'
 
 export default {
@@ -49,7 +50,7 @@ export default {
 
   //componnet
   CartesianAxis, CartesianGrid,
-  Legend, Tooltip,
+  Legend, Tooltip, Brush, ReferenceLine,
   PolarGrid, PolarRadiusAxis, PolarAngleAxis,
 
   // shape
@@ -60,7 +61,7 @@ export default {
   BarChart, BarItem,
   PieChart, PieItem,
   ScatterChart, ScatterItem,
-  TriangleChart, TriangleItem,
+  RadialBarChart, RadialBarItem,
 
   XAxis, YAxis, ZAxis,
 

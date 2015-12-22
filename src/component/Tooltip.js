@@ -85,7 +85,8 @@ const Tooltip = React.createClass({
   },
 
   render() {
-    let {mouseX, mouseY, coordinate, active, label, style, labelStyle} = this.props;
+    let {component, mouseX, mouseY, coordinate, active,
+        label, style, labelStyle} = this.props;
     let margin = this.getMargin();
     let wrapperStyle = {
           pointerEvents: 'none',
@@ -108,8 +109,14 @@ const Tooltip = React.createClass({
 
     return (
       <div className='tooltip' style={wrapperStyle}>
-        <p className='tooltip-label' style={finalLabelStyle}>{label}</p>
-        {this.renderContent()}
+        {
+          component ? React.cloneElement(component, this.props) : (
+            <div className='tooltip-default'>
+              <p className='tooltip-label' style={finalLabelStyle}>{label}</p>
+              {this.renderContent()}
+            </div>
+          )
+        }
       </div>
     );
   }

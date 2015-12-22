@@ -24,13 +24,6 @@ class PieChart extends React.Component {
   static propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    // viewBox 对象
-    viewBox: PropTypes.shape({
-      x: PropTypes.number,
-      y: PropTypes.number,
-      width: PropTypes.number,
-      height: PropTypes.number
-    }),
     margin: PropTypes.shape({
       top: PropTypes.number,
       right: PropTypes.number,

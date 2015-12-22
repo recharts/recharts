@@ -70,15 +70,15 @@ const range = (from, to) => {
  * @param {Number|String} percent 百分比
  * @return {Number}
  */
-const getPercentValue = (totalValue, percent) => {
+const getPercentValue = (percent, totalValue) => {
   let str = '' + percent;
   let index = str.indexOf('%');
   let value;
 
   if (index > 0) {
     value = totalValue * parseFloat(str.slice(0, index)) / 100;
-  } else {
-    value = parseFloat(percent);
+  } else if (percent === +percent) {
+    value = percent;
   }
 
   if (isNaN(value) || value > totalValue) {
@@ -97,13 +97,92 @@ const maxBy = (fn, a, b) => {
   return fn(a) > fn(b) ? a : b;
 };
 
+const toFixed = (num, fixed) => {
+  if (fixed !== +fixed) {
+    fixed = 0;
+  }
+
+  num = num.toFixed(fixed + 1);
+
+  let sNum = num + ''
+    , sep = sNum.split('.')
+    , pint = parseInt(sep[0], 10) || 0
+    , dec = '0'
+    , res = '';
+
+  if (sep[1] !== undefined && parseInt(sep[1], 10) !== 0) {
+    dec = sep[1];
+  }
+
+  if (parseInt(dec, 10) !== 0) {
+    let fDec = parseFloat('0.' + dec)
+      // 对数据做舍零处理
+      , fixedDec = Math.floor(fDec * Math.pow(10, fixed)) + ''
+      , len = fixedDec.length;
+
+    if (fixed !== 0) {
+      if (len === (fixed + 1)) {
+        res = [pint + 1, pad(fixed, '0')].join('.');
+      } else if (len < fixed) {
+        res = [pint, pad(fixed - len, '0') + fixedDec].join('.');
+      } else {
+        res = [pint, fixedDec.substring(0, fixed)].join('.');
+      }
+    } else {
+      //res = fDec >= 0.5 ? (pint + 1) : pint;
+      // 不做 round，全部舍去
+      res = pint;
+    }
+  } else {
+    if (fixed !== 0 && pint !== 0) {
+      res = [pint, pad(fixed, '0')].join('.');
+    } else {
+      res = pint;
+    }
+  }
+
+  return (res + '');
+};
+
+const toPercentage = (num, unit, max=99999) => {
+  if (num !== +num) {
+    return '-';
+  }
+
+  unit = unit || '%';
+
+  let res = num || ''
+    , fixedNum = toFixed(num * 100, 2)
+    , fNum = parseFloat(fixedNum)
+    , iNum = parseInt(fixedNum, 10);
+
+  //if (fNum > 100000) {
+  if (fNum > max) {
+    res = '>' + max;
+  } else {
+    if (fNum === iNum) {
+      res = iNum;
+    } else {
+      res = fixedNum;
+    }
+  }
+
+  res += unit;
+
+  return res;
+};
+
 
 export default {
   isArray, isNumber, isString,
 
-  extent,
+  extent, maxBy,
 
   getUniqueId,
 
-  range
+  range,
+
+  getPercentValue,
+
+  toFixed, toPercentage
 };

@@ -17,6 +17,9 @@ class BarItem extends React.Component {
     name: PropTypes.any,
     // 柱对应的数据key
     dataKey: PropTypes.string.isRequired,
+    // 指标名称
+    name: PropTypes.string,
+
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,

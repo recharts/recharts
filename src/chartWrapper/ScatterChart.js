@@ -25,13 +25,6 @@ class ScatterChart extends React.Component {
   static propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    // viewBox 对象
-    viewBox: PropTypes.shape({
-      x: PropTypes.number,
-      y: PropTypes.number,
-      width: PropTypes.number,
-      height: PropTypes.number
-    }),
     margin: PropTypes.shape({
       top: PropTypes.number,
       right: PropTypes.number,
@@ -282,6 +275,8 @@ class ScatterChart extends React.Component {
    * @return {[type]} [description]
    */
   renderAxis(axis, layerKey) {
+    const {width, height} = this.props;
+
     if (axis) {
       return (
         <Layer key={layerKey} className={layerKey}>
@@ -291,6 +286,7 @@ class ScatterChart extends React.Component {
             width={axis.width}
             height={axis.height}
             orient={axis.orient}
+            viewBox={{x: 0, y: 0, width, height}}
             ticks={this.getAxisTicks(axis)}/>
         </Layer>
       );
@@ -444,9 +440,9 @@ class ScatterChart extends React.Component {
         }
 
         <Surface {...this.props}>
+          {this.renderGrid(xAxis, yAxis, offset)}
           {this.renderAxis(xAxis, 'x-axis-layer')}
           {this.renderAxis(yAxis, 'y-axis-layer')}
-          {this.renderGrid(xAxis, yAxis, offset)}
           {this.renderItems(items, xAxis, yAxis, zAxis, offset)}
         </Surface>
 

@@ -17,10 +17,16 @@ const Area = React.createClass({
     strokeDasharray: PropTypes.string,
     className: PropTypes.string,
     // 是否展示曲线上的点
-    dot: PropTypes.bool,
+    hasDot: PropTypes.bool,
+    // 是否展示曲线
+    hasCurve: PropTypes.bool,
     // 是否展示填充面积
     area: PropTypes.bool,
-    data: PropTypes.arrayOf(PropTypes.shape({
+    baseLineType: PropTypes.oneOf(['horizontal', 'vertical', 'curve']),
+    baseLine: PropTypes.oneOfType([
+        PropTypes.number, PropTypes.array
+      ]),
+    points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
       value: PropTypes.value
@@ -36,14 +42,39 @@ const Area = React.createClass({
       area: true,
       // 数据
       data: [],
+      hasDot: false,
+      hasCurve: true,
       onClick () {},
       onMouseEnter () {},
       onMouseLeave () {}
     };
   },
 
+  renderArea () {
+    const {hasDot, hasCurve, className, ...other} = this.props;
+
+    return (
+      <Curve
+        {...other}
+        stroke='none'
+        onMouseEnter={this.props.onMouseEnter}
+        onMouseLeave={this.props.onMouseLeave}
+        onClick={this.props.onClick}/>
+    );
+  },
+
+  renderCurve () {
+    const {hasDot, hasCurve, baseLineType, baseLine, ...other} = this.props;
+
+    return (
+      <Curve
+        {...other}
+        fill='none'/>
+    );
+  },
+
   renderDots () {
-    let {data, ...other} = this.props;
+    const {data, ...other} = this.props;
 
     const dots = data.map((entry, i) => {
       return <circle {...other} key={'dot-' + i} cx={entry.x} cy={entry.y} r={3}/>
@@ -53,22 +84,18 @@ const Area = React.createClass({
   },
 
   render () {
-    let {dot, data, className, ...other} = this.props;
+    const {hasDot, hasCurve, points, className, ...other} = this.props;
 
-    if (!data || !data.length) {
+    if (!points || !points.length) {
       return;
     }
 
     return (
       <Layer className={'recharts-line ' + (className || '')}>
-        <Curve
-          {...other}
-          stroke='none'
-          onMouseEnter={this.props.onMouseEnter}
-          onMouseLeave={this.props.onMouseLeave}
-          onClick={this.props.onClick}
-          points={data}/>
-        {dot && this.renderDots()}
+        {hasCurve && this.renderCurve()}
+        {this.renderArea()}
+
+        {hasDot && this.renderDots()}
       </Layer>
     );
   }

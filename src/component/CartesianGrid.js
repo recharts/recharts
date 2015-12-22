@@ -15,7 +15,9 @@ const CartesianGrid = React.createClass({
     horizontal: PropTypes.bool,
     vertical: PropTypes.bool,
     horizontalPoints: PropTypes.arrayOf(PropTypes.number),
-    verticalPoints: PropTypes.arrayOf(PropTypes.number)
+    verticalPoints: PropTypes.arrayOf(PropTypes.number),
+
+    fill: PropTypes.string
   },
 
   getDefaultProps () {
@@ -29,7 +31,10 @@ const CartesianGrid = React.createClass({
       // 水平线条的纵坐标
       horizontalPoints: [],
       // 竖直线条的横坐标
-      verticalPoints: []
+      verticalPoints: [],
+
+      stroke: '#ccc',
+      fill: 'none'
     };
   },
   /**
@@ -37,7 +42,8 @@ const CartesianGrid = React.createClass({
    * @return {Group}
    */
   renderHorizontal () {
-    let {x, width, horizontalPoints} = this.props;
+    let {x, y, width, height, horizontal, vertical, horizontalPoints,
+        verticalPoints, ...others} = this.props;
 
     if (!horizontalPoints || !horizontalPoints.length) { return null; }
 
@@ -45,7 +51,7 @@ const CartesianGrid = React.createClass({
 
     horizontalPoints.reduce((result, entry, i) => {
       items['line-' + i] = (
-        <line key={'line-' + i} stroke='#000' x1={x} y1={entry} x2={x + width} y2={entry}></line>
+        <line key={'line-' + i} {...others} x1={x} y1={entry} x2={x + width} y2={entry}></line>
       );
     }, items)
 
@@ -60,7 +66,8 @@ const CartesianGrid = React.createClass({
    * @return {Group}
    */
   renderVertical () {
-    let {y, height, verticalPoints} = this.props;
+    let {x, y, width, height, horizontal, vertical,
+         horizontalPoints, verticalPoints, ...others} = this.props;
 
     if (!verticalPoints || !verticalPoints.length) { return null; }
 
@@ -68,7 +75,7 @@ const CartesianGrid = React.createClass({
 
     verticalPoints.reduce((result, entry, i) => {
       items['line-' + i] = (
-        <line key={'line-' + i} stroke='#000' x1={entry} y1={y} x2={entry} y2={y + height}></line>
+        <line key={'line-' + i} {...others} x1={entry} y1={y} x2={entry} y2={y + height}></line>
       );
     }, items)
 
