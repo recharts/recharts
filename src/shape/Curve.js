@@ -16,6 +16,10 @@ const Curve = React.createClass({
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
+    baseLineType: PropTypes.oneOf(['horizontal', 'vertical', 'curve']),
+    baseLine: PropTypes.oneOfType([
+      PropTypes.number, PropTypes.array
+    ]),
     points: PropTypes.arrayOf(PropTypes.object)
   },
 
@@ -38,17 +42,24 @@ const Curve = React.createClass({
   },
   /**
    * 获取曲线路径
-   * @param {String} type 曲线的类型
-   * @param {Array} points 曲线的节点
    * @return {String} 路径
    */
-  getPath (type, points) {
+  getPath () {
+    const {type, points, baseLine, baseLineType} = this.props;
     const l = d3Shape.line().x(p => p.x)
                     .y(p => p.y)
                     .defined(p => p.x && p.x === +p.x && p.y && p.y === + p.y)
                     .curve(d3Shape[type]);
+    const len = points.length;
+    let curvePath = l(points);
 
-    return l(points);
+    if (baseLineType === 'horizontal' && baseLine === +baseLine) {
+      curvePath += `L${points[len - 1].x} ${baseLine}L${points[0].x} ${baseLine}Z`;
+    } else if (baseLineType === 'vertical' && baseLine === +baseLine) {
+      curvePath += `L${baseLine} ${points[len - 1].y}L${baseLine} ${points[0].y}Z`;
+    }
+
+    return curvePath;
   },
 
   render () {
@@ -66,7 +77,7 @@ const Curve = React.createClass({
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}
-        d={this.getPath(type, points)}/>
+        d={this.getPath()}/>
     );
   }
 });

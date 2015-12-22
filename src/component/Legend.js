@@ -8,6 +8,7 @@ const Legend = React.createClass({
   mixins: [PureRenderMixin],
 
   propTypes: {
+    style: PropTypes.object,
     width: PropTypes.number,
     height: PropTypes.number,
     iconSize: PropTypes.number,
@@ -87,12 +88,12 @@ const Legend = React.createClass({
   },
 
   render () {
-    let {data, width, height, layout, align} = this.props;
+    let {data, width, height, layout, align, verticalAlign, style} = this.props;
 
     if (!data || !data.length || width <= 0 || height <= 0) {
       return null;
     }
-    let style = {
+    let finalStyle = {
       padding: 0,
       margin: 0,
       width: width,
@@ -100,8 +101,14 @@ const Legend = React.createClass({
       textAlign: layout === 'horizontal' ? align : 'left'
     };
 
+    if (layout === 'vertical') {
+      finalStyle.position = 'absolute';
+    }
+
+    finalStyle = {...finalStyle, ...style};
+
     return (
-      <ul className='recharts-legend' style={style}>
+      <ul className='recharts-legend' style={finalStyle}>
         {this.renderItems()}
       </ul>
     );

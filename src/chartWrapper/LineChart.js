@@ -106,9 +106,10 @@ class LineChart extends CartesianChart {
         }
 
         <Surface {...this.props}>
+          {this.renderGrid(xAxisMap, yAxisMap, offset)}
+          {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
           {this.renderXAxis(xAxisMap)}
           {this.renderYAxis(yAxisMap)}
-          {this.renderGrid(xAxisMap, yAxisMap, offset)}
           {this.renderItems(items, xAxisMap, yAxisMap, offset)}
         </Surface>
 

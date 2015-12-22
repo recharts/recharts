@@ -14,6 +14,8 @@ class AreaItem extends React.Component {
     name: PropTypes.any,
     // 线对应的数据key
     dataKey: PropTypes.string.isRequired,
+    // 指标名称
+    name: PropTypes.string,
     // 线的类型
     type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
     className: PropTypes.string,

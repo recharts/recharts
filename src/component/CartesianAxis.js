@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import createFragment from 'react-addons-create-fragment';
+import DOMUtils from '../util/DOMUtils';
 
 const CartesianAxis = React.createClass({
   mixins: [PureRenderMixin],
@@ -11,9 +12,24 @@ const CartesianAxis = React.createClass({
     width: PropTypes.number,
     height: PropTypes.number,
     orient: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
-    ticks: PropTypes.array,
+    viewBox: PropTypes.shape({
+      x: PropTypes.number,
+      y: PropTypes.number,
+      width: PropTypes.number,
+      height: PropTypes.number
+    }),
+
+    stroke: PropTypes.string,
+    hasAxis: PropTypes.bool,
+    hasTick: PropTypes.bool,
+
+    ticks: PropTypes.arrayOf(PropTypes.shape({
+      value: PropTypes.any,
+      coord: PropTypes.value
+    })),
     tickSize: PropTypes.number,
-    tickValueFormat: PropTypes.func
+    tickValueFormat: PropTypes.func,
+    interval: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
   },
 
   getDefaultProps () {
@@ -26,9 +42,45 @@ const CartesianAxis = React.createClass({
       orient: 'bottom',
       // 刻度数据，格式为 {value: "展示的刻度值", coord: 12, size: 8}
       ticks: [],
+
+      stroke: '#666',
+      hasTick: true,
+      hasAxis: true,
+
       // 刻度的大小
-      tickSize: 6
+      tickSize: 6,
+      interval: 'auto'
     };
+  },
+
+  getNumberIntervalTicks () {
+    const {interval, ticks} = this.props;
+
+    return ticks.filter((entry, i) => {
+      return i % (interval + 1) === 0;
+    });
+  },
+
+  getAutoIntervalTicks () {
+    const {ticks, viewBox, orient} = this.props;
+    const {x, y, width, height} = viewBox;
+    const sizeKey = (orient === 'top' || orient === 'bottom') ? 'width' : 'height';
+    const sign = ticks.length >= 2 ? Math.sign(ticks[1].coord - ticks[0].coord) : 1;
+
+    let pointer = sign === 1 ?
+                  (sizeKey === 'width' ? x : y) :
+                  (sizeKey === 'width' ? x + width : y + height);
+
+    return ticks.filter(entry => {
+      const labelSize = DOMUtils.getStringSize(entry.value)[sizeKey];
+      const isShow = sign === 1 ? (entry.coord - labelSize / 2) >= pointer : (entry.coord + labelSize / 2) <= pointer;
+
+      if (isShow) {
+        pointer = entry.coord + sign * labelSize / 2;
+      }
+
+      return isShow;
+    });
   },
   /**
    * 获取tick线段的端点坐标
@@ -126,21 +178,21 @@ const CartesianAxis = React.createClass({
   },
 
   renderAxis () {
-    let {x, y, width, height, orient} = this.props,
+    let {x, y, width, height, orient, stroke} = this.props,
         axis;
 
     switch (orient) {
       case 'top':
-        axis = <line className='axis-line' stroke='#000' x1={x} y1={y + height} x2={x + width} y2={y + height}/>;
+        axis = <line className='axis-line' stroke={stroke} x1={x} y1={y + height} x2={x + width} y2={y + height}/>;
         break;
       case 'bottom':
-        axis = <line className='axis-line' stroke='#000' x1={x} y1={y} x2={x + width} y2={y}/>;
+        axis = <line className='axis-line' stroke={stroke} x1={x} y1={y} x2={x + width} y2={y}/>;
          break;
       case 'left':
-        axis = <line className='axis-line' stroke='#000' x1={x + width} y1={y} x2={x + width} y2={y + height}/>;
+        axis = <line className='axis-line' stroke={stroke} x1={x + width} y1={y} x2={x + width} y2={y + height}/>;
         break;
       case 'right':
-        axis = <line className='axis-line' stroke='#000' x1={x} y1={y} x2={x} y2={y + height}/>;
+        axis = <line className='axis-line' stroke={stroke} x1={x} y1={y} x2={x} y2={y + height}/>;
         break;
     }
 
@@ -148,26 +200,32 @@ const CartesianAxis = React.createClass({
   },
 
   renderTicks () {
-    let {ticks, orient} = this.props;
+    const {ticks, orient, interval, hasTick, stroke} = this.props;
 
     if (!ticks || !ticks.length) { return ; }
 
-    let items = {},
-        textAnchor = this.getTickTextAnchor();
+    const finalTicks = interval === +interval && interval >= 0
+        ? this.getNumberIntervalTicks()
+        : this.getAutoIntervalTicks();
 
-    ticks.reduce((result, entry, i) => {
-      let lineCoord = this.getTickLineCoord(entry);
+    const textAnchor = this.getTickTextAnchor();
 
-      items['tick-' + i] = (
+    const items = finalTicks.map((entry, i) => {
+      const lineCoord = this.getTickLineCoord(entry);
+
+      return (
         <g className='axis-tick' key={'tick-' + i}>
-          <line
-            className='tick-line'
-            stroke='#000'
-            x1={lineCoord.x1}
-            y1={lineCoord.y1}
-            x2={lineCoord.x2}
-            y2={lineCoord.y2}/>
+          {hasTick && (
+            <line
+              className='tick-line'
+              stroke={stroke}
+              x1={lineCoord.x1}
+              y1={lineCoord.y1}
+              x2={lineCoord.x2}
+              y2={lineCoord.y2}/>
+          )}
           <text
+            fill={stroke}
             dy={this.getDy(entry)}
             x={lineCoord.x1}
             y={lineCoord.y1}
@@ -175,17 +233,17 @@ const CartesianAxis = React.createClass({
             className='tick-value'>{entry.value}</text>
         </g>
       );
-    }, items)
+    });
 
     return (
       <g className='axis-ticks'>
-        {createFragment(items)}
+        {items}
       </g>
     );
   },
 
   render () {
-    let {width, height, ticks} = this.props;
+    let {hasTick, hasAxis, width, height, ticks} = this.props;
 
     if (width <= 0 || height <= 0 || !ticks || !ticks.length) {
       return null;
@@ -193,7 +251,7 @@ const CartesianAxis = React.createClass({
 
     return (
       <g className='layer-axis layer-cartesian-axis'>
-        {this.renderAxis()}
+        {hasAxis && this.renderAxis()}
         {this.renderTicks()}
       </g>
     );

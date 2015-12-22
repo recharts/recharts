@@ -17,10 +17,10 @@ class AreaChart extends CartesianChart {
    * @return {Array}
    */
   getComposeData(xAxis, yAxis, dataKey) {
-    let {data, layout} = this.props;
-    let xTicks = this.getAxisTicks(xAxis);
-    let yTicks = this.getAxisTicks(yAxis);
-    let points = data.map((entry, index) => {
+    const {data, layout} = this.props;
+    const xTicks = this.getAxisTicks(xAxis);
+    const yTicks = this.getAxisTicks(yAxis);
+    const points = data.map((entry, index) => {
       return {
         x: layout === 'horizontal' ? xTicks[index].coord : xAxis.scale(entry[dataKey]),
         y: layout === 'horizontal' ? yAxis.scale(entry[dataKey]) : yTicks[index].coord,
@@ -28,30 +28,21 @@ class AreaChart extends CartesianChart {
       };
     });
 
+    let range, baseLine;
+
     if (layout === 'horizontal') {
-      let range = yAxis.scale.range();
-      let y = xAxis.orient === 'top' ? Math.min(range[0], range[1]) : Math.max(range[0], range[1]);
-      points.push({
-        x: points[points.length - 1].x, y
-      });
-
-      points.push({
-        x: points[0].x, y
-      });
+      range = yAxis.scale.range();
+      baseLine = xAxis.orient === 'top' ? Math.min(range[0], range[1]) : Math.max(range[0], range[1]);
     } else {
-      let range = xAxis.scale.range();
-      let x = yAxis.orient === 'left' ? Math.min(range[0], range[1]) : Math.max(range[0], range[1]);
-
-      points.push({
-        y: points[points.length - 1].y, x
-      });
-
-      points.push({
-        y: points[0].y, x
-      });
+      range = xAxis.scale.range();
+      baseLine = yAxis.orient === 'left' ? Math.min(range[0], range[1]) : Math.max(range[0], range[1]);
     }
 
-    return points;
+    return {
+      points: points,
+      baseLine,
+      baseLineType: layout
+    };
   }
   /**
    * 鼠标进入曲线的响应事件
@@ -101,7 +92,7 @@ class AreaChart extends CartesianChart {
           fillOpacity={fillOpacity}
           onMouseLeave={this.handleAreaMouseLeave}
           onMouseEnter={this.handleAreaMouseEnter.bind(null, dataKey)}
-          data={this.getComposeData(xAxis, yAxis, dataKey)}/>
+          {...this.getComposeData(xAxis, yAxis, dataKey)}/>
       );
 
       return activeAreaKey === dataKey ? [...result, area] : [area, ...result];
@@ -133,9 +124,10 @@ class AreaChart extends CartesianChart {
         }
 
         <Surface {...this.props}>
+          {this.renderGrid(xAxisMap, yAxisMap, offset)}
+          {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
           {this.renderXAxis(xAxisMap)}
           {this.renderYAxis(yAxisMap)}
-          {this.renderGrid(xAxisMap, yAxisMap, offset)}
           {this.renderItems(items, xAxisMap, yAxisMap, offset)}
         </Surface>
 
