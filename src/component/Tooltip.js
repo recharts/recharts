@@ -85,10 +85,10 @@ const Tooltip = React.createClass({
   },
 
   render() {
-    let {component, mouseX, mouseY, coordinate, active,
+    const {component, mouseX, mouseY, coordinate, active,
         label, style, labelStyle} = this.props;
-    let margin = this.getMargin();
-    let wrapperStyle = {
+    const margin = this.getMargin();
+    const wrapperStyle = {
           pointerEvents: 'none',
           whiteSpace: 'nowrap',
           padding: 10,
@@ -99,10 +99,10 @@ const Tooltip = React.createClass({
           display: active ? 'block' : 'none',
           position: 'absolute',
           top: coordinate.y + 20,
-          left: coordinate.x,
+          left: coordinate.x + 10,
           ...style
         };
-    let finalLabelStyle = {
+    const finalLabelStyle = {
       margin: 0,
       ...labelStyle
     };

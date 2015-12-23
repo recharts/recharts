@@ -411,33 +411,21 @@ class CartesianChart extends React.Component {
    * @param  {Object} axis 刻度对象
    * @return {Array}
    */
-  getGridTicks(axis, min, max) {
-    const scale = axis.scale;
+  getGridTicks(ticks, min, max) {
     let hasMin, hasMax;
-    let ticks;
+    let values;
 
-    if (axis.ticks) {
-      ticks = axis.ticks;
-    } else if (scale.ticks) {
-      ticks = scale.ticks(axis.tickCount);
-    } else {
-      ticks = scale.domain();
-    }
+    values = ticks.map(entry => {
+      if (entry.coord === min) { hasMin = true;}
+      if (entry.coord === max) { hasMax = true;}
 
-    ticks = ticks.map(entry => {
-      const value = scale(entry);
-
-      if (value === min) { hasMin = true;}
-      if (value === max) { hasMax = true;}
-
-      return value;
+      return entry.coord;
     });
 
-    if (!hasMin) { ticks.push(min);}
-    if (!hasMax) { ticks.push(max);}
+    if (!hasMin) { values.push(min);}
+    if (!hasMax) { values.push(max);}
 
-
-    return ticks;
+    return values;
   }
 
   /**
@@ -622,15 +610,27 @@ class CartesianChart extends React.Component {
    * @return {ReactComponent}
    */
   renderGrid(xAxisMap, yAxisMap, offset) {
-    const {children} = this.props;
+    const {children, width, height} = this.props;
     const gridItem = ReactUtils.findChildByType(children, CartesianGrid);
 
     if (!gridItem) {return;}
 
-    let xIds = Object.keys(xAxisMap);
-    let yIds = Object.keys(yAxisMap);
-    let xAxis = xAxisMap[xIds[0]];
-    let yAxis = yAxisMap[yIds[0]];
+    const xIds = Object.keys(xAxisMap);
+    const yIds = Object.keys(yAxisMap);
+    const xAxis = xAxisMap[xIds[0]];
+    const yAxis = yAxisMap[yIds[0]];
+
+    const verticalPoints = this.getGridTicks(CartesianAxis.getTicks({
+      ...CartesianAxis.defaultProps, ...xAxis,
+      ticks: this.getAxisTicks(xAxis),
+      viewBox: {x: 0, y: 0, width, height}
+    }), offset.left, offset.left + offset.width);
+
+    const horizontalPoints = this.getGridTicks(CartesianAxis.getTicks({
+      ...CartesianAxis.defaultProps, ...yAxis,
+      ticks: this.getAxisTicks(yAxis),
+      viewBox: {x: 0, y: 0, width, height}
+    }), offset.top, offset.top + offset.height);
 
     return React.cloneElement(gridItem, {
       key: 'grid',
@@ -638,8 +638,7 @@ class CartesianChart extends React.Component {
       y: offset.top,
       width: offset.width,
       height: offset.height,
-      verticalPoints: this.getGridTicks(xAxis, offset.left, offset.left + offset.width),
-      horizontalPoints: this.getGridTicks(yAxis, offset.top, offset.top + offset.height)
+      verticalPoints, horizontalPoints
     });
   }
   /**
