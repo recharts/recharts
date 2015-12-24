@@ -63,11 +63,8 @@ export default {
   BarChart, BarItem,
   PieChart, PieItem,
   ScatterChart, ScatterItem,
-<<<<<<< HEAD
   RadialBarChart, RadialBarItem,
-=======
   TreemapChart,
->>>>>>> init Treemap
 
   XAxis, YAxis, ZAxis,
 
