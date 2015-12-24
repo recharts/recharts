@@ -53,11 +53,8 @@ export default {
     BarChart,
     ScatterChart,
     PieChart,
-<<<<<<< HEAD
-    RadialBarChart
-=======
+    RadialBarChart,
     TreemapChart
->>>>>>> init Treemap
   },
 
   Util: {
