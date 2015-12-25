@@ -41,7 +41,6 @@ import RadialBarItem from './chartWrapper/RadialBarItem';
 import XAxis from './chartWrapper/XAxis';
 import YAxis from './chartWrapper/YAxis';
 import ZAxis from './chartWrapper/ZAxis';
-import ColorUtils from './util/ColorUtils'
 
 export default {
   // container
@@ -50,7 +49,7 @@ export default {
   // chart
   Pie, Radar,
 
-  //componnet
+  // componnet
   CartesianAxis, CartesianGrid,
   Legend, Tooltip, Brush, ReferenceLine,
   PolarGrid, PolarRadiusAxis, PolarAngleAxis,
@@ -67,6 +66,4 @@ export default {
   TreemapChart,
 
   XAxis, YAxis, ZAxis,
-
-  ColorUtils
 };

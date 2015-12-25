@@ -1,12 +1,9 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 const RADIAN = Math.PI / 180;
 
-const Radar = React.createClass({
-  mixins: [PureRenderMixin],
-
-  propTypes: {
+class Radar extends React.Component {
+  static propTypes = {
     cx: PropTypes.number,
     cy: PropTypes.number,
     startAngle: PropTypes.number,
@@ -18,47 +15,44 @@ const Radar = React.createClass({
     // 径向scale函数
     polarRadiusScale: React.PropTypes.func,
     // 数据，格式为 {value: someValue, name: "数据的名称"}
-    data: React.PropTypes.array
-  },
+    data: React.PropTypes.array,
+  };
 
-  getDefaultProps () {
-    return {
-      // 数据
-      data: []
-    };
-  },
+  static defaultProps = {
+    // 数据
+    data: [],
+  };
   /**
    * 计算雷达图中多边形的顶点坐标
-   * @return {Array}
+   * @return {Array} 多边形的顶点
    */
-  getPolygonVertexs () {
-    let {data, polarAngleScale, polarRadiusScale} = this.props,
-        vertexs = data.map((entry, index) => {
-          let radius = polarRadiusScale(entry.value),
-              angle = polarAngleScale(index);
+  getPolygonVertexs() {
+    const {data, polarAngleScale, polarRadiusScale} = this.props;
 
-          return {
-            x: cx + radius * Math.cos(-angle * RADIAN),
-            y: cy + radius * Math.sin(-angle * RADIAN)
-          }
-        });
+    return data.map((entry, index) => {
+      const radius = polarRadiusScale(entry.value);
+      const angle = polarAngleScale(index);
 
-    return vertexs;
-  },
+      return {
+        x: cx + radius * Math.cos(-angle * RADIAN),
+        y: cy + radius * Math.sin(-angle * RADIAN),
+      };
+    });
+  }
 
-  renderPolygon () {
-    let vertexs = this.getPolygonVertexs
+  renderPolygon() {
+    const vertexs = this.getPolygonVertexs;
 
-    return <polygon fill='green' fillOpacity={0.6} stroke='red' points={vertexs.join(' ')}/>;
-  },
+    return <polygon fill="green" fillOpacity={0.6} stroke="red" points={vertexs.join(' ')}/>;
+  }
 
-  render () {
+  render() {
     return (
-      <g className='layer-radar'>
+      <g className="layer-radar">
         {this.renderPolygon()}
       </g>
     );
   }
-});
+}
 
 export default Radar;

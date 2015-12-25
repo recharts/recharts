@@ -3,17 +3,15 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 const Rectangle = React.createClass({
 
-  mixins: [PureRenderMixin],
-
   propTypes: {
     x: PropTypes.number,
     y: PropTypes.number,
     width: PropTypes.number,
     height: PropTypes.number,
     radius: PropTypes.oneOfType([
-            PropTypes.number,
-            PropTypes.array
-          ]),
+      PropTypes.number,
+      PropTypes.array,
+    ]),
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
@@ -21,10 +19,12 @@ const Rectangle = React.createClass({
     className: PropTypes.string,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
   },
 
-  getDefaultProps () {
+  mixins: [PureRenderMixin],
+
+  getDefaultProps() {
     return {
       // 矩形左上角的横坐标
       x: 0,
@@ -42,16 +42,16 @@ const Rectangle = React.createClass({
       strokeWidth: 1,
       strokeDasharray: 'none',
       fill: '#000',
-      onMouseEnter () {},
-      onMouseLeave () {},
-      onClick () {}
+      onMouseEnter() {},
+      onMouseLeave() {},
+      onClick() {},
     };
   },
 
-  getPath (x, y, width, height, radius) {
-    let maxRadius = Math.min(width / 2, height / 2),
-        newRadius = [],
-        path;
+  getPath(x, y, width, height, radius) {
+    const maxRadius = Math.min(width / 2, height / 2);
+    let newRadius = [];
+    let path;
 
     if (maxRadius > 0 && radius instanceof Array) {
       for (let i = 0, len = 4; i < len; i++) {
@@ -96,8 +96,8 @@ const Rectangle = React.createClass({
     return path;
   },
 
-  render () {
-    let {x, y, width, height, radius,
+  render() {
+    const {x, y, width, height, radius,
         onClick, onMouseEnter, onMouseLeave,
         className, ...others} = this.props;
 
@@ -110,7 +110,7 @@ const Rectangle = React.createClass({
         onClick={onClick}
         d={this.getPath(x, y, width, height, radius)}/>
     );
-  }
+  },
 });
 
 export default Rectangle;

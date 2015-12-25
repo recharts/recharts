@@ -2,14 +2,12 @@
  * @fileOverview 面积图
  */
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Curve from '../shape/Curve';
 import Layer from '../container/Layer';
 
-const Area = React.createClass({
-  mixins: [PureRenderMixin],
+class Area extends React.Component {
 
-  propTypes: {
+  static propTypes = {
     type: PropTypes.string,
     fill: PropTypes.string,
     stroke: PropTypes.string,
@@ -24,70 +22,68 @@ const Area = React.createClass({
     area: PropTypes.bool,
     baseLineType: PropTypes.oneOf(['horizontal', 'vertical', 'curve']),
     baseLine: PropTypes.oneOfType([
-        PropTypes.number, PropTypes.array
-      ]),
+      PropTypes.number, PropTypes.array,
+    ]),
     points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
-      value: PropTypes.value
+      value: PropTypes.value,
     })),
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func
-  },
+    onClick: PropTypes.func,
+  };
 
-  getDefaultProps () {
-    return {
-      strokeWidth: 1,
-      area: true,
-      // 数据
-      data: [],
-      hasDot: false,
-      hasCurve: true,
-      onClick () {},
-      onMouseEnter () {},
-      onMouseLeave () {}
-    };
-  },
+  static defaultProps = {
+    strokeWidth: 1,
+    area: true,
+    // 数据
+    data: [],
+    hasDot: false,
+    hasCurve: true,
+    onClick() {},
+    onMouseEnter() {},
+    onMouseLeave() {},
+  };
 
-  renderArea () {
+  renderArea() {
     const {hasDot, hasCurve, className, ...other} = this.props;
 
     return (
       <Curve
         {...other}
-        stroke='none'
+        stroke="none"
         onMouseEnter={this.props.onMouseEnter}
         onMouseLeave={this.props.onMouseLeave}
         onClick={this.props.onClick}/>
     );
-  },
+  }
 
-  renderCurve () {
+  renderCurve() {
     const {hasDot, hasCurve, baseLineType, baseLine, ...other} = this.props;
 
     return (
       <Curve
         {...other}
-        fill='none'/>
+        fill="none"/>
     );
-  },
+  }
 
-  renderDots () {
-    const {data, ...other} = this.props;
+  renderDots() {
+    const {points, ...other} = this.props;
 
-    const dots = data.map((entry, i) => {
-      return <circle {...other} key={'dot-' + i} cx={entry.x} cy={entry.y} r={3}/>
+    const dots = points.map((entry, i) => {
+      return <circle {...other} key={'dot-' + i} cx={entry.x} cy={entry.y} r={3}/>;
     });
 
-    return <Layer className='layer-line-dots'>{dots}</Layer>
-  },
+    return <Layer className="layer-line-dots">{dots}</Layer>;
+  }
 
-  render () {
+  render() {
     const {hasDot, hasCurve, points, className, ...other} = this.props;
 
     if (!points || !points.length) {
-      return;
+      return null;
     }
 
     return (
@@ -99,6 +95,6 @@ const Area = React.createClass({
       </Layer>
     );
   }
-});
+}
 
 export default Area;

@@ -1,9 +1,6 @@
 import React, {PropTypes} from 'react';
 
 class LineItem extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   static displayName = 'LineItem';
 
@@ -14,8 +11,6 @@ class LineItem extends React.Component {
     name: PropTypes.any,
     // 线对应的数据key
     dataKey: PropTypes.string.isRequired,
-    // 指标名称
-    name: PropTypes.string,
     // 线的类型
     type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
     className: PropTypes.string,
@@ -28,7 +23,7 @@ class LineItem extends React.Component {
     legendType: PropTypes.string,
     dot: PropTypes.bool,
     // 数据格式化函数
-    formatter: PropTypes.func
+    formatter: PropTypes.func,
   };
 
   static defaultProps = {
@@ -37,12 +32,16 @@ class LineItem extends React.Component {
     xAxisId: 0,
     yAxisId: 0,
     dot: true,
-    legendType: 'line'
+    legendType: 'line',
   };
 
-  render () {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
     return null;
   }
-};
+}
 
 export default LineItem;

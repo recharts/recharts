@@ -4,8 +4,6 @@ import d3Shape from 'd3-shape';
 
 const Curve = React.createClass({
 
-  mixins: [PureRenderMixin],
-
   propTypes: {
     type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
     fill: PropTypes.string,
@@ -18,12 +16,14 @@ const Curve = React.createClass({
     onClick: PropTypes.func,
     baseLineType: PropTypes.oneOf(['horizontal', 'vertical', 'curve']),
     baseLine: PropTypes.oneOfType([
-      PropTypes.number, PropTypes.array
+      PropTypes.number, PropTypes.array,
     ]),
-    points: PropTypes.arrayOf(PropTypes.object)
+    points: PropTypes.arrayOf(PropTypes.object),
   },
 
-  getDefaultProps () {
+  mixins: [PureRenderMixin],
+
+  getDefaultProps() {
     return {
       // 曲线类型，linear - 折线
       // stepBefore - 节点靠前的阶梯曲线, stepMiddle - 节点居中的阶梯曲线, stepAfter - 节点靠后的阶梯曲线
@@ -35,16 +35,16 @@ const Curve = React.createClass({
       strokeDasharray: 'none',
       // 点坐标
       points: [],
-      onClick () {},
-      onMouseEnter () {},
-      onMouseLeave () {}
+      onClick() {},
+      onMouseEnter() {},
+      onMouseLeave() {},
     };
   },
   /**
    * 获取曲线路径
    * @return {String} 路径
    */
-  getPath () {
+  getPath() {
     const {type, points, baseLine, baseLineType} = this.props;
     const l = d3Shape.line().x(p => p.x)
                     .y(p => p.y)
@@ -62,8 +62,8 @@ const Curve = React.createClass({
     return curvePath;
   },
 
-  render () {
-    let {className, points, type, onClick,
+  render() {
+    const {className, points, type, onClick,
         onMouseEnter, onMouseLeave, ...others} = this.props;
 
     if (!points || !points.length) {
@@ -79,7 +79,7 @@ const Curve = React.createClass({
         onClick={onClick}
         d={this.getPath()}/>
     );
-  }
+  },
 });
 
 export default Curve;

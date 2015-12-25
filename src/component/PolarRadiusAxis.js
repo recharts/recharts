@@ -10,7 +10,6 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 const RADIAN = Math.PI / 180;
 
 const PolarRadiusAxis = React.createClass({
-  mixins: [PureRenderMixin],
 
   propTypes: {
     cx: PropTypes.number,
@@ -21,16 +20,19 @@ const PolarRadiusAxis = React.createClass({
     clockWise: PropTypes.bool,
     angle: PropTypes.number,
     ticks: PropTypes.array,
-    tickValueFormat: PropTypes.func
+    tickValueFormat: PropTypes.func,
+    orientation: PropTypes.string,
   },
 
-  getDefaultProps () {
+  mixins: [PureRenderMixin],
+
+  getDefaultProps() {
     return {
 
       // 坐标轴所在的方位
       orientation: 'bottom',
       // 刻度数据，格式为 {value: "展示的刻度值", radius: 50}
-      ticks: []
+      ticks: [],
     };
   },
   /**
@@ -38,76 +40,76 @@ const PolarRadiusAxis = React.createClass({
    * @param  {Object} data tick数据
    * @return {Object} (x, y)
    */
-  getTickValueCoord (data) {
-    const {angle, cx, cy} = this.props,
-          sin = Math.sin(-angle * RADIAN),
-          cos = Math.cos(-angle * RADIAN);
+  getTickValueCoord(data) {
+    const {angle, cx, cy} = this.props;
+    const sin = Math.sin(-angle * RADIAN);
+    const cos = Math.cos(-angle * RADIAN);
 
     return {
       x: cx + data.radius * cos,
-      y: cy + data.radius * sin
+      y: cy + data.radius * sin,
     };
   },
 
-  getTickTextAnchor () {
-    let {orientation} = this.props,
-        textAnchor;
+  getTickTextAnchor() {
+    const {orientation} = this.props;
+    let textAnchor;
 
     switch (orientation) {
-      case 'left':
-        textAnchor = 'end';
-        break;
-      case 'right':
-        textAnchor = 'start';
-        break;
-      default:
-        textAnchor = 'middle';
-        break;
+    case 'left':
+      textAnchor = 'end';
+      break;
+    case 'right':
+      textAnchor = 'start';
+      break;
+    default:
+      textAnchor = 'middle';
+      break;
     }
 
     return textAnchor;
   },
 
-  renderTicks () {
-    let {ticks, angle, orientation} = this.props,
-        items = {},
-        textAnchor = this.getTickTextAnchor();
+  renderTicks() {
+    const {ticks, angle} = this.props;
+    const items = {};
+    const textAnchor = this.getTickTextAnchor();
 
     ticks.reduce((result, entry, i) => {
-      let coord = this.getTickValueCoord(entry);
+      const coord = this.getTickValueCoord(entry);
 
       items['tick-' + i] = (
-        <g className='axis-tick' key={'tick-' + i}>
+        <g className="axis-tick" key={'tick-' + i}>
           <text
             x={coord.x}
             y={coord.y}
             textAnchor={textAnchor}
             transform={`rotate(${90 - angle}, ${coord.x}, ${coord.y})`}
-            className='tick-value'>{entry.value}</text>
+            className="tick-value">{entry.value}</text>
         </g>
       );
-    }, items)
+    }, items);
 
     return (
-      <g className='axis-ticks'>
+      <g className="axis-ticks">
         {createFragment(items)}
       </g>
     );
   },
 
-  render () {
-    let {ticks} = this.props;
+  render() {
+    const {ticks} = this.props;
 
     if (!ticks || !ticks.length) {
-      return;
+      return null;
     }
 
     return (
-      <g className='layer-axis layer-polar-radius-axis'>
+      <g className="layer-axis layer-polar-radius-axis">
         {this.renderTicks()}
       </g>
     );
-  }
+  },
 });
 
 export default PolarRadiusAxis;

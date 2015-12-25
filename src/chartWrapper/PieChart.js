@@ -15,11 +15,8 @@ import Tooltip from '../component/Tooltip';
  */
 
 class PieChart extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
-  displayName = 'PieChart';
+  static displayName = 'PieChart';
 
   static propTypes = {
     width: PropTypes.number.isRequired,
@@ -28,42 +25,50 @@ class PieChart extends React.Component {
       top: PropTypes.number,
       right: PropTypes.number,
       bottom: PropTypes.number,
-      left: PropTypes.number
+      left: PropTypes.number,
     }),
     title: PropTypes.string,
     style: PropTypes.object,
+    children: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.node),
+      PropTypes.node,
+    ]),
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
   };
 
 
   static defaultProps = {
     style: {},
-    margin: {top: 0, right: 0, bottom: 0, left: 0}
+    margin: {top: 0, right: 0, bottom: 0, left: 0},
   };
+
+  constructor(props) {
+    super(props);
+  }
 
   state = {
     activeTooltipLabel: '',
     activeTooltipPosition: 'left-bottom',
     activeTooltipCoord: {x: 0, y: 0},
-    isTooltipActive: false
+    isTooltipActive: false,
   };
 
   getComposeData(item) {
     const {fill, stroke, strokeWidth, strokeDasharray, data} = item.props;
 
-    return data.map((entry, index) => {
+    return data.map((entry) => {
       return {
         fill, stroke, strokeWidth, strokeDasharray,
-        ...entry
+        ...entry,
       };
     });
   }
 
   handleMouseEnter = (el, e) => {
     this.setState({
-      isTooltipActive: true
+      isTooltipActive: true,
     }, () => {
       if (this.props.onMouseEnter) {
         this.props.onMouseEnter(el, e);
@@ -73,7 +78,7 @@ class PieChart extends React.Component {
 
   handleMouseLeave = (e) => {
     this.setState({
-      isTooltipActive: false
+      isTooltipActive: false,
     }, () => {
       if (this.props.onMouseEnter) {
         this.props.onMouseLeave(e);
@@ -82,17 +87,17 @@ class PieChart extends React.Component {
   }
   /**
    * 渲染图形部分
-   * @param  {Array[ReactComponet]} items 线图元素
-   * @param  {Object} offset   图形区域的偏移量
-   * @return {ReactComponent}
+   * @param  {Array} items 饼图元素
+   * @param  {ReactElement} legendItem   图例对象
+   * @return {ReactElement} 图例
    */
-  renderLegend (items, legendItem) {
+  renderLegend(items, legendItem) {
     const {width} = this.props;
 
     const legendData = items.reduce((result, child) => {
       const data = this.getComposeData(child);
 
-      return result.concat(data.map((entry, i) => {
+      return result.concat(data.map((entry) => {
         const {name, value, ...rest} = entry;
 
         return {value: entry.name, color: entry.fill, ...rest};
@@ -101,11 +106,11 @@ class PieChart extends React.Component {
 
     return React.cloneElement(legendItem, {
       width,
-      data: legendData
+      data: legendData,
     });
   }
 
-  renderTooltip () {
+  renderTooltip() {
     const {children} = this.props;
     const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
 
@@ -115,11 +120,10 @@ class PieChart extends React.Component {
   }
   /**
    * 渲染图形部分
-   * @param  {Array[ReactComponet]} items 线图元素
-   * @param  {Object} offset   图形区域的偏移量
-   * @return {ReactComponent}
+   * @param  {Array} items 饼图元素
+   * @return {ReactComponent} 饼图元素
    */
-  renderItems (items, offset) {
+  renderItems(items) {
     const {width, height} = this.props;
 
     return items.map((child, i) => {
@@ -140,13 +144,13 @@ class PieChart extends React.Component {
     });
   }
 
-  render () {
+  render() {
     const {style, children} = this.props;
     const items = ReactUtils.findAllByType(children, PieItem);
     const legendItem = ReactUtils.findChildByType(children, Legend);
 
     return (
-      <div className='recharts-wrapper'
+      <div className="recharts-wrapper"
         style={{position: 'relative', cursor: 'default', ...style}}>
 
         {legendItem && legendItem.props.layout === 'horizontal'
@@ -166,6 +170,6 @@ class PieChart extends React.Component {
     );
   }
 
-};
+}
 
 export default PieChart;

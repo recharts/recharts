@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
 import CartesianChart from './CartesianChart';
 
 import Surface from '../container/Surface';
@@ -8,13 +8,13 @@ import Area from '../chart/Area';
 import AreaItem from './AreaItem';
 
 class AreaChart extends CartesianChart {
-  displayName = 'AreaChart';
+  static displayName = 'AreaChart';
   /**
    * 组装曲线数据
    * @param  {Object} xAxis   x轴刻度
    * @param  {Object} yAxis   y轴刻度
    * @param  {String} dataKey 该组数据所对应的key
-   * @return {Array}
+   * @return {Array} 组合后的数据
    */
   getComposeData(xAxis, yAxis, dataKey) {
     const {data, layout} = this.props;
@@ -24,11 +24,12 @@ class AreaChart extends CartesianChart {
       return {
         x: layout === 'horizontal' ? xTicks[index].coord : xAxis.scale(entry[dataKey]),
         y: layout === 'horizontal' ? yAxis.scale(entry[dataKey]) : yTicks[index].coord,
-        value: entry[dataKey]
+        value: entry[dataKey],
       };
     });
 
-    let range, baseLine;
+    let range;
+    let baseLine;
 
     if (layout === 'horizontal') {
       range = yAxis.scale.range();
@@ -41,45 +42,46 @@ class AreaChart extends CartesianChart {
     return {
       points: points,
       baseLine,
-      baseLineType: layout
+      baseLineType: layout,
     };
   }
   /**
    * 鼠标进入曲线的响应事件
    * @param {String} key 曲线唯一对应的key
-   * @param {Object} e   事件对象
+   * @return {Object} no return
    */
-  handleAreaMouseEnter = (key, e) => {
+  handleAreaMouseEnter = (key) => {
     this.setState({
-      activeAreaKey: key
+      activeAreaKey: key,
     });
   }
   /**
    * 鼠标离开曲线的响应事件
+   * @return {Object} no return
    */
   handleAreaMouseLeave = () => {
     this.setState({
-      activeAreaKey: null
+      activeAreaKey: null,
     });
   }
   /**
    * 绘制图形部分
-   * @param  {Array[ReactComponet]} items 线图元素
+   * @param  {Array} items 线图元素
    * @param  {Object} xAxisMap x轴刻度
    * @param  {Object} yAxisMap y轴刻度
    * @param  {Object} offset   图形区域的偏移量
-   * @return {ReactComponent}
+   * @return {ReactComponent} 图形元素
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
     const {activeAreaKey} = this.state;
 
     return items.reduce((result, child, i) => {
-      let {xAxisId, yAxisId, dataKey, fillOpacity, ...other} = child.props;
+      const {xAxisId, yAxisId, dataKey, fillOpacity, ...other} = child.props;
       const xAxis = xAxisMap[xAxisId];
       const yAxis = yAxisMap[yAxisId];
 
-      fillOpacity = fillOpacity === +fillOpacity ? fillOpacity : AreaItem.defaultProps.fillOpacity;
-      fillOpacity = activeAreaKey === dataKey ? Math.min(fillOpacity * 1.2, 1) : fillOpacity;
+      let finalFillOpacity = fillOpacity === +fillOpacity ? fillOpacity : AreaItem.defaultProps.fillOpacity;
+      finalFillOpacity = activeAreaKey === dataKey ? Math.min(finalFillOpacity * 1.2, 1) : finalFillOpacity;
 
       const area = (
         <Area
@@ -89,7 +91,7 @@ class AreaChart extends CartesianChart {
           y={offset.y}
           width={offset.width}
           height={offset.height}
-          fillOpacity={fillOpacity}
+          fillOpacity={finalFillOpacity}
           onMouseLeave={this.handleAreaMouseLeave}
           onMouseEnter={this.handleAreaMouseEnter.bind(null, dataKey)}
           {...this.getComposeData(xAxis, yAxis, dataKey)}/>
@@ -112,7 +114,7 @@ class AreaChart extends CartesianChart {
     yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
 
     return (
-      <div className='recharts-wrapper'
+      <div className="recharts-wrapper"
         style={{position: 'relative', cursor: 'default', ...style}}
         onMouseEnter={this.handleMouseEnter.bind(null, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(null, offset, xAxisMap, yAxisMap)}
@@ -138,6 +140,6 @@ class AreaChart extends CartesianChart {
       </div>
     );
   }
-};
+}
 
 export default AreaChart;

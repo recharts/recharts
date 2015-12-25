@@ -1,9 +1,6 @@
 import React, {PropTypes} from 'react';
 
 class XAxis extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   static displayName = 'XAxis';
 
@@ -29,7 +26,7 @@ class XAxis extends React.Component {
     // 刻度数
     tickCount: PropTypes.number,
     // 刻度格式化函数
-    tickFormatter: PropTypes.func
+    tickFormatter: PropTypes.func,
   };
 
   static defaultProps = {
@@ -38,12 +35,16 @@ class XAxis extends React.Component {
     height: 30,
     xAxisId: 0,
     tickCount: 5,
-    type: 'category'
+    type: 'category',
   };
 
-  render () {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
     return null;
   }
-};
+}
 
 export default XAxis;

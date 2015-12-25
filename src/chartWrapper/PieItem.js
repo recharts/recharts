@@ -1,9 +1,6 @@
 import React, {PropTypes} from 'react';
 
 class PieItem extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   static displayName = 'PieItem';
 
@@ -23,9 +20,9 @@ class PieItem extends React.Component {
     className: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.any,
-      value: PropTypes.number
+      value: PropTypes.number,
     })),
-    legendType: PropTypes.string
+    legendType: PropTypes.string,
   };
 
   static defaultProps = {
@@ -34,12 +31,16 @@ class PieItem extends React.Component {
     stroke: '#fff',
     fill: '#808080',
     legendType: 'line',
-    isActive: true
+    isActive: true,
   };
 
-  render () {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
     return null;
   }
-};
+}
 
 export default PieItem;

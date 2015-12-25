@@ -1,16 +1,13 @@
 import React, {PropTypes} from 'react';
 
 class RadialBarItem extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   static displayName = 'RadialBarItem';
 
   static propTypes = {
     dataKey: PropTypes.oneOfType([
-        PropTypes.number, PropTypes.string
-      ]).isRequired,
+      PropTypes.number, PropTypes.string,
+    ]).isRequired,
     // 如果没有指定，会取RadialBarChart设置的值，
     barRadius: PropTypes.number,
     startAngle: PropTypes.number,
@@ -28,9 +25,9 @@ class RadialBarItem extends React.Component {
     className: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.any,
-      value: PropTypes.number
+      value: PropTypes.number,
     })),
-    legendType: PropTypes.string
+    legendType: PropTypes.string,
   };
 
   static defaultProps = {
@@ -41,12 +38,16 @@ class RadialBarItem extends React.Component {
     innerRadius: 0,
     outerRadius: 0,
     stroke: '#fff',
-    fill: '#808080'
+    fill: '#808080',
   };
 
-  render () {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
     return null;
   }
-};
+}
 
 export default RadialBarItem;

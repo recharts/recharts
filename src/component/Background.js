@@ -1,11 +1,7 @@
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 // TODO: add support of gradient
 class Background extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   static displayName = 'Background';
 
@@ -16,15 +12,19 @@ class Background extends React.Component {
     height: PropTypes.number,
     strokeWidth: PropTypes.number,
     stroke: PropTypes.string,
-    fill: PropTypes.string
+    fill: PropTypes.string,
+    className: PropTypes.string,
   };
 
   static defaultProps = {
 
   };
 
+  constructor(props) {
+    super(props);
+  }
 
-  render () {
+  render() {
     const {className, ...others} = this.props;
 
     return (
@@ -34,3 +34,5 @@ class Background extends React.Component {
     );
   }
 }
+
+export default Background;

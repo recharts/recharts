@@ -5,7 +5,6 @@ import Surface from '../container/Surface';
 const SIZE = 32;
 
 const Legend = React.createClass({
-  mixins: [PureRenderMixin],
 
   propTypes: {
     style: PropTypes.object,
@@ -18,11 +17,13 @@ const Legend = React.createClass({
     data: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.any,
       id: PropTypes.any,
-      type: PropTypes.oneOf(['line', 'scatter', 'square', 'rect'])
-    }))
+      type: PropTypes.oneOf(['line', 'scatter', 'square', 'rect']),
+    })),
   },
 
-  getDefaultProps () {
+  mixins: [PureRenderMixin],
+
+  getDefaultProps() {
     return {
       width: 0,
       height: 40,
@@ -30,7 +31,7 @@ const Legend = React.createClass({
       layout: 'horizontal',
       align: 'center',
       verticalAlign: 'middle',
-      data: []
+      data: [],
     };
   },
 
@@ -39,41 +40,44 @@ const Legend = React.createClass({
    * @param {Object} data 包含图表类型、填充颜色、相应的seriesIndex等的数据
    * @return {String} 路径
    */
-  renderIcon (data) {
-    let halfSize = SIZE / 2;
-    let sixthSize = SIZE / 6;
-    let thirdSize = SIZE / 3;
-    let path, fill = data.color, stroke = data.color;
+  renderIcon(data) {
+    const halfSize = SIZE / 2;
+    const sixthSize = SIZE / 6;
+    const thirdSize = SIZE / 3;
+    let path;
+    let fill = data.color;
+    let stroke = data.color;
 
     switch (data.type) {
-      case 'line':
-        fill = 'none';
-        path = `M0,${halfSize}h${thirdSize}A${sixthSize},${sixthSize},0,1,1,${2 * thirdSize},${halfSize}H${SIZE}M${2 * thirdSize},${halfSize}A${sixthSize},${sixthSize},0,1,1,${thirdSize},${halfSize}`;
-        break;
-      case 'scatter':
-        stroke = 'none';
-        path = `M${halfSize},0A${halfSize},${halfSize},0,1,1,${halfSize},${SIZE}A${halfSize},${halfSize},0,1,1,${halfSize},0Z`;
-        break;
-      case 'rect':
-        stroke = 'none';
-        path = `M0,${SIZE / 8}h${SIZE}v${SIZE * 3 / 4}h${-SIZE}z`;
-        break;
-      default:
-        stroke = 'none';
-        path = `M0,0h${SIZE}v${SIZE}h${-SIZE}z`
-        break;
+    case 'line':
+      fill = 'none';
+      path = `M0,${halfSize}h${thirdSize}A${sixthSize},${sixthSize},0,1,1,${2 * thirdSize},${halfSize}H${SIZE}M${2 * thirdSize},${halfSize}A${sixthSize},${sixthSize},0,1,1,${thirdSize},${halfSize}`;
+      break;
+    case 'scatter':
+      stroke = 'none';
+      path = `M${halfSize},0A${halfSize},${halfSize},0,1,1,${halfSize},${SIZE}A${halfSize},${halfSize},0,1,1,${halfSize},0Z`;
+      break;
+    case 'rect':
+      stroke = 'none';
+      path = `M0,${SIZE / 8}h${SIZE}v${SIZE * 3 / 4}h${-SIZE}z`;
+      break;
+    default:
+      stroke = 'none';
+      path = `M0,0h${SIZE}v${SIZE}h${-SIZE}z`;
+      break;
     }
 
-    return <path strokeWidth={4} fill={fill} stroke={stroke} d={path} className='recharts-legend-icon'/>;
+    return <path strokeWidth={4} fill={fill} stroke={stroke} d={path} className="recharts-legend-icon"/>;
   },
   /**
    * 渲染图例
+   * @return {ReactElement} 图例
    */
-  renderItems () {
-    let {data, iconSize, layout} = this.props;
-    let viewBox = {x: 0, y: 0, width: SIZE, height: SIZE};
-    let itemStyle = {display: layout === 'horizontal' ? 'inline-block' : 'block', marginRight: 10};
-    let svgStyle = {display: 'inline-block', verticalAlign: 'middle', marginRight: 4};
+  renderItems() {
+    const {data, iconSize, layout} = this.props;
+    const viewBox = {x: 0, y: 0, width: SIZE, height: SIZE};
+    const itemStyle = {display: layout === 'horizontal' ? 'inline-block' : 'block', marginRight: 10};
+    const svgStyle = {display: 'inline-block', verticalAlign: 'middle', marginRight: 4};
 
     return data.map((entry, i) => {
       return (
@@ -81,14 +85,14 @@ const Legend = React.createClass({
           <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
             {this.renderIcon(entry)}
           </Surface>
-          <span className='legend-text'>{entry.value}</span>
+          <span className="legend-text">{entry.value}</span>
         </li>
       );
     });
   },
 
-  render () {
-    let {data, width, height, layout, align, verticalAlign, style} = this.props;
+  render() {
+    const {data, width, height, layout, align, style} = this.props;
 
     if (!data || !data.length || width <= 0 || height <= 0) {
       return null;
@@ -98,7 +102,7 @@ const Legend = React.createClass({
       margin: 0,
       width: width,
       height: height,
-      textAlign: layout === 'horizontal' ? align : 'left'
+      textAlign: layout === 'horizontal' ? align : 'left',
     };
 
     if (layout === 'vertical') {
@@ -108,11 +112,11 @@ const Legend = React.createClass({
     finalStyle = {...finalStyle, ...style};
 
     return (
-      <ul className='recharts-legend' style={finalStyle}>
+      <ul className="recharts-legend" style={finalStyle}>
         {this.renderItems()}
       </ul>
     );
-  }
+  },
 });
 
 export default Legend;

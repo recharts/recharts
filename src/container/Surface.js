@@ -8,15 +8,19 @@ const Surface = React.createClass({
       x: PropTypes.number,
       y: PropTypes.number,
       width: PropTypes.number,
-      height: PropTypes.number
+      height: PropTypes.number,
     }),
     className: PropTypes.string,
-    style: PropTypes.object
+    style: PropTypes.object,
+    children: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.node),
+      PropTypes.node,
+    ]),
   },
 
-  render () {
-    let {children, width, height, viewBox, padding, className, style} = this.props;
-    let svgView = viewBox || {width: width, height: height, x: 0, y: 0};
+  render() {
+    const {children, width, height, viewBox, className, style} = this.props;
+    const svgView = viewBox || {width: width, height: height, x: 0, y: 0};
 
     return (
       <svg
@@ -29,7 +33,7 @@ const Surface = React.createClass({
         {children}
       </svg>
     );
-  }
+  },
 });
 
 export default Surface;

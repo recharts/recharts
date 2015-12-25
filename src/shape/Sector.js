@@ -1,12 +1,9 @@
 import React, {PropTypes} from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import d3Shape from 'd3-shape';
 
 const RADIAN = Math.PI / 180;
 
 const Sector = React.createClass({
-
-  mixins: [PureRenderMixin],
 
   propTypes: {
     cx: PropTypes.number,
@@ -22,10 +19,12 @@ const Sector = React.createClass({
     className: PropTypes.string,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
   },
 
-  getDefaultProps () {
+  mixins: [PureRenderMixin],
+
+  getDefaultProps() {
     return {
       // 圆心的横坐标
       cx: 0,
@@ -39,39 +38,37 @@ const Sector = React.createClass({
       startAngle: 0,
       // 终点角度
       endAngle: 0,
-      onMouseEnter () {},
-      onMouseLeave () {},
-      onClick () {}
+      onMouseEnter() {},
+      onMouseLeave() {},
+      onClick() {},
     };
   },
 
-  getPath (cx, cy, innerRadius, outerRadius, startAngle, endAngle) {
-    let angle = endAngle - startAngle,
-        path;
-
+  getPath(cx, cy, innerRadius, outerRadius, startAngle, endAngle) {
+    const angle = endAngle - startAngle;
     // 360度的圆环，起点和终点一致，会导致绘制的图形为空
-    if (Math.abs(angle) >= 360) {
-      endAngle = startAngle + 0.9999 * angle;
-    }
+    const _endAngle = Math.abs(angle) >= 360 ? startAngle + 0.9999 * angle : endAngle;
+    let path;
+
 
     if (innerRadius > 0) {
       path = `M ${cx + outerRadius * Math.cos(-startAngle * RADIAN)},${cy + outerRadius * Math.sin(-startAngle * RADIAN)}
-              A ${outerRadius},${outerRadius},0,${+(Math.abs(angle) > 180)},${+(startAngle > endAngle)},
-              ${cx + outerRadius * Math.cos(-endAngle * RADIAN)},${cy + outerRadius * Math.sin(-endAngle * RADIAN)}
-              L ${cx + innerRadius * Math.cos(-endAngle * RADIAN)},${cy + innerRadius * Math.sin(-endAngle * RADIAN)}
-              A ${innerRadius},${innerRadius},0,${+(Math.abs(angle) > 180)},${+(startAngle <= endAngle)},
+              A ${outerRadius},${outerRadius},0,${+(Math.abs(angle) > 180)},${+(startAngle > _endAngle)},
+              ${cx + outerRadius * Math.cos(-_endAngle * RADIAN)},${cy + outerRadius * Math.sin(-_endAngle * RADIAN)}
+              L ${cx + innerRadius * Math.cos(-_endAngle * RADIAN)},${cy + innerRadius * Math.sin(-_endAngle * RADIAN)}
+              A ${innerRadius},${innerRadius},0,${+(Math.abs(angle) > 180)},${+(startAngle <= _endAngle)},
               ${cx + innerRadius * Math.cos(-startAngle * RADIAN)},${cy + innerRadius * Math.sin(-startAngle * RADIAN)} Z`;
     } else {
       path = `M ${cx + outerRadius * Math.cos(-startAngle * RADIAN)},${cy + outerRadius * Math.sin(-startAngle * RADIAN)}
-              A ${outerRadius},${outerRadius},0,${+(Math.abs(angle) > 180)},${+(startAngle > endAngle)},
-              ${cx + outerRadius * Math.cos(-endAngle * RADIAN)},${cy + outerRadius * Math.sin(-endAngle * RADIAN)}
+              A ${outerRadius},${outerRadius},0,${+(Math.abs(angle) > 180)},${+(startAngle > _endAngle)},
+              ${cx + outerRadius * Math.cos(-_endAngle * RADIAN)},${cy + outerRadius * Math.sin(-_endAngle * RADIAN)}
               L ${cx},${cy} Z`;
     }
 
     return path;
   },
 
-  render () {
+  render() {
     const {cx, cy, innerRadius, outerRadius, startAngle, endAngle,
           onClick, onMouseEnter, onMouseLeave, className,
           ...others} = this.props;
@@ -79,7 +76,6 @@ const Sector = React.createClass({
     if (outerRadius < innerRadius || startAngle === endAngle) {
       return null;
     }
-    const events = {};
 
     return (
      <path
@@ -90,7 +86,7 @@ const Sector = React.createClass({
       onClick={onClick}
       d={this.getPath(cx, cy, innerRadius, outerRadius, startAngle, endAngle)}/>
     );
-  }
+  },
 });
 
 export default Sector;
