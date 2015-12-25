@@ -1,11 +1,6 @@
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
-
 
 class ReferenceLine extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   static displayName = 'ReferenceLine';
 
@@ -26,16 +21,24 @@ class ReferenceLine extends React.Component {
 
     strokeWidth: PropTypes.number,
     stroke: PropTypes.string,
-    fill: PropTypes.string
+    fill: PropTypes.string,
+    fillOpacity: PropTypes.number,
+    strokeOpacity: PropTypes.number,
   };
 
   static defaultProps = {
     xAxisId: 0,
     yAxisId: 0,
-    fill: 'none'
+    fill: 'none',
+    fillOpacity: 1,
+    strokeWidth: 1,
   };
 
-  getEndPoints () {
+  constructor(props) {
+    super(props);
+  }
+
+  getEndPoints() {
     const {xAxisMap, yAxisMap, type, value, xAxisId, yAxisId,
           x, y, width, height} = this.props;
     let coord;
@@ -45,22 +48,21 @@ class ReferenceLine extends React.Component {
 
       return [{x, y: coord}, {x: x + width, y: coord}];
     } else if (type === 'vertical') {
-      coord = xAxisId[xAxisId].scale(value);
+      coord = xAxisMap[xAxisId].scale(value);
 
       return [{x: coord, y}, {x: coord, y: y + height}];
     }
   }
 
-  render () {
+  render() {
     const {type, value, fill, stroke, fillOpacity, strokeOpacity} = this.props;
-
-    if (!type || value !== +value) {return;}
+    if (!type || value !== +value) {return null;}
 
     const [start, end] = this.getEndPoints();
 
     return (
       <line
-        className='recharts-reference-line'
+        className="recharts-reference-line"
         x1={start.x}
         y1={start.y}
         x2={end.x}

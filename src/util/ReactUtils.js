@@ -7,14 +7,15 @@ export default {
    * string
    */
   findAllByType(children, type) {
-    let result = [];
+    const result = [];
+    let childType = type;
 
     if (type && type.displayName) {
-      type = type.displayName;
+      childType = type.displayName;
     }
 
     React.Children.forEach(children, child => {
-      if (child && child.type && child.type.displayName === type) {
+      if (child && child.type && child.type.displayName === childType) {
         result.push(child);
       }
     });
@@ -36,7 +37,7 @@ export default {
    * Create a new array of children excluding the ones matched the type
    */
   withoutType(children) {
-    let newChildren = [];
+    const newChildren = [];
     let types = [].slice.call(arguments, 1);
 
     types = types.map(type => {
@@ -52,5 +53,5 @@ export default {
     });
 
     return newChildren;
-  }
+  },
 };

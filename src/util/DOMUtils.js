@@ -1,26 +1,26 @@
-function offset (el) {
+function offset(el) {
   let box = {top: 0, left: 0};
 
   if (el.getBoundingClientRect) {
     box = el.getBoundingClientRect();
   }
 
-  let docElem = document.documentElement;
-  let body = document.body;
-  let clientTop = docElem.clientTop || body.clientTop || 0;
-  let clientLeft = docElem.clientLeft || body.clientLeft || 0;
-  let scrollTop = window.pageYOffset || docElem.scrollTop;
-  let scrollLeft = window.pageXOffset || docElem.scrollLeft;
+  const docElem = document.documentElement;
+  const body = document.body;
+  const clientTop = docElem.clientTop || body.clientTop || 0;
+  const clientLeft = docElem.clientLeft || body.clientLeft || 0;
+  const scrollTop = window.pageYOffset || docElem.scrollTop;
+  const scrollLeft = window.pageXOffset || docElem.scrollLeft;
 
   return {
     top: box.top + scrollTop - clientTop,
-    left: box.left + scrollLeft - clientLeft
+    left: box.left + scrollLeft - clientLeft,
   };
 }
 
 const stringCache = {
   widthCache: {},
-  cacheCount: 0
+  cacheCount: 0,
 };
 const MAX_CACHE_NUM = 2000;
 const SPAN_STYLE = {
@@ -30,20 +30,20 @@ const SPAN_STYLE = {
   padding: 0,
   margin: 0,
   border: 'none',
-  whiteSpace: 'pre'
+  whiteSpace: 'pre',
 };
 const STYLE_LIST = [
   'minWidth', 'maxWidth', 'width', 'minHeight', 'maxHeight', 'height',
-  'top', 'left', 'fontSize', 'lineHeight'
+  'top', 'left', 'fontSize', 'lineHeight',
 ];
-function autoCompleteStyle (name, value) {
+function autoCompleteStyle(name, value) {
   if (STYLE_LIST.indexOf(name) >= 0 && value === +value) {
     return value + 'px';
   }
 
   return value;
 }
-function camelToMiddleLine (text) {
+function camelToMiddleLine(text) {
   const strs = text.split('');
 
   const formatStrs = strs.reduce((result, entry) => {
@@ -57,16 +57,18 @@ function camelToMiddleLine (text) {
   return formatStrs.join('');
 }
 
-function getStyleString (style) {
+function getStyleString(style) {
   let result = '';
 
-  for (let s in style) {
-    result += `${camelToMiddleLine(s)}:${autoCompleteStyle(s, style[s])};`;
+  for (const s in style) {
+    if (style.hasOwnProperty(s)) {
+      result += `${camelToMiddleLine(s)}:${autoCompleteStyle(s, style[s])};`;
+    }
   }
   return result;
 }
 
-function getStringSize (text, style = {}) {
+function getStringSize(text, style = {}) {
   if (text === undefined || text === null) {return 0;}
 
   const str = text + '';
@@ -76,14 +78,14 @@ function getStringSize (text, style = {}) {
   if (stringCache.widthCache[cacheKey]) { return stringCache.widthCache[cacheKey];}
 
   if (!stringCache.span) {
-    let span = document.createElement('span');
+    const span = document.createElement('span');
     span.setAttribute('style', getStyleString(SPAN_STYLE));
     document.body.appendChild(span);
 
     stringCache.span = span;
   }
 
-  stringCache.span.setAttribute('style', getStyleString({...SPAN_STYLE, ...style}))
+  stringCache.span.setAttribute('style', getStyleString({...SPAN_STYLE, ...style}));
   stringCache.span.textContent = str;
 
   const rect = stringCache.span.getBoundingClientRect();
@@ -101,5 +103,5 @@ function getStringSize (text, style = {}) {
 
 export default {
   offset,
-  getStringSize
+  getStringSize,
 };

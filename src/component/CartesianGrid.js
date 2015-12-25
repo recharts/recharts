@@ -5,7 +5,6 @@ import createFragment from 'react-addons-create-fragment';
 const PropTypes = React.PropTypes;
 
 const CartesianGrid = React.createClass({
-  mixins: [PureRenderMixin],
 
   propTypes: {
     x: PropTypes.number,
@@ -17,10 +16,12 @@ const CartesianGrid = React.createClass({
     horizontalPoints: PropTypes.arrayOf(PropTypes.number),
     verticalPoints: PropTypes.arrayOf(PropTypes.number),
 
-    fill: PropTypes.string
+    fill: PropTypes.string,
   },
 
-  getDefaultProps () {
+  mixins: [PureRenderMixin],
+
+  getDefaultProps() {
     return {
       x: 0,
       y: 0,
@@ -34,72 +35,72 @@ const CartesianGrid = React.createClass({
       verticalPoints: [],
 
       stroke: '#ccc',
-      fill: 'none'
+      fill: 'none',
     };
   },
   /**
    * 绘制水平方向的线条
-   * @return {Group}
+   * @return {Group} 图层
    */
-  renderHorizontal () {
-    let {x, y, width, height, horizontal, vertical, horizontalPoints,
+  renderHorizontal() {
+    const {x, y, width, height, horizontal, vertical, horizontalPoints,
         verticalPoints, ...others} = this.props;
 
     if (!horizontalPoints || !horizontalPoints.length) { return null; }
 
-    let items = {};
+    const items = {};
 
     horizontalPoints.reduce((result, entry, i) => {
       items['line-' + i] = (
         <line key={'line-' + i} {...others} x1={x} y1={entry} x2={x + width} y2={entry}></line>
       );
-    }, items)
+    }, items);
 
     return (
-      <g className='layer-grid-horizontal'>
+      <g className="layer-grid-horizontal">
         {createFragment(items)}
       </g>
     );
   },
   /**
    * 绘制竖直方向的线条
-   * @return {Group}
+   * @return {Group} 图层
    */
-  renderVertical () {
-    let {x, y, width, height, horizontal, vertical,
+  renderVertical() {
+    const {x, y, width, height, horizontal, vertical,
          horizontalPoints, verticalPoints, ...others} = this.props;
 
     if (!verticalPoints || !verticalPoints.length) { return null; }
 
-    let items = {};
+    const items = {};
 
     verticalPoints.reduce((result, entry, i) => {
       items['line-' + i] = (
         <line key={'line-' + i} {...others} x1={entry} y1={y} x2={entry} y2={y + height}></line>
       );
-    }, items)
+    }, items);
 
     return (
-      <g className='layer-grid-vertical'>
+      <g className="layer-grid-vertical">
         {createFragment(items)}
       </g>
     );
   },
 
-  render () {
-    let {width, height, horizontal, vertical} = this.props;
+  render() {
+    const {width, height, horizontal, vertical} = this.props;
 
     if (width <= 0 || height <= 0) {
       return null;
     }
 
     return (
-      <g className='layer-grid layer-cartesian-grid'>
+      <g className="layer-grid layer-cartesian-grid">
         {horizontal && this.renderHorizontal()}
         {vertical && this.renderVertical()}
       </g>
     );
-  }
+  },
 });
 
 export default CartesianGrid;

@@ -1,16 +1,12 @@
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import Sector from '../shape/Sector';
 import PolarGrid from '../component/PolarGrid';
 import PolarAngleAxis from '../component/PolarAngleAxis';
-import PolarRadiusAxis from '../component/PolarRadiusAxis';
 
 const perigon = 360;
 const RADIAN = Math.PI / 180;
 
 const Pie = React.createClass({
-  mixins: [PureRenderMixin],
 
   propTypes: {
     cx: PropTypes.number,
@@ -22,10 +18,10 @@ const Pie = React.createClass({
     concentricPathType: PropTypes.oneOf(['polygon', 'circle']),
     gridNumber: PropTypes.number,
     data: PropTypes.array,
-    className: PropTypes.string
+    className: PropTypes.string,
   },
 
-  getDefaultProps () {
+  getDefaultProps() {
     return {
       cx: 0,
       cy: 0,
@@ -36,16 +32,17 @@ const Pie = React.createClass({
       // 网格分段数
       gridNumber: 2,
       // 数据
-      data: []
+      data: [],
     };
   },
   /**
    * 计算网格所在的半径节点
    * @return {Array} 半径节点
    */
-  getGridRadius () {
-    let {gridNumber, innerRadius, outerRadius} = this.props,
-        result = [], step;
+  getGridRadius() {
+    const {gridNumber} = this.props;
+    let {innerRadius, outerRadius} = this.props;
+    const result = [];
 
     if (innerRadius === outerRadius) {
       return result;
@@ -56,7 +53,7 @@ const Pie = React.createClass({
     }
 
     // 生成均匀的网格
-    step = (outerRadius - innerRadius) / gridNumber;
+    const step = (outerRadius - innerRadius) / gridNumber;
 
     for (let i = 0; i < gridNumber; i++) {
       if (i === 0 && innerRadius > 0) {
@@ -74,10 +71,10 @@ const Pie = React.createClass({
    * @param {Object} data 单个数据
    * @return {Object} {x: '横坐标', y: '纵坐标'}
    */
-  getVertexCoord (data) {
-    let {min, max, value, angle} = data,
-        {cx, cy, innerRadius, outerRadius} = this.props,
-        r;
+  getVertexCoord(data) {
+    const {min, max, value, angle} = data;
+    const {cx, cy, innerRadius, outerRadius} = this.props;
+    let r;
 
     if (min === max) {
       r = outerRadius;
@@ -87,59 +84,57 @@ const Pie = React.createClass({
 
     return {
       x: cx + r * Math.cos(-angle * RADIAN),
-      y: cy + r * Math.sin(-angle * RADIAN)
-    }
+      y: cy + r * Math.sin(-angle * RADIAN),
+    };
   },
   /**
    * 获取按角度的刻度
-   * @return {Array}
+   * @return {Array} 角度轴的刻度
    */
-  getAngleTicks () {
-    let {startAngle, data, clockWise} = this.props,
-        sign = clockWise ? -1 : 1,
-        len = data.length,
-        angle = perigon / len,
-        result = [];
+  getAngleTicks() {
+    const {startAngle, data, clockWise} = this.props;
+    const sign = clockWise ? -1 : 1;
+    const len = data.length;
+    const angle = perigon / len;
+    const result = [];
 
     // 雷达图是根据数据的条数等份圆周角
     for (let i = 0; i < len; i++) {
       result.push({
         angle: startAngle + i * sign * angle,
-        value: data[i].name
+        value: data[i].name,
       });
     }
 
     return result;
   },
 
-  renderPolygon () {
-    let {data, innerRadius, outerRadius} = this.props,
-        points = [];
+  renderPolygon() {
+    const {data} = this.props;
+    const points = [];
 
     for (let i = 0, len = data.length; i < len; i++) {
-      let {x, y} = this.getVertexCoord(data[i]);
+      const {x, y} = this.getVertexCoord(data[i]);
 
       points.push([x, y]);
     }
 
 
-    return <polygon fill='green' fillOpacity={0.6} stroke='red' points={points.join(' ')}/>;
+    return <polygon fill="green" fillOpacity={0.6} stroke="red" points={points.join(' ')}/>;
   },
 
-  render () {
-    let {cx, cy, innerRadius, outerRadius, concentricPathType, data} = this.props;
+  render() {
+    const {outerRadius, data} = this.props;
 
     if (outerRadius <= 0 || !data || !data.length) {
-      return;
+      return null;
     }
-    let angleTicks = this.getAngleTicks(),
-        radius = this.getGridRadius(),
-        angles = angleTicks.map(entry => {
-                  return entry.angle;
-                });
+    const angleTicks = this.getAngleTicks();
+    const radius = this.getGridRadius();
+    const angles = angleTicks.map(entry =>  entry.angle);
 
     return (
-      <g className='layer-pie'>
+      <g className="layer-radar">
         <PolarGrid
           {...this.props}
           polarAngles={angles}
@@ -150,7 +145,7 @@ const Pie = React.createClass({
         {this.renderPolygon()}
       </g>
     );
-  }
+  },
 });
 
 export default Pie;

@@ -3,12 +3,10 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 const Rectangle = React.createClass({
 
-  mixins: [PureRenderMixin],
-
   propTypes: {
     points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
-      y: PropTypes.number
+      y: PropTypes.number,
     })),
     radius: PropTypes.number,
     fill: PropTypes.string,
@@ -18,32 +16,34 @@ const Rectangle = React.createClass({
     className: PropTypes.string,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
   },
 
-  getDefaultProps () {
+  mixins: [PureRenderMixin],
+
+  getDefaultProps() {
     return {
       radius: 0,
       stroke: 'none',
       strokeWidth: 1,
       strokeDasharray: 'none',
       fill: '#000',
-      onMouseEnter () {},
-      onMouseLeave () {},
-      onClick () {}
+      onMouseEnter() {},
+      onMouseLeave() {},
+      onClick() {},
     };
   },
 
-  getPath (points, radius) {
-    if (!points || !points.length) {return ;}
+  getPath(points) {
+    if (!points || !points.length) {return '';}
 
     const ary = points.map(entry => entry.x + ' ' + entry.y);
 
-    return 'M' + ary.join('L') + 'Z';
+    return `M${ary.join('L')}Z`;
   },
 
-  render () {
-    let {points, radius,onClick,
+  render() {
+    const {points, radius, onClick,
         onMouseEnter, onMouseLeave,
         className, ...others} = this.props;
 
@@ -56,7 +56,7 @@ const Rectangle = React.createClass({
         onClick={onClick}
         d={this.getPath(points, radius)}/>
     );
-  }
+  },
 });
 
 export default Rectangle;

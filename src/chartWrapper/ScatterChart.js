@@ -11,7 +11,6 @@ import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Scatter from '../chart/Scatter';
 
-import CartesianChart from './CartesianChart';
 import ReactUtils from '../util/ReactUtils';
 import ScatterItem from './ScatterItem';
 import XAxis from './XAxis';
@@ -29,16 +28,20 @@ class ScatterChart extends React.Component {
       top: PropTypes.number,
       right: PropTypes.number,
       bottom: PropTypes.number,
-      left: PropTypes.number
+      left: PropTypes.number,
     }),
     title: PropTypes.string,
-    style: PropTypes.object
+    style: PropTypes.object,
+    children: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.node),
+      PropTypes.node,
+    ]),
   };
 
 
   static defaultProps = {
     style: {},
-    margin: {top: 20, right: 20, bottom: 20, left: 20}
+    margin: {top: 20, right: 20, bottom: 20, left: 20},
   };
 
   state = {
@@ -46,21 +49,22 @@ class ScatterChart extends React.Component {
     activeTooltipCoord: {x: 0, y: 0},
     isTooltipActive: false,
     activeGroupId: null,
-    activeItem: null
+    activeItem: null,
   };
     /**
    * 组装曲线数据
+   * @param  {Array}  data    传入的数据
    * @param  {Object} xAxis   x轴刻度
    * @param  {Object} yAxis   y轴刻度
-   * @param  {String} dataKey 该组数据所对应的key
-   * @return {Array}
+   * @param  {Objext} zAxis   z轴刻度
+   * @return {Array} 组合后的数据
    */
   getComposeData(data, xAxis, yAxis, zAxis) {
     const xAxisDataKey = xAxis.dataKey;
     const yAxisDataKey = yAxis.dataKey;
     const zAxisDataKey = zAxis.dataKey;
 
-    return data.map((entry, index) => {
+    return data.map(entry => {
       return {
         cx: xAxis.scale(entry[xAxisDataKey]),
         cy: yAxis.scale(entry[yAxisDataKey]),
@@ -68,15 +72,15 @@ class ScatterChart extends React.Component {
         value: {
           x: entry[xAxisDataKey],
           y: entry[yAxisDataKey],
-          z: (zAxisDataKey !== undefined && entry[zAxisDataKey]) || '-'
-        }
+          z: (zAxisDataKey !== undefined && entry[zAxisDataKey]) || '-',
+        },
       };
     });
   }
   /**
    * 计算x轴，y轴的刻度
    * @param  {Object}  axis 刻度对象
-   * @return {Array}
+   * @return {Array} 刻度
    */
   getAxisTicks(axis) {
     const scale = axis.scale;
@@ -85,32 +89,31 @@ class ScatterChart extends React.Component {
       return axis.ticks.map(entry => {
         return {
           coord: scale(entry),
-          value: entry
+          value: entry,
         };
-      })
+      });
     }
 
     if (scale.ticks) {
       return scale.ticks(axis.tickCount).map(entry => {
         return {
           coord: scale(entry),
-          value: entry
+          value: entry,
         };
       });
     }
 
-    return scale.domain().map((entry, index) => {
+    return scale.domain().map((entry) => {
       return {
         coord: scale(entry),
-        value: entry
+        value: entry,
       };
     });
   }
-
    /**
    * 计算网格的刻度
    * @param  {Object} axis 刻度对象
-   * @return {Array}
+   * @return {Array} 刻度
    */
   getGridTicks(axis) {
     const scale = axis.scale;
@@ -132,15 +135,14 @@ class ScatterChart extends React.Component {
   }
   /**
    * 取ticks的定义域
-   * @param  {Array} ticks
-   * @param  {String} type  刻度类型
-   * @return {Array}
+   * @param  {Array} ticks 刻度
+   * @return {Array} 刻度
    */
-  getDomainOfTicks(ticks, type) {
+  getDomainOfTicks(ticks) {
     return [Math.min.apply(null, ticks), Math.max.apply(null, ticks)];
   }
 
-  getDomain (items, dataKey) {
+  getDomain(items, dataKey) {
     const domain = items.reduce((result, item) => {
       return result.concat(item.props.data.map(entry => entry[dataKey]));
     }, []);
@@ -149,9 +151,12 @@ class ScatterChart extends React.Component {
   }
   /**
    * 计算X轴 或者 Y轴的配置
+   * @param {String} axisType 轴的类型
+   * @param {Object} items 图形元素
+   * @return {Object} 轴的配置
    */
   getAxis(axisType = 'xAxis', items) {
-    const {children, data} = this.props;
+    const {children} = this.props;
     const Axis = axisType === 'xAxis' ? XAxis : YAxis;
     const axis = ReactUtils.findChildByType(children, Axis);
 
@@ -161,18 +166,20 @@ class ScatterChart extends React.Component {
       return {
         ...axis.props,
         axisType,
-        domain
+        domain,
       };
-    } else {
-      console.info('recharts: 散点图必须创建 %s 组件', Axis.displayName);
     }
+
+    console.info('recharts: 散点图必须创建 %s 组件', Axis.displayName);
 
     return null;
   }
   /**
    * 计算Z轴的配置
+   * @param {Object} items 图形元素
+   * @return {Object} 轴的配置
    */
-  getZAxis (items) {
+  getZAxis(items) {
     const {children} = this.props;
     const axisItem = ReactUtils.findChildByType(children, ZAxis);
     const axisProps = (axisItem && axisItem.props) || ZAxis.defaultProps;
@@ -181,7 +188,7 @@ class ScatterChart extends React.Component {
     return {
       ...axisProps,
       domain,
-      scale: linear().domain(domain).range(axisProps.range)
+      scale: linear().domain(domain).range(axisProps.range),
     };
   }
 
@@ -195,13 +202,14 @@ class ScatterChart extends React.Component {
     return {
       ...offset,
       width: width - offset.left - offset.right,
-      height: height - offset.top - offset.bottom
+      height: height - offset.top - offset.bottom,
     };
   }
   /**
    * 设置刻度函数的刻度值
    * @param {Object} scale 刻度对象
    * @param {Object} opts  配置
+   * @return {null} 无返回
    */
   setTicksOfScale(scale, opts) {
     // 优先使用用户配置的刻度
@@ -209,28 +217,26 @@ class ScatterChart extends React.Component {
       opts.domain = this.getDomainOfTicks(opts.ticks, opts.type);
       scale.domain(opts.domain)
            .ticks(opts.ticks.length);
+    } else {
+      // 数值类型的刻度，指定了刻度的个数后，根据范围动态计算
+      const domain = scale.domain();
+      const tickValues = getNiceTickValues(domain, opts.tickCount);
 
-      return;
+      opts.ticks = tickValues;
+      opts.domain = this.getDomainOfTicks(tickValues, opts.type);
+      scale.domain(opts.domain)
+          .ticks(opts.tickCount);
     }
-    // 数值类型的刻度，指定了刻度的个数后，根据范围动态计算
-    const domain = scale.domain();
-    const tickValues = getNiceTickValues(domain, opts.tickCount)
-
-    opts.ticks = tickValues;
-    opts.domain = this.getDomainOfTicks(tickValues, opts.type);
-    scale.domain(opts.domain)
-        .ticks(opts.tickCount);
   }
   /**
    * 计算轴的刻度函数，位置，大小等信息
-   * @param  {Object} axisMap  刻度对象
+   * @param  {Object} axis  刻度对象
    * @param  {Object} offset   图形区域的偏移量
    * @param  {Object} axisType 刻度类型，x轴或者y轴
-   * @return {Object}
+   * @return {Object} 格式化的轴
    */
   getFormatAxis(axis, offset, axisType) {
-    const {width, height} = this.props;
-    const {orient, type, domain, tickCount, tickFormat} = axis;
+    const {orient, domain, tickFormat} = axis;
     const range = axisType === 'xAxis' ?
                   [offset.left, offset.left + offset.width] :
                   [offset.top + offset.height, offset.top];
@@ -239,40 +245,159 @@ class ScatterChart extends React.Component {
     this.setTicksOfScale(scale, axis);
     tickFormat && scale.tickFormat(tickFormat);
 
+    let x;
+    let y;
+
+    if (axisType === 'xAxis') {
+      x = offset.left;
+      y = orient === 'top' ? offset.top - axis.height : offset.top + offset.height;
+    } else {
+      x  = orient === 'left' ? offset.left - axis.width : offset.right;
+      y = offset.top;
+    }
+
+
     return {
       ...axis,
       scale,
       width: axisType === 'xAxis' ? offset.width : axis.width,
       height: axisType === 'yAxis' ? offset.height : axis.height,
-      x: axisType === 'xAxis' ? offset.left : ( orient === 'left' ? offset.left - axis.width : offset.right),
-      y: axisType === 'xAxis' ? (orient === 'top' ? offset.top - axis.height : offset.top + offset.height) : offset.top
+      x, y,
     };
+  }
+  /**
+   * 更具图形元素计算tooltip的显示内容
+   * @param  {Array} data 数据
+   * @param {Object} xAxis x轴刻度
+   * @param {Object} yAxis y轴刻度
+   * @param {Object} zAxis z轴刻度
+   * @return {Array} 浮层中的内容
+   */
+  getTooltipContent(data, xAxis, yAxis, zAxis) {
+    if (!data) {return null;}
+
+    const content = [{
+      key: xAxis.name || xAxis.dataKey,
+      unit: xAxis.unit || '',
+      value: data.x,
+    }, {
+      key: yAxis.name || yAxis.dataKey,
+      unit: yAxis.unit || '',
+      value: data.y,
+    }];
+
+    if (data.z && data.z !== '-') {
+      content.push({
+        key: zAxis.name || zAxis.dataKey,
+        unit: zAxis.unit || '',
+        value: data.z,
+      });
+    }
+
+    return content;
   }
   /**
    * 鼠标进入曲线的响应事件
    * @param {String} groupId 散点所对应的组
    * @param {Object} el  散点对象
    * @param {Object} e   事件对象
+   * @return {Object} no return
    */
-  handleScatterMouseEnter = (groupId, el, e) => {
+  handleScatterMouseEnter = (groupId, el) => {
     this.setState({
       isTooltipActive: true,
       activeGroupId: groupId,
       activeItem: el,
-      activeTooltipCoord: {x: el.cx, y: el.cy}
+      activeTooltipCoord: {x: el.cx, y: el.cy},
     });
   }
   /**
    * 鼠标离开散点的响应事件
+   * @return {Object} no return
    */
   handleScatterMouseLeave = () => {
     this.setState({
-      isTooltipActive: false
+      isTooltipActive: false,
     });
   }
     /**
+   * 渲染浮层
+   * @param  {Array} items 线图元素或者柱图元素
+   * @param  {Object} xAxis x轴刻度
+   * @param  {Object} yAxis y轴刻度
+   * @param  {Object} zAxis z轴刻度
+   * @return {ReactElement} 浮层元素
+   */
+  renderTooltip(items, xAxis, yAxis, zAxis) {
+    const {children} = this.props;
+    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+
+    if (!tooltipItem) {
+      return null;
+    }
+
+    const {chartX, chartY, isTooltipActive,
+          activeItem, activeTooltipCoord,
+          activeTooltipPosition} = this.state;
+
+    return React.cloneElement(tooltipItem, {
+      position: activeTooltipPosition,
+      active: isTooltipActive,
+      label: '',
+      data: this.getTooltipContent(activeItem && activeItem.value, xAxis, yAxis, zAxis),
+      coordinate: activeTooltipCoord,
+      mouseX: chartX,
+      mouseY: chartY,
+    });
+  }
+    /**
+   * 渲染网格部分
+   * @param  {Object} xAxis x轴刻度
+   * @param  {Object} yAxis y轴刻度
+   * @param  {Object} offset   图形区域的偏移量
+   * @return {ReactElement} 网格对象
+   */
+  renderGrid(xAxis, yAxis, offset) {
+    return (
+      <CartesianGrid
+        key={'grid'}
+        x={offset.left}
+        y={offset.top}
+        width={offset.width}
+        height={offset.height}
+        verticalPoints={this.getGridTicks(xAxis)}
+        horizontalPoints={this.getGridTicks(yAxis)}/>
+    );
+  }
+
+  /**
+   * 绘制图例部分
+   * @param  {Array} items 线图元素或者柱图元素
+   * @param  {Object} offset 图形区域的偏移量
+   * @param  {ReactElement} legendItem 图例元素
+   * @return {ReactElement} 图例
+   */
+  renderLegend(items, offset, legendItem) {
+    const legendData = items.map((child) => {
+      const {name, fill, legendType} = child.props;
+
+      return {
+        type: legendType || 'square',
+        color: fill,
+        value: name || '',
+      };
+    }, this);
+
+    return React.cloneElement(legendItem, {
+      width: offset.width,
+      data: legendData,
+    });
+  }
+/**
    * 渲染轴
-   * @return {[type]} [description]
+   * @param {Object} axis 刻度
+   * @param {String} layerKey key值
+   * @return {ReactElement} 刻度图层
    */
   renderAxis(axis, layerKey) {
     const {width, height} = this.props;
@@ -293,124 +418,28 @@ class ScatterChart extends React.Component {
     }
   }
   /**
-   * 渲染网格部分
-   * @param  {Object} xAxis x轴刻度
-   * @param  {Object} yAxis y轴刻度
-   * @param  {Object} offset   图形区域的偏移量
-   * @return {ReactComponent}
-   */
-  renderGrid(xAxis, yAxis, offset) {
-    return (
-      <CartesianGrid
-        key={'grid'}
-        x={offset.left}
-        y={offset.top}
-        width={offset.width}
-        height={offset.height}
-        verticalPoints={this.getGridTicks(xAxis)}
-        horizontalPoints={this.getGridTicks(yAxis)}/>
-    );
-  }
-  /**
-   * 绘制图例部分
-   * @param  {Array[ReactComponet]} items 线图元素或者柱图元素
-   * @param  {Object} offset 图形区域的偏移量
-   * @return {ReactComponent}
-   */
-  renderLegend(items, offset, legendItem) {
-    const legendData = items.map((child, i) => {
-      let {name, stroke, fill, legendType} = child.props;
-
-      return {
-        type: legendType || 'square',
-        color: fill,
-        value: name || ''
-      };
-    }, this);
-
-    return React.cloneElement(legendItem, {
-      width: offset.width,
-      data: legendData
-    });
-  }
-  /**
-   * 更具图形元素计算tooltip的显示内容
-   * @param  {Array[ReactComponet]} items 线图元素或者柱图元素
-   * @return {Array}
-   */
-  getTooltipContent(data, xAxis, yAxis, zAxis) {
-    if (!data) {return;}
-
-    const content = [{
-      key: xAxis.name || xAxis.dataKey,
-      unit: xAxis.unit || '',
-      value: data.x
-    }, {
-      key: yAxis.name || yAxis.dataKey,
-      unit: yAxis.unit || '',
-      value: data.y
-    }];
-
-    if (data.z && data.z !== '-') {
-      content.push({
-        key: zAxis.name || zAxis.dataKey,
-        unit: zAxis.unit || '',
-        value: data.z
-      });
-    }
-
-    return content;
-  }
-  /**
-   * 渲染浮层
-   * @param  {Array[ReactComponet]} items 线图元素或者柱图元素
-   * @return {ReactComponent}
-   */
-  renderTooltip(items, xAxis, yAxis, zAxis) {
-    const {children} = this.props;
-    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
-
-    if (!tooltipItem) {
-      return;
-    }
-
-    const {chartX, chartY, isTooltipActive,
-          activeItem, activeTooltipCoord,
-          activeTooltipPosition} = this.state;
-
-    return React.cloneElement(tooltipItem, {
-        position: activeTooltipPosition,
-        active: isTooltipActive,
-        label: '',
-        data: this.getTooltipContent(activeItem && activeItem.value, xAxis, yAxis, zAxis),
-        coordinate: activeTooltipCoord,
-        mouseX: chartX,
-        mouseY: chartY
-    });
-  }
-  /**
    * 绘制图形部分
-   * @param  {Array[ReactComponet]} items 线图元素
-   * @param  {Object} xAxisMap x轴刻度
-   * @param  {Object} yAxisMap y轴刻度
-   * @param  {Object} offset   图形区域的偏移量
-   * @return {ReactComponent}
+   * @param  {Array} items 线图元素
+   * @param  {Object} xAxis x轴
+   * @param  {Object} yAxis y轴
+   * @param  {Object} zAxis z轴
+   * @return {ReactElement} 散点
    */
-  renderItems(items, xAxis, yAxis, zAxis, offset) {
+  renderItems(items, xAxis, yAxis, zAxis) {
     const {activeScatterKey} = this.state;
 
     return items.map((child, i) => {
-      let {strokeWidth, data, ...other} = child.props;
+      const {strokeWidth, data, ...other} = child.props;
 
-      strokeWidth = strokeWidth === +strokeWidth ? strokeWidth : 1;
-      strokeWidth = activeScatterKey === i ? strokeWidth + 2 : strokeWidth;
+      let finalStrokeWidth = strokeWidth === +strokeWidth ? strokeWidth : 1;
+      finalStrokeWidth = activeScatterKey === i ? finalStrokeWidth + 2 : finalStrokeWidth;
 
       return (
         <Scatter
           {...other}
           key={'scatter-' + i}
           groupId={'scatter-' + i}
-          strokeWidth={strokeWidth}
+          strokeWidth={finalStrokeWidth}
           onMouseLeave={this.handleScatterMouseLeave}
           onMouseEnter={this.handleScatterMouseEnter}
           data={this.getComposeData(data, xAxis, yAxis, zAxis)}/>
@@ -431,7 +460,7 @@ class ScatterChart extends React.Component {
     yAxis = this.getFormatAxis(yAxis, offset, 'yAxis');
 
     return (
-      <div className='recharts-wrapper'
+      <div className="recharts-wrapper"
         style={{position: 'relative', cursor: 'default', ...style}}>
 
         {legendItem && legendItem.props.layout === 'horizontal'
@@ -453,6 +482,7 @@ class ScatterChart extends React.Component {
       </div>
     );
   }
-};
+
+}
 
 export default ScatterChart;

@@ -22,8 +22,6 @@ import ScatterChart from './ScatterChart';
 import RadialBarChart from './RadialBarChart';
 import TreemapChart from './TreemapChart';
 
-import ColorPick from './ColorPick';
-
 export default {
   chart: {
     Pie,
@@ -56,8 +54,4 @@ export default {
     RadialBarChart,
     TreemapChart
   },
-
-  Util: {
-    ColorPick
-  }
 };

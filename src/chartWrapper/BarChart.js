@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
 import CartesianChart from './CartesianChart';
 import LodashUtils from '../util/LodashUtils';
 
@@ -9,7 +9,7 @@ import Tooltip from '../component/Tooltip';
 import Bar from '../chart/Bar';
 import BarItem from './BarItem';
 /**
- *  <BarChart className="my-line-cahrt">
+ *  <BarChart className='my-line-cahrt'>
  *    <BarItem data={} yAxis={0}/>
  *    <BarItem data={} yAxis={1}>
  *  </BarChart>
@@ -17,7 +17,7 @@ import BarItem from './BarItem';
 
 class BarChart extends CartesianChart {
 
-  displayName = 'BarChart';
+  static displayName = 'BarChart';
     /**
    * 组装曲线数据
    * @param  {Array}  barPosition 每个柱子的大小和偏移量
@@ -25,10 +25,10 @@ class BarChart extends CartesianChart {
    * @param  {Object} yAxis    y轴刻度
    * @param  {Object} offset   图形区域的偏移量
    * @param  {String} dataKey  该组数据所对应的key
-   * @return {Array}
+   * @return {Array} 组装后的数据
    */
   getComposeData(barPosition, xAxis, yAxis, offset, dataKey) {
-    const {barSize, barGap, layout} = this.props;
+    const {layout} = this.props;
     const {dataStartIndex, dataEndIndex} = this.state;
     const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
     const pos = barPosition[dataKey];
@@ -38,39 +38,32 @@ class BarChart extends CartesianChart {
 
     return data.map((entry, index) => {
       const value = entry[dataKey];
-      const width = layout === 'horizontal' ?
-                    pos.size :
-                    (yAxis.orient === 'left' ?
-                      xAxis.scale(value) - baseline :
-                      baseline - xAxis.scale(value)
-                    );
-      const height = layout === 'horizontal' ?
-              (xAxis.orient === 'top' ?
-                yAxis.scale(value) - baseline :
-                baseline - yAxis.scale(value)
-              ) :
-              pos.size;
+      let x;
+      let y;
+      let width;
+      let height;
 
-      return {
-        ...entry,
-        x: layout === 'horizontal' ?
-            xTicks[index].coord + pos.offset :
-            (yAxis.orient === 'left' ?
-              offset.left :
-              xAxis.scale(value)
-            ),
-        y: layout === 'horizontal' ?
-            (xAxis.orient === 'top' ?
-              offset.top :
-              yAxis.scale(value)
-            ) :
-            yTicks[index].coord + pos.offset,
-        width, height, value
-      };
+      if (layout === 'horizontal') {
+        x = xTicks[index].coord + pos.offset;
+        y = xAxis.orient === 'top' ? offset.top : yAxis.scale(value);
+        width = pos.size;
+        height = xAxis.orient === 'top' ?
+                yAxis.scale(value) - baseline :
+                baseline - yAxis.scale(value);
+      } else {
+        x = yAxis.orient === 'left' ? offset.left : xAxis.scale(value);
+        y = yTicks[index].coord + pos.offset;
+        width = yAxis.orient === 'left' ?
+                xAxis.scale(value) - baseline :
+                baseline - xAxis.scale(value);
+        height = pos.size;
+      }
+
+      return {...entry, x, y, width, height, value};
     });
   }
 
-  getBaseLine (xAxis, yAxis) {
+  getBaseLine(xAxis, yAxis) {
     const {layout} = this.props;
     const scale = layout === 'horizontal' ? yAxis.scale : xAxis.scale;
     const domain = scale.domain();
@@ -82,43 +75,43 @@ class BarChart extends CartesianChart {
    * 获取柱子的宽度以及柱子间的间距
    * @param  {Number}   bandSize 每一个类别所占的宽度或者高度
    * @param  {sizeList} sizeList  所有group设置的size
-   * @return {Number}
+   * @return {Number} 柱子的宽度以及柱子间的间距
    */
-  getBarPosition (bandSize, sizeList) {
+  getBarPosition(bandSize, sizeList) {
     const {barGap, barOffset} = this.props;
     const len = sizeList.length;
     let result;
 
     // 判断用户是否设置了柱子的大小
     if (sizeList[0].barSize === +sizeList[0].barSize) {
-      let sum = sizeList.reduce((result, entry) => {
-        return result + entry.barSize;
+      let sum = sizeList.reduce((res, entry) => {
+        return res + entry.barSize;
       }, 0);
       sum += (len - 1) * barGap;
-      let offset =  - sum / 2   >> 0;
+      const offset =  - sum / 2   >> 0;
       let prev = {offset: offset - barGap, size: 0};
 
-      result = sizeList.reduce((result, entry, i) => {
-        result[entry.dataKey] = {
+      result = sizeList.reduce((res, entry) => {
+        res[entry.dataKey] = {
           offset: prev.offset + prev.size + barGap,
-          size: entry.barSize
+          size: entry.barSize,
         };
-        prev = result[entry.dataKey];
+        prev = res[entry.dataKey];
 
-        return result;
+        return res;
       }, {});
     } else {
       let offset = LodashUtils.getPercentValue(barOffset, bandSize);
-      let size = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
+      const size = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
       offset = -Math.max(((size * len + (len - 1) * barGap) / 2) >> 0, 0);
 
-      result = sizeList.reduce((result, entry, i) => {
-        result[entry.dataKey] = {
+      result = sizeList.reduce((res, entry, i) => {
+        res[entry.dataKey] = {
           offset: offset + (size + barGap) * i,
-          size
+          size,
         };
 
-        return result;
+        return res;
       }, {});
     }
 
@@ -126,17 +119,17 @@ class BarChart extends CartesianChart {
   }
   /**
    * 计算每组柱子的大小
-   * @param  {Array[ReactComponent]} items 所有的柱图对象
-   * @return {Object}
+   * @param  {Array} items 所有的柱图对象
+   * @return {Object} 每组柱子的大小
    */
-  getSizeList (items) {
+  getSizeList(items) {
     const {layout, barSize} = this.props;
 
     const sizeList = items.reduce((result, child) => {
       const {xAxisId, yAxisId, dataKey} = child.props;
       const axisId = layout === 'horizontal' ? xAxisId : yAxisId;
 
-      let list = result[axisId] || [];
+      const list = result[axisId] || [];
 
       list.push({dataKey, barSize: child.props.barSize || barSize});
 
@@ -150,38 +143,39 @@ class BarChart extends CartesianChart {
   /**
    * 计算类目轴的两个区块间隔的大小
    * @param  {Function} scale 刻度函数
-   * @return {Number}
+   * @return {Number} 间隔大小
    */
-  getBandSize (scale) {
-    let ranges = scale.range();
+  getBandSize(scale) {
+    const ranges = scale.range();
 
     return ranges[1] - ranges[0];
   }
   /**
    * 鼠标进入柱子的响应事件
    * @param {String} key 曲线唯一对应的key
-   * @param {Object} e   事件对象
+   * @return {Object} no return
    */
-  handleBarMouseEnter = (key, e) => {
+  handleBarMouseEnter = (key) => {
     this.setState({
-      activeBarKey: key
+      activeBarKey: key,
     });
   }
   /**
    * 鼠标离开柱子的响应事件
+   * @return {Object} no return
    */
   handleBarMouseLeave = () => {
     this.setState({
-      activeBarKey: null
+      activeBarKey: null,
     });
   }
 
-  renderCursor (xAxisMap, yAxisMap, offset) {
+  renderCursor(xAxisMap, yAxisMap, offset) {
     const {children} = this.props;
     const {isTooltipActive} = this.state;
     const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
 
-    if (!tooltipItem || !isTooltipActive) {return;}
+    if (!tooltipItem || !isTooltipActive) {return null;}
 
     const {layout} = this.props;
     const {activeTooltipIndex} = this.state;
@@ -194,7 +188,7 @@ class BarChart extends CartesianChart {
 
     return (
       <rect
-        fill='#f1f1f1'
+        fill="#f1f1f1"
         x={layout === 'horizontal' ? start : offset.left + 0.5}
         y={layout === 'horizontal' ? offset.top + 0.5 : start}
         width={layout === 'horizontal' ? bandSize : offset.width - 1}
@@ -203,30 +197,29 @@ class BarChart extends CartesianChart {
   }
   /**
    * 绘制图形部分
-   * @param  {Array[ReactComponet]} items 柱图元素
+   * @param  {Array} items 柱图元素
    * @param  {Object} xAxisMap x轴刻度
    * @param  {Object} yAxisMap y轴刻度
    * @param  {Object} offset   图形区域的偏移量
-   * @return {ReactComponent}
+   * @return {ReactComponent} 柱子元素
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
-    if (!items || !items.length) {return;}
+    if (!items || !items.length) {return null;}
 
-    const {children, layout} = this.props;
-    const {activeLineKey} = this.state;
+    const {layout} = this.props;
     const sizeList = this.getSizeList(items);
 
-    let barPositionMap = {};
+    const barPositionMap = {};
 
     return items.map((child, i) => {
       const {xAxisId, yAxisId, dataKey, ...other} = child.props;
       const axisId = layout === 'horizontal' ? xAxisId : yAxisId;
       const bandSize = this.getBandSize(
                         layout === 'horizontal' ?
-                        xAxisMap[xAxisId].scale:
+                        xAxisMap[xAxisId].scale :
                         yAxisMap[yAxisId].scale
                       );
-      const barPosition = barPositionMap[axisId] || this.getBarPosition(bandSize, sizeList[axisId])
+      const barPosition = barPositionMap[axisId] || this.getBarPosition(bandSize, sizeList[axisId]);
 
       return (
         <Bar
@@ -252,7 +245,7 @@ class BarChart extends CartesianChart {
     yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
 
     return (
-      <div className='recharts-wrapper'
+      <div className="recharts-wrapper"
         style={{position: 'relative', cursor: 'default', ...style}}
         onMouseEnter={this.handleMouseEnter.bind(null, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(null, offset, xAxisMap, yAxisMap)}
@@ -280,6 +273,6 @@ class BarChart extends CartesianChart {
       </div>
     );
   }
-};
+}
 
 export default BarChart;

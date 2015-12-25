@@ -22,11 +22,8 @@
     "react-dom": "^0.14.2"
   },
   "dependencies": {
-    "d3-color": "^0.2.7",
     "d3-scale": "^0.1.2",
     "d3-shape": "^0.2.0",
-    "invariant": "^2.0.0",
-    "ramda": "^0.18.0",
     "react-addons-create-fragment": "^0.14.2",
     "react-addons-pure-render-mixin": "^0.14.2",
     "recharts-scale": "^0.1.2-beta"

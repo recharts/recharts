@@ -1,9 +1,6 @@
 import React, {PropTypes} from 'react';
 
 class BarItem extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   static displayName = 'BarItem';
 
@@ -13,8 +10,6 @@ class BarItem extends React.Component {
     barSize: PropTypes.number,
     // 数据对应的单位
     unit: PropTypes.any,
-    // 数据对应的名称
-    name: PropTypes.any,
     // 柱对应的数据key
     dataKey: PropTypes.string.isRequired,
     // 指标名称
@@ -25,16 +20,13 @@ class BarItem extends React.Component {
     strokeWidth: PropTypes.number,
     strokeDasharray: PropTypes.string,
     className: PropTypes.string,
-    // 数据对应的单位
-    unit: PropTypes.any,
-    // 数据对应的名称
-    name: PropTypes.any,
+
     legendType: PropTypes.string,
     isActive: PropTypes.bool,
     stack: PropTypes.string,
     stackType: PropTypes.string,
     // 数据格式化函数
-    formatter: PropTypes.func
+    formatter: PropTypes.func,
   };
 
   static defaultProps = {
@@ -42,12 +34,16 @@ class BarItem extends React.Component {
     xAxisId: 0,
     yAxisId: 0,
     legendType: 'rect',
-    isActive: true
+    isActive: true,
   };
 
-  render () {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
     return null;
   }
-};
+}
 
 export default BarItem;

@@ -14,14 +14,14 @@ const Tooltip = React.createClass({
     mouseY: PropTypes.number,
     coordinate: PropTypes.shape({
       x: PropTypes.number,
-      y: PropTypes.number
+      y: PropTypes.number,
     }),
     label: PropTypes.any,
     data: PropTypes.arrayOf(PropTypes.shape({
       key: PropTypes.any,
       value: PropTypes.number,
-      unit: PropTypes.any
-    }))
+      unit: PropTypes.any,
+    })),
   },
 
   getDefaultProps() {
@@ -34,16 +34,15 @@ const Tooltip = React.createClass({
       itemStyle: {},
       labelStyle: {},
       mouseX: 0,
-      mouseY: 0
+      mouseY: 0,
     };
   },
 
-  getMargin () {
-    let {position} = this.props;
-    let ary = position.split('-');
-    let orientH = ary[0];
-    let orientV = ary[1];
-    let result = {};
+  getMargin() {
+    const {position} = this.props;
+    const ary = position.split('-');
+    const orientH = ary[0];
+    const result = {};
 
     if (orientH === 'right') {
       result.marginLeft = '-100%';
@@ -55,7 +54,7 @@ const Tooltip = React.createClass({
     return result;
   },
 
-  renderContent () {
+  renderContent() {
     const {data, separator, formatter, itemStyle} = this.props;
 
     if (data && data.length) {
@@ -66,60 +65,59 @@ const Tooltip = React.createClass({
           paddingTop: 4,
           paddingBottom: 4,
           color: entry.color || '#000',
-          ...itemStyle
+          ...itemStyle,
         };
         const finalFormatter = entry.formatter || formatter;
 
         return (
-          <li className='tooltip-item' key={'tooltip-item-' + i} style={finalItemStyle}>
-            <span className='name'>{entry.key}</span>
-            <span className='separator'>{separator}</span>
-            <span className='value'>{finalFormatter ? finalFormatter(entry.value, entry.key) : entry.value}</span>
-            <span className='unit'>{entry.unit || ''}</span>
+          <li className="tooltip-item" key={'tooltip-item-' + i} style={finalItemStyle}>
+            <span className="name">{entry.key}</span>
+            <span className="separator">{separator}</span>
+            <span className="value">{finalFormatter ? finalFormatter(entry.value, entry.key) : entry.value}</span>
+            <span className="unit">{entry.unit || ''}</span>
           </li>
         );
       });
 
-      return <ul className='tooltip-item-list' style={listStyle}>{items}</ul>;
+      return <ul className="tooltip-item-list" style={listStyle}>{items}</ul>;
     }
   },
 
   render() {
-    const {component, mouseX, mouseY, coordinate, active,
+    const {component, coordinate, active,
         label, style, labelStyle} = this.props;
-    const margin = this.getMargin();
     const wrapperStyle = {
-          pointerEvents: 'none',
-          whiteSpace: 'nowrap',
-          padding: 10,
-          borderWidth: 1,
-          borderStyle: 'solid',
-          borderColor: '#ccc',
-          backgroundColor: '#fff',
-          display: active ? 'block' : 'none',
-          position: 'absolute',
-          top: coordinate.y + 20,
-          left: coordinate.x + 10,
-          ...style
-        };
+      pointerEvents: 'none',
+      whiteSpace: 'nowrap',
+      padding: 10,
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor: '#ccc',
+      backgroundColor: '#fff',
+      display: active ? 'block' : 'none',
+      position: 'absolute',
+      top: coordinate.y + 20,
+      left: coordinate.x + 10,
+      ...style,
+    };
     const finalLabelStyle = {
       margin: 0,
-      ...labelStyle
+      ...labelStyle,
     };
 
     return (
-      <div className='tooltip' style={wrapperStyle}>
+      <div className="tooltip" style={wrapperStyle}>
         {
           component ? React.cloneElement(component, this.props) : (
-            <div className='tooltip-default'>
-              <p className='tooltip-label' style={finalLabelStyle}>{label}</p>
+            <div className="tooltip-default">
+              <p className="tooltip-label" style={finalLabelStyle}>{label}</p>
               {this.renderContent()}
             </div>
           )
         }
       </div>
     );
-  }
+  },
 });
 
 export default Tooltip;

@@ -2,7 +2,6 @@
  * @fileOverview 玉玦图
  */
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
 import LodashUtils from '../util/LodashUtils';
@@ -10,10 +9,9 @@ import DOMUtils from '../util/DOMUtils';
 
 const RADIAN = Math.PI / 180;
 
-const RadialBar = React.createClass({
-  mixins: [PureRenderMixin],
+class RadialBar extends React.Component {
 
-  propTypes: {
+  static propTypes = {
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
@@ -23,6 +21,9 @@ const RadialBar = React.createClass({
     component: PropTypes.object,
 
     labelOffsetRadius: PropTypes.number,
+
+    cx: PropTypes.number,
+    cy: PropTypes.number,
     clockWise: PropTypes.bool,
     startAngle: PropTypes.number,
     endAngle: PropTypes.number,
@@ -33,33 +34,32 @@ const RadialBar = React.createClass({
       cy: PropTypes.number,
       innerRadius: PropTypes.number,
       outerRadius: PropTypes.number,
-      value: PropTypes.value
+      value: PropTypes.value,
     })),
 
+    labelStyle: PropTypes.object,
     hasLabel: PropTypes.bool,
     hasBackground: PropTypes.bool,
 
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func
-  },
+    onClick: PropTypes.func,
+  };
 
-  getDefaultProps () {
-    return {
-      // 数据
-      data: [],
-      labelOffsetRadius: 2,
-      clockWise: true,
-      startAngle: 0,
-      minAngle: 0,
-      onClick () {},
-      onMouseEnter () {},
-      onMouseLeave () {}
-    };
-  },
+  static defaultProps = {
+    // 数据
+    data: [],
+    labelOffsetRadius: 2,
+    clockWise: true,
+    startAngle: 0,
+    minAngle: 0,
+    onClick() {},
+    onMouseEnter() {},
+    onMouseLeave() {},
+  };
 
-  getSectors () {
-    const {cx, cy, innerRadius, outerRadius, startAngle, endAngle,
+  getSectors() {
+    const {cx, cy, startAngle,
            data, minAngle, maxAngle, clockWise} = this.props;
     const maxValue = Math.max.apply(null, data.map(entry => entry.value));
     const absMinAngle = Math.abs(minAngle);
@@ -75,14 +75,14 @@ const RadialBar = React.createClass({
         cx, cy,
         clockWise,
         startAngle,
-        endAngle: _endAngle
+        endAngle: _endAngle,
       };
     });
 
     return sectors;
-  },
+  }
 
-  getLabelPathArc (data, label, style) {
+  getLabelPathArc(data, label, style) {
     const {labelOffsetRadius} = this.props;
     const {cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise} = data;
     const radius = clockWise ? innerRadius + labelOffsetRadius : Math.max(outerRadius - labelOffsetRadius, 0);
@@ -91,7 +91,8 @@ const RadialBar = React.createClass({
 
     const labelSize = DOMUtils.getStringSize(label, style);
     const deltaAngle = labelSize.width / (radius * RADIAN);
-    let _startAngle, _endAngle;
+    let _startAngle;
+    let _endAngle;
 
     if (clockWise) {
       _startAngle = Math.min(endAngle + deltaAngle, startAngle);
@@ -108,10 +109,10 @@ const RadialBar = React.createClass({
             ${clockWise ? 1 : 0},
             ${cx + radius * Math.cos(-RADIAN * _endAngle)},
             ${cy + radius * Math.sin(-RADIAN * _endAngle)}`;
-  },
+  }
 
 
-  renderSectors (sectors) {
+  renderSectors(sectors) {
     const {className, component, data, ...others} = this.props;
 
     return sectors.map((entry, i) => {
@@ -119,15 +120,15 @@ const RadialBar = React.createClass({
 
       return component ? React.cloneElement(component, {
         ...others, ...rest,
-        key: 'sector-' + i
+        key: 'sector-' + i,
       }) : React.createElement(Sector, {
         ...others, ...rest,
-        key: 'sector-' + i
+        key: 'sector-' + i,
       });
     });
-  },
+  }
 
-  renderBackground (sectors) {
+  renderBackground(sectors) {
     const {startAngle, endAngle, clockWise} = this.props;
 
     return sectors.map((entry, i) => {
@@ -136,16 +137,16 @@ const RadialBar = React.createClass({
       return (
         <Sector
           {...rest}
-          fill='#f1f1f1'
+          fill="#f1f1f1"
           clockWise={clockWise}
           startAngle={startAngle}
           endAngle={endAngle}
           key={'sector-' + i}/>
       );
     });
-  },
+  }
 
-  renderLabels (sectors) {
+  renderLabels(sectors) {
     const {labelStyle} = this.props;
 
     return sectors.map((entry, i) => {
@@ -160,36 +161,36 @@ const RadialBar = React.createClass({
 
       return <text style={style} key={'label-' + i} dangerouslySetInnerHTML={{__html: html}}/>;
     });
-  },
+  }
 
-  render () {
-    let {data, className, hasBackground, hasLabel} = this.props;
+  render() {
+    const {data, className, hasBackground, hasLabel} = this.props;
 
     if (!data || !data.length) {
-      return;
+      return null;
     }
     const sectors = this.getSectors();
 
     return (
       <Layer className={'layer-radial-bar ' + (className || '')}>
         {hasBackground && (
-          <Layer className={'layer-background'}>
+          <Layer className="layer-background">
             {this.renderBackground(sectors)}
           </Layer>
         )}
 
-        <Layer className='laryer-sector'>
+        <Layer className="laryer-sector">
           {this.renderSectors(sectors)}
         </Layer>
 
         {hasLabel && (
-          <Layer className='laryer-label'>
+          <Layer className="laryer-label">
             {this.renderLabels(sectors)}
           </Layer>
         )}
       </Layer>
     );
   }
-});
+}
 
 export default RadialBar;

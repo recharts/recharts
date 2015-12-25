@@ -2,15 +2,15 @@
  * @fileOverview 柱图
  */
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 
-const Bar = React.createClass({
-  mixins: [PureRenderMixin],
+class Bar extends  React.Component {
 
-  propTypes: {
+  static propTypes = {
     component: PropTypes.element,
+    hasLabel: PropTypes.bool,
+
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
@@ -22,74 +22,72 @@ const Bar = React.createClass({
       width: PropTypes.number,
       height: PropTypes.number,
       radius: PropTypes.oneOfType([
-                PropTypes.number,
-                PropTypes.array
-              ]),
-      value: PropTypes.value
+        PropTypes.number,
+        PropTypes.array,
+      ]),
+      value: PropTypes.value,
     })),
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func
-  },
+    onClick: PropTypes.func,
+  };
 
-  getDefaultProps () {
-    return {
-      // 数据
-      data: [],
-      onClick () {},
-      onMouseEnter () {},
-      onMouseLeave () {}
-    };
-  },
+  static defaultProps = {
+    // 数据
+    data: [],
+    onClick() {},
+    onMouseEnter() {},
+    onMouseLeave() {},
+  };
 
-  renderRectangles () {
+  renderRectangles() {
     const {data, className, hasLabel, component, ...others} = this.props;
 
     return data.map((entry, i) => {
-      let {value, ...rest} = entry;
+      const {value, ...rest} = entry;
 
       return component ? React.cloneElement(component, {
         ...others, ...rest,
-        key: 'rectangle-' + i
+        key: 'rectangle-' + i,
       }) : React.createElement(Rectangle, {
         ...others, ...rest,
-        key: 'rectangle-' + i
+        key: 'rectangle-' + i,
       });
     });
-  },
+  }
 
-  renderLabels () {
+  renderLabels() {
     const {data} = this.props;
 
     return data.map((entry, i) => {
       return (
-        <text textAnchor='middle' x={entry.x + entry.width / 2} y={entry.y} key={'label-' + i}>
+        <text textAnchor="middle" x={entry.x + entry.width / 2} y={entry.y} key={'label-' + i}>
           {entry.value}
         </text>
       );
     });
-  },
+  }
 
-  render () {
-    let {data, className, hasLabel} = this.props;
+  render() {
+    const {data, className, hasLabel} = this.props;
 
     if (!data || !data.length) {
-      return;
+      return null;
     }
 
     return (
       <Layer className={'layer-bar ' + (className || '')}>
-        <Layer className='layer-rectangles'>
+        <Layer className="layer-rectangles">
           {this.renderRectangles()}
         </Layer>
         { hasLabel && (
-          <Layer className='layer-rectangles'>
+          <Layer className="layer-rectangles">
             {this.renderLabels()}
           </Layer>
         )}
       </Layer>
     );
   }
-});
+}
 
 export default Bar;

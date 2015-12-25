@@ -1,9 +1,6 @@
 import React, {PropTypes} from 'react';
 
 class YAxis extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   static displayName = 'YAxis';
 
@@ -29,7 +26,7 @@ class YAxis extends React.Component {
     height: PropTypes.number,
     // 轴的方位
     orient: PropTypes.oneOf(['left', 'right']),
-    type: PropTypes.oneOf(['number', 'category'])
+    type: PropTypes.oneOf(['number', 'category']),
   };
 
   static defaultProps = {
@@ -38,12 +35,16 @@ class YAxis extends React.Component {
     height: 0,
     yAxisId: 0,
     tickCount: 5,
-    type: 'number'
+    type: 'number',
   };
 
-  render () {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
     return null;
   }
-};
+}
 
 export default YAxis;
