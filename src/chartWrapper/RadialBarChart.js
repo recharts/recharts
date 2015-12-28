@@ -168,8 +168,8 @@ class RadialBarChart extends React.Component {
 
       result = radiusList.reduce((res, entry) => {
         res[entry.dataKey] = {
-          offset: prev.offset + prev.size + barGapRadius,
-          radius: entry.barSize,
+          offset: prev.offset + prev.radius + barGapRadius,
+          radius: entry.barRadius,
         };
         prev = res[entry.dataKey];
 
