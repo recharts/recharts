@@ -1,13 +1,19 @@
 import React, {PropTypes} from 'react';
 
-const Layer = React.createClass({
-  propTypes: {
+class Layer extends React.Component {
+
+  static displayName = 'Layer';
+
+  static propTypes = {
     className: PropTypes.string,
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
     ]),
-  },
+  };
+  constructor(props) {
+    super(props);
+  }
 
   render() {
     const {children, className, ...others} = this.props;
@@ -17,7 +23,7 @@ const Layer = React.createClass({
         {children}
       </g>
     );
-  },
-});
+  }
+}
 
 export default Layer;

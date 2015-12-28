@@ -5,6 +5,9 @@ import React, {PropTypes} from 'react';
 import Sector from '../shape/Sector';
 
 class Pie extends React.Component {
+
+  static displayName = 'Pie';
+
   static propTypes = {
     cx: PropTypes.number,
     cy: PropTypes.number,
@@ -47,6 +50,10 @@ class Pie extends React.Component {
     onMouseLeave() {},
     onClick() {},
   };
+
+  constructor(props) {
+    super(props);
+  }
 
   getSectors() {
     const {cx, cy, innerRadius, outerRadius, startAngle, data, minAngle, clockWise} = this.props;
@@ -91,7 +98,7 @@ class Pie extends React.Component {
     return sectors;
   }
 
-  handleSectorEnter(data, e) {
+  handleSectorEnter = (data, e) => {
     this.props.onMouseEnter(data, e);
   }
 

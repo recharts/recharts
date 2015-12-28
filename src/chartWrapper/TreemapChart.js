@@ -3,6 +3,8 @@ import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 
 class TreemapChart extends React.Component {
+  static displayName = 'TreemapChart';
+
   static propTypes = {
     width: PropTypes.number,
     height: PropTypes.number,
@@ -10,6 +12,10 @@ class TreemapChart extends React.Component {
     style: PropTypes.object,
     ratio: PropTypes.number,
   };
+
+  constructor(props) {
+    super(props);
+  }
 
   pad(node) {
     return {x: node.x, y: node.y, dx: node.dx, dy: node.dy};

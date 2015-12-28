@@ -2,6 +2,8 @@ import React from 'react';
 import {Surface, Pie} from 'recharts';
 
 export default React.createClass({
+  displayName: 'PieDemo',
+
   render () {
     let data = [
     {name: 'iphone4', value: 120, fill: '#ff7300'},

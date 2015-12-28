@@ -11,6 +11,8 @@ const RADIAN = Math.PI / 180;
 
 class RadialBar extends React.Component {
 
+  static displayName = 'RadialBar';
+
   static propTypes = {
     fill: PropTypes.string,
     stroke: PropTypes.string,
@@ -57,6 +59,10 @@ class RadialBar extends React.Component {
     onMouseEnter() {},
     onMouseLeave() {},
   };
+
+  constructor(props) {
+    super(props);
+  }
 
   getSectors() {
     const {cx, cy, startAngle,

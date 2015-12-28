@@ -2,7 +2,10 @@ import React from 'react';
 
 const RADIAN = Math.PI / 180;
 
-class Radar extends React.Component {
+class RadarSecond extends React.Component {
+
+  static displayName = 'RadarSecond';
+
   static propTypes = {
     cx: PropTypes.number,
     cy: PropTypes.number,
@@ -22,6 +25,10 @@ class Radar extends React.Component {
     // 数据
     data: [],
   };
+
+  constructor(props) {
+    super(props);
+  }
   /**
    * 计算雷达图中多边形的顶点坐标
    * @return {Array} 多边形的顶点
@@ -55,4 +62,4 @@ class Radar extends React.Component {
   }
 }
 
-export default Radar;
+export default RadarSecond;

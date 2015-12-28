@@ -42,7 +42,7 @@ import XAxis from './chartWrapper/XAxis';
 import YAxis from './chartWrapper/YAxis';
 import ZAxis from './chartWrapper/ZAxis';
 
-export default {
+export {
   // container
   Surface,
 

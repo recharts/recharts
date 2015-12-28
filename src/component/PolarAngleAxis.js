@@ -5,16 +5,17 @@
  */
 import React from 'react';
 import createFragment from 'react-addons-create-fragment';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 const PropTypes = React.PropTypes;
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
 const offset = 8;
 
-const PolarAngleAxis = React.createClass({
+class PolarAngleAxis extends React.Component {
 
-  propTypes: {
+  static displayName = 'PolarAngleAxis';
+
+  static propTypes = {
     cx: PropTypes.number,
     cy: PropTypes.number,
     startAngle: PropTypes.number,
@@ -26,20 +27,20 @@ const PolarAngleAxis = React.createClass({
     tickValueFormat: PropTypes.func,
     orientation: PropTypes.oneOf(['inner', 'outer']),
     concentricPathType: PropTypes.oneOf(['polygon', 'circle']),
-  },
+  };
 
-  mixins: [PureRenderMixin],
+  static defaultProps = {
+    // 坐标轴所在的方位
+    orientation: 'inner',
+    // 刻度数据，格式为 {value: "展示的刻度值", angle: 12, size: 8}
+    ticks: [],
+    // 刻度的大小
+    tickSize: 6,
+  };
 
-  getDefaultProps() {
-    return {
-      // 坐标轴所在的方位
-      orientation: 'inner',
-      // 刻度数据，格式为 {value: "展示的刻度值", angle: 12, size: 8}
-      ticks: [],
-      // 刻度的大小
-      tickSize: 6,
-    };
-  },
+  constructor(props) {
+    super(props);
+  }
   /**
    * 获取tick线段的端点坐标
    * @param  {Object} data tick数据
@@ -79,7 +80,7 @@ const PolarAngleAxis = React.createClass({
     }
 
     return {x0, y0, x1, y1, x2, y2};
-  },
+  }
   /**
    * 计算文字的对齐方式
    * @param  {Object} data 刻度数据
@@ -99,7 +100,7 @@ const PolarAngleAxis = React.createClass({
     }
 
     return textAnchor;
-  },
+  }
   /**
    * 绘制刻度
    * @return {SVGElement} [description]
@@ -138,7 +139,7 @@ const PolarAngleAxis = React.createClass({
         {createFragment(items)}
       </g>
     );
-  },
+  }
 
   render() {
     const {ticks} = this.props;
@@ -152,7 +153,7 @@ const PolarAngleAxis = React.createClass({
         {this.renderTicks()}
       </g>
     );
-  },
-});
+  }
+}
 
 export default PolarAngleAxis;

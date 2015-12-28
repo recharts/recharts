@@ -1,7 +1,10 @@
 import React, {PropTypes} from 'react';
 
-const Tooltip = React.createClass({
-  propTypes: {
+class Tooltip extends React.Component {
+
+  static displayName = 'Tooltip';
+
+  static propTypes = {
     component: PropTypes.element,
     active: PropTypes.bool,
     position: PropTypes.string,
@@ -22,21 +25,23 @@ const Tooltip = React.createClass({
       value: PropTypes.number,
       unit: PropTypes.any,
     })),
-  },
+  };
 
-  getDefaultProps() {
-    return {
-      active: false,
-      position: 'left-bottom',
-      coordinate: {x: 0, y: 0},
-      separator: ' : ',
-      style: {},
-      itemStyle: {},
-      labelStyle: {},
-      mouseX: 0,
-      mouseY: 0,
-    };
-  },
+  static defaultProps = {
+    active: false,
+    position: 'left-bottom',
+    coordinate: {x: 0, y: 0},
+    separator: ' : ',
+    style: {},
+    itemStyle: {},
+    labelStyle: {},
+    mouseX: 0,
+    mouseY: 0,
+  };
+
+  constructor(props) {
+    super(props);
+  }
 
   getMargin() {
     const {position} = this.props;
@@ -52,7 +57,7 @@ const Tooltip = React.createClass({
     }
 
     return result;
-  },
+  }
 
   renderContent() {
     const {data, separator, formatter, itemStyle} = this.props;
@@ -81,7 +86,7 @@ const Tooltip = React.createClass({
 
       return <ul className="tooltip-item-list" style={listStyle}>{items}</ul>;
     }
-  },
+  }
 
   render() {
     const {component, coordinate, active,
@@ -117,7 +122,7 @@ const Tooltip = React.createClass({
         }
       </div>
     );
-  },
-});
+  }
+}
 
 export default Tooltip;

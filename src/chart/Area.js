@@ -7,6 +7,8 @@ import Layer from '../container/Layer';
 
 class Area extends React.Component {
 
+  static displayName = 'Area';
+
   static propTypes = {
     type: PropTypes.string,
     fill: PropTypes.string,
@@ -45,6 +47,10 @@ class Area extends React.Component {
     onMouseEnter() {},
     onMouseLeave() {},
   };
+
+  constructor(props) {
+    super(props);
+  }
 
   renderArea() {
     const {hasDot, hasCurve, className, ...other} = this.props;
