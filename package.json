@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "React charts",
   "main": "src/index.js",
   "keywords": [
