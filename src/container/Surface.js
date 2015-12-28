@@ -1,7 +1,10 @@
 import React, {PropTypes} from 'react';
 
-const Surface = React.createClass({
-  propTypes: {
+class Surface extends React.Component {
+
+  static displayName = 'Surface';
+
+  static propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     viewBox: PropTypes.shape({
@@ -16,7 +19,10 @@ const Surface = React.createClass({
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
     ]),
-  },
+  };
+  constructor(props) {
+    super(props);
+  }
 
   render() {
     const {children, width, height, viewBox, className, style} = this.props;
@@ -33,7 +39,7 @@ const Surface = React.createClass({
         {children}
       </svg>
     );
-  },
-});
+  }
+}
 
 export default Surface;

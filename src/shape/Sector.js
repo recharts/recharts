@@ -1,11 +1,11 @@
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
-
 const RADIAN = Math.PI / 180;
 
-const Sector = React.createClass({
+class Sector extends React.Component {
 
-  propTypes: {
+  static displayName = 'Sector';
+
+  static propTypes = {
     cx: PropTypes.number,
     cy: PropTypes.number,
     innerRadius: PropTypes.number,
@@ -20,29 +20,29 @@ const Sector = React.createClass({
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
-  },
+  };
 
-  mixins: [PureRenderMixin],
+  static defaultProps = {
+    // 圆心的横坐标
+    cx: 0,
+    // 圆心的纵坐标
+    cy: 0,
+    // 内径
+    innerRadius: 0,
+    // 外径
+    outerRadius: 0,
+    // 起始角度
+    startAngle: 0,
+    // 终点角度
+    endAngle: 0,
+    onMouseEnter() {},
+    onMouseLeave() {},
+    onClick() {},
+  };
 
-  getDefaultProps() {
-    return {
-      // 圆心的横坐标
-      cx: 0,
-      // 圆心的纵坐标
-      cy: 0,
-      // 内径
-      innerRadius: 0,
-      // 外径
-      outerRadius: 0,
-      // 起始角度
-      startAngle: 0,
-      // 终点角度
-      endAngle: 0,
-      onMouseEnter() {},
-      onMouseLeave() {},
-      onClick() {},
-    };
-  },
+  constructor(props) {
+    super(props);
+  }
 
   getPath(cx, cy, innerRadius, outerRadius, startAngle, endAngle) {
     const angle = endAngle - startAngle;
@@ -66,7 +66,7 @@ const Sector = React.createClass({
     }
 
     return path;
-  },
+  }
 
   render() {
     const {cx, cy, innerRadius, outerRadius, startAngle, endAngle,
@@ -86,7 +86,7 @@ const Sector = React.createClass({
       onClick={onClick}
       d={this.getPath(cx, cy, innerRadius, outerRadius, startAngle, endAngle)}/>
     );
-  },
-});
+  }
+}
 
 export default Sector;

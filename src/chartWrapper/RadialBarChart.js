@@ -6,13 +6,15 @@ import RadialBar from '../chart/RadialBar';
 import RadialBarItem from './RadialBarItem';
 import LodashUtils from '../util/LodashUtils';
 
-import {ordinal} from 'd3-scale';
+import D3Scale from 'd3-scale';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 
 class RadialBarChart extends React.Component {
 
   static displayName = 'RadialBarChart';
+
+  displayName = 'RadialBarChart';
 
   static propTypes = {
     width: PropTypes.number.isRequired,
@@ -139,8 +141,8 @@ class RadialBarChart extends React.Component {
       LodashUtils.getPercentValue(innerRadius, maxRadius),
     ];
 
-    const scale = ordinal().domain(LodashUtils.range(0, bandCount))
-                    .rangeRoundBands(range);
+    const scale = D3Scale.band().domain(LodashUtils.range(0, bandCount))
+                    .range(range);
 
     return scale;
   }
@@ -252,7 +254,7 @@ class RadialBarChart extends React.Component {
     if (!items || !items.length) {return null;}
 
     const radiusList = this.getRadiusList(items);
-    const bandRadius = radiusScale.rangeBand();
+    const bandRadius = radiusScale.bandwidth();
     const barPosition = this.getBarPosition(bandRadius, radiusList);
 
     return items.map((child, i) => {

@@ -2,4 +2,3 @@
   plugins: ["transform-export-extensions"],
   presets: ["es2015", "react", "stage-0"]
 }
-

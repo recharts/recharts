@@ -25,11 +25,12 @@ module.exports = {
   module: {
     loaders: [{
       test: /\.js$/,
-      loaders: ['react-hot', 'babel-loader?stage=0'],
+      loaders: ['react-hot', 'babel-loader'],
       include: [
         __dirname,
         path.join(__dirname,  '..', 'src'),
-        path.join(__dirname,  '..', 'node_modules', 'recharts-scale')
+        path.join(__dirname,  '..', 'node_modules', 'recharts-scale'),
+        path.join(__dirname,  '..', 'node_modules', 'recharts-color-util')
       ]
     }]
   }

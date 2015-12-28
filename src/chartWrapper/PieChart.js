@@ -18,6 +18,8 @@ class PieChart extends React.Component {
 
   static displayName = 'PieChart';
 
+  displayName = 'PieChart';
+
   static propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,

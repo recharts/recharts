@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import ReactDOM from 'react-dom';
 import {getNiceTickValues} from 'recharts-scale';
-import {linear, ordinal} from 'd3-scale';
+import D3Scale from 'd3-scale';
 
 import Layer from '../container/Layer';
 import CartesianAxis from '../component/CartesianAxis';
@@ -22,7 +22,6 @@ const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
   yAxis: ['left', 'right'],
 };
-
 /**
  * 欧式坐标系图表基类
  */
@@ -361,14 +360,14 @@ class CartesianChart extends React.Component {
                 [offset.top + offset.height, offset.top] :
                 [offset.top, offset.top + offset.height];
       }
-
       let scale;
       // 数值类型的刻度使用 linear刻度，类目轴使用 ordinal刻度
       if (type === 'number') {
-        scale = linear().domain(domain).range(range);
+        scale = D3Scale.linear().domain(domain).range(range);
+      } else if (this.displayName === 'LineChart' || this.displayName === 'AreaChart') {
+        scale = D3Scale.point().domain(domain).range(range);
       } else {
-        scale = ordinal().domain(domain)
-                        .rangeRoundPoints(range, this.displayName === 'LineChart' || this.displayName === 'AreaChart' ? 0 : 1);
+        scale = D3Scale.band().domain(domain).range(range);
       }
 
       this.setTicksOfScale(scale, axis);
@@ -404,32 +403,26 @@ class CartesianChart extends React.Component {
   /**
    * 计算x轴，y轴的刻度
    * @param  {Object}  axis 刻度对象
-   * @param  {Function} fn  处理函数
    * @return {Array} 轴的刻度
    */
-  getAxisTicks(axis, fn) {
+  getAxisTicks(axis, isGrid = false) {
     const scale = axis.scale;
+    const offset = isGrid && axis.type === 'category' ? scale.bandwidth() / 2 : 0;
 
     if (axis.ticks) {
       return axis.ticks.map(entry => {
-        const result = {coord: scale(entry), value: entry};
-
-        return fn ? fn(result) : result;
+        return {coord: scale(entry) + offset, value: entry};
       });
     }
 
     if (scale.ticks) {
       return scale.ticks(axis.tickCount).map(entry => {
-        const result = {coord: scale(entry), value: entry};
-
-        return fn ? fn(result) : result;
+        return {coord: scale(entry) + offset, value: entry};
       });
     }
 
     return scale.domain().map((entry) => {
-      const result = {coord: scale(entry), value: entry};
-
-      return fn ? fn(result) : result;
+      return {coord: scale(entry) + offset, value: entry};
     });
   }
 
@@ -624,7 +617,7 @@ class CartesianChart extends React.Component {
               key={'x-axis-' + ids[i]}
               orient={axis.orient}
               viewBox={{x: 0, y: 0, width, height}}
-              ticks={this.getAxisTicks(axis)}/>
+              ticks={this.getAxisTicks(axis, true)}/>
           ));
         }
       }
@@ -658,7 +651,7 @@ class CartesianChart extends React.Component {
               key={'y-axis-' + ids[i]}
               orient={axis.orient}
               viewBox={{x: 0, y: 0, width, height}}
-              ticks={this.getAxisTicks(axis)}/>
+              ticks={this.getAxisTicks(axis, true)}/>
           ));
         }
       }
@@ -686,13 +679,13 @@ class CartesianChart extends React.Component {
 
     const verticalPoints = this.getGridTicks(CartesianAxis.getTicks({
       ...CartesianAxis.defaultProps, ...xAxis,
-      ticks: this.getAxisTicks(xAxis),
+      ticks: this.getAxisTicks(xAxis, true),
       viewBox: {x: 0, y: 0, width, height},
     }), offset.left, offset.left + offset.width);
 
     const horizontalPoints = this.getGridTicks(CartesianAxis.getTicks({
       ...CartesianAxis.defaultProps, ...yAxis,
-      ticks: this.getAxisTicks(yAxis),
+      ticks: this.getAxisTicks(yAxis, true),
       viewBox: {x: 0, y: 0, width, height},
     }), offset.top, offset.top + offset.height);
 

@@ -1,10 +1,11 @@
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import d3Shape from 'd3-shape';
 
-const Curve = React.createClass({
+class Curve extends React.Component {
 
-  propTypes: {
+  static displayName = 'Curve';
+
+  static propTypes = {
     type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
     fill: PropTypes.string,
     stroke: PropTypes.string,
@@ -19,27 +20,26 @@ const Curve = React.createClass({
       PropTypes.number, PropTypes.array,
     ]),
     points: PropTypes.arrayOf(PropTypes.object),
-  },
+  };
 
-  mixins: [PureRenderMixin],
-
-  getDefaultProps() {
-    return {
-      // 曲线类型，linear - 折线
-      // stepBefore - 节点靠前的阶梯曲线, stepMiddle - 节点居中的阶梯曲线, stepAfter - 节点靠后的阶梯曲线
-      // monotone - 光滑曲线
-      type: 'linear',
-      stroke: '#000',
-      fill: 'none',
-      strokeWidth: 1,
-      strokeDasharray: 'none',
-      // 点坐标
-      points: [],
-      onClick() {},
-      onMouseEnter() {},
-      onMouseLeave() {},
-    };
-  },
+  static defaultProps = {
+    // 曲线类型，linear - 折线
+    // stepBefore - 节点靠前的阶梯曲线, stepMiddle - 节点居中的阶梯曲线, stepAfter - 节点靠后的阶梯曲线
+    // monotone - 光滑曲线
+    type: 'linear',
+    stroke: '#000',
+    fill: 'none',
+    strokeWidth: 1,
+    strokeDasharray: 'none',
+    // 点坐标
+    points: [],
+    onClick() {},
+    onMouseEnter() {},
+    onMouseLeave() {},
+  };
+  constructor(props) {
+    super(props);
+  }
   /**
    * 获取曲线路径
    * @return {String} 路径
@@ -60,7 +60,7 @@ const Curve = React.createClass({
     }
 
     return curvePath;
-  },
+  }
 
   render() {
     const {className, points, type, onClick,
@@ -79,7 +79,7 @@ const Curve = React.createClass({
         onClick={onClick}
         d={this.getPath()}/>
     );
-  },
-});
+  }
+}
 
 export default Curve;

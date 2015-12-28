@@ -1,12 +1,13 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import createFragment from 'react-addons-create-fragment';
 
 const PropTypes = React.PropTypes;
 
-const CartesianGrid = React.createClass({
+class CartesianGrid extends React.Component {
 
-  propTypes: {
+  static displayName = 'CartesianGrid';
+
+  static propTypes = {
     x: PropTypes.number,
     y: PropTypes.number,
     width: PropTypes.number,
@@ -17,27 +18,27 @@ const CartesianGrid = React.createClass({
     verticalPoints: PropTypes.arrayOf(PropTypes.number),
 
     fill: PropTypes.string,
-  },
+  };
 
-  mixins: [PureRenderMixin],
+  static defaultProps = {
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    horizontal: true,
+    vertical: true,
+    // 水平线条的纵坐标
+    horizontalPoints: [],
+    // 竖直线条的横坐标
+    verticalPoints: [],
 
-  getDefaultProps() {
-    return {
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-      horizontal: true,
-      vertical: true,
-      // 水平线条的纵坐标
-      horizontalPoints: [],
-      // 竖直线条的横坐标
-      verticalPoints: [],
+    stroke: '#ccc',
+    fill: 'none',
+  };
 
-      stroke: '#ccc',
-      fill: 'none',
-    };
-  },
+  constructor(props) {
+    super(props);
+  }
   /**
    * 绘制水平方向的线条
    * @return {Group} 图层
@@ -61,7 +62,7 @@ const CartesianGrid = React.createClass({
         {createFragment(items)}
       </g>
     );
-  },
+  }
   /**
    * 绘制竖直方向的线条
    * @return {Group} 图层
@@ -85,7 +86,7 @@ const CartesianGrid = React.createClass({
         {createFragment(items)}
       </g>
     );
-  },
+  }
 
   render() {
     const {width, height, horizontal, vertical} = this.props;
@@ -100,7 +101,7 @@ const CartesianGrid = React.createClass({
         {vertical && this.renderVertical()}
       </g>
     );
-  },
-});
+  }
+}
 
 export default CartesianGrid;

@@ -5,7 +5,9 @@ import React, {PropTypes} from 'react';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 
-class Bar extends  React.Component {
+class Bar extends React.Component {
+
+  static displayName = 'Bar';
 
   static propTypes = {
     component: PropTypes.element,
@@ -39,6 +41,10 @@ class Bar extends  React.Component {
     onMouseEnter() {},
     onMouseLeave() {},
   };
+
+  constructor(props) {
+    super(props);
+  }
 
   renderRectangles() {
     const {data, className, hasLabel, component, ...others} = this.props;

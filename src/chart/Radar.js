@@ -6,9 +6,11 @@ import PolarAngleAxis from '../component/PolarAngleAxis';
 const perigon = 360;
 const RADIAN = Math.PI / 180;
 
-const Pie = React.createClass({
+class Radar extends React.Component {
 
-  propTypes: {
+  static displayName = 'Radar';
+
+  static propTypes = {
     cx: PropTypes.number,
     cy: PropTypes.number,
     startAngle: PropTypes.number,
@@ -19,22 +21,24 @@ const Pie = React.createClass({
     gridNumber: PropTypes.number,
     data: PropTypes.array,
     className: PropTypes.string,
-  },
+  };
 
-  getDefaultProps() {
-    return {
-      cx: 0,
-      cy: 0,
-      innerRadius: 0,
-      outerRadius: 0,
-      startAngle: 0,
-      clockWise: true,
-      // 网格分段数
-      gridNumber: 2,
-      // 数据
-      data: [],
-    };
-  },
+  static defaultProps = {
+    cx: 0,
+    cy: 0,
+    innerRadius: 0,
+    outerRadius: 0,
+    startAngle: 0,
+    clockWise: true,
+    // 网格分段数
+    gridNumber: 2,
+    // 数据
+    data: [],
+  };
+
+  constructor(props) {
+    super(props);
+  }
   /**
    * 计算网格所在的半径节点
    * @return {Array} 半径节点
@@ -64,7 +68,7 @@ const Pie = React.createClass({
     }
 
     return result;
-  },
+  }
 
   /**
    * 获取顶点坐标
@@ -86,7 +90,7 @@ const Pie = React.createClass({
       x: cx + r * Math.cos(-angle * RADIAN),
       y: cy + r * Math.sin(-angle * RADIAN),
     };
-  },
+  }
   /**
    * 获取按角度的刻度
    * @return {Array} 角度轴的刻度
@@ -107,7 +111,7 @@ const Pie = React.createClass({
     }
 
     return result;
-  },
+  }
 
   renderPolygon() {
     const {data} = this.props;
@@ -121,7 +125,7 @@ const Pie = React.createClass({
 
 
     return <polygon fill="green" fillOpacity={0.6} stroke="red" points={points.join(' ')}/>;
-  },
+  }
 
   render() {
     const {outerRadius, data} = this.props;
@@ -145,7 +149,7 @@ const Pie = React.createClass({
         {this.renderPolygon()}
       </g>
     );
-  },
-});
+  }
+}
 
-export default Pie;
+export default Radar;

@@ -10,6 +10,12 @@ import LineItem from './LineItem';
 
 class LineChart extends CartesianChart {
   static displayName = 'LineChart';
+
+  displayName = 'LineChart';
+
+  constructor(props) {
+    super(props);
+  }
   /**
    * 组装曲线数据
    * @param  {Object} xAxis   x轴刻度

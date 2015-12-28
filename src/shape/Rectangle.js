@@ -1,9 +1,10 @@
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-const Rectangle = React.createClass({
+class Rectangle extends React.Component {
 
-  propTypes: {
+  static displayName = 'Rectangle';
+
+  static propTypes = {
     x: PropTypes.number,
     y: PropTypes.number,
     width: PropTypes.number,
@@ -20,33 +21,33 @@ const Rectangle = React.createClass({
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
-  },
+  };
 
-  mixins: [PureRenderMixin],
+  static defaultProps = {
+    // 矩形左上角的横坐标
+    x: 0,
+    // 矩形左上角的纵坐标
+    y: 0,
+    // 宽度
+    width: 0,
+    // 高度
+    height: 0,
+    // 圆角半径
+    // 当radius为数值类型时，矩形的四个角的圆角半径都设置为该值
+    // 当radius为数组时，分别设置左上角、右上角、右下角、左下角的圆角半径
+    radius: 0,
+    stroke: 'none',
+    strokeWidth: 1,
+    strokeDasharray: 'none',
+    fill: '#000',
+    onMouseEnter() {},
+    onMouseLeave() {},
+    onClick() {},
+  };
 
-  getDefaultProps() {
-    return {
-      // 矩形左上角的横坐标
-      x: 0,
-      // 矩形左上角的纵坐标
-      y: 0,
-      // 宽度
-      width: 0,
-      // 高度
-      height: 0,
-      // 圆角半径
-      // 当radius为数值类型时，矩形的四个角的圆角半径都设置为该值
-      // 当radius为数组时，分别设置左上角、右上角、右下角、左下角的圆角半径
-      radius: 0,
-      stroke: 'none',
-      strokeWidth: 1,
-      strokeDasharray: 'none',
-      fill: '#000',
-      onMouseEnter() {},
-      onMouseLeave() {},
-      onClick() {},
-    };
-  },
+  constructor(props) {
+    super(props);
+  }
 
   getPath(x, y, width, height, radius) {
     const maxRadius = Math.min(width / 2, height / 2);
@@ -94,7 +95,7 @@ const Rectangle = React.createClass({
     }
 
     return path;
-  },
+  }
 
   render() {
     const {x, y, width, height, radius,
@@ -110,7 +111,7 @@ const Rectangle = React.createClass({
         onClick={onClick}
         d={this.getPath(x, y, width, height, radius)}/>
     );
-  },
-});
+  }
+}
 
 export default Rectangle;

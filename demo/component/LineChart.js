@@ -1,5 +1,5 @@
 import React from 'react';
-import {LineChart, LineItem, XAxis, YAxis, Tooltip} from 'recharts';
+import {LineChart, LineItem, XAxis, YAxis, Tooltip, CartesianGrid} from 'recharts';
 
 export default React.createClass({
   displayName: 'LineChartDemo',
@@ -17,6 +17,7 @@ export default React.createClass({
         <p>最简单的线图（线图默认是水平方向的）</p>
         <div className='line-chart-wrapper'>
           <LineChart width={400} height={400} data={data}>
+            <CartesianGrid stroke='#f5f5f5'/>
             <LineItem type='monotone' dataKey='uv' stroke='#ff7300'/>
           </LineChart>
         </div>
@@ -27,6 +28,7 @@ export default React.createClass({
             margin={{top: 5, right: 20, left: 10, bottom: 5}}>
             <XAxis dataKey='name'/>
             <Tooltip/>
+            <CartesianGrid stroke='#f5f5f5'/>
             <LineItem type='monotone' dataKey='uv' stroke='#ff7300' yAxisId={0}/>
             <LineItem type='monotone' dataKey='pv' stroke='#387908' yAxisId={1}/>
           </LineChart>
@@ -39,6 +41,7 @@ export default React.createClass({
             <YAxis type='number' orient='right' yAxisId={1}/>
             <YAxis type='number' orient='right' yAxisId={2}/>
             <XAxis dataKey='name'/>
+            <CartesianGrid stroke='#f5f5f5'/>
             <LineItem dataKey='uv' stroke='#ff7300' strokeWidth={2} yAxisId={0}/>
             <LineItem dataKey='pv' stroke='#387908' strokeWidth={2} yAxisId={1}/>
             <LineItem dataKey='amt' stroke='#38abc8' strokeWidth={2} yAxisId={2}/>
@@ -51,6 +54,7 @@ export default React.createClass({
             <YAxis type='category' dataKey='name'/>
             <XAxis type='number' xAxisId={0} orient='top'/>
             <XAxis type='number' xAxisId={1} orient='bottom'/>
+            <CartesianGrid stroke='#f5f5f5'/>
             <LineItem dataKey='uv' stroke='#ff7300' strokeWidth={2} xAxisId={0} />
             <LineItem dataKey='pv' stroke='#387908' strokeWidth={2} xAxisId={1} />
           </LineChart>

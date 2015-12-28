@@ -5,6 +5,9 @@ import React, {PropTypes} from 'react';
 import Layer from '../container/Layer';
 
 class Scatter extends React.Component {
+
+  static displayName = 'Scatter';
+
   static propTypes = {
     fill: PropTypes.string,
     stroke: PropTypes.string,
@@ -34,6 +37,10 @@ class Scatter extends React.Component {
     onMouseEnter() {},
     onMouseLeave() {},
   };
+
+  constructor(props) {
+    super(props);
+  }
 
   handleCircleMouseEnter(data, e) {
     const {onMouseEnter, groupId} = this.props;

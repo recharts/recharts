@@ -18,6 +18,12 @@ import BarItem from './BarItem';
 class BarChart extends CartesianChart {
 
   static displayName = 'BarChart';
+
+  displayName = 'BarChart';
+
+  constructor(props) {
+    super(props);
+  }
     /**
    * 组装曲线数据
    * @param  {Array}  barPosition 每个柱子的大小和偏移量
@@ -88,7 +94,7 @@ class BarChart extends CartesianChart {
         return res + entry.barSize;
       }, 0);
       sum += (len - 1) * barGap;
-      const offset =  - sum / 2   >> 0;
+      const offset = ((bandSize - sum) / 2) >> 0;
       let prev = {offset: offset - barGap, size: 0};
 
       result = sizeList.reduce((res, entry) => {
@@ -103,7 +109,6 @@ class BarChart extends CartesianChart {
     } else {
       let offset = LodashUtils.getPercentValue(barOffset, bandSize);
       const size = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
-      offset = -Math.max(((size * len + (len - 1) * barGap) / 2) >> 0, 0);
 
       result = sizeList.reduce((res, entry, i) => {
         res[entry.dataKey] = {
@@ -146,9 +151,7 @@ class BarChart extends CartesianChart {
    * @return {Number} 间隔大小
    */
   getBandSize(scale) {
-    const ranges = scale.range();
-
-    return ranges[1] - ranges[0];
+    return scale.bandwidth();
   }
   /**
    * 鼠标进入柱子的响应事件
@@ -182,9 +185,10 @@ class BarChart extends CartesianChart {
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
     const ids = Object.keys(axisMap);
     const axis = xAxisMap[ids[0]];
-    const bandSize = this.getBandSize(axis.scale);
+    const bandSize = axis.scale.bandwidth();
+
     const ticks = this.getAxisTicks(axis);
-    const start = ticks[activeTooltipIndex].coord - bandSize / 2;
+    const start = ticks[activeTooltipIndex].coord;
 
     return (
       <rect

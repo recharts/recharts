@@ -54,10 +54,6 @@ module.exports = function(watch) {
         {
           test: /\.jsx?$/,
           loader: 'babel-loader',
-          query: {
-            stage: 0,
-            loose: 'all'
-          },
           exclude: /node_modules/
         }
       ],

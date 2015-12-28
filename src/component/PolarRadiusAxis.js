@@ -5,13 +5,14 @@
  */
 import React, {PropTypes} from 'react';
 import createFragment from 'react-addons-create-fragment';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 const RADIAN = Math.PI / 180;
 
-const PolarRadiusAxis = React.createClass({
+class PolarRadiusAxis extends React.Component {
 
-  propTypes: {
+  static displayName = 'PolarRadiusAxis';
+
+  static propTypes = {
     cx: PropTypes.number,
     cy: PropTypes.number,
     startAngle: PropTypes.number,
@@ -22,19 +23,19 @@ const PolarRadiusAxis = React.createClass({
     ticks: PropTypes.array,
     tickValueFormat: PropTypes.func,
     orientation: PropTypes.string,
-  },
+  };
 
-  mixins: [PureRenderMixin],
+  static defaultProps = {
 
-  getDefaultProps() {
-    return {
+    // 坐标轴所在的方位
+    orientation: 'bottom',
+    // 刻度数据，格式为 {value: "展示的刻度值", radius: 50}
+    ticks: [],
+  };
 
-      // 坐标轴所在的方位
-      orientation: 'bottom',
-      // 刻度数据，格式为 {value: "展示的刻度值", radius: 50}
-      ticks: [],
-    };
-  },
+  constructor(props) {
+    super(props);
+  }
   /**
    * 获取tick文本的坐标
    * @param  {Object} data tick数据
@@ -49,7 +50,7 @@ const PolarRadiusAxis = React.createClass({
       x: cx + data.radius * cos,
       y: cy + data.radius * sin,
     };
-  },
+  }
 
   getTickTextAnchor() {
     const {orientation} = this.props;
@@ -68,7 +69,7 @@ const PolarRadiusAxis = React.createClass({
     }
 
     return textAnchor;
-  },
+  }
 
   renderTicks() {
     const {ticks, angle} = this.props;
@@ -95,7 +96,7 @@ const PolarRadiusAxis = React.createClass({
         {createFragment(items)}
       </g>
     );
-  },
+  }
 
   render() {
     const {ticks} = this.props;
@@ -109,7 +110,7 @@ const PolarRadiusAxis = React.createClass({
         {this.renderTicks()}
       </g>
     );
-  },
-});
+  }
+}
 
 export default PolarRadiusAxis;

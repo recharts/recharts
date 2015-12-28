@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import {ordinal} from 'd3-scale';
+import D3Scale from 'd3-scale';
 import Layer from '../container/Layer';
 import LodashUtils from '../util/LodashUtils';
 
@@ -43,9 +43,9 @@ class Brush extends React.Component {
       const startIndex = props.start === +props.start ? props.start : 0;
       const endIndex = props.end === +props.end ? props.end : len - 1;
 
-      this.scale = ordinal().domain(LodashUtils.range(0, len))
-                    .rangePoints([props.x, props.x + props.width - props.burshWidth]);
-
+      this.scale = D3Scale.point().domain(LodashUtils.range(0, len))
+                    .range([props.x, props.x + props.width - props.burshWidth]);
+      this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
 
       this.state = {
         isSlideMoving: false,
@@ -80,9 +80,8 @@ class Brush extends React.Component {
   getIndex({startX, endX}) {
     const min = Math.min(startX, endX);
     const max = Math.max(startX, endX);
-    const range = this.scale.range();
-    const minIndex = this.getIndexInRange(range, min);
-    const maxIndex = this.getIndexInRange(range, max);
+    const minIndex = this.getIndexInRange(this.scaleValues, min);
+    const maxIndex = this.getIndexInRange(this.scaleValues, max);
 
     return {
       startIndex: minIndex,
@@ -253,9 +252,6 @@ class Brush extends React.Component {
 
     if (!data || !data.length) {return null;}
 
-    const scale = ordinal().domain(LodashUtils.range(0, data.length))
-                          .rangeRoundBands([x, x + width - burshWidth]);
-
     return (
       <Layer className={'layer-recharts-bursh ' + (className || '')}
         onMouseUp={this.handleUp}
@@ -264,7 +260,7 @@ class Brush extends React.Component {
         {this.renderSlide(startX, endX)}
         {this.renderBrush(startX, 'startX')}
         {this.renderBrush(endX, 'endX')}
-        {this.renderText(scale)}
+        {this.renderText()}
       </Layer>
     );
   }

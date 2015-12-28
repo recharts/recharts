@@ -1,12 +1,12 @@
 import React, {PropTypes} from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Surface from '../container/Surface';
 
 const SIZE = 32;
 
-const Legend = React.createClass({
+class Legend extends React.Component {
+  static displayName = 'Legend';
 
-  propTypes: {
+  static propTypes = {
     style: PropTypes.object,
     width: PropTypes.number,
     height: PropTypes.number,
@@ -19,22 +19,21 @@ const Legend = React.createClass({
       id: PropTypes.any,
       type: PropTypes.oneOf(['line', 'scatter', 'square', 'rect']),
     })),
-  },
+  };
 
-  mixins: [PureRenderMixin],
+  static defaultProps = {
+    width: 0,
+    height: 40,
+    iconSize: 14,
+    layout: 'horizontal',
+    align: 'center',
+    verticalAlign: 'middle',
+    data: [],
+  };
 
-  getDefaultProps() {
-    return {
-      width: 0,
-      height: 40,
-      iconSize: 14,
-      layout: 'horizontal',
-      align: 'center',
-      verticalAlign: 'middle',
-      data: [],
-    };
-  },
-
+  constructor(props) {
+    super(props);
+  }
   /**
    * 获取图例中Icon的路径
    * @param {Object} data 包含图表类型、填充颜色、相应的seriesIndex等的数据
@@ -68,7 +67,7 @@ const Legend = React.createClass({
     }
 
     return <path strokeWidth={4} fill={fill} stroke={stroke} d={path} className="recharts-legend-icon"/>;
-  },
+  }
   /**
    * 渲染图例
    * @return {ReactElement} 图例
@@ -89,7 +88,7 @@ const Legend = React.createClass({
         </li>
       );
     });
-  },
+  }
 
   render() {
     const {data, width, height, layout, align, style} = this.props;
@@ -116,7 +115,7 @@ const Legend = React.createClass({
         {this.renderItems()}
       </ul>
     );
-  },
-});
+  }
+}
 
 export default Legend;

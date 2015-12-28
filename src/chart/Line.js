@@ -6,6 +6,9 @@ import Curve from '../shape/Curve';
 import Layer from '../container/Layer';
 
 class Line extends React.Component {
+
+  static displayName = 'Line';
+
   static propTypes = {
     type: PropTypes.string,
     fill: PropTypes.string,
@@ -36,6 +39,10 @@ class Line extends React.Component {
     onMouseEnter() {},
     onMouseLeave() {},
   };
+
+  constructor(props) {
+    super(props);
+  }
 
   renderDots() {
     const {data, ...other} = this.props;

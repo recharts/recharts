@@ -21,6 +21,8 @@ import ZAxis from './ZAxis';
 class ScatterChart extends React.Component {
   static displayName = 'ScatterChart';
 
+  displayName = 'ScatterChart';
+
   static propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
@@ -43,6 +45,10 @@ class ScatterChart extends React.Component {
     style: {},
     margin: {top: 20, right: 20, bottom: 20, left: 20},
   };
+
+  constructor(props) {
+    super(props);
+  }
 
   state = {
     activeTooltipPosition: 'left-bottom',

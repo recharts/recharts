@@ -1,12 +1,13 @@
 import React, {PropTypes} from 'react';
 import createFragment from 'react-addons-create-fragment';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 const RADIAN = Math.PI / 180;
 
-const PolarGrid = React.createClass({
+class PolarGrid extends React.Component {
 
-  propTypes: {
+  static displayName = 'PolarGrid';
+
+  static propTypes = {
     cx: PropTypes.number,
     cy: PropTypes.number,
     startAngle: PropTypes.number,
@@ -16,26 +17,26 @@ const PolarGrid = React.createClass({
     polarAngles: PropTypes.arrayOf(PropTypes.number),
     polarRadius: PropTypes.arrayOf(PropTypes.number),
     concentricPathType: PropTypes.oneOf(['polygon', 'circle']),
-  },
+  };
 
-  mixins: [PureRenderMixin],
+  static defaultProps = {
+    cx: 0,
+    cy: 0,
+    startAngle: 0,
+    innerRadius: 0,
+    outerRadius: 0,
+    clockWise: true,
+    // 水平线条的纵坐标
+    polarAngles: [],
+    // 竖直线条的横坐标
+    polarRadius: [],
+    // 同心轴的类型
+    concentricPathType: 'polygon',
+  };
 
-  getDefaultProps() {
-    return {
-      cx: 0,
-      cy: 0,
-      startAngle: 0,
-      innerRadius: 0,
-      outerRadius: 0,
-      clockWise: true,
-      // 水平线条的纵坐标
-      polarAngles: [],
-      // 竖直线条的横坐标
-      polarRadius: [],
-      // 同心轴的类型
-      concentricPathType: 'polygon',
-    };
-  },
+  constructor(props) {
+    super(props);
+  }
   /**
    * 绘制从极点向外发射的射线
    * @return {[type]} [description]
@@ -66,7 +67,7 @@ const PolarGrid = React.createClass({
         {createFragment(items)}
       </g>
     );
-  },
+  }
   /**
    * 绘制同心圆
    * @param {Number} radius 同心圆的半径
@@ -77,7 +78,7 @@ const PolarGrid = React.createClass({
     const {cx, cy} = this.props;
 
     return <circle className="concentric-circle" stroke="#000" fill="none" key={'circle-' + index} cx={cx} cy={cy} r={radius}/>;
-  },
+  }
   /**
    * 绘制同心轴
    * @param {Number} radius 同心圆的半径
@@ -97,7 +98,7 @@ const PolarGrid = React.createClass({
     });
 
     return <path className="concentric-polygon" stroke="#000" fill="none" key={'path-' + index} d={path + 'Z'}/>;
-  },
+  }
 
   /**
    * 绘制同心轴或者同心圆
@@ -123,7 +124,7 @@ const PolarGrid = React.createClass({
         {createFragment(items)}
       </g>
     );
-  },
+  }
 
   render() {
     const {outerRadius} = this.props;
@@ -138,7 +139,7 @@ const PolarGrid = React.createClass({
         {this.renderConcentricPath()}
       </g>
     );
-  },
-});
+  }
+}
 
 export default PolarGrid;
