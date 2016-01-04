@@ -100,7 +100,7 @@ class Tooltip extends React.Component {
       coordinate.x - box.width - offset :
       coordinate.x + offset, scope.x1);
     outerStyle.top = Math.max(
-      coordinate.y + box.height + offset> scope.y2 ?
+      coordinate.y + box.height + offset > scope.y2 ?
       coordinate.y - box.height - offset :
       coordinate.y + offset, scope.y1);
 

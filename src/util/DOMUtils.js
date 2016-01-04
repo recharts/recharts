@@ -34,7 +34,9 @@ const SPAN_STYLE = {
 };
 const STYLE_LIST = [
   'minWidth', 'maxWidth', 'width', 'minHeight', 'maxHeight', 'height',
-  'top', 'left', 'fontSize', 'lineHeight',
+  'top', 'left', 'fontSize', 'lineHeight', 'padding', 'margin',
+  'paddingLeft', 'paddingRight', 'paddingTop', 'paddingBottom',
+  'marginLeft', 'marginRight', 'marginTop', 'marginBottom',
 ];
 function autoCompleteStyle(name, value) {
   if (STYLE_LIST.indexOf(name) >= 0 && value === +value) {
