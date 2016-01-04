@@ -1,6 +1,8 @@
 import React, {PropTypes} from 'react';
 import DOMUtils from '../util/DOMUtils';
+import pureRender from 'pure-render-decorator';
 
+@pureRender
 class CartesianAxis extends React.Component {
 
   static displayName = 'CartesianAxis';

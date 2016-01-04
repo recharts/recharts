@@ -6,9 +6,11 @@ import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
 import LodashUtils from '../util/LodashUtils';
 import DOMUtils from '../util/DOMUtils';
+import pureRender from 'pure-render-decorator';
 
 const RADIAN = Math.PI / 180;
 
+@pureRender
 class RadialBar extends React.Component {
 
   static displayName = 'RadialBar';
@@ -39,8 +41,9 @@ class RadialBar extends React.Component {
       value: PropTypes.value,
     })),
 
-    labelStyle: PropTypes.object,
     hasLabel: PropTypes.bool,
+    labelStyle: PropTypes.object,
+    labelFormatter: PropTypes.func,
     hasBackground: PropTypes.bool,
 
     onMouseEnter: PropTypes.func,

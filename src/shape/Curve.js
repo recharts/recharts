@@ -1,6 +1,8 @@
 import React, {PropTypes} from 'react';
 import d3Shape from 'd3-shape';
+import pureRender from 'pure-render-decorator';
 
+@pureRender
 class Curve extends React.Component {
 
   static displayName = 'Curve';

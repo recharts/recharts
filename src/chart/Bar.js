@@ -4,7 +4,9 @@
 import React, {PropTypes} from 'react';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
+import pureRender from 'pure-render-decorator';
 
+@pureRender
 class Bar extends React.Component {
 
   static displayName = 'Bar';

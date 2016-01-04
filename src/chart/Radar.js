@@ -2,10 +2,12 @@ import React, {PropTypes} from 'react';
 
 import PolarGrid from '../component/PolarGrid';
 import PolarAngleAxis from '../component/PolarAngleAxis';
+import pureRender from 'pure-render-decorator';
 
 const perigon = 360;
 const RADIAN = Math.PI / 180;
 
+@pureRender
 class Radar extends React.Component {
 
   static displayName = 'Radar';

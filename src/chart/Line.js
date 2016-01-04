@@ -4,7 +4,9 @@
 import React, {PropTypes} from 'react';
 import Curve from '../shape/Curve';
 import Layer from '../container/Layer';
+import pureRender from 'pure-render-decorator';
 
+@pureRender
 class Line extends React.Component {
 
   static displayName = 'Line';

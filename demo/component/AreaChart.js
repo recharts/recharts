@@ -82,6 +82,7 @@ export default React.createClass({
             <XAxis type='number' xAxisId={1} orient='bottom'/>
             <AreaItem dataKey='uv' dataKeyName='月环比' stroke='#ff7300' fill='#ff7300' strokeWidth={2} xAxisId={0} />
             <AreaItem dataKey='pv' dataKeyName='年同比' stroke='#387908' fill='#387908' strokeWidth={2} xAxisId={1} />
+            <Tooltip/>
           </AreaChart>
         </div>
 

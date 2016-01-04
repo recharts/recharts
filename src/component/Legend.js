@@ -1,8 +1,10 @@
 import React, {PropTypes} from 'react';
 import Surface from '../container/Surface';
+import pureRender from 'pure-render-decorator';
 
 const SIZE = 32;
 
+@pureRender
 class Legend extends React.Component {
   static displayName = 'Legend';
 

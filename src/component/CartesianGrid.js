@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import createFragment from 'react-addons-create-fragment';
+import pureRender from 'pure-render-decorator';
 
-const PropTypes = React.PropTypes;
-
+@pureRender
 class CartesianGrid extends React.Component {
 
   static displayName = 'CartesianGrid';

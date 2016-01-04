@@ -3,7 +3,9 @@
  */
 import React, {PropTypes} from 'react';
 import Layer from '../container/Layer';
+import pureRender from 'pure-render-decorator';
 
+@pureRender
 class Scatter extends React.Component {
 
   static displayName = 'Scatter';

@@ -104,4 +104,5 @@ function getStringSize(text, style = {}) {
 export default {
   offset,
   getStringSize,
+  getStyleString,
 };
