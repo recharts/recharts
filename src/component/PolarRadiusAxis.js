@@ -5,9 +5,11 @@
  */
 import React, {PropTypes} from 'react';
 import createFragment from 'react-addons-create-fragment';
+import pureRender from 'pure-render-decorator';
 
 const RADIAN = Math.PI / 180;
 
+@pureRender
 class PolarRadiusAxis extends React.Component {
 
   static displayName = 'PolarRadiusAxis';

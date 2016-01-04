@@ -18,12 +18,13 @@
   },
   "homepage": "https://github.com/recharts/recharts",
   "peerDependencies": {
-    "react": "0.14.3",
-    "react-dom": "0.14.3"
+    "react": "0.14.5",
+    "react-dom": "0.14.5"
   },
   "dependencies": {
     "d3-scale": "0.4.0",
     "d3-shape": "0.2.2",
+    "pure-render-decorator": "^0.2.0",
     "react-addons-create-fragment": "0.14.3",
     "recharts-scale": "0.1.4-beta"
   },
@@ -31,6 +32,7 @@
     "babel-core": "6.3.21",
     "babel-eslint": "5.0.0-beta6",
     "babel-loader": "6.2.0",
+    "babel-plugin-transform-decorators-legacy": "1.3.4",
     "babel-plugin-transform-export-extensions": "6.3.13",
     "babel-preset-es2015": "6.3.13",
     "babel-preset-react": "6.3.13",
@@ -43,11 +45,11 @@
     "isparta": "4.0.0",
     "mocha": "2.3.4",
     "node-libs-browser": "0.5.3",
-    "react": "0.14.3",
-    "react-dom": "0.14.3",
+    "react": "0.14.5",
+    "react-dom": "0.14.5",
     "react-hot-loader": "1.3.0",
     "react-router": "1.0.3",
-    "recharts-color-utils": "^0.1.1",
+    "recharts-color-utils": "0.1.1",
     "require-dir": "0.3.0",
     "webpack": "1.12.9",
     "webpack-dev-server": "1.14.0"

@@ -174,25 +174,25 @@ class BarChart extends CartesianChart {
   }
 
   renderCursor(xAxisMap, yAxisMap, offset) {
-    const {children} = this.props;
-    const {isTooltipActive} = this.state;
+    const { children } = this.props;
     const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
 
-    if (!tooltipItem || !isTooltipActive) {return null;}
+    if (!tooltipItem || !this.state.isTooltipActive) {return null;}
 
     const {layout} = this.props;
     const {activeTooltipIndex} = this.state;
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
     const ids = Object.keys(axisMap);
-    const axis = xAxisMap[ids[0]];
+    const axis = axisMap[ids[0]];
     const bandSize = axis.scale.bandwidth();
 
     const ticks = this.getAxisTicks(axis);
     const start = ticks[activeTooltipIndex].coord;
+    const style = { fill: '#f1f1f1', ...tooltipItem.cursorStyle };
 
     return (
       <rect
-        fill="#f1f1f1"
+        {...style}
         x={layout === 'horizontal' ? start : offset.left + 0.5}
         y={layout === 'horizontal' ? offset.top + 0.5 : start}
         width={layout === 'horizontal' ? bandSize : offset.width - 1}
@@ -273,7 +273,7 @@ class BarChart extends CartesianChart {
         {legendItem && (legendItem.props.layout !== 'horizontal'
           || legendItem.props.verticalAlign !== 'top')
         && this.renderLegend(items, offset, legendItem)}
-        {this.renderTooltip(items)}
+        {this.renderTooltip(items, offset)}
       </div>
     );
   }

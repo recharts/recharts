@@ -721,12 +721,13 @@ class CartesianChart extends React.Component {
       data: legendData,
     });
   }
-    /**
+  /**
    * 渲染浮层
    * @param  {Array} items 线图元素或者柱图元素
+   * @param  {Object} offset 图形区域的偏移量
    * @return {ReactElement} 浮层元素
    */
-  renderTooltip(items) {
+  renderTooltip(items, offset) {
     const {children} = this.props;
     const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
 
@@ -737,8 +738,15 @@ class CartesianChart extends React.Component {
     const {chartX, chartY, isTooltipActive,
           activeTooltipLabel, activeTooltipCoord,
           activeTooltipPosition} = this.state;
+    const scope = {
+      x1: offset.left,
+      x2: offset.left + offset.width,
+      y1: offset.top,
+      y2: offset.top + offset.height,
+    };
 
     return React.cloneElement(tooltipItem, {
+      scope,
       position: activeTooltipPosition,
       active: isTooltipActive,
       label: activeTooltipLabel,
@@ -767,6 +775,7 @@ class CartesianChart extends React.Component {
     });
 
   }
+
   renderReferenceLines(xAxisMap, yAxisMap, offset) {
     const {children} = this.props;
     const lines = ReactUtils.findAllByType(children, ReferenceLine);

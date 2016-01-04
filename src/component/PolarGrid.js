@@ -1,8 +1,10 @@
 import React, {PropTypes} from 'react';
 import createFragment from 'react-addons-create-fragment';
+import pureRender from 'pure-render-decorator';
 
 const RADIAN = Math.PI / 180;
 
+@pureRender
 class PolarGrid extends React.Component {
 
   static displayName = 'PolarGrid';

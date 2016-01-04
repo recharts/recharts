@@ -4,6 +4,7 @@ import CartesianChart from './CartesianChart';
 import Surface from '../container/Surface';
 import ReactUtils from '../util/ReactUtils';
 import Legend from '../component/Legend';
+import Tooltip from '../component/Tooltip';
 import Area from '../chart/Area';
 import AreaItem from './AreaItem';
 
@@ -79,20 +80,28 @@ class AreaChart extends CartesianChart {
    * @return {ReactComponent} 图形元素
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
-    const {activeAreaKey} = this.state;
+    const { children } = this.props;
+    const { activeAreaKey, isTooltipActive, activeTooltipIndex } = this.state;
+    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+    const hasDot = tooltipItem && isTooltipActive;
+    let areaItems = [];
+    const dotItems = [];
 
-    return items.reduce((result, child, i) => {
+    items.forEach((child, i) => {
       const {xAxisId, yAxisId, dataKey, fillOpacity, ...other} = child.props;
       const xAxis = xAxisMap[xAxisId];
       const yAxis = yAxisMap[yAxisId];
+      const composeData = this.getComposeData(xAxis, yAxis, dataKey);
+      const activePoint = composeData.points && composeData.points[activeTooltipIndex];
+      const pointStyle = { fill: other.fill, strokeWidth: 4, stroke: '#fff' };
 
       let finalFillOpacity = fillOpacity === +fillOpacity ? fillOpacity : AreaItem.defaultProps.fillOpacity;
       finalFillOpacity = activeAreaKey === dataKey ? Math.min(finalFillOpacity * 1.2, 1) : finalFillOpacity;
 
       const area = (
         <Area
-          {...other}
           key={'area-' + i}
+          {...other}
           x={offset.x}
           y={offset.y}
           width={offset.width}
@@ -100,11 +109,44 @@ class AreaChart extends CartesianChart {
           fillOpacity={finalFillOpacity}
           onMouseLeave={this.handleAreaMouseLeave}
           onMouseEnter={this.handleAreaMouseEnter.bind(null, dataKey)}
-          {...this.getComposeData(xAxis, yAxis, dataKey)}/>
+          {...composeData}/>
       );
 
-      return activeAreaKey === dataKey ? [...result, area] : [area, ...result];
-    }, []);
+      areaItems = activeAreaKey === dataKey ? [...areaItems, area] : [area, ...areaItems];
+
+      if (hasDot && activePoint) {
+        dotItems.push(<circle key={'area-dot-' + i} cx={activePoint.x} cy={activePoint.y} r={8} {...pointStyle}/>);
+      }
+    });
+
+    return (
+      <g key="recharts-area-wrapper">
+        <g key="recharts-area">{areaItems}</g>
+        <g key="recharts-area-dot">{dotItems}</g>
+      </g>
+    );
+  }
+
+  renderCursor(xAxisMap, yAxisMap, offset) {
+    const { children } = this.props;
+    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+
+    if (!tooltipItem || !this.state.isTooltipActive) {return null;}
+
+    const { layout } = this.props;
+    const { activeTooltipIndex } = this.state;
+    const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
+    const ids = Object.keys(axisMap);
+    const axis = axisMap[ids[0]];
+    const ticks = this.getAxisTicks(axis);
+    const start = ticks[activeTooltipIndex].coord;
+    const style = { stroke: '#ccc', ...tooltipItem.cursorStyle };
+
+    if (layout === 'horizontal') {
+      return <line className='recharts-cursor' {...style} x1={start} x2={start} y1={offset.top} y2={offset.top + offset.height}/>;
+    }
+
+    return <line className='recharts-cursor' {...style} x1={offset.left} x2={offset.left + offset.width} y1={start} y2={start}/>;
   }
 
   render() {
@@ -136,13 +178,14 @@ class AreaChart extends CartesianChart {
           {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
           {this.renderXAxis(xAxisMap)}
           {this.renderYAxis(yAxisMap)}
+          {this.renderCursor(xAxisMap, yAxisMap, offset)}
           {this.renderItems(items, xAxisMap, yAxisMap, offset)}
         </Surface>
 
         {legendItem && (legendItem.props.layout !== 'horizontal'
           || legendItem.props.verticalAlign !== 'top')
         && this.renderLegend(items, offset, legendItem)}
-        {this.renderTooltip(items)}
+        {this.renderTooltip(items, offset)}
       </div>
     );
   }

@@ -3,7 +3,9 @@
  */
 import React, {PropTypes} from 'react';
 import Sector from '../shape/Sector';
+import pureRender from 'pure-render-decorator';
 
+@pureRender
 class Pie extends React.Component {
 
   static displayName = 'Pie';

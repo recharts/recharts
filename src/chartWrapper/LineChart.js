@@ -123,7 +123,7 @@ class LineChart extends CartesianChart {
         {legendItem && (legendItem.props.layout !== 'horizontal'
           || legendItem.props.verticalAlign !== 'top')
         && this.renderLegend(items, offset, legendItem)}
-        {this.renderTooltip(items)}
+        {this.renderTooltip(items, offset)}
       </div>
     );
   }

@@ -1,5 +1,7 @@
 import React, {PropTypes} from 'react';
+import pureRender from 'pure-render-decorator';
 
+@pureRender
 class Rectangle extends React.Component {
 
   static displayName = 'Rectangle';

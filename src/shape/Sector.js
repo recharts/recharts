@@ -1,6 +1,8 @@
 import React, {PropTypes} from 'react';
+import pureRender from 'pure-render-decorator';
 const RADIAN = Math.PI / 180;
 
+@pureRender
 class Sector extends React.Component {
 
   static displayName = 'Sector';
