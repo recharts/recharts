@@ -10,7 +10,7 @@ class Tooltip extends React.Component {
   static displayName = 'Tooltip';
 
   static propTypes = {
-    component: PropTypes.element,
+    customContent: PropTypes.element,
     scope: PropTypes.shape({
       x1: PropTypes.number,
       x2: PropTypes.number,
@@ -60,10 +60,10 @@ class Tooltip extends React.Component {
   }
 
   getTooltipBBox(wrapperStyle) {
-    const { component } = this.props;
+    const { customContent } = this.props;
     const contentHtml = ReactDOMServer.renderToStaticMarkup(
-      component ?
-      React.cloneElement(component, this.props) :
+      React.isValidElement(customContent) ?
+      React.cloneElement(customContent, this.props) :
       React.createElement(DefaultTooltipContent, this.props)
     );
     const style = {...wrapperStyle, top: -20000, left: 0, display: 'block'};
@@ -80,7 +80,7 @@ class Tooltip extends React.Component {
   }
 
   render() {
-    const {component, scope, coordinate, active,
+    const {customContent, scope, coordinate, active,
         label, style, labelStyle, offset} = this.props;
 
     let outerStyle = {
@@ -107,8 +107,8 @@ class Tooltip extends React.Component {
     return (
       <div className="tooltip-outer-wrapper" style={outerStyle}>
         {
-          component ?
-          React.cloneElement(component, this.props) :
+          React.isValidElement(customContent) ?
+          React.cloneElement(customContent, this.props) :
           React.createElement(DefaultTooltipContent, this.props)
         }
       </div>

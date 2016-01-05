@@ -38,7 +38,7 @@ export default React.createClass({
           <AreaChart width={900} height={250} data={data} margin={{top: 10, right: 20, bottom: 10, left: 10}}>
             <XAxis dataKey='name' hasTick={true}/>
             <YAxis tickCount={7} hasTick={true}/>
-            <Tooltip component={<CustomTooltip external={data}/>}/>
+            <Tooltip customContent={<CustomTooltip external={data}/>}/>
             <CartesianGrid stroke='#f5f5f5'/>
             <AreaItem type='monotone' dataKey='uv' stroke='#7d79d4' fill='#7d79d4' fillOpacity={0.25}/>
           </AreaChart>
