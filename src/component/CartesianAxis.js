@@ -19,7 +19,7 @@ class CartesianAxis extends React.Component {
       width: PropTypes.number,
       height: PropTypes.number,
     }),
-    component: PropTypes.element,
+    customContent: PropTypes.element,
 
     stroke: PropTypes.string,
     hasAxis: PropTypes.bool,
@@ -221,7 +221,7 @@ class CartesianAxis extends React.Component {
   }
 
   renderTicks() {
-    const {ticks, hasTick, stroke, component} = this.props;
+    const {ticks, hasTick, stroke, customContent} = this.props;
 
     if (!ticks || !ticks.length) { return null; }
 
@@ -243,7 +243,7 @@ class CartesianAxis extends React.Component {
               x2={lineCoord.x2}
               y2={lineCoord.y2}/>
           )}
-          {component ? React.cloneElement(component, {
+          {React.isValidElement(customContent) ? React.cloneElement(customContent, {
             x: lineCoord.x1,
             y: lineCoord.y1,
             ...entry,

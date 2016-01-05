@@ -12,13 +12,17 @@ class Bar extends React.Component {
   static displayName = 'Bar';
 
   static propTypes = {
-    component: PropTypes.element,
-    hasLabel: PropTypes.bool,
+    customContent: PropTypes.element,
+    label: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.element,
+    ]),
 
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
     strokeDasharray: PropTypes.string,
+
     className: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
@@ -49,12 +53,12 @@ class Bar extends React.Component {
   }
 
   renderRectangles() {
-    const {data, className, hasLabel, component, ...others} = this.props;
+    const {data, className, hasLabel, customContent, ...others} = this.props;
 
     return data.map((entry, i) => {
       const {value, ...rest} = entry;
 
-      return component ? React.cloneElement(component, {
+      return React.isValidElement(customContent) ? React.cloneElement(customContent, {
         ...others, ...rest,
         key: 'rectangle-' + i,
       }) : React.createElement(Rectangle, {
@@ -65,11 +69,15 @@ class Bar extends React.Component {
   }
 
   renderLabels() {
-    const {data} = this.props;
+    const {data, label, fill, stroke} = this.props;
 
     return data.map((entry, i) => {
-      return (
-        <text textAnchor="middle" x={entry.x + entry.width / 2} y={entry.y} key={'label-' + i}>
+      const x = entry.x + entry.width / 2;
+      const y = entry.y;
+      const props = { fill, stroke, ...entry, index: i, key: `label-${i}` };
+
+      return React.isValidElement(label) ? React.cloneElement(label, props) : (
+        <text textAnchor="middle" x={x} y={y} key={'label-' + i}>
           {entry.value}
         </text>
       );
@@ -77,7 +85,7 @@ class Bar extends React.Component {
   }
 
   render() {
-    const {data, className, hasLabel} = this.props;
+    const {data, className, label} = this.props;
 
     if (!data || !data.length) {
       return null;
@@ -88,8 +96,8 @@ class Bar extends React.Component {
         <Layer className="layer-rectangles">
           {this.renderRectangles()}
         </Layer>
-        { hasLabel && (
-          <Layer className="layer-rectangles">
+        { label && (
+          <Layer className="layer-rectangle-labels">
             {this.renderLabels()}
           </Layer>
         )}

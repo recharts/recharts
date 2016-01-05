@@ -238,15 +238,15 @@ export default React.createClass({
         <div className='bar-chart-wrapper'>
           <BarChart width={500} height={250} barOffset={0} data={data}  margin={{top: 20, right: 20, bottom: 0, left: 20}}>
             <XAxis dataKey='name'/>
-            <BarItem dataKey='uv' barGap={0} fill='#ff7300' component={<CustomBar/>}/>
+            <BarItem dataKey='uv' barGap={0} fill='#ff7300' customContent={<CustomBar/>}/>
           </BarChart>
         </div>
 
         <p>变形的柱图（二）</p>
         <div className='bar-chart-wrapper'>
           <BarChart width={500} height={250} barOffset={0} data={data} margin={{top: 20, right: 20, bottom: 20, left: 20}}>
-            <XAxis hasAxis={false} hasTick={false} dataKey='name' component={<CustomAxis />}/>
-            <BarItem dataKey='uv' barGap={0} component={<BarTwo/>}/>
+            <XAxis hasAxis={false} hasTick={false} dataKey='name' customContent={<CustomAxis />}/>
+            <BarItem dataKey='uv' barGap={0} customContent={<BarTwo/>} label/>
           </BarChart>
         </div>
       </div>
