@@ -1,5 +1,22 @@
 /* eslint no-unused-expressions: 0 */
 import React from 'react';
+const PRESENTATION_ATTRIBUTES = [
+  'alignmentBaseline', 'baselineShift', 'clip', 'clipPath',
+  'clipRule', 'color', 'colorInterpolation', 'colorInterpolationFilters',
+  'colorProfile', 'colorRendering', 'cursor', 'direction',
+  'display', 'dominantBaseline', 'enableBackground', 'fill',
+  'fillOpacity', 'fillRule', 'filter', 'floodColor',
+  'floodOpacity', 'fontFamily', 'fontSize', 'fontSizeAdjust',
+  'fontStretch', 'fontStyle', 'fontVariant', 'fontWeight',
+  'glyphOrientationHorizontal', 'glyphOrientationVertical',
+  'imageRendering', 'kerning', 'letterSpacing', 'lightingColor',
+  'markerEnd', 'markerMid', 'markerStart', 'mask', 'opacity',
+  'overflow', 'pointerEvents', 'shapeRendering', 'stopColor', 'stopOpacity',
+  'stroke', 'strokeDasharray', 'strokeDashoffset', 'strokeLinecap',
+  'strokeLinejoin', 'strokeMiterlimit', 'strokeOpacity', 'strokeWidth',
+  'textAnchor', 'textDecoration', 'textRendering', 'unicodeBidi',
+  'visibility', 'wordSpacing', 'writingMode',
+];
 
 export default {
   /*
@@ -53,5 +70,24 @@ export default {
     });
 
     return newChildren;
+  },
+  /**
+   * get all the attribute of svg element
+   * @param  {Object} el An react element
+   * @return {Object}    attributes or null
+   */
+  getPresentationAttributes(el) {
+    if (!el || !el.props) {return null;}
+    const props = el.props;
+    let result = null;
+
+    for (const key in props) {
+      if (props.hasOwnProperty(key) && PRESENTATION_ATTRIBUTES.indexOf(key) >= 0) {
+        if (!result) {result = {};}
+        result[key] = props[key];
+      }
+    }
+
+    return result;
   },
 };

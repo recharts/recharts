@@ -60,6 +60,7 @@ class Bar extends React.Component {
 
       return React.isValidElement(customContent) ? React.cloneElement(customContent, {
         ...others, ...rest,
+        index: i,
         key: 'rectangle-' + i,
       }) : React.createElement(Rectangle, {
         ...others, ...rest,
