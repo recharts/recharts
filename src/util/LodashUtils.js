@@ -31,6 +31,14 @@ const isNumber = (value) => {
           value && typeof value === 'object' && Object.prototype.toString.call(value) === numberClass || false;
 };
 /**
+ * 判断是否是函数
+ * @param {Any} value 待判断的值
+ * @return {Boolean} 是否为函数
+ */
+const isFunction = (value) => {
+  return typeof value == 'function';
+};
+/**
  * 获取一个惟一的id
  * @param {String} prefix 前缀
  * @return {String} id
@@ -193,7 +201,7 @@ const toPercentage = (num, unit = '%', max = 99999) => {
 
 
 export default {
-  isArray, isNumber, isString,
+  isArray, isNumber, isString, isFunction,
 
   extent, maxBy,
 

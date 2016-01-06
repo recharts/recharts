@@ -244,9 +244,10 @@ class CartesianAxis extends React.Component {
               y2={lineCoord.y2}/>
           )}
           {React.isValidElement(customContent) ? React.cloneElement(customContent, {
+            ...entry,
             x: lineCoord.x1,
             y: lineCoord.y1,
-            ...entry,
+            index: i,
           }) : (<text
             fill={stroke}
             dy={this.getDy(entry)}

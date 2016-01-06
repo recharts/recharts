@@ -6,6 +6,7 @@ import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
 import LodashUtils from '../util/LodashUtils';
 import DOMUtils from '../util/DOMUtils';
+import ReactUtils from '../util/ReactUtils';
 import pureRender from 'pure-render-decorator';
 
 const RADIAN = Math.PI / 180;
@@ -21,10 +22,7 @@ class RadialBar extends React.Component {
     strokeWidth: PropTypes.number,
     strokeDasharray: PropTypes.string,
     className: PropTypes.string,
-
     component: PropTypes.object,
-
-    labelOffsetRadius: PropTypes.number,
 
     cx: PropTypes.number,
     cy: PropTypes.number,
@@ -41,10 +39,13 @@ class RadialBar extends React.Component {
       value: PropTypes.value,
     })),
 
-    hasLabel: PropTypes.bool,
-    labelStyle: PropTypes.object,
-    labelFormatter: PropTypes.func,
-    hasBackground: PropTypes.bool,
+    label: PropTypes.oneOfType([
+      PropTypes.bool, PropTypes.element, PropTypes.object,
+    ]),
+
+    background: PropTypes.oneOfType([
+      PropTypes.bool, PropTypes.element,
+    ]),
 
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
@@ -54,7 +55,6 @@ class RadialBar extends React.Component {
   static defaultProps = {
     // 数据
     data: [],
-    labelOffsetRadius: 2,
     clockWise: true,
     startAngle: 0,
     minAngle: 0,
@@ -91,14 +91,15 @@ class RadialBar extends React.Component {
     return sectors;
   }
 
-  getLabelPathArc(data, label, style) {
-    const {labelOffsetRadius} = this.props;
+  getLabelPathArc(data, labelContent, style) {
+    const {label} = this.props;
+    const offsetRadius = (React.isValidElement(label) ? label.props.offsetRadius : label.offsetRadius) || 2;
     const {cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise} = data;
-    const radius = clockWise ? innerRadius + labelOffsetRadius : Math.max(outerRadius - labelOffsetRadius, 0);
+    const radius = clockWise ? innerRadius + offsetRadius : Math.max(outerRadius - offsetRadius, 0);
 
     if (radius <= 0) {return '';}
 
-    const labelSize = DOMUtils.getStringSize(label, style);
+    const labelSize = DOMUtils.getStringSize(labelContent, style);
     const deltaAngle = labelSize.width / (radius * RADIAN);
     let _startAngle;
     let _endAngle;
@@ -138,12 +139,14 @@ class RadialBar extends React.Component {
   }
 
   renderBackground(sectors) {
-    const {startAngle, endAngle, clockWise} = this.props;
+    const {startAngle, endAngle, clockWise, background} = this.props;
 
     return sectors.map((entry, i) => {
       const {value, ...rest} = entry;
 
-      return (
+      return React.isValidElement(background) ? React.cloneElement(background, {
+        ...rest, clockWise, startAngle, endAngle, index: i, key: 'sector-' + i,
+      }) : (
         <Sector
           {...rest}
           fill="#f1f1f1"
@@ -156,24 +159,27 @@ class RadialBar extends React.Component {
   }
 
   renderLabels(sectors) {
-    const {labelStyle} = this.props;
+    const {label} = this.props;
+    const isElement = React.isValidElement(label);
+    const formatter = isElement ? label.props.formatter : label.formatter;
+    const hasFormatter = LodashUtils.isFunction(formatter);
 
     return sectors.map((entry, i) => {
-      const label = entry.value;
+      const content =  hasFormatter ? formatter(entry.value) : entry.value;
       const id = LodashUtils.getUniqueId('recharts-defs-');
-      const style = labelStyle || {fontSize: 10, fill: '#000'};
-      const path = this.getLabelPathArc(entry, label, style);
+      const style = (isElement ? ReactUtils.getPresentationAttributes(label) : label.style) || {fontSize: 10, fill: '#000'};
+      const path = this.getLabelPathArc(entry, content, style);
 
       const html =
         `<defs><path id='${id}' d='${path}'/></defs>
-         <textPath xlink:href='#${id}'>${label}</textPath>`;
+         <textPath xlink:href='#${id}'>${content}</textPath>`;
 
-      return <text style={style} key={'label-' + i} dangerouslySetInnerHTML={{__html: html}}/>;
+      return <text {...style} key={'label-' + i} dangerouslySetInnerHTML={{__html: html}}/>;
     });
   }
 
   render() {
-    const {data, className, hasBackground, hasLabel} = this.props;
+    const {data, className, background, label} = this.props;
 
     if (!data || !data.length) {
       return null;
@@ -182,7 +188,7 @@ class RadialBar extends React.Component {
 
     return (
       <Layer className={'layer-radial-bar ' + (className || '')}>
-        {hasBackground && (
+        {background && (
           <Layer className="layer-background">
             {this.renderBackground(sectors)}
           </Layer>
@@ -192,7 +198,7 @@ class RadialBar extends React.Component {
           {this.renderSectors(sectors)}
         </Layer>
 
-        {hasLabel && (
+        {label && (
           <Layer className="laryer-label">
             {this.renderLabels(sectors)}
           </Layer>
