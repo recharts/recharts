@@ -1,6 +1,11 @@
 import React, {PropTypes} from 'react';
+
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
+
+import ReactUtils from '../util/ReactUtils';
+
+import TreemapItem from './TreemapItem';
 
 class TreemapChart extends React.Component {
   static displayName = 'TreemapChart';
@@ -139,8 +144,9 @@ class TreemapChart extends React.Component {
   }
 
   renderAllNodes() {
-    const {width, height, data, style} = this.props;
-
+    const {width, height, data, children} = this.props;
+    const treemapItem = children.props.element;
+    
     const nodes = {
       value: data.reduce((a, b)=>(a + b.value), 0),
       children: data,
@@ -152,13 +158,14 @@ class TreemapChart extends React.Component {
 
     this.squarify(nodes);
 
-    return nodes.children.map((v, i) => (
+    return nodes.children.map(
+      (v, i) =>
       <Layer key={i}>
-        <rect x={v.x} y={v.y} width={v.dx} height={v.dy} style={Object.assign({}, style, v.style)}/>
-        <text x={v.x + 4} y={v.y + 22} fill={'#fff'} fontSize={18}>{'' + (nodes.children.length - i)}</text>
-        <text x={v.x + v.dx / 2 + 2 - v.name.length * 16 / 2} y={v.y + v.dy / 2 + 2 + 16 / 2} fill={'#fff'} fontSize={16}>{'' + v.name}</text>
+        {
+          React.cloneElement(treemapItem, {node: v, index: i})
+        }
       </Layer>
-    ));
+    );
   }
 
   render() {
