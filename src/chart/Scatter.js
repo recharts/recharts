@@ -60,7 +60,7 @@ class Scatter extends React.Component {
         <circle
           {...others}
           {...rest}
-          onMouseEnter={this.handleCircleMouseEnter.bind(null, entry)}
+          onMouseEnter={this.handleCircleMouseEnter.bind(this, entry)}
           key={'circle-' + i}
         />
       );

@@ -112,7 +112,7 @@ class Pie extends React.Component {
       return (
         <Sector
           {...entry}
-          onMouseEnter={this.handleSectorEnter.bind(null, entry)}
+          onMouseEnter={this.handleSectorEnter.bind(this, entry)}
           onMouseLeave={onMouseLeave}
           onClick={onClick}
           key={'sector-' + i}

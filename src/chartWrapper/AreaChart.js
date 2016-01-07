@@ -108,7 +108,7 @@ class AreaChart extends CartesianChart {
           height={offset.height}
           fillOpacity={finalFillOpacity}
           onMouseLeave={::this.handleAreaMouseLeave}
-          onMouseEnter={this.handleAreaMouseEnter.bind(null, dataKey)}
+          onMouseEnter={this.handleAreaMouseEnter.bind(this, dataKey)}
           {...composeData}
         />
       );
@@ -165,9 +165,9 @@ class AreaChart extends CartesianChart {
     return (
       <div className="recharts-wrapper"
         style={{ position: 'relative', cursor: 'default', ...style }}
-        onMouseEnter={this.handleMouseEnter.bind(null, offset, xAxisMap, yAxisMap)}
-        onMouseMove={this.handleMouseMove.bind(null, offset, xAxisMap, yAxisMap)}
-        onMouseLeave={this.handleMouseLeave}
+        onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
+        onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
+        onMouseLeave={::this.handleMouseLeave}
       >
 
         {legendItem && legendItem.props.layout === 'horizontal'
