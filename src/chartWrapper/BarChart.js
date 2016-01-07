@@ -231,7 +231,7 @@ class BarChart extends CartesianChart {
           {...other}
           key={'bar-' + i}
           onMouseLeave={::this.handleBarMouseLeave}
-          onMouseEnter={this.handleBarMouseEnter.bind(null, dataKey)}
+          onMouseEnter={this.handleBarMouseEnter.bind(this, dataKey)}
           data={this.getComposeData(barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey)}
         />
       );
@@ -253,9 +253,9 @@ class BarChart extends CartesianChart {
     return (
       <div className="recharts-wrapper"
         style={{ position: 'relative', cursor: 'default', ...style }}
-        onMouseEnter={this.handleMouseEnter.bind(null, offset, xAxisMap, yAxisMap)}
-        onMouseMove={this.handleMouseMove.bind(null, offset, xAxisMap, yAxisMap)}
-        onMouseLeave={this.handleMouseLeave}
+        onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
+        onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
+        onMouseLeave={::this.handleMouseLeave}
       >
 
         {legendItem && legendItem.props.layout === 'horizontal'

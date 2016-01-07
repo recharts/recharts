@@ -525,7 +525,7 @@ class CartesianChart extends React.Component {
     });
   }
 
-  handleBrushChange = ({ startIndex, endIndex }) => {
+  handleBrushChange({ startIndex, endIndex }) {
     this.setState({
       dataStartIndex: startIndex,
       dataEndIndex: endIndex,
@@ -540,7 +540,7 @@ class CartesianChart extends React.Component {
    * @param  {Object} e        事件对象
    * @return {Null} no return
    */
-  handleMouseEnter = (offset, xAxisMap, yAxisMap, e) => {
+  handleMouseEnter(offset, xAxisMap, yAxisMap, e) {
     const container = ReactDOM.findDOMNode(this);
     const containerOffset = DOMUtils.offset(container);
     const ne = EventUtils.normalize(e, containerOffset);
@@ -563,7 +563,7 @@ class CartesianChart extends React.Component {
    * @param  {Object} e        事件对象
    * @return {Null} no return
    */
-  handleMouseMove = (offset, xAxisMap, yAxisMap, e) => {
+  handleMouseMove(offset, xAxisMap, yAxisMap, e) {
     const container = ReactDOM.findDOMNode(this);
     const containerOffset = DOMUtils.offset(container);
     const ne = EventUtils.normalize(e, containerOffset);
@@ -586,7 +586,7 @@ class CartesianChart extends React.Component {
    * 鼠标离开图形区域的响应事件
    * @return {Null} no return
    */
-  handleMouseLeave = () => {
+  handleMouseLeave() {
     this.setState({
       isTooltipActive: false,
     });
@@ -771,7 +771,7 @@ class CartesianChart extends React.Component {
     const height = (brushItem.props.height || Brush.defaultProps.height) + 1;
 
     return React.cloneElement(brushItem, {
-      onBrushChange: this.handleBrushChange,
+      onBrushChange: ::this.handleBrushChange,
       data: data.map(entry => entry[dataKey]),
       x: offset.left,
       y: offset.top + offset.height + offset.bottom - height,

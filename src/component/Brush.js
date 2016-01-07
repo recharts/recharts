@@ -104,7 +104,7 @@ class Brush extends React.Component {
     });
   }
 
-  handleSlideDown = (e) => {
+  handleSlideDown(e) {
     this.setState({
       isBrushMoving: false,
       isSlideMoving: true,
@@ -199,7 +199,7 @@ class Brush extends React.Component {
     return (
       <Layer
         className="layer-brush"
-        onMouseDown={this.handleBrushDown.bind(null, id)}
+        onMouseDown={this.handleBrushDown.bind(this, id)}
         style={{ cursor: 'col-resize' }}
       >
         <rect
@@ -221,7 +221,7 @@ class Brush extends React.Component {
 
     return (
       <rect
-        onMouseDown={this.handleSlideDown}
+        onMouseDown={::this.handleSlideDown}
         style={{ cursor: 'move' }}
         stroke="none"
         fill="#e5e5f7"

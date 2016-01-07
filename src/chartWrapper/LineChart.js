@@ -82,7 +82,7 @@ class LineChart extends CartesianChart {
           height={offset.height}
           strokeWidth={finalStrokeWidth}
           onMouseLeave={::this.handleLineMouseLeave}
-          onMouseEnter={this.handleLineMouseEnter.bind(null, dataKey)}
+          onMouseEnter={this.handleLineMouseEnter.bind(this, dataKey)}
           data={this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey)}
         />
       );
@@ -104,9 +104,9 @@ class LineChart extends CartesianChart {
     return (
       <div className="recharts-wrapper"
         style={{ position: 'relative', cursor: 'default', ...style }}
-        onMouseEnter={this.handleMouseEnter.bind(null, offset, xAxisMap, yAxisMap)}
-        onMouseMove={this.handleMouseMove.bind(null, offset, xAxisMap, yAxisMap)}
-        onMouseLeave={this.handleMouseLeave}
+        onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
+        onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
+        onMouseLeave={::this.handleMouseLeave}
       >
 
         {legendItem && legendItem.props.layout === 'horizontal'

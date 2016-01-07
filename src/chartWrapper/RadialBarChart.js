@@ -266,7 +266,7 @@ class RadialBarChart extends React.Component {
           {...center}
           key={'radial-bar-' + i}
           onMouseLeave={::this.handleMouseLeave}
-          onMouseEnter={this.handleMouseEnter.bind(null, dataKey)}
+          onMouseEnter={this.handleMouseEnter.bind(this, dataKey)}
           data={this.getComposeData(barPosition, radiusScale, center, dataKey)}
         />
       );
