@@ -112,7 +112,7 @@ class Brush extends React.Component {
     });
   }
 
-  handleSlideMove = (e) => {
+  handleSlideMove(e) {
     const { slideMoveStartX, startX, endX } = this.state;
     const { x, width, burshWidth, onBrushChange } = this.props;
     let delta = e.pageX - slideMoveStartX;
@@ -148,7 +148,7 @@ class Brush extends React.Component {
     });
   }
 
-  handleBrushMove = (e) => {
+  handleBrushMove(e) {
     const { brushMoveStartX, movingBrushId } = this.state;
     const prevValue = this.state[movingBrushId];
     const { x, width, burshWidth, onBrushChange } = this.props;
