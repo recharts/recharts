@@ -158,7 +158,7 @@ class BarChart extends CartesianChart {
    * @param {String} key 曲线唯一对应的key
    * @return {Object} no return
    */
-  handleBarMouseEnter = (key) => {
+  handleBarMouseEnter(key) {
     this.setState({
       activeBarKey: key,
     });
@@ -167,7 +167,7 @@ class BarChart extends CartesianChart {
    * 鼠标离开柱子的响应事件
    * @return {Object} no return
    */
-  handleBarMouseLeave = () => {
+  handleBarMouseLeave() {
     this.setState({
       activeBarKey: null,
     });
@@ -230,7 +230,7 @@ class BarChart extends CartesianChart {
         <Bar
           {...other}
           key={'bar-' + i}
-          onMouseLeave={this.handleBarMouseLeave}
+          onMouseLeave={::this.handleBarMouseLeave}
           onMouseEnter={this.handleBarMouseEnter.bind(null, dataKey)}
           data={this.getComposeData(barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey)}
         />

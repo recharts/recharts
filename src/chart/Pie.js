@@ -100,7 +100,7 @@ class Pie extends React.Component {
     return sectors;
   }
 
-  handleSectorEnter = (data, e) => {
+  handleSectorEnter(data, e) {
     this.props.onMouseEnter(data, e);
   }
 

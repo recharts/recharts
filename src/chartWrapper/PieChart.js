@@ -68,7 +68,7 @@ class PieChart extends React.Component {
     });
   }
 
-  handleMouseEnter = (el, e) => {
+  handleMouseEnter(el, e) {
     this.setState({
       isTooltipActive: true,
     }, () => {
@@ -78,7 +78,7 @@ class PieChart extends React.Component {
     });
   }
 
-  handleMouseLeave = (e) => {
+  handleMouseLeave(e) {
     this.setState({
       isTooltipActive: false,
     }, () => {
@@ -139,8 +139,8 @@ class PieChart extends React.Component {
           cy={cy || height / 2}
           key={'recharts-pie-' + i}
           data={this.getComposeData(child)}
-          onMouseEnter={this.handleMouseEnter}
-          onMouseLeave={this.handleMouseLeave}
+          onMouseEnter={::this.handleMouseEnter}
+          onMouseLeave={::this.handleMouseLeave}
           outerRadius={outerRadius || maxRadius * 0.8}
         />
       );

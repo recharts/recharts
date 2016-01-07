@@ -41,7 +41,7 @@ class LineChart extends CartesianChart {
    * @param {String} key 曲线唯一对应的key
    * @return {Object} no return
    */
-  handleLineMouseEnter = (key) => {
+  handleLineMouseEnter(key) {
     this.setState({
       activeLineKey: key,
     });
@@ -50,7 +50,7 @@ class LineChart extends CartesianChart {
    * 鼠标离开曲线的响应事件
    * @return {Object} no return
    */
-  handleLineMouseLeave = () => {
+  handleLineMouseLeave() {
     this.setState({
       activeLineKey: null,
     });
@@ -81,7 +81,7 @@ class LineChart extends CartesianChart {
           width={offset.width}
           height={offset.height}
           strokeWidth={finalStrokeWidth}
-          onMouseLeave={this.handleLineMouseLeave}
+          onMouseLeave={::this.handleLineMouseLeave}
           onMouseEnter={this.handleLineMouseEnter.bind(null, dataKey)}
           data={this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey)}
         />
