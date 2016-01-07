@@ -57,7 +57,7 @@ class AreaChart extends CartesianChart {
    * @param {String} key 曲线唯一对应的key
    * @return {Object} no return
    */
-  handleAreaMouseEnter = (key) => {
+  handleAreaMouseEnter(key) {
     this.setState({
       activeAreaKey: key,
     });
@@ -66,7 +66,7 @@ class AreaChart extends CartesianChart {
    * 鼠标离开曲线的响应事件
    * @return {Object} no return
    */
-  handleAreaMouseLeave = () => {
+  handleAreaMouseLeave() {
     this.setState({
       activeAreaKey: null,
     });
@@ -107,7 +107,7 @@ class AreaChart extends CartesianChart {
           width={offset.width}
           height={offset.height}
           fillOpacity={finalFillOpacity}
-          onMouseLeave={this.handleAreaMouseLeave}
+          onMouseLeave={::this.handleAreaMouseLeave}
           onMouseEnter={this.handleAreaMouseEnter.bind(null, dataKey)}
           {...composeData}
         />

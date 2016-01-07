@@ -310,7 +310,7 @@ class ScatterChart extends React.Component {
    * @param {Object} e   事件对象
    * @return {Object} no return
    */
-  handleScatterMouseEnter = (groupId, el) => {
+  handleScatterMouseEnter(groupId, el) {
     this.setState({
       isTooltipActive: true,
       activeGroupId: groupId,
@@ -322,7 +322,7 @@ class ScatterChart extends React.Component {
    * 鼠标离开散点的响应事件
    * @return {Object} no return
    */
-  handleScatterMouseLeave = () => {
+  handleScatterMouseLeave() {
     this.setState({
       isTooltipActive: false,
     });
@@ -449,8 +449,8 @@ class ScatterChart extends React.Component {
           key={'scatter-' + i}
           groupId={'scatter-' + i}
           strokeWidth={finalStrokeWidth}
-          onMouseLeave={this.handleScatterMouseLeave}
-          onMouseEnter={this.handleScatterMouseEnter}
+          onMouseLeave={::this.handleScatterMouseLeave}
+          onMouseEnter={::this.handleScatterMouseEnter}
           data={this.getComposeData(data, xAxis, yAxis, zAxis)}
         />
       );

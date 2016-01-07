@@ -193,7 +193,7 @@ class RadialBarChart extends React.Component {
     return result;
   }
 
-  handleMouseEnter = (el, e) => {
+  handleMouseEnter(el, e) {
     this.setState({
       isTooltipActive: true,
     }, () => {
@@ -203,7 +203,7 @@ class RadialBarChart extends React.Component {
     });
   }
 
-  handleMouseLeave = (e) => {
+  handleMouseLeave(e) {
     this.setState({
       isTooltipActive: false,
     }, () => {
@@ -265,7 +265,7 @@ class RadialBarChart extends React.Component {
           {...other}
           {...center}
           key={'radial-bar-' + i}
-          onMouseLeave={this.handleMouseLeave}
+          onMouseLeave={::this.handleMouseLeave}
           onMouseEnter={this.handleMouseEnter.bind(null, dataKey)}
           data={this.getComposeData(barPosition, radiusScale, center, dataKey)}
         />

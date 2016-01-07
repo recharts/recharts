@@ -89,7 +89,7 @@ class Brush extends React.Component {
     };
   }
 
-  handleMove = (e) => {
+  handleMove(e) {
     if (this.state.isBrushMoving) {
       this.handleBrushMove(e);
     } else if (this.state.isSlideMoving) {
@@ -97,7 +97,7 @@ class Brush extends React.Component {
     }
   }
 
-  handleUp = () => {
+  handleUp() {
     this.setState({
       isBrushMoving: false,
       isSlideMoving: false,
@@ -262,8 +262,8 @@ class Brush extends React.Component {
 
     return (
       <Layer className={'layer-recharts-bursh ' + (className || '')}
-        onMouseUp={this.handleUp}
-        onMouseMove={this.handleMove}
+        onMouseUp={::this.handleUp}
+        onMouseMove={::this.handleMove}
       >
         {this.renderBackground()}
         {this.renderSlide(startX, endX)}
