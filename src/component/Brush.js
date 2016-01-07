@@ -139,7 +139,7 @@ class Brush extends React.Component {
     });
   }
 
-  handleBrushDown = (id, e) => {
+  handleBrushDown(id, e) {
     this.setState({
       isSlideMoving: false,
       isBrushMoving: true,
