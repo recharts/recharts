@@ -47,7 +47,7 @@ class PolarAngleAxis extends React.Component {
    * @return {Object} (x0, y0) 为文字的起点坐标，(x1, y1)为靠近文字的端点坐标，(x2, y2)为靠近轴的端点坐标
    */
   getTickLineCoord(data) {
-    const {cx, cy, outerRadius, orientation, tickSize} = this.props;
+    const { cx, cy, outerRadius, orientation, tickSize } = this.props;
     const sin = Math.sin(-data.angle * RADIAN);
     const cos = Math.cos(-data.angle * RADIAN);
     let x0;
@@ -63,23 +63,23 @@ class PolarAngleAxis extends React.Component {
     y2 = cy + outerRadius * sin;
 
     switch (orientation) {
-    case 'inner':
-      x0 = cx + (outerRadius - finalTickSize - offset) * cos;
-      y0 = cy + (outerRadius - finalTickSize - offset) * sin;
+      case 'inner':
+        x0 = cx + (outerRadius - finalTickSize - offset) * cos;
+        y0 = cy + (outerRadius - finalTickSize - offset) * sin;
 
-      x1 = cx + (outerRadius - finalTickSize) * cos;
-      y1 = cy + (outerRadius - finalTickSize) * sin;
-      break;
-    default:
-      x0 = cx + (outerRadius + finalTickSize + offset) * cos;
-      y0 = cy + (outerRadius + finalTickSize + offset) * sin;
+        x1 = cx + (outerRadius - finalTickSize) * cos;
+        y1 = cy + (outerRadius - finalTickSize) * sin;
+        break;
+      default:
+        x0 = cx + (outerRadius + finalTickSize + offset) * cos;
+        y0 = cy + (outerRadius + finalTickSize + offset) * sin;
 
-      x1 = cx + (outerRadius + finalTickSize) * cos;
-      y1 = cy + (outerRadius + finalTickSize) * sin;
-      break;
+        x1 = cx + (outerRadius + finalTickSize) * cos;
+        y1 = cy + (outerRadius + finalTickSize) * sin;
+        break;
     }
 
-    return {x0, y0, x1, y1, x2, y2};
+    return { x0, y0, x1, y1, x2, y2 };
   }
   /**
    * 计算文字的对齐方式
@@ -88,8 +88,8 @@ class PolarAngleAxis extends React.Component {
    */
   getTickTextAnchor(data) {
     const orientation = this.props.orientation;
-    const cos = Math.cos(- data.angle * RADIAN);
-    let  textAnchor;
+    const cos = Math.cos(-data.angle * RADIAN);
+    let textAnchor;
 
     if (cos > eps) {
       textAnchor = orientation === 'outer' ? 'start' : 'end';
@@ -106,7 +106,7 @@ class PolarAngleAxis extends React.Component {
    * @return {SVGElement} [description]
    */
   renderTicks() {
-    const {ticks} = this.props;
+    const { ticks } = this.props;
 
     if (!ticks || !ticks.length) { return null; }
 
@@ -124,12 +124,16 @@ class PolarAngleAxis extends React.Component {
             x1={lineCoord.x1}
             y1={lineCoord.y1}
             x2={lineCoord.x2}
-            y2={lineCoord.y2}/>
+            y2={lineCoord.y2}
+          />
           <text
             x={lineCoord.x0}
             y={lineCoord.y0}
             textAnchor={textAnchor}
-            className="tick-value">{entry.value}</text>
+            className="tick-value"
+          >
+            {entry.value}
+          </text>
         </g>
       );
     }, items);
@@ -142,7 +146,7 @@ class PolarAngleAxis extends React.Component {
   }
 
   render() {
-    const {ticks} = this.props;
+    const { ticks } = this.props;
 
     if (!ticks || !ticks.length) {
       return null;

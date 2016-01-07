@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
 class Surface extends React.Component {
 
@@ -25,8 +25,8 @@ class Surface extends React.Component {
   }
 
   render() {
-    const {children, width, height, viewBox, className, style} = this.props;
-    const svgView = viewBox || {width: width, height: height, x: 0, y: 0};
+    const { children, width, height, viewBox, className, style } = this.props;
+    const svgView = viewBox || { width, height, x: 0, y: 0 };
 
     return (
       <svg
@@ -35,7 +35,8 @@ class Surface extends React.Component {
         height={height}
         style={style}
         viewBox={`${svgView.x} ${svgView.y} ${svgView.width} ${svgView.height}`}
-        xmlns="http://www.w3.org/2000/svg" version="1.1">
+        xmlns="http://www.w3.org/2000/svg" version="1.1"
+      >
         {children}
       </svg>
     );

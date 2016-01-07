@@ -36,7 +36,7 @@ const isNumber = (value) => {
  * @return {Boolean} 是否为函数
  */
 const isFunction = (value) => {
-  return typeof value == 'function';
+  return typeof value === 'function';
 };
 /**
  * 获取一个惟一的id
@@ -60,7 +60,7 @@ const extent = (ary) => {
       min: Math.min(min, result.min),
       max: Math.max(max, result.max),
     };
-  }, {min: Infinity, max: -Infinity});
+  }, { min: Infinity, max: -Infinity });
 };
 /**
  * 生成从from到to（不包含to）的一个数组
@@ -116,6 +116,23 @@ const getElementOfObject = (obj) => {
 
 const maxBy = (fn, a, b) => {
   return fn(a) > fn(b) ? a : b;
+};
+/**
+ * Pad symbol
+ * @param  {number} num    A number
+ * @param  {string} symbol pad sring
+ * @return {array}  the value after pad
+ */
+const pad = (num, symbol) => {
+  let total = '';
+  let temp = num;
+
+  while (temp > 0) {
+    total += symbol;
+    temp--;
+  }
+
+  return total;
 };
 /**
  * 转化成特定的位数

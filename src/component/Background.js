@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 
 // TODO: add support of gradient
@@ -27,7 +27,7 @@ class Background extends React.Component {
   }
 
   render() {
-    const {className, ...others} = this.props;
+    const { className, ...others } = this.props;
 
     return (
       <g className={'recharts-background ' + (className || '')}>

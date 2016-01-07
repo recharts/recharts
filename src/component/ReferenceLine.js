@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 
 @pureRender
@@ -41,23 +41,23 @@ class ReferenceLine extends React.Component {
   }
 
   getEndPoints() {
-    const {xAxisMap, yAxisMap, type, value, xAxisId, yAxisId,
-          x, y, width, height} = this.props;
+    const { xAxisMap, yAxisMap, type, value, xAxisId, yAxisId,
+          x, y, width, height } = this.props;
     let coord;
 
     if (type === 'horizontal') {
       coord = yAxisMap[yAxisId].scale(value);
 
-      return [{x, y: coord}, {x: x + width, y: coord}];
+      return [{ x, y: coord }, { x: x + width, y: coord }];
     } else if (type === 'vertical') {
       coord = xAxisMap[xAxisId].scale(value);
 
-      return [{x: coord, y}, {x: coord, y: y + height}];
+      return [{ x: coord, y }, { x: coord, y: y + height }];
     }
   }
 
   render() {
-    const {type, value, fill, stroke, fillOpacity, strokeOpacity} = this.props;
+    const { type, value, fill, stroke, fillOpacity, strokeOpacity } = this.props;
     if (!type || value !== +value) {return null;}
 
     const [start, end] = this.getEndPoints();
@@ -72,7 +72,8 @@ class ReferenceLine extends React.Component {
         fill={fill}
         stroke={stroke}
         fillOpacity={fillOpacity}
-        strokeOpacity={strokeOpacity}/>
+        strokeOpacity={strokeOpacity}
+      />
     );
   }
 }

@@ -24,7 +24,7 @@ class AreaChart extends CartesianChart {
    * @return {Array} 组合后的数据
    */
   getComposeData(xAxis, yAxis, dataKey) {
-    const {data, layout} = this.props;
+    const { data, layout } = this.props;
     const xTicks = this.getAxisTicks(xAxis);
     const yTicks = this.getAxisTicks(yAxis);
     const points = data.map((entry, index) => {
@@ -47,7 +47,7 @@ class AreaChart extends CartesianChart {
     }
 
     return {
-      points: points,
+      points,
       baseLine,
       baseLineType: layout,
     };
@@ -88,7 +88,7 @@ class AreaChart extends CartesianChart {
     const dotItems = [];
 
     items.forEach((child, i) => {
-      const {xAxisId, yAxisId, dataKey, fillOpacity, ...other} = child.props;
+      const { xAxisId, yAxisId, dataKey, fillOpacity, ...other } = child.props;
       const xAxis = xAxisMap[xAxisId];
       const yAxis = yAxisMap[yAxisId];
       const composeData = this.getComposeData(xAxis, yAxis, dataKey);
@@ -109,7 +109,8 @@ class AreaChart extends CartesianChart {
           fillOpacity={finalFillOpacity}
           onMouseLeave={this.handleAreaMouseLeave}
           onMouseEnter={this.handleAreaMouseEnter.bind(null, dataKey)}
-          {...composeData}/>
+          {...composeData}
+        />
       );
 
       areaItems = activeAreaKey === dataKey ? [...areaItems, area] : [area, ...areaItems];
@@ -143,14 +144,14 @@ class AreaChart extends CartesianChart {
     const style = { stroke: '#ccc', ...tooltipItem.cursorStyle };
 
     if (layout === 'horizontal') {
-      return <line className='recharts-cursor' {...style} x1={start} x2={start} y1={offset.top} y2={offset.top + offset.height}/>;
+      return <line className="recharts-cursor" {...style} x1={start} x2={start} y1={offset.top} y2={offset.top + offset.height}/>;
     }
 
-    return <line className='recharts-cursor' {...style} x1={offset.left} x2={offset.left + offset.width} y1={start} y2={start}/>;
+    return <line className="recharts-cursor" {...style} x1={offset.left} x2={offset.left + offset.width} y1={start} y2={start}/>;
   }
 
   render() {
-    const {style, children} = this.props;
+    const { style, children } = this.props;
     const items = ReactUtils.findAllByType(children, AreaItem);
     const legendItem = ReactUtils.findChildByType(children, Legend);
 
@@ -163,10 +164,11 @@ class AreaChart extends CartesianChart {
 
     return (
       <div className="recharts-wrapper"
-        style={{position: 'relative', cursor: 'default', ...style}}
+        style={{ position: 'relative', cursor: 'default', ...style }}
         onMouseEnter={this.handleMouseEnter.bind(null, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(null, offset, xAxisMap, yAxisMap)}
-        onMouseLeave={this.handleMouseLeave}>
+        onMouseLeave={this.handleMouseLeave}
+      >
 
         {legendItem && legendItem.props.layout === 'horizontal'
           && legendItem.props.verticalAlign === 'top'

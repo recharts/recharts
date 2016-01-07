@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 
 const RADIAN = Math.PI / 180;
@@ -36,7 +36,7 @@ class RadarSecond extends React.Component {
    * @return {Array} 多边形的顶点
    */
   getPolygonVertexs() {
-    const {data, polarAngleScale, polarRadiusScale} = this.props;
+    const { cx, cy, data, polarAngleScale, polarRadiusScale } = this.props;
 
     return data.map((entry, index) => {
       const radius = polarRadiusScale(entry.value);

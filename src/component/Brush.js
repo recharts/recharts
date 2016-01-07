@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import D3Scale from 'd3-scale';
 import Layer from '../container/Layer';
 import LodashUtils from '../util/LodashUtils';
@@ -77,7 +77,7 @@ class Brush extends React.Component {
     return x >= range[end] ? end : start;
   }
 
-  getIndex({startX, endX}) {
+  getIndex({ startX, endX }) {
     const min = Math.min(startX, endX);
     const max = Math.max(startX, endX);
     const minIndex = this.getIndexInRange(this.scaleValues, min);
@@ -113,8 +113,8 @@ class Brush extends React.Component {
   }
 
   handleSlideMove = (e) => {
-    const {slideMoveStartX, startX, endX} = this.state;
-    const {x, width, burshWidth, onBrushChange} = this.props;
+    const { slideMoveStartX, startX, endX } = this.state;
+    const { x, width, burshWidth, onBrushChange } = this.props;
     let delta = e.pageX - slideMoveStartX;
 
     if (delta > 0) {
@@ -133,7 +133,9 @@ class Brush extends React.Component {
       slideMoveStartX: e.pageX,
       ...newIndex,
     }, () => {
-      onBrushChange && onBrushChange(newIndex);
+      if (onBrushChange) {
+        onBrushChange(newIndex);
+      }
     });
   }
 
@@ -147,11 +149,11 @@ class Brush extends React.Component {
   }
 
   handleBrushMove = (e) => {
-    const {brushMoveStartX, movingBrushId} = this.state;
+    const { brushMoveStartX, movingBrushId } = this.state;
     const prevValue = this.state[movingBrushId];
-    const {x, width, burshWidth, onBrushChange} = this.props;
+    const { x, width, burshWidth, onBrushChange } = this.props;
 
-    const params = {startX: this.state.startX, endX: this.state.endX};
+    const params = { startX: this.state.startX, endX: this.state.endX };
     let delta = e.pageX - brushMoveStartX;
 
     if (delta > 0) {
@@ -168,12 +170,14 @@ class Brush extends React.Component {
       brushMoveStartX: e.pageX,
       ...newIndex,
     }, () => {
-      onBrushChange && onBrushChange(newIndex);
+      if (onBrushChange) {
+        onBrushChange(newIndex);
+      }
     });
   }
 
   renderBackground() {
-    const {x, y, width, height, fill, stroke} = this.props;
+    const { x, y, width, height, fill, stroke } = this.props;
 
     return (
       <rect
@@ -182,12 +186,13 @@ class Brush extends React.Component {
         x={x}
         y={y}
         width={width}
-        height={height}/>
+        height={height}
+      />
     );
   }
 
   renderBrush(startX, id) {
-    const {y, burshWidth, height, stroke} = this.props;
+    const { y, burshWidth, height, stroke } = this.props;
     const lineY = Math.floor(y + height / 2) - 1;
     const x = Math.max(startX, this.props.x);
 
@@ -195,14 +200,16 @@ class Brush extends React.Component {
       <Layer
         className="layer-brush"
         onMouseDown={this.handleBrushDown.bind(null, id)}
-        style={{cursor: 'col-resize'}}>
+        style={{ cursor: 'col-resize' }}
+      >
         <rect
           x={x}
           y={y}
           width={burshWidth}
           height={height}
           fill={stroke}
-          stroke="none"/>
+          stroke="none"
+        />
         <line x1={x + 1} y1={lineY} x2={x + burshWidth - 1} y2={lineY} fill="none" stroke="#fff"/>
         <line x1={x + 1} y1={lineY + 2} x2={x + burshWidth - 1} y2={lineY + 2} fill="none" stroke="#fff"/>
       </Layer>
@@ -210,24 +217,25 @@ class Brush extends React.Component {
   }
 
   renderSlide(startX, endX) {
-    const {y, height} = this.props;
+    const { y, height } = this.props;
 
     return (
       <rect
         onMouseDown={this.handleSlideDown}
-        style={{cursor: 'move'}}
+        style={{ cursor: 'move' }}
         stroke="none"
         fill="#e5e5f7"
         x={Math.min(startX, endX)}
         y={y}
         width={Math.abs(endX - startX)}
-        height={height}/>
+        height={height}
+      />
     );
   }
 
   renderText() {
-    const {data, y, height, burshWidth, stroke} = this.props;
-    const {startIndex, endIndex, startX, endX} = this.state;
+    const { data, y, height, burshWidth, stroke } = this.props;
+    const { startIndex, endIndex, startX, endX } = this.state;
     const offset = 5;
     const style = {
       pointerEvents: 'none',
@@ -247,15 +255,16 @@ class Brush extends React.Component {
   }
 
   render() {
-    const {x, width, burshWidth, data, className} = this.props;
-    const {startX, endX} = this.state;
+    const { x, width, burshWidth, data, className } = this.props;
+    const { startX, endX } = this.state;
 
     if (!data || !data.length) {return null;}
 
     return (
       <Layer className={'layer-recharts-bursh ' + (className || '')}
         onMouseUp={this.handleUp}
-        onMouseMove={this.handleMove}>
+        onMouseMove={this.handleMove}
+      >
         {this.renderBackground()}
         {this.renderSlide(startX, endX)}
         {this.renderBrush(startX, 'startX')}

@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 const RADIAN = Math.PI / 180;
 
@@ -71,22 +71,23 @@ class Sector extends React.Component {
   }
 
   render() {
-    const {cx, cy, innerRadius, outerRadius, startAngle, endAngle,
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle,
           onClick, onMouseEnter, onMouseLeave, className,
-          ...others} = this.props;
+          ...others } = this.props;
 
     if (outerRadius < innerRadius || startAngle === endAngle) {
       return null;
     }
 
     return (
-     <path
-      {...others}
-      className={'recharts-sector' + (className || '')}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onClick={onClick}
-      d={this.getPath(cx, cy, innerRadius, outerRadius, startAngle, endAngle)}/>
+      <path
+        {...others}
+        className={'recharts-sector' + (className || '')}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onClick={onClick}
+        d={this.getPath(cx, cy, innerRadius, outerRadius, startAngle, endAngle)}
+      />
     );
   }
 }

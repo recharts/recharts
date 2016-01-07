@@ -24,7 +24,7 @@ class LineChart extends CartesianChart {
    * @return {Array} 组合后的数据
    */
   getComposeData(xAxis, yAxis, dataKey) {
-    const {data, layout} = this.props;
+    const { data, layout } = this.props;
     const xTicks = this.getAxisTicks(xAxis);
     const yTicks = this.getAxisTicks(yAxis);
 
@@ -64,10 +64,10 @@ class LineChart extends CartesianChart {
    * @return {ReactComponent} 图形元素
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
-    const {activeLineKey} = this.state;
+    const { activeLineKey } = this.state;
 
     return items.map((child, i) => {
-      const {xAxisId, yAxisId, dataKey, strokeWidth, ...other} = child.props;
+      const { xAxisId, yAxisId, dataKey, strokeWidth, ...other } = child.props;
 
       let finalStrokeWidth = strokeWidth === +strokeWidth ? strokeWidth : 1;
       finalStrokeWidth = activeLineKey === dataKey ? finalStrokeWidth + 2 : finalStrokeWidth;
@@ -83,13 +83,14 @@ class LineChart extends CartesianChart {
           strokeWidth={finalStrokeWidth}
           onMouseLeave={this.handleLineMouseLeave}
           onMouseEnter={this.handleLineMouseEnter.bind(null, dataKey)}
-          data={this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey)}/>
+          data={this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey)}
+        />
       );
     }, this);
   }
 
   render() {
-    const {style, children} = this.props;
+    const { style, children } = this.props;
     const items = ReactUtils.findAllByType(children, LineItem);
     const legendItem = ReactUtils.findChildByType(children, Legend);
 
@@ -102,10 +103,11 @@ class LineChart extends CartesianChart {
 
     return (
       <div className="recharts-wrapper"
-        style={{position: 'relative', cursor: 'default', ...style}}
+        style={{ position: 'relative', cursor: 'default', ...style }}
         onMouseEnter={this.handleMouseEnter.bind(null, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(null, offset, xAxisMap, yAxisMap)}
-        onMouseLeave={this.handleMouseLeave}>
+        onMouseLeave={this.handleMouseLeave}
+      >
 
         {legendItem && legendItem.props.layout === 'horizontal'
           && legendItem.props.verticalAlign === 'top'

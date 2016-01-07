@@ -1,7 +1,7 @@
 /**
  * @fileOverview 散点图
  */
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import Layer from '../container/Layer';
 import pureRender from 'pure-render-decorator';
 
@@ -45,29 +45,30 @@ class Scatter extends React.Component {
   }
 
   handleCircleMouseEnter(data, e) {
-    const {onMouseEnter, groupId} = this.props;
+    const { onMouseEnter, groupId } = this.props;
 
     onMouseEnter(groupId, data, e);
   }
 
   renderCircles() {
-    const {data, className, onMouseEnter,  ...others} = this.props;
+    const { data, className, onMouseEnter, ...others } = this.props;
 
     return data.map((entry, i) => {
-      const {value, ...rest} = entry;
+      const { value, ...rest } = entry;
 
       return (
         <circle
           {...others}
           {...rest}
           onMouseEnter={this.handleCircleMouseEnter.bind(null, entry)}
-          key={'circle-' + i}/>
+          key={'circle-' + i}
+        />
       );
     });
   }
 
   render() {
-    const {data, className} = this.props;
+    const { data, className } = this.props;
 
     if (!data || !data.length) {
       return null;

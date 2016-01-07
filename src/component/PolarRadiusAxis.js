@@ -3,7 +3,7 @@
  * @author xile611
  * @Date 2015-08-28
  */
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import createFragment from 'react-addons-create-fragment';
 import pureRender from 'pure-render-decorator';
 
@@ -44,7 +44,7 @@ class PolarRadiusAxis extends React.Component {
    * @return {Object} (x, y)
    */
   getTickValueCoord(data) {
-    const {angle, cx, cy} = this.props;
+    const { angle, cx, cy } = this.props;
     const sin = Math.sin(-angle * RADIAN);
     const cos = Math.cos(-angle * RADIAN);
 
@@ -55,26 +55,26 @@ class PolarRadiusAxis extends React.Component {
   }
 
   getTickTextAnchor() {
-    const {orientation} = this.props;
+    const { orientation } = this.props;
     let textAnchor;
 
     switch (orientation) {
-    case 'left':
-      textAnchor = 'end';
-      break;
-    case 'right':
-      textAnchor = 'start';
-      break;
-    default:
-      textAnchor = 'middle';
-      break;
+      case 'left':
+        textAnchor = 'end';
+        break;
+      case 'right':
+        textAnchor = 'start';
+        break;
+      default:
+        textAnchor = 'middle';
+        break;
     }
 
     return textAnchor;
   }
 
   renderTicks() {
-    const {ticks, angle} = this.props;
+    const { ticks, angle } = this.props;
     const items = {};
     const textAnchor = this.getTickTextAnchor();
 
@@ -88,7 +88,10 @@ class PolarRadiusAxis extends React.Component {
             y={coord.y}
             textAnchor={textAnchor}
             transform={`rotate(${90 - angle}, ${coord.x}, ${coord.y})`}
-            className="tick-value">{entry.value}</text>
+            className="tick-value"
+          >
+            {entry.value}
+          </text>
         </g>
       );
     }, items);
@@ -101,7 +104,7 @@ class PolarRadiusAxis extends React.Component {
   }
 
   render() {
-    const {ticks} = this.props;
+    const { ticks } = this.props;
 
     if (!ticks || !ticks.length) {
       return null;

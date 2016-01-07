@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import ReactDOMServer from 'react-dom/server';
 import DefaultTooltipContent from './DefaultTooltipContent';
@@ -45,9 +45,9 @@ class Tooltip extends React.Component {
   static defaultProps = {
     active: false,
     offset: 10,
-    scope: {x1: 0, x2: 0, y1: 0, y2: 0},
+    scope: { x1: 0, x2: 0, y1: 0, y2: 0 },
     position: 'left-bottom',
-    coordinate: {x: 0, y: 0},
+    coordinate: { x: 0, y: 0 },
     cursorStyle: {},
     separator: ' : ',
     style: {},
@@ -66,7 +66,7 @@ class Tooltip extends React.Component {
       React.cloneElement(customContent, this.props) :
       React.createElement(DefaultTooltipContent, this.props)
     );
-    const style = {...wrapperStyle, top: -20000, left: 0, display: 'block'};
+    const style = { ...wrapperStyle, top: -20000, left: 0, display: 'block' };
     const wrapper = document.createElement('div');
 
     wrapper.setAttribute('style', DOMUtils.getStyleString(wrapperStyle));
@@ -80,14 +80,14 @@ class Tooltip extends React.Component {
   }
 
   render() {
-    const {customContent, scope, coordinate, active,
-        label, style, labelStyle, offset} = this.props;
+    const { customContent, scope, coordinate, active,
+        label, style, labelStyle, offset } = this.props;
 
-    let outerStyle = {
+    const outerStyle = {
       pointerEvents: 'none',
       whiteSpace: 'nowrap',
       padding: 10,
-      border: "1px solid #ccc",
+      border: '1px solid #ccc',
       backgroundColor: '#fff',
       display: active ? 'block' : 'none',
       position: 'absolute',

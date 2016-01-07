@@ -1,7 +1,7 @@
 /**
  * @fileOverview 面积图
  */
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import Curve from '../shape/Curve';
 import Layer from '../container/Layer';
 import pureRender from 'pure-render-decorator';
@@ -55,7 +55,7 @@ class Area extends React.Component {
   }
 
   renderArea() {
-    const {hasDot, hasCurve, className, ...other} = this.props;
+    const { hasDot, hasCurve, className, ...other } = this.props;
 
     return (
       <Curve
@@ -63,22 +63,24 @@ class Area extends React.Component {
         stroke="none"
         onMouseEnter={this.props.onMouseEnter}
         onMouseLeave={this.props.onMouseLeave}
-        onClick={this.props.onClick}/>
+        onClick={this.props.onClick}
+      />
     );
   }
 
   renderCurve() {
-    const {hasDot, hasCurve, baseLineType, baseLine, ...other} = this.props;
+    const { hasDot, hasCurve, baseLineType, baseLine, ...other } = this.props;
 
     return (
       <Curve
         {...other}
-        fill="none"/>
+        fill="none"
+      />
     );
   }
 
   renderDots() {
-    const {points, ...other} = this.props;
+    const { points, ...other } = this.props;
 
     const dots = points.map((entry, i) => {
       return <circle {...other} key={'dot-' + i} cx={entry.x} cy={entry.y} r={3}/>;
@@ -88,7 +90,7 @@ class Area extends React.Component {
   }
 
   render() {
-    const {hasDot, hasCurve, points, className, ...other} = this.props;
+    const { hasDot, hasCurve, points, className, ...other } = this.props;
 
     if (!points || !points.length) {
       return null;

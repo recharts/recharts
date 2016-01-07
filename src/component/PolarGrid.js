@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import createFragment from 'react-addons-create-fragment';
 import pureRender from 'pure-render-decorator';
 
@@ -44,7 +44,7 @@ class PolarGrid extends React.Component {
    * @return {[type]} [description]
    */
   renderPolarAngles() {
-    const {cx, cy, innerRadius, outerRadius, polarAngles} = this.props;
+    const { cx, cy, innerRadius, outerRadius, polarAngles } = this.props;
 
     if (!polarAngles || !polarAngles.length) { return null; }
 
@@ -60,7 +60,8 @@ class PolarGrid extends React.Component {
           x1={cx + cos * innerRadius}
           y1={cy + sin * innerRadius}
           x2={cx + cos * outerRadius}
-          y2={cy + sin * outerRadius} />
+          y2={cy + sin * outerRadius}
+        />
       );
     }, items);
 
@@ -77,7 +78,7 @@ class PolarGrid extends React.Component {
    * @return {ReactElement} [description]
    */
   renderConcentricCircle(radius, index) {
-    const {cx, cy} = this.props;
+    const { cx, cy } = this.props;
 
     return <circle className="concentric-circle" stroke="#000" fill="none" key={'circle-' + index} cx={cx} cy={cy} r={radius}/>;
   }
@@ -88,7 +89,7 @@ class PolarGrid extends React.Component {
    * @return {ReactElement} [description]
    */
   renderConcentricPolygon(radius, index) {
-    const {cx, cy, polarAngles} = this.props;
+    const { cx, cy, polarAngles } = this.props;
     let path = '';
 
     polarAngles.forEach((angle, i) => {
@@ -108,7 +109,7 @@ class PolarGrid extends React.Component {
    * @todo 英文名优化，同心轴有点怪怪的
    */
   renderConcentricPath() {
-    const {polarRadius, concentricPathType} = this.props;
+    const { polarRadius, concentricPathType } = this.props;
 
     if (!polarRadius || !polarRadius.length) { return null; }
 
@@ -129,7 +130,7 @@ class PolarGrid extends React.Component {
   }
 
   render() {
-    const {outerRadius} = this.props;
+    const { outerRadius } = this.props;
 
     if (outerRadius <= 0) {
       return null;

@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
 import Surface from '../container/Surface';
 import ReactUtils from '../util/ReactUtils';
@@ -58,7 +58,7 @@ class RadialBarChart extends React.Component {
     barGapRadius: 2,
     barOffsetRadius: '10%',
     style: {},
-    margin: {top: 0, right: 0, bottom: 0, left: 0},
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
   };
 
   constructor(props) {
@@ -68,7 +68,7 @@ class RadialBarChart extends React.Component {
   state = {
     activeTooltipLabel: '',
     activeTooltipPosition: 'left-bottom',
-    activeTooltipCoord: {x: 0, y: 0},
+    activeTooltipCoord: { x: 0, y: 0 },
     isTooltipActive: false,
   };
  /**
@@ -80,7 +80,7 @@ class RadialBarChart extends React.Component {
    * @return {Array} 组装后的数据
    */
   getComposeData(barPosition, radiusScale, center, dataKey) {
-    const {data} = this.props;
+    const { data } = this.props;
     const pos = barPosition[dataKey];
 
     return data.map((entry, index) => {
@@ -101,7 +101,7 @@ class RadialBarChart extends React.Component {
    * @return {Object} 圆心的坐标
    */
   getCenter() {
-    const {cx, cy, width, height, margin} = this.props;
+    const { cx, cy, width, height, margin } = this.props;
 
     return {
       cx: cx === +cx ? cx : ((margin.left + width - margin.right) / 2) >> 0,
@@ -114,7 +114,7 @@ class RadialBarChart extends React.Component {
    * @return {Number} 柱子的半径数组
    */
   getRadiusList(items) {
-    const {barRadius} = this.props;
+    const { barRadius } = this.props;
 
     return items.map((child) => {
       return {
@@ -130,7 +130,7 @@ class RadialBarChart extends React.Component {
    * @return {Object} 刻度
    */
   getRadiusScale(center) {
-    const {data, innerRadius, outerRadius, margin} = this.props;
+    const { data, innerRadius, outerRadius, margin } = this.props;
     const bandCount = Math.max(data.length, 1);
     const maxRadius = Math.min.apply(null, [
       Math.abs(center.cx - margin.left), Math.abs(center.cx - margin.right),
@@ -153,7 +153,7 @@ class RadialBarChart extends React.Component {
    * @return {Number} 柱子的位置
    */
   getBarPosition(bandRadius, radiusList) {
-    const {barGapRadius, barOffsetRadius} = this.props;
+    const { barGapRadius, barOffsetRadius } = this.props;
     const len = radiusList.length;
     let result;
 
@@ -163,8 +163,8 @@ class RadialBarChart extends React.Component {
         return res + entry.barRadius;
       }, 0);
       sum += (len - 1) * barGapRadius;
-      const offset =  - sum / 2   >> 0;
-      let prev = {offset: offset - barGapRadius, radius: 0};
+      const offset = -sum / 2 >> 0;
+      let prev = { offset: offset - barGapRadius, radius: 0 };
 
       result = radiusList.reduce((res, entry) => {
         res[entry.dataKey] = {
@@ -218,7 +218,7 @@ class RadialBarChart extends React.Component {
    * @return {ReactComponent} 图例
    */
   renderLegend(legendItem) {
-    const {data, width, height} = this.props;
+    const { data, width, height } = this.props;
 
     const legendData = data.map(entry => {
       return {
@@ -236,7 +236,7 @@ class RadialBarChart extends React.Component {
   }
 
   renderTooltip() {
-    const {children} = this.props;
+    const { children } = this.props;
     const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
 
     if (!tooltipItem) {
@@ -258,7 +258,7 @@ class RadialBarChart extends React.Component {
     const barPosition = this.getBarPosition(bandRadius, radiusList);
 
     return items.map((child, i) => {
-      const {dataKey, ...other} = child.props;
+      const { dataKey, ...other } = child.props;
 
       return (
         <RadialBar
@@ -267,13 +267,14 @@ class RadialBarChart extends React.Component {
           key={'radial-bar-' + i}
           onMouseLeave={this.handleMouseLeave}
           onMouseEnter={this.handleMouseEnter.bind(null, dataKey)}
-          data={this.getComposeData(barPosition, radiusScale, center, dataKey)}/>
+          data={this.getComposeData(barPosition, radiusScale, center, dataKey)}
+        />
       );
     }, this);
   }
 
   render() {
-    const {style, children} = this.props;
+    const { style, children } = this.props;
     const items = ReactUtils.findAllByType(children, RadialBarItem);
     const legendItem = ReactUtils.findChildByType(children, Legend);
     const center = this.getCenter();
@@ -281,7 +282,8 @@ class RadialBarChart extends React.Component {
 
     return (
       <div className="recharts-wrapper"
-        style={{cursor: 'default', ...style, position: 'relative'}}>
+        style={{ cursor: 'default', ...style, position: 'relative' }}
+      >
 
         {legendItem && legendItem.props.layout === 'horizontal'
           && legendItem.props.verticalAlign === 'top'

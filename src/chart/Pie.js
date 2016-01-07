@@ -1,7 +1,7 @@
 /**
  * @fileOverview 饼图
  */
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import Sector from '../shape/Sector';
 import pureRender from 'pure-render-decorator';
 
@@ -58,7 +58,7 @@ class Pie extends React.Component {
   }
 
   getSectors() {
-    const {cx, cy, innerRadius, outerRadius, startAngle, data, minAngle, clockWise} = this.props;
+    const { cx, cy, innerRadius, outerRadius, startAngle, data, minAngle, clockWise } = this.props;
     const len = data.length;
 
     const sum = data.reduce((result, entry) => {
@@ -85,10 +85,10 @@ class Pie extends React.Component {
         prev = {
           ...entry,
           fill: entry.fill,
-          cx: cx,
-          cy: cy,
-          innerRadius: innerRadius,
-          outerRadius: outerRadius,
+          cx,
+          cy,
+          innerRadius,
+          outerRadius,
           startAngle: clockWise ? _startAngle : _endAngle,
           endAngle: clockWise ? _endAngle : _startAngle,
         };
@@ -106,7 +106,7 @@ class Pie extends React.Component {
 
   renderSectors() {
     const sectors = this.getSectors();
-    const {onMouseLeave, onClick} = this.props;
+    const { onMouseLeave, onClick } = this.props;
 
     return sectors.map((entry, i) => {
       return (
@@ -115,13 +115,14 @@ class Pie extends React.Component {
           onMouseEnter={this.handleSectorEnter.bind(null, entry)}
           onMouseLeave={onMouseLeave}
           onClick={onClick}
-          key={'sector-' + i}/>
+          key={'sector-' + i}
+        />
       );
     });
   }
 
   render() {
-    const {data, className} = this.props;
+    const { data, className } = this.props;
 
     if (!data || !data.length) {
       return null;
