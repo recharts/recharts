@@ -1,6 +1,6 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import {getNiceTickValues} from 'recharts-scale';
+import { getNiceTickValues } from 'recharts-scale';
 import D3Scale from 'd3-scale';
 
 import Layer from '../container/Layer';
@@ -55,7 +55,7 @@ class CartesianChart extends React.Component {
     barOffset: '10%',
     barGap: 4,
     layout: 'horizontal',
-    margin: {top: 5, right: 5, bottom: 5, left: 5},
+    margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
 
   constructor(props) {
@@ -67,7 +67,7 @@ class CartesianChart extends React.Component {
       activeTooltipIndex: -1,
       activeTooltipLabel: '',
       activeTooltipPosition: 'left-bottom',
-      activeTooltipCoord: {x: 0, y: 0},
+      activeTooltipCoord: { x: 0, y: 0 },
       isTooltipActive: false,
       activeLineKey: null,
       activeBarKey: null,
@@ -94,8 +94,8 @@ class CartesianChart extends React.Component {
    * @return {Array} 定义域
    */
   getDomainByKey(key, type) {
-    const {data} = this.props;
-    const {dataStartIndex, dataEndIndex} = this.state;
+    const { data } = this.props;
+    const { dataStartIndex, dataEndIndex } = this.state;
     const domain = data.slice(dataStartIndex, dataEndIndex + 1)
                        .map(entry => entry[key]);
 
@@ -148,7 +148,7 @@ class CartesianChart extends React.Component {
    * @return {Object}           轴的配置
    */
   getAxisMap(axisType = 'xAxis', items) {
-    const {children} = this.props;
+    const { children } = this.props;
     const Axis = axisType === 'xAxis' ? XAxis : YAxis;
     const axisIdKey = axisType === 'xAxis' ? 'xAxisId' : 'yAxisId';
     // 所有定义的XAxis组件
@@ -176,7 +176,7 @@ class CartesianChart extends React.Component {
   getAxisMapByAxes(axes, items, axisType, axisIdKey) {
     // 需要去除重复的情况
     const axisMap = axes.reduce((result, child) => {
-      const {type, dataKey} = child.props;
+      const { type, dataKey } = child.props;
       const axisId = child.props[axisIdKey];
 
       if (!result[axisId]) {
@@ -192,11 +192,11 @@ class CartesianChart extends React.Component {
           }), type);
         }
 
-        return {...result, [axisId]: {
+        return { ...result, [axisId]: {
           ...child.props,
           axisType,
           domain,
-        }};
+        } };
       }
 
       return result;
@@ -213,7 +213,7 @@ class CartesianChart extends React.Component {
    * @return {Object}      刻度配置对象
    */
   getAxisMapByItems(items, Axis, axisType, axisIdKey) {
-    const {dataEndIndex, dataStartIndex} = this.state;
+    const { dataEndIndex, dataStartIndex } = this.state;
     const len = dataEndIndex - dataStartIndex + 1;
     let index = -1;
 
@@ -253,7 +253,7 @@ class CartesianChart extends React.Component {
    * @return {Object} 偏移量
    */
   getOffset(xAxisMap, yAxisMap) {
-    const {width, height, margin, children} = this.props;
+    const { width, height, margin, children } = this.props;
     const brushItem = ReactUtils.findChildByType(children, Brush);
 
     const offsetH = Object.keys(yAxisMap).reduce((result, id) => {
@@ -263,7 +263,7 @@ class CartesianChart extends React.Component {
       result[orient] += entry.hide ? 0 : entry.width;
 
       return result;
-    }, {left: margin.left, right: margin.right});
+    }, { left: margin.left, right: margin.right });
 
     const offsetV = Object.keys(xAxisMap).reduce((result, id) => {
       const entry = xAxisMap[id];
@@ -272,7 +272,7 @@ class CartesianChart extends React.Component {
       result[orient] += entry.hide ? 0 : entry.height;
 
       return result;
-    }, {top: margin.top, bottom: margin.bottom});
+    }, { top: margin.top, bottom: margin.bottom });
 
     if (brushItem) {
       offsetV.bottom += brushItem.props.height || Brush.defaultProps.height;
@@ -295,12 +295,12 @@ class CartesianChart extends React.Component {
     let result;
 
     switch (displayName) {
-    case 'LineItem':
-      result = item.props.stroke;
-      break;
-    default:
-      result = item.props.fill;
-      break;
+      case 'LineItem':
+        result = item.props.stroke;
+        break;
+      default:
+        result = item.props.fill;
+        break;
     }
 
     return result;
@@ -339,7 +339,7 @@ class CartesianChart extends React.Component {
    * @return {Object} 格式化后的刻度对象
    */
   getFormatAxisMap(axisMap, offset, axisType) {
-    const {width, height, layout} = this.props;
+    const { width, height, layout } = this.props;
     const ids = Object.keys(axisMap);
     const steps = {
       left: offset.left,
@@ -350,7 +350,7 @@ class CartesianChart extends React.Component {
 
     return ids.reduce((result, id) => {
       const axis = axisMap[id];
-      const {orient, type, domain, tickFormatter} = axis;
+      const { orient, type, domain, tickFormatter } = axis;
       let range;
 
       if (axisType === 'xAxis') {
@@ -371,7 +371,9 @@ class CartesianChart extends React.Component {
       }
 
       this.setTicksOfScale(scale, axis);
-      tickFormatter && scale.tickFormat(tickFormatter);
+      if (tickFormatter) {
+        scale.tickFormat(tickFormatter);
+      }
 
       let x;
       let y;
@@ -384,7 +386,7 @@ class CartesianChart extends React.Component {
         y = offset.top;
       }
 
-      result[id] = {...axis,
+      result[id] = { ...axis,
         x, y, scale,
         width: axisType === 'xAxis' ? offset.width : axis.width,
         height: axisType === 'yAxis' ? offset.height : axis.height,
@@ -411,18 +413,18 @@ class CartesianChart extends React.Component {
 
     if (axis.ticks) {
       return axis.ticks.map(entry => {
-        return {coord: scale(entry) + offset, value: entry};
+        return { coord: scale(entry) + offset, value: entry };
       });
     }
 
     if (scale.ticks) {
       return scale.ticks(axis.tickCount).map(entry => {
-        return {coord: scale(entry) + offset, value: entry};
+        return { coord: scale(entry) + offset, value: entry };
       });
     }
 
     return scale.domain().map((entry) => {
-      return {coord: scale(entry) + offset, value: entry};
+      return { coord: scale(entry) + offset, value: entry };
     });
   }
 
@@ -465,7 +467,7 @@ class CartesianChart extends React.Component {
 
     if (!isIn) {return null;}
 
-    const {layout} = this.props;
+    const { layout } = this.props;
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
     const pos = layout === 'horizontal' ? e.chartX : e.chartY;
     const ids = Object.keys(axisMap);
@@ -476,8 +478,8 @@ class CartesianChart extends React.Component {
     for (let i = 0, len = ticks.length; i < len; i++) {
       if ((i === 0 && pos <= (ticks[i].coord + ticks[i + 1].coord) / 2)
         || (i > 0 && i < len - 1 && pos > (ticks[i].coord + ticks[i - 1].coord) / 2
-          && pos <= (ticks[i].coord + ticks[i + 1].coord) / 2 )
-        || (i === len - 1 && pos > (ticks[i].coord + ticks[i - 1].coord) / 2) ) {
+          && pos <= (ticks[i].coord + ticks[i + 1].coord) / 2)
+        || (i === len - 1 && pos > (ticks[i].coord + ticks[i - 1].coord) / 2)) {
         index = i;
         break;
       }
@@ -499,7 +501,7 @@ class CartesianChart extends React.Component {
    * @return {Array} 浮窗现实的内容
    */
   getTooltipContent(items) {
-    const {activeLineKey, activeTooltipIndex, dataStartIndex, dataEndIndex} = this.state;
+    const { activeLineKey, activeTooltipIndex, dataStartIndex, dataEndIndex } = this.state;
     const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
 
     if (activeTooltipIndex < 0 || !items || !items.length) {
@@ -511,19 +513,19 @@ class CartesianChart extends React.Component {
             items;
 
     return activeItems.map((child) => {
-      const {dataKey, name, unit, formatter} = child.props;
+      const { dataKey, name, unit, formatter } = child.props;
 
       return {
         key: name || dataKey,
         unit: unit || '',
         color: this.getMainColorOfItem(child),
         value: data[activeTooltipIndex][dataKey],
-        formatter: formatter,
+        formatter,
       };
     });
   }
 
-  handleBrushChange = ({startIndex, endIndex}) => {
+  handleBrushChange = ({ startIndex, endIndex }) => {
     this.setState({
       dataStartIndex: startIndex,
       dataEndIndex: endIndex,
@@ -596,7 +598,7 @@ class CartesianChart extends React.Component {
    * @return {ReactElement} x轴
    */
   renderXAxis(xAxisMap) {
-    const {width, height} = this.props;
+    const { width, height } = this.props;
     const ids = xAxisMap && Object.keys(xAxisMap);
 
     if (ids && ids.length) {
@@ -616,8 +618,9 @@ class CartesianChart extends React.Component {
               height={axis.height}
               key={'x-axis-' + ids[i]}
               orient={axis.orient}
-              viewBox={{x: 0, y: 0, width, height}}
-              ticks={this.getAxisTicks(axis, true)}/>
+              viewBox={{ x: 0, y: 0, width, height }}
+              ticks={this.getAxisTicks(axis, true)}
+            />
           ));
         }
       }
@@ -631,7 +634,7 @@ class CartesianChart extends React.Component {
    * @return {ReactElement} y轴
    */
   renderYAxis(yAxisMap) {
-    const {width, height} = this.props;
+    const { width, height } = this.props;
     const ids = yAxisMap && Object.keys(yAxisMap);
 
     if (ids && ids.length) {
@@ -650,8 +653,9 @@ class CartesianChart extends React.Component {
               height={axis.height}
               key={'y-axis-' + ids[i]}
               orient={axis.orient}
-              viewBox={{x: 0, y: 0, width, height}}
-              ticks={this.getAxisTicks(axis, true)}/>
+              viewBox={{ x: 0, y: 0, width, height }}
+              ticks={this.getAxisTicks(axis, true)}
+            />
           ));
         }
       }
@@ -667,7 +671,7 @@ class CartesianChart extends React.Component {
    * @return {ReactElement} 网格
    */
   renderGrid(xAxisMap, yAxisMap, offset) {
-    const {children, width, height} = this.props;
+    const { children, width, height } = this.props;
     const gridItem = ReactUtils.findChildByType(children, CartesianGrid);
 
     if (!gridItem) {return null;}
@@ -680,13 +684,13 @@ class CartesianChart extends React.Component {
     const verticalPoints = this.getGridTicks(CartesianAxis.getTicks({
       ...CartesianAxis.defaultProps, ...xAxis,
       ticks: this.getAxisTicks(xAxis, true),
-      viewBox: {x: 0, y: 0, width, height},
+      viewBox: { x: 0, y: 0, width, height },
     }), offset.left, offset.left + offset.width);
 
     const horizontalPoints = this.getGridTicks(CartesianAxis.getTicks({
       ...CartesianAxis.defaultProps, ...yAxis,
       ticks: this.getAxisTicks(yAxis, true),
-      viewBox: {x: 0, y: 0, width, height},
+      viewBox: { x: 0, y: 0, width, height },
     }), offset.top, offset.top + offset.height);
 
     return React.cloneElement(gridItem, {
@@ -707,7 +711,7 @@ class CartesianChart extends React.Component {
    */
   renderLegend(items, offset, legendItem) {
     const legendData = items.map((child) => {
-      const {dataKey, name, legendType} = child.props;
+      const { dataKey, name, legendType } = child.props;
 
       return {
         type: legendType || 'square',
@@ -728,16 +732,16 @@ class CartesianChart extends React.Component {
    * @return {ReactElement} 浮层元素
    */
   renderTooltip(items, offset) {
-    const {children} = this.props;
+    const { children } = this.props;
     const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
 
     if (!tooltipItem) {
       return null;
     }
 
-    const {chartX, chartY, isTooltipActive,
+    const { chartX, chartY, isTooltipActive,
           activeTooltipLabel, activeTooltipCoord,
-          activeTooltipPosition} = this.state;
+          activeTooltipPosition } = this.state;
     const scope = {
       x1: offset.left,
       x2: offset.left + offset.width,
@@ -758,7 +762,7 @@ class CartesianChart extends React.Component {
   }
 
   renderBrush(xAxisMap, yAxisMap, offset) {
-    const {children, data} = this.props;
+    const { children, data } = this.props;
     const brushItem = ReactUtils.findChildByType(children, Brush);
 
     if (!brushItem) {return null;}
@@ -777,7 +781,7 @@ class CartesianChart extends React.Component {
   }
 
   renderReferenceLines(xAxisMap, yAxisMap, offset) {
-    const {children} = this.props;
+    const { children } = this.props;
     const lines = ReactUtils.findAllByType(children, ReferenceLine);
 
     if (!lines || !lines.length) {return null;}

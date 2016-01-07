@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import d3Shape from 'd3-shape';
 import pureRender from 'pure-render-decorator';
 
@@ -47,7 +47,7 @@ class Curve extends React.Component {
    * @return {String} 路径
    */
   getPath() {
-    const {type, points, baseLine, baseLineType} = this.props;
+    const { type, points, baseLine, baseLineType } = this.props;
     const l = d3Shape.line().x(p => p.x)
                     .y(p => p.y)
                     .defined(p => p.x && p.x === +p.x && p.y && p.y === + p.y)
@@ -65,8 +65,8 @@ class Curve extends React.Component {
   }
 
   render() {
-    const {className, points, type, onClick,
-        onMouseEnter, onMouseLeave, ...others} = this.props;
+    const { className, points, type, onClick,
+        onMouseEnter, onMouseLeave, ...others } = this.props;
 
     if (!points || !points.length) {
       return null;
@@ -79,7 +79,8 @@ class Curve extends React.Component {
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}
-        d={this.getPath()}/>
+        d={this.getPath()}
+      />
     );
   }
 }

@@ -1,7 +1,7 @@
 /**
  * @fileOverview 饼图
  */
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import Curve from '../shape/Curve';
 import Layer from '../container/Layer';
 import pureRender from 'pure-render-decorator';
@@ -47,7 +47,7 @@ class Line extends React.Component {
   }
 
   renderDots() {
-    const {data, ...other} = this.props;
+    const { data, ...other } = this.props;
 
     const dots = data.map((entry, i) => {
       return <circle {...other} key={'dot-' + i} cx={entry.x} cy={entry.y} r={3}/>;
@@ -57,7 +57,7 @@ class Line extends React.Component {
   }
 
   render() {
-    const {dot, data, className, ...other} = this.props;
+    const { dot, data, className, ...other } = this.props;
 
     if (!data || !data.length) {
       return null;
@@ -71,7 +71,8 @@ class Line extends React.Component {
           onMouseEnter={this.props.onMouseEnter}
           onMouseLeave={this.props.onMouseLeave}
           onClick={this.props.onClick}
-          points={data}/>
+          points={data}
+        />
         {dot && this.renderDots()}
       </Layer>
     );

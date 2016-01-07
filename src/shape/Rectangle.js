@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 
 @pureRender
@@ -100,9 +100,9 @@ class Rectangle extends React.Component {
   }
 
   render() {
-    const {x, y, width, height, radius,
+    const { x, y, width, height, radius,
         onClick, onMouseEnter, onMouseLeave,
-        className, ...others} = this.props;
+        className, ...others } = this.props;
 
     return (
       <path
@@ -111,7 +111,8 @@ class Rectangle extends React.Component {
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}
-        d={this.getPath(x, y, width, height, radius)}/>
+        d={this.getPath(x, y, width, height, radius)}
+      />
     );
   }
 }

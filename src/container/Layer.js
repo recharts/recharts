@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
 class Layer extends React.Component {
 
@@ -16,7 +16,7 @@ class Layer extends React.Component {
   }
 
   render() {
-    const {children, className, ...others} = this.props;
+    const { children, className, ...others } = this.props;
 
     return (
       <g className={'recharts-layer ' + (className || '')} {...others}>

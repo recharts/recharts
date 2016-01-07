@@ -1,7 +1,6 @@
-import React, {PropTypes} from 'react';
-import {getNiceTickValues} from 'recharts-scale';
-import {linear} from 'd3-scale';
-
+import React, { PropTypes } from 'react';
+import { getNiceTickValues } from 'recharts-scale';
+import { linear } from 'd3-scale';
 
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
@@ -43,7 +42,7 @@ class ScatterChart extends React.Component {
 
   static defaultProps = {
     style: {},
-    margin: {top: 20, right: 20, bottom: 20, left: 20},
+    margin: { top: 20, right: 20, bottom: 20, left: 20 },
   };
 
   constructor(props) {
@@ -52,7 +51,7 @@ class ScatterChart extends React.Component {
 
   state = {
     activeTooltipPosition: 'left-bottom',
-    activeTooltipCoord: {x: 0, y: 0},
+    activeTooltipCoord: { x: 0, y: 0 },
     isTooltipActive: false,
     activeGroupId: null,
     activeItem: null,
@@ -162,7 +161,7 @@ class ScatterChart extends React.Component {
    * @return {Object} 轴的配置
    */
   getAxis(axisType = 'xAxis', items) {
-    const {children} = this.props;
+    const { children } = this.props;
     const Axis = axisType === 'xAxis' ? XAxis : YAxis;
     const axis = ReactUtils.findChildByType(children, Axis);
 
@@ -186,7 +185,7 @@ class ScatterChart extends React.Component {
    * @return {Object} 轴的配置
    */
   getZAxis(items) {
-    const {children} = this.props;
+    const { children } = this.props;
     const axisItem = ReactUtils.findChildByType(children, ZAxis);
     const axisProps = (axisItem && axisItem.props) || ZAxis.defaultProps;
     const domain = axisProps.dataKey ? this.getDomain(items, axisProps.dataKey) : [-1, 1];
@@ -199,8 +198,8 @@ class ScatterChart extends React.Component {
   }
 
   getOffset(xAxis, yAxis) {
-    const {width, height, margin} = this.props;
-    const offset = {...margin};
+    const { width, height, margin } = this.props;
+    const offset = { ...margin };
 
     offset[xAxis.orient] += xAxis.height;
     offset[yAxis.orient] += yAxis.width;
@@ -242,14 +241,16 @@ class ScatterChart extends React.Component {
    * @return {Object} 格式化的轴
    */
   getFormatAxis(axis, offset, axisType) {
-    const {orient, domain, tickFormat} = axis;
+    const { orient, domain, tickFormat } = axis;
     const range = axisType === 'xAxis' ?
                   [offset.left, offset.left + offset.width] :
                   [offset.top + offset.height, offset.top];
     const scale = linear().domain(domain).range(range);
 
     this.setTicksOfScale(scale, axis);
-    tickFormat && scale.tickFormat(tickFormat);
+    if (tickFormat) {
+      scale.tickFormat(tickFormat);
+    }
 
     let x;
     let y;
@@ -258,7 +259,7 @@ class ScatterChart extends React.Component {
       x = offset.left;
       y = orient === 'top' ? offset.top - axis.height : offset.top + offset.height;
     } else {
-      x  = orient === 'left' ? offset.left - axis.width : offset.right;
+      x = orient === 'left' ? offset.left - axis.width : offset.right;
       y = offset.top;
     }
 
@@ -314,7 +315,7 @@ class ScatterChart extends React.Component {
       isTooltipActive: true,
       activeGroupId: groupId,
       activeItem: el,
-      activeTooltipCoord: {x: el.cx, y: el.cy},
+      activeTooltipCoord: { x: el.cx, y: el.cy },
     });
   }
   /**
@@ -335,16 +336,16 @@ class ScatterChart extends React.Component {
    * @return {ReactElement} 浮层元素
    */
   renderTooltip(items, xAxis, yAxis, zAxis) {
-    const {children} = this.props;
+    const { children } = this.props;
     const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
 
     if (!tooltipItem) {
       return null;
     }
 
-    const {chartX, chartY, isTooltipActive,
+    const { chartX, chartY, isTooltipActive,
           activeItem, activeTooltipCoord,
-          activeTooltipPosition} = this.state;
+          activeTooltipPosition } = this.state;
 
     return React.cloneElement(tooltipItem, {
       position: activeTooltipPosition,
@@ -372,7 +373,8 @@ class ScatterChart extends React.Component {
         width={offset.width}
         height={offset.height}
         verticalPoints={this.getGridTicks(xAxis)}
-        horizontalPoints={this.getGridTicks(yAxis)}/>
+        horizontalPoints={this.getGridTicks(yAxis)}
+      />
     );
   }
 
@@ -385,7 +387,7 @@ class ScatterChart extends React.Component {
    */
   renderLegend(items, offset, legendItem) {
     const legendData = items.map((child) => {
-      const {name, fill, legendType} = child.props;
+      const { name, fill, legendType } = child.props;
 
       return {
         type: legendType || 'square',
@@ -406,7 +408,7 @@ class ScatterChart extends React.Component {
    * @return {ReactElement} 刻度图层
    */
   renderAxis(axis, layerKey) {
-    const {width, height} = this.props;
+    const { width, height } = this.props;
 
     if (axis) {
       return (
@@ -417,8 +419,9 @@ class ScatterChart extends React.Component {
             width={axis.width}
             height={axis.height}
             orient={axis.orient}
-            viewBox={{x: 0, y: 0, width, height}}
-            ticks={this.getAxisTicks(axis)}/>
+            viewBox={{ x: 0, y: 0, width, height }}
+            ticks={this.getAxisTicks(axis)}
+          />
         </Layer>
       );
     }
@@ -432,10 +435,10 @@ class ScatterChart extends React.Component {
    * @return {ReactElement} 散点
    */
   renderItems(items, xAxis, yAxis, zAxis) {
-    const {activeScatterKey} = this.state;
+    const { activeScatterKey } = this.state;
 
     return items.map((child, i) => {
-      const {strokeWidth, data, ...other} = child.props;
+      const { strokeWidth, data, ...other } = child.props;
 
       let finalStrokeWidth = strokeWidth === +strokeWidth ? strokeWidth : 1;
       finalStrokeWidth = activeScatterKey === i ? finalStrokeWidth + 2 : finalStrokeWidth;
@@ -448,13 +451,14 @@ class ScatterChart extends React.Component {
           strokeWidth={finalStrokeWidth}
           onMouseLeave={this.handleScatterMouseLeave}
           onMouseEnter={this.handleScatterMouseEnter}
-          data={this.getComposeData(data, xAxis, yAxis, zAxis)}/>
+          data={this.getComposeData(data, xAxis, yAxis, zAxis)}
+        />
       );
     }, this);
   }
 
   render() {
-    const {style, children} = this.props;
+    const { style, children } = this.props;
     const items = ReactUtils.findAllByType(children, ScatterItem);
     const legendItem = ReactUtils.findChildByType(children, Legend);
     const zAxis = this.getZAxis(items);
@@ -467,7 +471,8 @@ class ScatterChart extends React.Component {
 
     return (
       <div className="recharts-wrapper"
-        style={{position: 'relative', cursor: 'default', ...style}}>
+        style={{ position: 'relative', cursor: 'default', ...style }}
+      >
 
         {legendItem && legendItem.props.layout === 'horizontal'
           && legendItem.props.verticalAlign === 'top'

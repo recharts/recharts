@@ -1,7 +1,7 @@
 /**
  * @fileOverview 玉玦图
  */
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
 import LodashUtils from '../util/LodashUtils';
@@ -68,8 +68,8 @@ class RadialBar extends React.Component {
   }
 
   getSectors() {
-    const {cx, cy, startAngle,
-           data, minAngle, maxAngle, clockWise} = this.props;
+    const { cx, cy, startAngle,
+           data, minAngle, maxAngle, clockWise } = this.props;
     const maxValue = Math.max.apply(null, data.map(entry => entry.value));
     const absMinAngle = Math.abs(minAngle);
     const gapAngle = Math.abs(maxAngle) - absMinAngle;
@@ -92,9 +92,9 @@ class RadialBar extends React.Component {
   }
 
   getLabelPathArc(data, labelContent, style) {
-    const {label} = this.props;
+    const { label } = this.props;
     const offsetRadius = (React.isValidElement(label) ? label.props.offsetRadius : label.offsetRadius) || 2;
-    const {cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise} = data;
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise } = data;
     const radius = clockWise ? innerRadius + offsetRadius : Math.max(outerRadius - offsetRadius, 0);
 
     if (radius <= 0) {return '';}
@@ -123,10 +123,10 @@ class RadialBar extends React.Component {
 
 
   renderSectors(sectors) {
-    const {className, component, data, ...others} = this.props;
+    const { className, component, data, ...others } = this.props;
 
     return sectors.map((entry, i) => {
-      const {value, ...rest} = entry;
+      const { value, ...rest } = entry;
 
       return component ? React.cloneElement(component, {
         ...others, ...rest,
@@ -139,10 +139,10 @@ class RadialBar extends React.Component {
   }
 
   renderBackground(sectors) {
-    const {startAngle, endAngle, clockWise, background} = this.props;
+    const { startAngle, endAngle, clockWise, background } = this.props;
 
     return sectors.map((entry, i) => {
-      const {value, ...rest} = entry;
+      const { value, ...rest } = entry;
 
       return React.isValidElement(background) ? React.cloneElement(background, {
         ...rest, clockWise, startAngle, endAngle, index: i, key: 'sector-' + i,
@@ -153,33 +153,34 @@ class RadialBar extends React.Component {
           clockWise={clockWise}
           startAngle={startAngle}
           endAngle={endAngle}
-          key={'sector-' + i}/>
+          key={'sector-' + i}
+        />
       );
     });
   }
 
   renderLabels(sectors) {
-    const {label} = this.props;
+    const { label } = this.props;
     const isElement = React.isValidElement(label);
     const formatter = isElement ? label.props.formatter : label.formatter;
     const hasFormatter = LodashUtils.isFunction(formatter);
 
     return sectors.map((entry, i) => {
-      const content =  hasFormatter ? formatter(entry.value) : entry.value;
+      const content = hasFormatter ? formatter(entry.value) : entry.value;
       const id = LodashUtils.getUniqueId('recharts-defs-');
-      const style = (isElement ? ReactUtils.getPresentationAttributes(label) : label.style) || {fontSize: 10, fill: '#000'};
+      const style = (isElement ? ReactUtils.getPresentationAttributes(label) : label.style) || { fontSize: 10, fill: '#000' };
       const path = this.getLabelPathArc(entry, content, style);
 
       const html =
         `<defs><path id='${id}' d='${path}'/></defs>
          <textPath xlink:href='#${id}'>${content}</textPath>`;
 
-      return <text {...style} key={'label-' + i} dangerouslySetInnerHTML={{__html: html}}/>;
+      return <text {...style} key={'label-' + i} dangerouslySetInnerHTML={{ __html: html }}/>;
     });
   }
 
   render() {
-    const {data, className, background, label} = this.props;
+    const { data, className, background, label } = this.props;
 
     if (!data || !data.length) {
       return null;

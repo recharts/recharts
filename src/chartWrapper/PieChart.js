@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
 import Surface from '../container/Surface';
 import ReactUtils from '../util/ReactUtils';
@@ -43,7 +43,7 @@ class PieChart extends React.Component {
 
   static defaultProps = {
     style: {},
-    margin: {top: 0, right: 0, bottom: 0, left: 0},
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
   };
 
   constructor(props) {
@@ -53,12 +53,12 @@ class PieChart extends React.Component {
   state = {
     activeTooltipLabel: '',
     activeTooltipPosition: 'left-bottom',
-    activeTooltipCoord: {x: 0, y: 0},
+    activeTooltipCoord: { x: 0, y: 0 },
     isTooltipActive: false,
   };
 
   getComposeData(item) {
-    const {fill, stroke, strokeWidth, strokeDasharray, data} = item.props;
+    const { fill, stroke, strokeWidth, strokeDasharray, data } = item.props;
 
     return data.map((entry) => {
       return {
@@ -94,15 +94,15 @@ class PieChart extends React.Component {
    * @return {ReactElement} 图例
    */
   renderLegend(items, legendItem) {
-    const {width} = this.props;
+    const { width } = this.props;
 
     const legendData = items.reduce((result, child) => {
       const data = this.getComposeData(child);
 
       return result.concat(data.map((entry) => {
-        const {name, value, ...rest} = entry;
+        const { name, value, ...rest } = entry;
 
-        return {value: entry.name, color: entry.fill, ...rest};
+        return { value: entry.name, color: entry.fill, ...rest };
       }));
     }, []);
 
@@ -113,7 +113,7 @@ class PieChart extends React.Component {
   }
 
   renderTooltip() {
-    const {children} = this.props;
+    const { children } = this.props;
     const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
 
     if (!tooltipItem) {
@@ -126,10 +126,10 @@ class PieChart extends React.Component {
    * @return {ReactComponent} 饼图元素
    */
   renderItems(items) {
-    const {width, height} = this.props;
+    const { width, height } = this.props;
 
     return items.map((child, i) => {
-      const {cx, cy, outerRadius, data, ...others} = child.props;
+      const { cx, cy, outerRadius, data, ...others } = child.props;
       const maxRadius = Math.min(width, height) / 2;
 
       return (
@@ -141,19 +141,21 @@ class PieChart extends React.Component {
           data={this.getComposeData(child)}
           onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}
-          outerRadius={outerRadius || maxRadius * 0.8}/>
+          outerRadius={outerRadius || maxRadius * 0.8}
+        />
       );
     });
   }
 
   render() {
-    const {style, children} = this.props;
+    const { style, children } = this.props;
     const items = ReactUtils.findAllByType(children, PieItem);
     const legendItem = ReactUtils.findChildByType(children, Legend);
 
     return (
       <div className="recharts-wrapper"
-        style={{position: 'relative', cursor: 'default', ...style}}>
+        style={{ position: 'relative', cursor: 'default', ...style }}
+      >
 
         {legendItem && legendItem.props.layout === 'horizontal'
           && legendItem.props.verticalAlign === 'top'

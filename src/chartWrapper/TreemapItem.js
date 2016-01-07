@@ -1,10 +1,10 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
 class TreemapItem extends React.Component {
   static displayName = 'TreemapItem';
 
   static propTypes = {
-    element: PropTypes.element
+    element: PropTypes.element,
   };
 
   static defaultProps = {};

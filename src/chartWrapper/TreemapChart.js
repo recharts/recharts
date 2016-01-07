@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
@@ -16,6 +16,10 @@ class TreemapChart extends React.Component {
     data: PropTypes.array,
     style: PropTypes.object,
     ratio: PropTypes.number,
+    children: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.node),
+      PropTypes.node,
+    ]),
   };
 
   constructor(props) {
@@ -23,7 +27,7 @@ class TreemapChart extends React.Component {
   }
 
   pad(node) {
-    return {x: node.x, y: node.y, dx: node.dx, dy: node.dy};
+    return { x: node.x, y: node.y, dx: node.dx, dy: node.dy };
   }
 
   // Compute the area for each child based on value & scale.
@@ -90,7 +94,7 @@ class TreemapChart extends React.Component {
     let rmin = Infinity;
     let i = -1;
     const n = row.length;
-    const {ratio} = this.props;
+    const { ratio } = this.props;
 
     while (++i < n) {
       r = row[i].area;
@@ -144,11 +148,11 @@ class TreemapChart extends React.Component {
   }
 
   renderAllNodes() {
-    const {width, height, data, children} = this.props;
+    const { width, height, data, children } = this.props;
     const treemapItem = children.props.element;
-    
+
     const nodes = {
-      value: data.reduce((a, b)=>(a + b.value), 0),
+      value: data.reduce((a, b) => (a + b.value), 0),
       children: data,
       x: 0,
       y: 0,
@@ -162,14 +166,14 @@ class TreemapChart extends React.Component {
       (v, i) =>
       <Layer key={i}>
         {
-          React.cloneElement(treemapItem, {node: v, index: i})
+          React.cloneElement(treemapItem, { node: v, index: i })
         }
       </Layer>
     );
   }
 
   render() {
-    const {width, height} = this.props;
+    const { width, height } = this.props;
 
     return (
       <Surface width={width} height={height}>

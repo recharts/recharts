@@ -1,7 +1,7 @@
 /**
  * @fileOverview 柱图
  */
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import pureRender from 'pure-render-decorator';
@@ -53,10 +53,10 @@ class Bar extends React.Component {
   }
 
   renderRectangles() {
-    const {data, className, hasLabel, customContent, ...others} = this.props;
+    const { data, className, customContent, ...others } = this.props;
 
     return data.map((entry, i) => {
-      const {value, ...rest} = entry;
+      const { value, ...rest } = entry;
 
       return React.isValidElement(customContent) ? React.cloneElement(customContent, {
         ...others, ...rest,
@@ -70,7 +70,7 @@ class Bar extends React.Component {
   }
 
   renderLabels() {
-    const {data, label, fill, stroke} = this.props;
+    const { data, label, fill, stroke } = this.props;
 
     return data.map((entry, i) => {
       const x = entry.x + entry.width / 2;
@@ -86,7 +86,7 @@ class Bar extends React.Component {
   }
 
   render() {
-    const {data, className, label} = this.props;
+    const { data, className, label } = this.props;
 
     if (!data || !data.length) {
       return null;

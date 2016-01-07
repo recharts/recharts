@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import DOMUtils from '../util/DOMUtils';
 import pureRender from 'pure-render-decorator';
 
@@ -40,7 +40,7 @@ class CartesianAxis extends React.Component {
     y: 0,
     width: 0,
     height: 0,
-    viewBox: {x: 0, y: 0, width: 0, height: 0},
+    viewBox: { x: 0, y: 0, width: 0, height: 0 },
     // 坐标轴所在的方位
     orient: 'bottom',
     // 刻度数据，格式为 {value: '展示的刻度值', coord: 12, size: 8}
@@ -61,7 +61,7 @@ class CartesianAxis extends React.Component {
   }
 
   static getTicks(props) {
-    const {ticks, viewBox, minLabelGap, orient, interval} = props;
+    const { ticks, viewBox, minLabelGap, orient, interval } = props;
 
     if (!ticks || !ticks.length) { return [];}
 
@@ -77,7 +77,7 @@ class CartesianAxis extends React.Component {
   }
 
   static getAutoIntervalTicks(ticks, viewBox, orient, minLabelGap) {
-    const {x, y, width, height} = viewBox;
+    const { x, y, width, height } = viewBox;
     const sizeKey = (orient === 'top' || orient === 'bottom') ? 'width' : 'height';
     const sign = ticks.length >= 2 ? Math.sign(ticks[1].coord - ticks[0].coord) : 1;
 
@@ -106,7 +106,7 @@ class CartesianAxis extends React.Component {
    * @return {Object} (x1, y1)为靠近文字的端点坐标，(x2, y2)为靠近轴的端点坐标
    */
   getTickLineCoord(data) {
-    const {x, y, width, height, orient, tickSize} = this.props;
+    const { x, y, width, height, orient, tickSize } = this.props;
     let x1;
     let x2;
     let y1;
@@ -115,113 +115,113 @@ class CartesianAxis extends React.Component {
     const finalTickSize = data.tickSize || tickSize;
 
     switch (orient) {
-    case 'top':
-      x1 = x2 = data.coord;
-      y1 = y + height - finalTickSize;
-      y2 = y + height;
-      break;
-    case 'left':
-      y1 = y2 = data.coord;
-      x1 = x + width - finalTickSize;
-      x2 = x + width;
-      break;
-    case 'right':
-      y1 = y2 = data.coord;
-      x1 = x + finalTickSize;
-      x2 = x;
-      break;
-    default:
-      x1 = x2 = data.coord;
-      y1 = y + finalTickSize;
-      y2 = y;
-      break;
+      case 'top':
+        x1 = x2 = data.coord;
+        y1 = y + height - finalTickSize;
+        y2 = y + height;
+        break;
+      case 'left':
+        y1 = y2 = data.coord;
+        x1 = x + width - finalTickSize;
+        x2 = x + width;
+        break;
+      case 'right':
+        y1 = y2 = data.coord;
+        x1 = x + finalTickSize;
+        x2 = x;
+        break;
+      default:
+        x1 = x2 = data.coord;
+        y1 = y + finalTickSize;
+        y2 = y;
+        break;
     }
 
-    return {x1, y1, x2, y2};
+    return { x1, y1, x2, y2 };
   }
 
   getBaseline() {
-    const {orient} = this.props;
+    const { orient } = this.props;
     let baseline;
 
     switch (orient) {
-    case 'top':
-      baseline = 'auto';
-      break;
-    case 'bottom':
-      baseline = 'text-before-edge';
-      break;
-    default:
-      baseline = 'central';
-      break;
+      case 'top':
+        baseline = 'auto';
+        break;
+      case 'bottom':
+        baseline = 'text-before-edge';
+        break;
+      default:
+        baseline = 'central';
+        break;
     }
 
     return baseline;
   }
 
   getTickTextAnchor() {
-    const {orient} = this.props;
+    const { orient } = this.props;
     let textAnchor;
 
     switch (orient) {
-    case 'left':
-      textAnchor = 'end';
-      break;
-    case 'right':
-      textAnchor = 'start';
-      break;
-    default:
-      textAnchor = 'middle';
-      break;
+      case 'left':
+        textAnchor = 'end';
+        break;
+      case 'right':
+        textAnchor = 'start';
+        break;
+      default:
+        textAnchor = 'middle';
+        break;
     }
 
     return textAnchor;
   }
 
   getDy() {
-    const {orient} = this.props;
+    const { orient } = this.props;
     let dy = 0;
 
     switch (orient) {
-    case 'left':
-    case 'right':
-      dy = 8;
-      break;
-    case 'top':
-      dy = -2;
-      break;
-    default:
-      dy = 15;
-      break;
+      case 'left':
+      case 'right':
+        dy = 8;
+        break;
+      case 'top':
+        dy = -2;
+        break;
+      default:
+        dy = 15;
+        break;
     }
 
     return dy;
   }
 
   renderAxis() {
-    const {x, y, width, height, orient, stroke} = this.props;
+    const { x, y, width, height, orient, stroke } = this.props;
     let axis;
 
     switch (orient) {
-    case 'top':
-      axis = <line className="axis-line" stroke={stroke} x1={x} y1={y + height} x2={x + width} y2={y + height}/>;
-      break;
-    case 'left':
-      axis = <line className="axis-line" stroke={stroke} x1={x + width} y1={y} x2={x + width} y2={y + height}/>;
-      break;
-    case 'right':
-      axis = <line className="axis-line" stroke={stroke} x1={x} y1={y} x2={x} y2={y + height}/>;
-      break;
-    default:
-      axis = <line className="axis-line" stroke={stroke} x1={x} y1={y} x2={x + width} y2={y}/>;
-      break;
+      case 'top':
+        axis = <line className="axis-line" stroke={stroke} x1={x} y1={y + height} x2={x + width} y2={y + height}/>;
+        break;
+      case 'left':
+        axis = <line className="axis-line" stroke={stroke} x1={x + width} y1={y} x2={x + width} y2={y + height}/>;
+        break;
+      case 'right':
+        axis = <line className="axis-line" stroke={stroke} x1={x} y1={y} x2={x} y2={y + height}/>;
+        break;
+      default:
+        axis = <line className="axis-line" stroke={stroke} x1={x} y1={y} x2={x + width} y2={y}/>;
+        break;
     }
 
     return axis;
   }
 
   renderTicks() {
-    const {ticks, hasTick, stroke, customContent} = this.props;
+    const { ticks, hasTick, stroke, customContent } = this.props;
 
     if (!ticks || !ticks.length) { return null; }
 
@@ -241,7 +241,8 @@ class CartesianAxis extends React.Component {
               x1={lineCoord.x1}
               y1={lineCoord.y1}
               x2={lineCoord.x2}
-              y2={lineCoord.y2}/>
+              y2={lineCoord.y2}
+            />
           )}
           {React.isValidElement(customContent) ? React.cloneElement(customContent, {
             ...entry,
@@ -254,7 +255,10 @@ class CartesianAxis extends React.Component {
             x={lineCoord.x1}
             y={lineCoord.y1}
             textAnchor={textAnchor}
-            className="tick-value">{entry.value}</text>
+            className="tick-value"
+          >
+            {entry.value}
+          </text>
           )}
         </g>
       );
@@ -268,7 +272,7 @@ class CartesianAxis extends React.Component {
   }
 
   render() {
-    const {hasAxis, width, height, ticks} = this.props;
+    const { hasAxis, width, height, ticks } = this.props;
 
     if (width <= 0 || height <= 0 || !ticks || !ticks.length) {
       return null;

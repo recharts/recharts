@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 
 @pureRender
@@ -30,10 +30,10 @@ class DefaultTooltipContent extends React.Component {
   }
 
   renderContent() {
-    const {data, separator, formatter, itemStyle} = this.props;
+    const { data, separator, formatter, itemStyle } = this.props;
 
     if (data && data.length) {
-      const listStyle = {padding: 0, margin: 0};
+      const listStyle = { padding: 0, margin: 0 };
       const items = data.map((entry, i) => {
         const finalItemStyle = {
           display: 'block',
@@ -59,7 +59,7 @@ class DefaultTooltipContent extends React.Component {
   }
 
   render() {
-    const {labelStyle, label} = this.props;
+    const { labelStyle, label } = this.props;
     const finalLabelStyle = {
       margin: 0,
       ...labelStyle,

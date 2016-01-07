@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
 import PolarGrid from '../component/PolarGrid';
 import PolarAngleAxis from '../component/PolarAngleAxis';
@@ -46,8 +46,8 @@ class Radar extends React.Component {
    * @return {Array} 半径节点
    */
   getGridRadius() {
-    const {gridNumber} = this.props;
-    let {innerRadius, outerRadius} = this.props;
+    const { gridNumber } = this.props;
+    let { innerRadius, outerRadius } = this.props;
     const result = [];
 
     if (innerRadius === outerRadius) {
@@ -78,8 +78,8 @@ class Radar extends React.Component {
    * @return {Object} {x: '横坐标', y: '纵坐标'}
    */
   getVertexCoord(data) {
-    const {min, max, value, angle} = data;
-    const {cx, cy, innerRadius, outerRadius} = this.props;
+    const { min, max, value, angle } = data;
+    const { cx, cy, innerRadius, outerRadius } = this.props;
     let r;
 
     if (min === max) {
@@ -98,7 +98,7 @@ class Radar extends React.Component {
    * @return {Array} 角度轴的刻度
    */
   getAngleTicks() {
-    const {startAngle, data, clockWise} = this.props;
+    const { startAngle, data, clockWise } = this.props;
     const sign = clockWise ? -1 : 1;
     const len = data.length;
     const angle = perigon / len;
@@ -116,11 +116,11 @@ class Radar extends React.Component {
   }
 
   renderPolygon() {
-    const {data} = this.props;
+    const { data } = this.props;
     const points = [];
 
     for (let i = 0, len = data.length; i < len; i++) {
-      const {x, y} = this.getVertexCoord(data[i]);
+      const { x, y } = this.getVertexCoord(data[i]);
 
       points.push([x, y]);
     }
@@ -130,24 +130,26 @@ class Radar extends React.Component {
   }
 
   render() {
-    const {outerRadius, data} = this.props;
+    const { outerRadius, data } = this.props;
 
     if (outerRadius <= 0 || !data || !data.length) {
       return null;
     }
     const angleTicks = this.getAngleTicks();
     const radius = this.getGridRadius();
-    const angles = angleTicks.map(entry =>  entry.angle);
+    const angles = angleTicks.map(entry => entry.angle);
 
     return (
       <g className="layer-radar">
         <PolarGrid
           {...this.props}
           polarAngles={angles}
-          polarRadius={radius}/>
+          polarRadius={radius}
+        />
         <PolarAngleAxis
           {...this.props}
-          ticks={angleTicks}/>
+          ticks={angleTicks}
+        />
         {this.renderPolygon()}
       </g>
     );

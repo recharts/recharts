@@ -1,5 +1,5 @@
 function offset(el) {
-  let box = {top: 0, left: 0};
+  let box = { top: 0, left: 0 };
 
   if (el.getBoundingClientRect) {
     box = el.getBoundingClientRect();
@@ -87,11 +87,11 @@ function getStringSize(text, style = {}) {
     stringCache.span = span;
   }
 
-  stringCache.span.setAttribute('style', getStyleString({...SPAN_STYLE, ...style}));
+  stringCache.span.setAttribute('style', getStyleString({ ...SPAN_STYLE, ...style }));
   stringCache.span.textContent = str;
 
   const rect = stringCache.span.getBoundingClientRect();
-  const result = {width: rect.width, height: rect.height};
+  const result = { width: rect.width, height: rect.height };
 
   stringCache.widthCache[cacheKey] = result;
 

@@ -44,8 +44,8 @@ class CartesianGrid extends React.Component {
    * @return {Group} 图层
    */
   renderHorizontal() {
-    const {x, y, width, height, horizontal, vertical, horizontalPoints,
-        verticalPoints, ...others} = this.props;
+    const { x, y, width, height, horizontal, vertical, horizontalPoints,
+        verticalPoints, ...others } = this.props;
 
     if (!horizontalPoints || !horizontalPoints.length) { return null; }
 
@@ -68,8 +68,8 @@ class CartesianGrid extends React.Component {
    * @return {Group} 图层
    */
   renderVertical() {
-    const {x, y, width, height, horizontal, vertical,
-         horizontalPoints, verticalPoints, ...others} = this.props;
+    const { x, y, width, height, horizontal, vertical,
+         horizontalPoints, verticalPoints, ...others } = this.props;
 
     if (!verticalPoints || !verticalPoints.length) { return null; }
 
@@ -89,7 +89,7 @@ class CartesianGrid extends React.Component {
   }
 
   render() {
-    const {width, height, horizontal, vertical} = this.props;
+    const { width, height, horizontal, vertical } = this.props;
 
     if (width <= 0 || height <= 0) {
       return null;
