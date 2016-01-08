@@ -33,7 +33,7 @@ export default React.createClass({
 
     return (
       <div className='area-charts'>
-        <p>阿里指数</p>
+        <p>自定义Tooltip内容</p>
         <div className='area-chart-wrapper'>
           <AreaChart width={900} height={250} data={data} margin={{top: 10, right: 20, bottom: 10, left: 10}}>
             <XAxis dataKey='name' hasTick={true}/>
@@ -62,11 +62,11 @@ export default React.createClass({
           </AreaChart>
         </div>
         <p>双轴图（线图默认是水平方向的，容器有margin）</p>
-        <div className='area-chart-wrapper' style={{margin: 40}}>
-          <AreaChart width={400} height={400} data={data}>
-            <YAxis type='number' yAxisId={0}/>
-            <YAxis type='number' orient='right' yAxisId={1}/>
-            <YAxis type='number' orient='right' yAxisId={2}/>
+        <div className='area-chart-wrapper'>
+          <AreaChart width={600} height={400} data={data}>
+            <YAxis type='number' yAxisId={0} stroke="#ff7300"/>
+            <YAxis type='number' orient='right' yAxisId={1} stroke="#387908"/>
+            <YAxis type='number' orient='right' yAxisId={2} stroke="#38abc8"/>
             <XAxis dataKey='name'/>
             <AreaItem dataKey='uv' stroke='#ff7300' fill='#ff7300' strokeWidth={2} yAxisId={0}/>
             <AreaItem dataKey='pv' stroke='#387908' fill='#387908' strokeWidth={2} yAxisId={1}/>

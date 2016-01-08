@@ -361,7 +361,7 @@ class CartesianChart extends React.Component {
 
     return ids.reduce((result, id) => {
       const axis = axisMap[id];
-      const { orient, type, domain, tickFormatter } = axis;
+      const { orient, type, domain } = axis;
       let range;
 
       if (axisType === 'xAxis') {
@@ -382,9 +382,6 @@ class CartesianChart extends React.Component {
       }
 
       this.setTicksOfScale(scale, axis);
-      if (tickFormatter) {
-        scale.tickFormat(tickFormatter);
-      }
 
       let x;
       let y;

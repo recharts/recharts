@@ -36,11 +36,12 @@ export default React.createClass({
 
         <p>双轴图（线图默认是水平方向的，容器有margin）</p>
         <div className='line-chart-wrapper' style={{margin: 40}}>
-          <LineChart width={400} height={400} data={data}>
+          <LineChart width={600} height={400} data={data}>
             <YAxis type='number' yAxisId={0}/>
             <YAxis type='number' orient='right' yAxisId={1}/>
             <YAxis type='number' orient='right' yAxisId={2}/>
             <XAxis dataKey='name'/>
+            <Tooltip/>
             <CartesianGrid stroke='#f5f5f5'/>
             <LineItem dataKey='uv' stroke='#ff7300' strokeWidth={2} yAxisId={0}/>
             <LineItem dataKey='pv' stroke='#387908' strokeWidth={2} yAxisId={1}/>
