@@ -8,7 +8,6 @@ import CartesianAxis from '../component/CartesianAxis';
 import CartesianGrid from '../component/CartesianGrid';
 
 import ReactUtils from '../util/ReactUtils';
-import EventUtils from '../util/EventUtils';
 import DOMUtils from '../util/DOMUtils';
 import LodashUtils from '../util/LodashUtils';
 
@@ -23,7 +22,7 @@ const ORIENT_MAP = {
   yAxis: ['left', 'right'],
 };
 /**
- * 欧式坐标系图表基类
+ * The base class of chart in cartesian coordinate system
  */
 class CartesianChart extends React.Component {
 
@@ -73,12 +72,24 @@ class CartesianChart extends React.Component {
       activeBarKey: null,
     };
   }
+  /**
+   * get coordinate of cursor in chart
+   * @param  {Object} e               event object
+   * @param  {Object} containerOffset offser of chart container
+   * @return {Object}                 {chartX, chartY}
+   */
+  getChartPosition(e, containerOffset) {
+    return {
+      chartX: Math.round(e.pageX - containerOffset.left),
+      chartY: Math.round(e.pageY - containerOffset.top),
+    };
+  }
 
   /**
-   * 取ticks的定义域
-   * @param  {Array} ticks 刻度
-   * @param  {String} type  刻度类型
-   * @return {Array} 刻度
+   * get domain of ticks
+   * @param  {Array} ticks Ticks of axis
+   * @param  {String} type  The type of axis
+   * @return {Array} domain
    */
   getDomainOfTicks(ticks, type) {
     if (type === 'number') {
@@ -543,7 +554,7 @@ class CartesianChart extends React.Component {
   handleMouseEnter(offset, xAxisMap, yAxisMap, e) {
     const container = ReactDOM.findDOMNode(this);
     const containerOffset = DOMUtils.offset(container);
-    const ne = EventUtils.normalize(e, containerOffset);
+    const ne = this.getChartPosition(e, containerOffset);
     const mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);
 
     if (mouse) {
@@ -566,7 +577,7 @@ class CartesianChart extends React.Component {
   handleMouseMove(offset, xAxisMap, yAxisMap, e) {
     const container = ReactDOM.findDOMNode(this);
     const containerOffset = DOMUtils.offset(container);
-    const ne = EventUtils.normalize(e, containerOffset);
+    const ne = this.getChartPosition(e, containerOffset);
     const mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);
 
     if (mouse) {

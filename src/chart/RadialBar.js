@@ -171,11 +171,12 @@ class RadialBar extends React.Component {
       const style = (isElement ? ReactUtils.getPresentationAttributes(label) : label.style) || { fontSize: 10, fill: '#000' };
       const path = this.getLabelPathArc(entry, content, style);
 
-      const html =
-        `<defs><path id='${id}' d='${path}'/></defs>
-         <textPath xlink:href='#${id}'>${content}</textPath>`;
-
-      return <text {...style} key={'label-' + i} dangerouslySetInnerHTML={{ __html: html }}/>;
+      return (
+        <text {...style} key={'label-' + i}>
+          <defs><path id={id} d={path} /></defs>
+          <textPath xlinkHref={'#' + id}>{content}</textPath>
+        </text>
+      );
     });
   }
 

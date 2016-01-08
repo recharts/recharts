@@ -1,4 +1,4 @@
-function offset(el) {
+const offset = (el) => {
   let box = { top: 0, left: 0 };
 
   if (el.getBoundingClientRect) {
@@ -16,7 +16,7 @@ function offset(el) {
     top: box.top + scrollTop - clientTop,
     left: box.left + scrollLeft - clientLeft,
   };
-}
+};
 
 const stringCache = {
   widthCache: {},
@@ -38,14 +38,15 @@ const STYLE_LIST = [
   'paddingLeft', 'paddingRight', 'paddingTop', 'paddingBottom',
   'marginLeft', 'marginRight', 'marginTop', 'marginBottom',
 ];
-function autoCompleteStyle(name, value) {
+
+const autoCompleteStyle = (name, value) => {
   if (STYLE_LIST.indexOf(name) >= 0 && value === +value) {
     return value + 'px';
   }
 
   return value;
 }
-function camelToMiddleLine(text) {
+const camelToMiddleLine = (text) => {
   const strs = text.split('');
 
   const formatStrs = strs.reduce((result, entry) => {
@@ -59,7 +60,7 @@ function camelToMiddleLine(text) {
   return formatStrs.join('');
 }
 
-function getStyleString(style) {
+const getStyleString = (style) => {
   let result = '';
 
   for (const s in style) {
@@ -70,7 +71,7 @@ function getStyleString(style) {
   return result;
 }
 
-function getStringSize(text, style = {}) {
+const getStringSize = (text, style = {}) => {
   if (text === undefined || text === null) {return 0;}
 
   const str = text + '';
