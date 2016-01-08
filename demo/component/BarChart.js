@@ -4,8 +4,6 @@ import ColorUtil from 'recharts-color-utils';
 
 let colors = ColorUtil.Palette('#ffc658', 'rectangle');
 
-//colors = ['#ccc', '#ccc', '#ccc', '#ccc'];
-
 const CustomBar = React.createClass({
   getPath () {
     const {x, y, width, height} = this.props;
@@ -122,10 +120,10 @@ export default React.createClass({
 
   render () {
     const data = [
-      {name: '美食', uv: 400, pv: 2400, fill: colors[0]},
-      {name: '美妆', uv: 300, pv: 4567, fill: colors[1]},
-      {name: '收纳', uv: 300, pv: 1398, fill: colors[2]},
-      {name: '数码', uv: 200, pv: 9800, fill: colors[3]}
+      {name: '美食', uv: 400, pv: 2400},
+      {name: '美妆', uv: 300, pv: 4567},
+      {name: '收纳', uv: 300, pv: 1398},
+      {name: '数码', uv: 200, pv: 9800}
     ];
     const data2 = [
       {name: '201102', uv: -6.11, pv: 0},
@@ -188,41 +186,41 @@ export default React.createClass({
       {name: '201511', uv: 3.27, pv: 6.74},
     ];
 
-        // <p>最简单的柱图</p>
-        // <div className='bar-chart-wrapper'>
-        //   <BarChart width={400} height={400} data={data}>
-        //     <XAxis dataKey='name'/>
-        //     <YAxis/>
-        //     <CartesianGrid vertical={false}/>
-        //     <BarItem dataKey='uv' fill='#ff7300'/>
-        //     <BarItem dataKey='pv' fill='#387908'/>
-        //   </BarChart>
-        // </div>
-
-        // <p>水平朝向的柱图</p>
-        // <div className='bar-chart-wrapper'>
-        //   <BarChart width={400} height={400} data={data} layout='vertical'>
-        //     <XAxis type='number'/>
-        //     <YAxis dataKey='name' type='category'/>
-        //     <CartesianGrid horizontal={false}/>
-        //     <BarItem dataKey='uv' fill='#ff7300'/>
-        //     <BarItem dataKey='pv' fill='#387908'/>
-        //   </BarChart>
-        // </div>
-
-        // <p>微型图表－柱图</p>
-        // <div className='bar-chart-wrapper'>
-        //   <BarChart width={150} height={40} data={data}>
-        //     <BarItem dataKey='uv' fill='#ff7300'/>
-        //   </BarChart>
-        // </div>
 
     return (
       <div className='bar-charts'>
+        <p>最简单的柱图</p>
+        <div className='bar-chart-wrapper'>
+          <BarChart width={400} height={400} data={data}>
+            <XAxis dataKey='name'/>
+            <YAxis/>
+            <CartesianGrid vertical={false}/>
+            <BarItem dataKey='uv' fill='#ff7300'/>
+            <BarItem dataKey='pv' fill='#387908'/>
+          </BarChart>
+        </div>
+
+        <p>水平朝向的柱图</p>
+        <div className='bar-chart-wrapper'>
+          <BarChart width={400} height={400} data={data} layout='vertical'>
+            <XAxis type='number'/>
+            <YAxis dataKey='name' type='category'/>
+            <CartesianGrid horizontal={false}/>
+            <BarItem dataKey='uv' fill='#ff7300'/>
+            <BarItem dataKey='pv' fill='#387908'/>
+          </BarChart>
+        </div>
+
+        <p>微型图表－柱图</p>
+        <div className='bar-chart-wrapper'>
+          <BarChart width={150} height={40} data={data}>
+            <BarItem dataKey='uv' fill='#ff7300'/>
+          </BarChart>
+        </div>
 
         <p>有正负的柱图</p>
         <div className='bar-chart-wrapper'>
-          <BarChart width={1100} height={250} barGap={2} barSize={6} data={data2} margin={{top: 20, right: 20, bottom: 0, left: 20}}>
+          <BarChart width={1100} height={250} barGap={2} barSize={6} data={data2} margin={{top: 20, right: 60, bottom: 0, left: 20}}>
             <XAxis dataKey='name'/>
             <YAxis tickCount={7}/>
             <BarItem dataKey='uv' name='月环比' fill='#8884d8'/>
@@ -246,7 +244,7 @@ export default React.createClass({
         <div className='bar-chart-wrapper'>
           <BarChart width={500} height={250} barOffset={0} data={data} margin={{top: 20, right: 20, bottom: 20, left: 20}}>
             <XAxis hasAxis={false} hasTick={false} dataKey='name' customContent={<CustomAxis />}/>
-            <BarItem dataKey='uv' barGap={0} customContent={<BarTwo/>} label/>
+            <BarItem dataKey='uv' barGap={0} fill="#8884d8" customContent={<BarTwo/>} label/>
           </BarChart>
         </div>
       </div>

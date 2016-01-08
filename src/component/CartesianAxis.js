@@ -31,7 +31,7 @@ class CartesianAxis extends React.Component {
       coord: PropTypes.value,
     })),
     tickSize: PropTypes.number,
-    tickValueFormat: PropTypes.func,
+    tickFormatter: PropTypes.func,
     interval: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   };
 
@@ -221,7 +221,7 @@ class CartesianAxis extends React.Component {
   }
 
   renderTicks() {
-    const { ticks, hasTick, stroke, customContent } = this.props;
+    const { ticks, tickFormatter, hasTick, stroke, customContent } = this.props;
 
     if (!ticks || !ticks.length) { return null; }
 
@@ -257,7 +257,7 @@ class CartesianAxis extends React.Component {
             textAnchor={textAnchor}
             className="tick-value"
           >
-            {entry.value}
+            {tickFormatter ? tickFormatter(entry.value) : entry.value}
           </text>
           )}
         </g>
