@@ -1,22 +1,67 @@
-/* eslint no-unused-expressions: 0 */
-import React from 'react';
-const PRESENTATION_ATTRIBUTES = [
-  'alignmentBaseline', 'baselineShift', 'clip', 'clipPath',
-  'clipRule', 'color', 'colorInterpolation', 'colorInterpolationFilters',
-  'colorProfile', 'colorRendering', 'cursor', 'direction',
-  'display', 'dominantBaseline', 'enableBackground', 'fill',
-  'fillOpacity', 'fillRule', 'filter', 'floodColor',
-  'floodOpacity', 'fontFamily', 'fontSize', 'fontSizeAdjust',
-  'fontStretch', 'fontStyle', 'fontVariant', 'fontWeight',
-  'glyphOrientationHorizontal', 'glyphOrientationVertical',
-  'imageRendering', 'kerning', 'letterSpacing', 'lightingColor',
-  'markerEnd', 'markerMid', 'markerStart', 'mask', 'opacity',
-  'overflow', 'pointerEvents', 'shapeRendering', 'stopColor', 'stopOpacity',
-  'stroke', 'strokeDasharray', 'strokeDashoffset', 'strokeLinecap',
-  'strokeLinejoin', 'strokeMiterlimit', 'strokeOpacity', 'strokeWidth',
-  'textAnchor', 'textDecoration', 'textRendering', 'unicodeBidi',
-  'visibility', 'wordSpacing', 'writingMode',
-];
+import React, { PropTypes } from 'react';
+
+const PRESENTATION_ATTRIBUTES = {
+  'alignmentBaseline': PropTypes.string,
+  'baselineShift': PropTypes.string,
+  'clip': PropTypes.string,
+  'clipPath': PropTypes.string,
+  'clipRule': PropTypes.string,
+  'color': PropTypes.string,
+  'colorInterpolation': PropTypes.string,
+  'colorInterpolationFilters': PropTypes.string,
+  'colorProfile': PropTypes.string,
+  'colorRendering': PropTypes.string,
+  'cursor': PropTypes.string,
+  'direction': PropTypes.oneOf(['ltr', 'rtl', 'inherit']),
+  'display': PropTypes.string,
+  'dominantBaseline': PropTypes.string,
+  'enableBackground': PropTypes.string,
+  'fill': PropTypes.string,
+  'fillOpacity': PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  'fillRule': PropTypes.oneOf([ 'nonzero', 'evenodd', 'inherit']),
+  'filter': PropTypes.string,
+  'floodColor': PropTypes.string,
+  'floodOpacity': PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  'font': PropTypes.string,
+  'fontFamily': PropTypes.string,
+  'fontSize': PropTypes.number,
+  'fontSizeAdjust': PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  'fontStretch': PropTypes.oneOf(['normal', 'wider', 'narrower', 'ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded', 'inherit']),
+  'fontStyle': PropTypes.oneOf(['normal', 'italic', 'oblique', 'inherit']),
+  'fontVariant': PropTypes.oneOf(['normal','small-caps', 'inherit']),
+  'fontWeight': PropTypes.oneOf(['normal', 'bold', 'bolder', 'lighter', 100, 200, 300, 400, 500, 600, 700, 800, 900, 'inherit']),
+  'glyphOrientationHorizontal': PropTypes.string,
+  'glyphOrientationVertical': PropTypes.string,
+  'imageRendering': PropTypes.oneOf(['auto', 'optimizeSpeed', 'optimizeQuality', 'inherit']),
+  'kerning': PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  'letterSpacing': PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  'lightingColor': PropTypes.string,
+  'markerEnd': PropTypes.string,
+  'markerMid': PropTypes.string,
+  'markerStart': PropTypes.string,
+  'mask': PropTypes.string,
+  'opacity': PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  'overflow': PropTypes.oneOf(['visible', 'hidden', 'scroll', 'auto', 'inherit']),
+  'pointerEvents': PropTypes.oneOf(['visiblePainted', 'visibleFill', 'visibleStroke', 'visible', 'painted', 'fill', 'stroke', 'all', 'none', 'inherit']),
+  'shapeRendering': PropTypes.oneOf(['auto', 'optimizeSpeed', 'crispEdges', 'geometricPrecision', 'inherit']),
+  'stopColor': PropTypes.string,
+  'stopOpacity': PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  'stroke': PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  'strokeDasharray': PropTypes.string,
+  'strokeDashoffset': PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  'strokeLinecap': PropTypes.oneOf(['butt', 'round', 'square', 'inherit']),
+  'strokeLinejoin': PropTypes.oneOf(['miter', 'round', 'bevel', 'inherit']),
+  'strokeMiterlimit': PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  'strokeOpacity': PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  'strokeWidth': PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  'textAnchor': PropTypes.oneOf(['start', 'middle', 'end', 'inherit']),
+  'textDecoration': PropTypes.oneOf(['none', 'underline', 'overline', 'line-through', 'blink', 'inherit']),
+  'textRendering': PropTypes.oneOf(['auto', 'optimizeSpeed', 'optimizeLegibility', 'geometricPrecision', 'inherit']),
+  'unicodeBidi': PropTypes.oneOf(['normal', 'embed', 'bidi-override', 'inherit']),
+  'visibility': PropTypes.oneOf(['visible', 'hidden', 'collapse', 'inherit']),
+  'wordSpacing': PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  'writingMode': PropTypes.oneOf(['lr-tb', 'rl-tb', 'tb-rl', 'lr', 'rl', 'tb', 'inherit']),
+};
 
 export default {
   /*
@@ -82,7 +127,7 @@ export default {
     let result = null;
 
     for (const key in props) {
-      if (props.hasOwnProperty(key) && PRESENTATION_ATTRIBUTES.indexOf(key) >= 0) {
+      if (props.hasOwnProperty(key) && PRESENTATION_ATTRIBUTES[key]) {
         if (!result) {result = {};}
         result[key] = props[key];
       }
