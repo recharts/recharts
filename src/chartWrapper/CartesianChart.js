@@ -492,7 +492,6 @@ class CartesianChart extends React.Component {
       }
     }
 
-    console.log(ticks[index]);
     return {
       activeTooltipIndex: index,
       activeTooltipLabel: ticks[index].value,
