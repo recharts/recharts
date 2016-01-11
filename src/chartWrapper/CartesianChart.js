@@ -657,7 +657,6 @@ class CartesianChart extends React.Component {
               y={axis.y}
               width={axis.width}
               height={axis.height}
-              key={'y-axis-' + ids[i]}
               orient={axis.orient}
               viewBox={{ x: 0, y: 0, width, height }}
               ticks={this.getAxisTicks(axis, true)}
