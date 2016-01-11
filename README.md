@@ -1,4 +1,4 @@
-# recharts
+# Recharts = React + Charts
 
 ## Intro
 
@@ -7,7 +7,7 @@ Recharts is a **Re-designed** charting library built with [React](https://facebo
 The biggest feature or difference is helping you write charts in React application perfectly. There some philosophies of Recharts:
 
 1. **Simplely** deploy with React components
-1. **Native** SVG support, lightweight depend on some D3 submodule
+1. **Native** SVG support, lightweight depend on some D3 submodules
 1. **Declarative** components, components of chart are dumbed
 
 ## We will do
