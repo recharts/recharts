@@ -19,7 +19,6 @@ class Tooltip extends React.Component {
     }),
 
     active: PropTypes.bool,
-    position: PropTypes.string,
     separator: PropTypes.string,
     formatter: PropTypes.func,
     offset: PropTypes.number,
@@ -46,7 +45,6 @@ class Tooltip extends React.Component {
     active: false,
     offset: 10,
     scope: { x1: 0, x2: 0, y1: 0, y2: 0 },
-    position: 'left-bottom',
     coordinate: { x: 0, y: 0 },
     cursorStyle: {},
     separator: ' : ',

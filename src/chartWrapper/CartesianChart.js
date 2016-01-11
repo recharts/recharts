@@ -65,7 +65,6 @@ class CartesianChart extends React.Component {
       dataEndIndex: props.data.length - 1,
       activeTooltipIndex: -1,
       activeTooltipLabel: '',
-      activeTooltipPosition: 'left-bottom',
       activeTooltipCoord: { x: 0, y: 0 },
       isTooltipActive: false,
       activeLineKey: null,
@@ -480,7 +479,7 @@ class CartesianChart extends React.Component {
     const pos = layout === 'horizontal' ? e.chartX : e.chartY;
     const ids = Object.keys(axisMap);
     const axis = axisMap[ids[0]];
-    const ticks = this.getAxisTicks(axis);
+    const ticks = this.getAxisTicks(axis, true);
     let index = 0;
 
     for (let i = 0, len = ticks.length; i < len; i++) {
@@ -492,11 +491,11 @@ class CartesianChart extends React.Component {
         break;
       }
     }
+
+    console.log(ticks[index]);
     return {
       activeTooltipIndex: index,
       activeTooltipLabel: ticks[index].value,
-      activeTooltipPosition: (e.chartX > offset.left + offset.width / 2 ? 'right' : 'left')
-                  + '-' + (e.chartY > offset.top + offset.height / 2 ? 'bottom' : 'top'),
       activeTooltipCoord: {
         x: layout === 'horizontal' ? ticks[index].coord : e.chartX,
         y: layout === 'horizontal' ? e.chartY : ticks[index].coord,
@@ -747,8 +746,7 @@ class CartesianChart extends React.Component {
     }
 
     const { chartX, chartY, isTooltipActive,
-          activeTooltipLabel, activeTooltipCoord,
-          activeTooltipPosition } = this.state;
+          activeTooltipLabel, activeTooltipCoord } = this.state;
     const scope = {
       x1: offset.left,
       x2: offset.left + offset.width,
@@ -758,7 +756,6 @@ class CartesianChart extends React.Component {
 
     return React.cloneElement(tooltipItem, {
       scope,
-      position: activeTooltipPosition,
       active: isTooltipActive,
       label: activeTooltipLabel,
       data: isTooltipActive ? this.getTooltipContent(items) : [],
