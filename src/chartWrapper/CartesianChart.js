@@ -619,7 +619,6 @@ class CartesianChart extends React.Component {
           xAxes.push((
             <CartesianAxis
               {...axis}
-              key={'x-axis-' + ids[i]}
               x={axis.x}
               y={axis.y}
               width={axis.width}
