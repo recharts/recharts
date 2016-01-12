@@ -29,6 +29,7 @@
     "recharts-scale": "0.1.4-beta"
   },
   "devDependencies": {
+    "babel-polyfill": "6.3.14",
     "babel-core": "6.3.21",
     "babel-eslint": "5.0.0-beta6",
     "babel-loader": "6.2.0",
