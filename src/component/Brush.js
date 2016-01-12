@@ -263,6 +263,7 @@ class Brush extends React.Component {
     return (
       <Layer className={'layer-recharts-bursh ' + (className || '')}
         onMouseUp={::this.handleUp}
+        onMouseLeave={::this.handleUp}
         onMouseMove={::this.handleMove}
       >
         {this.renderBackground()}

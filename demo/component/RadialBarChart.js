@@ -18,6 +18,7 @@ export default React.createClass({
       left: 350,
       lineHeight: '24px'
     };
+    const label = {orient: 'outer'};
 
     return (
       <div className='radial-bar-charts'>
@@ -25,7 +26,7 @@ export default React.createClass({
         <p>玉玦图</p>
         <div className='radial-bar-chart-wrapper'>
           <RadialBarChart width={500} height={300} cx={150} cy={150} innerRadius={20} outerRadius={140} barRadius={10} data={data}>
-            <RadialBarItem minAngle={15} label background clockWise={true} dataKey='uv'/>
+            <RadialBarItem minAngle={15} label={label} background clockWise={true} dataKey='uv'/>
             <Legend iconSize={10} width={120} height={140} layout='vertical' verticalAlign='middle' style={style}/>
           </RadialBarChart>
         </div>

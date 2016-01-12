@@ -93,7 +93,9 @@ class RadialBar extends React.Component {
 
   getLabelPathArc(data, labelContent, style) {
     const { label } = this.props;
-    const offsetRadius = (React.isValidElement(label) ? label.props.offsetRadius : label.offsetRadius) || 2;
+    const labelProps = React.isValidElement(label) ? label.props : label;
+    const offsetRadius = labelProps.offsetRadius || 2;
+    const orient = labelProps.orient || 'inner';
     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise } = data;
     const radius = clockWise ? innerRadius + offsetRadius : Math.max(outerRadius - offsetRadius, 0);
 
@@ -105,10 +107,10 @@ class RadialBar extends React.Component {
     let _endAngle;
 
     if (clockWise) {
-      _startAngle = Math.min(endAngle + deltaAngle, startAngle);
+      _startAngle = orient === 'inner' ? Math.min(endAngle + deltaAngle, startAngle) : endAngle;
       _endAngle = _startAngle - deltaAngle;
     } else {
-      _startAngle = Math.max(endAngle - deltaAngle, startAngle);
+      _startAngle = orient === 'inner' ? Math.max(endAngle - deltaAngle, startAngle) : endAngle;
       _endAngle = _startAngle + deltaAngle;
     }
 
