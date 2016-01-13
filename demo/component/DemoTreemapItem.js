@@ -16,17 +16,17 @@ class DemoTreemapItem extends React.Component {
 
   render() {
     const {treemapItemColor, node, index} = this.props;
-    const {x, y, dx, dy} = node;
+    const {x, y, width, height} = node;
 
     return (
       <g>
-        <rect x={x} y={y} width={dx} height={dy}
+        <rect x={x} y={y} width={width} height={height}
           style={{
             fill:treemapItemColor[index],
             stroke:'#fff',
             strokeWidth:3
           }}/>
-        <text x={x+dx/2} y={y+dy/2} textAnchor='middle'>{node.name}</text>
+        <text x={x+width/2} y={y+height/2} textAnchor='middle'>{node.name}</text>
         <text x={x+3} y={y+17}>{node.rank}</text>
       </g>
     );

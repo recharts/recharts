@@ -86,7 +86,7 @@ class Area extends React.Component {
       return <circle {...other} key={'dot-' + i} cx={entry.x} cy={entry.y} r={3}/>;
     });
 
-    return <Layer className="layer-line-dots">{dots}</Layer>;
+    return <Layer className="recharts-layer-line-dots">{dots}</Layer>;
   }
 
   render() {
@@ -97,7 +97,7 @@ class Area extends React.Component {
     }
 
     return (
-      <Layer className={'recharts-line ' + (className || '')}>
+      <Layer className={`recharts-line ${className || ''}`}>
         {hasCurve && this.renderCurve()}
         {this.renderArea()}
 

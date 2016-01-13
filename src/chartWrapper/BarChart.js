@@ -239,7 +239,7 @@ class BarChart extends CartesianChart {
   }
 
   render() {
-    const { style, children } = this.props;
+    const { style, children, className } = this.props;
     const items = ReactUtils.findAllByType(children, BarItem);
     const legendItem = ReactUtils.findChildByType(children, Legend);
 
@@ -251,7 +251,7 @@ class BarChart extends CartesianChart {
     yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
 
     return (
-      <div className="recharts-wrapper"
+      <div className={`recharts-wrapper ${className || ''}`}
         style={{ position: 'relative', cursor: 'default', ...style }}
         onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}

@@ -37,6 +37,8 @@ class CartesianChart extends React.Component {
       bottom: PropTypes.number,
       left: PropTypes.number,
     }),
+
+    className: PropTypes.string,
     stackType: PropTypes.oneOf(['value', 'percent']),
     title: PropTypes.string,
     style: PropTypes.object,
@@ -59,18 +61,18 @@ class CartesianChart extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      dataStartIndex: 0,
-      dataEndIndex: props.data.length - 1,
-      activeTooltipIndex: -1,
-      activeTooltipLabel: '',
-      activeTooltipCoord: { x: 0, y: 0 },
-      isTooltipActive: false,
-      activeLineKey: null,
-      activeBarKey: null,
-    };
   }
+
+  state = {
+    dataStartIndex: 0,
+    dataEndIndex: this.props.data.length - 1,
+    activeTooltipIndex: -1,
+    activeTooltipLabel: '',
+    activeTooltipCoord: { x: 0, y: 0 },
+    isTooltipActive: false,
+    activeLineKey: null,
+    activeBarKey: null,
+  };
   /**
    * get coordinate of cursor in chart
    * @param  {Object} e               event object

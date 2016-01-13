@@ -19,7 +19,7 @@ class Layer extends React.Component {
     const { children, className, ...others } = this.props;
 
     return (
-      <g className={'recharts-layer ' + (className || '')} {...others}>
+      <g className={`recharts-layer ${className || ''}`} {...others}>
         {children}
       </g>
     );

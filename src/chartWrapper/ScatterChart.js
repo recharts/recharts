@@ -42,7 +42,7 @@ class ScatterChart extends React.Component {
 
   static defaultProps = {
     style: {},
-    margin: { top: 20, right: 20, bottom: 20, left: 20 },
+    margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
 
   constructor(props) {
