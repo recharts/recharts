@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "0.3.17",
+  "version": "0.3.18",
   "description": "React charts",
   "main": "src/index.js",
   "keywords": [
@@ -26,7 +26,7 @@
     "d3-shape": "0.2.2",
     "pure-render-decorator": "^0.2.0",
     "react-addons-create-fragment": "0.14.3",
-    "recharts-scale": "0.1.4-beta"
+    "recharts-scale": "0.1.5-beta"
   },
   "devDependencies": {
     "babel-polyfill": "6.3.14",
