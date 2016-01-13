@@ -11,6 +11,12 @@ import AreaItem from './AreaItem';
 class AreaChart extends CartesianChart {
   static displayName = 'AreaChart';
 
+  static defaultProps = {
+    style: {},
+    layout: 'horizontal',
+    margin: { top: 5, right: 5, bottom: 5, left: 5 },
+  };
+
   displayName = 'AreaChart';
 
   constructor(props) {

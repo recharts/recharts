@@ -122,8 +122,8 @@ export default {
    * @return {Object}    attributes or null
    */
   getPresentationAttributes(el) {
-    if (!el || !el.props) {return null;}
-    const props = el.props;
+    if (!el) {return null;}
+    const props = React.isValidElement(el) ? el.props : el;
     let result = null;
 
     for (const key in props) {

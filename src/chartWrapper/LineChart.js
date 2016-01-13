@@ -11,6 +11,12 @@ import LineItem from './LineItem';
 class LineChart extends CartesianChart {
   static displayName = 'LineChart';
 
+  static defaultProps = {
+    style: {},
+    layout: 'horizontal',
+    margin: { top: 5, right: 5, bottom: 5, left: 5 },
+  };
+
   displayName = 'LineChart';
 
   constructor(props) {

@@ -93,12 +93,12 @@ class Bar extends React.Component {
     }
 
     return (
-      <Layer className={'layer-bar ' + (className || '')}>
-        <Layer className="layer-rectangles">
+      <Layer className={`recharts-layer-bar ${className || ''}`}>
+        <Layer className="recharts-layer-rectangles">
           {this.renderRectangles()}
         </Layer>
         { label && (
-          <Layer className="layer-rectangle-labels">
+          <Layer className="recharts-layer-rectangle-labels">
             {this.renderLabels()}
           </Layer>
         )}

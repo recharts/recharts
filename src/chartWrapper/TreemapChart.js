@@ -2,10 +2,9 @@ import React, { PropTypes } from 'react';
 
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
+import Rectangle from '../shape/Rectangle';
 
 import ReactUtils from '../util/ReactUtils';
-
-import TreemapItem from './TreemapItem';
 
 class TreemapChart extends React.Component {
   static displayName = 'TreemapChart';
@@ -16,18 +15,23 @@ class TreemapChart extends React.Component {
     data: PropTypes.array,
     style: PropTypes.object,
     ratio: PropTypes.number,
-    children: PropTypes.oneOfType([
-      PropTypes.arrayOf(PropTypes.node),
-      PropTypes.node,
-    ]),
+    customContent: PropTypes.element,
+    fill: PropTypes.string,
+    stroke: PropTypes.string,
   };
+
+  static defaultProps = {
+    fill: '#fff',
+    stroke: '#000',
+  };
+
 
   constructor(props) {
     super(props);
   }
 
   pad(node) {
-    return { x: node.x, y: node.y, dx: node.dx, dy: node.dy };
+    return { x: node.x, y: node.y, width: node.width, height: node.height };
   }
 
   // Compute the area for each child based on value & scale.
@@ -54,10 +58,10 @@ class TreemapChart extends React.Component {
       let child;
       let best = Infinity; // the best row score so far
       let score; // the current row score
-      let u = Math.min(rect.dx, rect.dy); // initial orientation
+      let u = Math.min(rect.width, rect.height); // initial orientation
       let n = remaining.length;
 
-      this.scale(remaining, rect.dx * rect.dy / node.value);
+      this.scale(remaining, rect.width * rect.height / node.value);
       row.area = 0;
       while (n > 0) {
         row.push(child = remaining[n - 1]);
@@ -70,7 +74,7 @@ class TreemapChart extends React.Component {
         } else { // abort, and try a different orientation
           row.area -= row.pop().area;
           this.position(row, u, rect, false);
-          u = Math.min(rect.dx, rect.dy);
+          u = Math.min(rect.width, rect.height);
           row.length = row.area = 0;
           best = Infinity;
         }
@@ -118,58 +122,63 @@ class TreemapChart extends React.Component {
     let y = rect.y;
     let v = u ? Math.round(row.area / u) : 0;
     let o;
-    if (u === rect.dx) { // horizontal subdivision
-      if (flush || v > rect.dy) v = rect.dy; // over+underflow
+    if (u === rect.width) { // horizontal subdivision
+      if (flush || v > rect.height) v = rect.height; // over+underflow
       while (++i < n) {
         o = row[i];
         o.x = x;
         o.y = y;
-        o.dy = v;
-        x += o.dx = Math.min(rect.x + rect.dx - x, v ? Math.round(o.area / v) : 0);
+        o.height = v;
+        x += o.width = Math.min(rect.x + rect.width - x, v ? Math.round(o.area / v) : 0);
       }
       o.z = true;
-      o.dx += rect.x + rect.dx - x; // rounding error
+      o.width += rect.x + rect.width - x; // rounding error
       rect.y += v;
-      rect.dy -= v;
+      rect.height -= v;
     } else { // vertical subdivision
-      if (flush || v > rect.dx) v = rect.dx; // over+underflow
+      if (flush || v > rect.width) v = rect.width; // over+underflow
       while (++i < n) {
         o = row[i];
         o.x = x;
         o.y = y;
-        o.dx = v;
-        y += o.dy = Math.min(rect.y + rect.dy - y, v ? Math.round(o.area / v) : 0);
+        o.width = v;
+        y += o.height = Math.min(rect.y + rect.height - y, v ? Math.round(o.area / v) : 0);
       }
       o.z = false;
-      o.dy += rect.y + rect.dy - y; // rounding error
+      o.height += rect.y + rect.height - y; // rounding error
       rect.x += v;
-      rect.dx -= v;
+      rect.width -= v;
     }
   }
 
+  renderDefaultNode({node}) {
+    return React.createElement(Rectangle, {...ReactUtils.getPresentationAttributes(this.props), ...node});
+  }
+
   renderAllNodes() {
-    const { width, height, data, children } = this.props;
-    const treemapItem = children.props.element;
+    const { width, height, data, customContent } = this.props;
 
     const nodes = {
       value: data.reduce((a, b) => (a + b.value), 0),
       children: data,
       x: 0,
       y: 0,
-      dx: width,
-      dy: height,
+      width,
+      height,
     };
 
     this.squarify(nodes);
 
-    return nodes.children.map(
-      (v, i) =>
-      <Layer key={i}>
-        {
-          React.cloneElement(treemapItem, { node: v, index: i })
-        }
-      </Layer>
-    );
+    return nodes.children.map((v, i) => {
+      return (
+        <Layer key={`recharts-treemap-node-${i}`}>
+          {React.isValidElement(customContent) ?
+            React.cloneElement(customContent, { node: v, index: i }) :
+            this.renderDefaultNode({node: v, index: i})
+          }
+        </Layer>
+      );
+    });
   }
 
   render() {
