@@ -68,7 +68,7 @@ class DefaultTooltipContent extends React.Component {
       border: '1px solid #ccc',
       whiteSpace: 'nowrap',
       ...wrapperStyle,
-    }
+    };
     const finalLabelStyle = {
       margin: 0,
       ...labelStyle,

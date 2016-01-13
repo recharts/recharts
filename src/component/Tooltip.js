@@ -98,7 +98,7 @@ class Tooltip extends React.Component {
       coordinate.y + offset, scope.y1);
 
     return (
-      <div className="tooltip-outer-wrapper" style={outerStyle}>
+      <div className="recharts-tooltip-wrapper" style={outerStyle}>
         {
           React.isValidElement(customContent) ?
           React.cloneElement(customContent, this.props) :
