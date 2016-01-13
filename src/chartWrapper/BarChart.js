@@ -20,6 +20,12 @@ class BarChart extends CartesianChart {
 
   static displayName = 'BarChart';
 
+  static defaultProps = {
+    style: {},
+    layout: 'horizontal',
+    margin: { top: 5, right: 5, bottom: 5, left: 5 },
+  };
+
   displayName = 'BarChart';
 
   constructor(props) {
