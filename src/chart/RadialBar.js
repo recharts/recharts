@@ -170,7 +170,7 @@ class RadialBar extends React.Component {
     return sectors.map((entry, i) => {
       const content = hasFormatter ? formatter(entry.value) : entry.value;
       const id = LodashUtils.getUniqueId('recharts-defs-');
-      const style = (isElement ? ReactUtils.getPresentationAttributes(label) : label.style) || { fontSize: 10, fill: '#000' };
+      const style = ReactUtils.getPresentationAttributes(label) || { fontSize: 10, fill: '#000' };
       const path = this.getLabelPathArc(entry, content, style);
 
       return (

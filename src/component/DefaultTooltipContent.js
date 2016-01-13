@@ -9,6 +9,7 @@ class DefaultTooltipContent extends React.Component {
   static propTypes = {
     separator: PropTypes.string,
     formatter: PropTypes.func,
+    wrapperStyle: PropTypes.object,
     itemStyle: PropTypes.object,
     labelStyle: PropTypes.object,
     label: PropTypes.any,
@@ -59,14 +60,22 @@ class DefaultTooltipContent extends React.Component {
   }
 
   render() {
-    const { labelStyle, label } = this.props;
+    const { labelStyle, label, wrapperStyle } = this.props;
+    const finalStyle = {
+      margin: 0,
+      padding: 10,
+      backgroundColor: '#fff',
+      border: '1px solid #ccc',
+      whiteSpace: 'nowrap',
+      ...wrapperStyle,
+    }
     const finalLabelStyle = {
       margin: 0,
       ...labelStyle,
     };
 
     return (
-      <div className="tooltip-default">
+      <div className="recharts-default-tooltip" style={finalStyle}>
         <p className="tooltip-label" style={finalLabelStyle}>{label}</p>
         {this.renderContent()}
       </div>

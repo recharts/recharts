@@ -25,8 +25,8 @@ class Tooltip extends React.Component {
 
     itemStyle: PropTypes.object,
     labelStyle: PropTypes.object,
-    style: PropTypes.object,
-    cursorStyle: PropTypes.object,
+    wrapperStyle: PropTypes.object,
+    cursor: PropTypes.oneOfType([PropTypes.element, PropTypes.object]),
 
     coordinate: PropTypes.shape({
       x: PropTypes.number,
@@ -48,7 +48,7 @@ class Tooltip extends React.Component {
     coordinate: { x: 0, y: 0 },
     cursorStyle: {},
     separator: ' : ',
-    style: {},
+    wrapperStyle: {},
     itemStyle: {},
     labelStyle: {},
   };
@@ -79,20 +79,15 @@ class Tooltip extends React.Component {
 
   render() {
     const { customContent, scope, coordinate, active,
-        label, style, labelStyle, offset } = this.props;
+        label, labelStyle, offset } = this.props;
 
     const outerStyle = {
       pointerEvents: 'none',
-      whiteSpace: 'nowrap',
-      padding: 10,
-      border: '1px solid #ccc',
-      backgroundColor: '#fff',
       display: active ? 'block' : 'none',
       position: 'absolute',
-      ...style,
     };
-    const finalLabelStyle = { margin: 0, ...labelStyle };
     const box = this.getTooltipBBox(outerStyle);
+
     outerStyle.left = Math.max(
       coordinate.x + box.width + offset > scope.x2 ?
       coordinate.x - box.width - offset :

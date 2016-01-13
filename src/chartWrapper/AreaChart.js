@@ -147,13 +147,18 @@ class AreaChart extends CartesianChart {
     const axis = axisMap[ids[0]];
     const ticks = this.getAxisTicks(axis);
     const start = ticks[activeTooltipIndex].coord;
-    const style = { stroke: '#ccc', ...tooltipItem.cursorStyle };
+    const cursorProps = {
+      stroke: '#ccc',
+      ...ReactUtils.getPresentationAttributes(tooltipItem.props.cursor),
+      x1: layout === 'horizontal' ? start : offset.left,
+      y1: layout === 'horizontal' ? offset.top : start,
+      x2: layout === 'horizontal' ? start : offset.left + offset.width,
+      y2: layout === 'horizontal' ? offset.top + offset.height: start,
+    };
 
-    if (layout === 'horizontal') {
-      return <line className="recharts-cursor" {...style} x1={start} x2={start} y1={offset.top} y2={offset.top + offset.height}/>;
-    }
-
-    return <line className="recharts-cursor" {...style} x1={offset.left} x2={offset.left + offset.width} y1={start} y2={start}/>;
+    return React.isValidElement(tooltipItem.props.cursor) ?
+          React.cloneElement(tooltipItem.props.cursor, cursorProps) :
+          <line className="recharts-cursor" {...cursorProps}/>;
   }
 
   render() {
