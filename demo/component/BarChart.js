@@ -225,7 +225,7 @@ export default React.createClass({
             <YAxis tickCount={7}/>
             <BarItem dataKey='uv' name='月环比' fill='#8884d8'/>
             <BarItem dataKey='pv' name='年同比' fill='#82ca9d'/>
-            <Tooltip/>
+            <Tooltip />
             <CartesianGrid/>
             <Brush dataKey='name' height={30}/>
             <ReferenceLine type='horizontal' value={0} stroke='#666'/>

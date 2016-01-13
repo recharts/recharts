@@ -56,7 +56,7 @@ export default React.createClass({
           <AreaChart width={400} height={400} data={data}
             margin={{top: 5, right: 20, left: 20, bottom: 5}}>
             <XAxis dataKey='name'/>
-            <Tooltip/>
+            <Tooltip />
             <AreaItem type='monotone' dataKey='uv' stroke='#ff7300' fill='#ff7300' yAxisId={0}/>
             <AreaItem type='monotone' dataKey='pv' stroke='#387908' fill='#387908' yAxisId={1}/>
           </AreaChart>

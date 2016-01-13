@@ -8,6 +8,7 @@ import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Bar from '../chart/Bar';
 import BarItem from './BarItem';
+import Rectangle from '../shape/Rectangle';
 /**
  *  <BarChart className='my-line-cahrt'>
  *    <BarItem data={} yAxis={0}/>
@@ -188,17 +189,18 @@ class BarChart extends CartesianChart {
 
     const ticks = this.getAxisTicks(axis);
     const start = ticks[activeTooltipIndex].coord;
-    const style = { fill: '#f1f1f1', ...tooltipItem.cursorStyle };
+    const cursorProps = {
+      fill: '#f1f1f1',
+      ...ReactUtils.getPresentationAttributes(tooltipItem.props.cursor),
+      x: layout === 'horizontal' ? start : offset.left + 0.5,
+      y: layout === 'horizontal' ? offset.top + 0.5 : start,
+      width: layout === 'horizontal' ? bandSize : offset.width - 1,
+      height: layout === 'horizontal' ? offset.height - 1 : bandSize,
+    };
 
-    return (
-      <rect
-        {...style}
-        x={layout === 'horizontal' ? start : offset.left + 0.5}
-        y={layout === 'horizontal' ? offset.top + 0.5 : start}
-        width={layout === 'horizontal' ? bandSize : offset.width - 1}
-        height={layout === 'horizontal' ? offset.height - 1 : bandSize}
-      />
-    );
+    return React.isValidElement(tooltipItem.props.cursor) ?
+      React.cloneElement(tooltipItem.props.cursor, cursorProps) :
+      React.createElement(Rectangle, cursorProps);
   }
   /**
    * 绘制图形部分
