@@ -1,4 +1,5 @@
 import 'ima.js-babel6-polyfill';
+import 'core-js/es6/math';
 import Surface from './container/Surface';
 
 import Pie from './chart/Pie';
