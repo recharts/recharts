@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "0.3.19",
+  "version": "0.3.20",
   "description": "React charts",
   "main": "src/index.js",
   "keywords": [
@@ -22,6 +22,7 @@
     "react-dom": "0.14.6"
   },
   "dependencies": {
+    "core-js": "^2.0.3",
     "d3-scale": "0.4.0",
     "d3-shape": "0.2.2",
     "pure-render-decorator": "^0.2.0",
@@ -57,7 +58,7 @@
     "webpack-dev-server": "1.14.0"
   },
   "scripts": {
-    "demo": "./node_modules/.bin/webpack-dev-server --host 0.0.0.0  --progress --port 3000  --colors --content-base demo --hot --inline --config demo/webpack.config.js",
+    "demo": "./node_modules/.bin/webpack-dev-server --host 30.10.171.213  --progress --port 3000  --colors --content-base demo --hot --inline --config demo/webpack.config.js",
     "test": "./node_modules/.bin/mocha --compilers js:babel/register --recursive",
     "test-cov": "./node_modules/.bin/babel-node ./node_modules/.bin/isparta --report html cover _mocha -- --recursive",
     "lint": "./node_modules/.bin/eslint src test"
