@@ -45,7 +45,7 @@ const autoCompleteStyle = (name, value) => {
   }
 
   return value;
-}
+};
 const camelToMiddleLine = (text) => {
   const strs = text.split('');
 
@@ -58,7 +58,7 @@ const camelToMiddleLine = (text) => {
   }, []);
 
   return formatStrs.join('');
-}
+};
 
 const getStyleString = (style) => {
   let result = '';
@@ -69,7 +69,7 @@ const getStyleString = (style) => {
     }
   }
   return result;
-}
+};
 
 const getStringSize = (text, style = {}) => {
   if (text === undefined || text === null) {return 0;}
@@ -102,7 +102,7 @@ const getStringSize = (text, style = {}) => {
   }
 
   return result;
-}
+};
 
 export default {
   offset,

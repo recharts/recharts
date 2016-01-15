@@ -1,5 +1,7 @@
 import React, { PropTypes } from 'react';
+import pureRender from 'pure-render-decorator';
 
+@pureRender
 class ZAxis extends React.Component {
 
   static displayName = 'ZAxis';

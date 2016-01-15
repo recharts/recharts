@@ -1,17 +1,19 @@
 import React, { PropTypes } from 'react';
+import pureRender from 'pure-render-decorator';
 
+@pureRender
 class AreaItem extends React.Component {
 
   static displayName = 'AreaItem';
 
   static propTypes = {
-    // 数据对应的单位
+    // The unit of data
     unit: PropTypes.any,
-    // 数据对应的名称
+    // The name of data
     name: PropTypes.any,
-    // 线对应的数据key
+    // The key of data which is unique in an area chart
     dataKey: PropTypes.string.isRequired,
-    // 线的类型
+    // The type of curve in area chart
     type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
     className: PropTypes.string,
     fill: PropTypes.string,
@@ -21,7 +23,7 @@ class AreaItem extends React.Component {
     yAxisId: PropTypes.number,
     xAxisId: PropTypes.number,
     legendType: PropTypes.string,
-    // 数据格式化函数
+    // The formatter function of data
     formatter: PropTypes.func,
   };
 

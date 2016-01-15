@@ -32,9 +32,7 @@ class Radar extends React.Component {
     outerRadius: 0,
     startAngle: 0,
     clockWise: true,
-    // 网格分段数
     gridNumber: 2,
-    // 数据
     data: [],
   };
 
@@ -42,8 +40,8 @@ class Radar extends React.Component {
     super(props);
   }
   /**
-   * 计算网格所在的半径节点
-   * @return {Array} 半径节点
+   * Calculate the radius of grid
+   * @return {Array} The radius of grid
    */
   getGridRadius() {
     const { gridNumber } = this.props;
@@ -58,7 +56,7 @@ class Radar extends React.Component {
       [innerRadius, outerRadius] = [outerRadius, innerRadius];
     }
 
-    // 生成均匀的网格
+    // generate grid of same gap
     const step = (outerRadius - innerRadius) / gridNumber;
 
     for (let i = 0; i < gridNumber; i++) {
@@ -71,11 +69,10 @@ class Radar extends React.Component {
 
     return result;
   }
-
   /**
-   * 获取顶点坐标
-   * @param {Object} data 单个数据
-   * @return {Object} {x: '横坐标', y: '纵坐标'}
+   * Get the coordinate of a vertex
+   * @param {Object} data The data of a point
+   * @return {Object} {x: 'abscissa', y: 'ordinate'}
    */
   getVertexCoord(data) {
     const { min, max, value, angle } = data;
@@ -94,8 +91,8 @@ class Radar extends React.Component {
     };
   }
   /**
-   * 获取按角度的刻度
-   * @return {Array} 角度轴的刻度
+   * Get the tick of each angle
+   * @return {Array} The tick of each angle
    */
   getAngleTicks() {
     const { startAngle, data, clockWise } = this.props;

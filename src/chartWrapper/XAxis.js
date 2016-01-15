@@ -1,5 +1,7 @@
 import React, { PropTypes } from 'react';
+import pureRender from 'pure-render-decorator';
 
+@pureRender
 class XAxis extends React.Component {
 
   static displayName = 'XAxis';

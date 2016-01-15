@@ -1,10 +1,12 @@
 /**
- * @fileOverview 饼图
+ * @fileOverview Line
  */
 import React, { PropTypes } from 'react';
 import Curve from '../shape/Curve';
+import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import pureRender from 'pure-render-decorator';
+import ReactUtils from '../util/ReactUtils';
 
 @pureRender
 class Line extends React.Component {
@@ -18,11 +20,9 @@ class Line extends React.Component {
     strokeWidth: PropTypes.number,
     strokeDasharray: PropTypes.string,
     className: PropTypes.string,
-    // 是否展示曲线上的点
-    dot: PropTypes.bool,
-    // 是否展示填充面积
-    area: PropTypes.bool,
-    data: PropTypes.arrayOf(PropTypes.shape({
+     // whether have dot in line
+    dot: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
+    points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
       value: PropTypes.value,
@@ -34,9 +34,7 @@ class Line extends React.Component {
 
   static defaultProps = {
     strokeWidth: 1,
-    area: true,
-    // 数据
-    data: [],
+    points: [],
     onClick() {},
     onMouseEnter() {},
     onMouseLeave() {},
@@ -47,33 +45,50 @@ class Line extends React.Component {
   }
 
   renderDots() {
-    const { data, ...other } = this.props;
+    const { dot, points } = this.props;
+    const lineProps = ReactUtils.getPresentationAttributes(this.props);
+    const customDotProps = ReactUtils.getPresentationAttributes(dot);
+    const isDotElement = React.isValidElement(dot);
 
-    const dots = data.map((entry, i) => {
-      return <circle {...other} key={'dot-' + i} cx={entry.x} cy={entry.y} r={3}/>;
+    const dots = points.map((entry, i) => {
+      const dotProps = {
+        key: `dot-${i}`,
+        r: 3,
+        ...lineProps,
+        ...customDotProps,
+        cx: entry.x,
+        cy: entry.y,
+        index: i,
+        playload: entry,
+      };
+
+      return isDotElement ? React.cloneElement(dot, dotProps) : <Dot {...dotProps}/>;
     });
 
-    return <Layer className="layer-line-dots">{dots}</Layer>;
+    return <Layer className="recharts-layer-line-dots">{dots}</Layer>;
   }
 
   render() {
-    const { dot, data, className, ...other } = this.props;
+    const { dot, points, className, ...other } = this.props;
 
-    if (!data || !data.length) {
+    if (!points || !points.length) {
       return null;
     }
+    const hasSinglePoint = points.length === 1;
 
     return (
       <Layer className={'recharts-line ' + (className || '')}>
-        <Curve
-          {...other}
-          fill="none"
-          onMouseEnter={this.props.onMouseEnter}
-          onMouseLeave={this.props.onMouseLeave}
-          onClick={this.props.onClick}
-          points={data}
-        />
-        {dot && this.renderDots()}
+        {!hasSinglePoint && (
+          <Curve
+            {...other}
+            fill="none"
+            onMouseEnter={this.props.onMouseEnter}
+            onMouseLeave={this.props.onMouseLeave}
+            onClick={this.props.onClick}
+            points={points}
+          />
+        )}
+        {(hasSinglePoint || dot) && this.renderDots()}
       </Layer>
     );
   }

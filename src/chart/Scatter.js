@@ -1,5 +1,5 @@
 /**
- * @fileOverview 散点图
+ * @fileOverview Render a group of scatters
  */
 import React, { PropTypes } from 'react';
 import Layer from '../container/Layer';
@@ -33,7 +33,6 @@ class Scatter extends React.Component {
   };
 
   static defaultProps = {
-    // 数据
     data: [],
     onClick() {},
     onMouseEnter() {},

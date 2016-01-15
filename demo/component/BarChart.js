@@ -219,7 +219,7 @@ export default React.createClass({
         </div>
 
         <p>有正负的柱图</p>
-        <div className='bar-chart-wrapper'>
+        <div className='bar-chart-wrapper' style={{userSelect: "none", WebkitUserSelect: "none"}}>
           <BarChart width={1100} height={250} barGap={2} barSize={6} data={data2} margin={{top: 20, right: 60, bottom: 0, left: 20}}>
             <XAxis dataKey='name'/>
             <YAxis tickCount={7}/>

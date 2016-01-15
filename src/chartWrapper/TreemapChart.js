@@ -151,8 +151,8 @@ class TreemapChart extends React.Component {
     }
   }
 
-  renderDefaultNode({node}) {
-    return React.createElement(Rectangle, {...ReactUtils.getPresentationAttributes(this.props), ...node});
+  renderDefaultNode({ node }) {
+    return React.createElement(Rectangle, { ...ReactUtils.getPresentationAttributes(this.props), ...node });
   }
 
   renderAllNodes() {
@@ -174,7 +174,7 @@ class TreemapChart extends React.Component {
         <Layer key={`recharts-treemap-node-${i}`}>
           {React.isValidElement(customContent) ?
             React.cloneElement(customContent, { node: v, index: i }) :
-            this.renderDefaultNode({node: v, index: i})
+            this.renderDefaultNode({ node: v, index: i })
           }
         </Layer>
       );

@@ -48,6 +48,7 @@ class Brush extends React.Component {
       this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
 
       this.state = {
+        isTextActive: false,
         isSlideMoving: false,
         isBrushMoving: false,
         startIndex, endIndex,
@@ -56,6 +57,13 @@ class Brush extends React.Component {
       };
     } else {
       this.state = {};
+    }
+  }
+
+  componentWillUnmount() {
+    if (this._leaveTimer) {
+      clearTimeout(this._leaveTimer);
+      this._leaveTimer = null;
     }
   }
 
@@ -90,6 +98,11 @@ class Brush extends React.Component {
   }
 
   handleMove(e) {
+    if (this._leaveTimer) {
+      clearTimeout(this._leaveTimer);
+      this._leaveTimer = null;
+    }
+
     if (this.state.isBrushMoving) {
       this.handleBrushMove(e);
     } else if (this.state.isSlideMoving) {
@@ -101,6 +114,24 @@ class Brush extends React.Component {
     this.setState({
       isBrushMoving: false,
       isSlideMoving: false,
+    });
+  }
+
+  handleLeaveWrapper() {
+    if (this.state.isBrushMoving || this.state.isSlideMoving) {
+      this._leaveTimer = setTimeout(::this.handleUp, 1000);
+    }
+  }
+
+  handleEnterSlideOrBrush() {
+    this.setState({
+      isTextActive: true
+    });
+  }
+
+  handleLeaveSlideOrBrush() {
+    this.setState({
+      isTextActive: false
     });
   }
 
@@ -199,6 +230,8 @@ class Brush extends React.Component {
     return (
       <Layer
         className="layer-brush"
+        onMouseEnter={::this.handleEnterSlideOrBrush}
+        onMouseLeave={::this.handleLeaveSlideOrBrush}
         onMouseDown={this.handleBrushDown.bind(this, id)}
         style={{ cursor: 'col-resize' }}
       >
@@ -221,6 +254,8 @@ class Brush extends React.Component {
 
     return (
       <rect
+        onMouseEnter={::this.handleEnterSlideOrBrush}
+        onMouseLeave={::this.handleLeaveSlideOrBrush}
         onMouseDown={::this.handleSlideDown}
         style={{ cursor: 'move' }}
         stroke="none"
@@ -256,21 +291,21 @@ class Brush extends React.Component {
 
   render() {
     const { x, width, burshWidth, data, className } = this.props;
-    const { startX, endX } = this.state;
+    const { startX, endX, isTextActive, isSlideMoving, isBrushMoving } = this.state;
 
     if (!data || !data.length) {return null;}
 
     return (
       <Layer className={'layer-recharts-bursh ' + (className || '')}
         onMouseUp={::this.handleUp}
-        onMouseLeave={::this.handleUp}
         onMouseMove={::this.handleMove}
+        onMouseLeave={::this.handleLeaveWrapper}
       >
         {this.renderBackground()}
         {this.renderSlide(startX, endX)}
         {this.renderBrush(startX, 'startX')}
         {this.renderBrush(endX, 'endX')}
-        {this.renderText()}
+        {(isTextActive || isSlideMoving || isBrushMoving) && this.renderText()}
       </Layer>
     );
   }

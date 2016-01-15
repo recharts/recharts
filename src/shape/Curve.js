@@ -39,9 +39,7 @@ class Curve extends React.Component {
     onMouseEnter() {},
     onMouseLeave() {},
   };
-  constructor(props) {
-    super(props);
-  }
+
   /**
    * 获取曲线路径
    * @return {String} 路径
@@ -54,6 +52,8 @@ class Curve extends React.Component {
                     .curve(d3Shape[type]);
     const len = points.length;
     let curvePath = l(points);
+
+    if (!curvePath) { return ''; }
 
     if (baseLineType === 'horizontal' && baseLine === +baseLine) {
       curvePath += `L${points[len - 1].x} ${baseLine}L${points[0].x} ${baseLine}Z`;

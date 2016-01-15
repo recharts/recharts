@@ -1,5 +1,7 @@
 import React, { PropTypes } from 'react';
+import pureRender from 'pure-render-decorator';
 
+@pureRender
 class Surface extends React.Component {
 
   static displayName = 'Surface';
