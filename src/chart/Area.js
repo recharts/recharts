@@ -1,9 +1,11 @@
 /**
- * @fileOverview 面积图
+ * @fileOverview Area
  */
 import React, { PropTypes } from 'react';
 import Curve from '../shape/Curve';
+import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
+import ReactUtils from '../util/ReactUtils';
 import pureRender from 'pure-render-decorator';
 
 @pureRender
@@ -18,12 +20,10 @@ class Area extends React.Component {
     strokeWidth: PropTypes.number,
     strokeDasharray: PropTypes.string,
     className: PropTypes.string,
-    // 是否展示曲线上的点
-    hasDot: PropTypes.bool,
-    // 是否展示曲线
-    hasCurve: PropTypes.bool,
-    // 是否展示填充面积
-    area: PropTypes.bool,
+    // dot configuration
+    dot: PropTypes.oneOfType([PropTypes.element, PropTypes.object, PropTypes.bool]),
+    // have curve configuration
+    curve: PropTypes.bool,
     baseLineType: PropTypes.oneOf(['horizontal', 'vertical', 'curve']),
     baseLine: PropTypes.oneOfType([
       PropTypes.number, PropTypes.array,
@@ -40,11 +40,10 @@ class Area extends React.Component {
 
   static defaultProps = {
     strokeWidth: 1,
-    area: true,
     // 数据
     data: [],
-    hasDot: false,
-    hasCurve: true,
+    dot: false,
+    curve: true,
     onClick() {},
     onMouseEnter() {},
     onMouseLeave() {},
@@ -55,53 +54,55 @@ class Area extends React.Component {
   }
 
   renderArea() {
-    const { hasDot, hasCurve, className, ...other } = this.props;
+    const { stroke, className, ...other } = this.props;
 
-    return (
-      <Curve
-        {...other}
-        stroke="none"
-        onMouseEnter={this.props.onMouseEnter}
-        onMouseLeave={this.props.onMouseLeave}
-        onClick={this.props.onClick}
-      />
-    );
+    return <Curve {...other} stroke="none"/>;
   }
 
   renderCurve() {
-    const { hasDot, hasCurve, baseLineType, baseLine, ...other } = this.props;
+    const { points, type } = this.props;
 
-    return (
-      <Curve
-        {...other}
-        fill="none"
-      />
-    );
+    return <Curve {...ReactUtils.getPresentationAttributes(this.props)} points={points} type={type} fill="none" />;
   }
 
   renderDots() {
-    const { points, ...other } = this.props;
+    const { dot, points } = this.props;
+    const areaProps = ReactUtils.getPresentationAttributes(this.props);
+    const customDotProps = ReactUtils.getPresentationAttributes(dot);
+    const isDotElement = React.isValidElement(dot);
 
     const dots = points.map((entry, i) => {
-      return <circle {...other} key={'dot-' + i} cx={entry.x} cy={entry.y} r={3}/>;
+      const dotProps = {
+        key: `dot-${i}`,
+        r: 3,
+        ...areaProps,
+        ...customDotProps,
+        cx: entry.x,
+        cy: entry.y,
+        index: i,
+        playload: entry,
+      };
+
+      return isDotElement ? React.cloneElement(dot, dotProps) : <Dot {...dotProps}/>;
     });
 
-    return <Layer className="recharts-layer-line-dots">{dots}</Layer>;
+    return <Layer className="recharts-layer-area-dots">{dots}</Layer>;
   }
 
   render() {
-    const { hasDot, hasCurve, points, className, ...other } = this.props;
+    const { dot, curve, points, className, ...other } = this.props;
 
     if (!points || !points.length) {
       return null;
     }
+    const hasSinglePoint = points.length === 1;
 
     return (
       <Layer className={`recharts-line ${className || ''}`}>
-        {hasCurve && this.renderCurve()}
-        {this.renderArea()}
+        {curve && !hasSinglePoint && this.renderCurve()}
+        {!hasSinglePoint && this.renderArea()}
 
-        {hasDot && this.renderDots()}
+        {(dot || hasSinglePoint) && this.renderDots()}
       </Layer>
     );
   }

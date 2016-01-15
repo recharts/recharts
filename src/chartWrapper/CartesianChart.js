@@ -74,9 +74,9 @@ class CartesianChart extends React.Component {
     activeBarKey: null,
   };
   /**
-   * get coordinate of cursor in chart
-   * @param  {Object} e               event object
-   * @param  {Object} containerOffset offser of chart container
+   * Calculate coordinate of cursor in chart
+   * @param  {Object} e               Event object
+   * @param  {Object} containerOffset The offset of main part in the svg element
    * @return {Object}                 {chartX, chartY}
    */
   getChartPosition(e, containerOffset) {
@@ -100,16 +100,16 @@ class CartesianChart extends React.Component {
     return ticks;
   }
   /**
-   * 根据指标名称获取 定义域
-   * @param  {String} key 数据的key值
-   * @param  {String} type 刻度类型
-   * @return {Array} 定义域
+   * Get domain of data by key
+   * @param  {String} key  The unique key of a group of data
+   * @param  {String} type The type of axis
+   * @return {Array} Domain of data
    */
   getDomainByKey(key, type) {
     const { data } = this.props;
     const { dataStartIndex, dataEndIndex } = this.state;
     const domain = data.slice(dataStartIndex, dataEndIndex + 1)
-                       .map(entry => entry[key]);
+                       .map(entry => entry[key] || 0);
 
     return type === 'number' ? [
       Math.min.apply(null, domain),
@@ -117,10 +117,10 @@ class CartesianChart extends React.Component {
     ] : domain;
   }
   /**
-   * 根据LineItem或者Bar计算数据的定义域
-   * @param  {Array} items 线图元素或者柱图元素
-   * @param  {String} type  相应的坐标轴类型，number - 数值类型的坐标轴, category - 类目轴
-   * @return {Array}        取值范围
+   * Get domain of data by the configuration of item element
+   * @param  {Array} items  The instances of item
+   * @param  {String} type  The type of axis, number - Number Axis, category - Category Axis
+   * @return {Array}        Domain
    */
   getDomainOfItems(items, type) {
     const domain = items.map(item => {
@@ -128,7 +128,7 @@ class CartesianChart extends React.Component {
     });
 
     if (type === 'number') {
-      // 计算数值类型的轴的取值范围
+      // Calculate the domain of number axis
       return domain.reduce((result, entry) => {
         return [
           Math.min(result[0], entry[0]),
@@ -140,7 +140,7 @@ class CartesianChart extends React.Component {
     const tag = {};
     const result = [];
 
-    // 类目轴，计算类目轴的并集
+    // Get the union set of category axis
     domain.forEach(entry => {
       for (let i = 0, len = entry.length; i < len; i++) {
         if (!tag[entry[i]]) {
@@ -154,21 +154,20 @@ class CartesianChart extends React.Component {
     return result;
   }
   /**
-   * 计算X轴 或者 Y轴的配置
-   * @param  {String} axisType 轴的类型
-   * @param  {Array} items    图形元素
-   * @return {Object}           轴的配置
+   * Get the configuration of all x-axis or y-axis
+   * @param  {String} axisType The type of axis
+   * @param  {Array} items     The instances of item
+   * @return {Object}          Configuration
    */
   getAxisMap(axisType = 'xAxis', items) {
     const { children } = this.props;
     const Axis = axisType === 'xAxis' ? XAxis : YAxis;
     const axisIdKey = axisType === 'xAxis' ? 'xAxisId' : 'yAxisId';
-    // 所有定义的XAxis组件
+    // Get all the instance of Axis
     const axes = ReactUtils.findAllByType(children, Axis);
 
     let axisMap = {};
 
-    // 根据用户显性配置的轴来计算轴的配置
     if (axes && axes.length) {
       axisMap = this.getAxisMapByAxes(axes, items, axisType, axisIdKey);
     } else if (items && items.length) {
@@ -178,15 +177,15 @@ class CartesianChart extends React.Component {
     return axisMap;
   }
   /**
-   * 根据用户显性配置的轴来计算轴的配置
-   * @param {Array} axes 轴对象
-   * @param  {Array} items 线图元素或者柱图元素
-   * @param  {String} axisType 轴的类型, xAxis - x轴, yAxis - y轴
-   * @param  {String} axisIdKey 标识轴的id的key
-   * @return {Object}      刻度配置对象
+   * Get the configuration of axis by the options of axis instance
+   * @param {Array}  axes  The instance of axes
+   * @param  {Array} items The instances of item
+   * @param  {String} axisType The type of axis, xAxis - x-axis, yAxis - y-axis
+   * @param  {String} axisIdKey The unique id of an axis
+   * @return {Object}      Configuration
    */
   getAxisMapByAxes(axes, items, axisType, axisIdKey) {
-    // 需要去除重复的情况
+    // Eliminate duplicated axes
     const axisMap = axes.reduce((result, child) => {
       const { type, dataKey } = child.props;
       const axisId = child.props[axisIdKey];
@@ -217,19 +216,22 @@ class CartesianChart extends React.Component {
     return axisMap;
   }
   /**
-   * 根据用户配置的图形元素来计算轴的配置，但是这种轴不会显示
-   * @param  {Array} items 线图元素或者柱图元素
-   * @param  {ReactElement} Axis 轴对象
-   * @param  {String} axisType 轴的类型, xAxis - x轴, yAxis - y轴
-   * @param  {String} axisIdKey 标识轴的id的key
-   * @return {Object}      刻度配置对象
+   * Get the configuration of axis by the options of item, this kind of axis does not display in chart
+   * @param  {Array} items       The instances of item
+   * @param  {ReactElement} Axis Axis Component
+   * @param  {String} axisType   The type of axis, xAxis - x-axis, yAxis - y-axis
+   * @param  {String} axisIdKey  The unique id of an axis
+   * @return {Object}            Configuration
    */
   getAxisMapByItems(items, Axis, axisType, axisIdKey) {
     const { dataEndIndex, dataStartIndex } = this.state;
     const len = dataEndIndex - dataStartIndex + 1;
     let index = -1;
 
-    // 当没有创建XAxis时，默认X轴为类目轴，根据data的序号来决定X轴绘制内容
+    // The default type of x-axis is category axis,
+    // The default contents of x-axis is the serial numbers of data
+    // The default type of y-axis is number axis
+    // The default contents of y-axis is the domain of data
     const axisMap = items.reduce((result, child) => {
       const axisId = child.props[axisIdKey];
 
@@ -258,11 +260,11 @@ class CartesianChart extends React.Component {
     return axisMap;
   }
 
-    /**
-   * 计算图表中图形区域的偏移量
-   * @param  {Object} xAxisMap  x轴刻度
-   * @param  {Object} yAxisMap  y轴刻度
-   * @return {Object} 偏移量
+  /**
+   * Calculate the offset of main part in the svg element
+   * @param  {Object} xAxisMap  The configuration of x-axis
+   * @param  {Object} yAxisMap  The configuration of y-axis
+   * @return {Object} The offset of main part in the svg element
    */
   getOffset(xAxisMap, yAxisMap) {
     const { width, height, margin, children } = this.props;
@@ -298,9 +300,9 @@ class CartesianChart extends React.Component {
     };
   }
   /**
-   * 获取图形元素的主色调
-   * @param  {ReactElement} item 图形元素
-   * @return {String}       颜色
+   * Get the main color of each graphic item
+   * @param  {ReactElement} item A graphic item
+   * @return {String}            Color
    */
   getMainColorOfItem(item) {
     const displayName = item.type.displayName;
@@ -318,20 +320,20 @@ class CartesianChart extends React.Component {
     return result;
   }
   /**
-   * 设置刻度函数的刻度值
-   * @param {Object} scale 刻度对象
-   * @param {Object} opts  配置
-   * @return {Object} 无返回
+   * Configure the scale function of axis
+   * @param {Object} scale The scale function
+   * @param {Object} opts  The configuration of axis
+   * @return {Object}      null
    */
   setTicksOfScale(scale, opts) {
-    // 优先使用用户配置的刻度
+    // Give priority to use the options of ticks
     if (opts.ticks && opts.ticks) {
       scale.domain(this.getDomainOfTicks(opts.ticks, opts.type))
            .ticks(opts.ticks.length);
 
       return;
     }
-    // 数值类型的刻度，指定了刻度的个数后，根据范围动态计算
+    // Calculate the ticks by the number of grid when the axis is a number axis
     if (opts.tickCount && opts.type === 'number' && !opts.hide) {
       const domain = scale.domain();
       const tickValues = getNiceTickValues(domain, opts.tickCount);
@@ -344,11 +346,11 @@ class CartesianChart extends React.Component {
     }
   }
   /**
-   * 计算轴的刻度函数，位置，大小等信息
-   * @param  {Object} axisMap  刻度对象
-   * @param  {Object} offset   图形区域的偏移量
-   * @param  {Object} axisType 刻度类型，x轴或者y轴
-   * @return {Object} 格式化后的刻度对象
+   * Calculate the scale function, position, width, height of axes
+   * @param  {Object} axisMap  The configuration of axes
+   * @param  {Object} offset   The offset of main part in the svg element
+   * @param  {Object} axisType The type of axes, x-axis or y-axis
+   * @return {Object} Configuration
    */
   getFormatAxisMap(axisMap, offset, axisType) {
     const { width, height, layout } = this.props;
@@ -373,7 +375,7 @@ class CartesianChart extends React.Component {
                 [offset.top, offset.top + offset.height];
       }
       let scale;
-      // 数值类型的刻度使用 linear刻度，类目轴使用 ordinal刻度
+
       if (type === 'number') {
         scale = D3Scale.linear().domain(domain).range(range);
       } else if (this.displayName === 'LineChart' || this.displayName === 'AreaChart') {
@@ -412,9 +414,10 @@ class CartesianChart extends React.Component {
   }
 
   /**
-   * 计算x轴，y轴的刻度
-   * @param  {Object}  axis 刻度对象
-   * @return {Array} 轴的刻度
+   * Get the ticks of an axis
+   * @param  {Object}  axis The configuration of an axis
+   * @param {Boolean} isGrid Whether or not are the ticks in grid
+   * @return {Array}  Ticks
    */
   getAxisTicks(axis, isGrid = false) {
     const scale = axis.scale;
@@ -438,11 +441,11 @@ class CartesianChart extends React.Component {
   }
 
   /**
-   * 计算网格的刻度
-   * @param  {Array} ticks 刻度对象
-   * @param {Number} min 最小值
-   * @param {Number} max 最大值
-   * @return {Array} 网格的刻度
+   * Calculate the ticks of grid
+   * @param  {Array} ticks The ticks in axis
+   * @param {Number} min   The minimun value of axis
+   * @param {Number} max   The maximun value of axis
+   * @return {Array}       Ticks
    */
   getGridTicks(ticks, min, max) {
     let hasMin;
@@ -463,12 +466,12 @@ class CartesianChart extends React.Component {
   }
 
   /**
-   * 判断鼠标是否在图表的图形区域
-   * @param  {Object}  xAxisMap x轴刻度
-   * @param  {Object}  yAxisMap y轴刻度
-   * @param  {Object}  offset 图形元素的偏移量
-   * @param  {Object}  e      事件对象
-   * @return {Object} 格式化后的鼠标数据
+   * Get the information of mouse in chart, return null when the mouse is not in the chart
+   * @param  {Object}  xAxisMap The configuration of all x-axes
+   * @param  {Object}  yAxisMap The configuration of all y-axes
+   * @param  {Object}  offset   The offset of main part in the svg element
+   * @param  {Object}  e        The event object
+   * @return {Object}           Mouse data
    */
   getMouseInfo(xAxisMap, yAxisMap, offset, e) {
     const isIn = e.chartX >= offset.left && e.chartX <= offset.left + offset.width
@@ -482,15 +485,19 @@ class CartesianChart extends React.Component {
     const ids = Object.keys(axisMap);
     const axis = axisMap[ids[0]];
     const ticks = this.getAxisTicks(axis, true);
-    let index = 0;
 
-    for (let i = 0, len = ticks.length; i < len; i++) {
-      if ((i === 0 && pos <= (ticks[i].coord + ticks[i + 1].coord) / 2)
-        || (i > 0 && i < len - 1 && pos > (ticks[i].coord + ticks[i - 1].coord) / 2
-          && pos <= (ticks[i].coord + ticks[i + 1].coord) / 2)
-        || (i === len - 1 && pos > (ticks[i].coord + ticks[i - 1].coord) / 2)) {
-        index = i;
-        break;
+    let index = 0;
+    const len = ticks.length;
+
+    if (len > 1) {
+      for (let i = 0; i < len; i++) {
+        if ((i === 0 && pos <= (ticks[i].coord + ticks[i + 1].coord) / 2)
+          || (i > 0 && i < len - 1 && pos > (ticks[i].coord + ticks[i - 1].coord) / 2
+            && pos <= (ticks[i].coord + ticks[i + 1].coord) / 2)
+          || (i === len - 1 && pos > (ticks[i].coord + ticks[i - 1].coord) / 2)) {
+          index = i;
+          break;
+        }
       }
     }
 
@@ -504,9 +511,9 @@ class CartesianChart extends React.Component {
     };
   }
   /**
-   * 更具图形元素计算tooltip的显示内容
-   * @param  {Array} items 线图元素或者柱图元素
-   * @return {Array} 浮窗现实的内容
+   * Get the content to be displayed in the tooltip
+   * @param  {Array} items The instances of item
+   * @return {Array}       The content of tooltip
    */
   getTooltipContent(items) {
     const { activeLineKey, activeTooltipIndex, dataStartIndex, dataEndIndex } = this.state;
@@ -541,12 +548,12 @@ class CartesianChart extends React.Component {
   }
 
   /**
-   * 鼠标进入图形区域
-   * @param  {Object} offset   图形区域距离容器的偏移量
-   * @param  {Object} xAxisMap x轴刻度
-   * @param  {Object} yAxisMap y轴刻度
-   * @param  {Object} e        事件对象
-   * @return {Null} no return
+   * The handler of mouse entering chart
+   * @param  {Object} offset   The offset of main part in the svg element
+   * @param  {Object} xAxisMap The configuration of all x-axes
+   * @param  {Object} yAxisMap The configuration of all y-axes
+   * @param  {Object} e        Event object
+   * @return {Null}            null
    */
   handleMouseEnter(offset, xAxisMap, yAxisMap, e) {
     const container = ReactDOM.findDOMNode(this);
@@ -564,8 +571,8 @@ class CartesianChart extends React.Component {
     }
   }
   /**
-   * 鼠标在图形区域移动
-   * @param  {Object} offset   图形区域距离容器的偏移量
+   * The handler of mouse moving in chart
+   * @param  {Object} offset   The offset of main part in the svg element
    * @param  {Object} xAxisMap x轴刻度
    * @param  {Object} yAxisMap y轴刻度
    * @param  {Object} e        事件对象
@@ -673,7 +680,7 @@ class CartesianChart extends React.Component {
    * 渲染网格部分
    * @param  {Object} xAxisMap x轴刻度
    * @param  {Object} yAxisMap y轴刻度
-   * @param  {Object} offset   图形区域的偏移量
+   * @param  {Object} offset   The offset of main part in the svg element
    * @return {ReactElement} 网格
    */
   renderGrid(xAxisMap, yAxisMap, offset) {
@@ -711,7 +718,7 @@ class CartesianChart extends React.Component {
   /**
    * 绘制图例部分
    * @param  {Array} items 线图元素或者柱图元素
-   * @param  {Object} offset 图形区域的偏移量
+   * @param  {Object} offset           The offset of main part in the svg element
    * @param  {ReactElement} legendItem 图例元素
    * @return {ReactElement} 图例
    */
@@ -734,7 +741,7 @@ class CartesianChart extends React.Component {
   /**
    * 渲染浮层
    * @param  {Array} items 线图元素或者柱图元素
-   * @param  {Object} offset 图形区域的偏移量
+   * @param  {Object} offset The offset of main part in the svg element
    * @return {ReactElement} 浮层元素
    */
   renderTooltip(items, offset) {

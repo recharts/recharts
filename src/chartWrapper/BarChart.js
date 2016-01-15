@@ -9,12 +9,7 @@ import Tooltip from '../component/Tooltip';
 import Bar from '../chart/Bar';
 import BarItem from './BarItem';
 import Rectangle from '../shape/Rectangle';
-/**
- *  <BarChart className='my-line-cahrt'>
- *    <BarItem data={} yAxis={0}/>
- *    <BarItem data={} yAxis={1}>
- *  </BarChart>
- */
+
 
 class BarChart extends CartesianChart {
 
@@ -22,6 +17,8 @@ class BarChart extends CartesianChart {
 
   static defaultProps = {
     style: {},
+    barOffset: '10%',
+    barGap: 4,
     layout: 'horizontal',
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
@@ -32,13 +29,13 @@ class BarChart extends CartesianChart {
     super(props);
   }
     /**
-   * 组装曲线数据
-   * @param  {Array}  barPosition 每个柱子的大小和偏移量
-   * @param  {Object} xAxis    x轴刻度
-   * @param  {Object} yAxis    y轴刻度
-   * @param  {Object} offset   图形区域的偏移量
-   * @param  {String} dataKey  该组数据所对应的key
-   * @return {Array} 组装后的数据
+   * Compose the data of each group
+   * @param  {Array}  barPosition The offset and size of each bar
+   * @param  {Object} xAxis       The configuration of x-axis
+   * @param  {Object} yAxis       The configuration of y-axis
+   * @param  {Object} offset      The offset of main part in the svg element
+   * @param  {String} dataKey     The unique key of a group
+   * @return {Array} Composed data
    */
   getComposeData(barPosition, xAxis, yAxis, offset, dataKey) {
     const { layout } = this.props;
@@ -48,7 +45,6 @@ class BarChart extends CartesianChart {
     const xTicks = this.getAxisTicks(xAxis);
     const yTicks = this.getAxisTicks(yAxis);
     const baseline = this.getBaseLine(xAxis, yAxis);
-
     return data.map((entry, index) => {
       const value = entry[dataKey];
       let x;
@@ -85,10 +81,10 @@ class BarChart extends CartesianChart {
     return scale(min);
   }
   /**
-   * 获取柱子的宽度以及柱子间的间距
-   * @param  {Number}   bandSize 每一个类别所占的宽度或者高度
-   * @param  {sizeList} sizeList  所有group设置的size
-   * @return {Number} 柱子的宽度以及柱子间的间距
+   * Calculate the size of each bar and the gap between two bars
+   * @param  {Number}   bandSize  The size of each category
+   * @param  {sizeList} sizeList  The size of all groups
+   * @return {Number} The size of each bar and the gap between two bars
    */
   getBarPosition(bandSize, sizeList) {
     const { barGap, barOffset } = this.props;
@@ -130,9 +126,9 @@ class BarChart extends CartesianChart {
     return result;
   }
   /**
-   * 计算每组柱子的大小
-   * @param  {Array} items 所有的柱图对象
-   * @return {Object} 每组柱子的大小
+   * Calculate the size of all groups
+   * @param  {Array} items All the instance of BarItem
+   * @return {Object} The size of all groups
    */
   getSizeList(items) {
     const { layout, barSize } = this.props;
@@ -153,17 +149,17 @@ class BarChart extends CartesianChart {
     return sizeList;
   }
   /**
-   * 计算类目轴的两个区块间隔的大小
-   * @param  {Function} scale 刻度函数
-   * @return {Number} 间隔大小
+   * Calculate the size between two category
+   * @param  {Function} scale Scale function
+   * @return {Number} Size
    */
   getBandSize(scale) {
     return scale.bandwidth();
   }
   /**
-   * 鼠标进入柱子的响应事件
-   * @param {String} key 曲线唯一对应的key
-   * @return {Object} no return
+   * Handler of mouse entering bar chart
+   * @param {String} key  The unique key of a group of data
+   * @return {Object}     null
    */
   handleBarMouseEnter(key) {
     this.setState({
@@ -171,8 +167,8 @@ class BarChart extends CartesianChart {
     });
   }
   /**
-   * 鼠标离开柱子的响应事件
-   * @return {Object} no return
+   * Handler of mouse leaving area chart
+   * @return {Object} null
    */
   handleBarMouseLeave() {
     this.setState({
@@ -209,12 +205,12 @@ class BarChart extends CartesianChart {
       React.createElement(Rectangle, cursorProps);
   }
   /**
-   * 绘制图形部分
-   * @param  {Array} items 柱图元素
-   * @param  {Object} xAxisMap x轴刻度
-   * @param  {Object} yAxisMap y轴刻度
-   * @param  {Object} offset   图形区域的偏移量
-   * @return {ReactComponent} 柱子元素
+   * Draw the main part of bar chart
+   * @param  {Array} items     All the instance of BarItem
+   * @param  {Object} xAxisMap The configuration of all x-axis
+   * @param  {Object} yAxisMap The configuration of all y-axis
+   * @param  {Object} offset   The offset of main part in the svg element
+   * @return {ReactComponent}  All the instances of Bar
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
     if (!items || !items.length) {return null;}

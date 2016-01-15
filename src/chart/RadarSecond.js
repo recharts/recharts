@@ -15,16 +15,17 @@ class RadarSecond extends React.Component {
     innerRadius: PropTypes.number,
     outerRadius: PropTypes.number,
     clockWise: PropTypes.bool,
-    // 角度的scale函数
+    // The scale function of angle
     polarAngleScale: React.PropTypes.func,
-    // 径向scale函数
+    // The scale function of polar diameter
     polarRadiusScale: React.PropTypes.func,
-    // 数据，格式为 {value: someValue, name: "数据的名称"}
-    data: React.PropTypes.array,
+    data: React.PropTypes.arrayOf(PropTypes.shape({
+      value: PropTypes.number,
+      name: PropTypes.any,
+    })),
   };
 
   static defaultProps = {
-    // 数据
     data: [],
   };
 
@@ -32,8 +33,8 @@ class RadarSecond extends React.Component {
     super(props);
   }
   /**
-   * 计算雷达图中多边形的顶点坐标
-   * @return {Array} 多边形的顶点
+   * Calculate the coordinate of vertexes
+   * @return {Array} Array of coordinate
    */
   getPolygonVertexs() {
     const { cx, cy, data, polarAngleScale, polarRadiusScale } = this.props;

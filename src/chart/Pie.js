@@ -1,5 +1,5 @@
 /**
- * @fileOverview 饼图
+ * @fileOverview Render sectors of a pie
  */
 import React, { PropTypes } from 'react';
 import Sector from '../shape/Sector';
@@ -33,19 +33,18 @@ class Pie extends React.Component {
   };
 
   static defaultProps = {
-    // 极点的横坐标
+    // The abscissa of pole
     cx: 0,
-    // 极点的纵坐标
+    // The ordinate of pole
     cy: 0,
-    // 起始角度
+    // The start angle of first sector
     startAngle: 0,
-    // 内径
+    // The inner radius of sectors
     innerRadius: 0,
-    // 外径
+    // The outer radius of sectors
     outerRadius: 0,
-    // 极坐标一般取逆时针为正方向，但饼图等一般默认为顺时针
+    // The direction of drawing sectors
     clockWise: true,
-    // 数据
     data: [],
     minAngle: 0,
     onMouseEnter() {},

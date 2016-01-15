@@ -1,5 +1,7 @@
 import React, { PropTypes } from 'react';
+import pureRender from 'pure-render-decorator';
 
+@pureRender
 class BarItem extends React.Component {
 
   static displayName = 'BarItem';
@@ -8,11 +10,11 @@ class BarItem extends React.Component {
     yAxisId: PropTypes.number,
     xAxisId: PropTypes.number,
     barSize: PropTypes.number,
-    // 数据对应的单位
+    // The unit of data
     unit: PropTypes.any,
-    // 柱对应的数据key
+    // The key of data which is unique in an area chart
     dataKey: PropTypes.string.isRequired,
-    // 指标名称
+    // The name of data
     name: PropTypes.string,
 
     fill: PropTypes.string,
@@ -25,7 +27,7 @@ class BarItem extends React.Component {
     isActive: PropTypes.bool,
     stack: PropTypes.string,
     stackType: PropTypes.string,
-    // 数据格式化函数
+    // The formatter function of data
     formatter: PropTypes.func,
   };
 

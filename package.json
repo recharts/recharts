@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "0.3.18",
+  "version": "0.3.19",
   "description": "React charts",
   "main": "src/index.js",
   "keywords": [
@@ -29,12 +29,12 @@
     "recharts-scale": "0.1.5-beta"
   },
   "devDependencies": {
-    "babel-polyfill": "6.3.14",
     "babel-core": "6.3.21",
     "babel-eslint": "5.0.0-beta6",
     "babel-loader": "6.2.0",
     "babel-plugin-transform-decorators-legacy": "1.3.4",
     "babel-plugin-transform-export-extensions": "6.3.13",
+    "babel-polyfill": "6.3.14",
     "babel-preset-es2015": "6.3.13",
     "babel-preset-react": "6.3.13",
     "babel-preset-stage-0": "6.3.13",
@@ -43,6 +43,7 @@
     "eslint-config-airbnb": "2.1.1",
     "eslint-plugin-react": "3.13.0",
     "history": "1.17.0",
+    "ima.js-babel6-polyfill": "^0.1.0",
     "isparta": "4.0.0",
     "mocha": "2.3.4",
     "node-libs-browser": "0.5.3",
@@ -56,7 +57,7 @@
     "webpack-dev-server": "1.14.0"
   },
   "scripts": {
-    "demo": "./node_modules/.bin/webpack-dev-server --progress --port 3000  --colors --content-base demo --hot --inline --config demo/webpack.config.js",
+    "demo": "./node_modules/.bin/webpack-dev-server --host 0.0.0.0  --progress --port 3000  --colors --content-base demo --hot --inline --config demo/webpack.config.js",
     "test": "./node_modules/.bin/mocha --compilers js:babel/register --recursive",
     "test-cov": "./node_modules/.bin/babel-node ./node_modules/.bin/isparta --report html cover _mocha -- --recursive",
     "lint": "./node_modules/.bin/eslint src test"

@@ -1,5 +1,5 @@
 /**
- * @fileOverview 柱图
+ * @fileOverview Render a group of bar
  */
 import React, { PropTypes } from 'react';
 import Rectangle from '../shape/Rectangle';
@@ -41,7 +41,7 @@ class Bar extends React.Component {
   };
 
   static defaultProps = {
-    // 数据
+    // data of bar
     data: [],
     onClick() {},
     onMouseEnter() {},

@@ -47,10 +47,6 @@ class Rectangle extends React.Component {
     onClick() {},
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   getPath(x, y, width, height, radius) {
     const maxRadius = Math.min(width / 2, height / 2);
     let newRadius = [];
@@ -103,6 +99,10 @@ class Rectangle extends React.Component {
     const { x, y, width, height, radius,
         onClick, onMouseEnter, onMouseLeave,
         className, ...others } = this.props;
+
+    if (x !== +x || y !== +y || width !== +width || height !== +height) {
+      return null;
+    }
 
     return (
       <path

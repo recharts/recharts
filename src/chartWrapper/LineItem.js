@@ -1,5 +1,7 @@
 import React, { PropTypes } from 'react';
+import pureRender from 'pure-render-decorator';
 
+@pureRender
 class LineItem extends React.Component {
 
   static displayName = 'LineItem';

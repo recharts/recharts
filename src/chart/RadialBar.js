@@ -1,5 +1,5 @@
 /**
- * @fileOverview 玉玦图
+ * @fileOverview Render a group of radial bar
  */
 import React, { PropTypes } from 'react';
 import Sector from '../shape/Sector';

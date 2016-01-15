@@ -1,12 +1,14 @@
 import React from 'react';
 import CartesianChart from './CartesianChart';
-
+import LodashUtils from '../util/LodashUtils';
 import Surface from '../container/Surface';
 import ReactUtils from '../util/ReactUtils';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Area from '../chart/Area';
 import AreaItem from './AreaItem';
+import Dot from '../shape/Dot';
+import Curve from '../shape/Curve';
 
 class AreaChart extends CartesianChart {
   static displayName = 'AreaChart';
@@ -23,11 +25,11 @@ class AreaChart extends CartesianChart {
     super(props);
   }
   /**
-   * 组装曲线数据
-   * @param  {Object} xAxis   x轴刻度
-   * @param  {Object} yAxis   y轴刻度
-   * @param  {String} dataKey 该组数据所对应的key
-   * @return {Array} 组合后的数据
+   * Compose the data of each area
+   * @param  {Object} xAxis   The configuration of x-axis
+   * @param  {Object} yAxis   The configuration of y-axis
+   * @param  {String} dataKey The unique key of a group
+   * @return {Array} Composed data
    */
   getComposeData(xAxis, yAxis, dataKey) {
     const { data, layout } = this.props;
@@ -59,9 +61,9 @@ class AreaChart extends CartesianChart {
     };
   }
   /**
-   * 鼠标进入曲线的响应事件
-   * @param {String} key 曲线唯一对应的key
-   * @return {Object} no return
+   * Handler of mouse entering area chart
+   * @param {String} key  The unique key of a group of data
+   * @return {Object} null
    */
   handleAreaMouseEnter(key) {
     this.setState({
@@ -69,8 +71,8 @@ class AreaChart extends CartesianChart {
     });
   }
   /**
-   * 鼠标离开曲线的响应事件
-   * @return {Object} no return
+   * Handler of mouse leaving area chart
+   * @return {Object} null
    */
   handleAreaMouseLeave() {
     this.setState({
@@ -78,12 +80,12 @@ class AreaChart extends CartesianChart {
     });
   }
   /**
-   * 绘制图形部分
-   * @param  {Array} items 线图元素
-   * @param  {Object} xAxisMap x轴刻度
-   * @param  {Object} yAxisMap y轴刻度
-   * @param  {Object} offset   图形区域的偏移量
-   * @return {ReactComponent} 图形元素
+   * Draw the main part of area chart
+   * @param  {Array} items     React elements of AreaItem
+   * @param  {Object} xAxisMap The configuration of all x-axis
+   * @param  {Object} yAxisMap The configuration of all y-axis
+   * @param  {Object} offset   The offset of main part in the svg element
+   * @return {ReactComponent} The instances of Area
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
     const { children } = this.props;
@@ -122,7 +124,7 @@ class AreaChart extends CartesianChart {
       areaItems = activeAreaKey === dataKey ? [...areaItems, area] : [area, ...areaItems];
 
       if (hasDot && activePoint) {
-        dotItems.push(<circle key={'area-dot-' + i} cx={activePoint.x} cy={activePoint.y} r={8} {...pointStyle}/>);
+        dotItems.push(<Dot key={'area-dot-' + i} cx={activePoint.x} cy={activePoint.y} r={8} {...pointStyle}/>);
       }
     });
 
@@ -147,18 +149,19 @@ class AreaChart extends CartesianChart {
     const axis = axisMap[ids[0]];
     const ticks = this.getAxisTicks(axis);
     const start = ticks[activeTooltipIndex].coord;
+    const x1 = layout === 'horizontal' ? start : offset.left;
+    const y1 = layout === 'horizontal' ? offset.top : start;
+    const x2 = layout === 'horizontal' ? start : offset.left + offset.width;
+    const y2 = layout === 'horizontal' ? offset.top + offset.height : start;
     const cursorProps = {
       stroke: '#ccc',
       ...ReactUtils.getPresentationAttributes(tooltipItem.props.cursor),
-      x1: layout === 'horizontal' ? start : offset.left,
-      y1: layout === 'horizontal' ? offset.top : start,
-      x2: layout === 'horizontal' ? start : offset.left + offset.width,
-      y2: layout === 'horizontal' ? offset.top + offset.height: start,
+      points: [{ x: x1, y: y1 }, { x: x2, y: y2 }],
     };
 
     return React.isValidElement(tooltipItem.props.cursor) ?
           React.cloneElement(tooltipItem.props.cursor, cursorProps) :
-          <line className="recharts-cursor" {...cursorProps}/>;
+          <Curve {...cursorProps} type="linear" className="recharts-cursor"/>;
   }
 
   render() {

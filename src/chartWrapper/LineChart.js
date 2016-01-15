@@ -89,7 +89,7 @@ class LineChart extends CartesianChart {
           strokeWidth={finalStrokeWidth}
           onMouseLeave={::this.handleLineMouseLeave}
           onMouseEnter={this.handleLineMouseEnter.bind(this, dataKey)}
-          data={this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey)}
+          points={this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey)}
         />
       );
     }, this);
