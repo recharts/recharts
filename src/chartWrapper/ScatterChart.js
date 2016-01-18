@@ -11,7 +11,6 @@ import Tooltip from '../component/Tooltip';
 import Scatter from '../chart/Scatter';
 
 import ReactUtils from '../util/ReactUtils';
-import ScatterItem from './ScatterItem';
 import XAxis from './XAxis';
 import YAxis from './YAxis';
 import ZAxis from './ZAxis';
@@ -438,28 +437,25 @@ class ScatterChart extends React.Component {
     const { activeScatterKey } = this.state;
 
     return items.map((child, i) => {
-      const { strokeWidth, data, ...other } = child.props;
+      const { strokeWidth, data } = child.props;
 
       let finalStrokeWidth = strokeWidth === +strokeWidth ? strokeWidth : 1;
       finalStrokeWidth = activeScatterKey === i ? finalStrokeWidth + 2 : finalStrokeWidth;
 
-      return (
-        <Scatter
-          {...other}
-          key={'scatter-' + i}
-          groupId={'scatter-' + i}
-          strokeWidth={finalStrokeWidth}
-          onMouseLeave={::this.handleScatterMouseLeave}
-          onMouseEnter={::this.handleScatterMouseEnter}
-          data={this.getComposeData(data, xAxis, yAxis, zAxis)}
-        />
-      );
+      return React.cloneElement(child, {
+        key: 'scatter-' + i,
+        groupId: 'scatter-' + i,
+        strokeWidth: finalStrokeWidth,
+        onMouseLeave: ::this.handleScatterMouseLeave,
+        onMouseEnter: ::this.handleScatterMouseEnter,
+        data: this.getComposeData(data, xAxis, yAxis, zAxis),
+      });
     }, this);
   }
 
   render() {
     const { style, children } = this.props;
-    const items = ReactUtils.findAllByType(children, ScatterItem);
+    const items = ReactUtils.findAllByType(children, Scatter);
     const legendItem = ReactUtils.findChildByType(children, Legend);
     const zAxis = this.getZAxis(items);
     let xAxis = this.getAxis('xAxis', items);

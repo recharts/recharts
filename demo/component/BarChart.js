@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import {BarChart, BarItem, Brush, CartesianGrid, ReferenceLine, XAxis, YAxis, Tooltip} from 'recharts';
+import {BarChart, Bar, Brush, CartesianGrid, ReferenceLine, XAxis, YAxis, Tooltip} from 'recharts';
 import ColorUtil from 'recharts-color-utils';
 
 let colors = ColorUtil.Palette('#ffc658', 'rectangle');
@@ -167,8 +167,8 @@ export default React.createClass({
             <XAxis dataKey='name'/>
             <YAxis/>
             <CartesianGrid vertical={false}/>
-            <BarItem dataKey='uv' fill='#ff7300'/>
-            <BarItem dataKey='pv' fill='#387908'/>
+            <Bar dataKey='uv' fill='#ff7300'/>
+            <Bar dataKey='pv' fill='#387908'/>
           </BarChart>
         </div>
 
@@ -178,15 +178,15 @@ export default React.createClass({
             <XAxis type='number'/>
             <YAxis dataKey='name' type='category'/>
             <CartesianGrid horizontal={false}/>
-            <BarItem dataKey='uv' fill='#ff7300'/>
-            <BarItem dataKey='pv' fill='#387908'/>
+            <Bar dataKey='uv' fill='#ff7300'/>
+            <Bar dataKey='pv' fill='#387908'/>
           </BarChart>
         </div>
 
         <p>Tiny BarChart</p>
         <div className='bar-chart-wrapper'>
           <BarChart width={150} height={40} data={data}>
-            <BarItem dataKey='uv' fill='#ff7300'/>
+            <Bar dataKey='uv' fill='#ff7300'/>
           </BarChart>
         </div>
 
@@ -195,8 +195,8 @@ export default React.createClass({
           <BarChart width={1100} height={250} barGap={2} barSize={6} data={data2} margin={{top: 20, right: 60, bottom: 0, left: 20}}>
             <XAxis dataKey='name'/>
             <YAxis tickCount={7}/>
-            <BarItem dataKey='uv' fill='#8884d8'/>
-            <BarItem dataKey='pv' fill='#82ca9d'/>
+            <Bar dataKey='uv' fill='#8884d8'/>
+            <Bar dataKey='pv' fill='#82ca9d'/>
             <Tooltip />
             <CartesianGrid/>
             <Brush dataKey='name' height={30}/>
@@ -208,7 +208,7 @@ export default React.createClass({
         <div className='bar-chart-wrapper'>
           <BarChart width={500} height={250} barOffset={0} data={data}  margin={{top: 20, right: 20, bottom: 0, left: 20}}>
             <XAxis dataKey='name'/>
-            <BarItem dataKey='uv' barGap={0} fill='#ff7300' customContent={<CustomBar/>}/>
+            <Bar dataKey='uv' barGap={0} fill='#ff7300' customContent={<CustomBar/>}/>
           </BarChart>
         </div>
 
@@ -216,7 +216,7 @@ export default React.createClass({
         <div className='bar-chart-wrapper'>
           <BarChart width={500} height={250} barOffset={0} data={data} margin={{top: 20, right: 20, bottom: 20, left: 20}}>
             <XAxis hasAxis={false} hasTick={false} dataKey='name' customContent={<CustomAxis />}/>
-            <BarItem dataKey='uv' barGap={0} fill="#8884d8" customContent={<BarTwo/>} label/>
+            <Bar dataKey='uv' barGap={0} fill="#8884d8" customContent={<BarTwo/>} label/>
           </BarChart>
         </div>
       </div>

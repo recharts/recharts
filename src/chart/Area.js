@@ -14,7 +14,16 @@ class Area extends React.Component {
   static displayName = 'Area';
 
   static propTypes = {
-    type: PropTypes.string,
+    type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
+    unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    yAxisId: PropTypes.number,
+    xAxisId: PropTypes.number,
+    legendType: PropTypes.string,
+    formatter: PropTypes.func,
+
+
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
@@ -40,8 +49,14 @@ class Area extends React.Component {
 
   static defaultProps = {
     strokeWidth: 1,
-    // 数据
-    data: [],
+    stroke: '#3182bd',
+    fill: '#3182bd',
+    fillOpacity: 0.6,
+    xAxisId: 0,
+    yAxisId: 0,
+    legendType: 'line',
+    // points of area
+    points: [],
     dot: false,
     curve: true,
     onClick() {},

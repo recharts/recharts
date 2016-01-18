@@ -7,7 +7,6 @@ import ReactUtils from '../util/ReactUtils';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Bar from '../chart/Bar';
-import BarItem from './BarItem';
 import Rectangle from '../shape/Rectangle';
 
 
@@ -127,7 +126,7 @@ class BarChart extends CartesianChart {
   }
   /**
    * Calculate the size of all groups
-   * @param  {Array} items All the instance of BarItem
+   * @param  {Array} items All the instance of Bar
    * @return {Object} The size of all groups
    */
   getSizeList(items) {
@@ -206,7 +205,7 @@ class BarChart extends CartesianChart {
   }
   /**
    * Draw the main part of bar chart
-   * @param  {Array} items     All the instance of BarItem
+   * @param  {Array} items     All the instance of Bar
    * @param  {Object} xAxisMap The configuration of all x-axis
    * @param  {Object} yAxisMap The configuration of all y-axis
    * @param  {Object} offset   The offset of main part in the svg element
@@ -221,7 +220,7 @@ class BarChart extends CartesianChart {
     const barPositionMap = {};
 
     return items.map((child, i) => {
-      const { xAxisId, yAxisId, dataKey, ...other } = child.props;
+      const { xAxisId, yAxisId, dataKey } = child.props;
       const axisId = layout === 'horizontal' ? xAxisId : yAxisId;
       const bandSize = this.getBandSize(
                         layout === 'horizontal' ?
@@ -230,21 +229,18 @@ class BarChart extends CartesianChart {
                       );
       const barPosition = barPositionMap[axisId] || this.getBarPosition(bandSize, sizeList[axisId]);
 
-      return (
-        <Bar
-          {...other}
-          key={'bar-' + i}
-          onMouseLeave={::this.handleBarMouseLeave}
-          onMouseEnter={this.handleBarMouseEnter.bind(this, dataKey)}
-          data={this.getComposeData(barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey)}
-        />
-      );
+      return React.cloneElement(child, {
+        key: 'bar-' + i,
+        onMouseLeave: ::this.handleBarMouseLeave,
+        onMouseEnter: this.handleBarMouseEnter.bind(this, dataKey),
+        data: this.getComposeData(barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey)
+      });
     }, this);
   }
 
   render() {
     const { style, children, className } = this.props;
-    const items = ReactUtils.findAllByType(children, BarItem);
+    const items = ReactUtils.findAllByType(children, Bar);
     const legendItem = ReactUtils.findChildByType(children, Legend);
 
     let xAxisMap = this.getAxisMap('xAxis', items);

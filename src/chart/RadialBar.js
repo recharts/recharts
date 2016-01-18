@@ -38,6 +38,8 @@ class RadialBar extends React.Component {
       outerRadius: PropTypes.number,
       value: PropTypes.value,
     })),
+    barRadius: PropTypes.number,
+    legendType: PropTypes.string,
 
     label: PropTypes.oneOfType([
       PropTypes.bool, PropTypes.element, PropTypes.object,
@@ -53,11 +55,16 @@ class RadialBar extends React.Component {
   };
 
   static defaultProps = {
-    // 数据
-    data: [],
-    clockWise: true,
-    startAngle: 0,
+    startAngle: 180,
+    endAngle: 0,
+    maxAngle: 135,
     minAngle: 0,
+    clockWise: true,
+    innerRadius: 0,
+    outerRadius: 0,
+    stroke: '#fff',
+    fill: '#808080',
+    data: [],
     onClick() {},
     onMouseEnter() {},
     onMouseLeave() {},

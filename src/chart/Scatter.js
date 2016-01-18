@@ -11,11 +11,17 @@ class Scatter extends React.Component {
   static displayName = 'Scatter';
 
   static propTypes = {
+    legendType: PropTypes.string,
+    xAxisId: PropTypes.number,
+    yAxisId: PropTypes.number,
+    zAxisId: PropTypes.number,
+
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
     strokeDasharray: PropTypes.string,
     className: PropTypes.string,
+
     groupId: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.shape({
       cx: PropTypes.number,
@@ -33,6 +39,11 @@ class Scatter extends React.Component {
   };
 
   static defaultProps = {
+    fill: '#fff',
+    xAxisId: 0,
+    yAxisId: 0,
+    zAxisId: 0,
+    legendType: 'scatter',
     data: [],
     onClick() {},
     onMouseEnter() {},

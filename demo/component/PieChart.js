@@ -1,5 +1,5 @@
 import React from 'react';
-import {PieChart, PieItem, Legend} from 'recharts';
+import {PieChart, Pie, Legend} from 'recharts';
 
 export default React.createClass({
   render () {
@@ -33,8 +33,8 @@ export default React.createClass({
         <div className='pie-chart-wrapper'>
           <PieChart width={400} height={400}>
             <Legend wrapperStyle={{height: 80}}/>
-            <PieItem data={data01} cx={100} cy={200} outerRadius={80}/>
-            <PieItem data={data02} cx={300} cy={200} outerRadius={80}/>
+            <Pie data={data01} cx={100} cy={200} outerRadius={80}/>
+            <Pie data={data02} cx={300} cy={200} outerRadius={80}/>
           </PieChart>
         </div>
 
@@ -42,8 +42,8 @@ export default React.createClass({
         <div className='pie-chart-wrapper'>
           <PieChart width={400} height={400}>
             <Legend verticalAlign='top'/>
-            <PieItem data={data01} cx={200} cy={200} innerRadius={50} outerRadius={80}/>
-            <PieItem data={data03} cx={200} cy={200} innerRadius={80} outerRadius={100}/>
+            <Pie data={data01} cx={200} cy={200} innerRadius={50} outerRadius={80}/>
+            <Pie data={data03} cx={200} cy={200} innerRadius={80} outerRadius={100}/>
           </PieChart>
         </div>
 

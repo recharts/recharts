@@ -14,7 +14,15 @@ class Line extends React.Component {
   static displayName = 'Line';
 
   static propTypes = {
-    type: PropTypes.string,
+    type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
+    unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    yAxisId: PropTypes.number,
+    xAxisId: PropTypes.number,
+    legendType: PropTypes.string,
+    formatter: PropTypes.func,
+
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
@@ -33,7 +41,13 @@ class Line extends React.Component {
   };
 
   static defaultProps = {
+    xAxisId: 0,
+    yAxisId: 0,
+    dot: true,
+    legendType: 'line',
+    stroke: '#3182bd',
     strokeWidth: 1,
+    fill: '#fff',
     points: [],
     onClick() {},
     onMouseEnter() {},
