@@ -12,18 +12,18 @@ export default React.createClass({
 
     return (
       <div className='scatter-charts'>
-        <p>最简单的散点图</p>
+        <p>Simple ScatterChart</p>
         <div className='scatter-chart-wrapper'>
-          <ScatterChart width={400} height={400}>
+          <ScatterChart width={400} height={400} margin={{top: 20, right: 20, bottom: 20, left: 20}}>
             <XAxis dataKey={'x'} name='身高' unit='cm'/>
             <YAxis dataKey={'y'} name='体重' unit='kg'/>
             <ScatterItem name='上海中学生' data={data01} fill='#ff7300'/>
           </ScatterChart>
         </div>
 
-        <p>最简单的散点图</p>
+        <p>ScatterChart of three dimension data</p>
         <div className='scatter-chart-wrapper'>
-          <ScatterChart width={400} height={400}>
+          <ScatterChart width={400} height={400} margin={{top: 20, right: 20, bottom: 20, left: 20}}>
             <XAxis dataKey={'x'} name='身高' unit='cm'/>
             <YAxis dataKey={'y'} name='体重' unit='kg'/>
             <ZAxis dataKey={'z'} range={[4, 20]} name='离家距离' unit='km'/>

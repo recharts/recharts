@@ -27,9 +27,9 @@ class CartesianGrid extends React.Component {
     height: 0,
     horizontal: true,
     vertical: true,
-    // 水平线条的纵坐标
+    // The ordinates of horizontal grid lines
     horizontalPoints: [],
-    // 竖直线条的横坐标
+    // The abscissas of vertical grid lines
     verticalPoints: [],
 
     stroke: '#ccc',
@@ -40,8 +40,8 @@ class CartesianGrid extends React.Component {
     super(props);
   }
   /**
-   * 绘制水平方向的线条
-   * @return {Group} 图层
+   * Draw the horizontal grid lines
+   * @return {Group} Horizontal lines
    */
   renderHorizontal() {
     const { x, y, width, height, horizontal, vertical, horizontalPoints,
@@ -64,8 +64,8 @@ class CartesianGrid extends React.Component {
     );
   }
   /**
-   * 绘制竖直方向的线条
-   * @return {Group} 图层
+   * Draw vertical grid lines
+   * @return {Group} Vertical lines
    */
   renderVertical() {
     const { x, y, width, height, horizontal, vertical,

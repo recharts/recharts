@@ -33,7 +33,7 @@ const App = React.createClass({
 
     return (
       <div className='component-list-wrapper'>
-        <p className='title'>组件列表</p>
+        <p className='title'>components</p>
         {items}
       </div>
     );
@@ -46,7 +46,7 @@ const App = React.createClass({
 
     return (
       <div className='component-wrapper'>
-        <p className='back'><Link to='/' params={{}}>回到首页</Link></p>
+        <p className='back'><Link to='/' params={{}}>Back to homepage</Link></p>
         <p className='title'>{page}</p>
         {components[group] && components[group][page] ? React.createElement(components[group][page]) : null}
       </div>

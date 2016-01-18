@@ -9,7 +9,7 @@ class Legend extends React.Component {
   static displayName = 'Legend';
 
   static propTypes = {
-    style: PropTypes.object,
+    wrapperStyle: PropTypes.object,
     width: PropTypes.number,
     height: PropTypes.number,
     iconSize: PropTypes.number,
@@ -37,9 +37,9 @@ class Legend extends React.Component {
     super(props);
   }
   /**
-   * 获取图例中Icon的路径
-   * @param {Object} data 包含图表类型、填充颜色、相应的seriesIndex等的数据
-   * @return {String} 路径
+   * Render the path of icon
+   * @param {Object} data Data of each legend item
+   * @return {String} Path element
    */
   renderIcon(data) {
     const halfSize = SIZE / 2;
@@ -71,8 +71,8 @@ class Legend extends React.Component {
     return <path strokeWidth={4} fill={fill} stroke={stroke} d={path} className="recharts-legend-icon"/>;
   }
   /**
-   * 渲染图例
-   * @return {ReactElement} 图例
+   * Draw items of legend
+   * @return {ReactElement} Items
    */
   renderItems() {
     const { data, iconSize, layout } = this.props;
@@ -93,7 +93,7 @@ class Legend extends React.Component {
   }
 
   render() {
-    const { data, width, height, layout, align, style } = this.props;
+    const { data, width, height, layout, align, wrapperStyle } = this.props;
 
     if (!data || !data.length || width <= 0 || height <= 0) {
       return null;
@@ -110,7 +110,7 @@ class Legend extends React.Component {
       finalStyle.position = 'absolute';
     }
 
-    finalStyle = { ...finalStyle, ...style };
+    finalStyle = { ...finalStyle, ...wrapperStyle };
 
     return (
       <ul className="recharts-legend" style={finalStyle}>
