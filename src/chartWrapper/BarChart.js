@@ -233,6 +233,7 @@ class BarChart extends CartesianChart {
       return (
         <Bar
           {...other}
+          layout={layout}
           key={'bar-' + i}
           onMouseLeave={::this.handleBarMouseLeave}
           onMouseEnter={this.handleBarMouseEnter.bind(this, dataKey)}

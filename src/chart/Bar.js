@@ -38,6 +38,9 @@ class Bar extends React.Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
+    animationDelay: PropTypes.number,
+    animationDuration: PropTypes.number,
+    layout: PropTypes.string,
   };
 
   static defaultProps = {
@@ -46,26 +49,61 @@ class Bar extends React.Component {
     onClick() {},
     onMouseEnter() {},
     onMouseLeave() {},
+    animationDelay: 400,
+    animationDuration: 1000,
+    layout: 'vertical',
   };
 
   constructor(props) {
     super(props);
   }
 
+  state = {
+    isAppearActive: false,
+  };
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.update();
+    });
+  }
+
+  update() {
+    this.setState({
+      isAppearActive: true,
+    });
+  }
+
   renderRectangles() {
-    const { data, className, customContent, ...others } = this.props;
+    const { data, className, customContent, layout, animationDuration, animationDelay, ...others } = this.props;
+    const { isAppearActive } = this.state;
 
-    return data.map((entry, i) => {
-      const { value, ...rest } = entry;
+    return data.map((entry, index) => {
+      const { value, width, height, ...rest } = entry;
+      const props = { ...others, ...rest, width, height };
+      let transformOrigin = '';
 
-      return React.isValidElement(customContent) ? React.cloneElement(customContent, {
-        ...others, ...rest,
-        index: i,
-        key: 'rectangle-' + i,
-      }) : React.createElement(Rectangle, {
-        ...others, ...rest,
-        key: 'rectangle-' + i,
-      });
+      if (layout === 'vertical') {
+        transformOrigin = width > 0 ? 'left center' : 'right center';
+      } else {
+        transformOrigin = height > 0 ? 'center bottom' : 'center top';
+      }
+
+      const style = {
+        transform: `scale${layout === 'vertical' ? 'X' : 'Y'}(${isAppearActive ? 1 : 0})`,
+        transition: `transform ${animationDuration}ms ease ${animationDelay}ms`,
+        transformOrigin,
+      };
+
+      return (
+        <g key={'rectangle-' + index} style={style}>
+          {
+            React.isValidElement(customContent) ?
+              React.cloneElement(customContent, { ...props, index }) :
+              React.createElement(Rectangle, props)
+          }
+        </g>
+      );
     });
   }
 
