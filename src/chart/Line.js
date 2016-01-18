@@ -7,6 +7,7 @@ import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import pureRender from 'pure-render-decorator';
 import ReactUtils from '../util/ReactUtils';
+import { findDOMNode } from 'react-dom';
 
 @pureRender
 class Line extends React.Component {
@@ -30,6 +31,12 @@ class Line extends React.Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
+    animation: PropTypes.shape({
+      isActive: PropTypes.bool,
+      delay: PropTypes.number,
+      duration: PropTypes.number,
+      timing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
+    }),
   };
 
   static defaultProps = {
@@ -38,10 +45,37 @@ class Line extends React.Component {
     onClick() {},
     onMouseEnter() {},
     onMouseLeave() {},
+    animation: {
+      isActive: true,
+      delay: 400,
+      duration: 1500,
+      timing: 'ease',
+    },
   };
 
   constructor(props) {
     super(props);
+  }
+
+  state = {
+    isAppearActive: false,
+    totalLength: 0,
+  };
+
+  componentDidMount() {
+    const { isActive, delay } = this.props.animation;
+
+    if (!isActive) {
+      return;
+    }
+
+    const totalLength = findDOMNode(this.refs.curve).getTotalLength() || 0;
+
+    this.setState({ totalLength });
+
+    setTimeout(() => {
+      this.setState({ isAppearActive: true });
+    }, delay);
   }
 
   renderDots() {
@@ -69,12 +103,28 @@ class Line extends React.Component {
   }
 
   render() {
-    const { dot, points, className, ...other } = this.props;
+    const { dot, points, className, animation, ...other } = this.props;
+    const { isActive, delay, duration, timing } = animation;
+    const { isAppearActive, totalLength } = this.state;
+    let style = {};
 
     if (!points || !points.length) {
       return null;
     }
     const hasSinglePoint = points.length === 1;
+
+    if (isActive && totalLength) {
+      if (isAppearActive) {
+        style = {
+          strokeDasharray: totalLength + 'px 0px',
+          transition: `stroke-dasharray ${duration}ms ${timing} ${delay}ms`,
+        };
+      } else {
+        style = {
+          strokeDasharray: '0px ' + totalLength + 'px',
+        };
+      }
+    }
 
     return (
       <Layer className={'recharts-line ' + (className || '')}>
@@ -82,10 +132,12 @@ class Line extends React.Component {
           <Curve
             {...other}
             fill="none"
+            style={style}
             onMouseEnter={this.props.onMouseEnter}
             onMouseLeave={this.props.onMouseLeave}
             onClick={this.props.onClick}
             points={points}
+            ref="curve"
           />
         )}
         {(hasSinglePoint || dot) && this.renderDots()}

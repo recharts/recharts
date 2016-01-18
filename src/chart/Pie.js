@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import Sector from '../shape/Sector';
 import pureRender from 'pure-render-decorator';
+import raf, { cancel as caf } from 'raf';
 
 @pureRender
 class Pie extends React.Component {
@@ -21,6 +22,7 @@ class Pie extends React.Component {
       name: PropTypes.any,
       value: PropTypes.number,
     })),
+    animationDuration: PropTypes.number,
     className: PropTypes.string,
     minAngle: PropTypes.number,
     fill: PropTypes.string,
@@ -30,6 +32,7 @@ class Pie extends React.Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
+    onAnimationEnd: PropTypes.func,
   };
 
   static defaultProps = {
@@ -38,22 +41,37 @@ class Pie extends React.Component {
     // The ordinate of pole
     cy: 0,
     // The start angle of first sector
-    startAngle: 0,
+    startAngle: 90,
     // The inner radius of sectors
     innerRadius: 0,
     // The outer radius of sectors
     outerRadius: 0,
     // The direction of drawing sectors
     clockWise: true,
+    // The duration of sector appearing animation
+    animationDuration: 1500,
     data: [],
     minAngle: 0,
     onMouseEnter() {},
     onMouseLeave() {},
     onClick() {},
+    onAnimationEnd() {},
   };
 
   constructor(props) {
     super(props);
+  }
+
+  state = {
+    endAngle: this.props.startAngle,
+  };
+
+  componentDidMount() {
+    const { animationDuration } = this.props;
+    const { endAngle } = this.state;
+
+    this.velocity = -360 / animationDuration;
+    raf(this.update.bind(this));
   }
 
   getSectors() {
@@ -99,8 +117,47 @@ class Pie extends React.Component {
     return sectors;
   }
 
+  update(timestamp) {
+    console.log('pie updated');
+    if (!this.beginTime) {
+      this.beginTime = timestamp;
+    }
+
+    const { animationDuration, onAnimationEnd, startAngle } = this.props;
+    const passedTime = timestamp - this.beginTime;
+
+    if (passedTime > animationDuration) {
+      return onAnimationEnd();
+    }
+
+    const endAngle = this.velocity * passedTime + startAngle;
+    this.setState({
+      endAngle,
+    });
+
+    raf(this.update.bind(this));
+  }
+
   handleSectorEnter(data, e) {
     this.props.onMouseEnter(data, e);
+  }
+
+  rednerClipPath() {
+    const { cx, cy, outerRadius, innerRadius, startAngle } = this.props;
+
+    return (
+      <defs>
+        <clipPath id="clipPath">
+          <Sector cx={cx}
+            cy={cy}
+            outerRadius={outerRadius}
+            innerRadius={innerRadius}
+            startAngle={startAngle}
+            endAngle={this.state.endAngle}
+          />
+        </clipPath>
+      </defs>
+    );
   }
 
   renderSectors() {
@@ -129,7 +186,10 @@ class Pie extends React.Component {
 
     return (
       <g className={'layer-pie ' + (className || '')}>
+        {this.rednerClipPath()}
+        <g clipPath="url(#clipPath)">
         {this.renderSectors()}
+        </g>
       </g>
     );
   }
