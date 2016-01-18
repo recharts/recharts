@@ -309,7 +309,7 @@ class CartesianChart extends React.Component {
     let result;
 
     switch (displayName) {
-      case 'LineItem':
+      case 'Line':
         result = item.props.stroke;
         break;
       default:

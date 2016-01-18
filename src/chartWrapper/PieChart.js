@@ -3,16 +3,8 @@ import React, { PropTypes } from 'react';
 import Surface from '../container/Surface';
 import ReactUtils from '../util/ReactUtils';
 import Pie from '../chart/Pie';
-import PieItem from './PieItem';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
-
-/**
- *  <PieChart className="my-pie-cahrt">
- *    <PieItem dataKey={}/>
- *    <PieItem dataKey={}>
- *  </PieChart>
- */
 
 class PieChart extends React.Component {
 
@@ -129,27 +121,24 @@ class PieChart extends React.Component {
     const { width, height } = this.props;
 
     return items.map((child, i) => {
-      const { cx, cy, outerRadius, data, ...others } = child.props;
+      const { cx, cy, outerRadius, data } = child.props;
       const maxRadius = Math.min(width, height) / 2;
 
-      return (
-        <Pie
-          {...others}
-          cx={cx || width / 2}
-          cy={cy || height / 2}
-          key={'recharts-pie-' + i}
-          data={this.getComposeData(child)}
-          onMouseEnter={::this.handleMouseEnter}
-          onMouseLeave={::this.handleMouseLeave}
-          outerRadius={outerRadius || maxRadius * 0.8}
-        />
-      );
+      return React.cloneElement(child, {
+        key: 'recharts-pie-' + i,
+        cx: cx || width / 2,
+        cy: cy || height / 2,
+        data: this.getComposeData(child),
+        onMouseEnter: ::this.handleMouseEnter,
+        onMouseLeave: ::this.handleMouseLeave,
+        outerRadius: outerRadius || maxRadius * 0.8,
+      });
     });
   }
 
   render() {
     const { style, children } = this.props;
-    const items = ReactUtils.findAllByType(children, PieItem);
+    const items = ReactUtils.findAllByType(children, Pie);
     const legendItem = ReactUtils.findChildByType(children, Legend);
 
     return (

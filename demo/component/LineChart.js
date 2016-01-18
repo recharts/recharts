@@ -1,5 +1,5 @@
 import React from 'react';
-import {LineChart, LineItem, XAxis, YAxis, Tooltip, CartesianGrid} from 'recharts';
+import {LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid} from 'recharts';
 
 const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400},
               {name: 'Page B', uv: 300, pv: 4567, amt: 2400},
@@ -18,7 +18,7 @@ export default React.createClass({
         <div className='line-chart-wrapper'>
           <LineChart width={400} height={400} data={data}>
             <CartesianGrid stroke='#f5f5f5'/>
-            <LineItem type='monotone' dataKey='uv' stroke='#ff7300'/>
+            <Line type='monotone' dataKey='uv' stroke='#ff7300'/>
           </LineChart>
         </div>
 
@@ -29,8 +29,8 @@ export default React.createClass({
             <XAxis dataKey='name'/>
             <Tooltip/>
             <CartesianGrid stroke='#f5f5f5'/>
-            <LineItem type='monotone' dataKey='uv' stroke='#ff7300' yAxisId={0}/>
-            <LineItem type='monotone' dataKey='pv' stroke='#387908' yAxisId={1}/>
+            <Line type='monotone' dataKey='uv' stroke='#ff7300' yAxisId={0}/>
+            <Line type='monotone' dataKey='pv' stroke='#387908' yAxisId={1}/>
           </LineChart>
         </div>
 
@@ -43,9 +43,9 @@ export default React.createClass({
             <XAxis dataKey='name'/>
             <Tooltip/>
             <CartesianGrid stroke='#f5f5f5'/>
-            <LineItem dataKey='uv' stroke='#ff7300' strokeWidth={2} yAxisId={0}/>
-            <LineItem dataKey='pv' stroke='#387908' strokeWidth={2} yAxisId={1}/>
-            <LineItem dataKey='amt' stroke='#38abc8' strokeWidth={2} yAxisId={2}/>
+            <Line dataKey='uv' stroke='#ff7300' strokeWidth={2} yAxisId={0}/>
+            <Line dataKey='pv' stroke='#387908' strokeWidth={2} yAxisId={1}/>
+            <Line dataKey='amt' stroke='#38abc8' strokeWidth={2} yAxisId={2}/>
           </LineChart>
         </div>
 
@@ -56,8 +56,8 @@ export default React.createClass({
             <XAxis type='number' xAxisId={0} orient='top'/>
             <XAxis type='number' xAxisId={1} orient='bottom'/>
             <CartesianGrid stroke='#f5f5f5'/>
-            <LineItem dataKey='uv' stroke='#ff7300' strokeWidth={2} xAxisId={0} />
-            <LineItem dataKey='pv' stroke='#387908' strokeWidth={2} xAxisId={1} />
+            <Line dataKey='uv' stroke='#ff7300' strokeWidth={2} xAxisId={0} />
+            <Line dataKey='pv' stroke='#387908' strokeWidth={2} xAxisId={1} />
           </LineChart>
         </div>
 

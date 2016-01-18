@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import {RadialBarChart, RadialBarItem, Legend} from 'recharts';
+import {RadialBarChart, RadialBar, Legend} from 'recharts';
 
 export default React.createClass({
   render () {
@@ -26,7 +26,7 @@ export default React.createClass({
         <p>RadialBarChart</p>
         <div className='radial-bar-chart-wrapper'>
           <RadialBarChart width={500} height={300} cx={150} cy={150} innerRadius={20} outerRadius={140} barRadius={10} data={data}>
-            <RadialBarItem minAngle={15} label={label} background clockWise={true} dataKey='uv'/>
+            <RadialBar minAngle={15} label={label} background clockWise={true} dataKey='uv'/>
             <Legend iconSize={10} width={120} height={140} layout='vertical' verticalAlign='middle' wrapperStyle={style}/>
           </RadialBarChart>
         </div>

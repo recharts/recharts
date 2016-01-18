@@ -2,7 +2,6 @@ import 'ima.js-babel6-polyfill';
 import 'core-js/es6/math';
 import Surface from './container/Surface';
 
-import Pie from './chart/Pie';
 import Radar from './chart/Radar';
 
 import CartesianAxis from './component/CartesianAxis';
@@ -21,24 +20,24 @@ import Rectangle from './shape/Rectangle';
 import Triangle from './shape/Triangle';
 
 import LineChart from './chartWrapper/LineChart';
-import LineItem from './chartWrapper/LineItem';
+import Line from './chart/Line';
 
 import BarChart from './chartWrapper/BarChart';
-import BarItem from './chartWrapper/BarItem';
+import Bar from './chart/Bar';
 
 import PieChart from './chartWrapper/PieChart';
-import PieItem from './chartWrapper/PieItem';
+import Pie from './chart/Pie';
 
 import TreemapChart from './chartWrapper/TreemapChart';
 
 import ScatterChart from './chartWrapper/ScatterChart';
-import ScatterItem from './chartWrapper/ScatterItem';
+import Scatter from './chart/Scatter';
 
 import AreaChart from './chartWrapper/AreaChart';
-import AreaItem from './chartWrapper/AreaItem';
+import Area from './chart/Area';
 
 import RadialBarChart from './chartWrapper/RadialBarChart';
-import RadialBarItem from './chartWrapper/RadialBarItem';
+import RadialBar from './chart/RadialBar';
 
 import XAxis from './chartWrapper/XAxis';
 import YAxis from './chartWrapper/YAxis';
@@ -49,7 +48,7 @@ export {
   Surface,
 
   // chart
-  Pie, Radar,
+  Radar,
 
   // componnet
   CartesianAxis, CartesianGrid,
@@ -59,12 +58,12 @@ export {
   // shape
   Sector, Curve, Rectangle, Triangle,
 
-  LineChart, LineItem,
-  AreaChart, AreaItem,
-  BarChart, BarItem,
-  PieChart, PieItem,
-  ScatterChart, ScatterItem,
-  RadialBarChart, RadialBarItem,
+  LineChart, Line,
+  AreaChart, Area,
+  BarChart, Bar,
+  PieChart, Pie,
+  ScatterChart, Scatter,
+  RadialBarChart, RadialBar,
   TreemapChart,
 
   XAxis, YAxis, ZAxis,

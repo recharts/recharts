@@ -3,7 +3,6 @@ import React, { PropTypes } from 'react';
 import Surface from '../container/Surface';
 import ReactUtils from '../util/ReactUtils';
 import RadialBar from '../chart/RadialBar';
-import RadialBarItem from './RadialBarItem';
 import LodashUtils from '../util/LodashUtils';
 
 import D3Scale from 'd3-scale';
@@ -258,24 +257,21 @@ class RadialBarChart extends React.Component {
     const barPosition = this.getBarPosition(bandRadius, radiusList);
 
     return items.map((child, i) => {
-      const { dataKey, ...other } = child.props;
+      const { dataKey } = child.props;
 
-      return (
-        <RadialBar
-          {...other}
-          {...center}
-          key={'radial-bar-' + i}
-          onMouseLeave={::this.handleMouseLeave}
-          onMouseEnter={this.handleMouseEnter.bind(this, dataKey)}
-          data={this.getComposeData(barPosition, radiusScale, center, dataKey)}
-        />
-      );
+      return React.cloneElement(child, {
+        ...center,
+        key: 'radial-bar-' + i,
+        onMouseLeave: ::this.handleMouseLeave,
+        onMouseEnter: this.handleMouseEnter.bind(this, dataKey),
+        data: this.getComposeData(barPosition, radiusScale, center, dataKey),
+      });
     }, this);
   }
 
   render() {
     const { style, children } = this.props;
-    const items = ReactUtils.findAllByType(children, RadialBarItem);
+    const items = ReactUtils.findAllByType(children, RadialBar);
     const legendItem = ReactUtils.findChildByType(children, Legend);
     const center = this.getCenter();
     const radiusScale = this.getRadiusScale(center);

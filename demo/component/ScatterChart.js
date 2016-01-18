@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScatterChart, ScatterItem, XAxis, YAxis, ZAxis} from 'recharts';
+import {ScatterChart, Scatter, XAxis, YAxis, ZAxis} from 'recharts';
 
 export default React.createClass({
   render () {
@@ -17,7 +17,7 @@ export default React.createClass({
           <ScatterChart width={400} height={400} margin={{top: 20, right: 20, bottom: 20, left: 20}}>
             <XAxis dataKey={'x'} name='身高' unit='cm'/>
             <YAxis dataKey={'y'} name='体重' unit='kg'/>
-            <ScatterItem name='上海中学生' data={data01} fill='#ff7300'/>
+            <Scatter name='上海中学生' data={data01} fill='#ff7300'/>
           </ScatterChart>
         </div>
 
@@ -27,8 +27,8 @@ export default React.createClass({
             <XAxis dataKey={'x'} name='身高' unit='cm'/>
             <YAxis dataKey={'y'} name='体重' unit='kg'/>
             <ZAxis dataKey={'z'} range={[4, 20]} name='离家距离' unit='km'/>
-            <ScatterItem name='上海中学生' data={data01} fillOpactity={0.3} fill='#ff7300'/>
-            <ScatterItem name='北京中学生' data={data02} fill='#347300'/>
+            <Scatter name='上海中学生' data={data01} fillOpactity={0.3} fill='#ff7300'/>
+            <Scatter name='北京中学生' data={data02} fill='#347300'/>
           </ScatterChart>
         </div>
 

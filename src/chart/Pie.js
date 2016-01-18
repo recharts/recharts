@@ -21,8 +21,10 @@ class Pie extends React.Component {
       name: PropTypes.any,
       value: PropTypes.number,
     })),
-    className: PropTypes.string,
     minAngle: PropTypes.number,
+    legendType: PropTypes.string,
+
+    className: PropTypes.string,
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
@@ -33,6 +35,11 @@ class Pie extends React.Component {
   };
 
   static defaultProps = {
+    innerRadius: 0,
+    outerRadius: 0,
+    stroke: '#fff',
+    fill: '#808080',
+    legendType: 'line',
     // The abscissa of pole
     cx: 0,
     // The ordinate of pole

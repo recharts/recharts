@@ -12,6 +12,14 @@ class Bar extends React.Component {
   static displayName = 'Bar';
 
   static propTypes = {
+    yAxisId: PropTypes.number,
+    xAxisId: PropTypes.number,
+    barSize: PropTypes.number,
+    unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    formatter: PropTypes.func,
+
     customContent: PropTypes.element,
     label: PropTypes.oneOfType([
       PropTypes.bool,
@@ -41,6 +49,10 @@ class Bar extends React.Component {
   };
 
   static defaultProps = {
+    fill: '#fff',
+    xAxisId: 0,
+    yAxisId: 0,
+    legendType: 'rect',
     // data of bar
     data: [],
     onClick() {},

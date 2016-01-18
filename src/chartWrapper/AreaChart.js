@@ -6,7 +6,6 @@ import ReactUtils from '../util/ReactUtils';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Area from '../chart/Area';
-import AreaItem from './AreaItem';
 import Dot from '../shape/Dot';
 import Curve from '../shape/Curve';
 
@@ -81,7 +80,7 @@ class AreaChart extends CartesianChart {
   }
   /**
    * Draw the main part of area chart
-   * @param  {Array} items     React elements of AreaItem
+   * @param  {Array} items     React elements of Area
    * @param  {Object} xAxisMap The configuration of all x-axis
    * @param  {Object} yAxisMap The configuration of all y-axis
    * @param  {Object} offset   The offset of main part in the svg element
@@ -96,30 +95,24 @@ class AreaChart extends CartesianChart {
     const dotItems = [];
 
     items.forEach((child, i) => {
-      const { xAxisId, yAxisId, dataKey, fillOpacity, ...other } = child.props;
+      const { xAxisId, yAxisId, dataKey, fillOpacity, fill } = child.props;
       const xAxis = xAxisMap[xAxisId];
       const yAxis = yAxisMap[yAxisId];
       const composeData = this.getComposeData(xAxis, yAxis, dataKey);
       const activePoint = composeData.points && composeData.points[activeTooltipIndex];
-      const pointStyle = { fill: other.fill, strokeWidth: 4, stroke: '#fff' };
+      const pointStyle = { fill: fill, strokeWidth: 4, stroke: '#fff' };
 
-      let finalFillOpacity = fillOpacity === +fillOpacity ? fillOpacity : AreaItem.defaultProps.fillOpacity;
+      let finalFillOpacity = fillOpacity === +fillOpacity ? fillOpacity : Area.defaultProps.fillOpacity;
       finalFillOpacity = activeAreaKey === dataKey ? Math.min(finalFillOpacity * 1.2, 1) : finalFillOpacity;
 
-      const area = (
-        <Area
-          key={'area-' + i}
-          {...other}
-          x={offset.x}
-          y={offset.y}
-          width={offset.width}
-          height={offset.height}
-          fillOpacity={finalFillOpacity}
-          onMouseLeave={::this.handleAreaMouseLeave}
-          onMouseEnter={this.handleAreaMouseEnter.bind(this, dataKey)}
-          {...composeData}
-        />
-      );
+      const area = React.cloneElement(child, {
+        key: 'area-' + i,
+        ...offset,
+        ...composeData,
+        fillOpacity: finalFillOpacity,
+        onMouseLeave: ::this.handleAreaMouseLeave,
+        onMouseEnter: this.handleAreaMouseEnter.bind(this, dataKey)
+      });
 
       areaItems = activeAreaKey === dataKey ? [...areaItems, area] : [area, ...areaItems];
 
@@ -166,7 +159,7 @@ class AreaChart extends CartesianChart {
 
   render() {
     const { style, children } = this.props;
-    const items = ReactUtils.findAllByType(children, AreaItem);
+    const items = ReactUtils.findAllByType(children, Area);
     const legendItem = ReactUtils.findChildByType(children, Legend);
 
     let xAxisMap = this.getAxisMap('xAxis', items);

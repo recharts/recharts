@@ -5,7 +5,6 @@ import Surface from '../container/Surface';
 import ReactUtils from '../util/ReactUtils';
 import Legend from '../component/Legend';
 import Line from '../chart/Line';
-import LineItem from './LineItem';
 
 
 class LineChart extends CartesianChart {
@@ -73,31 +72,25 @@ class LineChart extends CartesianChart {
     const { activeLineKey } = this.state;
 
     return items.map((child, i) => {
-      const { xAxisId, yAxisId, dataKey, strokeWidth, ...other } = child.props;
+      const { xAxisId, yAxisId, dataKey, strokeWidth } = child.props;
 
       let finalStrokeWidth = strokeWidth === +strokeWidth ? strokeWidth : 1;
       finalStrokeWidth = activeLineKey === dataKey ? finalStrokeWidth + 2 : finalStrokeWidth;
 
-      return (
-        <Line
-          {...other}
-          key={'line-' + i}
-          x={offset.x}
-          y={offset.y}
-          width={offset.width}
-          height={offset.height}
-          strokeWidth={finalStrokeWidth}
-          onMouseLeave={::this.handleLineMouseLeave}
-          onMouseEnter={this.handleLineMouseEnter.bind(this, dataKey)}
-          points={this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey)}
-        />
-      );
+      return React.cloneElement(child, {
+        key: 'line-' + i,
+        ...offset,
+        strokeWidth: finalStrokeWidth,
+        onMouseLeave: ::this.handleLineMouseLeave,
+        onMouseEnter: this.handleLineMouseEnter.bind(this, dataKey),
+        points: this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey)
+      });
     }, this);
   }
 
   render() {
     const { style, children } = this.props;
-    const items = ReactUtils.findAllByType(children, LineItem);
+    const items = ReactUtils.findAllByType(children, Line);
     const legendItem = ReactUtils.findChildByType(children, Legend);
 
     let xAxisMap = this.getAxisMap('xAxis', items);
