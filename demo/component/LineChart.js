@@ -1,20 +1,20 @@
 import React from 'react';
 import {LineChart, LineItem, XAxis, YAxis, Tooltip, CartesianGrid} from 'recharts';
 
+const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400},
+              {name: 'Page B', uv: 300, pv: 4567, amt: 2400},
+              {name: 'Page C', uv: 300, pv: 1398, amt: 2400},
+              {name: 'Page D', uv: 200, pv: 9800, amt: 2400},
+              {name: 'Page E', uv: 278, pv: 3908, amt: 2400},
+              {name: 'Page F', uv: 189, pv: 4800, amt: 2400}];
+
 export default React.createClass({
   displayName: 'LineChartDemo',
 
   render () {
-    const data = [{name: '上海', uv: 400, pv: 2400, amt: 2400},
-                  {name: '北京', uv: 300, pv: 4567, amt: 2400},
-                  {name: '杭州', uv: 300, pv: 1398, amt: 2400},
-                  {name: '上饶', uv: 200, pv: 9800, amt: 2400},
-                  {name: '台湾', uv: 278, pv: 3908, amt: 2400},
-                  {name: '香港', uv: 189, pv: 4800, amt: 2400}];
-
     return (
       <div className='line-charts'>
-        <p>最简单的线图（线图默认是水平方向的）</p>
+        <p>A simple LineChart</p>
         <div className='line-chart-wrapper'>
           <LineChart width={400} height={400} data={data}>
             <CartesianGrid stroke='#f5f5f5'/>
@@ -22,7 +22,7 @@ export default React.createClass({
           </LineChart>
         </div>
 
-        <p>双轴图（线图默认是水平方向的，容器有padding）</p>
+        <p>LineChart with two y-axes</p>
         <div className='line-chart-wrapper' style={{padding: 40}}>
           <LineChart width={400} height={400} data={data}
             margin={{top: 5, right: 20, left: 10, bottom: 5}}>
@@ -34,7 +34,7 @@ export default React.createClass({
           </LineChart>
         </div>
 
-        <p>双轴图（线图默认是水平方向的，容器有margin）</p>
+        <p>LineChart with three y-axes</p>
         <div className='line-chart-wrapper' style={{margin: 40}}>
           <LineChart width={600} height={400} data={data}>
             <YAxis type='number' yAxisId={0}/>
@@ -49,7 +49,7 @@ export default React.createClass({
           </LineChart>
         </div>
 
-        <p>竖直方向的线图</p>
+        <p>LineChart of vertical layout</p>
         <div className='line-chart-wrapper' style={{margin: 40}}>
           <LineChart width={400} height={400} data={data} layout='vertical'>
             <YAxis type='category' dataKey='name'/>
@@ -60,6 +60,8 @@ export default React.createClass({
             <LineItem dataKey='pv' stroke='#387908' strokeWidth={2} xAxisId={1} />
           </LineChart>
         </div>
+
+
       </div>
     );
   }

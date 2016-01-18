@@ -1,5 +1,5 @@
 /**
- * @fileOverview 极坐标系中沿着极径的刻度
+ * @fileOverview Axis of radial direction
  * @author xile611
  * @Date 2015-08-28
  */
@@ -27,16 +27,16 @@ class PolarAngleAxis extends React.Component {
     ticks: PropTypes.array,
     tickSize: PropTypes.number,
     tickValueFormat: PropTypes.func,
-    orientation: PropTypes.oneOf(['inner', 'outer']),
+    orient: PropTypes.oneOf(['inner', 'outer']),
     concentricPathType: PropTypes.oneOf(['polygon', 'circle']),
   };
 
   static defaultProps = {
-    // 坐标轴所在的方位
-    orientation: 'inner',
-    // 刻度数据，格式为 {value: "展示的刻度值", angle: 12, size: 8}
+    // The orientation of axis
+    orient: 'inner',
+    // The data of ticks
     ticks: [],
-    // 刻度的大小
+    // The radius of tick
     tickSize: 6,
   };
 
@@ -44,12 +44,12 @@ class PolarAngleAxis extends React.Component {
     super(props);
   }
   /**
-   * 获取tick线段的端点坐标
-   * @param  {Object} data tick数据
-   * @return {Object} (x0, y0) 为文字的起点坐标，(x1, y1)为靠近文字的端点坐标，(x2, y2)为靠近轴的端点坐标
+   * Calculate the coordinate of line endpoint
+   * @param  {Object} data The Data if ticks
+   * @return {Object} (x0, y0): The start point of text, (x1, y1): The end point close to text, (x2, y2): The end point close to axis
    */
   getTickLineCoord(data) {
-    const { cx, cy, outerRadius, orientation, tickSize } = this.props;
+    const { cx, cy, outerRadius, orient, tickSize } = this.props;
     const sin = Math.sin(-data.angle * RADIAN);
     const cos = Math.cos(-data.angle * RADIAN);
     let x0;
@@ -64,7 +64,7 @@ class PolarAngleAxis extends React.Component {
     x2 = cx + outerRadius * cos;
     y2 = cy + outerRadius * sin;
 
-    switch (orientation) {
+    switch (orient) {
       case 'inner':
         x0 = cx + (outerRadius - finalTickSize - offset) * cos;
         y0 = cy + (outerRadius - finalTickSize - offset) * sin;
@@ -84,19 +84,19 @@ class PolarAngleAxis extends React.Component {
     return { x0, y0, x1, y1, x2, y2 };
   }
   /**
-   * 计算文字的对齐方式
-   * @param  {Object} data 刻度数据
-   * @return {String} middle - 居中对齐，start - 左对齐，right - 右对齐
+   * Get the text-anchor of each tick
+   * @param  {Object} data Data of ticks
+   * @return {String} text-anchor
    */
   getTickTextAnchor(data) {
-    const orientation = this.props.orientation;
+    const { orient } = this.props;
     const cos = Math.cos(-data.angle * RADIAN);
     let textAnchor;
 
     if (cos > eps) {
-      textAnchor = orientation === 'outer' ? 'start' : 'end';
+      textAnchor = orient === 'outer' ? 'start' : 'end';
     } else if (cos < -eps) {
-      textAnchor = orientation === 'outer' ? 'end' : 'start';
+      textAnchor = orient === 'outer' ? 'end' : 'start';
     } else {
       textAnchor = 'middle';
     }
@@ -104,8 +104,8 @@ class PolarAngleAxis extends React.Component {
     return textAnchor;
   }
   /**
-   * 绘制刻度
-   * @return {SVGElement} [description]
+   * Draw ticks
+   * @return {SVGElement} Ticks group
    */
   renderTicks() {
     const { ticks } = this.props;

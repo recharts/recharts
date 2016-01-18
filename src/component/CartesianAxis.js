@@ -41,9 +41,9 @@ class CartesianAxis extends React.Component {
     width: 0,
     height: 0,
     viewBox: { x: 0, y: 0, width: 0, height: 0 },
-    // 坐标轴所在的方位
+    // The orientation of axis
     orient: 'bottom',
-    // 刻度数据，格式为 {value: '展示的刻度值', coord: 12, size: 8}
+    // The ticks
     ticks: [],
 
     stroke: '#666',
@@ -51,7 +51,7 @@ class CartesianAxis extends React.Component {
     hasAxis: true,
 
     minLabelGap: 5,
-    // 刻度的大小
+    // The width or height of tick
     tickSize: 6,
     interval: 'auto',
   };

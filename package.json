@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "0.3.20",
+  "version": "0.3.21",
   "description": "React charts",
   "main": "src/index.js",
   "keywords": [
@@ -27,6 +27,7 @@
     "d3-shape": "0.2.2",
     "pure-render-decorator": "^0.2.0",
     "react-addons-create-fragment": "0.14.3",
+    "ima.js-babel6-polyfill": "^0.1.0",
     "recharts-scale": "0.1.5-beta"
   },
   "devDependencies": {
@@ -44,7 +45,6 @@
     "eslint-config-airbnb": "2.1.1",
     "eslint-plugin-react": "3.13.0",
     "history": "1.17.0",
-    "ima.js-babel6-polyfill": "^0.1.0",
     "isparta": "4.0.0",
     "mocha": "2.3.4",
     "node-libs-browser": "0.5.3",
@@ -58,7 +58,7 @@
     "webpack-dev-server": "1.14.0"
   },
   "scripts": {
-    "demo": "./node_modules/.bin/webpack-dev-server --host 30.10.171.213  --progress --port 3000  --colors --content-base demo --hot --inline --config demo/webpack.config.js",
+    "demo": "./node_modules/.bin/webpack-dev-server  --progress --port 3000  --colors --content-base demo --hot --inline --config demo/webpack.config.js",
     "test": "./node_modules/.bin/mocha --compilers js:babel/register --recursive",
     "test-cov": "./node_modules/.bin/babel-node ./node_modules/.bin/isparta --report html cover _mocha -- --recursive",
     "lint": "./node_modules/.bin/eslint src test"
