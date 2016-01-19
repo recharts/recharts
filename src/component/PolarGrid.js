@@ -28,11 +28,11 @@ class PolarGrid extends React.Component {
     innerRadius: 0,
     outerRadius: 0,
     clockWise: true,
-    // 水平线条的纵坐标
+    // The angles of axis
     polarAngles: [],
-    // 竖直线条的横坐标
+    // The radius of axis
     polarRadius: [],
-    // 同心轴的类型
+    // The type of concentric axis
     concentricPathType: 'polygon',
   };
 
@@ -40,8 +40,8 @@ class PolarGrid extends React.Component {
     super(props);
   }
   /**
-   * 绘制从极点向外发射的射线
-   * @return {[type]} [description]
+   * Draw axis of radial line
+   * @return {[type]} The lines
    */
   renderPolarAngles() {
     const { cx, cy, innerRadius, outerRadius, polarAngles } = this.props;
@@ -72,10 +72,10 @@ class PolarGrid extends React.Component {
     );
   }
   /**
-   * 绘制同心圆
-   * @param {Number} radius 同心圆的半径
-   * @param {Number} index 序号
-   * @return {ReactElement} [description]
+   * Draw concentric circles
+   * @param {Number} radius The radius of circle
+   * @param {Number} index  The index of circle
+   * @return {ReactElement} circle
    */
   renderConcentricCircle(radius, index) {
     const { cx, cy } = this.props;
@@ -83,10 +83,10 @@ class PolarGrid extends React.Component {
     return <circle className="concentric-circle" stroke="#000" fill="none" key={'circle-' + index} cx={cx} cy={cy} r={radius}/>;
   }
   /**
-   * 绘制同心轴
-   * @param {Number} radius 同心圆的半径
-   * @param {Number} index 序号
-   * @return {ReactElement} [description]
+   * Draw concentric polygons
+   * @param {Number} radius The radius of polygon
+   * @param {Number} index  The index of polygon
+   * @return {ReactElement} polygon
    */
   renderConcentricPolygon(radius, index) {
     const { cx, cy, polarAngles } = this.props;
@@ -104,9 +104,9 @@ class PolarGrid extends React.Component {
   }
 
   /**
-   * 绘制同心轴或者同心圆
-   * @return {ReactElement} React元素
-   * @todo 英文名优化，同心轴有点怪怪的
+   * Draw concentric axis
+   * @return {ReactElement} Concentric axis
+   * @todo Optimize the name
    */
   renderConcentricPath() {
     const { polarRadius, concentricPathType } = this.props;

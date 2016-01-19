@@ -80,10 +80,10 @@ class PieChart extends React.Component {
     });
   }
   /**
-   * 渲染图形部分
-   * @param  {Array} items 饼图元素
-   * @param  {ReactElement} legendItem   图例对象
-   * @return {ReactElement} 图例
+   * Draw legend
+   * @param  {Array} items             The instances of Pie
+   * @param  {ReactElement} legendItem The instance of Legend
+   * @return {ReactElement}            The instance of Legend
    */
   renderLegend(items, legendItem) {
     const { width } = this.props;
@@ -113,9 +113,9 @@ class PieChart extends React.Component {
     }
   }
   /**
-   * 渲染图形部分
-   * @param  {Array} items 饼图元素
-   * @return {ReactComponent} 饼图元素
+   * Draw the main part of bar chart
+   * @param  {Array} items    All the instance of Pie
+   * @return {ReactComponent} All the instance of Pie
    */
   renderItems(items) {
     const { width, height } = this.props;

@@ -28,15 +28,13 @@ class RadialBarChart extends React.Component {
     cx: PropTypes.number,
 
     data: PropTypes.array,
-    // 内径
     innerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    // 外径
     outerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    // 每个类别的玦环之间的间隔半径
+    // The offset radius between two categorys
     barOffsetRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    // 两组玦环间隔的半径
+    // The gap radius of two radial bar in one category
     barGapRadius: PropTypes.number,
-    // 每个玦环的半径
+    // The radius of each radial bar
     barRadius: PropTypes.number,
 
     title: PropTypes.string,
@@ -71,12 +69,12 @@ class RadialBarChart extends React.Component {
     isTooltipActive: false,
   };
  /**
-   * 组装数据
-   * @param  {Array}  barPosition 每个柱子的半径大小和偏移量
-   * @param  {Object} radiusScale    半径刻度
-   * @param  {Object} center  圆心坐标
-   * @param  {String} dataKey  该组数据所对应的key
-   * @return {Array} 组装后的数据
+   * Compose the data of each group
+   * @param  {Array}  barPosition The offset and size of each bar
+   * @param  {Object} radiusScale The scale function of radius of bars
+   * @param  {Object} center      The coordinate of center
+   * @param  {String} dataKey     The unique key of a group
+   * @return {Array}              Composed data
    */
   getComposeData(barPosition, radiusScale, center, dataKey) {
     const { data } = this.props;
@@ -96,8 +94,8 @@ class RadialBarChart extends React.Component {
     });
   }
   /**
-   * 计算圆心
-   * @return {Object} 圆心的坐标
+   * Calculate the coordinate of center
+   * @return {Object} Coordinate
    */
   getCenter() {
     const { cx, cy, width, height, margin } = this.props;
@@ -107,10 +105,10 @@ class RadialBarChart extends React.Component {
       cy: cy === +cy ? cy : ((margin.top + height - margin.bottom) / 2) >> 0,
     };
   }
-  /**
-   * 计算柱子的半径大小
-   * @param  {Array} items 所有的柱图对象
-   * @return {Number} 柱子的半径数组
+   /**
+   * Calculate the size of all groups
+   * @param  {Array} items All the instance of RadialBar
+   * @return {Object} The size of all groups
    */
   getRadiusList(items) {
     const { barRadius } = this.props;
@@ -124,9 +122,9 @@ class RadialBarChart extends React.Component {
   }
 
   /**
-   * 计算每个类别所占的半径大小
-   * @param {Object} center 圆心坐标
-   * @return {Object} 刻度
+   * Calculate the scale function of radius
+   * @param {Object} center The coordinate of center
+   * @return {Object}       A scale function
    */
   getRadiusScale(center) {
     const { data, innerRadius, outerRadius, margin } = this.props;
@@ -145,18 +143,18 @@ class RadialBarChart extends React.Component {
 
     return scale;
   }
-  /**
-   * 获取柱子的半径以及柱子间的间距
-   * @param  {Number}   bandRadius 每一个类别所占的半径
-   * @param  {sizeList} radiusList  所有group设置的半径
-   * @return {Number} 柱子的位置
+    /**
+   * Calculate the size of each bar and the gap between two bars
+   * @param  {Number} bandRadius  The radius of each category
+   * @param  {Array} radiusList   The radius of all groups
+   * @return {Number} The size of each bar and the gap between two bars
    */
   getBarPosition(bandRadius, radiusList) {
     const { barGapRadius, barOffsetRadius } = this.props;
     const len = radiusList.length;
     let result;
 
-    // 判断用户是否设置了柱子的大小
+    // whether or not is barSize setted by user
     if (len && radiusList[0].barRadius === +radiusList[0].barRadius) {
       let sum = radiusList.reduce((res, entry) => {
         return res + entry.barRadius;
@@ -212,9 +210,9 @@ class RadialBarChart extends React.Component {
     });
   }
   /**
-   * 渲染图例
-   * @param  {Object} legendItem   图例对象
-   * @return {ReactComponent} 图例
+   * Draw legend
+   * @param  {ReactElement} legendItem The instance of Legend
+   * @return {ReactElement}            The instance of Legend
    */
   renderLegend(legendItem) {
     const { data, width, height } = this.props;
@@ -243,11 +241,11 @@ class RadialBarChart extends React.Component {
     }
   }
   /**
-   * 绘制图形部分
-   * @param  {Array} items 柱图元素
-   * @param {Function} radiusScale 刻度函数
-   * @param {Object} center 圆心坐标
-   * @return {ReactComponent} 玉玦块
+   * Draw the main part of bar chart
+   * @param  {Array} items     All the instance of RadialBar
+   * @param  {Object} radiusScale The scale function of radius of bars
+   * @param  {Object} center      The coordinate of center
+   * @return {ReactComponent}  All the instances of RadialBar
    */
   renderItems(items, radiusScale, center) {
     if (!items || !items.length) {return null;}

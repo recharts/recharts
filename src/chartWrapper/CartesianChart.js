@@ -573,9 +573,9 @@ class CartesianChart extends React.Component {
   /**
    * The handler of mouse moving in chart
    * @param  {Object} offset   The offset of main part in the svg element
-   * @param  {Object} xAxisMap x轴刻度
-   * @param  {Object} yAxisMap y轴刻度
-   * @param  {Object} e        事件对象
+   * @param  {Object} xAxisMap The configuration of all x-axes
+   * @param  {Object} yAxisMap The configuration of all y-axes
+   * @param  {Object} e        Event object
    * @return {Null} no return
    */
   handleMouseMove(offset, xAxisMap, yAxisMap, e) {
@@ -598,7 +598,7 @@ class CartesianChart extends React.Component {
     }
   }
   /**
-   * 鼠标离开图形区域的响应事件
+   * The handler if mouse leaving chart
    * @return {Null} no return
    */
   handleMouseLeave() {
@@ -608,9 +608,9 @@ class CartesianChart extends React.Component {
   }
 
    /**
-   * 渲染x轴部分
-   * @param {Object} xAxisMap x轴刻度
-   * @return {ReactElement} x轴
+   * Draw x-axes
+   * @param {Object} xAxisMap The configuration of all x-axes
+   * @return {ReactElement} The instance of x-axes
    */
   renderXAxis(xAxisMap) {
     const { width, height } = this.props;
@@ -643,9 +643,9 @@ class CartesianChart extends React.Component {
   }
 
   /**
-   * 渲染Y轴部分
-   * @param  {Object} yAxisMap 所有的Y轴配置
-   * @return {ReactElement} y轴
+   * Draw y-axes
+   * @param  {Object} yAxisMap The configuration of all y-axes
+   * @return {ReactElement} The instance of y-axes
    */
   renderYAxis(yAxisMap) {
     const { width, height } = this.props;
@@ -677,11 +677,11 @@ class CartesianChart extends React.Component {
     }
   }
   /**
-   * 渲染网格部分
-   * @param  {Object} xAxisMap x轴刻度
-   * @param  {Object} yAxisMap y轴刻度
+   * Draw grid
+   * @param  {Object} xAxisMap The configuration of all x-axes
+   * @param  {Object} yAxisMap The configuration of all y-axes
    * @param  {Object} offset   The offset of main part in the svg element
-   * @return {ReactElement} 网格
+   * @return {ReactElement} The instance of grid
    */
   renderGrid(xAxisMap, yAxisMap, offset) {
     const { children, width, height } = this.props;
@@ -716,11 +716,11 @@ class CartesianChart extends React.Component {
     });
   }
   /**
-   * 绘制图例部分
-   * @param  {Array} items 线图元素或者柱图元素
+   * Draw legend
+   * @param  {Array} items             The instances of item
    * @param  {Object} offset           The offset of main part in the svg element
-   * @param  {ReactElement} legendItem 图例元素
-   * @return {ReactElement} 图例
+   * @param  {ReactElement} legendItem The instance of Legend
+   * @return {ReactElement}            The instance of Legend
    */
   renderLegend(items, offset, legendItem) {
     const legendData = items.map((child) => {
@@ -739,10 +739,10 @@ class CartesianChart extends React.Component {
     });
   }
   /**
-   * 渲染浮层
-   * @param  {Array} items 线图元素或者柱图元素
+   * Draw Tooltip
+   * @param  {Array} items   The instances of item
    * @param  {Object} offset The offset of main part in the svg element
-   * @return {ReactElement} 浮层元素
+   * @return {ReactElement}  The instance of Tooltip
    */
   renderTooltip(items, offset) {
     const { children } = this.props;

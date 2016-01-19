@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import pureRender from 'pure-render-decorator';
+import ReactUtils from '../util/ReactUtils';
 
 @pureRender
 class Bar extends React.Component {
@@ -23,6 +24,7 @@ class Bar extends React.Component {
     customContent: PropTypes.element,
     label: PropTypes.oneOfType([
       PropTypes.bool,
+      PropTypes.object,
       PropTypes.element,
     ]),
 
@@ -82,19 +84,30 @@ class Bar extends React.Component {
   }
 
   renderLabels() {
-    const { data, label, fill, stroke } = this.props;
+    const { data, label } = this.props;
+    const barProps = ReactUtils.getPresentationAttributes(this.props);
+    const customLabelProps = ReactUtils.getPresentationAttributes(label);
+    const isLabelElement = React.isValidElement(label);
 
-    return data.map((entry, i) => {
+    const labels = data.map((entry, i) => {
       const x = entry.x + entry.width / 2;
-      const y = entry.y;
-      const props = { fill, stroke, ...entry, index: i, key: `label-${i}` };
+      const labelProps = {
+        textAnchor: 'middle',
+        ...entry,
+        ...barProps,
+        ...customLabelProps,
+        x,
+        index: i,
+        key: `label-${i}`,
+        payload: entry,
+      };
 
-      return React.isValidElement(label) ? React.cloneElement(label, props) : (
-        <text textAnchor="middle" x={x} y={y} key={'label-' + i}>
-          {entry.value}
-        </text>
+      return isLabelElement ? React.cloneElement(label, labelProps) : (
+        <text {...labelProps}>{entry.value}</text>
       );
     });
+
+    return <Layer className="recharts-layer-bar-labels">{labels}</Layer>;
   }
 
   render() {

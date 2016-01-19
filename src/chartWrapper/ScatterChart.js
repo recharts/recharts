@@ -14,6 +14,7 @@ import ReactUtils from '../util/ReactUtils';
 import XAxis from './XAxis';
 import YAxis from './YAxis';
 import ZAxis from './ZAxis';
+import Cross from '../shape/Cross';
 
 
 class ScatterChart extends React.Component {
@@ -49,19 +50,17 @@ class ScatterChart extends React.Component {
   }
 
   state = {
-    activeTooltipPosition: 'left-bottom',
     activeTooltipCoord: { x: 0, y: 0 },
     isTooltipActive: false,
-    activeGroupId: null,
     activeItem: null,
   };
-    /**
-   * 组装曲线数据
-   * @param  {Array}  data    传入的数据
-   * @param  {Object} xAxis   x轴刻度
-   * @param  {Object} yAxis   y轴刻度
-   * @param  {Objext} zAxis   z轴刻度
-   * @return {Array} 组合后的数据
+  /**
+   * Compose the data of each group
+   * @param  {Array}  data        The original data
+   * @param  {Object} xAxis       The configuration of x-axis
+   * @param  {Object} yAxis       The configuration of y-axis
+   * @param  {Object} zAxis       The configuration of z-axis
+   * @return {Array} Composed data
    */
   getComposeData(data, xAxis, yAxis, zAxis) {
     const xAxisDataKey = xAxis.dataKey;
@@ -82,11 +81,12 @@ class ScatterChart extends React.Component {
     });
   }
   /**
-   * 计算x轴，y轴的刻度
-   * @param  {Object}  axis 刻度对象
-   * @return {Array} 刻度
+   * Get the ticks of an axis
+   * @param  {Object}  axis The configuration of an axis
+   * @param {Boolean} isGrid Whether or not are the ticks in grid
+   * @return {Array}  Ticks
    */
-  getAxisTicks(axis) {
+  getAxisTicks(axis, isGrid = false) {
     const scale = axis.scale;
 
     if (axis.ticks) {
@@ -114,33 +114,34 @@ class ScatterChart extends React.Component {
       };
     });
   }
-   /**
-   * 计算网格的刻度
-   * @param  {Object} axis 刻度对象
-   * @return {Array} 刻度
+  /**
+   * Calculate the ticks of grid
+   * @param  {Array} ticks The ticks in axis
+   * @param {Number} min   The minimun value of axis
+   * @param {Number} max   The maximun value of axis
+   * @return {Array}       Ticks
    */
-  getGridTicks(axis) {
-    const scale = axis.scale;
+  getGridTicks(ticks, min, max) {
+    let hasMin;
+    let hasMax;
+    let values;
 
-    if (axis.ticks) {
-      return axis.ticks.map(entry => {
-        return scale(entry);
-      });
-    }
-    if (scale.ticks) {
-      return scale.ticks(axis.tickCount).map(entry => {
-        return scale(entry);
-      });
-    }
+    values = ticks.map(entry => {
+      if (entry.coord === min) { hasMin = true;}
+      if (entry.coord === max) { hasMax = true;}
 
-    return scale.domain().map(entry => {
-      return scale(entry);
+      return entry.coord;
     });
+
+    if (!hasMin) { values.push(min);}
+    if (!hasMax) { values.push(max);}
+
+    return values;
   }
   /**
-   * 取ticks的定义域
-   * @param  {Array} ticks 刻度
-   * @return {Array} 刻度
+   * get domain of ticks
+   * @param  {Array} ticks Ticks of axis
+   * @return {Array} domain
    */
   getDomainOfTicks(ticks) {
     return [Math.min.apply(null, ticks), Math.max.apply(null, ticks)];
@@ -154,10 +155,10 @@ class ScatterChart extends React.Component {
     return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
   }
   /**
-   * 计算X轴 或者 Y轴的配置
-   * @param {String} axisType 轴的类型
-   * @param {Object} items 图形元素
-   * @return {Object} 轴的配置
+   * Get the configuration of x-axis or y-axis
+   * @param  {String} axisType The type of axis
+   * @param  {Array} items     The instances of item
+   * @return {Object}          Configuration
    */
   getAxis(axisType = 'xAxis', items) {
     const { children } = this.props;
@@ -174,14 +175,14 @@ class ScatterChart extends React.Component {
       };
     }
 
-    console.info('recharts: 散点图必须创建 %s 组件', Axis.displayName);
+    console.info('recharts: ScatterChart must has %s', Axis.displayName);
 
     return null;
   }
   /**
-   * 计算Z轴的配置
-   * @param {Object} items 图形元素
-   * @return {Object} 轴的配置
+   * Get the configuration of z-axis
+   * @param  {Array} items The instances of item
+   * @return {Object}      Configuration
    */
   getZAxis(items) {
     const { children } = this.props;
@@ -210,19 +211,19 @@ class ScatterChart extends React.Component {
     };
   }
   /**
-   * 设置刻度函数的刻度值
-   * @param {Object} scale 刻度对象
-   * @param {Object} opts  配置
-   * @return {null} 无返回
+   * Configure the scale function of axis
+   * @param {Object} scale The scale function
+   * @param {Object} opts  The configuration of axis
+   * @return {Object}      null
    */
   setTicksOfScale(scale, opts) {
-    // 优先使用用户配置的刻度
+    // Give priority to use the options of ticks
     if (opts.ticks && opts.ticks) {
       opts.domain = this.getDomainOfTicks(opts.ticks, opts.type);
       scale.domain(opts.domain)
            .ticks(opts.ticks.length);
     } else {
-      // 数值类型的刻度，指定了刻度的个数后，根据范围动态计算
+    // Calculate the ticks by the number of grid
       const domain = scale.domain();
       const tickValues = getNiceTickValues(domain, opts.tickCount);
 
@@ -232,12 +233,12 @@ class ScatterChart extends React.Component {
           .ticks(opts.tickCount);
     }
   }
-  /**
-   * 计算轴的刻度函数，位置，大小等信息
-   * @param  {Object} axis  刻度对象
-   * @param  {Object} offset   图形区域的偏移量
-   * @param  {Object} axisType 刻度类型，x轴或者y轴
-   * @return {Object} 格式化的轴
+    /**
+   * Calculate the scale function, position, width, height of axes
+   * @param  {Object} axis     The configuration of axis
+   * @param  {Object} offset   The offset of main part in the svg element
+   * @param  {Object} axisType The type of axis, x-axis or y-axis
+   * @return {Object} Configuration
    */
   getFormatAxis(axis, offset, axisType) {
     const { orient, domain, tickFormat } = axis;
@@ -272,12 +273,12 @@ class ScatterChart extends React.Component {
     };
   }
   /**
-   * 更具图形元素计算tooltip的显示内容
-   * @param  {Array} data 数据
-   * @param {Object} xAxis x轴刻度
-   * @param {Object} yAxis y轴刻度
-   * @param {Object} zAxis z轴刻度
-   * @return {Array} 浮层中的内容
+   * Get the content to be displayed in the tooltip
+   * @param  {Object} data  The data of active item
+   * @param  {Object} xAxis The configuration of x-axis
+   * @param  {Object} yAxis The configuration of y-axis
+   * @param  {Object} zAxis The configuration of z-axis
+   * @return {Array}        The content of tooltip
    */
   getTooltipContent(data, xAxis, yAxis, zAxis) {
     if (!data) {return null;}
@@ -303,22 +304,20 @@ class ScatterChart extends React.Component {
     return content;
   }
   /**
-   * 鼠标进入曲线的响应事件
-   * @param {String} groupId 散点所对应的组
-   * @param {Object} el  散点对象
-   * @param {Object} e   事件对象
+   * The handler of mouse entering a scatter
+   * @param {Object} el      The active scatter
+   * @param {Object} e       Event object
    * @return {Object} no return
    */
-  handleScatterMouseEnter(groupId, el) {
+  handleScatterMouseEnter(el, e) {
     this.setState({
       isTooltipActive: true,
-      activeGroupId: groupId,
       activeItem: el,
       activeTooltipCoord: { x: el.cx, y: el.cy },
     });
   }
   /**
-   * 鼠标离开散点的响应事件
+   * The handler of mouse leaving a scatter
    * @return {Object} no return
    */
   handleScatterMouseLeave() {
@@ -326,15 +325,16 @@ class ScatterChart extends React.Component {
       isTooltipActive: false,
     });
   }
-    /**
-   * 渲染浮层
-   * @param  {Array} items 线图元素或者柱图元素
-   * @param  {Object} xAxis x轴刻度
-   * @param  {Object} yAxis y轴刻度
-   * @param  {Object} zAxis z轴刻度
-   * @return {ReactElement} 浮层元素
+  /**
+   * Draw Tooltip
+   * @param  {Array} items   The instances of Scatter
+   * @param  {Object} xAxis  The configuration of x-axis
+   * @param  {Object} yAxis  The configuration of y-axis
+   * @param  {Object} zAxis  The configuration of z-axis
+   * @param  {Object} offset The offset of main part in the svg element
+   * @return {ReactElement}  The instance of Tooltip
    */
-  renderTooltip(items, xAxis, yAxis, zAxis) {
+  renderTooltip(items, xAxis, yAxis, zAxis, offset) {
     const { children } = this.props;
     const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
 
@@ -343,11 +343,16 @@ class ScatterChart extends React.Component {
     }
 
     const { chartX, chartY, isTooltipActive,
-          activeItem, activeTooltipCoord,
-          activeTooltipPosition } = this.state;
+          activeItem, activeTooltipCoord } = this.state;
+    const scope = {
+      x1: offset.left,
+      x2: offset.left + offset.width,
+      y1: offset.top,
+      y2: offset.top + offset.height,
+    };
 
     return React.cloneElement(tooltipItem, {
-      position: activeTooltipPosition,
+      scope,
       active: isTooltipActive,
       label: '',
       data: this.getTooltipContent(activeItem && activeItem.value, xAxis, yAxis, zAxis),
@@ -356,33 +361,47 @@ class ScatterChart extends React.Component {
       mouseY: chartY,
     });
   }
-    /**
-   * 渲染网格部分
-   * @param  {Object} xAxis x轴刻度
-   * @param  {Object} yAxis y轴刻度
-   * @param  {Object} offset   图形区域的偏移量
-   * @return {ReactElement} 网格对象
+  /**
+   * Draw grid
+   * @param  {Object} xAxis  The configuration of x-axis
+   * @param  {Object} yAxis  The configuration of y-axis
+   * @param  {Object} offset The offset of main part in the svg element
+   * @return {ReactElement} The instance of grid
    */
   renderGrid(xAxis, yAxis, offset) {
-    return (
-      <CartesianGrid
-        key={'grid'}
-        x={offset.left}
-        y={offset.top}
-        width={offset.width}
-        height={offset.height}
-        verticalPoints={this.getGridTicks(xAxis)}
-        horizontalPoints={this.getGridTicks(yAxis)}
-      />
-    );
-  }
+    const { children, width, height } = this.props;
+    const gridItem = ReactUtils.findChildByType(children, CartesianGrid);
 
+    if (!gridItem) {return null;}
+
+    const verticalPoints = this.getGridTicks(CartesianAxis.getTicks({
+      ...CartesianAxis.defaultProps, ...xAxis,
+      ticks: this.getAxisTicks(xAxis),
+      viewBox: { x: 0, y: 0, width, height },
+    }), offset.left, offset.left + offset.width);
+
+    const horizontalPoints = this.getGridTicks(CartesianAxis.getTicks({
+      ...CartesianAxis.defaultProps, ...yAxis,
+      ticks: this.getAxisTicks(yAxis),
+      viewBox: { x: 0, y: 0, width, height },
+    }), offset.top, offset.top + offset.height);
+
+    return React.cloneElement(gridItem, {
+      key: 'grid',
+      x: offset.left,
+      y: offset.top,
+      width: offset.width,
+      height: offset.height,
+      verticalPoints,
+      horizontalPoints,
+    });
+  }
   /**
-   * 绘制图例部分
-   * @param  {Array} items 线图元素或者柱图元素
-   * @param  {Object} offset 图形区域的偏移量
-   * @param  {ReactElement} legendItem 图例元素
-   * @return {ReactElement} 图例
+   * Draw legend
+   * @param  {Array} items             The instances of Scatters
+   * @param  {Object} offset           The offset of main part in the svg element
+   * @param  {ReactElement} legendItem The instance of Legend
+   * @return {ReactElement}            The instance of Legend
    */
   renderLegend(items, offset, legendItem) {
     const legendData = items.map((child) => {
@@ -400,16 +419,16 @@ class ScatterChart extends React.Component {
       data: legendData,
     });
   }
-/**
-   * 渲染轴
-   * @param {Object} axis 刻度
-   * @param {String} layerKey key值
-   * @return {ReactElement} 刻度图层
+  /**
+   * Draw axis
+   * @param {Object} axis     The configuration of axis
+   * @param {String} layerKey The key of layer
+   * @return {ReactElement}   The instance of axis
    */
   renderAxis(axis, layerKey) {
     const { width, height } = this.props;
 
-    if (axis) {
+    if (axis && !axis.hide) {
       return (
         <Layer key={layerKey} className={layerKey}>
           <CartesianAxis
@@ -425,22 +444,41 @@ class ScatterChart extends React.Component {
       );
     }
   }
+  renderCursor(xAxis, yAxis, offset) {
+    const { children } = this.props;
+    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+
+    if (!tooltipItem || !this.state.isTooltipActive) {return null;}
+    const { activeItem } = this.state;
+
+    const cursorProps = {
+      fill: '#f1f1f1',
+      ...ReactUtils.getPresentationAttributes(tooltipItem.props.cursor),
+      ...offset,
+      x: activeItem.cx,
+      y: activeItem.cy,
+      payload: activeItem,
+    };
+
+    return React.isValidElement(tooltipItem.props.cursor) ?
+      React.cloneElement(tooltipItem.props.cursor, cursorProps) :
+      React.createElement(Cross, cursorProps);
+  }
   /**
-   * 绘制图形部分
-   * @param  {Array} items 线图元素
-   * @param  {Object} xAxis x轴
-   * @param  {Object} yAxis y轴
-   * @param  {Object} zAxis z轴
-   * @return {ReactElement} 散点
+   * Draw the main part of scatter chart
+   * @param  {Array} items   All the instance of Scatter
+   * @param  {Object} xAxis  The configuration of all x-axis
+   * @param  {Object} yAxis  The configuration of all y-axis
+   * @param  {Object} zAxis  The configuration of all z-axis
+   * @return {ReactComponent}  All the instances of Scatter
    */
   renderItems(items, xAxis, yAxis, zAxis) {
-    const { activeScatterKey } = this.state;
-
+    const { activeGroupId } = this.state;
     return items.map((child, i) => {
       const { strokeWidth, data } = child.props;
 
       let finalStrokeWidth = strokeWidth === +strokeWidth ? strokeWidth : 1;
-      finalStrokeWidth = activeScatterKey === i ? finalStrokeWidth + 2 : finalStrokeWidth;
+      finalStrokeWidth = activeGroupId === 'scatter-' + i ? finalStrokeWidth + 2 : finalStrokeWidth;
 
       return React.cloneElement(child, {
         key: 'scatter-' + i,
@@ -479,13 +517,14 @@ class ScatterChart extends React.Component {
           {this.renderGrid(xAxis, yAxis, offset)}
           {this.renderAxis(xAxis, 'x-axis-layer')}
           {this.renderAxis(yAxis, 'y-axis-layer')}
+          {this.renderCursor(xAxis, yAxis, offset)}
           {this.renderItems(items, xAxis, yAxis, zAxis, offset)}
         </Surface>
 
         {legendItem && (legendItem.props.layout !== 'horizontal'
           || legendItem.props.verticalAlign !== 'top')
         && this.renderLegend(items, offset, legendItem)}
-        {this.renderTooltip(items, xAxis, yAxis, zAxis)}
+        {this.renderTooltip(items, xAxis, yAxis, zAxis, offset)}
       </div>
     );
   }

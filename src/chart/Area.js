@@ -23,7 +23,6 @@ class Area extends React.Component {
     legendType: PropTypes.string,
     formatter: PropTypes.func,
 
-
     fill: PropTypes.string,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
@@ -104,8 +103,33 @@ class Area extends React.Component {
     return <Layer className="recharts-layer-area-dots">{dots}</Layer>;
   }
 
+  renderLabels() {
+    const { points, label } = this.props;
+    const areaProps = ReactUtils.getPresentationAttributes(this.props);
+    const customLabelProps = ReactUtils.getPresentationAttributes(label);
+    const isLabelElement = React.isValidElement(label);
+
+    const labels = points.map((entry, i) => {
+      const labelProps = {
+        textAnchor: 'middle',
+        ...entry,
+        ...areaProps,
+        ...customLabelProps,
+        index: i,
+        key: `label-${i}`,
+        payload: entry,
+      };
+
+      return isLabelElement ? React.cloneElement(label, labelProps) : (
+        <text {...labelProps}>{entry.value}</text>
+      );
+    });
+
+    return <Layer className="recharts-layer-area-labels">{labels}</Layer>;
+  }
+
   render() {
-    const { dot, curve, points, className, ...other } = this.props;
+    const { dot, curve, label, points, className, ...other } = this.props;
 
     if (!points || !points.length) {
       return null;
@@ -118,6 +142,7 @@ class Area extends React.Component {
         {!hasSinglePoint && this.renderArea()}
 
         {(dot || hasSinglePoint) && this.renderDots()}
+        {label && this.renderLabels()}
       </Layer>
     );
   }

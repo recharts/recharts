@@ -90,7 +90,7 @@ class BarChart extends CartesianChart {
     const len = sizeList.length;
     let result;
 
-    // 判断用户是否设置了柱子的大小
+    // whether or not is barSize setted by user
     if (sizeList[0].barSize === +sizeList[0].barSize) {
       let sum = sizeList.reduce((res, entry) => {
         return res + entry.barSize;
@@ -233,7 +233,7 @@ class BarChart extends CartesianChart {
         key: 'bar-' + i,
         onMouseLeave: ::this.handleBarMouseLeave,
         onMouseEnter: this.handleBarMouseEnter.bind(this, dataKey),
-        data: this.getComposeData(barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey)
+        data: this.getComposeData(barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey),
       });
     }, this);
   }

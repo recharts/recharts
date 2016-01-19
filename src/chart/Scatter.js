@@ -22,7 +22,6 @@ class Scatter extends React.Component {
     strokeDasharray: PropTypes.string,
     className: PropTypes.string,
 
-    groupId: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.shape({
       cx: PropTypes.number,
       cy: PropTypes.number,
@@ -50,14 +49,10 @@ class Scatter extends React.Component {
     onMouseLeave() {},
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   handleCircleMouseEnter(data, e) {
-    const { onMouseEnter, groupId } = this.props;
+    const { onMouseEnter } = this.props;
 
-    onMouseEnter(groupId, data, e);
+    onMouseEnter(data, e);
   }
 
   renderCircles() {

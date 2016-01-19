@@ -101,9 +101,9 @@ class CartesianAxis extends React.Component {
     });
   }
   /**
-   * 获取tick线段的端点坐标
-   * @param  {Object} data tick数据
-   * @return {Object} (x1, y1)为靠近文字的端点坐标，(x2, y2)为靠近轴的端点坐标
+   * Calculate the coordinates of endpoints in ticks
+   * @param  {Object} data The data of a simple tick
+   * @return {Object} (x1, y1): The coordinate of endpoint close to label text (x2, y2): The coordinate of endpoint close to axis
    */
   getTickLineCoord(data) {
     const { x, y, width, height, orient, tickSize } = this.props;

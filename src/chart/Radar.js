@@ -101,7 +101,7 @@ class Radar extends React.Component {
     const angle = perigon / len;
     const result = [];
 
-    // 雷达图是根据数据的条数等份圆周角
+    // divide perigon equally
     for (let i = 0; i < len; i++) {
       result.push({
         angle: startAngle + i * sign * angle,

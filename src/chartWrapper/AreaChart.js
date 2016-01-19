@@ -100,7 +100,7 @@ class AreaChart extends CartesianChart {
       const yAxis = yAxisMap[yAxisId];
       const composeData = this.getComposeData(xAxis, yAxis, dataKey);
       const activePoint = composeData.points && composeData.points[activeTooltipIndex];
-      const pointStyle = { fill: fill, strokeWidth: 4, stroke: '#fff' };
+      const pointStyle = { fill, strokeWidth: 4, stroke: '#fff' };
 
       let finalFillOpacity = fillOpacity === +fillOpacity ? fillOpacity : Area.defaultProps.fillOpacity;
       finalFillOpacity = activeAreaKey === dataKey ? Math.min(finalFillOpacity * 1.2, 1) : finalFillOpacity;
@@ -111,7 +111,7 @@ class AreaChart extends CartesianChart {
         ...composeData,
         fillOpacity: finalFillOpacity,
         onMouseLeave: ::this.handleAreaMouseLeave,
-        onMouseEnter: this.handleAreaMouseEnter.bind(this, dataKey)
+        onMouseEnter: this.handleAreaMouseEnter.bind(this, dataKey),
       });
 
       areaItems = activeAreaKey === dataKey ? [...areaItems, area] : [area, ...areaItems];

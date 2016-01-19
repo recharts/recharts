@@ -64,6 +64,7 @@ const PRESENTATION_ATTRIBUTES = {
 };
 
 export default {
+  PRESENTATION_ATTRIBUTES,
   /*
    * Find and return all matched children by type. `type` can be a React element class or
    * string

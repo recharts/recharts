@@ -1,5 +1,5 @@
 /**
- * @fileOverview 极坐标系中沿着极径的刻度
+ * @fileOverview The axis of polar coordinate system
  * @author xile611
  * @Date 2015-08-28
  */
@@ -22,16 +22,16 @@ class PolarRadiusAxis extends React.Component {
     outerRadius: PropTypes.number,
     clockWise: PropTypes.bool,
     angle: PropTypes.number,
-    ticks: PropTypes.array,
+    ticks: PropTypes.arrayOf(PropTypes.shape({
+      value: PropTypes.any,
+      radius: PropTypes.number,
+    })),
     tickValueFormat: PropTypes.func,
-    orientation: PropTypes.string,
+    orient: PropTypes.oneOf(['bottom', 'top']),
   };
 
   static defaultProps = {
-
-    // 坐标轴所在的方位
-    orientation: 'bottom',
-    // 刻度数据，格式为 {value: "展示的刻度值", radius: 50}
+    orient: 'bottom',
     ticks: [],
   };
 
@@ -39,8 +39,8 @@ class PolarRadiusAxis extends React.Component {
     super(props);
   }
   /**
-   * 获取tick文本的坐标
-   * @param  {Object} data tick数据
+   * Calculate the coordinate of tick
+   * @param  {Object} data The data of a simple tick
    * @return {Object} (x, y)
    */
   getTickValueCoord(data) {
@@ -55,10 +55,10 @@ class PolarRadiusAxis extends React.Component {
   }
 
   getTickTextAnchor() {
-    const { orientation } = this.props;
+    const { orient } = this.props;
     let textAnchor;
 
-    switch (orientation) {
+    switch (orient) {
       case 'left':
         textAnchor = 'end';
         break;
