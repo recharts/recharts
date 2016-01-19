@@ -7,31 +7,33 @@ class XAxis extends React.Component {
   static displayName = 'XAxis';
 
   static propTypes = {
-    // 轴所对应的数据的名称
+    hide: PropTypes.bool,
+    // The name of data displayed in the axis
     name: PropTypes.any,
-    // 轴所对应的数据单位
+    // The unit of data displayed in the axis
     unit: PropTypes.any,
+    // The unique id of x-axis
     xAxisId: PropTypes.number,
-    // 类目轴需要传入此属性
+    // The key of data displayed in the axis
     dataKey: PropTypes.string,
-    // x轴占的宽度，一般计算得到，不需要设置
+    // The width of axis which is usually calculated in Chart
     width: PropTypes.number,
-    // x轴占的高度
+    // The height of axis, which need to be setted by user
     height: PropTypes.number,
-    // 轴的方位
+    // The orient of axis
     orient: PropTypes.oneOf(['top', 'bottom']),
     type: PropTypes.oneOf(['number', 'category']),
-     // 可以通过ticks传入刻度
-    // 当为类目轴时，可以是任何类型的刻度
-    // 当为数值轴时，需要传入Number类型的刻度
+    // Ticks can be any type when the axis is the type of category
+    // Ticks must be numbers when the axis is the type of number
     ticks: PropTypes.array,
-    // 刻度数
+    // The count of ticks
     tickCount: PropTypes.number,
-    // 刻度格式化函数
+    // The formatter function of tick
     tickFormatter: PropTypes.func,
   };
 
   static defaultProps = {
+    hide: false,
     orient: 'bottom',
     width: 0,
     height: 30,

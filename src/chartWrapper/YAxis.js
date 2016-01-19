@@ -7,31 +7,33 @@ class YAxis extends React.Component {
   static displayName = 'YAxis';
 
   static propTypes = {
-    // 轴所对应的数据的名称
+    hide: PropTypes.bool,
+    // The name of data displayed in the axis
     name: PropTypes.any,
-    // 轴所对应的数据单位
+    // The unit of data displayed in the axis
     unit: PropTypes.any,
+    // The unique id of y-axis
     yAxisId: PropTypes.number,
-    // 当y轴为类目轴时，需要传入此属性
+    // The key of data displayed in the axis
     dataKey: PropTypes.string,
-    // 可以通过ticks传入刻度
-    // 当为类目轴时，可以是任何类型的刻度
-    // 当为数值轴时，需要传入Number类型的刻度
+    // Ticks can be any type when the axis is the type of category
+    // Ticks must be numbers when the axis is the type of number
     ticks: PropTypes.array,
-    // 刻度数
+    // The count of ticks
     tickCount: PropTypes.number,
-    // 刻度格式化函数
+    // The formatter function of tick
     tickFormatter: PropTypes.func,
-    // y轴占的宽度
+    // The width of axis, which need to be setted by user
     width: PropTypes.number,
-    // y轴占的高度，一般计算而得，不需要设置
+    // The height of axis which is usually calculated in Chart
     height: PropTypes.number,
-    // 轴的方位
+    // The orient of axis
     orient: PropTypes.oneOf(['left', 'right']),
     type: PropTypes.oneOf(['number', 'category']),
   };
 
   static defaultProps = {
+    hide: false,
     orient: 'left',
     width: 60,
     height: 0,

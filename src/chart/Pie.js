@@ -35,8 +35,6 @@ class Pie extends React.Component {
   };
 
   static defaultProps = {
-    innerRadius: 0,
-    outerRadius: 0,
     stroke: '#fff',
     fill: '#808080',
     legendType: 'line',

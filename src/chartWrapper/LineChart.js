@@ -4,7 +4,9 @@ import CartesianChart from './CartesianChart';
 import Surface from '../container/Surface';
 import ReactUtils from '../util/ReactUtils';
 import Legend from '../component/Legend';
+import Tooltip from '../component/Tooltip';
 import Line from '../chart/Line';
+import Curve from '../shape/Curve';
 
 
 class LineChart extends CartesianChart {
@@ -22,11 +24,11 @@ class LineChart extends CartesianChart {
     super(props);
   }
   /**
-   * 组装曲线数据
-   * @param  {Object} xAxis   x轴刻度
-   * @param  {Object} yAxis   y轴刻度
-   * @param  {String} dataKey 该组数据所对应的key
-   * @return {Array} 组合后的数据
+   * Compose the data of each group
+   * @param  {Object} xAxis   The configuration of x-axis
+   * @param  {Object} yAxis   The configuration of y-axis
+   * @param  {String} dataKey The unique key of a group
+   * @return {Array}  Composed data
    */
   getComposeData(xAxis, yAxis, dataKey) {
     const { data, layout } = this.props;
@@ -42,8 +44,8 @@ class LineChart extends CartesianChart {
     });
   }
   /**
-   * 鼠标进入曲线的响应事件
-   * @param {String} key 曲线唯一对应的key
+   * Handler of mouse entering line chart
+   * @param {String} key  The unique key of a group of data
    * @return {Object} no return
    */
   handleLineMouseEnter(key) {
@@ -52,7 +54,7 @@ class LineChart extends CartesianChart {
     });
   }
   /**
-   * 鼠标离开曲线的响应事件
+   * Handler of mouse leaving line chart
    * @return {Object} no return
    */
   handleLineMouseLeave() {
@@ -61,12 +63,12 @@ class LineChart extends CartesianChart {
     });
   }
   /**
-   * 绘制图形部分
-   * @param  {Array} items 线图元素
-   * @param  {Object} xAxisMap x轴刻度
-   * @param  {Object} yAxisMap y轴刻度
-   * @param  {Object} offset   图形区域的偏移量
-   * @return {ReactComponent} 图形元素
+   * Draw the main part of bar chart
+   * @param  {Array} items     All the instance of Bar
+   * @param  {Object} xAxisMap The configuration of all x-axes
+   * @param  {Object} yAxisMap The configuration of all y-axes
+   * @param  {Object} offset   The offset of main part in the svg element
+   * @return {ReactComponent}  All the instances of Line
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
     const { activeLineKey } = this.state;
@@ -83,9 +85,37 @@ class LineChart extends CartesianChart {
         strokeWidth: finalStrokeWidth,
         onMouseLeave: ::this.handleLineMouseLeave,
         onMouseEnter: this.handleLineMouseEnter.bind(this, dataKey),
-        points: this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey)
+        points: this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey),
       });
     }, this);
+  }
+
+  renderCursor(xAxisMap, yAxisMap, offset) {
+    const { children } = this.props;
+    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+
+    if (!tooltipItem || !this.state.isTooltipActive) {return null;}
+
+    const { layout } = this.props;
+    const { activeTooltipIndex } = this.state;
+    const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
+    const ids = Object.keys(axisMap);
+    const axis = axisMap[ids[0]];
+    const ticks = this.getAxisTicks(axis);
+    const start = ticks[activeTooltipIndex].coord;
+    const x1 = layout === 'horizontal' ? start : offset.left;
+    const y1 = layout === 'horizontal' ? offset.top : start;
+    const x2 = layout === 'horizontal' ? start : offset.left + offset.width;
+    const y2 = layout === 'horizontal' ? offset.top + offset.height : start;
+    const cursorProps = {
+      stroke: '#ccc',
+      ...ReactUtils.getPresentationAttributes(tooltipItem.props.cursor),
+      points: [{ x: x1, y: y1 }, { x: x2, y: y2 }],
+    };
+
+    return React.isValidElement(tooltipItem.props.cursor) ?
+          React.cloneElement(tooltipItem.props.cursor, cursorProps) :
+          <Curve {...cursorProps} type="linear" className="recharts-cursor"/>;
   }
 
   render() {
@@ -118,6 +148,7 @@ class LineChart extends CartesianChart {
           {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
           {this.renderXAxis(xAxisMap)}
           {this.renderYAxis(yAxisMap)}
+          {this.renderCursor(xAxisMap, yAxisMap, offset)}
           {this.renderItems(items, xAxisMap, yAxisMap, offset)}
         </Surface>
 

@@ -26,17 +26,13 @@ class Rectangle extends React.Component {
   };
 
   static defaultProps = {
-    // 矩形左上角的横坐标
     x: 0,
-    // 矩形左上角的纵坐标
     y: 0,
-    // 宽度
     width: 0,
-    // 高度
     height: 0,
-    // 圆角半径
-    // 当radius为数值类型时，矩形的四个角的圆角半径都设置为该值
-    // 当radius为数组时，分别设置左上角、右上角、右下角、左下角的圆角半径
+    // The radius of border
+    // The radius of four corners when radius is a number
+    // The radius of left-top, right-top, right-bottom, left-bottom when radius is an array
     radius: 0,
     stroke: 'none',
     strokeWidth: 1,

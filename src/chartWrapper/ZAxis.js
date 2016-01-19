@@ -7,13 +7,15 @@ class ZAxis extends React.Component {
   static displayName = 'ZAxis';
 
   static propTypes = {
-    // 轴所对应的数据的名称
+    // The name of data displayed in the axis
     name: PropTypes.any,
-    // 轴所对应的数据单位
+    // The unit of data displayed in the axis
     unit: PropTypes.any,
+    // The unique id of z-axis
     zAxisId: PropTypes.number,
-    // 当y轴为类目轴时，需要传入此属性
+    // The key of data displayed in the axis
     dataKey: PropTypes.string.isRequired,
+    // The range of axis
     range: PropTypes.arrayOf(PropTypes.number),
   };
 

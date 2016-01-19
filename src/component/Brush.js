@@ -125,13 +125,13 @@ class Brush extends React.Component {
 
   handleEnterSlideOrBrush() {
     this.setState({
-      isTextActive: true
+      isTextActive: true,
     });
   }
 
   handleLeaveSlideOrBrush() {
     this.setState({
-      isTextActive: false
+      isTextActive: false,
     });
   }
 

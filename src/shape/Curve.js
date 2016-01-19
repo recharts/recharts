@@ -25,24 +25,19 @@ class Curve extends React.Component {
   };
 
   static defaultProps = {
-    // 曲线类型，linear - 折线
-    // stepBefore - 节点靠前的阶梯曲线, stepMiddle - 节点居中的阶梯曲线, stepAfter - 节点靠后的阶梯曲线
-    // monotone - 光滑曲线
     type: 'linear',
     stroke: '#000',
     fill: 'none',
     strokeWidth: 1,
     strokeDasharray: 'none',
-    // 点坐标
     points: [],
     onClick() {},
     onMouseEnter() {},
     onMouseLeave() {},
   };
-
   /**
-   * 获取曲线路径
-   * @return {String} 路径
+   * Calculate the path of curve
+   * @return {String} path
    */
   getPath() {
     const { type, points, baseLine, baseLineType } = this.props;

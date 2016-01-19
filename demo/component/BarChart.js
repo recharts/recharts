@@ -216,7 +216,7 @@ export default React.createClass({
         <div className='bar-chart-wrapper'>
           <BarChart width={500} height={250} barOffset={0} data={data} margin={{top: 20, right: 20, bottom: 20, left: 20}}>
             <XAxis hasAxis={false} hasTick={false} dataKey='name' customContent={<CustomAxis />}/>
-            <Bar dataKey='uv' barGap={0} fill="#8884d8" customContent={<BarTwo/>} label/>
+            <Bar dataKey='uv' barGap={0} fill="#8884d8" customContent={<BarTwo/>} label={{fill: 'red'}}/>
           </BarChart>
         </div>
       </div>

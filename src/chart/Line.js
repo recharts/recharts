@@ -30,6 +30,8 @@ class Line extends React.Component {
     className: PropTypes.string,
      // whether have dot in line
     dot: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
+    label: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
+
     points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -73,7 +75,7 @@ class Line extends React.Component {
         cx: entry.x,
         cy: entry.y,
         index: i,
-        playload: entry,
+        payload: entry,
       };
 
       return isDotElement ? React.cloneElement(dot, dotProps) : <Dot {...dotProps}/>;
@@ -82,8 +84,35 @@ class Line extends React.Component {
     return <Layer className="recharts-layer-line-dots">{dots}</Layer>;
   }
 
+  renderLabels() {
+    const { points, label } = this.props;
+    const lineProps = ReactUtils.getPresentationAttributes(this.props);
+    const customLabelProps = ReactUtils.getPresentationAttributes(label);
+    const isLabelElement = React.isValidElement(label);
+
+    const labels = points.map((entry, i) => {
+      const x = entry.x + entry.width / 2;
+      const y = entry.y;
+      const labelProps = {
+        textAnchor: 'middle',
+        ...entry,
+        ...lineProps,
+        ...customLabelProps,
+        index: i,
+        key: `label-${i}`,
+        payload: entry,
+      };
+
+      return isLabelElement ? React.cloneElement(label, labelProps) : (
+        <text {...labelProps}>{entry.value}</text>
+      );
+    });
+
+    return <Layer className="recharts-layer-line-labels">{labels}</Layer>;
+  }
+
   render() {
-    const { dot, points, className, ...other } = this.props;
+    const { dot, label, points, className, ...other } = this.props;
 
     if (!points || !points.length) {
       return null;
@@ -103,6 +132,7 @@ class Line extends React.Component {
           />
         )}
         {(hasSinglePoint || dot) && this.renderDots()}
+        {label && this.renderLabels()}
       </Layer>
     );
   }

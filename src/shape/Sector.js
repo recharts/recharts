@@ -25,17 +25,11 @@ class Sector extends React.Component {
   };
 
   static defaultProps = {
-    // 圆心的横坐标
     cx: 0,
-    // 圆心的纵坐标
     cy: 0,
-    // 内径
     innerRadius: 0,
-    // 外径
     outerRadius: 0,
-    // 起始角度
     startAngle: 0,
-    // 终点角度
     endAngle: 0,
     onMouseEnter() {},
     onMouseLeave() {},
@@ -48,7 +42,7 @@ class Sector extends React.Component {
 
   getPath(cx, cy, innerRadius, outerRadius, startAngle, endAngle) {
     const angle = endAngle - startAngle;
-    // 360度的圆环，起点和终点一致，会导致绘制的图形为空
+    // When the angle of sector equals to 360, star point and end point coincide
     const _endAngle = Math.abs(angle) >= 360 ? startAngle + 0.9999 * angle : endAngle;
     let path;
 
