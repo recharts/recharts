@@ -58,7 +58,7 @@ class ReferenceLine extends React.Component {
 
   render() {
     const { type, value, fill, stroke, fillOpacity, strokeOpacity } = this.props;
-    if (!type || value !== +value) {return null;}
+    if (!type || value !== +value) { return null; }
 
     const [start, end] = this.getEndPoints();
 

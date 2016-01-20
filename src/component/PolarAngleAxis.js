@@ -3,11 +3,10 @@
  * @author xile611
  * @Date 2015-08-28
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import createFragment from 'react-addons-create-fragment';
 import pureRender from 'pure-render-decorator';
 
-const PropTypes = React.PropTypes;
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
 const offset = 8;
