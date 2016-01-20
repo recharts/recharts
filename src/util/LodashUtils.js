@@ -4,7 +4,6 @@ const arrayClass = '[object Array]';
 
 let idStart = 0x0907;
 
-
 const isArray = Array.isArray || (value => {
   return Object.prototype.toString.call(value) === arrayClass;
 });

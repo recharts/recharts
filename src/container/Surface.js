@@ -22,6 +22,7 @@ class Surface extends React.Component {
       PropTypes.node,
     ]),
   };
+
   constructor(props) {
     super(props);
   }

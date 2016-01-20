@@ -13,6 +13,7 @@ class Layer extends React.Component {
       PropTypes.node,
     ]),
   };
+
   constructor(props) {
     super(props);
   }
