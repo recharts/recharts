@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-
 import PolarGrid from '../component/PolarGrid';
 import PolarAngleAxis from '../component/PolarAngleAxis';
 import pureRender from 'pure-render-decorator';
@@ -77,13 +76,8 @@ class Radar extends React.Component {
   getVertexCoord(data) {
     const { min, max, value, angle } = data;
     const { cx, cy, innerRadius, outerRadius } = this.props;
-    let r;
-
-    if (min === max) {
-      r = outerRadius;
-    } else {
-      r = innerRadius + (outerRadius - innerRadius) * (value - min) / (max - min);
-    }
+    const r = min === max ? outerRadius :
+      innerRadius + (outerRadius - innerRadius) * (value - min) / (max - min);
 
     return {
       x: cx + r * Math.cos(-angle * RADIAN),
@@ -97,33 +91,26 @@ class Radar extends React.Component {
   getAngleTicks() {
     const { startAngle, data, clockWise } = this.props;
     const sign = clockWise ? -1 : 1;
-    const len = data.length;
-    const angle = perigon / len;
-    const result = [];
+    const angle = perigon / data.length;
 
     // divide perigon equally
-    for (let i = 0; i < len; i++) {
-      result.push({
+    return data.map((item, i) => {
+      return {
         angle: startAngle + i * sign * angle,
-        value: data[i].name,
-      });
-    }
-
-    return result;
+        value: item.name,
+      };
+    });
   }
 
   renderPolygon() {
     const { data } = this.props;
-    const points = [];
+    const points = data.map((item, i) => {
+      const { x, y } = this.getVertexCoord(item);
 
-    for (let i = 0, len = data.length; i < len; i++) {
-      const { x, y } = this.getVertexCoord(data[i]);
+      return [x, y];
+    }).join(' ');
 
-      points.push([x, y]);
-    }
-
-
-    return <polygon fill="green" fillOpacity={0.6} stroke="red" points={points.join(' ')}/>;
+    return <polygon fill="green" fillOpacity={0.6} stroke="red" points={points}/>;
   }
 
   render() {
