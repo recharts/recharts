@@ -33,7 +33,7 @@ export default React.createClass({
         <div className='pie-chart-wrapper'>
           <PieChart width={400} height={400}>
             <Legend wrapperStyle={{height: 80}}/>
-            <Pie data={data01} cx={100} cy={200} outerRadius={80}/>
+            <Pie isAnimationActive={false} data={data01} cx={100} cy={200} outerRadius={80}/>
             <Pie data={data02} cx={300} cy={200} outerRadius={80}/>
           </PieChart>
         </div>

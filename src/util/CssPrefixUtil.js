@@ -3,9 +3,9 @@ const PREFIX_LIST = ['Webkit', 'Moz', 'O', 'ms'];
 export const generatePrefixStyle = (name, value) => {
   if (!name) { return null; }
 
-  const CamelName = name.replace(/(\w)/, v => v.toUpperCase());
+  const camelName = name.replace(/(\w)/, v => v.toUpperCase());
   const result = PREFIX_LIST.reduce((res, entry) => {
-    res[entry + CamelName] = value;
+    res[entry + camelName] = value;
 
     return res;
   }, {});

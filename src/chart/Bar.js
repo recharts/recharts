@@ -1,11 +1,12 @@
 /**
  * @fileOverview Render a group of bar
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Children } from 'react';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import pureRender from 'pure-render-decorator';
 import ReactUtils from '../util/ReactUtils';
+import Animate from 're-animate';
 
 @pureRender
 class Bar extends React.Component {
@@ -48,6 +49,12 @@ class Bar extends React.Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
+    layout: PropTypes.string,
+    children: PropTypes.element,
+    isAnimationActive: PropTypes.bool,
+    animationBegin: PropTypes.number,
+    animationDuration: PropTypes.number,
+    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
   };
 
   static defaultProps = {
@@ -60,6 +67,11 @@ class Bar extends React.Component {
     onClick() {},
     onMouseEnter() {},
     onMouseLeave() {},
+    layout: 'vertical',
+    isAnimationActive: true,
+    animationBegin: 0,
+    animationDuration: 1500,
+    animationEasing: 'ease',
   };
 
   constructor(props) {
@@ -67,19 +79,53 @@ class Bar extends React.Component {
   }
 
   renderRectangles() {
-    const { data, className, customContent, ...others } = this.props;
+    const {
+      data,
+      className,
+      customContent,
+      layout,
+      children,
+      isAnimationActive,
+      animationBegin,
+      animationDuration,
+      animationEasing,
+      ...others,
+    } = this.props;
 
-    return data.map((entry, i) => {
-      const { value, ...rest } = entry;
+    return data.map((entry, index) => {
+      const { value, width, height, ...rest } = entry;
+      const props = { ...others, ...rest, width, height };
+      let transformOrigin = '';
+      const getStyle = isBegin => {
+        return {
+          transform: `scale${layout === 'vertical' ? 'X' : 'Y'}(${isBegin ? 0 : 1})`,
+        };
+      };
 
-      return React.isValidElement(customContent) ? React.cloneElement(customContent, {
-        ...others, ...rest,
-        index: i,
-        key: 'rectangle-' + i,
-      }) : React.createElement(Rectangle, {
-        ...others, ...rest,
-        key: 'rectangle-' + i,
-      });
+      if (layout === 'vertical') {
+        transformOrigin = width > 0 ? 'left center' : 'right center';
+      } else {
+        transformOrigin = height > 0 ? 'center bottom' : 'center top';
+      }
+
+      return (
+        <Animate begin={animationBegin}
+          duration={animationDuration}
+          isActive={isAnimationActive}
+          easing={animationEasing}
+          from={getStyle(true)}
+          to={getStyle(false)}
+          key={'rectangle-' + index}
+        >
+          <g style={{ transformOrigin }}>
+            {
+              React.isValidElement(customContent) ?
+                React.cloneElement(customContent, { ...props, index }) :
+                React.createElement(Rectangle, props)
+            }
+          </g>
+        </Animate>
+      );
     });
   }
 
@@ -111,7 +157,7 @@ class Bar extends React.Component {
   }
 
   render() {
-    const { data, className, label } = this.props;
+    const { data, className, label, children } = this.props;
 
     if (!data || !data.length) {
       return null;
