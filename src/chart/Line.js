@@ -7,6 +7,8 @@ import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import pureRender from 'pure-render-decorator';
 import ReactUtils from '../util/ReactUtils';
+import { findDOMNode } from 'react-dom';
+import Animate from 're-animate';
 
 @pureRender
 class Line extends React.Component {
@@ -40,6 +42,11 @@ class Line extends React.Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
+    layout: PropTypes.string,
+    isAnimationActive: PropTypes.bool,
+    animationBegin: PropTypes.number,
+    animationDuration: PropTypes.number,
+    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
   };
 
   static defaultProps = {
@@ -54,17 +61,47 @@ class Line extends React.Component {
     onClick() {},
     onMouseEnter() {},
     onMouseLeave() {},
+    layout: 'vertical',
+    isAnimationActive: true,
+    animationBegin: 0,
+    animationDuration: 1500,
+    animationEasing: 'ease',
   };
 
   constructor(props) {
     super(props);
   }
 
+  state = {
+    isAnimationFinished: false,
+    totalLength: 0,
+  };
+
+  componentDidMount() {
+    const { isAnimationActive } = this.props;
+
+    if (!isAnimationActive) {
+      return;
+    }
+
+    const totalLength = findDOMNode(this.refs.curve).getTotalLength() || 0;
+
+    this.setState({ totalLength });
+  }
+
+  handleAnimationEnd() {
+    this.setState({ isAnimationFinished: true });
+  }
+
   renderDots() {
-    const { dot, points } = this.props;
+    const { dot, points, isAnimationActive } = this.props;
     const lineProps = ReactUtils.getPresentationAttributes(this.props);
     const customDotProps = ReactUtils.getPresentationAttributes(dot);
     const isDotElement = React.isValidElement(dot);
+
+    if (isAnimationActive && !this.state.isAnimationFinished) {
+      return null;
+    }
 
     const dots = points.map((entry, i) => {
       const dotProps = {
@@ -112,7 +149,18 @@ class Line extends React.Component {
   }
 
   render() {
-    const { dot, label, points, className, ...other } = this.props;
+    const {
+      dot,
+      points,
+      label,
+      className,
+      isAnimationActive,
+      animationBegin,
+      animationDuration,
+      animationEasing,
+      ...other,
+    } = this.props;
+    const { totalLength } = this.state;
 
     if (!points || !points.length) {
       return null;
@@ -122,14 +170,26 @@ class Line extends React.Component {
     return (
       <Layer className={'recharts-line ' + (className || '')}>
         {!hasSinglePoint && (
-          <Curve
-            {...other}
-            fill="none"
-            onMouseEnter={this.props.onMouseEnter}
-            onMouseLeave={this.props.onMouseLeave}
-            onClick={this.props.onClick}
-            points={points}
-          />
+          <Animate isActive={isAnimationActive}
+            begin={animationBegin}
+            canBegin={totalLength > 0}
+            from={'0px ' + (totalLength === 0 ? 1 : totalLength) + 'px'}
+            to={totalLength + 'px 0px'}
+            easing={animationEasing}
+            duration={animationDuration}
+            attributeName="strokeDasharray"
+            onAnimationEnd={::this.handleAnimationEnd}
+          >
+            <Curve
+              {...other}
+              fill="none"
+              onMouseEnter={this.props.onMouseEnter}
+              onMouseLeave={this.props.onMouseLeave}
+              onClick={this.props.onClick}
+              points={points}
+              ref="curve"
+            />
+          </Animate>
         )}
         {(hasSinglePoint || dot) && this.renderDots()}
         {label && this.renderLabels()}
