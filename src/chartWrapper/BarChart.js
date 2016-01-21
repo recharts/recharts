@@ -231,6 +231,7 @@ class BarChart extends CartesianChart {
 
       return React.cloneElement(child, {
         key: 'bar-' + i,
+        layout,
         onMouseLeave: ::this.handleBarMouseLeave,
         onMouseEnter: this.handleBarMouseEnter.bind(this, dataKey),
         data: this.getComposeData(barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey),
