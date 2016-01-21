@@ -14,7 +14,7 @@ class ZAxis extends React.Component {
     // The unique id of z-axis
     zAxisId: PropTypes.number,
     // The key of data displayed in the axis
-    dataKey: PropTypes.string.isRequired,
+    dataKey: PropTypes.string,
     // The range of axis
     range: PropTypes.arrayOf(PropTypes.number),
   };
