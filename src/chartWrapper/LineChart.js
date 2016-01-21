@@ -18,8 +18,6 @@ class LineChart extends CartesianChart {
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
 
-  displayName = 'LineChart';
-
   constructor(props) {
     super(props);
   }
