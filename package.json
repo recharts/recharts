@@ -25,9 +25,11 @@
     "core-js": "^2.0.3",
     "d3-scale": "0.4.0",
     "d3-shape": "0.2.2",
-    "pure-render-decorator": "^0.2.0",
-    "react-addons-create-fragment": "0.14.3",
     "ima.js-babel6-polyfill": "^0.1.0",
+    "pure-render-decorator": "^0.2.0",
+    "raf": "^3.1.0",
+    "re-animate": "0.0.3",
+    "react-addons-create-fragment": "0.14.3",
     "recharts-scale": "0.1.5-beta"
   },
   "devDependencies": {
