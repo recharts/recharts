@@ -72,7 +72,7 @@ class ScatterChart extends React.Component {
         cx: xAxis.scale(entry[xAxisDataKey]),
         cy: yAxis.scale(entry[yAxisDataKey]),
         r: zAxisDataKey !== undefined ? zAxis.scale(entry[zAxisDataKey]) : zAxis.range[0],
-        value: {
+        payload: {
           x: entry[xAxisDataKey],
           y: entry[yAxisDataKey],
           z: (zAxisDataKey !== undefined && entry[zAxisDataKey]) || '-',
@@ -355,7 +355,7 @@ class ScatterChart extends React.Component {
       scope,
       active: isTooltipActive,
       label: '',
-      data: this.getTooltipContent(activeItem && activeItem.value, xAxis, yAxis, zAxis),
+      data: this.getTooltipContent(activeItem && activeItem.payload, xAxis, yAxis, zAxis),
       coordinate: activeTooltipCoord,
       mouseX: chartX,
       mouseY: chartY,
@@ -486,7 +486,7 @@ class ScatterChart extends React.Component {
         strokeWidth: finalStrokeWidth,
         onMouseLeave: ::this.handleScatterMouseLeave,
         onMouseEnter: ::this.handleScatterMouseEnter,
-        data: this.getComposeData(data, xAxis, yAxis, zAxis),
+        points: this.getComposeData(data, xAxis, yAxis, zAxis),
       });
     }, this);
   }

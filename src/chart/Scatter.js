@@ -4,6 +4,8 @@
 import React, { PropTypes } from 'react';
 import Layer from '../container/Layer';
 import pureRender from 'pure-render-decorator';
+import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import Curve from '../shape/Curve';
 
 @pureRender
 class Scatter extends React.Component {
@@ -11,22 +13,20 @@ class Scatter extends React.Component {
   static displayName = 'Scatter';
 
   static propTypes = {
+    ...PRESENTATION_ATTRIBUTES,
+
     legendType: PropTypes.string,
     xAxisId: PropTypes.number,
     yAxisId: PropTypes.number,
     zAxisId: PropTypes.number,
+    line: PropTypes.oneOfType([PropTypes.bool, PropTypes.object, PropTypes.element]),
+    lineType: PropTypes.oneOf(['fitting', 'joint']),
 
-    fill: PropTypes.string,
-    stroke: PropTypes.string,
-    strokeWidth: PropTypes.number,
-    strokeDasharray: PropTypes.string,
-    className: PropTypes.string,
-
-    data: PropTypes.arrayOf(PropTypes.shape({
+    points: PropTypes.arrayOf(PropTypes.shape({
       cx: PropTypes.number,
       cy: PropTypes.number,
       r: PropTypes.number,
-      value: PropTypes.shape({
+      payload: PropTypes.shape({
         x: PropTypes.number,
         y: PropTypes.number,
         z: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -43,44 +43,92 @@ class Scatter extends React.Component {
     yAxisId: 0,
     zAxisId: 0,
     legendType: 'scatter',
+    lineType: 'joint',
     data: [],
     onClick() {},
     onMouseEnter() {},
     onMouseLeave() {},
   };
 
-  handleCircleMouseEnter(data, e) {
+  state = {
+    activeIndex: -1,
+  };
+
+  handleCircleMouseEnter(data, index, e) {
     const { onMouseEnter } = this.props;
 
-    onMouseEnter(data, e);
+    this.setState({
+      activeIndex: index,
+    }, () => {
+      onMouseEnter(data, e);
+    });
+  }
+
+  handleCircleMouseLeave() {
+    const { onMouseLeave } = this.props;
+
+    this.setState({
+      activeIndex: -1,
+    }, onMouseLeave);
   }
 
   renderCircles() {
-    const { data, className, onMouseEnter, ...others } = this.props;
+    const { points, className, onMouseEnter, ...others } = this.props;
+    const { activeIndex } = this.state;
 
-    return data.map((entry, i) => {
-      const { value, ...rest } = entry;
+    return points.map((entry, i) => {
+      const { payload, r, ...rest } = entry;
 
       return (
         <circle
           {...others}
           {...rest}
-          onMouseEnter={this.handleCircleMouseEnter.bind(this, entry)}
+          r={i === activeIndex ? r * 1.1 : r}
+          onMouseEnter={this.handleCircleMouseEnter.bind(this, entry, i)}
+          onMouseLeave={::this.handleCircleMouseLeave}
           key={'circle-' + i}
         />
       );
     });
   }
 
-  render() {
-    const { data, className } = this.props;
+  renderLine() {
+    const { points, line, lineType } = this.props;
+    const scatterProps = ReactUtils.getPresentationAttributes(this.props);
+    const customLineProps = ReactUtils.getPresentationAttributes(line);
+    const isLineElement = React.isValidElement(line);
+    let linePoints;
 
-    if (!data || !data.length) {
+    if (lineType === 'joint') {
+      linePoints = points.map(entry => {
+        return { x: entry.cx, y: entry.cy};
+      });
+    }
+    const lineProps = {
+      ...scatterProps,
+      fill: 'none',
+      stroke: scatterProps.fill,
+      ...customLineProps,
+      points: linePoints,
+    };
+
+    return (
+      <Layer className="recharts-layer-scatter-line">
+        {isLineElement ? React.cloneElement(line, lineProps) : React.createElement(Curve, lineProps)}
+      </Layer>
+    );
+  }
+
+  render() {
+    const { points, line, className } = this.props;
+
+    if (!points || !points.length) {
       return null;
     }
 
     return (
       <Layer className={'layer-scatter ' + (className || '')}>
+        {line && this.renderLine()}
         {this.renderCircles()}
       </Layer>
     );
