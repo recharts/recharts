@@ -46,7 +46,7 @@ export default React.createClass({
             <YAxis tickCount={7} hasTick/>
             <Tooltip customContent={<CustomTooltip external={data}/>}/>
             <CartesianGrid stroke='#f5f5f5'/>
-            <Area type='monotone' dataKey='pv' stroke='#7d79d4' fill='#7d79d4' fillOpacity={0.25}/>
+            <Area type='monotone' dataKey='pv' stroke='#ff7300' fill='#ff7300' fillOpacity={0.25}/>
           </AreaChart>
         </div>
 

@@ -59,10 +59,6 @@ class CartesianChart extends React.Component {
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   state = {
     dataStartIndex: 0,
     dataEndIndex: this.props.data.length - 1,
@@ -354,6 +350,7 @@ class CartesianChart extends React.Component {
    */
   getFormatAxisMap(axisMap, offset, axisType) {
     const { width, height, layout } = this.props;
+    const displayName = this.constructor.displayName;
     const ids = Object.keys(axisMap);
     const steps = {
       left: offset.left,
@@ -378,7 +375,7 @@ class CartesianChart extends React.Component {
 
       if (type === 'number') {
         scale = D3Scale.linear().domain(domain).range(range);
-      } else if (this.displayName === 'LineChart' || this.displayName === 'AreaChart') {
+      } else if (displayName === 'LineChart' || displayName === 'AreaChart') {
         scale = D3Scale.point().domain(domain).range(range);
       } else {
         scale = D3Scale.band().domain(domain).range(range);

@@ -17,12 +17,6 @@ class AreaChart extends CartesianChart {
     layout: 'horizontal',
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
-
-  displayName = 'AreaChart';
-
-  constructor(props) {
-    super(props);
-  }
   /**
    * Compose the data of each area
    * @param  {Object} xAxis   The configuration of x-axis
@@ -78,57 +72,6 @@ class AreaChart extends CartesianChart {
       activeAreaKey: null,
     });
   }
-  /**
-   * Draw the main part of area chart
-   * @param  {Array} items     React elements of Area
-   * @param  {Object} xAxisMap The configuration of all x-axis
-   * @param  {Object} yAxisMap The configuration of all y-axis
-   * @param  {Object} offset   The offset of main part in the svg element
-   * @return {ReactComponent} The instances of Area
-   */
-  renderItems(items, xAxisMap, yAxisMap, offset) {
-    const { children } = this.props;
-    const { activeAreaKey, isTooltipActive, activeTooltipIndex } = this.state;
-    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
-    const hasDot = tooltipItem && isTooltipActive;
-    let areaItems = [];
-    const dotItems = [];
-
-    items.forEach((child, i) => {
-      const { xAxisId, yAxisId, dataKey, fillOpacity, fill } = child.props;
-      const xAxis = xAxisMap[xAxisId];
-      const yAxis = yAxisMap[yAxisId];
-      const composeData = this.getComposeData(xAxis, yAxis, dataKey);
-      const activePoint = composeData.points && composeData.points[activeTooltipIndex];
-      const pointStyle = { fill, strokeWidth: 4, stroke: '#fff' };
-
-      let finalFillOpacity = fillOpacity === +fillOpacity ? fillOpacity : Area.defaultProps.fillOpacity;
-      finalFillOpacity = activeAreaKey === dataKey ? Math.min(finalFillOpacity * 1.2, 1) : finalFillOpacity;
-
-      const area = React.cloneElement(child, {
-        key: 'area-' + i,
-        ...offset,
-        ...composeData,
-        fillOpacity: finalFillOpacity,
-        onMouseLeave: ::this.handleAreaMouseLeave,
-        onMouseEnter: this.handleAreaMouseEnter.bind(this, dataKey),
-      });
-
-      areaItems = activeAreaKey === dataKey ? [...areaItems, area] : [area, ...areaItems];
-
-      if (hasDot && activePoint) {
-        dotItems.push(<Dot key={'area-dot-' + i} cx={activePoint.x} cy={activePoint.y} r={8} {...pointStyle}/>);
-      }
-    });
-
-    return (
-      <g key="recharts-area-wrapper">
-        <g key="recharts-area">{areaItems}</g>
-        <g key="recharts-area-dot">{dotItems}</g>
-      </g>
-    );
-  }
-
   renderCursor(xAxisMap, yAxisMap, offset) {
     const { children } = this.props;
     const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
@@ -155,6 +98,54 @@ class AreaChart extends CartesianChart {
     return React.isValidElement(tooltipItem.props.cursor) ?
           React.cloneElement(tooltipItem.props.cursor, cursorProps) :
           <Curve {...cursorProps} type="linear" className="recharts-cursor"/>;
+  }
+  /**
+   * Draw the main part of area chart
+   * @param  {Array} items     React elements of Area
+   * @param  {Object} xAxisMap The configuration of all x-axis
+   * @param  {Object} yAxisMap The configuration of all y-axis
+   * @param  {Object} offset   The offset of main part in the svg element
+   * @return {ReactComponent} The instances of Area
+   */
+  renderItems(items, xAxisMap, yAxisMap, offset) {
+    const { children } = this.props;
+    const { activeAreaKey, isTooltipActive, activeTooltipIndex } = this.state;
+    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+    const hasDot = tooltipItem && isTooltipActive;
+    const dotItems = [];
+
+    const areaItems = items.reduce((result, child, i) => {
+      const { xAxisId, yAxisId, dataKey, fillOpacity, fill } = child.props;
+      const composeData = this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey);
+
+      const activePoint = composeData.points && composeData.points[activeTooltipIndex];
+      const pointStyle = { fill, strokeWidth: 4, stroke: '#fff' };
+
+      if (hasDot && activePoint) {
+        dotItems.push(<Dot key={'area-dot-' + i} cx={activePoint.x} cy={activePoint.y} r={8} {...pointStyle}/>);
+      }
+
+      let finalFillOpacity = fillOpacity === +fillOpacity ? fillOpacity : Area.defaultProps.fillOpacity;
+      finalFillOpacity = activeAreaKey === dataKey ? Math.min(finalFillOpacity * 1.2, 1) : finalFillOpacity;
+
+      const area = React.cloneElement(child, {
+        key: 'area-' + i,
+        ...offset,
+        ...composeData,
+        fillOpacity: finalFillOpacity,
+        onMouseLeave: ::this.handleAreaMouseLeave,
+        onMouseEnter: this.handleAreaMouseEnter.bind(this, dataKey),
+      });
+
+      return activeAreaKey === dataKey ? [...result, area] : [area, ...result];
+    }, []);
+
+    return (
+      <g key="recharts-area-wrapper">
+        <g key="recharts-area">{areaItems}</g>
+        <g key="recharts-area-dot">{dotItems}</g>
+      </g>
+    );
   }
 
   render() {

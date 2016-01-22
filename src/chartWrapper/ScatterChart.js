@@ -20,8 +20,6 @@ import Cross from '../shape/Cross';
 class ScatterChart extends React.Component {
   static displayName = 'ScatterChart';
 
-  displayName = 'ScatterChart';
-
   static propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
@@ -44,10 +42,6 @@ class ScatterChart extends React.Component {
     style: {},
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   state = {
     activeTooltipCoord: { x: 0, y: 0 },

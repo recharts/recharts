@@ -26,7 +26,7 @@ export default React.createClass({
         <p>LineChart with two y-axes</p>
         <div className='line-chart-wrapper' style={{padding: 40}}>
           <LineChart width={400} height={400} data={data}
-            margin={{top: 5, right: 20, left: 10, bottom: 5}}>
+            margin={{top: 5, right: 30, left: 30, bottom: 5}}>
             <XAxis dataKey='name'/>
             <Tooltip/>
             <CartesianGrid stroke='#f5f5f5'/>
@@ -52,7 +52,8 @@ export default React.createClass({
 
         <p>LineChart of vertical layout</p>
         <div className='line-chart-wrapper' style={{margin: 40}}>
-          <LineChart width={400} height={400} data={data} layout='vertical'>
+          <LineChart width={400} height={400} data={data} layout='vertical'
+            margin={{top: 5, right: 20, left: 20, bottom: 5}}>
             <YAxis type='category' dataKey='name'/>
             <XAxis type='number' xAxisId={0} orient='top'/>
             <XAxis type='number' xAxisId={1} orient='bottom'/>

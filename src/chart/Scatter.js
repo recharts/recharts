@@ -75,7 +75,6 @@ class Scatter extends React.Component {
   renderCircles() {
     const { points, className, onMouseEnter, ...others } = this.props;
     const { activeIndex } = this.state;
-
     return points.map((entry, i) => {
       const { payload, r, ...rest } = entry;
 

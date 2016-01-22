@@ -13,8 +13,6 @@ class RadialBarChart extends React.Component {
 
   static displayName = 'RadialBarChart';
 
-  displayName = 'RadialBarChart';
-
   static propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
@@ -57,10 +55,6 @@ class RadialBarChart extends React.Component {
     style: {},
     margin: { top: 0, right: 0, bottom: 0, left: 0 },
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   state = {
     activeTooltipLabel: '',

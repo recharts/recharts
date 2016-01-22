@@ -32,7 +32,7 @@ class Brush extends React.Component {
     height: 40,
     burshWidth: 5,
     fill: '#fff',
-    stroke: '#8884d8',
+    stroke: '#666',
   };
 
   constructor(props) {
@@ -250,7 +250,7 @@ class Brush extends React.Component {
   }
 
   renderSlide(startX, endX) {
-    const { y, height } = this.props;
+    const { y, height, stroke } = this.props;
 
     return (
       <rect
@@ -259,7 +259,8 @@ class Brush extends React.Component {
         onMouseDown={::this.handleSlideDown}
         style={{ cursor: 'move' }}
         stroke="none"
-        fill="#e5e5f7"
+        fill={stroke}
+        fillOpacity={0.2}
         x={Math.min(startX, endX)}
         y={y}
         width={Math.abs(endX - startX)}

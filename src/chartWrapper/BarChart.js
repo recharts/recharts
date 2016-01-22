@@ -21,12 +21,6 @@ class BarChart extends CartesianChart {
     layout: 'horizontal',
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
-
-  displayName = 'BarChart';
-
-  constructor(props) {
-    super(props);
-  }
     /**
    * Compose the data of each group
    * @param  {Array}  barPosition The offset and size of each bar

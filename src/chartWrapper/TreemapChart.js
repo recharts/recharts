@@ -25,11 +25,6 @@ class TreemapChart extends React.Component {
     stroke: '#000',
   };
 
-
-  constructor(props) {
-    super(props);
-  }
-
   pad(node) {
     return { x: node.x, y: node.y, width: node.width, height: node.height };
   }
