@@ -22,6 +22,7 @@ class Area extends React.Component {
     xAxisId: PropTypes.number,
     legendType: PropTypes.string,
     formatter: PropTypes.func,
+    label: PropTypes.string,
 
     fill: PropTypes.string,
     stroke: PropTypes.string,

@@ -21,6 +21,7 @@ class Scatter extends React.Component {
     zAxisId: PropTypes.number,
     line: PropTypes.oneOfType([PropTypes.bool, PropTypes.object, PropTypes.element]),
     lineType: PropTypes.oneOf(['fitting', 'joint']),
+    className: PropTypes.string,
 
     points: PropTypes.arrayOf(PropTypes.shape({
       cx: PropTypes.number,
@@ -101,7 +102,7 @@ class Scatter extends React.Component {
 
     if (lineType === 'joint') {
       linePoints = points.map(entry => {
-        return { x: entry.cx, y: entry.cy};
+        return { x: entry.cx, y: entry.cy };
       });
     }
     const lineProps = {
