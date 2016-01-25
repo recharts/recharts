@@ -91,14 +91,16 @@ class Line extends React.Component {
   }
 
   renderDots() {
-    const { dot, points, isAnimationActive } = this.props;
-    const lineProps = ReactUtils.getPresentationAttributes(this.props);
-    const customDotProps = ReactUtils.getPresentationAttributes(dot);
-    const isDotElement = React.isValidElement(dot);
+    const { isAnimationActive } = this.props;
 
     if (isAnimationActive && !this.state.isAnimationFinished) {
       return null;
     }
+
+    const { dot, points } = this.props;
+    const lineProps = ReactUtils.getPresentationAttributes(this.props);
+    const customDotProps = ReactUtils.getPresentationAttributes(dot);
+    const isDotElement = React.isValidElement(dot);
 
     const dots = points.map((entry, i) => {
       const dotProps = {

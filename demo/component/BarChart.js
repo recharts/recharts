@@ -167,8 +167,8 @@ export default React.createClass({
             <XAxis dataKey='name'/>
             <YAxis/>
             <CartesianGrid vertical={false}/>
-            <Bar dataKey='uv' fill='#ff7300'/>
-            <Bar dataKey='pv' fill='#387908'/>
+            <Bar dataKey='uv' fill='#ff7300' label/>
+            <Bar dataKey='pv' fill='#387908' label/>
           </BarChart>
         </div>
 
@@ -206,7 +206,7 @@ export default React.createClass({
 
         <p>BarChart of custom bar (1)</p>
         <div className='bar-chart-wrapper'>
-          <BarChart width={500} height={250} barOffset={0} data={data}  margin={{top: 20, right: 20, bottom: 0, left: 20}}>
+          <BarChart width={500} height={250} barCategoryGap={0} data={data}  margin={{top: 20, right: 20, bottom: 0, left: 20}}>
             <XAxis dataKey='name'/>
             <Bar dataKey='uv' barGap={0} fill='#ff7300' customContent={<CustomBar/>}/>
           </BarChart>
@@ -214,7 +214,7 @@ export default React.createClass({
 
         <p>BarChart of custom bar (2)</p>
         <div className='bar-chart-wrapper'>
-          <BarChart width={500} height={250} barOffset={0} data={data} margin={{top: 20, right: 20, bottom: 20, left: 20}}>
+          <BarChart width={500} height={250} barCategoryGap={0} data={data} margin={{top: 20, right: 20, bottom: 20, left: 20}}>
             <XAxis hasAxis={false} hasTick={false} dataKey='name' customContent={<CustomAxis />}/>
             <Bar dataKey='uv' barGap={0} fill="#387908" customContent={<BarTwo/>} label/>
           </BarChart>

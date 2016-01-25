@@ -11,8 +11,8 @@ import ReactUtils from '../util/ReactUtils';
 import DOMUtils from '../util/DOMUtils';
 import LodashUtils from '../util/LodashUtils';
 
-import XAxis from './XAxis';
-import YAxis from './YAxis';
+import XAxis from '../chart/XAxis';
+import YAxis from '../chart/YAxis';
 import Tooltip from '../component/Tooltip';
 import Brush from '../component/Brush';
 import ReferenceLine from '../component/ReferenceLine';
@@ -42,7 +42,7 @@ class CartesianChart extends React.Component {
     stackType: PropTypes.oneOf(['value', 'percent']),
     title: PropTypes.string,
     style: PropTypes.object,
-    barOffset: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    barCategoryGap: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     barGap: PropTypes.number,
     barSize: PropTypes.number,
     children: PropTypes.oneOfType([
@@ -53,7 +53,7 @@ class CartesianChart extends React.Component {
 
   static defaultProps = {
     style: {},
-    barOffset: '10%',
+    barCategoryGap: '10%',
     barGap: 4,
     layout: 'horizontal',
     margin: { top: 5, right: 5, bottom: 5, left: 5 },

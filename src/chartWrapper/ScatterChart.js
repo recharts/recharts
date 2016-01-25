@@ -11,9 +11,9 @@ import Tooltip from '../component/Tooltip';
 import Scatter from '../chart/Scatter';
 
 import ReactUtils from '../util/ReactUtils';
-import XAxis from './XAxis';
-import YAxis from './YAxis';
-import ZAxis from './ZAxis';
+import XAxis from '../chart/XAxis';
+import YAxis from '../chart/YAxis';
+import ZAxis from '../chart/ZAxis';
 import Cross from '../shape/Cross';
 
 

@@ -5,7 +5,7 @@ import React, { PropTypes, Children } from 'react';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import pureRender from 'pure-render-decorator';
-import ReactUtils from '../util/ReactUtils';
+import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 import Animate from 're-animate';
 
 @pureRender
@@ -14,8 +14,12 @@ class Bar extends React.Component {
   static displayName = 'Bar';
 
   static propTypes = {
-    yAxisId: PropTypes.number,
+    ...PRESENTATION_ATTRIBUTES,
+
+    className: PropTypes.string,
+    layout: PropTypes.string,
     xAxisId: PropTypes.number,
+    yAxisId: PropTypes.number,
     barSize: PropTypes.number,
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -28,13 +32,6 @@ class Bar extends React.Component {
       PropTypes.object,
       PropTypes.element,
     ]),
-
-    fill: PropTypes.string,
-    stroke: PropTypes.string,
-    strokeWidth: PropTypes.number,
-    strokeDasharray: PropTypes.string,
-
-    className: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -49,8 +46,7 @@ class Bar extends React.Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
-    layout: PropTypes.string,
-    children: PropTypes.element,
+
     isAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
@@ -74,8 +70,12 @@ class Bar extends React.Component {
     animationEasing: 'ease',
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    isAnimationFinished: false,
+  };
+
+  handleAnimationEnd() {
+    this.setState({ isAnimationFinished: true });
   }
 
   renderRectangles() {
@@ -84,7 +84,6 @@ class Bar extends React.Component {
       className,
       customContent,
       layout,
-      children,
       isAnimationActive,
       animationBegin,
       animationDuration,
@@ -116,6 +115,7 @@ class Bar extends React.Component {
           from={getStyle(true)}
           to={getStyle(false)}
           key={'rectangle-' + index}
+          onAnimationEnd={::this.handleAnimationEnd}
         >
           <g style={{ transformOrigin }}>
             {
@@ -130,6 +130,12 @@ class Bar extends React.Component {
   }
 
   renderLabels() {
+    const { isAnimationActive } = this.props;
+
+    if (isAnimationActive && !this.state.isAnimationFinished) {
+      return null;
+    }
+
     const { data, label } = this.props;
     const barProps = ReactUtils.getPresentationAttributes(this.props);
     const customLabelProps = ReactUtils.getPresentationAttributes(label);
@@ -157,7 +163,7 @@ class Bar extends React.Component {
   }
 
   render() {
-    const { data, className, label, children } = this.props;
+    const { data, className, label } = this.props;
 
     if (!data || !data.length) {
       return null;

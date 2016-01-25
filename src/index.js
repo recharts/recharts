@@ -39,9 +39,9 @@ import Area from './chart/Area';
 import RadialBarChart from './chartWrapper/RadialBarChart';
 import RadialBar from './chart/RadialBar';
 
-import XAxis from './chartWrapper/XAxis';
-import YAxis from './chartWrapper/YAxis';
-import ZAxis from './chartWrapper/ZAxis';
+import XAxis from './chart/XAxis';
+import YAxis from './chart/YAxis';
+import ZAxis from './chart/ZAxis';
 
 export {
   // container

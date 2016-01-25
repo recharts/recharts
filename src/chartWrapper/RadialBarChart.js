@@ -29,11 +29,11 @@ class RadialBarChart extends React.Component {
     innerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     outerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     // The offset radius between two categorys
-    barOffsetRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    barCategoryGap: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     // The gap radius of two radial bar in one category
-    barGapRadius: PropTypes.number,
+    barGap: PropTypes.number,
     // The radius of each radial bar
-    barRadius: PropTypes.number,
+    barSize: PropTypes.number,
 
     title: PropTypes.string,
     style: PropTypes.object,
@@ -50,8 +50,8 @@ class RadialBarChart extends React.Component {
   static defaultProps = {
     innerRadius: '30%',
     outerRadius: '100%',
-    barGapRadius: 2,
-    barOffsetRadius: '10%',
+    barGap: 2,
+    barCategoryGap: '10%',
     style: {},
     margin: { top: 0, right: 0, bottom: 0, left: 0 },
   };
@@ -105,12 +105,12 @@ class RadialBarChart extends React.Component {
    * @return {Object} The size of all groups
    */
   getRadiusList(items) {
-    const { barRadius } = this.props;
+    const { barSize } = this.props;
 
     return items.map((child) => {
       return {
         ...child.props,
-        barRadius: child.props.barRadius || barRadius,
+        barSize: child.props.barSize || barSize,
       };
     });
   }
@@ -144,36 +144,36 @@ class RadialBarChart extends React.Component {
    * @return {Number} The size of each bar and the gap between two bars
    */
   getBarPosition(bandRadius, radiusList) {
-    const { barGapRadius, barOffsetRadius } = this.props;
+    const { barGap, barCategoryGap } = this.props;
     const len = radiusList.length;
     let result;
 
     // whether or not is barSize setted by user
-    if (len && radiusList[0].barRadius === +radiusList[0].barRadius) {
+    if (len && radiusList[0].barSize === +radiusList[0].barSize) {
       let sum = radiusList.reduce((res, entry) => {
-        return res + entry.barRadius;
+        return res + entry.barSize;
       }, 0);
-      sum += (len - 1) * barGapRadius;
+      sum += (len - 1) * barGap;
       const offset = -sum / 2 >> 0;
-      let prev = { offset: offset - barGapRadius, radius: 0 };
+      let prev = { offset: offset - barGap, radius: 0 };
 
       result = radiusList.reduce((res, entry) => {
         res[entry.dataKey] = {
-          offset: prev.offset + prev.radius + barGapRadius,
-          radius: entry.barRadius,
+          offset: prev.offset + prev.radius + barGap,
+          radius: entry.barSize,
         };
         prev = res[entry.dataKey];
 
         return res;
       }, {});
     } else {
-      let offset = LodashUtils.getPercentValue(barOffsetRadius, bandRadius);
-      const radius = (bandRadius - 2 * offset - (len - 1) * barGapRadius) / len >> 0;
-      offset = -Math.max(((radius * len + (len - 1) * barGapRadius) / 2) >> 0, 0);
+      let offset = LodashUtils.getPercentValue(barCategoryGap, bandRadius);
+      const radius = (bandRadius - 2 * offset - (len - 1) * barGap) / len >> 0;
+      offset = -Math.max(((radius * len + (len - 1) * barGap) / 2) >> 0, 0);
 
       result = radiusList.reduce((res, entry, i) => {
         res[entry.dataKey] = {
-          offset: offset + (radius + barGapRadius) * i,
+          offset: offset + (radius + barGap) * i,
           radius,
         };
 
