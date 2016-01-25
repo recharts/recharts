@@ -16,17 +16,11 @@ class BarChart extends CartesianChart {
 
   static defaultProps = {
     style: {},
-    barOffset: '10%',
+    barCategoryGap: '10%',
     barGap: 4,
     layout: 'horizontal',
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
-
-  displayName = 'BarChart';
-
-  constructor(props) {
-    super(props);
-  }
     /**
    * Compose the data of each group
    * @param  {Array}  barPosition The offset and size of each bar
@@ -86,7 +80,7 @@ class BarChart extends CartesianChart {
    * @return {Number} The size of each bar and the gap between two bars
    */
   getBarPosition(bandSize, sizeList) {
-    const { barGap, barOffset } = this.props;
+    const { barGap, barCategoryGap } = this.props;
     const len = sizeList.length;
     let result;
 
@@ -109,7 +103,7 @@ class BarChart extends CartesianChart {
         return res;
       }, {});
     } else {
-      const offset = LodashUtils.getPercentValue(barOffset, bandSize);
+      const offset = LodashUtils.getPercentValue(barCategoryGap, bandSize);
       const size = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
 
       result = sizeList.reduce((res, entry, i) => {

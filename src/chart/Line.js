@@ -6,7 +6,7 @@ import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import pureRender from 'pure-render-decorator';
-import ReactUtils from '../util/ReactUtils';
+import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 import { findDOMNode } from 'react-dom';
 import Animate from 're-animate';
 
@@ -25,10 +25,7 @@ class Line extends React.Component {
     legendType: PropTypes.string,
     formatter: PropTypes.func,
 
-    fill: PropTypes.string,
-    stroke: PropTypes.string,
-    strokeWidth: PropTypes.number,
-    strokeDasharray: PropTypes.string,
+    ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
      // whether have dot in line
     dot: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
@@ -94,14 +91,16 @@ class Line extends React.Component {
   }
 
   renderDots() {
-    const { dot, points, isAnimationActive } = this.props;
-    const lineProps = ReactUtils.getPresentationAttributes(this.props);
-    const customDotProps = ReactUtils.getPresentationAttributes(dot);
-    const isDotElement = React.isValidElement(dot);
+    const { isAnimationActive } = this.props;
 
     if (isAnimationActive && !this.state.isAnimationFinished) {
       return null;
     }
+
+    const { dot, points } = this.props;
+    const lineProps = ReactUtils.getPresentationAttributes(this.props);
+    const customDotProps = ReactUtils.getPresentationAttributes(dot);
+    const isDotElement = React.isValidElement(dot);
 
     const dots = points.map((entry, i) => {
       const dotProps = {

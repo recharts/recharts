@@ -62,6 +62,18 @@ const PRESENTATION_ATTRIBUTES = {
   'wordSpacing': PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   'writingMode': PropTypes.oneOf(['lr-tb', 'rl-tb', 'tb-rl', 'lr', 'rl', 'tb', 'inherit']),
 };
+const EVENT_ATTRIBUTES = {
+  onActivate: PropTypes.func,
+  onClick: PropTypes.func,
+  onFocusin: PropTypes.func,
+  onFocusout: PropTypes.func,
+  onload: PropTypes.func,
+  onMouseDown: PropTypes.func,
+  onMouseMove: PropTypes.func,
+  onMouseOut: PropTypes.func,
+  onMouseOver: PropTypes.func,
+  onMouseUp: PropTypes.func,
+};
 
 export default {
   PRESENTATION_ATTRIBUTES,
@@ -118,8 +130,8 @@ export default {
     return newChildren;
   },
   /**
-   * get all the attribute of svg element
-   * @param  {Object} el An react element
+   * get all the presentation attribute of svg element
+   * @param  {Object} el A react element or the props of a react element
    * @return {Object}    attributes or null
    */
   getPresentationAttributes(el) {
@@ -129,6 +141,25 @@ export default {
 
     for (const key in props) {
       if (props.hasOwnProperty(key) && PRESENTATION_ATTRIBUTES[key]) {
+        if (!result) {result = {};}
+        result[key] = props[key];
+      }
+    }
+
+    return result;
+  },
+  /**
+   * get all the event attribute of svg element
+   * @param  {Object} el A react element or the props of a react element
+   * @return {Object}    attributes or null
+   */
+  getEventAttributes(el) {
+    if (!el) {return null;}
+    const props = React.isValidElement(el) ? el.props : el;
+    let result = null;
+
+    for (const key in props) {
+      if (props.hasOwnProperty(key) && EVENT_ATTRIBUTES[key]) {
         if (!result) {result = {};}
         result[key] = props[key];
       }

@@ -11,16 +11,14 @@ import Tooltip from '../component/Tooltip';
 import Scatter from '../chart/Scatter';
 
 import ReactUtils from '../util/ReactUtils';
-import XAxis from './XAxis';
-import YAxis from './YAxis';
-import ZAxis from './ZAxis';
+import XAxis from '../chart/XAxis';
+import YAxis from '../chart/YAxis';
+import ZAxis from '../chart/ZAxis';
 import Cross from '../shape/Cross';
 
 
 class ScatterChart extends React.Component {
   static displayName = 'ScatterChart';
-
-  displayName = 'ScatterChart';
 
   static propTypes = {
     width: PropTypes.number.isRequired,
@@ -44,10 +42,6 @@ class ScatterChart extends React.Component {
     style: {},
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   state = {
     activeTooltipCoord: { x: 0, y: 0 },

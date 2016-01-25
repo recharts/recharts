@@ -11,8 +11,8 @@ import ReactUtils from '../util/ReactUtils';
 import DOMUtils from '../util/DOMUtils';
 import LodashUtils from '../util/LodashUtils';
 
-import XAxis from './XAxis';
-import YAxis from './YAxis';
+import XAxis from '../chart/XAxis';
+import YAxis from '../chart/YAxis';
 import Tooltip from '../component/Tooltip';
 import Brush from '../component/Brush';
 import ReferenceLine from '../component/ReferenceLine';
@@ -42,7 +42,7 @@ class CartesianChart extends React.Component {
     stackType: PropTypes.oneOf(['value', 'percent']),
     title: PropTypes.string,
     style: PropTypes.object,
-    barOffset: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    barCategoryGap: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     barGap: PropTypes.number,
     barSize: PropTypes.number,
     children: PropTypes.oneOfType([
@@ -53,15 +53,11 @@ class CartesianChart extends React.Component {
 
   static defaultProps = {
     style: {},
-    barOffset: '10%',
+    barCategoryGap: '10%',
     barGap: 4,
     layout: 'horizontal',
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   state = {
     dataStartIndex: 0,
@@ -354,6 +350,7 @@ class CartesianChart extends React.Component {
    */
   getFormatAxisMap(axisMap, offset, axisType) {
     const { width, height, layout } = this.props;
+    const displayName = this.constructor.displayName;
     const ids = Object.keys(axisMap);
     const steps = {
       left: offset.left,
@@ -378,7 +375,7 @@ class CartesianChart extends React.Component {
 
       if (type === 'number') {
         scale = D3Scale.linear().domain(domain).range(range);
-      } else if (this.displayName === 'LineChart' || this.displayName === 'AreaChart') {
+      } else if (displayName === 'LineChart' || displayName === 'AreaChart') {
         scale = D3Scale.point().domain(domain).range(range);
       } else {
         scale = D3Scale.band().domain(domain).range(range);

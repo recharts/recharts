@@ -2,9 +2,13 @@
  * @fileOverview Render sectors of a pie
  */
 import React, { PropTypes } from 'react';
+import Layer from '../container/Layer';
 import Sector from '../shape/Sector';
+import Curve from '../shape/Curve';
 import pureRender from 'pure-render-decorator';
 import raf, { cancel as caf } from 'raf';
+import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+const RADIAN = Math.PI / 180;
 
 @pureRender
 class Pie extends React.Component {
@@ -12,6 +16,8 @@ class Pie extends React.Component {
   static displayName = 'Pie';
 
   static propTypes = {
+    ...PRESENTATION_ATTRIBUTES,
+    className: PropTypes.string,
     cx: PropTypes.number,
     cy: PropTypes.number,
     startAngle: PropTypes.number,
@@ -24,11 +30,9 @@ class Pie extends React.Component {
     })),
     minAngle: PropTypes.number,
     legendType: PropTypes.string,
-    className: PropTypes.string,
-    fill: PropTypes.string,
-    stroke: PropTypes.string,
-    strokeWidth: PropTypes.number,
-    strokeDasharray: PropTypes.string,
+    label: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
+
+
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
@@ -113,13 +117,13 @@ class Pie extends React.Component {
 
         prev = {
           ...entry,
-          fill: entry.fill,
           cx,
           cy,
           innerRadius,
           outerRadius,
           startAngle: clockWise ? _startAngle : _endAngle,
           endAngle: clockWise ? _endAngle : _startAngle,
+          payload: entry,
         };
 
         return prev;
@@ -178,8 +182,60 @@ class Pie extends React.Component {
     );
   }
 
-  renderSectors() {
-    const sectors = this.getSectors();
+  getTextAnchor(x, cx) {
+    if (x > cx) {
+      return 'start';
+    } else if (x < cx) {
+      return 'end';
+    }
+
+    return 'middle';
+  }
+
+  renderLabels(sectors) {
+    const { label } = this.props;
+    const pieProps = ReactUtils.getPresentationAttributes(this.props);
+    const customLabelProps = ReactUtils.getPresentationAttributes(label);
+    const isLabelElement = React.isValidElement(label);
+    const offsetRadius = (customLabelProps && customLabelProps.offsetRadius) || 20;
+
+    const labels = sectors.map((entry, i) => {
+      const midAngle = -RADIAN * (entry.startAngle + entry.endAngle) / 2;
+      const x = entry.cx + (entry.outerRadius + offsetRadius) * Math.cos(midAngle);
+      const y = entry.cy + (entry.outerRadius + offsetRadius) * Math.sin(midAngle);
+      const labelProps = {
+        ...pieProps,
+        ...entry,
+        stroke: 'none',
+        ...customLabelProps,
+        index: i,
+        textAnchor: this.getTextAnchor(x, entry.cx),
+        x, y,
+      };
+      const lineProps = {
+        ...pieProps,
+        ...entry,
+        fill: 'none',
+        stroke: entry.fill,
+        ...customLabelProps,
+        points: [{
+          x: entry.cx + entry.outerRadius * Math.cos(midAngle),
+          y: entry.cy + entry.outerRadius * Math.sin(midAngle),
+        }, {x, y}],
+      };
+
+      return isLabelElement ? React.cloneElement(label, {labelProps, key: `label-${i}`}) : (
+        <g key={`label-${i}`}>
+          <Curve {...lineProps} type="linear" className="recharts-cursor"/>
+          <text {...labelProps}>{entry.value}</text>
+        </g>
+      );
+    });
+
+    return <Layer className="recharts-layer-line-labels">{labels}</Layer>;
+  }
+
+  renderSectors(sectors) {
     const { onMouseLeave, onClick } = this.props;
 
     return sectors.map((entry, i) => {
@@ -196,7 +252,7 @@ class Pie extends React.Component {
   }
 
   render() {
-    const { data, className } = this.props;
+    const { data, className, label } = this.props;
 
     if (!this.id) {
       this.id = 'clipPath' + Date.now();
@@ -206,12 +262,15 @@ class Pie extends React.Component {
       return null;
     }
 
+    const sectors = this.getSectors();
+
     return (
       <g className={'layer-pie ' + (className || '')}>
         {this.renderClipPath()}
         <g clipPath={`url(#${this.id})`}>
-        {this.renderSectors()}
+        {this.renderSectors(sectors)}
         </g>
+        {label && this.renderLabels(sectors)}
       </g>
     );
   }

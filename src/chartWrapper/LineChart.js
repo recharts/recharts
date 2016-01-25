@@ -7,9 +7,11 @@ import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Line from '../chart/Line';
 import Curve from '../shape/Curve';
+import Dot from '../shape/Dot';
 
 
 class LineChart extends CartesianChart {
+
   static displayName = 'LineChart';
 
   static defaultProps = {
@@ -17,10 +19,6 @@ class LineChart extends CartesianChart {
     layout: 'horizontal',
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
-
-  constructor(props) {
-    super(props);
-  }
   /**
    * Compose the data of each group
    * @param  {Object} xAxis   The configuration of x-axis
@@ -43,7 +41,7 @@ class LineChart extends CartesianChart {
   }
   /**
    * Handler of mouse entering line chart
-   * @param {String} key  The unique key of a group of data
+   * @param {String}       key The unique key of a group of data
    * @return {Object} no return
    */
   handleLineMouseEnter(key) {
@@ -59,33 +57,6 @@ class LineChart extends CartesianChart {
     this.setState({
       activeLineKey: null,
     });
-  }
-  /**
-   * Draw the main part of bar chart
-   * @param  {Array} items     All the instance of Bar
-   * @param  {Object} xAxisMap The configuration of all x-axes
-   * @param  {Object} yAxisMap The configuration of all y-axes
-   * @param  {Object} offset   The offset of main part in the svg element
-   * @return {ReactComponent}  All the instances of Line
-   */
-  renderItems(items, xAxisMap, yAxisMap, offset) {
-    const { activeLineKey } = this.state;
-
-    return items.map((child, i) => {
-      const { xAxisId, yAxisId, dataKey, strokeWidth } = child.props;
-
-      let finalStrokeWidth = strokeWidth === +strokeWidth ? strokeWidth : 1;
-      finalStrokeWidth = activeLineKey === dataKey ? finalStrokeWidth + 2 : finalStrokeWidth;
-
-      return React.cloneElement(child, {
-        key: 'line-' + i,
-        ...offset,
-        strokeWidth: finalStrokeWidth,
-        onMouseLeave: ::this.handleLineMouseLeave,
-        onMouseEnter: this.handleLineMouseEnter.bind(this, dataKey),
-        points: this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey),
-      });
-    }, this);
   }
 
   renderCursor(xAxisMap, yAxisMap, offset) {
@@ -114,6 +85,52 @@ class LineChart extends CartesianChart {
     return React.isValidElement(tooltipItem.props.cursor) ?
           React.cloneElement(tooltipItem.props.cursor, cursorProps) :
           <Curve {...cursorProps} type="linear" className="recharts-cursor"/>;
+  }
+
+  /**
+   * Draw the main part of bar chart
+   * @param  {Array} items     All the instance of Bar
+   * @param  {Object} xAxisMap The configuration of all x-axes
+   * @param  {Object} yAxisMap The configuration of all y-axes
+   * @param  {Object} offset   The offset of main part in the svg element
+   * @return {ReactComponent}  All the instances of Line
+   */
+  renderItems(items, xAxisMap, yAxisMap, offset) {
+    const { children } = this.props;
+    const { activeLineKey, isTooltipActive, activeTooltipIndex } = this.state;
+    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+    const hasDot = tooltipItem && isTooltipActive;
+    const dotItems = [];
+
+    const lineItems = items.map((child, i) => {
+      const { xAxisId, yAxisId, dataKey, strokeWidth, stroke } = child.props;
+      const points = this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey);
+      const activePoint = points[activeTooltipIndex];
+      const pointStyle = { fill: stroke, strokeWidth: 2, stroke: '#fff' };
+
+      let finalStrokeWidth = strokeWidth === +strokeWidth ? strokeWidth : 1;
+      finalStrokeWidth = activeLineKey === dataKey ? finalStrokeWidth + 2 : finalStrokeWidth;
+
+      if (hasDot && activePoint) {
+        dotItems.push(<Dot key={'area-dot-' + i} cx={activePoint.x} cy={activePoint.y} r={4} {...pointStyle}/>);
+      }
+
+      return React.cloneElement(child, {
+        key: 'line-' + i,
+        ...offset,
+        strokeWidth: finalStrokeWidth,
+        onMouseLeave: ::this.handleLineMouseLeave,
+        onMouseEnter: this.handleLineMouseEnter.bind(this, dataKey),
+        points,
+      });
+    }, this);
+
+    return (
+      <g key="recharts-line-wrapper">
+        <g key="recharts-line">{lineItems}</g>
+        <g key="recharts-line-dot">{dotItems}</g>
+      </g>
+    );
   }
 
   render() {
