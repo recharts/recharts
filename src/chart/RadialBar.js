@@ -6,7 +6,7 @@ import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
 import LodashUtils from '../util/LodashUtils';
 import DOMUtils from '../util/DOMUtils';
-import ReactUtils from '../util/ReactUtils';
+import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 import pureRender from 'pure-render-decorator';
 
 const RADIAN = Math.PI / 180;
@@ -17,12 +17,9 @@ class RadialBar extends React.Component {
   static displayName = 'RadialBar';
 
   static propTypes = {
-    fill: PropTypes.string,
-    stroke: PropTypes.string,
-    strokeWidth: PropTypes.number,
-    strokeDasharray: PropTypes.string,
+    ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
-    component: PropTypes.object,
+    customElement: PropTypes.object,
 
     cx: PropTypes.number,
     cy: PropTypes.number,
@@ -38,7 +35,6 @@ class RadialBar extends React.Component {
       outerRadius: PropTypes.number,
       value: PropTypes.value,
     })),
-    barRadius: PropTypes.number,
     legendType: PropTypes.string,
 
     label: PropTypes.oneOfType([
@@ -60,8 +56,6 @@ class RadialBar extends React.Component {
     maxAngle: 135,
     minAngle: 0,
     clockWise: true,
-    innerRadius: 0,
-    outerRadius: 0,
     stroke: '#fff',
     fill: '#808080',
     data: [],
@@ -69,10 +63,6 @@ class RadialBar extends React.Component {
     onMouseEnter() {},
     onMouseLeave() {},
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   getSectors() {
     const { cx, cy, startAngle,
@@ -132,12 +122,12 @@ class RadialBar extends React.Component {
 
 
   renderSectors(sectors) {
-    const { className, component, data, ...others } = this.props;
+    const { className, customElement, data, ...others } = this.props;
 
     return sectors.map((entry, i) => {
       const { value, ...rest } = entry;
 
-      return component ? React.cloneElement(component, {
+      return customElement ? React.cloneElement(customElement, {
         ...others, ...rest,
         key: 'sector-' + i,
       }) : React.createElement(Sector, {

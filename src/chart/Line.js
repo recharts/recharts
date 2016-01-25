@@ -16,6 +16,8 @@ class Line extends React.Component {
   static displayName = 'Line';
 
   static propTypes = {
+    ...PRESENTATION_ATTRIBUTES,
+    className: PropTypes.string,
     type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -25,8 +27,6 @@ class Line extends React.Component {
     legendType: PropTypes.string,
     formatter: PropTypes.func,
 
-    ...PRESENTATION_ATTRIBUTES,
-    className: PropTypes.string,
      // whether have dot in line
     dot: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
     label: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
@@ -39,7 +39,6 @@ class Line extends React.Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
-    layout: PropTypes.string,
     isAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
@@ -58,7 +57,6 @@ class Line extends React.Component {
     onClick() {},
     onMouseEnter() {},
     onMouseLeave() {},
-    layout: 'vertical',
     isAnimationActive: true,
     animationBegin: 0,
     animationDuration: 1500,

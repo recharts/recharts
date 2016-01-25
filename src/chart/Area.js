@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
-import ReactUtils from '../util/ReactUtils';
+import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 import pureRender from 'pure-render-decorator';
 
 @pureRender
@@ -14,6 +14,8 @@ class Area extends React.Component {
   static displayName = 'Area';
 
   static propTypes = {
+    ...PRESENTATION_ATTRIBUTES,
+    className: PropTypes.string,
     type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -22,15 +24,9 @@ class Area extends React.Component {
     xAxisId: PropTypes.number,
     legendType: PropTypes.string,
     formatter: PropTypes.func,
-    label: PropTypes.string,
-
-    fill: PropTypes.string,
-    stroke: PropTypes.string,
-    strokeWidth: PropTypes.number,
-    strokeDasharray: PropTypes.string,
-    className: PropTypes.string,
     // dot configuration
     dot: PropTypes.oneOfType([PropTypes.element, PropTypes.object, PropTypes.bool]),
+    label: PropTypes.oneOfType([PropTypes.element, PropTypes.object, PropTypes.bool]),
     // have curve configuration
     curve: PropTypes.bool,
     baseLineType: PropTypes.oneOf(['horizontal', 'vertical', 'curve']),
@@ -58,6 +54,7 @@ class Area extends React.Component {
     // points of area
     points: [],
     dot: false,
+    label: false,
     curve: true,
     onClick() {},
     onMouseEnter() {},

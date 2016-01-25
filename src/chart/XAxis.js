@@ -16,7 +16,7 @@ class XAxis extends React.Component {
     xAxisId: PropTypes.number,
     // The key of data displayed in the axis
     dataKey: PropTypes.string,
-    // The width of axis which is usually calculated in Chart
+    // The width of axis which is usually calculated internally
     width: PropTypes.number,
     // The height of axis, which need to be setted by user
     height: PropTypes.number,

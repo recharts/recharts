@@ -18,7 +18,7 @@ class Brush extends React.Component {
     height: PropTypes.number.isRequired,
     data: PropTypes.array,
 
-    burshWidth: PropTypes.number,
+    travellerWidth: PropTypes.number,
     start: PropTypes.number,
     end: PropTypes.number,
 
@@ -30,7 +30,7 @@ class Brush extends React.Component {
     y: 0,
     width: 0,
     height: 40,
-    burshWidth: 5,
+    travellerWidth: 5,
     fill: '#fff',
     stroke: '#666',
   };
@@ -44,13 +44,13 @@ class Brush extends React.Component {
       const endIndex = props.end === +props.end ? props.end : len - 1;
 
       this.scale = D3Scale.point().domain(LodashUtils.range(0, len))
-                    .range([props.x, props.x + props.width - props.burshWidth]);
+                    .range([props.x, props.x + props.width - props.travellerWidth]);
       this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
 
       this.state = {
         isTextActive: false,
         isSlideMoving: false,
-        isBrushMoving: false,
+        isTravellerMoving: false,
         startIndex, endIndex,
         startX: this.scale(startIndex),
         endX: this.scale(endIndex),
@@ -103,8 +103,8 @@ class Brush extends React.Component {
       this._leaveTimer = null;
     }
 
-    if (this.state.isBrushMoving) {
-      this.handleBrushMove(e);
+    if (this.state.isTravellerMoving) {
+      this.handleTravellerMove(e);
     } else if (this.state.isSlideMoving) {
       this.handleSlideMove(e);
     }
@@ -112,24 +112,24 @@ class Brush extends React.Component {
 
   handleUp() {
     this.setState({
-      isBrushMoving: false,
+      isTravellerMoving: false,
       isSlideMoving: false,
     });
   }
 
   handleLeaveWrapper() {
-    if (this.state.isBrushMoving || this.state.isSlideMoving) {
+    if (this.state.isTravellerMoving || this.state.isSlideMoving) {
       this._leaveTimer = setTimeout(::this.handleUp, 1000);
     }
   }
 
-  handleEnterSlideOrBrush() {
+  handleEnterSlideOrTraveller() {
     this.setState({
       isTextActive: true,
     });
   }
 
-  handleLeaveSlideOrBrush() {
+  handleLeaveSlideOrTraveller() {
     this.setState({
       isTextActive: false,
     });
@@ -137,7 +137,7 @@ class Brush extends React.Component {
 
   handleSlideDown(e) {
     this.setState({
-      isBrushMoving: false,
+      isTravellerMoving: false,
       isSlideMoving: true,
       slideMoveStartX: e.pageX,
     });
@@ -145,11 +145,11 @@ class Brush extends React.Component {
 
   handleSlideMove(e) {
     const { slideMoveStartX, startX, endX } = this.state;
-    const { x, width, burshWidth, onBrushChange } = this.props;
+    const { x, width, travellerWidth, onBrushChange } = this.props;
     let delta = e.pageX - slideMoveStartX;
 
     if (delta > 0) {
-      delta = Math.min(delta, x + width - burshWidth - endX, x + width - burshWidth - startX);
+      delta = Math.min(delta, x + width - travellerWidth - endX, x + width - travellerWidth - startX);
     } else if (delta < 0) {
       delta = Math.max(delta, x - startX, x - endX);
     }
@@ -170,34 +170,34 @@ class Brush extends React.Component {
     });
   }
 
-  handleBrushDown(id, e) {
+  handleTravellerDown(id, e) {
     this.setState({
       isSlideMoving: false,
-      isBrushMoving: true,
-      movingBrushId: id,
+      isTravellerMoving: true,
+      movingTravellerId: id,
       brushMoveStartX: e.pageX,
     });
   }
 
-  handleBrushMove(e) {
-    const { brushMoveStartX, movingBrushId } = this.state;
-    const prevValue = this.state[movingBrushId];
-    const { x, width, burshWidth, onBrushChange } = this.props;
+  handleTravellerMove(e) {
+    const { brushMoveStartX, movingTravellerId } = this.state;
+    const prevValue = this.state[movingTravellerId];
+    const { x, width, travellerWidth, onBrushChange } = this.props;
 
     const params = { startX: this.state.startX, endX: this.state.endX };
     let delta = e.pageX - brushMoveStartX;
 
     if (delta > 0) {
-      delta = Math.min(delta, x + width - burshWidth - prevValue);
+      delta = Math.min(delta, x + width - travellerWidth - prevValue);
     } else if (delta < 0) {
       delta = Math.max(delta, x - prevValue);
     }
 
-    params[movingBrushId] = prevValue + delta;
+    params[movingTravellerId] = prevValue + delta;
     const newIndex = this.getIndex(params);
 
     this.setState({
-      [movingBrushId]: prevValue + delta,
+      [movingTravellerId]: prevValue + delta,
       brushMoveStartX: e.pageX,
       ...newIndex,
     }, () => {
@@ -222,29 +222,29 @@ class Brush extends React.Component {
     );
   }
 
-  renderBrush(startX, id) {
-    const { y, burshWidth, height, stroke } = this.props;
+  renderTraveller(startX, id) {
+    const { y, travellerWidth, height, stroke } = this.props;
     const lineY = Math.floor(y + height / 2) - 1;
     const x = Math.max(startX, this.props.x);
 
     return (
       <Layer
         className="layer-brush"
-        onMouseEnter={::this.handleEnterSlideOrBrush}
-        onMouseLeave={::this.handleLeaveSlideOrBrush}
-        onMouseDown={this.handleBrushDown.bind(this, id)}
+        onMouseEnter={::this.handleEnterSlideOrTraveller}
+        onMouseLeave={::this.handleLeaveSlideOrTraveller}
+        onMouseDown={this.handleTravellerDown.bind(this, id)}
         style={{ cursor: 'col-resize' }}
       >
         <rect
           x={x}
           y={y}
-          width={burshWidth}
+          width={travellerWidth}
           height={height}
           fill={stroke}
           stroke="none"
         />
-        <line x1={x + 1} y1={lineY} x2={x + burshWidth - 1} y2={lineY} fill="none" stroke="#fff"/>
-        <line x1={x + 1} y1={lineY + 2} x2={x + burshWidth - 1} y2={lineY + 2} fill="none" stroke="#fff"/>
+        <line x1={x + 1} y1={lineY} x2={x + travellerWidth - 1} y2={lineY} fill="none" stroke="#fff"/>
+        <line x1={x + 1} y1={lineY + 2} x2={x + travellerWidth - 1} y2={lineY + 2} fill="none" stroke="#fff"/>
       </Layer>
     );
   }
@@ -254,8 +254,8 @@ class Brush extends React.Component {
 
     return (
       <rect
-        onMouseEnter={::this.handleEnterSlideOrBrush}
-        onMouseLeave={::this.handleLeaveSlideOrBrush}
+        onMouseEnter={::this.handleEnterSlideOrTraveller}
+        onMouseLeave={::this.handleLeaveSlideOrTraveller}
         onMouseDown={::this.handleSlideDown}
         style={{ cursor: 'move' }}
         stroke="none"
@@ -270,7 +270,7 @@ class Brush extends React.Component {
   }
 
   renderText() {
-    const { data, y, height, burshWidth, stroke } = this.props;
+    const { data, y, height, travellerWidth, stroke } = this.props;
     const { startIndex, endIndex, startX, endX } = this.state;
     const offset = 5;
     const style = {
@@ -283,7 +283,7 @@ class Brush extends React.Component {
         <text textAnchor="end" style={style} dy={offset} x={Math.min(startX, endX) - offset} y={y + height / 2}>
           {data[startIndex]}
         </text>
-        <text textAnchor="start" style={style} dy={offset} x={Math.max(startX, endX) + burshWidth + offset} y={y + height / 2}>
+        <text textAnchor="start" style={style} dy={offset} x={Math.max(startX, endX) + travellerWidth + offset} y={y + height / 2}>
           {data[endIndex]}
         </text>
       </Layer>
@@ -291,8 +291,8 @@ class Brush extends React.Component {
   }
 
   render() {
-    const { x, width, burshWidth, data, className } = this.props;
-    const { startX, endX, isTextActive, isSlideMoving, isBrushMoving } = this.state;
+    const { x, width, travellerWidth, data, className } = this.props;
+    const { startX, endX, isTextActive, isSlideMoving, isTravellerMoving } = this.state;
 
     if (!data || !data.length) {return null;}
 
@@ -304,9 +304,9 @@ class Brush extends React.Component {
       >
         {this.renderBackground()}
         {this.renderSlide(startX, endX)}
-        {this.renderBrush(startX, 'startX')}
-        {this.renderBrush(endX, 'endX')}
-        {(isTextActive || isSlideMoving || isBrushMoving) && this.renderText()}
+        {this.renderTraveller(startX, 'startX')}
+        {this.renderTraveller(endX, 'endX')}
+        {(isTextActive || isSlideMoving || isTravellerMoving) && this.renderText()}
       </Layer>
     );
   }
