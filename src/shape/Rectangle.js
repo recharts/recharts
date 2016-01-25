@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
+import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 
 @pureRender
 class Rectangle extends React.Component {
@@ -7,6 +8,8 @@ class Rectangle extends React.Component {
   static displayName = 'Rectangle';
 
   static propTypes = {
+    ...PRESENTATION_ATTRIBUTES,
+    className: PropTypes.string,
     x: PropTypes.number,
     y: PropTypes.number,
     width: PropTypes.number,
@@ -15,11 +18,6 @@ class Rectangle extends React.Component {
       PropTypes.number,
       PropTypes.array,
     ]),
-    fill: PropTypes.string,
-    stroke: PropTypes.string,
-    strokeWidth: PropTypes.number,
-    strokeDasharray: PropTypes.string,
-    className: PropTypes.string,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
@@ -94,7 +92,7 @@ class Rectangle extends React.Component {
   render() {
     const { x, y, width, height, radius,
         onClick, onMouseEnter, onMouseLeave,
-        className, ...others } = this.props;
+        className } = this.props;
 
     if (x !== +x || y !== +y || width !== +width || height !== +height) {
       return null;
@@ -102,7 +100,7 @@ class Rectangle extends React.Component {
 
     return (
       <path
-        {...others}
+        {...ReactUtils.getPresentationAttributes(this.props)}
         className={'recharts-rectangle ' + (className || '')}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}

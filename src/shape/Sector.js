@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
+import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 const RADIAN = Math.PI / 180;
 
 @pureRender
@@ -8,17 +9,14 @@ class Sector extends React.Component {
   static displayName = 'Sector';
 
   static propTypes = {
+    ...PRESENTATION_ATTRIBUTES,
+    className: PropTypes.string,
     cx: PropTypes.number,
     cy: PropTypes.number,
     innerRadius: PropTypes.number,
     outerRadius: PropTypes.number,
     startAngle: PropTypes.number,
     endAngle: PropTypes.number,
-    fill: PropTypes.string,
-    stroke: PropTypes.string,
-    strokeWidth: PropTypes.number,
-    strokeDasharray: PropTypes.string,
-    className: PropTypes.string,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
@@ -35,10 +33,6 @@ class Sector extends React.Component {
     onMouseLeave() {},
     onClick() {},
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   getPath(cx, cy, innerRadius, outerRadius, startAngle, endAngle) {
     const angle = endAngle - startAngle;
@@ -66,8 +60,7 @@ class Sector extends React.Component {
 
   render() {
     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle,
-          onClick, onMouseEnter, onMouseLeave, className,
-          ...others } = this.props;
+          onClick, onMouseEnter, onMouseLeave, className, } = this.props;
 
     if (outerRadius < innerRadius || startAngle === endAngle) {
       return null;
@@ -75,7 +68,7 @@ class Sector extends React.Component {
 
     return (
       <path
-        {...others}
+        {...ReactUtils.getPresentationAttributes(this.props)}
         className={'recharts-sector' + (className || '')}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}

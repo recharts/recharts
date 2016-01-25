@@ -19,10 +19,10 @@ class Brush extends React.Component {
     data: PropTypes.array,
 
     travellerWidth: PropTypes.number,
-    start: PropTypes.number,
-    end: PropTypes.number,
+    defaultStartIndex: PropTypes.number,
+    defaultEndIndex: PropTypes.number,
 
-    onBrushChange: PropTypes.func,
+    onChange: PropTypes.func,
   };
 
   static defaultProps = {
@@ -40,8 +40,8 @@ class Brush extends React.Component {
 
     if (props.data && props.data.length) {
       const len = props.data.length;
-      const startIndex = props.start === +props.start ? props.start : 0;
-      const endIndex = props.end === +props.end ? props.end : len - 1;
+      const startIndex = props.defaultStartIndex === +props.defaultStartIndex ? props.defaultStartIndex : 0;
+      const endIndex = props.defaultEndIndex === +props.defaultEndIndex ? props.defaultEndIndex : len - 1;
 
       this.scale = D3Scale.point().domain(LodashUtils.range(0, len))
                     .range([props.x, props.x + props.width - props.travellerWidth]);
@@ -145,7 +145,7 @@ class Brush extends React.Component {
 
   handleSlideMove(e) {
     const { slideMoveStartX, startX, endX } = this.state;
-    const { x, width, travellerWidth, onBrushChange } = this.props;
+    const { x, width, travellerWidth, onChange } = this.props;
     let delta = e.pageX - slideMoveStartX;
 
     if (delta > 0) {
@@ -164,8 +164,8 @@ class Brush extends React.Component {
       slideMoveStartX: e.pageX,
       ...newIndex,
     }, () => {
-      if (onBrushChange) {
-        onBrushChange(newIndex);
+      if (onChange) {
+        onChange(newIndex);
       }
     });
   }
@@ -182,7 +182,7 @@ class Brush extends React.Component {
   handleTravellerMove(e) {
     const { brushMoveStartX, movingTravellerId } = this.state;
     const prevValue = this.state[movingTravellerId];
-    const { x, width, travellerWidth, onBrushChange } = this.props;
+    const { x, width, travellerWidth, onChange } = this.props;
 
     const params = { startX: this.state.startX, endX: this.state.endX };
     let delta = e.pageX - brushMoveStartX;
@@ -201,8 +201,8 @@ class Brush extends React.Component {
       brushMoveStartX: e.pageX,
       ...newIndex,
     }, () => {
-      if (onBrushChange) {
-        onBrushChange(newIndex);
+      if (onChange) {
+        onChange(newIndex);
       }
     });
   }

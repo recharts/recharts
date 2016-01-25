@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import DOMUtils from '../util/DOMUtils';
 import pureRender from 'pure-render-decorator';
+import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 
 @pureRender
 class CartesianAxis extends React.Component {
@@ -8,6 +9,7 @@ class CartesianAxis extends React.Component {
   static displayName = 'CartesianAxis';
 
   static propTypes = {
+    ...PRESENTATION_ATTRIBUTES,
     x: PropTypes.number,
     y: PropTypes.number,
     width: PropTypes.number,
@@ -19,11 +21,14 @@ class CartesianAxis extends React.Component {
       width: PropTypes.number,
       height: PropTypes.number,
     }),
-    customContent: PropTypes.element,
+    label: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.object,
+      PropTypes.element,
+    ]),
 
-    stroke: PropTypes.string,
-    hasAxis: PropTypes.bool,
-    hasTick: PropTypes.bool,
+    axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
+    tickLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
 
     minLabelGap: PropTypes.number,
     ticks: PropTypes.arrayOf(PropTypes.shape({
@@ -47,18 +52,15 @@ class CartesianAxis extends React.Component {
     ticks: [],
 
     stroke: '#666',
-    hasTick: true,
-    hasAxis: true,
+    tickLine: true,
+    axisLine: true,
+    label: true,
 
     minLabelGap: 5,
     // The width or height of tick
     tickSize: 6,
     interval: 'auto',
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   static getTicks(props) {
     const { ticks, viewBox, minLabelGap, orient, interval } = props;
@@ -198,67 +200,64 @@ class CartesianAxis extends React.Component {
     return dy;
   }
 
-  renderAxis() {
-    const { x, y, width, height, orient, stroke } = this.props;
-    let axis;
+  renderAxisLine() {
+    const { x, y, width, height, orient, stroke, axisLine } = this.props;
+    let props = { stroke, ...ReactUtils.getPresentationAttributes(axisLine)};
 
     switch (orient) {
       case 'top':
-        axis = <line className="axis-line" stroke={stroke} x1={x} y1={y + height} x2={x + width} y2={y + height}/>;
+        props = { ...props, x1: x, y1: y + height, x2: x + width, y2: y + height };
         break;
       case 'left':
-        axis = <line className="axis-line" stroke={stroke} x1={x + width} y1={y} x2={x + width} y2={y + height}/>;
+        props = { ...props, x1: x + width, y1: y, x2: x + width, y2: y + height };
         break;
       case 'right':
-        axis = <line className="axis-line" stroke={stroke} x1={x} y1={y} x2={x} y2={y + height}/>;
+        props = { ...props, x1: x, y1: y, x2: x, y2: y + height };
         break;
       default:
-        axis = <line className="axis-line" stroke={stroke} x1={x} y1={y} x2={x + width} y2={y}/>;
+        props = { ...props, x1: x, y1: y, x2: x + width, y2: y };
         break;
     }
 
-    return axis;
+    return <line className="axis-line" {...props}/>;
   }
 
   renderTicks() {
-    const { ticks, tickFormatter, hasTick, stroke, customContent } = this.props;
+    const { ticks, tickFormatter, tickLine, stroke, label } = this.props;
 
     if (!ticks || !ticks.length) { return null; }
 
     const finalTicks = CartesianAxis.getTicks(this.props);
 
     const textAnchor = this.getTickTextAnchor();
+    const axisProps = ReactUtils.getPresentationAttributes(this.props);
+    const customLabelProps = ReactUtils.getPresentationAttributes(label);
+    const isLabelElement = React.isValidElement(label);
+    const tickLineProps = ReactUtils.getPresentationAttributes(tickLine);
 
     const items = finalTicks.map((entry, i) => {
       const lineCoord = this.getTickLineCoord(entry);
+      const tickProps = { stroke, ...tickLineProps, ...lineCoord, }
+      const labelProps = {
+        dy: this.getDy(entry),
+        textAnchor,
+        ...axisProps,
+        stroke: 'none',
+        fill: stroke,
+        ...customLabelProps,
+        index: i,
+        x: lineCoord.x1,
+        y: lineCoord.y1,
+        payload: entry,
+      };
 
       return (
         <g className="axis-tick" key={'tick-' + i}>
-          {hasTick && (
-            <line
-              className="tick-line"
-              stroke={stroke}
-              x1={lineCoord.x1}
-              y1={lineCoord.y1}
-              x2={lineCoord.x2}
-              y2={lineCoord.y2}
-            />
-          )}
-          {React.isValidElement(customContent) ? React.cloneElement(customContent, {
-            ...entry,
-            x: lineCoord.x1,
-            y: lineCoord.y1,
-            index: i,
-          }) : (<text
-            fill={stroke}
-            dy={this.getDy(entry)}
-            x={lineCoord.x1}
-            y={lineCoord.y1}
-            textAnchor={textAnchor}
-            className="tick-value"
-          >
-            {tickFormatter ? tickFormatter(entry.value) : entry.value}
-          </text>
+          {tickLine && <line className="tick-line" {...tickProps}/>}
+          {isLabelElement ? React.cloneElement(label, labelProps) : (
+            <text {...labelProps} className="tick-value">
+              {tickFormatter ? tickFormatter(entry.value) : entry.value}
+            </text>
           )}
         </g>
       );
@@ -272,7 +271,7 @@ class CartesianAxis extends React.Component {
   }
 
   render() {
-    const { hasAxis, width, height, ticks } = this.props;
+    const { axisLine, width, height, ticks } = this.props;
 
     if (width <= 0 || height <= 0 || !ticks || !ticks.length) {
       return null;
@@ -280,7 +279,7 @@ class CartesianAxis extends React.Component {
 
     return (
       <g className="layer-axis layer-cartesian-axis">
-        {hasAxis && this.renderAxis()}
+        {axisLine && this.renderAxisLine()}
         {this.renderTicks()}
       </g>
     );

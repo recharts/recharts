@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
+import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 
 @pureRender
 class ReferenceLine extends React.Component {
@@ -7,10 +8,13 @@ class ReferenceLine extends React.Component {
   static displayName = 'ReferenceLine';
 
   static propTypes = {
-    x: PropTypes.number,
-    y: PropTypes.number,
-    width: PropTypes.number,
-    height: PropTypes.number,
+    ...PRESENTATION_ATTRIBUTES,
+    viewBox: PropTypes.shape({
+      x: PropTypes.number,
+      y: PropTypes.number,
+      width: PropTypes.number,
+      height: PropTypes.number,
+    }),
 
     xAxisMap: PropTypes.object,
     yAxisMap: PropTypes.object,
@@ -20,12 +24,6 @@ class ReferenceLine extends React.Component {
 
     yAxisId: PropTypes.number,
     xAxisId: PropTypes.number,
-
-    strokeWidth: PropTypes.number,
-    stroke: PropTypes.string,
-    fill: PropTypes.string,
-    fillOpacity: PropTypes.number,
-    strokeOpacity: PropTypes.number,
   };
 
   static defaultProps = {
@@ -36,13 +34,9 @@ class ReferenceLine extends React.Component {
     strokeWidth: 1,
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   getEndPoints() {
-    const { xAxisMap, yAxisMap, type, value, xAxisId, yAxisId,
-          x, y, width, height } = this.props;
+    const { xAxisMap, yAxisMap, type, value, xAxisId, yAxisId, viewBox } = this.props;
+    const { x, y, width, height } = viewBox;
     let coord;
 
     if (type === 'horizontal') {
@@ -57,22 +51,20 @@ class ReferenceLine extends React.Component {
   }
 
   render() {
-    const { type, value, fill, stroke, fillOpacity, strokeOpacity } = this.props;
+    const { type, value } = this.props;
     if (!type || value !== +value) { return null; }
 
     const [start, end] = this.getEndPoints();
+    const props = ReactUtils.getPresentationAttributes(this.props);
 
     return (
       <line
+        {...props}
         className="recharts-reference-line"
         x1={start.x}
         y1={start.y}
         x2={end.x}
         y2={end.y}
-        fill={fill}
-        stroke={stroke}
-        fillOpacity={fillOpacity}
-        strokeOpacity={strokeOpacity}
       />
     );
   }

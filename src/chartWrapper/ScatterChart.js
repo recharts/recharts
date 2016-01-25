@@ -332,21 +332,20 @@ class ScatterChart extends React.Component {
     const { children } = this.props;
     const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
 
-    if (!tooltipItem) {
+    if (!tooltipItem || !tooltipItem.props.cursor || !this.state.isTooltipActive) {
       return null;
     }
 
-    const { chartX, chartY, isTooltipActive,
-          activeItem, activeTooltipCoord } = this.state;
-    const scope = {
-      x1: offset.left,
-      x2: offset.left + offset.width,
-      y1: offset.top,
-      y2: offset.top + offset.height,
+    const { chartX, chartY, activeItem, activeTooltipCoord } = this.state;
+    const viewBox = {
+      x: offset.left,
+      y: offset.top,
+      width: offset.width,
+      height: offset.height,
     };
 
     return React.cloneElement(tooltipItem, {
-      scope,
+      viewBox,
       active: isTooltipActive,
       label: '',
       data: this.getTooltipContent(activeItem && activeItem.payload, xAxis, yAxis, zAxis),

@@ -38,10 +38,10 @@ const BarTwo = React.createClass({
 
 const CustomAxis = React.createClass({
   getIcon () {
-    const {x, y, value} = this.props;
+    const {x, y, payload} = this.props;
     let icon;
 
-    switch(value) {
+    switch(payload.value) {
       case 'food':
         icon = (
           <svg x={x - 10} y={y} width={20} height={20} version="1.1" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 1024 1024">
@@ -76,12 +76,12 @@ const CustomAxis = React.createClass({
   },
 
   render () {
-    const {x, y, value} = this.props;
+    const {x, y, payload} = this.props;
 
     return (
       <g>
         {this.getIcon()}
-        <text textAnchor='middle' x={x} y={y} dy={34}>{value}</text>
+        <text textAnchor='middle' x={x} y={y} dy={34}>{payload.value}</text>
       </g>
     )
   }
@@ -215,7 +215,7 @@ export default React.createClass({
         <p>BarChart of custom bar (2)</p>
         <div className='bar-chart-wrapper'>
           <BarChart width={500} height={250} barCategoryGap={0} data={data} margin={{top: 20, right: 20, bottom: 20, left: 20}}>
-            <XAxis hasAxis={false} hasTick={false} dataKey='name' customContent={<CustomAxis />}/>
+            <XAxis axisLine={false} tickLine={false} dataKey='name' label={<CustomAxis />}/>
             <Bar dataKey='uv' barGap={0} fill="#387908" customContent={<BarTwo/>} label/>
           </BarChart>
         </div>

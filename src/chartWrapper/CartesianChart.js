@@ -751,15 +751,15 @@ class CartesianChart extends React.Component {
 
     const { chartX, chartY, isTooltipActive,
           activeTooltipLabel, activeTooltipCoord } = this.state;
-    const scope = {
-      x1: offset.left,
-      x2: offset.left + offset.width,
-      y1: offset.top,
-      y2: offset.top + offset.height,
+    const viewBox = {
+      x: offset.left,
+      y: offset.top,
+      width: offset.width,
+      height: offset.height,
     };
 
     return React.cloneElement(tooltipItem, {
-      scope,
+      viewBox,
       active: isTooltipActive,
       label: activeTooltipLabel,
       data: isTooltipActive ? this.getTooltipContent(items) : [],
@@ -779,7 +779,7 @@ class CartesianChart extends React.Component {
     const height = (brushItem.props.height || Brush.defaultProps.height) + 1;
 
     return React.cloneElement(brushItem, {
-      onBrushChange: ::this.handleBrushChange,
+      onChange: ::this.handleBrushChange,
       data: data.map(entry => entry[dataKey]),
       x: offset.left,
       y: offset.top + offset.height + offset.bottom - height,
@@ -798,10 +798,12 @@ class CartesianChart extends React.Component {
       return React.cloneElement(entry, {
         key: 'reference-line-' + i,
         xAxisMap, yAxisMap,
-        x: offset.left,
-        y: offset.top,
-        width: offset.width,
-        height: offset.height,
+        viewBox: {
+          x: offset.left,
+          y: offset.top,
+          width: offset.width,
+          height: offset.height,
+        },
       });
     });
 

@@ -11,11 +11,11 @@ class Tooltip extends React.Component {
 
   static propTypes = {
     customContent: PropTypes.element,
-    scope: PropTypes.shape({
-      x1: PropTypes.number,
-      x2: PropTypes.number,
-      y1: PropTypes.number,
-      y2: PropTypes.number,
+    viewBox: PropTypes.shape({
+      x: PropTypes.number,
+      y: PropTypes.number,
+      width: PropTypes.number,
+      height: PropTypes.number,
     }),
 
     active: PropTypes.bool,
@@ -44,18 +44,15 @@ class Tooltip extends React.Component {
   static defaultProps = {
     active: false,
     offset: 10,
-    scope: { x1: 0, x2: 0, y1: 0, y2: 0 },
+    viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
     coordinate: { x: 0, y: 0 },
     cursorStyle: {},
     separator: ' : ',
     wrapperStyle: {},
     itemStyle: {},
     labelStyle: {},
+    cursor: true,
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   getTooltipBBox(wrapperStyle) {
     const { customContent } = this.props;
@@ -78,8 +75,7 @@ class Tooltip extends React.Component {
   }
 
   render() {
-    const { customContent, scope, coordinate, active,
-        label, labelStyle, offset } = this.props;
+    const { customContent, viewBox, coordinate, active, offset } = this.props;
 
     const outerStyle = {
       pointerEvents: 'none',
@@ -89,13 +85,13 @@ class Tooltip extends React.Component {
     const box = this.getTooltipBBox(outerStyle);
 
     outerStyle.left = Math.max(
-      coordinate.x + box.width + offset > scope.x2 ?
+      coordinate.x + box.width + offset > (viewBox.x + viewBox.width) ?
       coordinate.x - box.width - offset :
-      coordinate.x + offset, scope.x1);
+      coordinate.x + offset, viewBox.x);
     outerStyle.top = Math.max(
-      coordinate.y + box.height + offset > scope.y2 ?
+      coordinate.y + box.height + offset > (viewBox.y  + viewBox.height) ?
       coordinate.y - box.height - offset :
-      coordinate.y + offset, scope.y1);
+      coordinate.y + offset, viewBox.x);
 
     return (
       <div className="recharts-tooltip-wrapper" style={outerStyle}>

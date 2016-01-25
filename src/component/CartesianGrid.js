@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
-import createFragment from 'react-addons-create-fragment';
 import pureRender from 'pure-render-decorator';
+import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 
 @pureRender
 class CartesianGrid extends React.Component {
@@ -8,6 +8,7 @@ class CartesianGrid extends React.Component {
   static displayName = 'CartesianGrid';
 
   static propTypes = {
+    ...PRESENTATION_ATTRIBUTES,
     x: PropTypes.number,
     y: PropTypes.number,
     width: PropTypes.number,
@@ -16,8 +17,6 @@ class CartesianGrid extends React.Component {
     vertical: PropTypes.bool,
     horizontalPoints: PropTypes.arrayOf(PropTypes.number),
     verticalPoints: PropTypes.arrayOf(PropTypes.number),
-
-    fill: PropTypes.string,
   };
 
   static defaultProps = {
@@ -35,57 +34,38 @@ class CartesianGrid extends React.Component {
     stroke: '#ccc',
     fill: 'none',
   };
-
-  constructor(props) {
-    super(props);
-  }
   /**
    * Draw the horizontal grid lines
    * @return {Group} Horizontal lines
    */
   renderHorizontal() {
-    const { x, y, width, height, horizontal, vertical, horizontalPoints,
-        verticalPoints, ...others } = this.props;
+    const { x, width,  horizontalPoints } = this.props;
 
     if (!horizontalPoints || !horizontalPoints.length) { return null; }
 
-    const items = {};
+    const props = ReactUtils.getPresentationAttributes(this.props);
+    const items = horizontalPoints.map((entry, i) => {
+      return <line {...props} key={'line-' + i} x1={x} y1={entry} x2={x + width} y2={entry}/>
+    });
 
-    horizontalPoints.reduce((result, entry, i) => {
-      items['line-' + i] = (
-        <line key={'line-' + i} {...others} x1={x} y1={entry} x2={x + width} y2={entry}></line>
-      );
-    }, items);
-
-    return (
-      <g className="layer-grid-horizontal">
-        {createFragment(items)}
-      </g>
-    );
+    return <g className="layer-grid-horizontal">{items}</g>;
   }
   /**
    * Draw vertical grid lines
    * @return {Group} Vertical lines
    */
   renderVertical() {
-    const { x, y, width, height, horizontal, vertical,
-         horizontalPoints, verticalPoints, ...others } = this.props;
+    const { y, height, verticalPoints } = this.props;
 
     if (!verticalPoints || !verticalPoints.length) { return null; }
 
-    const items = {};
+    const props = ReactUtils.getPresentationAttributes(this.props);
 
-    verticalPoints.reduce((result, entry, i) => {
-      items['line-' + i] = (
-        <line key={'line-' + i} {...others} x1={entry} y1={y} x2={entry} y2={y + height}></line>
-      );
-    }, items);
+    const items = verticalPoints.map((entry, i) => {
+      return <line {...props} key={'line-' + i} x1={entry} y1={y} x2={entry} y2={y + height}/>
+    });
 
-    return (
-      <g className="layer-grid-vertical">
-        {createFragment(items)}
-      </g>
-    );
+    return <g className="layer-grid-vertical">{items}</g>;
   }
 
   render() {

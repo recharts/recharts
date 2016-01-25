@@ -63,7 +63,7 @@ class LineChart extends CartesianChart {
     const { children } = this.props;
     const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
 
-    if (!tooltipItem || !this.state.isTooltipActive) {return null;}
+    if (!tooltipItem || !tooltipItem.props.cursor || !this.state.isTooltipActive) {return null;}
 
     const { layout } = this.props;
     const { activeTooltipIndex } = this.state;

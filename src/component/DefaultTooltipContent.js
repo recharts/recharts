@@ -76,7 +76,7 @@ class DefaultTooltipContent extends React.Component {
 
     return (
       <div className="recharts-default-tooltip" style={finalStyle}>
-        <p className="tooltip-label" style={finalLabelStyle}>{label}</p>
+        <p className="tooltip-label" style={finalLabelStyle}>{label || ''}</p>
         {this.renderContent()}
       </div>
     );

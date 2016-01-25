@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import d3Shape from 'd3-shape';
 import pureRender from 'pure-render-decorator';
+import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 
 @pureRender
 class Curve extends React.Component {
@@ -8,12 +9,9 @@ class Curve extends React.Component {
   static displayName = 'Curve';
 
   static propTypes = {
-    type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
-    fill: PropTypes.string,
-    stroke: PropTypes.string,
-    strokeWidth: PropTypes.number,
-    strokeDasharray: PropTypes.string,
+    ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
+    type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
@@ -61,7 +59,7 @@ class Curve extends React.Component {
 
   render() {
     const { className, points, type, onClick,
-        onMouseEnter, onMouseLeave, ...others } = this.props;
+        onMouseEnter, onMouseLeave } = this.props;
 
     if (!points || !points.length) {
       return null;
@@ -69,7 +67,7 @@ class Curve extends React.Component {
 
     return (
       <path
-        {...others}
+        {...ReactUtils.getPresentationAttributes(this.props)}
         className={'recharts-curve' + (className || '')}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
