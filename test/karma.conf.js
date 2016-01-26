@@ -36,6 +36,7 @@ module.exports = function(config) {
       devtool: 'inline-source-map',
       module: {
         noParse: [
+          /node_modules\/sinon\//,
           /node_modules\/re-animate\/lib\/index\.js/,
           /node_modules\/recharts-scale\/node_modules\/ramda\/dist\/ramda\.js/,
         ],
@@ -43,23 +44,33 @@ module.exports = function(config) {
           test: /\.js$/,
           include: /src|test|recharts/,
           exclude: /node_modules/,
-          loader: 'babel'
+          loader: 'babel',
         }, {
           test: /\.jsx?$/,
           include: /node_modules\/recharts-scale/,
-          loader: 'babel'
+          loader: 'babel',
+        }, {
+          test: /\.json$/,
+          loader: 'json',
         }],
         postLoaders: [{
           test: /\.js$/,
           include: /src/,
           exclude: /node_modules/,
-          loader: 'istanbul-instrumenter'
+          loader: 'istanbul-instrumenter',
         }]
+      },
+      externals: {
+        'jsdom': 'window',
+        'react/lib/ExecutionEnvironment': true,
+        'react/lib/ReactContext': 'window',
+        'text-encoding': 'window',
       },
       resolve: {
         alias: {
+          'sinon': 'sinon/pkg/sinon',
           'recharts': path.resolve('./src/index.js'),
-          'recharts-scale': path.resolve('./node_modules/recharts-scale/index.js')
+          'recharts-scale': path.resolve('./node_modules/recharts-scale/index.js'),
         }
       },
       stats: {
