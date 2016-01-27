@@ -75,7 +75,8 @@ class Line extends React.Component {
       return;
     }
 
-    const totalLength = findDOMNode(this.refs.curve).getTotalLength() || 0;
+    const curveDom = findDOMNode(this.refs.curve);
+    const totalLength = (curveDom && curveDom.getTotalLength && curveDom.getTotalLength()) || 0;
 
     this.setState({ totalLength });
   }

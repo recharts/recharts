@@ -29,7 +29,7 @@ class Surface extends React.Component {
 
     return (
       <svg
-        className={`recharts-surface ${className || ''}-surface`}
+        className={`recharts-surface ${className || ''}`}
         width={width}
         height={height}
         style={style}

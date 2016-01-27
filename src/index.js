@@ -39,6 +39,8 @@ import Area from './chart/Area';
 import RadialBarChart from './chartWrapper/RadialBarChart';
 import RadialBar from './chart/RadialBar';
 
+import ComposedChart from './chartWrapper/ComposedChart';
+
 import XAxis from './chart/XAxis';
 import YAxis from './chart/YAxis';
 import ZAxis from './chart/ZAxis';
@@ -65,6 +67,7 @@ export {
   ScatterChart, Scatter,
   RadialBarChart, RadialBar,
   TreemapChart,
+  ComposedChart,
 
   XAxis, YAxis, ZAxis,
 };

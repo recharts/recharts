@@ -513,16 +513,22 @@ class CartesianChart extends React.Component {
    * @return {Array}       The content of tooltip
    */
   getTooltipContent(items) {
-    const { activeLineKey, activeTooltipIndex, dataStartIndex, dataEndIndex } = this.state;
+    const { activeLineKey, activeBarKey, activeAreaKey, activeTooltipIndex, dataStartIndex, dataEndIndex } = this.state;
     const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
 
     if (activeTooltipIndex < 0 || !items || !items.length) {
       return null;
     }
 
-    const activeItems = activeLineKey ?
-            items.filter(item => item.props.dataKey === activeLineKey) :
-            items;
+    let activeItems = items;
+
+    if (activeLineKey) {
+      activeItems = items.filter(item => item.props.dataKey === activeLineKey && item.type.displayName === 'Line');
+    } else if (activeBarKey) {
+      activeItems = items.filter(item => item.props.dataKey === activeBarKey && item.type.displayName === 'Bar');
+    } else if (activeAreaKey) {
+      activeItems = items.filter(item => item.props.dataKey === activeAreaKey && item.type.displayName === 'Area');
+    }
 
     return activeItems.map((child) => {
       const { dataKey, name, unit, formatter } = child.props;

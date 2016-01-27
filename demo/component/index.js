@@ -17,6 +17,7 @@ import Triangle from './Triangle';
 import LineChart from './LineChart';
 import AreaChart from './AreaChart';
 import BarChart from './BarChart';
+import ComposedChart from './ComposedChart';
 import PieChart from './PieChart';
 import ScatterChart from './ScatterChart';
 import RadialBarChart from './RadialBarChart';
@@ -49,6 +50,7 @@ export default {
     LineChart,
     AreaChart,
     BarChart,
+    ComposedChart,
     ScatterChart,
     PieChart,
     RadialBarChart,

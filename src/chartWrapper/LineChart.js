@@ -106,8 +106,8 @@ class LineChart extends CartesianChart {
   }
 
   /**
-   * Draw the main part of bar chart
-   * @param  {Array} items     All the instance of Bar
+   * Draw the main part of line chart
+   * @param  {Array} items     All the instance of Line
    * @param  {Object} xAxisMap The configuration of all x-axes
    * @param  {Object} yAxisMap The configuration of all y-axes
    * @param  {Object} offset   The offset of main part in the svg element
