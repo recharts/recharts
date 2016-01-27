@@ -336,7 +336,7 @@ class ScatterChart extends React.Component {
       return null;
     }
 
-    const { chartX, chartY, activeItem, activeTooltipCoord } = this.state;
+    const { chartX, chartY, isTooltipActive, activeItem, activeTooltipCoord } = this.state;
     const viewBox = {
       x: offset.left,
       y: offset.top,
@@ -348,7 +348,7 @@ class ScatterChart extends React.Component {
       viewBox,
       active: isTooltipActive,
       label: '',
-      data: this.getTooltipContent(activeItem && activeItem.payload, xAxis, yAxis, zAxis),
+      payload: this.getTooltipContent(activeItem && activeItem.payload, xAxis, yAxis, zAxis),
       coordinate: activeTooltipCoord,
       mouseX: chartX,
       mouseY: chartY,
@@ -409,7 +409,7 @@ class ScatterChart extends React.Component {
 
     return React.cloneElement(legendItem, {
       width: offset.width,
-      data: legendData,
+      payload: legendData,
     });
   }
   /**

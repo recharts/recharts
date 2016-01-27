@@ -24,10 +24,6 @@ class ZAxis extends React.Component {
     range: [10, 10],
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return null;
   }

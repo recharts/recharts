@@ -42,10 +42,6 @@ class YAxis extends React.Component {
     type: 'number',
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return null;
   }

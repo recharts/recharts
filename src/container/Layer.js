@@ -14,10 +14,6 @@ class Layer extends React.Component {
     ]),
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { children, className, ...others } = this.props;
 

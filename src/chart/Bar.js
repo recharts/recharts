@@ -18,8 +18,9 @@ class Bar extends React.Component {
 
     className: PropTypes.string,
     layout: PropTypes.string,
-    xAxisId: PropTypes.number,
-    yAxisId: PropTypes.number,
+    xAxisId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    yAxisId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     barSize: PropTypes.number,
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

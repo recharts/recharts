@@ -16,7 +16,7 @@ class Legend extends React.Component {
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     align: PropTypes.oneOf(['center', 'left', 'right']),
     verticalAlign: PropTypes.oneOf(['top', 'bottom', 'middle']),
-    data: PropTypes.arrayOf(PropTypes.shape({
+    payload: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.any,
       id: PropTypes.any,
       type: PropTypes.oneOf(['line', 'scatter', 'square', 'rect']),
@@ -30,12 +30,9 @@ class Legend extends React.Component {
     layout: 'horizontal',
     align: 'center',
     verticalAlign: 'middle',
-    data: [],
+    payload: [],
   };
 
-  constructor(props) {
-    super(props);
-  }
   /**
    * Render the path of icon
    * @param {Object} data Data of each legend item
@@ -75,12 +72,12 @@ class Legend extends React.Component {
    * @return {ReactElement} Items
    */
   renderItems() {
-    const { data, iconSize, layout } = this.props;
+    const { payload, iconSize, layout } = this.props;
     const viewBox = { x: 0, y: 0, width: SIZE, height: SIZE };
     const itemStyle = { display: layout === 'horizontal' ? 'inline-block' : 'block', marginRight: 10 };
     const svgStyle = { display: 'inline-block', verticalAlign: 'middle', marginRight: 4 };
 
-    return data.map((entry, i) => {
+    return payload.map((entry, i) => {
       return (
         <li className={'legend-item legend-item-' + i} style={itemStyle} key={'legend-item-' + i}>
           <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
@@ -93,9 +90,9 @@ class Legend extends React.Component {
   }
 
   render() {
-    const { data, width, height, layout, align, wrapperStyle } = this.props;
+    const { payload, width, height, layout, align, wrapperStyle } = this.props;
 
-    if (!data || !data.length || width <= 0 || height <= 0) {
+    if (!payload || !payload.length || width <= 0 || height <= 0) {
       return null;
     }
     let finalStyle = {

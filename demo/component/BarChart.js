@@ -1,8 +1,26 @@
 import React, {PropTypes} from 'react';
-import {BarChart, Bar, Brush, CartesianGrid, ReferenceLine, XAxis, YAxis, Tooltip} from 'recharts';
+import {BarChart, Bar, Brush, CartesianGrid, ReferenceLine, XAxis, YAxis, Tooltip, Legend} from 'recharts';
 import ColorUtil from 'recharts-color-utils';
 
 let colors = ColorUtil.Palette('#ffc658', 'rectangle');
+
+const CustomLabel = React.createClass({
+  render() {
+    const { payload, x, y } = this.props;
+    return <text x={x} y={y} fill="#666" textAnchor="middle" dy={-4}>{payload.province}</text>;
+  }
+});
+const CustomAxisLabel = React.createClass({
+  render() {
+    const {x, y, payload} = this.props;
+
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">{payload.value}</text>
+      </g>
+    );
+  }
+});
 
 const CustomBar = React.createClass({
   getPath () {
@@ -158,9 +176,189 @@ export default React.createClass({
       {name: '201511', uv: 3.27, pv: 6.74},
     ];
 
+    const seller = [{
+      cate: '山核桃/坚果/炒货',
+      province: '安徽省',
+      searchIndex: 1839109.93076351,
+    }, {
+      cate: '饼干/膨化',
+      province: '广东省',
+      searchIndex: 622982.275649824,
+    }, {
+      cate: '巧克力',
+      province: '上海',
+      searchIndex: 585272.377090585,
+    }, {
+      cate: '蜜饯/枣类/梅/果干',
+      province: '浙江省',
+      searchIndex: 481116.468800108,
+    }, {
+      cate: '牛肉干/猪肉脯/卤味零食',
+      province: '浙江省',
+      searchIndex: 461574.227199966,
+    }, {
+      cate: '糖果零食/果冻/布丁',
+      province: '广东省',
+      searchIndex: 427609.867599949,
+    }, {
+      cate: '糕点/点心',
+      province: '浙江省',
+      searchIndex: 415203.625121803,
+    }, {
+      cate: '鱿鱼丝/鱼干/海味即食',
+      province: '山东省',
+      searchIndex: 269468.365197646,
+    }, {
+      cate: '巧克力/DIY巧克力',
+      province: '上海',
+      searchIndex: 254133.555933591,
+    }, {
+      cate: '奶酪/乳制品',
+      province: '内蒙古',
+      searchIndex: 189697.819664556,
+    }, {
+      cate: '豆干制品/蔬菜干',
+      province: '湖南省',
+      searchIndex: 187087.48618712,
+    }];
+    const buyer = [{
+      cate: '山核桃/坚果/炒货',
+      province: '浙江省',
+      searchIndex: 1023646.28804588,
+    }, {
+      cate: '蜜饯/枣类/梅/果干',
+      province: '广东省',
+      searchIndex: 509964.815068001,
+    }, {
+      cate: '饼干/膨化',
+      province: '广东省',
+      searchIndex: 505761.351335363,
+    }, {
+      cate: '牛肉干/猪肉脯/卤味零食',
+      province: '浙江省',
+      searchIndex: 498318.907475999,
+    }, {
+      cate: '糕点/点心',
+      province: '广东省',
+      searchIndex: 400880.029483245,
+    }, {
+      cate: '糖果零食/果冻/布丁',
+      province: '广东省',
+      searchIndex: 389512.213887801,
+    }, {
+      cate: '巧克力',
+      province: '广东省',
+      searchIndex: 273812.534948759,
+    }, {
+      cate: '鱿鱼丝/鱼干/海味即食',
+      province: '广东省',
+      searchIndex: 219422.496761267,
+    }, {
+      cate: '巧克力/DIY巧克力',
+      province: '广东省',
+      searchIndex: 159591.6597615,
+    }, {
+      cate: '豆干制品/蔬菜干',
+      province: '江苏省',
+      searchIndex: 156907.075080761,
+    }, {
+      cate: '奶酪/乳制品',
+      province: '福建省',
+      searchIndex: 61395.5046967385,
+    }];
+
+    const gender = [{
+      cate: '山核桃/坚果/炒货',
+      female: 4424855,
+      male: 2125194,
+      total: 6550049,
+    }, {
+      cate: '蜜饯/枣类/梅/果干',
+      female: 3074885,
+      male: 1286577,
+      total: 4361462,
+    }, {
+      cate: '饼干/膨化',
+      female: 2361883,
+      male: 988327,
+      total: 3350210,
+    }, {
+      cate: '糕点/点心',
+      female: 2052923,
+      male: 927169,
+      total: 2980092,
+    }, {
+      cate: '牛肉干/猪肉脯/卤味零食',
+      female: 1757580,
+      male: 897722,
+      total: 2655302,
+    }, {
+      cate: '糖果零食/果冻/布丁',
+      female: 1700489,
+      male: 712896,
+      total: 2413385,
+    }, {
+      cate: '鱿鱼丝/鱼干/海味即食',
+      female: 940808,
+      male: 408618,
+      total: 1349426,
+    }, {
+      cate: '豆干制品/蔬菜干',
+      female: 857907,
+      male: 389851,
+      total: 1247758,
+    }, {
+      cate: '巧克力',
+      female: 701143,
+      male: 341501,
+      total: 1042644,
+    }, {
+      cate: '巧克力/DIY巧克力',
+      female: 355727,
+      male: 166773,
+      total: 522500,
+    }, {
+      cate: '奶酪/乳制品',
+      female: 96403,
+      male: 41512,
+      total: 137915,
+    }];
+
 
     return (
       <div className='bar-charts'>
+        <p>Simple BarChart</p>
+        <div className='bar-chart-wrapper'>
+          <BarChart width={740} height={340} data={seller} margin={{top: 20, right: 20, bottom: 100, left: 80}}>
+            <XAxis dataKey='cate' interval={0} label={<CustomAxisLabel/>}/>
+            <YAxis label={false} hide/>
+            <CartesianGrid stroke="#f5f5f5"/>
+            <Bar dataKey='searchIndex' barSize={30} fill='#8884d8' label={<CustomLabel/>}/>
+          </BarChart>
+        </div>
+
+        <p>Simple BarChart</p>
+        <div className='bar-chart-wrapper'>
+          <BarChart width={740} height={340} data={buyer} margin={{top: 20, right: 20, bottom: 100, left: 80}}>
+            <XAxis dataKey='cate' interval={0} label={<CustomAxisLabel/>}/>
+            <YAxis label={false} hide/>
+            <CartesianGrid stroke="#f5f5f5"/>
+            <Bar dataKey='searchIndex' barSize={30} fill='#8884d8' label={<CustomLabel/>}/>
+          </BarChart>
+        </div>
+
+        <p>Simple BarChart</p>
+        <div className='bar-chart-wrapper'>
+          <BarChart width={740} height={340} data={gender} margin={{top: 20, right: 20, bottom: 100, left: 80}}>
+            <XAxis dataKey='cate' interval={0} label={<CustomAxisLabel/>}/>
+            <YAxis label={false} hide/>
+            <CartesianGrid stroke="#f5f5f5"/>
+            <Bar dataKey='male' name="男" fill='#8884d8' stackId={0}/>
+            <Bar dataKey='female' name="女" fill='#82ca9d' stackId={0}/>
+            <Legend layout="vertical" wrapperStyle={{right: 30, bottom: 120}} verticalAlign="top"/>
+          </BarChart>
+        </div>
+
         <p>Simple BarChart</p>
         <div className='bar-chart-wrapper'>
           <BarChart width={400} height={400} data={data}>

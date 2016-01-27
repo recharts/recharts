@@ -39,9 +39,6 @@ class PolarAngleAxis extends React.Component {
     tickSize: 6,
   };
 
-  constructor(props) {
-    super(props);
-  }
   /**
    * Calculate the coordinate of line endpoint
    * @param  {Object} data The Data if ticks

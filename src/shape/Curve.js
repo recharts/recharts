@@ -33,6 +33,12 @@ class Curve extends React.Component {
     onMouseEnter() {},
     onMouseLeave() {},
   };
+
+  getCurveFactory(type) {
+    const name = 'curve' + type.slice(0, 1).toUpperCase() + type.slice(1);
+
+    return d3Shape[name];
+  }
   /**
    * Calculate the path of curve
    * @return {String} path
@@ -42,7 +48,7 @@ class Curve extends React.Component {
     const l = d3Shape.line().x(p => p.x)
                     .y(p => p.y)
                     .defined(p => p.x && p.x === +p.x && p.y && p.y === + p.y)
-                    .curve(d3Shape[type]);
+                    .curve(this.getCurveFactory(type));
     const len = points.length;
     let curvePath = l(points);
 

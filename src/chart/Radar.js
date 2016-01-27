@@ -35,9 +35,6 @@ class Radar extends React.Component {
     data: [],
   };
 
-  constructor(props) {
-    super(props);
-  }
   /**
    * Calculate the radius of grid
    * @return {Array} The radius of grid

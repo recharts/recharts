@@ -61,10 +61,6 @@ class Area extends React.Component {
     onMouseLeave() {},
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   renderArea() {
     const { stroke, className, ...other } = this.props;
 

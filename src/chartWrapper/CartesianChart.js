@@ -732,7 +732,7 @@ class CartesianChart extends React.Component {
 
     return React.cloneElement(legendItem, {
       width: offset.width,
-      data: legendData,
+      payload: legendData,
     });
   }
   /**
@@ -762,7 +762,7 @@ class CartesianChart extends React.Component {
       viewBox,
       active: isTooltipActive,
       label: activeTooltipLabel,
-      data: isTooltipActive ? this.getTooltipContent(items) : [],
+      payload: isTooltipActive ? this.getTooltipContent(items) : [],
       coordinate: activeTooltipCoord,
       mouseX: chartX,
       mouseY: chartY,

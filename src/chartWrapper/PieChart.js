@@ -94,7 +94,7 @@ class PieChart extends React.Component {
 
     return React.cloneElement(legendItem, {
       width,
-      data: legendData,
+      payload: legendData,
     });
   }
 

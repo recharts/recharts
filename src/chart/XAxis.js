@@ -42,10 +42,6 @@ class XAxis extends React.Component {
     type: 'category',
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return null;
   }

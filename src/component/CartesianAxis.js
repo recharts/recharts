@@ -67,7 +67,7 @@ class CartesianAxis extends React.Component {
 
     if (!ticks || !ticks.length) { return [];}
 
-    return interval === +interval && interval >= 0
+    return interval === +interval
         ? CartesianAxis.getNumberIntervalTicks(ticks, interval)
         : CartesianAxis.getAutoIntervalTicks(ticks, viewBox, orient, minLabelGap);
   }
@@ -250,15 +250,21 @@ class CartesianAxis extends React.Component {
         y: lineCoord.y1,
         payload: entry,
       };
+      let labelItem;
+
+      if (label) {
+        labelItem = isLabelElement ? React.cloneElement(label, labelProps) : (
+          <text {...labelProps} className="tick-value">
+            {tickFormatter ? tickFormatter(entry.value) : entry.value}
+          </text>
+        );
+      }
+
 
       return (
         <g className="axis-tick" key={'tick-' + i}>
           {tickLine && <line className="tick-line" {...tickProps}/>}
-          {isLabelElement ? React.cloneElement(label, labelProps) : (
-            <text {...labelProps} className="tick-value">
-              {tickFormatter ? tickFormatter(entry.value) : entry.value}
-            </text>
-          )}
+          {label && labelItem}
         </g>
       );
     });

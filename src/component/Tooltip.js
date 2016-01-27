@@ -26,7 +26,7 @@ class Tooltip extends React.Component {
     itemStyle: PropTypes.object,
     labelStyle: PropTypes.object,
     wrapperStyle: PropTypes.object,
-    cursor: PropTypes.oneOfType([PropTypes.element, PropTypes.object]),
+    cursor: PropTypes.oneOfType([PropTypes.bool, PropTypes.element, PropTypes.object]),
 
     coordinate: PropTypes.shape({
       x: PropTypes.number,
@@ -34,7 +34,7 @@ class Tooltip extends React.Component {
     }),
 
     label: PropTypes.any,
-    data: PropTypes.arrayOf(PropTypes.shape({
+    payload: PropTypes.arrayOf(PropTypes.shape({
       key: PropTypes.any,
       value: PropTypes.number,
       unit: PropTypes.any,

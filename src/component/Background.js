@@ -22,10 +22,6 @@ class Background extends React.Component {
 
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { className, ...others } = this.props;
 

@@ -68,10 +68,6 @@ class Pie extends React.Component {
     animationDuration: 1500,
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   state = {
     endAngle: this.props.startAngle,
   };

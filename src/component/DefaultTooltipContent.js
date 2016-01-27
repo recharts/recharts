@@ -13,7 +13,7 @@ class DefaultTooltipContent extends React.Component {
     itemStyle: PropTypes.object,
     labelStyle: PropTypes.object,
     label: PropTypes.any,
-    data: PropTypes.arrayOf(PropTypes.shape({
+    payload: PropTypes.arrayOf(PropTypes.shape({
       key: PropTypes.any,
       value: PropTypes.number,
       unit: PropTypes.any,
@@ -26,16 +26,12 @@ class DefaultTooltipContent extends React.Component {
     labelStyle: {},
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   renderContent() {
-    const { data, separator, formatter, itemStyle } = this.props;
+    const { payload, separator, formatter, itemStyle } = this.props;
 
-    if (data && data.length) {
+    if (payload && payload.length) {
       const listStyle = { padding: 0, margin: 0 };
-      const items = data.map((entry, i) => {
+      const items = payload.map((entry, i) => {
         const finalItemStyle = {
           display: 'block',
           paddingTop: 4,

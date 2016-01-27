@@ -35,9 +35,6 @@ class PolarRadiusAxis extends React.Component {
     ticks: [],
   };
 
-  constructor(props) {
-    super(props);
-  }
   /**
    * Calculate the coordinate of tick
    * @param  {Object} data The data of a simple tick

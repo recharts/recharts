@@ -63,10 +63,6 @@ class Line extends React.Component {
     animationEasing: 'ease',
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   state = {
     isAnimationFinished: false,
     totalLength: 0,

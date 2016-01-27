@@ -222,7 +222,7 @@ class RadialBarChart extends React.Component {
     return React.cloneElement(legendItem, {
       width: legendItem.props.width || width,
       height: legendItem.props.height || height,
-      data: legendData,
+      payload: legendData,
     });
   }
 

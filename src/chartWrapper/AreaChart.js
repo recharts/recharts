@@ -119,10 +119,10 @@ class AreaChart extends CartesianChart {
       const composeData = this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey);
 
       const activePoint = composeData.points && composeData.points[activeTooltipIndex];
-      const pointStyle = { fill, strokeWidth: 4, stroke: '#fff' };
+      const pointStyle = { fill, strokeWidth: 2, stroke: '#fff' };
 
       if (hasDot && activePoint) {
-        dotItems.push(<Dot key={'area-dot-' + i} cx={activePoint.x} cy={activePoint.y} r={8} {...pointStyle}/>);
+        dotItems.push(<Dot key={'area-dot-' + i} cx={activePoint.x} cy={activePoint.y} r={4} {...pointStyle}/>);
       }
 
       let finalFillOpacity = fillOpacity === +fillOpacity ? fillOpacity : Area.defaultProps.fillOpacity;

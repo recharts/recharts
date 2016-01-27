@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "React charts",
   "main": "src/index.js",
   "keywords": [
@@ -24,7 +24,7 @@
   "dependencies": {
     "core-js": "^2.0.3",
     "d3-scale": "0.4.0",
-    "d3-shape": "0.2.2",
+    "d3-shape": "0.4.0",
     "ima.js-babel6-polyfill": "^0.1.0",
     "pure-render-decorator": "^0.2.0",
     "raf": "^3.1.0",

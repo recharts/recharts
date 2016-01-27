@@ -29,9 +29,6 @@ class RadarSecond extends React.Component {
     data: [],
   };
 
-  constructor(props) {
-    super(props);
-  }
   /**
    * Calculate the coordinate of vertexes
    * @return {Array} Array of coordinate

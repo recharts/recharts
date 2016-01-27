@@ -23,10 +23,6 @@ class Surface extends React.Component {
     ]),
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { children, width, height, viewBox, className, style } = this.props;
     const svgView = viewBox || { width, height, x: 0, y: 0 };

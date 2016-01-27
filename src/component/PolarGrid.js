@@ -36,9 +36,6 @@ class PolarGrid extends React.Component {
     concentricPathType: 'polygon',
   };
 
-  constructor(props) {
-    super(props);
-  }
   /**
    * Draw axis of radial line
    * @return {[type]} The lines

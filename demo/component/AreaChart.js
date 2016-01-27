@@ -4,7 +4,7 @@ import {AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid} from 'recharts';
 const CustomTooltip = React.createClass({
 
   render () {
-    const {active, data, external, label} = this.props;
+    const {active, payload, external, label} = this.props;
     if (active) {
       const style = {
         padding: 6,
@@ -15,7 +15,7 @@ const CustomTooltip = React.createClass({
 
       return (
         <div className='area-chart-tooltip' style={style}>
-          <p>{data[0].key + ' : '}<em>{data[0].value}</em></p>
+          <p>{payload[0].key + ' : '}<em>{payload[0].value}</em></p>
           <p>{'uv : '}<em>{currData.uv}</em></p>
         </div>
       );

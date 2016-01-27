@@ -61,6 +61,8 @@ const PRESENTATION_ATTRIBUTES = {
   'visibility': PropTypes.oneOf(['visible', 'hidden', 'collapse', 'inherit']),
   'wordSpacing': PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   'writingMode': PropTypes.oneOf(['lr-tb', 'rl-tb', 'tb-rl', 'lr', 'rl', 'tb', 'inherit']),
+
+  'transform': PropTypes.string,
 };
 const EVENT_ATTRIBUTES = {
   onActivate: PropTypes.func,
