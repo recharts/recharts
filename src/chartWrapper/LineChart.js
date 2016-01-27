@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import CartesianChart from './CartesianChart';
 
 import Surface from '../container/Surface';
@@ -9,10 +9,28 @@ import Line from '../chart/Line';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 
-
 class LineChart extends CartesianChart {
 
   static displayName = 'LineChart';
+
+  static propTypes = {
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    data: PropTypes.arrayOf(PropTypes.object),
+    layout: PropTypes.oneOf(['horizontal', 'vertical']),
+    margin: PropTypes.shape({
+      top: PropTypes.number,
+      right: PropTypes.number,
+      bottom: PropTypes.number,
+      left: PropTypes.number,
+    }),
+    className: PropTypes.string,
+    style: PropTypes.object,
+    children: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.node),
+      PropTypes.node,
+    ]),
+  };
 
   static defaultProps = {
     style: {},
