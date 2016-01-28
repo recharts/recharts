@@ -73,35 +73,44 @@ class ComposedChart extends CartesianChart {
    * @param  {String} dataKey The unique key of a group
    * @return {Array} Composed data
    */
-  getAreaComposeData(xAxis, yAxis, dataKey) {
+  getAreaComposeData(xAxis, yAxis, dataKey, stackedData) {
     const { data, layout } = this.props;
-    const bandSize = this.getBandSize(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
     const xTicks = this.getAxisTicks(xAxis);
     const yTicks = this.getAxisTicks(yAxis);
+    const bandSize = this.getBandSize(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
+    const hasStack = stackedData && stackedData.length;
+
     const points = data.map((entry, index) => {
+      const value = hasStack ? stackedData[index] : [0, entry[dataKey]];
       return {
-        x: layout === 'horizontal' ? xTicks[index].coord + bandSize / 2 : xAxis.scale(entry[dataKey]),
-        y: layout === 'horizontal' ? yAxis.scale(entry[dataKey]) : yTicks[index].coord + bandSize / 2,
+        x: layout === 'horizontal' ? xTicks[index].coord + bandSize / 2 : xAxis.scale(value[1]),
+        y: layout === 'horizontal' ? yAxis.scale(value[1]) : yTicks[index].coord + bandSize / 2,
         value: entry[dataKey],
       };
     });
 
     let range;
     let baseLine;
-
-    if (layout === 'horizontal') {
+    let baseLineType;
+    if (hasStack) {
+      baseLineType = 'curve';
+      baseLine = stackedData.map((entry, index) => {
+        return {
+          x: layout === 'horizontal' ? xTicks[index].coord + bandSize / 2 : xAxis.scale(entry[0]),
+          y: layout === 'horizontal' ? yAxis.scale(entry[0]) : yTicks[index].coord + bandSize / 2,
+        };
+      });
+    } else if (layout === 'horizontal') {
+      baseLineType = layout;
       range = yAxis.scale.range();
       baseLine = xAxis.orient === 'top' ? Math.min(range[0], range[1]) : Math.max(range[0], range[1]);
     } else {
+      baseLineType = layout;
       range = xAxis.scale.range();
       baseLine = yAxis.orient === 'left' ? Math.min(range[0], range[1]) : Math.max(range[0], range[1]);
     }
 
-    return {
-      points,
-      baseLine,
-      baseLineType: layout,
-    };
+    return { points, baseLine, baseLineType };
   }
   /**
    * Compose the data of each bar
@@ -112,16 +121,18 @@ class ComposedChart extends CartesianChart {
    * @param  {String} dataKey     The unique key of a group
    * @return {Array} Composed data
    */
-  getBarComposeData(barPosition, xAxis, yAxis, offset, dataKey) {
+  getBarComposeData(barPosition, xAxis, yAxis, offset, dataKey, stackedData) {
     const { layout } = this.props;
     const { dataStartIndex, dataEndIndex } = this.state;
     const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
     const pos = barPosition[dataKey];
     const xTicks = this.getAxisTicks(xAxis);
     const yTicks = this.getAxisTicks(yAxis);
-    const baseline = this.getBaseLine(xAxis, yAxis);
+    const baseValue = this.getBaseValue(xAxis, yAxis);
+    const hasStack = stackedData && stackedData.length;
+
     return data.map((entry, index) => {
-      const value = entry[dataKey];
+      const value = stackedData ? stackedData[dataStartIndex + index] : [baseValue, entry[dataKey]];
       let x;
       let y;
       let width;
@@ -129,31 +140,31 @@ class ComposedChart extends CartesianChart {
 
       if (layout === 'horizontal') {
         x = xTicks[index].coord + pos.offset;
-        y = xAxis.orient === 'top' ? offset.top : yAxis.scale(value);
+        y = yAxis.scale(xAxis.orient === 'top' ? value[0] : value[1]);
         width = pos.size;
         height = xAxis.orient === 'top' ?
-                yAxis.scale(value) - baseline :
-                baseline - yAxis.scale(value);
+                yAxis.scale(value[1]) - yAxis.scale(value[0]) :
+                yAxis.scale(value[0]) - yAxis.scale(value[1]);
       } else {
-        x = yAxis.orient === 'left' ? offset.left : xAxis.scale(value);
+        x = xAxis.scale(yAxis.orient === 'left' ? value[0] : value[1]);
         y = yTicks[index].coord + pos.offset;
         width = yAxis.orient === 'left' ?
-                xAxis.scale(value) - baseline :
-                baseline - xAxis.scale(value);
+                xAxis.scale(value[1]) - xAxis.scale(value[0]) :
+                xAxis.scale(value[0]) - xAxis.scale(value[1]);
         height = pos.size;
       }
 
-      return { ...entry, x, y, width, height, value };
+      return { ...entry, x, y, width, height, value: value[1] };
     });
   }
 
-  getBaseLine(xAxis, yAxis) {
+  getBaseValue(xAxis, yAxis) {
     const { layout } = this.props;
     const scale = layout === 'horizontal' ? yAxis.scale : xAxis.scale;
     const domain = scale.domain();
-    const min = Math.max(Math.min(domain[0], domain[1]), 0);
 
-    return scale(min);
+
+    return Math.max(Math.min(domain[0], domain[1]), 0);
   }
   /**
    * Calculate the size of each bar and the gap between two bars
@@ -182,6 +193,11 @@ class ComposedChart extends CartesianChart {
         };
         prev = res[entry.dataKey];
 
+        if (entry.stackList && entry.stackList.length) {
+          entry.stackList.forEach(key => {
+            res[key] = res[entry.dataKey];
+          });
+        }
         return res;
       }, {});
     } else {
@@ -193,7 +209,11 @@ class ComposedChart extends CartesianChart {
           offset: offset + (size + barGap) * i,
           size,
         };
-
+        if (entry.stackList && entry.stackList.length) {
+          entry.stackList.forEach(key => {
+            res[key] = res[entry.dataKey];
+          });
+        }
         return res;
       }, {});
     }
@@ -205,23 +225,25 @@ class ComposedChart extends CartesianChart {
    * @param  {Array} items All the instance of Bar
    * @return {Object} The size of all groups
    */
-  getSizeList(items) {
+  getSizeList(stackGroups) {
     const { layout, barSize } = this.props;
 
-    const sizeList = items.reduce((result, child) => {
-      const { xAxisId, yAxisId, dataKey } = child.props;
-      const axisId = layout === 'horizontal' ? xAxisId : yAxisId;
+    return Object.keys(stackGroups).reduce((result, axisId) => {
+      const sgs = stackGroups[axisId].stackGroups;
 
-      const list = result[axisId] || [];
+      result[axisId] = Object.keys(sgs).map(stackId => {
+        const { items } = sgs[stackId];
+        const { dataKey } = items[0].props;
 
-      list.push({ dataKey, barSize: child.props.barSize || barSize });
-
-      result[axisId] = list;
+        return {
+          dataKey,
+          stackList: items.slice(1).map(item => item.props.dataKey),
+          barSize: items[0].props.barSize || barSize,
+        };
+      });
 
       return result;
     }, {});
-
-    return sizeList;
   }
   /**
    * Calculate the size between two category
@@ -374,8 +396,8 @@ class ComposedChart extends CartesianChart {
    * @param  {Object} offset   The offset of main part in the svg element
    * @return {ReactComponent} The instances of Area
    */
-  renderAreaItems(items, xAxisMap, yAxisMap, offset) {
-    const { children } = this.props;
+  renderAreaItems(items, xAxisMap, yAxisMap, offset, stackGroups) {
+    const { children, layout } = this.props;
     const { activeAreaKey, isTooltipActive, activeTooltipIndex } = this.state;
     const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
@@ -383,7 +405,10 @@ class ComposedChart extends CartesianChart {
 
     const areaItems = items.reduce((result, child, i) => {
       const { xAxisId, yAxisId, dataKey, fillOpacity, fill } = child.props;
-      const composeData = this.getAreaComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey);
+      const axisId = layout === 'horizontal' ? xAxisId : yAxisId;
+      const stackedData = stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
+                        && this.getStackedDataOfItem(child, stackGroups[axisId].stackGroups);
+      const composeData = this.getAreaComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey, stackedData);
 
       const activePoint = composeData.points && composeData.points[activeTooltipIndex];
       const pointStyle = { fill, strokeWidth: 2, stroke: '#fff' };
@@ -423,11 +448,11 @@ class ComposedChart extends CartesianChart {
    * @param  {Object} offset   The offset of main part in the svg element
    * @return {ReactComponent}  All the instances of Bar
    */
-  renderBarItems(items, xAxisMap, yAxisMap, offset) {
+  renderBarItems(items, xAxisMap, yAxisMap, offset, stackGroups) {
     if (!items || !items.length) {return null;}
 
     const { layout } = this.props;
-    const sizeList = this.getSizeList(items);
+    const sizeList = this.getSizeList(stackGroups);
 
     const barPositionMap = {};
 
@@ -440,27 +465,32 @@ class ComposedChart extends CartesianChart {
                         yAxisMap[yAxisId].scale
                       );
       const barPosition = barPositionMap[axisId] || this.getBarPosition(bandSize, sizeList[axisId]);
+      const stackedData = stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
+                        && this.getStackedDataOfItem(child, stackGroups[axisId].stackGroups);
 
       return React.cloneElement(child, {
         key: 'bar-' + i,
         layout,
         onMouseLeave: ::this.handleBarMouseLeave,
         onMouseEnter: this.handleBarMouseEnter.bind(this, dataKey),
-        data: this.getBarComposeData(barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey),
+        data: this.getBarComposeData(barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey, stackedData),
       });
     }, this);
   }
 
   render() {
-    const { style, children } = this.props;
+    const { style, children, layout } = this.props;
+    const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
     const lineItems = ReactUtils.findAllByType(children, Line);
     const barItems = ReactUtils.findAllByType(children, Bar);
     const areaItems = ReactUtils.findAllByType(children, Area);
     const items = [...lineItems, ...barItems, ...areaItems];
     const legendItem = ReactUtils.findChildByType(children, Legend);
 
-    let xAxisMap = this.getAxisMap('xAxis', items);
-    let yAxisMap = this.getAxisMap('yAxis', items);
+    const stackGroups = this.getStackGroupsByAxisId(items, `${numberAxisName}Id`);
+
+    let xAxisMap = this.getAxisMap('xAxis', items, numberAxisName === 'xAxis' && stackGroups);
+    let yAxisMap = this.getAxisMap('yAxis', items, numberAxisName === 'yAxis' && stackGroups);
     const offset = this.getOffset(xAxisMap, yAxisMap);
 
     xAxisMap = this.getFormatAxisMap(xAxisMap, offset, 'xAxis');
@@ -485,8 +515,8 @@ class ComposedChart extends CartesianChart {
           {this.renderXAxis(xAxisMap)}
           {this.renderYAxis(yAxisMap)}
           {this.renderCursor(xAxisMap, yAxisMap, offset)}
-          {this.renderAreaItems(areaItems, xAxisMap, yAxisMap, offset)}
-          {this.renderBarItems(barItems, xAxisMap, yAxisMap, offset)}
+          {this.renderAreaItems(areaItems, xAxisMap, yAxisMap, offset, stackGroups)}
+          {this.renderBarItems(barItems, xAxisMap, yAxisMap, offset, stackGroups)}
           {this.renderLineItems(lineItems, xAxisMap, yAxisMap, offset)}
         </Surface>
 

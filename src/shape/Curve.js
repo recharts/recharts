@@ -39,6 +39,19 @@ class Curve extends React.Component {
 
     return d3Shape[name];
   }
+
+  fliterMouseToSeg(path) {
+    const reg = /[CSLHVcslhv]/;
+    const res = reg.exec(path);
+
+    if (res && res.length) {
+      const index = path.indexOf(res[0]);
+
+      return path.slice(index);
+    }
+
+    return path;
+  }
   /**
    * Calculate the path of curve
    * @return {String} path
@@ -54,7 +67,14 @@ class Curve extends React.Component {
 
     if (!curvePath) { return ''; }
 
-    if (baseLineType === 'horizontal' && baseLine === +baseLine) {
+    if (baseLineType === 'curve' && baseLine && baseLine.length) {
+      const revese = baseLine.reduce((result, entry) => {
+        return [entry, ...result];
+      }, []);
+      const revesePath = this.fliterMouseToSeg(l(revese) || '');
+
+      curvePath += `L${revese[0].x} ${revese[0].y}${revesePath}Z`;
+    } else if (baseLineType === 'horizontal' && baseLine === +baseLine) {
       curvePath += `L${points[len - 1].x} ${baseLine}L${points[0].x} ${baseLine}Z`;
     } else if (baseLineType === 'vertical' && baseLine === +baseLine) {
       curvePath += `L${baseLine} ${points[len - 1].y}L${baseLine} ${points[0].y}Z`;

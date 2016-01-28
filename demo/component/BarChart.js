@@ -110,10 +110,10 @@ export default React.createClass({
 
   render () {
     const data = [
-      {name: 'food', uv: 400, pv: 2400},
-      {name: 'cosmetic', uv: 300, pv: 4567},
-      {name: 'storage', uv: 300, pv: 1398},
-      {name: 'digital', uv: 200, pv: 9800}
+      {name: 'food', uv: 2400, pv: 2400, amt: 4500},
+      {name: 'cosmetic', uv: 3300, pv: 4567, amt: 6500},
+      {name: 'storage', uv: 3300, pv: 1398, amt: 5000},
+      {name: 'digital', uv: 3200, pv: 9800, amt: 4000}
     ];
     const data2 = [
       {name: '201102', uv: -6.11, pv: 0},
@@ -178,6 +178,19 @@ export default React.createClass({
 
     return (
       <div className='bar-charts'>
+        <p>Stack BarChart</p>
+        <div className='bar-chart-wrapper'>
+          <BarChart width={400} height={400} data={data}>
+            <XAxis dataKey='name'/>
+            <YAxis/>
+            <Tooltip />
+            <CartesianGrid vertical={false}/>
+            <Bar stackId="0" dataKey='uv' fill='#ff7300' />
+            <Bar stackId="0" dataKey='pv' fill='#387908'/>
+            <Bar dataKey='amt' fill='#387908'/>
+          </BarChart>
+        </div>
+
         <p>Simple BarChart</p>
         <div className='bar-chart-wrapper'>
           <BarChart width={400} height={400} data={data}>

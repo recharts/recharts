@@ -24,34 +24,43 @@ class AreaChart extends CartesianChart {
    * @param  {String} dataKey The unique key of a group
    * @return {Array} Composed data
    */
-  getComposeData(xAxis, yAxis, dataKey) {
+  getComposeData(xAxis, yAxis, dataKey, stackedData) {
     const { data, layout } = this.props;
     const xTicks = this.getAxisTicks(xAxis);
     const yTicks = this.getAxisTicks(yAxis);
+    const hasStack = stackedData && stackedData.length;
+
     const points = data.map((entry, index) => {
+      const value = hasStack ? stackedData[index] : [0, entry[dataKey]];
       return {
-        x: layout === 'horizontal' ? xTicks[index].coord : xAxis.scale(entry[dataKey]),
-        y: layout === 'horizontal' ? yAxis.scale(entry[dataKey]) : yTicks[index].coord,
+        x: layout === 'horizontal' ? xTicks[index].coord : xAxis.scale(value[1]),
+        y: layout === 'horizontal' ? yAxis.scale(value[1]) : yTicks[index].coord,
         value: entry[dataKey],
       };
     });
 
     let range;
     let baseLine;
-
-    if (layout === 'horizontal') {
+    let baseLineType;
+    if (hasStack) {
+      baseLineType = 'curve';
+      baseLine = stackedData.map((entry, index) => {
+        return {
+          x: layout === 'horizontal' ? xTicks[index].coord : xAxis.scale(entry[0]),
+          y: layout === 'horizontal' ? yAxis.scale(entry[0]) : yTicks[index].coord,
+        };
+      });
+    } else if (layout === 'horizontal') {
+      baseLineType = layout;
       range = yAxis.scale.range();
       baseLine = xAxis.orient === 'top' ? Math.min(range[0], range[1]) : Math.max(range[0], range[1]);
     } else {
+      baseLineType = layout;
       range = xAxis.scale.range();
       baseLine = yAxis.orient === 'left' ? Math.min(range[0], range[1]) : Math.max(range[0], range[1]);
     }
 
-    return {
-      points,
-      baseLine,
-      baseLineType: layout,
-    };
+    return { points, baseLine, baseLineType };
   }
   /**
    * Handler of mouse entering area chart
@@ -107,8 +116,8 @@ class AreaChart extends CartesianChart {
    * @param  {Object} offset   The offset of main part in the svg element
    * @return {ReactComponent} The instances of Area
    */
-  renderItems(items, xAxisMap, yAxisMap, offset) {
-    const { children } = this.props;
+  renderItems(items, xAxisMap, yAxisMap, offset, stackGroups) {
+    const { children, layout } = this.props;
     const { activeAreaKey, isTooltipActive, activeTooltipIndex } = this.state;
     const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
@@ -116,7 +125,10 @@ class AreaChart extends CartesianChart {
 
     const areaItems = items.reduce((result, child, i) => {
       const { xAxisId, yAxisId, dataKey, fillOpacity, fill } = child.props;
-      const composeData = this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey);
+      const axisId = layout === 'horizontal' ? xAxisId : yAxisId;
+      const stackedData = stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
+                        && this.getStackedDataOfItem(child, stackGroups[axisId].stackGroups);
+      const composeData = this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey, stackedData);
 
       const activePoint = composeData.points && composeData.points[activeTooltipIndex];
       const pointStyle = { fill, strokeWidth: 2, stroke: '#fff' };
@@ -149,12 +161,14 @@ class AreaChart extends CartesianChart {
   }
 
   render() {
-    const { style, children } = this.props;
+    const { style, children, layout } = this.props;
+    const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
     const items = ReactUtils.findAllByType(children, Area);
+    const stackGroups = this.getStackGroupsByAxisId(items, `${numberAxisName}Id`);
     const legendItem = ReactUtils.findChildByType(children, Legend);
 
-    let xAxisMap = this.getAxisMap('xAxis', items);
-    let yAxisMap = this.getAxisMap('yAxis', items);
+    let xAxisMap = this.getAxisMap('xAxis', items, numberAxisName === 'xAxis' && stackGroups);
+    let yAxisMap = this.getAxisMap('yAxis', items, numberAxisName === 'yAxis' && stackGroups);
     const offset = this.getOffset(xAxisMap, yAxisMap);
 
     xAxisMap = this.getFormatAxisMap(xAxisMap, offset, 'xAxis');
@@ -179,7 +193,7 @@ class AreaChart extends CartesianChart {
           {this.renderXAxis(xAxisMap)}
           {this.renderYAxis(yAxisMap)}
           {this.renderCursor(xAxisMap, yAxisMap, offset)}
-          {this.renderItems(items, xAxisMap, yAxisMap, offset)}
+          {this.renderItems(items, xAxisMap, yAxisMap, offset, stackGroups)}
         </Surface>
 
         {legendItem && (legendItem.props.layout !== 'horizontal'

@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { getNiceTickValues } from 'recharts-scale';
 import D3Scale from 'd3-scale';
+import D3Shape from 'd3-shape';
 
 import Layer from '../container/Layer';
 import CartesianAxis from '../component/CartesianAxis';
@@ -69,6 +70,88 @@ class CartesianChart extends React.Component {
     activeLineKey: null,
     activeBarKey: null,
   };
+
+  getStackGroupsByAxisId(items, axisIdKey) {
+    const stackGroups = items.reduce((result, item) => {
+      const { stackId, dataKey} = item.props;
+      const axisId = item.props[axisIdKey];
+
+      if (!result[axisId]) {
+        result[axisId] = { hasStack: false, stackGroups: {} };
+      }
+
+      if (LodashUtils.isNumber(stackId) || LodashUtils.isString(stackId)) {
+        if (!result[axisId].stackGroups[stackId]) {
+          result[axisId].stackGroups[stackId] = {
+            items: [],
+          };
+        }
+        result[axisId].stackGroups[stackId].items.push(item);
+
+        if (result[axisId].stackGroups[stackId].items.length >= 2) {
+          result[axisId].hasStack = true;
+        }
+      } else {
+        result[axisId].stackGroups[LodashUtils.getUniqueId('_stackId_')] = {
+          items: [item],
+        };
+      }
+
+      return result;
+    }, {});
+
+    return Object.keys(stackGroups).reduce((result, axisId) => {
+      const group = stackGroups[axisId];
+
+      if (group.hasStack) {
+        group.stackGroups = Object.keys(group.stackGroups).reduce((res, stackId) => {
+          const g = group.stackGroups[stackId];
+          res[stackId] = {
+            items: g.items,
+            stackedData: this.getStackedData(g.items),
+          };
+
+          return res;
+        }, {});
+      }
+      result[axisId] = group;
+      return  result;
+    }, {});
+  }
+
+  getStackedData(stackItems) {
+    const { data } = this.props;
+    const dataKeys = stackItems.map(item => item.props.dataKey);
+    const stack = D3Shape.stack()
+                  .keys(dataKeys)
+                  .value((d, key) => (+d[key] || 0))
+                  .order(D3Shape.stackOrderNone)
+                  .offset(D3Shape.stackOffsetNone);
+
+    return stack(data);
+  }
+
+  getStackedDataOfItem(item, stackGroups) {
+    const { stackId } = item.props;
+
+    if (LodashUtils.isNumber(stackId) || LodashUtils.isString(stackId)) {
+      const group = stackGroups[stackId];
+
+      if (group && group.items.length) {
+        let itemIndex = -1;
+
+        for (let i = 0, len = group.items.length; i < len; i++) {
+          if (group.items[i] === item) {
+            itemIndex = i;
+            break;
+          }
+        }
+        return itemIndex >= 0 ? group.stackedData[itemIndex] : null;
+      }
+    }
+
+    return null;
+  }
   /**
    * Calculate coordinate of cursor in chart
    * @param  {Object} e               Event object
@@ -112,20 +195,39 @@ class CartesianChart extends React.Component {
       Math.max.apply(null, domain),
     ] : domain;
   }
+
+  getDomainOfStackGroups(stackGroups) {
+    const { dataStartIndex, dataEndIndex } = this.state;
+
+    return Object.keys(stackGroups).reduce((result, stackId) => {
+      const group = stackGroups[stackId];
+      const { stackedData } = group;
+      const minList = stackedData[0].slice(dataStartIndex, dataEndIndex + 1);
+      const maxList = stackedData[stackedData.length - 1].slice(dataStartIndex, dataEndIndex + 1);
+      const min = minList.reduce((res, entry) => {
+        return Math.min(res, entry[0]);
+      }, Infinity);
+      const max = maxList.reduce((res, entry) => {
+        return Math.max(res, entry[1]);
+      }, -Infinity);
+
+      return [Math.min(min, result[0]), Math.max(max, result[1])];
+    }, [Infinity, -Infinity])
+  }
   /**
    * Get domain of data by the configuration of item element
    * @param  {Array} items  The instances of item
    * @param  {String} type  The type of axis, number - Number Axis, category - Category Axis
    * @return {Array}        Domain
    */
-  getDomainOfItems(items, type) {
-    const domain = items.map(item => {
+  getDomainOfItemsWithSameAxis(items, type) {
+    const domains = items.map(item => {
       return this.getDomainByKey(item.props.dataKey, type);
     });
 
     if (type === 'number') {
       // Calculate the domain of number axis
-      return domain.reduce((result, entry) => {
+      return domains.reduce((result, entry) => {
         return [
           Math.min(result[0], entry[0]),
           Math.max(result[1], entry[1]),
@@ -134,10 +236,8 @@ class CartesianChart extends React.Component {
     }
 
     const tag = {};
-    const result = [];
-
     // Get the union set of category axis
-    domain.forEach(entry => {
+    return domains.reduce((result, entry) => {
       for (let i = 0, len = entry.length; i < len; i++) {
         if (!tag[entry[i]]) {
           tag[entry[i]] = true;
@@ -145,17 +245,17 @@ class CartesianChart extends React.Component {
           result.push(entry[i]);
         }
       }
-    });
-
-    return result;
+      return result;
+    }, []);
   }
   /**
    * Get the configuration of all x-axis or y-axis
-   * @param  {String} axisType The type of axis
-   * @param  {Array} items     The instances of item
+   * @param  {String} axisType    The type of axis
+   * @param  {Array} items        The instances of item
+   * @param  {Object} stackGroups The items grouped by axisId and stackId
    * @return {Object}          Configuration
    */
-  getAxisMap(axisType = 'xAxis', items) {
+  getAxisMap(axisType = 'xAxis', items, stackGroups) {
     const { children } = this.props;
     const Axis = axisType === 'xAxis' ? XAxis : YAxis;
     const axisIdKey = axisType === 'xAxis' ? 'xAxisId' : 'yAxisId';
@@ -165,9 +265,9 @@ class CartesianChart extends React.Component {
     let axisMap = {};
 
     if (axes && axes.length) {
-      axisMap = this.getAxisMapByAxes(axes, items, axisType, axisIdKey);
+      axisMap = this.getAxisMapByAxes(axes, items, axisType, axisIdKey, stackGroups);
     } else if (items && items.length) {
-      axisMap = this.getAxisMapByItems(items, Axis, axisType, axisIdKey);
+      axisMap = this.getAxisMapByItems(items, Axis, axisType, axisIdKey, stackGroups);
     }
 
     return axisMap;
@@ -180,7 +280,7 @@ class CartesianChart extends React.Component {
    * @param  {String} axisIdKey The unique id of an axis
    * @return {Object}      Configuration
    */
-  getAxisMapByAxes(axes, items, axisType, axisIdKey) {
+  getAxisMapByAxes(axes, items, axisType, axisIdKey, stackGroups) {
     // Eliminate duplicated axes
     const axisMap = axes.reduce((result, child) => {
       const { type, dataKey } = child.props;
@@ -193,8 +293,11 @@ class CartesianChart extends React.Component {
           domain = child.props.data;
         } else if (dataKey) {
           domain = this.getDomainByKey(dataKey, type);
+        } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
+          && type === 'number') {
+          domain = this.getDomainOfStackGroups(stackGroups[axisId].stackGroups);
         } else {
-          domain = this.getDomainOfItems(items.filter(entry => {
+          domain = this.getDomainOfItemsWithSameAxis(items.filter(entry => {
             return entry.props[axisIdKey] === axisId;
           }), type);
         }
@@ -219,10 +322,13 @@ class CartesianChart extends React.Component {
    * @param  {String} axisIdKey  The unique id of an axis
    * @return {Object}            Configuration
    */
-  getAxisMapByItems(items, Axis, axisType, axisIdKey) {
+  getAxisMapByItems(items, Axis, axisType, axisIdKey, stackGroups) {
+    const { layout } = this.props;
     const { dataEndIndex, dataStartIndex } = this.state;
     const len = dataEndIndex - dataStartIndex + 1;
     let index = -1;
+    const isCategoryAxis = (layout === 'horizontal' && axisType === 'xAxis') ||
+                        (layout === 'vertical' && axisType === 'yAxis');
 
     // The default type of x-axis is category axis,
     // The default contents of x-axis is the serial numbers of data
@@ -233,6 +339,18 @@ class CartesianChart extends React.Component {
 
       if (!result[axisId]) {
         index++;
+
+        let domain;
+        if (isCategoryAxis) {
+          domain = LodashUtils.range(0, len);
+        } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack) {
+          domain = this.getDomainOfStackGroups(stackGroups[axisId].stackGroups);
+        } else {
+          domain = this.getDomainOfItemsWithSameAxis(
+            items.filter(entry => entry.props[axisIdKey] === axisId), 'number'
+          );
+        }
+
         return {
           ...result,
           [axisId]: {
@@ -243,9 +361,7 @@ class CartesianChart extends React.Component {
             height: Axis.defaultProps.height,
             tickCount: Axis.defaultProps.tickCount,
             orient: ORIENT_MAP[axisType][index % 2],
-            domain: axisType === 'xAxis' ? LodashUtils.range(0, len) : this.getDomainOfItems(
-              items.filter(entry => entry.props[axisIdKey] === axisId), 'number'
-            ),
+            domain,
           },
         };
       }

@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import LodashUtils from './LodashUtils';
 
 const PRESENTATION_ATTRIBUTES = {
   'alignmentBaseline': PropTypes.string,

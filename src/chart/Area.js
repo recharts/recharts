@@ -22,6 +22,7 @@ class Area extends React.Component {
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     yAxisId: PropTypes.number,
     xAxisId: PropTypes.number,
+    stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     legendType: PropTypes.string,
     formatter: PropTypes.func,
     // dot configuration

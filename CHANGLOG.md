@@ -1,3 +1,8 @@
+## 0.4.2 (January 27, 2016)
+
+### UI
+- Add support of stack value in BarChart, AreaChart, ComposedChart
+
 ## 0.4.1 (January 27, 2016)
 
 ### UI
