@@ -115,6 +115,11 @@ module.exports = function(config) {
       }]
     },
 
+    webpackMiddleware: {
+      // webpack-dev-middleware configuration
+      noInfo: true
+    },
+
     // web server port
     port: 9876,
 
