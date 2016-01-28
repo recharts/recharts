@@ -53,50 +53,50 @@ export default React.createClass({
           </AreaChart>
         </div>
 
+        <p>Simple AreaChart</p>
+        <div className='area-chart-wrapper'>
+          <AreaChart width={100} height={50} data={data}>
+            <Area type='monotone' dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
+          </AreaChart>
+        </div>
+
+
+        <p>AreaChart with three y-axes</p>
+        <div className='area-chart-wrapper'>
+          <AreaChart width={600} height={400} data={data}>
+            <YAxis type='number' yAxisId={0} stroke="#ff7300"/>
+            <YAxis type='number' orient='right' yAxisId={1} stroke="#387908"/>
+            <YAxis type='number' orient='right' yAxisId={2} stroke="#38abc8"/>
+            <XAxis dataKey='name'/>
+            <Area dataKey='uv' stroke='#ff7300' fill='#ff7300' strokeWidth={2} yAxisId={0}/>
+            <Area dataKey='pv' stroke='#387908' fill='#387908' strokeWidth={2} yAxisId={1}/>
+            <Area dataKey='amt' stroke='#38abc8' fill='#38abc8' strokeWidth={2} yAxisId={2}/>
+          </AreaChart>
+        </div>
+
+        <p>AreaChart of vertical layout </p>
+        <div className='area-chart-wrapper' style={{margin: 40}}>
+          <AreaChart width={400} height={400} data={data} layout='vertical'>
+            <YAxis type='category' dataKey='name'/>
+            <XAxis type='number' xAxisId={0} orient='top'/>
+            <XAxis type='number' xAxisId={1} orient='bottom'/>
+            <Area dataKey='uv' dataKeyName='月环比' stroke='#ff7300' fill='#ff7300' strokeWidth={2} xAxisId={0} />
+            <Area dataKey='pv' dataKeyName='年同比' stroke='#387908' fill='#387908' strokeWidth={2} xAxisId={1} />
+            <Tooltip/>
+          </AreaChart>
+        </div>
+
+        <p>AreaChart with custom tooltip</p>
+        <div className='area-chart-wrapper'>
+          <AreaChart width={900} height={250} data={data} margin={{top: 10, right: 20, bottom: 10, left: 10}}>
+            <XAxis dataKey='name' hasTick/>
+            <YAxis tickCount={7} hasTick/>
+            <Tooltip content={<CustomTooltip external={data}/>}/>
+            <CartesianGrid stroke='#f5f5f5'/>
+            <Area type='monotone' dataKey='pv' stroke='#ff7300' fill='#ff7300' fillOpacity={0.25}/>
+          </AreaChart>
+        </div>
       </div>
     );
   }
 });
-        // <p>Simple AreaChart</p>
-        // <div className='area-chart-wrapper'>
-        //   <AreaChart width={100} height={50} data={data}>
-        //     <Area type='monotone' dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
-        //   </AreaChart>
-        // </div>
-
-
-        // <p>AreaChart with three y-axes</p>
-        // <div className='area-chart-wrapper'>
-        //   <AreaChart width={600} height={400} data={data}>
-        //     <YAxis type='number' yAxisId={0} stroke="#ff7300"/>
-        //     <YAxis type='number' orient='right' yAxisId={1} stroke="#387908"/>
-        //     <YAxis type='number' orient='right' yAxisId={2} stroke="#38abc8"/>
-        //     <XAxis dataKey='name'/>
-        //     <Area dataKey='uv' stroke='#ff7300' fill='#ff7300' strokeWidth={2} yAxisId={0}/>
-        //     <Area dataKey='pv' stroke='#387908' fill='#387908' strokeWidth={2} yAxisId={1}/>
-        //     <Area dataKey='amt' stroke='#38abc8' fill='#38abc8' strokeWidth={2} yAxisId={2}/>
-        //   </AreaChart>
-        // </div>
-
-        // <p>AreaChart of vertical layout </p>
-        // <div className='area-chart-wrapper' style={{margin: 40}}>
-        //   <AreaChart width={400} height={400} data={data} layout='vertical'>
-        //     <YAxis type='category' dataKey='name'/>
-        //     <XAxis type='number' xAxisId={0} orient='top'/>
-        //     <XAxis type='number' xAxisId={1} orient='bottom'/>
-        //     <Area dataKey='uv' dataKeyName='月环比' stroke='#ff7300' fill='#ff7300' strokeWidth={2} xAxisId={0} />
-        //     <Area dataKey='pv' dataKeyName='年同比' stroke='#387908' fill='#387908' strokeWidth={2} xAxisId={1} />
-        //     <Tooltip/>
-        //   </AreaChart>
-        // </div>
-
-        // <p>AreaChart with custom tooltip</p>
-        // <div className='area-chart-wrapper'>
-        //   <AreaChart width={900} height={250} data={data} margin={{top: 10, right: 20, bottom: 10, left: 10}}>
-        //     <XAxis dataKey='name' hasTick/>
-        //     <YAxis tickCount={7} hasTick/>
-        //     <Tooltip customContent={<CustomTooltip external={data}/>}/>
-        //     <CartesianGrid stroke='#f5f5f5'/>
-        //     <Area type='monotone' dataKey='pv' stroke='#ff7300' fill='#ff7300' fillOpacity={0.25}/>
-        //   </AreaChart>
-        // </div>

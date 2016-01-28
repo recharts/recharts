@@ -1,4 +1,10 @@
-## 0.4.2 (January 27, 2016)
+## 0.4.3 (January 28, 2016)
+
+### UI
+- deps(recharts-scale, react-smooth): update version of recharts-scale and react-smooth
+- refactor(Bar, RadialBar, TreemapChart, Tooltip): rename the props customContent
+
+## 0.4.2 (January 28, 2016)
 
 ### UI
 - Add support of stack value in BarChart, AreaChart, ComposedChart

@@ -19,7 +19,7 @@ class RadialBar extends React.Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
-    customContent: PropTypes.object,
+    shape: PropTypes.object,
 
     cx: PropTypes.number,
     cy: PropTypes.number,
@@ -122,12 +122,12 @@ class RadialBar extends React.Component {
 
 
   renderSectors(sectors) {
-    const { className, customContent, data, ...others } = this.props;
+    const { className, shape, data, ...others } = this.props;
 
     return sectors.map((entry, i) => {
       const { value, ...rest } = entry;
 
-      return customContent ? React.cloneElement(customContent, {
+      return shape ? React.cloneElement(shape, {
         ...others, ...rest,
         key: 'sector-' + i,
       }) : React.createElement(Sector, {

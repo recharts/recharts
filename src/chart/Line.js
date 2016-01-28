@@ -8,7 +8,7 @@ import Layer from '../container/Layer';
 import pureRender from 'pure-render-decorator';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 import { findDOMNode } from 'react-dom';
-import Animate from 're-animate';
+import Animate from 'react-smooth';
 
 @pureRender
 class Line extends React.Component {

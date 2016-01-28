@@ -10,7 +10,7 @@ class Tooltip extends React.Component {
   static displayName = 'Tooltip';
 
   static propTypes = {
-    customContent: PropTypes.element,
+    content: PropTypes.element,
     viewBox: PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -55,10 +55,10 @@ class Tooltip extends React.Component {
   };
 
   getTooltipBBox(wrapperStyle) {
-    const { customContent } = this.props;
+    const { content } = this.props;
     const contentHtml = ReactDOMServer.renderToStaticMarkup(
-      React.isValidElement(customContent) ?
-      React.cloneElement(customContent, this.props) :
+      React.isValidElement(content) ?
+      React.cloneElement(content, this.props) :
       React.createElement(DefaultTooltipContent, this.props)
     );
     const style = { ...wrapperStyle, top: -20000, left: 0, display: 'block' };
@@ -75,7 +75,7 @@ class Tooltip extends React.Component {
   }
 
   render() {
-    const { customContent, viewBox, coordinate, active, offset } = this.props;
+    const { content, viewBox, coordinate, active, offset } = this.props;
 
     const outerStyle = {
       pointerEvents: 'none',
@@ -96,8 +96,8 @@ class Tooltip extends React.Component {
     return (
       <div className="recharts-tooltip-wrapper" style={outerStyle}>
         {
-          React.isValidElement(customContent) ?
-          React.cloneElement(customContent, this.props) :
+          React.isValidElement(content) ?
+          React.cloneElement(content, this.props) :
           React.createElement(DefaultTooltipContent, this.props)
         }
       </div>

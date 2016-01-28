@@ -54,7 +54,7 @@ class DemoTreemapChart extends React.Component {
         <br/>
         <br/>
         <div className='treemap-chart-wrapper'>
-          <TreemapChart width={1000} height={500} data={data} ratio={0.5 * (1 + Math.sqrt(5))} customContent={<DemoTreemapItem treemapItemColor={treemapItemColor}/>} />
+          <TreemapChart width={1000} height={500} data={data} ratio={0.5 * (1 + Math.sqrt(5))} content={<DemoTreemapItem treemapItemColor={treemapItemColor}/>} />
         </div>
       </div>
     );

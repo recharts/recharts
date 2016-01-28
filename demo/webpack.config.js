@@ -30,6 +30,7 @@ module.exports = {
         __dirname,
         path.join(__dirname,  '..', 'src'),
         path.join(__dirname,  '..', 'node_modules', 'recharts-scale'),
+        path.join(__dirname,  '..', 'node_modules', 'react-smooth'),
         path.join(__dirname,  '..', 'node_modules', 'recharts-color-util')
       ]
     }]

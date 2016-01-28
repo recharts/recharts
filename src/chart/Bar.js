@@ -6,7 +6,7 @@ import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import pureRender from 'pure-render-decorator';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
-import Animate from 're-animate';
+import Animate from 'react-smooth';
 
 @pureRender
 class Bar extends React.Component {
@@ -27,7 +27,7 @@ class Bar extends React.Component {
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     formatter: PropTypes.func,
 
-    customContent: PropTypes.element,
+    shape: PropTypes.element,
     label: PropTypes.oneOfType([
       PropTypes.bool,
       PropTypes.object,
@@ -83,7 +83,7 @@ class Bar extends React.Component {
     const {
       data,
       className,
-      customContent,
+      shape,
       layout,
       isAnimationActive,
       animationBegin,
@@ -120,8 +120,8 @@ class Bar extends React.Component {
         >
           <g style={{ transformOrigin }}>
             {
-              React.isValidElement(customContent) ?
-                React.cloneElement(customContent, { ...props, index }) :
+              React.isValidElement(shape) ?
+                React.cloneElement(shape, { ...props, index }) :
                 React.createElement(Rectangle, props)
             }
           </g>

@@ -15,7 +15,7 @@ class TreemapChart extends React.Component {
     data: PropTypes.array,
     style: PropTypes.object,
     ratio: PropTypes.number,
-    customContent: PropTypes.element,
+    content: PropTypes.element,
     fill: PropTypes.string,
     stroke: PropTypes.string,
   };
@@ -151,7 +151,7 @@ class TreemapChart extends React.Component {
   }
 
   renderAllNodes() {
-    const { width, height, data, customContent } = this.props;
+    const { width, height, data, content } = this.props;
 
     const nodes = {
       value: data.reduce((a, b) => (a + b.value), 0),
@@ -167,8 +167,8 @@ class TreemapChart extends React.Component {
     return nodes.children.map((v, i) => {
       return (
         <Layer key={`recharts-treemap-node-${i}`}>
-          {React.isValidElement(customContent) ?
-            React.cloneElement(customContent, { node: v, index: i }) :
+          {React.isValidElement(content) ?
+            React.cloneElement(content, { node: v, index: i }) :
             this.renderDefaultNode({ node: v, index: i })
           }
         </Layer>

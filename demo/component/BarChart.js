@@ -238,7 +238,7 @@ export default React.createClass({
         <div className='bar-chart-wrapper'>
           <BarChart width={500} height={250} barCategoryGap={0} data={data}  margin={{top: 20, right: 20, bottom: 0, left: 20}}>
             <XAxis dataKey='name'/>
-            <Bar dataKey='uv' barGap={0} fill='#ff7300' customContent={<CustomBar/>}/>
+            <Bar dataKey='uv' barGap={0} fill='#ff7300' shape={<CustomBar/>}/>
           </BarChart>
         </div>
 
@@ -246,7 +246,7 @@ export default React.createClass({
         <div className='bar-chart-wrapper'>
           <BarChart width={500} height={250} barCategoryGap={0} data={data} margin={{top: 20, right: 20, bottom: 20, left: 20}}>
             <XAxis axisLine={false} tickLine={false} dataKey='name' label={<CustomAxis />}/>
-            <Bar dataKey='uv' barGap={0} fill="#387908" customContent={<BarTwo/>} label/>
+            <Bar dataKey='uv' barGap={0} fill="#387908" shape={<BarTwo/>} label/>
           </BarChart>
         </div>
       </div>
