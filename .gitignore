@@ -2,6 +2,5 @@
 *.log
 node_modules
 dist
-lib
 coverage
 *.orig
