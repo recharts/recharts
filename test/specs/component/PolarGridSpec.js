@@ -1,14 +1,13 @@
-import ReactDOM from 'react-dom';
 import React from 'react';
-import ReactTestUtils from 'react-addons-test-utils';
 import { expect } from 'chai';
 import { Surface, PolarGrid } from 'recharts';
+import { render } from 'enzyme';
 
 describe('<PolarGrid />', () => {
   let polarAngles = [0, 30, 60, 90, 145, 180, 200, 270, 300],
     polarRadius = [10, 20, 40, 80];
 
-  let component = ReactTestUtils.renderIntoDocument(
+  let wrapper = render(
     <Surface width={500} height={500}>
       <PolarGrid
         cx={250}
@@ -22,12 +21,10 @@ describe('<PolarGrid />', () => {
   );
 
   it('renders 9 lines in simple PolarGrid', () => {
-    const wrapper = ReactTestUtils.scryRenderedDOMComponentsWithTag(component, 'line');
-    expect(wrapper.length).to.equal(9);
+    expect(wrapper.find('line').length).to.equal(9);
   });
 
   it('renders 4 polygon in simple PolarGrid', () => {
-    const wrapper = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, 'concentric-polygon');
-    expect(wrapper.length).to.equal(4);
+    expect(wrapper.find('.concentric-polygon').length).to.equal(4);
   });
 });

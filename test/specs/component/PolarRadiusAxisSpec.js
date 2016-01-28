@@ -1,8 +1,7 @@
-import ReactDOM from 'react-dom';
 import React from 'react';
-import ReactTestUtils from 'react-addons-test-utils';
 import { expect } from 'chai';
 import { Surface, PolarRadiusAxis } from 'recharts';
+import { render } from 'enzyme';
 
 describe('<PolarRadiusAxis />', () => {
   let ticks = [
@@ -14,7 +13,7 @@ describe('<PolarRadiusAxis />', () => {
     {value: '600', radius: 300}
   ];
 
-  let component = ReactTestUtils.renderIntoDocument(
+  let wrapper = render(
     <Surface width={1000} height={1000}>
       <PolarRadiusAxis
         cx={500}
@@ -25,7 +24,6 @@ describe('<PolarRadiusAxis />', () => {
   );
 
   it('renders 6 axis-tick in simple PolarRadiusAxis', () => {
-    const wrapper = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, 'axis-tick');
-    expect(wrapper.length).to.equal(6);
+    expect(wrapper.find('.axis-tick').length).to.equal(6);
   });
 });

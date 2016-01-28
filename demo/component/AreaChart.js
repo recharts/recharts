@@ -57,6 +57,7 @@ export default React.createClass({
         <div className='area-chart-wrapper'>
           <AreaChart width={100} height={50} data={data} margin={{top: 5, right: 0, left: 0, bottom: 5}}>
             <Area type='monotone' dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
+            <Tooltip/>
           </AreaChart>
         </div>
 
