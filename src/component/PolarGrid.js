@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import createFragment from 'react-addons-create-fragment';
 import pureRender from 'pure-render-decorator';
 
 const RADIAN = Math.PI / 180;
@@ -16,26 +15,21 @@ class PolarGrid extends React.Component {
     innerRadius: PropTypes.number,
     outerRadius: PropTypes.number,
     clockWise: PropTypes.bool,
+
     polarAngles: PropTypes.arrayOf(PropTypes.number),
     polarRadius: PropTypes.arrayOf(PropTypes.number),
-    concentricPathType: PropTypes.oneOf(['polygon', 'circle']),
+    gridCount: PropTypes.number,
+    gridType: PropTypes.oneOf(['polygon', 'circle']),
   };
 
   static defaultProps = {
-    cx: 0,
-    cy: 0,
-    startAngle: 0,
-    innerRadius: 0,
-    outerRadius: 0,
-    clockWise: true,
-    // The angles of axis
-    polarAngles: [],
-    // The radius of axis
-    polarRadius: [],
-    // The type of concentric axis
-    concentricPathType: 'polygon',
+    gridCount: 2,
+    gridType: 'circle',
   };
 
+  constructor(props) {
+    super(props);
+  }
   /**
    * Draw axis of radial line
    * @return {[type]} The lines
@@ -45,26 +39,23 @@ class PolarGrid extends React.Component {
 
     if (!polarAngles || !polarAngles.length) { return null; }
 
-    const items = {};
-
-    polarAngles.reduce((result, entry, i) => {
-      const cos = Math.cos(-entry * RADIAN);
-      const sin = Math.sin(-entry * RADIAN);
-
-      items['angle-' + i] = (
-        <line key={'line-' + i}
-          stroke="#000"
-          x1={cx + cos * innerRadius}
-          y1={cy + sin * innerRadius}
-          x2={cx + cos * outerRadius}
-          y2={cy + sin * outerRadius}
-        />
-      );
-    }, items);
-
     return (
       <g className="layer-grid-angle">
-        {createFragment(items)}
+        {
+          polarAngles.map((entry, i) => {
+            const cos = Math.cos(-entry * RADIAN);
+            const sin = Math.sin(-entry * RADIAN);
+            return (
+              <line key={'line-' + i}
+                stroke="#ccc"
+                x1={cx + cos * innerRadius}
+                y1={cy + sin * innerRadius}
+                x2={cx + cos * outerRadius}
+                y2={cy + sin * outerRadius}
+              />
+            );
+          })
+        }
       </g>
     );
   }
@@ -77,7 +68,7 @@ class PolarGrid extends React.Component {
   renderConcentricCircle(radius, index) {
     const { cx, cy } = this.props;
 
-    return <circle className="concentric-circle" stroke="#000" fill="none" key={'circle-' + index} cx={cx} cy={cy} r={radius}/>;
+    return <circle className="concentric-circle" stroke="#ccc" fill="none" key={'circle-' + index} cx={cx} cy={cy} r={radius}/>;
   }
   /**
    * Draw concentric polygons
@@ -97,7 +88,7 @@ class PolarGrid extends React.Component {
       }
     });
 
-    return <path className="concentric-polygon" stroke="#000" fill="none" key={'path-' + index} d={path + 'Z'}/>;
+    return <path className="concentric-polygon" stroke="#ccc" fill="none" key={'path-' + index} d={path + 'Z'}/>;
   }
 
   /**
@@ -106,22 +97,19 @@ class PolarGrid extends React.Component {
    * @todo Optimize the name
    */
   renderConcentricPath() {
-    const { polarRadius, concentricPathType } = this.props;
+    const { polarRadius, gridType } = this.props;
 
     if (!polarRadius || !polarRadius.length) { return null; }
 
-    const items = polarRadius.reduce((result, entry, i) => {
-      return {
-        ...result,
-        ['path-' + i]: concentricPathType === 'circle' ?
-                 this.renderConcentricCircle(entry, i) :
-                 this.renderConcentricPolygon(entry, i),
-      };
-    }, {});
-
     return (
       <g className="layer-grid-concentric">
-        {createFragment(items)}
+        {
+          polarRadius.map((entry, i) => (
+            gridType === 'circle' ?
+              this.renderConcentricCircle(entry, i) :
+              this.renderConcentricPolygon(entry, i)
+          ))
+        }
       </g>
     );
   }

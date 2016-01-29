@@ -2,8 +2,6 @@ import 'ima.js-babel6-polyfill';
 import 'core-js/es6/math';
 import Surface from './container/Surface';
 
-import Radar from './chart/Radar';
-
 import CartesianAxis from './component/CartesianAxis';
 import CartesianGrid from './component/CartesianGrid';
 import Legend from './component/Legend';
@@ -18,6 +16,8 @@ import Sector from './shape/Sector';
 import Curve from './shape/Curve';
 import Rectangle from './shape/Rectangle';
 import Triangle from './shape/Triangle';
+import Polygon from './shape/Polygon';
+import Dot from './shape/Dot';
 
 import LineChart from './chartWrapper/LineChart';
 import Line from './chart/Line';
@@ -29,6 +29,9 @@ import PieChart from './chartWrapper/PieChart';
 import Pie from './chart/Pie';
 
 import TreemapChart from './chartWrapper/TreemapChart';
+
+import RadarChart from './chartWrapper/RadarChart';
+import Radar from './chart/Radar';
 
 import ScatterChart from './chartWrapper/ScatterChart';
 import Scatter from './chart/Scatter';
@@ -58,7 +61,7 @@ export {
   PolarGrid, PolarRadiusAxis, PolarAngleAxis,
 
   // shape
-  Sector, Curve, Rectangle, Triangle,
+  Sector, Curve, Rectangle, Triangle, Polygon, Dot,
 
   LineChart, Line,
   AreaChart, Area,
@@ -67,6 +70,7 @@ export {
   ScatterChart, Scatter,
   RadialBarChart, RadialBar,
   TreemapChart,
+  RadarChart, Radar,
   ComposedChart,
 
   XAxis, YAxis, ZAxis,
