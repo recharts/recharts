@@ -47,23 +47,36 @@ class Legend extends React.Component {
     }
   }
 
-  getDefaultPosition() {
+  getDefaultPosition(style) {
     const { layout, align, verticalAlign } = this.props;
+    let hPos;
+    let vPos;
 
-    if (layout === 'vertical') {
-      return align === 'right' ? { right: 0 } : { left: 0 };
+    if (!style || ((style.left === undefined || style.left === null) && (
+      style.right === undefined || style.right === null))) {
+      hPos = align === 'right' ? { right: 0 } : { left: 0 }
     }
 
-    return verticalAlign === 'top' ? { top: 0 } : { bottom: 0 };
+    if (!style || ((style.top === undefined || style.top === null) && (
+      style.bottom === undefined || style.bottom === null))) {
+      if (layout === 'vertical') {
+        vPos = verticalAlign === 'bottom' ? { bottom : 0} : { top: 0 };
+      } else {
+        vPos = verticalAlign === 'top' ? { top: 0 } : { bottom: 0 };
+      }
+    }
+
+    return { ...hPos, ...vPos };
   }
 
   render() {
-    const { content, width, height, layout } = this.props;
+    const { content, width, height, layout, wrapperStyle } = this.props;
     const outerStyle = {
       position: 'absolute',
       width: width || 'auto',
       height: height || 'auto',
-      ...this.getDefaultPosition(),
+      ...this.getDefaultPosition(wrapperStyle),
+      ...wrapperStyle,
     };
 
     return (

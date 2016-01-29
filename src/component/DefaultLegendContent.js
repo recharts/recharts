@@ -10,7 +10,6 @@ class DefaultLegendContent extends React.Component {
 
   static propTypes = {
     content: PropTypes.element,
-    wrapperStyle: PropTypes.object,
     iconSize: PropTypes.number,
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     align: PropTypes.oneOf(['center', 'left', 'right']),
@@ -87,22 +86,17 @@ class DefaultLegendContent extends React.Component {
   }
 
   render() {
-    const { payload, layout, align, wrapperStyle } = this.props;
+    const { payload, layout, align } = this.props;
 
     if (!payload || !payload.length) {
       return null;
     }
-    let finalStyle = {
+
+    const finalStyle = {
       padding: 0,
       margin: 0,
       textAlign: layout === 'horizontal' ? align : 'left',
     };
-
-    if (layout === 'vertical') {
-      finalStyle.position = 'absolute';
-    }
-
-    finalStyle = { ...finalStyle, ...wrapperStyle };
 
     return (
       <ul className="recharts-default-legend" style={finalStyle}>
