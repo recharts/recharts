@@ -34,6 +34,8 @@
     "recharts-scale": "0.1.6-beta"
   },
   "devDependencies": {
+    "react": "0.14.7",
+    "react-dom": "0.14.7",
     "babel-core": "6.3.21",
     "babel-eslint": "5.0.0-beta6",
     "babel-loader": "6.2.0",
@@ -44,7 +46,7 @@
     "babel-preset-react": "6.3.13",
     "babel-preset-stage-0": "6.3.13",
     "chai": "3.4.1",
-    "enzyme": "1.4.1",
+    "enzyme": "^1.4.1",
     "eslint": "1.10.3",
     "eslint-config-airbnb": "2.1.1",
     "eslint-plugin-react": "3.13.0",
@@ -68,6 +70,7 @@
     "react-router": "1.0.3",
     "recharts-color-utils": "0.1.1",
     "require-dir": "0.3.0",
+    "sinon": "^1.17.3",
     "webpack": "1.12.9",
     "webpack-dev-server": "1.14.0"
   },

@@ -16,7 +16,7 @@ module.exports = function(config) {
 
     // list of files / patterns to l/oad in the browser
     files: [
-      { pattern: 'test/specs/*.js', included: true, watched: false },
+      { pattern: 'test/index.js', included: true, watched: false },
     ],
 
     // list of files to exclude
@@ -29,7 +29,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/**/*.js': ['webpack', 'sourcemap'],
+      'test/index.js': ['webpack', 'sourcemap'],
     },
 
     webpack: {
@@ -37,17 +37,22 @@ module.exports = function(config) {
       module: {
         noParse: [
           /node_modules\/sinon\//,
-          /node_modules\/re-animate\/lib\/index\.js/,
           /node_modules\/recharts-scale\/node_modules\/ramda\/dist\/ramda\.js/,
         ],
         loaders: [{
           test: /\.js$/,
-          include: /src|test|recharts/,
+          include: [
+            /src|test|recharts/,
+            /node_modules\/react-smooth\/src\//,
+          ],
           exclude: /node_modules/,
           loader: 'babel',
         }, {
           test: /\.jsx?$/,
-          include: /node_modules\/recharts-scale/,
+          include: [
+            /node_modules\/recharts-scale/,
+            /node_modules\/react-smooth\/src\//,
+          ],
           loader: 'babel',
         }, {
           test: /\.json$/,
@@ -113,6 +118,11 @@ module.exports = function(config) {
         type: 'lcov',
         subdir: 'coverage'
       }]
+    },
+
+    webpackMiddleware: {
+      // webpack-dev-middleware configuration
+      noInfo: true
     },
 
     // web server port

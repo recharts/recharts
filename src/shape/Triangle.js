@@ -40,7 +40,7 @@ class Rectangle extends React.Component {
   }
 
   render() {
-    const { points, radius, onClick,
+    const { points, radius, onClick, className,
         onMouseEnter, onMouseLeave } = this.props;
 
     return (
