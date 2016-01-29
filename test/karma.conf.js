@@ -37,17 +37,22 @@ module.exports = function(config) {
       module: {
         noParse: [
           /node_modules\/sinon\//,
-          /node_modules\/re-animate\/lib\/index\.js/,
           /node_modules\/recharts-scale\/node_modules\/ramda\/dist\/ramda\.js/,
         ],
         loaders: [{
           test: /\.js$/,
-          include: /src|test|recharts/,
+          include: [
+            /src|test|recharts/,
+            /node_modules\/react-smooth\/src\//,
+          ],
           exclude: /node_modules/,
           loader: 'babel',
         }, {
           test: /\.jsx?$/,
-          include: /node_modules\/recharts-scale/,
+          include: [
+            /node_modules\/recharts-scale/,
+            /node_modules\/react-smooth\/src\//,
+          ],
           loader: 'babel',
         }, {
           test: /\.json$/,
