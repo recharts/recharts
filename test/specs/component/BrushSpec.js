@@ -4,9 +4,8 @@ import { Surface, Brush } from 'recharts';
 import Layer from '../../../src/container/Layer';
 import { mount, render } from 'enzyme';
 
-
 describe('<Brush />', () => {
-  let data = [
+  const data = [
     '2015-10-01', '2015-10-02', '2015-10-03', '2015-10-04', '2015-10-05',
     '2015-10-06', '2015-10-07', '2015-10-08', '2015-10-09', '2015-10-10',
     '2015-10-11', '2015-10-12', '2015-10-13', '2015-10-14', '2015-10-15',
@@ -33,5 +32,4 @@ describe('<Brush />', () => {
     brushLayer.simulate('mouseEnter');
     expect(wrapper.state().isTextActive).to.equal(true);
   });
-
 });

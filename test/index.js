@@ -10,10 +10,12 @@ let ScatterSpec = require('./specs/chart/ScatterSpec.js');
 let XAxisSpec = require('./specs/chart/XAxisSpec.js');
 let YAxisSpec = require('./specs/chart/YAxisSpec.js');
 let ZAxisSpec = require('./specs/chart/ZAxisSpec.js');
+
 //chartWrapper
 let TreemapChartSpec = require('./specs/chartWrapper/TreemapChartSpec.js');
 let ScatterChartSpec = require('./specs/chartWrapper/ScatterChartSpec.js');
 let RadialBarChartSpec = require('./specs/chartWrapper/RadialBarChartSpec.js');
+
 //component
 let BackgroundSpec = require('./specs/component/BackgroundSpec.js');
 let BrushSpec = require('./specs/component/BrushSpec.js');
@@ -23,6 +25,7 @@ let DefaultTooltipContentSpec = require('./specs/component/DefaultTooltipContent
 let LegendSpec = require('./specs/component/LegendSpec.js');
 let ReferenceLineSpec = require('./specs/component/ReferenceLineSpec.js');
 let TooltipSpec = require('./specs/component/TooltipSpec.js');
+
 //shape
 let CrossSpec = require('./specs/shape/CrossSpec.js');
 let CurveSpec = require('./specs/shape/CurveSpec.js');
@@ -30,8 +33,3 @@ let DotSpec = require('./specs/shape/DotSpec.js');
 let RectangleSpec = require('./specs/shape/RectangleSpec.js');
 let SectorSpec = require('./specs/shape/SectorSpec.js');
 let TriangleSpec = require('./specs/shape/TriangleSpec.js');
-
-
-
-
-
