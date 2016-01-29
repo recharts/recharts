@@ -1,5 +1,4 @@
 import Pie from './Pie';
-import Radar from './Radar';
 
 import CartesianAxis from './CartesianAxis';
 import CartesianGrid from './CartesianGrid';
@@ -20,13 +19,13 @@ import BarChart from './BarChart';
 import ComposedChart from './ComposedChart';
 import PieChart from './PieChart';
 import ScatterChart from './ScatterChart';
+import RadarChart from './RadarChart';
 import RadialBarChart from './RadialBarChart';
 import TreemapChart from './TreemapChart';
 
 export default {
   chart: {
     Pie,
-    Radar
   },
 
   component: {
@@ -34,16 +33,16 @@ export default {
     CartesianAxis,
     CartesianGrid,
     Legend,
-    PolarGrid,
     PolarRadiusAxis,
     PolarAngleAxis,
+    PolarGrid,
   },
 
   shape: {
     Curve,
     Rectangle,
     Sector,
-    Triangle
+    Triangle,
   },
 
   chartWrapper: {
@@ -53,7 +52,8 @@ export default {
     ComposedChart,
     ScatterChart,
     PieChart,
+    RadarChart,
     RadialBarChart,
-    TreemapChart
+    TreemapChart,
   },
 };
