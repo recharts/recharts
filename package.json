@@ -34,6 +34,8 @@
     "recharts-scale": "0.1.6-beta"
   },
   "devDependencies": {
+    "react": "0.14.7",
+    "react-dom": "0.14.7",
     "babel-core": "6.3.21",
     "babel-eslint": "5.0.0-beta6",
     "babel-loader": "6.2.0",
