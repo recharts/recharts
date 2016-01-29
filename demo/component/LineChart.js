@@ -8,6 +8,17 @@ const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400},
               {name: 'Page D', uv: 200, pv: 9800, amt: 2400},
               {name: 'Page E', uv: 278, pv: 3908, amt: 2400},
               {name: 'Page F', uv: 189, pv: 4800, amt: 2400}];
+const data01 = [
+  {day: '05-01', wether: 'sunny'},
+  {day: '05-02', wether: 'sunny'},
+  {day: '05-03', wether: 'cloudy'},
+  {day: '05-04', wether: 'rain'},
+  {day: '05-05', wether: 'rain'},
+  {day: '05-06', wether: 'cloudy'},
+  {day: '05-07', wether: 'cloudy'},
+  {day: '05-08', wether: 'sunny'},
+  {day: '05-09', wether: 'sunny'},
+];
 
 export default React.createClass({
   displayName: 'LineChartDemo',
@@ -63,8 +74,17 @@ export default React.createClass({
           </LineChart>
         </div>
 
-
+        <p>LineChart of discrete velues</p>
+        <div className='line-chart-wrapper'>
+          <LineChart width={400} height={400} data={data01} margin={{top: 20, right: 20, bottom: 20, left: 20}}>
+            <XAxis dataKey="day"/>
+            <YAxis type="category"/>
+            <Tooltip/>
+            <Line type="stepAfter" dataKey='wether'  stroke='#ff7300'/>
+          </LineChart>
+        </div>
       </div>
     );
   }
 });
+

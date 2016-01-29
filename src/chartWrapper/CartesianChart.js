@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { getNiceTickValues } from 'recharts-scale';
 import D3Scale from 'd3-scale';
 import D3Shape from 'd3-shape';
+import invariant from 'invariant';
 
 import Layer from '../container/Layer';
 import CartesianAxis from '../component/CartesianAxis';
@@ -60,6 +61,12 @@ class CartesianChart extends React.Component {
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
 
+  constructor(props) {
+    super(props);
+
+    this.validateAxes();
+  }
+
   state = {
     dataStartIndex: 0,
     dataEndIndex: this.props.data.length - 1,
@@ -70,6 +77,42 @@ class CartesianChart extends React.Component {
     activeLineKey: null,
     activeBarKey: null,
   };
+
+  validateAxes() {
+    const { layout, children } = this.props;
+    const xAxes = ReactUtils.findAllByType(children, XAxis);
+    const yAxes = ReactUtils.findAllByType(children, YAxis);
+
+    if (layout === 'horizontal' && xAxes && xAxes.length) {
+      xAxes.forEach(axis => {
+        invariant(axis.props.type === 'category',
+          'x-axis should be category axis when the layout is horizontal'
+        );
+      });
+    } else if (layout === 'vertical') {
+      const displayName = this.constructor.displayName;
+
+      invariant(yAxes && yAxes.length,
+        `You should add <YAxis type="number"/> in ${displayName}.` +
+        `The layout is vertical now, y-axis should be category axis,` +
+        `but y-axis is number axis when no YAxis is added.`
+      );
+      invariant(xAxes && xAxes.length,
+        `You should add <XAxis /> in ${displayName}.` +
+        `The layout is vertical now, x-axis is category when no XAxis is added.`
+      );
+
+      if (yAxes && yAxes.length) {
+        yAxes.forEach(axis => {
+          invariant(axis.props.type === 'category',
+            'y-axis should be category axis when the layout is vertical'
+          );
+        });
+      }
+    }
+
+    return null;
+  }
 
   getStackGroupsByAxisId(items, axisIdKey) {
     const stackGroups = items.reduce((result, item) => {

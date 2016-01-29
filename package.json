@@ -26,10 +26,11 @@
     "d3-scale": "0.4.0",
     "d3-shape": "0.4.0",
     "ima.js-babel6-polyfill": "0.1.0",
+    "invariant": "2.2.0",
     "pure-render-decorator": "0.2.0",
     "raf": "3.1.0",
-    "react-smooth": "0.0.1",
     "react-addons-create-fragment": "0.14.7",
+    "react-smooth": "0.0.1",
     "recharts-scale": "0.1.6-beta"
   },
   "devDependencies": {

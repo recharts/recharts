@@ -69,11 +69,14 @@ class BarChart extends CartesianChart {
 
   getBaseValue(xAxis, yAxis) {
     const { layout } = this.props;
-    const scale = layout === 'horizontal' ? yAxis.scale : xAxis.scale;
-    const domain = scale.domain();
+    const numberAxis = layout === 'horizontal' ? yAxis : xAxis;
+    const domain = numberAxis.scale.domain();
 
+    if (numberAxis.type === 'number') {
+      return Math.max(Math.min(domain[0], domain[1]), 0);
+    }
 
-    return Math.max(Math.min(domain[0], domain[1]), 0);
+    return domain[0];
   }
   /**
    * Calculate the size of each bar and the gap between two bars

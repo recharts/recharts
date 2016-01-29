@@ -4,7 +4,7 @@ import pureRender from 'pure-render-decorator';
 @pureRender
 class DefaultTooltipContent extends React.Component {
 
-  static displayName = 'TooltipContent';
+  static displayName = 'DefaultTooltipContent';
 
   static propTypes = {
     separator: PropTypes.string,
@@ -15,7 +15,7 @@ class DefaultTooltipContent extends React.Component {
     label: PropTypes.any,
     payload: PropTypes.arrayOf(PropTypes.shape({
       key: PropTypes.any,
-      value: PropTypes.number,
+      value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       unit: PropTypes.any,
     })),
   };
