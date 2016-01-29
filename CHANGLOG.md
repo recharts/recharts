@@ -1,3 +1,12 @@
+## 0.4.6 (January 29, 2016)
+
+### UI
+- refactor(Legend): refactor the legend in all the charts, change the location method of legend
+- feat(radar): add new RadarChart with the new component used in Chart, like PolarAngleAxis PolarRadiusAxis PolarGrid Polygon ex
+
+### Test
+- feat(test): add test for charts, chartWrappers, components, and shapes
+
 ## 0.4.5 (January 29, 2016)
 
 ### UI
