@@ -16,6 +16,7 @@ import LodashUtils from '../util/LodashUtils';
 import XAxis from '../chart/XAxis';
 import YAxis from '../chart/YAxis';
 import Tooltip from '../component/Tooltip';
+import Legend from '../component/Legend';
 import Brush from '../component/Brush';
 import ReferenceLine from '../component/ReferenceLine';
 
@@ -884,7 +885,11 @@ class CartesianChart extends React.Component {
    * @param  {ReactElement} legendItem The instance of Legend
    * @return {ReactElement}            The instance of Legend
    */
-  renderLegend(items, offset, legendItem) {
+  renderLegend(items) {
+    const { children, width, height } = this.props;
+    const legendItem = ReactUtils.findChildByType(children, Legend);
+    if (!legendItem) {return null;}
+
     const legendData = items.map((child) => {
       const { dataKey, name, legendType } = child.props;
 
@@ -896,7 +901,7 @@ class CartesianChart extends React.Component {
     }, this);
 
     return React.cloneElement(legendItem, {
-      width: offset.width,
+      ...Legend.getWithHeight(legendItem, width, height),
       payload: legendData,
     });
   }

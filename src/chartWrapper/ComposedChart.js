@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import CartesianChart from './CartesianChart';
 
 import Surface from '../container/Surface';
-import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Line from '../chart/Line';
 import Bar from '../chart/Bar';
@@ -492,7 +491,6 @@ class ComposedChart extends CartesianChart {
     const barItems = ReactUtils.findAllByType(children, Bar);
     const areaItems = ReactUtils.findAllByType(children, Area);
     const items = [...lineItems, ...barItems, ...areaItems];
-    const legendItem = ReactUtils.findChildByType(children, Legend);
 
     const stackGroups = this.getStackGroupsByAxisId(items, `${numberAxisName}Id`);
 
@@ -510,12 +508,6 @@ class ComposedChart extends CartesianChart {
         onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseLeave={::this.handleMouseLeave}
       >
-
-        {legendItem && legendItem.props.layout === 'horizontal'
-          && legendItem.props.verticalAlign === 'top'
-          && this.renderLegend(items, offset, legendItem)
-        }
-
         <Surface {...this.props}>
           {this.renderGrid(xAxisMap, yAxisMap, offset)}
           {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
@@ -527,9 +519,7 @@ class ComposedChart extends CartesianChart {
           {this.renderLineItems(lineItems, xAxisMap, yAxisMap, offset)}
         </Surface>
 
-        {legendItem && (legendItem.props.layout !== 'horizontal'
-          || legendItem.props.verticalAlign !== 'top')
-        && this.renderLegend(items, offset, legendItem)}
+        {this.renderLegend(items)}
         {this.renderTooltip(items, offset)}
       </div>
     );

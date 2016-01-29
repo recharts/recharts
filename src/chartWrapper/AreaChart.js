@@ -3,7 +3,6 @@ import CartesianChart from './CartesianChart';
 import LodashUtils from '../util/LodashUtils';
 import Surface from '../container/Surface';
 import ReactUtils from '../util/ReactUtils';
-import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Area from '../chart/Area';
 import Dot from '../shape/Dot';
@@ -165,7 +164,6 @@ class AreaChart extends CartesianChart {
     const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
     const items = ReactUtils.findAllByType(children, Area);
     const stackGroups = this.getStackGroupsByAxisId(items, `${numberAxisName}Id`);
-    const legendItem = ReactUtils.findChildByType(children, Legend);
 
     let xAxisMap = this.getAxisMap('xAxis', items, numberAxisName === 'xAxis' && stackGroups);
     let yAxisMap = this.getAxisMap('yAxis', items, numberAxisName === 'yAxis' && stackGroups);
@@ -182,11 +180,6 @@ class AreaChart extends CartesianChart {
         onMouseLeave={::this.handleMouseLeave}
       >
 
-        {legendItem && legendItem.props.layout === 'horizontal'
-          && legendItem.props.verticalAlign === 'top'
-          && this.renderLegend(items, offset, legendItem)
-        }
-
         <Surface {...this.props}>
           {this.renderGrid(xAxisMap, yAxisMap, offset)}
           {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
@@ -196,9 +189,7 @@ class AreaChart extends CartesianChart {
           {this.renderItems(items, xAxisMap, yAxisMap, offset, stackGroups)}
         </Surface>
 
-        {legendItem && (legendItem.props.layout !== 'horizontal'
-          || legendItem.props.verticalAlign !== 'top')
-        && this.renderLegend(items, offset, legendItem)}
+        {this.renderLegend(items)}
         {this.renderTooltip(items, offset)}
       </div>
     );

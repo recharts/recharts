@@ -4,7 +4,6 @@ import LodashUtils from '../util/LodashUtils';
 
 import Surface from '../container/Surface';
 import ReactUtils from '../util/ReactUtils';
-import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Bar from '../chart/Bar';
 import Rectangle from '../shape/Rectangle';
@@ -260,8 +259,6 @@ class BarChart extends CartesianChart {
     const items = ReactUtils.findAllByType(children, Bar);
     const stackGroups = this.getStackGroupsByAxisId(items, `${numberAxisName}Id`);
 
-    const legendItem = ReactUtils.findChildByType(children, Legend);
-
     let xAxisMap = this.getAxisMap('xAxis', items, numberAxisName === 'xAxis' && stackGroups);
     let yAxisMap = this.getAxisMap('yAxis', items, numberAxisName === 'yAxis' && stackGroups);
     const offset = this.getOffset(xAxisMap, yAxisMap);
@@ -276,12 +273,6 @@ class BarChart extends CartesianChart {
         onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseLeave={::this.handleMouseLeave}
       >
-
-        {legendItem && legendItem.props.layout === 'horizontal'
-          && legendItem.props.verticalAlign === 'top'
-          && this.renderLegend(items, offset, legendItem)
-        }
-
         <Surface {...this.props}>
           {this.renderGrid(xAxisMap, yAxisMap, offset)}
           {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
@@ -292,9 +283,7 @@ class BarChart extends CartesianChart {
           {this.renderBrush(xAxisMap, yAxisMap, offset)}
         </Surface>
 
-        {legendItem && (legendItem.props.layout !== 'horizontal'
-          || legendItem.props.verticalAlign !== 'top')
-        && this.renderLegend(items, offset, legendItem)}
+        {this.renderLegend(items)}
         {this.renderTooltip(items, offset)}
       </div>
     );

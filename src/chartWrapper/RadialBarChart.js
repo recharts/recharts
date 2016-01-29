@@ -208,7 +208,11 @@ class RadialBarChart extends React.Component {
    * @param  {ReactElement} legendItem The instance of Legend
    * @return {ReactElement}            The instance of Legend
    */
-  renderLegend(legendItem) {
+  renderLegend() {
+    const { children } = this.props;
+    const legendItem = ReactUtils.findChildByType(children, Legend);
+    if (!legendItem) {return null;}
+
     const { data, width, height } = this.props;
 
     const legendData = data.map(entry => {
@@ -220,8 +224,7 @@ class RadialBarChart extends React.Component {
     });
 
     return React.cloneElement(legendItem, {
-      width: legendItem.props.width || width,
-      height: legendItem.props.height || height,
+      ...Legend.getWithHeight(legendItem, width, height),
       payload: legendData,
     });
   }
@@ -264,7 +267,6 @@ class RadialBarChart extends React.Component {
   render() {
     const { style, children } = this.props;
     const items = ReactUtils.findAllByType(children, RadialBar);
-    const legendItem = ReactUtils.findChildByType(children, Legend);
     const center = this.getCenter();
     const radiusScale = this.getRadiusScale(center);
 
@@ -273,18 +275,11 @@ class RadialBarChart extends React.Component {
         style={{ cursor: 'default', ...style, position: 'relative' }}
       >
 
-        {legendItem && legendItem.props.layout === 'horizontal'
-          && legendItem.props.verticalAlign === 'top'
-          && this.renderLegend(legendItem)
-        }
-
         <Surface {...this.props}>
           {this.renderItems(items, radiusScale, center)}
         </Surface>
 
-        {legendItem && (legendItem.props.layout !== 'horizontal'
-          || legendItem.props.verticalAlign !== 'top')
-        && this.renderLegend(legendItem)}
+        {this.renderLegend()}
 
         {this.renderTooltip(items)}
       </div>

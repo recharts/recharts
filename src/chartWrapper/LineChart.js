@@ -3,7 +3,6 @@ import CartesianChart from './CartesianChart';
 
 import Surface from '../container/Surface';
 import ReactUtils from '../util/ReactUtils';
-import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Line from '../chart/Line';
 import Curve from '../shape/Curve';
@@ -154,7 +153,6 @@ class LineChart extends CartesianChart {
   render() {
     const { style, children } = this.props;
     const items = ReactUtils.findAllByType(children, Line);
-    const legendItem = ReactUtils.findChildByType(children, Legend);
 
     let xAxisMap = this.getAxisMap('xAxis', items);
     let yAxisMap = this.getAxisMap('yAxis', items);
@@ -171,11 +169,6 @@ class LineChart extends CartesianChart {
         onMouseLeave={::this.handleMouseLeave}
       >
 
-        {legendItem && legendItem.props.layout === 'horizontal'
-          && legendItem.props.verticalAlign === 'top'
-          && this.renderLegend(items, offset, legendItem)
-        }
-
         <Surface {...this.props}>
           {this.renderGrid(xAxisMap, yAxisMap, offset)}
           {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
@@ -185,9 +178,7 @@ class LineChart extends CartesianChart {
           {this.renderItems(items, xAxisMap, yAxisMap, offset)}
         </Surface>
 
-        {legendItem && (legendItem.props.layout !== 'horizontal'
-          || legendItem.props.verticalAlign !== 'top')
-        && this.renderLegend(items, offset, legendItem)}
+        {this.renderLegend(items)}
         {this.renderTooltip(items, offset)}
       </div>
     );

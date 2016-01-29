@@ -1,6 +1,6 @@
 import React from 'react';
 import CustomLineDot from './CustomLineDot';
-import {LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid} from 'recharts';
+import {LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend} from 'recharts';
 
 const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400},
               {name: 'Page B', uv: 300, pv: 4567, amt: 2400},
@@ -30,6 +30,7 @@ export default React.createClass({
         <div className='line-chart-wrapper'>
           <LineChart width={400} height={400} data={data} margin={{top: 20, right: 20, bottom: 20, left: 20}}>
             <CartesianGrid stroke='#f5f5f5'/>
+            <Legend/>
             <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300'/>
           </LineChart>
         </div>
