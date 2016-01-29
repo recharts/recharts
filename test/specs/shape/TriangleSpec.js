@@ -4,9 +4,15 @@ import { Surface, Triangle } from 'recharts';
 import { mount, render } from 'enzyme';
 
 describe('<Triangle />', () => {
-  let wrapper = render(
+  const points = [
+    { x: 100, y: 300 },
+    { x: 300, y: 300 },
+    { x: 200, y: 50 },
+  ];
+
+  const wrapper = render(
     <Surface width={400} height={400}>
-      <Triangle points={[{x: 100, y: 300}, {x: 300, y: 300}, {x: 200, y : 50}]} fill='#ff7300'/>
+      <Triangle points={points} fill="#ff7300"/>
     </Surface>
   );
 

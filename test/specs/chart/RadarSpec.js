@@ -16,7 +16,7 @@ describe('<Radar />', () => {
   ];
 
   it('renders 1 polygon in simple Radar', () => {
-    let wrapper = render(
+    const wrapper = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
         <Radar />
       </RadarChart>
@@ -25,9 +25,8 @@ describe('<Radar />', () => {
   });
 
   it('renders 1 PolarGrid 1 PolarAngleAxis and 1 PolarRadiusAxis in simple Radar', () => {
-    let wrapper = render(
-      <RadarChart cx={300} cy={250} startAngle={45} innerRadius={20} outerRadius={150}
-        width={600} height={500} data={data} >
+    const wrapper = render(
+      <RadarChart cx={300} cy={250} startAngle={45} innerRadius={20} outerRadius={150} width={600} height={500} data={data}>
         <Radar dataKey="value" fill="#9597E4" fillOpacity={0.6} stroke="#8889DD" strokeWidth={3} />
         <PolarGrid />
         <PolarAngleAxis />
@@ -40,9 +39,8 @@ describe('<Radar />', () => {
   });
 
   it('renders 8 angle grid angle line, 8 angle axis ticks, and 3 radius axis ticks', () => {
-    let wrapper = render(
-      <RadarChart cx={300} cy={250} startAngle={45} innerRadius={20} outerRadius={150}
-        width={600} height={500} data={data} >
+    const wrapper = render(
+      <RadarChart cx={300} cy={250} startAngle={45} innerRadius={20} outerRadius={150} width={600} height={500} data={data} >
         <Radar dataKey="value" fill="#9597E4" fillOpacity={0.6} stroke="#8889DD" strokeWidth={3} />
         <PolarGrid />
         <PolarAngleAxis />
