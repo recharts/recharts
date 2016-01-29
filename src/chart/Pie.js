@@ -152,6 +152,16 @@ class Pie extends React.Component {
     raf(this.update.bind(this));
   }
 
+  getTextAnchor(x, cx) {
+    if (x > cx) {
+      return 'start';
+    } else if (x < cx) {
+      return 'end';
+    }
+
+    return 'middle';
+  }
+
   handleSectorEnter(data, e) {
     this.props.onMouseEnter(data, e);
   }
@@ -176,16 +186,6 @@ class Pie extends React.Component {
         </clipPath>
       </defs>
     );
-  }
-
-  getTextAnchor(x, cx) {
-    if (x > cx) {
-      return 'start';
-    } else if (x < cx) {
-      return 'end';
-    }
-
-    return 'middle';
   }
 
   renderLabels(sectors) {

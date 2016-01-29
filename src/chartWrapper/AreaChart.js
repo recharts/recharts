@@ -18,9 +18,10 @@ class AreaChart extends CartesianChart {
   };
   /**
    * Compose the data of each area
-   * @param  {Object} xAxis   The configuration of x-axis
-   * @param  {Object} yAxis   The configuration of y-axis
-   * @param  {String} dataKey The unique key of a group
+   * @param  {Object} xAxis       The configuration of x-axis
+   * @param  {Object} yAxis       The configuration of y-axis
+   * @param  {String} dataKey     The unique key of a group
+   * @param  {Array}  stackedData If the area is stacked, the stackedData is an array of min value and max value
    * @return {Array} Composed data
    */
   getComposeData(xAxis, yAxis, dataKey, stackedData) {
@@ -113,6 +114,7 @@ class AreaChart extends CartesianChart {
    * @param  {Object} xAxisMap The configuration of all x-axis
    * @param  {Object} yAxisMap The configuration of all y-axis
    * @param  {Object} offset   The offset of main part in the svg element
+   * @param  {Object} stackGroups The items grouped by axisId and stackId
    * @return {ReactComponent} The instances of Area
    */
   renderItems(items, xAxisMap, yAxisMap, offset, stackGroups) {
