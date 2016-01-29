@@ -392,11 +392,13 @@ class ScatterChart extends React.Component {
   /**
    * Draw legend
    * @param  {Array} items             The instances of Scatters
-   * @param  {Object} offset           The offset of main part in the svg element
-   * @param  {ReactElement} legendItem The instance of Legend
    * @return {ReactElement}            The instance of Legend
    */
-  renderLegend(items, offset, legendItem) {
+  renderLegend(items, offset) {
+    const { children, width, height } = this.props;
+    const legendItem = ReactUtils.findChildByType(children, Legend);
+    if (!legendItem) {return null;}
+
     const legendData = items.map((child) => {
       const { name, fill, legendType } = child.props;
 
@@ -408,7 +410,7 @@ class ScatterChart extends React.Component {
     }, this);
 
     return React.cloneElement(legendItem, {
-      width: offset.width,
+      ...Legend.getWithHeight(legendItem, width, height),
       payload: legendData,
     });
   }
@@ -487,7 +489,6 @@ class ScatterChart extends React.Component {
   render() {
     const { style, children } = this.props;
     const items = ReactUtils.findAllByType(children, Scatter);
-    const legendItem = ReactUtils.findChildByType(children, Legend);
     const zAxis = this.getZAxis(items);
     let xAxis = this.getAxis('xAxis', items);
     let yAxis = this.getAxis('yAxis', items);
@@ -500,12 +501,6 @@ class ScatterChart extends React.Component {
       <div className="recharts-wrapper"
         style={{ position: 'relative', cursor: 'default', ...style }}
       >
-
-        {legendItem && legendItem.props.layout === 'horizontal'
-          && legendItem.props.verticalAlign === 'top'
-          && this.renderLegend(items, offset, legendItem)
-        }
-
         <Surface {...this.props}>
           {this.renderGrid(xAxis, yAxis, offset)}
           {this.renderAxis(xAxis, 'x-axis-layer')}
@@ -514,9 +509,7 @@ class ScatterChart extends React.Component {
           {this.renderItems(items, xAxis, yAxis, zAxis, offset)}
         </Surface>
 
-        {legendItem && (legendItem.props.layout !== 'horizontal'
-          || legendItem.props.verticalAlign !== 'top')
-        && this.renderLegend(items, offset, legendItem)}
+        {this.renderLegend(items)}
         {this.renderTooltip(items, xAxis, yAxis, zAxis, offset)}
       </div>
     );

@@ -36,7 +36,7 @@ class Tooltip extends React.Component {
     label: PropTypes.any,
     payload: PropTypes.arrayOf(PropTypes.shape({
       key: PropTypes.any,
-      value: PropTypes.number,
+      value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       unit: PropTypes.any,
     })),
   };

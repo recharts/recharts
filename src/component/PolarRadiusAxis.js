@@ -4,7 +4,6 @@
  * @Date 2015-08-28
  */
 import React, { PropTypes } from 'react';
-import createFragment from 'react-addons-create-fragment';
 import pureRender from 'pure-render-decorator';
 
 const RADIAN = Math.PI / 180;
@@ -21,20 +20,24 @@ class PolarRadiusAxis extends React.Component {
     innerRadius: PropTypes.number,
     outerRadius: PropTypes.number,
     clockWise: PropTypes.bool,
+
     angle: PropTypes.number,
-    ticks: PropTypes.arrayOf(PropTypes.shape({
-      value: PropTypes.any,
-      radius: PropTypes.number,
-    })),
-    tickValueFormat: PropTypes.func,
-    orient: PropTypes.oneOf(['bottom', 'top']),
+    polarRadius: PropTypes.arrayOf(PropTypes.number),
+    orient: PropTypes.oneOf(['left', 'right', 'middle']),
+
+    fill: PropTypes.string,
+    fontSize: PropTypes.number,
   };
 
   static defaultProps = {
-    orient: 'bottom',
-    ticks: [],
+    orient: 'middle',
+    fill: '#ccc',
+    fontSize: 12,
   };
 
+  constructor(props) {
+    super(props);
+  }
   /**
    * Calculate the coordinate of tick
    * @param  {Object} data The data of a simple tick
@@ -46,8 +49,8 @@ class PolarRadiusAxis extends React.Component {
     const cos = Math.cos(-angle * RADIAN);
 
     return {
-      x: cx + data.radius * cos,
-      y: cy + data.radius * sin,
+      x: cx + data * cos,
+      y: cy + data * sin,
     };
   }
 
@@ -71,39 +74,37 @@ class PolarRadiusAxis extends React.Component {
   }
 
   renderTicks() {
-    const { ticks, angle } = this.props;
-    const items = {};
+    const { polarRadius, angle, fill, fontSize } = this.props;
     const textAnchor = this.getTickTextAnchor();
-
-    ticks.reduce((result, entry, i) => {
-      const coord = this.getTickValueCoord(entry);
-
-      items['tick-' + i] = (
-        <g className="axis-tick" key={'tick-' + i}>
-          <text
-            x={coord.x}
-            y={coord.y}
-            textAnchor={textAnchor}
-            transform={`rotate(${90 - angle}, ${coord.x}, ${coord.y})`}
-            className="tick-value"
-          >
-            {entry.value}
-          </text>
-        </g>
-      );
-    }, items);
 
     return (
       <g className="axis-ticks">
-        {createFragment(items)}
+        {
+          polarRadius.map((v, i) => {
+            const coord = this.getTickValueCoord(v);
+
+            return (
+              <text
+                key={'tick-' + i}
+                x={coord.x}
+                y={coord.y}
+                textAnchor={textAnchor}
+                transform={`rotate(${90 - angle}, ${coord.x}, ${coord.y})`}
+                className="tick-value"
+                fill={fill}
+                fontSize={fontSize}
+              >{Math.floor(v)}</text>
+            );
+          })
+        }
       </g>
     );
   }
 
   render() {
-    const { ticks } = this.props;
+    const { polarRadius } = this.props;
 
-    if (!ticks || !ticks.length) {
+    if (!polarRadius || !polarRadius.length) {
       return null;
     }
 

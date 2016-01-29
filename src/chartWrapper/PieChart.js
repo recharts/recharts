@@ -76,12 +76,14 @@ class PieChart extends React.Component {
   /**
    * Draw legend
    * @param  {Array} items             The instances of Pie
-   * @param  {ReactElement} legendItem The instance of Legend
    * @return {ReactElement}            The instance of Legend
    */
-  renderLegend(items, legendItem) {
-    const { width } = this.props;
+  renderLegend(items) {
+    const { children } = this.props;
+    const legendItem = ReactUtils.findChildByType(children, Legend);
+    if (!legendItem) {return null;}
 
+    const { width, height } = this.props;
     const legendData = items.reduce((result, child) => {
       const data = this.getComposeData(child);
 
@@ -93,7 +95,7 @@ class PieChart extends React.Component {
     }, []);
 
     return React.cloneElement(legendItem, {
-      width,
+      ...Legend.getWithHeight(legendItem, width, height),
       payload: legendData,
     });
   }
@@ -133,25 +135,17 @@ class PieChart extends React.Component {
   render() {
     const { style, children } = this.props;
     const items = ReactUtils.findAllByType(children, Pie);
-    const legendItem = ReactUtils.findChildByType(children, Legend);
 
     return (
       <div className="recharts-wrapper"
         style={{ position: 'relative', cursor: 'default', ...style }}
       >
 
-        {legendItem && legendItem.props.layout === 'horizontal'
-          && legendItem.props.verticalAlign === 'top'
-          && this.renderLegend(items, legendItem)
-        }
-
         <Surface {...this.props}>
           {this.renderItems(items)}
         </Surface>
 
-        {legendItem && (legendItem.props.layout !== 'horizontal'
-          || legendItem.props.verticalAlign !== 'top')
-        && this.renderLegend(items, legendItem)}
+        {this.renderLegend(items)}
         {this.renderTooltip(items)}
       </div>
     );
