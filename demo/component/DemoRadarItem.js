@@ -18,12 +18,12 @@ const DemoRadarItem = ({ radar }) => {
   return (
     <g>
       <Polygon
-        style={{ fill: '#9597E4', fillOpacity: 0.6, stroke: '#8889DD', strokeWidth: 3 }}
+        style={{ fill: '#A5D297', fillOpacity: 0.3, stroke: '#8DC77B', strokeWidth: 2 }}
         points={points}
       />
       {
         points.map((v, i) => {
-          return <Dot key={i} cx={v[0]} cy={v[1]} r={6} style={{ fill: '#F8C12D' }} />;
+          return <Dot key={i} cx={v[0]} cy={v[1]} r={6} style={{ fill: '#8889DD' }} />;
         })
       }
     </g>

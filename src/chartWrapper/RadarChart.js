@@ -71,7 +71,7 @@ class RadarChart extends React.Component {
     const step = (outerRadius - innerRadius) / gridCount;
 
     for (let i = 0; i < gridCount; i++) {
-      if (i === 0 && innerRadius > 0) {
+      if (i === 0 && innerRadius >= 0) {
         result.push(innerRadius);
       }
 
@@ -98,6 +98,13 @@ class RadarChart extends React.Component {
     return angles;
   }
 
+  getRadiusTicks(ratio, radiusArray) {
+    return radiusArray.map((v, i) => ({
+      radius: v,
+      value: v * ratio,
+    }));
+  }
+
   polarToCartesian(cx, cy, angle, radius) {
     return [cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius];
   }
@@ -107,6 +114,7 @@ class RadarChart extends React.Component {
 
     return {
       name: data.map((v) => (v.name)),
+      value: data.map((v) => (v[dataKey])),
       radius: data.map((v) => (
                 (outerRadius - innerRadius) * v[dataKey] / max + innerRadius)
               ),
@@ -217,19 +225,29 @@ class RadarChart extends React.Component {
     const len = data.length;
     const radiusAxis = ReactUtils.findChildByType(children, PolarRadiusAxis);
     const grid = ReactUtils.findChildByType(children, PolarGrid);
+    const radarElements = ReactUtils.findAllByType(children, Radar);
 
-    if (grid && radiusAxis) {
-      const cx = radiusAxis.props.cx || grid.props.cx || this.props.cx;
-      const cy = radiusAxis.props.cy || grid.props.cy || this.props.cy;
-      const startAngle = radiusAxis.props.startAngle || grid.props.startAngle || this.props.startAngle;
-      const innerRadius = radiusAxis.props.innerRadius || grid.props.innerRadius || this.props.innerRadius;
-      const outerRadius = radiusAxis.props.outerRadius || grid.props.outerRadius || this.props.outerRadius;
-      const clockWise = radiusAxis.props.clockWise || grid.props.clockWise || this.props.clockWise;
+    if (radarElements && grid && radiusAxis) {
+      const dataKeys = radarElements.map((v) => (v.props.dataKey));
+      const max = data.reduce((prev, current) => {
+        const currentMax = Math.max(...dataKeys.map((v) => (current[v])));
+        return prev > currentMax ? prev : currentMax;
+      }, 0);
+
+      const cx = grid.props.cx || this.props.cx;
+      const cy = grid.props.cy || this.props.cy;
+      const startAngle = grid.props.startAngle || this.props.startAngle;
+      const innerRadius = grid.props.innerRadius || this.props.innerRadius;
+      const outerRadius = grid.props.outerRadius || this.props.outerRadius;
+      const clockWise = grid.props.clockWise || this.props.clockWise;
       const { gridCount } = grid.props;
 
       return React.cloneElement(radiusAxis, {
         angle: this.getAngleTicks(len, startAngle, clockWise)[len - 1],
-        polarRadius: this.getGridRadius(gridCount, innerRadius, outerRadius),
+        ticks: this.getRadiusTicks(
+                max / this.props.outerRadius,
+                this.getGridRadius(gridCount, innerRadius, outerRadius)
+              ),
         cx, cy, startAngle, innerRadius, outerRadius, clockWise,
         ...radiusAxis.props,
       });
@@ -246,12 +264,14 @@ class RadarChart extends React.Component {
     }
 
     return (
-      <Surface width={width} height={height}>
-        {this.renderGrid()}
-        {this.renderRadiusAxis()}
-        {this.renderAngleAxis()}
-        {this.renderRadars()}
-      </Surface>
+      <div className="recharts-wrapper">
+        <Surface width={width} height={height}>
+          {this.renderGrid()}
+          {this.renderRadiusAxis()}
+          {this.renderAngleAxis()}
+          {this.renderRadars()}
+        </Surface>
+      </div>
     );
   }
 }
