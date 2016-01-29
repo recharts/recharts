@@ -1,7 +1,8 @@
 import React from 'react';
 import { expect } from 'chai';
 import { AreaChart, Area } from 'recharts';
-import { mount, render } from 'enzyme';
+import { mount, render, spy } from 'enzyme';
+import sinon from 'sinon';
 
 describe('<AreaChart />', () => {
   const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400},
@@ -20,14 +21,16 @@ describe('<AreaChart />', () => {
     expect(wrapper.find('path').length).to.equal(2);
   });
 
-  // it('simulate mouseEnter on AreaChart', () => {
-  //   let wrapper = mount(
-  //     <AreaChart width={100} height={50} data={data}>
+  // @TODO wait for implements
+  // it.only('simulate mouseEnter on AreaChart', () => {
+  //   const onMouseEnter = sinon.spy();
+  //   const wrapper = mount(
+  //     <AreaChart onMouseEnter={onMouseEnter} width={100} height={50} data={data}>
   //       <Area type='monotone' dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
   //     </AreaChart>
   //   );
-  //   var tt = wrapper.find('.recharts-wrapper');
-  //   tt.simulate('mouseEnter');
-  //   console.log(wrapper.state());
+  //   const area = wrapper.find(Area);
+  //   area.simulate('mouseEnter');
+  //   expect(onMouseEnter.calledOnce).to.equal(true);
   // });
 });

@@ -12,6 +12,8 @@ let YAxisSpec = require('./specs/chart/YAxisSpec.js');
 let ZAxisSpec = require('./specs/chart/ZAxisSpec.js');
 //chartWrapper
 let TreemapChartSpec = require('./specs/chartWrapper/TreemapChartSpec.js');
+let ScatterChartSpec = require('./specs/chartWrapper/ScatterChartSpec.js');
+let RadialBarChartSpec = require('./specs/chartWrapper/RadialBarChartSpec.js');
 //component
 let BackgroundSpec = require('./specs/component/BackgroundSpec.js');
 let BrushSpec = require('./specs/component/BrushSpec.js');

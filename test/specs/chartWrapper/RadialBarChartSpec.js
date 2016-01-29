@@ -38,6 +38,6 @@ describe('<RadialBarChart />', () => {
   });
 
   it('renders 7 legend items', () => {
-    expect(wrapper.find('legend-item').length).to.equal(2);
+    expect(wrapper.find('.legend-item').length).to.equal(7);
   })
 });

@@ -1,8 +1,7 @@
-import ReactDOM from 'react-dom';
 import React from 'react';
-import ReactTestUtils from 'react-addons-test-utils';
 import { expect } from 'chai';
 import { TreemapChart } from 'recharts';
+import { mount, render } from 'enzyme';
 
 describe('<TreemapChart />', () => {
 
@@ -32,12 +31,11 @@ const data = [
   {rank:'20', name:'J', value:1885463047}
 ].reverse();
   
-  let component = ReactTestUtils.renderIntoDocument(
+  let wrapper = render(
     <TreemapChart width={1000} height={500} data={data} ratio={0.5 * (1 + Math.sqrt(5))}/>
   );
 
   it('renders 20 rectangles in simple TreemapChart', () => {
-    const wrapper = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, 'recharts-rectangle');
-    expect(wrapper.length).to.equal(20);
+    expect(wrapper.find('.recharts-rectangle').length).to.equal(20);
   });
 });

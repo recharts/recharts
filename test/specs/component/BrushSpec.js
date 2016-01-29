@@ -1,6 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { Surface, Brush } from 'recharts';
+import Layer from '../../../src/container/Layer';
 import { mount, render } from 'enzyme';
 
 
@@ -23,15 +24,14 @@ describe('<Brush />', () => {
     expect(wrapper.find('.layer-brush').length).to.equal(2);
   });
 
-  // @TODO successfully simulate mouseMove event, but how to expect?
-  // it.only('simulate mouseMove on brush', () => {
-  //   const wrapper = mount(
-  //     <Surface width={800} height={200}>
-  //       <Brush x={100} y={50} width={400} height={40} data={data}/>
-  //     </Surface>
-  //   );
-  //   var brush = wrapper.find(Brush);
-  //   brush.simulate('mouseMove');
-  // });
+  it('mouse enter on brush will set isTextActive true', () => {
+    const wrapper = mount(
+      <Brush x={100} y={50} width={400} height={40} data={data}/>
+    );
+    const layers = wrapper.find(Layer);
+    const brushLayer = layers.at(1);
+    brushLayer.simulate('mouseEnter');
+    expect(wrapper.state().isTextActive).to.equal(true);
+  });
 
 });
