@@ -129,6 +129,7 @@ class Area extends React.Component {
     if (!points || !points.length) {
       return null;
     }
+
     const hasSinglePoint = points.length === 1;
 
     return (

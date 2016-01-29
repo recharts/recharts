@@ -1,3 +1,16 @@
+## 0.4.5 (January 29, 2016)
+
+### UI
+- fix(Curve): fix the bug of curve defined function
+- fix(ComposedChart): fix the bug of bar position when a line and a bar display a same group of data.
+- chore(webpack.config.js): add react, react-dom, react-dom-server to external
+- deps(react, react-dom): update version to v0.14.7
+
+## 0.4.4 (January 28, 2016)
+
+### Dev
+- chore(webpack.config.js): add build command
+
 ## 0.4.3 (January 28, 2016)
 
 ### UI

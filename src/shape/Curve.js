@@ -60,7 +60,7 @@ class Curve extends React.Component {
     const { type, points, baseLine, baseLineType } = this.props;
     const l = d3Shape.line().x(p => p.x)
                     .y(p => p.y)
-                    .defined(p => p.x && p.x === +p.x && p.y && p.y === + p.y)
+                    .defined(p => p.x === +p.x && p.y === + p.y)
                     .curve(this.getCurveFactory(type));
     const len = points.length;
     let curvePath = l(points);

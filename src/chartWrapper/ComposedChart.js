@@ -227,20 +227,27 @@ class ComposedChart extends CartesianChart {
    */
   getSizeList(stackGroups) {
     const { layout, barSize } = this.props;
+    console.log(stackGroups);
 
     return Object.keys(stackGroups).reduce((result, axisId) => {
       const sgs = stackGroups[axisId].stackGroups;
 
-      result[axisId] = Object.keys(sgs).map(stackId => {
+      result[axisId] = Object.keys(sgs).reduce((res, stackId) => {
         const { items } = sgs[stackId];
-        const { dataKey } = items[0].props;
+        const firstItem = items[0];
 
-        return {
-          dataKey,
-          stackList: items.slice(1).map(item => item.props.dataKey),
-          barSize: items[0].props.barSize || barSize,
-        };
-      });
+        if (firstItem.type.displayName === 'Bar') {
+          const { dataKey } = firstItem.props;
+
+          res.push({
+            dataKey,
+            stackList: items.slice(1).map(item => item.props.dataKey),
+            barSize: firstItem.props.barSize || barSize,
+          });
+        }
+
+        return res;
+      }, []);
 
       return result;
     }, {});

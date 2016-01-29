@@ -53,13 +53,12 @@ export default React.createClass({
           </AreaChart>
         </div>
 
-        <p>Simple AreaChart</p>
+        <p>Tiny AreaChart</p>
         <div className='area-chart-wrapper'>
-          <AreaChart width={100} height={50} data={data}>
+          <AreaChart width={100} height={50} data={data} margin={{top: 5, right: 0, left: 0, bottom: 5}}>
             <Area type='monotone' dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
           </AreaChart>
         </div>
-
 
         <p>AreaChart with three y-axes</p>
         <div className='area-chart-wrapper'>
@@ -96,6 +95,7 @@ export default React.createClass({
             <Area type='monotone' dataKey='pv' stroke='#ff7300' fill='#ff7300' fillOpacity={0.25}/>
           </AreaChart>
         </div>
+
       </div>
     );
   }
