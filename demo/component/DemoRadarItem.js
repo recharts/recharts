@@ -9,21 +9,21 @@ const DemoRadarItem = ({ radar }) => {
   const angleInterval = 360 / radius.length;
 
   const points = radar.radius.map((v, i) => (
-    [
-      cx + Math.cos(-(startAngle + i * sign * angleInterval) * RADIAN) * v,
-      cy + Math.sin(-(startAngle + i * sign * angleInterval) * RADIAN) * v,
-    ]
+    {
+      x: cx + Math.cos(-(startAngle + i * sign * angleInterval) * RADIAN) * v,
+      y: cy + Math.sin(-(startAngle + i * sign * angleInterval) * RADIAN) * v,
+    }
   ));
 
   return (
     <g>
       <Polygon
-        style={{ fill: '#9597E4', fillOpacity: 0.6, stroke: '#8889DD', strokeWidth: 3 }}
+        fill='#A5D297' fillOpacity={0.3} stroke='#8DC77B' strokeWidth={2}
         points={points}
       />
       {
         points.map((v, i) => {
-          return <Dot key={i} cx={v[0]} cy={v[1]} r={6} style={{ fill: '#F8C12D' }} />;
+          return <Dot key={i} cx={v.x} cy={v.y} r={6} fill='#8889DD'/>;
         })
       }
     </g>
