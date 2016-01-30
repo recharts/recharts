@@ -22,7 +22,7 @@ class PolarRadiusAxis extends React.Component {
     clockWise: PropTypes.bool,
 
     angle: PropTypes.number,
-    polarRadius: PropTypes.arrayOf(PropTypes.number),
+    ticks: PropTypes.arrayOf(PropTypes.object),
     orient: PropTypes.oneOf(['left', 'right', 'middle']),
 
     fill: PropTypes.string,
@@ -40,17 +40,17 @@ class PolarRadiusAxis extends React.Component {
   }
   /**
    * Calculate the coordinate of tick
-   * @param  {Object} data The data of a simple tick
+   * @param  {Object} radius The data of a simple tick
    * @return {Object} (x, y)
    */
-  getTickValueCoord(data) {
+  getTickValueCoord(radius) {
     const { angle, cx, cy } = this.props;
     const sin = Math.sin(-angle * RADIAN);
     const cos = Math.cos(-angle * RADIAN);
 
     return {
-      x: cx + data * cos,
-      y: cy + data * sin,
+      x: cx + radius * cos,
+      y: cy + radius * sin,
     };
   }
 
@@ -74,14 +74,14 @@ class PolarRadiusAxis extends React.Component {
   }
 
   renderTicks() {
-    const { polarRadius, angle, fill, fontSize } = this.props;
+    const { ticks, angle, fill, fontSize } = this.props;
     const textAnchor = this.getTickTextAnchor();
 
     return (
       <g className="axis-ticks">
         {
-          polarRadius.map((v, i) => {
-            const coord = this.getTickValueCoord(v);
+          ticks.map((v, i) => {
+            const coord = this.getTickValueCoord(v.radius);
 
             return (
               <text
@@ -93,7 +93,7 @@ class PolarRadiusAxis extends React.Component {
                 className="tick-value"
                 fill={fill}
                 fontSize={fontSize}
-              >{Math.floor(v)}</text>
+              >{Math.floor(v.value)}</text>
             );
           })
         }
@@ -102,9 +102,9 @@ class PolarRadiusAxis extends React.Component {
   }
 
   render() {
-    const { polarRadius } = this.props;
+    const { ticks } = this.props;
 
-    if (!polarRadius || !polarRadius.length) {
+    if (!ticks || !ticks.length) {
       return null;
     }
 
