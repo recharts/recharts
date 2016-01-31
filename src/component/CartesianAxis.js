@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import DOMUtils from '../util/DOMUtils';
 import pureRender from 'pure-render-decorator';
+import Layer from '../container/Layer';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 
 @pureRender
@@ -223,7 +224,7 @@ class CartesianAxis extends React.Component {
         break;
     }
 
-    return <line className="axis-line" {...props}/>;
+    return <line className="recharts-cartesian-axis-line" {...props}/>;
   }
 
   renderTicks() {
@@ -258,7 +259,7 @@ class CartesianAxis extends React.Component {
 
       if (label) {
         labelItem = isLabelElement ? React.cloneElement(label, labelProps) : (
-          <text {...labelProps} className="tick-value">
+          <text {...labelProps} className="recharts-cartesian-axis-tick-value">
             {tickFormatter ? tickFormatter(entry.value) : entry.value}
           </text>
         );
@@ -266,15 +267,15 @@ class CartesianAxis extends React.Component {
 
 
       return (
-        <g className="axis-tick" key={'tick-' + i}>
-          {tickLine && <line className="tick-line" {...tickProps}/>}
+        <g className="recharts-cartesian-axis-tick" key={'tick-' + i}>
+          {tickLine && <line className="recharts-cartesian-axis-tick-line" {...tickProps}/>}
           {label && labelItem}
         </g>
       );
     });
 
     return (
-      <g className="axis-ticks">
+      <g className="recharts-cartesian-axis-ticks">
         {items}
       </g>
     );
@@ -288,10 +289,10 @@ class CartesianAxis extends React.Component {
     }
 
     return (
-      <g className="layer-axis layer-cartesian-axis">
+      <Layer className="recharts-cartesian-axis">
         {axisLine && this.renderAxisLine()}
         {this.renderTicks()}
-      </g>
+      </Layer>
     );
   }
 }

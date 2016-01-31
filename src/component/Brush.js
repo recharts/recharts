@@ -297,7 +297,7 @@ class Brush extends React.Component {
     if (!data || !data.length) {return null;}
 
     return (
-      <Layer className={'layer-recharts-bursh ' + (className || '')}
+      <Layer className={'recharts-layer-bursh ' + (className || '')}
         onMouseUp={::this.handleUp}
         onMouseMove={::this.handleMove}
         onMouseLeave={::this.handleLeaveWrapper}

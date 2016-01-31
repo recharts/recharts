@@ -2,7 +2,7 @@ import React from 'react';
 import { Surface, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import DemoRadarItem from './DemoRadarItem';
 
-class RadarDemo extends React.Component {
+class RadarChartDemo extends React.Component {
   render() {
     const data = [
         { name: 'A', value: 420, half: 610 },
@@ -18,7 +18,7 @@ class RadarDemo extends React.Component {
     return (
       <div>
         <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
-          <Radar />
+          <Radar dataKey="value"/>
           <PolarGrid />
           <PolarAngleAxis />
           <PolarRadiusAxis />
@@ -38,13 +38,13 @@ class RadarDemo extends React.Component {
         >
           <Radar dataKey="value" />
           <Radar dataKey="half" />
-          <PolarGrid outerRadius={180} gridType="polygon" gridCount={4} />
-          <PolarAngleAxis dataKey="name" outerRadius={210} orient="inner" fill="#8889DD" fontSize={8} />
-          <PolarRadiusAxis orient="right" startAngle={0} fill="#666"/>
+          <PolarGrid gridType="polygon" gridCount={4} />
+          <PolarAngleAxis dataKey="name" radius={210} orient="inner" fill="#8889DD" fontSize={8} />
+          <PolarRadiusAxis orient="right" fill="#666"/>
         </RadarChart>
       </div>
     );
   }
 }
 
-export default RadarDemo;
+export default RadarChartDemo;
