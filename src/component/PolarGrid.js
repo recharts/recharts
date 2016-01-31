@@ -11,14 +11,12 @@ class PolarGrid extends React.Component {
   static propTypes = {
     cx: PropTypes.number,
     cy: PropTypes.number,
-    startAngle: PropTypes.number,
     innerRadius: PropTypes.number,
     outerRadius: PropTypes.number,
-    clockWise: PropTypes.bool,
+    gridCount: PropTypes.number,
 
     polarAngles: PropTypes.arrayOf(PropTypes.number),
     polarRadius: PropTypes.arrayOf(PropTypes.number),
-    gridCount: PropTypes.number,
     gridType: PropTypes.oneOf(['polygon', 'circle']),
   };
 
@@ -27,9 +25,6 @@ class PolarGrid extends React.Component {
     gridType: 'circle',
   };
 
-  constructor(props) {
-    super(props);
-  }
   /**
    * Draw axis of radial line
    * @return {[type]} The lines
