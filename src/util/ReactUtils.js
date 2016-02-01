@@ -64,6 +64,7 @@ const PRESENTATION_ATTRIBUTES = {
   writingMode: PropTypes.oneOf(['lr-tb', 'rl-tb', 'tb-rl', 'lr', 'rl', 'tb', 'inherit']),
 
   transform: PropTypes.string,
+  style: PropTypes.object,
 };
 const EVENT_ATTRIBUTES = {
   onActivate: PropTypes.func,

@@ -37,17 +37,17 @@ class Legend extends Component {
   };
 
   static getWithHeight(item, chartWidth, chartHeight) {
-    const {layout} = item.props;
+    const { layout } = item.props;
 
     if (layout === 'vertical') {
       return {
         height: item.props.height || chartHeight,
       };
-    } else {
-      return {
-        width: item.props.width || chartWidth,
-      };
     }
+
+    return {
+      width: item.props.width || chartWidth,
+    };
   }
 
   getDefaultPosition(style) {
@@ -57,13 +57,13 @@ class Legend extends Component {
 
     if (!style || ((style.left === undefined || style.left === null) && (
       style.right === undefined || style.right === null))) {
-      hPos = align === 'right' ? { right: 0 } : { left: 0 }
+      hPos = align === 'right' ? { right: 0 } : { left: 0 };
     }
 
     if (!style || ((style.top === undefined || style.top === null) && (
       style.bottom === undefined || style.bottom === null))) {
       if (layout === 'vertical') {
-        vPos = verticalAlign === 'bottom' ? { bottom : 0} : { top: 0 };
+        vPos = verticalAlign === 'bottom' ? { bottom: 0 } : { top: 0 };
       } else {
         vPos = verticalAlign === 'top' ? { top: 0 } : { bottom: 0 };
       }

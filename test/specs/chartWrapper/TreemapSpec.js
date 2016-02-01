@@ -1,9 +1,9 @@
 import React from 'react';
 import { expect } from 'chai';
-import { TreemapChart } from 'recharts';
+import { Treemap } from 'recharts';
 import { mount, render } from 'enzyme';
 
-describe('<TreemapChart />', () => {
+describe('<Treemap />', () => {
   const data = [
     { rank: '1', name: 'A', value: 17061682925 },
     { rank: '2', name: 'B', value: 12490887132 },
@@ -28,7 +28,7 @@ describe('<TreemapChart />', () => {
   ];
 
   const wrapper = render(
-    <TreemapChart width={1000} height={500} data={data} ratio={0.5 * (1 + Math.sqrt(5))}/>
+    <Treemap width={1000} height={500} data={data} ratio={0.5 * (1 + Math.sqrt(5))}/>
   );
 
   it('renders 20 rectangles in simple TreemapChart', () => {

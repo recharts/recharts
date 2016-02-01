@@ -83,45 +83,9 @@ class CartesianChart extends Component {
     activeBarKey: null,
   };
 
-  validateAxes() {
-    const { layout, children } = this.props;
-    const xAxes = ReactUtils.findAllByType(children, XAxis);
-    const yAxes = ReactUtils.findAllByType(children, YAxis);
-
-    if (layout === 'horizontal' && xAxes && xAxes.length) {
-      xAxes.forEach(axis => {
-        invariant(axis.props.type === 'category',
-          'x-axis should be category axis when the layout is horizontal'
-        );
-      });
-    } else if (layout === 'vertical') {
-      const displayName = this.constructor.displayName;
-
-      invariant(yAxes && yAxes.length,
-        `You should add <YAxis type="number"/> in ${displayName}.` +
-        `The layout is vertical now, y-axis should be category axis,` +
-        `but y-axis is number axis when no YAxis is added.`
-      );
-      invariant(xAxes && xAxes.length,
-        `You should add <XAxis /> in ${displayName}.` +
-        `The layout is vertical now, x-axis is category when no XAxis is added.`
-      );
-
-      if (yAxes && yAxes.length) {
-        yAxes.forEach(axis => {
-          invariant(axis.props.type === 'category',
-            'y-axis should be category axis when the layout is vertical'
-          );
-        });
-      }
-    }
-
-    return null;
-  }
-
   getStackGroupsByAxisId(items, axisIdKey) {
     const stackGroups = items.reduce((result, item) => {
-      const { stackId, dataKey} = item.props;
+      const { stackId, dataKey } = item.props;
       const axisId = item.props[axisIdKey];
 
       if (!result[axisId]) {
@@ -163,7 +127,7 @@ class CartesianChart extends Component {
         }, {});
       }
       result[axisId] = group;
-      return  result;
+      return result;
     }, {});
   }
 
@@ -260,7 +224,7 @@ class CartesianChart extends Component {
       }, -Infinity);
 
       return [Math.min(min, result[0]), Math.max(max, result[1])];
-    }, [Infinity, -Infinity])
+    }, [Infinity, -Infinity]);
   }
   /**
    * Get domain of data by the configuration of item element
@@ -326,6 +290,7 @@ class CartesianChart extends Component {
    * @param  {Array} items The instances of item
    * @param  {String} axisType The type of axis, xAxis - x-axis, yAxis - y-axis
    * @param  {String} axisIdKey The unique id of an axis
+   * @param  {Object} stackGroups The items grouped by axisId and stackId
    * @return {Object}      Configuration
    */
   getAxisMapByAxes(axes, items, axisType, axisIdKey, stackGroups) {
@@ -368,6 +333,7 @@ class CartesianChart extends Component {
    * @param  {ReactElement} Axis Axis Component
    * @param  {String} axisType   The type of axis, xAxis - x-axis, yAxis - y-axis
    * @param  {String} axisIdKey  The unique id of an axis
+   * @param  {Object} stackGroups The items grouped by axisId and stackId
    * @return {Object}            Configuration
    */
   getAxisMapByItems(items, Axis, axisType, axisIdKey, stackGroups) {
@@ -705,6 +671,42 @@ class CartesianChart extends Component {
         formatter,
       };
     });
+  }
+
+  validateAxes() {
+    const { layout, children } = this.props;
+    const xAxes = ReactUtils.findAllByType(children, XAxis);
+    const yAxes = ReactUtils.findAllByType(children, YAxis);
+
+    if (layout === 'horizontal' && xAxes && xAxes.length) {
+      xAxes.forEach(axis => {
+        invariant(axis.props.type === 'category',
+          'x-axis should be category axis when the layout is horizontal'
+        );
+      });
+    } else if (layout === 'vertical') {
+      const displayName = this.constructor.displayName;
+
+      invariant(yAxes && yAxes.length,
+        `You should add <YAxis type="number"/> in ${displayName}.` +
+        `The layout is vertical now, y-axis should be category axis,` +
+        `but y-axis is number axis when no YAxis is added.`
+      );
+      invariant(xAxes && xAxes.length,
+        `You should add <XAxis /> in ${displayName}.` +
+        `The layout is vertical now, x-axis is category when no XAxis is added.`
+      );
+
+      if (yAxes && yAxes.length) {
+        yAxes.forEach(axis => {
+          invariant(axis.props.type === 'category',
+            'y-axis should be category axis when the layout is vertical'
+          );
+        });
+      }
+    }
+
+    return null;
   }
 
   handleBrushChange({ startIndex, endIndex }) {

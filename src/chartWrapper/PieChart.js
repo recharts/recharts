@@ -7,6 +7,7 @@ import ReactUtils from '../util/ReactUtils';
 import Pie from '../chart/Pie';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
+import classNames from 'classnames';
 
 class PieChart extends Component {
 
@@ -27,6 +28,7 @@ class PieChart extends Component {
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
     ]),
+    className: PropTypes.string,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
@@ -136,15 +138,15 @@ class PieChart extends Component {
   }
 
   render() {
-    const { style, children } = this.props;
+    const { style, children, className, width, height } = this.props;
     const items = ReactUtils.findAllByType(children, Pie);
 
     return (
-      <div className="recharts-wrapper"
+      <div className={classNames('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', ...style }}
       >
 
-        <Surface {...this.props}>
+        <Surface width={width} height={height}>
           {this.renderItems(items)}
         </Surface>
 

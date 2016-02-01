@@ -64,9 +64,7 @@ class Area extends Component {
   };
 
   renderArea() {
-    const { stroke, ...other } = this.props;
-
-    return <Curve {...other} stroke="none" className="recharts-area-area" />;
+    return <Curve {...this.props} stroke="none" className="recharts-area-area" />;
   }
 
   renderCurve() {

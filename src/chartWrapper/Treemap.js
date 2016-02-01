@@ -6,6 +6,7 @@ import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Rectangle from '../shape/Rectangle';
 import ReactUtils from '../util/ReactUtils';
+import classNames from 'classnames';
 
 class Treemap extends Component {
   static displayName = 'Treemap';
@@ -19,6 +20,7 @@ class Treemap extends Component {
     content: PropTypes.element,
     fill: PropTypes.string,
     stroke: PropTypes.string,
+    className: PropTypes.string,
   };
 
   static defaultProps = {
@@ -178,12 +180,16 @@ class Treemap extends Component {
   }
 
   render() {
-    const { width, height } = this.props;
+    const { width, height, className, style } = this.props;
 
     return (
-      <Surface width={width} height={height}>
-        {this.renderAllNodes()}
-      </Surface>
+      <div className={classNames('recharts-wrapper', className)}
+        style={{ position: 'relative', cursor: 'default', ...style }}
+      >
+        <Surface width={width} height={height}>
+          {this.renderAllNodes()}
+        </Surface>
+      </div>
     );
   }
 }

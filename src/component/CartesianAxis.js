@@ -206,7 +206,7 @@ class CartesianAxis extends Component {
   }
 
   renderAxisLine() {
-    const { x, y, width, height, orient, stroke, axisLine } = this.props;
+    const { x, y, width, height, orient, axisLine } = this.props;
     let props = {
       ...ReactUtils.getPresentationAttributes(this.props),
       fill: 'none',
@@ -246,7 +246,7 @@ class CartesianAxis extends Component {
 
     const items = finalTicks.map((entry, i) => {
       const lineCoord = this.getTickLineCoord(entry);
-      const tickProps = { ...axisProps, fill: 'none', ...tickLineProps, ...lineCoord, }
+      const tickProps = { ...axisProps, fill: 'none', ...tickLineProps, ...lineCoord };
       const labelProps = {
         dy: this.getDy(entry),
         textAnchor,

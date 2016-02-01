@@ -9,6 +9,7 @@ import ReactUtils from '../util/ReactUtils';
 import Tooltip from '../component/Tooltip';
 import Bar from '../chart/Bar';
 import Rectangle from '../shape/Rectangle';
+import classNames from 'classnames';
 
 class BarChart extends CartesianChart {
 
@@ -28,6 +29,7 @@ class BarChart extends CartesianChart {
    * @param  {Object} yAxis       The configuration of y-axis
    * @param  {Object} offset      The offset of main part in the svg element
    * @param  {String} dataKey     The unique key of a group
+   * @param  {Array} stackedData  The stacked data of a bar item
    * @return {Array} Composed data
    */
   getComposedData(barPosition, xAxis, yAxis, offset, dataKey, stackedData) {
@@ -222,6 +224,7 @@ class BarChart extends CartesianChart {
    * @param  {Object} xAxisMap The configuration of all x-axis
    * @param  {Object} yAxisMap The configuration of all y-axis
    * @param  {Object} offset   The offset of main part in the svg element
+   * @param  {Object} stackGroups The items grouped by axisId and stackId
    * @return {ReactComponent}  All the instances of Bar
    */
   renderItems(items, xAxisMap, yAxisMap, offset, stackGroups) {
@@ -255,7 +258,7 @@ class BarChart extends CartesianChart {
   }
 
   render() {
-    const { style, children, className, layout } = this.props;
+    const { style, children, className, layout, width, height } = this.props;
     const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
     const items = ReactUtils.findAllByType(children, Bar);
     const stackGroups = this.getStackGroupsByAxisId(items, `${numberAxisName}Id`);
@@ -268,13 +271,13 @@ class BarChart extends CartesianChart {
     yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
 
     return (
-      <div className={`recharts-wrapper ${className || ''}`}
+      <div className={classNames('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', ...style }}
         onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseLeave={::this.handleMouseLeave}
       >
-        <Surface {...this.props}>
+        <Surface width={width} height={height}>
           {this.renderGrid(xAxisMap, yAxisMap, offset)}
           {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
           {this.renderXAxis(xAxisMap)}

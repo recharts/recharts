@@ -42,13 +42,13 @@ class CartesianGrid extends Component {
    * @return {Group} Horizontal lines
    */
   renderHorizontal() {
-    const { x, width,  horizontalPoints } = this.props;
+    const { x, width, horizontalPoints } = this.props;
 
     if (!horizontalPoints || !horizontalPoints.length) { return null; }
 
     const props = ReactUtils.getPresentationAttributes(this.props);
     const items = horizontalPoints.map((entry, i) => {
-      return <line {...props} key={'line-' + i} x1={x} y1={entry} x2={x + width} y2={entry}/>
+      return <line {...props} key={'line-' + i} x1={x} y1={entry} x2={x + width} y2={entry}/>;
     });
 
     return <g className="recharts-cartesian-grid-horizontal">{items}</g>;
@@ -65,7 +65,7 @@ class CartesianGrid extends Component {
     const props = ReactUtils.getPresentationAttributes(this.props);
 
     const items = verticalPoints.map((entry, i) => {
-      return <line {...props} key={'line-' + i} x1={entry} y1={y} x2={entry} y2={y + height}/>
+      return <line {...props} key={'line-' + i} x1={entry} y1={y} x2={entry} y2={y + height}/>;
     });
 
     return <g className="recharts-cartesian-grid-vertical">{items}</g>;

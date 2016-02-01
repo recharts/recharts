@@ -133,6 +133,16 @@ class Pie extends Component {
     return sectors;
   }
 
+  getTextAnchor(x, cx) {
+    if (x > cx) {
+      return 'start';
+    } else if (x < cx) {
+      return 'end';
+    }
+
+    return 'middle';
+  }
+
   update(timestamp) {
     if (!this.beginTime) {
       this.beginTime = timestamp;
@@ -154,16 +164,6 @@ class Pie extends Component {
     });
 
     raf(this.update.bind(this));
-  }
-
-  getTextAnchor(x, cx) {
-    if (x > cx) {
-      return 'start';
-    } else if (x < cx) {
-      return 'end';
-    }
-
-    return 'middle';
   }
 
   handleSectorEnter(data, e) {
@@ -221,10 +221,10 @@ class Pie extends Component {
         points: [{
           x: entry.cx + entry.outerRadius * Math.cos(midAngle),
           y: entry.cy + entry.outerRadius * Math.sin(midAngle),
-        }, {x, y}],
+        }, { x, y }],
       };
 
-      return isLabelElement ? React.cloneElement(label, {labelProps, key: `label-${i}`}) : (
+      return isLabelElement ? React.cloneElement(label, { labelProps, key: `label-${i}` }) : (
         <g key={`label-${i}`}>
           <Curve {...lineProps} type="linear" className="recharts-pie-label-line"/>
           <text {...labelProps} className="recharts-pie-label-text">{entry[valueKey]}</text>

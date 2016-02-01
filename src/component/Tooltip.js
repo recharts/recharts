@@ -92,7 +92,7 @@ class Tooltip extends Component {
       coordinate.x - box.width - offset :
       coordinate.x + offset, viewBox.x);
     outerStyle.top = Math.max(
-      coordinate.y + box.height + offset > (viewBox.y  + viewBox.height) ?
+      coordinate.y + box.height + offset > (viewBox.y + viewBox.height) ?
       coordinate.y - box.height - offset :
       coordinate.y + offset, viewBox.x);
 

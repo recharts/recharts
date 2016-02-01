@@ -43,18 +43,6 @@ class Curve extends Component {
     return d3Shape[name];
   }
 
-  fliterMouseToSeg(path) {
-    const reg = /[CSLHVcslhv]/;
-    const res = reg.exec(path);
-
-    if (res && res.length) {
-      const index = path.indexOf(res[0]);
-
-      return path.slice(index);
-    }
-
-    return path;
-  }
   /**
    * Calculate the path of curve
    * @return {String} path
@@ -84,6 +72,19 @@ class Curve extends Component {
     }
 
     return curvePath;
+  }
+
+  fliterMouseToSeg(path) {
+    const reg = /[CSLHVcslhv]/;
+    const res = reg.exec(path);
+
+    if (res && res.length) {
+      const index = path.indexOf(res[0]);
+
+      return path.slice(index);
+    }
+
+    return path;
   }
 
   render() {

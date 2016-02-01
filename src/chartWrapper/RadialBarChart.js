@@ -9,6 +9,7 @@ import RadialBar from '../chart/RadialBar';
 import LodashUtils from '../util/LodashUtils';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
+import classNames from 'classnames';
 
 class RadialBarChart extends Component {
 
@@ -45,6 +46,7 @@ class RadialBarChart extends Component {
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
     ]),
+    className: PropTypes.string,
   };
 
 
@@ -266,17 +268,17 @@ class RadialBarChart extends Component {
   }
 
   render() {
-    const { style, children } = this.props;
+    const { style, children, className, width, height } = this.props;
     const items = ReactUtils.findAllByType(children, RadialBar);
     const center = this.getCenter();
     const radiusScale = this.getRadiusScale(center);
 
     return (
-      <div className="recharts-wrapper"
+      <div className={classNames('recharts-wrapper', className)}
         style={{ cursor: 'default', ...style, position: 'relative' }}
       >
 
-        <Surface {...this.props}>
+        <Surface width={width} height={height}>
           {this.renderItems(items, radiusScale, center)}
         </Surface>
 

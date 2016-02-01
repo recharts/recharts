@@ -119,7 +119,7 @@ class PolarRadiusAxis extends Component {
         stroke: 'none', fill: stroke,
         ...customLabelProps,
         index: i, payload: entry,
-        ...coord
+        ...coord,
       };
 
       return (
@@ -133,9 +133,9 @@ class PolarRadiusAxis extends Component {
           }
         </g>
       );
-    })
+    });
 
-    return <g className="recharts-polar-radius-axis-ticks">{items}</g>
+    return <g className="recharts-polar-radius-axis-ticks">{items}</g>;
   }
 
   render() {

@@ -134,7 +134,7 @@ class PolarAngleAxis extends Component {
     const items = ticks.map((entry, i) => {
       const lineCoord = this.getTickLineCoord(entry);
       const textAnchor = this.getTickTextAnchor(entry);
-      const tickProps = { ...axisProps, fill: 'none', ...tickLineProps, ...lineCoord, }
+      const tickProps = { ...axisProps, fill: 'none', ...tickLineProps, ...lineCoord };
       const labelProps = {
         textAnchor,
         ...axisProps,
@@ -159,9 +159,9 @@ class PolarAngleAxis extends Component {
           {label && labelItem}
         </g>
       );
-    })
+    });
 
-    return <g className="recharts-polar-angle-axis-ticks">{items}</g>
+    return <g className="recharts-polar-angle-axis-ticks">{items}</g>;
   }
 
   render() {

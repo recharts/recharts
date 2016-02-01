@@ -10,7 +10,7 @@ const YAxisSpec = require('./specs/chart/YAxisSpec.js');
 const ZAxisSpec = require('./specs/chart/ZAxisSpec.js');
 
 //chartWrapper
-const TreemapChartSpec = require('./specs/chartWrapper/TreemapChartSpec.js');
+const TreemapSpec = require('./specs/chartWrapper/TreemapSpec.js');
 const ScatterChartSpec = require('./specs/chartWrapper/ScatterChartSpec.js');
 const RadialBarChartSpec = require('./specs/chartWrapper/RadialBarChartSpec.js');
 const ComposedChartSpec = require('./specs/chartWrapper/ComposedChartSpec.js');

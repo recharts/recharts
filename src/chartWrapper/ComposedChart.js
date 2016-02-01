@@ -16,6 +16,7 @@ import Rectangle from '../shape/Rectangle';
 
 import ReactUtils from '../util/ReactUtils';
 import LodashUtils from '../util/LodashUtils';
+import classNames from 'classnames';
 
 class ComposedChart extends CartesianChart {
 
@@ -73,6 +74,7 @@ class ComposedChart extends CartesianChart {
    * @param  {Object} xAxis   The configuration of x-axis
    * @param  {Object} yAxis   The configuration of y-axis
    * @param  {String} dataKey The unique key of a group
+   * @param  {Array} stackedData The stacked data of a area item
    * @return {Array} Composed data
    */
   getAreaComposedData(xAxis, yAxis, dataKey, stackedData) {
@@ -121,6 +123,7 @@ class ComposedChart extends CartesianChart {
    * @param  {Object} yAxis       The configuration of y-axis
    * @param  {Object} offset      The offset of main part in the svg element
    * @param  {String} dataKey     The unique key of a group
+   * @param  {Array} stackedData  The stacked data of a bar item
    * @return {Array} Composed data
    */
   getBarComposedData(barPosition, xAxis, yAxis, offset, dataKey, stackedData) {
@@ -224,7 +227,7 @@ class ComposedChart extends CartesianChart {
   }
   /**
    * Calculate the size of all groups
-   * @param  {Array} items All the instance of Bar
+   * @param  {Object} stackGroups The items grouped by axisId and stackId
    * @return {Object} The size of all groups
    */
   getSizeList(stackGroups) {
@@ -402,6 +405,7 @@ class ComposedChart extends CartesianChart {
    * @param  {Object} xAxisMap The configuration of all x-axis
    * @param  {Object} yAxisMap The configuration of all y-axis
    * @param  {Object} offset   The offset of main part in the svg element
+   * @param  {Object} stackGroups The items grouped by axisId and stackId
    * @return {ReactComponent} The instances of Area
    */
   renderAreaItems(items, xAxisMap, yAxisMap, offset, stackGroups) {
@@ -454,6 +458,7 @@ class ComposedChart extends CartesianChart {
    * @param  {Object} xAxisMap The configuration of all x-axis
    * @param  {Object} yAxisMap The configuration of all y-axis
    * @param  {Object} offset   The offset of main part in the svg element
+   * @param  {Object} stackGroups The items grouped by axisId and stackId
    * @return {ReactComponent}  All the instances of Bar
    */
   renderBarItems(items, xAxisMap, yAxisMap, offset, stackGroups) {
@@ -487,7 +492,7 @@ class ComposedChart extends CartesianChart {
   }
 
   render() {
-    const { style, children, layout } = this.props;
+    const { style, children, className, layout, width, height } = this.props;
     const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
     const lineItems = ReactUtils.findAllByType(children, Line);
     const barItems = ReactUtils.findAllByType(children, Bar);
@@ -504,13 +509,13 @@ class ComposedChart extends CartesianChart {
     yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
 
     return (
-      <div className="recharts-wrapper"
+      <div className={classNames('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', ...style }}
         onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseLeave={::this.handleMouseLeave}
       >
-        <Surface {...this.props}>
+        <Surface width={width} height={height}>
           {this.renderGrid(xAxisMap, yAxisMap, offset)}
           {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
           {this.renderXAxis(xAxisMap)}

@@ -10,6 +10,7 @@ import Tooltip from '../component/Tooltip';
 import Line from '../chart/Line';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
+import classNames from 'classnames';
 
 class LineChart extends CartesianChart {
 
@@ -154,7 +155,7 @@ class LineChart extends CartesianChart {
   }
 
   render() {
-    const { style, children } = this.props;
+    const { style, children, className, width, height } = this.props;
     const items = ReactUtils.findAllByType(children, Line);
 
     let xAxisMap = this.getAxisMap('xAxis', items);
@@ -165,14 +166,14 @@ class LineChart extends CartesianChart {
     yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
 
     return (
-      <div className="recharts-wrapper"
+      <div className={classNames('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', ...style }}
         onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseLeave={::this.handleMouseLeave}
       >
 
-        <Surface {...this.props}>
+        <Surface width={width} height={height}>
           {this.renderGrid(xAxisMap, yAxisMap, offset)}
           {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
           {this.renderXAxis(xAxisMap)}

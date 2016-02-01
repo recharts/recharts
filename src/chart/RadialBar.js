@@ -134,7 +134,7 @@ class RadialBar extends Component {
         ...rest,
         key: `sector-${i}`,
         className: 'recharts-radial-bar-sector',
-      }
+      };
 
       return isShapeElement ?
              React.cloneElement(shape, props) :

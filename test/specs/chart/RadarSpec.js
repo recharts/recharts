@@ -49,6 +49,6 @@ describe('<Radar />', () => {
     );
     expect(wrapper.find('.recharts-polar-grid .recharts-polar-grid-angle line').length).to.equal(8);
     expect(wrapper.find('.recharts-polar-angle-axis .recharts-polar-angle-axis-tick').length).to.equal(8);
-    expect(wrapper.find('.recharts-polar-radius-axis .recharts-polar-radius-axis-tick').length).to.equal(2);
+    expect(wrapper.find('.recharts-polar-radius-axis .recharts-polar-radius-axis-tick').length).to.equal(5);
   });
 });

@@ -47,7 +47,8 @@ class Polygon extends Component {
       <polygon
         {...ReactUtils.getPresentationAttributes(this.props)}
         className={layerClass}
-        points={this.getPolygonPoints(points)}/>
+        points={this.getPolygonPoints(points)}
+      />
     );
   }
 }

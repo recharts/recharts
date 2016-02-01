@@ -15,6 +15,7 @@ import LodashUtils from '../util/LodashUtils';
 import D3Scale from 'd3-scale';
 import invariant from 'invariant';
 import { getNiceTickValues } from 'recharts-scale';
+import classNames from 'classnames';
 
 const RADIAN = Math.PI / 180;
 
@@ -38,6 +39,7 @@ class RadarChart extends Component {
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
     ]),
+    className: PropTypes.string,
   };
 
   static defaultProps = {
@@ -67,7 +69,7 @@ class RadarChart extends Component {
         `domain in PolarRadiusAxis should be an array which has two numbers`
       );
     } else if (radiusAxis && radiusAxis.props.ticks) {
-      ticks = radius.props.ticks;
+      ticks = radiusAxis.props.ticks;
 
       tickCount = ticks.length;
       domain = [Math.min.apply(null, ticks), Math.max.apply(null, ticks)];
@@ -86,7 +88,7 @@ class RadarChart extends Component {
   }
 
   getTicksByItems(axisItem, tickCount) {
-    const { data } = this.props;
+    const { data, children } = this.props;
     const radarItems = ReactUtils.findAllByType(children, Radar);
     const dataKeys = radarItems.map(item => item.props.dataKey);
     const max = data.reduce((prev, current) => {
@@ -133,7 +135,7 @@ class RadarChart extends Component {
           radius: scale(entry),
           value: entry,
         };
-      })
+      });
     }
     const { tickCount } = axisCfg;
     const domain = scale.domain();
@@ -145,13 +147,6 @@ class RadarChart extends Component {
         radius: scale(value),
       };
     });
-  }
-
-  polarToCartesian(cx, cy, angle, radius) {
-    return {
-      x: cx + Math.cos(-RADIAN * angle) * radius,
-      y: cy + Math.sin(-RADIAN * angle) * radius,
-    };
   }
 
   getComposedData(item, scale) {
@@ -173,6 +168,12 @@ class RadarChart extends Component {
     });
   }
 
+  polarToCartesian(cx, cy, angle, radius) {
+    return {
+      x: cx + Math.cos(-RADIAN * angle) * radius,
+      y: cy + Math.sin(-RADIAN * angle) * radius,
+    };
+  }
 
   renderRadars(items, scale) {
     const { data, children } = this.props;
@@ -227,11 +228,11 @@ class RadarChart extends Component {
 
       return React.cloneElement(angleAxis, {
         ticks: data.map((v, i) => {
-                return {
-                  value: dataKey ? v[dataKey] : i,
-                  angle: this.getAngle(i, len, startAngle, clockWise)
-                };
-              }),
+          return {
+            value: dataKey ? v[dataKey] : i,
+            angle: this.getAngle(i, len, startAngle, clockWise),
+          };
+        }),
         cx, cy, radius,
         axisLineType: (grid && grid.props && grid.props.gridType)
                       || PolarGrid.defaultProps.gridType,
@@ -244,8 +245,7 @@ class RadarChart extends Component {
 
   renderRadiusAxis(radiusAxis, radiusAxisCfg) {
     const { cx, cy, startAngle } = this.props;
-
-    if (radiusAxis && !radiusAxis.props.hide ) {
+    if (radiusAxis && !radiusAxis.props.hide) {
       return React.cloneElement(radiusAxis, {
         angle: radiusAxis.props.angle || startAngle,
         ticks: this.getRadiusTicks(radiusAxisCfg),
@@ -282,7 +282,7 @@ class RadarChart extends Component {
   }
 
   render() {
-    const { innerRadius, outerRadius, data, width,
+    const { innerRadius, outerRadius, className, data, width,
       height, children, style } = this.props;
 
     if (outerRadius <= 0 || !data || !data.length) {
@@ -303,8 +303,9 @@ class RadarChart extends Component {
     const radiusAxisCfg = this.getRadiusAxisCfg(radiusAxis);
 
     return (
-      <div className="recharts-wrapper"
-        style={{ position: 'relative', cursor: 'default', ...style }}>
+      <div className={classNames('recharts-wrapper', className)}
+        style={{ position: 'relative', cursor: 'default', ...style }}
+      >
         <Surface width={width} height={height}>
           {this.renderGrid(radiusAxisCfg)}
           {this.renderRadiusAxis(radiusAxis, radiusAxisCfg)}

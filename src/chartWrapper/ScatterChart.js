@@ -17,6 +17,7 @@ import YAxis from '../chart/YAxis';
 import ZAxis from '../chart/ZAxis';
 import Cross from '../shape/Cross';
 import invariant from 'invariant';
+import classNames from 'classnames';
 
 class ScatterChart extends Component {
   static displayName = 'ScatterChart';
@@ -36,6 +37,7 @@ class ScatterChart extends Component {
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
     ]),
+    className: PropTypes.string,
   };
 
   static defaultProps = {
@@ -392,6 +394,7 @@ class ScatterChart extends Component {
   /**
    * Draw legend
    * @param  {Array} items             The instances of Scatters
+   * @param  {Object} offset   The offset of main part in the svg element
    * @return {ReactElement}            The instance of Legend
    */
   renderLegend(items, offset) {
@@ -487,7 +490,7 @@ class ScatterChart extends Component {
   }
 
   render() {
-    const { style, children } = this.props;
+    const { style, children, className, width, height } = this.props;
     const items = ReactUtils.findAllByType(children, Scatter);
     const zAxis = this.getZAxis(items);
     let xAxis = this.getAxis('xAxis', items);
@@ -498,10 +501,10 @@ class ScatterChart extends Component {
     yAxis = this.getFormatAxis(yAxis, offset, 'yAxis');
 
     return (
-      <div className="recharts-wrapper"
+      <div className={classNames('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', ...style }}
       >
-        <Surface {...this.props}>
+        <Surface width={width} height={height}>
           {this.renderGrid(xAxis, yAxis, offset)}
           {this.renderAxis(xAxis, 'recharts-x-axis')}
           {this.renderAxis(yAxis, 'recharts-y-axis')}

@@ -10,6 +10,7 @@ import Tooltip from '../component/Tooltip';
 import Area from '../chart/Area';
 import Dot from '../shape/Dot';
 import Curve from '../shape/Curve';
+import classNames from 'classnames';
 
 class AreaChart extends CartesianChart {
   static displayName = 'AreaChart';
@@ -165,7 +166,7 @@ class AreaChart extends CartesianChart {
   }
 
   render() {
-    const { style, children, layout } = this.props;
+    const { style, children, layout, className, width, height } = this.props;
     const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
     const items = ReactUtils.findAllByType(children, Area);
     const stackGroups = this.getStackGroupsByAxisId(items, `${numberAxisName}Id`);
@@ -178,14 +179,14 @@ class AreaChart extends CartesianChart {
     yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
 
     return (
-      <div className="recharts-wrapper"
+      <div className={classNames('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', ...style }}
         onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseLeave={::this.handleMouseLeave}
       >
 
-        <Surface {...this.props}>
+        <Surface width={width} height={height}>
           {this.renderGrid(xAxisMap, yAxisMap, offset)}
           {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
           {this.renderXAxis(xAxisMap)}
