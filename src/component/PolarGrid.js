@@ -16,7 +16,6 @@ class PolarGrid extends Component {
     cy: PropTypes.number,
     innerRadius: PropTypes.number,
     outerRadius: PropTypes.number,
-    gridCount: PropTypes.number,
 
     polarAngles: PropTypes.arrayOf(PropTypes.number),
     polarRadius: PropTypes.arrayOf(PropTypes.number),
@@ -24,8 +23,7 @@ class PolarGrid extends Component {
   };
 
   static defaultProps = {
-    gridCount: 2,
-    gridType: 'circle',
+    gridType: 'polygon',
   };
 
   /**

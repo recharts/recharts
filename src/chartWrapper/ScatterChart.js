@@ -56,7 +56,7 @@ class ScatterChart extends Component {
    * @param  {Object} zAxis       The configuration of z-axis
    * @return {Array} Composed data
    */
-  getComposeData(data, xAxis, yAxis, zAxis) {
+  getComposedData(data, xAxis, yAxis, zAxis) {
     const xAxisDataKey = xAxis.dataKey;
     const yAxisDataKey = yAxis.dataKey;
     const zAxisDataKey = zAxis.dataKey;
@@ -481,7 +481,7 @@ class ScatterChart extends Component {
         strokeWidth: finalStrokeWidth,
         onMouseLeave: ::this.handleScatterMouseLeave,
         onMouseEnter: ::this.handleScatterMouseEnter,
-        points: this.getComposeData(data, xAxis, yAxis, zAxis),
+        points: this.getComposedData(data, xAxis, yAxis, zAxis),
       });
     }, this);
   }

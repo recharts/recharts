@@ -1,9 +1,9 @@
 import React from 'react';
-import { TreemapChart } from 'recharts';
+import { Treemap } from 'recharts';
 import DemoTreemapItem from './DemoTreemapItem';
 
-class DemoTreemapChart extends React.Component {
-  static displayName = 'DemoTreemapChart';
+class DemoTreemap extends React.Component {
+  static displayName = 'DemoTreemap';
 
   render() {
     const data = [
@@ -49,16 +49,16 @@ class DemoTreemapChart extends React.Component {
       <div className="treemap-charts">
         <p>Treemap</p>
         <div className="treemap-chart-wrapper">
-          <TreemapChart width={1000} height={500} data={data} ratio={0.5 * (1 + Math.sqrt(5))}/>
+          <Treemap width={1000} height={500} data={data} ratio={0.5 * (1 + Math.sqrt(5))}/>
         </div>
         <br/>
         <br/>
         <div className="treemap-chart-wrapper">
-          <TreemapChart width={1000} height={500} data={data} ratio={0.5 * (1 + Math.sqrt(5))} content={<DemoTreemapItem treemapItemColor={treemapItemColor}/>} />
+          <Treemap width={1000} height={500} data={data} ratio={0.5 * (1 + Math.sqrt(5))} content={<DemoTreemapItem treemapItemColor={treemapItemColor}/>} />
         </div>
       </div>
     );
   }
 }
 
-export default DemoTreemapChart;
+export default DemoTreemap;

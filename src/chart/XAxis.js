@@ -17,6 +17,7 @@ class XAxis extends Component {
     unit: PropTypes.any,
     // The unique id of x-axis
     xAxisId: PropTypes.number,
+    domain: PropTypes.array,
     // The key of data displayed in the axis
     dataKey: PropTypes.string,
     // The width of axis which is usually calculated internally

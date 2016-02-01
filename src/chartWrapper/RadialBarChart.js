@@ -71,7 +71,7 @@ class RadialBarChart extends Component {
    * @param  {String} dataKey     The unique key of a group
    * @return {Array}              Composed data
    */
-  getComposeData(barPosition, radiusScale, center, dataKey) {
+  getComposedData(barPosition, radiusScale, center, dataKey) {
     const { data } = this.props;
     const pos = barPosition[dataKey];
 
@@ -260,7 +260,7 @@ class RadialBarChart extends Component {
         key: 'radial-bar-' + i,
         onMouseLeave: ::this.handleMouseLeave,
         onMouseEnter: this.handleMouseEnter.bind(this, dataKey),
-        data: this.getComposeData(barPosition, radiusScale, center, dataKey),
+        data: this.getComposedData(barPosition, radiusScale, center, dataKey),
       });
     }, this);
   }

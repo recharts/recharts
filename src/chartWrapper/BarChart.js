@@ -30,7 +30,7 @@ class BarChart extends CartesianChart {
    * @param  {String} dataKey     The unique key of a group
    * @return {Array} Composed data
    */
-  getComposeData(barPosition, xAxis, yAxis, offset, dataKey, stackedData) {
+  getComposedData(barPosition, xAxis, yAxis, offset, dataKey, stackedData) {
     const { layout } = this.props;
     const { dataStartIndex, dataEndIndex } = this.state;
     const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
@@ -249,7 +249,7 @@ class BarChart extends CartesianChart {
         layout,
         onMouseLeave: ::this.handleBarMouseLeave,
         onMouseEnter: this.handleBarMouseEnter.bind(this, dataKey),
-        data: this.getComposeData(barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey, stackedData),
+        data: this.getComposedData(barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey, stackedData),
       });
     }, this);
   }

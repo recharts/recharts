@@ -54,7 +54,7 @@ class ComposedChart extends CartesianChart {
    * @param  {String} dataKey The unique key of a group
    * @return {Array}  Composed data
    */
-  getLineComposeData(xAxis, yAxis, dataKey) {
+  getLineComposedData(xAxis, yAxis, dataKey) {
     const { data, layout } = this.props;
     const bandSize = this.getBandSize(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
     const xTicks = this.getAxisTicks(xAxis);
@@ -75,7 +75,7 @@ class ComposedChart extends CartesianChart {
    * @param  {String} dataKey The unique key of a group
    * @return {Array} Composed data
    */
-  getAreaComposeData(xAxis, yAxis, dataKey, stackedData) {
+  getAreaComposedData(xAxis, yAxis, dataKey, stackedData) {
     const { data, layout } = this.props;
     const xTicks = this.getAxisTicks(xAxis);
     const yTicks = this.getAxisTicks(yAxis);
@@ -123,7 +123,7 @@ class ComposedChart extends CartesianChart {
    * @param  {String} dataKey     The unique key of a group
    * @return {Array} Composed data
    */
-  getBarComposeData(barPosition, xAxis, yAxis, offset, dataKey, stackedData) {
+  getBarComposedData(barPosition, xAxis, yAxis, offset, dataKey, stackedData) {
     const { layout } = this.props;
     const { dataStartIndex, dataEndIndex } = this.state;
     const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
@@ -367,7 +367,7 @@ class ComposedChart extends CartesianChart {
 
     const lineItems = items.map((child, i) => {
       const { xAxisId, yAxisId, dataKey, strokeWidth, stroke } = child.props;
-      const points = this.getLineComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey);
+      const points = this.getLineComposedData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey);
       const activePoint = points[activeTooltipIndex];
       const pointStyle = { fill: stroke, strokeWidth: 2, stroke: '#fff' };
 
@@ -416,7 +416,7 @@ class ComposedChart extends CartesianChart {
       const axisId = layout === 'horizontal' ? xAxisId : yAxisId;
       const stackedData = stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
                         && this.getStackedDataOfItem(child, stackGroups[axisId].stackGroups);
-      const composeData = this.getAreaComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey, stackedData);
+      const composeData = this.getAreaComposedData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey, stackedData);
 
       const activePoint = composeData.points && composeData.points[activeTooltipIndex];
       const pointStyle = { fill, strokeWidth: 2, stroke: '#fff' };
@@ -481,7 +481,7 @@ class ComposedChart extends CartesianChart {
         layout,
         onMouseLeave: ::this.handleBarMouseLeave,
         onMouseEnter: this.handleBarMouseEnter.bind(this, dataKey),
-        data: this.getBarComposeData(barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey, stackedData),
+        data: this.getBarComposedData(barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey, stackedData),
       });
     }, this);
   }

@@ -30,6 +30,7 @@ class CartesianAxis extends Component {
       PropTypes.object,
       PropTypes.element,
     ]),
+    domain: PropTypes.array,
 
     axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
     tickLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),

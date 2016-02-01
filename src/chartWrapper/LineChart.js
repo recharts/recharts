@@ -46,7 +46,7 @@ class LineChart extends CartesianChart {
    * @param  {String} dataKey The unique key of a group
    * @return {Array}  Composed data
    */
-  getComposeData(xAxis, yAxis, dataKey) {
+  getComposedData(xAxis, yAxis, dataKey) {
     const { data, layout } = this.props;
     const xTicks = this.getAxisTicks(xAxis);
     const yTicks = this.getAxisTicks(yAxis);
@@ -124,7 +124,7 @@ class LineChart extends CartesianChart {
 
     const lineItems = items.map((child, i) => {
       const { xAxisId, yAxisId, dataKey, strokeWidth, stroke } = child.props;
-      const points = this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey);
+      const points = this.getComposedData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey);
       const activePoint = points[activeTooltipIndex];
       const pointStyle = { fill: stroke, strokeWidth: 2, stroke: '#fff' };
 

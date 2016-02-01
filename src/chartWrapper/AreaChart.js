@@ -27,7 +27,7 @@ class AreaChart extends CartesianChart {
    * @param  {Array}  stackedData If the area is stacked, the stackedData is an array of min value and max value
    * @return {Array} Composed data
    */
-  getComposeData(xAxis, yAxis, dataKey, stackedData) {
+  getComposedData(xAxis, yAxis, dataKey, stackedData) {
     const { data, layout } = this.props;
     const xTicks = this.getAxisTicks(xAxis);
     const yTicks = this.getAxisTicks(yAxis);
@@ -132,7 +132,7 @@ class AreaChart extends CartesianChart {
       const axisId = layout === 'horizontal' ? xAxisId : yAxisId;
       const stackedData = stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
                         && this.getStackedDataOfItem(child, stackGroups[axisId].stackGroups);
-      const composeData = this.getComposeData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey, stackedData);
+      const composeData = this.getComposedData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey, stackedData);
 
       const activePoint = composeData.points && composeData.points[activeTooltipIndex];
       const pointStyle = { fill, strokeWidth: 2, stroke: '#fff' };

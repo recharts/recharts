@@ -17,6 +17,7 @@ class YAxis extends Component {
     unit: PropTypes.any,
     // The unique id of y-axis
     yAxisId: PropTypes.number,
+    domain: PropTypes.array,
     // The key of data displayed in the axis
     dataKey: PropTypes.string,
     // Ticks can be any type when the axis is the type of category

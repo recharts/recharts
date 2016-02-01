@@ -28,7 +28,7 @@ import Bar from './chart/Bar';
 import PieChart from './chartWrapper/PieChart';
 import Pie from './chart/Pie';
 
-import TreemapChart from './chartWrapper/TreemapChart';
+import Treemap from './chartWrapper/Treemap';
 
 import RadarChart from './chartWrapper/RadarChart';
 import Radar from './chart/Radar';
@@ -69,7 +69,7 @@ export {
   PieChart, Pie,
   ScatterChart, Scatter,
   RadialBarChart, RadialBar,
-  TreemapChart,
+  Treemap,
   RadarChart, Radar,
   ComposedChart,
 

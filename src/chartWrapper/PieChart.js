@@ -45,7 +45,7 @@ class PieChart extends Component {
     isTooltipActive: false,
   };
 
-  getComposeData(item) {
+  getComposedData(item) {
     const { fill, stroke, strokeWidth, strokeDasharray, data } = item.props;
 
     return data.map((entry) => {
@@ -88,7 +88,7 @@ class PieChart extends Component {
     const { width, height } = this.props;
     const legendData = items.reduce((result, child) => {
       const { nameKey } = child.props;
-      const data = this.getComposeData(child);
+      const data = this.getComposedData(child);
 
       return result.concat(data.map((entry) => {
         const { name, value, ...rest } = entry;
@@ -127,7 +127,7 @@ class PieChart extends Component {
         key: 'recharts-pie-' + i,
         cx: cx || width / 2,
         cy: cy || height / 2,
-        data: this.getComposeData(child),
+        data: this.getComposedData(child),
         onMouseEnter: ::this.handleMouseEnter,
         onMouseLeave: ::this.handleMouseLeave,
         outerRadius: outerRadius || maxRadius * 0.8,

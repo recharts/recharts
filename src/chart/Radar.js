@@ -34,8 +34,8 @@ class Radar extends Component {
   };
 
   static defaultProps = {
-    dot: true,
-    label: true,
+    dot: false,
+    label: false,
   };
 
   renderPolygon() {

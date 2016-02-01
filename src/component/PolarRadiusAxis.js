@@ -17,8 +17,10 @@ class PolarRadiusAxis extends Component {
     ...PRESENTATION_ATTRIBUTES,
     cx: PropTypes.number,
     cy: PropTypes.number,
+    hide: PropTypes.bool,
 
     angle: PropTypes.number,
+    tickCount: PropTypes.number,
     ticks: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.any,
       radius: PropTypes.value,
@@ -39,6 +41,7 @@ class PolarRadiusAxis extends Component {
     stroke: '#ccc',
     axisLine: true,
     label: true,
+    tickCount: 5,
   };
 
   /**

@@ -73,7 +73,10 @@ class DefaultLegendContent extends Component {
   renderItems() {
     const { payload, iconSize, layout } = this.props;
     const viewBox = { x: 0, y: 0, width: SIZE, height: SIZE };
-    const itemStyle = { display: layout === 'horizontal' ? 'inline-block' : 'block', marginRight: 10 };
+    const itemStyle = {
+      display: layout === 'horizontal' ? 'inline-block' : 'block',
+      marginRight: 10,
+    };
     const svgStyle = { display: 'inline-block', verticalAlign: 'middle', marginRight: 4 };
 
     return payload.map((entry, i) => {

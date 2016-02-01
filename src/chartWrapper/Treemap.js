@@ -7,8 +7,8 @@ import Layer from '../container/Layer';
 import Rectangle from '../shape/Rectangle';
 import ReactUtils from '../util/ReactUtils';
 
-class TreemapChart extends Component {
-  static displayName = 'TreemapChart';
+class Treemap extends Component {
+  static displayName = 'Treemap';
 
   static propTypes = {
     width: PropTypes.number,
@@ -188,4 +188,4 @@ class TreemapChart extends Component {
   }
 }
 
-export default TreemapChart;
+export default Treemap;

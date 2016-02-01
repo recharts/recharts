@@ -21,7 +21,7 @@ import PieChart from './PieChart';
 import ScatterChart from './ScatterChart';
 import RadarChart from './RadarChart';
 import RadialBarChart from './RadialBarChart';
-import TreemapChart from './TreemapChart';
+import Treemap from './Treemap';
 
 export default {
   chart: {
@@ -54,6 +54,6 @@ export default {
     PieChart,
     RadarChart,
     RadialBarChart,
-    TreemapChart,
+    Treemap,
   },
 };

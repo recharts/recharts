@@ -337,8 +337,8 @@ class CartesianChart extends Component {
       if (!result[axisId]) {
         let domain;
 
-        if (child.props.data) {
-          domain = child.props.data;
+        if (child.props.domain) {
+          domain = child.props.domain;
         } else if (dataKey) {
           domain = this.getDomainByKey(dataKey, type);
         } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
@@ -885,8 +885,6 @@ class CartesianChart extends Component {
   /**
    * Draw legend
    * @param  {Array} items             The instances of item
-   * @param  {Object} offset           The offset of main part in the svg element
-   * @param  {ReactElement} legendItem The instance of Legend
    * @return {ReactElement}            The instance of Legend
    */
   renderLegend(items) {
