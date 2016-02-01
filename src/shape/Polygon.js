@@ -9,6 +9,7 @@ class Polygon extends React.Component {
 
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
+    className: PropTypes.string,
     points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -32,7 +33,7 @@ class Polygon extends React.Component {
   }
 
   render() {
-    const { points } = this.props;
+    const { points, className } = this.props;
 
     if (!points || !points.length) {
       return null;
@@ -41,6 +42,7 @@ class Polygon extends React.Component {
     return (
       <polygon
         {...ReactUtils.getPresentationAttributes(this.props)}
+        className={`recharts-polygon ${className || ''}`}
         points={this.getPolygonPoints(points)}/>
     );
   }

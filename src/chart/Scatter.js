@@ -74,14 +74,16 @@ class Scatter extends React.Component {
   }
 
   renderCircles() {
-    const { points, className, onMouseEnter, ...others } = this.props;
+    const { points } = this.props;
     const { activeIndex } = this.state;
+    const baseProps = ReactUtils.getPresentationAttributes(this.props);
+
     return points.map((entry, i) => {
       const { payload, r, ...rest } = entry;
 
       return (
         <circle
-          {...others}
+          {...baseProps}
           {...rest}
           r={i === activeIndex ? r * 1.1 : r}
           onMouseEnter={this.handleCircleMouseEnter.bind(this, entry, i)}
@@ -113,7 +115,7 @@ class Scatter extends React.Component {
     };
 
     return (
-      <Layer className="recharts-layer-scatter-line">
+      <Layer className="recharts-scatter-line">
         {isLineElement ? React.cloneElement(line, lineProps) : React.createElement(Curve, lineProps)}
       </Layer>
     );
@@ -127,7 +129,7 @@ class Scatter extends React.Component {
     }
 
     return (
-      <Layer className={'layer-scatter ' + (className || '')}>
+      <Layer className={'recharts-scatter ' + (className || '')}>
         {line && this.renderLine()}
         {this.renderCircles()}
       </Layer>

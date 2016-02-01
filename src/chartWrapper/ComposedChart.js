@@ -226,7 +226,6 @@ class ComposedChart extends CartesianChart {
    */
   getSizeList(stackGroups) {
     const { layout, barSize } = this.props;
-    console.log(stackGroups);
 
     return Object.keys(stackGroups).reduce((result, axisId) => {
       const sgs = stackGroups[axisId].stackGroups;

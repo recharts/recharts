@@ -801,7 +801,7 @@ class CartesianChart extends React.Component {
           ));
         }
       }
-      return xAxes.length ? <Layer key="x-axis-layer" className="x-axis-layer">{xAxes}</Layer> : null;
+      return xAxes.length ? <Layer key="x-axis-layer" className="recharts-x-axis">{xAxes}</Layer> : null;
     }
   }
 
@@ -836,7 +836,7 @@ class CartesianChart extends React.Component {
         }
       }
 
-      return yAxes.length ? <Layer key="y-axis-layer" className="y-axis-layer">{yAxes}</Layer> : null;
+      return yAxes.length ? <Layer key="y-axis-layer" className="recharts-y-axis">{yAxes}</Layer> : null;
     }
   }
   /**

@@ -21,7 +21,7 @@ describe('<ScatterChart />', () => {
       </PieChart>
     );
 
-    expect(wrapper.find('.recharts-sector').length).to.equal(6);
+    expect(wrapper.find('.recharts-pie-sector').length).to.equal(6);
   });
 
   it('click on Sector should invoke onClick callback', () => {

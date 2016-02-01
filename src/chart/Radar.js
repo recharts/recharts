@@ -59,11 +59,11 @@ class Radar extends React.Component {
       };
 
       return isLabelElement ? React.cloneElement(label, labelProps) : (
-        <text {...labelProps}>{entry.value}</text>
+        <text {...labelProps} className="recharts-radar-label">{entry.value}</text>
       );
     });
 
-    return <Layer className="recharts-layer-area-labels">{labels}</Layer>;
+    return <Layer className="recharts-radar-labels">{labels}</Layer>;
   }
 
   renderDots() {
@@ -87,16 +87,16 @@ class Radar extends React.Component {
       return isDotElement ? React.cloneElement(dot, dotProps) : <Dot {...dotProps}/>;
     });
 
-    return <Layer className="recharts-layer-area-dots">{dots}</Layer>;
+    return <Layer className="recharts-radar-dots">{dots}</Layer>;
   }
 
   render() {
-    const { points, label, dot } = this.props;
+    const { className, points, label, dot } = this.props;
 
     if (!points || !points.length) {return null;}
 
     return (
-      <Layer className="recharts-radar">
+      <Layer className={`recharts-radar ${className || ''}`}>
         {this.renderPolygon()}
         {label && this.renderLabels()}
         {dot && this.renderDots()}

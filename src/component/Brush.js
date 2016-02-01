@@ -229,7 +229,7 @@ class Brush extends React.Component {
 
     return (
       <Layer
-        className="layer-brush"
+        className="recharts-brush-traveller"
         onMouseEnter={::this.handleEnterSlideOrTraveller}
         onMouseLeave={::this.handleLeaveSlideOrTraveller}
         onMouseDown={this.handleTravellerDown.bind(this, id)}
@@ -254,6 +254,7 @@ class Brush extends React.Component {
 
     return (
       <rect
+        className="recharts-brush-slide"
         onMouseEnter={::this.handleEnterSlideOrTraveller}
         onMouseLeave={::this.handleLeaveSlideOrTraveller}
         onMouseDown={::this.handleSlideDown}
@@ -297,7 +298,7 @@ class Brush extends React.Component {
     if (!data || !data.length) {return null;}
 
     return (
-      <Layer className={'recharts-layer-bursh ' + (className || '')}
+      <Layer className={'recharts-bursh ' + (className || '')}
         onMouseUp={::this.handleUp}
         onMouseMove={::this.handleMove}
         onMouseLeave={::this.handleLeaveWrapper}

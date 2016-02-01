@@ -24,8 +24,9 @@ describe('<ReferenceLine />', () => {
         <XAxis dataKey="name"/>
         <YAxis tickCount={7}/>
         <ReferenceLine type="horizontal" value={0} stroke="#666"/>
+        <ReferenceLine type="vertical" value='201102' stroke="#666"/>
       </BarChart>
     );
-    expect(wrapper.find('.recharts-reference-line').length).to.equal(1);
+    expect(wrapper.find('.recharts-reference-line').length).to.equal(2);
   });
 });

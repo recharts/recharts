@@ -69,7 +69,7 @@ class Sector extends React.Component {
     return (
       <path
         {...ReactUtils.getPresentationAttributes(this.props)}
-        className={'recharts-sector' + (className || '')}
+        className={'recharts-sector ' + (className || '')}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}

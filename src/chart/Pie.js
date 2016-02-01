@@ -222,13 +222,13 @@ class Pie extends React.Component {
 
       return isLabelElement ? React.cloneElement(label, {labelProps, key: `label-${i}`}) : (
         <g key={`label-${i}`}>
-          <Curve {...lineProps} type="linear" className="recharts-cursor"/>
-          <text {...labelProps}>{entry.value}</text>
+          <Curve {...lineProps} type="linear" className="recharts-pie-label-line"/>
+          <text {...labelProps} className="recharts-pie-label-text">{entry.value}</text>
         </g>
       );
     });
 
-    return <Layer className="recharts-layer-line-labels">{labels}</Layer>;
+    return <Layer className="recharts-pie-labels">{labels}</Layer>;
   }
 
   renderSectors(sectors) {
@@ -238,6 +238,7 @@ class Pie extends React.Component {
       return (
         <Sector
           {...entry}
+          className="recharts-pie-sector"
           onMouseEnter={this.handleSectorEnter.bind(this, entry)}
           onMouseLeave={onMouseLeave}
           onClick={onClick}
@@ -261,13 +262,13 @@ class Pie extends React.Component {
     const sectors = this.getSectors();
 
     return (
-      <g className={'layer-pie ' + (className || '')}>
+      <Layer className={'recharts-pie ' + (className || '')}>
         {this.renderClipPath()}
         <g clipPath={`url(#${this.id})`}>
-        {this.renderSectors(sectors)}
+          {this.renderSectors(sectors)}
         </g>
         {label && this.renderLabels(sectors)}
-      </g>
+      </Layer>
     );
   }
 }

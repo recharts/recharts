@@ -20,7 +20,7 @@ class ReferenceLine extends React.Component {
     yAxisMap: PropTypes.object,
 
     type: PropTypes.oneOf(['horizontal', 'vertical']),
-    value: PropTypes.number,
+    value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
     yAxisId: PropTypes.number,
     xAxisId: PropTypes.number,
@@ -52,7 +52,7 @@ class ReferenceLine extends React.Component {
 
   render() {
     const { type, value } = this.props;
-    if (!type || value !== +value) { return null; }
+    if (!type) { return null; }
 
     const [start, end] = this.getEndPoints();
     const props = ReactUtils.getPresentationAttributes(this.props);

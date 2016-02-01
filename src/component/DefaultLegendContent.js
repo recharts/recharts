@@ -75,11 +75,11 @@ class DefaultLegendContent extends React.Component {
 
     return payload.map((entry, i) => {
       return (
-        <li className={'legend-item legend-item-' + i} style={itemStyle} key={'legend-item-' + i}>
+        <li className={'recharts-legend-item legend-item-' + i} style={itemStyle} key={'legend-item-' + i}>
           <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
             {this.renderIcon(entry)}
           </Surface>
-          <span className="legend-text">{entry.value}</span>
+          <span className="recharts-legend-item-text">{entry.value}</span>
         </li>
       );
     });

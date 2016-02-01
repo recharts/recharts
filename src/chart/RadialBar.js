@@ -42,7 +42,7 @@ class RadialBar extends React.Component {
     ]),
 
     background: PropTypes.oneOfType([
-      PropTypes.bool, PropTypes.element,
+      PropTypes.bool, PropTypes.object, PropTypes.element,
     ]),
 
     onMouseEnter: PropTypes.func,
@@ -122,39 +122,47 @@ class RadialBar extends React.Component {
 
 
   renderSectors(sectors) {
-    const { className, shape, data, ...others } = this.props;
+    const { className, shape, data } = this.props;
+    const baseProps = ReactUtils.getPresentationAttributes(this.props);
+    const isShapeElement = React.isValidElement(shape);
 
     return sectors.map((entry, i) => {
       const { value, ...rest } = entry;
+      const props = {
+        ...baseProps,
+        ...rest,
+        key: `sector-${i}`,
+        className: 'recharts-radial-bar-sector',
+      }
 
-      return shape ? React.cloneElement(shape, {
-        ...others, ...rest,
-        key: 'sector-' + i,
-      }) : React.createElement(Sector, {
-        ...others, ...rest,
-        key: 'sector-' + i,
-      });
+      return isShapeElement ?
+             React.cloneElement(shape, props) :
+             React.createElement(Sector, props);
     });
   }
 
   renderBackground(sectors) {
     const { startAngle, endAngle, clockWise, background } = this.props;
+    const isBackgroundElement = React.isValidElement(background);
+    const backgroundProps = ReactUtils.getPresentationAttributes(background);
 
     return sectors.map((entry, i) => {
       const { value, ...rest } = entry;
+      const props = {
+        ...rest,
+        fill: '#eee',
+        ...backgroundProps,
+        clockWise,
+        startAngle,
+        endAngle,
+        index: i,
+        key: `sector-${i}`,
+        className: 'recharts-radial-bar-background-sector',
+      };
 
-      return React.isValidElement(background) ? React.cloneElement(background, {
-        ...rest, clockWise, startAngle, endAngle, index: i, key: 'sector-' + i,
-      }) : (
-        <Sector
-          {...rest}
-          fill="#f1f1f1"
-          clockWise={clockWise}
-          startAngle={startAngle}
-          endAngle={endAngle}
-          key={'sector-' + i}
-        />
-      );
+      return isBackgroundElement ?
+            React.cloneElement(background, props) :
+            React.createElement(Sector, props);
     });
   }
 
@@ -171,7 +179,7 @@ class RadialBar extends React.Component {
       const path = this.getLabelPathArc(entry, content, style);
 
       return (
-        <text {...style} key={'label-' + i}>
+        <text {...style} key={'label-' + i} className="recharts-radial-bar-label">
           <defs><path id={id} d={path} /></defs>
           <textPath xlinkHref={'#' + id}>{content}</textPath>
         </text>
@@ -188,19 +196,19 @@ class RadialBar extends React.Component {
     const sectors = this.getSectors();
 
     return (
-      <Layer className={'layer-radial-bar ' + (className || '')}>
+      <Layer className={'recharts-radial-bar ' + (className || '')}>
         {background && (
-          <Layer className="layer-background">
+          <Layer className="recharts-radial-bar-background">
             {this.renderBackground(sectors)}
           </Layer>
         )}
 
-        <Layer className="laryer-sector">
+        <Layer className="recharts-radial-bar-sectors">
           {this.renderSectors(sectors)}
         </Layer>
 
         {label && (
-          <Layer className="laryer-label">
+          <Layer className="recharts-radial-bar-labels">
             {this.renderLabels(sectors)}
           </Layer>
         )}

@@ -106,7 +106,7 @@ class AreaChart extends CartesianChart {
 
     return React.isValidElement(tooltipItem.props.cursor) ?
           React.cloneElement(tooltipItem.props.cursor, cursorProps) :
-          <Curve {...cursorProps} type="linear" className="recharts-cursor"/>;
+          <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor"/>;
   }
   /**
    * Draw the main part of area chart
