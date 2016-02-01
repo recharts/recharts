@@ -1,5 +1,7 @@
 # Recharts = React + Charts [![Build Status](https://travis-ci.org/recharts/recharts.svg)](https://travis-ci.org/recharts/recharts) [![npm version](https://badge.fury.io/js/recharts.svg)](http://badge.fury.io/js/recharts) [![Coverage Status](https://coveralls.io/repos/recharts/recharts/badge.svg?branch=master&service=github)](https://coveralls.io/github/recharts/recharts?branch=master)
 
+[![Join the chat at https://gitter.im/recharts/recharts](https://badges.gitter.im/recharts/recharts.svg)](https://gitter.im/recharts/recharts?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Intro
 
 Recharts is a **Re-designed** charting library built with [React](https://facebook.github.io/react/) and [D3](http://d3js.org).
