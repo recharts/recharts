@@ -94,7 +94,7 @@ class Curve extends React.Component {
     return (
       <path
         {...ReactUtils.getPresentationAttributes(this.props)}
-        className={'recharts-curve' + (className || '')}
+        className={'recharts-curve ' + (className || '')}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}

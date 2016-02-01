@@ -18,7 +18,7 @@ describe('<Radar />', () => {
   it('renders 1 polygon in simple Radar', () => {
     const wrapper = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
-        <Radar />
+        <Radar dataKey="value"/>
       </RadarChart>
     );
     expect(wrapper.find('polygon').length).to.equal(1);
@@ -33,9 +33,9 @@ describe('<Radar />', () => {
         <PolarRadiusAxis orient="middle" angle={67.5}/>
       </RadarChart>
     );
-    expect(wrapper.find('.layer-polar-grid').length).to.equal(1);
-    expect(wrapper.find('.layer-polar-angle-axis').length).to.equal(1);
-    expect(wrapper.find('.layer-polar-radius-axis').length).to.equal(1);
+    expect(wrapper.find('.recharts-polar-grid').length).to.equal(1);
+    expect(wrapper.find('.recharts-polar-angle-axis').length).to.equal(1);
+    expect(wrapper.find('.recharts-polar-radius-axis').length).to.equal(1);
   });
 
   it('renders 8 angle grid angle line, 8 angle axis ticks, and 3 radius axis ticks', () => {
@@ -47,8 +47,8 @@ describe('<Radar />', () => {
         <PolarRadiusAxis orient="middle" angle={67.5}/>
       </RadarChart>
     );
-    expect(wrapper.find('.layer-polar-grid .layer-grid-angle line').length).to.equal(8);
-    expect(wrapper.find('.layer-polar-angle-axis .axis-tick text').length).to.equal(8);
-    expect(wrapper.find('.layer-polar-radius-axis .axis-ticks text').length).to.equal(3);
+    expect(wrapper.find('.recharts-polar-grid .recharts-polar-grid-angle line').length).to.equal(8);
+    expect(wrapper.find('.recharts-polar-angle-axis .recharts-polar-angle-axis-tick').length).to.equal(8);
+    expect(wrapper.find('.recharts-polar-radius-axis .recharts-polar-radius-axis-tick').length).to.equal(2);
   });
 });

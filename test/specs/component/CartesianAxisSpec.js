@@ -19,6 +19,6 @@ describe('<CartesianAxis />', () => {
       </Surface>
     );
 
-    expect(wrapper.find('.axis-tick').length).to.equal(5);
+    expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
   });
 });

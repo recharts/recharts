@@ -42,16 +42,16 @@ class DefaultTooltipContent extends React.Component {
         const finalFormatter = entry.formatter || formatter;
 
         return (
-          <li className="tooltip-item" key={'tooltip-item-' + i} style={finalItemStyle}>
-            <span className="name">{entry.key}</span>
-            <span className="separator">{separator}</span>
-            <span className="value">{finalFormatter ? finalFormatter(entry.value, entry.key) : entry.value}</span>
-            <span className="unit">{entry.unit || ''}</span>
+          <li className="recharts-tooltip-item" key={'tooltip-item-' + i} style={finalItemStyle}>
+            <span className="recharts-tooltip-item-name">{entry.key}</span>
+            <span className="recharts-tooltip-item-separator">{separator}</span>
+            <span className="recharts-tooltip-item-value">{finalFormatter ? finalFormatter(entry.value, entry.key) : entry.value}</span>
+            <span className="recharts-tooltip-item-unit">{entry.unit || ''}</span>
           </li>
         );
       });
 
-      return <ul className="tooltip-item-list" style={listStyle}>{items}</ul>;
+      return <ul className="recharts-tooltip-item-list" style={listStyle}>{items}</ul>;
     }
   }
 
@@ -72,7 +72,7 @@ class DefaultTooltipContent extends React.Component {
 
     return (
       <div className="recharts-default-tooltip" style={finalStyle}>
-        <p className="tooltip-label" style={finalLabelStyle}>{label || ''}</p>
+        <p className="recharts-tooltip-label" style={finalLabelStyle}>{label || ''}</p>
         {this.renderContent()}
       </div>
     );

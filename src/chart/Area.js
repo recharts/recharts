@@ -65,13 +65,13 @@ class Area extends React.Component {
   renderArea() {
     const { stroke, className, ...other } = this.props;
 
-    return <Curve {...other} stroke="none"/>;
+    return <Curve {...other} stroke="none" className="recharts-area-area"/>;
   }
 
   renderCurve() {
     const { points, type } = this.props;
 
-    return <Curve {...ReactUtils.getPresentationAttributes(this.props)} points={points} type={type} fill="none" />;
+    return <Curve {...ReactUtils.getPresentationAttributes(this.props)} className="recharts-area-curve" points={points} type={type} fill="none" />;
   }
 
   renderDots() {
@@ -95,7 +95,7 @@ class Area extends React.Component {
       return isDotElement ? React.cloneElement(dot, dotProps) : <Dot {...dotProps}/>;
     });
 
-    return <Layer className="recharts-layer-area-dots">{dots}</Layer>;
+    return <Layer className="recharts-area-dots">{dots}</Layer>;
   }
 
   renderLabels() {
@@ -120,7 +120,7 @@ class Area extends React.Component {
       );
     });
 
-    return <Layer className="recharts-layer-area-labels">{labels}</Layer>;
+    return <Layer className="recharts-area-labels">{labels}</Layer>;
   }
 
   render() {
@@ -133,7 +133,7 @@ class Area extends React.Component {
     const hasSinglePoint = points.length === 1;
 
     return (
-      <Layer className={`recharts-line ${className || ''}`}>
+      <Layer className={`recharts-area ${className || ''}`}>
         {curve && !hasSinglePoint && this.renderCurve()}
         {!hasSinglePoint && this.renderArea()}
 

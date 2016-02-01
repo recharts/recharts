@@ -29,11 +29,11 @@ describe('<RadialBarChart />', () => {
     </RadialBarChart>
   );
 
-  it('renders 14 sectors in simple RadialBarChart', () => {
-    expect(wrapper.find('.recharts-sector').length).to.equal(14);
+  it('renders 7 sectors in simple RadialBarChart', () => {
+    expect(wrapper.find('.recharts-radial-bar-sector').length).to.equal(7);
   });
 
   it('renders 7 legend items', () => {
-    expect(wrapper.find('.legend-item').length).to.equal(7);
+    expect(wrapper.find('.recharts-legend-item').length).to.equal(7);
   });
 });

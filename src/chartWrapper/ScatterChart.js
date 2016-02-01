@@ -15,7 +15,7 @@ import XAxis from '../chart/XAxis';
 import YAxis from '../chart/YAxis';
 import ZAxis from '../chart/ZAxis';
 import Cross from '../shape/Cross';
-
+import invariant from 'invariant';
 
 class ScatterChart extends React.Component {
   static displayName = 'ScatterChart';
@@ -159,6 +159,8 @@ class ScatterChart extends React.Component {
     const Axis = axisType === 'xAxis' ? XAxis : YAxis;
     const axis = ReactUtils.findChildByType(children, Axis);
 
+    invariant(axis, 'recharts: ScatterChart must has %s', Axis.displayName);
+
     if (axis) {
       const domain = this.getDomain(items, axis.props.dataKey);
 
@@ -168,8 +170,6 @@ class ScatterChart extends React.Component {
         domain,
       };
     }
-
-    console.info('recharts: ScatterChart must has %s', Axis.displayName);
 
     return null;
   }
@@ -503,8 +503,8 @@ class ScatterChart extends React.Component {
       >
         <Surface {...this.props}>
           {this.renderGrid(xAxis, yAxis, offset)}
-          {this.renderAxis(xAxis, 'x-axis-layer')}
-          {this.renderAxis(yAxis, 'y-axis-layer')}
+          {this.renderAxis(xAxis, 'recharts-x-axis')}
+          {this.renderAxis(yAxis, 'recharts-y-axis')}
           {this.renderCursor(xAxis, yAxis, offset)}
           {this.renderItems(items, xAxis, yAxis, zAxis, offset)}
         </Surface>

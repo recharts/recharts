@@ -160,7 +160,7 @@ class Bar extends React.Component {
       );
     });
 
-    return <Layer className="recharts-layer-bar-labels">{labels}</Layer>;
+    return <Layer className="recharts-bar-labels">{labels}</Layer>;
   }
 
   render() {
@@ -171,12 +171,12 @@ class Bar extends React.Component {
     }
 
     return (
-      <Layer className={`recharts-layer-bar ${className || ''}`}>
-        <Layer className="recharts-layer-rectangles">
+      <Layer className={`recharts-bar ${className || ''}`}>
+        <Layer className="recharts-bar-rectangles">
           {this.renderRectangles()}
         </Layer>
         { label && (
-          <Layer className="recharts-layer-rectangle-labels">
+          <Layer className="recharts-bar-rectangle-labels">
             {this.renderLabels()}
           </Layer>
         )}

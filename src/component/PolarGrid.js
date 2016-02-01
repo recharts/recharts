@@ -35,7 +35,7 @@ class PolarGrid extends React.Component {
     if (!polarAngles || !polarAngles.length) { return null; }
 
     return (
-      <g className="layer-grid-angle">
+      <g className="recharts-polar-grid-angle">
         {
           polarAngles.map((entry, i) => {
             const cos = Math.cos(-entry * RADIAN);
@@ -63,7 +63,7 @@ class PolarGrid extends React.Component {
   renderConcentricCircle(radius, index) {
     const { cx, cy } = this.props;
 
-    return <circle className="concentric-circle" stroke="#ccc" fill="none" key={'circle-' + index} cx={cx} cy={cy} r={radius}/>;
+    return <circle className="recharts-polar-grid-concentric-circle" stroke="#ccc" fill="none" key={'circle-' + index} cx={cx} cy={cy} r={radius}/>;
   }
   /**
    * Draw concentric polygons
@@ -83,7 +83,7 @@ class PolarGrid extends React.Component {
       }
     });
 
-    return <path className="concentric-polygon" stroke="#ccc" fill="none" key={'path-' + index} d={path + 'Z'}/>;
+    return <path className="recharts-polar-grid-concentric-polygon" stroke="#ccc" fill="none" key={'path-' + index} d={path + 'Z'}/>;
   }
 
   /**
@@ -97,7 +97,7 @@ class PolarGrid extends React.Component {
     if (!polarRadius || !polarRadius.length) { return null; }
 
     return (
-      <g className="layer-grid-concentric">
+      <g className="recharts-polar-grid-concentric">
         {
           polarRadius.map((entry, i) => (
             gridType === 'circle' ?
@@ -117,7 +117,7 @@ class PolarGrid extends React.Component {
     }
 
     return (
-      <g className="layer-grid layer-polar-grid">
+      <g className="recharts-polar-grid">
         {this.renderPolarAngles()}
         {this.renderConcentricPath()}
       </g>

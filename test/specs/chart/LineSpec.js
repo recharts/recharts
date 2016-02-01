@@ -20,7 +20,7 @@ describe('<LineChart />', () => {
         <Line type="monotone" dataKey="uv" stroke="#ff7300"/>
       </LineChart>
     );
-    expect(wrapper.find('.recharts-line .recharts-curve').length).to.equal(1);
+    expect(wrapper.find('.recharts-line .recharts-line-curve').length).to.equal(1);
   });
 
   it('click on Curve should invoke onClick callback', () => {

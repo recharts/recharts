@@ -112,7 +112,7 @@ class Line extends React.Component {
       return isDotElement ? React.cloneElement(dot, dotProps) : <Dot {...dotProps}/>;
     });
 
-    return <Layer className="recharts-layer-line-dots">{dots}</Layer>;
+    return <Layer className="recharts-line-dots">{dots}</Layer>;
   }
 
   renderLabels() {
@@ -139,7 +139,7 @@ class Line extends React.Component {
       );
     });
 
-    return <Layer className="recharts-layer-line-labels">{labels}</Layer>;
+    return <Layer className="recharts-line-labels">{labels}</Layer>;
   }
 
   render() {
@@ -176,6 +176,7 @@ class Line extends React.Component {
           >
             <Curve
               {...other}
+              className="recharts-line-curve"
               fill="none"
               onMouseEnter={this.props.onMouseEnter}
               onMouseLeave={this.props.onMouseLeave}

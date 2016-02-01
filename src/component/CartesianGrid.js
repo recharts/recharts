@@ -48,7 +48,7 @@ class CartesianGrid extends React.Component {
       return <line {...props} key={'line-' + i} x1={x} y1={entry} x2={x + width} y2={entry}/>
     });
 
-    return <g className="layer-grid-horizontal">{items}</g>;
+    return <g className="recharts-cartesian-grid-horizontal">{items}</g>;
   }
   /**
    * Draw vertical grid lines
@@ -65,7 +65,7 @@ class CartesianGrid extends React.Component {
       return <line {...props} key={'line-' + i} x1={entry} y1={y} x2={entry} y2={y + height}/>
     });
 
-    return <g className="layer-grid-vertical">{items}</g>;
+    return <g className="recharts-cartesian-grid-vertical">{items}</g>;
   }
 
   render() {
@@ -76,7 +76,7 @@ class CartesianGrid extends React.Component {
     }
 
     return (
-      <g className="layer-grid layer-cartesian-grid">
+      <g className="recharts-cartesian-grid">
         {horizontal && this.renderHorizontal()}
         {vertical && this.renderVertical()}
       </g>
