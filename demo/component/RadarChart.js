@@ -16,42 +16,27 @@ class RadarChartDemo extends React.Component {
   render() {
     return (
       <div>
+        <p>A simple RadarChart</p>
+        <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
+          <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6}/>
+          <PolarGrid />
+          <PolarAngleAxis dataKey="subject" />
+          <PolarRadiusAxis/>
+        </RadarChart>
+
+        <p>A RadarChart of two students' score</p>
         <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
           <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6}/>
           <Radar name="Lily" dataKey="B" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6}/>
           <PolarGrid />
           <Legend />
           <PolarAngleAxis dataKey="subject" />
-          <PolarRadiusAxis hide domain={[0, 150]}/>
+          <PolarRadiusAxis angle={30} domain={[0, 150]}/>
         </RadarChart>
       </div>
     );
   }
 }
-        // <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
-        //   <Radar dataKey="value"/>
-        //   <PolarGrid />
-        //   <PolarAngleAxis />
-        //   <PolarRadiusAxis />
-        // </RadarChart>
 
-        // <RadarChart cx={300} cy={250} startAngle={45} innerRadius={0} outerRadius={150}
-        //   width={600} height={500} data={data}
-        // >
-        //   <Radar dataKey="value" fill="#9597E4" fillOpacity={0.6} stroke="#8889DD" strokeWidth={3} />
-        //   <PolarGrid />
-        //   <PolarAngleAxis />
-        //   <PolarRadiusAxis orient="middle" angle={67.5}/>
-        // </RadarChart>
-
-        // <RadarChart cx={300} cy={250} startAngle={0} innerRadius={0} outerRadius={150} clockWise
-        //   width={600} height={500} data={data} shape={<DemoRadarItem />}
-        // >
-        //   <Radar dataKey="value" />
-        //   <Radar dataKey="half" />
-        //   <PolarGrid gridType="polygon" gridCount={4} />
-        //   <PolarAngleAxis dataKey="name" radius={210} orient="inner" fill="#8889DD" fontSize={8} />
-        //   <PolarRadiusAxis orient="right" fill="#666"/>
-        // </RadarChart>
 
 export default RadarChartDemo;
