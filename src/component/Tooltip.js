@@ -1,11 +1,14 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Tooltip
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import ReactDOMServer from 'react-dom/server';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import DOMUtils from '../util/DOMUtils';
 
 @pureRender
-class Tooltip extends React.Component {
+class Tooltip extends Component {
 
   static displayName = 'Tooltip';
 

@@ -1,7 +1,9 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Scatter Chart
+ */
+import React, { Component, PropTypes } from 'react';
 import { getNiceTickValues } from 'recharts-scale';
 import { linear } from 'd3-scale';
-
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import CartesianAxis from '../component/CartesianAxis';
@@ -9,7 +11,6 @@ import CartesianGrid from '../component/CartesianGrid';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Scatter from '../chart/Scatter';
-
 import ReactUtils from '../util/ReactUtils';
 import XAxis from '../chart/XAxis';
 import YAxis from '../chart/YAxis';
@@ -17,7 +18,7 @@ import ZAxis from '../chart/ZAxis';
 import Cross from '../shape/Cross';
 import invariant from 'invariant';
 
-class ScatterChart extends React.Component {
+class ScatterChart extends Component {
   static displayName = 'ScatterChart';
 
   static propTypes = {
@@ -36,7 +37,6 @@ class ScatterChart extends React.Component {
       PropTypes.node,
     ]),
   };
-
 
   static defaultProps = {
     style: {},
@@ -514,7 +514,6 @@ class ScatterChart extends React.Component {
       </div>
     );
   }
-
 }
 
 export default ScatterChart;

@@ -1,4 +1,7 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Cartesian Chart
+ */
+import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { getNiceTickValues } from 'recharts-scale';
 import D3Scale from 'd3-scale';
@@ -24,10 +27,11 @@ const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
   yAxis: ['left', 'right'],
 };
+
 /**
  * The base class of chart in cartesian coordinate system
  */
-class CartesianChart extends React.Component {
+class CartesianChart extends Component {
 
   static propTypes = {
     width: PropTypes.number.isRequired,

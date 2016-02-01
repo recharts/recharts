@@ -1,9 +1,7 @@
 /**
  * @fileOverview Axis of radial direction
- * @author xile611
- * @Date 2015-08-28
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import Layer from '../container/Layer';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
@@ -14,7 +12,7 @@ const RADIAN = Math.PI / 180;
 const eps = 1e-5;
 
 @pureRender
-class PolarAngleAxis extends React.Component {
+class PolarAngleAxis extends Component {
 
   static displayName = 'PolarAngleAxis';
 
@@ -169,9 +167,7 @@ class PolarAngleAxis extends React.Component {
   render() {
     const { ticks, radius, axisLine, tickLine, label } = this.props;
 
-    if (radius <= 0 || !ticks || !ticks.length) {
-      return null;
-    }
+    if (radius <= 0 || !ticks || !ticks.length) { return null; }
 
     return (
       <Layer className="recharts-polar-angle-axis">

@@ -1,10 +1,14 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Sector
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
+import classNames from 'classnames';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 const RADIAN = Math.PI / 180;
 
 @pureRender
-class Sector extends React.Component {
+class Sector extends Component {
 
   static displayName = 'Sector';
 
@@ -62,14 +66,14 @@ class Sector extends React.Component {
     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle,
           onClick, onMouseEnter, onMouseLeave, className, } = this.props;
 
-    if (outerRadius < innerRadius || startAngle === endAngle) {
-      return null;
-    }
+    if (outerRadius < innerRadius || startAngle === endAngle) { return null; }
+
+    const layerClass = classNames('recharts-sector', className);
 
     return (
       <path
         {...ReactUtils.getPresentationAttributes(this.props)}
-        className={'recharts-sector ' + (className || '')}
+        className={layerClass}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}

@@ -1,8 +1,11 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Y Axis
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 
 @pureRender
-class YAxis extends React.Component {
+class YAxis extends Component {
 
   static displayName = 'YAxis';
 

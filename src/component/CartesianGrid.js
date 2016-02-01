@@ -1,9 +1,12 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Cartesian Grid
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 
 @pureRender
-class CartesianGrid extends React.Component {
+class CartesianGrid extends Component {
 
   static displayName = 'CartesianGrid';
 

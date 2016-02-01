@@ -1,8 +1,12 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Layer
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
+import classNames from 'classnames';
 
 @pureRender
-class Layer extends React.Component {
+class Layer extends Component {
 
   static displayName = 'Layer';
 
@@ -16,9 +20,10 @@ class Layer extends React.Component {
 
   render() {
     const { children, className, ...others } = this.props;
+    const layerClass = classNames('recharts-layer', className);
 
     return (
-      <g className={`recharts-layer ${className || ''}`} {...others}>
+      <g className={layerClass} {...others}>
         {children}
       </g>
     );

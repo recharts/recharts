@@ -1,8 +1,11 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Z Axis
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 
 @pureRender
-class ZAxis extends React.Component {
+class ZAxis extends Component {
 
   static displayName = 'ZAxis';
 

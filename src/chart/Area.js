@@ -1,15 +1,16 @@
 /**
  * @fileOverview Area
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import pureRender from 'pure-render-decorator';
+import classNames from 'classnames';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
-import pureRender from 'pure-render-decorator';
 
 @pureRender
-class Area extends React.Component {
+class Area extends Component {
 
   static displayName = 'Area';
 
@@ -63,15 +64,23 @@ class Area extends React.Component {
   };
 
   renderArea() {
-    const { stroke, className, ...other } = this.props;
+    const { stroke, ...other } = this.props;
 
-    return <Curve {...other} stroke="none" className="recharts-area-area"/>;
+    return <Curve {...other} stroke="none" className="recharts-area-area" />;
   }
 
   renderCurve() {
     const { points, type } = this.props;
 
-    return <Curve {...ReactUtils.getPresentationAttributes(this.props)} className="recharts-area-curve" points={points} type={type} fill="none" />;
+    return (
+      <Curve
+        {...ReactUtils.getPresentationAttributes(this.props)}
+        className="recharts-area-curve"
+        points={points}
+        type={type}
+        fill="none"
+      />
+    );
   }
 
   renderDots() {
@@ -92,7 +101,7 @@ class Area extends React.Component {
         playload: entry,
       };
 
-      return isDotElement ? React.cloneElement(dot, dotProps) : <Dot {...dotProps}/>;
+      return isDotElement ? React.cloneElement(dot, dotProps) : <Dot {...dotProps} />;
     });
 
     return <Layer className="recharts-area-dots">{dots}</Layer>;
@@ -126,14 +135,13 @@ class Area extends React.Component {
   render() {
     const { dot, curve, label, points, className, ...other } = this.props;
 
-    if (!points || !points.length) {
-      return null;
-    }
+    if (!points || !points.length) { return null; }
 
     const hasSinglePoint = points.length === 1;
+    const layerClass = classNames('recharts-area', className);
 
     return (
-      <Layer className={`recharts-area ${className || ''}`}>
+      <Layer className={layerClass}>
         {curve && !hasSinglePoint && this.renderCurve()}
         {!hasSinglePoint && this.renderArea()}
 

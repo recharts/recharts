@@ -1,12 +1,13 @@
-import React, { PropTypes } from 'react';
-
+/**
+ * @fileOverview Radar Chart
+ */
+import React, { Component, PropTypes } from 'react';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Radar from '../chart/Radar';
 import PolarGrid from '../component/PolarGrid';
 import PolarAngleAxis from '../component/PolarAngleAxis';
 import PolarRadiusAxis from '../component/PolarRadiusAxis';
-
 import ReactUtils from '../util/ReactUtils';
 import LodashUtils from '../util/LodashUtils';
 import D3Scale from 'd3-scale';
@@ -14,7 +15,7 @@ import invariant from 'invariant';
 
 const RADIAN = Math.PI / 180;
 
-class RadarChart extends React.Component {
+class RadarChart extends Component {
   static displayName = 'RadarChart';
 
   static propTypes = {

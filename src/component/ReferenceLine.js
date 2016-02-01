@@ -1,9 +1,12 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Reference Line
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 
 @pureRender
-class ReferenceLine extends React.Component {
+class ReferenceLine extends Component {
 
   static displayName = 'ReferenceLine';
 

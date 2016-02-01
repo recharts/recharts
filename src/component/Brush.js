@@ -1,9 +1,13 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Brush
+ */
+import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
 import D3Scale from 'd3-scale';
 import Layer from '../container/Layer';
 import LodashUtils from '../util/LodashUtils';
 
-class Brush extends React.Component {
+class Brush extends Component {
 
   static displayName = 'Brush';
 
@@ -297,8 +301,10 @@ class Brush extends React.Component {
 
     if (!data || !data.length) {return null;}
 
+    const layerClass = classNames('recharts-bursh', className);
+
     return (
-      <Layer className={'recharts-bursh ' + (className || '')}
+      <Layer className={layerClass}
         onMouseUp={::this.handleUp}
         onMouseMove={::this.handleMove}
         onMouseLeave={::this.handleLeaveWrapper}

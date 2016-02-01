@@ -1,3 +1,6 @@
+/**
+ * @fileOverview Area Chart
+ */
 import React from 'react';
 import CartesianChart from './CartesianChart';
 import LodashUtils from '../util/LodashUtils';

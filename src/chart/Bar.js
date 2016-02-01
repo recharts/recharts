@@ -1,7 +1,8 @@
 /**
  * @fileOverview Render a group of bar
  */
-import React, { PropTypes, Children } from 'react';
+import React, { Component, PropTypes, Children } from 'react';
+import classNames from 'classnames';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import pureRender from 'pure-render-decorator';
@@ -9,7 +10,7 @@ import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 import Animate from 'react-smooth';
 
 @pureRender
-class Bar extends React.Component {
+class Bar extends Component {
 
   static displayName = 'Bar';
 
@@ -166,12 +167,12 @@ class Bar extends React.Component {
   render() {
     const { data, className, label } = this.props;
 
-    if (!data || !data.length) {
-      return null;
-    }
+    if (!data || !data.length) { return null; }
+
+    const layerClass = classNames('recharts-bar', className);
 
     return (
-      <Layer className={`recharts-bar ${className || ''}`}>
+      <Layer className={layerClass}>
         <Layer className="recharts-bar-rectangles">
           {this.renderRectangles()}
         </Layer>

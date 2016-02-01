@@ -1,9 +1,13 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Rectangle
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
+import classNames from 'classnames';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 
 @pureRender
-class Rectangle extends React.Component {
+class Rectangle extends Component {
 
   static displayName = 'Rectangle';
 
@@ -94,14 +98,14 @@ class Rectangle extends React.Component {
         onClick, onMouseEnter, onMouseLeave,
         className } = this.props;
 
-    if (x !== +x || y !== +y || width !== +width || height !== +height) {
-      return null;
-    }
+    if (x !== +x || y !== +y || width !== +width || height !== +height) { return null; }
+
+    const layerClass = classNames('recharts-rectangle', className);
 
     return (
       <path
         {...ReactUtils.getPresentationAttributes(this.props)}
-        className={'recharts-rectangle ' + (className || '')}
+        className={layerClass}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}

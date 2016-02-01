@@ -1,9 +1,7 @@
 /**
  * @fileOverview The axis of polar coordinate system
- * @author xile611
- * @Date 2015-08-28
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import Layer from '../container/Layer';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
@@ -11,7 +9,7 @@ import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 const RADIAN = Math.PI / 180;
 
 @pureRender
-class PolarRadiusAxis extends React.Component {
+class PolarRadiusAxis extends Component {
 
   static displayName = 'PolarRadiusAxis';
 

@@ -1,11 +1,14 @@
-import React, { PropTypes } from 'react';
-import DOMUtils from '../util/DOMUtils';
+/**
+ * @fileOverview Cartesian Axis
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
+import DOMUtils from '../util/DOMUtils';
 import Layer from '../container/Layer';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 
 @pureRender
-class CartesianAxis extends React.Component {
+class CartesianAxis extends Component {
 
   static displayName = 'CartesianAxis';
 

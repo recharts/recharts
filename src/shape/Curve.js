@@ -1,10 +1,13 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Curve
+ */
+import React, { Component, PropTypes } from 'react';
 import d3Shape from 'd3-shape';
 import pureRender from 'pure-render-decorator';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 
 @pureRender
-class Curve extends React.Component {
+class Curve extends Component {
 
   static displayName = 'Curve';
 
@@ -87,9 +90,7 @@ class Curve extends React.Component {
     const { className, points, type, onClick,
         onMouseEnter, onMouseLeave } = this.props;
 
-    if (!points || !points.length) {
-      return null;
-    }
+    if (!points || !points.length) { return null; }
 
     return (
       <path

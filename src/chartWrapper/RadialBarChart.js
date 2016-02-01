@@ -1,15 +1,16 @@
-import React, { PropTypes } from 'react';
-
+/**
+ * @fileOverview Radar Bar Chart
+ */
+import React, { Component, PropTypes } from 'react';
+import D3Scale from 'd3-scale';
 import Surface from '../container/Surface';
 import ReactUtils from '../util/ReactUtils';
 import RadialBar from '../chart/RadialBar';
 import LodashUtils from '../util/LodashUtils';
-
-import D3Scale from 'd3-scale';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 
-class RadialBarChart extends React.Component {
+class RadialBarChart extends Component {
 
   static displayName = 'RadialBarChart';
 

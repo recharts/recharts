@@ -1,17 +1,19 @@
 /**
  * @fileOverview Render sectors of a pie
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import pureRender from 'pure-render-decorator';
+import classNames from 'classnames';
 import Layer from '../container/Layer';
 import Sector from '../shape/Sector';
 import Curve from '../shape/Curve';
-import pureRender from 'pure-render-decorator';
 import raf, { cancel as caf } from 'raf';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+
 const RADIAN = Math.PI / 180;
 
 @pureRender
-class Pie extends React.Component {
+class Pie extends Component {
 
   static displayName = 'Pie';
 
@@ -260,9 +262,10 @@ class Pie extends React.Component {
     }
 
     const sectors = this.getSectors();
+    const layerClass = classNames('recharts-pie', className);
 
     return (
-      <Layer className={'recharts-pie ' + (className || '')}>
+      <Layer className={layerClass}>
         {this.renderClipPath()}
         <g clipPath={`url(#${this.id})`}>
           {this.renderSectors(sectors)}
