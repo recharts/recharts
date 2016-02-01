@@ -26,10 +26,9 @@ class Pie extends Component {
     innerRadius: PropTypes.number,
     outerRadius: PropTypes.number,
     clockWise: PropTypes.bool,
-    data: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.any,
-      value: PropTypes.number,
-    })),
+    nameKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    valueKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    data: PropTypes.arrayOf(PropTypes.object),
     minAngle: PropTypes.number,
     legendType: PropTypes.string,
     label: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
@@ -59,6 +58,8 @@ class Pie extends Component {
     outerRadius: 0,
     // The direction of drawing sectors
     clockWise: true,
+    nameKey: 'name',
+    valueKey: 'value',
     data: [],
     minAngle: 0,
     onMouseEnter() {},
@@ -89,11 +90,12 @@ class Pie extends Component {
   }
 
   getSectors() {
-    const { cx, cy, innerRadius, outerRadius, startAngle, data, minAngle, clockWise } = this.props;
+    const { cx, cy, innerRadius, outerRadius, startAngle,
+      data, minAngle, clockWise, valueKey } = this.props;
     const len = data.length;
 
     const sum = data.reduce((result, entry) => {
-      return result + entry.value;
+      return result + entry[valueKey];
     }, 0);
 
     let sectors = [];
@@ -101,7 +103,7 @@ class Pie extends Component {
 
     if (sum > 0) {
       sectors = data.map((entry, i) => {
-        const percent = entry.value / sum;
+        const percent = entry[valueKey] / sum;
         let _startAngle;
         let _endAngle;
 
@@ -191,7 +193,7 @@ class Pie extends Component {
   }
 
   renderLabels(sectors) {
-    const { label } = this.props;
+    const { label, valueKey } = this.props;
     const pieProps = ReactUtils.getPresentationAttributes(this.props);
     const customLabelProps = ReactUtils.getPresentationAttributes(label);
     const isLabelElement = React.isValidElement(label);
@@ -225,7 +227,7 @@ class Pie extends Component {
       return isLabelElement ? React.cloneElement(label, {labelProps, key: `label-${i}`}) : (
         <g key={`label-${i}`}>
           <Curve {...lineProps} type="linear" className="recharts-pie-label-line"/>
-          <text {...labelProps} className="recharts-pie-label-text">{entry.value}</text>
+          <text {...labelProps} className="recharts-pie-label-text">{entry[valueKey]}</text>
         </g>
       );
     });

@@ -24,6 +24,7 @@ class PolarAngleAxis extends Component {
     radius: PropTypes.number,
 
     axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
+    axisLineType: PropTypes.oneOf(['polygon', 'circle']),
     tickLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
     label: PropTypes.oneOfType([
       PropTypes.bool,
@@ -36,7 +37,6 @@ class PolarAngleAxis extends Component {
       angle: PropTypes.number,
     })),
     orient: PropTypes.oneOf(['inner', 'outer']),
-    axisLineType: PropTypes.oneOf(['polygon', 'circle']),
     tickFormatter: PropTypes.func,
   };
 

@@ -87,12 +87,13 @@ class PieChart extends Component {
 
     const { width, height } = this.props;
     const legendData = items.reduce((result, child) => {
+      const { nameKey } = child.props;
       const data = this.getComposeData(child);
 
       return result.concat(data.map((entry) => {
         const { name, value, ...rest } = entry;
 
-        return { value: entry.name, color: entry.fill, ...rest };
+        return { value: entry[nameKey], color: entry.fill, ...rest };
       }));
     }, []);
 

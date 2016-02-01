@@ -56,9 +56,11 @@ class Radar extends Component {
     const labels = points.map((entry, i) => {
       const labelProps = {
         textAnchor: 'middle',
-        ...entry,
         ...baseProps,
+        stroke: 'none',
+        fill: (baseProps && baseProps.stroke) || '#666',
         ...customLabelProps,
+        ...entry,
         index: i,
         key: `label-${i}`,
         payload: entry,
