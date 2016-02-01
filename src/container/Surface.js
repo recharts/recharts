@@ -1,8 +1,12 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Surface
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
+import classNames from 'classnames';
 
 @pureRender
-class Surface extends React.Component {
+class Surface extends Component {
 
   static displayName = 'Surface';
 
@@ -26,10 +30,11 @@ class Surface extends React.Component {
   render() {
     const { children, width, height, viewBox, className, style } = this.props;
     const svgView = viewBox || { width, height, x: 0, y: 0 };
+    const layerClass = classNames('recharts-surface', className);
 
     return (
       <svg
-        className={`recharts-surface ${className || ''}`}
+        className={layerClass}
         width={width}
         height={height}
         style={style}

@@ -1,10 +1,13 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Cross
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 import LodashUtils from '../util/LodashUtils';
 
 @pureRender
-class Cross extends React.Component {
+class Cross extends Component {
 
   static displayName = 'Cross';
 

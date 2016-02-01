@@ -1,10 +1,16 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Radar
+ */
+import React, { Component, PropTypes } from 'react';
+import pureRender from 'pure-render-decorator';
+import classNames from 'classnames';
 import ReactUtils from '../util/ReactUtils';
 import Polygon from '../shape/Polygon';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 
-class Radar extends React.Component {
+@pureRender
+class Radar extends Component {
 
   static displayName = 'Radar';
 
@@ -95,8 +101,10 @@ class Radar extends React.Component {
 
     if (!points || !points.length) {return null;}
 
+    const layerClass = classNames('recharts-radar', className);
+
     return (
-      <Layer className={`recharts-radar ${className || ''}`}>
+      <Layer className={layerClass}>
         {this.renderPolygon()}
         {label && this.renderLabels()}
         {dot && this.renderDots()}

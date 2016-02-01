@@ -1,7 +1,8 @@
 /**
  * @fileOverview Line
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
@@ -11,7 +12,7 @@ import { findDOMNode } from 'react-dom';
 import Animate from 'react-smooth';
 
 @pureRender
-class Line extends React.Component {
+class Line extends Component {
 
   static displayName = 'Line';
 
@@ -160,9 +161,10 @@ class Line extends React.Component {
       return null;
     }
     const hasSinglePoint = points.length === 1;
+    const layerClass = classNames('recharts-line', className);
 
     return (
-      <Layer className={'recharts-line ' + (className || '')}>
+      <Layer className={layerClass}>
         {!hasSinglePoint && (
           <Animate isActive={isAnimationActive}
             begin={animationBegin}

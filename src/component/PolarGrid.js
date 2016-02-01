@@ -1,10 +1,13 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Polar Grid
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 
 const RADIAN = Math.PI / 180;
 
 @pureRender
-class PolarGrid extends React.Component {
+class PolarGrid extends Component {
 
   static displayName = 'PolarGrid';
 
@@ -112,9 +115,7 @@ class PolarGrid extends React.Component {
   render() {
     const { outerRadius } = this.props;
 
-    if (outerRadius <= 0) {
-      return null;
-    }
+    if (outerRadius <= 0) { return null; }
 
     return (
       <g className="recharts-polar-grid">

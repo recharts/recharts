@@ -1,8 +1,12 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Dot
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
+import classNames from 'classnames';
 
 @pureRender
-class Dot extends React.Component {
+class Dot extends Component {
   static displayName = 'Dot';
 
   static propTypes = {
@@ -14,9 +18,10 @@ class Dot extends React.Component {
 
   render() {
     const { cx, cy, r, className } = this.props;
+    const layerClass = classNames('recharts-dot', className);
 
     if (cx === +cx && cy === +cy && r === +r) {
-      return <circle {...this.props} className={`recharts-dot ${className || ''}`}/>;
+      return <circle {...this.props} className={layerClass}/>;
     }
 
     return null;

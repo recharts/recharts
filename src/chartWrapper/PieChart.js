@@ -1,12 +1,14 @@
-import React, { PropTypes } from 'react';
-
+/**
+ * @fileOverview Pie Chart
+ */
+import React, { Component, PropTypes } from 'react';
 import Surface from '../container/Surface';
 import ReactUtils from '../util/ReactUtils';
 import Pie from '../chart/Pie';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 
-class PieChart extends React.Component {
+class PieChart extends Component {
 
   static displayName = 'PieChart';
 

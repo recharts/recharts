@@ -1,8 +1,11 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Default Tooltip Content
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 
 @pureRender
-class DefaultTooltipContent extends React.Component {
+class DefaultTooltipContent extends Component {
 
   static displayName = 'DefaultTooltipContent';
 

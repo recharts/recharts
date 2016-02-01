@@ -1,11 +1,14 @@
-import React, { PropTypes } from 'react';
-import Surface from '../container/Surface';
+/**
+ * @fileOverview Default Legend Content
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
+import Surface from '../container/Surface';
 
 const SIZE = 32;
 
 @pureRender
-class DefaultLegendContent extends React.Component {
+class DefaultLegendContent extends Component {
   static displayName = 'Legend';
 
   static propTypes = {

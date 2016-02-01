@@ -1,12 +1,13 @@
-import React, { PropTypes } from 'react';
-
+/**
+ * @fileOverview TreemapChart
+ */
+import React, { Component, PropTypes } from 'react';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Rectangle from '../shape/Rectangle';
-
 import ReactUtils from '../util/ReactUtils';
 
-class TreemapChart extends React.Component {
+class TreemapChart extends Component {
   static displayName = 'TreemapChart';
 
   static propTypes = {

@@ -1,14 +1,15 @@
 /**
  * @fileOverview Render a group of scatters
  */
-import React, { PropTypes } from 'react';
-import Layer from '../container/Layer';
+import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
 import pureRender from 'pure-render-decorator';
+import Layer from '../container/Layer';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 import Curve from '../shape/Curve';
 
 @pureRender
-class Scatter extends React.Component {
+class Scatter extends Component {
 
   static displayName = 'Scatter';
 
@@ -124,12 +125,12 @@ class Scatter extends React.Component {
   render() {
     const { points, line, className } = this.props;
 
-    if (!points || !points.length) {
-      return null;
-    }
+    if (!points || !points.length) { return null; }
+
+    const layerClass = classNames('recharts-scatter', className);
 
     return (
-      <Layer className={'recharts-scatter ' + (className || '')}>
+      <Layer className={layerClass}>
         {line && this.renderLine()}
         {this.renderCircles()}
       </Layer>

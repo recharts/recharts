@@ -1,3 +1,6 @@
+/**
+ * @fileOverview Line Chart
+ */
 import React, { PropTypes } from 'react';
 import CartesianChart from './CartesianChart';
 

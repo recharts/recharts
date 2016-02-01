@@ -1,7 +1,8 @@
 /**
  * @fileOverview Render a group of radial bar
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
 import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
 import LodashUtils from '../util/LodashUtils';
@@ -12,7 +13,7 @@ import pureRender from 'pure-render-decorator';
 const RADIAN = Math.PI / 180;
 
 @pureRender
-class RadialBar extends React.Component {
+class RadialBar extends Component {
 
   static displayName = 'RadialBar';
 
@@ -190,13 +191,13 @@ class RadialBar extends React.Component {
   render() {
     const { data, className, background, label } = this.props;
 
-    if (!data || !data.length) {
-      return null;
-    }
+    if (!data || !data.length) { return null; }
+
     const sectors = this.getSectors();
+    const layerClass = classNames('recharts-area', className);
 
     return (
-      <Layer className={'recharts-radial-bar ' + (className || '')}>
+      <Layer className={layerClass}>
         {background && (
           <Layer className="recharts-radial-bar-background">
             {this.renderBackground(sectors)}

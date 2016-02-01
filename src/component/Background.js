@@ -1,9 +1,12 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Background
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 
 // TODO: add support of gradient
 @pureRender
-class Background extends React.Component {
+class Background extends Component {
 
   static displayName = 'Background';
 

@@ -1,9 +1,13 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Triangle
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
+import classNames from 'classnames';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 
 @pureRender
-class Rectangle extends React.Component {
+class Rectangle extends Component {
 
   static displayName = 'Rectangle';
 
@@ -40,13 +44,13 @@ class Rectangle extends React.Component {
   }
 
   render() {
-    const { points, radius, onClick, className,
-        onMouseEnter, onMouseLeave } = this.props;
+    const { points, radius, onClick, className, onMouseEnter, onMouseLeave } = this.props;
+    const layerClass = classNames('recharts-triangle', className);
 
     return (
       <path
         {...ReactUtils.getPresentationAttributes(this.props)}
-        className={'recharts-triangle ' + (className || '')}
+        className={layerClass}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}

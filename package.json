@@ -22,6 +22,7 @@
     "react-dom": "0.14.7"
   },
   "dependencies": {
+    "classnames": "2.2.3",
     "core-js": "2.0.3",
     "d3-scale": "0.4.0",
     "d3-shape": "0.4.0",

@@ -1,9 +1,13 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview Polygon
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
+import classNames from 'classnames';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 
 @pureRender
-class Polygon extends React.Component {
+class Polygon extends Component {
 
   static displayName = 'Polygon';
 
@@ -35,14 +39,14 @@ class Polygon extends React.Component {
   render() {
     const { points, className } = this.props;
 
-    if (!points || !points.length) {
-      return null;
-    }
+    if (!points || !points.length) { return null; }
+
+    const layerClass = classNames('recharts-polygon', className);
 
     return (
       <polygon
         {...ReactUtils.getPresentationAttributes(this.props)}
-        className={`recharts-polygon ${className || ''}`}
+        className={layerClass}
         points={this.getPolygonPoints(points)}/>
     );
   }

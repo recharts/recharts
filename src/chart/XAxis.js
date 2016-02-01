@@ -1,8 +1,11 @@
-import React, { PropTypes } from 'react';
+/**
+ * @fileOverview X Axis
+ */
+import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 
 @pureRender
-class XAxis extends React.Component {
+class XAxis extends Component {
 
   static displayName = 'XAxis';
 
