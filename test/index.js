@@ -32,3 +32,7 @@ const DotSpec = require('./specs/shape/DotSpec.js');
 const RectangleSpec = require('./specs/shape/RectangleSpec.js');
 const SectorSpec = require('./specs/shape/SectorSpec.js');
 const TriangleSpec = require('./specs/shape/TriangleSpec.js');
+
+// util
+let LodashUtils = require('./specs/util/LodashUtils.js');
+let ReactUtils = require('./specs/util/ReactUtils.js');
