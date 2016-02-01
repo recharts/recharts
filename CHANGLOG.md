@@ -1,3 +1,10 @@
+## 0.4.7 (February 1, 2016)
+
+### UI
+- refactor(RadarChart, Radar, PolarAngleAxis, PolarRadiusAxis): refactor the components of Radar
+- refactor(classNames): refactor the method of package a className
+- refactor(Pie): add nameKey in Pie
+
 ## 0.4.6 (January 29, 2016)
 
 ### UI
