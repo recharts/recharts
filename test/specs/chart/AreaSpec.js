@@ -18,7 +18,29 @@ describe('<AreaChart />', () => {
         <Area type='monotone' dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
       </AreaChart>
     );
-    expect(wrapper.find('path').length).to.equal(2);
+    expect(wrapper.find('.recharts-area-area').length).to.equal(1);
+    expect(wrapper.find('.recharts-area-curve').length).to.equal(1);
+  });
+
+  it('renders dots and labels when dot is setted to true', () => {
+    let wrapper = render(
+      <AreaChart width={100} height={50} data={data}>
+        <Area type='monotone' dot label dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
+      </AreaChart>
+    );
+    expect(wrapper.find('.recharts-area-dots').length).to.equal(1);
+    expect(wrapper.find('.recharts-area-dot').length).to.equal(6);
+    expect(wrapper.find('.recharts-area-labels').length).to.equal(1);
+    expect(wrapper.find('.recharts-area-label').length).to.equal(6);
+  });
+
+  it('renders empty when data is empty', () => {
+    let wrapper = render(
+      <AreaChart width={100} height={50} data={[]}>
+        <Area type='monotone' dot label dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
+      </AreaChart>
+    );
+    expect(wrapper.find('.recharts-area').length).to.equal(0);
   });
 
   // @TODO wait for implements

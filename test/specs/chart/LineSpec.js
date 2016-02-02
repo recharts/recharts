@@ -23,6 +23,24 @@ describe('<LineChart />', () => {
     expect(wrapper.find('.recharts-line .recharts-line-curve').length).to.equal(1);
   });
 
+  it('renders 6 labels when label is setted to be true', () => {
+    const wrapper = render(
+      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <Line isAnimationActive={false} label type="monotone" dataKey="uv" stroke="#ff7300"/>
+      </LineChart>
+    );
+    expect(wrapper.find('.recharts-line-label').length).to.equal(6);
+  });
+
+  it('renders 6 dots when dot is setted to be true', () => {
+    const wrapper = render(
+      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <Line isAnimationActive={false} dot type="monotone" dataKey="uv" stroke="#ff7300"/>
+      </LineChart>
+    );
+    expect(wrapper.find('.recharts-line-dot').length).to.equal(6);
+  });
+
   it('click on Curve should invoke onClick callback', () => {
     const onClick = sinon.spy();
     const wrapper = mount(

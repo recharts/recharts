@@ -24,6 +24,24 @@ describe('<Radar />', () => {
     expect(wrapper.find('polygon').length).to.equal(1);
   });
 
+  it('renders 8 dots when dot is setted to be true', () => {
+    const wrapper = render(
+      <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
+        <Radar dot dataKey="value"/>
+      </RadarChart>
+    );
+    expect(wrapper.find('.recharts-radar-dot').length).to.equal(8);
+  });
+
+  it('renders 8 labels when dot is setted to be true', () => {
+    const wrapper = render(
+      <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
+        <Radar label dataKey="value"/>
+      </RadarChart>
+    );
+    expect(wrapper.find('.recharts-radar-label').length).to.equal(8);
+  });
+
   it('renders 1 PolarGrid 1 PolarAngleAxis and 1 PolarRadiusAxis in simple Radar', () => {
     const wrapper = render(
       <RadarChart cx={300} cy={250} startAngle={45} innerRadius={20} outerRadius={150} width={600} height={500} data={data}>
