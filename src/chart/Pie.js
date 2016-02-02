@@ -87,12 +87,6 @@ class Pie extends Component {
     }
   }
 
-  handleAnimationEnd() {
-    this.setState({
-      isAnimationFinished: true,
-    });
-  }
-
   getDeltaAngle() {
     const { startAngle, endAngle } = this.props;
     const sign = Math.sign(endAngle - startAngle);
@@ -157,6 +151,12 @@ class Pie extends Component {
     return 'middle';
   }
 
+  handleAnimationEnd() {
+    this.setState({
+      isAnimationFinished: true,
+    });
+  }
+
   handleSectorEnter(data, e) {
     this.props.onMouseEnter(data, e);
   }
@@ -168,7 +168,6 @@ class Pie extends Component {
       outerRadius,
       innerRadius,
       startAngle,
-      endAngle,
       isAnimationActive,
       animationDuration,
       animationEasing,
@@ -184,7 +183,7 @@ class Pie extends Component {
             animationBegin={animationBegin}
             onAnimationEnd={::this.handleAnimationEnd}
             from={{ endAngle: startAngle }}
-            to = {{ endAngle: endAngle }}
+            to = {{ endAngle: this.props.endAngle }}
           >
             {
               ({ endAngle }) => {

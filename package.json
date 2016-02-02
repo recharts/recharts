@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "description": "React charts",
   "main": "src/index.js",
   "keywords": [
@@ -71,7 +71,8 @@
     "require-dir": "0.3.0",
     "sinon": "^1.17.3",
     "webpack": "1.12.9",
-    "webpack-dev-server": "1.14.0"
+    "webpack-dev-server": "1.14.0",
+    "escope": "3.3.0"
   },
   "scripts": {
     "clean:lib": "./node_modules/.bin/rimraf lib",
@@ -79,7 +80,7 @@
     "build": "npm run clean:lib && npm run build:webpack",
     "demo": "./node_modules/.bin/webpack-dev-server  --progress --port 3000  --colors --content-base demo --hot --inline --config demo/webpack.config.js",
     "test": "./node_modules/karma/bin/karma start test/karma.conf.js",
-    "lint": "./node_modules/.bin/eslint src test"
+    "lint": "./node_modules/.bin/eslint src"
   },
   "license": "MIT"
 }
