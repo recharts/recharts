@@ -7,7 +7,7 @@ const data = [
   {name: 'food', uv: 2400, pv: 2400, amt: 4500},
   {name: 'cosmetic', uv: 3300, pv: 4567, amt: 6500},
   {name: 'storage', uv: 3300, pv: 1398, amt: 5000},
-  {name: 'digital', uv: 3200, pv: 9800, amt: 4000}
+  {name: 'digital', uv: 3200, pv: 2800, amt: 4000}
 ];
 const data01 = [
   {day: '05-01', wether: 'sunny'},

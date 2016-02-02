@@ -32,7 +32,7 @@ describe('<ScatterChart />', () => {
       </PieChart>
     );
     const sectors = wrapper.find(Sector);
-    const firstSector = sectors.first(); // you can also use sectors.at(0) to get the wrapper node.
+    const firstSector = sectors.at(1); // you can also use sectors.at(0) to get the wrapper node.
     firstSector.simulate('click');
     expect(onClick.calledOnce).to.equal(true);
   });

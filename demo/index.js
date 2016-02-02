@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Router, {Route} from 'react-router';
+import Router, { Route } from 'react-router';
 import App from './container/App';
 
 const routes = (
-  <Route path='/' component={App}/>
+  <Route path="/" component={App}/>
 );
 /*
 Router.run(routes, function (Handler, state) {

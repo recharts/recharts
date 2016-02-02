@@ -6,21 +6,21 @@ module.exports = {
   debug: true,
   devtool: '#inline-source-map',
   entry: [
-    './index.js'
+    './index.js',
   ],
   output: {
     path: __dirname + '/build',
-    filename: 'bundle.js'
+    filename: 'bundle.js',
   },
   plugins: [
-    //new webpack.HotModuleReplacementPlugin(),
-    //new webpack.NoErrorsPlugin()
+    // new webpack.HotModuleReplacementPlugin(),
+    // new webpack.NoErrorsPlugin()
   ],
   resolve: {
     alias: {
-      'recharts': path.join(__dirname, '..', 'src/index.js')
+      'recharts': path.join(__dirname, '..', 'src/index.js'),
     },
-    extensions: ['', '.js']
+    extensions: ['', '.js'],
   },
   module: {
     loaders: [{
@@ -28,11 +28,11 @@ module.exports = {
       loaders: ['react-hot', 'babel-loader'],
       include: [
         __dirname,
-        path.join(__dirname,  '..', 'src'),
-        path.join(__dirname,  '..', 'node_modules', 'recharts-scale'),
-        path.join(__dirname,  '..', 'node_modules', 'react-smooth'),
-        path.join(__dirname,  '..', 'node_modules', 'recharts-color-util')
-      ]
-    }]
-  }
+        path.join(__dirname, '..', 'src'),
+        path.join(__dirname, '..', 'node_modules', 'recharts-scale'),
+        path.join(__dirname, '..', 'node_modules', 'react-smooth'),
+        path.join(__dirname, '..', 'node_modules', 'recharts-color-util'),
+      ],
+    }],
+  },
 };
