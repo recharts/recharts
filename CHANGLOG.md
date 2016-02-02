@@ -1,4 +1,4 @@
-## 0.4.8 (February 2, 2016)
+## 0.4.9 (February 2, 2016)
 
 ### UI
 - refactor(CartesianAxis, PolarAngleAxis): change props name "orient" to "orientation"
