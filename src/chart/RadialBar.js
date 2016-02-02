@@ -153,7 +153,7 @@ class RadialBar extends Component {
   }
 
   renderBackground(sectors) {
-    const { startAngle, endAngle, clockWise, background } = this.props;
+    const { startAngle, endAngle, background } = this.props;
     const isBackgroundElement = React.isValidElement(background);
     const backgroundProps = ReactUtils.getPresentationAttributes(background);
 
@@ -163,7 +163,6 @@ class RadialBar extends Component {
         ...rest,
         fill: '#eee',
         ...backgroundProps,
-        clockWise,
         startAngle,
         endAngle,
         index: i,

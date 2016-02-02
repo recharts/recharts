@@ -21,4 +21,25 @@ describe('<BarChart />', () => {
 
     expect(wrapper.find('.recharts-rectangle').length).to.equal(8);
   });
+
+  it('renders 4 labels when label is setted to be true', () => {
+    const wrapper = render(
+      <BarChart width={100} height={50} data={data}>
+        <Bar isAnimationActive={false} dataKey="uv" label fill="#ff7300"/>
+      </BarChart>
+    );
+
+    expect(wrapper.find('.recharts-bar-rectangle-labels').length).to.equal(1);
+    expect(wrapper.find('.recharts-bar-label').length).to.equal(4);
+  });
+
+  it('renders empty when data is empty', () => {
+    const wrapper = render(
+      <BarChart width={100} height={50} data={[]}>
+        <Bar dataKey="uv" label fill="#ff7300"/>
+      </BarChart>
+    );
+
+    expect(wrapper.find('path').length).to.equal(0);
+  });
 });

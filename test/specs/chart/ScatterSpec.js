@@ -17,11 +17,15 @@ describe('<ScatterChart />', () => {
     <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
       <XAxis dataKey={"x"} name="stature" unit="cm"/>
       <YAxis dataKey={"y"} name="weight" unit="kg"/>
-      <Scatter name="A school" data={data} fill="#ff7300"/>
+      <Scatter line name="A school" data={data} fill="#ff7300"/>
     </ScatterChart>
   );
 
   it('renders 6 circles in simple ScatterChart', () => {
     expect(wrapper.find('circle').length).to.equal(6);
   });
+  it('renders 1 jointed line when line is setted to be true', () => {
+    expect(wrapper.find('.recharts-scatter-line').length).to.equal(1);
+  });
+
 });

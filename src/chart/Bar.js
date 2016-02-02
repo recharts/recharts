@@ -157,7 +157,7 @@ class Bar extends Component {
       };
 
       return isLabelElement ? React.cloneElement(label, labelProps) : (
-        <text {...labelProps}>{entry.value}</text>
+        <text {...labelProps} className="recharts-bar-label">{entry.value}</text>
       );
     });
 

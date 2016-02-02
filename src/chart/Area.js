@@ -99,7 +99,7 @@ class Area extends Component {
         playload: entry,
       };
 
-      return isDotElement ? React.cloneElement(dot, dotProps) : <Dot {...dotProps} />;
+      return isDotElement ? React.cloneElement(dot, dotProps) : <Dot {...dotProps} className="recharts-area-dot" />;
     });
 
     return <Layer className="recharts-area-dots">{dots}</Layer>;
@@ -123,7 +123,7 @@ class Area extends Component {
       };
 
       return isLabelElement ? React.cloneElement(label, labelProps) : (
-        <text {...labelProps}>{entry.value}</text>
+        <text {...labelProps} className="recharts-area-label">{entry.value}</text>
       );
     });
 

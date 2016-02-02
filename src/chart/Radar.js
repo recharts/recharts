@@ -92,7 +92,9 @@ class Radar extends Component {
         playload: entry,
       };
 
-      return isDotElement ? React.cloneElement(dot, dotProps) : <Dot {...dotProps}/>;
+      return isDotElement ?
+            React.cloneElement(dot, dotProps) :
+            <Dot {...dotProps} className="recharts-radar-dot"/>;
     });
 
     return <Layer className="recharts-radar-dots">{dots}</Layer>;
