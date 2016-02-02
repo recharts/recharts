@@ -1,3 +1,12 @@
+## 0.4.8 (February 2, 2016)
+
+### UI
+- refactor(CartesianAxis, PolarAngleAxis): change props name "orient" to "orientation"
+- refactor(Line, Bar, Pie): refactor animation using new react-smooth
+- refactor(Pie, RidalBar): remove the props clockWise, and add the props endAngle
+### Test
+- test(Line, Bar, Radar, Scatter): add test case
+
 ## 0.4.7 (February 1, 2016)
 
 ### UI
