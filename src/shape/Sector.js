@@ -38,10 +38,19 @@ class Sector extends Component {
     onClick() {},
   };
 
+  getDeltaAngle(startAngle, endAngle) {
+    const sign = Math.sign(endAngle - startAngle);
+    const deltaAngle = Math.min(Math.abs(endAngle - startAngle), 359.9999);
+
+    return sign * deltaAngle;
+  }
+
+
   getPath(cx, cy, innerRadius, outerRadius, startAngle, endAngle) {
-    const angle = endAngle - startAngle;
+    const angle = this.getDeltaAngle(startAngle, endAngle);
+
     // When the angle of sector equals to 360, star point and end point coincide
-    const _endAngle = Math.abs(angle) >= 360 ? startAngle + 0.9999 * angle : endAngle;
+    const _endAngle = startAngle + angle;
     let path;
 
 

@@ -102,7 +102,7 @@ class RadialBar extends Component {
     const { label } = this.props;
     const labelProps = React.isValidElement(label) ? label.props : label;
     const offsetRadius = labelProps.offsetRadius || 2;
-    const orient = labelProps.orient || 'inner';
+    const orientation = labelProps.orientation || 'inner';
     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = data;
     const clockWise = this.getDeltaAngle() < 0;
     const radius = clockWise ? innerRadius + offsetRadius : Math.max(outerRadius - offsetRadius, 0);
@@ -115,10 +115,10 @@ class RadialBar extends Component {
     let _endAngle;
 
     if (clockWise) {
-      _startAngle = orient === 'inner' ? Math.min(endAngle + deltaAngle, startAngle) : endAngle;
+      _startAngle = orientation === 'inner' ? Math.min(endAngle + deltaAngle, startAngle) : endAngle;
       _endAngle = _startAngle - deltaAngle;
     } else {
-      _startAngle = orient === 'inner' ? Math.max(endAngle - deltaAngle, startAngle) : endAngle;
+      _startAngle = orientation === 'inner' ? Math.max(endAngle - deltaAngle, startAngle) : endAngle;
       _endAngle = _startAngle + deltaAngle;
     }
 

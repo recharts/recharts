@@ -36,12 +36,15 @@ class PolarAngleAxis extends Component {
       value: PropTypes.any,
       angle: PropTypes.number,
     })),
-    orient: PropTypes.oneOf(['inner', 'outer']),
+    orientation: PropTypes.oneOf(['inner', 'outer']),
     tickFormatter: PropTypes.func,
   };
 
   static defaultProps = {
-    orient: 'outer',
+    cx: 0,
+    cy: 0,
+    radius: 0,
+    orientation: 'outer',
     fill: '#666',
     stroke: '#ccc',
     axisLine: true,
@@ -55,7 +58,7 @@ class PolarAngleAxis extends Component {
    * @return {Object} (x0, y0): The start point of text, (x1, y1): The end point close to text, (x2, y2): The end point close to axis
    */
   getTickLineCoord(data) {
-    const { cx, cy, radius, orient, tickLine } = this.props;
+    const { cx, cy, radius, orientation, tickLine } = this.props;
     const tickLineSize = (tickLine && tickLine.size) || 8;
     const sin = Math.sin(-data.angle * RADIAN);
     const cos = Math.cos(-data.angle * RADIAN);
@@ -64,7 +67,7 @@ class PolarAngleAxis extends Component {
     let y1;
     let y2;
 
-    switch (orient) {
+    switch (orientation) {
       case 'inner':
         x1 = cx + radius * cos;
         y1 = cy + radius * sin;
@@ -87,14 +90,14 @@ class PolarAngleAxis extends Component {
    * @return {String} text-anchor
    */
   getTickTextAnchor(data) {
-    const { orient } = this.props;
+    const { orientation } = this.props;
     const cos = Math.cos(-data.angle * RADIAN);
     let textAnchor;
 
     if (cos > eps) {
-      textAnchor = orient === 'outer' ? 'start' : 'end';
+      textAnchor = orientation === 'outer' ? 'start' : 'end';
     } else if (cos < -eps) {
-      textAnchor = orient === 'outer' ? 'end' : 'start';
+      textAnchor = orientation === 'outer' ? 'end' : 'start';
     } else {
       textAnchor = 'middle';
     }

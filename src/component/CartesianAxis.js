@@ -18,7 +18,7 @@ class CartesianAxis extends Component {
     y: PropTypes.number,
     width: PropTypes.number,
     height: PropTypes.number,
-    orient: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
+    orientation: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
     viewBox: PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -52,7 +52,7 @@ class CartesianAxis extends Component {
     height: 0,
     viewBox: { x: 0, y: 0, width: 0, height: 0 },
     // The orientation of axis
-    orient: 'bottom',
+    orientation: 'bottom',
     // The ticks
     ticks: [],
 
@@ -68,13 +68,13 @@ class CartesianAxis extends Component {
   };
 
   static getTicks(props) {
-    const { ticks, viewBox, minLabelGap, orient, interval } = props;
+    const { ticks, viewBox, minLabelGap, orientation, interval } = props;
 
     if (!ticks || !ticks.length) { return [];}
 
     return interval === +interval
         ? CartesianAxis.getNumberIntervalTicks(ticks, interval)
-        : CartesianAxis.getAutoIntervalTicks(ticks, viewBox, orient, minLabelGap);
+        : CartesianAxis.getAutoIntervalTicks(ticks, viewBox, orientation, minLabelGap);
   }
 
   static getNumberIntervalTicks(ticks, interval) {
@@ -83,9 +83,9 @@ class CartesianAxis extends Component {
     });
   }
 
-  static getAutoIntervalTicks(ticks, viewBox, orient, minLabelGap) {
+  static getAutoIntervalTicks(ticks, viewBox, orientation, minLabelGap) {
     const { x, y, width, height } = viewBox;
-    const sizeKey = (orient === 'top' || orient === 'bottom') ? 'width' : 'height';
+    const sizeKey = (orientation === 'top' || orientation === 'bottom') ? 'width' : 'height';
     const sign = ticks.length >= 2 ? Math.sign(ticks[1].coord - ticks[0].coord) : 1;
 
     let pointer;
@@ -113,7 +113,7 @@ class CartesianAxis extends Component {
    * @return {Object} (x1, y1): The coordinate of endpoint close to label text (x2, y2): The coordinate of endpoint close to axis
    */
   getTickLineCoord(data) {
-    const { x, y, width, height, orient, tickSize } = this.props;
+    const { x, y, width, height, orientation, tickSize } = this.props;
     let x1;
     let x2;
     let y1;
@@ -121,7 +121,7 @@ class CartesianAxis extends Component {
 
     const finalTickSize = data.tickSize || tickSize;
 
-    switch (orient) {
+    switch (orientation) {
       case 'top':
         x1 = x2 = data.coord;
         y1 = y + height - finalTickSize;
@@ -148,10 +148,10 @@ class CartesianAxis extends Component {
   }
 
   getBaseline() {
-    const { orient } = this.props;
+    const { orientation } = this.props;
     let baseline;
 
-    switch (orient) {
+    switch (orientation) {
       case 'top':
         baseline = 'auto';
         break;
@@ -167,10 +167,10 @@ class CartesianAxis extends Component {
   }
 
   getTickTextAnchor() {
-    const { orient } = this.props;
+    const { orientation } = this.props;
     let textAnchor;
 
-    switch (orient) {
+    switch (orientation) {
       case 'left':
         textAnchor = 'end';
         break;
@@ -186,10 +186,10 @@ class CartesianAxis extends Component {
   }
 
   getDy() {
-    const { orient } = this.props;
+    const { orientation } = this.props;
     let dy = 0;
 
-    switch (orient) {
+    switch (orientation) {
       case 'left':
       case 'right':
         dy = 8;
@@ -206,14 +206,14 @@ class CartesianAxis extends Component {
   }
 
   renderAxisLine() {
-    const { x, y, width, height, orient, axisLine } = this.props;
+    const { x, y, width, height, orientation, axisLine } = this.props;
     let props = {
       ...ReactUtils.getPresentationAttributes(this.props),
       fill: 'none',
       ...ReactUtils.getPresentationAttributes(axisLine),
     };
 
-    switch (orient) {
+    switch (orientation) {
       case 'top':
         props = { ...props, x1: x, y1: y + height, x2: x + width, y2: y + height };
         break;

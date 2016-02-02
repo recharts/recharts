@@ -17,7 +17,7 @@ export default React.createClass({
         <PolarAngleAxis
           cx={250}
           cy={250}
-          outerRadius={200}
+          radius={200}
           ticks={ticks}/>
       </Surface>
     );

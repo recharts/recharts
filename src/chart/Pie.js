@@ -85,8 +85,6 @@ class Pie extends Component {
     if (!this.id) {
       this.id = 'clipPath' + Date.now();
     }
-
-    this.handleAnimationEnd = this.handleAnimationEnd.bind(this);
   }
 
   handleAnimationEnd() {
@@ -170,6 +168,7 @@ class Pie extends Component {
       outerRadius,
       innerRadius,
       startAngle,
+      endAngle,
       isAnimationActive,
       animationDuration,
       animationEasing,
@@ -183,9 +182,9 @@ class Pie extends Component {
             isActive={isAnimationActive}
             duration={animationDuration}
             animationBegin={animationBegin}
-            onAnimationEnd={this.handleAnimationEnd}
+            onAnimationEnd={::this.handleAnimationEnd}
             from={{ endAngle: startAngle }}
-            to = {{ endAngle: startAngle + 359.5 }}
+            to = {{ endAngle: endAngle }}
           >
             {
               ({ endAngle }) => {

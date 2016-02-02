@@ -25,7 +25,7 @@ class PolarRadiusAxis extends Component {
       value: PropTypes.any,
       radius: PropTypes.value,
     })),
-    orient: PropTypes.oneOf(['left', 'right', 'middle']),
+    orientation: PropTypes.oneOf(['left', 'right', 'middle']),
     axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
     label: PropTypes.oneOfType([
       PropTypes.bool,
@@ -36,8 +36,10 @@ class PolarRadiusAxis extends Component {
   };
 
   static defaultProps = {
+    cx: 0,
+    cy: 0,
     angle: 0,
-    orient: 'right',
+    orientation: 'right',
     stroke: '#ccc',
     axisLine: true,
     label: true,
@@ -61,10 +63,10 @@ class PolarRadiusAxis extends Component {
   }
 
   getTickTextAnchor() {
-    const { orient } = this.props;
+    const { orientation } = this.props;
     let textAnchor;
 
-    switch (orient) {
+    switch (orientation) {
       case 'left':
         textAnchor = 'end';
         break;

@@ -31,14 +31,14 @@ class YAxis extends Component {
     width: PropTypes.number,
     // The height of axis which is usually calculated in Chart
     height: PropTypes.number,
-    // The orient of axis
-    orient: PropTypes.oneOf(['left', 'right']),
+    // The orientation of axis
+    orientation: PropTypes.oneOf(['left', 'right']),
     type: PropTypes.oneOf(['number', 'category']),
   };
 
   static defaultProps = {
     hide: false,
-    orient: 'left',
+    orientation: 'left',
     width: 60,
     height: 0,
     yAxisId: 0,

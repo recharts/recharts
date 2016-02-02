@@ -64,8 +64,8 @@ export default React.createClass({
         <div className='area-chart-wrapper'>
           <AreaChart width={600} height={400} data={data}>
             <YAxis type='number' yAxisId={0} stroke="#ff7300"/>
-            <YAxis type='number' orient='right' yAxisId={1} stroke="#387908"/>
-            <YAxis type='number' orient='right' yAxisId={2} stroke="#38abc8"/>
+            <YAxis type='number' orientation='right' yAxisId={1} stroke="#387908"/>
+            <YAxis type='number' orientation='right' yAxisId={2} stroke="#38abc8"/>
             <XAxis dataKey='name'/>
             <Area dataKey='uv' stroke='#ff7300' fill='#ff7300' strokeWidth={2} yAxisId={0}/>
             <Area dataKey='pv' stroke='#387908' fill='#387908' strokeWidth={2} yAxisId={1}/>
@@ -77,8 +77,8 @@ export default React.createClass({
         <div className='area-chart-wrapper' style={{margin: 40}}>
           <AreaChart width={400} height={400} data={data} layout='vertical'>
             <YAxis type='category' dataKey='name'/>
-            <XAxis type='number' xAxisId={0} orient='top'/>
-            <XAxis type='number' xAxisId={1} orient='bottom'/>
+            <XAxis type='number' xAxisId={0} orientation='top'/>
+            <XAxis type='number' xAxisId={1} orientation='bottom'/>
             <Area dataKey='uv' dataKeyName='月环比' stroke='#ff7300' fill='#ff7300' strokeWidth={2} xAxisId={0} />
             <Area dataKey='pv' dataKeyName='年同比' stroke='#387908' fill='#387908' strokeWidth={2} xAxisId={1} />
             <Tooltip/>

@@ -25,7 +25,8 @@ module.exports = {
     resolve: {
       alias: {
         'react': path.resolve(__dirname, './node_modules/react/'),
-        'react-dom': path.resolve(__dirname, './node_modules/react-dom/')
+        'react-dom': path.resolve(__dirname, './node_modules/react-dom/'),
+        'react-addons-transition-group': path.resolve(__dirname, './node_modules/react-addons-transition-group')
       }
     }
   },
@@ -50,6 +51,13 @@ module.exports = {
       commonjs2: 'ReactDOMServer',
       commonjs: 'ReactDOMServer',
       amd: 'ReactDOMServer'
+    }
+  }, {
+    'react-addons-transition-group': {
+      root: 'ReactTransitionGroup',
+      commonjs2: 'ReactTransitionGroup',
+      commonjs: 'ReactTransitionGroup',
+      amd: 'ReactTransitionGroup'
     }
   }],
 

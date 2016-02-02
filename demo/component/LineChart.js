@@ -51,8 +51,8 @@ export default React.createClass({
         <div className='line-chart-wrapper' style={{margin: 40}}>
           <LineChart width={600} height={400} data={data}>
             <YAxis type='number' yAxisId={0}/>
-            <YAxis type='number' orient='right' yAxisId={1}/>
-            <YAxis type='number' orient='right' yAxisId={2}/>
+            <YAxis type='number' orientation='right' yAxisId={1}/>
+            <YAxis type='number' orientation='right' yAxisId={2}/>
             <XAxis dataKey='name'/>
             <Tooltip/>
             <CartesianGrid stroke='#f5f5f5'/>
@@ -67,8 +67,8 @@ export default React.createClass({
           <LineChart width={400} height={400} data={data} layout='vertical'
             margin={{top: 5, right: 20, left: 20, bottom: 5}}>
             <YAxis type='category' dataKey='name'/>
-            <XAxis type='number' xAxisId={0} orient='top'/>
-            <XAxis type='number' xAxisId={1} orient='bottom'/>
+            <XAxis type='number' xAxisId={0} orientation='top'/>
+            <XAxis type='number' xAxisId={1} orientation='bottom'/>
             <CartesianGrid stroke='#f5f5f5'/>
             <Line dataKey='uv' stroke='#ff7300' strokeWidth={2} xAxisId={0} />
             <Line dataKey='pv' stroke='#387908' strokeWidth={2} xAxisId={1} />

@@ -57,11 +57,11 @@ class AreaChart extends CartesianChart {
     } else if (layout === 'horizontal') {
       baseLineType = layout;
       range = yAxis.scale.range();
-      baseLine = xAxis.orient === 'top' ? Math.min(range[0], range[1]) : Math.max(range[0], range[1]);
+      baseLine = xAxis.orientation === 'top' ? Math.min(range[0], range[1]) : Math.max(range[0], range[1]);
     } else {
       baseLineType = layout;
       range = xAxis.scale.range();
-      baseLine = yAxis.orient === 'left' ? Math.min(range[0], range[1]) : Math.max(range[0], range[1]);
+      baseLine = yAxis.orientation === 'left' ? Math.min(range[0], range[1]) : Math.max(range[0], range[1]);
     }
 
     return { points, baseLine, baseLineType };

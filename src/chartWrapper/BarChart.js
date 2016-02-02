@@ -51,15 +51,15 @@ class BarChart extends CartesianChart {
 
       if (layout === 'horizontal') {
         x = xTicks[index].coord + pos.offset;
-        y = yAxis.scale(xAxis.orient === 'top' ? value[0] : value[1]);
+        y = yAxis.scale(xAxis.orientation === 'top' ? value[0] : value[1]);
         width = pos.size;
-        height = xAxis.orient === 'top' ?
+        height = xAxis.orientation === 'top' ?
                 yAxis.scale(value[1]) - yAxis.scale(value[0]) :
                 yAxis.scale(value[0]) - yAxis.scale(value[1]);
       } else {
-        x = xAxis.scale(yAxis.orient === 'left' ? value[0] : value[1]);
+        x = xAxis.scale(yAxis.orientation === 'left' ? value[0] : value[1]);
         y = yTicks[index].coord + pos.offset;
-        width = yAxis.orient === 'left' ?
+        width = yAxis.orientation === 'left' ?
                 xAxis.scale(value[1]) - xAxis.scale(value[0]) :
                 xAxis.scale(value[0]) - xAxis.scale(value[1]);
         height = pos.size;

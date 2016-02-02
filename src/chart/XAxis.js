@@ -24,8 +24,8 @@ class XAxis extends Component {
     width: PropTypes.number,
     // The height of axis, which need to be setted by user
     height: PropTypes.number,
-    // The orient of axis
-    orient: PropTypes.oneOf(['top', 'bottom']),
+    // The orientation of axis
+    orientation: PropTypes.oneOf(['top', 'bottom']),
     type: PropTypes.oneOf(['number', 'category']),
     // Ticks can be any type when the axis is the type of category
     // Ticks must be numbers when the axis is the type of number
@@ -38,7 +38,7 @@ class XAxis extends Component {
 
   static defaultProps = {
     hide: false,
-    orient: 'bottom',
+    orientation: 'bottom',
     width: 0,
     height: 30,
     xAxisId: 0,

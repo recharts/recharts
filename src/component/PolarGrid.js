@@ -23,6 +23,10 @@ class PolarGrid extends Component {
   };
 
   static defaultProps = {
+    cx: 0,
+    cy: 0,
+    innerRadius: 0,
+    outerRadius: 0,
     gridType: 'polygon',
   };
 

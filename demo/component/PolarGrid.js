@@ -11,6 +11,7 @@ export default React.createClass({
         <PolarGrid
           cx={250}
           cy={250}
+          innerRadius={0}
           outerRadius={200}
           width={500}
           height={500}

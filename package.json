@@ -29,7 +29,6 @@
     "ima.js-babel6-polyfill": "0.1.0",
     "invariant": "2.2.0",
     "pure-render-decorator": "0.2.0",
-    "react-addons-create-fragment": "0.14.7",
     "react-smooth": "0.0.2",
     "recharts-scale": "0.1.6-beta"
   },

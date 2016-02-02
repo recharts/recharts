@@ -17,7 +17,7 @@ export default React.createClass({
       lineHeight: '24px',
       left: 300,
     };
-    const label = {orient: 'outer'};
+    const label = {orientation: 'outer'};
 
     return (
       <div className='radial-bar-charts'>

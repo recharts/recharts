@@ -374,7 +374,7 @@ class CartesianChart extends Component {
             width: Axis.defaultProps.width,
             height: Axis.defaultProps.height,
             tickCount: Axis.defaultProps.tickCount,
-            orient: ORIENT_MAP[axisType][index % 2],
+            orientation: ORIENT_MAP[axisType][index % 2],
             domain,
           },
         };
@@ -398,18 +398,18 @@ class CartesianChart extends Component {
 
     const offsetH = Object.keys(yAxisMap).reduce((result, id) => {
       const entry = yAxisMap[id];
-      const orient = entry.orient;
+      const orientation = entry.orientation;
 
-      result[orient] += entry.hide ? 0 : entry.width;
+      result[orientation] += entry.hide ? 0 : entry.width;
 
       return result;
     }, { left: margin.left, right: margin.right });
 
     const offsetV = Object.keys(xAxisMap).reduce((result, id) => {
       const entry = xAxisMap[id];
-      const orient = entry.orient;
+      const orientation = entry.orientation;
 
-      result[orient] += entry.hide ? 0 : entry.height;
+      result[orientation] += entry.hide ? 0 : entry.height;
 
       return result;
     }, { top: margin.top, bottom: margin.bottom });
@@ -491,7 +491,7 @@ class CartesianChart extends Component {
 
     return ids.reduce((result, id) => {
       const axis = axisMap[id];
-      const { orient, type, domain } = axis;
+      const { orientation, type, domain } = axis;
       let range;
 
       if (axisType === 'xAxis') {
@@ -518,9 +518,9 @@ class CartesianChart extends Component {
 
       if (axisType === 'xAxis') {
         x = offset.left;
-        y = orient === 'top' ? steps[orient] - axis.height : steps[orient];
+        y = orientation === 'top' ? steps[orientation] - axis.height : steps[orientation];
       } else {
-        x = orient === 'left' ? steps[orient] - axis.width : steps[orient];
+        x = orientation === 'left' ? steps[orientation] - axis.width : steps[orientation];
         y = offset.top;
       }
 
@@ -531,9 +531,9 @@ class CartesianChart extends Component {
       };
 
       if (!axis.hide && axisType === 'xAxis') {
-        steps[orient] += (orient === 'top' ? -1 : 1) * result[id].height;
+        steps[orientation] += (orientation === 'top' ? -1 : 1) * result[id].height;
       } else if (!axis.hide) {
-        steps[orient] += (orient === 'left' ? -1 : 1) * result[id].width;
+        steps[orientation] += (orientation === 'left' ? -1 : 1) * result[id].width;
       }
 
       return result;
@@ -800,7 +800,7 @@ class CartesianChart extends Component {
               width={axis.width}
               height={axis.height}
               key={'x-axis-' + ids[i]}
-              orient={axis.orient}
+              orientation={axis.orientation}
               viewBox={{ x: 0, y: 0, width, height }}
               ticks={this.getAxisTicks(axis, true)}
             />
@@ -834,7 +834,7 @@ class CartesianChart extends Component {
               y={axis.y}
               width={axis.width}
               height={axis.height}
-              orient={axis.orient}
+              orientation={axis.orientation}
               viewBox={{ x: 0, y: 0, width, height }}
               ticks={this.getAxisTicks(axis, true)}
             />

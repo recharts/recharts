@@ -9,14 +9,16 @@ export default React.createClass({
 
     return (
       <div>
-        <Legend width={500} height={30} data={data} />
-
         <div style={{position: 'relative', height: 200}}>
-          <Legend layout='vertical' width={200} height={100} data={data2} />
+          <Legend width={500} height={30} payload={data} />
         </div>
 
-        <div>
-          <Legend width={200} height={30} data={data3} />
+        <div style={{position: 'relative', height: 200}}>
+          <Legend layout='vertical' width={200} height={100} payload={data2} />
+        </div>
+
+        <div style={{position: 'relative', height: 200}}>
+          <Legend width={200} height={30} payload={data3} />
         </div>
       </div>
     );

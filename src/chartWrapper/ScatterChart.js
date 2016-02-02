@@ -197,8 +197,8 @@ class ScatterChart extends Component {
     const { width, height, margin } = this.props;
     const offset = { ...margin };
 
-    offset[xAxis.orient] += xAxis.height;
-    offset[yAxis.orient] += yAxis.width;
+    offset[xAxis.orientation] += xAxis.height;
+    offset[yAxis.orientation] += yAxis.width;
 
     return {
       ...offset,
@@ -237,7 +237,7 @@ class ScatterChart extends Component {
    * @return {Object} Configuration
    */
   getFormatAxis(axis, offset, axisType) {
-    const { orient, domain, tickFormat } = axis;
+    const { orientation, domain, tickFormat } = axis;
     const range = axisType === 'xAxis' ?
                   [offset.left, offset.left + offset.width] :
                   [offset.top + offset.height, offset.top];
@@ -253,9 +253,9 @@ class ScatterChart extends Component {
 
     if (axisType === 'xAxis') {
       x = offset.left;
-      y = orient === 'top' ? offset.top - axis.height : offset.top + offset.height;
+      y = orientation === 'top' ? offset.top - axis.height : offset.top + offset.height;
     } else {
-      x = orient === 'left' ? offset.left - axis.width : offset.right;
+      x = orientation === 'left' ? offset.left - axis.width : offset.right;
       y = offset.top;
     }
 
@@ -434,7 +434,7 @@ class ScatterChart extends Component {
             y={axis.y}
             width={axis.width}
             height={axis.height}
-            orient={axis.orient}
+            orientation={axis.orientation}
             viewBox={{ x: 0, y: 0, width, height }}
             ticks={this.getAxisTicks(axis)}
           />
