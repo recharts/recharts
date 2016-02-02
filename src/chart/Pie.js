@@ -23,16 +23,15 @@ class Pie extends Component {
     cx: PropTypes.number,
     cy: PropTypes.number,
     startAngle: PropTypes.number,
+    endAngle: PropTypes.number,
     innerRadius: PropTypes.number,
     outerRadius: PropTypes.number,
-    clockWise: PropTypes.bool,
     nameKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     valueKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     data: PropTypes.arrayOf(PropTypes.object),
     minAngle: PropTypes.number,
     legendType: PropTypes.string,
     label: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
-
 
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
@@ -45,19 +44,19 @@ class Pie extends Component {
   static defaultProps = {
     stroke: '#fff',
     fill: '#808080',
-    legendType: 'line',
+    legendType: 'rect',
     // The abscissa of pole
     cx: 0,
     // The ordinate of pole
     cy: 0,
     // The start angle of first sector
     startAngle: 0,
+    // The direction of drawing sectors
+    endAngle: 360,
     // The inner radius of sectors
     innerRadius: 0,
     // The outer radius of sectors
     outerRadius: 0,
-    // The direction of drawing sectors
-    clockWise: true,
     nameKey: 'name',
     valueKey: 'value',
     data: [],
@@ -72,7 +71,8 @@ class Pie extends Component {
   };
 
   state = {
-    endAngle: this.props.startAngle,
+    clipEndAngle: this.props.startAngle,
+    isAnimationFinished: false,
   };
 
   componentDidMount() {
@@ -81,18 +81,29 @@ class Pie extends Component {
       return;
     }
 
-    const { endAngle } = this.state;
+    const { clipEndAngle } = this.state;
+    const deltaAngle = this.getDeltaAngle();
 
-    this.velocity = -360 / animationDuration;
+    this.velocity = deltaAngle / animationDuration;
     setTimeout(() => {
       raf(this.update.bind(this));
     }, animationBegin);
   }
 
+  getDeltaAngle() {
+    const { startAngle, endAngle } = this.props;
+    const sign = Math.sign(endAngle - startAngle);
+    const deltaAngle = Math.min(Math.abs(endAngle - startAngle), 360);
+
+    return sign * deltaAngle;
+  }
+
   getSectors() {
     const { cx, cy, innerRadius, outerRadius, startAngle,
-      data, minAngle, clockWise, valueKey } = this.props;
+      data, minAngle, endAngle, valueKey } = this.props;
     const len = data.length;
+    const deltaAngle = this.getDeltaAngle();
+    const absDeltaAngle = Math.abs(deltaAngle);
 
     const sum = data.reduce((result, entry) => {
       return result + entry[valueKey];
@@ -108,12 +119,12 @@ class Pie extends Component {
         let _endAngle;
 
         if (i) {
-          _startAngle = clockWise ? prev.endAngle : prev.startAngle;
+          _startAngle = deltaAngle < 0 ? prev.endAngle : prev.startAngle;
         } else {
           _startAngle = startAngle;
         }
 
-        _endAngle = _startAngle + (clockWise ? 1 : -1) * (minAngle + percent * (360 - len * minAngle));
+        _endAngle = _startAngle + Math.sign(deltaAngle) * (minAngle + percent * (absDeltaAngle - len * minAngle));
 
         prev = {
           ...entry,
@@ -121,8 +132,8 @@ class Pie extends Component {
           cy,
           innerRadius,
           outerRadius,
-          startAngle: clockWise ? _startAngle : _endAngle,
-          endAngle: clockWise ? _endAngle : _startAngle,
+          startAngle: deltaAngle < 0 ? _startAngle : _endAngle,
+          endAngle: deltaAngle < 0 ? _endAngle : _startAngle,
           payload: entry,
         };
 
@@ -152,15 +163,17 @@ class Pie extends Component {
     const passedTime = timestamp - this.beginTime;
 
     if (passedTime > this.props.animationDuration) {
+      const deltaAngle = this.getDeltaAngle();
       this.setState({
-        endAngle: startAngle + 360,
+        clipEndAngle: startAngle + deltaAngle,
+        isAnimationFinished: true,
       });
       return;
     }
 
-    const endAngle = this.velocity * passedTime + startAngle;
+    const clipEndAngle = this.velocity * passedTime + startAngle;
     this.setState({
-      endAngle,
+      clipEndAngle,
     });
 
     raf(this.update.bind(this));
@@ -185,7 +198,7 @@ class Pie extends Component {
             outerRadius={outerRadius}
             innerRadius={innerRadius}
             startAngle={startAngle}
-            endAngle={this.state.endAngle}
+            endAngle={this.state.clipEndAngle}
           />
         </clipPath>
       </defs>
@@ -193,6 +206,11 @@ class Pie extends Component {
   }
 
   renderLabels(sectors) {
+    const { isAnimationActive } = this.props;
+
+    if (isAnimationActive && !this.state.isAnimationFinished) {
+      return null;
+    }
     const { label, valueKey } = this.props;
     const pieProps = ReactUtils.getPresentationAttributes(this.props);
     const customLabelProps = ReactUtils.getPresentationAttributes(label);
