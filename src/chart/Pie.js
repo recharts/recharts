@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import Layer from '../container/Layer';
 import Sector from '../shape/Sector';
 import Curve from '../shape/Curve';
-import raf, { cancel as caf } from 'raf';
+import Animate from 'react-smooth';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 
 const RADIAN = Math.PI / 180;
@@ -39,6 +39,10 @@ class Pie extends Component {
     isAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
+    animationEasing: PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.string,
+    ]),
   };
 
   static defaultProps = {
@@ -68,26 +72,27 @@ class Pie extends Component {
     isAnimationActive: true,
     animationBegin: 400,
     animationDuration: 1500,
+    animationEasing: 'ease',
   };
 
-  state = {
-    clipEndAngle: this.props.startAngle,
-    isAnimationFinished: false,
-  };
+  constructor(props, ctx) {
+    super(props, ctx);
 
-  componentDidMount() {
-    const { isAnimationActive, animationBegin, animationDuration } = this.props;
-    if (!isAnimationActive) {
-      return;
+    this.state = {
+      isAnimationFinished: false,
+    };
+
+    if (!this.id) {
+      this.id = 'clipPath' + Date.now();
     }
 
-    const { clipEndAngle } = this.state;
-    const deltaAngle = this.getDeltaAngle();
+    this.handleAnimationEnd = this.handleAnimationEnd.bind(this);
+  }
 
-    this.velocity = deltaAngle / animationDuration;
-    setTimeout(() => {
-      raf(this.update.bind(this));
-    }, animationBegin);
+  handleAnimationEnd() {
+    this.setState({
+      isAnimationFinished: true,
+    });
   }
 
   getDeltaAngle() {
@@ -154,52 +159,48 @@ class Pie extends Component {
     return 'middle';
   }
 
-  update(timestamp) {
-    if (!this.beginTime) {
-      this.beginTime = timestamp;
-    }
-
-    const { startAngle } = this.props;
-    const passedTime = timestamp - this.beginTime;
-
-    if (passedTime > this.props.animationDuration) {
-      const deltaAngle = this.getDeltaAngle();
-      this.setState({
-        clipEndAngle: startAngle + deltaAngle,
-        isAnimationFinished: true,
-      });
-      return;
-    }
-
-    const clipEndAngle = this.velocity * passedTime + startAngle;
-    this.setState({
-      clipEndAngle,
-    });
-
-    raf(this.update.bind(this));
-  }
-
   handleSectorEnter(data, e) {
     this.props.onMouseEnter(data, e);
   }
 
   renderClipPath() {
-    const { cx, cy, outerRadius, innerRadius, startAngle, isAnimationActive } = this.props;
-
-    if (!isAnimationActive) {
-      return null;
-    }
+    const {
+      cx,
+      cy,
+      outerRadius,
+      innerRadius,
+      startAngle,
+      isAnimationActive,
+      animationDuration,
+      animationEasing,
+      animationBegin,
+    } = this.props;
 
     return (
       <defs>
         <clipPath id={this.id}>
-          <Sector cx={cx}
-            cy={cy}
-            outerRadius={outerRadius}
-            innerRadius={innerRadius}
-            startAngle={startAngle}
-            endAngle={this.state.clipEndAngle}
-          />
+          <Animate easing={animationEasing}
+            isActive={isAnimationActive}
+            duration={animationDuration}
+            animationBegin={animationBegin}
+            onAnimationEnd={this.handleAnimationEnd}
+            from={{ endAngle: startAngle }}
+            to = {{ endAngle: startAngle + 359.5 }}
+          >
+            {
+              ({ endAngle }) => {
+                return (
+                  <Sector cx={cx}
+                    cy={cy}
+                    outerRadius={outerRadius}
+                    innerRadius={innerRadius}
+                    startAngle={startAngle}
+                    endAngle={endAngle}
+                  />
+                );
+              }
+            }
+          </Animate>
         </clipPath>
       </defs>
     );
@@ -272,10 +273,6 @@ class Pie extends Component {
 
   render() {
     const { data, className, label } = this.props;
-
-    if (!this.id) {
-      this.id = 'clipPath' + Date.now();
-    }
 
     if (!data || !data.length) {
       return null;
