@@ -1,17 +1,16 @@
 //chart
-const AreaSpec = require('./specs/chart/AreaSpec.js');
-const BarSpec = require('./specs/chart/BarSpec.js');
-const LineSpec = require('./specs/chart/LineSpec.js');
-const PieSpec = require('./specs/chart/PieSpec.js');
-const RadarSpec = require('./specs/chart/RadarSpec.js');
-const ScatterSpec = require('./specs/chart/ScatterSpec.js');
 const XAxisSpec = require('./specs/chart/XAxisSpec.js');
 const YAxisSpec = require('./specs/chart/YAxisSpec.js');
 const ZAxisSpec = require('./specs/chart/ZAxisSpec.js');
 
 //chartWrapper
-const TreemapSpec = require('./specs/chartWrapper/TreemapSpec.js');
+const AreaChartSpec = require('./specs/chartWrapper/AreaChartSpec.js');
+const BarChartSpec = require('./specs/chartWrapper/BarChartSpec.js');
+const LineChartSpec = require('./specs/chartWrapper/LineChartSpec.js');
+const PieChartSpec = require('./specs/chartWrapper/PieChartSpec.js');
+const RadarChartSpec = require('./specs/chartWrapper/RadarChartSpec.js');
 const ScatterChartSpec = require('./specs/chartWrapper/ScatterChartSpec.js');
+const TreemapSpec = require('./specs/chartWrapper/TreemapSpec.js');
 const RadialBarChartSpec = require('./specs/chartWrapper/RadialBarChartSpec.js');
 const ComposedChartSpec = require('./specs/chartWrapper/ComposedChartSpec.js');
 
@@ -34,5 +33,5 @@ const SectorSpec = require('./specs/shape/SectorSpec.js');
 const TriangleSpec = require('./specs/shape/TriangleSpec.js');
 
 // util
-let LodashUtils = require('./specs/util/LodashUtils.js');
-let ReactUtils = require('./specs/util/ReactUtils.js');
+const LodashUtils = require('./specs/util/LodashUtils.js');
+const ReactUtils = require('./specs/util/ReactUtils.js');

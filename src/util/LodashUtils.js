@@ -25,17 +25,6 @@ const getUniqueId = (prefix) => {
   return (prefix || '_') + (idStart++);
 };
 
-const extent = (ary) => {
-  return ary.reduce((result, entry) => {
-    const min = Math.min.apply(null, entry);
-    const max = Math.max.apply(null, entry);
-
-    return {
-      min: Math.min(min, result.min),
-      max: Math.max(max, result.max),
-    };
-  }, { min: Infinity, max: -Infinity });
-};
 /**
  * Generate a array of number which is greater than or equal to from and sma than less than to
  * @param  {Number} from Start value
@@ -191,7 +180,7 @@ const toPercentage = (num, unit = '%', max = 99999) => {
 export default {
   isArray, isNumber, isString, isFunction,
 
-  extent, maxBy,
+  maxBy,
 
   getUniqueId,
 

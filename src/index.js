@@ -18,6 +18,7 @@ import Rectangle from './shape/Rectangle';
 import Triangle from './shape/Triangle';
 import Polygon from './shape/Polygon';
 import Dot from './shape/Dot';
+import Cross from './shape/Cross';
 
 import LineChart from './chartWrapper/LineChart';
 import Line from './chart/Line';
@@ -61,7 +62,7 @@ export {
   PolarGrid, PolarRadiusAxis, PolarAngleAxis,
 
   // shape
-  Sector, Curve, Rectangle, Triangle, Polygon, Dot,
+  Sector, Curve, Rectangle, Triangle, Polygon, Dot, Cross,
 
   LineChart, Line,
   AreaChart, Area,
