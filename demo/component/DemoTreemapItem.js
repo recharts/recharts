@@ -13,7 +13,7 @@ class DemoTreemapItem extends React.Component {
     index: PropTypes.number,
     payload: PropTypes.object,
 
-    bgColors: PropTypes.arrayOf(PropTypes.number),
+    bgColors: PropTypes.arrayOf(PropTypes.string),
   };
 
   static defaultProps = {};

@@ -5,7 +5,11 @@ import { mount, render } from 'enzyme';
 
 describe('<Treemap />', () => {
   const data = [
-    { rank: '1', name: 'A', value: 17061682925 },
+    { rank: '1', name: 'A', children: [
+      { rank: '21', name: 'U', value: 12490887132 },
+      { rank: '22', name: 'V', value: 10772738863 },
+      { rank: '23', name: 'W', value: 8236223813 },
+    ] },
     { rank: '2', name: 'B', value: 12490887132 },
     { rank: '3', name: 'C', value: 10772738863 },
     { rank: '4', name: 'D', value: 8236223813 },
@@ -22,16 +26,16 @@ describe('<Treemap />', () => {
     { rank: '15', name: 'O', value: 2907504853 },
     { rank: '16', name: 'P', value: 2555558916 },
     { rank: '17', name: 'Q', value: 2149183029 },
-    { rank: '18', name: 'H', value: 2107468912 },
-    { rank: '19', name: 'I', value: 2088055427 },
-    { rank: '20', name: 'J', value: 1885463047 },
+    { rank: '18', name: 'R', value: 2107468912 },
+    { rank: '19', name: 'S', value: 2088055427 },
+    { rank: '20', name: 'T', value: 1885463047 },
   ];
 
   const wrapper = render(
-    <Treemap width={1000} height={500} data={data} ratio={0.5 * (1 + Math.sqrt(5))}/>
+    <Treemap width={1000} height={500} data={data}/>
   );
 
   it('renders 20 rectangles in simple TreemapChart', () => {
-    expect(wrapper.find('.recharts-rectangle').length).to.equal(20);
+    expect(wrapper.find('.recharts-rectangle').length).to.equal(24);
   });
 });
