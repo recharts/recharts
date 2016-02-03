@@ -171,4 +171,20 @@ export default {
 
     return result;
   },
+  /**
+   * validate the width and height props of a chart element
+   * @param  {Object} el A chart element
+   * @return {Boolean}   true If the props width and height are number, and greater than 0
+   */
+  validateWidthHeight(el) {
+    if (!el || !el.props) { return false; }
+    const { width, height } = el.props;
+
+    if (!LodashUtils.isNumber(width) || width <= 0 ||
+      !LodashUtils.isNumber(height) || height <= 0) {
+      return false;
+    }
+
+    return true;
+  },
 };

@@ -1,3 +1,20 @@
+## 0.5.0 (February 3, 2016)
+
+### UI
+- feat(AdaptionWrapper): add AdaptionWrapper to make charts adapt to the size of parent dom
+- refactor: directory structure adjustment
+- fix(LineChart, CartesianChart): 1.fix the bug of margin when only part of the attributes are specified 2.fix the bug of number axis when domain is specified 3.fix the bug of category number when no dataKey is specified 4.format the code in README.md
+- refactor(treemap): support tree structure data; changed props that pass to shape
+
+### Test
+- test: 1.rename some test files 2.add test case of LodashUtil
+- test(treemap): modified treemap test
+
+### Docs
+- deps: add dependence oui-dom-utils
+- chore(README.md): add syntax highlighting to the readme
+- chore(package.json): add keyword react-component
+
 ## 0.4.9 (February 2, 2016)
 
 ### UI

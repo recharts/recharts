@@ -16,8 +16,8 @@ class LineChart extends CartesianChart {
   static displayName = 'LineChart';
 
   static propTypes = {
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
+    width: PropTypes.number,
+    height: PropTypes.number,
     data: PropTypes.arrayOf(PropTypes.object),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     margin: PropTypes.shape({
@@ -154,6 +154,8 @@ class LineChart extends CartesianChart {
   }
 
   render() {
+    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+
     const { style, children, className, width, height } = this.props;
     const items = ReactUtils.findAllByType(children, Line);
 

@@ -1,23 +1,3 @@
-const offset = (el) => {
-  let box = { top: 0, left: 0 };
-
-  if (el.getBoundingClientRect) {
-    box = el.getBoundingClientRect();
-  }
-
-  const docElem = document.documentElement;
-  const body = document.body;
-  const clientTop = docElem.clientTop || body.clientTop || 0;
-  const clientLeft = docElem.clientLeft || body.clientLeft || 0;
-  const scrollTop = window.pageYOffset || docElem.scrollTop;
-  const scrollLeft = window.pageXOffset || docElem.scrollLeft;
-
-  return {
-    top: box.top + scrollTop - clientTop,
-    left: box.left + scrollLeft - clientLeft,
-  };
-};
-
 const stringCache = {
   widthCache: {},
   cacheCount: 0,
@@ -105,7 +85,6 @@ const getStringSize = (text, style = {}) => {
 };
 
 export default {
-  offset,
   getStringSize,
   getStyleString,
 };

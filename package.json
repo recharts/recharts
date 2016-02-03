@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "0.4.9",
+  "version": "0.5.0",
   "description": "React charts",
   "main": "src/index.js",
   "keywords": [
@@ -29,6 +29,7 @@
     "d3-shape": "0.4.0",
     "ima.js-babel6-polyfill": "0.1.0",
     "invariant": "2.2.0",
+    "oui-dom-utils": "0.3.5",
     "pure-render-decorator": "0.2.0",
     "react-smooth": "0.0.4",
     "recharts-scale": "0.1.6-beta"

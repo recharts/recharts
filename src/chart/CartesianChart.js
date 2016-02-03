@@ -7,6 +7,7 @@ import { getNiceTickValues } from 'recharts-scale';
 import D3Scale from 'd3-scale';
 import D3Shape from 'd3-shape';
 import invariant from 'invariant';
+import OuiDomUtils from 'oui-dom-utils';
 
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
@@ -34,8 +35,8 @@ const ORIENT_MAP = {
 class CartesianChart extends Component {
 
   static propTypes = {
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
+    width: PropTypes.number,
+    height: PropTypes.number,
     data: PropTypes.arrayOf(PropTypes.object),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     margin: PropTypes.shape({
@@ -331,7 +332,7 @@ class CartesianChart extends Component {
           axisType,
           domain,
           isDomainFixed,
-        }};
+        } };
       }
 
       return result;
@@ -340,24 +341,6 @@ class CartesianChart extends Component {
     return axisMap;
   }
 
-  parseSpecifiedDomain(specifiedDomain, autoDomain) {
-    if (!LodashUtils.isArray(specifiedDomain)) {
-      return autoDomain;
-    }
-    const domain = [];
-    if (!LodashUtils.isNumber(specifiedDomain[0]) || specifiedDomain[0] > autoDomain[0]) {
-      domain[0] = autoDomain[0];
-    } else {
-      domain[0] = specifiedDomain[0];
-    }
-    if (!LodashUtils.isNumber(specifiedDomain[1]) || specifiedDomain[1] < autoDomain[1]) {
-      domain[1] = autoDomain[1];
-    } else {
-      domain[1] = specifiedDomain[1];
-    }
-
-    return domain;
-  }
   /**
    * Get the configuration of axis by the options of item, this kind of axis does not display in chart
    * @param  {Array} items       The instances of item
@@ -486,7 +469,7 @@ class CartesianChart extends Component {
   setTicksOfScale(scale, opts) {
     // Give priority to use the options of ticks
     if (opts.ticks && opts.ticks) {
-      scale.domain(this.getDomainOfTicks(opts.ticks, opts.type))
+      scale.domain(this.getDomainOfTicks(opts.ticks, opts.type));
 
       return;
     }
@@ -498,7 +481,7 @@ class CartesianChart extends Component {
       const tickValues = getNiceTickValues(domain, opts.tickCount);
 
       opts.ticks = tickValues;
-      scale.domain(this.getDomainOfTicks(tickValues, opts.type))
+      scale.domain(this.getDomainOfTicks(tickValues, opts.type));
     }
   }
   /**
@@ -739,6 +722,25 @@ class CartesianChart extends Component {
     return null;
   }
 
+  parseSpecifiedDomain(specifiedDomain, autoDomain) {
+    if (!LodashUtils.isArray(specifiedDomain)) {
+      return autoDomain;
+    }
+    const domain = [];
+    if (!LodashUtils.isNumber(specifiedDomain[0]) || specifiedDomain[0] > autoDomain[0]) {
+      domain[0] = autoDomain[0];
+    } else {
+      domain[0] = specifiedDomain[0];
+    }
+    if (!LodashUtils.isNumber(specifiedDomain[1]) || specifiedDomain[1] < autoDomain[1]) {
+      domain[1] = autoDomain[1];
+    } else {
+      domain[1] = specifiedDomain[1];
+    }
+
+    return domain;
+  }
+
   handleBrushChange({ startIndex, endIndex }) {
     this.setState({
       dataStartIndex: startIndex,
@@ -756,7 +758,7 @@ class CartesianChart extends Component {
    */
   handleMouseEnter(offset, xAxisMap, yAxisMap, e) {
     const container = ReactDOM.findDOMNode(this);
-    const containerOffset = DOMUtils.offset(container);
+    const containerOffset = OuiDomUtils.getOffset(container);
     const ne = this.getChartPosition(e, containerOffset);
     const mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);
 
@@ -779,7 +781,7 @@ class CartesianChart extends Component {
    */
   handleMouseMove(offset, xAxisMap, yAxisMap, e) {
     const container = ReactDOM.findDOMNode(this);
-    const containerOffset = DOMUtils.offset(container);
+    const containerOffset = OuiDomUtils.getOffset(container);
     const ne = this.getChartPosition(e, containerOffset);
     const mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);
 

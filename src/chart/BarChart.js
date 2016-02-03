@@ -258,6 +258,8 @@ class BarChart extends CartesianChart {
   }
 
   render() {
+    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+
     const { style, children, className, layout, width, height } = this.props;
     const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
     const items = ReactUtils.findAllByType(children, Bar);

@@ -16,8 +16,8 @@ class RadialBarChart extends Component {
   static displayName = 'RadialBarChart';
 
   static propTypes = {
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
+    width: PropTypes.number,
+    height: PropTypes.number,
     margin: PropTypes.shape({
       top: PropTypes.number,
       right: PropTypes.number,
@@ -268,6 +268,8 @@ class RadialBarChart extends Component {
   }
 
   render() {
+    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+
     const { style, children, className, width, height } = this.props;
     const items = ReactUtils.findAllByType(children, RadialBar);
     const center = this.getCenter();

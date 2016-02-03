@@ -215,6 +215,8 @@ class Treemap extends Component {
   }
 
   render() {
+    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+
     const { width, height, className, style } = this.props;
 
     return (

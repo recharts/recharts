@@ -166,6 +166,8 @@ class AreaChart extends CartesianChart {
   }
 
   render() {
+    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+
     const { style, children, layout, className, width, height } = this.props;
     const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
     const items = ReactUtils.findAllByType(children, Area);

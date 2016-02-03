@@ -14,8 +14,8 @@ class PieChart extends Component {
   static displayName = 'PieChart';
 
   static propTypes = {
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
+    width: PropTypes.number,
+    height: PropTypes.number,
     margin: PropTypes.shape({
       top: PropTypes.number,
       right: PropTypes.number,
@@ -137,6 +137,8 @@ class PieChart extends Component {
   }
 
   render() {
+    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+
     const { style, children, className, width, height } = this.props;
     const items = ReactUtils.findAllByType(children, Pie);
 

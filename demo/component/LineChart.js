@@ -1,6 +1,6 @@
 import React from 'react';
 import CustomLineDot from './CustomLineDot';
-import {LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend} from 'recharts';
+import {AdaptionWrapper, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend} from 'recharts';
 
 const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400},
               {name: 'Page B', uv: 300, pv: 4567, amt: 2400},

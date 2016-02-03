@@ -24,8 +24,8 @@ class ComposedChart extends CartesianChart {
   static displayName = 'ComposedChart';
 
   static propTypes = {
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
+    width: PropTypes.number,
+    height: PropTypes.number,
     data: PropTypes.arrayOf(PropTypes.object),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     margin: PropTypes.shape({
@@ -493,6 +493,8 @@ class ComposedChart extends CartesianChart {
   }
 
   render() {
+    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+
     const { style, children, className, layout, width, height } = this.props;
     const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
     const lineItems = ReactUtils.findAllByType(children, Line);

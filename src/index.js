@@ -4,6 +4,7 @@ import Surface from './container/Surface';
 
 import Legend from './component/Legend';
 import Tooltip from './component/Tooltip';
+import AdaptionWrapper from './component/AdaptionWrapper';
 
 import Sector from './shape/Sector';
 import Curve from './shape/Curve';
@@ -45,27 +46,30 @@ import ComposedChart from './chart/ComposedChart';
 export {
   // container
   Surface,
-
-  // chart
-  Radar,
-
   // componnet
-  CartesianAxis, CartesianGrid,
-  Legend, Tooltip, Brush, ReferenceLine,
-  PolarGrid, PolarRadiusAxis, PolarAngleAxis,
-
+  Legend, Tooltip, AdaptionWrapper,
   // shape
   Sector, Curve, Rectangle, Triangle, Polygon, Dot, Cross,
 
-  LineChart, Line,
-  AreaChart, Area,
-  BarChart, Bar,
-  PieChart, Pie,
-  ScatterChart, Scatter,
-  RadialBarChart, RadialBar,
-  Treemap,
-  RadarChart, Radar,
-  ComposedChart,
-
+  // components in cartesian system charts
+  CartesianAxis, CartesianGrid,
+  Brush, ReferenceLine,
   XAxis, YAxis, ZAxis,
+  Line, Area, Bar, Scatter,
+  // cartesian system charts
+  LineChart,
+  AreaChart,
+  BarChart,
+  ComposedChart,
+  ScatterChart,
+
+  // components in polar system charts
+  PolarGrid, PolarRadiusAxis, PolarAngleAxis,
+  Radar, Pie, RadialBar,
+  // polar system charts
+  PieChart,
+  RadialBarChart,
+  RadarChart,
+
+  Treemap,
 };

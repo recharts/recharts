@@ -283,6 +283,8 @@ class RadarChart extends Component {
   }
 
   render() {
+    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+
     const { innerRadius, outerRadius, className, data, width,
       height, children, style } = this.props;
 

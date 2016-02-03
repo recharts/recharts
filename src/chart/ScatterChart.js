@@ -23,8 +23,8 @@ class ScatterChart extends Component {
   static displayName = 'ScatterChart';
 
   static propTypes = {
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
+    width: PropTypes.number,
+    height: PropTypes.number,
     margin: PropTypes.shape({
       top: PropTypes.number,
       right: PropTypes.number,
@@ -490,6 +490,8 @@ class ScatterChart extends Component {
   }
 
   render() {
+    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+
     const { style, children, className, width, height } = this.props;
     const items = ReactUtils.findAllByType(children, Scatter);
     const zAxis = this.getZAxis(items);
