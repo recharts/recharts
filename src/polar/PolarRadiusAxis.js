@@ -33,6 +33,7 @@ class PolarRadiusAxis extends Component {
       PropTypes.element,
     ]),
     tickFormatter: PropTypes.func,
+    domain: PropTypes.array,
   };
 
   static defaultProps = {
