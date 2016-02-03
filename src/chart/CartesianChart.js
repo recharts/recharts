@@ -9,19 +9,19 @@ import D3Shape from 'd3-shape';
 import invariant from 'invariant';
 
 import Layer from '../container/Layer';
-import CartesianAxis from '../component/CartesianAxis';
-import CartesianGrid from '../component/CartesianGrid';
+import Tooltip from '../component/Tooltip';
+import Legend from '../component/Legend';
 
 import ReactUtils from '../util/ReactUtils';
 import DOMUtils from '../util/DOMUtils';
 import LodashUtils from '../util/LodashUtils';
 
-import XAxis from '../chart/XAxis';
-import YAxis from '../chart/YAxis';
-import Tooltip from '../component/Tooltip';
-import Legend from '../component/Legend';
-import Brush from '../component/Brush';
-import ReferenceLine from '../component/ReferenceLine';
+import CartesianAxis from '../cartesian/CartesianAxis';
+import CartesianGrid from '../cartesian/CartesianGrid';
+import ReferenceLine from '../cartesian/ReferenceLine';
+import XAxis from '../cartesian/XAxis';
+import YAxis from '../cartesian/YAxis';
+import Brush from '../cartesian/Brush';
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],

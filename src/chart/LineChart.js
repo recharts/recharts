@@ -2,15 +2,14 @@
  * @fileOverview Line Chart
  */
 import React, { PropTypes } from 'react';
-import CartesianChart from './CartesianChart';
-
+import classNames from 'classnames';
 import Surface from '../container/Surface';
-import ReactUtils from '../util/ReactUtils';
 import Tooltip from '../component/Tooltip';
-import Line from '../chart/Line';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
-import classNames from 'classnames';
+import CartesianChart from './CartesianChart';
+import Line from '../cartesian/Line';
+import ReactUtils from '../util/ReactUtils';
 
 class LineChart extends CartesianChart {
 

@@ -24,27 +24,6 @@ import RadialBarChart from './RadialBarChart';
 import Treemap from './Treemap';
 
 export default {
-  chart: {
-    Pie,
-  },
-
-  component: {
-    Brush,
-    CartesianAxis,
-    CartesianGrid,
-    Legend,
-    PolarRadiusAxis,
-    PolarAngleAxis,
-    PolarGrid,
-  },
-
-  shape: {
-    Curve,
-    Rectangle,
-    Sector,
-    Triangle,
-  },
-
   chartWrapper: {
     LineChart,
     AreaChart,
@@ -55,5 +34,29 @@ export default {
     RadarChart,
     RadialBarChart,
     Treemap,
+  },
+
+  polar: {
+    Pie,
+    PolarRadiusAxis,
+    PolarAngleAxis,
+    PolarGrid,
+  },
+
+  cartesian: {
+    Brush,
+    CartesianAxis,
+    CartesianGrid,
+  },
+
+  component: {
+    Legend,
+  },
+
+  shape: {
+    Curve,
+    Rectangle,
+    Sector,
+    Triangle,
   },
 };

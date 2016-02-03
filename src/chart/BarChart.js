@@ -2,14 +2,14 @@
  * @fileOverview Bar Chart
  */
 import React from 'react';
-import CartesianChart from './CartesianChart';
-import LodashUtils from '../util/LodashUtils';
-import Surface from '../container/Surface';
-import ReactUtils from '../util/ReactUtils';
-import Tooltip from '../component/Tooltip';
-import Bar from '../chart/Bar';
-import Rectangle from '../shape/Rectangle';
 import classNames from 'classnames';
+import Surface from '../container/Surface';
+import Tooltip from '../component/Tooltip';
+import Rectangle from '../shape/Rectangle';
+import LodashUtils from '../util/LodashUtils';
+import ReactUtils from '../util/ReactUtils';
+import CartesianChart from './CartesianChart';
+import Bar from '../cartesian/Bar';
 
 class BarChart extends CartesianChart {
 

@@ -2,13 +2,15 @@
  * @fileOverview Composed Chart
  */
 import React, { PropTypes } from 'react';
-import CartesianChart from './CartesianChart';
+import classNames from 'classnames';
 
 import Surface from '../container/Surface';
 import Tooltip from '../component/Tooltip';
-import Line from '../chart/Line';
-import Bar from '../chart/Bar';
-import Area from '../chart/Area';
+
+import CartesianChart from './CartesianChart';
+import Line from '../cartesian/Line';
+import Bar from '../cartesian/Bar';
+import Area from '../cartesian/Area';
 
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
@@ -16,7 +18,6 @@ import Rectangle from '../shape/Rectangle';
 
 import ReactUtils from '../util/ReactUtils';
 import LodashUtils from '../util/LodashUtils';
-import classNames from 'classnames';
 
 class ComposedChart extends CartesianChart {
 

@@ -2,15 +2,15 @@
  * @fileOverview Area Chart
  */
 import React from 'react';
-import CartesianChart from './CartesianChart';
-import LodashUtils from '../util/LodashUtils';
+import classNames from 'classnames';
 import Surface from '../container/Surface';
-import ReactUtils from '../util/ReactUtils';
 import Tooltip from '../component/Tooltip';
-import Area from '../chart/Area';
 import Dot from '../shape/Dot';
 import Curve from '../shape/Curve';
-import classNames from 'classnames';
+import LodashUtils from '../util/LodashUtils';
+import ReactUtils from '../util/ReactUtils';
+import CartesianChart from './CartesianChart';
+import Area from '../cartesian/Area';
 
 class AreaChart extends CartesianChart {
   static displayName = 'AreaChart';

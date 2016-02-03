@@ -2,20 +2,21 @@
  * @fileOverview Radar Chart
  */
 import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
+import invariant from 'invariant';
+import D3Scale from 'd3-scale';
+import { getNiceTickValues } from 'recharts-scale';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
-import Radar from '../chart/Radar';
-import PolarGrid from '../component/PolarGrid';
-import PolarAngleAxis from '../component/PolarAngleAxis';
-import PolarRadiusAxis from '../component/PolarRadiusAxis';
 import Legend from '../component/Legend';
+
+import Radar from '../polar/Radar';
+import PolarGrid from '../polar/PolarGrid';
+import PolarAngleAxis from '../polar/PolarAngleAxis';
+import PolarRadiusAxis from '../polar/PolarRadiusAxis';
 
 import ReactUtils from '../util/ReactUtils';
 import LodashUtils from '../util/LodashUtils';
-import D3Scale from 'd3-scale';
-import invariant from 'invariant';
-import { getNiceTickValues } from 'recharts-scale';
-import classNames from 'classnames';
 
 const RADIAN = Math.PI / 180;
 
