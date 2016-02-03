@@ -23,9 +23,13 @@ The biggest feature or difference is helping you write charts in React applicati
 
 ## Examples
 
-```
-<LineChart width={400} height={400} data={data}
-  margin={{top: 5, right: 20, left: 10, bottom: 5}}>
+```jsx
+<LineChart 
+  width={400} 
+  height={400} 
+  data={data}
+  margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+>
   <XAxis dataKey='name' />
   <Tooltip />
   <CartesianGrid stroke='#f5f5f5' />
