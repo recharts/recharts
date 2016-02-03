@@ -7,6 +7,7 @@ import Layer from '../container/Layer';
 import Rectangle from '../shape/Rectangle';
 import ReactUtils from '../util/ReactUtils';
 import classNames from 'classnames';
+import invariant from 'invariant';
 
 class Treemap extends Component {
   static displayName = 'Treemap';
@@ -21,11 +22,14 @@ class Treemap extends Component {
     fill: PropTypes.string,
     stroke: PropTypes.string,
     className: PropTypes.string,
+    dataKey: PropTypes.string,
   };
 
   static defaultProps = {
     fill: '#fff',
     stroke: '#000',
+    dataKey: 'value',
+    ratio: 0.5 * (1 + Math.sqrt(5)),
   };
 
   pad(node) {
@@ -57,17 +61,16 @@ class Treemap extends Component {
       let best = Infinity; // the best row score so far
       let score; // the current row score
       let u = Math.min(rect.width, rect.height); // initial orientation
-      let n = remaining.length;
 
       this.scale(remaining, rect.width * rect.height / node.value);
       row.area = 0;
-      while (n > 0) {
-        row.push(child = remaining[n - 1]);
+      while (remaining.length > 0) {
+        row.push(child = remaining[0]);
         row.area += child.area;
 
         score = this.worst(row, u);
         if (score <= best) { // continue with this orientation
-          remaining.pop();
+          remaining.shift();
           best = score;
         } else { // abort, and try a different orientation
           row.area -= row.pop().area;
@@ -76,14 +79,12 @@ class Treemap extends Component {
           row.length = row.area = 0;
           best = Infinity;
         }
-
-        n = remaining.length;
       }
       if (row.length) {
         this.position(row, u, rect, true);
         row.length = row.area = 0;
       }
-      children.forEach(this.squarify);
+      children.forEach(this.squarify.bind(this));
     }
   }
 
@@ -149,34 +150,68 @@ class Treemap extends Component {
     }
   }
 
-  renderDefaultNode({ node }) {
-    return React.createElement(Rectangle, { ...ReactUtils.getPresentationAttributes(this.props), ...node });
+  computeNode(depth, node, index) {
+    const { dataKey } = this.props;
+    const { children, x, y, width, height, ...payload } = node;
+    const childDepth = depth + 1;
+    const computedChildren = children && children.length ?
+                               children.map(this.computeNode.bind(this, childDepth)) : null;
+    let value;
+    if (children && children.length) {
+      value = computedChildren.reduce((a, b) => (a + b.value), 0);
+    } else {
+      value = isNaN(node[dataKey]) || node[dataKey] <= 0 ? 0 : node[dataKey];
+    }
+
+    return {
+      children: computedChildren,
+      value,
+      depth,
+      index,
+      x,
+      y,
+      width,
+      height,
+      payload,
+    };
+  }
+
+  renderDefaultNode(nodeProps) {
+    return React.createElement(Rectangle, nodeProps);
+  }
+
+  renderNode(root, node, i) {
+    const { content } = this.props;
+    const nodeProps = { ...ReactUtils.getPresentationAttributes(this.props), ...node, root };
+
+    return (
+      <Layer key={`recharts-treemap-node-${i}`}>
+        {
+          React.isValidElement(content) ?
+          React.cloneElement(content, nodeProps) : this.renderDefaultNode(nodeProps)
+        }
+        {
+          node.children && node.children.length ?
+          node.children.map(this.renderNode.bind(this, root)) : null
+        }
+      </Layer>
+    );
   }
 
   renderAllNodes() {
-    const { width, height, data, content } = this.props;
+    const { width, height, data } = this.props;
 
-    const nodes = {
-      value: data.reduce((a, b) => (a + b.value), 0),
+    const root = this.computeNode(0, {
       children: data,
       x: 0,
       y: 0,
       width,
       height,
-    };
+    }, 0);
 
-    this.squarify(nodes);
+    this.squarify(root);
 
-    return nodes.children.map((v, i) => {
-      return (
-        <Layer key={`recharts-treemap-node-${i}`}>
-          {React.isValidElement(content) ?
-            React.cloneElement(content, { node: v, index: i }) :
-            this.renderDefaultNode({ node: v, index: i })
-          }
-        </Layer>
-      );
-    });
+    return this.renderNode(root, root, 0);
   }
 
   render() {
