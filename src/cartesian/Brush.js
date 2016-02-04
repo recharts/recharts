@@ -44,8 +44,8 @@ class Brush extends Component {
 
     if (props.data && props.data.length) {
       const len = props.data.length;
-      const startIndex = props.defaultStartIndex === +props.defaultStartIndex ? props.defaultStartIndex : 0;
-      const endIndex = props.defaultEndIndex === +props.defaultEndIndex ? props.defaultEndIndex : len - 1;
+      const startIndex = LodashUtils.isNumber(props.defaultStartIndex) ? props.defaultStartIndex : 0;
+      const endIndex = LodashUtils.isNumber(props.defaultEndIndex) ? props.defaultEndIndex : len - 1;
 
       this.scale = D3Scale.point().domain(LodashUtils.range(0, len))
                     .range([props.x, props.x + props.width - props.travellerWidth]);
