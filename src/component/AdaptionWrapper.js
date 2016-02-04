@@ -28,14 +28,14 @@ class ResponsiveWrapper extends Component {
 
   componentDidMount() {
     this.updateSizeOfWrapper();
-    window.addEventListener('resize', ::this.updateSizeOfWrapper);
+    window.addEventListener('resize', this.updateSizeOfWrapper);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', ::this.updateSizeOfWrapper);
+    window.removeEventListener('resize', this.updateSizeOfWrapper);
   }
 
-  updateSizeOfWrapper() {
+  updateSizeOfWrapper = () => {
     const wrapper = this.refs.wrapper;
     const clientWidth = OuiDomUtils.width(wrapper);
     const clientHeight = OuiDomUtils.height(wrapper);
@@ -46,7 +46,7 @@ class ResponsiveWrapper extends Component {
       width: DataUtils.getPercentValue(width, clientWidth),
       height: DataUtils.getPercentValue(height, clientHeight),
     });
-  }
+  };
 
   render() {
     const { hasInitialized, width, height } = this.state;

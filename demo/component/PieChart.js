@@ -28,39 +28,39 @@ export default React.createClass({
                   {name: 'F2', value: 49},
                   {name: 'F3', value: 51}]
 
+        // <p>PieChart wrapped by AdaptionWrapper</p>
+        // <div className='pie-chart-wrapper' style={{width: '50%', height: '100%', backgroundColor: '#f5f5f5'}}>
+        //   <AdaptionWrapper>
+        //     <PieChart>
+        //       <Pie data={data01} cx="30%" cy="30%" innerRadius="25%" outerRadius="40%"/>
+        //       <Pie data={data03} cx="30%" cy="30%" innerRadius="45%" outerRadius="80%"/>
+        //     </PieChart>
+        //   </AdaptionWrapper>
+        // </div>
     return (
       <div className='pie-charts'>
-        <p>PieChart wrapped by AdaptionWrapper</p>
-        <div className='pie-chart-wrapper' style={{width: '50%', height: '100%', backgroundColor: '#f5f5f5'}}>
-          <AdaptionWrapper>
-            <PieChart>
-              <Pie data={data01} cx="30%" cy="30%" innerRadius="25%" outerRadius="40%"/>
-              <Pie data={data03} cx="30%" cy="30%" innerRadius="45%" outerRadius="80%"/>
-            </PieChart>
-          </AdaptionWrapper>
-        </div>
 
         <p>Simple PieChart</p>
         <div className='pie-chart-wrapper'>
           <PieChart width={800} height={400}>
             <Legend />
-            <Pie data={data01} cx={200} cy={200} startAngle={180} endAngle={0} outerRadius={80} fill="#ff7300" label/>
+            <Pie isAnimationActive={false} data={data01} cx={200} cy={200} startAngle={180} endAngle={0} outerRadius={80} fill="#ff7300" label/>
             <Pie data={data02} cx={600} cy={200} startAngle={180} endAngle={-180} outerRadius={80} fill="#387908" label/>
           </PieChart>
         </div>
 
-        <p>PieChart with two donut</p>
-        <div className='pie-chart-wrapper'>
-          <PieChart width={400} height={400}>
-            <Legend verticalAlign='top'/>
-            <Pie data={data01} cx={200} cy={200} innerRadius={50} outerRadius={80}/>
-            <Pie data={data03} cx={200} cy={200} innerRadius={80} outerRadius={100}/>
-          </PieChart>
-        </div>
 
 
       </div>
     );
   }
 });
+        // <p>PieChart with two donut</p>
+        // <div className='pie-chart-wrapper'>
+        //   <PieChart width={400} height={400}>
+        //     <Legend verticalAlign='top'/>
+        //     <Pie data={data01} cx={200} cy={200} innerRadius={50} outerRadius={80}/>
+        //     <Pie data={data03} cx={200} cy={200} innerRadius={80} outerRadius={100}/>
+        //   </PieChart>
+        // </div>
 

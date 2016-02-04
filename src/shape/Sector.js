@@ -69,7 +69,7 @@ class Sector extends Component {
               ${+(Math.abs(angle) > 180)},${+(startAngle <= _endAngle)},
               ${innerStartPoint.x},${innerStartPoint.y} Z`;
     } else {
-      path = `M ${outerStartPoint.x},${outerStartPoint.x}
+      path = `M ${outerStartPoint.x},${outerStartPoint.y}
               A ${outerRadius},${outerRadius},0,
               ${+(Math.abs(angle) > 180)},${+(startAngle > _endAngle)},
               ${outerEndPoint.x},${outerEndPoint.y}

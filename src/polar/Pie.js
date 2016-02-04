@@ -10,8 +10,7 @@ import Curve from '../shape/Curve';
 import Animate from 'react-smooth';
 import _ from 'lodash';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
-
-const RADIAN = Math.PI / 180;
+import { polarToCartesian } from '../util/PolarUtils';
 
 @pureRender
 class Pie extends Component {
@@ -218,17 +217,18 @@ class Pie extends Component {
     const offsetRadius = (customLabelProps && customLabelProps.offsetRadius) || 20;
 
     const labels = sectors.map((entry, i) => {
-      const midAngle = -RADIAN * (entry.startAngle + entry.endAngle) / 2;
-      const x = entry.cx + (entry.outerRadius + offsetRadius) * Math.cos(midAngle);
-      const y = entry.cy + (entry.outerRadius + offsetRadius) * Math.sin(midAngle);
+      const midAngle = (entry.startAngle + entry.endAngle) / 2;
+      const endPoint = polarToCartesian(
+        entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle
+      );
       const labelProps = {
         ...pieProps,
         ...entry,
         stroke: 'none',
         ...customLabelProps,
         index: i,
-        textAnchor: this.getTextAnchor(x, entry.cx),
-        x, y,
+        textAnchor: this.getTextAnchor(endPoint.x, entry.cx),
+        ...endPoint,
       };
       const lineProps = {
         ...pieProps,
@@ -236,10 +236,7 @@ class Pie extends Component {
         fill: 'none',
         stroke: entry.fill,
         ...customLabelProps,
-        points: [{
-          x: entry.cx + entry.outerRadius * Math.cos(midAngle),
-          y: entry.cy + entry.outerRadius * Math.sin(midAngle),
-        }, { x, y }],
+        points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
       };
 
       return isLabelElement ? React.cloneElement(label, { labelProps, key: `label-${i}` }) : (

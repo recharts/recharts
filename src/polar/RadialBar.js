@@ -9,6 +9,7 @@ import _ from 'lodash';
 import DOMUtils from '../util/DOMUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import pureRender from 'pure-render-decorator';
+import { polarToCartesian } from '../util/PolarUtils';
 
 const RADIAN = Math.PI / 180;
 
@@ -128,14 +129,13 @@ class RadialBar extends Component {
                     endAngle;
       _endAngle = _startAngle + deltaAngle;
     }
-
-    return `M${cx + radius * Math.cos(-RADIAN * _startAngle)}
-            ${cy + radius * Math.sin(-RADIAN * _startAngle)}
+    const startPoint = polarToCartesian(cx, cy, radius, _startAngle);
+    const endPoint = polarToCartesian(cx, cy, radius, _endAngle);
+    return `M${startPoint.x},${startPoint.y}
             A${radius},${radius},0,
             ${deltaAngle >= 180 ? 1 : 0},
             ${clockWise ? 1 : 0},
-            ${cx + radius * Math.cos(-RADIAN * _endAngle)},
-            ${cy + radius * Math.sin(-RADIAN * _endAngle)}`;
+            ${endPoint.x},${endPoint.y}`;
   }
 
 
