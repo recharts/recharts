@@ -5,8 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
-
-const RADIAN = Math.PI / 180;
+import { polarToCartesian } from '../util/PolarUtils';
 
 @pureRender
 class PolarRadiusAxis extends Component {
@@ -54,13 +53,8 @@ class PolarRadiusAxis extends Component {
    */
   getTickValueCoord({ radius }) {
     const { angle, cx, cy } = this.props;
-    const sin = Math.sin(-angle * RADIAN);
-    const cos = Math.cos(-angle * RADIAN);
 
-    return {
-      x: cx + radius * cos,
-      y: cy + radius * sin,
-    };
+    return polarToCartesian(cx, cy, radius, angle);
   }
 
   getTickTextAnchor() {
@@ -90,17 +84,17 @@ class PolarRadiusAxis extends Component {
         Math.max(result[1], entry.radius),
       ];
     }, [Infinity, -Infinity]);
-    const sin = Math.sin(-angle * RADIAN);
-    const cos = Math.cos(-angle * RADIAN);
+    const point0 = polarToCartesian(cx, cy, extent[0], angle);
+    const point1 = polarToCartesian(cx, cy, extent[1], angle);
 
     const props = {
       ...getPresentationAttributes(this.props),
       fill: 'none',
       ...getPresentationAttributes(axisLine),
-      x1: cx + extent[0] * cos,
-      y1: cy + extent[0] * sin,
-      x2: cx + extent[1] * cos,
-      y2: cy + extent[1] * sin,
+      x1: point0.x,
+      y1: point0.y,
+      x2: point1.x,
+      y2: point1.y,
     };
 
     return <line className="recharts-polar-radius-axis-line" {...props}/>;

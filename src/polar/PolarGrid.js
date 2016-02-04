@@ -6,8 +6,6 @@ import pureRender from 'pure-render-decorator';
 import { polarToCartesian } from '../util/PolarUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
-const RADIAN = Math.PI / 180;
-
 @pureRender
 class PolarGrid extends Component {
 

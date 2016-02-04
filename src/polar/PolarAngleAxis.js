@@ -7,6 +7,7 @@ import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import Dot from '../shape/Dot';
 import Polygon from '../shape/Polygon';
+import { polarToCartesian } from '../util/PolarUtils';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
@@ -61,29 +62,13 @@ class PolarAngleAxis extends Component {
   getTickLineCoord(data) {
     const { cx, cy, radius, orientation, tickLine } = this.props;
     const tickLineSize = (tickLine && tickLine.size) || 8;
-    const sin = Math.sin(-data.angle * RADIAN);
-    const cos = Math.cos(-data.angle * RADIAN);
-    let x1;
-    let x2;
-    let y1;
-    let y2;
+    const p1 = polarToCartesian(cx, cy, radius, data.angle);
+    const p2 = polarToCartesian(
+      cx, cy,
+      radius + (orientation === 'inner' ? -1 : 1) * tickLineSize, data.angle
+    );
 
-    switch (orientation) {
-      case 'inner':
-        x1 = cx + radius * cos;
-        y1 = cy + radius * sin;
-        x2 = cx + (radius - tickLineSize) * cos;
-        y2 = cy + (radius - tickLineSize) * sin;
-        break;
-      default:
-        x1 = cx + radius * cos;
-        y1 = cy + radius * sin;
-        x2 = cx + (radius + tickLineSize) * cos;
-        y2 = cy + (radius + tickLineSize) * sin;
-        break;
-    }
-
-    return { x1, y1, x2, y2 };
+    return { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y };
   }
   /**
    * Get the text-anchor of each tick
@@ -118,12 +103,7 @@ class PolarAngleAxis extends Component {
       return <Dot className="recharts-polar-angle-axis-line" {...props} cx={cx} cy={cy} r={radius}/>;
     }
     const { ticks } = this.props;
-    const points = ticks.map(entry => {
-      const cos = Math.cos(-RADIAN * entry.angle);
-      const sin = Math.sin(-RADIAN * entry.angle);
-
-      return { x: cx + cos * radius, y: cy + sin * radius };
-    });
+    const points = ticks.map(entry => polarToCartesian(cx, cy, radius, entry.angle));
 
     return <Polygon className="recharts-polar-angle-axis-line" {...props} points={points}/>;
   }
