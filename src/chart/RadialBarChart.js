@@ -53,6 +53,8 @@ class RadialBarChart extends Component {
 
 
   static defaultProps = {
+    cx: '50%',
+    cy: '50%',
     innerRadius: '30%',
     outerRadius: '100%',
     barGap: 2,
@@ -270,7 +272,7 @@ class RadialBarChart extends Component {
       >
 
         <Surface width={width} height={height}>
-          {this.renderItems(items, radiusScale, {cx, cy})}
+          {this.renderItems(items, radiusScale, { cx, cy })}
         </Surface>
 
         {this.renderLegend()}

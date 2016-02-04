@@ -53,6 +53,10 @@ class RadarChart extends Component {
   static defaultProps = {
     width: 0,
     height: 0,
+    cx: '50%',
+    cy: '50%',
+    innerRadius: 0,
+    outerRadius: '80%',
 
     startAngle: 90,
     clockWise: true,
