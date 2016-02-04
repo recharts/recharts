@@ -40,7 +40,7 @@ const camelToMiddleLine = (text) => {
   return formatStrs.join('');
 };
 
-const getStyleString = (style) => {
+export const getStyleString = (style) => {
   let result = '';
 
   for (const s in style) {
@@ -51,7 +51,7 @@ const getStyleString = (style) => {
   return result;
 };
 
-const getStringSize = (text, style = {}) => {
+export const getStringSize = (text, style = {}) => {
   if (text === undefined || text === null) {return 0;}
 
   const str = `${text}`;
@@ -84,7 +84,3 @@ const getStringSize = (text, style = {}) => {
   return result;
 };
 
-export default {
-  getStringSize,
-  getStyleString,
-};

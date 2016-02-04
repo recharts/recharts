@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import ReactDOMServer from 'react-dom/server';
 import DefaultTooltipContent from './DefaultTooltipContent';
-import DOMUtils from '../util/DOMUtils';
+import { getStyleString } from '../util/DOMUtils';
 
 @pureRender
 class Tooltip extends Component {
@@ -67,7 +67,7 @@ class Tooltip extends Component {
     const style = { ...wrapperStyle, top: -20000, left: 0, display: 'block' };
     const wrapper = document.createElement('div');
 
-    wrapper.setAttribute('style', DOMUtils.getStyleString(wrapperStyle));
+    wrapper.setAttribute('style', getStyleString(wrapperStyle));
     wrapper.innerHTML = contentHtml;
     document.body.appendChild(wrapper);
     const box = wrapper.getBoundingClientRect();

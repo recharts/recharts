@@ -14,7 +14,6 @@ import Tooltip from '../component/Tooltip';
 import Legend from '../component/Legend';
 
 import { findAllByType, findChildByType } from '../util/ReactUtils';
-import DOMUtils from '../util/DOMUtils';
 import _ from 'lodash';
 
 import CartesianAxis from '../cartesian/CartesianAxis';

@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
 import _ from 'lodash';
-import DOMUtils from '../util/DOMUtils';
+import { getStringSize } from '../util/DOMUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import pureRender from 'pure-render-decorator';
 import { polarToCartesian } from '../util/PolarUtils';
@@ -113,7 +113,7 @@ class RadialBar extends Component {
 
     if (radius <= 0) {return '';}
 
-    const labelSize = DOMUtils.getStringSize(labelContent, style);
+    const labelSize = getStringSize(labelContent, style);
     const deltaAngle = labelSize.width / (radius * RADIAN);
     let _startAngle;
     let _endAngle;
@@ -192,6 +192,7 @@ class RadialBar extends Component {
     return sectors.map((entry, i) => {
       const content = hasFormatter ? formatter(entry.value) : entry.value;
       const id = _.uniqueId('recharts-defs-');
+
       const style = getPresentationAttributes(label) || { fontSize: 10, fill: '#000' };
       const path = this.getLabelPathArc(entry, content, style);
 

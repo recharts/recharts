@@ -3,9 +3,9 @@
  */
 import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
+import { getPercentValue } from '../util/DataUtils';
 import OuiDomUtils from 'oui-dom-utils';
 import invariant from 'invariant';
-import DataUtils from '../util/DataUtils';
 
 @pureRender
 class ResponsiveWrapper extends Component {
@@ -43,8 +43,8 @@ class ResponsiveWrapper extends Component {
 
     this.setState({
       hasInitialized: true,
-      width: DataUtils.getPercentValue(width, clientWidth),
-      height: DataUtils.getPercentValue(height, clientHeight),
+      width: getPercentValue(width, clientWidth),
+      height: getPercentValue(height, clientHeight),
     });
   };
 

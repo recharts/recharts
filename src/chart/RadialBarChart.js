@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import D3Scale from 'd3-scale';
 import Surface from '../container/Surface';
 import RadialBar from '../polar/RadialBar';
-import DataUtils from '../util/DataUtils';
+import { getPercentValue } from '../util/DataUtils';
 import _ from 'lodash';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
@@ -120,7 +120,6 @@ class RadialBarChart extends Component {
     const { data } = this.props;
     const bandCount = Math.max(data.length, 1);
     const range = [outerRadius, innerRadius];
-
     const scale = D3Scale.band().domain(_.range(0, bandCount))
                     .range(range);
 
@@ -156,7 +155,7 @@ class RadialBarChart extends Component {
         return res;
       }, {});
     } else {
-      let offset = DataUtils.getPercentValue(barCategoryGap, bandRadius);
+      let offset = getPercentValue(barCategoryGap, bandRadius);
       const radius = (bandRadius - 2 * offset - (len - 1) * barGap) / len >> 0;
       offset = -Math.max(((radius * len + (len - 1) * barGap) / 2) >> 0, 0);
 
@@ -258,12 +257,11 @@ class RadialBarChart extends Component {
 
     const { style, children, className, width, height, margin } = this.props;
     const items = findAllByType(children, RadialBar);
-
-    const cx = DataUtils.getPercentValue(this.props.cx, width, width / 2);
-    const cy = DataUtils.getPercentValue(this.props.cy, height, height / 2);
+    const cx = getPercentValue(this.props.cx, width, width / 2);
+    const cy = getPercentValue(this.props.cy, height, height / 2);
     const maxRadius = getMaxRadius(width, height, cx, cy, margin);
-    const innerRadius = DataUtils.getPercentValue(this.props.innerRadius, maxRadius, 0);
-    const outerRadius = DataUtils.getPercentValue(this.props.outerRadius, maxRadius, maxRadius * 0.8);
+    const innerRadius = getPercentValue(this.props.innerRadius, maxRadius, 0);
+    const outerRadius = getPercentValue(this.props.outerRadius, maxRadius, maxRadius * 0.8);
     const radiusScale = this.getRadiusScale(innerRadius, outerRadius);
 
     return (

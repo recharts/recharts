@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
-import DOMUtils from '../util/DOMUtils';
+import { getStringSize } from '../util/DOMUtils';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
@@ -96,7 +96,7 @@ class CartesianAxis extends Component {
     }
 
     return ticks.filter(entry => {
-      const labelSize = DOMUtils.getStringSize(entry.value)[sizeKey];
+      const labelSize = getStringSize(entry.value)[sizeKey];
       const isShow = sign === 1 ? (entry.coord - labelSize / 2) >= pointer : (entry.coord + labelSize / 2) <= pointer;
 
       if (isShow) {
