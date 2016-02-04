@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect, assert } from 'chai';
 import { ScatterChart, Scatter, CartesianGrid, Tooltip, XAxis, YAxis, ZAxis, CartesianAxis } from 'recharts';
-import ReactUtils from '../../../src/util/ReactUtils';
+import { getPresentationAttributes, getEventAttributes } from '../../../src/util/ReactUtils';
 import { mount, render } from 'enzyme';
 
 describe('ScatterChart of three dimension data', () => {
@@ -40,10 +40,10 @@ describe('ScatterChart of three dimension data', () => {
   });
 
   it('ReactUtils', () => {
-    assert.isObject(ReactUtils.getEventAttributes(wrapper.props()), 'getEventAttributes is an object');
+    assert.isObject(getEventAttributes(wrapper.props()), 'getEventAttributes is an object');
   });
 
   it('ReactUtils', () => {
-    assert.isObject(ReactUtils.getPresentationAttributes(wrapper.props()), 'getPresentationAttributes is an object');
+    assert.isObject(getPresentationAttributes(wrapper.props()), 'getPresentationAttributes is an object');
   });
 });
