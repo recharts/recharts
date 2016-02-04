@@ -16,8 +16,9 @@ import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Rectangle from '../shape/Rectangle';
 
-import ReactUtils from '../util/ReactUtils';
-import DataUtils from '../util/DataUtils';
+import { getPercentValue } from '../util/DataUtils';
+import { getPresentationAttributes, findChildByType,
+  findAllByType, validateWidthHeight } from '../util/ReactUtils';
 
 class ComposedChart extends CartesianChart {
 
@@ -207,7 +208,7 @@ class ComposedChart extends CartesianChart {
         return res;
       }, {});
     } else {
-      const offset = DataUtils.getPercentValue(barCategoryGap, bandSize);
+      const offset = getPercentValue(barCategoryGap, bandSize);
       const size = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
 
       result = sizeList.reduce((res, entry, i) => {
@@ -328,7 +329,7 @@ class ComposedChart extends CartesianChart {
 
   renderCursor(xAxisMap, yAxisMap, offset) {
     const { children } = this.props;
-    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+    const tooltipItem = findChildByType(children, Tooltip);
     if (!tooltipItem || !tooltipItem.props.cursor || !this.state.isTooltipActive) {return null;}
 
     const { layout } = this.props;
@@ -342,7 +343,7 @@ class ComposedChart extends CartesianChart {
     const start = ticks[activeTooltipIndex].coord;
     const cursorProps = {
       fill: '#f1f1f1',
-      ...ReactUtils.getPresentationAttributes(tooltipItem.props.cursor),
+      ...getPresentationAttributes(tooltipItem.props.cursor),
       x: layout === 'horizontal' ? start : offset.left + 0.5,
       y: layout === 'horizontal' ? offset.top + 0.5 : start,
       width: layout === 'horizontal' ? bandSize : offset.width - 1,
@@ -365,7 +366,7 @@ class ComposedChart extends CartesianChart {
   renderLineItems(items, xAxisMap, yAxisMap, offset) {
     const { children } = this.props;
     const { activeLineKey, isTooltipActive, activeTooltipIndex } = this.state;
-    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+    const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];
 
@@ -412,7 +413,7 @@ class ComposedChart extends CartesianChart {
   renderAreaItems(items, xAxisMap, yAxisMap, offset, stackGroups) {
     const { children, layout } = this.props;
     const { activeAreaKey, isTooltipActive, activeTooltipIndex } = this.state;
-    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+    const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];
 
@@ -493,13 +494,13 @@ class ComposedChart extends CartesianChart {
   }
 
   render() {
-    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+    if (!validateWidthHeight(this)) {return null;}
 
     const { style, children, className, layout, width, height } = this.props;
     const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
-    const lineItems = ReactUtils.findAllByType(children, Line);
-    const barItems = ReactUtils.findAllByType(children, Bar);
-    const areaItems = ReactUtils.findAllByType(children, Area);
+    const lineItems = findAllByType(children, Line);
+    const barItems = findAllByType(children, Bar);
+    const areaItems = findAllByType(children, Area);
     const items = [...lineItems, ...barItems, ...areaItems];
 
     const stackGroups = this.getStackGroupsByAxisId(items, `${numberAxisName}Id`);

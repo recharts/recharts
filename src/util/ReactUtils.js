@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import _ from 'lodash';
 
-const PRESENTATION_ATTRIBUTES = {
+export const PRESENTATION_ATTRIBUTES = {
   alignmentBaseline: PropTypes.string,
   baselineShift: PropTypes.string,
   clip: PropTypes.string,
@@ -27,13 +27,22 @@ const PRESENTATION_ATTRIBUTES = {
   fontFamily: PropTypes.string,
   fontSize: PropTypes.number,
   fontSizeAdjust: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  fontStretch: PropTypes.oneOf(['normal', 'wider', 'narrower', 'ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded', 'inherit']),
+  fontStretch: PropTypes.oneOf([
+    'normal', 'wider', 'narrower', 'ultra-condensed', 'extra-condensed',
+    'condensed', 'semi-condensed', 'semi-expanded', 'expanded',
+    'extra-expanded', 'ultra-expanded', 'inherit',
+  ]),
   fontStyle: PropTypes.oneOf(['normal', 'italic', 'oblique', 'inherit']),
   fontVariant: PropTypes.oneOf(['normal', 'small-caps', 'inherit']),
-  fontWeight: PropTypes.oneOf(['normal', 'bold', 'bolder', 'lighter', 100, 200, 300, 400, 500, 600, 700, 800, 900, 'inherit']),
+  fontWeight: PropTypes.oneOf([
+    'normal', 'bold', 'bolder', 'lighter',
+    100, 200, 300, 400, 500, 600, 700, 800, 900, 'inherit',
+  ]),
   glyphOrientationHorizontal: PropTypes.string,
   glyphOrientationVertical: PropTypes.string,
-  imageRendering: PropTypes.oneOf(['auto', 'optimizeSpeed', 'optimizeQuality', 'inherit']),
+  imageRendering: PropTypes.oneOf([
+    'auto', 'optimizeSpeed', 'optimizeQuality', 'inherit',
+  ]),
   kerning: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   letterSpacing: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   lightingColor: PropTypes.string,
@@ -43,8 +52,13 @@ const PRESENTATION_ATTRIBUTES = {
   mask: PropTypes.string,
   opacity: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   overflow: PropTypes.oneOf(['visible', 'hidden', 'scroll', 'auto', 'inherit']),
-  pointerEvents: PropTypes.oneOf(['visiblePainted', 'visibleFill', 'visibleStroke', 'visible', 'painted', 'fill', 'stroke', 'all', 'none', 'inherit']),
-  shapeRendering: PropTypes.oneOf(['auto', 'optimizeSpeed', 'crispEdges', 'geometricPrecision', 'inherit']),
+  pointerEvents: PropTypes.oneOf([
+    'visiblePainted', 'visibleFill', 'visibleStroke', 'visible', 'painted',
+    'fill', 'stroke', 'all', 'none', 'inherit',
+  ]),
+  shapeRendering: PropTypes.oneOf([
+    'auto', 'optimizeSpeed', 'crispEdges', 'geometricPrecision', 'inherit',
+  ]),
   stopColor: PropTypes.string,
   stopOpacity: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   stroke: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -56,13 +70,19 @@ const PRESENTATION_ATTRIBUTES = {
   strokeOpacity: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   strokeWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   textAnchor: PropTypes.oneOf(['start', 'middle', 'end', 'inherit']),
-  textDecoration: PropTypes.oneOf(['none', 'underline', 'overline', 'line-through', 'blink', 'inherit']),
-  textRendering: PropTypes.oneOf(['auto', 'optimizeSpeed', 'optimizeLegibility', 'geometricPrecision', 'inherit']),
+  textDecoration: PropTypes.oneOf([
+    'none', 'underline', 'overline', 'line-through', 'blink', 'inherit',
+  ]),
+  textRendering: PropTypes.oneOf([
+    'auto', 'optimizeSpeed', 'optimizeLegibility', 'geometricPrecision',
+    'inherit',
+  ]),
   unicodeBidi: PropTypes.oneOf(['normal', 'embed', 'bidi-override', 'inherit']),
   visibility: PropTypes.oneOf(['visible', 'hidden', 'collapse', 'inherit']),
   wordSpacing: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  writingMode: PropTypes.oneOf(['lr-tb', 'rl-tb', 'tb-rl', 'lr', 'rl', 'tb', 'inherit']),
-
+  writingMode: PropTypes.oneOf([
+    'lr-tb', 'rl-tb', 'tb-rl', 'lr', 'rl', 'tb', 'inherit',
+  ]),
   transform: PropTypes.string,
   style: PropTypes.object,
 };
@@ -80,112 +100,110 @@ const EVENT_ATTRIBUTES = {
   onMouseUp: PropTypes.func,
 };
 
-export default {
-  PRESENTATION_ATTRIBUTES,
-  /*
-   * Find and return all matched children by type. `type` can be a React element class or
-   * string
-   */
-  findAllByType(children, type) {
-    const result = [];
-    let childType = type;
+/*
+ * Find and return all matched children by type. `type` can be a React element class or
+ * string
+ */
+export const findAllByType = (children, type) => {
+  const result = [];
+  let childType = type;
 
-    if (type && type.displayName) {
-      childType = type.displayName;
+  if (type && type.displayName) {
+    childType = type.displayName;
+  }
+
+  React.Children.forEach(children, child => {
+    if (child && child.type && child.type.displayName === childType) {
+      result.push(child);
     }
+  });
 
-    React.Children.forEach(children, child => {
-      if (child && child.type && child.type.displayName === childType) {
-        result.push(child);
-      }
-    });
-
-    return result;
-  },
+  return result;
+};
 
   /*
    * Return the first matched child by type, return null otherwise.
    * `type` can be a React element class or string.
    */
-  findChildByType(children, type) {
-    const result = this.findAllByType(children, type);
+export const findChildByType = (children, type) => {
+  const result = findAllByType(children, type);
 
-    return result && result[0];
-  },
+  return result && result[0];
+};
 
   /*
    * Create a new array of children excluding the ones matched the type
    */
-  withoutType(children) {
-    const newChildren = [];
-    let types = [].slice.call(arguments, 1);
+export const withoutType = (children) => {
+  const newChildren = [];
+  let types = [].slice.call(arguments, 1);
 
-    types = types.map(type => {
-      if (type && type.displayName) { return type.displayName; }
-      return type;
-    });
+  types = types.map(type => {
+    if (type && type.displayName) { return type.displayName; }
+    return type;
+  });
 
-    React.Children.forEach(children, child => {
-      if (child && child.type && child.type.displayName && types.indexOf(child.type.displayName) !== -1) {
-        return;
-      }
-      newChildren.push(child);
-    });
-
-    return newChildren;
-  },
-  /**
-   * get all the presentation attribute of svg element
-   * @param  {Object} el A react element or the props of a react element
-   * @return {Object}    attributes or null
-   */
-  getPresentationAttributes(el) {
-    if (!el) {return null;}
-    const props = React.isValidElement(el) ? el.props : el;
-    let result = null;
-
-    for (const key in props) {
-      if (props.hasOwnProperty(key) && PRESENTATION_ATTRIBUTES[key]) {
-        if (!result) {result = {};}
-        result[key] = props[key];
-      }
+  React.Children.forEach(children, child => {
+    if (child && child.type && child.type.displayName
+      && types.indexOf(child.type.displayName) !== -1) {
+      return;
     }
+    newChildren.push(child);
+  });
 
-    return result;
-  },
-  /**
-   * get all the event attribute of svg element
-   * @param  {Object} el A react element or the props of a react element
-   * @return {Object}    attributes or null
-   */
-  getEventAttributes(el) {
-    if (!el) {return null;}
-    const props = React.isValidElement(el) ? el.props : el;
-    let result = null;
+  return newChildren;
+};
+/**
+ * get all the presentation attribute of svg element
+ * @param  {Object} el A react element or the props of a react element
+ * @return {Object}    attributes or null
+ */
+export const getPresentationAttributes = (el) => {
+  if (!el) {return null;}
+  const props = React.isValidElement(el) ? el.props : el;
+  let result = null;
 
-    for (const key in props) {
-      if (props.hasOwnProperty(key) && EVENT_ATTRIBUTES[key]) {
-        if (!result) {result = {};}
-        result[key] = props[key];
-      }
+  for (const key in props) {
+    if (props.hasOwnProperty(key) && PRESENTATION_ATTRIBUTES[key]) {
+      if (!result) {result = {};}
+      result[key] = props[key];
     }
+  }
 
-    return result;
-  },
-  /**
-   * validate the width and height props of a chart element
-   * @param  {Object} el A chart element
-   * @return {Boolean}   true If the props width and height are number, and greater than 0
-   */
-  validateWidthHeight(el) {
-    if (!el || !el.props) { return false; }
-    const { width, height } = el.props;
+  return result;
+};
+/**
+ * get all the event attribute of svg element
+ * @param  {Object} el A react element or the props of a react element
+ * @return {Object}    attributes or null
+ */
+export const getEventAttributes = (el) => {
+  if (!el) {return null;}
+  const props = React.isValidElement(el) ? el.props : el;
+  let result = null;
 
-    if (!_.isNumber(width) || width <= 0 ||
-      !_.isNumber(height) || height <= 0) {
-      return false;
+  for (const key in props) {
+    if (props.hasOwnProperty(key) && EVENT_ATTRIBUTES[key]) {
+      if (!result) {result = {};}
+      result[key] = props[key];
     }
+  }
 
-    return true;
-  },
+  return result;
+};
+/**
+ * validate the width and height props of a chart element
+ * @param  {Object} el A chart element
+ * @return {Boolean}   true If the props width and height are number, and greater than 0
+ */
+export const validateWidthHeight = (el) => {
+  if (!el || !el.props) { return false; }
+  const { width, height } = el.props;
+
+  if (!_.isNumber(width) || width <= 0 ||
+    !_.isNumber(height) || height <= 0) {
+    return false;
+  }
+
+  return true;
 };

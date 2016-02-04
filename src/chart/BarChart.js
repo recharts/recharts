@@ -6,8 +6,9 @@ import classNames from 'classnames';
 import Surface from '../container/Surface';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
-import DataUtils from '../util/DataUtils';
-import ReactUtils from '../util/ReactUtils';
+import { getPercentValue } from '../util/DataUtils';
+import { getPresentationAttributes, findChildByType,
+  findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import CartesianChart from './CartesianChart';
 import Bar from '../cartesian/Bar';
 
@@ -115,7 +116,7 @@ class BarChart extends CartesianChart {
         return res;
       }, {});
     } else {
-      const offset = DataUtils.getPercentValue(barCategoryGap, bandSize);
+      const offset = getPercentValue(barCategoryGap, bandSize);
       const size = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
 
       result = sizeList.reduce((res, entry, i) => {
@@ -192,7 +193,7 @@ class BarChart extends CartesianChart {
 
   renderCursor(xAxisMap, yAxisMap, offset) {
     const { children } = this.props;
-    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem || !tooltipItem.props.cursor || !this.state.isTooltipActive) {return null;}
 
@@ -207,7 +208,7 @@ class BarChart extends CartesianChart {
     const start = ticks[activeTooltipIndex].coord;
     const cursorProps = {
       fill: '#f1f1f1',
-      ...ReactUtils.getPresentationAttributes(tooltipItem.props.cursor),
+      ...getPresentationAttributes(tooltipItem.props.cursor),
       x: layout === 'horizontal' ? start : offset.left + 0.5,
       y: layout === 'horizontal' ? offset.top + 0.5 : start,
       width: layout === 'horizontal' ? bandSize : offset.width - 1,
@@ -258,11 +259,11 @@ class BarChart extends CartesianChart {
   }
 
   render() {
-    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+    if (!validateWidthHeight(this)) {return null;}
 
     const { style, children, className, layout, width, height } = this.props;
     const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
-    const items = ReactUtils.findAllByType(children, Bar);
+    const items = findAllByType(children, Bar);
     const stackGroups = this.getStackGroupsByAxisId(items, `${numberAxisName}Id`);
 
     let xAxisMap = this.getAxisMap('xAxis', items, numberAxisName === 'xAxis' && stackGroups);

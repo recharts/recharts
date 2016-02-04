@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import classNames from 'classnames';
-import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
 @pureRender
 class Polygon extends Component {
@@ -45,7 +45,7 @@ class Polygon extends Component {
 
     return (
       <polygon
-        {...ReactUtils.getPresentationAttributes(this.props)}
+        {...getPresentationAttributes(this.props)}
         className={layerClass}
         points={this.getPolygonPoints(points)}
       />

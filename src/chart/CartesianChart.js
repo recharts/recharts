@@ -13,7 +13,7 @@ import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Legend from '../component/Legend';
 
-import ReactUtils from '../util/ReactUtils';
+import { findAllByType, findChildByType } from '../util/ReactUtils';
 import DOMUtils from '../util/DOMUtils';
 import _ from 'lodash';
 
@@ -273,7 +273,7 @@ class CartesianChart extends Component {
     const Axis = axisType === 'xAxis' ? XAxis : YAxis;
     const axisIdKey = axisType === 'xAxis' ? 'xAxisId' : 'yAxisId';
     // Get all the instance of Axis
-    const axes = ReactUtils.findAllByType(children, Axis);
+    const axes = findAllByType(children, Axis);
 
     let axisMap = {};
 
@@ -409,7 +409,7 @@ class CartesianChart extends Component {
    */
   getOffset(xAxisMap, yAxisMap) {
     const { width, height, margin, children } = this.props;
-    const brushItem = ReactUtils.findChildByType(children, Brush);
+    const brushItem = findChildByType(children, Brush);
 
     const offsetH = Object.keys(yAxisMap).reduce((result, id) => {
       const entry = yAxisMap[id];
@@ -688,8 +688,8 @@ class CartesianChart extends Component {
 
   validateAxes() {
     const { layout, children } = this.props;
-    const xAxes = ReactUtils.findAllByType(children, XAxis);
-    const yAxes = ReactUtils.findAllByType(children, YAxis);
+    const xAxes = findAllByType(children, XAxis);
+    const yAxes = findAllByType(children, YAxis);
 
     if (layout === 'horizontal' && xAxes && xAxes.length) {
       xAxes.forEach(axis => {
@@ -886,7 +886,7 @@ class CartesianChart extends Component {
    */
   renderGrid(xAxisMap, yAxisMap, offset) {
     const { children, width, height } = this.props;
-    const gridItem = ReactUtils.findChildByType(children, CartesianGrid);
+    const gridItem = findChildByType(children, CartesianGrid);
 
     if (!gridItem) {return null;}
 
@@ -923,7 +923,7 @@ class CartesianChart extends Component {
    */
   renderLegend(items) {
     const { children, width, height } = this.props;
-    const legendItem = ReactUtils.findChildByType(children, Legend);
+    const legendItem = findChildByType(children, Legend);
     if (!legendItem) {return null;}
 
     const legendData = items.map((child) => {
@@ -949,7 +949,7 @@ class CartesianChart extends Component {
    */
   renderTooltip(items, offset) {
     const { children } = this.props;
-    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem) {
       return null;
@@ -977,7 +977,7 @@ class CartesianChart extends Component {
 
   renderBrush(xAxisMap, yAxisMap, offset) {
     const { children, data } = this.props;
-    const brushItem = ReactUtils.findChildByType(children, Brush);
+    const brushItem = findChildByType(children, Brush);
 
     if (!brushItem) {return null;}
 
@@ -996,7 +996,7 @@ class CartesianChart extends Component {
 
   renderReferenceLines(xAxisMap, yAxisMap, offset) {
     const { children } = this.props;
-    const lines = ReactUtils.findAllByType(children, ReferenceLine);
+    const lines = findAllByType(children, ReferenceLine);
 
     if (!lines || !lines.length) {return null;}
 

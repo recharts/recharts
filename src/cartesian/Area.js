@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
-import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
 @pureRender
 class Area extends Component {
@@ -72,7 +72,7 @@ class Area extends Component {
 
     return (
       <Curve
-        {...ReactUtils.getPresentationAttributes(this.props)}
+        {...getPresentationAttributes(this.props)}
         className="recharts-area-curve"
         points={points}
         type={type}
@@ -83,8 +83,8 @@ class Area extends Component {
 
   renderDots() {
     const { dot, points } = this.props;
-    const areaProps = ReactUtils.getPresentationAttributes(this.props);
-    const customDotProps = ReactUtils.getPresentationAttributes(dot);
+    const areaProps = getPresentationAttributes(this.props);
+    const customDotProps = getPresentationAttributes(dot);
     const isDotElement = React.isValidElement(dot);
 
     const dots = points.map((entry, i) => {
@@ -109,8 +109,8 @@ class Area extends Component {
 
   renderLabels() {
     const { points, label } = this.props;
-    const areaProps = ReactUtils.getPresentationAttributes(this.props);
-    const customLabelProps = ReactUtils.getPresentationAttributes(label);
+    const areaProps = getPresentationAttributes(this.props);
+    const customLabelProps = getPresentationAttributes(label);
     const isLabelElement = React.isValidElement(label);
 
     const labels = points.map((entry, i) => {

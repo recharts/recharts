@@ -10,7 +10,7 @@ import DataUtils from '../util/DataUtils';
 import _ from 'lodash';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
-import ReactUtils from '../util/ReactUtils';
+import { findChildByType, findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import { getMaxRadius } from '../util/PolarUtils';
 
 class RadialBarChart extends Component {
@@ -197,7 +197,7 @@ class RadialBarChart extends Component {
    */
   renderLegend() {
     const { children } = this.props;
-    const legendItem = ReactUtils.findChildByType(children, Legend);
+    const legendItem = findChildByType(children, Legend);
     if (!legendItem) {return null;}
 
     const { data, width, height } = this.props;
@@ -218,7 +218,7 @@ class RadialBarChart extends Component {
 
   renderTooltip() {
     const { children } = this.props;
-    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem) {
       return;
@@ -252,10 +252,10 @@ class RadialBarChart extends Component {
   }
 
   render() {
-    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+    if (!validateWidthHeight(this)) {return null;}
 
     const { style, children, className, width, height, margin } = this.props;
-    const items = ReactUtils.findAllByType(children, RadialBar);
+    const items = findAllByType(children, RadialBar);
 
     const cx = DataUtils.getPercentValue(this.props.cx, width, width / 2);
     const cy = DataUtils.getPercentValue(this.props.cy, height, height / 2);

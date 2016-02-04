@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
-import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
 @pureRender
 class ReferenceLine extends Component {
@@ -58,7 +58,7 @@ class ReferenceLine extends Component {
     if (!type) { return null; }
 
     const [start, end] = this.getEndPoints();
-    const props = ReactUtils.getPresentationAttributes(this.props);
+    const props = getPresentationAttributes(this.props);
 
     return (
       <line

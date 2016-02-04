@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Rectangle from '../shape/Rectangle';
-import ReactUtils from '../util/ReactUtils';
+import { getPresentationAttributes, validateWidthHeight } from '../util/ReactUtils';
 import classNames from 'classnames';
 import invariant from 'invariant';
 
@@ -182,7 +182,7 @@ class Treemap extends Component {
 
   renderNode(root, node, i) {
     const { content } = this.props;
-    const nodeProps = { ...ReactUtils.getPresentationAttributes(this.props), ...node, root };
+    const nodeProps = { ...getPresentationAttributes(this.props), ...node, root };
 
     return (
       <Layer key={`recharts-treemap-node-${i}`}>
@@ -215,7 +215,7 @@ class Treemap extends Component {
   }
 
   render() {
-    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+    if (!validateWidthHeight(this)) {return null;}
 
     const { width, height, className, style } = this.props;
 

@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import classNames from 'classnames';
-import ReactUtils from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import Polygon from '../shape/Polygon';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
@@ -15,6 +15,7 @@ class Radar extends Component {
   static displayName = 'Radar';
 
   static propTypes = {
+    ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
     dataKey: PropTypes.string.isRequired,
 
@@ -49,8 +50,8 @@ class Radar extends Component {
 
   renderLabels() {
     const { points, label } = this.props;
-    const baseProps = ReactUtils.getPresentationAttributes(this.props);
-    const customLabelProps = ReactUtils.getPresentationAttributes(label);
+    const baseProps = getPresentationAttributes(this.props);
+    const customLabelProps = getPresentationAttributes(label);
     const isLabelElement = React.isValidElement(label);
 
     const labels = points.map((entry, i) => {
@@ -76,8 +77,8 @@ class Radar extends Component {
 
   renderDots() {
     const { dot, points } = this.props;
-    const baseProps = ReactUtils.getPresentationAttributes(this.props);
-    const customDotProps = ReactUtils.getPresentationAttributes(dot);
+    const baseProps = getPresentationAttributes(this.props);
+    const customDotProps = getPresentationAttributes(dot);
     const isDotElement = React.isValidElement(dot);
 
     const dots = points.map((entry, i) => {

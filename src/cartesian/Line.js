@@ -7,7 +7,7 @@ import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import pureRender from 'pure-render-decorator';
-import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { findDOMNode } from 'react-dom';
 import Animate from 'react-smooth';
 
@@ -94,8 +94,8 @@ class Line extends Component {
     }
 
     const { dot, points } = this.props;
-    const lineProps = ReactUtils.getPresentationAttributes(this.props);
-    const customDotProps = ReactUtils.getPresentationAttributes(dot);
+    const lineProps = getPresentationAttributes(this.props);
+    const customDotProps = getPresentationAttributes(dot);
     const isDotElement = React.isValidElement(dot);
 
     const dots = points.map((entry, i) => {
@@ -120,8 +120,8 @@ class Line extends Component {
 
   renderLabels() {
     const { points, label } = this.props;
-    const lineProps = ReactUtils.getPresentationAttributes(this.props);
-    const customLabelProps = ReactUtils.getPresentationAttributes(label);
+    const lineProps = getPresentationAttributes(this.props);
+    const customLabelProps = getPresentationAttributes(label);
     const isLabelElement = React.isValidElement(label);
 
     const labels = points.map((entry, i) => {

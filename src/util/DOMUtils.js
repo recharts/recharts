@@ -21,7 +21,7 @@ const STYLE_LIST = [
 
 const autoCompleteStyle = (name, value) => {
   if (STYLE_LIST.indexOf(name) >= 0 && value === +value) {
-    return value + 'px';
+    return `${value}px`;
   }
 
   return value;
@@ -54,9 +54,9 @@ const getStyleString = (style) => {
 const getStringSize = (text, style = {}) => {
   if (text === undefined || text === null) {return 0;}
 
-  const str = text + '';
+  const str = `${text}`;
   const styleString = getStyleString(style);
-  const cacheKey = str + '-' + styleString;
+  const cacheKey = `${str}-${styleString}`;
 
   if (stringCache.widthCache[cacheKey]) { return stringCache.widthCache[cacheKey];}
 

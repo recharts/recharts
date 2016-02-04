@@ -17,7 +17,8 @@ import Scatter from '../cartesian/Scatter';
 import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import ZAxis from '../cartesian/ZAxis';
-import ReactUtils from '../util/ReactUtils';
+import { getPresentationAttributes, findChildByType,
+  findAllByType, validateWidthHeight } from '../util/ReactUtils';
 
 class ScatterChart extends Component {
   static displayName = 'ScatterChart';
@@ -159,7 +160,7 @@ class ScatterChart extends Component {
   getAxis(axisType = 'xAxis', items) {
     const { children } = this.props;
     const Axis = axisType === 'xAxis' ? XAxis : YAxis;
-    const axis = ReactUtils.findChildByType(children, Axis);
+    const axis = findChildByType(children, Axis);
 
     invariant(axis, 'recharts: ScatterChart must has %s', Axis.displayName);
 
@@ -182,7 +183,7 @@ class ScatterChart extends Component {
    */
   getZAxis(items) {
     const { children } = this.props;
-    const axisItem = ReactUtils.findChildByType(children, ZAxis);
+    const axisItem = findChildByType(children, ZAxis);
     const axisProps = (axisItem && axisItem.props) || ZAxis.defaultProps;
     const domain = axisProps.dataKey ? this.getDomain(items, axisProps.dataKey) : [-1, 1];
 
@@ -332,7 +333,7 @@ class ScatterChart extends Component {
    */
   renderTooltip(items, xAxis, yAxis, zAxis, offset) {
     const { children } = this.props;
-    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem || !tooltipItem.props.cursor || !this.state.isTooltipActive) {
       return null;
@@ -365,7 +366,7 @@ class ScatterChart extends Component {
    */
   renderGrid(xAxis, yAxis, offset) {
     const { children, width, height } = this.props;
-    const gridItem = ReactUtils.findChildByType(children, CartesianGrid);
+    const gridItem = findChildByType(children, CartesianGrid);
 
     if (!gridItem) {return null;}
 
@@ -399,7 +400,7 @@ class ScatterChart extends Component {
    */
   renderLegend(items, offset) {
     const { children, width, height } = this.props;
-    const legendItem = ReactUtils.findChildByType(children, Legend);
+    const legendItem = findChildByType(children, Legend);
     if (!legendItem) {return null;}
 
     const legendData = items.map((child) => {
@@ -444,14 +445,14 @@ class ScatterChart extends Component {
   }
   renderCursor(xAxis, yAxis, offset) {
     const { children } = this.props;
-    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem || !this.state.isTooltipActive) {return null;}
     const { activeItem } = this.state;
 
     const cursorProps = {
       fill: '#f1f1f1',
-      ...ReactUtils.getPresentationAttributes(tooltipItem.props.cursor),
+      ...getPresentationAttributes(tooltipItem.props.cursor),
       ...offset,
       x: activeItem.cx,
       y: activeItem.cy,
@@ -490,10 +491,10 @@ class ScatterChart extends Component {
   }
 
   render() {
-    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+    if (!validateWidthHeight(this)) {return null;}
 
     const { style, children, className, width, height } = this.props;
-    const items = ReactUtils.findAllByType(children, Scatter);
+    const items = findAllByType(children, Scatter);
     const zAxis = this.getZAxis(items);
     let xAxis = this.getAxis('xAxis', items);
     let yAxis = this.getAxis('yAxis', items);

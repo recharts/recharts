@@ -7,7 +7,7 @@ import _ from 'lodash';
  * @param {NUmber} defaultValue   The value returned when percent is undefined or invalid
  * @return {Number} value
  */
-const getPercentValue = (percent, totalValue, defaultValue = 0) => {
+export const getPercentValue = (percent, totalValue, defaultValue = 0) => {
   if (!_.isNumber(percent) && !_.isString(percent)) {
     return defaultValue;
   }
@@ -27,8 +27,4 @@ const getPercentValue = (percent, totalValue, defaultValue = 0) => {
   }
 
   return value;
-};
-
-export default {
-  getPercentValue,
 };

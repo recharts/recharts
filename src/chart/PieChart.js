@@ -7,8 +7,8 @@ import Surface from '../container/Surface';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Pie from '../polar/Pie';
-import ReactUtils from '../util/ReactUtils';
-import DataUtils from '../util/DataUtils';
+import { getPercentValue } from '../util/DataUtils';
+import { findChildByType, findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import { getMaxRadius } from '../util/PolarUtils';
 
 class PieChart extends Component {
@@ -85,7 +85,7 @@ class PieChart extends Component {
    */
   renderLegend(items) {
     const { children } = this.props;
-    const legendItem = ReactUtils.findChildByType(children, Legend);
+    const legendItem = findChildByType(children, Legend);
     if (!legendItem) {return null;}
 
     const { width, height } = this.props;
@@ -108,7 +108,7 @@ class PieChart extends Component {
 
   renderTooltip() {
     const { children } = this.props;
-    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem) {
       return;
@@ -124,16 +124,16 @@ class PieChart extends Component {
 
     return items.map((child, i) => {
       const { innerRadius, outerRadius, data } = child.props;
-      const cx = DataUtils.getPercentValue(child.props.cx, width, width / 2);
-      const cy = DataUtils.getPercentValue(child.props.cy, height, height / 2);
+      const cx = getPercentValue(child.props.cx, width, width / 2);
+      const cy = getPercentValue(child.props.cy, height, height / 2);
       const maxRadius = getMaxRadius(width, height, cx, cy, margin);
 
       return React.cloneElement(child, {
         key: `recharts-pie-${i}`,
         cx,
         cy,
-        innerRadius: DataUtils.getPercentValue(innerRadius, maxRadius, 0),
-        outerRadius: DataUtils.getPercentValue(outerRadius, maxRadius, maxRadius * 0.8),
+        innerRadius: getPercentValue(innerRadius, maxRadius, 0),
+        outerRadius: getPercentValue(outerRadius, maxRadius, maxRadius * 0.8),
         data: this.getComposedData(child),
         onMouseEnter: ::this.handleMouseEnter,
         onMouseLeave: ::this.handleMouseLeave,
@@ -142,10 +142,10 @@ class PieChart extends Component {
   }
 
   render() {
-    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+    if (!validateWidthHeight(this)) {return null;}
 
     const { style, children, className, width, height } = this.props;
-    const items = ReactUtils.findAllByType(children, Pie);
+    const items = findAllByType(children, Pie);
 
     return (
       <div className={classNames('recharts-wrapper', className)}

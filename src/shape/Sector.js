@@ -4,8 +4,8 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import classNames from 'classnames';
-import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
-const RADIAN = Math.PI / 180;
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { polarToCartesian } from '../util/PolarUtils';
 
 @pureRender
 class Sector extends Component {
@@ -51,20 +51,28 @@ class Sector extends Component {
 
     // When the angle of sector equals to 360, star point and end point coincide
     const _endAngle = startAngle + angle;
+    const outerStartPoint = polarToCartesian(cx, cy, outerRadius, startAngle);
+    const outerEndPoint = polarToCartesian(cx, cy, outerRadius, _endAngle);
+
     let path;
 
 
     if (innerRadius > 0) {
-      path = `M ${cx + outerRadius * Math.cos(-startAngle * RADIAN)},${cy + outerRadius * Math.sin(-startAngle * RADIAN)}
-              A ${outerRadius},${outerRadius},0,${+(Math.abs(angle) > 180)},${+(startAngle > _endAngle)},
-              ${cx + outerRadius * Math.cos(-_endAngle * RADIAN)},${cy + outerRadius * Math.sin(-_endAngle * RADIAN)}
-              L ${cx + innerRadius * Math.cos(-_endAngle * RADIAN)},${cy + innerRadius * Math.sin(-_endAngle * RADIAN)}
-              A ${innerRadius},${innerRadius},0,${+(Math.abs(angle) > 180)},${+(startAngle <= _endAngle)},
-              ${cx + innerRadius * Math.cos(-startAngle * RADIAN)},${cy + innerRadius * Math.sin(-startAngle * RADIAN)} Z`;
+      const innerStartPoint = polarToCartesian(cx, cy, innerRadius, startAngle);
+      const innerEndPoint = polarToCartesian(cx, cy, innerRadius, _endAngle);
+      path = `M ${outerStartPoint.x},${outerStartPoint.y}
+              A ${outerRadius},${outerRadius},0,
+              ${+(Math.abs(angle) > 180)},${+(startAngle > _endAngle)},
+              ${outerEndPoint.x},${outerEndPoint.y}
+              L ${innerEndPoint.x},${innerEndPoint.y}
+              A ${innerRadius},${innerRadius},0,
+              ${+(Math.abs(angle) > 180)},${+(startAngle <= _endAngle)},
+              ${innerStartPoint.x},${innerStartPoint.y} Z`;
     } else {
-      path = `M ${cx + outerRadius * Math.cos(-startAngle * RADIAN)},${cy + outerRadius * Math.sin(-startAngle * RADIAN)}
-              A ${outerRadius},${outerRadius},0,${+(Math.abs(angle) > 180)},${+(startAngle > _endAngle)},
-              ${cx + outerRadius * Math.cos(-_endAngle * RADIAN)},${cy + outerRadius * Math.sin(-_endAngle * RADIAN)}
+      path = `M ${outerStartPoint.x},${outerStartPoint.x}
+              A ${outerRadius},${outerRadius},0,
+              ${+(Math.abs(angle) > 180)},${+(startAngle > _endAngle)},
+              ${outerEndPoint.x},${outerEndPoint.y}
               L ${cx},${cy} Z`;
     }
 
@@ -81,7 +89,7 @@ class Sector extends Component {
 
     return (
       <path
-        {...ReactUtils.getPresentationAttributes(this.props)}
+        {...getPresentationAttributes(this.props)}
         className={layerClass}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}

@@ -8,8 +8,8 @@ import Layer from '../container/Layer';
 import Sector from '../shape/Sector';
 import Curve from '../shape/Curve';
 import Animate from 'react-smooth';
-import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 import _ from 'lodash';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
 const RADIAN = Math.PI / 180;
 
@@ -212,8 +212,8 @@ class Pie extends Component {
       return null;
     }
     const { label, valueKey } = this.props;
-    const pieProps = ReactUtils.getPresentationAttributes(this.props);
-    const customLabelProps = ReactUtils.getPresentationAttributes(label);
+    const pieProps = getPresentationAttributes(this.props);
+    const customLabelProps = getPresentationAttributes(label);
     const isLabelElement = React.isValidElement(label);
     const offsetRadius = (customLabelProps && customLabelProps.offsetRadius) || 20;
 

@@ -4,7 +4,8 @@
 import React, { Component, PropTypes } from 'react';
 import d3Shape from 'd3-shape';
 import pureRender from 'pure-render-decorator';
-import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import classNames from 'classnames';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
 @pureRender
 class Curve extends Component {
@@ -38,7 +39,7 @@ class Curve extends Component {
   };
 
   getCurveFactory(type) {
-    const name = 'curve' + type.slice(0, 1).toUpperCase() + type.slice(1);
+    const name = `curve${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
 
     return d3Shape[name];
   }
@@ -95,8 +96,8 @@ class Curve extends Component {
 
     return (
       <path
-        {...ReactUtils.getPresentationAttributes(this.props)}
-        className={'recharts-curve ' + (className || '')}
+        {...getPresentationAttributes(this.props)}
+        className={classNames('recharts-curve', className)}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}

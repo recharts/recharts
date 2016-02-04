@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import pureRender from 'pure-render-decorator';
 import Layer from '../container/Layer';
-import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import Curve from '../shape/Curve';
 
 @pureRender
@@ -77,7 +77,7 @@ class Scatter extends Component {
   renderCircles() {
     const { points } = this.props;
     const { activeIndex } = this.state;
-    const baseProps = ReactUtils.getPresentationAttributes(this.props);
+    const baseProps = getPresentationAttributes(this.props);
 
     return points.map((entry, i) => {
       const { payload, r, ...rest } = entry;
@@ -97,8 +97,8 @@ class Scatter extends Component {
 
   renderLine() {
     const { points, line, lineType } = this.props;
-    const scatterProps = ReactUtils.getPresentationAttributes(this.props);
-    const customLineProps = ReactUtils.getPresentationAttributes(line);
+    const scatterProps = getPresentationAttributes(this.props);
+    const customLineProps = getPresentationAttributes(line);
     const isLineElement = React.isValidElement(line);
     let linePoints;
 

@@ -15,10 +15,11 @@ import PolarGrid from '../polar/PolarGrid';
 import PolarAngleAxis from '../polar/PolarAngleAxis';
 import PolarRadiusAxis from '../polar/PolarRadiusAxis';
 
-import ReactUtils from '../util/ReactUtils';
-import DataUtils from '../util/DataUtils';
 import _ from 'lodash';
+import { validateWidthHeight, findChildByType, findAllByType,
+  getPresentationAttributes } from '../util/ReactUtils';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
+import { getPercentValue } from '../util/DataUtils';
 
 class RadarChart extends Component {
   static displayName = 'RadarChart';
@@ -92,7 +93,7 @@ class RadarChart extends Component {
 
   getTicksByItems(axisItem, tickCount) {
     const { data, children } = this.props;
-    const radarItems = ReactUtils.findAllByType(children, Radar);
+    const radarItems = findAllByType(children, Radar);
     const dataKeys = radarItems.map(item => item.props.dataKey);
     const max = data.reduce((prev, current) => {
       const currentMax = Math.max.apply(null, dataKeys.map(v => current[v] || 0));
@@ -174,11 +175,11 @@ class RadarChart extends Component {
   renderRadars(items, scale, cx, cy, innerRadius, outerRadius) {
     if (!items || !items.length) {return null;}
 
-    const baseProps = ReactUtils.getPresentationAttributes(this.props);
+    const baseProps = getPresentationAttributes(this.props);
     return items.map((el, index) => {
       return React.cloneElement(el, {
         ...baseProps,
-        ...ReactUtils.getPresentationAttributes(el),
+        ...getPresentationAttributes(el),
         points: this.getComposedData(el, scale, cx, cy, innerRadius, outerRadius),
         key: 'radar-' + index,
       });
@@ -187,7 +188,7 @@ class RadarChart extends Component {
 
   renderGrid(radiusAxisCfg, cx, cy, innerRadius, outerRadius) {
     const { children } = this.props;
-    const grid = ReactUtils.findChildByType(children, PolarGrid);
+    const grid = findChildByType(children, PolarGrid);
 
     if (!grid) {return null;}
 
@@ -205,14 +206,14 @@ class RadarChart extends Component {
 
   renderAngleAxis(cx, cy, outerRadius, maxRadius) {
     const { children } = this.props;
-    const angleAxis = ReactUtils.findChildByType(children, PolarAngleAxis);
+    const angleAxis = findChildByType(children, PolarAngleAxis);
 
     if (!angleAxis || angleAxis.props.hide) {return null;}
 
     const { data, width, height, startAngle, clockWise } = this.props;
     const len = data.length;
-    const grid = ReactUtils.findChildByType(children, PolarGrid);
-    const radius = DataUtils.getPercentValue(angleAxis.props.radius, maxRadius, outerRadius);
+    const grid = findChildByType(children, PolarGrid);
+    const radius = getPercentValue(angleAxis.props.radius, maxRadius, outerRadius);
     const { dataKey } = angleAxis.props;
 
     return React.cloneElement(angleAxis, {
@@ -246,7 +247,7 @@ class RadarChart extends Component {
    */
   renderLegend(items) {
     const { children } = this.props;
-    const legendItem = ReactUtils.findChildByType(children, Legend);
+    const legendItem = findChildByType(children, Legend);
     if (!legendItem) {return null;}
 
     const { width, height } = this.props;
@@ -267,13 +268,13 @@ class RadarChart extends Component {
   }
 
   render() {
-    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+    if (!validateWidthHeight(this)) {return null;}
     const { className, data, width, height, margin, children, style } = this.props;
-    const cx = DataUtils.getPercentValue(this.props.cx, width, width / 2);
-    const cy = DataUtils.getPercentValue(this.props.cy, height, height / 2);
+    const cx = getPercentValue(this.props.cx, width, width / 2);
+    const cy = getPercentValue(this.props.cy, height, height / 2);
     const maxRadius = getMaxRadius(width, height, cx, cy, margin);
-    const innerRadius = DataUtils.getPercentValue(this.props.innerRadius, maxRadius, 0);
-    const outerRadius = DataUtils.getPercentValue(this.props.outerRadius, maxRadius, maxRadius * 0.8);
+    const innerRadius = getPercentValue(this.props.innerRadius, maxRadius, 0);
+    const outerRadius = getPercentValue(this.props.outerRadius, maxRadius, maxRadius * 0.8);
 
     if (outerRadius <= 0 || !data || !data.length) {
       invariant(outerRadius > 0,
@@ -289,8 +290,8 @@ class RadarChart extends Component {
       `greater than innerRadius(${this.props.innerRadius}). `
     );
 
-    const items = ReactUtils.findAllByType(children, Radar);
-    const radiusAxis = ReactUtils.findChildByType(children, PolarRadiusAxis);
+    const items = findAllByType(children, Radar);
+    const radiusAxis = findChildByType(children, PolarRadiusAxis);
     const radiusAxisCfg = this.getRadiusAxisCfg(radiusAxis, innerRadius, outerRadius);
 
     return (

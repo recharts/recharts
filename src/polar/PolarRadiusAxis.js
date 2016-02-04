@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import Layer from '../container/Layer';
-import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
 const RADIAN = Math.PI / 180;
 
@@ -94,9 +94,9 @@ class PolarRadiusAxis extends Component {
     const cos = Math.cos(-angle * RADIAN);
 
     const props = {
-      ...ReactUtils.getPresentationAttributes(this.props),
+      ...getPresentationAttributes(this.props),
       fill: 'none',
-      ...ReactUtils.getPresentationAttributes(axisLine),
+      ...getPresentationAttributes(axisLine),
       x1: cx + extent[0] * cos,
       y1: cy + extent[0] * sin,
       x2: cx + extent[1] * cos,
@@ -109,8 +109,8 @@ class PolarRadiusAxis extends Component {
   renderTicks() {
     const { ticks, label, angle, tickFormatter, stroke } = this.props;
     const textAnchor = this.getTickTextAnchor();
-    const axisProps = ReactUtils.getPresentationAttributes(this.props);
-    const customLabelProps = ReactUtils.getPresentationAttributes(label);
+    const axisProps = getPresentationAttributes(this.props);
+    const customLabelProps = getPresentationAttributes(label);
     const isLabelElement = React.isValidElement(label);
 
     const items = ticks.map((entry, i) => {

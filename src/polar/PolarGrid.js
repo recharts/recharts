@@ -3,6 +3,8 @@
  */
 import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
+import { polarToCartesian } from '../util/PolarUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
 const RADIAN = Math.PI / 180;
 
@@ -12,6 +14,7 @@ class PolarGrid extends Component {
   static displayName = 'PolarGrid';
 
   static propTypes = {
+    ...PRESENTATION_ATTRIBUTES,
     cx: PropTypes.number,
     cy: PropTypes.number,
     innerRadius: PropTypes.number,
@@ -38,20 +41,26 @@ class PolarGrid extends Component {
     const { cx, cy, innerRadius, outerRadius, polarAngles } = this.props;
 
     if (!polarAngles || !polarAngles.length) { return null; }
+    const props = {
+      stroke: '#ccc',
+      ...getPresentationAttributes(this.props),
+    };
 
     return (
       <g className="recharts-polar-grid-angle">
         {
           polarAngles.map((entry, i) => {
-            const cos = Math.cos(-entry * RADIAN);
-            const sin = Math.sin(-entry * RADIAN);
+            const start = polarToCartesian(cx, cy, innerRadius, entry);
+            const end = polarToCartesian(cx, cy, outerRadius, entry);
+
             return (
-              <line key={'line-' + i}
-                stroke="#ccc"
-                x1={cx + cos * innerRadius}
-                y1={cy + sin * innerRadius}
-                x2={cx + cos * outerRadius}
-                y2={cy + sin * outerRadius}
+              <line
+                {...props}
+                key={`line-${i}`}
+                x1={start.x}
+                y1={start.y}
+                x2={end.x}
+                y2={end.y}
               />
             );
           })
@@ -67,8 +76,22 @@ class PolarGrid extends Component {
    */
   renderConcentricCircle(radius, index) {
     const { cx, cy } = this.props;
+    const props = {
+      stroke: '#ccc',
+      fill: 'none',
+      ...getPresentationAttributes(this.props),
+    };
 
-    return <circle className="recharts-polar-grid-concentric-circle" stroke="#ccc" fill="none" key={'circle-' + index} cx={cx} cy={cy} r={radius}/>;
+    return (
+      <circle
+        {...props}
+        className="recharts-polar-grid-concentric-circle"
+        key={`circle-${index}`}
+        cx={cx}
+        cy={cy}
+        r={radius}
+      />
+    );
   }
   /**
    * Draw concentric polygons
@@ -78,17 +101,32 @@ class PolarGrid extends Component {
    */
   renderConcentricPolygon(radius, index) {
     const { cx, cy, polarAngles } = this.props;
+    const props = {
+      stroke: '#ccc',
+      fill: 'none',
+      ...getPresentationAttributes(this.props),
+    };
     let path = '';
 
     polarAngles.forEach((angle, i) => {
+      const point = polarToCartesian(cx, cy, radius, angle);
+
       if (i) {
-        path += `L ${cx + radius * Math.cos(-angle * RADIAN)},${cy + radius * Math.sin(-angle * RADIAN)}`;
+        path += `L ${point.x},${point.y}`;
       } else {
-        path += `M ${cx + radius * Math.cos(-angle * RADIAN)},${cy + radius * Math.sin(-angle * RADIAN)}`;
+        path += `M ${point.x},${point.y}`;
       }
     });
+    path += 'Z';
 
-    return <path className="recharts-polar-grid-concentric-polygon" stroke="#ccc" fill="none" key={'path-' + index} d={path + 'Z'}/>;
+    return (
+      <path
+        {...props}
+        className="recharts-polar-grid-concentric-polygon"
+        key={`path-${index}`}
+        d={path}
+      />
+    );
   }
 
   /**

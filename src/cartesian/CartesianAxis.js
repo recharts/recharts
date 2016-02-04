@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import DOMUtils from '../util/DOMUtils';
 import Layer from '../container/Layer';
-import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
 @pureRender
 class CartesianAxis extends Component {
@@ -207,9 +207,9 @@ class CartesianAxis extends Component {
   renderAxisLine() {
     const { x, y, width, height, orientation, axisLine } = this.props;
     let props = {
-      ...ReactUtils.getPresentationAttributes(this.props),
+      ...getPresentationAttributes(this.props),
       fill: 'none',
-      ...ReactUtils.getPresentationAttributes(axisLine),
+      ...getPresentationAttributes(axisLine),
     };
 
     switch (orientation) {
@@ -238,10 +238,10 @@ class CartesianAxis extends Component {
     const finalTicks = CartesianAxis.getTicks(this.props);
 
     const textAnchor = this.getTickTextAnchor();
-    const axisProps = ReactUtils.getPresentationAttributes(this.props);
-    const customLabelProps = ReactUtils.getPresentationAttributes(label);
+    const axisProps = getPresentationAttributes(this.props);
+    const customLabelProps = getPresentationAttributes(label);
     const isLabelElement = React.isValidElement(label);
-    const tickLineProps = ReactUtils.getPresentationAttributes(tickLine);
+    const tickLineProps = getPresentationAttributes(tickLine);
 
     const items = finalTicks.map((entry, i) => {
       const lineCoord = this.getTickLineCoord(entry);

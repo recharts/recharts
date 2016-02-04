@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import Layer from '../container/Layer';
-import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import Dot from '../shape/Dot';
 import Polygon from '../shape/Polygon';
 
@@ -109,9 +109,9 @@ class PolarAngleAxis extends Component {
   renderAxisLine() {
     const { cx, cy, radius, axisLine, axisLineType } = this.props;
     const props = {
-      ...ReactUtils.getPresentationAttributes(this.props),
+      ...getPresentationAttributes(this.props),
       fill: 'none',
-      ...ReactUtils.getPresentationAttributes(axisLine),
+      ...getPresentationAttributes(axisLine),
     };
 
     if (axisLineType === 'circle') {
@@ -130,10 +130,10 @@ class PolarAngleAxis extends Component {
 
   renderTicks() {
     const { ticks, label, tickLine, tickFormatter, stroke } = this.props;
-    const axisProps = ReactUtils.getPresentationAttributes(this.props);
-    const customLabelProps = ReactUtils.getPresentationAttributes(label);
+    const axisProps = getPresentationAttributes(this.props);
+    const customLabelProps = getPresentationAttributes(label);
     const isLabelElement = React.isValidElement(label);
-    const tickLineProps = ReactUtils.getPresentationAttributes(tickLine);
+    const tickLineProps = getPresentationAttributes(tickLine);
 
     const items = ticks.map((entry, i) => {
       const lineCoord = this.getTickLineCoord(entry);

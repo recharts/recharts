@@ -9,7 +9,8 @@ import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import CartesianChart from './CartesianChart';
 import Line from '../cartesian/Line';
-import ReactUtils from '../util/ReactUtils';
+import { getPresentationAttributes, findChildByType,
+  findAllByType, validateWidthHeight } from '../util/ReactUtils';
 
 class LineChart extends CartesianChart {
 
@@ -81,7 +82,7 @@ class LineChart extends CartesianChart {
 
   renderCursor(xAxisMap, yAxisMap, offset) {
     const { children } = this.props;
-    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem || !tooltipItem.props.cursor || !this.state.isTooltipActive) {return null;}
 
@@ -98,7 +99,7 @@ class LineChart extends CartesianChart {
     const y2 = layout === 'horizontal' ? offset.top + offset.height : start;
     const cursorProps = {
       stroke: '#ccc',
-      ...ReactUtils.getPresentationAttributes(tooltipItem.props.cursor),
+      ...getPresentationAttributes(tooltipItem.props.cursor),
       points: [{ x: x1, y: y1 }, { x: x2, y: y2 }],
     };
 
@@ -118,7 +119,7 @@ class LineChart extends CartesianChart {
   renderItems(items, xAxisMap, yAxisMap, offset) {
     const { children } = this.props;
     const { activeLineKey, isTooltipActive, activeTooltipIndex } = this.state;
-    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+    const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];
 
@@ -154,10 +155,10 @@ class LineChart extends CartesianChart {
   }
 
   render() {
-    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+    if (!validateWidthHeight(this)) {return null;}
 
     const { style, children, className, width, height } = this.props;
-    const items = ReactUtils.findAllByType(children, Line);
+    const items = findAllByType(children, Line);
 
     let xAxisMap = this.getAxisMap('xAxis', items);
     let yAxisMap = this.getAxisMap('yAxis', items);

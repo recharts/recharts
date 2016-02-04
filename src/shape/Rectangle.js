@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import classNames from 'classnames';
-import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
 @pureRender
 class Rectangle extends Component {
@@ -82,9 +82,12 @@ class Rectangle extends Component {
       newRadius = radius > maxRadius ? maxRadius : radius;
 
       path = `M ${x},${y + newRadius} A ${newRadius},${newRadius},0,0,1,${x + newRadius},${y}`
-           + `L ${x + width - newRadius},${y} A ${newRadius},${newRadius},0,0,1,${x + width},${y + newRadius}`
-           + `L ${x + width},${y + height - newRadius} A ${newRadius},${newRadius},0,0,1,${x + width - newRadius},${y + height}`
-           + `L ${x + newRadius},${y + height} A ${newRadius},${newRadius},0,0,1,${x},${y + height - newRadius} Z`;
+           + `L ${x + width - newRadius},${y}`
+           + `A ${newRadius},${newRadius},0,0,1,${x + width},${y + newRadius}`
+           + `L ${x + width},${y + height - newRadius}`
+           + `A ${newRadius},${newRadius},0,0,1,${x + width - newRadius},${y + height}`
+           + `L ${x + newRadius},${y + height}`
+           + `A ${newRadius},${newRadius},0,0,1,${x},${y + height - newRadius} Z`;
 
     } else {
       path = `M ${x},${y} h ${width} v ${height} h ${-width} Z`;
@@ -104,7 +107,7 @@ class Rectangle extends Component {
 
     return (
       <path
-        {...ReactUtils.getPresentationAttributes(this.props)}
+        {...getPresentationAttributes(this.props)}
         className={layerClass}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}

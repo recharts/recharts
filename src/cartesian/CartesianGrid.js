@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
-import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
 @pureRender
 class CartesianGrid extends Component {
@@ -46,7 +46,7 @@ class CartesianGrid extends Component {
 
     if (!horizontalPoints || !horizontalPoints.length) { return null; }
 
-    const props = ReactUtils.getPresentationAttributes(this.props);
+    const props = getPresentationAttributes(this.props);
     const items = horizontalPoints.map((entry, i) => {
       return <line {...props} key={'line-' + i} x1={x} y1={entry} x2={x + width} y2={entry}/>;
     });
@@ -62,7 +62,7 @@ class CartesianGrid extends Component {
 
     if (!verticalPoints || !verticalPoints.length) { return null; }
 
-    const props = ReactUtils.getPresentationAttributes(this.props);
+    const props = getPresentationAttributes(this.props);
 
     const items = verticalPoints.map((entry, i) => {
       return <line {...props} key={'line-' + i} x1={entry} y1={y} x2={entry} y2={y + height}/>;

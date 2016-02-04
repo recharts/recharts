@@ -7,7 +7,7 @@ import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
 import _ from 'lodash';
 import DOMUtils from '../util/DOMUtils';
-import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import pureRender from 'pure-render-decorator';
 
 const RADIAN = Math.PI / 180;
@@ -79,13 +79,14 @@ class RadialBar extends Component {
     const absMinAngle = Math.abs(minAngle);
     const absMaxAngle = Math.abs(maxAngle);
     const deltaAngle = this.getDeltaAngle();
-    const deltaSign = Math.sign(deltaAngle);
     const gapAngle = Math.min(Math.abs(absMaxAngle - absMinAngle), 360);
 
     const sectors = data.map((entry) => {
       const value = entry.value;
       const _endAngle = maxValue === 0 ? startAngle :
-        startAngle + Math.sign(value) * deltaSign * (absMinAngle + gapAngle * Math.abs(entry.value) / maxValue);
+        startAngle + Math.sign(value * deltaAngle) * (
+          absMinAngle + gapAngle * Math.abs(entry.value) / maxValue
+        );
 
       return {
         ...entry,
@@ -105,7 +106,9 @@ class RadialBar extends Component {
     const orientation = labelProps.orientation || 'inner';
     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = data;
     const clockWise = this.getDeltaAngle() < 0;
-    const radius = clockWise ? innerRadius + offsetRadius : Math.max(outerRadius - offsetRadius, 0);
+    const radius = clockWise ?
+                  innerRadius + offsetRadius :
+                  Math.max(outerRadius - offsetRadius, 0);
 
     if (radius <= 0) {return '';}
 
@@ -115,10 +118,14 @@ class RadialBar extends Component {
     let _endAngle;
 
     if (clockWise) {
-      _startAngle = orientation === 'inner' ? Math.min(endAngle + deltaAngle, startAngle) : endAngle;
+      _startAngle = orientation === 'inner' ?
+                    Math.min(endAngle + deltaAngle, startAngle) :
+                    endAngle;
       _endAngle = _startAngle - deltaAngle;
     } else {
-      _startAngle = orientation === 'inner' ? Math.max(endAngle - deltaAngle, startAngle) : endAngle;
+      _startAngle = orientation === 'inner' ?
+                    Math.max(endAngle - deltaAngle, startAngle) :
+                    endAngle;
       _endAngle = _startAngle + deltaAngle;
     }
 
@@ -134,7 +141,7 @@ class RadialBar extends Component {
 
   renderSectors(sectors) {
     const { className, shape, data } = this.props;
-    const baseProps = ReactUtils.getPresentationAttributes(this.props);
+    const baseProps = getPresentationAttributes(this.props);
     const isShapeElement = React.isValidElement(shape);
 
     return sectors.map((entry, i) => {
@@ -155,7 +162,7 @@ class RadialBar extends Component {
   renderBackground(sectors) {
     const { startAngle, endAngle, background } = this.props;
     const isBackgroundElement = React.isValidElement(background);
-    const backgroundProps = ReactUtils.getPresentationAttributes(background);
+    const backgroundProps = getPresentationAttributes(background);
 
     return sectors.map((entry, i) => {
       const { value, ...rest } = entry;
@@ -185,13 +192,13 @@ class RadialBar extends Component {
     return sectors.map((entry, i) => {
       const content = hasFormatter ? formatter(entry.value) : entry.value;
       const id = _.uniqueId('recharts-defs-');
-      const style = ReactUtils.getPresentationAttributes(label) || { fontSize: 10, fill: '#000' };
+      const style = getPresentationAttributes(label) || { fontSize: 10, fill: '#000' };
       const path = this.getLabelPathArc(entry, content, style);
 
       return (
-        <text {...style} key={'label-' + i} className="recharts-radial-bar-label">
+        <text {...style} key={`label-${i}`} className="recharts-radial-bar-label">
           <defs><path id={id} d={path} /></defs>
-          <textPath xlinkHref={'#' + id}>{content}</textPath>
+          <textPath xlinkHref={`#${id}`}>{content}</textPath>
         </text>
       );
     });

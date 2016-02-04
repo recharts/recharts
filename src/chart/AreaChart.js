@@ -7,7 +7,8 @@ import Surface from '../container/Surface';
 import Tooltip from '../component/Tooltip';
 import Dot from '../shape/Dot';
 import Curve from '../shape/Curve';
-import ReactUtils from '../util/ReactUtils';
+import { getPresentationAttributes, findChildByType,
+  findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import CartesianChart from './CartesianChart';
 import Area from '../cartesian/Area';
 
@@ -86,7 +87,7 @@ class AreaChart extends CartesianChart {
   }
   renderCursor(xAxisMap, yAxisMap, offset) {
     const { children } = this.props;
-    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem || !tooltipItem.props.cursor || !this.state.isTooltipActive) {return null;}
 
@@ -103,7 +104,7 @@ class AreaChart extends CartesianChart {
     const y2 = layout === 'horizontal' ? offset.top + offset.height : start;
     const cursorProps = {
       stroke: '#ccc',
-      ...ReactUtils.getPresentationAttributes(tooltipItem.props.cursor),
+      ...getPresentationAttributes(tooltipItem.props.cursor),
       points: [{ x: x1, y: y1 }, { x: x2, y: y2 }],
     };
 
@@ -123,7 +124,7 @@ class AreaChart extends CartesianChart {
   renderItems(items, xAxisMap, yAxisMap, offset, stackGroups) {
     const { children, layout } = this.props;
     const { activeAreaKey, isTooltipActive, activeTooltipIndex } = this.state;
-    const tooltipItem = ReactUtils.findChildByType(children, Tooltip);
+    const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];
 
@@ -165,11 +166,11 @@ class AreaChart extends CartesianChart {
   }
 
   render() {
-    if (!ReactUtils.validateWidthHeight(this)) {return null;}
+    if (!validateWidthHeight(this)) {return null;}
 
     const { style, children, layout, className, width, height } = this.props;
     const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
-    const items = ReactUtils.findAllByType(children, Area);
+    const items = findAllByType(children, Area);
     const stackGroups = this.getStackGroupsByAxisId(items, `${numberAxisName}Id`);
 
     let xAxisMap = this.getAxisMap('xAxis', items, numberAxisName === 'xAxis' && stackGroups);

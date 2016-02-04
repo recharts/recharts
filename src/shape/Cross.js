@@ -3,7 +3,8 @@
  */
 import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
-import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import classNames from 'classnames';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import _ from 'lodash';
 
 @pureRender
@@ -55,8 +56,8 @@ class Cross extends Component {
 
     return (
       <path
-        {...ReactUtils.getPresentationAttributes(this.props)}
-        className={'recharts-cross ' + (className || '')}
+        {...getPresentationAttributes(this.props)}
+        className={classNames('recharts-cross', className)}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}
