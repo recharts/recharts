@@ -47,9 +47,13 @@ const range = (from, to) => {
  * Get percent value of a total value
  * @param {Number|String} percent A percent
  * @param {Number} totalValue     Total value
+ * @param {NUmber} defaultValue   The value returned when percent is undefined or invalid
  * @return {Number} value
  */
-const getPercentValue = (percent, totalValue) => {
+const getPercentValue = (percent, totalValue, defaultValue = 0) => {
+  if (!isNumber(percent) && !isString(percent)) {
+    return defaultValue;
+  }
   const str = '' + percent;
   const index = str.indexOf('%');
   let value;

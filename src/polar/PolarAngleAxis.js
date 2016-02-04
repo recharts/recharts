@@ -21,7 +21,7 @@ class PolarAngleAxis extends Component {
     dataKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     cx: PropTypes.number,
     cy: PropTypes.number,
-    radius: PropTypes.number,
+    radius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
     axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
     axisLineType: PropTypes.oneOf(['polygon', 'circle']),

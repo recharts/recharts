@@ -9,6 +9,7 @@ import Sector from '../shape/Sector';
 import Curve from '../shape/Curve';
 import Animate from 'react-smooth';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import LodashUtils from '../util/LodashUtils';
 
 const RADIAN = Math.PI / 180;
 
@@ -20,12 +21,12 @@ class Pie extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
-    cx: PropTypes.number,
-    cy: PropTypes.number,
+    cx: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    cy: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     startAngle: PropTypes.number,
     endAngle: PropTypes.number,
-    innerRadius: PropTypes.number,
-    outerRadius: PropTypes.number,
+    innerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    outerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     nameKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     valueKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     data: PropTypes.arrayOf(PropTypes.object),
@@ -270,9 +271,11 @@ class Pie extends Component {
   }
 
   render() {
-    const { data, className, label } = this.props;
+    const { data, className, label, cx, cy, innerRadius, outerRadius } = this.props;
 
-    if (!data || !data.length) {
+    if (!data || !data.length || !LodashUtils.isNumber(cx)
+      || !LodashUtils.isNumber(cy) || !LodashUtils.isNumber(innerRadius)
+      || !LodashUtils.isNumber(outerRadius)) {
       return null;
     }
 

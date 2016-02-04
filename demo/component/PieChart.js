@@ -1,5 +1,5 @@
 import React from 'react';
-import {PieChart, Pie, Legend} from 'recharts';
+import {PieChart, Pie, Legend, AdaptionWrapper} from 'recharts';
 
 export default React.createClass({
   render () {
@@ -30,6 +30,16 @@ export default React.createClass({
 
     return (
       <div className='pie-charts'>
+        <p>PieChart wrapped by AdaptionWrapper</p>
+        <div className='pie-chart-wrapper' style={{width: '50%', height: '100%', backgroundColor: '#f5f5f5'}}>
+          <AdaptionWrapper>
+            <PieChart>
+              <Pie data={data01} cx="30%" cy="30%" innerRadius="25%" outerRadius="40%"/>
+              <Pie data={data03} cx="30%" cy="30%" innerRadius="45%" outerRadius="80%"/>
+            </PieChart>
+          </AdaptionWrapper>
+        </div>
+
         <p>Simple PieChart</p>
         <div className='pie-chart-wrapper'>
           <PieChart width={800} height={400}>
@@ -47,6 +57,7 @@ export default React.createClass({
             <Pie data={data03} cx={200} cy={200} innerRadius={80} outerRadius={100}/>
           </PieChart>
         </div>
+
 
       </div>
     );

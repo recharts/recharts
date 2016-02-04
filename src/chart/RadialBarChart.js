@@ -10,6 +10,7 @@ import LodashUtils from '../util/LodashUtils';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import ReactUtils from '../util/ReactUtils';
+import { getMaxRadius } from '../util/PolarUtils';
 
 class RadialBarChart extends Component {
 
@@ -24,8 +25,8 @@ class RadialBarChart extends Component {
       bottom: PropTypes.number,
       left: PropTypes.number,
     }),
-    cy: PropTypes.number,
-    cx: PropTypes.number,
+    cy: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    cx: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
     data: PropTypes.array,
     innerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -90,18 +91,6 @@ class RadialBarChart extends Component {
       };
     });
   }
-  /**
-   * Calculate the coordinate of center
-   * @return {Object} Coordinate
-   */
-  getCenter() {
-    const { cx, cy, width, height, margin } = this.props;
-
-    return {
-      cx: cx === +cx ? cx : ((margin.left + width - margin.right) / 2) >> 0,
-      cy: cy === +cy ? cy : ((margin.top + height - margin.bottom) / 2) >> 0,
-    };
-  }
    /**
    * Calculate the size of all groups
    * @param  {Array} items All the instance of RadialBar
@@ -120,20 +109,14 @@ class RadialBarChart extends Component {
 
   /**
    * Calculate the scale function of radius
-   * @param {Object} center The coordinate of center
-   * @return {Object}       A scale function
+   * @param {Number} innerRadius The outer radius
+   * @param {Number} outerRadius The inner radius
+   * @return {Object}            A scale function
    */
-  getRadiusScale(center) {
-    const { data, innerRadius, outerRadius, margin } = this.props;
+  getRadiusScale(innerRadius, outerRadius) {
+    const { data } = this.props;
     const bandCount = Math.max(data.length, 1);
-    const maxRadius = Math.min.apply(null, [
-      Math.abs(center.cx - margin.left), Math.abs(center.cx - margin.right),
-      Math.abs(center.cy - margin.top), Math.abs(center.cy - margin.top),
-    ]);
-    const range = [
-      LodashUtils.getPercentValue(outerRadius, maxRadius),
-      LodashUtils.getPercentValue(innerRadius, maxRadius),
-    ];
+    const range = [outerRadius, innerRadius];
 
     const scale = D3Scale.band().domain(LodashUtils.range(0, bandCount))
                     .range(range);
@@ -270,10 +253,15 @@ class RadialBarChart extends Component {
   render() {
     if (!ReactUtils.validateWidthHeight(this)) {return null;}
 
-    const { style, children, className, width, height } = this.props;
+    const { style, children, className, width, height, margin } = this.props;
     const items = ReactUtils.findAllByType(children, RadialBar);
-    const center = this.getCenter();
-    const radiusScale = this.getRadiusScale(center);
+
+    const cx = LodashUtils.getPercentValue(this.props.cx, width, width / 2);
+    const cy = LodashUtils.getPercentValue(this.props.cy, height, height / 2);
+    const maxRadius = getMaxRadius(width, height, cx, cy, margin);
+    const innerRadius = LodashUtils.getPercentValue(this.props.innerRadius, maxRadius, 0);
+    const outerRadius = LodashUtils.getPercentValue(this.props.outerRadius, maxRadius, maxRadius * 0.8);
+    const radiusScale = this.getRadiusScale(innerRadius, outerRadius);
 
     return (
       <div className={classNames('recharts-wrapper', className)}
@@ -281,7 +269,7 @@ class RadialBarChart extends Component {
       >
 
         <Surface width={width} height={height}>
-          {this.renderItems(items, radiusScale, center)}
+          {this.renderItems(items, radiusScale, {cx, cy})}
         </Surface>
 
         {this.renderLegend()}

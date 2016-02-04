@@ -17,8 +17,7 @@ import PolarRadiusAxis from '../polar/PolarRadiusAxis';
 
 import ReactUtils from '../util/ReactUtils';
 import LodashUtils from '../util/LodashUtils';
-
-const RADIAN = Math.PI / 180;
+import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 
 class RadarChart extends Component {
   static displayName = 'RadarChart';
@@ -26,12 +25,18 @@ class RadarChart extends Component {
   static propTypes = {
     width: PropTypes.number,
     height: PropTypes.number,
+    margin: PropTypes.shape({
+      top: PropTypes.number,
+      right: PropTypes.number,
+      bottom: PropTypes.number,
+      left: PropTypes.number,
+    }),
 
-    cx: PropTypes.number,
-    cy: PropTypes.number,
+    cx: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    cy: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     startAngle: PropTypes.number,
-    innerRadius: PropTypes.number,
-    outerRadius: PropTypes.number,
+    innerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    outerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     clockWise: PropTypes.bool,
 
     data: PropTypes.array,
@@ -47,18 +52,14 @@ class RadarChart extends Component {
     width: 0,
     height: 0,
 
-    cx: 0,
-    cy: 0,
     startAngle: 90,
-    innerRadius: 0,
-    outerRadius: 0,
     clockWise: true,
-
     data: [],
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
   };
 
-  getRadiusAxisCfg(radiusAxis) {
-    const { children, innerRadius, outerRadius } = this.props;
+  getRadiusAxisCfg(radiusAxis, innerRadius, outerRadius) {
+    const { children } = this.props;
     let domain;
     let tickCount;
     let ticks;
@@ -150,9 +151,9 @@ class RadarChart extends Component {
     });
   }
 
-  getComposedData(item, scale) {
+  getComposedData(item, scale, cx, cy, innerRadius, outerRadius) {
     const { dataKey } = item.props;
-    const { data, cx, cy, innerRadius, outerRadius, startAngle, clockWise } = this.props;
+    const { data, startAngle, clockWise } = this.props;
     const len = data.length;
 
     return data.map((entry, i) => {
@@ -161,7 +162,7 @@ class RadarChart extends Component {
       const radius = scale(value);
 
       return {
-        ...this.polarToCartesian(cx, cy, angle, radius),
+        ...polarToCartesian(cx, cy, radius, angle),
         value,
         cx, cy, radius, angle,
         payload: entry,
@@ -169,92 +170,73 @@ class RadarChart extends Component {
     });
   }
 
-  polarToCartesian(cx, cy, angle, radius) {
-    return {
-      x: cx + Math.cos(-RADIAN * angle) * radius,
-      y: cy + Math.sin(-RADIAN * angle) * radius,
-    };
-  }
+  renderRadars(items, scale, cx, cy, innerRadius, outerRadius) {
+    if (!items || !items.length) {return null;}
 
-  renderRadars(items, scale) {
-    const { data, children } = this.props;
-
-    if (items && items.length) {
-      const baseProps = ReactUtils.getPresentationAttributes(this.props);
-
-      return items.map((el, index) => {
-
-        return React.cloneElement(el, {
-          ...baseProps,
-          ...ReactUtils.getPresentationAttributes(el),
-          points: this.getComposedData(el, scale),
-          key: 'radar-' + index,
-        });
+    const baseProps = ReactUtils.getPresentationAttributes(this.props);
+    return items.map((el, index) => {
+      return React.cloneElement(el, {
+        ...baseProps,
+        ...ReactUtils.getPresentationAttributes(el),
+        points: this.getComposedData(el, scale, cx, cy, innerRadius, outerRadius),
+        key: 'radar-' + index,
       });
-    }
-
-    return null;
+    });
   }
 
-  renderGrid(radiusAxisCfg) {
-    const { data, children } = this.props;
-    const len = data.length;
+  renderGrid(radiusAxisCfg, cx, cy, innerRadius, outerRadius) {
+    const { children } = this.props;
     const grid = ReactUtils.findChildByType(children, PolarGrid);
 
-    if (grid) {
-      const { cx, cy, innerRadius, outerRadius, startAngle, clockWise } = this.props;
-      const gridCount = radiusAxisCfg.tickCount;
+    if (!grid) {return null;}
 
-      return React.cloneElement(grid, {
-        polarAngles: this.getAngleTicks(len, startAngle, clockWise),
-        polarRadius: this.getGridRadius(gridCount, innerRadius, outerRadius),
-        cx, cy, innerRadius, outerRadius,
-        key: 'layer-grid',
-      });
-    }
+    const { startAngle, clockWise, data } = this.props;
+    const len = data.length;
+    const gridCount = radiusAxisCfg.tickCount;
 
-    return null;
+    return React.cloneElement(grid, {
+      polarAngles: this.getAngleTicks(len, startAngle, clockWise),
+      polarRadius: this.getGridRadius(gridCount, innerRadius, outerRadius),
+      cx, cy, innerRadius, outerRadius,
+      key: 'layer-grid',
+    });
   }
 
-  renderAngleAxis() {
-    const { data, children, startAngle, clockWise } = this.props;
-    const len = data.length;
+  renderAngleAxis(cx, cy, outerRadius, maxRadius) {
+    const { children } = this.props;
     const angleAxis = ReactUtils.findChildByType(children, PolarAngleAxis);
+
+    if (!angleAxis || angleAxis.props.hide) {return null;}
+
+    const { data, width, height, startAngle, clockWise } = this.props;
+    const len = data.length;
     const grid = ReactUtils.findChildByType(children, PolarGrid);
+    const radius = LodashUtils.getPercentValue(angleAxis.props.radius, maxRadius, outerRadius);
+    const { dataKey } = angleAxis.props;
 
-    if (angleAxis) {
-      const { cx, cy } = this.props;
-      const radius = angleAxis.props.radius || this.props.outerRadius;
-      const { dataKey } = angleAxis.props;
-
-      return React.cloneElement(angleAxis, {
-        ticks: data.map((v, i) => {
-          return {
-            value: dataKey ? v[dataKey] : i,
-            angle: this.getAngle(i, len, startAngle, clockWise),
-          };
-        }),
-        cx, cy, radius,
-        axisLineType: (grid && grid.props && grid.props.gridType)
-                      || PolarGrid.defaultProps.gridType,
-        key: 'layer-angle-axis',
-      });
-    }
-
-    return null;
+    return React.cloneElement(angleAxis, {
+      ticks: data.map((v, i) => {
+        return {
+          value: dataKey ? v[dataKey] : i,
+          angle: this.getAngle(i, len, startAngle, clockWise),
+        };
+      }),
+      cx, cy, radius,
+      axisLineType: (grid && grid.props && grid.props.gridType)
+                    || PolarGrid.defaultProps.gridType,
+      key: 'layer-angle-axis',
+    });
   }
 
-  renderRadiusAxis(radiusAxis, radiusAxisCfg) {
-    const { cx, cy, startAngle } = this.props;
-    if (radiusAxis && !radiusAxis.props.hide) {
-      return React.cloneElement(radiusAxis, {
-        angle: radiusAxis.props.angle || startAngle,
-        ticks: this.getRadiusTicks(radiusAxisCfg),
-        cx, cy,
-      });
-    }
+  renderRadiusAxis(radiusAxis, radiusAxisCfg, cx, cy) {
+    if (!radiusAxis || radiusAxis.props.hide) {return null;}
 
-    return null;
+    const { startAngle } = this.props;
+    return React.cloneElement(radiusAxis, {
+      angle: radiusAxis.props.angle || startAngle,
+      ticks: this.getRadiusTicks(radiusAxisCfg),
+      cx, cy,
+    });
   }
   /**
    * Draw legend
@@ -262,10 +244,11 @@ class RadarChart extends Component {
    * @return {ReactElement}            The instance of Legend
    */
   renderLegend(items) {
-    const { children, width, height } = this.props;
+    const { children } = this.props;
     const legendItem = ReactUtils.findChildByType(children, Legend);
     if (!legendItem) {return null;}
 
+    const { width, height } = this.props;
     const legendData = items.map((child) => {
       const { dataKey, name, legendType } = child.props;
 
@@ -284,9 +267,12 @@ class RadarChart extends Component {
 
   render() {
     if (!ReactUtils.validateWidthHeight(this)) {return null;}
-
-    const { innerRadius, outerRadius, className, data, width,
-      height, children, style } = this.props;
+    const { className, data, width, height, margin, children, style } = this.props;
+    const cx = LodashUtils.getPercentValue(this.props.cx, width, width / 2);
+    const cy = LodashUtils.getPercentValue(this.props.cy, height, height / 2);
+    const maxRadius = getMaxRadius(width, height, cx, cy, margin);
+    const innerRadius = LodashUtils.getPercentValue(this.props.innerRadius, maxRadius, 0);
+    const outerRadius = LodashUtils.getPercentValue(this.props.outerRadius, maxRadius, maxRadius * 0.8);
 
     if (outerRadius <= 0 || !data || !data.length) {
       invariant(outerRadius > 0,
@@ -298,22 +284,23 @@ class RadarChart extends Component {
       return null;
     }
     invariant(outerRadius > innerRadius,
-      `outerRadius should be greater than innerRadius, ` +
-      `but now outerRadius(${outerRadius}) is not greater than innerRadius(${innerRadius}).`
+      `outerRadius(${this.props.outerRadius}) should be ` +
+      `greater than innerRadius(${this.props.innerRadius}). `
     );
+
     const items = ReactUtils.findAllByType(children, Radar);
     const radiusAxis = ReactUtils.findChildByType(children, PolarRadiusAxis);
-    const radiusAxisCfg = this.getRadiusAxisCfg(radiusAxis);
+    const radiusAxisCfg = this.getRadiusAxisCfg(radiusAxis, innerRadius, outerRadius);
 
     return (
       <div className={classNames('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', ...style }}
       >
         <Surface width={width} height={height}>
-          {this.renderGrid(radiusAxisCfg)}
-          {this.renderRadiusAxis(radiusAxis, radiusAxisCfg)}
-          {this.renderAngleAxis()}
-          {this.renderRadars(items, radiusAxisCfg.scale)}
+          {this.renderGrid(radiusAxisCfg, cx, cy, innerRadius, outerRadius)}
+          {this.renderRadiusAxis(radiusAxis, radiusAxisCfg, cx, cy)}
+          {this.renderAngleAxis(cx, cy, outerRadius, maxRadius)}
+          {this.renderRadars(items, radiusAxisCfg.scale, cx, cy, innerRadius, outerRadius)}
         </Surface>
 
         {this.renderLegend(items)}

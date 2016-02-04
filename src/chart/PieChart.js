@@ -8,6 +8,8 @@ import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Pie from '../polar/Pie';
 import ReactUtils from '../util/ReactUtils';
+import LodashUtils from '../util/LodashUtils';
+import { getMaxRadius } from '../util/PolarUtils';
 
 class PieChart extends Component {
 
@@ -118,20 +120,23 @@ class PieChart extends Component {
    * @return {ReactComponent} All the instance of Pie
    */
   renderItems(items) {
-    const { width, height } = this.props;
+    const { width, height, margin } = this.props;
 
     return items.map((child, i) => {
-      const { cx, cy, outerRadius, data } = child.props;
-      const maxRadius = Math.min(width, height) / 2;
+      const { innerRadius, outerRadius, data } = child.props;
+      const cx = LodashUtils.getPercentValue(child.props.cx, width, width / 2);
+      const cy = LodashUtils.getPercentValue(child.props.cy, height, height / 2);
+      const maxRadius = getMaxRadius(width, height, cx, cy, margin);
 
       return React.cloneElement(child, {
         key: 'recharts-pie-' + i,
-        cx: cx || width / 2,
-        cy: cy || height / 2,
+        cx,
+        cy,
+        innerRadius: LodashUtils.getPercentValue(innerRadius, maxRadius, 0),
+        outerRadius: LodashUtils.getPercentValue(outerRadius, maxRadius, maxRadius * 0.8),
         data: this.getComposedData(child),
         onMouseEnter: ::this.handleMouseEnter,
         onMouseLeave: ::this.handleMouseLeave,
-        outerRadius: outerRadius || maxRadius * 0.8,
       });
     });
   }
