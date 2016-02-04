@@ -1,8 +1,6 @@
 import React, {PropTypes} from 'react';
 import {BarChart, Bar, Brush, CartesianGrid, ReferenceLine, XAxis, YAxis, Tooltip, Legend} from 'recharts';
-import ColorUtil from 'recharts-color-utils';
 
-let colors = ColorUtil.Palette('#ffc658', 'rectangle');
 const data = [
   {name: 'food', uv: 2400, pv: 2400, amt: 4500},
   {name: 'cosmetic', uv: 3300, pv: 4567, amt: 6500},

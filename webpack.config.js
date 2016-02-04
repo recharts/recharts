@@ -6,8 +6,6 @@ module.exports = {
   entry: './src/index.js',
 
   output: {
-    path: path.resolve(__dirname, 'lib'),
-    filename: 'recharts.js',
     library: 'Recharts',
     libraryTarget: 'umd',
   },
@@ -16,11 +14,10 @@ module.exports = {
     loaders: [{
       test: /\.jsx?$/,
       include: [
-        path.resolve(__dirname, 'src'),
-        path.resolve(__dirname, './node_modules/react-smooth'),
-        path.resolve(__dirname, './node_modules/recharts-scale'),
+        path.resolve(__dirname, 'src')
       ],
-      loaders: ['babel'],
+      exclude: /node_modules/,
+      loader: 'babel',
     }],
     resolve: {
       alias: {
@@ -62,16 +59,9 @@ module.exports = {
   }],
 
   plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.DedupePlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        unused: true,
-        dead_code: true,
-      },
     })
   ],
 };

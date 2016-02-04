@@ -1,3 +1,14 @@
+## 0.5.1 (February 4, 2016)
+
+### UI
+- feat: support percentage string in the props(cx, cy, innerRadius, outerRadius) of RadarChart, PieChart, RadialChart
+- fix(PolarRadiusAxis): add props domain
+- refactor(CartesianAxis): remove unneed props domain
+
+### Docs
+- chore: optimize npm script commands
+- chore: update pkg
+
 ## 0.5.0 (February 3, 2016)
 
 ### UI

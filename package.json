@@ -1,14 +1,33 @@
 {
   "name": "recharts",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "React charts",
-  "main": "src/index.js",
+  "main": "lib/recharts.js",
+  "files": [
+    "*.md",
+    "demo",
+    "es6",
+    "lib",
+    "umd",
+    "src"
+  ],
+  "jsnext:main": "src/index",
   "keywords": [
     "react",
     "reactjs",
     "chart",
     "react-component"
   ],
+  "scripts": {
+    "build": "npm run build-cjs && npm run build-es6 && rimraf umd && npm run build-umd && npm run build-min",
+    "build-cjs": "rimraf lib && babel ./src -d lib",
+    "build-es6": "rimraf es6 && babel ./src -d es6 --blacklist=es6.modules",
+    "build-umd": "NODE_ENV=production webpack src/index.js umd/Recharts.js",
+    "build-min": "NODE_ENV=production webpack -p src/index.js umd/Recharts.min.js",
+    "demo": "webpack-dev-server  --progress --port 3000  --colors --content-base demo --hot --inline --config demo/webpack.config.js",
+    "test": "./node_modules/karma/bin/karma start test/karma.conf.js",
+    "lint": "eslint src"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/recharts/recharts.git"
@@ -20,7 +39,8 @@
   "homepage": "https://github.com/recharts/recharts",
   "peerDependencies": {
     "react": "^0.14.0",
-    "react-dom": "^0.14.0"
+    "react-dom": "^0.14.0",
+    "react-addons-transition-group": "^0.14.0"
   },
   "dependencies": {
     "classnames": "2.2.3",
@@ -31,12 +51,15 @@
     "invariant": "2.2.0",
     "oui-dom-utils": "0.3.5",
     "pure-render-decorator": "0.2.0",
-    "react-smooth": "0.0.4",
-    "recharts-scale": "0.1.6-beta"
+    "react-smooth": "0.0.7",
+    "recharts-scale": "0.1.8"
   },
   "devDependencies": {
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
+    "react-addons-transition-group": "^0.14.0",
+    "react-addons-test-utils": "^0.14.0",
+    "babel-cli": "^6.3.21",
     "babel-core": "^6.3.21",
     "babel-eslint": "5.0.0-beta10",
     "babel-loader": "^6.2.1",
@@ -66,23 +89,13 @@
     "karma-webpack": "^1.7.0",
     "mocha": "^2.3.4",
     "node-libs-browser": "^0.5.3",
-    "react-addons-test-utils": "^0.14.0",
     "react-hot-loader": "^1.3.0",
     "react-router": "^1.0.3",
-    "recharts-color-utils": "^0.1.1",
     "require-dir": "^0.3.0",
     "sinon": "^1.17.3",
     "webpack": "^1.12.9",
     "webpack-dev-server": "^1.14.0",
     "escope": "^3.3.0"
-  },
-  "scripts": {
-    "clean:lib": "./node_modules/.bin/rimraf lib",
-    "build:webpack": "./node_modules/.bin/webpack --config webpack.config.js",
-    "build": "npm run clean:lib && npm run build:webpack",
-    "demo": "./node_modules/.bin/webpack-dev-server  --progress --port 3000  --colors --content-base demo --hot --inline --config demo/webpack.config.js",
-    "test": "./node_modules/karma/bin/karma start test/karma.conf.js",
-    "lint": "./node_modules/.bin/eslint src"
   },
   "license": "MIT"
 }

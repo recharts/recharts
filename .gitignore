@@ -1,6 +1,9 @@
 .DS_Store
 *.log
 node_modules
-dist
+umd
+lib
+es6
 coverage
+npm-debug.log
 *.orig
