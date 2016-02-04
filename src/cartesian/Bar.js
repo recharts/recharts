@@ -97,7 +97,7 @@ class Bar extends Component {
       const { value, width, height, ...rest } = entry;
       const props = { ...others, ...rest, width, height };
       let transformOrigin = '';
-      const getStyle = isBegin => {
+      const getStyle = (isBegin) => {
         return {
           transform: `scale${layout === 'vertical' ? 'X' : 'Y'}(${isBegin ? 0 : 1})`,
         };
@@ -116,7 +116,7 @@ class Bar extends Component {
           easing={animationEasing}
           from={getStyle(true)}
           to={getStyle(false)}
-          key={'rectangle-' + index}
+          key={`rectangle-${index}`}
           onAnimationEnd={::this.handleAnimationEnd}
         >
           <g style={{ transformOrigin }}>

@@ -22,6 +22,7 @@ class PolarAngleAxis extends Component {
     cx: PropTypes.number,
     cy: PropTypes.number,
     radius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    hide: PropTypes.bool,
 
     axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
     axisLineType: PropTypes.oneOf(['polygon', 'circle']),
@@ -43,13 +44,13 @@ class PolarAngleAxis extends Component {
   static defaultProps = {
     cx: 0,
     cy: 0,
-    radius: 0,
     orientation: 'outer',
     fill: '#666',
     stroke: '#ccc',
     axisLine: true,
     tickLine: true,
     label: true,
+    hide: false,
   };
 
   /**

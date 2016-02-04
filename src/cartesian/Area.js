@@ -99,7 +99,9 @@ class Area extends Component {
         playload: entry,
       };
 
-      return isDotElement ? React.cloneElement(dot, dotProps) : <Dot {...dotProps} className="recharts-area-dot" />;
+      return isDotElement ?
+              React.cloneElement(dot, dotProps) :
+              <Dot {...dotProps} className="recharts-area-dot" />;
     });
 
     return <Layer className="recharts-area-dots">{dots}</Layer>;

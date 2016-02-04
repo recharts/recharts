@@ -1,8 +1,9 @@
 {
   "name": "recharts",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "React charts",
-  "main": "lib/recharts.js",
+  "main": "lib/index",
+  "jsnext:main": "es6/index",
   "files": [
     "*.md",
     "demo",
@@ -11,7 +12,6 @@
     "umd",
     "src"
   ],
-  "jsnext:main": "src/index",
   "keywords": [
     "react",
     "reactjs",

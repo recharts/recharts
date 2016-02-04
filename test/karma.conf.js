@@ -37,22 +37,13 @@ module.exports = function(config) {
       module: {
         noParse: [
           /node_modules\/sinon\//,
-          /node_modules\/recharts-scale\/node_modules\/ramda\/dist\/ramda\.js/,
         ],
         loaders: [{
           test: /\.js$/,
           include: [
             /src|test|recharts/,
-            /node_modules\/react-smooth\/src\//,
           ],
           exclude: /node_modules/,
-          loader: 'babel',
-        }, {
-          test: /\.jsx?$/,
-          include: [
-            /node_modules\/recharts-scale/,
-            /node_modules\/react-smooth\/src\//,
-          ],
           loader: 'babel',
         }, {
           test: /\.json$/,
@@ -75,7 +66,6 @@ module.exports = function(config) {
         alias: {
           'sinon': 'sinon/pkg/sinon',
           'recharts': path.resolve('./src/index.js'),
-          'recharts-scale': path.resolve('./node_modules/recharts-scale/index.js'),
         }
       },
       stats: {

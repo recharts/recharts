@@ -1,3 +1,11 @@
+## 0.5.2 (February 4, 2016)
+
+### UI
+- fix(RadarChart): fix the bug of unreasonable default value for radius in PolarAngleAxis
+
+### Docs
+- chore: change main and jsnext:main in package.json
+
 ## 0.5.1 (February 4, 2016)
 
 ### UI
