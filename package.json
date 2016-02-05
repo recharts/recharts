@@ -52,7 +52,7 @@
     "lodash": "^4.2.1",
     "oui-dom-utils": "0.3.5",
     "pure-render-decorator": "0.2.0",
-    "react-smooth": "0.0.7",
+    "react-smooth": "0.0.9",
     "recharts-scale": "0.1.8"
   },
   "devDependencies": {
