@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
-import LodashUtils from '../util/LodashUtils';
+import _ from 'lodash';
 import DOMUtils from '../util/DOMUtils';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 import pureRender from 'pure-render-decorator';
@@ -180,11 +180,11 @@ class RadialBar extends Component {
     const { label } = this.props;
     const isElement = React.isValidElement(label);
     const formatter = isElement ? label.props.formatter : label.formatter;
-    const hasFormatter = LodashUtils.isFunction(formatter);
+    const hasFormatter = _.isFunction(formatter);
 
     return sectors.map((entry, i) => {
       const content = hasFormatter ? formatter(entry.value) : entry.value;
-      const id = LodashUtils.getUniqueId('recharts-defs-');
+      const id = _.uniqueId('recharts-defs-');
       const style = ReactUtils.getPresentationAttributes(label) || { fontSize: 10, fill: '#000' };
       const path = this.getLabelPathArc(entry, content, style);
 

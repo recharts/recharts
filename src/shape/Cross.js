@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
-import LodashUtils from '../util/LodashUtils';
+import _ from 'lodash';
 
 @pureRender
 class Cross extends Component {
@@ -48,8 +48,8 @@ class Cross extends Component {
         onClick, onMouseEnter, onMouseLeave,
         className } = this.props;
 
-    if (!LodashUtils.isNumber(x) || !LodashUtils.isNumber(y) || !LodashUtils.isNumber(width)
-      || !LodashUtils.isNumber(height) || !LodashUtils.isNumber(top) || !LodashUtils.isNumber(left)) {
+    if (!_.isNumber(x) || !_.isNumber(y) || !_.isNumber(width)
+      || !_.isNumber(height) || !_.isNumber(top) || !_.isNumber(left)) {
       return null;
     }
 

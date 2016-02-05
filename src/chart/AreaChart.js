@@ -7,7 +7,6 @@ import Surface from '../container/Surface';
 import Tooltip from '../component/Tooltip';
 import Dot from '../shape/Dot';
 import Curve from '../shape/Curve';
-import LodashUtils from '../util/LodashUtils';
 import ReactUtils from '../util/ReactUtils';
 import CartesianChart from './CartesianChart';
 import Area from '../cartesian/Area';

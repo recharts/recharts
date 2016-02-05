@@ -1,15 +1,15 @@
 /**
- * @fileOverview Wrapper component to make charts adapt to the size of parent dom
+ * @fileOverview Wrapper component to make charts adapt to the size of parent * DOM
  */
 import React, { Component, PropTypes } from 'react';
 import pureRender from 'pure-render-decorator';
-import LodashUtils from '../util/LodashUtils';
 import OuiDomUtils from 'oui-dom-utils';
 import invariant from 'invariant';
+import DataUtils from '../util/DataUtils';
 
 @pureRender
-class AdaptionWrapper extends Component {
-  static displayName = 'AdaptionWrapper';
+class ResponsiveWrapper extends Component {
+  static displayName = 'ResponsiveWrapper';
 
   static propTypes = {
     width: PropTypes.string,
@@ -43,8 +43,8 @@ class AdaptionWrapper extends Component {
 
     this.setState({
       hasInitialized: true,
-      width: LodashUtils.getPercentValue(width, clientWidth),
-      height: LodashUtils.getPercentValue(height, clientHeight),
+      width: DataUtils.getPercentValue(width, clientWidth),
+      height: DataUtils.getPercentValue(height, clientHeight),
     });
   }
 
@@ -65,7 +65,7 @@ class AdaptionWrapper extends Component {
     }
 
     return (
-      <div className="recharts-adaption-wrapper" style={style} ref="wrapper">
+      <div className="recharts-responsive-wrapper" style={style} ref="wrapper">
         {
           hasInitialized && width > 0 && height > 0 ?
           React.cloneElement(children, { width, height }) :
@@ -76,4 +76,4 @@ class AdaptionWrapper extends Component {
   }
 }
 
-export default AdaptionWrapper;
+export default ResponsiveWrapper;

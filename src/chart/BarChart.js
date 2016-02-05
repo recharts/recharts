@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import Surface from '../container/Surface';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
-import LodashUtils from '../util/LodashUtils';
+import DataUtils from '../util/DataUtils';
 import ReactUtils from '../util/ReactUtils';
 import CartesianChart from './CartesianChart';
 import Bar from '../cartesian/Bar';
@@ -115,7 +115,7 @@ class BarChart extends CartesianChart {
         return res;
       }, {});
     } else {
-      const offset = LodashUtils.getPercentValue(barCategoryGap, bandSize);
+      const offset = DataUtils.getPercentValue(barCategoryGap, bandSize);
       const size = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
 
       result = sizeList.reduce((res, entry, i) => {

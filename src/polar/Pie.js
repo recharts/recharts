@@ -9,7 +9,7 @@ import Sector from '../shape/Sector';
 import Curve from '../shape/Curve';
 import Animate from 'react-smooth';
 import ReactUtils, { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
-import LodashUtils from '../util/LodashUtils';
+import _ from 'lodash';
 
 const RADIAN = Math.PI / 180;
 
@@ -273,9 +273,9 @@ class Pie extends Component {
   render() {
     const { data, className, label, cx, cy, innerRadius, outerRadius } = this.props;
 
-    if (!data || !data.length || !LodashUtils.isNumber(cx)
-      || !LodashUtils.isNumber(cy) || !LodashUtils.isNumber(innerRadius)
-      || !LodashUtils.isNumber(outerRadius)) {
+    if (!data || !data.length || !_.isNumber(cx)
+      || !_.isNumber(cy) || !_.isNumber(innerRadius)
+      || !_.isNumber(outerRadius)) {
       return null;
     }
 

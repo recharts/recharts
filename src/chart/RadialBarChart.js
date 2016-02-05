@@ -6,7 +6,8 @@ import classNames from 'classnames';
 import D3Scale from 'd3-scale';
 import Surface from '../container/Surface';
 import RadialBar from '../polar/RadialBar';
-import LodashUtils from '../util/LodashUtils';
+import DataUtils from '../util/DataUtils';
+import _ from 'lodash';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import ReactUtils from '../util/ReactUtils';
@@ -118,7 +119,7 @@ class RadialBarChart extends Component {
     const bandCount = Math.max(data.length, 1);
     const range = [outerRadius, innerRadius];
 
-    const scale = D3Scale.band().domain(LodashUtils.range(0, bandCount))
+    const scale = D3Scale.band().domain(_.range(0, bandCount))
                     .range(range);
 
     return scale;
@@ -153,7 +154,7 @@ class RadialBarChart extends Component {
         return res;
       }, {});
     } else {
-      let offset = LodashUtils.getPercentValue(barCategoryGap, bandRadius);
+      let offset = DataUtils.getPercentValue(barCategoryGap, bandRadius);
       const radius = (bandRadius - 2 * offset - (len - 1) * barGap) / len >> 0;
       offset = -Math.max(((radius * len + (len - 1) * barGap) / 2) >> 0, 0);
 
@@ -256,11 +257,11 @@ class RadialBarChart extends Component {
     const { style, children, className, width, height, margin } = this.props;
     const items = ReactUtils.findAllByType(children, RadialBar);
 
-    const cx = LodashUtils.getPercentValue(this.props.cx, width, width / 2);
-    const cy = LodashUtils.getPercentValue(this.props.cy, height, height / 2);
+    const cx = DataUtils.getPercentValue(this.props.cx, width, width / 2);
+    const cy = DataUtils.getPercentValue(this.props.cy, height, height / 2);
     const maxRadius = getMaxRadius(width, height, cx, cy, margin);
-    const innerRadius = LodashUtils.getPercentValue(this.props.innerRadius, maxRadius, 0);
-    const outerRadius = LodashUtils.getPercentValue(this.props.outerRadius, maxRadius, maxRadius * 0.8);
+    const innerRadius = DataUtils.getPercentValue(this.props.innerRadius, maxRadius, 0);
+    const outerRadius = DataUtils.getPercentValue(this.props.outerRadius, maxRadius, maxRadius * 0.8);
     const radiusScale = this.getRadiusScale(innerRadius, outerRadius);
 
     return (

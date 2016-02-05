@@ -15,7 +15,7 @@ import Legend from '../component/Legend';
 
 import ReactUtils from '../util/ReactUtils';
 import DOMUtils from '../util/DOMUtils';
-import LodashUtils from '../util/LodashUtils';
+import _ from 'lodash';
 
 import CartesianAxis from '../cartesian/CartesianAxis';
 import CartesianGrid from '../cartesian/CartesianGrid';
@@ -93,7 +93,7 @@ class CartesianChart extends Component {
         result[axisId] = { hasStack: false, stackGroups: {} };
       }
 
-      if (LodashUtils.isNumber(stackId) || LodashUtils.isString(stackId)) {
+      if (_.isNumber(stackId) || _.isString(stackId)) {
         if (!result[axisId].stackGroups[stackId]) {
           result[axisId].stackGroups[stackId] = {
             items: [],
@@ -105,7 +105,7 @@ class CartesianChart extends Component {
           result[axisId].hasStack = true;
         }
       } else {
-        result[axisId].stackGroups[LodashUtils.getUniqueId('_stackId_')] = {
+        result[axisId].stackGroups[_.uniqueId('_stackId_')] = {
           items: [item],
         };
       }
@@ -147,7 +147,7 @@ class CartesianChart extends Component {
   getStackedDataOfItem(item, stackGroups) {
     const { stackId } = item.props;
 
-    if (LodashUtils.isNumber(stackId) || LodashUtils.isString(stackId)) {
+    if (_.isNumber(stackId) || _.isString(stackId)) {
       const group = stackGroups[stackId];
 
       if (group && group.items.length) {
@@ -316,7 +316,7 @@ class CartesianChart extends Component {
           && type === 'number') {
           domain = this.getDomainOfStackGroups(stackGroups[axisId].stackGroups);
         } else if (isCategoryAxis) {
-          domain = LodashUtils.range(0, len);
+          domain = _.range(0, len);
         } else {
           domain = this.getDomainOfItemsWithSameAxis(items.filter(entry => {
             return entry.props[axisIdKey] === axisId;
@@ -370,7 +370,7 @@ class CartesianChart extends Component {
 
         let domain;
         if (isCategoryAxis) {
-          domain = LodashUtils.range(0, len);
+          domain = _.range(0, len);
         } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack) {
           domain = this.getDomainOfStackGroups(stackGroups[axisId].stackGroups);
         } else {
@@ -723,16 +723,16 @@ class CartesianChart extends Component {
   }
 
   parseSpecifiedDomain(specifiedDomain, autoDomain) {
-    if (!LodashUtils.isArray(specifiedDomain)) {
+    if (!_.isArray(specifiedDomain)) {
       return autoDomain;
     }
     const domain = [];
-    if (!LodashUtils.isNumber(specifiedDomain[0]) || specifiedDomain[0] > autoDomain[0]) {
+    if (!_.isNumber(specifiedDomain[0]) || specifiedDomain[0] > autoDomain[0]) {
       domain[0] = autoDomain[0];
     } else {
       domain[0] = specifiedDomain[0];
     }
-    if (!LodashUtils.isNumber(specifiedDomain[1]) || specifiedDomain[1] < autoDomain[1]) {
+    if (!_.isNumber(specifiedDomain[1]) || specifiedDomain[1] < autoDomain[1]) {
       domain[1] = autoDomain[1];
     } else {
       domain[1] = specifiedDomain[1];

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import LodashUtils from './LodashUtils';
+import _ from 'lodash';
 
 const PRESENTATION_ATTRIBUTES = {
   alignmentBaseline: PropTypes.string,
@@ -66,6 +66,7 @@ const PRESENTATION_ATTRIBUTES = {
   transform: PropTypes.string,
   style: PropTypes.object,
 };
+
 const EVENT_ATTRIBUTES = {
   onActivate: PropTypes.func,
   onClick: PropTypes.func,
@@ -180,8 +181,8 @@ export default {
     if (!el || !el.props) { return false; }
     const { width, height } = el.props;
 
-    if (!LodashUtils.isNumber(width) || width <= 0 ||
-      !LodashUtils.isNumber(height) || height <= 0) {
+    if (!_.isNumber(width) || width <= 0 ||
+      !_.isNumber(height) || height <= 0) {
       return false;
     }
 

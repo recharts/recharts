@@ -16,7 +16,8 @@ import PolarAngleAxis from '../polar/PolarAngleAxis';
 import PolarRadiusAxis from '../polar/PolarRadiusAxis';
 
 import ReactUtils from '../util/ReactUtils';
-import LodashUtils from '../util/LodashUtils';
+import DataUtils from '../util/DataUtils';
+import _ from 'lodash';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 
 class RadarChart extends Component {
@@ -104,7 +105,7 @@ class RadarChart extends Component {
   }
 
   getGridRadius(gridCount, innerRadius, outerRadius) {
-    const domain = LodashUtils.range(0, gridCount);
+    const domain = _.range(0, gridCount);
     const scale = D3Scale.point().domain(domain)
              .range([innerRadius, outerRadius]);
 
@@ -142,7 +143,7 @@ class RadarChart extends Component {
     const { tickCount } = axisCfg;
     const domain = scale.domain();
 
-    return LodashUtils.range(0, tickCount).map((v, i) => {
+    return _.range(0, tickCount).map((v, i) => {
       const value = domain[0] + i * (domain[1] - domain[0]) / (tickCount - 1);
       return {
         value,
@@ -211,7 +212,7 @@ class RadarChart extends Component {
     const { data, width, height, startAngle, clockWise } = this.props;
     const len = data.length;
     const grid = ReactUtils.findChildByType(children, PolarGrid);
-    const radius = LodashUtils.getPercentValue(angleAxis.props.radius, maxRadius, outerRadius);
+    const radius = DataUtils.getPercentValue(angleAxis.props.radius, maxRadius, outerRadius);
     const { dataKey } = angleAxis.props;
 
     return React.cloneElement(angleAxis, {
@@ -268,11 +269,11 @@ class RadarChart extends Component {
   render() {
     if (!ReactUtils.validateWidthHeight(this)) {return null;}
     const { className, data, width, height, margin, children, style } = this.props;
-    const cx = LodashUtils.getPercentValue(this.props.cx, width, width / 2);
-    const cy = LodashUtils.getPercentValue(this.props.cy, height, height / 2);
+    const cx = DataUtils.getPercentValue(this.props.cx, width, width / 2);
+    const cy = DataUtils.getPercentValue(this.props.cy, height, height / 2);
     const maxRadius = getMaxRadius(width, height, cx, cy, margin);
-    const innerRadius = LodashUtils.getPercentValue(this.props.innerRadius, maxRadius, 0);
-    const outerRadius = LodashUtils.getPercentValue(this.props.outerRadius, maxRadius, maxRadius * 0.8);
+    const innerRadius = DataUtils.getPercentValue(this.props.innerRadius, maxRadius, 0);
+    const outerRadius = DataUtils.getPercentValue(this.props.outerRadius, maxRadius, maxRadius * 0.8);
 
     if (outerRadius <= 0 || !data || !data.length) {
       invariant(outerRadius > 0,

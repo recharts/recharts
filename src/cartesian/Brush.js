@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import D3Scale from 'd3-scale';
 import Layer from '../container/Layer';
-import LodashUtils from '../util/LodashUtils';
+import _ from 'lodash';
 
 class Brush extends Component {
 
@@ -44,10 +44,10 @@ class Brush extends Component {
 
     if (props.data && props.data.length) {
       const len = props.data.length;
-      const startIndex = LodashUtils.isNumber(props.defaultStartIndex) ? props.defaultStartIndex : 0;
-      const endIndex = LodashUtils.isNumber(props.defaultEndIndex) ? props.defaultEndIndex : len - 1;
+      const startIndex = _.isNumber(props.defaultStartIndex) ? props.defaultStartIndex : 0;
+      const endIndex = _.isNumber(props.defaultEndIndex) ? props.defaultEndIndex : len - 1;
 
-      this.scale = D3Scale.point().domain(LodashUtils.range(0, len))
+      this.scale = D3Scale.point().domain(_.range(0, len))
                     .range([props.x, props.x + props.width - props.travellerWidth]);
       this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
 

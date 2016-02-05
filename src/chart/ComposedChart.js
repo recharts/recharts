@@ -17,7 +17,7 @@ import Dot from '../shape/Dot';
 import Rectangle from '../shape/Rectangle';
 
 import ReactUtils from '../util/ReactUtils';
-import LodashUtils from '../util/LodashUtils';
+import DataUtils from '../util/DataUtils';
 
 class ComposedChart extends CartesianChart {
 
@@ -207,7 +207,7 @@ class ComposedChart extends CartesianChart {
         return res;
       }, {});
     } else {
-      const offset = LodashUtils.getPercentValue(barCategoryGap, bandSize);
+      const offset = DataUtils.getPercentValue(barCategoryGap, bandSize);
       const size = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
 
       result = sizeList.reduce((res, entry, i) => {
