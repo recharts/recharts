@@ -244,7 +244,7 @@ class RadialBarChart extends Component {
 
       return React.cloneElement(child, {
         ...center,
-        key: 'radial-bar-' + i,
+        key: `radial-bar-${i}`,
         onMouseLeave: ::this.handleMouseLeave,
         onMouseEnter: this.handleMouseEnter.bind(this, dataKey),
         data: this.getComposedData(barPosition, radiusScale, center, dataKey),
