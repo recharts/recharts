@@ -1,6 +1,6 @@
 import React from 'react';
 import { Surface, Radar, RadarChart, PolarGrid, Legend,
-         PolarAngleAxis, PolarRadiusAxis, AdaptionWrapper } from 'recharts';
+         PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import DemoRadarItem from './DemoRadarItem';
 
 const data = [
@@ -16,16 +16,16 @@ class RadarChartDemo extends React.Component {
   render() {
     return (
       <div>
-        <p>RadarChart wrapped by AdaptionWrapper</p>
+        <p>RadarChart wrapped by ResponsiveContainer</p>
         <div style={{width: '100%', height: '100%'}}>
-          <AdaptionWrapper>
+          <ResponsiveContainer>
             <RadarChart data={data}>
               <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6}/>
               <PolarGrid />
               <PolarAngleAxis dataKey="subject" />
               <PolarRadiusAxis/>
             </RadarChart>
-          </AdaptionWrapper>
+          </ResponsiveContainer>
         </div>
 
         <p>A simple RadarChart</p>

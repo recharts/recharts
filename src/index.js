@@ -4,7 +4,7 @@ import Surface from './container/Surface';
 
 import Legend from './component/Legend';
 import Tooltip from './component/Tooltip';
-import AdaptionWrapper from './component/AdaptionWrapper';
+import ResponsiveContainer from './component/ResponsiveContainer';
 
 import Sector from './shape/Sector';
 import Curve from './shape/Curve';
@@ -47,7 +47,7 @@ export {
   // container
   Surface,
   // componnet
-  Legend, Tooltip, AdaptionWrapper,
+  Legend, Tooltip, ResponsiveContainer,
   // shape
   Sector, Curve, Rectangle, Triangle, Polygon, Dot, Cross,
 

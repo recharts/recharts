@@ -83,4 +83,3 @@ export const getStringSize = (text, style = {}) => {
 
   return result;
 };
-

@@ -8,8 +8,8 @@ import OuiDomUtils from 'oui-dom-utils';
 import invariant from 'invariant';
 
 @pureRender
-class ResponsiveWrapper extends Component {
-  static displayName = 'ResponsiveWrapper';
+class ResponsiveContainer extends Component {
+  static displayName = 'ResponsiveContainer';
 
   static propTypes = {
     width: PropTypes.string,
@@ -76,4 +76,4 @@ class ResponsiveWrapper extends Component {
   }
 }
 
-export default ResponsiveWrapper;
+export default ResponsiveContainer;
