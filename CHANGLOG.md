@@ -1,3 +1,8 @@
+## 0.6.1 (February 5, 2016)
+
+### UI
+- fix(Pie, RadialBarChart): fix the default value of cx, cy, innerRadius, outerRadius
+
 ## 0.6.0 (February 5, 2016)
 
 ### UI

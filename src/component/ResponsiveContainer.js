@@ -36,9 +36,9 @@ class ResponsiveContainer extends Component {
   }
 
   updateSizeOfWrapper = () => {
-    const wrapper = this.refs.wrapper;
-    const clientWidth = OuiDomUtils.width(wrapper);
-    const clientHeight = OuiDomUtils.height(wrapper);
+    const container = this.refs.container;
+    const clientWidth = OuiDomUtils.width(container);
+    const clientHeight = OuiDomUtils.height(container);
     const { width, height } = this.props;
 
     this.setState({
@@ -65,7 +65,7 @@ class ResponsiveContainer extends Component {
     }
 
     return (
-      <div className="recharts-responsive-wrapper" style={style} ref="wrapper">
+      <div className="recharts-responsive-container" style={style} ref="container">
         {
           hasInitialized && width > 0 && height > 0 ?
           React.cloneElement(children, { width, height }) :

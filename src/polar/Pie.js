@@ -50,9 +50,9 @@ class Pie extends Component {
     fill: '#808080',
     legendType: 'rect',
     // The abscissa of pole
-    cx: 0,
+    cx: '50%',
     // The ordinate of pole
-    cy: 0,
+    cy: '50%',
     // The start angle of first sector
     startAngle: 0,
     // The direction of drawing sectors
@@ -60,7 +60,7 @@ class Pie extends Component {
     // The inner radius of sectors
     innerRadius: 0,
     // The outer radius of sectors
-    outerRadius: 0,
+    outerRadius: '80%',
     nameKey: 'name',
     valueKey: 'value',
     data: [],

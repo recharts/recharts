@@ -30,15 +30,6 @@ export default React.createClass({
 
     return (
       <div className='pie-charts'>
-        <p>PieChart wrapped by ResponsiveContainer</p>
-        <div className='pie-chart-wrapper' style={{width: '50%', height: '100%', backgroundColor: '#f5f5f5'}}>
-          <ResponsiveContainer>
-            <PieChart>
-              <Pie data={data01} cx="30%" cy="30%" innerRadius="25%" outerRadius="40%"/>
-              <Pie data={data03} cx="30%" cy="30%" innerRadius="45%" outerRadius="80%"/>
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
 
         <p>Simple PieChart</p>
         <div className='pie-chart-wrapper'>
@@ -59,6 +50,15 @@ export default React.createClass({
           </PieChart>
         </div>
 
+        <p>PieChart wrapped by ResponsiveContainer</p>
+        <div className='pie-chart-wrapper' style={{width: '50%', height: '100%', backgroundColor: '#f5f5f5'}}>
+          <ResponsiveContainer>
+            <PieChart>
+              <Pie data={data01} innerRadius="25%" outerRadius="40%"/>
+              <Pie data={data03} innerRadius="45%" outerRadius="80%"/>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     );
   }

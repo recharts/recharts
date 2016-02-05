@@ -56,7 +56,7 @@ class RadialBarChart extends Component {
     cx: '50%',
     cy: '50%',
     innerRadius: '30%',
-    outerRadius: '100%',
+    outerRadius: '90%',
     barGap: 2,
     barCategoryGap: '10%',
     style: {},
