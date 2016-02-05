@@ -1,3 +1,12 @@
+## 0.6.0 (February 5, 2016)
+
+### UI
+- refactor: rename AdaptionWrapper to ResponsiveContainer
+- refactor: delete some repeated codes, and use polarToCartesian in PolarUtils
+- fix: update the defaultProps of cx, cy, innerRadius, outerRadius
+- fix(Sector, AdaptionWrapper):1. fix the bug of Sector when innerRadius is 0 2. fix the bug of unbind event when component is unmounted
+- feat(util): use lodash replace utils
+
 ## 0.5.2 (February 4, 2016)
 
 ### UI
