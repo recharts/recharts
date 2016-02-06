@@ -31,6 +31,7 @@ class PolarRadiusAxis extends Component {
       PropTypes.object,
       PropTypes.element,
     ]),
+    stroke: PropTypes.string,
     tickFormatter: PropTypes.func,
     domain: PropTypes.array,
   };
@@ -78,12 +79,10 @@ class PolarRadiusAxis extends Component {
 
   renderAxisLine() {
     const { cx, cy, angle, ticks, axisLine } = this.props;
-    const extent = ticks.reduce((result, entry) => {
-      return [
-        Math.min(result[0], entry.radius),
-        Math.max(result[1], entry.radius),
-      ];
-    }, [Infinity, -Infinity]);
+    const extent = ticks.reduce((result, entry) => [
+      Math.min(result[0], entry.radius),
+      Math.max(result[1], entry.radius),
+    ], [Infinity, -Infinity]);
     const point0 = polarToCartesian(cx, cy, extent[0], angle);
     const point1 = polarToCartesian(cx, cy, extent[1], angle);
 

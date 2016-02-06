@@ -87,29 +87,23 @@ class ScatterChart extends Component {
     const scale = axis.scale;
 
     if (axis.ticks) {
-      return axis.ticks.map(entry => {
-        return {
-          coord: scale(entry),
-          value: entry,
-        };
-      });
+      return axis.ticks.map(entry => ({
+        coord: scale(entry),
+        value: entry,
+      }));
     }
 
     if (scale.ticks) {
-      return scale.ticks(axis.tickCount).map(entry => {
-        return {
-          coord: scale(entry),
-          value: entry,
-        };
-      });
-    }
-
-    return scale.domain().map((entry) => {
-      return {
+      return scale.ticks(axis.tickCount).map(entry => ({
         coord: scale(entry),
         value: entry,
-      };
-    });
+      }));
+    }
+
+    return scale.domain().map((entry) => ({
+      coord: scale(entry),
+      value: entry,
+    }));
   }
   /**
    * Calculate the ticks of grid
@@ -145,9 +139,9 @@ class ScatterChart extends Component {
   }
 
   getDomain(items, dataKey) {
-    const domain = items.reduce((result, item) => {
-      return result.concat(item.props.data.map(entry => entry[dataKey]));
-    }, []);
+    const domain = items.reduce((result, item) => (
+      result.concat(item.props.data.map(entry => entry[dataKey]))
+    ), []);
 
     return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
   }

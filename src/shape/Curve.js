@@ -60,9 +60,7 @@ class Curve extends Component {
     if (!curvePath) { return ''; }
 
     if (baseLineType === 'curve' && baseLine && baseLine.length) {
-      const revese = baseLine.reduce((result, entry) => {
-        return [entry, ...result];
-      }, []);
+      const revese = baseLine.reduce((result, entry) => [entry, ...result], []);
       const revesePath = this.fliterMouseToSeg(l(revese) || '');
 
       curvePath += `L${revese[0].x} ${revese[0].y}${revesePath}Z`;

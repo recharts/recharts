@@ -138,12 +138,10 @@ class RadarChart extends Component {
     const { ticks, scale } = axisCfg;
 
     if (ticks && ticks.length) {
-      return ticks.map(entry => {
-        return {
-          radius: scale(entry),
-          value: entry,
-        };
-      });
+      return ticks.map(entry => ({
+        radius: scale(entry),
+        value: entry,
+      }));
     }
     const { tickCount } = axisCfg;
     const domain = scale.domain();
@@ -180,14 +178,13 @@ class RadarChart extends Component {
     if (!items || !items.length) {return null;}
 
     const baseProps = getPresentationAttributes(this.props);
-    return items.map((el, index) => {
-      return React.cloneElement(el, {
+    return items.map((el, index) => (
+      React.cloneElement(el, {
         ...baseProps,
         ...getPresentationAttributes(el),
         points: this.getComposedData(el, scale, cx, cy, innerRadius, outerRadius),
-        key: 'radar-' + index,
-      });
-    });
+        key: `radar-${index}`,
+      })));
   }
 
   renderGrid(radiusAxisCfg, cx, cy, innerRadius, outerRadius) {
@@ -221,12 +218,10 @@ class RadarChart extends Component {
     const { dataKey } = angleAxis.props;
 
     return React.cloneElement(angleAxis, {
-      ticks: data.map((v, i) => {
-        return {
-          value: dataKey ? v[dataKey] : i,
-          angle: this.getAngle(i, len, startAngle, clockWise),
-        };
-      }),
+      ticks: data.map((v, i) => ({
+        value: dataKey ? v[dataKey] : i,
+        angle: this.getAngle(i, len, startAngle, clockWise),
+      })),
       cx, cy, radius,
       axisLineType: (grid && grid.props && grid.props.gridType)
                     || PolarGrid.defaultProps.gridType,

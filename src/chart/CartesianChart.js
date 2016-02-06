@@ -216,12 +216,8 @@ class CartesianChart extends Component {
       const { stackedData } = group;
       const minList = stackedData[0].slice(dataStartIndex, dataEndIndex + 1);
       const maxList = stackedData[stackedData.length - 1].slice(dataStartIndex, dataEndIndex + 1);
-      const min = minList.reduce((res, entry) => {
-        return Math.min(res, entry[0]);
-      }, Infinity);
-      const max = maxList.reduce((res, entry) => {
-        return Math.max(res, entry[1]);
-      }, -Infinity);
+      const min = minList.reduce((res, entry) => Math.min(res, entry[0]), Infinity);
+      const max = maxList.reduce((res, entry) => Math.max(res, entry[1]), -Infinity);
 
       return [Math.min(min, result[0]), Math.max(max, result[1])];
     }, [Infinity, -Infinity]);
@@ -233,18 +229,14 @@ class CartesianChart extends Component {
    * @return {Array}        Domain
    */
   getDomainOfItemsWithSameAxis(items, type) {
-    const domains = items.map(item => {
-      return this.getDomainByKey(item.props.dataKey, type);
-    });
+    const domains = items.map(item => this.getDomainByKey(item.props.dataKey, type));
 
     if (type === 'number') {
       // Calculate the domain of number axis
-      return domains.reduce((result, entry) => {
-        return [
-          Math.min(result[0], entry[0]),
-          Math.max(result[1], entry[1]),
-        ];
-      }, [Infinity, -Infinity]);
+      return domains.reduce((result, entry) => [
+        Math.min(result[0], entry[0]),
+        Math.max(result[1], entry[1]),
+      ], [Infinity, -Infinity]);
     }
 
     const tag = {};
@@ -317,9 +309,9 @@ class CartesianChart extends Component {
         } else if (isCategoryAxis) {
           domain = _.range(0, len);
         } else {
-          domain = this.getDomainOfItemsWithSameAxis(items.filter(entry => {
-            return entry.props[axisIdKey] === axisId;
-          }), type);
+          domain = this.getDomainOfItemsWithSameAxis(items.filter(entry =>
+            entry.props[axisIdKey] === axisId
+          ), type);
         }
         if (type === 'number' && child.props.domain) {
           isDomainFixed = true;
@@ -563,20 +555,20 @@ class CartesianChart extends Component {
     const offset = isGrid && axis.type === 'category' ? scale.bandwidth() / 2 : 0;
 
     if (axis.ticks) {
-      return axis.ticks.map(entry => {
-        return { coord: scale(entry) + offset, value: entry };
-      });
+      return axis.ticks.map(entry => (
+        { coord: scale(entry) + offset, value: entry }
+      ));
     }
 
     if (scale.ticks) {
-      return scale.ticks(axis.tickCount).map(entry => {
-        return { coord: scale(entry) + offset, value: entry };
-      });
+      return scale.ticks(axis.tickCount).map(entry => (
+        { coord: scale(entry) + offset, value: entry }
+      ));
     }
 
-    return scale.domain().map((entry) => {
-      return { coord: scale(entry) + offset, value: entry };
-    });
+    return scale.domain().map((entry) => (
+      { coord: scale(entry) + offset, value: entry }
+    ));
   }
 
   /**
@@ -830,7 +822,7 @@ class CartesianChart extends Component {
               y={axis.y}
               width={axis.width}
               height={axis.height}
-              key={'x-axis-' + ids[i]}
+              key={`x-axis-${ids[i]}`}
               orientation={axis.orientation}
               viewBox={{ x: 0, y: 0, width, height }}
               ticks={this.getAxisTicks(axis, true)}
@@ -838,6 +830,7 @@ class CartesianChart extends Component {
           ));
         }
       }
+
       return xAxes.length ? <Layer key="x-axis-layer" className="recharts-x-axis">{xAxes}</Layer> : null;
     }
   }
@@ -999,9 +992,9 @@ class CartesianChart extends Component {
 
     if (!lines || !lines.length) {return null;}
 
-    return lines.map((entry, i) => {
-      return React.cloneElement(entry, {
-        key: 'reference-line-' + i,
+    return lines.map((entry, i) =>
+      React.cloneElement(entry, {
+        key: `reference-line-${i}`,
         xAxisMap, yAxisMap,
         viewBox: {
           x: offset.left,
@@ -1009,9 +1002,8 @@ class CartesianChart extends Component {
           width: offset.width,
           height: offset.height,
         },
-      });
-    });
-
+      })
+    );
   }
 }
 

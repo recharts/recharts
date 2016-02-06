@@ -171,8 +171,8 @@ class Line extends Component {
           <Animate isActive={isAnimationActive}
             begin={animationBegin}
             canBegin={totalLength > 0}
-            from={'0px ' + (totalLength === 0 ? 1 : totalLength) + 'px'}
-            to={totalLength + 'px 0px'}
+            from={`0px ${(totalLength === 0 ? 1 : totalLength)} px`}
+            to={`${totalLength} px 0px`}
             easing={animationEasing}
             duration={animationDuration}
             attributeName="strokeDasharray"

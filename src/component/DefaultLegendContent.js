@@ -79,16 +79,14 @@ class DefaultLegendContent extends Component {
     };
     const svgStyle = { display: 'inline-block', verticalAlign: 'middle', marginRight: 4 };
 
-    return payload.map((entry, i) => {
-      return (
-        <li className={'recharts-legend-item legend-item-' + i} style={itemStyle} key={'legend-item-' + i}>
-          <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
-            {this.renderIcon(entry)}
-          </Surface>
-          <span className="recharts-legend-item-text">{entry.value}</span>
-        </li>
-      );
-    });
+    return payload.map((entry, i) => (
+      <li className={`recharts-legend-item legend-item-${i}`} style={itemStyle} key={`legend-item-${i}`}>
+        <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
+          {this.renderIcon(entry)}
+        </Surface>
+        <span className="recharts-legend-item-text">{entry.value}</span>
+      </li>
+    ));
   }
 
   render() {

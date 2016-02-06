@@ -48,20 +48,22 @@ class AreaChart extends CartesianChart {
     let baseLineType;
     if (hasStack) {
       baseLineType = 'curve';
-      baseLine = stackedData.map((entry, index) => {
-        return {
-          x: layout === 'horizontal' ? xTicks[index].coord : xAxis.scale(entry[0]),
-          y: layout === 'horizontal' ? yAxis.scale(entry[0]) : yTicks[index].coord,
-        };
-      });
+      baseLine = stackedData.map((entry, index) => ({
+        x: layout === 'horizontal' ? xTicks[index].coord : xAxis.scale(entry[0]),
+        y: layout === 'horizontal' ? yAxis.scale(entry[0]) : yTicks[index].coord,
+      }));
     } else if (layout === 'horizontal') {
       baseLineType = layout;
       range = yAxis.scale.range();
-      baseLine = xAxis.orientation === 'top' ? Math.min(range[0], range[1]) : Math.max(range[0], range[1]);
+      baseLine = xAxis.orientation === 'top' ?
+        Math.min(range[0], range[1]) :
+        Math.max(range[0], range[1]);
     } else {
       baseLineType = layout;
       range = xAxis.scale.range();
-      baseLine = yAxis.orientation === 'left' ? Math.min(range[0], range[1]) : Math.max(range[0], range[1]);
+      baseLine = yAxis.orientation === 'left' ?
+        Math.min(range[0], range[1]) :
+        Math.max(range[0], range[1]);
     }
 
     return { points, baseLine, baseLineType };
@@ -139,14 +141,14 @@ class AreaChart extends CartesianChart {
       const pointStyle = { fill, strokeWidth: 2, stroke: '#fff' };
 
       if (hasDot && activePoint) {
-        dotItems.push(<Dot key={'area-dot-' + i} cx={activePoint.x} cy={activePoint.y} r={4} {...pointStyle}/>);
+        dotItems.push(<Dot key={`area-dot-${i}`} cx={activePoint.x} cy={activePoint.y} r={4} {...pointStyle}/>);
       }
 
       let finalFillOpacity = fillOpacity === +fillOpacity ? fillOpacity : Area.defaultProps.fillOpacity;
       finalFillOpacity = activeAreaKey === dataKey ? Math.min(finalFillOpacity * 1.2, 1) : finalFillOpacity;
 
       const area = React.cloneElement(child, {
-        key: 'area-' + i,
+        key: `area-${i}`,
         ...offset,
         ...composeData,
         fillOpacity: finalFillOpacity,

@@ -52,13 +52,11 @@ class LineChart extends CartesianChart {
     const xTicks = this.getAxisTicks(xAxis);
     const yTicks = this.getAxisTicks(yAxis);
 
-    return data.map((entry, index) => {
-      return {
-        x: layout === 'horizontal' ? xTicks[index].coord : xAxis.scale(entry[dataKey]),
-        y: layout === 'horizontal' ? yAxis.scale(entry[dataKey]) : yTicks[index].coord,
-        value: entry[dataKey],
-      };
-    });
+    return data.map((entry, index) => ({
+      x: layout === 'horizontal' ? xTicks[index].coord : xAxis.scale(entry[dataKey]),
+      y: layout === 'horizontal' ? yAxis.scale(entry[dataKey]) : yTicks[index].coord,
+      value: entry[dataKey],
+    }));
   }
   /**
    * Handler of mouse entering line chart

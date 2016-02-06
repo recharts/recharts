@@ -94,9 +94,7 @@ class BarChart extends CartesianChart {
 
     // whether or not is barSize setted by user
     if (sizeList[0].barSize === +sizeList[0].barSize) {
-      let sum = sizeList.reduce((res, entry) => {
-        return res + entry.barSize;
-      }, 0);
+      let sum = sizeList.reduce((res, entry) => (res + entry.barSize), 0);
       sum += (len - 1) * barGap;
       const offset = ((bandSize - sum) / 2) >> 0;
       let prev = { offset: offset - barGap, size: 0 };
@@ -124,6 +122,7 @@ class BarChart extends CartesianChart {
           offset: offset + (size + barGap) * i,
           size,
         };
+
         if (entry.stackList && entry.stackList.length) {
           entry.stackList.forEach(key => {
             res[key] = res[entry.dataKey];

@@ -89,7 +89,7 @@ class Scatter extends Component {
           r={i === activeIndex ? r * 1.1 : r}
           onMouseEnter={this.handleCircleMouseEnter.bind(this, entry, i)}
           onMouseLeave={::this.handleCircleMouseLeave}
-          key={'circle-' + i}
+          key={`circle-${i}'`}
         />
       );
     });
@@ -103,10 +103,9 @@ class Scatter extends Component {
     let linePoints;
 
     if (lineType === 'joint') {
-      linePoints = points.map(entry => {
-        return { x: entry.cx, y: entry.cy };
-      });
+      linePoints = points.map(entry => ({ x: entry.cx, y: entry.cy }));
     }
+
     const lineProps = {
       ...scatterProps,
       fill: 'none',
@@ -117,7 +116,9 @@ class Scatter extends Component {
 
     return (
       <Layer className="recharts-scatter-line">
-        {isLineElement ? React.cloneElement(line, lineProps) : React.createElement(Curve, lineProps)}
+        {isLineElement ?
+          React.cloneElement(line, lineProps) :
+          React.createElement(Curve, lineProps)}
       </Layer>
     );
   }

@@ -96,12 +96,10 @@ class Bar extends Component {
     return data.map((entry, index) => {
       const { value, width, height, ...rest } = entry;
       const props = { ...others, ...rest, width, height };
+      const getStyle = (isBegin) => ({
+        transform: `scale${layout === 'vertical' ? 'X' : 'Y'}(${isBegin ? 0 : 1})`,
+      });
       let transformOrigin = '';
-      const getStyle = (isBegin) => {
-        return {
-          transform: `scale${layout === 'vertical' ? 'X' : 'Y'}(${isBegin ? 0 : 1})`,
-        };
-      };
 
       if (layout === 'vertical') {
         transformOrigin = width > 0 ? 'left center' : 'right center';

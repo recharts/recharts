@@ -38,6 +38,7 @@ class PolarAngleAxis extends Component {
       value: PropTypes.any,
       angle: PropTypes.number,
     })),
+    stroke: PropTypes.string,
     orientation: PropTypes.oneOf(['inner', 'outer']),
     tickFormatter: PropTypes.func,
   };
@@ -138,7 +139,7 @@ class PolarAngleAxis extends Component {
       }
 
       return (
-        <g className="recharts-polar-angle-axis-tick" key={'tick-' + i}>
+        <g className="recharts-polar-angle-axis-tick" key={`tick-${i}`}>
           {tickLine && <line className="recharts-polar-angle-axis-tick-line" {...tickProps}/>}
           {label && labelItem}
         </g>

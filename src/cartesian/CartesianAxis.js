@@ -40,6 +40,7 @@ class CartesianAxis extends Component {
       coord: PropTypes.value,
     })),
     tickSize: PropTypes.number,
+    stroke: PropTypes.string,
     tickFormatter: PropTypes.func,
     interval: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   };
@@ -77,9 +78,7 @@ class CartesianAxis extends Component {
   }
 
   static getNumberIntervalTicks(ticks, interval) {
-    return ticks.filter((entry, i) => {
-      return i % (interval + 1) === 0;
-    });
+    return ticks.filter((entry, i) => (i % (interval + 1) === 0));
   }
 
   static getAutoIntervalTicks(ticks, viewBox, orientation, minLabelGap) {
@@ -97,7 +96,9 @@ class CartesianAxis extends Component {
 
     return ticks.filter(entry => {
       const labelSize = getStringSize(entry.value)[sizeKey];
-      const isShow = sign === 1 ? (entry.coord - labelSize / 2) >= pointer : (entry.coord + labelSize / 2) <= pointer;
+      const isShow = sign === 1 ?
+        (entry.coord - labelSize / 2) >= pointer :
+        (entry.coord + labelSize / 2) <= pointer;
 
       if (isShow) {
         pointer = entry.coord + sign * labelSize / 2 + minLabelGap;
@@ -268,9 +269,8 @@ class CartesianAxis extends Component {
         );
       }
 
-
       return (
-        <g className="recharts-cartesian-axis-tick" key={'tick-' + i}>
+        <g className="recharts-cartesian-axis-tick" key={`tick-${i}`}>
           {tickLine && <line className="recharts-cartesian-axis-tick-line" {...tickProps}/>}
           {label && labelItem}
         </g>

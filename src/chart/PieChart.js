@@ -51,12 +51,10 @@ class PieChart extends Component {
   getComposedData(item) {
     const { fill, stroke, strokeWidth, strokeDasharray, data } = item.props;
 
-    return data.map((entry) => {
-      return {
-        fill, stroke, strokeWidth, strokeDasharray,
-        ...entry,
-      };
-    });
+    return data.map((entry) => ({
+      fill, stroke, strokeWidth, strokeDasharray,
+      ...entry,
+    }));
   }
 
   handleMouseEnter(el, e) {

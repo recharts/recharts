@@ -2,6 +2,7 @@
  * @fileOverview Background
  */
 import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
 import pureRender from 'pure-render-decorator';
 
 // TODO: add support of gradient
@@ -29,7 +30,7 @@ class Background extends Component {
     const { className, ...others } = this.props;
 
     return (
-      <g className={'recharts-background ' + (className || '')}>
+      <g className={classNames('recharts-background', className)}>
         <rect {...others}/>
       </g>
     );

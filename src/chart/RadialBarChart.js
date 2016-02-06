@@ -38,7 +38,6 @@ class RadialBarChart extends Component {
     barGap: PropTypes.number,
     // The radius of each radial bar
     barSize: PropTypes.number,
-
     title: PropTypes.string,
     style: PropTypes.object,
     onMouseEnter: PropTypes.func,
@@ -102,12 +101,10 @@ class RadialBarChart extends Component {
   getRadiusList(items) {
     const { barSize } = this.props;
 
-    return items.map((child) => {
-      return {
-        ...child.props,
-        barSize: child.props.barSize || barSize,
-      };
-    });
+    return items.map((child) => ({
+      ...child.props,
+      barSize: child.props.barSize || barSize,
+    }));
   }
 
   /**
@@ -138,9 +135,7 @@ class RadialBarChart extends Component {
 
     // whether or not is barSize setted by user
     if (len && radiusList[0].barSize === +radiusList[0].barSize) {
-      let sum = radiusList.reduce((res, entry) => {
-        return res + entry.barSize;
-      }, 0);
+      let sum = radiusList.reduce((res, entry) => res + entry.barSize, 0);
       sum += (len - 1) * barGap;
       const offset = -sum / 2 >> 0;
       let prev = { offset: offset - barGap, radius: 0 };
@@ -203,13 +198,11 @@ class RadialBarChart extends Component {
 
     const { data, width, height } = this.props;
 
-    const legendData = data.map(entry => {
-      return {
-        type: 'square',
-        color: entry.fill || '#000',
-        value: entry.name,
-      };
-    });
+    const legendData = data.map(entry => ({
+      type: 'square',
+      color: entry.fill || '#000',
+      value: entry.name,
+    }));
 
     return React.cloneElement(legendItem, {
       ...Legend.getWithHeight(legendItem, width, height),

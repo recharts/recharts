@@ -83,7 +83,7 @@ class Pie extends Component {
     };
 
     if (!this.id) {
-      this.id = 'clipPath' + Date.now();
+      this.id = `clipPath${Date.now()}`;
     }
   }
 
@@ -102,9 +102,7 @@ class Pie extends Component {
     const deltaAngle = this.getDeltaAngle();
     const absDeltaAngle = Math.abs(deltaAngle);
 
-    const sum = data.reduce((result, entry) => {
-      return result + entry[valueKey];
-    }, 0);
+    const sum = data.reduce((result, entry) => (result + entry[valueKey]), 0);
 
     let sectors = [];
     let prev;
@@ -186,17 +184,15 @@ class Pie extends Component {
             to = {{ endAngle: this.props.endAngle }}
           >
             {
-              ({ endAngle }) => {
-                return (
-                  <Sector cx={cx}
-                    cy={cy}
-                    outerRadius={outerRadius}
-                    innerRadius={innerRadius}
-                    startAngle={startAngle}
-                    endAngle={endAngle}
-                  />
-                );
-              }
+              ({ endAngle }) => (
+                <Sector cx={cx}
+                  cy={cy}
+                  outerRadius={outerRadius}
+                  innerRadius={innerRadius}
+                  startAngle={startAngle}
+                  endAngle={endAngle}
+                />
+              )
             }
           </Animate>
         </clipPath>
@@ -253,18 +249,16 @@ class Pie extends Component {
   renderSectors(sectors) {
     const { onMouseLeave, onClick } = this.props;
 
-    return sectors.map((entry, i) => {
-      return (
-        <Sector
-          {...entry}
-          className="recharts-pie-sector"
-          onMouseEnter={this.handleSectorEnter.bind(this, entry)}
-          onMouseLeave={onMouseLeave}
-          onClick={onClick}
-          key={'sector-' + i}
-        />
-      );
-    });
+    return sectors.map((entry, i) => (
+      <Sector
+        {...entry}
+        className="recharts-pie-sector"
+        onMouseEnter={this.handleSectorEnter.bind(this, entry)}
+        onMouseLeave={onMouseLeave}
+        onClick={onClick}
+        key={`sector-${i}`}
+      />
+    ));
   }
 
   render() {
