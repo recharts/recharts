@@ -117,8 +117,8 @@ class Line extends Component {
       };
 
       return isDotElement ?
-            React.cloneElement(dot, dotProps) :
-            <Dot className="recharts-line-dot" {...dotProps} />;
+        React.cloneElement(dot, dotProps) :
+        <Dot className="recharts-line-dot" {...dotProps} />;
     });
 
     return <Layer className="recharts-line-dots">{dots}</Layer>;
@@ -143,9 +143,9 @@ class Line extends Component {
         payload: entry,
       };
 
-      return isLabelElement ? React.cloneElement(label, labelProps) : (
-        <text {...labelProps} className="recharts-line-label">{entry.value}</text>
-      );
+      return isLabelElement ?
+        React.cloneElement(label, labelProps) :
+        (<text {...labelProps} className="recharts-line-label">{entry.value}</text>);
     });
 
     return <Layer className="recharts-line-labels">{labels}</Layer>;

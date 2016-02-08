@@ -86,8 +86,8 @@ class Legend extends Component {
       <div className="recharts-legend-wrapper" style={outerStyle}>
         {
           React.isValidElement(content) ?
-          React.cloneElement(content, this.props) :
-          React.createElement(DefaultLegendContent, this.props)
+            React.cloneElement(content, this.props) :
+            React.createElement(DefaultLegendContent, this.props)
         }
       </div>
     );
