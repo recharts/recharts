@@ -89,7 +89,7 @@ class Scatter extends Component {
           r={i === activeIndex ? r * 1.1 : r}
           onMouseEnter={this.handleCircleMouseEnter.bind(this, entry, i)}
           onMouseLeave={::this.handleCircleMouseLeave}
-          key={`circle-${i}'`}
+          key={`circle-${i}`}
         />
       );
     });
