@@ -44,8 +44,8 @@ class Radar extends Component {
     const isShapeElement = React.isValidElement(shape);
 
     return isShapeElement ?
-           React.cloneElement(shape, this.props) :
-           React.createElement(Polygon, this.props);
+      React.cloneElement(shape, this.props) :
+      React.createElement(Polygon, this.props);
   }
 
   renderLabels() {
@@ -94,8 +94,8 @@ class Radar extends Component {
       };
 
       return isDotElement ?
-            React.cloneElement(dot, dotProps) :
-            <Dot {...dotProps} className="recharts-radar-dot"/>;
+        React.cloneElement(dot, dotProps) :
+        <Dot {...dotProps} className="recharts-radar-dot"/>;
     });
 
     return <Layer className="recharts-radar-dots">{dots}</Layer>;
@@ -104,7 +104,7 @@ class Radar extends Component {
   render() {
     const { className, points, label, dot } = this.props;
 
-    if (!points || !points.length) {return null;}
+    if (!points || !points.length) { return null; }
 
     const layerClass = classNames('recharts-radar', className);
 

@@ -51,6 +51,7 @@ class ScatterChart extends Component {
     isTooltipActive: false,
     activeItem: null,
   };
+
   /**
    * Compose the data of each group
    * @param  {Array}  data        The original data
@@ -77,6 +78,7 @@ class ScatterChart extends Component {
       };
     });
   }
+
   /**
    * Get the ticks of an axis
    * @param  {Object}  axis The configuration of an axis
@@ -105,6 +107,7 @@ class ScatterChart extends Component {
       value: entry,
     }));
   }
+
   /**
    * Calculate the ticks of grid
    * @param  {Array} ticks The ticks in axis
@@ -129,6 +132,7 @@ class ScatterChart extends Component {
 
     return values;
   }
+
   /**
    * get domain of ticks
    * @param  {Array} ticks Ticks of axis
@@ -145,6 +149,7 @@ class ScatterChart extends Component {
 
     return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
   }
+
   /**
    * Get the configuration of x-axis or y-axis
    * @param  {String} axisType The type of axis
@@ -170,6 +175,7 @@ class ScatterChart extends Component {
 
     return null;
   }
+
   /**
    * Get the configuration of z-axis
    * @param  {Array} items The instances of item
@@ -201,6 +207,7 @@ class ScatterChart extends Component {
       height: height - offset.top - offset.bottom,
     };
   }
+
   /**
    * Configure the scale function of axis
    * @param {Object} scale The scale function
@@ -224,7 +231,8 @@ class ScatterChart extends Component {
           .ticks(opts.tickCount);
     }
   }
-    /**
+
+  /**
    * Calculate the scale function, position, width, height of axes
    * @param  {Object} axis     The configuration of axis
    * @param  {Object} offset   The offset of main part in the svg element
@@ -254,7 +262,6 @@ class ScatterChart extends Component {
       y = offset.top;
     }
 
-
     return {
       ...axis,
       scale,
@@ -263,6 +270,7 @@ class ScatterChart extends Component {
       x, y,
     };
   }
+
   /**
    * Get the content to be displayed in the tooltip
    * @param  {Object} data  The data of active item
@@ -294,10 +302,11 @@ class ScatterChart extends Component {
 
     return content;
   }
+
   /**
    * The handler of mouse entering a scatter
-   * @param {Object} el      The active scatter
-   * @param {Object} e       Event object
+   * @param {Object} el The active scatter
+   * @param {Object} e  Event object
    * @return {Object} no return
    */
   handleScatterMouseEnter(el, e) {
@@ -307,6 +316,7 @@ class ScatterChart extends Component {
       activeTooltipCoord: { x: el.cx, y: el.cy },
     });
   }
+
   /**
    * The handler of mouse leaving a scatter
    * @return {Object} no return
@@ -316,6 +326,7 @@ class ScatterChart extends Component {
       isTooltipActive: false,
     });
   }
+
   /**
    * Draw Tooltip
    * @param  {Array} items   The instances of Scatter
@@ -351,6 +362,7 @@ class ScatterChart extends Component {
       mouseY: chartY,
     });
   }
+
   /**
    * Draw grid
    * @param  {Object} xAxis  The configuration of x-axis
@@ -386,11 +398,12 @@ class ScatterChart extends Component {
       horizontalPoints,
     });
   }
+
   /**
    * Draw legend
-   * @param  {Array} items             The instances of Scatters
+   * @param  {Array} items     The instances of Scatters
    * @param  {Object} offset   The offset of main part in the svg element
-   * @return {ReactElement}            The instance of Legend
+   * @return {ReactElement}    The instance of Legend
    */
   renderLegend(items, offset) {
     const { children, width, height } = this.props;
@@ -412,6 +425,7 @@ class ScatterChart extends Component {
       payload: legendData,
     });
   }
+
   /**
    * Draw axis
    * @param {Object} axis     The configuration of axis
@@ -437,6 +451,7 @@ class ScatterChart extends Component {
       );
     }
   }
+
   renderCursor(xAxis, yAxis, offset) {
     const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
@@ -457,6 +472,7 @@ class ScatterChart extends Component {
       React.cloneElement(tooltipItem.props.cursor, cursorProps) :
       React.createElement(Cross, cursorProps);
   }
+
   /**
    * Draw the main part of scatter chart
    * @param  {Array} items   All the instance of Scatter
@@ -485,7 +501,7 @@ class ScatterChart extends Component {
   }
 
   render() {
-    if (!validateWidthHeight(this)) {return null;}
+    if (!validateWidthHeight(this)) { return null; }
 
     const { style, children, className, width, height } = this.props;
     const items = findAllByType(children, Scatter);

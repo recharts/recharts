@@ -81,7 +81,7 @@ class Sector extends Component {
 
   render() {
     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle,
-          onClick, onMouseEnter, onMouseLeave, className } = this.props;
+      onClick, onMouseEnter, onMouseLeave, className } = this.props;
 
     if (outerRadius < innerRadius || startAngle === endAngle) { return null; }
 

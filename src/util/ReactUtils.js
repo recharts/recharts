@@ -121,19 +121,19 @@ export const findAllByType = (children, type) => {
   return result;
 };
 
-  /*
-   * Return the first matched child by type, return null otherwise.
-   * `type` can be a React element class or string.
-   */
+/*
+ * Return the first matched child by type, return null otherwise.
+ * `type` can be a React element class or string.
+ */
 export const findChildByType = (children, type) => {
   const result = findAllByType(children, type);
 
   return result && result[0];
 };
 
-  /*
-   * Create a new array of children excluding the ones matched the type
-   */
+/*
+ * Create a new array of children excluding the ones matched the type
+ */
 export const withoutType = (children) => {
   const newChildren = [];
   let types = [].slice.call(arguments, 1);
@@ -153,13 +153,15 @@ export const withoutType = (children) => {
 
   return newChildren;
 };
+
 /**
  * get all the presentation attribute of svg element
  * @param  {Object} el A react element or the props of a react element
  * @return {Object}    attributes or null
  */
 export const getPresentationAttributes = (el) => {
-  if (!el) {return null;}
+  if (!el) { return null; }
+
   const props = React.isValidElement(el) ? el.props : el;
   let result = null;
 
@@ -172,13 +174,15 @@ export const getPresentationAttributes = (el) => {
 
   return result;
 };
+
 /**
  * get all the event attribute of svg element
  * @param  {Object} el A react element or the props of a react element
  * @return {Object}    attributes or null
  */
 export const getEventAttributes = (el) => {
-  if (!el) {return null;}
+  if (!el) { return null; }
+
   const props = React.isValidElement(el) ? el.props : el;
   let result = null;
 
@@ -191,6 +195,7 @@ export const getEventAttributes = (el) => {
 
   return result;
 };
+
 /**
  * validate the width and height props of a chart element
  * @param  {Object} el A chart element

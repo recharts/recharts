@@ -20,6 +20,7 @@ class AreaChart extends CartesianChart {
     layout: 'horizontal',
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
+
   /**
    * Compose the data of each area
    * @param  {Object} xAxis       The configuration of x-axis
@@ -68,6 +69,7 @@ class AreaChart extends CartesianChart {
 
     return { points, baseLine, baseLineType };
   }
+
   /**
    * Handler of mouse entering area chart
    * @param {String} key  The unique key of a group of data
@@ -78,6 +80,7 @@ class AreaChart extends CartesianChart {
       activeAreaKey: key,
     });
   }
+
   /**
    * Handler of mouse leaving area chart
    * @return {Object} null
@@ -87,6 +90,7 @@ class AreaChart extends CartesianChart {
       activeAreaKey: null,
     });
   }
+
   renderCursor(xAxisMap, yAxisMap, offset) {
     const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
@@ -111,9 +115,10 @@ class AreaChart extends CartesianChart {
     };
 
     return React.isValidElement(tooltipItem.props.cursor) ?
-          React.cloneElement(tooltipItem.props.cursor, cursorProps) :
-          <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor"/>;
+      React.cloneElement(tooltipItem.props.cursor, cursorProps) :
+      <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor" />;
   }
+
   /**
    * Draw the main part of area chart
    * @param  {Array} items     React elements of Area
@@ -141,7 +146,7 @@ class AreaChart extends CartesianChart {
       const pointStyle = { fill, strokeWidth: 2, stroke: '#fff' };
 
       if (hasDot && activePoint) {
-        dotItems.push(<Dot key={`area-dot-${i}`} cx={activePoint.x} cy={activePoint.y} r={4} {...pointStyle}/>);
+        dotItems.push(<Dot key={`area-dot-${i}`} cx={activePoint.x} cy={activePoint.y} r={4} {...pointStyle} />);
       }
 
       let finalFillOpacity = fillOpacity === +fillOpacity ? fillOpacity : Area.defaultProps.fillOpacity;
@@ -189,7 +194,6 @@ class AreaChart extends CartesianChart {
         onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseLeave={::this.handleMouseLeave}
       >
-
         <Surface width={width} height={height}>
           {this.renderGrid(xAxisMap, yAxisMap, offset)}
           {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
@@ -198,7 +202,6 @@ class AreaChart extends CartesianChart {
           {this.renderCursor(xAxisMap, yAxisMap, offset)}
           {this.renderItems(items, xAxisMap, yAxisMap, offset, stackGroups)}
         </Surface>
-
         {this.renderLegend(items)}
         {this.renderTooltip(items, offset)}
       </div>

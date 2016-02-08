@@ -116,9 +116,11 @@ class Scatter extends Component {
 
     return (
       <Layer className="recharts-scatter-line">
-        {isLineElement ?
-          React.cloneElement(line, lineProps) :
-          React.createElement(Curve, lineProps)}
+        {
+          isLineElement ?
+            React.cloneElement(line, lineProps) :
+            React.createElement(Curve, lineProps)
+        }
       </Layer>
     );
   }

@@ -91,6 +91,7 @@ class PolarGrid extends Component {
       />
     );
   }
+
   /**
    * Draw concentric polygons
    * @param {Number} radius The radius of polygon

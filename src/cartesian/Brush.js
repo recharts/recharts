@@ -247,8 +247,22 @@ class Brush extends Component {
           fill={stroke}
           stroke="none"
         />
-        <line x1={x + 1} y1={lineY} x2={x + travellerWidth - 1} y2={lineY} fill="none" stroke="#fff"/>
-        <line x1={x + 1} y1={lineY + 2} x2={x + travellerWidth - 1} y2={lineY + 2} fill="none" stroke="#fff"/>
+        <line
+          x1={x + 1}
+          y1={lineY}
+          x2={x + travellerWidth - 1}
+          y2={lineY}
+          fill="none"
+          stroke="#fff"
+        />
+        <line
+          x1={x + 1}
+          y1={lineY + 2}
+          x2={x + travellerWidth - 1}
+          y2={lineY + 2}
+          fill="none"
+          stroke="#fff"
+        />
       </Layer>
     );
   }
@@ -285,10 +299,22 @@ class Brush extends Component {
 
     return (
       <Layer className="recharts-brush-texts">
-        <text textAnchor="end" style={style} dy={offset} x={Math.min(startX, endX) - offset} y={y + height / 2}>
+        <text
+          textAnchor="end"
+          style={style}
+          dy={offset}
+          x={Math.min(startX, endX) - offset}
+          y={y + height / 2}
+        >
           {data[startIndex]}
         </text>
-        <text textAnchor="start" style={style} dy={offset} x={Math.max(startX, endX) + travellerWidth + offset} y={y + height / 2}>
+        <text
+          textAnchor="start"
+          style={style}
+          dy={offset}
+          x={Math.max(startX, endX) + travellerWidth + offset}
+          y={y + height / 2}
+        >
           {data[endIndex]}
         </text>
       </Layer>
@@ -304,7 +330,8 @@ class Brush extends Component {
     const layerClass = classNames('recharts-bursh', className);
 
     return (
-      <Layer className={layerClass}
+      <Layer
+        className={layerClass}
         onMouseUp={::this.handleUp}
         onMouseMove={::this.handleMove}
         onMouseLeave={::this.handleLeaveWrapper}

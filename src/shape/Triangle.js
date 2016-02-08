@@ -36,7 +36,7 @@ class Rectangle extends Component {
   };
 
   getPath(points) {
-    if (!points || !points.length) {return '';}
+    if (!points || !points.length) { return ''; }
 
     const ary = points.map(entry => `${entry.x} ${entry.y}`);
 

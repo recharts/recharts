@@ -108,6 +108,7 @@ class Treemap extends Component {
     }
     s *= s;
     newU *= newU;
+
     return s
         ? Math.max((newU * rmax * ratio) / s, s / (newU * rmin * ratio))
         : Infinity;
@@ -121,6 +122,7 @@ class Treemap extends Component {
     let y = rect.y;
     let v = u ? Math.round(row.area / u) : 0;
     let o;
+
     if (u === rect.width) { // horizontal subdivision
       if (flush || v > rect.height) v = rect.height; // over+underflow
       while (++i < n) {
@@ -157,6 +159,7 @@ class Treemap extends Component {
     const computedChildren = children && children.length ?
                                children.map(this.computeNode.bind(this, childDepth)) : null;
     let value;
+
     if (children && children.length) {
       value = computedChildren.reduce((a, b) => (a + b.value), 0);
     } else {
@@ -188,11 +191,11 @@ class Treemap extends Component {
       <Layer key={`recharts-treemap-node-${i}`}>
         {
           React.isValidElement(content) ?
-          React.cloneElement(content, nodeProps) : this.renderDefaultNode(nodeProps)
+            React.cloneElement(content, nodeProps) : this.renderDefaultNode(nodeProps)
         }
         {
           node.children && node.children.length ?
-          node.children.map(this.renderNode.bind(this, root)) : null
+            node.children.map(this.renderNode.bind(this, root)) : null
         }
       </Layer>
     );

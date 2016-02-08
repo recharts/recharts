@@ -50,6 +50,7 @@ class ComposedChart extends CartesianChart {
     layout: 'horizontal',
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
+
   /**
    * Compose the data of each line
    * @param  {Object} xAxis   The configuration of x-axis
@@ -73,6 +74,7 @@ class ComposedChart extends CartesianChart {
       value: entry[dataKey],
     }));
   }
+
   /**
    * Compose the data of each area
    * @param  {Object} xAxis   The configuration of x-axis
@@ -122,6 +124,7 @@ class ComposedChart extends CartesianChart {
 
     return { points, baseLine, baseLineType };
   }
+
   /**
    * Compose the data of each bar
    * @param  {Array}  barPosition The offset and size of each bar
@@ -177,6 +180,7 @@ class ComposedChart extends CartesianChart {
 
     return Math.max(Math.min(domain[0], domain[1]), 0);
   }
+
   /**
    * Calculate the size of each bar and the gap between two bars
    * @param  {Number}   bandSize  The size of each category
@@ -229,6 +233,7 @@ class ComposedChart extends CartesianChart {
 
     return result;
   }
+
   /**
    * Calculate the size of all groups
    * @param  {Object} stackGroups The items grouped by axisId and stackId
@@ -260,6 +265,7 @@ class ComposedChart extends CartesianChart {
       return result;
     }, {});
   }
+
   /**
    * Calculate the size between two category
    * @param  {Function} scale Scale function
@@ -271,6 +277,7 @@ class ComposedChart extends CartesianChart {
     }
     return 0;
   }
+
   /**
    * Handler of mouse entering bar chart
    * @param {String} key  The unique key of a group of data
@@ -281,6 +288,7 @@ class ComposedChart extends CartesianChart {
       activeBarKey: key,
     });
   }
+
   /**
    * Handler of mouse leaving area chart
    * @return {Object} null
@@ -290,6 +298,7 @@ class ComposedChart extends CartesianChart {
       activeBarKey: null,
     });
   }
+
   /**
    * Handler of mouse entering line chart
    * @param {String}       key The unique key of a group of data
@@ -300,6 +309,7 @@ class ComposedChart extends CartesianChart {
       activeLineKey: key,
     });
   }
+
   /**
    * Handler of mouse leaving line chart
    * @return {Object} no return
@@ -309,6 +319,7 @@ class ComposedChart extends CartesianChart {
       activeLineKey: null,
     });
   }
+
   /**
    * Handler of mouse entering area chart
    * @param {String} key  The unique key of a group of data
@@ -319,6 +330,7 @@ class ComposedChart extends CartesianChart {
       activeAreaKey: key,
     });
   }
+
   /**
    * Handler of mouse leaving area chart
    * @return {Object} null
@@ -430,7 +442,7 @@ class ComposedChart extends CartesianChart {
       const pointStyle = { fill, strokeWidth: 2, stroke: '#fff' };
 
       if (hasDot && activePoint) {
-        dotItems.push(<Dot key={`area-dot-${i}`} cx={activePoint.x} cy={activePoint.y} r={4} {...pointStyle}/>);
+        dotItems.push(<Dot key={`area-dot-${i}`} cx={activePoint.x} cy={activePoint.y} r={4} {...pointStyle} />);
       }
 
       let finalFillOpacity = fillOpacity === +fillOpacity ? fillOpacity : Area.defaultProps.fillOpacity;
@@ -515,7 +527,8 @@ class ComposedChart extends CartesianChart {
     yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
 
     return (
-      <div className={classNames('recharts-wrapper', className)}
+      <div
+        className={classNames('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', ...style }}
         onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}

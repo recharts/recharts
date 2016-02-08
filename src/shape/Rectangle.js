@@ -98,8 +98,7 @@ class Rectangle extends Component {
 
   render() {
     const { x, y, width, height, radius,
-        onClick, onMouseEnter, onMouseLeave,
-        className } = this.props;
+      onClick, onMouseEnter, onMouseLeave, className } = this.props;
 
     if (x !== +x || y !== +y || width !== +width || height !== +height) { return null; }
 

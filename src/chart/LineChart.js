@@ -40,6 +40,7 @@ class LineChart extends CartesianChart {
     layout: 'horizontal',
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
+
   /**
    * Compose the data of each group
    * @param  {Object} xAxis   The configuration of x-axis
@@ -58,6 +59,7 @@ class LineChart extends CartesianChart {
       value: entry[dataKey],
     }));
   }
+
   /**
    * Handler of mouse entering line chart
    * @param {String}       key The unique key of a group of data
@@ -68,6 +70,7 @@ class LineChart extends CartesianChart {
       activeLineKey: key,
     });
   }
+
   /**
    * Handler of mouse leaving line chart
    * @return {Object} no return
@@ -102,8 +105,8 @@ class LineChart extends CartesianChart {
     };
 
     return React.isValidElement(tooltipItem.props.cursor) ?
-          React.cloneElement(tooltipItem.props.cursor, cursorProps) :
-          <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor"/>;
+      React.cloneElement(tooltipItem.props.cursor, cursorProps) :
+      <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor" />;
   }
 
   /**
@@ -131,7 +134,7 @@ class LineChart extends CartesianChart {
       finalStrokeWidth = activeLineKey === dataKey ? finalStrokeWidth + 2 : finalStrokeWidth;
 
       if (hasDot && activePoint) {
-        dotItems.push(<Dot key={'area-dot-' + i} cx={activePoint.x} cy={activePoint.y} r={4} {...pointStyle}/>);
+        dotItems.push(<Dot key={`area-dot-${i}`} cx={activePoint.x} cy={activePoint.y} r={4} {...pointStyle} />);
       }
 
       return React.cloneElement(child, {
@@ -166,13 +169,13 @@ class LineChart extends CartesianChart {
     yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
 
     return (
-      <div className={classNames('recharts-wrapper', className)}
+      <div
+        className={classNames('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', ...style }}
         onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseLeave={::this.handleMouseLeave}
       >
-
         <Surface width={width} height={height}>
           {this.renderGrid(xAxisMap, yAxisMap, offset)}
           {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}

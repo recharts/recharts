@@ -2,14 +2,14 @@
  * @fileOverview Line
  */
 import React, { Component, PropTypes } from 'react';
+import { findDOMNode } from 'react-dom';
+import Animate from 'react-smooth';
 import classNames from 'classnames';
+import pureRender from 'pure-render-decorator';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
-import pureRender from 'pure-render-decorator';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
-import { findDOMNode } from 'react-dom';
-import Animate from 'react-smooth';
 
 @pureRender
 class Line extends Component {
@@ -26,7 +26,6 @@ class Line extends Component {
     yAxisId: PropTypes.number,
     xAxisId: PropTypes.number,
     legendType: PropTypes.string,
-    formatter: PropTypes.func,
 
      // whether have dot in line
     dot: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
@@ -68,6 +67,13 @@ class Line extends Component {
     isAnimationFinished: false,
     totalLength: 0,
   };
+
+  constructor(props) {
+    super(props);
+    this.onClick = this.props.onClick.bind(this);
+    this.onMouseEnter = this.props.onMouseEnter.bind(this);
+    this.onMouseLeave = this.props.onMouseLeave.bind(this);
+  }
 
   componentDidMount() {
     const { isAnimationActive } = this.props;
@@ -112,7 +118,7 @@ class Line extends Component {
 
       return isDotElement ?
             React.cloneElement(dot, dotProps) :
-            <Dot className="recharts-line-dot" {...dotProps}/>;
+            <Dot className="recharts-line-dot" {...dotProps} />;
     });
 
     return <Layer className="recharts-line-dots">{dots}</Layer>;
@@ -182,9 +188,9 @@ class Line extends Component {
               {...other}
               className="recharts-line-curve"
               fill="none"
-              onMouseEnter={this.props.onMouseEnter}
-              onMouseLeave={this.props.onMouseLeave}
-              onClick={this.props.onClick}
+              onClick={this.onClick}
+              onMouseEnter={this.onMouseEnter}
+              onMouseLeave={this.onMouseLeave}
               points={points}
               ref="curve"
             />

@@ -64,8 +64,9 @@ class DefaultLegendContent extends Component {
         break;
     }
 
-    return <path strokeWidth={4} fill={fill} stroke={stroke} d={path} className="recharts-legend-icon"/>;
+    return <path strokeWidth={4} fill={fill} stroke={stroke} d={path} className="recharts-legend-icon" />;
   }
+
   /**
    * Draw items of legend
    * @return {ReactElement} Items
@@ -92,9 +93,7 @@ class DefaultLegendContent extends Component {
   render() {
     const { payload, layout, align } = this.props;
 
-    if (!payload || !payload.length) {
-      return null;
-    }
+    if (!payload || !payload.length) { return null; }
 
     const finalStyle = {
       padding: 0,

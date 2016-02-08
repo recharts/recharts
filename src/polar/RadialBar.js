@@ -108,10 +108,10 @@ class RadialBar extends Component {
     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = data;
     const clockWise = this.getDeltaAngle() < 0;
     const radius = clockWise ?
-                  innerRadius + offsetRadius :
-                  Math.max(outerRadius - offsetRadius, 0);
+      innerRadius + offsetRadius :
+      Math.max(outerRadius - offsetRadius, 0);
 
-    if (radius <= 0) {return '';}
+    if (radius <= 0) { return ''; }
 
     const labelSize = getStringSize(labelContent, style);
     const deltaAngle = labelSize.width / (radius * RADIAN);
@@ -120,17 +120,17 @@ class RadialBar extends Component {
 
     if (clockWise) {
       _startAngle = orientation === 'inner' ?
-                    Math.min(endAngle + deltaAngle, startAngle) :
-                    endAngle;
+        Math.min(endAngle + deltaAngle, startAngle) : endAngle;
       _endAngle = _startAngle - deltaAngle;
     } else {
       _startAngle = orientation === 'inner' ?
-                    Math.max(endAngle - deltaAngle, startAngle) :
-                    endAngle;
+        Math.max(endAngle - deltaAngle, startAngle) : endAngle;
       _endAngle = _startAngle + deltaAngle;
     }
+
     const startPoint = polarToCartesian(cx, cy, radius, _startAngle);
     const endPoint = polarToCartesian(cx, cy, radius, _endAngle);
+
     return `M${startPoint.x},${startPoint.y}
             A${radius},${radius},0,
             ${deltaAngle >= 180 ? 1 : 0},
@@ -154,8 +154,8 @@ class RadialBar extends Component {
       };
 
       return isShapeElement ?
-             React.cloneElement(shape, props) :
-             React.createElement(Sector, props);
+        React.cloneElement(shape, props) :
+        React.createElement(Sector, props);
     });
   }
 
@@ -178,8 +178,8 @@ class RadialBar extends Component {
       };
 
       return isBackgroundElement ?
-            React.cloneElement(background, props) :
-            React.createElement(Sector, props);
+        React.cloneElement(background, props) :
+        React.createElement(Sector, props);
     });
   }
 
@@ -215,21 +215,25 @@ class RadialBar extends Component {
 
     return (
       <Layer className={layerClass}>
-        {background && (
-          <Layer className="recharts-radial-bar-background">
-            {this.renderBackground(sectors)}
-          </Layer>
-        )}
+        {
+          background && (
+            <Layer className="recharts-radial-bar-background">
+              {this.renderBackground(sectors)}
+            </Layer>
+          )
+        }
 
         <Layer className="recharts-radial-bar-sectors">
           {this.renderSectors(sectors)}
         </Layer>
 
-        {label && (
-          <Layer className="recharts-radial-bar-labels">
-            {this.renderLabels(sectors)}
-          </Layer>
-        )}
+        {
+          label && (
+            <Layer className="recharts-radial-bar-labels">
+              {this.renderLabels(sectors)}
+            </Layer>
+          )
+        }
       </Layer>
     );
   }

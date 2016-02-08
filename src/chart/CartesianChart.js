@@ -164,6 +164,7 @@ class CartesianChart extends Component {
 
     return null;
   }
+
   /**
    * Calculate coordinate of cursor in chart
    * @param  {Object} e               Event object
@@ -190,6 +191,7 @@ class CartesianChart extends Component {
 
     return ticks;
   }
+
   /**
    * Get domain of data by key
    * @param  {String} key  The unique key of a group of data
@@ -222,6 +224,7 @@ class CartesianChart extends Component {
       return [Math.min(min, result[0]), Math.max(max, result[1])];
     }, [Infinity, -Infinity]);
   }
+
   /**
    * Get domain of data by the configuration of item element
    * @param  {Array} items  The instances of item
@@ -252,6 +255,7 @@ class CartesianChart extends Component {
       return result;
     }, []);
   }
+
   /**
    * Get the configuration of all x-axis or y-axis
    * @param  {String} axisType    The type of axis
@@ -276,6 +280,7 @@ class CartesianChart extends Component {
 
     return axisMap;
   }
+
   /**
    * Get the configuration of axis by the options of axis instance
    * @param {Array}  axes  The instance of axes
@@ -431,6 +436,7 @@ class CartesianChart extends Component {
       height: height - offsetV.top - offsetV.bottom,
     };
   }
+
   /**
    * Get the main color of each graphic item
    * @param  {ReactElement} item A graphic item
@@ -451,6 +457,7 @@ class CartesianChart extends Component {
 
     return result;
   }
+
   /**
    * Configure the scale function of axis
    * @param {Object} scale The scale function
@@ -475,6 +482,7 @@ class CartesianChart extends Component {
       scale.domain(this.getDomainOfTicks(tickValues, opts.type));
     }
   }
+
   /**
    * Calculate the scale function, position, width, height of axes
    * @param  {Object} axisMap  The configuration of axes
@@ -641,6 +649,7 @@ class CartesianChart extends Component {
       },
     };
   }
+
   /**
    * Get the content to be displayed in the tooltip
    * @param  {Array} items The instances of item
@@ -762,6 +771,7 @@ class CartesianChart extends Component {
       });
     }
   }
+
   /**
    * The handler of mouse moving in chart
    * @param  {Object} offset   The offset of main part in the svg element
@@ -789,6 +799,7 @@ class CartesianChart extends Component {
       });
     }
   }
+
   /**
    * The handler if mouse leaving chart
    * @return {Null} no return
@@ -799,7 +810,7 @@ class CartesianChart extends Component {
     });
   }
 
-   /**
+  /**
    * Draw x-axes
    * @param {Object} xAxisMap The configuration of all x-axes
    * @return {ReactElement} The instance of x-axes
@@ -869,6 +880,7 @@ class CartesianChart extends Component {
       return yAxes.length ? <Layer key="y-axis-layer" className="recharts-y-axis">{yAxes}</Layer> : null;
     }
   }
+
   /**
    * Draw grid
    * @param  {Object} xAxisMap The configuration of all x-axes
@@ -908,6 +920,7 @@ class CartesianChart extends Component {
       verticalPoints, horizontalPoints,
     });
   }
+
   /**
    * Draw legend
    * @param  {Array} items             The instances of item
@@ -933,6 +946,7 @@ class CartesianChart extends Component {
       payload: legendData,
     });
   }
+
   /**
    * Draw Tooltip
    * @param  {Array} items   The instances of item

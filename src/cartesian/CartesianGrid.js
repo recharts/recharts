@@ -37,6 +37,7 @@ class CartesianGrid extends Component {
     stroke: '#ccc',
     fill: 'none',
   };
+
   /**
    * Draw the horizontal grid lines
    * @return {Group} Horizontal lines
@@ -48,10 +49,11 @@ class CartesianGrid extends Component {
 
     const props = getPresentationAttributes(this.props);
     const items = horizontalPoints.map((entry, i) =>
-      (<line {...props} key={`line-${i}`} x1={x} y1={entry} x2={x + width} y2={entry}/>));
+      (<line {...props} key={`line-${i}`} x1={x} y1={entry} x2={x + width} y2={entry} />));
 
     return <g className="recharts-cartesian-grid-horizontal">{items}</g>;
   }
+
   /**
    * Draw vertical grid lines
    * @return {Group} Vertical lines

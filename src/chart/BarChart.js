@@ -23,6 +23,7 @@ class BarChart extends CartesianChart {
     layout: 'horizontal',
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
+
   /**
    * Compose the data of each group
    * @param  {Array}  barPosition The offset and size of each bar
@@ -81,6 +82,7 @@ class BarChart extends CartesianChart {
 
     return domain[0];
   }
+
   /**
    * Calculate the size of each bar and the gap between two bars
    * @param  {Number}   bandSize  The size of each category
@@ -134,6 +136,7 @@ class BarChart extends CartesianChart {
 
     return result;
   }
+
   /**
    * Calculate the size of all groups
    * @param  {Object} stackGroups The items grouped by axisId and stackId
@@ -159,6 +162,7 @@ class BarChart extends CartesianChart {
       return result;
     }, {});
   }
+
   /**
    * Calculate the size between two category
    * @param  {Function} scale Scale function
@@ -170,6 +174,7 @@ class BarChart extends CartesianChart {
     }
     return 0;
   }
+
   /**
    * Handler of mouse entering bar chart
    * @param {String} key  The unique key of a group of data
@@ -180,6 +185,7 @@ class BarChart extends CartesianChart {
       activeBarKey: key,
     });
   }
+
   /**
    * Handler of mouse leaving area chart
    * @return {Object} null
@@ -218,6 +224,7 @@ class BarChart extends CartesianChart {
       React.cloneElement(tooltipItem.props.cursor, cursorProps) :
       React.createElement(Rectangle, cursorProps);
   }
+
   /**
    * Draw the main part of bar chart
    * @param  {Array} items     All the instance of Bar
@@ -273,7 +280,8 @@ class BarChart extends CartesianChart {
     yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
 
     return (
-      <div className={classNames('recharts-wrapper', className)}
+      <div
+        className={classNames('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', ...style }}
         onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}

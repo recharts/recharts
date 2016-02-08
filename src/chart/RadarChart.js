@@ -191,7 +191,7 @@ class RadarChart extends Component {
     const { children } = this.props;
     const grid = findChildByType(children, PolarGrid);
 
-    if (!grid) {return null;}
+    if (!grid) { return null; }
 
     const { startAngle, clockWise, data } = this.props;
     const len = data.length;
@@ -209,7 +209,7 @@ class RadarChart extends Component {
     const { children } = this.props;
     const angleAxis = findChildByType(children, PolarAngleAxis);
 
-    if (!angleAxis || angleAxis.props.hide) {return null;}
+    if (!angleAxis || angleAxis.props.hide) { return null; }
 
     const { data, width, height, startAngle, clockWise } = this.props;
     const len = data.length;
@@ -239,6 +239,7 @@ class RadarChart extends Component {
       cx, cy,
     });
   }
+
   /**
    * Draw legend
    * @param  {Array} items             The instances of item
@@ -267,7 +268,7 @@ class RadarChart extends Component {
   }
 
   render() {
-    if (!validateWidthHeight(this)) {return null;}
+    if (!validateWidthHeight(this)) { return null; }
     const { className, data, width, height, margin, children, style } = this.props;
     const cx = getPercentValue(this.props.cx, width, width / 2);
     const cy = getPercentValue(this.props.cy, height, height / 2);

@@ -76,6 +76,7 @@ class PieChart extends Component {
       }
     });
   }
+
   /**
    * Draw legend
    * @param  {Array} items             The instances of Pie
@@ -112,6 +113,7 @@ class PieChart extends Component {
       return;
     }
   }
+
   /**
    * Draw the main part of bar chart
    * @param  {Array} items    All the instance of Pie
@@ -140,7 +142,7 @@ class PieChart extends Component {
   }
 
   render() {
-    if (!validateWidthHeight(this)) {return null;}
+    if (!validateWidthHeight(this)) { return null; }
 
     const { style, children, className, width, height } = this.props;
     const items = findAllByType(children, Pie);
@@ -149,7 +151,6 @@ class PieChart extends Component {
       <div className={classNames('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', ...style }}
       >
-
         <Surface width={width} height={height}>
           {this.renderItems(items)}
         </Surface>
@@ -159,7 +160,6 @@ class PieChart extends Component {
       </div>
     );
   }
-
 }
 
 export default PieChart;

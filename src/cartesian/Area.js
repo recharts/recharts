@@ -100,8 +100,8 @@ class Area extends Component {
       };
 
       return isDotElement ?
-              React.cloneElement(dot, dotProps) :
-              <Dot {...dotProps} className="recharts-area-dot" />;
+        React.cloneElement(dot, dotProps) :
+        <Dot {...dotProps} className="recharts-area-dot" />;
     });
 
     return <Layer className="recharts-area-dots">{dots}</Layer>;
@@ -124,9 +124,9 @@ class Area extends Component {
         payload: entry,
       };
 
-      return isLabelElement ? React.cloneElement(label, labelProps) : (
-        <text {...labelProps} className="recharts-area-label">{entry.value}</text>
-      );
+      return isLabelElement ?
+        React.cloneElement(label, labelProps) :
+        (<text {...labelProps} className="recharts-area-label">{entry.value}</text>);
     });
 
     return <Layer className="recharts-area-labels">{labels}</Layer>;

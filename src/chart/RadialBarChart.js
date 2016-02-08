@@ -50,7 +50,6 @@ class RadialBarChart extends Component {
     className: PropTypes.string,
   };
 
-
   static defaultProps = {
     cx: '50%',
     cy: '50%',
@@ -68,7 +67,8 @@ class RadialBarChart extends Component {
     activeTooltipCoord: { x: 0, y: 0 },
     isTooltipActive: false,
   };
- /**
+
+  /**
    * Compose the data of each group
    * @param  {Array}  barPosition The offset and size of each bar
    * @param  {Object} radiusScale The scale function of radius of bars
@@ -93,7 +93,8 @@ class RadialBarChart extends Component {
       };
     });
   }
-   /**
+
+  /**
    * Calculate the size of all groups
    * @param  {Array} items All the instance of RadialBar
    * @return {Object} The size of all groups
@@ -122,7 +123,8 @@ class RadialBarChart extends Component {
 
     return scale;
   }
-    /**
+
+  /**
    * Calculate the size of each bar and the gap between two bars
    * @param  {Number} bandRadius  The radius of each category
    * @param  {Array} radiusList   The radius of all groups
@@ -186,6 +188,7 @@ class RadialBarChart extends Component {
       }
     });
   }
+
   /**
    * Draw legend
    * @param  {ReactElement} legendItem The instance of Legend
@@ -218,6 +221,7 @@ class RadialBarChart extends Component {
       return;
     }
   }
+
   /**
    * Draw the main part of bar chart
    * @param  {Array} items     All the instance of RadialBar
@@ -226,7 +230,7 @@ class RadialBarChart extends Component {
    * @return {ReactComponent}  All the instances of RadialBar
    */
   renderItems(items, radiusScale, center) {
-    if (!items || !items.length) {return null;}
+    if (!items || !items.length) { return null; }
 
     const radiusList = this.getRadiusList(items);
     const bandRadius = radiusScale.bandwidth();
@@ -261,18 +265,15 @@ class RadialBarChart extends Component {
       <div className={classNames('recharts-wrapper', className)}
         style={{ cursor: 'default', ...style, position: 'relative' }}
       >
-
         <Surface width={width} height={height}>
           {this.renderItems(items, radiusScale, { cx, cy })}
         </Surface>
 
         {this.renderLegend()}
-
         {this.renderTooltip(items)}
       </div>
     );
   }
-
 }
 
 export default RadialBarChart;

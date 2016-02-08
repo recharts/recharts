@@ -228,7 +228,7 @@ class CartesianAxis extends Component {
         break;
     }
 
-    return <line className="recharts-cartesian-axis-line" {...props}/>;
+    return <line className="recharts-cartesian-axis-line" {...props} />;
   }
 
   renderTicks() {
@@ -262,11 +262,12 @@ class CartesianAxis extends Component {
       let labelItem;
 
       if (label) {
-        labelItem = isLabelElement ? React.cloneElement(label, labelProps) : (
-          <text {...labelProps} className="recharts-cartesian-axis-tick-value">
-            {tickFormatter ? tickFormatter(entry.value) : entry.value}
-          </text>
-        );
+        labelItem = isLabelElement ?
+          React.cloneElement(label, labelProps) : (
+            <text {...labelProps} className="recharts-cartesian-axis-tick-value">
+              {tickFormatter ? tickFormatter(entry.value) : entry.value}
+            </text>
+          );
       }
 
       return (

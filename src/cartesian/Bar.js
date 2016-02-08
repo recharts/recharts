@@ -3,11 +3,11 @@
  */
 import React, { Component, PropTypes, Children } from 'react';
 import classNames from 'classnames';
+import pureRender from 'pure-render-decorator';
+import Animate from 'react-smooth';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
-import pureRender from 'pure-render-decorator';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
-import Animate from 'react-smooth';
 
 @pureRender
 class Bar extends Component {
@@ -154,9 +154,9 @@ class Bar extends Component {
         payload: entry,
       };
 
-      return isLabelElement ? React.cloneElement(label, labelProps) : (
-        <text {...labelProps} className="recharts-bar-label">{entry.value}</text>
-      );
+      return isLabelElement ?
+        React.cloneElement(label, labelProps) :
+        (<text {...labelProps} className="recharts-bar-label">{entry.value}</text>);
     });
 
     return <Layer className="recharts-bar-labels">{labels}</Layer>;

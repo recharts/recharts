@@ -31,7 +31,7 @@ class Background extends Component {
 
     return (
       <g className={classNames('recharts-background', className)}>
-        <rect {...others}/>
+        <rect {...others} />
       </g>
     );
   }
