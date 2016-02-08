@@ -14,12 +14,17 @@ The main purpose of this library is to help you to write charts in React applica
 1. **Native** SVG support, lightweight depend on some D3 submodules
 1. **Declarative** components, components of chart are purely presentational
 
-## The library offers
+## Roadmap
 
-- Great animation
+### v1.0 release plan
+
+Expected release: April 2016
+
+- Great animation support
 - Good documentation
-- Appropriate interaction
-- More and more variety of charts to come
+- Cascade Chart
+- Wireless support
+- 90% code test coverage
 
 ## Examples
 
@@ -41,6 +46,8 @@ The main purpose of this library is to help you to write charts in React applica
 All the components of Recharts is clearly separated. The lineChart is composed by x axis, tooltip, grid, and line items, and each of them is an independent React Component. The clear seperation and composition of components is one of the principle Recharts follow.
 
 ## Contribution
+
+We'd love :heart: to hear what you think we should build. Please create a issue to write your usage or ideas.
 
 We are looking for like-minded people who share the same idea about Recharts. The goal of this project is create more flexible charting library for React community.
 
