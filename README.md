@@ -1,7 +1,9 @@
 # Recharts = React + Charts
 
-[![Build Status](https://travis-ci.org/recharts/recharts.svg)](https://travis-ci.org/recharts/recharts) [![npm version](https://badge.fury.io/js/recharts.svg)](http://badge.fury.io/js/recharts) [![Coverage Status](https://coveralls.io/repos/recharts/recharts/badge.svg?branch=master&service=github)](https://coveralls.io/github/recharts/recharts?branch=master)
-
+[![Build Status](https://travis-ci.org/recharts/recharts.svg)](https://travis-ci.org/recharts/recharts)
+[![Coverage Status](https://coveralls.io/repos/recharts/recharts/badge.svg?branch=master&service=github)](https://coveralls.io/github/recharts/recharts?branch=master)
+[![npm version](https://badge.fury.io/js/recharts.svg)](http://badge.fury.io/js/recharts)
+[![npm downloads](https://img.shields.io/npm/dm/recharts.svg?style=flat-square)](https://www.npmjs.com/package/recharts)
 [![Gitter](https://badges.gitter.im/recharts/recharts.svg)](https://gitter.im/recharts/recharts?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Intro
