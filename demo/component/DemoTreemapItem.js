@@ -1,6 +1,6 @@
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 
-class DemoTreemapItem extends React.Component {
+class DemoTreemapItem extends Component {
   static displayName = 'DemoTreemapItem';
 
   static propTypes = {
@@ -12,7 +12,6 @@ class DemoTreemapItem extends React.Component {
     height: PropTypes.number,
     index: PropTypes.number,
     payload: PropTypes.object,
-
     bgColors: PropTypes.arrayOf(PropTypes.string),
   };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Surface, Brush} from 'recharts';
+import { Surface, Brush } from 'recharts';
 
 export default React.createClass({
   render () {

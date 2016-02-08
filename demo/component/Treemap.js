@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Treemap } from 'recharts';
 import DemoTreemapItem from './DemoTreemapItem';
 
-class DemoTreemap extends React.Component {
+class DemoTreemap extends Component {
   static displayName = 'DemoTreemap';
 
   render() {
@@ -403,7 +403,7 @@ class DemoTreemap extends React.Component {
         </div>
         <br/>
         <div className="treemap-chart-wrapper">
-          <Treemap width={1000} height={500} data={data} dataKey="size"/>
+          <Treemap width={1000} height={500} data={data} dataKey="size" />
         </div>
       </div>
     );

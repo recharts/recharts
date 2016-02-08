@@ -1,8 +1,8 @@
 import React from 'react';
 
 export default React.createClass({
-  render () {
-    const {cx, cy, stroke, payload} = this.props;
+  render() {
+    const { cx, cy, stroke, payload } = this.props;
 
     if (payload.value > 250) {
       return (
