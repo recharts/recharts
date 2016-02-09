@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import d3Shape from 'd3-shape';
-import pureRender from 'pure-render-decorator';
+import pureRender from '../util/PureRender';
 import classNames from 'classnames';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 

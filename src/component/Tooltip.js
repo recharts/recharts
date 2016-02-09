@@ -2,7 +2,7 @@
  * @fileOverview Tooltip
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from 'pure-render-decorator';
+import pureRender from '../util/PureRender';
 import ReactDOMServer from 'react-dom/server';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import { getStyleString } from '../util/DOMUtils';

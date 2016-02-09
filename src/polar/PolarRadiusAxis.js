@@ -2,7 +2,7 @@
  * @fileOverview The axis of polar coordinate system
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from 'pure-render-decorator';
+import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';

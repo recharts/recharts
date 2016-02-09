@@ -12,7 +12,9 @@ import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import { findChildByType, findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import { getMaxRadius } from '../util/PolarUtils';
+import pureRender from '../util/PureRender';
 
+@pureRender
 class RadialBarChart extends Component {
 
   static displayName = 'RadialBarChart';

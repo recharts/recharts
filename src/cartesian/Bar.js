@@ -3,10 +3,10 @@
  */
 import React, { Component, PropTypes, Children } from 'react';
 import classNames from 'classnames';
-import pureRender from 'pure-render-decorator';
 import Animate from 'react-smooth';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
+import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
 @pureRender

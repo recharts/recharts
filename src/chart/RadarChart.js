@@ -20,7 +20,9 @@ import { validateWidthHeight, findChildByType, findAllByType,
   getPresentationAttributes } from '../util/ReactUtils';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { getPercentValue } from '../util/DataUtils';
+import pureRender from '../util/PureRender';
 
+@pureRender
 class RadarChart extends Component {
   static displayName = 'RadarChart';
 

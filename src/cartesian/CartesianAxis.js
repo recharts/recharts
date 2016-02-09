@@ -2,7 +2,7 @@
  * @fileOverview Cartesian Axis
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from 'pure-render-decorator';
+import pureRender from '../util/PureRender';
 import { getStringSize } from '../util/DOMUtils';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
@@ -65,7 +65,14 @@ class CartesianAxis extends Component {
     // The width or height of tick
     tickSize: 6,
     interval: 'auto',
+    tickFormatter: () => {},
   };
+
+  constructor(props) {
+    super(props);
+
+    this.tickFormatter = this.props.tickFormatter.bind(this);
+  }
 
   static getTicks(props) {
     const { ticks, viewBox, minLabelGap, orientation, interval } = props;
@@ -232,7 +239,8 @@ class CartesianAxis extends Component {
   }
 
   renderTicks() {
-    const { ticks, tickFormatter, tickLine, stroke, label } = this.props;
+    const { ticks, tickLine, stroke, label } = this.props;
+    const tickFormatter = this.tickFormatter;
 
     if (!ticks || !ticks.length) { return null; }
 

@@ -2,7 +2,7 @@
  * @fileOverview Default Legend Content
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from 'pure-render-decorator';
+import pureRender from '../util/PureRender';
 import Surface from '../container/Surface';
 
 const SIZE = 32;

@@ -11,7 +11,9 @@ import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import CartesianChart from './CartesianChart';
 import Bar from '../cartesian/Bar';
+import pureRender from '../util/PureRender';
 
+@pureRender
 class BarChart extends CartesianChart {
 
   static displayName = 'BarChart';

@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { findDOMNode } from 'react-dom';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
-import pureRender from 'pure-render-decorator';
+import pureRender from '../util/PureRender';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';

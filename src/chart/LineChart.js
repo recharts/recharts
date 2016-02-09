@@ -11,7 +11,9 @@ import CartesianChart from './CartesianChart';
 import Line from '../cartesian/Line';
 import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
+import pureRender from '../util/PureRender';
 
+@pureRender
 class LineChart extends CartesianChart {
 
   static displayName = 'LineChart';

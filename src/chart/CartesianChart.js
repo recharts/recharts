@@ -22,6 +22,7 @@ import ReferenceLine from '../cartesian/ReferenceLine';
 import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
+import pureRender from '../util/PureRender';
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
@@ -31,6 +32,7 @@ const ORIENT_MAP = {
 /**
  * The base class of chart in cartesian coordinate system
  */
+@pureRender
 class CartesianChart extends Component {
 
   static propTypes = {

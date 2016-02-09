@@ -19,7 +19,9 @@ import YAxis from '../cartesian/YAxis';
 import ZAxis from '../cartesian/ZAxis';
 import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
+import pureRender from '../util/PureRender';
 
+@pureRender
 class ScatterChart extends Component {
   static displayName = 'ScatterChart';
 

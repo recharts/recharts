@@ -2,8 +2,9 @@
  * @fileOverview Cartesian Grid
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from 'pure-render-decorator';
+import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import _ from 'lodash';
 
 @pureRender
 class CartesianGrid extends Component {
@@ -37,6 +38,10 @@ class CartesianGrid extends Component {
     stroke: '#ccc',
     fill: 'none',
   };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !_.isEqual(nextProps, this.props);
+  }
 
   /**
    * Draw the horizontal grid lines

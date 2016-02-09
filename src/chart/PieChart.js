@@ -10,7 +10,9 @@ import Pie from '../polar/Pie';
 import { getPercentValue } from '../util/DataUtils';
 import { findChildByType, findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import { getMaxRadius } from '../util/PolarUtils';
+import pureRender from '../util/PureRender';
 
+@pureRender
 class PieChart extends Component {
 
   static displayName = 'PieChart';

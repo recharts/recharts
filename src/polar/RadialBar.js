@@ -8,7 +8,7 @@ import Layer from '../container/Layer';
 import _ from 'lodash';
 import { getStringSize } from '../util/DOMUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
-import pureRender from 'pure-render-decorator';
+import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
 
 const RADIAN = Math.PI / 180;

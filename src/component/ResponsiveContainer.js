@@ -2,7 +2,7 @@
  * @fileOverview Wrapper component to make charts adapt to the size of parent * DOM
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from 'pure-render-decorator';
+import pureRender from '../util/PureRender';
 import { getPercentValue } from '../util/DataUtils';
 import OuiDomUtils from 'oui-dom-utils';
 import invariant from 'invariant';

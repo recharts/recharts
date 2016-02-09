@@ -2,11 +2,11 @@
  * @fileOverview Area
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from 'pure-render-decorator';
 import classNames from 'classnames';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
+import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
 @pureRender

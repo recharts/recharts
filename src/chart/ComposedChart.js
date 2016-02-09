@@ -19,7 +19,9 @@ import Rectangle from '../shape/Rectangle';
 import { getPercentValue } from '../util/DataUtils';
 import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
+import pureRender from '../util/PureRender';
 
+@pureRender
 class ComposedChart extends CartesianChart {
 
   static displayName = 'ComposedChart';

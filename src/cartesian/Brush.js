@@ -4,9 +4,11 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import D3Scale from 'd3-scale';
+import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import _ from 'lodash';
 
+@pureRender
 class Brush extends Component {
 
   static displayName = 'Brush';

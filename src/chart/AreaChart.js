@@ -11,7 +11,9 @@ import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import CartesianChart from './CartesianChart';
 import Area from '../cartesian/Area';
+import pureRender from '../util/PureRender';
 
+@pureRender
 class AreaChart extends CartesianChart {
   static displayName = 'AreaChart';
 
