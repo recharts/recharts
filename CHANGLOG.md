@@ -1,3 +1,8 @@
+## 0.6.2 (February 9, 2016)
+
+### UI
+- feat: use lodash `isEqual` write new pureRender
+
 ## 0.6.1 (February 5, 2016)
 
 ### UI
