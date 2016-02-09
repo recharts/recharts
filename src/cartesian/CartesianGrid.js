@@ -39,10 +39,6 @@ class CartesianGrid extends Component {
     fill: 'none',
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return !_.isEqual(nextProps, this.props);
-  }
-
   /**
    * Draw the horizontal grid lines
    * @return {Group} Horizontal lines
