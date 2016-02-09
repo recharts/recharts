@@ -5,6 +5,9 @@
 var path = require('path');
 
 module.exports = function(config) {
+  if (process.env.RELEASE)
+    config.singleRun = true
+
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -130,9 +133,5 @@ module.exports = function(config) {
     browsers: ['Chrome'],
 
     browserNoActivityTimeout: 60000,
-
-    // Continuous Integration mode
-    // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
   });
 };
