@@ -65,14 +65,7 @@ class CartesianAxis extends Component {
     // The width or height of tick
     tickSize: 6,
     interval: 'auto',
-    tickFormatter: () => {},
   };
-
-  constructor(props) {
-    super(props);
-
-    this.tickFormatter = this.props.tickFormatter.bind(this);
-  }
 
   static getTicks(props) {
     const { ticks, viewBox, minLabelGap, orientation, interval } = props;
@@ -239,8 +232,7 @@ class CartesianAxis extends Component {
   }
 
   renderTicks() {
-    const { ticks, tickLine, stroke, label } = this.props;
-    const tickFormatter = this.tickFormatter;
+    const { ticks, tickLine, stroke, label, tickFormatter } = this.props;
 
     if (!ticks || !ticks.length) { return null; }
 

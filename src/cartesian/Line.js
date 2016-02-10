@@ -68,13 +68,6 @@ class Line extends Component {
     totalLength: 0,
   };
 
-  constructor(props) {
-    super(props);
-    this.onClick = this.props.onClick.bind(this);
-    this.onMouseEnter = this.props.onMouseEnter.bind(this);
-    this.onMouseLeave = this.props.onMouseLeave.bind(this);
-  }
-
   componentDidMount() {
     const { isAnimationActive } = this.props;
 
@@ -161,6 +154,9 @@ class Line extends Component {
       animationBegin,
       animationDuration,
       animationEasing,
+      onClick,
+      onMouseEnter,
+      onMouseLeave,
       ...other,
     } = this.props;
     const { totalLength } = this.state;
@@ -188,9 +184,9 @@ class Line extends Component {
               {...other}
               className="recharts-line-curve"
               fill="none"
-              onClick={this.onClick}
-              onMouseEnter={this.onMouseEnter}
-              onMouseLeave={this.onMouseLeave}
+              onClick={onClick}
+              onMouseEnter={onMouseEnter}
+              onMouseLeave={onMouseLeave}
               points={points}
               ref="curve"
             />

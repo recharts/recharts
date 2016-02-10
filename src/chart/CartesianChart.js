@@ -85,6 +85,15 @@ class CartesianChart extends Component {
     activeBarKey: null,
   };
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data !== this.props.data) {
+      this.setState({
+        dataStartIndex: 0,
+        dataEndIndex: nextProps.data.length - 1,
+      });
+    }
+  }
+
   getStackGroupsByAxisId(items, axisIdKey) {
     const stackGroups = items.reduce((result, item) => {
       const { stackId, dataKey } = item.props;
