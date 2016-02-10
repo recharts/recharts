@@ -17,6 +17,8 @@ class Legend extends Component {
   static propTypes = {
     content: PropTypes.element,
     wrapperStyle: PropTypes.object,
+    chartWidth: PropTypes.number,
+    chartHeight: PropTypes.number,
     width: PropTypes.number,
     height: PropTypes.number,
     iconSize: PropTypes.number,
@@ -49,7 +51,7 @@ class Legend extends Component {
 
     if (layout === 'vertical') {
       return {
-        height: item.props.height || chartHeight,
+        height: item.props.height || 'auto',
       };
     }
 
@@ -58,7 +60,7 @@ class Legend extends Component {
     };
   }
 
-  static getLegendBBox(props, chartWidth, chartHeight) {
+  static getLegendBBox(props) {
     const { content, width, height, wrapperStyle } = props;
     const contentHtml = ReactDOMServer.renderToStaticMarkup(
       React.isValidElement(content) ?
@@ -66,6 +68,7 @@ class Legend extends Component {
       React.createElement(DefaultLegendContent, props)
     );
     const style = {
+      position: 'absolute',
       width: width || 'auto',
       height: height || 'auto',
       ...wrapperStyle,
@@ -86,27 +89,31 @@ class Legend extends Component {
   }
 
   getDefaultPosition(style) {
-    const { layout, align, verticalAlign, margin } = this.props;
+    const { layout, align, verticalAlign, margin, chartWidth, chartHeight } = this.props;
     let hPos;
     let vPos;
 
     if (!style || ((style.left === undefined || style.left === null) && (
       style.right === undefined || style.right === null))) {
-      hPos = align === 'right' ?
-            { right: (margin && margin.right) || 0 } :
-            { left: (margin && margin.left) || 0 };
+      if (align === 'center' && layout === 'vertical') {
+        const box = Legend.getLegendBBox(this.props) || { width : 0 };
+        hPos = { left: ((chartWidth || 0) - box.width) / 2 };
+      } else {
+        hPos = align === 'right' ?
+              { right: (margin && margin.right) || 0 } :
+              { left: (margin && margin.left) || 0 };
+      }
     }
 
     if (!style || ((style.top === undefined || style.top === null) && (
       style.bottom === undefined || style.bottom === null))) {
-      if (layout === 'vertical') {
+      if (verticalAlign === 'middle') {
+        const box = Legend.getLegendBBox(this.props) || { height : 0 };
+        vPos = { top: ((chartHeight || 0) - box.height) / 2 };
+      } else {
         vPos = verticalAlign === 'bottom' ?
               { bottom: (margin && margin.bottom) || 0 } :
               { top: (margin && margin.top) || 0 };
-      } else {
-        vPos = verticalAlign === 'top' ?
-              { top: (margin && margin.top) || 0 } :
-              { bottom: (margin && margin.bottom) || 0 };
       }
     }
 

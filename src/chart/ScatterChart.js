@@ -444,8 +444,14 @@ class ScatterChart extends Component {
     const props = this.getLegendProps(items);
 
     if (!props) {return null;}
+    const { margin, width, height } = this.props;
 
-    return React.createElement(Legend, props);
+    return React.createElement(Legend, {
+      ...props,
+      chartWidth: width,
+      chartHeight: height,
+      margin,
+    });
   }
 
   /**

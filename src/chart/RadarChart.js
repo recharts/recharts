@@ -266,6 +266,8 @@ class RadarChart extends Component {
     return React.cloneElement(legendItem, {
       ...Legend.getWithHeight(legendItem, width, height),
       payload: legendData,
+      chartWidth: width,
+      chartHeight: height,
       margin,
     });
   }

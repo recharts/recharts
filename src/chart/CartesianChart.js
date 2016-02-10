@@ -974,9 +974,14 @@ class CartesianChart extends Component {
     const props = this.getLegendProps(items);
 
     if (!props) {return null;}
-    const { margin } = this.props;
+    const { margin, width, height } = this.props;
 
-    return React.createElement(Legend, {...props, margin });
+    return React.createElement(Legend, {
+      ...props,
+      chartWidth: width,
+      chartHeight: height,
+      margin,
+    });
   }
 
   /**
