@@ -58,7 +58,9 @@ class PolarAngleAxis extends Component {
   /**
    * Calculate the coordinate of line endpoint
    * @param  {Object} data The Data if ticks
-   * @return {Object} (x0, y0): The start point of text, (x1, y1): The end point close to text, (x2, y2): The end point close to axis
+   * @return {Object} (x0, y0): The start point of text,
+   *                  (x1, y1): The end point close to text,
+   *                  (x2, y2): The end point close to axis
    */
   getTickLineCoord(data) {
     const { cx, cy, radius, orientation, tickLine } = this.props;
@@ -101,7 +103,15 @@ class PolarAngleAxis extends Component {
     };
 
     if (axisLineType === 'circle') {
-      return <Dot className="recharts-polar-angle-axis-line" {...props} cx={cx} cy={cy} r={radius}/>;
+      return (
+        <Dot
+          className="recharts-polar-angle-axis-line"
+          {...props}
+          cx={cx}
+          cy={cy}
+          r={radius}
+        />
+      );
     }
     const { ticks } = this.props;
     const points = ticks.map(entry => polarToCartesian(cx, cy, radius, entry.angle));

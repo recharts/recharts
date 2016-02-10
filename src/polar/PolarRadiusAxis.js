@@ -119,7 +119,7 @@ class PolarRadiusAxis extends Component {
       };
 
       return (
-        <g className="recharts-polar-radius-axis-tick" key={'tick-' + i}>
+        <g className="recharts-polar-radius-axis-tick" key={`tick-${i}`}>
           {
             isLabelElement ?
               React.cloneElement(label, labelProps) : (

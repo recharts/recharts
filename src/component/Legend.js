@@ -7,6 +7,7 @@ import ReactDOMServer from 'react-dom/server';
 import Surface from '../container/Surface';
 import DefaultLegendContent from './DefaultLegendContent';
 import { getStyleString } from '../util/DOMUtils';
+import _ from 'lodash';
 
 const SIZE = 32;
 
@@ -49,15 +50,17 @@ class Legend extends Component {
   static getWithHeight(item, chartWidth, chartHeight) {
     const { layout } = item.props;
 
-    if (layout === 'vertical') {
+    if (layout === 'vertical' && _.isNumber(item.props.height)) {
       return {
-        height: item.props.height || 'auto',
+        height: item.props.height,
+      };
+    } else if (layout === 'horizontal') {
+      return {
+        width: item.props.width || chartWidth,
       };
     }
 
-    return {
-      width: item.props.width || chartWidth,
-    };
+    return null;
   }
 
   static getLegendBBox(props) {
@@ -74,7 +77,7 @@ class Legend extends Component {
       ...wrapperStyle,
       top: -20000,
       left: 0,
-      display: 'block'
+      display: 'block',
     };
     const wrapper = document.createElement('div');
 
@@ -96,7 +99,7 @@ class Legend extends Component {
     if (!style || ((style.left === undefined || style.left === null) && (
       style.right === undefined || style.right === null))) {
       if (align === 'center' && layout === 'vertical') {
-        const box = Legend.getLegendBBox(this.props) || { width : 0 };
+        const box = Legend.getLegendBBox(this.props) || { width: 0 };
         hPos = { left: ((chartWidth || 0) - box.width) / 2 };
       } else {
         hPos = align === 'right' ?
@@ -108,7 +111,7 @@ class Legend extends Component {
     if (!style || ((style.top === undefined || style.top === null) && (
       style.bottom === undefined || style.bottom === null))) {
       if (verticalAlign === 'middle') {
-        const box = Legend.getLegendBBox(this.props) || { height : 0 };
+        const box = Legend.getLegendBBox(this.props) || { height: 0 };
         vPos = { top: ((chartHeight || 0) - box.height) / 2 };
       } else {
         vPos = verticalAlign === 'bottom' ?

@@ -4,9 +4,10 @@ import _ from 'lodash';
  * Tells if a component should update given it's next props
  * and state.
  *
- * @param object nextProps Next props.
- * @param object nextState Next state.
- */
+ * @param {Object} nextProps Next props.
+ * @param {Object} nextState Next state.
+ * @return {Boolean} Need update or not
+*/
 function shouldComponentUpdate(nextProps, nextState) {
   return !_.isEqual(this.props, nextProps) || !_.isEqual(this.state, nextState);
 }
@@ -14,7 +15,8 @@ function shouldComponentUpdate(nextProps, nextState) {
 /**
  * Makes the given component "pure".
  *
- * @param object component Component.
+ * @param {Object} component A react component.
+ * @return {Object} No return
  */
 function pureRenderDecorator(component) {
   component.prototype.shouldComponentUpdate = shouldComponentUpdate;

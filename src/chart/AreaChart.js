@@ -28,7 +28,8 @@ class AreaChart extends CartesianChart {
    * @param  {Object} xAxis       The configuration of x-axis
    * @param  {Object} yAxis       The configuration of y-axis
    * @param  {String} dataKey     The unique key of a group
-   * @param  {Array}  stackedData If the area is stacked, the stackedData is an array of min value and max value
+   * @param  {Array}  stackedData If the area is stacked,
+   * the stackedData is an array of min value and max value
    * @return {Array} Composed data
    */
   getComposedData(xAxis, yAxis, dataKey, stackedData) {
@@ -142,17 +143,31 @@ class AreaChart extends CartesianChart {
       const axisId = layout === 'horizontal' ? xAxisId : yAxisId;
       const stackedData = stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
                         && this.getStackedDataOfItem(child, stackGroups[axisId].stackGroups);
-      const composeData = this.getComposedData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey, stackedData);
+      const composeData = this.getComposedData(
+        xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey, stackedData
+      );
 
       const activePoint = composeData.points && composeData.points[activeTooltipIndex];
       const pointStyle = { fill, strokeWidth: 2, stroke: '#fff' };
 
       if (hasDot && activePoint) {
-        dotItems.push(<Dot key={`area-dot-${i}`} cx={activePoint.x} cy={activePoint.y} r={4} {...pointStyle} />);
+        dotItems.push(
+          <Dot
+            key={`area-dot-${i}`}
+            cx={activePoint.x}
+            cy={activePoint.y}
+            r={4}
+            {...pointStyle}
+          />
+        );
       }
 
-      let finalFillOpacity = fillOpacity === +fillOpacity ? fillOpacity : Area.defaultProps.fillOpacity;
-      finalFillOpacity = activeAreaKey === dataKey ? Math.min(finalFillOpacity * 1.2, 1) : finalFillOpacity;
+      let finalFillOpacity = fillOpacity === +fillOpacity ?
+                            fillOpacity :
+                            Area.defaultProps.fillOpacity;
+      finalFillOpacity = activeAreaKey === dataKey ?
+                        Math.min(finalFillOpacity * 1.2, 1) :
+                        finalFillOpacity;
 
       const area = React.cloneElement(child, {
         key: `area-${i}`,

@@ -136,11 +136,19 @@ class LineChart extends CartesianChart {
       finalStrokeWidth = activeLineKey === dataKey ? finalStrokeWidth + 2 : finalStrokeWidth;
 
       if (hasDot && activePoint) {
-        dotItems.push(<Dot key={`area-dot-${i}`} cx={activePoint.x} cy={activePoint.y} r={4} {...pointStyle} />);
+        dotItems.push(
+          <Dot
+            key={`area-dot-${i}`}
+            cx={activePoint.x}
+            cy={activePoint.y}
+            r={4}
+            {...pointStyle}
+          />
+        );
       }
 
       return React.cloneElement(child, {
-        key: 'line-' + i,
+        key: `line-${i}`,
         ...offset,
         strokeWidth: finalStrokeWidth,
         onMouseLeave: ::this.handleLineMouseLeave,

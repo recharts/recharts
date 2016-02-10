@@ -84,7 +84,9 @@ class RadarChart extends Component {
       tickCount = ticks.length;
       domain = [Math.min.apply(null, ticks), Math.max.apply(null, ticks)];
     } else {
-      tickCount = Math.max(radiusAxis && radiusAxis.props.tickCount || PolarRadiusAxis.defaultProps.tickCount, 2);
+      tickCount = Math.max(
+        radiusAxis && radiusAxis.props.tickCount || PolarRadiusAxis.defaultProps.tickCount, 2
+      );
       ticks = this.getTicksByItems(radiusAxis, tickCount);
 
       domain = [Math.min.apply(null, ticks), Math.max.apply(null, ticks)];

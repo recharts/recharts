@@ -110,7 +110,8 @@ class CartesianAxis extends Component {
   /**
    * Calculate the coordinates of endpoints in ticks
    * @param  {Object} data The data of a simple tick
-   * @return {Object} (x1, y1): The coordinate of endpoint close to label text (x2, y2): The coordinate of endpoint close to axis
+   * @return {Object} (x1, y1): The coordinate of endpoint close to label text
+   *  (x2, y2): The coordinate of endpoint close to axis
    */
   getTickLineCoord(data) {
     const { x, y, width, height, orientation, tickSize } = this.props;

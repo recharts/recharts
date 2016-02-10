@@ -155,7 +155,11 @@ class Brush extends Component {
     let delta = e.pageX - slideMoveStartX;
 
     if (delta > 0) {
-      delta = Math.min(delta, x + width - travellerWidth - endX, x + width - travellerWidth - startX);
+      delta = Math.min(
+        delta,
+        x + width - travellerWidth - endX,
+        x + width - travellerWidth - startX
+      );
     } else if (delta < 0) {
       delta = Math.max(delta, x - startX, x - endX);
     }

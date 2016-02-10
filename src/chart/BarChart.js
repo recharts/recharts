@@ -257,11 +257,13 @@ class BarChart extends CartesianChart {
                         && this.getStackedDataOfItem(child, stackGroups[axisId].stackGroups);
 
       return React.cloneElement(child, {
-        key: 'bar-' + i,
+        key: `bar-${i}`,
         layout,
         onMouseLeave: ::this.handleBarMouseLeave,
         onMouseEnter: this.handleBarMouseEnter.bind(this, dataKey),
-        data: this.getComposedData(barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey, stackedData),
+        data: this.getComposedData(
+          barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey, stackedData
+        ),
       });
     }, this);
   }

@@ -119,7 +119,9 @@ class Pie extends Component {
           _startAngle = startAngle;
         }
 
-        _endAngle = _startAngle + Math.sign(deltaAngle) * (minAngle + percent * (absDeltaAngle - len * minAngle));
+        _endAngle = _startAngle + Math.sign(deltaAngle) * (
+          minAngle + percent * (absDeltaAngle - len * minAngle)
+        );
 
         prev = {
           ...entry,

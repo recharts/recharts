@@ -396,7 +396,15 @@ class ComposedChart extends CartesianChart {
       finalStrokeWidth = activeLineKey === dataKey ? finalStrokeWidth + 2 : finalStrokeWidth;
 
       if (hasDot && activePoint) {
-        dotItems.push(<Dot key={`area-dot-${i}`} cx={activePoint.x} cy={activePoint.y} r={4} {...pointStyle}/>);
+        dotItems.push(
+          <Dot
+            key={`area-dot-${i}`}
+            cx={activePoint.x}
+            cy={activePoint.y}
+            r={4}
+            {...pointStyle}
+          />
+        );
       }
 
       return React.cloneElement(child, {
@@ -438,17 +446,31 @@ class ComposedChart extends CartesianChart {
       const axisId = layout === 'horizontal' ? xAxisId : yAxisId;
       const stackedData = stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
                         && this.getStackedDataOfItem(child, stackGroups[axisId].stackGroups);
-      const composeData = this.getAreaComposedData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey, stackedData);
+      const composeData = this.getAreaComposedData(
+        xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey, stackedData
+      );
 
       const activePoint = composeData.points && composeData.points[activeTooltipIndex];
       const pointStyle = { fill, strokeWidth: 2, stroke: '#fff' };
 
       if (hasDot && activePoint) {
-        dotItems.push(<Dot key={`area-dot-${i}`} cx={activePoint.x} cy={activePoint.y} r={4} {...pointStyle} />);
+        dotItems.push(
+          <Dot
+            key={`area-dot-${i}`}
+            cx={activePoint.x}
+            cy={activePoint.y}
+            r={4}
+            {...pointStyle}
+          />
+        );
       }
 
-      let finalFillOpacity = fillOpacity === +fillOpacity ? fillOpacity : Area.defaultProps.fillOpacity;
-      finalFillOpacity = activeAreaKey === dataKey ? Math.min(finalFillOpacity * 1.2, 1) : finalFillOpacity;
+      let finalFillOpacity = fillOpacity === +fillOpacity ?
+                          fillOpacity :
+                          Area.defaultProps.fillOpacity;
+      finalFillOpacity = activeAreaKey === dataKey ?
+                      Math.min(finalFillOpacity * 1.2, 1) :
+                      finalFillOpacity;
 
       const area = React.cloneElement(child, {
         key: `area-${i}`,
@@ -504,7 +526,9 @@ class ComposedChart extends CartesianChart {
         layout,
         onMouseLeave: ::this.handleBarMouseLeave,
         onMouseEnter: this.handleBarMouseEnter.bind(this, dataKey),
-        data: this.getBarComposedData(barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey, stackedData),
+        data: this.getBarComposedData(
+          barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey, stackedData
+        ),
       });
     }, this);
   }

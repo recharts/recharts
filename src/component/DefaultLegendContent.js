@@ -48,11 +48,15 @@ class DefaultLegendContent extends Component {
     switch (data.type) {
       case 'line':
         fill = 'none';
-        path = `M0,${halfSize}h${thirdSize}A${sixthSize},${sixthSize},0,1,1,${2 * thirdSize},${halfSize}H${SIZE}M${2 * thirdSize},${halfSize}A${sixthSize},${sixthSize},0,1,1,${thirdSize},${halfSize}`;
+        path = `M0,${halfSize}h${thirdSize}A${sixthSize},${sixthSize},` +
+              `0,1,1,${2 * thirdSize},${halfSize}` +
+              `H${SIZE}M${2 * thirdSize},${halfSize}` +
+              `A${sixthSize},${sixthSize},0,1,1,${thirdSize},${halfSize}`;
         break;
       case 'scatter':
         stroke = 'none';
-        path = `M${halfSize},0A${halfSize},${halfSize},0,1,1,${halfSize},${SIZE}A${halfSize},${halfSize},0,1,1,${halfSize},0Z`;
+        path = `M${halfSize},0A${halfSize},${halfSize},0,1,1,${halfSize},${SIZE}` +
+              `A${halfSize},${halfSize},0,1,1,${halfSize},0Z`;
         break;
       case 'rect':
         stroke = 'none';
@@ -64,7 +68,15 @@ class DefaultLegendContent extends Component {
         break;
     }
 
-    return <path strokeWidth={4} fill={fill} stroke={stroke} d={path} className="recharts-legend-icon" />;
+    return (
+      <path
+        strokeWidth={4}
+        fill={fill}
+        stroke={stroke}
+        d={path}
+        className="recharts-legend-icon"
+      />
+    );
   }
 
   /**
@@ -81,7 +93,11 @@ class DefaultLegendContent extends Component {
     const svgStyle = { display: 'inline-block', verticalAlign: 'middle', marginRight: 4 };
 
     return payload.map((entry, i) => (
-      <li className={`recharts-legend-item legend-item-${i}`} style={itemStyle} key={`legend-item-${i}`}>
+      <li
+        className={`recharts-legend-item legend-item-${i}`}
+        style={itemStyle}
+        key={`legend-item-${i}`}
+      >
         <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
           {this.renderIcon(entry)}
         </Surface>

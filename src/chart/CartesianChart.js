@@ -349,7 +349,8 @@ class CartesianChart extends Component {
   }
 
   /**
-   * Get the configuration of axis by the options of item, this kind of axis does not display in chart
+   * Get the configuration of axis by the options of item,
+   * this kind of axis does not display in chart
    * @param  {Array} items       The instances of item
    * @param  {ReactElement} Axis Axis Component
    * @param  {String} axisType   The type of axis, xAxis - x-axis, yAxis - y-axis
@@ -679,7 +680,8 @@ class CartesianChart extends Component {
    * @return {Array}       The content of tooltip
    */
   getTooltipContent(items) {
-    const { activeLineKey, activeBarKey, activeAreaKey, activeTooltipIndex, dataStartIndex, dataEndIndex } = this.state;
+    const { activeLineKey, activeBarKey, activeAreaKey, activeTooltipIndex,
+      dataStartIndex, dataEndIndex } = this.state;
     const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
 
     if (activeTooltipIndex < 0 || !items || !items.length) {
@@ -689,11 +691,17 @@ class CartesianChart extends Component {
     let activeItems = items;
 
     if (activeLineKey) {
-      activeItems = items.filter(item => item.props.dataKey === activeLineKey && item.type.displayName === 'Line');
+      activeItems = items.filter(item => (
+        item.props.dataKey === activeLineKey && item.type.displayName === 'Line'
+      ));
     } else if (activeBarKey) {
-      activeItems = items.filter(item => item.props.dataKey === activeBarKey && item.type.displayName === 'Bar');
+      activeItems = items.filter(item => (
+        item.props.dataKey === activeBarKey && item.type.displayName === 'Bar'
+      ));
     } else if (activeAreaKey) {
-      activeItems = items.filter(item => item.props.dataKey === activeAreaKey && item.type.displayName === 'Area');
+      activeItems = items.filter(item => (
+        item.props.dataKey === activeAreaKey && item.type.displayName === 'Area'
+      ));
     }
 
     return activeItems.map((child) => {
@@ -707,6 +715,48 @@ class CartesianChart extends Component {
         formatter,
       };
     });
+  }
+
+  parseSpecifiedDomain(specifiedDomain, autoDomain) {
+    if (!_.isArray(specifiedDomain)) {
+      return autoDomain;
+    }
+    const domain = [];
+    if (!_.isNumber(specifiedDomain[0]) || specifiedDomain[0] > autoDomain[0]) {
+      domain[0] = autoDomain[0];
+    } else {
+      domain[0] = specifiedDomain[0];
+    }
+    if (!_.isNumber(specifiedDomain[1]) || specifiedDomain[1] < autoDomain[1]) {
+      domain[1] = autoDomain[1];
+    } else {
+      domain[1] = specifiedDomain[1];
+    }
+
+    return domain;
+  }
+
+  getLegendProps(items) {
+    const { children } = this.props;
+    const legendItem = findChildByType(children, Legend);
+    if (!legendItem) {return null;}
+
+    const { width, height } = this.props;
+    const legendData = items.map((child) => {
+      const { dataKey, name, legendType } = child.props;
+
+      return {
+        type: legendType || 'square',
+        color: this.getMainColorOfItem(child),
+        value: name || dataKey,
+      };
+    }, this);
+
+    return {
+      ...legendItem.props,
+      ...Legend.getWithHeight(legendItem, width, height),
+      payload: legendData,
+    };
   }
 
   validateAxes() {
@@ -743,25 +793,6 @@ class CartesianChart extends Component {
     }
 
     return null;
-  }
-
-  parseSpecifiedDomain(specifiedDomain, autoDomain) {
-    if (!_.isArray(specifiedDomain)) {
-      return autoDomain;
-    }
-    const domain = [];
-    if (!_.isNumber(specifiedDomain[0]) || specifiedDomain[0] > autoDomain[0]) {
-      domain[0] = autoDomain[0];
-    } else {
-      domain[0] = specifiedDomain[0];
-    }
-    if (!_.isNumber(specifiedDomain[1]) || specifiedDomain[1] < autoDomain[1]) {
-      domain[1] = autoDomain[1];
-    } else {
-      domain[1] = specifiedDomain[1];
-    }
-
-    return domain;
   }
 
   handleBrushChange({ startIndex, endIndex }) {
@@ -865,7 +896,9 @@ class CartesianChart extends Component {
         }
       }
 
-      return xAxes.length ? <Layer key="x-axis-layer" className="recharts-x-axis">{xAxes}</Layer> : null;
+      return xAxes.length ?
+            <Layer key="x-axis-layer" className="recharts-x-axis">{xAxes}</Layer> :
+            null;
     }
   }
 
@@ -887,7 +920,7 @@ class CartesianChart extends Component {
           yAxes.push((
             <CartesianAxis
               {...axis}
-              key={'y-axis-' + ids[i]}
+              key={`y-axis-${ids[i]}`}
               x={axis.x}
               y={axis.y}
               width={axis.width}
@@ -900,7 +933,9 @@ class CartesianChart extends Component {
         }
       }
 
-      return yAxes.length ? <Layer key="y-axis-layer" className="recharts-y-axis">{yAxes}</Layer> : null;
+      return yAxes.length ?
+            <Layer key="y-axis-layer" className="recharts-y-axis">{yAxes}</Layer> :
+            null;
     }
   }
 
@@ -942,28 +977,6 @@ class CartesianChart extends Component {
       height: offset.height,
       verticalPoints, horizontalPoints,
     });
-  }
-  getLegendProps(items) {
-    const { children } = this.props;
-    const legendItem = findChildByType(children, Legend);
-    if (!legendItem) {return null;}
-
-    const { width, height } = this.props;
-    const legendData = items.map((child) => {
-      const { dataKey, name, legendType } = child.props;
-
-      return {
-        type: legendType || 'square',
-        color: this.getMainColorOfItem(child),
-        value: name || dataKey,
-      };
-    }, this);
-
-    return {
-      ...legendItem.props,
-      ...Legend.getWithHeight(legendItem, width, height),
-      payload: legendData,
-    };
   }
   /**
    * Draw legend
