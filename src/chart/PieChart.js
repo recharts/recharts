@@ -89,7 +89,7 @@ class PieChart extends Component {
     const legendItem = findChildByType(children, Legend);
     if (!legendItem) {return null;}
 
-    const { width, height } = this.props;
+    const { width, height, margin } = this.props;
     const legendData = items.reduce((result, child) => {
       const { nameKey } = child.props;
       const data = this.getComposedData(child);
@@ -104,6 +104,7 @@ class PieChart extends Component {
     return React.cloneElement(legendItem, {
       ...Legend.getWithHeight(legendItem, width, height),
       payload: legendData,
+      margin,
     });
   }
 

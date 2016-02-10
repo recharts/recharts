@@ -201,7 +201,7 @@ class RadialBarChart extends Component {
     const legendItem = findChildByType(children, Legend);
     if (!legendItem) {return null;}
 
-    const { data, width, height } = this.props;
+    const { data, width, height, margin } = this.props;
 
     const legendData = data.map(entry => ({
       type: 'square',
@@ -212,6 +212,7 @@ class RadialBarChart extends Component {
     return React.cloneElement(legendItem, {
       ...Legend.getWithHeight(legendItem, width, height),
       payload: legendData,
+      margin,
     });
   }
 

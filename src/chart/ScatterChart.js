@@ -20,6 +20,7 @@ import ZAxis from '../cartesian/ZAxis';
 import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
+import _ from 'lodash';
 
 @pureRender
 class ScatterChart extends Component {
@@ -196,12 +197,24 @@ class ScatterChart extends Component {
     };
   }
 
-  getOffset(xAxis, yAxis) {
+  getOffset(items, xAxis, yAxis) {
     const { width, height, margin } = this.props;
     const offset = { ...margin };
+    const legendProps = this.getLegendProps(items);
 
     offset[xAxis.orientation] += xAxis.height;
     offset[yAxis.orientation] += yAxis.width;
+
+    if (legendProps) {
+      const box = Legend.getLegendBBox(legendProps, width, height);
+      if (legendProps.layout === 'horizontal' &&
+        _.isNumber(offset[legendProps.verticalAlign])) {
+        offset[legendProps.verticalAlign] += box.height || 0;
+      } else if (legendProps.layout === 'vertical' &&
+        _.isNumber(offset[legendProps.align])) {
+        offset[legendProps.align] += box.width || 0;
+      }
+    }
 
     return {
       ...offset,
@@ -400,18 +413,12 @@ class ScatterChart extends Component {
       horizontalPoints,
     });
   }
-
-  /**
-   * Draw legend
-   * @param  {Array} items     The instances of Scatters
-   * @param  {Object} offset   The offset of main part in the svg element
-   * @return {ReactElement}    The instance of Legend
-   */
-  renderLegend(items, offset) {
-    const { children, width, height } = this.props;
+  getLegendProps(items) {
+    const { children } = this.props;
     const legendItem = findChildByType(children, Legend);
     if (!legendItem) {return null;}
 
+    const { width, height } = this.props;
     const legendData = items.map((child) => {
       const { name, fill, legendType } = child.props;
 
@@ -422,10 +429,23 @@ class ScatterChart extends Component {
       };
     }, this);
 
-    return React.cloneElement(legendItem, {
+    return {
+      ...legendItem.props,
       ...Legend.getWithHeight(legendItem, width, height),
       payload: legendData,
-    });
+    };
+  }
+  /**
+   * Draw legend
+   * @param  {Array} items     The instances of Scatters
+   * @return {ReactElement}    The instance of Legend
+   */
+  renderLegend(items) {
+    const props = this.getLegendProps(items);
+
+    if (!props) {return null;}
+
+    return React.createElement(Legend, props);
   }
 
   /**
@@ -511,7 +531,7 @@ class ScatterChart extends Component {
     let xAxis = this.getAxis('xAxis', items);
     let yAxis = this.getAxis('yAxis', items);
 
-    const offset = this.getOffset(xAxis, yAxis);
+    const offset = this.getOffset(items, xAxis, yAxis);
     xAxis = this.getFormatAxis(xAxis, offset, 'xAxis');
     yAxis = this.getFormatAxis(yAxis, offset, 'yAxis');
 

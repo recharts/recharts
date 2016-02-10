@@ -19,7 +19,7 @@ export default React.createClass({
         <p>A simple ComposedChart of Line, Bar, Area</p>
         <div className="composed-chart-wrapper">
           <ComposedChart width={800} height={400} data={data}
-            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+            margin={{ top: 20, right: 20, bottom: 5, left: 20 }}>
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />

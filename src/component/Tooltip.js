@@ -67,7 +67,7 @@ class Tooltip extends Component {
     const style = { ...wrapperStyle, top: -20000, left: 0, display: 'block' };
     const wrapper = document.createElement('div');
 
-    wrapper.setAttribute('style', getStyleString(wrapperStyle));
+    wrapper.setAttribute('style', getStyleString(style));
     wrapper.innerHTML = contentHtml;
     document.body.appendChild(wrapper);
     const box = wrapper.getBoundingClientRect();

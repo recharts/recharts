@@ -3,8 +3,10 @@
  */
 import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
+import ReactDOMServer from 'react-dom/server';
 import Surface from '../container/Surface';
 import DefaultLegendContent from './DefaultLegendContent';
+import { getStyleString } from '../util/DOMUtils';
 
 const SIZE = 32;
 
@@ -21,6 +23,12 @@ class Legend extends Component {
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     align: PropTypes.oneOf(['center', 'left', 'right']),
     verticalAlign: PropTypes.oneOf(['top', 'bottom', 'middle']),
+    margin: PropTypes.shape({
+      top: PropTypes.number,
+      left: PropTypes.number,
+      bottom: PropTypes.number,
+      right: PropTypes.number,
+    }),
     payload: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.any,
       id: PropTypes.any,
@@ -50,22 +58,55 @@ class Legend extends Component {
     };
   }
 
+  static getLegendBBox(props, chartWidth, chartHeight) {
+    const { content, width, height, wrapperStyle } = props;
+    const contentHtml = ReactDOMServer.renderToStaticMarkup(
+      React.isValidElement(content) ?
+      React.cloneElement(content, props) :
+      React.createElement(DefaultLegendContent, props)
+    );
+    const style = {
+      width: width || 'auto',
+      height: height || 'auto',
+      ...wrapperStyle,
+      top: -20000,
+      left: 0,
+      display: 'block'
+    };
+    const wrapper = document.createElement('div');
+
+    wrapper.setAttribute('style', getStyleString(style));
+    wrapper.innerHTML = contentHtml;
+    document.body.appendChild(wrapper);
+    const box = wrapper.getBoundingClientRect();
+
+    document.body.removeChild(wrapper);
+
+    return box;
+  }
+
   getDefaultPosition(style) {
-    const { layout, align, verticalAlign } = this.props;
+    const { layout, align, verticalAlign, margin } = this.props;
     let hPos;
     let vPos;
 
     if (!style || ((style.left === undefined || style.left === null) && (
       style.right === undefined || style.right === null))) {
-      hPos = align === 'right' ? { right: 0 } : { left: 0 };
+      hPos = align === 'right' ?
+            { right: (margin && margin.right) || 0 } :
+            { left: (margin && margin.left) || 0 };
     }
 
     if (!style || ((style.top === undefined || style.top === null) && (
       style.bottom === undefined || style.bottom === null))) {
       if (layout === 'vertical') {
-        vPos = verticalAlign === 'bottom' ? { bottom: 0 } : { top: 0 };
+        vPos = verticalAlign === 'bottom' ?
+              { bottom: (margin && margin.bottom) || 0 } :
+              { top: (margin && margin.top) || 0 };
       } else {
-        vPos = verticalAlign === 'top' ? { top: 0 } : { bottom: 0 };
+        vPos = verticalAlign === 'top' ?
+              { top: (margin && margin.top) || 0 } :
+              { bottom: (margin && margin.bottom) || 0 };
       }
     }
 

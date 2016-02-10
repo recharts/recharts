@@ -523,7 +523,7 @@ class ComposedChart extends CartesianChart {
 
     let xAxisMap = this.getAxisMap('xAxis', items, numberAxisName === 'xAxis' && stackGroups);
     let yAxisMap = this.getAxisMap('yAxis', items, numberAxisName === 'yAxis' && stackGroups);
-    const offset = this.getOffset(xAxisMap, yAxisMap);
+    const offset = this.getOffset(items, xAxisMap, yAxisMap);
 
     xAxisMap = this.getFormatAxisMap(xAxisMap, offset, 'xAxis');
     yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');

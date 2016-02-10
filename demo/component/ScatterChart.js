@@ -1,5 +1,6 @@
 import React from 'react';
-import { ScatterChart, Scatter, CartesianGrid, Tooltip, XAxis, YAxis, ZAxis } from 'recharts';
+import { ScatterChart, Scatter, CartesianGrid, Tooltip, Legend,
+ XAxis, YAxis, ZAxis } from 'recharts';
 
 const data01 = [
   { x: 100, y: 200, z: 200 },
@@ -42,18 +43,19 @@ export default React.createClass({
       <div className="scatter-charts">
         <p>Simple ScatterChart</p>
         <div className="scatter-chart-wrapper">
-          <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
             <XAxis dataKey={'x'} name="stature" unit="cm" />
             <YAxis dataKey={'y'} name="weight" unit="kg" />
             <Scatter name="A school" data={data01} fill="#ff7300" />
             <CartesianGrid />
             <Tooltip />
+            <Legend/>
           </ScatterChart>
         </div>
 
         <p>ScatterChart of three dimension data</p>
         <div className="scatter-chart-wrapper">
-          <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
             <XAxis dataKey={'x'} name="stature" unit="cm" />
             <YAxis dataKey={'y'} name="weight" unit="kg" />
             <ZAxis dataKey={'z'} range={[4, 20]} name="score" unit="km" />
@@ -61,12 +63,13 @@ export default React.createClass({
             <Scatter name="A school" data={data01} fillOpactity={0.3} fill="#ff7300" />
             <Scatter name="B school" data={data02} fill="#347300" />
             <Tooltip/>
+            <Legend/>
           </ScatterChart>
         </div>
 
         <p>ScatterChart which has joint line</p>
         <div className="scatter-chart-wrapper">
-          <ScatterChart width={800} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <ScatterChart width={800} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
             <XAxis dataKey={'x'} name="stature" unit="cm" />
             <YAxis dataKey={'y'} name="weight" unit="kg" />
             <ZAxis range={[4]} />
@@ -74,6 +77,7 @@ export default React.createClass({
             <Scatter line data={data04} fill="#347300" />
             <CartesianGrid />
             <Tooltip cursor={{ stroke: '#808080', strokeDasharray: '5 5' }}/>
+            <Legend/>
           </ScatterChart>
         </div>
       </div>

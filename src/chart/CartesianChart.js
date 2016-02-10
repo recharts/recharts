@@ -410,11 +410,12 @@ class CartesianChart extends Component {
 
   /**
    * Calculate the offset of main part in the svg element
+   * @param  {Array} items       The instances of item
    * @param  {Object} xAxisMap  The configuration of x-axis
    * @param  {Object} yAxisMap  The configuration of y-axis
    * @return {Object} The offset of main part in the svg element
    */
-  getOffset(xAxisMap, yAxisMap) {
+  getOffset(items, xAxisMap, yAxisMap) {
     const { width, height, margin, children } = this.props;
     const brushItem = findChildByType(children, Brush);
 
@@ -438,6 +439,17 @@ class CartesianChart extends Component {
 
     if (brushItem) {
       offsetV.bottom += brushItem.props.height || Brush.defaultProps.height;
+    }
+    const legendProps = this.getLegendProps(items);
+    if (legendProps) {
+      const box = Legend.getLegendBBox(legendProps, width, height);
+      if (legendProps.layout === 'horizontal' &&
+        _.isNumber(offsetV[legendProps.verticalAlign])) {
+        offsetV[legendProps.verticalAlign] += box.height || 0;
+      } else if (legendProps.layout === 'vertical' &&
+        _.isNumber(offsetH[legendProps.align])) {
+        offsetH[legendProps.align] += box.width || 0;
+      }
     }
 
     return {
@@ -931,17 +943,12 @@ class CartesianChart extends Component {
       verticalPoints, horizontalPoints,
     });
   }
-
-  /**
-   * Draw legend
-   * @param  {Array} items             The instances of item
-   * @return {ReactElement}            The instance of Legend
-   */
-  renderLegend(items) {
-    const { children, width, height } = this.props;
+  getLegendProps(items) {
+    const { children } = this.props;
     const legendItem = findChildByType(children, Legend);
     if (!legendItem) {return null;}
 
+    const { width, height } = this.props;
     const legendData = items.map((child) => {
       const { dataKey, name, legendType } = child.props;
 
@@ -952,10 +959,24 @@ class CartesianChart extends Component {
       };
     }, this);
 
-    return React.cloneElement(legendItem, {
+    return {
+      ...legendItem.props,
       ...Legend.getWithHeight(legendItem, width, height),
       payload: legendData,
-    });
+    };
+  }
+  /**
+   * Draw legend
+   * @param  {Array} items             The instances of item
+   * @return {ReactElement}            The instance of Legend
+   */
+  renderLegend(items) {
+    const props = this.getLegendProps(items);
+
+    if (!props) {return null;}
+    const { margin } = this.props;
+
+    return React.createElement(Legend, {...props, margin });
   }
 
   /**

@@ -252,7 +252,7 @@ class RadarChart extends Component {
     const legendItem = findChildByType(children, Legend);
     if (!legendItem) {return null;}
 
-    const { width, height } = this.props;
+    const { width, height, margin } = this.props;
     const legendData = items.map((child) => {
       const { dataKey, name, legendType } = child.props;
 
@@ -266,6 +266,7 @@ class RadarChart extends Component {
     return React.cloneElement(legendItem, {
       ...Legend.getWithHeight(legendItem, width, height),
       payload: legendData,
+      margin,
     });
   }
 
