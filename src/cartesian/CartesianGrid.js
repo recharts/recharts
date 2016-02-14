@@ -67,7 +67,7 @@ class CartesianGrid extends Component {
     const props = getPresentationAttributes(this.props);
 
     const items = verticalPoints.map((entry, i) =>
-      (<line {...props} key={`line-${i}'`} x1={entry} y1={y} x2={entry} y2={y + height}/>));
+      (<line {...props} key={`line-${i}`} x1={entry} y1={y} x2={entry} y2={y + height} />));
 
     return <g className="recharts-cartesian-grid-vertical">{items}</g>;
   }
