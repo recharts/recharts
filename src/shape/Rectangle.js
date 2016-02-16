@@ -81,13 +81,13 @@ class Rectangle extends Component {
     } else if (maxRadius > 0 && radius === +radius && radius > 0) {
       newRadius = radius > maxRadius ? maxRadius : radius;
 
-      path = `M ${x},${y + newRadius} A ${newRadius},${newRadius},0,0,1,${x + newRadius},${y}`
-           + `L ${x + width - newRadius},${y}`
-           + `A ${newRadius},${newRadius},0,0,1,${x + width},${y + newRadius}`
-           + `L ${x + width},${y + height - newRadius}`
-           + `A ${newRadius},${newRadius},0,0,1,${x + width - newRadius},${y + height}`
-           + `L ${x + newRadius},${y + height}`
-           + `A ${newRadius},${newRadius},0,0,1,${x},${y + height - newRadius} Z`;
+      path = `M ${x},${y + newRadius} A ${newRadius},${newRadius},0,0,1,${x + newRadius},${y}
+              L ${x + width - newRadius},${y}
+              A ${newRadius},${newRadius},0,0,1,${x + width},${y + newRadius}
+              L ${x + width},${y + height - newRadius}
+              A ${newRadius},${newRadius},0,0,1,${x + width - newRadius},${y + height}
+              L ${x + newRadius},${y + height}
+              A ${newRadius},${newRadius},0,0,1,${x},${y + height - newRadius} Z`;
 
     } else {
       path = `M ${x},${y} h ${width} v ${height} h ${-width} Z`;
