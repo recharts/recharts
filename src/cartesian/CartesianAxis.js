@@ -27,10 +27,15 @@ class CartesianAxis extends Component {
     }),
     label: PropTypes.oneOfType([
       PropTypes.bool,
+      PropTypes.string,
       PropTypes.object,
       PropTypes.element,
     ]),
-
+    tick: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.object,
+      PropTypes.element,
+    ]),
     axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
     tickLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
 
@@ -59,29 +64,29 @@ class CartesianAxis extends Component {
     stroke: '#666',
     tickLine: true,
     axisLine: true,
-    label: true,
+    tick: true,
 
-    minLabelGap: 5,
+    minTickGap: 5,
     // The width or height of tick
     tickSize: 6,
     interval: 'auto',
   };
 
   static getTicks(props) {
-    const { ticks, viewBox, minLabelGap, orientation, interval } = props;
+    const { ticks, viewBox, minTickGap, orientation, interval } = props;
 
     if (!ticks || !ticks.length) { return [];}
 
     return interval === +interval
         ? CartesianAxis.getNumberIntervalTicks(ticks, interval)
-        : CartesianAxis.getAutoIntervalTicks(ticks, viewBox, orientation, minLabelGap);
+        : CartesianAxis.getAutoIntervalTicks(ticks, viewBox, orientation, minTickGap);
   }
 
   static getNumberIntervalTicks(ticks, interval) {
     return ticks.filter((entry, i) => (i % (interval + 1) === 0));
   }
 
-  static getAutoIntervalTicks(ticks, viewBox, orientation, minLabelGap) {
+  static getAutoIntervalTicks(ticks, viewBox, orientation, minTickGap) {
     const { x, y, width, height } = viewBox;
     const sizeKey = (orientation === 'top' || orientation === 'bottom') ? 'width' : 'height';
     const sign = ticks.length >= 2 ? Math.sign(ticks[1].coord - ticks[0].coord) : 1;
@@ -95,13 +100,13 @@ class CartesianAxis extends Component {
     }
 
     return ticks.filter(entry => {
-      const labelSize = getStringSize(entry.value)[sizeKey];
+      const tickSize = getStringSize(entry.value)[sizeKey];
       const isShow = sign === 1 ?
-        (entry.coord - labelSize / 2) >= pointer :
-        (entry.coord + labelSize / 2) <= pointer;
+        (entry.coord - tickSize / 2) >= pointer :
+        (entry.coord + tickSize / 2) <= pointer;
 
       if (isShow) {
-        pointer = entry.coord + sign * labelSize / 2 + minLabelGap;
+        pointer = entry.coord + sign * tickSize / 2 + minTickGap;
       }
 
       return isShow;
@@ -110,7 +115,7 @@ class CartesianAxis extends Component {
   /**
    * Calculate the coordinates of endpoints in ticks
    * @param  {Object} data The data of a simple tick
-   * @return {Object} (x1, y1): The coordinate of endpoint close to label text
+   * @return {Object} (x1, y1): The coordinate of endpoint close to tick text
    *  (x2, y2): The coordinate of endpoint close to axis
    */
   getTickLineCoord(data) {
@@ -233,7 +238,7 @@ class CartesianAxis extends Component {
   }
 
   renderTicks() {
-    const { ticks, tickLine, stroke, label, tickFormatter } = this.props;
+    const { ticks, tickLine, stroke, tick, tickFormatter } = this.props;
 
     if (!ticks || !ticks.length) { return null; }
 
@@ -241,31 +246,32 @@ class CartesianAxis extends Component {
 
     const textAnchor = this.getTickTextAnchor();
     const axisProps = getPresentationAttributes(this.props);
-    const customLabelProps = getPresentationAttributes(label);
-    const isLabelElement = React.isValidElement(label);
-    const tickLineProps = getPresentationAttributes(tickLine);
+    const customTickProps = getPresentationAttributes(tick);
+    const istickElement = React.isValidElement(tick);
+    const tickLineProps = {
+      ...axisProps, fill: 'none', ...getPresentationAttributes(tickLine),
+    } ;
 
     const items = finalTicks.map((entry, i) => {
       const lineCoord = this.getTickLineCoord(entry);
-      const tickProps = { ...axisProps, fill: 'none', ...tickLineProps, ...lineCoord };
-      const labelProps = {
+      const tickProps = {
         dy: this.getDy(entry),
         textAnchor,
         ...axisProps,
         stroke: 'none',
         fill: stroke,
-        ...customLabelProps,
+        ...customTickProps,
         index: i,
         x: lineCoord.x1,
         y: lineCoord.y1,
         payload: entry,
       };
-      let labelItem;
+      let tickItem;
 
-      if (label) {
-        labelItem = isLabelElement ?
-          React.cloneElement(label, labelProps) : (
-            <text {...labelProps} className="recharts-cartesian-axis-tick-value">
+      if (tick) {
+        tickItem = istickElement ?
+          React.cloneElement(tick, tickProps) : (
+            <text {...tickProps} className="recharts-cartesian-axis-tick-value">
               {tickFormatter ? tickFormatter(entry.value) : entry.value}
             </text>
           );
@@ -273,8 +279,8 @@ class CartesianAxis extends Component {
 
       return (
         <g className="recharts-cartesian-axis-tick" key={`tick-${i}`}>
-          {tickLine && <line className="recharts-cartesian-axis-tick-line" {...tickProps}/>}
-          {label && labelItem}
+          {tickLine && <line className="recharts-cartesian-axis-tick-line" {...tickLineProps} {...lineCoord}/>}
+          {tick && tickItem}
         </g>
       );
     });
@@ -286,8 +292,12 @@ class CartesianAxis extends Component {
     );
   }
 
+  renderLabel() {
+
+  }
+
   render() {
-    const { axisLine, width, height, ticks } = this.props;
+    const { axisLine, width, height, ticks, label } = this.props;
 
     if (width <= 0 || height <= 0 || !ticks || !ticks.length) {
       return null;
@@ -297,6 +307,7 @@ class CartesianAxis extends Component {
       <Layer className="recharts-cartesian-axis">
         {axisLine && this.renderAxisLine()}
         {this.renderTicks()}
+        {label && this.renderLabel() }
       </Layer>
     );
   }

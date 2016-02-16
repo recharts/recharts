@@ -81,13 +81,13 @@ const data02 = [
   { name: '201511', uv: 3.27, pv: 6.74 },
 ];
 
-const CustomLabel = function() {
+const CustomTick = function() {
   const { payload, x, y } = this.props;
 
   return <text x={x} y={y} fill="#666" textAnchor="middle" dy={-4}>{payload.province}</text>;
 };
 
-const CustomAxisLabel = function() {
+const CustomAxisTick = function() {
   const {x, y, payload} = this.props;
 
   return (
@@ -243,7 +243,7 @@ export default React.createClass({
         <p>BarChart of custom bar (2)</p>
         <div className="bar-chart-wrapper">
           <BarChart width={500} height={250} barCategoryGap={0} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-            <XAxis axisLine={false} tickLine={false} dataKey="name" label={<CustomAxis />}/>
+            <XAxis axisLine={false} tickLine={false} dataKey="name" tick={<CustomAxis />}/>
             <Bar dataKey="uv" barGap={0} fill="#387908" shape={<BarTwo />} label />
           </BarChart>
         </div>

@@ -28,7 +28,7 @@ class PolarAngleAxis extends Component {
     axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
     axisLineType: PropTypes.oneOf(['polygon', 'circle']),
     tickLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
-    label: PropTypes.oneOfType([
+    tick: PropTypes.oneOfType([
       PropTypes.bool,
       PropTypes.object,
       PropTypes.element,
@@ -51,7 +51,7 @@ class PolarAngleAxis extends Component {
     stroke: '#ccc',
     axisLine: true,
     tickLine: true,
-    label: true,
+    tick: true,
     hide: false,
   };
 
@@ -120,29 +120,30 @@ class PolarAngleAxis extends Component {
   }
 
   renderTicks() {
-    const { ticks, label, tickLine, tickFormatter, stroke } = this.props;
+    const { ticks, tick, tickLine, tickFormatter, stroke } = this.props;
     const axisProps = getPresentationAttributes(this.props);
-    const customLabelProps = getPresentationAttributes(label);
-    const isLabelElement = React.isValidElement(label);
-    const tickLineProps = getPresentationAttributes(tickLine);
+    const customTickProps = getPresentationAttributes(tick);
+    const isTickElement = React.isValidElement(tick);
+    const tickLineProps = {
+      ...axisProps, fill: 'none', ...getPresentationAttributes(tickLine),
+    };
 
     const items = ticks.map((entry, i) => {
       const lineCoord = this.getTickLineCoord(entry);
       const textAnchor = this.getTickTextAnchor(entry);
-      const tickProps = { ...axisProps, fill: 'none', ...tickLineProps, ...lineCoord };
-      const labelProps = {
+      const tickProps = {
         textAnchor,
         ...axisProps,
         stroke: 'none', fill: stroke,
-        ...customLabelProps,
+        ...customTickProps,
         index: i, payload: entry,
         x: lineCoord.x2, y: lineCoord.y2,
       };
-      let labelItem;
+      let tickItem;
 
-      if (label) {
-        labelItem = isLabelElement ? React.cloneElement(label, labelProps) : (
-          <text {...labelProps} className="recharts-polar-angle-axis-tick-value">
+      if (tick) {
+        tickItem = isTickElement ? React.cloneElement(tick, tickProps) : (
+          <text {...tickProps} className="recharts-polar-angle-axis-tick-value">
             {tickFormatter ? tickFormatter(entry.value) : entry.value}
           </text>
         );
@@ -150,8 +151,14 @@ class PolarAngleAxis extends Component {
 
       return (
         <g className="recharts-polar-angle-axis-tick" key={`tick-${i}`}>
-          {tickLine && <line className="recharts-polar-angle-axis-tick-line" {...tickProps}/>}
-          {label && labelItem}
+          {tickLine && (
+            <line
+              className="recharts-polar-angle-axis-tick-line"
+              {...tickLineProps}
+              {...lineCoord}
+            />
+          )}
+          {tick && tickItem}
         </g>
       );
     });
@@ -160,7 +167,7 @@ class PolarAngleAxis extends Component {
   }
 
   render() {
-    const { ticks, radius, axisLine, tickLine, label } = this.props;
+    const { ticks, radius, axisLine, tickLine } = this.props;
 
     if (radius <= 0 || !ticks || !ticks.length) { return null; }
 
