@@ -1,6 +1,6 @@
 import React from 'react';
 import CustomLineDot from './CustomLineDot';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from 'recharts';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine, Tooltip, CartesianGrid, Legend } from 'recharts';
 
 const data = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
@@ -31,11 +31,13 @@ export default React.createClass({
       <div className='line-charts'>
         <p>A simple LineChart with fixed domain y-axis</p>
         <div className='line-chart-wrapper'>
-          <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 40, bottom: 20, left: 20 }}>
             <CartesianGrid stroke='#f5f5f5'/>
             <Legend/>
             <XAxis />
             <YAxis domain={[0, 500]}/>
+            <ReferenceLine label="max" type="horizontal" value={400} stroke="#666" />
+            <ReferenceLine strokeDasharray="3 3 2 2" label="middle" type="vertical" value={3} stroke="#666" />
             <Line type='monotone' dataKey='uv' stroke='#ff7300'/>
           </LineChart>
         </div>

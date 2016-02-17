@@ -6,6 +6,7 @@ import pureRender from '../util/PureRender';
 import { getStringSize } from '../util/DOMUtils';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import _ from 'lodash';
 
 @pureRender
 class CartesianAxis extends Component {
@@ -26,9 +27,8 @@ class CartesianAxis extends Component {
       height: PropTypes.number,
     }),
     label: PropTypes.oneOfType([
-      PropTypes.bool,
+      PropTypes.number,
       PropTypes.string,
-      PropTypes.object,
       PropTypes.element,
     ]),
     tick: PropTypes.oneOfType([
@@ -211,6 +211,25 @@ class CartesianAxis extends Component {
     return dy;
   }
 
+  getLabelProps() {
+    const { x, y, width, height, orientation } = this.props;
+
+    switch (orientation) {
+      case 'left':
+        return { x: x + width, y: y - 6, textAnchor: 'middle' };
+        break;
+      case 'right':
+        return { x: x, y: y - 6, textAnchor: 'middle' };
+        break;
+      case 'top':
+        return { x: x + width + 6, y: y + height + 6, textAnchor: 'start' };
+        break;
+      default:
+        return { x: x + width + 6, y: y + 6, textAnchor: 'start' };
+        break;
+    }
+  }
+
   renderAxisLine() {
     const { x, y, width, height, orientation, axisLine } = this.props;
     let props = {
@@ -293,7 +312,26 @@ class CartesianAxis extends Component {
   }
 
   renderLabel() {
+    const { label, x, y, width, height, orientation, stroke } = this.props;
 
+    if (React.isValidElement(label)) {
+      return React.cloneElement(label, this.props);
+    } else if (_.isString(label) || _.isNumber(label)) {
+      const props = {
+        ...getPresentationAttributes(this.props),
+        stroke: 'none',
+        fill: stroke,
+        ...this.getLabelProps(),
+      };
+
+      return (
+        <g className="recharts-cartesian-axis-label">
+          <text {...props}>{label}</text>
+        </g>
+      );
+    }
+
+    return null;
   }
 
   render() {
@@ -307,7 +345,7 @@ class CartesianAxis extends Component {
       <Layer className="recharts-cartesian-axis">
         {axisLine && this.renderAxisLine()}
         {this.renderTicks()}
-        {label && this.renderLabel() }
+        {this.renderLabel()}
       </Layer>
     );
   }

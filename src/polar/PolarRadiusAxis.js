@@ -6,6 +6,7 @@ import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
+import _ from 'lodash';
 
 @pureRender
 class PolarRadiusAxis extends Component {
@@ -26,6 +27,11 @@ class PolarRadiusAxis extends Component {
     })),
     orientation: PropTypes.oneOf(['left', 'right', 'middle']),
     axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
+    label: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string,
+      PropTypes.element,
+    ]),
     tick: PropTypes.oneOfType([
       PropTypes.bool,
       PropTypes.object,
@@ -135,6 +141,36 @@ class PolarRadiusAxis extends Component {
     return <g className="recharts-polar-radius-axis-ticks">{items}</g>;
   }
 
+  renderLabel() {
+    const { label } = this.props;
+
+    if (React.isValidElement(label)) {
+      return React.cloneElement(label, this.props);
+    } else if (_.isString(label) || _.isNumber(label)) {
+      const { ticks, angle, stroke } = this.props;
+      const maxRadiusTick = _.maxBy(ticks, entry => (entry.radius || 0));
+      const radius = maxRadiusTick.radius || 0;
+      const coord = this.getTickValueCoord({ radius: radius + 10 })
+
+      const props = {
+        ...getPresentationAttributes(this.props),
+        stroke: 'none',
+        fill: stroke,
+        ...coord,
+        textAnchor: 'middle',
+        transform: `rotate(${90 - angle}, ${coord.x}, ${coord.y})`,
+      };
+
+      return (
+        <g className="recharts-polar-radius-axis-label">
+          <text {...props}>{label}</text>
+        </g>
+      );
+    }
+
+    return null;
+  }
+
   render() {
     const { ticks, axisLine, tick } = this.props;
 
@@ -144,6 +180,7 @@ class PolarRadiusAxis extends Component {
       <g className="recharts-polar-radius-axis">
         {axisLine && this.renderAxisLine()}
         {tick && this.renderTicks()}
+        {this.renderLabel()}
       </g>
     );
   }

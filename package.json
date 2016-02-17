@@ -26,7 +26,8 @@
     "build-min": "NODE_ENV=production webpack -p src/index.js umd/Recharts.min.js",
     "demo": "webpack-dev-server  --progress --port 3000  --colors --content-base demo --hot --inline --config demo/webpack.config.js",
     "test": "./node_modules/karma/bin/karma start test/karma.conf.js",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "bundle-analyse": "NODE_ENV=production webpack src/index.js umd/Recharts.js --json | webpack-bundle-size-analyzer"
   },
   "repository": {
     "type": "git",
@@ -96,6 +97,7 @@
     "require-dir": "^0.3.0",
     "sinon": "^1.17.3",
     "webpack": "^1.12.9",
+    "webpack-bundle-size-analyzer": "^2.0.1",
     "webpack-dev-server": "^1.14.0"
   },
   "license": "MIT"

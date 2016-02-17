@@ -45,9 +45,9 @@ export default React.createClass({
         <p>Stacked AreaChart</p>
         <div className="area-chart-wrapper">
           <AreaChart width={800} height={400} data={data}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <XAxis dataKey="name" />
-            <YAxis />
+            margin={{ top: 20, right: 80, left: 20, bottom: 5 }}>
+            <XAxis dataKey="name" label="province"/>
+            <YAxis/>
             <Tooltip />
             <Area stackId="0" type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
             <Area stackId="0" type="monotone" dataKey="pv" stroke="#387908" fill="#387908" />
@@ -63,11 +63,11 @@ export default React.createClass({
 
         <p>AreaChart with three y-axes</p>
         <div className="area-chart-wrapper">
-          <AreaChart width={600} height={400} data={data}>
+          <AreaChart width={600} height={400} data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
             <YAxis type="number" yAxisId={0} stroke="#ff7300" />
             <YAxis type="number" orientation="right" yAxisId={1} stroke="#387908" />
             <YAxis type="number" orientation="right" yAxisId={2} stroke="#38abc8" />
-            <XAxis dataKey="name" />
+            <XAxis dataKey="name"/>
             <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" strokeWidth={2} yAxisId={0} />
             <Area dataKey="pv" stroke="#387908" fill="#387908" strokeWidth={2} yAxisId={1} />
             <Area dataKey="amt" stroke="#38abc8" fill="#38abc8" strokeWidth={2} yAxisId={2} />

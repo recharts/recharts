@@ -30,8 +30,7 @@ class RadarChartDemo extends React.Component {
           <Radar name="Lily" dataKey="B" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} />
           <PolarGrid />
           <Legend />
-          <PolarAngleAxis dataKey="subject" />
-          <PolarRadiusAxis angle={30} domain={[0, 150]} />
+          <PolarRadiusAxis domain={[0, 150]} label="score"/>
         </RadarChart>
 
         <p>RadarChart wrapped by ResponsiveContainer</p>
