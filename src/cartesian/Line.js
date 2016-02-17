@@ -43,7 +43,6 @@ class Line extends Component {
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
     animationEasing: PropTypes.oneOf([
-      'spring',
       'ease',
       'ease-in',
       'ease-out',
