@@ -48,7 +48,7 @@ export default React.createClass({
           <PieChart width={800} height={400}>
             <Legend />
             <Pie isAnimationActive={false} data={data01} cx={200} cy={200} startAngle={180} endAngle={0} outerRadius={80} fill="#ff7300" label/>
-            <Pie data={data02} cx={600} cy={200} startAngle={180} endAngle={-180} outerRadius={80} fill="#387908" label/>
+            <Pie data={data02} cx={600} cy={200} startAngle={180} endAngle={-180} innerRadius={60} outerRadius={80} fill="#387908"/>
           </PieChart>
         </div>
 

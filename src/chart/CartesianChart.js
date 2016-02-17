@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { getNiceTickValues } from 'recharts-scale';
 import { scaleLinear, scaleBand, scalePoint } from 'd3-scale';
-import D3Shape from 'd3-shape';
+import { stack as shapeStack, stackOrderNone, stackOffsetNone } from 'd3-shape';
 import invariant from 'invariant';
 import OuiDomUtils from 'oui-dom-utils';
 
@@ -145,11 +145,11 @@ class CartesianChart extends Component {
   getStackedData(stackItems) {
     const { data } = this.props;
     const dataKeys = stackItems.map(item => item.props.dataKey);
-    const stack = D3Shape.stack()
+    const stack = shapeStack()
                   .keys(dataKeys)
                   .value((d, key) => (+d[key] || 0))
-                  .order(D3Shape.stackOrderNone)
-                  .offset(D3Shape.stackOffsetNone);
+                  .order(stackOrderNone)
+                  .offset(stackOffsetNone);
 
     return stack(data);
   }

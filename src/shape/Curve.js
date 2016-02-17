@@ -2,11 +2,17 @@
  * @fileOverview Curve
  */
 import React, { Component, PropTypes } from 'react';
-import d3Shape from 'd3-shape';
+import { line as shapeLine, curveLinear, curveMonotoneX, curveMonotoneY, curveStep,
+  curveStepAfter, curveStepBefore } from 'd3-shape';
 import pureRender from '../util/PureRender';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+
+const CURVE_FACTORIES = {
+  curveLinear, curveMonotoneX, curveMonotoneY, curveStep,
+  curveStepAfter, curveStepBefore
+};
 
 @pureRender
 class Curve extends Component {
@@ -42,10 +48,10 @@ class Curve extends Component {
   getCurveFactory(type, layout) {
     const name = `curve${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
 
-    if (name === 'curveMonotone') {
-      return d3Shape[`${name}${layout === 'vertical' ? 'Y' : 'X'}`];
+    if (name === 'curveMonotone' && layout) {
+      return CURVE_FACTORIES[`${name}${layout === 'vertical' ? 'Y' : 'X'}`];
     }
-    return d3Shape[name];
+    return CURVE_FACTORIES[name] || curveLinear;
   }
 
   /**
@@ -54,7 +60,7 @@ class Curve extends Component {
    */
   getPath() {
     const { type, points, baseLine, layout } = this.props;
-    const l = d3Shape.line().x(p => p.x)
+    const l = shapeLine().x(p => p.x)
                     .y(p => p.y)
                     .defined(p => p.x === +p.x && p.y === + p.y)
                     .curve(this.getCurveFactory(type, layout));
