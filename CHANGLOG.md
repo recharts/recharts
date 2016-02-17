@@ -8,6 +8,13 @@
 - feat:Implement tooltip for RadialBarChart
 - deps(d3-scale,d3-shape,oui-dom-util): 1.update version of d3-scale, d3-shape, oui-dom-util 2.update some api of d3-scale
 
+## 0.6.3 (February 10, 2016)
+
+### UI
+- refactor(Legend): refactor the location of legend
+- fix(CartesianChart,CartesianAxis): 1. fix the bug of dataStartIndex && dataEndIndex when the length of data was changed 2. fix the default value of tickFormatter
+- fix(cartesian/Line.js): fix Line animation bug
+
 ## 0.6.2 (February 9, 2016)
 
 ### UI
