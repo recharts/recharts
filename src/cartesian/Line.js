@@ -42,7 +42,13 @@ class Line extends Component {
     isAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
+    animationEasing: PropTypes.oneOf([
+      'ease',
+      'ease-in',
+      'ease-out',
+      'ease-in-out',
+      'linear',
+    ]),
   };
 
   static defaultProps = {
@@ -63,10 +69,17 @@ class Line extends Component {
     animationEasing: 'ease',
   };
 
-  state = {
-    isAnimationFinished: false,
-    totalLength: 0,
-  };
+  constructor(props, ctx) {
+    super(props, ctx);
+
+    this.state = {
+      isAnimationFinished: false,
+      steps: [],
+      totalLength: 0,
+    };
+
+    this.handleAnimationEnd = this.handleAnimationEnd.bind(this);
+  }
 
   componentDidMount() {
     const { isAnimationActive } = this.props;
@@ -75,14 +88,74 @@ class Line extends Component {
       return;
     }
 
-    const curveDom = findDOMNode(this.refs.curve);
+    const curveDom = findDOMNode(this.refs.animate);
     const totalLength = (curveDom && curveDom.getTotalLength && curveDom.getTotalLength()) || 0;
 
     this.setState({ totalLength });
   }
 
+  getStrokeDasharray(length, totalLength, lines) {
+    const lineLength = lines.reduce((pre, next) => pre + next);
+
+    const count = parseInt(length / lineLength, 10);
+    const remainLength = length % lineLength;
+    const restLength = totalLength - length;
+
+    let remainLines = [];
+    for (let i = 0, sum = 0; true; sum += lines[i], ++i) {
+      if (sum + lines[i] > remainLength) {
+        remainLines = [...lines.slice(0, i), remainLength - sum];
+        break;
+      }
+    }
+
+    const emptyLines = remainLines.length % 2 === 0 ? [0, restLength] : [restLength];
+
+    return [...this.repeat(lines, count), ...remainLines, ...emptyLines]
+      .map(line => line + 'px')
+      .join(', ');
+  }
+
+  repeat(lines, count) {
+    const linesUnit = lines.length % 2 !== 0 ? [...lines, 0] : lines;
+    let result = [];
+
+    for (let i = 0; i < count; ++i) {
+      result = [...result, ...linesUnit];
+    }
+
+    return result;
+  }
+
   handleAnimationEnd() {
     this.setState({ isAnimationFinished: true });
+  }
+
+  renderLabels() {
+    const { points, label } = this.props;
+    const lineProps = getPresentationAttributes(this.props);
+    const customLabelProps = getPresentationAttributes(label);
+    const isLabelElement = React.isValidElement(label);
+
+    const labels = points.map((entry, i) => {
+      const x = entry.x + entry.width / 2;
+      const y = entry.y;
+      const labelProps = {
+        textAnchor: 'middle',
+        ...entry,
+        ...lineProps,
+        ...customLabelProps,
+        index: i,
+        key: `label-${i}`,
+        payload: entry,
+      };
+
+      return isLabelElement ?
+        React.cloneElement(label, labelProps) :
+        (<text {...labelProps} className="recharts-line-label">{entry.value}</text>);
+    });
+
+    return <Layer className="recharts-line-labels">{labels}</Layer>;
   }
 
   renderDots() {
@@ -117,34 +190,7 @@ class Line extends Component {
     return <Layer className="recharts-line-dots">{dots}</Layer>;
   }
 
-  renderLabels() {
-    const { points, label } = this.props;
-    const lineProps = getPresentationAttributes(this.props);
-    const customLabelProps = getPresentationAttributes(label);
-    const isLabelElement = React.isValidElement(label);
-
-    const labels = points.map((entry, i) => {
-      const x = entry.x + entry.width / 2;
-      const y = entry.y;
-      const labelProps = {
-        textAnchor: 'middle',
-        ...entry,
-        ...lineProps,
-        ...customLabelProps,
-        index: i,
-        key: `label-${i}`,
-        payload: entry,
-      };
-
-      return isLabelElement ?
-        React.cloneElement(label, labelProps) :
-        (<text {...labelProps} className="recharts-line-label">{entry.value}</text>);
-    });
-
-    return <Layer className="recharts-line-labels">{labels}</Layer>;
-  }
-
-  render() {
+  renderCurve() {
     const {
       dot,
       points,
@@ -157,41 +203,82 @@ class Line extends Component {
       onClick,
       onMouseEnter,
       onMouseLeave,
+      strokeDasharray,
       ...other,
     } = this.props;
+
     const { totalLength } = this.state;
+    const animationProps = {
+      isActive: isAnimationActive,
+      begin: animationBegin,
+      canBegin: totalLength > 0,
+      easing: animationEasing,
+      duration: animationDuration,
+      onAnimationEnd: this.handleAnimationEnd,
+      ref: 'animate',
+    };
+    const curveProps = {
+      ...other,
+      className: 'recharts-line-curve',
+      fill: 'none',
+      onClick,
+      onMouseEnter,
+      onMouseLeave,
+      points,
+    };
+
+    if (strokeDasharray) {
+      const lines = strokeDasharray.split(/[,\s]+/gim)
+        .map(num => parseInt(num, 10));
+
+      return (
+        <Animate { ...animationProps }
+          from={{ length: 0 }}
+          to={{ length: totalLength }}
+        >
+          {
+            ({ length }) => (
+              <Curve { ...curveProps }
+                strokeDasharray={this.getStrokeDasharray(length, totalLength, lines)}
+              />
+            )
+          }
+        </Animate>
+      );
+    }
+
+    return (
+      <Animate { ...animationProps }
+        from={`0px ${(totalLength === 0 ? 1 : totalLength)}px`}
+        to={`${totalLength}px 0px`}
+        attributeName="strokeDasharray"
+      >
+        <Curve { ...curveProps } />
+      </Animate>
+    );
+  }
+
+  render() {
+    const {
+      dot,
+      points,
+      label,
+      className,
+      onClick,
+      onMouseEnter,
+      onMouseLeave,
+    } = this.props;
 
     if (!points || !points.length) {
       return null;
     }
+
     const hasSinglePoint = points.length === 1;
     const layerClass = classNames('recharts-line', className);
 
     return (
       <Layer className={layerClass}>
-        {!hasSinglePoint && (
-          <Animate isActive={isAnimationActive}
-            begin={animationBegin}
-            canBegin={totalLength > 0}
-            from={`0px ${(totalLength === 0 ? 1 : totalLength)}px`}
-            to={`${totalLength}px 0px`}
-            easing={animationEasing}
-            duration={animationDuration}
-            attributeName="strokeDasharray"
-            onAnimationEnd={::this.handleAnimationEnd}
-          >
-            <Curve
-              {...other}
-              className="recharts-line-curve"
-              fill="none"
-              onClick={onClick}
-              onMouseEnter={onMouseEnter}
-              onMouseLeave={onMouseLeave}
-              points={points}
-              ref="curve"
-            />
-          </Animate>
-        )}
+        {!hasSinglePoint && this.renderCurve()}
         {(hasSinglePoint || dot) && this.renderDots()}
         {label && this.renderLabels()}
       </Layer>
