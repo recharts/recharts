@@ -1,3 +1,13 @@
+## 0.7.0 (February 17, 2016)
+
+### UI
+- feat: support dasharray line animaton
+- refactor(CartesianAxis, PolarAngleAxis, PolarRadiusAxis):rename label to tick
+- feat(label): add label of CartesianAxis, PolarRadiusAxis, ReferenceLine
+- feat: Implement tooltip for PieChart
+- feat:Implement tooltip for RadialBarChart
+- deps(d3-scale,d3-shape,oui-dom-util): 1.update version of d3-scale, d3-shape, oui-dom-util 2.update some api of d3-scale
+
 ## 0.6.2 (February 9, 2016)
 
 ### UI
