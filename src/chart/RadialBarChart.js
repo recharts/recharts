@@ -171,7 +171,7 @@ class RadialBarChart extends Component {
     return result;
   }
 
-  handleMouseEnter(el, index, e) {
+  handleMouseEnter = (el, index, e) => {
     const { cx, cy, endAngle, outerRadius } = el;
 
     this.setState({
@@ -183,9 +183,9 @@ class RadialBarChart extends Component {
         this.props.onMouseEnter(el, index, e);
       }
     });
-  }
+  };
 
-  handleMouseLeave(el, index, e) {
+  handleMouseLeave = (el, index, e) => {
     this.setState({
       isTooltipActive: false,
     }, () => {
@@ -193,7 +193,7 @@ class RadialBarChart extends Component {
         this.props.onMouseLeave(el, index, e);
       }
     });
-  }
+  };
 
   /**
    * Draw legend
@@ -262,8 +262,8 @@ class RadialBarChart extends Component {
       return React.cloneElement(child, {
         ...center,
         key: `radial-bar-${i}`,
-        onMouseLeave: ::this.handleMouseLeave,
-        onMouseEnter: ::this.handleMouseEnter,
+        onMouseLeave: this.handleMouseLeave,
+        onMouseEnter: this.handleMouseEnter,
         onClick: this.props.onClick,
         data: this.getComposedData(barPosition, radiusScale, center, dataKey),
       });

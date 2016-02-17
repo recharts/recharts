@@ -155,11 +155,11 @@ class Pie extends Component {
     return 'middle';
   }
 
-  handleAnimationEnd() {
+  handleAnimationEnd = () => {
     this.setState({
       isAnimationFinished: true,
     });
-  }
+  };
 
   handleSectorEnter(data, index, e) {
     const { onMouseEnter } = this.props;
@@ -173,13 +173,13 @@ class Pie extends Component {
     });
   }
 
-  handleSectorLeave(data, index, e) {
+  handleSectorLeave = (data, index, e) => {
     const { onMouseLeave } = this.props;
 
     this.setState({
       activeIndex: -1,
     }, onMouseLeave);
-  }
+  };
 
   handleSectorClick(data, index, e) {
     const { onClick } = this.props;
@@ -211,7 +211,7 @@ class Pie extends Component {
             isActive={isAnimationActive}
             duration={animationDuration}
             animationBegin={animationBegin}
-            onAnimationEnd={::this.handleAnimationEnd}
+            onAnimationEnd={this.handleAnimationEnd}
             from={{ endAngle: startAngle }}
             to = {{ endAngle: this.props.endAngle }}
           >
@@ -305,7 +305,7 @@ class Pie extends Component {
           cy={finalCy}
           className="recharts-pie-sector"
           onMouseEnter={this.handleSectorEnter.bind(this, entry, i)}
-          onMouseLeave={::this.handleSectorLeave}
+          onMouseLeave={this.handleSectorLeave}
           onClick={this.handleSectorClick.bind(this, entry, i)}
           key={`sector-${i}`}
         />

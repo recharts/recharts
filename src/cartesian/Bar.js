@@ -76,9 +76,9 @@ class Bar extends Component {
     isAnimationFinished: false,
   };
 
-  handleAnimationEnd() {
+  handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
-  }
+  };
 
   renderRectangles() {
     const {
@@ -115,7 +115,7 @@ class Bar extends Component {
           from={getStyle(true)}
           to={getStyle(false)}
           key={`rectangle-${index}`}
-          onAnimationEnd={::this.handleAnimationEnd}
+          onAnimationEnd={this.handleAnimationEnd}
         >
           <g style={{ transformOrigin }}>
             {

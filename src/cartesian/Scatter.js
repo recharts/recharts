@@ -66,13 +66,13 @@ class Scatter extends Component {
     });
   }
 
-  handleCircleMouseLeave() {
+  handleCircleMouseLeave = () => {
     const { onMouseLeave } = this.props;
 
     this.setState({
       activeIndex: -1,
     }, onMouseLeave);
-  }
+  };
 
   renderCircles() {
     const { points } = this.props;
@@ -88,7 +88,7 @@ class Scatter extends Component {
           {...rest}
           r={i === activeIndex ? r * 1.1 : r}
           onMouseEnter={this.handleCircleMouseEnter.bind(this, entry, i)}
-          onMouseLeave={::this.handleCircleMouseLeave}
+          onMouseLeave={this.handleCircleMouseLeave}
           key={`circle-${i}`}
         />
       );

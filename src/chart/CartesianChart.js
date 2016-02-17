@@ -795,12 +795,12 @@ class CartesianChart extends Component {
     return null;
   }
 
-  handleBrushChange({ startIndex, endIndex }) {
+  handleBrushChange = ({ startIndex, endIndex }) => {
     this.setState({
       dataStartIndex: startIndex,
       dataEndIndex: endIndex,
     });
-  }
+  };
 
   /**
    * The handler of mouse entering chart
@@ -854,11 +854,11 @@ class CartesianChart extends Component {
    * The handler if mouse leaving chart
    * @return {Null} no return
    */
-  handleMouseLeave() {
+  handleMouseLeave = () => {
     this.setState({
       isTooltipActive: false,
     });
-  }
+  };
 
   /**
    * Draw x-axes
@@ -1033,7 +1033,7 @@ class CartesianChart extends Component {
     const height = (brushItem.props.height || Brush.defaultProps.height) + 1;
 
     return React.cloneElement(brushItem, {
-      onChange: ::this.handleBrushChange,
+      onChange: this.handleBrushChange,
       data: data.map(entry => entry[dataKey]),
       x: offset.left,
       y: offset.top + offset.height + offset.bottom - height,

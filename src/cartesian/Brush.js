@@ -44,6 +44,11 @@ class Brush extends Component {
   constructor(props) {
     super(props);
 
+    this.travellerDownHandlers = {
+      startX: this.handleTravellerDown.bind(this, 'startX'),
+      endX: this.handleTravellerDown.bind(this, 'endX'),
+    };
+
     if (props.data && props.data.length) {
       const len = props.data.length;
       const startIndex = _.isNumber(props.defaultStartIndex) ? props.defaultStartIndex : 0;
@@ -103,7 +108,7 @@ class Brush extends Component {
     };
   }
 
-  handleMove(e) {
+  handleMove = (e) => {
     if (this._leaveTimer) {
       clearTimeout(this._leaveTimer);
       this._leaveTimer = null;
@@ -114,40 +119,40 @@ class Brush extends Component {
     } else if (this.state.isSlideMoving) {
       this.handleSlideMove(e);
     }
-  }
+  };
 
-  handleUp() {
+  handleUp = () => {
     this.setState({
       isTravellerMoving: false,
       isSlideMoving: false,
     });
-  }
+  };
 
-  handleLeaveWrapper() {
+  handleLeaveWrapper = () => {
     if (this.state.isTravellerMoving || this.state.isSlideMoving) {
-      this._leaveTimer = setTimeout(::this.handleUp, 1000);
+      this._leaveTimer = setTimeout(this.handleUp, 1000);
     }
-  }
+  };
 
-  handleEnterSlideOrTraveller() {
+  handleEnterSlideOrTraveller = () => {
     this.setState({
       isTextActive: true,
     });
-  }
+  };
 
-  handleLeaveSlideOrTraveller() {
+  handleLeaveSlideOrTraveller = () => {
     this.setState({
       isTextActive: false,
     });
-  }
+  };
 
-  handleSlideDown(e) {
+  handleSlideDown = (e) => {
     this.setState({
       isTravellerMoving: false,
       isSlideMoving: true,
       slideMoveStartX: e.pageX,
     });
-  }
+  };
 
   handleSlideMove(e) {
     const { slideMoveStartX, startX, endX } = this.state;
@@ -240,9 +245,9 @@ class Brush extends Component {
     return (
       <Layer
         className="recharts-brush-traveller"
-        onMouseEnter={::this.handleEnterSlideOrTraveller}
-        onMouseLeave={::this.handleLeaveSlideOrTraveller}
-        onMouseDown={this.handleTravellerDown.bind(this, id)}
+        onMouseEnter={this.handleEnterSlideOrTraveller}
+        onMouseLeave={this.handleLeaveSlideOrTraveller}
+        onMouseDown={this.travellerDownHandlers[id]}
         style={{ cursor: 'col-resize' }}
       >
         <rect
@@ -279,9 +284,9 @@ class Brush extends Component {
     return (
       <rect
         className="recharts-brush-slide"
-        onMouseEnter={::this.handleEnterSlideOrTraveller}
-        onMouseLeave={::this.handleLeaveSlideOrTraveller}
-        onMouseDown={::this.handleSlideDown}
+        onMouseEnter={this.handleEnterSlideOrTraveller}
+        onMouseLeave={this.handleLeaveSlideOrTraveller}
+        onMouseDown={this.handleSlideDown}
         style={{ cursor: 'move' }}
         stroke="none"
         fill={stroke}
@@ -338,9 +343,9 @@ class Brush extends Component {
     return (
       <Layer
         className={layerClass}
-        onMouseUp={::this.handleUp}
-        onMouseMove={::this.handleMove}
-        onMouseLeave={::this.handleLeaveWrapper}
+        onMouseUp={this.handleUp}
+        onMouseMove={this.handleMove}
+        onMouseLeave={this.handleLeaveWrapper}
       >
         {this.renderBackground()}
         {this.renderSlide(startX, endX)}

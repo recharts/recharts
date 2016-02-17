@@ -291,11 +291,11 @@ class ComposedChart extends CartesianChart {
    * Handler of mouse leaving area chart
    * @return {Object} null
    */
-  handleBarMouseLeave() {
+  handleBarMouseLeave = () => {
     this.setState({
       activeBarKey: null,
     });
-  }
+  };
 
   /**
    * Handler of mouse entering line chart
@@ -312,11 +312,11 @@ class ComposedChart extends CartesianChart {
    * Handler of mouse leaving line chart
    * @return {Object} no return
    */
-  handleLineMouseLeave() {
+  handleLineMouseLeave = () => {
     this.setState({
       activeLineKey: null,
     });
-  }
+  };
 
   /**
    * Handler of mouse entering area chart
@@ -333,11 +333,11 @@ class ComposedChart extends CartesianChart {
    * Handler of mouse leaving area chart
    * @return {Object} null
    */
-  handleAreaMouseLeave() {
+  handleAreaMouseLeave = () => {
     this.setState({
       activeAreaKey: null,
     });
-  }
+  };
 
   renderCursor(xAxisMap, yAxisMap, offset) {
     const { children } = this.props;
@@ -408,7 +408,7 @@ class ComposedChart extends CartesianChart {
         ...offset,
         layout,
         strokeWidth: finalStrokeWidth,
-        onMouseLeave: ::this.handleLineMouseLeave,
+        onMouseLeave: this.handleLineMouseLeave,
         onMouseEnter: this.handleLineMouseEnter.bind(this, dataKey),
         points,
       });
@@ -474,7 +474,7 @@ class ComposedChart extends CartesianChart {
         ...offset,
         ...composeData,
         fillOpacity: finalFillOpacity,
-        onMouseLeave: ::this.handleAreaMouseLeave,
+        onMouseLeave: this.handleAreaMouseLeave,
         onMouseEnter: this.handleAreaMouseEnter.bind(this, dataKey),
       });
 
@@ -521,7 +521,7 @@ class ComposedChart extends CartesianChart {
       return React.cloneElement(child, {
         key: `bar-${i}`,
         layout,
-        onMouseLeave: ::this.handleBarMouseLeave,
+        onMouseLeave: this.handleBarMouseLeave,
         onMouseEnter: this.handleBarMouseEnter.bind(this, dataKey),
         data: this.getBarComposedData(
           barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey, stackedData
@@ -555,7 +555,7 @@ class ComposedChart extends CartesianChart {
         style={{ position: 'relative', cursor: 'default', ...style }}
         onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
-        onMouseLeave={::this.handleMouseLeave}
+        onMouseLeave={this.handleMouseLeave}
       >
         <Surface width={width} height={height}>
           {this.renderGrid(xAxisMap, yAxisMap, offset)}

@@ -345,23 +345,23 @@ class ScatterChart extends Component {
    * @param {Object} e  Event object
    * @return {Object} no return
    */
-  handleScatterMouseEnter(el, e) {
+  handleScatterMouseEnter = (el, e) => {
     this.setState({
       isTooltipActive: true,
       activeItem: el,
       activeTooltipCoord: { x: el.cx, y: el.cy },
     });
-  }
+  };
 
   /**
    * The handler of mouse leaving a scatter
    * @return {Object} no return
    */
-  handleScatterMouseLeave() {
+  handleScatterMouseLeave = () => {
     this.setState({
       isTooltipActive: false,
     });
-  }
+  };
 
   /**
    * Draw Tooltip
@@ -518,8 +518,8 @@ class ScatterChart extends Component {
         key: `scatter-${i}`,
         groupId: `scatter-${i}`,
         strokeWidth: finalStrokeWidth,
-        onMouseLeave: ::this.handleScatterMouseLeave,
-        onMouseEnter: ::this.handleScatterMouseEnter,
+        onMouseLeave: this.handleScatterMouseLeave,
+        onMouseEnter: this.handleScatterMouseEnter,
         points: this.getComposedData(data, xAxis, yAxis, zAxis),
       });
     }, this);

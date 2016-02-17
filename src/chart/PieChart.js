@@ -59,7 +59,7 @@ class PieChart extends Component {
     }));
   }
 
-  handleMouseEnter(el, index, e) {
+  handleMouseEnter = (el, index, e) => {
     const { onMouseEnter } = this.props;
     const { cx, cy, outerRadius, midAngle } = el;
 
@@ -72,9 +72,9 @@ class PieChart extends Component {
         onMouseEnter(el, index, e);
       }
     });
-  }
+  };
 
-  handleMouseLeave(e) {
+  handleMouseLeave = (e) => {
     this.setState({
       isTooltipActive: false,
     }, () => {
@@ -82,7 +82,7 @@ class PieChart extends Component {
         this.props.onMouseLeave(e);
       }
     });
-  }
+  };
 
   /**
    * Draw legend
@@ -156,8 +156,8 @@ class PieChart extends Component {
         innerRadius: getPercentValue(innerRadius, maxRadius, 0),
         outerRadius: getPercentValue(outerRadius, maxRadius, maxRadius * 0.8),
         data: this.getComposedData(child),
-        onMouseEnter: ::this.handleMouseEnter,
-        onMouseLeave: ::this.handleMouseLeave,
+        onMouseEnter: this.handleMouseEnter,
+        onMouseLeave: this.handleMouseLeave,
       });
     });
   }

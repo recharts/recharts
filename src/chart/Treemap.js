@@ -52,7 +52,7 @@ class Treemap extends Component {
   }
 
   // Recursively arranges the specified node's children into squarified rows.
-  squarify(node) {
+  squarify = (node) => {
     const children = node.children;
 
     if (children && children.length) {
@@ -86,9 +86,9 @@ class Treemap extends Component {
         this.position(row, u, rect, true);
         row.length = row.area = 0;
       }
-      children.forEach(this.squarify.bind(this));
+      children.forEach(this.squarify);
     }
-  }
+  };
 
   // Computes the score for the specified row, as the worst aspect ratio.
   worst(row, u) {
@@ -159,7 +159,7 @@ class Treemap extends Component {
     const { children, x, y, width, height, ...payload } = node;
     const childDepth = depth + 1;
     const computedChildren = children && children.length ?
-                               children.map(this.computeNode.bind(this, childDepth)) : null;
+      children.map(this.computeNode.bind(this, childDepth)) : null;
     let value;
 
     if (children && children.length) {

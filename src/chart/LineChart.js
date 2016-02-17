@@ -77,11 +77,11 @@ class LineChart extends CartesianChart {
    * Handler of mouse leaving line chart
    * @return {Object} no return
    */
-  handleLineMouseLeave() {
+  handleLineMouseLeave = () => {
     this.setState({
       activeLineKey: null,
     });
-  }
+  };
 
   renderCursor(xAxisMap, yAxisMap, offset) {
     const { children } = this.props;
@@ -152,7 +152,7 @@ class LineChart extends CartesianChart {
         ...offset,
         layout,
         strokeWidth: finalStrokeWidth,
-        onMouseLeave: ::this.handleLineMouseLeave,
+        onMouseLeave: this.handleLineMouseLeave,
         onMouseEnter: this.handleLineMouseEnter.bind(this, dataKey),
         points,
       });
@@ -185,7 +185,7 @@ class LineChart extends CartesianChart {
         style={{ position: 'relative', cursor: 'default', ...style }}
         onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
-        onMouseLeave={::this.handleMouseLeave}
+        onMouseLeave={this.handleMouseLeave}
       >
         <Surface width={width} height={height}>
           {this.renderGrid(xAxisMap, yAxisMap, offset)}

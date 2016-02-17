@@ -78,8 +78,6 @@ class Line extends Component {
       steps: [],
       totalLength: 0,
     };
-
-    this.handleAnimationEnd = this.handleAnimationEnd.bind(this);
   }
 
   componentDidMount() {
@@ -113,7 +111,7 @@ class Line extends Component {
     const emptyLines = remainLines.length % 2 === 0 ? [0, restLength] : [restLength];
 
     return [...this.repeat(lines, count), ...remainLines, ...emptyLines]
-      .map(line => line + 'px')
+      .map(line => `${line}px`)
       .join(', ');
   }
 
@@ -128,9 +126,9 @@ class Line extends Component {
     return result;
   }
 
-  handleAnimationEnd() {
+  handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
-  }
+  };
 
   renderLabels() {
     const { points, label } = this.props;

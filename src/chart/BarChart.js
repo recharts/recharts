@@ -192,11 +192,11 @@ class BarChart extends CartesianChart {
    * Handler of mouse leaving area chart
    * @return {Object} null
    */
-  handleBarMouseLeave() {
+  handleBarMouseLeave = () => {
     this.setState({
       activeBarKey: null,
     });
-  }
+  };
 
   renderCursor(xAxisMap, yAxisMap, offset) {
     const { children } = this.props;
@@ -259,7 +259,7 @@ class BarChart extends CartesianChart {
       return React.cloneElement(child, {
         key: `bar-${i}`,
         layout,
-        onMouseLeave: ::this.handleBarMouseLeave,
+        onMouseLeave: this.handleBarMouseLeave,
         onMouseEnter: this.handleBarMouseEnter.bind(this, dataKey),
         data: this.getComposedData(
           barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey, stackedData
@@ -289,7 +289,7 @@ class BarChart extends CartesianChart {
         style={{ position: 'relative', cursor: 'default', ...style }}
         onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
-        onMouseLeave={::this.handleMouseLeave}
+        onMouseLeave={this.handleMouseLeave}
       >
         <Surface width={width} height={height}>
           {this.renderGrid(xAxisMap, yAxisMap, offset)}

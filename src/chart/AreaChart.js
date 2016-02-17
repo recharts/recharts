@@ -84,11 +84,11 @@ class AreaChart extends CartesianChart {
    * Handler of mouse leaving area chart
    * @return {Object} null
    */
-  handleAreaMouseLeave() {
+  handleAreaMouseLeave = () => {
     this.setState({
       activeAreaKey: null,
     });
-  }
+  };
 
   renderCursor(xAxisMap, yAxisMap, offset) {
     const { children } = this.props;
@@ -170,7 +170,7 @@ class AreaChart extends CartesianChart {
         ...offset,
         ...composeData,
         fillOpacity: finalFillOpacity,
-        onMouseLeave: ::this.handleAreaMouseLeave,
+        onMouseLeave: this.handleAreaMouseLeave,
         onMouseEnter: this.handleAreaMouseEnter.bind(this, dataKey),
       });
 
@@ -205,7 +205,7 @@ class AreaChart extends CartesianChart {
         style={{ position: 'relative', cursor: 'default', ...style }}
         onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
         onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
-        onMouseLeave={::this.handleMouseLeave}
+        onMouseLeave={this.handleMouseLeave}
       >
         <Surface width={width} height={height}>
           {this.renderGrid(xAxisMap, yAxisMap, offset)}
