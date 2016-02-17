@@ -191,17 +191,9 @@ class Line extends Component {
 
   renderCurve() {
     const {
-      dot,
-      points,
-      label,
-      className,
-      isAnimationActive,
-      animationBegin,
-      animationDuration,
-      animationEasing,
-      onClick,
-      onMouseEnter,
-      onMouseLeave,
+      dot, points, label, className,
+      isAnimationActive, animationBegin, animationDuration, animationEasing,
+      onClick, onMouseEnter, onMouseLeave,
       strokeDasharray,
       ...other,
     } = this.props;
@@ -259,13 +251,8 @@ class Line extends Component {
 
   render() {
     const {
-      dot,
-      points,
-      label,
-      className,
-      onClick,
-      onMouseEnter,
-      onMouseLeave,
+      dot, points, label, className,
+      onClick, onMouseEnter, onMouseLeave,
     } = this.props;
 
     if (!points || !points.length) {
