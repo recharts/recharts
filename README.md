@@ -22,6 +22,7 @@ The main purpose of this library is to help you to write charts in React applica
 
 Expected release: April 2016
 
+- Build babel-plugin-recharts (pack on required)
 - Great animation support
 - Good documentation
 - Cascade Chart
