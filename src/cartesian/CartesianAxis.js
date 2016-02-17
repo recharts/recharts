@@ -217,16 +217,12 @@ class CartesianAxis extends Component {
     switch (orientation) {
       case 'left':
         return { x: x + width, y: y - 6, textAnchor: 'middle' };
-        break;
       case 'right':
-        return { x: x, y: y - 6, textAnchor: 'middle' };
-        break;
+        return { x, y: y - 6, textAnchor: 'middle' };
       case 'top':
         return { x: x + width + 6, y: y + height + 6, textAnchor: 'start' };
-        break;
       default:
         return { x: x + width + 6, y: y + 6, textAnchor: 'start' };
-        break;
     }
   }
 
@@ -269,7 +265,7 @@ class CartesianAxis extends Component {
     const istickElement = React.isValidElement(tick);
     const tickLineProps = {
       ...axisProps, fill: 'none', ...getPresentationAttributes(tickLine),
-    } ;
+    };
 
     const items = finalTicks.map((entry, i) => {
       const lineCoord = this.getTickLineCoord(entry);
@@ -298,7 +294,13 @@ class CartesianAxis extends Component {
 
       return (
         <g className="recharts-cartesian-axis-tick" key={`tick-${i}`}>
-          {tickLine && <line className="recharts-cartesian-axis-tick-line" {...tickLineProps} {...lineCoord}/>}
+          {tickLine && (
+            <line
+              className="recharts-cartesian-axis-tick-line"
+              {...tickLineProps}
+              {...lineCoord}
+            />
+          )}
           {tick && tickItem}
         </g>
       );

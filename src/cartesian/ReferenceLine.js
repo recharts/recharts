@@ -54,13 +54,13 @@ class ReferenceLine extends Component {
       coord = yAxisMap[yAxisId].scale(value);
 
       return yAxisMap[yAxisId].orientation === 'left' ?
-          [{ x, y: coord }, { x: x + width, y: coord }]:
+          [{ x, y: coord }, { x: x + width, y: coord }] :
           [{ x: x + width, y: coord }, { x, y: coord }];
     } else if (type === 'vertical') {
       coord = xAxisMap[xAxisId].scale(value);
 
       return yAxisMap[yAxisId].orientation === 'top' ?
-         [{ x: coord, y }, { x: coord, y: y + height }]:
+         [{ x: coord, y }, { x: coord, y: y + height }] :
          [{ x: coord, y: y + height }, { x: coord, y }];
     }
   }

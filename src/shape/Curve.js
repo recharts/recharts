@@ -11,7 +11,7 @@ import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/Reac
 
 const CURVE_FACTORIES = {
   curveLinear, curveMonotoneX, curveMonotoneY, curveStep,
-  curveStepAfter, curveStepBefore
+  curveStepAfter, curveStepBefore,
 };
 
 @pureRender

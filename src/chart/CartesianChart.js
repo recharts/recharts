@@ -717,25 +717,6 @@ class CartesianChart extends Component {
     });
   }
 
-  parseSpecifiedDomain(specifiedDomain, autoDomain) {
-    if (!_.isArray(specifiedDomain)) {
-      return autoDomain;
-    }
-    const domain = [];
-    if (!_.isNumber(specifiedDomain[0]) || specifiedDomain[0] > autoDomain[0]) {
-      domain[0] = autoDomain[0];
-    } else {
-      domain[0] = specifiedDomain[0];
-    }
-    if (!_.isNumber(specifiedDomain[1]) || specifiedDomain[1] < autoDomain[1]) {
-      domain[1] = autoDomain[1];
-    } else {
-      domain[1] = specifiedDomain[1];
-    }
-
-    return domain;
-  }
-
   getLegendProps(items) {
     const { children } = this.props;
     const legendItem = findChildByType(children, Legend);
@@ -757,6 +738,25 @@ class CartesianChart extends Component {
       ...Legend.getWithHeight(legendItem, width, height),
       payload: legendData,
     };
+  }
+
+  parseSpecifiedDomain(specifiedDomain, autoDomain) {
+    if (!_.isArray(specifiedDomain)) {
+      return autoDomain;
+    }
+    const domain = [];
+    if (!_.isNumber(specifiedDomain[0]) || specifiedDomain[0] > autoDomain[0]) {
+      domain[0] = autoDomain[0];
+    } else {
+      domain[0] = specifiedDomain[0];
+    }
+    if (!_.isNumber(specifiedDomain[1]) || specifiedDomain[1] < autoDomain[1]) {
+      domain[1] = autoDomain[1];
+    } else {
+      domain[1] = specifiedDomain[1];
+    }
+
+    return domain;
   }
 
   validateAxes() {

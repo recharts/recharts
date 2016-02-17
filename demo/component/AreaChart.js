@@ -64,9 +64,9 @@ export default React.createClass({
         <p>AreaChart with three y-axes</p>
         <div className="area-chart-wrapper">
           <AreaChart width={600} height={400} data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-            <YAxis type="number" yAxisId={0} stroke="#ff7300" />
-            <YAxis type="number" orientation="right" yAxisId={1} stroke="#387908" />
-            <YAxis type="number" orientation="right" yAxisId={2} stroke="#38abc8" />
+            <YAxis label="uv" type="number" yAxisId={0} stroke="#ff7300" />
+            <YAxis label="pv" type="number" orientation="right" yAxisId={1} stroke="#387908" />
+            <YAxis label="amt" type="number" orientation="right" yAxisId={2} stroke="#38abc8" />
             <XAxis dataKey="name"/>
             <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" strokeWidth={2} yAxisId={0} />
             <Area dataKey="pv" stroke="#387908" fill="#387908" strokeWidth={2} yAxisId={1} />

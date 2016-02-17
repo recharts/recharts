@@ -167,7 +167,9 @@ class Pie extends Component {
     this.setState({
       activeIndex: index,
     }, () => {
-       onMouseEnter && onMouseEnter(data, e);
+      if (onMouseEnter) {
+        onMouseEnter(data, index, e);
+      }
     });
   }
 

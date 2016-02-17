@@ -1,13 +1,5 @@
 import _ from 'lodash';
 
-function shouldComponentUpdate(nextProps, nextState) {
-  return shallowCompare(this, nextProps, nextState);
-}
-
-function shallowCompare(instance, nextProps, nextState) {
-  return !shallowEqual(instance.props, nextProps) || !shallowEqual(instance.state, nextState);
-}
-
 function shallowEqual(objA, objB) {
   if (objA === objB) {
     return true;
@@ -38,6 +30,15 @@ function shallowEqual(objA, objB) {
   }
 
   return true;
+}
+
+
+function shallowCompare(instance, nextProps, nextState) {
+  return !shallowEqual(instance.props, nextProps) || !shallowEqual(instance.state, nextState);
+}
+
+function shouldComponentUpdate(nextProps, nextState) {
+  return shallowCompare(this, nextProps, nextState);
 }
 
 function pureRenderDecorator(component) {

@@ -317,7 +317,28 @@ class ScatterChart extends Component {
 
     return content;
   }
+  getLegendProps(items) {
+    const { children } = this.props;
+    const legendItem = findChildByType(children, Legend);
+    if (!legendItem) {return null;}
 
+    const { width, height } = this.props;
+    const legendData = items.map((child) => {
+      const { name, fill, legendType } = child.props;
+
+      return {
+        type: legendType || 'square',
+        color: fill,
+        value: name || '',
+      };
+    }, this);
+
+    return {
+      ...legendItem.props,
+      ...Legend.getWithHeight(legendItem, width, height),
+      payload: legendData,
+    };
+  }
   /**
    * The handler of mouse entering a scatter
    * @param {Object} el The active scatter
@@ -410,28 +431,6 @@ class ScatterChart extends Component {
       verticalPoints,
       horizontalPoints,
     });
-  }
-  getLegendProps(items) {
-    const { children } = this.props;
-    const legendItem = findChildByType(children, Legend);
-    if (!legendItem) {return null;}
-
-    const { width, height } = this.props;
-    const legendData = items.map((child) => {
-      const { name, fill, legendType } = child.props;
-
-      return {
-        type: legendType || 'square',
-        color: fill,
-        value: name || '',
-      };
-    }, this);
-
-    return {
-      ...legendItem.props,
-      ...Legend.getWithHeight(legendItem, width, height),
-      payload: legendData,
-    };
   }
   /**
    * Draw legend

@@ -70,32 +70,6 @@ class RadialBar extends Component {
     selectedIndex: -1,
   };
 
-  handleSectorEnter(data, index, e) {
-    const { onMouseEnter } = this.props;
-
-    this.setState({
-      activeIndex: index,
-    }, () => {
-       onMouseEnter && onMouseEnter(data, e);
-    });
-  }
-
-  handleSectorLeave(data, index, e) {
-    const { onMouseLeave } = this.props;
-
-    this.setState({
-      activeIndex: -1,
-    }, onMouseLeave);
-  }
-
-  handleSectorClick(data, index, e) {
-    const { onClick } = this.props;
-
-    this.setState({
-      selectedIndex: index,
-    }, onClick);
-  }
-
   getDeltaAngle() {
     const { startAngle, endAngle } = this.props;
     const sign = Math.sign(endAngle - startAngle);
@@ -170,6 +144,33 @@ class RadialBar extends Component {
             ${endPoint.x},${endPoint.y}`;
   }
 
+  handleSectorClick(data, index, e) {
+    const { onClick } = this.props;
+
+    this.setState({
+      selectedIndex: index,
+    }, onClick);
+  }
+
+  handleSectorEnter(data, index, e) {
+    const { onMouseEnter } = this.props;
+
+    this.setState({
+      activeIndex: index,
+    }, () => {
+      if (onMouseEnter) {
+        onMouseEnter(data, index, e);
+      }
+    });
+  }
+
+  handleSectorLeave(data, index, e) {
+    const { onMouseLeave } = this.props;
+
+    this.setState({
+      activeIndex: -1,
+    }, onMouseLeave);
+  }
 
   renderSectors(sectors) {
     const { className, shape, data } = this.props;
