@@ -9,7 +9,7 @@ import Tooltip from '../component/Tooltip';
 import Pie from '../polar/Pie';
 import { getPercentValue } from '../util/DataUtils';
 import { findChildByType, findAllByType, validateWidthHeight } from '../util/ReactUtils';
-import { getMaxRadius } from '../util/PolarUtils';
+import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import pureRender from '../util/PureRender';
 
 @pureRender
@@ -45,8 +45,8 @@ class PieChart extends Component {
 
   state = {
     activeTooltipLabel: '',
-    activeTooltipPosition: 'left-bottom',
     activeTooltipCoord: { x: 0, y: 0 },
+    activeTooltipPayload: [],
     isTooltipActive: false,
   };
 
@@ -59,12 +59,17 @@ class PieChart extends Component {
     }));
   }
 
-  handleMouseEnter(el, e) {
+  handleMouseEnter(el, index, e) {
+    const { onMouseEnter } = this.props;
+    const { cx, cy, outerRadius, midAngle } = el;
+
     this.setState({
       isTooltipActive: true,
+      activeTooltipCoord: polarToCartesian(cx, cy, outerRadius, midAngle),
+      activeTooltipPayload: [el.payload],
     }, () => {
-      if (this.props.onMouseEnter) {
-        this.props.onMouseEnter(el, e);
+      if (onMouseEnter) {
+        onMouseEnter(el, index, e);
       }
     });
   }
@@ -114,9 +119,20 @@ class PieChart extends Component {
     const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
-    if (!tooltipItem) {
-      return;
-    }
+    if (!tooltipItem) { return null;}
+
+    const { width, height } = this.props;
+    const { isTooltipActive, activeTooltipLabel, activeTooltipCoord,
+      activeTooltipPayload } = this.state;
+    const viewBox = { x: 0, y: 0, width, height };
+
+    return React.cloneElement(tooltipItem, {
+      viewBox,
+      active: isTooltipActive,
+      label: activeTooltipLabel,
+      payload: activeTooltipPayload,
+      coordinate: activeTooltipCoord,
+    });
   }
 
   /**

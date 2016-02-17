@@ -17,7 +17,7 @@ class DefaultTooltipContent extends Component {
     labelStyle: PropTypes.object,
     label: PropTypes.any,
     payload: PropTypes.arrayOf(PropTypes.shape({
-      key: PropTypes.any,
+      name: PropTypes.any,
       value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       unit: PropTypes.any,
     })),
@@ -46,10 +46,10 @@ class DefaultTooltipContent extends Component {
 
         return (
           <li className="recharts-tooltip-item" key={`tooltip-item-${i}`} style={finalItemStyle}>
-            <span className="recharts-tooltip-item-name">{entry.key}</span>
+            <span className="recharts-tooltip-item-name">{entry.name}</span>
             <span className="recharts-tooltip-item-separator">{separator}</span>
             <span className="recharts-tooltip-item-value">
-              {finalFormatter ? finalFormatter(entry.value, entry.key) : entry.value}
+              {finalFormatter ? finalFormatter(entry.value, entry.name) : entry.value}
             </span>
             <span className="recharts-tooltip-item-unit">{entry.unit || ''}</span>
           </li>

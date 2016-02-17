@@ -38,7 +38,7 @@ class Tooltip extends Component {
 
     label: PropTypes.any,
     payload: PropTypes.arrayOf(PropTypes.shape({
-      key: PropTypes.any,
+      name: PropTypes.any,
       value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       unit: PropTypes.any,
     })),
@@ -78,6 +78,9 @@ class Tooltip extends Component {
   }
 
   render() {
+    const { payload } = this.props;
+    if (!payload || !payload.length) {return null;}
+
     const { content, viewBox, coordinate, active, offset } = this.props;
 
     const outerStyle = {

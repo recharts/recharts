@@ -708,7 +708,7 @@ class CartesianChart extends Component {
       const { dataKey, name, unit, formatter } = child.props;
 
       return {
-        key: name || dataKey,
+        name: name || dataKey,
         unit: unit || '',
         color: this.getMainColorOfItem(child),
         value: data[activeTooltipIndex][dataKey],
@@ -820,8 +820,6 @@ class CartesianChart extends Component {
       this.setState({
         ...mouse,
         isTooltipActive: true,
-        chartX: ne.chartX,
-        chartY: ne.chartY,
       });
     }
   }
@@ -844,8 +842,6 @@ class CartesianChart extends Component {
       this.setState({
         ...mouse,
         isTooltipActive: true,
-        chartX: ne.chartX,
-        chartY: ne.chartY,
       });
     } else {
       this.setState({
@@ -1007,11 +1003,9 @@ class CartesianChart extends Component {
     const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
-    if (!tooltipItem) {
-      return null;
-    }
+    if (!tooltipItem) { return null; }
 
-    const { chartX, chartY, isTooltipActive,
+    const { isTooltipActive,
           activeTooltipLabel, activeTooltipCoord } = this.state;
     const viewBox = {
       x: offset.left,
@@ -1026,8 +1020,6 @@ class CartesianChart extends Component {
       label: activeTooltipLabel,
       payload: isTooltipActive ? this.getTooltipContent(items) : [],
       coordinate: activeTooltipCoord,
-      mouseX: chartX,
-      mouseY: chartY,
     });
   }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { PieChart, Pie, Legend, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Legend, Tooltip, ResponsiveContainer } from 'recharts';
 
 const data01 = [
   { name: 'Group A', value: 400 },
@@ -47,6 +47,7 @@ export default React.createClass({
         <div className="pie-chart-wrapper">
           <PieChart width={800} height={400}>
             <Legend />
+            <Tooltip/>
             <Pie isAnimationActive={false} data={data01} cx={200} cy={200} startAngle={180} endAngle={0} outerRadius={80} fill="#ff7300" label/>
             <Pie data={data02} cx={600} cy={200} startAngle={180} endAngle={-180} innerRadius={60} outerRadius={80} fill="#387908"/>
           </PieChart>

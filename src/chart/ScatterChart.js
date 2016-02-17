@@ -298,18 +298,18 @@ class ScatterChart extends Component {
     if (!data) {return null;}
 
     const content = [{
-      key: xAxis.name || xAxis.dataKey,
+      name: xAxis.name || xAxis.dataKey,
       unit: xAxis.unit || '',
       value: data.x,
     }, {
-      key: yAxis.name || yAxis.dataKey,
+      name: yAxis.name || yAxis.dataKey,
       unit: yAxis.unit || '',
       value: data.y,
     }];
 
     if (data.z && data.z !== '-') {
       content.push({
-        key: zAxis.name || zAxis.dataKey,
+        name: zAxis.name || zAxis.dataKey,
         unit: zAxis.unit || '',
         value: data.z,
       });
@@ -359,7 +359,7 @@ class ScatterChart extends Component {
       return null;
     }
 
-    const { chartX, chartY, isTooltipActive, activeItem, activeTooltipCoord } = this.state;
+    const { isTooltipActive, activeItem, activeTooltipCoord } = this.state;
     const viewBox = {
       x: offset.left,
       y: offset.top,
@@ -373,8 +373,6 @@ class ScatterChart extends Component {
       label: '',
       payload: this.getTooltipContent(activeItem && activeItem.payload, xAxis, yAxis, zAxis),
       coordinate: activeTooltipCoord,
-      mouseX: chartX,
-      mouseY: chartY,
     });
   }
 

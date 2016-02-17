@@ -33,6 +33,8 @@ class Pie extends Component {
     legendType: PropTypes.string,
     label: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
 
+    hoverOffset: PropTypes.number,
+    selectedOffset: PropTypes.number,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
@@ -61,13 +63,12 @@ class Pie extends Component {
     innerRadius: 0,
     // The outer radius of sectors
     outerRadius: '80%',
+    hoverOffset: 8,
+    selectedOffset: 8,
     nameKey: 'name',
     valueKey: 'value',
     data: [],
     minAngle: 0,
-    onMouseEnter() {},
-    onMouseLeave() {},
-    onClick() {},
     onAnimationEnd() {},
     isAnimationActive: true,
     animationBegin: 400,
@@ -79,6 +80,8 @@ class Pie extends Component {
     super(props, ctx);
 
     this.state = {
+      activeIndex: -1,
+      selectedIndex: -1,
       isAnimationFinished: false,
     };
 
@@ -132,6 +135,7 @@ class Pie extends Component {
           startAngle: deltaAngle < 0 ? _startAngle : _endAngle,
           endAngle: deltaAngle < 0 ? _endAngle : _startAngle,
           payload: entry,
+          midAngle: (_startAngle + _endAngle) / 2,
         };
 
         return prev;
@@ -157,14 +161,38 @@ class Pie extends Component {
     });
   }
 
-  handleSectorEnter(data, e) {
-    this.props.onMouseEnter(data, e);
+  handleSectorEnter(data, index, e) {
+    const { onMouseEnter } = this.props;
+
+    this.setState({
+      activeIndex: index,
+    }, () => {
+       onMouseEnter && onMouseEnter(data, e);
+    });
+  }
+
+  handleSectorLeave(data, index, e) {
+    const { onMouseLeave } = this.props;
+
+    this.setState({
+      activeIndex: -1,
+    }, onMouseLeave);
+  }
+
+  handleSectorClick(data, index, e) {
+    const { onClick } = this.props;
+
+    this.setState({
+      selectedIndex: index,
+    }, onClick);
   }
 
   renderClipPath() {
     const {
       cx,
       cy,
+      hoverOffset,
+      selectedOffset,
       outerRadius,
       innerRadius,
       startAngle,
@@ -189,7 +217,7 @@ class Pie extends Component {
               ({ endAngle }) => (
                 <Sector cx={cx}
                   cy={cy}
-                  outerRadius={outerRadius}
+                  outerRadius={outerRadius + hoverOffset + selectedOffset}
                   innerRadius={innerRadius}
                   startAngle={startAngle}
                   endAngle={endAngle}
@@ -249,18 +277,38 @@ class Pie extends Component {
   }
 
   renderSectors(sectors) {
-    const { onMouseLeave, onClick } = this.props;
+    const { activeIndex, selectedIndex } = this.state;
+    const { selectedOffset, hoverOffset } = this.props;
 
-    return sectors.map((entry, i) => (
-      <Sector
-        {...entry}
-        className="recharts-pie-sector"
-        onMouseEnter={this.handleSectorEnter.bind(this, entry)}
-        onMouseLeave={onMouseLeave}
-        onClick={onClick}
-        key={`sector-${i}`}
-      />
-    ));
+    return sectors.map((entry, i) => {
+      const { innerRadius, outerRadius, cx, cy, midAngle } = entry;
+      let finalOuterRadius = outerRadius;
+      let finalCx = cx;
+      let finalCy = cy;
+
+      if (activeIndex === i) {
+        finalOuterRadius = outerRadius + hoverOffset;
+      }
+      if (selectedIndex === i && innerRadius === 0) {
+        const finalCenter = polarToCartesian(cx, cy, selectedOffset, midAngle);
+        finalCx = finalCenter.x;
+        finalCy = finalCenter.y;
+      }
+
+      return (
+        <Sector
+          {...entry}
+          outerRadius={finalOuterRadius}
+          cx={finalCx}
+          cy={finalCy}
+          className="recharts-pie-sector"
+          onMouseEnter={this.handleSectorEnter.bind(this, entry, i)}
+          onMouseLeave={::this.handleSectorLeave}
+          onClick={this.handleSectorClick.bind(this, entry, i)}
+          key={`sector-${i}`}
+        />
+      );
+    });
   }
 
   render() {
