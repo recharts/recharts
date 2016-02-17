@@ -11,7 +11,7 @@ import _ from 'lodash';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import { findChildByType, findAllByType, validateWidthHeight } from '../util/ReactUtils';
-import { getMaxRadius } from '../util/PolarUtils';
+import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import pureRender from '../util/PureRender';
 
 @pureRender
@@ -65,7 +65,7 @@ class RadialBarChart extends Component {
 
   state = {
     activeTooltipLabel: '',
-    activeTooltipPosition: 'left-bottom',
+    activeTooltipPayload: [],
     activeTooltipCoord: { x: 0, y: 0 },
     isTooltipActive: false,
   };
@@ -171,22 +171,26 @@ class RadialBarChart extends Component {
     return result;
   }
 
-  handleMouseEnter(el, e) {
+  handleMouseEnter(el, index, e) {
+    const { cx, cy, endAngle, outerRadius } = el;
+
     this.setState({
       isTooltipActive: true,
+      activeTooltipCoord: polarToCartesian(cx, cy, outerRadius, endAngle),
+      activeTooltipPayload: [el.payload],
     }, () => {
       if (this.props.onMouseEnter) {
-        this.props.onMouseEnter(el, e);
+        this.props.onMouseEnter(el, index, e);
       }
     });
   }
 
-  handleMouseLeave(e) {
+  handleMouseLeave(el, index, e) {
     this.setState({
       isTooltipActive: false,
     }, () => {
       if (this.props.onMouseEnter) {
-        this.props.onMouseLeave(e);
+        this.props.onMouseLeave(el, index, e);
       }
     });
   }
@@ -222,9 +226,20 @@ class RadialBarChart extends Component {
     const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
-    if (!tooltipItem) {
-      return;
-    }
+    if (!tooltipItem) { return null;}
+
+    const { width, height } = this.props;
+    const { isTooltipActive, activeTooltipLabel, activeTooltipCoord,
+      activeTooltipPayload } = this.state;
+    const viewBox = { x: 0, y: 0, width, height };
+
+    return React.cloneElement(tooltipItem, {
+      viewBox,
+      active: isTooltipActive,
+      label: activeTooltipLabel,
+      payload: activeTooltipPayload,
+      coordinate: activeTooltipCoord,
+    });
   }
 
   /**
@@ -248,7 +263,8 @@ class RadialBarChart extends Component {
         ...center,
         key: `radial-bar-${i}`,
         onMouseLeave: ::this.handleMouseLeave,
-        onMouseEnter: this.handleMouseEnter.bind(this, dataKey),
+        onMouseEnter: ::this.handleMouseEnter,
+        onClick: this.props.onClick,
         data: this.getComposedData(barPosition, radiusScale, center, dataKey),
       });
     }, this);

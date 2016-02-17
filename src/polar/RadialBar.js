@@ -65,6 +65,37 @@ class RadialBar extends Component {
     onMouseLeave() {},
   };
 
+  state = {
+    activeIndex: -1,
+    selectedIndex: -1,
+  };
+
+  handleSectorEnter(data, index, e) {
+    const { onMouseEnter } = this.props;
+
+    this.setState({
+      activeIndex: index,
+    }, () => {
+       onMouseEnter && onMouseEnter(data, e);
+    });
+  }
+
+  handleSectorLeave(data, index, e) {
+    const { onMouseLeave } = this.props;
+
+    this.setState({
+      activeIndex: -1,
+    }, onMouseLeave);
+  }
+
+  handleSectorClick(data, index, e) {
+    const { onClick } = this.props;
+
+    this.setState({
+      selectedIndex: index,
+    }, onClick);
+  }
+
   getDeltaAngle() {
     const { startAngle, endAngle } = this.props;
     const sign = Math.sign(endAngle - startAngle);
@@ -94,6 +125,7 @@ class RadialBar extends Component {
         cx, cy,
         startAngle,
         endAngle: _endAngle,
+        payload: entry,
       };
     });
 
@@ -106,7 +138,7 @@ class RadialBar extends Component {
     const offsetRadius = labelProps.offsetRadius || 2;
     const orientation = labelProps.orientation || 'inner';
     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = data;
-    const clockWise = this.getDeltaAngle() < 0;
+    const clockWise = this.getDeltaAngle() < 0 && (data.value > 0);
     const radius = clockWise ?
       innerRadius + offsetRadius :
       Math.max(outerRadius - offsetRadius, 0);
@@ -149,9 +181,14 @@ class RadialBar extends Component {
       const props = {
         ...baseProps,
         ...rest,
+        onMouseEnter: this.handleSectorEnter.bind(this, entry, i),
+        onMouseLeave: this.handleSectorLeave.bind(this, entry, i),
+        onClick: this.handleSectorClick.bind(this, entry, i),
         key: `sector-${i}`,
-        className: 'recharts-radial-bar-sector',
       };
+      if (!isShapeElement) {
+        props.className = 'recharts-radial-bar-sector';
+      }
 
       return isShapeElement ?
         React.cloneElement(shape, props) :
