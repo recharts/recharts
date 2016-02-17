@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import invariant from 'invariant';
-import D3Scale from 'd3-scale';
+import { scaleLinear, scalePoint } from 'd3-scale';
 import { getNiceTickValues } from 'recharts-scale';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
@@ -95,7 +95,7 @@ class RadarChart extends Component {
     return {
       tickCount,
       ticks,
-      scale: D3Scale.linear().domain(domain).range([innerRadius, outerRadius]),
+      scale: scaleLinear().domain(domain).range([innerRadius, outerRadius]),
     };
   }
 
@@ -115,7 +115,7 @@ class RadarChart extends Component {
 
   getGridRadius(gridCount, innerRadius, outerRadius) {
     const domain = _.range(0, gridCount);
-    const scale = D3Scale.point().domain(domain)
+    const scale = scalePoint().domain(domain)
              .range([innerRadius, outerRadius]);
 
     return domain.map(v => scale(v));

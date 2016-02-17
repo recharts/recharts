@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import D3Scale from 'd3-scale';
+import { scaleBand } from 'd3-scale';
 import Surface from '../container/Surface';
 import RadialBar from '../polar/RadialBar';
 import { getPercentValue } from '../util/DataUtils';
@@ -120,7 +120,7 @@ class RadialBarChart extends Component {
     const { data } = this.props;
     const bandCount = Math.max(data.length, 1);
     const range = [outerRadius, innerRadius];
-    const scale = D3Scale.band().domain(_.range(0, bandCount))
+    const scale = scaleBand().domain(_.range(0, bandCount))
                     .range(range);
 
     return scale;

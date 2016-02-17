@@ -46,8 +46,8 @@
   "dependencies": {
     "classnames": "2.2.3",
     "core-js": "2.0.3",
-    "d3-scale": "0.4.0",
-    "d3-shape": "0.4.0",
+    "d3-scale": "0.6.1",
+    "d3-shape": "0.5.1",
     "ima.js-babel6-polyfill": "0.1.0",
     "invariant": "2.2.0",
     "lodash": "^4.4.0",

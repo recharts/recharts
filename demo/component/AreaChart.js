@@ -80,8 +80,8 @@ export default React.createClass({
             <YAxis type="category" dataKey="name" />
             <XAxis type="number" xAxisId={0} orientation="top" />
             <XAxis type="number" xAxisId={1} orientation="bottom" />
-            <Area dataKey="uv" dataKeyName="月环比" stroke="#ff7300" fill="#ff7300" strokeWidth={2} xAxisId={0} />
-            <Area dataKey="pv" dataKeyName="年同比" stroke="#387908" fill="#387908" strokeWidth={2} xAxisId={1} />
+            <Area dataKey="uv" type="monotone" stroke="#ff7300" fill="#ff7300" strokeWidth={2} xAxisId={0} />
+            <Area dataKey="pv" type="monotone" stroke="#387908" fill="#387908" strokeWidth={2} xAxisId={1} />
             <Tooltip/>
           </AreaChart>
         </div>

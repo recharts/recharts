@@ -120,7 +120,7 @@ class LineChart extends CartesianChart {
    * @return {ReactComponent}  All the instances of Line
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
-    const { children } = this.props;
+    const { children, layout } = this.props;
     const { activeLineKey, isTooltipActive, activeTooltipIndex } = this.state;
     const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
@@ -150,6 +150,7 @@ class LineChart extends CartesianChart {
       return React.cloneElement(child, {
         key: `line-${i}`,
         ...offset,
+        layout,
         strokeWidth: finalStrokeWidth,
         onMouseLeave: ::this.handleLineMouseLeave,
         onMouseEnter: this.handleLineMouseEnter.bind(this, dataKey),

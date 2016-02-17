@@ -31,7 +31,7 @@ class Area extends Component {
     label: PropTypes.oneOfType([PropTypes.element, PropTypes.object, PropTypes.bool]),
     // have curve configuration
     curve: PropTypes.bool,
-    baseLineType: PropTypes.oneOf(['horizontal', 'vertical', 'curve']),
+    layout: PropTypes.oneOf(['horizontal', 'vertical']),
     baseLine: PropTypes.oneOfType([
       PropTypes.number, PropTypes.array,
     ]),
@@ -68,12 +68,13 @@ class Area extends Component {
   }
 
   renderCurve() {
-    const { points, type } = this.props;
+    const { points, type, layout } = this.props;
 
     return (
       <Curve
         {...getPresentationAttributes(this.props)}
         className="recharts-area-curve"
+        layout={layout}
         points={points}
         type={type}
         fill="none"

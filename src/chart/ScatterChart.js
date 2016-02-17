@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import invariant from 'invariant';
 import classNames from 'classnames';
-import { linear } from 'd3-scale';
+import { scaleLinear } from 'd3-scale';
 import { getNiceTickValues } from 'recharts-scale';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
@@ -193,7 +193,7 @@ class ScatterChart extends Component {
     return {
       ...axisProps,
       domain,
-      scale: linear().domain(domain).range(axisProps.range),
+      scale: scaleLinear().domain(domain).range(axisProps.range),
     };
   }
 
@@ -259,7 +259,7 @@ class ScatterChart extends Component {
     const range = axisType === 'xAxis' ?
                   [offset.left, offset.left + offset.width] :
                   [offset.top + offset.height, offset.top];
-    const scale = linear().domain(domain).range(range);
+    const scale = scaleLinear().domain(domain).range(range);
 
     this.setTicksOfScale(scale, axis);
     if (tickFormat) {

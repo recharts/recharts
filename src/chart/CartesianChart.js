@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { getNiceTickValues } from 'recharts-scale';
-import D3Scale from 'd3-scale';
+import { scaleLinear, scaleBand, scalePoint } from 'd3-scale';
 import D3Shape from 'd3-shape';
 import invariant from 'invariant';
 import OuiDomUtils from 'oui-dom-utils';
@@ -540,11 +540,11 @@ class CartesianChart extends Component {
       let scale;
 
       if (type === 'number') {
-        scale = D3Scale.linear().domain(domain).range(range);
+        scale = scaleLinear().domain(domain).range(range);
       } else if (displayName === 'LineChart' || displayName === 'AreaChart') {
-        scale = D3Scale.point().domain(domain).range(range);
+        scale = scalePoint().domain(domain).range(range);
       } else {
-        scale = D3Scale.band().domain(domain).range(range);
+        scale = scaleBand().domain(domain).range(range);
       }
 
       this.setTicksOfScale(scale, axis);

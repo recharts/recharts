@@ -49,28 +49,24 @@ class AreaChart extends CartesianChart {
 
     let range;
     let baseLine;
-    let baseLineType;
     if (hasStack) {
-      baseLineType = 'curve';
       baseLine = stackedData.map((entry, index) => ({
         x: layout === 'horizontal' ? xTicks[index].coord : xAxis.scale(entry[0]),
         y: layout === 'horizontal' ? yAxis.scale(entry[0]) : yTicks[index].coord,
       }));
     } else if (layout === 'horizontal') {
-      baseLineType = layout;
       range = yAxis.scale.range();
       baseLine = xAxis.orientation === 'top' ?
         Math.min(range[0], range[1]) :
         Math.max(range[0], range[1]);
     } else {
-      baseLineType = layout;
       range = xAxis.scale.range();
       baseLine = yAxis.orientation === 'left' ?
         Math.min(range[0], range[1]) :
         Math.max(range[0], range[1]);
     }
 
-    return { points, baseLine, baseLineType };
+    return { points, baseLine, layout };
   }
 
   /**

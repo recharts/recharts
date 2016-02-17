@@ -103,28 +103,24 @@ class ComposedChart extends CartesianChart {
 
     let range;
     let baseLine;
-    let baseLineType;
     if (hasStack) {
-      baseLineType = 'curve';
       baseLine = stackedData.map((entry, index) => ({
         x: layout === 'horizontal' ? xTicks[index].coord + bandSize / 2 : xAxis.scale(entry[0]),
         y: layout === 'horizontal' ? yAxis.scale(entry[0]) : yTicks[index].coord + bandSize / 2,
       }));
     } else if (layout === 'horizontal') {
-      baseLineType = layout;
       range = yAxis.scale.range();
       baseLine = xAxis.orientation === 'top' ?
         Math.min(range[0], range[1]) :
         Math.max(range[0], range[1]);
     } else {
-      baseLineType = layout;
       range = xAxis.scale.range();
       baseLine = yAxis.orientation === 'left' ?
         Math.min(range[0], range[1]) :
         Math.max(range[0], range[1]);
     }
 
-    return { points, baseLine, baseLineType };
+    return { points, baseLine, layout };
   }
 
   /**
@@ -380,7 +376,7 @@ class ComposedChart extends CartesianChart {
    * @return {ReactComponent}  All the instances of Line
    */
   renderLineItems(items, xAxisMap, yAxisMap, offset) {
-    const { children } = this.props;
+    const { children, layout } = this.props;
     const { activeLineKey, isTooltipActive, activeTooltipIndex } = this.state;
     const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
@@ -410,6 +406,7 @@ class ComposedChart extends CartesianChart {
       return React.cloneElement(child, {
         key: `line-${i}`,
         ...offset,
+        layout,
         strokeWidth: finalStrokeWidth,
         onMouseLeave: ::this.handleLineMouseLeave,
         onMouseEnter: this.handleLineMouseEnter.bind(this, dataKey),

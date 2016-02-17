@@ -88,8 +88,8 @@ export default React.createClass({
             <XAxis type='number' xAxisId={0} orientation='top'/>
             <XAxis type='number' xAxisId={1} orientation='bottom'/>
             <CartesianGrid stroke='#f5f5f5'/>
-            <Line dataKey='uv' stroke='#ff7300' strokeWidth={2} xAxisId={0} />
-            <Line dataKey='pv' stroke='#387908' strokeWidth={2} xAxisId={1} />
+            <Line dataKey='uv' type="monotone" stroke='#ff7300' strokeWidth={2} xAxisId={0} />
+            <Line dataKey='pv' type="monotone" stroke='#387908' strokeWidth={2} xAxisId={1} />
           </LineChart>
         </div>
 

@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import d3Shape from 'd3-shape';
 import pureRender from '../util/PureRender';
 import classNames from 'classnames';
+import _ from 'lodash';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
 @pureRender
@@ -19,7 +20,7 @@ class Curve extends Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
-    baseLineType: PropTypes.oneOf(['horizontal', 'vertical', 'curve']),
+    layout: PropTypes.oneOf(['horizontal', 'vertical']),
     baseLine: PropTypes.oneOfType([
       PropTypes.number, PropTypes.array,
     ]),
@@ -38,9 +39,12 @@ class Curve extends Component {
     onMouseLeave() {},
   };
 
-  getCurveFactory(type) {
+  getCurveFactory(type, layout) {
     const name = `curve${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
 
+    if (name === 'curveMonotone') {
+      return d3Shape[`${name}${layout === 'vertical' ? 'Y' : 'X'}`];
+    }
     return d3Shape[name];
   }
 
@@ -49,25 +53,25 @@ class Curve extends Component {
    * @return {String} path
    */
   getPath() {
-    const { type, points, baseLine, baseLineType } = this.props;
+    const { type, points, baseLine, layout } = this.props;
     const l = d3Shape.line().x(p => p.x)
                     .y(p => p.y)
                     .defined(p => p.x === +p.x && p.y === + p.y)
-                    .curve(this.getCurveFactory(type));
+                    .curve(this.getCurveFactory(type, layout));
     const len = points.length;
     let curvePath = l(points);
 
     if (!curvePath) { return ''; }
 
-    if (baseLineType === 'curve' && baseLine && baseLine.length) {
+    if (layout === 'horizontal' && _.isNumber(baseLine)) {
+      curvePath += `L${points[len - 1].x} ${baseLine}L${points[0].x} ${baseLine}Z`;
+    } else if (layout === 'vertical' && _.isNumber(baseLine)) {
+      curvePath += `L${baseLine} ${points[len - 1].y}L${baseLine} ${points[0].y}Z`;
+    } else if (_.isArray(baseLine) && baseLine.length) {
       const revese = baseLine.reduce((result, entry) => [entry, ...result], []);
       const revesePath = this.fliterMouseToSeg(l(revese) || '');
 
       curvePath += `L${revese[0].x} ${revese[0].y}${revesePath}Z`;
-    } else if (baseLineType === 'horizontal' && baseLine === +baseLine) {
-      curvePath += `L${points[len - 1].x} ${baseLine}L${points[0].x} ${baseLine}Z`;
-    } else if (baseLineType === 'vertical' && baseLine === +baseLine) {
-      curvePath += `L${baseLine} ${points[len - 1].y}L${baseLine} ${points[0].y}Z`;
     }
 
     return curvePath;

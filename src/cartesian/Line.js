@@ -26,6 +26,7 @@ class Line extends Component {
     yAxisId: PropTypes.number,
     xAxisId: PropTypes.number,
     legendType: PropTypes.string,
+    layout: PropTypes.oneOf(['horizontal', 'vertical']),
 
      // whether have dot in line
     dot: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
