@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import Router, { Route, Link } from 'react-router';
+import { Link } from 'react-router';
 import components from '../component/index';
 
 const App = React.createClass({
@@ -16,7 +16,7 @@ const App = React.createClass({
 
         return (
           <li key={'component-' + c}>
-            <Link to="/" query={{ page: c, group: key }}>{c}</Link>
+            <Link to={{ pathname: '/', query: { page: c, group: key } }}>{c}</Link>
           </li>
         );
       });
@@ -46,7 +46,7 @@ const App = React.createClass({
 
     return (
       <div className="component-wrapper">
-        <p className="back"><Link to="/" params={{}}>Back to homepage</Link></p>
+        <p className="back"><Link to={{ pathname: '/' }}>Back to homepage</Link></p>
         <p className="title">{page}</p>
         {components[group] && components[group][page] ? React.createElement(components[group][page]) : null}
       </div>
