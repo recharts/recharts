@@ -46,4 +46,8 @@ git push origin $next_ref
 
 node scripts/build.js
 
+rm -rf node_modules/history
+
 npm publish
+
+npm install history
