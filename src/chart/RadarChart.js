@@ -103,7 +103,7 @@ class RadarChart extends Component {
       const currentMax = Math.max.apply(null, values);
       const currentMin = Math.min.apply(null, values);
 
-      return [Math.min(prev[0], currentMin), Math.max(prev[0], currentMax)];
+      return [Math.min(prev[0], currentMin), Math.max(prev[1], currentMax)];
     }, [Infinity, -Infinity]);
     const finalDomain = [domain && domain[0], domain && domain[1]];
 
