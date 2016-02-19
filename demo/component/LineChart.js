@@ -36,8 +36,8 @@ export default React.createClass({
             <Legend/>
             <XAxis />
             <YAxis domain={[0, 500]}/>
-            <ReferenceLine label="max" type="horizontal" value={400} stroke="#666" />
-            <ReferenceLine strokeDasharray="3 3 2 2" label="middle" type="vertical" value={3} stroke="#666" />
+            <ReferenceLine label="max" y={300} stroke="#666" />
+            <ReferenceLine x={3} strokeDasharray="3 3 2 2" label="middle" stroke="#666" />
             <Line type='monotone' dataKey='uv' stroke='#ff7300'/>
           </LineChart>
         </div>

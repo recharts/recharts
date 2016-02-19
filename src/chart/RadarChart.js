@@ -19,7 +19,7 @@ import _ from 'lodash';
 import { validateWidthHeight, findChildByType, findAllByType,
   getPresentationAttributes } from '../util/ReactUtils';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
-import { getPercentValue } from '../util/DataUtils';
+import { getPercentValue, parseSpecifiedDomain } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
 
 @pureRender
@@ -105,14 +105,7 @@ class RadarChart extends Component {
 
       return [Math.min(prev[0], currentMin), Math.max(prev[1], currentMax)];
     }, [Infinity, -Infinity]);
-    const finalDomain = [domain && domain[0], domain && domain[1]];
-
-    if (!domain || !_.isNumber(domain[0]) || domain[0] > extent[0]) {
-      finalDomain[0] = extent[0];
-    }
-    if (!domain || !_.isNumber(domain[1]) || domain[1] < extent[1]) {
-      finalDomain[1] = extent[1];
-    }
+    const finalDomain = parseSpecifiedDomain(domain, extent);
 
     if (domain && (domain[0] === 'auto' || domain[1] === 'auto')) {
       return getNiceTickValues(finalDomain, tickCount);

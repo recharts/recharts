@@ -23,6 +23,7 @@ import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
 import pureRender from '../util/PureRender';
+import { parseSpecifiedDomain } from '../util/DataUtils';
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
@@ -329,7 +330,7 @@ class CartesianChart extends Component {
           ), type);
         }
         if (type === 'number' && child.props.domain) {
-          domain = this.parseSpecifiedDomain(child.props.domain, domain);
+          domain = parseSpecifiedDomain(child.props.domain, domain);
         }
 
         return {
@@ -383,7 +384,7 @@ class CartesianChart extends Component {
         } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack) {
           domain = this.getDomainOfStackGroups(stackGroups[axisId].stackGroups);
         } else {
-          domain = this.parseSpecifiedDomain(Axis.defaultProps.domain,
+          domain = parseSpecifiedDomain(Axis.defaultProps.domain,
             this.getDomainOfItemsWithSameAxis(
               items.filter(entry => entry.props[axisIdKey] === axisId), 'number'
             )
@@ -495,7 +496,6 @@ class CartesianChart extends Component {
     // Give priority to use the options of ticks
     if (opts.ticks && opts.ticks) {
       scale.domain(this.getDomainOfTicks(opts.ticks, opts.type));
-
       return;
     }
 
@@ -744,28 +744,6 @@ class CartesianChart extends Component {
       ...Legend.getWithHeight(legendItem, width, height),
       payload: legendData,
     };
-  }
-
-  parseSpecifiedDomain(specifiedDomain, autoDomain) {
-    if (!_.isArray(specifiedDomain)) {
-      return autoDomain;
-    }
-
-    const domain = [];
-
-    if (!_.isNumber(specifiedDomain[0]) || specifiedDomain[0] > autoDomain[0]) {
-      domain[0] = autoDomain[0];
-    } else {
-      domain[0] = specifiedDomain[0];
-    }
-
-    if (!_.isNumber(specifiedDomain[1]) || specifiedDomain[1] < autoDomain[1]) {
-      domain[1] = autoDomain[1];
-    } else {
-      domain[1] = specifiedDomain[1];
-    }
-
-    return domain;
   }
 
   validateAxes() {

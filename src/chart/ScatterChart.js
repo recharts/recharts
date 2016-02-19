@@ -17,9 +17,11 @@ import Scatter from '../cartesian/Scatter';
 import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import ZAxis from '../cartesian/ZAxis';
+import ReferenceLine from '../cartesian/ReferenceLine';
 import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
+import { parseSpecifiedDomain } from '../util/DataUtils';
 import _ from 'lodash';
 
 @pureRender
@@ -167,12 +169,16 @@ class ScatterChart extends Component {
     invariant(axis, 'recharts: ScatterChart must has %s', Axis.displayName);
 
     if (axis) {
-      const domain = this.getDomain(items, axis.props.dataKey);
+      const domain = parseSpecifiedDomain(
+        axis.props.domain,
+        this.getDomain(items, axis.props.dataKey)
+      );
 
       return {
         ...axis.props,
         axisType,
         domain,
+        originalDomain: axis.props.domain,
       };
     }
 
@@ -235,15 +241,17 @@ class ScatterChart extends Component {
       opts.domain = this.getDomainOfTicks(opts.ticks, opts.type);
       scale.domain(opts.domain)
            .ticks(opts.ticks.length);
-    } else {
-    // Calculate the ticks by the number of grid
+      return;
+    }
+
+    if (opts.tickCount && opts.type === 'number' && opts.originalDomain && (
+      opts.originalDomain[0] === 'auto' || opts.originalDomain[1] === 'auto')) {
+      // Calculate the ticks by the number of grid when the axis is a number axis
       const domain = scale.domain();
       const tickValues = getNiceTickValues(domain, opts.tickCount);
 
       opts.ticks = tickValues;
-      opts.domain = this.getDomainOfTicks(tickValues, opts.type);
-      scale.domain(opts.domain)
-          .ticks(opts.tickCount);
+      scale.domain(this.getDomainOfTicks(tickValues, opts.type));
     }
   }
 
@@ -525,6 +533,27 @@ class ScatterChart extends Component {
     }, this);
   }
 
+  renderReferenceLines(xAxis, yAxis, offset) {
+    const { children } = this.props;
+    const lines = findAllByType(children, ReferenceLine);
+
+    if (!lines || !lines.length) { return null; }
+
+    return lines.map((entry, i) =>
+      React.cloneElement(entry, {
+        key: `reference-line-${i}`,
+        xAxisMap: {[xAxis.xAxisId]: xAxis},
+        yAxisMap: {[yAxis.yAxisId]: yAxis},
+        viewBox: {
+          x: offset.left,
+          y: offset.top,
+          width: offset.width,
+          height: offset.height,
+        },
+      })
+    );
+  }
+
   render() {
     if (!validateWidthHeight(this)) { return null; }
 
@@ -544,6 +573,7 @@ class ScatterChart extends Component {
       >
         <Surface width={width} height={height}>
           {this.renderGrid(xAxis, yAxis, offset)}
+          {this.renderReferenceLines(xAxis, yAxis, offset)}
           {this.renderAxis(xAxis, 'recharts-x-axis')}
           {this.renderAxis(yAxis, 'recharts-y-axis')}
           {this.renderCursor(xAxis, yAxis, offset)}
