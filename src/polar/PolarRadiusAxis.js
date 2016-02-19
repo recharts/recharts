@@ -39,7 +39,10 @@ class PolarRadiusAxis extends Component {
     ]),
     stroke: PropTypes.string,
     tickFormatter: PropTypes.func,
-    domain: PropTypes.array,
+    domain: PropTypes.arrayOf(PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.oneOf(['auto', 'dataMin', 'dataMax']),
+    ])),
   };
 
   static defaultProps = {
@@ -51,6 +54,7 @@ class PolarRadiusAxis extends Component {
     axisLine: true,
     tick: true,
     tickCount: 5,
+    domain: [0, 'auto'],
   };
 
   /**

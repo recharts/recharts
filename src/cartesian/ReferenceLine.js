@@ -41,6 +41,7 @@ class ReferenceLine extends Component {
     xAxisId: 0,
     yAxisId: 0,
     fill: 'none',
+    stroke: '#ccc',
     fillOpacity: 1,
     strokeWidth: 1,
   };

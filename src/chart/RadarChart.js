@@ -72,13 +72,7 @@ class RadarChart extends Component {
     let tickCount;
     let ticks;
 
-    if (radiusAxis && radiusAxis.props.domain) {
-      tickCount = Math.max(radiusAxis.props.tickCount || PolarRadiusAxis.defaultProps.tickCount, 2);
-      domain = radiusAxis.props.domain;
-      invariant(domain.length === 2 && domain[0] === +domain[0] && domain[1] === +domain[1],
-        `domain in PolarRadiusAxis should be an array which has two numbers`
-      );
-    } else if (radiusAxis && radiusAxis.props.ticks) {
+    if (radiusAxis && radiusAxis.props.ticks) {
       ticks = radiusAxis.props.ticks;
 
       tickCount = ticks.length;
@@ -101,16 +95,30 @@ class RadarChart extends Component {
 
   getTicksByItems(axisItem, tickCount) {
     const { data, children } = this.props;
+    const { domain } = axisItem.props;
     const radarItems = findAllByType(children, Radar);
     const dataKeys = radarItems.map(item => item.props.dataKey);
-    const max = data.reduce((prev, current) => {
-      const currentMax = Math.max.apply(null, dataKeys.map(v => current[v] || 0));
+    const extent = data.reduce((prev, current) => {
+      const values = dataKeys.map(v => current[v] || 0);
+      const currentMax = Math.max.apply(null, values);
+      const currentMin = Math.min.apply(null, values);
 
-      return Math.max(prev, currentMax);
-    }, 0);
-    const tickValues = getNiceTickValues([0, max], tickCount);
+      return [Math.min(prev[0], currentMin), Math.max(prev[0], currentMax)];
+    }, [Infinity, -Infinity]);
+    const finalDomain = [domain && domain[0], domain && domain[1]];
 
-    return tickValues;
+    if (!domain || !_.isNumber(domain[0]) || domain[0] > extent[0]) {
+      finalDomain[0] = extent[0];
+    }
+    if (!domain || !_.isNumber(domain[1]) || domain[1] < extent[1]) {
+      finalDomain[1] = extent[1];
+    }
+
+    if (domain && (domain[0] === 'auto' || domain[1] === 'auto')) {
+      return getNiceTickValues(finalDomain, tickCount);
+    }
+
+    return finalDomain;
   }
 
   getGridRadius(gridCount, innerRadius, outerRadius) {

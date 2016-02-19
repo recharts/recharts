@@ -17,7 +17,10 @@ class XAxis extends Component {
     unit: PropTypes.any,
     // The unique id of x-axis
     xAxisId: PropTypes.number,
-    domain: PropTypes.array,
+    domain: PropTypes.arrayOf(PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.oneOf(['auto', 'dataMin', 'dataMax']),
+    ])),
     // The key of data displayed in the axis
     dataKey: PropTypes.string,
     // The width of axis which is usually calculated internally
@@ -44,6 +47,7 @@ class XAxis extends Component {
     xAxisId: 0,
     tickCount: 5,
     type: 'category',
+    domain: [0, 'auto'],
   };
 
   render() {

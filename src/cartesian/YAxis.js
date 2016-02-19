@@ -17,7 +17,10 @@ class YAxis extends Component {
     unit: PropTypes.any,
     // The unique id of y-axis
     yAxisId: PropTypes.number,
-    domain: PropTypes.array,
+    domain: PropTypes.arrayOf(PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.oneOf(['auto', 'dataMin', 'dataMax']),
+    ])),
     // The key of data displayed in the axis
     dataKey: PropTypes.string,
     // Ticks can be any type when the axis is the type of category
@@ -44,6 +47,7 @@ class YAxis extends Component {
     yAxisId: 0,
     tickCount: 5,
     type: 'number',
+    domain: [0, 'auto'],
   };
 
   render() {

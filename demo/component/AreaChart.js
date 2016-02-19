@@ -66,7 +66,7 @@ export default React.createClass({
           <AreaChart width={600} height={400} data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
             <YAxis label="uv" type="number" yAxisId={0} stroke="#ff7300" />
             <YAxis label="pv" type="number" orientation="right" yAxisId={1} stroke="#387908" />
-            <YAxis label="amt" type="number" orientation="right" yAxisId={2} stroke="#38abc8" />
+            <YAxis label="amt" type="number" orientation="right" yAxisId={2} stroke="#38abc8"/>
             <XAxis dataKey="name"/>
             <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" strokeWidth={2} yAxisId={0} />
             <Area dataKey="pv" stroke="#387908" fill="#387908" strokeWidth={2} yAxisId={1} />
@@ -76,7 +76,8 @@ export default React.createClass({
 
         <p>AreaChart of vertical layout </p>
         <div className="area-chart-wrapper" style={{ margin: 40 }}>
-          <AreaChart width={400} height={400} data={data} layout='vertical'>
+          <AreaChart width={400} height={400} data={data} layout='vertical'
+            margin={{top: 5, right: 30, bottom: 5, left: 5}}>
             <YAxis type="category" dataKey="name" />
             <XAxis type="number" xAxisId={0} orientation="top" />
             <XAxis type="number" xAxisId={1} orientation="bottom" />
@@ -88,7 +89,7 @@ export default React.createClass({
 
         <p>AreaChart with custom tooltip</p>
         <div className="area-chart-wrapper">
-          <AreaChart width={900} height={250} data={data} margin={{ top: 10, right: 20, bottom: 10, left: 10 }}>
+          <AreaChart width={900} height={250} data={data} margin={{ top: 10, right: 30, bottom: 10, left: 10 }}>
             <XAxis dataKey="name" hasTick />
             <YAxis tickCount={7} hasTick />
             <Tooltip content={<CustomTooltip external={data} />} />
