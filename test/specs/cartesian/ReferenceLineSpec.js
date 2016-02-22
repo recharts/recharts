@@ -57,4 +57,17 @@ describe('<ReferenceLine />', () => {
     expect(wrapper.find('.recharts-reference-line-line').length).to.equal(1);
     expect(wrapper.find('.recharts-reference-line-label').length).to.equal(1);
   });
+  
+  it("Render custom lable when label is set to react element", () => {
+    const Label = ({ text, ...props }) => <text {...props} >{text}</text>;
+    const wrapper = render(
+      <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
+        <XAxis dataKey="name"/>
+        <YAxis tickCount={7}/>
+        <Bar dataKey="uv"/>
+        <ReferenceLine y={20} stroke="#666" label={<Label text="Custom Text" />} alwaysShow/>
+      </BarChart>
+    );
+    expect(wrapper.find('.recharts-reference-line text').text()).to.equal('Custom Text');
+  });
 });
