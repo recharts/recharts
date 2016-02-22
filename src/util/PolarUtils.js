@@ -5,12 +5,10 @@ export const polarToCartesian = (cx, cy, radius, angle) => ({
   y: cy + Math.sin(-RADIAN * angle) * radius,
 });
 
-export const getMaxRadius = (width, height, cx, cy, margin = {
+export const getMaxRadius = (width, height, margin = {
   top: 0, right: 0, bottom: 0, left: 0,
 }) => (
   Math.min(
-    Math.abs(cx - margin.left || 0),
-    Math.abs(width - cx - margin.right || 0),
-    Math.abs(cy - margin.top || 0),
-    Math.abs(height - cy - margin.bottom || 0)
-  ));
+    Math.abs(width - (margin.left || 0) - (margin.right || 0)),
+    Math.abs(height - (margin.left || 0) - (margin.right || 0)),
+  ) / 2);

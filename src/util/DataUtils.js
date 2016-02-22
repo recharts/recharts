@@ -7,7 +7,7 @@ import _ from 'lodash';
  * @param {NUmber} defaultValue   The value returned when percent is undefined or invalid
  * @return {Number} value
  */
-export const getPercentValue = (percent, totalValue, defaultValue = 0) => {
+export const getPercentValue = (percent, totalValue, defaultValue = 0, validate = false) => {
   if (!_.isNumber(percent) && !_.isString(percent)) {
     return defaultValue;
   }
@@ -22,7 +22,11 @@ export const getPercentValue = (percent, totalValue, defaultValue = 0) => {
     value = percent;
   }
 
-  if (isNaN(value) || value > totalValue) {
+  if (isNaN(value)) {
+    value = defaultValue;
+  }
+
+  if (validate && value > totalValue) {
     value = totalValue;
   }
 
@@ -49,4 +53,17 @@ export const parseSpecifiedDomain = (specifiedDomain, dataDomain) => {
   }
 
   return domain;
-}
+};
+
+export const validateCoordinateInRange = (coordinate, scale) => {
+  if (!scale) { return false; }
+
+  const range = scale.range();
+  const first = range[0];
+  const last = range[range.length - 1];
+  const isValidate = first <= last ?
+    (coordinate >= first && coordinate <= last) :
+    (coordinate >= last && coordinate <= first);
+
+  return isValidate;
+};

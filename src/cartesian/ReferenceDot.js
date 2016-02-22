@@ -6,6 +6,7 @@ import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Dot from '../shape/Dot';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { validateCoordinateInRange } from '../util/DataUtils';
 import _ from 'lodash';
 
 @pureRender
@@ -45,17 +46,6 @@ class ReferenceDot extends Component {
     strokeWidth: 1,
   };
 
-  validateCoordinate(value, coord, scale, type) {
-    const range = scale.range();
-    const first = range[0];
-    const last = range[range.length - 1];
-    const isValidate = first <= last ?
-      (coord >= first && coord <= last) :
-      (coord >= last && coord <= first);
-
-    return isValidate;
-  }
-
   getCoordinate() {
     const { x, y, xAxisMap, yAxisMap, xAxisId, yAxisId } = this.props;
     const xScale = xAxisMap[xAxisId].scale;
@@ -65,8 +55,8 @@ class ReferenceDot extends Component {
       cy: yScale(y),
     };
 
-    if (this.validateCoordinate(x, result.cx, xScale, 'x') &&
-      this.validateCoordinate(y, result.cy, yScale, 'y')) {
+    if (validateCoordinateInRange(result.cx, xScale) &&
+      validateCoordinateInRange(result.cy, yScale)) {
       return result;
     }
 

@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { validateCoordinateInRange } from '../util/DataUtils';
 import _ from 'lodash';
 
 @pureRender
@@ -48,17 +49,6 @@ class ReferenceLine extends Component {
     strokeWidth: 1,
   };
 
-  validateLine(value, coord, scale) {
-    const range = scale.range();
-    const first = range[0];
-    const last = range[range.length - 1];
-    const isValidate = first <= last ?
-      (coord >= first && coord <= last) :
-      (coord >= last && coord <= first);
-
-    return isValidate;
-  }
-
   getEndPoints(isX, isY) {
     const { xAxisMap, yAxisMap, xAxisId, yAxisId, viewBox } = this.props;
     const { x, y, width, height } = viewBox;
@@ -68,7 +58,7 @@ class ReferenceLine extends Component {
       const scale = yAxisMap[yAxisId].scale;
       const coord = scale(value);
 
-      if (this.validateLine(value, coord, scale)) {
+      if (validateCoordinateInRange(coord, scale)) {
         return yAxisMap[yAxisId].orientation === 'left' ?
             [{ x, y: coord }, { x: x + width, y: coord }] :
             [{ x: x + width, y: coord }, { x, y: coord }];
@@ -78,7 +68,7 @@ class ReferenceLine extends Component {
       const scale = xAxisMap[xAxisId].scale;
       const coord = scale(value);
 
-      if (this.validateLine(value, coord, scale)) {
+      if (validateCoordinateInRange(coord, scale)) {
         return yAxisMap[yAxisId].orientation === 'top' ?
            [{ x: coord, y }, { x: coord, y: y + height }] :
            [{ x: coord, y: y + height }, { x: coord, y }];

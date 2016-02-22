@@ -277,7 +277,7 @@ class RadialBarChart extends Component {
     const items = findAllByType(children, RadialBar);
     const cx = getPercentValue(this.props.cx, width, width / 2);
     const cy = getPercentValue(this.props.cy, height, height / 2);
-    const maxRadius = getMaxRadius(width, height, cx, cy, margin);
+    const maxRadius = getMaxRadius(width, height, margin);
     const innerRadius = getPercentValue(this.props.innerRadius, maxRadius, 0);
     const outerRadius = getPercentValue(this.props.outerRadius, maxRadius, maxRadius * 0.8);
     const radiusScale = this.getRadiusScale(innerRadius, outerRadius);

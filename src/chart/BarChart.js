@@ -118,7 +118,7 @@ class BarChart extends CartesianChart {
         return res;
       }, {});
     } else {
-      const offset = getPercentValue(barCategoryGap, bandSize);
+      const offset = getPercentValue(barCategoryGap, bandSize, 0, true);
       const size = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
 
       result = sizeList.reduce((res, entry, i) => {
