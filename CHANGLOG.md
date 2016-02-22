@@ -2,9 +2,11 @@
 ### feat
 - implement ReferenceDot in cartesian charts
 - support alwaysShow of ReferenceLine and ReferenceDot
+
 ### refactor
 - refactor domain of CartesianAxis and PolarRadiusAxis
 - refactor this props name in ReferenceLine
+
 ### fix
 - fix the bug of calculate extent in RadarChart
 - fix some bugs of server side rendering when document is called
