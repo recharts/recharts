@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import { mount, render } from 'enzyme';
 
-describe('<Radar />', () => {
+describe('<RadarChart />', () => {
   const data = [
     { name: 'iPhone 3GS', value: 420, half: 210 },
     { name: 'iPhone 4', value: 460, half: 230 },
@@ -15,7 +15,7 @@ describe('<Radar />', () => {
     { name: 'iPhone 5se', value: 365, half: 183 },
   ];
 
-  it('renders 1 polygon in simple Radar', () => {
+  it('Render 1 polygon in a simple Radar', () => {
     const wrapper = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
         <Radar dataKey="value"/>
@@ -24,7 +24,7 @@ describe('<Radar />', () => {
     expect(wrapper.find('polygon').length).to.equal(1);
   });
 
-  it('renders 8 dots when dot is setted to be true', () => {
+  it('Render 8 dots when dot is setted to be true', () => {
     const wrapper = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
         <Radar dot dataKey="value"/>
@@ -33,7 +33,7 @@ describe('<Radar />', () => {
     expect(wrapper.find('.recharts-radar-dot').length).to.equal(8);
   });
 
-  it('renders 8 labels when dot is setted to be true', () => {
+  it('Render 8 labels when dot is setted to be true', () => {
     const wrapper = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
         <Radar label dataKey="value"/>
@@ -42,7 +42,7 @@ describe('<Radar />', () => {
     expect(wrapper.find('.recharts-radar-label').length).to.equal(8);
   });
 
-  it('renders 1 PolarGrid 1 PolarAngleAxis and 1 PolarRadiusAxis in simple Radar', () => {
+  it('Render 1 PolarGrid 1 PolarAngleAxis and 1 PolarRadiusAxis in simple Radar', () => {
     const wrapper = render(
       <RadarChart cx={300} cy={250} startAngle={45} innerRadius={20} outerRadius={150} width={600} height={500} data={data}>
         <Radar dataKey="value" fill="#9597E4" fillOpacity={0.6} stroke="#8889DD" strokeWidth={3} />
@@ -56,7 +56,7 @@ describe('<Radar />', () => {
     expect(wrapper.find('.recharts-polar-radius-axis').length).to.equal(1);
   });
 
-  it('renders 8 angle grid angle line, 8 angle axis ticks, and 3 radius axis ticks', () => {
+  it('Render 8 angle grid angle line, 8 angle axis ticks, and 3 radius axis ticks', () => {
     const wrapper = render(
       <RadarChart cx={300} cy={250} startAngle={45} innerRadius={20} outerRadius={150} width={600} height={500} data={data} >
         <Radar dataKey="value" fill="#9597E4" fillOpacity={0.6} stroke="#8889DD" strokeWidth={3} />

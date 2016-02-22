@@ -10,13 +10,13 @@ describe('<Triangle />', () => {
     { x: 200, y: 50 },
   ];
 
-  const wrapper = render(
-    <Surface width={400} height={400}>
-      <Triangle points={points} fill="#ff7300"/>
-    </Surface>
-  );
-
   it('renders 1 triangle in simple Triangle', () => {
+    const wrapper = render(
+      <Surface width={400} height={400}>
+        <Triangle points={points} fill="#ff7300"/>
+      </Surface>
+    );
+
     expect(wrapper.find('.recharts-triangle').length).to.equal(1);
   });
 });

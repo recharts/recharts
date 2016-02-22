@@ -38,7 +38,7 @@ export default React.createClass({
             <XAxis />
             <YAxis />
             <ReferenceLine label="max" y={780} alwaysShow stroke="#666" />
-            <ReferenceLine x={2.5} strokeDasharray="3 3 2 2" label="middle" stroke="#666" />
+            <ReferenceDot x={2} y={1000} strokeDasharray="3 3 2 2" label="middle" stroke="#666" alwaysShow/>
             <Line type='monotone' dataKey='uv' stroke='#ff7300'/>
           </LineChart>
         </div>

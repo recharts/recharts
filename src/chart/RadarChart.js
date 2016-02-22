@@ -94,7 +94,7 @@ class RadarChart extends Component {
 
   getTicksByItems(axisItem, tickCount) {
     const { data, children } = this.props;
-    const { domain } = axisItem.props;
+    const { domain } = axisItem ? axisItem.props : PolarRadiusAxis.defaultProps;
     const radarItems = findAllByType(children, Radar);
     const dataKeys = radarItems.map(item => item.props.dataKey);
     const extent = data.reduce((prev, current) => {

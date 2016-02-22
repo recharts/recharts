@@ -14,14 +14,20 @@ describe('<Brush />', () => {
     '2015-10-26', '2015-10-27', '2015-10-28', '2015-10-29', '2015-10-30',
   ];
 
-  it('renders 2 travellers and 1 slide in simple Brush', () => {
+  it('Render 2 travellers and 1 slide in simple Brush', () => {
     const wrapper = render(
-      <Surface width={800} height={200}>
-        <Brush x={100} y={50} width={400} height={40} data={data}/>
-      </Surface>
+      <Brush x={100} y={50} width={400} height={40} data={data}/>
     );
     expect(wrapper.find('.recharts-brush-traveller').length).to.equal(2);
     expect(wrapper.find('.recharts-brush-slide').length).to.equal(1);
+  });
+
+  it("Don't render any travellers or slide when data is empty in simple Brush", () => {
+    const wrapper = render(
+      <Brush x={100} y={50} width={400} height={40} data={[]}/>
+    );
+    expect(wrapper.find('.recharts-brush-traveller').length).to.equal(0);
+    expect(wrapper.find('.recharts-brush-slide').length).to.equal(0);
   });
 
   it('mouse enter on brush will set isTextActive true', () => {

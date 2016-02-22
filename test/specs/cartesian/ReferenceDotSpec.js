@@ -1,9 +1,9 @@
 import React from 'react';
 import { expect } from 'chai';
-import { BarChart, ReferenceLine, Bar, XAxis, YAxis } from 'recharts';
+import { BarChart, ReferenceDot, Bar, XAxis, YAxis } from 'recharts';
 import { mount, render } from 'enzyme';
 
-describe('<ReferenceLine />', () => {
+describe('<ReferenceDot />', () => {
   const data = [
     { name: '201102', uv: -6.11, pv: 0 },
     { name: '201103', uv: 0.39, pv: 0 },
@@ -18,43 +18,42 @@ describe('<ReferenceLine />', () => {
     { name: '201112', uv: 4.3, pv: 0 },
   ];
 
-  it('renders 1 line in ReferenceLine', () => {
+  it('Render 1 dot and 1 label in ReferenceDot', () => {
     const wrapper = render(
       <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
         <XAxis dataKey="name"/>
         <YAxis tickCount={7}/>
         <Bar dataKey="uv"/>
-        <ReferenceLine x="201106" stroke="#666" label="201106"/>
-        <ReferenceLine y={0} stroke="#666" label="0"/>
+        <ReferenceDot x="201106" y={3} stroke="#666" label="201106"/>
       </BarChart>
     );
-    expect(wrapper.find('.recharts-reference-line-line').length).to.equal(2);
-    expect(wrapper.find('.recharts-reference-line-label').length).to.equal(2);
+    expect(wrapper.find('.recharts-reference-dot-dot').length).to.equal(1);
+    expect(wrapper.find('.recharts-reference-dot-label').length).to.equal(1);
   });
 
-  it("Don't render any line or label when reference line is outside domain in ReferenceLine", () => {
+  it("Don't render any dot or label when reference dot is outside domain in ReferenceDot", () => {
     const wrapper = render(
       <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
         <XAxis dataKey="name"/>
         <YAxis tickCount={7}/>
         <Bar dataKey="uv"/>
-        <ReferenceLine y={20} stroke="#666" label="20"/>
+        <ReferenceDot x="201106" y={20} stroke="#666" label="201106"/>
       </BarChart>
     );
-    expect(wrapper.find('.recharts-reference-line-line').length).to.equal(0);
-    expect(wrapper.find('.recharts-reference-line-label').length).to.equal(0);
+    expect(wrapper.find('.recharts-reference-dot-dot').length).to.equal(0);
+    expect(wrapper.find('.recharts-reference-dot-label').length).to.equal(0);
   });
 
-  it("Render 1 line and 1 label when alwaysShow is true in ReferenceLine", () => {
+  it("Render 1 line and 1 label when alwaysShow is true in ReferenceDot", () => {
     const wrapper = render(
       <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
         <XAxis dataKey="name"/>
         <YAxis tickCount={7}/>
         <Bar dataKey="uv"/>
-        <ReferenceLine y={20} stroke="#666" label="20" alwaysShow/>
+        <ReferenceDot x="201106" y={20} stroke="#666" label="201106" alwaysShow/>
       </BarChart>
     );
-    expect(wrapper.find('.recharts-reference-line-line').length).to.equal(1);
-    expect(wrapper.find('.recharts-reference-line-label').length).to.equal(1);
+    expect(wrapper.find('.recharts-reference-dot-dot').length).to.equal(1);
+    expect(wrapper.find('.recharts-reference-dot-label').length).to.equal(1);
   });
 });

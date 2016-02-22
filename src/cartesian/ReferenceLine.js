@@ -124,7 +124,7 @@ class ReferenceLine extends Component {
       };
 
       return (
-        <g className="recharts-cartesian-axis-label">
+        <g className="recharts-reference-line-label">
           <text {...props}>{label}</text>
         </g>
       );

@@ -6,6 +6,7 @@ const BrushSpec = require('./specs/cartesian/BrushSpec.js');
 const CartesianAxisSpec = require('./specs/cartesian/CartesianAxisSpec.js');
 const CartesianGridSpec = require('./specs/cartesian/CartesianGridSpec.js');
 const ReferenceLineSpec = require('./specs/cartesian/ReferenceLineSpec.js');
+const ReferenceDotSpec = require('./specs/cartesian/ReferenceDotSpec.js');
 
 // chart
 const AreaChartSpec = require('./specs/chart/AreaChartSpec.js');
@@ -19,10 +20,9 @@ const RadialBarChartSpec = require('./specs/chart/RadialBarChartSpec.js');
 const ComposedChartSpec = require('./specs/chart/ComposedChartSpec.js');
 
 // general component
-const BackgroundSpec = require('./specs/component/BackgroundSpec.js');
-const DefaultTooltipContentSpec = require('./specs/component/DefaultTooltipContentSpec.js');
 const LegendSpec = require('./specs/component/LegendSpec.js');
 const TooltipSpec = require('./specs/component/TooltipSpec.js');
+const ResponsiveContainerSpec = require('./specs/component/ResponsiveContainerSpec.js');
 
 // shape
 const CrossSpec = require('./specs/shape/CrossSpec.js');
