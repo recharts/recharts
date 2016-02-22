@@ -190,6 +190,7 @@ class LineChart extends CartesianChart {
         <Surface width={width} height={height}>
           {this.renderGrid(xAxisMap, yAxisMap, offset)}
           {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
+          {this.renderReferenceDots(xAxisMap, yAxisMap, offset)}
           {this.renderXAxis(xAxisMap)}
           {this.renderYAxis(yAxisMap)}
           {this.renderCursor(xAxisMap, yAxisMap, offset)}

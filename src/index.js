@@ -23,6 +23,7 @@ import RadialBar from './polar/RadialBar';
 
 import Brush from './cartesian/Brush';
 import ReferenceLine from './cartesian/ReferenceLine';
+import ReferenceDot from './cartesian/ReferenceDot';
 import CartesianAxis from './cartesian/CartesianAxis';
 import CartesianGrid from './cartesian/CartesianGrid';
 import Line from './cartesian/Line';
@@ -53,7 +54,7 @@ export {
 
   // components in cartesian system charts
   CartesianAxis, CartesianGrid,
-  Brush, ReferenceLine,
+  Brush, ReferenceLine, ReferenceDot,
   XAxis, YAxis, ZAxis,
   Line, Area, Bar, Scatter,
   // cartesian system charts

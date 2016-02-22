@@ -244,7 +244,7 @@ class ScatterChart extends Component {
       return;
     }
 
-    if (opts.tickCount && opts.type === 'number' && opts.originalDomain && (
+    if (opts.tickCount && opts.originalDomain && (
       opts.originalDomain[0] === 'auto' || opts.originalDomain[1] === 'auto')) {
       // Calculate the ticks by the number of grid when the axis is a number axis
       const domain = scale.domain();

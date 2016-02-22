@@ -19,6 +19,7 @@ import _ from 'lodash';
 import CartesianAxis from '../cartesian/CartesianAxis';
 import CartesianGrid from '../cartesian/CartesianGrid';
 import ReferenceLine from '../cartesian/ReferenceLine';
+import ReferenceDot from '../cartesian/ReferenceDot';
 import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
@@ -1044,6 +1045,20 @@ class CartesianChart extends Component {
           width: offset.width,
           height: offset.height,
         },
+      })
+    );
+  }
+
+  renderReferenceDots(xAxisMap, yAxisMap, offset) {
+    const { children } = this.props;
+    const dots = findAllByType(children, ReferenceDot);
+
+    if (!dots || !dots.length) { return null; }
+
+    return dots.map((entry, i) =>
+      React.cloneElement(entry, {
+        key: `reference-dot-${i}`,
+        xAxisMap, yAxisMap,
       })
     );
   }

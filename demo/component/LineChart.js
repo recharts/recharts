@@ -1,6 +1,7 @@
 import React from 'react';
 import CustomLineDot from './CustomLineDot';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine, Tooltip, CartesianGrid, Legend } from 'recharts';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine,
+  ReferenceDot, Tooltip, CartesianGrid, Legend } from 'recharts';
 
 const data = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
@@ -36,6 +37,7 @@ export default React.createClass({
             <Legend/>
             <XAxis />
             <YAxis domain={[0, 500]}/>
+            <ReferenceDot label="max" x="3" y={300} stroke="#666" />
             <ReferenceLine label="max" y={300} stroke="#666" />
             <ReferenceLine x={3} strokeDasharray="3 3 2 2" label="middle" stroke="#666" />
             <Line type='monotone' dataKey='uv' stroke='#ff7300'/>
