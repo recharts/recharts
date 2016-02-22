@@ -25,6 +25,7 @@ import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
 import pureRender from '../util/PureRender';
 import { parseSpecifiedDomain } from '../util/DataUtils';
+import { detectReferenceElementsDomain } from '../util/CartesianUtils';
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
@@ -304,7 +305,7 @@ class CartesianChart extends Component {
    * @return {Object}      Configuration
    */
   getAxisMapByAxes(axes, items, axisType, axisIdKey, stackGroups) {
-    const { layout } = this.props;
+    const { layout, children } = this.props;
     const { dataEndIndex, dataStartIndex } = this.state;
     const len = dataEndIndex - dataStartIndex + 1;
     const isCategoryAxis = (layout === 'horizontal' && axisType === 'xAxis') ||
@@ -330,8 +331,13 @@ class CartesianChart extends Component {
             entry.props[axisIdKey] === axisId
           ), type);
         }
-        if (type === 'number' && child.props.domain) {
-          domain = parseSpecifiedDomain(child.props.domain, domain);
+        if (type === 'number') {
+          // To detect wether there is any reference lines whose props alwaysShow is true
+          domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
+
+          if (child.props.domain) {
+            domain = parseSpecifiedDomain(child.props.domain, domain);
+          }
         }
 
         return {
@@ -362,7 +368,7 @@ class CartesianChart extends Component {
    * @return {Object}            Configuration
    */
   getAxisMapByItems(items, Axis, axisType, axisIdKey, stackGroups) {
-    const { layout } = this.props;
+    const { layout, children } = this.props;
     const { dataEndIndex, dataStartIndex } = this.state;
     const len = dataEndIndex - dataStartIndex + 1;
     let index = -1;
@@ -384,12 +390,14 @@ class CartesianChart extends Component {
           domain = _.range(0, len);
         } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack) {
           domain = this.getDomainOfStackGroups(stackGroups[axisId].stackGroups);
+          domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
         } else {
           domain = parseSpecifiedDomain(Axis.defaultProps.domain,
             this.getDomainOfItemsWithSameAxis(
               items.filter(entry => entry.props[axisIdKey] === axisId), 'number'
             )
           );
+          domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
         }
 
         return {

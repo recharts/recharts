@@ -30,6 +30,7 @@ class ReferenceLine extends Component {
     xAxisMap: PropTypes.object,
     yAxisMap: PropTypes.object,
 
+    alwaysShow: PropTypes.bool,
     x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
@@ -38,6 +39,7 @@ class ReferenceLine extends Component {
   };
 
   static defaultProps = {
+    alwaysShow: false,
     xAxisId: 0,
     yAxisId: 0,
     fill: 'none',
@@ -149,7 +151,7 @@ class ReferenceLine extends Component {
       <Layer className="recharts-reference-line">
         <line
           {...props}
-          className="recharts-reference-line-curve"
+          className="recharts-reference-line-line"
           x1={start.x}
           y1={start.y}
           x2={end.x}

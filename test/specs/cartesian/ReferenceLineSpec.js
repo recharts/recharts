@@ -23,10 +23,10 @@ describe('<ReferenceLine />', () => {
       <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
         <XAxis dataKey="name"/>
         <YAxis tickCount={7}/>
-        <ReferenceLine type="horizontal" value={0} stroke="#666"/>
-        <ReferenceLine type="vertical" value='201102' stroke="#666"/>
+        <ReferenceLine x={0} stroke="#666"/>
+        <ReferenceLine y='201102' stroke="#666"/>
       </BarChart>
     );
-    expect(wrapper.find('.recharts-reference-line').length).to.equal(2);
+    expect(wrapper.find('.recharts-reference-line-line').length).to.equal(2);
   });
 });

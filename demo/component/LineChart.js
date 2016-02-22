@@ -36,9 +36,8 @@ export default React.createClass({
             <CartesianGrid stroke='#f5f5f5'/>
             <Legend/>
             <XAxis />
-            <YAxis domain={[0, 500]}/>
-            <ReferenceDot label="max" x="3" y={300} stroke="#666" />
-            <ReferenceLine label="max" y={300} stroke="#666" />
+            <YAxis />
+            <ReferenceLine label="max" y={780} alwaysShow stroke="#666" />
             <ReferenceLine x={2.5} strokeDasharray="3 3 2 2" label="middle" stroke="#666" />
             <Line type='monotone' dataKey='uv' stroke='#ff7300'/>
           </LineChart>
@@ -51,7 +50,7 @@ export default React.createClass({
             <Legend/>
             <XAxis />
             <YAxis domain={[0, 500]}/>
-            <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300' strokeDasharray="0 5px"/>
+            <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300'/>
           </LineChart>
         </div>
 

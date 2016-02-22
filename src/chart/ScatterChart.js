@@ -18,10 +18,12 @@ import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import ZAxis from '../cartesian/ZAxis';
 import ReferenceLine from '../cartesian/ReferenceLine';
+import ReferenceDot from '../cartesian/ReferenceDot';
 import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { parseSpecifiedDomain } from '../util/DataUtils';
+import { detectReferenceElementsDomain } from '../util/CartesianUtils';
 import _ from 'lodash';
 
 @pureRender
@@ -147,10 +149,16 @@ class ScatterChart extends Component {
     return [Math.min.apply(null, ticks), Math.max.apply(null, ticks)];
   }
 
-  getDomain(items, dataKey) {
-    const domain = items.reduce((result, item) => (
+  getDomain(items, dataKey, axisId, axisType) {
+    let domain = items.reduce((result, item) => (
       result.concat(item.props.data.map(entry => entry[dataKey]))
     ), []);
+
+    if (axisType === 'xAxis' || axisType === 'yAxis') {
+      domain = detectReferenceElementsDomain(
+        this.props.children, domain, axisId, axisType
+      );
+    }
 
     return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
   }
@@ -171,7 +179,7 @@ class ScatterChart extends Component {
     if (axis) {
       const domain = parseSpecifiedDomain(
         axis.props.domain,
-        this.getDomain(items, axis.props.dataKey)
+        this.getDomain(items, axis.props.dataKey, axis.props[axisType + 'Id'], axisType)
       );
 
       return {
@@ -194,7 +202,9 @@ class ScatterChart extends Component {
     const { children } = this.props;
     const axisItem = findChildByType(children, ZAxis);
     const axisProps = (axisItem && axisItem.props) || ZAxis.defaultProps;
-    const domain = axisProps.dataKey ? this.getDomain(items, axisProps.dataKey) : [-1, 1];
+    const domain = axisProps.dataKey ?
+                  this.getDomain(items, axisProps.dataKey) :
+                  [-1, 1];
 
     return {
       ...axisProps,
@@ -554,6 +564,21 @@ class ScatterChart extends Component {
     );
   }
 
+  renderReferenceDots(xAxis, yAxis, offset) {
+    const { children } = this.props;
+    const dots = findAllByType(children, ReferenceDot);
+
+    if (!dots || !dots.length) { return null; }
+
+    return dots.map((entry, i) =>
+      React.cloneElement(entry, {
+        key: `reference-dot-${i}`,
+        xAxisMap: {[xAxis.xAxisId]: xAxis},
+        yAxisMap: {[yAxis.yAxisId]: yAxis},
+      })
+    );
+  }
+
   render() {
     if (!validateWidthHeight(this)) { return null; }
 
@@ -574,6 +599,7 @@ class ScatterChart extends Component {
         <Surface width={width} height={height}>
           {this.renderGrid(xAxis, yAxis, offset)}
           {this.renderReferenceLines(xAxis, yAxis, offset)}
+          {this.renderReferenceDots(xAxis, yAxis, offset)}
           {this.renderAxis(xAxis, 'recharts-x-axis')}
           {this.renderAxis(yAxis, 'recharts-y-axis')}
           {this.renderCursor(xAxis, yAxis, offset)}

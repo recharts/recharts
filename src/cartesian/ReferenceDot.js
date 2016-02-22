@@ -26,6 +26,7 @@ class ReferenceDot extends Component {
     xAxisMap: PropTypes.object,
     yAxisMap: PropTypes.object,
 
+    alwaysShow: PropTypes.bool,
     x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
@@ -34,6 +35,7 @@ class ReferenceDot extends Component {
   };
 
   static defaultProps = {
+    alwaysShow: false,
     xAxisId: 0,
     yAxisId: 0,
     r: 20,
