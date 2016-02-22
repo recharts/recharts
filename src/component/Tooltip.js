@@ -65,16 +65,21 @@ class Tooltip extends Component {
       React.createElement(DefaultTooltipContent, this.props)
     );
     const style = { ...wrapperStyle, top: -20000, left: 0, display: 'block' };
-    const wrapper = document.createElement('div');
 
-    wrapper.setAttribute('style', getStyleString(style));
-    wrapper.innerHTML = contentHtml;
-    document.body.appendChild(wrapper);
-    const box = wrapper.getBoundingClientRect();
+    if (typeof document !== 'undefined') {
+      const wrapper = document.createElement('div');
 
-    document.body.removeChild(wrapper);
+      wrapper.setAttribute('style', getStyleString(style));
+      wrapper.innerHTML = contentHtml;
+      document.body.appendChild(wrapper);
+      const box = wrapper.getBoundingClientRect();
 
-    return box;
+      document.body.removeChild(wrapper);
+
+      return box;
+    }
+
+    return null;
   }
 
   render() {
@@ -89,6 +94,8 @@ class Tooltip extends Component {
       position: 'absolute',
     };
     const box = this.getTooltipBBox(outerStyle);
+
+    if (!box) { return null; }
 
     outerStyle.left = Math.max(
       coordinate.x + box.width + offset > (viewBox.x + viewBox.width) ?

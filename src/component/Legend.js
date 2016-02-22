@@ -64,31 +64,35 @@ class Legend extends Component {
   }
 
   static getLegendBBox(props) {
-    const { content, width, height, wrapperStyle } = props;
-    const contentHtml = ReactDOMServer.renderToStaticMarkup(
-      React.isValidElement(content) ?
-      React.cloneElement(content, props) :
-      React.createElement(DefaultLegendContent, props)
-    );
-    const style = {
-      position: 'absolute',
-      width: width || 'auto',
-      height: height || 'auto',
-      ...wrapperStyle,
-      top: -20000,
-      left: 0,
-      display: 'block',
-    };
-    const wrapper = document.createElement('div');
+    if (typeof document !== 'undefined') {
+      const { content, width, height, wrapperStyle } = props;
+      const contentHtml = ReactDOMServer.renderToStaticMarkup(
+        React.isValidElement(content) ?
+        React.cloneElement(content, props) :
+        React.createElement(DefaultLegendContent, props)
+      );
+      const style = {
+        position: 'absolute',
+        width: width || 'auto',
+        height: height || 'auto',
+        ...wrapperStyle,
+        top: -20000,
+        left: 0,
+        display: 'block',
+      };
+      const wrapper = document.createElement('div');
 
-    wrapper.setAttribute('style', getStyleString(style));
-    wrapper.innerHTML = contentHtml;
-    document.body.appendChild(wrapper);
-    const box = wrapper.getBoundingClientRect();
+      wrapper.setAttribute('style', getStyleString(style));
+      wrapper.innerHTML = contentHtml;
+      document.body.appendChild(wrapper);
+      const box = wrapper.getBoundingClientRect();
 
-    document.body.removeChild(wrapper);
+      document.body.removeChild(wrapper);
 
-    return box;
+      return box;
+    }
+
+    return null;
   }
 
   getDefaultPosition(style) {

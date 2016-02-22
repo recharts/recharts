@@ -51,7 +51,7 @@ export default React.createClass({
             <Legend/>
             <XAxis />
             <YAxis domain={[0, 500]}/>
-            <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300' strokeDasharray="5px 5px"/>
+            <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300' strokeDasharray="0 5px"/>
           </LineChart>
         </div>
 

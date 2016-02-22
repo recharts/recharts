@@ -212,7 +212,7 @@ class ScatterChart extends Component {
     offset[yAxis.orientation] += yAxis.width;
 
     if (legendProps) {
-      const box = Legend.getLegendBBox(legendProps, width, height);
+      const box = Legend.getLegendBBox(legendProps, width, height) || {};
       if (legendProps.layout === 'horizontal' &&
         _.isNumber(offset[legendProps.verticalAlign])) {
         offset[legendProps.verticalAlign] += box.height || 0;

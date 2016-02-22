@@ -449,7 +449,7 @@ class CartesianChart extends Component {
     }
     const legendProps = this.getLegendProps(items);
     if (legendProps) {
-      const box = Legend.getLegendBBox(legendProps, width, height);
+      const box = Legend.getLegendBBox(legendProps, width, height) || {};
       if (legendProps.layout === 'horizontal' &&
         _.isNumber(offsetV[legendProps.verticalAlign])) {
         offsetV[legendProps.verticalAlign] += box.height || 0;
