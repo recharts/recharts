@@ -45,7 +45,7 @@ export default React.createClass({
         <p>RadialBarChart wrapped by ResponsiveContainer</p>
         <div className="radial-bar-chart-wrapper">
           <ResponsiveContainer>
-            <RadialBarChart width={500} height={300} data={data}>
+            <RadialBarChart data={data} cx="50%" cy="90%" innerRadius="20%" outerRadius="90%" >
               <RadialBar minAngle={15} label={label} background dataKey="uv" />
               <Legend iconSize={10} width={120} height={140} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
             </RadialBarChart>
