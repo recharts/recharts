@@ -58,15 +58,15 @@ class Tooltip extends Component {
   };
 
   getTooltipBBox(wrapperStyle) {
-    const { content } = this.props;
-    const contentHtml = ReactDOMServer.renderToStaticMarkup(
-      React.isValidElement(content) ?
-      React.cloneElement(content, this.props) :
-      React.createElement(DefaultTooltipContent, this.props)
-    );
-    const style = { ...wrapperStyle, top: -20000, left: 0, display: 'block' };
-
     if (typeof document !== 'undefined') {
+      const { content } = this.props;
+      const contentHtml = ReactDOMServer.renderToStaticMarkup(
+        React.isValidElement(content) ?
+        React.cloneElement(content, this.props) :
+        React.createElement(DefaultTooltipContent, this.props)
+      );
+      const style = { ...wrapperStyle, top: -20000, left: 0, display: 'block' };
+
       const wrapper = document.createElement('div');
 
       wrapper.setAttribute('style', getStyleString(style));

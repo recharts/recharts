@@ -7,7 +7,6 @@ import Layer from '../container/Layer';
 import Dot from '../shape/Dot';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import _ from 'lodash';
-import invariant from 'invariant';
 
 @pureRender
 class ReferenceDot extends Component {
@@ -51,13 +50,6 @@ class ReferenceDot extends Component {
     const isValidate = first <= last ?
       (coord >= first && coord <= last) :
       (coord >= last && coord <= first);
-
-    invariant(isValidate,
-      `The reference Dot will get rendered out side the domain.
-        Please check the domain of ${type.toUpperCase()}Axis,
-        or ${type}(${value}) of ReferenceDot.
-      `
-    );
 
     return isValidate;
   }

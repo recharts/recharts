@@ -3,7 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import invariant from 'invariant';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { getNiceTickValues } from 'recharts-scale';
 import Surface from '../container/Surface';
@@ -285,18 +284,8 @@ class RadarChart extends Component {
     const outerRadius = getPercentValue(this.props.outerRadius, maxRadius, maxRadius * 0.8);
 
     if (outerRadius <= 0 || !data || !data.length) {
-      invariant(outerRadius > 0,
-        `outerRadius should be greater than 0.`
-      );
-      invariant(data && data.length,
-        `data(${data}) should not be null, undefined, or an empty array.`
-      );
       return null;
     }
-    invariant(outerRadius > innerRadius,
-      `outerRadius(${this.props.outerRadius}) should be ` +
-      `greater than innerRadius(${this.props.innerRadius}). `
-    );
 
     const items = findAllByType(children, Radar);
     const radiusAxis = findChildByType(children, PolarRadiusAxis);

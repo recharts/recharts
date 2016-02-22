@@ -7,7 +7,6 @@ import Layer from '../container/Layer';
 import Rectangle from '../shape/Rectangle';
 import { getPresentationAttributes, validateWidthHeight } from '../util/ReactUtils';
 import classNames from 'classnames';
-import invariant from 'invariant';
 import pureRender from '../util/PureRender';
 
 @pureRender

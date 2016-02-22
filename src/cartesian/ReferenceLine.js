@@ -6,7 +6,6 @@ import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import _ from 'lodash';
-import invariant from 'invariant';
 
 @pureRender
 class ReferenceLine extends Component {
@@ -31,8 +30,6 @@ class ReferenceLine extends Component {
     xAxisMap: PropTypes.object,
     yAxisMap: PropTypes.object,
 
-    type: PropTypes.oneOf(['horizontal', 'vertical']),
-    value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
@@ -57,21 +54,15 @@ class ReferenceLine extends Component {
       (coord >= first && coord <= last) :
       (coord >= last && coord <= first);
 
-    invariant(isValidate,
-      `The reference line will get rendered out side the domain.
-        Please check the domain of axis, or value(${value}) of ReferenceLine.
-      `
-    );
-
     return isValidate;
   }
 
-  getEndPoints(isX, isY, type) {
+  getEndPoints(isX, isY) {
     const { xAxisMap, yAxisMap, xAxisId, yAxisId, viewBox } = this.props;
     const { x, y, width, height } = viewBox;
 
-    if ( isY || type === 'horizontal') {
-      const value = isY ? this.props.y : this.props.value;
+    if (isY) {
+      const value = this.props.y;
       const scale = yAxisMap[yAxisId].scale;
       const coord = scale(value);
 
@@ -80,8 +71,8 @@ class ReferenceLine extends Component {
             [{ x, y: coord }, { x: x + width, y: coord }] :
             [{ x: x + width, y: coord }, { x, y: coord }];
       }
-    } else if (isX || type === 'vertical') {
-      const value = isX ? this.props.x : this.props.value;
+    } else if (isX) {
+      const value = this.props.x;
       const scale = xAxisMap[xAxisId].scale;
       const coord = scale(value);
 
@@ -95,17 +86,17 @@ class ReferenceLine extends Component {
     return null;
   }
 
-  getLabelProps() {
-    const { xAxisMap, yAxisMap, xAxisId, yAxisId, type } = this.props;
+  getLabelProps(isX, isY) {
+    const { xAxisMap, yAxisMap, xAxisId, yAxisId } = this.props;
 
-    if (type === 'horizontal') {
+    if (isY) {
       const axis = yAxisMap[yAxisId];
 
       if (axis.orientation === 'left') {
         return { dx: 6, dy: 6, textAnchor: 'start' };
       }
       return { dx: -6, dy: 6, textAnchor: 'end' };
-    } else if (type === 'vertical') {
+    } else if (isX) {
       const axis = xAxisMap[xAxisId];
 
       if (axis.orientation === 'top') {
@@ -115,7 +106,7 @@ class ReferenceLine extends Component {
     }
   }
 
-  renderLabel(end) {
+  renderLabel(isX, isY, end) {
     const { label } = this.props;
 
     if (React.isValidElement(label)) {
@@ -127,7 +118,7 @@ class ReferenceLine extends Component {
         stroke: 'none',
         fill: stroke,
         ...end,
-        ...this.getLabelProps(),
+        ...this.getLabelProps(isX, isY),
       };
 
       return (
@@ -141,13 +132,13 @@ class ReferenceLine extends Component {
   }
 
   render() {
-    const { type, value, x, y } = this.props;
+    const { x, y } = this.props;
     const isX = _.isNumber(x) || _.isString(x);
     const isY = _.isNumber(y) || _.isString(y);
 
-    if (!type && !isX && !isY) { return null; }
+    if (!isX && !isY) { return null; }
 
-    const endPoints = this.getEndPoints(isX, isY, type);
+    const endPoints = this.getEndPoints(isX, isY);
 
     if (!endPoints) {return null;}
 
@@ -164,7 +155,7 @@ class ReferenceLine extends Component {
           x2={end.x}
           y2={end.y}
         />
-        {this.renderLabel(end)}
+        {this.renderLabel(isX, isY, end)}
       </Layer>
     );
   }
