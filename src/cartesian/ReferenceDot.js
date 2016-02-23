@@ -64,21 +64,18 @@ class ReferenceDot extends Component {
   }
 
   renderLabel(coordinate) {
-    const { label } = this.props;
-
+    const { label, stroke } = this.props;
+    const props = {
+      ...getPresentationAttributes(label),
+      stroke: 'none',
+      fill: stroke,
+      x: coordinate.cx,
+      y: coordinate.cy,
+      textAnchor: 'middle',
+    };
     if (React.isValidElement(label)) {
-      return React.cloneElement(label, this.props);
+      return React.cloneElement(label, props);
     } else if (_.isString(label) || _.isNumber(label)) {
-      const { stroke } = this.props;
-      const props = {
-        ...getPresentationAttributes(this.props),
-        stroke: 'none',
-        fill: stroke,
-        x: coordinate.cx,
-        y: coordinate.cy,
-        textAnchor: 'middle',
-      };
-
       return (
         <g className="recharts-reference-dot-label">
           <text {...props}>{label}</text>

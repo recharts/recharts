@@ -37,6 +37,8 @@ class ReferenceLine extends Component {
 
     yAxisId: PropTypes.number,
     xAxisId: PropTypes.number,
+
+    labelPosition: PropTypes.oneOf(['start', 'end']),
   };
 
   static defaultProps = {
@@ -47,6 +49,7 @@ class ReferenceLine extends Component {
     stroke: '#ccc',
     fillOpacity: 1,
     strokeWidth: 1,
+    labelPosition: 'end',
   };
 
   getEndPoints(isX, isY) {
@@ -79,12 +82,15 @@ class ReferenceLine extends Component {
   }
 
   getLabelProps(isX, isY) {
-    const { xAxisMap, yAxisMap, xAxisId, yAxisId } = this.props;
+    const { xAxisMap, yAxisMap, xAxisId, yAxisId, labelPosition } = this.props;
 
     if (isY) {
       const axis = yAxisMap[yAxisId];
 
-      if (axis.orientation === 'left') {
+      if (axis.orientation === 'left' && labelPosition === 'end') {
+        return { dx: 6, dy: 6, textAnchor: 'start' };
+      }
+      if (axis.orientation === 'right' && labelPosition === 'start') {
         return { dx: 6, dy: 6, textAnchor: 'start' };
       }
       return { dx: -6, dy: 6, textAnchor: 'end' };
@@ -99,32 +105,30 @@ class ReferenceLine extends Component {
   }
 
   renderLabel(isX, isY, end) {
-    const { label } = this.props;
-
+    const { label, stroke } = this.props;
+    const props = {
+      ...getPresentationAttributes(label),
+      stroke: 'none',
+      fill: stroke,
+      ...end,
+      ...this.getLabelProps(isX, isY),
+    };
     if (React.isValidElement(label)) {
-      return React.cloneElement(label, this.props);
+      return React.cloneElement(label, {
+        ...props
+      });
     } else if (_.isString(label) || _.isNumber(label)) {
-      const { stroke } = this.props;
-      const props = {
-        ...getPresentationAttributes(this.props),
-        stroke: 'none',
-        fill: stroke,
-        ...end,
-        ...this.getLabelProps(isX, isY),
-      };
-
       return (
         <g className="recharts-reference-line-label">
           <text {...props}>{label}</text>
         </g>
       );
     }
-
     return null;
   }
 
   render() {
-    const { x, y } = this.props;
+    const { x, y, labelPosition } = this.props;
     const isX = _.isNumber(x) || _.isString(x);
     const isY = _.isNumber(y) || _.isString(y);
 
@@ -147,7 +151,7 @@ class ReferenceLine extends Component {
           x2={end.x}
           y2={end.y}
         />
-        {this.renderLabel(isX, isY, end)}
+        {this.renderLabel(isX, isY, (labelPosition === 'start' ? start : end))}
       </Layer>
     );
   }
