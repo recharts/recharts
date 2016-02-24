@@ -1,3 +1,7 @@
+## 0.8.1 (February 24, 2016)
+### fix
+- fix the bug of Line animation from value
+
 ## 0.8.0 (February 22, 2016)
 ### feat
 - implement ReferenceDot in cartesian charts
