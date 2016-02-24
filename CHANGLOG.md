@@ -1,3 +1,7 @@
+## 0.8.2 (February 24, 2016)
+### fix
+- rollback last fix of Line animtion from value
+
 ## 0.8.1 (February 24, 2016)
 ### fix
 - fix the bug of Line animation from value
