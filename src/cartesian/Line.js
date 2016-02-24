@@ -220,7 +220,7 @@ class Line extends Component {
 
     if (strokeDasharray) {
       const lines = strokeDasharray.split(/[,\s]+/gim)
-        .map(num => parseInt(num, 10));
+        .map(num => parseFloat(num));
 
       return (
         <Animate { ...animationProps }
@@ -240,7 +240,7 @@ class Line extends Component {
 
     return (
       <Animate { ...animationProps }
-        from={`0px ${(totalLength === 0 ? 1 : totalLength)}px`}
+        from={`0px ${totalLength}px`}
         to={`${totalLength}px 0px`}
         attributeName="strokeDasharray"
       >
