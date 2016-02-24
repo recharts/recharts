@@ -240,7 +240,7 @@ class Line extends Component {
 
     return (
       <Animate { ...animationProps }
-        from={`0px ${totalLength}px`}
+        from={`0px ${totalLength === 0 ? 1 : totalLength}px`}
         to={`${totalLength}px 0px`}
         attributeName="strokeDasharray"
       >
