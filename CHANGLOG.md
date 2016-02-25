@@ -1,12 +1,23 @@
+## 0.8.3 (February 25, 2016)
+
+### refactor
+- refactor CartesianChart to a high order component, move some function to /util/CartesianUtils which can be used in ScatterChart. 
+- Simplify ComposedChart, remove duplicated code
+- use `filterEventAttributes` to add events props
+- cancle selecting line and area in LineChart, AreaChart, ComposedChart  
+
 ## 0.8.2 (February 24, 2016)
+
 ### fix
 - rollback last fix of Line animtion from value
 
 ## 0.8.1 (February 24, 2016)
+
 ### fix
 - fix the bug of Line animation from value
 
 ## 0.8.0 (February 22, 2016)
+
 ### feat
 - implement ReferenceDot in cartesian charts
 - support alwaysShow of ReferenceLine and ReferenceDot
