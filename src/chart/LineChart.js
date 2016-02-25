@@ -141,7 +141,7 @@ class LineChart extends Component {
     const { isComposed, xAxisMap, yAxisMap, offset, graphicalItems } = this.props;
 
     return (
-      <Layer className="recharts-line">
+      <Layer className="recharts-line-graphical">
         {!isComposed && this.renderCursor(xAxisMap, yAxisMap, offset)}
         {this.renderItems(graphicalItems, xAxisMap, yAxisMap, offset)}
       </Layer>

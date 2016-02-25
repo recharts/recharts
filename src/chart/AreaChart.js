@@ -179,7 +179,7 @@ class AreaChart extends Component {
     const { isComposed, graphicalItems, xAxisMap, yAxisMap, offset, stackGroups } = this.props;
 
     return (
-      <Layer className="recharts-area">
+      <Layer className="recharts-area-graphical">
         {!isComposed && this.renderCursor(xAxisMap, yAxisMap, offset)}
         {this.renderItems(graphicalItems, xAxisMap, yAxisMap, offset, stackGroups)}
       </Layer>

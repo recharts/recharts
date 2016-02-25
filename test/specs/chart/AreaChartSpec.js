@@ -34,7 +34,7 @@ describe('<AreaChart />', () => {
     expect(wrapper.find('.recharts-area-label').length).to.equal(6);
   });
 
-  it('renders empty when data is empty', () => {
+  it('Render empty when data is empty', () => {
     let wrapper = render(
       <AreaChart width={100} height={50} data={[]}>
         <Area type='monotone' dot label dataKey='uv' stroke='#ff7300' fill='#ff7300'/>

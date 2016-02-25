@@ -258,7 +258,7 @@ class BarChart extends Component {
     const { isComposed, graphicalItems, xAxisMap, yAxisMap, offset, stackGroups } = this.props;
 
     return (
-      <Layer className="recharts-bar">
+      <Layer className="recharts-bar-graphical">
         {!isComposed && this.renderCursor(xAxisMap, yAxisMap, offset)}
         {this.renderItems(graphicalItems, xAxisMap, yAxisMap, offset, stackGroups)}
       </Layer>
