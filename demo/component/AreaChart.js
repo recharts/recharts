@@ -1,5 +1,5 @@
 import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, Brush } from 'recharts';
 
 const data = [
   { name: 'Page A', uv: 4000, pv: 2400, amt: 2400 },
@@ -51,6 +51,7 @@ export default React.createClass({
             <Tooltip />
             <Area stackId="0" type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
             <Area stackId="0" type="monotone" dataKey="pv" stroke="#387908" fill="#387908" />
+            <Brush dataKey="name" height={30} />
           </AreaChart>
         </div>
 

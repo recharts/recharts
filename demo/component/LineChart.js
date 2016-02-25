@@ -1,7 +1,7 @@
 import React from 'react';
 import CustomLineDot from './CustomLineDot';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine,
-  ReferenceDot, Tooltip, CartesianGrid, Legend } from 'recharts';
+  ReferenceDot, Tooltip, CartesianGrid, Legend, Brush } from 'recharts';
 
 const data = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
@@ -40,6 +40,7 @@ export default React.createClass({
             <ReferenceLine label="max" y={780} alwaysShow stroke="#666" />
             <ReferenceDot x={2} y={1000} strokeDasharray="3 3 2 2" label="middle" stroke="#666" alwaysShow/>
             <Line type='monotone' dataKey='uv' stroke='#ff7300'/>
+            <Brush dataKey="name" height={30} />
           </LineChart>
         </div>
 

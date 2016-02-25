@@ -23,7 +23,8 @@ import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { parseSpecifiedDomain } from '../util/DataUtils';
-import { detectReferenceElementsDomain } from '../util/CartesianUtils';
+import { calculateDomainOfTicks, detectReferenceElementsDomain, getTicksOfAxis,
+  getTicksOfGrid, getLegendProps } from '../util/CartesianUtils';
 import _ from 'lodash';
 
 @pureRender
@@ -72,81 +73,16 @@ class ScatterChart extends Component {
     const yAxisDataKey = yAxis.dataKey;
     const zAxisDataKey = zAxis.dataKey;
 
-    return data.map(entry => {
-      return {
-        cx: xAxis.scale(entry[xAxisDataKey]),
-        cy: yAxis.scale(entry[yAxisDataKey]),
-        r: zAxisDataKey !== undefined ? zAxis.scale(entry[zAxisDataKey]) : zAxis.range[0],
-        payload: {
-          x: entry[xAxisDataKey],
-          y: entry[yAxisDataKey],
-          z: (zAxisDataKey !== undefined && entry[zAxisDataKey]) || '-',
-        },
-      };
-    });
-  }
-
-  /**
-   * Get the ticks of an axis
-   * @param  {Object}  axis The configuration of an axis
-   * @param {Boolean} isGrid Whether or not are the ticks in grid
-   * @return {Array}  Ticks
-   */
-  getAxisTicks(axis, isGrid = false) {
-    const scale = axis.scale;
-
-    if (axis.ticks) {
-      return axis.ticks.map(entry => ({
-        coord: scale(entry),
-        value: entry,
-      }));
-    }
-
-    if (scale.ticks) {
-      return scale.ticks(axis.tickCount).map(entry => ({
-        coord: scale(entry),
-        value: entry,
-      }));
-    }
-
-    return scale.domain().map((entry) => ({
-      coord: scale(entry),
-      value: entry,
+    return data.map(entry => ({
+      cx: xAxis.scale(entry[xAxisDataKey]),
+      cy: yAxis.scale(entry[yAxisDataKey]),
+      r: zAxisDataKey !== undefined ? zAxis.scale(entry[zAxisDataKey]) : zAxis.range[0],
+      payload: {
+        x: entry[xAxisDataKey],
+        y: entry[yAxisDataKey],
+        z: (zAxisDataKey !== undefined && entry[zAxisDataKey]) || '-',
+      },
     }));
-  }
-
-  /**
-   * Calculate the ticks of grid
-   * @param  {Array} ticks The ticks in axis
-   * @param {Number} min   The minimun value of axis
-   * @param {Number} max   The maximun value of axis
-   * @return {Array}       Ticks
-   */
-  getGridTicks(ticks, min, max) {
-    let hasMin;
-    let hasMax;
-    let values;
-
-    values = ticks.map(entry => {
-      if (entry.coord === min) { hasMin = true;}
-      if (entry.coord === max) { hasMax = true;}
-
-      return entry.coord;
-    });
-
-    if (!hasMin) { values.push(min);}
-    if (!hasMax) { values.push(max);}
-
-    return values;
-  }
-
-  /**
-   * get domain of ticks
-   * @param  {Array} ticks Ticks of axis
-   * @return {Array} domain
-   */
-  getDomainOfTicks(ticks) {
-    return [Math.min.apply(null, ticks), Math.max.apply(null, ticks)];
   }
 
   getDomain(items, dataKey, axisId, axisType) {
@@ -179,13 +115,14 @@ class ScatterChart extends Component {
     if (axis) {
       const domain = parseSpecifiedDomain(
         axis.props.domain,
-        this.getDomain(items, axis.props.dataKey, axis.props[axisType + 'Id'], axisType)
+        this.getDomain(items, axis.props.dataKey, axis.props[`${axisType}Id`], axisType)
       );
 
       return {
         ...axis.props,
         axisType,
         domain,
+        type: 'number',
         originalDomain: axis.props.domain,
       };
     }
@@ -214,9 +151,9 @@ class ScatterChart extends Component {
   }
 
   getOffset(items, xAxis, yAxis) {
-    const { width, height, margin } = this.props;
+    const { children, width, height, margin } = this.props;
     const offset = { ...margin };
-    const legendProps = this.getLegendProps(items);
+    const legendProps = getLegendProps(children, items, width, height);
 
     offset[xAxis.orientation] += xAxis.height;
     offset[yAxis.orientation] += yAxis.width;
@@ -248,7 +185,7 @@ class ScatterChart extends Component {
   setTicksOfScale(scale, opts) {
     // Give priority to use the options of ticks
     if (opts.ticks && opts.ticks) {
-      opts.domain = this.getDomainOfTicks(opts.ticks, opts.type);
+      opts.domain = calculateDomainOfTicks(opts.ticks, opts.type);
       scale.domain(opts.domain)
            .ticks(opts.ticks.length);
       return;
@@ -261,7 +198,7 @@ class ScatterChart extends Component {
       const tickValues = getNiceTickValues(domain, opts.tickCount);
 
       opts.ticks = tickValues;
-      scale.domain(this.getDomainOfTicks(tickValues, opts.type));
+      scale.domain(calculateDomainOfTicks(tickValues, opts.type));
     }
   }
 
@@ -335,28 +272,6 @@ class ScatterChart extends Component {
 
     return content;
   }
-  getLegendProps(items) {
-    const { children } = this.props;
-    const legendItem = findChildByType(children, Legend);
-    if (!legendItem) {return null;}
-
-    const { width, height } = this.props;
-    const legendData = items.map((child) => {
-      const { name, fill, legendType } = child.props;
-
-      return {
-        type: legendType || 'square',
-        color: fill,
-        value: name || '',
-      };
-    }, this);
-
-    return {
-      ...legendItem.props,
-      ...Legend.getWithHeight(legendItem, width, height),
-      payload: legendData,
-    };
-  }
   /**
    * The handler of mouse entering a scatter
    * @param {Object} el The active scatter
@@ -428,15 +343,15 @@ class ScatterChart extends Component {
 
     if (!gridItem) {return null;}
 
-    const verticalPoints = this.getGridTicks(CartesianAxis.getTicks({
+    const verticalPoints = getTicksOfGrid(CartesianAxis.getTicks({
       ...CartesianAxis.defaultProps, ...xAxis,
-      ticks: this.getAxisTicks(xAxis),
+      ticks: getTicksOfAxis(xAxis, true),
       viewBox: { x: 0, y: 0, width, height },
     }), offset.left, offset.left + offset.width);
 
-    const horizontalPoints = this.getGridTicks(CartesianAxis.getTicks({
+    const horizontalPoints = getTicksOfGrid(CartesianAxis.getTicks({
       ...CartesianAxis.defaultProps, ...yAxis,
-      ticks: this.getAxisTicks(yAxis),
+      ticks: getTicksOfAxis(yAxis, true),
       viewBox: { x: 0, y: 0, width, height },
     }), offset.top, offset.top + offset.height);
 
@@ -456,7 +371,7 @@ class ScatterChart extends Component {
    * @return {ReactElement}    The instance of Legend
    */
   renderLegend(items) {
-    const props = this.getLegendProps(items);
+    const props = getLegendProps(items);
 
     if (!props) {return null;}
     const { margin, width, height } = this.props;
@@ -488,7 +403,7 @@ class ScatterChart extends Component {
             height={axis.height}
             orientation={axis.orientation}
             viewBox={{ x: 0, y: 0, width, height }}
-            ticks={this.getAxisTicks(axis)}
+            ticks={getTicksOfAxis(axis)}
           />
         </Layer>
       );
@@ -552,8 +467,8 @@ class ScatterChart extends Component {
     return lines.map((entry, i) =>
       React.cloneElement(entry, {
         key: `reference-line-${i}`,
-        xAxisMap: {[xAxis.xAxisId]: xAxis},
-        yAxisMap: {[yAxis.yAxisId]: yAxis},
+        xAxisMap: { [xAxis.xAxisId]: xAxis },
+        yAxisMap: { [yAxis.yAxisId]: yAxis },
         viewBox: {
           x: offset.left,
           y: offset.top,
@@ -573,8 +488,8 @@ class ScatterChart extends Component {
     return dots.map((entry, i) =>
       React.cloneElement(entry, {
         key: `reference-dot-${i}`,
-        xAxisMap: {[xAxis.xAxisId]: xAxis},
-        yAxisMap: {[yAxis.yAxisId]: yAxis},
+        xAxisMap: { [xAxis.xAxisId]: xAxis },
+        yAxisMap: { [yAxis.yAxisId]: yAxis },
       })
     );
   }

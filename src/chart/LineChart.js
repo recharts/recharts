@@ -1,46 +1,41 @@
 /**
  * @fileOverview Line Chart
  */
-import React, { PropTypes } from 'react';
-import classNames from 'classnames';
-import Surface from '../container/Surface';
+import React, { PropTypes, Component } from 'react';
+import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
-import CartesianChart from './CartesianChart';
+import generateCategoricalChart from './generateCategoricalChart';
 import Line from '../cartesian/Line';
 import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
+import { getTicksOfAxis } from '../util/CartesianUtils';
+import { getBandSizeOfScale } from '../util/DataUtils';
 
 @pureRender
-class LineChart extends CartesianChart {
+class LineChart extends Component {
 
   static displayName = 'LineChart';
 
   static propTypes = {
-    width: PropTypes.number,
-    height: PropTypes.number,
-    data: PropTypes.arrayOf(PropTypes.object),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
-    margin: PropTypes.shape({
-      top: PropTypes.number,
-      right: PropTypes.number,
-      bottom: PropTypes.number,
-      left: PropTypes.number,
-    }),
-    className: PropTypes.string,
-    style: PropTypes.object,
+    dataStartIndex: PropTypes.number,
+    dataEndIndex: PropTypes.number,
+    data: PropTypes.array,
+    isTooltipActive: PropTypes.bool,
+    activeTooltipIndex: PropTypes.number,
+    xAxisMap: PropTypes.object,
+    yAxisMap: PropTypes.object,
+    offset: PropTypes.object,
+    graphicalItems: PropTypes.array,
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
     ]),
-  };
-
-  static defaultProps = {
-    style: {},
-    layout: 'horizontal',
-    margin: { top: 5, right: 5, bottom: 5, left: 5 },
+    // used internally
+    isComposed: PropTypes.bool,
   };
 
   /**
@@ -51,51 +46,35 @@ class LineChart extends CartesianChart {
    * @return {Array}  Composed data
    */
   getComposedData(xAxis, yAxis, dataKey) {
-    const { data, layout } = this.props;
-    const xTicks = this.getAxisTicks(xAxis);
-    const yTicks = this.getAxisTicks(yAxis);
+    const { layout, dataStartIndex, dataEndIndex, isComposed } = this.props;
+    const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
+    const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
+    const xTicks = getTicksOfAxis(xAxis);
+    const yTicks = getTicksOfAxis(yAxis);
 
     return data.map((entry, index) => ({
-      x: layout === 'horizontal' ? xTicks[index].coord : xAxis.scale(entry[dataKey]),
-      y: layout === 'horizontal' ? yAxis.scale(entry[dataKey]) : yTicks[index].coord,
+      x: layout === 'horizontal' ?
+        xTicks[index].coordinate + bandSize / 2 :
+        xAxis.scale(entry[dataKey]),
+      y: layout === 'horizontal' ?
+        yAxis.scale(entry[dataKey]) :
+        yTicks[index].coordinate + bandSize / 2,
       value: entry[dataKey],
     }));
   }
 
-  /**
-   * Handler of mouse entering line chart
-   * @param {String}       key The unique key of a group of data
-   * @return {Object} no return
-   */
-  handleLineMouseEnter(key) {
-    this.setState({
-      activeLineKey: key,
-    });
-  }
-
-  /**
-   * Handler of mouse leaving line chart
-   * @return {Object} no return
-   */
-  handleLineMouseLeave = () => {
-    this.setState({
-      activeLineKey: null,
-    });
-  };
-
   renderCursor(xAxisMap, yAxisMap, offset) {
-    const { children } = this.props;
+    const { children, isTooltipActive } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
-    if (!tooltipItem || !tooltipItem.props.cursor || !this.state.isTooltipActive) {return null;}
+    if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive) {return null;}
 
-    const { layout } = this.props;
-    const { activeTooltipIndex } = this.state;
+    const { layout, activeTooltipIndex } = this.props;
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
     const ids = Object.keys(axisMap);
     const axis = axisMap[ids[0]];
-    const ticks = this.getAxisTicks(axis);
-    const start = ticks[activeTooltipIndex].coord;
+    const ticks = getTicksOfAxis(axis);
+    const start = ticks[activeTooltipIndex].coordinate;
     const x1 = layout === 'horizontal' ? start : offset.left;
     const y1 = layout === 'horizontal' ? offset.top : start;
     const x2 = layout === 'horizontal' ? start : offset.left + offset.width;
@@ -120,20 +99,16 @@ class LineChart extends CartesianChart {
    * @return {ReactComponent}  All the instances of Line
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
-    const { children, layout } = this.props;
-    const { activeLineKey, isTooltipActive, activeTooltipIndex } = this.state;
+    const { children, layout, isTooltipActive, activeTooltipIndex } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];
 
     const lineItems = items.map((child, i) => {
-      const { xAxisId, yAxisId, dataKey, strokeWidth, stroke } = child.props;
+      const { xAxisId, yAxisId, dataKey, stroke } = child.props;
       const points = this.getComposedData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey);
       const activePoint = points[activeTooltipIndex];
       const pointStyle = { fill: stroke, strokeWidth: 2, stroke: '#fff' };
-
-      let finalStrokeWidth = strokeWidth === +strokeWidth ? strokeWidth : 1;
-      finalStrokeWidth = activeLineKey === dataKey ? finalStrokeWidth + 2 : finalStrokeWidth;
 
       if (hasDot && activePoint) {
         dotItems.push(
@@ -151,9 +126,6 @@ class LineChart extends CartesianChart {
         key: `line-${i}`,
         ...offset,
         layout,
-        strokeWidth: finalStrokeWidth,
-        onMouseLeave: this.handleLineMouseLeave,
-        onMouseEnter: this.handleLineMouseEnter.bind(this, dataKey),
         points,
       });
     }, this);
@@ -167,41 +139,16 @@ class LineChart extends CartesianChart {
   }
 
   render() {
-    if (!validateWidthHeight(this)) {return null;}
-
-    const { style, children, className, width, height } = this.props;
-    const items = findAllByType(children, Line);
-
-    let xAxisMap = this.getAxisMap('xAxis', items);
-    let yAxisMap = this.getAxisMap('yAxis', items);
-    const offset = this.getOffset(items, xAxisMap, yAxisMap);
-
-    xAxisMap = this.getFormatAxisMap(xAxisMap, offset, 'xAxis');
-    yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
+    const { isComposed, xAxisMap, yAxisMap, offset, graphicalItems } = this.props;
 
     return (
-      <div
-        className={classNames('recharts-wrapper', className)}
-        style={{ position: 'relative', cursor: 'default', ...style }}
-        onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
-        onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
-        onMouseLeave={this.handleMouseLeave}
-      >
-        <Surface width={width} height={height}>
-          {this.renderGrid(xAxisMap, yAxisMap, offset)}
-          {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
-          {this.renderReferenceDots(xAxisMap, yAxisMap, offset)}
-          {this.renderXAxis(xAxisMap)}
-          {this.renderYAxis(yAxisMap)}
-          {this.renderCursor(xAxisMap, yAxisMap, offset)}
-          {this.renderItems(items, xAxisMap, yAxisMap, offset)}
-        </Surface>
-
-        {this.renderLegend(items)}
-        {this.renderTooltip(items, offset)}
-      </div>
+      <Layer className="recharts-line">
+        {!isComposed && this.renderCursor(xAxisMap, yAxisMap, offset)}
+        {this.renderItems(graphicalItems, xAxisMap, yAxisMap, offset)}
+      </Layer>
     );
   }
 }
 
-export default LineChart;
+export default generateCategoricalChart(LineChart, Line);
+export { LineChart };

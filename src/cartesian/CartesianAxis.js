@@ -42,7 +42,7 @@ class CartesianAxis extends Component {
     minLabelGap: PropTypes.number,
     ticks: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.any,
-      coord: PropTypes.value,
+      coordinate: PropTypes.value,
     })),
     tickSize: PropTypes.number,
     stroke: PropTypes.string,
@@ -89,7 +89,7 @@ class CartesianAxis extends Component {
   static getAutoIntervalTicks(ticks, viewBox, orientation, minTickGap) {
     const { x, y, width, height } = viewBox;
     const sizeKey = (orientation === 'top' || orientation === 'bottom') ? 'width' : 'height';
-    const sign = ticks.length >= 2 ? Math.sign(ticks[1].coord - ticks[0].coord) : 1;
+    const sign = ticks.length >= 2 ? Math.sign(ticks[1].coordinate - ticks[0].coordinate) : 1;
 
     let pointer;
 
@@ -102,11 +102,11 @@ class CartesianAxis extends Component {
     return ticks.filter(entry => {
       const tickSize = getStringSize(entry.value)[sizeKey];
       const isShow = sign === 1 ?
-        (entry.coord - tickSize / 2) >= pointer :
-        (entry.coord + tickSize / 2) <= pointer;
+        (entry.coordinate - tickSize / 2) >= pointer :
+        (entry.coordinate + tickSize / 2) <= pointer;
 
       if (isShow) {
-        pointer = entry.coord + sign * tickSize / 2 + minTickGap;
+        pointer = entry.coordinate + sign * tickSize / 2 + minTickGap;
       }
 
       return isShow;
@@ -129,22 +129,22 @@ class CartesianAxis extends Component {
 
     switch (orientation) {
       case 'top':
-        x1 = x2 = data.coord;
+        x1 = x2 = data.coordinate;
         y1 = y + height - finalTickSize;
         y2 = y + height;
         break;
       case 'left':
-        y1 = y2 = data.coord;
+        y1 = y2 = data.coordinate;
         x1 = x + width - finalTickSize;
         x2 = x + width;
         break;
       case 'right':
-        y1 = y2 = data.coord;
+        y1 = y2 = data.coordinate;
         x1 = x + finalTickSize;
         x2 = x;
         break;
       default:
-        x1 = x2 = data.coord;
+        x1 = x2 = data.coordinate;
         y1 = y + finalTickSize;
         y2 = y;
         break;

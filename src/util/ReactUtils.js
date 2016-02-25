@@ -106,21 +106,26 @@ const EVENT_ATTRIBUTES = {
  */
 export const findAllByType = (children, type) => {
   const result = [];
-  let childType = type;
+  let types = [];
 
-  if (type && type.displayName) {
-    childType = type.displayName;
+  if (_.isArray(type)) {
+    types = type.map(t => {
+      if (t && t.displayName) { return t.displayName; }
+      return t;
+    });
+  } else {
+    types = [type && type.displayName];
   }
 
+
   React.Children.forEach(children, child => {
-    if (child && child.type && child.type.displayName === childType) {
+    if (child && child.type && types.indexOf(child.type.displayName) !== -1) {
       result.push(child);
     }
   });
 
   return result;
 };
-
 /*
  * Return the first matched child by type, return null otherwise.
  * `type` can be a React element class or string.
@@ -211,4 +216,11 @@ export const validateWidthHeight = (el) => {
   }
 
   return true;
+};
+
+export const getDisplayName = (Comp) => {
+  if (typeof Comp === 'string') {
+    return Comp;
+  }
+  return Comp.displayName || Comp.name || 'Component';
 };

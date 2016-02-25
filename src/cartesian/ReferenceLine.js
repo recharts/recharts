@@ -114,9 +114,7 @@ class ReferenceLine extends Component {
       ...this.getLabelProps(isX, isY),
     };
     if (React.isValidElement(label)) {
-      return React.cloneElement(label, {
-        ...props
-      });
+      return React.cloneElement(label, props);
     } else if (_.isString(label) || _.isNumber(label)) {
       return (
         <g className="recharts-reference-line-label">

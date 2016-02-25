@@ -67,3 +67,15 @@ export const validateCoordinateInRange = (coordinate, scale) => {
 
   return isValidate;
 };
+
+/**
+ * Calculate the size between two category
+ * @param  {Function} scale Scale function
+ * @return {Number} Size
+ */
+export const getBandSizeOfScale = (scale) => {
+  if (scale && scale.bandwidth) {
+    return scale.bandwidth();
+  }
+  return 0;
+};

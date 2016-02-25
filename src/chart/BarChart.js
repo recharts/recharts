@@ -1,29 +1,49 @@
 /**
  * @fileOverview Bar Chart
  */
-import React from 'react';
-import classNames from 'classnames';
-import Surface from '../container/Surface';
+import React, { PropTypes, Component } from 'react';
+import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
-import { getPercentValue } from '../util/DataUtils';
+import { getPercentValue, getBandSizeOfScale } from '../util/DataUtils';
 import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
-import CartesianChart from './CartesianChart';
+import generateCategoricalChart from './generateCategoricalChart';
 import Bar from '../cartesian/Bar';
 import pureRender from '../util/PureRender';
+import { getTicksOfAxis, getStackedDataOfItem } from '../util/CartesianUtils';
 
 @pureRender
-class BarChart extends CartesianChart {
+class BarChart extends Component {
 
   static displayName = 'BarChart';
 
+  static propTypes = {
+    layout: PropTypes.oneOf(['horizontal', 'vertical']),
+    dataStartIndex: PropTypes.number,
+    dataEndIndex: PropTypes.number,
+    data: PropTypes.array,
+    isTooltipActive: PropTypes.bool,
+    activeTooltipIndex: PropTypes.number,
+    xAxisMap: PropTypes.object,
+    yAxisMap: PropTypes.object,
+    offset: PropTypes.object,
+    graphicalItems: PropTypes.array,
+    children: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.node),
+      PropTypes.node,
+    ]),
+    stackGroups: PropTypes.object,
+    barCategoryGap: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    barGap: PropTypes.number,
+    barSize: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    // used internally
+    isComposed: PropTypes.bool,
+  };
+
   static defaultProps = {
-    style: {},
     barCategoryGap: '10%',
     barGap: 4,
-    layout: 'horizontal',
-    margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
 
   /**
@@ -37,12 +57,11 @@ class BarChart extends CartesianChart {
    * @return {Array} Composed data
    */
   getComposedData(barPosition, xAxis, yAxis, offset, dataKey, stackedData) {
-    const { layout } = this.props;
-    const { dataStartIndex, dataEndIndex } = this.state;
-    const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
+    const { layout, dataStartIndex, dataEndIndex } = this.props;
     const pos = barPosition[dataKey];
-    const xTicks = this.getAxisTicks(xAxis);
-    const yTicks = this.getAxisTicks(yAxis);
+    const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
+    const xTicks = getTicksOfAxis(xAxis);
+    const yTicks = getTicksOfAxis(yAxis);
     const baseValue = this.getBaseValue(xAxis, yAxis);
     const hasStack = stackedData && stackedData.length;
 
@@ -54,7 +73,7 @@ class BarChart extends CartesianChart {
       let height;
 
       if (layout === 'horizontal') {
-        x = xTicks[index].coord + pos.offset;
+        x = xTicks[index].coordinate + pos.offset;
         y = yAxis.scale(xAxis.orientation === 'top' ? value[0] : value[1]);
         width = pos.size;
         height = xAxis.orientation === 'top' ?
@@ -62,7 +81,7 @@ class BarChart extends CartesianChart {
                 yAxis.scale(value[0]) - yAxis.scale(value[1]);
       } else {
         x = xAxis.scale(yAxis.orientation === 'left' ? value[0] : value[1]);
-        y = yTicks[index].coord + pos.offset;
+        y = yTicks[index].coordinate + pos.offset;
         width = yAxis.orientation === 'left' ?
                 xAxis.scale(value[1]) - xAxis.scale(value[0]) :
                 xAxis.scale(value[0]) - xAxis.scale(value[1]);
@@ -98,7 +117,7 @@ class BarChart extends CartesianChart {
 
     // whether or not is barSize setted by user
     if (sizeList[0].barSize === +sizeList[0].barSize) {
-      let sum = sizeList.reduce((res, entry) => (res + entry.barSize), 0);
+      let sum = sizeList.reduce((res, entry) => (res + entry.barSize || 0), 0);
       sum += (len - 1) * barGap;
       const offset = ((bandSize - sum) / 2) >> 0;
       let prev = { offset: offset - barGap, size: 0 };
@@ -150,69 +169,39 @@ class BarChart extends CartesianChart {
     return Object.keys(stackGroups).reduce((result, axisId) => {
       const sgs = stackGroups[axisId].stackGroups;
 
-      result[axisId] = Object.keys(sgs).map(stackId => {
+      result[axisId] = Object.keys(sgs).reduce((res, stackId) => {
         const { items } = sgs[stackId];
-        const { dataKey } = items[0].props;
+        const barItems = items.filter(item => item.type.displayName === 'Bar');
 
-        return {
-          dataKey,
-          stackList: items.slice(1).map(item => item.props.dataKey),
-          barSize: items[0].props.barSize || barSize,
-        };
-      });
+        if (barItems && barItems.length) {
+          const { dataKey } = barItems[0].props;
+          return [...res, {
+            dataKey,
+            stackList: barItems.slice(1).map(item => item.props.dataKey),
+            barSize: barItems[0].props.barSize || barSize,
+          }];
+        }
+        return res;
+      }, []);
 
       return result;
     }, {});
   }
 
-  /**
-   * Calculate the size between two category
-   * @param  {Function} scale Scale function
-   * @return {Number} Size
-   */
-  getBandSize(scale) {
-    if (scale && scale.bandwidth) {
-      return scale.bandwidth();
-    }
-    return 0;
-  }
-
-  /**
-   * Handler of mouse entering bar chart
-   * @param {String} key  The unique key of a group of data
-   * @return {Object}     null
-   */
-  handleBarMouseEnter(key) {
-    this.setState({
-      activeBarKey: key,
-    });
-  }
-
-  /**
-   * Handler of mouse leaving area chart
-   * @return {Object} null
-   */
-  handleBarMouseLeave = () => {
-    this.setState({
-      activeBarKey: null,
-    });
-  };
-
   renderCursor(xAxisMap, yAxisMap, offset) {
-    const { children } = this.props;
+    const { children, isTooltipActive } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
-    if (!tooltipItem || !tooltipItem.props.cursor || !this.state.isTooltipActive) {return null;}
+    if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive) {return null;}
 
-    const { layout } = this.props;
-    const { activeTooltipIndex } = this.state;
+    const { layout, activeTooltipIndex } = this.props;
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
     const ids = Object.keys(axisMap);
     const axis = axisMap[ids[0]];
     const bandSize = axis.scale.bandwidth();
 
-    const ticks = this.getAxisTicks(axis);
-    const start = ticks[activeTooltipIndex].coord;
+    const ticks = getTicksOfAxis(axis);
+    const start = ticks[activeTooltipIndex].coordinate;
     const cursorProps = {
       fill: '#f1f1f1',
       ...getPresentationAttributes(tooltipItem.props.cursor),
@@ -247,20 +236,18 @@ class BarChart extends CartesianChart {
     return items.map((child, i) => {
       const { xAxisId, yAxisId, dataKey } = child.props;
       const axisId = layout === 'horizontal' ? xAxisId : yAxisId;
-      const bandSize = this.getBandSize(
+      const bandSize = getBandSizeOfScale(
                         layout === 'horizontal' ?
                         xAxisMap[xAxisId].scale :
                         yAxisMap[yAxisId].scale
                       );
       const barPosition = barPositionMap[axisId] || this.getBarPosition(bandSize, sizeList[axisId]);
       const stackedData = stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
-                        && this.getStackedDataOfItem(child, stackGroups[axisId].stackGroups);
+                        && getStackedDataOfItem(child, stackGroups[axisId].stackGroups);
 
       return React.cloneElement(child, {
         key: `bar-${i}`,
         layout,
-        onMouseLeave: this.handleBarMouseLeave,
-        onMouseEnter: this.handleBarMouseEnter.bind(this, dataKey),
         data: this.getComposedData(
           barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey, stackedData
         ),
@@ -269,44 +256,16 @@ class BarChart extends CartesianChart {
   }
 
   render() {
-    if (!validateWidthHeight(this)) {return null;}
-
-    const { style, children, className, layout, width, height } = this.props;
-    const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
-    const items = findAllByType(children, Bar);
-    const stackGroups = this.getStackGroupsByAxisId(items, `${numberAxisName}Id`);
-
-    let xAxisMap = this.getAxisMap('xAxis', items, numberAxisName === 'xAxis' && stackGroups);
-    let yAxisMap = this.getAxisMap('yAxis', items, numberAxisName === 'yAxis' && stackGroups);
-    const offset = this.getOffset(items, xAxisMap, yAxisMap);
-
-    xAxisMap = this.getFormatAxisMap(xAxisMap, offset, 'xAxis');
-    yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
+    const { isComposed, graphicalItems, xAxisMap, yAxisMap, offset, stackGroups } = this.props;
 
     return (
-      <div
-        className={classNames('recharts-wrapper', className)}
-        style={{ position: 'relative', cursor: 'default', ...style }}
-        onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
-        onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
-        onMouseLeave={this.handleMouseLeave}
-      >
-        <Surface width={width} height={height}>
-          {this.renderGrid(xAxisMap, yAxisMap, offset)}
-          {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
-          {this.renderReferenceDots(xAxisMap, yAxisMap, offset)}
-          {this.renderXAxis(xAxisMap)}
-          {this.renderYAxis(yAxisMap)}
-          {this.renderCursor(xAxisMap, yAxisMap, offset)}
-          {this.renderItems(items, xAxisMap, yAxisMap, offset, stackGroups)}
-          {this.renderBrush(xAxisMap, yAxisMap, offset)}
-        </Surface>
-
-        {this.renderLegend(items)}
-        {this.renderTooltip(items, offset)}
-      </div>
+      <Layer className="recharts-bar">
+        {!isComposed && this.renderCursor(xAxisMap, yAxisMap, offset)}
+        {this.renderItems(graphicalItems, xAxisMap, yAxisMap, offset, stackGroups)}
+      </Layer>
     );
   }
 }
 
-export default BarChart;
+export default generateCategoricalChart(BarChart, Bar);
+export { BarChart };
