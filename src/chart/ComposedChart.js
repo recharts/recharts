@@ -13,7 +13,7 @@ import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Rectangle from '../shape/Rectangle';
 import generateCategoricalChart from './generateCategoricalChart';
-import { getPercentValue, getBandSizeOfScale } from '../util/DataUtils';
+import { getPercentValue, getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
 import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
@@ -51,8 +51,7 @@ class ComposedChart extends Component {
 
     const { layout, activeTooltipIndex } = this.props;
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
-    const ids = Object.keys(axisMap);
-    const axis = axisMap[ids[0]];
+    const axis = getAnyElementOfObject(axisMap);
     const bandSize = getBandSizeOfScale(axis.scale);
 
     const ticks = getTicksOfAxis(axis);

@@ -5,7 +5,7 @@ import React, { PropTypes, Component } from 'react';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
-import { getPercentValue, getBandSizeOfScale } from '../util/DataUtils';
+import { getPercentValue, getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
 import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import generateCategoricalChart from './generateCategoricalChart';
@@ -196,8 +196,7 @@ class BarChart extends Component {
 
     const { layout, activeTooltipIndex } = this.props;
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
-    const ids = Object.keys(axisMap);
-    const axis = axisMap[ids[0]];
+    const axis = getAnyElementOfObject(axisMap);
     const bandSize = axis.scale.bandwidth();
 
     const ticks = getTicksOfAxis(axis);

@@ -79,3 +79,16 @@ export const getBandSizeOfScale = (scale) => {
   }
   return 0;
 };
+
+
+export const getAnyElementOfObject = (obj) => {
+  if (!obj) { return null; }
+
+  const keys = Object.keys(obj);
+
+  if (keys && keys.length) {
+    return obj[keys[0]];
+  }
+
+  return null;
+};

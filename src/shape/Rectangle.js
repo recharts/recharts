@@ -4,7 +4,8 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import classNames from 'classnames';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
+  filterEventAttributes } from '../util/ReactUtils';
 
 @pureRender
 class Rectangle extends Component {
@@ -22,9 +23,6 @@ class Rectangle extends Component {
       PropTypes.number,
       PropTypes.array,
     ]),
-    onMouseEnter: PropTypes.func,
-    onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func,
   };
 
   static defaultProps = {
@@ -40,9 +38,6 @@ class Rectangle extends Component {
     strokeWidth: 1,
     strokeDasharray: 'none',
     fill: '#000',
-    onMouseEnter() {},
-    onMouseLeave() {},
-    onClick() {},
   };
 
   getPath(x, y, width, height, radius) {
@@ -97,8 +92,7 @@ class Rectangle extends Component {
   }
 
   render() {
-    const { x, y, width, height, radius,
-      onClick, onMouseEnter, onMouseLeave, className } = this.props;
+    const { x, y, width, height, radius, className } = this.props;
 
     if (x !== +x || y !== +y || width !== +width || height !== +height) { return null; }
 
@@ -107,10 +101,8 @@ class Rectangle extends Component {
     return (
       <path
         {...getPresentationAttributes(this.props)}
+        {...filterEventAttributes(this.props)}
         className={layerClass}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onClick={onClick}
         d={this.getPath(x, y, width, height, radius)}
       />
     );

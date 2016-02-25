@@ -7,7 +7,8 @@ import { line as shapeLine, curveLinear, curveMonotoneX, curveMonotoneY, curveSt
 import pureRender from '../util/PureRender';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
+  filterEventAttributes } from '../util/ReactUtils';
 
 const CURVE_FACTORIES = {
   curveLinear, curveMonotoneX, curveMonotoneY, curveStep,
@@ -23,9 +24,6 @@ class Curve extends Component {
     ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
     type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
-    onMouseEnter: PropTypes.func,
-    onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func,
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     baseLine: PropTypes.oneOfType([
       PropTypes.number, PropTypes.array,
@@ -40,9 +38,6 @@ class Curve extends Component {
     strokeWidth: 1,
     strokeDasharray: 'none',
     points: [],
-    onClick() {},
-    onMouseEnter() {},
-    onMouseLeave() {},
   };
 
   getCurveFactory(type, layout) {
@@ -97,18 +92,15 @@ class Curve extends Component {
   }
 
   render() {
-    const { className, points, type, onClick,
-        onMouseEnter, onMouseLeave } = this.props;
+    const { className, points, type } = this.props;
 
     if (!points || !points.length) { return null; }
 
     return (
       <path
         {...getPresentationAttributes(this.props)}
+        {...filterEventAttributes(this.props)}
         className={classNames('recharts-curve', className)}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onClick={onClick}
         d={this.getPath()}
       />
     );

@@ -88,16 +88,14 @@ export const PRESENTATION_ATTRIBUTES = {
 };
 
 const EVENT_ATTRIBUTES = {
-  onActivate: PropTypes.func,
   onClick: PropTypes.func,
-  onFocusin: PropTypes.func,
-  onFocusout: PropTypes.func,
-  onload: PropTypes.func,
   onMouseDown: PropTypes.func,
+  onMouseUp: PropTypes.func,
+  onMouseOver: PropTypes.func,
   onMouseMove: PropTypes.func,
   onMouseOut: PropTypes.func,
-  onMouseOver: PropTypes.func,
-  onMouseUp: PropTypes.func,
+  onMouseEnter: PropTypes.func,
+  onMouseLeave: PropTypes.func,
 };
 
 /*
@@ -185,7 +183,7 @@ export const getPresentationAttributes = (el) => {
  * @param  {Object} el A react element or the props of a react element
  * @return {Object}    attributes or null
  */
-export const getEventAttributes = (el) => {
+export const filterEventAttributes = (el) => {
   if (!el) { return null; }
 
   const props = React.isValidElement(el) ? el.props : el;

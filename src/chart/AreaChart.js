@@ -12,7 +12,7 @@ import { getTicksOfAxis, getStackedDataOfItem } from '../util/CartesianUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Area from '../cartesian/Area';
 import pureRender from '../util/PureRender';
-import { getBandSizeOfScale } from '../util/DataUtils';
+import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
 
 @pureRender
 class AreaChart extends Component {
@@ -101,8 +101,7 @@ class AreaChart extends Component {
 
     const { layout, activeTooltipIndex } = this.props;
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
-    const ids = Object.keys(axisMap);
-    const axis = axisMap[ids[0]];
+    const axis = getAnyElementOfObject(axisMap);
     const ticks = getTicksOfAxis(axis);
     const start = ticks[activeTooltipIndex].coordinate;
     const x1 = layout === 'horizontal' ? start : offset.left;

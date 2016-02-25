@@ -22,7 +22,7 @@ import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
 import pureRender from '../util/PureRender';
-import { parseSpecifiedDomain } from '../util/DataUtils';
+import { parseSpecifiedDomain, getAnyElementOfObject } from '../util/DataUtils';
 import { calculateDomainOfTicks, calculateChartCoordinate, calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
   getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getTicksOfGrid,
@@ -348,8 +348,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { layout } = this.props;
       const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
       const pos = layout === 'horizontal' ? e.chartX : e.chartY;
-      const ids = Object.keys(axisMap);
-      const axis = axisMap[ids[0]];
+      const axis = getAnyElementOfObject(axisMap);
       const ticks = getTicksOfAxis(axis, true);
       const activeIndex = calculateActiveTickIndex(pos, ticks);
 
@@ -590,10 +589,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       if (!gridItem) {return null;}
 
-      const xIds = Object.keys(xAxisMap);
-      const yIds = Object.keys(yAxisMap);
-      const xAxis = xAxisMap[xIds[0]];
-      const yAxis = yAxisMap[yIds[0]];
+      const xAxis = getAnyElementOfObject(xAxisMap);
+      const yAxis = getAnyElementOfObject(yAxisMap);
 
       const verticalPoints = getTicksOfGrid(CartesianAxis.getTicks({
         ...CartesianAxis.defaultProps, ...xAxis,

@@ -4,7 +4,8 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import classNames from 'classnames';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
+  filterEventAttributes } from '../util/ReactUtils';
 
 @pureRender
 class Rectangle extends Component {
@@ -19,9 +20,6 @@ class Rectangle extends Component {
       y: PropTypes.number,
     })),
     radius: PropTypes.number,
-    onMouseEnter: PropTypes.func,
-    onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func,
   };
 
   static defaultProps = {
@@ -30,9 +28,6 @@ class Rectangle extends Component {
     strokeWidth: 1,
     strokeDasharray: 'none',
     fill: '#000',
-    onMouseEnter() {},
-    onMouseLeave() {},
-    onClick() {},
   };
 
   getPath(points) {
@@ -44,16 +39,14 @@ class Rectangle extends Component {
   }
 
   render() {
-    const { points, radius, onClick, className, onMouseEnter, onMouseLeave } = this.props;
+    const { points, radius, className } = this.props;
     const layerClass = classNames('recharts-triangle', className);
 
     return (
       <path
         {...getPresentationAttributes(this.props)}
+        {...filterEventAttributes(this.props)}
         className={layerClass}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onClick={onClick}
         d={this.getPath(points, radius)}
       />
     );

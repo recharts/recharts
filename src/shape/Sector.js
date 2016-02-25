@@ -4,7 +4,8 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import classNames from 'classnames';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
+  filterEventAttributes } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 
 @pureRender
@@ -21,9 +22,6 @@ class Sector extends Component {
     outerRadius: PropTypes.number,
     startAngle: PropTypes.number,
     endAngle: PropTypes.number,
-    onMouseEnter: PropTypes.func,
-    onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func,
   };
 
   static defaultProps = {
@@ -33,9 +31,6 @@ class Sector extends Component {
     outerRadius: 0,
     startAngle: 0,
     endAngle: 0,
-    onMouseEnter() {},
-    onMouseLeave() {},
-    onClick() {},
   };
 
   getDeltaAngle(startAngle, endAngle) {
@@ -80,8 +75,7 @@ class Sector extends Component {
   }
 
   render() {
-    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle,
-      onClick, onMouseEnter, onMouseLeave, className } = this.props;
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, className } = this.props;
 
     if (outerRadius < innerRadius || startAngle === endAngle) { return null; }
 
@@ -90,10 +84,8 @@ class Sector extends Component {
     return (
       <path
         {...getPresentationAttributes(this.props)}
+        {...filterEventAttributes(this.props)}
         className={layerClass}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onClick={onClick}
         d={this.getPath(cx, cy, innerRadius, outerRadius, startAngle, endAngle)}
       />
     );

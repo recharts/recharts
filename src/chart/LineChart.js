@@ -12,7 +12,7 @@ import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { getTicksOfAxis } from '../util/CartesianUtils';
-import { getBandSizeOfScale } from '../util/DataUtils';
+import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
 
 @pureRender
 class LineChart extends Component {
@@ -71,8 +71,7 @@ class LineChart extends Component {
 
     const { layout, activeTooltipIndex } = this.props;
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
-    const ids = Object.keys(axisMap);
-    const axis = axisMap[ids[0]];
+    const axis = getAnyElementOfObject(axisMap);
     const ticks = getTicksOfAxis(axis);
     const start = ticks[activeTooltipIndex].coordinate;
     const x1 = layout === 'horizontal' ? start : offset.left;
