@@ -420,6 +420,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         return result;
       }, { top: margin.top || 0, bottom: margin.bottom || 0 });
 
+      const brushBottom = offsetV.bottom;
+
       if (brushItem) {
         offsetV.bottom += brushItem.props.height || Brush.defaultProps.height;
       }
@@ -437,6 +439,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       }
 
       return {
+        brushBottom,
         ...offsetH,
         ...offsetV,
         width: width - offsetH.left - offsetH.right,
@@ -664,19 +667,18 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     }
 
     renderBrush(xAxisMap, yAxisMap, offset) {
-      const { children, data } = this.props;
+      const { children, data, margin } = this.props;
       const brushItem = findChildByType(children, Brush);
 
       if (!brushItem) { return null; }
 
       const dataKey = brushItem.props.dataKey;
-      const height = (brushItem.props.height || Brush.defaultProps.height) + 1;
 
       return React.cloneElement(brushItem, {
         onChange: this.handleBrushChange,
         data: data.map(entry => entry[dataKey]),
         x: offset.left,
-        y: offset.top + offset.height + offset.bottom - height,
+        y: offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
         width: offset.width,
       });
 

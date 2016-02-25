@@ -21,9 +21,6 @@ class Cross extends Component {
     width: PropTypes.number,
     height: PropTypes.number,
     className: PropTypes.string,
-    onMouseEnter: PropTypes.func,
-    onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func,
   };
 
   static defaultProps = {
@@ -35,9 +32,6 @@ class Cross extends Component {
     height: 0,
     stroke: '#000',
     fill: 'none',
-    onMouseEnter() {},
-    onMouseLeave() {},
-    onClick() {},
   };
 
   getPath(x, y, width, height, top, left) {
@@ -46,7 +40,6 @@ class Cross extends Component {
 
   render() {
     const { x, y, width, height, top, left,
-        onClick, onMouseEnter, onMouseLeave,
         className } = this.props;
 
     if (!_.isNumber(x) || !_.isNumber(y) || !_.isNumber(width)
@@ -58,9 +51,6 @@ class Cross extends Component {
       <path
         {...getPresentationAttributes(this.props)}
         className={classNames('recharts-cross', className)}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onClick={onClick}
         d={this.getPath(x, y, width, height, top, left)}
       />
     );
