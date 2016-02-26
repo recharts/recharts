@@ -40,12 +40,22 @@ class Radar extends Component {
   };
 
   renderPolygon() {
-    const { shape } = this.props;
+    const { shape, points } = this.props;
     const isShapeElement = React.isValidElement(shape);
 
-    return isShapeElement ?
-      React.cloneElement(shape, this.props) :
-      React.createElement(Polygon, this.props);
+    if (isShapeElement) {
+      return React.cloneElement(shape, this.props);
+    }
+    const point = points[0];
+    const transformPoints = points.map(p => (
+      { x: p.x - point.cx, y: p.y - point.cy }
+    ));
+
+    return (
+      <Layer className="recharts-radar-polygon" transform={`translate(${point.cx}, ${point.cy})`}>
+        <Polygon {...getPresentationAttributes(this.props)} points={transformPoints}/>
+      </Layer>
+    );
   }
 
   renderLabels() {
