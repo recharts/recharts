@@ -10,6 +10,7 @@ import { getStringSize } from '../util/DOMUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
+import Animate from 'react-smooth';
 
 const RADIAN = Math.PI / 180;
 
@@ -49,6 +50,11 @@ class RadialBar extends Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
+
+    isAnimationActive: PropTypes.bool,
+    animationBegin: PropTypes.number,
+    animationDuration: PropTypes.number,
+    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
   };
 
   static defaultProps = {
@@ -63,6 +69,10 @@ class RadialBar extends Component {
     onClick() {},
     onMouseEnter() {},
     onMouseLeave() {},
+    isAnimationActive: true,
+    animationBegin: 0,
+    animationDuration: 1500,
+    animationEasing: 'ease',
   };
 
   state = {

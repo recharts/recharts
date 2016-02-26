@@ -8,6 +8,7 @@ import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/Reac
 import Polygon from '../shape/Polygon';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
+import Animate from 'react-smooth';
 
 @pureRender
 class Radar extends Component {
@@ -32,11 +33,20 @@ class Radar extends Component {
     shape: PropTypes.element,
     dot: PropTypes.oneOfType([PropTypes.element, PropTypes.object, PropTypes.bool]),
     label: PropTypes.oneOfType([PropTypes.element, PropTypes.object, PropTypes.bool]),
+
+    isAnimationActive: PropTypes.bool,
+    animationBegin: PropTypes.number,
+    animationDuration: PropTypes.number,
+    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
   };
 
   static defaultProps = {
     dot: false,
     label: false,
+    isAnimationActive: true,
+    animationBegin: 0,
+    animationDuration: 1500,
+    animationEasing: 'ease',
   };
 
   renderPolygon() {
@@ -117,10 +127,16 @@ class Radar extends Component {
     if (!points || !points.length) { return null; }
 
     const layerClass = classNames('recharts-radar', className);
+    const transformOrigin = 'center center';
 
     return (
       <Layer className={layerClass}>
-        {this.renderPolygon()}
+        <Animate from="scale(1)"
+          to="scale(1)"
+          attributeName="transform"
+        >
+          {this.renderPolygon()}
+        </Animate>
         {label && this.renderLabels()}
         {dot && this.renderDots()}
       </Layer>
