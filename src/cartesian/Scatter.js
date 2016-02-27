@@ -7,6 +7,7 @@ import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import Curve from '../shape/Curve';
+import Animate from 'react-smooth';
 
 @pureRender
 class Scatter extends Component {
@@ -37,6 +38,11 @@ class Scatter extends Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
+
+    isAnimationActive: PropTypes.bool,
+    animationBegin: PropTypes.number,
+    animationDuration: PropTypes.number,
+    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
   };
 
   static defaultProps = {
@@ -50,6 +56,11 @@ class Scatter extends Component {
     onClick() {},
     onMouseEnter() {},
     onMouseLeave() {},
+
+    isAnimationActive: true,
+    animationBegin: 0,
+    animationDuration: 1500,
+    animationEasing: 'ease',
   };
 
   state = {
@@ -75,7 +86,13 @@ class Scatter extends Component {
   };
 
   renderCircles() {
-    const { points } = this.props;
+    const {
+      points,
+      isAnimationActive,
+      animationBegin,
+      animationDuration,
+      animationEasing,
+    } = this.props;
     const { activeIndex } = this.state;
     const baseProps = getPresentationAttributes(this.props);
 
@@ -83,14 +100,22 @@ class Scatter extends Component {
       const { payload, r, ...rest } = entry;
 
       return (
-        <circle
-          {...baseProps}
-          {...rest}
-          r={i === activeIndex ? r * 1.1 : r}
-          onMouseEnter={this.handleCircleMouseEnter.bind(this, entry, i)}
-          onMouseLeave={this.handleCircleMouseLeave}
+        <Animate from="scale(0)" to="scale(1)"
+          attributeName="transform"
+          easing="ease"
           key={`circle-${i}`}
-        />
+        >
+          <circle
+            style={{
+              transformOrigin: 'center center',
+            }}
+            {...baseProps}
+            {...rest}
+            r={i === activeIndex ? r * 1.1 : r}
+            onMouseEnter={this.handleCircleMouseEnter.bind(this, entry, i)}
+            onMouseLeave={this.handleCircleMouseLeave}
+          />
+        </Animate>
       );
     });
   }

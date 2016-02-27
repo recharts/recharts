@@ -25,8 +25,19 @@ class RadarChartDemo extends React.Component {
 
         <p>A RadarChart of two students' score</p>
         <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
-          <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-          <Radar name="Lily" dataKey="B" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} />
+          <Radar name="Mike"
+            dataKey="A"
+            stroke="#8884d8"
+            fill="#8884d8"
+            fillOpacity={0.6}
+          />
+          <Radar name="Lily"
+            dataKey="B"
+            stroke="#82ca9d"
+            fill="#82ca9d"
+            fillOpacity={0.6}
+            animationBegin={180}
+          />
           <PolarGrid />
           <Legend />
           <PolarRadiusAxis domain={[0, 150]} label="score"/>

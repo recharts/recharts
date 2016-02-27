@@ -50,7 +50,15 @@ class Radar extends Component {
   };
 
   renderPolygon() {
-    const { shape, points } = this.props;
+    const {
+      shape,
+      points,
+      animationDuration,
+      animationEasing,
+      animationBegin,
+      isAnimationActive,
+    } = this.props;
+
     const isShapeElement = React.isValidElement(shape);
 
     if (isShapeElement) {
@@ -63,7 +71,16 @@ class Radar extends Component {
 
     return (
       <Layer className="recharts-radar-polygon" transform={`translate(${point.cx}, ${point.cy})`}>
-        <Polygon {...getPresentationAttributes(this.props)} points={transformPoints}/>
+        <Animate from="scale(0)"
+          to="scale(1)"
+          attributeName="transform"
+          isActive={isAnimationActive}
+          begin={animationBegin}
+          easing={animationEasing}
+          duration={animationDuration}
+        >
+          <Polygon {...getPresentationAttributes(this.props)} points={transformPoints} />
+        </Animate>
       </Layer>
     );
   }
@@ -131,12 +148,7 @@ class Radar extends Component {
 
     return (
       <Layer className={layerClass}>
-        <Animate from="scale(1)"
-          to="scale(1)"
-          attributeName="transform"
-        >
-          {this.renderPolygon()}
-        </Animate>
+        {this.renderPolygon()}
         {label && this.renderLabels()}
         {dot && this.renderDots()}
       </Layer>

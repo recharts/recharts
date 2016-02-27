@@ -163,9 +163,6 @@ class AreaChart extends Component {
         ...offset,
         ...composeData,
         layout,
-        fillOpacity: finalFillOpacity,
-        onMouseLeave: ::this.handleAreaMouseLeave,
-        onMouseEnter: this.handleAreaMouseEnter.bind(this, dataKey),
       });
 
       return [...result, area];

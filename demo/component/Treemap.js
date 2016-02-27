@@ -388,9 +388,13 @@ class DemoTreemap extends Component {
 
     return (
       <div className="treemap-charts">
-        <p>Treemap</p>
 
         <br/>
+        <div className="treemap-chart-wrapper">
+          <Treemap width={1000} height={500} data={data} dataKey="size" />
+        </div>
+        <br/>
+        <p>Treemap</p>
         <div className="treemap-chart-wrapper">
           <Treemap
             width={1000}
@@ -400,10 +404,6 @@ class DemoTreemap extends Component {
             ratio={1}
             content={<DemoTreemapItem bgColors={ColorPlatte}/>}
           />
-        </div>
-        <br/>
-        <div className="treemap-chart-wrapper">
-          <Treemap width={1000} height={500} data={data} dataKey="size" />
         </div>
       </div>
     );

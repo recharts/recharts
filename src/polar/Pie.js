@@ -41,9 +41,13 @@ class Pie extends Component {
     isAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOfType([
-      PropTypes.func,
-      PropTypes.string,
+    animationEasing: PropTypes.oneOf([
+      'ease',
+      'ease-in',
+      'ease-out',
+      'ease-in-out',
+      'spring',
+      'linear',
     ]),
   };
 
@@ -198,6 +202,7 @@ class Pie extends Component {
       outerRadius,
       innerRadius,
       startAngle,
+      endAngle,
       isAnimationActive,
       animationDuration,
       animationEasing,
@@ -212,17 +217,17 @@ class Pie extends Component {
             duration={animationDuration}
             animationBegin={animationBegin}
             onAnimationEnd={this.handleAnimationEnd}
-            from={{ endAngle: startAngle }}
-            to = {{ endAngle: this.props.endAngle }}
+            from={{ alpha: 0 }}
+            to = {{ alpha: 1 }}
           >
             {
-              ({ endAngle }) => (
+              ({ alpha }) => (
                 <Sector cx={cx}
                   cy={cy}
-                  outerRadius={outerRadius + hoverOffset + selectedOffset}
-                  innerRadius={innerRadius}
+                  outerRadius={(outerRadius + hoverOffset + selectedOffset) * alpha}
+                  innerRadius={innerRadius * alpha}
                   startAngle={startAngle}
-                  endAngle={endAngle}
+                  endAngle={(endAngle - startAngle) * alpha + startAngle}
                 />
               )
             }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import {RadialBarChart, RadialBar, Legend} from 'recharts';
+import { RadialBarChart, RadialBar, Legend } from 'recharts';
 import { mount, render } from 'enzyme';
 
 describe('<RadialBarChart />', () => {
@@ -23,9 +23,29 @@ describe('<RadialBarChart />', () => {
   const label = { orient: 'outer' };
 
   const wrapper = render(
-    <RadialBarChart width={500} height={300} cx={150} cy={150} innerRadius={20} outerRadius={140} barSize={10} data={data}>
-      <RadialBar minAngle={15} label={label} background clockWise dataKey="uv"/>
-      <Legend iconSize={10} width={120} height={140} layout="vertical" verticalAlign="middle" wrapperStyle={style}/>
+    <RadialBarChart width={500}
+      height={300}
+      cx={150}
+      cy={150}
+      innerRadius={20}
+      outerRadius={140}
+      barSize={10}
+      data={data}
+    >
+      <RadialBar minAngle={15}
+        label={label}
+        background
+        clockWise
+        dataKey="uv"
+        isAnimationActive={false}
+      />
+      <Legend iconSize={10}
+        width={120}
+        height={140}
+        layout="vertical"
+        verticalAlign="middle"
+        wrapperStyle={style}
+      />
     </RadialBarChart>
   );
 
@@ -36,4 +56,5 @@ describe('<RadialBarChart />', () => {
   it('renders 7 legend items', () => {
     expect(wrapper.find('.recharts-legend-item').length).to.equal(7);
   });
+
 });

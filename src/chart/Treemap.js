@@ -7,6 +7,7 @@ import Layer from '../container/Layer';
 import Rectangle from '../shape/Rectangle';
 import { getPresentationAttributes, validateWidthHeight } from '../util/ReactUtils';
 import classNames from 'classnames';
+import Animate from 'react-smooth';
 import pureRender from '../util/PureRender';
 
 @pureRender
@@ -24,6 +25,10 @@ class Treemap extends Component {
     stroke: PropTypes.string,
     className: PropTypes.string,
     dataKey: PropTypes.string,
+    isAnimationActive: PropTypes.bool,
+    animationBegin: PropTypes.number,
+    animationDuration: PropTypes.number,
+    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
   };
 
   static defaultProps = {
@@ -31,6 +36,11 @@ class Treemap extends Component {
     stroke: '#000',
     dataKey: 'value',
     ratio: 0.5 * (1 + Math.sqrt(5)),
+
+    isAnimationActive: true,
+    animationBegin: 0,
+    animationDuration: 1500,
+    animationEasing: 'ease',
   };
 
   pad(node) {
@@ -181,7 +191,30 @@ class Treemap extends Component {
   }
 
   renderDefaultNode(nodeProps) {
-    return React.createElement(Rectangle, nodeProps);
+    const { isAnimationActive, animationBegin, animationDuration, animationEasing } = this.props;
+    const { width, height } = nodeProps;
+    const translateX = parseInt((Math.random() * 2 - 1) * width, 10);
+    const translateY = parseInt((Math.random() * 2 - 1) * height, 10);
+
+    return (
+      <Animate from={`translate(${translateX}px, ${translateX}px)`}
+        to="translate(0, 0)"
+        attributeName="transform"
+        animationBegin={animationBegin}
+        animationEasing={animationEasing}
+        isAnimationActive={isAnimationActive}
+        animationDuration={animationDuration}
+      >
+        <g>
+          {
+            React.createElement(Rectangle, {
+              ...nodeProps,
+              isAnimationActive,
+            })
+          }
+        </g>
+      </Animate>
+    );
   }
 
   renderNode(root, node, i) {
