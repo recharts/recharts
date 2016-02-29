@@ -31,6 +31,8 @@ class Pie extends Component {
     data: PropTypes.arrayOf(PropTypes.object),
     minAngle: PropTypes.number,
     legendType: PropTypes.string,
+
+    labelLine: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
     label: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
 
     hoverOffset: PropTypes.number,
@@ -244,11 +246,13 @@ class Pie extends Component {
     if (isAnimationActive && !this.state.isAnimationFinished) {
       return null;
     }
-    const { label, valueKey } = this.props;
+    const { label, labelLine, valueKey } = this.props;
     const pieProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);
+    const customLabelLineProps = getPresentationAttributes(labelLine);
     const isLabelElement = React.isValidElement(label);
-    const offsetRadius = (customLabelProps && customLabelProps.offsetRadius) || 20;
+    const isLabelLineElement = React.isValidElement(labelLine)
+    const offsetRadius = (label && label.offsetRadius) || 20;
 
     const labels = sectors.map((entry, i) => {
       const midAngle = (entry.startAngle + entry.endAngle) / 2;
@@ -269,19 +273,23 @@ class Pie extends Component {
         ...entry,
         fill: 'none',
         stroke: entry.fill,
-        ...customLabelProps,
+        ...customLabelLineProps,
         points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
       };
 
       return (
-        <g key={`label-${i}`}>
-          <Curve {...lineProps} type="linear" className="recharts-pie-label-line"/>
+        <Layer key={`label-${i}`}>
           {
-            isLabelElement 
-              ? React.cloneElement(label, { key: `label-${i}`, ...labelProps })
+            isLabelLineElement
+              ? React.cloneElement(labelLine, lineProps)
+              : <Curve {...lineProps} type="linear" className="recharts-pie-label-line"/>
+          }
+          {
+            isLabelElement
+              ? React.cloneElement(label, labelProps)
               : <text {...labelProps} className="recharts-pie-label-text">{entry[valueKey]}</text>
           }
-        </g>
+        </Layer>
       );
     });
 
