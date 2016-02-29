@@ -15,6 +15,7 @@ class DefaultTooltipContent extends Component {
     wrapperStyle: PropTypes.object,
     itemStyle: PropTypes.object,
     labelStyle: PropTypes.object,
+    labelFormatter: PropTypes.func,
     label: PropTypes.any,
     payload: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.any,
@@ -61,7 +62,7 @@ class DefaultTooltipContent extends Component {
   }
 
   render() {
-    const { labelStyle, label, wrapperStyle } = this.props;
+    const { labelStyle, label, labelFormatter, wrapperStyle } = this.props;
     const finalStyle = {
       margin: 0,
       padding: 10,
@@ -74,10 +75,11 @@ class DefaultTooltipContent extends Component {
       margin: 0,
       ...labelStyle,
     };
-
+    let finalLabel = label;
+    if (label && labelFormatter) finalLabel = labelFormatter(label);
     return (
       <div className="recharts-default-tooltip" style={finalStyle}>
-        <p className="recharts-tooltip-label" style={finalLabelStyle}>{label || ''}</p>
+        <p className="recharts-tooltip-label" style={finalLabelStyle}>{  finalLabel || ''}</p>
         {this.renderContent()}
       </div>
     );

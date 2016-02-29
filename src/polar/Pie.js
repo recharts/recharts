@@ -131,6 +131,7 @@ class Pie extends Component {
         );
 
         prev = {
+          percent,
           ...entry,
           cx,
           cy,
@@ -272,10 +273,14 @@ class Pie extends Component {
         points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
       };
 
-      return isLabelElement ? React.cloneElement(label, { labelProps, key: `label-${i}` }) : (
+      return (
         <g key={`label-${i}`}>
           <Curve {...lineProps} type="linear" className="recharts-pie-label-line"/>
-          <text {...labelProps} className="recharts-pie-label-text">{entry[valueKey]}</text>
+          {
+            isLabelElement 
+              ? React.cloneElement(label, { key: `label-${i}`, ...labelProps })
+              : <text {...labelProps} className="recharts-pie-label-text">{entry[valueKey]}</text>
+          }
         </g>
       );
     });
