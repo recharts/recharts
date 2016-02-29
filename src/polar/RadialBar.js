@@ -10,6 +10,7 @@ import { getStringSize } from '../util/DOMUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
+import Animate from 'react-smooth';
 
 const RADIAN = Math.PI / 180;
 
@@ -49,6 +50,18 @@ class RadialBar extends Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
+
+    isAnimationActive: PropTypes.bool,
+    animationBegin: PropTypes.number,
+    animationDuration: PropTypes.number,
+    animationEasing: PropTypes.oneOf([
+      'ease',
+      'ease-in',
+      'ease-out',
+      'ease-in-out',
+      'linear',
+      'spring',
+    ]),
   };
 
   static defaultProps = {
@@ -63,6 +76,10 @@ class RadialBar extends Component {
     onClick() {},
     onMouseEnter() {},
     onMouseLeave() {},
+    isAnimationActive: true,
+    animationBegin: 0,
+    animationDuration: 1500,
+    animationEasing: 'ease',
   };
 
   state = {
@@ -174,27 +191,57 @@ class RadialBar extends Component {
 
   renderSectors(sectors) {
     const { className, shape, data } = this.props;
+    const {
+      animationEasing,
+      animationDuration,
+      animationBegin,
+      isAnimationActive,
+    } = this.props;
     const baseProps = getPresentationAttributes(this.props);
     const isShapeElement = React.isValidElement(shape);
 
-    return sectors.map((entry, i) => {
-      const { value, ...rest } = entry;
-      const props = {
-        ...baseProps,
-        ...rest,
-        onMouseEnter: this.handleSectorEnter.bind(this, entry, i),
-        onMouseLeave: this.handleSectorLeave.bind(this, entry, i),
-        onClick: this.handleSectorClick.bind(this, entry, i),
-        key: `sector-${i}`,
-      };
-      if (!isShapeElement) {
-        props.className = 'recharts-radial-bar-sector';
-      }
+    return (
+      <Animate from={{ alpha: 0 }}
+        to={{ alpha: 1 }}
+        begin={animationBegin}
+        isActive={isAnimationActive}
+        duration={animationDuration}
+        easing={animationEasing}
+      >
+      {
+        ({ alpha }) =>
+          <Layer>
+          {
+            sectors.map((entry, i) => {
+              const { value, ...rest } = entry;
+              let { startAngle, endAngle } = entry;
 
-      return isShapeElement ?
-        React.cloneElement(shape, props) :
-        React.createElement(Sector, props);
-    });
+              if (isAnimationActive) {
+                endAngle = (endAngle - startAngle) * alpha + startAngle;
+              }
+
+              const props = {
+                ...baseProps,
+                ...rest,
+                endAngle,
+                onMouseEnter: this.handleSectorEnter.bind(this, entry, i),
+                onMouseLeave: this.handleSectorLeave.bind(this, entry, i),
+                onClick: this.handleSectorClick.bind(this, entry, i),
+                key: `sector-${i}`,
+              };
+              if (!isShapeElement) {
+                props.className = 'recharts-radial-bar-sector';
+              }
+
+              return isShapeElement ?
+                React.cloneElement(shape, props) :
+                React.createElement(Sector, props);
+            })
+          }
+          </Layer>
+      }
+      </Animate>
+    );
   }
 
   renderBackground(sectors) {

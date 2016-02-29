@@ -4,6 +4,8 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import classNames from 'classnames';
+import { findDOMNode } from 'react-dom';
+import Animate from 'react-smooth';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 
@@ -23,6 +25,10 @@ class Rectangle extends Component {
       PropTypes.number,
       PropTypes.array,
     ]),
+    isAnimationActive: PropTypes.bool,
+    animationBegin: PropTypes.number,
+    animationDuration: PropTypes.number,
+    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
   };
 
   static defaultProps = {
@@ -38,7 +44,27 @@ class Rectangle extends Component {
     strokeWidth: 1,
     strokeDasharray: 'none',
     fill: '#000',
+    isAnimationActive: false,
+    animationBegin: 0,
+    animationDuration: 1500,
+    animationEasing: 'ease',
   };
+
+  state = {
+    totalLength: -1,
+  };
+
+  componentDidMount() {
+    const path = findDOMNode(this);
+
+    const totalLength = path && path.getTotalLength && path.getTotalLength();
+
+    if (totalLength) {
+      this.setState({
+        totalLength,
+      });
+    }
+  }
 
   getPath(x, y, width, height, radius) {
     const maxRadius = Math.min(width / 2, height / 2);
@@ -93,18 +119,30 @@ class Rectangle extends Component {
 
   render() {
     const { x, y, width, height, radius, className } = this.props;
+    const { totalLength } = this.state;
+    const { animationEasing, animationDuration, animationBegin, isAnimationActive } = this.props;
 
     if (x !== +x || y !== +y || width !== +width || height !== +height) { return null; }
 
     const layerClass = classNames('recharts-rectangle', className);
 
     return (
-      <path
-        {...getPresentationAttributes(this.props)}
-        {...filterEventAttributes(this.props)}
-        className={layerClass}
-        d={this.getPath(x, y, width, height, radius)}
-      />
+      <Animate canBegin={totalLength > 0}
+        from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
+        to={`${totalLength}px 0px`}
+        attributeName="strokeDasharray"
+        begin={animationBegin}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+      >
+        <path
+          {...getPresentationAttributes(this.props)}
+          {...filterEventAttributes(this.props)}
+          className={layerClass}
+          d={this.getPath(x, y, width, height, radius)}
+        />
+      </Animate>
     );
   }
 }

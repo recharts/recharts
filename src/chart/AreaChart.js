@@ -162,6 +162,7 @@ class AreaChart extends Component {
         key: `area-${i}`,
         ...offset,
         ...composeData,
+        layout,
       });
 
       return [...result, area];

@@ -49,9 +49,22 @@ export default React.createClass({
             <XAxis dataKey="name" label="province"/>
             <YAxis/>
             <Tooltip />
-            <Area stackId="0" type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
-            <Area stackId="0" type="monotone" dataKey="pv" stroke="#387908" fill="#387908" />
-            <Brush dataKey="name" height={30} />
+            <Area stackId="0"
+              type="monotone"
+              dataKey="uv"
+              stroke="#ff7300"
+              fill="#ff7300"
+              animationBegin={100}
+            />
+            <Area stackId="0"
+              type="monotone"
+              dataKey="pv"
+              stroke="#387908"
+              fill="#387908"
+              animationBegin={1300}
+              animationEasing="ease-out"
+              animationDuration={1500}
+            />
           </AreaChart>
         </div>
 

@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
+import Animate from 'react-smooth';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
@@ -43,6 +44,11 @@ class Area extends Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
+
+    isAnimationActive: PropTypes.bool,
+    animationBegin: PropTypes.number,
+    animationDuration: PropTypes.number,
+    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
   };
 
   static defaultProps = {
@@ -61,6 +67,11 @@ class Area extends Component {
     onClick() {},
     onMouseEnter() {},
     onMouseLeave() {},
+
+    isAnimationActive: true,
+    animationBegin: 0,
+    animationDuration: 1500,
+    animationEasing: 'ease',
   };
 
   renderArea() {
@@ -134,17 +145,42 @@ class Area extends Component {
   }
 
   render() {
-    const { dot, curve, label, points, className, ...other } = this.props;
+    const {
+      dot,
+      curve,
+      label,
+      points,
+      className,
+      layout,
+      isAnimationActive,
+      animationBegin,
+      animationDuration,
+      animationEasing,
+      ...other,
+    } = this.props;
 
     if (!points || !points.length) { return null; }
 
     const hasSinglePoint = points.length === 1;
     const layerClass = classNames('recharts-area', className);
+    const transformOrigin = layout === 'vertical' ? 'left center' : 'center bottom';
+    const scaleType = layout === 'vertical' ? 'scaleX' : 'scaleY';
 
     return (
       <Layer className={layerClass}>
-        {curve && !hasSinglePoint && this.renderCurve()}
-        {!hasSinglePoint && this.renderArea()}
+        <Animate attributeName="transform"
+          isActive={isAnimationActive}
+          begin={animationBegin}
+          easing={animationEasing}
+          duration={animationDuration}
+          from={`${scaleType}(0)`}
+          to={`${scaleType}(1)`}
+        >
+          <g style={{ transformOrigin }}>
+            {curve && !hasSinglePoint && this.renderCurve()}
+            {!hasSinglePoint && this.renderArea()}
+          </g>
+        </Animate>
 
         {(dot || hasSinglePoint) && this.renderDots()}
         {label && this.renderLabels()}
