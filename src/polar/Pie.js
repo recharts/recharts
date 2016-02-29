@@ -251,7 +251,7 @@ class Pie extends Component {
     const customLabelProps = getPresentationAttributes(label);
     const customLabelLineProps = getPresentationAttributes(labelLine);
     const isLabelElement = React.isValidElement(label);
-    const isLabelLineElement = React.isValidElement(labelLine)
+    const isLabelLineElement = React.isValidElement(labelLine);
     const offsetRadius = (label && label.offsetRadius) || 20;
 
     const labels = sectors.map((entry, i) => {

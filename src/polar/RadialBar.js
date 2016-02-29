@@ -214,7 +214,8 @@ class RadialBar extends Component {
           {
             sectors.map((entry, i) => {
               const { value, ...rest } = entry;
-              let { startAngle, endAngle } = entry;
+              const { startAngle } = entry;
+              let { endAngle } = entry;
 
               if (isAnimationActive) {
                 endAngle = (endAngle - startAngle) * alpha + startAngle;

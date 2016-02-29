@@ -309,4 +309,3 @@ export const getLegendProps = (children, graphicItems, width, height) => {
     payload: legendData,
   };
 };
-

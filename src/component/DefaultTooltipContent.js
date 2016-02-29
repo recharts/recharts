@@ -76,10 +76,10 @@ class DefaultTooltipContent extends Component {
       ...labelStyle,
     };
     let finalLabel = label;
-    if (label && labelFormatter) finalLabel = labelFormatter(label);
+    if (label && labelFormatter) { finalLabel = labelFormatter(label); }
     return (
       <div className="recharts-default-tooltip" style={finalStyle}>
-        <p className="recharts-tooltip-label" style={finalLabelStyle}>{  finalLabel || ''}</p>
+        <p className="recharts-tooltip-label" style={finalLabelStyle}>{finalLabel || ''}</p>
         {this.renderContent()}
       </div>
     );

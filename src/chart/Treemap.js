@@ -54,7 +54,7 @@ const scale = (children, k) => {
 const worst = (row, size, ratio) => {
   const newSize = size * size;
   const rowArea = row.area * row.area;
-  const {min, max} = row.reduce((result, child) => (
+  const { min, max } = row.reduce((result, child) => (
     {
       min: Math.min(result.min, child.area),
       max: Math.max(result.max, child.area),
@@ -64,6 +64,44 @@ const worst = (row, size, ratio) => {
   return rowArea
       ? Math.max((newSize * max * ratio) / rowArea, rowArea / (newSize * min * ratio))
       : Infinity;
+};
+
+// Positions the specified row of nodes. Modifies `rect`.
+const position = (row, size, rect, flush) => {
+  let i = -1;
+  const n = row.length;
+  let x = rect.x;
+  let y = rect.y;
+  let v = size ? Math.round(row.area / size) : 0;
+  let o;
+
+  if (size === rect.width) { // horizontal subdivision
+    if (flush || v > rect.height) v = rect.height; // over+underflow
+    while (++i < n) {
+      o = row[i];
+      o.x = x;
+      o.y = y;
+      o.height = v;
+      x += o.width = Math.min(rect.x + rect.width - x, v ? Math.round(o.area / v) : 0);
+    }
+    o.z = true;
+    o.width += rect.x + rect.width - x; // rounding error
+    rect.y += v;
+    rect.height -= v;
+  } else { // vertical subdivision
+    if (flush || v > rect.width) v = rect.width; // over+underflow
+    while (++i < n) {
+      o = row[i];
+      o.x = x;
+      o.y = y;
+      o.width = v;
+      y += o.height = Math.min(rect.y + rect.height - y, v ? Math.round(o.area / v) : 0);
+    }
+    o.z = false;
+    o.height += rect.y + rect.height - y; // rounding error
+    rect.x += v;
+    rect.width -= v;
+  }
 };
 
 // Recursively arranges the specified node's children into squarified rows.
@@ -109,45 +147,6 @@ const squarify = (node, ratio) => {
 
   return node;
 };
-
-// Positions the specified row of nodes. Modifies `rect`.
-const position = (row, size, rect, flush) => {
-  let i = -1;
-  const n = row.length;
-  let x = rect.x;
-  let y = rect.y;
-  let v = size ? Math.round(row.area / size) : 0;
-  let o;
-
-  if (size === rect.width) { // horizontal subdivision
-    if (flush || v > rect.height) v = rect.height; // over+underflow
-    while (++i < n) {
-      o = row[i];
-      o.x = x;
-      o.y = y;
-      o.height = v;
-      x += o.width = Math.min(rect.x + rect.width - x, v ? Math.round(o.area / v) : 0);
-    }
-    o.z = true;
-    o.width += rect.x + rect.width - x; // rounding error
-    rect.y += v;
-    rect.height -= v;
-  } else { // vertical subdivision
-    if (flush || v > rect.width) v = rect.width; // over+underflow
-    while (++i < n) {
-      o = row[i];
-      o.x = x;
-      o.y = y;
-      o.width = v;
-      y += o.height = Math.min(rect.y + rect.height - y, v ? Math.round(o.area / v) : 0);
-    }
-    o.z = false;
-    o.height += rect.y + rect.height - y; // rounding error
-    rect.x += v;
-    rect.width -= v;
-  }
-};
-
 
 @pureRender
 class Treemap extends Component {
