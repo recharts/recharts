@@ -103,11 +103,8 @@ const squarify = (node, ratio) => {
       position(row, size, rect, true);
       row.length = row.area = 0;
     }
-    children.forEach(c => {
-      squarify(c, ratio);
-    });
 
-    return {...node, children: scaleChildren};
+    return {...node, children: scaleChildren.map(c => squarify(c, ratio))};
   }
 
   return node;
@@ -184,6 +181,7 @@ class Treemap extends Component {
     animationDuration: 1500,
     animationEasing: 'ease',
   };
+
   renderDefaultNode(nodeProps) {
     const { isAnimationActive, animationBegin, animationDuration, animationEasing } = this.props;
     const { width, height } = nodeProps;
@@ -223,7 +221,7 @@ class Treemap extends Component {
         }
         {
           node.children && node.children.length ?
-            node.children.map(this.renderNode.bind(this, root)) : null
+            node.children.map((child, index) => this.renderNode(node, child, index)) : null
         }
       </Layer>
     );
@@ -241,8 +239,6 @@ class Treemap extends Component {
     }, 0, dataKey);
 
     const formatRoot = squarify(root, ratio);
-
-    console.log(formatRoot);
 
     return this.renderNode(formatRoot, formatRoot, 0);
   }
