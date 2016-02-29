@@ -142,7 +142,7 @@ const squarify = (node, ratio) => {
       row.length = row.area = 0;
     }
 
-    return {...node, children: scaleChildren.map(c => squarify(c, ratio))};
+    return { ...node, children: scaleChildren.map(c => squarify(c, ratio)) };
   }
 
   return node;

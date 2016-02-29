@@ -69,16 +69,18 @@ export const getStackGroupsByAxisId = (data, items, axisIdKey) => {
     if (group.hasStack) {
       group.stackGroups = Object.keys(group.stackGroups).reduce((res, stackId) => {
         const g = group.stackGroups[stackId];
-        res[stackId] = {
-          items: g.items,
-          stackedData: getStackedData(data, g.items),
-        };
 
-        return res;
+        return {
+          ...res,
+          [stackId]: {
+            items: g.items,
+            stackedData: getStackedData(data, g.items),
+          },
+        };
       }, {});
     }
-    result[axisId] = group;
-    return result;
+
+    return { ...result, [axisId]: group };
   }, {});
 };
 
