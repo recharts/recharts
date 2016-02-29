@@ -22,8 +22,7 @@ class DemoTreemapItem extends Component {
   }
 
   render() {
-    const { root, depth, x, y, width, height, index, payload, bgColors } = this.props;
-    const { rank, name } = payload;
+    const { root, depth, x, y, width, height, index, rank, name, bgColors } = this.props;
 
     return (
       <g>
