@@ -74,22 +74,98 @@ class Area extends Component {
     animationEasing: 'ease',
   };
 
-  renderArea() {
-    return <Curve {...this.props} stroke="none" className="recharts-area-area" />;
-  }
+  renderCurve(points, opacity) {
+    const { layout, type, curve } = this.props;
+    let animProps = {
+      points: this.props.points,
+    };
 
-  renderCurve() {
-    const { points, type, layout } = this.props;
+    if (points) {
+      animProps = {
+        points,
+        opacity,
+      };
+    }
 
     return (
-      <Curve
-        {...getPresentationAttributes(this.props)}
-        className="recharts-area-curve"
-        layout={layout}
-        points={points}
-        type={type}
-        fill="none"
-      />
+      <g>
+        {
+          curve &&
+          <Curve {...getPresentationAttributes(this.props)}
+            className="recharts-area-curve"
+            layout={layout}
+            type={type}
+            fill="none"
+            { ...animProps }
+          />
+        }
+        <Curve { ...this.props }
+          stroke="none"
+          className="recharts-area-area"
+          { ...animProps }
+        />
+      </g>
+    );
+  }
+
+  renderAreaCurve() {
+    const { points, ...rest } = this.props;
+    const {
+      type,
+      layout,
+      baseLine,
+      curve,
+      isAnimationActive,
+      animationBegin,
+      animationDuration,
+      animationEasing,
+    } = this.props;
+
+    if (points.length === 1) {
+      return null;
+    }
+
+    const animationProps = {
+      isActive: isAnimationActive,
+      begin: animationBegin,
+      easing: animationEasing,
+      duration: animationDuration,
+    };
+
+    if (!baseLine || !baseLine.length) {
+      const transformOrigin = layout === 'vertical' ? 'left center' : 'center bottom';
+      const scaleType = layout === 'vertical' ? 'scaleX' : 'scaleY';
+
+      return (
+        <Animate attributeName="transform"
+          from={`${scaleType}(0)`}
+          to={`${scaleType}(1)`}
+          { ...animationProps }
+        >
+          <g style={{ transformOrigin }}>
+            { this.renderCurve() }
+          </g>
+        </Animate>
+      );
+    }
+
+    return (
+      <Animate from={{ alpha: 0 }}
+        to={{ alpha: 1 }}
+        { ...animationProps }
+      >
+      {
+        ({ alpha }) => this.renderCurve(
+          points.map(
+            ({ x, y }, i) => ({
+              x,
+              y: (y - baseLine[i].y) * alpha + baseLine[i].y,
+            })
+          ),
+          +(alpha > 0),
+        )
+      }
+      </Animate>
     );
   }
 
@@ -152,10 +228,6 @@ class Area extends Component {
       points,
       className,
       layout,
-      isAnimationActive,
-      animationBegin,
-      animationDuration,
-      animationEasing,
       ...other,
     } = this.props;
 
@@ -163,25 +235,10 @@ class Area extends Component {
 
     const hasSinglePoint = points.length === 1;
     const layerClass = classNames('recharts-area', className);
-    const transformOrigin = layout === 'vertical' ? 'left center' : 'center bottom';
-    const scaleType = layout === 'vertical' ? 'scaleX' : 'scaleY';
 
     return (
       <Layer className={layerClass}>
-        <Animate attributeName="transform"
-          isActive={isAnimationActive}
-          begin={animationBegin}
-          easing={animationEasing}
-          duration={animationDuration}
-          from={`${scaleType}(0)`}
-          to={`${scaleType}(1)`}
-        >
-          <g style={{ transformOrigin }}>
-            {curve && !hasSinglePoint && this.renderCurve()}
-            {!hasSinglePoint && this.renderArea()}
-          </g>
-        </Animate>
-
+        { this.renderAreaCurve() }
         {(dot || hasSinglePoint) && this.renderDots()}
         {label && this.renderLabels()}
       </Layer>
