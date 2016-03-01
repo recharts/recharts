@@ -2,7 +2,6 @@
  * @fileOverview Scatter Chart
  */
 import React, { Component, PropTypes } from 'react';
-import invariant from 'invariant';
 import classNames from 'classnames';
 import { scaleLinear } from 'd3-scale';
 import { getNiceTickValues } from 'recharts-scale';
@@ -23,6 +22,7 @@ import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { parseSpecifiedDomain } from '../util/DataUtils';
+import { warn } from '../util/LogUtils';
 import { calculateDomainOfTicks, detectReferenceElementsDomain, getTicksOfAxis,
   getTicksOfGrid, getLegendProps } from '../util/CartesianUtils';
 import _ from 'lodash';
@@ -110,7 +110,7 @@ class ScatterChart extends Component {
     const Axis = axisType === 'xAxis' ? XAxis : YAxis;
     const axis = findChildByType(children, Axis);
 
-    invariant(axis, 'recharts: ScatterChart must has %s', Axis.displayName);
+    warn(axis, 'recharts: ScatterChart must has %s', Axis.displayName);
 
     if (axis) {
       const domain = parseSpecifiedDomain(

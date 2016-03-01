@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import { getPercentValue } from '../util/DataUtils';
 import OuiDomUtils from 'oui-dom-utils';
-import invariant from 'invariant';
+import { warn } from '../util/LogUtils';
 
 @pureRender
 class ResponsiveContainer extends Component {
@@ -57,7 +57,7 @@ class ResponsiveContainer extends Component {
     };
 
     if (hasInitialized) {
-      invariant(width > 0 && height > 0,
+      warn(width > 0 && height > 0,
         `The width(%s) and height(%s) of chart should be greater than 0, ` +
         `please check the style of container, or the props width(%s) and height(%s).`,
         width, height, this.props.width, this.props.height

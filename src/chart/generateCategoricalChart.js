@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { getNiceTickValues } from 'recharts-scale';
 import { scaleLinear, scaleBand, scalePoint } from 'd3-scale';
-import invariant from 'invariant';
 import OuiDomUtils from 'oui-dom-utils';
 import classNames from 'classnames';
 import Surface from '../container/Surface';
@@ -10,6 +9,7 @@ import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Legend from '../component/Legend';
 
+import { warn } from '../util/LogUtils';
 import { findAllByType, findChildByType, getDisplayName,
   validateWidthHeight } from '../util/ReactUtils';
 import _ from 'lodash';
@@ -516,26 +516,26 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       if (layout === 'horizontal' && xAxes && xAxes.length) {
         xAxes.forEach(axis => {
-          invariant(axis.props.type === 'category',
+          warn(axis.props.type === 'category',
             'x-axis should be category axis when the layout is horizontal'
           );
         });
       } else if (layout === 'vertical') {
         const displayName = this.constructor.displayName;
 
-        invariant(yAxes && yAxes.length,
+        warn(yAxes && yAxes.length,
           `You should add <YAxis type="number"/> in ${displayName}.` +
           `The layout is vertical now, y-axis should be category axis,` +
           `but y-axis is number axis when no YAxis is added.`
         );
-        invariant(xAxes && xAxes.length,
+        warn(xAxes && xAxes.length,
           `You should add <XAxis /> in ${displayName}.` +
           `The layout is vertical now, x-axis is category when no XAxis is added.`
         );
 
         if (yAxes && yAxes.length) {
           yAxes.forEach(axis => {
-            invariant(axis.props.type === 'category',
+            warn(axis.props.type === 'category',
               'y-axis should be category axis when the layout is vertical'
             );
           });
