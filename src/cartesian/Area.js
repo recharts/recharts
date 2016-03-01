@@ -126,7 +126,7 @@ class Area extends Component {
     }
 
     const animationProps = {
-      isActive: true,
+      isActive: isAnimationActive,
       begin: animationBegin,
       easing: animationEasing,
       duration: animationDuration,
