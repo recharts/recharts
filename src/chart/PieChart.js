@@ -8,7 +8,8 @@ import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Pie from '../polar/Pie';
 import { getPercentValue } from '../util/DataUtils';
-import { findChildByType, findAllByType, validateWidthHeight } from '../util/ReactUtils';
+import { findChildByType, findAllByType, validateWidthHeight,
+  getPresentationAttributes } from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import pureRender from '../util/PureRender';
 
@@ -51,10 +52,21 @@ class PieChart extends Component {
   };
 
   getComposedData(item) {
-    const { fill, stroke, strokeWidth, strokeDasharray, data } = item.props;
+    const { data, children, nameKey, valueKey } = item.props;
+    const props = getPresentationAttributes(item.props);
+
+    if (children && children.length) {
+      return React.Children.map(children, (child, index) => (
+        {
+          ...props,
+          ...(data && data[index]),
+          ...child.props,
+        }
+      ));
+    }
 
     return data.map((entry) => ({
-      fill, stroke, strokeWidth, strokeDasharray,
+      ...props,
       ...entry,
     }));
   }

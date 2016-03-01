@@ -1,5 +1,8 @@
 import React from 'react';
-import { PieChart, Pie, Legend, Tooltip, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Legend, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { scaleCategory10 } from 'd3-scale';
+
+const colors = scaleCategory10().range();
 
 const data01 = [
   { name: 'Group A', value: 400 },
@@ -48,7 +51,13 @@ export default React.createClass({
           <PieChart width={800} height={400}>
             <Legend />
             <Tooltip/>
-            <Pie data={data01} cx={200} cy={200} startAngle={180} endAngle={0} outerRadius={80} fill="#ff7300" label/>
+            <Pie cx={200} cy={200} startAngle={180} endAngle={0} outerRadius={80} label>
+              {
+                data01.map((entry, index) => (
+                  <Cell key={`slice-${index}`} name={entry.name} value={entry.value} fill={colors[index % 10]}/>
+                ))
+              }
+            </Pie>
             <Pie data={data02} cx={600} cy={200} startAngle={180} endAngle={-180} innerRadius={60} outerRadius={80} fill="#387908"/>
           </PieChart>
         </div>

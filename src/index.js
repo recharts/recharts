@@ -5,6 +5,7 @@ import Surface from './container/Surface';
 import Legend from './component/Legend';
 import Tooltip from './component/Tooltip';
 import ResponsiveContainer from './component/ResponsiveContainer';
+import Cell from './component/Cell';
 
 import Sector from './shape/Sector';
 import Curve from './shape/Curve';
@@ -48,7 +49,7 @@ export {
   // container
   Surface,
   // componnet
-  Legend, Tooltip, ResponsiveContainer,
+  Cell, Legend, Tooltip, ResponsiveContainer,
   // shape
   Sector, Curve, Rectangle, Triangle, Polygon, Dot, Cross,
 
