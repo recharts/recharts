@@ -8,6 +8,7 @@ import Surface from '../container/Surface';
 import RadialBar from '../polar/RadialBar';
 import { getPercentValue } from '../util/DataUtils';
 import _ from 'lodash';
+import Cell from '../component/Cell';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import { findChildByType, findAllByType, validateWidthHeight } from '../util/ReactUtils';
@@ -72,15 +73,17 @@ class RadialBarChart extends Component {
 
   /**
    * Compose the data of each group
+   * @param  {Object} item        An instance of RadialBar
    * @param  {Array}  barPosition The offset and size of each bar
    * @param  {Object} radiusScale The scale function of radius of bars
    * @param  {Object} center      The coordinate of center
    * @param  {String} dataKey     The unique key of a group
    * @return {Array}              Composed data
    */
-  getComposedData(barPosition, radiusScale, center, dataKey) {
+  getComposedData(item, barPosition, radiusScale, center, dataKey) {
     const { data } = this.props;
     const pos = barPosition[dataKey];
+    const cells = findAllByType(item.props.children, Cell);
 
     return data.map((entry, index) => {
       const value = entry[dataKey];
@@ -92,6 +95,7 @@ class RadialBarChart extends Component {
         value,
         innerRadius: radius - pos.offset,
         outerRadius: radius - pos.offset + pos.radius,
+        ...(cells && cells[index] && cells[index].props),
       };
     });
   }
@@ -265,13 +269,14 @@ class RadialBarChart extends Component {
         onMouseLeave: this.handleMouseLeave,
         onMouseEnter: this.handleMouseEnter,
         onClick: this.props.onClick,
-        data: this.getComposedData(barPosition, radiusScale, center, dataKey),
+        data: this.getComposedData(child, barPosition, radiusScale, center, dataKey),
       });
     }, this);
   }
 
   render() {
-    if (!validateWidthHeight(this)) {return null;}
+    const { data } = this.props;
+    if (!validateWidthHeight(this) || !data || !data.length) {return null;}
 
     const { style, children, className, width, height, margin } = this.props;
     const items = findAllByType(children, RadialBar);

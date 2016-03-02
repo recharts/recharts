@@ -145,8 +145,8 @@ class Bar extends Component {
       const x = entry.x + entry.width / 2;
       const labelProps = {
         textAnchor: 'middle',
-        ...entry,
         ...barProps,
+        ...entry,
         ...customLabelProps,
         x,
         index: i,

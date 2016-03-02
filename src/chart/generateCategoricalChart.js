@@ -716,9 +716,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     }
 
     render() {
-      if (!validateWidthHeight(this)) {return null;}
+      const { data } = this.props;
+      if (!validateWidthHeight(this) || !data || !data.length) {return null;}
 
-      const { style, children, layout, className, width, height, data } = this.props;
+      const { style, children, layout, className, width, height } = this.props;
       const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
       const items = findAllByType(children, GraphicalChild);
       const stackGroups = getStackGroupsByAxisId(data, items, `${numberAxisName}Id`);

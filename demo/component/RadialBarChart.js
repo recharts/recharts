@@ -1,5 +1,8 @@
 import React from 'react';
-import { RadialBarChart, RadialBar, Legend, Tooltip, ResponsiveContainer } from 'recharts';
+import { RadialBarChart, RadialBar, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
+import { scaleCategory10 } from 'd3-scale';
+
+const colors = scaleCategory10().range();
 
 const data = [
   { name: '18-24', uv: 31.47, pv: 2400, fill: '#8884d8' },
@@ -27,7 +30,13 @@ export default React.createClass({
         <p>RadialBarChart</p>
         <div className="radial-bar-chart-wrapper">
           <RadialBarChart width={500} height={300} cx={150} cy={150} innerRadius={20} outerRadius={140} barSize={10} data={data}>
-            <RadialBar minAngle={15} label={label} background dataKey="uv" />
+            <RadialBar minAngle={15} label={label} background dataKey="uv">
+              {
+                data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={colors[index]}/>
+                ))
+              }
+            </RadialBar>
             <Legend iconSize={10} width={120} height={140} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
             <Tooltip/>
           </RadialBarChart>

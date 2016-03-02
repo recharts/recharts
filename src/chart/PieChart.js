@@ -7,6 +7,7 @@ import Surface from '../container/Surface';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Pie from '../polar/Pie';
+import Cell from '../component/Cell';
 import { getPercentValue } from '../util/DataUtils';
 import { findChildByType, findAllByType, validateWidthHeight,
   getPresentationAttributes } from '../util/ReactUtils';
@@ -54,21 +55,19 @@ class PieChart extends Component {
   getComposedData(item) {
     const { data, children, nameKey, valueKey } = item.props;
     const props = getPresentationAttributes(item.props);
+    const cells = findAllByType(children, Cell);
 
-    if (children && children.length) {
-      return React.Children.map(children, (child, index) => (
-        {
-          ...props,
-          ...(data && data[index]),
-          ...child.props,
-        }
-      ));
+    if (data && data.length) {
+      return data.map((entry, index) => ({
+        ...props,
+        ...entry,
+        ...(cells && cells[index] && cells[index].props),
+      }));
     }
 
-    return data.map((entry) => ({
-      ...props,
-      ...entry,
-    }));
+    if (cells && cells.length) {
+      return cells.map(cell => ({ ...props, ...cell.props }));
+    }
   }
 
   handleMouseEnter = (el, index, e) => {

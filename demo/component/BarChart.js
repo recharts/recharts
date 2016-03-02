@@ -1,5 +1,8 @@
 import React, { PropTypes } from 'react';
-import { BarChart, Bar, Brush, CartesianGrid, ReferenceLine, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, Brush, Cell, CartesianGrid, ReferenceLine, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import { scaleCategory20 } from 'd3-scale';
+
+const colors = scaleCategory20().range();
 
 const data = [
   { name: 'food', uv: 2400, pv: 2400, amt: 4500 },
@@ -194,9 +197,22 @@ export default React.createClass({
           <BarChart width={400} height={400} data={data}>
             <XAxis dataKey="name" />
             <YAxis />
+            <Legend />
             <CartesianGrid vertical={false}/>
-            <Bar dataKey="uv" fill="#ff7300" label />
-            <Bar dataKey="pv" fill="#387908" label />
+            <Bar dataKey="uv" fill="#ff7300" label >
+              {
+                data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
+                ))
+              }
+            </Bar>
+            <Bar dataKey="pv" fill="#387908" label>
+              {
+                data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
+                ))
+              }
+            </Bar>
           </BarChart>
         </div>
 

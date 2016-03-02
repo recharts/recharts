@@ -229,7 +229,7 @@ export const getTicksOfGrid = (ticks, min, max) => {
  * @param {Boolean} isGrid Whether or not are the ticks in grid
  * @return {Array}  Ticks
  */
-export const getTicksOfAxis = (axis, isGrid = false) => {
+export const getTicksOfAxis = (axis, isGrid) => {
   const scale = axis.scale;
   const offset = isGrid && axis.type === 'category' ? scale.bandwidth() / 2 : 0;
 

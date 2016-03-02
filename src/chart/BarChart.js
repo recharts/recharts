@@ -9,6 +9,7 @@ import { getPercentValue, getBandSizeOfScale, getAnyElementOfObject } from '../u
 import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import generateCategoricalChart from './generateCategoricalChart';
+import Cell from '../component/Cell';
 import Bar from '../cartesian/Bar';
 import pureRender from '../util/PureRender';
 import { getTicksOfAxis, getStackedDataOfItem } from '../util/CartesianUtils';
@@ -48,22 +49,24 @@ class BarChart extends Component {
 
   /**
    * Compose the data of each group
+   * @param  {Object} item        An instance of Bar
    * @param  {Array}  barPosition The offset and size of each bar
    * @param  {Object} xAxis       The configuration of x-axis
    * @param  {Object} yAxis       The configuration of y-axis
    * @param  {Object} offset      The offset of main part in the svg element
-   * @param  {String} dataKey     The unique key of a group
    * @param  {Array} stackedData  The stacked data of a bar item
    * @return {Array} Composed data
    */
-  getComposedData(barPosition, xAxis, yAxis, offset, dataKey, stackedData) {
+  getComposedData(item, barPosition, xAxis, yAxis, offset, stackedData) {
     const { layout, dataStartIndex, dataEndIndex } = this.props;
+    const { dataKey, children } = item.props;
     const pos = barPosition[dataKey];
     const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
     const xTicks = getTicksOfAxis(xAxis);
     const yTicks = getTicksOfAxis(yAxis);
     const baseValue = this.getBaseValue(xAxis, yAxis);
     const hasStack = stackedData && stackedData.length;
+    const cells = findAllByType(children, Cell);
 
     return data.map((entry, index) => {
       const value = stackedData ? stackedData[dataStartIndex + index] : [baseValue, entry[dataKey]];
@@ -88,7 +91,11 @@ class BarChart extends Component {
         height = pos.size;
       }
 
-      return { ...entry, x, y, width, height, value: value[1] };
+      return {
+        ...entry,
+        x, y, width, height, value: value[1],
+        ...(cells && cells[index] && cells[index].props),
+      };
     });
   }
 
@@ -233,7 +240,7 @@ class BarChart extends Component {
     const barPositionMap = {};
 
     return items.map((child, i) => {
-      const { xAxisId, yAxisId, dataKey } = child.props;
+      const { xAxisId, yAxisId } = child.props;
       const axisId = layout === 'horizontal' ? xAxisId : yAxisId;
       const bandSize = getBandSizeOfScale(
                         layout === 'horizontal' ?
@@ -248,7 +255,7 @@ class BarChart extends Component {
         key: `bar-${i}`,
         layout,
         data: this.getComposedData(
-          barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, dataKey, stackedData
+          child, barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, stackedData
         ),
       });
     }, this);
