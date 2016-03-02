@@ -1,3 +1,24 @@
+## 0.8.4 (March 02, 2016)
+
+### refactor
+
+- Refactor the implemention type of renderPolygon in `Radar`
+- Refactor code in `Treemap`
+- Remove `invariant` and add `LogUtils`
+
+### feat
+
+- Add animation of Area, Radar, RadialBar, Scatter
+- Add label formatter to default tooltip
+- Add props labelLine in `Pie`
+- Add Cell of `Pie` to set different options for each sector
+- Add Cell support in `Bar`, `RadialBar`
+
+### fix 
+
+- Fix Pie chart Label position, When using custom label It was not rendering as part of the curve group.
+- Fix `isAnimationActive` props in `Area` 
+
 ## 0.8.3 (February 25, 2016)
 
 ### refactor
