@@ -18,13 +18,24 @@ function shallowEqual(objA, objB) {
 
   const bHasOwnProperty = hasOwnProperty.bind(objB);
   for (let i = 0; i < keysA.length; i++) {
-    // special diff with Array or Object
-    if ((_.isArray(objA[keysA[i]]) || _.isPlainObject(objA[keysA[i]]))
-        && _.isEqual(objA[keysA[i]], objB[keysA[i]])) {
+    let keyA = keysA[i];
+
+    if (objA[keyA] === objB[keyA]) {
       continue;
     }
 
-    if (!bHasOwnProperty(keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
+    // special diff with Array or Object
+    if (_.isArray(objA[keyA])) {
+      if (!_.isArray(objB[keyA]) || objA[keyA].length !== objB[keyA]) {
+        return false;
+      } else if (!_.isEqual(objA[keyA], objB[keyA])) {
+        return false;
+      }
+    } else if (_.isPlainObject(objA[keyA])) {
+      if (!_.isPlainObject(objB[keyA]) || !_.isEqual(objA[keyA], objB[keyA])) {
+        return false;
+      }
+    } else if (!bHasOwnProperty(keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
       return false;
     }
   }

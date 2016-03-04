@@ -276,14 +276,18 @@ class Pie extends Component {
         ...customLabelLineProps,
         points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
       };
+      let lineItem;
+
+      if (labelLine) {
+        lineItem = isLabelLineElement
+              ? React.cloneElement(labelLine, lineProps)
+              : <Curve {...lineProps} type="linear" className="recharts-pie-label-line"/>;
+      }
+
 
       return (
         <Layer key={`label-${i}`}>
-          {
-            isLabelLineElement
-              ? React.cloneElement(labelLine, lineProps)
-              : <Curve {...lineProps} type="linear" className="recharts-pie-label-line"/>
-          }
+          { labelLine && lineItem }
           {
             isLabelElement
               ? React.cloneElement(label, labelProps)
