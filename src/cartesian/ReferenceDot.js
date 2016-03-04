@@ -19,9 +19,7 @@ class ReferenceDot extends Component {
     r: PropTypes.number,
 
     label: PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.string,
-      PropTypes.element,
+      PropTypes.number, PropTypes.string, PropTypes.func, PropTypes.element,
     ]),
 
     xAxisMap: PropTypes.object,
@@ -73,8 +71,11 @@ class ReferenceDot extends Component {
       y: coordinate.cy,
       textAnchor: 'middle',
     };
+
     if (React.isValidElement(label)) {
       return React.cloneElement(label, props);
+    } else if (_.isFunction(label)) {
+      return label(props);
     } else if (_.isString(label) || _.isNumber(label)) {
       return (
         <g className="recharts-reference-dot-label">

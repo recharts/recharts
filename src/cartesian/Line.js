@@ -10,6 +10,7 @@ import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import _ from 'lodash';
 
 @pureRender
 class Line extends Component {
@@ -29,8 +30,12 @@ class Line extends Component {
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
 
      // whether have dot in line
-    dot: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
-    label: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
+    dot: PropTypes.oneOfType([
+      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool
+    ]),
+    label: PropTypes.oneOfType([
+      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool
+    ]),
 
     points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
@@ -130,11 +135,20 @@ class Line extends Component {
     this.setState({ isAnimationFinished: true });
   };
 
+  renderLabelItem(option, props, value) {
+    if (React.isValidElement(option)) {
+      return React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      return option(props);
+    } else {
+      return <text {...props} className="recharts-line-label">{value}</text>;
+    }
+  }
+
   renderLabels() {
     const { points, label } = this.props;
     const lineProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);
-    const isLabelElement = React.isValidElement(label);
 
     const labels = points.map((entry, i) => {
       const x = entry.x + entry.width / 2;
@@ -149,12 +163,20 @@ class Line extends Component {
         payload: entry,
       };
 
-      return isLabelElement ?
-        React.cloneElement(label, labelProps) :
-        (<text {...labelProps} className="recharts-line-label">{entry.value}</text>);
+      return this.renderLabelItem(label, labelProps, entry.value);
     });
 
     return <Layer className="recharts-line-labels">{labels}</Layer>;
+  }
+
+  renderDotItem(option, props) {
+    if (React.isValidElement(option)) {
+      return React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      return option(props);
+    } else {
+      return <Dot {...props} className="recharts-line-dot" />;
+    }
   }
 
   renderDots() {
@@ -163,27 +185,19 @@ class Line extends Component {
     if (isAnimationActive && !this.state.isAnimationFinished) {
       return null;
     }
-
     const { dot, points } = this.props;
     const lineProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
-    const isDotElement = React.isValidElement(dot);
-
     const dots = points.map((entry, i) => {
       const dotProps = {
         key: `dot-${i}`,
         r: 3,
         ...lineProps,
         ...customDotProps,
-        cx: entry.x,
-        cy: entry.y,
-        index: i,
-        payload: entry,
+        cx: entry.x, cy: entry.y, index: i, payload: entry,
       };
 
-      return isDotElement ?
-        React.cloneElement(dot, dotProps) :
-        <Dot className="recharts-line-dot" {...dotProps} />;
+      return this.renderDotItem(dot, dotProps);
     });
 
     return <Layer className="recharts-line-dots">{dots}</Layer>;

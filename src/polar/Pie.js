@@ -32,8 +32,8 @@ class Pie extends Component {
     minAngle: PropTypes.number,
     legendType: PropTypes.string,
 
-    labelLine: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
-    label: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.bool]),
+    labelLine: PropTypes.oneOfType([PropTypes.object, PropTypes.func, PropTypes.element, PropTypes.bool]),
+    label: PropTypes.oneOfType([PropTypes.object, PropTypes.func, PropTypes.element, PropTypes.bool]),
 
     hoverOffset: PropTypes.number,
     selectedOffset: PropTypes.number,
@@ -73,6 +73,7 @@ class Pie extends Component {
     selectedOffset: 8,
     nameKey: 'name',
     valueKey: 'value',
+    labelLine: true,
     data: [],
     minAngle: 0,
     onAnimationEnd() {},
@@ -240,6 +241,26 @@ class Pie extends Component {
     );
   }
 
+  renderLabelLineItem(option, props) {
+    if (React.isValidElement(option)) {
+      return React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      return option(props);
+    } else {
+      return <Curve {...props} type="linear" className="recharts-pie-label-line"/>;
+    }
+  }
+
+  renderLabelItem(option, props, value) {
+    if (React.isValidElement(option)) {
+      return React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      return option(props);
+    } else {
+      return <text {...props} className="recharts-pie-label-text">{value}</text>;
+    }
+  }
+
   renderLabels(sectors) {
     const { isAnimationActive } = this.props;
 
@@ -250,8 +271,6 @@ class Pie extends Component {
     const pieProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);
     const customLabelLineProps = getPresentationAttributes(labelLine);
-    const isLabelElement = React.isValidElement(label);
-    const isLabelLineElement = React.isValidElement(labelLine);
     const offsetRadius = (label && label.offsetRadius) || 20;
 
     const labels = sectors.map((entry, i) => {
@@ -276,23 +295,11 @@ class Pie extends Component {
         ...customLabelLineProps,
         points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
       };
-      let lineItem;
-
-      if (labelLine) {
-        lineItem = isLabelLineElement
-              ? React.cloneElement(labelLine, lineProps)
-              : <Curve {...lineProps} type="linear" className="recharts-pie-label-line"/>;
-      }
-
 
       return (
         <Layer key={`label-${i}`}>
-          { labelLine && lineItem }
-          {
-            isLabelElement
-              ? React.cloneElement(label, labelProps)
-              : <text {...labelProps} className="recharts-pie-label-text">{entry[valueKey]}</text>
-          }
+          {labelLine && this.renderLabelLineItem(labelLine, lineProps)}
+          {this.renderLabelItem(label, labelProps, entry[valueKey])}
         </Layer>
       );
     });

@@ -28,14 +28,10 @@ class PolarRadiusAxis extends Component {
     orientation: PropTypes.oneOf(['left', 'right', 'middle']),
     axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
     label: PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.string,
-      PropTypes.element,
+      PropTypes.number, PropTypes.string, PropTypes.element, PropTypes.func,
     ]),
     tick: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.object,
-      PropTypes.element,
+      PropTypes.bool, PropTypes.object, PropTypes.element, PropTypes.func,
     ]),
     stroke: PropTypes.string,
     tickFormatter: PropTypes.func,
@@ -109,12 +105,25 @@ class PolarRadiusAxis extends Component {
     return <line className="recharts-polar-radius-axis-line" {...props}/>;
   }
 
+  renderTickItem(option, props, value) {
+    if (React.isValidElement(option)) {
+      return React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      return option(props);
+    } else {
+      return (
+        <text {...props} className="recharts-polar-radius-axis-tick-value">
+          {value}
+        </text>
+      );
+    }
+  }
+
   renderTicks() {
     const { ticks, tick, angle, tickFormatter, stroke } = this.props;
     const textAnchor = this.getTickTextAnchor();
     const axisProps = getPresentationAttributes(this.props);
     const customTickProps = getPresentationAttributes(tick);
-    const isTickElement = React.isValidElement(tick);
 
     const items = ticks.map((entry, i) => {
       const coord = this.getTickValueCoord(entry);
@@ -130,14 +139,9 @@ class PolarRadiusAxis extends Component {
 
       return (
         <g className="recharts-polar-radius-axis-tick" key={`tick-${i}`}>
-          {
-            isTickElement ?
-              React.cloneElement(tick, tickProps) : (
-                <text {...tickProps} className="recharts-polar-radius-axis-tick-value">
-                  {tickFormatter ? tickFormatter(entry.value) : entry.value}
-                </text>
-              )
-          }
+          {this.renderTickItem(
+            tick, tickProps, tickFormatter ? tickFormatter(entry.value) : entry.value
+          )}
         </g>
       );
     });
@@ -150,6 +154,8 @@ class PolarRadiusAxis extends Component {
 
     if (React.isValidElement(label)) {
       return React.cloneElement(label, this.props);
+    } else if (_.isFunction(label)) {
+      return label(this.props);
     } else if (_.isString(label) || _.isNumber(label)) {
       const { ticks, angle, stroke } = this.props;
       const maxRadiusTick = _.maxBy(ticks, entry => (entry.radius || 0));

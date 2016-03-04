@@ -6,94 +6,100 @@ import pureRender from '../util/PureRender';
 import ReactDOMServer from 'react-dom/server';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import { getStyleString } from '../util/DOMUtils';
+import _ from 'lodash';
 
-@pureRender
-class Tooltip extends Component {
+const propTypes = {
+  content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
+  viewBox: PropTypes.shape({
+    x: PropTypes.number,
+    y: PropTypes.number,
+    width: PropTypes.number,
+    height: PropTypes.number,
+  }),
 
-  static displayName = 'Tooltip';
+  active: PropTypes.bool,
+  separator: PropTypes.string,
+  formatter: PropTypes.func,
+  offset: PropTypes.number,
 
-  static propTypes = {
-    content: PropTypes.element,
-    viewBox: PropTypes.shape({
-      x: PropTypes.number,
-      y: PropTypes.number,
-      width: PropTypes.number,
-      height: PropTypes.number,
-    }),
+  itemStyle: PropTypes.object,
+  labelStyle: PropTypes.object,
+  wrapperStyle: PropTypes.object,
+  cursor: PropTypes.oneOfType([PropTypes.bool, PropTypes.element, PropTypes.object]),
 
-    active: PropTypes.bool,
-    separator: PropTypes.string,
-    formatter: PropTypes.func,
-    offset: PropTypes.number,
+  coordinate: PropTypes.shape({
+    x: PropTypes.number,
+    y: PropTypes.number,
+  }),
 
-    itemStyle: PropTypes.object,
-    labelStyle: PropTypes.object,
-    wrapperStyle: PropTypes.object,
-    cursor: PropTypes.oneOfType([PropTypes.bool, PropTypes.element, PropTypes.object]),
+  label: PropTypes.any,
+  payload: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.any,
+    value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    unit: PropTypes.any,
+  })),
+};
 
-    coordinate: PropTypes.shape({
-      x: PropTypes.number,
-      y: PropTypes.number,
-    }),
+const defaultProps = {
+  active: false,
+  offset: 10,
+  viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
+  coordinate: { x: 0, y: 0 },
+  cursorStyle: {},
+  separator: ' : ',
+  wrapperStyle: {},
+  itemStyle: {},
+  labelStyle: {},
+  cursor: true,
+};
 
-    label: PropTypes.any,
-    payload: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.any,
-      value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-      unit: PropTypes.any,
-    })),
-  };
+const getTooltipBBox = (wrapperStyle, contentItem) => {
+  if (typeof document !== 'undefined') {
+    const contentHtml = ReactDOMServer.renderToStaticMarkup(contentItem);
+    const style = { ...wrapperStyle, top: -20000, left: 0, display: 'block' };
 
-  static defaultProps = {
-    active: false,
-    offset: 10,
-    viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
-    coordinate: { x: 0, y: 0 },
-    cursorStyle: {},
-    separator: ' : ',
-    wrapperStyle: {},
-    itemStyle: {},
-    labelStyle: {},
-    cursor: true,
-  };
+    const wrapper = document.createElement('div');
 
-  getTooltipBBox(wrapperStyle) {
-    if (typeof document !== 'undefined') {
-      const { content } = this.props;
-      const contentHtml = ReactDOMServer.renderToStaticMarkup(
-        React.isValidElement(content) ?
-        React.cloneElement(content, this.props) :
-        React.createElement(DefaultTooltipContent, this.props)
-      );
-      const style = { ...wrapperStyle, top: -20000, left: 0, display: 'block' };
+    wrapper.setAttribute('style', getStyleString(style));
+    wrapper.innerHTML = contentHtml;
+    document.body.appendChild(wrapper);
+    const box = wrapper.getBoundingClientRect();
 
-      const wrapper = document.createElement('div');
+    document.body.removeChild(wrapper);
 
-      wrapper.setAttribute('style', getStyleString(style));
-      wrapper.innerHTML = contentHtml;
-      document.body.appendChild(wrapper);
-      const box = wrapper.getBoundingClientRect();
-
-      document.body.removeChild(wrapper);
-
-      return box;
-    }
-
-    return null;
+    return box;
   }
+
+  return null;
+};
+
+const renderContent = (content, props) => {
+  if (React.isValidElement(content)) {
+     return React.cloneElement(content, props);
+  } else if (_.isFunction(content)) {
+    return content(props);
+  } else {
+    return React.createElement(DefaultTooltipContent, props);
+  }
+};
+
+class Tooltip extends Component {
+  static displayName = 'Tooltip';
+  static propTypes = propTypes;
+  static defaultProps = defaultProps;
 
   render() {
     const { payload } = this.props;
     if (!payload || !payload.length) {return null;}
 
     const { content, viewBox, coordinate, active, offset } = this.props;
-
     const outerStyle = {
       pointerEvents: 'none',
       display: active ? 'block' : 'none',
       position: 'absolute',
     };
-    const box = this.getTooltipBBox(outerStyle);
+    const contentItem = renderContent(content, this.props);
+    const box = getTooltipBBox(outerStyle, contentItem);
 
     if (!box) { return null; }
 
@@ -108,11 +114,7 @@ class Tooltip extends Component {
 
     return (
       <div className="recharts-tooltip-wrapper" style={outerStyle}>
-        {
-          React.isValidElement(content) ?
-          React.cloneElement(content, this.props) :
-          React.createElement(DefaultTooltipContent, this.props)
-        }
+        {contentItem}
       </div>
     );
   }

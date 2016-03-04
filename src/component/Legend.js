@@ -11,12 +11,22 @@ import _ from 'lodash';
 
 const SIZE = 32;
 
+const renderContent = (content, props) => {
+  if (React.isValidElement(content)) {
+    return React.cloneElement(content, props);
+  } else if (_.isFunction(content)) {
+    return content(props);
+  } else {
+    return React.createElement(DefaultLegendContent, props);
+  }
+};
+
 @pureRender
 class Legend extends Component {
   static displayName = 'Legend';
 
   static propTypes = {
-    content: PropTypes.element,
+    content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
     wrapperStyle: PropTypes.object,
     chartWidth: PropTypes.number,
     chartHeight: PropTypes.number,
@@ -66,11 +76,7 @@ class Legend extends Component {
   static getLegendBBox(props) {
     if (typeof document !== 'undefined') {
       const { content, width, height, wrapperStyle } = props;
-      const contentHtml = ReactDOMServer.renderToStaticMarkup(
-        React.isValidElement(content) ?
-        React.cloneElement(content, props) :
-        React.createElement(DefaultLegendContent, props)
-      );
+      const contentHtml = ReactDOMServer.renderToStaticMarkup(renderContent(content, props));
       const style = {
         position: 'absolute',
         width: width || 'auto',
@@ -139,11 +145,7 @@ class Legend extends Component {
 
     return (
       <div className="recharts-legend-wrapper" style={outerStyle}>
-        {
-          React.isValidElement(content) ?
-            React.cloneElement(content, this.props) :
-            React.createElement(DefaultLegendContent, this.props)
-        }
+        {renderContent(content, this.props)}
       </div>
     );
   }

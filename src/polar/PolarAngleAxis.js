@@ -8,6 +8,7 @@ import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/Reac
 import Dot from '../shape/Dot';
 import Polygon from '../shape/Polygon';
 import { polarToCartesian } from '../util/PolarUtils';
+import _ from 'lodash';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
@@ -29,9 +30,7 @@ class PolarAngleAxis extends Component {
     axisLineType: PropTypes.oneOf(['polygon', 'circle']),
     tickLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
     tick: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.object,
-      PropTypes.element,
+      PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element,
     ]),
 
     ticks: PropTypes.arrayOf(PropTypes.shape({
@@ -119,11 +118,24 @@ class PolarAngleAxis extends Component {
     return <Polygon className="recharts-polar-angle-axis-line" {...props} points={points}/>;
   }
 
+  renderTickItem(option, props, value) {
+    if (React.isValidElement(option)) {
+      return React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      return option(props);
+    } else {
+      return (
+        <text {...props} className="recharts-polar-angle-axis-tick-value">
+          {value}
+        </text>
+      );
+    }
+  }
+
   renderTicks() {
     const { ticks, tick, tickLine, tickFormatter, stroke } = this.props;
     const axisProps = getPresentationAttributes(this.props);
     const customTickProps = getPresentationAttributes(tick);
-    const isTickElement = React.isValidElement(tick);
     const tickLineProps = {
       ...axisProps, fill: 'none', ...getPresentationAttributes(tickLine),
     };
@@ -139,15 +151,6 @@ class PolarAngleAxis extends Component {
         index: i, payload: entry,
         x: lineCoord.x2, y: lineCoord.y2,
       };
-      let tickItem;
-
-      if (tick) {
-        tickItem = isTickElement ? React.cloneElement(tick, tickProps) : (
-          <text {...tickProps} className="recharts-polar-angle-axis-tick-value">
-            {tickFormatter ? tickFormatter(entry.value) : entry.value}
-          </text>
-        );
-      }
 
       return (
         <g className="recharts-polar-angle-axis-tick" key={`tick-${i}`}>
@@ -158,7 +161,9 @@ class PolarAngleAxis extends Component {
               {...lineCoord}
             />
           )}
-          {tick && tickItem}
+          {tick && this.renderTickItem(
+            tick, tickProps, tickFormatter ? tickFormatter(entry.value) : entry.value
+          )}
         </g>
       );
     });

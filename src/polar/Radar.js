@@ -9,6 +9,7 @@ import Polygon from '../shape/Polygon';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import Animate from 'react-smooth';
+import _ from 'lodash';
 
 @pureRender
 class Radar extends Component {
@@ -31,8 +32,12 @@ class Radar extends Component {
       payload: PropTypes.object,
     })),
     shape: PropTypes.element,
-    dot: PropTypes.oneOfType([PropTypes.element, PropTypes.object, PropTypes.bool]),
-    label: PropTypes.oneOfType([PropTypes.element, PropTypes.object, PropTypes.bool]),
+    dot: PropTypes.oneOfType([
+      PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool
+    ]),
+    label: PropTypes.oneOfType([
+      PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool
+    ]),
 
     isAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
@@ -59,11 +64,12 @@ class Radar extends Component {
       isAnimationActive,
     } = this.props;
 
-    const isShapeElement = React.isValidElement(shape);
-
-    if (isShapeElement) {
+    if (React.isValidElement(shape)) {
       return React.cloneElement(shape, this.props);
+    } else if (_.isFunction(shape)) {
+      return shape(this.props);
     }
+
     const point = points[0];
     const transformPoints = points.map(p => (
       { x: p.x - point.cx, y: p.y - point.cy }
@@ -85,11 +91,20 @@ class Radar extends Component {
     );
   }
 
+  renderLabelItem(option, props, value) {
+    if (React.isValidElement(option)) {
+      return React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      return option(props);
+    } else {
+      return <text {...labelProps} className="recharts-radar-label">{value}</text>;
+    }
+  }
+
   renderLabels() {
     const { points, label } = this.props;
     const baseProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);
-    const isLabelElement = React.isValidElement(label);
 
     const labels = points.map((entry, i) => {
       const labelProps = {
@@ -104,19 +119,26 @@ class Radar extends Component {
         payload: entry,
       };
 
-      return isLabelElement ? React.cloneElement(label, labelProps) : (
-        <text {...labelProps} className="recharts-radar-label">{entry.value}</text>
-      );
+      return this.renderLabelItem(label, labelProps, entry.value);
     });
 
     return <Layer className="recharts-radar-labels">{labels}</Layer>;
+  }
+
+  renderDotItem(option, props) {
+    if (React.isValidElement(option)) {
+      return React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      return option(props);
+    } else {
+      return <Dot {...dotProps} className="recharts-radar-dot"/>;
+    }
   }
 
   renderDots() {
     const { dot, points } = this.props;
     const baseProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
-    const isDotElement = React.isValidElement(dot);
 
     const dots = points.map((entry, i) => {
       const dotProps = {
@@ -130,9 +152,7 @@ class Radar extends Component {
         playload: entry,
       };
 
-      return isDotElement ?
-        React.cloneElement(dot, dotProps) :
-        <Dot {...dotProps} className="recharts-radar-dot"/>;
+      return this.renderDotItem(dot, dotProps);
     });
 
     return <Layer className="recharts-radar-dots">{dots}</Layer>;

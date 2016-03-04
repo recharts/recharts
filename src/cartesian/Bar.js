@@ -8,6 +8,7 @@ import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import _ from 'lodash';
 
 @pureRender
 class Bar extends Component {
@@ -16,7 +17,6 @@ class Bar extends Component {
 
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
-
     className: PropTypes.string,
     layout: PropTypes.string,
     xAxisId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -28,21 +28,16 @@ class Bar extends Component {
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     formatter: PropTypes.func,
 
-    shape: PropTypes.element,
+    shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
     label: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.object,
-      PropTypes.element,
+      PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element
     ]),
     data: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
       width: PropTypes.number,
       height: PropTypes.number,
-      radius: PropTypes.oneOfType([
-        PropTypes.number,
-        PropTypes.array,
-      ]),
+      radius: PropTypes.oneOfType([PropTypes.number, PropTypes.array]),
       value: PropTypes.value,
     })),
     onMouseEnter: PropTypes.func,
@@ -80,25 +75,27 @@ class Bar extends Component {
     this.setState({ isAnimationFinished: true });
   };
 
+  renderRectangle(option, props) {
+    if (React.isValidElement(option)) {
+      return React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      return option(props);
+    } else {
+      return <Rectangle {...props} className="recharts-bar-rectangle"/>;
+    }
+  }
+
   renderRectangles() {
-    const {
-      data,
-      className,
-      shape,
-      layout,
-      isAnimationActive,
-      animationBegin,
-      animationDuration,
-      animationEasing,
-      ...others,
-    } = this.props;
+    const { data, shape, layout, isAnimationActive, animationBegin,
+      animationDuration, animationEasing } = this.props;
+    const baseProps = getPresentationAttributes(this.props);
+    const getStyle = (isBegin) => ({
+      transform: `scale${layout === 'vertical' ? 'X' : 'Y'}(${isBegin ? 0 : 1})`,
+    });
 
     return data.map((entry, index) => {
-      const { value, width, height, ...rest } = entry;
-      const props = { ...others, ...rest, width, height };
-      const getStyle = (isBegin) => ({
-        transform: `scale${layout === 'vertical' ? 'X' : 'Y'}(${isBegin ? 0 : 1})`,
-      });
+      const { width, height } = entry;
+      const props = { ...baseProps, ...entry, index};
       let transformOrigin = '';
 
       if (layout === 'vertical') {
@@ -117,46 +114,42 @@ class Bar extends Component {
           key={`rectangle-${index}`}
           onAnimationEnd={this.handleAnimationEnd}
         >
-          <g style={{ transformOrigin }}>
-            {
-              React.isValidElement(shape) ?
-                React.cloneElement(shape, { ...props, index }) :
-                React.createElement(Rectangle, props)
-            }
-          </g>
+          <g style={{ transformOrigin }}>{this.renderRectangle(shape, props)}</g>
         </Animate>
       );
     });
   }
 
+  renderLabelItem(option, props, value) {
+    if (React.isValidElement(option)) {
+      return React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      return option(props);
+    } else {
+      return <text {...props} className="recharts-bar-label">{value}</text>;
+    }
+  }
+
   renderLabels() {
     const { isAnimationActive } = this.props;
-
-    if (isAnimationActive && !this.state.isAnimationFinished) {
-      return null;
-    }
+    if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
     const { data, label } = this.props;
     const barProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);
-    const isLabelElement = React.isValidElement(label);
-
     const labels = data.map((entry, i) => {
-      const x = entry.x + entry.width / 2;
       const labelProps = {
         textAnchor: 'middle',
         ...barProps,
         ...entry,
         ...customLabelProps,
-        x,
+        x: entry.x + entry.width / 2,
         index: i,
         key: `label-${i}`,
         payload: entry,
       };
 
-      return isLabelElement ?
-        React.cloneElement(label, labelProps) :
-        (<text {...labelProps} className="recharts-bar-label">{entry.value}</text>);
+      return this.renderLabelItem(label, labelProps, entry.value);
     });
 
     return <Layer className="recharts-bar-labels">{labels}</Layer>;

@@ -5,12 +5,12 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
-import _ from 'lodash';
 import { getStringSize } from '../util/DOMUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
 import Animate from 'react-smooth';
+import _ from 'lodash';
 
 const RADIAN = Math.PI / 180;
 
@@ -38,13 +38,11 @@ class RadialBar extends Component {
       value: PropTypes.value,
     })),
     legendType: PropTypes.string,
-
     label: PropTypes.oneOfType([
-      PropTypes.bool, PropTypes.element, PropTypes.object,
+      PropTypes.bool, PropTypes.func, PropTypes.element, PropTypes.object,
     ]),
-
     background: PropTypes.oneOfType([
-      PropTypes.bool, PropTypes.object, PropTypes.element,
+      PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element,
     ]),
 
     onMouseEnter: PropTypes.func,
@@ -55,12 +53,7 @@ class RadialBar extends Component {
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
     animationEasing: PropTypes.oneOf([
-      'ease',
-      'ease-in',
-      'ease-out',
-      'ease-in-out',
-      'linear',
-      'spring',
+      'ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear', 'spring',
     ]),
   };
 
@@ -85,6 +78,11 @@ class RadialBar extends Component {
   state = {
     activeIndex: -1,
     selectedIndex: -1,
+    isAnimationFinished: false,
+  };
+
+  handleAnimationEnd = () => {
+    this.setState({ isAnimationFinished: true });
   };
 
   getDeltaAngle() {
@@ -189,6 +187,16 @@ class RadialBar extends Component {
     }, onMouseLeave);
   }
 
+  renderSectorShape(shape, props) {
+    if (React.isValidElement(shape)) {
+      return React.cloneElement(shape, props);
+    } else if (_.isFunction(shape)) {
+      return shape(props);
+    } else {
+      return React.createElement(Sector, props)
+    }
+  }
+
   renderSectors(sectors) {
     const { className, shape, data } = this.props;
     const {
@@ -198,7 +206,6 @@ class RadialBar extends Component {
       isAnimationActive,
     } = this.props;
     const baseProps = getPresentationAttributes(this.props);
-    const isShapeElement = React.isValidElement(shape);
 
     return (
       <Animate from={{ alpha: 0 }}
@@ -207,36 +214,30 @@ class RadialBar extends Component {
         isActive={isAnimationActive}
         duration={animationDuration}
         easing={animationEasing}
+        onAnimationEnd={this.handleAnimationEnd}
       >
       {
         ({ alpha }) =>
           <Layer>
           {
             sectors.map((entry, i) => {
-              const { value, ...rest } = entry;
-              const { startAngle } = entry;
-              let { endAngle } = entry;
-
+              const { startAngle, endAngle } = entry;
+              let angle = endAngle;
               if (isAnimationActive) {
-                endAngle = (endAngle - startAngle) * alpha + startAngle;
+                angle = (endAngle - startAngle) * alpha + startAngle;
               }
 
               const props = {
                 ...baseProps,
-                ...rest,
-                endAngle,
+                ...entry,
+                endAngle: angle,
                 onMouseEnter: this.handleSectorEnter.bind(this, entry, i),
                 onMouseLeave: this.handleSectorLeave.bind(this, entry, i),
                 onClick: this.handleSectorClick.bind(this, entry, i),
                 key: `sector-${i}`,
               };
-              if (!isShapeElement) {
-                props.className = 'recharts-radial-bar-sector';
-              }
 
-              return isShapeElement ?
-                React.cloneElement(shape, props) :
-                React.createElement(Sector, props);
+              return this.renderSectorShape(shape, props);
             })
           }
           </Layer>
@@ -247,7 +248,6 @@ class RadialBar extends Component {
 
   renderBackground(sectors) {
     const { startAngle, endAngle, background } = this.props;
-    const isBackgroundElement = React.isValidElement(background);
     const backgroundProps = getPresentationAttributes(background);
 
     return sectors.map((entry, i) => {
@@ -263,13 +263,14 @@ class RadialBar extends Component {
         className: 'recharts-radial-bar-background-sector',
       };
 
-      return isBackgroundElement ?
-        React.cloneElement(background, props) :
-        React.createElement(Sector, props);
+      return this.renderSectorShape(background, props);
     });
   }
 
   renderLabels(sectors) {
+    const { isAnimationActive } = this.props;
+    if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
+
     const { label } = this.props;
     const isElement = React.isValidElement(label);
     const formatter = isElement ? label.props.formatter : label.formatter;

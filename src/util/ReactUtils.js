@@ -98,6 +98,14 @@ const EVENT_ATTRIBUTES = {
   onMouseLeave: PropTypes.func,
 };
 
+export const getDisplayName = (Comp) => {
+  if (!Comp) { return ''; }
+  if (typeof Comp === 'string') {
+    return Comp;
+  }
+  return Comp.displayName || Comp.name || 'Component';
+};
+
 /*
  * Find and return all matched children by type. `type` can be a React element class or
  * string
@@ -108,16 +116,15 @@ export const findAllByType = (children, type) => {
 
   if (_.isArray(type)) {
     types = type.map(t => {
-      if (t && t.displayName) { return t.displayName; }
-      return t;
+      return getDisplayName(t);
     });
   } else {
-    types = [type && type.displayName];
+    types = [getDisplayName(type)];
   }
 
-
   React.Children.forEach(children, child => {
-    if (child && child.type && types.indexOf(child.type.displayName) !== -1) {
+    const childType = child && child.type && (child.type.displayName || child.type.name);
+    if (types.indexOf(childType) !== -1) {
       result.push(child);
     }
   });
@@ -163,7 +170,7 @@ export const withoutType = (children) => {
  * @return {Object}    attributes or null
  */
 export const getPresentationAttributes = (el) => {
-  if (!el) { return null; }
+  if (!el || _.isFunction(el)) { return null; }
 
   const props = React.isValidElement(el) ? el.props : el;
   let result = null;
@@ -184,7 +191,7 @@ export const getPresentationAttributes = (el) => {
  * @return {Object}    attributes or null
  */
 export const filterEventAttributes = (el) => {
-  if (!el) { return null; }
+  if (!el || _.isFunction(el)) { return null; }
 
   const props = React.isValidElement(el) ? el.props : el;
   let result = null;
@@ -216,9 +223,3 @@ export const validateWidthHeight = (el) => {
   return true;
 };
 
-export const getDisplayName = (Comp) => {
-  if (typeof Comp === 'string') {
-    return Comp;
-  }
-  return Comp.displayName || Comp.name || 'Component';
-};

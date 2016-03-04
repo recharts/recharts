@@ -9,6 +9,7 @@ import Layer from '../container/Layer';
 import Animate from 'react-smooth';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import _ from 'lodash';
 
 @pureRender
 class Area extends Component {
@@ -28,8 +29,12 @@ class Area extends Component {
     legendType: PropTypes.string,
     formatter: PropTypes.func,
     // dot configuration
-    dot: PropTypes.oneOfType([PropTypes.element, PropTypes.object, PropTypes.bool]),
-    label: PropTypes.oneOfType([PropTypes.element, PropTypes.object, PropTypes.bool]),
+    dot: PropTypes.oneOfType([
+      PropTypes.func, PropTypes.element, PropTypes.object, PropTypes.bool,
+    ]),
+    label: PropTypes.oneOfType([
+      PropTypes.func, PropTypes.element, PropTypes.object, PropTypes.bool,
+    ]),
     // have curve configuration
     curve: PropTypes.bool,
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
@@ -169,11 +174,20 @@ class Area extends Component {
     );
   }
 
+  renderDotItem(option, props) {
+    if (React.isValidElement(option)) {
+      return React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      return option(props);
+    } else {
+      return <Dot {...props} className="recharts-area-dot" />;
+    }
+  }
+
   renderDots() {
     const { dot, points } = this.props;
     const areaProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
-    const isDotElement = React.isValidElement(dot);
 
     const dots = points.map((entry, i) => {
       const dotProps = {
@@ -187,19 +201,26 @@ class Area extends Component {
         playload: entry,
       };
 
-      return isDotElement ?
-        React.cloneElement(dot, dotProps) :
-        <Dot {...dotProps} className="recharts-area-dot" />;
+      return this.renderDotItem(dot, dotProps)
     });
 
     return <Layer className="recharts-area-dots">{dots}</Layer>;
+  }
+
+  renderLabelItem(option, props, value) {
+    if (React.isValidElement(option)) {
+      return React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      return option(props);
+    } else {
+      return <text {...props} className="recharts-area-label">{value}</text>;
+    }
   }
 
   renderLabels() {
     const { points, label } = this.props;
     const areaProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);
-    const isLabelElement = React.isValidElement(label);
 
     const labels = points.map((entry, i) => {
       const labelProps = {
@@ -212,24 +233,14 @@ class Area extends Component {
         payload: entry,
       };
 
-      return isLabelElement ?
-        React.cloneElement(label, labelProps) :
-        (<text {...labelProps} className="recharts-area-label">{entry.value}</text>);
+      return this.renderLabelItem(label, labelProps, entry.value);
     });
 
     return <Layer className="recharts-area-labels">{labels}</Layer>;
   }
 
   render() {
-    const {
-      dot,
-      curve,
-      label,
-      points,
-      className,
-      layout,
-      ...other,
-    } = this.props;
+    const { dot, curve, label, points, className, layout, ...other } = this.props;
 
     if (!points || !points.length) { return null; }
 

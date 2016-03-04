@@ -9,6 +9,7 @@ import { getPresentationAttributes, validateWidthHeight } from '../util/ReactUti
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import pureRender from '../util/PureRender';
+import _ from 'lodash';
 
 const computeNode = (depth, node, index, valueKey) => {
   const { children } = node;
@@ -158,7 +159,7 @@ class Treemap extends Component {
     data: PropTypes.array,
     style: PropTypes.object,
     ratio: PropTypes.number,
-    content: PropTypes.element,
+    content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
     fill: PropTypes.string,
     stroke: PropTypes.string,
     className: PropTypes.string,
@@ -211,13 +212,19 @@ class Treemap extends Component {
   renderNode(root, node, i) {
     const { content } = this.props;
     const nodeProps = { ...getPresentationAttributes(this.props), ...node, root };
+    let contentItem;
+
+    if (React.isValidElement(content)) {
+      contentItem = React.cloneElement(content, nodeProps);
+    } else if (_.isFunction(content)) {
+      contentItem = content(nodeProps);
+    } else {
+      contentItem = this.renderDefaultNode(nodeProps);
+    }
 
     return (
       <Layer key={`recharts-treemap-node-${i}`}>
-        {
-          React.isValidElement(content) ?
-            React.cloneElement(content, nodeProps) : this.renderDefaultNode(nodeProps)
-        }
+        {contentItem}
         {
           node.children && node.children.length ?
             node.children.map((child, index) => this.renderNode(node, child, index)) : null

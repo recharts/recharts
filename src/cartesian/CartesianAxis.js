@@ -27,14 +27,10 @@ class CartesianAxis extends Component {
       height: PropTypes.number,
     }),
     label: PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.string,
-      PropTypes.element,
+      PropTypes.number, PropTypes.string, PropTypes.func, PropTypes.element,
     ]),
     tick: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.object,
-      PropTypes.element,
+      PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element,
     ]),
     axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
     tickLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
@@ -252,45 +248,37 @@ class CartesianAxis extends Component {
     return <line className="recharts-cartesian-axis-line" {...props} />;
   }
 
+  renderTickItem(option, props, value) {
+    if (React.isValidElement(option)) {
+      return React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      return option(props);
+    } else {
+      return <text {...props} className="recharts-cartesian-axis-tick-value">{value}</text>;
+    }
+  }
+
   renderTicks() {
     const { ticks, tickLine, stroke, tick, tickFormatter } = this.props;
 
     if (!ticks || !ticks.length) { return null; }
 
     const finalTicks = CartesianAxis.getTicks(this.props);
-
     const textAnchor = this.getTickTextAnchor();
     const axisProps = getPresentationAttributes(this.props);
     const customTickProps = getPresentationAttributes(tick);
-    const istickElement = React.isValidElement(tick);
     const tickLineProps = {
       ...axisProps, fill: 'none', ...getPresentationAttributes(tickLine),
     };
-
     const items = finalTicks.map((entry, i) => {
       const lineCoord = this.getTickLineCoord(entry);
       const tickProps = {
-        dy: this.getDy(entry),
-        textAnchor,
+        dy: this.getDy(entry), textAnchor,
         ...axisProps,
-        stroke: 'none',
-        fill: stroke,
+        stroke: 'none', fill: stroke,
         ...customTickProps,
-        index: i,
-        x: lineCoord.x1,
-        y: lineCoord.y1,
-        payload: entry,
+        index: i, x: lineCoord.x1, y: lineCoord.y1, payload: entry,
       };
-      let tickItem;
-
-      if (tick) {
-        tickItem = istickElement ?
-          React.cloneElement(tick, tickProps) : (
-            <text {...tickProps} className="recharts-cartesian-axis-tick-value">
-              {tickFormatter ? tickFormatter(entry.value) : entry.value}
-            </text>
-          );
-      }
 
       return (
         <g className="recharts-cartesian-axis-tick" key={`tick-${i}`}>
@@ -301,7 +289,9 @@ class CartesianAxis extends Component {
               {...lineCoord}
             />
           )}
-          {tick && tickItem}
+          {tick && this.renderTickItem(
+            tick, tickProps, tickFormatter ? tickFormatter(entry.value) : entry.value
+          )}
         </g>
       );
     });
@@ -318,6 +308,8 @@ class CartesianAxis extends Component {
 
     if (React.isValidElement(label)) {
       return React.cloneElement(label, this.props);
+    } else if (_.isFunction(label)) {
+      return label(this.props);
     } else if (_.isString(label) || _.isNumber(label)) {
       const props = {
         ...getPresentationAttributes(this.props),

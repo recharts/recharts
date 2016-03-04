@@ -8,6 +8,7 @@ import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import Curve from '../shape/Curve';
 import Animate from 'react-smooth';
+import _ from 'lodash';
 
 @pureRender
 class Scatter extends Component {
@@ -21,7 +22,7 @@ class Scatter extends Component {
     xAxisId: PropTypes.number,
     yAxisId: PropTypes.number,
     zAxisId: PropTypes.number,
-    line: PropTypes.oneOfType([PropTypes.bool, PropTypes.object, PropTypes.element]),
+    line: PropTypes.oneOfType([PropTypes.bool, PropTypes.object, PropTypes.func, PropTypes.element]),
     lineType: PropTypes.oneOf(['fitting', 'joint']),
     className: PropTypes.string,
 
@@ -124,13 +125,11 @@ class Scatter extends Component {
     const { points, line, lineType } = this.props;
     const scatterProps = getPresentationAttributes(this.props);
     const customLineProps = getPresentationAttributes(line);
-    const isLineElement = React.isValidElement(line);
     let linePoints;
 
     if (lineType === 'joint') {
       linePoints = points.map(entry => ({ x: entry.cx, y: entry.cy }));
     }
-
     const lineProps = {
       ...scatterProps,
       fill: 'none',
@@ -138,16 +137,16 @@ class Scatter extends Component {
       ...customLineProps,
       points: linePoints,
     };
+    let lineItem;
+    if (React.isValidElement(line)) {
+      lineItem = React.cloneElement(line, lineProps);
+    } else if (_.isFunction(line)) {
+      lineItem = line(lineProps);
+    } else {
+      lineItem = <Curve {...lineProps} />
+    }
 
-    return (
-      <Layer className="recharts-scatter-line">
-        {
-          isLineElement ?
-            React.cloneElement(line, lineProps) :
-            React.createElement(Curve, lineProps)
-        }
-      </Layer>
-    );
+    return <Layer className="recharts-scatter-line">{lineItem}</Layer>;
   }
 
   render() {

@@ -23,9 +23,7 @@ class ReferenceLine extends Component {
     }),
 
     label: PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.string,
-      PropTypes.element,
+      PropTypes.number, PropTypes.string, PropTypes.element, PropTypes.func,
     ]),
 
     xAxisMap: PropTypes.object,
@@ -115,6 +113,8 @@ class ReferenceLine extends Component {
     };
     if (React.isValidElement(label)) {
       return React.cloneElement(label, props);
+    } else if (_.isFunction(label)) {
+      return label(props);
     } else if (_.isString(label) || _.isNumber(label)) {
       return (
         <g className="recharts-reference-line-label">
