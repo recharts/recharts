@@ -52,7 +52,8 @@
     "lodash": "4.6.1",
     "oui-dom-utils": "0.3.8",
     "react-smooth": "0.0.11",
-    "recharts-scale": "0.1.8"
+    "recharts-scale": "0.1.8",
+    "react-virtualized": "5.5.1"
   },
   "devDependencies": {
     "babel-cli": "^6.6.4",
