@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { BarChart, Bar, Brush, Cell, CartesianGrid, ReferenceLine, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import { scaleCategory20 } from 'd3-scale';
+import _ from 'lodash';
 
 const colors = scaleCategory20().range();
 
@@ -84,6 +85,16 @@ const data02 = [
   { name: '201511', uv: 3.27, pv: 6.74 },
 ];
 
+const renderLabel = (props) => {
+  const { x, y, textAnchor, key, value, index } = props;
+
+  return (
+    <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={key}>
+      {_.isArray(value) ? value[1] : value}
+    </text>
+  );
+};
+
 const CustomTick = function() {
   const { payload, x, y } = this.props;
 
@@ -100,22 +111,15 @@ const CustomAxisTick = function() {
   );
 };
 
-const CustomBar = React.createClass({
-  getPath () {
-    const { x, y, width, height } = this.props;
+const CustomBar = (props) => {
+  const { x, y, width, height, fill } = props;
+  const path = `M${x},${y + height}
+          C${x + width / 3},${y + height} ${x + width / 2},${y + height / 3} ${x + width / 2}, ${y}
+          C${x + width / 2},${y + height / 3} ${x + 2 * width / 3},${y + height} ${x + width}, ${y + height}
+          Z`;
 
-    return `M${x},${y + height}
-            C${x + width / 3},${y + height} ${x + width / 2},${y + height / 3} ${x + width / 2}, ${y}
-            C${x + width / 2},${y + height / 3} ${x + 2 * width / 3},${y + height} ${x + width}, ${y + height}
-            Z`;
-  },
-
-  render () {
-    const {fill} = this.props;
-
-    return <path d={this.getPath()} stroke='none' fill={fill}/>;
-  }
-});
+  return <path d={path} stroke='none' fill={fill}/>;
+};
 
 const BarTwo = React.createClass({
   getPath () {
@@ -199,7 +203,7 @@ export default React.createClass({
             <YAxis />
             <Legend />
             <CartesianGrid vertical={false}/>
-            <Bar dataKey="uv" fill="#ff7300" label >
+            <Bar dataKey="uv" fill="#ff7300" label={renderLabel} >
               {
                 data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
@@ -252,7 +256,7 @@ export default React.createClass({
         <div className="bar-chart-wrapper">
           <BarChart width={500} height={250} barCategoryGap={0} data={data}  margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
             <XAxis dataKey="name" />
-            <Bar dataKey="uv" barGap={0} fill="#ff7300" shape={<CustomBar />} />
+            <Bar dataKey="uv" barGap={0} fill="#ff7300" shape={CustomBar} />
           </BarChart>
         </div>
 
@@ -272,8 +276,8 @@ export default React.createClass({
             <Tooltip />
             <CartesianGrid vertical={false}/>
             <Bar stackId="0" dataKey="uv" fill="#ff7300" />
-            <Bar stackId="0" dataKey="pv" fill="#387908"/>
-            <Bar dataKey="amt" fill="#387908"/>
+            <Bar stackId="0" dataKey="pv" fill="#387908" label={renderLabel}/>
+            <Bar dataKey="amt" fill="#387908" label={renderLabel}/>
           </BarChart>
         </div>
       </div>

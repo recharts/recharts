@@ -12,17 +12,17 @@ class YAxis extends Component {
   static propTypes = {
     hide: PropTypes.bool,
     // The name of data displayed in the axis
-    name: PropTypes.any,
+    name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // The unit of data displayed in the axis
-    unit: PropTypes.any,
+    unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // The unique id of y-axis
-    yAxisId: PropTypes.number,
+    yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     domain: PropTypes.arrayOf(PropTypes.oneOfType([
       PropTypes.number,
       PropTypes.oneOf(['auto', 'dataMin', 'dataMax']),
     ])),
     // The key of data displayed in the axis
-    dataKey: PropTypes.string,
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // Ticks can be any type when the axis is the type of category
     // Ticks must be numbers when the axis is the type of number
     ticks: PropTypes.array,

@@ -27,7 +27,7 @@ describe('<RadarChart />', () => {
   it('Render 8 dots when dot is setted to be true', () => {
     const wrapper = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
-        <Radar dot dataKey="value"/>
+        <Radar isAnimationActive={false} dot dataKey="value"/>
       </RadarChart>
     );
     expect(wrapper.find('.recharts-radar-dot').length).to.equal(8);
@@ -36,7 +36,7 @@ describe('<RadarChart />', () => {
   it('Render 8 labels when dot is setted to be true', () => {
     const wrapper = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
-        <Radar label dataKey="value"/>
+        <Radar isAnimationActive={false} label dataKey="value"/>
       </RadarChart>
     );
     expect(wrapper.find('.recharts-radar-label').length).to.equal(8);

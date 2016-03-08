@@ -35,7 +35,7 @@ describe('<ReferenceDot />', () => {
     const wrapper = render(
       <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
         <XAxis dataKey="name"/>
-        <YAxis tickCount={7}/>
+        <YAxis tickCount={7} orientation="right"/>
         <Bar dataKey="uv"/>
         <ReferenceDot x="201106" y={20} stroke="#666" label="201106"/>
       </BarChart>

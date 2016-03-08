@@ -36,6 +36,18 @@ const CustomTooltip = React.createClass({
   },
 });
 
+const renderSpecialDot = (props) => {
+  const { cx, cy, stroke, key } = props;
+
+  return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke} key={key}/>;
+};
+
+const renderLabel = (props) => {
+  const { x, y, textAnchor, key, value, index } = props;
+
+  return <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={key}>{value[1]}</text>
+};
+
 export default React.createClass({
   displayName: 'AreaChartDemo',
 
@@ -47,7 +59,7 @@ export default React.createClass({
           <AreaChart width={800} height={400} data={data}
             margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
           >
-            <XAxis dataKey="name" label="province" orientation="top" />
+            <XAxis dataKey="name" label="province" />
             <YAxis />
             <Tooltip />
             <Area stackId="0"
@@ -62,6 +74,8 @@ export default React.createClass({
               stroke="#387908"
               fill="#387908"
               animationBegin={1300}
+              label={renderLabel}
+              dot={renderSpecialDot}
             />
           </AreaChart>
         </div>

@@ -22,7 +22,9 @@ class RadialBar extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
-    shape: PropTypes.object,
+    shape: PropTypes.oneOfType([
+      PropTypes.func, PropTypes.element,
+    ]),
 
     cx: PropTypes.number,
     cy: PropTypes.number,
@@ -235,6 +237,7 @@ class RadialBar extends Component {
                 onMouseLeave: this.handleSectorLeave.bind(this, entry, i),
                 onClick: this.handleSectorClick.bind(this, entry, i),
                 key: `sector-${i}`,
+                className: 'recharts-radial-bar-sector',
               };
 
               return this.renderSectorShape(shape, props);

@@ -24,6 +24,18 @@ const data01 = [
   { day: '05-09', wether: 'sunny' },
 ];
 
+const renderSpecialDot = (props) => {
+  const { cx, cy, stroke, key } = props;
+
+  return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke} key={key}/>;
+};
+
+const renderLabel = (props) => {
+  const { x, y, textAnchor, key, value } = props;
+
+  return <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={key}>{value}</text>
+};
+
 export default React.createClass({
   displayName: 'LineChartDemo',
 
@@ -37,9 +49,7 @@ export default React.createClass({
             <Legend/>
             <XAxis />
             <YAxis />
-            <ReferenceLine label="max" y={780} alwaysShow stroke="#666" />
-            <ReferenceDot x={2} y={1000} strokeDasharray="3 3 2 2" label="middle" stroke="#666" alwaysShow/>
-            <Line type='monotone' dataKey='uv' stroke='#ff7300'/>
+            <Line type='monotone' dataKey='uv' stroke='#ff7300' dot={renderSpecialDot} label={renderLabel}/>
             <Brush dataKey="name" height={30} />
           </LineChart>
         </div>

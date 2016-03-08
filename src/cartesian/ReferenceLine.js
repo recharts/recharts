@@ -33,8 +33,8 @@ class ReferenceLine extends Component {
     x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
-    yAxisId: PropTypes.number,
-    xAxisId: PropTypes.number,
+    yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
     labelPosition: PropTypes.oneOf(['start', 'end']),
   };

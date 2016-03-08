@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { PieChart, Pie, Sector } from 'recharts';
+import { PieChart, Pie, Sector, Legend, Tooltip, Cell } from 'recharts';
 import { mount, render } from 'enzyme';
 import sinon from 'sinon';
 
@@ -14,7 +14,7 @@ describe('<ScatterChart />', () => {
     { name: 'Group F', value: 189 },
   ];
 
-  it('renders 6 sectors circles in simple PieChart', () => {
+  it('Renders 6 sectors circles in simple PieChart', () => {
     const wrapper = render(
       <PieChart width={800} height={400}>
         <Pie isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label/>
@@ -22,6 +22,63 @@ describe('<ScatterChart />', () => {
     );
 
     expect(wrapper.find('.recharts-pie-sector').length).to.equal(6);
+  });
+
+  it('Renders 6 sectors circles when add Cell to specified props of eact slice', () => {
+    const wrapper = render(
+      <PieChart width={800} height={400}>
+        <Pie isAnimationActive={false} cx={200} cy={200} outerRadius={80} fill="#ff7300" label>
+          {
+            data.map((entry, index) => (
+              <Cell {...entry}  key={`cell-${index}`} strokeWidth={index + 1}/>
+            ))
+          }
+        </Pie>
+      </PieChart>
+    );
+
+    expect(wrapper.find('.recharts-pie-sector').length).to.equal(6);
+  });
+
+  it('Don\'t renders any sectors when width or height is smaller than 0', () => {
+    const wrapper = render(
+      <PieChart width={0} height={400}>
+        <Pie isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label/>
+      </PieChart>
+    );
+    expect(wrapper.find('.recharts-pie-sector').length).to.equal(0);
+  });
+
+  it('Renders 6 legend item when add a Legend element', () => {
+    const wrapper = render(
+      <PieChart width={800} height={400}>
+        <Pie isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label/>
+        <Legend/>
+      </PieChart>
+    );
+
+    expect(wrapper.find('.recharts-legend-wrapper').length).to.equal(1);
+    expect(wrapper.find('.recharts-legend-item').length).to.equal(6);
+  });
+
+  it('Renders tooltip when add a Tooltip element', () => {
+    const wrapper = mount(
+      <PieChart width={800} height={400}>
+        <Pie isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label/>
+        <Tooltip/>
+      </PieChart>
+    );
+    wrapper.setState({
+      isTooltipActive: true,
+      activeTooltipCoord: {
+        x: 95,
+        y: 21,
+      },
+      activeTooltipLabel: 'test',
+      activeTooltipPayload: [{name: 'test', value: 1}],
+    });
+    expect(wrapper.find('.recharts-tooltip-wrapper').length).to.equal(1);
+    expect(wrapper.find('.recharts-default-tooltip').length).to.equal(1);
   });
 
   it('click on Sector should invoke onClick callback', () => {

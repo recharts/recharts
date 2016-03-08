@@ -63,7 +63,7 @@ class AreaChart extends Component {
         y: layout === 'horizontal' ?
             yAxis.scale(value[1]) :
             yTicks[index].coordinate + bandSize / 2,
-        value: entry[dataKey],
+        value,
       };
     });
 

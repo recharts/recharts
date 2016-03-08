@@ -93,7 +93,7 @@ class BarChart extends Component {
 
       return {
         ...entry,
-        x, y, width, height, value: value[1],
+        x, y, width, height, value: stackedData ? value : value[1],
         ...(cells && cells[index] && cells[index].props),
       };
     });
@@ -219,7 +219,7 @@ class BarChart extends Component {
 
     return React.isValidElement(tooltipItem.props.cursor) ?
       React.cloneElement(tooltipItem.props.cursor, cursorProps) :
-      React.createElement(Rectangle, cursorProps);
+      React.createElement(Rectangle, { ...cursorProps, className: 'recharts-bar-cursor'});
   }
 
   /**

@@ -135,6 +135,7 @@ class PolarRadiusAxis extends Component {
         ...customTickProps,
         index: i, payload: entry,
         ...coord,
+        payload: entry,
       };
 
       return (
@@ -151,26 +152,24 @@ class PolarRadiusAxis extends Component {
 
   renderLabel() {
     const { label } = this.props;
+    const { ticks, angle, stroke } = this.props;
+    const maxRadiusTick = _.maxBy(ticks, entry => (entry.radius || 0));
+    const radius = maxRadiusTick.radius || 0;
+    const coord = this.getTickValueCoord({ radius: radius + 10 });
+    const props = {
+      ...this.props,
+      stroke: 'none',
+      fill: stroke,
+      ...coord,
+      textAnchor: 'middle',
+      transform: `rotate(${90 - angle}, ${coord.x}, ${coord.y})`,
+    };
 
     if (React.isValidElement(label)) {
-      return React.cloneElement(label, this.props);
+      return React.cloneElement(label, props);
     } else if (_.isFunction(label)) {
-      return label(this.props);
+      return label(props);
     } else if (_.isString(label) || _.isNumber(label)) {
-      const { ticks, angle, stroke } = this.props;
-      const maxRadiusTick = _.maxBy(ticks, entry => (entry.radius || 0));
-      const radius = maxRadiusTick.radius || 0;
-      const coord = this.getTickValueCoord({ radius: radius + 10 });
-
-      const props = {
-        ...getPresentationAttributes(this.props),
-        stroke: 'none',
-        fill: stroke,
-        ...coord,
-        textAnchor: 'middle',
-        transform: `rotate(${90 - angle}, ${coord.x}, ${coord.y})`,
-      };
-
       return (
         <g className="recharts-polar-radius-axis-label">
           <text {...props}>{label}</text>

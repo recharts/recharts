@@ -144,14 +144,17 @@ export const findChildByType = (children, type) => {
 /*
  * Create a new array of children excluding the ones matched the type
  */
-export const withoutType = (children) => {
+export const withoutType = (children, type) => {
   const newChildren = [];
-  let types = [].slice.call(arguments, 1);
+  let types;
 
-  types = types.map(type => {
-    if (type && type.displayName) { return type.displayName; }
-    return type;
-  });
+  if (_.isArray(type)) {
+    types = type.map(t => {
+      return getDisplayName(t);
+    });
+  } else {
+    types = [getDisplayName(type)];
+  }
 
   React.Children.forEach(children, child => {
     if (child && child.type && child.type.displayName

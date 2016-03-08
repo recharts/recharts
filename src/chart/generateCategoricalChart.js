@@ -68,7 +68,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     state = {
       dataStartIndex: 0,
-      dataEndIndex: this.props.data.length - 1,
+      dataEndIndex: (this.props.data && (this.props.data.length - 1)) || 0,
       activeTooltipIndex: -1,
       activeTooltipLabel: '',
       activeTooltipCoord: { x: 0, y: 0 },
@@ -79,7 +79,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       if (nextProps.data !== this.props.data) {
         this.setState({
           dataStartIndex: 0,
-          dataEndIndex: nextProps.data.length - 1,
+          dataEndIndex: (nextProps.data && (nextProps.data.length - 1)) || 0,
         });
       }
     }

@@ -11,13 +11,13 @@ class ZAxis extends Component {
 
   static propTypes = {
     // The name of data displayed in the axis
-    name: PropTypes.any,
+    name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // The unit of data displayed in the axis
-    unit: PropTypes.any,
+    unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // The unique id of z-axis
-    zAxisId: PropTypes.number,
+    zAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // The key of data displayed in the axis
-    dataKey: PropTypes.string,
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // The range of axis
     range: PropTypes.arrayOf(PropTypes.number),
   };

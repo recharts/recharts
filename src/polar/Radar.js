@@ -97,7 +97,7 @@ class Radar extends Component {
     } else if (_.isFunction(option)) {
       return option(props);
     } else {
-      return <text {...labelProps} className="recharts-radar-label">{value}</text>;
+      return <text {...props} className="recharts-radar-label">{value}</text>;
     }
   }
 
@@ -131,7 +131,7 @@ class Radar extends Component {
     } else if (_.isFunction(option)) {
       return option(props);
     } else {
-      return <Dot {...dotProps} className="recharts-radar-dot"/>;
+      return <Dot {...props} className="recharts-radar-dot"/>;
     }
   }
 

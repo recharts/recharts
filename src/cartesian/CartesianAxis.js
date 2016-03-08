@@ -260,9 +260,6 @@ class CartesianAxis extends Component {
 
   renderTicks() {
     const { ticks, tickLine, stroke, tick, tickFormatter } = this.props;
-
-    if (!ticks || !ticks.length) { return null; }
-
     const finalTicks = CartesianAxis.getTicks(this.props);
     const textAnchor = this.getTickTextAnchor();
     const axisProps = getPresentationAttributes(this.props);

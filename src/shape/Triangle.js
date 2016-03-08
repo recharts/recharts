@@ -31,7 +31,6 @@ class Rectangle extends Component {
   };
 
   getPath(points) {
-    if (!points || !points.length) { return ''; }
 
     const ary = points.map(entry => `${entry.x} ${entry.y}`);
 
@@ -40,6 +39,8 @@ class Rectangle extends Component {
 
   render() {
     const { points, radius, className } = this.props;
+    if (!points || !points.length) { return null; }
+
     const layerClass = classNames('recharts-triangle', className);
 
     return (

@@ -1,37 +1,42 @@
 // cartesian system chart component
-const XAxisSpec = require('./specs/cartesian/XAxisSpec.js');
-const YAxisSpec = require('./specs/cartesian/YAxisSpec.js');
-const ZAxisSpec = require('./specs/cartesian/ZAxisSpec.js');
-const BrushSpec = require('./specs/cartesian/BrushSpec.js');
-const CartesianAxisSpec = require('./specs/cartesian/CartesianAxisSpec.js');
-const CartesianGridSpec = require('./specs/cartesian/CartesianGridSpec.js');
-const ReferenceLineSpec = require('./specs/cartesian/ReferenceLineSpec.js');
-const ReferenceDotSpec = require('./specs/cartesian/ReferenceDotSpec.js');
+const XAxisSpec = require('./specs/cartesian/XAxisSpec');
+const YAxisSpec = require('./specs/cartesian/YAxisSpec');
+const ZAxisSpec = require('./specs/cartesian/ZAxisSpec');
+const BrushSpec = require('./specs/cartesian/BrushSpec');
+const CartesianAxisSpec = require('./specs/cartesian/CartesianAxisSpec');
+const CartesianGridSpec = require('./specs/cartesian/CartesianGridSpec');
+const ReferenceLineSpec = require('./specs/cartesian/ReferenceLineSpec');
+const ReferenceDotSpec = require('./specs/cartesian/ReferenceDotSpec');
+
+// polar system chart component
+const PolarRadiusAxisSpec = require('./specs/polar/PolarRadiusAxisSpec');
+const PolarGridSpec = require('./specs/polar/PolarGridSpec');
 
 // chart
-const AreaChartSpec = require('./specs/chart/AreaChartSpec.js');
-const BarChartSpec = require('./specs/chart/BarChartSpec.js');
-const LineChartSpec = require('./specs/chart/LineChartSpec.js');
-const PieChartSpec = require('./specs/chart/PieChartSpec.js');
-const RadarChartSpec = require('./specs/chart/RadarChartSpec.js');
-const ScatterChartSpec = require('./specs/chart/ScatterChartSpec.js');
-const TreemapSpec = require('./specs/chart/TreemapSpec.js');
-const RadialBarChartSpec = require('./specs/chart/RadialBarChartSpec.js');
-const ComposedChartSpec = require('./specs/chart/ComposedChartSpec.js');
+const AreaChartSpec = require('./specs/chart/AreaChartSpec');
+const BarChartSpec = require('./specs/chart/BarChartSpec');
+const LineChartSpec = require('./specs/chart/LineChartSpec');
+const PieChartSpec = require('./specs/chart/PieChartSpec');
+const RadarChartSpec = require('./specs/chart/RadarChartSpec');
+const ScatterChartSpec = require('./specs/chart/ScatterChartSpec');
+const TreemapSpec = require('./specs/chart/TreemapSpec');
+const RadialBarChartSpec = require('./specs/chart/RadialBarChartSpec');
+const ComposedChartSpec = require('./specs/chart/ComposedChartSpec');
 
 // general component
-const LegendSpec = require('./specs/component/LegendSpec.js');
-const TooltipSpec = require('./specs/component/TooltipSpec.js');
-const ResponsiveContainerSpec = require('./specs/component/ResponsiveContainerSpec.js');
+const LegendSpec = require('./specs/component/LegendSpec');
+const TooltipSpec = require('./specs/component/TooltipSpec');
+const ResponsiveContainerSpec = require('./specs/component/ResponsiveContainerSpec');
 
 // shape
-const CrossSpec = require('./specs/shape/CrossSpec.js');
-const CurveSpec = require('./specs/shape/CurveSpec.js');
-const DotSpec = require('./specs/shape/DotSpec.js');
-const RectangleSpec = require('./specs/shape/RectangleSpec.js');
-const SectorSpec = require('./specs/shape/SectorSpec.js');
-const TriangleSpec = require('./specs/shape/TriangleSpec.js');
+const CrossSpec = require('./specs/shape/CrossSpec');
+const CurveSpec = require('./specs/shape/CurveSpec');
+const DotSpec = require('./specs/shape/DotSpec');
+const RectangleSpec = require('./specs/shape/RectangleSpec');
+const SectorSpec = require('./specs/shape/SectorSpec');
+const TriangleSpec = require('./specs/shape/TriangleSpec');
+const PolygonSpec = require('./specs/shape/PolygonSpec');
 
 // util
-const DataUtils = require('./specs/util/DataUtils.js');
-const ReactUtils = require('./specs/util/ReactUtils.js');
+const DataUtils = require('./specs/util/DataUtils');
+const ReactUtilsSpec = require('./specs/util/ReactUtilsSpec');

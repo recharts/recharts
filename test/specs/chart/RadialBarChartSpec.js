@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { RadialBarChart, RadialBar, Legend } from 'recharts';
+import { RadialBarChart, RadialBar, Legend, Sector, Tooltip } from 'recharts';
 import { mount, render } from 'enzyme';
 
 describe('<RadialBarChart />', () => {
@@ -14,47 +14,241 @@ describe('<RadialBarChart />', () => {
     { name: 'unknow', uv: 6.67, pv: 4800, fill: '#ffc658' },
   ];
 
-  const style = {
-    top: 0,
-    left: 350,
-    lineHeight: '24px',
-  };
-
-  const label = { orient: 'outer' };
-
-  const wrapper = render(
-    <RadialBarChart width={500}
-      height={300}
-      cx={150}
-      cy={150}
-      innerRadius={20}
-      outerRadius={140}
-      barSize={10}
-      data={data}
-    >
-      <RadialBar minAngle={15}
-        label={label}
-        background
-        clockWise
-        dataKey="uv"
-        isAnimationActive={false}
-      />
-      <Legend iconSize={10}
-        width={120}
-        height={140}
-        layout="vertical"
-        verticalAlign="middle"
-        wrapperStyle={style}
-      />
-    </RadialBarChart>
-  );
-
-  it('renders 7 sectors in simple RadialBarChart', () => {
+  it('Renders 7 sectors in simple RadialBarChart', () => {
+    const label = { orientation: 'outer' };
+    const wrapper = render(
+      <RadialBarChart
+        width={500}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        barSize={10}
+        data={data}
+      >
+        <RadialBar
+          minAngle={15}
+          label={label}
+          background
+          clockWise
+          dataKey="uv"
+          isAnimationActive={false}
+        />
+      </RadialBarChart>
+    );
     expect(wrapper.find('.recharts-radial-bar-sector').length).to.equal(7);
   });
 
-  it('renders 7 legend items', () => {
+  it('Don\'t renders any sectors when no RadialBar is added', () => {
+    const label = { orientation: 'outer' };
+    const wrapper = render(
+      <RadialBarChart
+        width={500}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        barSize={10}
+        data={data}
+      >
+      </RadialBarChart>
+    );
+    expect(wrapper.find('.recharts-radial-bar-sector').length).to.equal(0);
+  });
+
+  it('Don\'t renders any sectors when width or height is smaller than 0', () => {
+    const label = { orientation: 'outer' };
+    const wrapper = render(
+      <RadialBarChart
+        width={0}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        barSize={10}
+        data={data}
+      >
+      </RadialBarChart>
+    );
+    expect(wrapper.find('.recharts-radial-bar-sector').length).to.equal(0);
+  });
+
+  it('Renders sectors when barSize is not specified', () => {
+    const label = { orientation: 'outer' };
+    const wrapper = render(
+      <RadialBarChart
+        width={500}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        data={data}
+      >
+        <RadialBar
+          minAngle={15}
+          label={label}
+          background
+          clockWise
+          dataKey="uv"
+          isAnimationActive={false}
+        />
+      </RadialBarChart>
+    );
+    expect(wrapper.find('.recharts-radial-bar-sector').length).to.equal(7);
+  });
+
+  it('Renders 7 sectors in simple RadialBarChart', () => {
+    const label = { orientation: 'outer' };
+    const wrapper = render(
+      <RadialBarChart
+        width={500}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        barSize={10}
+        data={data}
+      >
+        <RadialBar
+          startAngle={0}
+          endAngle={180}
+          minAngle={15}
+          label={label}
+          background
+          clockWise
+          dataKey="uv"
+          isAnimationActive={false}
+        />
+      </RadialBarChart>
+    );
+    expect(wrapper.find('.recharts-radial-bar-sector').length).to.equal(7);
+  });
+
+  it('Renders 7 customized shape when shape is set to be a react element', () => {
+    const label = { orientation: 'outer' };
+    const Shape = (props) => {
+      return <Sector {...props} className="customized-shape"/>;
+    };
+    const wrapper = render(
+      <RadialBarChart
+        width={500}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        barSize={10}
+        data={data}
+      >
+        <RadialBar
+          shape={<Shape/>}
+          minAngle={15}
+          label={label}
+          background
+          clockWise
+          dataKey="uv"
+          isAnimationActive={false}
+        />
+      </RadialBarChart>
+    );
+    expect(wrapper.find('.customized-shape').length).to.equal(7);
+  });
+
+  it('Renders 7 customized shape when shape is set to be a function', () => {
+    const label = { orientation: 'outer' };
+    const renderShape = (props) => {
+      return <Sector {...props} className="customized-shape"/>;
+    };
+    const wrapper = render(
+      <RadialBarChart
+        width={500}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        barSize={10}
+        data={data}
+      >
+        <RadialBar
+          shape={renderShape}
+          minAngle={15}
+          label={label}
+          background
+          clockWise
+          dataKey="uv"
+          isAnimationActive={false}
+        />
+      </RadialBarChart>
+    );
+    expect(wrapper.find('.customized-shape').length).to.equal(7);
+  });
+
+  it('Renders 7 legend item when add a Legend element', () => {
+    const wrapper = render(
+      <RadialBarChart
+        width={500}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        barSize={10}
+        data={data}
+      >
+        <RadialBar
+          minAngle={15}
+          background
+          clockWise
+          dataKey="uv"
+          isAnimationActive={false}
+        />
+        <Legend />
+      </RadialBarChart>
+    );
+    expect(wrapper.find('.recharts-legend-wrapper').length).to.equal(1);
     expect(wrapper.find('.recharts-legend-item').length).to.equal(7);
   });
+
+  it('Renders tooltip when add a Tooltip element', () => {
+    const wrapper = mount(
+      <RadialBarChart
+        width={500}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        barSize={10}
+        data={data}
+      >
+        <RadialBar
+          minAngle={15}
+          background
+          clockWise
+          dataKey="uv"
+          isAnimationActive={false}
+        />
+        <Tooltip />
+      </RadialBarChart>
+    );
+    wrapper.setState({
+      isTooltipActive: true,
+      activeTooltipCoord: {
+        x: 95,
+        y: 21,
+      },
+      activeTooltipLabel: 'test',
+      activeTooltipPayload: [{name: 'test', value: 1}],
+    });
+    expect(wrapper.find('.recharts-tooltip-wrapper').length).to.equal(1);
+    expect(wrapper.find('.recharts-default-tooltip').length).to.equal(1);
+  });
+
 
 });

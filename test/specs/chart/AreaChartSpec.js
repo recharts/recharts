@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { AreaChart, Area } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis } from 'recharts';
 import { mount, render, spy } from 'enzyme';
 import sinon from 'sinon';
 
@@ -12,7 +12,7 @@ describe('<AreaChart />', () => {
     {name: 'Page E', uv: 278, pv: 3908, amt: 2400},
     {name: 'Page F', uv: 189, pv: 4800, amt: 2400}];
 
-  it('renders 2 path in simple AreaChart', () => {
+  it('Renders 2 path in simple AreaChart', () => {
     let wrapper = render(
       <AreaChart width={100} height={50} data={data}>
         <Area type='monotone' dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
@@ -22,10 +22,33 @@ describe('<AreaChart />', () => {
     expect(wrapper.find('.recharts-area-curve').length).to.equal(1);
   });
 
-  it('renders dots and labels when dot is setted to true', () => {
+  it('Renders 4 path in a stacked AreaChart', () => {
     let wrapper = render(
       <AreaChart width={100} height={50} data={data}>
-        <Area type='monotone' dot label dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
+        <Area type='monotone' dataKey='uv' stackId="test" stroke='#ff7300' fill='#ff7300'/>
+        <Area type='monotone' dataKey='pv' stackId="test" stroke='#ff7300' fill='#ff7300'/>
+      </AreaChart>
+    );
+    expect(wrapper.find('.recharts-area-area').length).to.equal(2);
+    expect(wrapper.find('.recharts-area-curve').length).to.equal(2);
+  });
+
+  it('Renders 4 path in a vertical AreaChart', () => {
+    let wrapper = render(
+      <AreaChart width={100} height={50} data={data} layout="vertical">
+        <XAxis type="number"/>
+        <YAxis dataKey="name" type="category"/>
+        <Area type='monotone' dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
+      </AreaChart>
+    );
+    expect(wrapper.find('.recharts-area-area').length).to.equal(1);
+    expect(wrapper.find('.recharts-area-curve').length).to.equal(1);
+  });
+
+  it('Renders dots and labels when dot is setted to true', () => {
+    let wrapper = render(
+      <AreaChart width={100} height={50} data={data}>
+        <Area isAnimationActive={false} type='monotone' dot label dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
       </AreaChart>
     );
     expect(wrapper.find('.recharts-area-dots').length).to.equal(1);

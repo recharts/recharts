@@ -24,8 +24,8 @@ class Line extends Component {
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    yAxisId: PropTypes.number,
-    xAxisId: PropTypes.number,
+    yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     legendType: PropTypes.string,
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
 
@@ -146,6 +146,12 @@ class Line extends Component {
   }
 
   renderLabels() {
+    const { isAnimationActive } = this.props;
+
+    if (isAnimationActive && !this.state.isAnimationFinished) {
+      return null;
+    }
+
     const { points, label } = this.props;
     const lineProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);
@@ -200,7 +206,7 @@ class Line extends Component {
       return this.renderDotItem(dot, dotProps);
     });
 
-    return <Layer className="recharts-line-dots">{dots}</Layer>;
+    return <Layer className="recharts-line-dots" key="dots">{dots}</Layer>;
   }
 
   renderCurve() {
@@ -264,10 +270,7 @@ class Line extends Component {
   }
 
   render() {
-    const {
-      dot, points, label, className,
-      onClick, onMouseEnter, onMouseLeave,
-    } = this.props;
+    const { dot, points, label, className } = this.props;
 
     if (!points || !points.length) {
       return null;

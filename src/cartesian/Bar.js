@@ -38,7 +38,7 @@ class Bar extends Component {
       width: PropTypes.number,
       height: PropTypes.number,
       radius: PropTypes.oneOfType([PropTypes.number, PropTypes.array]),
-      value: PropTypes.value,
+      value: PropTypes.oneOfType([PropTypes.number, PropTypes.array]),
     })),
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
@@ -126,7 +126,11 @@ class Bar extends Component {
     } else if (_.isFunction(option)) {
       return option(props);
     } else {
-      return <text {...props} className="recharts-bar-label">{value}</text>;
+      return (
+        <text {...props} className="recharts-bar-label">
+          {_.isArray(value) ? value[1] : value}
+        </text>
+      );
     }
   }
 

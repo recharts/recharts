@@ -23,8 +23,8 @@ class Area extends Component {
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    yAxisId: PropTypes.number,
-    xAxisId: PropTypes.number,
+    yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     legendType: PropTypes.string,
     formatter: PropTypes.func,
@@ -44,7 +44,7 @@ class Area extends Component {
     points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
-      value: PropTypes.value,
+      value: PropTypes.oneOfType([PropTypes.number, PropTypes.array]),
     })),
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
@@ -69,14 +69,19 @@ class Area extends Component {
     dot: false,
     label: false,
     curve: true,
-    onClick() {},
-    onMouseEnter() {},
-    onMouseLeave() {},
 
     isAnimationActive: true,
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
+  };
+
+  state = {
+    isAnimationFinished: false,
+  };
+
+  handleAnimationEnd = () => {
+    this.setState({ isAnimationFinished: true });
   };
 
   renderCurve(points, opacity) {
@@ -94,8 +99,7 @@ class Area extends Component {
 
     return (
       <g>
-        {
-          curve &&
+        { curve && (
           <Curve {...getPresentationAttributes(this.props)}
             className="recharts-area-curve"
             layout={layout}
@@ -103,7 +107,7 @@ class Area extends Component {
             fill="none"
             { ...animProps }
           />
-        }
+        )}
         <Curve { ...this.props }
           stroke="none"
           className="recharts-area-area"
@@ -115,16 +119,8 @@ class Area extends Component {
 
   renderAreaCurve() {
     const { points, ...rest } = this.props;
-    const {
-      type,
-      layout,
-      baseLine,
-      curve,
-      isAnimationActive,
-      animationBegin,
-      animationDuration,
-      animationEasing,
-    } = this.props;
+    const { type, layout, baseLine, curve, isAnimationActive,
+      animationBegin, animationDuration, animationEasing } = this.props;
 
     if (points.length === 1) {
       return null;
@@ -135,6 +131,7 @@ class Area extends Component {
       begin: animationBegin,
       easing: animationEasing,
       duration: animationDuration,
+      onAnimationEnd: this.handleAnimationEnd,
     };
 
     if (!baseLine || !baseLine.length) {
@@ -185,6 +182,11 @@ class Area extends Component {
   }
 
   renderDots() {
+    const { isAnimationActive } = this.props;
+
+    if (isAnimationActive && !this.state.isAnimationFinished) {
+      return null;
+    }
     const { dot, points } = this.props;
     const areaProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
@@ -213,11 +215,20 @@ class Area extends Component {
     } else if (_.isFunction(option)) {
       return option(props);
     } else {
-      return <text {...props} className="recharts-area-label">{value}</text>;
+      return (
+        <text {...props} className="recharts-area-label">
+          {_.isArray(value) ? value[1] : value}
+        </text>
+      );
     }
   }
 
   renderLabels() {
+    const { isAnimationActive } = this.props;
+
+    if (isAnimationActive && !this.state.isAnimationFinished) {
+      return null;
+    }
     const { points, label } = this.props;
     const areaProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);

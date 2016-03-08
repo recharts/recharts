@@ -12,17 +12,17 @@ class XAxis extends Component {
   static propTypes = {
     hide: PropTypes.bool,
     // The name of data displayed in the axis
-    name: PropTypes.any,
+    name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // The unit of data displayed in the axis
-    unit: PropTypes.any,
+    unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // The unique id of x-axis
-    xAxisId: PropTypes.number,
+    xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     domain: PropTypes.arrayOf(PropTypes.oneOfType([
       PropTypes.number,
       PropTypes.oneOf(['auto', 'dataMin', 'dataMax']),
     ])),
     // The key of data displayed in the axis
-    dataKey: PropTypes.string,
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // The width of axis which is usually calculated internally
     width: PropTypes.number,
     // The height of axis, which need to be setted by user
