@@ -4,8 +4,11 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import { getPercentValue } from '../util/DataUtils';
-import OuiDomUtils from 'oui-dom-utils';
 import { warn } from '../util/LogUtils';
+import OuiDomUtils from 'oui-dom-utils';
+import {
+  addResizeListener, removeResizeListener
+} from 'react-virtualized/dist/commonjs/vendor/detectElementResize';
 
 @pureRender
 class ResponsiveContainer extends Component {
@@ -28,11 +31,11 @@ class ResponsiveContainer extends Component {
 
   componentDidMount() {
     this.updateSizeOfWrapper();
-    window.addEventListener('resize', this.updateSizeOfWrapper);
+    addResizeListener(this.refs.container, this.updateSizeOfWrapper);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.updateSizeOfWrapper);
+    removeEventListener(this.refs.container, this.updateSizeOfWrapper);
   }
 
   updateSizeOfWrapper = () => {
