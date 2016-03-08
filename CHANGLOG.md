@@ -1,3 +1,18 @@
+## 0.8.5 (March 08, 2016)
+
+### feat
+
+- Add support of function type customized element
+
+### fix
+
+- fix the props labelLine in Pie
+- fix the bug of PureRender
+
+### test
+
+- Add more test cases
+
 ## 0.8.4 (March 02, 2016)
 
 ### refactor
