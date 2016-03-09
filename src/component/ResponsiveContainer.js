@@ -6,9 +6,7 @@ import pureRender from '../util/PureRender';
 import { getPercentValue } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import OuiDomUtils from 'oui-dom-utils';
-import {
-  addResizeListener, removeResizeListener
-} from 'react-virtualized/dist/commonjs/vendor/detectElementResize';
+import { addResizeListener, removeResizeListener } from '../util/detectElementResize';
 
 @pureRender
 class ResponsiveContainer extends Component {

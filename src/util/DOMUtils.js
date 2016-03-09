@@ -1,3 +1,5 @@
+import { isSsr } from './ReactUtils';
+
 const stringCache = {
   widthCache: {},
   cacheCount: 0,
@@ -52,7 +54,7 @@ export const getStyleString = (style) => {
 };
 
 export const getStringSize = (text, style = {}) => {
-  if (text === undefined || text === null || typeof document === 'undefined') {return 0;}
+  if (text === undefined || text === null || isSsr()) {return 0;}
 
   const str = `${text}`;
   const styleString = getStyleString(style);

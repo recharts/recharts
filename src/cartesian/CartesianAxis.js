@@ -5,7 +5,8 @@ import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import { getStringSize } from '../util/DOMUtils';
 import Layer from '../container/Layer';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { isSsr, PRESENTATION_ATTRIBUTES,
+  getPresentationAttributes } from '../util/ReactUtils';
 import _ from 'lodash';
 
 @pureRender
@@ -73,8 +74,8 @@ class CartesianAxis extends Component {
 
     if (!ticks || !ticks.length) { return [];}
 
-    return interval === +interval
-        ? CartesianAxis.getNumberIntervalTicks(ticks, interval)
+    return (interval === +interval || isSsr())
+        ? CartesianAxis.getNumberIntervalTicks(ticks, interval === +interval ? +interval : 0)
         : CartesianAxis.getAutoIntervalTicks(ticks, viewBox, orientation, minTickGap);
   }
 

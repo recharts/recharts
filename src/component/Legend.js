@@ -7,6 +7,7 @@ import ReactDOMServer from 'react-dom/server';
 import Surface from '../container/Surface';
 import DefaultLegendContent from './DefaultLegendContent';
 import { getStyleString } from '../util/DOMUtils';
+import { isSsr } from '../util/ReactUtils';
 import _ from 'lodash';
 
 const SIZE = 32;
@@ -74,7 +75,7 @@ class Legend extends Component {
   }
 
   static getLegendBBox(props) {
-    if (typeof document !== 'undefined') {
+    if (!isSsr()) {
       const { content, width, height, wrapperStyle } = props;
       const contentHtml = ReactDOMServer.renderToStaticMarkup(renderContent(content, props));
       const style = {

@@ -6,6 +6,7 @@ import pureRender from '../util/PureRender';
 import ReactDOMServer from 'react-dom/server';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import { getStyleString } from '../util/DOMUtils';
+import { isSsr } from '../util/ReactUtils';
 import _ from 'lodash';
 
 const propTypes = {
@@ -54,7 +55,7 @@ const defaultProps = {
 };
 
 const getTooltipBBox = (wrapperStyle, contentItem) => {
-  if (typeof document !== 'undefined') {
+  if (!isSsr()) {
     const contentHtml = ReactDOMServer.renderToStaticMarkup(contentItem);
     const style = { ...wrapperStyle, top: -20000, left: 0, display: 'block' };
 

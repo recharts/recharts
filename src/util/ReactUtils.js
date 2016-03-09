@@ -226,3 +226,7 @@ export const validateWidthHeight = (el) => {
   return true;
 };
 
+export const isSsr = () => {
+  return typeof document === 'undefined';
+}
+
