@@ -1,3 +1,13 @@
+## 0.8.6 (March 09, 2016)
+
+### refactor
+
+- Use detectElementResize in react-virtualized to refactor ResponsiveContainer
+
+### fix
+
+- Fix ssr render bug of CartesianAxis
+
 ## 0.8.5 (March 08, 2016)
 
 ### feat
