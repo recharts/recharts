@@ -56,16 +56,57 @@ describe('<ReferenceDot />', () => {
     expect(wrapper.find('.recharts-reference-dot-dot').length).to.equal(1);
     expect(wrapper.find('.recharts-reference-dot-label').length).to.equal(1);
   });
-  it("Render custom lable when label is set to react element", () => {
-    const Label = ({ text, ...props }) => <text {...props} >{text}</text>;
+
+  it("Render custom lable when label is set to be a react element", () => {
+    const Label = ({ text, ...props }) => <text className="customized-label" {...props} >{text}</text>;
     const wrapper = render(
       <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
         <XAxis dataKey="name"/>
         <YAxis tickCount={7}/>
         <Bar dataKey="uv"/>
-        <ReferenceDot x="201106" y={20} stroke="#666" label={<Label text="Custom Text" />}  alwaysShow/>
+        <ReferenceDot x="201106" y={20} stroke="#666" label={<Label text="Custom Text" />} alwaysShow/>
       </BarChart>
     );
-    expect(wrapper.find('.recharts-reference-dot text').text()).to.equal('Custom Text');
+    expect(wrapper.find('.customized-label').text()).to.equal('Custom Text');
+  });
+
+  it("Render custom lable when label is set to be a function", () => {
+    const renderLabel = ({ text, ...props }) => <text className="customized-label" {...props} >Custom Text</text>;
+    const wrapper = render(
+      <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
+        <XAxis dataKey="name"/>
+        <YAxis tickCount={7}/>
+        <Bar dataKey="uv"/>
+        <ReferenceDot x="201106" y={20} stroke="#666" label={renderLabel} alwaysShow/>
+      </BarChart>
+    );
+    expect(wrapper.find('.customized-label').text()).to.equal('Custom Text');
+  });
+
+  it("Don\'t render any label when label is a plain object", () => {
+    const renderLabel = ({ text, ...props }) => <text className="customized-label" {...props} >Custom Text</text>;
+    const wrapper = render(
+      <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
+        <XAxis dataKey="name"/>
+        <YAxis tickCount={7}/>
+        <Bar dataKey="uv"/>
+        <ReferenceDot x="201106" y={20} stroke="#666" label={{}} alwaysShow/>
+      </BarChart>
+    );
+    expect(wrapper.find('.recharts-reference-dot-label').length).to.equal(0);
+  });
+
+  it("Don\'t render any dot when x or y is not specified", () => {
+    const renderLabel = ({ text, ...props }) => <text className="customized-label" {...props} >Custom Text</text>;
+    const wrapper = render(
+      <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
+        <XAxis dataKey="name"/>
+        <YAxis tickCount={7}/>
+        <Bar dataKey="uv"/>
+        <ReferenceDot x="201106" stroke="#666" alwaysShow/>
+        <ReferenceDot y={20} stroke="#666" alwaysShow/>
+      </BarChart>
+    );
+    expect(wrapper.find('.recharts-reference-dot-dot').length).to.equal(0);
   });
 });

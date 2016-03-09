@@ -23,10 +23,8 @@ describe('ScatterChart of three dimension data', () => {
     { x: 210, y: 220, z: 230 },
   ];
 
-  let wrapper;
-
-  beforeEach(() => {
-    wrapper = mount(
+  it('render 2 Scatter, 2 CartesianAxis, 1 CartesianGrid', () => {
+    const wrapper = mount(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis dataKey={"x"} name="stature" unit="cm"/>
         <YAxis dataKey={"y"} name="weight" unit="kg"/>
@@ -37,15 +35,39 @@ describe('ScatterChart of three dimension data', () => {
         <Tooltip/>
       </ScatterChart>
     );
-  });
 
-  it('render 2 Scatter, 2 CartesianAxis, 1 CartesianGrid', () => {
     expect(wrapper.find(Scatter).length).to.equal(2);
     expect(wrapper.find(CartesianAxis).length).to.equal(2);
     expect(wrapper.find(CartesianGrid).length).to.equal(1);
   });
 
+  it('render 2 Scatter, 2 CartesianAxis, 1 CartesianGrid', () => {
+    const wrapper = render(
+      <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <XAxis dataKey={"x"} name="stature" unit="cm"/>
+        <YAxis dataKey={"y"} name="weight" unit="kg"/>
+        <ZAxis dataKey={"z"} range={[4, 20]} name="score" unit="km"/>
+        <CartesianGrid />
+        <Scatter name="A school" data={[]} fillOpactity={0.3} fill="#ff7300"/>
+        <Tooltip/>
+      </ScatterChart>
+    );
+
+    expect(wrapper.find('circle').length).to.equal(0);
+  });
+
   it('mouse enter on one circle will trigger one Cross', () => {
+    const wrapper = mount(
+      <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <XAxis dataKey={"x"} name="stature" unit="cm"/>
+        <YAxis dataKey={"y"} name="weight" unit="kg"/>
+        <ZAxis dataKey={"z"} range={[4, 20]} name="score" unit="km"/>
+        <CartesianGrid />
+        <Scatter name="A school" data={data01} fillOpactity={0.3} fill="#ff7300"/>
+        <Scatter name="B school" data={data02} fill="#347300"/>
+        <Tooltip/>
+      </ScatterChart>
+    );
     const circles = wrapper.find('circle');
     const firstCircle = circles.first();
     firstCircle.simulate('mouseEnter');

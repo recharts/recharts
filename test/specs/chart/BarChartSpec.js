@@ -22,6 +22,47 @@ describe('<BarChart />', () => {
     expect(wrapper.find('.recharts-rectangle').length).to.equal(8);
   });
 
+  it('Render 4 labels when label is setted to be true', () => {
+    const wrapper = render(
+      <BarChart width={100} height={50} data={data}>
+        <Bar isAnimationActive={false} dataKey="uv" label fill="#ff7300"/>
+      </BarChart>
+    );
+
+    expect(wrapper.find('.recharts-bar-rectangle-labels').length).to.equal(1);
+    expect(wrapper.find('.recharts-bar-label').length).to.equal(4);
+  });
+
+  it('Renders 4 bar labels when label is set to be a react element', () => {
+    const Label = (props) => {
+      const { x, y, index } = props;
+
+      return <text key={`label-${index}`} x={x} y={y} className="customized-label">test</text>
+    };
+    const wrapper = render(
+      <BarChart width={100} height={50} data={data}>
+        <Bar isAnimationActive={false} dataKey="uv" fill="#ff7300" label={<Label/>}/>
+      </BarChart>
+    );
+
+    expect(wrapper.find('.customized-label').length).to.equal(4);
+  });
+
+  it('Renders 4 bar labels when label is set to be a function', () => {
+    const renderLabel = (props) => {
+      const { x, y, index } = props;
+
+      return <text key={`label-${index}`} x={x} y={y} className="customized-label">test</text>
+    };
+    const wrapper = render(
+      <BarChart width={100} height={50} data={data}>
+        <Bar isAnimationActive={false} dataKey="uv" fill="#ff7300" label={renderLabel}/>
+      </BarChart>
+    );
+
+    expect(wrapper.find('.customized-label').length).to.equal(4);
+  });
+
   it('Don\'t renders any bars when no Bar item is added', () => {
     const wrapper = render(
       <BarChart width={100} height={50} data={data}>
@@ -77,24 +118,41 @@ describe('<BarChart />', () => {
     expect(wrapper.find('.recharts-tooltip-wrapper').length).to.equal(1);
   });
 
-  it('renders 4 labels when label is setted to be true', () => {
-    const wrapper = render(
-      <BarChart width={100} height={50} data={data}>
-        <Bar isAnimationActive={false} dataKey="uv" label fill="#ff7300"/>
-      </BarChart>
-    );
-
-    expect(wrapper.find('.recharts-bar-rectangle-labels').length).to.equal(1);
-    expect(wrapper.find('.recharts-bar-label').length).to.equal(4);
-  });
-
-  it('renders empty when data is empty', () => {
+  it('Render empty when data is empty', () => {
     const wrapper = render(
       <BarChart width={100} height={50} data={[]}>
         <Bar dataKey="uv" label fill="#ff7300"/>
       </BarChart>
     );
-
     expect(wrapper.find('path').length).to.equal(0);
   });
+
+  it('Render customized shapem when shape is set to be a react element', () => {
+    const Shape = (props) => {
+      const {x, y, width, height} = props;
+
+      return <circle className="customized-shape" cx={x} cy={y} r={8}/>
+    }
+    const wrapper = render(
+      <BarChart width={100} height={50} data={data}>
+        <Bar dataKey="uv" label fill="#ff7300" shape={<Shape/>}/>
+      </BarChart>
+    );
+    expect(wrapper.find('.customized-shape').length).to.equal(4);
+  });
+
+  it('Render customized shapem when shape is set to be a function', () => {
+    const renderShape = (props) => {
+      const {x, y, width, height} = props;
+
+      return <circle className="customized-shape" cx={x} cy={y} r={8}/>
+    }
+    const wrapper = render(
+      <BarChart width={100} height={50} data={data}>
+        <Bar dataKey="uv" label fill="#ff7300" shape={renderShape}/>
+      </BarChart>
+    );
+    expect(wrapper.find('.customized-shape').length).to.equal(4);
+  });
+
 });

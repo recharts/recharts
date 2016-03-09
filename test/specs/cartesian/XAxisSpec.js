@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { ScatterChart, Scatter, LineChart, Line, XAxis, YAxis, CartesianAxis } from 'recharts';
+import { Surface, ScatterChart, Scatter, LineChart, Line, XAxis, YAxis, CartesianAxis } from 'recharts';
 import { mount, render } from 'enzyme';
 
 describe('<XAxis />', () => {
@@ -22,7 +22,7 @@ describe('<XAxis />', () => {
   ];
 
 
-  it('renders 1 x-CartesianAxis and 1 y-CartesianAxis ticks in ScatterChart', () => {
+  it('Render 1 x-CartesianAxis and 1 y-CartesianAxis ticks in ScatterChart', () => {
     const wrapper = mount(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis dataKey={"x"} name="stature" unit="cm"/>
@@ -33,7 +33,18 @@ describe('<XAxis />', () => {
     expect(wrapper.find(CartesianAxis).length).to.equal(2);
   });
 
-  it('Not render x-axis when hide is setted to be true', () => {
+  it('Don\'t render anything', () => {
+    const wrapper = render(
+      <Surface width={500} height={500}>
+        <XAxis dataKey={"x"} name="stature" unit="cm"/>
+      </Surface>
+    );
+
+    expect(wrapper.find('svg').children.length).to.equal(1);
+    expect(wrapper.find('svg noscript').children.length).to.equal(1);
+  });
+
+  it('Don\'t render x-axis when hide is setted to be true', () => {
     const wrapper = render(
       <LineChart width={400} height={400} data={lineData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis hide/>

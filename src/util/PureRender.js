@@ -26,7 +26,7 @@ function shallowEqual(objA, objB) {
 
     // special diff with Array or Object
     if (_.isArray(objA[keyA])) {
-      if (!_.isArray(objB[keyA]) || objA[keyA].length !== objB[keyA]) {
+      if (!_.isArray(objB[keyA]) || objA[keyA].length !== objB[keyA].length) {
         return false;
       } else if (!_.isEqual(objA[keyA], objB[keyA])) {
         return false;
@@ -55,6 +55,5 @@ function shouldComponentUpdate(nextProps, nextState) {
 function pureRenderDecorator(component) {
   component.prototype.shouldComponentUpdate = shouldComponentUpdate;
 }
-
-
+export { shallowEqual };
 export default pureRenderDecorator;
