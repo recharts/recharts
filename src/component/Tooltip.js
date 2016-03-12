@@ -111,7 +111,7 @@ class Tooltip extends Component {
     outerStyle.top = Math.max(
       coordinate.y + box.height + offset > (viewBox.y + viewBox.height) ?
       coordinate.y - box.height - offset :
-      coordinate.y + offset, viewBox.x);
+      coordinate.y + offset, viewBox.y);
 
     return (
       <div className="recharts-tooltip-wrapper" style={outerStyle}>
