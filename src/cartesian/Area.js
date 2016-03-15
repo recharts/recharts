@@ -164,7 +164,7 @@ class Area extends Component {
               y: (y - baseLine[i].y) * alpha + baseLine[i].y,
             })
           ),
-          +(alpha > 0),
+          +(alpha > 0)
         )
       }
       </Animate>

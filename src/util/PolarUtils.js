@@ -10,5 +10,5 @@ export const getMaxRadius = (width, height, margin = {
 }) => (
   Math.min(
     Math.abs(width - (margin.left || 0) - (margin.right || 0)),
-    Math.abs(height - (margin.left || 0) - (margin.right || 0)),
+    Math.abs(height - (margin.left || 0) - (margin.right || 0))
   ) / 2);
