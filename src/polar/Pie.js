@@ -221,17 +221,23 @@ class Pie extends Component {
             duration={animationDuration}
             animationBegin={animationBegin}
             onAnimationEnd={this.handleAnimationEnd}
-            from={{ alpha: 0 }}
-            to = {{ alpha: 1 }}
+            from={{
+              endAngle: startAngle,
+            }}
+            to = {{
+              outerRadius: outerRadius + hoverOffset + selectedOffset,
+              innerRadius,
+              endAngle,
+            }}
           >
             {
-              ({ alpha }) => (
+              ({ outerRadius, innerRadius, endAngle }) => (
                 <Sector cx={cx}
                   cy={cy}
-                  outerRadius={(outerRadius + hoverOffset + selectedOffset) * alpha}
-                  innerRadius={innerRadius * alpha}
+                  outerRadius={outerRadius}
+                  innerRadius={innerRadius}
                   startAngle={startAngle}
-                  endAngle={(endAngle - startAngle) * alpha + startAngle}
+                  endAngle={endAngle}
                 />
               )
             }
