@@ -51,7 +51,7 @@
     "ima.js-babel6-polyfill": "0.1.1",
     "lodash": "4.6.1",
     "oui-dom-utils": "0.3.8",
-    "react-smooth": "0.0.11",
+    "react-smooth": "0.0.15",
     "recharts-scale": "0.1.8"
   },
   "devDependencies": {
