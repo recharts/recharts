@@ -15,22 +15,18 @@ var config = {
     loaders: [{
       test: /\.(js|jsx)$/,
       exclude: /node_modules/,
+      include: [
+        path.resolve(__dirname, 'src')
+      ],
       loader: 'babel',
     }],
-  },
-
-  resolve: {
-    extensions: ['', '.js', '.jsx'],
-    modules: [
-      path.resolve('./src'),
-      'node_modules'
-    ],
-    mainFields: ['jsnext:main', 'main'],
-    alias: {
-      'react': path.resolve(__dirname, './node_modules/react'),
-      'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
-      'react-addons-transition-group': path.resolve(__dirname, './node_modules/react-addons-transition-group'),
-    }
+    resolve: {
+      alias: {
+        'react': path.resolve(__dirname, './node_modules/react'),
+        'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
+        'react-addons-transition-group': path.resolve(__dirname, './node_modules/react-addons-transition-group'),
+      }
+    },
   },
 
   externals: {
@@ -55,10 +51,6 @@ var config = {
 
 if (env === 'production') {
   config.plugins.push(
-    new webpack.LoaderOptionsPlugin({
-      minimize: true,
-      debug: false
-    }),
     new webpack.optimize.UglifyJsPlugin({
       compressor: {
         pure_getters: true,
