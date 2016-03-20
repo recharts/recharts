@@ -98,7 +98,7 @@ class Scatter extends Component {
     const baseProps = getPresentationAttributes(this.props);
 
     return points.map((entry, i) => {
-      const { payload, r, ...rest } = entry;
+      const { r, ...rest } = entry;
 
       return (
         <Animate from="scale(0)" to="scale(1)"
@@ -143,7 +143,7 @@ class Scatter extends Component {
     } else if (_.isFunction(line)) {
       lineItem = line(lineProps);
     } else {
-      lineItem = <Curve {...lineProps} />
+      lineItem = <Curve {...lineProps} />;
     }
 
     return <Layer className="recharts-scatter-line">{lineItem}</Layer>;

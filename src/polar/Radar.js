@@ -33,10 +33,10 @@ class Radar extends Component {
     })),
     shape: PropTypes.element,
     dot: PropTypes.oneOfType([
-      PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool
+      PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool,
     ]),
     label: PropTypes.oneOfType([
-      PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool
+      PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool,
     ]),
 
     isAnimationActive: PropTypes.bool,
@@ -92,13 +92,17 @@ class Radar extends Component {
   }
 
   renderLabelItem(option, props, value) {
+    let labelItem;
+
     if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
+      labelItem = React.cloneElement(option, props);
     } else if (_.isFunction(option)) {
-      return option(props);
+      labelItem = option(props);
     } else {
-      return <text {...props} className="recharts-radar-label">{value}</text>;
+      labelItem = <text {...props} className="recharts-radar-label">{value}</text>;
     }
+
+    return labelItem;
   }
 
   renderLabels() {
@@ -126,13 +130,17 @@ class Radar extends Component {
   }
 
   renderDotItem(option, props) {
+    let dotItem;
+
     if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
+      dotItem = React.cloneElement(option, props);
     } else if (_.isFunction(option)) {
-      return option(props);
+      dotItem = option(props);
     } else {
-      return <Dot {...props} className="recharts-radar-dot"/>;
+      dotItem = <Dot {...props} className="recharts-radar-dot" />;
     }
+
+    return dotItem;
   }
 
   renderDots() {

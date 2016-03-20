@@ -118,8 +118,7 @@ class Area extends Component {
   }
 
   renderAreaCurve() {
-    const { points, ...rest } = this.props;
-    const { type, layout, baseLine, curve, isAnimationActive,
+    const { points, type, layout, baseLine, curve, isAnimationActive,
       animationBegin, animationDuration, animationEasing } = this.props;
 
     if (points.length === 1) {
@@ -172,13 +171,17 @@ class Area extends Component {
   }
 
   renderDotItem(option, props) {
+    let dotItem;
+
     if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
+      dotItem = React.cloneElement(option, props);
     } else if (_.isFunction(option)) {
-      return option(props);
+      dotItem = option(props);
     } else {
-      return <Dot {...props} className="recharts-area-dot" />;
+      dotItem = <Dot {...props} className="recharts-area-dot" />;
     }
+
+    return dotItem;
   }
 
   renderDots() {
@@ -203,24 +206,28 @@ class Area extends Component {
         playload: entry,
       };
 
-      return this.renderDotItem(dot, dotProps)
+      return this.renderDotItem(dot, dotProps);
     });
 
     return <Layer className="recharts-area-dots">{dots}</Layer>;
   }
 
   renderLabelItem(option, props, value) {
+    let labelItem;
+
     if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
+      labelItem = React.cloneElement(option, props);
     } else if (_.isFunction(option)) {
-      return option(props);
+      labelItem = option(props);
     } else {
-      return (
+      labelItem = (
         <text {...props} className="recharts-area-label">
           {_.isArray(value) ? value[1] : value}
         </text>
       );
     }
+
+    return labelItem;
   }
 
   renderLabels() {
@@ -251,7 +258,7 @@ class Area extends Component {
   }
 
   render() {
-    const { dot, curve, label, points, className, layout, ...other } = this.props;
+    const { dot, label, points, className } = this.props;
 
     if (!points || !points.length) { return null; }
 

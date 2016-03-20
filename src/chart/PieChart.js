@@ -110,11 +110,9 @@ class PieChart extends Component {
       const { nameKey } = child.props;
       const data = this.getComposedData(child);
 
-      return result.concat(data.map((entry) => {
-        const { name, value, ...rest } = entry;
-
-        return { value: entry[nameKey], color: entry.fill, ...rest };
-      }));
+      return result.concat(data.map((entry) => (
+        { value: entry[nameKey], color: entry.fill, ...entry }
+      )));
     }, []);
 
     return React.cloneElement(legendItem, {

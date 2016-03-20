@@ -524,7 +524,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         const displayName = this.constructor.displayName;
 
         warn(yAxes && yAxes.length,
-          `You should add <YAxis type="number"/> in ${displayName}.` +
+          `You should add <YAxis type="number" /> in ${displayName}.` +
           `The layout is vertical now, y-axis should be category axis,` +
           `but y-axis is number axis when no YAxis is added.`
         );

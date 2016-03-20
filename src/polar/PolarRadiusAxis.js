@@ -102,21 +102,25 @@ class PolarRadiusAxis extends Component {
       y2: point1.y,
     };
 
-    return <line className="recharts-polar-radius-axis-line" {...props}/>;
+    return <line className="recharts-polar-radius-axis-line" {...props} />;
   }
 
   renderTickItem(option, props, value) {
+    let tickItem;
+
     if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
+      tickItem = React.cloneElement(option, props);
     } else if (_.isFunction(option)) {
-      return option(props);
+      tickItem = option(props);
     } else {
-      return (
+      tickItem = (
         <text {...props} className="recharts-polar-radius-axis-tick-value">
           {value}
         </text>
       );
     }
+
+    return tickItem;
   }
 
   renderTicks() {
@@ -133,7 +137,7 @@ class PolarRadiusAxis extends Component {
         ...axisProps,
         stroke: 'none', fill: stroke,
         ...customTickProps,
-        index: i, payload: entry,
+        index: i,
         ...coord,
         payload: entry,
       };

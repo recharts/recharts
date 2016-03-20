@@ -30,7 +30,7 @@ class Bar extends Component {
 
     shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
     label: PropTypes.oneOfType([
-      PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element
+      PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element,
     ]),
     data: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
@@ -76,13 +76,17 @@ class Bar extends Component {
   };
 
   renderRectangle(option, props) {
+    let rectangle;
+
     if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
+      rectangle = React.cloneElement(option, props);
     } else if (_.isFunction(option)) {
-      return option(props);
+      rectangle = option(props);
     } else {
-      return <Rectangle {...props} className="recharts-bar-rectangle"/>;
+      rectangle = <Rectangle {...props} className="recharts-bar-rectangle" />;
     }
+
+    return rectangle;
   }
 
   renderRectangles() {
@@ -90,12 +94,12 @@ class Bar extends Component {
       animationDuration, animationEasing } = this.props;
     const baseProps = getPresentationAttributes(this.props);
     const getStyle = (isBegin) => ({
-      transform: `scale${layout === 'vertical' ? 'X' : 'Y'}(${isBegin ? 0 : 1})`,
+      transform: `scale${layout === 'vertical' ? 'X' : 'Y'} (${isBegin ? 0 : 1})`,
     });
 
     return data.map((entry, index) => {
       const { width, height } = entry;
-      const props = { ...baseProps, ...entry, index};
+      const props = { ...baseProps, ...entry, index };
       let transformOrigin = '';
 
       if (layout === 'vertical') {
@@ -121,17 +125,21 @@ class Bar extends Component {
   }
 
   renderLabelItem(option, props, value) {
+    let labelItem;
+
     if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
+      labelItem = React.cloneElement(option, props);
     } else if (_.isFunction(option)) {
-      return option(props);
+      labelItem = option(props);
     } else {
-      return (
+      labelItem = (
         <text {...props} className="recharts-bar-label">
           {_.isArray(value) ? value[1] : value}
         </text>
       );
     }
+
+    return labelItem;
   }
 
   renderLabels() {

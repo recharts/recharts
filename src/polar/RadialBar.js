@@ -83,7 +83,7 @@ class RadialBar extends Component {
     isAnimationFinished: false,
   };
 
-  handleAnimationEnd = () => {
+  handleAnimationEnd() {
     this.setState({ isAnimationFinished: true });
   };
 
@@ -190,13 +190,17 @@ class RadialBar extends Component {
   }
 
   renderSectorShape(shape, props) {
+    let sectorShape;
+
     if (React.isValidElement(shape)) {
-      return React.cloneElement(shape, props);
+      sectorShape = React.cloneElement(shape, props);
     } else if (_.isFunction(shape)) {
-      return shape(props);
+      sectorShape = shape(props);
     } else {
-      return React.createElement(Sector, props)
+      sectorShape = React.createElement(Sector, props);
     }
+
+    return sectorShape;
   }
 
   renderSectors(sectors) {
@@ -216,7 +220,7 @@ class RadialBar extends Component {
         isActive={isAnimationActive}
         duration={animationDuration}
         easing={animationEasing}
-        onAnimationEnd={this.handleAnimationEnd}
+        onAnimationEnd={::this.handleAnimationEnd}
       >
       {
         ({ alpha }) =>

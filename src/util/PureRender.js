@@ -18,7 +18,7 @@ function shallowEqual(objA, objB) {
 
   const bHasOwnProperty = hasOwnProperty.bind(objB);
   for (let i = 0; i < keysA.length; i++) {
-    let keyA = keysA[i];
+    const keyA = keysA[i];
 
     if (objA[keyA] === objB[keyA]) {
       continue;

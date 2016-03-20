@@ -35,13 +35,13 @@ const requestFrame = (fn) => {
   if (_window) {
     raf = _window.requestAnimationFrame || _window.mozRequestAnimationFrame ||
     _window.webkitRequestAnimationFrame || ((fn) => {
-      _window.setTimeout(fn, 20)
+      _window.setTimeout(fn, 20);
     });
   } else {
     raf = () => {};
   }
 
-  return raf(fn)
+  return raf(fn);
 };
 
 const cancelFrame = (id) => {
@@ -149,7 +149,7 @@ const detectCssAnimation = () => {
     animationKeyframes: '',
     animationStyle: '',
   };
-}
+};
 
 const createStyles = (animationKeyframes, animationStyle) => {
   if (!stylesCreated) {
@@ -213,7 +213,7 @@ const addResizeListener = (element, fn) => {
       element.addEventListener('scroll', scrollListener, true);
 
       /* Listen for a css animation to detect element display/re-attach */
-      animationstartevent && element.__resizeTriggers__.addEventListener(animationstartevent, function (e) {
+      animationstartevent && element.__resizeTriggers__.addEventListener(animationstartevent, (e) => {
         if (e.animationName == animationName) resetTriggers(element);
       });
     }

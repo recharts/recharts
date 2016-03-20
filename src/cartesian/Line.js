@@ -31,10 +31,10 @@ class Line extends Component {
 
      // whether have dot in line
     dot: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool
+      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
     ]),
     label: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool
+      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
     ]),
 
     points: PropTypes.arrayOf(PropTypes.shape({
@@ -106,7 +106,7 @@ class Line extends Component {
     const restLength = totalLength - length;
 
     let remainLines = [];
-    for (let i = 0, sum = 0; true; sum += lines[i], ++i) {
+    for (let i = 0, sum = 0; ; sum += lines[i], ++i) {
       if (sum + lines[i] > remainLength) {
         remainLines = [...lines.slice(0, i), remainLength - sum];
         break;
@@ -136,13 +136,17 @@ class Line extends Component {
   };
 
   renderLabelItem(option, props, value) {
+    let labelItem;
+
     if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
+      labelItem = React.cloneElement(option, props);
     } else if (_.isFunction(option)) {
-      return option(props);
+      labelItem = option(props);
     } else {
-      return <text {...props} className="recharts-line-label">{value}</text>;
+      labelItem = <text {...props} className="recharts-line-label">{value}</text>;
     }
+
+    return labelItem;
   }
 
   renderLabels() {
@@ -176,13 +180,17 @@ class Line extends Component {
   }
 
   renderDotItem(option, props) {
+    let dotItem;
+
     if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
+      dotItem = React.cloneElement(option, props);
     } else if (_.isFunction(option)) {
-      return option(props);
+      dotItem = option(props);
     } else {
-      return <Dot {...props} className="recharts-line-dot" />;
+      dotItem = <Dot {...props} className="recharts-line-dot" />;
     }
+
+    return dotItem;
   }
 
   renderDots() {
@@ -211,7 +219,7 @@ class Line extends Component {
 
   renderCurve() {
     const {
-      dot, points, label, className,
+      points, className,
       isAnimationActive, animationBegin, animationDuration, animationEasing,
       onClick, onMouseEnter, onMouseLeave,
       strokeDasharray,

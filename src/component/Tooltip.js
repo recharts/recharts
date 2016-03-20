@@ -76,7 +76,7 @@ const getTooltipBBox = (wrapperStyle, contentItem) => {
 
 const renderContent = (content, props) => {
   if (React.isValidElement(content)) {
-     return React.cloneElement(content, props);
+    return React.cloneElement(content, props);
   } else if (_.isFunction(content)) {
     return content(props);
   } else {

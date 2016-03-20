@@ -250,13 +250,17 @@ class CartesianAxis extends Component {
   }
 
   renderTickItem(option, props, value) {
+    let tickItem;
+
     if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
+      tickItem = React.cloneElement(option, props);
     } else if (_.isFunction(option)) {
-      return option(props);
+      tickItem = option(props);
     } else {
-      return <text {...props} className="recharts-cartesian-axis-tick-value">{value}</text>;
+      tickItem = <text {...props} className="recharts-cartesian-axis-tick-value">{value}</text>;
     }
+
+    return tickItem;
   }
 
   renderTicks() {

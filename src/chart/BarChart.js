@@ -219,7 +219,7 @@ class BarChart extends Component {
 
     return React.isValidElement(tooltipItem.props.cursor) ?
       React.cloneElement(tooltipItem.props.cursor, cursorProps) :
-      React.createElement(Rectangle, { ...cursorProps, className: 'recharts-bar-cursor'});
+      React.createElement(Rectangle, { ...cursorProps, className: 'recharts-bar-cursor' });
   }
 
   /**

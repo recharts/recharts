@@ -115,9 +115,7 @@ export const findAllByType = (children, type) => {
   let types = [];
 
   if (_.isArray(type)) {
-    types = type.map(t => {
-      return getDisplayName(t);
-    });
+    types = type.map(t => getDisplayName(t));
   } else {
     types = [getDisplayName(type)];
   }
@@ -149,9 +147,7 @@ export const withoutType = (children, type) => {
   let types;
 
   if (_.isArray(type)) {
-    types = type.map(t => {
-      return getDisplayName(t);
-    });
+    types = type.map(t => getDisplayName(t));
   } else {
     types = [getDisplayName(type)];
   }
@@ -226,7 +222,5 @@ export const validateWidthHeight = (el) => {
   return true;
 };
 
-export const isSsr = () => {
-  return typeof document === 'undefined';
-}
+export const isSsr = () => (typeof document === 'undefined');
 

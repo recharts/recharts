@@ -253,7 +253,7 @@ class Pie extends Component {
     } else if (_.isFunction(option)) {
       return option(props);
     } else {
-      return <Curve {...props} type="linear" className="recharts-pie-label-line"/>;
+      return <Curve {...props} type="linear" className="recharts-pie-label-line" />;
     }
   }
 

@@ -80,9 +80,9 @@ class ComposedChart extends Component {
       <Layer className="recharts-composed">
         {this.renderCursor(xAxisMap, yAxisMap, offset)}
 
-        <AreaChart {...this.props} graphicalItems={areaItems} isComposed/>
-        <BarChart {...this.props} graphicalItems={barItems} isComposed/>
-        <LineChart {...this.props} graphicalItems={lineItems} isComposed/>
+        <AreaChart {...this.props} graphicalItems={areaItems} isComposed />
+        <BarChart {...this.props} graphicalItems={barItems} isComposed />
+        <LineChart {...this.props} graphicalItems={lineItems} isComposed />
       </Layer>
     );
   }
