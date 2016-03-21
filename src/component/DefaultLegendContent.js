@@ -29,7 +29,6 @@ class DefaultLegendContent extends Component {
     layout: 'horizontal',
     align: 'center',
     verticalAlign: 'middle',
-    payload: [],
   };
 
   /**

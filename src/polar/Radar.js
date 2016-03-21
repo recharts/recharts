@@ -31,7 +31,7 @@ class Radar extends Component {
       value: PropTypes.number,
       payload: PropTypes.object,
     })),
-    shape: PropTypes.element,
+    shape: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
     dot: PropTypes.oneOfType([
       PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool,
     ]),

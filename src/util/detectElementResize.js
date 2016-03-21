@@ -207,7 +207,11 @@ const addResizeListener = (element, fn) => {
       element.__resizeLast__ = {};
       element.__resizeListeners__ = [];
       (element.__resizeTriggers__ = document.createElement('div')).className = 'resize-triggers';
-      element.__resizeTriggers__.innerHTML = '<div class="expand-trigger"><div></div></div>' + '<div class="contract-trigger"></div>';
+      element.__resizeTriggers__.innerHTML =
+        `
+          <div class="expand-trigger"><div></div></div>
+          <div class="contract-trigger"></div>
+        `;
       element.appendChild(element.__resizeTriggers__);
       resetTriggers(element);
       element.addEventListener('scroll', scrollListener, true);

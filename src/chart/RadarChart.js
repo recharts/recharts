@@ -255,15 +255,16 @@ class RadarChart extends Component {
     if (!legendItem) {return null;}
 
     const { width, height, margin } = this.props;
-    const legendData = items.map((child) => {
-      const { dataKey, name, legendType } = child.props;
+    const legendData = (legendItem.props && legendItem.props.payload) ||
+      items.map((child) => {
+        const { dataKey, name, legendType } = child.props;
 
-      return {
-        type: legendType || 'square',
-        color: child.props.stroke || child.props.fill,
-        value: name || dataKey,
-      };
-    }, this);
+        return {
+          type: legendType || 'square',
+          color: child.props.stroke || child.props.fill,
+          value: name || dataKey,
+        };
+      }, this);
 
     return React.cloneElement(legendItem, {
       ...Legend.getWithHeight(legendItem, width, height),

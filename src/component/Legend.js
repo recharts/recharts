@@ -55,7 +55,6 @@ class Legend extends Component {
     layout: 'horizontal',
     align: 'center',
     verticalAlign: 'bottom',
-    payload: [],
   };
 
   static getWithHeight(item, chartWidth, chartHeight) {

@@ -295,19 +295,20 @@ export const getLegendProps = (children, graphicItems, width, height) => {
 
   if (!legendItem) { return null; }
 
-  const legendData = graphicItems.map((child) => {
-    const { dataKey, name, legendType } = child.props;
+  const legendData = (legendItem.props && legendItem.props.payload) ||
+    graphicItems.map((child) => {
+      const { dataKey, name, legendType } = child.props;
 
-    return {
-      type: legendType || 'square',
-      color: getMainColorOfGraphicItem(child),
-      value: name || dataKey,
-    };
-  }, this);
+      return {
+        type: legendType || 'square',
+        color: getMainColorOfGraphicItem(child),
+        value: name || dataKey,
+      };
+    }, this);
 
   return {
     ...legendItem.props,
     ...Legend.getWithHeight(legendItem, width, height),
-    payload: legendData,
+    payload: legendData ,
   };
 };

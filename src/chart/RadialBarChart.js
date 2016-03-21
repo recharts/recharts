@@ -211,11 +211,12 @@ class RadialBarChart extends Component {
 
     const { data, width, height, margin } = this.props;
 
-    const legendData = data.map(entry => ({
-      type: 'square',
-      color: entry.fill || '#000',
-      value: entry.name,
-    }));
+    const legendData = (legendItem.props && legendItem.props.payload) ||
+      data.map(entry => ({
+        type: 'square',
+        color: entry.fill || '#000',
+        value: entry.name,
+      }));
 
     return React.cloneElement(legendItem, {
       ...Legend.getWithHeight(legendItem, width, height),

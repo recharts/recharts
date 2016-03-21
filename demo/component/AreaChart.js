@@ -106,7 +106,7 @@ export default React.createClass({
               yAxisId={2}
               stroke="#38abc8"
             />
-            <XAxis dataKey="name" />
+            <XAxis dataKey="name" interval={0}/>
             <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" strokeWidth={2} yAxisId={0} />
             <Area dataKey="pv" stroke="#387908" fill="#387908" strokeWidth={2} yAxisId={1} />
             <Area dataKey="amt" stroke="#38abc8" fill="#38abc8" strokeWidth={2} yAxisId={2} />
