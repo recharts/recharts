@@ -1,3 +1,9 @@
+## 0.8.7 (March 21, 2016)
+
+### refactor
+
+- Don't overwrite payload in Legend when customized payload has been setted
+
 ## 0.8.6 (March 09, 2016)
 
 ### refactor
