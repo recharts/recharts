@@ -1,4 +1,10 @@
 {
-  plugins: ["transform-export-extensions"],
-  presets: ["es2015", "react", "stage-0"]
+  plugins: [
+    "transform-export-extensions",
+    "transform-decorators-legacy",
+    "transform-class-properties",
+    "transform-object-rest-spread",
+    "transform-function-bind",
+  ],
+  presets: ["es2015", "react"]
 }
