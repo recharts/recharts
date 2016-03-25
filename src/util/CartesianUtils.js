@@ -208,9 +208,8 @@ export const isCategorialAxis = (layout, axisType) => (
 export const getTicksOfGrid = (ticks, min, max) => {
   let hasMin;
   let hasMax;
-  let values;
 
-  values = ticks.map(entry => {
+  const values = ticks.map(entry => {
     if (entry.coordinate === min) { hasMin = true;}
     if (entry.coordinate === max) { hasMax = true;}
 
@@ -309,6 +308,6 @@ export const getLegendProps = (children, graphicItems, width, height) => {
   return {
     ...legendItem.props,
     ...Legend.getWithHeight(legendItem, width, height),
-    payload: legendData ,
+    payload: legendData,
   };
 };

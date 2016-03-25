@@ -59,6 +59,8 @@ class DefaultTooltipContent extends Component {
 
       return <ul className="recharts-tooltip-item-list" style={listStyle}>{items}</ul>;
     }
+
+    return null;
   }
 
   render() {

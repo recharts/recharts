@@ -34,8 +34,8 @@ const requestFrame = (fn) => {
 
   if (_window) {
     raf = _window.requestAnimationFrame || _window.mozRequestAnimationFrame ||
-    _window.webkitRequestAnimationFrame || ((fn) => {
-      _window.setTimeout(fn, 20);
+    _window.webkitRequestAnimationFrame || ((callback) => {
+      _window.setTimeout(callback, 20);
     });
   } else {
     raf = () => {};
@@ -80,10 +80,10 @@ const resetTriggers = (element) => {
   }
 };
 
-const checkTriggers = (element) => {
-  return element.offsetWidth != element.__resizeLast__.width ||
-      element.offsetHeight != element.__resizeLast__.height;
-};
+const checkTriggers = (element) => (
+  element.offsetWidth !== element.__resizeLast__.width ||
+      element.offsetHeight !== element.__resizeLast__.height
+);
 
 function scrollListener(e) {
   const element = this;
@@ -116,7 +116,9 @@ const removeNode = (elm) => {
 /* Detect CSS Animations support to detect element display/re-attach */
 const detectCssAnimation = () => {
   const domPrefixes = 'Webkit Moz O ms'.split(' ');
-  const startEvents = 'webkitAnimationStart animationstart oAnimationStart MSAnimationStart'.split(' ');
+  const startEvents = [
+    'webkitAnimationStart', 'animationstart', 'oAnimationStart', 'MSAnimationStart',
+  ];
   const _window = getWindow();
 
   if (_window) {
@@ -128,19 +130,19 @@ const detectCssAnimation = () => {
         animationKeyframes: `keyframes ${animationName} { from {opacity:0;} to {opacity:0;} } `,
         animationStyle: `animation: 1ms ${animationName};`,
       };
-    } else {
-      for (let i = 0, len = domPrefixes.length; i < len; i++) {
-        if (elm.style[domPrefixes[i] + 'AnimationName'] !== undefined) {
-          removeNode(elm);
-          const pfx = domPrefixes[i];
-          const keyframeprefix = `-${pfx.toLowerCase()}-`;
+    }
 
-          return {
-            animationstartevent: startEvents[i],
-            animationKeyframes: `@${keyframeprefix}keyframes ${animationName} { from {opacity:0;} to {opacity:0;} } `,
-            animationStyle: `${keyframeprefix}animation: 1ms ${animationName};`,
-          };
-        }
+    for (let i = 0, len = domPrefixes.length; i < len; i++) {
+      if (elm.style[`${domPrefixes[i]}AnimationName`] !== undefined) {
+        removeNode(elm);
+        const pfx = domPrefixes[i];
+        const keyframeprefix = `-${pfx.toLowerCase()}-`;
+
+        return {
+          animationstartevent: startEvents[i],
+          animationKeyframes: `@${keyframeprefix}keyframes ${animationName} {from{opacity:0;} to{opacity:0;}} `,
+          animationStyle: `${keyframeprefix}animation: 1ms ${animationName};`,
+        };
       }
     }
   }
@@ -153,7 +155,7 @@ const detectCssAnimation = () => {
 
 const createStyles = (animationKeyframes, animationStyle) => {
   if (!stylesCreated) {
-    //opacity:0 works around a chrome bug https://code.google.com/p/chromium/issues/detail?id=286360
+    // opacity:0 works around a chrome bug https://code.google.com/p/chromium/issues/detail?id=286360
     const css = `
         ${animationKeyframes}
         .resize-triggers {
@@ -199,7 +201,7 @@ const addResizeListener = (element, fn) => {
     element.attachEvent('onresize', fn);
   } else if (typeof document !== 'undefined') {
     if (!element.__resizeTriggers__) {
-      if (getComputedStyle(element).position == 'static') {
+      if (getComputedStyle(element).position === 'static') {
         element.style.position = 'relative';
       }
       const { animationstartevent, animationKeyframes, animationStyle } = detectCssAnimation();
@@ -217,9 +219,11 @@ const addResizeListener = (element, fn) => {
       element.addEventListener('scroll', scrollListener, true);
 
       /* Listen for a css animation to detect element display/re-attach */
-      animationstartevent && element.__resizeTriggers__.addEventListener(animationstartevent, (e) => {
-        if (e.animationName == animationName) resetTriggers(element);
-      });
+      animationstartevent && element.__resizeTriggers__.addEventListener(
+        animationstartevent, (e) => {
+          if (e.animationName === animationName) resetTriggers(element);
+        }
+      );
     }
     element.__resizeListeners__.push(fn);
   }

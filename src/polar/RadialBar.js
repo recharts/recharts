@@ -83,10 +83,6 @@ class RadialBar extends Component {
     isAnimationFinished: false,
   };
 
-  handleAnimationEnd() {
-    this.setState({ isAnimationFinished: true });
-  };
-
   getDeltaAngle() {
     const { startAngle, endAngle } = this.props;
     const sign = Math.sign(endAngle - startAngle);
@@ -161,6 +157,10 @@ class RadialBar extends Component {
             ${endPoint.x},${endPoint.y}`;
   }
 
+  handleAnimationEnd = () => {
+    this.setState({ isAnimationFinished: true });
+  };
+
   handleSectorClick(data, index, e) {
     const { onClick } = this.props;
 
@@ -220,7 +220,7 @@ class RadialBar extends Component {
         isActive={isAnimationActive}
         duration={animationDuration}
         easing={animationEasing}
-        onAnimationEnd={::this.handleAnimationEnd}
+        onAnimationEnd={this.handleAnimationEnd}
       >
       {
         ({ alpha }) =>

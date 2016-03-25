@@ -135,6 +135,6 @@ export const getOffset = (el) => {
 
   return {
     top: box.top + window.pageYOffset - html.clientTop,
-    left: box.left + window.pageXOffset - html.clientLeft
+    left: box.left + window.pageXOffset - html.clientLeft,
   };
 };

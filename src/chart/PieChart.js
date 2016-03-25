@@ -68,6 +68,8 @@ class PieChart extends Component {
     if (cells && cells.length) {
       return cells.map(cell => ({ ...props, ...cell.props }));
     }
+
+    return [];
   }
 
   handleMouseEnter = (el, index, e) => {

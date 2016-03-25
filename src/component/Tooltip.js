@@ -79,9 +79,9 @@ const renderContent = (content, props) => {
     return React.cloneElement(content, props);
   } else if (_.isFunction(content)) {
     return content(props);
-  } else {
-    return React.createElement(DefaultTooltipContent, props);
   }
+
+  return React.createElement(DefaultTooltipContent, props);
 };
 
 class Tooltip extends Component {

@@ -121,7 +121,6 @@ class Pie extends Component {
       sectors = data.map((entry, i) => {
         const percent = entry[valueKey] / sum;
         let _startAngle;
-        let _endAngle;
 
         if (i) {
           _startAngle = deltaAngle < 0 ? prev.endAngle : prev.startAngle;
@@ -129,7 +128,7 @@ class Pie extends Component {
           _startAngle = startAngle;
         }
 
-        _endAngle = _startAngle + Math.sign(deltaAngle) * (
+        const _endAngle = _startAngle + Math.sign(deltaAngle) * (
           minAngle + percent * (absDeltaAngle - len * minAngle)
         );
 
@@ -252,9 +251,9 @@ class Pie extends Component {
       return React.cloneElement(option, props);
     } else if (_.isFunction(option)) {
       return option(props);
-    } else {
-      return <Curve {...props} type="linear" className="recharts-pie-label-line" />;
     }
+
+    return <Curve {...props} type="linear" className="recharts-pie-label-line" />;
   }
 
   renderLabelItem(option, props, value) {
@@ -262,9 +261,9 @@ class Pie extends Component {
       return React.cloneElement(option, props);
     } else if (_.isFunction(option)) {
       return option(props);
-    } else {
-      return <text {...props} className="recharts-pie-label-text">{value}</text>;
     }
+
+    return <text {...props} className="recharts-pie-label-text">{value}</text>;
   }
 
   renderLabels(sectors) {

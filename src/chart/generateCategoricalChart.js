@@ -524,13 +524,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         const displayName = this.constructor.displayName;
 
         warn(yAxes && yAxes.length,
-          `You should add <YAxis type="number" /> in ${displayName}.` +
-          `The layout is vertical now, y-axis should be category axis,` +
-          `but y-axis is number axis when no YAxis is added.`
+          `You should add <YAxis type="number" /> in ${displayName}.
+           The layout is vertical now, y-axis should be category axis,
+           but y-axis is number axis when no YAxis is added.`
         );
         warn(xAxes && xAxes.length,
-          `You should add <XAxis /> in ${displayName}.` +
-          `The layout is vertical now, x-axis is category when no XAxis is added.`
+          `You should add <XAxis /> in ${displayName}.
+          The layout is vertical now, x-axis is category when no XAxis is added.`
         );
 
         if (yAxes && yAxes.length) {
@@ -575,6 +575,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         return axes.length ?
           <Layer key={`${name}-layer`} className={`recharts-${name}`}>{axes}</Layer> : null;
       }
+
+      return null;
     }
     /**
      * Draw grid

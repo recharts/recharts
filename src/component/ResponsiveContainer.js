@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
-import { getPercentValue } from '../util/DataUtils';
+import { getPercentValue, isPercent } from '../util/DataUtils';
 import { getWidth, getHeight } from '../util/DOMUtils';
 import { warn } from '../util/LogUtils';
 import { addResizeListener, removeResizeListener } from '../util/detectElementResize';
@@ -13,8 +13,8 @@ class ResponsiveContainer extends Component {
   static displayName = 'ResponsiveContainer';
 
   static propTypes = {
-    width: PropTypes.string,
-    height: PropTypes.string,
+    width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     children: PropTypes.node,
   };
 
@@ -36,7 +36,7 @@ class ResponsiveContainer extends Component {
     removeEventListener(this.refs.container, this.updateSizeOfWrapper);
   }
 
-  updateSizeOfWrapper() {
+  updateSizeOfWrapper = () => {
     const { width, height } = this.props;
     const container = this.refs.container;
     const clientWidth = getWidth(container);
@@ -57,10 +57,16 @@ class ResponsiveContainer extends Component {
       height: '100%',
     };
 
+    warn(isPercent(this.props.width) || isPercent(this.props.height),
+      `The width(%s) and height(%s) are both fixed number,
+       maybe you don't need to use ResponsiveContainer.`,
+      this.props.width, this.props.height
+    );
+
     if (hasInitialized) {
       warn(width > 0 && height > 0,
-        `The width(%s) and height(%s) of chart should be greater than 0, ` +
-        `please check the style of container, or the props width(%s) and height(%s).`,
+        `The width(%s) and height(%s) of chart should be greater than 0,
+        please check the style of container, or the props width(%s) and height(%s).`,
         width, height, this.props.width, this.props.height
       );
     }

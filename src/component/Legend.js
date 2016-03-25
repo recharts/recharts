@@ -17,9 +17,9 @@ const renderContent = (content, props) => {
     return React.cloneElement(content, props);
   } else if (_.isFunction(content)) {
     return content(props);
-  } else {
-    return React.createElement(DefaultLegendContent, props);
   }
+
+  return React.createElement(DefaultLegendContent, props);
 };
 
 @pureRender

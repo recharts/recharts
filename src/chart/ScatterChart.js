@@ -408,6 +408,8 @@ class ScatterChart extends Component {
         </Layer>
       );
     }
+
+    return null;
   }
 
   renderCursor(xAxis, yAxis, offset) {
