@@ -1,4 +1,4 @@
-import 'ima.js-babel6-polyfill';
+import './polyfill';
 import 'core-js/es6/math';
 
 export Surface from './container/Surface';

@@ -21,14 +21,15 @@ const STYLE_LIST = [
   'marginLeft', 'marginRight', 'marginTop', 'marginBottom',
 ];
 
-const autoCompleteStyle = (name, value) => {
+function autoCompleteStyle(name, value) {
   if (STYLE_LIST.indexOf(name) >= 0 && value === +value) {
     return `${value}px`;
   }
 
   return value;
-};
-const camelToMiddleLine = (text) => {
+}
+
+function camelToMiddleLine(text) {
   const strs = text.split('');
 
   const formatStrs = strs.reduce((result, entry) => {
@@ -40,7 +41,11 @@ const camelToMiddleLine = (text) => {
   }, []);
 
   return formatStrs.join('');
-};
+}
+
+function getComputedStyles(el) {
+  return el.ownerDocument.defaultView.getComputedStyle(el, null);
+}
 
 export const getStyleString = (style) => {
   let result = '';
@@ -84,4 +89,52 @@ export const getStringSize = (text, style = {}) => {
   }
 
   return result;
+};
+
+export const getWidth = (el) => {
+  const styles = getComputedStyles(el);
+  const width = parseFloat(styles.width.indexOf('px') !== -1 ? styles.width : 0);
+
+  const boxSizing = styles.boxSizing || 'content-box';
+  if (boxSizing === 'border-box') {
+    return width;
+  }
+
+  const borderLeftWidth = parseFloat(styles.borderLeftWidth);
+  const borderRightWidth = parseFloat(styles.borderRightWidth);
+  const paddingLeft = parseFloat(styles.paddingLeft);
+  const paddingRight = parseFloat(styles.paddingRight);
+  return width - borderRightWidth - borderLeftWidth - paddingLeft - paddingRight;
+};
+
+export const getHeight = (el) => {
+  const styles = getComputedStyles(el);
+  const height = parseFloat(styles.height.indexOf('px') !== -1 ? styles.height : 0);
+
+  const boxSizing = styles.boxSizing || 'content-box';
+  if (boxSizing === 'border-box') {
+    return height;
+  }
+
+  const borderTopWidth = parseFloat(styles.borderTopWidth);
+  const borderBottomWidth = parseFloat(styles.borderBottomWidth);
+  const paddingTop = parseFloat(styles.paddingTop);
+  const paddingBottom = parseFloat(styles.paddingBottom);
+  return height - borderBottomWidth - borderTopWidth - paddingTop - paddingBottom;
+};
+
+export const getOffset = (el) => {
+  const html = el.ownerDocument.documentElement;
+  let box = { top: 0, left: 0 };
+
+  // If we don't have gBCR, just use 0,0 rather than error
+  // BlackBerry 5, iOS 3 (original iPhone)
+  if (typeof el.getBoundingClientRect !== 'undefined') {
+    box = el.getBoundingClientRect();
+  }
+
+  return {
+    top: box.top + window.pageYOffset - html.clientTop,
+    left: box.left + window.pageXOffset - html.clientLeft
+  };
 };

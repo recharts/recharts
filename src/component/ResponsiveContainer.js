@@ -4,8 +4,8 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import { getPercentValue } from '../util/DataUtils';
+import { getWidth, getHeight } from '../util/DOMUtils';
 import { warn } from '../util/LogUtils';
-import OuiDomUtils from 'oui-dom-utils';
 import { addResizeListener, removeResizeListener } from '../util/detectElementResize';
 
 @pureRender
@@ -36,11 +36,11 @@ class ResponsiveContainer extends Component {
     removeEventListener(this.refs.container, this.updateSizeOfWrapper);
   }
 
-  updateSizeOfWrapper = () => {
-    const container = this.refs.container;
-    const clientWidth = OuiDomUtils.width(container);
-    const clientHeight = OuiDomUtils.height(container);
+  updateSizeOfWrapper() {
     const { width, height } = this.props;
+    const container = this.refs.container;
+    const clientWidth = getWidth(container);
+    const clientHeight = getHeight(container);
 
     this.setState({
       hasInitialized: true,

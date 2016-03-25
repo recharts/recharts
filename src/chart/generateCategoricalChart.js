@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { getNiceTickValues } from 'recharts-scale';
 import { scaleLinear, scaleBand, scalePoint } from 'd3-scale';
-import OuiDomUtils from 'oui-dom-utils';
 import classNames from 'classnames';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
@@ -22,6 +21,7 @@ import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
 import pureRender from '../util/PureRender';
+import { getOffset } from '../util/DOMUtils';
 import { parseSpecifiedDomain, getAnyElementOfObject } from '../util/DataUtils';
 import { calculateDomainOfTicks, calculateChartCoordinate, calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
@@ -462,7 +462,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      */
     handleMouseEnter(offset, xAxisMap, yAxisMap, e) {
       const container = ReactDOM.findDOMNode(this);
-      const containerOffset = OuiDomUtils.getOffset(container);
+      const containerOffset = getOffset(container);
       const ne = calculateChartCoordinate(e, containerOffset);
       const mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);
 
@@ -484,7 +484,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      */
     handleMouseMove(offset, xAxisMap, yAxisMap, e) {
       const container = ReactDOM.findDOMNode(this);
-      const containerOffset = OuiDomUtils.getOffset(container);
+      const containerOffset = getOffset(container);
       const ne = calculateChartCoordinate(e, containerOffset);
       const mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);
 
