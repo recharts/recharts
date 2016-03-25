@@ -1,3 +1,9 @@
+## 0.8.8 (March 25, 2016)
+
+### refactor
+
+- Support fixed value of width or height in ResponsiveContainer
+
 ## 0.8.7 (March 21, 2016)
 
 ### refactor
