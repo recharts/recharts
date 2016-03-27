@@ -1,15 +1,14 @@
-(function () {
-  const testObject = {};
+/* eslint no-proto: 0 */
+const testObject = {};
 
-  if (!(Object.setPrototypeOf || testObject.__proto__)) {
-    const nativeGetPrototypeOf = Object.getPrototypeOf;
+if (!(Object.setPrototypeOf || testObject.__proto__)) {
+  const nativeGetPrototypeOf = Object.getPrototypeOf;
 
-    Object.getPrototypeOf = function (object) {
-      if (object.__proto__) {
-        return object.__proto__;
-      }
+  Object.getPrototypeOf = (object) => {
+    if (object.__proto__) {
+      return object.__proto__;
+    }
 
-      return nativeGetPrototypeOf.call(Object, object);
-    };
-  }
-})();
+    return nativeGetPrototypeOf.call(Object, object);
+  };
+}
