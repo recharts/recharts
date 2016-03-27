@@ -1,3 +1,4 @@
+/* eslint no-console: 0 */
 const __DEV__ = process.env.NODE_ENV !== 'production';
 
 export const warn = (condition, format, a, b, c, d, e, f) => {
