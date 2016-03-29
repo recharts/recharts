@@ -85,6 +85,8 @@ export const PRESENTATION_ATTRIBUTES = {
   ]),
   transform: PropTypes.string,
   style: PropTypes.object,
+
+  r: PropTypes.number,
 };
 
 const EVENT_ATTRIBUTES = {

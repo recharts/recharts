@@ -2,7 +2,6 @@
  * @fileOverview Layer
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from '../util/PureRender';
 import classNames from 'classnames';
 
 const propTypes = {

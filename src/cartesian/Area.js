@@ -28,6 +28,10 @@ class Area extends Component {
     stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     legendType: PropTypes.string,
     formatter: PropTypes.func,
+
+    activeDot: PropTypes.oneOfType([
+      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
+    ]),
     // dot configuration
     dot: PropTypes.oneOfType([
       PropTypes.func, PropTypes.element, PropTypes.object, PropTypes.bool,
@@ -69,6 +73,7 @@ class Area extends Component {
     dot: false,
     label: false,
     curve: true,
+    activeDot: true,
 
     isAnimationActive: true,
     animationBegin: 0,

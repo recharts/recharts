@@ -5,36 +5,27 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import pureRender from '../util/PureRender';
 
-// TODO: add support of gradient
-@pureRender
-class Background extends Component {
+const propTypes = {
+  x: PropTypes.number,
+  y: PropTypes.number,
+  width: PropTypes.number,
+  height: PropTypes.number,
+  strokeWidth: PropTypes.number,
+  stroke: PropTypes.string,
+  fill: PropTypes.string,
+  className: PropTypes.string,
+};
 
-  static displayName = 'Background';
+function Background(props) {
+  const { className, ...others } = props;
 
-  static propTypes = {
-    x: PropTypes.number,
-    y: PropTypes.number,
-    width: PropTypes.number,
-    height: PropTypes.number,
-    strokeWidth: PropTypes.number,
-    stroke: PropTypes.string,
-    fill: PropTypes.string,
-    className: PropTypes.string,
-  };
-
-  static defaultProps = {
-
-  };
-
-  render() {
-    const { className, ...others } = this.props;
-
-    return (
-      <g className={classNames('recharts-background', className)}>
-        <rect {...others} />
-      </g>
-    );
-  }
+  return (
+    <g className={classNames('recharts-background', className)}>
+      <rect {...others} />
+    </g>
+  );
 }
+
+Background.propTypes = propTypes;
 
 export default Background;

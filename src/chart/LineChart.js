@@ -89,6 +89,19 @@ class LineChart extends Component {
       <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor" />;
   }
 
+  renderActiveDot(option, props) {
+    let dot;
+
+    if (React.isValidElement(option)) {
+      dot = React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      dot = option(props);
+    } else {
+      dot = <Dot {...props} key={`dot-${props.index}`}/>;
+    }
+
+    return dot;
+  }
   /**
    * Draw the main part of line chart
    * @param  {Array} items     All the instance of Line
@@ -104,21 +117,18 @@ class LineChart extends Component {
     const dotItems = [];
 
     const lineItems = items.map((child, i) => {
-      const { xAxisId, yAxisId, dataKey, stroke } = child.props;
+      const { xAxisId, yAxisId, dataKey, stroke, activeDot } = child.props;
       const points = this.getComposedData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey);
       const activePoint = points[activeTooltipIndex];
-      const pointStyle = { fill: stroke, strokeWidth: 2, stroke: '#fff' };
 
-      if (hasDot && activePoint) {
-        dotItems.push(
-          <Dot
-            key={`area-dot-${i}`}
-            cx={activePoint.x}
-            cy={activePoint.y}
-            r={4}
-            {...pointStyle}
-          />
-        );
+      if (hasDot && activeDot && activePoint) {
+        const dotProps = {
+          index: i,
+          cx: activePoint.x, cy: activePoint.y, r: 4,
+          fill: stroke, strokeWidth: 2, stroke: '#fff',
+          ...getPresentationAttributes(activeDot),
+        };
+        dotItems.push(this.renderActiveDot(activeDot, dotProps));
       }
 
       return React.cloneElement(child, {
