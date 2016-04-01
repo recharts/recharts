@@ -41,6 +41,16 @@ const data03 = [
   { name: 'F2', value: 49 },
   { name: 'F3', value: 51 },
 ];
+const renderLabelContent = (props) => {
+  const { value, percent, x, y, midAngle } = props;
+
+  return (
+    <g transform={`translate(${x}, ${y})`} textAnchor={ (midAngle < -90 || midAngle >= 90) ? 'end' : 'start'}>
+      <text x={0} y={0}>{`评价数 ${value}`}</text>
+      <text x={0} y={20}>{`（占比 ${(percent * 100).toFixed(2)}%）`}</text>
+    </g>
+  );
+};
 
 export default React.createClass({
   render () {
@@ -50,7 +60,6 @@ export default React.createClass({
         <div className="pie-chart-wrapper">
           <PieChart width={800} height={400}>
             <Legend />
-            <Tooltip/>
             <Pie cx={200} cy={200} startAngle={180} endAngle={0} outerRadius={80} label>
               {
                 data01.map((entry, index) => (
@@ -58,7 +67,14 @@ export default React.createClass({
                 ))
               }
             </Pie>
-            <Pie data={data02} cx={600} cy={200} startAngle={180} endAngle={-180} innerRadius={60} outerRadius={80} fill="#387908"/>
+            <Pie cx={600} cy={200} startAngle={180} endAngle={-180} innerRadius={60} outerRadius={80}
+              label={renderLabelContent}>
+              {
+                data02.map((entry, index) => (
+                  <Cell key={`slice-${index}`} name={entry.name} value={entry.value} fill={colors[index % 10]}/>
+                ))
+              }
+            </Pie>
           </PieChart>
         </div>
 

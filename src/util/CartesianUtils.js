@@ -149,16 +149,26 @@ export const getDomainOfDataByKey = (data, key, type) => {
   ] : domain;
 };
 
+const getDomainOfSingle = (data) => {
+  return data.reduce((result, entry) => (
+    [
+      Math.min(result[0], entry[0], entry[1]),
+      Math.max(result[1], entry[0], entry[1]),
+    ]
+  ), [Infinity, -Infinity]);
+};
+
 export const getDomainOfStackGroups = (stackGroups, startIndex, endIndex) => (
   Object.keys(stackGroups).reduce((result, stackId) => {
     const group = stackGroups[stackId];
     const { stackedData } = group;
-    const minList = stackedData[0].slice(startIndex, endIndex + 1);
-    const maxList = stackedData[stackedData.length - 1].slice(startIndex, endIndex + 1);
-    const min = minList.reduce((res, entry) => Math.min(res, entry[0]), Infinity);
-    const max = maxList.reduce((res, entry) => Math.max(res, entry[1]), -Infinity);
+    const domain = stackedData.reduce((res, entry) => {
+      const s = getDomainOfSingle(entry.slice(startIndex, endIndex + 1));
 
-    return [Math.min(min, result[0]), Math.max(max, result[1])];
+      return [Math.min(res[0], s[0]), Math.max(res[1], s[1])];
+    }, [Infinity, -Infinity])
+
+    return [Math.min(domain[0], result[0]), Math.max(domain[1], result[1])];
   }, [Infinity, -Infinity])
 );
 

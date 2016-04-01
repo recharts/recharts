@@ -53,9 +53,10 @@ class AreaChart extends Component {
     const yTicks = getTicksOfAxis(yAxis);
     const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
     const hasStack = stackedData && stackedData.length;
+    const baseValue = this.getBaseValue(xAxis, yAxis);
 
     const points = data.map((entry, index) => {
-      const value = hasStack ? stackedData[dataStartIndex + index] : [0, entry[dataKey]];
+      const value = hasStack ? stackedData[dataStartIndex + index] : [baseValue, entry[dataKey]];
       return {
         x: layout === 'horizontal' ?
             xTicks[index].coordinate + bandSize / 2 :
@@ -67,7 +68,6 @@ class AreaChart extends Component {
       };
     });
 
-    let range;
     let baseLine;
     if (hasStack) {
       baseLine = stackedData.slice(dataStartIndex, dataEndIndex + 1).map((entry, index) => ({
@@ -79,18 +79,24 @@ class AreaChart extends Component {
             yTicks[index].coordinate + bandSize / 2,
       }));
     } else if (layout === 'horizontal') {
-      range = yAxis.scale.range();
-      baseLine = xAxis.orientation === 'top' ?
-        Math.min(range[0], range[1]) :
-        Math.max(range[0], range[1]);
+      baseLine = yAxis.scale(baseValue);
     } else {
-      range = xAxis.scale.range();
-      baseLine = yAxis.orientation === 'left' ?
-        Math.min(range[0], range[1]) :
-        Math.max(range[0], range[1]);
+      baseLine = xAxis.scale(baseValue);
     }
 
     return { points, baseLine, layout };
+  }
+
+  getBaseValue(xAxis, yAxis) {
+    const { layout } = this.props;
+    const numberAxis = layout === 'horizontal' ? yAxis : xAxis;
+    const domain = numberAxis.scale.domain();
+
+    if (numberAxis.type === 'number') {
+      return Math.max(Math.min(domain[0], domain[1]), 0);
+    }
+
+    return domain[0];
   }
 
   renderCursor(xAxisMap, yAxisMap, offset) {
