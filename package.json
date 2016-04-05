@@ -49,7 +49,7 @@
     "d3-scale": "0.6.4",
     "d3-shape": "0.6.0",
     "lodash": "4.6.1",
-    "react-smooth": "0.1.0",
+    "react-smooth": "0.1.1",
     "recharts-scale": "0.1.8"
   },
   "devDependencies": {
