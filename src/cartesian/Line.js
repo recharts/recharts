@@ -92,10 +92,24 @@ class Line extends Component {
       return;
     }
 
+    const totalLength = this.getTotalLength();
+
+    this.setState({ totalLength });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { points } = this.props;
+
+    if (points !== prevProps.points) {
+      this.setState({ totalLength: this.getTotalLength(), isAnimationFinished: false });
+    }
+  }
+
+  getTotalLength() {
     const curveDom = findDOMNode(this.refs.animate);
     const totalLength = (curveDom && curveDom.getTotalLength && curveDom.getTotalLength()) || 0;
 
-    this.setState({ totalLength });
+    return totalLength;
   }
 
   getStrokeDasharray(length, totalLength, lines) {
@@ -235,6 +249,7 @@ class Line extends Component {
       duration: animationDuration,
       onAnimationEnd: this.handleAnimationEnd,
       ref: 'animate',
+      shouldReAnimate: true,
     };
     const curveProps = {
       ...other,
