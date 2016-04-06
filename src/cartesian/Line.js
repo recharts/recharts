@@ -82,8 +82,9 @@ class Line extends Component {
   constructor(props, ctx) {
     super(props, ctx);
 
+    const { points } = props;
     this.state = {
-      isAnimationFinished: false,
+      isAnimationFinished: (!points || points.length <= 1),
       steps: [],
       totalLength: 0,
     };
@@ -105,7 +106,10 @@ class Line extends Component {
     const { points } = this.props;
 
     if (points !== prevProps.points) {
-      this.setState({ totalLength: this.getTotalLength(), isAnimationFinished: false });
+      this.setState({
+        totalLength: this.getTotalLength(),
+        isAnimationFinished: !points || points.length <= 1,
+      });
     }
   }
 

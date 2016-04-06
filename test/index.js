@@ -3,6 +3,7 @@ require('./specs/cartesian/XAxisSpec');
 require('./specs/cartesian/YAxisSpec');
 require('./specs/cartesian/ZAxisSpec');
 require('./specs/cartesian/BarSpec');
+require('./specs/cartesian/AreaSpec');
 require('./specs/cartesian/LineSpec');
 require('./specs/cartesian/BrushSpec');
 require('./specs/cartesian/CartesianAxisSpec');
@@ -12,7 +13,10 @@ require('./specs/cartesian/ReferenceDotSpec');
 
 // polar system chart component
 require('./specs/polar/PolarRadiusAxisSpec');
+require('./specs/polar/PolarAngleAxisSpec');
 require('./specs/polar/PolarGridSpec');
+require('./specs/polar/PieSpec');
+require('./specs/polar/RadialBarSpec');
 
 // chart
 require('./specs/chart/AreaChartSpec');

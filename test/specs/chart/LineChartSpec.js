@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { LineChart, Line, Curve } from 'recharts';
+import { LineChart, Line, Curve, XAxis, YAxis } from 'recharts';
 import { mount, render } from 'enzyme';
 import sinon from 'sinon';
 
@@ -17,6 +17,17 @@ describe('<LineChart />', () => {
   it('Render 1 line in simple LineChart', () => {
     const wrapper = render(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <Line type="monotone" dataKey="uv" stroke="#ff7300"/>
+      </LineChart>
+    );
+    expect(wrapper.find('.recharts-line .recharts-line-curve').length).to.equal(1);
+  });
+
+  it('Render 1 line in simple LineChart', () => {
+    const wrapper = render(
+      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <XAxis/>
+        <YAxis type="category"/>
         <Line type="monotone" dataKey="uv" stroke="#ff7300"/>
       </LineChart>
     );

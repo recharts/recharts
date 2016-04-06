@@ -60,8 +60,7 @@ describe('ReactUtils', () => {
       }
     );
 
-    expect(result).to.include.keys('stroke', 'fill');
-    expect(result).to.not.include.keys('r');
+    expect(result).to.include.keys('stroke', 'fill', 'r');
   });
 
   it('withoutType return children except specified type', () => {

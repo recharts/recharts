@@ -81,9 +81,14 @@ class Area extends Component {
     animationEasing: 'ease',
   };
 
-  state = {
-    isAnimationFinished: false,
-  };
+  constructor(props, ctx) {
+    super(props, ctx);
+
+    const { points } = props;
+    this.state = {
+      isAnimationFinished: (!points || points.length <= 1),
+    };
+  }
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
@@ -125,10 +130,6 @@ class Area extends Component {
   renderAreaCurve() {
     const { points, type, layout, baseLine, curve, isAnimationActive,
       animationBegin, animationDuration, animationEasing } = this.props;
-
-    if (points.length === 1) {
-      return null;
-    }
 
     const animationProps = {
       isActive: isAnimationActive,
@@ -272,7 +273,7 @@ class Area extends Component {
 
     return (
       <Layer className={layerClass}>
-        { this.renderAreaCurve() }
+        {!hasSinglePoint && this.renderAreaCurve() }
         {(dot || hasSinglePoint) && this.renderDots()}
         {label && this.renderLabels()}
       </Layer>

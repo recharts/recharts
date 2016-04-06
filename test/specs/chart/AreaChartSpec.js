@@ -22,6 +22,18 @@ describe('<AreaChart />', () => {
     expect(wrapper.find('.recharts-area-curve').length).to.equal(1);
   });
 
+  it('Renders 1 dot when data only have one element', () => {
+    let wrapper = render(
+      <AreaChart width={100} height={50} data={data.slice(0, 1)}>
+        <Area type='monotone' dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
+      </AreaChart>
+    );
+    expect(wrapper.find('.recharts-area-area').length).to.equal(0);
+    expect(wrapper.find('.recharts-area-curve').length).to.equal(0);
+    expect(wrapper.find('.recharts-area-dot').length).to.equal(1);
+  });
+
+
   it('Renders 4 path in a stacked AreaChart', () => {
     let wrapper = render(
       <AreaChart width={100} height={50} data={data}>
