@@ -22,7 +22,9 @@ class Scatter extends Component {
     xAxisId: PropTypes.number,
     yAxisId: PropTypes.number,
     zAxisId: PropTypes.number,
-    line: PropTypes.oneOfType([PropTypes.bool, PropTypes.object, PropTypes.func, PropTypes.element]),
+    line: PropTypes.oneOfType([
+      PropTypes.bool, PropTypes.object, PropTypes.func, PropTypes.element
+    ]),
     lineType: PropTypes.oneOf(['fitting', 'joint']),
     className: PropTypes.string,
 

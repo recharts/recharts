@@ -13,6 +13,7 @@ import generateCategoricalChart from './generateCategoricalChart';
 import Area from '../cartesian/Area';
 import pureRender from '../util/PureRender';
 import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
+import _ from 'lodash';
 
 @pureRender
 class AreaChart extends Component {
@@ -133,7 +134,7 @@ class AreaChart extends Component {
     } else if (_.isFunction(option)) {
       dot = option(props);
     } else {
-      dot = <Dot {...props} key={`dot-${props.index}`}/>;
+      dot = <Dot {...props} key={`dot-${props.index}`} />;
     }
 
     return dot;

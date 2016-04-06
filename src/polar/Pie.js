@@ -31,12 +31,19 @@ class Pie extends Component {
     data: PropTypes.arrayOf(PropTypes.object),
     minAngle: PropTypes.number,
     legendType: PropTypes.string,
+    maxRadius: PropTypes.number,
 
-    labelLine: PropTypes.oneOfType([PropTypes.object, PropTypes.func, PropTypes.element, PropTypes.bool]),
-    label: PropTypes.oneOfType([PropTypes.object, PropTypes.func, PropTypes.element, PropTypes.bool]),
+    labelLine: PropTypes.oneOfType([
+      PropTypes.object, PropTypes.func, PropTypes.element, PropTypes.bool,
+    ]),
+    label: PropTypes.oneOfType([
+      PropTypes.object, PropTypes.func, PropTypes.element, PropTypes.bool,
+    ]),
+    activeShape: PropTypes.oneOfType([
+      PropTypes.object, PropTypes.func, PropTypes.element, PropTypes.bool,
+    ]),
+    activeIndex: PropTypes.number,
 
-    hoverOffset: PropTypes.number,
-    selectedOffset: PropTypes.number,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
@@ -69,8 +76,6 @@ class Pie extends Component {
     innerRadius: 0,
     // The outer radius of sectors
     outerRadius: '80%',
-    hoverOffset: 8,
-    selectedOffset: 8,
     nameKey: 'name',
     valueKey: 'value',
     labelLine: true,
@@ -87,8 +92,6 @@ class Pie extends Component {
     super(props, ctx);
 
     this.state = {
-      activeIndex: -1,
-      selectedIndex: -1,
       isAnimationFinished: false,
     };
 
@@ -171,41 +174,33 @@ class Pie extends Component {
   handleSectorEnter(data, index, e) {
     const { onMouseEnter } = this.props;
 
-    this.setState({
-      activeIndex: index,
-    }, () => {
-      if (onMouseEnter) {
-        onMouseEnter(data, index, e);
-      }
-    });
+    if (onMouseEnter) {
+      onMouseEnter(data, index, e);
+    }
   }
 
-  handleSectorLeave = (data, index, e) => {
+  handleSectorLeave = () => {
     const { onMouseLeave } = this.props;
 
-    this.setState({
-      activeIndex: -1,
-    }, onMouseLeave);
+    if (onMouseLeave) {
+      onMouseLeave();
+    }
   };
 
   handleSectorClick(data, index, e) {
     const { onClick } = this.props;
 
-    this.setState({
-      selectedIndex: index,
-    }, onClick);
+    if (onClick) {
+      onClick(data, index, e);
+    }
   }
 
   renderClipPath() {
     const {
       cx,
       cy,
-      hoverOffset,
-      selectedOffset,
-      outerRadius,
-      innerRadius,
+      maxRadius,
       startAngle,
-      endAngle,
       isAnimationActive,
       animationDuration,
       animationEasing,
@@ -224,9 +219,9 @@ class Pie extends Component {
               endAngle: startAngle,
             }}
             to = {{
-              outerRadius: outerRadius + hoverOffset + selectedOffset,
-              innerRadius,
-              endAngle,
+              outerRadius: Math.max(this.props.outerRadius, maxRadius || 0),
+              innerRadius: 0,
+              endAngle: this.props.endAngle,
             }}
           >
             {
@@ -312,39 +307,32 @@ class Pie extends Component {
     return <Layer className="recharts-pie-labels">{labels}</Layer>;
   }
 
+  renderSectorItem(option, props) {
+    if (React.isValidElement(option)) {
+      return React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      return option(props);
+    } else if (_.isPlainObject(option)) {
+      return <Sector {...props} {...option} />;
+    }
+
+    return <Sector {...props} />;
+  }
+
   renderSectors(sectors) {
-    const { activeIndex, selectedIndex } = this.state;
-    const { selectedOffset, hoverOffset } = this.props;
+    const { activeShape, activeIndex } = this.props;
 
-    return sectors.map((entry, i) => {
-      const { innerRadius, outerRadius, cx, cy, midAngle } = entry;
-      let finalOuterRadius = outerRadius;
-      let finalCx = cx;
-      let finalCy = cy;
-
-      if (activeIndex === i) {
-        finalOuterRadius = outerRadius + hoverOffset;
-      }
-      if (selectedIndex === i && innerRadius === 0) {
-        const finalCenter = polarToCartesian(cx, cy, selectedOffset, midAngle);
-        finalCx = finalCenter.x;
-        finalCy = finalCenter.y;
-      }
-
-      return (
-        <Sector
-          {...entry}
-          outerRadius={finalOuterRadius}
-          cx={finalCx}
-          cy={finalCy}
-          className="recharts-pie-sector"
-          onMouseEnter={this.handleSectorEnter.bind(this, entry, i)}
-          onMouseLeave={this.handleSectorLeave}
-          onClick={this.handleSectorClick.bind(this, entry, i)}
-          key={`sector-${i}`}
-        />
-      );
-    });
+    return sectors.map((entry, i) => (
+      <Layer
+        className="recharts-pie-sector"
+        onMouseEnter={this.handleSectorEnter.bind(this, entry, i)}
+        onMouseLeave={this.handleSectorLeave}
+        onClick={this.handleSectorClick.bind(this, entry, i)}
+        key={`sector-${i}`}
+      >
+        {this.renderSectorItem(activeIndex === i ? activeShape : null, entry)}
+      </Layer>
+    ));
   }
 
   render() {

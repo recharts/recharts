@@ -149,14 +149,14 @@ export const getDomainOfDataByKey = (data, key, type) => {
   ] : domain;
 };
 
-const getDomainOfSingle = (data) => {
-  return data.reduce((result, entry) => (
+const getDomainOfSingle = (data) => (
+  data.reduce((result, entry) => (
     [
       Math.min(result[0], entry[0], entry[1]),
       Math.max(result[1], entry[0], entry[1]),
     ]
-  ), [Infinity, -Infinity]);
-};
+  ), [Infinity, -Infinity])
+);
 
 export const getDomainOfStackGroups = (stackGroups, startIndex, endIndex) => (
   Object.keys(stackGroups).reduce((result, stackId) => {
@@ -166,7 +166,7 @@ export const getDomainOfStackGroups = (stackGroups, startIndex, endIndex) => (
       const s = getDomainOfSingle(entry.slice(startIndex, endIndex + 1));
 
       return [Math.min(res[0], s[0]), Math.max(res[1], s[1])];
-    }, [Infinity, -Infinity])
+    }, [Infinity, -Infinity]);
 
     return [Math.min(domain[0], result[0]), Math.max(domain[1], result[1])];
   }, [Infinity, -Infinity])

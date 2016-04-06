@@ -13,6 +13,7 @@ import { getPresentationAttributes, findChildByType,
 import pureRender from '../util/PureRender';
 import { getTicksOfAxis } from '../util/CartesianUtils';
 import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
+import _ from 'lodash';
 
 @pureRender
 class LineChart extends Component {
@@ -97,7 +98,7 @@ class LineChart extends Component {
     } else if (_.isFunction(option)) {
       dot = option(props);
     } else {
-      dot = <Dot {...props} key={`dot-${props.index}`}/>;
+      dot = <Dot {...props} key={`dot-${props.index}`} />;
     }
 
     return dot;

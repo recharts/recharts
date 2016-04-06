@@ -91,7 +91,7 @@ class PieChart extends Component {
     this.setState({
       isTooltipActive: false,
     }, () => {
-      if (this.props.onMouseEnter) {
+      if (this.props.onMouseLeave) {
         this.props.onMouseLeave(e);
       }
     });
@@ -165,6 +165,7 @@ class PieChart extends Component {
         key: `recharts-pie-${i}`,
         cx,
         cy,
+        maxRadius,
         innerRadius: getPercentValue(innerRadius, maxRadius, 0),
         outerRadius: getPercentValue(outerRadius, maxRadius, maxRadius * 0.8),
         data: this.getComposedData(child),

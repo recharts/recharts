@@ -100,6 +100,8 @@ class ReferenceLine extends Component {
       }
       return { dy: -6, textAnchor: 'middle' };
     }
+
+    return null;
   }
 
   renderLabel(isX, isY, end) {
