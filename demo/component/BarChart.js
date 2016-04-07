@@ -202,15 +202,16 @@ export default React.createClass({
             <XAxis dataKey="name" />
             <YAxis />
             <Legend />
+            <Tooltip />
             <CartesianGrid vertical={false}/>
-            <Bar dataKey="uv" fill="#ff7300" label={renderLabel} >
+            <Bar dataKey="uv" label={renderLabel} >
               {
                 data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
                 ))
               }
             </Bar>
-            <Bar dataKey="pv" fill="#387908" label>
+            <Bar dataKey="pv" label>
               {
                 data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={colors[index % 20]}/>

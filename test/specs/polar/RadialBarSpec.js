@@ -5,7 +5,7 @@ import { mount, render } from 'enzyme';
 
 describe('<RadialBar />', () => {
   const data = [
-    { cx: 250, cy: 250, innerRadius: 10, outerRadius: 20, value: 50 },
+    { cx: 250, cy: 250, innerRadius: 0, outerRadius: 0, value: 50 },
     { cx: 250, cy: 250, innerRadius: 30, outerRadius: 40, value: 50 },
     { cx: 250, cy: 250, innerRadius: 50, outerRadius: 60, value: 50 },
     { cx: 250, cy: 250, innerRadius: 70, outerRadius: 80, value: 50 },
@@ -19,6 +19,7 @@ describe('<RadialBar />', () => {
           cx={250}
           cy={250}
           data={data}
+          label
         />
       </Surface>
     );
@@ -37,4 +38,24 @@ describe('<RadialBar />', () => {
 
     expect(wrapper.find('.recharts-pie').length).to.equal(0);
   });
+
+  it('Render 5 sectors', () => {
+    const wrapper = mount(
+      <Surface width={500} height={500}>
+        <RadialBar
+          isAnimationActive={false}
+          cx={250}
+          cy={250}
+          data={data}
+        />
+      </Surface>
+    );
+
+    const se = wrapper.find(Sector).first();
+
+    se.simulate('mouseEnter');
+    se.simulate('mouseLeave');
+    se.simulate('click');
+  });
+
 });

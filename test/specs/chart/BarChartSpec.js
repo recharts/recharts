@@ -88,6 +88,7 @@ describe('<BarChart />', () => {
   it('Renders 8 bars in a stacked BarChart', () => {
     const wrapper = render(
       <BarChart width={100} height={50} data={data}>
+        <YAxis />
         <Bar dataKey="uv" stackId="test" fill="#ff7300"/>
         <Bar dataKey="pv" stackId="test" fill="#387908"/>
       </BarChart>

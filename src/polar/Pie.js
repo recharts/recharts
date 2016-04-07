@@ -81,7 +81,6 @@ class Pie extends Component {
     labelLine: true,
     data: [],
     minAngle: 0,
-    onAnimationEnd() {},
     isAnimationActive: true,
     animationBegin: 400,
     animationDuration: 1500,

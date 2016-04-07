@@ -1,7 +1,9 @@
 import React from 'react';
 import { expect } from 'chai';
 import { Surface, Pie, Sector } from 'recharts';
+import Layer from '../../../src/container/Layer';
 import { mount, render } from 'enzyme';
+import sinon from 'sinon';
 
 describe('<Pie />', () => {
   const data = [
@@ -194,5 +196,34 @@ describe('<Pie />', () => {
     );
 
     expect(wrapper.find('.recharts-pie').length).to.equal(0);
+  });
+
+  it('Pie event handler', () => {
+    const onMouseEnter = sinon.spy();
+    const onMouseLeave = sinon.spy();
+    const onClick = sinon.spy();
+    const wrapper = mount(
+      <Surface width={500} height={500}>
+        <Pie
+          isAnimationActive={false}
+          cx={250}
+          cy={250}
+          innerRadius={0}
+          outerRadius={200}
+          data={data}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+          onClick={onClick}
+        />
+      </Surface>
+    );
+    const se = wrapper.find(Layer).at(3);
+
+    se.simulate('mouseEnter');
+    expect(onMouseEnter.calledOnce).to.equal(true);
+    se.simulate('mouseLeave');
+    expect(onMouseLeave.calledOnce).to.equal(true);
+    se.simulate('click');
+    expect(onClick.calledOnce).to.equal(true);
   });
 });

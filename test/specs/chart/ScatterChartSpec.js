@@ -1,6 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
-import { ScatterChart, Scatter, CartesianGrid, Tooltip, XAxis, YAxis, ZAxis, CartesianAxis } from 'recharts';
+import { ScatterChart, Scatter, CartesianGrid, Tooltip, XAxis, YAxis, ZAxis,
+  CartesianAxis, Legend } from 'recharts';
 import Cross from '../../../src/shape/Cross';
 import { mount, render } from 'enzyme';
 
@@ -33,6 +34,7 @@ describe('ScatterChart of three dimension data', () => {
         <Scatter name="A school" data={data01} fillOpactity={0.3} fill="#ff7300"/>
         <Scatter name="B school" data={data02} fill="#347300"/>
         <Tooltip/>
+        <Legend />
       </ScatterChart>
     );
 
@@ -44,12 +46,13 @@ describe('ScatterChart of three dimension data', () => {
   it('render 2 Scatter, 2 CartesianAxis, 1 CartesianGrid', () => {
     const wrapper = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-        <XAxis dataKey={"x"} name="stature" unit="cm"/>
+        <XAxis dataKey={"x"} name="stature" unit="cm" />
         <YAxis dataKey={"y"} name="weight" unit="kg"/>
         <ZAxis dataKey={"z"} range={[4, 20]} name="score" unit="km"/>
         <CartesianGrid />
         <Scatter name="A school" data={[]} fillOpactity={0.3} fill="#ff7300"/>
         <Tooltip/>
+        <Legend layout="vertical"/>
       </ScatterChart>
     );
 

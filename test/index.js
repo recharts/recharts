@@ -17,6 +17,7 @@ require('./specs/polar/PolarAngleAxisSpec');
 require('./specs/polar/PolarGridSpec');
 require('./specs/polar/PieSpec');
 require('./specs/polar/RadialBarSpec');
+require('./specs/polar/RadarSpec');
 
 // chart
 require('./specs/chart/AreaChartSpec');

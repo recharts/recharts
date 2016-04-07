@@ -89,8 +89,10 @@ describe('<ScatterChart />', () => {
       </PieChart>
     );
     const sectors = wrapper.find(Sector);
-    const firstSector = sectors.at(1); // you can also use sectors.at(0) to get the wrapper node.
-    firstSector.simulate('click');
+    const se = sectors.at(2);
+    se.simulate('click');
     expect(onClick.calledOnce).to.equal(true);
+
+    se.simulate('mouseEnter')
   });
 });

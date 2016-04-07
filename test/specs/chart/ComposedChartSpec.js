@@ -1,6 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
-import { ComposedChart, Line, Bar, Area, XAxis, YAxis, Legend, CartesianGrid } from 'recharts';
+import { ComposedChart, Line, Bar, Area, XAxis, YAxis, Legend,
+ CartesianGrid, Tooltip } from 'recharts';
 import { mount, render } from 'enzyme';
 import sinon from 'sinon';
 
@@ -28,6 +29,35 @@ const data = [{name: 'Page A', uv: 590, pv: 800, amt: 1400},
     expect(wrapper.find('.recharts-line .recharts-line-curve').length).to.equal(1);
     expect(wrapper.find('.recharts-bar').length).to.equal(1);
     expect(wrapper.find('.recharts-area .recharts-area-area').length).to.equal(1);
+  });
+
+  it('MouseEnter ComposedChart should show tooltip, active dot, and cursor', () => {
+    const wrapper = mount(
+      <ComposedChart width={800} height={400} data={data}
+            margin={{top: 20, right: 20, bottom: 20, left: 20}}>
+        <XAxis dataKey="name"/>
+        <YAxis />
+        <Legend />
+        <Tooltip />
+        <CartesianGrid stroke='#f5f5f5'/>
+        <Area isAnimationActive={false} type='monotone' dataKey='amt' fill='#8884d8' stroke='#8884d8'/>
+        <Bar isAnimationActive={false} dataKey='pv' barSize={20} fill='#413ea0'/>
+        <Line isAnimationActive={false} type='monotone' dataKey='uv' stroke='#ff7300'/>
+      </ComposedChart>
+    );
+
+    wrapper.setState({
+      isTooltipActive: true,
+      activeTooltipIndex: 1,
+      activeTooltipLabel: 'test',
+      activeTooltipCoord: {
+        x: 100,
+        y: 100,
+      },
+    });
+
+    // expect(wrapper.find('.recharts-tooltip-cursor').length).to.equal(1);
+    // expect(wrapper.find('.recharts-line-active-dot').length).to.equal(1);
   });
 
 });

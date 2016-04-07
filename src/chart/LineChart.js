@@ -98,7 +98,7 @@ class LineChart extends Component {
     } else if (_.isFunction(option)) {
       dot = option(props);
     } else {
-      dot = <Dot {...props} key={`dot-${props.index}`} />;
+      dot = <Dot {...props} className="recharts-line-active-dot" key={`dot-${props.index}`} />;
     }
 
     return dot;

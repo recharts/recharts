@@ -6,7 +6,6 @@ import pureRender from '../util/PureRender';
 import { getPercentValue, isPercent } from '../util/DataUtils';
 import { getWidth, getHeight } from '../util/DOMUtils';
 import { warn } from '../util/LogUtils';
-import { addResizeListener, removeResizeListener } from '../util/detectElementResize';
 
 @pureRender
 class ResponsiveContainer extends Component {
@@ -29,11 +28,11 @@ class ResponsiveContainer extends Component {
 
   componentDidMount() {
     this.updateSizeOfWrapper();
-    addResizeListener(this.refs.container, this.updateSizeOfWrapper);
+    window.addEventListener('resize', this.updateSizeOfWrapper);
   }
 
   componentWillUnmount() {
-    removeEventListener(this.refs.container, this.updateSizeOfWrapper);
+    window.removeEventListener('resize', this.updateSizeOfWrapper);
   }
 
   updateSizeOfWrapper = () => {

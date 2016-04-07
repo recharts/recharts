@@ -2,6 +2,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { Surface, Brush } from 'recharts';
 import Layer from '../../../src/container/Layer';
+import sinon from 'sinon';
 import { mount, render } from 'enzyme';
 
 describe('<Brush />', () => {
@@ -30,13 +31,39 @@ describe('<Brush />', () => {
     expect(wrapper.find('.recharts-brush-slide').length).to.equal(0);
   });
 
-  it('mouse enter on brush will set isTextActive true', () => {
+  it('mouse enter and mouse leave on traveller will set isTextActive true', () => {
     const wrapper = mount(
       <Brush x={100} y={50} width={400} height={40} data={data}/>
     );
-    const layers = wrapper.find(Layer);
-    const brushLayer = layers.at(1);
-    brushLayer.simulate('mouseEnter');
+    const layers = wrapper.find('.recharts-brush-traveller');
+    const treavellerLayer = layers.at(1);
+    treavellerLayer.simulate('mouseEnter');
     expect(wrapper.state().isTextActive).to.equal(true);
+    treavellerLayer.simulate('mouseLeave');
+    expect(wrapper.state().isTextActive).to.equal(false);
+  });
+
+  it('mouse down on brush traveller will set isTravellerMoving true', () => {
+    const wrapper = mount(
+      <Brush x={100} y={50} width={400} height={40} data={data}/>
+    );
+    const layers = wrapper.find('.recharts-brush-traveller');
+    const treavellerLayer = layers.at(1);
+    treavellerLayer.simulate('mouseDown');
+    expect(wrapper.state().isTravellerMoving).to.equal(true);
+
+    wrapper.simulate('mouseMove');
+  });
+
+  it('mouse down on brush slide will set isSlideMoving true', () => {
+    const wrapper = mount(
+      <Brush x={100} y={50} width={400} height={40} data={data}/>
+    );
+    const slide = wrapper.find('.recharts-brush-slide');
+    slide.simulate('mouseDown');
+    expect(wrapper.state().isSlideMoving).to.equal(true);
+
+    wrapper.simulate('mouseMove');
+    wrapper.simulate('mouseLeave');
   });
 });
