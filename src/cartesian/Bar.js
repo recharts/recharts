@@ -145,23 +145,35 @@ class Bar extends Component {
   renderLabels() {
     const { isAnimationActive } = this.props;
     if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
-
-    const { data, label } = this.props;
+    const { data, label, layout } = this.props;
     const barProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);
+    const textAnchor = layout === 'vertical' ? 'start' : 'middle';
     const labels = data.map((entry, i) => {
+      let x;
+      let y;
+      if (layout === 'vertical') {
+        x = 5 + entry.x + entry.width;
+        y = 5 + entry.y + entry.height / 2;
+      } else {
+        x = entry.x + entry.width / 2;
+      }
       const labelProps = {
-        textAnchor: 'middle',
+        textAnchor,
         ...barProps,
         ...entry,
         ...customLabelProps,
-        x: entry.x + entry.width / 2,
+        x: x || 0,
+        y: y || 0,
         index: i,
         key: `label-${i}`,
         payload: entry,
       };
-
-      return this.renderLabelItem(label, labelProps, entry.value);
+      let labelValue = entry.value;
+      if (label === true && entry.value && labelProps.label) {
+        labelValue = labelProps.label;
+      }
+      return this.renderLabelItem(label, labelProps, labelValue);
     });
 
     return <Layer className="recharts-bar-labels">{labels}</Layer>;
