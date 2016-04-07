@@ -1,3 +1,16 @@
+## 0.9.0 (April 7, 2016)
+
+### refactor
+
+- Remove default event handler in Pie, and add `activeIndex` to let user control the active sector
+- Remove detectElementResize
+- Add activeDot in Line and Area
+
+### fix
+
+- Fix the bug of updating line when the length of line is zero at first
+- Fix the base value of AreaChart which was set to be 0 before
+
 ## 0.8.8 (March 25, 2016)
 
 ### refactor
