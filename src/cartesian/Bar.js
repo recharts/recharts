@@ -94,7 +94,7 @@ class Bar extends Component {
       animationDuration, animationEasing } = this.props;
     const baseProps = getPresentationAttributes(this.props);
     const getStyle = (isBegin) => ({
-      transform: `scale${layout === 'vertical' ? 'X' : 'Y'} (${isBegin ? 0 : 1})`,
+      transform: `scale${layout === 'vertical' ? 'X' : 'Y'}(${isBegin ? 0 : 1})`,
     });
 
     return data.map((entry, index) => {
