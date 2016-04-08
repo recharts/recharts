@@ -1,3 +1,13 @@
+## 0.9.1 (April 8, 2016)
+
+### fix
+
+- Fix the bug of bar animation
+
+### deps
+
+- update version of rechats-scale, and babel-eslint
+
 ## 0.9.0 (April 7, 2016)
 
 ### refactor
