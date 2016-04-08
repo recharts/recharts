@@ -12,7 +12,7 @@ Recharts is a **Redefined** chart library built with [React](https://facebook.gi
 
 The main purpose of this library is to help you to write charts in React applications without any pain. Main principles of Recharts are:
 
-1. **Simplely** deploy with React components
+1. **Simply** deploy with React components
 1. **Native** SVG support, lightweight depend on some D3 submodules
 1. **Declarative** components, components of chart are purely presentational
 
@@ -52,7 +52,7 @@ All the components of Recharts is clearly separated. The lineChart is composed b
 
 We'd love :heart: to hear what you think we should build. Please create a issue to write your usage or ideas.
 
-We are looking for like-minded people who share the same idea about Recharts. The goal of this project is create more flexible charting library for React community.
+We are looking for like-minded people who share the same idea about Recharts. The goal of this project is create a more flexible charting library for the  React community.
 
 ## License
 
