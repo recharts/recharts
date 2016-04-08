@@ -130,35 +130,42 @@ class BarChart extends Component {
       let prev = { offset: offset - barGap, size: 0 };
 
       result = sizeList.reduce((res, entry) => {
-        res[entry.dataKey] = {
-          offset: prev.offset + prev.size + barGap,
-          size: entry.barSize,
+        const newRes = {
+          ...res,
+          [entry.dataKey]: {
+            offset: prev.offset + prev.size + barGap,
+            size: entry.barSize,
+          },
         };
-        prev = res[entry.dataKey];
+
+        prev = newRes[entry.dataKey];
 
         if (entry.stackList && entry.stackList.length) {
           entry.stackList.forEach(key => {
-            res[key] = res[entry.dataKey];
+            newRes[key] = newRes[entry.dataKey];
           });
         }
-        return res;
+        return newRes;
       }, {});
     } else {
       const offset = getPercentValue(barCategoryGap, bandSize, 0, true);
       const size = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
 
       result = sizeList.reduce((res, entry, i) => {
-        res[entry.dataKey] = {
-          offset: offset + (size + barGap) * i,
-          size,
+        const newRes = {
+          ...res,
+          [entry.dataKey]: {
+            offset: offset + (size + barGap) * i,
+            size,
+          },
         };
 
         if (entry.stackList && entry.stackList.length) {
           entry.stackList.forEach(key => {
-            res[key] = res[entry.dataKey];
+            newRes[key] = newRes[entry.dataKey];
           });
         }
-        return res;
+        return newRes;
       }, {});
     }
 
@@ -176,22 +183,23 @@ class BarChart extends Component {
     return Object.keys(stackGroups).reduce((result, axisId) => {
       const sgs = stackGroups[axisId].stackGroups;
 
-      result[axisId] = Object.keys(sgs).reduce((res, stackId) => {
-        const { items } = sgs[stackId];
-        const barItems = items.filter(item => item.type.displayName === 'Bar');
+      return {
+        ...result,
+        [axisId]: Object.keys(sgs).reduce((res, stackId) => {
+          const { items } = sgs[stackId];
+          const barItems = items.filter(item => item.type.displayName === 'Bar');
 
-        if (barItems && barItems.length) {
-          const { dataKey } = barItems[0].props;
-          return [...res, {
-            dataKey,
-            stackList: barItems.slice(1).map(item => item.props.dataKey),
-            barSize: barItems[0].props.barSize || barSize,
-          }];
-        }
-        return res;
-      }, []);
-
-      return result;
+          if (barItems && barItems.length) {
+            const { dataKey } = barItems[0].props;
+            return [...res, {
+              dataKey,
+              stackList: barItems.slice(1).map(item => item.props.dataKey),
+              barSize: barItems[0].props.barSize || barSize,
+            }];
+          }
+          return res;
+        }, []),
+      };
     }, {});
   }
 

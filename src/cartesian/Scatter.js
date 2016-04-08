@@ -23,11 +23,16 @@ class Scatter extends Component {
     yAxisId: PropTypes.number,
     zAxisId: PropTypes.number,
     line: PropTypes.oneOfType([
-      PropTypes.bool, PropTypes.object, PropTypes.func, PropTypes.element
+      PropTypes.bool, PropTypes.object, PropTypes.func, PropTypes.element,
     ]),
     lineType: PropTypes.oneOf(['fitting', 'joint']),
     className: PropTypes.string,
 
+    shape: PropTypes.oneOfType([
+      PropTypes.oneOf(['circle', 'cross', 'dimand', 'square', 'triangle-down', 'triangle-up']),
+      PropTypes.element,
+      PropTypes.func,
+    ]),
     points: PropTypes.arrayOf(PropTypes.shape({
       cx: PropTypes.number,
       cy: PropTypes.number,
@@ -59,6 +64,7 @@ class Scatter extends Component {
     onClick() {},
     onMouseEnter() {},
     onMouseLeave() {},
+    shape: 'circle',
 
     isAnimationActive: true,
     animationBegin: 0,

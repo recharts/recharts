@@ -40,7 +40,7 @@ class Pie extends Component {
       PropTypes.object, PropTypes.func, PropTypes.element, PropTypes.bool,
     ]),
     activeShape: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.func, PropTypes.element, PropTypes.bool,
+      PropTypes.object, PropTypes.func, PropTypes.element,
     ]),
     activeIndex: PropTypes.number,
 

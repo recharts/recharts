@@ -149,27 +149,27 @@ class RadialBarChart extends Component {
       let prev = { offset: offset - barGap, radius: 0 };
 
       result = radiusList.reduce((res, entry) => {
-        res[entry.dataKey] = {
+        prev = {
           offset: prev.offset + prev.radius + barGap,
           radius: entry.barSize,
         };
-        prev = res[entry.dataKey];
 
-        return res;
+        return { ...res, [entry.dataKey]: prev };
       }, {});
     } else {
       let offset = getPercentValue(barCategoryGap, bandRadius);
       const radius = (bandRadius - 2 * offset - (len - 1) * barGap) / len >> 0;
       offset = -Math.max(((radius * len + (len - 1) * barGap) / 2) >> 0, 0);
 
-      result = radiusList.reduce((res, entry, i) => {
-        res[entry.dataKey] = {
-          offset: offset + (radius + barGap) * i,
-          radius,
-        };
-
-        return res;
-      }, {});
+      result = radiusList.reduce((res, entry, i) => (
+        {
+          ...res,
+          [entry.dataKey]: {
+            offset: offset + (radius + barGap) * i,
+            radius,
+          },
+        }
+      ), {});
     }
 
     return result;

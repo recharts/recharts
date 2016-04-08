@@ -10,6 +10,7 @@ export const isPercent = (value) => (
  * @param {Number|String} percent A percent
  * @param {Number} totalValue     Total value
  * @param {NUmber} defaultValue   The value returned when percent is undefined or invalid
+ * @param {Boolean} validate      If set to be true, the result will be validated
  * @return {Number} value
  */
 export const getPercentValue = (percent, totalValue, defaultValue = 0, validate = false) => {

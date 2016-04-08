@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "React charts",
   "main": "lib/index",
   "jsnext:main": "es6/index",
@@ -50,12 +50,12 @@
     "d3-shape": "0.6.0",
     "lodash": "4.6.1",
     "react-smooth": "0.1.1",
-    "recharts-scale": "0.1.8"
+    "recharts-scale": "0.1.9"
   },
   "devDependencies": {
     "babel-cli": "^6.6.4",
     "babel-core": "^6.7.2",
-    "babel-eslint": "^5.0.0",
+    "babel-eslint": "^6.0.2",
     "babel-loader": "^6.2.4",
     "babel-plugin-lodash": "^2.2.1",
     "babel-plugin-transform-class-properties": "^6.6.0",
