@@ -45,10 +45,10 @@
   },
   "dependencies": {
     "classnames": "2.2.3",
-    "core-js": "2.1.5",
+    "core-js": "2.2.1",
     "d3-scale": "0.6.4",
     "d3-shape": "0.6.0",
-    "lodash": "4.6.1",
+    "lodash": "4.8.2",
     "react-smooth": "0.1.1",
     "recharts-scale": "0.1.9"
   },
