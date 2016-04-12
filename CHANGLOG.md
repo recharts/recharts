@@ -1,3 +1,9 @@
+## 0.9.3 (April 12, 2016)
+
+### deps
+
+- Update react-smooth to 0.1.4
+
 ## 0.9.2 (April 12, 2016)
 
 ### deps
