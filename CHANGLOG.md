@@ -1,3 +1,9 @@
+## 0.9.2 (April 12, 2016)
+
+### deps
+
+- Update react to 15.0.0
+
 ## 0.9.1 (April 8, 2016)
 
 ### fix
@@ -74,18 +80,18 @@
 - Add Cell of `Pie` to set different options for each sector
 - Add Cell support in `Bar`, `RadialBar`
 
-### fix 
+### fix
 
 - Fix Pie chart Label position, When using custom label It was not rendering as part of the curve group.
-- Fix `isAnimationActive` props in `Area` 
+- Fix `isAnimationActive` props in `Area`
 
 ## 0.8.3 (February 25, 2016)
 
 ### refactor
-- refactor CartesianChart to a high order component, move some function to /util/CartesianUtils which can be used in ScatterChart. 
+- refactor CartesianChart to a high order component, move some function to /util/CartesianUtils which can be used in ScatterChart.
 - Simplify ComposedChart, remove duplicated code
 - use `filterEventAttributes` to add events props
-- cancle selecting line and area in LineChart, AreaChart, ComposedChart  
+- cancle selecting line and area in LineChart, AreaChart, ComposedChart
 
 ## 0.8.2 (February 24, 2016)
 
