@@ -14,6 +14,7 @@ import pureRender from '../util/PureRender';
 import { getTicksOfAxis } from '../util/CartesianUtils';
 import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
 import _ from 'lodash';
+import Smooth from 'react-smooth';
 
 @pureRender
 class LineChart extends Component {
@@ -90,7 +91,7 @@ class LineChart extends Component {
       <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor" />;
   }
 
-  renderActiveDot(option, props) {
+  renderActiveDot(option, props, index) {
     let dot;
 
     if (React.isValidElement(option)) {
@@ -101,7 +102,19 @@ class LineChart extends Component {
       dot = <Dot {...props} className="recharts-line-active-dot" key={`dot-${props.index}`} />;
     }
 
-    return dot;
+    return (
+      <Smooth
+        from="scale(0)"
+        to="scale(1)"
+        duration={400}
+        key={`dot-${props.cx}-${index}`}
+        attributeName="transform"
+      >
+        <Layer style={{ transformOrigin: 'center center' }}>
+          { dot }
+        </Layer>
+      </Smooth>
+    );
   }
   /**
    * Draw the main part of line chart
@@ -129,7 +142,7 @@ class LineChart extends Component {
           fill: stroke, strokeWidth: 2, stroke: '#fff',
           ...getPresentationAttributes(activeDot),
         };
-        dotItems.push(this.renderActiveDot(activeDot, dotProps));
+        dotItems.push(this.renderActiveDot(activeDot, dotProps, i));
       }
 
       return React.cloneElement(child, {
