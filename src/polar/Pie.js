@@ -37,7 +37,10 @@ class Pie extends Component {
       PropTypes.object, PropTypes.func, PropTypes.element, PropTypes.bool,
     ]),
     label: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.func, PropTypes.element, PropTypes.bool,
+      PropTypes.shape({
+        offsetRadius: PropTypes.number,
+      }),
+      PropTypes.func, PropTypes.element, PropTypes.bool,
     ]),
     activeShape: PropTypes.oneOfType([
       PropTypes.object, PropTypes.func, PropTypes.element,
@@ -257,7 +260,7 @@ class Pie extends Component {
       return option(props);
     }
 
-    return <text {...props} className="recharts-pie-label-text">{value}</text>;
+    return <text {...props} alignmentBaseline="middle" className="recharts-pie-label-text">{value}</text>;
   }
 
   renderLabels(sectors) {
