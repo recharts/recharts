@@ -58,7 +58,7 @@ export default React.createClass({
           <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
             <XAxis dataKey={'x'} name="stature" unit="cm" />
             <YAxis dataKey={'y'} name="weight" unit="kg" />
-            <ZAxis dataKey={'z'} range={[4, 20]} name="score" unit="km" />
+            <ZAxis dataKey={'z'} range={[50, 1200]} name="score" unit="km" />
             <CartesianGrid />
             <Scatter name="A school" data={data01} fillOpactity={0.3} fill="#ff7300" />
             <Scatter name="B school" data={data02} fill="#347300" />
@@ -72,9 +72,9 @@ export default React.createClass({
           <ScatterChart width={800} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
             <XAxis dataKey={'x'} name="stature" unit="cm" />
             <YAxis dataKey={'y'} name="weight" unit="kg" />
-            <ZAxis range={[4]} />
-            <Scatter line data={data03} fill="#ff7300" />
-            <Scatter line data={data04} fill="#347300" />
+            <ZAxis range={[64]} />
+            <Scatter line shape="star" data={data03} fill="#ff7300" />
+            <Scatter line shape="square" data={data04} fill="#347300" />
             <CartesianGrid />
             <Tooltip cursor={{ stroke: '#808080', strokeDasharray: '5 5' }}/>
             <Legend/>

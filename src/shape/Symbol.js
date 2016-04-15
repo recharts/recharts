@@ -1,0 +1,100 @@
+/**
+ * @fileOverview Curve
+ */
+import React, { Component, PropTypes } from 'react';
+import { symbol as shapeSymbol, symbolCircle, symbolCross, symbolDiamond,
+ symbolSquare, symbolStar, symbolTriangle, symbolWye } from 'd3-shape';
+import pureRender from '../util/PureRender';
+import classNames from 'classnames';
+import _ from 'lodash';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
+  filterEventAttributes } from '../util/ReactUtils';
+
+const SYMBOL_FACTORIES = {
+  symbolCircle, symbolCircle, symbolCross, symbolDiamond,
+  symbolSquare, symbolStar, symbolTriangle, symbolWye,
+};
+
+const getSymbolFactory = (type) => {
+  const name = `symbol${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
+
+  return SYMBOL_FACTORIES[name] || symbolCircle;
+};
+
+@pureRender
+class Symbol extends Component {
+
+  static displayName = 'Symbol';
+
+  static propTypes = {
+    ...PRESENTATION_ATTRIBUTES,
+    className: PropTypes.string,
+    shape: PropTypes.oneOfType([
+      PropTypes.oneOf(['circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye']),
+      PropTypes.element,
+      PropTypes.func,
+    ]),
+
+    cx: PropTypes.number,
+    cy: PropTypes.number,
+    size: PropTypes.number
+  };
+
+  static defaultProps = {
+    shape: 'circle',
+    stroke: 'none',
+    fill: '#000',
+    size: 64,
+  };
+
+  /**
+   * Calculate the path of curve
+   * @return {String} path
+   */
+  getPath() {
+    const { size, shape } = this.props;
+
+    if (_.isString(shape)) {
+      const symbolFactory = getSymbolFactory(shape);
+      const symbol = shapeSymbol().type(symbolFactory).size(size);
+
+
+      return symbol();
+    }
+
+    return '';
+  }
+
+  renderCustomizedShape() {
+    const { shape } = this.props;
+
+    if (React.isValidElement(shape)) {
+      return React.cloneElement(shape, this.props);
+    } else if (_.isFunction(shape)) {
+      return shape(this.props);
+    }
+
+    return null;
+  }
+
+  render() {
+    const { className, cx, cy, size, shape } = this.props;
+
+    if (cx === +cx && cy === +cy && size === +size) {
+
+      return _.isString(shape) ? (
+        <path
+          {...getPresentationAttributes(this.props)}
+          {...filterEventAttributes(this.props)}
+          className={classNames('recharts-symbol', className)}
+          transform={`translate(${cx}, ${cy})`}
+          d={this.getPath()}
+        />
+      ) : this.renderCustomizedShape();
+    }
+
+    return null;
+  }
+}
+
+export default Symbol;

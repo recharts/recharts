@@ -44,15 +44,15 @@ const CustomTooltip = React.createClass({
 });
 
 const renderSpecialDot = (props) => {
-  const { cx, cy, stroke, key } = props;
+  const { cx, cy, stroke } = props;
 
-  return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke} key={key}/>;
+  return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke}/>;
 };
 
 const renderLabel = (props) => {
-  const { x, y, textAnchor, key, value, index } = props;
+  const { x, y, textAnchor, value, index } = props;
 
-  return <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={key}>{value[1]}</text>
+  return <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={`label-${index}`}>{value[1]}</text>
 };
 
 export default React.createClass({

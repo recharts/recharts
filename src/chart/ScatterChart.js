@@ -76,7 +76,7 @@ class ScatterChart extends Component {
     return data.map(entry => ({
       cx: xAxis.scale(entry[xAxisDataKey]),
       cy: yAxis.scale(entry[yAxisDataKey]),
-      r: zAxisDataKey !== undefined ? zAxis.scale(entry[zAxisDataKey]) : zAxis.range[0],
+      size: zAxisDataKey !== undefined ? zAxis.scale(entry[zAxisDataKey]) : zAxis.range[0],
       payload: {
         x: entry[xAxisDataKey],
         y: entry[yAxisDataKey],

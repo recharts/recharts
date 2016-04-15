@@ -7,8 +7,12 @@ import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import Curve from '../shape/Curve';
+import Symbol from '../shape/Symbol';
 import Animate from 'react-smooth';
 import _ from 'lodash';
+
+const PI = Math.PI;
+const SYMBOL_STYLE = { transformOrigin: 'center center' };
 
 @pureRender
 class Scatter extends Component {
@@ -29,14 +33,14 @@ class Scatter extends Component {
     className: PropTypes.string,
 
     shape: PropTypes.oneOfType([
-      PropTypes.oneOf(['circle', 'cross', 'dimand', 'square', 'triangle-down', 'triangle-up']),
+      PropTypes.oneOf(['circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye']),
       PropTypes.element,
       PropTypes.func,
     ]),
     points: PropTypes.arrayOf(PropTypes.shape({
       cx: PropTypes.number,
       cy: PropTypes.number,
-      r: PropTypes.number,
+      size: PropTypes.number,
       payload: PropTypes.shape({
         x: PropTypes.number,
         y: PropTypes.number,
@@ -94,38 +98,26 @@ class Scatter extends Component {
     }, onMouseLeave);
   };
 
-  renderCircles() {
-    const {
-      points,
-      isAnimationActive,
-      animationBegin,
-      animationDuration,
-      animationEasing,
-    } = this.props;
+  renderSymbols() {
+    const { points, shape, isAnimationActive, animationBegin, animationDuration,
+      animationEasing } = this.props;
     const { activeIndex } = this.state;
     const baseProps = getPresentationAttributes(this.props);
 
     return points.map((entry, i) => {
-      const { r, ...rest } = entry;
 
+      /*
       return (
         <Animate from="scale(0)" to="scale(1)"
           attributeName="transform"
           easing="ease"
           key={`circle-${i}`}
         >
-          <circle
-            style={{
-              transformOrigin: 'center center',
-            }}
-            {...baseProps}
-            {...rest}
-            r={i === activeIndex ? r * 1.1 : r}
-            onMouseEnter={this.handleCircleMouseEnter.bind(this, entry, i)}
-            onMouseLeave={this.handleCircleMouseLeave}
-          />
+          <path d={} style={SYMBOL_STYLE} {...baseProps} {...rest}/>
         </Animate>
       );
+      */
+      return <Symbol key={`symbol-${i}`} {...baseProps} {...entry} shape={shape}/>;
     });
   }
 
@@ -154,7 +146,11 @@ class Scatter extends Component {
       lineItem = <Curve {...lineProps} />;
     }
 
-    return <Layer className="recharts-scatter-line">{lineItem}</Layer>;
+    return (
+      <Layer className="recharts-scatter-line" key="recharts-scatter-line">
+        {lineItem}
+      </Layer>
+    );
   }
 
   render() {
@@ -167,7 +163,9 @@ class Scatter extends Component {
     return (
       <Layer className={layerClass}>
         {line && this.renderLine()}
-        {this.renderCircles()}
+        <Layer key="recharts-scatter-symbols">
+          {this.renderSymbols()}
+        </Layer>
       </Layer>
     );
   }

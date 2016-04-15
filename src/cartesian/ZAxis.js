@@ -24,7 +24,7 @@ class ZAxis extends Component {
 
   static defaultProps = {
     zAxisId: 0,
-    range: [10, 10],
+    range: [64, 64],
   };
 
   render() {

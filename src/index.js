@@ -11,7 +11,6 @@ export Cell from './component/Cell';
 export Sector from './shape/Sector';
 export Curve from './shape/Curve';
 export Rectangle from './shape/Rectangle';
-export Triangle from './shape/Triangle';
 export Polygon from './shape/Polygon';
 export Dot from './shape/Dot';
 export Cross from './shape/Cross';

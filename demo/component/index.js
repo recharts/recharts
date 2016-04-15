@@ -11,7 +11,6 @@ import Brush from './BrushDemo';
 import Curve from './Curve';
 import Rectangle from './Rectangle';
 import Sector from './Sector';
-import Triangle from './Triangle';
 
 import LineChart from './LineChart';
 import AreaChart from './AreaChart';
@@ -57,6 +56,5 @@ export default {
     Curve,
     Rectangle,
     Sector,
-    Triangle,
   },
 };
