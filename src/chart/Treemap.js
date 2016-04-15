@@ -7,7 +7,7 @@ import Layer from '../container/Layer';
 import Rectangle from '../shape/Rectangle';
 import { getPresentationAttributes, validateWidthHeight } from '../util/ReactUtils';
 import classNames from 'classnames';
-import Animate from 'react-smooth';
+import Smooth from 'react-smooth';
 import pureRender from '../util/PureRender';
 import _ from 'lodash';
 
@@ -165,6 +165,7 @@ class Treemap extends Component {
     className: PropTypes.string,
     dataKey: PropTypes.string,
     isAnimationActive: PropTypes.bool,
+    isUpdateAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
     animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
@@ -175,56 +176,84 @@ class Treemap extends Component {
     stroke: '#000',
     dataKey: 'value',
     ratio: 0.5 * (1 + Math.sqrt(5)),
-
     isAnimationActive: true,
+    isUpdateAnimationActive: true,
     animationBegin: 0,
     animationDuration: 1500,
-    animationEasing: 'ease',
+    animationEasing: 'linear',
   };
 
-  renderDefaultNode(nodeProps) {
-    const { isAnimationActive, animationBegin, animationDuration, animationEasing } = this.props;
-    const { width, height } = nodeProps;
+  renderAnimatedItem(content, nodeProps) {
+    const {
+      isAnimationActive,
+      animationBegin,
+      animationDuration,
+      animationEasing,
+      isUpdateAnimationActive,
+    } = this.props;
+    const { width, height, x, y } = nodeProps;
     const translateX = parseInt((Math.random() * 2 - 1) * width, 10);
     const translateY = parseInt((Math.random() * 2 - 1) * height, 10);
+    const contentItem = this.renderContentItem(content, {
+      ...nodeProps,
+      isAnimationActive,
+    });
 
     return (
-      <Animate from={`translate(${translateX}px, ${translateX}px)`}
-        to="translate(0, 0)"
-        attributeName="transform"
-        animationBegin={animationBegin}
-        animationEasing={animationEasing}
-        isAnimationActive={isAnimationActive}
-        animationDuration={animationDuration}
+      <Smooth
+        from={{ x, y, width, height }}
+        to={{ x, y, width, height }}
+        duration={animationDuration}
+        easing={animationEasing}
+        isActive={isUpdateAnimationActive}
       >
-        <g>
-          {
-            React.createElement(Rectangle, {
-              ...nodeProps,
-              isAnimationActive,
-            })
-          }
-        </g>
-      </Animate>
+      {
+        ({ x: currX, y: currY, width: currWidth, height: currHeight }) => (
+          <Smooth from={`translate(${translateX}px, ${translateX}px)`}
+            to="translate(0, 0)"
+            attributeName="transform"
+            begin={animationBegin}
+            easing={animationEasing}
+            isActive={isAnimationActive}
+            duration={animationDuration}
+          >
+            <Layer>
+            {
+              this.renderContentItem(content, {
+                ...nodeProps,
+                isAnimationActive,
+                isUpdateAnimationActive: !isUpdateAnimationActive,
+                width: currWidth,
+                height: currHeight,
+                x: currX,
+                y: currY,
+              })
+            }
+            </Layer>
+          </Smooth>
+        )
+      }
+      </Smooth>
     );
+  }
+
+  renderContentItem(content, nodeProps) {
+    if (React.isValidElement(content)) {
+      return React.cloneElement(content, nodeProps);
+    } else if (_.isFunction(content)) {
+      return content(nodeProps);
+    }
+
+    return <Rectangle { ...nodeProps } />;
   }
 
   renderNode(root, node, i) {
     const { content } = this.props;
     const nodeProps = { ...getPresentationAttributes(this.props), ...node, root };
-    let contentItem;
-
-    if (React.isValidElement(content)) {
-      contentItem = React.cloneElement(content, nodeProps);
-    } else if (_.isFunction(content)) {
-      contentItem = content(nodeProps);
-    } else {
-      contentItem = this.renderDefaultNode(nodeProps);
-    }
 
     return (
       <Layer key={`recharts-treemap-node-${i}`}>
-        {contentItem}
+        { this.renderAnimatedItem(content, nodeProps) }
         {
           node.children && node.children.length ?
             node.children.map((child, index) => this.renderNode(node, child, index)) : null
