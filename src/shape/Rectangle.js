@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import classNames from 'classnames';
 import { findDOMNode } from 'react-dom';
-import Animate from 'react-smooth';
+import Smooth from 'react-smooth';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 
@@ -26,6 +26,7 @@ class Rectangle extends Component {
       PropTypes.array,
     ]),
     isAnimationActive: PropTypes.bool,
+    isUpdateAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
     animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
@@ -45,6 +46,7 @@ class Rectangle extends Component {
     strokeDasharray: 'none',
     fill: '#000',
     isAnimationActive: false,
+    isUpdateAnimationActive: false,
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
@@ -120,29 +122,48 @@ class Rectangle extends Component {
   render() {
     const { x, y, width, height, radius, className } = this.props;
     const { totalLength } = this.state;
-    const { animationEasing, animationDuration, animationBegin, isAnimationActive } = this.props;
+    const {
+      animationEasing,
+      animationDuration,
+      animationBegin,
+      isAnimationActive,
+      isUpdateAnimationActive,
+    } = this.props;
 
     if (x !== +x || y !== +y || width !== +width || height !== +height) { return null; }
 
     const layerClass = classNames('recharts-rectangle', className);
 
     return (
-      <Animate canBegin={totalLength > 0}
-        from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
-        to={`${totalLength}px 0px`}
-        attributeName="strokeDasharray"
-        begin={animationBegin}
+      <Smooth canBegin={totalLength > 0}
+        from={{ width, height, x, y }}
+        to={{ width, height, x, y }}
         duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
+        animationEasing={animationEasing}
+        isActive={isUpdateAnimationActive}
       >
-        <path
-          {...getPresentationAttributes(this.props)}
-          {...filterEventAttributes(this.props)}
-          className={layerClass}
-          d={this.getPath(x, y, width, height, radius)}
-        />
-      </Animate>
+      {
+        ({ width: currWidth, height: currHeight, x: currX, y: currY }) => (
+          <Smooth
+            canBegin={totalLength > 0}
+            from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
+            to={`${totalLength}px 0px`}
+            attributeName="strokeDasharray"
+            begin={animationBegin}
+            duration={animationDuration}
+            isActive={isAnimationActive}
+            easing={animationEasing}
+          >
+            <path
+              {...getPresentationAttributes(this.props)}
+              {...filterEventAttributes(this.props)}
+              className={layerClass}
+              d={this.getPath(currX, currY, currWidth, currHeight, radius)}
+            />
+          </Smooth>
+        )
+      }
+      </Smooth>
     );
   }
 }
