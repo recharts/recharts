@@ -117,7 +117,7 @@ class Scatter extends Component {
         </Animate>
       );
       */
-      return <Symbol key={`symbol-${i}`} {...baseProps} {...entry} shape={shape}/>;
+      return <Symbol key={`symbol-${i}`} {...baseProps} {...entry} type={shape}/>;
     });
   }
 

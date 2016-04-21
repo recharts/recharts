@@ -242,8 +242,9 @@ export const getTicksOfAxis = (axis, isGrid) => {
   const scale = axis.scale;
   const offset = isGrid && axis.type === 'category' ? scale.bandwidth() / 2 : 0;
 
-  if (axis.ticks) {
-    return axis.ticks.map(entry => (
+  // The ticks setted by user should only affect the ticks adjacent to axis line
+  if (isGrid && (axis.ticks || axis.niceTicks)) {
+    return (axis.ticks || axis.niceTicks).map(entry => (
       { coordinate: scale(entry) + offset, value: entry }
     ));
   }

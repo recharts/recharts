@@ -18,7 +18,6 @@ class Sector extends Component {
     className: PropTypes.string,
     cx: PropTypes.number,
     cy: PropTypes.number,
-    shape: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
     innerRadius: PropTypes.number,
     outerRadius: PropTypes.number,
     startAngle: PropTypes.number,
@@ -75,26 +74,14 @@ class Sector extends Component {
     return path;
   }
 
-  renderCustomizedShape() {
-    const { shape } = this.props;
-
-    if (React.isValidElement(shape)) {
-      return React.cloneElement(shape, this.props);
-    } else if (_.isFunction(shape)) {
-      return shape(this.props);
-    }
-
-    return null;
-  }
-
   render() {
-    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, className, shape } = this.props;
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, className } = this.props;
 
     if (outerRadius < innerRadius || startAngle === endAngle) { return null; }
 
     const layerClass = classNames('recharts-sector', className);
 
-    return shape ? this.renderCustomizedShape() : (
+    return (
       <path
         {...getPresentationAttributes(this.props)}
         {...filterEventAttributes(this.props)}

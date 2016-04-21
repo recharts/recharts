@@ -72,7 +72,7 @@ export default React.createClass({
           <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             <CartesianGrid stroke='#f5f5f5'/>
             <Legend/>
-            <XAxis/>
+            <XAxis />
             <YAxis domain={[0, 500]}/>
             <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300'/>
           </LineChart>
@@ -93,7 +93,7 @@ export default React.createClass({
         <p>LineChart with three y-axes</p>
         <div className='line-chart-wrapper' style={{ margin: 40 }}>
           <LineChart width={600} height={400} data={data}>
-            <YAxis type='number' yAxisId={0}/>
+            <YAxis type='number' yAxisId={0} ticks={[0, 250]}/>
             <YAxis type='number' orientation='right' yAxisId={1}/>
             <YAxis type='number' orientation='right' yAxisId={2}/>
             <XAxis dataKey='name'/>

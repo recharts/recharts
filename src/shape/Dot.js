@@ -11,32 +11,17 @@ class Dot extends Component {
 
   static propTypes = {
     className: PropTypes.string,
-    shape: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
     cx: PropTypes.number,
     cy: PropTypes.number,
     r: PropTypes.number,
   };
 
-  renderCustomizedShape() {
-    const { shape } = this.props;
-
-    if (React.isValidElement(shape)) {
-      return React.cloneElement(shape, this.props);
-    } else if (_.isFunction(shape)) {
-      return shape(this.props);
-    }
-
-    return null;
-  }
-
   render() {
-    const { cx, cy, r, className, shape } = this.props;
+    const { cx, cy, r, className } = this.props;
     const layerClass = classNames('recharts-dot', className);
 
     if (cx === +cx && cy === +cy && r === +r) {
-      return shape ?
-            this.renderCustomizedShape() :
-            <circle {...this.props} className={layerClass} />;
+      return <circle {...this.props} className={layerClass} />;
     }
 
     return null;

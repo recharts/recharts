@@ -29,19 +29,14 @@ class Symbol extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
-    shape: PropTypes.oneOfType([
-      PropTypes.oneOf(['circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye']),
-      PropTypes.element,
-      PropTypes.func,
-    ]),
-
+    type: PropTypes.oneOf(['circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye']),
     cx: PropTypes.number,
     cy: PropTypes.number,
     size: PropTypes.number
   };
 
   static defaultProps = {
-    shape: 'circle',
+    type: 'circle',
     stroke: 'none',
     fill: '#000',
     size: 64,
@@ -52,37 +47,19 @@ class Symbol extends Component {
    * @return {String} path
    */
   getPath() {
-    const { size, shape } = this.props;
+    const { size, type } = this.props;
+    const symbolFactory = getSymbolFactory(type);
+    const symbol = shapeSymbol().type(symbolFactory).size(size);
 
-    if (_.isString(shape)) {
-      const symbolFactory = getSymbolFactory(shape);
-      const symbol = shapeSymbol().type(symbolFactory).size(size);
-
-
-      return symbol();
-    }
-
-    return '';
-  }
-
-  renderCustomizedShape() {
-    const { shape } = this.props;
-
-    if (React.isValidElement(shape)) {
-      return React.cloneElement(shape, this.props);
-    } else if (_.isFunction(shape)) {
-      return shape(this.props);
-    }
-
-    return null;
+    return symbol();
   }
 
   render() {
-    const { className, cx, cy, size, shape } = this.props;
+    const { className, cx, cy, size } = this.props;
 
     if (cx === +cx && cy === +cy && size === +size) {
 
-      return _.isString(shape) ? (
+      return (
         <path
           {...getPresentationAttributes(this.props)}
           {...filterEventAttributes(this.props)}
@@ -90,7 +67,7 @@ class Symbol extends Component {
           transform={`translate(${cx}, ${cy})`}
           d={this.getPath()}
         />
-      ) : this.renderCustomizedShape();
+      );
     }
 
     return null;

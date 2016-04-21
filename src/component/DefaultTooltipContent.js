@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
+import _ from 'lodash';
 
 @pureRender
 class DefaultTooltipContent extends Component {
@@ -77,11 +78,12 @@ class DefaultTooltipContent extends Component {
       margin: 0,
       ...labelStyle,
     };
-    let finalLabel = label;
-    if (label && labelFormatter) { finalLabel = labelFormatter(label); }
+    const hasLabel = _.isNumber(label) || _.isString(label);
+    let finalLabel = hasLabel ? label : '';
+    if (hasLabel && labelFormatter) { finalLabel = labelFormatter(label); }
     return (
       <div className="recharts-default-tooltip" style={finalStyle}>
-        <p className="recharts-tooltip-label" style={finalLabelStyle}>{finalLabel || ''}</p>
+        <p className="recharts-tooltip-label" style={finalLabelStyle}>{finalLabel}</p>
         {this.renderContent()}
       </div>
     );

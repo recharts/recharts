@@ -25,7 +25,6 @@ class Rectangle extends Component {
       PropTypes.number,
       PropTypes.array,
     ]),
-    shape: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
     isAnimationActive: PropTypes.bool,
     isUpdateAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
@@ -120,20 +119,8 @@ class Rectangle extends Component {
     return path;
   }
 
-  renderCustomizedShape() {
-    const { shape } = this.props;
-
-    if (React.isValidElement(shape)) {
-      return React.cloneElement(shape, this.props);
-    } else if (_.isFunction(shape)) {
-      return shape(this.props);
-    }
-
-    return null;
-  }
-
   render() {
-    const { x, y, width, height, radius, className, shape } = this.props;
+    const { x, y, width, height, radius, className } = this.props;
     const { totalLength } = this.state;
     const {
       animationEasing,

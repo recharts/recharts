@@ -14,7 +14,6 @@ class Polygon extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
-    shape: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
     points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -37,26 +36,14 @@ class Polygon extends Component {
     }, []).join(' ');
   }
 
-  renderCustomizedShape() {
-    const { shape } = this.props;
-
-    if (React.isValidElement(shape)) {
-      return React.cloneElement(shape, this.props);
-    } else if (_.isFunction(shape)) {
-      return shape(this.props);
-    }
-
-    return null;
-  }
-
   render() {
-    const { points, className, shape } = this.props;
+    const { points, className } = this.props;
 
     if (!points || !points.length) { return null; }
 
     const layerClass = classNames('recharts-polygon', className);
 
-    return shape ? this.renderCustomizedShape :t (
+    return (
       <polygon
         {...getPresentationAttributes(this.props)}
         className={layerClass}
