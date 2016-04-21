@@ -24,7 +24,7 @@ import pureRender from '../util/PureRender';
 import { parseSpecifiedDomain } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { calculateDomainOfTicks, detectReferenceElementsDomain, getTicksOfAxis,
-  getTicksOfGrid, getLegendProps } from '../util/CartesianUtils';
+  getCoordinatesOfGrid, getLegendProps } from '../util/CartesianUtils';
 import _ from 'lodash';
 
 @pureRender
@@ -343,13 +343,13 @@ class ScatterChart extends Component {
 
     if (!gridItem) {return null;}
 
-    const verticalPoints = getTicksOfGrid(CartesianAxis.getTicks({
+    const verticalPoints = getCoordinatesOfGrid(CartesianAxis.getTicks({
       ...CartesianAxis.defaultProps, ...xAxis,
       ticks: getTicksOfAxis(xAxis, true),
       viewBox: { x: 0, y: 0, width, height },
     }), offset.left, offset.left + offset.width);
 
-    const horizontalPoints = getTicksOfGrid(CartesianAxis.getTicks({
+    const horizontalPoints = getCoordinatesOfGrid(CartesianAxis.getTicks({
       ...CartesianAxis.defaultProps, ...yAxis,
       ticks: getTicksOfAxis(yAxis, true),
       viewBox: { x: 0, y: 0, width, height },

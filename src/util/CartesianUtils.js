@@ -209,13 +209,13 @@ export const isCategorialAxis = (layout, axisType) => (
   (layout === 'vertical' && axisType === 'yAxis')
 );
  /**
- * Calculate the ticks of grid
+ * Calculate the Coordinates of grid
  * @param  {Array} ticks The ticks in axis
  * @param {Number} min   The minimun value of axis
  * @param {Number} max   The maximun value of axis
- * @return {Array}       Ticks
+ * @return {Array}       Coordinates
  */
-export const getTicksOfGrid = (ticks, min, max) => {
+export const getCoordinatesOfGrid = (ticks, min, max) => {
   let hasMin;
   let hasMax;
 
@@ -240,13 +240,19 @@ export const getTicksOfGrid = (ticks, min, max) => {
  */
 export const getTicksOfAxis = (axis, isGrid) => {
   const scale = axis.scale;
-  const offset = isGrid && axis.type === 'category' ? scale.bandwidth() / 2 : 0;
+  const { duplicateDomain, type } = axis;
+  const offset = isGrid && type === 'category' ? scale.bandwidth() / 2 : 0;
 
   // The ticks setted by user should only affect the ticks adjacent to axis line
   if (isGrid && (axis.ticks || axis.niceTicks)) {
-    return (axis.ticks || axis.niceTicks).map(entry => (
-      { coordinate: scale(entry) + offset, value: entry }
-    ));
+    return (axis.ticks || axis.niceTicks).map(entry => {
+      const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
+
+      return {
+        coordinate: scale(scaleContent) + offset,
+        value: entry,
+      };
+    });
   }
 
   if (scale.ticks) {
@@ -255,8 +261,12 @@ export const getTicksOfAxis = (axis, isGrid) => {
     ));
   }
 
+  // When axis has duplicated text, serial numbers are used to generate scale
   return scale.domain().map((entry) => (
-    { coordinate: scale(entry) + offset, value: entry }
+    {
+      coordinate: scale(entry) + offset,
+      value: duplicateDomain ? duplicateDomain[entry] : entry,
+    }
   ));
 };
 

@@ -221,67 +221,67 @@ export default React.createClass({
           </BarChart>
         </div>
 
+        <p>BarChart of layout vertical</p>
+        <div className="bar-chart-wrapper">
+          <BarChart width={400} height={400} data={data} layout="vertical">
+            <XAxis type="number" />
+            <YAxis dataKey="name" type="category" />
+            <CartesianGrid horizontal={false} />
+            <Bar dataKey="uv" fill="#ff7300" />
+            <Bar dataKey="pv" fill="#387908" />
+          </BarChart>
+        </div>
+
+        <p>Tiny BarChart</p>
+        <div className="bar-chart-wrapper">
+          <BarChart width={150} height={40} data={data}>
+            <Bar dataKey="uv" fill="#ff7300" />
+          </BarChart>
+        </div>
+
+        <p>BarChart of positive and negative values</p>
+        <div className="bar-chart-wrapper" style={{ userSelect: "none", WebkitUserSelect: "none" }}>
+          <BarChart width={1100} height={250} barGap={2} barSize={6} data={data02} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
+            <XAxis dataKey="name" />
+            <YAxis tickCount={7} />
+            <Bar dataKey="uv" fill="#ff7300" />
+            <Bar dataKey="pv" fill="#387908" />
+            <Tooltip />
+            <CartesianGrid />
+            <Brush dataKey="name" height={30} />
+            <ReferenceLine type="horizontal" value={0} stroke="#666" />
+          </BarChart>
+        </div>
+
+        <p>BarChart of custom bar (1)</p>
+        <div className="bar-chart-wrapper">
+          <BarChart width={500} height={250} barCategoryGap={0} data={data}  margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
+            <XAxis dataKey="name" />
+            <Bar dataKey="uv" barGap={0} fill="#ff7300" shape={CustomBar} />
+          </BarChart>
+        </div>
+
+        <p>BarChart of custom bar (2)</p>
+        <div className="bar-chart-wrapper">
+          <BarChart width={500} height={250} barCategoryGap={0} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+            <XAxis axisLine={false} tickLine={false} dataKey="name" tick={<CustomAxis />}/>
+            <Bar dataKey="uv" barGap={0} fill="#387908" shape={<BarTwo />} label />
+          </BarChart>
+        </div>
+
+        <p>Stack BarChart</p>
+        <div className="bar-chart-wrapper">
+          <BarChart width={400} height={400} data={data}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <CartesianGrid vertical={false}/>
+            <Bar stackId="0" dataKey="uv" fill="#ff7300" />
+            <Bar stackId="0" dataKey="pv" fill="#387908" label={renderLabel}/>
+            <Bar dataKey="amt" fill="#387908" label={renderLabel}/>
+          </BarChart>
+        </div>
       </div>
     );
   }
 });
-        // <p>BarChart of layout vertical</p>
-        // <div className="bar-chart-wrapper">
-        //   <BarChart width={400} height={400} data={data} layout="vertical">
-        //     <XAxis type="number" />
-        //     <YAxis dataKey="name" type="category" />
-        //     <CartesianGrid horizontal={false} />
-        //     <Bar dataKey="uv" fill="#ff7300" />
-        //     <Bar dataKey="pv" fill="#387908" />
-        //   </BarChart>
-        // </div>
-
-        // <p>Tiny BarChart</p>
-        // <div className="bar-chart-wrapper">
-        //   <BarChart width={150} height={40} data={data}>
-        //     <Bar dataKey="uv" fill="#ff7300" />
-        //   </BarChart>
-        // </div>
-
-        // <p>BarChart of positive and negative values</p>
-        // <div className="bar-chart-wrapper" style={{ userSelect: "none", WebkitUserSelect: "none" }}>
-        //   <BarChart width={1100} height={250} barGap={2} barSize={6} data={data02} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
-        //     <XAxis dataKey="name" />
-        //     <YAxis tickCount={7} />
-        //     <Bar dataKey="uv" fill="#ff7300" />
-        //     <Bar dataKey="pv" fill="#387908" />
-        //     <Tooltip />
-        //     <CartesianGrid />
-        //     <Brush dataKey="name" height={30} />
-        //     <ReferenceLine type="horizontal" value={0} stroke="#666" />
-        //   </BarChart>
-        // </div>
-
-        // <p>BarChart of custom bar (1)</p>
-        // <div className="bar-chart-wrapper">
-        //   <BarChart width={500} height={250} barCategoryGap={0} data={data}  margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
-        //     <XAxis dataKey="name" />
-        //     <Bar dataKey="uv" barGap={0} fill="#ff7300" shape={CustomBar} />
-        //   </BarChart>
-        // </div>
-
-        // <p>BarChart of custom bar (2)</p>
-        // <div className="bar-chart-wrapper">
-        //   <BarChart width={500} height={250} barCategoryGap={0} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-        //     <XAxis axisLine={false} tickLine={false} dataKey="name" tick={<CustomAxis />}/>
-        //     <Bar dataKey="uv" barGap={0} fill="#387908" shape={<BarTwo />} label />
-        //   </BarChart>
-        // </div>
-
-        // <p>Stack BarChart</p>
-        // <div className="bar-chart-wrapper">
-        //   <BarChart width={400} height={400} data={data}>
-        //     <XAxis dataKey="name" />
-        //     <YAxis />
-        //     <Tooltip />
-        //     <CartesianGrid vertical={false}/>
-        //     <Bar stackId="0" dataKey="uv" fill="#ff7300" />
-        //     <Bar stackId="0" dataKey="pv" fill="#387908" label={renderLabel}/>
-        //     <Bar dataKey="amt" fill="#387908" label={renderLabel}/>
-        //   </BarChart>
-        // </div>

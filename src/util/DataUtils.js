@@ -3,8 +3,6 @@ import _ from 'lodash';
 export const isPercent = (value) => (
   _.isString(value) && value.indexOf('%') === value.length - 1
 );
-
-
 /**
  * Get percent value of a total value
  * @param {Number|String} percent A percent
@@ -97,3 +95,20 @@ export const getAnyElementOfObject = (obj) => {
 
   return null;
 };
+
+export const hasDuplicate = (ary) => {
+  if (!_.isArray(ary)) { return false; }
+
+  const len = ary.length;
+  const cache = {};
+
+  for (let i = 0; i < len; i++ ) {
+    if (cache[ary[i]]) {
+      return true;
+    } else {
+      cache[ary[i]] = true;
+    }
+  }
+
+  return false;
+}

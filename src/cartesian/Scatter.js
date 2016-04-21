@@ -32,6 +32,10 @@ class Scatter extends Component {
     lineType: PropTypes.oneOf(['fitting', 'joint']),
     className: PropTypes.string,
 
+    activeIndex: PropTypes.number,
+    activeShape: PropTypes.oneOfType([
+      PropTypes.object, PropTypes.func, PropTypes.element,
+    ]),
     shape: PropTypes.oneOfType([
       PropTypes.oneOf(['circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye']),
       PropTypes.element,
@@ -50,11 +54,6 @@ class Scatter extends Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
-
-    isAnimationActive: PropTypes.bool,
-    animationBegin: PropTypes.number,
-    animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
   };
 
   static defaultProps = {
@@ -69,55 +68,72 @@ class Scatter extends Component {
     onMouseEnter() {},
     onMouseLeave() {},
     shape: 'circle',
-
-    isAnimationActive: true,
-    animationBegin: 0,
-    animationDuration: 1500,
-    animationEasing: 'ease',
   };
 
   state = {
     activeIndex: -1,
   };
 
-  handleCircleMouseEnter(data, index, e) {
+  handleSymbolMouseEnter(data, index, e) {
     const { onMouseEnter } = this.props;
 
-    this.setState({
-      activeIndex: index,
-    }, () => {
-      onMouseEnter(data, e);
-    });
+    if (onMouseEnter) {
+      onMouseEnter(data, index, e);
+    }
   }
 
-  handleCircleMouseLeave = () => {
+  handleSymbolMouseLeave = () => {
     const { onMouseLeave } = this.props;
 
-    this.setState({
-      activeIndex: -1,
-    }, onMouseLeave);
+    if (onMouseLeave) {
+      onMouseLeave();
+    }
   };
 
+  handleSymbolClick(data, index, e) {
+    const { onClick } = this.props;
+
+    if (onClick) {
+      onClick(data, index, e);
+    }
+  }
+
+  renderSymbolItem(option, props) {
+    let symbol;
+
+    if (React.isValidElement(option)) {
+      symbol = React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      symbol = option(props);
+    } else {
+      symbol = <Symbol {...props} type={option}/>;
+    }
+
+    return symbol;
+  }
+
+
   renderSymbols() {
-    const { points, shape, isAnimationActive, animationBegin, animationDuration,
-      animationEasing } = this.props;
-    const { activeIndex } = this.state;
+    const { points, shape, activeShape, activeIndex } = this.props;
     const baseProps = getPresentationAttributes(this.props);
 
     return points.map((entry, i) => {
-
-      /*
+      const props = {
+        key: `symbol-${i}`,
+        ...baseProps,
+        ...entry,
+      };
       return (
-        <Animate from="scale(0)" to="scale(1)"
-          attributeName="transform"
-          easing="ease"
-          key={`circle-${i}`}
+        <Layer
+          className="recharts-scatter-symbol"
+          onMouseEnter={this.handleSymbolMouseEnter.bind(this, entry, i)}
+          onMouseLeave={this.handleSymbolMouseLeave}
+          onClick={this.handleSymbolClick.bind(this, entry, i)}
+          key={`symbol-${i}`}
         >
-          <path d={} style={SYMBOL_STYLE} {...baseProps} {...rest}/>
-        </Animate>
+          {this.renderSymbolItem(activeIndex === i ? activeShape : shape, props)}
+        </Layer>
       );
-      */
-      return <Symbol key={`symbol-${i}`} {...baseProps} {...entry} type={shape}/>;
     });
   }
 

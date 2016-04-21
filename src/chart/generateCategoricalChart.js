@@ -22,10 +22,10 @@ import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
 import pureRender from '../util/PureRender';
 import { getOffset } from '../util/DOMUtils';
-import { parseSpecifiedDomain, getAnyElementOfObject } from '../util/DataUtils';
+import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate } from '../util/DataUtils';
 import { calculateDomainOfTicks, calculateChartCoordinate, calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
-  getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getTicksOfGrid,
+  getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
   getStackGroupsByAxisId, getTicksOfAxis, isCategorialAxis } from '../util/CartesianUtils';
 
 const ORIENT_MAP = {
@@ -132,12 +132,15 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
         if (!result[axisId]) {
           let domain;
+          let duplicateDomain;
 
           if (dataKey) {
             domain = getDomainOfDataByKey(displayedData, dataKey, type);
-            const uniqDomain = _.uniq(domain);
+            const duplicate = hasDuplicate(domain);
 
-            domain = uniqDomain.length !== domain ? _.range(0, len) : domain;
+            duplicateDomain = duplicate ? domain : null;
+            // When axis has duplicated text, serial numbers are used to generate scale
+            domain = duplicate ? _.range(0, len) : domain;
           } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
             && type === 'number') {
             domain = getDomainOfStackGroups(
@@ -165,6 +168,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
               ...child.props,
               axisType,
               domain,
+              duplicateDomain,
               originalDomain: child.props.domain,
             },
           };
@@ -594,13 +598,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const xAxis = getAnyElementOfObject(xAxisMap);
       const yAxis = getAnyElementOfObject(yAxisMap);
 
-      const verticalPoints = getTicksOfGrid(CartesianAxis.getTicks({
+      const verticalPoints = getCoordinatesOfGrid(CartesianAxis.getTicks({
         ...CartesianAxis.defaultProps, ...xAxis,
         ticks: getTicksOfAxis(xAxis, true),
         viewBox: { x: 0, y: 0, width, height },
       }), offset.left, offset.left + offset.width);
 
-      const horizontalPoints = getTicksOfGrid(CartesianAxis.getTicks({
+      const horizontalPoints = getCoordinatesOfGrid(CartesianAxis.getTicks({
         ...CartesianAxis.defaultProps, ...yAxis,
         ticks: getTicksOfAxis(yAxis, true),
         viewBox: { x: 0, y: 0, width, height },
