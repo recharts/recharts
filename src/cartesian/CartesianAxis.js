@@ -70,20 +70,20 @@ class CartesianAxis extends Component {
   };
 
   static getTicks(props) {
-    const { ticks, viewBox, minTickGap, orientation, interval } = props;
+    const { ticks, viewBox, minTickGap, orientation, interval, tickFormatter } = props;
 
     if (!ticks || !ticks.length) { return [];}
 
     return (interval === +interval || isSsr())
         ? CartesianAxis.getNumberIntervalTicks(ticks, interval === +interval ? +interval : 0)
-        : CartesianAxis.getAutoIntervalTicks(ticks, viewBox, orientation, minTickGap);
+        : CartesianAxis.getAutoIntervalTicks(ticks, tickFormatter, viewBox, orientation, minTickGap);
   }
 
   static getNumberIntervalTicks(ticks, interval) {
     return ticks.filter((entry, i) => (i % (interval + 1) === 0));
   }
 
-  static getAutoIntervalTicks(ticks, viewBox, orientation, minTickGap) {
+  static getAutoIntervalTicks(ticks, tickFormatter, viewBox, orientation, minTickGap) {
     const { x, y, width, height } = viewBox;
     const sizeKey = (orientation === 'top' || orientation === 'bottom') ? 'width' : 'height';
     const sign = ticks.length >= 2 ? Math.sign(ticks[1].coordinate - ticks[0].coordinate) : 1;
@@ -97,7 +97,8 @@ class CartesianAxis extends Component {
     }
 
     return ticks.filter(entry => {
-      const tickSize = getStringSize(entry.value)[sizeKey];
+      const tickContent = _.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value;
+      const tickSize = getStringSize(tickContent)[sizeKey];
       const isShow = sign === 1 ?
         (entry.coordinate - tickSize / 2) >= pointer :
         (entry.coordinate + tickSize / 2) <= pointer;
@@ -292,7 +293,9 @@ class CartesianAxis extends Component {
             />
           )}
           {tick && this.renderTickItem(
-            tick, tickProps, tickFormatter ? tickFormatter(entry.value) : entry.value
+            tick,
+            tickProps,
+            _.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value
           )}
         </g>
       );
