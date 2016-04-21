@@ -14,6 +14,7 @@ export Rectangle from './shape/Rectangle';
 export Polygon from './shape/Polygon';
 export Dot from './shape/Dot';
 export Cross from './shape/Cross';
+export Symbol from './shape/Symbol';
 
 export PolarGrid from './polar/PolarGrid';
 export PolarRadiusAxis from './polar/PolarRadiusAxis';

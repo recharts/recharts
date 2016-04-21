@@ -44,8 +44,8 @@ export default React.createClass({
         <p>Simple ScatterChart</p>
         <div className="scatter-chart-wrapper">
           <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
-            <XAxis dataKey={'x'} name="stature" unit="cm" />
-            <YAxis dataKey={'y'} name="weight" unit="kg" />
+            <XAxis dataKey="x" name="stature" unit="cm" />
+            <YAxis dataKey="y" name="weight" unit="kg" />
             <Scatter name="A school" data={data01} fill="#ff7300" />
             <CartesianGrid />
             <Tooltip />
@@ -56,9 +56,9 @@ export default React.createClass({
         <p>ScatterChart of three dimension data</p>
         <div className="scatter-chart-wrapper">
           <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
-            <XAxis dataKey={'x'} name="stature" unit="cm" />
-            <YAxis dataKey={'y'} name="weight" unit="kg" />
-            <ZAxis dataKey={'z'} range={[50, 1200]} name="score" unit="km" />
+            <XAxis dataKey="x" name="stature" unit="cm" />
+            <YAxis dataKey="y" name="weight" unit="kg" />
+            <ZAxis dataKey="z" range={[50, 1200]} name="score" unit="km" />
             <CartesianGrid />
             <Scatter name="A school" data={data01} fillOpactity={0.3} fill="#ff7300" />
             <Scatter name="B school" data={data02} fill="#347300" />
@@ -70,8 +70,8 @@ export default React.createClass({
         <p>ScatterChart which has joint line</p>
         <div className="scatter-chart-wrapper">
           <ScatterChart width={800} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
-            <XAxis dataKey={'x'} name="stature" unit="cm" />
-            <YAxis dataKey={'y'} name="weight" unit="kg" />
+            <XAxis dataKey="x" name="stature" unit="cm" />
+            <YAxis dataKey="y" name="weight" unit="kg" />
             <ZAxis range={[64]} />
             <Scatter line shape="star" data={data03} fill="#ff7300" />
             <Scatter line shape="square" data={data04} fill="#347300" />

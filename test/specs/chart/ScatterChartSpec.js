@@ -1,8 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { ScatterChart, Scatter, CartesianGrid, Tooltip, XAxis, YAxis, ZAxis,
-  CartesianAxis, Legend } from 'recharts';
-import Cross from '../../../src/shape/Cross';
+  CartesianAxis, Legend, Cross, Symbol } from 'recharts';
 import { mount, render } from 'enzyme';
 
 describe('ScatterChart of three dimension data', () => {
@@ -24,12 +23,12 @@ describe('ScatterChart of three dimension data', () => {
     { x: 210, y: 220, z: 230 },
   ];
 
-  it('render 2 Scatter, 2 CartesianAxis, 1 CartesianGrid', () => {
-    const wrapper = mount(
+  it('Render 2 Scatter', () => {
+    const wrapper = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-        <XAxis dataKey={"x"} name="stature" unit="cm"/>
-        <YAxis dataKey={"y"} name="weight" unit="kg"/>
-        <ZAxis dataKey={"z"} range={[4, 20]} name="score" unit="km"/>
+        <XAxis dataKey="x" name="stature" unit="cm"/>
+        <YAxis dataKey="y" name="weight" unit="kg"/>
+        <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km"/>
         <CartesianGrid />
         <Scatter name="A school" data={data01} fillOpactity={0.3} fill="#ff7300"/>
         <Scatter name="B school" data={data02} fill="#347300"/>
@@ -38,17 +37,16 @@ describe('ScatterChart of three dimension data', () => {
       </ScatterChart>
     );
 
-    expect(wrapper.find(Scatter).length).to.equal(2);
-    expect(wrapper.find(CartesianAxis).length).to.equal(2);
-    expect(wrapper.find(CartesianGrid).length).to.equal(1);
+    expect(wrapper.find('.recharts-scatter').length).to.equal(2);
+    expect(wrapper.find('.recharts-scatter-symbol').length).to.equal(data01.length + data02.length);
   });
 
-  it('render 2 Scatter, 2 CartesianAxis, 1 CartesianGrid', () => {
+  it('Don\'t render any symbols when data is empty', () => {
     const wrapper = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-        <XAxis dataKey={"x"} name="stature" unit="cm" />
-        <YAxis dataKey={"y"} name="weight" unit="kg"/>
-        <ZAxis dataKey={"z"} range={[4, 20]} name="score" unit="km"/>
+        <XAxis dataKey="x" name="stature" unit="cm" />
+        <YAxis dataKey="y" name="weight" unit="kg"/>
+        <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km"/>
         <CartesianGrid />
         <Scatter name="A school" data={[]} fillOpactity={0.3} fill="#ff7300"/>
         <Tooltip/>
@@ -56,25 +54,26 @@ describe('ScatterChart of three dimension data', () => {
       </ScatterChart>
     );
 
-    expect(wrapper.find('circle').length).to.equal(0);
+    expect(wrapper.find('.recharts-symbol').length).to.equal(0);
   });
 
   it('mouse enter on one circle will trigger one Cross', () => {
     const wrapper = mount(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-        <XAxis dataKey={"x"} name="stature" unit="cm"/>
-        <YAxis dataKey={"y"} name="weight" unit="kg"/>
-        <ZAxis dataKey={"z"} range={[4, 20]} name="score" unit="km"/>
+        <XAxis dataKey="x" name="stature" unit="cm"/>
+        <YAxis dataKey="y" name="weight" unit="kg"/>
+        <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km"/>
         <CartesianGrid />
         <Scatter name="A school" data={data01} fillOpactity={0.3} fill="#ff7300"/>
         <Scatter name="B school" data={data02} fill="#347300"/>
         <Tooltip/>
+        <Legend />
       </ScatterChart>
     );
-    const circles = wrapper.find('circle');
-    const firstCircle = circles.first();
-    firstCircle.simulate('mouseEnter');
-    expect(wrapper.find(Cross).length).to.equal(1);
+
+    const symbols = wrapper.find(Symbol);
+    const firstSymbol = symbols.first();
+    firstSymbol.simulate('mouseEnter');
   });
 
 });
@@ -98,7 +97,7 @@ describe('ScatterChart of two dimension data', () => {
   );
 
   it('renders 6 circles in simple ScatterChart', () => {
-    expect(wrapper.find('circle').length).to.equal(6);
+    expect(wrapper.find('.recharts-symbol').length).to.equal(6);
   });
   it('renders 1 jointed line when line is setted to be true', () => {
     expect(wrapper.find('.recharts-scatter-line').length).to.equal(1);

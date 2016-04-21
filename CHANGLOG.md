@@ -1,3 +1,21 @@
+## 0.10.0 (April 21, 2016)
+
+### refactor
+
+- Refactor *ticks* specified in `XAxis`, `YAxis`
+- Use area of `Symbol` to show the size of number in ScatterChart
+- Refactor the `activeShape` in `Scatter` 
+
+### feat
+
+- Add `Symbol` and support different `Symbol` in ScatterChart 
+
+### fix
+
+- Fix the content of legend in `PieChart`
+- Fix the crush bug when categorical axis has duplicate labels
+- Fix the bug of calculating tick width
+
 ## 0.9.3 (April 12, 2016)
 
 ### deps
