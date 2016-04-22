@@ -54,6 +54,11 @@ class Scatter extends Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
+
+    isAnimationActive: PropTypes.bool,
+    animationBegin: PropTypes.number,
+    animationDuration: PropTypes.number,
+    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
   };
 
   static defaultProps = {
@@ -68,6 +73,11 @@ class Scatter extends Component {
     onMouseEnter() {},
     onMouseLeave() {},
     shape: 'circle',
+
+    isAnimationActive: true,
+    animationBegin: 0,
+    animationDuration: 400,
+    animationEasing: 'linear',
   };
 
   state = {
@@ -114,7 +124,8 @@ class Scatter extends Component {
 
 
   renderSymbols() {
-    const { points, shape, activeShape, activeIndex } = this.props;
+    const { points, shape, activeShape, activeIndex, animationBegin,
+      animationDuration, isAnimationActive, animationEasing } = this.props;
     const baseProps = getPresentationAttributes(this.props);
 
     return points.map((entry, i) => {
@@ -131,7 +142,24 @@ class Scatter extends Component {
           onClick={this.handleSymbolClick.bind(this, entry, i)}
           key={`symbol-${i}`}
         >
-          {this.renderSymbolItem(activeIndex === i ? activeShape : shape, props)}
+          {
+            <Animate 
+              from={{ size: 0 }}
+              to={{ size: props.size }}
+              duration={animationDuration}
+              begin={animationBegin}
+              isActive={isAnimationActive}
+              easing={animationEasing}
+            >
+            {
+              (animateProps) => {
+                const finalProps = { ...props, ...animateProps };
+
+                return this.renderSymbolItem(activeIndex === i ? activeShape : shape, finalProps);
+              }
+            }
+            </Animate>
+          }
         </Layer>
       );
     });
