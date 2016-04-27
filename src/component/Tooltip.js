@@ -54,7 +54,7 @@ const defaultProps = {
   cursor: true,
 };
 
-const getTooltipBBox = (wrapperStyle, contentItem) => {
+const getTooltipBox = (wrapperStyle, contentItem) => {
   if (!isSsr()) {
     const contentHtml = ReactDOMServer.renderToStaticMarkup(contentItem);
     const style = { ...wrapperStyle, top: -20000, left: 0, display: 'block' };
@@ -100,7 +100,7 @@ class Tooltip extends Component {
       position: 'absolute',
     };
     const contentItem = renderContent(content, this.props);
-    const box = getTooltipBBox(outerStyle, contentItem);
+    const box = getTooltipBox(outerStyle, contentItem);
 
     if (!box) { return null; }
 
