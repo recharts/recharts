@@ -5,6 +5,7 @@ require('./specs/cartesian/ZAxisSpec');
 require('./specs/cartesian/BarSpec');
 require('./specs/cartesian/AreaSpec');
 require('./specs/cartesian/LineSpec');
+require('./specs/cartesian/ScatterSpec');
 require('./specs/cartesian/BrushSpec');
 require('./specs/cartesian/CartesianAxisSpec');
 require('./specs/cartesian/CartesianGridSpec');

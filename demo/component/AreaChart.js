@@ -43,10 +43,10 @@ const CustomTooltip = React.createClass({
   },
 });
 
-const renderSpecialDot = (props) => {
-  const { cx, cy, stroke } = props;
+const renderCustomizedActiveDot = (props) => {
+  const { cx, cy, stroke, index, dataKey } = props;
 
-  return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke}/>;
+  return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke} key={`dot-${dataKey}`}/>;
 };
 
 const renderLabel = (props) => {
@@ -87,6 +87,8 @@ export default React.createClass({
               dataKey="uv"
               stroke="#ff7300"
               fill="#ff7300"
+              dot
+              activeDot={renderCustomizedActiveDot}
             />
             <Area stackId="0"
               type="monotone"
@@ -95,7 +97,8 @@ export default React.createClass({
               fill="#387908"
               animationBegin={1300}
               label={renderLabel}
-              dot={renderSpecialDot}
+              dot
+              activeDot={renderCustomizedActiveDot}
             />
           </AreaChart>
         </div>

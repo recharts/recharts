@@ -234,7 +234,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
               hide: true,
               orientation: ORIENT_MAP[axisType][index % 2],
               domain,
-              originalDomain: Axis.defaultProps.domain
+              originalDomain: Axis.defaultProps.domain,
             },
           };
         }

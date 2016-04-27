@@ -50,7 +50,7 @@ describe('<Tooltip />', () => {
     // I simulate to hover on the AreaChart, then the tooltip should show!
     wrapper.setState({
       isTooltipActive: true,
-      activeTooltipIndex: 4,
+      activeTooltipIndex: 0,
       activeTooltipLabel: 4,
       activeTooltipCoord: {
         x: 95,

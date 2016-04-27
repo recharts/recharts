@@ -34,6 +34,53 @@ describe('<LineChart />', () => {
     expect(wrapper.find('.recharts-line .recharts-line-curve').length).to.equal(1);
   });
 
+  it('Renders customized active dot when activeDot is set to be a ReactElement', () => {
+    const ActiveDot = ({cx, cy}) => {
+      return <circle cx={cx} cy={cy} r={10} className="customized-active-dot"/>;
+    };
+    const wrapper = mount(
+      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <Line activeDot={<ActiveDot/>} type="monotone" dataKey="uv" stroke="#ff7300"/>
+        <Tooltip/>
+      </LineChart>
+    );
+
+    wrapper.setState({
+      isTooltipActive: true,
+      activeTooltipIndex: 4,
+      activeTooltipLabel: 4,
+      activeTooltipCoord: {
+        x: 95,
+        y: 21,
+      },
+    });
+    expect(wrapper.find(ActiveDot).length).to.equal(1);
+  });
+
+  it('Renders customized active dot when activeDot is set to be a function', () => {
+    const renderActiveDot = ({cx, cy}) => {
+      return <circle cx={cx} cy={cy} r={10} className="customized-active-dot"/>;
+    };
+    const wrapper = mount(
+      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <Line activeDot={renderActiveDot} type="monotone" dataKey="uv" stroke="#ff7300"/>
+        <Tooltip/>
+      </LineChart>
+    );
+
+    wrapper.setState({
+      isTooltipActive: true,
+      activeTooltipIndex: 4,
+      activeTooltipLabel: 4,
+      activeTooltipCoord: {
+        x: 95,
+        y: 21,
+      },
+    });
+
+    // expect(wrapper.find(ActiveDot).length).to.equal(1);
+  });
+
   it('Render 1 line in simple LineChart', () => {
     const wrapper = render(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>

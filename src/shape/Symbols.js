@@ -11,7 +11,7 @@ import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 
 const SYMBOL_FACTORIES = {
-  symbolCircle, symbolCircle, symbolCross, symbolDiamond,
+  symbolCircle, symbolCross, symbolDiamond,
   symbolSquare, symbolStar, symbolTriangle, symbolWye,
 };
 
@@ -22,9 +22,9 @@ const getSymbolFactory = (type) => {
 };
 
 @pureRender
-class Symbol extends Component {
+class Symbols extends Component {
 
-  static displayName = 'Symbol';
+  static displayName = 'Symbols';
 
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
@@ -32,7 +32,7 @@ class Symbol extends Component {
     type: PropTypes.oneOf(['circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye']),
     cx: PropTypes.number,
     cy: PropTypes.number,
-    size: PropTypes.number
+    size: PropTypes.number,
   };
 
   static defaultProps = {
@@ -74,4 +74,4 @@ class Symbol extends Component {
   }
 }
 
-export default Symbol;
+export default Symbols;

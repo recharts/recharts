@@ -2,6 +2,7 @@ import './polyfill';
 import 'core-js/es6/math';
 
 export Surface from './container/Surface';
+export Layer from './container/Layer';
 
 export Legend from './component/Legend';
 export Tooltip from './component/Tooltip';
@@ -14,7 +15,7 @@ export Rectangle from './shape/Rectangle';
 export Polygon from './shape/Polygon';
 export Dot from './shape/Dot';
 export Cross from './shape/Cross';
-export Symbol from './shape/Symbol';
+export Symbols from './shape/Symbols';
 
 export PolarGrid from './polar/PolarGrid';
 export PolarRadiusAxis from './polar/PolarRadiusAxis';

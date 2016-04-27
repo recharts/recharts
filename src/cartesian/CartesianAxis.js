@@ -74,9 +74,11 @@ class CartesianAxis extends Component {
 
     if (!ticks || !ticks.length) { return [];}
 
-    return (interval === +interval || isSsr())
-        ? CartesianAxis.getNumberIntervalTicks(ticks, interval === +interval ? +interval : 0)
-        : CartesianAxis.getAutoIntervalTicks(ticks, tickFormatter, viewBox, orientation, minTickGap);
+    return (_.isNumber(interval) || isSsr())
+        ? CartesianAxis.getNumberIntervalTicks(ticks, _.isNumber(interval) ? interval : 0)
+        : CartesianAxis.getAutoIntervalTicks(
+          ticks, tickFormatter, viewBox, orientation, minTickGap
+        );
   }
 
   static getNumberIntervalTicks(ticks, interval) {

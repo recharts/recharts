@@ -260,7 +260,15 @@ class Pie extends Component {
       return option(props);
     }
 
-    return <text {...props} alignmentBaseline="middle" className="recharts-pie-label-text">{value}</text>;
+    return (
+      <text
+        {...props}
+        alignmentBaseline="middle"
+        className="recharts-pie-label-text"
+      >
+        {value}
+      </text>
+    );
   }
 
   renderLabels(sectors) {

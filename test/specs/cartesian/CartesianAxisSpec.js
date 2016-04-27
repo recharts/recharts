@@ -153,4 +153,49 @@ describe('<CartesianAxis />', () => {
 
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
   });
+
+  it('Render customized ticks when tick is set to be a ReactElement', () => {
+    const CustomizedTick = ({x, y}) => {
+      return <text x={x} y={y} className="customized-tick">test</text>;
+    };
+    const wrapper = render(
+      <Surface width={500} height={500}>
+        <CartesianAxis
+          orientation="bottom"
+          y={100}
+          width={400}
+          height={50}
+          viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
+          ticks={ticks}
+          tick={<CustomizedTick/>}
+          interval={0}
+        />
+      </Surface>
+    );
+
+    expect(wrapper.find('.customized-tick').length).to.equal(ticks.length);
+  });
+
+  it('Render customized ticks when tick is set to be a function', () => {
+    const renderCustomizedTick = ({x, y}) => {
+      return <text x={x} y={y} className="customized-tick">test</text>;
+    };
+    const wrapper = render(
+      <Surface width={500} height={500}>
+        <CartesianAxis
+          orientation="bottom"
+          y={100}
+          width={400}
+          height={50}
+          viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
+          ticks={ticks}
+          tick={renderCustomizedTick}
+          interval={0}
+        />
+      </Surface>
+    );
+
+    expect(wrapper.find('.customized-tick').length).to.equal(ticks.length);
+  });
+
 });

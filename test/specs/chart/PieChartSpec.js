@@ -94,5 +94,6 @@ describe('<ScatterChart />', () => {
     expect(onClick.calledOnce).to.equal(true);
 
     se.simulate('mouseEnter')
+    se.simulate('mouseLeave')
   });
 });

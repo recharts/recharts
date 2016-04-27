@@ -7,7 +7,7 @@ import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import Curve from '../shape/Curve';
-import Symbol from '../shape/Symbol';
+import Symbols from '../shape/Symbols';
 import Animate from 'react-smooth';
 import _ from 'lodash';
 
@@ -116,7 +116,7 @@ class Scatter extends Component {
     } else if (_.isFunction(option)) {
       symbol = option(props);
     } else {
-      symbol = <Symbol {...props} type={option}/>;
+      symbol = <Symbols {...props} type={option} />;
     }
 
     return symbol;
@@ -143,7 +143,7 @@ class Scatter extends Component {
           key={`symbol-${i}`}
         >
           {
-            <Animate 
+            <Animate
               from={{ size: 0 }}
               to={{ size: props.size }}
               duration={animationDuration}

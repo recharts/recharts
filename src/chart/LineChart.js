@@ -99,7 +99,7 @@ class LineChart extends Component {
     } else if (_.isFunction(option)) {
       dot = option(props);
     } else {
-      dot = <Dot {...props} className="recharts-line-active-dot" key={`dot-${props.index}`} />;
+      dot = <Dot {...props} className="recharts-line-active-dot" />;
     }
 
     return (
@@ -107,7 +107,7 @@ class LineChart extends Component {
         from="scale(0)"
         to="scale(1)"
         duration={400}
-        key={`dot-${props.cx}-${index}`}
+        key={`dot-${props.dataKey}`}
         attributeName="transform"
       >
         <Layer style={{ transformOrigin: 'center center' }}>
@@ -138,6 +138,7 @@ class LineChart extends Component {
       if (hasDot && activeDot && activePoint) {
         const dotProps = {
           index: i,
+          dataKey,
           cx: activePoint.x, cy: activePoint.y, r: 4,
           fill: stroke, strokeWidth: 2, stroke: '#fff',
           ...getPresentationAttributes(activeDot),

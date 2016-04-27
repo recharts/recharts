@@ -102,13 +102,13 @@ export const hasDuplicate = (ary) => {
   const len = ary.length;
   const cache = {};
 
-  for (let i = 0; i < len; i++ ) {
-    if (cache[ary[i]]) {
-      return true;
-    } else {
+  for (let i = 0; i < len; i++) {
+    if (!cache[ary[i]]) {
       cache[ary[i]] = true;
+    } else {
+      return true;
     }
   }
 
   return false;
-}
+};

@@ -25,7 +25,7 @@ class DemoTreemapItem extends Component {
     const { root, depth, x, y, width, height, index, rank, name, bgColors } = this.props;
 
     return (
-      <g data-customized="true">
+      <g>
         <rect
           x={x}
           y={y}

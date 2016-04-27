@@ -18,7 +18,7 @@ class Bar extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
-    layout: PropTypes.string,
+    layout: PropTypes.oneOf(['vertical', 'horizontal']),
     xAxisId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     yAxisId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -57,9 +57,6 @@ class Bar extends Component {
     legendType: 'rect',
     // data of bar
     data: [],
-    onClick() {},
-    onMouseEnter() {},
-    onMouseLeave() {},
     layout: 'vertical',
     isAnimationActive: true,
     animationBegin: 0,
@@ -150,8 +147,8 @@ class Bar extends Component {
     const customLabelProps = getPresentationAttributes(label);
     const textAnchor = layout === 'vertical' ? 'start' : 'middle';
     const labels = data.map((entry, i) => {
-      let x;
-      let y;
+      let x = 0;
+      let y = 0;
       if (layout === 'vertical') {
         x = 5 + entry.x + entry.width;
         y = 5 + entry.y + entry.height / 2;
@@ -163,8 +160,8 @@ class Bar extends Component {
         ...barProps,
         ...entry,
         ...customLabelProps,
-        x: x || 0,
-        y: y || 0,
+        x,
+        y,
         index: i,
         key: `label-${i}`,
         payload: entry,

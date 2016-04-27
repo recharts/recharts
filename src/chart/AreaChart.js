@@ -14,6 +14,7 @@ import Area from '../cartesian/Area';
 import pureRender from '../util/PureRender';
 import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
 import _ from 'lodash';
+import Smooth from 'react-smooth';
 
 @pureRender
 class AreaChart extends Component {
@@ -134,10 +135,22 @@ class AreaChart extends Component {
     } else if (_.isFunction(option)) {
       dot = option(props);
     } else {
-      dot = <Dot {...props} key={`dot-${props.index}`} />;
+      dot = <Dot {...props} />;
     }
 
-    return dot;
+    return (
+      <Smooth
+        from="scale(0)"
+        to="scale(1)"
+        duration={400}
+        key={`dot-${props.dataKey}`}
+        attributeName="transform"
+      >
+        <Layer style={{ transformOrigin: 'center center' }}>
+          { dot }
+        </Layer>
+      </Smooth>
+    );
   }
 
   /**
@@ -163,17 +176,21 @@ class AreaChart extends Component {
       const composeData = this.getComposedData(
         xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey, stackedData
       );
-
       const activePoint = composeData.points && composeData.points[activeTooltipIndex];
 
       if (hasDot && activeDot && activePoint) {
         const dotProps = {
           index: i,
+          dataKey,
           cx: activePoint.x, cy: activePoint.y, r: 4,
           fill, strokeWidth: 2, stroke: '#fff',
           ...getPresentationAttributes(activeDot),
         };
-        dotItems.push(this.renderActiveDot(activeDot, dotProps));
+        dotItems.push((
+          <Layer key={`dot-${dataKey}`}>
+            {this.renderActiveDot(activeDot, dotProps)}
+          </Layer>
+        ));
       }
 
       const area = React.cloneElement(child, {
@@ -187,10 +204,10 @@ class AreaChart extends Component {
     }, []);
 
     return (
-      <g key="recharts-area-wrapper">
-        <g key="recharts-area">{areaItems}</g>
-        <g key="recharts-area-dot">{dotItems}</g>
-      </g>
+      <Layer className="recharts-area-chart-group">
+        <Layer className="recharts-area-chart-shapes">{areaItems}</Layer>
+        <Layer className="recharts-area-chart-dots">{dotItems}</Layer>
+      </Layer>
     );
   }
 

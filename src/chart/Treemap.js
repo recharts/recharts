@@ -5,13 +5,13 @@ import React, { Component, PropTypes } from 'react';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Rectangle from '../shape/Rectangle';
-import { getPresentationAttributes, validateWidthHeight } from '../util/ReactUtils';
+import { findChildByType, getPresentationAttributes,
+  validateWidthHeight } from '../util/ReactUtils';
 import classNames from 'classnames';
 import Smooth from 'react-smooth';
 import Tooltip from '../component/Tooltip';
 import pureRender from '../util/PureRender';
 import _ from 'lodash';
-import { findChildByType } from '../util/ReactUtils';
 
 const computeNode = (depth, node, index, valueKey) => {
   const { children } = node;
@@ -166,6 +166,10 @@ class Treemap extends Component {
     stroke: PropTypes.string,
     className: PropTypes.string,
     dataKey: PropTypes.string,
+    children: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.node),
+      PropTypes.node,
+    ]),
 
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
@@ -205,7 +209,7 @@ class Treemap extends Component {
       if (onMouseEnter) {
         onMouseEnter(node);
       }
-    })
+    });
   }
 
   handleMouseLeave(node) {
@@ -218,8 +222,7 @@ class Treemap extends Component {
       if (onMouseLeave) {
         onMouseLeave(node);
       }
-    })
-
+    });
   }
 
   handleClick(node) {
@@ -242,7 +245,7 @@ class Treemap extends Component {
       event = {
         onMouseEnter: this.handleMouseEnter.bind(this, nodeProps),
         onMouseLeave: this.handleMouseLeave.bind(this, nodeProps),
-        onClick: this.handleClick.bind(this, nodeProps)
+        onClick: this.handleClick.bind(this, nodeProps),
       };
     }
 
@@ -264,7 +267,7 @@ class Treemap extends Component {
             isActive={isAnimationActive}
             duration={animationDuration}
           >
-            <Layer {...event} data-leaf={isLeaf ? 'true': 'false'}>
+            <Layer {...event}>
             {
               this.renderContentItem(content, {
                 ...nodeProps,

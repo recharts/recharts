@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { ScatterChart, Scatter, CartesianGrid, Tooltip, XAxis, YAxis, ZAxis,
-  CartesianAxis, Legend, Cross, Symbol } from 'recharts';
+  CartesianAxis, Legend, Cross, Symbols } from 'recharts';
 import { mount, render } from 'enzyme';
 
 describe('ScatterChart of three dimension data', () => {
@@ -71,7 +71,7 @@ describe('ScatterChart of three dimension data', () => {
       </ScatterChart>
     );
 
-    const symbols = wrapper.find(Symbol);
+    const symbols = wrapper.find(Symbols);
     const firstSymbol = symbols.first();
     firstSymbol.simulate('mouseEnter');
   });
