@@ -8,8 +8,10 @@ import Rectangle from '../shape/Rectangle';
 import { getPresentationAttributes, validateWidthHeight } from '../util/ReactUtils';
 import classNames from 'classnames';
 import Smooth from 'react-smooth';
+import Tooltip from '../component/Tooltip';
 import pureRender from '../util/PureRender';
 import _ from 'lodash';
+import { findChildByType } from '../util/ReactUtils';
 
 const computeNode = (depth, node, index, valueKey) => {
   const { children } = node;
@@ -164,6 +166,11 @@ class Treemap extends Component {
     stroke: PropTypes.string,
     className: PropTypes.string,
     dataKey: PropTypes.string,
+
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
+    onClick: PropTypes.func,
+
     isAnimationActive: PropTypes.bool,
     isUpdateAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
@@ -183,21 +190,61 @@ class Treemap extends Component {
     animationEasing: 'linear',
   };
 
-  renderAnimatedItem(content, nodeProps) {
-    const {
-      isAnimationActive,
-      animationBegin,
-      animationDuration,
-      animationEasing,
-      isUpdateAnimationActive,
-    } = this.props;
+  state = {
+    isTooltipActive: false,
+    activeNode: null,
+  };
+
+  handleMouseEnter(node, e) {
+    const { onMouseEnter } = this.props;
+
+    this.setState({
+      isTooltipActive: true,
+      activeNode: node,
+    }, () => {
+      if (onMouseEnter) {
+        onMouseEnter(node);
+      }
+    })
+  }
+
+  handleMouseLeave(node) {
+    const { onMouseLeave } = this.props;
+
+    this.setState({
+      isTooltipActive: false,
+      activeNode: null,
+    }, () => {
+      if (onMouseLeave) {
+        onMouseLeave(node);
+      }
+    })
+
+  }
+
+  handleClick(node) {
+    const { onClick } = this.props;
+
+    if (onClick) {
+      onClick(node);
+    }
+  }
+
+  renderAnimatedItem(content, nodeProps, isLeaf) {
+    const { isAnimationActive, animationBegin, animationDuration,
+      animationEasing, isUpdateAnimationActive } = this.props;
     const { width, height, x, y } = nodeProps;
     const translateX = parseInt((Math.random() * 2 - 1) * width, 10);
     const translateY = parseInt((Math.random() * 2 - 1) * height, 10);
-    const contentItem = this.renderContentItem(content, {
-      ...nodeProps,
-      isAnimationActive,
-    });
+    let event = {};
+
+    if (isLeaf) {
+      event = {
+        onMouseEnter: this.handleMouseEnter.bind(this, nodeProps),
+        onMouseLeave: this.handleMouseLeave.bind(this, nodeProps),
+        onClick: this.handleClick.bind(this, nodeProps)
+      };
+    }
 
     return (
       <Smooth
@@ -217,7 +264,7 @@ class Treemap extends Component {
             isActive={isAnimationActive}
             duration={animationDuration}
           >
-            <Layer>
+            <Layer {...event} data-leaf={isLeaf ? 'true': 'false'}>
             {
               this.renderContentItem(content, {
                 ...nodeProps,
@@ -250,10 +297,11 @@ class Treemap extends Component {
   renderNode(root, node, i) {
     const { content } = this.props;
     const nodeProps = { ...getPresentationAttributes(this.props), ...node, root };
+    const isLeaf = !node.children || !node.children.length;
 
     return (
       <Layer key={`recharts-treemap-node-${i}`}>
-        { this.renderAnimatedItem(content, nodeProps) }
+        { this.renderAnimatedItem(content, nodeProps, isLeaf) }
         {
           node.children && node.children.length ?
             node.children.map((child, index) => this.renderNode(node, child, index)) : null
@@ -278,6 +326,33 @@ class Treemap extends Component {
     return this.renderNode(formatRoot, formatRoot, 0);
   }
 
+  renderTooltip(items, offset) {
+    const { children } = this.props;
+    const tooltipItem = findChildByType(children, Tooltip);
+
+    if (!tooltipItem) { return null; }
+
+    const { width, height, dataKey } = this.props;
+    const { isTooltipActive, activeNode } = this.state;
+    const viewBox = { x: 0, y: 0, width, height };
+    const coordinate = activeNode ? {
+      x: activeNode.x + activeNode.width / 2,
+      y: activeNode.y + activeNode.height / 2,
+    } : null;
+    const payload = isTooltipActive && activeNode ? [{
+      name: '', value: activeNode[dataKey],
+    }] : [];
+
+    return React.cloneElement(tooltipItem, {
+      viewBox,
+      active: isTooltipActive,
+      coordinate,
+      label: '',
+      payload,
+      separator: '',
+    });
+  }
+
   render() {
     if (!validateWidthHeight(this)) {return null;}
 
@@ -290,6 +365,7 @@ class Treemap extends Component {
         <Surface width={width} height={height}>
           {this.renderAllNodes()}
         </Surface>
+        {this.renderTooltip()}
       </div>
     );
   }

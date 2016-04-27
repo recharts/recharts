@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Treemap } from 'recharts';
+import { Treemap, Tooltip } from 'recharts';
 import DemoTreemapItem from './DemoTreemapItem';
 import _ from 'lodash';
 
@@ -433,7 +433,9 @@ class DemoTreemap extends Component {
             dataKey="size"
             ratio={1}
             content={<DemoTreemapItem bgColors={ColorPlatte} />}
-          />
+          >
+            <Tooltip/>
+          </Treemap>
         </div>
       </div>
     );

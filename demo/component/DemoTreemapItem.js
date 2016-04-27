@@ -25,21 +25,19 @@ class DemoTreemapItem extends Component {
     const { root, depth, x, y, width, height, index, rank, name, bgColors } = this.props;
 
     return (
-      <g>
+      <g data-customized="true">
         <rect
           x={x}
           y={y}
           width={width}
           height={height}
-          style={{
-            fill: depth < 2 ? bgColors[Math.floor(index / root.children.length * 6)] : 'none',
-            stroke: '#fff',
-            strokeWidth: 2 / (depth + 1e-10),
-            strokeOpacity: 1 / (depth + 1e-10),
-          }}
+          fill={depth < 2 ? bgColors[index % 6] : "rgba(255,255,255,0)"}
+          stroke="#fff"
+          strokeWidth={2 / (depth + 1e-10)}
+          strokeOpacity={1 / (depth + 1e-10)}
         />
         {
-          depth === 1 ?
+          depth === 1 ? (
           <text
             x={x + width / 2}
             y={y + height / 2 + 9}
@@ -48,7 +46,7 @@ class DemoTreemapItem extends Component {
             fontSize={18}
           >
             {name}
-          </text>
+          </text> )
           : null
         }
         {
