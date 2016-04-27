@@ -1,3 +1,14 @@
+## 0.10.1 (April 27, 2016)
+
+### feat
+
+- Support Tooltip in Treemap
+
+### fix
+
+- Rename `Symbol` to `Symbols`
+- Fix the key of `activeDot` in `AreaChart`
+
 ## 0.10.0 (April 21, 2016)
 
 ### refactor
