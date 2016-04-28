@@ -404,6 +404,7 @@ class ScatterChart extends Component {
             orientation={axis.orientation}
             viewBox={{ x: 0, y: 0, width, height }}
             ticks={getTicksOfAxis(axis)}
+            tickFormatter={axis.tickFormatter}
           />
         </Layer>
       );
