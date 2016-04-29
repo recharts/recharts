@@ -7,6 +7,7 @@ import ReactDOMServer from 'react-dom/server';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import { getStyleString } from '../util/DOMUtils';
 import { isSsr } from '../util/ReactUtils';
+import Animate from 'react-smooth';
 import _ from 'lodash';
 
 const propTypes = {
@@ -39,6 +40,16 @@ const propTypes = {
     value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     unit: PropTypes.any,
   })),
+
+  isAnimationActive: PropTypes.bool,
+  animationDuration: PropTypes.number,
+  animationEasing: PropTypes.oneOf([
+    'ease',
+    'ease-in',
+    'ease-out',
+    'ease-in-out',
+    'linear',
+  ]),
 };
 
 const defaultProps = {
@@ -52,6 +63,9 @@ const defaultProps = {
   itemStyle: {},
   labelStyle: {},
   cursor: true,
+  isAnimationActive: true,
+  animationEasing: 'ease',
+  animationDuration: 400,
 };
 
 const getTooltipBBox = (wrapperStyle, contentItem) => {
@@ -90,7 +104,7 @@ class Tooltip extends Component {
   static defaultProps = defaultProps;
 
   render() {
-    const { payload } = this.props;
+    const { payload, isAnimationActive, animationDuration, animationEasing } = this.props;
     if (!payload || !payload.length) {return null;}
 
     const { content, viewBox, coordinate, active, offset } = this.props;
@@ -104,19 +118,32 @@ class Tooltip extends Component {
 
     if (!box) { return null; }
 
-    outerStyle.left = Math.max(
+    const translateX = Math.max(
       coordinate.x + box.width + offset > (viewBox.x + viewBox.width) ?
       coordinate.x - box.width - offset :
       coordinate.x + offset, viewBox.x);
+
     outerStyle.top = Math.max(
       coordinate.y + box.height + offset > (viewBox.y + viewBox.height) ?
       coordinate.y - box.height - offset :
       coordinate.y + offset, viewBox.y);
 
     return (
-      <div className="recharts-tooltip-wrapper" style={outerStyle}>
-        {contentItem}
-      </div>
+      <Animate
+        from={`translateX(${translateX}px)`}
+        to={`translateX(${translateX}px)`}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+        attributeName="transform"
+      >
+        <div
+          className="recharts-tooltip-wrapper"
+          style={outerStyle}
+        >
+          {contentItem}
+        </div>
+      </Animate>
     );
   }
 }
