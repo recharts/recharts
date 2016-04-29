@@ -98,6 +98,7 @@ class Tooltip extends Component {
       pointerEvents: 'none',
       display: active ? 'block' : 'none',
       position: 'absolute',
+      transition: '200ms linear',
     };
     const contentItem = renderContent(content, this.props);
     const box = getTooltipBBox(outerStyle, contentItem);
