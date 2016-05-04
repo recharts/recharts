@@ -13,7 +13,9 @@ import Cell from '../component/Cell';
 import Bar from '../cartesian/Bar';
 import pureRender from '../util/PureRender';
 import { getTicksOfAxis, getStackedDataOfItem } from '../util/CartesianUtils';
+import AnimationDecorator from '../util/AnimationDecorator';
 
+@AnimationDecorator
 @pureRender
 class BarChart extends Component {
 
@@ -40,6 +42,7 @@ class BarChart extends Component {
     barSize: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     // used internally
     isComposed: PropTypes.bool,
+    animationId: PropTypes.number,
   };
 
   static defaultProps = {
@@ -244,6 +247,7 @@ class BarChart extends Component {
 
     const { layout } = this.props;
     const sizeList = this.getSizeList(stackGroups);
+    const { animationId } = this.props;
 
     const barPositionMap = {};
 
@@ -262,6 +266,7 @@ class BarChart extends Component {
       return React.cloneElement(child, {
         key: `bar-${i}`,
         layout,
+        animationId,
         data: this.getComposedData(
           child, barPosition, xAxisMap[xAxisId], yAxisMap[yAxisId], offset, stackedData
         ),

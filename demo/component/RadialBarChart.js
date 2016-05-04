@@ -1,5 +1,6 @@
 import React from 'react';
 import { RadialBarChart, RadialBar, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
+import { changeNumberOfData } from './utils';
 import { scaleCategory10 } from 'd3-scale';
 
 const colors = scaleCategory10().range();
@@ -14,8 +15,19 @@ const data = [
   { name: 'unknow', uv: 6.67, pv: 4800, fill: '#ffc658' },
 ];
 
+const initilaState = { data };
+
 export default React.createClass({
+  getInitialState() {
+    return initilaState;
+  },
+
+  handleChangeData() {
+    this.setState(() => _.mapValues(initilaState, changeNumberOfData));
+  },
+
   render () {
+    const { data } = this.state;
     const style = {
       lineHeight: '24px',
       left: 300,
@@ -27,6 +39,14 @@ export default React.createClass({
 
     return (
       <div className='radial-bar-charts'>
+        <a
+          href="javascript: void(0);"
+          className="btn update"
+          onClick={this.handleChangeData}
+        >
+          change data
+        </a>
+        <br/>
         <p>RadialBarChart</p>
         <div className="radial-bar-chart-wrapper">
           <RadialBarChart width={500} height={300} cx={150} cy={150} innerRadius={20} outerRadius={140} barSize={10} data={data}>

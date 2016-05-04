@@ -150,6 +150,7 @@ class Area extends Component {
           attributeName="transform"
           from={`${scaleType}(0)`}
           to={`${scaleType}(1)`}
+          key={this.props.animationId}
           { ...animationProps }
         >
           <g style={{ transformOrigin }}>
@@ -163,6 +164,7 @@ class Area extends Component {
       <Animate
         from={{ alpha: 0 }}
         to={{ alpha: 1 }}
+        key={this.props.animationId}
         { ...animationProps }
       >
       {

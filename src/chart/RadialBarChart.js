@@ -14,7 +14,9 @@ import Tooltip from '../component/Tooltip';
 import { findChildByType, findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import pureRender from '../util/PureRender';
+import AnimationDecorator from '../util/AnimationDecorator';
 
+@AnimationDecorator
 @pureRender
 class RadialBarChart extends Component {
 
@@ -51,6 +53,7 @@ class RadialBarChart extends Component {
       PropTypes.node,
     ]),
     className: PropTypes.string,
+    animationId: PropTypes.number,
   };
 
   static defaultProps = {
@@ -270,6 +273,7 @@ class RadialBarChart extends Component {
         onMouseLeave: this.handleMouseLeave,
         onMouseEnter: this.handleMouseEnter,
         onClick: this.props.onClick,
+        animationId: this.props.animationId,
         data: this.getComposedData(child, barPosition, radiusScale, center, dataKey),
       });
     }, this);

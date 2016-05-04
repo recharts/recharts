@@ -15,7 +15,9 @@ import pureRender from '../util/PureRender';
 import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
 import _ from 'lodash';
 import Smooth from 'react-smooth';
+import AnimationDecorator from '../util/AnimationDecorator';
 
+@AnimationDecorator
 @pureRender
 class AreaChart extends Component {
   static displayName = 'AreaChart';
@@ -38,7 +40,9 @@ class AreaChart extends Component {
     stackGroups: PropTypes.object,
     // used internally
     isComposed: PropTypes.bool,
+    animationId: PropTypes.number,
   };
+
   /**
    * Compose the data of each area
    * @param  {Object} xAxis       The configuration of x-axis
@@ -167,6 +171,7 @@ class AreaChart extends Component {
     const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];
+    const { animationId } = this.props;
 
     const areaItems = items.reduce((result, child, i) => {
       const { xAxisId, yAxisId, dataKey, fillOpacity, fill, activeDot } = child.props;
@@ -182,6 +187,7 @@ class AreaChart extends Component {
         const dotProps = {
           index: i,
           dataKey,
+          animationId,
           cx: activePoint.x, cy: activePoint.y, r: 4,
           fill, strokeWidth: 2, stroke: '#fff',
           ...getPresentationAttributes(activeDot),
@@ -197,6 +203,7 @@ class AreaChart extends Component {
         key: `area-${i}`,
         ...offset,
         ...composeData,
+        animationId,
         layout,
       });
 

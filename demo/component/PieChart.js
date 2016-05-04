@@ -1,6 +1,7 @@
 import React from 'react';
 import { PieChart, Pie, Legend, Cell, Tooltip, ResponsiveContainer, Sector } from 'recharts';
 import { scaleCategory10 } from 'd3-scale';
+import { changeNumberOfData } from './utils';
 
 const colors = scaleCategory10().range();
 
@@ -41,6 +42,9 @@ const data03 = [
   { name: 'F2', value: 49 },
   { name: 'F3', value: 51 },
 ];
+
+const initilaState = { data01, data02, data03 };
+
 const renderLabelContent = (props) => {
   const { value, percent, x, y, midAngle } = props;
 
@@ -99,21 +103,36 @@ const renderActiveShape = (props) => {
 };
 
 export default React.createClass({
-  getInitialState() {
-    return {
-      activeIndex: 0,
-    };
-  },
-
   onPieEnter(data, index) {
     this.setState({
       activeIndex: index,
     });
   },
 
+  getInitialState() {
+    return {
+      ...initilaState,
+      activeIndex: 0,
+    };
+  },
+
+  handleChangeData() {
+    this.setState(() => _.mapValues(initilaState, changeNumberOfData));
+  },
+
   render () {
+    const { data01, data02, data03 } = this.state;
+
     return (
       <div className="pie-charts">
+        <a
+          href="javascript: void(0);"
+          className="btn update"
+          onClick={this.handleChangeData}
+        >
+          change data
+        </a>
+        <br/>
         <p>Simple PieChart</p>
         <div className="pie-chart-wrapper">
           <PieChart width={800} height={400}>

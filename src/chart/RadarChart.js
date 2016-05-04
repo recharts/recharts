@@ -20,7 +20,9 @@ import { validateWidthHeight, findChildByType, findAllByType,
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { getPercentValue, parseSpecifiedDomain } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
+import AnimationDecorator from '../util/AnimationDecorator';
 
+@AnimationDecorator
 @pureRender
 class RadarChart extends Component {
   static displayName = 'RadarChart';
@@ -49,6 +51,7 @@ class RadarChart extends Component {
       PropTypes.node,
     ]),
     className: PropTypes.string,
+    animationId: PropTypes.number,
   };
 
   static defaultProps = {
@@ -186,6 +189,7 @@ class RadarChart extends Component {
       React.cloneElement(el, {
         ...baseProps,
         ...getPresentationAttributes(el),
+        animationId: this.props.animationId,
         points: this.getComposedData(el, scale, cx, cy, innerRadius, outerRadius),
         key: `radar-${index}`,
       })));
