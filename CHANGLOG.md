@@ -1,3 +1,9 @@
+## 0.10.3 (May 4, 2016)
+
+### fix
+
+- fix bug of ReactUtils in Firefox 31
+
 ## 0.10.2 (May 4, 2016)
 
 ### refactor
