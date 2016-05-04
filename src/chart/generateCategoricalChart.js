@@ -317,7 +317,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           y = offset.top;
         }
 
-        result[id] = { ...axis,
+        result[id] = {
+          ...axis,
           x, y, scale,
           width: axisType === 'xAxis' ? offset.width : axis.width,
           height: axisType === 'yAxis' ? offset.height : axis.height,
@@ -409,18 +410,14 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         const entry = yAxisMap[id];
         const orientation = entry.orientation;
 
-        result[orientation] += entry.hide ? 0 : entry.width;
-
-        return result;
+        return { ...result, [orientation]: result[orientation] + (entry.hide ? 0 : entry.width) };
       }, { left: margin.left || 0, right: margin.right || 0 });
 
       const offsetV = Object.keys(xAxisMap).reduce((result, id) => {
         const entry = xAxisMap[id];
         const orientation = entry.orientation;
 
-        result[orientation] += entry.hide ? 0 : entry.height;
-
-        return result;
+        return { ...result, [orientation]: result[orientation] + (entry.hide ? 0 : entry.height) };
       }, { top: margin.top || 0, bottom: margin.bottom || 0 });
 
       const brushBottom = offsetV.bottom;
@@ -593,7 +590,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { children, width, height } = this.props;
       const gridItem = findChildByType(children, CartesianGrid);
 
-      if (!gridItem) {return null;}
+      if (!gridItem) { return null; }
 
       const xAxis = getAnyElementOfObject(xAxisMap);
       const yAxis = getAnyElementOfObject(yAxisMap);
@@ -723,7 +720,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     render() {
       const { data } = this.props;
-      if (!validateWidthHeight(this) || !data || !data.length) {return null;}
+      if (!validateWidthHeight(this) || !data || !data.length) { return null; }
 
       const { style, children, layout, className, width, height } = this.props;
       const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
@@ -738,7 +735,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
 
       return (
-        <div className={classNames('recharts-wrapper', className)}
+        <div
+          className={classNames('recharts-wrapper', className)}
           style={{ position: 'relative', cursor: 'default', ...style }}
           onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
           onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}

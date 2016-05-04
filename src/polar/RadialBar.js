@@ -102,7 +102,7 @@ class RadialBar extends Component {
 
     const sectors = data.map((entry) => {
       const value = entry.value;
-      const _endAngle = maxValue === 0 ? startAngle :
+      const tempEndAngle = maxValue === 0 ? startAngle :
         startAngle + Math.sign(value * deltaAngle) * (
           absMinAngle + gapAngle * Math.abs(entry.value) / maxValue
         );
@@ -111,7 +111,7 @@ class RadialBar extends Component {
         ...entry,
         cx, cy,
         startAngle,
-        endAngle: _endAngle,
+        endAngle: tempEndAngle,
         payload: entry,
       };
     });
@@ -134,21 +134,21 @@ class RadialBar extends Component {
 
     const labelSize = getStringSize(labelContent, style);
     const deltaAngle = labelSize.width / (radius * RADIAN);
-    let _startAngle;
-    let _endAngle;
+    let tempStartAngle;
+    let tempEndAngle;
 
     if (clockWise) {
-      _startAngle = orientation === 'inner' ?
+      tempStartAngle = orientation === 'inner' ?
         Math.min(endAngle + deltaAngle, startAngle) : endAngle;
-      _endAngle = _startAngle - deltaAngle;
+      tempEndAngle = tempStartAngle - deltaAngle;
     } else {
-      _startAngle = orientation === 'inner' ?
+      tempStartAngle = orientation === 'inner' ?
         Math.max(endAngle - deltaAngle, startAngle) : endAngle;
-      _endAngle = _startAngle + deltaAngle;
+      tempEndAngle = tempStartAngle + deltaAngle;
     }
 
-    const startPoint = polarToCartesian(cx, cy, radius, _startAngle);
-    const endPoint = polarToCartesian(cx, cy, radius, _endAngle);
+    const startPoint = polarToCartesian(cx, cy, radius, tempStartAngle);
+    const endPoint = polarToCartesian(cx, cy, radius, tempEndAngle);
 
     return `M${startPoint.x},${startPoint.y}
             A${radius},${radius},0,
@@ -214,7 +214,8 @@ class RadialBar extends Component {
     const baseProps = getPresentationAttributes(this.props);
 
     return (
-      <Animate from={{ alpha: 0 }}
+      <Animate
+        from={{ alpha: 0 }}
         to={{ alpha: 1 }}
         begin={animationBegin}
         isActive={isAnimationActive}

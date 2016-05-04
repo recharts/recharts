@@ -77,7 +77,8 @@ class Radar extends Component {
 
     return (
       <Layer className="recharts-radar-polygon" transform={`translate(${point.cx}, ${point.cy})`}>
-        <Animate from="scale(0)"
+        <Animate
+          from="scale(0)"
           to="scale(1)"
           attributeName="transform"
           isActive={isAnimationActive}

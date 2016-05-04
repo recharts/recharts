@@ -136,7 +136,7 @@ class ReferenceLine extends Component {
 
     const endPoints = this.getEndPoints(isX, isY);
 
-    if (!endPoints) {return null;}
+    if (!endPoints) { return null; }
 
     const [start, end] = endPoints;
     const props = getPresentationAttributes(this.props);

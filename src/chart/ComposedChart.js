@@ -47,7 +47,7 @@ class ComposedChart extends Component {
   renderCursor(xAxisMap, yAxisMap, offset) {
     const { children, isTooltipActive } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
-    if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive) {return null;}
+    if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive) { return null; }
 
     const { layout, activeTooltipIndex } = this.props;
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;

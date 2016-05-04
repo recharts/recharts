@@ -207,7 +207,7 @@ class BarChart extends Component {
     const { children, isTooltipActive } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
-    if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive) {return null;}
+    if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive) { return null; }
 
     const { layout, activeTooltipIndex } = this.props;
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
@@ -240,7 +240,7 @@ class BarChart extends Component {
    * @return {ReactComponent}  All the instances of Bar
    */
   renderItems(items, xAxisMap, yAxisMap, offset, stackGroups) {
-    if (!items || !items.length) {return null;}
+    if (!items || !items.length) { return null; }
 
     const { layout } = this.props;
     const sizeList = this.getSizeList(stackGroups);

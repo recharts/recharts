@@ -174,16 +174,11 @@ export const getPresentationAttributes = (el) => {
   if (!el || _.isFunction(el)) { return null; }
 
   const props = React.isValidElement(el) ? el.props : el;
-  let result = null;
+  const keys = Object.keys(props).filter(k => PRESENTATION_ATTRIBUTES[k]);
 
-  for (const key in props) {
-    if (props.hasOwnProperty(key) && PRESENTATION_ATTRIBUTES[key]) {
-      if (!result) {result = {};}
-      result[key] = props[key];
-    }
-  }
-
-  return result;
+  return (keys && keys.length) ?
+    keys.reduce((result, k) => ({ ...result, [k]: props[k] }), {}) :
+    null;
 };
 
 /**
@@ -195,16 +190,12 @@ export const filterEventAttributes = (el) => {
   if (!el || _.isFunction(el)) { return null; }
 
   const props = React.isValidElement(el) ? el.props : el;
-  let result = null;
 
-  for (const key in props) {
-    if (props.hasOwnProperty(key) && EVENT_ATTRIBUTES[key]) {
-      if (!result) {result = {};}
-      result[key] = props[key];
-    }
-  }
+  const keys = Object.keys(props).filter(k => EVENT_ATTRIBUTES[k]);
 
-  return result;
+  return (keys && keys.length) ?
+      keys.map((result, k) => ({ ...result, [k]: props[k] }), {}) :
+      null;
 };
 
 /**

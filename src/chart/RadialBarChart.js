@@ -207,7 +207,7 @@ class RadialBarChart extends Component {
   renderLegend() {
     const { children } = this.props;
     const legendItem = findChildByType(children, Legend);
-    if (!legendItem) {return null;}
+    if (!legendItem) { return null; }
 
     const { data, width, height, margin } = this.props;
 
@@ -231,7 +231,7 @@ class RadialBarChart extends Component {
     const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
-    if (!tooltipItem) { return null;}
+    if (!tooltipItem) { return null; }
 
     const { width, height } = this.props;
     const { isTooltipActive, activeTooltipLabel, activeTooltipCoord,
@@ -277,7 +277,7 @@ class RadialBarChart extends Component {
 
   render() {
     const { data } = this.props;
-    if (!validateWidthHeight(this) || !data || !data.length) {return null;}
+    if (!validateWidthHeight(this) || !data || !data.length) { return null; }
 
     const { style, children, className, width, height, margin } = this.props;
     const items = findAllByType(children, RadialBar);
@@ -289,7 +289,8 @@ class RadialBarChart extends Component {
     const radiusScale = this.getRadiusScale(innerRadius, outerRadius);
 
     return (
-      <div className={classNames('recharts-wrapper', className)}
+      <div
+        className={classNames('recharts-wrapper', className)}
         style={{ cursor: 'default', ...style, position: 'relative' }}
       >
         <Surface width={width} height={height}>

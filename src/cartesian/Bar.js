@@ -106,7 +106,8 @@ class Bar extends Component {
       }
 
       return (
-        <Animate begin={animationBegin}
+        <Animate
+          begin={animationBegin}
           duration={animationDuration}
           isActive={isAnimationActive}
           easing={animationEasing}
@@ -188,7 +189,7 @@ class Bar extends Component {
         <Layer className="recharts-bar-rectangles">
           {this.renderRectangles()}
         </Layer>
-        { label && (
+        {label && (
           <Layer className="recharts-bar-rectangle-labels">
             {this.renderLabels()}
           </Layer>

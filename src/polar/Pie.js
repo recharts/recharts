@@ -29,6 +29,7 @@ class Pie extends Component {
     nameKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     valueKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     data: PropTypes.arrayOf(PropTypes.object),
+    composedData: PropTypes.arrayOf(PropTypes.object),
     minAngle: PropTypes.number,
     legendType: PropTypes.string,
     maxRadius: PropTypes.number,
@@ -110,9 +111,9 @@ class Pie extends Component {
     return sign * deltaAngle;
   }
 
-  getSectors() {
+  getSectors(data) {
     const { cx, cy, innerRadius, outerRadius, startAngle,
-      data, minAngle, endAngle, valueKey } = this.props;
+      minAngle, endAngle, valueKey } = this.props;
     const len = data.length;
     const deltaAngle = this.getDeltaAngle();
     const absDeltaAngle = Math.abs(deltaAngle);
@@ -125,15 +126,15 @@ class Pie extends Component {
     if (sum > 0) {
       sectors = data.map((entry, i) => {
         const percent = entry[valueKey] / sum;
-        let _startAngle;
+        let tempStartAngle;
 
         if (i) {
-          _startAngle = deltaAngle < 0 ? prev.endAngle : prev.startAngle;
+          tempStartAngle = deltaAngle < 0 ? prev.endAngle : prev.startAngle;
         } else {
-          _startAngle = startAngle;
+          tempStartAngle = startAngle;
         }
 
-        const _endAngle = _startAngle + Math.sign(deltaAngle) * (
+        const tempEndAngle = tempStartAngle + Math.sign(deltaAngle) * (
           minAngle + percent * (absDeltaAngle - len * minAngle)
         );
 
@@ -144,10 +145,10 @@ class Pie extends Component {
           cy,
           innerRadius,
           outerRadius,
-          startAngle: deltaAngle < 0 ? _startAngle : _endAngle,
-          endAngle: deltaAngle < 0 ? _endAngle : _startAngle,
+          startAngle: deltaAngle < 0 ? tempStartAngle : tempEndAngle,
+          endAngle: deltaAngle < 0 ? tempEndAngle : tempStartAngle,
           payload: entry,
-          midAngle: (_startAngle + _endAngle) / 2,
+          midAngle: (tempStartAngle + tempEndAngle) / 2,
         };
 
         return prev;
@@ -212,7 +213,8 @@ class Pie extends Component {
     return (
       <defs>
         <clipPath id={this.id}>
-          <Animate easing={animationEasing}
+          <Animate
+            easing={animationEasing}
             isActive={isAnimationActive}
             duration={animationDuration}
             animationBegin={animationBegin}
@@ -220,7 +222,7 @@ class Pie extends Component {
             from={{
               endAngle: startAngle,
             }}
-            to = {{
+            to={{
               outerRadius: Math.max(this.props.outerRadius, maxRadius || 0),
               innerRadius: 0,
               endAngle: this.props.endAngle,
@@ -228,7 +230,8 @@ class Pie extends Component {
           >
             {
               ({ outerRadius, innerRadius, endAngle }) => (
-                <Sector cx={cx}
+                <Sector
+                  cx={cx}
                   cy={cy}
                   outerRadius={outerRadius}
                   innerRadius={innerRadius}
@@ -346,15 +349,17 @@ class Pie extends Component {
   }
 
   render() {
-    const { data, className, label, cx, cy, innerRadius, outerRadius } = this.props;
+    const { data, composedData, className, label, cx, cy, innerRadius,
+      outerRadius } = this.props;
+    const pieData = composedData || data;
 
-    if (!data || !data.length || !_.isNumber(cx)
+    if (!pieData || !pieData.length || !_.isNumber(cx)
       || !_.isNumber(cy) || !_.isNumber(innerRadius)
       || !_.isNumber(outerRadius)) {
       return null;
     }
 
-    const sectors = this.getSectors();
+    const sectors = this.getSectors(pieData);
     const layerClass = classNames('recharts-pie', className);
 
     return (

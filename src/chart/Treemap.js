@@ -259,7 +259,8 @@ class Treemap extends Component {
       >
       {
         ({ x: currX, y: currY, width: currWidth, height: currHeight }) => (
-          <Smooth from={`translate(${translateX}px, ${translateX}px)`}
+          <Smooth
+            from={`translate(${translateX}px, ${translateX}px)`}
             to="translate(0, 0)"
             attributeName="transform"
             begin={animationBegin}
@@ -304,7 +305,7 @@ class Treemap extends Component {
 
     return (
       <Layer key={`recharts-treemap-node-${i}`}>
-        { this.renderAnimatedItem(content, nodeProps, isLeaf) }
+        {this.renderAnimatedItem(content, nodeProps, isLeaf)}
         {
           node.children && node.children.length ?
             node.children.map((child, index) => this.renderNode(node, child, index)) : null
@@ -357,12 +358,13 @@ class Treemap extends Component {
   }
 
   render() {
-    if (!validateWidthHeight(this)) {return null;}
+    if (!validateWidthHeight(this)) { return null; }
 
     const { width, height, className, style } = this.props;
 
     return (
-      <div className={classNames('recharts-wrapper', className)}
+      <div
+        className={classNames('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', ...style }}
       >
         <Surface width={width} height={height}>

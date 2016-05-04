@@ -72,9 +72,9 @@ class Brush extends Component {
   }
 
   componentWillUnmount() {
-    if (this._leaveTimer) {
-      clearTimeout(this._leaveTimer);
-      this._leaveTimer = null;
+    if (this.leaveTimer) {
+      clearTimeout(this.leaveTimer);
+      this.leaveTimer = null;
     }
   }
 
@@ -109,9 +109,9 @@ class Brush extends Component {
   }
 
   handleMove = (e) => {
-    if (this._leaveTimer) {
-      clearTimeout(this._leaveTimer);
-      this._leaveTimer = null;
+    if (this.leaveTimer) {
+      clearTimeout(this.leaveTimer);
+      this.leaveTimer = null;
     }
 
     if (this.state.isTravellerMoving) {
@@ -130,7 +130,7 @@ class Brush extends Component {
 
   handleLeaveWrapper = () => {
     if (this.state.isTravellerMoving || this.state.isSlideMoving) {
-      this._leaveTimer = setTimeout(this.handleUp, 1000);
+      this.leaveTimer = setTimeout(this.handleUp, 1000);
     }
   };
 
@@ -336,7 +336,7 @@ class Brush extends Component {
     const { x, width, travellerWidth, data, className } = this.props;
     const { startX, endX, isTextActive, isSlideMoving, isTravellerMoving } = this.state;
 
-    if (!data || !data.length) {return null;}
+    if (!data || !data.length) { return null; }
 
     const layerClass = classNames('recharts-bursh', className);
 

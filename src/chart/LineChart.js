@@ -69,7 +69,7 @@ class LineChart extends Component {
     const { children, isTooltipActive } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
-    if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive) {return null;}
+    if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive) { return null; }
 
     const { layout, activeTooltipIndex } = this.props;
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
@@ -110,9 +110,7 @@ class LineChart extends Component {
         key={`dot-${props.dataKey}`}
         attributeName="transform"
       >
-        <Layer style={{ transformOrigin: 'center center' }}>
-          { dot }
-        </Layer>
+        <Layer style={{ transformOrigin: 'center center' }}>{dot}</Layer>
       </Smooth>
     );
   }

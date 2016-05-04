@@ -105,7 +105,7 @@ class PieChart extends Component {
   renderLegend(items) {
     const { children } = this.props;
     const legendItem = findChildByType(children, Legend);
-    if (!legendItem) {return null;}
+    if (!legendItem) { return null; }
 
     const { width, height, margin } = this.props;
     const legendData = (legendItem.props && legendItem.props.payload) ||
@@ -130,7 +130,7 @@ class PieChart extends Component {
     const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
-    if (!tooltipItem) { return null;}
+    if (!tooltipItem) { return null; }
 
     const { width, height } = this.props;
     const { isTooltipActive, activeTooltipLabel, activeTooltipCoord,
@@ -167,7 +167,7 @@ class PieChart extends Component {
         maxRadius: Math.max(width, height) / 2,
         innerRadius: getPercentValue(innerRadius, maxRadius, 0),
         outerRadius: getPercentValue(outerRadius, maxRadius, maxRadius * 0.8),
-        data: this.getComposedData(child),
+        composedData: this.getComposedData(child),
         onMouseEnter: this.handleMouseEnter,
         onMouseLeave: this.handleMouseLeave,
       });
@@ -181,7 +181,8 @@ class PieChart extends Component {
     const items = findAllByType(children, Pie);
 
     return (
-      <div className={classNames('recharts-wrapper', className)}
+      <div
+        className={classNames('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', ...style }}
       >
         <Surface width={width} height={height}>

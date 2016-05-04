@@ -179,7 +179,7 @@ class RadarChart extends Component {
   }
 
   renderRadars(items, scale, cx, cy, innerRadius, outerRadius) {
-    if (!items || !items.length) {return null;}
+    if (!items || !items.length) { return null; }
 
     const baseProps = getPresentationAttributes(this.props);
     return items.map((el, index) => (
@@ -234,7 +234,7 @@ class RadarChart extends Component {
   }
 
   renderRadiusAxis(radiusAxis, radiusAxisCfg, cx, cy) {
-    if (!radiusAxis || radiusAxis.props.hide) {return null;}
+    if (!radiusAxis || radiusAxis.props.hide) { return null; }
 
     const { startAngle } = this.props;
     return React.cloneElement(radiusAxis, {
@@ -252,7 +252,7 @@ class RadarChart extends Component {
   renderLegend(items) {
     const { children } = this.props;
     const legendItem = findChildByType(children, Legend);
-    if (!legendItem) {return null;}
+    if (!legendItem) { return null; }
 
     const { width, height, margin } = this.props;
     const legendData = (legendItem.props && legendItem.props.payload) ||
@@ -293,7 +293,8 @@ class RadarChart extends Component {
     const radiusAxisCfg = this.getRadiusAxisCfg(radiusAxis, innerRadius, outerRadius);
 
     return (
-      <div className={classNames('recharts-wrapper', className)}
+      <div
+        className={classNames('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', ...style }}
       >
         <Surface width={width} height={height}>

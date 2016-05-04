@@ -135,7 +135,8 @@ class Rectangle extends Component {
     const layerClass = classNames('recharts-rectangle', className);
 
     return (
-      <Smooth canBegin={totalLength > 0}
+      <Smooth
+        canBegin={totalLength > 0}
         from={{ width, height, x, y }}
         to={{ width, height, x, y }}
         duration={animationDuration}

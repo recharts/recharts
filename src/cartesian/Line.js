@@ -271,13 +271,15 @@ class Line extends Component {
         .map(num => parseFloat(num));
 
       return (
-        <Animate { ...animationProps }
+        <Animate
+          { ...animationProps }
           from={{ length: 0 }}
           to={{ length: totalLength }}
         >
           {
             ({ length }) => (
-              <Curve { ...curveProps }
+              <Curve
+                { ...curveProps }
                 strokeDasharray={this.getStrokeDasharray(length, totalLength, lines)}
               />
             )
@@ -287,7 +289,8 @@ class Line extends Component {
     }
 
     return (
-      <Animate { ...animationProps }
+      <Animate
+        { ...animationProps }
         from={`0px ${totalLength === 0 ? 1 : totalLength}px`}
         to={`${totalLength}px 0px`}
         attributeName="strokeDasharray"

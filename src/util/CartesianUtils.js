@@ -38,29 +38,25 @@ export const getStackGroupsByAxisId = (data, items, axisIdKey) => {
   const stackGroups = items.reduce((result, item) => {
     const { stackId, dataKey } = item.props;
     const axisId = item.props[axisIdKey];
-
-    if (!result[axisId]) {
-      result[axisId] = { hasStack: false, stackGroups: {} };
-    }
+    const parentGroup = result[axisId] || { hasStack: false, stackGroups: {} };
 
     if (_.isNumber(stackId) || _.isString(stackId)) {
-      if (!result[axisId].stackGroups[stackId]) {
-        result[axisId].stackGroups[stackId] = {
-          items: [],
-        };
-      }
-      result[axisId].stackGroups[stackId].items.push(item);
+      const childGroup = parentGroup.stackGroups[stackId] || { items: [] };
 
-      if (result[axisId].stackGroups[stackId].items.length >= 2) {
-        result[axisId].hasStack = true;
+      childGroup.items.push(item);
+
+      if (childGroup.items.length >= 2) {
+        parentGroup.hasStack = true;
       }
+
+      parentGroup.stackGroups[stackId] = childGroup;
     } else {
-      result[axisId].stackGroups[_.uniqueId('_stackId_')] = {
+      parentGroup.stackGroups[_.uniqueId('_stackId_')] = {
         items: [item],
       };
     }
 
-    return result;
+    return { ...result, [axisId]: parentGroup };
   }, {});
 
   return Object.keys(stackGroups).reduce((result, axisId) => {
@@ -220,14 +216,14 @@ export const getCoordinatesOfGrid = (ticks, min, max) => {
   let hasMax;
 
   const values = ticks.map(entry => {
-    if (entry.coordinate === min) { hasMin = true;}
-    if (entry.coordinate === max) { hasMax = true;}
+    if (entry.coordinate === min) { hasMin = true; }
+    if (entry.coordinate === max) { hasMax = true; }
 
     return entry.coordinate;
   });
 
-  if (!hasMin) { values.push(min);}
-  if (!hasMax) { values.push(max);}
+  if (!hasMin) { values.push(min); }
+  if (!hasMax) { values.push(max); }
 
   return values;
 };

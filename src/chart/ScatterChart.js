@@ -250,7 +250,7 @@ class ScatterChart extends Component {
    * @return {Array}        The content of tooltip
    */
   getTooltipContent(data, xAxis, yAxis, zAxis) {
-    if (!data) {return null;}
+    if (!data) { return null; }
 
     const content = [{
       name: xAxis.name || xAxis.dataKey,
@@ -341,7 +341,7 @@ class ScatterChart extends Component {
     const { children, width, height } = this.props;
     const gridItem = findChildByType(children, CartesianGrid);
 
-    if (!gridItem) {return null;}
+    if (!gridItem) { return null; }
 
     const verticalPoints = getCoordinatesOfGrid(CartesianAxis.getTicks({
       ...CartesianAxis.defaultProps, ...xAxis,
@@ -373,7 +373,7 @@ class ScatterChart extends Component {
   renderLegend(items) {
     const props = getLegendProps(items);
 
-    if (!props) {return null;}
+    if (!props) { return null; }
     const { margin, width, height } = this.props;
 
     return React.createElement(Legend, {
@@ -417,7 +417,7 @@ class ScatterChart extends Component {
     const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
-    if (!tooltipItem || !this.state.isTooltipActive) {return null;}
+    if (!tooltipItem || !this.state.isTooltipActive) { return null; }
     const { activeItem } = this.state;
 
     const cursorProps = {
@@ -511,7 +511,8 @@ class ScatterChart extends Component {
     yAxis = this.getFormatAxis(yAxis, offset, 'yAxis');
 
     return (
-      <div className={classNames('recharts-wrapper', className)}
+      <div
+        className={classNames('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', ...style }}
       >
         <Surface width={width} height={height}>

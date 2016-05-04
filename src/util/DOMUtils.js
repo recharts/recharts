@@ -47,25 +47,20 @@ function getComputedStyles(el) {
   return el.ownerDocument.defaultView.getComputedStyle(el, null);
 }
 
-export const getStyleString = (style) => {
-  let result = '';
-
-  for (const s in style) {
-    if (style.hasOwnProperty(s)) {
-      result += `${camelToMiddleLine(s)}:${autoCompleteStyle(s, style[s])};`;
-    }
-  }
-  return result;
-};
+export const getStyleString = (style) => (
+  Object.keys(style).reduce((result, s) => (
+    `${result}${camelToMiddleLine(s)}:${autoCompleteStyle(s, style[s])};`
+  ), '')
+);
 
 export const getStringSize = (text, style = {}) => {
-  if (text === undefined || text === null || isSsr()) {return 0;}
+  if (text === undefined || text === null || isSsr()) { return 0; }
 
   const str = `${text}`;
   const styleString = getStyleString(style);
   const cacheKey = `${str}-${styleString}`;
 
-  if (stringCache.widthCache[cacheKey]) { return stringCache.widthCache[cacheKey];}
+  if (stringCache.widthCache[cacheKey]) { return stringCache.widthCache[cacheKey]; }
 
   if (!stringCache.span) {
     const span = document.createElement('span');

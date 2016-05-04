@@ -109,8 +109,9 @@ class Area extends Component {
 
     return (
       <g>
-        { curve && (
-          <Curve {...getPresentationAttributes(this.props)}
+        {curve && (
+          <Curve
+            {...getPresentationAttributes(this.props)}
             className="recharts-area-curve"
             layout={layout}
             type={type}
@@ -118,7 +119,8 @@ class Area extends Component {
             { ...animProps }
           />
         )}
-        <Curve { ...this.props }
+        <Curve
+          { ...this.props }
           stroke="none"
           className="recharts-area-area"
           { ...animProps }
@@ -144,20 +146,22 @@ class Area extends Component {
       const scaleType = layout === 'vertical' ? 'scaleX' : 'scaleY';
 
       return (
-        <Animate attributeName="transform"
+        <Animate
+          attributeName="transform"
           from={`${scaleType}(0)`}
           to={`${scaleType}(1)`}
           { ...animationProps }
         >
           <g style={{ transformOrigin }}>
-            { this.renderCurve() }
+            {this.renderCurve()}
           </g>
         </Animate>
       );
     }
 
     return (
-      <Animate from={{ alpha: 0 }}
+      <Animate
+        from={{ alpha: 0 }}
         to={{ alpha: 1 }}
         { ...animationProps }
       >
@@ -273,7 +277,7 @@ class Area extends Component {
 
     return (
       <Layer className={layerClass}>
-        {!hasSinglePoint && this.renderAreaCurve() }
+        {!hasSinglePoint && this.renderAreaCurve()}
         {(dot || hasSinglePoint) && this.renderDots()}
         {label && this.renderLabels()}
       </Layer>

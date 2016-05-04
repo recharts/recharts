@@ -96,7 +96,7 @@ class ReferenceDot extends Component {
 
     const coordinate = this.getCoordinate();
 
-    if (!coordinate) {return null;}
+    if (!coordinate) { return null; }
 
     const props = getPresentationAttributes(this.props);
 

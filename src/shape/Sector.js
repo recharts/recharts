@@ -45,28 +45,28 @@ class Sector extends Component {
     const angle = this.getDeltaAngle(startAngle, endAngle);
 
     // When the angle of sector equals to 360, star point and end point coincide
-    const _endAngle = startAngle + angle;
+    const tempEndAngle = startAngle + angle;
     const outerStartPoint = polarToCartesian(cx, cy, outerRadius, startAngle);
-    const outerEndPoint = polarToCartesian(cx, cy, outerRadius, _endAngle);
+    const outerEndPoint = polarToCartesian(cx, cy, outerRadius, tempEndAngle);
 
     let path;
 
 
     if (innerRadius > 0) {
       const innerStartPoint = polarToCartesian(cx, cy, innerRadius, startAngle);
-      const innerEndPoint = polarToCartesian(cx, cy, innerRadius, _endAngle);
+      const innerEndPoint = polarToCartesian(cx, cy, innerRadius, tempEndAngle);
       path = `M ${outerStartPoint.x},${outerStartPoint.y}
               A ${outerRadius},${outerRadius},0,
-              ${+(Math.abs(angle) > 180)},${+(startAngle > _endAngle)},
+              ${+(Math.abs(angle) > 180)},${+(startAngle > tempEndAngle)},
               ${outerEndPoint.x},${outerEndPoint.y}
               L ${innerEndPoint.x},${innerEndPoint.y}
               A ${innerRadius},${innerRadius},0,
-              ${+(Math.abs(angle) > 180)},${+(startAngle <= _endAngle)},
+              ${+(Math.abs(angle) > 180)},${+(startAngle <= tempEndAngle)},
               ${innerStartPoint.x},${innerStartPoint.y} Z`;
     } else {
       path = `M ${outerStartPoint.x},${outerStartPoint.y}
               A ${outerRadius},${outerRadius},0,
-              ${+(Math.abs(angle) > 180)},${+(startAngle > _endAngle)},
+              ${+(Math.abs(angle) > 180)},${+(startAngle > tempEndAngle)},
               ${outerEndPoint.x},${outerEndPoint.y}
               L ${cx},${cy} Z`;
     }
