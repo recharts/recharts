@@ -1,3 +1,9 @@
+## 0.10.2 (May 4, 2016)
+
+### refactor
+
+- refactor data in Pie which was modified internally
+
 ## 0.10.1 (April 27, 2016)
 
 ### feat
