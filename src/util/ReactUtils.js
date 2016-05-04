@@ -174,6 +174,9 @@ export const getPresentationAttributes = (el) => {
   if (!el || _.isFunction(el)) { return null; }
 
   const props = React.isValidElement(el) ? el.props : el;
+
+  if (!_.isObject(props)) { return null; }
+
   const keys = Object.keys(props).filter(k => PRESENTATION_ATTRIBUTES[k]);
 
   return (keys && keys.length) ?
@@ -190,6 +193,9 @@ export const filterEventAttributes = (el) => {
   if (!el || _.isFunction(el)) { return null; }
 
   const props = React.isValidElement(el) ? el.props : el;
+
+  if (!_.isObject(props)) { return null; }
+
   const keys = Object.keys(props).filter(k => EVENT_ATTRIBUTES[k]);
 
   return (keys && keys.length) ?
