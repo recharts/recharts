@@ -2,6 +2,7 @@ import React from 'react';
 import { Surface, Radar, RadarChart, PolarGrid, Legend,
          PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import DemoRadarItem from './DemoRadarItem';
+import { changeNumberOfData } from './utils';
 
 const data = [
   { subject: 'Math', A: 120, B: 110 },
@@ -12,10 +13,33 @@ const data = [
   { subject: 'History', A: 65, B: 85 },
 ];
 
+const initilaState = { data };
+
 class RadarChartDemo extends React.Component {
+  constructor() {
+    super();
+
+    this.state = initilaState;
+    this.handleChangeData = this.handleChangeData.bind(this);
+  }
+
+  handleChangeData() {
+    this.setState(() => _.mapValues(initilaState, changeNumberOfData));
+  }
+
   render() {
+    const { data } = this.state;
+
     return (
       <div>
+        <a
+          href="javascript: void(0);"
+          className="btn update"
+          onClick={this.handleChangeData}
+        >
+          change data
+        </a>
+        <br/>
         <p>A simple RadarChart</p>
         <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
           <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />

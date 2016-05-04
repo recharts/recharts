@@ -54,6 +54,7 @@ class RadialBar extends Component {
     isAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
+    animationId: PropTypes.number,
     animationEasing: PropTypes.oneOf([
       'ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear', 'spring',
     ]),
@@ -210,6 +211,7 @@ class RadialBar extends Component {
       animationDuration,
       animationBegin,
       isAnimationActive,
+      animationId,
     } = this.props;
     const baseProps = getPresentationAttributes(this.props);
 
@@ -221,6 +223,7 @@ class RadialBar extends Component {
         isActive={isAnimationActive}
         duration={animationDuration}
         easing={animationEasing}
+        key={animationId}
         onAnimationEnd={this.handleAnimationEnd}
       >
       {

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Treemap, Tooltip } from 'recharts';
 import DemoTreemapItem from './DemoTreemapItem';
 import _ from 'lodash';
+import { changeNumberOfData as changeData } from './utils';
 
 const data = [{
   name: 'analytics',
@@ -369,24 +370,6 @@ const data = [{
     { name: 'Visualization', size: 16540 },
   ],
 }][2].children;
-
-function changeData(_data) {
-  if (Array.isArray(_data)) {
-    return _data.map(changeData);
-  }
-
-  if (typeof _data === 'object') {
-    return _.mapValues(_data, (val, key) => {
-      if (key === 'size' && typeof val === 'number') {
-        return parseInt(val * Math.random() * 2, 10);
-      }
-
-      return changeData(val);
-    });
-  }
-
-  return _data;
-}
 
 class DemoTreemap extends Component {
   static displayName = 'DemoTreemap';

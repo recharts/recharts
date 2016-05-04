@@ -40,6 +40,7 @@ class Radar extends Component {
     ]),
 
     isAnimationActive: PropTypes.bool,
+    animationId: PropTypes.number,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
     animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
@@ -55,14 +56,8 @@ class Radar extends Component {
   };
 
   renderPolygon() {
-    const {
-      shape,
-      points,
-      animationDuration,
-      animationEasing,
-      animationBegin,
-      isAnimationActive,
-    } = this.props;
+    const { shape, points, animationDuration, animationEasing,
+      animationBegin, isAnimationActive, animationId } = this.props;
 
     if (React.isValidElement(shape)) {
       return React.cloneElement(shape, this.props);
@@ -85,6 +80,7 @@ class Radar extends Component {
           begin={animationBegin}
           easing={animationEasing}
           duration={animationDuration}
+          key={animationId}
         >
           <Polygon {...getPresentationAttributes(this.props)} points={transformPoints} />
         </Animate>

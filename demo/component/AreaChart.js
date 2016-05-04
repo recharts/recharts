@@ -1,4 +1,5 @@
 import React from 'react';
+import { changeNumberOfData } from './utils';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, Brush } from 'recharts';
 
 const data = [
@@ -17,6 +18,8 @@ const data02 = [
   { name: 'Page D', uv: 2780, pv: 3908, amt: 2000 },
   { name: 'Page E', uv: 1890, pv: 4800, amt: 2181 },
 ];
+
+const initilaState = { data, data02 };
 
 const CustomTooltip = React.createClass({
   render() {
@@ -59,9 +62,11 @@ export default React.createClass({
   displayName: 'AreaChartDemo',
 
   getInitialState() {
-    return {
-      data: data,
-    };
+    return initilaState;
+  },
+
+  handleChangeData() {
+    this.setState(() => _.mapValues(initilaState, changeNumberOfData));
   },
 
   handleSwitch() {
@@ -71,8 +76,18 @@ export default React.createClass({
   },
 
   render() {
+    const { data, data02 } = this.state;
+
     return (
       <div className="area-charts">
+        <a
+          href="javascript: void(0);"
+          className="btn update"
+          onClick={this.handleChangeData}
+        >
+          change data
+        </a>
+        <br/>
         <p>Stacked AreaChart</p>
         <a onClick={this.handleSwitch}>切换数据</a>
         <div className="area-chart-wrapper">
