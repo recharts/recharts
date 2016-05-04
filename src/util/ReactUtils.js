@@ -190,11 +190,10 @@ export const filterEventAttributes = (el) => {
   if (!el || _.isFunction(el)) { return null; }
 
   const props = React.isValidElement(el) ? el.props : el;
-
   const keys = Object.keys(props).filter(k => EVENT_ATTRIBUTES[k]);
 
   return (keys && keys.length) ?
-      keys.map((result, k) => ({ ...result, [k]: props[k] }), {}) :
+      keys.reduce((result, k) => ({ ...result, [k]: props[k] }), {}) :
       null;
 };
 
