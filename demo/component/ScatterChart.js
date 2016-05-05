@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScatterChart, Scatter, CartesianGrid, Tooltip, Legend,
  XAxis, YAxis, ZAxis, ReferenceLine } from 'recharts';
+import { changeNumberOfData } from './utils';
 
 const data01 = [
   { x: 100, y: 200, z: 200 },
@@ -37,10 +38,35 @@ const data04 = [
   { x: 120, y: 190 },
 ];
 
+const initilaState = {
+  data01,
+  data02,
+  data03,
+  data04,
+};
+
 export default React.createClass({
+  getInitialState() {
+    return initilaState;
+  },
+
+  handleChangeData() {
+    this.setState(() => _.mapValues(initilaState, changeNumberOfData));
+  },
+
   render () {
+    const { data01, data02, data03, data04 } = this.state;
+
     return (
       <div className="scatter-charts">
+        <a
+          href="javascript: void(0);"
+          className="btn update"
+          onClick={this.handleChangeData}
+        >
+          change data
+        </a>
+        <br/>
         <p>Simple ScatterChart</p>
         <div className="scatter-chart-wrapper">
           <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>

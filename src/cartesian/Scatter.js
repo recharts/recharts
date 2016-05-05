@@ -10,10 +10,12 @@ import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
 import Animate from 'react-smooth';
 import _ from 'lodash';
+import AnimationDecorator from '../util/AnimationDecorator';
 
 const PI = Math.PI;
 const SYMBOL_STYLE = { transformOrigin: 'center center' };
 
+@AnimationDecorator
 @pureRender
 class Scatter extends Component {
 
@@ -56,6 +58,7 @@ class Scatter extends Component {
     onClick: PropTypes.func,
 
     isAnimationActive: PropTypes.bool,
+    animationId: PropTypes.number,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
     animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
@@ -125,7 +128,7 @@ class Scatter extends Component {
 
   renderSymbols() {
     const { points, shape, activeShape, activeIndex, animationBegin,
-      animationDuration, isAnimationActive, animationEasing } = this.props;
+      animationDuration, isAnimationActive, animationEasing, animationId } = this.props;
     const baseProps = getPresentationAttributes(this.props);
 
     return points.map((entry, i) => {
@@ -149,11 +152,12 @@ class Scatter extends Component {
               duration={animationDuration}
               begin={animationBegin}
               isActive={isAnimationActive}
+              key={animationId}
               easing={animationEasing}
             >
             {
-              (animateProps) => {
-                const finalProps = { ...props, ...animateProps };
+              ({ size }) => {
+                const finalProps = { ...props, size };
 
                 return this.renderSymbolItem(activeIndex === i ? activeShape : shape, finalProps);
               }

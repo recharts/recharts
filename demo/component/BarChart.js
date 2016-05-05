@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { BarChart, Bar, Brush, Cell, CartesianGrid, ReferenceLine, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import { scaleCategory20 } from 'd3-scale';
 import _ from 'lodash';
+import { changeNumberOfData } from './utils';
 
 const colors = scaleCategory20().range();
 
@@ -190,12 +191,36 @@ const CustomAxis = React.createClass({
   }
 });
 
+const initilaState = {
+  data,
+  data01,
+  data02,
+};
+
 export default React.createClass({
   displayName: 'BarChartDemo',
 
+  getInitialState() {
+    return initilaState;
+  },
+
+  handleChangeData() {
+    this.setState(() => _.mapValues(initilaState, changeNumberOfData));
+  },
+
   render() {
+    const { data, data01, data02 } = this.state;
+
     return (
       <div className="bar-charts">
+        <a
+          href="javascript: void(0);"
+          className="btn update"
+          onClick={this.handleChangeData}
+        >
+          change data
+        </a>
+        <br/>
         <p>Simple BarChart</p>
         <div className="bar-chart-wrapper">
           <BarChart width={400} height={400} data={data}>

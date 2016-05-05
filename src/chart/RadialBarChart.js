@@ -14,6 +14,7 @@ import Tooltip from '../component/Tooltip';
 import { findChildByType, findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import pureRender from '../util/PureRender';
+import AnimationDecorator from '../util/AnimationDecorator';
 
 @pureRender
 class RadialBarChart extends Component {

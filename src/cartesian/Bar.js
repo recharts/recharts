@@ -44,6 +44,7 @@ class Bar extends Component {
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
 
+    animationId: PropTypes.number,
     isAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
@@ -72,6 +73,10 @@ class Bar extends Component {
     this.setState({ isAnimationFinished: true });
   };
 
+  handleAnimationStart = () => {
+    this.setState({ isAnimationFinished: false });
+  };
+
   renderRectangle(option, props) {
     let rectangle;
 
@@ -88,7 +93,7 @@ class Bar extends Component {
 
   renderRectangles() {
     const { data, shape, layout, isAnimationActive, animationBegin,
-      animationDuration, animationEasing } = this.props;
+      animationDuration, animationEasing, animationId } = this.props;
     const baseProps = getPresentationAttributes(this.props);
     const getStyle = (isBegin) => ({
       transform: `scale${layout === 'vertical' ? 'X' : 'Y'}(${isBegin ? 0 : 1})`,
@@ -113,8 +118,9 @@ class Bar extends Component {
           easing={animationEasing}
           from={getStyle(true)}
           to={getStyle(false)}
-          key={`rectangle-${index}`}
+          key={`rectangle-${index}-${animationId}`}
           onAnimationEnd={this.handleAnimationEnd}
+          onAnimationStart={this.handleAnimationStart}
         >
           <g style={{ transformOrigin }}>{this.renderRectangle(shape, props)}</g>
         </Animate>

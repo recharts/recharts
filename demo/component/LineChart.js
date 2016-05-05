@@ -1,5 +1,6 @@
 import React from 'react';
 import CustomLineDot from './CustomLineDot';
+import { changeNumberOfData } from './utils';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine,
   ReferenceDot, Tooltip, CartesianGrid, Legend, Brush } from 'recharts';
 
@@ -33,6 +34,12 @@ const data02 = [
   { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
 ];
 
+const initilaState = {
+  data,
+  data01,
+  data02,
+};
+
 const renderSpecialDot = (props) => {
   const { cx, cy, stroke, key } = props;
 
@@ -49,12 +56,26 @@ export default React.createClass({
   displayName: 'LineChartDemo',
 
   getInitialState() {
-    return { data };
+    return initilaState;
+  },
+
+  handleChangeData() {
+    this.setState(() => _.mapValues(initilaState, changeNumberOfData));
   },
 
   render() {
+    const { data, data01, data02 } = this.state;
+
     return (
       <div className='line-charts'>
+        <a
+          href="javascript: void(0);"
+          className="btn update"
+          onClick={this.handleChangeData}
+        >
+          change data
+        </a>
+        <br/>
         <p>A simple LineChart with fixed domain y-axis</p>
         <div className='line-chart-wrapper'>
           <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 40, bottom: 20, left: 20 }}>

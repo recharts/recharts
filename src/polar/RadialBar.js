@@ -161,6 +161,10 @@ class RadialBar extends Component {
     this.setState({ isAnimationFinished: true });
   };
 
+  handleAnimationStart = () => {
+    this.setState({ isAnimationFinished: false });
+  };
+
   handleSectorClick(data, index, e) {
     const { onClick } = this.props;
 
@@ -213,45 +217,41 @@ class RadialBar extends Component {
     } = this.props;
     const baseProps = getPresentationAttributes(this.props);
 
-    return (
-      <Animate
-        from={{ alpha: 0 }}
-        to={{ alpha: 1 }}
-        begin={animationBegin}
-        isActive={isAnimationActive}
-        duration={animationDuration}
-        easing={animationEasing}
-        onAnimationEnd={this.handleAnimationEnd}
-      >
-      {
-        ({ alpha }) =>
-          <Layer>
-          {
-            sectors.map((entry, i) => {
-              const { startAngle, endAngle } = entry;
-              let angle = endAngle;
-              if (isAnimationActive) {
-                angle = (endAngle - startAngle) * alpha + startAngle;
-              }
+    return sectors.map((entry, i) => {
+      const { startAngle, endAngle } = entry;
 
-              const props = {
-                ...baseProps,
-                ...entry,
-                endAngle: angle,
-                onMouseEnter: this.handleSectorEnter.bind(this, entry, i),
-                onMouseLeave: this.handleSectorLeave.bind(this, entry, i),
-                onClick: this.handleSectorClick.bind(this, entry, i),
-                key: `sector-${i}`,
-                className: 'recharts-radial-bar-sector',
-              };
+      return (
+        <Animate
+          from={{ angle: startAngle }}
+          to={{ angle: endAngle }}
+          begin={animationBegin}
+          isActive={isAnimationActive}
+          duration={animationDuration}
+          easing={animationEasing}
+          shouldReAnimate
+          key={`aniamte-${i}`}
+          onAnimationStart={this.handleAnimationStart}
+          onAnimationEnd={this.handleAnimationEnd}
+        >
+        {
+          ({ angle }) => {
+            const props = {
+              ...baseProps,
+              ...entry,
+              endAngle: angle,
+              onMouseEnter: this.handleSectorEnter.bind(this, entry, i),
+              onMouseLeave: this.handleSectorLeave.bind(this, entry, i),
+              onClick: this.handleSectorClick.bind(this, entry, i),
+              key: `sector-${i}`,
+              className: 'recharts-radial-bar-sector',
+            };
 
-              return this.renderSectorShape(shape, props);
-            })
+            return this.renderSectorShape(shape, props);
           }
-          </Layer>
-      }
-      </Animate>
-    );
+        }
+        </Animate>
+      );
+    });
   }
 
   renderBackground(sectors) {

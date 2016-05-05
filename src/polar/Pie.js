@@ -11,7 +11,9 @@ import Animate from 'react-smooth';
 import _ from 'lodash';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
+import AnimationDecorator from '../util/AnimationDecorator';
 
+@AnimationDecorator
 @pureRender
 class Pie extends Component {
 
@@ -85,6 +87,7 @@ class Pie extends Component {
     labelLine: true,
     data: [],
     minAngle: 0,
+    animationId: PropTypes.number,
     isAnimationActive: true,
     animationBegin: 400,
     animationDuration: 1500,
@@ -199,16 +202,8 @@ class Pie extends Component {
   }
 
   renderClipPath() {
-    const {
-      cx,
-      cy,
-      maxRadius,
-      startAngle,
-      isAnimationActive,
-      animationDuration,
-      animationEasing,
-      animationBegin,
-    } = this.props;
+    const { cx, cy, maxRadius, startAngle, isAnimationActive, animationDuration,
+      animationEasing, animationBegin, animationId } = this.props;
 
     return (
       <defs>
@@ -217,6 +212,7 @@ class Pie extends Component {
             easing={animationEasing}
             isActive={isAnimationActive}
             duration={animationDuration}
+            key={animationId}
             animationBegin={animationBegin}
             onAnimationEnd={this.handleAnimationEnd}
             from={{

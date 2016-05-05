@@ -81,7 +81,7 @@ class Line extends Component {
 
     const { points } = props;
     this.state = {
-      isAnimationFinished: (!points || points.length <= 1),
+      isAnimationFinished: false,
       steps: [],
       totalLength: 0,
     };
@@ -105,7 +105,6 @@ class Line extends Component {
     if (points !== prevProps.points) {
       this.setState({
         totalLength: this.getTotalLength(),
-        isAnimationFinished: !points || points.length <= 1,
       });
     }
   }
@@ -152,6 +151,10 @@ class Line extends Component {
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
+  };
+
+  handleAnimationStart = () => {
+    this.setState({ isAnimationFinished: false });
   };
 
   renderLabelItem(option, props, value) {
@@ -253,6 +256,7 @@ class Line extends Component {
       easing: animationEasing,
       duration: animationDuration,
       onAnimationEnd: this.handleAnimationEnd,
+      onAnimationStart: this.handleAnimationStart,
       ref: 'animate',
       shouldReAnimate: true,
     };
