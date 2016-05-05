@@ -1,3 +1,17 @@
+## 0.10.4 (May 5, 2016)
+
+### feat
+
+- support animation when data update
+
+### refactor
+
+- refactor event handlers in charts
+
+### fix
+
+- fix tooltip position in BarChart
+
 ## 0.10.3 (May 4, 2016)
 
 ### fix
