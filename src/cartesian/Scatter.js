@@ -156,8 +156,8 @@ class Scatter extends Component {
               easing={animationEasing}
             >
             {
-              (animateProps) => {
-                const finalProps = { ...props, ...animateProps };
+              ({ size }) => {
+                const finalProps = { ...props, size };
 
                 return this.renderSymbolItem(activeIndex === i ? activeShape : shape, finalProps);
               }

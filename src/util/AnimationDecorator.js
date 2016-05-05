@@ -1,15 +1,19 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import hoistStatics from 'hoist-non-react-statics';
 
 function getDisplayName(WrappedComponent) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 }
 
-export default function(WrappedComponent) {
+export default function (WrappedComponent) {
   class AniamtionDecorator extends Component {
     static displayName = `AniamtionDecorator(${getDisplayName(WrappedComponent)})`;
 
     static WrappedComponent = WrappedComponent;
+
+    static propTypes = {
+      data: PropTypes.array,
+    };
 
     state = {
       animationId: 0,

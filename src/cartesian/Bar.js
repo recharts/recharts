@@ -73,6 +73,10 @@ class Bar extends Component {
     this.setState({ isAnimationFinished: true });
   };
 
+  handleAnimationStart = () => {
+    this.setState({ isAnimationFinished: false });
+  };
+
   renderRectangle(option, props) {
     let rectangle;
 
@@ -116,6 +120,7 @@ class Bar extends Component {
           to={getStyle(false)}
           key={`rectangle-${index}-${animationId}`}
           onAnimationEnd={this.handleAnimationEnd}
+          onAnimationStart={this.handleAnimationStart}
         >
           <g style={{ transformOrigin }}>{this.renderRectangle(shape, props)}</g>
         </Animate>

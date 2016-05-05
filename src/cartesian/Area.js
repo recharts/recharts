@@ -94,6 +94,10 @@ class Area extends Component {
     this.setState({ isAnimationFinished: true });
   };
 
+  handleAnimationStart = () => {
+    this.setState({ isAnimationFinished: false });
+  };
+
   renderCurve(points, opacity) {
     const { layout, type, curve } = this.props;
     let animProps = {
@@ -139,6 +143,7 @@ class Area extends Component {
       easing: animationEasing,
       duration: animationDuration,
       onAnimationEnd: this.handleAnimationEnd,
+      onAnimationStart: this.handleAnimationStart,
     };
 
     if (!baseLine || !baseLine.length) {
