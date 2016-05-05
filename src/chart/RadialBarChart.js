@@ -177,27 +177,40 @@ class RadialBarChart extends Component {
   }
 
   handleMouseEnter = (el, index, e) => {
+    const { children, onMouseEnter } = this.props;
     const { cx, cy, endAngle, outerRadius } = el;
+    const tooltipItem = findChildByType(children, Tooltip);
 
-    this.setState({
-      isTooltipActive: true,
-      activeTooltipCoord: polarToCartesian(cx, cy, outerRadius, endAngle),
-      activeTooltipPayload: [el.payload],
-    }, () => {
-      if (this.props.onMouseEnter) {
-        this.props.onMouseEnter(el, index, e);
-      }
-    });
+    if (tooltipItem) {
+      this.setState({
+        isTooltipActive: true,
+        activeTooltipCoord: polarToCartesian(cx, cy, outerRadius, endAngle),
+        activeTooltipPayload: [el.payload],
+      }, () => {
+        if (onMouseEnter) {
+          onMouseEnter(el, index, e);
+        }
+      });
+    } else if (onMouseEnter) {
+      onMouseEnter(el, index, e);
+    }
   };
 
   handleMouseLeave = (el, index, e) => {
-    this.setState({
-      isTooltipActive: false,
-    }, () => {
-      if (this.props.onMouseEnter) {
-        this.props.onMouseLeave(el, index, e);
-      }
-    });
+    const { children, onMouseLeave } = this.props;
+    const tooltipItem = findChildByType(children, Tooltip);
+
+    if (tooltipItem) {
+      this.setState({
+        isTooltipActive: false,
+      }, () => {
+        if (onMouseLeave) {
+          onMouseLeave(el, index, e);
+        }
+      });
+    } else if (onMouseLeave) {
+      onMouseLeave(el, index, e);
+    }
   };
 
   /**
@@ -258,6 +271,7 @@ class RadialBarChart extends Component {
   renderItems(items, radiusScale, center) {
     if (!items || !items.length) { return null; }
 
+    const { onClick } = this.props;
     const radiusList = this.getRadiusList(items);
     const bandRadius = radiusScale.bandwidth();
     const barPosition = this.getBarPosition(bandRadius, radiusList);
@@ -268,9 +282,9 @@ class RadialBarChart extends Component {
       return React.cloneElement(child, {
         ...center,
         key: `radial-bar-${i}`,
-        onMouseLeave: this.handleMouseLeave,
         onMouseEnter: this.handleMouseEnter,
-        onClick: this.props.onClick,
+        onMouseLeave: this.handleMouseLeave,
+        onClick,
         data: this.getComposedData(child, barPosition, radiusScale, center, dataKey),
       });
     }, this);

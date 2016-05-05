@@ -298,7 +298,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
         if (type === 'number') {
           scale = scaleLinear().domain(domain).range(range);
-        } else if (displayName === 'LineChart' || displayName === 'AreaChart') {
+        } else if (displayName.indexOf('LineChart') >= 0 ||
+          displayName.indexOf('AreaChart') >= 0) {
           scale = scalePoint().domain(domain).range(range);
         } else {
           scale = scaleBand().domain(domain).range(range);
@@ -353,7 +354,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
       const pos = layout === 'horizontal' ? e.chartX : e.chartY;
       const axis = getAnyElementOfObject(axisMap);
-      const ticks = getTicksOfAxis(axis);
+      const ticks = getTicksOfAxis(axis, true);
       const activeIndex = calculateActiveTickIndex(pos, ticks);
 
       if (activeIndex >= 0) {
@@ -639,16 +640,12 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     /**
      * Draw Tooltip
-     * @param  {Array} items   The instances of item
+     * @param  {ReactElement} tootltipItem   The instance of Tooltip
+     * @param  {Array}  items  The instances of GraphicalChild
      * @param  {Object} offset The offset of main part in the svg element
      * @return {ReactElement}  The instance of Tooltip
      */
-    renderTooltip(items, offset) {
-      const { children } = this.props;
-      const tooltipItem = findChildByType(children, Tooltip);
-
-      if (!tooltipItem) { return null; }
-
+    renderTooltip(tooltipItem, items, offset) {
       const { isTooltipActive, activeTooltipLabel, activeTooltipCoord } = this.state;
       const viewBox = {
         x: offset.left,
@@ -729,18 +726,24 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       let xAxisMap = this.getAxisMap('xAxis', items, numberAxisName === 'xAxis' && stackGroups);
       let yAxisMap = this.getAxisMap('yAxis', items, numberAxisName === 'yAxis' && stackGroups);
+
       const offset = this.calculateOffset(items, xAxisMap, yAxisMap);
 
       xAxisMap = this.getFormatAxisMap(xAxisMap, offset, 'xAxis');
       yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
 
+      const tooltipItem = findChildByType(children, Tooltip);
+      const events = tooltipItem ? {
+        onMouseEnter: this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap),
+        onMouseMove: this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap),
+        onMouseLeave: this.handleMouseLeave,
+      } : null;
+
       return (
         <div
           className={classNames('recharts-wrapper', className)}
           style={{ position: 'relative', cursor: 'default', ...style }}
-          onMouseEnter={this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap)}
-          onMouseMove={this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap)}
-          onMouseLeave={this.handleMouseLeave}
+          {...events}
         >
           <Surface width={width} height={height}>
             {this.renderGrid(xAxisMap, yAxisMap, offset)}
@@ -760,7 +763,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             {this.renderBrush(xAxisMap, yAxisMap, offset)}
           </Surface>
           {this.renderLegend(items)}
-          {this.renderTooltip(items, offset)}
+          {tooltipItem && this.renderTooltip(tooltipItem, items, offset)}
         </div>
       );
     }

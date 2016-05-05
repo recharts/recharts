@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import hoistStatics from 'hoist-non-react-statics';
 
 function getDisplayName(WrappedComponent) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
@@ -9,11 +8,14 @@ export default function (WrappedComponent) {
   class AniamtionDecorator extends Component {
     static displayName = `AniamtionDecorator(${getDisplayName(WrappedComponent)})`;
 
-    static WrappedComponent = WrappedComponent;
-
     static propTypes = {
+      ...WrappedComponent.propTypes,
       data: PropTypes.array,
     };
+
+    static WrappedComponent = WrappedComponent;
+
+    static defaultProps = WrappedComponent.defaultProps;
 
     state = {
       animationId: 0,
@@ -34,5 +36,5 @@ export default function (WrappedComponent) {
     }
   }
 
-  return hoistStatics(AniamtionDecorator, WrappedComponent);
+  return AniamtionDecorator;
 }

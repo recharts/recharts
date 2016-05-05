@@ -4,7 +4,7 @@ import { PieChart, Pie, Sector, Legend, Tooltip, Cell } from 'recharts';
 import { mount, render } from 'enzyme';
 import sinon from 'sinon';
 
-describe('<ScatterChart />', () => {
+describe('<PieChart />', () => {
   const data = [
     { name: 'Group A', value: 400 },
     { name: 'Group B', value: 300 },
@@ -83,17 +83,32 @@ describe('<ScatterChart />', () => {
 
   it('click on Sector should invoke onClick callback', () => {
     const onClick = sinon.spy();
+    const onMouseEnter = sinon.spy();
+    const onMouseLeave = sinon.spy();
+
     const wrapper = mount(
-      <PieChart width={800} height={400}>
-        <Pie onClick={onClick} isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label/>
+      <PieChart
+        width={800}
+        height={400}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+      >
+        <Pie isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label/>
       </PieChart>
     );
     const sectors = wrapper.find(Sector);
     const se = sectors.at(2);
+
     se.simulate('click');
     expect(onClick.calledOnce).to.equal(true);
 
-    se.simulate('mouseEnter')
-    se.simulate('mouseLeave')
+    /*
+    se.simulate('mouseEnter');
+    expect(onMouseEnter.calledOnce).to.equal(true);
+
+    se.simulate('mouseLeave');
+    expect(onMouseLeave.calledOnce).to.equal(true);
+    */
   });
 });

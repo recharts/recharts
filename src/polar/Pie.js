@@ -185,13 +185,13 @@ class Pie extends Component {
     }
   }
 
-  handleSectorLeave = () => {
+  handleSectorLeave(data, index, e) {
     const { onMouseLeave } = this.props;
 
     if (onMouseLeave) {
-      onMouseLeave();
+      onMouseLeave(data, index, e);
     }
-  };
+  }
 
   handleSectorClick(data, index, e) {
     const { onClick } = this.props;
@@ -335,7 +335,7 @@ class Pie extends Component {
       <Layer
         className="recharts-pie-sector"
         onMouseEnter={this.handleSectorEnter.bind(this, entry, i)}
-        onMouseLeave={this.handleSectorLeave}
+        onMouseLeave={this.handleSectorLeave.bind(this, entry, i)}
         onClick={this.handleSectorClick.bind(this, entry, i)}
         key={`sector-${i}`}
       >

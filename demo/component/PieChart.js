@@ -171,6 +171,7 @@ export default React.createClass({
             <PieChart>
               <Pie data={data01} innerRadius="25%" outerRadius="40%"/>
               <Pie data={data03} innerRadius="45%" outerRadius="80%"/>
+              <Tooltip/>
             </PieChart>
           </ResponsiveContainer>
         </div>

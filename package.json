@@ -48,7 +48,6 @@
     "core-js": "2.3.0",
     "d3-scale": "0.6.4",
     "d3-shape": "0.6.0",
-    "hoist-non-react-statics": "^1.0.5",
     "lodash": "4.11.1",
     "react-smooth": "0.1.9",
     "recharts-scale": "0.1.9"

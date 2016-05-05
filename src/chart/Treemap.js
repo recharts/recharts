@@ -200,29 +200,39 @@ class Treemap extends Component {
   };
 
   handleMouseEnter(node, e) {
-    const { onMouseEnter } = this.props;
+    const { onMouseEnter, children } = this.props;
+    const tooltipItem = findChildByType(children, Tooltip);
 
-    this.setState({
-      isTooltipActive: true,
-      activeNode: node,
-    }, () => {
-      if (onMouseEnter) {
-        onMouseEnter(node);
-      }
-    });
+    if (tooltipItem) {
+      this.setState({
+        isTooltipActive: true,
+        activeNode: node,
+      }, () => {
+        if (onMouseEnter) {
+          onMouseEnter(node, e);
+        }
+      });
+    } else if (onMouseEnter) {
+      onMouseEnter(node, e);
+    }
   }
 
-  handleMouseLeave(node) {
-    const { onMouseLeave } = this.props;
+  handleMouseLeave(node, e) {
+    const { onMouseLeave, children } = this.props;
+    const tooltipItem = findChildByType(children, Tooltip);
 
-    this.setState({
-      isTooltipActive: false,
-      activeNode: null,
-    }, () => {
-      if (onMouseLeave) {
-        onMouseLeave(node);
-      }
-    });
+    if (tooltipItem) {
+      this.setState({
+        isTooltipActive: false,
+        activeNode: null,
+      }, () => {
+        if (onMouseLeave) {
+          onMouseLeave(node, e);
+        }
+      });
+    } else if (onMouseLeave) {
+      onMouseLeave(node, e);
+    }
   }
 
   handleClick(node) {

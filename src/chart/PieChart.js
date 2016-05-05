@@ -73,30 +73,41 @@ class PieChart extends Component {
   }
 
   handleMouseEnter = (el, index, e) => {
-    const { onMouseEnter } = this.props;
+    const { children, onMouseEnter } = this.props;
     const { cx, cy, outerRadius, midAngle } = el;
+    const tooltipItem = findChildByType(children, Tooltip);
 
-    this.setState({
-      isTooltipActive: true,
-      activeTooltipCoord: polarToCartesian(cx, cy, outerRadius, midAngle),
-      activeTooltipPayload: [el.payload],
-    }, () => {
-      if (onMouseEnter) {
-        onMouseEnter(el, index, e);
-      }
-    });
+    if (tooltipItem) {
+      this.setState({
+        isTooltipActive: true,
+        activeTooltipCoord: polarToCartesian(cx, cy, outerRadius, midAngle),
+        activeTooltipPayload: [el.payload],
+      }, () => {
+        if (onMouseEnter) {
+          onMouseEnter(el, index, e);
+        }
+      });
+    } else if (onMouseEnter) {
+      onMouseEnter(el, index, e);
+    }
   };
 
-  handleMouseLeave = (e) => {
-    this.setState({
-      isTooltipActive: false,
-    }, () => {
-      if (this.props.onMouseLeave) {
-        this.props.onMouseLeave(e);
-      }
-    });
-  };
+  handleMouseLeave = (el, index, e) => {
+    const { children, onMouseLeave } = this.props;
+    const tooltipItem = findChildByType(children, Tooltip);
 
+    if (tooltipItem) {
+      this.setState({
+        isTooltipActive: false,
+      }, () => {
+        if (onMouseLeave) {
+          onMouseLeave(el, index, e);
+        }
+      });
+    } else if (onMouseLeave) {
+      onMouseLeave(el, index, e);
+    }
+  };
   /**
    * Draw legend
    * @param  {Array} items             The instances of Pie
@@ -114,9 +125,10 @@ class PieChart extends Component {
         const data = this.getComposedData(child);
 
         return result.concat(data.map((entry) => (
-          { ...entry, value: entry[nameKey], color: entry.fill }
+          { ...entry, value: entry[nameKey] , color: entry.fill }
         )));
       }, []);
+
     return React.cloneElement(legendItem, {
       ...Legend.getWithHeight(legendItem, width, height),
       payload: legendData,
@@ -152,7 +164,7 @@ class PieChart extends Component {
    * @return {ReactComponent} All the instance of Pie
    */
   renderItems(items) {
-    const { width, height, margin } = this.props;
+    const { width, height, margin, onClick } = this.props;
 
     return items.map((child, i) => {
       const { innerRadius, outerRadius, data } = child.props;
@@ -170,6 +182,7 @@ class PieChart extends Component {
         composedData: this.getComposedData(child),
         onMouseEnter: this.handleMouseEnter,
         onMouseLeave: this.handleMouseLeave,
+        onClick,
       });
     });
   }
