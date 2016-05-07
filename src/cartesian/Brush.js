@@ -23,6 +23,7 @@ class Brush extends Component {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     data: PropTypes.array,
+    tickFormatter: PropTypes.func, 
 
     travellerWidth: PropTypes.number,
     defaultStartIndex: PropTypes.number,
@@ -300,13 +301,16 @@ class Brush extends Component {
   }
 
   renderText() {
-    const { data, y, height, travellerWidth, stroke } = this.props;
+    const { data, y, height, travellerWidth, stroke, tickFormatter } = this.props;
     const { startIndex, endIndex, startX, endX } = this.state;
     const offset = 5;
     const style = {
       pointerEvents: 'none',
       fill: stroke,
     };
+    
+    const textStart = (tickFormatter) ? tickFormatter(data[startIndex]) : data[startIndex];
+    const textEnd = (tickFormatter) ? tickFormatter(data[endIndex]) : data[endIndex];
 
     return (
       <Layer className="recharts-brush-texts">
@@ -317,7 +321,7 @@ class Brush extends Component {
           x={Math.min(startX, endX) - offset}
           y={y + height / 2}
         >
-          {data[startIndex]}
+          {textStart}
         </text>
         <text
           textAnchor="start"
@@ -326,7 +330,7 @@ class Brush extends Component {
           x={Math.max(startX, endX) + travellerWidth + offset}
           y={y + height / 2}
         >
-          {data[endIndex]}
+          {textEnd}
         </text>
       </Layer>
     );
