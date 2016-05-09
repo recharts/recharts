@@ -2,8 +2,9 @@
  * @fileOverview Curve
  */
 import React, { Component, PropTypes } from 'react';
-import { line as shapeLine, curveLinear, curveMonotoneX, curveMonotoneY, curveStep,
-  curveStepAfter, curveStepBefore } from 'd3-shape';
+import { line as shapeLine, curveBasisClosed, curveBasisOpen, curveBasis,
+  curveLinearClosed, curveLinear, curveMonotoneX, curveMonotoneY, curveNatural,
+  curveStep, curveStepAfter, curveStepBefore } from 'd3-shape';
 import pureRender from '../util/PureRender';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -11,8 +12,9 @@ import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 
 const CURVE_FACTORIES = {
-  curveLinear, curveMonotoneX, curveMonotoneY, curveStep,
-  curveStepAfter, curveStepBefore,
+  curveBasisClosed, curveBasisOpen, curveBasis, curveLinearClosed, curveLinear,
+  curveMonotoneX, curveMonotoneY, curveNatural, curveStep, curveStepAfter,
+  curveStepBefore
 };
 
 @pureRender
@@ -23,7 +25,10 @@ class Curve extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
-    type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
+    type: PropTypes.oneOfType([PropTypes.oneOf([
+      'basis', 'basisClosed', 'basisOpen', 'linear', 'linearClosed', 'natural',
+      'monotone', 'step', 'stepBefore', 'stepAfter',
+    ]), PropTypes.func]),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     baseLine: PropTypes.oneOfType([
       PropTypes.number, PropTypes.array,
@@ -41,6 +46,8 @@ class Curve extends Component {
   };
 
   getCurveFactory(type, layout) {
+    if (_.isFunction(type)) { return type; }
+
     const name = `curve${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
 
     if (name === 'curveMonotone' && layout) {
