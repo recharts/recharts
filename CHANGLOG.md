@@ -1,3 +1,10 @@
+## 0.10.5 (May 9, 2016)
+
+### feat
+
+- Support more interpolations in Curve, Line
+- Allow to set custom tick formatter function for Brush start/end index
+
 ## 0.10.4 (May 5, 2016)
 
 ### feat
