@@ -22,7 +22,7 @@ class Line extends Component {
     className: PropTypes.string,
     type: PropTypes.oneOfType([PropTypes.oneOf([
       'basis', 'basisClosed', 'basisOpen', 'linear', 'linearClosed', 'natural',
-      'monotone', 'step', 'stepBefore', 'stepAfter',
+      'monotoneX', 'monotoneY', 'monotone', 'step', 'stepBefore', 'stepAfter',
     ]), PropTypes.func]),
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

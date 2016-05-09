@@ -27,7 +27,7 @@ class Curve extends Component {
     className: PropTypes.string,
     type: PropTypes.oneOfType([PropTypes.oneOf([
       'basis', 'basisClosed', 'basisOpen', 'linear', 'linearClosed', 'natural',
-      'monotone', 'step', 'stepBefore', 'stepAfter',
+      'monotoneX', 'monotoneY', 'monotone', 'step', 'stepBefore', 'stepAfter',
     ]), PropTypes.func]),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     baseLine: PropTypes.oneOfType([
