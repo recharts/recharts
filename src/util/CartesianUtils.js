@@ -2,18 +2,18 @@ import { findAllByType, findChildByType } from './ReactUtils';
 import ReferenceDot from '../cartesian/ReferenceDot';
 import ReferenceLine from '../cartesian/ReferenceLine';
 import Legend from '../component/Legend';
-import { 
-  stack as shapeStack, stackOrderNone, stackOffsetExpand, 
-  stackOffsetNone, stackOffsetSilhouette, stackOffsetWiggle 
+import {
+  stack as shapeStack, stackOrderNone, stackOffsetExpand,
+  stackOffsetNone, stackOffsetSilhouette, stackOffsetWiggle,
 } from 'd3-shape';
 import _ from 'lodash';
 
 const STACK_OFFSET_MAP = {
-  'expand'    : stackOffsetExpand,
-  'none'      : stackOffsetNone,
-  'silhouette': stackOffsetSilhouette,
-  'wiggle'    : stackOffsetWiggle
-}
+  expand: stackOffsetExpand,
+  none: stackOffsetNone,
+  silhouette: stackOffsetSilhouette,
+  wiggle: stackOffsetWiggle,
+};
 
 export const detectReferenceElementsDomain = (children, domain, axisId, axisType) => {
   const lines = findAllByType(children, ReferenceLine);
