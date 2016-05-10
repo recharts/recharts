@@ -88,11 +88,72 @@ export default React.createClass({
           change data
         </a>
         <br/>
+
         <p>Stacked AreaChart</p>
         <a onClick={this.handleSwitch}>切换数据</a>
         <div className="area-chart-wrapper">
           <AreaChart width={800} height={400} data={this.state.data}
             margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
+          >
+            <XAxis dataKey="name" label="province" />
+            <YAxis />
+            <Tooltip />
+            <Area stackId="0"
+              type="monotone"
+              dataKey="uv"
+              stroke="#ff7300"
+              fill="#ff7300"
+              dot
+              activeDot={renderCustomizedActiveDot}
+            />
+            <Area stackId="0"
+              type="monotone"
+              dataKey="pv"
+              stroke="#387908"
+              fill="#387908"
+              animationBegin={1300}
+              label={renderLabel}
+              dot
+              activeDot={renderCustomizedActiveDot}
+            />
+          </AreaChart>
+        </div>
+
+        <p>Stacked AreaChart | Stack Offset Expand</p>
+        <div className="area-chart-wrapper">
+          <AreaChart width={800} height={400} data={this.state.data}
+            margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
+            stackOffset="expand"
+          >
+            <XAxis dataKey="name" label="province" />
+            <YAxis />
+            <Tooltip />
+            <Area stackId="0"
+              type="monotone"
+              dataKey="uv"
+              stroke="#ff7300"
+              fill="#ff7300"
+              dot
+              activeDot={renderCustomizedActiveDot}
+            />
+            <Area stackId="0"
+              type="monotone"
+              dataKey="pv"
+              stroke="#387908"
+              fill="#387908"
+              animationBegin={1300}
+              label={renderLabel}
+              dot
+              activeDot={renderCustomizedActiveDot}
+            />
+          </AreaChart>
+        </div>
+
+        <p>Stacked AreaChart | Stack Offset Silhouette</p>
+        <div className="area-chart-wrapper">
+          <AreaChart width={800} height={400} data={this.state.data}
+            margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
+            stackOffset="silhouette"
           >
             <XAxis dataKey="name" label="province" />
             <YAxis />

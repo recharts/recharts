@@ -2,7 +2,7 @@ import { findAllByType, findChildByType } from './ReactUtils';
 import ReferenceDot from '../cartesian/ReferenceDot';
 import ReferenceLine from '../cartesian/ReferenceLine';
 import Legend from '../component/Legend';
-import { stack as shapeStack, stackOrderNone, stackOffsetNone } from 'd3-shape';
+import * as d3Shape from 'd3-shape';
 import _ from 'lodash';
 
 export const detectReferenceElementsDomain = (children, domain, axisId, axisType) => {
@@ -23,18 +23,18 @@ export const detectReferenceElementsDomain = (children, domain, axisId, axisType
   }, domain);
 };
 
-export const getStackedData = (data, stackItems) => {
+export const getStackedData = (data, stackItems, stackOffset) => {
   const dataKeys = stackItems.map(item => item.props.dataKey);
-  const stack = shapeStack()
+  const stack = d3Shape.stack()
                 .keys(dataKeys)
                 .value((d, key) => (+d[key] || 0))
-                .order(stackOrderNone)
-                .offset(stackOffsetNone);
+                .order(d3Shape.stackOrderNone)
+                .offset(d3Shape[`stackOffset${_.capitalize(stackOffset)}`]);
 
   return stack(data);
 };
 
-export const getStackGroupsByAxisId = (data, items, axisIdKey) => {
+export const getStackGroupsByAxisId = (data, items, axisIdKey, stackOffset) => {
   const stackGroups = items.reduce((result, item) => {
     const { stackId, dataKey } = item.props;
     const axisId = item.props[axisIdKey];
@@ -70,7 +70,7 @@ export const getStackGroupsByAxisId = (data, items, axisIdKey) => {
           ...res,
           [stackId]: {
             items: g.items,
-            stackedData: getStackedData(data, g.items),
+            stackedData: getStackedData(data, g.items, stackOffset),
           },
         };
       }, {});

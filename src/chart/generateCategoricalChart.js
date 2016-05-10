@@ -42,6 +42,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       height: PropTypes.number,
       data: PropTypes.arrayOf(PropTypes.object),
       layout: PropTypes.oneOf(['horizontal', 'vertical']),
+      stackOffset: PropTypes.oneOf(['expand', 'none', 'wiggle', 'silhouette']),
       margin: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -58,6 +59,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     static defaultProps = {
       layout: 'horizontal',
+      stackOffset: 'none',
       margin: { top: 5, right: 5, bottom: 5, left: 5 },
     };
 
@@ -719,10 +721,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { data } = this.props;
       if (!validateWidthHeight(this) || !data || !data.length) { return null; }
 
-      const { style, children, layout, className, width, height } = this.props;
+      const { style, children, layout, className, width, height, stackOffset } = this.props;
       const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
       const items = findAllByType(children, GraphicalChild);
-      const stackGroups = getStackGroupsByAxisId(data, items, `${numberAxisName}Id`);
+      const stackGroups = getStackGroupsByAxisId(data, items, `${numberAxisName}Id`, stackOffset);
 
       let xAxisMap = this.getAxisMap('xAxis', items, numberAxisName === 'xAxis' && stackGroups);
       let yAxisMap = this.getAxisMap('yAxis', items, numberAxisName === 'yAxis' && stackGroups);
