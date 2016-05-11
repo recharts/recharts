@@ -640,7 +640,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     /**
      * Draw Tooltip
-     * @param  {ReactElement} tootltipItem   The instance of Tooltip
+     * @param  {ReactElement} tooltipItem  The instance of Tooltip
      * @param  {Array}  items  The instances of GraphicalChild
      * @param  {Object} offset The offset of main part in the svg element
      * @return {ReactElement}  The instance of Tooltip

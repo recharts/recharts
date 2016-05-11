@@ -23,7 +23,7 @@ class Brush extends Component {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     data: PropTypes.array,
-    tickFormatter: PropTypes.func, 
+    tickFormatter: PropTypes.func,
 
     travellerWidth: PropTypes.number,
     defaultStartIndex: PropTypes.number,
@@ -308,7 +308,7 @@ class Brush extends Component {
       pointerEvents: 'none',
       fill: stroke,
     };
-    
+
     const textStart = (tickFormatter) ? tickFormatter(data[startIndex]) : data[startIndex];
     const textEnd = (tickFormatter) ? tickFormatter(data[endIndex]) : data[endIndex];
 

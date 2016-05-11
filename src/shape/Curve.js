@@ -14,7 +14,7 @@ import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
 const CURVE_FACTORIES = {
   curveBasisClosed, curveBasisOpen, curveBasis, curveLinearClosed, curveLinear,
   curveMonotoneX, curveMonotoneY, curveNatural, curveStep, curveStepAfter,
-  curveStepBefore
+  curveStepBefore,
 };
 
 @pureRender
