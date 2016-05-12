@@ -216,7 +216,7 @@ describe('<RadialBarChart />', () => {
   });
 
   it('Renders tooltip when add a Tooltip element', () => {
-    const wrapper = mount(
+    const wrapper = render(
       <RadialBarChart
         width={500}
         height={300}

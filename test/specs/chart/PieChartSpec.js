@@ -62,7 +62,7 @@ describe('<PieChart />', () => {
   });
 
   it('Renders tooltip when add a Tooltip element', () => {
-    const wrapper = mount(
+    const wrapper = render(
       <PieChart width={800} height={400}>
         <Pie isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label/>
         <Tooltip/>
