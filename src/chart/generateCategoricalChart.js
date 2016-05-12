@@ -61,6 +61,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     static defaultProps = {
       layout: 'horizontal',
       margin: { top: 5, right: 5, bottom: 5, left: 5 },
+      isAbove: false,
     };
 
     constructor(props) {
