@@ -223,12 +223,13 @@ export default React.createClass({
         <br/>
         <p>Simple BarChart</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={400} height={400} data={data}>
+          <BarChart width={400} height={400} data={data} isAbove >
             <XAxis dataKey="name" />
             <YAxis />
             <Legend />
             <Tooltip />
             <CartesianGrid vertical={false}/>
+            <ReferenceLine y={3200} stroke="red" />
             <Bar dataKey="uv" label={renderLabel} >
               {
                 data.map((entry, index) => (

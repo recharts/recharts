@@ -100,9 +100,9 @@ describe('<BarChart />', () => {
   it('Renders tooltip when Tooltip item is added', () => {
     const wrapper = mount(
       <BarChart width={100} height={50} data={data}>
-        <Bar dataKey="uv" stackId="test" fill="#ff7300"/>
-        <Bar dataKey="pv" stackId="test" fill="#387908"/>
-        <Tooltip/>
+        <Bar dataKey="uv" stackId="test" fill="#ff7300" />
+        <Bar dataKey="pv" stackId="test" fill="#387908" />
+        <Tooltip />
       </BarChart>
     );
     wrapper.setState({

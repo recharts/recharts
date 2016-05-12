@@ -42,6 +42,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       height: PropTypes.number,
       data: PropTypes.arrayOf(PropTypes.object),
       layout: PropTypes.oneOf(['horizontal', 'vertical']),
+      // if the chart should render above the reference line or dot.
+      isAbove: PropTypes.bool,
       margin: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -59,6 +61,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     static defaultProps = {
       layout: 'horizontal',
       margin: { top: 5, right: 5, bottom: 5, left: 5 },
+      isAbove: false,
     };
 
     constructor(props) {
@@ -681,8 +684,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     }
 
-    renderReferenceLines(xAxisMap, yAxisMap, offset) {
-      const { children } = this.props;
+    renderReferenceLines(xAxisMap, yAxisMap, offset, isBeforeRender) {
+      const { children, isAbove } = this.props;
+
+      if (isAbove && !isBeforeRender || !isAbove && isBeforeRender) {
+        return null;
+      }
+
       const lines = findAllByType(children, ReferenceLine);
 
       if (!lines || !lines.length) { return null; }
@@ -701,8 +709,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       );
     }
 
-    renderReferenceDots(xAxisMap, yAxisMap, offset) {
-      const { children } = this.props;
+    renderReferenceDots(xAxisMap, yAxisMap, offset, isBeforeRender) {
+      const { children, isAbove } = this.props;
+
+      if (isAbove && !isBeforeRender || !isAbove && isBeforeRender) {
+        return null;
+      }
+
       const dots = findAllByType(children, ReferenceDot);
 
       if (!dots || !dots.length) { return null; }
@@ -747,8 +760,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         >
           <Surface width={width} height={height}>
             {this.renderGrid(xAxisMap, yAxisMap, offset)}
-            {this.renderReferenceLines(xAxisMap, yAxisMap, offset)}
-            {this.renderReferenceDots(xAxisMap, yAxisMap, offset)}
+            {this.renderReferenceLines(xAxisMap, yAxisMap, offset, true)}
+            {this.renderReferenceDots(xAxisMap, yAxisMap, offset, true)}
             {this.renderAxes(xAxisMap, 'x-axis')}
             {this.renderAxes(yAxisMap, 'y-axis')}
             <ChartComponent
@@ -760,6 +773,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
               offset={offset}
               stackGroups={stackGroups}
             />
+            {this.renderReferenceLines(xAxisMap, yAxisMap, offset, false)}
+            {this.renderReferenceDots(xAxisMap, yAxisMap, offset, false)}
             {this.renderBrush(xAxisMap, yAxisMap, offset)}
           </Surface>
           {this.renderLegend(items)}
