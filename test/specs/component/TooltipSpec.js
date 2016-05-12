@@ -40,7 +40,7 @@ describe('<Tooltip />', () => {
     const Customized = () => {
       return <div className="customized"/>
     };
-    const wrapper = render(
+    const wrapper = mount(
       <AreaChart width={100} height={50} data={data}>
         <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300"/>
         <Tooltip content={<Customized/>}/>

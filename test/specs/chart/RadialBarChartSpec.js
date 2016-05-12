@@ -216,7 +216,7 @@ describe('<RadialBarChart />', () => {
   });
 
   it('Renders tooltip when add a Tooltip element', () => {
-    const wrapper = render(
+    const wrapper = mount(
       <RadialBarChart
         width={500}
         height={300}
@@ -249,6 +249,4 @@ describe('<RadialBarChart />', () => {
     expect(wrapper.find('.recharts-tooltip-wrapper').length).to.equal(1);
     expect(wrapper.find('.recharts-default-tooltip').length).to.equal(1);
   });
-
-
 });
