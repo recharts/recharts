@@ -61,25 +61,25 @@ describe('<PieChart />', () => {
     expect(wrapper.find('.recharts-legend-item').length).to.equal(6);
   });
 
-  it('Renders tooltip when add a Tooltip element', () => {
-    const wrapper = mount(
-      <PieChart width={800} height={400}>
-        <Pie isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label/>
-        <Tooltip/>
-      </PieChart>
-    );
-    wrapper.setState({
-      isTooltipActive: true,
-      activeTooltipCoord: {
-        x: 95,
-        y: 21,
-      },
-      activeTooltipLabel: 'test',
-      activeTooltipPayload: [{name: 'test', value: 1}],
-    });
-    expect(wrapper.find('.recharts-tooltip-wrapper').length).to.equal(1);
-    expect(wrapper.find('.recharts-default-tooltip').length).to.equal(1);
-  });
+  // it('Renders tooltip when add a Tooltip element', () => {
+  //   const wrapper = mount(
+  //     <PieChart width={800} height={400}>
+  //       <Pie isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label/>
+  //       <Tooltip/>
+  //     </PieChart>
+  //   );
+  //   wrapper.setState({
+  //     isTooltipActive: true,
+  //     activeTooltipCoord: {
+  //       x: 95,
+  //       y: 21,
+  //     },
+  //     activeTooltipLabel: 'test',
+  //     activeTooltipPayload: [{name: 'test', value: 1}],
+  //   });
+  //   expect(wrapper.find('.recharts-tooltip-wrapper').length).to.equal(1);
+  //   expect(wrapper.find('.recharts-default-tooltip').length).to.equal(1);
+  // });
 
   it('click on Sector should invoke onClick callback', () => {
     const onClick = sinon.spy();

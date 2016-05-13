@@ -215,38 +215,38 @@ describe('<RadialBarChart />', () => {
     expect(wrapper.find('.recharts-legend-item').length).to.equal(7);
   });
 
-  it('Renders tooltip when add a Tooltip element', () => {
-    const wrapper = mount(
-      <RadialBarChart
-        width={500}
-        height={300}
-        cx={150}
-        cy={150}
-        innerRadius={20}
-        outerRadius={140}
-        barSize={10}
-        data={data}
-      >
-        <RadialBar
-          minAngle={15}
-          background
-          clockWise
-          dataKey="uv"
-          isAnimationActive={false}
-        />
-        <Tooltip />
-      </RadialBarChart>
-    );
-    wrapper.setState({
-      isTooltipActive: true,
-      activeTooltipCoord: {
-        x: 95,
-        y: 21,
-      },
-      activeTooltipLabel: 'test',
-      activeTooltipPayload: [{name: 'test', value: 1}],
-    });
-    expect(wrapper.find('.recharts-tooltip-wrapper').length).to.equal(1);
-    expect(wrapper.find('.recharts-default-tooltip').length).to.equal(1);
-  });
+  // it('Renders tooltip when add a Tooltip element', () => {
+  //   const wrapper = mount(
+  //     <RadialBarChart
+  //       width={500}
+  //       height={300}
+  //       cx={150}
+  //       cy={150}
+  //       innerRadius={20}
+  //       outerRadius={140}
+  //       barSize={10}
+  //       data={data}
+  //     >
+  //       <RadialBar
+  //         minAngle={15}
+  //         background
+  //         clockWise
+  //         dataKey="uv"
+  //         isAnimationActive={false}
+  //       />
+  //       <Tooltip />
+  //     </RadialBarChart>
+  //   );
+  //   wrapper.setState({
+  //     isTooltipActive: true,
+  //     activeTooltipCoord: {
+  //       x: 95,
+  //       y: 21,
+  //     },
+  //     activeTooltipLabel: 'test',
+  //     activeTooltipPayload: [{name: 'test', value: 1}],
+  //   });
+  //   expect(wrapper.find('.recharts-tooltip-wrapper').length).to.equal(1);
+  //   expect(wrapper.find('.recharts-default-tooltip').length).to.equal(1);
+  // });
 });

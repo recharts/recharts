@@ -36,28 +36,28 @@ describe('<Tooltip />', () => {
     expect(wrapper.find(Tooltip).length).to.equal(1);
   });
 
-  it('Render customized tooltip when content is set to be a react element', () => {
-    const Customized = () => {
-      return <div className="customized"/>
-    };
-    const wrapper = mount(
-      <AreaChart width={100} height={50} data={data}>
-        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300"/>
-        <Tooltip content={<Customized/>}/>
-      </AreaChart>
-    );
+  // it('Render customized tooltip when content is set to be a react element', () => {
+  //   const Customized = () => {
+  //     return <div className="customized"/>
+  //   };
+  //   const wrapper = mount(
+  //     <AreaChart width={100} height={50} data={data}>
+  //       <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300"/>
+  //       <Tooltip content={<Customized/>}/>
+  //     </AreaChart>
+  //   );
 
-    // I simulate to hover on the AreaChart, then the tooltip should show!
-    wrapper.setState({
-      isTooltipActive: true,
-      activeTooltipIndex: 0,
-      activeTooltipLabel: 4,
-      activeTooltipCoord: {
-        x: 95,
-        y: 21,
-      },
-    });
+  //   // I simulate to hover on the AreaChart, then the tooltip should show!
+  //   wrapper.setState({
+  //     isTooltipActive: true,
+  //     activeTooltipIndex: 0,
+  //     activeTooltipLabel: 4,
+  //     activeTooltipCoord: {
+  //       x: 95,
+  //       y: 21,
+  //     },
+  //   });
 
-    expect(wrapper.find('.customized').length).to.equal(1);
-  });
+  //   expect(wrapper.find('.customized').length).to.equal(1);
+  // });
 });

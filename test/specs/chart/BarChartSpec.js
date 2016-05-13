@@ -97,27 +97,27 @@ describe('<BarChart />', () => {
     expect(wrapper.find('.recharts-rectangle').length).to.equal(8);
   });
 
-  it('Renders tooltip when Tooltip item is added', () => {
-    const wrapper = mount(
-      <BarChart width={100} height={50} data={data}>
-        <Bar dataKey="uv" stackId="test" fill="#ff7300" />
-        <Bar dataKey="pv" stackId="test" fill="#387908" />
-        <Tooltip />
-      </BarChart>
-    );
-    wrapper.setState({
-      isTooltipActive: true,
-      activeTooltipIndex: 3,
-      activeTooltipLabel: 4,
-      activeTooltipCoord: {
-        x: 95,
-        y: 21,
-      },
-    });
+  // it('Renders tooltip when Tooltip item is added', () => {
+  //   const wrapper = mount(
+  //     <BarChart width={100} height={50} data={data}>
+  //       <Bar dataKey="uv" stackId="test" fill="#ff7300" />
+  //       <Bar dataKey="pv" stackId="test" fill="#387908" />
+  //       <Tooltip />
+  //     </BarChart>
+  //   );
+  //   wrapper.setState({
+  //     isTooltipActive: true,
+  //     activeTooltipIndex: 3,
+  //     activeTooltipLabel: 4,
+  //     activeTooltipCoord: {
+  //       x: 95,
+  //       y: 21,
+  //     },
+  //   });
 
-    expect(wrapper.find('.recharts-default-tooltip').length).to.equal(1);
-    expect(wrapper.find('.recharts-tooltip-wrapper').length).to.equal(1);
-  });
+  //   expect(wrapper.find('.recharts-default-tooltip').length).to.equal(1);
+  //   expect(wrapper.find('.recharts-tooltip-wrapper').length).to.equal(1);
+  // });
 
   it('Render empty when data is empty', () => {
     const wrapper = render(
