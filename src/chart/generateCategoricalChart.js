@@ -627,12 +627,12 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      * @return {ReactElement}            The instance of Legend
      */
     renderLegend(items) {
-      const { children, width, height } = this.props;
-      const props = getLegendProps(children, items, width, height);
+      const { children, width, height, margin } = this.props;
+      const legendWidth = width - margin.left - margin.right;
+      const legendHeight = height - margin.top - margin.bottom;
+      const props = getLegendProps(children, items, legendWidth, legendHeight);
 
       if (!props) { return null; }
-
-      const { margin } = this.props;
 
       return React.createElement(Legend, {
         ...props,
