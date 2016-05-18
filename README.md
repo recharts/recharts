@@ -16,19 +16,6 @@ The main purpose of this library is to help you to write charts in React applica
 1. **Native** SVG support, lightweight depend on some D3 submodules
 1. **Declarative** components, components of chart are purely presentational
 
-## Roadmap
-
-### v1.0 release plan
-
-Expected release: April 2016
-
-- Build babel-plugin-recharts (pack on required)
-- Great animation support
-- Good documentation
-- Cascade Chart
-- Wireless support
-- 90% code test coverage
-
 ## Examples
 
 ```jsx
@@ -47,6 +34,10 @@ Expected release: April 2016
 ```
 
 All the components of Recharts is clearly separated. The lineChart is composed by x axis, tooltip, grid, and line items, and each of them is an independent React Component. The clear seperation and composition of components is one of the principle Recharts follow.
+
+## Module Formats
+
+- [babel-plugin-recharts](https://github.com/recharts/babel-plugin-recharts) A simple transform to cherry-pick Rcharts modules so you don’t have to.
 
 ## Contribution
 
