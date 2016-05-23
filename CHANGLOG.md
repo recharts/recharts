@@ -1,3 +1,9 @@
+## 0.10.6 (May 23, 2016)
+
+### feat
+
+- ResponsiveContainer  listen to parent element instead of the window
+
 ## 0.10.5 (May 9, 2016)
 
 ### feat
@@ -48,11 +54,11 @@
 
 - Refactor *ticks* specified in `XAxis`, `YAxis`
 - Use area of `Symbol` to show the size of number in ScatterChart
-- Refactor the `activeShape` in `Scatter` 
+- Refactor the `activeShape` in `Scatter`
 
 ### feat
 
-- Add `Symbol` and support different `Symbol` in ScatterChart 
+- Add `Symbol` and support different `Symbol` in ScatterChart
 
 ### fix
 
@@ -318,4 +324,3 @@
 
 ### UI
 - Refator some components, include CartesianAxis, Legend, Tooltip etc, to unify some props name.
-
