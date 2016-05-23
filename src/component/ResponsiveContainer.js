@@ -24,14 +24,14 @@ const render = ({ width, height, container, children }) => {
     calculatedWidth, calculatedHeight, width, height
   );
 
-  if (calculatedWidth > 0 && calculatedHeight > 0) {
-    return React.cloneElement(children, {
-      width: calculatedWidth,
-      height: calculatedHeight,
-    });
+  if (!calculatedWidth || !calculatedHeight) {
+    return <div className="compressed-chart" />;
   }
 
-  return null;
+  return React.cloneElement(children, {
+    width: calculatedWidth,
+    height: calculatedHeight,
+  });
 };
 
 const style = {
@@ -40,7 +40,7 @@ const style = {
 };
 
 const ResponsiveContainer = props => (
-  <div className="recharts-responsive-container" style={style} ref="container">
+  <div className="recharts-responsive-container" style={style}>
     <ContainerDimensions>
       {
         container =>

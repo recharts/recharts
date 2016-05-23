@@ -2,7 +2,7 @@
 
 ### feat
 
-- ResponsiveContainer  listen to parent element instead of the window
+- ResponsiveContainer listen to parent element instead of the window
 
 ## 0.10.5 (May 9, 2016)
 
