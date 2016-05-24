@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Sankey } from 'recharts';
 import _ from 'lodash';
+import DemoSankeyLink from './DemoSankeyLink';
 
-const data = {
+const data0 = {
   nodes: [
     { name: 'Agricultural waste' },
     { name: 'Bio-conversion' },
@@ -125,14 +126,31 @@ const data = {
   ],
 };
 
+const data1 = {
+  nodes: [
+    { name: '本店访客数' },
+    { name: '本店购买人数' },
+    { name: '未在本店购买人数' },
+    { name: '购买流失人数' },
+    { name: '其他人数' },
+  ],
+  links: [
+    { source: 0, target: 1, value: 21283 },
+    { source: 0, target: 2, value: 614170 },
+    { source: 2, target: 3, value: 122429 },
+    { source: 2, target: 4, value: 591741 },
+  ],
+};
+
 function SankeyDemo() {
   return (
     <div className="sankey-charts">
       <Sankey
-        width={1800} height={1000}
-        data={data}
-        nodeWidth={30} nodePadding={30}
-        iterations={1000}
+        width={960} height={500}
+        data={data0}
+        nodeWidth={15} nodePadding={10}
+        iterations={32}
+        linkContent={<DemoSankeyLink />}
       />
     </div>
   );

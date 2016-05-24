@@ -266,6 +266,8 @@ class Sankey extends Component {
     nodeWidth: PropTypes.number,
     linkCurvature: PropTypes.number,
     iterations: PropTypes.number,
+    nodeContent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
+    linkContent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
   };
 
   static defaultProps = {
@@ -276,7 +278,7 @@ class Sankey extends Component {
   }
 
   renderLinks(links) {
-    const { linkCurvature } = this.props;
+    const { linkCurvature, linkContent } = this.props;
 
     return (
       <Layer>
@@ -289,14 +291,29 @@ class Sankey extends Component {
             const x3 = xi(1 - linkCurvature);
             const y0 = link.source.y + link.sy + link.dy / 2;
             const y1 = link.target.y + link.ty + link.dy / 2;
+            const { sy, ty, dy } = link;
+
+            const linkProps = {
+              x0, x1, x2, x3, y0, y1,
+              sy, ty, dy,
+              index: i,
+              key: `link${i}`,
+            };
+
+            if (React.isValidElement(linkContent)) {
+              return React.cloneElement(linkContent, linkProps);
+            } else if (_.isFunction(linkContent)) {
+              return linkContent(linkProps);
+            }
+
             return (
               <path
                 key={`link${i}`}
                 d={`M${x0},${y0}C${x2},${y0} ${x3},${y1} ${x1},${y1}`}
                 fill="none"
-                stroke="#000"
+                stroke="#333"
                 strokeWidth={link.dy}
-                strokeOpacity="0.3"
+                strokeOpacity="0.2"
               />
             );
           })
@@ -306,20 +323,29 @@ class Sankey extends Component {
   }
 
   renderNodes(nodes) {
+    const { nodeContent } = this.props;
+
     return (
       <Layer>
         {
           nodes.map((node, i) => {
             const { x, y, dx, dy } = node;
-            return (
-              <Rectangle
-                key={`node${i}`}
-                x={x} y={y}
-                width={dx} height={dy}
-                fill="#0066cc"
-                fillOpacity="0.7"
-              />
-            );
+
+            const nodeProps = {
+              x,
+              y,
+              width: dx,
+              height: dy,
+              index: i,
+            };
+
+            if (React.isValidElement(nodeContent)) {
+              return React.cloneElement(nodeContent, nodeProps);
+            } else if (_.isFunction(nodeContent)) {
+              return nodeContent(nodeProps);
+            }
+
+            return <Rectangle key={`node${i}`} {...nodeProps} fill="#0088fe" />;
           })
         }
       </Layer>
