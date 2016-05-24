@@ -298,6 +298,7 @@ class Sankey extends Component {
               sy, ty, dy,
               index: i,
               key: `link${i}`,
+              link,
             };
 
             if (React.isValidElement(linkContent)) {
@@ -337,6 +338,7 @@ class Sankey extends Component {
               width: dx,
               height: dy,
               index: i,
+              node,
             };
 
             if (React.isValidElement(nodeContent)) {
@@ -345,7 +347,7 @@ class Sankey extends Component {
               return nodeContent(nodeProps);
             }
 
-            return <Rectangle key={`node${i}`} {...nodeProps} fill="#0088fe" />;
+            return <Rectangle key={`node${i}`} {...nodeProps} fill="#0088fe" fillOpacity="0.8" />;
           })
         }
       </Layer>

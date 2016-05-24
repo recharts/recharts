@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Sankey } from 'recharts';
+import { Sankey, Tooltip } from 'recharts';
 import _ from 'lodash';
 import DemoSankeyLink from './DemoSankeyLink';
+import DemoSankeyNode from './DemoSankeyNode';
 
 const data0 = {
   nodes: [
@@ -128,30 +129,40 @@ const data0 = {
 
 const data1 = {
   nodes: [
-    { name: '本店访客数' },
-    { name: '本店购买人数' },
-    { name: '未在本店购买人数' },
-    { name: '购买流失人数' },
-    { name: '其他人数' },
+    { name: 'Visit' },
+    { name: 'Direct-Favourite' },
+    { name: 'Page-Click' },
+    { name: 'Detail-Favourite' },
+    { name: 'Lost' },
   ],
   links: [
-    { source: 0, target: 1, value: 21283 },
-    { source: 0, target: 2, value: 614170 },
-    { source: 2, target: 3, value: 122429 },
-    { source: 2, target: 4, value: 591741 },
+    { source: 0, target: 1, value: 37283 },
+    { source: 0, target: 2, value: 354170 },
+    { source: 2, target: 3, value: 62429 },
+    { source: 2, target: 4, value: 291741 },
   ],
 };
 
 function SankeyDemo() {
   return (
     <div className="sankey-charts">
-      <Sankey
-        width={960} height={500}
-        data={data0}
-        nodeWidth={15} nodePadding={10}
-        iterations={32}
-        linkContent={<DemoSankeyLink />}
-      />
+      <div>
+        <Sankey width={960} height={500} data={data0} />
+      </div>
+      <br />
+      <div>
+        <Sankey
+          width={960} height={500}
+          data={data1}
+          nodeWidth={10} nodePadding={60}
+          linkCurvature={0.61}
+          iterations={64}
+          linkContent={<DemoSankeyLink />}
+          nodeContent={<DemoSankeyNode containerWidth={960} />}
+        >
+          <Tooltip />
+        </Sankey>
+      </div>
     </div>
   );
 }
