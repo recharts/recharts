@@ -1,3 +1,16 @@
+## 0.10.6 (May 25, 2016)
+
+### feat
+
+- Add customized event handlers in BarChart
+- Add curveMonotoneX and curveMonotoneY in Curve and Line
+- Pass stackOffset type as an optional parameter for categorical chart
+- Add `isFront` in ReferenceLine and ReferenceDot to support auxiliary information at differents z-index
+
+### fix
+
+- Fix legend position with margin
+
 ## 0.10.5 (May 9, 2016)
 
 ### feat
