@@ -29,6 +29,7 @@ class ReferenceLine extends Component {
     xAxisMap: PropTypes.object,
     yAxisMap: PropTypes.object,
 
+    isFront: PropTypes.bool,
     alwaysShow: PropTypes.bool,
     x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -40,6 +41,7 @@ class ReferenceLine extends Component {
   };
 
   static defaultProps = {
+    isFront: false,
     alwaysShow: false,
     xAxisId: 0,
     yAxisId: 0,

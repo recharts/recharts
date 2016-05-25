@@ -461,13 +461,13 @@ class ScatterChart extends Component {
     }, this);
   }
 
-  renderReferenceLines(xAxis, yAxis, offset) {
+  renderReferenceLines(xAxis, yAxis, offset, isFront) {
     const { children } = this.props;
     const lines = findAllByType(children, ReferenceLine);
 
     if (!lines || !lines.length) { return null; }
 
-    return lines.map((entry, i) =>
+    return lines.filter(entry => (isFront === entry.props.isFront)).map((entry, i) =>
       React.cloneElement(entry, {
         key: `reference-line-${i}`,
         xAxisMap: { [xAxis.xAxisId]: xAxis },
@@ -482,13 +482,13 @@ class ScatterChart extends Component {
     );
   }
 
-  renderReferenceDots(xAxis, yAxis, offset) {
+  renderReferenceDots(xAxis, yAxis, offset, isFront) {
     const { children } = this.props;
     const dots = findAllByType(children, ReferenceDot);
 
     if (!dots || !dots.length) { return null; }
 
-    return dots.map((entry, i) =>
+    return dots.filter(entry => (isFront === entry.props.isFront)).map((entry, i) =>
       React.cloneElement(entry, {
         key: `reference-dot-${i}`,
         xAxisMap: { [xAxis.xAxisId]: xAxis },
@@ -517,12 +517,14 @@ class ScatterChart extends Component {
       >
         <Surface width={width} height={height}>
           {this.renderGrid(xAxis, yAxis, offset)}
-          {this.renderReferenceLines(xAxis, yAxis, offset)}
-          {this.renderReferenceDots(xAxis, yAxis, offset)}
+          {this.renderReferenceLines(xAxis, yAxis, offset, false)}
+          {this.renderReferenceDots(xAxis, yAxis, offset, false)}
           {this.renderAxis(xAxis, 'recharts-x-axis')}
           {this.renderAxis(yAxis, 'recharts-y-axis')}
           {this.renderCursor(xAxis, yAxis, offset)}
           {this.renderItems(items, xAxis, yAxis, zAxis, offset)}
+          {this.renderReferenceLines(xAxis, yAxis, offset, true)}
+          {this.renderReferenceDots(xAxis, yAxis, offset, true)}
         </Surface>
 
         {this.renderLegend(items)}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { changeNumberOfData } from './utils';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, Brush } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, Brush,
+  ReferenceLine, ReferenceDot } from 'recharts';
 
 const data = [
   { name: 'Page A', uv: 4000, pv: 2400, amt: 2400 },
@@ -249,11 +250,13 @@ export default React.createClass({
             <YAxis tickCount={7} hasTick />
             <Tooltip content={<CustomTooltip external={data} />} />
             <CartesianGrid stroke="#f5f5f5" />
+            <ReferenceLine y={7500} stroke="#387908"/>
+            <ReferenceDot x="Page C" y={1398} r={10} fill="#387908" isFront/>
             <Area type="monotone"
               dataKey="pv"
               stroke="#ff7300"
               fill="#ff7300"
-              fillOpacity={0.25}
+              fillOpacity={0.9}
             />
           </AreaChart>
         </div>

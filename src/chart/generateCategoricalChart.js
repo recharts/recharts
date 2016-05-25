@@ -42,7 +42,6 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       height: PropTypes.number,
       data: PropTypes.arrayOf(PropTypes.object),
       layout: PropTypes.oneOf(['horizontal', 'vertical']),
-      isAbove: PropTypes.bool,
       stackOffset: PropTypes.oneOf(['expand', 'none', 'wiggle', 'silhouette']),
       margin: PropTypes.shape({
         top: PropTypes.number,
@@ -62,7 +61,6 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       layout: 'horizontal',
       stackOffset: 'none',
       margin: { top: 5, right: 5, bottom: 5, left: 5 },
-      isAbove: false,
     };
 
     constructor(props) {
@@ -685,18 +683,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     }
 
-    renderReferenceLines(xAxisMap, yAxisMap, offset, isBeforeRender) {
-      const { children, isAbove } = this.props;
-
-      if (isAbove && !isBeforeRender || !isAbove && isBeforeRender) {
-        return null;
-      }
-
+    renderReferenceLines(xAxisMap, yAxisMap, offset, isFront) {
+      const { children } = this.props;
       const lines = findAllByType(children, ReferenceLine);
 
       if (!lines || !lines.length) { return null; }
 
-      return lines.map((entry, i) =>
+      return lines.filter(entry => (isFront === entry.props.isFront)).map((entry, i) =>
         React.cloneElement(entry, {
           key: `reference-line-${i}`,
           xAxisMap, yAxisMap,
@@ -710,18 +703,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       );
     }
 
-    renderReferenceDots(xAxisMap, yAxisMap, offset, isBeforeRender) {
-      const { children, isAbove } = this.props;
-
-      if (isAbove && !isBeforeRender || !isAbove && isBeforeRender) {
-        return null;
-      }
-
+    renderReferenceDots(xAxisMap, yAxisMap, offset, isFront) {
+      const { children } = this.props;
       const dots = findAllByType(children, ReferenceDot);
 
       if (!dots || !dots.length) { return null; }
 
-      return dots.map((entry, i) =>
+      return dots.filter(entry => (isFront === entry.props.isFront)).map((entry, i) =>
         React.cloneElement(entry, {
           key: `reference-dot-${i}`,
           xAxisMap, yAxisMap,
@@ -761,8 +749,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         >
           <Surface width={width} height={height}>
             {this.renderGrid(xAxisMap, yAxisMap, offset)}
-            {this.renderReferenceLines(xAxisMap, yAxisMap, offset, true)}
-            {this.renderReferenceDots(xAxisMap, yAxisMap, offset, true)}
+            {this.renderReferenceLines(xAxisMap, yAxisMap, offset, false)}
+            {this.renderReferenceDots(xAxisMap, yAxisMap, offset, false)}
             {this.renderAxes(xAxisMap, 'x-axis')}
             {this.renderAxes(yAxisMap, 'y-axis')}
             <ChartComponent
@@ -774,8 +762,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
               offset={offset}
               stackGroups={stackGroups}
             />
-            {this.renderReferenceLines(xAxisMap, yAxisMap, offset, false)}
-            {this.renderReferenceDots(xAxisMap, yAxisMap, offset, false)}
+            {this.renderReferenceLines(xAxisMap, yAxisMap, offset, true)}
+            {this.renderReferenceDots(xAxisMap, yAxisMap, offset, true)}
             {this.renderBrush(xAxisMap, yAxisMap, offset)}
           </Surface>
           {this.renderLegend(items)}
