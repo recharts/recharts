@@ -7,7 +7,8 @@ import Animate from 'react-smooth';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import pureRender from '../util/PureRender';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
+  filterEventsOfChild } from '../util/ReactUtils';
 import _ from 'lodash';
 
 @pureRender
@@ -101,7 +102,7 @@ class Bar extends Component {
 
     return data.map((entry, index) => {
       const { width, height } = entry;
-      const props = { ...baseProps, ...entry, index };
+      const props = { ...baseProps, ...entry, index, ...filterEventsOfChild(this.props, entry, index) };
       let transformOrigin = '';
 
       if (layout === 'vertical') {

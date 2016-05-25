@@ -5,7 +5,8 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
+  filterEventsOfChild } from '../util/ReactUtils';
 import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
 import Animate from 'react-smooth';
@@ -72,9 +73,6 @@ class Scatter extends Component {
     legendType: 'scatter',
     lineType: 'joint',
     data: [],
-    onClick() {},
-    onMouseEnter() {},
-    onMouseLeave() {},
     shape: 'circle',
 
     isAnimationActive: true,
@@ -86,30 +84,6 @@ class Scatter extends Component {
   state = {
     activeIndex: -1,
   };
-
-  handleSymbolMouseEnter(data, index, e) {
-    const { onMouseEnter } = this.props;
-
-    if (onMouseEnter) {
-      onMouseEnter(data, index, e);
-    }
-  }
-
-  handleSymbolMouseLeave = () => {
-    const { onMouseLeave } = this.props;
-
-    if (onMouseLeave) {
-      onMouseLeave();
-    }
-  };
-
-  handleSymbolClick(data, index, e) {
-    const { onClick } = this.props;
-
-    if (onClick) {
-      onClick(data, index, e);
-    }
-  }
 
   renderSymbolItem(option, props) {
     let symbol;
@@ -140,9 +114,7 @@ class Scatter extends Component {
       return (
         <Layer
           className="recharts-scatter-symbol"
-          onMouseEnter={this.handleSymbolMouseEnter.bind(this, entry, i)}
-          onMouseLeave={this.handleSymbolMouseLeave}
-          onClick={this.handleSymbolClick.bind(this, entry, i)}
+          {...filterEventsOfChild(this.props, entry, i)}
           key={`symbol-${i}`}
         >
           {

@@ -199,8 +199,30 @@ export const filterEventAttributes = (el) => {
   const keys = Object.keys(props).filter(k => EVENT_ATTRIBUTES[k]);
 
   return (keys && keys.length) ?
-      keys.reduce((result, k) => ({ ...result, [k]: props[k] }), {}) :
-      null;
+    keys.reduce((result, k) => ({ ...result, [k]: props[k] }), {}) :
+    null;
+};
+
+const getEventHandler = (originalHandler, data, index) => {
+  return (e) => {
+    originalHandler(data, index, e);
+
+    return null;
+  };
+};
+
+export const filterEventsOfChild = (props, data, index) => {
+  if (!_.isObject(props)) { return null; }
+
+  const events = Object.keys(props).filter(k => (
+    EVENT_ATTRIBUTES[k] && _.isFunction(props[k])
+  ));
+
+  return (events && events.length) ?
+    events.reduce((result, e) => ({
+      ...result, [e]: getEventHandler(props[e], data, index)
+    }), {}) :
+    null;
 };
 
 /**

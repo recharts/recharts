@@ -9,7 +9,8 @@ import Sector from '../shape/Sector';
 import Curve from '../shape/Curve';
 import Animate from 'react-smooth';
 import _ from 'lodash';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
+  filterEventsOfChild } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
 
@@ -177,30 +178,6 @@ class Pie extends Component {
     });
   };
 
-  handleSectorEnter(data, index, e) {
-    const { onMouseEnter } = this.props;
-
-    if (onMouseEnter) {
-      onMouseEnter(data, index, e);
-    }
-  }
-
-  handleSectorLeave(data, index, e) {
-    const { onMouseLeave } = this.props;
-
-    if (onMouseLeave) {
-      onMouseLeave(data, index, e);
-    }
-  }
-
-  handleSectorClick(data, index, e) {
-    const { onClick } = this.props;
-
-    if (onClick) {
-      onClick(data, index, e);
-    }
-  }
-
   renderClipPath() {
     const { cx, cy, maxRadius, startAngle, isAnimationActive, animationDuration,
       animationEasing, animationBegin, animationId } = this.props;
@@ -334,9 +311,7 @@ class Pie extends Component {
     return sectors.map((entry, i) => (
       <Layer
         className="recharts-pie-sector"
-        onMouseEnter={this.handleSectorEnter.bind(this, entry, i)}
-        onMouseLeave={this.handleSectorLeave.bind(this, entry, i)}
-        onClick={this.handleSectorClick.bind(this, entry, i)}
+        {...filterEventsOfChild(this.props, entry, i)}
         key={`sector-${i}`}
       >
         {this.renderSectorItem(activeIndex === i ? activeShape : null, entry)}

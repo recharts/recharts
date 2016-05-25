@@ -6,8 +6,8 @@ import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
 import { getPercentValue, getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
-import { getPresentationAttributes, findChildByType,
-  findAllByType, validateWidthHeight } from '../util/ReactUtils';
+import { getPresentationAttributes, findChildByType, findAllByType,
+  validateWidthHeight, filterEventAttributes } from '../util/ReactUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Cell from '../component/Cell';
 import Bar from '../cartesian/Bar';
@@ -265,6 +265,7 @@ class BarChart extends Component {
 
       return React.cloneElement(child, {
         key: `bar-${i}`,
+        ...filterEventAttributes(this.props),
         layout,
         animationId,
         data: this.getComposedData(

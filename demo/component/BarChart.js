@@ -208,6 +208,10 @@ export default React.createClass({
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
   },
 
+  handlePvBarClick(data, index, e) {
+    console.log(`Pv Bar (${index}) Click: `, data);
+  },
+
   render() {
     const { data, data01, data02 } = this.state;
 
@@ -221,9 +225,9 @@ export default React.createClass({
           change data
         </a>
         <br/>
-        <p>Simple BarChart</p>
+        <p>Simple BarChart (Click on rectangles and open console )</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={400} height={400} data={data} isAbove >
+          <BarChart width={400} height={400} data={data} isAbove onClick={this.handlePvBarClick}>
             <XAxis dataKey="name" />
             <YAxis />
             <Legend />

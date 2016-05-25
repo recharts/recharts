@@ -6,7 +6,8 @@ import classNames from 'classnames';
 import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
 import { getStringSize } from '../util/DOMUtils';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
+  filterEventsOfChild } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
 import Animate from 'react-smooth';
@@ -22,9 +23,11 @@ class RadialBar extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
-    shape: PropTypes.oneOfType([
-      PropTypes.func, PropTypes.element,
+    shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
+    activeShape: PropTypes.oneOfType([
+      PropTypes.object, PropTypes.func, PropTypes.element,
     ]),
+    activeIndex: PropTypes.number,
 
     cx: PropTypes.number,
     cy: PropTypes.number,
@@ -68,9 +71,6 @@ class RadialBar extends Component {
     fill: '#808080',
     legendType: 'rect',
     data: [],
-    onClick() {},
-    onMouseEnter() {},
-    onMouseLeave() {},
     isAnimationActive: true,
     animationBegin: 0,
     animationDuration: 1500,
@@ -78,8 +78,6 @@ class RadialBar extends Component {
   };
 
   state = {
-    activeIndex: -1,
-    selectedIndex: -1,
     isAnimationFinished: false,
   };
 
@@ -165,34 +163,6 @@ class RadialBar extends Component {
     this.setState({ isAnimationFinished: false });
   };
 
-  handleSectorClick(data, index, e) {
-    const { onClick } = this.props;
-
-    this.setState({
-      selectedIndex: index,
-    }, onClick);
-  }
-
-  handleSectorEnter(data, index, e) {
-    const { onMouseEnter } = this.props;
-
-    this.setState({
-      activeIndex: index,
-    }, () => {
-      if (onMouseEnter) {
-        onMouseEnter(data, index, e);
-      }
-    });
-  }
-
-  handleSectorLeave(data, index, e) {
-    const { onMouseLeave } = this.props;
-
-    this.setState({
-      activeIndex: -1,
-    }, onMouseLeave);
-  }
-
   renderSectorShape(shape, props) {
     let sectorShape;
 
@@ -208,7 +178,7 @@ class RadialBar extends Component {
   }
 
   renderSectors(sectors) {
-    const { className, shape, data } = this.props;
+    const { className, shape, activeShape, activeIndex, data } = this.props;
     const {
       animationEasing,
       animationDuration,
@@ -238,15 +208,13 @@ class RadialBar extends Component {
             const props = {
               ...baseProps,
               ...entry,
+              ...filterEventsOfChild(this.props, entry, i),
               endAngle: angle,
-              onMouseEnter: this.handleSectorEnter.bind(this, entry, i),
-              onMouseLeave: this.handleSectorLeave.bind(this, entry, i),
-              onClick: this.handleSectorClick.bind(this, entry, i),
               key: `sector-${i}`,
               className: 'recharts-radial-bar-sector',
             };
 
-            return this.renderSectorShape(shape, props);
+            return this.renderSectorShape(i === activeIndex ? activeShape : shape, props);
           }
         }
         </Animate>
