@@ -51,21 +51,13 @@ class Brush extends Component {
     };
 
     if (props.data && props.data.length) {
-      const len = props.data.length;
-      const startIndex = _.isNumber(props.defaultStartIndex) ? props.defaultStartIndex : 0;
-      const endIndex = _.isNumber(props.defaultEndIndex) ? props.defaultEndIndex : len - 1;
-
-      this.scale = scalePoint().domain(_.range(0, len))
-                    .range([props.x, props.x + props.width - props.travellerWidth]);
-      this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
+      const xScale = this.setupXScale(props.data.length)
 
       this.state = {
         isTextActive: false,
         isSlideMoving: false,
         isTravellerMoving: false,
-        startIndex, endIndex,
-        startX: this.scale(startIndex),
-        endX: this.scale(endIndex),
+        ...xScale,
       };
     } else {
       this.state = {};
@@ -76,6 +68,25 @@ class Brush extends Component {
     if (this.leaveTimer) {
       clearTimeout(this.leaveTimer);
       this.leaveTimer = null;
+    }
+  }
+  
+  resetXScaleState(dataLength) {
+    this.setState(this.setupXScale(dataLength))
+  }
+
+  setupXScale(dataLength) {
+    const startIndex = _.isNumber(this.props.defaultStartIndex) ? this.props.defaultStartIndex : 0;
+    const endIndex = _.isNumber(this.props.defaultEndIndex) ? this.props.defaultEndIndex : dataLength - 1;
+    
+    this.scale = scalePoint().domain(_.range(0, dataLength))
+                  .range([this.props.x, this.props.x + this.props.width - this.props.travellerWidth]);
+    this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
+    
+    return {
+      startIndex, endIndex,
+      startX: this.scale(startIndex),
+      endX: this.scale(endIndex),
     }
   }
 
@@ -154,7 +165,7 @@ class Brush extends Component {
       slideMoveStartX: e.pageX,
     });
   };
-
+  
   handleSlideMove(e) {
     const { slideMoveStartX, startX, endX } = this.state;
     const { x, width, travellerWidth, onChange } = this.props;

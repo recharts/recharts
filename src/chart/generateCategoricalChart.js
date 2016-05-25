@@ -85,6 +85,9 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           dataStartIndex: 0,
           dataEndIndex: (nextProps.data && (nextProps.data.length - 1)) || 0,
         });
+        if (this.refs.brush) {
+          this.refs.brush.resetXScaleState(nextProps.data.length);
+        }
       }
     }
 
@@ -681,6 +684,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         x: offset.left,
         y: offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
         width: offset.width,
+        ref: 'brush',
       });
 
     }
