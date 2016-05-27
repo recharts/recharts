@@ -1,0 +1,5 @@
+#!/bin/bash
+
+npm run build-es6
+rm -rf /Users/Alex/Asim/Git/stable/dash/src/lib/recharts/*
+cp -a es6/* /Users/Alex/Asim/Git/stable/dash/src/lib/recharts
