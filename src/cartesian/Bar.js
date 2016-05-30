@@ -102,7 +102,9 @@ class Bar extends Component {
 
     return data.map((entry, index) => {
       const { width, height } = entry;
-      const props = { ...baseProps, ...entry, index, ...filterEventsOfChild(this.props, entry, index) };
+      const props = {
+        ...baseProps, ...entry, index, ...filterEventsOfChild(this.props, entry, index),
+      };
       let transformOrigin = '';
 
       if (layout === 'vertical') {

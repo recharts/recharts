@@ -666,16 +666,14 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     }
 
     renderBrush(xAxisMap, yAxisMap, offset) {
-      const { children, data, margin } = this.props;
+      const { children, margin, data } = this.props;
       const brushItem = findChildByType(children, Brush);
 
       if (!brushItem) { return null; }
 
-      const dataKey = brushItem.props.dataKey;
-
       return React.cloneElement(brushItem, {
         onChange: this.handleBrushChange,
-        data: data.map(entry => entry[dataKey]),
+        data,
         x: offset.left,
         y: offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
         width: offset.width,

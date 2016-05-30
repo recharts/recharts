@@ -220,7 +220,7 @@ export const filterEventsOfChild = (props, data, index) => {
 
   return (events && events.length) ?
     events.reduce((result, e) => ({
-      ...result, [e]: getEventHandler(props[e], data, index)
+      ...result, [e]: getEventHandler(props[e], data, index),
     }), {}) :
     null;
 };
