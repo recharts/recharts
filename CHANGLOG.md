@@ -1,3 +1,9 @@
+## 0.10.7 (May 30, 2016)
+
+### fix
+
+- Fix the bug of Brush when data or the size of container changes.
+
 ## 0.10.6 (May 25, 2016)
 
 ### feat
