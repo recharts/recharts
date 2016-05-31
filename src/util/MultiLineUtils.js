@@ -23,7 +23,7 @@ import _ from 'lodash';
  * @param  {String} dataKey The unique key of a group
  * @return {Array}  Composed data
  */
-export const getComposedData = (props, xAxis, yAxis, dataKey, startIndex, endIndex) => {
+export const getComposedData = (props, type, xAxis, yAxis, dataKey, startIndex, endIndex) => {
   const { layout, dataStartIndex, dataEndIndex, isComposed } = props;
   const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
   const xTicks = getTicksOfAxis(xAxis);
@@ -32,7 +32,8 @@ export const getComposedData = (props, xAxis, yAxis, dataKey, startIndex, endInd
   const data = [];
   for (var i = startIndex; i <= endIndex; i++) {
     const dataPoint = props.data[i];
-    const yDataPoint = i === endIndex ? props.data[i - 1] : props.data[i];
+    const yDataPoint = i === endIndex &&
+      (type === 'stepBefore' || type === 'stepAfter') ? props.data[i - 1] : props.data[i];
     data.push({
       x: layout === 'horizontal' ?
         xTicks[i].coordinate + bandSize / 2 :
@@ -198,14 +199,14 @@ const findDataSegments = (lineProps, data, dataKey) => {
  */
 export const renderMultiLine = (chartProps, child, xAxisMap, yAxisMap, offset, i) => {
   const { data, layout } = chartProps; // Parent (LineChart) props
-  const { xAxisId, yAxisId, dataKey } = child.props;
+  const { xAxisId, yAxisId, dataKey, type } = child.props;
 
   const dataSegments = findDataSegments(child.props, data, dataKey);
 
   return dataSegments.map((segment, l) => {
     const { start, end, stroke } = segment;
 
-    const points = getComposedData(chartProps, xAxisMap[xAxisId],
+    const points = getComposedData(chartProps, type, xAxisMap[xAxisId],
         yAxisMap[yAxisId], dataKey, start, end);
 
     return React.cloneElement(child, {
