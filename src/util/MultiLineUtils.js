@@ -7,33 +7,28 @@ import { getBandSizeOfScale } from './DataUtils';
 import { getTicksOfAxis } from './CartesianUtils';
 import _ from 'lodash';
 
-
-// export const getScaledValue = (el, axis, entryValue, threshold, i) => {
-//   if (threshold === null || threshold === undefined) return axis.scale(entryValue);
-//   if (i === 0) {
-//     return entryValue <= threshold ? axis.scale(entryValue) : null;
-//   }
-//   return entryValue >= threshold ? axis.scale(entryValue) : null;
-// };
-
 /**
  * Compose the data of each group
- * @param  {Object} xAxis   The configuration of x-axis
- * @param  {Object} yAxis   The configuration of y-axis
- * @param  {String} dataKey The unique key of a group
+ * @param  {Object} chartProps  The props from the parent chart (e.g. LineChart)
+ * @param  {String} type        The type of line (e.g. 'linear', 'step')
+ * @param  {Object} xAxis       The configuration of x-axis
+ * @param  {Object} yAxis       The configuration of y-axis
+ * @param  {String} dataKey     The unique key of a group for the data item
+ * @param  {Number} startIndex  The starting point of the data for the segment
+ * @param  {Number} endIndex    The end point of the data for the segment
  * @return {Array}  Composed data
  */
-export const getComposedData = (props, type, xAxis, yAxis, dataKey, startIndex, endIndex) => {
-  const { layout, dataStartIndex, dataEndIndex, isComposed } = props;
+export const getComposedData = (chartProps, type, xAxis, yAxis, dataKey, startIndex, endIndex) => {
+  const { layout, dataStartIndex, dataEndIndex, isComposed } = chartProps;
   const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
   const xTicks = getTicksOfAxis(xAxis);
   const yTicks = getTicksOfAxis(yAxis);
 
   const data = [];
   for (var i = startIndex; i <= endIndex; i++) {
-    const dataPoint = props.data[i];
+    const dataPoint = chartProps.data[i];
     const yDataPoint = i === endIndex &&
-      (type === 'stepBefore' || type === 'stepAfter') ? props.data[i - 1] : props.data[i];
+      (type === 'stepBefore' || type === 'stepAfter') ? chartProps.data[i - 1] : chartProps.data[i];
     data.push({
       x: layout === 'horizontal' ?
         xTicks[i].coordinate + bandSize / 2 :
@@ -47,39 +42,29 @@ export const getComposedData = (props, type, xAxis, yAxis, dataKey, startIndex, 
   return data;
 };
 
-// getComposedData(xAxis, yAxis, dataKey, threshold, i) {
-//   const { layout, dataStartIndex, dataEndIndex, isComposed } = this.props;
-//   const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
-//   const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
-//   const xTicks = getTicksOfAxis(xAxis);
-//   const yTicks = getTicksOfAxis(yAxis);
-//
-//   return data.map((entry, index) => ({
-//     x: layout === 'horizontal' ?
-//       xTicks[index].coordinate + bandSize / 2 :
-//       xAxis.scale(entry[dataKey]),
-//     y: layout === 'horizontal' ?
-//       this.getScaledValue(yAxis, entry[dataKey], threshold, i) :
-//       yTicks[index].coordinate + bandSize / 2,
-//     value: entry[dataKey],
-//   }));
-// }
-
 /**
- * Get Stroke coloured based on variables given on init
+ * Find Stroke colour based on variables given on init
+ * @param  {Object} lineProps     The props from the line React component
+ * @param  {String} region        The region key if using strokeRegions
+ * @param  {Number} segmentCount  The count of the segment if using a stroke array to pick colours
+ * @return {String} Stroke Colour
  **/
-const findStroke = (props, region, segmentCount) => {
-  if (props.strokeRegions) {
-    return props.strokeRegions[region];
-  } else if (props.strokeArray && segmentCount >= 0) {
-    const strokeIndex = segmentCount % props.strokeArray.length;
-    return props.strokeArray[strokeIndex];
+const findStroke = (lineProps, region, segmentCount) => {
+  if (lineProps.strokeRegions) {
+    return lineProps.strokeRegions[region];
+  } else if (lineProps.strokeArray && segmentCount >= 0) {
+    const strokeIndex = segmentCount % lineProps.strokeArray.length;
+    return lineProps.strokeArray[strokeIndex];
   }
-  return props.stroke;
+  return lineProps.stroke;
 };
 
 /**
- * Find points where the line transitions to a different region
+ * Find points where the line transitions to a different segment based on regions
+ * @param  {Object} lineProps The props from the line React component
+ * @param  {Array} data       The data used for points on the chart
+ * @param  {String} dataKey   The key specifying which property on data holds the value
+ * @return {Array} Data Segments, i.e. the different sections the line is split into
  **/
 const findDataSegmentsByRegion = (lineProps, data, dataKey) => {
   const { regionKey } = lineProps;
@@ -109,7 +94,11 @@ const findDataSegmentsByRegion = (lineProps, data, dataKey) => {
 };
 
 /**
- * Find points where the line transitions to a different region
+ * Find points where the line transitions to a different segment based on thresholds
+ * @param  {Object} lineProps The props from the line React component
+ * @param  {Array} data       The data used for points on the chart
+ * @param  {String} dataKey   The key specifying which property on data holds the value
+ * @return {Array} Data Segments, i.e. the different sections the line is split into
  **/
 const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
   function checkThreshold(thr, val) {
@@ -179,7 +168,11 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
 };
 
 /**
- * Find points where the line transitions to a different region
+ * Find the data segmentation where the line transitions, choosing logic
+ * @param  {Object} lineProps The props from the line React component
+ * @param  {Array} data       The data used for points on the chart
+ * @param  {String} dataKey   The key specifying which property on data holds the value
+ * @return {Array} Data Segments, i.e. the different sections the line is split into
  **/
 const findDataSegments = (lineProps, data, dataKey) => {
   if (lineProps.regionKey && lineProps.strokeRegions) {
@@ -187,15 +180,18 @@ const findDataSegments = (lineProps, data, dataKey) => {
   } else if (lineProps.thresholds) {
     return findDataSegmentsByThreshold(lineProps, data, dataKey);
   }
+  return [{ start: 0, end: data.length - 1, stroke: lineProps.stroke }];
 };
 
 /**
- * Draw the main part of line chart
- * @param  {Array} items     All the instance of Line
- * @param  {Object} xAxisMap The configuration of all x-axes
- * @param  {Object} yAxisMap The configuration of all y-axes
- * @param  {Object} offset   The offset of main part in the svg element
- * @return {ReactComponent}  All the instances of Line
+ * Draw the main part of multi-line chart
+ * @param  {Object} chartProps  The props from the parent chart (e.g. LineChart)
+ * @param  {Object} child       The react child component of the LineChart (e.g. Line)
+ * @param  {Object} xAxisMap    The configuration of all x-axes
+ * @param  {Object} yAxisMap    The configuration of all y-axes
+ * @param  {Object} offset      The offset of main part in the svg element
+ * @param  {Number} i           The line count
+ * @return {ReactComponent}     All the instances of Line
  */
 export const renderMultiLine = (chartProps, child, xAxisMap, yAxisMap, offset, i) => {
   const { data, layout } = chartProps; // Parent (LineChart) props
