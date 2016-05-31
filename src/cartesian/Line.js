@@ -61,6 +61,11 @@ class Line extends Component {
       'ease-in-out',
       'linear',
     ]),
+
+    // MultiLine
+    isMultiline: PropTypes.bool,
+    strokeArray: PropTypes.arrayOf(PropTypes.string),
+    strokeRegions: PropTypes.object,
   };
 
   static defaultProps = {
@@ -70,7 +75,6 @@ class Line extends Component {
     dot: true,
     legendType: 'line',
     stroke: '#3182bd',
-    strokeArray: ['#5598c8', '#31bd6d', '#ccc761', '#db772e', '#bd3196', '#3422c2'],
     strokeWidth: 1,
     fill: '#fff',
     points: [],
@@ -78,6 +82,10 @@ class Line extends Component {
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
+
+    // Multiline
+    isMultiline: false,
+    strokeArray: ['#5598c8', '#31bd6d', '#ccc761', '#db772e', '#bd3196', '#3422c2'],
   };
 
   constructor(props, ctx) {
@@ -121,7 +129,6 @@ class Line extends Component {
   }
 
   getStrokeDasharray(length, totalLength, lines) {
-    // console.log(length, totalLength, lines);
     const lineLength = lines.reduce((pre, next) => pre + next);
 
     const count = parseInt(length / lineLength, 10);
@@ -137,7 +144,6 @@ class Line extends Component {
     }
 
     const emptyLines = remainLines.length % 2 === 0 ? [0, restLength] : [restLength];
-    console.log(lines, remainLines, emptyLines);
     return [...this.repeat(lines, count), ...remainLines, ...emptyLines]
       .map(line => `${line}px`)
       .join(', ');
@@ -278,7 +284,6 @@ class Line extends Component {
     if (strokeDasharray) {
       const lines = strokeDasharray.split(/[,\s]+/gim)
         .map(num => parseFloat(num));
-        console.log(lines);
       return (
         <Animate
           { ...animationProps }

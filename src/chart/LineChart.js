@@ -15,6 +15,7 @@ import { getTicksOfAxis } from '../util/CartesianUtils';
 import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
 import _ from 'lodash';
 import Smooth from 'react-smooth';
+import { renderMultiLine } from '../util/MultiLineUtils';
 
 @pureRender
 class LineChart extends Component {
@@ -40,14 +41,6 @@ class LineChart extends Component {
     isComposed: PropTypes.bool,
   };
 
-  getScaledValue(axis, entryValue, threshold, i) {
-    if (threshold === null || threshold === undefined) return axis.scale(entryValue);
-    if (i === 0) {
-      return entryValue <= threshold ? axis.scale(entryValue) : null;
-    }
-    return entryValue >= threshold ? axis.scale(entryValue) : null;
-  }
-
   /**
    * Compose the data of each group
    * @param  {Object} xAxis   The configuration of x-axis
@@ -55,46 +48,23 @@ class LineChart extends Component {
    * @param  {String} dataKey The unique key of a group
    * @return {Array}  Composed data
    */
-  getComposedData(xAxis, yAxis, dataKey, startSegmentIndex, endSegmentIndex, l) {
+  getComposedData(xAxis, yAxis, dataKey) {
     const { layout, dataStartIndex, dataEndIndex, isComposed } = this.props;
-    // const data = this.props.data.slice(startSegmentIndex, endSegmentIndex + 1);
+    const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
     const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
     const xTicks = getTicksOfAxis(xAxis);
     const yTicks = getTicksOfAxis(yAxis);
 
-    const data = [];
-    for (var i = startSegmentIndex; i <= endSegmentIndex; i++) {
-      const dataPoint = this.props.data[i];
-      data.push({
-        x: layout === 'horizontal' ?
-          xTicks[i].coordinate + bandSize / 2 :
-          xAxis.scale(dataPoint[dataKey]),
-        y: layout === 'horizontal' ?
-          yAxis.scale(dataPoint[dataKey]) :
-          yTicks[i].coordinate + bandSize / 2,
-        value: dataPoint[dataKey],
-      });
-    }
-    return data;
+    return data.map((entry, index) => ({
+      x: layout === 'horizontal' ?
+        xTicks[index].coordinate + bandSize / 2 :
+        xAxis.scale(entry[dataKey]),
+      y: layout === 'horizontal' ?
+        yAxis.scale(entry[dataKey]) :
+        yTicks[index].coordinate + bandSize / 2,
+      value: entry[dataKey],
+    }));
   }
-
-  // getComposedData(xAxis, yAxis, dataKey, threshold, i) {
-  //   const { layout, dataStartIndex, dataEndIndex, isComposed } = this.props;
-  //   const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
-  //   const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
-  //   const xTicks = getTicksOfAxis(xAxis);
-  //   const yTicks = getTicksOfAxis(yAxis);
-  //
-  //   return data.map((entry, index) => ({
-  //     x: layout === 'horizontal' ?
-  //       xTicks[index].coordinate + bandSize / 2 :
-  //       xAxis.scale(entry[dataKey]),
-  //     y: layout === 'horizontal' ?
-  //       this.getScaledValue(yAxis, entry[dataKey], threshold, i) :
-  //       yTicks[index].coordinate + bandSize / 2,
-  //     value: entry[dataKey],
-  //   }));
-  // }
 
   renderCursor(xAxisMap, yAxisMap, offset) {
     const { children, isTooltipActive } = this.props;
@@ -159,99 +129,33 @@ class LineChart extends Component {
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];
 
-    // const thresholds = [80];
-    // let splitItems = []
-    // for (var j = 0; j < items.length; j++) {
-    //   splitItems.push(Object.assign({}, items[j], { threshold: thresholds[0] }));
-    //   for (var k = 0; k < thresholds.length; k++) {
-    //     let nextLine = Object.assign({}, splitItems[0]);
-    //     nextLine.threshold = thresholds[k];
-    //     splitItems.push(nextLine);
-    //   }
-    // }
-
-        // for (var j = 1; j =< xAxisMap[0].tickCount; j++) {
-        //   if (true) {
-        //
-        //   }
-        //
-        //   splitItems.push(Object.assign({}, items[j], { threshold: thresholds[0] }));
-        //   for (var k = 0; k < thresholds.length; k++) {
-        //     let nextLine = Object.assign({}, splitItems[0]);
-        //     nextLine.threshold = thresholds[k];
-        //     splitItems.push(nextLine);
-        //   }
-        // }
-
-
     const lineItems = items.map((child, i) => {
-      const { xAxisId, yAxisId, dataKey, stroke, activeDot, strokeArray } = child.props;
-
-      const threshold = 80;
-      const data = this.props.data;
-      const dataSegments = [];
-      const dk = child.props.dataKey;
-      const strokeSectors = {
-        good: '#11d919',
-        warning: '#fcec0b',
-        bad: '#ff1111',
-      };
-      const stepKey = 'status';
-      let sector = null;
-
-      for (var j = 0; j < data.length; j++) {
-        const currItem = data[j];
-        const dataItem = currItem[dk];
-        const dataSegment = currItem[stepKey];
-        if (sector === null) {
-          sector = dataSegment;
-        } else if (sector !== dataSegment) {
-          sector = dataSegment;
-          dataSegments.push(j);
-        }
+      if (child.props.isMultiline) {
+        return renderMultiLine(this.props, child, xAxisMap, yAxisMap, offset, i);
       }
-      dataSegments.push(data.length - 1);
 
+      const { xAxisId, yAxisId, dataKey, stroke, activeDot, isMultiline } = child.props;
 
-      const lineSections = dataSegments.map((endSegmentIndex, l) => {
-        const startSegmentIndex = l === 0 ? 0 : dataSegments[l - 1];
+      const points = this.getComposedData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey);
+      const activePoint = points[activeTooltipIndex];
 
-        let lineStroke;
-        if (strokeSectors) {
-          const dataPoint = data[startSegmentIndex];
-          lineStroke = strokeSectors[dataPoint[stepKey]];
-        } else if (strokeArray) {
-          const strokeIndex = l % strokeArray.length;
-          lineStroke = strokeArray[strokeIndex];
-        } else {
-          lineStroke = stroke;
-        }
+      if (hasDot && activeDot && activePoint) {
+        const dotProps = {
+          index: i,
+          dataKey,
+          cx: activePoint.x, cy: activePoint.y, r: 4,
+          fill: stroke, strokeWidth: 2, stroke: '#fff',
+          ...getPresentationAttributes(activeDot),
+        };
+        dotItems.push(this.renderActiveDot(activeDot, dotProps, i));
+      }
 
-        const points = this.getComposedData(xAxisMap[xAxisId],
-            yAxisMap[yAxisId], dataKey, startSegmentIndex, endSegmentIndex, l);
-        // startSegmentIndex = endSegmentIndex;
-        const activePoint = points[activeTooltipIndex];
-
-        if (hasDot && activeDot && activePoint) {
-          const dotProps = {
-            index: i,
-            dataKey,
-            cx: activePoint.x, cy: activePoint.y, r: 4,
-            fill: stroke, strokeWidth: 2, stroke: '#fff',
-            ...getPresentationAttributes(activeDot),
-          };
-          dotItems.push(this.renderActiveDot(activeDot, dotProps, i));
-        }
-
-        return React.cloneElement(child, {
-          key: `line-${i}-${l}`,
-          ...offset,
-          layout,
-          points,
-          stroke: lineStroke,
-        });
-      }, this);
-      return lineSections;
+      return React.cloneElement(child, {
+        key: `line-${i}`,
+        ...offset,
+        layout,
+        points,
+      });
     }, this);
 
     return (
