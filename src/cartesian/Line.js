@@ -65,7 +65,15 @@ class Line extends Component {
     // MultiLine
     isMultiline: PropTypes.bool,
     strokeArray: PropTypes.arrayOf(PropTypes.string),
+    // MultiLine by Region
+    regionKey: PropTypes.string,
     strokeRegions: PropTypes.object,
+    // MultiLine by Threshold
+    thresholds: PropTypes.arrayOf(PropTypes.shape({
+      min: React.PropTypes.number,
+      max: React.PropTypes.number,
+      color: React.PropTypes.string.isRequired,
+    })),
   };
 
   static defaultProps = {

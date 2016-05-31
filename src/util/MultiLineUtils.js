@@ -5,6 +5,7 @@ import React, { PropTypes, Component } from 'react';
 import { findChildByType } from './ReactUtils';
 import { getBandSizeOfScale } from './DataUtils';
 import { getTicksOfAxis } from './CartesianUtils';
+import _ from 'lodash';
 
 
 // export const getScaledValue = (el, axis, entryValue, threshold, i) => {
@@ -79,7 +80,8 @@ const findStroke = (props, region, segmentCount) => {
 /**
  * Find points where the line transitions to a different region
  **/
-const findDataSegments = (props, data, dataKey, regionKey) => {
+const findDataSegmentsByRegion = (lineProps, data, dataKey) => {
+  const { regionKey } = lineProps;
   const dataSegments = [];
   let currentRegion = null;
   let start = 0;
@@ -91,7 +93,7 @@ const findDataSegments = (props, data, dataKey, regionKey) => {
     if (currentRegion === null) {
       currentRegion = dataSegment;
     } else if (currentRegion !== dataSegment) {
-      const stroke = findStroke(props, currentRegion, dataSegments.length);
+      const stroke = findStroke(lineProps, currentRegion, dataSegments.length);
       dataSegments.push({ start, end: i, stroke });
       currentRegion = dataSegment;
       start = i;
@@ -100,9 +102,90 @@ const findDataSegments = (props, data, dataKey, regionKey) => {
   dataSegments.push({
     start,
     end: data.length - 1,
-    stroke: findStroke(props, currentRegion, dataSegments.length),
+    stroke: findStroke(lineProps, currentRegion, dataSegments.length),
   });
   return dataSegments;
+};
+
+/**
+ * Find points where the line transitions to a different region
+ **/
+const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
+  function checkThreshold(thr, val) {
+    if (!thr.min) {
+      return val < thr.max;
+    } else if (!thr.max) {
+      return val >= thr.min;
+    }
+    return val >= thr.min && val < thr.max;
+  }
+
+  const { thresholds } = lineProps;
+
+  // Threshold checks
+  let lastThreshold = null;
+  for (const threshold of thresholds) {
+    if (lastThreshold === null) {
+      lastThreshold = threshold;
+    } else {
+      if (lastThreshold.max !== threshold.min) {
+        console.log(`Thresholds max and min do not match,
+          [${lastThreshold.min} - ${lastThreshold.max}] and [${threshold.min} - ${threshold.max}]`);
+      }
+    }
+  }
+
+  let dataSegments = [];
+  let currentThreshold = null;
+  let start = 0;
+
+  for (var i = 0; i < data.length; i++) {
+    const currItem = data[i];
+    const dataItem = Number(currItem[dataKey]);
+    if (currentThreshold === null) {
+      currentThreshold = _.find(thresholds, function(thr) {
+        return checkThreshold(thr, dataItem);
+      });
+      if (currentThreshold === null || currentThreshold === undefined) {
+        console.log('Could not find threshold');
+        dataSegments = [{ start: 0, end: data.length - 1, stroke: lineProps.stroke }];
+        return dataSegments;
+      }
+    } else {
+      const isSame = checkThreshold(currentThreshold, dataItem);
+      if (!isSame) {
+        dataSegments.push({ start, end: i, stroke: currentThreshold.color });
+
+        // New Segment
+        start = i;
+        currentThreshold = _.find(thresholds, function(thr) {
+          return checkThreshold(thr, dataItem);
+        });
+        if (currentThreshold === null || currentThreshold === undefined) {
+          console.log(`Could not find threshold, value: ${dataItem}, i: '${i}'`);
+          dataSegments = [{ start: 0, end: data.length - 1, stroke: lineProps.stroke }];
+          return dataSegments;
+        }
+      }
+    }
+  }
+  dataSegments.push({
+    start,
+    end: data.length - 1,
+    stroke: currentThreshold.color,
+  });
+  return dataSegments;
+};
+
+/**
+ * Find points where the line transitions to a different region
+ **/
+const findDataSegments = (lineProps, data, dataKey) => {
+  if (lineProps.regionKey && lineProps.strokeRegions) {
+    return findDataSegmentsByRegion(lineProps, data, dataKey);
+  } else if (lineProps.thresholds) {
+    return findDataSegmentsByThreshold(lineProps, data, dataKey);
+  }
 };
 
 /**
@@ -113,16 +196,16 @@ const findDataSegments = (props, data, dataKey, regionKey) => {
  * @param  {Object} offset   The offset of main part in the svg element
  * @return {ReactComponent}  All the instances of Line
  */
-export const renderMultiLine = (props, child, xAxisMap, yAxisMap, offset, i) => {
-  const { data, layout } = props;
-  const { xAxisId, yAxisId, dataKey, regionKey } = child.props;
+export const renderMultiLine = (chartProps, child, xAxisMap, yAxisMap, offset, i) => {
+  const { data, layout } = chartProps; // Parent (LineChart) props
+  const { xAxisId, yAxisId, dataKey } = child.props;
 
-  const dataSegments = findDataSegments(child.props, data, dataKey, regionKey);
+  const dataSegments = findDataSegments(child.props, data, dataKey);
 
   return dataSegments.map((segment, l) => {
     const { start, end, stroke } = segment;
 
-    const points = getComposedData(props, xAxisMap[xAxisId],
+    const points = getComposedData(chartProps, xAxisMap[xAxisId],
         yAxisMap[yAxisId], dataKey, start, end);
 
     return React.cloneElement(child, {
