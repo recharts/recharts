@@ -378,7 +378,7 @@ class Brush extends Component {
 
     if (!data || !data.length) { return null; }
 
-    const layerClass = classNames('recharts-bursh', className);
+    const layerClass = classNames('recharts-brush', className);
 
     return (
       <Layer
