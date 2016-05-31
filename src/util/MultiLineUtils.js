@@ -6,20 +6,6 @@ import { findChildByType } from './ReactUtils';
 import { getBandSizeOfScale } from './DataUtils';
 import { getTicksOfAxis } from './CartesianUtils';
 
-// import Layer from '../container/Layer';
-// import Tooltip from '../component/Tooltip';
-// import Curve from '../shape/Curve';
-// import Dot from '../shape/Dot';
-// import generateCategoricalChart from './generateCategoricalChart';
-// import Line from '../cartesian/Line';
-// import { getPresentationAttributes, findChildByType,
-//   findAllByType, validateWidthHeight } from '../util/ReactUtils';
-// import pureRender from '../util/PureRender';
-// import { getTicksOfAxis } from '../util/CartesianUtils';
-// import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
-// import _ from 'lodash';
-// import Smooth from 'react-smooth';
-
 
 // export const getScaledValue = (el, axis, entryValue, threshold, i) => {
 //   if (threshold === null || threshold === undefined) return axis.scale(entryValue);
@@ -45,12 +31,13 @@ export const getComposedData = (props, xAxis, yAxis, dataKey, startIndex, endInd
   const data = [];
   for (var i = startIndex; i <= endIndex; i++) {
     const dataPoint = props.data[i];
+    const yDataPoint = i === endIndex ? props.data[i - 1] : props.data[i];
     data.push({
       x: layout === 'horizontal' ?
         xTicks[i].coordinate + bandSize / 2 :
         xAxis.scale(dataPoint[dataKey]),
       y: layout === 'horizontal' ?
-        yAxis.scale(dataPoint[dataKey]) :
+        yAxis.scale(yDataPoint[dataKey]) :
         yTicks[i].coordinate + bandSize / 2,
       value: dataPoint[dataKey],
     });
@@ -105,16 +92,16 @@ const findDataSegments = (props, data, dataKey, regionKey) => {
       currentRegion = dataSegment;
     } else if (currentRegion !== dataSegment) {
       const stroke = findStroke(props, currentRegion, dataSegments.length);
-      dataSegments.push({
-        start: start,
-        end: i,
-        stroke: stroke
-      });
+      dataSegments.push({ start, end: i, stroke });
       currentRegion = dataSegment;
       start = i;
     }
   }
-  dataSegments.push(data.length - 1);
+  dataSegments.push({
+    start,
+    end: data.length - 1,
+    stroke: findStroke(props, currentRegion, dataSegments.length),
+  });
   return dataSegments;
 };
 
