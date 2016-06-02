@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Rectangle from '../shape/Rectangle';
-import { findChildByType, getPresentationAttributes,
+import { findChildByType, getPresentationAttributes, filterSvgElements,
   validateWidthHeight } from '../util/ReactUtils';
 import classNames from 'classnames';
 import Smooth from 'react-smooth';
@@ -370,7 +370,7 @@ class Treemap extends Component {
   render() {
     if (!validateWidthHeight(this)) { return null; }
 
-    const { width, height, className, style } = this.props;
+    const { width, height, className, style, children } = this.props;
 
     return (
       <div
@@ -379,6 +379,7 @@ class Treemap extends Component {
       >
         <Surface width={width} height={height}>
           {this.renderAllNodes()}
+          {filterSvgElements(children)}
         </Surface>
         {this.renderTooltip()}
       </div>

@@ -244,3 +244,30 @@ export const validateWidthHeight = (el) => {
 
 export const isSsr = () => (typeof document === 'undefined');
 
+const SVG_TAGS = ['a', 'altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',
+'animateColor', 'animateMotion', 'animateTransform', 'circle', 'clipPath',
+'color-profile', 'cursor', 'defs', 'desc', 'ellipse', 'feBlend', 'feColormatrix',
+'feComponentTransfer', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting',
+'feDisplacementMap', 'feDistantLight', 'feFlood', 'feFuncA', 'feFuncB', 'feFuncG',
+'feFuncR', 'feGaussianBlur', 'feImage', 'feMerge', 'feMergeNode', 'feMorphology',
+'feOffset', 'fePointLight', 'feSpecularLighting', 'feSpotLight', 'feTile',
+'feTurbulence', 'filter', 'font', 'font-face', 'font-face-format', 'font-face-name',
+'font-face-url', 'foreignObject', 'g', 'glyph', 'glyphRef', 'hkern', 'image',
+'line', 'lineGradient', 'marker', 'mask', 'metadata', 'missing-glyph', 'mpath',
+'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect', 'script',
+'set', 'stop', 'style', 'svg', 'switch', 'symbol', 'text', 'textPath', 'title',
+'tref', 'tspan', 'use', 'view', 'vkern'];
+
+export const filterSvgElements = (children) => {
+  const svgElements = [];
+
+  React.Children.forEach(children, entry => {
+    if (entry.type && _.isString(entry.type) &&
+      SVG_TAGS.indexOf(entry.type) >= 0) {
+      svgElements.push(entry);
+    }
+  });
+
+  return svgElements;
+};
+

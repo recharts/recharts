@@ -11,7 +11,8 @@ import _ from 'lodash';
 import Cell from '../component/Cell';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
-import { findChildByType, findAllByType, validateWidthHeight } from '../util/ReactUtils';
+import { findChildByType, findAllByType, validateWidthHeight,
+  filterSvgElements } from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import pureRender from '../util/PureRender';
 import AnimationDecorator from '../util/AnimationDecorator';
@@ -310,6 +311,7 @@ class RadialBarChart extends Component {
       >
         <Surface width={width} height={height}>
           {this.renderItems(items, radiusScale, { cx, cy })}
+          {filterSvgElements(children)}
         </Surface>
 
         {this.renderLegend()}

@@ -1,8 +1,8 @@
 import React from 'react';
 import { expect } from 'chai';
 import { LineChart, Line, Bar } from 'recharts';
-import { getPresentationAttributes, filterEventAttributes,
-  getDisplayName, withoutType, validateWidthHeight,
+import { getPresentationAttributes, filterEventAttributes, filterEventsOfChild,
+  getDisplayName, withoutType, validateWidthHeight, filterSvgElements,
 } from '../../../src/util/ReactUtils';
 import { mount, render } from 'enzyme';
 
@@ -33,6 +33,12 @@ describe('ReactUtils', () => {
   it('filterEventAttributes return null when input is not a react element', () => {
     expect(filterEventAttributes(null)).to.equal(null);
     expect(filterEventAttributes(() => {})).to.equal(null);
+    expect(filterEventAttributes(1)).to.equal(null);
+  });
+
+  it('filterEventsOfChild return null when input is not a props', () => {
+    expect(filterEventsOfChild(null)).to.equal(null);
+    expect(filterEventsOfChild(1)).to.equal(null);
   });
 
   it('validateWidthHeight return false when input is not a react element', () => {
@@ -75,6 +81,21 @@ describe('ReactUtils', () => {
 
     expect(withoutType(children, Bar).length).to.equal(2);
     expect(withoutType(children, [Bar, Line]).length).to.equal(0);
+  });
+
+
+  it('filterSvgElements filter children which are svg elements', () => {
+    const wrapper = mount((
+      <LineChart width={200} height={200}>
+        <Line dataKey="a"/>
+        <Line dataKey="b"/>
+        <rect x="0" y="0" width="20" height="20"/>
+        <text x="0" y="0">12</text>
+      </LineChart>
+    ));
+    const children = wrapper.props().children;
+
+    expect(filterSvgElements(children).length).to.equal(2);
   });
 
 

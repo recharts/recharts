@@ -15,7 +15,7 @@ import PolarAngleAxis from '../polar/PolarAngleAxis';
 import PolarRadiusAxis from '../polar/PolarRadiusAxis';
 
 import _ from 'lodash';
-import { validateWidthHeight, findChildByType, findAllByType,
+import { validateWidthHeight, findChildByType, findAllByType, filterSvgElements,
   getPresentationAttributes } from '../util/ReactUtils';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { getPercentValue, parseSpecifiedDomain } from '../util/DataUtils';
@@ -306,6 +306,7 @@ class RadarChart extends Component {
           {this.renderRadiusAxis(radiusAxis, radiusAxisCfg, cx, cy)}
           {this.renderAngleAxis(cx, cy, outerRadius, maxRadius)}
           {this.renderRadars(items, radiusAxisCfg.scale, cx, cy, innerRadius, outerRadius)}
+          {filterSvgElements(children)}
         </Surface>
 
         {this.renderLegend(items)}

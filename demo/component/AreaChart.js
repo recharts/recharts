@@ -59,6 +59,10 @@ const renderLabel = (props) => {
   return <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={`label-${index}`}>{value[1]}</text>
 };
 
+const RenderRect = (props) => {
+  return <rect x={20} y={20} width={100} height={20} stroke="#000"/>;
+};
+
 export default React.createClass({
   displayName: 'AreaChartDemo',
 
@@ -68,12 +72,6 @@ export default React.createClass({
 
   handleChangeData() {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
-  },
-
-  handleSwitch() {
-    this.setState({
-      data: this.state.data === data ? data02 : data,
-    });
   },
 
   render() {
@@ -91,7 +89,6 @@ export default React.createClass({
         <br/>
 
         <p>Stacked AreaChart</p>
-        <a onClick={this.handleSwitch}>切换数据</a>
         <div className="area-chart-wrapper">
           <AreaChart width={800} height={400} data={this.state.data}
             margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
@@ -257,6 +254,33 @@ export default React.createClass({
               stroke="#ff7300"
               fill="#ff7300"
               fillOpacity={0.9}
+            />
+          </AreaChart>
+        </div>
+
+        <p>AreaChart filled with linear gradient</p>
+        <div>
+          <AreaChart width={800} height={400} data={this.state.data}
+            margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
+          >
+            <defs>
+              <linearGradient id="MyGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="rgba(0, 136, 254, 0.8)" />
+                <stop offset="95%" stopColor="rgba(0, 136, 254, 0)" />
+              </linearGradient>
+            </defs>
+            <XAxis dataKey="name" label="province" />
+            <YAxis />
+            <Tooltip />
+            <Area stackId="0"
+              type="monotone"
+              dataKey="uv"
+              stroke="#0088FE"
+              strokeWidth="2"
+              fillOpacity="1"
+              fill="url(#MyGradient)"
+              dot={{ fill: '#fff' }}
+              activeDot={renderCustomizedActiveDot}
             />
           </AreaChart>
         </div>

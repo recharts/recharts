@@ -10,7 +10,7 @@ import Legend from '../component/Legend';
 
 import { warn } from '../util/LogUtils';
 import { findAllByType, findChildByType, getDisplayName,
-  validateWidthHeight } from '../util/ReactUtils';
+  validateWidthHeight, filterSvgElements } from '../util/ReactUtils';
 import _ from 'lodash';
 
 import CartesianAxis from '../cartesian/CartesianAxis';
@@ -763,6 +763,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             {this.renderReferenceLines(xAxisMap, yAxisMap, offset, true)}
             {this.renderReferenceDots(xAxisMap, yAxisMap, offset, true)}
             {this.renderBrush(xAxisMap, yAxisMap, offset)}
+            {filterSvgElements(children)}
           </Surface>
           {this.renderLegend(items)}
           {tooltipItem && this.renderTooltip(tooltipItem, items, offset)}

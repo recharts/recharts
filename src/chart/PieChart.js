@@ -9,7 +9,7 @@ import Tooltip from '../component/Tooltip';
 import Pie from '../polar/Pie';
 import Cell from '../component/Cell';
 import { getPercentValue } from '../util/DataUtils';
-import { findChildByType, findAllByType, validateWidthHeight,
+import { findChildByType, findAllByType, validateWidthHeight, filterSvgElements,
   getPresentationAttributes } from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import pureRender from '../util/PureRender';
@@ -200,6 +200,7 @@ class PieChart extends Component {
       >
         <Surface width={width} height={height}>
           {this.renderItems(items)}
+          {filterSvgElements(children)}
         </Surface>
 
         {this.renderLegend(items)}
