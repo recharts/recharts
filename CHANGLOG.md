@@ -1,3 +1,9 @@
+## 0.10.8 (June 2, 2016)
+
+### feat
+
+- Support any svg elements in the charts, such as defs, linearGradient
+
 ## 0.10.7 (May 30, 2016)
 
 ### fix
