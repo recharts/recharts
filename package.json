@@ -24,7 +24,7 @@
     "build-es6": "rimraf es6 && babel ./src -d es6 --blacklist=es6.modules",
     "build-umd": "NODE_ENV=development webpack src/index.js umd/Recharts.js",
     "build-min": "NODE_ENV=production webpack src/index.js umd/Recharts.min.js",
-    "demo": "webpack-dev-server  --progress --port 3000  --colors --content-base demo --hot --inline --config demo/webpack.config.js",
+    "demo": "webpack-dev-server  --progress --port 3002  --colors --content-base demo --hot --inline --config demo/webpack.config.js",
     "test": "karma start test/karma.conf.js",
     "lint": "eslint src",
     "bundle-analyse": "NODE_ENV=production webpack src/index.js umd/Recharts.min.js --json | webpack-bundle-size-analyzer"
@@ -48,7 +48,7 @@
     "core-js": "2.4.0",
     "d3-scale": "0.7.1",
     "d3-shape": "0.6.0",
-    "lodash": "4.12.0",
+    "lodash": "^4.12.0",
     "react-smooth": "0.1.9",
     "recharts-scale": "0.1.9"
   },

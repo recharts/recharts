@@ -111,27 +111,31 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
   }
 
   const { thresholds } = lineProps;
+  const orderedThresholds = _.orderBy(thresholds, ['min']);
 
   // Threshold checks
   let lastThreshold = null;
-  for (const threshold of thresholds) {
+  for (const threshold of orderedThresholds) {
     if (lastThreshold === null) {
       lastThreshold = threshold;
     } else {
-      if (lastThreshold.max !== threshold.min) {
+      let hasThreshError = lastThreshold.max !== threshold.min;
+      if (hasThreshError) {
         console.log(`Thresholds max and min do not match,
           [${lastThreshold.min} - ${lastThreshold.max}] and [${threshold.min} - ${threshold.max}]`);
       }
     }
+    lastThreshold = threshold;
   }
 
   let dataSegments = [];
   let currentThreshold = null;
   let start = 0;
+  const thresholdKey = lineProps.thresholdKey || dataKey;
 
   for (var i = 0; i < data.length; i++) {
     const currItem = data[i];
-    const dataItem = Number(currItem[dataKey]);
+    const dataItem = Number(currItem[thresholdKey]);
     if (currentThreshold === null) {
       currentThreshold = _.find(thresholds, function(thr) {
         return checkThreshold(thr, dataItem);
@@ -175,10 +179,10 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
  * @return {Array} Data Segments, i.e. the different sections the line is split into
  **/
 const findDataSegments = (lineProps, data, dataKey) => {
-  if (lineProps.regionKey && lineProps.strokeRegions) {
-    return findDataSegmentsByRegion(lineProps, data, dataKey);
-  } else if (lineProps.thresholds) {
+  if (lineProps.thresholds) {
     return findDataSegmentsByThreshold(lineProps, data, dataKey);
+  } else if (lineProps.regionKey) {
+    return findDataSegmentsByRegion(lineProps, data, dataKey);
   }
   return [{ start: 0, end: data.length - 1, stroke: lineProps.stroke }];
 };

@@ -69,6 +69,7 @@ class Line extends Component {
     regionKey: PropTypes.string,
     strokeRegions: PropTypes.object,
     // MultiLine by Threshold
+    thresholdKey: PropTypes.string, // If thresholds need to be something besides dataKey
     thresholds: PropTypes.arrayOf(PropTypes.shape({
       min: React.PropTypes.number,
       max: React.PropTypes.number,
