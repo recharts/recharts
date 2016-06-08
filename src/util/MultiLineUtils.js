@@ -7,6 +7,8 @@ import { getBandSizeOfScale } from './DataUtils';
 import { getTicksOfAxis } from './CartesianUtils';
 import _ from 'lodash';
 
+const defaultColor = '#8e8e8e';
+
 /**
  * Compose the data of each group
  * @param  {Object} chartProps  The props from the parent chart (e.g. LineChart)
@@ -18,7 +20,7 @@ import _ from 'lodash';
  * @param  {Number} endIndex    The end point of the data for the segment
  * @return {Array}  Composed data
  */
-export const getComposedData = (chartProps, type, xAxis, yAxis, dataKey, startIndex, endIndex) => {
+export const getComposedData = (chartProps, type, xAxis, yAxis, dataKey, startIndex, endIndex, regionValue = null) => {
   const { layout, dataStartIndex, dataEndIndex, isComposed } = chartProps;
   const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
   const xTicks = getTicksOfAxis(xAxis);
@@ -29,12 +31,14 @@ export const getComposedData = (chartProps, type, xAxis, yAxis, dataKey, startIn
     const dataPoint = chartProps.data[i];
     const yDataPoint = i === endIndex &&
       (type === 'stepBefore' || type === 'stepAfter') ? chartProps.data[i - 1] : chartProps.data[i];
+    const yPoint = regionValue !== null ? regionValue : yDataPoint[dataKey];
+
     data.push({
       x: layout === 'horizontal' ?
         xTicks[i].coordinate + bandSize / 2 :
         xAxis.scale(dataPoint[dataKey]),
       y: layout === 'horizontal' ?
-        yAxis.scale(yDataPoint[dataKey]) :
+        yAxis.scale(yPoint) :
         yTicks[i].coordinate + bandSize / 2,
       value: dataPoint[dataKey],
     });
@@ -51,12 +55,22 @@ export const getComposedData = (chartProps, type, xAxis, yAxis, dataKey, startIn
  **/
 const findStroke = (lineProps, region, segmentCount) => {
   if (lineProps.strokeRegions) {
-    return lineProps.strokeRegions[region];
+    if (lineProps.strokeRegions[region] && lineProps.strokeRegions[region].color) {
+      return lineProps.strokeRegions[region].color;
+    }
+    return defaultColor;
   } else if (lineProps.strokeArray && segmentCount >= 0) {
     const strokeIndex = segmentCount % lineProps.strokeArray.length;
     return lineProps.strokeArray[strokeIndex];
   }
   return lineProps.stroke;
+};
+
+const findRegionValue = (lineProps, region, dataItem) => {
+  if (lineProps.strokeRegions && lineProps.strokeRegions[region].value !== null) {
+    return lineProps.strokeRegions[region].value;
+  }
+  return dataItem;
 };
 
 /**
@@ -80,7 +94,8 @@ const findDataSegmentsByRegion = (lineProps, data, dataKey) => {
       currentRegion = dataSegment;
     } else if (currentRegion !== dataSegment) {
       const stroke = findStroke(lineProps, currentRegion, dataSegments.length);
-      dataSegments.push({ start, end: i, stroke });
+      const regionValue = findRegionValue(lineProps, currentRegion, dataItem);
+      dataSegments.push({ start, end: i, regionValue: regionValue, stroke });
       currentRegion = dataSegment;
       start = i;
     }
@@ -88,6 +103,7 @@ const findDataSegmentsByRegion = (lineProps, data, dataKey) => {
   dataSegments.push({
     start,
     end: data.length - 1,
+    regionValue: findRegionValue(lineProps, currentRegion, data[data.length - 1][dataKey]),
     stroke: findStroke(lineProps, currentRegion, dataSegments.length),
   });
   return dataSegments;
@@ -102,6 +118,10 @@ const findDataSegmentsByRegion = (lineProps, data, dataKey) => {
  **/
 const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
   function checkThreshold(thr, val) {
+    if (thr === null || val === null) {
+      return thr === null && val === null;
+    }
+
     if (!thr.min) {
       return val < thr.max;
     } else if (!thr.max) {
@@ -135,38 +155,32 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
 
   for (var i = 0; i < data.length; i++) {
     const currItem = data[i];
-    const dataItem = Number(currItem[thresholdKey]);
+    const dataItem = currItem[thresholdKey] !== undefined ? Number(currItem[thresholdKey]) : null;
     if (currentThreshold === null) {
-      currentThreshold = _.find(thresholds, function(thr) {
-        return checkThreshold(thr, dataItem);
-      });
-      if (currentThreshold === null || currentThreshold === undefined) {
-        console.log('Could not find threshold');
-        dataSegments = [{ start: 0, end: data.length - 1, stroke: lineProps.stroke }];
-        return dataSegments;
-      }
+      currentThreshold = dataItem === null ? null :
+        _.find(thresholds, function (thr) {
+          return checkThreshold(thr, dataItem);
+        });
     } else {
       const isSame = checkThreshold(currentThreshold, dataItem);
       if (!isSame) {
-        dataSegments.push({ start, end: i, stroke: currentThreshold.color });
+        const color = currentThreshold && currentThreshold.color ?
+          currentThreshold.color : defaultColor;
+        dataSegments.push({ start, end: i, stroke: color });
 
         // New Segment
         start = i;
-        currentThreshold = _.find(thresholds, function(thr) {
-          return checkThreshold(thr, dataItem);
-        });
-        if (currentThreshold === null || currentThreshold === undefined) {
-          console.log(`Could not find threshold, value: ${dataItem}, i: '${i}'`);
-          dataSegments = [{ start: 0, end: data.length - 1, stroke: lineProps.stroke }];
-          return dataSegments;
-        }
+        currentThreshold = dataItem === null ? null :
+          _.find(thresholds, function (thr) {
+            return checkThreshold(thr, dataItem);
+          });
       }
     }
   }
   dataSegments.push({
     start,
     end: data.length - 1,
-    stroke: currentThreshold.color,
+    stroke: currentThreshold && currentThreshold.color ? currentThreshold.color : defaultColor,
   });
   return dataSegments;
 };
@@ -204,10 +218,10 @@ export const renderMultiLine = (chartProps, child, xAxisMap, yAxisMap, offset, i
   const dataSegments = findDataSegments(child.props, data, dataKey);
 
   return dataSegments.map((segment, l) => {
-    const { start, end, stroke } = segment;
+    const { start, end, stroke, regionValue } = segment;
 
     const points = getComposedData(chartProps, type, xAxisMap[xAxisId],
-        yAxisMap[yAxisId], dataKey, start, end);
+        yAxisMap[yAxisId], dataKey, start, end, regionValue);
 
     return React.cloneElement(child, {
       key: `line-${i}-${l}`,
