@@ -262,7 +262,7 @@ export const filterSvgElements = (children) => {
   const svgElements = [];
 
   React.Children.forEach(children, entry => {
-    if (entry.type && _.isString(entry.type) &&
+    if (entry && entry.type && _.isString(entry.type) &&
       SVG_TAGS.indexOf(entry.type) >= 0) {
       svgElements.push(entry);
     }
