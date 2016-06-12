@@ -1,3 +1,9 @@
+## 0.10.9 (June 12, 2016)
+
+### refactor
+
+- Use react-container-dimensions to refactor ResponsiveContainer, close #104, close #105
+
 ## 0.10.8 (June 2, 2016)
 
 ### feat
