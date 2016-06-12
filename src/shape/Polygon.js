@@ -6,6 +6,16 @@ import pureRender from '../util/PureRender';
 import classNames from 'classnames';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
+const getPolygonPoints = (points) => {
+  return points.reduce((result, entry) => {
+    if (entry.x === +entry.x && entry.y === +entry.y) {
+      result.push([entry.x, entry.y]);
+    }
+
+    return result;
+  }, []).join(' ');
+};
+
 @pureRender
 class Polygon extends Component {
 
@@ -26,16 +36,6 @@ class Polygon extends Component {
     strokeWidth: 1,
   };
 
-  getPolygonPoints(points) {
-    return points.reduce((result, entry) => {
-      if (entry.x === +entry.x && entry.y === +entry.y) {
-        result.push([entry.x, entry.y]);
-      }
-
-      return result;
-    }, []).join(' ');
-  }
-
   render() {
     const { points, className } = this.props;
 
@@ -47,7 +47,7 @@ class Polygon extends Component {
       <polygon
         {...getPresentationAttributes(this.props)}
         className={layerClass}
-        points={this.getPolygonPoints(points)}
+        points={getPolygonPoints(points)}
       />
     );
   }

@@ -17,6 +17,30 @@ const CURVE_FACTORIES = {
   curveStepBefore,
 };
 
+const fliterMouseToSeg = (path) => {
+  const reg = /[CSLHVcslhv]/;
+  const res = reg.exec(path);
+
+  if (res && res.length) {
+    const index = path.indexOf(res[0]);
+
+    return path.slice(index);
+  }
+
+  return path;
+};
+
+const getCurveFactory = (type, layout) => {
+  if (_.isFunction(type)) { return type; }
+
+  const name = `curve${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
+
+  if (name === 'curveMonotone' && layout) {
+    return CURVE_FACTORIES[`${name}${layout === 'vertical' ? 'Y' : 'X'}`];
+  }
+  return CURVE_FACTORIES[name] || curveLinear;
+};
+
 @pureRender
 class Curve extends Component {
 
@@ -44,18 +68,6 @@ class Curve extends Component {
     strokeDasharray: 'none',
     points: [],
   };
-
-  getCurveFactory(type, layout) {
-    if (_.isFunction(type)) { return type; }
-
-    const name = `curve${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
-
-    if (name === 'curveMonotone' && layout) {
-      return CURVE_FACTORIES[`${name}${layout === 'vertical' ? 'Y' : 'X'}`];
-    }
-    return CURVE_FACTORIES[name] || curveLinear;
-  }
-
   /**
    * Calculate the path of curve
    * @return {String} path
@@ -65,7 +77,7 @@ class Curve extends Component {
     const l = shapeLine().x(p => p.x)
                     .y(p => p.y)
                     .defined(p => p.x === +p.x && p.y === + p.y)
-                    .curve(this.getCurveFactory(type, layout));
+                    .curve(getCurveFactory(type, layout));
     const len = points.length;
     let curvePath = l(points);
 
@@ -77,25 +89,12 @@ class Curve extends Component {
       curvePath += `L${baseLine} ${points[len - 1].y}L${baseLine} ${points[0].y}Z`;
     } else if (_.isArray(baseLine) && baseLine.length) {
       const revese = baseLine.reduce((result, entry) => [entry, ...result], []);
-      const revesePath = this.fliterMouseToSeg(l(revese) || '');
+      const revesePath = fliterMouseToSeg(l(revese) || '');
 
       curvePath += `L${revese[0].x} ${revese[0].y}${revesePath}Z`;
     }
 
     return curvePath;
-  }
-
-  fliterMouseToSeg(path) {
-    const reg = /[CSLHVcslhv]/;
-    const res = reg.exec(path);
-
-    if (res && res.length) {
-      const index = path.indexOf(res[0]);
-
-      return path.slice(index);
-    }
-
-    return path;
   }
 
   render() {
