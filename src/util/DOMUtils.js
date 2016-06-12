@@ -86,38 +86,6 @@ export const getStringSize = (text, style = {}) => {
   return result;
 };
 
-export const getWidth = (el) => {
-  const styles = getComputedStyles(el);
-  const width = parseFloat(styles.width.indexOf('px') !== -1 ? styles.width : 0);
-
-  const boxSizing = styles.boxSizing || 'content-box';
-  if (boxSizing === 'border-box') {
-    return width;
-  }
-
-  const borderLeftWidth = parseFloat(styles.borderLeftWidth);
-  const borderRightWidth = parseFloat(styles.borderRightWidth);
-  const paddingLeft = parseFloat(styles.paddingLeft);
-  const paddingRight = parseFloat(styles.paddingRight);
-  return width - borderRightWidth - borderLeftWidth - paddingLeft - paddingRight;
-};
-
-export const getHeight = (el) => {
-  const styles = getComputedStyles(el);
-  const height = parseFloat(styles.height.indexOf('px') !== -1 ? styles.height : 0);
-
-  const boxSizing = styles.boxSizing || 'content-box';
-  if (boxSizing === 'border-box') {
-    return height;
-  }
-
-  const borderTopWidth = parseFloat(styles.borderTopWidth);
-  const borderBottomWidth = parseFloat(styles.borderBottomWidth);
-  const paddingTop = parseFloat(styles.paddingTop);
-  const paddingBottom = parseFloat(styles.paddingBottom);
-  return height - borderBottomWidth - borderTopWidth - paddingTop - paddingBottom;
-};
-
 export const getOffset = (el) => {
   const html = el.ownerDocument.documentElement;
   let box = { top: 0, left: 0 };
