@@ -30,6 +30,7 @@ require('./specs/chart/ScatterChartSpec');
 require('./specs/chart/TreemapSpec');
 require('./specs/chart/RadialBarChartSpec');
 require('./specs/chart/ComposedChartSpec');
+require('./specs/chart/SankeySpec');
 
 // general component
 require('./specs/component/LegendSpec');

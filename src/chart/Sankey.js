@@ -309,6 +309,7 @@ class Sankey extends Component {
 
             return (
               <path
+                className="recharts-sankey-link"
                 key={`link${i}`}
                 d={`M${x0},${y0}C${x2},${y0} ${x3},${y1} ${x1},${y1}`}
                 fill="none"
@@ -347,7 +348,15 @@ class Sankey extends Component {
               return nodeContent(nodeProps);
             }
 
-            return <Rectangle key={`node${i}`} {...nodeProps} fill="#0088fe" fillOpacity="0.8" />;
+            return (
+              <Rectangle
+                className="recharts-sankey-node"
+                key={`node${i}`}
+                {...nodeProps}
+                fill="#0088fe"
+                fillOpacity="0.8"
+              />
+            );
           })
         }
       </Layer>
