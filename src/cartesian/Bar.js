@@ -159,12 +159,15 @@ class Bar extends Component {
     const labels = data.map((entry, i) => {
       let x = 0;
       let y = 0;
+
       if (layout === 'vertical') {
         x = 5 + entry.x + entry.width;
         y = 5 + entry.y + entry.height / 2;
       } else {
         x = entry.x + entry.width / 2;
+        y = entry.y - 5;
       }
+
       const labelProps = {
         textAnchor,
         ...barProps,
