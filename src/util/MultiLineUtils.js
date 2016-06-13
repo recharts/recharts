@@ -18,6 +18,7 @@ const defaultColor = '#8e8e8e';
  * @param  {String} dataKey     The unique key of a group for the data item
  * @param  {Number} startIndex  The starting point of the data for the segment
  * @param  {Number} endIndex    The end point of the data for the segment
+ * @param  {Number | String} regionValue  The region value used for step chart regions
  * @return {Array}  Composed data
  */
 export const getComposedData = (chartProps, type, xAxis, yAxis, dataKey, startIndex, endIndex, regionValue = null) => {
