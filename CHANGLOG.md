@@ -1,3 +1,9 @@
+## 0.10.10 (June 13, 2016)
+
+### fix
+
+- Fix the posiiton of labels in Bar
+
 ## 0.10.9 (June 12, 2016)
 
 ### refactor
