@@ -82,7 +82,9 @@ class DefaultTooltipContent extends Component {
     };
     const hasLabel = _.isNumber(label) || _.isString(label);
     let finalLabel = hasLabel ? label : '';
+
     if (hasLabel && labelFormatter) { finalLabel = labelFormatter(label); }
+
     return (
       <div className="recharts-default-tooltip" style={finalStyle}>
         <p className="recharts-tooltip-label" style={finalLabelStyle}>{finalLabel}</p>

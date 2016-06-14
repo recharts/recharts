@@ -272,15 +272,14 @@ export default React.createClass({
             <XAxis dataKey="name" label="province" />
             <YAxis />
             <Tooltip />
-            <Area stackId="0"
+            <Area
               type="monotone"
               dataKey="uv"
               stroke="#0088FE"
               strokeWidth="2"
               fillOpacity="1"
               fill="url(#MyGradient)"
-              dot={{ fill: '#fff' }}
-              activeDot={renderCustomizedActiveDot}
+              dot
             />
           </AreaChart>
         </div>

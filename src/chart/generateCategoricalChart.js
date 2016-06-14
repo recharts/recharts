@@ -9,8 +9,8 @@ import Tooltip from '../component/Tooltip';
 import Legend from '../component/Legend';
 
 import { warn } from '../util/LogUtils';
-import { findAllByType, findChildByType, getDisplayName,
-  validateWidthHeight, filterSvgElements } from '../util/ReactUtils';
+import { findAllByType, findChildByType, filterSvgElements, getDisplayName,
+  getPresentationAttributes, validateWidthHeight } from '../util/ReactUtils';
 import _ from 'lodash';
 
 import CartesianAxis from '../cartesian/CartesianAxis';
@@ -388,12 +388,12 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         const { dataKey, name, unit, formatter } = child.props;
 
         return {
+          ...getPresentationAttributes(child),
+          dataKey, unit, formatter,
           name: name || dataKey,
-          unit: unit || '',
           color: getMainColorOfGraphicItem(child),
           value: data[activeTooltipIndex][dataKey],
           payload: data[activeTooltipIndex],
-          formatter,
         };
       });
     }

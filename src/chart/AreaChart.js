@@ -8,7 +8,8 @@ import Dot from '../shape/Dot';
 import Curve from '../shape/Curve';
 import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
-import { getTicksOfAxis, getStackedDataOfItem } from '../util/CartesianUtils';
+import { getTicksOfAxis, getStackedDataOfItem,
+  getMainColorOfGraphicItem } from '../util/CartesianUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Area from '../cartesian/Area';
 import pureRender from '../util/PureRender';
@@ -194,7 +195,8 @@ class AreaChart extends Component {
           dataKey,
           animationId,
           cx: activePoint.x, cy: activePoint.y, r: 4,
-          fill, strokeWidth: 2, stroke: '#fff',
+          fill: getMainColorOfGraphicItem(child),
+          strokeWidth: 2, stroke: '#fff',
           ...getPresentationAttributes(activeDot),
         };
         dotItems.push((

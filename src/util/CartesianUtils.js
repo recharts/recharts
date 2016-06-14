@@ -312,6 +312,7 @@ export const getMainColorOfGraphicItem = (item) => {
 
   switch (displayName) {
     case 'Line':
+    case 'Area':
       result = item.props.stroke;
       break;
     default:
