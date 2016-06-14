@@ -4,9 +4,11 @@
 import React, { Component, PropTypes } from 'react';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
+import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
 import classNames from 'classnames';
 import pureRender from '../util/PureRender';
+import { findChildByType, validateWidthHeight, filterSvgElements } from '../util/ReactUtils';
 import _ from 'lodash';
 
 const number = (a, b) => {
@@ -268,6 +270,16 @@ class Sankey extends Component {
     iterations: PropTypes.number,
     nodeContent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
     linkContent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
+    style: PropTypes.object,
+    className: PropTypes.string,
+    children: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.node),
+      PropTypes.node,
+    ]),
+
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
+    onClick: PropTypes.func,
   };
 
   static defaultProps = {
@@ -275,6 +287,52 @@ class Sankey extends Component {
     nodeWidth: 10,
     linkCurvature: 0.5,
     iterations: 32,
+  }
+
+  state = {
+    isTooltipActive: false,
+  }
+
+  handleMouseEnter = (e) => {
+    const { onMouseEnter, children } = this.props;
+    const tooltipItem = findChildByType(children, Tooltip);
+
+    if (tooltipItem) {
+      this.setState({
+        isTooltipActive: true,
+      }, () => {
+        if (onMouseEnter) {
+          onMouseEnter(e);
+        }
+      });
+    } else if (onMouseEnter) {
+      onMouseEnter(e);
+    }
+  };
+
+  handleMouseLeave = (e) => {
+    const { onMouseLeave, children } = this.props;
+    const tooltipItem = findChildByType(children, Tooltip);
+
+    if (tooltipItem) {
+      this.setState({
+        isTooltipActive: false,
+      }, () => {
+        if (onMouseLeave) {
+          onMouseLeave(e);
+        }
+      });
+    } else if (onMouseLeave) {
+      onMouseLeave(e);
+    }
+  };
+
+  handleClick() {
+    const { onClick } = this.props;
+
+    if (onClick) {
+      onClick();
+    }
   }
 
   renderLinks(links) {
@@ -308,15 +366,20 @@ class Sankey extends Component {
             }
 
             return (
-              <path
-                className="recharts-sankey-link"
-                key={`link${i}`}
-                d={`M${x0},${y0}C${x2},${y0} ${x3},${y1} ${x1},${y1}`}
-                fill="none"
-                stroke="#333"
-                strokeWidth={link.dy}
-                strokeOpacity="0.2"
-              />
+              <Layer
+                onMouseLeave={this.handleMouseLeave}
+                onMouseEnter={this.handleMouseEnter}
+              >
+                <path
+                  className="recharts-sankey-link"
+                  key={`link${i}`}
+                  d={`M${x0},${y0}C${x2},${y0} ${x3},${y1} ${x1},${y1}`}
+                  fill="none"
+                  stroke="#333"
+                  strokeWidth={link.dy}
+                  strokeOpacity="0.2"
+                />
+              </Layer>
             );
           })
         }
@@ -363,16 +426,57 @@ class Sankey extends Component {
     );
   }
 
+  renderTooltip() {
+    const { children } = this.props;
+    const tooltipItem = findChildByType(children, Tooltip);
+
+    if (!tooltipItem) { return null; }
+
+    const { isTooltipActive } = this.state;
+    const viewBox = { x: 0, y: 0, width: 100, height: 100 };
+    const coordinate = {
+      x: 0,
+      y: 0,
+    };
+    const payload = isTooltipActive ? [{
+      name: 'hh', value: 'aa',
+    }] : [];
+
+    return React.cloneElement(tooltipItem, {
+      viewBox,
+      active: isTooltipActive,
+      coordinate,
+      label: 'bb',
+      payload,
+      separator: 'cc',
+    });
+  }
+
   render() {
-    const { data, iterations, width, height, nodeWidth, nodePadding } = this.props;
+    if (!validateWidthHeight(this)) { return null; }
+
+    const { data,
+      iterations, nodeWidth, nodePadding,
+      width, height,
+      className, style, children,
+    } = this.props;
     const size = [width, height];
     const { nodes, links } = computeData(
-      _.cloneDeep(data), size, iterations, nodeWidth, nodePadding);
+      _.cloneDeep(data), size, iterations, nodeWidth, nodePadding
+    );
+
     return (
-      <Surface width={width} height={height}>
-        {this.renderLinks(links)}
-        {this.renderNodes(nodes)}
-      </Surface>
+      <div
+        className={classNames('recharts-wrapper', className)}
+        style={{ position: 'relative', cursor: 'default', ...style }}
+      >
+        <Surface width={width} height={height}>
+          {filterSvgElements(children)}
+          {this.renderLinks(links)}
+          {this.renderNodes(nodes)}
+        </Surface>
+        {this.renderTooltip()}
+      </div>
     );
   }
 }

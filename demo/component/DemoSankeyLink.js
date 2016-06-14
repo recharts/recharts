@@ -25,12 +25,6 @@ class DemoSankeyLink extends Component {
 
     return (
       <Layer>
-        <defs>
-          <linearGradient id={'linkGradient'}>
-            <stop offset="0%" stopColor="rgba(0, 136, 254, 0.5)" />
-            <stop offset="100%" stopColor="rgba(0, 197, 159, 0.3)" />
-          </linearGradient>
-        </defs>
         <path
           d={`
             M${x0},${y0 + dy / 2}
