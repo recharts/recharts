@@ -21,7 +21,8 @@ const defaultColor = '#8e8e8e';
  * @param  {Number | String} regionValue  The region value used for step chart regions
  * @return {Array}  Composed data
  */
-export const getComposedData = (chartProps, type, xAxis, yAxis, dataKey, startIndex, endIndex, regionValue = null) => {
+export const getComposedData = (chartProps, type, xAxis, yAxis, dataKey,
+    startIndex, endIndex, regionValue = null) => {
   const { layout, dataStartIndex, dataEndIndex, isComposed } = chartProps;
   const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
   const xTicks = getTicksOfAxis(xAxis);
@@ -96,7 +97,7 @@ const findDataSegmentsByRegion = (lineProps, data, dataKey) => {
     } else if (currentRegion !== dataSegment) {
       const stroke = findStroke(lineProps, currentRegion, dataSegments.length);
       const regionValue = findRegionValue(lineProps, currentRegion, dataItem);
-      dataSegments.push({ start, end: i, regionValue: regionValue, stroke });
+      dataSegments.push({ start, end: i, regionValue, stroke });
       currentRegion = dataSegment;
       start = i;
     }
@@ -140,16 +141,15 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
     if (lastThreshold === null) {
       lastThreshold = threshold;
     } else {
-      let hasThreshError = lastThreshold.max !== threshold.min;
+      const hasThreshError = lastThreshold.max !== threshold.min;
       if (hasThreshError) {
-        console.log(`Thresholds max and min do not match,
-          [${lastThreshold.min} - ${lastThreshold.max}] and [${threshold.min} - ${threshold.max}]`);
+        console.log(`Thresholds max and min do not match, [${lastThreshold.min} - ${lastThreshold.max}] and [${threshold.min} - ${threshold.max}]`); // eslint-disable-line
       }
     }
     lastThreshold = threshold;
   }
 
-  let dataSegments = [];
+  const dataSegments = [];
   let currentThreshold = null;
   let start = 0;
   const thresholdKey = lineProps.thresholdKey || dataKey;
@@ -159,7 +159,7 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
     const dataItem = currItem[thresholdKey] !== undefined ? Number(currItem[thresholdKey]) : null;
     if (currentThreshold === null) {
       currentThreshold = dataItem === null ? null :
-        _.find(thresholds, function (thr) {
+        _.find(thresholds, function (thr) { // eslint-disable-line prefer-arrow-callback,func-names
           return checkThreshold(thr, dataItem);
         });
     } else {
@@ -172,7 +172,7 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
         // New Segment
         start = i;
         currentThreshold = dataItem === null ? null :
-          _.find(thresholds, function (thr) {
+          _.find(thresholds, function (thr) { // eslint-disable-line prefer-arrow-callback,func-names,max-len
             return checkThreshold(thr, dataItem);
           });
       }
