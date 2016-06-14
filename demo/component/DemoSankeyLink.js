@@ -3,15 +3,15 @@ import { Tooltip, Layer } from 'recharts';
 
 class DemoSankeyLink extends Component {
   static propTypes = {
-    x0: PropTypes.number,
-    x1: PropTypes.number,
-    x2: PropTypes.number,
-    x3: PropTypes.number,
-    y0: PropTypes.number,
-    y1: PropTypes.number,
-    sy: PropTypes.number,
-    ty: PropTypes.number,
-    dy: PropTypes.number,
+    sourceX: PropTypes.number,
+    targetX: PropTypes.number,
+    sourceY: PropTypes.number,
+    targetY: PropTypes.number,
+    sourceControlX: PropTypes.number,
+    targetControlX: PropTypes.number,
+    sourceRelativeY: PropTypes.number,
+    targetRelativeY: PropTypes.number,
+    linkWidth: PropTypes.number,
     index: PropTypes.number,
   }
 
@@ -20,17 +20,27 @@ class DemoSankeyLink extends Component {
   }
 
   render() {
-    const { x0, x1, x2, x3, y0, y1, dy, index } = this.props;
+    const { sourceX, targetX,
+      sourceY, targetY,
+      sourceControlX, targetControlX,
+      sourceRelativeY, targetRelativeY,
+      linkWidth,
+      index,
+    } = this.props;
     const { fill } = this.state;
 
     return (
-      <Layer>
+      <Layer key={`CustomLink${index}`}>
         <path
           d={`
-            M${x0},${y0 + dy / 2}
-            C${x2},${y0 + dy / 2} ${x3},${y1 + dy / 2} ${x1},${y1 + dy / 2}
-            L${x1},${y1 - dy / 2}
-            C${x3},${y1 - dy / 2} ${x2},${y0 - dy / 2} ${x0},${y0 - dy / 2}
+            M${sourceX},${sourceY + linkWidth / 2}
+            C${sourceControlX},${sourceY + linkWidth / 2}
+              ${targetControlX},${targetY + linkWidth / 2}
+              ${targetX},${targetY + linkWidth / 2}
+            L${targetX},${targetY - linkWidth / 2}
+            C${targetControlX},${targetY - linkWidth / 2}
+              ${sourceControlX},${sourceY - linkWidth / 2}
+              ${sourceX},${sourceY - linkWidth / 2}
             Z
           `}
           fill={fill}

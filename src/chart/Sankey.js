@@ -342,20 +342,26 @@ class Sankey extends Component {
       <Layer>
         {
           links.map((link, i) => {
-            const x0 = link.source.x + link.source.dx;
-            const x1 = link.target.x;
-            const xi = number(x0, x1);
-            const x2 = xi(linkCurvature);
-            const x3 = xi(1 - linkCurvature);
-            const y0 = link.source.y + link.sy + link.dy / 2;
-            const y1 = link.target.y + link.ty + link.dy / 2;
-            const { sy, ty, dy } = link;
+            const { sy: sourceRelativeY, ty: targetRelativeY, dy: linkWidth } = link;
+
+            const sourceX = link.source.x + link.source.dx;
+            const targetX = link.target.x;
+
+            const interpolationFunc = number(sourceX, targetX);
+            const sourceControlX = interpolationFunc(linkCurvature);
+            const targetControlX = interpolationFunc(1 - linkCurvature);
+
+            const sourceY = link.source.y + sourceRelativeY + linkWidth / 2;
+            const targetY = link.target.y + targetRelativeY + linkWidth / 2;
+
 
             const linkProps = {
-              x0, x1, x2, x3, y0, y1,
-              sy, ty, dy,
+              sourceX, targetX,
+              sourceY, targetY,
+              sourceControlX, targetControlX,
+              sourceRelativeY, targetRelativeY,
+              linkWidth,
               index: i,
-              key: `link${i}`,
               link,
             };
 
@@ -367,16 +373,19 @@ class Sankey extends Component {
 
             return (
               <Layer
+                key={`link${i}`}
                 onMouseLeave={this.handleMouseLeave}
                 onMouseEnter={this.handleMouseEnter}
               >
                 <path
                   className="recharts-sankey-link"
-                  key={`link${i}`}
-                  d={`M${x0},${y0}C${x2},${y0} ${x3},${y1} ${x1},${y1}`}
+                  d={`
+                    M${sourceX},${sourceY}
+                    C${sourceControlX},${sourceY} ${targetControlX},${targetY} ${targetX},${targetY}
+                  `}
                   fill="none"
                   stroke="#333"
-                  strokeWidth={link.dy}
+                  strokeWidth={linkWidth}
                   strokeOpacity="0.2"
                 />
               </Layer>

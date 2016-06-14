@@ -4,7 +4,7 @@ import { Rectangle, Layer } from 'recharts';
 function DemoSankeyNode({ x, y, width, height, index, node, containerWidth}) {
   const isOut = x + width + 6 > containerWidth;
   return (
-    <Layer>
+    <Layer key={`CustomNode${index}`}>
       <Rectangle
         x={x} y={y} width={width} height={height}
         fill="#5192ca" fillOpacity="1"
