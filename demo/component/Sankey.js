@@ -148,7 +148,7 @@ function SankeyDemo() {
     <div className="sankey-charts">
       <div>
         <Sankey width={960} height={500} data={data0}>
-          <Tooltip />
+          {/* <Tooltip /> */}
         </Sankey>
       </div>
       <br />
