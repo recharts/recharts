@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { Rectangle, Layer } from 'recharts';
 
-function DemoSankeyNode({ x, y, width, height, index, node, containerWidth}) {
+function DemoSankeyNode({ x, y, width, height, index, payload, containerWidth}) {
   const isOut = x + width + 6 > containerWidth;
   return (
     <Layer key={`CustomNode${index}`}>
@@ -15,7 +15,7 @@ function DemoSankeyNode({ x, y, width, height, index, node, containerWidth}) {
         y={y + height / 2}
         fontSize="14"
         stroke="#333"
-      >{node.name}</text>
+      >{payload.name}</text>
       <text
         textAnchor={isOut ? 'end' : 'start'}
         x={isOut ? x - 6 : x + width + 6}
@@ -23,7 +23,7 @@ function DemoSankeyNode({ x, y, width, height, index, node, containerWidth}) {
         fontSize="12"
         stroke="#333"
         strokeOpacity="0.5"
-      >{node.value + 'k'}</text>
+      >{payload.value + 'k'}</text>
     </Layer>
   );
 }
