@@ -8,7 +8,9 @@ import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
 import classNames from 'classnames';
 import pureRender from '../util/PureRender';
-import { PRESENTATION_ATTRIBUTES, findChildByType, getPresentationAttributes, validateWidthHeight, filterSvgElements, EVENT_ATTRIBUTES, filterEventAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
+  EVENT_ATTRIBUTES, filterEventAttributes,
+  filterSvgElements, validateWidthHeight, findChildByType } from '../util/ReactUtils';
 import _ from 'lodash';
 
 const interpolationGenerator = (a, b) => {
@@ -76,9 +78,9 @@ const updateDepthOfTargets = (tree, curNode) => {
   }
 };
 
-const getNodesTree = ({nodes, links}, width, nodeWidth) => {
+const getNodesTree = ({ nodes, links }, width, nodeWidth) => {
   const tree = nodes.map((entry, index) => {
-    const result = searchTargetsAndSources(links, index)
+    const result = searchTargetsAndSources(links, index);
 
     return {
       ...entry,
@@ -119,7 +121,7 @@ const getNodesTree = ({nodes, links}, width, nodeWidth) => {
 const getDepthTree = (tree, maxDepth) => {
   const result = [];
 
-  for (let i = 0, len = tree.length; i <len; i++) {
+  for (let i = 0, len = tree.length; i < len; i++) {
     const node = tree[i];
 
     if (!result[node.depth]) {
@@ -327,7 +329,7 @@ class Sankey extends Component {
         isTooltipActive: true,
       }, () => {
         if (onMouseEnter) {
-          onMouseLeave(el, index, e);
+          onMouseEnter(el, index, e);
         }
       });
     } else if (onMouseEnter) {
@@ -349,7 +351,7 @@ class Sankey extends Component {
         }
       });
     } else if (onMouseLeave) {
-      onMouseLeave(el, inde, e);
+      onMouseLeave(el, index, e);
     }
   }
 
@@ -390,32 +392,38 @@ class Sankey extends Component {
               payload: link,
             };
             let linkPresentationAttributes = {};
-            let linkEventAttributes = {};
 
             if (React.isValidElement(linkContent)) {
-              return React.cloneElement(linkContent, linkProps);
+              return (
+                <Layer key={`link${i}`}>
+                  {React.cloneElement(linkContent, linkProps)}
+                </Layer>
+              );
             } else if (_.isFunction(linkContent)) {
-              return linkContent(linkProps);
+              return (
+                <Layer key={`link${i}`}>
+                  {linkContent(linkProps)}
+                </Layer>
+              );
             } else if (_.isObject(linkContent)) {
               linkPresentationAttributes = getPresentationAttributes(linkContent);
-              linkEventAttributes = filterEventAttributes(linkContent);
             }
 
             return (
-              <path
-                key={`link${i}`}
-                className="recharts-sankey-link"
-                d={`
-                  M${sourceX},${sourceY}
-                  C${sourceControlX},${sourceY} ${targetControlX},${targetY} ${targetX},${targetY}
-                `}
-                fill="none"
-                stroke="#333"
-                strokeWidth={linkWidth}
-                strokeOpacity="0.2"
-                {...linkPresentationAttributes}
-                {...linkEventAttributes}
-              />
+              <Layer key={`link${i}`}>
+                <path
+                  className="recharts-sankey-link"
+                  d={`
+                    M${sourceX},${sourceY}
+                    C${sourceControlX},${sourceY} ${targetControlX},${targetY} ${targetX},${targetY}
+                  `}
+                  fill="none"
+                  stroke="#333"
+                  strokeWidth={linkWidth}
+                  strokeOpacity="0.2"
+                  {...linkPresentationAttributes}
+                />
+              </Layer>
             );
           })
         }
@@ -441,27 +449,33 @@ class Sankey extends Component {
               payload: node,
             };
             let nodePresentationAttributes = {};
-            let nodeEventAttributes = {};
 
             if (React.isValidElement(nodeContent)) {
-              return React.cloneElement(nodeContent, nodeProps);
+              return (
+                <Layer key={`node${i}`}>
+                  {React.cloneElement(nodeContent, nodeProps)}
+                </Layer>
+              );
             } else if (_.isFunction(nodeContent)) {
-              return nodeContent(nodeProps);
+              return (
+                <Layer key={`node${i}`}>
+                  {nodeContent(nodeProps)}
+                </Layer>
+              );
             } else if (_.isObject(nodeContent)) {
               nodePresentationAttributes = getPresentationAttributes(nodeContent);
-              nodeEventAttributes = filterEventAttributes(nodeContent);
             }
 
             return (
-              <Rectangle
-                className="recharts-sankey-node"
-                key={`node${i}`}
-                fill="#0088fe"
-                fillOpacity="0.8"
-                {...nodeProps}
-                {...nodePresentationAttributes}
-                {...nodeEventAttributes}
-              />
+              <Layer key={`node${i}`}>
+                <Rectangle
+                  className="recharts-sankey-node"
+                  fill="#0088fe"
+                  fillOpacity="0.8"
+                  {...nodeProps}
+                  {...nodePresentationAttributes}
+                />
+              </Layer>
             );
           })
         }
@@ -504,7 +518,7 @@ class Sankey extends Component {
       className, style, children,
     } = this.props;
     const { links, nodes } = computeData({
-      data, width, height, iterations, nodeWidth, nodePadding
+      data, width, height, iterations, nodeWidth, nodePadding,
     });
 
     return (

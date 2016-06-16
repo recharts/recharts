@@ -154,13 +154,13 @@ function SankeyDemo() {
       </div>
       <br />
       <div>
-        <pre>2. Customized Sankey. Click node or link to check its type and color.</pre>
+        <pre>2. Customized Sankey.</pre>
         <Sankey
           width={960}
           height={500}
           data={data0}
-          node={{ fill: '#8a52b6',  onClick: (e) => {alert('node #8a52b6')} }}
-          link={{ stroke: '#77c878', onClick: (e) => {alert('link #77c878')} }}
+          node={{ fill: '#8a52b6' }}
+          link={{ stroke: '#77c878' }}
         >
           {/* <Tooltip /> */}
         </Sankey>
