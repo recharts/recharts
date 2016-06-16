@@ -105,8 +105,9 @@ class Tooltip extends Component {
 
   render() {
     const { payload, isAnimationActive, animationDuration, animationEasing } = this.props;
+
     if (!payload || !payload.length ||
-      !payload.filter(entry => _.isNumber(entry.value)).length
+      !payload.filter(entry => (_.isNumber(entry.value) || _.isString(entry.value))).length
     ) { return null; }
 
     const { content, viewBox, coordinate, active, offset } = this.props;

@@ -37,7 +37,7 @@ class DefaultTooltipContent extends Component {
     if (payload && payload.length) {
       const listStyle = { padding: 0, margin: 0 };
 
-      const items = payload.filter(entry => _.isNumber(entry.value))
+      const items = payload.filter(entry => (_.isNumber(entry.value) || _.isString(entry.value)))
       .map((entry, i) => {
         const finalItemStyle = {
           display: 'block',
