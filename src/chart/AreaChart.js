@@ -63,15 +63,20 @@ class AreaChart extends Component {
 
     const points = data.map((entry, index) => {
       const value = hasStack ? stackedData[dataStartIndex + index] : [baseValue, entry[dataKey]];
+
+      if (layout === 'horizontal') {
+        return {
+          x: xTicks[index].coordinate + bandSize / 2,
+          y: _.isNumber(value[1]) ? yAxis.scale(value[1]) : null,
+          value,
+        };
+      }
+
       return {
-        x: layout === 'horizontal' ?
-            xTicks[index].coordinate + bandSize / 2 :
-            xAxis.scale(value[1]),
-        y: layout === 'horizontal' ?
-            yAxis.scale(value[1]) :
-            yTicks[index].coordinate + bandSize / 2,
+        x: _.isNumber(value[1]) ? xAxis.scale(value[1]) : null,
+        y: yTicks[index].coordinate + bandSize / 2,
         value,
-      };
+      }
     });
 
     let baseLine;

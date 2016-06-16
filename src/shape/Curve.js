@@ -2,9 +2,9 @@
  * @fileOverview Curve
  */
 import React, { Component, PropTypes } from 'react';
-import { line as shapeLine, curveBasisClosed, curveBasisOpen, curveBasis,
-  curveLinearClosed, curveLinear, curveMonotoneX, curveMonotoneY, curveNatural,
-  curveStep, curveStepAfter, curveStepBefore } from 'd3-shape';
+import { line as shapeLine, area as shapeArea, curveBasisClosed, curveBasisOpen,
+  curveBasis, curveLinearClosed, curveLinear, curveMonotoneX, curveMonotoneY,
+  curveNatural, curveStep, curveStepAfter, curveStepBefore } from 'd3-shape';
 import pureRender from '../util/PureRender';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -17,18 +17,9 @@ const CURVE_FACTORIES = {
   curveStepBefore,
 };
 
-const fliterMouseToSeg = (path) => {
-  const reg = /[CSLHVcslhv]/;
-  const res = reg.exec(path);
-
-  if (res && res.length) {
-    const index = path.indexOf(res[0]);
-
-    return path.slice(index);
-  }
-
-  return path;
-};
+const defined = p => p.x === +p.x && p.y === + p.y;
+const getX = p => p.x;
+const getY = p => p.y;
 
 const getCurveFactory = (type, layout) => {
   if (_.isFunction(type)) { return type; }
@@ -74,27 +65,32 @@ class Curve extends Component {
    */
   getPath() {
     const { type, points, baseLine, layout } = this.props;
-    const l = shapeLine().x(p => p.x)
-                    .y(p => p.y)
-                    .defined(p => p.x === +p.x && p.y === + p.y)
-                    .curve(getCurveFactory(type, layout));
-    const len = points.length;
-    let curvePath = l(points);
+    const curveFactory = getCurveFactory(type, layout);
+    let lineFunction;
 
-    if (!curvePath) { return ''; }
+    if (_.isArray(baseLine)) {
+      const areaPoints = points.map((entry, index) => (
+        { ...entry, base: baseLine[index]}
+      ));
+      if (layout === 'vertical') {
+        lineFunction = shapeArea().y(getY).x1(getX).x0(d => d.base.x);
+      } else {
+        lineFunction = shapeArea().x(getX).y1(getY).y0(d => d.base.y);
+      }
+      lineFunction.defined(defined).curve(curveFactory);
 
-    if (layout === 'horizontal' && _.isNumber(baseLine)) {
-      curvePath += `L${points[len - 1].x} ${baseLine}L${points[0].x} ${baseLine}Z`;
+      return lineFunction(areaPoints);
     } else if (layout === 'vertical' && _.isNumber(baseLine)) {
-      curvePath += `L${baseLine} ${points[len - 1].y}L${baseLine} ${points[0].y}Z`;
-    } else if (_.isArray(baseLine) && baseLine.length) {
-      const revese = baseLine.reduce((result, entry) => [entry, ...result], []);
-      const revesePath = fliterMouseToSeg(l(revese) || '');
-
-      curvePath += `L${revese[0].x} ${revese[0].y}${revesePath}Z`;
+      lineFunction = shapeArea().y(getY).x1(getX).x0(baseLine);
+    } else if (_.isNumber(baseLine)) {
+      lineFunction = shapeArea().x(getX).y1(getY).y0(baseLine);
+    } else {
+      lineFunction = shapeLine().x(getX).y(getY);
     }
 
-    return curvePath;
+    lineFunction.defined(defined).curve(curveFactory);
+
+    return lineFunction(points);
   }
 
   render() {
