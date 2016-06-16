@@ -6,15 +6,15 @@ import pureRender from '../util/PureRender';
 import classNames from 'classnames';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
-const getPolygonPoints = (points) => {
-  return points.reduce((result, entry) => {
+const getPolygonPoints = (points) => (
+  points.reduce((result, entry) => {
     if (entry.x === +entry.x && entry.y === +entry.y) {
       result.push([entry.x, entry.y]);
     }
 
     return result;
-  }, []).join(' ');
-};
+  }, []).join(' ')
+);
 
 @pureRender
 class Polygon extends Component {

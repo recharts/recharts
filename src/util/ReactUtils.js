@@ -203,13 +203,13 @@ export const filterEventAttributes = (el) => {
     null;
 };
 
-const getEventHandler = (originalHandler, data, index) => {
-  return (e) => {
+const getEventHandler = (originalHandler, data, index) => (
+  (e) => {
     originalHandler(data, index, e);
 
     return null;
-  };
-};
+  }
+);
 
 export const filterEventsOfChild = (props, data, index) => {
   if (!_.isObject(props)) { return null; }

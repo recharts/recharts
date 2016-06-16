@@ -246,6 +246,7 @@ export const getCoordinatesOfGrid = (ticks, min, max) => {
  * Get the ticks of an axis
  * @param  {Object}  axis The configuration of an axis
  * @param {Boolean} isGrid Whether or not are the ticks in grid
+ * @param {Boolean} isAll Return the ticks of all the points or not
  * @return {Array}  Ticks
  */
 export const getTicksOfAxis = (axis, isGrid, isAll) => {

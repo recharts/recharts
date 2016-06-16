@@ -7,7 +7,7 @@ import pureRender from '../util/PureRender';
 import { getPercentValue, isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
-const render = ({width, height, container, children}) => {
+const render = ({ width, height, container, children }) => {
   warn(isPercent(width) || isPercent(height),
     `The width(%s) and height(%s) are both fixed number,
      maybe you don't need to use ResponsiveContainer.`,

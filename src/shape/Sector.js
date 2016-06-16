@@ -15,7 +15,7 @@ const getDeltaAngle = (startAngle, endAngle) => {
   return sign * deltaAngle;
 };
 
-const getSectorPath = ({cx, cy, innerRadius, outerRadius, startAngle, endAngle}) => {
+const getSectorPath = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle }) => {
   const angle = getDeltaAngle(startAngle, endAngle);
 
   // When the angle of sector equals to 360, star point and end point coincide
@@ -84,7 +84,7 @@ class Sector extends Component {
         {...getPresentationAttributes(this.props)}
         {...filterEventAttributes(this.props)}
         className={layerClass}
-        d={getSectorPath({cx, cy, innerRadius, outerRadius, startAngle, endAngle})}
+        d={getSectorPath({ cx, cy, innerRadius, outerRadius, startAngle, endAngle })}
       />
     );
   }

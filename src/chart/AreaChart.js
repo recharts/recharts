@@ -77,7 +77,7 @@ class AreaChart extends Component {
         x: _.isNumber(value[1]) ? xAxis.scale(value[1]) : null,
         y: yTicks[index].coordinate + bandSize / 2,
         value,
-      }
+      };
     });
 
     let baseLine;

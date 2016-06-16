@@ -70,25 +70,36 @@ class Curve extends Component {
 
     if (_.isArray(baseLine)) {
       const areaPoints = points.map((entry, index) => (
-        { ...entry, base: baseLine[index]}
+        { ...entry, base: baseLine[index] }
       ));
       if (layout === 'vertical') {
-        lineFunction = shapeArea().y(getY).x1(getX).x0(d => d.base.x);
+        lineFunction = shapeArea().y(getY)
+                                  .x1(getX)
+                                  .x0(d => d.base.x);
       } else {
-        lineFunction = shapeArea().x(getX).y1(getY).y0(d => d.base.y);
+        lineFunction = shapeArea().x(getX)
+                                  .y1(getY)
+                                  .y0(d => d.base.y);
       }
-      lineFunction.defined(defined).curve(curveFactory);
+      lineFunction.defined(defined)
+                  .curve(curveFactory);
 
       return lineFunction(areaPoints);
     } else if (layout === 'vertical' && _.isNumber(baseLine)) {
-      lineFunction = shapeArea().y(getY).x1(getX).x0(baseLine);
+      lineFunction = shapeArea().y(getY)
+                                .x1(getX)
+                                .x0(baseLine);
     } else if (_.isNumber(baseLine)) {
-      lineFunction = shapeArea().x(getX).y1(getY).y0(baseLine);
+      lineFunction = shapeArea().x(getX)
+                                .y1(getY)
+                                .y0(baseLine);
     } else {
-      lineFunction = shapeLine().x(getX).y(getY);
+      lineFunction = shapeLine().x(getX)
+                                .y(getY);
     }
 
-    lineFunction.defined(defined).curve(curveFactory);
+    lineFunction.defined(defined)
+                .curve(curveFactory);
 
     return lineFunction(points);
   }
