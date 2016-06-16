@@ -147,20 +147,35 @@ function SankeyDemo() {
   return (
     <div className="sankey-charts">
       <div>
+        <pre>1. Simple Sankey</pre>
         <Sankey width={960} height={500} data={data0}>
           <Tooltip />
         </Sankey>
       </div>
       <br />
       <div>
+        <pre>2. Customized Sankey. Click node or link to check its type and color.</pre>
+        <Sankey
+          width={960}
+          height={500}
+          data={data0}
+          node={{ fill: '#8a52b6',  onClick: (e) => {alert('node #8a52b6')} }}
+          link={{ stroke: '#77c878', onClick: (e) => {alert('link #77c878')} }}
+        >
+          {/* <Tooltip /> */}
+        </Sankey>
+      </div>
+      <br />
+      <div>
+        <pre>2. Sankey with gradient color, name and value.</pre>
         <Sankey
           width={960} height={500}
           data={data1}
           nodeWidth={10} nodePadding={60}
           linkCurvature={0.61}
           iterations={64}
-          linkContent={<DemoSankeyLink />}
-          nodeContent={<DemoSankeyNode containerWidth={960} />}
+          link={<DemoSankeyLink />}
+          node={<DemoSankeyNode containerWidth={960} />}
         >
           <defs>
             <linearGradient id={'linkGradient'}>
