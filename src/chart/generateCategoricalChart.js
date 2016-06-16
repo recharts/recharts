@@ -178,7 +178,6 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
         return result;
       }, {});
-
       return axisMap;
     }
 
@@ -356,7 +355,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
       const pos = layout === 'horizontal' ? e.chartX : e.chartY;
       const axis = getAnyElementOfObject(axisMap);
-      const ticks = getTicksOfAxis(axis, true);
+      const ticks = getTicksOfAxis(axis, false, true);
       const activeIndex = calculateActiveTickIndex(pos, ticks);
 
       if (activeIndex >= 0) {

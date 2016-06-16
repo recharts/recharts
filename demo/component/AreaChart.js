@@ -8,7 +8,7 @@ const data = [
   { name: 'Page B', uv: 3000, pv: 1398, amt: 2210 },
   { name: 'Page C', uv: 2000, pv: 9800, amt: 2290 },
   { name: 'Page D', uv: 2780, pv: 3908, amt: 2000 },
-  { name: 'Page E',  pv: 4800, amt: 2181 },
+  { name: 'Page E', uv: 2500, pv: 4800, amt: 2181 },
   { name: 'Page F', uv: 1220, pv: 3800, amt: 2500 },
   { name: 'Page G', uv: 2300, pv: 4300, amt: 2100 },
 ];
@@ -18,33 +18,6 @@ const data02 = [
   { name: 'Page C', uv: 2000, pv: 9800, amt: 2290 },
   { name: 'Page D', uv: 2780, pv: 3908, amt: 2000 },
   { name: 'Page E', uv: 1890, pv: 4800, amt: 2181 },
-];
-
-const data03 = [
-  {"today": 388085.8, "offline": 532724.8, "date": 0},
-  {"today":553276.3,"offline":765888,"date":1},
-  {"today":635559.1,"offline":887238.2,"date":2},
-  {"today":686320,"offline":954904,"date":3},
-  {"today":727945.5,"offline":989444.1,"date":4},
-  {"today":782391.7,"offline":1048854.4,"date":5},
-  {"today":920114.7,"offline":1194713.6,"date":6},
-  {"today":1153627.2,"offline":1561516.4,"date":7},
-  {"today":1625349.5,"offline":2234697.5,"date":8},
-  {"today":3608223.6,"offline":3365376,"date":9},
-  {"today":5219551.6,"offline":5820587.5,"date":10},
-  {"today":6238297.6,"offline":7243728.9,"date":11},
-  {"today":7233577.9,"offline":10023517.3,"date":12},
-  {"today":8179879.1,"offline":11383026,"date":13},
-  {"today":9096577.6,"offline":12522850,"date":14},
-  {"today":9915164.4,"offline":16611556.3,"date":15},
-  {"today":null,"offline":17881602.4,"date":16},
-  {"today":null,"offline":18952052.9,"date":17},
-  {"today":null,"offline":20062353.7,"date":18},
-  {"today":null,"offline":21172548.2,"date":19},
-  {"today":null,"offline":22425981.5,"date":20},
-  {"today":null,"offline":23724919.7,"date":21},
-  {"today":null,"offline":24911034.6,"date":22},
-  {"today":null,"offline":25763200.4,"date":23}
 ];
 
 const initilaState = { data, data02 };

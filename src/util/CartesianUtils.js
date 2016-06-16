@@ -146,13 +146,17 @@ export const calculateDomainOfTicks = (ticks, type) => {
  * @return {Array} Domain of data
  */
 export const getDomainOfDataByKey = (data, key, type) => {
-  const defaultValue = type === 'number' ? 0 : '';
-  const domain = data.map(entry => entry[key] || defaultValue);
+  if (type === 'number') {
+    const domain = data.map(entry => (_.isNumber(entry[key]) ? entry[key] : 0));
 
-  return type === 'number' ? [
-    Math.min.apply(null, domain),
-    Math.max.apply(null, domain),
-  ] : domain;
+    return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
+  }
+
+  return data.map(entry => {
+    const value = entry[key];
+
+    return (_.isNumber(value) || _.isString(value)) ? value : '';
+  });
 };
 
 const getDomainOfSingle = (data) => (
@@ -244,7 +248,7 @@ export const getCoordinatesOfGrid = (ticks, min, max) => {
  * @param {Boolean} isGrid Whether or not are the ticks in grid
  * @return {Array}  Ticks
  */
-export const getTicksOfAxis = (axis, isGrid) => {
+export const getTicksOfAxis = (axis, isGrid, isAll) => {
   const scale = axis.scale;
   const { duplicateDomain, type } = axis;
   const offset = isGrid && type === 'category' ? scale.bandwidth() / 2 : 0;
@@ -261,7 +265,7 @@ export const getTicksOfAxis = (axis, isGrid) => {
     });
   }
 
-  if (scale.ticks) {
+  if (scale.ticks && !isAll) {
     return scale.ticks(axis.tickCount).map(entry => (
       { coordinate: scale(entry) + offset, value: entry }
     ));
@@ -290,6 +294,8 @@ export const calculateActiveTickIndex = (coordinate, ticks) => {
         break;
       }
     }
+  } else {
+    index = 0;
   }
 
   return index;
