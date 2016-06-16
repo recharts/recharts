@@ -1,3 +1,18 @@
+## 0.11.0 (June 17, 2016)
+
+### feat
+
+- Add Sankey
+
+### fix
+
+- Fix the bug of Area when the data break off in some points
+- Fix the bug of ticks when 0 in ticks
+
+### refactor
+
+- Refactor the payload of tooltip, and the props of activeDot in AreaChart
+
 ## 0.10.10 (June 13, 2016)
 
 ### fix
