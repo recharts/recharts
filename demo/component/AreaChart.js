@@ -1,7 +1,7 @@
 import React from 'react';
 import { changeNumberOfData } from './utils';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, Brush,
-  ReferenceLine, ReferenceDot } from 'recharts';
+  ReferenceLine, ReferenceDot, ResponsiveContainer } from 'recharts';
 
 const data = [
   { name: 'Page A', uv: 4000, pv: 2400, amt: 2400 },
@@ -62,6 +62,16 @@ const renderLabel = (props) => {
 const RenderRect = (props) => {
   return <rect x={20} y={20} width={100} height={20} stroke="#000"/>;
 };
+
+function CustomizedAxisTick(props) {
+  const { x, y, stroke, payload } = props;
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text x={0} y={0} dy={-12} textAnchor="end" fill="#999" fontSize="12">{payload.value}</text>
+    </g>
+  );
+}
 
 export default React.createClass({
   displayName: 'AreaChartDemo',

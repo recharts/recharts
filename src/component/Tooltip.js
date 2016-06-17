@@ -110,12 +110,13 @@ class Tooltip extends Component {
       !payload.filter(entry => (_.isNumber(entry.value) || _.isString(entry.value))).length
     ) { return null; }
 
-    const { content, viewBox, coordinate, active, offset } = this.props;
+    const { content, viewBox, coordinate, active, offset, wrapperStyle } = this.props;
     const outerStyle = {
       pointerEvents: 'none',
       display: active ? 'block' : 'none',
       position: 'absolute',
       top: 0,
+      ...wrapperStyle,
     };
     const contentItem = renderContent(content, this.props);
     const box = getTooltipBBox(outerStyle, contentItem);
