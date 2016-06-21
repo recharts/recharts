@@ -81,6 +81,10 @@ class Bar extends Component {
   renderRectangle(option, props) {
     let rectangle;
 
+    if (typeof props.fill === 'function') {
+      props.fill = props.fill(props.value)
+    }
+
     if (React.isValidElement(option)) {
       rectangle = React.cloneElement(option, props);
     } else if (_.isFunction(option)) {

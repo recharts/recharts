@@ -17,7 +17,7 @@ export const PRESENTATION_ATTRIBUTES = {
   display: PropTypes.string,
   dominantBaseline: PropTypes.string,
   enableBackground: PropTypes.string,
-  fill: PropTypes.string,
+  fill: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
   fillOpacity: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   fillRule: PropTypes.oneOf(['nonzero', 'evenodd', 'inherit']),
   filter: PropTypes.string,
