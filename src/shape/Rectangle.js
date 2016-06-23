@@ -107,6 +107,7 @@ class Rectangle extends Component {
     totalLength: -1,
   };
 
+  /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
     const path = findDOMNode(this);
 
@@ -122,13 +123,8 @@ class Rectangle extends Component {
   render() {
     const { x, y, width, height, radius, className } = this.props;
     const { totalLength } = this.state;
-    const {
-      animationEasing,
-      animationDuration,
-      animationBegin,
-      isAnimationActive,
-      isUpdateAnimationActive,
-    } = this.props;
+    const { animationEasing, animationDuration, animationBegin,
+      isAnimationActive, isUpdateAnimationActive } = this.props;
 
     if (x !== +x || y !== +y || width !== +width || height !== +height) { return null; }
 
