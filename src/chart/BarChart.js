@@ -266,7 +266,7 @@ class BarChart extends Component {
 
     return items.map((child, i) => {
       const { xAxisId, yAxisId } = child.props;
-      const axisId = layout === 'horizontal' ? xAxisId : yAxisId;
+      const axisId = layout === 'horizontal' ? yAxisId : xAxisId;
       const bandSize = getBandSizeOfScale(
                         layout === 'horizontal' ?
                         xAxisMap[xAxisId].scale :
