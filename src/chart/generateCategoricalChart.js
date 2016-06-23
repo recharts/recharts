@@ -349,6 +349,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         && e.chartY >= offset.top
         && e.chartY <= offset.top + offset.height;
 
+      const displayName = this.constructor.displayName;
+
+      const snapToLine = displayName.indexOf('LineChart') >= 0 || displayName.indexOf('AreaChart') >= 0
+
       if (!isIn) { return null; }
 
       const { layout } = this.props;
@@ -356,7 +360,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const pos = layout === 'horizontal' ? e.chartX : e.chartY;
       const axis = getAnyElementOfObject(axisMap);
       const ticks = getTicksOfAxis(axis, false, true);
-      const activeIndex = calculateActiveTickIndex(pos, ticks);
+      const activeIndex = calculateActiveTickIndex(pos, ticks, snapToLine);
 
       if (activeIndex >= 0) {
         return {
