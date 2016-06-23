@@ -282,24 +282,17 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
 };
 
 export const calculateActiveTickIndex = (coordinate, ticks) => {
-  let index = -1;
-  const len = ticks.length;
 
-  if (len > 1) {
-    for (let i = 0; i < len; i++) {
-      if ((i === 0 && coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2)
-        || (i > 0 && i < len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2
-          && coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2)
-        || (i === len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2)) {
-        index = i;
-        break;
-      }
+  let boundaries = ticks.map(tick => tick.coordinate);
+
+  let targetTickCoordinate = boundaries.reduce((lastResult, current) => {
+    if(coordinate >= current) {
+      return current;
     }
-  } else {
-    index = 0;
-  }
+    return lastResult;
+  });
 
-  return index;
+  return boundaries.indexOf(targetTickCoordinate)
 };
 
 /**
