@@ -182,13 +182,13 @@ class ScatterChart extends Component {
    * @param {Object} opts  The configuration of axis
    * @return {Object}      null
    */
-  setTicksOfScale(scale, opts) {
+  getTicksOfScale(scale, opts) {
     // Give priority to use the options of ticks
     if (opts.ticks && opts.ticks) {
-      opts.domain = calculateDomainOfTicks(opts.ticks, opts.type);
-      scale.domain(opts.domain)
+      const domain = calculateDomainOfTicks(opts.ticks, opts.type);
+      scale.domain(domain)
            .ticks(opts.ticks.length);
-      return;
+      return { domain };
     }
 
     if (opts.tickCount && opts.originalDomain && (
@@ -197,9 +197,12 @@ class ScatterChart extends Component {
       const domain = scale.domain();
       const tickValues = getNiceTickValues(domain, opts.tickCount);
 
-      opts.ticks = tickValues;
       scale.domain(calculateDomainOfTicks(tickValues, opts.type));
+
+      return { ticks: tickValues };
     }
+
+    return null;
   }
 
   /**
@@ -210,13 +213,19 @@ class ScatterChart extends Component {
    * @return {Object} Configuration
    */
   getFormatAxis(axis, offset, axisType) {
-    const { orientation, domain, tickFormat } = axis;
-    const range = axisType === 'xAxis' ?
-                  [offset.left, offset.left + offset.width] :
-                  [offset.top + offset.height, offset.top];
+    const { orientation, domain, tickFormat, padding = {} } = axis;
+    const range = axisType === 'xAxis' ? [
+      offset.left + (padding.left || 0),
+      offset.left + offset.width - (padding.right || 0),
+    ] : [
+      offset.top + offset.height - (padding.bottom || 0),
+      offset.top + (padding.top || 0),
+    ];
+
     const scale = scaleLinear().domain(domain).range(range);
 
-    this.setTicksOfScale(scale, axis);
+    const ticks = this.getTicksOfScale(scale, axis);
+
     if (tickFormat) {
       scale.tickFormat(tickFormat);
     }
@@ -234,6 +243,7 @@ class ScatterChart extends Component {
 
     return {
       ...axis,
+      ...ticks,
       scale,
       width: axisType === 'xAxis' ? offset.width : axis.width,
       height: axisType === 'yAxis' ? offset.height : axis.height,

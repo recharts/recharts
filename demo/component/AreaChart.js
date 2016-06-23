@@ -103,7 +103,7 @@ export default React.createClass({
           <AreaChart width={800} height={400} data={this.state.data}
             margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
           >
-            <XAxis dataKey="name" label="province" />
+            <XAxis dataKey="name" label="province"/>
             <YAxis />
             <Tooltip />
             <Area stackId="0"

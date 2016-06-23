@@ -62,7 +62,7 @@ class BarChart extends Component {
    */
   getComposedData(item, barPosition, xAxis, yAxis, offset, stackedData) {
     const { layout, dataStartIndex, dataEndIndex } = this.props;
-    const { dataKey, children } = item.props;
+    const { dataKey, children, minPointSize } = item.props;
     const pos = barPosition[dataKey];
     const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
     const xTicks = getTicksOfAxis(xAxis);
@@ -85,6 +85,12 @@ class BarChart extends Component {
         height = xAxis.orientation === 'top' ?
                 yAxis.scale(value[1]) - yAxis.scale(value[0]) :
                 yAxis.scale(value[0]) - yAxis.scale(value[1]);
+        if (minPointSize > 0 && Math.abs(height) < minPointSize) {
+          const delta = Math.sign(height) * (minPointSize - Math.abs(height));
+
+          y -= delta;
+          height += delta;
+        }
       } else {
         x = xAxis.scale(yAxis.orientation === 'left' ? value[0] : value[1]);
         y = yTicks[index].coordinate + pos.offset;
@@ -92,6 +98,13 @@ class BarChart extends Component {
                 xAxis.scale(value[1]) - xAxis.scale(value[0]) :
                 xAxis.scale(value[0]) - xAxis.scale(value[1]);
         height = pos.size;
+
+        if (minPointSize > 0 && Math.abs(width) < minPointSize) {
+          const delta = Math.sign(width) * (minPointSize - Math.abs(width));
+
+          x -= delta;
+          width += delta;
+        }
       }
 
       return {

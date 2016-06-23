@@ -82,8 +82,8 @@ export default React.createClass({
           <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 40, bottom: 20, left: 20 }}>
             <CartesianGrid stroke='#f5f5f5'/>
             <Legend/>
-            <XAxis />
-            <YAxis />
+            <XAxis/>
+            <YAxis/>
             <Line type='monotone' dataKey='uv' stroke='#ff7300' dot={renderSpecialDot} label={renderLabel}/>
             <Brush dataKey="name" height={30} />
           </LineChart>

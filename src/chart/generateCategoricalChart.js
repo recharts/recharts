@@ -251,18 +251,21 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      * @param {Object} opts  The configuration of axis
      * @return {Object}      null
      */
-    setTicksOfScale(scale, opts) {
-      const { type } = opts;
+    getTicksOfScale(scale, opts) {
+      const { type, tickCount, originalDomain } = opts;
 
-      if (opts.tickCount && type === 'number' && opts.originalDomain && (
-        opts.originalDomain[0] === 'auto' || opts.originalDomain[1] === 'auto')) {
+      if (tickCount && type === 'number' && originalDomain && (
+        originalDomain[0] === 'auto' || originalDomain[1] === 'auto')) {
         // Calculate the ticks by the number of grid when the axis is a number axis
         const domain = scale.domain();
-        const tickValues = getNiceTickValues(domain, opts.tickCount);
+        const tickValues = getNiceTickValues(domain, tickCount);
 
-        opts.niceTicks = tickValues;
         scale.domain(calculateDomainOfTicks(tickValues, type));
+
+        return { niceTicks: tickValues };
       }
+
+      return null;
     }
 
     /**
@@ -285,15 +288,22 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       return ids.reduce((result, id) => {
         const axis = axisMap[id];
-        const { orientation, type, domain } = axis;
+        const { orientation, type, domain, padding = {} } = axis;
         let range;
 
         if (axisType === 'xAxis') {
-          range = [offset.left, offset.left + offset.width];
+          range = [
+            offset.left + (padding.left || 0),
+            offset.left + offset.width - (padding.right || 0),
+          ];
         } else {
-          range = layout === 'horizontal' ?
-                  [offset.top + offset.height, offset.top] :
-                  [offset.top, offset.top + offset.height];
+          range = layout === 'horizontal' ? [
+            offset.top + offset.height - (padding.bottom || 0),
+            offset.top + (padding.top || 0),
+          ] : [
+            offset.top + (padding.top || 0),
+            offset.top + offset.height - (padding.bottom || 0),
+          ];
         }
         let scale;
 
@@ -306,7 +316,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           scale = scaleBand().domain(domain).range(range);
         }
 
-        this.setTicksOfScale(scale, axis);
+        const ticks = this.getTicksOfScale(scale, axis);
 
         let x;
         let y;
@@ -319,20 +329,21 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           y = offset.top;
         }
 
-        result[id] = {
+        const finalAxis = {
           ...axis,
+          ...ticks,
           x, y, scale,
           width: axisType === 'xAxis' ? offset.width : axis.width,
           height: axisType === 'yAxis' ? offset.height : axis.height,
         };
 
         if (!axis.hide && axisType === 'xAxis') {
-          steps[orientation] += (orientation === 'top' ? -1 : 1) * result[id].height;
+          steps[orientation] += (orientation === 'top' ? -1 : 1) * finalAxis.height;
         } else if (!axis.hide) {
-          steps[orientation] += (orientation === 'left' ? -1 : 1) * result[id].width;
+          steps[orientation] += (orientation === 'left' ? -1 : 1) * finalAxis.width;
         }
 
-        return result;
+        return { ...result, [id]: finalAxis };
       }, {});
     }
     /**

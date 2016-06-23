@@ -7,10 +7,10 @@ import { changeNumberOfData } from './utils';
 const colors = scaleCategory20().range();
 
 const data = [
-  { name: 'food', uv: 2400, pv: 2400, amt: 4500 },
-  { name: 'sport', uv: 3300, pv: 4567, amt: 6500 },
-  { name: 'storage', uv: 3300, pv: 1398, amt: 5000 },
-  { name: 'digital', uv: 3200, pv: 2800, amt: 4000 },
+  { name: 'food', uv: 2400, pv: 2013, amt: 4500 },
+  { name: 'sport', uv: 3300, pv: 2000, amt: 6500 },
+  { name: 'storage', uv: 3200, pv: 1398, amt: 5000 },
+  { name: 'digital', uv: 2800, pv: 2800, amt: 4000 },
 ];
 
 const data01 = [
@@ -234,7 +234,7 @@ export default React.createClass({
             <Tooltip />
             <CartesianGrid vertical={false}/>
             <ReferenceLine y={3200} stroke="red" />
-            <Bar dataKey="uv" label={renderLabel} >
+            <Bar dataKey="uv" label={renderLabel}>
               {
                 data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
@@ -306,7 +306,7 @@ export default React.createClass({
             <YAxis />
             <Tooltip />
             <CartesianGrid vertical={false}/>
-            <Bar stackId="0" dataKey="uv" fill="#ff7300" />
+            <Bar stackId="0" dataKey="uv" fill="#ff7300"/>
             <Bar stackId="0" dataKey="pv" fill="#387908" label={renderLabel}/>
             <Bar dataKey="amt" fill="#387908" label={renderLabel}/>
           </BarChart>

@@ -13,12 +13,12 @@ import Tooltip from '../component/Tooltip';
 import pureRender from '../util/PureRender';
 import _ from 'lodash';
 
-const computeNode = (depth, node, index, valueKey) => {
+const computeNode = ({ depth, node, index, valueKey }) => {
   const { children } = node;
   const childDepth = depth + 1;
   const computedChildren = children && children.length ?
       children.map((child, i) => (
-        computeNode(childDepth, child, i, valueKey)
+        computeNode({ depth: childDepth, node: child, index: i, valueKey })
       )) : null;
   let value;
 
@@ -35,16 +35,16 @@ const computeNode = (depth, node, index, valueKey) => {
   };
 };
 
-const pad = (node) => (
+const filterRect = (node) => (
   { x: node.x, y: node.y, width: node.width, height: node.height }
 );
 
 // Compute the area for each child based on value & scale.
-const scale = (children, k) => {
-  const formatK = k < 0 ? 0 : k;
+const getAreaOfChildren = (children, areaValueRatio) => {
+  const ratio = areaValueRatio < 0 ? 0 : areaValueRatio;
 
   return children.map(child => {
-    const area = child.value * formatK;
+    const area = child.value * ratio;
 
     return {
       ...child,
@@ -54,8 +54,8 @@ const scale = (children, k) => {
 };
 
 // Computes the score for the specified row, as the worst aspect ratio.
-const worst = (row, size, ratio) => {
-  const newSize = size * size;
+const getWorstScore = (row, parentSize, aspectRatio) => {
+  const parentArea = parentSize * parentSize;
   const rowArea = row.area * row.area;
   const { min, max } = row.reduce((result, child) => (
     {
@@ -64,60 +64,93 @@ const worst = (row, size, ratio) => {
     }
   ), { min: Infinity, max: 0 });
 
-  return rowArea
-      ? Math.max((newSize * max * ratio) / rowArea, rowArea / (newSize * min * ratio))
-      : Infinity;
+  return rowArea ? Math.max(
+      (parentArea * max * aspectRatio) / rowArea,
+      rowArea / (parentArea * min * aspectRatio)
+    ) : Infinity;
 };
 
-// Positions the specified row of nodes. Modifies `rect`.
-const position = (row, size, rect, flush) => {
-  let i = -1;
-  const n = row.length;
-  let x = rect.x;
-  let y = rect.y;
-  let v = size ? Math.round(row.area / size) : 0;
-  let o;
+const horizontalPosition = (row, parentSize, parentRect, isFlush) => {
+  let rowHeight = parentSize ? Math.round(row.area / parentSize) : 0;
 
-  if (size === rect.width) { // horizontal subdivision
-    if (flush || v > rect.height) v = rect.height; // over+underflow
-    while (++i < n) {
-      o = row[i];
-      o.x = x;
-      o.y = y;
-      o.height = v;
-      x += o.width = Math.min(rect.x + rect.width - x, v ? Math.round(o.area / v) : 0);
-    }
-    o.z = true;
-    o.width += rect.x + rect.width - x; // rounding error
-    rect.y += v;
-    rect.height -= v;
-  } else { // vertical subdivision
-    if (flush || v > rect.width) v = rect.width; // over+underflow
-    while (++i < n) {
-      o = row[i];
-      o.x = x;
-      o.y = y;
-      o.width = v;
-      y += o.height = Math.min(rect.y + rect.height - y, v ? Math.round(o.area / v) : 0);
-    }
-    o.z = false;
-    o.height += rect.y + rect.height - y; // rounding error
-    rect.x += v;
-    rect.width -= v;
+  if (isFlush || rowHeight > parentRect.height) {
+    rowHeight = parentRect.height;
   }
+
+  let curX = parentRect.x;
+  let child;
+  for (let i = 0, len = row.length; i < len; i++) {
+    child = row[i];
+    child.x = curX;
+    child.y = parentRect.y;
+    child.height = rowHeight;
+    child.width = Math.min(
+      rowHeight ? Math.round(child.area / rowHeight) : 0,
+      parentRect.x + parentRect.width - curX
+    );
+    curX += child.width;
+  }
+  // what's z
+  child.z = true;
+  // add the remain x to the last one of row
+  child.width += parentRect.x + parentRect.width - curX;
+
+  return {
+    ...parentRect,
+    y: parentRect.y + rowHeight,
+    height: parentRect.height - rowHeight,
+  };
+};
+
+const verticalPosition = (row, parentSize, parentRect, isFlush) => {
+  let rowWidth = parentSize ? Math.round(row.area / parentSize) : 0;
+
+  if (isFlush || rowWidth > parentRect.width) {
+    rowWidth = parentRect.width;
+  }
+
+  let curY = parentRect.y;
+  let child;
+  for (let i = 0, len = row.length; i < len; i++) {
+    child = row[i];
+    child.x = parentRect.x;
+    child.y = curY;
+    child.width = rowWidth;
+    child.height = Math.min(
+      rowWidth ? Math.round(child.area / rowWidth) : 0,
+      parentRect.y + parentRect.height - curY
+    );
+    curY += child.height;
+  }
+  child.z = false;
+  child.height += parentRect.y + parentRect.height - curY;
+
+  return {
+    ...parentRect,
+    x: parentRect.x + rowWidth,
+    width: parentRect.width - rowWidth,
+  };
+};
+
+const position = (row, parentSize, parentRect, isFlush) => {
+  if (parentSize === parentRect.width) {
+    return horizontalPosition(row, parentSize, parentRect, isFlush);
+  }
+
+  return verticalPosition(row, parentSize, parentRect, isFlush);
 };
 
 // Recursively arranges the specified node's children into squarified rows.
-const squarify = (node, ratio) => {
+const squarify = (node, aspectRatio) => {
   const children = node.children;
 
   if (children && children.length) {
-    const rect = pad(node);
+    let rect = filterRect(node);
     const row = [];
     let best = Infinity; // the best row score so far
     let score; // the current row score
     let size = Math.min(rect.width, rect.height); // initial orientation
-    const scaleChildren = scale(children, rect.width * rect.height / node.value);
+    const scaleChildren = getAreaOfChildren(children, rect.width * rect.height / node.value);
     const tempChildren = scaleChildren.slice();
 
     row.area = 0;
@@ -125,27 +158,29 @@ const squarify = (node, ratio) => {
     let child;
 
     while (tempChildren.length > 0) {
+      // row first
       row.push(child = tempChildren[0]);
       row.area += child.area;
 
-      score = worst(row, size, ratio);
+      score = getWorstScore(row, size, aspectRatio);
       if (score <= best) { // continue with this orientation
         tempChildren.shift();
         best = score;
       } else { // abort, and try a different orientation
         row.area -= row.pop().area;
-        position(row, size, rect, false);
+        rect = position(row, size, rect, false);
         size = Math.min(rect.width, rect.height);
         row.length = row.area = 0;
         best = Infinity;
       }
     }
+
     if (row.length) {
-      position(row, size, rect, true);
+      rect = position(row, size, rect, true);
       row.length = row.area = 0;
     }
 
-    return { ...node, children: scaleChildren.map(c => squarify(c, ratio)) };
+    return { ...node, children: scaleChildren.map(c => squarify(c, aspectRatio)) };
   }
 
   return node;
@@ -160,7 +195,7 @@ class Treemap extends Component {
     height: PropTypes.number,
     data: PropTypes.array,
     style: PropTypes.object,
-    ratio: PropTypes.number,
+    aspectRatio: PropTypes.number,
     content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
     fill: PropTypes.string,
     stroke: PropTypes.string,
@@ -186,7 +221,7 @@ class Treemap extends Component {
     fill: '#fff',
     stroke: '#000',
     dataKey: 'value',
-    ratio: 0.5 * (1 + Math.sqrt(5)),
+    aspectRatio: 0.5 * (1 + Math.sqrt(5)),
     isAnimationActive: true,
     isUpdateAnimationActive: true,
     animationBegin: 0,
@@ -325,17 +360,16 @@ class Treemap extends Component {
   }
 
   renderAllNodes() {
-    const { width, height, data, dataKey, ratio } = this.props;
+    const { width, height, data, dataKey, aspectRatio } = this.props;
 
-    const root = computeNode(0, {
-      children: data,
-      x: 0,
-      y: 0,
-      width,
-      height,
-    }, 0, dataKey);
+    const root = computeNode({
+      depth: 0,
+      node: { children: data, x: 0, y: 0, width, height },
+      index: 0,
+      valueKey: dataKey,
+    });
 
-    const formatRoot = squarify(root, ratio);
+    const formatRoot = squarify(root, aspectRatio);
 
     return this.renderNode(formatRoot, formatRoot, 0);
   }

@@ -28,6 +28,7 @@ class Bar extends Component {
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     formatter: PropTypes.func,
+    minPointSize: PropTypes.number,
 
     shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
     label: PropTypes.oneOfType([
@@ -57,6 +58,7 @@ class Bar extends Component {
     xAxisId: 0,
     yAxisId: 0,
     legendType: 'rect',
+    minPointSize: 0,
     // data of bar
     data: [],
     layout: 'vertical',
