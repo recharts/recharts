@@ -281,25 +281,29 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
   ));
 };
 
-export const calculateActiveTickIndex = (coordinate, ticks) => {
-  let index = -1;
-  const len = ticks.length;
+export const calculateActiveTickIndex = (coordinate, ticks, snapToClosestLine) => {
 
-  if (len > 1) {
-    for (let i = 0; i < len; i++) {
-      if ((i === 0 && coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2)
-        || (i > 0 && i < len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2
-          && coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2)
-        || (i === len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2)) {
-        index = i;
-        break;
+  let boundaries = ticks.map(tick => tick.coordinate);
+
+  let targetTickCoordinate = boundaries.reduce((lastResult, current, index) => {
+    if (snapToClosestLine) {
+      const distanceToLast = Math.abs(coordinate - lastResult)
+      const distanceToNext = boundaries[index + 1] !== undefined ? Math.abs(coordinate - boundaries[index + 1]) : null
+
+      if (distanceToNext !== null && distanceToNext < distanceToLast) {
+        return boundaries[index + 1]
       }
+      else return lastResult
     }
-  } else {
-    index = 0;
-  }
+    else {
+      if(coordinate >= current) {
+        return current;
+      }
+      return lastResult;
+    }
+  }, boundaries[0]);
 
-  return index;
+  return boundaries.indexOf(targetTickCoordinate)
 };
 
 /**
