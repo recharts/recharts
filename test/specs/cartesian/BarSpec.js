@@ -52,4 +52,17 @@ describe('<Bar />', () => {
 
     expect(wrapper.find('.recharts-bar-rectangle').length).to.equal(0);
   });
+
+  it('Allows a function to determine fill value', () => {
+    const wrapper = render(
+      <Surface width={500} height={500}>
+        <Bar
+          data={data}
+          fill={(value) => value === 100 ? '#d00' : '#333'}
+        />
+      </Surface>
+    );
+
+    expect(wrapper.find('.recharts-bar-rectangle').props().fill).to.equal('#d00');
+  });
 });
