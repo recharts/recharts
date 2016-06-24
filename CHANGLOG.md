@@ -1,3 +1,9 @@
+## 0.12.1 (June 24, 2016)
+
+### fix
+
+- Fix the bug with a hack method that golbal css will affect the width and height of Legend, Tooltip  
+
 ## 0.12.0 (June 23, 2016)
 
 ### feat

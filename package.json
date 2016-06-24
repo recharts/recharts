@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "description": "React charts",
   "main": "lib/index",
   "jsnext:main": "es6/index",
