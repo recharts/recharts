@@ -18,6 +18,7 @@ class XAxis extends Component {
     // The unique id of x-axis
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     domain: PropTypes.arrayOf(PropTypes.oneOfType([
+      PropTypes.string,
       PropTypes.number,
       PropTypes.oneOf(['auto', 'dataMin', 'dataMax']),
     ])),
@@ -37,6 +38,10 @@ class XAxis extends Component {
     tickCount: PropTypes.number,
     // The formatter function of tick
     tickFormatter: PropTypes.func,
+    padding: PropTypes.shape({
+      left: PropTypes.number,
+      right: PropTypes.number,
+    }),
   };
 
   static defaultProps = {
@@ -48,6 +53,7 @@ class XAxis extends Component {
     tickCount: 5,
     type: 'category',
     domain: [0, 'auto'],
+    padding: { left: 0, right: 0 },
   };
 
   render() {

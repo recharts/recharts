@@ -89,7 +89,7 @@ class Line extends Component {
       totalLength: 0,
     };
   }
-
+  /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
     const { isAnimationActive } = this.props;
 
@@ -101,7 +101,7 @@ class Line extends Component {
 
     this.setState({ totalLength });
   }
-
+  /* eslint-disable  react/no-did-update-set-state */
   componentDidUpdate(prevProps, prevState) {
     const { points } = this.props;
 

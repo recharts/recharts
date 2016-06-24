@@ -252,7 +252,7 @@ export const getCoordinatesOfGrid = (ticks, min, max) => {
 export const getTicksOfAxis = (axis, isGrid, isAll) => {
   const scale = axis.scale;
   const { duplicateDomain, type } = axis;
-  const offset = isGrid && type === 'category' ? scale.bandwidth() / 2 : 0;
+  const offset = (isGrid || isAll) && type === 'category' ? scale.bandwidth() / 2 : 0;
 
   // The ticks setted by user should only affect the ticks adjacent to axis line
   if (isGrid && (axis.ticks || axis.niceTicks)) {

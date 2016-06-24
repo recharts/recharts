@@ -1,3 +1,27 @@
+## 0.12.1 (June 24, 2016)
+
+### fix
+
+- Fix the bug with a hack method that golbal css will affect the width and height of Legend, Tooltip  
+
+## 0.12.0 (June 23, 2016)
+
+### feat
+
+- Add padding in XAxis and YAxis
+- Support minPointSize in Bar
+- Support "dataMin - 110" and "dataMax + 100" in the domain of numeric axis
+
+### refactor
+
+- Refactor Treemap, change ratio to aspectRatio
+
+### fix
+
+- Fix the bug of axisId in BarChart
+- Fix the bug of tooltip's position in BarChart
+- Fix PropTypes of `type` in `Area`
+
 ## 0.11.0 (June 17, 2016)
 
 ### feat

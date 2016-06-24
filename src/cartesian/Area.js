@@ -20,7 +20,10 @@ class Area extends Component {
     ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
+    type: PropTypes.oneOfType([PropTypes.oneOf([
+      'basis', 'basisClosed', 'basisOpen', 'linear', 'linearClosed', 'natural',
+      'monotoneX', 'monotoneY', 'monotone', 'step', 'stepBefore', 'stepAfter',
+    ]), PropTypes.func]),
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

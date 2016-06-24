@@ -51,7 +51,7 @@ function shallowCompare(instance, nextProps, nextState) {
 function shouldComponentUpdate(nextProps, nextState) {
   return shallowCompare(this, nextProps, nextState);
 }
-
+/* eslint-disable no-param-reassign */
 function pureRenderDecorator(component) {
   component.prototype.shouldComponentUpdate = shouldComponentUpdate;
 }

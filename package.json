@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "0.11.0",
+  "version": "0.12.1",
   "description": "React charts",
   "main": "lib/index",
   "jsnext:main": "es6/index",
@@ -29,6 +29,9 @@
     "lint": "eslint src",
     "bundle-analyse": "NODE_ENV=production webpack src/index.js umd/Recharts.min.js --json | webpack-bundle-size-analyzer"
   },
+  "pre-commit": [
+    "lint"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/recharts/recharts.git"
