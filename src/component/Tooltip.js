@@ -71,7 +71,14 @@ const defaultProps = {
 const getTooltipBBox = (wrapperStyle, contentItem) => {
   if (!isSsr()) {
     const contentHtml = ReactDOMServer.renderToStaticMarkup(contentItem);
-    const style = { ...wrapperStyle, top: -20000, left: 0, display: 'block' };
+    const style = {
+      // solve the problem temporarily that the width and height will be affect by the global css
+      fontSize: 12,
+      ...wrapperStyle,
+      top: -20000,
+      left: 0,
+      display: 'block',
+    };
 
     const wrapper = document.createElement('div');
 
