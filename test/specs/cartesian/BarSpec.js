@@ -58,7 +58,7 @@ describe('<Bar />', () => {
       <Surface width={500} height={500}>
         <Bar
           data={data}
-          fill={(value) => value === 100 ? '#d00' : '#333'}
+          fillFormatter={(value) => value === 100 ? '#d00' : '#333'}
         />
       </Surface>
     );
