@@ -6,7 +6,7 @@ import { mount, render } from 'enzyme';
 describe('<Bar />', () => {
   const data = [
     { x: 10, y: 50, width: 20, height: 50, value: 100, label: 'test' },
-    { x: 50, y: 50, width: 20, height: 50, value: 100, label: 'test' },
+    { x: 50, y: 50, width: 20, height: 50, value: 10, label: 'test' },
     { x: 90, y: 50, width: 20, height: 50, value: 100, label: 'test' },
     { x: 130, y: 50, width: 20, height: 50, value: 100, label: 'test' },
     { x: 170, y: 50, width: 20, height: 50, value: 100, label: 'test' },
@@ -63,6 +63,7 @@ describe('<Bar />', () => {
       </Surface>
     );
 
-    expect(wrapper.find('.recharts-bar-rectangle').props().fill).to.equal('#d00');
+    expect(wrapper.find('.recharts-bar-rectangle')[0].attribs.fill).to.equal('#d00');
+    expect(wrapper.find('.recharts-bar-rectangle')[1].attribs.fill).to.equal('#333');
   });
 });
