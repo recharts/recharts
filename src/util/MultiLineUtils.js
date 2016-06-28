@@ -132,6 +132,12 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
     return val >= thr.min && val < thr.max;
   }
 
+  function checkDataKey(prevItem, currItemm, dk) {
+    const prevDataItem = prevItem[dk] !== undefined ? Number(prevItem[dk]) : null;
+    const currentDataItem = currItemm[dk] !== undefined ? Number(currItemm[dk]) : null;
+    return prevDataItem === currentDataItem;
+  }
+
   const { thresholds } = lineProps;
   const orderedThresholds = _.orderBy(thresholds, ['min']);
 
@@ -163,7 +169,11 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
           return checkThreshold(thr, dataItem);
         });
     } else {
-      const isSame = checkThreshold(currentThreshold, dataItem);
+      let isSame = checkThreshold(currentThreshold, dataItem);
+      if (isSame && dataKey !== thresholdKey && i > 0) {
+        // if statement to check for scenario where threshold does not change, but data changes, so step must create a new line. // eslint-disable-line max-len
+        isSame = checkDataKey(data[i - 1], data[i], dataKey);
+      }
       if (!isSame) {
         const color = currentThreshold && currentThreshold.color ?
           currentThreshold.color : defaultColor;
