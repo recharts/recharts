@@ -1,3 +1,14 @@
+## 0.12.2 (June 29, 2016)
+
+### feat
+
+- Add margin props in Sankey to avoid outer-clip
+- Add shape props in ReferenceDot
+
+### fix
+
+- Fix the width and height of wrapper 
+
 ## 0.12.1 (June 24, 2016)
 
 ### fix
