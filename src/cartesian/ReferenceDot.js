@@ -32,6 +32,7 @@ class ReferenceDot extends Component {
 
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
   };
 
   static defaultProps = {
@@ -89,6 +90,20 @@ class ReferenceDot extends Component {
     return null;
   }
 
+  renderDot(option, props) {
+    let dot;
+
+    if (React.isValidElement(option)) {
+      dot = React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      dot = option(props);
+    } else {
+      dot = <Dot {...props} className="recharts-reference-dot-dot" />;
+    }
+
+    return dot;
+  }
+
   render() {
     const { x, y } = this.props;
     const isX = _.isNumber(x) || _.isString(x);
@@ -100,16 +115,12 @@ class ReferenceDot extends Component {
 
     if (!coordinate) { return null; }
 
+    const { shape, r } = this.props;
     const props = getPresentationAttributes(this.props);
 
     return (
       <Layer className="recharts-reference-dot">
-        <Dot
-          {...props}
-          r={this.props.r}
-          className="recharts-reference-dot-dot"
-          {...coordinate}
-        />
+        {this.renderDot(shape, { ...props, ...coordinate })}
         {this.renderLabel(coordinate)}
       </Layer>
     );
