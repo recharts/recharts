@@ -523,7 +523,7 @@ class ScatterChart extends Component {
     return (
       <div
         className={classNames('recharts-wrapper', className)}
-        style={{ position: 'relative', cursor: 'default', ...style }}
+        style={{ position: 'relative', cursor: 'default', ...style, width, height }}
       >
         <Surface width={width} height={height}>
           {this.renderGrid(xAxis, yAxis, offset)}

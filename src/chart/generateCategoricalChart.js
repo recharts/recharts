@@ -752,7 +752,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       return (
         <div
           className={classNames('recharts-wrapper', className)}
-          style={{ position: 'relative', cursor: 'default', ...style }}
+          style={{ position: 'relative', cursor: 'default', ...style, width, height }}
           {...events}
         >
           <Surface width={width} height={height}>

@@ -226,7 +226,7 @@ export default React.createClass({
         </a>
         <br/>
         <p>Simple BarChart (Click on rectangles and open console )</p>
-        <div className="bar-chart-wrapper">
+        <div className="bar-chart-wrapper" style={{textAlign: 'right'}}>
           <BarChart width={400} height={400} data={data} onClick={this.handlePvBarClick}>
             <XAxis dataKey="name" />
             <YAxis />

@@ -307,7 +307,7 @@ class RadialBarChart extends Component {
     return (
       <div
         className={classNames('recharts-wrapper', className)}
-        style={{ cursor: 'default', ...style, position: 'relative' }}
+        style={{ cursor: 'default', position: 'relative', ...style, width, height }}
       >
         <Surface width={width} height={height}>
           {this.renderItems(items, radiusScale, { cx, cy })}
