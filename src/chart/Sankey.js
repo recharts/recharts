@@ -372,7 +372,8 @@ class Sankey extends Component {
 
   renderLinks(links, nodes) {
     const { linkCurvature, link: linkContent, margin } = this.props;
-    const { top, left } = margin;
+    const top = margin.top || 0;
+    const left = margin.left || 0;
 
     return (
       <Layer className="recharts-sankey-links" key="recharts-sankey-links">
@@ -441,7 +442,8 @@ class Sankey extends Component {
 
   renderNodes(nodes) {
     const { node: nodeContent, margin } = this.props;
-    const { top, left } = margin;
+    const top = margin.top || 0;
+    const left = margin.left || 0;
 
     return (
       <Layer className="recharts-sankey-nodes" key="recharts-sankey-nodes">
@@ -526,8 +528,8 @@ class Sankey extends Component {
       width, height,
       className, style, children, margin,
     } = this.props;
-    const contentWidth = width - (margin.left + margin.right);
-    const contentHeight = height - (margin.top + margin.bottom);
+    const contentWidth = width - (margin.left || 0) - (margin.right || 0);
+    const contentHeight = height - (margin.top || 0) - (margin.bottom || 0);
     const { links, nodes } = computeData({
       data,
       width: contentWidth,

@@ -170,7 +170,7 @@ function SankeyDemo() {
         <pre>2. Sankey with gradient color, name and value, and use margin to avoid outer-clip.</pre>
         <Sankey
           width={960} height={500}
-          margin={{ top: 20, left: 0, right: 0, bottom: 20 }}
+          margin={{ top: 20, bottom: 20 }}
           data={data1}
           nodeWidth={10} nodePadding={60}
           linkCurvature={0.61}
