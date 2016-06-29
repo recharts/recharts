@@ -306,6 +306,12 @@ class Sankey extends Component {
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
     ]),
+    margin: PropTypes.shape({
+      top: PropTypes.number,
+      right: PropTypes.number,
+      bottom: PropTypes.number,
+      left: PropTypes.number,
+    }),
   };
 
   static defaultProps = {
@@ -313,6 +319,7 @@ class Sankey extends Component {
     nodeWidth: 10,
     linkCurvature: 0.5,
     iterations: 32,
+    margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
 
   state = {
@@ -364,7 +371,9 @@ class Sankey extends Component {
   }
 
   renderLinks(links, nodes) {
-    const { linkCurvature, link: linkContent } = this.props;
+    const { linkCurvature, link: linkContent, margin } = this.props;
+    const top = margin.top || 0;
+    const left = margin.left || 0;
 
     return (
       <Layer className="recharts-sankey-links" key="recharts-sankey-links">
@@ -373,14 +382,14 @@ class Sankey extends Component {
             const { sy: sourceRelativeY, ty: targetRelativeY, dy: linkWidth } = link;
             const source = nodes[link.source];
             const target = nodes[link.target];
-            const sourceX = source.x + source.dx;
-            const targetX = target.x;
+            const sourceX = source.x + source.dx + left;
+            const targetX = target.x + left;
             const interpolationFunc = interpolationGenerator(sourceX, targetX);
             const sourceControlX = interpolationFunc(linkCurvature);
             const targetControlX = interpolationFunc(1 - linkCurvature);
 
-            const sourceY = source.y + sourceRelativeY + linkWidth / 2;
-            const targetY = target.y + targetRelativeY + linkWidth / 2;
+            const sourceY = source.y + sourceRelativeY + linkWidth / 2 + top;
+            const targetY = target.y + targetRelativeY + linkWidth / 2 + top;
 
             const linkProps = {
               sourceX, targetX,
@@ -432,7 +441,9 @@ class Sankey extends Component {
   }
 
   renderNodes(nodes) {
-    const { node: nodeContent } = this.props;
+    const { node: nodeContent, margin } = this.props;
+    const top = margin.top || 0;
+    const left = margin.left || 0;
 
     return (
       <Layer className="recharts-sankey-nodes" key="recharts-sankey-nodes">
@@ -441,8 +452,8 @@ class Sankey extends Component {
             const { x, y, dx, dy } = node;
 
             const nodeProps = {
-              x,
-              y,
+              x: x + left,
+              y: y + top,
               width: dx,
               height: dy,
               index: i,
@@ -515,12 +526,16 @@ class Sankey extends Component {
     const { data,
       iterations, nodeWidth, nodePadding,
       width, height,
-      className, style, children,
+      className, style, children, margin,
     } = this.props;
+    const contentWidth = width - (margin.left || 0) - (margin.right || 0);
+    const contentHeight = height - (margin.top || 0) - (margin.bottom || 0);
     const { links, nodes } = computeData({
-      data, width, height, iterations, nodeWidth, nodePadding,
+      data,
+      width: contentWidth,
+      height: contentHeight,
+      iterations, nodeWidth, nodePadding,
     });
-
     return (
       <div
         className={classNames('recharts-wrapper', className)}

@@ -136,7 +136,7 @@ const data1 = {
     { name: 'Lost' },
   ],
   links: [
-    { source: 0, target: 1, value: 37283 },
+    { source: 0, target: 1, value: 3728.3 },
     { source: 0, target: 2, value: 354170 },
     { source: 2, target: 3, value: 62429 },
     { source: 2, target: 4, value: 291741 },
@@ -167,9 +167,10 @@ function SankeyDemo() {
       </div>
       <br />
       <div>
-        <pre>2. Sankey with gradient color, name and value.</pre>
+        <pre>2. Sankey with gradient color, name and value, and use margin to avoid outer-clip.</pre>
         <Sankey
           width={960} height={500}
+          margin={{ top: 20, bottom: 20 }}
           data={data1}
           nodeWidth={10} nodePadding={60}
           linkCurvature={0.61}
