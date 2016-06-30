@@ -12,6 +12,8 @@ import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import _ from 'lodash';
 
+const FACTOR = 1.0000001;
+
 @pureRender
 class Line extends Component {
 
@@ -61,6 +63,7 @@ class Line extends Component {
       'ease-in-out',
       'linear',
     ]),
+    animationId: PropTypes.number,
   };
 
   static defaultProps = {
@@ -103,11 +106,14 @@ class Line extends Component {
   }
   /* eslint-disable  react/no-did-update-set-state */
   componentDidUpdate(prevProps, prevState) {
-    const { points } = this.props;
+    const { animationId, points } = this.props;
 
-    if (points !== prevProps.points) {
+    if (animationId !== prevProps.animationId || points !== prevProps.points) {
+      const cur = this.getTotalLength();
+      const { totalLength } = prevState;
+      // A hack method to trigger animation
       this.setState({
-        totalLength: this.getTotalLength(),
+        totalLength: cur === totalLength ? cur * FACTOR : cur,
       });
     }
   }

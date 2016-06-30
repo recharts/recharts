@@ -15,7 +15,9 @@ import { getTicksOfAxis } from '../util/CartesianUtils';
 import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
 import _ from 'lodash';
 import Smooth from 'react-smooth';
+import AnimationDecorator from '../util/AnimationDecorator';
 
+@AnimationDecorator
 @pureRender
 class LineChart extends Component {
 
@@ -38,6 +40,7 @@ class LineChart extends Component {
     ]),
     // used internally
     isComposed: PropTypes.bool,
+    animationId: PropTypes.number,
   };
 
   /**
@@ -123,7 +126,7 @@ class LineChart extends Component {
    * @return {ReactComponent}  All the instances of Line
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
-    const { children, layout, isTooltipActive, activeTooltipIndex } = this.props;
+    const { children, layout, isTooltipActive, activeTooltipIndex, animationId } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];
@@ -149,6 +152,7 @@ class LineChart extends Component {
         ...offset,
         layout,
         points,
+        animationId,
       });
     }, this);
 
