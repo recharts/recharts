@@ -691,13 +691,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     }
 
-    renderReferenceElements(xAxisMap, yAxisMap, offset, isFront, Component) {
+    renderReferenceElements(xAxisMap, yAxisMap, offset, isFront, Compt) {
       const { children } = this.props;
-      const elements = findAllByType(children, Component);
+      const elements = findAllByType(children, Compt);
 
       if (!elements || !elements.length) { return null; }
 
-      const keyPrefix = `${getDisplayName(Component)}-${isFront ? 'front' : 'back'}`;
+      const keyPrefix = `${getDisplayName(Compt)}-${isFront ? 'front' : 'back'}`;
 
       return elements.filter(entry => (isFront === entry.props.isFront)).map((entry, i) => {
         const { xAxisId, yAxisId } = entry.props;
@@ -712,7 +712,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             width: offset.width,
             height: offset.height,
           },
-        })
+        });
       });
     }
 

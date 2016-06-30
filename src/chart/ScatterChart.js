@@ -471,13 +471,13 @@ class ScatterChart extends Component {
     }, this);
   }
 
-  renderReferenceElements(xAxis, yAxis, offset, isFront, Component) {
+  renderReferenceElements(xAxis, yAxis, offset, isFront, Compt) {
     const { children } = this.props;
-    const elements = findAllByType(children, Component);
+    const elements = findAllByType(children, Compt);
 
     if (!elements || !elements.length) { return null; }
 
-    const keyPrefix = `${getDisplayName(Component)}-${isFront ? 'front' : 'back'}`;
+    const keyPrefix = `${getDisplayName(Compt)}-${isFront ? 'front' : 'back'}`;
 
     return elements.filter(entry => (isFront === entry.props.isFront)).map((entry, i) =>
       React.cloneElement(entry, {
