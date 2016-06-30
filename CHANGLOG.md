@@ -1,3 +1,13 @@
+## 0.12.3 (June 30, 2016)
+
+### fix
+
+- Fix the bug that no animation when data change, but points of Line are the same
+
+### refactor
+
+- Remove xAxisMap and yAxisMap in ReferenceDot and ReferenceLine
+
 ## 0.12.2 (June 29, 2016)
 
 ### feat
