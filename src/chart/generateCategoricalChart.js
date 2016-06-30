@@ -691,16 +691,21 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     }
 
-    renderReferenceLines(xAxisMap, yAxisMap, offset, isFront) {
+    renderReferenceElements(xAxisMap, yAxisMap, offset, isFront, Component) {
       const { children } = this.props;
-      const lines = findAllByType(children, ReferenceLine);
+      const elements = findAllByType(children, Component);
 
-      if (!lines || !lines.length) { return null; }
+      if (!elements || !elements.length) { return null; }
 
-      return lines.filter(entry => (isFront === entry.props.isFront)).map((entry, i) =>
-        React.cloneElement(entry, {
-          key: `reference-line-${i}`,
-          xAxisMap, yAxisMap,
+      const keyPrefix = `${getDisplayName(Component)}-${isFront ? 'front' : 'back'}`;
+
+      return elements.filter(entry => (isFront === entry.props.isFront)).map((entry, i) => {
+        const { xAxisId, yAxisId } = entry.props;
+
+        return React.cloneElement(entry, {
+          key: `${keyPrefix}-${i}`,
+          xAxis: xAxisMap[xAxisId],
+          yAxis: yAxisMap[yAxisId],
           viewBox: {
             x: offset.left,
             y: offset.top,
@@ -708,21 +713,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             height: offset.height,
           },
         })
-      );
-    }
-
-    renderReferenceDots(xAxisMap, yAxisMap, offset, isFront) {
-      const { children } = this.props;
-      const dots = findAllByType(children, ReferenceDot);
-
-      if (!dots || !dots.length) { return null; }
-
-      return dots.filter(entry => (isFront === entry.props.isFront)).map((entry, i) =>
-        React.cloneElement(entry, {
-          key: `reference-dot-${i}`,
-          xAxisMap, yAxisMap,
-        })
-      );
+      });
     }
 
     render() {
@@ -757,8 +748,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         >
           <Surface width={width} height={height}>
             {this.renderGrid(xAxisMap, yAxisMap, offset)}
-            {this.renderReferenceLines(xAxisMap, yAxisMap, offset, false)}
-            {this.renderReferenceDots(xAxisMap, yAxisMap, offset, false)}
+            {this.renderReferenceElements(xAxisMap, yAxisMap, offset, false, ReferenceLine)}
+            {this.renderReferenceElements(xAxisMap, yAxisMap, offset, false, ReferenceDot)}
             {this.renderAxes(xAxisMap, 'x-axis')}
             {this.renderAxes(yAxisMap, 'y-axis')}
             <ChartComponent
@@ -770,8 +761,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
               offset={offset}
               stackGroups={stackGroups}
             />
-            {this.renderReferenceLines(xAxisMap, yAxisMap, offset, true)}
-            {this.renderReferenceDots(xAxisMap, yAxisMap, offset, true)}
+            {this.renderReferenceElements(xAxisMap, yAxisMap, offset, true, ReferenceLine)}
+            {this.renderReferenceElements(xAxisMap, yAxisMap, offset, true, ReferenceDot)}
             {this.renderBrush(xAxisMap, yAxisMap, offset)}
             {filterSvgElements(children)}
           </Surface>

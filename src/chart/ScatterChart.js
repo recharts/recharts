@@ -19,7 +19,7 @@ import ZAxis from '../cartesian/ZAxis';
 import ReferenceLine from '../cartesian/ReferenceLine';
 import ReferenceDot from '../cartesian/ReferenceDot';
 import { getPresentationAttributes, findChildByType, filterSvgElements,
-  findAllByType, validateWidthHeight } from '../util/ReactUtils';
+  findAllByType, validateWidthHeight, getDisplayName } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { parseSpecifiedDomain } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
@@ -471,38 +471,24 @@ class ScatterChart extends Component {
     }, this);
   }
 
-  renderReferenceLines(xAxis, yAxis, offset, isFront) {
+  renderReferenceElements(xAxis, yAxis, offset, isFront, Component) {
     const { children } = this.props;
-    const lines = findAllByType(children, ReferenceLine);
+    const elements = findAllByType(children, Component);
 
-    if (!lines || !lines.length) { return null; }
+    if (!elements || !elements.length) { return null; }
 
-    return lines.filter(entry => (isFront === entry.props.isFront)).map((entry, i) =>
+    const keyPrefix = `${getDisplayName(Component)}-${isFront ? 'front' : 'back'}`;
+
+    return elements.filter(entry => (isFront === entry.props.isFront)).map((entry, i) =>
       React.cloneElement(entry, {
-        key: `reference-line-${i}`,
-        xAxisMap: { [xAxis.xAxisId]: xAxis },
-        yAxisMap: { [yAxis.yAxisId]: yAxis },
+        key: `${keyPrefix}-${i}`,
+        xAxis, yAxis,
         viewBox: {
           x: offset.left,
           y: offset.top,
           width: offset.width,
           height: offset.height,
         },
-      })
-    );
-  }
-
-  renderReferenceDots(xAxis, yAxis, offset, isFront) {
-    const { children } = this.props;
-    const dots = findAllByType(children, ReferenceDot);
-
-    if (!dots || !dots.length) { return null; }
-
-    return dots.filter(entry => (isFront === entry.props.isFront)).map((entry, i) =>
-      React.cloneElement(entry, {
-        key: `reference-dot-${i}`,
-        xAxisMap: { [xAxis.xAxisId]: xAxis },
-        yAxisMap: { [yAxis.yAxisId]: yAxis },
       })
     );
   }
@@ -527,14 +513,14 @@ class ScatterChart extends Component {
       >
         <Surface width={width} height={height}>
           {this.renderGrid(xAxis, yAxis, offset)}
-          {this.renderReferenceLines(xAxis, yAxis, offset, false)}
-          {this.renderReferenceDots(xAxis, yAxis, offset, false)}
+          {this.renderReferenceElements(xAxis, yAxis, offset, false, ReferenceLine)}
+          {this.renderReferenceElements(xAxis, yAxis, offset, false, ReferenceDot)}
           {this.renderAxis(xAxis, 'recharts-x-axis')}
           {this.renderAxis(yAxis, 'recharts-y-axis')}
           {this.renderCursor(xAxis, yAxis, offset)}
           {this.renderItems(items, xAxis, yAxis, zAxis, offset)}
-          {this.renderReferenceLines(xAxis, yAxis, offset, true)}
-          {this.renderReferenceDots(xAxis, yAxis, offset, true)}
+          {this.renderReferenceElements(xAxis, yAxis, offset, true, ReferenceLine)}
+          {this.renderReferenceElements(xAxis, yAxis, offset, true, ReferenceDot)}
           {filterSvgElements(children)}
         </Surface>
 

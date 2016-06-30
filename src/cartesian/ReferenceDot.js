@@ -22,8 +22,8 @@ class ReferenceDot extends Component {
       PropTypes.number, PropTypes.string, PropTypes.func, PropTypes.element,
     ]),
 
-    xAxisMap: PropTypes.object,
-    yAxisMap: PropTypes.object,
+    xAxis: PropTypes.object,
+    yAxis: PropTypes.object,
 
     isFront: PropTypes.bool,
     alwaysShow: PropTypes.bool,
@@ -40,7 +40,7 @@ class ReferenceDot extends Component {
     alwaysShow: false,
     xAxisId: 0,
     yAxisId: 0,
-    r: 20,
+    r: 10,
     fill: '#fff',
     stroke: '#ccc',
     fillOpacity: 1,
@@ -48,12 +48,12 @@ class ReferenceDot extends Component {
   };
 
   getCoordinate() {
-    const { x, y, xAxisMap, yAxisMap, xAxisId, yAxisId } = this.props;
-    const xScale = xAxisMap[xAxisId].scale;
-    const yScale = yAxisMap[yAxisId].scale;
+    const { x, y, xAxis, yAxis } = this.props;
+    const xScale = xAxis.scale;
+    const yScale = yAxis.scale;
     const result = {
-      cx: xScale(x),
-      cy: yScale(y),
+      cx: xScale(x) + (xScale.bandwidth ? xScale.bandwidth() / 2 : 0),
+      cy: yScale(y) + (yScale.bandwidth ? yScale.bandwidth() / 2 : 0),
     };
 
     if (validateCoordinateInRange(result.cx, xScale) &&
@@ -98,7 +98,14 @@ class ReferenceDot extends Component {
     } else if (_.isFunction(option)) {
       dot = option(props);
     } else {
-      dot = <Dot {...props} className="recharts-reference-dot-dot" />;
+      dot = (
+        <Dot
+          {...getPresentationAttributes(props)}
+          cx={props.cx}
+          cy={props.cy}
+          className="recharts-reference-dot-dot"
+        />
+      );
     }
 
     return dot;
@@ -115,12 +122,11 @@ class ReferenceDot extends Component {
 
     if (!coordinate) { return null; }
 
-    const { shape, r } = this.props;
-    const props = getPresentationAttributes(this.props);
+    const { shape } = this.props;
 
     return (
       <Layer className="recharts-reference-dot">
-        {this.renderDot(shape, { ...props, ...coordinate })}
+        {this.renderDot(shape, { ...this.props, ...coordinate })}
         {this.renderLabel(coordinate)}
       </Layer>
     );

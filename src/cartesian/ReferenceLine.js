@@ -26,8 +26,8 @@ class ReferenceLine extends Component {
       PropTypes.number, PropTypes.string, PropTypes.element, PropTypes.func,
     ]),
 
-    xAxisMap: PropTypes.object,
-    yAxisMap: PropTypes.object,
+    xAxis: PropTypes.object,
+    yAxis: PropTypes.object,
 
     isFront: PropTypes.bool,
     alwaysShow: PropTypes.bool,
@@ -53,26 +53,28 @@ class ReferenceLine extends Component {
   };
 
   getEndPoints(isX, isY) {
-    const { xAxisMap, yAxisMap, xAxisId, yAxisId, viewBox } = this.props;
+    const { xAxis, yAxis, viewBox } = this.props;
     const { x, y, width, height } = viewBox;
 
     if (isY) {
       const value = this.props.y;
-      const scale = yAxisMap[yAxisId].scale;
-      const coord = scale(value);
+      const { scale } = yAxis;
+      const offset = scale.bandwidth ? scale.bandwidth() / 2 : 0;
+      const coord = scale(value) + offset;
 
       if (validateCoordinateInRange(coord, scale)) {
-        return yAxisMap[yAxisId].orientation === 'left' ?
+        return xAxis.orientation === 'left' ?
             [{ x, y: coord }, { x: x + width, y: coord }] :
             [{ x: x + width, y: coord }, { x, y: coord }];
       }
     } else if (isX) {
       const value = this.props.x;
-      const scale = xAxisMap[xAxisId].scale;
-      const coord = scale(value);
+      const { scale } = xAxis;
+      const offset = scale.bandwidth ? scale.bandwidth() / 2 : 0;
+      const coord = scale(value) + offset;
 
       if (validateCoordinateInRange(coord, scale)) {
-        return yAxisMap[yAxisId].orientation === 'top' ?
+        return yAxis.orientation === 'top' ?
            [{ x: coord, y }, { x: coord, y: y + height }] :
            [{ x: coord, y: y + height }, { x: coord, y }];
       }
@@ -82,10 +84,10 @@ class ReferenceLine extends Component {
   }
 
   getLabelProps(isX, isY) {
-    const { xAxisMap, yAxisMap, xAxisId, yAxisId, labelPosition } = this.props;
+    const { xAxis, yAxis, labelPosition } = this.props;
 
     if (isY) {
-      const axis = yAxisMap[yAxisId];
+      const axis = yAxis;
 
       if (axis.orientation === 'left' && labelPosition === 'end') {
         return { dx: 6, dy: 6, textAnchor: 'start' };
@@ -95,7 +97,7 @@ class ReferenceLine extends Component {
       }
       return { dx: -6, dy: 6, textAnchor: 'end' };
     } else if (isX) {
-      const axis = xAxisMap[xAxisId];
+      const axis = xAxis;
 
       if (axis.orientation === 'top') {
         return { dy: 6, textAnchor: 'middle' };

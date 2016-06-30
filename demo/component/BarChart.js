@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
-import { BarChart, Bar, Brush, Cell, CartesianGrid, ReferenceLine, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, Brush, Cell, CartesianGrid, ReferenceLine, ReferenceDot,
+  XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import { scaleCategory20 } from 'd3-scale';
 import _ from 'lodash';
 import { changeNumberOfData } from './utils';
@@ -233,7 +234,6 @@ export default React.createClass({
             <Legend />
             <Tooltip />
             <CartesianGrid vertical={false}/>
-            <ReferenceLine y={3200} stroke="red" />
             <Bar dataKey="uv" label={renderLabel}>
               {
                 data.map((entry, index) => (

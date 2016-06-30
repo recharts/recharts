@@ -1,6 +1,6 @@
 import React from 'react';
 import { ResponsiveContainer, ComposedChart, Line, Bar, Area, XAxis, YAxis,
-  Tooltip, Legend, CartesianGrid, Brush } from 'recharts';
+  ReferenceLine, ReferenceDot, Tooltip, Legend, CartesianGrid, Brush } from 'recharts';
 
 const data = [
   { name: 'Page A', uv: 590, pv: 800, amt: 1400 },
