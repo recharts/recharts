@@ -75,11 +75,12 @@ class ComposedChart extends Component {
     const areaItems = graphicalItems.filter(item => item.type.displayName === 'Area');
     const lineItems = graphicalItems.filter(item => item.type.displayName === 'Line');
     const barItems = graphicalItems.filter(item => item.type.displayName === 'Bar');
+    const rectItems = graphicalItems.filter(item => item.type.displayName === 'Rectangle');
 
     return (
       <Layer className="recharts-composed">
         {this.renderCursor(xAxisMap, yAxisMap, offset)}
-
+        {rectItems}
         <AreaChart {...this.props} graphicalItems={areaItems} isComposed />
         <BarChart {...this.props} graphicalItems={barItems} isComposed />
         <LineChart {...this.props} graphicalItems={lineItems} isComposed />
@@ -88,4 +89,4 @@ class ComposedChart extends Component {
   }
 }
 
-export default generateCategoricalChart(ComposedChart, [Line, Area, Bar]);
+export default generateCategoricalChart(ComposedChart, [Line, Area, Bar, Rectangle]);
