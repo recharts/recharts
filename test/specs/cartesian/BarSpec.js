@@ -6,7 +6,7 @@ import { mount, render } from 'enzyme';
 describe('<Bar />', () => {
   const data = [
     { x: 10, y: 50, width: 20, height: 50, value: 100, label: 'test' },
-    { x: 50, y: 50, width: 20, height: 50, value: 100, label: 'test' },
+    { x: 50, y: 50, width: 20, height: 50, value: 10, label: 'test' },
     { x: 90, y: 50, width: 20, height: 50, value: 100, label: 'test' },
     { x: 130, y: 50, width: 20, height: 50, value: 100, label: 'test' },
     { x: 170, y: 50, width: 20, height: 50, value: 100, label: 'test' },
@@ -51,5 +51,19 @@ describe('<Bar />', () => {
     );
 
     expect(wrapper.find('.recharts-bar-rectangle').length).to.equal(0);
+  });
+
+  it('Allows a function to determine fill value', () => {
+    const wrapper = render(
+      <Surface width={500} height={500}>
+        <Bar
+          data={data}
+          fillFormatter={(value) => value === 100 ? '#d00' : '#333'}
+        />
+      </Surface>
+    );
+
+    expect(wrapper.find('.recharts-bar-rectangle')[0].attribs.fill).to.equal('#d00');
+    expect(wrapper.find('.recharts-bar-rectangle')[1].attribs.fill).to.equal('#333');
   });
 });

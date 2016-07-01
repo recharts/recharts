@@ -29,6 +29,7 @@ class Bar extends Component {
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     formatter: PropTypes.func,
     minPointSize: PropTypes.number,
+    fillFormatter: PropTypes.func,
 
     shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
     label: PropTypes.oneOfType([
@@ -97,15 +98,21 @@ class Bar extends Component {
   renderRectangles() {
     const { data, shape, layout, isAnimationActive, animationBegin,
       animationDuration, animationEasing, animationId } = this.props;
+
     const baseProps = getPresentationAttributes(this.props);
     const getStyle = (isBegin) => ({
       transform: `scale${layout === 'vertical' ? 'X' : 'Y'}(${isBegin ? 0 : 1})`,
     });
 
     return data.map((entry, index) => {
+      let fill = this.props.fill
+      if (this.props.fillFormatter) {
+        fill = this.props.fillFormatter(entry.value)
+      }
+
       const { width, height } = entry;
       const props = {
-        ...baseProps, ...entry, index, ...filterEventsOfChild(this.props, entry, index),
+        ...baseProps, ...entry, index, fill, ...filterEventsOfChild(this.props, entry, index),
       };
       let transformOrigin = '';
 
