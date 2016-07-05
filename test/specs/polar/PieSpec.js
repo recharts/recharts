@@ -94,6 +94,28 @@ describe('<Pie />', () => {
     expect(wrapper.find('.customized-active-shape').length).to.equal(0);
   });
 
+  it('Support multiple active sectors', () => {
+    const ActiveShape = (props) => {
+      return <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
+    };
+    const wrapper = render(
+      <Surface width={500} height={500}>
+        <Pie
+          isAnimationActive={false}
+          activeIndex={[0, 2]}
+          activeShape={<ActiveShape />}
+          cx={250}
+          cy={250}
+          innerRadius={0}
+          outerRadius={200}
+          data={data}
+        />
+      </Surface>
+    );
+
+    expect(wrapper.find('.customized-active-shape').length).to.equal(2);
+  });
+
   it('Render customized label when label is set to be a react element', () => {
     const Label = (props) => {
       const { x, y } = props;

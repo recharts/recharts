@@ -49,7 +49,7 @@ class Pie extends Component {
     activeShape: PropTypes.oneOfType([
       PropTypes.object, PropTypes.func, PropTypes.element,
     ]),
-    activeIndex: PropTypes.number,
+    activeIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
 
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
@@ -170,6 +170,15 @@ class Pie extends Component {
     }
 
     return 'middle';
+  }
+  
+  isActiveIndex(i) {
+    const { activeIndex } = this.props;
+    if (Array.isArray(activeIndex)){
+      return activeIndex.indexOf(i) != -1;
+    } else {
+      return i === activeIndex;
+    }
   }
 
   handleAnimationEnd = () => {
@@ -306,7 +315,7 @@ class Pie extends Component {
   }
 
   renderSectors(sectors) {
-    const { activeShape, activeIndex } = this.props;
+    const { activeShape } = this.props;
 
     return sectors.map((entry, i) => (
       <Layer
@@ -314,7 +323,7 @@ class Pie extends Component {
         {...filterEventsOfChild(this.props, entry, i)}
         key={`sector-${i}`}
       >
-        {this.renderSectorItem(activeIndex === i ? activeShape : null, entry)}
+        {this.renderSectorItem(this.isActiveIndex(i) ? activeShape : null, entry)}
       </Layer>
     ));
   }
