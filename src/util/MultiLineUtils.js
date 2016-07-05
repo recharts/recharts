@@ -33,16 +33,16 @@ export const getComposedData = (chartProps, type, xAxis, yAxis, dataKey,
     const dataPoint = chartProps.data[i];
     const yDataPoint = i === endIndex &&
       (type === 'stepBefore' || type === 'stepAfter') ? chartProps.data[i - 1] : chartProps.data[i];
-    const yPoint = regionValue !== null ? regionValue : yDataPoint[dataKey];
+    const yPoint = regionValue !== null ? regionValue : _.get(yDataPoint, dataKey, null);
 
     data.push({
       x: layout === 'horizontal' ?
         xTicks[i].coordinate + bandSize / 2 :
-        xAxis.scale(dataPoint[dataKey]),
+        xAxis.scale(_.get(dataPoint, dataKey, null)),
       y: layout === 'horizontal' ?
         yAxis.scale(yPoint) :
         yTicks[i].coordinate + bandSize / 2,
-      value: dataPoint[dataKey],
+      value: _.get(dataPoint, dataKey, null),
     });
   }
   return data;
