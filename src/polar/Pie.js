@@ -175,7 +175,7 @@ class Pie extends Component {
   isActiveIndex(i) {
     const { activeIndex } = this.props;
     if (Array.isArray(activeIndex)){
-      return activeIndex.indexOf(i) != -1;
+      return activeIndex.indexOf(i) !== -1;
     } else {
       return i === activeIndex;
     }
