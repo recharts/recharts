@@ -90,8 +90,8 @@ const findDataSegmentsByRegion = (lineProps, data, dataKey) => {
 
   for (var i = 0; i < data.length; i++) {
     const currItem = data[i];
-    const dataItem = currItem[dataKey];
-    const dataSegment = currItem[regionKey];
+    const dataItem = _.get(currItem, dataKey, null);
+    const dataSegment = _.get(currItem, regionKey, null);
     if (currentRegion === null) {
       currentRegion = dataSegment;
     } else if (currentRegion !== dataSegment) {
@@ -105,7 +105,7 @@ const findDataSegmentsByRegion = (lineProps, data, dataKey) => {
   dataSegments.push({
     start,
     end: data.length - 1,
-    regionValue: findRegionValue(lineProps, currentRegion, data[data.length - 1][dataKey]),
+    regionValue: findRegionValue(lineProps, currentRegion, _.get(data[data.length - 1], dataKey, null)),
     stroke: findStroke(lineProps, currentRegion, dataSegments.length),
   });
   return dataSegments;
@@ -133,8 +133,10 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
   }
 
   function checkDataKey(prevItem, currItemm, dk) {
-    const prevDataItem = prevItem[dk] !== undefined ? Number(prevItem[dk]) : null;
-    const currentDataItem = currItemm[dk] !== undefined ? Number(currItemm[dk]) : null;
+    const prevDataItemTemp = _.get(prevItem, dk, null);
+    const prevDataItem = prevDataItemTemp !== null ? Number(prevDataItemTemp) : null;
+    const currentDataItemTemp = _.get(currItemm, dk, null);
+    const currentDataItem = currentDataItemTemp !== null ? Number(currentDataItemTemp) : null;
     return prevDataItem === currentDataItem;
   }
 
@@ -162,7 +164,7 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
 
   for (var i = 0; i < data.length; i++) {
     const currItem = data[i];
-    const dataItem = currItem[thresholdKey] !== undefined ? Number(currItem[thresholdKey]) : null;
+    const dataItem = _.get(currItem, thresholdKey, null) !== null ? Number(_.get(currItem, thresholdKey, null)) : null;
     if (currentThreshold === null) {
       currentThreshold = dataItem === null ? null :
         _.find(thresholds, function (thr) { // eslint-disable-line prefer-arrow-callback,func-names
