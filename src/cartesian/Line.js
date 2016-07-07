@@ -174,7 +174,15 @@ class Line extends Component {
     } else if (_.isFunction(option)) {
       labelItem = option(props);
     } else {
-      labelItem = <text {...props} className="recharts-line-label">{value}</text>;
+      labelItem = (
+        <text
+          key={props.key}
+          {...getPresentationAttributes(props)}
+          className="recharts-line-label"
+        >
+          {value}
+        </text>
+      );
     }
 
     return labelItem;

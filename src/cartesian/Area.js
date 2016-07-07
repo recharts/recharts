@@ -197,7 +197,7 @@ class Area extends Component {
     } else if (_.isFunction(option)) {
       dotItem = option(props);
     } else {
-      dotItem = <Dot {...props} className="recharts-area-dot" />;
+      dotItem = <Dot className="recharts-area-dot" />;
     }
 
     return dotItem;
@@ -240,7 +240,11 @@ class Area extends Component {
       labelItem = option(props);
     } else {
       labelItem = (
-        <text {...props} className="recharts-area-label">
+        <text
+          key={props.key}
+          {...getPresentationAttributes(props)}
+          className="recharts-area-label"
+        >
           {_.isArray(value) ? value[1] : value}
         </text>
       );

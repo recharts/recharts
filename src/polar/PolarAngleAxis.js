@@ -127,7 +127,10 @@ class PolarAngleAxis extends Component {
       tickItem = option(props);
     } else {
       tickItem = (
-        <text {...props} className="recharts-polar-angle-axis-tick-value">
+        <text
+          {...getPresentationAttributes(props)}
+          className="recharts-polar-angle-axis-tick-value"
+        >
           {value}
         </text>
       );

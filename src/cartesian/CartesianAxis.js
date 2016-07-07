@@ -260,7 +260,14 @@ class CartesianAxis extends Component {
     } else if (_.isFunction(option)) {
       tickItem = option(props);
     } else {
-      tickItem = <text {...props} className="recharts-cartesian-axis-tick-value">{value}</text>;
+      tickItem = (
+        <text
+          {...getPresentationAttributes(props)}
+          className="recharts-cartesian-axis-tick-value"
+        >
+          {value}
+        </text>
+      );
     }
 
     return tickItem;

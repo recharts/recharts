@@ -87,7 +87,7 @@ class Bar extends Component {
     } else if (_.isFunction(option)) {
       rectangle = option(props);
     } else {
-      rectangle = <Rectangle {...props} className="recharts-bar-rectangle" />;
+      rectangle = <Rectangle className="recharts-bar-rectangle" />;
     }
 
     return rectangle;
@@ -141,7 +141,11 @@ class Bar extends Component {
       labelItem = option(props);
     } else {
       labelItem = (
-        <text {...props} className="recharts-bar-label">
+        <text
+          {...getPresentationAttributes(props)}
+          key={props.key}
+          className="recharts-bar-label"
+        >
           {_.isArray(value) ? value[1] : value}
         </text>
       );

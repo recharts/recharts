@@ -100,7 +100,7 @@ class ReferenceDot extends Component {
     } else {
       dot = (
         <Dot
-          {...getPresentationAttributes(props)}
+          {...props}
           cx={props.cx}
           cy={props.cy}
           className="recharts-reference-dot-dot"

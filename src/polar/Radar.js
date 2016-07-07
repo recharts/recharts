@@ -96,7 +96,15 @@ class Radar extends Component {
     } else if (_.isFunction(option)) {
       labelItem = option(props);
     } else {
-      labelItem = <text {...props} className="recharts-radar-label">{value}</text>;
+      labelItem = (
+        <text
+          key={props.key}
+          {...getPresentationAttributes(props)}
+          className="recharts-radar-label"
+        >
+          {value}
+        </text>
+      );
     }
 
     return labelItem;

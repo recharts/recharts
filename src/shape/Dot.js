@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import classNames from 'classnames';
+import { getPresentationAttributes } from '../util/ReactUtils';
 
 @pureRender
 class Dot extends Component {
@@ -21,7 +22,7 @@ class Dot extends Component {
     const layerClass = classNames('recharts-dot', className);
 
     if (cx === +cx && cy === +cy && r === +r) {
-      return <circle {...this.props} className={layerClass} />;
+      return <circle {...getPresentationAttributes(this.props)} className={layerClass} />;
     }
 
     return null;

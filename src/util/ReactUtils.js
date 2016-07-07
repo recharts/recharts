@@ -86,6 +86,12 @@ export const PRESENTATION_ATTRIBUTES = {
   transform: PropTypes.string,
   style: PropTypes.object,
 
+  width: PropTypes.number,
+  height: PropTypes.number,
+  dx: PropTypes.number,
+  dy: PropTypes.number,
+  x: PropTypes.number,
+  y: PropTypes.number,
   r: PropTypes.number,
 };
 
