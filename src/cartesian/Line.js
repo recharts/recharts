@@ -285,14 +285,14 @@ class Line extends Component {
 
       return (
         <Animate
-          { ...animationProps }
+          {...animationProps}
           from={{ length: 0 }}
           to={{ length: totalLength }}
         >
           {
             ({ length }) => (
               <Curve
-                { ...curveProps }
+                {...curveProps}
                 strokeDasharray={this.getStrokeDasharray(length, totalLength, lines)}
               />
             )
@@ -303,12 +303,12 @@ class Line extends Component {
 
     return (
       <Animate
-        { ...animationProps }
+        {...animationProps}
         from={`0px ${totalLength === 0 ? 1 : totalLength}px`}
         to={`${totalLength}px 0px`}
         attributeName="strokeDasharray"
       >
-        <Curve { ...curveProps } />
+        <Curve {...curveProps} />
       </Animate>
     );
   }

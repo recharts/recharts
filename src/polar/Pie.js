@@ -171,14 +171,15 @@ class Pie extends Component {
 
     return 'middle';
   }
-  
+
   isActiveIndex(i) {
     const { activeIndex } = this.props;
-    if (Array.isArray(activeIndex)){
+
+    if (Array.isArray(activeIndex)) {
       return activeIndex.indexOf(i) !== -1;
-    } else {
-      return i === activeIndex;
     }
+
+    return i === activeIndex;
   }
 
   handleAnimationEnd = () => {

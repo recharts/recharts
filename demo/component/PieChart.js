@@ -1,9 +1,9 @@
 import React from 'react';
 import { PieChart, Pie, Legend, Cell, Tooltip, ResponsiveContainer, Sector } from 'recharts';
-import { scaleCategory10 } from 'd3-scale';
+import { scaleOrdinal, schemeCategory10 } from 'd3-scale';
 import { changeNumberOfData } from './utils';
 
-const colors = scaleCategory10().range();
+const colors = scaleOrdinal(schemeCategory10).range();
 
 const data01 = [
   { name: 'Group A', value: 400 },

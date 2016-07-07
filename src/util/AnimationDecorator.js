@@ -29,7 +29,7 @@ export default function (WrappedComponent) {
     }
 
     render() {
-      return <WrappedComponent { ...this.props } animationId={this.state.animationId} />;
+      return <WrappedComponent {...this.props} animationId={this.state.animationId} />;
     }
   }
 
