@@ -1,9 +1,9 @@
 import React from 'react';
 import { RadialBarChart, RadialBar, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
 import { changeNumberOfData } from './utils';
-import { scaleCategory10 } from 'd3-scale';
+import { scaleOrdinal, schemeCategory10 } from 'd3-scale';
 
-const colors = scaleCategory10().range();
+const colors = scaleOrdinal(schemeCategory10).range();
 
 const data = [
   { name: '18-24', uv: 31.47, pv: 2400, fill: '#8884d8' },

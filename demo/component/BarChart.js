@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react';
 import { BarChart, Bar, Brush, Cell, CartesianGrid, ReferenceLine, ReferenceDot,
   XAxis, YAxis, Tooltip, Legend } from 'recharts';
-import { scaleCategory20 } from 'd3-scale';
+import { scaleOrdinal, schemeCategory10 } from 'd3-scale';
 import _ from 'lodash';
 import { changeNumberOfData } from './utils';
 
-const colors = scaleCategory20().range();
+const colors = scaleOrdinal(schemeCategory10).range();
 
 const data = [
   { name: 'food', uv: 2400, pv: 2013, amt: 4500 },

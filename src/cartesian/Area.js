@@ -123,14 +123,14 @@ class Area extends Component {
             layout={layout}
             type={type}
             fill="none"
-            { ...animProps }
+            {...animProps}
           />
         )}
         <Curve
-          { ...this.props }
+          {...this.props}
           stroke="none"
           className="recharts-area-area"
-          { ...animProps }
+          {...animProps}
         />
       </g>
     );
@@ -159,7 +159,7 @@ class Area extends Component {
           from={`${scaleType}(0)`}
           to={`${scaleType}(1)`}
           key={this.props.animationId}
-          { ...animationProps }
+          {...animationProps}
         >
           <g style={{ transformOrigin }}>
             {this.renderCurve()}
@@ -173,7 +173,7 @@ class Area extends Component {
         from={{ alpha: 0 }}
         to={{ alpha: 1 }}
         key={this.props.animationId}
-        { ...animationProps }
+        {...animationProps}
       >
       {
         ({ alpha }) => this.renderCurve(

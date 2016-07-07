@@ -340,7 +340,7 @@ class Treemap extends Component {
       return content(nodeProps);
     }
 
-    return <Rectangle { ...nodeProps } />;
+    return <Rectangle {...nodeProps} />;
   }
 
   renderNode(root, node, i) {
