@@ -33,6 +33,7 @@ require('./specs/chart/ComposedChartSpec');
 require('./specs/chart/SankeySpec');
 
 // general component
+require('./specs/component/CellSpec');
 require('./specs/component/LegendSpec');
 require('./specs/component/TooltipSpec');
 require('./specs/component/ResponsiveContainerSpec');
@@ -44,6 +45,7 @@ require('./specs/shape/DotSpec');
 require('./specs/shape/RectangleSpec');
 require('./specs/shape/SectorSpec');
 require('./specs/shape/PolygonSpec');
+require('./specs/shape/SymbolsSpec');
 
 // util
 require('./specs/util/CartesianUtilsSpec');

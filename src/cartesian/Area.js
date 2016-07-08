@@ -197,7 +197,7 @@ class Area extends Component {
     } else if (_.isFunction(option)) {
       dotItem = option(props);
     } else {
-      dotItem = <Dot className="recharts-area-dot" />;
+      dotItem = <Dot {...props} className="recharts-area-dot" />;
     }
 
     return dotItem;

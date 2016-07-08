@@ -101,6 +101,13 @@ module.exports = function(config) {
     reporters: ['progress', 'coverage', 'coveralls'],
 
     coverageReporter: {
+      instrumenters: { isparta : require('isparta') },
+      instrumenter: {
+        '**/*.js': 'isparta'
+      },
+      instrumenterOptions: {
+        isparta: { babel : { presets: 'es2015' } }
+      },
       dir: 'test',
       reporters: [{
         type: 'html',

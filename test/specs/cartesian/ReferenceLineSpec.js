@@ -31,6 +31,20 @@ describe('<ReferenceLine />', () => {
     expect(wrapper.find('.recharts-reference-line-line').length).to.equal(2);
     expect(wrapper.find('.recharts-reference-line-label').length).to.equal(2);
   });
+
+  it('Renders 1 line in ReferenceLine in vertical barchart', () => {
+    const wrapper = render(
+      <BarChart layout="vertical" width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
+        <XAxis type="number" orientation="top"/>
+        <YAxis type="category" dataKey="name" tickCount={7} orientation="right"/>
+        <Bar dataKey="uv"/>
+        <ReferenceLine y="201106" stroke="#666" label="201106"/>
+        <ReferenceLine x={0} stroke="#666" label="0" labelPosition="start"/>
+      </BarChart>
+    );
+    expect(wrapper.find('.recharts-reference-line-line').length).to.equal(2);
+    expect(wrapper.find('.recharts-reference-line-label').length).to.equal(2);
+  });
   it('Don\'t renders 1 line in ReferenceLine when no x or y is set', () => {
     const wrapper = render(
       <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>

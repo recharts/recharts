@@ -22,7 +22,15 @@ class Dot extends Component {
     const layerClass = classNames('recharts-dot', className);
 
     if (cx === +cx && cy === +cy && r === +r) {
-      return <circle {...getPresentationAttributes(this.props)} className={layerClass} />;
+      return (
+        <circle
+          {...getPresentationAttributes(this.props)}
+          className={layerClass}
+          cx={cx}
+          cy={cy}
+          r={r}
+        />
+      );
     }
 
     return null;

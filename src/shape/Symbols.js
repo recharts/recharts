@@ -63,7 +63,7 @@ class Symbols extends Component {
         <path
           {...getPresentationAttributes(this.props)}
           {...filterEventAttributes(this.props)}
-          className={classNames('recharts-symbol', className)}
+          className={classNames('recharts-symbols', className)}
           transform={`translate(${cx}, ${cy})`}
           d={this.getPath()}
         />

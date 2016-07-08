@@ -87,7 +87,7 @@ class Bar extends Component {
     } else if (_.isFunction(option)) {
       rectangle = option(props);
     } else {
-      rectangle = <Rectangle className="recharts-bar-rectangle" />;
+      rectangle = <Rectangle {...props} className="recharts-bar-rectangle" />;
     }
 
     return rectangle;

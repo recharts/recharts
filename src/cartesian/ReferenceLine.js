@@ -63,7 +63,7 @@ class ReferenceLine extends Component {
       const coord = scale(value) + offset;
 
       if (validateCoordinateInRange(coord, scale)) {
-        return xAxis.orientation === 'left' ?
+        return yAxis.orientation === 'left' ?
             [{ x, y: coord }, { x: x + width, y: coord }] :
             [{ x: x + width, y: coord }, { x, y: coord }];
       }
@@ -74,7 +74,7 @@ class ReferenceLine extends Component {
       const coord = scale(value) + offset;
 
       if (validateCoordinateInRange(coord, scale)) {
-        return yAxis.orientation === 'top' ?
+        return xAxis.orientation === 'top' ?
            [{ x: coord, y }, { x: coord, y: y + height }] :
            [{ x: coord, y: y + height }, { x: coord, y }];
       }
