@@ -1,3 +1,21 @@
+## 0.12.4 (July 8, 2016)
+
+### fix
+
+- Fix the bug of calculation accuracy in IE(Sector)
+- Remove unneed props "formatter" in Area and Bar
+- Fix props which can be supported by html tags and svg tags
+
+### refactor
+
+- Support multiple activeIndex in Pie
+
+### deps
+
+- Update d3-scale and d3-shape to the latest version
+- Update version of react-smooth and recharts-scale
+- Restrict the version of react to '~15.1.0'
+
 ## 0.12.3 (June 30, 2016)
 
 ### fix
