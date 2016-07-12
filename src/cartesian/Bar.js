@@ -184,6 +184,7 @@ class Bar extends Component {
         key: `label-${i}`,
         payload: entry,
       };
+
       let labelValue = entry.value;
       if (label === true && entry.value && labelProps.label) {
         labelValue = labelProps.label;

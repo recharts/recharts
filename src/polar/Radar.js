@@ -56,11 +56,11 @@ class Radar extends Component {
   };
 
   renderPolygon() {
-    const { shape, points, animationDuration, animationEasing,
-      animationBegin, isAnimationActive, animationId } = this.props;
+    const { shape, points, animationDuration, animationEasing, animationBegin,
+      isAnimationActive, animationId, dataKey, className, ...others } = this.props;
 
     if (React.isValidElement(shape)) {
-      return React.cloneElement(shape, this.props);
+      return React.cloneElement(shape, { ...others, points });
     } else if (_.isFunction(shape)) {
       return shape(this.props);
     }

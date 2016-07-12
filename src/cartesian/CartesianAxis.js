@@ -318,15 +318,16 @@ class CartesianAxis extends Component {
   }
 
   renderLabel() {
-    const { label, x, y, width, height, orientation, stroke } = this.props;
+    const { label, stroke, orientation, viewBox } = this.props;
+    const pressentation = getPresentationAttributes(this.props);
 
     if (React.isValidElement(label)) {
-      return React.cloneElement(label, this.props);
+      return React.cloneElement(label, { ...pressentation, orientation, viewBox });
     } else if (_.isFunction(label)) {
       return label(this.props);
     } else if (_.isString(label) || _.isNumber(label)) {
       const props = {
-        ...getPresentationAttributes(this.props),
+        ...pressentation,
         stroke: 'none',
         fill: stroke,
         ...this.getLabelProps(),

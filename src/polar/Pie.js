@@ -27,6 +27,7 @@ class Pie extends Component {
     cy: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     startAngle: PropTypes.number,
     endAngle: PropTypes.number,
+    paddingAngle: PropTypes.number,
     innerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     outerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     nameKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -83,6 +84,7 @@ class Pie extends Component {
     innerRadius: 0,
     // The outer radius of sectors
     outerRadius: '80%',
+    paddingAngle: 0,
     nameKey: 'name',
     valueKey: 'value',
     labelLine: true,
@@ -116,12 +118,12 @@ class Pie extends Component {
   }
 
   getSectors(data) {
-    const { cx, cy, innerRadius, outerRadius, startAngle,
+    const { cx, cy, innerRadius, outerRadius, startAngle, paddingAngle,
       minAngle, endAngle, valueKey } = this.props;
     const len = data.length;
     const deltaAngle = this.getDeltaAngle();
     const absDeltaAngle = Math.abs(deltaAngle);
-
+    const totalPadingAngle = (absDeltaAngle >= 360 ? len : (len - 1)) * paddingAngle;
     const sum = data.reduce((result, entry) => (result + entry[valueKey]), 0);
 
     let sectors = [];
@@ -133,13 +135,14 @@ class Pie extends Component {
         let tempStartAngle;
 
         if (i) {
-          tempStartAngle = deltaAngle < 0 ? prev.endAngle : prev.startAngle;
+          tempStartAngle = (deltaAngle < 0 ? prev.endAngle : prev.startAngle)
+            + Math.sign(deltaAngle) * paddingAngle;
         } else {
           tempStartAngle = startAngle;
         }
 
         const tempEndAngle = tempStartAngle + Math.sign(deltaAngle) * (
-          minAngle + percent * (absDeltaAngle - len * minAngle)
+          minAngle + percent * (absDeltaAngle - len * minAngle - totalPadingAngle )
         );
 
         prev = {
