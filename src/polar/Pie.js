@@ -142,7 +142,7 @@ class Pie extends Component {
         }
 
         const tempEndAngle = tempStartAngle + Math.sign(deltaAngle) * (
-          minAngle + percent * (absDeltaAngle - len * minAngle - totalPadingAngle )
+          minAngle + percent * (absDeltaAngle - len * minAngle - totalPadingAngle)
         );
 
         prev = {
