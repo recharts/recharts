@@ -1,3 +1,13 @@
+## 0.12.5 (July 12, 2016)
+
+### feat
+
+- Add paddingAngle in Pie, fix #142
+
+### deps
+
+- update version of react, fix #138, fix #103
+
 ## 0.12.4 (July 8, 2016)
 
 ### fix
