@@ -1,6 +1,7 @@
 /**
  * @fileOverview Multiline Chart Utils
  */
+ /*eslint max-len: ["error", { "ignoreComments": true }]*/
 import React, { PropTypes, Component } from 'react';
 import { findChildByType } from './ReactUtils';
 import { getBandSizeOfScale } from './DataUtils';
@@ -31,8 +32,7 @@ export const getComposedData = (chartProps, type, xAxis, yAxis, dataKey,
   const data = [];
   for (var i = startIndex; i <= endIndex; i++) {
     const dataPoint = chartProps.data[i];
-    const yDataPoint = i === endIndex &&
-      (type === 'stepBefore' || type === 'stepAfter') ? chartProps.data[i - 1] : chartProps.data[i];
+    const yDataPoint = i === endIndex ? chartProps.data[i - 1] : chartProps.data[i];
     const yPoint = regionValue !== null ? regionValue : _.get(yDataPoint, dataKey, null);
 
     data.push({
@@ -69,7 +69,9 @@ const findStroke = (lineProps, region, segmentCount) => {
 };
 
 const findRegionValue = (lineProps, region, dataItem) => {
-  if (lineProps.strokeRegions && lineProps.strokeRegions[region].value !== null) {
+  if (lineProps.strokeRegions
+    && lineProps.strokeRegions[region] !== undefined
+    && lineProps.strokeRegions[region].value !== null) {
     return lineProps.strokeRegions[region].value;
   }
   return dataItem;
@@ -102,10 +104,12 @@ const findDataSegmentsByRegion = (lineProps, data, dataKey) => {
       start = i;
     }
   }
+
+  const dataVal = _.get(data[data.length - 1], dataKey, null);
   dataSegments.push({
     start,
     end: data.length - 1,
-    regionValue: findRegionValue(lineProps, currentRegion, _.get(data[data.length - 1], dataKey, null)),
+    regionValue: findRegionValue(lineProps, currentRegion, dataVal),
     stroke: findStroke(lineProps, currentRegion, dataSegments.length),
   });
   return dataSegments;
@@ -161,25 +165,54 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
   let currentThreshold = null;
   let start = 0;
   const thresholdKey = lineProps.thresholdKey || dataKey;
+  let previousDataItem = null;
 
   for (var i = 0; i < data.length; i++) {
     const currItem = data[i];
-    const dataItem = _.get(currItem, thresholdKey, null) !== null ? Number(_.get(currItem, thresholdKey, null)) : null;
-    if (currentThreshold === null) {
-      currentThreshold = dataItem === null ? null :
+    const dataItem = _.get(currItem, thresholdKey, null) !== null
+      ? Number(_.get(currItem, thresholdKey, null)) : null;
+    // if (currentThreshold === null) {
+    //   let newThreshold = dataItem === null ? null :
+    //     _.find(thresholds, function (thr) { // eslint-disable-line prefer-arrow-callback,func-names
+    //       return checkThreshold(thr, dataItem);
+    //     });
+    //   if (newThreshold !== null) {
+    //     if (i !== 0) {
+    //       dataSegments.push({ start, end: i, stroke: defaultColor });
+    //       start = i;
+    //     } else {
+    //       previousDataItem = dataItem;
+    //     }
+    //     currentThreshold = newThreshold;
+    //     // previousDataItem = dataItem;
+    //   }
+    if (currentThreshold === null && start === 0) {
+      let newThreshold = dataItem === null ? null :
         _.find(thresholds, function (thr) { // eslint-disable-line prefer-arrow-callback,func-names
           return checkThreshold(thr, dataItem);
         });
+      if (newThreshold !== null) {
+        // if (i !== 0) {
+        //   dataSegments.push({ start, end: i, stroke: defaultColor });
+        //   start = i;
+        // } else {
+        //   previousDataItem = dataItem;
+        // }
+        currentThreshold = newThreshold;
+        previousDataItem = dataItem;
+      }
     } else {
       let isSame = checkThreshold(currentThreshold, dataItem);
       if (isSame && dataKey !== thresholdKey && i > 0) {
-        // if statement to check for scenario where threshold does not change, but data changes, so step must create a new line. // eslint-disable-line max-len
+        // if statement to check for scenario where threshold does not change, but data changes, so step must create a new line.
         isSame = checkDataKey(data[i - 1], data[i], dataKey);
       }
       if (!isSame) {
         const color = currentThreshold && currentThreshold.color ?
           currentThreshold.color : defaultColor;
-        dataSegments.push({ start, end: i, stroke: color });
+        if (previousDataItem !== null) {
+          dataSegments.push({ start, end: i, stroke: color });
+        }
 
         // New Segment
         start = i;
@@ -187,14 +220,18 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
           _.find(thresholds, function (thr) { // eslint-disable-line prefer-arrow-callback,func-names,max-len
             return checkThreshold(thr, dataItem);
           });
+        previousDataItem = dataItem;
       }
     }
   }
-  dataSegments.push({
-    start,
-    end: data.length - 1,
-    stroke: currentThreshold && currentThreshold.color ? currentThreshold.color : defaultColor,
-  });
+  if (previousDataItem !== null) {
+    dataSegments.push({
+      start,
+      end: data.length - 1,
+      stroke: currentThreshold && currentThreshold.color
+        ? currentThreshold.color : defaultColor,
+    });
+  }
   return dataSegments;
 };
 
