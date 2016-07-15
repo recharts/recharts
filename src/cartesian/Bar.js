@@ -50,6 +50,9 @@ class Bar extends Component {
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
     animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
+
+    hoverTimestamp: PropTypes.number,
+    unactiveFill: PropTypes.string,
   };
 
   static defaultProps = {
@@ -86,7 +89,13 @@ class Bar extends Component {
     } else if (_.isFunction(option)) {
       rectangle = option(props);
     } else {
-      rectangle = <Rectangle {...props} className="recharts-bar-rectangle" />;
+      const {hoverTimestamp, unactiveFill} = this.props;
+      const {timestamp} = props;
+      let fill = this.props.fill;
+      if (hoverTimestamp && hoverTimestamp > 0 && timestamp && timestamp > 0 && timestamp !== hoverTimestamp && unactiveFill) {
+        fill = this.props.unactiveFill;
+      }
+      rectangle = <Rectangle {...props} fill={fill} className="recharts-bar-rectangle" />;
     }
 
     return rectangle;

@@ -32,6 +32,9 @@ class ReferenceDot extends Component {
 
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+
+    offsetY: PropTypes.number,
+    offsetX: PropTypes.number,
   };
 
   static defaultProps = {
@@ -48,6 +51,10 @@ class ReferenceDot extends Component {
 
   getCoordinate() {
     const { x, y, xAxisMap, yAxisMap, xAxisId, yAxisId } = this.props;
+    if (xAxisMap === undefined || yAxisMap === undefined) {
+      return null;
+    }
+
     const xScale = xAxisMap[xAxisId].scale;
     const yScale = yAxisMap[yAxisId].scale;
     const result = {
@@ -99,6 +106,10 @@ class ReferenceDot extends Component {
     const coordinate = this.getCoordinate();
 
     if (!coordinate) { return null; }
+
+    const { offsetX, offsetY } = this.props;
+    if (offsetX) { coordinate.cx += offsetX; }
+    if (offsetY) { coordinate.cy += offsetY; }
 
     const props = getPresentationAttributes(this.props);
 
