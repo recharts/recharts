@@ -88,30 +88,34 @@ const findDataSegmentsByRegion = (lineProps, data, dataKey) => {
   const { regionKey } = lineProps;
   const dataSegments = [];
   let currentRegion = null;
+  let previousRegionValue = null;
   let start = 0;
 
   for (var i = 0; i < data.length; i++) {
     const currItem = data[i];
     const dataItem = _.get(currItem, dataKey, null);
     const dataSegment = _.get(currItem, regionKey, null);
-    if (currentRegion === null) {
+    if (i === 0) {
       currentRegion = dataSegment;
+      previousRegionValue = findRegionValue(lineProps, currentRegion, dataItem)
     } else if (currentRegion !== dataSegment) {
       const stroke = findStroke(lineProps, currentRegion, dataSegments.length);
       const regionValue = findRegionValue(lineProps, currentRegion, dataItem);
-      dataSegments.push({ start, end: i, regionValue, stroke });
+      if (previousRegionValue !== null) {
+        dataSegments.push({ start, end: i, regionValue: previousRegionValue, stroke });
+      }
       currentRegion = dataSegment;
       start = i;
+      previousRegionValue = regionValue;
     }
   }
 
   const dataVal = _.get(data[data.length - 1], dataKey, null);
-  dataSegments.push({
-    start,
-    end: data.length - 1,
-    regionValue: findRegionValue(lineProps, currentRegion, dataVal),
-    stroke: findStroke(lineProps, currentRegion, dataSegments.length),
-  });
+  const finalRegionVal = findRegionValue(lineProps, currentRegion, dataVal);
+  if (finalRegionVal !== null) {
+    const finalStroke = findStroke(lineProps, currentRegion, dataSegments.length);
+    dataSegments.push({start, end: data.length - 1, regionValue: finalRegionVal, stroke: finalStroke});
+  }
   return dataSegments;
 };
 
