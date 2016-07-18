@@ -55,8 +55,12 @@ export const getComposedData = (chartProps, type, xAxis, yAxis, dataKey,
  * @param  {Number} segmentCount  The count of the segment if using a stroke array to pick colours
  * @return {String} Stroke Colour
  **/
-const findStroke = (lineProps, region, segmentCount) => {
-  if (lineProps.strokeRegions) {
+const findStroke = (lineProps, region, segmentCount, previousDataItem) => {
+  if (lineProps.strokeThresholds && lineProps.strokeThresholdKey && previousDataItem) {
+    const diVal = _.get(previousDataItem, lineProps.strokeThresholdKey, null);
+    const threshold = findThreshold(lineProps.strokeThresholds, diVal);
+    return thresholdColor(threshold);
+  } else if (lineProps.strokeRegions) {
     if (lineProps.strokeRegions[region] && lineProps.strokeRegions[region].color) {
       return lineProps.strokeRegions[region].color;
     }
@@ -77,6 +81,30 @@ const findRegionValue = (lineProps, region, dataItem) => {
   return dataItem;
 };
 
+const checkThreshold = (thr, val) => {
+  if (thr === null || val === null) {
+    return thr === null && val === null;
+  }
+
+  if (!thr.min) {
+    return val < thr.max;
+  } else if (!thr.max) {
+    return val >= thr.min;
+  }
+  return val >= thr.min && val < thr.max;
+};
+
+const findThreshold = (thresholds, dataVal) => {
+  if (dataVal === null || dataVal === undefined) { return null; };
+  return _.find(thresholds, function (thr) { // eslint-disable-line prefer-arrow-callback,func-names,max-len
+    return checkThreshold(thr, dataVal);
+  });
+};
+
+const thresholdColor = (threshold) => {
+  return threshold && threshold.color ? threshold.color : defaultColor;
+};
+
 /**
  * Find points where the line transitions to a different segment based on regions
  * @param  {Object} lineProps The props from the line React component
@@ -89,6 +117,7 @@ const findDataSegmentsByRegion = (lineProps, data, dataKey) => {
   const dataSegments = [];
   let currentRegion = null;
   let previousRegionValue = null;
+  let previousItem = null;
   let start = 0;
 
   for (var i = 0; i < data.length; i++) {
@@ -97,15 +126,17 @@ const findDataSegmentsByRegion = (lineProps, data, dataKey) => {
     const dataSegment = _.get(currItem, regionKey, null);
     if (i === 0) {
       currentRegion = dataSegment;
+      previousItem = currItem;
       previousRegionValue = findRegionValue(lineProps, currentRegion, dataItem)
     } else if (currentRegion !== dataSegment) {
-      const stroke = findStroke(lineProps, currentRegion, dataSegments.length);
-      const regionValue = findRegionValue(lineProps, currentRegion, dataItem);
       if (previousRegionValue !== null) {
+        const stroke = findStroke(lineProps, currentRegion, dataSegments.length, previousItem);
         dataSegments.push({ start, end: i, regionValue: previousRegionValue, stroke });
       }
       currentRegion = dataSegment;
+      const regionValue = findRegionValue(lineProps, currentRegion, dataItem);
       start = i;
+      previousItem = currItem;
       previousRegionValue = regionValue;
     }
   }
@@ -113,8 +144,29 @@ const findDataSegmentsByRegion = (lineProps, data, dataKey) => {
   const dataVal = _.get(data[data.length - 1], dataKey, null);
   const finalRegionVal = findRegionValue(lineProps, currentRegion, dataVal);
   if (finalRegionVal !== null) {
-    const finalStroke = findStroke(lineProps, currentRegion, dataSegments.length);
+    const finalStroke = findStroke(lineProps, currentRegion, dataSegments.length, data[data.length - 1]);
     dataSegments.push({start, end: data.length - 1, regionValue: finalRegionVal, stroke: finalStroke});
+  }
+  return dataSegments;
+};
+
+const findDataSegmentsNormal = (lineProps, data, dataKey) => {
+  const {stroke} = lineProps;
+  const dataSegments = [];
+  let start = 0;
+  let previousDataItem = null;
+
+  for (var i = 0; i < data.length; i++) {
+    const dataItem = _.get(data[i], dataKey, null);
+    if (i === 0) {
+      previousDataItem = dataItem;
+    } else if ((dataItem === null && previousDataItem !== null) || (i === (data.length - 1) && previousDataItem !== null)) {
+      dataSegments.push({ start, end: i, stroke });
+      previousDataItem = null;
+    } else if (dataItem !== null && previousDataItem === null) {
+      start = i;
+      previousDataItem = dataItem
+    }
   }
   return dataSegments;
 };
@@ -127,19 +179,6 @@ const findDataSegmentsByRegion = (lineProps, data, dataKey) => {
  * @return {Array} Data Segments, i.e. the different sections the line is split into
  **/
 const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
-  function checkThreshold(thr, val) {
-    if (thr === null || val === null) {
-      return thr === null && val === null;
-    }
-
-    if (!thr.min) {
-      return val < thr.max;
-    } else if (!thr.max) {
-      return val >= thr.min;
-    }
-    return val >= thr.min && val < thr.max;
-  }
-
   function checkDataKey(prevItem, currItemm, dk) {
     const prevDataItemTemp = _.get(prevItem, dk, null);
     const prevDataItem = prevDataItemTemp !== null ? Number(prevDataItemTemp) : null;
@@ -175,33 +214,9 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
     const currItem = data[i];
     const dataItem = _.get(currItem, thresholdKey, null) !== null
       ? Number(_.get(currItem, thresholdKey, null)) : null;
-    // if (currentThreshold === null) {
-    //   let newThreshold = dataItem === null ? null :
-    //     _.find(thresholds, function (thr) { // eslint-disable-line prefer-arrow-callback,func-names
-    //       return checkThreshold(thr, dataItem);
-    //     });
-    //   if (newThreshold !== null) {
-    //     if (i !== 0) {
-    //       dataSegments.push({ start, end: i, stroke: defaultColor });
-    //       start = i;
-    //     } else {
-    //       previousDataItem = dataItem;
-    //     }
-    //     currentThreshold = newThreshold;
-    //     // previousDataItem = dataItem;
-    //   }
-    if (currentThreshold === null && start === 0) {
-      let newThreshold = dataItem === null ? null :
-        _.find(thresholds, function (thr) { // eslint-disable-line prefer-arrow-callback,func-names
-          return checkThreshold(thr, dataItem);
-        });
+    if (currentThreshold === null && i === 0) {
+      let newThreshold = findThreshold(thresholds, dataItem);
       if (newThreshold !== null) {
-        // if (i !== 0) {
-        //   dataSegments.push({ start, end: i, stroke: defaultColor });
-        //   start = i;
-        // } else {
-        //   previousDataItem = dataItem;
-        // }
         currentThreshold = newThreshold;
         previousDataItem = dataItem;
       }
@@ -212,18 +227,13 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
         isSame = checkDataKey(data[i - 1], data[i], dataKey);
       }
       if (!isSame) {
-        const color = currentThreshold && currentThreshold.color ?
-          currentThreshold.color : defaultColor;
         if (previousDataItem !== null) {
-          dataSegments.push({ start, end: i, stroke: color });
+          dataSegments.push({ start, end: i, stroke: thresholdColor(currentThreshold) });
         }
 
         // New Segment
         start = i;
-        currentThreshold = dataItem === null ? null :
-          _.find(thresholds, function (thr) { // eslint-disable-line prefer-arrow-callback,func-names,max-len
-            return checkThreshold(thr, dataItem);
-          });
+        currentThreshold = findThreshold(thresholds, dataItem);
         previousDataItem = dataItem;
       }
     }
@@ -232,8 +242,7 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
     dataSegments.push({
       start,
       end: data.length - 1,
-      stroke: currentThreshold && currentThreshold.color
-        ? currentThreshold.color : defaultColor,
+      stroke: thresholdColor(currentThreshold),
     });
   }
   return dataSegments;
@@ -252,7 +261,7 @@ const findDataSegments = (lineProps, data, dataKey) => {
   } else if (lineProps.regionKey) {
     return findDataSegmentsByRegion(lineProps, data, dataKey);
   }
-  return [{ start: 0, end: data.length - 1, stroke: lineProps.stroke }];
+  return findDataSegmentsNormal(lineProps, data, dataKey);
 };
 
 /**

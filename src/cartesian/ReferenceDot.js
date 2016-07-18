@@ -35,6 +35,9 @@ class ReferenceDot extends Component {
 
     offsetY: PropTypes.number,
     offsetX: PropTypes.number,
+
+    showCursor: PropTypes.bool,
+    height: PropTypes.number,
   };
 
   static defaultProps = {
@@ -47,6 +50,7 @@ class ReferenceDot extends Component {
     stroke: '#ccc',
     fillOpacity: 1,
     strokeWidth: 1,
+    showCursor: false,
   };
 
   getCoordinate() {
@@ -96,6 +100,27 @@ class ReferenceDot extends Component {
     return null;
   }
 
+  renderLine(props, coordinate) {
+    if (!coordinate) { return null; }
+
+    const lineProps = {
+      stroke: props.stroke === 'none' ? props.fill : props.stroke,
+    };
+    const height = props && props.height ||
+      props && props.yAxisMap && props.yAxisMap[0] && props.yAxisMap[0].height || 10;
+
+    return (
+      <line
+        {...lineProps}
+        className="recharts-reference-line-line"
+        x1={coordinate.cx}
+        y1={0}
+        x2={coordinate.cx}
+        y2={height}
+      />
+    );
+  }
+
   render() {
     const { x, y } = this.props;
     const isX = _.isNumber(x) || _.isString(x);
@@ -121,6 +146,7 @@ class ReferenceDot extends Component {
           className="recharts-reference-dot-dot"
           {...coordinate}
         />
+        {this.renderLine(this.props, coordinate)}
         {this.renderLabel(coordinate)}
       </Layer>
     );

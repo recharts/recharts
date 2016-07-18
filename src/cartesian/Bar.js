@@ -28,6 +28,8 @@ class Bar extends Component {
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     formatter: PropTypes.func,
+    minPointSize: PropTypes.number,
+    barType: PropTypes.string,
 
     shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
     label: PropTypes.oneOfType([
@@ -53,6 +55,8 @@ class Bar extends Component {
 
     hoverTimestamp: PropTypes.number,
     unactiveFill: PropTypes.string,
+
+    updateOnHover: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -60,6 +64,7 @@ class Bar extends Component {
     xAxisId: 0,
     yAxisId: 0,
     legendType: 'rect',
+    minPointSize: 0,
     // data of bar
     data: [],
     layout: 'vertical',
@@ -95,7 +100,8 @@ class Bar extends Component {
       if (hoverTimestamp && hoverTimestamp > 0 && timestamp && timestamp > 0 && timestamp !== hoverTimestamp && unactiveFill) {
         fill = this.props.unactiveFill;
       }
-      rectangle = <Rectangle {...props} fill={fill} className="recharts-bar-rectangle" />;
+      const classes = `recharts-bar-rectangle ts-${timestamp}`;
+      rectangle = <Rectangle {...props} fill={fill} className={classes} />;
     }
 
     return rectangle;
