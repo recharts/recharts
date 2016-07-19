@@ -88,7 +88,7 @@ class Area extends Component {
 
     const { points } = props;
     this.state = {
-      isAnimationFinished: (!points || points.length <= 1),
+      isAnimationFinished: true,
     };
   }
 

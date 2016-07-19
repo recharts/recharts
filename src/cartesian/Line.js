@@ -87,8 +87,7 @@ class Line extends Component {
 
     const { points } = props;
     this.state = {
-      isAnimationFinished: false,
-      steps: [],
+      isAnimationFinished: true,
       totalLength: 0,
     };
   }

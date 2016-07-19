@@ -43,7 +43,11 @@ const initilaState = {
 const renderSpecialDot = (props) => {
   const { cx, cy, stroke, key } = props;
 
-  return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke} key={key}/>;
+  if (cx === +cx && cy === +cy) {
+    return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke} key={key}/>;
+  }
+
+  return null;
 };
 
 const renderLabel = (props) => {
