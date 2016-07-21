@@ -1,3 +1,15 @@
+## 0.12.6 (July 21, 2016)
+
+### feat
+
+- Support Tooltip  of RadarChart
+
+### fix
+
+- Fix the initial value of state isAnimationFinished in Line and Area
+- Fix the spelling error, pressentation => presentation (CartesianAxis)
+- Tweak text in RadarSpec
+
 ## 0.12.5 (July 12, 2016)
 
 ### feat
