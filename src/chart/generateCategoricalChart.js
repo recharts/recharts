@@ -21,9 +21,9 @@ import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
 import pureRender from '../util/PureRender';
-import { getOffset } from '../util/DOMUtils';
+import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
 import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate } from '../util/DataUtils';
-import { calculateDomainOfTicks, calculateChartCoordinate, calculateActiveTickIndex,
+import { calculateDomainOfTicks, calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
   getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
   getStackGroupsByAxisId, getTicksOfAxis, isCategorialAxis } from '../util/CartesianUtils';

@@ -39,6 +39,8 @@ class Radar extends Component {
       PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool,
     ]),
 
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
     isAnimationActive: PropTypes.bool,
     animationId: PropTypes.number,
     animationBegin: PropTypes.number,
@@ -53,6 +55,22 @@ class Radar extends Component {
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
+  };
+
+  handleMouseEnter = (e) => {
+    const { onMouseEnter } = this.props;
+
+    if (onMouseEnter) {
+      onMouseEnter(this.props, e);
+    }
+  };
+
+  handleMouseLeave = (e) => {
+    const { onMouseLeave } = this.props;
+
+    if (onMouseLeave) {
+      onMouseLeave(this.props, e);
+    }
   };
 
   renderPolygon() {
@@ -82,7 +100,12 @@ class Radar extends Component {
           duration={animationDuration}
           key={animationId}
         >
-          <Polygon {...getPresentationAttributes(this.props)} points={transformPoints} />
+          <Polygon
+            onMouseEnter={this.handleMouseEnter}
+            onMouseLeave={this.handleMouseLeave}
+            {...getPresentationAttributes(this.props)}
+            points={transformPoints}
+          />
         </Animate>
       </Layer>
     );

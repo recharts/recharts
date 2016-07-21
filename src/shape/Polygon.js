@@ -4,7 +4,8 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import classNames from 'classnames';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
+  filterEventAttributes } from '../util/ReactUtils';
 
 const getPolygonPoints = (points) => (
   points.reduce((result, entry) => {
@@ -46,6 +47,7 @@ class Polygon extends Component {
     return (
       <polygon
         {...getPresentationAttributes(this.props)}
+        {...filterEventAttributes(this.props)}
         className={layerClass}
         points={getPolygonPoints(points)}
       />

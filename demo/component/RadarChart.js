@@ -1,5 +1,5 @@
 import React from 'react';
-import { Surface, Radar, RadarChart, PolarGrid, Legend,
+import { Surface, Radar, RadarChart, PolarGrid, Legend, Tooltip,
          PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import DemoRadarItem from './DemoRadarItem';
 import { changeNumberOfData } from './utils';
@@ -62,6 +62,7 @@ class RadarChartDemo extends React.Component {
             fillOpacity={0.6}
             animationBegin={180}
           />
+          <Tooltip />
           <PolarGrid />
           <Legend />
           <PolarRadiusAxis domain={[0, 150]} label="score"/>
@@ -75,6 +76,7 @@ class RadarChartDemo extends React.Component {
               <PolarGrid />
               <PolarAngleAxis dataKey="subject" />
               <PolarRadiusAxis />
+              <Tooltip />
             </RadarChart>
           </ResponsiveContainer>
         </div>

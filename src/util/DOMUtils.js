@@ -101,3 +101,16 @@ export const getOffset = (el) => {
     left: box.left + window.pageXOffset - html.clientLeft,
   };
 };
+
+/**
+ * Calculate coordinate of cursor in chart
+ * @param  {Object} event  Event object
+ * @param  {Object} offset The offset of main part in the svg element
+ * @return {Object}        {chartX, chartY}
+ */
+export const calculateChartCoordinate = (event, offset) => (
+  {
+    chartX: Math.round(event.pageX - offset.left),
+    chartY: Math.round(event.pageY - offset.top),
+  }
+);

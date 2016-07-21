@@ -2,12 +2,14 @@
  * @fileOverview Radar Chart
  */
 import React, { Component, PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { getNiceTickValues } from 'recharts-scale';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Legend from '../component/Legend';
+import Tooltip from '../component/Tooltip';
 
 import Radar from '../polar/Radar';
 import PolarGrid from '../polar/PolarGrid';
@@ -17,6 +19,7 @@ import PolarRadiusAxis from '../polar/PolarRadiusAxis';
 import _ from 'lodash';
 import { validateWidthHeight, findChildByType, findAllByType, filterSvgElements,
   getPresentationAttributes } from '../util/ReactUtils';
+import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { getPercentValue, parseSpecifiedDomain } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
@@ -52,6 +55,9 @@ class RadarChart extends Component {
     ]),
     className: PropTypes.string,
     animationId: PropTypes.number,
+
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
   };
 
   static defaultProps = {
@@ -67,6 +73,25 @@ class RadarChart extends Component {
     data: [],
     margin: { top: 0, right: 0, bottom: 0, left: 0 },
   };
+
+  state = {
+    activeTooltipLabel: '',
+    activeTooltipCoord: { x: 0, y: 0 },
+    isTooltipActive: false,
+  };
+
+  getTooltipContent(itemProps) {
+    const { points, dataKey, unit } = itemProps;
+
+    return points.map((entry) => {
+      const { name, value, payload } = entry;
+
+      return {
+        ...getPresentationAttributes(itemProps),
+        dataKey, unit, name, value, payload,
+      };
+    });
+  }
 
   getRadiusAxisCfg(radiusAxis, innerRadius, outerRadius) {
     const { children } = this.props;
@@ -164,7 +189,9 @@ class RadarChart extends Component {
 
   getComposedData(item, scale, cx, cy, innerRadius, outerRadius) {
     const { dataKey } = item.props;
-    const { data, startAngle, clockWise } = this.props;
+    const { data, startAngle, clockWise, children } = this.props;
+    const angleAxis = findChildByType(children, PolarAngleAxis);
+    const nameKey = angleAxis && angleAxis.props.dataKey;
     const len = data.length;
 
     return data.map((entry, i) => {
@@ -175,11 +202,54 @@ class RadarChart extends Component {
       return {
         ...polarToCartesian(cx, cy, radius, angle),
         value,
+        name: nameKey ? (entry[nameKey] || i) : i,
         cx, cy, radius, angle,
         payload: entry,
       };
     });
   }
+
+  handleMouseEnter = (itemProps, e) => {
+    const { children, onMouseEnter } = this.props;
+    const { points } = itemProps;
+    const tooltipItem = findChildByType(children, Tooltip);
+
+    if (tooltipItem && points.length) {
+      const container = ReactDOM.findDOMNode(this);
+      const containerOffset = getOffset(container);
+      const ne = calculateChartCoordinate(e, containerOffset);
+
+      this.setState({
+        isTooltipActive: true,
+        activeTooltipLabel: itemProps.name || itemProps.dataKey,
+        activeTooltipCoord: { x: ne.chartX, y: ne.chartY },
+        activeTooltipPayload: this.getTooltipContent(itemProps),
+      }, () => {
+        if (onMouseEnter) {
+          onMouseEnter(points, e);
+        }
+      });
+    } else if (onMouseEnter) {
+      onMouseEnter(points, e);
+    }
+  };
+
+  handleMouseLeave = (itemProps, e) => {
+    const { children, onMouseLeave } = this.props;
+    const tooltipItem = findChildByType(children, Tooltip);
+
+    if (tooltipItem) {
+      this.setState({
+        isTooltipActive: false,
+      }, () => {
+        if (onMouseLeave) {
+          onMouseLeave(itemProps, e);
+        }
+      });
+    } else if (onMouseLeave) {
+      onMouseLeave(itemProps, e);
+    }
+  };
 
   renderRadars(items, scale, cx, cy, innerRadius, outerRadius) {
     if (!items || !items.length) { return null; }
@@ -192,6 +262,8 @@ class RadarChart extends Component {
         animationId: this.props.animationId,
         points: this.getComposedData(el, scale, cx, cy, innerRadius, outerRadius),
         key: `radar-${index}`,
+        onMouseEnter: this.handleMouseEnter,
+        onMouseLeave: this.handleMouseLeave,
       })));
   }
 
@@ -245,6 +317,26 @@ class RadarChart extends Component {
       angle: radiusAxis.props.angle || startAngle,
       ticks: this.getRadiusTicks(radiusAxisCfg),
       cx, cy,
+    });
+  }
+
+  renderTooltip() {
+    const { children } = this.props;
+    const tooltipItem = findChildByType(children, Tooltip);
+
+    if (!tooltipItem) { return null; }
+
+    const { width, height } = this.props;
+    const { isTooltipActive, activeTooltipLabel, activeTooltipCoord,
+      activeTooltipPayload } = this.state;
+    const viewBox = { x: 0, y: 0, width, height };
+
+    return React.cloneElement(tooltipItem, {
+      viewBox,
+      active: isTooltipActive,
+      label: activeTooltipLabel,
+      payload: activeTooltipPayload,
+      coordinate: activeTooltipCoord,
     });
   }
 
@@ -310,6 +402,7 @@ class RadarChart extends Component {
         </Surface>
 
         {this.renderLegend(items)}
+        {this.renderTooltip()}
       </div>
     );
   }

@@ -204,7 +204,7 @@ class PieChart extends Component {
         </Surface>
 
         {this.renderLegend(items)}
-        {this.renderTooltip(items)}
+        {this.renderTooltip()}
       </div>
     );
   }
