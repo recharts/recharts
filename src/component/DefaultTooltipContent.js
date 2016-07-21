@@ -23,6 +23,7 @@ class DefaultTooltipContent extends Component {
       value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       unit: PropTypes.any,
     })),
+    itemSorter: PropTypes.func,
   };
 
   static defaultProps = {
@@ -32,12 +33,13 @@ class DefaultTooltipContent extends Component {
   };
 
   renderContent() {
-    const { payload, separator, formatter, itemStyle } = this.props;
+    const { payload, separator, formatter, itemStyle, itemSorter } = this.props;
 
     if (payload && payload.length) {
       const listStyle = { padding: 0, margin: 0 };
 
       const items = payload.filter(entry => (_.isNumber(entry.value) || _.isString(entry.value)))
+      .sort(itemSorter)
       .map((entry, i) => {
         const finalItemStyle = {
           display: 'block',

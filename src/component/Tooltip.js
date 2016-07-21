@@ -50,6 +50,7 @@ const propTypes = {
     'ease-in-out',
     'linear',
   ]),
+  itemSorter: PropTypes.func,
 };
 
 const defaultProps = {
@@ -66,6 +67,7 @@ const defaultProps = {
   isAnimationActive: true,
   animationEasing: 'ease',
   animationDuration: 400,
+  itemSorter: (item1, item2) => -1,
 };
 
 const getTooltipBBox = (wrapperStyle, contentItem) => {
