@@ -37,6 +37,7 @@ class ReferenceDot extends Component {
     offsetX: PropTypes.number,
 
     showCursor: PropTypes.bool,
+    showLine: PropTypes.bool,
     height: PropTypes.number,
   };
 
@@ -51,6 +52,7 @@ class ReferenceDot extends Component {
     fillOpacity: 1,
     strokeWidth: 1,
     showCursor: false,
+    showLine: false,
   };
 
   getCoordinate() {
@@ -122,7 +124,7 @@ class ReferenceDot extends Component {
   }
 
   render() {
-    const { x, y } = this.props;
+    const { x, y, showLine } = this.props;
     const isX = _.isNumber(x) || _.isString(x);
     const isY = _.isNumber(y) || _.isString(y);
 
@@ -146,7 +148,7 @@ class ReferenceDot extends Component {
           className="recharts-reference-dot-dot"
           {...coordinate}
         />
-        {this.renderLine(this.props, coordinate)}
+        {showLine && this.renderLine(this.props, coordinate)}
         {this.renderLabel(coordinate)}
       </Layer>
     );
