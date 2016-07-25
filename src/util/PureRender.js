@@ -52,6 +52,11 @@ function updateFlagCheck(props, nextProps) {
   return props.processTimestamp !== nextProps.processTimestamp;
 }
 
+function updateNoteFlagCheck(props, nextProps) {
+  // update chart when hovering over a notification to see it's duration
+  return props.noteHoverStartTime !== nextProps.noteHoverStartTime;
+}
+
 function hoverUpdateCheck(props, nextProps) {
   return props.hoverTimestamp !== nextProps.processTimestamp;
 }
@@ -59,6 +64,9 @@ function hoverUpdateCheck(props, nextProps) {
 function shouldComponentUpdate(nextProps, nextState) {
   if (nextProps.updateOnHover === true) {
     return hoverUpdateCheck(this.props, nextProps);
+  }
+  if (this.props.noteHoverStartTime !== nextProps.noteHoverStartTime) {
+    return true;
   }
   if (nextProps.processTimestamp > 0) {
     return updateFlagCheck(this.props, nextProps);
