@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { scaleLinear } from 'd3-scale';
-import { getNiceTickValues } from 'recharts-scale';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Legend from '../component/Legend';
@@ -24,7 +23,7 @@ import pureRender from '../util/PureRender';
 import { parseSpecifiedDomain } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { calculateDomainOfTicks, detectReferenceElementsDomain, getTicksOfAxis,
-  getCoordinatesOfGrid, getLegendProps } from '../util/CartesianUtils';
+  getCoordinatesOfGrid, getLegendProps, getTicksOfScale } from '../util/CartesianUtils';
 import _ from 'lodash';
 
 @pureRender
@@ -175,36 +174,6 @@ class ScatterChart extends Component {
       height: height - offset.top - offset.bottom,
     };
   }
-
-  /**
-   * Configure the scale function of axis
-   * @param {Object} scale The scale function
-   * @param {Object} opts  The configuration of axis
-   * @return {Object}      null
-   */
-  getTicksOfScale(scale, opts) {
-    // Give priority to use the options of ticks
-    if (opts.ticks && opts.ticks) {
-      const domain = calculateDomainOfTicks(opts.ticks, opts.type);
-      scale.domain(domain)
-           .ticks(opts.ticks.length);
-      return { domain };
-    }
-
-    if (opts.tickCount && opts.originalDomain && (
-      opts.originalDomain[0] === 'auto' || opts.originalDomain[1] === 'auto')) {
-      // Calculate the ticks by the number of grid when the axis is a number axis
-      const domain = scale.domain();
-      const tickValues = getNiceTickValues(domain, opts.tickCount);
-
-      scale.domain(calculateDomainOfTicks(tickValues, opts.type));
-
-      return { ticks: tickValues };
-    }
-
-    return null;
-  }
-
   /**
    * Calculate the scale function, position, width, height of axes
    * @param  {Object} axis     The configuration of axis
@@ -224,7 +193,7 @@ class ScatterChart extends Component {
 
     const scale = scaleLinear().domain(domain).range(range);
 
-    const ticks = this.getTicksOfScale(scale, axis);
+    const ticks = getTicksOfScale(scale, axis);
 
     if (tickFormat) {
       scale.tickFormat(tickFormat);

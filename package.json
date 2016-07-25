@@ -54,7 +54,7 @@
     "lodash": "4.13.1",
     "react-container-dimensions": "1.2.0",
     "react-smooth": "0.1.11",
-    "recharts-scale": "0.1.11"
+    "recharts-scale": "0.2.1"
   },
   "devDependencies": {
     "babel-cli": "^6.10.0",

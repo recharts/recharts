@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import { getNiceTickValues } from 'recharts-scale';
 import { scaleLinear, scaleBand, scalePoint } from 'd3-scale';
 import classNames from 'classnames';
 import Surface from '../container/Surface';
@@ -26,7 +25,8 @@ import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate } from '../ut
 import { calculateDomainOfTicks, calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
   getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
-  getStackGroupsByAxisId, getTicksOfAxis, isCategorialAxis } from '../util/CartesianUtils';
+  getStackGroupsByAxisId, getTicksOfAxis, isCategorialAxis, getTicksOfScale,
+} from '../util/CartesianUtils';
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
@@ -246,29 +246,6 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       return axisMap;
     }
     /**
-     * Configure the scale function of axis
-     * @param {Object} scale The scale function
-     * @param {Object} opts  The configuration of axis
-     * @return {Object}      null
-     */
-    getTicksOfScale(scale, opts) {
-      const { type, tickCount, originalDomain } = opts;
-
-      if (tickCount && type === 'number' && originalDomain && (
-        originalDomain[0] === 'auto' || originalDomain[1] === 'auto')) {
-        // Calculate the ticks by the number of grid when the axis is a number axis
-        const domain = scale.domain();
-        const tickValues = getNiceTickValues(domain, tickCount);
-
-        scale.domain(calculateDomainOfTicks(tickValues, type));
-
-        return { niceTicks: tickValues };
-      }
-
-      return null;
-    }
-
-    /**
      * Calculate the scale function, position, width, height of axes
      * @param  {Object} axisMap  The configuration of axes
      * @param  {Object} offset   The offset of main part in the svg element
@@ -316,7 +293,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           scale = scaleBand().domain(domain).range(range);
         }
 
-        const ticks = this.getTicksOfScale(scale, axis);
+        const ticks = getTicksOfScale(scale, axis);
 
         let x;
         let y;

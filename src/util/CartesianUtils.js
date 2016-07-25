@@ -2,6 +2,7 @@ import { findAllByType, findChildByType } from './ReactUtils';
 import ReferenceDot from '../cartesian/ReferenceDot';
 import ReferenceLine from '../cartesian/ReferenceLine';
 import Legend from '../component/Legend';
+import { getNiceTickValues, getTickValues } from 'recharts-scale';
 import {
   stack as shapeStack, stackOrderNone, stackOffsetExpand,
   stackOffsetNone, stackOffsetSilhouette, stackOffsetWiggle,
@@ -333,3 +334,39 @@ export const getLegendProps = (children, graphicItems, width, height) => {
     payload: legendData,
   };
 };
+/**
+ * Configure the scale function of axis
+ * @param {Object} scale The scale function
+ * @param {Object} opts  The configuration of axis
+ * @return {Object}      null
+ */
+export const getTicksOfScale = (scale, opts) => {
+  const { type, tickCount, ticks, originalDomain, allowDecimals } = opts;
+
+  // Give priority to use the options of ticks
+  if (ticks && ticks.length) {
+    const domain = calculateDomainOfTicks(ticks, type);
+    scale.domain(domain).ticks(ticks.length);
+
+    return { domain };
+  }
+
+  if (tickCount && type === 'number' && originalDomain && (
+    originalDomain[0] === 'auto' || originalDomain[1] === 'auto')) {
+    // Calculate the ticks by the number of grid when the axis is a number axis
+    const domain = scale.domain();
+    const tickValues = getNiceTickValues(domain, tickCount, allowDecimals);
+
+    scale.domain(calculateDomainOfTicks(tickValues, type));
+
+    return { niceTicks: tickValues };
+  } else if (tickCount && type === 'number') {
+    const domain = scale.domain();
+    const tickValues = getTickValues(domain, tickCount, allowDecimals);
+
+    return { niceTicks: tickValues };
+  }
+
+  return null;
+};
+

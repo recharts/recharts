@@ -10,6 +10,7 @@ class XAxis extends Component {
   static displayName = 'XAxis';
 
   static propTypes = {
+    allowDecimals: PropTypes.bool,
     hide: PropTypes.bool,
     // The name of data displayed in the axis
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -45,6 +46,7 @@ class XAxis extends Component {
   };
 
   static defaultProps = {
+    allowDecimals: true,
     hide: false,
     orientation: 'bottom',
     width: 0,
