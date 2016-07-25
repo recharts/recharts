@@ -1,3 +1,10 @@
+## 0.12.7 (July 25, 2016)
+
+### feat
+
+- Add itemSorter to tooltips
+- add props allowDecimals in XAxis and YAxis
+
 ## 0.12.6 (July 21, 2016)
 
 ### feat
