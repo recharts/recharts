@@ -43,6 +43,7 @@ class ComposedChart extends Component {
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
     ]),
+    noteHoverStartTime: PropTypes.number,
   };
 
   renderCursor(xAxisMap, yAxisMap, offset) {

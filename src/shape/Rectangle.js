@@ -30,6 +30,9 @@ class Rectangle extends Component {
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
     animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
+    noteHoverStartTime: PropTypes.number,
+    invert: PropTypes.bool,
+    parentWidth: PropTypes.number,
   };
 
   static defaultProps = {
@@ -50,6 +53,7 @@ class Rectangle extends Component {
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
+    invert: false,
   };
 
   state = {
@@ -120,7 +124,7 @@ class Rectangle extends Component {
   }
 
   render() {
-    const { x, y, width, height, radius, className } = this.props;
+    const { x, y, width, height, radius, className, hasEndTimestamp } = this.props;
     const { totalLength } = this.state;
     const {
       animationEasing,
@@ -133,6 +137,28 @@ class Rectangle extends Component {
     if (x !== +x || y !== +y || width !== +width || height !== +height) { return null; }
 
     const layerClass = classNames('recharts-rectangle', className);
+
+    if (this.props.invert === true) {
+      const endX = this.props.parentWidth - (x + width);
+      const presentationAttributes = getPresentationAttributes(this.props);
+      const eventAttributes = filterEventAttributes(this.props);
+      return (
+        <g>
+          <path
+            {...presentationAttributes}
+            {...eventAttributes}
+            className={layerClass}
+            d={this.getPath(0, 0, x, height, radius)}
+          />
+        {hasEndTimestamp && <path
+            {...presentationAttributes}
+            {...eventAttributes}
+            className={layerClass}
+            d={this.getPath(x + width, 0, endX, height, radius)}
+          />}
+        </g>
+      );
+    }
 
     return (
       <Smooth
