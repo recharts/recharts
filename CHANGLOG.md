@@ -1,3 +1,10 @@
+## 0.12.8 (Aug 01, 2016)
+
+### fix
+
+- Fix the bug of getTicksOfScale
+- Fix the bug of radius of ClipPath is so small that some texts of Pie is covered
+
 ## 0.12.7 (July 25, 2016)
 
 ### feat
