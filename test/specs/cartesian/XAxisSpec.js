@@ -53,4 +53,14 @@ describe('<XAxis />', () => {
     );
     expect(wrapper.find('.recharts-x-axis').length).to.equal(0);
   });
+
+  it('Don\'t render x-axis when hide is setted to be true', () => {
+    const wrapper = render(
+      <LineChart width={400} height={400} data={lineData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <XAxis ticks={[0, 4]}/>
+        <Line type="monotone" dataKey="uv" stroke="#ff7300"/>
+      </LineChart>
+    );
+    expect(wrapper.find('.recharts-x-axis .recharts-cartesian-axis-tick').length).to.equal(2);
+  });
 });

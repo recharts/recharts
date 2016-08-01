@@ -176,7 +176,7 @@ class PieChart extends Component {
         key: `recharts-pie-${i}`,
         cx,
         cy,
-        maxRadius: Math.max(width, height) / 2,
+        maxRadius: child.props.maxRadius || Math.sqrt(width * width + height * height) / 2,
         innerRadius: getPercentValue(innerRadius, maxRadius, 0),
         outerRadius: getPercentValue(outerRadius, maxRadius, maxRadius * 0.8),
         composedData: this.getComposedData(child),

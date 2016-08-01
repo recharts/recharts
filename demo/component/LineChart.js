@@ -98,7 +98,7 @@ export default React.createClass({
           <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             <CartesianGrid stroke='#f5f5f5'/>
             <Legend/>
-            <XAxis/>
+            <XAxis ticks={[0, 4]}/>
             <YAxis domain={[0, 500]}/>
             <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300'/>
           </LineChart>
