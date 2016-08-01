@@ -54,7 +54,7 @@ describe('<XAxis />', () => {
     expect(wrapper.find('.recharts-x-axis').length).to.equal(0);
   });
 
-  it('Don\'t render x-axis when hide is setted to be true', () => {
+  it('Render ticks of XAxis when specify ticks', () => {
     const wrapper = render(
       <LineChart width={400} height={400} data={lineData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis ticks={[0, 4]}/>
