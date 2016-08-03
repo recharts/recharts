@@ -258,14 +258,9 @@ class Line extends Component {
   }
 
   renderCurve() {
-    const {
-      points, className,
-      isAnimationActive, animationBegin, animationDuration, animationEasing,
-      onClick, onMouseEnter, onMouseLeave,
-      strokeDasharray,
-      ...other,
-    } = this.props;
-
+    const { points, className, strokeDasharray, isAnimationActive,
+      animationBegin, animationDuration, animationEasing, onClick, onMouseEnter,
+      onMouseLeave, ...other } = this.props;
     const { totalLength } = this.state;
     const animationProps = {
       isActive: isAnimationActive,
@@ -278,15 +273,8 @@ class Line extends Component {
       ref: 'animate',
       shouldReAnimate: true,
     };
-    const curveProps = {
-      ...other,
-      className: 'recharts-line-curve',
-      fill: 'none',
-      onClick,
-      onMouseEnter,
-      onMouseLeave,
-      points,
-    };
+    const curveProps = { ...other, className: 'recharts-line-curve', fill: 'none',
+      onClick, onMouseEnter, onMouseLeave, points };
 
     if (strokeDasharray) {
       const lines = strokeDasharray.split(/[,\s]+/gim)

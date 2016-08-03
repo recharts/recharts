@@ -105,7 +105,11 @@ const EVENT_ATTRIBUTES = {
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,
 };
-
+/**
+ * Get the display name of a component
+ * @param  {Object} Comp Specified Component
+ * @return {String}      Display name of Component
+ */
 export const getDisplayName = (Comp) => {
   if (!Comp) { return ''; }
   if (typeof Comp === 'string') {
@@ -263,7 +267,11 @@ const SVG_TAGS = ['a', 'altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',
 'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect', 'script',
 'set', 'stop', 'style', 'svg', 'switch', 'symbol', 'text', 'textPath', 'title',
 'tref', 'tspan', 'use', 'view', 'vkern'];
-
+/**
+ * Filter all the svg elements of children
+ * @param  {Array} children The children of a react element
+ * @return {Array}          All the svg elements
+ */
 export const filterSvgElements = (children) => {
   const svgElements = [];
 

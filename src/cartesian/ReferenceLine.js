@@ -117,6 +117,7 @@ class ReferenceLine extends Component {
       ...end,
       ...this.getLabelProps(isX, isY),
     };
+
     if (React.isValidElement(label)) {
       return React.cloneElement(label, props);
     } else if (_.isFunction(label)) {
@@ -128,6 +129,7 @@ class ReferenceLine extends Component {
         </g>
       );
     }
+
     return null;
   }
 

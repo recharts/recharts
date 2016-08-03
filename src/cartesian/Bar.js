@@ -156,7 +156,9 @@ class Bar extends Component {
 
   renderLabels() {
     const { isAnimationActive } = this.props;
+
     if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
+
     const { data, label, layout } = this.props;
     const barProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);

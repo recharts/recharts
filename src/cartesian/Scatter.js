@@ -86,9 +86,7 @@ class Scatter extends Component {
     animationEasing: 'linear',
   };
 
-  state = {
-    activeIndex: -1,
-  };
+  state = { activeIndex: -1 };
 
   renderSymbolItem(option, props) {
     let symbol;
@@ -122,16 +120,15 @@ class Scatter extends Component {
           {...filterEventsOfChild(this.props, entry, i)}
           key={`symbol-${i}`}
         >
-          {
-            <Animate
-              from={{ size: 0 }}
-              to={{ size: props.size }}
-              duration={animationDuration}
-              begin={animationBegin}
-              isActive={isAnimationActive}
-              key={animationId}
-              easing={animationEasing}
-            >
+          <Animate
+            from={{ size: 0 }}
+            to={{ size: props.size }}
+            duration={animationDuration}
+            begin={animationBegin}
+            isActive={isAnimationActive}
+            key={animationId}
+            easing={animationEasing}
+          >
             {
               ({ size }) => {
                 const finalProps = { ...props, size };
@@ -139,8 +136,7 @@ class Scatter extends Component {
                 return this.renderSymbolItem(activeIndex === i ? activeShape : shape, finalProps);
               }
             }
-            </Animate>
-          }
+          </Animate>
         </Layer>
       );
     });

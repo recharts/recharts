@@ -89,9 +89,7 @@ class Area extends Component {
     super(props, ctx);
 
     const { points } = props;
-    this.state = {
-      isAnimationFinished: true,
-    };
+    this.state = { isAnimationFinished: true };
   }
 
   handleAnimationEnd = () => {
@@ -104,13 +102,9 @@ class Area extends Component {
 
   renderCurve(points, opacity) {
     const { layout, type, curve, connectNulls } = this.props;
-    let animProps = {
-      points: this.props.points,
-    };
+    let animProps = { points: this.props.points };
 
-    if (points) {
-      animProps = { points, opacity };
-    }
+    if (points) { animProps = { points, opacity }; }
 
     return (
       <g>
@@ -148,7 +142,7 @@ class Area extends Component {
       onAnimationStart: this.handleAnimationStart,
     };
 
-    if (!baseLine || !baseLine.length) {
+    if (_.isNumber(baseLine)) {
       const transformOrigin = layout === 'vertical' ? 'left center' : 'center bottom';
       const scaleType = layout === 'vertical' ? 'scaleX' : 'scaleY';
 
@@ -176,12 +170,9 @@ class Area extends Component {
       >
       {
         ({ alpha }) => this.renderCurve(
-          points.map(
-            ({ x, y }, i) => ({
-              x,
-              y: (y - baseLine[i].y) * alpha + baseLine[i].y,
-            })
-          ),
+          points.map(({ x, y }, i) => (
+            { x, y: (y - baseLine[i].y) * alpha + baseLine[i].y }
+          )),
           +(alpha > 0)
         )
       }
@@ -206,9 +197,8 @@ class Area extends Component {
   renderDots() {
     const { isAnimationActive } = this.props;
 
-    if (isAnimationActive && !this.state.isAnimationFinished) {
-      return null;
-    }
+    if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
+
     const { dot, points } = this.props;
     const areaProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
@@ -256,9 +246,8 @@ class Area extends Component {
   renderLabels() {
     const { isAnimationActive } = this.props;
 
-    if (isAnimationActive && !this.state.isAnimationFinished) {
-      return null;
-    }
+    if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
+
     const { points, label } = this.props;
     const areaProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);
