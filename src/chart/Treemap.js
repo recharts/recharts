@@ -229,11 +229,23 @@ class Treemap extends Component {
     animationEasing: 'linear',
   };
 
-  state = {
-    isTooltipActive: false,
-    activeNode: null,
-  };
+  state = this.createDefaultState();
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data !== this.props.data) {
+      this.setState(this.createDefaultState());
+    }
+  }
+  /**
+   * Returns default, reset state for the treemap chart.
+   * @return {Object} Whole new state
+   */
+  createDefaultState() {
+    return {
+      isTooltipActive: false,
+      activeNode: null,
+    };
+  }
   handleMouseEnter(node, e) {
     const { onMouseEnter, children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);

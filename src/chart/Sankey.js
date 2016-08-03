@@ -322,9 +322,22 @@ class Sankey extends Component {
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
   };
 
-  state = {
-    isTooltipActive: false,
-  };
+  state = this.createDefaultState();
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data !== this.props.data) {
+      this.setState(this.createDefaultState());
+    }
+  }
+  /**
+   * Returns default, reset state for the sankey chart.
+   * @return {Object} Whole new state
+   */
+  createDefaultState() {
+    return {
+      isTooltipActive: false,
+    };
+  }
 
   handleMouseEnter(el, index, e) {
     const { onMouseEnter, children } = this.props;

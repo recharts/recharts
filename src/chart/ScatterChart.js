@@ -58,7 +58,6 @@ class ScatterChart extends Component {
     isTooltipActive: false,
     activeItem: null,
   };
-
   /**
    * Compose the data of each group
    * @param  {Array}  data        The original data

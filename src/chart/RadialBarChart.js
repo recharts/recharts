@@ -66,13 +66,13 @@ class RadialBarChart extends Component {
     margin: { top: 0, right: 0, bottom: 0, left: 0 },
   };
 
-  state = {
-    activeTooltipLabel: '',
-    activeTooltipPayload: [],
-    activeTooltipCoord: { x: 0, y: 0 },
-    isTooltipActive: false,
-  };
+  state = this.createDefaultState();
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data !== this.props.data) {
+      this.setState(this.createDefaultState());
+    }
+  }
   /**
    * Compose the data of each group
    * @param  {Object} item        An instance of RadialBar
@@ -101,7 +101,6 @@ class RadialBarChart extends Component {
       };
     });
   }
-
   /**
    * Calculate the size of all groups
    * @param  {Array} items All the instance of RadialBar
@@ -175,6 +174,18 @@ class RadialBarChart extends Component {
     }
 
     return result;
+  }
+  /**
+   * Returns default, reset state for the radial bar chart.
+   * @return {Object} Whole new state
+   */
+  createDefaultState() {
+    return {
+      activeTooltipLabel: '',
+      activeTooltipPayload: [],
+      activeTooltipCoord: { x: 0, y: 0 },
+      isTooltipActive: false,
+    };
   }
 
   handleMouseEnter = (el, index, e) => {
