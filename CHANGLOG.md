@@ -1,3 +1,18 @@
+## 0.13.0 (Aug 03, 2016)
+
+### Fix
+
+- Ensured all tooltip-related state gets reset upon receiving new data for all the charts
+
+### feat
+
+- Support smooth curve in Scatter 
+- Support props connectNulls in Area, Line, and Curve,
+
+### refactor
+
+- Refactor animation of Area
+
 ## 0.12.8 (Aug 01, 2016)
 
 ### fix
