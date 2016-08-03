@@ -49,6 +49,7 @@ class Curve extends Component {
       PropTypes.number, PropTypes.array,
     ]),
     points: PropTypes.arrayOf(PropTypes.object),
+    connectNulls: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -58,18 +59,20 @@ class Curve extends Component {
     strokeWidth: 1,
     strokeDasharray: 'none',
     points: [],
+    connectNulls: false,
   };
   /**
    * Calculate the path of curve
    * @return {String} path
    */
   getPath() {
-    const { type, points, baseLine, layout } = this.props;
+    const { type, points, baseLine, layout, connectNulls } = this.props;
     const curveFactory = getCurveFactory(type, layout);
+    const formatPoints = connectNulls ? points.filter(entry => defined(entry)) : points;
     let lineFunction;
 
     if (_.isArray(baseLine)) {
-      const areaPoints = points.map((entry, index) => (
+      const areaPoints = formatPoints.map((entry, index) => (
         { ...entry, base: baseLine[index] }
       ));
       if (layout === 'vertical') {
@@ -101,7 +104,7 @@ class Curve extends Component {
     lineFunction.defined(defined)
                 .curve(curveFactory);
 
-    return lineFunction(points);
+    return lineFunction(formatPoints);
   }
 
   render() {

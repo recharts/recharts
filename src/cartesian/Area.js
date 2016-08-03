@@ -30,6 +30,7 @@ class Area extends Component {
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     legendType: PropTypes.string,
+    connectNulls: PropTypes.bool,
 
     activeDot: PropTypes.oneOfType([
       PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
@@ -70,6 +71,7 @@ class Area extends Component {
     xAxisId: 0,
     yAxisId: 0,
     legendType: 'line',
+    connectNulls: false,
     // points of area
     points: [],
     dot: false,
@@ -101,16 +103,13 @@ class Area extends Component {
   };
 
   renderCurve(points, opacity) {
-    const { layout, type, curve } = this.props;
+    const { layout, type, curve, connectNulls } = this.props;
     let animProps = {
       points: this.props.points,
     };
 
     if (points) {
-      animProps = {
-        points,
-        opacity,
-      };
+      animProps = { points, opacity };
     }
 
     return (
@@ -121,6 +120,7 @@ class Area extends Component {
             className="recharts-area-curve"
             layout={layout}
             type={type}
+            connectNulls={connectNulls}
             fill="none"
             {...animProps}
           />

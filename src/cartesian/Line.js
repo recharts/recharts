@@ -33,6 +33,7 @@ class Line extends Component {
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     legendType: PropTypes.string,
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
+    connectNulls: PropTypes.bool,
 
      // whether have dot in line
     activeDot: PropTypes.oneOfType([
@@ -69,6 +70,7 @@ class Line extends Component {
   static defaultProps = {
     xAxisId: 0,
     yAxisId: 0,
+    connectNulls: false,
     activeDot: true,
     dot: true,
     legendType: 'line',

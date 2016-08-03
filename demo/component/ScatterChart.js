@@ -102,7 +102,7 @@ export default React.createClass({
             <XAxis dataKey="x" name="stature" unit="cm" />
             <YAxis dataKey="y" name="weight" unit="kg" />
             <ZAxis range={[64]} />
-            <Scatter line shape="star" data={data03} fill="#ff7300" />
+            <Scatter line lineJointType="monotoneX" shape="star" data={data03} fill="#ff7300" />
             <Scatter line shape="square" data={data04} fill="#347300" />
             <CartesianGrid />
             <Tooltip cursor={{ stroke: '#808080', strokeDasharray: '5 5' }}/>

@@ -33,6 +33,10 @@ class Scatter extends Component {
       PropTypes.bool, PropTypes.object, PropTypes.func, PropTypes.element,
     ]),
     lineType: PropTypes.oneOf(['fitting', 'joint']),
+    lineJointType: PropTypes.oneOfType([PropTypes.oneOf([
+      'basis', 'basisClosed', 'basisOpen', 'linear', 'linearClosed', 'natural',
+      'monotoneX', 'monotoneY', 'monotone', 'step', 'stepBefore', 'stepAfter',
+    ]), PropTypes.func]),
     className: PropTypes.string,
 
     activeIndex: PropTypes.number,
@@ -72,6 +76,7 @@ class Scatter extends Component {
     zAxisId: 0,
     legendType: 'scatter',
     lineType: 'joint',
+    lineJointType: 'linear',
     data: [],
     shape: 'circle',
 
@@ -142,7 +147,7 @@ class Scatter extends Component {
   }
 
   renderLine() {
-    const { points, line, lineType } = this.props;
+    const { points, line, lineType, lineJointType } = this.props;
     const scatterProps = getPresentationAttributes(this.props);
     const customLineProps = getPresentationAttributes(line);
     let linePoints;
@@ -163,7 +168,7 @@ class Scatter extends Component {
     } else if (_.isFunction(line)) {
       lineItem = line(lineProps);
     } else {
-      lineItem = <Curve {...lineProps} />;
+      lineItem = <Curve {...lineProps} type={lineJointType} />;
     }
 
     return (
