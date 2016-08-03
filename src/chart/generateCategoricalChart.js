@@ -65,24 +65,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     constructor(props) {
       super(props);
+      this.state = this.createDefaultState(this.props);
       this.validateAxes();
     }
 
-    state = {
-      dataStartIndex: 0,
-      dataEndIndex: (this.props.data && (this.props.data.length - 1)) || 0,
-      activeTooltipIndex: -1,
-      activeTooltipLabel: '',
-      activeTooltipCoord: { x: 0, y: 0 },
-      isTooltipActive: false,
-    };
-
     componentWillReceiveProps(nextProps) {
       if (nextProps.data !== this.props.data) {
-        this.setState({
-          dataStartIndex: 0,
-          dataEndIndex: (nextProps.data && (nextProps.data.length - 1)) || 0,
-        });
+        this.setState(this.createDefaultState(nextProps));
       }
     }
 
@@ -384,6 +373,21 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           payload: data[activeTooltipIndex],
         };
       });
+    }
+    /**
+     * Returns default, reset state for the categorical chart.
+     * @param {Object} props Props object to use when creating the default state
+     * @return {Object} Whole new state
+     */
+    createDefaultState(props) {
+      return {
+        dataStartIndex: 0,
+        dataEndIndex: (props.data && (props.data.length - 1)) || 0,
+        activeTooltipIndex: -1,
+        activeTooltipLabel: '',
+        activeTooltipCoord: { x: 0, y: 0 },
+        isTooltipActive: false,
+      };
     }
     /**
      * Calculate the offset of main part in the svg element
