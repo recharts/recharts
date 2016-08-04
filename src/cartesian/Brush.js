@@ -26,8 +26,8 @@ class Brush extends Component {
 
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     data: PropTypes.array,
-    defaultStartIndex: PropTypes.number,
-    defaultEndIndex: PropTypes.number,
+    startIndex: PropTypes.number,
+    endIndex: PropTypes.number,
     tickFormatter: PropTypes.func,
 
     onChange: PropTypes.func,
@@ -68,11 +68,9 @@ class Brush extends Component {
       this.scale.range([nextProps.x, nextProps.x + nextProps.width - nextProps.travellerWidth]);
       this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
 
-      const { startIndex, endIndex } = this.state;
-
       this.setState({
-        startX: this.scale(startIndex),
-        endX: this.scale(endIndex),
+        startX: this.scale(nextProps.startIndex),
+        endX: this.scale(nextProps.endIndex),
       });
     }
   }
@@ -193,7 +191,6 @@ class Brush extends Component {
       startX: startX + delta,
       endX: endX + delta,
       slideMoveStartX: e.pageX,
-      ...newIndex,
     }, () => {
       if (onChange) {
         onChange(newIndex);
@@ -230,7 +227,6 @@ class Brush extends Component {
     this.setState({
       [movingTravellerId]: prevValue + delta,
       brushMoveStartX: e.pageX,
-      ...newIndex,
     }, () => {
       if (onChange) {
         onChange(newIndex);
@@ -239,23 +235,17 @@ class Brush extends Component {
   }
 
   updateScale(props) {
-    const { data, defaultStartIndex, defaultEndIndex, x,
-      width, travellerWidth } = props;
+    const { data, startIndex, endIndex, x, width, travellerWidth } = props;
 
     if (data && data.length) {
       const len = data.length;
-      const startIndex = _.isNumber(defaultStartIndex) ? defaultStartIndex : 0;
-      const endIndex = _.isNumber(defaultEndIndex) ? defaultEndIndex : len - 1;
-
       this.scale = scalePoint().domain(_.range(0, len))
                     .range([x, x + width - travellerWidth]);
       this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
-
       this.state = {
         isTextActive: false,
         isSlideMoving: false,
         isTravellerMoving: false,
-        startIndex, endIndex,
         startX: this.scale(startIndex),
         endX: this.scale(endIndex),
       };
@@ -340,8 +330,9 @@ class Brush extends Component {
   }
 
   renderText() {
-    const { data, y, height, travellerWidth, stroke, tickFormatter } = this.props;
-    const { startIndex, endIndex, startX, endX } = this.state;
+    const { startIndex, endIndex, data, y, height, travellerWidth,
+      stroke, tickFormatter } = this.props;
+    const { startX, endX } = this.state;
     const offset = 5;
     const style = {
       pointerEvents: 'none',

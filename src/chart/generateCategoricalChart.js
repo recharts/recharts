@@ -658,6 +658,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     renderBrush(xAxisMap, yAxisMap, offset) {
       const { children, margin, data } = this.props;
+      const { dataStartIndex, dataEndIndex } = this.state;
       const brushItem = findChildByType(children, Brush);
 
       if (!brushItem) { return null; }
@@ -668,6 +669,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         x: offset.left,
         y: offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
         width: offset.width,
+        startIndex: dataStartIndex,
+        endIndex: dataEndIndex,
       });
 
     }
