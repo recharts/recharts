@@ -85,8 +85,8 @@ class ComposedChart extends Component {
         {this.renderCursor(xAxisMap, yAxisMap, offset)}
         <AreaChart {...this.props} graphicalItems={areaItems} isComposed />
         <LineChart {...this.props} graphicalItems={lineItems} isComposed />
-        {rectItems}
         <BarChart {...this.props} graphicalItems={barItems} isComposed />
+        {rectItems}
         {refDotItems}
       </Layer>
     );

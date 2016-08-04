@@ -32,7 +32,7 @@ export const getComposedData = (chartProps, type, xAxis, yAxis, dataKey,
   const data = [];
   for (var i = startIndex; i <= endIndex; i++) {
     const dataPoint = chartProps.data[i];
-    const yDataPoint = i === endIndex ? chartProps.data[i - 1] : chartProps.data[i];
+    const yDataPoint = i === endIndex && type === 'stepAfter' ? chartProps.data[i - 1] : chartProps.data[i];
     const yPoint = regionValue !== null ? regionValue : _.get(yDataPoint, dataKey, null);
 
     data.push({

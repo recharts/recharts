@@ -336,7 +336,7 @@ class Line extends Component {
     return (
       <Layer className={layerClass}>
         {!hasSinglePoint && this.renderCurve()}
-        {(hasSinglePoint || dot) && this.renderDots()}
+        {(hasSinglePoint && dot) && this.renderDots()}
         {label && this.renderLabels()}
       </Layer>
     );
