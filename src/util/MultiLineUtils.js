@@ -34,16 +34,20 @@ export const getComposedData = (chartProps, type, xAxis, yAxis, dataKey,
     const dataPoint = chartProps.data[i];
     const yDataPoint = i === endIndex && type === 'stepAfter' ? chartProps.data[i - 1] : chartProps.data[i];
     const yPoint = regionValue !== null ? regionValue : _.get(yDataPoint, dataKey, null);
+    const value = _.get(dataPoint, dataKey, null)
+    const hasNullEndValue = type === 'linear' && value === null && i === endIndex;
 
-    data.push({
-      x: layout === 'horizontal' ?
-        xTicks[i].coordinate + bandSize / 2 :
-        xAxis.scale(_.get(dataPoint, dataKey, null)),
-      y: layout === 'horizontal' ?
-        yAxis.scale(yPoint) :
-        yTicks[i].coordinate + bandSize / 2,
-      value: _.get(dataPoint, dataKey, null),
-    });
+    if (!hasNullEndValue) {
+      data.push({
+        x: layout === 'horizontal' ?
+          xTicks[i].coordinate + bandSize / 2 :
+          xAxis.scale(_.get(dataPoint, dataKey, null)),
+        y: layout === 'horizontal' ?
+          yAxis.scale(yPoint) :
+          yTicks[i].coordinate + bandSize / 2,
+        value: value,
+      });
+    }
   }
   return data;
 };
