@@ -53,7 +53,7 @@ class PieChart extends Component {
   };
 
   getComposedData(item) {
-    const { data, children, nameKey, valueKey } = item.props;
+    const { data, children } = item.props;
     const props = getPresentationAttributes(item.props);
     const cells = findAllByType(children, Cell);
 
@@ -81,7 +81,7 @@ class PieChart extends Component {
       this.setState({
         isTooltipActive: true,
         activeTooltipCoord: polarToCartesian(cx, cy, outerRadius, midAngle),
-        activeTooltipPayload: [el.payload],
+        activeTooltipPayload: [el],
       }, () => {
         if (onMouseEnter) {
           onMouseEnter(el, index, e);

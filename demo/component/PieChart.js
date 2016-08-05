@@ -6,12 +6,12 @@ import { changeNumberOfData } from './utils';
 const colors = scaleOrdinal(schemeCategory10).range();
 
 const data01 = [
-  { name: 'Group A', value: 400 },
-  { name: 'Group B', value: 300 },
-  { name: 'Group C', value: 300 },
-  { name: 'Group D', value: 200 },
-  { name: 'Group E', value: 278 },
-  { name: 'Group F', value: 189 },
+  { name: 'Group A', value: 400, v: 89 },
+  { name: 'Group B', value: 300, v: 100 },
+  { name: 'Group C', value: 300, v: 200 },
+  { name: 'Group D', value: 200, v: 20 },
+  { name: 'Group E', value: 278, v: 40 },
+  { name: 'Group F', value: 189, v: 60 },
 ];
 
 const data02 = [
@@ -169,8 +169,9 @@ export default React.createClass({
         <div className="pie-chart-wrapper" style={{ width: '50%', height: '100%', backgroundColor: '#f5f5f5' }}>
           <ResponsiveContainer>
             <PieChart>
+              <Tooltip />
               <Pie data={data01} innerRadius="25%" outerRadius="40%"/>
-              <Pie data={data03} innerRadius="45%" outerRadius="80%"/>
+              <Pie data={data01} nameKey="name" valueKey="v" innerRadius="45%" outerRadius="80%"/>
               <Tooltip/>
             </PieChart>
           </ResponsiveContainer>

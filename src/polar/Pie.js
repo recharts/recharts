@@ -119,7 +119,7 @@ class Pie extends Component {
 
   getSectors(data) {
     const { cx, cy, innerRadius, outerRadius, startAngle, paddingAngle,
-      minAngle, endAngle, valueKey } = this.props;
+      minAngle, endAngle, nameKey, valueKey } = this.props;
     const len = data.length;
     const deltaAngle = this.getDeltaAngle();
     const absDeltaAngle = Math.abs(deltaAngle);
@@ -152,6 +152,8 @@ class Pie extends Component {
           cy,
           innerRadius,
           outerRadius,
+          name: entry[nameKey],
+          value: entry[valueKey],
           startAngle: deltaAngle < 0 ? tempStartAngle : tempEndAngle,
           endAngle: deltaAngle < 0 ? tempEndAngle : tempStartAngle,
           payload: entry,
