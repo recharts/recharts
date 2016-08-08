@@ -1,3 +1,13 @@
+## 0.13.1 (Aug 08, 2016)
+
+### Fix
+
+- Fix the bug that tooltip did not show up for pie chart while using nameKey and valueKey
+
+### Refactor
+
+- Refactor Brush as controlled component
+
 ## 0.13.0 (Aug 03, 2016)
 
 ### Fix
