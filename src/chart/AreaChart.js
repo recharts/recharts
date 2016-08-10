@@ -105,7 +105,8 @@ class AreaChart extends Component {
     const domain = numberAxis.scale.domain();
 
     if (numberAxis.type === 'number') {
-      return Math.max(Math.min(domain[0], domain[1]), 0);
+      const max = Math.max(domain[0], domain[1]);
+      return max < 0 ? max : Math.max(Math.min(domain[0], domain[1]), 0);
     }
 
     return domain[0];

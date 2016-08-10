@@ -42,7 +42,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       height: PropTypes.number,
       data: PropTypes.arrayOf(PropTypes.object),
       layout: PropTypes.oneOf(['horizontal', 'vertical']),
-      stackOffset: PropTypes.oneOf(['expand', 'none', 'wiggle', 'silhouette']),
+      stackOffset: PropTypes.oneOf(['sign', 'expand', 'none', 'wiggle', 'silhouette']),
       margin: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
