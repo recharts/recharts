@@ -46,7 +46,10 @@ class Legend extends Component {
     payload: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.any,
       id: PropTypes.any,
-      type: PropTypes.oneOf(['line', 'scatter', 'square', 'rect']),
+      type: PropTypes.oneOf([
+        'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square',
+        'star', 'triangle', 'wye',
+      ]),
     })),
   };
 

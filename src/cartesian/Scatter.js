@@ -74,7 +74,7 @@ class Scatter extends Component {
     xAxisId: 0,
     yAxisId: 0,
     zAxisId: 0,
-    legendType: 'scatter',
+    legendType: 'circle',
     lineType: 'joint',
     lineJointType: 'linear',
     data: [],

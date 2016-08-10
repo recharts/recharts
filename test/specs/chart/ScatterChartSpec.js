@@ -38,6 +38,7 @@ describe('ScatterChart of three dimension data', () => {
     );
 
     expect(wrapper.find('.recharts-scatter').length).to.equal(2);
+    expect(wrapper.find('.recharts-legend-item').length).to.equal(2);
     expect(wrapper.find('.recharts-scatter-symbol').length).to.equal(data01.length + data02.length);
   });
 

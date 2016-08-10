@@ -260,6 +260,7 @@ export default React.createClass({
             <CartesianGrid horizontal={false} />
             <Bar dataKey="uv" fill="#ff7300" />
             <Bar dataKey="pv" fill="#387908" />
+            <Legend />
           </BarChart>
         </div>
 

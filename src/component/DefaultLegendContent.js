@@ -4,7 +4,8 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import Surface from '../container/Surface';
-
+import Symbols from '../shape/Symbols';
+const PI = Math.PI;
 const SIZE = 32;
 
 @pureRender
@@ -20,7 +21,10 @@ class DefaultLegendContent extends Component {
     payload: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.any,
       id: PropTypes.any,
-      type: PropTypes.oneOf(['line', 'scatter', 'square', 'rect']),
+      type: PropTypes.oneOf([
+        'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square',
+        'star', 'triangle', 'wye',
+      ]),
     })),
   };
 
@@ -37,43 +41,43 @@ class DefaultLegendContent extends Component {
    * @return {String} Path element
    */
   renderIcon(data) {
+    const { color } = data;
     const halfSize = SIZE / 2;
     const sixthSize = SIZE / 6;
     const thirdSize = SIZE / 3;
-    let path;
-    let fill = data.color;
-    let stroke = data.color;
 
-    switch (data.type) {
-      case 'line':
-        fill = 'none';
-        path = `M0,${halfSize}h${thirdSize}A${sixthSize},${sixthSize},` +
-              `0,1,1,${2 * thirdSize},${halfSize}` +
-              `H${SIZE}M${2 * thirdSize},${halfSize}` +
-              `A${sixthSize},${sixthSize},0,1,1,${thirdSize},${halfSize}`;
-        break;
-      case 'scatter':
-        stroke = 'none';
-        path = `M${halfSize},0A${halfSize},${halfSize},0,1,1,${halfSize},${SIZE}` +
-              `A${halfSize},${halfSize},0,1,1,${halfSize},0Z`;
-        break;
-      case 'rect':
-        stroke = 'none';
-        path = `M0,${SIZE / 8}h${SIZE}v${SIZE * 3 / 4}h${-SIZE}z`;
-        break;
-      default:
-        stroke = 'none';
-        path = `M0,0h${SIZE}v${SIZE}h${-SIZE}z`;
-        break;
+    if (data.type === 'line') {
+      return (
+        <path
+          strokeWidth={4}
+          fill="none"
+          stroke={color}
+          d={`M0,${halfSize}h${thirdSize}
+            A${sixthSize},${sixthSize},0,1,1,${2 * thirdSize},${halfSize}
+            H${SIZE}M${2 * thirdSize},${halfSize}
+            A${sixthSize},${sixthSize},0,1,1,${thirdSize},${halfSize}`}
+          className="recharts-legend-icon"
+        />
+      );
+    } else if (data.type === 'rect') {
+      return (
+        <path
+          stroke="none"
+          fill={color}
+          d={`M0,${SIZE / 8}h${SIZE}v${SIZE * 3 / 4}h${-SIZE}z`}
+          className="recharts-legend-icon"
+        />
+      );
     }
 
     return (
-      <path
-        strokeWidth={4}
-        fill={fill}
-        stroke={stroke}
-        d={path}
-        className="recharts-legend-icon"
+      <Symbols
+        fill={color}
+        cx={halfSize}
+        cy={halfSize}
+        size={SIZE}
+        sizeType="diameter"
+        type={data.type}
       />
     );
   }
@@ -98,7 +102,7 @@ class DefaultLegendContent extends Component {
         key={`legend-item-${i}`}
       >
         <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
-          {this.renderIcon(entry)}
+          {this.renderIcon(entry, iconSize)}
         </Surface>
         <span className="recharts-legend-item-text">{entry.value}</span>
       </li>
