@@ -27,6 +27,7 @@ import { calculateDomainOfTicks, calculateActiveTickIndex,
   getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
   getStackGroupsByAxisId, getTicksOfAxis, isCategorialAxis, getTicksOfScale,
 } from '../util/CartesianUtils';
+import { eventCenter, MOUSE_EVENT } from '../util/Events';
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
@@ -38,6 +39,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     static displayName = getDisplayName(ChartComponent);
 
     static propTypes = {
+      combinedId: PropTypes.string,
       width: PropTypes.number,
       height: PropTypes.number,
       data: PropTypes.arrayOf(PropTypes.object),
@@ -67,6 +69,17 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       super(props);
       this.state = this.createDefaultState(this.props);
       this.validateAxes();
+      this.uniqueChartId = _.uniqueId('recharts');
+    }
+
+    componentDidMount() {
+      eventCenter.on(MOUSE_EVENT, (cId, chartId, data) => {
+        const { combinedId } = this.props;
+
+        if (combinedId === cId && chartId !== this.chartId) {
+          this.setState(data);
+        }
+      });
     }
 
     componentWillReceiveProps(nextProps) {
@@ -337,12 +350,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       if (activeIndex >= 0) {
         return {
+          ...e,
           activeTooltipIndex: activeIndex,
-          activeTooltipLabel: ticks[activeIndex].value,
-          activeTooltipCoord: {
-            x: layout === 'horizontal' ? ticks[activeIndex].coordinate : e.chartX,
-            y: layout === 'horizontal' ? e.chartY : ticks[activeIndex].coordinate,
-          },
         };
       }
 
@@ -381,11 +390,11 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      */
     createDefaultState(props) {
       return {
+        chartX: 0,
+        chartY: 0,
         dataStartIndex: 0,
         dataEndIndex: (props.data && (props.data.length - 1)) || 0,
         activeTooltipIndex: -1,
-        activeTooltipLabel: '',
-        activeTooltipCoord: { x: 0, y: 0 },
         isTooltipActive: false,
       };
     }
@@ -462,10 +471,9 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);
 
       if (mouse) {
-        this.setState({
-          ...mouse,
-          isTooltipActive: true,
-        });
+        const nextState = { ...mouse, isTooltipActive: true };
+        this.setState(nextState);
+        this.triggerCombinedEvent(nextState);
       }
     }
 
@@ -482,26 +490,20 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const containerOffset = getOffset(container);
       const ne = calculateChartCoordinate(e, containerOffset);
       const mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);
+      const nextState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
 
-      if (mouse) {
-        this.setState({
-          ...mouse,
-          isTooltipActive: true,
-        });
-      } else {
-        this.setState({
-          isTooltipActive: false,
-        });
-      }
+      this.setState(nextState);
+      this.triggerCombinedEvent(nextState);
     }
     /**
      * The handler if mouse leaving chart
      * @return {Null} no return
      */
     handleMouseLeave = () => {
-      this.setState({
-        isTooltipActive: false,
-      });
+      const nextState = { isTooltipActive: false };
+
+      this.setState(nextState);
+      this.triggerCombinedEvent(nextState);
     };
 
     validateAxes() {
@@ -538,6 +540,14 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       }
 
       return null;
+    }
+
+    triggerCombinedEvent(data) {
+      const { combinedId } = this.props;
+
+      if (combinedId) {
+        eventCenter.emit(MOUSE_EVENT, combinedId, this.uniqueChartId, data);
+      }
     }
     /**
      * Draw axes
@@ -633,13 +643,20 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     /**
      * Draw Tooltip
+     * @param  {Object} xAxisMap The configuration of all x-axes
+     * @param  {Object} yAxisMap The configuration of all y-axes
      * @param  {ReactElement} tooltipItem  The instance of Tooltip
      * @param  {Array}  items  The instances of GraphicalChild
      * @param  {Object} offset The offset of main part in the svg element
      * @return {ReactElement}  The instance of Tooltip
      */
-    renderTooltip(tooltipItem, items, offset) {
-      const { isTooltipActive, activeTooltipLabel, activeTooltipCoord } = this.state;
+    renderTooltip(xAxisMap, yAxisMap, tooltipItem, items, offset) {
+      const { layout } = this.props;
+      const { isTooltipActive, activeTooltipIndex, chartX, chartY } = this.state;
+      const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
+      const pos = layout === 'horizontal' ? chartX : chartY;
+      const axis = getAnyElementOfObject(axisMap);
+      const ticks = getTicksOfAxis(axis, false, true);
       const viewBox = {
         x: offset.left,
         y: offset.top,
@@ -650,9 +667,12 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       return React.cloneElement(tooltipItem, {
         viewBox,
         active: isTooltipActive,
-        label: activeTooltipLabel,
+        label: ticks[activeTooltipIndex] && ticks[activeTooltipIndex].value,
         payload: isTooltipActive ? this.getTooltipContent(items) : [],
-        coordinate: activeTooltipCoord,
+        coordinate: ticks[activeTooltipIndex] ? {
+          x: layout === 'horizontal' ? ticks[activeTooltipIndex].coordinate : chartX,
+          y: layout === 'horizontal' ? chartY : ticks[activeTooltipIndex].coordinate,
+        } : { x: 0, y: 0 },
       });
     }
 
@@ -751,7 +771,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             {filterSvgElements(children)}
           </Surface>
           {this.renderLegend(items)}
-          {tooltipItem && this.renderTooltip(tooltipItem, items, offset)}
+          {tooltipItem && this.renderTooltip(xAxisMap, yAxisMap, tooltipItem, items, offset)}
         </div>
       );
     }

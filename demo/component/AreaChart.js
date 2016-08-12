@@ -102,6 +102,7 @@ export default React.createClass({
         <div className="area-chart-wrapper">
           <AreaChart width={800} height={400} data={this.state.data}
             margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
+            combinedId="test"
           >
             <XAxis dataKey="name" label="province"/>
             <YAxis />
@@ -129,11 +130,12 @@ export default React.createClass({
 
         <p>Stacked AreaChart | Stack Offset Expand</p>
         <div className="area-chart-wrapper">
-          <AreaChart width={800} height={400} data={this.state.data}
+          <AreaChart width={400} height={300} data={this.state.data}
             margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
             stackOffset="expand"
+            combinedId="test"
           >
-            <XAxis dataKey="name" label="province" />
+            <XAxis />
             <YAxis />
             <Tooltip />
             <Area stackId="0"
