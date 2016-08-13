@@ -37,7 +37,7 @@ All the components of Recharts is clearly separated. The lineChart is composed b
 
 ## Module Formats
 
-- [babel-plugin-recharts](https://github.com/recharts/babel-plugin-recharts) A simple transform to cherry-pick Rcharts modules so you don’t have to.
+- [babel-plugin-recharts](https://github.com/recharts/babel-plugin-recharts) A simple transform to cherry-pick Recharts modules so you don’t have to.
 
 ## Contribution
 
