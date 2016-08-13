@@ -33,7 +33,7 @@ The main purpose of this library is to help you to write charts in React applica
 </LineChart>
 ```
 
-All the components of Recharts is clearly separated. The lineChart is composed by x axis, tooltip, grid, and line items, and each of them is an independent React Component. The clear seperation and composition of components is one of the principle Recharts follow.
+All the components of Recharts is clearly separated. The lineChart is composed by x axis, tooltip, grid, and line items, and each of them is an independent React Component. The clear separation and composition of components is one of the principle Recharts follow.
 
 ## Module Formats
 

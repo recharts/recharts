@@ -16,7 +16,7 @@
 
 ### feat
 
-- Support smooth curve in Scatter 
+- Support smooth curve in Scatter
 - Support props connectNulls in Area, Line, and Curve,
 
 ### refactor
@@ -96,13 +96,13 @@
 
 ### fix
 
-- Fix the width and height of wrapper 
+- Fix the width and height of wrapper
 
 ## 0.12.1 (June 24, 2016)
 
 ### fix
 
-- Fix the bug with a hack method that golbal css will affect the width and height of Legend, Tooltip  
+- Fix the bug with a hack method that global css will affect the width and height of Legend, Tooltip
 
 ## 0.12.0 (June 23, 2016)
 
@@ -141,7 +141,7 @@
 
 ### fix
 
-- Fix the posiiton of labels in Bar
+- Fix the position of labels in Bar
 
 ## 0.10.9 (June 12, 2016)
 
@@ -224,11 +224,11 @@
 
 - Refactor *ticks* specified in `XAxis`, `YAxis`
 - Use area of `Symbol` to show the size of number in ScatterChart
-- Refactor the `activeShape` in `Scatter` 
+- Refactor the `activeShape` in `Scatter`
 
 ### feat
 
-- Add `Symbol` and support different `Symbol` in ScatterChart 
+- Add `Symbol` and support different `Symbol` in ScatterChart
 
 ### fix
 
@@ -312,7 +312,7 @@
 
 ### refactor
 
-- Refactor the implemention type of renderPolygon in `Radar`
+- Refactor the implementation type of renderPolygon in `Radar`
 - Refactor code in `Treemap`
 - Remove `invariant` and add `LogUtils`
 
@@ -335,12 +335,12 @@
 - refactor CartesianChart to a high order component, move some function to /util/CartesianUtils which can be used in ScatterChart.
 - Simplify ComposedChart, remove duplicated code
 - use `filterEventAttributes` to add events props
-- cancle selecting line and area in LineChart, AreaChart, ComposedChart
+- cancel selecting line and area in LineChart, AreaChart, ComposedChart
 
 ## 0.8.2 (February 24, 2016)
 
 ### fix
-- rollback last fix of Line animtion from value
+- rollback last fix of Line animation from value
 
 ## 0.8.1 (February 24, 2016)
 
@@ -365,7 +365,7 @@
 ## 0.7.0 (February 17, 2016)
 
 ### UI
-- feat: support dasharray line animaton
+- feat: support dasharray line animation
 - refactor(CartesianAxis, PolarAngleAxis, PolarRadiusAxis):rename label to tick
 - feat(label): add label of CartesianAxis, PolarRadiusAxis, ReferenceLine
 - feat: Implement tooltip for PieChart
@@ -411,7 +411,7 @@
 ### UI
 - feat: support percentage string in the props(cx, cy, innerRadius, outerRadius) of RadarChart, PieChart, RadialChart
 - fix(PolarRadiusAxis): add props domain
-- refactor(CartesianAxis): remove unneed props domain
+- refactor(CartesianAxis): remove unneeded props domain
 
 ### Docs
 - chore: optimize npm script commands
