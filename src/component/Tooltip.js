@@ -131,7 +131,6 @@ class Tooltip extends Component {
     const box = getTooltipBBox(outerStyle, contentItem);
 
     if (!box) { return null; }
-
     const translateX = Math.max(
       coordinate.x + box.width + offset > (viewBox.x + viewBox.width) ?
       coordinate.x - box.width - offset :

@@ -73,13 +73,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     }
 
     componentDidMount() {
-      eventCenter.on(MOUSE_EVENT, (cId, chartId, data) => {
-        const { combinedId } = this.props;
-
-        if (combinedId === cId && chartId !== this.chartId) {
-          this.setState(data);
-        }
-      });
+      eventCenter.on(MOUSE_EVENT, this.handleReceiveCombinedEvent);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -88,6 +82,9 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       }
     }
 
+    componentWillUnmount() {
+      eventCenter.removeListener(MOUSE_EVENT, this.handleReceiveCombinedEvent);
+    }
     /**
    * Get the configuration of all x-axis or y-axis
    * @param  {String} axisType    The type of axis
@@ -366,7 +363,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { activeTooltipIndex, dataStartIndex, dataEndIndex } = this.state;
       const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
 
-      if (activeTooltipIndex < 0 || !items || !items.length) {
+      if (activeTooltipIndex < 0 || !items || !items.length
+        || activeTooltipIndex >= data.length) {
         return null;
       }
 
@@ -450,8 +448,21 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       };
     }
 
+    handleReceiveCombinedEvent = (cId, chartId, data) => {
+      const { combinedId } = this.props;
+
+      if (combinedId === cId && chartId !== this.chartId) {
+        this.setState(data);
+      }
+    };
+
     handleBrushChange = ({ startIndex, endIndex }) => {
       this.setState({
+        dataStartIndex: startIndex,
+        dataEndIndex: endIndex,
+      });
+
+      this.triggerCombinedEvent({
         dataStartIndex: startIndex,
         dataEndIndex: endIndex,
       });
@@ -657,12 +668,11 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const pos = layout === 'horizontal' ? chartX : chartY;
       const axis = getAnyElementOfObject(axisMap);
       const ticks = getTicksOfAxis(axis, false, true);
-      const viewBox = {
-        x: offset.left,
-        y: offset.top,
-        width: offset.width,
-        height: offset.height,
-      };
+      const viewBox = { ...offset, x: offset.left, y: offset.top };
+      // When a categotical chart is combined with another chart, the value of chartX
+      // and chartY may beyond the boundaries.
+      const validateChartX = Math.min(chartX, viewBox.x + viewBox.width);
+      const validateChartY = Math.min(chartY, viewBox.y + viewBox.height);
 
       return React.cloneElement(tooltipItem, {
         viewBox,
@@ -670,8 +680,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         label: ticks[activeTooltipIndex] && ticks[activeTooltipIndex].value,
         payload: isTooltipActive ? this.getTooltipContent(items) : [],
         coordinate: ticks[activeTooltipIndex] ? {
-          x: layout === 'horizontal' ? ticks[activeTooltipIndex].coordinate : chartX,
-          y: layout === 'horizontal' ? chartY : ticks[activeTooltipIndex].coordinate,
+          x: layout === 'horizontal' ? ticks[activeTooltipIndex].coordinate : validateChartX,
+          y: layout === 'horizontal' ? validateChartY : ticks[activeTooltipIndex].coordinate,
         } : { x: 0, y: 0 },
       });
     }

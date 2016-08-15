@@ -32,6 +32,7 @@ const data02 = [
   { name: 'Page D', uv: 200, pv: 9800, amt: 2400 },
   { name: 'Page E', uv: 278, pv: 3908, amt: 2400 },
   { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
+  { name: 'Page G', uv: 189, pv: 4800, amt: 2400 },
 ];
 
 const initilaState = {
@@ -87,11 +88,12 @@ export default React.createClass({
 
         <p>A simple LineChart with fixed domain y-axis</p>
         <div className='line-chart-wrapper'>
-          <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 40, bottom: 20, left: 20 }}>
+          <LineChart width={400} height={400} data={data02} margin={{ top: 20, right: 40, bottom: 20, left: 20 }} combinedId="test">
             <CartesianGrid stroke='#f5f5f5'/>
             <Legend/>
             <XAxis/>
             <YAxis/>
+            <Tooltip />
             <Line type='monotone' dataKey='uv' stroke='#ff7300' dot={renderSpecialDot} label={renderLabel}/>
             <Brush dataKey="name" height={30} />
           </LineChart>
@@ -99,11 +101,12 @@ export default React.createClass({
 
         <p>A simple LineChart with customized line dot</p>
         <div className='line-chart-wrapper'>
-          <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }} combinedId="test">
             <CartesianGrid stroke='#f5f5f5'/>
-            <Legend/>
-            <XAxis ticks={[0, 4]}/>
+            <Legend />
+            <XAxis />
             <YAxis domain={[0, 500]}/>
+            <Tooltip />
             <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300'/>
           </LineChart>
         </div>
