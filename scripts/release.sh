@@ -29,7 +29,7 @@ next_ref="v$next_version"
 
 npm test
 
-vim CHANGLOG.md
+vim CHANGELOG.md
 
 update_version 'package.json' $next_version
 
