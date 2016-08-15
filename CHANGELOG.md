@@ -1,3 +1,13 @@
+## 0.13.2 (Aug 15, 2016)
+
+### Feat
+
+- Add an option "sign" to the props stackOffset in BarChart and AreaChart which allows the bars and areas to be stacked according to the sign of value
+
+### Fix
+
+- Fix the the bug of legend in ScatterChart and refactor symbols
+
 ## 0.13.1 (Aug 08, 2016)
 
 ### Fix
