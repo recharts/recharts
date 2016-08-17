@@ -17,13 +17,14 @@ const offsetSign = (series, order) => {
   for (let j = 0, m = series[0].length; j < m; ++j) {
     let positive = 0;
     let negative = 0;
+
     for (let i = 0; i < n; ++i) {
       const value = isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
 
       if (value >= 0) {
         series[i][j][0] = positive;
         series[i][j][1] = positive + value;
-        positive += series[i][j][1];
+        positive = series[i][j][1];
       } else {
         series[i][j][0] = negative;
         series[i][j][1] = negative + value;
@@ -65,7 +66,7 @@ export const getStackedData = (data, stackItems, offsetType) => {
                 .keys(dataKeys)
                 .value((d, key) => (+d[key] || 0))
                 .order(stackOrderNone)
-                .offset(offsetSign);
+                .offset(STACK_OFFSET_MAP[offsetType]);
 
   return stack(data);
 };

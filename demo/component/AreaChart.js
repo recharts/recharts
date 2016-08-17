@@ -117,6 +117,14 @@ export default React.createClass({
             />
             <Area stackId="0"
               type="monotone"
+              dataKey="amt"
+              stroke="#82ca9d"
+              fill="#82ca9d"
+              dot
+              activeDot={renderCustomizedActiveDot}
+            />
+            <Area stackId="0"
+              type="monotone"
               dataKey="pv"
               stroke="#387908"
               fill="#387908"
