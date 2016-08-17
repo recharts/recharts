@@ -27,6 +27,10 @@ class Bar extends Component {
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    legendType: PropTypes.oneOf([
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
+      'triangle', 'wye',
+    ]),
     minPointSize: PropTypes.number,
 
     shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),

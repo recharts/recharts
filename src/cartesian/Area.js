@@ -29,7 +29,10 @@ class Area extends Component {
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    legendType: PropTypes.string,
+    legendType: PropTypes.oneOf([
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
+      'triangle', 'wye',
+    ]),
     connectNulls: PropTypes.bool,
 
     activeDot: PropTypes.oneOfType([

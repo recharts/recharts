@@ -38,6 +38,10 @@ class Radar extends Component {
     label: PropTypes.oneOfType([
       PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool,
     ]),
+    legendType: PropTypes.oneOf([
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square',
+      'star', 'triangle', 'wye',
+    ]),
 
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
@@ -51,6 +55,7 @@ class Radar extends Component {
   static defaultProps = {
     dot: false,
     label: false,
+    legendType: 'rect',
     isAnimationActive: true,
     animationBegin: 0,
     animationDuration: 1500,

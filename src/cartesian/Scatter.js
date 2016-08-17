@@ -25,7 +25,6 @@ class Scatter extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
 
-    legendType: PropTypes.string,
     xAxisId: PropTypes.number,
     yAxisId: PropTypes.number,
     zAxisId: PropTypes.number,
@@ -37,6 +36,10 @@ class Scatter extends Component {
       'basis', 'basisClosed', 'basisOpen', 'linear', 'linearClosed', 'natural',
       'monotoneX', 'monotoneY', 'monotone', 'step', 'stepBefore', 'stepAfter',
     ]), PropTypes.func]),
+    legendType: PropTypes.oneOf([
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
+      'triangle', 'wye',
+    ]),
     className: PropTypes.string,
 
     activeIndex: PropTypes.number,

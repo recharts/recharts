@@ -35,7 +35,10 @@ class Pie extends Component {
     data: PropTypes.arrayOf(PropTypes.object),
     composedData: PropTypes.arrayOf(PropTypes.object),
     minAngle: PropTypes.number,
-    legendType: PropTypes.string,
+    legendType: PropTypes.oneOf([
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
+      'triangle', 'wye',
+    ]),
     maxRadius: PropTypes.number,
 
     labelLine: PropTypes.oneOfType([

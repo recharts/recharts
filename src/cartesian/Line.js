@@ -31,7 +31,10 @@ class Line extends Component {
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    legendType: PropTypes.string,
+    legendType: PropTypes.oneOf([
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
+      'triangle', 'wye',
+    ]),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     connectNulls: PropTypes.bool,
 
