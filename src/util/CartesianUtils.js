@@ -23,7 +23,7 @@ const offsetSign = (series, order) => {
       if (value >= 0) {
         series[i][j][0] = positive;
         series[i][j][1] = positive + value;
-        positive += series[i][j][1];
+        positive = series[i][j][1];
       } else {
         series[i][j][0] = negative;
         series[i][j][1] = negative + value;
