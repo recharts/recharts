@@ -102,7 +102,7 @@ export default React.createClass({
         <div className="area-chart-wrapper">
           <AreaChart width={800} height={400} data={this.state.data}
             margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
-            combinedId="test"
+            syncId="test"
           >
             <XAxis dataKey="name" label="province"/>
             <YAxis />
@@ -141,7 +141,7 @@ export default React.createClass({
           <AreaChart width={400} height={300} data={this.state.data}
             margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
             stackOffset="expand"
-            combinedId="test"
+            syncId="test"
           >
             <XAxis />
             <YAxis />

@@ -27,7 +27,7 @@ import { calculateDomainOfTicks, calculateActiveTickIndex,
   getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
   getStackGroupsByAxisId, getTicksOfAxis, isCategorialAxis, getTicksOfScale,
 } from '../util/CartesianUtils';
-import { eventCenter, MOUSE_EVENT } from '../util/Events';
+import { eventCenter, SYNC_EVENT } from '../util/Events';
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
@@ -39,7 +39,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     static displayName = getDisplayName(ChartComponent);
 
     static propTypes = {
-      combinedId: PropTypes.string,
+      syncId: PropTypes.string,
       width: PropTypes.number,
       height: PropTypes.number,
       data: PropTypes.arrayOf(PropTypes.object),
@@ -73,7 +73,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     }
 
     componentDidMount() {
-      eventCenter.on(MOUSE_EVENT, this.handleReceiveCombinedEvent);
+      eventCenter.on(SYNC_EVENT, this.handleReceiveSyncEvent);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -83,7 +83,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     }
 
     componentWillUnmount() {
-      eventCenter.removeListener(MOUSE_EVENT, this.handleReceiveCombinedEvent);
+      eventCenter.removeListener(SYNC_EVENT, this.handleReceiveSyncEvent);
     }
     /**
    * Get the configuration of all x-axis or y-axis
@@ -448,10 +448,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       };
     }
 
-    handleReceiveCombinedEvent = (cId, chartId, data) => {
-      const { combinedId } = this.props;
+    handleReceiveSyncEvent = (cId, chartId, data) => {
+      const { syncId } = this.props;
 
-      if (combinedId === cId && chartId !== this.chartId) {
+      if (syncId === cId && chartId !== this.chartId) {
         this.setState(data);
       }
     };
@@ -462,7 +462,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         dataEndIndex: endIndex,
       });
 
-      this.triggerCombinedEvent({
+      this.triggerSyncEvent({
         dataStartIndex: startIndex,
         dataEndIndex: endIndex,
       });
@@ -484,7 +484,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       if (mouse) {
         const nextState = { ...mouse, isTooltipActive: true };
         this.setState(nextState);
-        this.triggerCombinedEvent(nextState);
+        this.triggerSyncEvent(nextState);
       }
     }
 
@@ -504,7 +504,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const nextState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
 
       this.setState(nextState);
-      this.triggerCombinedEvent(nextState);
+      this.triggerSyncEvent(nextState);
     }
     /**
      * The handler if mouse leaving chart
@@ -514,7 +514,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const nextState = { isTooltipActive: false };
 
       this.setState(nextState);
-      this.triggerCombinedEvent(nextState);
+      this.triggerSyncEvent(nextState);
     };
 
     validateAxes() {
@@ -553,11 +553,11 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       return null;
     }
 
-    triggerCombinedEvent(data) {
-      const { combinedId } = this.props;
+    triggerSyncEvent(data) {
+      const { syncId } = this.props;
 
-      if (combinedId) {
-        eventCenter.emit(MOUSE_EVENT, combinedId, this.uniqueChartId, data);
+      if (syncId) {
+        eventCenter.emit(SYNC_EVENT, syncId, this.uniqueChartId, data);
       }
     }
     /**
