@@ -1,3 +1,14 @@
+## 0.13.3 (Aug 17, 2016)
+
+### Feat
+
+- Support the functionality that syncs multiple categorical charts when mouse enter, move, leave a chart, or when change the brush of one chart
+
+### Fix
+
+- Fix the bug of stack offset function - "sign"
+- Fix the propTypes or legendType 
+
 ## 0.13.2 (Aug 15, 2016)
 
 ### Feat
