@@ -19,7 +19,7 @@ export default React.createClass({
       <div className="line-charts">
         <p>A simple ComposedChart of Line, Bar, Area</p>
         <div className="composed-chart-wrapper">
-          <ResponsiveContainer>
+          <ResponsiveContainer width="100%" height={300}>
             <ComposedChart width={800} height={400} data={data}
               margin={{ top: 20, right: 20, bottom: 5, left: 20 }}>
               <XAxis dataKey="name" />
