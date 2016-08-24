@@ -182,6 +182,7 @@ export default React.createClass({
           <ResponsiveContainer>
             <PieChart onMouseEnter={this.onPieEnter}>
               <Pie
+                scaleToFit
                 data={data01}
                 innerRadius="25%"
                 outerRadius="40%"
