@@ -2,6 +2,7 @@
  * @fileOverview Render sectors of a pie
  */
 import React, { Component, PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 import pureRender from '../util/PureRender';
 import classNames from 'classnames';
 import Layer from '../container/Layer';
@@ -23,8 +24,11 @@ class Pie extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
+    scaleToFit: PropTypes.bool,
     cx: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     cy: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    height: PropTypes.number,
+    width: PropTypes.number,
     startAngle: PropTypes.number,
     endAngle: PropTypes.number,
     paddingAngle: PropTypes.number,
@@ -98,18 +102,22 @@ class Pie extends Component {
     animationBegin: 400,
     animationDuration: 1500,
     animationEasing: 'ease',
+    scaleToFit: false,
   };
 
   constructor(props, ctx) {
     super(props, ctx);
 
     this.state = {
+      scale: 1,
       isAnimationFinished: false,
     };
 
     if (!this.id) {
       this.id = `clipPath${Date.now()}`;
     }
+
+    this.checkSize = this.checkSize.bind(this);
   }
 
   getDeltaAngle() {
@@ -178,6 +186,25 @@ class Pie extends Component {
     }
 
     return 'middle';
+  }
+
+  checkSize() {
+    if (this.props.scaleToFit) {
+      const { width, height } = this.props;
+      const bbox = ReactDOM.findDOMNode(this).getBBox();
+      let factor;
+      if (bbox.x + bbox.width > width) {
+        factor = (bbox.x + bbox.width / width) / 100;
+        const wide = { scale: factor };
+        this.setState(wide);
+      }
+      if (bbox.y + bbox.height > height) {
+        const heightFactor = (bbox.x + bbox.height / height) / 100;
+        factor = Math.min(factor, heightFactor);
+        const tall = { scale: factor };
+        this.setState(tall);
+      }
+    }
   }
 
   isActiveIndex(i) {
@@ -350,14 +377,17 @@ class Pie extends Component {
 
     const sectors = this.getSectors(pieData);
     const layerClass = classNames('recharts-pie', className);
+    const scale = this.state.scale;
 
     return (
-      <Layer className={layerClass}>
-        {this.renderClipPath()}
-        <g clipPath={`url(#${this.id})`}>
-          {this.renderSectors(sectors)}
+      <Layer className={layerClass} ref={() => this.checkSize()}>
+        <g className="recharts-pie-scale" transform={`scale(${scale})`}>
+          {this.renderClipPath()}
+          <g clipPath={`url(#${this.id})`}>
+            {this.renderSectors(sectors)}
+          </g>
+          {label && this.renderLabels(sectors)}
         </g>
-        {label && this.renderLabels(sectors)}
       </Layer>
     );
   }
