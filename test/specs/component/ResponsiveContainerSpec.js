@@ -40,6 +40,28 @@ describe('<ResponsiveContainer />', () => {
     expect(wrapper.find('.inside').length).to.equal(1);
   });
 
+  it("Handles zero height correctly", () => {
+    const wrapper = mount(
+      <ResponsiveContainer height={0} aspect={2} width={300}>
+        <div className="inside">Inside</div>
+      </ResponsiveContainer>
+    );
+
+    expect(wrapper.find('.inside')).to.have.attr('width').equal('300');
+    expect(wrapper.find('.inside')).to.have.attr('height').equal('150');
+  });
+
+  it("Handles zero width correctly", () => {
+    const wrapper = mount(
+      <ResponsiveContainer height={300} aspect={2} width={0}>
+        <div className="inside">Inside</div>
+      </ResponsiveContainer>
+    );
+
+    expect(wrapper.find('.inside')).to.have.attr('width').equal('600');
+    expect(wrapper.find('.inside')).to.have.attr('height').equal('300');
+  });
+
   // Note that we force height and width here which will trigger a warning.
   // Unfortunately ContainerDimensions does not measure with enzyme
   // so we have to force it to test aspect handling behaviors

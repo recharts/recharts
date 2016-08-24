@@ -18,14 +18,15 @@ const render = ({ aspect, width, height, minWidth, minHeight, container, childre
        'The aspect(%s) must be greater than zero.',
        aspect);
 
-  let calculatedWidth = container.width;
-  let calculatedHeight = container.height;
+  let calculatedWidth = isPercent(width) ? container.width : width;
+  let calculatedHeight = isPercent(height) ? container.height : height;
 
   if (aspect && aspect > 0) {
     // Preserve the desired aspect ratio
-    if (calculatedWidth / calculatedHeight > aspect) {
+    if (calculatedHeight > 0 &&
+        (calculatedWidth === 0 || calculatedWidth / calculatedHeight > aspect)) {
       calculatedWidth = calculatedHeight * aspect;
-    } else if (calculatedWidth / calculatedHeight < aspect) {
+    } else if (calculatedHeight === 0 || calculatedWidth / calculatedHeight < aspect) {
       calculatedHeight = calculatedWidth / aspect;
     }
   }
