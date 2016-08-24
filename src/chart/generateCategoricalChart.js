@@ -16,6 +16,7 @@ import CartesianAxis from '../cartesian/CartesianAxis';
 import CartesianGrid from '../cartesian/CartesianGrid';
 import ReferenceLine from '../cartesian/ReferenceLine';
 import ReferenceDot from '../cartesian/ReferenceDot';
+import ReferenceArea from '../cartesian/ReferenceArea';
 import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
@@ -765,6 +766,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         >
           <Surface width={width} height={height}>
             {this.renderGrid(xAxisMap, yAxisMap, offset)}
+            {this.renderReferenceElements(xAxisMap, yAxisMap, offset, false, ReferenceArea)}
             {this.renderReferenceElements(xAxisMap, yAxisMap, offset, false, ReferenceLine)}
             {this.renderReferenceElements(xAxisMap, yAxisMap, offset, false, ReferenceDot)}
             {this.renderAxes(xAxisMap, 'x-axis')}
@@ -778,6 +780,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
               offset={offset}
               stackGroups={stackGroups}
             />
+            {this.renderReferenceElements(xAxisMap, yAxisMap, offset, true, ReferenceArea)}
             {this.renderReferenceElements(xAxisMap, yAxisMap, offset, true, ReferenceLine)}
             {this.renderReferenceElements(xAxisMap, yAxisMap, offset, true, ReferenceDot)}
             {this.renderBrush(xAxisMap, yAxisMap, offset)}

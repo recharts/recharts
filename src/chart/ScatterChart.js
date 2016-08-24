@@ -17,6 +17,7 @@ import YAxis from '../cartesian/YAxis';
 import ZAxis from '../cartesian/ZAxis';
 import ReferenceLine from '../cartesian/ReferenceLine';
 import ReferenceDot from '../cartesian/ReferenceDot';
+import ReferenceArea from '../cartesian/ReferenceArea';
 import { getPresentationAttributes, findChildByType, filterSvgElements,
   findAllByType, validateWidthHeight, getDisplayName } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
@@ -483,12 +484,14 @@ class ScatterChart extends Component {
       >
         <Surface width={width} height={height}>
           {this.renderGrid(xAxis, yAxis, offset)}
+          {this.renderReferenceElements(xAxis, yAxis, offset, false, ReferenceArea)}
           {this.renderReferenceElements(xAxis, yAxis, offset, false, ReferenceLine)}
           {this.renderReferenceElements(xAxis, yAxis, offset, false, ReferenceDot)}
           {this.renderAxis(xAxis, 'recharts-x-axis')}
           {this.renderAxis(yAxis, 'recharts-y-axis')}
           {this.renderCursor(xAxis, yAxis, offset)}
           {this.renderItems(items, xAxis, yAxis, zAxis, offset)}
+          {this.renderReferenceElements(xAxis, yAxis, offset, true, ReferenceArea)}
           {this.renderReferenceElements(xAxis, yAxis, offset, true, ReferenceLine)}
           {this.renderReferenceElements(xAxis, yAxis, offset, true, ReferenceDot)}
           {filterSvgElements(children)}

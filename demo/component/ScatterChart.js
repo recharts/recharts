@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScatterChart, Scatter, CartesianGrid, Tooltip, Legend,
- XAxis, YAxis, ZAxis, ReferenceLine, ReferenceDot } from 'recharts';
+ XAxis, YAxis, ZAxis, ReferenceLine, ReferenceDot, ReferenceArea } from 'recharts';
 import { changeNumberOfData } from './utils';
 
 const data01 = [
@@ -90,6 +90,7 @@ export default React.createClass({
             <Scatter name="B school" data={data02} fill="#347300" />
             <Tooltip/>
             <Legend/>
+            <ReferenceArea x1={250} x2={300} alwaysShow />
             <ReferenceLine x={159} stroke="red"/>
             <ReferenceLine y={237.5} stroke="red"/>
             <ReferenceDot x={170} y={290} r={15} stroke="none" fill="red" isFront/>

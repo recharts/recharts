@@ -1,6 +1,7 @@
 import { findAllByType, findChildByType } from './ReactUtils';
 import ReferenceDot from '../cartesian/ReferenceDot';
 import ReferenceLine from '../cartesian/ReferenceLine';
+import ReferenceArea from '../cartesian/ReferenceArea';
 import Legend from '../component/Legend';
 import { getNiceTickValues, getTickValues } from 'recharts-scale';
 import {
@@ -46,18 +47,40 @@ export const detectReferenceElementsDomain = (children, domain, axisId, axisType
   const lines = findAllByType(children, ReferenceLine);
   const dots = findAllByType(children, ReferenceDot);
   const elements = lines.concat(dots);
+  const areas = findAllByType(children, ReferenceArea);
   const idKey = `${axisType}Id`;
   const valueKey = axisType[0];
+  let finalDomain = domain;
 
-  return elements.reduce((result, el) => {
-    if (el.props[idKey] === axisId && el.props.alwaysShow &&
-      _.isNumber(el.props[valueKey])) {
-      const value = el.props[valueKey];
+  if (elements.length) {
+    finalDomain = elements.reduce((result, el) => {
+      if (el.props[idKey] === axisId && el.props.alwaysShow &&
+        _.isNumber(el.props[valueKey])) {
+        const value = el.props[valueKey];
 
-      return [Math.min(result[0], value), Math.max(result[1], value)];
-    }
-    return result;
-  }, domain);
+        return [Math.min(result[0], value), Math.max(result[1], value)];
+      }
+      return result;
+    }, finalDomain);
+  }
+
+  if (areas.length) {
+    const key1 = `${valueKey}1`;
+    const key2 = `${valueKey}2`;
+
+    finalDomain = areas.reduce((result, el) => {
+      if (el.props[idKey] === axisId && el.props.alwaysShow &&
+        (_.isNumber(el.props[key1]) && _.isNumber(el.props[key2]))) {
+        const value1 = el.props[key1];
+        const value2 = el.props[key2];
+
+        return [Math.min(result[0], value1, value2), Math.max(result[1], value1, value2)];
+      }
+      return result;
+    }, finalDomain);
+  }
+
+  return finalDomain;
 };
 
 export const getStackedData = (data, stackItems, offsetType) => {

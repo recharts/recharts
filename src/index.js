@@ -27,6 +27,7 @@ export RadialBar from './polar/RadialBar';
 export Brush from './cartesian/Brush';
 export ReferenceLine from './cartesian/ReferenceLine';
 export ReferenceDot from './cartesian/ReferenceDot';
+export ReferenceArea from './cartesian/ReferenceArea';
 export CartesianAxis from './cartesian/CartesianAxis';
 export CartesianGrid from './cartesian/CartesianGrid';
 export Line from './cartesian/Line';
