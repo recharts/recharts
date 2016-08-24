@@ -71,6 +71,7 @@
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-react": "^6.11.0",
     "chai": "^3.5.0",
+    "chai-enzyme": "^0.5.1",
     "enzyme": "^2.3.0",
     "escope": "^3.6.0",
     "eslint": "^3.0.0",
