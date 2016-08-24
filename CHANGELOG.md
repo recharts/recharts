@@ -1,3 +1,17 @@
+## 0.13.4 (Aug 24, 2016)
+
+### Feat
+
+- Add cartesian Component ReferenceArea
+
+### Refactor
+
+- Refactor ResponsiveContainer and support minHeight, minWidth, aspect in ResponsiveContainer
+
+### Fix
+
+- Fix the position of Bar for charts which have multiple y-axes
+
 ## 0.13.3 (Aug 17, 2016)
 
 ### Feat
