@@ -735,12 +735,15 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       if (!validateWidthHeight(this) || !data || !data.length) { return null; }
 
       const { style, children, layout, className, width, height, stackOffset } = this.props;
-      const numberAxisName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
+      const numericIdName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
+      const cateIdName = layout === 'horizontal' ? 'xAxis' : 'yAxis';
       const items = findAllByType(children, GraphicalChild);
-      const stackGroups = getStackGroupsByAxisId(data, items, `${numberAxisName}Id`, stackOffset);
+      const stackGroups = getStackGroupsByAxisId(
+        data, items, `${numericIdName}Id`, `${cateIdName}Id`, stackOffset
+      );
 
-      let xAxisMap = this.getAxisMap('xAxis', items, numberAxisName === 'xAxis' && stackGroups);
-      let yAxisMap = this.getAxisMap('yAxis', items, numberAxisName === 'yAxis' && stackGroups);
+      let xAxisMap = this.getAxisMap('xAxis', items, numericIdName === 'xAxis' && stackGroups);
+      let yAxisMap = this.getAxisMap('yAxis', items, numericIdName === 'yAxis' && stackGroups);
 
       const offset = this.calculateOffset(items, xAxisMap, yAxisMap);
 

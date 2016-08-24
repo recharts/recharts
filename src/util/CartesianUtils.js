@@ -71,10 +71,10 @@ export const getStackedData = (data, stackItems, offsetType) => {
   return stack(data);
 };
 
-export const getStackGroupsByAxisId = (data, items, axisIdKey, offsetType) => {
+export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, offsetType) => {
   const stackGroups = items.reduce((result, item) => {
     const { stackId, dataKey } = item.props;
-    const axisId = item.props[axisIdKey];
+    const axisId = item.props[numericAxisId];
     const parentGroup = result[axisId] || { hasStack: false, stackGroups: {} };
 
     if (_.isNumber(stackId) || _.isString(stackId)) {
@@ -89,7 +89,7 @@ export const getStackGroupsByAxisId = (data, items, axisIdKey, offsetType) => {
       parentGroup.stackGroups[stackId] = childGroup;
     } else {
       parentGroup.stackGroups[_.uniqueId('_stackId_')] = {
-        items: [item],
+        numericAxisId, cateAxisId, items: [item],
       };
     }
 
@@ -106,6 +106,8 @@ export const getStackGroupsByAxisId = (data, items, axisIdKey, offsetType) => {
         return {
           ...res,
           [stackId]: {
+            numericAxisId,
+            cateAxisId,
             items: g.items,
             stackedData: getStackedData(data, g.items, offsetType),
           },

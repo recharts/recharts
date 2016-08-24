@@ -231,18 +231,19 @@ export default React.createClass({
         <div className="bar-chart-wrapper" style={{textAlign: 'right'}}>
           <BarChart width={400} height={400} data={data} onClick={this.handlePvBarClick}>
             <XAxis dataKey="name" />
-            <YAxis />
+            <YAxis yAxisId="a" />
+            <YAxis yAxisId="b" orientation="right" />
             <Legend />
             <Tooltip />
             <CartesianGrid vertical={false}/>
-            <Bar dataKey="uv" label={<RenderLabel />}>
+            <Bar yAxisId="a" dataKey="uv" label={<RenderLabel />}>
               {
                 data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
                 ))
               }
             </Bar>
-            <Bar dataKey="pv" label>
+            <Bar yAxisId="b" dataKey="pv" label>
               {
                 data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
