@@ -4,11 +4,10 @@
 import React, { Component, PropTypes } from 'react';
 import ContainerDimensions from 'react-container-dimensions';
 import pureRender from '../util/PureRender';
-import { getPercentValue, isPercent } from '../util/DataUtils';
+import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
 const render = ({ aspect, width, height, minWidth, minHeight, container, children }) => {
-
   warn(isPercent(width) || isPercent(height),
     `The width(%s) and height(%s) are both fixed numbers,
      maybe you don't need to use a ResponsiveContainer.`,
@@ -19,8 +18,8 @@ const render = ({ aspect, width, height, minWidth, minHeight, container, childre
        'The aspect(%s) must be greater than zero.',
        aspect);
 
-  let calculatedWidth = getPercentValue(width, container.width);
-  let calculatedHeight = getPercentValue(height, container.height);
+  let calculatedWidth = container.width;
+  let calculatedHeight = container.height;
 
   if (aspect && aspect > 0) {
     // Preserve the desired aspect ratio
