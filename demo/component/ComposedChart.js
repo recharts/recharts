@@ -63,6 +63,21 @@ export default React.createClass({
             <Line dataKey="uv" stroke="#ff7300" />
           </ComposedChart>
         </div>
+        
+        <p>A simple ComposedChart of Line, Bar with custom Hover fill and stroke</p>
+        <div className="composed-chart-wrapper">
+          <ComposedChart width={800} height={400} data={data}
+            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+            cursorFill="#fff111" cursorStroke="green">
+            <XAxis dataKey="name"/>
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <CartesianGrid stroke="#f5f5f5" />
+            <Bar dataKey="pv" barSize={20} fill="#413ea0" />
+            <Line type="monotone" dataKey="pv" stroke="#ff7300" />
+          </ComposedChart>
+        </div>
       </div>
     );
   }

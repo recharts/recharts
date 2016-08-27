@@ -29,6 +29,8 @@ class ComposedChart extends Component {
 
   static propTypes = {
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
+    cursorFill: PropTypes.string,
+    cursorStroke: PropTypes.string,
     dataStartIndex: PropTypes.number,
     dataEndIndex: PropTypes.number,
     isTooltipActive: PropTypes.bool,
@@ -44,8 +46,15 @@ class ComposedChart extends Component {
     ]),
   };
 
+  static defaultProps = {
+    cursorFill: '#f1f1f1',
+    cursorStroke: '',
+  }
+
   renderCursor(xAxisMap, yAxisMap, offset) {
-    const { children, isTooltipActive, layout, activeTooltipIndex } = this.props;
+    const { children, isTooltipActive, layout, activeTooltipIndex
+            , cursorFill, cursorStroke } = this.props;
+
     const tooltipItem = findChildByType(children, Tooltip);
     if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive ||
       activeTooltipIndex < 0) { return null; }
@@ -59,7 +68,8 @@ class ComposedChart extends Component {
     const bandSize = getBandSizeOfScale(axis.scale);
     const start = ticks[activeTooltipIndex].coordinate;
     const cursorProps = {
-      fill: '#f1f1f1',
+      fill: cursorFill,
+      stroke: cursorStroke,
       ...getPresentationAttributes(tooltipItem.props.cursor),
       x: layout === 'horizontal' ? start : offset.left + 0.5,
       y: layout === 'horizontal' ? offset.top + 0.5 : start,
