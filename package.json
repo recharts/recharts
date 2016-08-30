@@ -53,7 +53,7 @@
     "d3-shape": "1.0.0",
     "lodash": "4.13.1",
     "react-container-dimensions": "1.2.0",
-    "react-smooth": "0.1.11",
+    "react-smooth": "git+https://github.com/Asimmetric/react-smooth.git#al-test-branch",
     "recharts-scale": "0.2.1"
   },
   "devDependencies": {
