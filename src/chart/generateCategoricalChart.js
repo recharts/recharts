@@ -377,7 +377,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           dataKey, unit, formatter,
           name: name || dataKey,
           color: getMainColorOfGraphicItem(child),
-          value: data[activeTooltipIndex][dataKey],
+          value: _.get(data[activeTooltipIndex],dataKey),
           payload: data[activeTooltipIndex],
         };
       });
