@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import classNames from 'classnames';
 import { findDOMNode } from 'react-dom';
-import Smooth from 'react-smooth';
+import Smooth from '../lib/reactSmooth';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 
@@ -144,13 +144,13 @@ class Rectangle extends Component {
             {...presentationAttributes}
             {...eventAttributes}
             className={layerClass}
-            d={this.getPath(0, 0, x, height, radius)}
+            d={getRectangePath(0, 0, x, height, radius)}
           />
         {hasEndTimestamp && <path
             {...presentationAttributes}
             {...eventAttributes}
             className={layerClass}
-            d={this.getPath(x + width, 0, endX, height, radius)}
+            d={getRectangePath(x + width, 0, endX, height, radius)}
           />}
         </g>
       );

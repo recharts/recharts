@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { findDOMNode } from 'react-dom';
-import Animate from 'react-smooth';
+import Animate from '../lib/reactSmooth';
 import classNames from 'classnames';
 import pureRender from '../util/PureRender';
 import Curve from '../shape/Curve';

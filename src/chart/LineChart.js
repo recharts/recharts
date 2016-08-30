@@ -14,7 +14,7 @@ import pureRender from '../util/PureRender';
 import { getTicksOfAxis } from '../util/CartesianUtils';
 import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
 import _ from 'lodash';
-import Smooth from 'react-smooth';
+import Smooth from '../lib/reactSmooth';
 import { renderMultiLine } from '../util/MultiLineUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
 

@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
-import Animate from 'react-smooth';
+import Animate from '../lib/reactSmooth';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import _ from 'lodash';
