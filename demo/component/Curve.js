@@ -2,7 +2,7 @@ import React from 'react';
 import { Surface, Curve, Layer } from 'recharts';
 import { curveBundle, curveCardinal, curveCardinalClosed, curveCardinalOpen,
   curveCatmullRomOpen  } from 'd3-shape';
-import { scaleWarm } from 'd3-scale';
+import { scaleOrdinal, schemeCategory10 } from 'd3-scale';
 
 export default React.createClass({
   render () {
@@ -13,7 +13,7 @@ export default React.createClass({
       { x: 130, y: 180 },
       { x: 170, y: 50 }
     ];
-    const scale = scaleWarm();
+    const scale = scaleOrdinal(schemeCategory10);
     const ticks = [0, 0.25, 0.5, 0.75, 1];
 
     return (

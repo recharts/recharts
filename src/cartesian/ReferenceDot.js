@@ -22,8 +22,8 @@ class ReferenceDot extends Component {
       PropTypes.number, PropTypes.string, PropTypes.func, PropTypes.element,
     ]),
 
-    xAxisMap: PropTypes.object,
-    yAxisMap: PropTypes.object,
+    xAxis: PropTypes.object,
+    yAxis: PropTypes.object,
 
     isFront: PropTypes.bool,
     alwaysShow: PropTypes.bool,
@@ -39,6 +39,8 @@ class ReferenceDot extends Component {
     showCursor: PropTypes.bool,
     showLine: PropTypes.bool,
     height: PropTypes.number,
+
+    shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
   };
 
   static defaultProps = {
@@ -46,7 +48,7 @@ class ReferenceDot extends Component {
     alwaysShow: false,
     xAxisId: 0,
     yAxisId: 0,
-    r: 20,
+    r: 10,
     fill: '#fff',
     stroke: '#ccc',
     fillOpacity: 1,
@@ -56,16 +58,22 @@ class ReferenceDot extends Component {
   };
 
   getCoordinate() {
-    const { x, y, xAxisMap, yAxisMap, xAxisId, yAxisId } = this.props;
-    if (xAxisMap === undefined || yAxisMap === undefined) {
+    const { x, y, xAxisMap, yAxisMap, xAxisId, yAxisId, xAxis, yAxis } = this.props;
+    let xScale, yScale
+    if (xAxisMap !== undefined && yAxisMap !== undefined && xAxisId !== undefined  && yAxisId !== undefined ) {
+      xScale = xAxisMap[xAxisId].scale;
+      yScale = yAxisMap[yAxisId].scale;
+    } else if (xAxis !== undefined && yAxis !== undefined) {
+      xScale = xAxis.scale;
+      yScale = yAxis.scale;
+    } else {
       return null;
     }
 
-    const xScale = xAxisMap[xAxisId].scale;
-    const yScale = yAxisMap[yAxisId].scale;
+
     const result = {
-      cx: xScale(x),
-      cy: yScale(y),
+      cx: xScale(x) + (xScale.bandwidth ? xScale.bandwidth() / 2 : 0),
+      cy: yScale(y) + (yScale.bandwidth ? yScale.bandwidth() / 2 : 0),
     };
 
     if (validateCoordinateInRange(result.cx, xScale) &&
@@ -123,6 +131,27 @@ class ReferenceDot extends Component {
     );
   }
 
+  renderDot(option, props) {
+    let dot;
+
+    if (React.isValidElement(option)) {
+      dot = React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      dot = option(props);
+    } else {
+      dot = (
+        <Dot
+          {...props}
+          cx={props.cx}
+          cy={props.cy}
+          className="recharts-reference-dot-dot"
+        />
+      );
+    }
+
+    return dot;
+  }
+
   render() {
     const { x, y, showLine } = this.props;
     const isX = _.isNumber(x) || _.isString(x);
@@ -138,16 +167,11 @@ class ReferenceDot extends Component {
     if (offsetX) { coordinate.cx += offsetX; }
     if (offsetY) { coordinate.cy += offsetY; }
 
-    const props = getPresentationAttributes(this.props);
+    const { shape } = this.props;
 
     return (
       <Layer className="recharts-reference-dot">
-        <Dot
-          {...props}
-          r={this.props.r}
-          className="recharts-reference-dot-dot"
-          {...coordinate}
-        />
+        {this.renderDot(shape, { ...getPresentationAttributes(this.props), ...coordinate })}
         {showLine && this.renderLine(this.props, coordinate)}
         {this.renderLabel(coordinate)}
       </Layer>

@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { findDOMNode } from 'react-dom';
-import Animate from 'react-smooth';
+import Animate from '../lib/reactSmooth';
 import classNames from 'classnames';
 import pureRender from '../util/PureRender';
 import Curve from '../shape/Curve';
@@ -11,6 +11,8 @@ import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import _ from 'lodash';
+
+const FACTOR = 1.0000001;
 
 @pureRender
 class Line extends Component {
@@ -29,8 +31,12 @@ class Line extends Component {
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    legendType: PropTypes.string,
+    legendType: PropTypes.oneOf([
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
+      'triangle', 'wye',
+    ]),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
+    connectNulls: PropTypes.bool,
 
      // whether have dot in line
     activeDot: PropTypes.oneOfType([
@@ -75,11 +81,14 @@ class Line extends Component {
       max: React.PropTypes.number,
       color: React.PropTypes.string.isRequired,
     })),
+
+    animationId: PropTypes.number,
   };
 
   static defaultProps = {
     xAxisId: 0,
     yAxisId: 0,
+    connectNulls: false,
     activeDot: true,
     dot: true,
     legendType: 'line',
@@ -102,12 +111,11 @@ class Line extends Component {
 
     const { points } = props;
     this.state = {
-      isAnimationFinished: false,
-      steps: [],
+      isAnimationFinished: true,
       totalLength: 0,
     };
   }
-
+  /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
     const { isAnimationActive } = this.props;
 
@@ -119,13 +127,16 @@ class Line extends Component {
 
     this.setState({ totalLength });
   }
-
+  /* eslint-disable  react/no-did-update-set-state */
   componentDidUpdate(prevProps, prevState) {
-    const { points } = this.props;
+    const { animationId, points } = this.props;
 
-    if (points !== prevProps.points) {
+    if (animationId !== prevProps.animationId || points !== prevProps.points) {
+      const cur = this.getTotalLength();
+      const { totalLength } = prevState;
+      // A hack method to trigger animation
       this.setState({
-        totalLength: this.getTotalLength(),
+        totalLength: cur === totalLength ? cur * FACTOR : cur,
       });
     }
   }
@@ -185,7 +196,15 @@ class Line extends Component {
     } else if (_.isFunction(option)) {
       labelItem = option(props);
     } else {
-      labelItem = <text {...props} className="recharts-line-label">{value}</text>;
+      labelItem = (
+        <text
+          key={props.key}
+          {...getPresentationAttributes(props)}
+          className="recharts-line-label"
+        >
+          {value}
+        </text>
+      );
     }
 
     return labelItem;
@@ -260,14 +279,9 @@ class Line extends Component {
   }
 
   renderCurve() {
-    const {
-      points, className,
-      isAnimationActive, animationBegin, animationDuration, animationEasing,
-      onClick, onMouseEnter, onMouseLeave,
-      strokeDasharray,
-      ...other,
-    } = this.props;
-
+    const { points, className, strokeDasharray, isAnimationActive,
+      animationBegin, animationDuration, animationEasing, onClick, onMouseEnter,
+      onMouseLeave, ...other } = this.props;
     const { totalLength } = this.state;
     const animationProps = {
       isActive: isAnimationActive,
@@ -280,29 +294,22 @@ class Line extends Component {
       ref: 'animate',
       shouldReAnimate: true,
     };
-    const curveProps = {
-      ...other,
-      className: 'recharts-line-curve',
-      fill: 'none',
-      onClick,
-      onMouseEnter,
-      onMouseLeave,
-      points,
-    };
+    const curveProps = { ...other, className: 'recharts-line-curve', fill: 'none',
+      onClick, onMouseEnter, onMouseLeave, points };
 
     if (strokeDasharray) {
       const lines = strokeDasharray.split(/[,\s]+/gim)
         .map(num => parseFloat(num));
       return (
         <Animate
-          { ...animationProps }
+          {...animationProps}
           from={{ length: 0 }}
           to={{ length: totalLength }}
         >
           {
             ({ length }) => (
               <Curve
-                { ...curveProps }
+                {...curveProps}
                 strokeDasharray={this.getStrokeDasharray(length, totalLength, lines)}
               />
             )
@@ -313,12 +320,12 @@ class Line extends Component {
 
     return (
       <Animate
-        { ...animationProps }
+        {...animationProps}
         from={`0px ${totalLength === 0 ? 1 : totalLength}px`}
         to={`${totalLength}px 0px`}
         attributeName="strokeDasharray"
       >
-        <Curve { ...curveProps } />
+        <Curve {...curveProps} />
       </Animate>
     );
   }

@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { Surface, Radar, Sector } from 'recharts';
 import { mount, render } from 'enzyme';
 
-describe('<Pie />', () => {
+describe('<Radar />', () => {
   const data = [
     { x: 200, y: 230, cx: 250, cy: 250, angle: 30, radius: 60, value: 4 },
     { x: 300, y: 405, cx: 250, cy: 250, angle: 90, radius: 60, value: 4 },

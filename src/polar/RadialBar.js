@@ -10,7 +10,7 @@ import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
-import Animate from 'react-smooth';
+import Animate from '../lib/reactSmooth';
 import _ from 'lodash';
 
 const RADIAN = Math.PI / 180;
@@ -42,7 +42,10 @@ class RadialBar extends Component {
       outerRadius: PropTypes.number,
       value: PropTypes.value,
     })),
-    legendType: PropTypes.string,
+    legendType: PropTypes.oneOf([
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square',
+      'star', 'triangle', 'wye',
+    ]),
     label: PropTypes.oneOfType([
       PropTypes.bool, PropTypes.func, PropTypes.element, PropTypes.object,
     ]),

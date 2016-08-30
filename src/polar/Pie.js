@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import Layer from '../container/Layer';
 import Sector from '../shape/Sector';
 import Curve from '../shape/Curve';
-import Animate from 'react-smooth';
+import Animate from '../lib/reactSmooth';
 import _ from 'lodash';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
@@ -27,6 +27,7 @@ class Pie extends Component {
     cy: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     startAngle: PropTypes.number,
     endAngle: PropTypes.number,
+    paddingAngle: PropTypes.number,
     innerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     outerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     nameKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -34,7 +35,10 @@ class Pie extends Component {
     data: PropTypes.arrayOf(PropTypes.object),
     composedData: PropTypes.arrayOf(PropTypes.object),
     minAngle: PropTypes.number,
-    legendType: PropTypes.string,
+    legendType: PropTypes.oneOf([
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
+      'triangle', 'wye',
+    ]),
     maxRadius: PropTypes.number,
 
     labelLine: PropTypes.oneOfType([
@@ -49,7 +53,7 @@ class Pie extends Component {
     activeShape: PropTypes.oneOfType([
       PropTypes.object, PropTypes.func, PropTypes.element,
     ]),
-    activeIndex: PropTypes.number,
+    activeIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
 
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
@@ -83,6 +87,7 @@ class Pie extends Component {
     innerRadius: 0,
     // The outer radius of sectors
     outerRadius: '80%',
+    paddingAngle: 0,
     nameKey: 'name',
     valueKey: 'value',
     labelLine: true,
@@ -116,12 +121,12 @@ class Pie extends Component {
   }
 
   getSectors(data) {
-    const { cx, cy, innerRadius, outerRadius, startAngle,
-      minAngle, endAngle, valueKey } = this.props;
+    const { cx, cy, innerRadius, outerRadius, startAngle, paddingAngle,
+      minAngle, endAngle, nameKey, valueKey } = this.props;
     const len = data.length;
     const deltaAngle = this.getDeltaAngle();
     const absDeltaAngle = Math.abs(deltaAngle);
-
+    const totalPadingAngle = (absDeltaAngle >= 360 ? len : (len - 1)) * paddingAngle;
     const sum = data.reduce((result, entry) => (result + entry[valueKey]), 0);
 
     let sectors = [];
@@ -133,13 +138,14 @@ class Pie extends Component {
         let tempStartAngle;
 
         if (i) {
-          tempStartAngle = deltaAngle < 0 ? prev.endAngle : prev.startAngle;
+          tempStartAngle = (deltaAngle < 0 ? prev.endAngle : prev.startAngle)
+            + Math.sign(deltaAngle) * paddingAngle;
         } else {
           tempStartAngle = startAngle;
         }
 
         const tempEndAngle = tempStartAngle + Math.sign(deltaAngle) * (
-          minAngle + percent * (absDeltaAngle - len * minAngle)
+          minAngle + percent * (absDeltaAngle - len * minAngle - totalPadingAngle)
         );
 
         prev = {
@@ -149,6 +155,8 @@ class Pie extends Component {
           cy,
           innerRadius,
           outerRadius,
+          name: entry[nameKey],
+          value: entry[valueKey],
           startAngle: deltaAngle < 0 ? tempStartAngle : tempEndAngle,
           endAngle: deltaAngle < 0 ? tempEndAngle : tempStartAngle,
           payload: entry,
@@ -170,6 +178,16 @@ class Pie extends Component {
     }
 
     return 'middle';
+  }
+
+  isActiveIndex(i) {
+    const { activeIndex } = this.props;
+
+    if (Array.isArray(activeIndex)) {
+      return activeIndex.indexOf(i) !== -1;
+    }
+
+    return i === activeIndex;
   }
 
   handleAnimationEnd = () => {
@@ -238,7 +256,7 @@ class Pie extends Component {
 
     return (
       <text
-        {...props}
+        {...getPresentationAttributes(props)}
         alignmentBaseline="middle"
         className="recharts-pie-label-text"
       >
@@ -306,7 +324,7 @@ class Pie extends Component {
   }
 
   renderSectors(sectors) {
-    const { activeShape, activeIndex } = this.props;
+    const { activeShape } = this.props;
 
     return sectors.map((entry, i) => (
       <Layer
@@ -314,7 +332,7 @@ class Pie extends Component {
         {...filterEventsOfChild(this.props, entry, i)}
         key={`sector-${i}`}
       >
-        {this.renderSectorItem(activeIndex === i ? activeShape : null, entry)}
+        {this.renderSectorItem(this.isActiveIndex(i) ? activeShape : null, entry)}
       </Layer>
     ));
   }

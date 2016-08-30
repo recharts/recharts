@@ -62,6 +62,7 @@ module.exports = function(config) {
       externals: {
         'jsdom': 'window',
         'react/lib/ExecutionEnvironment': true,
+        'react/addons': true,
         'react/lib/ReactContext': 'window',
         'text-encoding': 'window',
       },
@@ -101,6 +102,13 @@ module.exports = function(config) {
     reporters: ['progress', 'coverage', 'coveralls'],
 
     coverageReporter: {
+      instrumenters: { isparta : require('isparta') },
+      instrumenter: {
+        '**/*.js': 'isparta'
+      },
+      instrumenterOptions: {
+        isparta: { babel : { presets: 'es2015' } }
+      },
       dir: 'test',
       reporters: [{
         type: 'html',

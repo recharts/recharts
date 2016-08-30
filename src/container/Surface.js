@@ -32,6 +32,7 @@ function Surface(props) {
       height={height}
       style={style}
       viewBox={`${svgView.x} ${svgView.y} ${svgView.width} ${svgView.height}`}
+      version="1.1"
     >
       {children}
     </svg>

@@ -46,7 +46,10 @@ class Legend extends Component {
     payload: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.any,
       id: PropTypes.any,
-      type: PropTypes.oneOf(['line', 'scatter', 'square', 'rect']),
+      type: PropTypes.oneOf([
+        'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square',
+        'star', 'triangle', 'wye',
+      ]),
     })),
   };
 
@@ -78,6 +81,8 @@ class Legend extends Component {
       const { content, width, height, wrapperStyle } = props;
       const contentHtml = ReactDOMServer.renderToStaticMarkup(renderContent(content, props));
       const style = {
+        // solve the problem temporarily that the width and height will be affect by the global css
+        fontSize: 12,
         position: 'absolute',
         width: width || 'auto',
         height: height || 'auto',

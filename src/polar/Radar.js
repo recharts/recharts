@@ -8,7 +8,7 @@ import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/Reac
 import Polygon from '../shape/Polygon';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
-import Animate from 'react-smooth';
+import Animate from '../lib/reactSmooth';
 import _ from 'lodash';
 
 @pureRender
@@ -38,7 +38,13 @@ class Radar extends Component {
     label: PropTypes.oneOfType([
       PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool,
     ]),
+    legendType: PropTypes.oneOf([
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square',
+      'star', 'triangle', 'wye',
+    ]),
 
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
     isAnimationActive: PropTypes.bool,
     animationId: PropTypes.number,
     animationBegin: PropTypes.number,
@@ -49,18 +55,35 @@ class Radar extends Component {
   static defaultProps = {
     dot: false,
     label: false,
+    legendType: 'rect',
     isAnimationActive: true,
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
   };
 
+  handleMouseEnter = (e) => {
+    const { onMouseEnter } = this.props;
+
+    if (onMouseEnter) {
+      onMouseEnter(this.props, e);
+    }
+  };
+
+  handleMouseLeave = (e) => {
+    const { onMouseLeave } = this.props;
+
+    if (onMouseLeave) {
+      onMouseLeave(this.props, e);
+    }
+  };
+
   renderPolygon() {
-    const { shape, points, animationDuration, animationEasing,
-      animationBegin, isAnimationActive, animationId } = this.props;
+    const { shape, points, animationDuration, animationEasing, animationBegin,
+      isAnimationActive, animationId, dataKey, className, ...others } = this.props;
 
     if (React.isValidElement(shape)) {
-      return React.cloneElement(shape, this.props);
+      return React.cloneElement(shape, { ...others, points });
     } else if (_.isFunction(shape)) {
       return shape(this.props);
     }
@@ -82,7 +105,12 @@ class Radar extends Component {
           duration={animationDuration}
           key={animationId}
         >
-          <Polygon {...getPresentationAttributes(this.props)} points={transformPoints} />
+          <Polygon
+            onMouseEnter={this.handleMouseEnter}
+            onMouseLeave={this.handleMouseLeave}
+            {...getPresentationAttributes(this.props)}
+            points={transformPoints}
+          />
         </Animate>
       </Layer>
     );
@@ -96,7 +124,15 @@ class Radar extends Component {
     } else if (_.isFunction(option)) {
       labelItem = option(props);
     } else {
-      labelItem = <text {...props} className="recharts-radar-label">{value}</text>;
+      labelItem = (
+        <text
+          key={props.key}
+          {...getPresentationAttributes(props)}
+          className="recharts-radar-label"
+        >
+          {value}
+        </text>
+      );
     }
 
     return labelItem;

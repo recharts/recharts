@@ -11,7 +11,8 @@ import _ from 'lodash';
 import Cell from '../component/Cell';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
-import { findChildByType, findAllByType, validateWidthHeight } from '../util/ReactUtils';
+import { findChildByType, findAllByType, validateWidthHeight,
+  filterSvgElements } from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import pureRender from '../util/PureRender';
 import AnimationDecorator from '../util/AnimationDecorator';
@@ -65,13 +66,13 @@ class RadialBarChart extends Component {
     margin: { top: 0, right: 0, bottom: 0, left: 0 },
   };
 
-  state = {
-    activeTooltipLabel: '',
-    activeTooltipPayload: [],
-    activeTooltipCoord: { x: 0, y: 0 },
-    isTooltipActive: false,
-  };
+  state = this.createDefaultState();
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data !== this.props.data) {
+      this.setState(this.createDefaultState());
+    }
+  }
   /**
    * Compose the data of each group
    * @param  {Object} item        An instance of RadialBar
@@ -100,7 +101,6 @@ class RadialBarChart extends Component {
       };
     });
   }
-
   /**
    * Calculate the size of all groups
    * @param  {Array} items All the instance of RadialBar
@@ -174,6 +174,18 @@ class RadialBarChart extends Component {
     }
 
     return result;
+  }
+  /**
+   * Returns default, reset state for the radial bar chart.
+   * @return {Object} Whole new state
+   */
+  createDefaultState() {
+    return {
+      activeTooltipLabel: '',
+      activeTooltipPayload: [],
+      activeTooltipCoord: { x: 0, y: 0 },
+      isTooltipActive: false,
+    };
   }
 
   handleMouseEnter = (el, index, e) => {
@@ -306,10 +318,11 @@ class RadialBarChart extends Component {
     return (
       <div
         className={classNames('recharts-wrapper', className)}
-        style={{ cursor: 'default', ...style, position: 'relative' }}
+        style={{ cursor: 'default', position: 'relative', ...style, width, height }}
       >
         <Surface width={width} height={height}>
           {this.renderItems(items, radiusScale, { cx, cy })}
+          {filterSvgElements(children)}
         </Surface>
 
         {this.renderLegend()}

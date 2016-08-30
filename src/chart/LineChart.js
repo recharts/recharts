@@ -14,9 +14,11 @@ import pureRender from '../util/PureRender';
 import { getTicksOfAxis } from '../util/CartesianUtils';
 import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
 import _ from 'lodash';
-import Smooth from 'react-smooth';
+import Smooth from '../lib/reactSmooth';
 import { renderMultiLine } from '../util/MultiLineUtils';
+import AnimationDecorator from '../util/AnimationDecorator';
 
+@AnimationDecorator
 @pureRender
 class LineChart extends Component {
 
@@ -39,6 +41,7 @@ class LineChart extends Component {
     ]),
     // used internally
     isComposed: PropTypes.bool,
+    animationId: PropTypes.number,
   };
 
   // shouldComponentUpdate(nextProps, nextState) {
@@ -71,15 +74,18 @@ class LineChart extends Component {
   }
 
   renderCursor(xAxisMap, yAxisMap, offset) {
-    const { children, isTooltipActive } = this.props;
+    const { children, isTooltipActive, layout, activeTooltipIndex } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
-    if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive) { return null; }
+    if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive ||
+      activeTooltipIndex < 0) { return null; }
 
-    const { layout, activeTooltipIndex } = this.props;
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
     const axis = getAnyElementOfObject(axisMap);
     const ticks = getTicksOfAxis(axis);
+
+    if (!ticks || !ticks[activeTooltipIndex]) { return null; }
+
     const start = ticks[activeTooltipIndex].coordinate;
     const x1 = layout === 'horizontal' ? start : offset.left;
     const y1 = layout === 'horizontal' ? offset.top : start;
@@ -128,7 +134,7 @@ class LineChart extends Component {
    * @return {ReactComponent}  All the instances of Line
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
-    const { children, layout, isTooltipActive, activeTooltipIndex } = this.props;
+    const { children, layout, isTooltipActive, activeTooltipIndex, animationId } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];
@@ -159,6 +165,7 @@ class LineChart extends Component {
         ...offset,
         layout,
         points,
+        animationId,
       });
     }, this);
 

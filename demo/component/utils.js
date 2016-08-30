@@ -2,6 +2,10 @@
  * change number in data
  */
 
+const randomChangeArray = (array) => {
+
+};
+
 export function changeNumberOfData(data) {
   if (Array.isArray(data)) {
     return data.map(changeNumberOfData);

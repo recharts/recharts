@@ -1,16 +1,16 @@
 import React from 'react';
 import { changeNumberOfData } from './utils';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, Brush,
-  ReferenceLine, ReferenceDot } from 'recharts';
+  ReferenceArea, ReferenceLine, ReferenceDot, ResponsiveContainer } from 'recharts';
 
 const data = [
   { name: 'Page A', uv: 4000, pv: 2400, amt: 2400 },
   { name: 'Page B', uv: 3000, pv: 1398, amt: 2210 },
   { name: 'Page C', uv: 2000, pv: 9800, amt: 2290 },
   { name: 'Page D', uv: 2780, pv: 3908, amt: 2000 },
-  { name: 'Page E', uv: 1890, pv: 4800, amt: 2181 },
-  { name: 'Page F', uv: 2390, pv: 3800, amt: 2500 },
-  { name: 'Page G', uv: 3490, pv: 4300, amt: 2100 },
+  { name: 'Page E', uv: 2500, pv: 4800, amt: 2181 },
+  { name: 'Page F', uv: 1220, pv: 3800, amt: 2500 },
+  { name: 'Page G', uv: 2300, pv: 4300, amt: 2100 },
 ];
 const data02 = [
   { name: 'Page A', uv: 4000, pv: 2400, amt: 2400 },
@@ -59,6 +59,20 @@ const renderLabel = (props) => {
   return <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={`label-${index}`}>{value[1]}</text>
 };
 
+const RenderRect = (props) => {
+  return <rect x={20} y={20} width={100} height={20} stroke="#000"/>;
+};
+
+function CustomizedAxisTick(props) {
+  const { x, y, stroke, payload } = props;
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text x={0} y={0} dy={-12} textAnchor="end" fill="#999" fontSize="12">{payload.value}</text>
+    </g>
+  );
+}
+
 export default React.createClass({
   displayName: 'AreaChartDemo',
 
@@ -68,12 +82,6 @@ export default React.createClass({
 
   handleChangeData() {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
-  },
-
-  handleSwitch() {
-    this.setState({
-      data: this.state.data === data ? data02 : data,
-    });
   },
 
   render() {
@@ -91,12 +99,12 @@ export default React.createClass({
         <br/>
 
         <p>Stacked AreaChart</p>
-        <a onClick={this.handleSwitch}>切换数据</a>
         <div className="area-chart-wrapper">
           <AreaChart width={800} height={400} data={this.state.data}
             margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
+            syncId="test"
           >
-            <XAxis dataKey="name" label="province" />
+            <XAxis dataKey="name" label="province"/>
             <YAxis />
             <Tooltip />
             <Area stackId="0"
@@ -104,6 +112,14 @@ export default React.createClass({
               dataKey="uv"
               stroke="#ff7300"
               fill="#ff7300"
+              dot
+              activeDot={renderCustomizedActiveDot}
+            />
+            <Area stackId="0"
+              type="monotone"
+              dataKey="amt"
+              stroke="#82ca9d"
+              fill="#82ca9d"
               dot
               activeDot={renderCustomizedActiveDot}
             />
@@ -122,11 +138,12 @@ export default React.createClass({
 
         <p>Stacked AreaChart | Stack Offset Expand</p>
         <div className="area-chart-wrapper">
-          <AreaChart width={800} height={400} data={this.state.data}
+          <AreaChart width={400} height={300} data={this.state.data}
             margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
             stackOffset="expand"
+            syncId="test"
           >
-            <XAxis dataKey="name" label="province" />
+            <XAxis />
             <YAxis />
             <Tooltip />
             <Area stackId="0"
@@ -250,6 +267,7 @@ export default React.createClass({
             <YAxis tickCount={7} hasTick />
             <Tooltip content={<CustomTooltip external={data} />} />
             <CartesianGrid stroke="#f5f5f5" />
+            <ReferenceArea x1="Page A" x2="Page E" />
             <ReferenceLine y={7500} stroke="#387908"/>
             <ReferenceDot x="Page C" y={1398} r={10} fill="#387908" isFront/>
             <Area type="monotone"
@@ -260,6 +278,33 @@ export default React.createClass({
             />
           </AreaChart>
         </div>
+
+        <p>AreaChart filled with linear gradient</p>
+        <div>
+          <AreaChart width={800} height={400} data={this.state.data}
+            margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
+          >
+            <defs>
+              <linearGradient id="MyGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="rgba(0, 136, 254, 0.8)" />
+                <stop offset="95%" stopColor="rgba(0, 136, 254, 0)" />
+              </linearGradient>
+            </defs>
+            <XAxis dataKey="name" label="province" />
+            <YAxis />
+            <Tooltip />
+            <Area
+              type="monotone"
+              dataKey="uv"
+              stroke="#0088FE"
+              strokeWidth="2"
+              fillOpacity="1"
+              fill="url(#MyGradient)"
+              dot
+            />
+          </AreaChart>
+        </div>
+
       </div>
     );
   },

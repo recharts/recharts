@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { scaleLinear } from 'd3-scale';
-import { getNiceTickValues } from 'recharts-scale';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Legend from '../component/Legend';
@@ -18,13 +17,14 @@ import YAxis from '../cartesian/YAxis';
 import ZAxis from '../cartesian/ZAxis';
 import ReferenceLine from '../cartesian/ReferenceLine';
 import ReferenceDot from '../cartesian/ReferenceDot';
-import { getPresentationAttributes, findChildByType,
-  findAllByType, validateWidthHeight } from '../util/ReactUtils';
+import ReferenceArea from '../cartesian/ReferenceArea';
+import { getPresentationAttributes, findChildByType, filterSvgElements,
+  findAllByType, validateWidthHeight, getDisplayName } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { parseSpecifiedDomain } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { calculateDomainOfTicks, detectReferenceElementsDomain, getTicksOfAxis,
-  getCoordinatesOfGrid, getLegendProps } from '../util/CartesianUtils';
+  getCoordinatesOfGrid, getLegendProps, getTicksOfScale } from '../util/CartesianUtils';
 import _ from 'lodash';
 
 @pureRender
@@ -59,7 +59,6 @@ class ScatterChart extends Component {
     isTooltipActive: false,
     activeItem: null,
   };
-
   /**
    * Compose the data of each group
    * @param  {Array}  data        The original data
@@ -175,33 +174,6 @@ class ScatterChart extends Component {
       height: height - offset.top - offset.bottom,
     };
   }
-
-  /**
-   * Configure the scale function of axis
-   * @param {Object} scale The scale function
-   * @param {Object} opts  The configuration of axis
-   * @return {Object}      null
-   */
-  setTicksOfScale(scale, opts) {
-    // Give priority to use the options of ticks
-    if (opts.ticks && opts.ticks) {
-      opts.domain = calculateDomainOfTicks(opts.ticks, opts.type);
-      scale.domain(opts.domain)
-           .ticks(opts.ticks.length);
-      return;
-    }
-
-    if (opts.tickCount && opts.originalDomain && (
-      opts.originalDomain[0] === 'auto' || opts.originalDomain[1] === 'auto')) {
-      // Calculate the ticks by the number of grid when the axis is a number axis
-      const domain = scale.domain();
-      const tickValues = getNiceTickValues(domain, opts.tickCount);
-
-      opts.ticks = tickValues;
-      scale.domain(calculateDomainOfTicks(tickValues, opts.type));
-    }
-  }
-
   /**
    * Calculate the scale function, position, width, height of axes
    * @param  {Object} axis     The configuration of axis
@@ -210,13 +182,19 @@ class ScatterChart extends Component {
    * @return {Object} Configuration
    */
   getFormatAxis(axis, offset, axisType) {
-    const { orientation, domain, tickFormat } = axis;
-    const range = axisType === 'xAxis' ?
-                  [offset.left, offset.left + offset.width] :
-                  [offset.top + offset.height, offset.top];
+    const { orientation, domain, tickFormat, padding = {} } = axis;
+    const range = axisType === 'xAxis' ? [
+      offset.left + (padding.left || 0),
+      offset.left + offset.width - (padding.right || 0),
+    ] : [
+      offset.top + offset.height - (padding.bottom || 0),
+      offset.top + (padding.top || 0),
+    ];
+
     const scale = scaleLinear().domain(domain).range(range);
 
-    this.setTicksOfScale(scale, axis);
+    const ticks = getTicksOfScale(scale, axis);
+
     if (tickFormat) {
       scale.tickFormat(tickFormat);
     }
@@ -234,6 +212,7 @@ class ScatterChart extends Component {
 
     return {
       ...axis,
+      ...ticks,
       scale,
       width: axisType === 'xAxis' ? offset.width : axis.width,
       height: axisType === 'yAxis' ? offset.height : axis.height,
@@ -371,10 +350,12 @@ class ScatterChart extends Component {
    * @return {ReactElement}    The instance of Legend
    */
   renderLegend(items) {
-    const props = getLegendProps(items);
+    const { children, width, height, margin } = this.props;
+    const legendWidth = width - margin.left - margin.right;
+    const legendHeight = height - margin.top - margin.bottom;
+    const props = getLegendProps(children, items, legendWidth, legendHeight);
 
     if (!props) { return null; }
-    const { margin, width, height } = this.props;
 
     return React.createElement(Legend, {
       ...props,
@@ -461,38 +442,24 @@ class ScatterChart extends Component {
     }, this);
   }
 
-  renderReferenceLines(xAxis, yAxis, offset, isFront) {
+  renderReferenceElements(xAxis, yAxis, offset, isFront, Compt) {
     const { children } = this.props;
-    const lines = findAllByType(children, ReferenceLine);
+    const elements = findAllByType(children, Compt);
 
-    if (!lines || !lines.length) { return null; }
+    if (!elements || !elements.length) { return null; }
 
-    return lines.filter(entry => (isFront === entry.props.isFront)).map((entry, i) =>
+    const keyPrefix = `${getDisplayName(Compt)}-${isFront ? 'front' : 'back'}`;
+
+    return elements.filter(entry => (isFront === entry.props.isFront)).map((entry, i) =>
       React.cloneElement(entry, {
-        key: `reference-line-${i}`,
-        xAxisMap: { [xAxis.xAxisId]: xAxis },
-        yAxisMap: { [yAxis.yAxisId]: yAxis },
+        key: `${keyPrefix}-${i}`,
+        xAxis, yAxis,
         viewBox: {
           x: offset.left,
           y: offset.top,
           width: offset.width,
           height: offset.height,
         },
-      })
-    );
-  }
-
-  renderReferenceDots(xAxis, yAxis, offset, isFront) {
-    const { children } = this.props;
-    const dots = findAllByType(children, ReferenceDot);
-
-    if (!dots || !dots.length) { return null; }
-
-    return dots.filter(entry => (isFront === entry.props.isFront)).map((entry, i) =>
-      React.cloneElement(entry, {
-        key: `reference-dot-${i}`,
-        xAxisMap: { [xAxis.xAxisId]: xAxis },
-        yAxisMap: { [yAxis.yAxisId]: yAxis },
       })
     );
   }
@@ -513,18 +480,21 @@ class ScatterChart extends Component {
     return (
       <div
         className={classNames('recharts-wrapper', className)}
-        style={{ position: 'relative', cursor: 'default', ...style }}
+        style={{ position: 'relative', cursor: 'default', ...style, width, height }}
       >
         <Surface width={width} height={height}>
           {this.renderGrid(xAxis, yAxis, offset)}
-          {this.renderReferenceLines(xAxis, yAxis, offset, false)}
-          {this.renderReferenceDots(xAxis, yAxis, offset, false)}
+          {this.renderReferenceElements(xAxis, yAxis, offset, false, ReferenceArea)}
+          {this.renderReferenceElements(xAxis, yAxis, offset, false, ReferenceLine)}
+          {this.renderReferenceElements(xAxis, yAxis, offset, false, ReferenceDot)}
           {this.renderAxis(xAxis, 'recharts-x-axis')}
           {this.renderAxis(yAxis, 'recharts-y-axis')}
           {this.renderCursor(xAxis, yAxis, offset)}
           {this.renderItems(items, xAxis, yAxis, zAxis, offset)}
-          {this.renderReferenceLines(xAxis, yAxis, offset, true)}
-          {this.renderReferenceDots(xAxis, yAxis, offset, true)}
+          {this.renderReferenceElements(xAxis, yAxis, offset, true, ReferenceArea)}
+          {this.renderReferenceElements(xAxis, yAxis, offset, true, ReferenceLine)}
+          {this.renderReferenceElements(xAxis, yAxis, offset, true, ReferenceDot)}
+          {filterSvgElements(children)}
         </Surface>
 
         {this.renderLegend(items)}

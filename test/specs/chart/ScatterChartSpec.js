@@ -38,6 +38,7 @@ describe('ScatterChart of three dimension data', () => {
     );
 
     expect(wrapper.find('.recharts-scatter').length).to.equal(2);
+    expect(wrapper.find('.recharts-legend-item').length).to.equal(2);
     expect(wrapper.find('.recharts-scatter-symbol').length).to.equal(data01.length + data02.length);
   });
 
@@ -97,7 +98,7 @@ describe('ScatterChart of two dimension data', () => {
   );
 
   it('renders 6 circles in simple ScatterChart', () => {
-    expect(wrapper.find('.recharts-symbol').length).to.equal(6);
+    expect(wrapper.find('.recharts-symbols').length).to.equal(6);
   });
   it('renders 1 jointed line when line is setted to be true', () => {
     expect(wrapper.find('.recharts-scatter-line').length).to.equal(1);

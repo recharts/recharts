@@ -1,5 +1,5 @@
 #!/bin/bash
 
 npm run build-es6
-rm -rf /Users/Alex/Asim/Git/dash/src/lib/recharts/*
-cp -a es6/* /Users/Alex/Asim/Git/dash/src/lib/recharts
+rm -rf ../dash/src/lib/recharts/*
+cp -a es6/* ../dash/src/lib/recharts
