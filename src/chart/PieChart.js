@@ -9,7 +9,7 @@ import Tooltip from '../component/Tooltip';
 import Pie from '../polar/Pie';
 import Cell from '../component/Cell';
 import { getPercentValue } from '../util/DataUtils';
-import { findChildByType, findAllByType, validateWidthHeight,
+import { findChildByType, findAllByType, validateWidthHeight, filterSvgElements,
   getPresentationAttributes } from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import pureRender from '../util/PureRender';
@@ -53,7 +53,7 @@ class PieChart extends Component {
   };
 
   getComposedData(item) {
-    const { data, children, nameKey, valueKey } = item.props;
+    const { data, children } = item.props;
     const props = getPresentationAttributes(item.props);
     const cells = findAllByType(children, Cell);
 
@@ -81,7 +81,7 @@ class PieChart extends Component {
       this.setState({
         isTooltipActive: true,
         activeTooltipCoord: polarToCartesian(cx, cy, outerRadius, midAngle),
-        activeTooltipPayload: [el.payload],
+        activeTooltipPayload: [el],
       }, () => {
         if (onMouseEnter) {
           onMouseEnter(el, index, e);
@@ -125,7 +125,10 @@ class PieChart extends Component {
         const data = this.getComposedData(child);
 
         return result.concat(data.map((entry) => (
-          { ...entry, value: entry[nameKey], color: entry.fill }
+          {
+            ...entry, type: child.props.legendType, value: entry[nameKey],
+            color: entry.fill,
+          }
         )));
       }, []);
 
@@ -176,7 +179,7 @@ class PieChart extends Component {
         key: `recharts-pie-${i}`,
         cx,
         cy,
-        maxRadius: Math.max(width, height) / 2,
+        maxRadius: child.props.maxRadius || Math.sqrt(width * width + height * height) / 2,
         innerRadius: getPercentValue(innerRadius, maxRadius, 0),
         outerRadius: getPercentValue(outerRadius, maxRadius, maxRadius * 0.8),
         composedData: this.getComposedData(child),
@@ -196,14 +199,15 @@ class PieChart extends Component {
     return (
       <div
         className={classNames('recharts-wrapper', className)}
-        style={{ position: 'relative', cursor: 'default', ...style }}
+        style={{ position: 'relative', cursor: 'default', ...style, width, height }}
       >
         <Surface width={width} height={height}>
           {this.renderItems(items)}
+          {filterSvgElements(children)}
         </Surface>
 
         {this.renderLegend(items)}
-        {this.renderTooltip(items)}
+        {this.renderTooltip()}
       </div>
     );
   }

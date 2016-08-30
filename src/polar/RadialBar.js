@@ -42,7 +42,10 @@ class RadialBar extends Component {
       outerRadius: PropTypes.number,
       value: PropTypes.value,
     })),
-    legendType: PropTypes.string,
+    legendType: PropTypes.oneOf([
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square',
+      'star', 'triangle', 'wye',
+    ]),
     label: PropTypes.oneOfType([
       PropTypes.bool, PropTypes.func, PropTypes.element, PropTypes.object,
     ]),

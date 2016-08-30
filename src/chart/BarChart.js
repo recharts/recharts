@@ -198,43 +198,53 @@ class BarChart extends Component {
    */
   getSizeList(stackGroups) {
     const { layout, barSize } = this.props;
+    const result = {};
+    const numericAxisIds = Object.keys(stackGroups);
 
-    return Object.keys(stackGroups).reduce((result, axisId) => {
-      const sgs = stackGroups[axisId].stackGroups;
+    for (let i = 0, len = numericAxisIds.length; i < len; i++) {
+      const sgs = stackGroups[numericAxisIds[i]].stackGroups;
+      const stackIds = Object.keys(sgs);
 
-      return {
-        ...result,
-        [axisId]: Object.keys(sgs).reduce((res, stackId) => {
-          const { items } = sgs[stackId];
-          const barItems = items.filter(item => item.type.displayName === 'Bar');
+      for (let j = 0, sLen = stackIds.length; j < sLen; j++) {
+        const { items, numericAxisId, cateAxisId } = sgs[stackIds[j]];
 
-          if (barItems && barItems.length) {
-            const { dataKey } = barItems[0].props;
-            return [...res, {
-              dataKey,
-              stackList: barItems.slice(1).map(item => item.props.dataKey),
-              barSize: barItems[0].props.barSize || barSize,
-            }];
+        const barItems = items.filter(item => item.type.displayName === 'Bar');
+
+        if (barItems && barItems.length) {
+          const { dataKey } = barItems[0].props;
+          const cateId = barItems[0].props[cateAxisId];
+
+          if (!result[cateId]) {
+            result[cateId] = [];
           }
-          return res;
-        }, []),
-      };
-    }, {});
+
+          result[cateId].push({
+            dataKey,
+            stackList: barItems.slice(1).map(item => item.props.dataKey),
+            barSize: barItems[0].props.barSize || barSize,
+          });
+        }
+      }
+    }
+
+    return result;
   }
 
   renderCursor(xAxisMap, yAxisMap, offset) {
-    const { children, isTooltipActive } = this.props;
+    const { children, isTooltipActive, layout, activeTooltipIndex } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
-    if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive) { return null; }
+    if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive ||
+      activeTooltipIndex < 0) { return null; }
 
-    const { layout, activeTooltipIndex } = this.props;
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
     const axis = getAnyElementOfObject(axisMap);
-    const bandSize = axis.scale.bandwidth();
-
     const ticks = getTicksOfAxis(axis);
+
+    if (!ticks || !ticks[activeTooltipIndex]) { return null; }
+
     const start = ticks[activeTooltipIndex].coordinate;
+    const bandSize = axis.scale.bandwidth();
     const cursorProps = {
       fill: '#f1f1f1',
       ...getPresentationAttributes(tooltipItem.props.cursor),
@@ -269,15 +279,15 @@ class BarChart extends Component {
 
     return items.map((child, i) => {
       const { xAxisId, yAxisId } = child.props;
-      const axisId = layout === 'horizontal' ? xAxisId : yAxisId;
-      const bandSize = getBandSizeOfScale(
-                        layout === 'horizontal' ?
-                        xAxisMap[xAxisId].scale :
-                        yAxisMap[yAxisId].scale
-                      );
-      const barPosition = barPositionMap[axisId] || this.getBarPosition(bandSize, sizeList[axisId]);
-      const stackedData = stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
-                        && getStackedDataOfItem(child, stackGroups[axisId].stackGroups);
+      const numericAxisId = layout === 'horizontal' ? yAxisId : xAxisId;
+      const cateAxisId = layout === 'horizontal' ? xAxisId : yAxisId;
+      const cateAxis = layout === 'horizontal' ? xAxisMap[xAxisId] : yAxisMap[yAxisId];
+      const bandSize = getBandSizeOfScale(cateAxis.scale);
+      const barPosition = barPositionMap[cateAxisId] ||
+        this.getBarPosition(bandSize, sizeList[cateAxisId]);
+      const stackedData = stackGroups && stackGroups[numericAxisId] &&
+        stackGroups[numericAxisId].hasStack &&
+        getStackedDataOfItem(child, stackGroups[numericAxisId].stackGroups);
 
       return React.cloneElement(child, {
         key: `bar-${i}`,

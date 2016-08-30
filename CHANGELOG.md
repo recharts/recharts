@@ -1,3 +1,201 @@
+## 0.13.4 (Aug 24, 2016)
+
+### Feat
+
+- Add cartesian Component ReferenceArea
+
+### Refactor
+
+- Refactor ResponsiveContainer and support minHeight, minWidth, aspect in ResponsiveContainer
+
+### Fix
+
+- Fix the position of Bar for charts which have multiple y-axes
+
+## 0.13.3 (Aug 17, 2016)
+
+### Feat
+
+- Support the functionality that syncs multiple categorical charts when mouse enter, move, leave a chart, or when change the brush of one chart
+
+### Fix
+
+- Fix the bug of stack offset function - "sign"
+- Fix the propTypes or legendType 
+
+## 0.13.2 (Aug 15, 2016)
+
+### Feat
+
+- Add an option "sign" to the props stackOffset in BarChart and AreaChart which allows the bars and areas to be stacked according to the sign of value.
+
+### Fix
+
+- Fix the the bug of legend in ScatterChart and refactor symbols.
+
+## 0.13.1 (Aug 08, 2016)
+
+### Fix
+
+- Fix the bug that tooltip did not show up for pie chart while using nameKey and valueKey
+
+### Refactor
+
+- Refactor Brush as controlled component
+
+## 0.13.0 (Aug 03, 2016)
+
+### Fix
+
+- Ensured all tooltip-related state gets reset upon receiving new data for all the charts
+
+### feat
+
+- Support smooth curve in Scatter
+- Support props connectNulls in Area, Line, and Curve,
+
+### refactor
+
+- Refactor animation of Area
+
+## 0.12.8 (Aug 01, 2016)
+
+### fix
+
+- Fix the bug of getTicksOfScale
+- Fix the bug of radius of ClipPath is so small that some texts of Pie is covered
+
+## 0.12.7 (July 25, 2016)
+
+### feat
+
+- Add itemSorter to tooltips
+- add props allowDecimals in XAxis and YAxis
+
+## 0.12.6 (July 21, 2016)
+
+### feat
+
+- Support Tooltip  of RadarChart
+
+### fix
+
+- Fix the initial value of state isAnimationFinished in Line and Area
+- Fix the spelling error, pressentation => presentation (CartesianAxis)
+- Tweak text in RadarSpec
+
+## 0.12.5 (July 12, 2016)
+
+### feat
+
+- Add paddingAngle in Pie, fix #142
+
+### deps
+
+- update version of react, fix #138, fix #103
+
+## 0.12.4 (July 8, 2016)
+
+### fix
+
+- Fix the bug of calculation accuracy in IE(Sector)
+- Remove unneed props "formatter" in Area and Bar
+- Fix props which can be supported by html tags and svg tags
+
+### refactor
+
+- Support multiple activeIndex in Pie
+
+### deps
+
+- Update d3-scale and d3-shape to the latest version
+- Update version of react-smooth and recharts-scale
+- Restrict the version of react to '~15.1.0'
+
+## 0.12.3 (June 30, 2016)
+
+### fix
+
+- Fix the bug that no animation when data change, but points of Line are the same
+
+### refactor
+
+- Remove xAxisMap and yAxisMap in ReferenceDot and ReferenceLine
+
+## 0.12.2 (June 29, 2016)
+
+### feat
+
+- Add margin props in Sankey to avoid outer-clip
+- Add shape props in ReferenceDot
+
+### fix
+
+- Fix the width and height of wrapper
+
+## 0.12.1 (June 24, 2016)
+
+### fix
+
+- Fix the bug with a hack method that global css will affect the width and height of Legend, Tooltip
+
+## 0.12.0 (June 23, 2016)
+
+### feat
+
+- Add padding in XAxis and YAxis
+- Support minPointSize in Bar
+- Support "dataMin - 110" and "dataMax + 100" in the domain of numeric axis
+
+### refactor
+
+- Refactor Treemap, change ratio to aspectRatio
+
+### fix
+
+- Fix the bug of axisId in BarChart
+- Fix the bug of tooltip's position in BarChart
+- Fix PropTypes of `type` in `Area`
+
+## 0.11.0 (June 17, 2016)
+
+### feat
+
+- Add Sankey
+
+### fix
+
+- Fix the bug of Area when the data break off in some points
+- Fix the bug of ticks when 0 in ticks
+
+### refactor
+
+- Refactor the payload of tooltip, and the props of activeDot in AreaChart
+
+## 0.10.10 (June 13, 2016)
+
+### fix
+
+- Fix the position of labels in Bar
+
+## 0.10.9 (June 12, 2016)
+
+### refactor
+
+- Use react-container-dimensions to refactor ResponsiveContainer, close #104, close #105
+
+## 0.10.8 (June 2, 2016)
+
+### feat
+
+- Support any svg elements in the charts, such as defs, linearGradient
+
+## 0.10.7 (May 30, 2016)
+
+### fix
+
+- Fix the bug of Brush when data or the size of container changes.
+
 ## 0.10.6 (May 25, 2016)
 
 ### feat
@@ -61,11 +259,11 @@
 
 - Refactor *ticks* specified in `XAxis`, `YAxis`
 - Use area of `Symbol` to show the size of number in ScatterChart
-- Refactor the `activeShape` in `Scatter` 
+- Refactor the `activeShape` in `Scatter`
 
 ### feat
 
-- Add `Symbol` and support different `Symbol` in ScatterChart 
+- Add `Symbol` and support different `Symbol` in ScatterChart
 
 ### fix
 
@@ -149,7 +347,7 @@
 
 ### refactor
 
-- Refactor the implemention type of renderPolygon in `Radar`
+- Refactor the implementation type of renderPolygon in `Radar`
 - Refactor code in `Treemap`
 - Remove `invariant` and add `LogUtils`
 
@@ -172,12 +370,12 @@
 - refactor CartesianChart to a high order component, move some function to /util/CartesianUtils which can be used in ScatterChart.
 - Simplify ComposedChart, remove duplicated code
 - use `filterEventAttributes` to add events props
-- cancle selecting line and area in LineChart, AreaChart, ComposedChart
+- cancel selecting line and area in LineChart, AreaChart, ComposedChart
 
 ## 0.8.2 (February 24, 2016)
 
 ### fix
-- rollback last fix of Line animtion from value
+- rollback last fix of Line animation from value
 
 ## 0.8.1 (February 24, 2016)
 
@@ -202,7 +400,7 @@
 ## 0.7.0 (February 17, 2016)
 
 ### UI
-- feat: support dasharray line animaton
+- feat: support dasharray line animation
 - refactor(CartesianAxis, PolarAngleAxis, PolarRadiusAxis):rename label to tick
 - feat(label): add label of CartesianAxis, PolarRadiusAxis, ReferenceLine
 - feat: Implement tooltip for PieChart
@@ -248,7 +446,7 @@
 ### UI
 - feat: support percentage string in the props(cx, cy, innerRadius, outerRadius) of RadarChart, PieChart, RadialChart
 - fix(PolarRadiusAxis): add props domain
-- refactor(CartesianAxis): remove unneed props domain
+- refactor(CartesianAxis): remove unneeded props domain
 
 ### Docs
 - chore: optimize npm script commands

@@ -50,6 +50,7 @@ const propTypes = {
     'ease-in-out',
     'linear',
   ]),
+  itemSorter: PropTypes.func,
 };
 
 const defaultProps = {
@@ -66,12 +67,20 @@ const defaultProps = {
   isAnimationActive: true,
   animationEasing: 'ease',
   animationDuration: 400,
+  itemSorter: (item1, item2) => -1,
 };
 
 const getTooltipBBox = (wrapperStyle, contentItem) => {
   if (!isSsr()) {
     const contentHtml = ReactDOMServer.renderToStaticMarkup(contentItem);
-    const style = { ...wrapperStyle, top: -20000, left: 0, display: 'block' };
+    const style = {
+      // solve the problem temporarily that the width and height will be affect by the global css
+      fontSize: 12,
+      ...wrapperStyle,
+      top: -20000,
+      left: 0,
+      display: 'block',
+    };
 
     const wrapper = document.createElement('div');
 
@@ -105,20 +114,23 @@ class Tooltip extends Component {
 
   render() {
     const { payload, isAnimationActive, animationDuration, animationEasing } = this.props;
-    if (!payload || !payload.length) { return null; }
 
-    const { content, viewBox, coordinate, active, offset } = this.props;
+    if (!payload || !payload.length ||
+      !payload.filter(entry => (_.isNumber(entry.value) || _.isString(entry.value))).length
+    ) { return null; }
+
+    const { content, viewBox, coordinate, active, offset, wrapperStyle } = this.props;
     const outerStyle = {
       pointerEvents: 'none',
       display: active ? 'block' : 'none',
       position: 'absolute',
       top: 0,
+      ...wrapperStyle,
     };
     const contentItem = renderContent(content, this.props);
     const box = getTooltipBBox(outerStyle, contentItem);
 
     if (!box) { return null; }
-
     const translateX = Math.max(
       coordinate.x + box.width + offset > (viewBox.x + viewBox.width) ?
       coordinate.x - box.width - offset :

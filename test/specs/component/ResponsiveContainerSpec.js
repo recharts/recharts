@@ -1,31 +1,90 @@
 import React from 'react';
-import { expect } from 'chai';
-import { LineChart, Line, ResponsiveContainer } from 'recharts';
+import chai, { expect } from 'chai';
+import chaiEnzyme from 'chai-enzyme';
+import { ResponsiveContainer } from 'recharts';
 import { mount, render } from 'enzyme';
 import sinon from 'sinon';
 
+chai.use(chaiEnzyme());
+
 describe('<ResponsiveContainer />', () => {
-  const data = [
-    { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
-    { name: 'Page B', uv: 300, pv: 4567, amt: 2400 },
-    { name: 'Page C', uv: 300, pv: 1398, amt: 2400 },
-    { name: 'Page D', uv: 200, pv: 9800, amt: 2400 },
-    { name: 'Page E', uv: 278, pv: 3908, amt: 2400 },
-    { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
-  ];
 
   it("Render a wrapper container in ResponsiveContainer", () => {
     const wrapper = render(
-      <div>
-        <ResponsiveContainer>
-          <LineChart data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-            <Line type="monotone" dataKey="uv" stroke="#ff7300"/>
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+      <ResponsiveContainer>
+        <div className="inside">Inside</div>
+      </ResponsiveContainer>
     );
 
     expect(wrapper.find('.recharts-responsive-container').length).to.equal(1);
+  });
+
+  it("Renders with minHeight and minWidth when provided", () => {
+    const wrapper = render(
+      <ResponsiveContainer minWidth={200} minHeight={100}>
+        <div className="inside">Inside</div>
+      </ResponsiveContainer>
+    );
+
+    expect(wrapper.find('.recharts-responsive-container')).to.have.style('min-width').equal('200px');
+    expect(wrapper.find('.recharts-responsive-container')).to.have.style('min-height').equal('100px');
+  });
+
+  it("Renders the component inside", () => {
+    const wrapper = mount(
+      <ResponsiveContainer minWidth={200} minHeight={100}>
+        <div className="inside">Inside</div>
+      </ResponsiveContainer>
+    );
+
+    expect(wrapper.find('.inside').length).to.equal(1);
+  });
+
+  it("Handles zero height correctly", () => {
+    const wrapper = mount(
+      <ResponsiveContainer height={0} aspect={2} width={300}>
+        <div className="inside">Inside</div>
+      </ResponsiveContainer>
+    );
+
+    expect(wrapper.find('.inside')).to.have.attr('width').equal('300');
+    expect(wrapper.find('.inside')).to.have.attr('height').equal('150');
+  });
+
+  it("Handles zero width correctly", () => {
+    const wrapper = mount(
+      <ResponsiveContainer height={300} aspect={2} width={0}>
+        <div className="inside">Inside</div>
+      </ResponsiveContainer>
+    );
+
+    expect(wrapper.find('.inside')).to.have.attr('width').equal('600');
+    expect(wrapper.find('.inside')).to.have.attr('height').equal('300');
+  });
+
+  // Note that we force height and width here which will trigger a warning.
+  // Unfortunately ContainerDimensions does not measure with enzyme
+  // so we have to force it to test aspect handling behaviors
+  it("Preserves aspect ratio when oversized", () => {
+    const wrapper = mount(
+      <ResponsiveContainer aspect={2} height={100} width={300}>
+        <div className="inside">Inside</div>
+      </ResponsiveContainer>
+    );
+
+    expect(wrapper.find('.inside')).to.have.attr('height').equal('100');
+    expect(wrapper.find('.inside')).to.have.attr('width').equal('200');
+  });
+
+  it("Preserves aspect ratio when undersized", () => {
+    const wrapper = mount(
+      <ResponsiveContainer aspect={2} height={300} width={100}>
+        <div className="inside">Inside</div>
+      </ResponsiveContainer>
+    );
+
+    expect(wrapper.find('.inside')).to.have.attr('height').equal('50');
+    expect(wrapper.find('.inside')).to.have.attr('width').equal('100');
   });
 
 });

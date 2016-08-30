@@ -28,8 +28,12 @@ class Bar extends Component {
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     formatter: PropTypes.func,
-    minPointSize: PropTypes.number,
     barType: PropTypes.string,
+    legendType: PropTypes.oneOf([
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
+      'triangle', 'wye',
+    ]),
+    minPointSize: PropTypes.number,
 
     shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
     label: PropTypes.oneOfType([
@@ -117,7 +121,9 @@ class Bar extends Component {
 
     return data.map((entry, index) => {
       const { width, height } = entry;
-      const props = { ...baseProps, ...entry, index, ...filterEventsOfChild(this.props, entry, index) };
+      const props = {
+        ...baseProps, ...entry, index, ...filterEventsOfChild(this.props, entry, index),
+      };
       let transformOrigin = '';
 
       if (layout === 'vertical') {
@@ -153,7 +159,11 @@ class Bar extends Component {
       labelItem = option(props);
     } else {
       labelItem = (
-        <text {...props} className="recharts-bar-label">
+        <text
+          {...getPresentationAttributes(props)}
+          key={props.key}
+          className="recharts-bar-label"
+        >
           {_.isArray(value) ? value[1] : value}
         </text>
       );
@@ -164,7 +174,9 @@ class Bar extends Component {
 
   renderLabels() {
     const { isAnimationActive } = this.props;
+
     if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
+
     const { data, label, layout } = this.props;
     const barProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);
@@ -172,12 +184,15 @@ class Bar extends Component {
     const labels = data.map((entry, i) => {
       let x = 0;
       let y = 0;
+
       if (layout === 'vertical') {
         x = 5 + entry.x + entry.width;
         y = 5 + entry.y + entry.height / 2;
       } else {
         x = entry.x + entry.width / 2;
+        y = entry.y - 5;
       }
+
       const labelProps = {
         textAnchor,
         ...barProps,
@@ -189,6 +204,7 @@ class Bar extends Component {
         key: `label-${i}`,
         payload: entry,
       };
+
       let labelValue = entry.value;
       if (label === true && entry.value && labelProps.label) {
         labelValue = labelProps.label;

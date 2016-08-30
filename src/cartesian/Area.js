@@ -20,14 +20,20 @@ class Area extends Component {
     ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    type: PropTypes.oneOf(['linear', 'monotone', 'step', 'stepBefore', 'stepAfter']),
+    type: PropTypes.oneOfType([PropTypes.oneOf([
+      'basis', 'basisClosed', 'basisOpen', 'linear', 'linearClosed', 'natural',
+      'monotoneX', 'monotoneY', 'monotone', 'step', 'stepBefore', 'stepAfter',
+    ]), PropTypes.func]),
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    legendType: PropTypes.string,
-    formatter: PropTypes.func,
+    legendType: PropTypes.oneOf([
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
+      'triangle', 'wye',
+    ]),
+    connectNulls: PropTypes.bool,
 
     activeDot: PropTypes.oneOfType([
       PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
@@ -54,6 +60,7 @@ class Area extends Component {
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
 
+    animationId: PropTypes.number,
     isAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
@@ -68,6 +75,7 @@ class Area extends Component {
     xAxisId: 0,
     yAxisId: 0,
     legendType: 'line',
+    connectNulls: false,
     // points of area
     points: [],
     dot: false,
@@ -85,9 +93,10 @@ class Area extends Component {
     super(props, ctx);
 
     const { points } = props;
-    this.state = {
-      isAnimationFinished: (!points || points.length <= 1),
-    };
+    this.state = { isAnimationFinished: true };
+    if (!this.id) {
+      this.id = `clipPath${Date.now()}`;
+    }
   }
 
   handleAnimationEnd = () => {
@@ -98,18 +107,8 @@ class Area extends Component {
     this.setState({ isAnimationFinished: false });
   };
 
-  renderCurve(points, opacity) {
-    const { layout, type, curve } = this.props;
-    let animProps = {
-      points: this.props.points,
-    };
-
-    if (points) {
-      animProps = {
-        points,
-        opacity,
-      };
-    }
+  renderCurve() {
+    const { layout, type, curve, points, connectNulls } = this.props;
 
     return (
       <g>
@@ -119,71 +118,98 @@ class Area extends Component {
             className="recharts-area-curve"
             layout={layout}
             type={type}
+            connectNulls={connectNulls}
             fill="none"
-            { ...animProps }
+            points={points}
           />
         )}
         <Curve
-          { ...this.props }
+          {...this.props}
           stroke="none"
           className="recharts-area-area"
-          { ...animProps }
         />
       </g>
     );
   }
 
-  renderAreaCurve() {
-    const { points, type, layout, baseLine, curve, isAnimationActive,
-      animationBegin, animationDuration, animationEasing } = this.props;
+  renderHorizontalRect(alpha) {
+    const { baseLine, layout, points, strokeWidth } = this.props;
+    const startX = points[0].x;
+    const endX = points[points.length - 1].x;
+    const width = alpha * Math.abs(startX - endX);
+    let maxY = Math.max.apply(null, points.map(entry => (entry.y || 0)));
 
-    const animationProps = {
-      isActive: isAnimationActive,
-      begin: animationBegin,
-      easing: animationEasing,
-      duration: animationDuration,
-      onAnimationEnd: this.handleAnimationEnd,
-      onAnimationStart: this.handleAnimationStart,
-    };
-
-    if (!baseLine || !baseLine.length) {
-      const transformOrigin = layout === 'vertical' ? 'left center' : 'center bottom';
-      const scaleType = layout === 'vertical' ? 'scaleX' : 'scaleY';
-
-      return (
-        <Animate
-          attributeName="transform"
-          from={`${scaleType}(0)`}
-          to={`${scaleType}(1)`}
-          key={this.props.animationId}
-          { ...animationProps }
-        >
-          <g style={{ transformOrigin }}>
-            {this.renderCurve()}
-          </g>
-        </Animate>
-      );
+    if (_.isNumber(baseLine)) {
+      maxY = Math.max(baseLine, maxY);
+    } else {
+      maxY = Math.max(Math.max.apply(null, baseLine.map(entry => (entry.y || 0))), maxY);
     }
 
     return (
-      <Animate
-        from={{ alpha: 0 }}
-        to={{ alpha: 1 }}
-        key={this.props.animationId}
-        { ...animationProps }
-      >
-      {
-        ({ alpha }) => this.renderCurve(
-          points.map(
-            ({ x, y }, i) => ({
-              x,
-              y: (y - baseLine[i].y) * alpha + baseLine[i].y,
-            })
-          ),
-          +(alpha > 0)
-        )
-      }
-      </Animate>
+      <rect
+        x={startX < endX ? startX : startX - width}
+        y={0}
+        width={width}
+        height={maxY + (strokeWidth || 1)}
+      />
+    );
+  }
+
+  renderVerticalRect(alpha) {
+    const { baseLine, layout, points, strokeWidth } = this.props;
+    const startY = points[0].y;
+    const endY = points[points.length - 1].y;
+    const height = alpha * Math.abs(startY - endY);
+    let maxX = Math.max.apply(null, points.map(entry => (entry.x || 0)));
+
+    if (_.isNumber(baseLine)) {
+      maxX = Math.max(baseLine, maxX);
+    } else {
+      maxX = Math.max(Math.max.apply(null, baseLine.map(entry => (entry.x || 0))), maxX);
+    }
+
+    return (
+      <rect
+        x={0}
+        y={startY < endY ? startY : startY - height}
+        width={maxX + (strokeWidth || 1)}
+        height={height}
+      />
+    );
+  }
+
+  renderClipRect(alpha) {
+    const { layout } = this.props;
+
+    if (layout === 'vertical') {
+      return this.renderVerticalRect(alpha);
+    }
+
+    return this.renderHorizontalRect(alpha);
+  }
+
+  renderClipPath() {
+    const { isAnimationActive, animationDuration, animationEasing,
+      animationBegin, animationId } = this.props;
+
+    return (
+      <defs>
+        <clipPath id={this.id}>
+          <Animate
+            easing={animationEasing}
+            isActive={isAnimationActive}
+            duration={animationDuration}
+            key={animationId}
+            animationBegin={animationBegin}
+            onAnimationStart={this.handleAnimationStart}
+            onAnimationEnd={this.handleAnimationEnd}
+            from={{ alpha: 0 }}
+            to={{ alpha: 1 }}
+          >
+            {({ alpha }) => this.renderClipRect(alpha)}
+          </Animate>
+        </clipPath>
+      </defs>
     );
   }
 
@@ -204,9 +230,8 @@ class Area extends Component {
   renderDots() {
     const { isAnimationActive } = this.props;
 
-    if (isAnimationActive && !this.state.isAnimationFinished) {
-      return null;
-    }
+    if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
+
     const { dot, points } = this.props;
     const areaProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
@@ -238,7 +263,11 @@ class Area extends Component {
       labelItem = option(props);
     } else {
       labelItem = (
-        <text {...props} className="recharts-area-label">
+        <text
+          key={props.key}
+          {...getPresentationAttributes(props)}
+          className="recharts-area-label"
+        >
           {_.isArray(value) ? value[1] : value}
         </text>
       );
@@ -250,9 +279,8 @@ class Area extends Component {
   renderLabels() {
     const { isAnimationActive } = this.props;
 
-    if (isAnimationActive && !this.state.isAnimationFinished) {
-      return null;
-    }
+    if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
+
     const { points, label } = this.props;
     const areaProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);
@@ -284,7 +312,16 @@ class Area extends Component {
 
     return (
       <Layer className={layerClass}>
-        {!hasSinglePoint && this.renderAreaCurve()}
+        {
+          !hasSinglePoint ? this.renderClipPath() : null
+        }
+        {
+          !hasSinglePoint ? (
+            <g clipPath={`url(#${this.id})`}>
+              {this.renderCurve()}
+            </g>
+          ) : null
+        }
         {(dot || hasSinglePoint) && this.renderDots()}
         {label && this.renderLabels()}
       </Layer>

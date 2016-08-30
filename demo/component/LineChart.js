@@ -7,7 +7,7 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine,
 const data = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
   { name: 'Page B', uv: 300, pv: 4567, amt: 2400 },
-  { name: 'Page C', uv: 300, pv: 1398, amt: 2400 },
+  { name: 'Page C', uv: 280, pv: 1398, amt: 2400 },
   { name: 'Page D', uv: 200, pv: 9800, amt: 2400 },
   { name: 'Page E', uv: 278, pv: 3908, amt: 2400 },
   { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
@@ -32,6 +32,7 @@ const data02 = [
   { name: 'Page D', uv: 200, pv: 9800, amt: 2400 },
   { name: 'Page E', uv: 278, pv: 3908, amt: 2400 },
   { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
+  { name: 'Page G', uv: 189, pv: 4800, amt: 2400 },
 ];
 
 const initilaState = {
@@ -43,13 +44,21 @@ const initilaState = {
 const renderSpecialDot = (props) => {
   const { cx, cy, stroke, key } = props;
 
-  return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke} key={key}/>;
+  if (cx === +cx && cy === +cy) {
+    return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke} key={key}/>;
+  }
+
+  return null;
 };
 
 const renderLabel = (props) => {
   const { x, y, textAnchor, key, value } = props;
 
-  return <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={key}>{value}</text>
+  if (x === +x && y === +y) {
+    return <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={key}>{value}</text>
+  }
+
+  return null;
 };
 
 export default React.createClass({
@@ -76,13 +85,15 @@ export default React.createClass({
           change data
         </a>
         <br/>
+
         <p>A simple LineChart with fixed domain y-axis</p>
         <div className='line-chart-wrapper'>
-          <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 40, bottom: 20, left: 20 }}>
+          <LineChart width={400} height={400} data={data02} margin={{ top: 20, right: 40, bottom: 20, left: 20 }} syncId="test">
             <CartesianGrid stroke='#f5f5f5'/>
             <Legend/>
-            <XAxis />
-            <YAxis />
+            <XAxis/>
+            <YAxis/>
+            <Tooltip />
             <Line type='monotone' dataKey='uv' stroke='#ff7300' dot={renderSpecialDot} label={renderLabel}/>
             <Brush dataKey="name" height={30} />
           </LineChart>
@@ -90,11 +101,12 @@ export default React.createClass({
 
         <p>A simple LineChart with customized line dot</p>
         <div className='line-chart-wrapper'>
-          <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }} syncId="test">
             <CartesianGrid stroke='#f5f5f5'/>
-            <Legend/>
+            <Legend />
             <XAxis />
             <YAxis domain={[0, 500]}/>
+            <Tooltip />
             <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300'/>
           </LineChart>
         </div>

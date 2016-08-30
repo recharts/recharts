@@ -8,7 +8,8 @@ import Dot from '../shape/Dot';
 import Curve from '../shape/Curve';
 import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
-import { getTicksOfAxis, getStackedDataOfItem } from '../util/CartesianUtils';
+import { getTicksOfAxis, getStackedDataOfItem,
+  getMainColorOfGraphicItem } from '../util/CartesianUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Area from '../cartesian/Area';
 import pureRender from '../util/PureRender';
@@ -63,13 +64,18 @@ class AreaChart extends Component {
 
     const points = data.map((entry, index) => {
       const value = hasStack ? stackedData[dataStartIndex + index] : [baseValue, entry[dataKey]];
+
+      if (layout === 'horizontal') {
+        return {
+          x: xTicks[index].coordinate + bandSize / 2,
+          y: _.isNumber(value[1]) ? yAxis.scale(value[1]) : null,
+          value,
+        };
+      }
+
       return {
-        x: layout === 'horizontal' ?
-            xTicks[index].coordinate + bandSize / 2 :
-            xAxis.scale(value[1]),
-        y: layout === 'horizontal' ?
-            yAxis.scale(value[1]) :
-            yTicks[index].coordinate + bandSize / 2,
+        x: _.isNumber(value[1]) ? xAxis.scale(value[1]) : null,
+        y: yTicks[index].coordinate + bandSize / 2,
         value,
       };
     });
@@ -99,22 +105,26 @@ class AreaChart extends Component {
     const domain = numberAxis.scale.domain();
 
     if (numberAxis.type === 'number') {
-      return Math.max(Math.min(domain[0], domain[1]), 0);
+      const max = Math.max(domain[0], domain[1]);
+      return max < 0 ? max : Math.max(Math.min(domain[0], domain[1]), 0);
     }
 
     return domain[0];
   }
 
   renderCursor(xAxisMap, yAxisMap, offset) {
-    const { children, isTooltipActive } = this.props;
+    const { children, isTooltipActive, layout, activeTooltipIndex } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
-    if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive) { return null; }
+    if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive ||
+      activeTooltipIndex < 0) { return null; }
 
-    const { layout, activeTooltipIndex } = this.props;
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
     const axis = getAnyElementOfObject(axisMap);
     const ticks = getTicksOfAxis(axis);
+
+    if (!ticks || !ticks[activeTooltipIndex]) { return null; }
+
     const start = ticks[activeTooltipIndex].coordinate;
     const x1 = layout === 'horizontal' ? start : offset.left;
     const y1 = layout === 'horizontal' ? offset.top : start;
@@ -189,7 +199,8 @@ class AreaChart extends Component {
           dataKey,
           animationId,
           cx: activePoint.x, cy: activePoint.y, r: 4,
-          fill, strokeWidth: 2, stroke: '#fff',
+          fill: getMainColorOfGraphicItem(child),
+          strokeWidth: 2, stroke: '#fff',
           ...getPresentationAttributes(activeDot),
         };
         dotItems.push((

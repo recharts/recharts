@@ -1,14 +1,42 @@
 import { findAllByType, findChildByType } from './ReactUtils';
 import ReferenceDot from '../cartesian/ReferenceDot';
 import ReferenceLine from '../cartesian/ReferenceLine';
+import ReferenceArea from '../cartesian/ReferenceArea';
 import Legend from '../component/Legend';
+import { getNiceTickValues, getTickValues } from 'recharts-scale';
 import {
   stack as shapeStack, stackOrderNone, stackOffsetExpand,
   stackOffsetNone, stackOffsetSilhouette, stackOffsetWiggle,
 } from 'd3-shape';
 import _ from 'lodash';
 
+/* eslint no-param-reassign: 0 */
+const offsetSign = (series, order) => {
+  const n = series.length;
+  if (n <= 0) { return; }
+
+  for (let j = 0, m = series[0].length; j < m; ++j) {
+    let positive = 0;
+    let negative = 0;
+
+    for (let i = 0; i < n; ++i) {
+      const value = isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
+
+      if (value >= 0) {
+        series[i][j][0] = positive;
+        series[i][j][1] = positive + value;
+        positive = series[i][j][1];
+      } else {
+        series[i][j][0] = negative;
+        series[i][j][1] = negative + value;
+        negative = series[i][j][1];
+      }
+    }
+  }
+};
+
 const STACK_OFFSET_MAP = {
+  sign: offsetSign,
   expand: stackOffsetExpand,
   none: stackOffsetNone,
   silhouette: stackOffsetSilhouette,
@@ -19,18 +47,40 @@ export const detectReferenceElementsDomain = (children, domain, axisId, axisType
   const lines = findAllByType(children, ReferenceLine);
   const dots = findAllByType(children, ReferenceDot);
   const elements = lines.concat(dots);
+  const areas = findAllByType(children, ReferenceArea);
   const idKey = `${axisType}Id`;
   const valueKey = axisType[0];
+  let finalDomain = domain;
 
-  return elements.reduce((result, el) => {
-    if (el.props[idKey] === axisId && el.props.alwaysShow &&
-      _.isNumber(el.props[valueKey])) {
-      const value = el.props[valueKey];
+  if (elements.length) {
+    finalDomain = elements.reduce((result, el) => {
+      if (el.props[idKey] === axisId && el.props.alwaysShow &&
+        _.isNumber(el.props[valueKey])) {
+        const value = el.props[valueKey];
 
-      return [Math.min(result[0], value), Math.max(result[1], value)];
-    }
-    return result;
-  }, domain);
+        return [Math.min(result[0], value), Math.max(result[1], value)];
+      }
+      return result;
+    }, finalDomain);
+  }
+
+  if (areas.length) {
+    const key1 = `${valueKey}1`;
+    const key2 = `${valueKey}2`;
+
+    finalDomain = areas.reduce((result, el) => {
+      if (el.props[idKey] === axisId && el.props.alwaysShow &&
+        (_.isNumber(el.props[key1]) && _.isNumber(el.props[key2]))) {
+        const value1 = el.props[key1];
+        const value2 = el.props[key2];
+
+        return [Math.min(result[0], value1, value2), Math.max(result[1], value1, value2)];
+      }
+      return result;
+    }, finalDomain);
+  }
+
+  return finalDomain;
 };
 
 export const getStackedData = (data, stackItems, offsetType) => {
@@ -44,10 +94,10 @@ export const getStackedData = (data, stackItems, offsetType) => {
   return stack(data);
 };
 
-export const getStackGroupsByAxisId = (data, items, axisIdKey, offsetType) => {
+export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, offsetType) => {
   const stackGroups = items.reduce((result, item) => {
     const { stackId, dataKey } = item.props;
-    const axisId = item.props[axisIdKey];
+    const axisId = item.props[numericAxisId];
     const parentGroup = result[axisId] || { hasStack: false, stackGroups: {} };
 
     if (_.isNumber(stackId) || _.isString(stackId)) {
@@ -62,7 +112,7 @@ export const getStackGroupsByAxisId = (data, items, axisIdKey, offsetType) => {
       parentGroup.stackGroups[stackId] = childGroup;
     } else {
       parentGroup.stackGroups[_.uniqueId('_stackId_')] = {
-        items: [item],
+        numericAxisId, cateAxisId, items: [item],
       };
     }
 
@@ -79,6 +129,8 @@ export const getStackGroupsByAxisId = (data, items, axisIdKey, offsetType) => {
         return {
           ...res,
           [stackId]: {
+            numericAxisId,
+            cateAxisId,
             items: g.items,
             stackedData: getStackedData(data, g.items, offsetType),
           },
@@ -111,19 +163,6 @@ export const getStackedDataOfItem = (item, stackGroups) => {
 
   return null;
 };
-
-/**
- * Calculate coordinate of cursor in chart
- * @param  {Object} event  Event object
- * @param  {Object} offset The offset of main part in the svg element
- * @return {Object}        {chartX, chartY}
- */
-export const calculateChartCoordinate = (event, offset) => (
-  {
-    chartX: Math.round(event.pageX - offset.left),
-    chartY: Math.round(event.pageY - offset.top),
-  }
-);
 /**
  * get domain of ticks
  * @param  {Array} ticks Ticks of axis
@@ -146,13 +185,17 @@ export const calculateDomainOfTicks = (ticks, type) => {
  * @return {Array} Domain of data
  */
 export const getDomainOfDataByKey = (data, key, type) => {
-  const defaultValue = type === 'number' ? 0 : '';
-  const domain = data.map(entry => entry[key] || defaultValue);
+  if (type === 'number') {
+    const domain = data.map(entry => (_.isNumber(entry[key]) ? entry[key] : 0));
 
-  return type === 'number' ? [
-    Math.min.apply(null, domain),
-    Math.max.apply(null, domain),
-  ] : domain;
+    return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
+  }
+
+  return data.map(entry => {
+    const value = entry[key];
+
+    return (_.isNumber(value) || _.isString(value)) ? value : '';
+  });
 };
 
 const getDomainOfSingle = (data) => (
@@ -242,12 +285,13 @@ export const getCoordinatesOfGrid = (ticks, min, max) => {
  * Get the ticks of an axis
  * @param  {Object}  axis The configuration of an axis
  * @param {Boolean} isGrid Whether or not are the ticks in grid
+ * @param {Boolean} isAll Return the ticks of all the points or not
  * @return {Array}  Ticks
  */
-export const getTicksOfAxis = (axis, isGrid) => {
+export const getTicksOfAxis = (axis, isGrid, isAll) => {
   const scale = axis.scale;
   const { duplicateDomain, type } = axis;
-  const offset = isGrid && type === 'category' ? scale.bandwidth() / 2 : 0;
+  const offset = (isGrid || isAll) && type === 'category' ? scale.bandwidth() / 2 : 0;
 
   // The ticks setted by user should only affect the ticks adjacent to axis line
   if (isGrid && (axis.ticks || axis.niceTicks)) {
@@ -261,7 +305,7 @@ export const getTicksOfAxis = (axis, isGrid) => {
     });
   }
 
-  if (scale.ticks) {
+  if (scale.ticks && !isAll) {
     return scale.ticks(axis.tickCount).map(entry => (
       { coordinate: scale(entry) + offset, value: entry }
     ));
@@ -290,6 +334,8 @@ export const calculateActiveTickIndex = (coordinate, ticks) => {
         break;
       }
     }
+  } else {
+    index = 0;
   }
 
   return index;
@@ -306,6 +352,7 @@ export const getMainColorOfGraphicItem = (item) => {
 
   switch (displayName) {
     case 'Line':
+    case 'Area':
       result = item.props.stroke;
       break;
     default:
@@ -338,3 +385,31 @@ export const getLegendProps = (children, graphicItems, width, height) => {
     payload: legendData,
   };
 };
+/**
+ * Configure the scale function of axis
+ * @param {Object} scale The scale function
+ * @param {Object} opts  The configuration of axis
+ * @return {Object}      null
+ */
+export const getTicksOfScale = (scale, opts) => {
+  const { type, tickCount, ticks, originalDomain, allowDecimals } = opts;
+
+  if (tickCount && type === 'number' && originalDomain && (
+    originalDomain[0] === 'auto' || originalDomain[1] === 'auto')) {
+    // Calculate the ticks by the number of grid when the axis is a number axis
+    const domain = scale.domain();
+    const tickValues = getNiceTickValues(domain, tickCount, allowDecimals);
+
+    scale.domain(calculateDomainOfTicks(tickValues, type));
+
+    return { niceTicks: tickValues };
+  } else if (tickCount && type === 'number') {
+    const domain = scale.domain();
+    const tickValues = getTickValues(domain, tickCount, allowDecimals);
+
+    return { niceTicks: tickValues };
+  }
+
+  return null;
+};
+

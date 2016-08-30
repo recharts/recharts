@@ -22,12 +22,13 @@ class Brush extends Component {
     y: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    data: PropTypes.array,
-    tickFormatter: PropTypes.func,
-
     travellerWidth: PropTypes.number,
-    defaultStartIndex: PropTypes.number,
-    defaultEndIndex: PropTypes.number,
+
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    data: PropTypes.array,
+    startIndex: PropTypes.number,
+    endIndex: PropTypes.number,
+    tickFormatter: PropTypes.func,
 
     onChange: PropTypes.func,
   };
@@ -51,28 +52,33 @@ class Brush extends Component {
     };
 
     if (props.data && props.data.length) {
-      const len = props.data.length;
-      const startIndex = _.isNumber(props.defaultStartIndex) ? props.defaultStartIndex : 0;
-      const endIndex = _.isNumber(props.defaultEndIndex) ? props.defaultEndIndex : len - 1;
-
-      this.scale = scalePoint().domain(_.range(0, len))
-                    .range([props.x, props.x + props.width - props.travellerWidth]);
-      this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
-
-      this.state = {
-        isTextActive: false,
-        isSlideMoving: false,
-        isTravellerMoving: false,
-        startIndex, endIndex,
-        startX: this.scale(startIndex),
-        endX: this.scale(endIndex),
-      };
+      this.updateScale(props);
     } else {
       this.state = {};
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { data, width, x, travellerWidth } = this.props;
+
+    if (nextProps.data !== data) {
+      this.updateScale(nextProps);
+    } else if (nextProps.width !== width || nextProps.x !== x ||
+      nextProps.travellerWidth !== travellerWidth) {
+      this.scale.range([nextProps.x, nextProps.x + nextProps.width - nextProps.travellerWidth]);
+      this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
+
+      this.setState({
+        startX: this.scale(nextProps.startIndex),
+        endX: this.scale(nextProps.endIndex),
+      });
+    }
+  }
+
   componentWillUnmount() {
+    this.scale = null;
+    this.scaleValues = null;
+
     if (this.leaveTimer) {
       clearTimeout(this.leaveTimer);
       this.leaveTimer = null;
@@ -107,6 +113,13 @@ class Brush extends Component {
       startIndex: minIndex,
       endIndex: maxIndex,
     };
+  }
+
+  getTextOfTick(index) {
+    const { data, tickFormatter, dataKey } = this.props;
+    const text = (data[index] && dataKey) ? data[index][dataKey] : index;
+
+    return _.isFunction(tickFormatter) ? tickFormatter(text) : text;
   }
 
   handleMove = (e) => {
@@ -178,7 +191,6 @@ class Brush extends Component {
       startX: startX + delta,
       endX: endX + delta,
       slideMoveStartX: e.pageX,
-      ...newIndex,
     }, () => {
       if (onChange) {
         onChange(newIndex);
@@ -215,12 +227,29 @@ class Brush extends Component {
     this.setState({
       [movingTravellerId]: prevValue + delta,
       brushMoveStartX: e.pageX,
-      ...newIndex,
     }, () => {
       if (onChange) {
         onChange(newIndex);
       }
     });
+  }
+
+  updateScale(props) {
+    const { data, startIndex, endIndex, x, width, travellerWidth } = props;
+
+    if (data && data.length) {
+      const len = data.length;
+      this.scale = scalePoint().domain(_.range(0, len))
+                    .range([x, x + width - travellerWidth]);
+      this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
+      this.state = {
+        isTextActive: false,
+        isSlideMoving: false,
+        isTravellerMoving: false,
+        startX: this.scale(startIndex),
+        endX: this.scale(endIndex),
+      };
+    }
   }
 
   renderBackground() {
@@ -301,16 +330,14 @@ class Brush extends Component {
   }
 
   renderText() {
-    const { data, y, height, travellerWidth, stroke, tickFormatter } = this.props;
-    const { startIndex, endIndex, startX, endX } = this.state;
+    const { startIndex, endIndex, data, y, height, travellerWidth,
+      stroke, tickFormatter } = this.props;
+    const { startX, endX } = this.state;
     const offset = 5;
     const style = {
       pointerEvents: 'none',
       fill: stroke,
     };
-
-    const textStart = (tickFormatter) ? tickFormatter(data[startIndex]) : data[startIndex];
-    const textEnd = (tickFormatter) ? tickFormatter(data[endIndex]) : data[endIndex];
 
     return (
       <Layer className="recharts-brush-texts">
@@ -321,7 +348,7 @@ class Brush extends Component {
           x={Math.min(startX, endX) - offset}
           y={y + height / 2}
         >
-          {textStart}
+          {this.getTextOfTick(startIndex)}
         </text>
         <text
           textAnchor="start"
@@ -330,7 +357,7 @@ class Brush extends Component {
           x={Math.max(startX, endX) + travellerWidth + offset}
           y={y + height / 2}
         >
-          {textEnd}
+          {this.getTextOfTick(endIndex)}
         </text>
       </Layer>
     );
@@ -342,7 +369,7 @@ class Brush extends Component {
 
     if (!data || !data.length) { return null; }
 
-    const layerClass = classNames('recharts-bursh', className);
+    const layerClass = classNames('recharts-brush', className);
 
     return (
       <Layer

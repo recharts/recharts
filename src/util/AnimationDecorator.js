@@ -1,8 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-
-function getDisplayName(WrappedComponent) {
-  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
-}
+import { getDisplayName } from './ReactUtils';
 
 export default function (WrappedComponent) {
   class AniamtionDecorator extends Component {
@@ -32,7 +29,7 @@ export default function (WrappedComponent) {
     }
 
     render() {
-      return <WrappedComponent { ...this.props } animationId={this.state.animationId} />;
+      return <WrappedComponent {...this.props} animationId={this.state.animationId} />;
     }
   }
 

@@ -25,7 +25,6 @@ class Scatter extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
 
-    legendType: PropTypes.string,
     xAxisId: PropTypes.number,
     yAxisId: PropTypes.number,
     zAxisId: PropTypes.number,
@@ -33,6 +32,14 @@ class Scatter extends Component {
       PropTypes.bool, PropTypes.object, PropTypes.func, PropTypes.element,
     ]),
     lineType: PropTypes.oneOf(['fitting', 'joint']),
+    lineJointType: PropTypes.oneOfType([PropTypes.oneOf([
+      'basis', 'basisClosed', 'basisOpen', 'linear', 'linearClosed', 'natural',
+      'monotoneX', 'monotoneY', 'monotone', 'step', 'stepBefore', 'stepAfter',
+    ]), PropTypes.func]),
+    legendType: PropTypes.oneOf([
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
+      'triangle', 'wye',
+    ]),
     className: PropTypes.string,
 
     activeIndex: PropTypes.number,
@@ -70,8 +77,9 @@ class Scatter extends Component {
     xAxisId: 0,
     yAxisId: 0,
     zAxisId: 0,
-    legendType: 'scatter',
+    legendType: 'circle',
     lineType: 'joint',
+    lineJointType: 'linear',
     data: [],
     shape: 'circle',
 
@@ -81,9 +89,7 @@ class Scatter extends Component {
     animationEasing: 'linear',
   };
 
-  state = {
-    activeIndex: -1,
-  };
+  state = { activeIndex: -1 };
 
   renderSymbolItem(option, props) {
     let symbol;
@@ -117,16 +123,15 @@ class Scatter extends Component {
           {...filterEventsOfChild(this.props, entry, i)}
           key={`symbol-${i}`}
         >
-          {
-            <Animate
-              from={{ size: 0 }}
-              to={{ size: props.size }}
-              duration={animationDuration}
-              begin={animationBegin}
-              isActive={isAnimationActive}
-              key={animationId}
-              easing={animationEasing}
-            >
+          <Animate
+            from={{ size: 0 }}
+            to={{ size: props.size }}
+            duration={animationDuration}
+            begin={animationBegin}
+            isActive={isAnimationActive}
+            key={animationId}
+            easing={animationEasing}
+          >
             {
               ({ size }) => {
                 const finalProps = { ...props, size };
@@ -134,15 +139,14 @@ class Scatter extends Component {
                 return this.renderSymbolItem(activeIndex === i ? activeShape : shape, finalProps);
               }
             }
-            </Animate>
-          }
+          </Animate>
         </Layer>
       );
     });
   }
 
   renderLine() {
-    const { points, line, lineType } = this.props;
+    const { points, line, lineType, lineJointType } = this.props;
     const scatterProps = getPresentationAttributes(this.props);
     const customLineProps = getPresentationAttributes(line);
     let linePoints;
@@ -163,7 +167,7 @@ class Scatter extends Component {
     } else if (_.isFunction(line)) {
       lineItem = line(lineProps);
     } else {
-      lineItem = <Curve {...lineProps} />;
+      lineItem = <Curve {...lineProps} type={lineJointType} />;
     }
 
     return (

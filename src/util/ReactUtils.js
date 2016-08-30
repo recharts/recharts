@@ -86,6 +86,12 @@ export const PRESENTATION_ATTRIBUTES = {
   transform: PropTypes.string,
   style: PropTypes.object,
 
+  width: PropTypes.number,
+  height: PropTypes.number,
+  dx: PropTypes.number,
+  dy: PropTypes.number,
+  x: PropTypes.number,
+  y: PropTypes.number,
   r: PropTypes.number,
 };
 
@@ -99,7 +105,11 @@ const EVENT_ATTRIBUTES = {
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,
 };
-
+/**
+ * Get the display name of a component
+ * @param  {Object} Comp Specified Component
+ * @return {String}      Display name of Component
+ */
 export const getDisplayName = (Comp) => {
   if (!Comp) { return ''; }
   if (typeof Comp === 'string') {
@@ -203,13 +213,13 @@ export const filterEventAttributes = (el) => {
     null;
 };
 
-const getEventHandler = (originalHandler, data, index) => {
-  return (e) => {
+const getEventHandler = (originalHandler, data, index) => (
+  (e) => {
     originalHandler(data, index, e);
 
     return null;
-  };
-};
+  }
+);
 
 export const filterEventsOfChild = (props, data, index) => {
   if (!_.isObject(props)) { return null; }
@@ -220,7 +230,7 @@ export const filterEventsOfChild = (props, data, index) => {
 
   return (events && events.length) ?
     events.reduce((result, e) => ({
-      ...result, [e]: getEventHandler(props[e], data, index)
+      ...result, [e]: getEventHandler(props[e], data, index),
     }), {}) :
     null;
 };
@@ -243,4 +253,35 @@ export const validateWidthHeight = (el) => {
 };
 
 export const isSsr = () => (typeof document === 'undefined');
+
+const SVG_TAGS = ['a', 'altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',
+'animateColor', 'animateMotion', 'animateTransform', 'circle', 'clipPath',
+'color-profile', 'cursor', 'defs', 'desc', 'ellipse', 'feBlend', 'feColormatrix',
+'feComponentTransfer', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting',
+'feDisplacementMap', 'feDistantLight', 'feFlood', 'feFuncA', 'feFuncB', 'feFuncG',
+'feFuncR', 'feGaussianBlur', 'feImage', 'feMerge', 'feMergeNode', 'feMorphology',
+'feOffset', 'fePointLight', 'feSpecularLighting', 'feSpotLight', 'feTile',
+'feTurbulence', 'filter', 'font', 'font-face', 'font-face-format', 'font-face-name',
+'font-face-url', 'foreignObject', 'g', 'glyph', 'glyphRef', 'hkern', 'image',
+'line', 'lineGradient', 'marker', 'mask', 'metadata', 'missing-glyph', 'mpath',
+'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect', 'script',
+'set', 'stop', 'style', 'svg', 'switch', 'symbol', 'text', 'textPath', 'title',
+'tref', 'tspan', 'use', 'view', 'vkern'];
+/**
+ * Filter all the svg elements of children
+ * @param  {Array} children The children of a react element
+ * @return {Array}          All the svg elements
+ */
+export const filterSvgElements = (children) => {
+  const svgElements = [];
+
+  React.Children.forEach(children, entry => {
+    if (entry && entry.type && _.isString(entry.type) &&
+      SVG_TAGS.indexOf(entry.type) >= 0) {
+      svgElements.push(entry);
+    }
+  });
+
+  return svgElements;
+};
 

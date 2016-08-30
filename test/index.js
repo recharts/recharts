@@ -11,6 +11,7 @@ require('./specs/cartesian/CartesianAxisSpec');
 require('./specs/cartesian/CartesianGridSpec');
 require('./specs/cartesian/ReferenceLineSpec');
 require('./specs/cartesian/ReferenceDotSpec');
+require('./specs/cartesian/ReferenceAreaSpec');
 
 // polar system chart component
 require('./specs/polar/PolarRadiusAxisSpec');
@@ -30,8 +31,10 @@ require('./specs/chart/ScatterChartSpec');
 require('./specs/chart/TreemapSpec');
 require('./specs/chart/RadialBarChartSpec');
 require('./specs/chart/ComposedChartSpec');
+require('./specs/chart/SankeySpec');
 
 // general component
+require('./specs/component/CellSpec');
 require('./specs/component/LegendSpec');
 require('./specs/component/TooltipSpec');
 require('./specs/component/ResponsiveContainerSpec');
@@ -43,9 +46,12 @@ require('./specs/shape/DotSpec');
 require('./specs/shape/RectangleSpec');
 require('./specs/shape/SectorSpec');
 require('./specs/shape/PolygonSpec');
+require('./specs/shape/SymbolsSpec');
 
 // util
 require('./specs/util/CartesianUtilsSpec');
 require('./specs/util/PureRenderSpec');
 require('./specs/util/DataUtilsSpec');
 require('./specs/util/ReactUtilsSpec');
+require('./specs/util/LogUtilsSpec');
+require('./specs/util/DOMUtilsSpec');

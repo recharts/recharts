@@ -260,7 +260,14 @@ class CartesianAxis extends Component {
     } else if (_.isFunction(option)) {
       tickItem = option(props);
     } else {
-      tickItem = <text {...props} className="recharts-cartesian-axis-tick-value">{value}</text>;
+      tickItem = (
+        <text
+          {...getPresentationAttributes(props)}
+          className="recharts-cartesian-axis-tick-value"
+        >
+          {value}
+        </text>
+      );
     }
 
     return tickItem;
@@ -311,15 +318,16 @@ class CartesianAxis extends Component {
   }
 
   renderLabel() {
-    const { label, x, y, width, height, orientation, stroke } = this.props;
+    const { label, stroke, orientation, viewBox } = this.props;
+    const presentation = getPresentationAttributes(this.props);
 
     if (React.isValidElement(label)) {
-      return React.cloneElement(label, this.props);
+      return React.cloneElement(label, { ...presentation, orientation, viewBox });
     } else if (_.isFunction(label)) {
       return label(this.props);
     } else if (_.isString(label) || _.isNumber(label)) {
       const props = {
-        ...getPresentationAttributes(this.props),
+        ...presentation,
         stroke: 'none',
         fill: stroke,
         ...this.getLabelProps(),
