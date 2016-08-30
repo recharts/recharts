@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes, Children } from 'react';
 import classNames from 'classnames';
-import Animate from 'react-smooth';
+import Animate from '../lib/reactSmooth';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import pureRender from '../util/PureRender';
@@ -27,6 +27,8 @@ class Bar extends Component {
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    formatter: PropTypes.func,
+    barType: PropTypes.string,
     legendType: PropTypes.oneOf([
       'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
       'triangle', 'wye',
@@ -54,6 +56,11 @@ class Bar extends Component {
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
     animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
+
+    hoverTimestamp: PropTypes.number,
+    unactiveFill: PropTypes.string,
+
+    updateOnHover: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -91,7 +98,14 @@ class Bar extends Component {
     } else if (_.isFunction(option)) {
       rectangle = option(props);
     } else {
-      rectangle = <Rectangle {...props} className="recharts-bar-rectangle" />;
+      const {hoverTimestamp, unactiveFill} = this.props;
+      const {timestamp} = props;
+      let fill = this.props.fill;
+      if (hoverTimestamp && hoverTimestamp > 0 && timestamp && timestamp > 0 && timestamp !== hoverTimestamp && unactiveFill) {
+        fill = this.props.unactiveFill;
+      }
+      const classes = `recharts-bar-rectangle ts-${timestamp}`;
+      rectangle = <Rectangle {...props} fill={fill} className={classes} />;
     }
 
     return rectangle;

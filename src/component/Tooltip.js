@@ -7,7 +7,7 @@ import ReactDOMServer from 'react-dom/server';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import { getStyleString } from '../util/DOMUtils';
 import { isSsr } from '../util/ReactUtils';
-import Animate from 'react-smooth';
+import Animate from '../lib/reactSmooth';
 import _ from 'lodash';
 
 const propTypes = {

@@ -74,11 +74,11 @@ class ScatterChart extends Component {
 
     return data.map(entry => ({
       cx: xAxis.scale(entry[xAxisDataKey]),
-      cy: yAxis.scale(entry[yAxisDataKey]),
+      cy: yAxis.scale(_.get(entry, yAxisDataKey)),
       size: zAxisDataKey !== undefined ? zAxis.scale(entry[zAxisDataKey]) : zAxis.range[0],
       payload: {
         x: entry[xAxisDataKey],
-        y: entry[yAxisDataKey],
+        y: _.get(entry, yAxisDataKey),
         z: (zAxisDataKey !== undefined && entry[zAxisDataKey]) || '-',
       },
     }));
@@ -86,7 +86,7 @@ class ScatterChart extends Component {
 
   getDomain(items, dataKey, axisId, axisType) {
     let domain = items.reduce((result, item) => (
-      result.concat(item.props.data.map(entry => entry[dataKey]))
+      result.concat(item.props.data.map(entry => _.get(entry, dataKey)))
     ), []);
 
     if (axisType === 'xAxis' || axisType === 'yAxis') {

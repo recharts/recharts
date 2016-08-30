@@ -32,6 +32,14 @@ class ReferenceDot extends Component {
 
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+
+    offsetY: PropTypes.number,
+    offsetX: PropTypes.number,
+
+    showCursor: PropTypes.bool,
+    showLine: PropTypes.bool,
+    height: PropTypes.number,
+
     shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
   };
 
@@ -45,12 +53,24 @@ class ReferenceDot extends Component {
     stroke: '#ccc',
     fillOpacity: 1,
     strokeWidth: 1,
+    showCursor: false,
+    showLine: false,
   };
 
   getCoordinate() {
-    const { x, y, xAxis, yAxis } = this.props;
-    const xScale = xAxis.scale;
-    const yScale = yAxis.scale;
+    const { x, y, xAxisMap, yAxisMap, xAxisId, yAxisId, xAxis, yAxis } = this.props;
+    let xScale, yScale
+    if (xAxisMap !== undefined && yAxisMap !== undefined && xAxisId !== undefined  && yAxisId !== undefined ) {
+      xScale = xAxisMap[xAxisId].scale;
+      yScale = yAxisMap[yAxisId].scale;
+    } else if (xAxis !== undefined && yAxis !== undefined) {
+      xScale = xAxis.scale;
+      yScale = yAxis.scale;
+    } else {
+      return null;
+    }
+
+
     const result = {
       cx: xScale(x) + (xScale.bandwidth ? xScale.bandwidth() / 2 : 0),
       cy: yScale(y) + (yScale.bandwidth ? yScale.bandwidth() / 2 : 0),
@@ -90,6 +110,27 @@ class ReferenceDot extends Component {
     return null;
   }
 
+  renderLine(props, coordinate) {
+    if (!coordinate) { return null; }
+
+    const lineProps = {
+      stroke: props.stroke === 'none' ? props.fill : props.stroke,
+    };
+    const height = props && props.height ||
+      props && props.yAxisMap && props.yAxisMap[0] && props.yAxisMap[0].height || 10;
+
+    return (
+      <line
+        {...lineProps}
+        className="recharts-reference-line-line"
+        x1={coordinate.cx}
+        y1={0}
+        x2={coordinate.cx}
+        y2={height}
+      />
+    );
+  }
+
   renderDot(option, props) {
     let dot;
 
@@ -112,7 +153,7 @@ class ReferenceDot extends Component {
   }
 
   render() {
-    const { x, y } = this.props;
+    const { x, y, showLine } = this.props;
     const isX = _.isNumber(x) || _.isString(x);
     const isY = _.isNumber(y) || _.isString(y);
 
@@ -122,11 +163,16 @@ class ReferenceDot extends Component {
 
     if (!coordinate) { return null; }
 
+    const { offsetX, offsetY } = this.props;
+    if (offsetX) { coordinate.cx += offsetX; }
+    if (offsetY) { coordinate.cy += offsetY; }
+
     const { shape } = this.props;
 
     return (
       <Layer className="recharts-reference-dot">
         {this.renderDot(shape, { ...getPresentationAttributes(this.props), ...coordinate })}
+        {showLine && this.renderLine(this.props, coordinate)}
         {this.renderLabel(coordinate)}
       </Layer>
     );

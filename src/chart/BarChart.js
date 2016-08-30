@@ -62,8 +62,8 @@ class BarChart extends Component {
    */
   getComposedData(item, barPosition, xAxis, yAxis, offset, stackedData) {
     const { layout, dataStartIndex, dataEndIndex } = this.props;
-    const { dataKey, children, minPointSize } = item.props;
-    const pos = barPosition[dataKey];
+    const { dataKey, children, minPointSize, barType } = item.props;
+    const pos = _.get(barPosition, dataKey);
     const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
     const xTicks = getTicksOfAxis(xAxis);
     const yTicks = getTicksOfAxis(yAxis);
@@ -72,7 +72,7 @@ class BarChart extends Component {
     const cells = findAllByType(children, Cell);
 
     return data.map((entry, index) => {
-      const value = stackedData ? stackedData[dataStartIndex + index] : [baseValue, entry[dataKey]];
+      const value = stackedData ? stackedData[dataStartIndex + index] : [baseValue, _.get(entry, dataKey)];
       let x;
       let y;
       let width;
@@ -80,12 +80,14 @@ class BarChart extends Component {
 
       if (layout === 'horizontal') {
         x = xTicks[index].coordinate + pos.offset;
-        y = yAxis.scale(xAxis.orientation === 'top' ? value[0] : value[1]);
+        y = barType === 'full' ? 0 : yAxis.scale(xAxis.orientation === 'top' ? value[0] : value[1]);
         width = pos.size;
-        height = xAxis.orientation === 'top' ?
+        height = barType === 'full' ? minPointSize :
+          xAxis.orientation === 'top' ?
                 yAxis.scale(value[1]) - yAxis.scale(value[0]) :
                 yAxis.scale(value[0]) - yAxis.scale(value[1]);
-        if (minPointSize > 0 && Math.abs(height) < minPointSize) {
+
+        if (barType !== 'full' && minPointSize > 0 && Math.abs(height) < minPointSize) {
           const delta = Math.sign(height) * (minPointSize - Math.abs(height));
 
           y -= delta;
@@ -94,17 +96,18 @@ class BarChart extends Component {
       } else {
         x = xAxis.scale(yAxis.orientation === 'left' ? value[0] : value[1]);
         y = yTicks[index].coordinate + pos.offset;
-        width = yAxis.orientation === 'left' ?
+        width = barType === 'full' ? minPointSize :
+          yAxis.orientation === 'left' ?
                 xAxis.scale(value[1]) - xAxis.scale(value[0]) :
                 xAxis.scale(value[0]) - xAxis.scale(value[1]);
         height = pos.size;
 
-        if (minPointSize > 0 && Math.abs(width) < minPointSize) {
-          const delta = Math.sign(width) * (minPointSize - Math.abs(width));
+        if (barType !== 'full' && minPointSize > 0 && Math.abs(width) < minPointSize) {
+           const delta = Math.sign(width) * (minPointSize - Math.abs(width));
 
-          x -= delta;
-          width += delta;
-        }
+           x -= delta;
+           width += delta;
+         }
       }
 
       return {
