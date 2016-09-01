@@ -378,14 +378,9 @@ class ScatterChart extends Component {
       return (
         <Layer key={layerKey} className={layerKey}>
           <CartesianAxis
-            x={axis.x}
-            y={axis.y}
-            width={axis.width}
-            height={axis.height}
-            orientation={axis.orientation}
+            {...axis}
             viewBox={{ x: 0, y: 0, width, height }}
-            ticks={getTicksOfAxis(axis)}
-            tickFormatter={axis.tickFormatter}
+            ticks={getTicksOfAxis(axis, true)}
           />
         </Layer>
       );
