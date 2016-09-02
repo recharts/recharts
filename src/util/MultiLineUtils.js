@@ -158,6 +158,8 @@ const findDataSegmentsByRegion = (lineProps, data, dataKey) => {
   if (finalRegionVal !== null) {
     const finalStroke = findStroke(lineProps, currentRegion, dataSegments.length, data[data.length - 1]);
     dataSegments.push({start, end: data.length - 1, regionValue: finalRegionVal, stroke: finalStroke});
+  } else {
+    dataSegments.push({start, end: data.length - 1, regionValue: finalRegionVal, stroke: null});
   }
   return dataSegments;
 };
@@ -173,7 +175,7 @@ const findDataSegmentsNormal = (lineProps, data, dataKey) => {
     if (i === 0) {
       previousDataItem = dataItem;
     } else if (i === (data.length - 1)) {
-      dataSegments.push({ start, end: i, stroke });
+      dataSegments.push({ start, end: i, stroke: previousDataItem !== null ? stroke : null });
     } else if (dataItem === null && previousDataItem !== null) { // end of line with values
       dataSegments.push({ start, end: i, stroke });
       previousDataItem = null;
@@ -261,6 +263,12 @@ const findDataSegmentsByThreshold = (lineProps, data, dataKey) => {
       start,
       end: data.length - 1,
       stroke: thresholdColor(currentThreshold),
+    });
+  } else {
+    dataSegments.push({
+      start,
+      end: data.length - 1,
+      stroke: null,
     });
   }
   return dataSegments;
