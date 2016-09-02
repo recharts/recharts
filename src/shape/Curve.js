@@ -108,15 +108,17 @@ class Curve extends Component {
   }
 
   render() {
-    const { className, points, type } = this.props;
+    const { className, points, type, stroke } = this.props;
 
     if (!points || !points.length) { return null; }
+    // const strokeDashClass = stroke === null ? 'stroke-no-val' : null;
+    const strokeDashClass = points[0] && points[0].nullVals === true ? 'stroke-no-val' : null;
 
     return (
       <path
         {...getPresentationAttributes(this.props)}
         {...filterEventAttributes(this.props)}
-        className={classNames('recharts-curve', className)}
+        className={classNames('recharts-curve', className, strokeDashClass)}
         d={this.getPath()}
       />
     );
