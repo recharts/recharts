@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import classNames from 'classnames';
 import { findDOMNode } from 'react-dom';
-import Smooth from 'react-smooth';
+import Smooth from '../lib/reactSmooth';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 
@@ -81,6 +81,9 @@ class Rectangle extends Component {
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
     animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
+    noteHoverStartTime: PropTypes.number,
+    invert: PropTypes.bool,
+    parentWidth: PropTypes.number,
   };
 
   static defaultProps = {
@@ -101,6 +104,7 @@ class Rectangle extends Component {
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
+    invert: false,
   };
 
   state = {
@@ -121,7 +125,7 @@ class Rectangle extends Component {
   }
 
   render() {
-    const { x, y, width, height, radius, className } = this.props;
+    const { x, y, width, height, radius, className, hasEndTimestamp } = this.props;
     const { totalLength } = this.state;
     const { animationEasing, animationDuration, animationBegin,
       isAnimationActive, isUpdateAnimationActive } = this.props;
@@ -129,6 +133,28 @@ class Rectangle extends Component {
     if (x !== +x || y !== +y || width !== +width || height !== +height) { return null; }
 
     const layerClass = classNames('recharts-rectangle', className);
+
+    if (this.props.invert === true) {
+      const endX = this.props.parentWidth - (x + width);
+      const presentationAttributes = getPresentationAttributes(this.props);
+      const eventAttributes = filterEventAttributes(this.props);
+      return (
+        <g>
+          <path
+            {...presentationAttributes}
+            {...eventAttributes}
+            className={layerClass}
+            d={getRectangePath(0, 0, x, height, radius)}
+          />
+        {hasEndTimestamp && <path
+            {...presentationAttributes}
+            {...eventAttributes}
+            className={layerClass}
+            d={getRectangePath(x + width, 0, endX, height, radius)}
+          />}
+        </g>
+      );
+    }
 
     return (
       <Smooth

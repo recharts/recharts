@@ -9,6 +9,7 @@ import Tooltip from '../component/Tooltip';
 import Line from '../cartesian/Line';
 import Bar from '../cartesian/Bar';
 import Area from '../cartesian/Area';
+import ReferenceDot from '../cartesian/ReferenceDot';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Rectangle from '../shape/Rectangle';
@@ -42,6 +43,7 @@ class ComposedChart extends Component {
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
     ]),
+    noteHoverStartTime: PropTypes.number,
   };
 
   renderCursor(xAxisMap, yAxisMap, offset) {
@@ -77,17 +79,20 @@ class ComposedChart extends Component {
     const areaItems = graphicalItems.filter(item => item.type.displayName === 'Area');
     const lineItems = graphicalItems.filter(item => item.type.displayName === 'Line');
     const barItems = graphicalItems.filter(item => item.type.displayName === 'Bar');
+    const rectItems = graphicalItems.filter(item => item.type.displayName === 'Rectangle');
+    const refDotItems = graphicalItems.filter(item => item.type.displayName === 'ReferenceDot');
 
     return (
       <Layer className="recharts-composed">
         {this.renderCursor(xAxisMap, yAxisMap, offset)}
-
         <AreaChart {...this.props} graphicalItems={areaItems} isComposed />
-        <BarChart {...this.props} graphicalItems={barItems} isComposed />
         <LineChart {...this.props} graphicalItems={lineItems} isComposed />
+        <BarChart {...this.props} graphicalItems={barItems} isComposed />
+        {rectItems}
+        {refDotItems}
       </Layer>
     );
   }
 }
 
-export default generateCategoricalChart(ComposedChart, [Line, Area, Bar]);
+export default generateCategoricalChart(ComposedChart, [Line, Area, Bar, Rectangle, ReferenceDot]);

@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { findDOMNode } from 'react-dom';
-import Animate from 'react-smooth';
+import Animate from '../lib/reactSmooth';
 import classNames from 'classnames';
 import pureRender from '../util/PureRender';
 import Curve from '../shape/Curve';
@@ -67,6 +67,21 @@ class Line extends Component {
       'ease-in-out',
       'linear',
     ]),
+
+    // MultiLine
+    isMultiline: PropTypes.bool,
+    strokeArray: PropTypes.arrayOf(PropTypes.string),
+    // MultiLine by Region
+    regionKey: PropTypes.string,
+    strokeRegions: PropTypes.object,
+    // MultiLine by Threshold
+    thresholdKey: PropTypes.string, // If thresholds need to be something besides dataKey
+    thresholds: PropTypes.arrayOf(PropTypes.shape({
+      min: React.PropTypes.number,
+      max: React.PropTypes.number,
+      color: React.PropTypes.string.isRequired,
+    })),
+
     animationId: PropTypes.number,
   };
 
@@ -85,6 +100,10 @@ class Line extends Component {
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
+
+    // Multiline
+    isMultiline: false,
+    strokeArray: ['#5598c8', '#31bd6d', '#ccc761', '#db772e', '#bd3196', '#3422c2'],
   };
 
   constructor(props, ctx) {
@@ -145,7 +164,6 @@ class Line extends Component {
     }
 
     const emptyLines = remainLines.length % 2 === 0 ? [0, restLength] : [restLength];
-
     return [...this.repeat(lines, count), ...remainLines, ...emptyLines]
       .map(line => `${line}px`)
       .join(', ');
@@ -282,7 +300,6 @@ class Line extends Component {
     if (strokeDasharray) {
       const lines = strokeDasharray.split(/[,\s]+/gim)
         .map(num => parseFloat(num));
-
       return (
         <Animate
           {...animationProps}
@@ -326,7 +343,7 @@ class Line extends Component {
     return (
       <Layer className={layerClass}>
         {!hasSinglePoint && this.renderCurve()}
-        {(hasSinglePoint || dot) && this.renderDots()}
+        {(hasSinglePoint && dot) && this.renderDots()}
         {label && this.renderLabels()}
       </Layer>
     );

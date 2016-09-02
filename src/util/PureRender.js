@@ -43,12 +43,34 @@ function shallowEqual(objA, objB) {
   return true;
 }
 
-
 function shallowCompare(instance, nextProps, nextState) {
   return !shallowEqual(instance.props, nextProps) || !shallowEqual(instance.state, nextState);
 }
 
+function updateFlagCheck(props, nextProps) {
+  // if there is an update flag (processTimestamp) then use flag logic for shouldComponentUpdate
+  return props.processTimestamp !== nextProps.processTimestamp;
+}
+
+function updateNoteFlagCheck(props, nextProps) {
+  // update chart when hovering over a notification to see it's duration
+  return props.noteHoverStartTime !== nextProps.noteHoverStartTime;
+}
+
+function hoverUpdateCheck(props, nextProps) {
+  return props.hoverTimestamp !== nextProps.processTimestamp;
+}
+
 function shouldComponentUpdate(nextProps, nextState) {
+  if (nextProps.updateOnHover === true) {
+    return hoverUpdateCheck(this.props, nextProps);
+  }
+  if (this.props.noteHoverStartTime !== nextProps.noteHoverStartTime) {
+    return true;
+  }
+  if (nextProps.processTimestamp > 0) {
+    return updateFlagCheck(this.props, nextProps);
+  }
   return shallowCompare(this, nextProps, nextState);
 }
 /* eslint-disable no-param-reassign */

@@ -14,7 +14,8 @@ import pureRender from '../util/PureRender';
 import { getTicksOfAxis } from '../util/CartesianUtils';
 import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
 import _ from 'lodash';
-import Smooth from 'react-smooth';
+import Smooth from '../lib/reactSmooth';
+import { renderMultiLine } from '../util/MultiLineUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
 
 @AnimationDecorator
@@ -42,6 +43,10 @@ class LineChart extends Component {
     isComposed: PropTypes.bool,
     animationId: PropTypes.number,
   };
+
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return false;
+  // }
 
   /**
    * Compose the data of each group
@@ -135,7 +140,12 @@ class LineChart extends Component {
     const dotItems = [];
 
     const lineItems = items.map((child, i) => {
+      if (child.props.isMultiline) {
+        return renderMultiLine(this.props, child, xAxisMap, yAxisMap, offset, i);
+      }
+
       const { xAxisId, yAxisId, dataKey, stroke, activeDot } = child.props;
+
       const points = this.getComposedData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey);
       const activePoint = points[activeTooltipIndex];
 
@@ -169,6 +179,26 @@ class LineChart extends Component {
 
   render() {
     const { isComposed, xAxisMap, yAxisMap, offset, graphicalItems } = this.props;
+
+    // // Temp dev timing
+    // if (!window.tmr) {
+    //   window.tmr = Date.now();
+    //   window.tmrarr = [];
+    // } else {
+    //   const nowdiff = Date.now() - window.tmr;
+    //   if (nowdiff < 1500) {
+    //     window.tmrarr.push(nowdiff);
+    //     const leng = window.tmrarr.length;
+    //     if (leng > 20) {
+    //       window.tmrarr = window.tmrarr.slice(leng - 20, leng - 1);
+    //     }
+    //     const tmravg = window.tmrarr.reduce(function (previousValue, currentValue) {
+    //       return previousValue + currentValue;
+    //     }) / window.tmrarr.length;
+    //     console.log(`Avg; ${Math.floor(tmravg)}, Array: ${window.tmrarr}`);
+    //   }
+    //   window.tmr = Date.now();
+    // }
 
     return (
       <Layer className="recharts-line-graphical">

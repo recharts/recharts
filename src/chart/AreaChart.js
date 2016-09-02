@@ -15,7 +15,7 @@ import Area from '../cartesian/Area';
 import pureRender from '../util/PureRender';
 import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
 import _ from 'lodash';
-import Smooth from 'react-smooth';
+import Smooth from '../lib/reactSmooth';
 import AnimationDecorator from '../util/AnimationDecorator';
 
 @AnimationDecorator

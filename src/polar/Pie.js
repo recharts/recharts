@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import Layer from '../container/Layer';
 import Sector from '../shape/Sector';
 import Curve from '../shape/Curve';
-import Animate from 'react-smooth';
+import Animate from '../lib/reactSmooth';
 import _ from 'lodash';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';

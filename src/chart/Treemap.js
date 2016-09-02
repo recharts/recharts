@@ -8,7 +8,7 @@ import Rectangle from '../shape/Rectangle';
 import { findChildByType, getPresentationAttributes, filterSvgElements,
   validateWidthHeight } from '../util/ReactUtils';
 import classNames from 'classnames';
-import Smooth from 'react-smooth';
+import Smooth from '../lib/reactSmooth';
 import Tooltip from '../component/Tooltip';
 import pureRender from '../util/PureRender';
 import _ from 'lodash';
