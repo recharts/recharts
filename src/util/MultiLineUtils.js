@@ -172,12 +172,16 @@ const findDataSegmentsNormal = (lineProps, data, dataKey) => {
     const dataItem = _.get(data[i], dataKey, null);
     if (i === 0) {
       previousDataItem = dataItem;
-    } else if ((dataItem === null && previousDataItem !== null) || (i === (data.length - 1) && previousDataItem !== null)) {
+    } else if (i === (data.length - 1)) {
+      dataSegments.push({ start, end: i, stroke });
+    } else if (dataItem === null && previousDataItem !== null) { // end of line with values
       dataSegments.push({ start, end: i, stroke });
       previousDataItem = null;
-    } else if (dataItem !== null && previousDataItem === null) {
       start = i;
-      previousDataItem = dataItem
+    } else if (dataItem !== null && previousDataItem === null) { // end of line without values
+      dataSegments.push({ start, end: i, stroke: null });
+      previousDataItem = dataItem;
+      start = i;
     }
   }
   return dataSegments;
