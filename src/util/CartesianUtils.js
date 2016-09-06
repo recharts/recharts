@@ -186,7 +186,9 @@ export const calculateDomainOfTicks = (ticks, type) => {
  */
 export const getDomainOfDataByKey = (data, key, type) => {
   if (type === 'number') {
-    const domain = data.map(entry => (_.isNumber(entry[key]) ? entry[key] : 0));
+    const domain = data
+      .map(entry => entry[key])
+      .filter(_.isNumber);
 
     return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
   }
@@ -199,12 +201,16 @@ export const getDomainOfDataByKey = (data, key, type) => {
 };
 
 const getDomainOfSingle = (data) => (
-  data.reduce((result, entry) => (
-    [
-      Math.min(result[0], entry[0], entry[1]),
-      Math.max(result[1], entry[0], entry[1]),
-    ]
-  ), [Infinity, -Infinity])
+  data.reduce((result, entry) => {
+    const sanitizedEntry = entry.map((thisEntry, index) =>
+      (thisEntry !== null ? thisEntry : result[index])
+    );
+
+    return [
+      Math.min(result[0], sanitizedEntry[0], sanitizedEntry[1]),
+      Math.max(result[1], sanitizedEntry[0], sanitizedEntry[1]),
+    ];
+  }, [Infinity, -Infinity])
 );
 
 export const getDomainOfStackGroups = (stackGroups, startIndex, endIndex) => (
