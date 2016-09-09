@@ -13,8 +13,8 @@ Recharts is a **Redefined** chart library built with [React](https://facebook.gi
 The main purpose of this library is to help you to write charts in React applications without any pain. Main principles of Recharts are:
 
 1. **Simply** deploy with React components
-1. **Native** SVG support, lightweight depend on some D3 submodules
-1. **Declarative** components, components of chart are purely presentational
+1. **Native** SVG support, lightweight depending only on some D3 submodules
+1. **Declarative** components, components of charts are purely presentational
 
 ## Examples
 
@@ -33,7 +33,7 @@ The main purpose of this library is to help you to write charts in React applica
 </LineChart>
 ```
 
-All the components of Recharts is clearly separated. The lineChart is composed by x axis, tooltip, grid, and line items, and each of them is an independent React Component. The clear separation and composition of components is one of the principle Recharts follow.
+All the components of Recharts are clearly separated. The lineChart is composed of x axis, tooltip, grid, and line items, and each of them is an independent React Component. The clear separation and composition of components is one of the principle Recharts follows.
 
 ## Module Formats
 
@@ -41,7 +41,7 @@ All the components of Recharts is clearly separated. The lineChart is composed b
 
 ## Contribution
 
-We'd love :heart: to hear what you think we should build. Please create a issue to write your usage or ideas.
+We'd love :heart: to hear what you think we should build. Please create an issue to write your usage or ideas.
 
 We are looking for like-minded people who share the same idea about Recharts. The goal of this project is create a more flexible charting library for the  React community.
 
