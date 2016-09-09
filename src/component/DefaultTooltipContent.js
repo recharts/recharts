@@ -55,7 +55,7 @@ class DefaultTooltipContent extends Component {
             <span className="recharts-tooltip-item-name">{entry.name}</span>
             <span className="recharts-tooltip-item-separator">{separator}</span>
             <span className="recharts-tooltip-item-value">
-              {finalFormatter ? finalFormatter(entry.value, entry.name) : entry.value}
+              {finalFormatter ? finalFormatter(entry.value, entry.name, entry) : entry.value}
             </span>
             <span className="recharts-tooltip-item-unit">{entry.unit || ''}</span>
           </li>
