@@ -185,9 +185,10 @@ class AreaChart extends Component {
 
     const areaItems = items.reduce((result, child, i) => {
       const { xAxisId, yAxisId, dataKey, fillOpacity, fill, activeDot } = child.props;
-      const axisId = layout === 'horizontal' ? xAxisId : yAxisId;
-      const stackedData = stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
-                        && getStackedDataOfItem(child, stackGroups[axisId].stackGroups);
+      const numericAxisId = layout === 'horizontal' ? yAxisId : xAxisId;
+      const stackedData = stackGroups && stackGroups[numericAxisId] &&
+        stackGroups[numericAxisId].hasStack &&
+        getStackedDataOfItem(child, stackGroups[numericAxisId].stackGroups);
       const composeData = this.getComposedData(
         xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey, stackedData
       );

@@ -107,7 +107,8 @@ export default React.createClass({
             <XAxis dataKey="name" label="province"/>
             <YAxis />
             <Tooltip />
-            <Area stackId="0"
+            <Area
+              stackId="0"
               type="monotone"
               dataKey="uv"
               stroke="#ff7300"
@@ -115,7 +116,8 @@ export default React.createClass({
               dot
               activeDot={renderCustomizedActiveDot}
             />
-            <Area stackId="0"
+            <Area
+              stackId="0"
               type="monotone"
               dataKey="amt"
               stroke="#82ca9d"
@@ -123,7 +125,8 @@ export default React.createClass({
               dot
               activeDot={renderCustomizedActiveDot}
             />
-            <Area stackId="0"
+            <Area
+              stackId="0"
               type="monotone"
               dataKey="pv"
               stroke="#387908"
