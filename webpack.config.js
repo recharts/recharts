@@ -36,9 +36,24 @@ var config = {
       commonjs: 'react',
       amd: 'react'
     },
-    'react-dom': 'ReactDOM',
-    'react-dom/server': 'ReactDOMServer',
-    'react-addons-transition-group': 'ReactTransitionGroup',
+    'react-dom': {
+      root:'ReactDOM',
+      commonjs2: 'react-dom',
+      commonjs: 'react-dom',
+      amd:'react-dom'
+    },
+    'react-dom/server': {
+      root: 'ReactDOMServer'
+      commonjs2: 'react-dom-server',
+      commonjs: 'react-dom-server',
+      amd:'react-dom-server'
+    },
+    'react-addons-css-transition-group': {
+      root: ['React','addons','CSSTransitionGroup'],
+      commonjs2: 'react-addons-css-transition-group',
+      commonjs: 'react-addons-css-transition-group',
+      amd: 'react-addons-css-transition-group'
+    }
   },
 
   plugins: [
