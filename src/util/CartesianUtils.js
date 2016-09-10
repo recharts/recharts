@@ -186,7 +186,9 @@ export const calculateDomainOfTicks = (ticks, type) => {
  */
 export const getDomainOfDataByKey = (data, key, type) => {
   if (type === 'number') {
-    const domain = data.map(entry => (_.isNumber(entry[key]) ? entry[key] : 0));
+    const domain = data
+      .map(entry => entry[key])
+      .filter(_.isNumber);
 
     return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
   }
@@ -199,26 +201,26 @@ export const getDomainOfDataByKey = (data, key, type) => {
 };
 
 const getDomainOfSingle = (data) => (
-  data.reduce((result, entry) => (
-    [
-      Math.min(result[0], entry[0], entry[1]),
-      Math.max(result[1], entry[0], entry[1]),
-    ]
-  ), [Infinity, -Infinity])
+  data.reduce((result, entry) => [
+    Math.min.apply(null, entry.concat([result[0]]).filter(_.isNumber)),
+    Math.max.apply(null, entry.concat([result[1]]).filter(_.isNumber)),
+  ], [Infinity, -Infinity])
 );
 
 export const getDomainOfStackGroups = (stackGroups, startIndex, endIndex) => (
-  Object.keys(stackGroups).reduce((result, stackId) => {
-    const group = stackGroups[stackId];
-    const { stackedData } = group;
-    const domain = stackedData.reduce((res, entry) => {
-      const s = getDomainOfSingle(entry.slice(startIndex, endIndex + 1));
+  Object.keys(stackGroups)
+    .reduce((result, stackId) => {
+      const group = stackGroups[stackId];
+      const { stackedData } = group;
+      const domain = stackedData.reduce((res, entry) => {
+        const s = getDomainOfSingle(entry.slice(startIndex, endIndex + 1));
 
-      return [Math.min(res[0], s[0]), Math.max(res[1], s[1])];
-    }, [Infinity, -Infinity]);
+        return [Math.min(res[0], s[0]), Math.max(res[1], s[1])];
+      }, [Infinity, -Infinity]);
 
-    return [Math.min(domain[0], result[0]), Math.max(domain[1], result[1])];
-  }, [Infinity, -Infinity])
+      return [Math.min(domain[0], result[0]), Math.max(domain[1], result[1])];
+    }, [Infinity, -Infinity])
+    .map(result => (result === Infinity || result === -Infinity ? 0 : result))
 );
 
 /**
