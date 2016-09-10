@@ -735,7 +735,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { data } = this.props;
       if (!validateWidthHeight(this) || !data || !data.length) { return null; }
 
-      const { style, children, layout, className, width, height, stackOffset } = this.props;
+      const { children, layout, className, width, height, stackOffset, style,
+        ...others } = this.props;
       const numericIdName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
       const cateIdName = layout === 'horizontal' ? 'xAxis' : 'yAxis';
       const items = findAllByType(children, GraphicalChild);
@@ -757,14 +758,15 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         onMouseMove: this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap),
         onMouseLeave: this.handleMouseLeave,
       } : null;
+      const attrs = getPresentationAttributes(others);
 
       return (
         <div
           className={classNames('recharts-wrapper', className)}
-          style={{ position: 'relative', cursor: 'default', ...style, width, height }}
+          style={{ ...style, position: 'relative', cursor: 'default', width, height }}
           {...events}
         >
-          <Surface width={width} height={height}>
+          <Surface {...attrs} width={width} height={height}>
             {this.renderGrid(xAxisMap, yAxisMap, offset)}
             {this.renderReferenceElements(xAxisMap, yAxisMap, offset, false, ReferenceArea)}
             {this.renderReferenceElements(xAxisMap, yAxisMap, offset, false, ReferenceLine)}

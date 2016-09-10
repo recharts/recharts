@@ -19,7 +19,8 @@ import ReferenceLine from '../cartesian/ReferenceLine';
 import ReferenceDot from '../cartesian/ReferenceDot';
 import ReferenceArea from '../cartesian/ReferenceArea';
 import { getPresentationAttributes, findChildByType, filterSvgElements,
-  findAllByType, validateWidthHeight, getDisplayName } from '../util/ReactUtils';
+  findAllByType, validateWidthHeight, getDisplayName, filterEventAttributes,
+} from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { parseSpecifiedDomain } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
@@ -462,7 +463,7 @@ class ScatterChart extends Component {
   render() {
     if (!validateWidthHeight(this)) { return null; }
 
-    const { style, children, className, width, height } = this.props;
+    const { style, children, className, width, height, ...others } = this.props;
     const items = findAllByType(children, Scatter);
     const zAxis = this.getZAxis(items);
     let xAxis = this.getAxis('xAxis', items);
@@ -471,13 +472,16 @@ class ScatterChart extends Component {
     const offset = this.getOffset(items, xAxis, yAxis);
     xAxis = this.getFormatAxis(xAxis, offset, 'xAxis');
     yAxis = this.getFormatAxis(yAxis, offset, 'yAxis');
+    const events = filterEventAttributes(this.props);
+    const attrs = getPresentationAttributes(others);
 
     return (
       <div
         className={classNames('recharts-wrapper', className)}
-        style={{ position: 'relative', cursor: 'default', ...style, width, height }}
+        style={{ position: 'relative', cursor: 'default', width, height }}
+        {...events}
       >
-        <Surface width={width} height={height}>
+        <Surface {...attrs} width={width} height={height}>
           {this.renderGrid(xAxis, yAxis, offset)}
           {this.renderReferenceElements(xAxis, yAxis, offset, false, ReferenceArea)}
           {this.renderReferenceElements(xAxis, yAxis, offset, false, ReferenceLine)}

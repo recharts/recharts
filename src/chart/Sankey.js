@@ -8,8 +8,7 @@ import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
 import classNames from 'classnames';
 import pureRender from '../util/PureRender';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
-  EVENT_ATTRIBUTES, filterEventAttributes,
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, EVENT_ATTRIBUTES,
   filterSvgElements, validateWidthHeight, findChildByType } from '../util/ReactUtils';
 import _ from 'lodash';
 
@@ -536,11 +535,8 @@ class Sankey extends Component {
   render() {
     if (!validateWidthHeight(this)) { return null; }
 
-    const { data,
-      iterations, nodeWidth, nodePadding,
-      width, height,
-      className, style, children, margin,
-    } = this.props;
+    const { data, iterations, nodeWidth, nodePadding, width, height,
+      className, style, children, margin, ...others } = this.props;
     const contentWidth = width - (margin.left || 0) - (margin.right || 0);
     const contentHeight = height - (margin.top || 0) - (margin.bottom || 0);
     const { links, nodes } = computeData({
@@ -549,17 +545,14 @@ class Sankey extends Component {
       height: contentHeight,
       iterations, nodeWidth, nodePadding,
     });
+    const attrs = getPresentationAttributes(others);
+
     return (
       <div
         className={classNames('recharts-wrapper', className)}
-        style={{ position: 'relative', cursor: 'default', ...style, width, height }}
+        style={{ ...style, position: 'relative', cursor: 'default', width, height }}
       >
-        <Surface
-          width={width}
-          height={height}
-          {...filterEventAttributes(this.props)}
-          {...getPresentationAttributes(this.props)}
-        >
+        <Surface {...attrs} width={width} height={height}>
           {filterSvgElements(children)}
           {this.renderLinks(links, nodes)}
           {this.renderNodes(nodes)}

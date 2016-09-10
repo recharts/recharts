@@ -193,15 +193,16 @@ class PieChart extends Component {
   render() {
     if (!validateWidthHeight(this)) { return null; }
 
-    const { style, children, className, width, height } = this.props;
+    const { style, children, className, width, height, ...others } = this.props;
     const items = findAllByType(children, Pie);
+    const attrs = getPresentationAttributes(others);
 
     return (
       <div
         className={classNames('recharts-wrapper', className)}
-        style={{ position: 'relative', cursor: 'default', ...style, width, height }}
+        style={{ ...style, position: 'relative', cursor: 'default', width, height }}
       >
-        <Surface width={width} height={height}>
+        <Surface {...attrs} width={width} height={height}>
           {this.renderItems(items)}
           {filterSvgElements(children)}
         </Surface>

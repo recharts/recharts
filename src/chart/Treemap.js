@@ -416,14 +416,15 @@ class Treemap extends Component {
   render() {
     if (!validateWidthHeight(this)) { return null; }
 
-    const { width, height, className, style, children } = this.props;
+    const { width, height, className, style, children, ...others } = this.props;
+    const attrs = getPresentationAttributes(others);
 
     return (
       <div
         className={classNames('recharts-wrapper', className)}
-        style={{ position: 'relative', cursor: 'default', ...style, width, height }}
+        style={{ ...style, position: 'relative', cursor: 'default', width, height }}
       >
-        <Surface width={width} height={height}>
+        <Surface {...attrs} width={width} height={height}>
           {this.renderAllNodes()}
           {filterSvgElements(children)}
         </Surface>

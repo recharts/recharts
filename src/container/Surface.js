@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
+import { getPresentationAttributes } from '../util/ReactUtils';
 
 const propTypes = {
   width: PropTypes.number.isRequired,
@@ -21,12 +22,14 @@ const propTypes = {
   ]),
 };
 function Surface(props) {
-  const { children, width, height, viewBox, className, style } = props;
+  const { children, width, height, viewBox, className, style, ...others } = props;
   const svgView = viewBox || { width, height, x: 0, y: 0 };
   const layerClass = classNames('recharts-surface', className);
+  const attrs = getPresentationAttributes(others);
 
   return (
     <svg
+      {...attrs}
       className={layerClass}
       width={width}
       height={height}

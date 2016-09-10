@@ -386,7 +386,7 @@ class RadarChart extends Component {
 
   render() {
     if (!validateWidthHeight(this)) { return null; }
-    const { className, data, width, height, margin, children, style } = this.props;
+    const { className, data, width, height, margin, children, style, ...others } = this.props;
     const cx = getPercentValue(this.props.cx, width, width / 2);
     const cy = getPercentValue(this.props.cy, height, height / 2);
     const maxRadius = getMaxRadius(width, height, margin);
@@ -400,13 +400,14 @@ class RadarChart extends Component {
     const items = findAllByType(children, Radar);
     const radiusAxis = findChildByType(children, PolarRadiusAxis);
     const radiusAxisCfg = this.getRadiusAxisCfg(radiusAxis, innerRadius, outerRadius);
+    const attrs = getPresentationAttributes(others);
 
     return (
       <div
         className={classNames('recharts-wrapper', className)}
-        style={{ position: 'relative', cursor: 'default', ...style, width, height }}
+        style={{ ...style, position: 'relative', cursor: 'default', width, height }}
       >
-        <Surface width={width} height={height}>
+        <Surface {...attrs} width={width} height={height}>
           {this.renderGrid(radiusAxisCfg, cx, cy, innerRadius, outerRadius)}
           {this.renderRadiusAxis(radiusAxis, radiusAxisCfg, cx, cy)}
           {this.renderAngleAxis(cx, cy, outerRadius, maxRadius)}

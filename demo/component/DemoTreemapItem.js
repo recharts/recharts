@@ -43,6 +43,7 @@ class DemoTreemapItem extends Component {
             y={y + height / 2 + 9}
             textAnchor="middle"
             fill="#fff"
+            stroke="none"
             fontSize={18}
           >
             {name}
@@ -55,6 +56,7 @@ class DemoTreemapItem extends Component {
             x={x + 4}
             y={y + 22}
             fill="#fff"
+            stroke="none"
             fontSize={18}
             fillOpacity={0.5}
           >

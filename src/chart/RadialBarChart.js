@@ -11,8 +11,8 @@ import _ from 'lodash';
 import Cell from '../component/Cell';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
-import { findChildByType, findAllByType, validateWidthHeight,
-  filterSvgElements } from '../util/ReactUtils';
+import { findChildByType, findAllByType, validateWidthHeight, filterSvgElements,
+  getPresentationAttributes } from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import pureRender from '../util/PureRender';
 import AnimationDecorator from '../util/AnimationDecorator';
@@ -306,7 +306,7 @@ class RadialBarChart extends Component {
     const { data } = this.props;
     if (!validateWidthHeight(this) || !data || !data.length) { return null; }
 
-    const { style, children, className, width, height, margin } = this.props;
+    const { style, children, className, width, height, margin, ...others } = this.props;
     const items = findAllByType(children, RadialBar);
     const cx = getPercentValue(this.props.cx, width, width / 2);
     const cy = getPercentValue(this.props.cy, height, height / 2);
@@ -314,13 +314,14 @@ class RadialBarChart extends Component {
     const innerRadius = getPercentValue(this.props.innerRadius, maxRadius, 0);
     const outerRadius = getPercentValue(this.props.outerRadius, maxRadius, maxRadius * 0.8);
     const radiusScale = this.getRadiusScale(innerRadius, outerRadius);
+    const attrs = getPresentationAttributes(others);
 
     return (
       <div
         className={classNames('recharts-wrapper', className)}
-        style={{ cursor: 'default', position: 'relative', ...style, width, height }}
+        style={{ ...style, cursor: 'default', position: 'relative', width, height }}
       >
-        <Surface width={width} height={height}>
+        <Surface {...attrs} width={width} height={height}>
           {this.renderItems(items, radiusScale, { cx, cy })}
           {filterSvgElements(children)}
         </Surface>
