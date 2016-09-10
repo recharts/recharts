@@ -250,8 +250,13 @@ class Pie extends Component {
   renderLabelItem(option, props, value) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
-      return option(props);
+    }
+    let label = value;
+    if (_.isFunction(option)) {
+      label = option(props);
+      if (React.isValidElement(label)) {
+        return label;
+      }
     }
 
     return (
@@ -260,7 +265,7 @@ class Pie extends Component {
         alignmentBaseline="middle"
         className="recharts-pie-label-text"
       >
-        {value}
+        {label}
       </text>
     );
   }

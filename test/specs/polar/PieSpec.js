@@ -138,6 +138,29 @@ describe('<Pie />', () => {
     expect(wrapper.find('.customized-label').length).to.equal(data.length);
   });
 
+  it('Render customized label when label is set to be a function that returns the label text', () => {
+    const Label = (props) => {
+      const { name, value } = props;
+      return `${name}: ${value}`;
+    };
+    const wrapper = render(
+      <Surface width={500} height={500}>
+        <Pie
+          isAnimationActive={false}
+          cx={250}
+          cy={250}
+          label={Label}
+          innerRadius={0}
+          outerRadius={200}
+          data={data}
+        />
+      </Surface>
+    );
+
+    expect(wrapper.find('.recharts-pie-label-text').length).to.equal(data.length);
+    expect(wrapper.find('.recharts-pie-label-text').first().text()).to.equal('A: 40');
+  });
+
   it('Render customized label when label is set to be a react element', () => {
     const renderLabel = (props) => {
       const { x, y } = props;
