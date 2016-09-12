@@ -12,7 +12,7 @@
 - Add dataKey in the payload of Legend
 - support allowDataOverflow in XAxis, YAxis, PolarRadiusAxis
 
-### Refator
+### Refactor
 
 - Refactor the received props of Surface
 
@@ -557,5 +557,5 @@
 ## 0.4.0 (January 26, 2016)
 
 ### UI
-- Refator some components, include CartesianAxis, Legend, Tooltip etc, to unify some props name.
+- Refactor some components, include CartesianAxis, Legend, Tooltip etc, to unify some props name.
 
