@@ -39,15 +39,16 @@ export const getPercentValue = (percent, totalValue, defaultValue = 0, validate 
 const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([\d]+)$/;
 const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([\d]+)$/;
 
-export const parseSpecifiedDomain = (specifiedDomain, dataDomain) => {
+export const parseSpecifiedDomain = (specifiedDomain, dataDomain, allowDataOverflow) => {
   if (!_.isArray(specifiedDomain)) {
     return dataDomain;
   }
 
   const domain = [];
 
-  if (_.isNumber(specifiedDomain[0]) && specifiedDomain[0] <= dataDomain[0]) {
-    domain[0] = specifiedDomain[0];
+  if (_.isNumber(specifiedDomain[0])) {
+    domain[0] = allowDataOverflow ?
+      specifiedDomain[0] : Math.min(specifiedDomain[0], dataDomain[0]);
   } else if (MIN_VALUE_REG.test(specifiedDomain[0])) {
     const value = +MIN_VALUE_REG.exec(specifiedDomain[0])[1];
 
@@ -56,8 +57,9 @@ export const parseSpecifiedDomain = (specifiedDomain, dataDomain) => {
     domain[0] = dataDomain[0];
   }
 
-  if (_.isNumber(specifiedDomain[1]) && specifiedDomain[1] >= dataDomain[1]) {
-    domain[1] = specifiedDomain[1];
+  if (_.isNumber(specifiedDomain[1])) {
+    domain[1] = allowDataOverflow ?
+      specifiedDomain[1] : Math.max(specifiedDomain[1], dataDomain[1]);
   } else if (MAX_VALUE_REG.test(specifiedDomain[1])) {
     const value = +MAX_VALUE_REG.exec(specifiedDomain[1])[1];
 

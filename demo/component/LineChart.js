@@ -92,7 +92,7 @@ export default React.createClass({
             <CartesianGrid stroke='#f5f5f5'/>
             <Legend/>
             <XAxis/>
-            <YAxis/>
+            <YAxis domain={[0, 350]} allowDataOverflow={true} />
             <Tooltip />
             <Line type='monotone' dataKey='uv' stroke='#ff7300' dot={renderSpecialDot} label={renderLabel}/>
             <Brush dataKey="name" height={30} />

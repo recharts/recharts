@@ -39,6 +39,7 @@ class PolarRadiusAxis extends Component {
       PropTypes.number,
       PropTypes.oneOf(['auto', 'dataMin', 'dataMax']),
     ])),
+    allowDataOverflow: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -51,6 +52,7 @@ class PolarRadiusAxis extends Component {
     tick: true,
     tickCount: 5,
     domain: [0, 'auto'],
+    allowDataOverflow: false,
   };
 
   /**

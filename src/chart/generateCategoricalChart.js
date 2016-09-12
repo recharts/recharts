@@ -129,7 +129,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       // Eliminate duplicated axes
       const axisMap = axes.reduce((result, child) => {
-        const { type, dataKey } = child.props;
+        const { type, dataKey, allowDataOverflow } = child.props;
         const axisId = child.props[axisIdKey];
 
         if (!result[axisId]) {
@@ -160,7 +160,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
 
             if (child.props.domain) {
-              domain = parseSpecifiedDomain(child.props.domain, domain);
+              domain = parseSpecifiedDomain(child.props.domain, domain, allowDataOverflow);
             }
           }
 
@@ -222,7 +222,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
               getDomainOfItemsWithSameAxis(
                 displayedData,
                 items.filter(entry => entry.props[axisIdKey] === axisId), 'number'
-              )
+              ),
+              Axis.defaultProps.allowDataOverflow
             );
             domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
           }

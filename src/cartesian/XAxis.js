@@ -43,6 +43,7 @@ class XAxis extends Component {
       left: PropTypes.number,
       right: PropTypes.number,
     }),
+    allowDataOverflow: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -56,6 +57,7 @@ class XAxis extends Component {
     type: 'category',
     domain: [0, 'auto'],
     padding: { left: 0, right: 0 },
+    allowDataOverflow: false,
   };
 
   render() {

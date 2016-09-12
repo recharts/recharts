@@ -115,7 +115,8 @@ class ScatterChart extends Component {
     if (axis) {
       const domain = parseSpecifiedDomain(
         axis.props.domain,
-        this.getDomain(items, axis.props.dataKey, axis.props[`${axisType}Id`], axisType)
+        this.getDomain(items, axis.props.dataKey, axis.props[`${axisType}Id`], axisType),
+        axis.props.allowDataOverflow
       );
 
       return {

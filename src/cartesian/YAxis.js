@@ -43,6 +43,7 @@ class YAxis extends Component {
       top: PropTypes.number,
       bottom: PropTypes.number,
     }),
+    allowDataOverflow: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -56,6 +57,7 @@ class YAxis extends Component {
     type: 'number',
     domain: [0, 'auto'],
     padding: { top: 0, bottom: 0 },
+    allowDataOverflow: false,
   };
 
   render() {

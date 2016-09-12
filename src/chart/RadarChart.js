@@ -124,7 +124,7 @@ class RadarChart extends Component {
 
   getTicksByItems(axisItem, tickCount) {
     const { data, children } = this.props;
-    const { domain } = axisItem ? axisItem.props : PolarRadiusAxis.defaultProps;
+    const { domain, allowDataOverflow } = axisItem ? axisItem.props : PolarRadiusAxis.defaultProps;
     const radarItems = findAllByType(children, Radar);
     const dataKeys = radarItems.map(item => item.props.dataKey);
     const extent = data.reduce((prev, current) => {
@@ -134,7 +134,7 @@ class RadarChart extends Component {
 
       return [Math.min(prev[0], currentMin), Math.max(prev[1], currentMax)];
     }, [Infinity, -Infinity]);
-    const finalDomain = parseSpecifiedDomain(domain, extent);
+    const finalDomain = parseSpecifiedDomain(domain, extent, allowDataOverflow);
 
     if (domain && (domain[0] === 'auto' || domain[1] === 'auto')) {
       return getNiceTickValues(finalDomain, tickCount);
