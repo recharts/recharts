@@ -1,3 +1,7 @@
+## 0.14.1 (Sep 12, 2016)
+
+- Fix webpack.config.js
+
 ## 0.14.0 (Sep 12, 2016)
 
 ### Feat
@@ -21,7 +25,7 @@
 
 ### Docs
 
-- Update and fix webpack.config.js, to support AMD
+- Update webpack.config.js, to support AMD
 
 ## 0.13.4 (Aug 24, 2016)
 
