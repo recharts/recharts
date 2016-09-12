@@ -1,3 +1,28 @@
+## 0.14.0 (Sep 12, 2016)
+
+### Feat
+
+- allow label function to return a string
+- Pass entry to formatter function
+- Support labels in ScatterChart axis
+- Add dataKey in the payload of Legend
+- support allowDataOverflow in XAxis, YAxis, PolarRadiusAxis
+
+### Refator
+
+- Refactor the received props of Surface
+
+### Fix
+
+- Fixed up handling of nulls for domain creation
+- Stopped domain calculation reverting to 0 for missing data points
+- Fix the bug of stacked areas which have yAxisId different from "0"
+- Fix the spelling error of AniamtionDecorator
+
+### Docs
+
+- Update webpack.config.js, to support AMD
+
 ## 0.13.4 (Aug 24, 2016)
 
 ### Feat
