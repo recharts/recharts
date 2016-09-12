@@ -2,8 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { getDisplayName } from './ReactUtils';
 
 export default function (WrappedComponent) {
-  class AniamtionDecorator extends Component {
-    static displayName = `AniamtionDecorator(${getDisplayName(WrappedComponent)})`;
+  class AnimationDecorator extends Component {
+    static displayName = `AnimationDecorator(${getDisplayName(WrappedComponent)})`;
 
     static propTypes = {
       ...WrappedComponent.propTypes,
@@ -33,5 +33,5 @@ export default function (WrappedComponent) {
     }
   }
 
-  return AniamtionDecorator;
+  return AnimationDecorator;
 }
