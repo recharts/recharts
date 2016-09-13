@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { scaleLinear } from 'd3-scale';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
+import Cell from '../component/Cell';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Cross from '../shape/Cross';
@@ -62,18 +63,22 @@ class ScatterChart extends Component {
   };
   /**
    * Compose the data of each group
+   * @param  {Object} item        An instance of Scatter
    * @param  {Array}  data        The original data
    * @param  {Object} xAxis       The configuration of x-axis
    * @param  {Object} yAxis       The configuration of y-axis
    * @param  {Object} zAxis       The configuration of z-axis
    * @return {Array} Composed data
    */
-  getComposedData(data, xAxis, yAxis, zAxis) {
+  getComposedData(item, data, xAxis, yAxis, zAxis) {
+    const { children } = item.props;
     const xAxisDataKey = xAxis.dataKey;
     const yAxisDataKey = yAxis.dataKey;
     const zAxisDataKey = zAxis.dataKey;
+    const cells = findAllByType(children, Cell);
 
-    return data.map(entry => ({
+    return data.map((entry, index) => ({
+      ...entry,
       cx: xAxis.scale(entry[xAxisDataKey]),
       cy: yAxis.scale(entry[yAxisDataKey]),
       size: zAxisDataKey !== undefined ? zAxis.scale(entry[zAxisDataKey]) : zAxis.range[0],
@@ -82,6 +87,7 @@ class ScatterChart extends Component {
         y: entry[yAxisDataKey],
         z: (zAxisDataKey !== undefined && entry[zAxisDataKey]) || '-',
       },
+      ...(cells && cells[index] && cells[index].props),
     }));
   }
 
@@ -434,7 +440,7 @@ class ScatterChart extends Component {
         strokeWidth: finalStrokeWidth,
         onMouseLeave: this.handleScatterMouseLeave,
         onMouseEnter: this.handleScatterMouseEnter,
-        points: this.getComposedData(data, xAxis, yAxis, zAxis),
+        points: this.getComposedData(child, data, xAxis, yAxis, zAxis),
       });
     }, this);
   }
