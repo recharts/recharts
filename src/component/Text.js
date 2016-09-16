@@ -32,7 +32,11 @@ class Text extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.updateWordsByLines(nextProps, this.props.children !== nextProps.children);
+    const calculateWordWidths = (
+      this.props.children !== nextProps.children ||
+      this.props.style !== nextProps.style
+    );
+    this.updateWordsByLines(nextProps, calculateWordWidths);
   }
 
   updateWordsByLines(props, calculateWordWidths) {

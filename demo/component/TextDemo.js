@@ -11,6 +11,8 @@ class TextDemo extends Component {
     fit: false,
     textAnchor: 'start',
     verticalAnchor: 'start',
+    fontSize: '1em',
+    lineHeight: '1em',
   };
 
   render() {
@@ -40,8 +42,10 @@ class TextDemo extends Component {
             width={this.state.width}
             textAnchor={this.state.textAnchor}
             verticalAnchor={this.state.verticalAnchor}
+            lineHeight={this.state.lineHeight}
             fit={this.state.fit}
             angle={this.state.angle}
+            style={{ fontSize: this.state.fontSize }}
           >
             {this.state.exampleText}
           </Text>
@@ -127,6 +131,24 @@ class TextDemo extends Component {
               checked={this.state.verticalAnchor === 'end'}
             /> end
           </label>
+        </div>
+
+        <div>
+          fontSize:
+          <input
+            type="text"
+            value={this.state.fontSize}
+            onChange={e => this.setState({ fontSize: e.target.value })}
+          />
+        </div>
+
+        <div>
+          lineHeight:
+          <input
+            type="text"
+            value={this.state.lineHeight}
+            onChange={e => this.setState({ lineHeight: e.target.value })}
+          />
         </div>
 
         <div>
