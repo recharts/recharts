@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import { getStringSize } from '../util/DOMUtils';
 import Layer from '../container/Layer';
+import Text from '../component/Text';
 import { isSsr, PRESENTATION_ATTRIBUTES,
   getPresentationAttributes } from '../util/ReactUtils';
 import _ from 'lodash';
@@ -261,12 +262,12 @@ class CartesianAxis extends Component {
       tickItem = option(props);
     } else {
       tickItem = (
-        <text
+        <Text
           {...getPresentationAttributes(props)}
           className="recharts-cartesian-axis-tick-value"
         >
           {value}
-        </text>
+        </Text>
       );
     }
 
@@ -335,7 +336,7 @@ class CartesianAxis extends Component {
 
       return (
         <g className="recharts-cartesian-axis-label">
-          <text {...props}>{label}</text>
+          <Text {...props}>{label}</Text>
         </g>
       );
     }

@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import Animate from 'react-smooth';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
+import Text from '../component/Text';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
@@ -145,13 +146,13 @@ class Bar extends Component {
       labelItem = option(props);
     } else {
       labelItem = (
-        <text
+        <Text
           {...getPresentationAttributes(props)}
           key={props.key}
           className="recharts-bar-label"
         >
           {_.isArray(value) ? value[1] : value}
-        </text>
+        </Text>
       );
     }
 

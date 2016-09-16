@@ -9,6 +9,7 @@ import pureRender from '../util/PureRender';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
+import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import _ from 'lodash';
 
@@ -179,13 +180,13 @@ class Line extends Component {
       labelItem = option(props);
     } else {
       labelItem = (
-        <text
+        <Text
           key={props.key}
           {...getPresentationAttributes(props)}
           className="recharts-line-label"
         >
           {value}
-        </text>
+        </Text>
       );
     }
 

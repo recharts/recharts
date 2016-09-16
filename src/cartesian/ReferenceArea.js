@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Dot from '../shape/Dot';
+import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { validateCoordinateInRange } from '../util/DataUtils';
 import _ from 'lodash';
@@ -124,7 +125,7 @@ class ReferenceArea extends Component {
     } else if (_.isString(label) || _.isNumber(label)) {
       return (
         <g className="recharts-reference-area-label">
-          <text {...props}>{label}</text>
+          <Text {...props}>{label}</Text>
         </g>
       );
     }
