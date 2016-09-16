@@ -7,7 +7,7 @@ import { Text } from 'recharts';
 describe('<Text />', () => {
   it('Does not wrap long text if enough width', () => {
     const wrapper = shallow(
-      <Text width={144}>This is really long text</Text>
+      <Text width={200}>This is really long text</Text>
     );
 
     expect(wrapper.instance().state.wordsByLines.length).to.equal(1);
@@ -15,7 +15,7 @@ describe('<Text />', () => {
 
   it('Wraps long text if not enough width', () => {
     const wrapper = shallow(
-      <Text width={143}>This is really long text</Text>
+      <Text width={100}>This is really long text</Text>
     );
 
     expect(wrapper.instance().state.wordsByLines.length).to.equal(2);
@@ -23,7 +23,7 @@ describe('<Text />', () => {
 
   it('Wraps long text if styled and not enough room', () => {
     const wrapper = shallow(
-      <Text width={144} style={{ fontWeight: 900 }}>This is really long text</Text>
+      <Text width={200} style={{ fontSize: '2em' }}>This is really long text</Text>
     );
 
     expect(wrapper.instance().state.wordsByLines.length).to.equal(2);
