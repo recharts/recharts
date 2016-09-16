@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
 import { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import _ from 'lodash';
 
 class Text extends Component {
 
@@ -59,7 +60,7 @@ class Text extends Component {
     // Calculate length of each word to be used to determine number of words per line
     var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    Object.assign(text.style, props.style);
+    _.assign(text.style, props.style);
     svg.appendChild(text);
     document.body.appendChild(svg);
 
