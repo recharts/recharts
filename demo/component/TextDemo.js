@@ -175,7 +175,7 @@ class TextDemo extends Component {
 
         <h2>Line height</h2>
         <svg width={this.state.width} style={styles.svg}>
-          <Text x={0} width={this.state.width} verticalAnchor="start" lineHeight="2">
+          <Text x={0} width={this.state.width} verticalAnchor="start" lineHeight="2em">
             {this.state.exampleText}
           </Text>
         </svg>
