@@ -20,6 +20,7 @@ const STYLE_LIST = [
   'paddingLeft', 'paddingRight', 'paddingTop', 'paddingBottom',
   'marginLeft', 'marginRight', 'marginTop', 'marginBottom',
 ];
+const MEASUREMENT_SPAN_ID = 'recharts_measurement_span';
 
 function autoCompleteStyle(name, value) {
   if (STYLE_LIST.indexOf(name) >= 0 && value === +value) {
@@ -62,18 +63,17 @@ export const getStringSize = (text, style = {}) => {
 
   if (stringCache.widthCache[cacheKey]) { return stringCache.widthCache[cacheKey]; }
 
-  if (!stringCache.span) {
-    const span = document.createElement('span');
-    span.setAttribute('style', getStyleString(SPAN_STYLE));
-    document.body.appendChild(span);
-
-    stringCache.span = span;
+  let measurementSpan = document.getElementById(MEASUREMENT_SPAN_ID);
+  if (!measurementSpan) {
+    measurementSpan = document.createElement('span');
+    measurementSpan.setAttribute('id', MEASUREMENT_SPAN_ID);
+    document.body.appendChild(measurementSpan);
   }
 
-  stringCache.span.setAttribute('style', getStyleString({ ...SPAN_STYLE, ...style }));
-  stringCache.span.textContent = str;
+  measurementSpan.setAttribute('style', getStyleString({ ...SPAN_STYLE, ...style }));
+  measurementSpan.textContent = str;
 
-  const rect = stringCache.span.getBoundingClientRect();
+  const rect = measurementSpan.getBoundingClientRect();
   const result = { width: rect.width, height: rect.height };
 
   stringCache.widthCache[cacheKey] = result;
