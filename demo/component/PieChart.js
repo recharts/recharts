@@ -8,7 +8,7 @@ const colors = scaleOrdinal(schemeCategory10).range();
 const data01 = [
   { name: 'Group A', value: 400, v: 89 },
   { name: 'Group B', value: 300, v: 100 },
-  { name: 'Group C', value: 300, v: 200 },
+  { name: 'Group C', value: null, v: 200 },
   { name: 'Group D', value: 200, v: 20 },
   { name: 'Group E', value: 278, v: 40 },
   { name: 'Group F', value: 189, v: 60 },

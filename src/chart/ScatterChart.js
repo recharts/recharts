@@ -79,9 +79,11 @@ class ScatterChart extends Component {
 
     return data.map((entry, index) => ({
       ...entry,
-      cx: xAxis.scale(entry[xAxisDataKey]),
-      cy: yAxis.scale(entry[yAxisDataKey]),
-      size: zAxisDataKey !== undefined ? zAxis.scale(entry[zAxisDataKey]) : zAxis.range[0],
+      cx: _.isNumber(entry[xAxisDataKey]) ? xAxis.scale(entry[xAxisDataKey]) : null,
+      cy: _.isNumber(entry[yAxisDataKey]) ? yAxis.scale(entry[yAxisDataKey]) : null,
+      size: zAxisDataKey !== undefined && _.isNumber(entry[zAxisDataKey]) ?
+        zAxis.scale(entry[zAxisDataKey]) :
+        zAxis.range[0],
       payload: {
         x: entry[xAxisDataKey],
         y: entry[yAxisDataKey],

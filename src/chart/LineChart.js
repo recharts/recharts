@@ -57,15 +57,23 @@ class LineChart extends Component {
     const xTicks = getTicksOfAxis(xAxis);
     const yTicks = getTicksOfAxis(yAxis);
 
-    return data.map((entry, index) => ({
-      x: layout === 'horizontal' ?
-        xTicks[index].coordinate + bandSize / 2 :
-        xAxis.scale(entry[dataKey]),
-      y: layout === 'horizontal' ?
-        yAxis.scale(entry[dataKey]) :
-        yTicks[index].coordinate + bandSize / 2,
-      value: entry[dataKey],
-    }));
+    return data.map((entry, index) => {
+      const value = entry[dataKey];
+
+      if (layout === 'horizontal') {
+        return {
+          x: xTicks[index].coordinate + bandSize / 2,
+          y: _.isNumber(value) ? yAxis.scale(value) : null,
+          value,
+        };
+      }
+
+      return {
+        x: _.isNumber(value) ? xAxis.scale(value) : null,
+        y: yTicks[index].coordinate + bandSize / 2,
+        value,
+      };
+    });
   }
 
   renderCursor(xAxisMap, yAxisMap, offset) {
