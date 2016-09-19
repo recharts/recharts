@@ -25,9 +25,9 @@ class Scatter extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
 
-    xAxisId: PropTypes.number,
-    yAxisId: PropTypes.number,
-    zAxisId: PropTypes.number,
+    xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    zAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     line: PropTypes.oneOfType([
       PropTypes.bool, PropTypes.object, PropTypes.func, PropTypes.element,
     ]),
