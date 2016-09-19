@@ -63,13 +63,13 @@ class LineChart extends Component {
       if (layout === 'horizontal') {
         return {
           x: xTicks[index].coordinate + bandSize / 2,
-          y: _.isNumber(value) ? yAxis.scale(value) : null,
+          y: _.isNil(value) ? null : yAxis.scale(value),
           value,
         };
       }
 
       return {
-        x: _.isNumber(value) ? xAxis.scale(value) : null,
+        x: _.isNil(value) ? null : xAxis.scale(value),
         y: yTicks[index].coordinate + bandSize / 2,
         value,
       };
