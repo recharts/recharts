@@ -1,3 +1,14 @@
+## 0.14.2 (Sep 19, 2016)
+
+### Fix
+
+- Stop caching span in memory of getStringSize
+- Fix the bug of LineChart and ScaterChart when some data is null or undefined
+
+### feat
+
+- ScatterChart support for attributes using data and Cell
+
 ## 0.14.1 (Sep 12, 2016)
 
 - Fix webpack.config.js
