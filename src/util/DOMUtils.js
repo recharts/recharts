@@ -83,8 +83,6 @@ export const getStringSize = (text, style = {}) => {
     stringCache.widthCache = {};
   }
 
-  document.body.removeChild(span);
-
   return result;
 };
 
