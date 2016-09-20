@@ -5,14 +5,15 @@ import React, { PropTypes, Component } from 'react';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
-import { getPercentValue, getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
+import { getPercentValue, getBandSizeOfScale, getCategoryOffsetOfDomain,
+  getAnyElementOfObject } from '../util/DataUtils';
 import { getPresentationAttributes, findChildByType, findAllByType,
   validateWidthHeight, filterEventAttributes } from '../util/ReactUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Cell from '../component/Cell';
 import Bar from '../cartesian/Bar';
 import pureRender from '../util/PureRender';
-import { getTicksOfAxis, getStackedDataOfItem } from '../util/CartesianUtils';
+import { getCoordinateOfTicks, getTicksOfAxis, getStackedDataOfItem } from '../util/CartesianUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
 
 @AnimationDecorator
@@ -67,9 +68,11 @@ class BarChart extends Component {
     const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
     const xTicks = getTicksOfAxis(xAxis);
     const yTicks = getTicksOfAxis(yAxis);
+    const categoricalAxis = layout === 'horizontal' ? xAxis : yAxis;
     const baseValue = this.getBaseValue(xAxis, yAxis);
     const hasStack = stackedData && stackedData.length;
     const cells = findAllByType(children, Cell);
+    const categoryOffset = getCategoryOffsetOfDomain(categoricalAxis.domain);
 
     return data.map((entry, index) => {
       const value = stackedData ? stackedData[dataStartIndex + index] : [baseValue, entry[dataKey]];
@@ -79,7 +82,7 @@ class BarChart extends Component {
       let height;
 
       if (layout === 'horizontal') {
-        x = xTicks[index].coordinate + pos.offset;
+        x = getCoordinateOfTicks(xTicks, index + categoryOffset, pos.offset * 2);
         y = yAxis.scale(xAxis.orientation === 'top' ? value[0] : value[1]);
         width = pos.size;
         height = xAxis.orientation === 'top' ?
@@ -93,7 +96,7 @@ class BarChart extends Component {
         }
       } else {
         x = xAxis.scale(yAxis.orientation === 'left' ? value[0] : value[1]);
-        y = yTicks[index].coordinate + pos.offset;
+        y = getCoordinateOfTicks(yTicks, index + categoryOffset, pos.offset * 2);
         width = yAxis.orientation === 'left' ?
                 xAxis.scale(value[1]) - xAxis.scale(value[0]) :
                 xAxis.scale(value[0]) - xAxis.scale(value[1]);
