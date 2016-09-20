@@ -50,13 +50,39 @@ describe('parseSpecifiedDomain', () => {
     expect(parseSpecifiedDomain(1, domain)).to.equal(domain);
   });
 
-  it('DataUtils.parseSpecifiedDomain(["auto", "auto"], domain) should return null ', () => {
+  it('DataUtils.parseSpecifiedDomain(["auto", "auto"], domain) should return domain ', () => {
     const result = parseSpecifiedDomain(['auto', 'auto'], domain);
     expect(result).to.deep.equal(domain);
   });
 
-  it('DataUtils.parseSpecifiedDomain([-1, 120], domain) should return null ', () => {
+  it('DataUtils.parseSpecifiedDomain([-1, 120], domain) should return [-1, 120] ', () => {
     const result = parseSpecifiedDomain([-1, 120], domain);
     expect(result).to.deep.equal([-1, 120]);
+  });
+
+  const categoricalDomain = [0, 1, 2, 3, 4];
+  it('DataUtils.parseSpecifiedDomain(1, categoricalDomain) should return categoricalDomain', () => {
+    const result = parseSpecifiedDomain(1, categoricalDomain);
+    expect(result).to.deep.equal(categoricalDomain);
+  });
+
+  it('DataUtils.parseSpecifiedDomain(["auto", "auto"], categoricalDomain) should return categoricalDomain', () => {
+    const result = parseSpecifiedDomain(['auto', 'auto'], categoricalDomain);
+    expect(result).to.deep.equal(categoricalDomain);
+  });
+
+  it('DataUtils.parseSpecifiedDomain([-1, 2], categoricalDomain) should return [-1, 0, 1, 2, 3, 4]', () => {
+    const result = parseSpecifiedDomain([-1, 2], categoricalDomain);
+    expect(result).to.deep.equal([-1, 0, 1, 2, 3, 4]);
+  });
+
+  it('DataUtils.parseSpecifiedDomain([-1, 2], categoricalDomain, true) should return [-1, 0, 1, 2]', () => {
+    const result = parseSpecifiedDomain([-1, 2], categoricalDomain, true);
+    expect(result).to.deep.equal([-1, 0, 1, 2]);
+  });
+
+  it('DataUtils.parseSpecifiedDomain(["auto", "auto"], [1]) should return [1]', () => {
+    const result = parseSpecifiedDomain(['auto', 'auto'], [1]);
+    expect(result).to.deep.equal([1]);
   });
 });
