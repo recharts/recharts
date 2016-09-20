@@ -123,7 +123,7 @@ export const getBandSizeOfScale = (scale) => {
  */
 export const getCategoryOffsetOfDomain = (domain) => {
   const first = domain[0];
-  return _.isNumber(first) ? Math.max(-domain[0], 0) : 0;
+  return _.isNumber(first) ? Math.max(-first, 0) : 0;
 };
 
 export const getAnyElementOfObject = (obj) => {
