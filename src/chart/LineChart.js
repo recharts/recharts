@@ -12,7 +12,8 @@ import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { getCoordinateOfTicks, getTicksOfAxis } from '../util/CartesianUtils';
-import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
+import { getBandSizeOfScale, getCategoryOffsetOfDomain,
+  getAnyElementOfObject } from '../util/DataUtils';
 import _ from 'lodash';
 import Smooth from 'react-smooth';
 import AnimationDecorator from '../util/AnimationDecorator';
@@ -53,7 +54,9 @@ class LineChart extends Component {
   getComposedData(xAxis, yAxis, dataKey) {
     const { layout, dataStartIndex, dataEndIndex, isComposed } = this.props;
     const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
-    const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
+    const categoricalAxis = layout === 'horizontal' ? xAxis : yAxis;
+    const bandSize = getBandSizeOfScale(categoricalAxis.scale);
+    const categoryOffset = getCategoryOffsetOfDomain(categoricalAxis.domain);
     const xTicks = getTicksOfAxis(xAxis);
     const yTicks = getTicksOfAxis(yAxis);
 
@@ -62,7 +65,7 @@ class LineChart extends Component {
 
       if (layout === 'horizontal') {
         return {
-          x: getCoordinateOfTicks(xTicks, index, bandSize),
+          x: getCoordinateOfTicks(xTicks, index + categoryOffset, bandSize),
           y: _.isNumber(value) ? yAxis.scale(value) : null,
           value,
         };
@@ -70,7 +73,7 @@ class LineChart extends Component {
 
       return {
         x: _.isNumber(value) ? xAxis.scale(value) : null,
-        y: getCoordinateOfTicks(yTicks, index, bandSize),
+        y: getCoordinateOfTicks(yTicks, index + categoryOffset, bandSize),
         value,
       };
     });

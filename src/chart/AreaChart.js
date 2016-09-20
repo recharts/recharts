@@ -13,7 +13,8 @@ import { getCoordinateOfTicks, getTicksOfAxis, getStackedDataOfItem,
 import generateCategoricalChart from './generateCategoricalChart';
 import Area from '../cartesian/Area';
 import pureRender from '../util/PureRender';
-import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
+import { getBandSizeOfScale, getCategoryOffsetOfDomain,
+  getAnyElementOfObject } from '../util/DataUtils';
 import _ from 'lodash';
 import Smooth from 'react-smooth';
 import AnimationDecorator from '../util/AnimationDecorator';
@@ -58,7 +59,9 @@ class AreaChart extends Component {
     const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
     const xTicks = getTicksOfAxis(xAxis);
     const yTicks = getTicksOfAxis(yAxis);
-    const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
+    const categoricalAxis = layout === 'horizontal' ? xAxis : yAxis;
+    const bandSize = getBandSizeOfScale(categoricalAxis.scale);
+    const categoryOffset = getCategoryOffsetOfDomain(categoricalAxis.domain);
     const hasStack = stackedData && stackedData.length;
     const baseValue = this.getBaseValue(xAxis, yAxis);
 
@@ -67,7 +70,7 @@ class AreaChart extends Component {
 
       if (layout === 'horizontal') {
         return {
-          x: getCoordinateOfTicks(xTicks, index, bandSize),
+          x: getCoordinateOfTicks(xTicks, index + categoryOffset, bandSize),
           y: _.isNumber(value[1]) ? yAxis.scale(value[1]) : null,
           value,
         };
@@ -75,7 +78,7 @@ class AreaChart extends Component {
 
       return {
         x: _.isNumber(value[1]) ? xAxis.scale(value[1]) : null,
-        y: getCoordinateOfTicks(yTicks, index, bandSize),
+        y: getCoordinateOfTicks(yTicks, index + categoryOffset, bandSize),
         value,
       };
     });

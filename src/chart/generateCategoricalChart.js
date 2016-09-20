@@ -22,7 +22,8 @@ import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
 import pureRender from '../util/PureRender';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
-import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate } from '../util/DataUtils';
+import { parseSpecifiedDomain, getCategoryOffsetOfDomain,
+  getAnyElementOfObject, hasDuplicate } from '../util/DataUtils';
 import { calculateDomainOfTicks, calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
   getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
@@ -357,14 +358,17 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     /**
      * Get the content to be displayed in the tooltip
      * @param  {Array} items The instances of item
+     * @param  {Object} axis Instance of the categorical axis.
      * @return {Array}       The content of tooltip
      */
-    getTooltipContent(items) {
+    getTooltipContent(items, axis) {
       const { activeTooltipIndex, dataStartIndex, dataEndIndex } = this.state;
       const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
+      const categoryOffset = getCategoryOffsetOfDomain(axis.domain);
+      const dataIndex = activeTooltipIndex - categoryOffset;
 
-      if (activeTooltipIndex < 0 || !items || !items.length
-        || activeTooltipIndex >= data.length) {
+      if (dataIndex < 0 || !items || !items.length
+        || dataIndex >= data.length) {
         return null;
       }
 
@@ -376,8 +380,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           dataKey, unit, formatter,
           name: name || dataKey,
           color: getMainColorOfGraphicItem(child),
-          value: data[activeTooltipIndex][dataKey],
-          payload: data[activeTooltipIndex],
+          value: data[dataIndex][dataKey],
+          payload: data[dataIndex],
         };
       });
     }
@@ -678,7 +682,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         viewBox,
         active: isTooltipActive,
         label: ticks[activeTooltipIndex] && ticks[activeTooltipIndex].value,
-        payload: isTooltipActive ? this.getTooltipContent(items) : [],
+        payload: isTooltipActive ? this.getTooltipContent(items, axis) : [],
         coordinate: ticks[activeTooltipIndex] ? {
           x: layout === 'horizontal' ? ticks[activeTooltipIndex].coordinate : validateChartX,
           y: layout === 'horizontal' ? validateChartY : ticks[activeTooltipIndex].coordinate,

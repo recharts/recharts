@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { getPercentValue, validateCoordinateInRange,
   getBandSizeOfScale, getAnyElementOfObject,
-  parseSpecifiedDomain } from '../../../src/util/DataUtils';
+  parseSpecifiedDomain, getCategoryOffsetOfDomain } from '../../../src/util/DataUtils';
 
 describe('getPercentValue', () => {
   it('DataUtils.getPercentValue("25%", 1) should return 0.25 ', () => {
@@ -109,5 +109,22 @@ describe('parseSpecifiedDomain', () => {
   it('DataUtils.parseSpecifiedDomain([-1, 3], ["foo", "bar", "baz"]) should return [-1, "foo", "bar", "baz", 3]', () => {
     const result = parseSpecifiedDomain([-1, 3], ['foo', 'bar', 'baz']);
     expect(result).to.deep.equal([-1, 'foo', 'bar', 'baz', 3]);
+  });
+});
+
+describe('getCategoryOffsetOfDomain', () => {
+  it('DataUtils.getCategoryOffsetOfDomain([0, 1, 2, 3]) should return 0', () => {
+    const result = getCategoryOffsetOfDomain([0, 1, 2, 3]);
+    expect(result).to.equal(0);
+  });
+
+  it('DataUtils.getCategoryOffsetOfDomain([-2, -1, 0, 1, 2, 3]) should return 2', () => {
+    const result = getCategoryOffsetOfDomain([-2, -1, 0, 1, 2, 3]);
+    expect(result).to.equal(2);
+  });
+
+  it('DataUtils.getCategoryOffsetOfDomain([-2, -1, "foo", "bar"]) should return 2', () => {
+    const result = getCategoryOffsetOfDomain([-2, -1, 'foo', 'bar']);
+    expect(result).to.equal(2);
   });
 });

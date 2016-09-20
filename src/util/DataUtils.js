@@ -115,6 +115,16 @@ export const getBandSizeOfScale = (scale) => {
   return 0;
 };
 
+/**
+ * Returns the index offset for categories. Applicable for domains
+ * extending before the first category.
+ * @param {Array} domain Domain of the categorical axis.
+ * @return {Number} index offset of the data.
+ */
+export const getCategoryOffsetOfDomain = (domain) => {
+  const first = domain[0];
+  return _.isNumber(first) ? Math.max(-domain[0], 0) : 0;
+};
 
 export const getAnyElementOfObject = (obj) => {
   if (!obj) { return null; }
