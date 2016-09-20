@@ -121,11 +121,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      * @return {Object}      Configuration
      */
     getAxisMapByAxes(axes, items, axisType, axisIdKey, stackGroups) {
-      const { layout, children, data } = this.props;
+      const { children, data } = this.props;
       const { dataEndIndex, dataStartIndex } = this.state;
       const displayedData = data.slice(dataStartIndex, dataEndIndex + 1);
       const len = displayedData.length;
-      const isCategorial = isCategorialAxis(layout, axisType);
 
       // Eliminate duplicated axes
       const axisMap = axes.reduce((result, child) => {

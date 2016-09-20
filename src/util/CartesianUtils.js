@@ -331,7 +331,7 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
  */
 export const getCoordinateOfTicks = (ticks, index, bandSize) => {
   const tick = ticks[index];
-  return tick.coordinate + bandSize / 2;
+  return tick ? tick.coordinate + bandSize / 2 : null;
 };
 
 export const calculateActiveTickIndex = (coordinate, ticks) => {

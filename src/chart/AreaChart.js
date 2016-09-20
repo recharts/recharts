@@ -8,7 +8,7 @@ import Dot from '../shape/Dot';
 import Curve from '../shape/Curve';
 import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
-import { getTicksOfAxis, getStackedDataOfItem,
+import { getCoordinateOfTicks, getTicksOfAxis, getStackedDataOfItem,
   getMainColorOfGraphicItem } from '../util/CartesianUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Area from '../cartesian/Area';
@@ -67,7 +67,7 @@ class AreaChart extends Component {
 
       if (layout === 'horizontal') {
         return {
-          x: xTicks[index].coordinate + bandSize / 2,
+          x: getCoordinateOfTicks(xTicks, index, bandSize),
           y: _.isNumber(value[1]) ? yAxis.scale(value[1]) : null,
           value,
         };
@@ -75,7 +75,7 @@ class AreaChart extends Component {
 
       return {
         x: _.isNumber(value[1]) ? xAxis.scale(value[1]) : null,
-        y: yTicks[index].coordinate + bandSize / 2,
+        y: getCoordinateOfTicks(yTicks, index, bandSize),
         value,
       };
     });
