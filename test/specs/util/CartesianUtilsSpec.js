@@ -3,7 +3,8 @@ import {
   calculateActiveTickIndex,
   calculateDomainOfTicks,
   getDomainOfStackGroups,
-  getDomainOfDataByKey
+  getDomainOfDataByKey,
+  getCoordinateOfTicks
 } from '../../../src/util/CartesianUtils';
 
 describe('calculateActiveTickIndex', () => {
@@ -104,5 +105,22 @@ describe('getDomainOfDataByKey', () => {
       expect(getDomainOfDataByKey(data, 'actual', 'number')).to.deep.equal([35.4, 42.5]);
       expect(getDomainOfDataByKey(data, 'benchmark', 'number')).to.deep.equal([31.86, 35.4]);
     });
+  });
+});
+
+describe('getCoordinateOfTicks', () => {
+  const ticks = [
+    { coordinate: 1, value: 5 },
+    { coordinate: 17, value: 42 },
+  ];
+
+  it('should calculate the correct coordinate if the index is in range', () => {
+    expect(getCoordinateOfTicks(ticks, 0, 20)).to.equal(11);
+    expect(getCoordinateOfTicks(ticks, 1, 20)).to.equal(27);
+  });
+
+  it('should return null if the index is out of range', () => {
+    expect(getCoordinateOfTicks(ticks, -1, 20)).to.equal(null);
+    expect(getCoordinateOfTicks(ticks, 2, 20)).to.equal(null);
   });
 });
