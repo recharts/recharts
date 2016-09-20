@@ -12,6 +12,7 @@ class TextDemo extends Component {
     textAnchor: 'start',
     verticalAnchor: 'start',
     fontSize: '1em',
+    fontFamily: 'Arial',
     lineHeight: '1em',
   };
 
@@ -45,7 +46,7 @@ class TextDemo extends Component {
             lineHeight={this.state.lineHeight}
             fit={this.state.fit}
             angle={this.state.angle}
-            style={{ fontSize: this.state.fontSize }}
+            style={{ fontSize: this.state.fontSize, fontFamily: this.state.fontFamily }}
           >
             {this.state.exampleText}
           </Text>
@@ -139,6 +140,15 @@ class TextDemo extends Component {
             type="text"
             value={this.state.fontSize}
             onChange={e => this.setState({ fontSize: e.target.value })}
+          />
+        </div>
+
+        <div>
+          fontFamily:
+          <input
+            type="text"
+            value={this.state.fontFamily}
+            onChange={e => this.setState({ fontFamily: e.target.value })}
           />
         </div>
 
