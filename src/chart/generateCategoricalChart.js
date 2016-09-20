@@ -148,7 +148,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             domain = getDomainOfStackGroups(
               stackGroups[axisId].stackGroups, dataStartIndex, dataEndIndex
             );
-          } else if (isCategorial) {
+          } else if (type === 'category') {
             domain = _.range(0, len);
           } else {
             domain = getDomainOfItemsWithSameAxis(
@@ -158,10 +158,9 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           if (type === 'number') {
             // To detect wether there is any reference lines whose props alwaysShow is true
             domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
-
-            if (child.props.domain) {
-              domain = parseSpecifiedDomain(child.props.domain, domain, allowDataOverflow);
-            }
+          }
+          if (child.props.domain) {
+            domain = parseSpecifiedDomain(child.props.domain, domain, allowDataOverflow);
           }
 
           return {

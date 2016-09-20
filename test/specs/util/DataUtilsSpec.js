@@ -85,4 +85,29 @@ describe('parseSpecifiedDomain', () => {
     const result = parseSpecifiedDomain(['auto', 'auto'], [1]);
     expect(result).to.deep.equal([1]);
   });
+
+  it('DataUtils.parseSpecifiedDomain([0, 1], ["foo", "bar", "baz"]) should return ["foo", "bar", "baz"]', () => {
+    const result = parseSpecifiedDomain([0, 1], ['foo', 'bar', 'baz']);
+    expect(result).to.deep.equal(['foo', 'bar', 'baz']);
+  });
+
+  it('DataUtils.parseSpecifiedDomain([0, 1], ["foo", "bar", "baz"], true) should return ["foo", "bar"]', () => {
+    const result = parseSpecifiedDomain([0, 1], ['foo', 'bar', 'baz'], true);
+    expect(result).to.deep.equal(['foo', 'bar']);
+  });
+
+  it('DataUtils.parseSpecifiedDomain([1, 2], ["foo", "bar", "baz"]) should return ["foo", "bar", "baz"]', () => {
+    const result = parseSpecifiedDomain([1, 2], ['foo', 'bar', 'baz']);
+    expect(result).to.deep.equal(['foo', 'bar', 'baz']);
+  });
+
+  it('DataUtils.parseSpecifiedDomain([1, 2], ["foo", "bar", "baz"], true) should return ["bar", "baz"]', () => {
+    const result = parseSpecifiedDomain([1, 2], ['foo', 'bar', 'baz'], true);
+    expect(result).to.deep.equal(['bar', 'baz']);
+  });
+
+  it('DataUtils.parseSpecifiedDomain([-1, 3], ["foo", "bar", "baz"]) should return [-1, "foo", "bar", "baz", 3]', () => {
+    const result = parseSpecifiedDomain([-1, 3], ['foo', 'bar', 'baz']);
+    expect(result).to.deep.equal([-1, 'foo', 'bar', 'baz', 3]);
+  });
 });

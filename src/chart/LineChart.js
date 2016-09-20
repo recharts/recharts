@@ -11,7 +11,7 @@ import Line from '../cartesian/Line';
 import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
-import { getTicksOfAxis } from '../util/CartesianUtils';
+import { getCoordinateOfTicks, getTicksOfAxis } from '../util/CartesianUtils';
 import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
 import _ from 'lodash';
 import Smooth from 'react-smooth';
@@ -62,7 +62,7 @@ class LineChart extends Component {
 
       if (layout === 'horizontal') {
         return {
-          x: xTicks[index].coordinate + bandSize / 2,
+          x: getCoordinateOfTicks(xTicks, index, bandSize),
           y: _.isNumber(value) ? yAxis.scale(value) : null,
           value,
         };
@@ -70,7 +70,7 @@ class LineChart extends Component {
 
       return {
         x: _.isNumber(value) ? xAxis.scale(value) : null,
-        y: yTicks[index].coordinate + bandSize / 2,
+        y: getCoordinateOfTicks(yTicks, index, bandSize),
         value,
       };
     });

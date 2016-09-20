@@ -322,6 +322,18 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
   ));
 };
 
+/**
+ * Returns the coordinate of a tick at a given index or null if not found.
+ * @param {Array} ticks A list of ticks. Can be obtained using `getTicksOfAxis`.
+ * @param {Number} index Index of the tick to obtain the coordinate from.
+ * @param {Number} bandSize Size of the space reserved for one data point.
+ * @return {Number|null} Either tick coordinate or null if tick wasn't found.
+ */
+export const getCoordinateOfTicks = (ticks, index, bandSize) => {
+  const tick = ticks[index];
+  return tick.coordinate + bandSize / 2;
+};
+
 export const calculateActiveTickIndex = (coordinate, ticks) => {
   let index = -1;
   const len = ticks.length;
@@ -415,4 +427,3 @@ export const getTicksOfScale = (scale, opts) => {
 
   return null;
 };
-

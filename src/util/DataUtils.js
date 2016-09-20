@@ -46,11 +46,11 @@ export const parseSpecifiedDomain = (specifiedDomain, dataDomain, allowDataOverf
   let domain;
   let domainMin;
   let domainMax;
-  const specifiedDomainMin = specifiedDomain[0];
-  const dataDomainMin = dataDomain[0];
-  const specifiedDomainMax = _.last(specifiedDomain);
-  const dataDomainMax = _.last(dataDomain);
   const isCategorical = dataDomain.length !== 2;
+  const specifiedDomainMin = specifiedDomain[0];
+  const dataDomainMin = isCategorical ? 0 : dataDomain[0];
+  const specifiedDomainMax = specifiedDomain[1];
+  const dataDomainMax = isCategorical ? dataDomain.length - 1 : dataDomain[1];
 
   if (_.isNumber(specifiedDomainMin)) {
     domainMin = allowDataOverflow ?
@@ -75,7 +75,14 @@ export const parseSpecifiedDomain = (specifiedDomain, dataDomain, allowDataOverf
   }
 
   if (isCategorical) {
-    domain = _.range(domainMin, domainMax + 1);
+    domain = [
+      ...(domainMin < dataDomainMin ? _.range(domainMin, dataDomainMin) : []),
+      ...(allowDataOverflow ? dataDomain.slice(
+        Math.max(domainMin, dataDomainMin),
+        Math.min(domainMax, dataDomainMax) + 1
+      ) : dataDomain),
+      ...(dataDomainMax < domainMax ? _.range(dataDomainMax + 1, domainMax + 1) : []),
+    ];
   } else {
     domain = [domainMin, domainMax];
   }
