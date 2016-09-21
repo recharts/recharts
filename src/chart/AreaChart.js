@@ -68,13 +68,13 @@ class AreaChart extends Component {
       if (layout === 'horizontal') {
         return {
           x: xTicks[index].coordinate + bandSize / 2,
-          y: _.isNumber(value[1]) ? yAxis.scale(value[1]) : null,
+          y: _.isNil(value[1]) ? null : yAxis.scale(value[1]),
           value,
         };
       }
 
       return {
-        x: _.isNumber(value[1]) ? xAxis.scale(value[1]) : null,
+        x: _.isNil(value[1]) ? null : xAxis.scale(value[1]),
         y: yTicks[index].coordinate + bandSize / 2,
         value,
       };
