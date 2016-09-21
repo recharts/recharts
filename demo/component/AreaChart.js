@@ -12,6 +12,17 @@ const data = [
   { name: 'Page F', uv: 1220, pv: 3800, amt: 2500 },
   { name: 'Page G', uv: 2300, pv: 4300, amt: 2100 },
 ];
+const data01 = [
+  { day: '05-01', weather: 'sunny' },
+  { day: '05-02', weather: 'sunny' },
+  { day: '05-03', weather: 'cloudy' },
+  { day: '05-04', weather: 'rain' },
+  { day: '05-05', weather: 'rain' },
+  { day: '05-06', weather: 'cloudy' },
+  { day: '05-07', weather: 'cloudy' },
+  { day: '05-08', weather: 'sunny' },
+  { day: '05-09', weather: 'sunny' },
+];
 const data02 = [
   { name: 'Page A', uv: 4000, pv: 2400, amt: 2400 },
   { name: 'Page B', uv: 3000, pv: 1398, amt: 2210 },
@@ -20,7 +31,7 @@ const data02 = [
   { name: 'Page E', uv: 1890, pv: 4800, amt: 2181 },
 ];
 
-const initilaState = { data, data02 };
+const initilaState = { data, data01, data02 };
 
 const CustomTooltip = React.createClass({
   render() {
@@ -85,7 +96,7 @@ export default React.createClass({
   },
 
   render() {
-    const { data, data02 } = this.state;
+    const { data, data01, data02 } = this.state;
 
     return (
       <div className="area-charts">
@@ -305,6 +316,18 @@ export default React.createClass({
               fill="url(#MyGradient)"
               dot
             />
+          </AreaChart>
+        </div>
+
+        <p>AreaChart of discrete values</p>
+        <div className="area-chart-wrapper">
+          <AreaChart
+              width={400} height={400} data={data01}
+              margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+            <XAxis dataKey="day" />
+            <YAxis type="category" />
+            <Tooltip />
+            <Area type="stepAfter" dataKey="weather" stroke="#0088FE" />
           </AreaChart>
         </div>
 
