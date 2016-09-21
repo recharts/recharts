@@ -16,6 +16,7 @@ class TextDemo extends Component {
     fontFamily: 'Arial',
     lineHeight: '1em',
     showAnchor: true,
+    resizeSvg: true,
   };
 
   render() {
@@ -28,7 +29,7 @@ class TextDemo extends Component {
         width: 275,
       },
       svg: {
-        height: this.state.height,
+        height: 200,
         display: 'block',
         border: '1px solid #aaa',
         marginBottom: 10,
@@ -38,7 +39,7 @@ class TextDemo extends Component {
     return (
       <div>
         <h2>Demo</h2>
-        <svg width={this.state.width} style={styles.svg}>
+        <svg width={this.state.resizeSvg ? this.state.width : 300} style={styles.svg}>
           <Text
             x={this.state.x}
             y={this.state.y}
@@ -196,73 +197,84 @@ class TextDemo extends Component {
           </label>
         </div>
 
+        <div>
+          <label>
+            resize svg (container):
+            <input
+              type="checkbox"
+              onChange={e => this.setState({ resizeSvg: !this.state.resizeSvg })}
+              checked={this.state.resizeSvg}
+            />
+          </label>
+        </div>
+
         <hr />
 
         <h2>Simple</h2>
-        <svg width={this.state.width} style={styles.svg}>
+        <svg width={this.state.resizeSvg ? this.state.width : 300} style={styles.svg}>
           <Text x={0} width={this.state.width} verticalAnchor="start">
             {this.state.exampleText}
           </Text>
         </svg>
 
         <h2>Centered</h2>
-        <svg width={this.state.width} style={styles.svg}>
+        <svg width={this.state.resizeSvg ? this.state.width : 300} style={styles.svg}>
           <Text x={this.state.width / 2} width={this.state.width} verticalAnchor="start" textAnchor="middle">
             {this.state.exampleText}
           </Text>
         </svg>
 
         <h2>Right-aligned</h2>
-        <svg width={this.state.width} style={styles.svg}>
+        <svg width={this.state.resizeSvg ? this.state.width : 300} style={styles.svg}>
           <Text x={this.state.width} width={this.state.width} verticalAnchor="start" textAnchor="end">
             {this.state.exampleText}
           </Text>
         </svg>
 
         <h2>Line height</h2>
-        <svg width={this.state.width} style={styles.svg}>
+        <svg width={this.state.resizeSvg ? this.state.width : 300} style={styles.svg}>
           <Text x={0} width={this.state.width} verticalAnchor="start" lineHeight="2em">
             {this.state.exampleText}
           </Text>
         </svg>
 
         <h2>Styled text (fontWeight)</h2>
-        <svg width={this.state.width} style={styles.svg}>
+        <svg width={this.state.resizeSvg ? this.state.width : 300} style={styles.svg}>
           <Text x={0} width={this.state.width} verticalAnchor="start" style={{ fontWeight: 900 }}>
             {this.state.exampleText}
           </Text>
         </svg>
 
         <h2>Styled (fontSize px)</h2>
-        <svg width={this.state.width} style={styles.svg}>
+        <svg width={this.state.resizeSvg ? this.state.width : 300} style={styles.svg}>
           <Text x={0} width={this.state.width} verticalAnchor="start" style={{ fontSize: '24px' }}>
             {this.state.exampleText}
           </Text>
         </svg>
 
         <h2>Styled (fontSize em)</h2>
-        <svg width={this.state.width} style={styles.svg}>
+        <svg width={this.state.resizeSvg ? this.state.width : 300} style={styles.svg}>
           <Text x={0} width={this.state.width} verticalAnchor="start" style={{ fontSize: '1.5em' }}>
             {this.state.exampleText}
           </Text>
         </svg>
 
         <h2>Styled (fontSize rem)</h2>
-        <svg width={this.state.width} style={styles.svg}>
+        <svg width={this.state.resizeSvg ? this.state.width : 300} style={styles.svg}>
           <Text x={0} width={this.state.width} verticalAnchor="start" style={{ fontSize: '1.5rem' }}>
             {this.state.exampleText}
           </Text>
         </svg>
 
         <h2>Styled (fontSize %)</h2>
-        <svg width={this.state.width} style={styles.svg}>
+        <svg width={this.state.resizeSvg ? this.state.width : 300} style={styles.svg}>
           <Text x={0} width={this.state.width} verticalAnchor="start" style={{ fontSize: '150%' }}>
             {this.state.exampleText}
           </Text>
         </svg>
 
         <h2>Fit</h2>
-        <svg width={this.state.width} style={styles.svg}>
+        <svg width={this.state.resizeSvg ? this.state.width : 300} style={styles.svg}>
           <Text width={this.state.width} verticalAnchor="start" scaleToFit>
             {this.state.exampleText}
           </Text>
