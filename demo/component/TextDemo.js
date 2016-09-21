@@ -7,6 +7,7 @@ class TextDemo extends Component {
     x: 0,
     y: 0,
     width: 300,
+    height: 200,
     angle: 0,
     fit: false,
     textAnchor: 'start',
@@ -27,7 +28,7 @@ class TextDemo extends Component {
         width: 275,
       },
       svg: {
-        height: 200,
+        height: this.state.height,
         display: 'block',
         border: '1px solid #aaa',
         marginBottom: 10,
