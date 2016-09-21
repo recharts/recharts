@@ -14,6 +14,7 @@ class TextDemo extends Component {
     fontSize: '1em',
     fontFamily: 'Arial',
     lineHeight: '1em',
+    showAnchor: true,
   };
 
   render() {
@@ -50,6 +51,7 @@ class TextDemo extends Component {
           >
             {this.state.exampleText}
           </Text>
+          { this.state.showAnchor && <circle cx={this.state.x} cy={this.state.y} r="2" fill="red" /> }
         </svg>
 
         <div>
@@ -178,6 +180,17 @@ class TextDemo extends Component {
               type="checkbox"
               onChange={e => this.setState({ fit: !this.state.fit })}
               checked={this.state.fit}
+            />
+          </label>
+        </div>
+
+        <div>
+          <label>
+            show anchor:
+            <input
+              type="checkbox"
+              onChange={e => this.setState({ showAnchor: !this.state.showAnchor })}
+              checked={this.state.showAnchor}
             />
           </label>
         </div>
