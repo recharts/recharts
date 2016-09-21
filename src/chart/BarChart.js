@@ -86,7 +86,8 @@ class BarChart extends Component {
                 yAxis.scale(value[1]) - yAxis.scale(value[0]) :
                 yAxis.scale(value[0]) - yAxis.scale(value[1]);
         if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
-          const delta = Math.sign(height || minPointSize) * (Math.abs(minPointSize) - Math.abs(height));
+          const delta = Math.sign(height || minPointSize) *
+            (Math.abs(minPointSize) - Math.abs(height));
 
           y -= delta;
           height += delta;
@@ -100,7 +101,8 @@ class BarChart extends Component {
         height = pos.size;
 
         if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
-          const delta = Math.sign(width || minPointSize) * (Math.abs(minPointSize) - Math.abs(width));
+          const delta = Math.sign(width || minPointSize) *
+            (Math.abs(minPointSize) - Math.abs(width));
           width += delta;
         }
       }
