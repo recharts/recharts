@@ -29,7 +29,7 @@ describe('<Text />', () => {
     expect(wrapper.instance().state.wordsByLines.length).to.equal(2);
   });
 
-  it('Does not perform word length calculation if width or fit props not set', () => {
+  it('Does not perform word length calculation if width or scaleToFit props not set', () => {
     const wrapper = shallow(
       <Text>This is really long text</Text>
     );

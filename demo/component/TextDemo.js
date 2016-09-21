@@ -9,7 +9,7 @@ class TextDemo extends Component {
     width: 300,
     height: 200,
     angle: 0,
-    fit: false,
+    scaleToFit: false,
     textAnchor: 'start',
     verticalAnchor: 'start',
     fontSize: '1em',
@@ -46,7 +46,7 @@ class TextDemo extends Component {
             textAnchor={this.state.textAnchor}
             verticalAnchor={this.state.verticalAnchor}
             lineHeight={this.state.lineHeight}
-            fit={this.state.fit}
+            scaleToFit={this.state.scaleToFit}
             angle={this.state.angle}
             style={{ fontSize: this.state.fontSize, fontFamily: this.state.fontFamily }}
           >
@@ -176,11 +176,11 @@ class TextDemo extends Component {
 
         <div>
           <label>
-            fit:
+            scaleToFit:
             <input
               type="checkbox"
-              onChange={e => this.setState({ fit: !this.state.fit })}
-              checked={this.state.fit}
+              onChange={e => this.setState({ scaleToFit: !this.state.scaleToFit })}
+              checked={this.state.scaleToFit}
             />
           </label>
         </div>
@@ -263,7 +263,7 @@ class TextDemo extends Component {
 
         <h2>Fit</h2>
         <svg width={this.state.width} style={styles.svg}>
-          <Text width={this.state.width} verticalAnchor="start" fit>
+          <Text width={this.state.width} verticalAnchor="start" scaleToFit>
             {this.state.exampleText}
           </Text>
         </svg>

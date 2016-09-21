@@ -7,7 +7,7 @@ class Text extends Component {
 
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
-    fit: PropTypes.bool,
+    scaleToFit: PropTypes.bool,
     angle: PropTypes.number,
     textAnchor: PropTypes.oneOf(['start', 'middle', 'end', 'inherit']),
     verticalAnchor: PropTypes.oneOf(['start', 'middle', 'end']),
@@ -18,7 +18,7 @@ class Text extends Component {
     y: 0,
     lineHeight: '1em',
     capHeight: '0.71em', // Magic number from d3
-    fit: false,
+    scaleToFit: false,
     textAnchor: 'start',
     verticalAnchor: 'end', // Maintain compat with existing charts / default SVG behavior
   };
@@ -40,8 +40,8 @@ class Text extends Component {
   }
 
   updateWordsByLines(props, calculateWordWidths) {
-    // Only perform calculations if using features that require them (multiline, fit)
-    if (props.width || props.fit) {
+    // Only perform calculations if using features that require them (multiline, scaleToFit)
+    if (props.width || props.scaleToFit) {
       if (calculateWordWidths) {
         const { wordsWithComputedWidth, spaceWidth } = this.calculateWordWidths(props);
         this.wordsWithComputedWidth = wordsWithComputedWidth;
@@ -83,17 +83,17 @@ class Text extends Component {
   }
 
   calculateWordsByLines(wordsWithComputedWidth, spaceWidth, lineWidth) {
-    const { fit } = this.props;
+    const { scaleToFit } = this.props;
     return wordsWithComputedWidth.reduce((result, { word, width }) => {
       const currentLine = result[result.length - 1];
 
-      if (currentLine && (lineWidth == null || fit ||
+      if (currentLine && (lineWidth == null || scaleToFit ||
         (currentLine.width + width + spaceWidth) < lineWidth)) {
         // Word can be added to an existing line
         currentLine.words.push(word);
         currentLine.width += width + spaceWidth;
       } else {
-        // Add first word to line or word is too long to fit on existing line
+        // Add first word to line or word is too long to scaleToFit on existing line
         const newLine = { words: [word], width };
         result.push(newLine);
       }
@@ -106,7 +106,7 @@ class Text extends Component {
     const {
       textAnchor,
       verticalAnchor,
-      fit,
+      scaleToFit,
       angle,
       lineHeight,
       capHeight,
@@ -131,7 +131,7 @@ class Text extends Component {
     }
 
     const transforms = [];
-    if (fit) {
+    if (scaleToFit) {
       const lineWidth = wordsByLines[0].width;
       transforms.push(`scale(${this.props.width / lineWidth})`);
     }
