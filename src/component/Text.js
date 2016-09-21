@@ -85,18 +85,15 @@ class Text extends Component {
   calculateWordsByLines(wordsWithComputedWidth, spaceWidth, lineWidth) {
     const { fit } = this.props;
     return wordsWithComputedWidth.reduce((result, { word, width }) => {
-      const currentLine = result[result.length - 1] || { words: [], width: 0 };
+      const currentLine = result[result.length - 1];
 
-      if (currentLine.words.length === 0) {
-        // First word on line
-        const newLine = { words: [word], width };
-        result.push(newLine);
-      } else if (lineWidth == null || fit || (currentLine.width + width + spaceWidth) < lineWidth) {
+      if (currentLine && (lineWidth == null || fit ||
+        (currentLine.width + width + spaceWidth) < lineWidth)) {
         // Word can be added to an existing line
         currentLine.words.push(word);
         currentLine.width += width + spaceWidth;
       } else {
-        // Word is too long to fit on existing line
+        // Add first word to line or word is too long to fit on existing line
         const newLine = { words: [word], width };
         result.push(newLine);
       }
