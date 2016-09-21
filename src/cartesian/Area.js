@@ -266,7 +266,7 @@ class Area extends Component {
       labelItem = (
         <Text
           key={props.key}
-          {...getPresentationAttributes(props)}
+          {...props}
           className="recharts-area-label"
         >
           {_.isArray(value) ? value[1] : value}

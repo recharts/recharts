@@ -129,7 +129,7 @@ class PolarAngleAxis extends Component {
     } else {
       tickItem = (
         <Text
-          {...getPresentationAttributes(props)}
+          {...props}
           className="recharts-polar-angle-axis-tick-value"
         >
           {value}

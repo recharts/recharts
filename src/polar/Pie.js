@@ -262,7 +262,7 @@ class Pie extends Component {
 
     return (
       <Text
-        {...getPresentationAttributes(props)}
+        {...props}
         alignmentBaseline="middle"
         className="recharts-pie-label-text"
       >

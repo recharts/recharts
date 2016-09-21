@@ -128,7 +128,7 @@ class Radar extends Component {
       labelItem = (
         <Text
           key={props.key}
-          {...getPresentationAttributes(props)}
+          {...props}
           className="recharts-radar-label"
         >
           {value}

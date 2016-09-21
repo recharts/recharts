@@ -147,7 +147,7 @@ class Bar extends Component {
     } else {
       labelItem = (
         <Text
-          {...getPresentationAttributes(props)}
+          {...props}
           key={props.key}
           className="recharts-bar-label"
         >

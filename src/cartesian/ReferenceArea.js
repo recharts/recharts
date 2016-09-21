@@ -110,7 +110,7 @@ class ReferenceArea extends Component {
   renderLabel({ x, y, width, height }) {
     const { label, stroke } = this.props;
     const props = {
-      ...getPresentationAttributes(label),
+      ...label,
       stroke: 'none',
       fill: stroke,
       x: x + width / 2,

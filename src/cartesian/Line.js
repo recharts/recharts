@@ -182,7 +182,7 @@ class Line extends Component {
       labelItem = (
         <Text
           key={props.key}
-          {...getPresentationAttributes(props)}
+          {...props}
           className="recharts-line-label"
         >
           {value}

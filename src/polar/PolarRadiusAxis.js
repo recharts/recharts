@@ -118,7 +118,7 @@ class PolarRadiusAxis extends Component {
     } else {
       tickItem = (
         <Text
-          {...getPresentationAttributes(props)}
+          {...props}
           className="recharts-polar-radius-axis-tick-value"
         >
           {value}
@@ -182,7 +182,7 @@ class PolarRadiusAxis extends Component {
     } else if (_.isString(label) || _.isNumber(label)) {
       return (
         <g className="recharts-polar-radius-axis-label">
-          <Text {...getPresentationAttributes(props)}>{label}</Text>
+          <Text {...props}>{label}</Text>
         </g>
       );
     }

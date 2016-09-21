@@ -263,7 +263,7 @@ class CartesianAxis extends Component {
     } else {
       tickItem = (
         <Text
-          {...getPresentationAttributes(props)}
+          {...props}
           className="recharts-cartesian-axis-tick-value"
         >
           {value}
