@@ -62,8 +62,8 @@ class Text extends Component {
 
   calculateWordWidths(props) {
     // Calculate length of each word to be used to determine number of words per line
-    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     _.assign(text.style, props.style);
     svg.appendChild(text);
     document.body.appendChild(svg);
