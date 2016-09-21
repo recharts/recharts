@@ -115,16 +115,18 @@ class Text extends Component {
     const { wordsByLines } = this.state;
     const { x, y } = textProps;
 
-    let dy;
+    let startDy;
     switch (verticalAnchor) {
       case 'start':
-        dy = reduceCSSCalc(`calc(${capHeight})`);
+        startDy = reduceCSSCalc(`calc(${capHeight})`);
         break;
       case 'middle':
-        dy = reduceCSSCalc(`calc(${capHeight} / 2)`);
+        startDy = reduceCSSCalc(
+          `calc(${(wordsByLines.length - 1) / 2} * -${lineHeight} + (${capHeight} / 2))`
+        );
         break;
       default:
-        dy = 0;
+        startDy = reduceCSSCalc(`calc(${wordsByLines.length - 1} * -${lineHeight})`);
         break;
     }
 
@@ -141,12 +143,10 @@ class Text extends Component {
     }
 
     return (
-      <text dy={dy} textAnchor={textAnchor} {...textProps}>
+      <text textAnchor={textAnchor} {...textProps}>
       {
-        wordsByLines.length === 1 ?
-        wordsByLines[0].words.join(' ') :
         wordsByLines.map((line, index) => (
-          <tspan x={x} dy={index ? lineHeight : undefined} key={index}>
+          <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={index}>
             {line.words.join(' ')}
           </tspan>
         ))
