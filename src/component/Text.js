@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
-import { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
+import classNames from 'classnames';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import _ from 'lodash';
 
 class Text extends Component {
@@ -110,6 +111,7 @@ class Text extends Component {
       angle,
       lineHeight,
       capHeight,
+      className,
       ...textProps,
     } = this.props;
     const { wordsByLines } = this.state;
@@ -143,7 +145,11 @@ class Text extends Component {
     }
 
     return (
-      <text textAnchor={textAnchor} {...textProps}>
+      <text
+        {...getPresentationAttributes(textProps)}
+        className={classNames('recharts-text', className)}
+        textAnchor={textAnchor}
+      >
       {
         wordsByLines.map((line, index) => (
           <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={index}>
