@@ -7,6 +7,7 @@ import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import Dot from '../shape/Dot';
 import Polygon from '../shape/Polygon';
+import Text from '../component/Text';
 import { polarToCartesian } from '../util/PolarUtils';
 import _ from 'lodash';
 
@@ -127,12 +128,12 @@ class PolarAngleAxis extends Component {
       tickItem = option(props);
     } else {
       tickItem = (
-        <text
-          {...getPresentationAttributes(props)}
+        <Text
+          {...props}
           className="recharts-polar-angle-axis-tick-value"
         >
           {value}
-        </text>
+        </Text>
       );
     }
 

@@ -8,6 +8,7 @@ export Legend from './component/Legend';
 export Tooltip from './component/Tooltip';
 export ResponsiveContainer from './component/ResponsiveContainer';
 export Cell from './component/Cell';
+export Text from './component/Text';
 
 export Sector from './shape/Sector';
 export Curve from './shape/Curve';

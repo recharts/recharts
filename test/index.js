@@ -38,6 +38,7 @@ require('./specs/component/CellSpec');
 require('./specs/component/LegendSpec');
 require('./specs/component/TooltipSpec');
 require('./specs/component/ResponsiveContainerSpec');
+require('./specs/component/TextSpec');
 
 // shape
 require('./specs/shape/CrossSpec');

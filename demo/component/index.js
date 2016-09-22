@@ -7,6 +7,7 @@ import PolarGrid from './PolarGrid';
 import PolarRadiusAxis from './PolarRadiusAxis';
 import PolarAngleAxis from './PolarAngleAxis';
 import Brush from './BrushDemo';
+import Text from './TextDemo';
 
 import Curve from './Curve';
 import Rectangle from './Rectangle';
@@ -52,6 +53,7 @@ export default {
 
   component: {
     Legend,
+    Text,
   },
 
   shape: {

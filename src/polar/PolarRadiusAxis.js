@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
+import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import _ from 'lodash';
@@ -116,12 +117,12 @@ class PolarRadiusAxis extends Component {
       tickItem = option(props);
     } else {
       tickItem = (
-        <text
-          {...getPresentationAttributes(props)}
+        <Text
+          {...props}
           className="recharts-polar-radius-axis-tick-value"
         >
           {value}
-        </text>
+        </Text>
       );
     }
 
@@ -181,7 +182,7 @@ class PolarRadiusAxis extends Component {
     } else if (_.isString(label) || _.isNumber(label)) {
       return (
         <g className="recharts-polar-radius-axis-label">
-          <text {...getPresentationAttributes(props)}>{label}</text>
+          <Text {...props}>{label}</Text>
         </g>
       );
     }

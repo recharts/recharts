@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import Layer from '../container/Layer';
 import Sector from '../shape/Sector';
 import Curve from '../shape/Curve';
+import Text from '../component/Text';
 import Animate from 'react-smooth';
 import _ from 'lodash';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
@@ -260,13 +261,13 @@ class Pie extends Component {
     }
 
     return (
-      <text
-        {...getPresentationAttributes(props)}
+      <Text
+        {...props}
         alignmentBaseline="middle"
         className="recharts-pie-label-text"
       >
         {label}
-      </text>
+      </Text>
     );
   }
 

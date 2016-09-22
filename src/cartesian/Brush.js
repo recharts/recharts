@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { scalePoint } from 'd3-scale';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
+import Text from '../component/Text';
 import _ from 'lodash';
 
 @pureRender
@@ -341,7 +342,7 @@ class Brush extends Component {
 
     return (
       <Layer className="recharts-brush-texts">
-        <text
+        <Text
           textAnchor="end"
           style={style}
           dy={offset}
@@ -349,8 +350,8 @@ class Brush extends Component {
           y={y + height / 2}
         >
           {this.getTextOfTick(startIndex)}
-        </text>
-        <text
+        </Text>
+        <Text
           textAnchor="start"
           style={style}
           dy={offset}
@@ -358,7 +359,7 @@ class Brush extends Component {
           y={y + height / 2}
         >
           {this.getTextOfTick(endIndex)}
-        </text>
+        </Text>
       </Layer>
     );
   }

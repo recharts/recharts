@@ -8,6 +8,7 @@ import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/Reac
 import Polygon from '../shape/Polygon';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
+import Text from '../component/Text';
 import Animate from 'react-smooth';
 import _ from 'lodash';
 
@@ -125,13 +126,13 @@ class Radar extends Component {
       labelItem = option(props);
     } else {
       labelItem = (
-        <text
+        <Text
           key={props.key}
-          {...getPresentationAttributes(props)}
+          {...props}
           className="recharts-radar-label"
         >
           {value}
-        </text>
+        </Text>
       );
     }
 

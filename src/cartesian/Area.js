@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
+import Text from '../component/Text';
 import Animate from 'react-smooth';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
@@ -263,13 +264,13 @@ class Area extends Component {
       labelItem = option(props);
     } else {
       labelItem = (
-        <text
+        <Text
           key={props.key}
-          {...getPresentationAttributes(props)}
+          {...props}
           className="recharts-area-label"
         >
           {_.isArray(value) ? value[1] : value}
-        </text>
+        </Text>
       );
     }
 
