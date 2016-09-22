@@ -3,7 +3,7 @@ import EventEmitter from 'events';
 const eventCenter = new EventEmitter();
 
 if (eventCenter.setMaxListeners) {
-  eventCenter.setMaxListeners(20);
+  eventCenter.setMaxListeners(10);
 }
 
 export { eventCenter };

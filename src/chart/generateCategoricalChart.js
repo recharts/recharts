@@ -40,7 +40,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     static displayName = getDisplayName(ChartComponent);
 
     static propTypes = {
-      syncId: PropTypes.string,
+      syncId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       width: PropTypes.number,
       height: PropTypes.number,
       data: PropTypes.arrayOf(PropTypes.object),
@@ -74,17 +74,29 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     }
 
     componentDidMount() {
-      eventCenter.on(SYNC_EVENT, this.handleReceiveSyncEvent);
+      if (!_.isNil(this.props.syncId)) {
+        this.addListener();
+      }
     }
 
     componentWillReceiveProps(nextProps) {
       if (nextProps.data !== this.props.data) {
         this.setState(this.createDefaultState(nextProps));
       }
+      // add syncId
+      if (_.isNil(this.props.syncId) && !_.isNil(nextProps.syncId)) {
+        this.addListener();
+      }
+      // remove syncId
+      if (!_.isNil(this.props.syncId) && _.isNil(nextProps.syncId)) {
+        this.removeListener();
+      }
     }
 
     componentWillUnmount() {
-      eventCenter.removeListener(SYNC_EVENT, this.handleReceiveSyncEvent);
+      if (!_.isNil(this.props.syncId)) {
+        this.removeListener();
+      }
     }
     /**
    * Get the configuration of all x-axis or y-axis
@@ -383,6 +395,21 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         };
       });
     }
+    /* eslint-disable  no-underscore-dangle */
+    addListener() {
+      eventCenter.on(SYNC_EVENT, this.handleReceiveSyncEvent);
+
+      if (eventCenter.setMaxListeners && eventCenter._maxListeners) {
+        eventCenter.setMaxListeners(eventCenter._maxListeners + 1);
+      }
+    }
+    removeListener() {
+      eventCenter.removeListener(SYNC_EVENT, this.handleReceiveSyncEvent);
+
+      if (eventCenter.setMaxListeners && eventCenter._maxListeners) {
+        eventCenter.setMaxListeners(eventCenter._maxListeners - 1);
+      }
+    }
     /**
      * Returns default, reset state for the categorical chart.
      * @param {Object} props Props object to use when creating the default state
@@ -558,7 +585,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     triggerSyncEvent(data) {
       const { syncId } = this.props;
 
-      if (syncId) {
+      if (!_.isNil(syncId)) {
         eventCenter.emit(SYNC_EVENT, syncId, this.uniqueChartId, data);
       }
     }
