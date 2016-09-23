@@ -1,3 +1,19 @@
+## 0.15.0 (Sep 23, 2016)
+
+### feat
+
+- New Component `Text`
+
+### refactor
+
+- Fix possible memory leak warning of events
+
+### fix
+
+- minPointSize working when value is 0
+- Restored support for discrete values in Line and Area charts
+- Allowed for strings to be used as axis id in the ScatterChart
+
 ## 0.14.2 (Sep 19, 2016)
 
 ### Fix
