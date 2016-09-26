@@ -1,3 +1,9 @@
+## 0.15.1 (Sep 26, 2016)
+
+### fix
+
+- Fix label/tick vertical alignment
+
 ## 0.15.0 (Sep 23, 2016)
 
 ### feat
