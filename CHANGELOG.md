@@ -2,7 +2,7 @@
 
 ### fix
 
-- Fix label/tick vertical alignment
+- Fix label/tick vertical alignment of Text
 
 ## 0.15.0 (Sep 23, 2016)
 
