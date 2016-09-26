@@ -27,7 +27,7 @@ import { parseSpecifiedDomain, getCategoryOffsetOfDomain,
 import { calculateDomainOfTicks, calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
   getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
-  getStackGroupsByAxisId, getTicksOfAxis, isCategorialAxis, getTicksOfScale,
+  getStackGroupsByAxisId, getTicksOfAxis, isCategoricalAxis, getTicksOfScale,
 } from '../util/CartesianUtils';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
 
@@ -126,7 +126,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { dataEndIndex, dataStartIndex } = this.state;
       const displayedData = data.slice(dataStartIndex, dataEndIndex + 1);
       const len = displayedData.length;
-      const isCategorial = isCategorialAxis(layout, axisType);
+      const isCategorical = isCategoricalAxis(layout, axisType);
 
       // Eliminate duplicated axes
       const axisMap = axes.reduce((result, child) => {
@@ -149,7 +149,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             domain = getDomainOfStackGroups(
               stackGroups[axisId].stackGroups, dataStartIndex, dataEndIndex
             );
-          } else if (isCategorial) {
+          } else if (isCategorical) {
             domain = _.range(0, len);
           } else {
             domain = getDomainOfItemsWithSameAxis(
@@ -161,7 +161,9 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
           }
           if (child.props.domain) {
-            domain = parseSpecifiedDomain(child.props.domain, domain, allowDataOverflow);
+            domain = parseSpecifiedDomain(
+                child.props.domain, domain, allowDataOverflow, isCategorical
+            );
           }
 
           return {
@@ -196,7 +198,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { dataEndIndex, dataStartIndex } = this.state;
       const displayedData = data.slice(dataStartIndex, dataEndIndex + 1);
       const len = displayedData.length;
-      const isCategorial = isCategorialAxis(layout, axisType);
+      const isCategorical = isCategoricalAxis(layout, axisType);
       let index = -1;
 
       // The default type of x-axis is category axis,
@@ -210,7 +212,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           index++;
           let domain;
 
-          if (isCategorial) {
+          if (isCategorical) {
             domain = _.range(0, len);
           } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack) {
             domain = getDomainOfStackGroups(
@@ -223,7 +225,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
                 displayedData,
                 items.filter(entry => entry.props[axisIdKey] === axisId), 'number'
               ),
-              Axis.defaultProps.allowDataOverflow
+              Axis.defaultProps.allowDataOverflow,
+              isCategorical
             );
             domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
           }

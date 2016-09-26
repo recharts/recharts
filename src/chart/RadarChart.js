@@ -134,7 +134,7 @@ class RadarChart extends Component {
 
       return [Math.min(prev[0], currentMin), Math.max(prev[1], currentMax)];
     }, [Infinity, -Infinity]);
-    const finalDomain = parseSpecifiedDomain(domain, extent, allowDataOverflow);
+    const finalDomain = parseSpecifiedDomain(domain, extent, allowDataOverflow, false);
 
     if (domain && (domain[0] === 'auto' || domain[1] === 'auto')) {
       return getNiceTickValues(finalDomain, tickCount);

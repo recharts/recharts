@@ -255,7 +255,7 @@ export const getDomainOfItemsWithSameAxis = (data, items, type) => {
   }, []);
 };
 
-export const isCategorialAxis = (layout, axisType) => (
+export const isCategoricalAxis = (layout, axisType) => (
   (layout === 'horizontal' && axisType === 'xAxis') ||
   (layout === 'vertical' && axisType === 'yAxis')
 );

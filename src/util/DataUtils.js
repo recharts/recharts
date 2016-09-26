@@ -39,14 +39,15 @@ export const getPercentValue = (percent, totalValue, defaultValue = 0, validate 
 const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([\d]+)$/;
 const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([\d]+)$/;
 
-export const parseSpecifiedDomain = (specifiedDomain, dataDomain, allowDataOverflow) => {
+export const parseSpecifiedDomain = (
+    specifiedDomain, dataDomain, allowDataOverflow, isCategorical
+) => {
   if (!_.isArray(specifiedDomain)) {
     return dataDomain;
   }
   let domain;
   let domainMin;
   let domainMax;
-  const isCategorical = dataDomain.length !== 2;
   const specifiedDomainMin = specifiedDomain[0];
   const dataDomainMin = isCategorical ? 0 : dataDomain[0];
   const specifiedDomainMax = specifiedDomain[1];
