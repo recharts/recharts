@@ -345,12 +345,14 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const pos = layout === 'horizontal' ? e.chartX : e.chartY;
       const axis = getAnyElementOfObject(axisMap);
       const ticks = getTicksOfAxis(axis, false, true);
+      const categoryOffset = getCategoryOffsetOfDomain(axis.domain);
       const activeIndex = calculateActiveTickIndex(pos, ticks);
 
       if (activeIndex >= 0) {
         return {
           ...e,
           activeTooltipIndex: activeIndex,
+          activePointIndex: activeIndex - categoryOffset,
         };
       }
 
@@ -363,13 +365,11 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      * @return {Array}       The content of tooltip
      */
     getTooltipContent(items, axis) {
-      const { activeTooltipIndex, dataStartIndex, dataEndIndex } = this.state;
+      const { activeTooltipIndex, activePointIndex, dataStartIndex, dataEndIndex } = this.state;
       const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
-      const categoryOffset = getCategoryOffsetOfDomain(axis.domain);
-      const dataIndex = activeTooltipIndex - categoryOffset;
 
-      if (dataIndex < 0 || !items || !items.length
-        || dataIndex >= data.length) {
+      if (activePointIndex < 0 || !items || !items.length
+        || activePointIndex >= data.length) {
         return null;
       }
 
@@ -381,8 +381,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           dataKey, unit, formatter,
           name: name || dataKey,
           color: getMainColorOfGraphicItem(child),
-          value: data[dataIndex][dataKey],
-          payload: data[dataIndex],
+          value: data[activePointIndex][dataKey],
+          payload: data[activePointIndex],
         };
       });
     }
@@ -398,6 +398,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         dataStartIndex: 0,
         dataEndIndex: (props.data && (props.data.length - 1)) || 0,
         activeTooltipIndex: -1,
+        activePointIndex: -1,
         isTooltipActive: false,
       };
     }

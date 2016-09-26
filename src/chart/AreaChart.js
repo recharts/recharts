@@ -31,6 +31,7 @@ class AreaChart extends Component {
     data: PropTypes.array,
     isTooltipActive: PropTypes.bool,
     activeTooltipIndex: PropTypes.number,
+    activePointIndex: PropTypes.number,
     xAxisMap: PropTypes.object,
     yAxisMap: PropTypes.object,
     offset: PropTypes.object,
@@ -180,7 +181,7 @@ class AreaChart extends Component {
    * @return {ReactComponent} The instances of Area
    */
   renderItems(items, xAxisMap, yAxisMap, offset, stackGroups) {
-    const { children, layout, isTooltipActive, activeTooltipIndex } = this.props;
+    const { children, layout, isTooltipActive, activePointIndex } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];
@@ -195,7 +196,7 @@ class AreaChart extends Component {
       const composeData = this.getComposedData(
         xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey, stackedData
       );
-      const activePoint = composeData.points && composeData.points[activeTooltipIndex];
+      const activePoint = composeData.points && composeData.points[activePointIndex];
 
       if (hasDot && activeDot && activePoint) {
         const dotProps = {

@@ -31,6 +31,7 @@ class LineChart extends Component {
     data: PropTypes.array,
     isTooltipActive: PropTypes.bool,
     activeTooltipIndex: PropTypes.number,
+    activePointIndex: PropTypes.number,
     xAxisMap: PropTypes.object,
     yAxisMap: PropTypes.object,
     offset: PropTypes.object,
@@ -140,7 +141,7 @@ class LineChart extends Component {
    * @return {ReactComponent}  All the instances of Line
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
-    const { children, layout, isTooltipActive, activeTooltipIndex, animationId } = this.props;
+    const { children, layout, isTooltipActive, activePointIndex, animationId } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];
@@ -148,7 +149,7 @@ class LineChart extends Component {
     const lineItems = items.map((child, i) => {
       const { xAxisId, yAxisId, dataKey, stroke, activeDot } = child.props;
       const points = this.getComposedData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey);
-      const activePoint = points[activeTooltipIndex];
+      const activePoint = points[activePointIndex];
 
       if (hasDot && activeDot && activePoint) {
         const dotProps = {

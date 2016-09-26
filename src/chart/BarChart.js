@@ -29,6 +29,7 @@ class BarChart extends Component {
     data: PropTypes.array,
     isTooltipActive: PropTypes.bool,
     activeTooltipIndex: PropTypes.number,
+    activePointIndex: PropTypes.number,
     xAxisMap: PropTypes.object,
     yAxisMap: PropTypes.object,
     offset: PropTypes.object,
