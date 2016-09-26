@@ -124,7 +124,8 @@ class ScatterChart extends Component {
       const domain = parseSpecifiedDomain(
         axis.props.domain,
         this.getDomain(items, axis.props.dataKey, axis.props[`${axisType}Id`], axisType),
-        axis.props.allowDataOverflow
+        axis.props.allowDataOverflow,
+        false
       );
 
       return {

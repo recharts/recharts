@@ -255,7 +255,7 @@ export const getDomainOfItemsWithSameAxis = (data, items, type) => {
   }, []);
 };
 
-export const isCategorialAxis = (layout, axisType) => (
+export const isCategoricalAxis = (layout, axisType) => (
   (layout === 'horizontal' && axisType === 'xAxis') ||
   (layout === 'vertical' && axisType === 'yAxis')
 );
@@ -320,6 +320,18 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
       value: duplicateDomain ? duplicateDomain[entry] : entry,
     }
   ));
+};
+
+/**
+ * Returns the coordinate of a tick at a given index or null if not found.
+ * @param {Array} ticks A list of ticks. Can be obtained using `getTicksOfAxis`.
+ * @param {Number} index Index of the tick to obtain the coordinate from.
+ * @param {Number} bandSize Size of the space reserved for one data point.
+ * @return {Number|null} Either tick coordinate or null if tick wasn't found.
+ */
+export const getCoordinateOfTicks = (ticks, index, bandSize) => {
+  const tick = ticks[index];
+  return tick ? tick.coordinate + bandSize / 2 : null;
 };
 
 export const calculateActiveTickIndex = (coordinate, ticks) => {
@@ -415,4 +427,3 @@ export const getTicksOfScale = (scale, opts) => {
 
   return null;
 };
-

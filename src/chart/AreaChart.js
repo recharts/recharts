@@ -8,12 +8,13 @@ import Dot from '../shape/Dot';
 import Curve from '../shape/Curve';
 import { getPresentationAttributes, findChildByType,
   findAllByType, validateWidthHeight } from '../util/ReactUtils';
-import { getTicksOfAxis, getStackedDataOfItem,
+import { getCoordinateOfTicks, getTicksOfAxis, getStackedDataOfItem,
   getMainColorOfGraphicItem } from '../util/CartesianUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Area from '../cartesian/Area';
 import pureRender from '../util/PureRender';
-import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
+import { getBandSizeOfScale, getCategoryOffsetOfDomain,
+  getAnyElementOfObject } from '../util/DataUtils';
 import _ from 'lodash';
 import Smooth from 'react-smooth';
 import AnimationDecorator from '../util/AnimationDecorator';
@@ -30,6 +31,7 @@ class AreaChart extends Component {
     data: PropTypes.array,
     isTooltipActive: PropTypes.bool,
     activeTooltipIndex: PropTypes.number,
+    activePointIndex: PropTypes.number,
     xAxisMap: PropTypes.object,
     yAxisMap: PropTypes.object,
     offset: PropTypes.object,
@@ -58,7 +60,9 @@ class AreaChart extends Component {
     const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
     const xTicks = getTicksOfAxis(xAxis);
     const yTicks = getTicksOfAxis(yAxis);
-    const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
+    const categoricalAxis = layout === 'horizontal' ? xAxis : yAxis;
+    const bandSize = getBandSizeOfScale(categoricalAxis.scale);
+    const categoryOffset = getCategoryOffsetOfDomain(categoricalAxis.domain);
     const hasStack = stackedData && stackedData.length;
     const baseValue = this.getBaseValue(xAxis, yAxis);
 
@@ -67,7 +71,7 @@ class AreaChart extends Component {
 
       if (layout === 'horizontal') {
         return {
-          x: xTicks[index].coordinate + bandSize / 2,
+          x: getCoordinateOfTicks(xTicks, index + categoryOffset, bandSize),
           y: _.isNil(value[1]) ? null : yAxis.scale(value[1]),
           value,
         };
@@ -75,7 +79,7 @@ class AreaChart extends Component {
 
       return {
         x: _.isNil(value[1]) ? null : xAxis.scale(value[1]),
-        y: yTicks[index].coordinate + bandSize / 2,
+        y: getCoordinateOfTicks(yTicks, index + categoryOffset, bandSize),
         value,
       };
     });
@@ -177,7 +181,7 @@ class AreaChart extends Component {
    * @return {ReactComponent} The instances of Area
    */
   renderItems(items, xAxisMap, yAxisMap, offset, stackGroups) {
-    const { children, layout, isTooltipActive, activeTooltipIndex } = this.props;
+    const { children, layout, isTooltipActive, activePointIndex } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];
@@ -192,7 +196,7 @@ class AreaChart extends Component {
       const composeData = this.getComposedData(
         xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey, stackedData
       );
-      const activePoint = composeData.points && composeData.points[activeTooltipIndex];
+      const activePoint = composeData.points && composeData.points[activePointIndex];
 
       if (hasDot && activeDot && activePoint) {
         const dotProps = {
