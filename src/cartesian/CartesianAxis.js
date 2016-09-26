@@ -192,24 +192,24 @@ class CartesianAxis extends Component {
     return textAnchor;
   }
 
-  getDy() {
+  getTickVerticalAnchor() {
     const { orientation } = this.props;
-    let dy = 0;
+    let verticalAnchor = 'end';
 
     switch (orientation) {
       case 'left':
       case 'right':
-        dy = 8;
+        verticalAnchor = 'middle';
         break;
       case 'top':
-        dy = -2;
+        verticalAnchor = 'end';
         break;
       default:
-        dy = 15;
+        verticalAnchor = 'start';
         break;
     }
 
-    return dy;
+    return verticalAnchor;
   }
 
   getLabelProps() {
@@ -278,6 +278,7 @@ class CartesianAxis extends Component {
     const { ticks, tickLine, stroke, tick, tickFormatter } = this.props;
     const finalTicks = CartesianAxis.getTicks(this.props);
     const textAnchor = this.getTickTextAnchor();
+    const verticalAnchor = this.getTickVerticalAnchor();
     const axisProps = getPresentationAttributes(this.props);
     const customTickProps = getPresentationAttributes(tick);
     const tickLineProps = {
@@ -286,7 +287,8 @@ class CartesianAxis extends Component {
     const items = finalTicks.map((entry, i) => {
       const lineCoord = this.getTickLineCoord(entry);
       const tickProps = {
-        dy: this.getDy(entry), textAnchor,
+        textAnchor,
+        verticalAnchor,
         ...axisProps,
         stroke: 'none', fill: stroke,
         ...customTickProps,

@@ -344,8 +344,8 @@ class Brush extends Component {
       <Layer className="recharts-brush-texts">
         <Text
           textAnchor="end"
+          verticalAnchor="middle"
           style={style}
-          dy={offset}
           x={Math.min(startX, endX) - offset}
           y={y + height / 2}
         >
@@ -353,8 +353,8 @@ class Brush extends Component {
         </Text>
         <Text
           textAnchor="start"
+          verticalAnchor="middle"
           style={style}
-          dy={offset}
           x={Math.max(startX, endX) + travellerWidth + offset}
           y={y + height / 2}
         >
