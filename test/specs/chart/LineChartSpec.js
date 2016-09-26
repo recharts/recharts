@@ -48,6 +48,7 @@ describe('<LineChart />', () => {
     wrapper.setState({
       isTooltipActive: true,
       activeTooltipIndex: 4,
+      activePointIndex: 4,
       activeTooltipLabel: 4,
       activeTooltipCoord: {
         x: 95,
