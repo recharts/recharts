@@ -69,6 +69,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     constructor(props) {
       super(props);
       this.state = this.createDefaultState(this.props);
+      this.state = { ...this.state,
+				...this.updateStateOfAxisMapsOffsetAndStackGroups(props) };
       this.validateAxes();
       this.uniqueChartId = _.uniqueId('recharts');
     }
@@ -81,7 +83,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     componentWillReceiveProps(nextProps) {
       if (nextProps.data !== this.props.data) {
-        this.setState(this.createDefaultState(nextProps));
+        this.setState({ ...this.createDefaultState(nextProps),
+					...this.updateStateOfAxisMapsOffsetAndStackGroups(nextProps) });
       }
       // add syncId
       if (_.isNil(this.props.syncId) && !_.isNil(nextProps.syncId)) {
@@ -98,6 +101,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         this.removeListener();
       }
     }
+
     /**
    * Get the configuration of all x-axis or y-axis
    * @param  {String} axisType    The type of axis
@@ -395,6 +399,41 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         };
       });
     }
+
+		/**
+		 * The AxisMaps are expensive to render on large data sets
+		 * so provide the ability to store them in state and only update them when necessary
+		 * they are dependent upon the start and end index of
+		 * the brush so it's important that this method is called _after_
+		 * the state is updated with any new start/end indices
+		 *
+		 * @param {Object} props The props object to be used for updating the axismaps
+		 * @return {Object} state New state to set
+		 */
+    updateStateOfAxisMapsOffsetAndStackGroups(props) {
+      console.log('Calling updateStateOfAxisMapsOffsetAndStackGroups');
+      const { data } = props;
+      if (!validateWidthHeight({ props }) || !data || !data.length) { return null; }
+
+      const { children, layout, stackOffset } = props;
+      const numericIdName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
+      const cateIdName = layout === 'horizontal' ? 'xAxis' : 'yAxis';
+      const items = findAllByType(children, GraphicalChild);
+      const stackGroups = getStackGroupsByAxisId(
+        data, items, `${numericIdName}Id`, `${cateIdName}Id`, stackOffset
+      );
+
+      let xAxisMap = this.getAxisMap('xAxis', items, numericIdName === 'xAxis' && stackGroups);
+      let yAxisMap = this.getAxisMap('yAxis', items, numericIdName === 'yAxis' && stackGroups);
+
+      const offset = this.calculateOffset(items, xAxisMap, yAxisMap);
+
+      xAxisMap = this.getFormatAxisMap(xAxisMap, offset, 'xAxis');
+      yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
+
+      return { xAxisMap, yAxisMap, offset, stackGroups };
+    }
+
     /* eslint-disable  no-underscore-dangle */
     addListener() {
       eventCenter.on(SYNC_EVENT, this.handleReceiveSyncEvent);
@@ -482,6 +521,9 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       if (syncId === cId && chartId !== this.chartId) {
         this.setState(data);
+        if (data.dataStartIndex || data.dataEndIndex) {
+          this.setState(this.updateStateOfAxisMapsOffsetAndStackGroups(this.props));
+        }
       }
     };
 
@@ -489,6 +531,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       this.setState({
         dataStartIndex: startIndex,
         dataEndIndex: endIndex,
+        ...this.updateStateOfAxisMapsOffsetAndStackGroups(this.props),
       });
 
       this.triggerSyncEvent({
@@ -589,6 +632,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         eventCenter.emit(SYNC_EVENT, syncId, this.uniqueChartId, data);
       }
     }
+
     /**
      * Draw axes
      * @param {Object} axisMap The configuration of all x-axes or y-axes
@@ -606,6 +650,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           const axis = axisMap[ids[i]];
 
           if (!axis.hide) {
+
             axes.push((
               <CartesianAxis
                 {...axis}
@@ -765,20 +810,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       const { children, layout, className, width, height, stackOffset, style,
         ...others } = this.props;
-      const numericIdName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
-      const cateIdName = layout === 'horizontal' ? 'xAxis' : 'yAxis';
+      const { xAxisMap, yAxisMap, offset, stackGroups } = this.state;
       const items = findAllByType(children, GraphicalChild);
-      const stackGroups = getStackGroupsByAxisId(
-        data, items, `${numericIdName}Id`, `${cateIdName}Id`, stackOffset
-      );
-
-      let xAxisMap = this.getAxisMap('xAxis', items, numericIdName === 'xAxis' && stackGroups);
-      let yAxisMap = this.getAxisMap('yAxis', items, numericIdName === 'yAxis' && stackGroups);
-
-      const offset = this.calculateOffset(items, xAxisMap, yAxisMap);
-
-      xAxisMap = this.getFormatAxisMap(xAxisMap, offset, 'xAxis');
-      yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
 
       const tooltipItem = findChildByType(children, Tooltip);
       const events = tooltipItem ? {
