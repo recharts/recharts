@@ -411,7 +411,6 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 		 * @return {Object} state New state to set
 		 */
     updateStateOfAxisMapsOffsetAndStackGroups(props) {
-      console.log('Calling updateStateOfAxisMapsOffsetAndStackGroups');
       const { data } = props;
       if (!validateWidthHeight({ props }) || !data || !data.length) { return null; }
 
