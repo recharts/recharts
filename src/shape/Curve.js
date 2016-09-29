@@ -108,7 +108,7 @@ class Curve extends Component {
   }
 
   render() {
-    const { className, points, type } = this.props;
+    const { className, points } = this.props;
 
     if (!points || !points.length) { return null; }
 

@@ -632,6 +632,9 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       }
     }
 
+
+    renderAxesTicksGenerator = (axis) => getTicksOfAxis(axis, true);
+
     /**
      * Draw axes
      * @param {Object} axisMap The configuration of all x-axes or y-axes
@@ -655,7 +658,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
                 {...axis}
                 key={`${name}-${ids[i]}`}
                 viewBox={{ x: 0, y: 0, width, height }}
-                ticks={getTicksOfAxis(axis, true)}
+                ticksGenerator={this.renderAxesTicksGenerator}
               />
             ));
           }

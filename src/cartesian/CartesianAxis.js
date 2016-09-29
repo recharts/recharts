@@ -2,7 +2,7 @@
  * @fileOverview Cartesian Axis
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from '../util/PureRender';
+import { shallowEqual } from '../util/PureRender';
 import { getStringSize } from '../util/DOMUtils';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
@@ -10,7 +10,6 @@ import { isSsr, PRESENTATION_ATTRIBUTES,
   getPresentationAttributes } from '../util/ReactUtils';
 import _ from 'lodash';
 
-@pureRender
 class CartesianAxis extends Component {
 
   static displayName = 'CartesianAxis';
@@ -45,6 +44,7 @@ class CartesianAxis extends Component {
     tickSize: PropTypes.number,
     stroke: PropTypes.string,
     tickFormatter: PropTypes.func,
+    ticksGenerator: PropTypes.func,
     interval: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   };
 
@@ -113,6 +113,15 @@ class CartesianAxis extends Component {
       return isShow;
     });
   }
+
+  shouldComponentUpdate({ viewBox, ...restProps }, state) {
+		// props.viewBox is sometimes generated every time -
+		// check that specially as object equality is likely to fail
+    const { viewBox: viewBoxOld, ...restPropsOld } = this.props;
+    return !shallowEqual(viewBox, viewBoxOld) ||
+			!shallowEqual(restProps, restPropsOld) || !shallowEqual(state, this.state);
+  }
+
   /**
    * Calculate the coordinates of endpoints in ticks
    * @param  {Object} data The data of a simple tick
@@ -274,9 +283,14 @@ class CartesianAxis extends Component {
     return tickItem;
   }
 
-  renderTicks() {
-    const { ticks, tickLine, stroke, tick, tickFormatter } = this.props;
-    const finalTicks = CartesianAxis.getTicks(this.props);
+	/**
+	 * render the ticks
+	 * @param {Array} ticks The ticks to actually render (overrides what was passed in props)
+	 * @return {ReactComponent} renderedTicks
+	 */
+  renderTicks(ticks) {
+    const { tickLine, stroke, tick, tickFormatter } = this.props;
+    const finalTicks = CartesianAxis.getTicks({ ...this.props, ticks });
     const textAnchor = this.getTickTextAnchor();
     const verticalAnchor = this.getTickVerticalAnchor();
     const axisProps = getPresentationAttributes(this.props);
@@ -347,7 +361,12 @@ class CartesianAxis extends Component {
   }
 
   render() {
-    const { axisLine, width, height, ticks, label } = this.props;
+    const { axisLine, width, height, ticksGenerator } = this.props;
+    let { ticks, ...noTicksProps } = this.props;
+
+    if (_.isFunction(ticksGenerator)) {
+      ticks = ticksGenerator(noTicksProps);
+    }
 
     if (width <= 0 || height <= 0 || !ticks || !ticks.length) {
       return null;
@@ -356,7 +375,7 @@ class CartesianAxis extends Component {
     return (
       <Layer className="recharts-cartesian-axis">
         {axisLine && this.renderAxisLine()}
-        {this.renderTicks()}
+        {this.renderTicks(ticks)}
         {this.renderLabel()}
       </Layer>
     );
