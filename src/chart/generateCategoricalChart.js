@@ -20,10 +20,9 @@ import ReferenceArea from '../cartesian/ReferenceArea';
 import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
-import pureRender from '../util/PureRender';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
 import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate } from '../util/DataUtils';
-import { calculateDomainOfTicks, calculateActiveTickIndex,
+import { calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
   getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
   getStackGroupsByAxisId, getTicksOfAxis, isCategorialAxis, getTicksOfScale,
@@ -741,7 +740,6 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { layout } = this.props;
       const { isTooltipActive, activeTooltipIndex, chartX, chartY } = this.state;
       const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
-      const pos = layout === 'horizontal' ? chartX : chartY;
       const axis = getAnyElementOfObject(axisMap);
       const ticks = getTicksOfAxis(axis, false, true);
       const viewBox = { ...offset, x: offset.left, y: offset.top };
@@ -810,7 +808,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { data } = this.props;
       if (!validateWidthHeight(this) || !data || !data.length) { return null; }
 
-      const { children, layout, className, width, height, stackOffset, style,
+      const { children, className, width, height, style,
         ...others } = this.props;
       const { xAxisMap, yAxisMap, offset, stackGroups } = this.state;
       const items = findAllByType(children, GraphicalChild);
