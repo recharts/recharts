@@ -21,6 +21,13 @@ class CartesianGrid extends Component {
     vertical: PropTypes.bool,
     horizontalPoints: PropTypes.arrayOf(PropTypes.number),
     verticalPoints: PropTypes.arrayOf(PropTypes.number),
+    horizontalCoordinatesGenerator: PropTypes.func,
+    verticalCoordinatesGenerator: PropTypes.func,
+    xAxis: PropTypes.object,
+    yAxis: PropTypes.object,
+    offset: PropTypes.object,
+    chartWidth: PropTypes.number,
+    chartHeight: PropTypes.number,
   };
 
   static defaultProps = {
@@ -41,10 +48,11 @@ class CartesianGrid extends Component {
 
   /**
    * Draw the horizontal grid lines
+   * @param {Array} horizontalPoints either passed in as props or generated from function
    * @return {Group} Horizontal lines
    */
-  renderHorizontal() {
-    const { x, width, horizontalPoints } = this.props;
+  renderHorizontal(horizontalPoints) {
+    const { x, width } = this.props;
 
     if (!horizontalPoints || !horizontalPoints.length) { return null; }
 
@@ -57,10 +65,11 @@ class CartesianGrid extends Component {
 
   /**
    * Draw vertical grid lines
+   * @param {Array} verticalPoints either passed in as props or generated from function
    * @return {Group} Vertical lines
    */
-  renderVertical() {
-    const { y, height, verticalPoints } = this.props;
+  renderVertical(verticalPoints) {
+    const { y, height } = this.props;
 
     if (!verticalPoints || !verticalPoints.length) { return null; }
 
@@ -73,16 +82,29 @@ class CartesianGrid extends Component {
   }
 
   render() {
-    const { width, height, horizontal, vertical } = this.props;
+    const { width, height, horizontal, vertical, horizontalCoordinatesGenerator,
+      verticalCoordinatesGenerator, xAxis, yAxis, offset, chartWidth, chartHeight } = this.props;
 
     if (width <= 0 || height <= 0) {
       return null;
     }
 
+    let { horizontalPoints, verticalPoints } = this.props;
+
+    if (_.isFunction(horizontalCoordinatesGenerator)) {
+      horizontalPoints = horizontalCoordinatesGenerator({ yAxis, width: chartWidth,
+        height: chartHeight, offset });
+    }
+
+    if (_.isFunction(verticalCoordinatesGenerator)) {
+      verticalPoints = verticalCoordinatesGenerator({ xAxis, width: chartWidth,
+        height: chartHeight, offset });
+    }
+
     return (
       <g className="recharts-cartesian-grid">
-        {horizontal && this.renderHorizontal()}
-        {vertical && this.renderVertical()}
+        {horizontal && this.renderHorizontal(horizontalPoints)}
+        {vertical && this.renderVertical(verticalPoints)}
       </g>
     );
   }

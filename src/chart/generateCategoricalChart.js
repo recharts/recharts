@@ -631,8 +631,22 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       }
     }
 
+    verticalCoordinatesGenerator = ({ xAxis, width, height, offset }) =>
+      getCoordinatesOfGrid(CartesianAxis.getTicks({
+        ...CartesianAxis.defaultProps,
+        ...xAxis,
+        ticks: getTicksOfAxis(xAxis, true),
+        viewBox: { x: 0, y: 0, width, height },
+      }), offset.left, offset.left + offset.width);
 
-    renderAxesTicksGenerator = (axis) => getTicksOfAxis(axis, true);
+    horizontalCoordinatesGenerator = ({ yAxis, width, height, offset }) =>
+      getCoordinatesOfGrid(CartesianAxis.getTicks({
+        ...CartesianAxis.defaultProps, ...yAxis,
+        ticks: getTicksOfAxis(yAxis, true),
+        viewBox: { x: 0, y: 0, width, height },
+      }), offset.top, offset.top + offset.height);
+
+    axesTicksGenerator = (axis) => getTicksOfAxis(axis, true);
 
     /**
      * Draw axes
@@ -657,7 +671,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
                 {...axis}
                 key={`${name}-${ids[i]}`}
                 viewBox={{ x: 0, y: 0, width, height }}
-                ticksGenerator={this.renderAxesTicksGenerator}
+                ticksGenerator={this.axesTicksGenerator}
               />
             ));
           }
@@ -669,6 +683,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       return null;
     }
+
     /**
      * Draw grid
      * @param  {Object} xAxisMap The configuration of all x-axes
@@ -685,25 +700,19 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const xAxis = getAnyElementOfObject(xAxisMap);
       const yAxis = getAnyElementOfObject(yAxisMap);
 
-      const verticalPoints = getCoordinatesOfGrid(CartesianAxis.getTicks({
-        ...CartesianAxis.defaultProps, ...xAxis,
-        ticks: getTicksOfAxis(xAxis, true),
-        viewBox: { x: 0, y: 0, width, height },
-      }), offset.left, offset.left + offset.width);
-
-      const horizontalPoints = getCoordinatesOfGrid(CartesianAxis.getTicks({
-        ...CartesianAxis.defaultProps, ...yAxis,
-        ticks: getTicksOfAxis(yAxis, true),
-        viewBox: { x: 0, y: 0, width, height },
-      }), offset.top, offset.top + offset.height);
-
       return React.cloneElement(gridItem, {
         key: 'grid',
         x: offset.left,
         y: offset.top,
         width: offset.width,
         height: offset.height,
-        verticalPoints, horizontalPoints,
+        xAxis,
+        yAxis,
+        offset,
+        chartWidth: width,
+        chartHeight: height,
+        verticalCoordinatesGenerator: this.verticalCoordinatesGenerator,
+        horizontalCoordinatesGenerator: this.horizontalCoordinatesGenerator,
       });
     }
     /**
