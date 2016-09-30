@@ -22,7 +22,7 @@
     "react/jsx-no-bind": 0,
 
     "strict": 0,
-    "no-unused-vars": 0,
+    "no-unused-vars": 1,
   },
   "plugins": [
     "react"

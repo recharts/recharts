@@ -1,4 +1,5 @@
 import { findAllByType, findChildByType } from './ReactUtils';
+import { getPercentValue } from './DataUtils';
 import ReferenceDot from '../cartesian/ReferenceDot';
 import ReferenceLine from '../cartesian/ReferenceLine';
 import ReferenceArea from '../cartesian/ReferenceArea';
@@ -11,7 +12,7 @@ import {
 import _ from 'lodash';
 
 /* eslint no-param-reassign: 0 */
-const offsetSign = (series, order) => {
+const offsetSign = (series) => {
   const n = series.length;
   if (n <= 0) { return; }
 
@@ -96,7 +97,7 @@ export const getStackedData = (data, stackItems, offsetType) => {
 
 export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, offsetType) => {
   const stackGroups = items.reduce((result, item) => {
-    const { stackId, dataKey } = item.props;
+    const { stackId } = item.props;
     const axisId = item.props[numericAxisId];
     const parentGroup = result[axisId] || { hasStack: false, stackGroups: {} };
 
@@ -395,7 +396,7 @@ export const getLegendProps = (children, graphicItems, width, height) => {
  * @return {Object}      null
  */
 export const getTicksOfScale = (scale, opts) => {
-  const { type, tickCount, ticks, originalDomain, allowDecimals } = opts;
+  const { type, tickCount, originalDomain, allowDecimals } = opts;
 
   if (tickCount && type === 'number' && originalDomain && (
     originalDomain[0] === 'auto' || originalDomain[1] === 'auto')) {
@@ -416,3 +417,101 @@ export const getTicksOfScale = (scale, opts) => {
   return null;
 };
 
+/**
+ * Calculate the size of all groups for stacked bar graph
+ * @param  {Object} stackGroups The items grouped by axisId and stackId
+ * @return {Object} The size of all groups
+ */
+export const getBarSizeList = ({ barSize, stackGroups = {} }) => {
+  const result = {};
+  const numericAxisIds = Object.keys(stackGroups);
+
+  for (let i = 0, len = numericAxisIds.length; i < len; i++) {
+    const sgs = stackGroups[numericAxisIds[i]].stackGroups;
+    const stackIds = Object.keys(sgs);
+
+    for (let j = 0, sLen = stackIds.length; j < sLen; j++) {
+      const { items, cateAxisId } = sgs[stackIds[j]];
+
+      const barItems = items.filter(item => item.type.displayName === 'Bar');
+
+      if (barItems && barItems.length) {
+        const { dataKey } = barItems[0].props;
+        const cateId = barItems[0].props[cateAxisId];
+
+        if (!result[cateId]) {
+          result[cateId] = [];
+        }
+
+        result[cateId].push({
+          dataKey,
+          stackList: barItems.slice(1).map(item => item.props.dataKey),
+          barSize: barItems[0].props.barSize || barSize,
+        });
+      }
+    }
+  }
+
+  return result;
+};
+
+/**
+   * Calculate the size of each bar and the gap between two bars
+   * @param  {Number}   bandSize  The size of each category
+   * @param  {sizeList} sizeList  The size of all groups
+   * @return {Number} The size of each bar and the gap between two bars
+   */
+export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = [] }) => {
+  const len = sizeList.length;
+  if (len < 1) return null;
+  let result;
+
+  // whether or not is barSize setted by user
+  if (sizeList[0].barSize === +sizeList[0].barSize) {
+    let sum = sizeList.reduce((res, entry) => (res + entry.barSize || 0), 0);
+    sum += (len - 1) * barGap;
+    const offset = ((bandSize - sum) / 2) >> 0;
+    let prev = { offset: offset - barGap, size: 0 };
+
+    result = sizeList.reduce((res, entry) => {
+      const newRes = {
+        ...res,
+        [entry.dataKey]: {
+          offset: prev.offset + prev.size + barGap,
+          size: entry.barSize,
+        },
+      };
+
+      prev = newRes[entry.dataKey];
+
+      if (entry.stackList && entry.stackList.length) {
+        entry.stackList.forEach(key => {
+          newRes[key] = newRes[entry.dataKey];
+        });
+      }
+      return newRes;
+    }, {});
+  } else {
+    const offset = getPercentValue(barCategoryGap, bandSize, 0, true);
+    const size = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
+
+    result = sizeList.reduce((res, entry, i) => {
+      const newRes = {
+        ...res,
+        [entry.dataKey]: {
+          offset: offset + (size + barGap) * i,
+          size,
+        },
+      };
+
+      if (entry.stackList && entry.stackList.length) {
+        entry.stackList.forEach(key => {
+          newRes[key] = newRes[entry.dataKey];
+        });
+      }
+      return newRes;
+    }, {});
+  }
+
+  return result;
+};

@@ -2,20 +2,15 @@
  * @fileOverview Composed Chart
  */
 import React, { PropTypes, Component } from 'react';
-import classNames from 'classnames';
-import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Line from '../cartesian/Line';
 import Bar from '../cartesian/Bar';
 import Area from '../cartesian/Area';
-import Curve from '../shape/Curve';
-import Dot from '../shape/Dot';
 import Rectangle from '../shape/Rectangle';
 import generateCategoricalChart from './generateCategoricalChart';
-import { getPercentValue, getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
-import { getPresentationAttributes, findChildByType,
-  findAllByType, validateWidthHeight } from '../util/ReactUtils';
+import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
+import { getPresentationAttributes, findChildByType } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { getTicksOfAxis } from '../util/CartesianUtils';
 import { AreaChart } from './AreaChart';
@@ -73,7 +68,7 @@ class ComposedChart extends Component {
   }
 
   render() {
-    const { xAxisMap, yAxisMap, offset, graphicalItems, stackGroups } = this.props;
+    const { xAxisMap, yAxisMap, offset, graphicalItems } = this.props;
     const areaItems = graphicalItems.filter(item => item.type.displayName === 'Area');
     const lineItems = graphicalItems.filter(item => item.type.displayName === 'Line');
     const barItems = graphicalItems.filter(item => item.type.displayName === 'Bar');

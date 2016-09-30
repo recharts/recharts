@@ -12,14 +12,35 @@ import { getPercentValue } from '../util/DataUtils';
 import { findChildByType, findAllByType, validateWidthHeight, filterSvgElements,
   getPresentationAttributes } from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
-import pureRender from '../util/PureRender';
+import composedDataDecorator from '../util/ComposedDataDecorator';
 
-@pureRender
-class PieChart extends Component {
+const getComposedData = ({ item }) => {
+  const { data, children } = item.props;
+  const presentationProps = getPresentationAttributes(item.props);
+  const cells = findAllByType(children, Cell);
+
+  if (data && data.length) {
+    return data.map((entry, index) => ({
+      ...presentationProps,
+      ...entry,
+      ...(cells && cells[index] && cells[index].props),
+    }));
+  }
+
+  if (cells && cells.length) {
+    return cells.map(cell => ({ ...presentationProps, ...cell.props }));
+  }
+
+  return [];
+};
+
+@composedDataDecorator({ getComposedData, ChildComponent: Pie })
+export class PieChart extends Component {
 
   static displayName = 'PieChart';
 
   static propTypes = {
+    composedData: PropTypes.array,
     width: PropTypes.number,
     height: PropTypes.number,
     margin: PropTypes.shape({
@@ -51,26 +72,6 @@ class PieChart extends Component {
     activeTooltipPayload: [],
     isTooltipActive: false,
   };
-
-  getComposedData(item) {
-    const { data, children } = item.props;
-    const props = getPresentationAttributes(item.props);
-    const cells = findAllByType(children, Cell);
-
-    if (data && data.length) {
-      return data.map((entry, index) => ({
-        ...props,
-        ...entry,
-        ...(cells && cells[index] && cells[index].props),
-      }));
-    }
-
-    if (cells && cells.length) {
-      return cells.map(cell => ({ ...props, ...cell.props }));
-    }
-
-    return [];
-  }
 
   handleMouseEnter = (el, index, e) => {
     const { children, onMouseEnter } = this.props;
@@ -114,15 +115,15 @@ class PieChart extends Component {
    * @return {ReactElement}            The instance of Legend
    */
   renderLegend(items) {
-    const { children } = this.props;
+    const { children, composedData } = this.props;
     const legendItem = findChildByType(children, Legend);
     if (!legendItem) { return null; }
 
     const { width, height, margin } = this.props;
     const legendData = (legendItem.props && legendItem.props.payload) ||
-      items.reduce((result, child) => {
+      items.reduce((result, child, i) => {
         const { nameKey } = child.props;
-        const data = this.getComposedData(child);
+        const data = composedData[i];
 
         return result.concat(data.map((entry) => (
           {
@@ -167,10 +168,10 @@ class PieChart extends Component {
    * @return {ReactComponent} All the instance of Pie
    */
   renderItems(items) {
-    const { width, height, margin, onClick } = this.props;
+    const { width, height, margin, onClick, composedData } = this.props;
 
     return items.map((child, i) => {
-      const { innerRadius, outerRadius, data } = child.props;
+      const { innerRadius, outerRadius } = child.props;
       const cx = getPercentValue(child.props.cx, width, width / 2);
       const cy = getPercentValue(child.props.cy, height, height / 2);
       const maxRadius = getMaxRadius(width, height, margin);
@@ -182,7 +183,7 @@ class PieChart extends Component {
         maxRadius: child.props.maxRadius || Math.sqrt(width * width + height * height) / 2,
         innerRadius: getPercentValue(innerRadius, maxRadius, 0),
         outerRadius: getPercentValue(outerRadius, maxRadius, maxRadius * 0.8),
-        composedData: this.getComposedData(child),
+        composedData: composedData[i],
         onMouseEnter: this.handleMouseEnter,
         onMouseLeave: this.handleMouseLeave,
         onClick,
