@@ -1,9 +1,8 @@
 /**
  * @fileOverview Background
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import pureRender from '../util/PureRender';
 
 const propTypes = {
   x: PropTypes.number,

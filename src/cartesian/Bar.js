@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render a group of bar
  */
-import React, { Component, PropTypes, Children } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import Rectangle from '../shape/Rectangle';

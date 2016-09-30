@@ -3,7 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
-import Layer from '../container/Layer';
 import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';

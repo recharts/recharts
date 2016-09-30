@@ -25,7 +25,7 @@ import { getPresentationAttributes, findChildByType, filterSvgElements,
 import pureRender from '../util/PureRender';
 import { parseSpecifiedDomain } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
-import { calculateDomainOfTicks, detectReferenceElementsDomain, getTicksOfAxis,
+import { detectReferenceElementsDomain, getTicksOfAxis,
   getCoordinatesOfGrid, getLegendProps, getTicksOfScale } from '../util/CartesianUtils';
 import _ from 'lodash';
 
@@ -162,7 +162,7 @@ class ScatterChart extends Component {
   getOffset(items, xAxis, yAxis) {
     const { children, width, height, margin } = this.props;
     const offset = { ...margin };
-    const legendProps = getLegendProps(children, items, width, height);
+    const legendProps = getLegendProps(children, items, width);
 
     offset[xAxis.orientation] += xAxis.height;
     offset[yAxis.orientation] += yAxis.width;
@@ -267,7 +267,7 @@ class ScatterChart extends Component {
    * @param {Object} e  Event object
    * @return {Object} no return
    */
-  handleScatterMouseEnter = (el, e) => {
+  handleScatterMouseEnter = (el) => {
     this.setState({
       isTooltipActive: true,
       activeItem: el,
@@ -362,8 +362,7 @@ class ScatterChart extends Component {
   renderLegend(items) {
     const { children, width, height, margin } = this.props;
     const legendWidth = width - margin.left - margin.right;
-    const legendHeight = height - margin.top - margin.bottom;
-    const props = getLegendProps(children, items, legendWidth, legendHeight);
+    const props = getLegendProps(children, items, legendWidth);
 
     if (!props) { return null; }
 
@@ -472,6 +471,7 @@ class ScatterChart extends Component {
   render() {
     if (!validateWidthHeight(this)) { return null; }
 
+		// eslint-disable-next-line no-unused-vars
     const { style, children, className, width, height, ...others } = this.props;
     const items = findAllByType(children, Scatter);
     const zAxis = this.getZAxis(items);

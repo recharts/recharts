@@ -13,9 +13,6 @@ import Animate from 'react-smooth';
 import _ from 'lodash';
 import AnimationDecorator from '../util/AnimationDecorator';
 
-const PI = Math.PI;
-const SYMBOL_STYLE = { transformOrigin: 'center center' };
-
 @AnimationDecorator
 @pureRender
 class Scatter extends Component {

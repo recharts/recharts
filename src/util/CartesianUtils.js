@@ -366,7 +366,7 @@ export const getMainColorOfGraphicItem = (item) => {
   return result;
 };
 
-export const getLegendProps = (children, graphicItems, width, height) => {
+export const getLegendProps = (children, graphicItems, width) => {
   const legendItem = findChildByType(children, Legend);
 
   if (!legendItem) { return null; }
@@ -385,7 +385,7 @@ export const getLegendProps = (children, graphicItems, width, height) => {
 
   return {
     ...legendItem.props,
-    ...Legend.getWithHeight(legendItem, width, height),
+    ...Legend.getWithHeight(legendItem, width),
     payload: legendData,
   };
 };

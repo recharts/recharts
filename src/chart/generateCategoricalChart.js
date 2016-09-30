@@ -493,7 +493,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         offsetV.bottom += brushItem.props.height || Brush.defaultProps.height;
       }
 
-      const legendProps = getLegendProps(children, items, width, height);
+      const legendProps = getLegendProps(children, items, width);
       if (legendProps) {
         const box = Legend.getLegendBBox(legendProps, width, height) || {};
         if (legendProps.layout === 'horizontal' &&
@@ -723,8 +723,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     renderLegend(items) {
       const { children, width, height, margin } = this.props;
       const legendWidth = width - margin.left - margin.right;
-      const legendHeight = height - margin.top - margin.bottom;
-      const props = getLegendProps(children, items, legendWidth, legendHeight);
+      const props = getLegendProps(children, items, legendWidth);
 
       if (!props) { return null; }
 

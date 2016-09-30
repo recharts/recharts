@@ -134,7 +134,7 @@ export class PieChart extends Component {
       }, []);
 
     return React.cloneElement(legendItem, {
-      ...Legend.getWithHeight(legendItem, width, height),
+      ...Legend.getWithHeight(legendItem, width),
       payload: legendData,
       chartWidth: width,
       chartHeight: height,

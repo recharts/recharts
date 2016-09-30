@@ -1,7 +1,7 @@
 /**
  * @fileOverview Surface
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { getPresentationAttributes } from '../util/ReactUtils';
 

@@ -117,7 +117,7 @@ const getNodesTree = ({ nodes, links }, width, nodeWidth) => {
   return { tree, maxDepth };
 };
 
-const getDepthTree = (tree, maxDepth) => {
+const getDepthTree = (tree) => {
   const result = [];
 
   for (let i = 0, len = tree.length; i < len; i++) {
@@ -249,9 +249,9 @@ const updateYOfLinks = (tree, links) => {
 };
 
 const computeData = ({ data, width, height, iterations, nodeWidth, nodePadding }) => {
-  const { nodes, links } = data;
-  const { tree, maxDepth } = getNodesTree(data, width, nodeWidth);
-  const depthTree = getDepthTree(tree, maxDepth);
+  const { links } = data;
+  const { tree } = getNodesTree(data, width, nodeWidth);
+  const depthTree = getDepthTree(tree);
   const newLinks = updateYOfTree(depthTree, height, nodePadding, links);
 
   resolveCollisions(depthTree, height, nodePadding);
@@ -506,13 +506,13 @@ class Sankey extends Component {
     );
   }
 
-  renderTooltip(links, nodes) {
+  renderTooltip() {
     const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem) { return null; }
 
-    const { isTooltipActive, activeLink } = this.state;
+    const { isTooltipActive } = this.state;
     const viewBox = { x: 0, y: 0, width: 100, height: 100 };
     const coordinate = {
       x: 0,
@@ -557,7 +557,7 @@ class Sankey extends Component {
           {this.renderLinks(links, nodes)}
           {this.renderNodes(nodes)}
         </Surface>
-        {this.renderTooltip(links, nodes)}
+        {this.renderTooltip()}
       </div>
     );
   }

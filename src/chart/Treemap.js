@@ -295,7 +295,6 @@ class Treemap extends Component {
       animationEasing, isUpdateAnimationActive } = this.props;
     const { width, height, x, y } = nodeProps;
     const translateX = parseInt((Math.random() * 2 - 1) * width, 10);
-    const translateY = parseInt((Math.random() * 2 - 1) * height, 10);
     let event = {};
 
     if (isLeaf) {
@@ -386,7 +385,7 @@ class Treemap extends Component {
     return this.renderNode(formatRoot, formatRoot, 0);
   }
 
-  renderTooltip(items, offset) {
+  renderTooltip() {
     const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 

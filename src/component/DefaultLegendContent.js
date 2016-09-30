@@ -5,7 +5,6 @@ import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import Surface from '../container/Surface';
 import Symbols from '../shape/Symbols';
-const PI = Math.PI;
 const SIZE = 32;
 
 @pureRender
