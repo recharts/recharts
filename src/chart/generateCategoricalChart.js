@@ -34,6 +34,8 @@ const ORIENT_MAP = {
   yAxis: ['left', 'right'],
 };
 
+const originCoordinate = { x: 0, y: 0 };
+
 const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
   class CategoricalChartWrapper extends Component {
     static displayName = getDisplayName(ChartComponent);
@@ -148,8 +150,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         const axisId = child.props[axisIdKey];
 
         if (!result[axisId]) {
-          let domain;
-          let duplicateDomain;
+          let domain, duplicateDomain;
 
           if (dataKey) {
             domain = getDomainOfDataByKey(displayedData, dataKey, type);
@@ -282,7 +283,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       return ids.reduce((result, id) => {
         const axis = axisMap[id];
         const { orientation, type, domain, padding = {} } = axis;
-        let range;
+        let range, scale, x, y;
 
         if (axisType === 'xAxis') {
           range = [
@@ -298,7 +299,6 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             offset.top + offset.height - (padding.bottom || 0),
           ];
         }
-        let scale;
 
         if (type === 'number') {
           scale = scaleLinear().domain(domain).range(range);
@@ -310,9 +310,6 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         }
 
         const ticks = getTicksOfScale(scale, axis);
-
-        let x;
-        let y;
 
         if (axisType === 'xAxis') {
           x = offset.left;
@@ -356,10 +353,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       if (!isIn) { return null; }
 
       const { layout } = this.props;
-      const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
+      const { tooltipTicks: ticks } = this.state;
       const pos = layout === 'horizontal' ? e.chartX : e.chartY;
-      const axis = getAnyElementOfObject(axisMap);
-      const ticks = getTicksOfAxis(axis, false, true);
       const activeIndex = calculateActiveTickIndex(pos, ticks);
 
       if (activeIndex >= 0) {
@@ -371,6 +366,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       return null;
     }
+
     /**
      * Get the content to be displayed in the tooltip
      * @param  {Array} items The instances of item
@@ -429,7 +425,9 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       xAxisMap = this.getFormatAxisMap(xAxisMap, offset, 'xAxis');
       yAxisMap = this.getFormatAxisMap(yAxisMap, offset, 'yAxis');
 
-      return { xAxisMap, yAxisMap, offset, stackGroups };
+      const tooltipTicks = this.tooltipTicksGenerator({ layout, xAxisMap, yAxisMap });
+
+      return { xAxisMap, yAxisMap, offset, stackGroups, tooltipTicks };
     }
 
     /* eslint-disable  no-underscore-dangle */
@@ -648,6 +646,12 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     axesTicksGenerator = (axis) => getTicksOfAxis(axis, true);
 
+    tooltipTicksGenerator = ({ layout, xAxisMap, yAxisMap }) => {
+      const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
+      const axis = getAnyElementOfObject(axisMap);
+      return getTicksOfAxis(axis, false, true);
+    }
+
     /**
      * Draw axes
      * @param {Object} axisMap The configuration of all x-axes or y-axes
@@ -735,21 +739,18 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       });
     }
 
+
     /**
      * Draw Tooltip
-     * @param  {Object} xAxisMap The configuration of all x-axes
-     * @param  {Object} yAxisMap The configuration of all y-axes
      * @param  {ReactElement} tooltipItem  The instance of Tooltip
-     * @param  {Array}  items  The instances of GraphicalChild
+     * @param  {Array} items  The instances of GraphicalChild
      * @param  {Object} offset The offset of main part in the svg element
      * @return {ReactElement}  The instance of Tooltip
      */
-    renderTooltip(xAxisMap, yAxisMap, tooltipItem, items, offset) {
+    renderTooltip({ tooltipItem, items, offset }) {
       const { layout } = this.props;
-      const { isTooltipActive, activeTooltipIndex, chartX, chartY } = this.state;
-      const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
-      const axis = getAnyElementOfObject(axisMap);
-      const ticks = getTicksOfAxis(axis, false, true);
+      const { isTooltipActive, activeTooltipIndex, chartX, chartY, tooltipTicks } = this.state;
+
       const viewBox = { ...offset, x: offset.left, y: offset.top };
       // When a categotical chart is combined with another chart, the value of chartX
       // and chartY may beyond the boundaries.
@@ -759,12 +760,12 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       return React.cloneElement(tooltipItem, {
         viewBox,
         active: isTooltipActive,
-        label: ticks[activeTooltipIndex] && ticks[activeTooltipIndex].value,
+        label: tooltipTicks[activeTooltipIndex] && tooltipTicks[activeTooltipIndex].value,
         payload: isTooltipActive ? this.getTooltipContent(items) : [],
-        coordinate: ticks[activeTooltipIndex] ? {
-          x: layout === 'horizontal' ? ticks[activeTooltipIndex].coordinate : validateChartX,
-          y: layout === 'horizontal' ? validateChartY : ticks[activeTooltipIndex].coordinate,
-        } : { x: 0, y: 0 },
+        coordinate: tooltipTicks[activeTooltipIndex] ? {
+          x: layout === 'horizontal' ? tooltipTicks[activeTooltipIndex].coordinate : validateChartX,
+          y: layout === 'horizontal' ? validateChartY : tooltipTicks[activeTooltipIndex].coordinate,
+        } : originCoordinate,
       });
     }
 
@@ -858,7 +859,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             {filterSvgElements(children)}
           </Surface>
           {this.renderLegend(items)}
-          {tooltipItem && this.renderTooltip(xAxisMap, yAxisMap, tooltipItem, items, offset)}
+          {tooltipItem && this.renderTooltip({ tooltipItem,
+						items, offset })}
         </div>
       );
     }

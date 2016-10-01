@@ -5,13 +5,12 @@ import React, { PropTypes, Component } from 'react';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
-import { getAnyElementOfObject } from '../util/DataUtils';
+import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
 import { getPresentationAttributes, findChildByType, findAllByType,
   filterEventAttributes } from '../util/ReactUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Cell from '../component/Cell';
 import Bar from '../cartesian/Bar';
-import { getTicksOfAxis } from '../util/CartesianUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
 import composedDataDecorator from '../util/ComposedDataDecorator';
 
@@ -37,22 +36,19 @@ const getBaseValue = ({ props, xAxis, yAxis }) => {
  * @param {Array} stackedData  The stacked data of a bar item
  * @return{Array} Composed data
  */
-const getComposedData = ({ props, item, barPosition, xAxis, yAxis, stackedData }) => {
+const getComposedData = ({ props, item, barPosition, xAxis, yAxis,
+	xTicks, yTicks, stackedData }) => {
+
   const { layout, dataStartIndex, dataEndIndex } = props;
   const { dataKey, children, minPointSize } = item.props;
   const pos = barPosition[dataKey];
   const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
-  const xTicks = getTicksOfAxis(xAxis);
-  const yTicks = getTicksOfAxis(yAxis);
   const baseValue = getBaseValue({ props, xAxis, yAxis });
   const cells = findAllByType(children, Cell);
 
   return data.map((entry, index) => {
     const value = stackedData ? stackedData[dataStartIndex + index] : [baseValue, entry[dataKey]];
-    let x;
-    let y;
-    let width;
-    let height;
+    let x, y, width, height;
 
     if (layout === 'horizontal') {
       x = xTicks[index].coordinate + pos.offset;
@@ -127,21 +123,20 @@ class BarChart extends Component {
     barGap: 4,
   };
 
-  renderCursor(xAxisMap, yAxisMap, offset) {
+  renderCursor({ xAxisMap, yAxisMap, offset, composedData }) {
     const { children, isTooltipActive, layout, activeTooltipIndex } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
-
     if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive ||
       activeTooltipIndex < 0) { return null; }
 
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
     const axis = getAnyElementOfObject(axisMap);
-    const ticks = getTicksOfAxis(axis);
+    const ticks = composedData.axisTicks;
 
     if (!ticks || !ticks[activeTooltipIndex]) { return null; }
 
+    const bandSize = getBandSizeOfScale(axis.scale);
     const start = ticks[activeTooltipIndex].coordinate;
-    const bandSize = axis.scale.bandwidth();
     const cursorProps = {
       fill: '#f1f1f1',
       ...getPresentationAttributes(tooltipItem.props.cursor),
@@ -180,11 +175,11 @@ class BarChart extends Component {
   }
 
   render() {
-    const { isComposed, graphicalItems, xAxisMap, yAxisMap, offset } = this.props;
+    const { isComposed, graphicalItems, xAxisMap, yAxisMap, offset, composedData } = this.props;
 
     return (
       <Layer className="recharts-bar-graphical">
-        {!isComposed && this.renderCursor(xAxisMap, yAxisMap, offset)}
+        {!isComposed && this.renderCursor({ xAxisMap, yAxisMap, offset, composedData })}
         {this.renderItems(graphicalItems)}
       </Layer>
     );

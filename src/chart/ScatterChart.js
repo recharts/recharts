@@ -209,8 +209,7 @@ class ScatterChart extends Component {
       scale.tickFormat(tickFormat);
     }
 
-    let x;
-    let y;
+    let x, y;
 
     if (axisType === 'xAxis') {
       x = offset.left;

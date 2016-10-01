@@ -67,10 +67,7 @@ class ReferenceArea extends Component {
     const yOffset = yScale.bandwidth ? yScale.bandwidth() / 2 : 0;
     const xRange = xScale.range();
     const yRange = yScale.range();
-    let x1;
-    let x2;
-    let y1;
-    let y2;
+    let x1, x2, y1, y2;
 
     if (hasX && isValidateValue(xValue1)) {
       x1 = xScale(xValue1) + xOffset;

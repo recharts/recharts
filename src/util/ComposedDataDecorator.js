@@ -1,7 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { shallowEqual } from './PureRender';
 import { getDisplayName, findAllByType } from './ReactUtils';
-import { getStackedDataOfItem, getBarSizeList, getBarPosition } from './CartesianUtils';
+import { getStackedDataOfItem, getTicksOfAxis,
+	getBarSizeList, getBarPosition } from './CartesianUtils';
 import { getBandSizeOfScale } from './DataUtils';
 
 export default ({ getComposedData, ChildComponent }) => (WrappedComponent) =>
@@ -22,7 +23,8 @@ export default ({ getComposedData, ChildComponent }) => (WrappedComponent) =>
     state = { composedData: this.getAllComposedData() };
 
     /**
-     * @return {Array} the composedData {points, baseLine, layout} for each graphicalItem in
+     * @return {Array} the composedData
+		 *		{axisTicks, points, baseLine, layout} for each graphicalItem in
      * props
      */
     getAllComposedData() {
@@ -35,16 +37,19 @@ export default ({ getComposedData, ChildComponent }) => (WrappedComponent) =>
 
       const sizeList = getBarSizeList({ barSize, stackGroups });
 
-      const composedData = [];
+      const allComposedData = [];
       items.forEach((item) => {
         const { xAxisId, yAxisId, dataKey } = item.props;
-        let xAxis;
-        let yAxis;
-        let barPosition;
-        let stackedData;
+        let xAxis, yAxis, xTicks, yTicks, axisTicks, barPosition, stackedData;
         if (xAxisMap || yAxisMap) {
+
           xAxis = xAxisMap[xAxisId];
           yAxis = yAxisMap[yAxisId];
+
+          xTicks = getTicksOfAxis(xAxis);
+          yTicks = getTicksOfAxis(yAxis);
+          axisTicks = layout === 'horizontal' ? xTicks : yTicks;
+
           const numericAxisId = layout === 'horizontal' ? yAxisId : xAxisId;
           const cateAxisId = layout === 'horizontal' ? xAxisId : yAxisId;
           const cateAxis = layout === 'horizontal' ? xAxisMap[xAxisId] : yAxisMap[yAxisId];
@@ -57,12 +62,14 @@ export default ({ getComposedData, ChildComponent }) => (WrappedComponent) =>
             getBarPosition({ barGap, barCategoryGap, bandSize, sizeList: sizeList[cateAxisId] });
         }
 
-        composedData.push(getComposedData({ props: this.props,
-          xAxis, yAxis, dataKey, item, barPosition, offset, stackedData,
-        }));
+        const composedData = getComposedData({ props: this.props,
+          xAxis, yAxis, xTicks, yTicks, dataKey, item, barPosition, offset, stackedData,
+        });
+        composedData.axisTicks = axisTicks;
+        allComposedData.push(composedData);
       });
 
-      return composedData;
+      return allComposedData;
     }
 
 	/*

@@ -268,8 +268,7 @@ export const isCategorialAxis = (layout, axisType) => (
  * @return {Array}       Coordinates
  */
 export const getCoordinatesOfGrid = (ticks, min, max) => {
-  let hasMin;
-  let hasMax;
+  let hasMin, hasMax;
 
   const values = ticks.map(entry => {
     if (entry.coordinate === min) { hasMin = true; }
@@ -292,6 +291,7 @@ export const getCoordinatesOfGrid = (ticks, min, max) => {
  * @return {Array}  Ticks
  */
 export const getTicksOfAxis = (axis, isGrid, isAll) => {
+  if (!axis) return null;
   const scale = axis.scale;
   const { duplicateDomain, type } = axis;
   const offset = (isGrid || isAll) && type === 'category' ? scale.bandwidth() / 2 : 0;

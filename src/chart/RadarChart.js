@@ -95,9 +95,7 @@ class RadarChart extends Component {
   }
 
   getRadiusAxisCfg(radiusAxis, innerRadius, outerRadius) {
-    let domain;
-    let tickCount;
-    let ticks;
+    let domain, tickCount, ticks;
 
     if (radiusAxis && radiusAxis.props.ticks) {
       ticks = radiusAxis.props.ticks;

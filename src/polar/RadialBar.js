@@ -136,8 +136,7 @@ class RadialBar extends Component {
 
     const labelSize = getStringSize(labelContent, style);
     const deltaAngle = labelSize.width / (radius * RADIAN);
-    let tempStartAngle;
-    let tempEndAngle;
+    let tempStartAngle, tempEndAngle;
 
     if (clockWise) {
       tempStartAngle = orientation === 'inner' ?

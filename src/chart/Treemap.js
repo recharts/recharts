@@ -148,14 +148,12 @@ const squarify = (node, aspectRatio) => {
     let rect = filterRect(node);
     const row = [];
     let best = Infinity; // the best row score so far
-    let score; // the current row score
+    let child, score; // the current row score
     let size = Math.min(rect.width, rect.height); // initial orientation
     const scaleChildren = getAreaOfChildren(children, rect.width * rect.height / node.value);
     const tempChildren = scaleChildren.slice();
 
     row.area = 0;
-
-    let child;
 
     while (tempChildren.length > 0) {
       // row first

@@ -12,7 +12,6 @@ import generateCategoricalChart from './generateCategoricalChart';
 import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
 import { getPresentationAttributes, findChildByType } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
-import { getTicksOfAxis } from '../util/CartesianUtils';
 import { AreaChart } from './AreaChart';
 import { LineChart } from './LineChart';
 import { BarChart } from './BarChart';
@@ -23,6 +22,7 @@ class ComposedChart extends Component {
   static displayName = 'ComposedChart';
 
   static propTypes = {
+    composedData: PropTypes.array,
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     dataStartIndex: PropTypes.number,
     dataEndIndex: PropTypes.number,
@@ -39,7 +39,7 @@ class ComposedChart extends Component {
     ]),
   };
 
-  renderCursor(xAxisMap, yAxisMap, offset) {
+  renderCursor({ xAxisMap, yAxisMap, offset, composedData }) {
     const { children, isTooltipActive, layout, activeTooltipIndex } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
     if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive ||
@@ -47,7 +47,7 @@ class ComposedChart extends Component {
 
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
     const axis = getAnyElementOfObject(axisMap);
-    const ticks = getTicksOfAxis(axis);
+    const ticks = composedData.axisTicks;
 
     if (!ticks || !ticks[activeTooltipIndex]) { return null; }
 
@@ -68,14 +68,14 @@ class ComposedChart extends Component {
   }
 
   render() {
-    const { xAxisMap, yAxisMap, offset, graphicalItems } = this.props;
+    const { xAxisMap, yAxisMap, offset, graphicalItems, composedData } = this.props;
     const areaItems = graphicalItems.filter(item => item.type.displayName === 'Area');
     const lineItems = graphicalItems.filter(item => item.type.displayName === 'Line');
     const barItems = graphicalItems.filter(item => item.type.displayName === 'Bar');
 
     return (
       <Layer className="recharts-composed">
-        {this.renderCursor(xAxisMap, yAxisMap, offset)}
+        {this.renderCursor({ xAxisMap, yAxisMap, offset, composedData })}
 
         <AreaChart {...this.props} graphicalItems={areaItems} isComposed />
         <BarChart {...this.props} graphicalItems={barItems} isComposed />

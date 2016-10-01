@@ -9,8 +9,7 @@ import Dot from '../shape/Dot';
 import generateCategoricalChart from './generateCategoricalChart';
 import Line from '../cartesian/Line';
 import { getPresentationAttributes, findChildByType } from '../util/ReactUtils';
-import { getTicksOfAxis } from '../util/CartesianUtils';
-import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
+import { getBandSizeOfScale } from '../util/DataUtils';
 import _ from 'lodash';
 import Smooth from 'react-smooth';
 import AnimationDecorator from '../util/AnimationDecorator';
@@ -24,12 +23,10 @@ import composedDataDecorator from '../util/ComposedDataDecorator';
  * @param  {String} dataKey The unique key of a group
  * @return {Array}  Composed data
  */
-const getComposedData = ({ props, xAxis, yAxis, dataKey }) => {
+const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey }) => {
   const { layout, dataStartIndex, dataEndIndex } = props;
   const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
   const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
-  const xTicks = getTicksOfAxis(xAxis);
-  const yTicks = getTicksOfAxis(yAxis);
 
   return data.map((entry, index) => {
     const value = entry[dataKey];
@@ -77,16 +74,14 @@ export class LineChart extends Component {
     animationId: PropTypes.number,
   };
 
-  renderCursor(xAxisMap, yAxisMap, offset) {
+  renderCursor({ offset, composedData }) {
     const { children, isTooltipActive, layout, activeTooltipIndex } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive ||
       activeTooltipIndex < 0) { return null; }
 
-    const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
-    const axis = getAnyElementOfObject(axisMap);
-    const ticks = getTicksOfAxis(axis);
+    const ticks = composedData.axisTicks;
 
     if (!ticks || !ticks[activeTooltipIndex]) { return null; }
 
@@ -178,11 +173,11 @@ export class LineChart extends Component {
   }
 
   render() {
-    const { isComposed, xAxisMap, yAxisMap, offset, graphicalItems } = this.props;
+    const { isComposed, xAxisMap, yAxisMap, offset, graphicalItems, composedData } = this.props;
 
     return (
       <Layer className="recharts-line-graphical">
-        {!isComposed && this.renderCursor(xAxisMap, yAxisMap, offset)}
+        {!isComposed && this.renderCursor({ offset, composedData })}
         {this.renderItems(graphicalItems, xAxisMap, yAxisMap, offset)}
       </Layer>
     );

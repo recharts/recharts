@@ -133,10 +133,7 @@ class CartesianAxis extends Component {
    */
   getTickLineCoord(data) {
     const { x, y, width, height, orientation, tickSize } = this.props;
-    let x1;
-    let x2;
-    let y1;
-    let y2;
+    let x1, x2, y1, y2;
 
     const finalTickSize = data.tickSize || tickSize;
 

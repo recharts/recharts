@@ -106,8 +106,7 @@ class Legend extends Component {
 
   getDefaultPosition(style) {
     const { layout, align, verticalAlign, margin, chartWidth, chartHeight } = this.props;
-    let hPos;
-    let vPos;
+    let hPos, vPos;
 
     if (!style || ((style.left === undefined || style.left === null) && (
       style.right === undefined || style.right === null))) {

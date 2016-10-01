@@ -7,10 +7,10 @@ import Tooltip from '../component/Tooltip';
 import Dot from '../shape/Dot';
 import Curve from '../shape/Curve';
 import { getPresentationAttributes, findChildByType } from '../util/ReactUtils';
-import { getTicksOfAxis, getMainColorOfGraphicItem } from '../util/CartesianUtils';
+import { getMainColorOfGraphicItem } from '../util/CartesianUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Area from '../cartesian/Area';
-import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
+import { getBandSizeOfScale } from '../util/DataUtils';
 import _ from 'lodash';
 import Smooth from 'react-smooth';
 import AnimationDecorator from '../util/AnimationDecorator';
@@ -40,11 +40,10 @@ const getBaseValue = (props, xAxis, yAxis) => {
  * the stackedData is an array of min value and max value
  * @return {Array} Composed data
  */
-const getComposedData = ({ props, xAxis, yAxis, dataKey, stackedData }) => {
+const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey, stackedData }) => {
   const { layout, dataStartIndex, dataEndIndex } = props;
   const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
-  const xTicks = getTicksOfAxis(xAxis);
-  const yTicks = getTicksOfAxis(yAxis);
+
   const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
   const hasStack = stackedData && stackedData.length;
   const baseValue = getBaseValue(props, xAxis, yAxis);
@@ -113,16 +112,14 @@ export class AreaChart extends Component {
     animationId: PropTypes.number,
   };
 
-  renderCursor(xAxisMap, yAxisMap, offset) {
+  renderCursor({ offset, composedData }) {
     const { children, isTooltipActive, layout, activeTooltipIndex } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive ||
       activeTooltipIndex < 0) { return null; }
 
-    const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
-    const axis = getAnyElementOfObject(axisMap);
-    const ticks = getTicksOfAxis(axis);
+    const ticks = composedData.axisTicks;
 
     if (!ticks || !ticks[activeTooltipIndex]) { return null; }
 
@@ -233,7 +230,7 @@ export class AreaChart extends Component {
 
     return (
       <Layer className="recharts-area-graphical">
-        {!isComposed && this.renderCursor(xAxisMap, yAxisMap, offset)}
+        {!isComposed && this.renderCursor({ xAxisMap, yAxisMap, offset, composedData })}
         {this.renderItems(graphicalItems, xAxisMap, yAxisMap, offset, composedData)}
       </Layer>
     );
