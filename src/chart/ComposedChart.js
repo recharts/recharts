@@ -25,7 +25,8 @@ class ComposedChart extends Component {
   static displayName = 'ComposedChart';
 
   static propTypes = {
-    composedData: PropTypes.array,
+    allComposedData: PropTypes.array,
+    axisTicks: PropTypes.array,
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     dataStartIndex: PropTypes.number,
     dataEndIndex: PropTypes.number,
@@ -42,15 +43,15 @@ class ComposedChart extends Component {
     ]),
   };
 
-  renderCursor({ xAxisMap, yAxisMap, offset, composedData }) {
-    const { children, isTooltipActive, layout, activeTooltipIndex } = this.props;
+  renderCursor({ xAxisMap, yAxisMap, offset }) {
+    const { children, isTooltipActive, layout, activeTooltipIndex, axisTicks } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
     if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive ||
       activeTooltipIndex < 0) { return null; }
 
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
     const axis = getAnyElementOfObject(axisMap);
-    const ticks = composedData.axisTicks;
+    const ticks = axisTicks;
 
     if (!ticks || !ticks[activeTooltipIndex]) { return null; }
 
@@ -71,14 +72,14 @@ class ComposedChart extends Component {
   }
 
   render() {
-    const { xAxisMap, yAxisMap, offset, graphicalItems, composedData } = this.props;
+    const { xAxisMap, yAxisMap, offset, graphicalItems } = this.props;
     const areaItems = graphicalItems.filter(item => item.type.displayName === 'Area');
     const lineItems = graphicalItems.filter(item => item.type.displayName === 'Line');
     const barItems = graphicalItems.filter(item => item.type.displayName === 'Bar');
 
     return (
       <Layer className="recharts-composed">
-        {this.renderCursor({ xAxisMap, yAxisMap, offset, composedData })}
+        {this.renderCursor({ xAxisMap, yAxisMap, offset })}
 
         <AreaChart {...this.props} graphicalItems={areaItems} isComposed />
         <BarChart {...this.props} graphicalItems={barItems} isComposed />

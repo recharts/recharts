@@ -54,7 +54,8 @@ export class LineChart extends Component {
   static displayName = 'LineChart';
 
   static propTypes = {
-    composedData: PropTypes.array,
+    allComposedData: PropTypes.array,
+    axisTicks: PropTypes.array,
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     dataStartIndex: PropTypes.number,
     dataEndIndex: PropTypes.number,
@@ -74,14 +75,14 @@ export class LineChart extends Component {
     animationId: PropTypes.number,
   };
 
-  renderCursor({ offset, composedData }) {
-    const { children, isTooltipActive, layout, activeTooltipIndex } = this.props;
+  renderCursor({ offset }) {
+    const { children, isTooltipActive, layout, activeTooltipIndex, axisTicks } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive ||
       activeTooltipIndex < 0) { return null; }
 
-    const ticks = composedData.axisTicks;
+    const ticks = axisTicks;
 
     if (!ticks || !ticks[activeTooltipIndex]) { return null; }
 
@@ -134,14 +135,14 @@ export class LineChart extends Component {
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
     const { children, layout, isTooltipActive, activeTooltipIndex,
-				animationId, composedData } = this.props;
+				animationId, allComposedData } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];
 
     const lineItems = items.map((child, i) => {
       const { dataKey, stroke, activeDot } = child.props;
-      const points = composedData[i];
+      const points = allComposedData[i];
       const activePoint = points[activeTooltipIndex];
 
       if (hasDot && activeDot && activePoint) {
@@ -173,11 +174,11 @@ export class LineChart extends Component {
   }
 
   render() {
-    const { isComposed, xAxisMap, yAxisMap, offset, graphicalItems, composedData } = this.props;
+    const { isComposed, xAxisMap, yAxisMap, offset, graphicalItems } = this.props;
 
     return (
       <Layer className="recharts-line-graphical">
-        {!isComposed && this.renderCursor({ offset, composedData })}
+        {!isComposed && this.renderCursor({ offset })}
         {this.renderItems(graphicalItems, xAxisMap, yAxisMap, offset)}
       </Layer>
     );

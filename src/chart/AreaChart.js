@@ -91,7 +91,8 @@ export class AreaChart extends Component {
   static displayName = 'AreaChart';
 
   static propTypes = {
-    composedData: PropTypes.array,
+    allComposedData: PropTypes.array,
+    axisTicks: PropTypes.array,
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     dataStartIndex: PropTypes.number,
     dataEndIndex: PropTypes.number,
@@ -112,14 +113,14 @@ export class AreaChart extends Component {
     animationId: PropTypes.number,
   };
 
-  renderCursor({ offset, composedData }) {
-    const { children, isTooltipActive, layout, activeTooltipIndex } = this.props;
+  renderCursor({ offset }) {
+    const { children, isTooltipActive, layout, activeTooltipIndex, axisTicks } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive ||
       activeTooltipIndex < 0) { return null; }
 
-    const ticks = composedData.axisTicks;
+    const ticks = axisTicks;
 
     if (!ticks || !ticks[activeTooltipIndex]) { return null; }
 
@@ -171,11 +172,11 @@ export class AreaChart extends Component {
    * @param  {Object} xAxisMap The configuration of all x-axis
    * @param  {Object} yAxisMap The configuration of all y-axis
    * @param  {Object} offset   The offset of main part in the svg element
-	 * @param	 {Array} composedData The array of pre-created composedData
+	 * @param	 {Array} allComposedData The array of pre-created composedData
 	 *															{points, basedLine, layout} for each item
    * @return {ReactComponent} The instances of Area
    */
-  renderItems(items, xAxisMap, yAxisMap, offset, composedData) {
+  renderItems(items, xAxisMap, yAxisMap, offset, allComposedData) {
     const { children, layout, isTooltipActive, activeTooltipIndex } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
@@ -185,7 +186,7 @@ export class AreaChart extends Component {
     const areaItems = items.reduce((result, child, i) => {
 
       const { dataKey, activeDot } = child.props;
-      const currentComposedData = composedData[i];
+      const currentComposedData = allComposedData[i];
       const activePoint = currentComposedData.points &&
 				currentComposedData.points[activeTooltipIndex];
 
@@ -226,12 +227,12 @@ export class AreaChart extends Component {
   }
 
   render() {
-    const { isComposed, graphicalItems, xAxisMap, yAxisMap, offset, composedData } = this.props;
+    const { isComposed, graphicalItems, xAxisMap, yAxisMap, offset, allComposedData } = this.props;
 
     return (
       <Layer className="recharts-area-graphical">
-        {!isComposed && this.renderCursor({ xAxisMap, yAxisMap, offset, composedData })}
-        {this.renderItems(graphicalItems, xAxisMap, yAxisMap, offset, composedData)}
+        {!isComposed && this.renderCursor({ xAxisMap, yAxisMap, offset })}
+        {this.renderItems(graphicalItems, xAxisMap, yAxisMap, offset, allComposedData)}
       </Layer>
     );
   }

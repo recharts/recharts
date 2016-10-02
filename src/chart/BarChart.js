@@ -94,7 +94,8 @@ class BarChart extends Component {
   static displayName = 'BarChart';
 
   static propTypes = {
-    composedData: PropTypes.array,
+    allComposedData: PropTypes.array,
+    axisTicks: PropTypes.array,
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     dataStartIndex: PropTypes.number,
     dataEndIndex: PropTypes.number,
@@ -123,15 +124,15 @@ class BarChart extends Component {
     barGap: 4,
   };
 
-  renderCursor({ xAxisMap, yAxisMap, offset, composedData }) {
-    const { children, isTooltipActive, layout, activeTooltipIndex } = this.props;
+  renderCursor({ xAxisMap, yAxisMap, offset }) {
+    const { children, isTooltipActive, layout, activeTooltipIndex, axisTicks } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
     if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive ||
       activeTooltipIndex < 0) { return null; }
 
     const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
     const axis = getAnyElementOfObject(axisMap);
-    const ticks = composedData.axisTicks;
+    const ticks = axisTicks;
 
     if (!ticks || !ticks[activeTooltipIndex]) { return null; }
 
@@ -161,7 +162,7 @@ class BarChart extends Component {
 
     const { layout } = this.props;
 
-    const { animationId, composedData } = this.props;
+    const { animationId, allComposedData } = this.props;
 
     return items.map((child, i) =>
       React.cloneElement(child, {
@@ -169,17 +170,17 @@ class BarChart extends Component {
         ...filterEventAttributes(this.props),
         layout,
         animationId,
-        data: composedData[i],
+        data: allComposedData[i],
       })
     , this);
   }
 
   render() {
-    const { isComposed, graphicalItems, xAxisMap, yAxisMap, offset, composedData } = this.props;
+    const { isComposed, graphicalItems, xAxisMap, yAxisMap, offset } = this.props;
 
     return (
       <Layer className="recharts-bar-graphical">
-        {!isComposed && this.renderCursor({ xAxisMap, yAxisMap, offset, composedData })}
+        {!isComposed && this.renderCursor({ xAxisMap, yAxisMap, offset })}
         {this.renderItems(graphicalItems)}
       </Layer>
     );
