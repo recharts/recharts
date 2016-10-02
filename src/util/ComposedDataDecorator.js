@@ -62,9 +62,9 @@ export default ({ getComposedData, ChildComponent }) => (WrappedComponent) =>
             getBarPosition({ barGap, barCategoryGap, bandSize, sizeList: sizeList[cateAxisId] });
         }
 
-        const composedData = getComposedData({ props: this.props,
+        const composedData = getComposedData && getComposedData({ props: this.props,
           xAxis, yAxis, xTicks, yTicks, dataKey, item, barPosition, offset, stackedData,
-        });
+        }) || {};
         composedData.axisTicks = axisTicks;
         allComposedData.push(composedData);
       });
@@ -105,7 +105,6 @@ export default ({ getComposedData, ChildComponent }) => (WrappedComponent) =>
     }
 
     render() {
-// composedData: this.state.composedData,
-      return <WrappedComponent composedData={this.state.composedData} {...this.props} />;
+      return <WrappedComponent {...this.props} composedData={this.state.composedData} />;
     }
   };

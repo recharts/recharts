@@ -15,8 +15,11 @@ import pureRender from '../util/PureRender';
 import { AreaChart } from './AreaChart';
 import { LineChart } from './LineChart';
 import { BarChart } from './BarChart';
+import composedDataDecorator from '../util/ComposedDataDecorator';
+
 
 @pureRender
+@composedDataDecorator({})
 class ComposedChart extends Component {
 
   static displayName = 'ComposedChart';
