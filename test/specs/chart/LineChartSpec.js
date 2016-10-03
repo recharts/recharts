@@ -1,10 +1,11 @@
 import React from 'react';
 import { expect } from 'chai';
+// eslint-disable-next-line import/no-unresolved
 import { LineChart, Line, Curve, XAxis, YAxis, Tooltip, Brush, Legend } from 'recharts';
 import { mount, render } from 'enzyme';
 import sinon from 'sinon';
 
-/* eslint-disable max-len */
+/* eslint-disable max-len, react/prop-types */
 
 describe('<LineChart />', () => {
   const data = [
@@ -37,9 +38,9 @@ describe('<LineChart />', () => {
   });
 
   it('Renders customized active dot when activeDot is set to be a ReactElement', () => {
-    const ActiveDot = ({ cx, cy }) => {
-      return <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
-    };
+    const ActiveDot = ({ cx, cy }) =>
+      <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
+
     const wrapper = mount(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line activeDot={<ActiveDot />} type="monotone" dataKey="uv" stroke="#ff7300" />
@@ -60,9 +61,9 @@ describe('<LineChart />', () => {
   });
 
   it('Renders customized active dot when activeDot is set to be a function', () => {
-    const renderActiveDot = ({ cx, cy }) => {
-      return <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
-    };
+    const renderActiveDot = ({ cx, cy }) =>
+      <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
+
     const wrapper = mount(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line activeDot={renderActiveDot} type="monotone" dataKey="uv" stroke="#ff7300" />
@@ -282,6 +283,51 @@ describe('<LineChart />', () => {
     expect(newLineDots.childAt(2).props().cx).to.equal(width - margin.right);
     expect(newLineDots.childAt(2).props().cy).to.equal(43.4666666666667);
 
+  });
+
+	// protect against the future where someone might mess up our clean rendering
+  it('should only render Line once when the mouse enters and moves', () => {
+    const wrapper = mount(
+      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+        <Tooltip />
+        <XAxis />
+        <YAxis />
+        <Brush />
+        <Legend layout="vertical" />
+      </LineChart>
+    );
+
+    const lines = wrapper.find(Line);
+    expect(lines.length).to.equal(1);
+    const lineRender = sinon.spy(lines.get(0), 'render');
+
+    wrapper.simulate('mouseEnter', { pageX: 30, pageY: 200 });
+    wrapper.simulate('mouseMove', { pageX: 200, pageY: 200 });
+    wrapper.simulate('mouseLeave');
+
+    expect(lineRender.callCount).to.equal(0);
+  });
+
+	// protect against the future where someone might mess up our clean rendering
+  it('should only render Line once when the brush moves but doesn\'t change start/end indices', () => {
+    const wrapper = mount(
+      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+        <Tooltip />
+        <XAxis />
+        <YAxis />
+        <Brush />
+        <Legend layout="vertical" />
+      </LineChart>
+    );
+
+    const lines = wrapper.find(Line);
+    expect(lines.length).to.equal(1);
+    const lineRender = sinon.spy(lines.get(0), 'render');
+
+    wrapper.instance().handleBrushChange({ startIndex: 0, endIndex: data.length - 1 });
+    expect(lineRender.callCount).to.equal(0);
   });
 
 });
