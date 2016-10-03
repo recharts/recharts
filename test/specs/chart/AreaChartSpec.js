@@ -1,21 +1,25 @@
 import React from 'react';
 import { expect } from 'chai';
-import { AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
-import { mount, render, spy } from 'enzyme';
+// eslint-disable-next-line import/no-unresolved
+import { AreaChart, Area, XAxis, YAxis, Tooltip, Brush, Legend, CartesianAxis } from 'recharts';
+import { mount, render } from 'enzyme';
 import sinon from 'sinon';
 
+/* eslint-disable max-len, react/prop-types */
+
+const data = [{ name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
+  { name: 'Page B', uv: 300, pv: 4567, amt: 2400 },
+  { name: 'Page C', uv: 300, pv: 1398, amt: 2400 },
+  { name: 'Page D', uv: 200, pv: 9800, amt: 2400 },
+  { name: 'Page E', uv: 278, pv: 3908, amt: 2400 },
+  { name: 'Page F', uv: 189, pv: 4800, amt: 2400 }];
+
 describe('<AreaChart />', () => {
-  const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400},
-    {name: 'Page B', uv: 300, pv: 4567, amt: 2400},
-    {name: 'Page C', uv: 300, pv: 1398, amt: 2400},
-    {name: 'Page D', uv: 200, pv: 9800, amt: 2400},
-    {name: 'Page E', uv: 278, pv: 3908, amt: 2400},
-    {name: 'Page F', uv: 189, pv: 4800, amt: 2400}];
 
   it('Renders 2 path in simple AreaChart', () => {
     const wrapper = render(
       <AreaChart width={100} height={50} data={data}>
-        <Area type='monotone' dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>
     );
     expect(wrapper.find('.recharts-area-area').length).to.equal(1);
@@ -25,7 +29,7 @@ describe('<AreaChart />', () => {
   it('Renders 1 dot when data only have one element', () => {
     const wrapper = render(
       <AreaChart width={100} height={50} data={data.slice(0, 1)}>
-        <Area type='monotone' dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>
     );
     expect(wrapper.find('.recharts-area-area').length).to.equal(0);
@@ -34,13 +38,11 @@ describe('<AreaChart />', () => {
   });
 
   it('Renders customized active dot when activeDot is set to be a ReactElement', () => {
-    const ActiveDot = ({cx, cy}) => {
-      return <circle cx={cx} cy={cy} r={10} className="customized-active-dot"/>;
-    };
+    const ActiveDot = ({ cx, cy }) => <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
     const wrapper = mount(
       <AreaChart width={100} height={50} data={data}>
-        <Area activeDot={<ActiveDot />} type='monotone' dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
-        <Tooltip/>
+        <Area activeDot={<ActiveDot />} type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip />
       </AreaChart>
     );
 
@@ -57,20 +59,18 @@ describe('<AreaChart />', () => {
   });
 
   it('Renders customized active dot when activeDot is set to be a function', () => {
-    const renderActiveDot = ({cx, cy}) => {
-      return <circle cx={cx} cy={cy} r={10} className="customized-active-dot"/>;
-    };
+    const renderActiveDot = ({ cx, cy }) => <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
     const wrapper = mount(
       <AreaChart width={100} height={50} data={data}>
         <Area
           isAnimationActive={false}
           activeDot={renderActiveDot}
-          type='monotone'
-          dataKey='uv'
-          stroke='#ff7300'
-          fill='#ff7300'
+          type="monotone"
+          dataKey="uv"
+          stroke="#ff7300"
+          fill="#ff7300"
         />
-        <Tooltip/>
+        <Tooltip />
       </AreaChart>
     );
 
@@ -88,8 +88,8 @@ describe('<AreaChart />', () => {
   it('Renders 4 path in a stacked AreaChart', () => {
     const wrapper = render(
       <AreaChart width={100} height={50} data={data}>
-        <Area type='monotone' dataKey='uv' stackId="test" stroke='#ff7300' fill='#ff7300'/>
-        <Area type='monotone' dataKey='pv' stackId="test" stroke='#ff7300' fill='#ff7300'/>
+        <Area type="monotone" dataKey="uv" stackId="test" stroke="#ff7300" fill="#ff7300" />
+        <Area type="monotone" dataKey="pv" stackId="test" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>
     );
     expect(wrapper.find('.recharts-area-area').length).to.equal(2);
@@ -99,9 +99,9 @@ describe('<AreaChart />', () => {
   it('Renders 4 path in a vertical AreaChart', () => {
     const wrapper = render(
       <AreaChart width={100} height={50} data={data} layout="vertical">
-        <XAxis type="number"/>
-        <YAxis dataKey="name" type="category"/>
-        <Area type='monotone' dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
+        <XAxis type="number" />
+        <YAxis dataKey="name" type="category" />
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>
     );
     expect(wrapper.find('.recharts-area-area').length).to.equal(1);
@@ -111,7 +111,7 @@ describe('<AreaChart />', () => {
   it('Renders dots and labels when dot is setted to true', () => {
     const wrapper = render(
       <AreaChart width={100} height={50} data={data}>
-        <Area isAnimationActive={false} type='monotone' dot label dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
+        <Area isAnimationActive={false} type="monotone" dot label dataKey="uv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>
     );
     expect(wrapper.find('.recharts-area-dots').length).to.equal(1);
@@ -123,7 +123,7 @@ describe('<AreaChart />', () => {
   it('Render empty when data is empty', () => {
     const wrapper = render(
       <AreaChart width={100} height={50} data={[]}>
-        <Area type='monotone' dot label dataKey='uv' stroke='#ff7300' fill='#ff7300'/>
+        <Area type="monotone" dot label dataKey="uv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>
     );
     expect(wrapper.find('.recharts-area').length).to.equal(0);
@@ -141,4 +141,60 @@ describe('<AreaChart />', () => {
   //   area.simulate('mouseEnter');
   //   expect(onMouseEnter.calledOnce).to.equal(true);
   // });
+});
+
+describe('<AreaChart /> - Pure Rendering', () => {
+  const pureElements = [Area];
+
+  const spies = [];
+	// CartesianAxis is what is actually render for XAxis and YAxis
+  let axisSpy;
+
+	// spy on each pure element before each test, and restore the spy afterwards
+  beforeEach(() => {
+    pureElements.forEach((el, i) => (spies[i] = sinon.spy(el.prototype, 'render')));
+    axisSpy = sinon.spy(CartesianAxis.prototype, 'render');
+  });
+  afterEach(() => {
+    pureElements.forEach((el, i) => spies[i].restore());
+    axisSpy.restore();
+  });
+
+  const chart = (
+    <AreaChart width={400} height={400} data={data}>
+      <Area isAnimationActive={false} type="monotone" dot label dataKey="uv" />
+      <Tooltip />
+      <XAxis />
+      <YAxis />
+      <Brush />
+      <Legend layout="vertical" />
+    </AreaChart>
+  );
+
+	// protect against the future where someone might mess up our clean rendering
+  it('should only render Area once when the mouse enters and moves', () => {
+    const wrapper = mount(chart);
+
+    spies.forEach((el) => expect(el.callCount).to.equal(1));
+    expect(axisSpy.callCount).to.equal(2);
+
+    wrapper.simulate('mouseEnter', { pageX: 30, pageY: 200 });
+    wrapper.simulate('mouseMove', { pageX: 200, pageY: 200 });
+    wrapper.simulate('mouseLeave');
+
+    spies.forEach((el) => expect(el.callCount).to.equal(1));
+    expect(axisSpy.callCount).to.equal(2);
+  });
+
+	// protect against the future where someone might mess up our clean rendering
+  it('should only render Area once when the brush moves but doesn\'t change start/end indices', () => {
+    const wrapper = mount(chart);
+
+    spies.forEach((el) => expect(el.callCount).to.equal(1));
+    expect(axisSpy.callCount).to.equal(2);
+    wrapper.instance().handleBrushChange({ startIndex: 0, endIndex: data.length - 1 });
+    spies.forEach((el) => expect(el.callCount).to.equal(1));
+    expect(axisSpy.callCount).to.equal(2);
+  });
+
 });
