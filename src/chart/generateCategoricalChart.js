@@ -69,9 +69,9 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     constructor(props) {
       super(props);
-      this.state = this.createDefaultState(this.props);
-      this.state = { ...this.state,
-				...this.updateStateOfAxisMapsOffsetAndStackGroups(props) };
+      const defaultState = this.createDefaultState(this.props);
+      this.state = { ...defaultState,
+				...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState }) };
       this.validateAxes();
       this.uniqueChartId = _.uniqueId('recharts');
     }
@@ -84,8 +84,11 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     componentWillReceiveProps(nextProps) {
       if (nextProps.data !== this.props.data) {
-        this.setState({ ...this.createDefaultState(nextProps),
-					...this.updateStateOfAxisMapsOffsetAndStackGroups(nextProps) });
+        const defaultState = this.createDefaultState(this.props);
+        this.setState({ ...defaultState,
+					...this.updateStateOfAxisMapsOffsetAndStackGroups(
+						{ props: this.props, ...defaultState }) }
+				);
       }
       // add syncId
       if (_.isNil(this.props.syncId) && !_.isNil(nextProps.syncId)) {
@@ -108,9 +111,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
    * @param  {String} axisType    The type of axis
    * @param  {Array} items        The instances of item
    * @param  {Object} stackGroups The items grouped by axisId and stackId
+	 * @param {Number} dataStartIndex The start index of the data series when a brush is applied
+	 * @param {Number} dataEndIndex The end index of the data series when a brush is applied
    * @return {Object}          Configuration
    */
-    getAxisMap(axisType = 'xAxis', items, stackGroups) {
+    getAxisMap({ axisType = 'xAxis', items, stackGroups, dataStartIndex, dataEndIndex }) {
+
+
       const { children } = this.props;
       const Axis = axisType === 'xAxis' ? XAxis : YAxis;
       const axisIdKey = axisType === 'xAxis' ? 'xAxisId' : 'yAxisId';
@@ -120,9 +127,11 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       let axisMap = {};
 
       if (axes && axes.length) {
-        axisMap = this.getAxisMapByAxes(axes, items, axisType, axisIdKey, stackGroups);
+        axisMap = this.getAxisMapByAxes({ axes, items, axisType, axisIdKey,
+					stackGroups, dataStartIndex, dataEndIndex });
       } else if (items && items.length) {
-        axisMap = this.getAxisMapByItems(items, Axis, axisType, axisIdKey, stackGroups);
+        axisMap = this.getAxisMapByItems({ items, Axis, axisType, axisIdKey,
+					stackGroups, dataStartIndex, dataEndIndex });
       }
 
       return axisMap;
@@ -135,11 +144,14 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      * @param  {String} axisType The type of axis, xAxis - x-axis, yAxis - y-axis
      * @param  {String} axisIdKey The unique id of an axis
      * @param  {Object} stackGroups The items grouped by axisId and stackId
+		 * @param {Number} dataStartIndex The start index of the data series when a brush is applied
+		 * @param {Number} dataEndIndex The end index of the data series when a brush is applied
      * @return {Object}      Configuration
      */
-    getAxisMapByAxes(axes, items, axisType, axisIdKey, stackGroups) {
+    getAxisMapByAxes({ axes, items, axisType, axisIdKey,
+			stackGroups, dataStartIndex, dataEndIndex }) {
+
       const { layout, children, data } = this.props;
-      const { dataEndIndex, dataStartIndex } = this.state;
       const displayedData = data.slice(dataStartIndex, dataEndIndex + 1);
       const len = displayedData.length;
       const isCategorial = isCategorialAxis(layout, axisType);
@@ -205,11 +217,14 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      * @param  {String} axisType   The type of axis, xAxis - x-axis, yAxis - y-axis
      * @param  {String} axisIdKey  The unique id of an axis
      * @param  {Object} stackGroups The items grouped by axisId and stackId
+		 * @param {Number} dataStartIndex The start index of the data series when a brush is applied
+		 * @param {Number} dataEndIndex The end index of the data series when a brush is applied
      * @return {Object}            Configuration
      */
-    getAxisMapByItems(items, Axis, axisType, axisIdKey, stackGroups) {
+    getAxisMapByItems({ items, Axis, axisType, axisIdKey,
+			stackGroups, dataStartIndex, dataEndIndex }) {
+
       const { layout, children, data } = this.props;
-      const { dataEndIndex, dataStartIndex } = this.state;
       const displayedData = data.slice(dataStartIndex, dataEndIndex + 1);
       const len = displayedData.length;
       const isCategorial = isCategorialAxis(layout, axisType);
@@ -403,9 +418,11 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 		 * the state is updated with any new start/end indices
 		 *
 		 * @param {Object} props The props object to be used for updating the axismaps
+		 * @param {Number} dataStartIndex The start index of the data series when a brush is applied
+		 * @param {Number} dataEndIndex The end index of the data series when a brush is applied
 		 * @return {Object} state New state to set
 		 */
-    updateStateOfAxisMapsOffsetAndStackGroups(props) {
+    updateStateOfAxisMapsOffsetAndStackGroups({ props, dataStartIndex, dataEndIndex }) {
       const { data } = props;
       if (!validateWidthHeight({ props }) || !data || !data.length) { return null; }
 
@@ -417,8 +434,21 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         data, items, `${numericIdName}Id`, `${cateIdName}Id`, stackOffset
       );
 
-      let xAxisMap = this.getAxisMap('xAxis', items, numericIdName === 'xAxis' && stackGroups);
-      let yAxisMap = this.getAxisMap('yAxis', items, numericIdName === 'yAxis' && stackGroups);
+      let xAxisMap = this.getAxisMap({
+        axisType: 'xAxis',
+        items,
+        stackGroups: numericIdName === 'xAxis' && stackGroups,
+        dataStartIndex,
+        dataEndIndex,
+      });
+
+      let yAxisMap = this.getAxisMap({
+        axisType: 'yAxis',
+        items,
+        stackGroups: numericIdName === 'yAxis' && stackGroups,
+        dataStartIndex,
+        dataEndIndex,
+      });
 
       const offset = this.calculateOffset(items, xAxisMap, yAxisMap);
 
@@ -517,23 +547,31 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       if (syncId === cId && chartId !== this.chartId) {
         this.setState(data);
+        const { dataStartIndex, dataEndIndex } = data;
         if (data.dataStartIndex || data.dataEndIndex) {
-          this.setState(this.updateStateOfAxisMapsOffsetAndStackGroups(this.props));
+          this.setState(this.updateStateOfAxisMapsOffsetAndStackGroups(
+						{ props: this.props, dataStartIndex, dataEndIndex }
+					));
         }
       }
     };
 
     handleBrushChange = ({ startIndex, endIndex }) => {
-      this.setState({
-        dataStartIndex: startIndex,
-        dataEndIndex: endIndex,
-        ...this.updateStateOfAxisMapsOffsetAndStackGroups(this.props),
-      });
+			// Only trigger changes if the extents of the brush have actually changed
+      if (startIndex !== this.state.dataStartIndex || endIndex !== this.state.dataEndIndex) {
+        this.setState({
+          dataStartIndex: startIndex,
+          dataEndIndex: endIndex,
+          ...this.updateStateOfAxisMapsOffsetAndStackGroups(
+						{ props: this.props, dataStartIndex: startIndex, dataEndIndex: endIndex }
+					),
+        });
 
-      this.triggerSyncEvent({
-        dataStartIndex: startIndex,
-        dataEndIndex: endIndex,
-      });
+        this.triggerSyncEvent({
+          dataStartIndex: startIndex,
+          dataEndIndex: endIndex,
+        });
+      }
     };
     /**
      * The handler of mouse entering chart
