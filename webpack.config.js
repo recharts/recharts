@@ -23,8 +23,7 @@ var config = {
     resolve: {
       alias: {
         'react': path.resolve(__dirname, './node_modules/react'),
-        'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
-        'react-addons-transition-group': path.resolve(__dirname, './node_modules/react-addons-transition-group'),
+        'react-dom': path.resolve(__dirname, './node_modules/react-dom')
       }
     },
   },
@@ -47,12 +46,6 @@ var config = {
       commonjs2: 'react-dom-server',
       commonjs: 'react-dom-server',
       amd:'react-dom-server'
-    },
-    'react-addons-css-transition-group': {
-      root: ['React','addons','CSSTransitionGroup'],
-      commonjs2: 'react-addons-css-transition-group',
-      commonjs: 'react-addons-css-transition-group',
-      amd: 'react-addons-css-transition-group'
     }
   },
 
