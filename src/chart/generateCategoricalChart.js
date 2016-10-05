@@ -496,6 +496,28 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         dataEndIndex: endIndex,
       });
     };
+
+    handleClickTooltip(offset, xAxisMap, yAxisMap, onClickTooltip, items, e) {
+      if (!onClickTooltip || !_.isFunction(onClickTooltip)) { return; }
+
+      const container = ReactDOM.findDOMNode(this);
+      const containerOffset = getOffset(container);
+      const ne = calculateChartCoordinate(e, containerOffset);
+      const mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);
+
+      if (!mouse) { return; }
+
+      const { activeTooltipIndex, dataStartIndex, dataEndIndex } = this.state;
+      const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
+
+      if (activeTooltipIndex < 0 || !items || !items.length
+        || activeTooltipIndex >= data.length) {
+        return;
+      }
+
+      onClickTooltip(data[activeTooltipIndex], activeTooltipIndex, e);
+    }
+
     /**
      * The handler of mouse entering chart
      * @param  {Object} offset   The offset of main part in the svg element
@@ -782,10 +804,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       const tooltipItem = findChildByType(children, Tooltip);
       const events = tooltipItem ? {
+        onClick: this.handleClickTooltip.bind(this, offset, xAxisMap, yAxisMap,
+          tooltipItem.props.onClick, items),
         onMouseEnter: this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap),
         onMouseMove: this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap),
         onMouseLeave: this.handleMouseLeave,
       } : null;
+
       const attrs = getPresentationAttributes(others);
 
       return (

@@ -2,6 +2,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { AreaChart, Area, Tooltip } from 'recharts';
 import { mount, render } from 'enzyme';
+import sinon from 'sinon';
 
 describe('<Tooltip />', () => {
   const data = [
@@ -15,8 +16,8 @@ describe('<Tooltip />', () => {
   it('Render 1 default tooltip', () => {
     const wrapper = mount(
       <AreaChart width={100} height={50} data={data}>
-        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300"/>
-        <Tooltip/>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip />
       </AreaChart>
     );
 
@@ -34,6 +35,70 @@ describe('<Tooltip />', () => {
     });
 
     expect(wrapper.find(Tooltip).length).to.equal(1);
+  });
+
+  it('click on chart should invoke onClick callback', () => {
+    const onClick = sinon.spy();
+    const wrapper = mount(
+      <AreaChart width={100} height={50} data={data}>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip onClick={onClick} />
+      </AreaChart>
+    );
+
+    // I simulate to hover on the AreaChart, then the tooltip should show!
+    wrapper.setState({
+      isTooltipActive: true,
+      chartX: 86,
+      chartY: 21,
+      activeTooltipIndex: 4,
+      activeTooltipLabel: 4,
+      activeTooltipCoord: {
+        x: 95,
+        y: 21,
+      },
+    });
+
+    const chart = wrapper.find(Area);
+    chart.simulate('click', { pageX: 50, pageY: 30 });
+    expect(onClick.calledOnce).to.equal(true);
+    expect(onClick.lastCall.args[0]).to.deep.equal({
+      name: 'Page E',
+      uv: 189,
+      pv: 4800,
+      amt: 2400,
+    });
+    expect(onClick.lastCall.args[1]).to.equal(4);
+  });
+
+  it('clicking outside the chart should not trigger onClick callback', () => {
+    const onClick = sinon.spy();
+    const wrapper = mount(
+      <AreaChart width={100} height={50} data={data} margin={{ left: 10 }}>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip onClick={onClick} />
+      </AreaChart>
+    );
+
+    // I simulate to hover on the AreaChart, then the tooltip should show!
+    wrapper.setState({
+      isTooltipActive: true,
+      chartX: 86,
+      chartY: 21,
+      activeTooltipIndex: 4,
+      activeTooltipLabel: 4,
+      activeTooltipCoord: {
+        x: 95,
+        y: 21,
+      },
+    });
+
+    const chart = wrapper.find(Area);
+    chart.simulate('click', { pageX: 5, pageY: 30 });
+    expect(onClick.calledOnce).to.equal(false);
+
+    chart.simulate('click', { pageX: 50, pageY: 30 });
+    expect(onClick.calledOnce).to.equal(true);
   });
 
   // it('Render customized tooltip when content is set to be a react element', () => {

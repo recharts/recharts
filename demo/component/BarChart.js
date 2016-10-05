@@ -213,6 +213,10 @@ export default React.createClass({
     console.log(`Pv Bar (${index}) Click: `, data);
   },
 
+  handleClickTooltip(data, index, e) {
+    console.log(`Tooltip (${index}) Click: `, data);
+  },
+
   render() {
     const { data, data01, data02 } = this.state;
 
@@ -301,12 +305,12 @@ export default React.createClass({
           </BarChart>
         </div>
 
-        <p>Stack BarChart</p>
+        <p>Stack BarChart (Click anywhere on chart and open console)</p>
         <div className="bar-chart-wrapper">
           <BarChart width={400} height={400} data={data}>
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
+            <Tooltip onClick={this.handleClickTooltip} />
             <CartesianGrid vertical={false}/>
             <Bar stackId="0" dataKey="uv" fill="#ff7300"/>
             <Bar stackId="0" dataKey="pv" fill="#387908" label={RenderLabel}/>
