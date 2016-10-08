@@ -433,7 +433,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      * @return {Object} The offset of main part in the svg element
      */
     calculateOffset(items, xAxisMap, yAxisMap) {
-      const { width, height, margin, children } = this.props;
+      const { width, height, children } = this.props;
+      const margin = this.props.margin || {};
       const brushItem = findChildByType(children, Brush);
 
       const offsetH = Object.keys(yAxisMap).reduce((result, id) => {
@@ -666,9 +667,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      * @return {ReactElement}            The instance of Legend
      */
     renderLegend(items) {
-      const { children, width, height, margin } = this.props;
-      const legendWidth = width - margin.left - margin.right;
-      const legendHeight = height - margin.top - margin.bottom;
+      const { children, width, height } = this.props;
+      const margin = this.props.margin || {};
+      const legendWidth = width - (margin.left || 0) - (margin.right || 0);
+      const legendHeight = height - (margin.top || 0) - (margin.bottom || 0);
       const props = getLegendProps(children, items, legendWidth, legendHeight);
 
       if (!props) { return null; }
