@@ -5,7 +5,6 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
-import Text from '../component/Text';
 import { getStringSize } from '../util/DOMUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
@@ -264,10 +263,10 @@ class RadialBar extends Component {
       const path = this.getLabelPathArc(entry, content, style);
 
       return (
-        <Text {...style} key={`label-${i}`} className="recharts-radial-bar-label">
+        <text {...style} key={`label-${i}`} className="recharts-radial-bar-label">
           <defs><path id={id} d={path} /></defs>
           <textPath xlinkHref={`#${id}`}>{content}</textPath>
-        </Text>
+        </text>
       );
     });
   }
