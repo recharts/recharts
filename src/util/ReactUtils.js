@@ -188,11 +188,14 @@ export const getPresentationAttributes = (el) => {
 
   if (!_.isObject(props)) { return null; }
 
-  const keys = Object.keys(props).filter(k => PRESENTATION_ATTRIBUTES[k]);
-
-  return (keys && keys.length) ?
-    keys.reduce((result, k) => ({ ...result, [k]: props[k] }), {}) :
-    null;
+  let out = null;
+  for (let i in props) {
+    if (props.hasOwnProperty(i) && PRESENTATION_ATTRIBUTES[i]) {
+      if (!out) out = {};
+      out[PRESENTATION_ATTRIBUTES[i]] = props[i];
+    }
+  }
+  return out;
 };
 
 /**
@@ -207,11 +210,14 @@ export const filterEventAttributes = (el) => {
 
   if (!_.isObject(props)) { return null; }
 
-  const keys = Object.keys(props).filter(k => EVENT_ATTRIBUTES[k]);
-
-  return (keys && keys.length) ?
-    keys.reduce((result, k) => ({ ...result, [k]: props[k] }), {}) :
-    null;
+  let out = null;
+  for (let i in props) {
+    if (props.hasOwnProperty(i) && EVENT_ATTRIBUTES[i]) {
+      if (!out) out = {};
+      out[EVENT_ATTRIBUTES[i]] = props[i];
+    }
+  }
+  return out;
 };
 
 const getEventHandler = (originalHandler, data, index) => (
@@ -224,16 +230,15 @@ const getEventHandler = (originalHandler, data, index) => (
 
 export const filterEventsOfChild = (props, data, index) => {
   if (!_.isObject(props)) { return null; }
-
-  const events = Object.keys(props).filter(k => (
-    EVENT_ATTRIBUTES[k] && _.isFunction(props[k])
-  ));
-
-  return (events && events.length) ?
-    events.reduce((result, e) => ({
-      ...result, [e]: getEventHandler(props[e], data, index),
-    }), {}) :
-    null;
+  
+  let out = null;
+  for (let i in props) {
+    if (props.hasOwnProperty(i) && EVENT_ATTRIBUTES[i] && _.isFunction(props[i])) {
+      if (!out) out = {};
+      out[i] = getEventHandler(props[i], data, index)
+    }
+  }
+  return out;
 };
 
 /**
