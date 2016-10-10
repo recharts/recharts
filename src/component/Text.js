@@ -56,7 +56,7 @@ class Text extends Component {
       );
       this.setState({ wordsByLines });
     } else {
-      const words = props.children ? props.children.toString().split(/\s+/) : [];
+      const words = !_.isNil(props.children) ? props.children.toString().split(/\s+/) : [];
       this.setState({ wordsByLines: [{ words }] });
     }
   }
@@ -69,7 +69,7 @@ class Text extends Component {
     svg.appendChild(text);
     document.body.appendChild(svg);
 
-    const words = props.children ? props.children.toString().split(/\s+/) : [];
+    const words = !_.isNil(props.children) ? props.children.toString().split(/\s+/) : [];
     const wordsWithComputedWidth = words.map(word => {
       text.textContent = word;
       return { word, width: text.getComputedTextLength() };
