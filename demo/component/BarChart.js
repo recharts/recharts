@@ -255,11 +255,11 @@ export default React.createClass({
 
         <p>BarChart of layout vertical</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={400} height={400} data={data} layout="vertical">
+          <BarChart width={400} height={400} data={data} layout="vertical" maxBarSize={10} >
             <XAxis type="number" />
             <YAxis dataKey="name" type="category"/>
             <CartesianGrid horizontal={false} />
-            <Bar dataKey="uv" fill="#ff7300" />
+            <Bar dataKey="uv" fill="#ff7300" maxBarSize={15} />
             <Bar dataKey="pv" fill="#387908" />
           </BarChart>
         </div>

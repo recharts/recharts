@@ -33,6 +33,7 @@ class Bar extends Component {
       'triangle', 'wye',
     ]),
     minPointSize: PropTypes.number,
+    maxBarSize: PropTypes.number,
 
     shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
     label: PropTypes.oneOfType([

@@ -14,6 +14,7 @@ import Bar from '../cartesian/Bar';
 import pureRender from '../util/PureRender';
 import { getTicksOfAxis, getStackedDataOfItem } from '../util/CartesianUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
+import _ from 'lodash';
 
 @AnimationDecorator
 @pureRender
@@ -40,6 +41,7 @@ class BarChart extends Component {
     barCategoryGap: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     barGap: PropTypes.number,
     barSize: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    maxBarSize: PropTypes.number,
     // used internally
     isComposed: PropTypes.bool,
     animationId: PropTypes.number,
@@ -129,11 +131,12 @@ class BarChart extends Component {
 
   /**
    * Calculate the size of each bar and the gap between two bars
-   * @param  {Number}   bandSize  The size of each category
-   * @param  {sizeList} sizeList  The size of all groups
+   * @param  {Number}     bandSize   The size of each category
+   * @param  {sizeList}   sizeList   The size of all groups
+   * @param  {maxBarSize} maxBarSize The maximum size of bar
    * @return {Number} The size of each bar and the gap between two bars
    */
-  getBarPosition(bandSize, sizeList) {
+  getBarPosition(bandSize, sizeList, maxBarSize) {
     const { barGap, barCategoryGap } = this.props;
     const len = sizeList.length;
     let result;
@@ -165,13 +168,14 @@ class BarChart extends Component {
       }, {});
     } else {
       const offset = getPercentValue(barCategoryGap, bandSize, 0, true);
-      const size = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
+      const originalSize = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
+      const size = (maxBarSize === +maxBarSize) ? Math.min(originalSize, maxBarSize) : originalSize;
 
       result = sizeList.reduce((res, entry, i) => {
         const newRes = {
           ...res,
           [entry.dataKey]: {
-            offset: offset + (size + barGap) * i,
+            offset: offset + (originalSize + barGap) * i + (originalSize - size) / 2,
             size,
           },
         };
@@ -194,7 +198,7 @@ class BarChart extends Component {
    * @return {Object} The size of all groups
    */
   getSizeList(stackGroups) {
-    const { layout, barSize } = this.props;
+    const { layout, barSize: globalSize } = this.props;
     const result = {};
     const numericAxisIds = Object.keys(stackGroups);
 
@@ -208,7 +212,7 @@ class BarChart extends Component {
         const barItems = items.filter(item => item.type.displayName === 'Bar');
 
         if (barItems && barItems.length) {
-          const { dataKey } = barItems[0].props;
+          const { dataKey, barSize: selfSize } = barItems[0].props;
           const cateId = barItems[0].props[cateAxisId];
 
           if (!result[cateId]) {
@@ -218,7 +222,7 @@ class BarChart extends Component {
           result[cateId].push({
             dataKey,
             stackList: barItems.slice(1).map(item => item.props.dataKey),
-            barSize: barItems[0].props.barSize || barSize,
+            barSize: _.isNil(selfSize) ? globalSize : selfSize,
           });
         }
       }
@@ -268,20 +272,21 @@ class BarChart extends Component {
   renderItems(items, xAxisMap, yAxisMap, offset, stackGroups) {
     if (!items || !items.length) { return null; }
 
-    const { layout } = this.props;
+    const { layout, maxBarSize: globalMax } = this.props;
     const sizeList = this.getSizeList(stackGroups);
     const { animationId } = this.props;
 
     const barPositionMap = {};
 
     return items.map((child, i) => {
-      const { xAxisId, yAxisId } = child.props;
+      const { xAxisId, yAxisId, maxBarSize: selfMax } = child.props;
       const numericAxisId = layout === 'horizontal' ? yAxisId : xAxisId;
       const cateAxisId = layout === 'horizontal' ? xAxisId : yAxisId;
       const cateAxis = layout === 'horizontal' ? xAxisMap[xAxisId] : yAxisMap[yAxisId];
       const bandSize = getBandSizeOfScale(cateAxis.scale);
+      const maxBarSize = _.isNil(selfMax) ? globalMax : selfMax;
       const barPosition = barPositionMap[cateAxisId] ||
-        this.getBarPosition(bandSize, sizeList[cateAxisId]);
+        this.getBarPosition(bandSize, sizeList[cateAxisId], maxBarSize);
       const stackedData = stackGroups && stackGroups[numericAxisId] &&
         stackGroups[numericAxisId].hasStack &&
         getStackedDataOfItem(child, stackGroups[numericAxisId].stackGroups);
