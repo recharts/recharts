@@ -161,7 +161,10 @@ class ScatterChart extends Component {
 
   getOffset(items, xAxis, yAxis) {
     const { children, width, height, margin } = this.props;
-    const offset = { ...margin };
+    const offset = {
+      left: margin.left || 0, right: margin.right || 0,
+      top: margin.top || 0, bottom: margin.bottom || 0,
+    };
     const legendProps = getLegendProps(children, items, width, height);
 
     offset[xAxis.orientation] += xAxis.height;
@@ -361,8 +364,8 @@ class ScatterChart extends Component {
    */
   renderLegend(items) {
     const { children, width, height, margin } = this.props;
-    const legendWidth = width - margin.left - margin.right;
-    const legendHeight = height - margin.top - margin.bottom;
+    const legendWidth = width - (margin.left || 0) - (margin.right || 0);
+    const legendHeight = height - (margin.top || 0) - (margin.bottom || 0);
     const props = getLegendProps(children, items, legendWidth, legendHeight);
 
     if (!props) { return null; }
