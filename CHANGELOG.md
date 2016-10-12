@@ -1,3 +1,21 @@
+## 0.15.2 (Oct 13, 2016)
+
+### Fix
+
+- support empty margin in generateCategoricalChart
+- fix the label of RadialBarChart
+- fix the bug of <Text>{0}</Text>
+- fix the bug of ScatterChart when margin lose some attributes
+
+### Feat
+
+- support maxBarSize in BarChart and Bar
+- support fill in CartesianGrid
+
+### Refactor
+
+- simplify the calculation of width and height when specified aspect
+
 ## 0.15.1 (Sep 26, 2016)
 
 ### fix
