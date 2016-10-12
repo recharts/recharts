@@ -17,7 +17,6 @@ const render = ({ aspect, width, height, minWidth, minHeight, container, childre
   warn(!aspect || aspect > 0,
        'The aspect(%s) must be greater than zero.',
        aspect);
-
   const calculatedWidth = isPercent(width) ? container.width : width;
   let calculatedHeight = isPercent(height) ? container.height : height;
 
