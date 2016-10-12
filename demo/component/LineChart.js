@@ -89,7 +89,7 @@ export default React.createClass({
         <p>A simple LineChart with fixed domain y-axis</p>
         <div className='line-chart-wrapper'>
           <LineChart width={400} height={400} data={data02} margin={{ top: 20, right: 40, bottom: 20, left: 20 }} syncId="test">
-            <CartesianGrid stroke='#f5f5f5'/>
+            <CartesianGrid stroke='#f5f5f5' />
             <Legend/>
             <XAxis/>
             <YAxis domain={[0, 350]} allowDataOverflow={true} />

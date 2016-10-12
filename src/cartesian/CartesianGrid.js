@@ -49,8 +49,9 @@ class CartesianGrid extends Component {
     if (!horizontalPoints || !horizontalPoints.length) { return null; }
 
     const props = getPresentationAttributes(this.props);
-    const items = horizontalPoints.map((entry, i) =>
-      (<line {...props} key={`line-${i}`} x1={x} y1={entry} x2={x + width} y2={entry} />));
+    const items = horizontalPoints.map((entry, i) => (
+      <line {...props} fill="none" key={`line-${i}`} x1={x} y1={entry} x2={x + width} y2={entry} />
+    ));
 
     return <g className="recharts-cartesian-grid-horizontal">{items}</g>;
   }
@@ -66,21 +67,44 @@ class CartesianGrid extends Component {
 
     const props = getPresentationAttributes(this.props);
 
-    const items = verticalPoints.map((entry, i) =>
-      (<line {...props} key={`line-${i}`} x1={entry} y1={y} x2={entry} y2={y + height} />));
+    const items = verticalPoints.map((entry, i) => (
+      <line {...props} fill="none" key={`line-${i}`} x1={entry} y1={y} x2={entry} y2={y + height} />
+    ));
 
     return <g className="recharts-cartesian-grid-vertical">{items}</g>;
   }
 
-  render() {
-    const { width, height, horizontal, vertical } = this.props;
+  renderBackground() {
+    const { fill } = this.props;
 
-    if (width <= 0 || height <= 0) {
+    if (!fill || fill === 'none') { return null; }
+
+    const { fillOpacity, x, y, width, height } = this.props;
+
+    return (
+      <rect
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        stroke="none"
+        fill={fill}
+        fillOpacity={fillOpacity}
+        className="recharts-cartesian-grid-bg"
+      />
+    );
+  }
+
+  render() {
+    const { x, y, width, height, horizontal, vertical, fill, fillOpacity } = this.props;
+
+    if (width <= 0 || height <= 0 || x !== +x || y !== +y) {
       return null;
     }
 
     return (
       <g className="recharts-cartesian-grid">
+        {this.renderBackground()}
         {horizontal && this.renderHorizontal()}
         {vertical && this.renderVertical()}
       </g>
