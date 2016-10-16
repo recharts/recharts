@@ -26,7 +26,7 @@ module.exports = function(config) {
     exclude: [
       'test/coverage/**',
       'lib/**',
-      'node_modules/'
+      'node_modules/',
     ],
 
     // preprocess matching files before serving them to the browser
@@ -43,21 +43,14 @@ module.exports = function(config) {
         ],
         loaders: [{
           test: /\.js$/,
-          include: [
-            /src|test|recharts/,
+          exclude: [
+            path.resolve('node_modules/')
           ],
-          exclude: /node_modules/,
           loader: 'babel',
         }, {
           test: /\.json$/,
           loader: 'json',
         }],
-        postLoaders: [{
-          test: /\.js$/,
-          include: /src/,
-          exclude: /node_modules/,
-          loader: 'istanbul-instrumenter',
-        }]
       },
       externals: {
         'jsdom': 'window',
@@ -70,7 +63,7 @@ module.exports = function(config) {
         alias: {
           'sinon': 'sinon/pkg/sinon',
           'recharts': path.resolve('./src/index.js'),
-        }
+        },
       },
       stats: {
         assets: false,
@@ -92,7 +85,6 @@ module.exports = function(config) {
       'karma-sourcemap-loader',
       'karma-firefox-launcher',
       'karma-chrome-launcher',
-      'istanbul-instrumenter-loader',
       'karma-coveralls'
     ],
 
@@ -102,13 +94,6 @@ module.exports = function(config) {
     reporters: ['progress', 'coverage', 'coveralls'],
 
     coverageReporter: {
-      instrumenters: { isparta : require('isparta') },
-      instrumenter: {
-        '**/*.js': 'isparta'
-      },
-      instrumenterOptions: {
-        isparta: { babel : { presets: 'es2015' } }
-      },
       dir: 'test',
       reporters: [{
         type: 'html',
@@ -123,7 +108,7 @@ module.exports = function(config) {
 
     webpackMiddleware: {
       // webpack-dev-middleware configuration
-      noInfo: true
+      stats: 'errors-only',
     },
 
     // web server port

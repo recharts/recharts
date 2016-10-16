@@ -25,7 +25,7 @@
     "build-umd": "NODE_ENV=development webpack src/index.js umd/Recharts.js",
     "build-min": "NODE_ENV=production webpack src/index.js umd/Recharts.min.js",
     "demo": "webpack-dev-server  --progress --port 3000  --colors --content-base demo --hot --inline --config demo/webpack.config.js",
-    "test": "karma start test/karma.conf.js",
+    "test": "NODE_ENV=test karma start test/karma.conf.js",
     "lint": "eslint src",
     "bundle-analyse": "NODE_ENV=production webpack src/index.js umd/Recharts.min.js --json | webpack-bundle-size-analyzer"
   },
@@ -43,8 +43,8 @@
   "homepage": "https://github.com/recharts/recharts",
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0",
-    "react-dom": "^0.14.0 || ^15.0.0",
-    "react-addons-transition-group": "^0.14.0 || ^15.0.0"
+    "react-addons-transition-group": "^0.14.0 || ^15.0.0",
+    "react-dom": "^0.14.0 || ^15.0.0"
   },
   "dependencies": {
     "classnames": "2.2.5",
@@ -62,6 +62,7 @@
     "babel-core": "^6.17.0",
     "babel-eslint": "^7.0.0",
     "babel-loader": "^6.2.0",
+    "babel-plugin-istanbul": "^2.0.1",
     "babel-plugin-lodash": "^3.2.0",
     "babel-plugin-transform-class-properties": "^6.16.0",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
@@ -81,8 +82,6 @@
     "eslint-plugin-jsx-a11y": "^2.2.0",
     "eslint-plugin-react": "^6.4.0",
     "estraverse-fb": "^1.3.1",
-    "isparta": "^4.0.0",
-    "istanbul-instrumenter-loader": "^0.2.0",
     "json-loader": "^0.5.4",
     "karma": "^1.3.0",
     "karma-chai": "^0.1.0",
