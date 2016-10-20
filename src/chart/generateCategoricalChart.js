@@ -81,7 +81,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     componentWillReceiveProps(nextProps) {
       if (nextProps.data !== this.props.data) {
-        this.setState(this.createDefaultState(nextProps));
+        this.setState({
+          ...this.createDefaultState(this.props),
+          chartX: this.state.chartX,
+          chartY: this.state.chartY,
+          activeTooltipIndex: this.state.activeTooltipIndex,
+          isTooltipActive: this.state.isTooltipActive
+        });
       }
       // add syncId
       if (_.isNil(this.props.syncId) && !_.isNil(nextProps.syncId)) {
