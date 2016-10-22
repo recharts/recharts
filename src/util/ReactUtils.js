@@ -3,6 +3,7 @@ import _ from 'lodash';
 
 export const PRESENTATION_ATTRIBUTES = {
   alignmentBaseline: PropTypes.string,
+  angle: PropTypes.number,
   baselineShift: PropTypes.string,
   clip: PropTypes.string,
   clipPath: PropTypes.string,
@@ -284,4 +285,3 @@ export const filterSvgElements = (children) => {
 
   return svgElements;
 };
-
