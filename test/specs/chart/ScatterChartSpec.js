@@ -25,7 +25,7 @@ describe('ScatterChart of three dimension data', () => {
 
   it('Render 2 Scatter', () => {
     const wrapper = render(
-      <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20 }}>
         <XAxis dataKey="x" name="stature" unit="cm"/>
         <YAxis dataKey="y" name="weight" unit="kg"/>
         <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km"/>
@@ -40,6 +40,7 @@ describe('ScatterChart of three dimension data', () => {
     expect(wrapper.find('.recharts-scatter').length).to.equal(2);
     expect(wrapper.find('.recharts-legend-item').length).to.equal(2);
     expect(wrapper.find('.recharts-scatter-symbol').length).to.equal(data01.length + data02.length);
+    expect(wrapper.find('.recharts-scatter-symbol path').length).to.equal(data01.length + data02.length);
   });
 
   it('Don\'t render any symbols when data is empty', () => {

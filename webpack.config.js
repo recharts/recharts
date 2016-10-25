@@ -53,16 +53,16 @@ var config = {
       commonjs: 'react-dom-server',
       amd: 'react-dom-server',
     },
-    'react-addons-css-transition-group': {
-      root: ['React', 'addons', 'CSSTransitionGroup'],
-      commonjs2: 'react-addons-css-transition-group',
-      commonjs: 'react-addons-css-transition-group',
-      amd: 'react-addons-css-transition-group',
+    'react-addons-transition-group': {
+      root: ['React', 'addons', 'TransitionGroup'],
+      commonjs2: 'react-addons-transition-group',
+      commonjs: 'react-addons-transition-group',
+      amd: 'react-addons-transition-group',
     },
   },
 
   plugins: [
-    new LodashModuleReplacementPlugin,
+    new LodashModuleReplacementPlugin(),
     new webpack.optimize.DedupePlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(env),

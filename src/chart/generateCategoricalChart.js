@@ -498,7 +498,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      * @return {Object} The offset of main part in the svg element
      */
     calculateOffset(items, xAxisMap, yAxisMap) {
-      const { width, height, margin, children } = this.props;
+      const { width, height, children } = this.props;
+      const margin = this.props.margin || {};
       const brushItem = findChildByType(children, Brush);
 
       const offsetH = Object.keys(yAxisMap).reduce((result, id) => {
@@ -629,7 +630,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const yAxes = findAllByType(children, YAxis);
 
       if (layout === 'horizontal' && xAxes && xAxes.length) {
-        xAxes.forEach(axis => {
+        xAxes.forEach((axis) => {
           warn(axis.props.type === 'category',
             'x-axis should be category axis when the layout is horizontal'
           );
@@ -648,7 +649,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         );
 
         if (yAxes && yAxes.length) {
-          yAxes.forEach(axis => {
+          yAxes.forEach((axis) => {
             warn(axis.props.type === 'category',
               'y-axis should be category axis when the layout is vertical'
             );
@@ -682,7 +683,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         viewBox: { x: 0, y: 0, width, height },
       }), offset.top, offset.top + offset.height);
 
-    axesTicksGenerator = (axis) => getTicksOfAxis(axis, true);
+    axesTicksGenerator = axis => getTicksOfAxis(axis, true);
 
     tooltipTicksGenerator = ({ layout, xAxisMap, yAxisMap }) => {
       const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
@@ -763,9 +764,11 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      * @return {ReactElement}            The instance of Legend
      */
     renderLegend(items) {
-      const { children, width, height, margin } = this.props;
-      const legendWidth = width - margin.left - margin.right;
-      const props = getLegendProps(children, items, legendWidth);
+      const { children, width, height } = this.props;
+      const margin = this.props.margin || {};
+      const legendWidth = width - (margin.left || 0) - (margin.right || 0);
+      const legendHeight = height - (margin.top || 0) - (margin.bottom || 0);
+      const props = getLegendProps(children, items, legendWidth, legendHeight);
 
       if (!props) { return null; }
 

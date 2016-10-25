@@ -4,13 +4,14 @@ import { getDisplayName, findAllByType } from './ReactUtils';
 import { getStackedDataOfItem, getTicksOfAxis,
 	getBarSizeList, getBarPosition } from './CartesianUtils';
 import { getBandSizeOfScale } from './DataUtils';
+import _ from 'lodash';
 
 /*
  * ComposedDataDecorator is a wrapper component that calculates expensive,
  * reusable data like ticks of an axis, stores it in state on this component,
  * and passes it in as props to the wrapped component.
  */
-export default ({ getComposedData, ChildComponent }) => (WrappedComponent) =>
+export default ({ getComposedData, ChildComponent }) => WrappedComponent =>
   class ComposedDataDecorator extends Component {
     static displayName = `ComposedDataDecorator(${getDisplayName(WrappedComponent)})`;
 
@@ -38,7 +39,7 @@ export default ({ getComposedData, ChildComponent }) => (WrappedComponent) =>
      */
     calculateExpensiveState({ props }) {
       const { children, graphicalItems, xAxisMap, yAxisMap, stackGroups,
-              layout, offset, barSize, barGap, barCategoryGap } = props;
+              layout, offset, barSize, barGap, barCategoryGap, maxBarSize: globalMaxBarSize } = props;
 
       // Some charts pre-filter their items into the graphicalItems prop,
       // others filter it in render of the children
@@ -49,7 +50,7 @@ export default ({ getComposedData, ChildComponent }) => (WrappedComponent) =>
       let axisTicks;
       const allComposedData = [];
       items.forEach((item) => {
-        const { xAxisId, yAxisId, dataKey } = item.props;
+        const { xAxisId, yAxisId, dataKey, maxBarSize: childMaxBarSize } = item.props;
         let xAxis, yAxis, xTicks, yTicks, barPosition, stackedData;
         if (xAxisMap || yAxisMap) {
 
@@ -70,8 +71,9 @@ export default ({ getComposedData, ChildComponent }) => (WrappedComponent) =>
             getStackedDataOfItem(item, stackGroups[numericAxisId].stackGroups);
 
           const bandSize = getBandSizeOfScale(cateAxis.scale);
+          const maxBarSize = _.isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
           barPosition =
-            getBarPosition({ barGap, barCategoryGap, bandSize, sizeList: sizeList[cateAxisId] });
+            getBarPosition({ barGap, barCategoryGap, bandSize, sizeList: sizeList[cateAxisId], maxBarSize });
         }
 
         const composedData = getComposedData && getComposedData({ props,

@@ -37,4 +37,20 @@ describe('<Text />', () => {
     expect(wrapper.instance().state.wordsByLines.length).to.equal(1);
     expect(wrapper.instance().state.wordsByLines[0].width).to.equal(undefined);
   });
+
+  it('Render 0 success when specify the width', () => {
+    const wrapper = render(
+      <Text x={0} y={0} width={30}>{0}</Text>
+    );
+
+    expect(wrapper.text()).to.contain("0");
+  });
+
+  it('Render 0 success when not specify the width', () => {
+    const wrapper = render(
+      <Text x={0} y={0}>{0}</Text>
+    );
+
+    expect(wrapper.text()).to.contain("0");
+  });
 });

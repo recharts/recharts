@@ -194,14 +194,14 @@ export const getDomainOfDataByKey = (data, key, type) => {
     return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
   }
 
-  return data.map(entry => {
+  return data.map((entry) => {
     const value = entry[key];
 
     return (_.isNumber(value) || _.isString(value)) ? value : '';
   });
 };
 
-const getDomainOfSingle = (data) => (
+const getDomainOfSingle = data => (
   data.reduce((result, entry) => [
     Math.min.apply(null, entry.concat([result[0]]).filter(_.isNumber)),
     Math.max.apply(null, entry.concat([result[1]]).filter(_.isNumber)),
@@ -270,7 +270,7 @@ export const isCategorialAxis = (layout, axisType) => (
 export const getCoordinatesOfGrid = (ticks, min, max) => {
   let hasMin, hasMax;
 
-  const values = ticks.map(entry => {
+  const values = ticks.map((entry) => {
     if (entry.coordinate === min) { hasMin = true; }
     if (entry.coordinate === max) { hasMax = true; }
 
@@ -298,7 +298,7 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
 
   // The ticks setted by user should only affect the ticks adjacent to axis line
   if (isGrid && (axis.ticks || axis.niceTicks)) {
-    return (axis.ticks || axis.niceTicks).map(entry => {
+    return (axis.ticks || axis.niceTicks).map((entry) => {
       const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
       return {
@@ -315,7 +315,7 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
-  return scale.domain().map((entry) => (
+  return scale.domain().map(entry => (
     {
       coordinate: scale(entry) + offset,
       value: duplicateDomain ? duplicateDomain[entry] : entry,
@@ -422,7 +422,7 @@ export const getTicksOfScale = (scale, opts) => {
  * @param  {Object} stackGroups The items grouped by axisId and stackId
  * @return {Object} The size of all groups
  */
-export const getBarSizeList = ({ barSize, stackGroups = {} }) => {
+export const getBarSizeList = ({ barSize: globalSize, stackGroups = {} }) => {
   const result = {};
   const numericAxisIds = Object.keys(stackGroups);
 
@@ -436,7 +436,7 @@ export const getBarSizeList = ({ barSize, stackGroups = {} }) => {
       const barItems = items.filter(item => item.type.displayName === 'Bar');
 
       if (barItems && barItems.length) {
-        const { dataKey } = barItems[0].props;
+        const { dataKey, barSize: selfSize } = barItems[0].props;
         const cateId = barItems[0].props[cateAxisId];
 
         if (!result[cateId]) {
@@ -446,7 +446,7 @@ export const getBarSizeList = ({ barSize, stackGroups = {} }) => {
         result[cateId].push({
           dataKey,
           stackList: barItems.slice(1).map(item => item.props.dataKey),
-          barSize: barItems[0].props.barSize || barSize,
+          barSize: _.isNil(selfSize) ? globalSize : selfSize,
         });
       }
     }
@@ -457,11 +457,12 @@ export const getBarSizeList = ({ barSize, stackGroups = {} }) => {
 
 /**
    * Calculate the size of each bar and the gap between two bars
-   * @param  {Number}   bandSize  The size of each category
+   * @param  {Number} bandSize  The size of each category
    * @param  {sizeList} sizeList  The size of all groups
+   * @param  {maxBarSize} maxBarSize The maximum size of bar
    * @return {Number} The size of each bar and the gap between two bars
    */
-export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = [] }) => {
+export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = [], maxBarSize }) => {
   const len = sizeList.length;
   if (len < 1) return null;
   let result;
@@ -485,7 +486,7 @@ export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = []
       prev = newRes[entry.dataKey];
 
       if (entry.stackList && entry.stackList.length) {
-        entry.stackList.forEach(key => {
+        entry.stackList.forEach((key) => {
           newRes[key] = newRes[entry.dataKey];
         });
       }
@@ -493,19 +494,20 @@ export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = []
     }, {});
   } else {
     const offset = getPercentValue(barCategoryGap, bandSize, 0, true);
-    const size = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
+    const originalSize = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
+    const size = (maxBarSize === +maxBarSize) ? Math.min(originalSize, maxBarSize) : originalSize;
 
     result = sizeList.reduce((res, entry, i) => {
       const newRes = {
         ...res,
         [entry.dataKey]: {
-          offset: offset + (size + barGap) * i,
+          offset: offset + (originalSize + barGap) * i + (originalSize - size) / 2,
           size,
         },
       };
 
       if (entry.stackList && entry.stackList.length) {
-        entry.stackList.forEach(key => {
+        entry.stackList.forEach((key) => {
           newRes[key] = newRes[entry.dataKey];
         });
       }

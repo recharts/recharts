@@ -58,8 +58,8 @@ describe('<ResponsiveContainer />', () => {
       </ResponsiveContainer>
     );
 
-    expect(wrapper.find('.inside')).to.have.attr('width').equal('600');
-    expect(wrapper.find('.inside')).to.have.attr('height').equal('300');
+    expect(wrapper.find('.inside')).to.have.attr('width').equal('0');
+    expect(wrapper.find('.inside')).to.have.attr('height').equal('0');
   });
 
   // Note that we force height and width here which will trigger a warning.
@@ -72,8 +72,8 @@ describe('<ResponsiveContainer />', () => {
       </ResponsiveContainer>
     );
 
-    expect(wrapper.find('.inside')).to.have.attr('height').equal('100');
-    expect(wrapper.find('.inside')).to.have.attr('width').equal('200');
+    expect(wrapper.find('.inside')).to.have.attr('height').equal('150');
+    expect(wrapper.find('.inside')).to.have.attr('width').equal('300');
   });
 
   it("Preserves aspect ratio when undersized", () => {
@@ -83,8 +83,8 @@ describe('<ResponsiveContainer />', () => {
       </ResponsiveContainer>
     );
 
-    expect(wrapper.find('.inside')).to.have.attr('height').equal('50');
     expect(wrapper.find('.inside')).to.have.attr('width').equal('100');
+    expect(wrapper.find('.inside')).to.have.attr('height').equal('50');
   });
 
 });
