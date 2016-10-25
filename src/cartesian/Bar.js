@@ -103,7 +103,7 @@ class Bar extends Component {
     const { data, shape, layout, isAnimationActive, animationBegin,
       animationDuration, animationEasing, animationId } = this.props;
     const baseProps = getPresentationAttributes(this.props);
-    const getStyle = (isBegin) => ({
+    const getStyle = isBegin => ({
       transform: `scale${layout === 'vertical' ? 'X' : 'Y'}(${isBegin ? 0 : 1})`,
     });
 

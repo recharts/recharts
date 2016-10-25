@@ -35,7 +35,7 @@ const computeNode = ({ depth, node, index, valueKey }) => {
   };
 };
 
-const filterRect = (node) => (
+const filterRect = node => (
   { x: node.x, y: node.y, width: node.width, height: node.height }
 );
 
@@ -43,7 +43,7 @@ const filterRect = (node) => (
 const getAreaOfChildren = (children, areaValueRatio) => {
   const ratio = areaValueRatio < 0 ? 0 : areaValueRatio;
 
-  return children.map(child => {
+  return children.map((child) => {
     const area = child.value * ratio;
 
     return {
@@ -311,7 +311,7 @@ class Treemap extends Component {
         easing={animationEasing}
         isActive={isUpdateAnimationActive}
       >
-      {
+        {
         ({ x: currX, y: currY, width: currWidth, height: currHeight }) => (
           <Smooth
             from={`translate(${translateX}px, ${translateX}px)`}
@@ -323,7 +323,7 @@ class Treemap extends Component {
             duration={animationDuration}
           >
             <Layer {...event}>
-            {
+              {
               this.renderContentItem(content, {
                 ...nodeProps,
                 isAnimationActive,

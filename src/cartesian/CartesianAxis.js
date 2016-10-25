@@ -102,7 +102,7 @@ class CartesianAxis extends Component {
       pointer = sizeKey === 'width' ? x + width : y + height;
     }
 
-    return ticks.filter(entry => {
+    return ticks.filter((entry) => {
       const tickContent = _.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value;
       const tickSize = getStringSize(tickContent)[sizeKey];
       const isShow = sign === 1 ?

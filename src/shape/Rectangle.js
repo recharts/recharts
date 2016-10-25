@@ -139,7 +139,7 @@ class Rectangle extends Component {
         animationEasing={animationEasing}
         isActive={isUpdateAnimationActive}
       >
-      {
+        {
         ({ width: currWidth, height: currHeight, x: currX, y: currY }) => (
           <Smooth
             canBegin={totalLength > 0}

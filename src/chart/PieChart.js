@@ -125,7 +125,7 @@ export class PieChart extends Component {
         const { nameKey } = child.props;
         const data = allComposedData[i];
 
-        return result.concat(data.map((entry) => (
+        return result.concat(data.map(entry => (
           {
             ...entry, type: child.props.legendType, value: entry[nameKey],
             color: entry.fill,

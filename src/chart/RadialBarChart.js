@@ -108,7 +108,7 @@ class RadialBarChart extends Component {
   getRadiusList(items) {
     const { barSize } = this.props;
 
-    return items.map((child) => ({
+    return items.map(child => ({
       ...child.props,
       barSize: child.props.barSize || barSize,
     }));

@@ -133,7 +133,7 @@ export const findAllByType = (children, type) => {
     types = [getDisplayName(type)];
   }
 
-  React.Children.forEach(children, child => {
+  React.Children.forEach(children, (child) => {
     const childType = child && child.type && (child.type.displayName || child.type.name);
     if (types.indexOf(childType) !== -1) {
       result.push(child);
@@ -165,7 +165,7 @@ export const withoutType = (children, type) => {
     types = [getDisplayName(type)];
   }
 
-  React.Children.forEach(children, child => {
+  React.Children.forEach(children, (child) => {
     if (child && child.type && child.type.displayName
       && types.indexOf(child.type.displayName) !== -1) {
       return;
@@ -276,7 +276,7 @@ const SVG_TAGS = ['a', 'altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',
 export const filterSvgElements = (children) => {
   const svgElements = [];
 
-  React.Children.forEach(children, entry => {
+  React.Children.forEach(children, (entry) => {
     if (entry && entry.type && _.isString(entry.type) &&
       SVG_TAGS.indexOf(entry.type) >= 0) {
       svgElements.push(entry);

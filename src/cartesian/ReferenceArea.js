@@ -9,7 +9,7 @@ import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/Reac
 import { validateCoordinateInRange } from '../util/DataUtils';
 import _ from 'lodash';
 
-const isValidateValue = (v) => (
+const isValidateValue = v => (
   _.isNumber(v) || _.isString(v)
 );
 

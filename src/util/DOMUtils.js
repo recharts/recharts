@@ -44,7 +44,7 @@ function camelToMiddleLine(text) {
   return formatStrs.join('');
 }
 
-export const getStyleString = (style) => (
+export const getStyleString = style => (
   Object.keys(style).reduce((result, s) => (
     `${result}${camelToMiddleLine(s)}:${autoCompleteStyle(s, style[s])};`
   ), '')

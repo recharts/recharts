@@ -38,7 +38,7 @@ const render = ({ aspect, width, height, minWidth, minHeight, container, childre
   });
 };
 
-const ResponsiveContainer = props => {
+const ResponsiveContainer = (props) => {
   const { minWidth, minHeight, width, height } = props;
   const style = { width, height, minWidth, minHeight };
   return (

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-export const isPercent = (value) => (
+export const isPercent = value => (
   _.isString(value) && value.indexOf('%') === value.length - 1
 );
 /**

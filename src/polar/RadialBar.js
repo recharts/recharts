@@ -205,7 +205,7 @@ class RadialBar extends Component {
           onAnimationStart={this.handleAnimationStart}
           onAnimationEnd={this.handleAnimationEnd}
         >
-        {
+          {
           ({ angle }) => {
             const props = {
               ...baseProps,
