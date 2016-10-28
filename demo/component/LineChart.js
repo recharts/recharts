@@ -72,6 +72,10 @@ export default React.createClass({
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
   },
 
+  handleClickTooltip(data, index, e) {
+    console.log(`Tooltip (${index}) Click: `, data);
+  },
+
   render() {
     const { data, data01, data02 } = this.state;
 
@@ -116,7 +120,7 @@ export default React.createClass({
           <LineChart width={400} height={400} data={data}
             margin={{top: 10, bottom: 10, left: 30, right: 30}}>
             <XAxis dataKey='name'/>
-            <Tooltip/>
+            <Tooltip onClick={this.handleClickTooltip} />
             <CartesianGrid stroke='#f5f5f5'/>
             <Line type='monotone' dataKey='uv' stroke='#ff7300' yAxisId={0} activeDot={{fill: '#ff7300', stroke: 'none'}}/>
             <Line type='monotone' dataKey='pv' stroke='#387908' yAxisId={1} activeDot={{fill: '#387908', stroke: 'none', r: 6}}/>

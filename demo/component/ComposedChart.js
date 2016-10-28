@@ -14,17 +14,21 @@ const data = [
 export default React.createClass({
   displayName: 'ComposedChartDemo',
 
+  handleClickTooltip(data, index, e) {
+    console.log(`Tooltip (${index}) Click: `, data);
+  },
+
   render () {
     return (
       <div className="line-charts">
-        <p>A simple ComposedChart of Line, Bar, Area</p>
+        <p>A simple ComposedChart of Line, Bar, Area (Click anywhere on chart and open console)</p>
         <div className="composed-chart-wrapper">
           <ResponsiveContainer width="100%" height={300}>
             <ComposedChart width={800} height={400} data={data}
               margin={{ top: 20, right: 20, bottom: 5, left: 20 }}>
               <XAxis dataKey="name" />
               <YAxis />
-              <Tooltip />
+              <Tooltip onClick={this.handleClickTooltip} />
               <Legend layout="vertical" align="right" verticalAlign="middle"/>
               <CartesianGrid stroke="#f5f5f5" />
               <Area type="monotone" dataKey='amt' fill="#8884d8" stroke="#8884d8" />
