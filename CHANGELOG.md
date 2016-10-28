@@ -1,3 +1,12 @@
+## 0.15.3 (Oct 28, 2016)
+
+### feat
+
+- Add angle property to PRESENTATION_ATTRIBUTES (#307)
+
+### Dev
+- chore: update istanbul plugin and add yarn.lock
+
 ## 0.15.2 (Oct 13, 2016)
 
 ### Fix
@@ -101,7 +110,7 @@
 ### Fix
 
 - Fix the bug of stack offset function - "sign"
-- Fix the propTypes or legendType 
+- Fix the propTypes or legendType
 
 ## 0.13.2 (Aug 15, 2016)
 
