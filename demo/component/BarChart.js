@@ -213,6 +213,14 @@ export default React.createClass({
     console.log(`Pv Bar (${index}) Click: `, data);
   },
 
+  handleBarAnimationStart() {
+    console.log('Animation start');
+  },
+
+  handleBarAnimationEnd() {
+    console.log('Animation end');
+  },
+
   render() {
     const { data, data01, data02 } = this.state;
 
@@ -236,7 +244,7 @@ export default React.createClass({
             <Legend />
             <Tooltip />
             <CartesianGrid vertical={false}/>
-            <Bar yAxisId="a" dataKey="uv" label={<RenderLabel />}>
+            <Bar yAxisId="a" dataKey="uv" label={<RenderLabel />} onAnimationStart={this.handleBarAnimationStart} onAnimationEnd={this.handleBarAnimationEnd} >
               {
                 data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
