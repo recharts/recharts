@@ -133,7 +133,7 @@ export const findAllByType = (children, type) => {
     types = [getDisplayName(type)];
   }
 
-  React.Children.forEach(children, child => {
+  React.Children.forEach(children, (child) => {
     const childType = child && child.type && (child.type.displayName || child.type.name);
     if (types.indexOf(childType) !== -1) {
       result.push(child);
@@ -165,7 +165,7 @@ export const withoutType = (children, type) => {
     types = [getDisplayName(type)];
   }
 
-  React.Children.forEach(children, child => {
+  React.Children.forEach(children, (child) => {
     if (child && child.type && child.type.displayName
       && types.indexOf(child.type.displayName) !== -1) {
       return;
@@ -188,11 +188,15 @@ export const getPresentationAttributes = (el) => {
 
   if (!_.isObject(props)) { return null; }
 
-  const keys = Object.keys(props).filter(k => PRESENTATION_ATTRIBUTES[k]);
-
-  return (keys && keys.length) ?
-    keys.reduce((result, k) => ({ ...result, [k]: props[k] }), {}) :
-    null;
+  let out = null;
+	// eslint-disable-next-line no-restricted-syntax
+  for (const i in props) {
+    if (props.hasOwnProperty(i) && PRESENTATION_ATTRIBUTES[i]) {
+      if (!out) out = {};
+      out[i] = props[i];
+    }
+  }
+  return out;
 };
 
 /**
@@ -207,11 +211,15 @@ export const filterEventAttributes = (el) => {
 
   if (!_.isObject(props)) { return null; }
 
-  const keys = Object.keys(props).filter(k => EVENT_ATTRIBUTES[k]);
-
-  return (keys && keys.length) ?
-    keys.reduce((result, k) => ({ ...result, [k]: props[k] }), {}) :
-    null;
+  let out = null;
+	// eslint-disable-next-line no-restricted-syntax
+  for (const i in props) {
+    if (props.hasOwnProperty(i) && EVENT_ATTRIBUTES[i]) {
+      if (!out) out = {};
+      out[i] = props[i];
+    }
+  }
+  return out;
 };
 
 const getEventHandler = (originalHandler, data, index) => (
@@ -225,15 +233,15 @@ const getEventHandler = (originalHandler, data, index) => (
 export const filterEventsOfChild = (props, data, index) => {
   if (!_.isObject(props)) { return null; }
 
-  const events = Object.keys(props).filter(k => (
-    EVENT_ATTRIBUTES[k] && _.isFunction(props[k])
-  ));
-
-  return (events && events.length) ?
-    events.reduce((result, e) => ({
-      ...result, [e]: getEventHandler(props[e], data, index),
-    }), {}) :
-    null;
+  let out = null;
+	// eslint-disable-next-line no-restricted-syntax
+  for (const i in props) {
+    if (props.hasOwnProperty(i) && EVENT_ATTRIBUTES[i] && _.isFunction(props[i])) {
+      if (!out) out = {};
+      out[i] = getEventHandler(props[i], data, index);
+    }
+  }
+  return out;
 };
 
 /**
@@ -276,7 +284,7 @@ const SVG_TAGS = ['a', 'altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',
 export const filterSvgElements = (children) => {
   const svgElements = [];
 
-  React.Children.forEach(children, entry => {
+  React.Children.forEach(children, (entry) => {
     if (entry && entry.type && _.isString(entry.type) &&
       SVG_TAGS.indexOf(entry.type) >= 0) {
       svgElements.push(entry);

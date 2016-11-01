@@ -8,22 +8,54 @@ import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import generateCategoricalChart from './generateCategoricalChart';
 import Line from '../cartesian/Line';
-import { getPresentationAttributes, findChildByType,
-  findAllByType, validateWidthHeight } from '../util/ReactUtils';
-import pureRender from '../util/PureRender';
-import { getTicksOfAxis } from '../util/CartesianUtils';
-import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
+import { getPresentationAttributes, findChildByType } from '../util/ReactUtils';
+import { getBandSizeOfScale } from '../util/DataUtils';
 import _ from 'lodash';
 import Smooth from 'react-smooth';
 import AnimationDecorator from '../util/AnimationDecorator';
+import composedDataDecorator from '../util/ComposedDataDecorator';
+
+/**
+ * Compose the data of each group
+ * @param {Object} props The props from the component
+ * @param  {Object} xAxis   The configuration of x-axis
+ * @param  {Object} yAxis   The configuration of y-axis
+ * @param  {String} dataKey The unique key of a group
+ * @return {Array}  Composed data
+ */
+const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey }) => {
+  const { layout, dataStartIndex, dataEndIndex } = props;
+  const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
+  const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
+
+  return data.map((entry, index) => {
+    const value = entry[dataKey];
+
+    if (layout === 'horizontal') {
+      return {
+        x: xTicks[index].coordinate + bandSize / 2,
+        y: _.isNil(value) ? null : yAxis.scale(value),
+        value,
+      };
+    }
+
+    return {
+      x: _.isNil(value) ? null : xAxis.scale(value),
+      y: yTicks[index].coordinate + bandSize / 2,
+      value,
+    };
+  });
+};
 
 @AnimationDecorator
-@pureRender
-class LineChart extends Component {
+@composedDataDecorator({ getComposedData })
+export class LineChart extends Component {
 
   static displayName = 'LineChart';
 
   static propTypes = {
+    allComposedData: PropTypes.array,
+    axisTicks: PropTypes.array,
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     dataStartIndex: PropTypes.number,
     dataEndIndex: PropTypes.number,
@@ -43,49 +75,14 @@ class LineChart extends Component {
     animationId: PropTypes.number,
   };
 
-  /**
-   * Compose the data of each group
-   * @param  {Object} xAxis   The configuration of x-axis
-   * @param  {Object} yAxis   The configuration of y-axis
-   * @param  {String} dataKey The unique key of a group
-   * @return {Array}  Composed data
-   */
-  getComposedData(xAxis, yAxis, dataKey) {
-    const { layout, dataStartIndex, dataEndIndex, isComposed } = this.props;
-    const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
-    const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
-    const xTicks = getTicksOfAxis(xAxis);
-    const yTicks = getTicksOfAxis(yAxis);
-
-    return data.map((entry, index) => {
-      const value = entry[dataKey];
-
-      if (layout === 'horizontal') {
-        return {
-          x: xTicks[index].coordinate + bandSize / 2,
-          y: _.isNil(value) ? null : yAxis.scale(value),
-          value,
-        };
-      }
-
-      return {
-        x: _.isNil(value) ? null : xAxis.scale(value),
-        y: yTicks[index].coordinate + bandSize / 2,
-        value,
-      };
-    });
-  }
-
-  renderCursor(xAxisMap, yAxisMap, offset) {
-    const { children, isTooltipActive, layout, activeTooltipIndex } = this.props;
+  renderCursor({ offset }) {
+    const { children, isTooltipActive, layout, activeTooltipIndex, axisTicks } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive ||
       activeTooltipIndex < 0) { return null; }
 
-    const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
-    const axis = getAnyElementOfObject(axisMap);
-    const ticks = getTicksOfAxis(axis);
+    const ticks = axisTicks;
 
     if (!ticks || !ticks[activeTooltipIndex]) { return null; }
 
@@ -102,10 +99,10 @@ class LineChart extends Component {
 
     return React.isValidElement(tooltipItem.props.cursor) ?
       React.cloneElement(tooltipItem.props.cursor, cursorProps) :
-      <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor" />;
+        <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor" />;
   }
 
-  renderActiveDot(option, props, index) {
+  renderActiveDot(option, props) {
     let dot;
 
     if (React.isValidElement(option)) {
@@ -137,14 +134,15 @@ class LineChart extends Component {
    * @return {ReactComponent}  All the instances of Line
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
-    const { children, layout, isTooltipActive, activeTooltipIndex, animationId } = this.props;
+    const { children, layout, isTooltipActive, activeTooltipIndex,
+				animationId, allComposedData } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];
 
     const lineItems = items.map((child, i) => {
-      const { xAxisId, yAxisId, dataKey, stroke, activeDot } = child.props;
-      const points = this.getComposedData(xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey);
+      const { dataKey, stroke, activeDot } = child.props;
+      const points = allComposedData[i];
       const activePoint = points[activeTooltipIndex];
 
       if (hasDot && activeDot && activePoint) {
@@ -180,7 +178,7 @@ class LineChart extends Component {
 
     return (
       <Layer className="recharts-line-graphical">
-        {!isComposed && this.renderCursor(xAxisMap, yAxisMap, offset)}
+        {!isComposed && this.renderCursor({ offset })}
         {this.renderItems(graphicalItems, xAxisMap, yAxisMap, offset)}
       </Layer>
     );
@@ -188,4 +186,3 @@ class LineChart extends Component {
 }
 
 export default generateCategoricalChart(LineChart, Line);
-export { LineChart };

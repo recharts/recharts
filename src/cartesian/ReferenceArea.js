@@ -4,13 +4,12 @@
 import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
-import Dot from '../shape/Dot';
 import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { validateCoordinateInRange } from '../util/DataUtils';
 import _ from 'lodash';
 
-const isValidateValue = (v) => (
+const isValidateValue = v => (
   _.isNumber(v) || _.isString(v)
 );
 
@@ -68,10 +67,7 @@ class ReferenceArea extends Component {
     const yOffset = yScale.bandwidth ? yScale.bandwidth() / 2 : 0;
     const xRange = xScale.range();
     const yRange = yScale.range();
-    let x1;
-    let x2;
-    let y1;
-    let y2;
+    let x1, x2, y1, y2;
 
     if (hasX && isValidateValue(xValue1)) {
       x1 = xScale(xValue1) + xOffset;

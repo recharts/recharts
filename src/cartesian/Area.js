@@ -93,7 +93,6 @@ class Area extends Component {
   constructor(props, ctx) {
     super(props, ctx);
 
-    const { points } = props;
     this.state = { isAnimationFinished: true };
     if (!this.id) {
       this.id = `clipPath${Date.now()}`;
@@ -134,7 +133,7 @@ class Area extends Component {
   }
 
   renderHorizontalRect(alpha) {
-    const { baseLine, layout, points, strokeWidth } = this.props;
+    const { baseLine, points, strokeWidth } = this.props;
     const startX = points[0].x;
     const endX = points[points.length - 1].x;
     const width = alpha * Math.abs(startX - endX);
@@ -157,7 +156,7 @@ class Area extends Component {
   }
 
   renderVerticalRect(alpha) {
-    const { baseLine, layout, points, strokeWidth } = this.props;
+    const { baseLine, points, strokeWidth } = this.props;
     const startY = points[0].y;
     const endY = points[points.length - 1].y;
     const height = alpha * Math.abs(startY - endY);
@@ -246,7 +245,7 @@ class Area extends Component {
         cx: entry.x,
         cy: entry.y,
         index: i,
-        playload: entry,
+        payload: entry,
       };
 
       return this.renderDotItem(dot, dotProps);

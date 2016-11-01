@@ -6,7 +6,6 @@ import { symbol as shapeSymbol, symbolCircle, symbolCross, symbolDiamond,
  symbolSquare, symbolStar, symbolTriangle, symbolWye } from 'd3-shape';
 import pureRender from '../util/PureRender';
 import classNames from 'classnames';
-import _ from 'lodash';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 

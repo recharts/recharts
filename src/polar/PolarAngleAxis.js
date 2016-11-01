@@ -180,7 +180,7 @@ class PolarAngleAxis extends Component {
   }
 
   render() {
-    const { ticks, radius, axisLine, tickLine } = this.props;
+    const { ticks, radius, axisLine } = this.props;
 
     if (radius <= 0 || !ticks || !ticks.length) { return null; }
 

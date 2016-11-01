@@ -1,10 +1,8 @@
 /**
  * @fileOverview Cross
  */
-import React, { Component, PropTypes } from 'react';
-import pureRender from '../util/PureRender';
+import { Component } from 'react';
 
-@pureRender
 class Cell extends Component {
 
   static displayName = 'Cell';

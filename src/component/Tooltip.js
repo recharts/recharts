@@ -2,7 +2,6 @@
  * @fileOverview Tooltip
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from '../util/PureRender';
 import ReactDOMServer from 'react-dom/server';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import { getStyleString } from '../util/DOMUtils';
@@ -67,7 +66,7 @@ const defaultProps = {
   isAnimationActive: true,
   animationEasing: 'ease',
   animationDuration: 400,
-  itemSorter: (item1, item2) => -1,
+  itemSorter: () => -1,
 };
 
 const getTooltipBBox = (wrapperStyle, contentItem) => {

@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render a group of bar
  */
-import React, { Component, PropTypes, Children } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import Rectangle from '../shape/Rectangle';
@@ -103,7 +103,7 @@ class Bar extends Component {
     const { data, shape, layout, isAnimationActive, animationBegin,
       animationDuration, animationEasing, animationId } = this.props;
     const baseProps = getPresentationAttributes(this.props);
-    const getStyle = (isBegin) => ({
+    const getStyle = isBegin => ({
       transform: `scale${layout === 'vertical' ? 'X' : 'Y'}(${isBegin ? 0 : 1})`,
     });
 

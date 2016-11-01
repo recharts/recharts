@@ -91,12 +91,12 @@ class Line extends Component {
   constructor(props, ctx) {
     super(props, ctx);
 
-    const { points } = props;
     this.state = {
       isAnimationFinished: true,
       totalLength: 0,
     };
   }
+
   /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
     const { isAnimationActive } = this.props;
@@ -109,6 +109,7 @@ class Line extends Component {
 
     this.setState({ totalLength });
   }
+
   /* eslint-disable  react/no-did-update-set-state */
   componentDidUpdate(prevProps, prevState) {
     const { animationId, points } = this.props;
@@ -205,8 +206,6 @@ class Line extends Component {
     const customLabelProps = getPresentationAttributes(label);
 
     const labels = points.map((entry, i) => {
-      const x = entry.x + entry.width / 2;
-      const y = entry.y;
       const labelProps = {
         textAnchor: 'middle',
         ...entry,
@@ -262,7 +261,7 @@ class Line extends Component {
   }
 
   renderCurve() {
-    const { points, className, strokeDasharray, isAnimationActive,
+    const { points, strokeDasharray, isAnimationActive,
       animationBegin, animationDuration, animationEasing, onClick, onMouseEnter,
       onMouseLeave, ...other } = this.props;
     const { totalLength } = this.state;

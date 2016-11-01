@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 
-const getPolygonPoints = (points) => (
+const getPolygonPoints = points => (
   points.reduce((result, entry) => {
     if (entry.x === +entry.x && entry.y === +entry.y) {
       result.push([entry.x, entry.y]);

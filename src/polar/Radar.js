@@ -80,8 +80,10 @@ class Radar extends Component {
   };
 
   renderPolygon() {
+		/* eslint-disable no-unused-vars */
     const { shape, points, animationDuration, animationEasing, animationBegin,
       isAnimationActive, animationId, dataKey, className, ...others } = this.props;
+		/* eslint-enable no-unused-vars */
 
     if (React.isValidElement(shape)) {
       return React.cloneElement(shape, { ...others, points });
@@ -206,7 +208,6 @@ class Radar extends Component {
     if (!points || !points.length) { return null; }
 
     const layerClass = classNames('recharts-radar', className);
-    const transformOrigin = 'center center';
 
     return (
       <Layer className={layerClass}>
