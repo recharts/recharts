@@ -2,15 +2,15 @@
  * @file TreemapChart
  */
 import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
+import _ from 'lodash';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
-import classNames from 'classnames';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, EVENT_ATTRIBUTES,
   filterSvgElements, validateWidthHeight, findChildByType } from '../util/ReactUtils';
-import _ from 'lodash';
 
 const interpolationGenerator = (a, b) => {
   const ka = +a;

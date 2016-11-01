@@ -2,15 +2,15 @@
  * @fileOverview Render a group of scatters
  */
 import React, { Component, PropTypes } from 'react';
+import Animate from 'react-smooth';
 import classNames from 'classnames';
+import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
 import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
-import Animate from 'react-smooth';
-import _ from 'lodash';
 import AnimationDecorator from '../util/AnimationDecorator';
 
 @AnimationDecorator

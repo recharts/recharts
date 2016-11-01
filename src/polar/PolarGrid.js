@@ -5,7 +5,6 @@ import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
-import Sector from '../shape/Sector';
 
 @pureRender
 class PolarGrid extends Component {
@@ -128,7 +127,6 @@ class PolarGrid extends Component {
    * @return {ReactElement} polygon
    */
   renderConcentricPolygon(radius, index, extraProps) {
-    const { cx, cy } = this.props;
     const props = {
       stroke: '#ccc',
       ...getPresentationAttributes(this.props),

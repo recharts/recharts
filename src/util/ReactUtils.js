@@ -191,7 +191,7 @@ export const getPresentationAttributes = (el) => {
   let out = null;
   // eslint-disable-next-line no-restricted-syntax
   for (const i in props) {
-    if (props.hasOwnProperty(i) && PRESENTATION_ATTRIBUTES[i]) {
+    if ({}.hasOwnProperty.call(props, i) && PRESENTATION_ATTRIBUTES[i]) {
       if (!out) out = {};
       out[i] = props[i];
     }
@@ -214,7 +214,7 @@ export const filterEventAttributes = (el) => {
   let out = null;
   // eslint-disable-next-line no-restricted-syntax
   for (const i in props) {
-    if (props.hasOwnProperty(i) && EVENT_ATTRIBUTES[i]) {
+    if ({}.hasOwnProperty.call(props, i) && EVENT_ATTRIBUTES[i]) {
       if (!out) out = {};
       out[i] = props[i];
     }
@@ -236,7 +236,7 @@ export const filterEventsOfChild = (props, data, index) => {
   let out = null;
   // eslint-disable-next-line no-restricted-syntax
   for (const i in props) {
-    if (props.hasOwnProperty(i) && EVENT_ATTRIBUTES[i] && _.isFunction(props[i])) {
+    if ({}.hasOwnProperty.call(props, i) && EVENT_ATTRIBUTES[i] && _.isFunction(props[i])) {
       if (!out) out = {};
       out[i] = getEventHandler(props[i], data, index);
     }
@@ -264,18 +264,18 @@ export const validateWidthHeight = (el) => {
 export const isSsr = () => (typeof document === 'undefined');
 
 const SVG_TAGS = ['a', 'altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',
-'animateColor', 'animateMotion', 'animateTransform', 'circle', 'clipPath',
-'color-profile', 'cursor', 'defs', 'desc', 'ellipse', 'feBlend', 'feColormatrix',
-'feComponentTransfer', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting',
-'feDisplacementMap', 'feDistantLight', 'feFlood', 'feFuncA', 'feFuncB', 'feFuncG',
-'feFuncR', 'feGaussianBlur', 'feImage', 'feMerge', 'feMergeNode', 'feMorphology',
-'feOffset', 'fePointLight', 'feSpecularLighting', 'feSpotLight', 'feTile',
-'feTurbulence', 'filter', 'font', 'font-face', 'font-face-format', 'font-face-name',
-'font-face-url', 'foreignObject', 'g', 'glyph', 'glyphRef', 'hkern', 'image',
-'line', 'lineGradient', 'marker', 'mask', 'metadata', 'missing-glyph', 'mpath',
-'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect', 'script',
-'set', 'stop', 'style', 'svg', 'switch', 'symbol', 'text', 'textPath', 'title',
-'tref', 'tspan', 'use', 'view', 'vkern'];
+  'animateColor', 'animateMotion', 'animateTransform', 'circle', 'clipPath',
+  'color-profile', 'cursor', 'defs', 'desc', 'ellipse', 'feBlend', 'feColormatrix',
+  'feComponentTransfer', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting',
+  'feDisplacementMap', 'feDistantLight', 'feFlood', 'feFuncA', 'feFuncB', 'feFuncG',
+  'feFuncR', 'feGaussianBlur', 'feImage', 'feMerge', 'feMergeNode', 'feMorphology',
+  'feOffset', 'fePointLight', 'feSpecularLighting', 'feSpotLight', 'feTile',
+  'feTurbulence', 'filter', 'font', 'font-face', 'font-face-format', 'font-face-name',
+  'font-face-url', 'foreignObject', 'g', 'glyph', 'glyphRef', 'hkern', 'image',
+  'line', 'lineGradient', 'marker', 'mask', 'metadata', 'missing-glyph', 'mpath',
+  'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect', 'script',
+  'set', 'stop', 'style', 'svg', 'switch', 'symbol', 'text', 'textPath', 'title',
+  'tref', 'tspan', 'use', 'view', 'vkern'];
 /**
  * Filter all the svg elements of children
  * @param  {Array} children The children of a react element

@@ -2,12 +2,12 @@
  * @fileOverview Legend
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from '../util/PureRender';
 import ReactDOMServer from 'react-dom/server';
+import _ from 'lodash';
+import pureRender from '../util/PureRender';
 import DefaultLegendContent from './DefaultLegendContent';
 import { getStyleString } from '../util/DOMUtils';
 import { isSsr } from '../util/ReactUtils';
-import _ from 'lodash';
 
 
 const renderContent = (content, props) => {

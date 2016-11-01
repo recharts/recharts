@@ -2,10 +2,10 @@
  * @fileOverview Radar Chart
  */
 import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { getNiceTickValues } from 'recharts-scale';
+import _ from 'lodash';
 import Surface from '../container/Surface';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
@@ -15,7 +15,6 @@ import PolarGrid from '../polar/PolarGrid';
 import PolarAngleAxis from '../polar/PolarAngleAxis';
 import PolarRadiusAxis from '../polar/PolarRadiusAxis';
 
-import _ from 'lodash';
 import { validateWidthHeight, findChildByType, findAllByType, filterSvgElements,
   getPresentationAttributes } from '../util/ReactUtils';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
@@ -224,7 +223,7 @@ class RadarChart extends Component {
     const tooltipItem = findChildByType(children, Tooltip);
 
     if (tooltipItem && points.length) {
-      const container = ReactDOM.findDOMNode(this);
+      const container = this.container;
       const containerOffset = getOffset(container);
       const ne = calculateChartCoordinate(e, containerOffset);
 
@@ -403,6 +402,7 @@ class RadarChart extends Component {
       <div
         className={classNames('recharts-wrapper', className)}
         style={{ ...style, position: 'relative', cursor: 'default', width, height }}
+        ref={(node) => { this.container = node; }}
       >
         <Surface {...attrs} width={width} height={height}>
           {this.renderGrid(radiusAxisCfg, cx, cy, innerRadius, outerRadius)}

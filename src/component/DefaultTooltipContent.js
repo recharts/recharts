@@ -2,8 +2,8 @@
  * @fileOverview Default Tooltip Content
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from '../util/PureRender';
 import _ from 'lodash';
+import pureRender from '../util/PureRender';
 
 @pureRender
 class DefaultTooltipContent extends Component {

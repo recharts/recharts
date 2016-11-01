@@ -2,8 +2,8 @@
  * @fileOverview Sector
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from '../util/PureRender';
 import classNames from 'classnames';
+import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';

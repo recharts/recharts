@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
 import { scaleLinear, scaleBand, scalePoint } from 'd3-scale';
 import classNames from 'classnames';
+import _ from 'lodash';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
@@ -10,7 +10,6 @@ import Legend from '../component/Legend';
 import { warn } from '../util/LogUtils';
 import { findAllByType, findChildByType, filterSvgElements, getDisplayName,
   getPresentationAttributes, validateWidthHeight } from '../util/ReactUtils';
-import _ from 'lodash';
 
 import CartesianAxis from '../cartesian/CartesianAxis';
 import CartesianGrid from '../cartesian/CartesianGrid';
@@ -583,7 +582,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      * @return {Null}            null
      */
     handleMouseEnter(offset, xAxisMap, yAxisMap, e) {
-      const container = ReactDOM.findDOMNode(this);
+      const container = this.container;
       const containerOffset = getOffset(container);
       const ne = calculateChartCoordinate(e, containerOffset);
       const mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);
@@ -604,7 +603,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      * @return {Null} no return
      */
     handleMouseMove(offset, xAxisMap, yAxisMap, e) {
-      const container = ReactDOM.findDOMNode(this);
+      const container = this.container;
       const containerOffset = getOffset(container);
       const ne = calculateChartCoordinate(e, containerOffset);
       const mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);
@@ -876,6 +875,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           className={classNames('recharts-wrapper', className)}
           style={{ ...style, position: 'relative', cursor: 'default', width, height }}
           {...events}
+          ref={(node) => { this.container = node; }}
         >
           <Surface {...attrs} width={width} height={height}>
             {this.renderGrid(xAxisMap, yAxisMap, offset)}

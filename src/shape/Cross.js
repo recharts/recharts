@@ -2,10 +2,10 @@
  * @fileOverview Cross
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from '../util/PureRender';
 import classNames from 'classnames';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import _ from 'lodash';
+import pureRender from '../util/PureRender';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
 @pureRender
 class Cross extends Component {

@@ -2,11 +2,11 @@
  * @fileOverview The axis of polar coordinate system
  */
 import React, { Component, PropTypes } from 'react';
+import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-import _ from 'lodash';
 
 @pureRender
 class PolarRadiusAxis extends Component {
@@ -86,7 +86,7 @@ class PolarRadiusAxis extends Component {
   }
 
   renderAxisLine() {
-    const { cx, cy, angle, ticks, axisLine } = this.props;
+    const { cx, cy, angle, ticks, axisLine, ...others } = this.props;
     const extent = ticks.reduce((result, entry) => [
       Math.min(result[0], entry.radius),
       Math.max(result[1], entry.radius),
@@ -95,7 +95,7 @@ class PolarRadiusAxis extends Component {
     const point1 = polarToCartesian(cx, cy, extent[1], angle);
 
     const props = {
-      ...getPresentationAttributes(this.props),
+      ...getPresentationAttributes(others),
       fill: 'none',
       ...getPresentationAttributes(axisLine),
       x1: point0.x,
@@ -129,9 +129,9 @@ class PolarRadiusAxis extends Component {
   }
 
   renderTicks() {
-    const { ticks, tick, angle, tickFormatter, stroke } = this.props;
+    const { ticks, tick, angle, tickFormatter, stroke, ...others } = this.props;
     const textAnchor = this.getTickTextAnchor();
-    const axisProps = getPresentationAttributes(this.props);
+    const axisProps = getPresentationAttributes(others);
     const customTickProps = getPresentationAttributes(tick);
 
     const items = ticks.map((entry, i) => {

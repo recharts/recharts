@@ -2,13 +2,13 @@
  * @fileOverview Cartesian Axis
  */
 import React, { Component, PropTypes } from 'react';
+import _ from 'lodash';
 import { shallowEqual } from '../util/PureRender';
 import { getStringSize } from '../util/DOMUtils';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import { isSsr, PRESENTATION_ATTRIBUTES,
   getPresentationAttributes } from '../util/ReactUtils';
-import _ from 'lodash';
 
 class CartesianAxis extends Component {
 

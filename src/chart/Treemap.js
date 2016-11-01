@@ -2,16 +2,16 @@
  * @fileOverview TreemapChart
  */
 import React, { Component, PropTypes } from 'react';
+import Smooth from 'react-smooth';
+import classNames from 'classnames';
+import _ from 'lodash';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Rectangle from '../shape/Rectangle';
 import { findChildByType, getPresentationAttributes, filterSvgElements,
   validateWidthHeight } from '../util/ReactUtils';
-import classNames from 'classnames';
-import Smooth from 'react-smooth';
 import Tooltip from '../component/Tooltip';
 import pureRender from '../util/PureRender';
-import _ from 'lodash';
 
 const computeNode = ({ depth, node, index, valueKey }) => {
   const { children } = node;

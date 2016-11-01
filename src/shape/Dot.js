@@ -2,8 +2,8 @@
  * @fileOverview Dot
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from '../util/PureRender';
 import classNames from 'classnames';
+import pureRender from '../util/PureRender';
 import { getPresentationAttributes } from '../util/ReactUtils';
 
 @pureRender

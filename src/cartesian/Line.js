@@ -2,16 +2,15 @@
  * @fileOverview Line
  */
 import React, { Component, PropTypes } from 'react';
-import { findDOMNode } from 'react-dom';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
+import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
-import _ from 'lodash';
 
 const FACTOR = 1.0000001;
 
@@ -131,7 +130,7 @@ class Line extends Component {
   }
 
   getTotalLength() {
-    const curveDom = findDOMNode(this.refs.animate);
+    const curveDom = this.animate;
     const totalLength = (curveDom && curveDom.getTotalLength && curveDom.getTotalLength()) || 0;
 
     return totalLength;
@@ -281,8 +280,8 @@ class Line extends Component {
       duration: animationDuration,
       onAnimationEnd: this.handleAnimationEnd,
       onAnimationStart: this.handleAnimationStart,
-      ref: 'animate',
       shouldReAnimate: true,
+      pathRef: (node) => { this.animate = node; },
     };
     const curveProps = { ...other, className: 'recharts-line-curve', fill: 'none',
       onClick, onMouseEnter, onMouseLeave, points };

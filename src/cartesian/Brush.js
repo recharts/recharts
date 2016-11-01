@@ -4,10 +4,10 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { scalePoint } from 'd3-scale';
+import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
-import _ from 'lodash';
 
 @pureRender
 class Brush extends Component {

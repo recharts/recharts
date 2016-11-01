@@ -2,6 +2,7 @@
  * @fileOverview Axis of radial direction
  */
 import React, { Component, PropTypes } from 'react';
+import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
@@ -9,7 +10,6 @@ import Dot from '../shape/Dot';
 import Polygon from '../shape/Polygon';
 import Text from '../component/Text';
 import { polarToCartesian } from '../util/PolarUtils';
-import _ from 'lodash';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;

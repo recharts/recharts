@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import _ from 'lodash';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
 class Text extends Component {
 

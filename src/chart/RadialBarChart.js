@@ -4,10 +4,10 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { scaleBand } from 'd3-scale';
+import _ from 'lodash';
 import Surface from '../container/Surface';
 import RadialBar from '../polar/RadialBar';
 import { getPercentValue } from '../util/DataUtils';
-import _ from 'lodash';
 import Cell from '../component/Cell';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';

@@ -3,11 +3,11 @@
  */
 import React, { Component, PropTypes } from 'react';
 import ReactDOMServer from 'react-dom/server';
+import Animate from 'react-smooth';
+import _ from 'lodash';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import { getStyleString } from '../util/DOMUtils';
 import { isSsr } from '../util/ReactUtils';
-import Animate from 'react-smooth';
-import _ from 'lodash';
 
 const propTypes = {
   content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),

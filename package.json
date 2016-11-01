@@ -27,6 +27,7 @@
     "demo": "webpack-dev-server  --progress --port 3000  --colors --content-base demo --hot --inline --config demo/webpack.config.js",
     "test": "NODE_ENV=test karma start test/karma.conf.js",
     "lint": "eslint src",
+    "autofix": "eslint src --fix",
     "bundle-analyse": "NODE_ENV=production webpack src/index.js umd/Recharts.min.js --json | webpack-bundle-size-analyzer"
   },
   "pre-commit": [
@@ -78,7 +79,7 @@
     "escope": "^3.6.0",
     "eslint": "^3.8.1",
     "eslint-config-airbnb": "^12.0.0",
-    "eslint-plugin-import": "^2.0.1",
+    "eslint-plugin-import": "^1.16.0",
     "eslint-plugin-jsx-a11y": "^2.2.0",
     "eslint-plugin-react": "^6.4.1",
     "estraverse-fb": "^1.3.1",

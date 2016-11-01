@@ -2,13 +2,13 @@
  * @fileOverview Reference Line
  */
 import React, { Component, PropTypes } from 'react';
+import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Dot from '../shape/Dot';
 import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { validateCoordinateInRange } from '../util/DataUtils';
-import _ from 'lodash';
 
 @pureRender
 class ReferenceDot extends Component {

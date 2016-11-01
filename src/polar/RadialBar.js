@@ -3,6 +3,8 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
+import Animate from 'react-smooth';
+import _ from 'lodash';
 import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
 import { getStringSize } from '../util/DOMUtils';
@@ -10,8 +12,6 @@ import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
-import Animate from 'react-smooth';
-import _ from 'lodash';
 
 const RADIAN = Math.PI / 180;
 
@@ -229,7 +229,7 @@ class RadialBar extends Component {
     const backgroundProps = getPresentationAttributes(background);
 
     return sectors.map((entry, i) => {
-			// eslint-disable-next-line no-unused-vars
+      // eslint-disable-next-line no-unused-vars
       const { value, ...rest } = entry;
       const props = {
         ...rest,

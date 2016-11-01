@@ -2,6 +2,8 @@
  * @fileOverview Area Chart
  */
 import React, { Component, PropTypes } from 'react';
+import Smooth from 'react-smooth';
+import _ from 'lodash';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Dot from '../shape/Dot';
@@ -11,8 +13,6 @@ import { getMainColorOfGraphicItem } from '../util/CartesianUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Area from '../cartesian/Area';
 import { getBandSizeOfScale } from '../util/DataUtils';
-import _ from 'lodash';
-import Smooth from 'react-smooth';
 import AnimationDecorator from '../util/AnimationDecorator';
 import composedDataDecorator from '../util/ComposedDataDecorator';
 
@@ -137,7 +137,7 @@ export class AreaChart extends Component {
 
     return React.isValidElement(tooltipItem.props.cursor) ?
       React.cloneElement(tooltipItem.props.cursor, cursorProps) :
-  <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor" />;
+        <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor" />;
   }
 
   renderActiveDot(option, props) {
@@ -172,8 +172,8 @@ export class AreaChart extends Component {
    * @param  {Object} xAxisMap The configuration of all x-axis
    * @param  {Object} yAxisMap The configuration of all y-axis
    * @param  {Object} offset   The offset of main part in the svg element
-   * @param   {Array} allComposedData The array of pre-created composedData
-   *                              {points, basedLine, layout} for each item
+   * @param  {Array} allComposedData The array of pre-created composedData
+   *                                 {points, basedLine, layout} for each item
    * @return {ReactComponent} The instances of Area
    */
   renderItems(items, xAxisMap, yAxisMap, offset, allComposedData) {

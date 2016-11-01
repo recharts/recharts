@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { scaleLinear } from 'd3-scale';
+import _ from 'lodash';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Cell from '../component/Cell';
@@ -27,7 +28,6 @@ import { parseSpecifiedDomain } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { detectReferenceElementsDomain, getTicksOfAxis,
   getCoordinatesOfGrid, getLegendProps, getTicksOfScale } from '../util/CartesianUtils';
-import _ from 'lodash';
 
 @pureRender
 class ScatterChart extends Component {
@@ -474,7 +474,7 @@ class ScatterChart extends Component {
   render() {
     if (!validateWidthHeight(this)) { return null; }
 
-		// eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line no-unused-vars
     const { style, children, className, width, height, ...others } = this.props;
     const items = findAllByType(children, Scatter);
     const zAxis = this.getZAxis(items);

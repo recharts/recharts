@@ -1,15 +1,15 @@
-import { findAllByType, findChildByType } from './ReactUtils';
-import { getPercentValue } from './DataUtils';
-import ReferenceDot from '../cartesian/ReferenceDot';
-import ReferenceLine from '../cartesian/ReferenceLine';
-import ReferenceArea from '../cartesian/ReferenceArea';
-import Legend from '../component/Legend';
 import { getNiceTickValues, getTickValues } from 'recharts-scale';
 import {
   stack as shapeStack, stackOrderNone, stackOffsetExpand,
   stackOffsetNone, stackOffsetSilhouette, stackOffsetWiggle,
 } from 'd3-shape';
 import _ from 'lodash';
+import { findAllByType, findChildByType } from './ReactUtils';
+import { getPercentValue } from './DataUtils';
+import ReferenceDot from '../cartesian/ReferenceDot';
+import ReferenceLine from '../cartesian/ReferenceLine';
+import ReferenceArea from '../cartesian/ReferenceArea';
+import Legend from '../component/Legend';
 
 /* eslint no-param-reassign: 0 */
 const offsetSign = (series) => {

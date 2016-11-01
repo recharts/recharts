@@ -2,6 +2,8 @@
  * @fileOverview Line Chart
  */
 import React, { PropTypes, Component } from 'react';
+import Smooth from 'react-smooth';
+import _ from 'lodash';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Curve from '../shape/Curve';
@@ -10,8 +12,6 @@ import generateCategoricalChart from './generateCategoricalChart';
 import Line from '../cartesian/Line';
 import { getPresentationAttributes, findChildByType } from '../util/ReactUtils';
 import { getBandSizeOfScale } from '../util/DataUtils';
-import _ from 'lodash';
-import Smooth from 'react-smooth';
 import AnimationDecorator from '../util/AnimationDecorator';
 import composedDataDecorator from '../util/ComposedDataDecorator';
 
@@ -135,7 +135,7 @@ export class LineChart extends Component {
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
     const { children, layout, isTooltipActive, activeTooltipIndex,
-        animationId, allComposedData } = this.props;
+      animationId, allComposedData } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];

@@ -2,9 +2,9 @@
  * @fileOverview Cartesian Grid
  */
 import React, { Component, PropTypes } from 'react';
+import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
-import _ from 'lodash';
 
 @pureRender
 class CartesianGrid extends Component {

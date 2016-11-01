@@ -4,13 +4,13 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
+import _ from 'lodash';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
-import _ from 'lodash';
 
 @pureRender
 class Bar extends Component {
