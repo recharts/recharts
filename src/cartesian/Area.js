@@ -60,6 +60,8 @@ class Area extends Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
+    onAnimationStart: PropTypes.func,
+    onAnimationEnd: PropTypes.func,
 
     animationId: PropTypes.number,
     isAnimationActive: PropTypes.bool,
@@ -84,10 +86,14 @@ class Area extends Component {
     curve: true,
     activeDot: true,
 
+
     isAnimationActive: true,
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
+
+    onAnimationStart: () => {},
+    onAnimationEnd: () => {},
   };
 
   constructor(props, ctx) {
@@ -101,10 +107,12 @@ class Area extends Component {
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
+    this.props.onAnimationEnd();
   };
 
   handleAnimationStart = () => {
     this.setState({ isAnimationFinished: false });
+    this.props.onAnimationStart();
   };
 
   renderCurve() {
