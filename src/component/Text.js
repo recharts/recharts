@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
 
 class Text extends Component {
 
@@ -42,7 +42,7 @@ class Text extends Component {
 
   updateWordsByLines(props, calculateWordWidths) {
     // Only perform calculations if using features that require them (multiline, scaleToFit)
-    if (props.width || props.scaleToFit) {
+    if ((props.width || props.scaleToFit) && !isSsr()) {
       if (calculateWordWidths) {
         const { wordsWithComputedWidth, spaceWidth } = this.calculateWordWidths(props);
         this.wordsWithComputedWidth = wordsWithComputedWidth;
