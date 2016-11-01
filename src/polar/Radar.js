@@ -80,10 +80,10 @@ class Radar extends Component {
   };
 
   renderPolygon() {
-		/* eslint-disable no-unused-vars */
+    /* eslint-disable no-unused-vars */
     const { shape, points, animationDuration, animationEasing, animationBegin,
       isAnimationActive, animationId, dataKey, className, ...others } = this.props;
-		/* eslint-enable no-unused-vars */
+    /* eslint-enable no-unused-vars */
 
     if (React.isValidElement(shape)) {
       return React.cloneElement(shape, { ...others, points });

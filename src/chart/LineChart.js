@@ -135,7 +135,7 @@ export class LineChart extends Component {
    */
   renderItems(items, xAxisMap, yAxisMap, offset) {
     const { children, layout, isTooltipActive, activeTooltipIndex,
-				animationId, allComposedData } = this.props;
+        animationId, allComposedData } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];

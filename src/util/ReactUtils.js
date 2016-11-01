@@ -189,7 +189,7 @@ export const getPresentationAttributes = (el) => {
   if (!_.isObject(props)) { return null; }
 
   let out = null;
-	// eslint-disable-next-line no-restricted-syntax
+  // eslint-disable-next-line no-restricted-syntax
   for (const i in props) {
     if (props.hasOwnProperty(i) && PRESENTATION_ATTRIBUTES[i]) {
       if (!out) out = {};
@@ -212,7 +212,7 @@ export const filterEventAttributes = (el) => {
   if (!_.isObject(props)) { return null; }
 
   let out = null;
-	// eslint-disable-next-line no-restricted-syntax
+  // eslint-disable-next-line no-restricted-syntax
   for (const i in props) {
     if (props.hasOwnProperty(i) && EVENT_ATTRIBUTES[i]) {
       if (!out) out = {};
@@ -234,7 +234,7 @@ export const filterEventsOfChild = (props, data, index) => {
   if (!_.isObject(props)) { return null; }
 
   let out = null;
-	// eslint-disable-next-line no-restricted-syntax
+  // eslint-disable-next-line no-restricted-syntax
   for (const i in props) {
     if (props.hasOwnProperty(i) && EVENT_ATTRIBUTES[i] && _.isFunction(props[i])) {
       if (!out) out = {};

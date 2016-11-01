@@ -118,11 +118,11 @@ class CartesianAxis extends Component {
   }
 
   shouldComponentUpdate({ viewBox, ...restProps }, state) {
-		// props.viewBox is sometimes generated every time -
-		// check that specially as object equality is likely to fail
+    // props.viewBox is sometimes generated every time -
+    // check that specially as object equality is likely to fail
     const { viewBox: viewBoxOld, ...restPropsOld } = this.props;
     return !shallowEqual(viewBox, viewBoxOld) ||
-			!shallowEqual(restProps, restPropsOld) || !shallowEqual(state, this.state);
+      !shallowEqual(restProps, restPropsOld) || !shallowEqual(state, this.state);
   }
 
   /**
@@ -283,11 +283,11 @@ class CartesianAxis extends Component {
     return tickItem;
   }
 
-	/**
-	 * render the ticks
-	 * @param {Array} ticks The ticks to actually render (overrides what was passed in props)
-	 * @return {ReactComponent} renderedTicks
-	 */
+  /**
+   * render the ticks
+   * @param {Array} ticks The ticks to actually render (overrides what was passed in props)
+   * @return {ReactComponent} renderedTicks
+   */
   renderTicks(ticks) {
     const { tickLine, stroke, tick, tickFormatter } = this.props;
     const finalTicks = CartesianAxis.getTicks({ ...this.props, ticks });
@@ -366,7 +366,7 @@ class CartesianAxis extends Component {
 
     if (_.isFunction(ticksGenerator)) {
       ticks = (ticks && ticks.length > 0) ? ticksGenerator(this.props) :
-				ticksGenerator(noTicksProps);
+        ticksGenerator(noTicksProps);
     }
 
     if (width <= 0 || height <= 0 || !ticks || !ticks.length) {

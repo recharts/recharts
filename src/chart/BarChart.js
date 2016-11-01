@@ -37,7 +37,7 @@ const getBaseValue = ({ props, xAxis, yAxis }) => {
  * @return{Array} Composed data
  */
 const getComposedData = ({ props, item, barPosition, xAxis, yAxis,
-	xTicks, yTicks, stackedData }) => {
+  xTicks, yTicks, stackedData }) => {
 
   const { layout, dataStartIndex, dataEndIndex } = props;
   const { dataKey, children, minPointSize } = item.props;
@@ -55,11 +55,11 @@ const getComposedData = ({ props, item, barPosition, xAxis, yAxis,
       y = yAxis.scale(xAxis.orientation === 'top' ? value[0] : value[1]);
       width = pos.size;
       height = xAxis.orientation === 'top' ?
-							yAxis.scale(value[1]) - yAxis.scale(value[0]) :
-							yAxis.scale(value[0]) - yAxis.scale(value[1]);
+              yAxis.scale(value[1]) - yAxis.scale(value[0]) :
+              yAxis.scale(value[0]) - yAxis.scale(value[1]);
       if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
         const delta = Math.sign(height || minPointSize) *
-					(Math.abs(minPointSize) - Math.abs(height));
+          (Math.abs(minPointSize) - Math.abs(height));
 
         y -= delta;
         height += delta;
@@ -68,13 +68,13 @@ const getComposedData = ({ props, item, barPosition, xAxis, yAxis,
       x = xAxis.scale(yAxis.orientation === 'left' ? value[0] : value[1]);
       y = yTicks[index].coordinate + pos.offset;
       width = yAxis.orientation === 'left' ?
-							xAxis.scale(value[1]) - xAxis.scale(value[0]) :
-							xAxis.scale(value[0]) - xAxis.scale(value[1]);
+              xAxis.scale(value[1]) - xAxis.scale(value[0]) :
+              xAxis.scale(value[0]) - xAxis.scale(value[1]);
       height = pos.size;
 
       if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
         const delta = Math.sign(width || minPointSize) *
-					(Math.abs(minPointSize) - Math.abs(width));
+          (Math.abs(minPointSize) - Math.abs(width));
         width += delta;
       }
     }

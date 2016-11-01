@@ -112,7 +112,7 @@ class Text extends Component {
       lineHeight,
       capHeight,
       className,
-      ...textProps
+      ...textProps,
     } = this.props;
     const { wordsByLines } = this.state;
     const { x, y } = textProps;

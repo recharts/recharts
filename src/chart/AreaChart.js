@@ -70,11 +70,11 @@ const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey, stacked
   if (hasStack) {
     baseLine = stackedData.slice(dataStartIndex, dataEndIndex + 1).map((entry, index) => ({
       x: layout === 'horizontal' ?
-					xTicks[index].coordinate + bandSize / 2 :
-					xAxis.scale(entry[0]),
+          xTicks[index].coordinate + bandSize / 2 :
+          xAxis.scale(entry[0]),
       y: layout === 'horizontal' ?
-					yAxis.scale(entry[0]) :
-					yTicks[index].coordinate + bandSize / 2,
+          yAxis.scale(entry[0]) :
+          yTicks[index].coordinate + bandSize / 2,
     }));
   } else if (layout === 'horizontal') {
     baseLine = yAxis.scale(baseValue);
@@ -136,7 +136,7 @@ export class AreaChart extends Component {
     };
 
     return React.isValidElement(tooltipItem.props.cursor) ?
-			React.cloneElement(tooltipItem.props.cursor, cursorProps) :
+      React.cloneElement(tooltipItem.props.cursor, cursorProps) :
   <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor" />;
   }
 
@@ -172,8 +172,8 @@ export class AreaChart extends Component {
    * @param  {Object} xAxisMap The configuration of all x-axis
    * @param  {Object} yAxisMap The configuration of all y-axis
    * @param  {Object} offset   The offset of main part in the svg element
-	 * @param	 {Array} allComposedData The array of pre-created composedData
-	 *															{points, basedLine, layout} for each item
+   * @param   {Array} allComposedData The array of pre-created composedData
+   *                              {points, basedLine, layout} for each item
    * @return {ReactComponent} The instances of Area
    */
   renderItems(items, xAxisMap, yAxisMap, offset, allComposedData) {
@@ -188,7 +188,7 @@ export class AreaChart extends Component {
       const { dataKey, activeDot } = child.props;
       const currentComposedData = allComposedData[i];
       const activePoint = currentComposedData.points &&
-				currentComposedData.points[activeTooltipIndex];
+        currentComposedData.points[activeTooltipIndex];
 
       if (hasDot && activeDot && activePoint) {
         const dotProps = {
