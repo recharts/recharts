@@ -9,7 +9,7 @@ import Bar from '../cartesian/Bar';
 import Area from '../cartesian/Area';
 import Rectangle from '../shape/Rectangle';
 import generateCategoricalChart from './generateCategoricalChart';
-import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
+import { getBandSizeOfAxis, getAnyElementOfObject } from '../util/DataUtils';
 import { getPresentationAttributes, findChildByType } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { AreaChart } from './AreaChart';
@@ -55,7 +55,7 @@ class ComposedChart extends Component {
 
     if (!ticks || !ticks[activeTooltipIndex]) { return null; }
 
-    const bandSize = getBandSizeOfScale(axis.scale);
+    const bandSize = getBandSizeOfAxis(axis);
     const start = ticks[activeTooltipIndex].coordinate;
     const cursorProps = {
       fill: '#f1f1f1',

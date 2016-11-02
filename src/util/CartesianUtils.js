@@ -308,6 +308,16 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
     });
   }
 
+  if (axis.isCategorial && axis.categoricalDomain) {
+    return axis.categoricalDomain.map((entry, index) => (
+      {
+        coordinate: scale(entry),
+        value: entry,
+        index,
+      }
+    ));
+  }
+
   if (scale.ticks && !isAll) {
     return scale.ticks(axis.tickCount).map(entry => (
       { coordinate: scale(entry) + offset, value: entry }
@@ -315,15 +325,16 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
-  return scale.domain().map(entry => (
+  return scale.domain().map((entry, index) => (
     {
       coordinate: scale(entry) + offset,
       value: duplicateDomain ? duplicateDomain[entry] : entry,
+      index,
     }
   ));
 };
 
-export const calculateActiveTickIndex = (coordinate, ticks) => {
+export const calculateActiveTickIndex = (coordinate, ticks, axis) => {
   let index = -1;
   const len = ticks.length;
 
@@ -333,7 +344,7 @@ export const calculateActiveTickIndex = (coordinate, ticks) => {
         || (i > 0 && i < len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2
           && coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2)
         || (i === len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2)) {
-        index = i;
+        index = ticks[i].index;
         break;
       }
     }

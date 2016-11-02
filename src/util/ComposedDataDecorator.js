@@ -4,7 +4,7 @@ import { shallowEqual } from './PureRender';
 import { getDisplayName, findAllByType } from './ReactUtils';
 import { getStackedDataOfItem, getTicksOfAxis,
   getBarSizeList, getBarPosition } from './CartesianUtils';
-import { getBandSizeOfScale } from './DataUtils';
+import { getBandSizeOfAxis } from './DataUtils';
 
 /*
  * ComposedDataDecorator is a wrapper component that calculates expensive,
@@ -66,22 +66,24 @@ export default ({ getComposedData, ChildComponent }) => WrappedComponent =>
 
           const numericAxisId = layout === 'horizontal' ? yAxisId : xAxisId;
           const cateAxisId = layout === 'horizontal' ? xAxisId : yAxisId;
-          const cateAxis = layout === 'horizontal' ? xAxisMap[xAxisId] : yAxisMap[yAxisId];
+          const cateAxis = layout === 'horizontal' ? xAxis : yAxis;
+          const cateTicks = layout === 'horizontal' ? xTicks : yTicks;
+
           stackedData = stackGroups && stackGroups[numericAxisId] &&
             stackGroups[numericAxisId].hasStack &&
             getStackedDataOfItem(item, stackGroups[numericAxisId].stackGroups);
 
-          const bandSize = getBandSizeOfScale(cateAxis.scale);
+          const bandSize = getBandSizeOfAxis(cateAxis, cateTicks);
           const maxBarSize = _.isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
           barPosition = getBarPosition({
             barGap, barCategoryGap, bandSize, sizeList: sizeList[cateAxisId], maxBarSize,
           });
-        }
 
-        const composedData = getComposedData && getComposedData({ props,
-          xAxis, yAxis, xTicks, yTicks, dataKey, item, barPosition, offset, stackedData,
-        }) || {};
-        allComposedData.push(composedData);
+          const composedData = getComposedData && getComposedData({ props,
+            xAxis, yAxis, xTicks, yTicks, dataKey, item, bandSize, barPosition, offset, stackedData,
+          }) || {};
+          allComposedData.push(composedData);
+        }
       });
 
       return { axisTicks, allComposedData };

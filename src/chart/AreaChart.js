@@ -12,10 +12,19 @@ import { getPresentationAttributes, findChildByType } from '../util/ReactUtils';
 import { getMainColorOfGraphicItem } from '../util/CartesianUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Area from '../cartesian/Area';
-import { getBandSizeOfScale } from '../util/DataUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
 import composedDataDecorator from '../util/ComposedDataDecorator';
 
+
+const getCategoryAxisCoordinate = ({ axis, ticks, bandSize, entry, index }) => {
+  if (axis.type === 'category') {
+    return ticks[index] ? ticks[index].coordinate + bandSize / 2 : null;
+  }
+
+  const dataKey = axis.dataKey;
+
+  return dataKey && !_.isNil(entry[dataKey]) ? axis.scale(entry[dataKey]) : null;
+};
 
 const getBaseValue = (props, xAxis, yAxis) => {
   const { layout } = props;
@@ -40,11 +49,10 @@ const getBaseValue = (props, xAxis, yAxis) => {
  * the stackedData is an array of min value and max value
  * @return {Array} Composed data
  */
-const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey, stackedData }) => {
+const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, bandSize, dataKey,
+  stackedData }) => {
   const { layout, dataStartIndex, dataEndIndex } = props;
   const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
-
-  const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
   const hasStack = stackedData && stackedData.length;
   const baseValue = getBaseValue(props, xAxis, yAxis);
 
@@ -53,7 +61,7 @@ const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey, stacked
 
     if (layout === 'horizontal') {
       return {
-        x: xTicks[index].coordinate + bandSize / 2,
+        x: getCategoryAxisCoordinate({ axis: xAxis, ticks: xTicks, bandSize, entry, index }),
         y: _.isNil(value[1]) ? null : yAxis.scale(value[1]),
         value,
       };
@@ -61,7 +69,7 @@ const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey, stacked
 
     return {
       x: _.isNil(value[1]) ? null : xAxis.scale(value[1]),
-      y: yTicks[index].coordinate + bandSize / 2,
+      y: getCategoryAxisCoordinate({ axis: yAxis, ticks: yTicks, bandSize, entry, index }),
       value,
     };
   });
@@ -70,11 +78,11 @@ const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey, stacked
   if (hasStack) {
     baseLine = stackedData.slice(dataStartIndex, dataEndIndex + 1).map((entry, index) => ({
       x: layout === 'horizontal' ?
-          xTicks[index].coordinate + bandSize / 2 :
+          getCategoryAxisCoordinate({ axis: xAxis, ticks: xTicks, bandSize, entry, index }) :
           xAxis.scale(entry[0]),
       y: layout === 'horizontal' ?
-          yAxis.scale(entry[0]) :
-          yTicks[index].coordinate + bandSize / 2,
+         yAxis.scale(entry[0]) :
+         getCategoryAxisCoordinate({ axis: yAxis, ticks: yTicks, bandSize, entry, index }),
     }));
   } else if (layout === 'horizontal') {
     baseLine = yAxis.scale(baseValue);

@@ -160,7 +160,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         const axisId = child.props[axisIdKey];
 
         if (!result[axisId]) {
-          let domain, duplicateDomain;
+          let domain, duplicateDomain, categoricalDomain;
 
           if (dataKey) {
             domain = getDomainOfDataByKey(displayedData, dataKey, type);
@@ -169,6 +169,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             duplicateDomain = duplicate ? domain : null;
             // When axis has duplicated text, serial numbers are used to generate scale
             domain = duplicate ? _.range(0, len) : domain;
+
+            if (isCategorial && type === 'number') {
+              categoricalDomain = getDomainOfDataByKey(displayedData, dataKey, 'category');
+            }
           } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
             && type === 'number') {
             domain = getDomainOfStackGroups(
@@ -196,8 +200,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
               ...child.props,
               axisType,
               domain,
+              categoricalDomain,
               duplicateDomain,
               originalDomain: child.props.domain,
+              isCategorial,
             },
           };
         }
@@ -266,6 +272,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
               orientation: ORIENT_MAP[axisType][index % 2],
               domain,
               originalDomain: Axis.defaultProps.domain,
+              isCategorial,
             },
           };
         }
@@ -352,13 +359,11 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     }
     /**
      * Get the information of mouse in chart, return null when the mouse is not in the chart
-     * @param  {Object}  xAxisMap The configuration of all x-axes
-     * @param  {Object}  yAxisMap The configuration of all y-axes
      * @param  {Object}  offset   The offset of main part in the svg element
      * @param  {Object}  e        The event object
      * @return {Object}           Mouse data
      */
-    getMouseInfo(xAxisMap, yAxisMap, offset, e) {
+    getMouseInfo(offset, e) {
       const isIn = e.chartX >= offset.left
         && e.chartX <= offset.left + offset.width
         && e.chartY >= offset.top
@@ -367,9 +372,9 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       if (!isIn) { return null; }
 
       const { layout } = this.props;
-      const { tooltipTicks: ticks } = this.state;
+      const { tooltipTicks: ticks, tooltipAxis: axis } = this.state;
       const pos = layout === 'horizontal' ? e.chartX : e.chartY;
-      const activeIndex = calculateActiveTickIndex(pos, ticks);
+      const activeIndex = calculateActiveTickIndex(pos, ticks, axis);
 
       if (activeIndex >= 0) {
         return {
@@ -454,9 +459,11 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       xAxisMap = this.getFormatAxisMap(props, xAxisMap, offset, 'xAxis');
       yAxisMap = this.getFormatAxisMap(props, yAxisMap, offset, 'yAxis');
 
-      const tooltipTicks = this.tooltipTicksGenerator({ layout, xAxisMap, yAxisMap });
+      const { ticks: tooltipTicks, axis: tooltipAxis } = this.tooltipTicksGenerator({
+        layout, xAxisMap, yAxisMap,
+      });
 
-      return { xAxisMap, yAxisMap, offset, stackGroups, tooltipTicks };
+      return { xAxisMap, yAxisMap, offset, stackGroups, tooltipTicks, tooltipAxis };
     }
 
     /* eslint-disable  no-underscore-dangle */
@@ -577,16 +584,14 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     /**
      * The handler of mouse entering chart
      * @param  {Object} offset   The offset of main part in the svg element
-     * @param  {Object} xAxisMap The configuration of all x-axes
-     * @param  {Object} yAxisMap The configuration of all y-axes
      * @param  {Object} e        Event object
      * @return {Null}            null
      */
-    handleMouseEnter(offset, xAxisMap, yAxisMap, e) {
+    handleMouseEnter(offset, e) {
       const container = this.container;
       const containerOffset = getOffset(container);
       const ne = calculateChartCoordinate(e, containerOffset);
-      const mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);
+      const mouse = this.getMouseInfo(offset, ne);
 
       if (mouse) {
         const nextState = { ...mouse, isTooltipActive: true };
@@ -598,16 +603,14 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     /**
      * The handler of mouse moving in chart
      * @param  {Object} offset   The offset of main part in the svg element
-     * @param  {Object} xAxisMap The configuration of all x-axes
-     * @param  {Object} yAxisMap The configuration of all y-axes
      * @param  {Object} e        Event object
      * @return {Null} no return
      */
-    handleMouseMove(offset, xAxisMap, yAxisMap, e) {
+    handleMouseMove(offset, e) {
       const container = this.container;
       const containerOffset = getOffset(container);
       const ne = calculateChartCoordinate(e, containerOffset);
-      const mouse = this.getMouseInfo(xAxisMap, yAxisMap, offset, ne);
+      const mouse = this.getMouseInfo(offset, ne);
       const nextState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
 
       this.setState(nextState);
@@ -631,8 +634,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       if (layout === 'horizontal' && xAxes && xAxes.length) {
         xAxes.forEach((axis) => {
-          warn(axis.props.type === 'category',
-            'x-axis should be category axis when the layout is horizontal'
+          warn(axis.props.type === 'category' || (axis.props.type === 'number' &&
+            !_.isNil(axis.props.dataKey)),
+            `x-axis should be a category axis or a number axis which has specifed dataKey
+             when the layout is horizontal`
           );
         });
       } else if (layout === 'vertical') {
@@ -650,8 +655,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
         if (yAxes && yAxes.length) {
           yAxes.forEach((axis) => {
-            warn(axis.props.type === 'category',
-              'y-axis should be category axis when the layout is vertical'
+            warn(axis.props.type === 'category' || (axis.props.type === 'number' &&
+              !_.isNil(axis.props.dataKey)),
+              `y-axis should be a category axis or a number axis which has specifed dataKey
+               when the layout is vertical`
             );
           });
         }
@@ -688,7 +695,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     tooltipTicksGenerator = ({ layout, xAxisMap, yAxisMap }) => {
       const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
       const axis = getAnyElementOfObject(axisMap);
-      return getTicksOfAxis(axis, false, true);
+
+      return { ticks: _.sortBy(getTicksOfAxis(axis, false, true), o => o.coordinate), axis };
     }
 
     /**
@@ -865,8 +873,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       const tooltipItem = findChildByType(children, Tooltip);
       const events = tooltipItem ? {
-        onMouseEnter: this.handleMouseEnter.bind(this, offset, xAxisMap, yAxisMap),
-        onMouseMove: this.handleMouseMove.bind(this, offset, xAxisMap, yAxisMap),
+        onMouseEnter: this.handleMouseEnter.bind(this, offset),
+        onMouseMove: this.handleMouseMove.bind(this, offset),
         onMouseLeave: this.handleMouseLeave,
       } : null;
       const attrs = getPresentationAttributes(others);

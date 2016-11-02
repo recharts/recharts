@@ -2,10 +2,11 @@
  * @fileOverview Bar Chart
  */
 import React, { PropTypes, Component } from 'react';
+import _ from 'lodash';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
-import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
+import { getBandSizeOfAxis, getAnyElementOfObject } from '../util/DataUtils';
 import { getPresentationAttributes, findChildByType, findAllByType,
   filterEventAttributes } from '../util/ReactUtils';
 import generateCategoricalChart from './generateCategoricalChart';
@@ -13,6 +14,18 @@ import Cell from '../component/Cell';
 import Bar from '../cartesian/Bar';
 import AnimationDecorator from '../util/AnimationDecorator';
 import composedDataDecorator from '../util/ComposedDataDecorator';
+
+const getCategoryAxisCoordinate = ({ axis, ticks, offset, bandSize, entry, index }) => {
+  if (axis.type === 'category') {
+    return ticks[index] ? ticks[index].coordinate + offset : null;
+  }
+
+  const dataKey = axis.dataKey;
+
+  return dataKey && !_.isNil(entry[dataKey]) ?
+    axis.scale(entry[dataKey]) - bandSize / 2 + offset :
+    null;
+};
 
 const getBaseValue = ({ props, xAxis, yAxis }) => {
   const { layout } = props;
@@ -36,7 +49,7 @@ const getBaseValue = ({ props, xAxis, yAxis }) => {
  * @param {Array} stackedData  The stacked data of a bar item
  * @return{Array} Composed data
  */
-const getComposedData = ({ props, item, barPosition, xAxis, yAxis,
+const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
   xTicks, yTicks, stackedData }) => {
 
   const { layout, dataStartIndex, dataEndIndex } = props;
@@ -51,7 +64,14 @@ const getComposedData = ({ props, item, barPosition, xAxis, yAxis,
     let x, y, width, height;
 
     if (layout === 'horizontal') {
-      x = xTicks[index].coordinate + pos.offset;
+      x = getCategoryAxisCoordinate({
+        axis: xAxis,
+        ticks: xTicks,
+        bandSize,
+        offset: pos.offset,
+        entry,
+        index,
+      });
       y = yAxis.scale(xAxis.orientation === 'top' ? value[0] : value[1]);
       width = pos.size;
       height = xAxis.orientation === 'top' ?
@@ -66,7 +86,14 @@ const getComposedData = ({ props, item, barPosition, xAxis, yAxis,
       }
     } else {
       x = xAxis.scale(yAxis.orientation === 'left' ? value[0] : value[1]);
-      y = yTicks[index].coordinate + pos.offset;
+      y = getCategoryAxisCoordinate({
+        axis: yAxis,
+        ticks: yTicks,
+        bandSize,
+        offset: pos.offset,
+        entry,
+        index,
+      });
       width = yAxis.orientation === 'left' ?
               xAxis.scale(value[1]) - xAxis.scale(value[0]) :
               xAxis.scale(value[0]) - xAxis.scale(value[1]);
@@ -136,7 +163,7 @@ class BarChart extends Component {
 
     if (!ticks || !ticks[activeTooltipIndex]) { return null; }
 
-    const bandSize = getBandSizeOfScale(axis.scale);
+    const bandSize = getBandSizeOfAxis(axis);
     const start = ticks[activeTooltipIndex].coordinate;
     const cursorProps = {
       fill: '#f1f1f1',

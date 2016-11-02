@@ -86,13 +86,29 @@ export const validateCoordinateInRange = (coordinate, scale) => {
 
 /**
  * Calculate the size between two category
- * @param  {Function} scale Scale function
+ * @param  {Object} axis  The options of axis
+ * @param  {Array}  ticks The ticks of axis
  * @return {Number} Size
  */
-export const getBandSizeOfScale = (scale) => {
-  if (scale && scale.bandwidth) {
-    return scale.bandwidth();
+export const getBandSizeOfAxis = (axis, ticks) => {
+  if (axis.type === 'category' && axis.scale && axis.scale.bandwidth) {
+    return axis.scale.bandwidth();
   }
+
+  if (axis.type === 'number' && ticks) {
+    const orderedTicks = _.sortBy(ticks, o => o.coordinate);
+    let bandSize = Infinity;
+
+    for (let i = 1, len = orderedTicks.length; i < len; i++) {
+      const cur = orderedTicks[i];
+      const prev = orderedTicks[i - 1];
+
+      bandSize = Math.min((cur.coordinate || 0) - (prev.coordinate || 0), bandSize);
+    }
+
+    return bandSize === Infinity ? 0 : bandSize;
+  }
+
   return 0;
 };
 

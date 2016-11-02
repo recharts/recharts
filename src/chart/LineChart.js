@@ -11,10 +11,19 @@ import Dot from '../shape/Dot';
 import generateCategoricalChart from './generateCategoricalChart';
 import Line from '../cartesian/Line';
 import { getPresentationAttributes, findChildByType } from '../util/ReactUtils';
-import { getBandSizeOfScale } from '../util/DataUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
 import composedDataDecorator from '../util/ComposedDataDecorator';
 
+
+const getCategoryAxisCoordinate = ({ axis, ticks, bandSize, entry, index }) => {
+  if (axis.type === 'category') {
+    return ticks[index] ? ticks[index].coordinate + bandSize / 2 : null;
+  }
+
+  const dataKey = axis.dataKey;
+
+  return dataKey && !_.isNil(entry[dataKey]) ? axis.scale(entry[dataKey]) : null;
+};
 /**
  * Compose the data of each group
  * @param {Object} props The props from the component
@@ -23,17 +32,16 @@ import composedDataDecorator from '../util/ComposedDataDecorator';
  * @param  {String} dataKey The unique key of a group
  * @return {Array}  Composed data
  */
-const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey }) => {
+const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey, bandSize }) => {
   const { layout, dataStartIndex, dataEndIndex } = props;
   const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
-  const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
 
   return data.map((entry, index) => {
     const value = entry[dataKey];
 
     if (layout === 'horizontal') {
       return {
-        x: xTicks[index].coordinate + bandSize / 2,
+        x: getCategoryAxisCoordinate({ axis: xAxis, ticks: xTicks, bandSize, entry, index }),
         y: _.isNil(value) ? null : yAxis.scale(value),
         value,
       };
@@ -41,7 +49,7 @@ const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey }) => {
 
     return {
       x: _.isNil(value) ? null : xAxis.scale(value),
-      y: yTicks[index].coordinate + bandSize / 2,
+      y: getCategoryAxisCoordinate({ axis: yAxis, ticks: yTicks, bandSize, entry, index }),
       value,
     };
   });
