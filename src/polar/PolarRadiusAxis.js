@@ -161,12 +161,12 @@ class PolarRadiusAxis extends Component {
 
   renderLabel() {
     const { label } = this.props;
-    const { ticks, angle, stroke } = this.props;
+    const { ticks, angle, stroke, ...others } = this.props;
     const maxRadiusTick = _.maxBy(ticks, entry => (entry.radius || 0));
     const radius = maxRadiusTick.radius || 0;
     const coord = this.getTickValueCoord({ radius: radius + 10 });
     const props = {
-      ...this.props,
+      ...others,
       stroke: 'none',
       fill: stroke,
       ...coord,

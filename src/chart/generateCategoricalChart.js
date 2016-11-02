@@ -149,7 +149,6 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      */
     getAxisMapByAxes(props, { axes, items, axisType, axisIdKey,
       stackGroups, dataStartIndex, dataEndIndex }) {
-
       const { layout, children, data } = props;
       const displayedData = data.slice(dataStartIndex, dataEndIndex + 1);
       const len = displayedData.length;
@@ -223,7 +222,6 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      */
     getAxisMapByItems(props, { items, Axis, axisType, axisIdKey,
       stackGroups, dataStartIndex, dataEndIndex }) {
-
       const { layout, children, data } = props;
       const displayedData = data.slice(dataStartIndex, dataEndIndex + 1);
       const len = displayedData.length;
