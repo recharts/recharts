@@ -52,7 +52,8 @@ export default ({ getComposedData, ChildComponent }) => WrappedComponent =>
       const allComposedData = [];
       items.forEach((item) => {
         const { xAxisId, yAxisId, dataKey, maxBarSize: childMaxBarSize } = item.props;
-        let xAxis, yAxis, xTicks, yTicks, barPosition, stackedData;
+        let xAxis, yAxis, xTicks, yTicks, barPosition, stackedData, bandSize;
+
         if (xAxisMap || yAxisMap) {
 
           xAxis = xAxisMap[xAxisId];
@@ -73,17 +74,18 @@ export default ({ getComposedData, ChildComponent }) => WrappedComponent =>
             stackGroups[numericAxisId].hasStack &&
             getStackedDataOfItem(item, stackGroups[numericAxisId].stackGroups);
 
-          const bandSize = getBandSizeOfAxis(cateAxis, cateTicks);
+          bandSize = getBandSizeOfAxis(cateAxis, cateTicks);
           const maxBarSize = _.isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
           barPosition = getBarPosition({
             barGap, barCategoryGap, bandSize, sizeList: sizeList[cateAxisId], maxBarSize,
           });
 
-          const composedData = getComposedData && getComposedData({ props,
-            xAxis, yAxis, xTicks, yTicks, dataKey, item, bandSize, barPosition, offset, stackedData,
-          }) || {};
-          allComposedData.push(composedData);
         }
+
+        const composedData = getComposedData && getComposedData({ props,
+          xAxis, yAxis, xTicks, yTicks, dataKey, item, bandSize, barPosition, offset, stackedData,
+        }) || {};
+        allComposedData.push(composedData);
       });
 
       return { axisTicks, allComposedData };

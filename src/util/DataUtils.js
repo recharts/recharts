@@ -91,11 +91,11 @@ export const validateCoordinateInRange = (coordinate, scale) => {
  * @return {Number} Size
  */
 export const getBandSizeOfAxis = (axis, ticks) => {
-  if (axis.type === 'category' && axis.scale && axis.scale.bandwidth) {
+  if (axis && axis.type === 'category' && axis.scale && axis.scale.bandwidth) {
     return axis.scale.bandwidth();
   }
 
-  if (axis.type === 'number' && ticks) {
+  if (axis && axis.type === 'number' && ticks) {
     const orderedTicks = _.sortBy(ticks, o => o.coordinate);
     let bandSize = Infinity;
 
