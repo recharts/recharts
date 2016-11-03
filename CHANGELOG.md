@@ -1,3 +1,18 @@
+## 0.16.1 (Nov 04, 2016)
+
+### fix
+
+- refactor to treat NaN like undefined or null, fix #303
+- fix tranform origin of Bar, fix #292
+
+### feat
+
+- support customized position of Tooltip, fix #31
+
+### docs
+
+- fix LodashModuleReplacementPlugin
+
 ## 0.16.0 (Nov 04, 2016)
 
 ### refactor
