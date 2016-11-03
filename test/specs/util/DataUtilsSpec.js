@@ -35,8 +35,8 @@ describe('getBandSizeOfAxis', () => {
   });
 
   it('DataUtils.getBandSizeOfAxis({ type: "category", scale }) should return 0 ', () => {
-    const axis = { type: 'category', scale: scaleBand().domain([0, 1, 2]).range([0, 100]) };
-    expect(getBandSizeOfAxis(axis)).to.equal(50);
+    const axis = { type: 'category', scale: scaleBand().domain([0, 1, 2, 3]).range([0, 100]) };
+    expect(getBandSizeOfAxis(axis)).to.equal(25);
   });
 
   it('DataUtils.getBandSizeOfAxis({ type: "number", scale }, ticks) should return 0 ', () => {
