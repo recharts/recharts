@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import Animate from 'react-smooth';
+import Animate, { translateStyle, configSpring } from 'react-smooth';
 import _ from 'lodash';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
@@ -115,16 +115,16 @@ class Bar extends Component {
     });
 
     return data.map((entry, index) => {
-      const { width, height } = entry;
+      const { x, y, width, height } = entry;
       const props = {
         ...baseProps, ...entry, index, ...filterEventsOfChild(this.props, entry, index),
       };
       let transformOrigin = '';
 
       if (layout === 'vertical') {
-        transformOrigin = width > 0 ? 'left center' : 'right center';
+        transformOrigin = `${x}px ${y + height / 2}px`;
       } else {
-        transformOrigin = height > 0 ? 'center bottom' : 'center top';
+        transformOrigin = `${x + width / 2}px ${y + height}px`;
       }
 
       return (
@@ -139,7 +139,9 @@ class Bar extends Component {
           onAnimationEnd={this.handleAnimationEnd}
           onAnimationStart={this.handleAnimationStart}
         >
-          <g style={{ transformOrigin }}>{this.renderRectangle(shape, props)}</g>
+          <g style={translateStyle({ transformOrigin })}>
+            {this.renderRectangle(shape, props)}
+          </g>
         </Animate>
       );
     });
