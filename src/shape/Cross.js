@@ -3,7 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import { isNumber } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';

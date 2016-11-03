@@ -130,7 +130,7 @@ export default React.createClass({
             <YAxis type='number' orientation='right' yAxisId={1}/>
             <YAxis type='number' orientation='right' yAxisId={2}/>
             <XAxis dataKey='name'/>
-            <Tooltip/>
+            <Tooltip position={{y: 200}} />
             <CartesianGrid stroke='#f5f5f5'/>
             <Line dataKey='uv' stroke='#ff7300' strokeWidth={2} yAxisId={0}/>
             <Line dataKey='pv' stroke='#387908' strokeWidth={2} yAxisId={1}/>
