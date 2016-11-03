@@ -62,7 +62,10 @@ var config = {
   },
 
   plugins: [
-    new LodashModuleReplacementPlugin(),
+    new LodashModuleReplacementPlugin({
+      collections: true,
+      shorthands: true
+    }),
     new webpack.optimize.DedupePlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(env),
