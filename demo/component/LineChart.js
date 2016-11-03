@@ -107,7 +107,7 @@ export default React.createClass({
             <XAxis />
             <YAxis />
             <Tooltip />
-            <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300'/>
+            <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300' />
           </LineChart>
         </div>
 

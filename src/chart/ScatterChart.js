@@ -24,7 +24,7 @@ import { getPresentationAttributes, findChildByType, filterSvgElements,
   findAllByType, validateWidthHeight, getDisplayName, filterEventAttributes,
 } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
-import { parseSpecifiedDomain } from '../util/DataUtils';
+import { parseSpecifiedDomain, isNumber } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { detectReferenceElementsDomain, getTicksOfAxis,
   getCoordinatesOfGrid, getLegendProps, getTicksOfScale } from '../util/CartesianUtils';
@@ -79,9 +79,9 @@ class ScatterChart extends Component {
 
     return data.map((entry, index) => ({
       ...entry,
-      cx: _.isNumber(entry[xAxisDataKey]) ? xAxis.scale(entry[xAxisDataKey]) : null,
-      cy: _.isNumber(entry[yAxisDataKey]) ? yAxis.scale(entry[yAxisDataKey]) : null,
-      size: zAxisDataKey !== undefined && _.isNumber(entry[zAxisDataKey]) ?
+      cx: isNumber(entry[xAxisDataKey]) ? xAxis.scale(entry[xAxisDataKey]) : null,
+      cy: isNumber(entry[yAxisDataKey]) ? yAxis.scale(entry[yAxisDataKey]) : null,
+      size: zAxisDataKey !== undefined && isNumber(entry[zAxisDataKey]) ?
         zAxis.scale(entry[zAxisDataKey]) :
         zAxis.range[0],
       payload: {
@@ -173,10 +173,10 @@ class ScatterChart extends Component {
     if (legendProps) {
       const box = Legend.getLegendBBox(legendProps, width, height) || {};
       if (legendProps.layout === 'horizontal' &&
-        _.isNumber(offset[legendProps.verticalAlign])) {
+        isNumber(offset[legendProps.verticalAlign])) {
         offset[legendProps.verticalAlign] += box.height || 0;
       } else if (legendProps.layout === 'vertical' &&
-        _.isNumber(offset[legendProps.align])) {
+        isNumber(offset[legendProps.align])) {
         offset[legendProps.align] += box.width || 0;
       }
     }

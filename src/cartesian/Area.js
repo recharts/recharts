@@ -11,6 +11,7 @@ import Layer from '../container/Layer';
 import Text from '../component/Text';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { isNumber } from '../util/DataUtils';
 
 @pureRender
 class Area extends Component {
@@ -147,7 +148,7 @@ class Area extends Component {
     const width = alpha * Math.abs(startX - endX);
     let maxY = Math.max.apply(null, points.map(entry => (entry.y || 0)));
 
-    if (_.isNumber(baseLine)) {
+    if (isNumber(baseLine)) {
       maxY = Math.max(baseLine, maxY);
     } else {
       maxY = Math.max(Math.max.apply(null, baseLine.map(entry => (entry.y || 0))), maxY);
@@ -170,7 +171,7 @@ class Area extends Component {
     const height = alpha * Math.abs(startY - endY);
     let maxX = Math.max.apply(null, points.map(entry => (entry.x || 0)));
 
-    if (_.isNumber(baseLine)) {
+    if (isNumber(baseLine)) {
       maxX = Math.max(baseLine, maxX);
     } else {
       maxX = Math.max(Math.max.apply(null, baseLine.map(entry => (entry.x || 0))), maxX);

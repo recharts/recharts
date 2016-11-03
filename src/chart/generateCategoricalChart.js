@@ -20,7 +20,8 @@ import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
-import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate } from '../util/DataUtils';
+import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate,
+  isNumber } from '../util/DataUtils';
 import { calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
   getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
@@ -533,10 +534,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       if (legendProps) {
         const box = Legend.getLegendBBox(legendProps, width, height) || {};
         if (legendProps.layout === 'horizontal' &&
-          _.isNumber(offsetV[legendProps.verticalAlign])) {
+          isNumber(offsetV[legendProps.verticalAlign])) {
           offsetV[legendProps.verticalAlign] += box.height || 0;
         } else if (legendProps.layout === 'vertical' &&
-          _.isNumber(offsetH[legendProps.align])) {
+          isNumber(offsetH[legendProps.align])) {
           offsetH[legendProps.align] += box.width || 0;
         }
       }

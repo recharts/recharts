@@ -7,6 +7,7 @@ import pureRender from '../util/PureRender';
 import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
+import { isNumOrStr } from '../util/DataUtils';
 
 @pureRender
 class PolarRadiusAxis extends Component {
@@ -178,7 +179,7 @@ class PolarRadiusAxis extends Component {
       return React.cloneElement(label, props);
     } else if (_.isFunction(label)) {
       return label(props);
-    } else if (_.isString(label) || _.isNumber(label)) {
+    } else if (isNumOrStr(label)) {
       return (
         <g className="recharts-polar-radius-axis-label">
           <Text {...props}>{label}</Text>

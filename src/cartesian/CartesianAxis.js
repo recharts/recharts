@@ -9,6 +9,7 @@ import Layer from '../container/Layer';
 import Text from '../component/Text';
 import { isSsr, PRESENTATION_ATTRIBUTES,
   getPresentationAttributes } from '../util/ReactUtils';
+import { isNumber, isNumOrStr } from '../util/DataUtils';
 
 class CartesianAxis extends Component {
 
@@ -78,8 +79,8 @@ class CartesianAxis extends Component {
 
     if (!ticks || !ticks.length) { return []; }
 
-    return (_.isNumber(interval) || isSsr())
-        ? CartesianAxis.getNumberIntervalTicks(ticks, _.isNumber(interval) ? interval : 0)
+    return (isNumber(interval) || isSsr())
+        ? CartesianAxis.getNumberIntervalTicks(ticks, isNumber(interval) ? interval : 0)
         : CartesianAxis.getAutoIntervalTicks(
           ticks, tickFormatter, viewBox, orientation, minTickGap
         );
@@ -342,7 +343,7 @@ class CartesianAxis extends Component {
       return React.cloneElement(label, { ...presentation, orientation, viewBox });
     } else if (_.isFunction(label)) {
       return label(this.props);
-    } else if (_.isString(label) || _.isNumber(label)) {
+    } else if (isNumOrStr(label)) {
       const props = {
         ...presentation,
         stroke: 'none',

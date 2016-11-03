@@ -7,11 +7,8 @@ import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
-import { validateCoordinateInRange } from '../util/DataUtils';
+import { validateCoordinateInRange, isNumber, isNumOrStr } from '../util/DataUtils';
 
-const isValidateValue = v => (
-  _.isNumber(v) || _.isString(v)
-);
 
 @pureRender
 class ReferenceArea extends Component {
@@ -69,22 +66,22 @@ class ReferenceArea extends Component {
     const yRange = yScale.range();
     let x1, x2, y1, y2;
 
-    if (hasX && isValidateValue(xValue1)) {
+    if (hasX && isNumOrStr(xValue1)) {
       x1 = xScale(xValue1) + xOffset;
     } else if (hasY) {
       x1 = xRange[0];
     }
-    if (hasX && isValidateValue(xValue2)) {
+    if (hasX && isNumOrStr(xValue2)) {
       x2 = xScale(xValue2) + xOffset;
     } else if (hasY) {
       x2 = xRange[1];
     }
-    if (hasY && isValidateValue(yValue1)) {
+    if (hasY && isNumOrStr(yValue1)) {
       y1 = yScale(yValue1) + yOffset;
     } else if (hasX) {
       y1 = yRange[0];
     }
-    if (hasY && isValidateValue(yValue2)) {
+    if (hasY && isNumOrStr(yValue2)) {
       y2 = yScale(yValue2) + yOffset;
     } else if (hasX) {
       y2 = yRange[1];
@@ -118,7 +115,7 @@ class ReferenceArea extends Component {
       return React.cloneElement(label, props);
     } else if (_.isFunction(label)) {
       return label(props);
-    } else if (_.isString(label) || _.isNumber(label)) {
+    } else if (isNumOrStr(label)) {
       return (
         <g className="recharts-reference-area-label">
           <Text {...props}>{label}</Text>
@@ -150,8 +147,8 @@ class ReferenceArea extends Component {
 
   render() {
     const { x1, x2, y1, y2 } = this.props;
-    const hasX = isValidateValue(x1) && isValidateValue(x2);
-    const hasY = isValidateValue(y1) && isValidateValue(y2);
+    const hasX = isNumOrStr(x1) && isNumOrStr(x2);
+    const hasY = isNumOrStr(y1) && isNumOrStr(y2);
 
     if (!hasX && !hasY) { return null; }
 

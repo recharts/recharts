@@ -7,7 +7,7 @@ import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
-import { validateCoordinateInRange } from '../util/DataUtils';
+import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';
 
 @pureRender
 class ReferenceLine extends Component {
@@ -123,7 +123,7 @@ class ReferenceLine extends Component {
       return React.cloneElement(label, props);
     } else if (_.isFunction(label)) {
       return label(props);
-    } else if (_.isString(label) || _.isNumber(label)) {
+    } else if (isNumOrStr(label)) {
       return (
         <g className="recharts-reference-line-label">
           <Text {...props}>{label}</Text>
@@ -136,8 +136,8 @@ class ReferenceLine extends Component {
 
   render() {
     const { x, y, labelPosition } = this.props;
-    const isX = _.isNumber(x) || _.isString(x);
-    const isY = _.isNumber(y) || _.isString(y);
+    const isX = isNumOrStr(x);
+    const isY = isNumOrStr(y);
 
     if (!isX && !isY) { return null; }
 

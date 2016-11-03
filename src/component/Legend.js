@@ -8,7 +8,7 @@ import pureRender from '../util/PureRender';
 import DefaultLegendContent from './DefaultLegendContent';
 import { getStyleString } from '../util/DOMUtils';
 import { isSsr } from '../util/ReactUtils';
-
+import { isNumber } from '../util/DataUtils';
 
 const renderContent = (content, props) => {
   if (React.isValidElement(content)) {
@@ -61,7 +61,7 @@ class Legend extends Component {
   static getWithHeight(item, chartWidth) {
     const { layout } = item.props;
 
-    if (layout === 'vertical' && _.isNumber(item.props.height)) {
+    if (layout === 'vertical' && isNumber(item.props.height)) {
       return {
         height: item.props.height,
       };

@@ -8,6 +8,7 @@ import _ from 'lodash';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import { getStyleString } from '../util/DOMUtils';
 import { isSsr } from '../util/ReactUtils';
+import { isNumOrStr } from '../util/DataUtils';
 
 const propTypes = {
   content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
@@ -115,7 +116,7 @@ class Tooltip extends Component {
     const { payload, isAnimationActive, animationDuration, animationEasing } = this.props;
 
     if (!payload || !payload.length ||
-      !payload.filter(entry => (_.isNumber(entry.value) || _.isString(entry.value))).length
+      !payload.filter(entry => isNumOrStr(entry.value)).length
     ) { return null; }
 
     const { content, viewBox, coordinate, active, offset, wrapperStyle } = this.props;

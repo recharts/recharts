@@ -14,6 +14,7 @@ import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
+import { isNumber } from '../util/DataUtils';
 
 @AnimationDecorator
 @pureRender
@@ -348,9 +349,9 @@ class Pie extends Component {
       outerRadius } = this.props;
     const pieData = composedData || data;
 
-    if (!pieData || !pieData.length || !_.isNumber(cx)
-      || !_.isNumber(cy) || !_.isNumber(innerRadius)
-      || !_.isNumber(outerRadius)) {
+    if (!pieData || !pieData.length || !isNumber(cx)
+      || !isNumber(cy) || !isNumber(innerRadius)
+      || !isNumber(outerRadius)) {
       return null;
     }
 

@@ -10,6 +10,7 @@ import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
+import { isNumber } from '../util/DataUtils';
 
 const CURVE_FACTORIES = {
   curveBasisClosed, curveBasisOpen, curveBasis, curveLinearClosed, curveLinear,
@@ -89,11 +90,11 @@ class Curve extends Component {
                   .curve(curveFactory);
 
       return lineFunction(areaPoints);
-    } else if (layout === 'vertical' && _.isNumber(baseLine)) {
+    } else if (layout === 'vertical' && isNumber(baseLine)) {
       lineFunction = shapeArea().y(getY)
                                 .x1(getX)
                                 .x0(baseLine);
-    } else if (_.isNumber(baseLine)) {
+    } else if (isNumber(baseLine)) {
       lineFunction = shapeArea().x(getX)
                                 .y1(getY)
                                 .y0(baseLine);

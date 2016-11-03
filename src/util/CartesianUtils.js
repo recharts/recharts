@@ -5,7 +5,7 @@ import {
 } from 'd3-shape';
 import _ from 'lodash';
 import { findAllByType, findChildByType } from './ReactUtils';
-import { getPercentValue } from './DataUtils';
+import { getPercentValue, isNumber, isNumOrStr } from './DataUtils';
 import ReferenceDot from '../cartesian/ReferenceDot';
 import ReferenceLine from '../cartesian/ReferenceLine';
 import ReferenceArea from '../cartesian/ReferenceArea';
@@ -56,7 +56,7 @@ export const detectReferenceElementsDomain = (children, domain, axisId, axisType
   if (elements.length) {
     finalDomain = elements.reduce((result, el) => {
       if (el.props[idKey] === axisId && el.props.alwaysShow &&
-        _.isNumber(el.props[valueKey])) {
+        isNumber(el.props[valueKey])) {
         const value = el.props[valueKey];
 
         return [Math.min(result[0], value), Math.max(result[1], value)];
@@ -71,7 +71,7 @@ export const detectReferenceElementsDomain = (children, domain, axisId, axisType
 
     finalDomain = areas.reduce((result, el) => {
       if (el.props[idKey] === axisId && el.props.alwaysShow &&
-        (_.isNumber(el.props[key1]) && _.isNumber(el.props[key2]))) {
+        (isNumber(el.props[key1]) && isNumber(el.props[key2]))) {
         const value1 = el.props[key1];
         const value2 = el.props[key2];
 
@@ -101,7 +101,7 @@ export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, o
     const axisId = item.props[numericAxisId];
     const parentGroup = result[axisId] || { hasStack: false, stackGroups: {} };
 
-    if (_.isNumber(stackId) || _.isString(stackId)) {
+    if (isNumOrStr(stackId)) {
       const childGroup = parentGroup.stackGroups[stackId] || { items: [] };
 
       childGroup.items.push(item);
@@ -146,7 +146,7 @@ export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, o
 export const getStackedDataOfItem = (item, stackGroups) => {
   const { stackId } = item.props;
 
-  if (_.isNumber(stackId) || _.isString(stackId)) {
+  if (isNumOrStr(stackId)) {
     const group = stackGroups[stackId];
 
     if (group && group.items.length) {
@@ -189,7 +189,7 @@ export const getDomainOfDataByKey = (data, key, type) => {
   if (type === 'number') {
     const domain = data
       .map(entry => entry[key])
-      .filter(_.isNumber);
+      .filter(isNumber);
 
     return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
   }
@@ -197,14 +197,14 @@ export const getDomainOfDataByKey = (data, key, type) => {
   return data.map((entry) => {
     const value = entry[key];
 
-    return (_.isNumber(value) || _.isString(value)) ? value : '';
+    return isNumOrStr(value) ? value : '';
   });
 };
 
 const getDomainOfSingle = data => (
   data.reduce((result, entry) => [
-    Math.min.apply(null, entry.concat([result[0]]).filter(_.isNumber)),
-    Math.max.apply(null, entry.concat([result[1]]).filter(_.isNumber)),
+    Math.min.apply(null, entry.concat([result[0]]).filter(isNumber)),
+    Math.max.apply(null, entry.concat([result[1]]).filter(isNumber)),
   ], [Infinity, -Infinity])
 );
 
@@ -334,7 +334,7 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
   ));
 };
 
-export const calculateActiveTickIndex = (coordinate, ticks, axis) => {
+export const calculateActiveTickIndex = (coordinate, ticks) => {
   let index = -1;
   const len = ticks.length;
 

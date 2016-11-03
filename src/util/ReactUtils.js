@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import _ from 'lodash';
+import { isNumber } from './DataUtils';
 
 export const PRESENTATION_ATTRIBUTES = {
   alignmentBaseline: PropTypes.string,
@@ -253,8 +254,8 @@ export const validateWidthHeight = (el) => {
   if (!el || !el.props) { return false; }
   const { width, height } = el.props;
 
-  if (!_.isNumber(width) || width <= 0 ||
-    !_.isNumber(height) || height <= 0) {
+  if (!isNumber(width) || width <= 0 ||
+    !isNumber(height) || height <= 0) {
     return false;
   }
 
