@@ -1,3 +1,18 @@
+## 0.16.0 (Nov 04, 2016)
+
+### refactor
+
+- Major Performance Change - Re-Use Expensive To Generate Data
+
+### feat
+
+- support both x-axis and y-axis are numerical axis, fix #183
+- add animation events in `Line`, `Area`, `Bar`
+
+### fix
+
+- fix angle of PolorRadiusAxis
+
 ## 0.15.3 (Oct 28, 2016)
 
 ### feat
