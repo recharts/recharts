@@ -2,7 +2,6 @@
  * @fileOverview Default Tooltip Content
  */
 import React, { Component, PropTypes } from 'react';
-import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import { isNumOrStr } from '../util/DataUtils';
 

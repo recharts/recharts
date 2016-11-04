@@ -2,6 +2,7 @@
  * @fileOverview Composed Chart
  */
 import React, { PropTypes, Component } from 'react';
+import _ from 'lodash';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Line from '../cartesian/Line';
@@ -17,6 +18,8 @@ import { LineChart } from './LineChart';
 import { BarChart } from './BarChart';
 import composedDataDecorator from '../util/ComposedDataDecorator';
 
+const GRAPHICAL_TYPES = ['Area', 'Bar', 'Line'];
+const GRAPHICAL_MAP = { Area: AreaChart, Bar: BarChart, Line: LineChart };
 
 @pureRender
 @composedDataDecorator({})
@@ -42,6 +45,30 @@ class ComposedChart extends Component {
       PropTypes.node,
     ]),
   };
+
+  filterGraphicalItems() {
+    const { graphicalItems } = this.props;
+    const record = {};
+    const result = [];
+
+    for (let i = 0, len = graphicalItems.length; i < len; i++) {
+      const item = graphicalItems[i];
+      const displayName = item.type.displayName;
+
+      if (GRAPHICAL_TYPES.indexOf(displayName) >= 0) {
+        if (!_.isNil(record[displayName])) {
+          const index = record[displayName];
+
+          result[index].items = [...result[index].items, item];
+        } else {
+          record[displayName] = result.length;
+          result.push({ items: [item], type: displayName });
+        }
+      }
+    }
+
+    return result;
+  }
 
   renderCursor({ xAxisMap, yAxisMap, offset }) {
     const { children, isTooltipActive, layout, activeTooltipIndex, axisTicks } = this.props;
@@ -72,18 +99,23 @@ class ComposedChart extends Component {
   }
 
   render() {
-    const { xAxisMap, yAxisMap, offset, graphicalItems } = this.props;
-    const areaItems = graphicalItems.filter(item => item.type.displayName === 'Area');
-    const lineItems = graphicalItems.filter(item => item.type.displayName === 'Line');
-    const barItems = graphicalItems.filter(item => item.type.displayName === 'Bar');
+    const { xAxisMap, yAxisMap, offset } = this.props;
+    const filteredItems = this.filterGraphicalItems();
 
     return (
       <Layer className="recharts-composed">
         {this.renderCursor({ xAxisMap, yAxisMap, offset })}
 
-        <AreaChart {...this.props} graphicalItems={areaItems} isComposed />
-        <BarChart {...this.props} graphicalItems={barItems} isComposed />
-        <LineChart {...this.props} graphicalItems={lineItems} isComposed />
+        {
+          filteredItems.map(({ items, type }) => {
+            const Chart = GRAPHICAL_MAP[type];
+
+            return (
+              <Chart {...this.props} graphicalItems={items} isComposed />
+            );
+          })
+        }
+
       </Layer>
     );
   }

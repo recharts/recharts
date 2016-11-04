@@ -7,8 +7,7 @@ import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
-import { validateCoordinateInRange, isNumber, isNumOrStr } from '../util/DataUtils';
-
+import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';
 
 @pureRender
 class ReferenceArea extends Component {

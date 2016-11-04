@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import Animate, { translateStyle, configSpring } from 'react-smooth';
+import Animate, { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';

@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { scaleLinear } from 'd3-scale';
-import _ from 'lodash';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Cell from '../component/Cell';
