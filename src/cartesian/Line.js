@@ -286,7 +286,7 @@ class Line extends Component {
     const curveProps = { ...other, className: 'recharts-line-curve', fill: 'none',
       onClick, onMouseEnter, onMouseLeave, points };
 
-    if (strokeDasharray) {
+    if (strokeDasharray && totalLength) {
       const lines = strokeDasharray.split(/[,\s]+/gim)
         .map(num => parseFloat(num));
 
