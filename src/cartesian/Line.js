@@ -271,6 +271,7 @@ class Line extends Component {
     const { points, strokeDasharray, isAnimationActive,
       animationBegin, animationDuration, animationEasing, onClick, onMouseEnter,
       onMouseLeave, ...other } = this.props;
+
     const { totalLength } = this.state;
     const animationProps = {
       isActive: isAnimationActive,
@@ -285,6 +286,10 @@ class Line extends Component {
     };
     const curveProps = { ...other, className: 'recharts-line-curve', fill: 'none',
       onClick, onMouseEnter, onMouseLeave, points };
+
+    if (!isAnimationActive) {
+      return <Curve {...curveProps} strokeDasharray={strokeDasharray} />;
+    }
 
     if (strokeDasharray && totalLength) {
       const lines = strokeDasharray.split(/[,\s]+/gim)

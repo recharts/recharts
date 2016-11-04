@@ -111,7 +111,7 @@ class ComposedChart extends Component {
             const Chart = GRAPHICAL_MAP[type];
 
             return (
-              <Chart {...this.props} graphicalItems={items} isComposed />
+              <Chart key={type} {...this.props} graphicalItems={items} isComposed />
             );
           })
         }
