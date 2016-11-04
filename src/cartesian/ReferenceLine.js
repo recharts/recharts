@@ -9,6 +9,25 @@ import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';
 
+const renderLine = (option, props) => {
+  let line;
+
+  if (React.isValidElement(option)) {
+    line = React.cloneElement(option, props);
+  } else if (_.isFunction(option)) {
+    line = option(props);
+  } else {
+    line = (
+      <line
+        {...props}
+        className="recharts-reference-line-line"
+      />
+    );
+  }
+
+  return line;
+};
+
 @pureRender
 class ReferenceLine extends Component {
 
@@ -39,6 +58,7 @@ class ReferenceLine extends Component {
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
     labelPosition: PropTypes.oneOf(['start', 'end']),
+    shape: PropTypes.func,
   };
 
   static defaultProps = {
@@ -135,7 +155,7 @@ class ReferenceLine extends Component {
   }
 
   render() {
-    const { x, y, labelPosition } = this.props;
+    const { x, y, labelPosition, shape } = this.props;
     const isX = isNumOrStr(x);
     const isY = isNumOrStr(y);
 
@@ -146,18 +166,17 @@ class ReferenceLine extends Component {
     if (!endPoints) { return null; }
 
     const [start, end] = endPoints;
-    const props = getPresentationAttributes(this.props);
+    const props = {
+      ...getPresentationAttributes(this.props),
+      x1: start.x,
+      y1: start.y,
+      x2: end.x,
+      y2: end.y,
+    };
 
     return (
       <Layer className="recharts-reference-line">
-        <line
-          {...props}
-          className="recharts-reference-line-line"
-          x1={start.x}
-          y1={start.y}
-          x2={end.x}
-          y2={end.y}
-        />
+        {renderLine(shape, props)}
         {this.renderLabel(isX, isY, (labelPosition === 'start' ? start : end))}
       </Layer>
     );
