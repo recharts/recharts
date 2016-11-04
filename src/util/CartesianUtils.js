@@ -1,17 +1,18 @@
-import { findAllByType, findChildByType } from './ReactUtils';
-import ReferenceDot from '../cartesian/ReferenceDot';
-import ReferenceLine from '../cartesian/ReferenceLine';
-import ReferenceArea from '../cartesian/ReferenceArea';
-import Legend from '../component/Legend';
 import { getNiceTickValues, getTickValues } from 'recharts-scale';
 import {
   stack as shapeStack, stackOrderNone, stackOffsetExpand,
   stackOffsetNone, stackOffsetSilhouette, stackOffsetWiggle,
 } from 'd3-shape';
 import _ from 'lodash';
+import { findAllByType, findChildByType } from './ReactUtils';
+import { getPercentValue, isNumber, isNumOrStr } from './DataUtils';
+import ReferenceDot from '../cartesian/ReferenceDot';
+import ReferenceLine from '../cartesian/ReferenceLine';
+import ReferenceArea from '../cartesian/ReferenceArea';
+import Legend from '../component/Legend';
 
 /* eslint no-param-reassign: 0 */
-const offsetSign = (series, order) => {
+const offsetSign = (series) => {
   const n = series.length;
   if (n <= 0) { return; }
 
@@ -55,7 +56,7 @@ export const detectReferenceElementsDomain = (children, domain, axisId, axisType
   if (elements.length) {
     finalDomain = elements.reduce((result, el) => {
       if (el.props[idKey] === axisId && el.props.alwaysShow &&
-        _.isNumber(el.props[valueKey])) {
+        isNumber(el.props[valueKey])) {
         const value = el.props[valueKey];
 
         return [Math.min(result[0], value), Math.max(result[1], value)];
@@ -70,7 +71,7 @@ export const detectReferenceElementsDomain = (children, domain, axisId, axisType
 
     finalDomain = areas.reduce((result, el) => {
       if (el.props[idKey] === axisId && el.props.alwaysShow &&
-        (_.isNumber(el.props[key1]) && _.isNumber(el.props[key2]))) {
+        (isNumber(el.props[key1]) && isNumber(el.props[key2]))) {
         const value1 = el.props[key1];
         const value2 = el.props[key2];
 
@@ -96,11 +97,11 @@ export const getStackedData = (data, stackItems, offsetType) => {
 
 export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, offsetType) => {
   const stackGroups = items.reduce((result, item) => {
-    const { stackId, dataKey } = item.props;
+    const { stackId } = item.props;
     const axisId = item.props[numericAxisId];
     const parentGroup = result[axisId] || { hasStack: false, stackGroups: {} };
 
-    if (_.isNumber(stackId) || _.isString(stackId)) {
+    if (isNumOrStr(stackId)) {
       const childGroup = parentGroup.stackGroups[stackId] || { items: [] };
 
       childGroup.items.push(item);
@@ -145,7 +146,7 @@ export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, o
 export const getStackedDataOfItem = (item, stackGroups) => {
   const { stackId } = item.props;
 
-  if (_.isNumber(stackId) || _.isString(stackId)) {
+  if (isNumOrStr(stackId)) {
     const group = stackGroups[stackId];
 
     if (group && group.items.length) {
@@ -188,22 +189,22 @@ export const getDomainOfDataByKey = (data, key, type) => {
   if (type === 'number') {
     const domain = data
       .map(entry => entry[key])
-      .filter(_.isNumber);
+      .filter(isNumber);
 
     return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
   }
 
-  return data.map(entry => {
+  return data.map((entry) => {
     const value = entry[key];
 
-    return (_.isNumber(value) || _.isString(value)) ? value : '';
+    return isNumOrStr(value) ? value : '';
   });
 };
 
-const getDomainOfSingle = (data) => (
+const getDomainOfSingle = data => (
   data.reduce((result, entry) => [
-    Math.min.apply(null, entry.concat([result[0]]).filter(_.isNumber)),
-    Math.max.apply(null, entry.concat([result[1]]).filter(_.isNumber)),
+    Math.min.apply(null, entry.concat([result[0]]).filter(isNumber)),
+    Math.max.apply(null, entry.concat([result[1]]).filter(isNumber)),
   ], [Infinity, -Infinity])
 );
 
@@ -267,10 +268,9 @@ export const isCategorialAxis = (layout, axisType) => (
  * @return {Array}       Coordinates
  */
 export const getCoordinatesOfGrid = (ticks, min, max) => {
-  let hasMin;
-  let hasMax;
+  let hasMin, hasMax;
 
-  const values = ticks.map(entry => {
+  const values = ticks.map((entry) => {
     if (entry.coordinate === min) { hasMin = true; }
     if (entry.coordinate === max) { hasMax = true; }
 
@@ -291,13 +291,14 @@ export const getCoordinatesOfGrid = (ticks, min, max) => {
  * @return {Array}  Ticks
  */
 export const getTicksOfAxis = (axis, isGrid, isAll) => {
+  if (!axis) return null;
   const scale = axis.scale;
   const { duplicateDomain, type } = axis;
   const offset = (isGrid || isAll) && type === 'category' ? scale.bandwidth() / 2 : 0;
 
   // The ticks setted by user should only affect the ticks adjacent to axis line
   if (isGrid && (axis.ticks || axis.niceTicks)) {
-    return (axis.ticks || axis.niceTicks).map(entry => {
+    return (axis.ticks || axis.niceTicks).map((entry) => {
       const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
       return {
@@ -307,6 +308,16 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
     });
   }
 
+  if (axis.isCategorial && axis.categoricalDomain) {
+    return axis.categoricalDomain.map((entry, index) => (
+      {
+        coordinate: scale(entry),
+        value: entry,
+        index,
+      }
+    ));
+  }
+
   if (scale.ticks && !isAll) {
     return scale.ticks(axis.tickCount).map(entry => (
       { coordinate: scale(entry) + offset, value: entry }
@@ -314,10 +325,11 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
-  return scale.domain().map((entry) => (
+  return scale.domain().map((entry, index) => (
     {
       coordinate: scale(entry) + offset,
       value: duplicateDomain ? duplicateDomain[entry] : entry,
+      index,
     }
   ));
 };
@@ -332,7 +344,7 @@ export const calculateActiveTickIndex = (coordinate, ticks) => {
         || (i > 0 && i < len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2
           && coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2)
         || (i === len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2)) {
-        index = i;
+        index = ticks[i].index;
         break;
       }
     }
@@ -365,7 +377,7 @@ export const getMainColorOfGraphicItem = (item) => {
   return result;
 };
 
-export const getLegendProps = (children, graphicItems, width, height) => {
+export const getLegendProps = (children, graphicItems, width) => {
   const legendItem = findChildByType(children, Legend);
 
   if (!legendItem) { return null; }
@@ -384,7 +396,7 @@ export const getLegendProps = (children, graphicItems, width, height) => {
 
   return {
     ...legendItem.props,
-    ...Legend.getWithHeight(legendItem, width, height),
+    ...Legend.getWithHeight(legendItem, width),
     payload: legendData,
   };
 };
@@ -395,7 +407,7 @@ export const getLegendProps = (children, graphicItems, width, height) => {
  * @return {Object}      null
  */
 export const getTicksOfScale = (scale, opts) => {
-  const { type, tickCount, ticks, originalDomain, allowDecimals } = opts;
+  const { type, tickCount, originalDomain, allowDecimals } = opts;
 
   if (tickCount && type === 'number' && originalDomain && (
     originalDomain[0] === 'auto' || originalDomain[1] === 'auto')) {
@@ -416,3 +428,103 @@ export const getTicksOfScale = (scale, opts) => {
   return null;
 };
 
+/**
+ * Calculate the size of all groups for stacked bar graph
+ * @param  {Object} stackGroups The items grouped by axisId and stackId
+ * @return {Object} The size of all groups
+ */
+export const getBarSizeList = ({ barSize: globalSize, stackGroups = {} }) => {
+  const result = {};
+  const numericAxisIds = Object.keys(stackGroups);
+
+  for (let i = 0, len = numericAxisIds.length; i < len; i++) {
+    const sgs = stackGroups[numericAxisIds[i]].stackGroups;
+    const stackIds = Object.keys(sgs);
+
+    for (let j = 0, sLen = stackIds.length; j < sLen; j++) {
+      const { items, cateAxisId } = sgs[stackIds[j]];
+
+      const barItems = items.filter(item => item.type.displayName === 'Bar');
+
+      if (barItems && barItems.length) {
+        const { dataKey, barSize: selfSize } = barItems[0].props;
+        const cateId = barItems[0].props[cateAxisId];
+
+        if (!result[cateId]) {
+          result[cateId] = [];
+        }
+
+        result[cateId].push({
+          dataKey,
+          stackList: barItems.slice(1).map(item => item.props.dataKey),
+          barSize: _.isNil(selfSize) ? globalSize : selfSize,
+        });
+      }
+    }
+  }
+
+  return result;
+};
+
+/**
+   * Calculate the size of each bar and the gap between two bars
+   * @param  {Number} bandSize  The size of each category
+   * @param  {sizeList} sizeList  The size of all groups
+   * @param  {maxBarSize} maxBarSize The maximum size of bar
+   * @return {Number} The size of each bar and the gap between two bars
+   */
+export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = [], maxBarSize }) => {
+  const len = sizeList.length;
+  if (len < 1) return null;
+  let result;
+
+  // whether or not is barSize setted by user
+  if (sizeList[0].barSize === +sizeList[0].barSize) {
+    let sum = sizeList.reduce((res, entry) => (res + entry.barSize || 0), 0);
+    sum += (len - 1) * barGap;
+    const offset = ((bandSize - sum) / 2) >> 0;
+    let prev = { offset: offset - barGap, size: 0 };
+
+    result = sizeList.reduce((res, entry) => {
+      const newRes = {
+        ...res,
+        [entry.dataKey]: {
+          offset: prev.offset + prev.size + barGap,
+          size: entry.barSize,
+        },
+      };
+
+      prev = newRes[entry.dataKey];
+
+      if (entry.stackList && entry.stackList.length) {
+        entry.stackList.forEach((key) => {
+          newRes[key] = newRes[entry.dataKey];
+        });
+      }
+      return newRes;
+    }, {});
+  } else {
+    const offset = getPercentValue(barCategoryGap, bandSize, 0, true);
+    const originalSize = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
+    const size = (maxBarSize === +maxBarSize) ? Math.min(originalSize, maxBarSize) : originalSize;
+
+    result = sizeList.reduce((res, entry, i) => {
+      const newRes = {
+        ...res,
+        [entry.dataKey]: {
+          offset: offset + (originalSize + barGap) * i + (originalSize - size) / 2,
+          size,
+        },
+      };
+
+      if (entry.stackList && entry.stackList.length) {
+        entry.stackList.forEach((key) => {
+          newRes[key] = newRes[entry.dataKey];
+        });
+      }
+      return newRes;
+    }, {});
+  }
+
+  return result;
+};

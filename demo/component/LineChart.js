@@ -91,8 +91,8 @@ export default React.createClass({
           <LineChart width={400} height={400} data={data02} margin={{ top: 20, right: 40, bottom: 20, left: 20 }} syncId="test">
             <CartesianGrid stroke='#f5f5f5' />
             <Legend/>
-            <XAxis/>
-            <YAxis domain={[0, 350]} allowDataOverflow={true} />
+            <XAxis type="number" dataKey="pv" />
+            <YAxis type="number" />
             <Tooltip />
             <Line type='monotone' dataKey='uv' stroke='#ff7300' dot={renderSpecialDot} label={renderLabel}/>
             <Brush dataKey="name" height={30} />
@@ -105,9 +105,9 @@ export default React.createClass({
             <CartesianGrid stroke='#f5f5f5'/>
             <Legend />
             <XAxis />
-            <YAxis domain={[0, 500]}/>
+            <YAxis />
             <Tooltip />
-            <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300'/>
+            <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300' />
           </LineChart>
         </div>
 
@@ -130,7 +130,7 @@ export default React.createClass({
             <YAxis type='number' orientation='right' yAxisId={1}/>
             <YAxis type='number' orientation='right' yAxisId={2}/>
             <XAxis dataKey='name'/>
-            <Tooltip/>
+            <Tooltip position={{y: 200}} />
             <CartesianGrid stroke='#f5f5f5'/>
             <Line dataKey='uv' stroke='#ff7300' strokeWidth={2} yAxisId={0}/>
             <Line dataKey='pv' stroke='#387908' strokeWidth={2} yAxisId={1}/>
@@ -157,7 +157,7 @@ export default React.createClass({
             <CartesianGrid stroke="#f5f5f5" />
             <Legend />
             <XAxis />
-            <YAxis domain={[0, 500]} />
+            <YAxis />
             <Line type="monotone" dataKey="uv" dot={<CustomLineDot/>} stroke="#ff7300" />
           </LineChart>
         </div>
@@ -186,6 +186,7 @@ export default React.createClass({
             <Line type="stepAfter" dataKey="weather" stroke="#ff7300" />
           </LineChart>
         </div>
+
       </div>
     );
   }

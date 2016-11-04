@@ -2,16 +2,15 @@
  * @fileOverview Line
  */
 import React, { Component, PropTypes } from 'react';
-import { findDOMNode } from 'react-dom';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
+import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
-import _ from 'lodash';
 
 const FACTOR = 1.0000001;
 
@@ -58,6 +57,9 @@ class Line extends Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
+    onAnimationStart: PropTypes.func,
+    onAnimationEnd: PropTypes.func,
+
     isAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
@@ -86,17 +88,20 @@ class Line extends Component {
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
+
+    onAnimationStart: () => {},
+    onAnimationEnd: () => {},
   };
 
   constructor(props, ctx) {
     super(props, ctx);
 
-    const { points } = props;
     this.state = {
       isAnimationFinished: true,
       totalLength: 0,
     };
   }
+
   /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
     const { isAnimationActive } = this.props;
@@ -109,6 +114,7 @@ class Line extends Component {
 
     this.setState({ totalLength });
   }
+
   /* eslint-disable  react/no-did-update-set-state */
   componentDidUpdate(prevProps, prevState) {
     const { animationId, points } = this.props;
@@ -124,7 +130,7 @@ class Line extends Component {
   }
 
   getTotalLength() {
-    const curveDom = findDOMNode(this.refs.animate);
+    const curveDom = this.animate;
     const totalLength = (curveDom && curveDom.getTotalLength && curveDom.getTotalLength()) || 0;
 
     return totalLength;
@@ -165,10 +171,12 @@ class Line extends Component {
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
+    this.props.onAnimationEnd();
   };
 
   handleAnimationStart = () => {
     this.setState({ isAnimationFinished: false });
+    this.props.onAnimationStart();
   };
 
   renderLabelItem(option, props, value) {
@@ -205,8 +213,6 @@ class Line extends Component {
     const customLabelProps = getPresentationAttributes(label);
 
     const labels = points.map((entry, i) => {
-      const x = entry.x + entry.width / 2;
-      const y = entry.y;
       const labelProps = {
         textAnchor: 'middle',
         ...entry,
@@ -262,7 +268,7 @@ class Line extends Component {
   }
 
   renderCurve() {
-    const { points, className, strokeDasharray, isAnimationActive,
+    const { points, strokeDasharray, isAnimationActive,
       animationBegin, animationDuration, animationEasing, onClick, onMouseEnter,
       onMouseLeave, ...other } = this.props;
     const { totalLength } = this.state;
@@ -274,13 +280,13 @@ class Line extends Component {
       duration: animationDuration,
       onAnimationEnd: this.handleAnimationEnd,
       onAnimationStart: this.handleAnimationStart,
-      ref: 'animate',
       shouldReAnimate: true,
+      pathRef: (node) => { this.animate = node; },
     };
     const curveProps = { ...other, className: 'recharts-line-curve', fill: 'none',
       onClick, onMouseEnter, onMouseLeave, points };
 
-    if (strokeDasharray) {
+    if (strokeDasharray && totalLength) {
       const lines = strokeDasharray.split(/[,\s]+/gim)
         .map(num => parseFloat(num));
 

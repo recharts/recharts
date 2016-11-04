@@ -12,6 +12,7 @@
     "react/jsx-uses-react": 2,
     "react/jsx-uses-vars": 2,
     "react/react-in-jsx-scope": 2,
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
 
     // Disable until Flow supports let and const
     "no-var": 0,
@@ -22,7 +23,18 @@
     "react/jsx-no-bind": 0,
 
     "strict": 0,
-    "no-unused-vars": 0,
+    "no-unused-vars": 1,
+    "one-var": ["error", { "uninitialized": "always" }],
+    "one-var-declaration-per-line": ["error", "initializations"],
+    "no-mixed-operators": 0,
+    "no-plusplus": 0,
+    "import/prefer-default-export": 0,
+    "react/forbid-prop-types": 0,
+    "no-bitwise": 0,
+    "object-property-newline": 0,
+    "react/no-unused-prop-types": 0,
+    "class-methods-use-this": 1,
+    "import/no-named-as-default": 0
   },
   "plugins": [
     "react"

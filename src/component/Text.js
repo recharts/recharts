@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import _ from 'lodash';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
 
 class Text extends Component {
 
@@ -42,7 +42,7 @@ class Text extends Component {
 
   updateWordsByLines(props, calculateWordWidths) {
     // Only perform calculations if using features that require them (multiline, scaleToFit)
-    if (props.width || props.scaleToFit) {
+    if ((props.width || props.scaleToFit) && !isSsr()) {
       if (calculateWordWidths) {
         const { wordsWithComputedWidth, spaceWidth } = this.calculateWordWidths(props);
         this.wordsWithComputedWidth = wordsWithComputedWidth;
@@ -70,7 +70,7 @@ class Text extends Component {
     document.body.appendChild(svg);
 
     const words = !_.isNil(props.children) ? props.children.toString().split(/\s+/) : [];
-    const wordsWithComputedWidth = words.map(word => {
+    const wordsWithComputedWidth = words.map((word) => {
       text.textContent = word;
       return { word, width: text.getComputedTextLength() };
     });
@@ -112,7 +112,7 @@ class Text extends Component {
       lineHeight,
       capHeight,
       className,
-      ...textProps,
+      ...textProps
     } = this.props;
     const { wordsByLines } = this.state;
     const { x, y } = textProps;
@@ -150,7 +150,7 @@ class Text extends Component {
         className={classNames('recharts-text', className)}
         textAnchor={textAnchor}
       >
-      {
+        {
         wordsByLines.map((line, index) => (
           <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={index}>
             {line.words.join(' ')}

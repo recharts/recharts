@@ -3,14 +3,15 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
+import Animate from 'react-smooth';
+import _ from 'lodash';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
-import Animate from 'react-smooth';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
-import _ from 'lodash';
+import { isNumber } from '../util/DataUtils';
 
 @pureRender
 class Area extends Component {
@@ -60,6 +61,8 @@ class Area extends Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
+    onAnimationStart: PropTypes.func,
+    onAnimationEnd: PropTypes.func,
 
     animationId: PropTypes.number,
     isAnimationActive: PropTypes.bool,
@@ -84,16 +87,19 @@ class Area extends Component {
     curve: true,
     activeDot: true,
 
+
     isAnimationActive: true,
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
+
+    onAnimationStart: () => {},
+    onAnimationEnd: () => {},
   };
 
   constructor(props, ctx) {
     super(props, ctx);
 
-    const { points } = props;
     this.state = { isAnimationFinished: true };
     if (!this.id) {
       this.id = `clipPath${Date.now()}`;
@@ -102,10 +108,12 @@ class Area extends Component {
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
+    this.props.onAnimationEnd();
   };
 
   handleAnimationStart = () => {
     this.setState({ isAnimationFinished: false });
+    this.props.onAnimationStart();
   };
 
   renderCurve() {
@@ -134,13 +142,13 @@ class Area extends Component {
   }
 
   renderHorizontalRect(alpha) {
-    const { baseLine, layout, points, strokeWidth } = this.props;
+    const { baseLine, points, strokeWidth } = this.props;
     const startX = points[0].x;
     const endX = points[points.length - 1].x;
     const width = alpha * Math.abs(startX - endX);
     let maxY = Math.max.apply(null, points.map(entry => (entry.y || 0)));
 
-    if (_.isNumber(baseLine)) {
+    if (isNumber(baseLine)) {
       maxY = Math.max(baseLine, maxY);
     } else {
       maxY = Math.max(Math.max.apply(null, baseLine.map(entry => (entry.y || 0))), maxY);
@@ -157,13 +165,13 @@ class Area extends Component {
   }
 
   renderVerticalRect(alpha) {
-    const { baseLine, layout, points, strokeWidth } = this.props;
+    const { baseLine, points, strokeWidth } = this.props;
     const startY = points[0].y;
     const endY = points[points.length - 1].y;
     const height = alpha * Math.abs(startY - endY);
     let maxX = Math.max.apply(null, points.map(entry => (entry.x || 0)));
 
-    if (_.isNumber(baseLine)) {
+    if (isNumber(baseLine)) {
       maxX = Math.max(baseLine, maxX);
     } else {
       maxX = Math.max(Math.max.apply(null, baseLine.map(entry => (entry.x || 0))), maxX);
@@ -246,7 +254,7 @@ class Area extends Component {
         cx: entry.x,
         cy: entry.y,
         index: i,
-        playload: entry,
+        payload: entry,
       };
 
       return this.renderDotItem(dot, dotProps);

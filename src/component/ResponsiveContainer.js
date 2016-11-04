@@ -1,9 +1,8 @@
 /**
  * @fileOverview Wrapper component to make charts adapt to the size of parent * DOM
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import ContainerDimensions from 'react-container-dimensions';
-import pureRender from '../util/PureRender';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
@@ -39,7 +38,7 @@ const render = ({ aspect, width, height, minWidth, minHeight, container, childre
   });
 };
 
-const ResponsiveContainer = props => {
+const ResponsiveContainer = (props) => {
   const { minWidth, minHeight, width, height } = props;
   const style = { width, height, minWidth, minHeight };
   return (

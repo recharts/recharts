@@ -1,6 +1,7 @@
 import { expect } from 'chai';
+import { scaleLinear, scaleBand } from 'd3-scale';
 import { getPercentValue, validateCoordinateInRange,
-  getBandSizeOfScale, getAnyElementOfObject,
+  getBandSizeOfAxis, getAnyElementOfObject,
   parseSpecifiedDomain } from '../../../src/util/DataUtils';
 
 describe('getPercentValue', () => {
@@ -28,9 +29,20 @@ describe('validateCoordinateInRange', () => {
   });
 });
 
-describe('getBandSizeOfScale', () => {
-  it('DataUtils.getBandSizeOfScale() should return 0 ', () => {
-    expect(getBandSizeOfScale()).to.equal(0);
+describe('getBandSizeOfAxis', () => {
+  it('DataUtils.getBandSizeOfAxis() should return 0 ', () => {
+    expect(getBandSizeOfAxis()).to.equal(0);
+  });
+
+  it('DataUtils.getBandSizeOfAxis({ type: "category", scale }) should return 0 ', () => {
+    const axis = { type: 'category', scale: scaleBand().domain([0, 1, 2, 3]).range([0, 100]) };
+    expect(getBandSizeOfAxis(axis)).to.equal(25);
+  });
+
+  it('DataUtils.getBandSizeOfAxis({ type: "number", scale }, ticks) should return 0 ', () => {
+    const axis = { type: 'number' };
+    const ticks = [{ coordinate: 13 }, { coordinate: 15 }, { coordinate: 20 }]
+    expect(getBandSizeOfAxis(axis, ticks)).to.equal(2);
   });
 });
 

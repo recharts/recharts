@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
-import _ from 'lodash';
+import { isNumOrStr } from '../util/DataUtils';
 
 @pureRender
 class DefaultTooltipContent extends Component {
@@ -38,7 +38,7 @@ class DefaultTooltipContent extends Component {
     if (payload && payload.length) {
       const listStyle = { padding: 0, margin: 0 };
 
-      const items = payload.filter(entry => (_.isNumber(entry.value) || _.isString(entry.value)))
+      const items = payload.filter(entry => isNumOrStr(entry.value))
       .sort(itemSorter)
       .map((entry, i) => {
         const finalItemStyle = {
@@ -82,7 +82,7 @@ class DefaultTooltipContent extends Component {
       margin: 0,
       ...labelStyle,
     };
-    const hasLabel = _.isNumber(label) || _.isString(label);
+    const hasLabel = isNumOrStr(label);
     let finalLabel = hasLabel ? label : '';
 
     if (hasLabel && labelFormatter) { finalLabel = labelFormatter(label); }

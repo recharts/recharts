@@ -38,7 +38,7 @@ export default React.createClass({
 
     return (
       <Surface width={800} height={200}>
-        <Brush x={100} y={50} width={400} height={40} data={data}/>
+        <Brush startIndex={0} endIndex={data.length - 1} x={100} y={50} width={400} height={40} data={data}/>
       </Surface>
     );
   }

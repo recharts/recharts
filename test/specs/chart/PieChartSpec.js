@@ -21,7 +21,7 @@ describe('<PieChart />', () => {
       </PieChart>
     );
 
-    expect(wrapper.find('.recharts-pie-sector').length).to.equal(6);
+    expect(wrapper.find('.recharts-pie-sector').length).to.equal(data.length);
   });
 
   it('Renders 6 sectors circles when add Cell to specified props of eact slice', () => {

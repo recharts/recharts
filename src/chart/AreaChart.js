@@ -2,28 +2,105 @@
  * @fileOverview Area Chart
  */
 import React, { Component, PropTypes } from 'react';
+import Smooth from 'react-smooth';
+import _ from 'lodash';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Dot from '../shape/Dot';
 import Curve from '../shape/Curve';
-import { getPresentationAttributes, findChildByType,
-  findAllByType, validateWidthHeight } from '../util/ReactUtils';
-import { getTicksOfAxis, getStackedDataOfItem,
-  getMainColorOfGraphicItem } from '../util/CartesianUtils';
+import { getPresentationAttributes, findChildByType } from '../util/ReactUtils';
+import { getMainColorOfGraphicItem } from '../util/CartesianUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Area from '../cartesian/Area';
-import pureRender from '../util/PureRender';
-import { getBandSizeOfScale, getAnyElementOfObject } from '../util/DataUtils';
-import _ from 'lodash';
-import Smooth from 'react-smooth';
 import AnimationDecorator from '../util/AnimationDecorator';
+import composedDataDecorator from '../util/ComposedDataDecorator';
+
+
+const getCategoryAxisCoordinate = ({ axis, ticks, bandSize, entry, index }) => {
+  if (axis.type === 'category') {
+    return ticks[index] ? ticks[index].coordinate + bandSize / 2 : null;
+  }
+
+  const dataKey = axis.dataKey;
+
+  return dataKey && !_.isNil(entry[dataKey]) ? axis.scale(entry[dataKey]) : null;
+};
+
+const getBaseValue = (props, xAxis, yAxis) => {
+  const { layout } = props;
+  const numberAxis = layout === 'horizontal' ? yAxis : xAxis;
+  const domain = numberAxis.scale.domain();
+
+  if (numberAxis.type === 'number') {
+    const max = Math.max(domain[0], domain[1]);
+    return max < 0 ? max : Math.max(Math.min(domain[0], domain[1]), 0);
+  }
+
+  return domain[0];
+};
+
+/**
+ * Compose the data of each area
+ * @param {Object} props The props that are passed to the component
+ * @param {Object} xAxis       The configuration of x-axis
+ * @param {Object} yAxis       The configuration of y-axis
+ * @param {String} dataKey     The unique key of a group
+ * @param {Array} stackedData If the area is stacked,
+ * the stackedData is an array of min value and max value
+ * @return {Array} Composed data
+ */
+const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, bandSize, dataKey,
+  stackedData }) => {
+  const { layout, dataStartIndex, dataEndIndex } = props;
+  const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
+  const hasStack = stackedData && stackedData.length;
+  const baseValue = getBaseValue(props, xAxis, yAxis);
+
+  const points = data.map((entry, index) => {
+    const value = hasStack ? stackedData[dataStartIndex + index] : [baseValue, entry[dataKey]];
+
+    if (layout === 'horizontal') {
+      return {
+        x: getCategoryAxisCoordinate({ axis: xAxis, ticks: xTicks, bandSize, entry, index }),
+        y: _.isNil(value[1]) ? null : yAxis.scale(value[1]),
+        value,
+      };
+    }
+
+    return {
+      x: _.isNil(value[1]) ? null : xAxis.scale(value[1]),
+      y: getCategoryAxisCoordinate({ axis: yAxis, ticks: yTicks, bandSize, entry, index }),
+      value,
+    };
+  });
+
+  let baseLine;
+  if (hasStack) {
+    baseLine = stackedData.slice(dataStartIndex, dataEndIndex + 1).map((entry, index) => ({
+      x: layout === 'horizontal' ?
+          getCategoryAxisCoordinate({ axis: xAxis, ticks: xTicks, bandSize, entry, index }) :
+          xAxis.scale(entry[0]),
+      y: layout === 'horizontal' ?
+         yAxis.scale(entry[0]) :
+         getCategoryAxisCoordinate({ axis: yAxis, ticks: yTicks, bandSize, entry, index }),
+    }));
+  } else if (layout === 'horizontal') {
+    baseLine = yAxis.scale(baseValue);
+  } else {
+    baseLine = xAxis.scale(baseValue);
+  }
+
+  return { points, baseLine, layout };
+};
 
 @AnimationDecorator
-@pureRender
-class AreaChart extends Component {
+@composedDataDecorator({ getComposedData })
+export class AreaChart extends Component {
   static displayName = 'AreaChart';
 
   static propTypes = {
+    allComposedData: PropTypes.array,
+    axisTicks: PropTypes.array,
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     dataStartIndex: PropTypes.number,
     dataEndIndex: PropTypes.number,
@@ -44,84 +121,14 @@ class AreaChart extends Component {
     animationId: PropTypes.number,
   };
 
-  /**
-   * Compose the data of each area
-   * @param  {Object} xAxis       The configuration of x-axis
-   * @param  {Object} yAxis       The configuration of y-axis
-   * @param  {String} dataKey     The unique key of a group
-   * @param  {Array}  stackedData If the area is stacked,
-   * the stackedData is an array of min value and max value
-   * @return {Array} Composed data
-   */
-  getComposedData(xAxis, yAxis, dataKey, stackedData) {
-    const { layout, dataStartIndex, dataEndIndex } = this.props;
-    const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
-    const xTicks = getTicksOfAxis(xAxis);
-    const yTicks = getTicksOfAxis(yAxis);
-    const bandSize = getBandSizeOfScale(layout === 'horizontal' ? xAxis.scale : yAxis.scale);
-    const hasStack = stackedData && stackedData.length;
-    const baseValue = this.getBaseValue(xAxis, yAxis);
-
-    const points = data.map((entry, index) => {
-      const value = hasStack ? stackedData[dataStartIndex + index] : [baseValue, entry[dataKey]];
-
-      if (layout === 'horizontal') {
-        return {
-          x: xTicks[index].coordinate + bandSize / 2,
-          y: _.isNil(value[1]) ? null : yAxis.scale(value[1]),
-          value,
-        };
-      }
-
-      return {
-        x: _.isNil(value[1]) ? null : xAxis.scale(value[1]),
-        y: yTicks[index].coordinate + bandSize / 2,
-        value,
-      };
-    });
-
-    let baseLine;
-    if (hasStack) {
-      baseLine = stackedData.slice(dataStartIndex, dataEndIndex + 1).map((entry, index) => ({
-        x: layout === 'horizontal' ?
-            xTicks[index].coordinate + bandSize / 2 :
-            xAxis.scale(entry[0]),
-        y: layout === 'horizontal' ?
-            yAxis.scale(entry[0]) :
-            yTicks[index].coordinate + bandSize / 2,
-      }));
-    } else if (layout === 'horizontal') {
-      baseLine = yAxis.scale(baseValue);
-    } else {
-      baseLine = xAxis.scale(baseValue);
-    }
-
-    return { points, baseLine, layout };
-  }
-
-  getBaseValue(xAxis, yAxis) {
-    const { layout } = this.props;
-    const numberAxis = layout === 'horizontal' ? yAxis : xAxis;
-    const domain = numberAxis.scale.domain();
-
-    if (numberAxis.type === 'number') {
-      const max = Math.max(domain[0], domain[1]);
-      return max < 0 ? max : Math.max(Math.min(domain[0], domain[1]), 0);
-    }
-
-    return domain[0];
-  }
-
-  renderCursor(xAxisMap, yAxisMap, offset) {
-    const { children, isTooltipActive, layout, activeTooltipIndex } = this.props;
+  renderCursor({ offset }) {
+    const { children, isTooltipActive, layout, activeTooltipIndex, axisTicks } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem || !tooltipItem.props.cursor || !isTooltipActive ||
       activeTooltipIndex < 0) { return null; }
 
-    const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
-    const axis = getAnyElementOfObject(axisMap);
-    const ticks = getTicksOfAxis(axis);
+    const ticks = axisTicks;
 
     if (!ticks || !ticks[activeTooltipIndex]) { return null; }
 
@@ -138,7 +145,7 @@ class AreaChart extends Component {
 
     return React.isValidElement(tooltipItem.props.cursor) ?
       React.cloneElement(tooltipItem.props.cursor, cursorProps) :
-      <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor" />;
+        <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor" />;
   }
 
   renderActiveDot(option, props) {
@@ -173,10 +180,11 @@ class AreaChart extends Component {
    * @param  {Object} xAxisMap The configuration of all x-axis
    * @param  {Object} yAxisMap The configuration of all y-axis
    * @param  {Object} offset   The offset of main part in the svg element
-   * @param  {Object} stackGroups The items grouped by axisId and stackId
+   * @param  {Array} allComposedData The array of pre-created composedData
+   *                                 {points, basedLine, layout} for each item
    * @return {ReactComponent} The instances of Area
    */
-  renderItems(items, xAxisMap, yAxisMap, offset, stackGroups) {
+  renderItems(items, xAxisMap, yAxisMap, offset, allComposedData) {
     const { children, layout, isTooltipActive, activeTooltipIndex } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
     const hasDot = tooltipItem && isTooltipActive;
@@ -184,15 +192,11 @@ class AreaChart extends Component {
     const { animationId } = this.props;
 
     const areaItems = items.reduce((result, child, i) => {
-      const { xAxisId, yAxisId, dataKey, fillOpacity, fill, activeDot } = child.props;
-      const numericAxisId = layout === 'horizontal' ? yAxisId : xAxisId;
-      const stackedData = stackGroups && stackGroups[numericAxisId] &&
-        stackGroups[numericAxisId].hasStack &&
-        getStackedDataOfItem(child, stackGroups[numericAxisId].stackGroups);
-      const composeData = this.getComposedData(
-        xAxisMap[xAxisId], yAxisMap[yAxisId], dataKey, stackedData
-      );
-      const activePoint = composeData.points && composeData.points[activeTooltipIndex];
+
+      const { dataKey, activeDot } = child.props;
+      const currentComposedData = allComposedData[i];
+      const activePoint = currentComposedData.points &&
+        currentComposedData.points[activeTooltipIndex];
 
       if (hasDot && activeDot && activePoint) {
         const dotProps = {
@@ -214,7 +218,7 @@ class AreaChart extends Component {
       const area = React.cloneElement(child, {
         key: `area-${i}`,
         ...offset,
-        ...composeData,
+        ...currentComposedData,
         animationId,
         layout,
       });
@@ -231,17 +235,15 @@ class AreaChart extends Component {
   }
 
   render() {
-    const { isComposed, graphicalItems, xAxisMap, yAxisMap, offset, stackGroups } = this.props;
+    const { isComposed, graphicalItems, xAxisMap, yAxisMap, offset, allComposedData } = this.props;
 
     return (
       <Layer className="recharts-area-graphical">
-        {!isComposed && this.renderCursor(xAxisMap, yAxisMap, offset)}
-        {this.renderItems(graphicalItems, xAxisMap, yAxisMap, offset, stackGroups)}
+        {!isComposed && this.renderCursor({ xAxisMap, yAxisMap, offset })}
+        {this.renderItems(graphicalItems, xAxisMap, yAxisMap, offset, allComposedData)}
       </Layer>
     );
   }
 }
 
 export default generateCategoricalChart(AreaChart, Area);
-
-export { AreaChart };

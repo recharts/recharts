@@ -2,10 +2,10 @@
  * @fileOverview Cross
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from '../util/PureRender';
 import classNames from 'classnames';
+import pureRender from '../util/PureRender';
+import { isNumber } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
-import _ from 'lodash';
 
 @pureRender
 class Cross extends Component {
@@ -42,8 +42,8 @@ class Cross extends Component {
     const { x, y, width, height, top, left,
         className } = this.props;
 
-    if (!_.isNumber(x) || !_.isNumber(y) || !_.isNumber(width)
-      || !_.isNumber(height) || !_.isNumber(top) || !_.isNumber(left)) {
+    if (!isNumber(x) || !isNumber(y) || !isNumber(width)
+      || !isNumber(height) || !isNumber(top) || !isNumber(left)) {
       return null;
     }
 

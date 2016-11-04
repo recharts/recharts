@@ -2,18 +2,19 @@
  * @fileOverview Render sectors of a pie
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from '../util/PureRender';
+import Animate from 'react-smooth';
 import classNames from 'classnames';
+import _ from 'lodash';
+import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Sector from '../shape/Sector';
 import Curve from '../shape/Curve';
 import Text from '../component/Text';
-import Animate from 'react-smooth';
-import _ from 'lodash';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
+import { isNumber } from '../util/DataUtils';
 
 @AnimationDecorator
 @pureRender
@@ -123,7 +124,7 @@ class Pie extends Component {
 
   getSectors(data) {
     const { cx, cy, innerRadius, outerRadius, startAngle, paddingAngle,
-      minAngle, endAngle, nameKey, valueKey } = this.props;
+      minAngle, nameKey, valueKey } = this.props;
     const len = data.length;
     const deltaAngle = this.getDeltaAngle();
     const absDeltaAngle = Math.abs(deltaAngle);
@@ -348,9 +349,9 @@ class Pie extends Component {
       outerRadius } = this.props;
     const pieData = composedData || data;
 
-    if (!pieData || !pieData.length || !_.isNumber(cx)
-      || !_.isNumber(cy) || !_.isNumber(innerRadius)
-      || !_.isNumber(outerRadius)) {
+    if (!pieData || !pieData.length || !isNumber(cx)
+      || !isNumber(cy) || !isNumber(innerRadius)
+      || !isNumber(outerRadius)) {
       return null;
     }
 

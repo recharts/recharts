@@ -4,10 +4,10 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { scaleBand } from 'd3-scale';
+import _ from 'lodash';
 import Surface from '../container/Surface';
 import RadialBar from '../polar/RadialBar';
 import { getPercentValue } from '../util/DataUtils';
-import _ from 'lodash';
 import Cell from '../component/Cell';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
@@ -15,7 +15,6 @@ import { findChildByType, findAllByType, validateWidthHeight, filterSvgElements,
   getPresentationAttributes } from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import pureRender from '../util/PureRender';
-import AnimationDecorator from '../util/AnimationDecorator';
 
 @pureRender
 class RadialBarChart extends Component {
@@ -109,7 +108,7 @@ class RadialBarChart extends Component {
   getRadiusList(items) {
     const { barSize } = this.props;
 
-    return items.map((child) => ({
+    return items.map(child => ({
       ...child.props,
       barSize: child.props.barSize || barSize,
     }));
@@ -245,7 +244,7 @@ class RadialBarChart extends Component {
       }));
 
     return React.cloneElement(legendItem, {
-      ...Legend.getWithHeight(legendItem, width, height),
+      ...Legend.getWithHeight(legendItem, width),
       payload: legendData,
       chartWidth: width,
       chartHeight: height,

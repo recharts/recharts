@@ -2,13 +2,13 @@
  * @fileOverview Tooltip
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from '../util/PureRender';
 import ReactDOMServer from 'react-dom/server';
+import Animate from 'react-smooth';
+import _ from 'lodash';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import { getStyleString } from '../util/DOMUtils';
 import { isSsr } from '../util/ReactUtils';
-import Animate from 'react-smooth';
-import _ from 'lodash';
+import { isNumOrStr, isNumber } from '../util/DataUtils';
 
 const propTypes = {
   content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
@@ -30,6 +30,10 @@ const propTypes = {
   cursor: PropTypes.oneOfType([PropTypes.bool, PropTypes.element, PropTypes.object]),
 
   coordinate: PropTypes.shape({
+    x: PropTypes.number,
+    y: PropTypes.number,
+  }),
+  position: PropTypes.shape({
     x: PropTypes.number,
     y: PropTypes.number,
   }),
@@ -67,7 +71,7 @@ const defaultProps = {
   isAnimationActive: true,
   animationEasing: 'ease',
   animationDuration: 400,
-  itemSorter: (item1, item2) => -1,
+  itemSorter: () => -1,
 };
 
 const getTooltipBBox = (wrapperStyle, contentItem) => {
@@ -116,10 +120,10 @@ class Tooltip extends Component {
     const { payload, isAnimationActive, animationDuration, animationEasing } = this.props;
 
     if (!payload || !payload.length ||
-      !payload.filter(entry => (_.isNumber(entry.value) || _.isString(entry.value))).length
+      !payload.filter(entry => isNumOrStr(entry.value)).length
     ) { return null; }
 
-    const { content, viewBox, coordinate, active, offset, wrapperStyle } = this.props;
+    const { content, viewBox, coordinate, position, active, offset, wrapperStyle } = this.props;
     const outerStyle = {
       pointerEvents: 'none',
       display: active ? 'block' : 'none',
@@ -128,18 +132,25 @@ class Tooltip extends Component {
       ...wrapperStyle,
     };
     const contentItem = renderContent(content, this.props);
-    const box = getTooltipBBox(outerStyle, contentItem);
+    let translateX, translateY;
 
-    if (!box) { return null; }
-    const translateX = Math.max(
-      coordinate.x + box.width + offset > (viewBox.x + viewBox.width) ?
-      coordinate.x - box.width - offset :
-      coordinate.x + offset, viewBox.x);
+    if (position && isNumber(position.x) && isNumber(position.y)) {
+      translateX = position.x;
+      translateY = position.y;
+    } else {
+      const box = getTooltipBBox(outerStyle, contentItem);
 
-    const translateY = Math.max(
-      coordinate.y + box.height + offset > (viewBox.y + viewBox.height) ?
-      coordinate.y - box.height - offset :
-      coordinate.y + offset, viewBox.y);
+      if (!box) { return null; }
+      translateX = position && isNumber(position.x) ? position.x : Math.max(
+        coordinate.x + box.width + offset > (viewBox.x + viewBox.width) ?
+        coordinate.x - box.width - offset :
+        coordinate.x + offset, viewBox.x);
+
+      translateY = position && isNumber(position.y) ? position.y : Math.max(
+        coordinate.y + box.height + offset > (viewBox.y + viewBox.height) ?
+        coordinate.y - box.height - offset :
+        coordinate.y + offset, viewBox.y);
+    }
 
     return (
       <Animate

@@ -2,12 +2,11 @@
  * @fileOverview Radar Chart
  */
 import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { getNiceTickValues } from 'recharts-scale';
+import _ from 'lodash';
 import Surface from '../container/Surface';
-import Layer from '../container/Layer';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 
@@ -16,7 +15,6 @@ import PolarGrid from '../polar/PolarGrid';
 import PolarAngleAxis from '../polar/PolarAngleAxis';
 import PolarRadiusAxis from '../polar/PolarRadiusAxis';
 
-import _ from 'lodash';
 import { validateWidthHeight, findChildByType, findAllByType, filterSvgElements,
   getPresentationAttributes } from '../util/ReactUtils';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
@@ -96,10 +94,7 @@ class RadarChart extends Component {
   }
 
   getRadiusAxisCfg(radiusAxis, innerRadius, outerRadius) {
-    const { children } = this.props;
-    let domain;
-    let tickCount;
-    let ticks;
+    let domain, tickCount, ticks;
 
     if (radiusAxis && radiusAxis.props.ticks) {
       ticks = radiusAxis.props.ticks;
@@ -189,7 +184,7 @@ class RadarChart extends Component {
     });
   }
 
-  getComposedData(item, scale, cx, cy, innerRadius, outerRadius) {
+  getComposedData(item, scale, cx, cy) {
     const { dataKey } = item.props;
     const { data, startAngle, clockWise, children } = this.props;
     const angleAxis = findChildByType(children, PolarAngleAxis);
@@ -228,7 +223,7 @@ class RadarChart extends Component {
     const tooltipItem = findChildByType(children, Tooltip);
 
     if (tooltipItem && points.length) {
-      const container = ReactDOM.findDOMNode(this);
+      const container = this.container;
       const containerOffset = getOffset(container);
       const ne = calculateChartCoordinate(e, containerOffset);
 
@@ -264,7 +259,7 @@ class RadarChart extends Component {
     }
   };
 
-  renderRadars(items, scale, cx, cy, innerRadius, outerRadius) {
+  renderRadars(items, scale, cx, cy) {
     if (!items || !items.length) { return null; }
 
     const baseProps = getPresentationAttributes(this.props);
@@ -273,7 +268,7 @@ class RadarChart extends Component {
         ...baseProps,
         ...getPresentationAttributes(el),
         animationId: this.props.animationId,
-        points: this.getComposedData(el, scale, cx, cy, innerRadius, outerRadius),
+        points: this.getComposedData(el, scale, cx, cy),
         key: `radar-${index}`,
         onMouseEnter: this.handleMouseEnter,
         onMouseLeave: this.handleMouseLeave,
@@ -304,7 +299,7 @@ class RadarChart extends Component {
 
     if (!angleAxis || angleAxis.props.hide) { return null; }
 
-    const { data, width, height, startAngle, clockWise } = this.props;
+    const { data, startAngle, clockWise } = this.props;
     const len = data.length;
     const grid = findChildByType(children, PolarGrid);
     const radius = getPercentValue(angleAxis.props.radius, maxRadius, outerRadius);
@@ -377,7 +372,7 @@ class RadarChart extends Component {
       }, this);
 
     return React.cloneElement(legendItem, {
-      ...Legend.getWithHeight(legendItem, width, height),
+      ...Legend.getWithHeight(legendItem, width),
       payload: legendData,
       chartWidth: width,
       chartHeight: height,
@@ -407,12 +402,13 @@ class RadarChart extends Component {
       <div
         className={classNames('recharts-wrapper', className)}
         style={{ ...style, position: 'relative', cursor: 'default', width, height }}
+        ref={(node) => { this.container = node; }}
       >
         <Surface {...attrs} width={width} height={height}>
           {this.renderGrid(radiusAxisCfg, cx, cy, innerRadius, outerRadius)}
           {this.renderRadiusAxis(radiusAxis, radiusAxisCfg, cx, cy)}
           {this.renderAngleAxis(cx, cy, outerRadius, maxRadius)}
-          {this.renderRadars(items, radiusAxisCfg.scale, cx, cy, innerRadius, outerRadius)}
+          {this.renderRadars(items, radiusAxisCfg.scale, cx, cy)}
           {filterSvgElements(children)}
         </Surface>
 

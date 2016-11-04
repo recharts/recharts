@@ -2,19 +2,16 @@
  * @fileOverview Render a group of scatters
  */
 import React, { Component, PropTypes } from 'react';
+import Animate from 'react-smooth';
 import classNames from 'classnames';
+import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
 import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
-import Animate from 'react-smooth';
-import _ from 'lodash';
 import AnimationDecorator from '../util/AnimationDecorator';
-
-const PI = Math.PI;
-const SYMBOL_STYLE = { transformOrigin: 'center center' };
 
 @AnimationDecorator
 @pureRender
@@ -149,7 +146,7 @@ class Scatter extends Component {
     const { points, line, lineType, lineJointType } = this.props;
     const scatterProps = getPresentationAttributes(this.props);
     const customLineProps = getPresentationAttributes(line);
-    let linePoints;
+    let linePoints, lineItem;
 
     if (lineType === 'joint') {
       linePoints = points.map(entry => ({ x: entry.cx, y: entry.cy }));
@@ -161,7 +158,7 @@ class Scatter extends Component {
       ...customLineProps,
       points: linePoints,
     };
-    let lineItem;
+
     if (React.isValidElement(line)) {
       lineItem = React.cloneElement(line, lineProps);
     } else if (_.isFunction(line)) {

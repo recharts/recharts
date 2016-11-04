@@ -1,7 +1,15 @@
 import _ from 'lodash';
 
-export const isPercent = (value) => (
+export const isPercent = value => (
   _.isString(value) && value.indexOf('%') === value.length - 1
+);
+
+export const isNumber = value => (
+  _.isNumber(value) && !_.isNaN(value)
+);
+
+export const isNumOrStr = value => (
+  isNumber(value) || _.isString(value)
 );
 /**
  * Get percent value of a total value
@@ -12,7 +20,7 @@ export const isPercent = (value) => (
  * @return {Number} value
  */
 export const getPercentValue = (percent, totalValue, defaultValue = 0, validate = false) => {
-  if (!_.isNumber(percent) && !_.isString(percent)) {
+  if (!isNumber(percent) && !_.isString(percent)) {
     return defaultValue;
   }
 
@@ -46,7 +54,7 @@ export const parseSpecifiedDomain = (specifiedDomain, dataDomain, allowDataOverf
 
   const domain = [];
 
-  if (_.isNumber(specifiedDomain[0])) {
+  if (isNumber(specifiedDomain[0])) {
     domain[0] = allowDataOverflow ?
       specifiedDomain[0] : Math.min(specifiedDomain[0], dataDomain[0]);
   } else if (MIN_VALUE_REG.test(specifiedDomain[0])) {
@@ -57,7 +65,7 @@ export const parseSpecifiedDomain = (specifiedDomain, dataDomain, allowDataOverf
     domain[0] = dataDomain[0];
   }
 
-  if (_.isNumber(specifiedDomain[1])) {
+  if (isNumber(specifiedDomain[1])) {
     domain[1] = allowDataOverflow ?
       specifiedDomain[1] : Math.max(specifiedDomain[1], dataDomain[1]);
   } else if (MAX_VALUE_REG.test(specifiedDomain[1])) {
@@ -86,13 +94,29 @@ export const validateCoordinateInRange = (coordinate, scale) => {
 
 /**
  * Calculate the size between two category
- * @param  {Function} scale Scale function
+ * @param  {Object} axis  The options of axis
+ * @param  {Array}  ticks The ticks of axis
  * @return {Number} Size
  */
-export const getBandSizeOfScale = (scale) => {
-  if (scale && scale.bandwidth) {
-    return scale.bandwidth();
+export const getBandSizeOfAxis = (axis, ticks) => {
+  if (axis && axis.type === 'category' && axis.scale && axis.scale.bandwidth) {
+    return axis.scale.bandwidth();
   }
+
+  if (axis && axis.type === 'number' && ticks) {
+    const orderedTicks = _.sortBy(ticks, o => o.coordinate);
+    let bandSize = Infinity;
+
+    for (let i = 1, len = orderedTicks.length; i < len; i++) {
+      const cur = orderedTicks[i];
+      const prev = orderedTicks[i - 1];
+
+      bandSize = Math.min((cur.coordinate || 0) - (prev.coordinate || 0), bandSize);
+    }
+
+    return bandSize === Infinity ? 0 : bandSize;
+  }
+
   return 0;
 };
 

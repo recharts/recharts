@@ -1,7 +1,7 @@
 /**
  * @fileOverview Z Axis
  */
-import React, { Component, PropTypes } from 'react';
+import { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 
 @pureRender

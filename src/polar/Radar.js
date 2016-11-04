@@ -2,15 +2,15 @@
  * @fileOverview Radar
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from '../util/PureRender';
+import Animate from 'react-smooth';
 import classNames from 'classnames';
+import _ from 'lodash';
+import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import Polygon from '../shape/Polygon';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
-import Animate from 'react-smooth';
-import _ from 'lodash';
 
 @pureRender
 class Radar extends Component {
@@ -80,8 +80,10 @@ class Radar extends Component {
   };
 
   renderPolygon() {
+    /* eslint-disable no-unused-vars */
     const { shape, points, animationDuration, animationEasing, animationBegin,
       isAnimationActive, animationId, dataKey, className, ...others } = this.props;
+    /* eslint-enable no-unused-vars */
 
     if (React.isValidElement(shape)) {
       return React.cloneElement(shape, { ...others, points });
@@ -206,7 +208,6 @@ class Radar extends Component {
     if (!points || !points.length) { return null; }
 
     const layerClass = classNames('recharts-radar', className);
-    const transformOrigin = 'center center';
 
     return (
       <Layer className={layerClass}>

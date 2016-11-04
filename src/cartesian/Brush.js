@@ -4,10 +4,10 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { scalePoint } from 'd3-scale';
+import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
-import _ from 'lodash';
 
 @pureRender
 class Brush extends Component {
@@ -331,8 +331,8 @@ class Brush extends Component {
   }
 
   renderText() {
-    const { startIndex, endIndex, data, y, height, travellerWidth,
-      stroke, tickFormatter } = this.props;
+    const { startIndex, endIndex, y, height, travellerWidth,
+      stroke } = this.props;
     const { startX, endX } = this.state;
     const offset = 5;
     const style = {
@@ -365,7 +365,7 @@ class Brush extends Component {
   }
 
   render() {
-    const { x, width, travellerWidth, data, className } = this.props;
+    const { data, className } = this.props;
     const { startX, endX, isTextActive, isSlideMoving, isTravellerMoving } = this.state;
 
     if (!data || !data.length) { return null; }

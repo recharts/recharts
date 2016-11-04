@@ -8,10 +8,10 @@ import {
 
 describe('calculateActiveTickIndex', () => {
   const ticks = [
-    {coordinate: 0},
-    {coordinate: 12},
-    {coordinate: 14},
-    {coordinate: 15},
+    {coordinate: 0, index: 0},
+    {coordinate: 12, index: 1},
+    {coordinate: 14, index: 2},
+    {coordinate: 15, index: 3},
   ];
   it('calculateActiveTickIndex(12, ticks) should return 1', () => {
     expect(calculateActiveTickIndex(12, ticks)).to.equal(1);

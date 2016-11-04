@@ -2,12 +2,12 @@
  * @fileOverview The axis of polar coordinate system
  */
 import React, { Component, PropTypes } from 'react';
+import _ from 'lodash';
 import pureRender from '../util/PureRender';
-import Layer from '../container/Layer';
 import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-import _ from 'lodash';
+import { isNumOrStr } from '../util/DataUtils';
 
 @pureRender
 class PolarRadiusAxis extends Component {
@@ -87,7 +87,7 @@ class PolarRadiusAxis extends Component {
   }
 
   renderAxisLine() {
-    const { cx, cy, angle, ticks, axisLine } = this.props;
+    const { cx, cy, angle, ticks, axisLine, ...others } = this.props;
     const extent = ticks.reduce((result, entry) => [
       Math.min(result[0], entry.radius),
       Math.max(result[1], entry.radius),
@@ -96,7 +96,7 @@ class PolarRadiusAxis extends Component {
     const point1 = polarToCartesian(cx, cy, extent[1], angle);
 
     const props = {
-      ...getPresentationAttributes(this.props),
+      ...getPresentationAttributes(others),
       fill: 'none',
       ...getPresentationAttributes(axisLine),
       x1: point0.x,
@@ -130,9 +130,9 @@ class PolarRadiusAxis extends Component {
   }
 
   renderTicks() {
-    const { ticks, tick, angle, tickFormatter, stroke } = this.props;
+    const { ticks, tick, angle, tickFormatter, stroke, ...others } = this.props;
     const textAnchor = this.getTickTextAnchor();
-    const axisProps = getPresentationAttributes(this.props);
+    const axisProps = getPresentationAttributes(others);
     const customTickProps = getPresentationAttributes(tick);
 
     const items = ticks.map((entry, i) => {
@@ -162,12 +162,12 @@ class PolarRadiusAxis extends Component {
 
   renderLabel() {
     const { label } = this.props;
-    const { ticks, angle, stroke } = this.props;
+    const { ticks, angle, stroke, ...others } = this.props;
     const maxRadiusTick = _.maxBy(ticks, entry => (entry.radius || 0));
     const radius = maxRadiusTick.radius || 0;
     const coord = this.getTickValueCoord({ radius: radius + 10 });
     const props = {
-      ...this.props,
+      ...others,
       stroke: 'none',
       fill: stroke,
       ...coord,
@@ -179,7 +179,7 @@ class PolarRadiusAxis extends Component {
       return React.cloneElement(label, props);
     } else if (_.isFunction(label)) {
       return label(props);
-    } else if (_.isString(label) || _.isNumber(label)) {
+    } else if (isNumOrStr(label)) {
       return (
         <g className="recharts-polar-radius-axis-label">
           <Text {...props}>{label}</Text>

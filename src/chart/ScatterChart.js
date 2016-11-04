@@ -23,11 +23,10 @@ import { getPresentationAttributes, findChildByType, filterSvgElements,
   findAllByType, validateWidthHeight, getDisplayName, filterEventAttributes,
 } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
-import { parseSpecifiedDomain } from '../util/DataUtils';
+import { parseSpecifiedDomain, isNumber } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
-import { calculateDomainOfTicks, detectReferenceElementsDomain, getTicksOfAxis,
+import { detectReferenceElementsDomain, getTicksOfAxis,
   getCoordinatesOfGrid, getLegendProps, getTicksOfScale } from '../util/CartesianUtils';
-import _ from 'lodash';
 
 @pureRender
 class ScatterChart extends Component {
@@ -79,9 +78,9 @@ class ScatterChart extends Component {
 
     return data.map((entry, index) => ({
       ...entry,
-      cx: _.isNumber(entry[xAxisDataKey]) ? xAxis.scale(entry[xAxisDataKey]) : null,
-      cy: _.isNumber(entry[yAxisDataKey]) ? yAxis.scale(entry[yAxisDataKey]) : null,
-      size: zAxisDataKey !== undefined && _.isNumber(entry[zAxisDataKey]) ?
+      cx: isNumber(entry[xAxisDataKey]) ? xAxis.scale(entry[xAxisDataKey]) : null,
+      cy: isNumber(entry[yAxisDataKey]) ? yAxis.scale(entry[yAxisDataKey]) : null,
+      size: zAxisDataKey !== undefined && isNumber(entry[zAxisDataKey]) ?
         zAxis.scale(entry[zAxisDataKey]) :
         zAxis.range[0],
       payload: {
@@ -173,10 +172,10 @@ class ScatterChart extends Component {
     if (legendProps) {
       const box = Legend.getLegendBBox(legendProps, width, height) || {};
       if (legendProps.layout === 'horizontal' &&
-        _.isNumber(offset[legendProps.verticalAlign])) {
+        isNumber(offset[legendProps.verticalAlign])) {
         offset[legendProps.verticalAlign] += box.height || 0;
       } else if (legendProps.layout === 'vertical' &&
-        _.isNumber(offset[legendProps.align])) {
+        isNumber(offset[legendProps.align])) {
         offset[legendProps.align] += box.width || 0;
       }
     }
@@ -212,8 +211,7 @@ class ScatterChart extends Component {
       scale.tickFormat(tickFormat);
     }
 
-    let x;
-    let y;
+    let x, y;
 
     if (axisType === 'xAxis') {
       x = offset.left;
@@ -270,7 +268,7 @@ class ScatterChart extends Component {
    * @param {Object} e  Event object
    * @return {Object} no return
    */
-  handleScatterMouseEnter = (el, e) => {
+  handleScatterMouseEnter = (el) => {
     this.setState({
       isTooltipActive: true,
       activeItem: el,
@@ -475,6 +473,7 @@ class ScatterChart extends Component {
   render() {
     if (!validateWidthHeight(this)) { return null; }
 
+    // eslint-disable-next-line no-unused-vars
     const { style, children, className, width, height, ...others } = this.props;
     const items = findAllByType(children, Scatter);
     const zAxis = this.getZAxis(items);

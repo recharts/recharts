@@ -1,3 +1,48 @@
+## 0.16.2 (Nov 04, 2016)
+
+### fix
+
+- fix dash line animation
+- fix the bug when the children of categorical chart change
+
+### feat
+
+- support shape in ReferenceLine
+
+### refactor
+
+- render Bar, Area, Line according to the order of Bar, Area, Line in ComposedChart
+
+## 0.16.1 (Nov 03, 2016)
+
+### fix
+
+- refactor to treat NaN like undefined or null, fix #303
+- fix tranform origin of Bar, fix #292
+
+### feat
+
+- support customized position of Tooltip, fix #31
+
+### docs
+
+- fix LodashModuleReplacementPlugin
+
+## 0.16.0 (Nov 03, 2016)
+
+### refactor
+
+- Major Performance Change - Re-Use Expensive To Generate Data
+
+### feat
+
+- support both x-axis and y-axis are numerical axis, fix #183
+- add animation events in `Line`, `Area`, `Bar`
+
+### fix
+
+- fix angle of PolorRadiusAxis
+
 ## 0.15.3 (Oct 28, 2016)
 
 ### feat

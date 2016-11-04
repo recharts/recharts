@@ -5,11 +5,12 @@ import React, { Component, PropTypes } from 'react';
 import { line as shapeLine, area as shapeArea, curveBasisClosed, curveBasisOpen,
   curveBasis, curveLinearClosed, curveLinear, curveMonotoneX, curveMonotoneY,
   curveNatural, curveStep, curveStepAfter, curveStepBefore } from 'd3-shape';
-import pureRender from '../util/PureRender';
 import classNames from 'classnames';
 import _ from 'lodash';
+import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
+import { isNumber } from '../util/DataUtils';
 
 const CURVE_FACTORIES = {
   curveBasisClosed, curveBasisOpen, curveBasis, curveLinearClosed, curveLinear,
@@ -17,7 +18,7 @@ const CURVE_FACTORIES = {
   curveStepBefore,
 };
 
-const defined = p => p.x === +p.x && p.y === + p.y;
+const defined = p => p.x === +p.x && p.y === +p.y;
 const getX = p => p.x;
 const getY = p => p.y;
 
@@ -50,6 +51,7 @@ class Curve extends Component {
     ]),
     points: PropTypes.arrayOf(PropTypes.object),
     connectNulls: PropTypes.bool,
+    pathRef: PropTypes.func,
   };
 
   static defaultProps = {
@@ -88,11 +90,11 @@ class Curve extends Component {
                   .curve(curveFactory);
 
       return lineFunction(areaPoints);
-    } else if (layout === 'vertical' && _.isNumber(baseLine)) {
+    } else if (layout === 'vertical' && isNumber(baseLine)) {
       lineFunction = shapeArea().y(getY)
                                 .x1(getX)
                                 .x0(baseLine);
-    } else if (_.isNumber(baseLine)) {
+    } else if (isNumber(baseLine)) {
       lineFunction = shapeArea().x(getX)
                                 .y1(getY)
                                 .y0(baseLine);
@@ -108,7 +110,7 @@ class Curve extends Component {
   }
 
   render() {
-    const { className, points, type } = this.props;
+    const { className, points, pathRef } = this.props;
 
     if (!points || !points.length) { return null; }
 
@@ -118,6 +120,7 @@ class Curve extends Component {
         {...filterEventAttributes(this.props)}
         className={classNames('recharts-curve', className)}
         d={this.getPath()}
+        ref={pathRef}
       />
     );
   }

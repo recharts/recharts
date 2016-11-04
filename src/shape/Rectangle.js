@@ -2,10 +2,10 @@
  * @fileOverview Rectangle
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from '../util/PureRender';
-import classNames from 'classnames';
 import { findDOMNode } from 'react-dom';
+import classNames from 'classnames';
 import Smooth from 'react-smooth';
+import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 
@@ -139,7 +139,7 @@ class Rectangle extends Component {
         animationEasing={animationEasing}
         isActive={isUpdateAnimationActive}
       >
-      {
+        {
         ({ width: currWidth, height: currHeight, x: currX, y: currY }) => (
           <Smooth
             canBegin={totalLength > 0}

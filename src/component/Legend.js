@@ -2,15 +2,13 @@
  * @fileOverview Legend
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from '../util/PureRender';
 import ReactDOMServer from 'react-dom/server';
-import Surface from '../container/Surface';
+import _ from 'lodash';
+import pureRender from '../util/PureRender';
 import DefaultLegendContent from './DefaultLegendContent';
 import { getStyleString } from '../util/DOMUtils';
 import { isSsr } from '../util/ReactUtils';
-import _ from 'lodash';
-
-const SIZE = 32;
+import { isNumber } from '../util/DataUtils';
 
 const renderContent = (content, props) => {
   if (React.isValidElement(content)) {
@@ -60,10 +58,10 @@ class Legend extends Component {
     verticalAlign: 'bottom',
   };
 
-  static getWithHeight(item, chartWidth, chartHeight) {
+  static getWithHeight(item, chartWidth) {
     const { layout } = item.props;
 
-    if (layout === 'vertical' && _.isNumber(item.props.height)) {
+    if (layout === 'vertical' && isNumber(item.props.height)) {
       return {
         height: item.props.height,
       };
@@ -108,8 +106,7 @@ class Legend extends Component {
 
   getDefaultPosition(style) {
     const { layout, align, verticalAlign, margin, chartWidth, chartHeight } = this.props;
-    let hPos;
-    let vPos;
+    let hPos, vPos;
 
     if (!style || ((style.left === undefined || style.left === null) && (
       style.right === undefined || style.right === null))) {
@@ -139,7 +136,7 @@ class Legend extends Component {
   }
 
   render() {
-    const { content, width, height, layout, wrapperStyle } = this.props;
+    const { content, width, height, wrapperStyle } = this.props;
     const outerStyle = {
       position: 'absolute',
       width: width || 'auto',

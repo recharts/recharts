@@ -8,10 +8,10 @@ import { changeNumberOfData } from './utils';
 const colors = scaleOrdinal(schemeCategory10).range();
 
 const data = [
-  { name: 'food', uv: 2400, pv: 2013, amt: 4500 },
-  { name: 'cosmetic', uv: 3300, pv: 2000, amt: 6500 },
-  { name: 'storage', uv: 3200, pv: 1398, amt: 5000 },
-  { name: 'digital', uv: 2800, pv: 2800, amt: 4000 },
+  { name: 'food', uv: 2400, pv: 2013, amt: 4500, time: 1 },
+  { name: 'cosmetic', uv: 3300, pv: 2000, amt: 6500, time: 2 },
+  { name: 'storage', uv: 3200, pv: 1398, amt: 5000, time: 3 },
+  { name: 'digital', uv: 2800, pv: 2800, amt: 4000, time: 4 },
 ];
 
 const data01 = [
@@ -213,6 +213,14 @@ export default React.createClass({
     console.log(`Pv Bar (${index}) Click: `, data);
   },
 
+  handleBarAnimationStart() {
+    console.log('Animation start');
+  },
+
+  handleBarAnimationEnd() {
+    console.log('Animation end');
+  },
+
   render() {
     const { data, data01, data02 } = this.state;
 
@@ -227,6 +235,18 @@ export default React.createClass({
         </a>
         <br/>
 
+        <p>BarChart of layout vertical</p>
+        <div className="bar-chart-wrapper">
+          <BarChart width={400} height={400} data={data} layout="vertical" maxBarSize={10} >
+            <XAxis type="number" />
+            <YAxis dataKey="time" type="number"/>
+            <CartesianGrid horizontal={false} />
+            <Bar dataKey="uv" fill="#ff7300" maxBarSize={15} />
+            <Bar dataKey="pv" fill="#387908" />
+            <Tooltip />
+          </BarChart>
+        </div>
+
         <p>Simple BarChart (Click on rectangles and open console )</p>
         <div className="bar-chart-wrapper" style={{textAlign: 'right'}}>
           <BarChart width={400} height={400} data={data} onClick={this.handlePvBarClick}>
@@ -236,7 +256,7 @@ export default React.createClass({
             <Legend />
             <Tooltip />
             <CartesianGrid vertical={false}/>
-            <Bar yAxisId="a" dataKey="uv" label={<RenderLabel />}>
+            <Bar yAxisId="a" dataKey="uv" label={<RenderLabel />} onAnimationStart={this.handleBarAnimationStart} onAnimationEnd={this.handleBarAnimationEnd} >
               {
                 data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
@@ -253,16 +273,6 @@ export default React.createClass({
           </BarChart>
         </div>
 
-        <p>BarChart of layout vertical</p>
-        <div className="bar-chart-wrapper">
-          <BarChart width={400} height={400} data={data} layout="vertical" maxBarSize={10} >
-            <XAxis type="number" />
-            <YAxis dataKey="name" type="category"/>
-            <CartesianGrid horizontal={false} />
-            <Bar dataKey="uv" fill="#ff7300" maxBarSize={15} />
-            <Bar dataKey="pv" fill="#387908" />
-          </BarChart>
-        </div>
 
         <p>Tiny BarChart</p>
         <div className="bar-chart-wrapper">

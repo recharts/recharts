@@ -1,16 +1,16 @@
 /**
  * @fileOverview Render a group of bar
  */
-import React, { Component, PropTypes, Children } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import Animate from 'react-smooth';
+import Animate, { translateStyle } from 'react-smooth';
+import _ from 'lodash';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
-import _ from 'lodash';
 
 @pureRender
 class Bar extends Component {
@@ -50,6 +50,8 @@ class Bar extends Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
+    onAnimationStart: PropTypes.func,
+    onAnimationEnd: PropTypes.func,
 
     animationId: PropTypes.number,
     isAnimationActive: PropTypes.bool,
@@ -71,6 +73,9 @@ class Bar extends Component {
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
+
+    onAnimationStart: () => {},
+    onAnimationEnd: () => {},
   };
 
   state = {
@@ -79,10 +84,12 @@ class Bar extends Component {
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
+    this.props.onAnimationEnd();
   };
 
   handleAnimationStart = () => {
     this.setState({ isAnimationFinished: false });
+    this.props.onAnimationStart();
   };
 
   renderRectangle(option, props) {
@@ -103,21 +110,21 @@ class Bar extends Component {
     const { data, shape, layout, isAnimationActive, animationBegin,
       animationDuration, animationEasing, animationId } = this.props;
     const baseProps = getPresentationAttributes(this.props);
-    const getStyle = (isBegin) => ({
+    const getStyle = isBegin => ({
       transform: `scale${layout === 'vertical' ? 'X' : 'Y'}(${isBegin ? 0 : 1})`,
     });
 
     return data.map((entry, index) => {
-      const { width, height } = entry;
+      const { x, y, width, height } = entry;
       const props = {
         ...baseProps, ...entry, index, ...filterEventsOfChild(this.props, entry, index),
       };
       let transformOrigin = '';
 
       if (layout === 'vertical') {
-        transformOrigin = width > 0 ? 'left center' : 'right center';
+        transformOrigin = `${x}px ${y + height / 2}px`;
       } else {
-        transformOrigin = height > 0 ? 'center bottom' : 'center top';
+        transformOrigin = `${x + width / 2}px ${y + height}px`;
       }
 
       return (
@@ -132,7 +139,9 @@ class Bar extends Component {
           onAnimationEnd={this.handleAnimationEnd}
           onAnimationStart={this.handleAnimationStart}
         >
-          <g style={{ transformOrigin }}>{this.renderRectangle(shape, props)}</g>
+          <g style={translateStyle({ transformOrigin })}>
+            {this.renderRectangle(shape, props)}
+          </g>
         </Animate>
       );
     });

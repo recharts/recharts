@@ -2,15 +2,15 @@
  * @fileOverview Cartesian Axis
  */
 import React, { Component, PropTypes } from 'react';
-import pureRender from '../util/PureRender';
+import _ from 'lodash';
+import { shallowEqual } from '../util/PureRender';
 import { getStringSize } from '../util/DOMUtils';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import { isSsr, PRESENTATION_ATTRIBUTES,
   getPresentationAttributes } from '../util/ReactUtils';
-import _ from 'lodash';
+import { isNumber, isNumOrStr } from '../util/DataUtils';
 
-@pureRender
 class CartesianAxis extends Component {
 
   static displayName = 'CartesianAxis';
@@ -38,13 +38,17 @@ class CartesianAxis extends Component {
     tickLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
 
     minLabelGap: PropTypes.number,
-    ticks: PropTypes.arrayOf(PropTypes.shape({
-      value: PropTypes.any,
-      coordinate: PropTypes.value,
-    })),
+    ticks: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.shape({
+        value: PropTypes.any,
+        coordinate: PropTypes.value,
+      })),
+      PropTypes.arrayOf(PropTypes.number),
+    ]),
     tickSize: PropTypes.number,
     stroke: PropTypes.string,
     tickFormatter: PropTypes.func,
+    ticksGenerator: PropTypes.func,
     interval: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   };
 
@@ -75,8 +79,8 @@ class CartesianAxis extends Component {
 
     if (!ticks || !ticks.length) { return []; }
 
-    return (_.isNumber(interval) || isSsr())
-        ? CartesianAxis.getNumberIntervalTicks(ticks, _.isNumber(interval) ? interval : 0)
+    return (isNumber(interval) || isSsr())
+        ? CartesianAxis.getNumberIntervalTicks(ticks, isNumber(interval) ? interval : 0)
         : CartesianAxis.getAutoIntervalTicks(
           ticks, tickFormatter, viewBox, orientation, minTickGap
         );
@@ -99,7 +103,7 @@ class CartesianAxis extends Component {
       pointer = sizeKey === 'width' ? x + width : y + height;
     }
 
-    return ticks.filter(entry => {
+    return ticks.filter((entry) => {
       const tickContent = _.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value;
       const tickSize = getStringSize(tickContent)[sizeKey];
       const isShow = sign === 1 ?
@@ -113,6 +117,15 @@ class CartesianAxis extends Component {
       return isShow;
     });
   }
+
+  shouldComponentUpdate({ viewBox, ...restProps }, state) {
+    // props.viewBox is sometimes generated every time -
+    // check that specially as object equality is likely to fail
+    const { viewBox: viewBoxOld, ...restPropsOld } = this.props;
+    return !shallowEqual(viewBox, viewBoxOld) ||
+      !shallowEqual(restProps, restPropsOld) || !shallowEqual(state, this.state);
+  }
+
   /**
    * Calculate the coordinates of endpoints in ticks
    * @param  {Object} data The data of a simple tick
@@ -121,10 +134,7 @@ class CartesianAxis extends Component {
    */
   getTickLineCoord(data) {
     const { x, y, width, height, orientation, tickSize } = this.props;
-    let x1;
-    let x2;
-    let y1;
-    let y2;
+    let x1, x2, y1, y2;
 
     const finalTickSize = data.tickSize || tickSize;
 
@@ -274,9 +284,14 @@ class CartesianAxis extends Component {
     return tickItem;
   }
 
-  renderTicks() {
-    const { ticks, tickLine, stroke, tick, tickFormatter } = this.props;
-    const finalTicks = CartesianAxis.getTicks(this.props);
+  /**
+   * render the ticks
+   * @param {Array} ticks The ticks to actually render (overrides what was passed in props)
+   * @return {ReactComponent} renderedTicks
+   */
+  renderTicks(ticks) {
+    const { tickLine, stroke, tick, tickFormatter } = this.props;
+    const finalTicks = CartesianAxis.getTicks({ ...this.props, ticks });
     const textAnchor = this.getTickTextAnchor();
     const verticalAnchor = this.getTickVerticalAnchor();
     const axisProps = getPresentationAttributes(this.props);
@@ -328,7 +343,7 @@ class CartesianAxis extends Component {
       return React.cloneElement(label, { ...presentation, orientation, viewBox });
     } else if (_.isFunction(label)) {
       return label(this.props);
-    } else if (_.isString(label) || _.isNumber(label)) {
+    } else if (isNumOrStr(label)) {
       const props = {
         ...presentation,
         stroke: 'none',
@@ -347,7 +362,13 @@ class CartesianAxis extends Component {
   }
 
   render() {
-    const { axisLine, width, height, ticks, label } = this.props;
+    const { axisLine, width, height, ticksGenerator } = this.props;
+    let { ticks, ...noTicksProps } = this.props;
+
+    if (_.isFunction(ticksGenerator)) {
+      ticks = (ticks && ticks.length > 0) ? ticksGenerator(this.props) :
+        ticksGenerator(noTicksProps);
+    }
 
     if (width <= 0 || height <= 0 || !ticks || !ticks.length) {
       return null;
@@ -356,7 +377,7 @@ class CartesianAxis extends Component {
     return (
       <Layer className="recharts-cartesian-axis">
         {axisLine && this.renderAxisLine()}
-        {this.renderTicks()}
+        {this.renderTicks(ticks)}
         {this.renderLabel()}
       </Layer>
     );

@@ -9,10 +9,10 @@ const data = [
 ];
 
 const data2 = [
-  { value: 'Apple', type: 'scatter', color: '#ff7300' },
-  { value: 'Samsung', type: 'scatter', color: '#bb7300' },
-  { value: 'Huawei', type: 'scatter', color: '#bb0067' },
-  { value: 'Sony', type: 'scatter', color: '#167300' },
+  { value: 'Apple', type: 'circle', color: '#ff7300' },
+  { value: 'Samsung', type: 'circle', color: '#bb7300' },
+  { value: 'Huawei', type: 'circle', color: '#bb0067' },
+  { value: 'Sony', type: 'circle', color: '#167300' },
 ];
 
 const data3 = [

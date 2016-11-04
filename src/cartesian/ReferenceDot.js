@@ -2,13 +2,13 @@
  * @fileOverview Reference Line
  */
 import React, { Component, PropTypes } from 'react';
+import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Dot from '../shape/Dot';
 import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
-import { validateCoordinateInRange } from '../util/DataUtils';
-import _ from 'lodash';
+import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';
 
 @pureRender
 class ReferenceDot extends Component {
@@ -80,7 +80,7 @@ class ReferenceDot extends Component {
       return React.cloneElement(label, props);
     } else if (_.isFunction(label)) {
       return label(props);
-    } else if (_.isString(label) || _.isNumber(label)) {
+    } else if (isNumOrStr(label)) {
       return (
         <g className="recharts-reference-dot-label">
           <Text {...props}>{label}</Text>
@@ -114,8 +114,8 @@ class ReferenceDot extends Component {
 
   render() {
     const { x, y } = this.props;
-    const isX = _.isNumber(x) || _.isString(x);
-    const isY = _.isNumber(y) || _.isString(y);
+    const isX = isNumOrStr(x);
+    const isY = isNumOrStr(y);
 
     if (!isX || !isY) { return null; }
 

@@ -4,13 +4,13 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, Brush,
   ReferenceArea, ReferenceLine, ReferenceDot, ResponsiveContainer } from 'recharts';
 
 const data = [
-  { name: 'Page A', uv: 4000, pv: 2400, amt: 2400 },
-  { name: 'Page B', uv: 3000, pv: 1398, amt: 2210 },
-  { name: 'Page C', uv: 2000, pv: 9800, amt: 2290 },
-  { name: 'Page D', uv: 2780, pv: 3908, amt: 2000 },
-  { name: 'Page E', uv: 2500, pv: 4800, amt: 2181 },
-  { name: 'Page F', uv: 1220, pv: 3800, amt: 2500 },
-  { name: 'Page G', uv: 2300, pv: 4300, amt: 2100 },
+  { name: 'Page A', uv: 4000, pv: 2400, amt: 2400, time: 1 },
+  { name: 'Page B', uv: 3000, pv: 1398, amt: 2210, time: 3 },
+  { name: 'Page C', uv: 2000, pv: 9800, amt: 2290, time: 9 },
+  { name: 'Page D', uv: 2780, pv: 3908, amt: 2000, time: 10 },
+  { name: 'Page E', uv: 2500, pv: 4800, amt: 2181, time: 12 },
+  { name: 'Page F', uv: 1220, pv: 3800, amt: 2500, time: 16 },
+  { name: 'Page G', uv: 2300, pv: 4300, amt: 2100, time: 18 },
 ];
 const data01 = [
   { day: '05-01', weather: 'sunny' },
@@ -115,7 +115,7 @@ export default React.createClass({
             margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
             syncId="test"
           >
-            <XAxis dataKey="name" label="province"/>
+            <XAxis dataKey="time" type="number" label="province"/>
             <YAxis />
             <Tooltip />
             <Area
@@ -149,6 +149,7 @@ export default React.createClass({
             />
           </AreaChart>
         </div>
+
 
         <p>Stacked AreaChart | Stack Offset Expand</p>
         <div className="area-chart-wrapper">
@@ -330,7 +331,6 @@ export default React.createClass({
             <Area type="stepAfter" dataKey="weather" stroke="#0088FE" />
           </AreaChart>
         </div>
-
       </div>
     );
   },
