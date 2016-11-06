@@ -83,7 +83,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     }
 
     componentWillReceiveProps(nextProps) {
-      if (nextProps.data !== this.props.data || nextProps.children !== this.props.children) {
+      if (nextProps.data !== this.props.data || nextProps.children !== this.props.children
+        || nextProps.width !== this.props.width || nextProps.height !== this.props.height) {
         const defaultState = this.createDefaultState(nextProps);
         this.setState({ ...defaultState,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
