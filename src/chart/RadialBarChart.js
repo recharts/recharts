@@ -241,6 +241,7 @@ class RadialBarChart extends Component {
         type: 'square',
         color: entry.fill || '#000',
         value: entry.name,
+        payload: entry,
       }));
 
     return React.cloneElement(legendItem, {

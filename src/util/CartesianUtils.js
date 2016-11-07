@@ -391,6 +391,7 @@ export const getLegendProps = (children, graphicItems, width) => {
         type: legendType || 'square',
         color: getMainColorOfGraphicItem(child),
         value: name || dataKey,
+        payload: child.props,
       };
     }, this);
 
