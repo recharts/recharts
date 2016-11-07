@@ -22,6 +22,7 @@ class CartesianAxis extends Component {
     width: PropTypes.number,
     height: PropTypes.number,
     orientation: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
+    // The viewBox of svg
     viewBox: PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -93,29 +94,78 @@ class CartesianAxis extends Component {
   static getAutoIntervalTicks(ticks, tickFormatter, viewBox, orientation, minTickGap) {
     const { x, y, width, height } = viewBox;
     const sizeKey = (orientation === 'top' || orientation === 'bottom') ? 'width' : 'height';
-    const sign = ticks.length >= 2 ? Math.sign(ticks[1].coordinate - ticks[0].coordinate) : 1;
+    const posKey = (orientation === 'top' || orientation === 'bottom') ? 'x' : 'y';
+    const result = (ticks || []).slice();
+    const len = result.length;
+    const sign = len >= 2 ? Math.sign(result[1].coordinate - result[0].coordinate) : 1;
 
-    let pointer;
+    let start, end;
 
     if (sign === 1) {
-      pointer = sizeKey === 'width' ? x : y;
+      start = sizeKey === 'width' ? x : y;
+      end = sizeKey === 'width' ? x + width : y + height;
     } else {
-      pointer = sizeKey === 'width' ? x + width : y + height;
+      start = sizeKey === 'width' ? x + width : y + height;
+      end = sizeKey === 'width' ? x : y;
+    }
+    const step = Math.ceil(len / 2);
+
+    for (let i = 0; i < step; i++) {
+      // the middle tick
+      if (len % 2 && i === len - 1 - i) {
+        const middle = result[i];
+        const content = _.isFunction(tickFormatter) ? tickFormatter(middle.value) : middle.value;
+        const size = getStringSize(content)[sizeKey];
+        const isShow = (sign * (middle.coordinate - sign * size / 2 - start) >= 0) &&
+          (sign * (middle.coordinate + sign * size / 2 - end) <= 0);
+
+        if (isShow) {
+          result[i] = { ...result[i], tickCoord: middle.coordinate, isShow };
+        }
+      } else {
+        let head = result[i];
+        const headContent = _.isFunction(tickFormatter) ? tickFormatter(head.value) : head.value;
+        const headSize = getStringSize(headContent)[sizeKey];
+        let tail = result[len - 1 - i];
+        const tailContent = _.isFunction(tickFormatter) ? tickFormatter(tail.value) : tail.value;
+        const tailSize = getStringSize(tailContent)[sizeKey];
+
+        if (i === 0) {
+          const tailGap = sign * (tail.coordinate + sign * tailSize / 2 - end);
+          result[len - 1 - i] = tail = {
+            ...tail,
+            tickCoord: tailGap > 0 ? tail.coordinate - tailGap * sign : tail.coordinate,
+          };
+
+          const headGap = sign * (head.coordinate - sign * headSize / 2 - start);
+          result[i] = head = {
+            ...head,
+            tickCoord: headGap < 0 ? head.coordinate - headGap * sign : head.coordinate,
+          };
+        } else {
+          result[i] = head = { ...head, tickCoord: head.coordinate };
+          result[len - 1 - i] = tail = { ...tail, tickCoord: tail.coordinate };
+        }
+
+        const isTailShow = (sign * (tail.tickCoord - sign * tailSize / 2 - start) >= 0) &&
+          (sign * (tail.tickCoord + sign * tailSize / 2 - end)) <= 0;
+
+        if (isTailShow) {
+          end = tail.tickCoord - sign * (tailSize / 2 + minTickGap);
+          result[len - 1 - i] = { ...tail, isShow: true };
+        }
+
+        const isHeadShow = (sign * (head.tickCoord - sign * headSize / 2 - start) >= 0) &&
+          (sign * (head.tickCoord + sign * headSize / 2 - end)) <= 0;
+
+        if (isHeadShow) {
+          start = head.tickCoord + sign * (headSize / 2 + minTickGap);
+          result[i] = { ...head, isShow: true };
+        }
+      }
     }
 
-    return ticks.filter((entry) => {
-      const tickContent = _.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value;
-      const tickSize = getStringSize(tickContent)[sizeKey];
-      const isShow = sign === 1 ?
-        (entry.coordinate - tickSize / 2) >= pointer :
-        (entry.coordinate + tickSize / 2) <= pointer;
-
-      if (isShow) {
-        pointer = entry.coordinate + sign * tickSize / 2 + minTickGap;
-      }
-
-      return isShow;
-    });
+    return result.filter(entry => entry.isShow);
   }
 
   shouldComponentUpdate({ viewBox, ...restProps }, state) {
@@ -134,34 +184,39 @@ class CartesianAxis extends Component {
    */
   getTickLineCoord(data) {
     const { x, y, width, height, orientation, tickSize } = this.props;
-    let x1, x2, y1, y2;
+    let x1, x2, y1, y2, tx, ty;
 
     const finalTickSize = data.tickSize || tickSize;
+    const tickCoord = isNumber(data.tickCoord) ? data.tickCoord : data.coordinate;
 
     switch (orientation) {
       case 'top':
         x1 = x2 = data.coordinate;
-        y1 = y + height - finalTickSize;
+        y1 = ty = y + height - finalTickSize;
         y2 = y + height;
+        tx = tickCoord;
         break;
       case 'left':
         y1 = y2 = data.coordinate;
-        x1 = x + width - finalTickSize;
+        x1 = tx = x + width - finalTickSize;
         x2 = x + width;
+        ty = tickCoord;
         break;
       case 'right':
         y1 = y2 = data.coordinate;
-        x1 = x + finalTickSize;
+        x1 = tx = x + finalTickSize;
         x2 = x;
+        ty = tickCoord;
         break;
       default:
         x1 = x2 = data.coordinate;
-        y1 = y + finalTickSize;
+        y1 = ty = y + finalTickSize;
         y2 = y;
+        tx = tickCoord;
         break;
     }
 
-    return { x1, y1, x2, y2 };
+    return { line: { x1, y1, x2, y2 }, tick: { x: tx, y: ty } };
   }
 
   getBaseline() {
@@ -300,14 +355,15 @@ class CartesianAxis extends Component {
       ...axisProps, fill: 'none', ...getPresentationAttributes(tickLine),
     };
     const items = finalTicks.map((entry, i) => {
-      const lineCoord = this.getTickLineCoord(entry);
+      const { line: lineCoord, tick: tickCoord } = this.getTickLineCoord(entry);
       const tickProps = {
         textAnchor,
         verticalAnchor,
         ...axisProps,
         stroke: 'none', fill: stroke,
         ...customTickProps,
-        index: i, x: lineCoord.x1, y: lineCoord.y1, payload: entry,
+        ...tickCoord,
+        index: i, payload: entry,
       };
 
       return (
