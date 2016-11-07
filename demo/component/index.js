@@ -24,6 +24,8 @@ import RadialBarChart from './RadialBarChart';
 import Treemap from './Treemap';
 import Sankey from './Sankey';
 
+import ResponsiveContainer from './ResponsiveContainer';
+
 export default {
   chartWrapper: {
     LineChart,
@@ -61,4 +63,8 @@ export default {
     Rectangle,
     Sector,
   },
+
+  other: {
+    ResponsiveContainer,
+  }
 };
