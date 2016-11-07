@@ -1,6 +1,6 @@
 import React from 'react';
 import { changeNumberOfData } from './utils';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, Brush,
+import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, Brush, Legend,
   ReferenceArea, ReferenceLine, ReferenceDot, ResponsiveContainer } from 'recharts';
 
 const data = [
@@ -147,6 +147,7 @@ export default React.createClass({
               dot
               activeDot={renderCustomizedActiveDot}
             />
+            <Legend layout="vertical" />
           </AreaChart>
         </div>
 

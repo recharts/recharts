@@ -25,7 +25,7 @@ import { getPresentationAttributes, findChildByType, filterSvgElements,
 import pureRender from '../util/PureRender';
 import { parseSpecifiedDomain, isNumber } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
-import { detectReferenceElementsDomain, getTicksOfAxis,
+import { appendOffsetOfLegend, detectReferenceElementsDomain, getTicksOfAxis,
   getCoordinatesOfGrid, getLegendProps, getTicksOfScale } from '../util/CartesianUtils';
 
 @pureRender
@@ -160,25 +160,15 @@ class ScatterChart extends Component {
 
   getOffset(items, xAxis, yAxis) {
     const { children, width, height, margin } = this.props;
-    const offset = {
+    let offset = {
       left: margin.left || 0, right: margin.right || 0,
       top: margin.top || 0, bottom: margin.bottom || 0,
     };
-    const legendProps = getLegendProps(children, items, width, height);
 
     offset[xAxis.orientation] += xAxis.height;
     offset[yAxis.orientation] += yAxis.width;
 
-    if (legendProps) {
-      const box = Legend.getLegendBBox(legendProps, width, height) || {};
-      if (legendProps.layout === 'horizontal' &&
-        isNumber(offset[legendProps.verticalAlign])) {
-        offset[legendProps.verticalAlign] += box.height || 0;
-      } else if (legendProps.layout === 'vertical' &&
-        isNumber(offset[legendProps.align])) {
-        offset[legendProps.align] += box.width || 0;
-      }
-    }
+    offset = appendOffsetOfLegend(offset, items, this.props);
 
     return {
       ...offset,

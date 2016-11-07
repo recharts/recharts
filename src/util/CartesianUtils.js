@@ -529,3 +529,26 @@ export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = []
 
   return result;
 };
+
+export const appendOffsetOfLegend = (offset, items, props) => {
+  const { children, width, height } = props;
+  const legendProps = getLegendProps(children, items, width);
+  let newOffset = offset;
+
+  if (legendProps) {
+    const box = Legend.getLegendBBox(legendProps, width, height) || {};
+    const { align, verticalAlign, layout } = legendProps;
+
+    if ((layout === 'vertical' || (layout === 'horizontal' && verticalAlign === 'center')) &&
+      isNumber(offset[align])) {
+      newOffset = { ...offset, [align]: newOffset[align] + (box.width || 0) };
+    }
+
+    if ((layout === 'horizontal' || (layout === 'vertical' && align === 'center')) &&
+      isNumber(offset[verticalAlign])) {
+      newOffset = { ...offset, [verticalAlign]: newOffset[verticalAlign] + (box.height || 0) };
+    }
+  }
+
+  return newOffset;
+};

@@ -26,6 +26,7 @@ import { calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
   getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
   getStackGroupsByAxisId, getTicksOfAxis, isCategorialAxis, getTicksOfScale,
+  appendOffsetOfLegend,
 } from '../util/CartesianUtils';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
 
@@ -525,30 +526,21 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         return { ...result, [orientation]: result[orientation] + (entry.hide ? 0 : entry.height) };
       }, { top: margin.top || 0, bottom: margin.bottom || 0 });
 
-      const brushBottom = offsetV.bottom;
+      let offset = { ...offsetV, ...offsetH };
+
+      const brushBottom = offset.bottom;
 
       if (brushItem) {
-        offsetV.bottom += brushItem.props.height || Brush.defaultProps.height;
+        offset.bottom += brushItem.props.height || Brush.defaultProps.height;
       }
 
-      const legendProps = getLegendProps(children, items, width);
-      if (legendProps) {
-        const box = Legend.getLegendBBox(legendProps, width, height) || {};
-        if (legendProps.layout === 'horizontal' &&
-          isNumber(offsetV[legendProps.verticalAlign])) {
-          offsetV[legendProps.verticalAlign] += box.height || 0;
-        } else if (legendProps.layout === 'vertical' &&
-          isNumber(offsetH[legendProps.align])) {
-          offsetH[legendProps.align] += box.width || 0;
-        }
-      }
+      offset = appendOffsetOfLegend(offset, items, props);
 
       return {
         brushBottom,
-        ...offsetH,
-        ...offsetV,
-        width: width - offsetH.left - offsetH.right,
-        height: height - offsetV.top - offsetV.bottom,
+        ...offset,
+        width: width - offset.left - offset.right,
+        height: height - offset.top - offset.bottom,
       };
     }
 
