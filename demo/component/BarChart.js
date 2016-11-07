@@ -239,7 +239,7 @@ export default React.createClass({
         <div className="bar-chart-wrapper">
           <BarChart width={400} height={400} data={data} layout="vertical" maxBarSize={10} >
             <XAxis type="number" />
-            <YAxis dataKey="time" type="number"/>
+            <YAxis dataKey="name" type="category"/>
             <CartesianGrid horizontal={false} />
             <Bar dataKey="uv" fill="#ff7300" maxBarSize={15} />
             <Bar dataKey="pv" fill="#387908" />
@@ -318,9 +318,10 @@ export default React.createClass({
             <YAxis />
             <Tooltip />
             <CartesianGrid vertical={false}/>
-            <Bar stackId="0" dataKey="uv" fill="#ff7300"/>
-            <Bar stackId="0" dataKey="pv" fill="#387908" label={RenderLabel}/>
+            <Bar stackId="0" dataKey="uv" fill="#ff7300" label={RenderLabel} />
+            <Bar stackId="0" dataKey="pv" fill="#387908" />
             <Bar dataKey="amt" fill="#387908" label={RenderLabel}/>
+            <Legend layout="vertical" />
           </BarChart>
         </div>
       </div>

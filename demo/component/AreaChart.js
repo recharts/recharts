@@ -125,6 +125,7 @@ export default React.createClass({
               stroke="#ff7300"
               fill="#ff7300"
               dot
+              label={renderLabel}
               activeDot={renderCustomizedActiveDot}
             />
             <Area
@@ -143,7 +144,6 @@ export default React.createClass({
               stroke="#387908"
               fill="#387908"
               animationBegin={1300}
-              label={renderLabel}
               dot
               activeDot={renderCustomizedActiveDot}
             />
@@ -167,6 +167,7 @@ export default React.createClass({
               dataKey="uv"
               stroke="#ff7300"
               fill="#ff7300"
+              label={renderLabel}
               dot
               activeDot={renderCustomizedActiveDot}
             />
@@ -176,7 +177,6 @@ export default React.createClass({
               stroke="#387908"
               fill="#387908"
               animationBegin={1300}
-              label={renderLabel}
               dot
               activeDot={renderCustomizedActiveDot}
             />
@@ -197,6 +197,7 @@ export default React.createClass({
               dataKey="uv"
               stroke="#ff7300"
               fill="#ff7300"
+              label={renderLabel}
               dot
               activeDot={renderCustomizedActiveDot}
             />
@@ -206,7 +207,6 @@ export default React.createClass({
               stroke="#387908"
               fill="#387908"
               animationBegin={1300}
-              label={renderLabel}
               dot
               activeDot={renderCustomizedActiveDot}
             />
