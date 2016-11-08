@@ -670,6 +670,20 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       }
     };
 
+    handleClick = (e) => {
+      const { onClick } = this.props;
+
+      if (_.isFunction(onClick)) {
+        const { offset } = this.state;
+        const container = this.container;
+        const containerOffset = getOffset(container);
+        const ne = calculateChartCoordinate(e, containerOffset);
+        const mouse = this.getMouseInfo(offset, ne);
+
+        onClick(mouse, e);
+      }
+    };
+
     validateAxes() {
       const { layout, children } = this.props;
       const xAxes = findAllByType(children, XAxis);
@@ -906,15 +920,14 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { data } = this.props;
       if (!validateWidthHeight(this) || !data || !data.length) { return null; }
 
-      const { children, className, width, height, style, onClick,
-        ...others } = this.props;
+      const { children, className, width, height, style, ...others } = this.props;
       const { xAxisMap, yAxisMap } = this.state;
 
       const events = {
         onMouseEnter: this.handleMouseEnter,
         onMouseMove: this.handleMouseMove,
         onMouseLeave: this.handleMouseLeave,
-        onClick,
+        onClick: this.handleClick,
       };
       const attrs = getPresentationAttributes(others);
 

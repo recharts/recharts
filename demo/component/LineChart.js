@@ -72,6 +72,10 @@ export default React.createClass({
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
   },
 
+  handleClick(data, e) {
+    console.log(data);
+  },
+
   render() {
     const { data, data01, data02 } = this.state;
 
@@ -101,7 +105,13 @@ export default React.createClass({
 
         <p>A simple LineChart with customized line dot</p>
         <div className='line-chart-wrapper'>
-          <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }} syncId="test">
+          <LineChart
+            width={400}
+            height={400}
+            data={data}
+            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+            syncId="test"
+          >
             <CartesianGrid stroke='#f5f5f5'/>
             <Legend />
             <XAxis />
@@ -113,8 +123,13 @@ export default React.createClass({
 
         <p>LineChart with two y-axes</p>
         <div className='line-chart-wrapper' style={{ padding: 40 }}>
-          <LineChart width={400} height={400} data={data}
-            margin={{top: 10, bottom: 10, left: 30, right: 30}}>
+          <LineChart
+            width={400}
+            height={400}
+            data={data}
+            margin={{top: 10, bottom: 10, left: 30, right: 30}}
+            onClick={this.handleClick}
+          >
             <XAxis dataKey='name'/>
             <Tooltip/>
             <CartesianGrid stroke='#f5f5f5'/>
