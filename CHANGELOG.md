@@ -1,3 +1,18 @@
+## 0.17.0 (Nov 08, 2016)
+
+### fix
+
+- fix strokeDasharray of Line
+- add payload in Legend payload item
+- fix position of vertical Legend
+
+### refactor
+
+- refactor ticks filter algorithm of CartesianAxis
+- change order of stacked BarChart and AreaChart
+- refactor event handlers of PieChart, RadarChart, Brush, RadialBarChart
+- support onMouseEnter, onMouseLeave, onMouseMove, onClick in categorical chart
+
 ## 0.16.2 (Nov 04, 2016)
 
 ### fix
