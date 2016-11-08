@@ -209,7 +209,6 @@ describe('<LineChart />', () => {
         <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
         <Tooltip />
         <Brush />
-        <Legend layout="vertical" />
       </LineChart>
     );
 
@@ -252,7 +251,6 @@ describe('<LineChart />', () => {
         <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
         <Tooltip />
         <Brush />
-        <Legend layout="vertical" />
       </LineChart>
     );
 
