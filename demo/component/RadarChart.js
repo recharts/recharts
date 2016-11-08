@@ -27,6 +27,10 @@ class RadarChartDemo extends React.Component {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
   }
 
+  handleMouseEnter(props) {
+    console.log(props);
+  }
+
   render() {
     const { data } = this.state;
 
@@ -48,12 +52,20 @@ class RadarChartDemo extends React.Component {
         </RadarChart>
 
         <p>A RadarChart of two students' score</p>
-        <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
+        <RadarChart
+          cx={300}
+          cy={250}
+          outerRadius={150}
+          width={600}
+          height={500}
+          data={data}
+        >
           <Radar name="Mike"
             dataKey="A"
             stroke="#8884d8"
             fill="#8884d8"
             fillOpacity={0.6}
+            onMouseEnter={this.handleMouseEnter}
           />
           <Radar name="Lily"
             dataKey="B"

@@ -46,6 +46,7 @@ class Radar extends Component {
 
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
+    onClick: PropTypes.func,
     isAnimationActive: PropTypes.bool,
     animationId: PropTypes.number,
     animationBegin: PropTypes.number,

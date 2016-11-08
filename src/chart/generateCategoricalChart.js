@@ -20,8 +20,8 @@ import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
-import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate,
-  isNumber } from '../util/DataUtils';
+import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate, isNumber,
+  combineEventHandlers } from '../util/DataUtils';
 import { calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
   getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
@@ -820,7 +820,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       if (!brushItem) { return null; }
 
       return React.cloneElement(brushItem, {
-        onChange: this.handleBrushChange,
+        onChange: combineEventHandlers(this.handleBrushChange, null, brushItem.props.onChange),
         data,
         x: offset.left,
         y: offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
@@ -903,8 +903,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             {filterSvgElements(children)}
           </Surface>
           {this.renderLegend(items)}
-          {tooltipItem && this.renderTooltip({ tooltipItem,
-            items, offset })}
+          {tooltipItem && this.renderTooltip({ tooltipItem, items, offset })}
         </div>
       );
     }

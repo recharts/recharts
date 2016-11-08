@@ -180,7 +180,7 @@ export default React.createClass({
         <p>PieChart wrapped by ResponsiveContainer</p>
         <div className="pie-chart-wrapper" style={{ width: '50%', height: '100%', backgroundColor: '#f5f5f5' }}>
           <ResponsiveContainer>
-            <PieChart onMouseEnter={this.onPieEnter}>
+            <PieChart onClick={this.onPieEnter}>
               <Pie
                 data={data01}
                 innerRadius="25%"

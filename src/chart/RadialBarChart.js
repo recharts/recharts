@@ -7,7 +7,7 @@ import { scaleBand } from 'd3-scale';
 import _ from 'lodash';
 import Surface from '../container/Surface';
 import RadialBar from '../polar/RadialBar';
-import { getPercentValue } from '../util/DataUtils';
+import { getPercentValue, combineEventHandlers } from '../util/DataUtils';
 import Cell from '../component/Cell';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
@@ -188,7 +188,7 @@ class RadialBarChart extends Component {
   }
 
   handleMouseEnter = (el, index, e) => {
-    const { children, onMouseEnter } = this.props;
+    const { children } = this.props;
     const { cx, cy, endAngle, outerRadius } = el;
     const tooltipItem = findChildByType(children, Tooltip);
 
@@ -197,30 +197,18 @@ class RadialBarChart extends Component {
         isTooltipActive: true,
         activeTooltipCoord: polarToCartesian(cx, cy, outerRadius, endAngle),
         activeTooltipPayload: [el.payload],
-      }, () => {
-        if (onMouseEnter) {
-          onMouseEnter(el, index, e);
-        }
       });
-    } else if (onMouseEnter) {
-      onMouseEnter(el, index, e);
     }
   };
 
   handleMouseLeave = (el, index, e) => {
-    const { children, onMouseLeave } = this.props;
+    const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
     if (tooltipItem) {
       this.setState({
         isTooltipActive: false,
-      }, () => {
-        if (onMouseLeave) {
-          onMouseLeave(el, index, e);
-        }
       });
-    } else if (onMouseLeave) {
-      onMouseLeave(el, index, e);
     }
   };
 
@@ -283,20 +271,21 @@ class RadialBarChart extends Component {
   renderItems(items, radiusScale, center) {
     if (!items || !items.length) { return null; }
 
-    const { onClick } = this.props;
+    const { onMouseEnter, onMouseLeave, onClick } = this.props;
     const radiusList = this.getRadiusList(items);
     const bandRadius = radiusScale.bandwidth();
     const barPosition = this.getBarPosition(bandRadius, radiusList);
 
     return items.map((child, i) => {
-      const { dataKey } = child.props;
+      const { dataKey, onMouseEnter: childOnMouseEnter, onMouseLeave: childOnMouseLeave,
+        onClick: childOnClick } = child.props;
 
       return React.cloneElement(child, {
         ...center,
         key: `radial-bar-${i}`,
-        onMouseEnter: this.handleMouseEnter,
-        onMouseLeave: this.handleMouseLeave,
-        onClick,
+        onMouseEnter: combineEventHandlers(this.handleMouseEnter, onMouseEnter, childOnMouseEnter),
+        onMouseLeave: combineEventHandlers(this.handleMouseLeave, onMouseLeave, childOnMouseLeave),
+        onClick: combineEventHandlers(null, onClick, childOnClick),
         data: this.getComposedData(child, barPosition, radiusScale, center, dataKey),
       });
     }, this);

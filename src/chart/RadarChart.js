@@ -19,7 +19,7 @@ import { validateWidthHeight, findChildByType, findAllByType, filterSvgElements,
   getPresentationAttributes } from '../util/ReactUtils';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
-import { getPercentValue, parseSpecifiedDomain } from '../util/DataUtils';
+import { getPercentValue, parseSpecifiedDomain, combineEventHandlers } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
 import AnimationDecorator from '../util/AnimationDecorator';
 
@@ -56,6 +56,7 @@ class RadarChart extends Component {
 
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
+    onClick: PropTypes.func,
   };
 
   static defaultProps = {
@@ -218,7 +219,7 @@ class RadarChart extends Component {
   }
 
   handleMouseEnter = (itemProps, e) => {
-    const { children, onMouseEnter } = this.props;
+    const { children } = this.props;
     const { points } = itemProps;
     const tooltipItem = findChildByType(children, Tooltip);
 
@@ -232,13 +233,7 @@ class RadarChart extends Component {
         activeTooltipLabel: itemProps.name || itemProps.dataKey,
         activeTooltipCoord: { x: ne.chartX, y: ne.chartY },
         activeTooltipPayload: this.getTooltipContent(itemProps),
-      }, () => {
-        if (onMouseEnter) {
-          onMouseEnter(points, e);
-        }
       });
-    } else if (onMouseEnter) {
-      onMouseEnter(points, e);
     }
   };
 
@@ -249,20 +244,16 @@ class RadarChart extends Component {
     if (tooltipItem) {
       this.setState({
         isTooltipActive: false,
-      }, () => {
-        if (onMouseLeave) {
-          onMouseLeave(itemProps, e);
-        }
       });
-    } else if (onMouseLeave) {
-      onMouseLeave(itemProps, e);
     }
   };
 
   renderRadars(items, scale, cx, cy) {
     if (!items || !items.length) { return null; }
 
+    const { onMouseEnter, onMouseLeave, onClick } = this.props;
     const baseProps = getPresentationAttributes(this.props);
+
     return items.map((el, index) => (
       React.cloneElement(el, {
         ...baseProps,
@@ -270,8 +261,11 @@ class RadarChart extends Component {
         animationId: this.props.animationId,
         points: this.getComposedData(el, scale, cx, cy),
         key: `radar-${index}`,
-        onMouseEnter: this.handleMouseEnter,
-        onMouseLeave: this.handleMouseLeave,
+        onMouseEnter: combineEventHandlers(
+          this.handleMouseEnter, onMouseEnter, el.props.onMouseEnter),
+        onMouseLeave: combineEventHandlers(
+          this.handleMouseLeave, onMouseLeave, el.props.onMouseLeave),
+        onClick: combineEventHandlers(null, onClick, el.props.onClick),
       })));
   }
 

@@ -149,3 +149,33 @@ export const hasDuplicate = (ary) => {
 
   return false;
 };
+/**
+ * combine the handlers
+ * @param  {Function} defaultHandler Internal private handler
+ * @param  {Function} parentHandler  Handler function specified in parent component
+ * @param  {Function} childHandler   Handler function specified in child component
+ * @return {Function}                The combined handler
+ */
+export const combineEventHandlers = (defaultHandler, parentHandler, childHandler) => {
+  let customizedHandler;
+
+  if (_.isFunction(childHandler)) {
+    customizedHandler = childHandler;
+  } else if (_.isFunction(parentHandler)) {
+    customizedHandler = parentHandler;
+  }
+
+  if (_.isFunction(defaultHandler) || customizedHandler) {
+    return (arg1, arg2, arg3, arg4) => {
+      if (_.isFunction(defaultHandler)) {
+        defaultHandler(arg1, arg2, arg3, arg4);
+      }
+
+      if (_.isFunction(customizedHandler)) {
+        customizedHandler(arg1, arg2, arg3, arg4);
+      }
+    };
+  }
+
+  return null;
+};

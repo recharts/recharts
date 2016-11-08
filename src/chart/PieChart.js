@@ -8,7 +8,7 @@ import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import Pie from '../polar/Pie';
 import Cell from '../component/Cell';
-import { getPercentValue } from '../util/DataUtils';
+import { getPercentValue, combineEventHandlers } from '../util/DataUtils';
 import { findChildByType, findAllByType, validateWidthHeight, filterSvgElements,
   getPresentationAttributes } from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
@@ -74,7 +74,7 @@ export class PieChart extends Component {
   };
 
   handleMouseEnter = (el, index, e) => {
-    const { children, onMouseEnter } = this.props;
+    const { children } = this.props;
     const { cx, cy, outerRadius, midAngle } = el;
     const tooltipItem = findChildByType(children, Tooltip);
 
@@ -83,30 +83,18 @@ export class PieChart extends Component {
         isTooltipActive: true,
         activeTooltipCoord: polarToCartesian(cx, cy, outerRadius, midAngle),
         activeTooltipPayload: [el],
-      }, () => {
-        if (onMouseEnter) {
-          onMouseEnter(el, index, e);
-        }
       });
-    } else if (onMouseEnter) {
-      onMouseEnter(el, index, e);
     }
   };
 
   handleMouseLeave = (el, index, e) => {
-    const { children, onMouseLeave } = this.props;
+    const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
     if (tooltipItem) {
       this.setState({
         isTooltipActive: false,
-      }, () => {
-        if (onMouseLeave) {
-          onMouseLeave(el, index, e);
-        }
       });
-    } else if (onMouseLeave) {
-      onMouseLeave(el, index, e);
     }
   };
   /**
@@ -169,10 +157,12 @@ export class PieChart extends Component {
    * @return {ReactComponent} All the instance of Pie
    */
   renderItems(items) {
-    const { width, height, margin, onClick, allComposedData } = this.props;
+    const { width, height, margin, allComposedData, onMouseEnter, onMouseLeave,
+      onClick } = this.props;
 
     return items.map((child, i) => {
-      const { innerRadius, outerRadius } = child.props;
+      const { innerRadius, outerRadius, onMouseEnter: childOnMouseEnter,
+        onMouseLeave: childOnMouseLeave, onClick: childOnClick } = child.props;
       const cx = getPercentValue(child.props.cx, width, width / 2);
       const cy = getPercentValue(child.props.cy, height, height / 2);
       const maxRadius = getMaxRadius(width, height, margin);
@@ -185,9 +175,9 @@ export class PieChart extends Component {
         innerRadius: getPercentValue(innerRadius, maxRadius, 0),
         outerRadius: getPercentValue(outerRadius, maxRadius, maxRadius * 0.8),
         composedData: allComposedData[i],
-        onMouseEnter: this.handleMouseEnter,
-        onMouseLeave: this.handleMouseLeave,
-        onClick,
+        onMouseEnter: combineEventHandlers(this.handleMouseEnter, onMouseEnter, childOnMouseEnter),
+        onMouseLeave: combineEventHandlers(this.handleMouseLeave, onMouseLeave, childOnMouseLeave),
+        onClick: combineEventHandlers(null, onClick, childOnClick),
       });
     });
   }
