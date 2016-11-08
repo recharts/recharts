@@ -159,7 +159,7 @@ class ScatterChart extends Component {
   }
 
   getOffset(items, xAxis, yAxis) {
-    const { children, width, height, margin } = this.props;
+    const { width, height, margin } = this.props;
     let offset = {
       left: margin.left || 0, right: margin.right || 0,
       top: margin.top || 0, bottom: margin.bottom || 0,

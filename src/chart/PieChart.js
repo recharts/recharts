@@ -87,7 +87,7 @@ export class PieChart extends Component {
     }
   };
 
-  handleMouseLeave = (el) => {
+  handleMouseLeave = () => {
     const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 

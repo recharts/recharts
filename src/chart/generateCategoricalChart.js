@@ -859,7 +859,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     renderBrush() {
       const { children, margin, data } = this.props;
-      const { xAxisMap, yAxisMap, offset, dataStartIndex, dataEndIndex } = this.state;
+      const { offset, dataStartIndex, dataEndIndex } = this.state;
       const brushItem = findChildByType(children, Brush);
 
       if (!brushItem) { return null; }
@@ -908,7 +908,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       const { children, className, width, height, style, onClick,
         ...others } = this.props;
-      const { xAxisMap, yAxisMap, offset, stackGroups } = this.state;
+      const { xAxisMap, yAxisMap } = this.state;
 
       const events = {
         onMouseEnter: this.handleMouseEnter,
