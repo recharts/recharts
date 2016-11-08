@@ -94,7 +94,6 @@ class CartesianAxis extends Component {
   static getAutoIntervalTicks(ticks, tickFormatter, viewBox, orientation, minTickGap) {
     const { x, y, width, height } = viewBox;
     const sizeKey = (orientation === 'top' || orientation === 'bottom') ? 'width' : 'height';
-    const posKey = (orientation === 'top' || orientation === 'bottom') ? 'x' : 'y';
     const result = (ticks || []).slice();
     const len = result.length;
     const sign = len >= 2 ? Math.sign(result[1].coordinate - result[0].coordinate) : 1;

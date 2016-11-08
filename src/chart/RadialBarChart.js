@@ -187,7 +187,7 @@ class RadialBarChart extends Component {
     };
   }
 
-  handleMouseEnter = (el, index, e) => {
+  handleMouseEnter = (el) => {
     const { children } = this.props;
     const { cx, cy, endAngle, outerRadius } = el;
     const tooltipItem = findChildByType(children, Tooltip);
@@ -201,7 +201,7 @@ class RadialBarChart extends Component {
     }
   };
 
-  handleMouseLeave = (el, index, e) => {
+  handleMouseLeave = (el) => {
     const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 

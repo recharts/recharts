@@ -97,10 +97,12 @@ export default ({ getComposedData, ChildComponent }) => WrappedComponent =>
     componentWillReceiveProps(nextProps) {
 
       const { graphicalItems, children, chartX, chartY,
-        activeTooltipIndex, isTooltipActive, ...restNextProps } = nextProps;
+        activeTooltipIndex, activeLabel, activeCoordinate, activePayload,
+        isTooltipActive, ...restNextProps } = nextProps;
 
       const { graphicalItems: graphicalItemsOld, children: childrenOld,
         chartX: chartXOld, chartY: chartYOld, activeTooltipIndex: aTIOld,
+        activeLabel: aLOld, activeCoordinate: aCOld, activePayload: aPOld,
         isTooltipActive: iTAOld, ...restOldProps } = this.props;
 
       /* eslint-enable no-unused-vars */
@@ -118,6 +120,7 @@ export default ({ getComposedData, ChildComponent }) => WrappedComponent =>
     // props.graphicalItems is sometimes generated every time -
     // check that specially as object equality is likely to fail
       const { graphicalItems: graphicalItemsOld, ...restPropsOld } = this.props;
+
       return !shallowEqual(graphicalItems, graphicalItemsOld) ||
         !shallowEqual(restProps, restPropsOld)
         || !shallowEqual(nextState, this.state);

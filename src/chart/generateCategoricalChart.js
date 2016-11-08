@@ -20,7 +20,7 @@ import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
-import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate, isNumber,
+import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate,
   combineEventHandlers } from '../util/DataUtils';
 import { calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
@@ -60,6 +60,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         PropTypes.arrayOf(PropTypes.node),
         PropTypes.node,
       ]),
+      onClick: PropTypes.func,
+      onMouseLeave: PropTypes.func,
+      onMouseEnter: PropTypes.func,
+      onMouseMove: PropTypes.func,
     };
 
     static defaultProps = {
@@ -110,15 +114,16 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     /**
    * Get the configuration of all x-axis or y-axis
-   * @param  {Object} props     Latest props
-   * @param  {String} axisType    The type of axis
-   * @param  {Array} items        The instances of item
-   * @param  {Object} stackGroups The items grouped by axisId and stackId
-   * @param {Number} dataStartIndex The start index of the data series when a brush is applied
-   * @param {Number} dataEndIndex The end index of the data series when a brush is applied
+   * @param  {Object} props          Latest props
+   * @param  {String} axisType       The type of axis
+   * @param  {Array}  graphicalItems The instances of item
+   * @param  {Object} stackGroups    The items grouped by axisId and stackId
+   * @param {Number} dataStartIndex  The start index of the data series when a brush is applied
+   * @param {Number} dataEndIndex    The end index of the data series when a brush is applied
    * @return {Object}          Configuration
    */
-    getAxisMap(props, { axisType = 'xAxis', items, stackGroups, dataStartIndex, dataEndIndex }) {
+    getAxisMap(props, { axisType = 'xAxis', graphicalItems, stackGroups, dataStartIndex,
+      dataEndIndex }) {
       const { children } = props;
       const Axis = axisType === 'xAxis' ? XAxis : YAxis;
       const axisIdKey = axisType === 'xAxis' ? 'xAxisId' : 'yAxisId';
@@ -128,10 +133,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       let axisMap = {};
 
       if (axes && axes.length) {
-        axisMap = this.getAxisMapByAxes(props, { axes, items, axisType, axisIdKey,
+        axisMap = this.getAxisMapByAxes(props, { axes, graphicalItems, axisType, axisIdKey,
           stackGroups, dataStartIndex, dataEndIndex });
-      } else if (items && items.length) {
-        axisMap = this.getAxisMapByItems(props, { items, Axis, axisType, axisIdKey,
+      } else if (graphicalItems && graphicalItems.length) {
+        axisMap = this.getAxisMapByItems(props, { graphicalItems, Axis, axisType, axisIdKey,
           stackGroups, dataStartIndex, dataEndIndex });
       }
 
@@ -140,17 +145,17 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     /**
      * Get the configuration of axis by the options of axis instance
-     * @param  {Object} props     Latest props
-     * @param {Array}  axes  The instance of axes
-     * @param  {Array} items The instances of item
-     * @param  {String} axisType The type of axis, xAxis - x-axis, yAxis - y-axis
-     * @param  {String} axisIdKey The unique id of an axis
-     * @param  {Object} stackGroups The items grouped by axisId and stackId
+     * @param  {Object} props         Latest props
+     * @param {Array}  axes           The instance of axes
+     * @param  {Array} graphicalItems The instances of item
+     * @param  {String} axisType      The type of axis, xAxis - x-axis, yAxis - y-axis
+     * @param  {String} axisIdKey     The unique id of an axis
+     * @param  {Object} stackGroups   The items grouped by axisId and stackId
      * @param {Number} dataStartIndex The start index of the data series when a brush is applied
-     * @param {Number} dataEndIndex The end index of the data series when a brush is applied
+     * @param {Number} dataEndIndex   The end index of the data series when a brush is applied
      * @return {Object}      Configuration
      */
-    getAxisMapByAxes(props, { axes, items, axisType, axisIdKey,
+    getAxisMapByAxes(props, { axes, graphicalItems, axisType, axisIdKey,
       stackGroups, dataStartIndex, dataEndIndex }) {
       const { layout, children, data } = props;
       const displayedData = data.slice(dataStartIndex, dataEndIndex + 1);
@@ -185,7 +190,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             domain = _.range(0, len);
           } else {
             domain = getDomainOfItemsWithSameAxis(
-              displayedData, items.filter(entry => entry.props[axisIdKey] === axisId), type
+              displayedData, graphicalItems.filter(entry => entry.props[axisIdKey] === axisId), type
             );
           }
           if (type === 'number') {
@@ -219,17 +224,17 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     /**
      * Get the configuration of axis by the options of item,
      * this kind of axis does not display in chart
-     * @param  {Object} props     Latest props
-     * @param  {Array} items       The instances of item
-     * @param  {ReactElement} Axis Axis Component
-     * @param  {String} axisType   The type of axis, xAxis - x-axis, yAxis - y-axis
-     * @param  {String} axisIdKey  The unique id of an axis
-     * @param  {Object} stackGroups The items grouped by axisId and stackId
+     * @param  {Object} props         Latest props
+     * @param  {Array} graphicalItems The instances of item
+     * @param  {ReactElement} Axis    Axis Component
+     * @param  {String} axisType      The type of axis, xAxis - x-axis, yAxis - y-axis
+     * @param  {String} axisIdKey     The unique id of an axis
+     * @param  {Object} stackGroups   The items grouped by axisId and stackId
      * @param {Number} dataStartIndex The start index of the data series when a brush is applied
-     * @param {Number} dataEndIndex The end index of the data series when a brush is applied
-     * @return {Object}            Configuration
+     * @param {Number} dataEndIndex   The end index of the data series when a brush is applied
+     * @return {Object}               Configuration
      */
-    getAxisMapByItems(props, { items, Axis, axisType, axisIdKey,
+    getAxisMapByItems(props, { graphicalItems, Axis, axisType, axisIdKey,
       stackGroups, dataStartIndex, dataEndIndex }) {
       const { layout, children, data } = props;
       const displayedData = data.slice(dataStartIndex, dataEndIndex + 1);
@@ -241,7 +246,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       // The default contents of x-axis is the serial numbers of data
       // The default type of y-axis is number axis
       // The default contents of y-axis is the domain of data
-      const axisMap = items.reduce((result, child) => {
+      const axisMap = graphicalItems.reduce((result, child) => {
         const axisId = child.props[axisIdKey];
 
         if (!result[axisId]) {
@@ -259,7 +264,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             domain = parseSpecifiedDomain(Axis.defaultProps.domain,
               getDomainOfItemsWithSameAxis(
                 displayedData,
-                items.filter(entry => entry.props[axisIdKey] === axisId), 'number'
+                graphicalItems.filter(entry => entry.props[axisIdKey] === axisId), 'number'
               ),
               Axis.defaultProps.allowDataOverflow
             );
@@ -362,9 +367,9 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     }
     /**
      * Get the information of mouse in chart, return null when the mouse is not in the chart
-     * @param  {Object}  offset   The offset of main part in the svg element
-     * @param  {Object}  e        The event object
-     * @return {Object}           Mouse data
+     * @param  {Object} offset   The offset of main part in the svg element
+     * @param  {Object} e        The event object
+     * @return {Object}          Mouse data
      */
     getMouseInfo(offset, e) {
       const isIn = e.chartX >= offset.left
@@ -375,35 +380,44 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       if (!isIn) { return null; }
 
       const { layout } = this.props;
-      const { tooltipTicks: ticks, tooltipAxis: axis } = this.state;
+      const { orderedTooltipTicks: ticks, tooltipAxis: axis, tooltipTicks } = this.state;
       const pos = layout === 'horizontal' ? e.chartX : e.chartY;
       const activeIndex = calculateActiveTickIndex(pos, ticks, axis);
 
       if (activeIndex >= 0) {
+        const activeLabel = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;
+        const activePayload = this.getTooltipContent(activeIndex);
+        const activeCoordinate = tooltipTicks[activeIndex] ? {
+          x: layout === 'horizontal' ? tooltipTicks[activeIndex].coordinate : e.chartX,
+          y: layout === 'horizontal' ? e.chartY : tooltipTicks[activeIndex].coordinate,
+        } : originCoordinate;
+
         return {
           ...e,
           activeTooltipIndex: activeIndex,
+          activeLabel,
+          activePayload,
+          activeCoordinate,
         };
       }
 
       return null;
     }
-
     /**
      * Get the content to be displayed in the tooltip
-     * @param  {Array} items The instances of item
-     * @return {Array}       The content of tooltip
+     * @param  {Number} activeIndex    Active index of data
+     * @return {Array}                 The content of tooltip
      */
-    getTooltipContent(items) {
-      const { activeTooltipIndex, dataStartIndex, dataEndIndex } = this.state;
+    getTooltipContent(activeIndex) {
+      const { dataStartIndex, dataEndIndex, graphicalItems } = this.state;
       const data = this.props.data.slice(dataStartIndex, dataEndIndex + 1);
 
-      if (activeTooltipIndex < 0 || !items || !items.length
-        || activeTooltipIndex >= data.length) {
+      if (activeIndex < 0 || !graphicalItems || !graphicalItems.length
+        || activeIndex >= data.length) {
         return null;
       }
 
-      return items.map((child) => {
+      return graphicalItems.map((child) => {
         const { dataKey, name, unit, formatter } = child.props;
 
         return {
@@ -411,8 +425,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           dataKey, unit, formatter,
           name: name || dataKey,
           color: getMainColorOfGraphicItem(child),
-          value: data[activeTooltipIndex][dataKey],
-          payload: data[activeTooltipIndex],
+          value: data[activeIndex] && data[activeIndex][dataKey],
+          payload: data[activeIndex],
         };
       });
     }
@@ -436,14 +450,14 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { children, layout, stackOffset } = props;
       const numericIdName = layout === 'horizontal' ? 'yAxis' : 'xAxis';
       const cateIdName = layout === 'horizontal' ? 'xAxis' : 'yAxis';
-      const items = findAllByType(children, GraphicalChild);
+      const graphicalItems = findAllByType(children, GraphicalChild);
       const stackGroups = getStackGroupsByAxisId(
-        data, items, `${numericIdName}Id`, `${cateIdName}Id`, stackOffset
+        data, graphicalItems, `${numericIdName}Id`, `${cateIdName}Id`, stackOffset
       );
 
       let xAxisMap = this.getAxisMap(props, {
         axisType: 'xAxis',
-        items,
+        graphicalItems,
         stackGroups: numericIdName === 'xAxis' && stackGroups,
         dataStartIndex,
         dataEndIndex,
@@ -451,22 +465,22 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       let yAxisMap = this.getAxisMap(props, {
         axisType: 'yAxis',
-        items,
+        graphicalItems,
         stackGroups: numericIdName === 'yAxis' && stackGroups,
         dataStartIndex,
         dataEndIndex,
       });
 
-      const offset = this.calculateOffset(props, items, xAxisMap, yAxisMap);
+      const offset = this.calculateOffset(props, graphicalItems, xAxisMap, yAxisMap);
 
       xAxisMap = this.getFormatAxisMap(props, xAxisMap, offset, 'xAxis');
       yAxisMap = this.getFormatAxisMap(props, yAxisMap, offset, 'yAxis');
 
-      const { ticks: tooltipTicks, axis: tooltipAxis } = this.tooltipTicksGenerator({
+      const ticksObj = this.tooltipTicksGenerator({
         layout, xAxisMap, yAxisMap,
       });
 
-      return { xAxisMap, yAxisMap, offset, stackGroups, tooltipTicks, tooltipAxis };
+      return { graphicalItems, xAxisMap, yAxisMap, offset, stackGroups, ...ticksObj };
     }
 
     /* eslint-disable  no-underscore-dangle */
@@ -501,13 +515,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     }
     /**
      * Calculate the offset of main part in the svg element
-     * @param  {Object} props     Latest props
-     * @param  {Array}  items     The instances of item
-     * @param  {Object} xAxisMap  The configuration of x-axis
-     * @param  {Object} yAxisMap  The configuration of y-axis
+     * @param  {Object} props          Latest props
+     * @param  {Array}  graphicalItems The instances of item
+     * @param  {Object} xAxisMap       The configuration of x-axis
+     * @param  {Object} yAxisMap       The configuration of y-axis
      * @return {Object} The offset of main part in the svg element
      */
-    calculateOffset(props, items, xAxisMap, yAxisMap) {
+    calculateOffset(props, graphicalItems, xAxisMap, yAxisMap) {
       const { width, height, children } = props;
       const margin = props.margin || {};
       const brushItem = findChildByType(children, Brush);
@@ -534,7 +548,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         offset.bottom += brushItem.props.height || Brush.defaultProps.height;
       }
 
-      offset = appendOffsetOfLegend(offset, items, props);
+      offset = appendOffsetOfLegend(offset, graphicalItems, props);
 
       return {
         brushBottom,
@@ -545,15 +559,34 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     }
 
     handleReceiveSyncEvent = (cId, chartId, data) => {
-      const { syncId } = this.props;
+      const { syncId, layout } = this.props;
 
       if (syncId === cId && chartId !== this.chartId) {
-        this.setState(data);
         const { dataStartIndex, dataEndIndex } = data;
-        if (data.dataStartIndex || data.dataEndIndex) {
+
+        if (!_.isNil(data.dataStartIndex) || !_.isNil(data.dataEndIndex)) {
           this.setState(this.updateStateOfAxisMapsOffsetAndStackGroups(
             { props: this.props, dataStartIndex, dataEndIndex }
           ));
+        } else if (!_.isNil(data.activeTooltipIndex)) {
+          const { chartX, chartY, activeTooltipIndex } = data;
+          const { offset, tooltipTicks } = this.state;
+          const viewBox = { ...offset, x: offset.left, y: offset.top };
+          // When a categotical chart is combined with another chart, the value of chartX
+          // and chartY may beyond the boundaries.
+          const validateChartX = Math.min(chartX, viewBox.x + viewBox.width);
+          const validateChartY = Math.min(chartY, viewBox.y + viewBox.height);
+          const activeLabel = tooltipTicks[activeTooltipIndex] &&
+            tooltipTicks[activeTooltipIndex].value;
+          const activePayload = this.getTooltipContent(activeTooltipIndex);
+          const activeCoordinate = tooltipTicks[activeTooltipIndex] ? {
+            x: layout === 'horizontal' ? tooltipTicks[activeTooltipIndex].coordinate : validateChartX,
+            y: layout === 'horizontal' ? validateChartY : tooltipTicks[activeTooltipIndex].coordinate,
+          } : originCoordinate;
+
+          this.setState({ ...data, activeLabel, activeCoordinate, activePayload });
+        } else {
+          this.setState(data);
         }
       }
     };
@@ -577,11 +610,12 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     };
     /**
      * The handler of mouse entering chart
-     * @param  {Object} offset   The offset of main part in the svg element
-     * @param  {Object} e        Event object
-     * @return {Null}            null
+     * @param  {Object} e              Event object
+     * @return {Null}                  null
      */
-    handleMouseEnter(offset, e) {
+    handleMouseEnter = (e) => {
+      const { onMouseEnter } = this.props;
+      const { offset } = this.state;
       const container = this.container;
       const containerOffset = getOffset(container);
       const ne = calculateChartCoordinate(e, containerOffset);
@@ -591,16 +625,21 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         const nextState = { ...mouse, isTooltipActive: true };
         this.setState(nextState);
         this.triggerSyncEvent(nextState);
+
+        if (_.isFunction(onMouseEnter)) {
+          onMouseEnter(nextState, e);
+        }
       }
-    }
+    };
 
     /**
      * The handler of mouse moving in chart
-     * @param  {Object} offset   The offset of main part in the svg element
      * @param  {Object} e        Event object
      * @return {Null} no return
      */
-    handleMouseMove(offset, e) {
+    handleMouseMove = (e) => {
+      const { onMouseMove } = this.props;
+      const { offset } = this.state;
       const container = this.container;
       const containerOffset = getOffset(container);
       const ne = calculateChartCoordinate(e, containerOffset);
@@ -609,16 +648,26 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       this.setState(nextState);
       this.triggerSyncEvent(nextState);
+
+      if (_.isFunction(onMouseMove)) {
+        onMouseMove(nextState, e);
+      }
     }
     /**
      * The handler if mouse leaving chart
+     * @param {Object} e Event object
      * @return {Null} no return
      */
-    handleMouseLeave = () => {
+    handleMouseLeave = (e) => {
+      const { onMouseLeave } = this.props;
       const nextState = { isTooltipActive: false };
 
       this.setState(nextState);
       this.triggerSyncEvent(nextState);
+
+      if (_.isFunction(onMouseLeave)) {
+        onMouseLeave(nextState, e);
+      }
     };
 
     validateAxes() {
@@ -689,8 +738,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     tooltipTicksGenerator = ({ layout, xAxisMap, yAxisMap }) => {
       const axisMap = layout === 'horizontal' ? xAxisMap : yAxisMap;
       const axis = getAnyElementOfObject(axisMap);
+      const tooltipTicks = getTicksOfAxis(axis, false, true);
 
-      return { ticks: _.sortBy(getTicksOfAxis(axis, false, true), o => o.coordinate), axis };
+      return {
+        tooltipTicks,
+        orderedTooltipTicks: _.sortBy(tooltipTicks, o => o.coordinate),
+        tooltipAxis: axis,
+      };
     }
 
     /**
@@ -731,12 +785,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     /**
      * Draw grid
-     * @param  {Object} xAxisMap The configuration of all x-axes
-     * @param  {Object} yAxisMap The configuration of all y-axes
-     * @param  {Object} offset   The offset of main part in the svg element
      * @return {ReactElement} The instance of grid
      */
-    renderGrid(xAxisMap, yAxisMap, offset) {
+    renderGrid() {
+      const { xAxisMap, yAxisMap, offset } = this.state;
       const { children, width, height } = this.props;
       const gridItem = findChildByType(children, CartesianGrid);
 
@@ -762,15 +814,15 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     }
     /**
      * Draw legend
-     * @param  {Array} items             The instances of item
      * @return {ReactElement}            The instance of Legend
      */
-    renderLegend(items) {
+    renderLegend() {
+      const { graphicalItems } = this.state;
       const { children, width, height } = this.props;
       const margin = this.props.margin || {};
       const legendWidth = width - (margin.left || 0) - (margin.right || 0);
       const legendHeight = height - (margin.top || 0) - (margin.bottom || 0);
-      const props = getLegendProps(children, items, legendWidth, legendHeight);
+      const props = getLegendProps(children, graphicalItems, legendWidth, legendHeight);
 
       if (!props) { return null; }
 
@@ -785,36 +837,29 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     /**
      * Draw Tooltip
-     * @param  {ReactElement} tooltipItem  The instance of Tooltip
-     * @param  {Array} items  The instances of GraphicalChild
-     * @param  {Object} offset The offset of main part in the svg element
      * @return {ReactElement}  The instance of Tooltip
      */
-    renderTooltip({ tooltipItem, items, offset }) {
-      const { layout } = this.props;
-      const { isTooltipActive, activeTooltipIndex, chartX, chartY, tooltipTicks } = this.state;
+    renderTooltip() {
+      const { children } = this.props;
+      const tooltipItem = findChildByType(children, Tooltip);
 
-      const viewBox = { ...offset, x: offset.left, y: offset.top };
-      // When a categotical chart is combined with another chart, the value of chartX
-      // and chartY may beyond the boundaries.
-      const validateChartX = Math.min(chartX, viewBox.x + viewBox.width);
-      const validateChartY = Math.min(chartY, viewBox.y + viewBox.height);
+      if (!tooltipItem) { return null; }
+
+      const { isTooltipActive, activeCoordinate, activePayload,
+        activeLabel, offset } = this.state;
 
       return React.cloneElement(tooltipItem, {
-        viewBox,
+        viewBox: { ...offset, x: offset.left, y: offset.top },
         active: isTooltipActive,
-        label: tooltipTicks[activeTooltipIndex] && tooltipTicks[activeTooltipIndex].value,
-        payload: isTooltipActive ? this.getTooltipContent(items) : [],
-        coordinate: tooltipTicks[activeTooltipIndex] ? {
-          x: layout === 'horizontal' ? tooltipTicks[activeTooltipIndex].coordinate : validateChartX,
-          y: layout === 'horizontal' ? validateChartY : tooltipTicks[activeTooltipIndex].coordinate,
-        } : originCoordinate,
+        label: activeLabel,
+        payload: isTooltipActive ? activePayload : [],
+        coordinate: activeCoordinate,
       });
     }
 
-    renderBrush(xAxisMap, yAxisMap, offset) {
+    renderBrush() {
       const { children, margin, data } = this.props;
-      const { dataStartIndex, dataEndIndex } = this.state;
+      const { xAxisMap, yAxisMap, offset, dataStartIndex, dataEndIndex } = this.state;
       const brushItem = findChildByType(children, Brush);
 
       if (!brushItem) { return null; }
@@ -831,12 +876,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     }
 
-    renderReferenceElements(xAxisMap, yAxisMap, offset, isFront, Compt) {
+    renderReferenceElements(isFront, Compt) {
       const { children } = this.props;
       const elements = findAllByType(children, Compt);
 
       if (!elements || !elements.length) { return null; }
 
+      const { xAxisMap, yAxisMap, offset } = this.state;
       const keyPrefix = `${getDisplayName(Compt)}-${isFront ? 'front' : 'back'}`;
 
       return elements.filter(entry => (isFront === entry.props.isFront)).map((entry, i) => {
@@ -860,17 +906,16 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { data } = this.props;
       if (!validateWidthHeight(this) || !data || !data.length) { return null; }
 
-      const { children, className, width, height, style,
+      const { children, className, width, height, style, onClick,
         ...others } = this.props;
       const { xAxisMap, yAxisMap, offset, stackGroups } = this.state;
-      const items = findAllByType(children, GraphicalChild);
 
-      const tooltipItem = findChildByType(children, Tooltip);
-      const events = tooltipItem ? {
-        onMouseEnter: this.handleMouseEnter.bind(this, offset),
-        onMouseMove: this.handleMouseMove.bind(this, offset),
+      const events = {
+        onMouseEnter: this.handleMouseEnter,
+        onMouseMove: this.handleMouseMove,
         onMouseLeave: this.handleMouseLeave,
-      } : null;
+        onClick,
+      };
       const attrs = getPresentationAttributes(others);
 
       return (
@@ -881,29 +926,24 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           ref={(node) => { this.container = node; }}
         >
           <Surface {...attrs} width={width} height={height}>
-            {this.renderGrid(xAxisMap, yAxisMap, offset)}
-            {this.renderReferenceElements(xAxisMap, yAxisMap, offset, false, ReferenceArea)}
-            {this.renderReferenceElements(xAxisMap, yAxisMap, offset, false, ReferenceLine)}
-            {this.renderReferenceElements(xAxisMap, yAxisMap, offset, false, ReferenceDot)}
+            {this.renderGrid()}
+            {this.renderReferenceElements(false, ReferenceArea)}
+            {this.renderReferenceElements(false, ReferenceLine)}
+            {this.renderReferenceElements(false, ReferenceDot)}
             {this.renderAxes(xAxisMap, 'x-axis')}
             {this.renderAxes(yAxisMap, 'y-axis')}
             <ChartComponent
               {...this.props}
               {...this.state}
-              graphicalItems={items}
-              xAxisMap={xAxisMap}
-              yAxisMap={yAxisMap}
-              offset={offset}
-              stackGroups={stackGroups}
             />
-            {this.renderReferenceElements(xAxisMap, yAxisMap, offset, true, ReferenceArea)}
-            {this.renderReferenceElements(xAxisMap, yAxisMap, offset, true, ReferenceLine)}
-            {this.renderReferenceElements(xAxisMap, yAxisMap, offset, true, ReferenceDot)}
-            {this.renderBrush(xAxisMap, yAxisMap, offset)}
+            {this.renderReferenceElements(true, ReferenceArea)}
+            {this.renderReferenceElements(true, ReferenceLine)}
+            {this.renderReferenceElements(true, ReferenceDot)}
+            {this.renderBrush()}
             {filterSvgElements(children)}
           </Surface>
-          {this.renderLegend(items)}
-          {tooltipItem && this.renderTooltip({ tooltipItem, items, offset })}
+          {this.renderLegend()}
+          {this.renderTooltip()}
         </div>
       );
     }

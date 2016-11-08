@@ -237,8 +237,8 @@ class RadarChart extends Component {
     }
   };
 
-  handleMouseLeave = (itemProps, e) => {
-    const { children, onMouseLeave } = this.props;
+  handleMouseLeave = () => {
+    const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
     if (tooltipItem) {

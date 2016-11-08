@@ -73,7 +73,7 @@ export class PieChart extends Component {
     isTooltipActive: false,
   };
 
-  handleMouseEnter = (el, index, e) => {
+  handleMouseEnter = (el) => {
     const { children } = this.props;
     const { cx, cy, outerRadius, midAngle } = el;
     const tooltipItem = findChildByType(children, Tooltip);
@@ -87,7 +87,7 @@ export class PieChart extends Component {
     }
   };
 
-  handleMouseLeave = (el, index, e) => {
+  handleMouseLeave = (el) => {
     const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
