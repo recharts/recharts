@@ -5,6 +5,7 @@
 - fix strokeDasharray of Line
 - add payload in Legend payload item
 - fix position of vertical Legend
+- Recalculate points after width or height change
 
 ### refactor
 
