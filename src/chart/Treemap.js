@@ -216,8 +216,6 @@ class Treemap extends Component {
   };
 
   static defaultProps = {
-    fill: '#fff',
-    stroke: '#000',
     dataKey: 'value',
     aspectRatio: 0.5 * (1 + Math.sqrt(5)),
     isAnimationActive: true,
@@ -349,7 +347,13 @@ class Treemap extends Component {
       return content(nodeProps);
     }
 
-    return <Rectangle {...nodeProps} />;
+    return (
+      <Rectangle
+        fill="#fff"
+        stroke="#000"
+        {...nodeProps}
+      />
+    );
   }
 
   renderNode(root, node, i) {
