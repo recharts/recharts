@@ -107,7 +107,7 @@ export class LineChart extends Component {
 
     return React.isValidElement(tooltipItem.props.cursor) ?
       React.cloneElement(tooltipItem.props.cursor, cursorProps) :
-        <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor" />;
+      <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor" />;
   }
 
   renderActiveDot(option, props) {
