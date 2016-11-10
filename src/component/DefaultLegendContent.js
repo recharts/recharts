@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import Surface from '../container/Surface';
 import Symbols from '../shape/Symbols';
+import { filterEventsOfChild } from '../util/ReactUtils';
 
 const SIZE = 32;
 
@@ -33,6 +34,9 @@ class DefaultLegendContent extends Component {
     layout: 'horizontal',
     align: 'center',
     verticalAlign: 'middle',
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
+    onClick: PropTypes.func,
   };
 
   /**
@@ -100,6 +104,7 @@ class DefaultLegendContent extends Component {
         className={`recharts-legend-item legend-item-${i}`}
         style={itemStyle}
         key={`legend-item-${i}`}
+        {...filterEventsOfChild(this.props, entry, i)}
       >
         <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
           {this.renderIcon(entry, iconSize)}

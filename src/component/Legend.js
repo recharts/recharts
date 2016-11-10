@@ -49,6 +49,9 @@ class Legend extends Component {
         'star', 'triangle', 'wye',
       ]),
     })),
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
+    onClick: PropTypes.func,
   };
 
   static defaultProps = {

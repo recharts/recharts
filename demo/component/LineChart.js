@@ -39,6 +39,7 @@ const initilaState = {
   data,
   data01,
   data02,
+  opacity: 1,
 };
 
 const renderSpecialDot = (props) => {
@@ -76,8 +77,20 @@ export default React.createClass({
     console.log(data);
   },
 
+  handleLegendMouseEnter() {
+    this.setState({
+      opacity: 0.5,
+    });
+  },
+
+  handleLegendMouseLeave() {
+    this.setState({
+      opacity: 1,
+    });
+  },
+
   render() {
-    const { data, data01, data02 } = this.state;
+    const { data, data01, data02, opacity } = this.state;
 
     return (
       <div className='line-charts'>
@@ -94,11 +107,21 @@ export default React.createClass({
         <div className='line-chart-wrapper'>
           <LineChart width={400} height={400} data={data02} syncId="test">
             <CartesianGrid stroke='#f5f5f5' />
-            <Legend/>
+            <Legend
+              onMouseEnter={this.handleLegendMouseEnter}
+              onMouseLeave={this.handleLegendMouseLeave}
+            />
             <XAxis type="number" dataKey="pv" />
             <YAxis type="number" />
             <Tooltip />
-            <Line type='monotone' dataKey='uv' stroke='#ff7300' dot={renderSpecialDot} label={renderLabel}/>
+            <Line
+              type="monotone"
+              dataKey="uv"
+              stroke="#ff7300"
+              dot={renderSpecialDot}
+              label={renderLabel}
+              strokeOpacity={opacity}
+            />
             <Brush dataKey="name" height={30} />
           </LineChart>
         </div>

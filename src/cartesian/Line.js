@@ -93,14 +93,10 @@ class Line extends Component {
     onAnimationEnd: () => {},
   };
 
-  constructor(props, ctx) {
-    super(props, ctx);
-
-    this.state = {
-      isAnimationFinished: true,
-      totalLength: 0,
-    };
-  }
+  state = {
+    isAnimationFinished: true,
+    totalLength: 0,
+  };
 
   /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
@@ -119,7 +115,7 @@ class Line extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { animationId, points } = this.props;
 
-    if (animationId !== prevProps.animationId || points !== prevProps.points) {
+    if (animationId !== prevProps.animationId) {
       const cur = this.getTotalLength();
       const { totalLength } = prevState;
       // A hack method to trigger animation
