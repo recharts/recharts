@@ -113,7 +113,7 @@ class Line extends Component {
 
   /* eslint-disable  react/no-did-update-set-state */
   componentDidUpdate(prevProps, prevState) {
-    const { animationId, points } = this.props;
+    const { animationId } = this.props;
 
     if (animationId !== prevProps.animationId) {
       const cur = this.getTotalLength();
