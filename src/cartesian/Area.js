@@ -72,7 +72,6 @@ class Area extends Component {
   };
 
   static defaultProps = {
-    strokeWidth: 1,
     stroke: '#3182bd',
     fill: '#3182bd',
     fillOpacity: 0.6,

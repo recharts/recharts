@@ -70,8 +70,6 @@ class RadialBar extends Component {
     endAngle: 0,
     maxAngle: 135,
     minAngle: 0,
-    stroke: '#fff',
-    fill: '#808080',
     legendType: 'rect',
     data: [],
     isAnimationActive: !isSsr(),

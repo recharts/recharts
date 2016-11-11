@@ -61,7 +61,6 @@ class Bar extends Component {
   };
 
   static defaultProps = {
-    fill: '#000',
     xAxisId: 0,
     yAxisId: 0,
     legendType: 'rect',

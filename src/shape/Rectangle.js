@@ -92,10 +92,6 @@ class Rectangle extends Component {
     // The radius of four corners when radius is a number
     // The radius of left-top, right-top, right-bottom, left-bottom when radius is an array
     radius: 0,
-    stroke: 'none',
-    strokeWidth: 1,
-    strokeDasharray: 'none',
-    fill: '#000',
     isAnimationActive: false,
     isUpdateAnimationActive: false,
     animationBegin: 0,

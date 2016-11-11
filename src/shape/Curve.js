@@ -56,10 +56,6 @@ class Curve extends Component {
 
   static defaultProps = {
     type: 'linear',
-    stroke: '#000',
-    fill: 'none',
-    strokeWidth: 1,
-    strokeDasharray: 'none',
     points: [],
     connectNulls: false,
   };

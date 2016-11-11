@@ -70,7 +70,6 @@ class Scatter extends Component {
   };
 
   static defaultProps = {
-    fill: '#fff',
     xAxisId: 0,
     yAxisId: 0,
     zAxisId: 0,

@@ -64,8 +64,6 @@ class Symbols extends Component {
 
   static defaultProps = {
     type: 'circle',
-    stroke: 'none',
-    fill: '#000',
     size: 64,
     sizeType: 'area',
   };

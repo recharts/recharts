@@ -31,12 +31,6 @@ class Polygon extends Component {
     })),
   };
 
-  static defaultProps = {
-    fill: 'none',
-    stroke: '#333',
-    strokeWidth: 1,
-  };
-
   render() {
     const { points, className } = this.props;
 

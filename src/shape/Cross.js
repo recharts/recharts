@@ -30,8 +30,6 @@ class Cross extends Component {
     left: 0,
     width: 0,
     height: 0,
-    stroke: '#000',
-    fill: 'none',
   };
 
   getPath(x, y, width, height, top, left) {

@@ -47,8 +47,6 @@ class PolarAngleAxis extends Component {
     cx: 0,
     cy: 0,
     orientation: 'outer',
-    fill: '#666',
-    stroke: '#ccc',
     axisLine: true,
     tickLine: true,
     tick: true,
