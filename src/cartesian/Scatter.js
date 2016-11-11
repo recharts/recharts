@@ -8,7 +8,7 @@ import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
-  filterEventsOfChild } from '../util/ReactUtils';
+  filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
 import AnimationDecorator from '../util/AnimationDecorator';
@@ -80,7 +80,7 @@ class Scatter extends Component {
     data: [],
     shape: 'circle',
 
-    isAnimationActive: true,
+    isAnimationActive: !isSsr(),
     animationBegin: 0,
     animationDuration: 400,
     animationEasing: 'linear',

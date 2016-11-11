@@ -68,7 +68,7 @@ const defaultProps = {
   itemStyle: {},
   labelStyle: {},
   cursor: true,
-  isAnimationActive: true,
+  isAnimationActive: !isSsr(),
   animationEasing: 'ease',
   animationDuration: 400,
   itemSorter: () => -1,

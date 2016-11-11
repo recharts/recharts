@@ -6,7 +6,7 @@ import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
 import pureRender from '../util/PureRender';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
 import Polygon from '../shape/Polygon';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
@@ -58,7 +58,7 @@ class Radar extends Component {
     dot: false,
     label: false,
     legendType: 'rect',
-    isAnimationActive: true,
+    isAnimationActive: !isSsr(),
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',

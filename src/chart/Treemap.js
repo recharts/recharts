@@ -9,7 +9,7 @@ import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Rectangle from '../shape/Rectangle';
 import { findChildByType, getPresentationAttributes, filterSvgElements,
-  validateWidthHeight } from '../util/ReactUtils';
+  validateWidthHeight, isSsr } from '../util/ReactUtils';
 import Tooltip from '../component/Tooltip';
 import pureRender from '../util/PureRender';
 
@@ -218,8 +218,8 @@ class Treemap extends Component {
   static defaultProps = {
     dataKey: 'value',
     aspectRatio: 0.5 * (1 + Math.sqrt(5)),
-    isAnimationActive: true,
-    isUpdateAnimationActive: true,
+    isAnimationActive: !isSsr(),
+    isUpdateAnimationActive: !isSsr(),
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'linear',

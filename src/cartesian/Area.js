@@ -10,7 +10,7 @@ import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import pureRender from '../util/PureRender';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
 import { isNumber } from '../util/DataUtils';
 
 @pureRender
@@ -88,7 +88,7 @@ class Area extends Component {
     activeDot: true,
 
 
-    isAnimationActive: true,
+    isAnimationActive: !isSsr(),
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',

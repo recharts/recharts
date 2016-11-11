@@ -9,7 +9,7 @@ import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
 import { getStringSize } from '../util/DOMUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
-  filterEventsOfChild } from '../util/ReactUtils';
+  filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
 
@@ -74,7 +74,7 @@ class RadialBar extends Component {
     fill: '#808080',
     legendType: 'rect',
     data: [],
-    isAnimationActive: true,
+    isAnimationActive: !isSsr(),
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',

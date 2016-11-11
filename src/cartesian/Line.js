@@ -10,7 +10,7 @@ import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
 
 const FACTOR = 1.0000001;
 
@@ -84,7 +84,7 @@ class Line extends Component {
     strokeWidth: 1,
     fill: '#fff',
     points: [],
-    isAnimationActive: true,
+    isAnimationActive: !isSsr(),
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',

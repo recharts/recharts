@@ -74,6 +74,7 @@ class ReferenceDot extends Component {
       x: coordinate.cx,
       y: coordinate.cy,
       textAnchor: 'middle',
+      verticalAnchor: 'middle',
     };
 
     if (React.isValidElement(label)) {

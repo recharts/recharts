@@ -11,7 +11,7 @@ import Sector from '../shape/Sector';
 import Curve from '../shape/Curve';
 import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
-  filterEventsOfChild } from '../util/ReactUtils';
+  filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
 import { isNumber } from '../util/DataUtils';
@@ -96,7 +96,7 @@ class Pie extends Component {
     data: [],
     minAngle: 0,
     animationId: PropTypes.number,
-    isAnimationActive: true,
+    isAnimationActive: !isSsr(),
     animationBegin: 400,
     animationDuration: 1500,
     animationEasing: 'ease',

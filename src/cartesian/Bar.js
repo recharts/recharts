@@ -10,7 +10,7 @@ import Layer from '../container/Layer';
 import Text from '../component/Text';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
-  filterEventsOfChild } from '../util/ReactUtils';
+  filterEventsOfChild, isSsr } from '../util/ReactUtils';
 
 @pureRender
 class Bar extends Component {
@@ -69,7 +69,7 @@ class Bar extends Component {
     // data of bar
     data: [],
     layout: 'vertical',
-    isAnimationActive: true,
+    isAnimationActive: !isSsr(),
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
