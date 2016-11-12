@@ -24,7 +24,7 @@
     "build-es6": "rimraf es6 && babel ./src -d es6 --blacklist=es6.modules",
     "build-umd": "NODE_ENV=development webpack src/index.js umd/Recharts.js",
     "build-min": "NODE_ENV=production webpack src/index.js umd/Recharts.min.js",
-    "demo": "webpack-dev-server  --progress --port 3000  --colors --content-base demo --inline --config demo/webpack.config.js",
+    "demo": "webpack-dev-server  --progress --port 3000  --content-base demo --inline --config demo/webpack.config.js",
     "test": "NODE_ENV=test karma start test/karma.conf.js",
     "lint": "eslint src",
     "autofix": "eslint src --fix",
@@ -93,7 +93,7 @@
     "karma-mocha": "^1.2.0",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^1.7.0",
-    "lodash-webpack-plugin": "^0.10.1",
+    "lodash-webpack-plugin": "^0.10.5",
     "mocha": "^3.1.0",
     "pre-commit": "^1.1.3",
     "react": "^15.0.0",
@@ -104,9 +104,9 @@
     "react-router": "^2.5.0",
     "rimraf": "^2.5.3",
     "sinon": "^1.17.0",
-    "webpack": "^1.13.0",
+    "webpack": "2.1.0-beta.25",
     "webpack-bundle-size-analyzer": "^2.2.0",
-    "webpack-dev-server": "^1.16.0"
+    "webpack-dev-server": "2.1.0-beta.10"
   },
   "license": "MIT"
 }

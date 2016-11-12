@@ -3,7 +3,6 @@ var webpack = require('webpack');
 
 module.exports = {
   context: __dirname,
-  debug: true,
   devtool: '#inline-source-map',
   entry: [
     './index.js',
@@ -13,6 +12,9 @@ module.exports = {
     filename: 'bundle.js',
   },
   plugins: [
+     new webpack.LoaderOptionsPlugin({
+       debug: true
+     })
     // new webpack.HotModuleReplacementPlugin(),
     // new webpack.NoErrorsPlugin()
   ],
@@ -20,7 +22,6 @@ module.exports = {
     alias: {
       'recharts': path.join(__dirname, '..', 'src/index.js'),
     },
-    extensions: ['', '.js'],
   },
   module: {
     loaders: [{

@@ -3,7 +3,6 @@ var LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 var webpack = require('webpack');
 var env = process.env.NODE_ENV;
 
-
 var config = {
   entry: './src/index.js',
 
@@ -24,13 +23,14 @@ var config = {
         plugins: ['lodash'],
       },
     }],
-    resolve: {
-      alias: {
-        react: path.resolve(__dirname, './node_modules/react'),
-        'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
-        'react-addons-transition-group':
-            path.resolve(__dirname, './node_modules/react-addons-transition-group'),
-      },
+  },
+
+  resolve: {
+    alias: {
+      react: path.resolve(__dirname, './node_modules/react'),
+      'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
+      'react-addons-transition-group':
+          path.resolve(__dirname, './node_modules/react-addons-transition-group'),
     },
   },
 
@@ -66,7 +66,6 @@ var config = {
       collections: true,
       shorthands: true
     }),
-    new webpack.optimize.DedupePlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(env),
     }),
