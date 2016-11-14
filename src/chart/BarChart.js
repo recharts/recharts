@@ -7,8 +7,7 @@ import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
 import { getBandSizeOfAxis, getAnyElementOfObject } from '../util/DataUtils';
-import { getPresentationAttributes, findChildByType, findAllByType,
-  filterEventAttributes } from '../util/ReactUtils';
+import { getPresentationAttributes, findChildByType, findAllByType } from '../util/ReactUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Cell from '../component/Cell';
 import Bar from '../cartesian/Bar';
