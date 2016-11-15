@@ -27,6 +27,9 @@ class DefaultLegendContent extends Component {
         'star', 'triangle', 'wye',
       ]),
     })),
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
+    onClick: PropTypes.func,
   };
 
   static defaultProps = {
@@ -34,9 +37,6 @@ class DefaultLegendContent extends Component {
     layout: 'horizontal',
     align: 'center',
     verticalAlign: 'middle',
-    onMouseEnter: PropTypes.func,
-    onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func,
   };
 
   /**

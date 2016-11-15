@@ -25,6 +25,7 @@ class Pie extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
+    animationId: PropTypes.number,
     cx: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     cy: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     startAngle: PropTypes.number,
@@ -95,7 +96,6 @@ class Pie extends Component {
     labelLine: true,
     data: [],
     minAngle: 0,
-    animationId: PropTypes.number,
     isAnimationActive: !isSsr(),
     animationBegin: 400,
     animationDuration: 1500,
