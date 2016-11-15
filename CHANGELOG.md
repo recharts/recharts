@@ -1,3 +1,22 @@
+## 0.18.0 (Nov 15, 2016)
+
+### feat
+
+- support customized scale function of categorical charts
+- support customized events in Legend
+
+### refactor
+
+- refactor ResponsiveContainer with ReactResizeDetector
+- change the default value of isAnimationActive
+- remove some unneed default attributes of Components
+
+### fix
+
+- fix wrong written default props
+- fix twice triggered event in Bar
+- fix treemap stroke pollution cause by defaultProps
+
 ## 0.17.0 | 0.17.1 (Nov 08, 2016)
 
 ### fix
