@@ -65,16 +65,10 @@ module.exports = function(config) {
           'recharts': path.resolve('./src/index.js'),
         },
       },
-      stats: {
-        assets: false,
-        colors: true,
-        version: false,
-        hash: false,
-        timings: false,
-        chunks: false,
-        chunkModules: false
-      },
-      debug: false,
+    },
+
+    webpackMiddleware: {
+      stats: 'errors-only',
     },
 
     plugins: [
