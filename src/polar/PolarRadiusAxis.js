@@ -40,6 +40,12 @@ class PolarRadiusAxis extends Component {
       PropTypes.number,
       PropTypes.oneOf(['auto', 'dataMin', 'dataMax']),
     ])),
+    scale: PropTypes.oneOfType([
+      PropTypes.oneOf(['auto', 'linear', 'pow', 'sqrt', 'log', 'identity', 'time',
+        'band', 'point', 'ordinal', 'quantile', 'quantize', 'utcTime', 'sequential',
+        'threshold']),
+      PropTypes.func,
+    ]),
     allowDataOverflow: PropTypes.bool,
   };
 
@@ -54,6 +60,7 @@ class PolarRadiusAxis extends Component {
     tickCount: 5,
     domain: [0, 'auto'],
     allowDataOverflow: false,
+    scale: 'auto',
   };
 
   /**

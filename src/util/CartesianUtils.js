@@ -410,6 +410,10 @@ export const getLegendProps = (children, graphicItems, width) => {
 export const getTicksOfScale = (scale, opts) => {
   const { type, tickCount, originalDomain, allowDecimals } = opts;
 
+  if (opts.scale !== 'auto' && opts.scale !== 'linear') {
+    return null;
+  }
+
   if (tickCount && type === 'number' && originalDomain && (
     originalDomain[0] === 'auto' || originalDomain[1] === 'auto')) {
     // Calculate the ticks by the number of grid when the axis is a number axis

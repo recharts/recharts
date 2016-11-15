@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import { scaleLinear, scalePoint } from 'd3-scale';
+import { scalePoint } from 'd3-scale';
 import { getNiceTickValues } from 'recharts-scale';
 import _ from 'lodash';
 import Surface from '../container/Surface';
@@ -19,7 +19,8 @@ import { validateWidthHeight, findChildByType, findAllByType, filterSvgElements,
   getPresentationAttributes } from '../util/ReactUtils';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
-import { getPercentValue, parseSpecifiedDomain, combineEventHandlers } from '../util/DataUtils';
+import { getPercentValue, parseSpecifiedDomain, combineEventHandlers,
+  parseScale } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
 import AnimationDecorator from '../util/AnimationDecorator';
 
@@ -95,6 +96,7 @@ class RadarChart extends Component {
   }
 
   getRadiusAxisCfg(radiusAxis, innerRadius, outerRadius) {
+    const props = radiusAxis ? radiusAxis.props : PolarRadiusAxis.defaultProps;
     let domain, tickCount, ticks;
 
     if (radiusAxis && radiusAxis.props.ticks) {
@@ -114,7 +116,7 @@ class RadarChart extends Component {
     return {
       tickCount,
       ticks,
-      scale: scaleLinear().domain(domain).range([innerRadius, outerRadius]),
+      scale: parseScale(props).domain(domain).range([innerRadius, outerRadius]),
     };
   }
 

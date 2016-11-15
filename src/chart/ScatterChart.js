@@ -3,7 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import { scaleLinear } from 'd3-scale';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Cell from '../component/Cell';
@@ -23,7 +22,7 @@ import { getPresentationAttributes, findChildByType, filterSvgElements,
   findAllByType, validateWidthHeight, getDisplayName, filterEventAttributes,
 } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
-import { parseSpecifiedDomain, isNumber } from '../util/DataUtils';
+import { parseSpecifiedDomain, isNumber, parseScale } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { appendOffsetOfLegend, detectReferenceElementsDomain, getTicksOfAxis,
   getCoordinatesOfGrid, getLegendProps, getTicksOfScale } from '../util/CartesianUtils';
@@ -154,7 +153,7 @@ class ScatterChart extends Component {
     return {
       ...axisProps,
       domain,
-      scale: scaleLinear().domain(domain).range(axisProps.range),
+      scale: parseScale(axisProps).domain(domain).range(axisProps.range),
     };
   }
 
@@ -193,7 +192,7 @@ class ScatterChart extends Component {
       offset.top + (padding.top || 0),
     ];
 
-    const scale = scaleLinear().domain(domain).range(range);
+    const scale = parseScale(axis).domain(domain).range(range);
 
     const ticks = getTicksOfScale(scale, axis);
 
@@ -398,7 +397,8 @@ class ScatterChart extends Component {
     const { activeItem } = this.state;
 
     const cursorProps = {
-      fill: '#f1f1f1',
+      stroke: '#ccc',
+      strokeDasharray: '5 5',
       ...getPresentationAttributes(tooltipItem.props.cursor),
       ...offset,
       x: activeItem.cx,

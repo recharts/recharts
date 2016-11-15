@@ -20,11 +20,18 @@ class ZAxis extends Component {
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // The range of axis
     range: PropTypes.arrayOf(PropTypes.number),
+    scale: PropTypes.oneOfType([
+      PropTypes.oneOf(['auto', 'linear', 'pow', 'sqrt', 'log', 'identity', 'time',
+        'band', 'point', 'ordinal', 'quantile', 'quantize', 'utcTime', 'sequential',
+        'threshold']),
+      PropTypes.func,
+    ]),
   };
 
   static defaultProps = {
     zAxisId: 0,
     range: [64, 64],
+    scale: 'auto',
   };
 
   render() {

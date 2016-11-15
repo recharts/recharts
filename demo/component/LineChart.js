@@ -3,9 +3,10 @@ import CustomLineDot from './CustomLineDot';
 import { changeNumberOfData } from './utils';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine,
   ReferenceDot, Tooltip, CartesianGrid, Legend, Brush } from 'recharts';
+import { scalePow, scaleLog } from 'd3-scale';
 
 const data = [
-  { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
+  { name: 'Page A', uv: 1000, pv: 2400, amt: 2400 },
   { name: 'Page B', uv: 300, pv: 4567, amt: 2400 },
   { name: 'Page C', uv: 280, pv: 1398, amt: 2400 },
   { name: 'Page D', uv: 200, pv: 9800, amt: 2400 },
@@ -91,6 +92,7 @@ export default React.createClass({
 
   render() {
     const { data, data01, data02, opacity } = this.state;
+    const scale = scaleLog().base(10).nice();
 
     return (
       <div className='line-charts'>
@@ -138,7 +140,7 @@ export default React.createClass({
             <CartesianGrid stroke='#f5f5f5'/>
             <Legend />
             <XAxis />
-            <YAxis />
+            <YAxis scale={scale} domain={[0.01, 'auto']} ticks={[0.01, 0.1, 1, 10, 100, 1000]} />
             <Tooltip />
             <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300' />
           </LineChart>
@@ -224,7 +226,6 @@ export default React.createClass({
             <Line type="stepAfter" dataKey="weather" stroke="#ff7300" />
           </LineChart>
         </div>
-
       </div>
     );
   }

@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import { scaleLinear, scaleBand, scalePoint } from 'd3-scale';
 import classNames from 'classnames';
 import _ from 'lodash';
 import Surface from '../container/Surface';
@@ -21,7 +20,7 @@ import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
 import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate,
-  combineEventHandlers } from '../util/DataUtils';
+  combineEventHandlers, parseScale } from '../util/DataUtils';
 import { calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
   getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
@@ -316,7 +315,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       return ids.reduce((result, id) => {
         const axis = axisMap[id];
         const { orientation, type, domain, padding = {} } = axis;
-        let range, scale, x, y;
+        let range, x, y;
 
         if (axisType === 'xAxis') {
           range = [
@@ -333,15 +332,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           ];
         }
 
-        if (type === 'number') {
-          scale = scaleLinear().domain(domain).range(range);
-        } else if (displayName.indexOf('LineChart') >= 0 ||
-          displayName.indexOf('AreaChart') >= 0) {
-          scale = scalePoint().domain(domain).range(range);
-        } else {
-          scale = scaleBand().domain(domain).range(range);
-        }
-
+        const scale = parseScale(axis, displayName);
+        scale.domain(domain).range(range);
         const ticks = getTicksOfScale(scale, axis);
 
         if (axisType === 'xAxis') {

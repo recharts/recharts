@@ -44,6 +44,12 @@ class YAxis extends Component {
       bottom: PropTypes.number,
     }),
     allowDataOverflow: PropTypes.bool,
+    scale: PropTypes.oneOfType([
+      PropTypes.oneOf(['auto', 'linear', 'pow', 'sqrt', 'log', 'identity', 'time',
+        'band', 'point', 'ordinal', 'quantile', 'quantize', 'utcTime', 'sequential',
+        'threshold']),
+      PropTypes.func,
+    ]),
   };
 
   static defaultProps = {
@@ -58,6 +64,7 @@ class YAxis extends Component {
     domain: [0, 'auto'],
     padding: { top: 0, bottom: 0 },
     allowDataOverflow: false,
+    scale: 'auto',
   };
 
   render() {

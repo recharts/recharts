@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import * as d3Scales from 'd3-scale';
 
 export const isPercent = value => (
   _.isString(value) && value.indexOf('%') === value.length - 1
@@ -179,3 +180,29 @@ export const combineEventHandlers = (defaultHandler, parentHandler, childHandler
 
   return null;
 };
+/**
+ * Parse the scale function of axis
+ * @param  {String}   options.scale The specified scale type
+ * @param  {String}   options.type  The type of axis
+ * @param  {String}   chartType     The displayName of chart
+ * @return {Function}               The scale funcion
+ */
+export const parseScale = ({ scale, type }, chartType) => {
+  if (scale === 'auto') {
+    if (type === 'category' && chartType && (chartType.indexOf('LineChart') >= 0 ||
+      chartType.indexOf('AreaChart') >= 0)) {
+      return d3Scales.scalePoint();
+    } else if (type === 'category') {
+      return d3Scales.scaleBand();
+    }
+
+    return d3Scales.scaleLinear();
+  } else if (_.isString(scale)) {
+    const name = `scale${scale.slice(0, 1).toUpperCase()}${scale.slice(1)}`;
+
+    return (d3Scales[name] || d3Scales.scalePoint)();
+  }
+
+  return _.isFunction(scale) ? scale : d3Scales.scalePoint();
+};
+

@@ -44,6 +44,12 @@ class XAxis extends Component {
       right: PropTypes.number,
     }),
     allowDataOverflow: PropTypes.bool,
+    scale: PropTypes.oneOfType([
+      PropTypes.oneOf(['auto', 'linear', 'pow', 'sqrt', 'log', 'identity', 'time',
+        'band', 'point', 'ordinal', 'quantile', 'quantize', 'utcTime', 'sequential',
+        'threshold']),
+      PropTypes.func,
+    ]),
   };
 
   static defaultProps = {
@@ -58,6 +64,7 @@ class XAxis extends Component {
     domain: [0, 'auto'],
     padding: { left: 0, right: 0 },
     allowDataOverflow: false,
+    scale: 'auto',
   };
 
   render() {
