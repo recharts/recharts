@@ -153,7 +153,7 @@ class Scatter extends Component {
     const lineProps = {
       ...scatterProps,
       fill: 'none',
-      stroke: scatterProps.fill,
+      stroke: scatterProps && scatterProps.fill,
       ...customLineProps,
       points: linePoints,
     };
