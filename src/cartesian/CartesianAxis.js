@@ -39,13 +39,7 @@ class CartesianAxis extends Component {
     tickLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
 
     minLabelGap: PropTypes.number,
-    ticks: PropTypes.oneOfType([
-      PropTypes.arrayOf(PropTypes.shape({
-        value: PropTypes.any,
-        coordinate: PropTypes.value,
-      })),
-      PropTypes.arrayOf(PropTypes.number),
-    ]),
+    ticks: PropTypes.array,
     tickSize: PropTypes.number,
     stroke: PropTypes.string,
     tickFormatter: PropTypes.func,
