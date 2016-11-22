@@ -121,8 +121,8 @@ class ResponsiveContainer extends Component {
   }
 
   render() {
-    const { minWidth, minHeight, width, height } = this.props;
-    const style = { width, height, minWidth, minHeight };
+    const { minWidth, minHeight, width, height, maxHeight } = this.props;
+    const style = { width, height, minWidth, minHeight, maxHeight };
 
     return (
       <div
