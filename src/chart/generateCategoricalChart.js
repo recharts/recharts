@@ -175,11 +175,14 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
           if (dataKey) {
             domain = getDomainOfDataByKey(displayedData, dataKey, type);
-            const duplicate = hasDuplicate(domain);
 
-            duplicateDomain = duplicate ? domain : null;
-            // When axis has duplicated text, serial numbers are used to generate scale
-            domain = duplicate ? _.range(0, len) : domain;
+            if (type === 'category') {
+              const duplicate = hasDuplicate(domain);
+              duplicateDomain = duplicate ? domain : null;
+
+              // When category axis has duplicated text, serial numbers are used to generate scale
+              domain = duplicate ? _.range(0, len) : domain;
+            }
 
             if (isCategorial && type === 'number') {
               categoricalDomain = getDomainOfDataByKey(displayedData, dataKey, 'category');
