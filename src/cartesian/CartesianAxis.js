@@ -44,7 +44,9 @@ class CartesianAxis extends Component {
     stroke: PropTypes.string,
     tickFormatter: PropTypes.func,
     ticksGenerator: PropTypes.func,
-    interval: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    interval: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf([
+      'preserveStart', 'preserveEnd', 'preserveStartEnd',
+    ])]),
   };
 
   static defaultProps = {
@@ -66,7 +68,7 @@ class CartesianAxis extends Component {
     minTickGap: 5,
     // The width or height of tick
     tickSize: 6,
-    interval: 'auto',
+    interval: 'preserveEnd',
   };
 
   static getTicks(props) {
@@ -74,18 +76,28 @@ class CartesianAxis extends Component {
 
     if (!ticks || !ticks.length) { return []; }
 
-    return (isNumber(interval) || isSsr())
-        ? CartesianAxis.getNumberIntervalTicks(ticks, isNumber(interval) ? interval : 0)
-        : CartesianAxis.getAutoIntervalTicks(
-          ticks, tickFormatter, viewBox, orientation, minTickGap
-        );
+    if (isNumber(interval) || isSsr()) {
+      return CartesianAxis.getNumberIntervalTicks(ticks, isNumber(interval) ? interval : 0);
+    }
+
+    if (interval === 'preserveStartEnd') {
+      return CartesianAxis.getTicksStart({
+        ticks, tickFormatter, viewBox, orientation, minTickGap,
+      }, true);
+    } else if (interval === 'preserveStart') {
+      return CartesianAxis.getTicksStart({
+        ticks, tickFormatter, viewBox, orientation, minTickGap,
+      });
+    }
+
+    return CartesianAxis.getTicksEnd({ ticks, tickFormatter, viewBox, orientation, minTickGap });
   }
 
   static getNumberIntervalTicks(ticks, interval) {
     return ticks.filter((entry, i) => (i % (interval + 1) === 0));
   }
 
-  static getAutoIntervalTicks(ticks, tickFormatter, viewBox, orientation, minTickGap) {
+  static getTicksStart({ ticks, tickFormatter, viewBox, orientation, minTickGap }, preserveEnd) {
     const { x, y, width, height } = viewBox;
     const sizeKey = (orientation === 'top' || orientation === 'bottom') ? 'width' : 'height';
     const result = (ticks || []).slice();
@@ -101,60 +113,93 @@ class CartesianAxis extends Component {
       start = sizeKey === 'width' ? x + width : y + height;
       end = sizeKey === 'width' ? x : y;
     }
-    const step = Math.ceil(len / 2);
 
-    for (let i = 0; i < step; i++) {
-      // the middle tick
-      if (len % 2 && i === len - 1 - i) {
-        const middle = result[i];
-        const content = _.isFunction(tickFormatter) ? tickFormatter(middle.value) : middle.value;
-        const size = getStringSize(content)[sizeKey];
-        const isShow = (sign * (middle.coordinate - sign * size / 2 - start) >= 0) &&
-          (sign * (middle.coordinate + sign * size / 2 - end) <= 0);
+    if (preserveEnd) {
+      // Try to guarantee the tail to be displayed
+      let tail = ticks[len - 1];
+      const tailContent = _.isFunction(tickFormatter) ? tickFormatter(tail.value) : tail.value;
+      const tailSize = getStringSize(tailContent)[sizeKey];
+      const tailGap = sign * (tail.coordinate + sign * tailSize / 2 - end);
+      result[len - 1] = tail = {
+        ...tail,
+        tickCoord: tailGap > 0 ? tail.coordinate - tailGap * sign : tail.coordinate,
+      };
 
-        if (isShow) {
-          result[i] = { ...result[i], tickCoord: middle.coordinate, isShow };
-        }
+      const isTailShow = (sign * (tail.tickCoord - sign * tailSize / 2 - start) >= 0) &&
+        (sign * (tail.tickCoord + sign * tailSize / 2 - end)) <= 0;
+
+      if (isTailShow) {
+        end = tail.tickCoord - sign * (tailSize / 2 + minTickGap);
+        result[len - 1] = { ...tail, isShow: true };
+      }
+    }
+
+    const count = preserveEnd ? len - 1 : len;
+    for (let i = 0; i < count; i++) {
+      let entry = result[i];
+      const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value;
+      const size = getStringSize(content)[sizeKey];
+
+      if (i === 0) {
+        const gap = sign * (entry.coordinate - sign * size / 2 - start);
+        result[i] = entry = {
+          ...entry,
+          tickCoord: gap < 0 ? entry.coordinate - gap * sign : entry.coordinate,
+        };
       } else {
-        let head = result[i];
-        const headContent = _.isFunction(tickFormatter) ? tickFormatter(head.value) : head.value;
-        const headSize = getStringSize(headContent)[sizeKey];
-        let tail = result[len - 1 - i];
-        const tailContent = _.isFunction(tickFormatter) ? tickFormatter(tail.value) : tail.value;
-        const tailSize = getStringSize(tailContent)[sizeKey];
+        result[i] = entry = { ...entry, tickCoord: entry.coordinate };
+      }
 
-        if (i === 0) {
-          const tailGap = sign * (tail.coordinate + sign * tailSize / 2 - end);
-          result[len - 1 - i] = tail = {
-            ...tail,
-            tickCoord: tailGap > 0 ? tail.coordinate - tailGap * sign : tail.coordinate,
-          };
+      const isShow = (sign * (entry.tickCoord - sign * size / 2 - start) >= 0) &&
+        (sign * (entry.tickCoord + sign * size / 2 - end)) <= 0;
 
-          const headGap = sign * (head.coordinate - sign * headSize / 2 - start);
-          result[i] = head = {
-            ...head,
-            tickCoord: headGap < 0 ? head.coordinate - headGap * sign : head.coordinate,
-          };
-        } else {
-          result[i] = head = { ...head, tickCoord: head.coordinate };
-          result[len - 1 - i] = tail = { ...tail, tickCoord: tail.coordinate };
-        }
+      if (isShow) {
+        start = entry.tickCoord + sign * (size / 2 + minTickGap);
+        result[i] = { ...entry, isShow: true };
+      }
+    }
 
-        const isTailShow = (sign * (tail.tickCoord - sign * tailSize / 2 - start) >= 0) &&
-          (sign * (tail.tickCoord + sign * tailSize / 2 - end)) <= 0;
+    return result.filter(entry => entry.isShow);
+  }
 
-        if (isTailShow) {
-          end = tail.tickCoord - sign * (tailSize / 2 + minTickGap);
-          result[len - 1 - i] = { ...tail, isShow: true };
-        }
+  static getTicksEnd({ ticks, tickFormatter, viewBox, orientation, minTickGap }) {
+    const { x, y, width, height } = viewBox;
+    const sizeKey = (orientation === 'top' || orientation === 'bottom') ? 'width' : 'height';
+    const result = (ticks || []).slice();
+    const len = result.length;
+    const sign = len >= 2 ? Math.sign(result[1].coordinate - result[0].coordinate) : 1;
 
-        const isHeadShow = (sign * (head.tickCoord - sign * headSize / 2 - start) >= 0) &&
-          (sign * (head.tickCoord + sign * headSize / 2 - end)) <= 0;
+    let start, end;
 
-        if (isHeadShow) {
-          start = head.tickCoord + sign * (headSize / 2 + minTickGap);
-          result[i] = { ...head, isShow: true };
-        }
+    if (sign === 1) {
+      start = sizeKey === 'width' ? x : y;
+      end = sizeKey === 'width' ? x + width : y + height;
+    } else {
+      start = sizeKey === 'width' ? x + width : y + height;
+      end = sizeKey === 'width' ? x : y;
+    }
+
+    for (let i = len - 1; i >= 0; i--) {
+      let entry = result[i];
+      const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value;
+      const size = getStringSize(content)[sizeKey];
+
+      if (i === len - 1) {
+        const gap = sign * (entry.coordinate + sign * size / 2 - end);
+        result[i] = entry = {
+          ...entry,
+          tickCoord: gap > 0 ? entry.coordinate - gap * sign : entry.coordinate,
+        };
+      } else {
+        result[i] = entry = { ...entry, tickCoord: entry.coordinate };
+      }
+
+      const isShow = (sign * (entry.tickCoord - sign * size / 2 - start) >= 0) &&
+        (sign * (entry.tickCoord + sign * size / 2 - end)) <= 0;
+
+      if (isShow) {
+        end = entry.tickCoord - sign * (size / 2 + minTickGap);
+        result[i] = { ...entry, isShow: true };
       }
     }
 

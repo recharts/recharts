@@ -12,6 +12,10 @@ const data = [
   { name: 'Page D', uv: 200, pv: 9800, amt: 2400 },
   { name: 'Page E', uv: 278, pv: 3908, amt: 2400 },
   { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
+  { name: 'Page G', uv: 189, pv: 4800, amt: 2400 },
+  { name: 'Page H', uv: 189, pv: 4800, amt: 2400 },
+  { name: 'Page I', uv: 189, pv: 4800, amt: 2400 },
+  { name: 'Page J', uv: 189, pv: 4800, amt: 2400 },
 ];
 
 const data01 = [
@@ -155,7 +159,7 @@ export default React.createClass({
             margin={{top: 10, bottom: 10, left: 30, right: 30}}
             onClick={this.handleClick}
           >
-            <XAxis dataKey='name'/>
+            <XAxis dataKey='name' interval="preserveStartEnd" />
             <Tooltip/>
             <CartesianGrid stroke='#f5f5f5'/>
             <Line type='monotone' dataKey='uv' stroke='#ff7300' yAxisId={0} activeDot={{fill: '#ff7300', stroke: 'none'}}/>
