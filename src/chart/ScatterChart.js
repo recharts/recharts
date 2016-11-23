@@ -82,11 +82,12 @@ class ScatterChart extends Component {
       size: zAxisDataKey !== undefined && isNumber(entry[zAxisDataKey]) ?
         zAxis.scale(entry[zAxisDataKey]) :
         zAxis.range[0],
-      payload: {
+      node: {
         x: entry[xAxisDataKey],
         y: entry[yAxisDataKey],
         z: (zAxisDataKey !== undefined && entry[zAxisDataKey]) || '-',
       },
+      payload: entry,
       ...(cells && cells[index] && cells[index].props),
     }));
   }
@@ -231,21 +232,26 @@ class ScatterChart extends Component {
   getTooltipContent(data, xAxis, yAxis, zAxis) {
     if (!data) { return null; }
 
+    const { payload, node } = data;
+
     const content = [{
       name: xAxis.name || xAxis.dataKey,
       unit: xAxis.unit || '',
-      value: data.x,
+      value: node.x,
+      payload,
     }, {
       name: yAxis.name || yAxis.dataKey,
       unit: yAxis.unit || '',
-      value: data.y,
+      value: node.y,
+      payload,
     }];
 
-    if (data.z && data.z !== '-') {
+    if (node.z && node.z !== '-') {
       content.push({
         name: zAxis.name || zAxis.dataKey,
         unit: zAxis.unit || '',
-        value: data.z,
+        value: node.z,
+        payload,
       });
     }
 
@@ -304,7 +310,7 @@ class ScatterChart extends Component {
       viewBox,
       active: isTooltipActive,
       label: '',
-      payload: this.getTooltipContent(activeItem && activeItem.payload, xAxis, yAxis, zAxis),
+      payload: this.getTooltipContent(activeItem, xAxis, yAxis, zAxis),
       coordinate: activeTooltipCoord,
     });
   }

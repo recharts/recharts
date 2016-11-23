@@ -52,11 +52,12 @@ class Scatter extends Component {
       cx: PropTypes.number,
       cy: PropTypes.number,
       size: PropTypes.number,
-      payload: PropTypes.shape({
+      node: PropTypes.shape({
         x: PropTypes.number,
         y: PropTypes.number,
         z: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       }),
+      payload: PropTypes.object,
     })),
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,

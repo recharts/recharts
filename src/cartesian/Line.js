@@ -216,7 +216,6 @@ class Line extends Component {
         ...customLabelProps,
         index: i,
         key: `label-${i}`,
-        payload: entry,
       };
 
       return this.renderLabelItem(label, labelProps, entry.value);
@@ -254,7 +253,7 @@ class Line extends Component {
         r: 3,
         ...lineProps,
         ...customDotProps,
-        cx: entry.x, cy: entry.y, index: i, payload: entry,
+        cx: entry.x, cy: entry.y, index: i, payload: entry.payload,
       };
 
       return this.renderDotItem(dot, dotProps);

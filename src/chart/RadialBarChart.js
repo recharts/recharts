@@ -96,6 +96,7 @@ class RadialBarChart extends Component {
         value,
         innerRadius: radius - pos.offset,
         outerRadius: radius - pos.offset + pos.radius,
+        payload: entry,
         ...(cells && cells[index] && cells[index].props),
       };
     });

@@ -161,7 +161,6 @@ class Pie extends Component {
           value: entry[valueKey],
           startAngle: deltaAngle < 0 ? tempStartAngle : tempEndAngle,
           endAngle: deltaAngle < 0 ? tempEndAngle : tempStartAngle,
-          payload: entry,
           midAngle: (tempStartAngle + tempEndAngle) / 2,
         };
 

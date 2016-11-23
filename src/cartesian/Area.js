@@ -253,7 +253,7 @@ class Area extends Component {
         cx: entry.x,
         cy: entry.y,
         index: i,
-        payload: entry,
+        payload: entry.payload,
       };
 
       return this.renderDotItem(dot, dotProps);
@@ -301,7 +301,7 @@ class Area extends Component {
         ...customLabelProps,
         index: i,
         key: `label-${i}`,
-        payload: entry,
+        payload: entry.payload,
       };
 
       return this.renderLabelItem(label, labelProps, entry.value);

@@ -198,7 +198,7 @@ class Bar extends Component {
         y,
         index: i,
         key: `label-${i}`,
-        payload: entry,
+        payload: entry.payload,
       };
 
       let labelValue = entry.value;

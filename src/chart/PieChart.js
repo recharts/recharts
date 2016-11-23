@@ -21,6 +21,7 @@ const getComposedData = ({ item }) => {
 
   if (data && data.length) {
     return data.map((entry, index) => ({
+      payload: entry,
       ...presentationProps,
       ...entry,
       ...(cells && cells[index] && cells[index].props),

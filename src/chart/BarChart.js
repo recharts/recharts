@@ -108,6 +108,7 @@ const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
     return {
       ...entry,
       x, y, width, height, value: stackedData ? value : value[1],
+      payload: entry,
       ...(cells && cells[index] && cells[index].props),
     };
   });

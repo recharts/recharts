@@ -64,6 +64,7 @@ const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, bandSize, dataKe
         x: getCategoryAxisCoordinate({ axis: xAxis, ticks: xTicks, bandSize, entry, index }),
         y: _.isNil(value[1]) ? null : yAxis.scale(value[1]),
         value,
+        payload: entry,
       };
     }
 
@@ -71,6 +72,7 @@ const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, bandSize, dataKe
       x: _.isNil(value[1]) ? null : xAxis.scale(value[1]),
       y: getCategoryAxisCoordinate({ axis: yAxis, ticks: yTicks, bandSize, entry, index }),
       value,
+      payload: entry,
     };
   });
 
