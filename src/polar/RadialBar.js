@@ -234,6 +234,7 @@ class RadialBar extends Component {
         ...rest,
         fill: '#eee',
         ...backgroundProps,
+        ...filterEventsOfChild(this.props, entry, i),
         startAngle,
         endAngle,
         index: i,
