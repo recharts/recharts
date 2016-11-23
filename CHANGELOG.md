@@ -1,3 +1,22 @@
+## 0.19.0 (Nov 23, 2016)
+
+### refactor
+
+- remove unneed `Animate` in `Bar` and `Rectangle`
+- refactor interval of `CartesianAxis`, support "preserveStart", "preserveEnd", "preserveStartEnd"
+- add payload in the `Tooltip` and `Scatter` of `ScatterChart`, and unify the payload of Components
+
+### feat
+
+- `RadialBar` support events triggered on the entire bar
+- support customized lable in `RadialBar`
+- support `maxHeight` in `ResponsiveContianer`
+
+### fix
+
+- fix multiple y-axes breaks chart when plotting only single datum
+- Relax propTypes.ticks in CartesianAxis
+
 ## 0.18.0 (Nov 15, 2016)
 
 ### feat
