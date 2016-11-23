@@ -15,6 +15,7 @@ class ResponsiveContainer extends Component {
     height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     minHeight: PropTypes.number,
     minWidth: PropTypes.number,
+    maxHeight: PropTypes.number,
     children: PropTypes.node.isRequired,
     debounce: PropTypes.number,
   };
@@ -82,7 +83,7 @@ class ResponsiveContainer extends Component {
 
     if (containerWidth < 0 || containerHeight < 0) { return null; }
 
-    const { aspect, width, height, minWidth, minHeight, children } = this.props;
+    const { aspect, width, height, minWidth, minHeight, maxHeight, children } = this.props;
 
     warn(isPercent(width) || isPercent(height),
       `The width(%s) and height(%s) are both fixed numbers,
@@ -100,6 +101,8 @@ class ResponsiveContainer extends Component {
     if (aspect && aspect > 0) {
       // Preserve the desired aspect ratio
       calculatedHeight = calculatedWidth / aspect;
+      // if maxHeight is set, overwrite if calculatedHeight is greater than maxHeight
+      if(maxHeight && (calculatedHeight > maxHeight)) calculatedHeight = maxHeight;
     }
 
     warn(calculatedWidth > 0 && calculatedHeight > 0,
@@ -118,8 +121,8 @@ class ResponsiveContainer extends Component {
   }
 
   render() {
-    const { minWidth, minHeight, width, height } = this.props;
-    const style = { width, height, minWidth, minHeight };
+    const { minWidth, minHeight, width, height, maxHeight } = this.props;
+    const style = { width, height, minWidth, minHeight, maxHeight };
 
     return (
       <div
