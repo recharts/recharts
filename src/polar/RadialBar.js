@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';
 import Sector from '../shape/Sector';
+import Text from '../component/Text';
 import Layer from '../container/Layer';
 import { getStringSize } from '../util/DOMUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
@@ -244,30 +245,48 @@ class RadialBar extends Component {
     });
   }
 
+  renderLabelItem(option, props, value) {
+    let labelItem;
+
+    if (React.isValidElement(option)) {
+      labelItem = React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      labelItem = option(props);
+    } else {
+      const id = _.uniqueId('recharts-defs-');
+      const filteredProps = getPresentationAttributes(props);
+      const path = this.getLabelPathArc(props, value, filteredProps);
+
+      labelItem = (
+        <text {...filteredProps} key={props.key} className="recharts-radial-bar-label">
+          <defs><path id={id} d={path} /></defs>
+          <textPath xlinkHref={`#${id}`}>{value}</textPath>
+        </text>
+      );
+    }
+
+    return labelItem;
+  }
+
   renderLabels(sectors) {
     const { isAnimationActive } = this.props;
     if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
     const { label } = this.props;
-    const isElement = React.isValidElement(label);
-    const formatter = isElement ? label.props.formatter : label.formatter;
-    const hasFormatter = _.isFunction(formatter);
 
     return sectors.map((entry, i) => {
-      const content = hasFormatter ? formatter(entry.value) : entry.value;
-      const id = _.uniqueId('recharts-defs-');
+      const props = {
+        fontSize: 10,
+        ...entry,
+        ...getPresentationAttributes(label),
+        index: i,
+        key: `label-${i}`,
+      };
 
-      const style = getPresentationAttributes(label) || { fontSize: 10, fill: '#000' };
-      const path = this.getLabelPathArc(entry, content, style);
-
-      return (
-        <text {...style} key={`label-${i}`} className="recharts-radial-bar-label">
-          <defs><path id={id} d={path} /></defs>
-          <textPath xlinkHref={`#${id}`}>{content}</textPath>
-        </text>
-      );
+      return this.renderLabelItem(label, props, entry.value);
     });
   }
+
 
   render() {
     const { data, className, background, label } = this.props;
