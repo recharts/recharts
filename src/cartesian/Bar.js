@@ -99,7 +99,7 @@ class Bar extends Component {
     } else if (_.isFunction(option)) {
       rectangle = option(props);
     } else {
-      rectangle = <Rectangle {...props} className="recharts-bar-rectangle" />;
+      rectangle = <Rectangle {...props} />;
     }
 
     return rectangle;
@@ -115,9 +115,20 @@ class Bar extends Component {
 
     return data.map((entry, index) => {
       const { x, y, width, height } = entry;
-      const props = {
-        ...baseProps, ...entry, index, ...filterEventsOfChild(this.props, entry, index),
-      };
+      const props = { ...baseProps, ...entry, index };
+
+      if (_.isNil(entry.value) || !isAnimationActive) {
+        return (
+          <Layer
+            className="recharts-bar-rectangle"
+            {...filterEventsOfChild(this.props, entry, index)}
+            key={`rectangle-${index}`}
+          >
+            {this.renderRectangle(shape, props)}
+          </Layer>
+        );
+      }
+
       let transformOrigin = '';
 
       if (layout === 'vertical') {
@@ -138,16 +149,21 @@ class Bar extends Component {
           onAnimationEnd={this.handleAnimationEnd}
           onAnimationStart={this.handleAnimationStart}
         >
-          <g style={translateStyle({ transformOrigin })}>
+          <Layer
+            className="recharts-bar-rectangle"
+            style={translateStyle({ transformOrigin })}
+            {...filterEventsOfChild(this.props, entry, index)}
+            key={`rectangle-${index}`}
+          >
             {this.renderRectangle(shape, props)}
-          </g>
+          </Layer>
         </Animate>
       );
     });
   }
 
   renderLabelItem(option, props, value) {
-    let labelItem;
+    let labelItem = null;
 
     if (React.isValidElement(option)) {
       labelItem = React.cloneElement(option, props);

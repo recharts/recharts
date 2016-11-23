@@ -8,7 +8,7 @@ import { changeNumberOfData } from './utils';
 const colors = scaleOrdinal(schemeCategory10).range();
 
 const data = [
-  { name: 'food', uv: 2400, pv: 2013, amt: 4500, time: 1 },
+  { name: 'food', uv: 2000, pv: 2013, amt: 4500, time: 1 },
   { name: 'cosmetic', uv: 3300, pv: 2000, amt: 6500, time: 2 },
   { name: 'storage', uv: 3200, pv: 1398, amt: 5000, time: 3 },
   { name: 'digital', uv: 2800, pv: 2800, amt: 4000, time: 4 },
@@ -90,11 +90,15 @@ const data02 = [
 const RenderLabel = (props) => {
   const { x, y, textAnchor, key, value, index, ...others } = props;
 
-  return (
-    <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={key}>
-      {_.isArray(value) ? value[1] : value}
-    </text>
-  );
+  if (x === +x && y === +y) {
+    return (
+      <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={key}>
+        {_.isArray(value) ? value[1] : value}
+      </text>
+    );
+  }
+
+  return null;
 };
 
 const CustomTick = function() {
@@ -115,23 +119,33 @@ const CustomAxisTick = function() {
 
 const CustomBar = (props) => {
   const { x, y, width, height, fill } = props;
-  const path = `M${x},${y + height}
-          C${x + width / 3},${y + height} ${x + width / 2},${y + height / 3} ${x + width / 2}, ${y}
-          C${x + width / 2},${y + height / 3} ${x + 2 * width / 3},${y + height} ${x + width}, ${y + height}
-          Z`;
 
-  return <path d={path} stroke='none' fill={fill}/>;
+  if (x === +x && y === +y) {
+    const path = `M${x},${y + height}
+            C${x + width / 3},${y + height} ${x + width / 2},${y + height / 3} ${x + width / 2}, ${y}
+            C${x + width / 2},${y + height / 3} ${x + 2 * width / 3},${y + height} ${x + width}, ${y + height}
+            Z`;
+
+    return <path d={path} stroke='none' fill={fill}/>;
+  }
+
+  return null;
 };
 
 const BarTwo = React.createClass({
   getPath () {
     const { x, y, width, height } = this.props;
-    const extend = width * 0.2;
 
-    return `M${x - extend},${y + height}
-            C${x - extend + width / 3},${y + height} ${x + width / 6},${y} ${x + width / 2}, ${y}
-            C${x + 5 * width / 6},${y} ${x + extend + 2 * width / 3},${y + height} ${x + width + extend}, ${y + height}
-            Z`;
+    if (x === +x && y === +y) {
+      const extend = width * 0.2;
+
+      return `M${x - extend},${y + height}
+              C${x - extend + width / 3},${y + height} ${x + width / 6},${y} ${x + width / 2}, ${y}
+              C${x + 5 * width / 6},${y} ${x + extend + 2 * width / 3},${y + height} ${x + width + extend}, ${y + height}
+              Z`;
+    }
+
+    return null;
   },
 
   render () {
@@ -241,7 +255,7 @@ export default React.createClass({
             <XAxis type="number" />
             <YAxis dataKey="name" type="category"/>
             <CartesianGrid horizontal={false} />
-            <Bar dataKey="uv" fill="#ff7300" maxBarSize={15} />
+            <Bar dataKey="uv" fill="#ff7300" maxBarSize={15} isAnimationActive={false} />
             <Bar dataKey="pv" fill="#387908" />
             <Tooltip />
           </BarChart>

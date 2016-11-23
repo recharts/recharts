@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
-import Smooth from 'react-smooth';
+import Animate from 'react-smooth';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
@@ -126,8 +126,19 @@ class Rectangle extends Component {
 
     const layerClass = classNames('recharts-rectangle', className);
 
+    if (!isUpdateAnimationActive) {
+      return (
+        <path
+          {...getPresentationAttributes(this.props)}
+          {...filterEventAttributes(this.props)}
+          className={layerClass}
+          d={getRectangePath(x, y, width, height, radius)}
+        />
+      );
+    }
+
     return (
-      <Smooth
+      <Animate
         canBegin={totalLength > 0}
         from={{ width, height, x, y }}
         to={{ width, height, x, y }}
@@ -137,7 +148,7 @@ class Rectangle extends Component {
       >
         {
         ({ width: currWidth, height: currHeight, x: currX, y: currY }) => (
-          <Smooth
+          <Animate
             canBegin={totalLength > 0}
             from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
             to={`${totalLength}px 0px`}
@@ -153,10 +164,10 @@ class Rectangle extends Component {
               className={layerClass}
               d={getRectangePath(currX, currY, currWidth, currHeight, radius)}
             />
-          </Smooth>
+          </Animate>
         )
       }
-      </Smooth>
+      </Animate>
     );
   }
 }
