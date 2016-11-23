@@ -259,7 +259,7 @@ describe('<LineChart />', () => {
     expect(lineDots.children().length).to.equal(6);
 
 		// verify one of the dots that we expect to move when the brush happens
-    expect(lineDots.childAt(2).props().payload.value).to.equal(data[2].uv);
+    expect(lineDots.childAt(2).props().payload).to.equal(data[2]);
     expect(lineDots.childAt(2).props().cx).to.equal(164);
     expect(lineDots.childAt(2).props().cy).to.equal(100);
 
@@ -272,12 +272,12 @@ describe('<LineChart />', () => {
     expect(newLineDots.children().length).to.equal(3);
 
 		// make sure the new first dot is the same as the old 2 dot, just in a new place
-    expect(newLineDots.childAt(0).props().payload.value).to.equal(data[2].uv);
+    expect(newLineDots.childAt(0).props().payload).to.equal(data[2]);
     expect(newLineDots.childAt(0).props().cx).to.equal(margin.left);
     expect(newLineDots.childAt(0).props().cy).to.equal(20);
 
 		// make sure the new last dot is the same as the old 4 dot, just in the last spot
-    expect(newLineDots.childAt(2).props().payload.value).to.equal(data[4].uv);
+    expect(newLineDots.childAt(2).props().payload).to.equal(data[4]);
     expect(newLineDots.childAt(2).props().cx).to.equal(width - margin.right);
     expect(newLineDots.childAt(2).props().cy).to.equal(43.4666666666667);
 
