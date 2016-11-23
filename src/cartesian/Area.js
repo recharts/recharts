@@ -253,6 +253,7 @@ class Area extends Component {
         cx: entry.x,
         cy: entry.y,
         index: i,
+        value: entry.value,
         payload: entry.payload,
       };
 
@@ -301,6 +302,7 @@ class Area extends Component {
         ...customLabelProps,
         index: i,
         key: `label-${i}`,
+        value: entry.value,
         payload: entry.payload,
       };
 

@@ -253,6 +253,7 @@ class Line extends Component {
         r: 3,
         ...lineProps,
         ...customDotProps,
+        value: entry.value,
         cx: entry.x, cy: entry.y, index: i, payload: entry.payload,
       };
 
