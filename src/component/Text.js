@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { isNumber } from '../util/DataUtils';
+import { isNumber, isNumOrStr } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
 
 class Text extends Component {
@@ -118,7 +118,7 @@ class Text extends Component {
     const { wordsByLines } = this.state;
     const { x, y } = textProps;
 
-    if (!isNumber(x) || !isNumber(y)) { return null; }
+    if (!isNumOrStr(x) || !isNumOrStr(y)) { return null; }
 
     let startDy;
     switch (verticalAnchor) {

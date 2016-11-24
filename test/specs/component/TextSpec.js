@@ -53,4 +53,28 @@ describe('<Text />', () => {
 
     expect(wrapper.text()).to.contain("0");
   });
+
+  it('Render text when x or y is a percentage', () => {
+    const wrapper = render(
+      <Text x="50%" y="50%">anything</Text>
+    );
+
+    expect(wrapper.text()).to.contain('anything');
+  });
+
+  it("Don't Render text when x or y is NaN, null, or undefined ", () => {
+    const wrapperNan = render(
+      <Text x={NaN} y={10}>anything</Text>
+    );
+    const wrapperNull = render(
+      <Text x={5} y={null}>anything</Text>
+    );
+    const wrapperUndefined = render(
+      <Text x={5} y={undefined}>anything</Text>
+    );
+
+    expect(wrapperNan.text()).to.not.contain('anything');
+    expect(wrapperNull.text()).to.not.contain('anything');
+    expect(wrapperUndefined.text()).to.not.contain('anything');
+  });
 });
