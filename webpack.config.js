@@ -1,6 +1,7 @@
 var path = require('path');
 var LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 var webpack = require('webpack');
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 var env = process.env.NODE_ENV;
 
 var config = {
@@ -71,6 +72,12 @@ var config = {
     }),
   ],
 };
+
+if (env === 'analyse') {
+  config.plugins.push(
+    new BundleAnalyzerPlugin()
+  );
+}
 
 if (env === 'production') {
   config.plugins.push(

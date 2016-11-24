@@ -28,7 +28,7 @@
     "test": "NODE_ENV=test karma start test/karma.conf.js",
     "lint": "eslint src",
     "autofix": "eslint src --fix",
-    "bundle-analyse": "NODE_ENV=production webpack src/index.js umd/Recharts.min.js --json | webpack-bundle-size-analyzer"
+    "bundle-analyse": "NODE_ENV=analyse webpack src/index.js umd/Recharts.js"
   },
   "pre-commit": [
     "lint"
@@ -105,7 +105,7 @@
     "rimraf": "^2.5.3",
     "sinon": "^1.17.0",
     "webpack": "2.1.0-beta.25",
-    "webpack-bundle-size-analyzer": "^2.2.0",
+    "webpack-bundle-analyzer": "^1.5.4",
     "webpack-dev-server": "2.1.0-beta.10"
   },
   "license": "MIT"
