@@ -376,7 +376,7 @@ class Brush extends Component {
       stroke } = this.props;
     const { startX, endX } = this.state;
     const offset = 5;
-    const style = {
+    const attrs = {
       pointerEvents: 'none',
       fill: stroke,
     };
@@ -386,18 +386,18 @@ class Brush extends Component {
         <Text
           textAnchor="end"
           verticalAnchor="middle"
-          style={style}
           x={Math.min(startX, endX) - offset}
           y={y + height / 2}
+          {...attrs}
         >
           {this.getTextOfTick(startIndex)}
         </Text>
         <Text
           textAnchor="start"
           verticalAnchor="middle"
-          style={style}
           x={Math.max(startX, endX) + travellerWidth + offset}
           y={y + height / 2}
+          {...attrs}
         >
           {this.getTextOfTick(endIndex)}
         </Text>
