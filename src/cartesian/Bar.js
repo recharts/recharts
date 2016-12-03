@@ -191,17 +191,16 @@ class Bar extends Component {
     if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
     const { data, errorBarFill, errorBarStrokeWidth } = this.props;
-    const errorKey = this.props.dataKey + 'Error';
+    const errorKey = `${this.props.dataKey}Error`;
     const errorBars = data.map((entry, i) => {
-      let xMid, yMid, xMin, yMin, xMax, yMax, scale = 0;
-      let coordsTop, coordsMid, coordsBot = {};
-      let errorVal = entry[errorKey];
+      let xMid, yMid, xMin, yMin, xMax, yMax, scale, coordsTop, coordsMid, coordsBot;
+      const errorVal = entry[errorKey];
 
       if (errorVal) {
         if (this.props.layout === 'vertical') {
-          scale = entry.width / entry.value; 
+          scale = entry.width / entry.value;
           xMid = entry.x + entry.width;
-          yMid = entry.y + entry.height / 2;  
+          yMid = entry.y + entry.height / 2;
           xMin = xMid - errorVal / 2 * scale;
           yMin = yMid + entry.height / 5;
           xMax = xMid + errorVal / 2 * scale;
@@ -210,7 +209,7 @@ class Bar extends Component {
           coordsMid = { x1: xMin, y1: yMid, x2: xMax, y2: yMid };
           coordsBot = { x1: xMin, y1: yMin, x2: xMin, y2: yMax };
         } else if (this.props.layout === 'horizontal') {
-          scale = entry.height / entry.value; 
+          scale = entry.height / entry.value;
           xMid = entry.x + entry.width / 2;
           yMid = entry.y;
           xMin = xMid - entry.width / 5;
@@ -223,16 +222,15 @@ class Bar extends Component {
         }
 
         return (
-          <Layer className={`recharts-bar-errorBar-${i}`}  key={i}>
+          <Layer className={`recharts-bar-errorBar-${i}`} key={i}>
             <line {...coordsTop} stroke={errorBarFill} strokeWidth={errorBarStrokeWidth} />;
             <line {...coordsMid} stroke={errorBarFill} strokeWidth={errorBarStrokeWidth} />;
             <line {...coordsBot} stroke={errorBarFill} strokeWidth={errorBarStrokeWidth} />;
           </Layer>
         );
-      } else {
-        return null;
       }
 
+      return null;
     });
 
     return <Layer className="recharts-bar-errorBars">{errorBars}</Layer>;
