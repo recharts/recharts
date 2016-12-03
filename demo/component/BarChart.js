@@ -8,10 +8,10 @@ import { changeNumberOfData } from './utils';
 const colors = scaleOrdinal(schemeCategory10).range();
 
 const data = [
-  { name: 'food', uv: 2000, pv: 2013, amt: 4500, time: 1 },
-  { name: 'cosmetic', uv: 3300, pv: 2000, amt: 6500, time: 2 },
-  { name: 'storage', uv: 3200, pv: 1398, amt: 5000, time: 3 },
-  { name: 'digital', uv: 2800, pv: 2800, amt: 4000, time: 4 },
+  { name: 'food', uv: 2000, pv: 2013, amt: 4500, time: 1, uvError: 200, pvError: 110 },
+  { name: 'cosmetic', uv: 3300, pv: 2000, amt: 6500, time: 2, uvError: 240, pvError: 100 },
+  { name: 'storage', uv: 3200, pv: 1398, amt: 5000, time: 3, uvError: 220, pvError: 200 },
+  { name: 'digital', uv: 2800, pv: 2800, amt: 4000, time: 4, uvError: 200, pvError: 130 },
 ];
 
 const data01 = [
@@ -286,6 +286,33 @@ export default React.createClass({
             </Bar>
           </BarChart>
         </div>
+        
+        <p>BarChart with error bars</p>
+        <div className="bar-chart-wrapper" style={{textAlign: 'right'}}>
+          <BarChart width={400} height={400} data={data} onClick={this.handlePvBarClick}>
+            <XAxis dataKey="name" />
+            <YAxis yAxisId="a" />
+            <YAxis yAxisId="b" orientation="right" />
+            <Legend />
+            <Tooltip />
+            <CartesianGrid vertical={false}/>
+            <Bar yAxisId="a" dataKey="uv" onAnimationStart={this.handleBarAnimationStart} onAnimationEnd={this.handleBarAnimationEnd} shouldShowErrorBar={true} >
+              {
+                data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
+                ))
+              }
+            </Bar>
+            <Bar yAxisId="b" dataKey="pv" shouldShowErrorBar={true}>
+              {
+                data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
+                ))
+              }
+            </Bar>
+          </BarChart>
+        </div>
+
 
 
         <p>Tiny BarChart</p>
