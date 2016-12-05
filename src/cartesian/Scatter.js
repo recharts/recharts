@@ -58,7 +58,7 @@ class Scatter extends Component {
         y: PropTypes.number,
         z: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       }),
-      payload: PropTypes.object,
+      payload: PropTypes.any,
     })),
 
     isAnimationActive: PropTypes.bool,
