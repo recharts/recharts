@@ -262,7 +262,10 @@ export const validateWidthHeight = (el) => {
   return true;
 };
 
-export const isSsr = () => (typeof document === 'undefined');
+export const isSsr = () => (
+  !(typeof window !== 'undefined' && window.document && window.document.createElement &&
+    window.setTimeout)
+);
 
 const SVG_TAGS = ['a', 'altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',
   'animateColor', 'animateMotion', 'animateTransform', 'circle', 'clipPath',
