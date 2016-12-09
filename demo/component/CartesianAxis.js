@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Surface, CartesianAxis } from 'recharts';
+import { Surface, CartesianAxis, Label } from 'recharts';
 
 export default class Demo extends Component {
 
@@ -23,7 +23,9 @@ export default class Demo extends Component {
           height={50}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
           ticks={ticks}
-        />
+        >
+          <Label>测试</Label>
+        </CartesianAxis>
         <CartesianAxis
           orientation="top"
           y={200}
