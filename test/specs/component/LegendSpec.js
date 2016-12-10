@@ -9,7 +9,7 @@ describe('<Legend />', () => {
     { value: 'Apple', color: '#ff7300' },
     { value: 'Samsung', color: '#bb7300' },
     { value: 'Huawei', color: '#887300' },
-    { value: 'Sony', color: '#667300' },
+    { value: 'Sony', color: '#667300', className: 'someCSSClass' },
   ];
 
   it('Render 4 legend items in simple Legend', () => {
@@ -22,14 +22,22 @@ describe('<Legend />', () => {
   });
 
   it('Render customized legend when content is set to be a react element', () => {
-    const CustomizedLegend = () => {
-      return <div className="customized-legend">test</div>;
-    };
+    const CustomizedLegend = () => <div className="customized-legend">test</div>;
+
     const wrapper = render(
-      <Legend width={500} height={30} payload={data} content={<CustomizedLegend/>}/>
+      <Legend width={500} height={30} payload={data} content={<CustomizedLegend />} />
     );
 
     expect(wrapper.find('.recharts-default-legend').length).to.equal(0);
     expect(wrapper.find('.customized-legend').length).to.equal(1);
   });
+
+  it('Render 4 legend items, one of them has a custom css class', () => {
+    const wrapper = render(
+      <Legend width={500} height={30} payload={data} />
+    );
+
+    expect(wrapper.find('.someCSSClass').length).to.equal(1);
+  });
+
 });

@@ -23,9 +23,9 @@ class DefaultLegendContent extends Component {
       value: PropTypes.any,
       id: PropTypes.any,
       type: PropTypes.oneOf([
-        'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square',
-        'star', 'triangle', 'wye',
+        'circle', 'cross', 'diamond', 'line', 'rect', 'square', 'star', 'triangle', 'wye',
       ]),
+      className: PropTypes.string,
     })),
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
@@ -99,19 +99,26 @@ class DefaultLegendContent extends Component {
     };
     const svgStyle = { display: 'inline-block', verticalAlign: 'middle', marginRight: 4 };
 
-    return payload.map((entry, i) => (
-      <li
-        className={`recharts-legend-item legend-item-${i}`}
-        style={itemStyle}
-        key={`legend-item-${i}`}
-        {...filterEventsOfChild(this.props, entry, i)}
-      >
-        <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
-          {this.renderIcon(entry, iconSize)}
-        </Surface>
-        <span className="recharts-legend-item-text">{entry.value}</span>
-      </li>
-    ));
+    return payload.map((entry, i) => {
+      let className = `recharts-legend-item legend-item-${i}`;
+      if (typeof entry.className === 'string' && entry.className.length > 0) {
+        className += ` ${entry.className}`;
+      }
+
+      return (
+        <li
+          className={className}
+          style={itemStyle}
+          key={`legend-item-${i}`}
+          {...filterEventsOfChild(this.props, entry, i)}
+        >
+          <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
+            {this.renderIcon(entry, iconSize)}
+          </Surface>
+          <span className="recharts-legend-item-text">{entry.value}</span>
+        </li>
+      );
+    });
   }
 
   render() {
