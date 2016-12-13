@@ -97,7 +97,7 @@ export const PRESENTATION_ATTRIBUTES = {
   r: PropTypes.number,
 };
 
-const EVENT_ATTRIBUTES = {
+export const EVENT_ATTRIBUTES = {
   onClick: PropTypes.func,
   onMouseDown: PropTypes.func,
   onMouseUp: PropTypes.func,

@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
@@ -20,6 +20,7 @@ class Scatter extends Component {
   static displayName = 'Scatter';
 
   static propTypes = {
+    ...PRESENTATION_ATTRIBUTES,
     ...PRESENTATION_ATTRIBUTES,
 
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -59,9 +60,6 @@ class Scatter extends Component {
       }),
       payload: PropTypes.object,
     })),
-    onMouseEnter: PropTypes.func,
-    onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func,
 
     isAnimationActive: PropTypes.bool,
     animationId: PropTypes.number,
