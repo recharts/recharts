@@ -153,6 +153,10 @@ class Line extends Component {
       .join(', ');
   }
 
+  pathRef = (node) => {
+    this.animate = node;
+  };
+
   repeat(lines, count) {
     const linesUnit = lines.length % 2 !== 0 ? [...lines, 0] : lines;
     let result = [];
@@ -277,7 +281,7 @@ class Line extends Component {
       onAnimationEnd: this.handleAnimationEnd,
       onAnimationStart: this.handleAnimationStart,
       shouldReAnimate: true,
-      pathRef: (node) => { this.animate = node; },
+      pathRef: this.pathRef,
     };
     const curveProps = { ...other, className: 'recharts-line-curve', fill: 'none',
       onClick, onMouseEnter, onMouseLeave, points };
@@ -293,18 +297,26 @@ class Line extends Component {
       return (
         <Animate
           {...animationProps}
-          from={{ length: 0 }}
-          to={{ length: totalLength }}
+          from={{ curveLen: 0 }}
+          to={{ curveLen: totalLength }}
         >
           {
-            ({ length }) => (
+            ({ curveLen }) => (
               <Curve
                 {...curveProps}
-                strokeDasharray={this.getStrokeDasharray(length, totalLength, lines)}
+                strokeDasharray={this.getStrokeDasharray(curveLen, totalLength, lines)}
               />
             )
           }
         </Animate>
+      );
+    } else if (strokeDasharray) {
+      return (
+        <Curve
+          {...curveProps}
+          pathRef={this.pathRef}
+          strokeDasharray={strokeDasharray}
+        />
       );
     }
 
