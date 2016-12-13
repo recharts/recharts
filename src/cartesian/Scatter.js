@@ -35,7 +35,7 @@ class Scatter extends Component {
       'monotoneX', 'monotoneY', 'monotone', 'step', 'stepBefore', 'stepAfter',
     ]), PropTypes.func]),
     legendType: PropTypes.oneOf([
-      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'star',
       'triangle', 'wye',
     ]),
     className: PropTypes.string,
