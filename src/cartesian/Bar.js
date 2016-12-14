@@ -8,6 +8,7 @@ import _ from 'lodash';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
+import ErrorBar from './ErrorBar';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild, isSsr } from '../util/ReactUtils';
@@ -23,6 +24,8 @@ class Bar extends Component {
     layout: PropTypes.oneOf(['vertical', 'horizontal']),
     xAxisId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     yAxisId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    yAxisMap: PropTypes.object,
+    xAxisMap: PropTypes.object,
     stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     barSize: PropTypes.number,
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -39,6 +42,7 @@ class Bar extends Component {
     label: PropTypes.oneOfType([
       PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element,
     ]),
+    errorBar: PropTypes.object,
     data: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -186,56 +190,6 @@ class Bar extends Component {
     return labelItem;
   }
 
-  renderErrorbars() {
-    const { isAnimationActive } = this.props;
-    if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
-
-    const { data, errorBarFill, errorBarStrokeWidth } = this.props;
-    const errorKey = `${this.props.dataKey}Error`;
-    const errorBars = data.map((entry, i) => {
-      let xMid, yMid, xMin, yMin, xMax, yMax, scale, coordsTop, coordsMid, coordsBot;
-      const errorVal = entry[errorKey];
-
-      if (errorVal) {
-        if (this.props.layout === 'vertical') {
-          scale = entry.width / entry.value;
-          xMid = entry.x + entry.width;
-          yMid = entry.y + entry.height / 2;
-          xMin = xMid - errorVal / 2 * scale;
-          yMin = yMid + entry.height / 5;
-          xMax = xMid + errorVal / 2 * scale;
-          yMax = yMid - entry.height / 5;
-          coordsTop = { x1: xMax, y1: yMin, x2: xMax, y2: yMax };
-          coordsMid = { x1: xMin, y1: yMid, x2: xMax, y2: yMid };
-          coordsBot = { x1: xMin, y1: yMin, x2: xMin, y2: yMax };
-        } else if (this.props.layout === 'horizontal') {
-          scale = entry.height / entry.value;
-          xMid = entry.x + entry.width / 2;
-          yMid = entry.y;
-          xMin = xMid - entry.width / 5;
-          xMax = xMid + entry.width / 5;
-          yMin = yMid + errorVal / 2 * scale;
-          yMax = yMid - errorVal / 2 * scale;
-          coordsTop = { x1: xMin, y1: yMax, x2: xMax, y2: yMax };
-          coordsMid = { x1: xMid, y1: yMin, x2: xMid, y2: yMax };
-          coordsBot = { x1: xMin, y1: yMin, x2: xMax, y2: yMin };
-        }
-
-        return (
-          <Layer className={`recharts-bar-errorBar-${i}`} key={i}>
-            <line {...coordsTop} stroke={errorBarFill} strokeWidth={errorBarStrokeWidth} />;
-            <line {...coordsMid} stroke={errorBarFill} strokeWidth={errorBarStrokeWidth} />;
-            <line {...coordsBot} stroke={errorBarFill} strokeWidth={errorBarStrokeWidth} />;
-          </Layer>
-        );
-      }
-
-      return null;
-    });
-
-    return <Layer className="recharts-bar-errorBars">{errorBars}</Layer>;
-  }
-
   renderLabels() {
     const { isAnimationActive } = this.props;
 
@@ -279,8 +233,38 @@ class Bar extends Component {
     return <Layer className="recharts-bar-labels">{labels}</Layer>;
   }
 
+  renderErrorBars() {
+    if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
+
+    const { data, xAxisId, xAxisMap, yAxisId, yAxisMap, errorBar, layout } = this.props;
+    const xAxis = xAxisMap[xAxisId];
+    const yAxis = yAxisMap[yAxisId];
+
+    return data.map((entry, i) => {
+      const offset = (layout === 'vertical') ? entry.height / 2 : entry.width / 2;
+
+      const props = {};
+      props.x = entry.x;
+      props.y = entry.y;
+      props.value = entry.value;
+      props.errorVal = entry[errorBar.errorKey];
+
+      return (
+        <ErrorBar
+          key={i}
+          offset={offset}
+          layout={layout}
+          xAxis={xAxis}
+          yAxis={yAxis}
+          {...errorBar}
+          {...props}
+        />
+      );
+    });
+  }
+
   render() {
-    const { data, className, label, shouldShowErrorBar } = this.props;
+    const { data, className, label, errorBar } = this.props;
 
     if (!data || !data.length) { return null; }
 
@@ -296,7 +280,11 @@ class Bar extends Component {
             {this.renderLabels()}
           </Layer>
         )}
-        {shouldShowErrorBar && this.renderErrorbars()}
+        {errorBar && (
+          <Layer className="recharts-bar-errorBars">
+            {this.renderErrorBars()}
+          </Layer>
+        )}
       </Layer>
     );
   }
