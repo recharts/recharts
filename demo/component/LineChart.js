@@ -6,16 +6,16 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine,
 import { scalePow, scaleLog } from 'd3-scale';
 
 const data = [
-  { name: 'Page A', uv: 1000, pv: 2400, amt: 2400 },
-  { name: 'Page B', uv: 300, pv: 4567, amt: 2400 },
-  { name: 'Page C', uv: 280, pv: 1398, amt: 2400 },
-  { name: 'Page D', uv: 200, pv: 9800, amt: 2400 },
-  { name: 'Page E', uv: 278, pv: 3908, amt: 2400 },
-  { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
-  { name: 'Page G', uv: 189, pv: 4800, amt: 2400 },
-  { name: 'Page H', uv: 189, pv: 4800, amt: 2400 },
-  { name: 'Page I', uv: 189, pv: 4800, amt: 2400 },
-  { name: 'Page J', uv: 189, pv: 4800, amt: 2400 },
+  { name: 'Page A', uv: 1000, pv: 2400, amt: 2400, uvError: 30 },
+  { name: 'Page B', uv: 300, pv: 4567, amt: 2400, uvError: 80 },
+  { name: 'Page C', uv: 280, pv: 1398, amt: 2400, uvError: 28 },
+  { name: 'Page D', uv: 200, pv: 9800, amt: 2400, uvError: 20 },
+  { name: 'Page E', uv: 278, pv: 3908, amt: 2400, uvError: 28 },
+  { name: 'Page F', uv: 189, pv: 4800, amt: 2400, uvError: 18 },
+  { name: 'Page G', uv: 189, pv: 4800, amt: 2400, uvError: 28 },
+  { name: 'Page H', uv: 189, pv: 4800, amt: 2400, uvError: 18 },
+  { name: 'Page I', uv: 189, pv: 4800, amt: 2400, uvError: 18 },
+  { name: 'Page J', uv: 189, pv: 4800, amt: 2400, uvError: 18 },
 ];
 
 const data01 = [
@@ -146,7 +146,23 @@ export default React.createClass({
             <XAxis />
             <YAxis scale={scale} domain={[0.01, 'auto']} ticks={[0.01, 0.1, 1, 10, 100, 1000]} />
             <Tooltip />
-            <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300' />
+            <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300'  />
+          </LineChart>
+        </div>
+        
+        <p>LineChart with error bars</p>
+        <div className='line-chart-wrapper' style={{ padding: 40 }}>
+          <LineChart
+            width={400}
+            height={400}
+            data={data}
+            margin={{top: 10, bottom: 10, left: 30, right: 30}}
+            onClick={this.handleClick}
+          >
+            <XAxis dataKey='name' interval="preserveStartEnd" />
+            <Tooltip/>
+            <CartesianGrid stroke='#f5f5f5'/>
+            <Line type='monotone' dataKey='uv' stroke='#ff7300' yAxisId={0} activeDot={{fill: '#ff7300', stroke: 'none'}} errorBar={{ errorKey: 'uvError' }}/>
           </LineChart>
         </div>
 
@@ -162,7 +178,7 @@ export default React.createClass({
             <XAxis dataKey='name' interval="preserveStartEnd" />
             <Tooltip/>
             <CartesianGrid stroke='#f5f5f5'/>
-            <Line type='monotone' dataKey='uv' stroke='#ff7300' yAxisId={0} activeDot={{fill: '#ff7300', stroke: 'none'}}/>
+            <Line type='monotone' dataKey='uv' stroke='#ff7300' yAxisId={0} activeDot={{fill: '#ff7300', stroke: 'none'}} />
             <Line type='monotone' dataKey='pv' stroke='#387908' yAxisId={1} activeDot={{fill: '#387908', stroke: 'none', r: 6}}/>
           </LineChart>
         </div>

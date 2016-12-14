@@ -28,7 +28,6 @@ class ErrorBars extends Component {
   };
 
   render() {
-
     const { offset, layout, fill, strokeWidth, width, x, y, value, errorVal } = this.props;
 
     if (!errorVal) { return null; }
