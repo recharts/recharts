@@ -242,12 +242,12 @@ class Bar extends Component {
 
     return data.map((entry, i) => {
       const offset = (layout === 'vertical') ? entry.height / 2 : entry.width / 2;
-
-      const props = {};
-      props.x = entry.x;
-      props.y = entry.y;
-      props.value = entry.value;
-      props.errorVal = entry[errorBar.errorKey];
+      const props = {
+        x: entry.x,
+        y: entry.y,
+        value: entry.value,
+        errorVal: entry[errorBar.errorKey],
+      };
 
       return (
         <ErrorBar
