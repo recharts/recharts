@@ -34,6 +34,7 @@ class Pie extends Component {
     paddingAngle: PropTypes.number,
     innerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     outerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    cornerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     nameKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     valueKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     data: PropTypes.arrayOf(PropTypes.object),
@@ -121,13 +122,14 @@ class Pie extends Component {
   }
 
   getSectors(data) {
-    const { cx, cy, innerRadius, outerRadius, startAngle, paddingAngle,
+    const { cx, cy, innerRadius, outerRadius, cornerRadius, startAngle, paddingAngle,
       minAngle, nameKey, valueKey } = this.props;
     const len = data.length;
     const deltaAngle = this.getDeltaAngle();
     const absDeltaAngle = Math.abs(deltaAngle);
     const totalPadingAngle = (absDeltaAngle >= 360 ? len : (len - 1)) * paddingAngle;
     const sum = data.reduce((result, entry) => (result + entry[valueKey]), 0);
+    const deltaRadius = Math.abs(outerRadius - innerRadius);
 
     let sectors = [];
     let prev;
@@ -135,6 +137,7 @@ class Pie extends Component {
     if (sum > 0) {
       sectors = data.map((entry, i) => {
         const percent = entry[valueKey] / sum;
+
         let tempStartAngle;
 
         if (i) {
@@ -150,6 +153,7 @@ class Pie extends Component {
 
         prev = {
           percent,
+          cornerRadius,
           ...entry,
           cx,
           cy,

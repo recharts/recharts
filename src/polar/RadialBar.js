@@ -30,6 +30,7 @@ class RadialBar extends Component {
     ]),
     activeIndex: PropTypes.number,
 
+    cornerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     cx: PropTypes.number,
     cy: PropTypes.number,
     startAngle: PropTypes.number,
@@ -179,7 +180,7 @@ class RadialBar extends Component {
   }
 
   renderSectors(sectors) {
-    const { shape, activeShape, activeIndex } = this.props;
+    const { shape, activeShape, activeIndex, cornerRadius } = this.props;
     const {
       animationEasing,
       animationDuration,
@@ -208,6 +209,7 @@ class RadialBar extends Component {
           ({ angle }) => {
             const props = {
               ...baseProps,
+              cornerRadius,
               ...entry,
               ...filterEventsOfChild(this.props, entry, i),
               endAngle: angle,
@@ -224,13 +226,14 @@ class RadialBar extends Component {
   }
 
   renderBackground(sectors) {
-    const { startAngle, endAngle, background } = this.props;
+    const { startAngle, endAngle, background, cornerRadius } = this.props;
     const backgroundProps = getPresentationAttributes(background);
 
     return sectors.map((entry, i) => {
       // eslint-disable-next-line no-unused-vars
       const { value, ...rest } = entry;
       const props = {
+        cornerRadius,
         ...rest,
         fill: '#eee',
         ...backgroundProps,
