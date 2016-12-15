@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import Layer from '../container/Layer';
 
-class ErrorBars extends Component {
+class ErrorBar extends Component {
 
   static propTypes = {
     xAxis: PropTypes.object.isRequired,
@@ -70,4 +70,4 @@ class ErrorBars extends Component {
 
 }
 
-export default ErrorBars;
+export default ErrorBar;
