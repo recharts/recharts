@@ -62,19 +62,11 @@ describe('<Text />', () => {
     expect(wrapper.text()).to.contain('anything');
   });
 
-  it("Don't Render text when x or y is NaN, null, or undefined ", () => {
+  it("Don't Render text when x or y is NaN ", () => {
     const wrapperNan = render(
       <Text x={NaN} y={10}>anything</Text>
     );
-    const wrapperNull = render(
-      <Text x={5} y={null}>anything</Text>
-    );
-    const wrapperUndefined = render(
-      <Text x={5} y={undefined}>anything</Text>
-    );
 
     expect(wrapperNan.text()).to.not.contain('anything');
-    expect(wrapperNull.text()).to.not.contain('anything');
-    expect(wrapperUndefined.text()).to.not.contain('anything');
   });
 });

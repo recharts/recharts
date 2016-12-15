@@ -102,7 +102,9 @@ export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, o
     const parentGroup = result[axisId] || { hasStack: false, stackGroups: {} };
 
     if (isNumOrStr(stackId)) {
-      const childGroup = parentGroup.stackGroups[stackId] || { items: [] };
+      const childGroup = parentGroup.stackGroups[stackId] || {
+        numericAxisId, cateAxisId, items: [],
+      };
 
       childGroup.items = [item].concat(childGroup.items);
 
