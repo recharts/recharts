@@ -11,6 +11,7 @@ import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
+import ErrorBar from './ErrorBar';
 import AnimationDecorator from '../util/AnimationDecorator';
 
 @AnimationDecorator
@@ -86,7 +87,12 @@ class Scatter extends Component {
     animationEasing: 'linear',
   };
 
-  state = { activeIndex: -1 };
+  state = { activeIndex: -1, isAnimationFinished: false };
+
+  componentDidMount() {
+    const { animationDuration } = this.props;
+    window.setTimeout(() => this.setState({ isAnimationFinished: true }), animationDuration);
+  }
 
   renderSymbolItem(option, props) {
     let symbol;
@@ -142,6 +148,32 @@ class Scatter extends Component {
     });
   }
 
+  renderErrorBars() {
+    if (!this.state.isAnimationFinished) { return null; }
+
+    const { points, xAxis, yAxis, errorBar, layout } = this.props;
+
+    return points.map((entry, i) => {
+      const props = {
+        x: entry.cx,
+        y: entry.cy,
+        value: entry.y,
+        errorVal: entry[errorBar.errorKey],
+      };
+
+      return (
+        <ErrorBar
+          key={i}
+          layout={layout}
+          xAxis={xAxis}
+          yAxis={yAxis}
+          {...errorBar}
+          {...props}
+        />
+      );
+    });
+  }
+
   renderLine() {
     const { points, line, lineType, lineJointType } = this.props;
     const scatterProps = getPresentationAttributes(this.props);
@@ -175,7 +207,7 @@ class Scatter extends Component {
   }
 
   render() {
-    const { points, line, className } = this.props;
+    const { points, line, className, errorBar } = this.props;
 
     if (!points || !points.length) { return null; }
 
@@ -187,6 +219,11 @@ class Scatter extends Component {
         <Layer key="recharts-scatter-symbols">
           {this.renderSymbols()}
         </Layer>
+        {errorBar && (
+          <Layer className="recharts-scatter-errorBars">
+            {this.renderErrorBars()}
+          </Layer>
+        )}
       </Layer>
     );
   }

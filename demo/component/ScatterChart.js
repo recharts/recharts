@@ -4,12 +4,12 @@ import { ScatterChart, Scatter, CartesianGrid, Tooltip, Legend,
 import { changeNumberOfData } from './utils';
 
 const data01 = [
-  { x: 100, y: 200, z: 200 },
-  { x: 120, y: 100, z: 260 },
-  { x: 170, y: 300, z: 400 },
-  { x: 140, y: 250, z: 280 },
-  { x: 150, y: 400, z: 500 },
-  { x: 110, y: 280, z: 200 },
+  { x: 100, y: 200, z: 200, error: 30 },
+  { x: 120, y: 100, z: 260, error: 40 },
+  { x: 170, y: 300, z: 400, error: 22 },
+  { x: 140, y: 250, z: 280, error: 33 },
+  { x: 150, y: 400, z: 500, error: 21 },
+  { x: 110, y: 280, z: 200, error: 21 },
 ];
 
 const data02 = [
@@ -94,6 +94,18 @@ export default React.createClass({
             <ReferenceLine x={159} stroke="red"/>
             <ReferenceLine y={237.5} stroke="red"/>
             <ReferenceDot x={170} y={290} r={15} label="AB" stroke="none" fill="red" isFront/>
+          </ScatterChart>
+        </div>
+        
+        <p>ScatterChart with error bars</p>
+        <div className="scatter-chart-wrapper">
+          <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
+            <XAxis dataKey="x" name="stature" unit="cm" />
+            <YAxis dataKey="y" name="weight" unit="kg" />
+            <Scatter name="A school" data={data01} fill="#ff7300" errorBar={{ errorKey: 'error' }} />
+            <CartesianGrid />
+            <Tooltip />
+            <Legend/>
           </ScatterChart>
         </div>
 

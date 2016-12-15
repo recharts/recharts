@@ -25,6 +25,7 @@ class ErrorBars extends Component {
     strokeWidth: 1.5,
     width: 5,
     offset: 0,
+    layout: 'horizontal',
   };
 
   render() {
