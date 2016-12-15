@@ -127,6 +127,7 @@ export default React.createClass({
               dot={renderSpecialDot}
               label={renderLabel}
               strokeOpacity={opacity}
+              strokeDasharray="3 3"
             />
             <Brush dataKey="name" height={30} />
           </LineChart>

@@ -36,7 +36,7 @@ class Scatter extends Component {
       'monotoneX', 'monotoneY', 'monotone', 'step', 'stepBefore', 'stepAfter',
     ]), PropTypes.func]),
     legendType: PropTypes.oneOf([
-      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'star',
       'triangle', 'wye',
     ]),
     className: PropTypes.string,
@@ -59,7 +59,7 @@ class Scatter extends Component {
         y: PropTypes.number,
         z: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       }),
-      payload: PropTypes.object,
+      payload: PropTypes.any,
     })),
 
     isAnimationActive: PropTypes.bool,

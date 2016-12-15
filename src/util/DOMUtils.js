@@ -59,27 +59,31 @@ export const getStringSize = (text, style = {}) => {
 
   if (stringCache.widthCache[cacheKey]) { return stringCache.widthCache[cacheKey]; }
 
-  let measurementSpan = document.getElementById(MEASUREMENT_SPAN_ID);
-  if (!measurementSpan) {
-    measurementSpan = document.createElement('span');
-    measurementSpan.setAttribute('id', MEASUREMENT_SPAN_ID);
-    document.body.appendChild(measurementSpan);
+  try {
+    let measurementSpan = document.getElementById(MEASUREMENT_SPAN_ID);
+    if (!measurementSpan) {
+      measurementSpan = document.createElement('span');
+      measurementSpan.setAttribute('id', MEASUREMENT_SPAN_ID);
+      document.body.appendChild(measurementSpan);
+    }
+
+    measurementSpan.setAttribute('style', getStyleString({ ...SPAN_STYLE, ...style }));
+    measurementSpan.textContent = str;
+
+    const rect = measurementSpan.getBoundingClientRect();
+    const result = { width: rect.width, height: rect.height };
+
+    stringCache.widthCache[cacheKey] = result;
+
+    if (++stringCache.cacheCount > MAX_CACHE_NUM) {
+      stringCache.cacheCount = 0;
+      stringCache.widthCache = {};
+    }
+
+    return result;
+  } catch (e) {
+    return 0;
   }
-
-  measurementSpan.setAttribute('style', getStyleString({ ...SPAN_STYLE, ...style }));
-  measurementSpan.textContent = str;
-
-  const rect = measurementSpan.getBoundingClientRect();
-  const result = { width: rect.width, height: rect.height };
-
-  stringCache.widthCache[cacheKey] = result;
-
-  if (++stringCache.cacheCount > MAX_CACHE_NUM) {
-    stringCache.cacheCount = 0;
-    stringCache.widthCache = {};
-  }
-
-  return result;
 };
 
 export const getOffset = (el) => {

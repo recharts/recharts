@@ -1,3 +1,16 @@
+## 0.19.1(Dec 15, 2016)
+
+### fix
+
+-  Adding missing event propTypes
+- support x, y of `Text` are number or text
+- fix proptypes of Scatter to allow that the props `data` can be a array of array
+- fix server side render check `isSsr`
+- remove duplicated "square" in legendType
+- fix `getStringSize` when server side rendering check fails
+- fix animation error when update Line which has props stroke-dasharray
+- fix bug of BarChart when add stackId in only one Bar and update test cases
+
 ## 0.19.0 (Nov 23, 2016)
 
 ### refactor

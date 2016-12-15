@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { isNumber } from '../util/DataUtils';
+import { isNumber, isNumOrStr } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
 
 class Text extends Component {
@@ -45,9 +45,18 @@ class Text extends Component {
     // Only perform calculations if using features that require them (multiline, scaleToFit)
     if ((props.width || props.scaleToFit) && !isSsr()) {
       if (calculateWordWidths) {
-        const { wordsWithComputedWidth, spaceWidth } = this.calculateWordWidths(props);
-        this.wordsWithComputedWidth = wordsWithComputedWidth;
-        this.spaceWidth = spaceWidth;
+        const wordWidths = this.calculateWordWidths(props);
+
+        if (wordWidths) {
+          const { wordsWithComputedWidth, spaceWidth } = wordWidths;
+
+          this.wordsWithComputedWidth = wordsWithComputedWidth;
+          this.spaceWidth = spaceWidth;
+        } else {
+          this.updateWordsWithoutCalculate(props);
+
+          return;
+        }
       }
 
       const wordsByLines = this.calculateWordsByLines(
@@ -57,31 +66,39 @@ class Text extends Component {
       );
       this.setState({ wordsByLines });
     } else {
-      const words = !_.isNil(props.children) ? props.children.toString().split(/\s+/) : [];
-      this.setState({ wordsByLines: [{ words }] });
+      this.updateWordsWithoutCalculate(props);
     }
   }
 
-  calculateWordWidths(props) {
-    // Calculate length of each word to be used to determine number of words per line
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    _.assign(text.style, props.style);
-    svg.appendChild(text);
-    document.body.appendChild(svg);
-
+  updateWordsWithoutCalculate(props) {
     const words = !_.isNil(props.children) ? props.children.toString().split(/\s+/) : [];
-    const wordsWithComputedWidth = words.map((word) => {
-      text.textContent = word;
-      return { word, width: text.getComputedTextLength() };
-    });
+    this.setState({ wordsByLines: [{ words }] });
+  }
 
-    text.textContent = '\u00A0'; // Unicode space
-    const spaceWidth = text.getComputedTextLength();
+  calculateWordWidths(props) {
+    try {
+      // Calculate length of each word to be used to determine number of words per line
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      _.assign(text.style, props.style);
+      svg.appendChild(text);
+      document.body.appendChild(svg);
 
-    document.body.removeChild(svg);
+      const words = !_.isNil(props.children) ? props.children.toString().split(/\s+/) : [];
+      const wordsWithComputedWidth = words.map((word) => {
+        text.textContent = word;
+        return { word, width: text.getComputedTextLength() };
+      });
 
-    return { wordsWithComputedWidth, spaceWidth };
+      text.textContent = '\u00A0'; // Unicode space
+      const spaceWidth = text.getComputedTextLength();
+
+      document.body.removeChild(svg);
+
+      return { wordsWithComputedWidth, spaceWidth };
+    } catch (e) {
+      return null;
+    }
   }
 
   calculateWordsByLines(wordsWithComputedWidth, spaceWidth, lineWidth) {
@@ -118,7 +135,7 @@ class Text extends Component {
     const { wordsByLines } = this.state;
     const { x, y } = textProps;
 
-    if (!isNumber(x) || !isNumber(y)) { return null; }
+    if (!isNumOrStr(x) || !isNumOrStr(y)) { return null; }
 
     let startDy;
     switch (verticalAnchor) {

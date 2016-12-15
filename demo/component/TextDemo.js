@@ -81,9 +81,9 @@ class TextDemo extends Component {
             onChange={e => this.setState({ width: Number(e.target.value) })}
           /> {this.state.width}
         </div>
-        
+
         <div>
-          textAnchor: 
+          textAnchor:
           <label>
             <input
               type="radio"

@@ -97,6 +97,17 @@ describe('<BarChart />', () => {
     expect(wrapper.find('.recharts-rectangle').length).to.equal(8);
   });
 
+  it('Renders 4 bars in a stacked BarChart which only have one Bar', () => {
+    const wrapper = render(
+      <BarChart width={100} height={50} data={data}>
+        <YAxis />
+        <Bar dataKey="uv" stackId="test" fill="#ff7300"/>
+      </BarChart>
+    );
+
+    expect(wrapper.find('.recharts-rectangle').length).to.equal(4);
+  });
+
   // it('Renders tooltip when Tooltip item is added', () => {
   //   const wrapper = mount(
   //     <BarChart width={100} height={50} data={data}>
