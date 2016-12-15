@@ -45,9 +45,9 @@ class Legend extends Component {
       value: PropTypes.any,
       id: PropTypes.any,
       type: PropTypes.oneOf([
-        'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square',
-        'star', 'triangle', 'wye',
+        'circle', 'cross', 'diamond', 'line', 'rect', 'square', 'star', 'triangle', 'wye',
       ]),
+      className: PropTypes.string,
     })),
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
