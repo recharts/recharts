@@ -6,7 +6,7 @@ import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import pureRender from '../util/PureRender';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 
 const getRectangePath = (x, y, width, height, radius) => {
@@ -67,6 +67,7 @@ class Rectangle extends Component {
 
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
+    ...EVENT_ATTRIBUTES,
     className: PropTypes.string,
     x: PropTypes.number,
     y: PropTypes.number,

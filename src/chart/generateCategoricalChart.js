@@ -41,6 +41,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     static displayName = getDisplayName(ChartComponent);
 
     static propTypes = {
+      ...ChartComponent.propTypes,
       syncId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       width: PropTypes.number,
       height: PropTypes.number,

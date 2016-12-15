@@ -50,6 +50,19 @@ class XAxis extends Component {
         'threshold']),
       PropTypes.func,
     ]),
+    label: PropTypes.oneOfType([
+      PropTypes.number, PropTypes.string, PropTypes.func, PropTypes.element,
+    ]),
+    tick: PropTypes.oneOfType([
+      PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element,
+    ]),
+    axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
+    tickLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
+    minTickGap: PropTypes.number,
+    tickSize: PropTypes.number,
+    interval: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf([
+      'preserveStart', 'preserveEnd', 'preserveStartEnd',
+    ])]),
   };
 
   static defaultProps = {
