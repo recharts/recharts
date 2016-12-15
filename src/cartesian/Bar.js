@@ -10,7 +10,7 @@ import Layer from '../container/Layer';
 import Text from '../component/Text';
 import ErrorBar from './ErrorBar';
 import pureRender from '../util/PureRender';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild, isSsr } from '../util/ReactUtils';
 
 @pureRender
@@ -20,6 +20,7 @@ class Bar extends Component {
 
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
+    ...EVENT_ATTRIBUTES,
     className: PropTypes.string,
     layout: PropTypes.oneOf(['vertical', 'horizontal']),
     xAxisId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -51,9 +52,6 @@ class Bar extends Component {
       radius: PropTypes.oneOfType([PropTypes.number, PropTypes.array]),
       value: PropTypes.oneOfType([PropTypes.number, PropTypes.array]),
     })),
-    onMouseEnter: PropTypes.func,
-    onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func,
     onAnimationStart: PropTypes.func,
     onAnimationEnd: PropTypes.func,
 

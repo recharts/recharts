@@ -10,7 +10,8 @@ import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import pureRender from '../util/PureRender';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
+  getPresentationAttributes, isSsr } from '../util/ReactUtils';
 import { isNumber } from '../util/DataUtils';
 
 @pureRender
@@ -20,6 +21,7 @@ class Area extends Component {
 
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
+    ...EVENT_ATTRIBUTES,
     className: PropTypes.string,
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     type: PropTypes.oneOfType([PropTypes.oneOf([
@@ -58,9 +60,6 @@ class Area extends Component {
       y: PropTypes.number,
       value: PropTypes.oneOfType([PropTypes.number, PropTypes.array]),
     })),
-    onMouseEnter: PropTypes.func,
-    onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func,
     onAnimationStart: PropTypes.func,
     onAnimationEnd: PropTypes.func,
 

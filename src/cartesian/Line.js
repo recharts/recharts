@@ -11,7 +11,8 @@ import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import ErrorBar from './ErrorBar';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
+  getPresentationAttributes, isSsr } from '../util/ReactUtils';
 
 const FACTOR = 1.0000001;
 
@@ -22,6 +23,7 @@ class Line extends Component {
 
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
+    ...EVENT_ATTRIBUTES,
     className: PropTypes.string,
     type: PropTypes.oneOfType([PropTypes.oneOf([
       'basis', 'basisClosed', 'basisOpen', 'linear', 'linearClosed', 'natural',
@@ -57,9 +59,6 @@ class Line extends Component {
       y: PropTypes.number,
       value: PropTypes.value,
     })),
-    onMouseEnter: PropTypes.func,
-    onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func,
     onAnimationStart: PropTypes.func,
     onAnimationEnd: PropTypes.func,
 

@@ -18,7 +18,8 @@ import ZAxis from '../cartesian/ZAxis';
 import ReferenceLine from '../cartesian/ReferenceLine';
 import ReferenceDot from '../cartesian/ReferenceDot';
 import ReferenceArea from '../cartesian/ReferenceArea';
-import { getPresentationAttributes, findChildByType, filterSvgElements,
+import { EVENT_ATTRIBUTES,
+  getPresentationAttributes, findChildByType, filterSvgElements,
   findAllByType, validateWidthHeight, getDisplayName, filterEventAttributes,
 } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
@@ -32,6 +33,7 @@ class ScatterChart extends Component {
   static displayName = 'ScatterChart';
 
   static propTypes = {
+    ...EVENT_ATTRIBUTES,
     width: PropTypes.number,
     height: PropTypes.number,
     margin: PropTypes.shape({

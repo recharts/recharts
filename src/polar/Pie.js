@@ -10,7 +10,7 @@ import Layer from '../container/Layer';
 import Sector from '../shape/Sector';
 import Curve from '../shape/Curve';
 import Text from '../component/Text';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
@@ -24,6 +24,7 @@ class Pie extends Component {
 
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
+    ...EVENT_ATTRIBUTES,
     className: PropTypes.string,
     animationId: PropTypes.number,
     cx: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -58,9 +59,6 @@ class Pie extends Component {
     ]),
     activeIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
 
-    onMouseEnter: PropTypes.func,
-    onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func,
     isAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
