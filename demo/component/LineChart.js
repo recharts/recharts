@@ -163,7 +163,7 @@ export default React.createClass({
             <XAxis dataKey='name' interval="preserveStartEnd" />
             <Tooltip/>
             <CartesianGrid stroke='#f5f5f5'/>
-            <Line type='monotone' dataKey='uv' stroke='#ff7300' yAxisId={0} activeDot={{fill: '#ff7300', stroke: 'none'}} errorBar={{ errorKey: 'uvError' }}>
+            <Line type='monotone' dataKey='uv' stroke='#ff7300' yAxisId={0} activeDot={{fill: '#ff7300', stroke: 'none'}}>
               <ErrorBar dataKey="uvError" />
             </Line>
           </LineChart>
