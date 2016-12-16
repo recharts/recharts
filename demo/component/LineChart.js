@@ -6,16 +6,16 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine,
 import { scalePow, scaleLog } from 'd3-scale';
 
 const data = [
-  { name: 'Page A', uv: 1000, pv: 2400, amt: 2400, uvError: 30 },
-  { name: 'Page B', uv: 300, pv: 4567, amt: 2400, uvError: 80 },
-  { name: 'Page C', uv: 280, pv: 1398, amt: 2400, uvError: 28 },
+  { name: 'Page A', uv: 1000, pv: 2400, amt: 2400, uvError: [75, 20] },
+  { name: 'Page B', uv: 300, pv: 4567, amt: 2400, uvError: [90, 40] },
+  { name: 'Page C', uv: 280, pv: 1398, amt: 2400, uvError: 40 },
   { name: 'Page D', uv: 200, pv: 9800, amt: 2400, uvError: 20 },
   { name: 'Page E', uv: 278, pv: 3908, amt: 2400, uvError: 28 },
-  { name: 'Page F', uv: 189, pv: 4800, amt: 2400, uvError: 18 },
-  { name: 'Page G', uv: 189, pv: 4800, amt: 2400, uvError: 28 },
-  { name: 'Page H', uv: 189, pv: 4800, amt: 2400, uvError: 18 },
-  { name: 'Page I', uv: 189, pv: 4800, amt: 2400, uvError: 18 },
-  { name: 'Page J', uv: 189, pv: 4800, amt: 2400, uvError: 18 },
+  { name: 'Page F', uv: 189, pv: 4800, amt: 2400, uvError: [90, 20] },
+  { name: 'Page G', uv: 189, pv: 4800, amt: 2400, uvError: [28, 40] },
+  { name: 'Page H', uv: 189, pv: 4800, amt: 2400, uvError: 28 },
+  { name: 'Page I', uv: 189, pv: 4800, amt: 2400, uvError: 28 },
+  { name: 'Page J', uv: 189, pv: 4800, amt: 2400, uvError: [15, 60] },
 ];
 
 const data01 = [

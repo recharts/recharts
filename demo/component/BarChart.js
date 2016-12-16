@@ -8,10 +8,10 @@ import { changeNumberOfData } from './utils';
 const colors = scaleOrdinal(schemeCategory10).range();
 
 const data = [
-{ name: 'food', uv: 2000, pv: 2013, amt: 4500, time: 1, uvError: 200, pvError: 110 },
-{ name: 'cosmetic', uv: 3300, pv: 2000, amt: 6500, time: 2, uvError: 240, pvError: 100 },
-{ name: 'storage', uv: 3200, pv: 1398, amt: 5000, time: 3, uvError: 220, pvError: 200 },
-{ name: 'digital', uv: 2800, pv: 2800, amt: 4000, time: 4, uvError: 200, pvError: 130 },
+{ name: 'food', uv: 2000, pv: 2013, amt: 4500, time: 1, uvError: [100, 50], pvError: [110, 20] },
+{ name: 'cosmetic', uv: 3300, pv: 2000, amt: 6500, time: 2, uvError: 120, pvError: 50 },
+{ name: 'storage', uv: 3200, pv: 1398, amt: 5000, time: 3, uvError: [120, 80], pvError: [200, 100] },
+{ name: 'digital', uv: 2800, pv: 2800, amt: 4000, time: 4, uvError: 100, pvError: 30 },
 ];
 
 const data01 = [
@@ -310,7 +310,7 @@ render() {
                   <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
                 ))
               }
-              <ErrorBar dataKey="uvError" />
+              <ErrorBar dataKey="pvError" />
             </Bar>
           </BarChart>
         </div>

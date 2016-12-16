@@ -4,11 +4,11 @@ import { ScatterChart, Scatter, CartesianGrid, Tooltip, Legend,
 import { changeNumberOfData } from './utils';
 
 const data01 = [
-  { x: 100, y: 200, z: 200, error: 30 },
-  { x: 120, y: 100, z: 260, error: 40 },
-  { x: 170, y: 300, z: 400, error: 22 },
-  { x: 140, y: 250, z: 280, error: 33 },
-  { x: 150, y: 400, z: 500, error: 21 },
+  { x: 100, y: 200, z: 200, error: [20, 30] },
+  { x: 120, y: 100, z: 260, error: 20 },
+  { x: 170, y: 300, z: 400, error: [12, 8] },
+  { x: 140, y: 250, z: 280, error: 23 },
+  { x: 150, y: 400, z: 500, error: [21, 10] },
   { x: 110, y: 280, z: 200, error: 21 },
 ];
 

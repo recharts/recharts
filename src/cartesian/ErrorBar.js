@@ -36,15 +36,24 @@ class ErrorBar extends Component {
 
       if (!errorVal) { return null; }
 
-      let xMid, yMid, xMin, yMin, xMax, yMax, scale, coordsTop, coordsMid, coordsBot;
+      let xMid, yMid, xMin, yMin, xMax, yMax, scale, coordsTop, coordsMid, coordsBot, lowBound,
+        highBound;
+
+      if (Array.isArray(errorVal)) {
+        lowBound = errorVal[0];
+        highBound = errorVal[1];
+      } else {
+        lowBound = errorVal;
+        highBound = errorVal;
+      }
 
       if (layout === 'vertical') {
         scale = xAxis.scale;
         xMid = value;
         yMid = y + offset;
-        xMin = scale(xMid - errorVal / 2);
+        xMin = scale(xMid - lowBound);
         yMin = yMid + width;
-        xMax = scale(xMid + errorVal / 2);
+        xMax = scale(xMid + highBound);
         yMax = yMid - width;
         coordsTop = { x1: xMax, y1: yMin, x2: xMax, y2: yMax };
         coordsMid = { x1: xMin, y1: yMid, x2: xMax, y2: yMid };
@@ -55,8 +64,8 @@ class ErrorBar extends Component {
         yMid = value;
         xMin = xMid - width;
         xMax = xMid + width;
-        yMin = scale(yMid + errorVal / 2);
-        yMax = scale(yMid - errorVal / 2);
+        yMin = scale(yMid - lowBound);
+        yMax = scale(yMid + highBound);
         coordsTop = { x1: xMin, y1: yMax, x2: xMax, y2: yMax };
         coordsMid = { x1: xMid, y1: yMin, x2: xMid, y2: yMax };
         coordsBot = { x1: xMin, y1: yMin, x2: xMax, y2: yMin };
