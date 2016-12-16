@@ -2,7 +2,7 @@ import React from 'react';
 import CustomLineDot from './CustomLineDot';
 import { changeNumberOfData } from './utils';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine,
-  ReferenceDot, Tooltip, CartesianGrid, Legend, Brush } from 'recharts';
+  ReferenceDot, Tooltip, CartesianGrid, Legend, Brush, ErrorBar } from 'recharts';
 import { scalePow, scaleLog } from 'd3-scale';
 
 const data = [
@@ -163,7 +163,9 @@ export default React.createClass({
             <XAxis dataKey='name' interval="preserveStartEnd" />
             <Tooltip/>
             <CartesianGrid stroke='#f5f5f5'/>
-            <Line type='monotone' dataKey='uv' stroke='#ff7300' yAxisId={0} activeDot={{fill: '#ff7300', stroke: 'none'}} errorBar={{ errorKey: 'uvError' }}/>
+            <Line type='monotone' dataKey='uv' stroke='#ff7300' yAxisId={0} activeDot={{fill: '#ff7300', stroke: 'none'}} errorBar={{ errorKey: 'uvError' }}>
+              <ErrorBar dataKey="uvError" />
+            </Line>
           </LineChart>
         </div>
 

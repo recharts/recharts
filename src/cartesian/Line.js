@@ -12,7 +12,7 @@ import Layer from '../container/Layer';
 import Text from '../component/Text';
 import ErrorBar from './ErrorBar';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
-  getPresentationAttributes, isSsr } from '../util/ReactUtils';
+  getPresentationAttributes, isSsr, findChildByType } from '../util/ReactUtils';
 
 const FACTOR = 1.0000001;
 
@@ -53,7 +53,6 @@ class Line extends Component {
       PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
     ]),
 
-    errorBar: PropTypes.object,
     points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -230,31 +229,32 @@ class Line extends Component {
     return <Layer className="recharts-line-labels">{labels}</Layer>;
   }
 
-  renderErrorBars() {
+  renderErrorBar() {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
-    const { points, xAxisId, xAxisMap, yAxisId, yAxisMap, errorBar, layout } = this.props;
+    const { points, xAxisId, xAxisMap, yAxisId, yAxisMap, layout, children } = this.props;
+    const errorBarItem = findChildByType(children, ErrorBar);
+
+    if (!errorBarItem) { return null; }
+
     const xAxis = xAxisMap[xAxisId];
     const yAxis = yAxisMap[yAxisId];
 
-    return points.map((entry, i) => {
-      const props = {
-        x: entry.x,
-        y: entry.y,
-        value: entry.value,
-        errorVal: entry.payload[errorBar.errorKey],
+    function dataPointFormatter(dataPoint, dataKey) {
+      return {
+        x: dataPoint.x,
+        y: dataPoint.y,
+        value: dataPoint.value,
+        errorVal: dataPoint.payload[dataKey],
       };
+    }
 
-      return (
-        <ErrorBar
-          key={i}
-          layout={layout}
-          xAxis={xAxis}
-          yAxis={yAxis}
-          {...errorBar}
-          {...props}
-        />
-      );
+    return React.cloneElement(errorBarItem, {
+      data: points,
+      xAxis,
+      yAxis,
+      layout,
+      dataPointFormatter,
     });
   }
 
@@ -364,7 +364,7 @@ class Line extends Component {
   }
 
   render() {
-    const { dot, points, label, className, errorBar } = this.props;
+    const { dot, points, label, className } = this.props;
 
     if (!points || !points.length) {
       return null;
@@ -378,11 +378,7 @@ class Line extends Component {
         {!hasSinglePoint && this.renderCurve()}
         {(hasSinglePoint || dot) && this.renderDots()}
         {label && this.renderLabels()}
-        {errorBar && (
-          <Layer className="recharts-line-errorBars">
-            {this.renderErrorBars()}
-          </Layer>
-        )}
+        {this.renderErrorBar()}
       </Layer>
     );
   }

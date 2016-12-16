@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { BarChart, Bar, Brush, Cell, CartesianGrid, ReferenceLine, ReferenceDot,
-  XAxis, YAxis, Tooltip, Legend } from 'recharts';
+  XAxis, YAxis, Tooltip, Legend, ErrorBar } from 'recharts';
 import { scaleOrdinal, schemeCategory10 } from 'd3-scale';
 import _ from 'lodash';
 import { changeNumberOfData } from './utils';
@@ -296,12 +296,13 @@ render() {
             <Legend />
             <Tooltip />
             <CartesianGrid vertical={false}/>
-            <Bar yAxisId="a" dataKey="uv" onAnimationStart={this.handleBarAnimationStart} onAnimationEnd={this.handleBarAnimationEnd} errorBar={{ errorKey: 'uvError' }} >
+            <Bar yAxisId="a" dataKey="uv" onAnimationStart={this.handleBarAnimationStart} onAnimationEnd={this.handleBarAnimationEnd}>
               {
                 data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
                 ))
               }
+              <ErrorBar dataKey="uvError" />
             </Bar>
             <Bar yAxisId="b" dataKey="pv" errorBar={{ errorKey: 'pvError', width: 10, strokeWidth: 1, fill: 'black' }}>
               {
@@ -309,6 +310,7 @@ render() {
                   <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
                 ))
               }
+              <ErrorBar dataKey="uvError" />
             </Bar>
           </BarChart>
         </div>

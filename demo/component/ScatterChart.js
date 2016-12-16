@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScatterChart, Scatter, CartesianGrid, Tooltip, Legend,
- XAxis, YAxis, ZAxis, ReferenceLine, ReferenceDot, ReferenceArea } from 'recharts';
+ XAxis, YAxis, ZAxis, ReferenceLine, ReferenceDot, ReferenceArea, ErrorBar } from 'recharts';
 import { changeNumberOfData } from './utils';
 
 const data01 = [
@@ -97,12 +97,14 @@ export default React.createClass({
           </ScatterChart>
         </div>
         
-        <p>ScatterChart with error bars</p>
+        <p>ScatterChart with customized error bars</p>
         <div className="scatter-chart-wrapper">
           <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
             <XAxis dataKey="x" name="stature" unit="cm" />
             <YAxis dataKey="y" name="weight" unit="kg" />
-            <Scatter name="A school" data={data01} fill="#ff7300" errorBar={{ errorKey: 'error' }} />
+            <Scatter name="A school" data={data01} fill="#ff7300">
+              <ErrorBar dataKey="error" width={8} strokeWidth={1} fill="blue" />
+            </Scatter>
             <CartesianGrid />
             <Tooltip />
             <Legend/>

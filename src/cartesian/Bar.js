@@ -11,7 +11,7 @@ import Text from '../component/Text';
 import ErrorBar from './ErrorBar';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
-  filterEventsOfChild, isSsr } from '../util/ReactUtils';
+  filterEventsOfChild, isSsr, findChildByType } from '../util/ReactUtils';
 
 @pureRender
 class Bar extends Component {
@@ -43,7 +43,6 @@ class Bar extends Component {
     label: PropTypes.oneOfType([
       PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element,
     ]),
-    errorBar: PropTypes.object,
     data: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -67,8 +66,6 @@ class Bar extends Component {
     yAxisId: 0,
     legendType: 'rect',
     minPointSize: 0,
-    errorBarStrokeWidth: 2,
-    errorBarFill: 'black',
     // data of bar
     data: [],
     layout: 'vertical',
@@ -231,38 +228,39 @@ class Bar extends Component {
     return <Layer className="recharts-bar-labels">{labels}</Layer>;
   }
 
-  renderErrorBars() {
+  renderErrorBar() {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
-    const { data, xAxisId, xAxisMap, yAxisId, yAxisMap, errorBar, layout } = this.props;
+    const { data, xAxisId, xAxisMap, yAxisId, yAxisMap, layout, children } = this.props;
+    const errorBarItem = findChildByType(children, ErrorBar);
+
+    if (!errorBarItem) { return null; }
+
+    const offset = (layout === 'vertical') ? data[0].height / 2 : data[0].width / 2;
     const xAxis = xAxisMap[xAxisId];
     const yAxis = yAxisMap[yAxisId];
 
-    return data.map((entry, i) => {
-      const offset = (layout === 'vertical') ? entry.height / 2 : entry.width / 2;
-      const props = {
-        x: entry.x,
-        y: entry.y,
-        value: entry.value,
-        errorVal: entry[errorBar.errorKey],
+    function dataPointFormatter(dataPoint, dataKey) {
+      return {
+        x: dataPoint.x,
+        y: dataPoint.y,
+        value: dataPoint.value,
+        errorVal: dataPoint[dataKey],
       };
+    }
 
-      return (
-        <ErrorBar
-          key={i}
-          offset={offset}
-          layout={layout}
-          xAxis={xAxis}
-          yAxis={yAxis}
-          {...errorBar}
-          {...props}
-        />
-      );
+    return React.cloneElement(errorBarItem, {
+      data,
+      xAxis,
+      yAxis,
+      layout,
+      offset,
+      dataPointFormatter,
     });
   }
 
   render() {
-    const { data, className, label, errorBar } = this.props;
+    const { data, className, label } = this.props;
 
     if (!data || !data.length) { return null; }
 
@@ -278,11 +276,7 @@ class Bar extends Component {
             {this.renderLabels()}
           </Layer>
         )}
-        {errorBar && (
-          <Layer className="recharts-bar-errorBars">
-            {this.renderErrorBars()}
-          </Layer>
-        )}
+        {this.renderErrorBar()}
       </Layer>
     );
   }
