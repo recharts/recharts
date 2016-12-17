@@ -8,7 +8,7 @@ import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
-  filterEventsOfChild, isSsr, findChildByType } from '../util/ReactUtils';
+  filterEventsOfChild, isSsr, findAllByType } from '../util/ReactUtils';
 import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
 import ErrorBar from './ErrorBar';
@@ -149,11 +149,11 @@ class Scatter extends Component {
     if (!this.state.isAnimationFinished) { return null; }
 
     const { points, xAxis, yAxis, layout, children } = this.props;
-    const errorBarItem = findChildByType(children, ErrorBar);
+    const errorBarItems = findAllByType(children, ErrorBar);
 
-    if (!errorBarItem) { return null; }
+    if (!errorBarItems) { return null; }
 
-    function dataPointFormatter(dataPoint, dataKey) {
+    function dataPointFormatterY(dataPoint, dataKey) {
       return {
         x: dataPoint.cx,
         y: dataPoint.cy,
@@ -162,12 +162,35 @@ class Scatter extends Component {
       };
     }
 
-    return React.cloneElement(errorBarItem, {
-      data: points,
-      xAxis,
-      yAxis,
-      layout,
-      dataPointFormatter,
+    function dataPointFormatterX(dataPoint, dataKey) {
+      return {
+        x: dataPoint.cx,
+        y: dataPoint.cy,
+        value: dataPoint.x,
+        errorVal: dataPoint[dataKey],
+      };
+    }
+
+    return errorBarItems.map((item, i) => {
+      if (item.props.direction === 'x') {
+        return React.cloneElement(item, {
+          key: i,
+          data: points,
+          xAxis,
+          yAxis,
+          layout: 'vertical',
+          dataPointFormatter: dataPointFormatterX,
+        });
+      }
+
+      return React.cloneElement(item, {
+        key: i,
+        data: points,
+        xAxis,
+        yAxis,
+        layout,
+        dataPointFormatter: dataPointFormatterY,
+      });
     });
   }
 
@@ -213,10 +236,10 @@ class Scatter extends Component {
     return (
       <Layer className={layerClass}>
         {line && this.renderLine()}
+        {this.renderErrorBar()}
         <Layer key="recharts-scatter-symbols">
           {this.renderSymbols()}
         </Layer>
-        {this.renderErrorBar()}
       </Layer>
     );
   }

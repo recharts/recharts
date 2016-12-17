@@ -17,6 +17,7 @@ class ErrorBar extends Component {
     strokeWidth: PropTypes.number,
     width: PropTypes.number,
     offset: PropTypes.number,
+    opacity: PropTypes.number,
   };
 
   static defaultProps = {
@@ -25,11 +26,12 @@ class ErrorBar extends Component {
     width: 5,
     offset: 0,
     layout: 'horizontal',
+    opacity: 1,
   };
 
   renderErrorBars() {
     const { offset, layout, fill, strokeWidth, width, dataKey, data,
-      dataPointFormatter, xAxis, yAxis } = this.props;
+      dataPointFormatter, xAxis, yAxis, opacity } = this.props;
 
     return data.map((entry, i) => {
       const { x, y, value, errorVal } = dataPointFormatter(entry, dataKey);
@@ -73,9 +75,9 @@ class ErrorBar extends Component {
 
       return (
         <Layer className={`recharts-errorBar-${i}`} key={i}>
-          <line {...coordsTop} stroke={fill} strokeWidth={strokeWidth} />;
-          <line {...coordsMid} stroke={fill} strokeWidth={strokeWidth} />;
-          <line {...coordsBot} stroke={fill} strokeWidth={strokeWidth} />;
+          <line {...coordsTop} stroke={fill} strokeWidth={strokeWidth} strokeOpacity={opacity} />;
+          <line {...coordsMid} stroke={fill} strokeWidth={strokeWidth} strokeOpacity={opacity} />;
+          <line {...coordsBot} stroke={fill} strokeWidth={strokeWidth} strokeOpacity={opacity} />;
         </Layer>
       );
 

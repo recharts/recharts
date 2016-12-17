@@ -4,12 +4,12 @@ import { ScatterChart, Scatter, CartesianGrid, Tooltip, Legend,
 import { changeNumberOfData } from './utils';
 
 const data01 = [
-  { x: 100, y: 200, z: 200, error: [20, 30] },
-  { x: 120, y: 100, z: 260, error: 20 },
-  { x: 170, y: 300, z: 400, error: [12, 8] },
-  { x: 140, y: 250, z: 280, error: 23 },
-  { x: 150, y: 400, z: 500, error: [21, 10] },
-  { x: 110, y: 280, z: 200, error: 21 },
+  { x: 100, y: 200, z: 200, errorY: [20, 30], errorX: 30 },
+  { x: 120, y: 100, z: 260, errorY: 20, errorX: [20, 30] },
+  { x: 170, y: 300, z: 400, errorY: [12, 8], errorX: 20 },
+  { x: 140, y: 250, z: 280, errorY: 23, errorX: [12, 8] },
+  { x: 150, y: 400, z: 500, errorY: [21, 10], errorX: 23 },
+  { x: 110, y: 280, z: 200, errorY: 21, errorX: [21, 10] },
 ];
 
 const data02 = [
@@ -103,7 +103,8 @@ export default React.createClass({
             <XAxis dataKey="x" name="stature" unit="cm" />
             <YAxis dataKey="y" name="weight" unit="kg" />
             <Scatter name="A school" data={data01} fill="#ff7300">
-              <ErrorBar dataKey="error" width={8} strokeWidth={1} fill="blue" />
+              <ErrorBar dataKey="errorY" width={8} strokeWidth={1} fill="blue" direction="y" />
+              <ErrorBar dataKey="errorX" width={4} strokeWidth={2} opacity={0.5} fill="green" direction="x" />
             </Scatter>
             <CartesianGrid />
             <Tooltip />
