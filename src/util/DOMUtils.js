@@ -51,7 +51,7 @@ export const getStyleString = style => (
 );
 
 export const getStringSize = (text, style = {}) => {
-  if (text === undefined || text === null || isSsr()) { return 0; }
+  if (text === undefined || text === null || isSsr()) { return { width: 0, height: 0 }; }
 
   const str = `${text}`;
   const styleString = getStyleString(style);
@@ -82,7 +82,7 @@ export const getStringSize = (text, style = {}) => {
 
     return result;
   } catch (e) {
-    return 0;
+    return { width: 0, height: 0 };
   }
 };
 
