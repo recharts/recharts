@@ -683,7 +683,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         onClick(mouse, e);
       }
     };
-
+  
+    handleTouchMove = (e) => {
+      if(e.changedTouches != null && e.changedTouches.length > 0) {
+        this.handleMouseMove(e.changedTouches[0]);
+      }
+    };
+  
     validateAxes() {
       const { layout, children } = this.props;
       const xAxes = findAllByType(children, XAxis);
@@ -928,6 +934,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         onMouseMove: this.handleMouseMove,
         onMouseLeave: this.handleMouseLeave,
         onClick: this.handleClick,
+        onTouchMove: this.handleTouchMove
       };
       const attrs = getPresentationAttributes(others);
 
