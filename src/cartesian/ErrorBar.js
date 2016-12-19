@@ -3,6 +3,7 @@
 */
 import React, { Component, PropTypes } from 'react';
 import Layer from '../container/Layer';
+import { getPresentationAttributes } from '../util/ReactUtils';
 
 class ErrorBar extends Component {
 
@@ -13,7 +14,7 @@ class ErrorBar extends Component {
     yAxis: PropTypes.object,
     layout: PropTypes.string,
     dataPointFormatter: PropTypes.func,
-    fill: PropTypes.string,
+    stroke: PropTypes.string,
     strokeWidth: PropTypes.number,
     width: PropTypes.number,
     offset: PropTypes.number,
@@ -21,7 +22,7 @@ class ErrorBar extends Component {
   };
 
   static defaultProps = {
-    fill: 'black',
+    stroke: 'black',
     strokeWidth: 1.5,
     width: 5,
     offset: 0,
@@ -30,8 +31,9 @@ class ErrorBar extends Component {
   };
 
   renderErrorBars() {
-    const { offset, layout, fill, strokeWidth, width, dataKey, data,
-      dataPointFormatter, xAxis, yAxis, opacity } = this.props;
+    const { offset, layout, width, dataKey, data,
+      dataPointFormatter, xAxis, yAxis, ...others } = this.props;
+    const props = getPresentationAttributes(others);
 
     return data.map((entry, i) => {
       const { x, y, value, errorVal } = dataPointFormatter(entry, dataKey);
@@ -74,10 +76,10 @@ class ErrorBar extends Component {
       }
 
       return (
-        <Layer className={`recharts-errorBar-${i}`} key={i}>
-          <line {...coordsTop} stroke={fill} strokeWidth={strokeWidth} strokeOpacity={opacity} />;
-          <line {...coordsMid} stroke={fill} strokeWidth={strokeWidth} strokeOpacity={opacity} />;
-          <line {...coordsBot} stroke={fill} strokeWidth={strokeWidth} strokeOpacity={opacity} />;
+        <Layer className={`recharts-errorBar-${i}`} key={i} {...props}>
+          <line {...coordsTop} />;
+          <line {...coordsMid} />;
+          <line {...coordsBot} />;
         </Layer>
       );
 

@@ -103,8 +103,8 @@ export default React.createClass({
             <XAxis dataKey="x" name="stature" unit="cm" />
             <YAxis dataKey="y" name="weight" unit="kg" />
             <Scatter name="A school" data={data01} fill="#ff7300">
-              <ErrorBar dataKey="errorY" width={8} strokeWidth={1} fill="blue" direction="y" />
-              <ErrorBar dataKey="errorX" width={4} strokeWidth={2} opacity={0.5} fill="green" direction="x" />
+              <ErrorBar dataKey="errorY" width={0} strokeWidth={1} stroke="blue" direction="y" />
+              <ErrorBar dataKey="errorX" width={4} strokeWidth={2} stroke="green" opacity={0.8} direction="x" />
             </Scatter>
             <CartesianGrid />
             <Tooltip />
