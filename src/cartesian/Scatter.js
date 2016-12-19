@@ -148,7 +148,7 @@ class Scatter extends Component {
   renderErrorBar() {
     if (!this.state.isAnimationFinished) { return null; }
 
-    const { points, xAxis, yAxis, layout, children } = this.props;
+    const { points, xAxis, yAxis, children } = this.props;
     const errorBarItems = findAllByType(children, ErrorBar);
 
     if (!errorBarItems) { return null; }
@@ -172,24 +172,15 @@ class Scatter extends Component {
     }
 
     return errorBarItems.map((item, i) => {
-      if (item.props.direction === 'x') {
-        return React.cloneElement(item, {
-          key: i,
-          data: points,
-          xAxis,
-          yAxis,
-          layout: 'vertical',
-          dataPointFormatter: dataPointFormatterX,
-        });
-      }
+      const { direction } = item.props;
 
       return React.cloneElement(item, {
         key: i,
         data: points,
         xAxis,
         yAxis,
-        layout,
-        dataPointFormatter: dataPointFormatterY,
+        layout: direction === 'x' ? 'vertical' : 'horizontal',
+        dataPointFormatter: direction === 'x' ? dataPointFormatterX : dataPointFormatterY,
       });
     });
   }
