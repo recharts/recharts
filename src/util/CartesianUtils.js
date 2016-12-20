@@ -537,12 +537,14 @@ export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = []
 };
 
 export const appendOffsetOfLegend = (offset, items, props) => {
-  const { children, width, height } = props;
-  const legendProps = getLegendProps(children, items, width);
+  const { children, width, height, margin } = props;
+  const legendWidth = width - (margin.left || 0) - (margin.right || 0);
+  const legendHeight = height - (margin.top || 0) - (margin.bottom || 0);
+  const legendProps = getLegendProps(children, items, legendWidth, legendHeight);
   let newOffset = offset;
 
   if (legendProps) {
-    const box = Legend.getLegendBBox(legendProps, width, height) || {};
+    const box = Legend.getLegendBBox(legendProps) || {};
     const { align, verticalAlign, layout } = legendProps;
 
     if ((layout === 'vertical' || (layout === 'horizontal' && verticalAlign === 'center')) &&

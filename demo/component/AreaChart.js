@@ -151,7 +151,6 @@ export default React.createClass({
           </AreaChart>
         </div>
 
-
         <p>Stacked AreaChart | Stack Offset Expand</p>
         <div className="area-chart-wrapper">
           <AreaChart width={400} height={300} data={this.state.data}

@@ -27,6 +27,7 @@ import { calculateActiveTickIndex,
   getStackGroupsByAxisId, getTicksOfAxis, isCategorialAxis, getTicksOfScale,
   appendOffsetOfLegend,
 } from '../util/CartesianUtils';
+import pureRender from '../util/PureRender';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
 
 const ORIENT_MAP = {
@@ -37,6 +38,7 @@ const ORIENT_MAP = {
 const originCoordinate = { x: 0, y: 0 };
 
 const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
+
   class CategoricalChartWrapper extends Component {
     static displayName = getDisplayName(ChartComponent);
 
@@ -168,7 +170,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      */
     getAxisMapByAxes(props, { axes, graphicalItems, axisType, axisIdKey,
       stackGroups, dataStartIndex, dataEndIndex }) {
-      const { layout, children, data } = props;
+      const { layout, children, data, stackOffset } = props;
       const displayedData = data.slice(dataStartIndex, dataEndIndex + 1);
       const len = displayedData.length;
       const isCategorial = isCategorialAxis(layout, axisType);
@@ -195,13 +197,14 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             if (isCategorial && type === 'number') {
               categoricalDomain = getDomainOfDataByKey(displayedData, dataKey, 'category');
             }
-          } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
-            && type === 'number') {
-            domain = getDomainOfStackGroups(
-              stackGroups[axisId].stackGroups, dataStartIndex, dataEndIndex
-            );
           } else if (isCategorial) {
             domain = _.range(0, len);
+          } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
+            && type === 'number') {
+            // when stackOffset is 'expand', the domain may be calculated as [0, 1.000000000002]
+            domain = stackOffset === 'expand' ? [0, 1] : getDomainOfStackGroups(
+              stackGroups[axisId].stackGroups, dataStartIndex, dataEndIndex
+            );
           } else {
             domain = getDomainOfItemsWithSameAxis(
               displayedData, graphicalItems.filter(entry => entry.props[axisIdKey] === axisId), type
@@ -697,7 +700,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     };
 
     handleTouchMove = (e) => {
-      if(e.changedTouches != null && e.changedTouches.length > 0) {
+      if (e.changedTouches != null && e.changedTouches.length > 0) {
         this.handleMouseMove(e.changedTouches[0]);
       }
     };
@@ -946,7 +949,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         onMouseMove: this.handleMouseMove,
         onMouseLeave: this.handleMouseLeave,
         onClick: this.handleClick,
-        onTouchMove: this.handleTouchMove
+        onTouchMove: this.handleTouchMove,
       };
       const attrs = getPresentationAttributes(others);
 

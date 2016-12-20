@@ -286,7 +286,7 @@ render() {
             </Bar>
           </BarChart>
         </div>
-        
+
         <p>BarChart with error bars</p>
         <div className="bar-chart-wrapper" style={{textAlign: 'right'}}>
           <BarChart width={400} height={400} data={data} onClick={this.handlePvBarClick}>
@@ -367,6 +367,7 @@ render() {
             <Legend layout="vertical" />
           </BarChart>
         </div>
+
       </div>
     );
   }

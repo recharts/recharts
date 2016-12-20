@@ -45,6 +45,7 @@ const initilaState = {
   data01,
   data02,
   opacity: 1,
+  anotherState: false,
 };
 
 const renderSpecialDot = (props) => {
@@ -94,6 +95,12 @@ export default React.createClass({
     });
   },
 
+  handleChangeAnotherState() {
+    this.setState({
+      anotherState: !this.state.anotherState,
+    })
+  },
+
   render() {
     const { data, data01, data02, opacity } = this.state;
     const scale = scaleLog().base(10).nice();
@@ -107,6 +114,7 @@ export default React.createClass({
         >
           change data
         </a>
+        <button onClick={this.handleChangeAnotherState}>switch another state</button>
         <br/>
 
         <p>A simple LineChart with fixed domain y-axis</p>
@@ -148,24 +156,6 @@ export default React.createClass({
             <YAxis scale={scale} domain={[0.01, 'auto']} ticks={[0.01, 0.1, 1, 10, 100, 1000]} />
             <Tooltip />
             <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300'  />
-          </LineChart>
-        </div>
-
-        <p>LineChart with error bars</p>
-        <div className='line-chart-wrapper' style={{ padding: 40 }}>
-          <LineChart
-            width={400}
-            height={400}
-            data={data}
-            margin={{top: 10, bottom: 10, left: 30, right: 30}}
-            onClick={this.handleClick}
-          >
-            <XAxis dataKey='name' interval="preserveStartEnd" />
-            <Tooltip/>
-            <CartesianGrid stroke='#f5f5f5'/>
-            <Line type='monotone' dataKey='uv' stroke='#ff7300' yAxisId={0} activeDot={{fill: '#ff7300', stroke: 'none'}}>
-              <ErrorBar dataKey="uvError" />
-            </Line>
           </LineChart>
         </div>
 

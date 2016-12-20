@@ -81,9 +81,8 @@ class Legend extends Component {
     if (!isSsr()) {
       const { content, width, height, wrapperStyle } = props;
       const contentHtml = ReactDOMServer.renderToStaticMarkup(renderContent(content, props));
+      // TODO: the style of legend will be effected by the global style
       const style = {
-        // solve the problem temporarily that the width and height will be affect by the global css
-        fontSize: 12,
         position: 'absolute',
         width: width || 'auto',
         height: height || 'auto',
