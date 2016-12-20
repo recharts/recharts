@@ -68,6 +68,11 @@ const renderLabel = (props) => {
   return null;
 };
 
+const scale = scaleLog().base(10).nice();
+const specifiedDomain = [0.01, 'auto'];
+const specifiedTicks = [0.01, 0.1, 1, 10, 100, 1000];
+const specifiedMargin = { top: 20, right: 20, bottom: 20, left: 20 };
+
 export default React.createClass({
   displayName: 'LineChartDemo',
 
@@ -103,8 +108,7 @@ export default React.createClass({
 
   render() {
     const { data, data01, data02, opacity } = this.state;
-    const scale = scaleLog().base(10).nice();
-
+    console.log(data);
     return (
       <div className='line-charts'>
         <a
@@ -147,15 +151,15 @@ export default React.createClass({
             width={400}
             height={400}
             data={data}
-            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+            margin={specifiedMargin}
             syncId="test"
           >
             <CartesianGrid stroke='#f5f5f5'/>
             <Legend />
             <XAxis />
-            <YAxis scale={scale} domain={[0.01, 'auto']} ticks={[0.01, 0.1, 1, 10, 100, 1000]} />
+            <YAxis scale={scale} domain={specifiedDomain} ticks={specifiedTicks} />
             <Tooltip />
-            <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300'  />
+            <Line type='monotone' dataKey='uv' dot={<CustomLineDot />} stroke='#ff7300'  />
           </LineChart>
         </div>
 

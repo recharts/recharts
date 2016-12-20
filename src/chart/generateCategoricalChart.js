@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes, Children } from 'react';
 import classNames from 'classnames';
 import _ from 'lodash';
 import Surface from '../container/Surface';
@@ -8,7 +8,7 @@ import Legend from '../component/Legend';
 
 import { warn } from '../util/LogUtils';
 import { findAllByType, findChildByType, filterSvgElements, getDisplayName,
-  getPresentationAttributes, validateWidthHeight } from '../util/ReactUtils';
+  getPresentationAttributes, validateWidthHeight, isChildrenEqual } from '../util/ReactUtils';
 
 import CartesianAxis from '../cartesian/CartesianAxis';
 import CartesianGrid from '../cartesian/CartesianGrid';
@@ -27,7 +27,7 @@ import { calculateActiveTickIndex,
   getStackGroupsByAxisId, getTicksOfAxis, isCategorialAxis, getTicksOfScale,
   appendOffsetOfLegend,
 } from '../util/CartesianUtils';
-import pureRender from '../util/PureRender';
+import pureRender, { shallowEqual } from '../util/PureRender';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
 
 const ORIENT_MAP = {
@@ -38,7 +38,6 @@ const ORIENT_MAP = {
 const originCoordinate = { x: 0, y: 0 };
 
 const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
-
   class CategoricalChartWrapper extends Component {
     static displayName = getDisplayName(ChartComponent);
 
@@ -78,7 +77,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     constructor(props) {
       super(props);
       const defaultState = this.createDefaultState(props);
-      this.state = { ...defaultState,
+      this.state = { ...defaultState, updateId: 0,
         ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState }) };
       this.validateAxes();
       this.uniqueChartId = _.uniqueId('recharts');
@@ -96,12 +95,12 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     componentWillReceiveProps(nextProps) {
       const { data, children, width, height, layout, stackOffset, margin } = this.props;
 
-      if (nextProps.data !== data || nextProps.children !== children ||
+      if (nextProps.data !== data || !isChildrenEqual(nextProps.children, children) ||
         nextProps.width !== width || nextProps.height !== height ||
         nextProps.layout !== layout || nextProps.stackOffset !== stackOffset ||
-        nextProps.margin !== margin) {
+        !shallowEqual(nextProps.margin, margin)) {
         const defaultState = this.createDefaultState(nextProps);
-        this.setState({ ...defaultState,
+        this.setState({ ...defaultState, updateId: this.state.updateId + 1,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
             { props: nextProps, ...defaultState }) }
         );
@@ -124,7 +123,6 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         this.triggeredAfterMouseMove.cancel();
       }
     }
-
     /**
    * Get the configuration of all x-axis or y-axis
    * @param  {Object} props          Latest props
@@ -894,11 +892,12 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     renderBrush() {
       const { children, margin, data } = this.props;
-      const { offset, dataStartIndex, dataEndIndex } = this.state;
+      const { offset, dataStartIndex, dataEndIndex, updateId } = this.state;
       const brushItem = findChildByType(children, Brush);
 
       if (!brushItem) { return null; }
 
+      // TODO: update brush when children update
       return React.cloneElement(brushItem, {
         onChange: combineEventHandlers(this.handleBrushChange, null, brushItem.props.onChange),
         data,
@@ -907,6 +906,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         width: offset.width,
         startIndex: dataStartIndex,
         endIndex: dataEndIndex,
+        updateId: `brush-${updateId}`,
       });
 
     }

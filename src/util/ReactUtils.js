@@ -1,6 +1,7 @@
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Children } from 'react';
 import _ from 'lodash';
 import { isNumber } from './DataUtils';
+import { shallowEqual } from './PureRender';
 
 export const PRESENTATION_ATTRIBUTES = {
   alignmentBaseline: PropTypes.string,
@@ -296,4 +297,31 @@ export const filterSvgElements = (children) => {
   });
 
   return svgElements;
+};
+/**
+ * Wether props of children changed
+ * @param  {Object} nextChildren The latest children
+ * @param  {Object} prevChildren The prev children
+ * @return {Boolean}             equal or not
+ */
+export const isChildrenEqual = (nextChildren, prevChildren) => {
+  if (nextChildren === prevChildren) { return true; }
+
+  if (Children.count(nextChildren) !== Children.count(prevChildren)) { return false; }
+
+  const count = Children.count(nextChildren);
+
+  if (count === 0) { return true; }
+  if (count === 1) { return shallowEqual(nextChildren.props, prevChildren.props); }
+
+  for (let i = 0; i < count; i++) {
+    const nextChild = nextChildren[i];
+    const prevChild = prevChildren[i];
+
+    if (!shallowEqual(nextChild.props, prevChild.props)) {
+      return false;
+    }
+  }
+
+  return true;
 };

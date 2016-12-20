@@ -32,6 +32,7 @@ class Brush extends Component {
     tickFormatter: PropTypes.func,
 
     onChange: PropTypes.func,
+    updateId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   };
 
   static defaultProps = {
@@ -60,9 +61,9 @@ class Brush extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data, width, x, travellerWidth, startIndex, endIndex } = this.props;
+    const { data, width, x, travellerWidth, updateId } = this.props;
 
-    if (nextProps.data !== data) {
+    if (nextProps.data !== data || nextProps.updateId !== updateId) {
       this.updateScale(nextProps);
     } else if (nextProps.width !== width || nextProps.x !== x ||
       nextProps.travellerWidth !== travellerWidth) {
@@ -171,7 +172,7 @@ class Brush extends Component {
 
   handleSlideMove(e) {
     const { slideMoveStartX, startX, endX } = this.state;
-    const { x, width, travellerWidth, onChange } = this.props;
+    const { x, width, travellerWidth, startIndex, endIndex, onChange } = this.props;
     let delta = e.pageX - slideMoveStartX;
 
     if (delta > 0) {
@@ -188,14 +189,14 @@ class Brush extends Component {
       endX: endX + delta,
     });
 
+    if ((newIndex.startIndex !== startIndex || newIndex.endIndex !== endIndex) && onChange) {
+      onChange(newIndex);
+    }
+
     this.setState({
       startX: startX + delta,
       endX: endX + delta,
       slideMoveStartX: e.pageX,
-    }, () => {
-      if (onChange) {
-        onChange(newIndex);
-      }
     });
   }
 
