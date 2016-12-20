@@ -8,9 +8,10 @@ import _ from 'lodash';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
+import ErrorBar from './ErrorBar';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
-  filterEventsOfChild, isSsr } from '../util/ReactUtils';
+  filterEventsOfChild, isSsr, findChildByType } from '../util/ReactUtils';
 
 @pureRender
 class Bar extends Component {
@@ -24,6 +25,8 @@ class Bar extends Component {
     layout: PropTypes.oneOf(['vertical', 'horizontal']),
     xAxisId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     yAxisId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    yAxis: PropTypes.object,
+    xAxis: PropTypes.object,
     stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     barSize: PropTypes.number,
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -225,6 +228,35 @@ class Bar extends Component {
     return <Layer className="recharts-bar-labels">{labels}</Layer>;
   }
 
+  renderErrorBar() {
+    if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
+
+    const { data, xAxis, yAxis, layout, children } = this.props;
+    const errorBarItem = findChildByType(children, ErrorBar);
+
+    if (!errorBarItem) { return null; }
+
+    const offset = (layout === 'vertical') ? data[0].height / 2 : data[0].width / 2;
+
+    function dataPointFormatter(dataPoint, dataKey) {
+      return {
+        x: dataPoint.x,
+        y: dataPoint.y,
+        value: dataPoint.value,
+        errorVal: dataPoint[dataKey],
+      };
+    }
+
+    return React.cloneElement(errorBarItem, {
+      data,
+      xAxis,
+      yAxis,
+      layout,
+      offset,
+      dataPointFormatter,
+    });
+  }
+
   render() {
     const { data, className, label } = this.props;
 
@@ -242,6 +274,7 @@ class Bar extends Component {
             {this.renderLabels()}
           </Layer>
         )}
+        {this.renderErrorBar()}
       </Layer>
     );
   }

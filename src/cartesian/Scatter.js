@@ -8,9 +8,10 @@ import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
-  filterEventsOfChild, isSsr } from '../util/ReactUtils';
+  filterEventsOfChild, isSsr, findAllByType } from '../util/ReactUtils';
 import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
+import ErrorBar from './ErrorBar';
 import AnimationDecorator from '../util/AnimationDecorator';
 
 @AnimationDecorator
@@ -84,7 +85,12 @@ class Scatter extends Component {
     animationEasing: 'linear',
   };
 
-  state = { activeIndex: -1 };
+  state = { activeIndex: -1, isAnimationFinished: false };
+
+  componentDidMount() {
+    const { animationDuration } = this.props;
+    window.setTimeout(() => this.setState({ isAnimationFinished: true }), animationDuration);
+  }
 
   renderSymbolItem(option, props) {
     let symbol;
@@ -99,7 +105,6 @@ class Scatter extends Component {
 
     return symbol;
   }
-
 
   renderSymbols() {
     const { points, shape, activeShape, activeIndex, animationBegin,
@@ -137,6 +142,46 @@ class Scatter extends Component {
           </Animate>
         </Layer>
       );
+    });
+  }
+
+  renderErrorBar() {
+    if (!this.state.isAnimationFinished) { return null; }
+
+    const { points, xAxis, yAxis, children } = this.props;
+    const errorBarItems = findAllByType(children, ErrorBar);
+
+    if (!errorBarItems) { return null; }
+
+    function dataPointFormatterY(dataPoint, dataKey) {
+      return {
+        x: dataPoint.cx,
+        y: dataPoint.cy,
+        value: dataPoint.y,
+        errorVal: dataPoint[dataKey],
+      };
+    }
+
+    function dataPointFormatterX(dataPoint, dataKey) {
+      return {
+        x: dataPoint.cx,
+        y: dataPoint.cy,
+        value: dataPoint.x,
+        errorVal: dataPoint[dataKey],
+      };
+    }
+
+    return errorBarItems.map((item, i) => {
+      const { direction } = item.props;
+
+      return React.cloneElement(item, {
+        key: i,
+        data: points,
+        xAxis,
+        yAxis,
+        layout: direction === 'x' ? 'vertical' : 'horizontal',
+        dataPointFormatter: direction === 'x' ? dataPointFormatterX : dataPointFormatterY,
+      });
     });
   }
 
@@ -182,6 +227,7 @@ class Scatter extends Component {
     return (
       <Layer className={layerClass}>
         {line && this.renderLine()}
+        {this.renderErrorBar()}
         <Layer key="recharts-scatter-symbols">
           {this.renderSymbols()}
         </Layer>

@@ -1,15 +1,15 @@
 import React from 'react';
 import { ScatterChart, Scatter, CartesianGrid, Tooltip, Legend,
- XAxis, YAxis, ZAxis, ReferenceLine, ReferenceDot, ReferenceArea } from 'recharts';
+ XAxis, YAxis, ZAxis, ReferenceLine, ReferenceDot, ReferenceArea, ErrorBar } from 'recharts';
 import { changeNumberOfData } from './utils';
 
 const data01 = [
-  { x: 100, y: 200, z: 200 },
-  { x: 120, y: 100, z: 260 },
-  { x: 170, y: 300, z: 400 },
-  { x: 140, y: 250, z: 280 },
-  { x: 150, y: 400, z: 500 },
-  { x: 110, y: 280, z: 200 },
+  { x: 100, y: 200, z: 200, errorY: [20, 30], errorX: 30 },
+  { x: 120, y: 100, z: 260, errorY: 20, errorX: [20, 30] },
+  { x: 170, y: 300, z: 400, errorY: [12, 8], errorX: 20 },
+  { x: 140, y: 250, z: 280, errorY: 23, errorX: [12, 8] },
+  { x: 150, y: 400, z: 500, errorY: [21, 10], errorX: 23 },
+  { x: 110, y: 280, z: 200, errorY: 21, errorX: [21, 10] },
 ];
 
 const data02 = [
@@ -94,6 +94,21 @@ export default React.createClass({
             <ReferenceLine x={159} stroke="red"/>
             <ReferenceLine y={237.5} stroke="red"/>
             <ReferenceDot x={170} y={290} r={15} label="AB" stroke="none" fill="red" isFront/>
+          </ScatterChart>
+        </div>
+        
+        <p>ScatterChart with customized error bars</p>
+        <div className="scatter-chart-wrapper">
+          <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
+            <XAxis dataKey="x" name="stature" unit="cm" />
+            <YAxis dataKey="y" name="weight" unit="kg" />
+            <Scatter name="A school" data={data01} fill="#ff7300">
+              <ErrorBar dataKey="errorY" width={0} strokeWidth={1} stroke="blue" direction="y" />
+              <ErrorBar dataKey="errorX" width={4} strokeWidth={2} stroke="green" opacity={0.8} direction="x" />
+            </Scatter>
+            <CartesianGrid />
+            <Tooltip />
+            <Legend/>
           </ScatterChart>
         </div>
 

@@ -10,8 +10,9 @@ import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
+import ErrorBar from './ErrorBar';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
-  getPresentationAttributes, isSsr } from '../util/ReactUtils';
+  getPresentationAttributes, isSsr, findChildByType } from '../util/ReactUtils';
 
 const FACTOR = 1.0000001;
 
@@ -30,9 +31,10 @@ class Line extends Component {
     ]), PropTypes.func]),
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    yAxis: PropTypes.object,
+    xAxis: PropTypes.object,
     legendType: PropTypes.oneOf([
       'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
       'triangle', 'wye',
@@ -227,6 +229,32 @@ class Line extends Component {
     return <Layer className="recharts-line-labels">{labels}</Layer>;
   }
 
+  renderErrorBar() {
+    if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
+
+    const { points, xAxis, yAxis, layout, children } = this.props;
+    const errorBarItem = findChildByType(children, ErrorBar);
+
+    if (!errorBarItem) { return null; }
+
+    function dataPointFormatter(dataPoint, dataKey) {
+      return {
+        x: dataPoint.x,
+        y: dataPoint.y,
+        value: dataPoint.value,
+        errorVal: dataPoint.payload[dataKey],
+      };
+    }
+
+    return React.cloneElement(errorBarItem, {
+      data: points,
+      xAxis,
+      yAxis,
+      layout,
+      dataPointFormatter,
+    });
+  }
+
   renderDotItem(option, props) {
     let dotItem;
 
@@ -345,6 +373,7 @@ class Line extends Component {
     return (
       <Layer className={layerClass}>
         {!hasSinglePoint && this.renderCurve()}
+        {this.renderErrorBar()}
         {(hasSinglePoint || dot) && this.renderDots()}
         {label && this.renderLabels()}
       </Layer>

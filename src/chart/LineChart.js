@@ -159,7 +159,6 @@ export class LineChart extends Component {
         const dotProps = {
           index: i,
           dataKey,
-          cx: activePoint.x, cy: activePoint.y, r: 4,
           fill: stroke, strokeWidth: 2, stroke: '#fff',
           ...getPresentationAttributes(activeDot),
         };
@@ -172,6 +171,8 @@ export class LineChart extends Component {
         layout,
         points,
         animationId,
+        xAxis: xAxisMap[child.props.xAxisId],
+        yAxis: yAxisMap[child.props.yAxisId],
       });
     }, this);
 

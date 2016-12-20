@@ -187,7 +187,7 @@ class BarChart extends Component {
   renderItems(items) {
     if (!items || !items.length) { return null; }
 
-    const { layout } = this.props;
+    const { layout, xAxisMap, yAxisMap } = this.props;
 
     const { animationId, allComposedData } = this.props;
 
@@ -197,6 +197,8 @@ class BarChart extends Component {
         layout,
         animationId,
         data: allComposedData[i],
+        xAxis: xAxisMap[child.props.xAxisId],
+        yAxis: yAxisMap[child.props.yAxisId],
       })
     , this);
   }

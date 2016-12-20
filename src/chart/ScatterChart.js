@@ -442,6 +442,8 @@ class ScatterChart extends Component {
         onMouseLeave: this.handleScatterMouseLeave,
         onMouseEnter: this.handleScatterMouseEnter,
         points: this.getComposedData(child, data, xAxis, yAxis, zAxis),
+        xAxis,
+        yAxis,
       });
     }, this);
   }

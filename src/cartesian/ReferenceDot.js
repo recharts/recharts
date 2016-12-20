@@ -23,8 +23,8 @@ class ReferenceDot extends Component {
       PropTypes.number, PropTypes.string, PropTypes.func, PropTypes.element,
     ]),
 
-    xAxis: PropTypes.shape({scale: PropTypes.func}),
-    yAxis: PropTypes.shape({scale: PropTypes.func}),
+    xAxis: PropTypes.shape({ scale: PropTypes.func }),
+    yAxis: PropTypes.shape({ scale: PropTypes.func }),
 
     isFront: PropTypes.bool,
     alwaysShow: PropTypes.bool,
