@@ -197,8 +197,8 @@ class BarChart extends Component {
         layout,
         animationId,
         data: allComposedData[i],
-        xAxisMap,
-        yAxisMap,
+        xAxis: xAxisMap[child.props.xAxisId],
+        yAxis: yAxisMap[child.props.yAxisId],
       })
     , this);
   }

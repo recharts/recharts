@@ -171,8 +171,8 @@ export class LineChart extends Component {
         layout,
         points,
         animationId,
-        xAxisMap,
-        yAxisMap,
+        xAxis: xAxisMap[child.props.xAxisId],
+        yAxis: yAxisMap[child.props.yAxisId],
       });
     }, this);
 

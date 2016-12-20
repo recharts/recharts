@@ -33,8 +33,8 @@ class Line extends Component {
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    yAxisMap: PropTypes.object,
-    xAxisMap: PropTypes.object,
+    yAxis: PropTypes.object,
+    xAxis: PropTypes.object,
     legendType: PropTypes.oneOf([
       'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
       'triangle', 'wye',
@@ -232,13 +232,10 @@ class Line extends Component {
   renderErrorBar() {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
-    const { points, xAxisId, xAxisMap, yAxisId, yAxisMap, layout, children } = this.props;
+    const { points, xAxis, yAxis, layout, children } = this.props;
     const errorBarItem = findChildByType(children, ErrorBar);
 
     if (!errorBarItem) { return null; }
-
-    const xAxis = xAxisMap[xAxisId];
-    const yAxis = yAxisMap[yAxisId];
 
     function dataPointFormatter(dataPoint, dataKey) {
       return {

@@ -25,8 +25,8 @@ class Bar extends Component {
     layout: PropTypes.oneOf(['vertical', 'horizontal']),
     xAxisId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     yAxisId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    yAxisMap: PropTypes.object,
-    xAxisMap: PropTypes.object,
+    yAxis: PropTypes.object,
+    xAxis: PropTypes.object,
     stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     barSize: PropTypes.number,
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -231,14 +231,12 @@ class Bar extends Component {
   renderErrorBar() {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
-    const { data, xAxisId, xAxisMap, yAxisId, yAxisMap, layout, children } = this.props;
+    const { data, xAxis, yAxis, layout, children } = this.props;
     const errorBarItem = findChildByType(children, ErrorBar);
 
     if (!errorBarItem) { return null; }
 
     const offset = (layout === 'vertical') ? data[0].height / 2 : data[0].width / 2;
-    const xAxis = xAxisMap[xAxisId];
-    const yAxis = yAxisMap[yAxisId];
 
     function dataPointFormatter(dataPoint, dataKey) {
       return {
