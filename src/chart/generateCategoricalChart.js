@@ -48,6 +48,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       data: PropTypes.arrayOf(PropTypes.object),
       layout: PropTypes.oneOf(['horizontal', 'vertical']),
       stackOffset: PropTypes.oneOf(['sign', 'expand', 'none', 'wiggle', 'silhouette']),
+      throttleDelay: PropTypes.number,
       margin: PropTypes.shape({
         top: PropTypes.number,
         right: PropTypes.number,
@@ -79,6 +80,9 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState }) };
       this.validateAxes();
       this.uniqueChartId = _.uniqueId('recharts');
+      if (props.throttleDelay) {
+        this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove, props.throttleDelay);
+      }
     }
 
     componentDidMount() {
@@ -113,6 +117,9 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     componentWillUnmount() {
       if (!_.isNil(this.props.syncId)) {
         this.removeListener();
+      }
+      if (typeof this.triggeredAfterMouseMove.cancel === 'function') {
+        this.triggeredAfterMouseMove.cancel();
       }
     }
 
@@ -632,12 +639,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       }
     };
 
-    /**
-     * The handler of mouse moving in chart
-     * @param  {Object} e        Event object
-     * @return {Null} no return
-     */
-    handleMouseMove = (e) => {
+    triggeredAfterMouseMove = (e) => {
+      console.log('trigger');
       const { onMouseMove } = this.props;
       const { offset } = this.state;
       const container = this.container;
@@ -652,6 +655,16 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       if (_.isFunction(onMouseMove)) {
         onMouseMove(nextState, e);
       }
+    }
+
+    /**
+     * The handler of mouse moving in chart
+     * @param  {Object} e        Event object
+     * @return {Null} no return
+     */
+    handleMouseMove = (e) => {
+      e.persist();
+      this.triggeredAfterMouseMove(e);
     }
     /**
      * The handler if mouse leaving chart
@@ -683,13 +696,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         onClick(mouse, e);
       }
     };
-  
+
     handleTouchMove = (e) => {
       if(e.changedTouches != null && e.changedTouches.length > 0) {
         this.handleMouseMove(e.changedTouches[0]);
       }
     };
-  
+
     validateAxes() {
       const { layout, children } = this.props;
       const xAxes = findAllByType(children, XAxis);
