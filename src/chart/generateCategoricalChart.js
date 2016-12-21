@@ -640,7 +640,6 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     };
 
     triggeredAfterMouseMove = (e) => {
-      console.log('trigger');
       const { onMouseMove } = this.props;
       const { offset } = this.state;
       const container = this.container;
