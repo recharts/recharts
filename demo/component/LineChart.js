@@ -156,8 +156,8 @@ export default React.createClass({
           >
             <CartesianGrid stroke='#f5f5f5'/>
             <Legend />
-            <XAxis />
-            <YAxis scale={scale} domain={specifiedDomain} ticks={specifiedTicks} />
+            <XAxis onClick={this.handleClick} cursor="pointer" />
+            <YAxis scale={scale} cursor="pointer" domain={specifiedDomain} ticks={specifiedTicks} onClick={this.handleClick} />
             <Tooltip />
             <Line type='monotone' dataKey='uv' dot={<CustomLineDot />} stroke='#ff7300'  />
           </LineChart>

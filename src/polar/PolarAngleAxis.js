@@ -5,7 +5,8 @@ import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
+  filterEventsOfChild } from '../util/ReactUtils';
 import Dot from '../shape/Dot';
 import Polygon from '../shape/Polygon';
 import Text from '../component/Text';
@@ -21,6 +22,7 @@ class PolarAngleAxis extends Component {
 
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
+    ...EVENT_ATTRIBUTES,
     dataKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     cx: PropTypes.number,
     cy: PropTypes.number,
@@ -159,7 +161,11 @@ class PolarAngleAxis extends Component {
       };
 
       return (
-        <g className="recharts-polar-angle-axis-tick" key={`tick-${i}`}>
+        <Layer
+          className="recharts-polar-angle-axis-tick"
+          key={`tick-${i}`}
+          {...filterEventsOfChild(this.props, entry, i)}
+        >
           {tickLine && (
             <line
               className="recharts-polar-angle-axis-tick-line"
@@ -170,11 +176,11 @@ class PolarAngleAxis extends Component {
           {tick && this.renderTickItem(
             tick, tickProps, tickFormatter ? tickFormatter(entry.value) : entry.value
           )}
-        </g>
+        </Layer>
       );
     });
 
-    return <g className="recharts-polar-angle-axis-ticks">{items}</g>;
+    return <Layer className="recharts-polar-angle-axis-ticks">{items}</Layer>;
   }
 
   render() {

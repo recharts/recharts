@@ -5,7 +5,9 @@ import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Text from '../component/Text';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import Layer from '../container/Layer';
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
+  filterEventsOfChild } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { isNumOrStr } from '../util/DataUtils';
 
@@ -16,6 +18,7 @@ class PolarRadiusAxis extends Component {
 
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
+    ...EVENT_ATTRIBUTES,
     cx: PropTypes.number,
     cy: PropTypes.number,
     hide: PropTypes.bool,
@@ -156,15 +159,19 @@ class PolarRadiusAxis extends Component {
       };
 
       return (
-        <g className="recharts-polar-radius-axis-tick" key={`tick-${i}`}>
+        <Layer
+          className="recharts-polar-radius-axis-tick"
+          key={`tick-${i}`}
+          {...filterEventsOfChild(this.props, entry, i)}
+        >
           {this.renderTickItem(
             tick, tickProps, tickFormatter ? tickFormatter(entry.value) : entry.value
           )}
-        </g>
+        </Layer>
       );
     });
 
-    return <g className="recharts-polar-radius-axis-ticks">{items}</g>;
+    return <Layer className="recharts-polar-radius-axis-ticks">{items}</Layer>;
   }
 
   renderLabel() {
@@ -188,9 +195,9 @@ class PolarRadiusAxis extends Component {
       return label(props);
     } else if (isNumOrStr(label)) {
       return (
-        <g className="recharts-polar-radius-axis-label">
+        <Layer className="recharts-polar-radius-axis-label">
           <Text {...props}>{label}</Text>
-        </g>
+        </Layer>
       );
     }
 
@@ -203,11 +210,11 @@ class PolarRadiusAxis extends Component {
     if (!ticks || !ticks.length) { return null; }
 
     return (
-      <g className="recharts-polar-radius-axis">
+      <Layer className="recharts-polar-radius-axis">
         {axisLine && this.renderAxisLine()}
         {tick && this.renderTicks()}
         {this.renderLabel()}
-      </g>
+      </Layer>
     );
   }
 }

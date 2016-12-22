@@ -7,8 +7,8 @@ import { shallowEqual } from '../util/PureRender';
 import { getStringSize } from '../util/DOMUtils';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
-import { isSsr, PRESENTATION_ATTRIBUTES,
-  getPresentationAttributes } from '../util/ReactUtils';
+import { isSsr, PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
+  filterEventsOfChild } from '../util/ReactUtils';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
 
 class CartesianAxis extends Component {
@@ -17,6 +17,7 @@ class CartesianAxis extends Component {
 
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
+    ...EVENT_ATTRIBUTES,
     x: PropTypes.number,
     y: PropTypes.number,
     width: PropTypes.number,
@@ -405,7 +406,11 @@ class CartesianAxis extends Component {
       };
 
       return (
-        <g className="recharts-cartesian-axis-tick" key={`tick-${i}`}>
+        <Layer
+          className="recharts-cartesian-axis-tick"
+          key={`tick-${i}`}
+          {...filterEventsOfChild(this.props, entry, i)}
+        >
           {tickLine && (
             <line
               className="recharts-cartesian-axis-tick-line"
@@ -418,7 +423,7 @@ class CartesianAxis extends Component {
             tickProps,
             _.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value
           )}
-        </g>
+        </Layer>
       );
     });
 

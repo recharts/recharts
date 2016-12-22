@@ -11,6 +11,10 @@ const ticks = [
 ];
 
 export default React.createClass({
+  handleActive(data, index, e) {
+    console.log(data, index);
+  },
+
   render () {
     return (
       <Surface width={500} height={500}>
@@ -19,6 +23,9 @@ export default React.createClass({
           cy={250}
           radius={200}
           ticks={ticks}
+          stroke="#ccc"
+          cursor="pointer"
+          onClick={this.handleActive}
         />
       </Surface>
     );
