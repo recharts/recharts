@@ -81,8 +81,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState }) };
       this.validateAxes();
       this.uniqueChartId = _.uniqueId('recharts');
+
       if (props.throttleDelay) {
-        this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove, props.throttleDelay);
+        this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove,
+          props.throttleDelay);
       }
     }
 
@@ -375,11 +377,15 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     }
     /**
      * Get the information of mouse in chart, return null when the mouse is not in the chart
-     * @param  {Object} offset   The offset of main part in the svg element
-     * @param  {Object} e        The event object
+     * @param  {Object} event    The event object
      * @return {Object}          Mouse data
      */
-    getMouseInfo(offset, e) {
+    getMouseInfo(event) {
+      if (!this.container) { return null; }
+
+      const { offset } = this.state;
+      const containerOffset = getOffset(this.container);
+      const e = calculateChartCoordinate(event, containerOffset);
       const isIn = e.chartX >= offset.left
         && e.chartX <= offset.left + offset.width
         && e.chartY >= offset.top
@@ -569,7 +575,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     handleReceiveSyncEvent = (cId, chartId, data) => {
       const { syncId, layout } = this.props;
 
-      if (syncId === cId && chartId !== this.chartId) {
+      if (syncId === cId && chartId !== this.uniqueChartId) {
         const { dataStartIndex, dataEndIndex } = data;
 
         if (!_.isNil(data.dataStartIndex) || !_.isNil(data.dataEndIndex)) {
@@ -623,11 +629,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      */
     handleMouseEnter = (e) => {
       const { onMouseEnter } = this.props;
-      const { offset } = this.state;
-      const container = this.container;
-      const containerOffset = getOffset(container);
-      const ne = calculateChartCoordinate(e, containerOffset);
-      const mouse = this.getMouseInfo(offset, ne);
+      const mouse = this.getMouseInfo(e);
 
       if (mouse) {
         const nextState = { ...mouse, isTooltipActive: true };
@@ -642,11 +644,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     triggeredAfterMouseMove = (e) => {
       const { onMouseMove } = this.props;
-      const { offset } = this.state;
-      const container = this.container;
-      const containerOffset = getOffset(container);
-      const ne = calculateChartCoordinate(e, containerOffset);
-      const mouse = this.getMouseInfo(offset, ne);
+      const mouse = this.getMouseInfo(e);
       const nextState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
 
       this.setState(nextState);
@@ -687,11 +685,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { onClick } = this.props;
 
       if (_.isFunction(onClick)) {
-        const { offset } = this.state;
-        const container = this.container;
-        const containerOffset = getOffset(container);
-        const ne = calculateChartCoordinate(e, containerOffset);
-        const mouse = this.getMouseInfo(offset, ne);
+        const mouse = this.getMouseInfo(e);
 
         onClick(mouse, e);
       }

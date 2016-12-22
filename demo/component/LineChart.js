@@ -108,7 +108,7 @@ export default React.createClass({
 
   render() {
     const { data, data01, data02, opacity } = this.state;
-    console.log(data);
+
     return (
       <div className='line-charts'>
         <a
