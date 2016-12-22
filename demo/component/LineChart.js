@@ -150,7 +150,25 @@ export default React.createClass({
             <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300'  />
           </LineChart>
         </div>
-        
+
+        <p>LineChart with error bars</p>
+        <div className='line-chart-wrapper' style={{ padding: 40 }}>
+          <LineChart
+            width={400}
+            height={400}
+            data={data}
+            margin={{top: 10, bottom: 10, left: 30, right: 30}}
+            onClick={this.handleClick}
+          >
+            <XAxis dataKey='name' interval="preserveStartEnd" />
+            <Tooltip/>
+            <CartesianGrid stroke='#f5f5f5'/>
+            <Line type='monotone' dataKey='uv' stroke='#ff7300' yAxisId={0} activeDot={{fill: '#ff7300', stroke: 'none'}}>
+              <ErrorBar dataKey="uvError" />
+            </Line>
+          </LineChart>
+        </div>
+
         <p>LineChart with error bars</p>
         <div className='line-chart-wrapper' style={{ padding: 40 }}>
           <LineChart
