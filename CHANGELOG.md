@@ -1,3 +1,25 @@
+## 0.20.0 (Dec 26, 2016)
+
+### feat
+
+- Support `ErrorBar` in `Line`, `Area`, `Bar`, `Scatter`
+- Support touch event in `LineChart`, `AreaChart`, `BarChart`
+- Add props `throttleDelay` in `LineChart`, `AreaChart`, `BarChart` for performance
+- Support cornerRadius in Sector, RadialBar and Pie
+- Support events in CartesianAxis, PolarAngleAxis, PolarRadiusAxis
+- Support touch events in Brush
+
+### refactor
+
+- Use `getStringSize` to calculate the width of `Text`
+- Refactor children comparsion in `generateCategoricalChart`, and add updateId to force Brush update when children update
+- Refactor `getMouseInfo` to remove some duplicated codes in `generateCategoricalChart`
+- Refactor Tooltip and Legend, remove react-dom-server
+
+### fix
+
+- Fix the `chartId` in `handleReceiveSyncEvent` of `generateCategoricalChart` 
+
 ## 0.19.1(Dec 15, 2016)
 
 ### fix
