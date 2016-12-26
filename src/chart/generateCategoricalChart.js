@@ -76,8 +76,9 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     constructor(props) {
       super(props);
+
       const defaultState = this.createDefaultState(props);
-      this.state = { ...defaultState, updateId: 0,
+      this.state = { ...defaultState, updateId: 0, isLegendReady: true,
         ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState }) };
       this.validateAxes();
       this.uniqueChartId = _.uniqueId('recharts');
@@ -88,21 +89,37 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       }
     }
 
+    /* eslint-disable  react/no-did-mount-set-state */
     componentDidMount() {
       if (!_.isNil(this.props.syncId)) {
         this.addListener();
+      }
+
+      if (this.legendInstance) {
+        const { dataStartIndex, dataEndIndex } = this.state;
+
+        this.setState(
+          this.updateStateOfAxisMapsOffsetAndStackGroups({
+            props: this.props, dataStartIndex, dataEndIndex,
+          })
+        );
       }
     }
 
     componentWillReceiveProps(nextProps) {
       const { data, children, width, height, layout, stackOffset, margin } = this.props;
 
-      if (nextProps.data !== data || !isChildrenEqual(nextProps.children, children) ||
-        nextProps.width !== width || nextProps.height !== height ||
-        nextProps.layout !== layout || nextProps.stackOffset !== stackOffset ||
-        !shallowEqual(nextProps.margin, margin)) {
+      if (nextProps.data !== data || nextProps.width !== width ||
+        nextProps.height !== height || nextProps.layout !== layout ||
+        nextProps.stackOffset !== stackOffset || !shallowEqual(nextProps.margin, margin)) {
         const defaultState = this.createDefaultState(nextProps);
         this.setState({ ...defaultState, updateId: this.state.updateId + 1,
+          ...this.updateStateOfAxisMapsOffsetAndStackGroups(
+            { props: nextProps, ...defaultState }) }
+        );
+      } else if (!isChildrenEqual(nextProps.children, children)) {
+        const defaultState = this.createDefaultState(nextProps);
+        this.setState({ ...defaultState,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
             { props: nextProps, ...defaultState }) }
         );
@@ -539,6 +556,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { width, height, children } = props;
       const margin = props.margin || {};
       const brushItem = findChildByType(children, Brush);
+      const legendItem = findChildByType(children, Legend);
 
       const offsetH = Object.keys(yAxisMap).reduce((result, id) => {
         const entry = yAxisMap[id];
@@ -562,7 +580,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         offset.bottom += brushItem.props.height || Brush.defaultProps.height;
       }
 
-      offset = appendOffsetOfLegend(offset, graphicalItems, props);
+      if (legendItem && this.legendInstance) {
+        const legendBox = this.legendInstance.getBBox();
+        offset = appendOffsetOfLegend(offset, graphicalItems, props, legendBox);
+      }
 
       return {
         brushBottom,
@@ -858,6 +879,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         chartWidth: width,
         chartHeight: height,
         margin,
+        ref: (legend) => { this.legendInstance = legend; },
       });
     }
 

@@ -7,7 +7,6 @@ import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import DefaultLegendContent from './DefaultLegendContent';
 import { getStyleString } from '../util/DOMUtils';
-import { isSsr } from '../util/ReactUtils';
 import { isNumber } from '../util/DataUtils';
 
 const renderContent = (content, props) => {
@@ -77,33 +76,10 @@ class Legend extends Component {
     return null;
   }
 
-  static getLegendBBox(props) {
-    if (!isSsr()) {
-      const { content, width, height, wrapperStyle } = props;
-      const contentHtml = ReactDOMServer.renderToStaticMarkup(renderContent(content, props));
-      // TODO: the style of legend will be effected by the global style
-      const style = {
-        position: 'absolute',
-        width: width || 'auto',
-        height: height || 'auto',
-        ...wrapperStyle,
-        top: -20000,
-        left: 0,
-        display: 'block',
-      };
-      const wrapper = document.createElement('div');
+  getBBox() {
+    if (!this.wrapperNode) { return null; }
 
-      wrapper.setAttribute('style', getStyleString(style));
-      wrapper.innerHTML = contentHtml;
-      document.body.appendChild(wrapper);
-      const box = wrapper.getBoundingClientRect();
-
-      document.body.removeChild(wrapper);
-
-      return box;
-    }
-
-    return null;
+    return this.wrapperNode.getBoundingClientRect ? this.wrapperNode.getBoundingClientRect() : null;
   }
 
   getDefaultPosition(style) {
@@ -113,7 +89,7 @@ class Legend extends Component {
     if (!style || ((style.left === undefined || style.left === null) && (
       style.right === undefined || style.right === null))) {
       if (align === 'center' && layout === 'vertical') {
-        const box = Legend.getLegendBBox(this.props) || { width: 0 };
+        const box = this.getBBox() || { width: 0 };
         hPos = { left: ((chartWidth || 0) - box.width) / 2 };
       } else {
         hPos = align === 'right' ?
@@ -125,7 +101,7 @@ class Legend extends Component {
     if (!style || ((style.top === undefined || style.top === null) && (
       style.bottom === undefined || style.bottom === null))) {
       if (verticalAlign === 'middle') {
-        const box = Legend.getLegendBBox(this.props) || { height: 0 };
+        const box = this.getBBox() || { height: 0 };
         vPos = { top: ((chartHeight || 0) - box.height) / 2 };
       } else {
         vPos = verticalAlign === 'bottom' ?
@@ -148,7 +124,11 @@ class Legend extends Component {
     };
 
     return (
-      <div className="recharts-legend-wrapper" style={outerStyle}>
+      <div
+        className="recharts-legend-wrapper"
+        style={outerStyle}
+        ref={(node) => { this.wrapperNode = node; }}
+      >
         {renderContent(content, this.props)}
       </div>
     );

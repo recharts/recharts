@@ -258,25 +258,6 @@ class CartesianAxis extends Component {
     return { line: { x1, y1, x2, y2 }, tick: { x: tx, y: ty } };
   }
 
-  getBaseline() {
-    const { orientation } = this.props;
-    let baseline;
-
-    switch (orientation) {
-      case 'top':
-        baseline = 'auto';
-        break;
-      case 'bottom':
-        baseline = 'text-before-edge';
-        break;
-      default:
-        baseline = 'central';
-        break;
-    }
-
-    return baseline;
-  }
-
   getTickTextAnchor() {
     const { orientation } = this.props;
     let textAnchor;

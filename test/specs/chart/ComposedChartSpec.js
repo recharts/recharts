@@ -19,7 +19,6 @@ const data = [{name: 'Page A', uv: 590, pv: 800, amt: 1400},
             margin={{top: 20, right: 20, bottom: 20, left: 20}}>
         <XAxis dataKey="name"/>
         <YAxis />
-        <Legend/>
         <CartesianGrid stroke='#f5f5f5'/>
         <Area type='monotone' dataKey='amt' fill='#8884d8' stroke='#8884d8'/>
         <Bar dataKey='pv' barSize={20} fill='#413ea0'/>
@@ -39,8 +38,6 @@ const data = [{name: 'Page A', uv: 590, pv: 800, amt: 1400},
         <XAxis dataKey="name"/>
         <YAxis dataKey='pv' orientation='left' yAxisId='left' />
         <YAxis dataKey='uv' orientation='right' yAxisId='right' />
-        <Tooltip />
-        <Legend />
         <CartesianGrid stroke="#f5f5f5" />
         <Bar dataKey="pv" barSize={20} fill="#413ea0" yAxisId='left' />
         <Line type="monotone" dataKey="uv" stroke="#ff7300" yAxisId='right' />

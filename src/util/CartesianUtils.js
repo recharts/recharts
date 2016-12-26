@@ -536,7 +536,7 @@ export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = []
   return result;
 };
 
-export const appendOffsetOfLegend = (offset, items, props) => {
+export const appendOffsetOfLegend = (offset, items, props, legendBox) => {
   const { children, width, height, margin } = props;
   const legendWidth = width - (margin.left || 0) - (margin.right || 0);
   const legendHeight = height - (margin.top || 0) - (margin.bottom || 0);
@@ -544,7 +544,7 @@ export const appendOffsetOfLegend = (offset, items, props) => {
   let newOffset = offset;
 
   if (legendProps) {
-    const box = Legend.getLegendBBox(legendProps) || {};
+    const box = legendBox || {};
     const { align, verticalAlign, layout } = legendProps;
 
     if ((layout === 'vertical' || (layout === 'horizontal' && verticalAlign === 'center')) &&

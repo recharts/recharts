@@ -2,7 +2,6 @@
  * @fileOverview Tooltip
  */
 import React, { Component, PropTypes } from 'react';
-import ReactDOMServer from 'react-dom/server';
 import Animate from 'react-smooth';
 import _ from 'lodash';
 import DefaultTooltipContent from './DefaultTooltipContent';
@@ -74,33 +73,6 @@ const defaultProps = {
   itemSorter: () => -1,
 };
 
-const getTooltipBBox = (wrapperStyle, contentItem) => {
-  if (!isSsr()) {
-    const contentHtml = ReactDOMServer.renderToStaticMarkup(contentItem);
-    const style = {
-      // solve the problem temporarily that the width and height will be affect by the global css
-      fontSize: 12,
-      ...wrapperStyle,
-      top: -20000,
-      left: 0,
-      display: 'block',
-    };
-
-    const wrapper = document.createElement('div');
-
-    wrapper.setAttribute('style', getStyleString(style));
-    wrapper.innerHTML = contentHtml;
-    document.body.appendChild(wrapper);
-    const box = wrapper.getBoundingClientRect();
-
-    document.body.removeChild(wrapper);
-
-    return box;
-  }
-
-  return null;
-};
-
 const renderContent = (content, props) => {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
@@ -116,40 +88,45 @@ class Tooltip extends Component {
   static propTypes = propTypes;
   static defaultProps = defaultProps;
 
+  getBBox() {
+    if (!this.wrapperNode) { return null; }
+
+    return this.wrapperNode.getBoundingClientRect ? this.wrapperNode.getBoundingClientRect() : null;
+  }
+
   render() {
     const { payload, isAnimationActive, animationDuration, animationEasing } = this.props;
-
-    if (!payload || !payload.length ||
-      !payload.filter(entry => isNumOrStr(entry.value)).length
-    ) { return null; }
-
+    const hasPayload = payload && payload.length &&
+      payload.filter(entry => isNumOrStr(entry.value)).length;
     const { content, viewBox, coordinate, position, active, offset, wrapperStyle } = this.props;
     const outerStyle = {
       pointerEvents: 'none',
-      display: active ? 'block' : 'none',
+      display: active && hasPayload ? 'block' : 'none',
       position: 'absolute',
       top: 0,
       ...wrapperStyle,
     };
-    const contentItem = renderContent(content, this.props);
     let translateX, translateY;
 
     if (position && isNumber(position.x) && isNumber(position.y)) {
       translateX = position.x;
       translateY = position.y;
     } else {
-      const box = getTooltipBBox(outerStyle, contentItem);
+      const box = this.getBBox();
 
-      if (!box) { return null; }
-      translateX = position && isNumber(position.x) ? position.x : Math.max(
-        coordinate.x + box.width + offset > (viewBox.x + viewBox.width) ?
-        coordinate.x - box.width - offset :
-        coordinate.x + offset, viewBox.x);
+      if (box) {
+        translateX = position && isNumber(position.x) ? position.x : Math.max(
+          coordinate.x + box.width + offset > (viewBox.x + viewBox.width) ?
+          coordinate.x - box.width - offset :
+          coordinate.x + offset, viewBox.x);
 
-      translateY = position && isNumber(position.y) ? position.y : Math.max(
-        coordinate.y + box.height + offset > (viewBox.y + viewBox.height) ?
-        coordinate.y - box.height - offset :
-        coordinate.y + offset, viewBox.y);
+        translateY = position && isNumber(position.y) ? position.y : Math.max(
+          coordinate.y + box.height + offset > (viewBox.y + viewBox.height) ?
+          coordinate.y - box.height - offset :
+          coordinate.y + offset, viewBox.y);
+      } else {
+        outerStyle.display = 'none';
+      }
     }
 
     return (
@@ -157,15 +134,16 @@ class Tooltip extends Component {
         from={`translate(${translateX}px, ${translateY}px)`}
         to={`translate(${translateX}px, ${translateY}px)`}
         duration={animationDuration}
-        isActive={isAnimationActive}
+        isActive={outerStyle.display === 'block'}
         easing={animationEasing}
         attributeName="transform"
       >
         <div
           className="recharts-tooltip-wrapper"
           style={outerStyle}
+          ref={(node) => { this.wrapperNode = node; }}
         >
-          {contentItem}
+          {renderContent(content, this.props)}
         </div>
       </Animate>
     );

@@ -167,7 +167,6 @@ describe('<AreaChart /> - Pure Rendering', () => {
       <XAxis />
       <YAxis />
       <Brush />
-      <Legend layout="vertical" />
     </AreaChart>
   );
 

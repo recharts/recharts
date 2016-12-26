@@ -61,6 +61,12 @@ class ScatterChart extends Component {
     isTooltipActive: false,
     activeItem: null,
   };
+
+  componentDidMount() {
+    if (this.legendInstance) {
+      this.forceUpdate();
+    }
+  }
   /**
    * Compose the data of each group
    * @param  {Object} item        An instance of Scatter
@@ -161,7 +167,9 @@ class ScatterChart extends Component {
   }
 
   getOffset(items, xAxis, yAxis) {
-    const { width, height, margin } = this.props;
+    const { width, height, margin, children } = this.props;
+    const legendItem = findChildByType(children, Legend);
+
     let offset = {
       left: margin.left || 0, right: margin.right || 0,
       top: margin.top || 0, bottom: margin.bottom || 0,
@@ -170,7 +178,10 @@ class ScatterChart extends Component {
     offset[xAxis.orientation] += xAxis.height;
     offset[yAxis.orientation] += yAxis.width;
 
-    offset = appendOffsetOfLegend(offset, items, this.props);
+    if (legendItem && this.legendInstance) {
+      const legendBox = this.legendInstance.getBBox();
+      offset = appendOffsetOfLegend(offset, items, this.props, legendBox);
+    }
 
     return {
       ...offset,
@@ -370,6 +381,7 @@ class ScatterChart extends Component {
       chartWidth: width,
       chartHeight: height,
       margin,
+      ref: (legend) => { this.legendInstance = legend; },
     });
   }
 

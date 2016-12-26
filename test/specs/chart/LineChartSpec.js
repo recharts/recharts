@@ -311,7 +311,6 @@ describe('<LineChart /> - Pure Rendering', () => {
       <XAxis />
       <YAxis />
       <Brush />
-      <Legend layout="vertical" />
     </LineChart>
 	);
 
@@ -339,6 +338,62 @@ describe('<LineChart /> - Pure Rendering', () => {
     wrapper.instance().handleBrushChange({ startIndex: 0, endIndex: data.length - 1 });
     spies.forEach((el) => expect(el.callCount).to.equal(1));
     expect(axisSpy.callCount).to.equal(2);
+  });
+
+});
+
+describe('<LineChart /> - Pure Rendering with legend', () => {
+  const pureElements = [Line];
+
+  const spies = [];
+  // CartesianAxis is what is actually render for XAxis and YAxis
+  let axisSpy;
+
+  // spy on each pure element before each test, and restore the spy afterwards
+  beforeEach(() => {
+    pureElements.forEach((el, i) => (spies[i] = sinon.spy(el.prototype, 'render')));
+    axisSpy = sinon.spy(CartesianAxis.prototype, 'render');
+  });
+  afterEach(() => {
+    pureElements.forEach((el, i) => spies[i].restore());
+    axisSpy.restore();
+  });
+
+  const chart = (
+    <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
+      <Tooltip />
+      <XAxis />
+      <YAxis />
+      <Brush />
+      <Legend />
+    </LineChart>
+  );
+
+  // protect against the future where someone might mess up our clean rendering
+  it('should only render Line once when the mouse enters and moves', () => {
+    const wrapper = mount(chart);
+
+    spies.forEach((el) => expect(el.callCount).to.equal(2));
+    expect(axisSpy.callCount).to.equal(4);
+
+    wrapper.simulate('mouseEnter', { pageX: 30, pageY: 200 });
+    wrapper.simulate('mouseMove', { pageX: 200, pageY: 200 });
+    wrapper.simulate('mouseLeave');
+
+    spies.forEach((el) => expect(el.callCount).to.equal(2));
+    expect(axisSpy.callCount).to.equal(4);
+  });
+
+  // protect against the future where someone might mess up our clean rendering
+  it('should only render Line once when the brush moves but doesn\'t change start/end indices', () => {
+    const wrapper = mount(chart);
+
+    spies.forEach((el) => expect(el.callCount).to.equal(2));
+    expect(axisSpy.callCount).to.equal(4);
+    wrapper.instance().handleBrushChange({ startIndex: 0, endIndex: data.length - 1 });
+    spies.forEach((el) => expect(el.callCount).to.equal(2));
+    expect(axisSpy.callCount).to.equal(4);
   });
 
 });
