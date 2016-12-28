@@ -157,9 +157,12 @@ export class LineChart extends Component {
 
       if (hasDot && activeDot && activePoint) {
         const dotProps = {
-          index: i,
+          index: activeTooltipIndex,
           dataKey,
+          cx: activePoint.x, cy: activePoint.y, r: 4,
           fill: stroke, strokeWidth: 2, stroke: '#fff',
+          payload: activePoint.payload,
+          value: activePoint.value,
           ...getPresentationAttributes(activeDot),
         };
         dotItems.push(this.renderActiveDot(activeDot, dotProps, i));

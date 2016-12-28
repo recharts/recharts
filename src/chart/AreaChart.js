@@ -202,19 +202,17 @@ export class AreaChart extends Component {
 
       if (hasDot && activeDot && activePoint) {
         const dotProps = {
-          index: i,
+          index: activeTooltipIndex,
           dataKey,
           animationId,
           cx: activePoint.x, cy: activePoint.y, r: 4,
           fill: getMainColorOfGraphicItem(child),
           strokeWidth: 2, stroke: '#fff',
+          payload: activePoint.payload,
+          value: activePoint.value,
           ...getPresentationAttributes(activeDot),
         };
-        dotItems.push((
-          <Layer key={`dot-${dataKey}`}>
-            {this.renderActiveDot(activeDot, dotProps)}
-          </Layer>
-        ));
+        dotItems.push(this.renderActiveDot(activeDot, dotProps));
       }
 
       const area = React.cloneElement(child, {
