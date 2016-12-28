@@ -1,4 +1,3 @@
-import 'core-js/es6/math';
 import './polyfill';
 
 export Surface from './container/Surface';
