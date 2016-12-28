@@ -483,20 +483,22 @@ export const getBarSizeList = ({ barSize: globalSize, stackGroups = {} }) => {
 export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = [], maxBarSize }) => {
   const len = sizeList.length;
   if (len < 1) return null;
+
+  let realBarGap = getPercentValue(barGap, bandSize, 0, true);
   let result;
 
   // whether or not is barSize setted by user
   if (sizeList[0].barSize === +sizeList[0].barSize) {
     let sum = sizeList.reduce((res, entry) => (res + entry.barSize || 0), 0);
-    sum += (len - 1) * barGap;
+    sum += (len - 1) * realBarGap;
     const offset = ((bandSize - sum) / 2) >> 0;
-    let prev = { offset: offset - barGap, size: 0 };
+    let prev = { offset: offset - realBarGap, size: 0 };
 
     result = sizeList.reduce((res, entry) => {
       const newRes = {
         ...res,
         [entry.dataKey]: {
-          offset: prev.offset + prev.size + barGap,
+          offset: prev.offset + prev.size + realBarGap,
           size: entry.barSize,
         },
       };
@@ -512,14 +514,17 @@ export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = []
     }, {});
   } else {
     const offset = getPercentValue(barCategoryGap, bandSize, 0, true);
-    const originalSize = (bandSize - 2 * offset - (len - 1) * barGap) / len >> 0;
+
+    if (bandSize - 2 * offset - (len - 1) * realBarGap <= 0) { realBarGap = 0; }
+
+    const originalSize = (bandSize - 2 * offset - (len - 1) * realBarGap) / len >> 0;
     const size = (maxBarSize === +maxBarSize) ? Math.min(originalSize, maxBarSize) : originalSize;
 
     result = sizeList.reduce((res, entry, i) => {
       const newRes = {
         ...res,
         [entry.dataKey]: {
-          offset: offset + (originalSize + barGap) * i + (originalSize - size) / 2,
+          offset: offset + (originalSize + realBarGap) * i + (originalSize - size) / 2,
           size,
         },
       };

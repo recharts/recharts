@@ -139,7 +139,7 @@ class BarChart extends Component {
     ]),
     stackGroups: PropTypes.object,
     barCategoryGap: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    barGap: PropTypes.number,
+    barGap: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     barSize: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     // used internally
     isComposed: PropTypes.bool,
