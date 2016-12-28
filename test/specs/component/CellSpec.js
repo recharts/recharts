@@ -1,4 +1,3 @@
-import ReactDOM from 'react-dom';
 import React from 'react';
 import { mount, render } from 'enzyme';
 import { expect } from 'chai';
