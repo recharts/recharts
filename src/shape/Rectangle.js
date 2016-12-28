@@ -2,7 +2,6 @@
  * @fileOverview Rectangle
  */
 import React, { Component, PropTypes } from 'react';
-import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import pureRender from '../util/PureRender';
@@ -106,15 +105,16 @@ class Rectangle extends Component {
 
   /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
-    const path = findDOMNode(this);
+    if (this.node && this.node.getTotalLength) {
+      const totalLength = this.node.getTotalLength();
 
-    const totalLength = path && path.getTotalLength && path.getTotalLength();
-
-    if (totalLength) {
-      this.setState({
-        totalLength,
-      });
+      if (totalLength) {
+        this.setState({
+          totalLength,
+        });
+      }
     }
+
   }
 
   render() {
@@ -164,6 +164,7 @@ class Rectangle extends Component {
               {...filterEventAttributes(this.props)}
               className={layerClass}
               d={getRectangePath(currX, currY, currWidth, currHeight, radius)}
+              ref={(node) => { this.node = node; }}
             />
           </Animate>
         )

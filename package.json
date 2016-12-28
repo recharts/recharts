@@ -44,8 +44,7 @@
   "homepage": "https://github.com/recharts/recharts",
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0",
-    "react-addons-transition-group": "^0.14.0 || ^15.0.0",
-    "react-dom": "^0.14.0 || ^15.0.0"
+    "react-addons-transition-group": "^0.14.0 || ^15.0.0"
   },
   "dependencies": {
     "classnames": "^2.2.5",
@@ -99,7 +98,6 @@
     "react": "^15.4.1",
     "react-addons-test-utils": "^15.4.1",
     "react-addons-transition-group": "^15.4.1",
-    "react-dom": "^15.4.1",
     "react-hot-loader": "^1.3.0",
     "react-router": "^2.5.0",
     "rimraf": "^2.5.3",

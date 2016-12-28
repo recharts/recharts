@@ -298,6 +298,16 @@ export const filterSvgElements = (children) => {
 
   return svgElements;
 };
+
+export const isSingleChildEqual = (nextChild, prevChild) => {
+  if (_.isNil(nextChild) && _.isNil(prevChild)) {
+    return true;
+  } else if (!_.isNil(nextChild) && !_.isNil(prevChild)) {
+    return shallowEqual(nextChild.props, prevChild.props);
+  }
+
+  return false;
+};
 /**
  * Wether props of children changed
  * @param  {Object} nextChildren The latest children
@@ -312,13 +322,13 @@ export const isChildrenEqual = (nextChildren, prevChildren) => {
   const count = Children.count(nextChildren);
 
   if (count === 0) { return true; }
-  if (count === 1) { return shallowEqual(nextChildren.props, prevChildren.props); }
+  if (count === 1) { return isSingleChildEqual(nextChildren, prevChildren); }
 
   for (let i = 0; i < count; i++) {
     const nextChild = nextChildren[i];
     const prevChild = prevChildren[i];
 
-    if (!shallowEqual(nextChild.props, prevChild.props)) {
+    if (!isSingleChildEqual(nextChild, prevChild)) {
       return false;
     }
   }

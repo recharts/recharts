@@ -38,7 +38,7 @@ class RectangleDemo extends Component {
             height={height}
             radius={[5, 10, 8, 15]}
             stroke="#ff7300"
-            isAnimationActive
+            isUpdateAnimationActive
             fill="none"
           />
         </Surface>

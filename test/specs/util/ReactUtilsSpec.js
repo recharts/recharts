@@ -114,6 +114,30 @@ describe('ReactUtils', () => {
     expect(filterSvgElements(children).length).to.equal(2);
   });
 
+  it('isChildrenEqual when children has no null children', () => {
+    const wrapper = mount((
+      <LineChart width={200} height={200}>
+        <Line dataKey="a"/>
+        <Line dataKey="b"/>
+        <rect x="0" y="0" width="20" height="20"/>
+        <text x="0" y="0">12</text>
+      </LineChart>
+    ));
 
+    expect(wrapper.props.children).to.equal(wrapper.props.children);
+  });
 
+  it('isChildrenEqual when children has null children', () => {
+    const wrapper = mount((
+      <LineChart width={200} height={200}>
+        <Line dataKey="a"/>
+        <Line dataKey="b"/>
+        <rect x="0" y="0" width="20" height="20"/>
+        <text x="0" y="0">12</text>
+        {null}
+      </LineChart>
+    ));
+
+    expect(wrapper.props.children).to.equal(wrapper.props.children);
+  });
 });
