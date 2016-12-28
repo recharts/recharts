@@ -1,3 +1,4 @@
+import 'core-js/es6/math';
 /* eslint no-proto: 0 */
 const testObject = {};
 
