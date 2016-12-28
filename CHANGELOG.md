@@ -1,3 +1,19 @@
+## 0.20.1 (Dec 27, 2016)
+
+### fix
+
+- Fix bug of `isChildrenEqual`  when component has child `null`
+- Adjust `barGap` when `bandSize` is too small to display bars
+
+
+### feat
+
+- Add props `payload` and `value`, update props `index` in `activeDot` of `Line`, `Area`
+
+### refactor
+
+- Move polyfill of `Math.sign` to polyfill.js
+
 ## 0.20.0 (Dec 26, 2016)
 
 ### feat
