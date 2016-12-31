@@ -18,7 +18,6 @@ class ErrorBar extends Component {
     strokeWidth: PropTypes.number,
     width: PropTypes.number,
     offset: PropTypes.number,
-    opacity: PropTypes.number,
   };
 
   static defaultProps = {
@@ -27,7 +26,6 @@ class ErrorBar extends Component {
     width: 5,
     offset: 0,
     layout: 'horizontal',
-    opacity: 1,
   };
 
   renderErrorBars() {
