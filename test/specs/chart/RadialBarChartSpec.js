@@ -52,8 +52,7 @@ describe('<RadialBarChart />', () => {
         outerRadius={140}
         barSize={10}
         data={data}
-      >
-      </RadialBarChart>
+      />
     );
     expect(wrapper.find('.recharts-radial-bar-sector').length).to.equal(0);
   });
@@ -70,8 +69,7 @@ describe('<RadialBarChart />', () => {
         outerRadius={140}
         barSize={10}
         data={data}
-      >
-      </RadialBarChart>
+      />
     );
     expect(wrapper.find('.recharts-radial-bar-sector').length).to.equal(0);
   });
@@ -131,9 +129,9 @@ describe('<RadialBarChart />', () => {
 
   it('Renders 7 customized shape when shape is set to be a react element', () => {
     const label = { orientation: 'outer' };
-    const Shape = (props) => {
-      return <Sector {...props} className="customized-shape"/>;
-    };
+    const Shape = props =>
+      <Sector {...props} className="customized-shape" />
+    ;
     const wrapper = render(
       <RadialBarChart
         width={500}
@@ -146,7 +144,7 @@ describe('<RadialBarChart />', () => {
         data={data}
       >
         <RadialBar
-          shape={<Shape/>}
+          shape={<Shape />}
           minAngle={15}
           label={label}
           background
@@ -161,9 +159,9 @@ describe('<RadialBarChart />', () => {
 
   it('Renders 7 customized shape when shape is set to be a function', () => {
     const label = { orientation: 'outer' };
-    const renderShape = (props) => {
-      return <Sector {...props} className="customized-shape"/>;
-    };
+    const renderShape = props =>
+      <Sector {...props} className="customized-shape" />
+    ;
     const wrapper = render(
       <RadialBarChart
         width={500}

@@ -30,7 +30,7 @@ describe('<PolarAngleAxis />', () => {
   it('Renders 5 ticks in when tick is set to be a react element', () => {
     const Tick = (props) => {
       const { x, y } = props;
-      return <text x={x} y={y} className="customized-tick">test</text>
+      return <text x={x} y={y} className="customized-tick">test</text>;
     };
     const wrapper = render(
       <Surface width={500} height={500}>
@@ -38,7 +38,7 @@ describe('<PolarAngleAxis />', () => {
           cx={250}
           cy={250}
           radus={50}
-          tick={<Tick/>}
+          tick={<Tick />}
           ticks={ticks}
         />
       </Surface>
@@ -50,7 +50,7 @@ describe('<PolarAngleAxis />', () => {
   it('Renders 5 ticks in when tick is set to be a function', () => {
     const Tick = (props) => {
       const { x, y } = props;
-      return <text x={x} y={y} className="customized-tick">test</text>
+      return <text x={x} y={y} className="customized-tick">test</text>;
     };
     const wrapper = render(
       <Surface width={500} height={500}>

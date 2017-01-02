@@ -32,9 +32,9 @@ describe('<Pie />', () => {
   });
 
   it('Render customized active sector when activeShape is set to be a element', () => {
-    const ActiveShape = (props) => {
-      return <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
-    };
+    const ActiveShape = props =>
+      <Sector {...props} fill="#ff7300" className="customized-active-shape" />
+    ;
     const wrapper = render(
       <Surface width={500} height={500}>
         <Pie
@@ -54,9 +54,9 @@ describe('<Pie />', () => {
   });
 
   it('Render customized active sector when activeShape is set to be a function', () => {
-    const renderActiveShape = (props) => {
-      return <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
-    };
+    const renderActiveShape = props =>
+      <Sector {...props} fill="#ff7300" className="customized-active-shape" />
+    ;
     const wrapper = render(
       <Surface width={500} height={500}>
         <Pie
@@ -81,7 +81,7 @@ describe('<Pie />', () => {
         <Pie
           isAnimationActive={false}
           activeIndex={0}
-          activeShape={{fill: '#ff7300'}}
+          activeShape={{ fill: '#ff7300' }}
           cx={250}
           cy={250}
           innerRadius={0}
@@ -95,9 +95,9 @@ describe('<Pie />', () => {
   });
 
   it('Support multiple active sectors', () => {
-    const ActiveShape = (props) => {
-      return <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
-    };
+    const ActiveShape = props =>
+      <Sector {...props} fill="#ff7300" className="customized-active-shape" />
+    ;
     const wrapper = render(
       <Surface width={500} height={500}>
         <Pie

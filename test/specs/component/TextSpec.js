@@ -42,7 +42,7 @@ describe('<Text />', () => {
       <Text x={0} y={0} width={30}>{0}</Text>
     );
 
-    expect(wrapper.text()).to.contain("0");
+    expect(wrapper.text()).to.contain('0');
   });
 
   it('Render 0 success when not specify the width', () => {
@@ -50,7 +50,7 @@ describe('<Text />', () => {
       <Text x={0} y={0}>{0}</Text>
     );
 
-    expect(wrapper.text()).to.contain("0");
+    expect(wrapper.text()).to.contain('0');
   });
 
   it('Render text when x or y is a percentage', () => {

@@ -18,7 +18,7 @@ describe('<RadarChart />', () => {
   it('Render 1 polygon in a simple Radar', () => {
     const wrapper = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
-        <Radar dataKey="value"/>
+        <Radar dataKey="value" />
       </RadarChart>
     );
     expect(wrapper.find('polygon').length).to.equal(1);
@@ -27,7 +27,7 @@ describe('<RadarChart />', () => {
   it('Render 8 dots when dot is setted to be true', () => {
     const wrapper = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
-        <Radar isAnimationActive={false} dot dataKey="value"/>
+        <Radar isAnimationActive={false} dot dataKey="value" />
       </RadarChart>
     );
     expect(wrapper.find('.recharts-radar-dot').length).to.equal(8);
@@ -36,7 +36,7 @@ describe('<RadarChart />', () => {
   it('Render 8 labels when dot is setted to be true', () => {
     const wrapper = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
-        <Radar isAnimationActive={false} label dataKey="value"/>
+        <Radar isAnimationActive={false} label dataKey="value" />
       </RadarChart>
     );
     expect(wrapper.find('.recharts-radar-label').length).to.equal(8);
@@ -48,7 +48,7 @@ describe('<RadarChart />', () => {
         <Radar dataKey="value" fill="#9597E4" fillOpacity={0.6} stroke="#8889DD" strokeWidth={3} />
         <PolarGrid />
         <PolarAngleAxis />
-        <PolarRadiusAxis orient="middle" angle={67.5}/>
+        <PolarRadiusAxis orient="middle" angle={67.5} />
       </RadarChart>
     );
     expect(wrapper.find('.recharts-polar-grid').length).to.equal(1);
@@ -62,7 +62,7 @@ describe('<RadarChart />', () => {
         <Radar dataKey="value" fill="#9597E4" fillOpacity={0.6} stroke="#8889DD" strokeWidth={3} />
         <PolarGrid />
         <PolarAngleAxis />
-        <PolarRadiusAxis orient="middle" angle={67.5}/>
+        <PolarRadiusAxis orient="middle" angle={67.5} />
       </RadarChart>
     );
     expect(wrapper.find('.recharts-polar-grid .recharts-polar-grid-angle line').length).to.equal(8);

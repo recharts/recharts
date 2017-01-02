@@ -21,11 +21,11 @@ describe('<Legend />', () => {
   });
 
   it('Render customized legend when content is set to be a react element', () => {
-    const CustomizedLegend = () => {
-      return <div className="customized-legend">test</div>;
-    };
+    const CustomizedLegend = () =>
+      <div className="customized-legend">test</div>
+    ;
     const wrapper = render(
-      <Legend width={500} height={30} payload={data} content={<CustomizedLegend/>}/>
+      <Legend width={500} height={30} payload={data} content={<CustomizedLegend />} />
     );
 
     expect(wrapper.find('.recharts-default-legend').length).to.equal(0);

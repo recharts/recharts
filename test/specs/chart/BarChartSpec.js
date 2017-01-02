@@ -14,8 +14,8 @@ describe('<BarChart />', () => {
   it('Renders 8 bars in simple BarChart', () => {
     const wrapper = render(
       <BarChart width={100} height={50} data={data}>
-        <Bar dataKey="uv" fill="#ff7300"/>
-        <Bar dataKey="pv" fill="#387908"/>
+        <Bar dataKey="uv" fill="#ff7300" />
+        <Bar dataKey="pv" fill="#387908" />
       </BarChart>
     );
 
@@ -25,7 +25,7 @@ describe('<BarChart />', () => {
   it('Render 4 labels when label is setted to be true', () => {
     const wrapper = render(
       <BarChart width={100} height={50} data={data}>
-        <Bar isAnimationActive={false} dataKey="uv" label fill="#ff7300"/>
+        <Bar isAnimationActive={false} dataKey="uv" label fill="#ff7300" />
       </BarChart>
     );
 
@@ -37,11 +37,11 @@ describe('<BarChart />', () => {
     const Label = (props) => {
       const { x, y, index } = props;
 
-      return <text key={`label-${index}`} x={x} y={y} className="customized-label">test</text>
+      return <text key={`label-${index}`} x={x} y={y} className="customized-label">test</text>;
     };
     const wrapper = render(
       <BarChart width={100} height={50} data={data}>
-        <Bar isAnimationActive={false} dataKey="uv" fill="#ff7300" label={<Label/>}/>
+        <Bar isAnimationActive={false} dataKey="uv" fill="#ff7300" label={<Label />} />
       </BarChart>
     );
 
@@ -52,11 +52,11 @@ describe('<BarChart />', () => {
     const renderLabel = (props) => {
       const { x, y, index } = props;
 
-      return <text key={`label-${index}`} x={x} y={y} className="customized-label">test</text>
+      return <text key={`label-${index}`} x={x} y={y} className="customized-label">test</text>;
     };
     const wrapper = render(
       <BarChart width={100} height={50} data={data}>
-        <Bar isAnimationActive={false} dataKey="uv" fill="#ff7300" label={renderLabel}/>
+        <Bar isAnimationActive={false} dataKey="uv" fill="#ff7300" label={renderLabel} />
       </BarChart>
     );
 
@@ -65,8 +65,7 @@ describe('<BarChart />', () => {
 
   it('Don\'t renders any bars when no Bar item is added', () => {
     const wrapper = render(
-      <BarChart width={100} height={50} data={data}>
-      </BarChart>
+      <BarChart width={100} height={50} data={data} />
     );
 
     expect(wrapper.find('.recharts-rectangle').length).to.equal(0);
@@ -75,10 +74,10 @@ describe('<BarChart />', () => {
   it('Renders 8 bars in a vertical BarChart', () => {
     const wrapper = render(
       <BarChart width={100} height={50} data={data} layout="vertical">
-        <XAxis type="number"/>
-        <YAxis type="category" dataKey="name"/>
-        <Bar dataKey="uv" fill="#ff7300"/>
-        <Bar dataKey="pv" fill="#387908"/>
+        <XAxis type="number" />
+        <YAxis type="category" dataKey="name" />
+        <Bar dataKey="uv" fill="#ff7300" />
+        <Bar dataKey="pv" fill="#387908" />
       </BarChart>
     );
 
@@ -89,8 +88,8 @@ describe('<BarChart />', () => {
     const wrapper = render(
       <BarChart width={100} height={50} data={data}>
         <YAxis />
-        <Bar dataKey="uv" stackId="test" fill="#ff7300"/>
-        <Bar dataKey="pv" stackId="test" fill="#387908"/>
+        <Bar dataKey="uv" stackId="test" fill="#ff7300" />
+        <Bar dataKey="pv" stackId="test" fill="#387908" />
       </BarChart>
     );
 
@@ -101,7 +100,7 @@ describe('<BarChart />', () => {
     const wrapper = render(
       <BarChart width={100} height={50} data={data}>
         <YAxis />
-        <Bar dataKey="uv" stackId="test" fill="#ff7300"/>
+        <Bar dataKey="uv" stackId="test" fill="#ff7300" />
       </BarChart>
     );
 
@@ -133,7 +132,7 @@ describe('<BarChart />', () => {
   it('Render empty when data is empty', () => {
     const wrapper = render(
       <BarChart width={100} height={50} data={[]}>
-        <Bar dataKey="uv" label fill="#ff7300"/>
+        <Bar dataKey="uv" label fill="#ff7300" />
       </BarChart>
     );
     expect(wrapper.find('path').length).to.equal(0);
@@ -141,13 +140,13 @@ describe('<BarChart />', () => {
 
   it('Render customized shapem when shape is set to be a react element', () => {
     const Shape = (props) => {
-      const {x, y, width, height} = props;
+      const { x, y, width, height } = props;
 
-      return <circle className="customized-shape" cx={x} cy={y} r={8}/>
-    }
+      return <circle className="customized-shape" cx={x} cy={y} r={8} />;
+    };
     const wrapper = render(
       <BarChart width={100} height={50} data={data}>
-        <Bar dataKey="uv" label fill="#ff7300" shape={<Shape/>}/>
+        <Bar dataKey="uv" label fill="#ff7300" shape={<Shape />} />
       </BarChart>
     );
     expect(wrapper.find('.customized-shape').length).to.equal(4);
@@ -155,13 +154,13 @@ describe('<BarChart />', () => {
 
   it('Render customized shapem when shape is set to be a function', () => {
     const renderShape = (props) => {
-      const {x, y, width, height} = props;
+      const { x, y, width, height } = props;
 
-      return <circle className="customized-shape" cx={x} cy={y} r={8}/>
-    }
+      return <circle className="customized-shape" cx={x} cy={y} r={8} />;
+    };
     const wrapper = render(
       <BarChart width={100} height={50} data={data}>
-        <Bar dataKey="uv" label fill="#ff7300" shape={renderShape}/>
+        <Bar dataKey="uv" label fill="#ff7300" shape={renderShape} />
       </BarChart>
     );
     expect(wrapper.find('.customized-shape').length).to.equal(4);

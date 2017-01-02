@@ -50,7 +50,7 @@ describe('<PolarRadiusAxis />', () => {
     const renderTick = (props) => {
       const { payload, x, y, fill } = props;
 
-      return <text x={x} y={y} className="customized-tick">{payload.value}</text>
+      return <text x={x} y={y} className="customized-tick">{payload.value}</text>;
     };
     const wrapper = render(
       <Surface width={500} height={500}>
@@ -73,7 +73,7 @@ describe('<PolarRadiusAxis />', () => {
     const Tick = (props) => {
       const { payload, x, y, fill } = props;
 
-      return <text x={x} y={y} className="customized-tick">{payload.value}</text>
+      return <text x={x} y={y} className="customized-tick">{payload.value}</text>;
     };
     const wrapper = render(
       <Surface width={500} height={500}>
@@ -96,7 +96,7 @@ describe('<PolarRadiusAxis />', () => {
     const renderLabel = (props) => {
       const { x, y } = props;
 
-      return <text x={x} y={y} className="customized-label">any</text>
+      return <text x={x} y={y} className="customized-label">any</text>;
     };
     const wrapper = render(
       <Surface width={500} height={500}>
@@ -117,7 +117,7 @@ describe('<PolarRadiusAxis />', () => {
     const Label = (props) => {
       const { x, y } = props;
 
-      return <text x={x} y={y} className="customized-label">any</text>
+      return <text x={x} y={y} className="customized-label">any</text>;
     };
     const wrapper = render(
       <Surface width={500} height={500}>

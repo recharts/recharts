@@ -17,7 +17,7 @@ describe('<Brush />', () => {
 
   it('Render 2 travellers and 1 slide in simple Brush', () => {
     const wrapper = render(
-      <Brush x={100} y={50} width={400} height={40} data={data}/>
+      <Brush x={100} y={50} width={400} height={40} data={data} />
     );
     expect(wrapper.find('.recharts-brush-traveller').length).to.equal(2);
     expect(wrapper.find('.recharts-brush-slide').length).to.equal(1);
@@ -25,7 +25,7 @@ describe('<Brush />', () => {
 
   it("Don't render any travellers or slide when data is empty in simple Brush", () => {
     const wrapper = render(
-      <Brush x={100} y={50} width={400} height={40} data={[]}/>
+      <Brush x={100} y={50} width={400} height={40} data={[]} />
     );
     expect(wrapper.find('.recharts-brush-traveller').length).to.equal(0);
     expect(wrapper.find('.recharts-brush-slide').length).to.equal(0);
@@ -33,7 +33,7 @@ describe('<Brush />', () => {
 
   it('mouse enter and mouse leave on traveller will set isTextActive true', () => {
     const wrapper = mount(
-      <Brush x={100} y={50} width={400} height={40} data={data}/>
+      <Brush x={100} y={50} width={400} height={40} data={data} />
     );
     const layers = wrapper.find('.recharts-brush-traveller');
     const treavellerLayer = layers.at(1);
@@ -45,7 +45,7 @@ describe('<Brush />', () => {
 
   it('mouse down on brush traveller will set isTravellerMoving true', () => {
     const wrapper = mount(
-      <Brush x={100} y={50} width={400} height={40} data={data}/>
+      <Brush x={100} y={50} width={400} height={40} data={data} />
     );
     const layers = wrapper.find('.recharts-brush-traveller');
     const treavellerLayer = layers.at(1);
@@ -57,7 +57,7 @@ describe('<Brush />', () => {
 
   it('mouse down on brush slide will set isSlideMoving true', () => {
     const wrapper = mount(
-      <Brush x={100} y={50} width={400} height={40} data={data}/>
+      <Brush x={100} y={50} width={400} height={40} data={data} />
     );
     const slide = wrapper.find('.recharts-brush-slide');
     slide.simulate('mouseDown');

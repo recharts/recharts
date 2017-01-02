@@ -155,9 +155,9 @@ describe('<CartesianAxis />', () => {
   });
 
   it('Render customized ticks when tick is set to be a ReactElement', () => {
-    const CustomizedTick = ({x, y}) => {
-      return <text x={x} y={y} className="customized-tick">test</text>;
-    };
+    const CustomizedTick = ({ x, y }) =>
+      <text x={x} y={y} className="customized-tick">test</text>
+    ;
     const wrapper = render(
       <Surface width={500} height={500}>
         <CartesianAxis
@@ -167,7 +167,7 @@ describe('<CartesianAxis />', () => {
           height={50}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
           ticks={ticks}
-          tick={<CustomizedTick/>}
+          tick={<CustomizedTick />}
           interval={0}
         />
       </Surface>
@@ -177,9 +177,9 @@ describe('<CartesianAxis />', () => {
   });
 
   it('Render customized ticks when ticks is an array of strings and interval is 0', () => {
-    const CustomizedTick = ({x, y}) => {
-      return <text x={x} y={y} className="customized-tick">test</text>;
-    };
+    const CustomizedTick = ({ x, y }) =>
+      <text x={x} y={y} className="customized-tick">test</text>
+    ;
     const wrapper = render(
       <Surface width={500} height={500}>
         <CartesianAxis
@@ -189,7 +189,7 @@ describe('<CartesianAxis />', () => {
           height={50}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
           ticks={['tick 1', 'tick 2', 'tick 3']}
-          tick={<CustomizedTick/>}
+          tick={<CustomizedTick />}
           interval={0}
         />
       </Surface>
@@ -199,9 +199,9 @@ describe('<CartesianAxis />', () => {
   });
 
   it('Render customized ticks when tick is set to be a function', () => {
-    const renderCustomizedTick = ({x, y}) => {
-      return <text x={x} y={y} className="customized-tick">test</text>;
-    };
+    const renderCustomizedTick = ({ x, y }) =>
+      <text x={x} y={y} className="customized-tick">test</text>
+    ;
     const wrapper = render(
       <Surface width={500} height={500}>
         <CartesianAxis

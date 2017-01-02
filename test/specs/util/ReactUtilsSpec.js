@@ -39,7 +39,7 @@ describe('ReactUtils', () => {
     const result = filterEventAttributes(
       {
         a: 1,
-        onMouseEnter: () => {}
+        onMouseEnter: () => {},
       }
     );
     expect(result).to.include.keys('onMouseEnter');
@@ -58,16 +58,16 @@ describe('ReactUtils', () => {
   });
 
   it('validateWidthHeight return false when input is not a react element', () => {
-    expect(validateWidthHeight({a: 1})).to.equal(false);
+    expect(validateWidthHeight({ a: 1 })).to.equal(false);
     expect(validateWidthHeight(() => {})).to.equal(false);
   });
 
   it('validateWidthHeight return false when a react element has width or height smaller than 0', () => {
     const wrapper = mount((
       <LineChart width={0} height={0}>
-        <Line dataKey="a"/>
-        <Line dataKey="b"/>
-        <Bar dataKey="c"/>
+        <Line dataKey="a" />
+        <Line dataKey="b" />
+        <Bar dataKey="c" />
       </LineChart>
     ));
     expect(validateWidthHeight(wrapper)).to.equal(false);
@@ -88,9 +88,9 @@ describe('ReactUtils', () => {
   it('withoutType return children except specified type', () => {
     const wrapper = mount((
       <LineChart width={200} height={200}>
-        <Line dataKey="a"/>
-        <Line dataKey="b"/>
-        <Bar dataKey="c"/>
+        <Line dataKey="a" />
+        <Line dataKey="b" />
+        <Bar dataKey="c" />
       </LineChart>
     ));
     const children = wrapper.props().children;
@@ -103,9 +103,9 @@ describe('ReactUtils', () => {
   it('filterSvgElements filter children which are svg elements', () => {
     const wrapper = mount((
       <LineChart width={200} height={200}>
-        <Line dataKey="a"/>
-        <Line dataKey="b"/>
-        <rect x="0" y="0" width="20" height="20"/>
+        <Line dataKey="a" />
+        <Line dataKey="b" />
+        <rect x="0" y="0" width="20" height="20" />
         <text x="0" y="0">12</text>
       </LineChart>
     ));
@@ -117,9 +117,9 @@ describe('ReactUtils', () => {
   it('isChildrenEqual when children has no null children', () => {
     const wrapper = mount((
       <LineChart width={200} height={200}>
-        <Line dataKey="a"/>
-        <Line dataKey="b"/>
-        <rect x="0" y="0" width="20" height="20"/>
+        <Line dataKey="a" />
+        <Line dataKey="b" />
+        <rect x="0" y="0" width="20" height="20" />
         <text x="0" y="0">12</text>
       </LineChart>
     ));
@@ -130,9 +130,9 @@ describe('ReactUtils', () => {
   it('isChildrenEqual when children has null children', () => {
     const wrapper = mount((
       <LineChart width={200} height={200}>
-        <Line dataKey="a"/>
-        <Line dataKey="b"/>
-        <rect x="0" y="0" width="20" height="20"/>
+        <Line dataKey="a" />
+        <Line dataKey="b" />
+        <rect x="0" y="0" width="20" height="20" />
         <text x="0" y="0">12</text>
         {null}
       </LineChart>
