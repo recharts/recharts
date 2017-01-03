@@ -18,7 +18,7 @@ describe('<Bar />', () => {
         <Bar
           isAnimationActive={false}
           data={data}
-          label={{label: 'test'}}
+          label={{ label: 'test' }}
         />
       </Surface>
     );

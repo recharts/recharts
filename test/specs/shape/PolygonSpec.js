@@ -13,7 +13,7 @@ describe('<Polygon />', () => {
   it('Render 1 path in simple Polygon', () => {
     const wrapper = render(
       <Surface width={400} height={400}>
-        <Polygon points={points} fill="#ff7300"/>
+        <Polygon points={points} fill="#ff7300" />
       </Surface>
     );
 
@@ -23,8 +23,8 @@ describe('<Polygon />', () => {
   it('Dno\'t render any path when points is empty or null', () => {
     const wrapper = render(
       <Surface width={400} height={400}>
-        <Polygon points={[]} fill="#ff7300"/>
-        <Polygon fill="#ff7300"/>
+        <Polygon points={[]} fill="#ff7300" />
+        <Polygon fill="#ff7300" />
       </Surface>
     );
 

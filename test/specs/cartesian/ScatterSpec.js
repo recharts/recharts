@@ -38,14 +38,14 @@ describe('<Scatter />', () => {
   });
 
   it('Render customized symbols when shape is set to be a ReactElement', () => {
-    const CustomizedShape = ({ cx, cy }) => {
-      return <circle cx={cx} cy={cy} r={5} className="customized-shape"/>
-    };
+    const CustomizedShape = ({ cx, cy }) =>
+      <circle cx={cx} cy={cy} r={5} className="customized-shape" />
+    ;
     const wrapper = render(
       <Surface width={500} height={500}>
         <Scatter
           isAnimationActive={false}
-          shape={<CustomizedShape/>}
+          shape={<CustomizedShape />}
           points={data}
         />
       </Surface>
@@ -55,9 +55,9 @@ describe('<Scatter />', () => {
   });
 
   it('Render customized symbols when shape is set to be a function', () => {
-    const renderCustomizedShape = ({ cx, cy }) => {
-      return <circle cx={cx} cy={cy} r={5} className="customized-shape"/>
-    };
+    const renderCustomizedShape = ({ cx, cy }) =>
+      <circle cx={cx} cy={cy} r={5} className="customized-shape" />
+    ;
     const wrapper = render(
       <Surface width={500} height={500}>
         <Scatter
@@ -72,14 +72,14 @@ describe('<Scatter />', () => {
   });
 
   it('Render customized line when line is set to be a ReactElement', () => {
-    const CustomizedLine = ({ points }) => {
-      return <path d="M0,0L200,200" className="customized-line"/>
-    };
+    const CustomizedLine = ({ points }) =>
+      <path d="M0,0L200,200" className="customized-line" />
+    ;
     const wrapper = render(
       <Surface width={500} height={500}>
         <Scatter
           isAnimationActive={false}
-          line={<CustomizedLine/>}
+          line={<CustomizedLine />}
           points={data}
         />
       </Surface>
@@ -89,9 +89,9 @@ describe('<Scatter />', () => {
   });
 
   it('Render customized line when line is set to be a function', () => {
-    const renderCustomizedLine = ({ points }) => {
-      return <path d="M0,0L200,200" className="customized-line"/>
-    };
+    const renderCustomizedLine = ({ points }) =>
+      <path d="M0,0L200,200" className="customized-line" />
+    ;
     const wrapper = render(
       <Surface width={500} height={500}>
         <Scatter

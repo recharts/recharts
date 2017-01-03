@@ -15,8 +15,8 @@ describe('<Tooltip />', () => {
   it('Render 1 default tooltip', () => {
     const wrapper = mount(
       <AreaChart width={100} height={50} data={data}>
-        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300"/>
-        <Tooltip/>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip />
       </AreaChart>
     );
 

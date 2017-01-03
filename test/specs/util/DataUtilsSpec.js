@@ -41,7 +41,7 @@ describe('getBandSizeOfAxis', () => {
 
   it('DataUtils.getBandSizeOfAxis({ type: "number", scale }, ticks) should return 0 ', () => {
     const axis = { type: 'number' };
-    const ticks = [{ coordinate: 13 }, { coordinate: 15 }, { coordinate: 20 }]
+    const ticks = [{ coordinate: 13 }, { coordinate: 15 }, { coordinate: 20 }];
     expect(getBandSizeOfAxis(axis, ticks)).to.equal(2);
   });
 });

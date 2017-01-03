@@ -17,7 +17,7 @@ describe('<PieChart />', () => {
   it('Renders 6 sectors circles in simple PieChart', () => {
     const wrapper = render(
       <PieChart width={800} height={400}>
-        <Pie isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label/>
+        <Pie isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label />
       </PieChart>
     );
 
@@ -30,7 +30,7 @@ describe('<PieChart />', () => {
         <Pie isAnimationActive={false} cx={200} cy={200} outerRadius={80} fill="#ff7300" label>
           {
             data.map((entry, index) => (
-              <Cell {...entry}  key={`cell-${index}`} strokeWidth={index + 1}/>
+              <Cell {...entry} key={`cell-${index}`} strokeWidth={index + 1} />
             ))
           }
         </Pie>
@@ -43,7 +43,7 @@ describe('<PieChart />', () => {
   it('Don\'t renders any sectors when width or height is smaller than 0', () => {
     const wrapper = render(
       <PieChart width={0} height={400}>
-        <Pie isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label/>
+        <Pie isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label />
       </PieChart>
     );
     expect(wrapper.find('.recharts-pie-sector').length).to.equal(0);
@@ -52,8 +52,8 @@ describe('<PieChart />', () => {
   it('Renders 6 legend item when add a Legend element', () => {
     const wrapper = render(
       <PieChart width={800} height={400}>
-        <Pie isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label/>
-        <Legend/>
+        <Pie isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label />
+        <Legend />
       </PieChart>
     );
 
@@ -94,7 +94,7 @@ describe('<PieChart />', () => {
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
-        <Pie isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label/>
+        <Pie isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label />
       </PieChart>
     );
     const sectors = wrapper.find(Sector);

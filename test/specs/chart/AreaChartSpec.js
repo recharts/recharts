@@ -174,14 +174,14 @@ describe('<AreaChart /> - Pure Rendering', () => {
   it('should only render Area once when the mouse enters and moves', () => {
     const wrapper = mount(chart);
 
-    spies.forEach((el) => expect(el.callCount).to.equal(1));
+    spies.forEach(el => expect(el.callCount).to.equal(1));
     expect(axisSpy.callCount).to.equal(2);
 
     wrapper.simulate('mouseEnter', { pageX: 30, pageY: 200 });
     wrapper.simulate('mouseMove', { pageX: 200, pageY: 200 });
     wrapper.simulate('mouseLeave');
 
-    spies.forEach((el) => expect(el.callCount).to.equal(1));
+    spies.forEach(el => expect(el.callCount).to.equal(1));
     expect(axisSpy.callCount).to.equal(2);
   });
 
@@ -189,10 +189,10 @@ describe('<AreaChart /> - Pure Rendering', () => {
   it('should only render Area once when the brush moves but doesn\'t change start/end indices', () => {
     const wrapper = mount(chart);
 
-    spies.forEach((el) => expect(el.callCount).to.equal(1));
+    spies.forEach(el => expect(el.callCount).to.equal(1));
     expect(axisSpy.callCount).to.equal(2);
     wrapper.instance().handleBrushChange({ startIndex: 0, endIndex: data.length - 1 });
-    spies.forEach((el) => expect(el.callCount).to.equal(1));
+    spies.forEach(el => expect(el.callCount).to.equal(1));
     expect(axisSpy.callCount).to.equal(2);
   });
 

@@ -32,7 +32,7 @@ describe('<Treemap />', () => {
   ];
 
   const wrapper = render(
-    <Treemap width={1000} height={500} data={data}/>
+    <Treemap width={1000} height={500} data={data} />
   );
 
   it('renders 20 rectangles in simple TreemapChart', () => {

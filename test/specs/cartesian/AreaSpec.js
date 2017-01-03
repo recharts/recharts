@@ -36,7 +36,7 @@ describe('<Area />', () => {
     const Label = (props) => {
       const { index, x, y } = props;
 
-      return <text x={x} y={y} className="customized-label">{index}</text>
+      return <text x={x} y={y} className="customized-label">{index}</text>;
     };
     const wrapper = render(
       <Surface width={500} height={500}>
@@ -56,7 +56,7 @@ describe('<Area />', () => {
     const renderDot = (props) => {
       const { cx, cy } = props;
 
-      return <circle x={cx} y={cy} r={5} className="customized-dot"/>
+      return <circle x={cx} y={cy} r={5} className="customized-dot" />;
     };
     const wrapper = render(
       <Surface width={500} height={500}>
@@ -76,7 +76,7 @@ describe('<Area />', () => {
     const CustomizedDot = (props) => {
       const { cx, cy } = props;
 
-      return <circle x={cx} y={cy} r={5} className="customized-dot"/>
+      return <circle x={cx} y={cy} r={5} className="customized-dot" />;
     };
     const wrapper = render(
       <Surface width={500} height={500}>

@@ -1,12 +1,14 @@
 // Karma configuration
 // Generated on Wed Mar 18 2015 11:41:18 GMT+0800 (CST)
+
 'use strict';
 
 var path = require('path');
 
-module.exports = function(config) {
-  if (process.env.RELEASE)
-    config.singleRun = true
+module.exports = function (config) {
+  if (process.env.RELEASE) {
+    config.singleRun = true;
+  }
 
   config.set({
 
@@ -44,7 +46,7 @@ module.exports = function(config) {
         loaders: [{
           test: /\.js$/,
           exclude: [
-            path.resolve('node_modules/')
+            path.resolve('node_modules/'),
           ],
           loader: 'babel',
         }, {
@@ -53,7 +55,7 @@ module.exports = function(config) {
         }],
       },
       externals: {
-        'jsdom': 'window',
+        jsdom: 'window',
         'react/lib/ExecutionEnvironment': true,
         'react/addons': true,
         'react/lib/ReactContext': 'window',
@@ -61,8 +63,8 @@ module.exports = function(config) {
       },
       resolve: {
         alias: {
-          'sinon': 'sinon/pkg/sinon',
-          'recharts': path.resolve('./src/index.js'),
+          sinon: 'sinon/pkg/sinon',
+          recharts: path.resolve('./src/index.js'),
         },
       },
     },
@@ -79,7 +81,7 @@ module.exports = function(config) {
       'karma-sourcemap-loader',
       'karma-firefox-launcher',
       'karma-chrome-launcher',
-      'karma-coveralls'
+      'karma-coveralls',
     ],
 
     // test results reporter to use
@@ -91,13 +93,13 @@ module.exports = function(config) {
       dir: 'test',
       reporters: [{
         type: 'html',
-        subdir: 'coverage'
+        subdir: 'coverage',
       }, {
         type: 'text',
       }, {
         type: 'lcov',
-        subdir: 'coverage'
-      }]
+        subdir: 'coverage',
+      }],
     },
 
     webpackMiddleware: {

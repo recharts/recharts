@@ -26,13 +26,13 @@ describe('ScatterChart of three dimension data', () => {
   it('Render 2 Scatter', () => {
     const wrapper = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20 }}>
-        <XAxis dataKey="x" name="stature" unit="cm"/>
-        <YAxis dataKey="y" name="weight" unit="kg"/>
-        <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km"/>
+        <XAxis dataKey="x" name="stature" unit="cm" />
+        <YAxis dataKey="y" name="weight" unit="kg" />
+        <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km" />
         <CartesianGrid />
-        <Scatter name="A school" data={data01} fillOpactity={0.3} fill="#ff7300"/>
-        <Scatter name="B school" data={data02} fill="#347300"/>
-        <Tooltip/>
+        <Scatter name="A school" data={data01} fillOpactity={0.3} fill="#ff7300" />
+        <Scatter name="B school" data={data02} fill="#347300" />
+        <Tooltip />
         <Legend />
       </ScatterChart>
     );
@@ -47,12 +47,12 @@ describe('ScatterChart of three dimension data', () => {
     const wrapper = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis dataKey="x" name="stature" unit="cm" />
-        <YAxis dataKey="y" name="weight" unit="kg"/>
-        <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km"/>
+        <YAxis dataKey="y" name="weight" unit="kg" />
+        <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km" />
         <CartesianGrid />
-        <Scatter name="A school" data={[]} fillOpactity={0.3} fill="#ff7300"/>
-        <Tooltip/>
-        <Legend layout="vertical"/>
+        <Scatter name="A school" data={[]} fillOpactity={0.3} fill="#ff7300" />
+        <Tooltip />
+        <Legend layout="vertical" />
       </ScatterChart>
     );
 
@@ -62,13 +62,13 @@ describe('ScatterChart of three dimension data', () => {
   it('mouse enter on one circle will trigger one Cross', () => {
     const wrapper = mount(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-        <XAxis dataKey="x" name="stature" unit="cm"/>
-        <YAxis dataKey="y" name="weight" unit="kg"/>
-        <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km"/>
+        <XAxis dataKey="x" name="stature" unit="cm" />
+        <YAxis dataKey="y" name="weight" unit="kg" />
+        <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km" />
         <CartesianGrid />
-        <Scatter name="A school" data={data01} fillOpactity={0.3} fill="#ff7300"/>
-        <Scatter name="B school" data={data02} fill="#347300"/>
-        <Tooltip/>
+        <Scatter name="A school" data={data01} fillOpactity={0.3} fill="#ff7300" />
+        <Scatter name="B school" data={data02} fill="#347300" />
+        <Tooltip />
         <Legend />
       </ScatterChart>
     );
@@ -92,9 +92,9 @@ describe('ScatterChart of two dimension data', () => {
 
   const wrapper = render(
     <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-      <XAxis dataKey={"x"} name="stature" unit="cm"/>
-      <YAxis dataKey={"y"} name="weight" unit="kg"/>
-      <Scatter line name="A school" data={data} fill="#ff7300"/>
+      <XAxis dataKey={'x'} name="stature" unit="cm" />
+      <YAxis dataKey={'y'} name="weight" unit="kg" />
+      <Scatter line name="A school" data={data} fill="#ff7300" />
     </ScatterChart>
   );
 
