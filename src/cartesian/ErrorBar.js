@@ -8,7 +8,7 @@ import { getPresentationAttributes } from '../util/ReactUtils';
 class ErrorBar extends Component {
 
   static propTypes = {
-    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
     data: PropTypes.array,
     xAxis: PropTypes.object,
     yAxis: PropTypes.object,

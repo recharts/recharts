@@ -10,7 +10,7 @@ import Dot from '../shape/Dot';
 import Curve from '../shape/Curve';
 import { getPresentationAttributes, findChildByType } from '../util/ReactUtils';
 import { getMainColorOfGraphicItem } from '../util/CartesianUtils';
-import { isNumber } from '../util/DataUtils';
+import { isNumber, getValueByDataKey } from '../util/DataUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Area from '../cartesian/Area';
 import AnimationDecorator from '../util/AnimationDecorator';
@@ -22,9 +22,9 @@ const getCategoryAxisCoordinate = ({ axis, ticks, bandSize, entry, index }) => {
     return ticks[index] ? ticks[index].coordinate + bandSize / 2 : null;
   }
 
-  const dataKey = axis.dataKey;
+  const value = getValueByDataKey(entry, axis.dataKey);
 
-  return dataKey && !_.isNil(entry[dataKey]) ? axis.scale(entry[dataKey]) : null;
+  return !_.isNil(value) ? axis.scale(value) : null;
 };
 
 const getBaseValue = (props, xAxis, yAxis) => {
@@ -70,7 +70,9 @@ const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, bandSize, dataKe
   const baseValue = getBaseValue(props, xAxis, yAxis);
 
   const points = data.map((entry, index) => {
-    const value = hasStack ? stackedData[dataStartIndex + index] : [baseValue, entry[dataKey]];
+    const value = hasStack ?
+      stackedData[dataStartIndex + index] :
+      [baseValue, getValueByDataKey(entry, dataKey)];
 
     if (layout === 'horizontal') {
       return {
@@ -171,7 +173,7 @@ export class AreaChart extends Component {
       <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor" />;
   }
 
-  renderActiveDot(option, props) {
+  renderActiveDot(option, props, childIndex) {
     let dot;
 
     if (React.isValidElement(option)) {
@@ -187,7 +189,7 @@ export class AreaChart extends Component {
         from="scale(0)"
         to="scale(1)"
         duration={400}
-        key={`dot-${props.dataKey}`}
+        key={`dot-${childIndex}`}
         attributeName="transform"
       >
         <Layer style={{ transformOrigin: 'center center' }}>
@@ -215,7 +217,6 @@ export class AreaChart extends Component {
     const { animationId } = this.props;
 
     const areaItems = items.reduce((result, child, i) => {
-
       const { dataKey, activeDot } = child.props;
       const currentComposedData = allComposedData[i];
       const activePoint = currentComposedData.points &&
@@ -233,7 +234,7 @@ export class AreaChart extends Component {
           value: activePoint.value,
           ...getPresentationAttributes(activeDot),
         };
-        dotItems.push(this.renderActiveDot(activeDot, dotProps));
+        dotItems.push(this.renderActiveDot(activeDot, dotProps, i));
       }
 
       const area = React.cloneElement(child, {

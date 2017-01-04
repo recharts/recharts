@@ -23,7 +23,7 @@ class PolarAngleAxis extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
     ...EVENT_ATTRIBUTES,
-    dataKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    dataKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.func]),
     cx: PropTypes.number,
     cy: PropTypes.number,
     radius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),

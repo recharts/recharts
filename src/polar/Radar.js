@@ -20,7 +20,7 @@ class Radar extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
-    dataKey: PropTypes.string.isRequired,
+    dataKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.func]).isRequired,
 
     points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,

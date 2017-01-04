@@ -23,7 +23,7 @@ class Area extends Component {
     ...PRESENTATION_ATTRIBUTES,
     ...EVENT_ATTRIBUTES,
     className: PropTypes.string,
-    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
     type: PropTypes.oneOfType([PropTypes.oneOf([
       'basis', 'basisClosed', 'basisOpen', 'linear', 'linearClosed', 'natural',
       'monotoneX', 'monotoneY', 'monotone', 'step', 'stepBefore', 'stepAfter',
@@ -103,7 +103,7 @@ class Area extends Component {
 
   state = { isAnimationFinished: true };
 
-  id = `area${Date.now()}`;
+  id = _.uniqueId('recharts-area-');
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });

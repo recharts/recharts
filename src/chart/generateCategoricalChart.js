@@ -20,7 +20,7 @@ import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
 import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate,
-  combineEventHandlers, parseScale } from '../util/DataUtils';
+  combineEventHandlers, parseScale, getValueByDataKey } from '../util/DataUtils';
 import { calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
   getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
@@ -456,7 +456,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           dataKey, unit, formatter,
           name: name || dataKey,
           color: getMainColorOfGraphicItem(child),
-          value: data[activeIndex] && data[activeIndex][dataKey],
+          value: getValueByDataKey(data[activeIndex], dataKey),
           payload: data[activeIndex],
         };
       });

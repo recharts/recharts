@@ -6,7 +6,8 @@ import _ from 'lodash';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
-import { getBandSizeOfAxis, getAnyElementOfObject } from '../util/DataUtils';
+import { getBandSizeOfAxis, getAnyElementOfObject, getValueByDataKey,
+  findPositionOfBar } from '../util/DataUtils';
 import { getPresentationAttributes, findChildByType, findAllByType } from '../util/ReactUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Cell from '../component/Cell';
@@ -19,11 +20,9 @@ const getCategoryAxisCoordinate = ({ axis, ticks, offset, bandSize, entry, index
     return ticks[index] ? ticks[index].coordinate + offset : null;
   }
 
-  const dataKey = axis.dataKey;
+  const value = getValueByDataKey(entry, axis.dataKey);
 
-  return dataKey && !_.isNil(entry[dataKey]) ?
-    axis.scale(entry[dataKey]) - bandSize / 2 + offset :
-    null;
+  return !_.isNil(value) ? axis.scale(value) - bandSize / 2 + offset : null;
 };
 
 const getBaseValue = ({ props, xAxis, yAxis }) => {
@@ -50,16 +49,20 @@ const getBaseValue = ({ props, xAxis, yAxis }) => {
  */
 const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
   xTicks, yTicks, stackedData }) => {
-
   const { layout, dataStartIndex, dataEndIndex } = props;
   const { dataKey, children, minPointSize } = item.props;
-  const pos = barPosition[dataKey];
+  const pos = findPositionOfBar(barPosition, item);
+
+  if (!pos) { return []; }
+
   const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
   const baseValue = getBaseValue({ props, xAxis, yAxis });
   const cells = findAllByType(children, Cell);
 
   return data.map((entry, index) => {
-    const value = stackedData ? stackedData[dataStartIndex + index] : [baseValue, entry[dataKey]];
+    const value = stackedData ?
+      stackedData[dataStartIndex + index] :
+      [baseValue, getValueByDataKey(entry, dataKey)];
     let x, y, width, height;
 
     if (layout === 'horizontal') {

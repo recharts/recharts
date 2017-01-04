@@ -206,3 +206,25 @@ export const parseScale = ({ scale, type }, chartType) => {
   return _.isFunction(scale) ? scale : d3Scales.scalePoint();
 };
 
+export const getValueByDataKey = (obj, dataKey, defaultValue) => {
+  if (_.isNil(obj) || _.isNil(dataKey)) { return defaultValue; }
+
+  if (isNumOrStr(dataKey)) { return _.get(obj, dataKey, defaultValue); }
+
+  if (_.isFunction(dataKey)) { return dataKey(obj); }
+
+  return defaultValue;
+};
+
+
+export const findPositionOfBar = (barPosition, child) => {
+  if (!barPosition) { return null; }
+
+  for (let i = 0, len = barPosition.length; i < len; i++) {
+    if (barPosition[i].item === child) {
+      return barPosition[i].position;
+    }
+  }
+
+  return null;
+};

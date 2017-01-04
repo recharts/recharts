@@ -23,7 +23,7 @@ import { EVENT_ATTRIBUTES,
   findAllByType, validateWidthHeight, getDisplayName, filterEventAttributes,
 } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
-import { parseSpecifiedDomain, isNumber, parseScale } from '../util/DataUtils';
+import { parseSpecifiedDomain, isNumber, parseScale, getValueByDataKey } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { appendOffsetOfLegend, detectReferenceElementsDomain, getTicksOfAxis,
   getCoordinatesOfGrid, getLegendProps, getTicksOfScale } from '../util/CartesianUtils';
@@ -102,7 +102,7 @@ class ScatterChart extends Component {
 
   getDomain(items, dataKey, axisId, axisType) {
     let domain = items.reduce((result, item) => (
-      result.concat(item.props.data.map(entry => entry[dataKey]))
+      result.concat(item.props.data.map(entry => getValueByDataKey(entry, dataKey)))
     ), []);
 
     if (axisType === 'xAxis' || axisType === 'yAxis') {

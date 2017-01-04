@@ -13,16 +13,16 @@ import Line from '../cartesian/Line';
 import { getPresentationAttributes, findChildByType } from '../util/ReactUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
 import composedDataDecorator from '../util/ComposedDataDecorator';
-
+import { getValueByDataKey } from '../util/DataUtils';
 
 const getCategoryAxisCoordinate = ({ axis, ticks, bandSize, entry, index }) => {
   if (axis.type === 'category') {
     return ticks[index] ? ticks[index].coordinate + bandSize / 2 : null;
   }
 
-  const dataKey = axis.dataKey;
+  const value = getValueByDataKey(entry, axis.dataKey);
 
-  return dataKey && !_.isNil(entry[dataKey]) ? axis.scale(entry[dataKey]) : null;
+  return !_.isNil(value) ? axis.scale(value) : null;
 };
 /**
  * Compose the data of each group
@@ -37,7 +37,7 @@ const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey, bandSiz
   const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
 
   return data.map((entry, index) => {
-    const value = entry[dataKey];
+    const value = getValueByDataKey(entry, dataKey);
 
     if (layout === 'horizontal') {
       return {
@@ -112,7 +112,7 @@ export class LineChart extends Component {
       <Curve {...cursorProps} type="linear" className="recharts-tooltip-cursor" />;
   }
 
-  renderActiveDot(option, props) {
+  renderActiveDot(option, props, childIndex) {
     let dot;
 
     if (React.isValidElement(option)) {
@@ -128,7 +128,7 @@ export class LineChart extends Component {
         from="scale(0)"
         to="scale(1)"
         duration={400}
-        key={`dot-${props.dataKey}`}
+        key={`dot-${childIndex}`}
         attributeName="transform"
       >
         <Layer style={{ transformOrigin: 'center center' }}>{dot}</Layer>

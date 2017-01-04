@@ -17,7 +17,7 @@ class ZAxis extends Component {
     // The unique id of z-axis
     zAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // The key of data displayed in the axis
-    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
     // The range of axis
     range: PropTypes.arrayOf(PropTypes.number),
     scale: PropTypes.oneOfType([

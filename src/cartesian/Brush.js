@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { scalePoint } from 'd3-scale';
 import _ from 'lodash';
+import { getValueByDataKey } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
@@ -25,7 +26,7 @@ class Brush extends Component {
     height: PropTypes.number.isRequired,
     travellerWidth: PropTypes.number,
 
-    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
     data: PropTypes.array,
     startIndex: PropTypes.number,
     endIndex: PropTypes.number,
@@ -119,7 +120,7 @@ class Brush extends Component {
 
   getTextOfTick(index) {
     const { data, tickFormatter, dataKey } = this.props;
-    const text = (data[index] && dataKey) ? data[index][dataKey] : index;
+    const text = getValueByDataKey(data[index], dataKey, index);
 
     return _.isFunction(tickFormatter) ? tickFormatter(text) : text;
   }

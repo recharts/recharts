@@ -5,7 +5,7 @@ import {
 } from 'd3-shape';
 import _ from 'lodash';
 import { findAllByType, findChildByType } from './ReactUtils';
-import { getPercentValue, isNumber, isNumOrStr } from './DataUtils';
+import { getPercentValue, isNumber, isNumOrStr, getValueByDataKey } from './DataUtils';
 import ReferenceDot from '../cartesian/ReferenceDot';
 import ReferenceLine from '../cartesian/ReferenceLine';
 import ReferenceArea from '../cartesian/ReferenceArea';
@@ -88,7 +88,7 @@ export const getStackedData = (data, stackItems, offsetType) => {
   const dataKeys = stackItems.map(item => item.props.dataKey);
   const stack = shapeStack()
                 .keys(dataKeys)
-                .value((d, key) => (+d[key] || 0))
+                .value((d, key) => +getValueByDataKey(d, key, 0))
                 .order(stackOrderNone)
                 .offset(STACK_OFFSET_MAP[offsetType]);
 
@@ -190,14 +190,14 @@ export const calculateDomainOfTicks = (ticks, type) => {
 export const getDomainOfDataByKey = (data, key, type) => {
   if (type === 'number') {
     const domain = data
-      .map(entry => entry[key])
+      .map(entry => getValueByDataKey(entry, key))
       .filter(isNumber);
 
     return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
   }
 
   return data.map((entry) => {
-    const value = entry[key];
+    const value = getValueByDataKey(entry, key);
 
     return isNumOrStr(value) ? value : '';
   });
@@ -454,7 +454,7 @@ export const getBarSizeList = ({ barSize: globalSize, stackGroups = {} }) => {
       const barItems = items.filter(item => item.type.displayName === 'Bar');
 
       if (barItems && barItems.length) {
-        const { dataKey, barSize: selfSize } = barItems[0].props;
+        const { barSize: selfSize } = barItems[0].props;
         const cateId = barItems[0].props[cateAxisId];
 
         if (!result[cateId]) {
@@ -462,8 +462,8 @@ export const getBarSizeList = ({ barSize: globalSize, stackGroups = {} }) => {
         }
 
         result[cateId].push({
-          dataKey,
-          stackList: barItems.slice(1).map(item => item.props.dataKey),
+          item: barItems[0],
+          stackList: barItems.slice(1),
           barSize: _.isNil(selfSize) ? globalSize : selfSize,
         });
       }
@@ -495,23 +495,23 @@ export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = []
     let prev = { offset: offset - realBarGap, size: 0 };
 
     result = sizeList.reduce((res, entry) => {
-      const newRes = {
-        ...res,
-        [entry.dataKey]: {
+      const newRes = [...res, {
+        item: entry.item,
+        position: {
           offset: prev.offset + prev.size + realBarGap,
           size: entry.barSize,
         },
-      };
+      }];
 
-      prev = newRes[entry.dataKey];
+      prev = newRes[newRes.length - 1].position;
 
       if (entry.stackList && entry.stackList.length) {
-        entry.stackList.forEach((key) => {
-          newRes[key] = newRes[entry.dataKey];
+        entry.stackList.forEach((item) => {
+          newRes.push({ item, position: prev });
         });
       }
       return newRes;
-    }, {});
+    }, []);
   } else {
     const offset = getPercentValue(barCategoryGap, bandSize, 0, true);
 
@@ -521,21 +521,21 @@ export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = []
     const size = (maxBarSize === +maxBarSize) ? Math.min(originalSize, maxBarSize) : originalSize;
 
     result = sizeList.reduce((res, entry, i) => {
-      const newRes = {
-        ...res,
-        [entry.dataKey]: {
+      const newRes = [...res, {
+        item: entry.item,
+        position: {
           offset: offset + (originalSize + realBarGap) * i + (originalSize - size) / 2,
           size,
         },
-      };
+      }];
 
       if (entry.stackList && entry.stackList.length) {
-        entry.stackList.forEach((key) => {
-          newRes[key] = newRes[entry.dataKey];
+        entry.stackList.forEach((item) => {
+          newRes.push({ item, position: newRes[newRes.length - 1].position });
         });
       }
       return newRes;
-    }, {});
+    }, []);
   }
 
   return result;
@@ -565,3 +565,4 @@ export const appendOffsetOfLegend = (offset, items, props, legendBox) => {
 
   return newOffset;
 };
+
