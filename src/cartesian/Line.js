@@ -53,6 +53,12 @@ class Line extends Component {
       PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
     ]),
 
+    viewBox: PropTypes.shape({
+      x: PropTypes.number,
+      y: PropTypes.number,
+      width: PropTypes.number,
+      height: PropTypes.number,
+    }),
     points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -154,6 +160,8 @@ class Line extends Component {
       .map(line => `${line}px`)
       .join(', ');
   }
+
+  id = `line${Date.now()}`;
 
   pathRef = (node) => {
     this.animate = node;
@@ -294,7 +302,7 @@ class Line extends Component {
     return <Layer className="recharts-line-dots" key="dots">{dots}</Layer>;
   }
 
-  renderCurve() {
+  renderCurve(needClip) {
     const { points, strokeDasharray, isAnimationActive,
       animationBegin, animationDuration, animationEasing, onClick, onMouseEnter,
       onMouseLeave, ...other } = this.props;
@@ -311,8 +319,12 @@ class Line extends Component {
       shouldReAnimate: true,
       pathRef: this.pathRef,
     };
-    const curveProps = { ...other, className: 'recharts-line-curve', fill: 'none',
-      onClick, onMouseEnter, onMouseLeave, points };
+    const curveProps = { ...other,
+      fill: 'none',
+      className: 'recharts-line-curve',
+      clipPath: needClip ? `url(#${this.id})` : null,
+      onClick, onMouseEnter, onMouseLeave, points,
+    };
 
     if (!isAnimationActive) {
       return <Curve {...curveProps} strokeDasharray={strokeDasharray} />;
@@ -361,18 +373,24 @@ class Line extends Component {
   }
 
   render() {
-    const { dot, points, label, className } = this.props;
+    const { dot, points, label, className, xAxis, yAxis, viewBox } = this.props;
 
-    if (!points || !points.length) {
-      return null;
-    }
+    if (!points || !points.length) { return null; }
 
     const hasSinglePoint = points.length === 1;
     const layerClass = classNames('recharts-line', className);
+    const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
 
     return (
       <Layer className={layerClass}>
-        {!hasSinglePoint && this.renderCurve()}
+        {needClip ? (
+          <defs>
+            <clipPath id={this.id}>
+              <rect {...viewBox} />
+            </clipPath>
+          </defs>
+        ) : null}
+        {!hasSinglePoint && this.renderCurve(needClip)}
         {this.renderErrorBar()}
         {(hasSinglePoint || dot) && this.renderDots()}
         {label && this.renderLabels()}

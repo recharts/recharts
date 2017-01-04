@@ -101,17 +101,7 @@ class Pie extends Component {
     animationEasing: 'ease',
   };
 
-  constructor(props, ctx) {
-    super(props, ctx);
-
-    this.state = {
-      isAnimationFinished: false,
-    };
-
-    if (!this.id) {
-      this.id = `clipPath${Date.now()}`;
-    }
-  }
+  state = { isAnimationFinished: false };
 
   getDeltaAngle() {
     const { startAngle, endAngle } = this.props;
@@ -182,6 +172,9 @@ class Pie extends Component {
 
     return 'middle';
   }
+
+
+  id = `pie${Date.now()}`;
 
   isActiveIndex(i) {
     const { activeIndex } = this.props;
