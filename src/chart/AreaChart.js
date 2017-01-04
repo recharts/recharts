@@ -10,6 +10,7 @@ import Dot from '../shape/Dot';
 import Curve from '../shape/Curve';
 import { getPresentationAttributes, findChildByType } from '../util/ReactUtils';
 import { getMainColorOfGraphicItem } from '../util/CartesianUtils';
+import { isNumber } from '../util/DataUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Area from '../cartesian/Area';
 import AnimationDecorator from '../util/AnimationDecorator';
@@ -27,14 +28,26 @@ const getCategoryAxisCoordinate = ({ axis, ticks, bandSize, entry, index }) => {
 };
 
 const getBaseValue = (props, xAxis, yAxis) => {
-  const { layout } = props;
+  const { layout, baseValue } = props;
+
+  if (isNumber(baseValue)) { return baseValue; }
+
   const numberAxis = layout === 'horizontal' ? yAxis : xAxis;
   const domain = numberAxis.scale.domain();
 
+
   if (numberAxis.type === 'number') {
     const max = Math.max(domain[0], domain[1]);
+    const min = Math.min(domain[0], domain[1]);
+
+    if (baseValue === 'dataMin') { return min; }
+    if (baseValue === 'dataMax') { return max; }
+
     return max < 0 ? max : Math.max(Math.min(domain[0], domain[1]), 0);
   }
+
+  if (baseValue === 'dataMin') { return domain[0]; }
+  if (baseValue === 'dataMax') { return domain[1]; }
 
   return domain[0];
 };
@@ -118,9 +131,17 @@ export class AreaChart extends Component {
       PropTypes.node,
     ]),
     stackGroups: PropTypes.object,
+    baseValue: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.oneOf(['dataMin', 'dataMax', 'auto']),
+    ]),
     // used internally
     isComposed: PropTypes.bool,
     animationId: PropTypes.number,
+  };
+
+  static defaultProps = {
+    baseValue: 'auto',
   };
 
   renderCursor({ offset }) {
