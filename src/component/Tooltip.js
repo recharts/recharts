@@ -114,7 +114,7 @@ class Tooltip extends Component {
     } else {
       const box = this.getBBox();
 
-      if (box) {
+      if (box && coordinate) {
         translateX = position && isNumber(position.x) ? position.x : Math.max(
           coordinate.x + box.width + offset > (viewBox.x + viewBox.width) ?
           coordinate.x - box.width - offset :
