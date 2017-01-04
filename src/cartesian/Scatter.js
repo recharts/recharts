@@ -12,6 +12,7 @@ import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
 import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
 import ErrorBar from './ErrorBar';
+import { getValueByDataKey } from '../util/DataUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
 
 @AnimationDecorator
@@ -158,7 +159,7 @@ class Scatter extends Component {
         x: dataPoint.cx,
         y: dataPoint.cy,
         value: dataPoint.y,
-        errorVal: dataPoint[dataKey],
+        errorVal: getValueByDataKey(dataPoint, dataKey),
       };
     }
 
@@ -167,7 +168,7 @@ class Scatter extends Component {
         x: dataPoint.cx,
         y: dataPoint.cy,
         value: dataPoint.x,
-        errorVal: dataPoint[dataKey],
+        errorVal: getValueByDataKey(dataPoint, dataKey),
       };
     }
 

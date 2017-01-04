@@ -11,6 +11,7 @@ import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import ErrorBar from './ErrorBar';
+import { getValueByDataKey } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
   getPresentationAttributes, isSsr, findChildByType } from '../util/ReactUtils';
 
@@ -161,7 +162,7 @@ class Line extends Component {
       .join(', ');
   }
 
-  id = `line${Date.now()}`;
+  id = _.uniqueId('recharts-line-');
 
   pathRef = (node) => {
     this.animate = node;
@@ -250,7 +251,7 @@ class Line extends Component {
         x: dataPoint.x,
         y: dataPoint.y,
         value: dataPoint.value,
-        errorVal: dataPoint.payload[dataKey],
+        errorVal: getValueByDataKey(dataPoint.payload, dataKey),
       };
     }
 

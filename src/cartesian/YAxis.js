@@ -24,7 +24,7 @@ class YAxis extends Component {
       PropTypes.oneOf(['auto', 'dataMin', 'dataMax']),
     ])),
     // The key of data displayed in the axis
-    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
     // Ticks can be any type when the axis is the type of category
     // Ticks must be numbers when the axis is the type of number
     ticks: PropTypes.array,

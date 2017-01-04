@@ -12,6 +12,7 @@ import { findChildByType, getPresentationAttributes, filterSvgElements,
   validateWidthHeight, isSsr } from '../util/ReactUtils';
 import Tooltip from '../component/Tooltip';
 import pureRender from '../util/PureRender';
+import { getValueByDataKey } from '../util/DataUtils';
 
 const computeNode = ({ depth, node, index, valueKey }) => {
   const { children } = node;
@@ -198,7 +199,7 @@ class Treemap extends Component {
     fill: PropTypes.string,
     stroke: PropTypes.string,
     className: PropTypes.string,
-    dataKey: PropTypes.string,
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
@@ -401,7 +402,7 @@ class Treemap extends Component {
       y: activeNode.y + activeNode.height / 2,
     } : null;
     const payload = isTooltipActive && activeNode ? [{
-      name: '', value: activeNode[dataKey],
+      name: '', value: getValueByDataKey(activeNode, dataKey),
     }] : [];
 
     return React.cloneElement(tooltipItem, {

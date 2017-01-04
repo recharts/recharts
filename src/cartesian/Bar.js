@@ -10,6 +10,7 @@ import Layer from '../container/Layer';
 import Text from '../component/Text';
 import ErrorBar from './ErrorBar';
 import pureRender from '../util/PureRender';
+import { getValueByDataKey } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild, isSsr, findChildByType } from '../util/ReactUtils';
 
@@ -31,7 +32,7 @@ class Bar extends Component {
     barSize: PropTypes.number,
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
     legendType: PropTypes.oneOf([
       'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
       'triangle', 'wye',
@@ -79,6 +80,7 @@ class Bar extends Component {
   };
 
   state = { isAnimationFinished: false };
+  id = _.uniqueId('recharts-bar-');
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
@@ -241,7 +243,7 @@ class Bar extends Component {
         x: dataPoint.x,
         y: dataPoint.y,
         value: dataPoint.value,
-        errorVal: dataPoint[dataKey],
+        errorVal: getValueByDataKey(dataPoint, dataKey),
       };
     }
 

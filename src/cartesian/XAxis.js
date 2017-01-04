@@ -24,7 +24,7 @@ class XAxis extends Component {
       PropTypes.oneOf(['auto', 'dataMin', 'dataMax']),
     ])),
     // The key of data displayed in the axis
-    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
     // The width of axis which is usually calculated internally
     width: PropTypes.number,
     // The height of axis, which need to be setted by user
