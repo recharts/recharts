@@ -213,8 +213,9 @@ export default React.createClass({
           >
             <CartesianGrid stroke="#f5f5f5" />
             <Legend />
+            <Tooltip />
             <XAxis />
-            <YAxis />
+            <YAxis domain={[0, 800]} allowDataOverflow />
             <Line type="monotone" dataKey="uv" dot={<CustomLineDot/>} stroke="#ff7300" />
           </LineChart>
         </div>

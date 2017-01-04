@@ -55,6 +55,12 @@ class Area extends Component {
     baseLine: PropTypes.oneOfType([
       PropTypes.number, PropTypes.array,
     ]),
+    viewBox: PropTypes.shape({
+      x: PropTypes.number,
+      y: PropTypes.number,
+      width: PropTypes.number,
+      height: PropTypes.number,
+    }),
     points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -95,14 +101,9 @@ class Area extends Component {
     onAnimationEnd: () => {},
   };
 
-  constructor(props, ctx) {
-    super(props, ctx);
+  state = { isAnimationFinished: true };
 
-    this.state = { isAnimationFinished: true };
-    if (!this.id) {
-      this.id = `clipPath${Date.now()}`;
-    }
-  }
+  id = `area${Date.now()}`;
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });

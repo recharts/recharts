@@ -78,9 +78,7 @@ class Bar extends Component {
     onAnimationEnd: () => {},
   };
 
-  state = {
-    isAnimationFinished: false,
-  };
+  state = { isAnimationFinished: false };
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
