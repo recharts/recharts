@@ -170,7 +170,7 @@ export class LineChart extends Component {
 
       return React.cloneElement(child, {
         key: `line-${i}`,
-        viewBox: { x: offset.left, y: offset.top, width: offset.width, height: offset.height },
+        ...offset,
         layout,
         points,
         animationId,
@@ -180,9 +180,9 @@ export class LineChart extends Component {
     }, this);
 
     return (
-      <Layer className="recharts-line-wrapper">
-        <Layer className="recharts-line">{lineItems}</Layer>
-        <Layer className="recharts-line-dot">{dotItems}</Layer>
+      <Layer className="recharts-line-chart-wrapper">
+        <Layer className="recharts-line-chart">{lineItems}</Layer>
+        <Layer className="recharts-line-chart-dot">{dotItems}</Layer>
       </Layer>
     );
   }
