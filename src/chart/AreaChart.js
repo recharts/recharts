@@ -240,7 +240,7 @@ export class AreaChart extends Component {
       const area = React.cloneElement(child, {
         key: `area-${i}`,
         ...currentComposedData,
-        viewBox: { x: offset.left, y: offset.top, width: offset.width, height: offset.height },
+        ...offset,
         animationId,
         layout,
       });

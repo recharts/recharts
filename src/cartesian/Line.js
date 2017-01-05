@@ -54,12 +54,10 @@ class Line extends Component {
       PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
     ]),
 
-    viewBox: PropTypes.shape({
-      x: PropTypes.number,
-      y: PropTypes.number,
-      width: PropTypes.number,
-      height: PropTypes.number,
-    }),
+    top: PropTypes.number,
+    left: PropTypes.number,
+    width: PropTypes.number,
+    height: PropTypes.number,
     points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -374,7 +372,7 @@ class Line extends Component {
   }
 
   render() {
-    const { dot, points, label, className, xAxis, yAxis, viewBox } = this.props;
+    const { dot, points, label, className, xAxis, yAxis, top, left, width, height } = this.props;
 
     if (!points || !points.length) { return null; }
 
@@ -387,7 +385,7 @@ class Line extends Component {
         {needClip ? (
           <defs>
             <clipPath id={this.id}>
-              <rect {...viewBox} />
+              <rect x={left} y={top} width={width} height={height} />
             </clipPath>
           </defs>
         ) : null}
