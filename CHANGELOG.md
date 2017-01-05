@@ -1,3 +1,17 @@
+## 0.20.2 (Jan 05, 2017)
+
+### fix
+
+- remove opacity in ErrorBar
+- fix `Tooltip` when `coordinate` is null
+
+### feat
+
+- add props `basevalue` in `AreaChart`
+- add clipPath when xAxis or yAxis of `Line` allow data overflow
+- allow dataKey to be a map function
+- support Tooltip in Sankey and Tooltip
+
 ## 0.20.1 (Dec 27, 2016)
 
 ### fix
