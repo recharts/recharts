@@ -535,11 +535,16 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      * @return {Object} Whole new state
      */
     createDefaultState(props) {
+      const { children } = props;
+      const brushItem = findChildByType(children, Brush);
+      const startIndex = (brushItem && brushItem.props && brushItem.props.startIndex) || 0;
+      const endIndex = (brushItem && brushItem.props && brushItem.props.endIndex)
+      || ((props.data && (props.data.length - 1)) || 0);
       return {
         chartX: 0,
         chartY: 0,
-        dataStartIndex: 0,
-        dataEndIndex: (props.data && (props.data.length - 1)) || 0,
+        dataStartIndex: startIndex,
+        dataEndIndex: endIndex,
         activeTooltipIndex: -1,
         isTooltipActive: false,
       };
