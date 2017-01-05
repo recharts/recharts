@@ -52,8 +52,12 @@ class DefaultTooltipContent extends Component {
 
         return (
           <li className="recharts-tooltip-item" key={`tooltip-item-${i}`} style={finalItemStyle}>
-            <span className="recharts-tooltip-item-name">{entry.name}</span>
-            <span className="recharts-tooltip-item-separator">{separator}</span>
+            {entry.name ? <span className="recharts-tooltip-item-name">{entry.name}</span> : null}
+            {
+              entry.name ?
+                <span className="recharts-tooltip-item-separator">{separator}</span> :
+                null
+            }
             <span className="recharts-tooltip-item-value">
               {finalFormatter ? finalFormatter(entry.value, entry.name, entry) : entry.value}
             </span>

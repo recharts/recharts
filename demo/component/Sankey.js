@@ -184,6 +184,7 @@ function SankeyDemo() {
               <stop offset="100%" stopColor="rgba(0, 197, 159, 0.3)" />
             </linearGradient>
           </defs>
+          <Tooltip />
         </Sankey>
       </div>
     </div>

@@ -14,7 +14,7 @@ import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
-import { isNumber } from '../util/DataUtils';
+import { isNumber, getValueByDataKey } from '../util/DataUtils';
 
 @AnimationDecorator
 @pureRender
@@ -118,7 +118,7 @@ class Pie extends Component {
     const deltaAngle = this.getDeltaAngle();
     const absDeltaAngle = Math.abs(deltaAngle);
     const totalPadingAngle = (absDeltaAngle >= 360 ? len : (len - 1)) * paddingAngle;
-    const sum = data.reduce((result, entry) => (result + entry[valueKey]), 0);
+    const sum = data.reduce((result, entry) => (result + getValueByDataKey(entry, valueKey, 0)), 0);
     const deltaRadius = Math.abs(outerRadius - innerRadius);
 
     let sectors = [];
@@ -126,7 +126,7 @@ class Pie extends Component {
 
     if (sum > 0) {
       sectors = data.map((entry, i) => {
-        const percent = entry[valueKey] / sum;
+        const percent = getValueByDataKey(entry, valueKey, 0) / sum;
 
         let tempStartAngle;
 
@@ -149,8 +149,8 @@ class Pie extends Component {
           cy,
           innerRadius,
           outerRadius,
-          name: entry[nameKey],
-          value: entry[valueKey],
+          name: getValueByDataKey(entry, nameKey),
+          value: getValueByDataKey(entry, valueKey),
           startAngle: deltaAngle < 0 ? tempStartAngle : tempEndAngle,
           endAngle: deltaAngle < 0 ? tempEndAngle : tempStartAngle,
           midAngle: (tempStartAngle + tempEndAngle) / 2,
@@ -304,7 +304,7 @@ class Pie extends Component {
       return (
         <Layer key={`label-${i}`}>
           {labelLine && this.renderLabelLineItem(labelLine, lineProps)}
-          {this.renderLabelItem(label, labelProps, entry[valueKey])}
+          {this.renderLabelItem(label, labelProps, getValueByDataKey(entry, valueKey))}
         </Layer>
       );
     });

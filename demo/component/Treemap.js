@@ -413,11 +413,12 @@ class DemoTreemap extends Component {
             height={250}
             data={this.state.data}
             isAnimationActive={false}
+            nameKey="name"
             dataKey="size"
             ratio={1}
             content={<DemoTreemapItem bgColors={ColorPlatte} />}
           >
-            <Tooltip/>
+            <Tooltip />
           </Treemap>
         </div>
       </div>

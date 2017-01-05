@@ -101,7 +101,7 @@ class Tooltip extends Component {
     const { content, viewBox, coordinate, position, active, offset, wrapperStyle } = this.props;
     const outerStyle = {
       pointerEvents: 'none',
-      display: active && hasPayload ? 'block' : 'none',
+      visibility: active && hasPayload ? 'visible' : 'hidden',
       position: 'absolute',
       top: 0,
       ...wrapperStyle,
@@ -125,7 +125,7 @@ class Tooltip extends Component {
           coordinate.y - box.height - offset :
           coordinate.y + offset, viewBox.y);
       } else {
-        outerStyle.display = 'none';
+        outerStyle.visibility = 'hidden';
       }
     }
 
@@ -134,7 +134,7 @@ class Tooltip extends Component {
         from={`translate(${translateX}px, ${translateY}px)`}
         to={`translate(${translateX}px, ${translateY}px)`}
         duration={animationDuration}
-        isActive={outerStyle.display === 'block'}
+        isActive={outerStyle.visibility === 'visible'}
         easing={animationEasing}
         attributeName="transform"
       >

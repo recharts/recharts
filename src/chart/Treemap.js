@@ -199,6 +199,7 @@ class Treemap extends Component {
     fill: PropTypes.string,
     stroke: PropTypes.string,
     className: PropTypes.string,
+    nameKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
@@ -363,7 +364,7 @@ class Treemap extends Component {
     const isLeaf = !node.children || !node.children.length;
 
     return (
-      <Layer key={`recharts-treemap-node-${i}`}>
+      <Layer key={`recharts-treemap-node-${i}`} className={`recharts-treemap-depth-${node.depth}`}>
         {this.renderAnimatedItem(content, nodeProps, isLeaf)}
         {
           node.children && node.children.length ?
@@ -389,7 +390,7 @@ class Treemap extends Component {
   }
 
   renderTooltip() {
-    const { children } = this.props;
+    const { children, nameKey } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem) { return null; }
@@ -402,7 +403,9 @@ class Treemap extends Component {
       y: activeNode.y + activeNode.height / 2,
     } : null;
     const payload = isTooltipActive && activeNode ? [{
-      name: '', value: getValueByDataKey(activeNode, dataKey),
+      payload: activeNode,
+      name: getValueByDataKey(activeNode, nameKey, ''),
+      value: getValueByDataKey(activeNode, dataKey),
     }] : [];
 
     return React.cloneElement(tooltipItem, {
@@ -411,7 +414,6 @@ class Treemap extends Component {
       coordinate,
       label: '',
       payload,
-      separator: '',
     });
   }
 
