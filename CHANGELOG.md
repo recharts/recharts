@@ -11,6 +11,7 @@
 - add clipPath when xAxis or yAxis of `Line` allow data overflow
 - allow dataKey to be a map function
 - support Tooltip in Sankey and Tooltip
+- Allow Brush to set default startIndex and endIndex
 
 ## 0.20.1 (Dec 27, 2016)
 
