@@ -190,6 +190,8 @@ describe('<LineChart />', () => {
 
   it('click on Curve should invoke onClick callback', () => {
     const onClick = sinon.spy();
+    const onMouseDown = sinon.spy();
+    const onMouseUp = sinon.spy();
     const wrapper = mount(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line onClick={onClick} type="monotone" dataKey="uv" stroke="#ff7300" />
@@ -197,7 +199,11 @@ describe('<LineChart />', () => {
     );
     const curve = wrapper.find(Curve);
     curve.simulate('click');
+    curve.simulate('mousedown');
+    curve.simulate('mouseup');
     expect(onClick.calledOnce).to.equal(true);
+    expect(onMouseDown.calledOnce).to.equal(true);
+    expect(onMouseUp.calledOnce).to.equal(true);
   });
 
   it('should show tooltip cursor on MouseEnter and MouseMove and hide on MouseLeave', () => {
