@@ -194,7 +194,7 @@ describe('<LineChart />', () => {
     const onMouseUp = sinon.spy();
     const wrapper = mount(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-        <Line onClick={onClick} type="monotone" dataKey="uv" stroke="#ff7300" />
+        <Line onClick={onClick} onMouseDown={onMouseDown} onMouseUp={onMouseUp} type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>
     );
     const curve = wrapper.find(Curve);
