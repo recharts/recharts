@@ -50,4 +50,4 @@ We are looking for like-minded people who share the same idea about Recharts. Th
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2015-2016 Recharts Group
+Copyright (c) 2015-2017 Recharts Group
