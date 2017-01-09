@@ -3,6 +3,7 @@
   "version": "0.20.2",
   "description": "React charts",
   "main": "lib/index",
+  "module": "es6/index",
   "jsnext:main": "es6/index",
   "files": [
     "*.md",
