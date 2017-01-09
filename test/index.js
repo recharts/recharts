@@ -12,6 +12,7 @@ require('./specs/cartesian/CartesianGridSpec');
 require('./specs/cartesian/ReferenceLineSpec');
 require('./specs/cartesian/ReferenceDotSpec');
 require('./specs/cartesian/ReferenceAreaSpec');
+require('./specs/cartesian/ErrorBarSpec');
 
 // polar system chart component
 require('./specs/polar/PolarRadiusAxisSpec');
