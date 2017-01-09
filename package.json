@@ -20,8 +20,8 @@
   ],
   "scripts": {
     "build": "npm run build-cjs && npm run build-es6 && rimraf umd && npm run build-umd && npm run build-min",
-    "build-cjs": "rimraf lib && babel ./src -d lib",
-    "build-es6": "rimraf es6 && babel ./src -d es6 --blacklist=es6.modules",
+    "build-cjs": "rimraf lib && babel ./src -d lib --plugins=transform-es2015-modules-commonjs",
+    "build-es6": "rimraf es6 && babel ./src -d es6",
     "build-umd": "NODE_ENV=development webpack src/index.js umd/Recharts.js",
     "build-min": "NODE_ENV=production webpack src/index.js umd/Recharts.min.js",
     "demo": "webpack-dev-server --progress --port 3000 --content-base demo --inline --config demo/webpack.config.js",
