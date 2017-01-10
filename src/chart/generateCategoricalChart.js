@@ -719,6 +719,26 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       }
     };
 
+    handleMouseDown = (e) => {
+      const { onMouseDown } = this.props;
+
+      if (_.isFunction(onMouseDown)) {
+        const mouse = this.getMouseInfo(e);
+
+        onMouseDown(mouse, e);
+      }
+    };
+
+    handleMouseUp = (e) => {
+      const { onMouseUp } = this.props;
+
+      if (_.isFunction(onMouseUp)) {
+        const mouse = this.getMouseInfo(e);
+
+        onMouseUp(mouse, e);
+      }
+    };
+
     handleTouchMove = (e) => {
       if (e.changedTouches != null && e.changedTouches.length > 0) {
         this.handleMouseMove(e.changedTouches[0]);
@@ -972,6 +992,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         onMouseMove: this.handleMouseMove,
         onMouseLeave: this.handleMouseLeave,
         onClick: this.handleClick,
+        onMouseDown: this.handleMouseDown,
+        onMouseUp: this.handleMouseUp,
         onTouchMove: this.handleTouchMove,
       };
       const attrs = getPresentationAttributes(others);
