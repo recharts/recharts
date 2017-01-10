@@ -7,11 +7,10 @@
     "transform-function-bind",
     "lodash"
   ],
-  presets: ["es2015", "react"],
+  presets: [["es2015", { "modules": false }], "react"],
   env: {
     test: {
-      plugins: ["istanbul"]
+      plugins: ["transform-es2015-modules-commonjs", "istanbul"]
     }
   }
 }
-
