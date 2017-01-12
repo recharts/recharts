@@ -36,6 +36,12 @@ The main purpose of this library is to help you to write charts in React applica
 
 All the components of Recharts are clearly separated. The lineChart is composed of x axis, tooltip, grid, and line items, and each of them is an independent React Component. The clear separation and composition of components is one of the principle Recharts follows.
 
+## Demo
+
+To examine the demos in your local build, execute
+  npm run-script demo
+and then browse to http://localhost:3000 
+
 ## Module Formats
 
 - [babel-plugin-recharts](https://github.com/recharts/babel-plugin-recharts) A simple transform to cherry-pick Recharts modules so you don’t have to.
