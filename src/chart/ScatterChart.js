@@ -437,9 +437,10 @@ class ScatterChart extends Component {
    * @param  {Object} xAxis  The configuration of all x-axis
    * @param  {Object} yAxis  The configuration of all y-axis
    * @param  {Object} zAxis  The configuration of all z-axis
+   * @param  {Object} offset The offset of main part in the svg element
    * @return {ReactComponent}  All the instances of Scatter
    */
-  renderItems(items, xAxis, yAxis, zAxis) {
+  renderItems(items, xAxis, yAxis, zAxis, offset) {
     const { activeGroupId } = this.state;
     return items.map((child, i) => {
       const { strokeWidth, data } = child.props;
@@ -454,6 +455,7 @@ class ScatterChart extends Component {
         onMouseLeave: this.handleScatterMouseLeave,
         onMouseEnter: this.handleScatterMouseEnter,
         points: this.getComposedData(child, data, xAxis, yAxis, zAxis),
+        ...offset,
         xAxis,
         yAxis,
       });

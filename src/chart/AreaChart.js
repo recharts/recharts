@@ -243,6 +243,8 @@ export class AreaChart extends Component {
         ...offset,
         animationId,
         layout,
+        xAxis: xAxisMap[child.props.xAxisId],
+        yAxis: yAxisMap[child.props.yAxisId],
       });
 
       return [...result, area];

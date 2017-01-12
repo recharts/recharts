@@ -32,6 +32,8 @@ class Area extends Component {
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    yAxis: PropTypes.object,
+    xAxis: PropTypes.object,
     stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     legendType: PropTypes.oneOf([
       'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
@@ -202,7 +204,7 @@ class Area extends Component {
 
     return (
       <defs>
-        <clipPath id={this.id}>
+        <clipPath id={`animationClipPath-${this.id}`}>
           <Animate
             easing={animationEasing}
             isActive={isAnimationActive}
@@ -313,23 +315,33 @@ class Area extends Component {
   }
 
   render() {
-    const { dot, label, points, className } = this.props;
+    const { dot, label, points, className, top, left, xAxis, yAxis, width, height } = this.props;
 
     if (!points || !points.length) { return null; }
 
     const hasSinglePoint = points.length === 1;
     const layerClass = classNames('recharts-area', className);
+    const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
 
     return (
       <Layer className={layerClass}>
+        {needClip ? (
+          <defs>
+            <clipPath id={`clipPath-${this.id}`}>
+              <rect x={left} y={top} width={width} height={height} />
+            </clipPath>
+          </defs>
+        ) : null}
         {
           !hasSinglePoint ? this.renderClipPath() : null
         }
         {
           !hasSinglePoint ? (
-            <g clipPath={`url(#${this.id})`}>
-              {this.renderCurve()}
-            </g>
+            <Layer clipPath={needClip ? `url(#clipPath-${this.id})` : null}>
+              <Layer clipPath={`url(#animationClipPath-${this.id})`}>
+                {this.renderCurve()}
+              </Layer>
+            </Layer>
           ) : null
         }
         {(dot || hasSinglePoint) && this.renderDots()}

@@ -93,6 +93,8 @@ class Scatter extends Component {
     window.setTimeout(() => this.setState({ isAnimationFinished: true }), animationDuration);
   }
 
+  id = _.uniqueId('recharts-scatter-');
+
   renderSymbolItem(option, props) {
     let symbol;
 
@@ -219,14 +221,25 @@ class Scatter extends Component {
   }
 
   render() {
-    const { points, line, className } = this.props;
+    const { points, line, className, xAxis, yAxis, left, top, width, height } = this.props;
 
     if (!points || !points.length) { return null; }
 
     const layerClass = classNames('recharts-scatter', className);
+    const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
 
     return (
-      <Layer className={layerClass}>
+      <Layer
+        className={layerClass}
+        clipPath={needClip ? `url(#clipPath-${this.id})` : null}
+      >
+        {needClip ? (
+          <defs>
+            <clipPath id={`clipPath-${this.id}`}>
+              <rect x={left} y={top} width={width} height={height} />
+            </clipPath>
+          </defs>
+        ) : null}
         {line && this.renderLine()}
         {this.renderErrorBar()}
         <Layer key="recharts-scatter-symbols">

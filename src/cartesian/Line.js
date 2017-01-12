@@ -321,7 +321,7 @@ class Line extends Component {
     const curveProps = { ...other,
       fill: 'none',
       className: 'recharts-line-curve',
-      clipPath: needClip ? `url(#${this.id})` : null,
+      clipPath: needClip ? `url(#clipPath-${this.id})` : null,
       onClick, onMouseEnter, onMouseLeave, points,
     };
 
@@ -384,7 +384,7 @@ class Line extends Component {
       <Layer className={layerClass}>
         {needClip ? (
           <defs>
-            <clipPath id={this.id}>
+            <clipPath id={`clipPath-${this.id}`}>
               <rect x={left} y={top} width={width} height={height} />
             </clipPath>
           </defs>
