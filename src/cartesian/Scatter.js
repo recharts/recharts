@@ -22,7 +22,7 @@ class Scatter extends Component {
   static displayName = 'Scatter';
 
   static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
+    ...EVENT_ATTRIBUTES,
     ...PRESENTATION_ATTRIBUTES,
 
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

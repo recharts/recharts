@@ -62,11 +62,11 @@ const getSectorPath = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle 
 const getSectorWithCorner = ({ cx, cy, innerRadius, outerRadius, cornerRadius, startAngle,
   endAngle }) => {
   const sign = Math.sign(endAngle - startAngle);
-  const { center: soc, circleTangency: soct, lineTangency: solt, theta: sot } =
+  const { circleTangency: soct, lineTangency: solt, theta: sot } =
     getTangentCircle({
       cx, cy, radius: outerRadius, angle: startAngle, sign, cornerRadius,
     });
-  const { center: eoc, circleTangency: eoct, lineTangency: eolt, theta: eot } =
+  const { circleTangency: eoct, lineTangency: eolt, theta: eot } =
     getTangentCircle({
       cx, cy, radius: outerRadius, angle: endAngle, sign: -sign, cornerRadius,
     });
@@ -85,11 +85,11 @@ const getSectorWithCorner = ({ cx, cy, innerRadius, outerRadius, cornerRadius, s
   `;
 
   if (innerRadius > 0) {
-    const { center: sic, circleTangency: sict, lineTangency: silt, theta: sit } =
+    const { circleTangency: sict, lineTangency: silt, theta: sit } =
       getTangentCircle({
         cx, cy, radius: innerRadius, angle: startAngle, sign, isExternal: true, cornerRadius,
       });
-    const { center: eic, circleTangency: eict, lineTangency: eilt, theta: eit } =
+    const { circleTangency: eict, lineTangency: eilt, theta: eit } =
       getTangentCircle({
         cx, cy, radius: innerRadius, angle: endAngle, sign: -sign, isExternal: true, cornerRadius,
       });

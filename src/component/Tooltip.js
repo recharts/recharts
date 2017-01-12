@@ -5,7 +5,6 @@ import React, { Component, PropTypes } from 'react';
 import Animate from 'react-smooth';
 import _ from 'lodash';
 import DefaultTooltipContent from './DefaultTooltipContent';
-import { getStyleString } from '../util/DOMUtils';
 import { isSsr } from '../util/ReactUtils';
 import { isNumOrStr, isNumber } from '../util/DataUtils';
 
@@ -134,7 +133,7 @@ class Tooltip extends Component {
         from={`translate(${translateX}px, ${translateY}px)`}
         to={`translate(${translateX}px, ${translateY}px)`}
         duration={animationDuration}
-        isActive={outerStyle.visibility === 'visible'}
+        isActive={isAnimationActive && (outerStyle.visibility === 'visible')}
         easing={animationEasing}
         attributeName="transform"
       >
