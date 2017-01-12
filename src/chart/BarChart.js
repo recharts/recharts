@@ -185,9 +185,10 @@ class BarChart extends Component {
   /**
    * Draw the main part of bar chart
    * @param  {Array} items     All the instance of Bar
+   * @param  {Object} offset   The offset of main part in the svg element
    * @return {ReactComponent}  All the instances of Bar
    */
-  renderItems(items) {
+  renderItems(items, offset) {
     if (!items || !items.length) { return null; }
 
     const { layout, xAxisMap, yAxisMap } = this.props;
@@ -199,6 +200,7 @@ class BarChart extends Component {
         key: `bar-${i}`,
         layout,
         animationId,
+        ...offset,
         data: allComposedData[i],
         xAxis: xAxisMap[child.props.xAxisId],
         yAxis: yAxisMap[child.props.yAxisId],
@@ -212,7 +214,7 @@ class BarChart extends Component {
     return (
       <Layer className="recharts-bar-graphical">
         {!isComposed && this.renderCursor({ xAxisMap, yAxisMap, offset })}
-        {this.renderItems(graphicalItems)}
+        {this.renderItems(graphicalItems, offset)}
       </Layer>
     );
   }

@@ -258,15 +258,26 @@ class Bar extends Component {
   }
 
   render() {
-    const { data, className, label } = this.props;
+    const { data, className, label, xAxis, yAxis, left, top, width, height } = this.props;
 
     if (!data || !data.length) { return null; }
 
     const layerClass = classNames('recharts-bar', className);
+    const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
 
     return (
       <Layer className={layerClass}>
-        <Layer className="recharts-bar-rectangles">
+        {needClip ? (
+          <defs>
+            <clipPath id={`clipPath-${this.id}`}>
+              <rect x={left} y={top} width={width} height={height} />
+            </clipPath>
+          </defs>
+        ) : null}
+        <Layer
+          className="recharts-bar-rectangles"
+          clipPath={needClip ? `url(#clipPath-${this.id})` : null}
+        >
           {this.renderRectangles()}
         </Layer>
         {label && (
