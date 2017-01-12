@@ -5,7 +5,6 @@ import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import DefaultLegendContent from './DefaultLegendContent';
-import { getStyleString } from '../util/DOMUtils';
 import { isNumber } from '../util/DataUtils';
 
 const renderContent = (content, props) => {

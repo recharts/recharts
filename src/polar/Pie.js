@@ -119,7 +119,6 @@ class Pie extends Component {
     const absDeltaAngle = Math.abs(deltaAngle);
     const totalPadingAngle = (absDeltaAngle >= 360 ? len : (len - 1)) * paddingAngle;
     const sum = data.reduce((result, entry) => (result + getValueByDataKey(entry, valueKey, 0)), 0);
-    const deltaRadius = Math.abs(outerRadius - innerRadius);
 
     let sectors = [];
     let prev;

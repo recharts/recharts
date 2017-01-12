@@ -1,4 +1,4 @@
-import React, { Component, PropTypes, Children } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import _ from 'lodash';
 import Surface from '../container/Surface';
@@ -27,7 +27,7 @@ import { calculateActiveTickIndex,
   getStackGroupsByAxisId, getTicksOfAxis, isCategorialAxis, getTicksOfScale,
   appendOffsetOfLegend,
 } from '../util/CartesianUtils';
-import pureRender, { shallowEqual } from '../util/PureRender';
+import { shallowEqual } from '../util/PureRender';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
 
 const ORIENT_MAP = {
@@ -345,7 +345,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       return ids.reduce((result, id) => {
         const axis = axisMap[id];
-        const { orientation, type, domain, padding = {} } = axis;
+        const { orientation, domain, padding = {} } = axis;
         let range, x, y;
 
         if (axisType === 'xAxis') {

@@ -587,7 +587,7 @@ class Sankey extends Component {
   render() {
     if (!validateWidthHeight(this)) { return null; }
 
-    const { data, width, height, className, style, children, ...others } = this.props;
+    const { width, height, className, style, children, ...others } = this.props;
     const { links, nodes } = this.state;
     const attrs = getPresentationAttributes(others);
 

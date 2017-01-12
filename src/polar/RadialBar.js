@@ -6,7 +6,6 @@ import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';
 import Sector from '../shape/Sector';
-import Text from '../component/Text';
 import Layer from '../container/Layer';
 import { getStringSize } from '../util/DOMUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
