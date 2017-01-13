@@ -7,6 +7,7 @@ import _ from 'lodash';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import { isSsr } from '../util/ReactUtils';
 import { isNumOrStr, isNumber } from '../util/DataUtils';
+import pureRender from '../util/PureRender';
 
 const propTypes = {
   content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
@@ -82,15 +83,39 @@ const renderContent = (content, props) => {
   return React.createElement(DefaultTooltipContent, props);
 };
 
+@pureRender
 class Tooltip extends Component {
   static displayName = 'Tooltip';
   static propTypes = propTypes;
   static defaultProps = defaultProps;
 
-  getBBox() {
-    if (!this.wrapperNode) { return null; }
+  state = {
+    boxWidth: -1,
+    boxHeight: -1,
+  };
 
-    return this.wrapperNode.getBoundingClientRect ? this.wrapperNode.getBoundingClientRect() : null;
+  componentDidMount() {
+    this.updateBBox();
+  }
+
+  componentDidUpdate() {
+    this.updateBBox();
+  }
+
+  updateBBox() {
+    if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
+      const box = this.wrapperNode.getBoundingClientRect();
+
+      this.setState({
+        boxWidth: box.width,
+        boxHeight: box.height,
+      });
+    } else {
+      this.setState({
+        boxWidth: -1,
+        boxHeight: -1,
+      });
+    }
   }
 
   render() {
@@ -111,17 +136,17 @@ class Tooltip extends Component {
       translateX = position.x;
       translateY = position.y;
     } else {
-      const box = this.getBBox();
+      const { boxWidth, boxHeight } = this.state;
 
-      if (box && coordinate) {
+      if (boxWidth > 0 && boxHeight > 0 && coordinate) {
         translateX = position && isNumber(position.x) ? position.x : Math.max(
-          coordinate.x + box.width + offset > (viewBox.x + viewBox.width) ?
-          coordinate.x - box.width - offset :
+          coordinate.x + boxWidth + offset > (viewBox.x + viewBox.width) ?
+          coordinate.x - boxWidth - offset :
           coordinate.x + offset, viewBox.x);
 
         translateY = position && isNumber(position.y) ? position.y : Math.max(
-          coordinate.y + box.height + offset > (viewBox.y + viewBox.height) ?
-          coordinate.y - box.height - offset :
+          coordinate.y + boxHeight + offset > (viewBox.y + viewBox.height) ?
+          coordinate.y - boxHeight - offset :
           coordinate.y + offset, viewBox.y);
       } else {
         outerStyle.visibility = 'hidden';

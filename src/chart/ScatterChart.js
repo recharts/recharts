@@ -307,9 +307,7 @@ class ScatterChart extends Component {
     const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
-    if (!tooltipItem || !tooltipItem.props.cursor || !this.state.isTooltipActive) {
-      return null;
-    }
+    if (!tooltipItem) { return null; }
 
     const { isTooltipActive, activeItem, activeTooltipCoord } = this.state;
     const viewBox = {
@@ -413,7 +411,7 @@ class ScatterChart extends Component {
     const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
-    if (!tooltipItem || !this.state.isTooltipActive) { return null; }
+    if (!tooltipItem || !tooltipItem.props.cursor || !this.state.isTooltipActive) { return null; }
     const { activeItem } = this.state;
 
     const cursorProps = {
