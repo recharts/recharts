@@ -2,7 +2,7 @@
  * @fileOverview Tooltip
  */
 import React, { Component, PropTypes } from 'react';
-import Animate from 'react-smooth';
+import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import { isSsr } from '../util/ReactUtils';
@@ -103,14 +103,18 @@ class Tooltip extends Component {
   }
 
   updateBBox() {
+    const { boxWidth, boxHeight } = this.state;
+
     if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
       const box = this.wrapperNode.getBoundingClientRect();
 
-      this.setState({
-        boxWidth: box.width,
-        boxHeight: box.height,
-      });
-    } else {
+      if (box.width !== boxWidth || box.height !== boxHeight) {
+        this.setState({
+          boxWidth: box.width,
+          boxHeight: box.height,
+        });
+      }
+    } else if (boxWidth !== -1 || boxHeight !== -1) {
       this.setState({
         boxWidth: -1,
         boxHeight: -1,
@@ -123,7 +127,7 @@ class Tooltip extends Component {
     const hasPayload = payload && payload.length &&
       payload.filter(entry => isNumOrStr(entry.value)).length;
     const { content, viewBox, coordinate, position, active, offset, wrapperStyle } = this.props;
-    const outerStyle = {
+    let outerStyle = {
       pointerEvents: 'none',
       visibility: active && hasPayload ? 'visible' : 'hidden',
       position: 'absolute',
@@ -153,23 +157,30 @@ class Tooltip extends Component {
       }
     }
 
+    outerStyle = {
+      ...outerStyle,
+      ...translateStyle({
+        transform: `translate(${translateX}px, ${translateY}px)`,
+      }),
+    };
+
+    if (isAnimationActive && active) {
+      outerStyle = {
+        ...outerStyle,
+        ...translateStyle({
+          transition: `transform ${animationDuration}ms ${animationEasing}`,
+        }),
+      };
+    }
+
     return (
-      <Animate
-        from={`translate(${translateX}px, ${translateY}px)`}
-        to={`translate(${translateX}px, ${translateY}px)`}
-        duration={animationDuration}
-        isActive={isAnimationActive && (outerStyle.visibility === 'visible')}
-        easing={animationEasing}
-        attributeName="transform"
+      <div
+        className="recharts-tooltip-wrapper"
+        style={outerStyle}
+        ref={(node) => { this.wrapperNode = node; }}
       >
-        <div
-          className="recharts-tooltip-wrapper"
-          style={outerStyle}
-          ref={(node) => { this.wrapperNode = node; }}
-        >
-          {renderContent(content, this.props)}
-        </div>
-      </Animate>
+        {renderContent(content, this.props)}
+      </div>
     );
   }
 }
