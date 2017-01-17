@@ -9,6 +9,8 @@ import { isSsr } from '../util/ReactUtils';
 import { isNumOrStr, isNumber } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
 
+const EPS = 1;
+
 const propTypes = {
   content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
   viewBox: PropTypes.shape({
@@ -108,7 +110,7 @@ class Tooltip extends Component {
     if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
       const box = this.wrapperNode.getBoundingClientRect();
 
-      if (box.width !== boxWidth || box.height !== boxHeight) {
+      if (Math.abs(box.width - boxWidth) > EPS || Math.abs(box.height - boxHeight) > EPS) {
         this.setState({
           boxWidth: box.width,
           boxHeight: box.height,
