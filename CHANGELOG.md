@@ -1,3 +1,21 @@
+## 0.20.3 (Jan 17, 2017)
+
+### fix
+
+- Fix Tooltip in ScatterChart
+- Fix radius of Rectangle when height < 0
+
+### feat
+
+- Add clip path in Area, Bar and Scatter
+- Add onMouseDown and onMouseUp hooks in generateCategoricalChart
+
+### chore
+
+- Disable babel transform es2015 modules to commonjs for es6 build
+- Use cross-env to support windows builds, likewise downgrade linebreak-style to warning
+- Update release.sh
+
 ## 0.20.2 (Jan 05, 2017)
 
 ### fix
