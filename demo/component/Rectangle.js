@@ -42,6 +42,17 @@ class RectangleDemo extends Component {
             fill="none"
           />
         </Surface>
+        <Surface width={500} height={500}>
+          <Rectangle
+            x={x}
+            y={y + height}
+            width={width}
+            height={-height}
+            radius={[5, 10, 8, 15]}
+            stroke="#ff7300"
+            fill="none"
+          />
+        </Surface>
       </div>
     );
   }
