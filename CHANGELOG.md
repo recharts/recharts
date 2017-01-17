@@ -1,3 +1,9 @@
+## 0.20.5 (Jan 17, 2017)
+
+### fix
+
+- fix "Maximum call stack size exceeded error" caused by Tooltip update
+
 ## 0.20.4 (Jan 17, 2017)
 
 ### fix
