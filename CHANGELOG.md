@@ -1,3 +1,8 @@
+## 0.20.4 (Jan 17, 2017)
+
+### fix
+- Animate of Tooltip may crash browser sometimes, use style transition to do the animation of tooltip
+
 ## 0.20.3 (Jan 17, 2017)
 
 ### fix
