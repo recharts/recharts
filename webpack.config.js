@@ -19,7 +19,7 @@ var config = {
       include: [
         path.resolve(__dirname, 'src'),
       ],
-      loader: 'babel',
+      loader: 'babel-loader',
       query: {
         plugins: ['lodash'],
       },
