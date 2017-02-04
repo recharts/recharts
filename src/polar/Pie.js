@@ -71,6 +71,7 @@ class Pie extends Component {
       'spring',
       'linear',
     ]),
+    clipPathId: PropTypes.string,
   };
 
   static defaultProps = {
@@ -99,6 +100,7 @@ class Pie extends Component {
     animationBegin: 400,
     animationDuration: 1500,
     animationEasing: 'ease',
+    clipPathId: `pie${Date.now()}`,
   };
 
   state = { isAnimationFinished: false };
@@ -172,9 +174,6 @@ class Pie extends Component {
     return 'middle';
   }
 
-
-  id = `pie${Date.now()}`;
-
   isActiveIndex(i) {
     const { activeIndex } = this.props;
 
@@ -193,11 +192,11 @@ class Pie extends Component {
 
   renderClipPath() {
     const { cx, cy, maxRadius, startAngle, isAnimationActive, animationDuration,
-      animationEasing, animationBegin, animationId } = this.props;
+      animationEasing, animationBegin, animationId, clipPathId } = this.props;
 
     return (
       <defs>
-        <clipPath id={this.id}>
+        <clipPath id={clipPathId}>
           <Animate
             easing={animationEasing}
             isActive={isAnimationActive}
@@ -339,7 +338,7 @@ class Pie extends Component {
 
   render() {
     const { data, composedData, className, label, cx, cy, innerRadius,
-      outerRadius } = this.props;
+      outerRadius, clipPathId } = this.props;
     const pieData = composedData || data;
 
     if (!pieData || !pieData.length || !isNumber(cx)
@@ -354,7 +353,7 @@ class Pie extends Component {
     return (
       <Layer className={layerClass}>
         {this.renderClipPath()}
-        <g clipPath={`url(#${this.id})`}>
+        <g clipPath={`url(#${clipPathId})`}>
           {this.renderSectors(sectors)}
         </g>
         {label && this.renderLabels(sectors)}

@@ -18,6 +18,7 @@ export default React.createClass({
           endAngle={0}
           cx={250}
           cy={250}
+          clipPathId="pie-demo-id-1"
           outerRadius={200}
           innerRadius={180}
           data={data}
