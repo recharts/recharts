@@ -605,9 +605,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         const { dataStartIndex, dataEndIndex } = data;
 
         if (!_.isNil(data.dataStartIndex) || !_.isNil(data.dataEndIndex)) {
-          this.setState(this.updateStateOfAxisMapsOffsetAndStackGroups(
-            { props: this.props, dataStartIndex, dataEndIndex }
-          ));
+          this.setState({
+            dataStartIndex,
+            dataEndIndex,
+            ...this.updateStateOfAxisMapsOffsetAndStackGroups(
+              { props: this.props, dataStartIndex, dataEndIndex }
+            ),
+          });
         } else if (!_.isNil(data.activeTooltipIndex)) {
           const { chartX, chartY, activeTooltipIndex } = data;
           const { offset, tooltipTicks } = this.state;
