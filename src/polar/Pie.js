@@ -173,7 +173,7 @@ class Pie extends Component {
   }
 
 
-  id = `pie${Date.now()}`;
+  id = _.uniqueId('recharts-pie-');
 
   isActiveIndex(i) {
     const { activeIndex } = this.props;

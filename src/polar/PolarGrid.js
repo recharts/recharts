@@ -31,14 +31,6 @@ class PolarGrid extends Component {
     gridType: 'polygon',
   };
 
-  constructor(props) {
-    super(props);
-
-    if (!this.clipId) {
-      this.clipId = `rechartsPolarGridBgClip${Date.now()}`;
-    }
-  }
-
   getPolygonPath(radius) {
     const { cx, cy, polarAngles } = this.props;
 
