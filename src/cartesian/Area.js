@@ -57,12 +57,6 @@ class Area extends Component {
     baseLine: PropTypes.oneOfType([
       PropTypes.number, PropTypes.array,
     ]),
-    viewBox: PropTypes.shape({
-      x: PropTypes.number,
-      y: PropTypes.number,
-      width: PropTypes.number,
-      height: PropTypes.number,
-    }),
     points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
