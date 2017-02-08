@@ -1,3 +1,10 @@
+## 0.20.6 (Feb 08, 2017)
+
+### fix
+
+- Fix `dataStartIndex` and `dataEndIndex` of synchronized chart
+- Use lodash.uniqueId to produce the id of Pie
+
 ## 0.20.5 (Jan 17, 2017)
 
 ### fix
