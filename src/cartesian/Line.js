@@ -4,7 +4,8 @@
 import React, { Component, PropTypes } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import uniqueId from 'lodash/uniqueId';
 import pureRender from '../util/PureRender';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
@@ -160,7 +161,7 @@ class Line extends Component {
       .join(', ');
   }
 
-  id = _.uniqueId('recharts-line-');
+  id = uniqueId('recharts-line-');
 
   pathRef = (node) => {
     this.animate = node;
@@ -192,7 +193,7 @@ class Line extends Component {
 
     if (React.isValidElement(option)) {
       labelItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       labelItem = option(props);
     } else {
       labelItem = (
@@ -267,7 +268,7 @@ class Line extends Component {
 
     if (React.isValidElement(option)) {
       dotItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       dotItem = option(props);
     } else {
       dotItem = <Dot {...props} className="recharts-line-dot" />;

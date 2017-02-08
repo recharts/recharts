@@ -2,7 +2,7 @@
  * @fileOverview Bar Chart
  */
 import React, { PropTypes, Component } from 'react';
-import _ from 'lodash';
+import isNil from 'lodash/isNil';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
@@ -22,7 +22,7 @@ const getCategoryAxisCoordinate = ({ axis, ticks, offset, bandSize, entry, index
 
   const value = getValueByDataKey(entry, axis.dataKey);
 
-  return !_.isNil(value) ? axis.scale(value) - bandSize / 2 + offset : null;
+  return !isNil(value) ? axis.scale(value) - bandSize / 2 + offset : null;
 };
 
 const getBaseValue = ({ props, xAxis, yAxis }) => {

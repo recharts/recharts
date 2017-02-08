@@ -3,7 +3,8 @@
  */
 import React, { PropTypes, Component } from 'react';
 import Smooth from 'react-smooth';
-import _ from 'lodash';
+import isNil from 'lodash/isNil';
+import isFunction from 'lodash/isFunction';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Curve from '../shape/Curve';
@@ -22,7 +23,7 @@ const getCategoryAxisCoordinate = ({ axis, ticks, bandSize, entry, index }) => {
 
   const value = getValueByDataKey(entry, axis.dataKey);
 
-  return !_.isNil(value) ? axis.scale(value) : null;
+  return !isNil(value) ? axis.scale(value) : null;
 };
 /**
  * Compose the data of each group
@@ -42,14 +43,14 @@ const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey, bandSiz
     if (layout === 'horizontal') {
       return {
         x: getCategoryAxisCoordinate({ axis: xAxis, ticks: xTicks, bandSize, entry, index }),
-        y: _.isNil(value) ? null : yAxis.scale(value),
+        y: isNil(value) ? null : yAxis.scale(value),
         value,
         payload: entry,
       };
     }
 
     return {
-      x: _.isNil(value) ? null : xAxis.scale(value),
+      x: isNil(value) ? null : xAxis.scale(value),
       y: getCategoryAxisCoordinate({ axis: yAxis, ticks: yTicks, bandSize, entry, index }),
       value,
       payload: entry,
@@ -117,7 +118,7 @@ export class LineChart extends Component {
 
     if (React.isValidElement(option)) {
       dot = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       dot = option(props);
     } else {
       dot = <Dot {...props} className="recharts-line-active-dot" />;

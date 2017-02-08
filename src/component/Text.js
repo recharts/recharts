@@ -1,14 +1,14 @@
 import React, { Component, PropTypes } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
-import _ from 'lodash';
+import isNil from 'lodash/isNil';
 import { isNumOrStr } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
 import { getStringSize } from '../util/DOMUtils';
 
 const calculateWordWidths = (props) => {
   try {
-    const words = !_.isNil(props.children) ? props.children.toString().split(/\s+/) : [];
+    const words = !isNil(props.children) ? props.children.toString().split(/\s+/) : [];
     const wordsWithComputedWidth = words.map(word => (
       { word, width: getStringSize(word, props.style).width }
     ));
@@ -89,7 +89,7 @@ class Text extends Component {
   }
 
   updateWordsWithoutCalculate(props) {
-    const words = !_.isNil(props.children) ? props.children.toString().split(/\s+/) : [];
+    const words = !isNil(props.children) ? props.children.toString().split(/\s+/) : [];
     this.setState({ wordsByLines: [{ words }] });
   }
 

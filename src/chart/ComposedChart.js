@@ -2,7 +2,7 @@
  * @fileOverview Composed Chart
  */
 import React, { PropTypes, Component } from 'react';
-import _ from 'lodash';
+import isNil from 'lodash/isNil';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Line from '../cartesian/Line';
@@ -56,7 +56,7 @@ class ComposedChart extends Component {
       const displayName = item.type.displayName;
 
       if (GRAPHICAL_TYPES.indexOf(displayName) >= 0) {
-        if (!_.isNil(record[displayName])) {
+        if (!isNil(record[displayName])) {
           const index = record[displayName];
 
           result[index].items = [...result[index].items, item];

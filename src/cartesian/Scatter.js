@@ -4,7 +4,8 @@
 import React, { Component, PropTypes } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import uniqueId from 'lodash/uniqueId';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
@@ -93,14 +94,14 @@ class Scatter extends Component {
     window.setTimeout(() => this.setState({ isAnimationFinished: true }), animationDuration);
   }
 
-  id = _.uniqueId('recharts-scatter-');
+  id = uniqueId('recharts-scatter-');
 
   renderSymbolItem(option, props) {
     let symbol;
 
     if (React.isValidElement(option)) {
       symbol = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       symbol = option(props);
     } else {
       symbol = <Symbols {...props} type={option} />;
@@ -207,7 +208,7 @@ class Scatter extends Component {
 
     if (React.isValidElement(line)) {
       lineItem = React.cloneElement(line, lineProps);
-    } else if (_.isFunction(line)) {
+    } else if (isFunction(line)) {
       lineItem = line(lineProps);
     } else {
       lineItem = <Curve {...lineProps} type={lineJointType} />;

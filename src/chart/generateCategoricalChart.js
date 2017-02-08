@@ -1,6 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import _ from 'lodash';
+import isNil from 'lodash/isNil';
+import isFunction from 'lodash/isFunction';
+import range from 'lodash/range';
+import throttle from 'lodash/throttle';
+import uniqueId from 'lodash/uniqueId';
+import sortBy from 'lodash/sortBy';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
@@ -81,17 +86,17 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       this.state = { ...defaultState, updateId: 0, isLegendReady: true,
         ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState }) };
       this.validateAxes();
-      this.uniqueChartId = _.uniqueId('recharts');
+      this.uniqueChartId = uniqueId('recharts');
 
       if (props.throttleDelay) {
-        this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove,
+        this.triggeredAfterMouseMove = throttle(this.triggeredAfterMouseMove,
           props.throttleDelay);
       }
     }
 
     /* eslint-disable  react/no-did-mount-set-state */
     componentDidMount() {
-      if (!_.isNil(this.props.syncId)) {
+      if (!isNil(this.props.syncId)) {
         this.addListener();
       }
 
@@ -125,17 +130,17 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         );
       }
       // add syncId
-      if (_.isNil(this.props.syncId) && !_.isNil(nextProps.syncId)) {
+      if (isNil(this.props.syncId) && !isNil(nextProps.syncId)) {
         this.addListener();
       }
       // remove syncId
-      if (!_.isNil(this.props.syncId) && _.isNil(nextProps.syncId)) {
+      if (!isNil(this.props.syncId) && isNil(nextProps.syncId)) {
         this.removeListener();
       }
     }
 
     componentWillUnmount() {
-      if (!_.isNil(this.props.syncId)) {
+      if (!isNil(this.props.syncId)) {
         this.removeListener();
       }
       if (typeof this.triggeredAfterMouseMove.cancel === 'function') {
@@ -208,14 +213,14 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
               duplicateDomain = duplicate ? domain : null;
 
               // When category axis has duplicated text, serial numbers are used to generate scale
-              domain = duplicate ? _.range(0, len) : domain;
+              domain = duplicate ? range(0, len) : domain;
             }
 
             if (isCategorial && type === 'number') {
               categoricalDomain = getDomainOfDataByKey(displayedData, dataKey, 'category');
             }
           } else if (isCategorial) {
-            domain = _.range(0, len);
+            domain = range(0, len);
           } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack
             && type === 'number') {
             // when stackOffset is 'expand', the domain may be calculated as [0, 1.000000000002]
@@ -288,7 +293,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           let domain;
 
           if (isCategorial) {
-            domain = _.range(0, len);
+            domain = range(0, len);
           } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack) {
             domain = getDomainOfStackGroups(
               stackGroups[axisId].stackGroups, dataStartIndex, dataEndIndex
@@ -346,15 +351,15 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       return ids.reduce((result, id) => {
         const axis = axisMap[id];
         const { orientation, domain, padding = {} } = axis;
-        let range, x, y;
+        let rangeArray, x, y;
 
         if (axisType === 'xAxis') {
-          range = [
+          rangeArray = [
             offset.left + (padding.left || 0),
             offset.left + offset.width - (padding.right || 0),
           ];
         } else {
-          range = layout === 'horizontal' ? [
+          rangeArray = layout === 'horizontal' ? [
             offset.top + offset.height - (padding.bottom || 0),
             offset.top + (padding.top || 0),
           ] : [
@@ -364,7 +369,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         }
 
         const scale = parseScale(axis, displayName);
-        scale.domain(domain).range(range);
+        scale.domain(domain).range(rangeArray);
         const ticks = getTicksOfScale(scale, axis);
 
         if (axisType === 'xAxis') {
@@ -604,7 +609,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       if (syncId === cId && chartId !== this.uniqueChartId) {
         const { dataStartIndex, dataEndIndex } = data;
 
-        if (!_.isNil(data.dataStartIndex) || !_.isNil(data.dataEndIndex)) {
+        if (!isNil(data.dataStartIndex) || !isNil(data.dataEndIndex)) {
           this.setState({
             dataStartIndex,
             dataEndIndex,
@@ -612,7 +617,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
               { props: this.props, dataStartIndex, dataEndIndex }
             ),
           });
-        } else if (!_.isNil(data.activeTooltipIndex)) {
+        } else if (!isNil(data.activeTooltipIndex)) {
           const { chartX, chartY, activeTooltipIndex } = data;
           const { offset, tooltipTicks } = this.state;
           const viewBox = { ...offset, x: offset.left, y: offset.top };
@@ -666,7 +671,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         this.setState(nextState);
         this.triggerSyncEvent(nextState);
 
-        if (_.isFunction(onMouseEnter)) {
+        if (isFunction(onMouseEnter)) {
           onMouseEnter(nextState, e);
         }
       }
@@ -680,7 +685,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       this.setState(nextState);
       this.triggerSyncEvent(nextState);
 
-      if (_.isFunction(onMouseMove)) {
+      if (isFunction(onMouseMove)) {
         onMouseMove(nextState, e);
       }
     }
@@ -691,7 +696,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      * @return {Null} no return
      */
     handleMouseMove = (e) => {
-      if (e && _.isFunction(e.persist)) {
+      if (e && isFunction(e.persist)) {
         e.persist();
         this.triggeredAfterMouseMove(e);
       }
@@ -708,7 +713,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       this.setState(nextState);
       this.triggerSyncEvent(nextState);
 
-      if (_.isFunction(onMouseLeave)) {
+      if (isFunction(onMouseLeave)) {
         onMouseLeave(nextState, e);
       }
     };
@@ -716,7 +721,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     handleClick = (e) => {
       const { onClick } = this.props;
 
-      if (_.isFunction(onClick)) {
+      if (isFunction(onClick)) {
         const mouse = this.getMouseInfo(e);
 
         onClick(mouse, e);
@@ -726,7 +731,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     handleMouseDown = (e) => {
       const { onMouseDown } = this.props;
 
-      if (_.isFunction(onMouseDown)) {
+      if (isFunction(onMouseDown)) {
         const mouse = this.getMouseInfo(e);
 
         onMouseDown(mouse, e);
@@ -736,7 +741,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     handleMouseUp = (e) => {
       const { onMouseUp } = this.props;
 
-      if (_.isFunction(onMouseUp)) {
+      if (isFunction(onMouseUp)) {
         const mouse = this.getMouseInfo(e);
 
         onMouseUp(mouse, e);
@@ -757,7 +762,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       if (layout === 'horizontal' && xAxes && xAxes.length) {
         xAxes.forEach((axis) => {
           warn(axis.props.type === 'category' || (axis.props.type === 'number' &&
-            !_.isNil(axis.props.dataKey)),
+            !isNil(axis.props.dataKey)),
             `x-axis should be a category axis or a number axis which has specifed dataKey
              when the layout is horizontal`
           );
@@ -778,7 +783,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         if (yAxes && yAxes.length) {
           yAxes.forEach((axis) => {
             warn(axis.props.type === 'category' || (axis.props.type === 'number' &&
-              !_.isNil(axis.props.dataKey)),
+              !isNil(axis.props.dataKey)),
               `y-axis should be a category axis or a number axis which has specifed dataKey
                when the layout is vertical`
             );
@@ -792,7 +797,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     triggerSyncEvent(data) {
       const { syncId } = this.props;
 
-      if (!_.isNil(syncId)) {
+      if (!isNil(syncId)) {
         eventCenter.emit(SYNC_EVENT, syncId, this.uniqueChartId, data);
       }
     }
@@ -821,7 +826,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       return {
         tooltipTicks,
-        orderedTooltipTicks: _.sortBy(tooltipTicks, o => o.coordinate),
+        orderedTooltipTicks: sortBy(tooltipTicks, o => o.coordinate),
         tooltipAxis: axis,
       };
     }

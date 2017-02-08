@@ -4,7 +4,10 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import Animate, { translateStyle } from 'react-smooth';
-import _ from 'lodash';
+import uniqueId from 'lodash/uniqueId';
+import isFunction from 'lodash/isFunction';
+import isNil from 'lodash/isNil';
+import isArray from 'lodash/isArray';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
@@ -80,7 +83,7 @@ class Bar extends Component {
   };
 
   state = { isAnimationFinished: false };
-  id = _.uniqueId('recharts-bar-');
+  id = uniqueId('recharts-bar-');
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
@@ -97,7 +100,7 @@ class Bar extends Component {
 
     if (React.isValidElement(option)) {
       rectangle = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       rectangle = option(props);
     } else {
       rectangle = <Rectangle {...props} />;
@@ -118,7 +121,7 @@ class Bar extends Component {
       const { x, y, width, height } = entry;
       const props = { ...baseProps, ...entry, index };
 
-      if (_.isNil(entry.value) || !isAnimationActive) {
+      if (isNil(entry.value) || !isAnimationActive) {
         return (
           <Layer
             className="recharts-bar-rectangle"
@@ -168,7 +171,7 @@ class Bar extends Component {
 
     if (React.isValidElement(option)) {
       labelItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       labelItem = option(props);
     } else {
       labelItem = (
@@ -177,7 +180,7 @@ class Bar extends Component {
           key={props.key}
           className="recharts-bar-label"
         >
-          {_.isArray(value) ? value[1] : value}
+          {isArray(value) ? value[1] : value}
         </Text>
       );
     }

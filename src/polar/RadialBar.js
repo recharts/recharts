@@ -4,7 +4,8 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import uniqueId from 'lodash/uniqueId';
 import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
 import { getStringSize } from '../util/DOMUtils';
@@ -169,7 +170,7 @@ class RadialBar extends Component {
 
     if (React.isValidElement(shape)) {
       sectorShape = React.cloneElement(shape, props);
-    } else if (_.isFunction(shape)) {
+    } else if (isFunction(shape)) {
       sectorShape = shape(props);
     } else {
       sectorShape = React.createElement(Sector, props);
@@ -253,10 +254,10 @@ class RadialBar extends Component {
 
     if (React.isValidElement(option)) {
       labelItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       labelItem = option(props);
     } else {
-      const id = _.uniqueId('recharts-defs-');
+      const id = uniqueId('recharts-defs-');
       const filteredProps = getPresentationAttributes(props);
       const path = this.getLabelPathArc(props, value, filteredProps);
 

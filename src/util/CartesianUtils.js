@@ -3,7 +3,8 @@ import {
   stack as shapeStack, stackOrderNone, stackOffsetExpand,
   stackOffsetNone, stackOffsetSilhouette, stackOffsetWiggle,
 } from 'd3-shape';
-import _ from 'lodash';
+import isNil from 'lodash/isNil';
+import uniqueId from 'lodash/uniqueId';
 import { findAllByType, findChildByType } from './ReactUtils';
 import { getPercentValue, isNumber, isNumOrStr, getValueByDataKey } from './DataUtils';
 import ReferenceDot from '../cartesian/ReferenceDot';
@@ -114,7 +115,7 @@ export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, o
 
       parentGroup.stackGroups[stackId] = childGroup;
     } else {
-      parentGroup.stackGroups[_.uniqueId('_stackId_')] = {
+      parentGroup.stackGroups[uniqueId('_stackId_')] = {
         numericAxisId, cateAxisId, items: [item],
       };
     }
@@ -464,7 +465,7 @@ export const getBarSizeList = ({ barSize: globalSize, stackGroups = {} }) => {
         result[cateId].push({
           item: barItems[0],
           stackList: barItems.slice(1),
-          barSize: _.isNil(selfSize) ? globalSize : selfSize,
+          barSize: isNil(selfSize) ? globalSize : selfSize,
         });
       }
     }

@@ -3,7 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import ReactResizeDetector from 'react-resize-detector';
-import _ from 'lodash';
+import debounce from 'lodash/debounce';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
@@ -35,7 +35,7 @@ class ResponsiveContainer extends Component {
     };
 
     this.handleResize = props.debounce > 0 ?
-      _.debounce(this.updateDimensionsImmediate, props.debounce) :
+      debounce(this.updateDimensionsImmediate, props.debounce) :
       this.updateDimensionsImmediate;
   }
 

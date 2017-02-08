@@ -1,16 +1,21 @@
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import get from 'lodash/get';
+import isArray from 'lodash/isArray';
+import isString from 'lodash/isString';
+import sortBy from 'lodash/sortBy';
+import isNil from 'lodash/isNil';
 import * as d3Scales from 'd3-scale';
 
 export const isPercent = value => (
-  _.isString(value) && value.indexOf('%') === value.length - 1
+  isString(value) && value.indexOf('%') === value.length - 1
 );
 
 export const isNumber = value => (
-  _.isNumber(value) && !_.isNaN(value)
+  isNumber(value) && !isNaN(value)
 );
 
 export const isNumOrStr = value => (
-  isNumber(value) || _.isString(value)
+  isNumber(value) || isString(value)
 );
 /**
  * Get percent value of a total value
@@ -21,7 +26,7 @@ export const isNumOrStr = value => (
  * @return {Number} value
  */
 export const getPercentValue = (percent, totalValue, defaultValue = 0, validate = false) => {
-  if (!isNumber(percent) && !_.isString(percent)) {
+  if (!isNumber(percent) && !isString(percent)) {
     return defaultValue;
   }
 
@@ -49,7 +54,7 @@ const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([\d]+)$/;
 const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([\d]+)$/;
 
 export const parseSpecifiedDomain = (specifiedDomain, dataDomain, allowDataOverflow) => {
-  if (!_.isArray(specifiedDomain)) {
+  if (!isArray(specifiedDomain)) {
     return dataDomain;
   }
 
@@ -105,7 +110,7 @@ export const getBandSizeOfAxis = (axis, ticks) => {
   }
 
   if (axis && axis.type === 'number' && ticks) {
-    const orderedTicks = _.sortBy(ticks, o => o.coordinate);
+    const orderedTicks = sortBy(ticks, o => o.coordinate);
     let bandSize = Infinity;
 
     for (let i = 1, len = orderedTicks.length; i < len; i++) {
@@ -135,7 +140,7 @@ export const getAnyElementOfObject = (obj) => {
 };
 
 export const hasDuplicate = (ary) => {
-  if (!_.isArray(ary)) { return false; }
+  if (!isArray(ary)) { return false; }
 
   const len = ary.length;
   const cache = {};
@@ -160,19 +165,19 @@ export const hasDuplicate = (ary) => {
 export const combineEventHandlers = (defaultHandler, parentHandler, childHandler) => {
   let customizedHandler;
 
-  if (_.isFunction(childHandler)) {
+  if (isFunction(childHandler)) {
     customizedHandler = childHandler;
-  } else if (_.isFunction(parentHandler)) {
+  } else if (isFunction(parentHandler)) {
     customizedHandler = parentHandler;
   }
 
-  if (_.isFunction(defaultHandler) || customizedHandler) {
+  if (isFunction(defaultHandler) || customizedHandler) {
     return (arg1, arg2, arg3, arg4) => {
-      if (_.isFunction(defaultHandler)) {
+      if (isFunction(defaultHandler)) {
         defaultHandler(arg1, arg2, arg3, arg4);
       }
 
-      if (_.isFunction(customizedHandler)) {
+      if (isFunction(customizedHandler)) {
         customizedHandler(arg1, arg2, arg3, arg4);
       }
     };
@@ -197,21 +202,21 @@ export const parseScale = ({ scale, type }, chartType) => {
     }
 
     return d3Scales.scaleLinear();
-  } else if (_.isString(scale)) {
+  } else if (isString(scale)) {
     const name = `scale${scale.slice(0, 1).toUpperCase()}${scale.slice(1)}`;
 
     return (d3Scales[name] || d3Scales.scalePoint)();
   }
 
-  return _.isFunction(scale) ? scale : d3Scales.scalePoint();
+  return isFunction(scale) ? scale : d3Scales.scalePoint();
 };
 
 export const getValueByDataKey = (obj, dataKey, defaultValue) => {
-  if (_.isNil(obj) || _.isNil(dataKey)) { return defaultValue; }
+  if (isNil(obj) || isNil(dataKey)) { return defaultValue; }
 
-  if (isNumOrStr(dataKey)) { return _.get(obj, dataKey, defaultValue); }
+  if (isNumOrStr(dataKey)) { return get(obj, dataKey, defaultValue); }
 
-  if (_.isFunction(dataKey)) { return dataKey(obj); }
+  if (isFunction(dataKey)) { return dataKey(obj); }
 
   return defaultValue;
 };

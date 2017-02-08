@@ -4,7 +4,9 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
-import _ from 'lodash';
+import uniqueId from 'lodash/uniqueId';
+import isFunction from 'lodash/isFunction';
+import isArray from 'lodash/isArray';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
@@ -99,7 +101,7 @@ class Area extends Component {
 
   state = { isAnimationFinished: true };
 
-  id = _.uniqueId('recharts-area-');
+  id = uniqueId('recharts-area-');
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
@@ -222,7 +224,7 @@ class Area extends Component {
 
     if (React.isValidElement(option)) {
       dotItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       dotItem = option(props);
     } else {
       dotItem = <Dot {...props} className="recharts-area-dot" />;
@@ -264,7 +266,7 @@ class Area extends Component {
 
     if (React.isValidElement(option)) {
       labelItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       labelItem = option(props);
     } else {
       labelItem = (
@@ -273,7 +275,7 @@ class Area extends Component {
           {...props}
           className="recharts-area-label"
         >
-          {_.isArray(value) ? value[1] : value}
+          {isArray(value) ? value[1] : value}
         </Text>
       );
     }

@@ -4,7 +4,9 @@
 import React, { Component, PropTypes } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
-import _ from 'lodash';
+import uniqueId from 'lodash/uniqueId';
+import isFunction from 'lodash/isFunction';
+import isPlainObject from 'lodash/isPlainObject';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Sector from '../shape/Sector';
@@ -173,7 +175,7 @@ class Pie extends Component {
   }
 
 
-  id = _.uniqueId('recharts-pie-');
+  id = uniqueId('recharts-pie-');
 
   isActiveIndex(i) {
     const { activeIndex } = this.props;
@@ -235,7 +237,7 @@ class Pie extends Component {
   renderLabelLineItem(option, props) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       return option(props);
     }
 
@@ -247,7 +249,7 @@ class Pie extends Component {
       return React.cloneElement(option, props);
     }
     let label = value;
-    if (_.isFunction(option)) {
+    if (isFunction(option)) {
       label = option(props);
       if (React.isValidElement(label)) {
         return label;
@@ -314,9 +316,9 @@ class Pie extends Component {
   renderSectorItem(option, props) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       return option(props);
-    } else if (_.isPlainObject(option)) {
+    } else if (isPlainObject(option)) {
       return <Sector {...props} {...option} />;
     }
 

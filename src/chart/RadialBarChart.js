@@ -4,16 +4,25 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { scaleBand } from 'd3-scale';
-import _ from 'lodash';
+import range from 'lodash/range';
 import Surface from '../container/Surface';
 import RadialBar from '../polar/RadialBar';
-import { getPercentValue, combineEventHandlers, getValueByDataKey,
-  findPositionOfBar } from '../util/DataUtils';
+import {
+  getPercentValue,
+  combineEventHandlers,
+  getValueByDataKey,
+  findPositionOfBar,
+} from '../util/DataUtils';
 import Cell from '../component/Cell';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
-import { findChildByType, findAllByType, validateWidthHeight, filterSvgElements,
-  getPresentationAttributes } from '../util/ReactUtils';
+import {
+  findChildByType,
+  findAllByType,
+  validateWidthHeight,
+  filterSvgElements,
+  getPresentationAttributes,
+} from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import pureRender from '../util/PureRender';
 
@@ -126,9 +135,9 @@ class RadialBarChart extends Component {
   getRadiusScale(innerRadius, outerRadius) {
     const { data } = this.props;
     const bandCount = Math.max(data.length, 1);
-    const range = [outerRadius, innerRadius];
-    const scale = scaleBand().domain(_.range(0, bandCount))
-                    .range(range);
+    const rangeArray = [outerRadius, innerRadius];
+    const scale = scaleBand().domain(range(0, bandCount))
+                    .range(rangeArray);
 
     return scale;
   }

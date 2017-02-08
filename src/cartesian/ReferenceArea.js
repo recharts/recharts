@@ -2,7 +2,7 @@
  * @fileOverview Reference Line
  */
 import React, { Component, PropTypes } from 'react';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
@@ -112,7 +112,7 @@ class ReferenceArea extends Component {
 
     if (React.isValidElement(label)) {
       return React.cloneElement(label, props);
-    } else if (_.isFunction(label)) {
+    } else if (isFunction(label)) {
       return label(props);
     } else if (isNumOrStr(label)) {
       return (
@@ -130,7 +130,7 @@ class ReferenceArea extends Component {
 
     if (React.isValidElement(option)) {
       rect = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       rect = option(props);
     } else {
       rect = (

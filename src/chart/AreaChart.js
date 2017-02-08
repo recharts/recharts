@@ -3,7 +3,8 @@
  */
 import React, { Component, PropTypes } from 'react';
 import Smooth from 'react-smooth';
-import _ from 'lodash';
+import isNil from 'lodash/isNil';
+import isFunction from 'lodash/isFunction';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Dot from '../shape/Dot';
@@ -24,7 +25,7 @@ const getCategoryAxisCoordinate = ({ axis, ticks, bandSize, entry, index }) => {
 
   const value = getValueByDataKey(entry, axis.dataKey);
 
-  return !_.isNil(value) ? axis.scale(value) : null;
+  return !isNil(value) ? axis.scale(value) : null;
 };
 
 const getBaseValue = (props, xAxis, yAxis) => {
@@ -77,14 +78,14 @@ const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, bandSize, dataKe
     if (layout === 'horizontal') {
       return {
         x: getCategoryAxisCoordinate({ axis: xAxis, ticks: xTicks, bandSize, entry, index }),
-        y: _.isNil(value[1]) ? null : yAxis.scale(value[1]),
+        y: isNil(value[1]) ? null : yAxis.scale(value[1]),
         value,
         payload: entry,
       };
     }
 
     return {
-      x: _.isNil(value[1]) ? null : xAxis.scale(value[1]),
+      x: isNil(value[1]) ? null : xAxis.scale(value[1]),
       y: getCategoryAxisCoordinate({ axis: yAxis, ticks: yTicks, bandSize, entry, index }),
       value,
       payload: entry,
@@ -178,7 +179,7 @@ export class AreaChart extends Component {
 
     if (React.isValidElement(option)) {
       dot = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       dot = option(props);
     } else {
       dot = <Dot {...props} />;

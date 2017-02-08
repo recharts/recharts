@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import _ from 'lodash';
+import isNil from 'lodash/isNil';
 import { shallowEqual } from './PureRender';
 import { getDisplayName, findAllByType } from './ReactUtils';
 import { getStackedDataOfItem, getTicksOfAxis,
@@ -75,7 +75,7 @@ export default ({ getComposedData, ChildComponent }) => WrappedComponent =>
             getStackedDataOfItem(item, stackGroups[numericAxisId].stackGroups);
 
           bandSize = getBandSizeOfAxis(cateAxis, cateTicks);
-          const maxBarSize = _.isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
+          const maxBarSize = isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
           barPosition = getBarPosition({
             barGap, barCategoryGap, bandSize, sizeList: sizeList[cateAxisId], maxBarSize,
           });
