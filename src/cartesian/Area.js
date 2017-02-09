@@ -12,7 +12,7 @@ import Text from '../component/Text';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
   getPresentationAttributes, isSsr } from '../util/ReactUtils';
-import { isNumber } from '../util/DataUtils';
+import { isNumber, uniqueId } from '../util/DataUtils';
 
 @pureRender
 class Area extends Component {
@@ -99,7 +99,7 @@ class Area extends Component {
 
   state = { isAnimationFinished: true };
 
-  id = _.uniqueId('recharts-area-');
+  id = uniqueId('recharts-area-');
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });

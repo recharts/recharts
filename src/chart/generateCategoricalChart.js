@@ -20,7 +20,7 @@ import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
 import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate,
-  combineEventHandlers, parseScale, getValueByDataKey } from '../util/DataUtils';
+  combineEventHandlers, parseScale, getValueByDataKey, uniqueId } from '../util/DataUtils';
 import { calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
   getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
@@ -81,7 +81,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       this.state = { ...defaultState, updateId: 0, isLegendReady: true,
         ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState }) };
       this.validateAxes();
-      this.uniqueChartId = _.uniqueId('recharts');
+      this.uniqueChartId = uniqueId('recharts');
 
       if (props.throttleDelay) {
         this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove,

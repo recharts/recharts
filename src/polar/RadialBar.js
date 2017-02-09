@@ -12,6 +12,7 @@ import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
+import { uniqueId } from '../util/DataUtils';
 
 const RADIAN = Math.PI / 180;
 
@@ -256,7 +257,7 @@ class RadialBar extends Component {
     } else if (_.isFunction(option)) {
       labelItem = option(props);
     } else {
-      const id = _.uniqueId('recharts-defs-');
+      const id = uniqueId('recharts-defs-');
       const filteredProps = getPresentationAttributes(props);
       const path = this.getLabelPathArc(props, value, filteredProps);
 
