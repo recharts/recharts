@@ -12,7 +12,7 @@ import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
 import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
 import ErrorBar from './ErrorBar';
-import { getValueByDataKey } from '../util/DataUtils';
+import { getValueByDataKey, uniqueId } from '../util/DataUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
 
 @AnimationDecorator
@@ -93,7 +93,7 @@ class Scatter extends Component {
     window.setTimeout(() => this.setState({ isAnimationFinished: true }), animationDuration);
   }
 
-  id = _.uniqueId('recharts-scatter-');
+  id = uniqueId('recharts-scatter-');
 
   renderSymbolItem(option, props) {
     let symbol;

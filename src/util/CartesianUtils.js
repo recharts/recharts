@@ -5,7 +5,8 @@ import {
 } from 'd3-shape';
 import _ from 'lodash';
 import { findAllByType, findChildByType } from './ReactUtils';
-import { getPercentValue, isNumber, isNumOrStr, getValueByDataKey } from './DataUtils';
+import { getPercentValue, isNumber, isNumOrStr, getValueByDataKey,
+  uniqueId } from './DataUtils';
 import ReferenceDot from '../cartesian/ReferenceDot';
 import ReferenceLine from '../cartesian/ReferenceLine';
 import ReferenceArea from '../cartesian/ReferenceArea';
@@ -114,7 +115,7 @@ export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, o
 
       parentGroup.stackGroups[stackId] = childGroup;
     } else {
-      parentGroup.stackGroups[_.uniqueId('_stackId_')] = {
+      parentGroup.stackGroups[uniqueId('_stackId_')] = {
         numericAxisId, cateAxisId, items: [item],
       };
     }

@@ -12,6 +12,13 @@ export const isNumber = value => (
 export const isNumOrStr = value => (
   isNumber(value) || _.isString(value)
 );
+
+let idCounter = 0;
+export const uniqueId = (prefix) => {
+  const id = ++idCounter;
+
+  return toString(prefix) + id;
+};
 /**
  * Get percent value of a total value
  * @param {Number|String} percent A percent

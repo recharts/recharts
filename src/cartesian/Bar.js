@@ -10,7 +10,7 @@ import Layer from '../container/Layer';
 import Text from '../component/Text';
 import ErrorBar from './ErrorBar';
 import pureRender from '../util/PureRender';
-import { getValueByDataKey } from '../util/DataUtils';
+import { getValueByDataKey, uniqueId } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild, isSsr, findChildByType } from '../util/ReactUtils';
 
@@ -80,7 +80,7 @@ class Bar extends Component {
   };
 
   state = { isAnimationFinished: false };
-  id = _.uniqueId('recharts-bar-');
+  id = uniqueId('recharts-bar-');
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });

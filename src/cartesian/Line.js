@@ -11,7 +11,7 @@ import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import ErrorBar from './ErrorBar';
-import { getValueByDataKey } from '../util/DataUtils';
+import { getValueByDataKey, uniqueId } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
   getPresentationAttributes, isSsr, findChildByType } from '../util/ReactUtils';
 
@@ -160,7 +160,7 @@ class Line extends Component {
       .join(', ');
   }
 
-  id = _.uniqueId('recharts-line-');
+  id = uniqueId('recharts-line-');
 
   pathRef = (node) => {
     this.animate = node;

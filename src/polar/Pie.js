@@ -14,7 +14,7 @@ import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
-import { isNumber, getValueByDataKey } from '../util/DataUtils';
+import { isNumber, getValueByDataKey, uniqueId } from '../util/DataUtils';
 
 @AnimationDecorator
 @pureRender
@@ -173,7 +173,7 @@ class Pie extends Component {
   }
 
 
-  id = _.uniqueId('recharts-pie-');
+  id = uniqueId('recharts-pie-');
 
   isActiveIndex(i) {
     const { activeIndex } = this.props;
