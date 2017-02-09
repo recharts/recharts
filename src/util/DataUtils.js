@@ -17,7 +17,7 @@ let idCounter = 0;
 export const uniqueId = (prefix) => {
   const id = ++idCounter;
 
-  return toString(prefix) + id;
+  return `${prefix || ''}${id}`;
 };
 /**
  * Get percent value of a total value
