@@ -2,6 +2,7 @@ import isFunction from 'lodash/isFunction';
 import get from 'lodash/get';
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
+import isNum from 'lodash/isNumber';
 import sortBy from 'lodash/sortBy';
 import isNil from 'lodash/isNil';
 import * as d3Scales from 'd3-scale';
@@ -11,11 +12,11 @@ export const isPercent = value => (
 );
 
 export const isNumber = value => (
-  isNumber(value) && !isNaN(value)
+  isNum(value) && !isNaN(value)
 );
 
 export const isNumOrStr = value => (
-  isNumber(value) || isString(value)
+  isNum(value) || isString(value)
 );
 /**
  * Get percent value of a total value
@@ -26,7 +27,7 @@ export const isNumOrStr = value => (
  * @return {Number} value
  */
 export const getPercentValue = (percent, totalValue, defaultValue = 0, validate = false) => {
-  if (!isNumber(percent) && !isString(percent)) {
+  if (!isNum(percent) && !isString(percent)) {
     return defaultValue;
   }
 
@@ -60,7 +61,7 @@ export const parseSpecifiedDomain = (specifiedDomain, dataDomain, allowDataOverf
 
   const domain = [];
 
-  if (isNumber(specifiedDomain[0])) {
+  if (isNum(specifiedDomain[0])) {
     domain[0] = allowDataOverflow ?
       specifiedDomain[0] : Math.min(specifiedDomain[0], dataDomain[0]);
   } else if (MIN_VALUE_REG.test(specifiedDomain[0])) {
@@ -71,7 +72,7 @@ export const parseSpecifiedDomain = (specifiedDomain, dataDomain, allowDataOverf
     domain[0] = dataDomain[0];
   }
 
-  if (isNumber(specifiedDomain[1])) {
+  if (isNum(specifiedDomain[1])) {
     domain[1] = allowDataOverflow ?
       specifiedDomain[1] : Math.max(specifiedDomain[1], dataDomain[1]);
   } else if (MAX_VALUE_REG.test(specifiedDomain[1])) {
