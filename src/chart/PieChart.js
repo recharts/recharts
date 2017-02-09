@@ -9,8 +9,13 @@ import Tooltip from '../component/Tooltip';
 import Pie from '../polar/Pie';
 import Cell from '../component/Cell';
 import { getPercentValue, combineEventHandlers } from '../util/DataUtils';
-import { findChildByType, findAllByType, validateWidthHeight, filterSvgElements,
-  getPresentationAttributes } from '../util/ReactUtils';
+import {
+  findChildByType,
+  findAllByType,
+  validateWidthHeight,
+  filterSvgElements,
+  getPresentationAttributes,
+} from '../util/ReactUtils';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import composedDataDecorator from '../util/ComposedDataDecorator';
 

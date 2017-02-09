@@ -2,7 +2,7 @@
  * @fileOverview Legend
  */
 import React, { Component, PropTypes } from 'react';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
 import pureRender from '../util/PureRender';
 import DefaultLegendContent from './DefaultLegendContent';
 import { isNumber } from '../util/DataUtils';
@@ -10,7 +10,7 @@ import { isNumber } from '../util/DataUtils';
 const renderContent = (content, props) => {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
-  } else if (_.isFunction(content)) {
+  } else if (isFunction(content)) {
     return content(props);
   }
 

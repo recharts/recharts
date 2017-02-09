@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { scalePoint } from 'd3-scale';
 import { getNiceTickValues } from 'recharts-scale';
-import _ from 'lodash';
+import range from 'lodash/range';
 import Surface from '../container/Surface';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
@@ -142,7 +142,7 @@ class RadarChart extends Component {
   }
 
   getGridRadius(gridCount, innerRadius, outerRadius) {
-    const domain = _.range(0, gridCount);
+    const domain = range(0, gridCount);
     const scale = scalePoint().domain(domain)
              .range([innerRadius, outerRadius]);
 
@@ -178,7 +178,7 @@ class RadarChart extends Component {
     const { tickCount } = axisCfg;
     const domain = scale.domain();
 
-    return _.range(0, tickCount).map((v, i) => {
+    return range(0, tickCount).map((v, i) => {
       const value = domain[0] + i * (domain[1] - domain[0]) / (tickCount - 1);
       return {
         value,

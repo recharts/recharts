@@ -3,7 +3,10 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import maxBy from 'lodash/maxBy';
+import sumBy from 'lodash/sumBy';
+import min from 'lodash/min';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
@@ -102,7 +105,7 @@ const getNodesTree = ({ nodes, links }, width, nodeWidth) => {
       updateDepthOfTargets(tree, node);
     }
   }
-  const maxDepth = _.maxBy(tree, entry => entry.depth).depth;
+  const maxDepth = maxBy(tree, entry => entry.depth).depth;
 
   if (maxDepth >= 1) {
     const childWidth = (width - nodeWidth) / maxDepth;
@@ -137,8 +140,8 @@ const getDepthTree = (tree) => {
 };
 
 const updateYOfTree = (depthTree, height, nodePadding, links) => {
-  const yRatio = _.min(depthTree.map(nodes => (
-    (height - (nodes.length - 1) * nodePadding) / _.sumBy(nodes, getValue)
+  const yRatio = min(depthTree.map(nodes => (
+    (height - (nodes.length - 1) * nodePadding) / sumBy(nodes, getValue)
   )));
 
   for (let d = 0, maxDepth = depthTree.length; d < maxDepth; d++) {
@@ -440,7 +443,7 @@ class Sankey extends Component {
   renderLinkItem(option, props) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       return option(props);
     }
 
@@ -512,7 +515,7 @@ class Sankey extends Component {
   renderNodeItem(option, props) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       return option(props);
     }
 

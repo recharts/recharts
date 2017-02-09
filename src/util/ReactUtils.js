@@ -1,5 +1,9 @@
 import React, { PropTypes, Children } from 'react';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import isArray from 'lodash/isArray';
+import isString from 'lodash/isString';
+import isNil from 'lodash/isNil';
+import isObject from 'lodash/isObject';
 import { isNumber } from './DataUtils';
 import { shallowEqual } from './PureRender';
 
@@ -129,7 +133,7 @@ export const findAllByType = (children, type) => {
   const result = [];
   let types = [];
 
-  if (_.isArray(type)) {
+  if (isArray(type)) {
     types = type.map(t => getDisplayName(t));
   } else {
     types = [getDisplayName(type)];
@@ -161,7 +165,7 @@ export const withoutType = (children, type) => {
   const newChildren = [];
   let types;
 
-  if (_.isArray(type)) {
+  if (isArray(type)) {
     types = type.map(t => getDisplayName(t));
   } else {
     types = [getDisplayName(type)];
@@ -184,11 +188,11 @@ export const withoutType = (children, type) => {
  * @return {Object}    attributes or null
  */
 export const getPresentationAttributes = (el) => {
-  if (!el || _.isFunction(el)) { return null; }
+  if (!el || isFunction(el)) { return null; }
 
   const props = React.isValidElement(el) ? el.props : el;
 
-  if (!_.isObject(props)) { return null; }
+  if (!isObject(props)) { return null; }
 
   let out = null;
   // eslint-disable-next-line no-restricted-syntax
@@ -207,11 +211,11 @@ export const getPresentationAttributes = (el) => {
  * @return {Object}    attributes or null
  */
 export const filterEventAttributes = (el) => {
-  if (!el || _.isFunction(el)) { return null; }
+  if (!el || isFunction(el)) { return null; }
 
   const props = React.isValidElement(el) ? el.props : el;
 
-  if (!_.isObject(props)) { return null; }
+  if (!isObject(props)) { return null; }
 
   let out = null;
   // eslint-disable-next-line no-restricted-syntax
@@ -233,12 +237,12 @@ const getEventHandler = (originalHandler, data, index) => (
 );
 
 export const filterEventsOfChild = (props, data, index) => {
-  if (!_.isObject(props)) { return null; }
+  if (!isObject(props)) { return null; }
 
   let out = null;
   // eslint-disable-next-line no-restricted-syntax
   for (const i in props) {
-    if ({}.hasOwnProperty.call(props, i) && EVENT_ATTRIBUTES[i] && _.isFunction(props[i])) {
+    if ({}.hasOwnProperty.call(props, i) && EVENT_ATTRIBUTES[i] && isFunction(props[i])) {
       if (!out) out = {};
       out[i] = getEventHandler(props[i], data, index);
     }
@@ -290,7 +294,7 @@ export const filterSvgElements = (children) => {
   const svgElements = [];
 
   React.Children.forEach(children, (entry) => {
-    if (entry && entry.type && _.isString(entry.type) &&
+    if (entry && entry.type && isString(entry.type) &&
       SVG_TAGS.indexOf(entry.type) >= 0) {
       svgElements.push(entry);
     }
@@ -300,9 +304,9 @@ export const filterSvgElements = (children) => {
 };
 
 export const isSingleChildEqual = (nextChild, prevChild) => {
-  if (_.isNil(nextChild) && _.isNil(prevChild)) {
+  if (isNil(nextChild) && isNil(prevChild)) {
     return true;
-  } else if (!_.isNil(nextChild) && !_.isNil(prevChild)) {
+  } else if (!isNil(nextChild) && !isNil(prevChild)) {
     return shallowEqual(nextChild.props, prevChild.props);
   }
 

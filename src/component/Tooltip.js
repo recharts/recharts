@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { translateStyle } from 'react-smooth';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import { isSsr } from '../util/ReactUtils';
 import { isNumOrStr, isNumber } from '../util/DataUtils';
@@ -78,7 +78,7 @@ const defaultProps = {
 const renderContent = (content, props) => {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
-  } else if (_.isFunction(content)) {
+  } else if (isFunction(content)) {
     return content(props);
   }
 

@@ -2,7 +2,7 @@
  * @fileOverview Reference Line
  */
 import React, { Component, PropTypes } from 'react';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
@@ -14,7 +14,7 @@ const renderLine = (option, props) => {
 
   if (React.isValidElement(option)) {
     line = React.cloneElement(option, props);
-  } else if (_.isFunction(option)) {
+  } else if (isFunction(option)) {
     line = option(props);
   } else {
     line = (
@@ -141,7 +141,7 @@ class ReferenceLine extends Component {
 
     if (React.isValidElement(label)) {
       return React.cloneElement(label, props);
-    } else if (_.isFunction(label)) {
+    } else if (isFunction(label)) {
       return label(props);
     } else if (isNumOrStr(label)) {
       return (

@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import Smooth from 'react-smooth';
 import classNames from 'classnames';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Rectangle from '../shape/Rectangle';
@@ -345,7 +345,7 @@ class Treemap extends Component {
   renderContentItem(content, nodeProps) {
     if (React.isValidElement(content)) {
       return React.cloneElement(content, nodeProps);
-    } else if (_.isFunction(content)) {
+    } else if (isFunction(content)) {
       return content(nodeProps);
     }
 

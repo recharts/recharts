@@ -2,7 +2,7 @@
  * @fileOverview Cartesian Grid
  */
 import React, { Component, PropTypes } from 'react';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
@@ -114,12 +114,12 @@ class CartesianGrid extends Component {
 
     let { horizontalPoints, verticalPoints } = this.props;
 
-    if (_.isFunction(horizontalCoordinatesGenerator)) {
+    if (isFunction(horizontalCoordinatesGenerator)) {
       horizontalPoints = horizontalCoordinatesGenerator({ yAxis, width: chartWidth,
         height: chartHeight, offset });
     }
 
-    if (_.isFunction(verticalCoordinatesGenerator)) {
+    if (isFunction(verticalCoordinatesGenerator)) {
       verticalPoints = verticalCoordinatesGenerator({ xAxis, width: chartWidth,
         height: chartHeight, offset });
     }

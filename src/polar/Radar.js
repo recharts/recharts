@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
 import Polygon from '../shape/Polygon';
@@ -88,7 +88,7 @@ class Radar extends Component {
 
     if (React.isValidElement(shape)) {
       return React.cloneElement(shape, { ...others, points });
-    } else if (_.isFunction(shape)) {
+    } else if (isFunction(shape)) {
       return shape(this.props);
     }
 
@@ -125,7 +125,7 @@ class Radar extends Component {
 
     if (React.isValidElement(option)) {
       labelItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       labelItem = option(props);
     } else {
       labelItem = (
@@ -171,7 +171,7 @@ class Radar extends Component {
 
     if (React.isValidElement(option)) {
       dotItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       dotItem = option(props);
     } else {
       dotItem = <Dot {...props} className="recharts-radar-dot" />;

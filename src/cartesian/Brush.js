@@ -4,7 +4,8 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { scalePoint } from 'd3-scale';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import range from 'lodash/range';
 import { getValueByDataKey } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
@@ -88,22 +89,22 @@ class Brush extends Component {
     }
   }
 
-  getIndexInRange(range, x) {
-    const len = range.length;
+  getIndexInRange(r, x) {
+    const len = r.length;
     let start = 0;
     let end = len - 1;
 
     while (end - start > 1) {
       const middle = Math.floor((start + end) / 2);
 
-      if (range[middle] > x) {
+      if (r[middle] > x) {
         end = middle;
       } else {
         start = middle;
       }
     }
 
-    return x >= range[end] ? end : start;
+    return x >= r[end] ? end : start;
   }
 
   getIndex({ startX, endX }) {
@@ -122,7 +123,7 @@ class Brush extends Component {
     const { data, tickFormatter, dataKey } = this.props;
     const text = getValueByDataKey(data[index], dataKey, index);
 
-    return _.isFunction(tickFormatter) ? tickFormatter(text) : text;
+    return isFunction(tickFormatter) ? tickFormatter(text) : text;
   }
 
   handleDrag = (e) => {
@@ -252,7 +253,7 @@ class Brush extends Component {
 
     if (data && data.length) {
       const len = data.length;
-      this.scale = scalePoint().domain(_.range(0, len))
+      this.scale = scalePoint().domain(range(0, len))
                     .range([x, x + width - travellerWidth]);
       this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
       this.state = {

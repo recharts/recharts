@@ -2,7 +2,7 @@
  * @fileOverview Cartesian Axis
  */
 import React, { Component, PropTypes } from 'react';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
 import { shallowEqual } from '../util/PureRender';
 import { getStringSize } from '../util/DOMUtils';
 import Layer from '../container/Layer';
@@ -118,7 +118,7 @@ class CartesianAxis extends Component {
     if (preserveEnd) {
       // Try to guarantee the tail to be displayed
       let tail = ticks[len - 1];
-      const tailContent = _.isFunction(tickFormatter) ? tickFormatter(tail.value) : tail.value;
+      const tailContent = isFunction(tickFormatter) ? tickFormatter(tail.value) : tail.value;
       const tailSize = getStringSize(tailContent)[sizeKey];
       const tailGap = sign * (tail.coordinate + sign * tailSize / 2 - end);
       result[len - 1] = tail = {
@@ -138,7 +138,7 @@ class CartesianAxis extends Component {
     const count = preserveEnd ? len - 1 : len;
     for (let i = 0; i < count; i++) {
       let entry = result[i];
-      const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value;
+      const content = isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value;
       const size = getStringSize(content)[sizeKey];
 
       if (i === 0) {
@@ -182,7 +182,7 @@ class CartesianAxis extends Component {
 
     for (let i = len - 1; i >= 0; i--) {
       let entry = result[i];
-      const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value;
+      const content = isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value;
       const size = getStringSize(content)[sizeKey];
 
       if (i === len - 1) {
@@ -343,7 +343,7 @@ class CartesianAxis extends Component {
 
     if (React.isValidElement(option)) {
       tickItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       tickItem = option(props);
     } else {
       tickItem = (
@@ -402,7 +402,7 @@ class CartesianAxis extends Component {
           {tick && this.renderTickItem(
             tick,
             tickProps,
-            _.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value
+            isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value
           )}
         </Layer>
       );
@@ -421,7 +421,7 @@ class CartesianAxis extends Component {
 
     if (React.isValidElement(label)) {
       return React.cloneElement(label, { ...presentation, orientation, viewBox });
-    } else if (_.isFunction(label)) {
+    } else if (isFunction(label)) {
       return label(this.props);
     } else if (isNumOrStr(label)) {
       const props = {
@@ -445,7 +445,7 @@ class CartesianAxis extends Component {
     const { axisLine, width, height, ticksGenerator } = this.props;
     let { ticks, ...noTicksProps } = this.props;
 
-    if (_.isFunction(ticksGenerator)) {
+    if (isFunction(ticksGenerator)) {
       ticks = (ticks && ticks.length > 0) ? ticksGenerator(this.props) :
         ticksGenerator(noTicksProps);
     }
