@@ -51,12 +51,13 @@ function Label(props) {
   const label = getLabel(props);
   const attrs = getPresentationAttributes(props);
   const { x, y, width, height } = viewBox;
+  const sign = height >= 0 ? 1 : -1;
 
   if (position === 'top') {
     return (
       <Text
         x={x + width / 2}
-        y={y - offset}
+        y={y - sign * offset}
         {...attrs}
         textAnchor="middle"
         verticalAnchor="end"
@@ -68,7 +69,7 @@ function Label(props) {
     return (
       <Text
         x={x + width / 2}
-        y={y + height + offset}
+        y={y + height + sign * offset}
         {...attrs}
         textAnchor="middle"
         verticalAnchor="start"
@@ -128,7 +129,7 @@ function Label(props) {
     return (
       <Text
         x={x + width / 2}
-        y={y + offset}
+        y={y + sign * offset}
         {...attrs}
         textAnchor="middle"
         verticalAnchor="start"
@@ -140,7 +141,7 @@ function Label(props) {
     return (
       <Text
         x={x + width / 2}
-        y={y + height - offset}
+        y={y + height - sign * offset}
         {...attrs}
         textAnchor="middle"
         verticalAnchor="end"
@@ -152,7 +153,7 @@ function Label(props) {
     return (
       <Text
         x={x + offset}
-        y={y + offset}
+        y={y + sign * offset}
         {...attrs}
         textAnchor="start"
         verticalAnchor="start"
@@ -164,7 +165,7 @@ function Label(props) {
     return (
       <Text
         x={x + width - offset}
-        y={y + offset}
+        y={y + sign * offset}
         {...attrs}
         textAnchor="end"
         verticalAnchor="start"
@@ -176,7 +177,7 @@ function Label(props) {
     return (
       <Text
         x={x + offset}
-        y={y + height - offset}
+        y={y + height - sign * offset}
         {...attrs}
         textAnchor="start"
         verticalAnchor="end"
@@ -188,7 +189,7 @@ function Label(props) {
     return (
       <Text
         x={x + width - offset}
-        y={y + height - offset}
+        y={y + height - sign * offset}
         {...attrs}
         textAnchor="end"
         verticalAnchor="end"
