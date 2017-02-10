@@ -14,6 +14,7 @@ import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES,
 import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
 import { uniqueId, mathSign } from '../util/DataUtils';
+import LabelList from '../component/LabelList';
 
 const RADIAN = Math.PI / 180;
 
@@ -291,10 +292,11 @@ class RadialBar extends Component {
 
 
   render() {
-    const { data, className, background, label } = this.props;
+    const { data, className, background, label, isAnimationActive } = this.props;
 
     if (!data || !data.length) { return null; }
 
+    const { isAnimationFinished } = this.state;
     const sectors = this.getSectors();
     const layerClass = classNames('recharts-area', className);
 
@@ -318,6 +320,12 @@ class RadialBar extends Component {
               {this.renderLabels(sectors)}
             </Layer>
           )
+        }
+        {(!isAnimationActive || isAnimationFinished) &&
+          LabelList.renderCallByParent({
+            ...this.props,
+            clockWise: this.getDeltaAngle() < 0,
+          }, sectors)
         }
       </Layer>
     );

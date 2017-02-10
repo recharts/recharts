@@ -9,6 +9,7 @@ import Layer from '../container/Layer';
 import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
+import Label from '../component/Label';
 import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';
 
 const renderLine = (option, props) => {
@@ -181,6 +182,12 @@ class ReferenceLine extends Component {
       <Layer className="recharts-reference-line">
         {renderLine(shape, props)}
         {this.renderLabel(isX, isY, (labelPosition === 'start' ? start : end))}
+        {Label.renderCallByParent(this.props, {
+          x: Math.min(props.x1, props.x2),
+          y: Math.min(props.y1, props.y2),
+          width: Math.abs(props.x2 - props.x1),
+          height: Math.abs(props.y2 - props.y1),
+        })}
       </Layer>
     );
   }

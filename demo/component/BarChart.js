@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { BarChart, Bar, Brush, Cell, CartesianGrid, ReferenceLine, ReferenceDot,
-  XAxis, YAxis, Tooltip, Legend, ErrorBar } from 'recharts';
+  XAxis, YAxis, Tooltip, Legend, ErrorBar, LabelList } from 'recharts';
 import { scaleOrdinal, schemeCategory10 } from 'd3-scale';
 import _ from 'lodash';
 import { changeNumberOfData } from './utils';

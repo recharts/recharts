@@ -13,6 +13,7 @@ import Polygon from '../shape/Polygon';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
+import LabelList from '../component/LabelList';
 
 @pureRender
 class Radar extends Component {
@@ -203,10 +204,11 @@ class Radar extends Component {
   }
 
   render() {
-    const { className, points, label, dot } = this.props;
+    const { className, points, label, dot, isAnimationActive } = this.props;
 
     if (!points || !points.length) { return null; }
 
+    const { isAnimationFinished } = this.state;
     const layerClass = classNames('recharts-radar', className);
 
     return (
@@ -214,6 +216,8 @@ class Radar extends Component {
         {this.renderPolygon()}
         {label && this.renderLabels()}
         {dot && this.renderDots()}
+        {(!isAnimationActive || isAnimationFinished) &&
+          LabelList.renderCallByParent(this.props, points)}
       </Layer>
     );
   }

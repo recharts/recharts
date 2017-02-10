@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { PieChart, Pie, Legend, Cell, Tooltip, ResponsiveContainer, Sector } from 'recharts';
+import { PieChart, Pie, Legend, Cell, Tooltip, ResponsiveContainer, Sector,
+  Label, LabelList } from 'recharts';
 import { scaleOrdinal, schemeCategory10 } from 'd3-scale';
 import { changeNumberOfData } from './utils';
 
@@ -146,6 +147,8 @@ export default class Demo extends Component {
                   <Cell key={`slice-${index}`} name={entry.name} value={entry.value} fill={colors[index % 10]}/>
                 ))
               }
+              <Label value="test" position="outside" />
+              <LabelList position="outside" />
             </Pie>
             <Pie cx={600} cy={200} startAngle={180} endAngle={-180} innerRadius={60} outerRadius={80}
               label={renderLabelContent}>
@@ -154,6 +157,7 @@ export default class Demo extends Component {
                   <Cell key={`slice-${index}`} name={entry.name} value={entry.value} fill={colors[index % 10]}/>
                 ))
               }
+              <Label width={50}>测试换行 测试杭欢</Label>
             </Pie>
           </PieChart>
         </div>
@@ -196,6 +200,7 @@ export default class Demo extends Component {
                     <Cell key={`slice-${index}`} name={entry.name} value={entry.value} fill={colors[index % 10]}/>
                   ))
                 }
+                <Label value="test" />
               </Pie>
             </PieChart>
           </ResponsiveContainer>

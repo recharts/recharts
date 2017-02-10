@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Surface, Radar, RadarChart, PolarGrid, Legend, Tooltip,
-         PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
+  PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
+  LabelList, Label } from 'recharts';
 import DemoRadarItem from './DemoRadarItem';
 import { changeNumberOfData } from './utils';
 
@@ -87,7 +88,9 @@ export default class Demo extends Component {
         <div style={{ width: '100%', height: '100%' }}>
           <ResponsiveContainer>
             <RadarChart data={data}>
-              <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+              <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6}>
+                <LabelList />
+              </Radar>
               <PolarGrid />
               <PolarAngleAxis dataKey="subject" />
               <PolarRadiusAxis />

@@ -10,6 +10,7 @@ import Dot from '../shape/Dot';
 import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
   getPresentationAttributes, filterEventAttributes } from '../util/ReactUtils';
+import Label from '../component/Label';
 import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';
 
 @pureRender
@@ -117,7 +118,7 @@ class ReferenceDot extends Component {
   }
 
   render() {
-    const { x, y } = this.props;
+    const { x, y, r } = this.props;
     const isX = isNumOrStr(x);
     const isY = isNumOrStr(y);
 
@@ -139,6 +140,12 @@ class ReferenceDot extends Component {
       <Layer className="recharts-reference-dot">
         {this.renderDot(shape, dotProps)}
         {this.renderLabel(coordinate)}
+        {Label.renderCallByParent(this.props, {
+          x: coordinate.x - r,
+          y: coordinate.y - r,
+          width: 2 * r,
+          height: 2 * r,
+        })}
       </Layer>
     );
   }
