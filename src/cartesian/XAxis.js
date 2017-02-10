@@ -29,6 +29,7 @@ class XAxis extends Component {
     width: PropTypes.number,
     // The height of axis, which need to be setted by user
     height: PropTypes.number,
+    mirror: PropTypes.bool,
     // The orientation of axis
     orientation: PropTypes.oneOf(['top', 'bottom']),
     type: PropTypes.oneOf(['number', 'category']),
@@ -71,6 +72,7 @@ class XAxis extends Component {
     orientation: 'bottom',
     width: 0,
     height: 30,
+    mirror: false,
     xAxisId: 0,
     tickCount: 5,
     type: 'category',

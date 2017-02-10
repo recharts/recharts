@@ -36,6 +36,7 @@ class YAxis extends Component {
     width: PropTypes.number,
     // The height of axis which is usually calculated in Chart
     height: PropTypes.number,
+    mirror: PropTypes.bool,
     // The orientation of axis
     orientation: PropTypes.oneOf(['left', 'right']),
     type: PropTypes.oneOf(['number', 'category']),
@@ -71,6 +72,7 @@ class YAxis extends Component {
     orientation: 'left',
     width: 60,
     height: 0,
+    mirror: false,
     yAxisId: 0,
     tickCount: 5,
     type: 'number',
