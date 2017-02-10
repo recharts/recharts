@@ -279,6 +279,12 @@ class RadialBar extends Component {
             clockWise: this.getDeltaAngle() < 0,
           }, sectors)
         }
+        {(!isAnimationActive || isAnimationFinished) &&
+          LabelList.renderCallByParent({
+            ...this.props,
+            clockWise: this.getDeltaAngle() < 0,
+          }, sectors)
+        }
       </Layer>
     );
   }
