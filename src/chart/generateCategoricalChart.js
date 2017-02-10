@@ -567,14 +567,22 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         const entry = yAxisMap[id];
         const orientation = entry.orientation;
 
-        return { ...result, [orientation]: result[orientation] + (entry.hide ? 0 : entry.width) };
+        if (!entry.mirror && !entry.hide) {
+          return { ...result, [orientation]: result[orientation] + entry.width };
+        }
+
+        return result;
       }, { left: margin.left || 0, right: margin.right || 0 });
 
       const offsetV = Object.keys(xAxisMap).reduce((result, id) => {
         const entry = xAxisMap[id];
         const orientation = entry.orientation;
 
-        return { ...result, [orientation]: result[orientation] + (entry.hide ? 0 : entry.height) };
+        if (!entry.mirror && !entry.hide) {
+          return { ...result, [orientation]: result[orientation] + entry.height };
+        }
+
+        return result;
       }, { top: margin.top || 0, bottom: margin.bottom || 0 });
 
       let offset = { ...offsetV, ...offsetH };
