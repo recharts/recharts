@@ -48,6 +48,8 @@ class CartesianAxis extends Component {
     interval: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf([
       'preserveStart', 'preserveEnd', 'preserveStartEnd',
     ])]),
+    showAll:PropTypes.bool,
+    handleEnd:PropTypes.bool,
   };
 
   static defaultProps = {
@@ -70,10 +72,12 @@ class CartesianAxis extends Component {
     // The width or height of tick
     tickSize: 6,
     interval: 'preserveEnd',
+    showAll:false,
+    handleEnd:true
   };
 
   static getTicks(props) {
-    const { ticks, viewBox, minTickGap, orientation, interval, tickFormatter } = props;
+    const { ticks, viewBox, minTickGap, orientation, interval, tickFormatter, showAll, handleEnd } = props;
 
     if (!ticks || !ticks.length) { return []; }
 
@@ -91,7 +95,7 @@ class CartesianAxis extends Component {
       });
     }
 
-    return CartesianAxis.getTicksEnd({ ticks, tickFormatter, viewBox, orientation, minTickGap });
+    return CartesianAxis.getTicksEnd({ ticks, tickFormatter, viewBox, orientation, minTickGap, showAll, handleEnd });
   }
 
   static getNumberIntervalTicks(ticks, interval) {
@@ -154,7 +158,7 @@ class CartesianAxis extends Component {
       const isShow = (sign * (entry.tickCoord - sign * size / 2 - start) >= 0) &&
         (sign * (entry.tickCoord + sign * size / 2 - end)) <= 0;
 
-      if (isShow) {
+      if (showAll || isShow) {
         start = entry.tickCoord + sign * (size / 2 + minTickGap);
         result[i] = { ...entry, isShow: true };
       }
@@ -163,7 +167,7 @@ class CartesianAxis extends Component {
     return result.filter(entry => entry.isShow);
   }
 
-  static getTicksEnd({ ticks, tickFormatter, viewBox, orientation, minTickGap }) {
+  static getTicksEnd({ ticks, tickFormatter, viewBox, orientation, minTickGap, showAll ,handleEnd }) {
     const { x, y, width, height } = viewBox;
     const sizeKey = (orientation === 'top' || orientation === 'bottom') ? 'width' : 'height';
     const result = (ticks || []).slice();
@@ -189,7 +193,7 @@ class CartesianAxis extends Component {
         const gap = sign * (entry.coordinate + sign * size / 2 - end);
         result[i] = entry = {
           ...entry,
-          tickCoord: gap > 0 ? entry.coordinate - gap * sign : entry.coordinate,
+          tickCoord: (gap > 0  && handleEnd) ? entry.coordinate - gap * sign : entry.coordinate,
         };
       } else {
         result[i] = entry = { ...entry, tickCoord: entry.coordinate };
