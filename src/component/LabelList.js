@@ -25,6 +25,7 @@ function LabelList(props) {
       {
         data.map((entry, index) => (
           <Label
+            {...getPresentationAttributes(entry)}
             {...others}
             value={valueAccessor(entry, index)}
             viewBox={Label.parseViewBox(_.isNil(clockWise) ? entry : { ...entry, clockWise })}
