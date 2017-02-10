@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { changeNumberOfData } from './utils';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, Brush, Legend,
-  ReferenceArea, ReferenceLine, ReferenceDot, ResponsiveContainer } from 'recharts';
+  ReferenceArea, ReferenceLine, ReferenceDot, ResponsiveContainer,
+  LabelList } from 'recharts';
 
 const data = [
   { name: 'Page A', uv: 4000, pv: 2400, amt: 2400, time: 1 },
@@ -157,7 +158,9 @@ export default class AreaChartDemo extends Component {
               animationBegin={1300}
               dot
               activeDot={renderCustomizedActiveDot}
-            />
+            >
+              <LabelList position="top" />
+            </Area>
             <Legend layout="vertical" />
           </AreaChart>
         </div>
@@ -189,7 +192,9 @@ export default class AreaChartDemo extends Component {
               animationBegin={1300}
               dot
               activeDot={renderCustomizedActiveDot}
-            />
+            >
+              <LabelList />
+            </Area>
           </AreaChart>
         </div>
 
