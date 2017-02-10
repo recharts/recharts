@@ -6,6 +6,7 @@ import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
+import Label from '../component/Label';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';
 import Rectangle from '../shape/Rectangle';
@@ -162,6 +163,7 @@ class ReferenceArea extends Component {
       <Layer className="recharts-reference-area">
         {this.renderRect(shape, { ...this.props, ...rect })}
         {this.renderLabel(rect)}
+        {Label.renderCallByParent(this.props, rect)}
       </Layer>
     );
   }

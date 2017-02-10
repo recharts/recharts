@@ -7,6 +7,7 @@ import { shallowEqual } from '../util/PureRender';
 import { getStringSize } from '../util/DOMUtils';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
+import Label from '../component/Label';
 import { isSsr, PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
@@ -450,7 +451,7 @@ class CartesianAxis extends Component {
   }
 
   render() {
-    const { axisLine, width, height, ticksGenerator, children } = this.props;
+    const { axisLine, width, height, ticksGenerator } = this.props;
     let { ticks, ...noTicksProps } = this.props;
 
     if (_.isFunction(ticksGenerator)) {
@@ -466,7 +467,7 @@ class CartesianAxis extends Component {
       <Layer className="recharts-cartesian-axis">
         {axisLine && this.renderAxisLine()}
         {this.renderTicks(ticks)}
-        {children}
+        {Label.renderCallByParent(this.props)}
       </Layer>
     );
   }

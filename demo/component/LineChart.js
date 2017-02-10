@@ -2,7 +2,8 @@ import React from 'react';
 import CustomLineDot from './CustomLineDot';
 import { changeNumberOfData } from './utils';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine,
-  ReferenceDot, Tooltip, CartesianGrid, Legend, Brush, ErrorBar } from 'recharts';
+  ReferenceDot, Tooltip, CartesianGrid, Legend, Brush, ErrorBar,
+  Label, LabelList } from 'recharts';
 import { scalePow, scaleLog } from 'd3-scale';
 
 const data = [
@@ -129,8 +130,12 @@ export default React.createClass({
               onMouseEnter={this.handleLegendMouseEnter}
               onMouseLeave={this.handleLegendMouseLeave}
             />
-            <XAxis type="number" dataKey="pv" />
-            <YAxis type="number" />
+            <XAxis type="number" dataKey="pv">
+              <Label value="x轴" position="right" />
+            </XAxis>
+            <YAxis type="number">
+              <Label value="y轴" position="insideLeft" angle={90} />
+            </YAxis>
             <Tooltip />
             <Line
               type="monotone"
@@ -140,7 +145,9 @@ export default React.createClass({
               label={renderLabel}
               strokeOpacity={opacity}
               strokeDasharray="3 3"
-            />
+            >
+              <LabelList />
+            </Line>
             <Brush dataKey="name" height={30} />
           </LineChart>
         </div>

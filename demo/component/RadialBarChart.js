@@ -1,5 +1,6 @@
 import React from 'react';
-import { RadialBarChart, RadialBar, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
+import { RadialBarChart, RadialBar, Cell, Legend, Tooltip, ResponsiveContainer,
+  LabelList } from 'recharts';
 import { changeNumberOfData } from './utils';
 import { scaleOrdinal, schemeCategory10 } from 'd3-scale';
 
@@ -56,6 +57,7 @@ export default React.createClass({
                   <Cell key={`cell-${index}`} fill={colors[index]}/>
                 ))
               }
+              <LabelList position="end" />
             </RadialBar>
             <Legend iconSize={10} width={120} height={140} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
             <Tooltip/>
@@ -65,7 +67,9 @@ export default React.createClass({
         <p>RadialBarChart with positive and negative value</p>
         <div className="radial-bar-chart-wrapper">
           <RadialBarChart width={500} height={300} cx={150} cy={150} innerRadius={20} outerRadius={140} data={data}>
-            <RadialBar startAngle={90} endAngle={-270} label={label} background dataKey="pv" />
+            <RadialBar startAngle={90} endAngle={-270} label={label} background dataKey="pv">
+              <LabelList position="end" />
+            </RadialBar>
             <Legend iconSize={10} width={120} height={140} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
             <Tooltip/>
           </RadialBarChart>

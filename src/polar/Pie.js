@@ -10,6 +10,8 @@ import Layer from '../container/Layer';
 import Sector from '../shape/Sector';
 import Curve from '../shape/Curve';
 import Text from '../component/Text';
+import Label from '../component/Label';
+import LabelList from '../component/LabelList';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
@@ -339,7 +341,7 @@ class Pie extends Component {
 
   render() {
     const { data, composedData, className, label, cx, cy, innerRadius,
-      outerRadius } = this.props;
+      outerRadius, isAnimationActive } = this.props;
     const pieData = composedData || data;
 
     if (!pieData || !pieData.length || !isNumber(cx)
@@ -348,6 +350,7 @@ class Pie extends Component {
       return null;
     }
 
+    const { isAnimationFinished } = this.state;
     const sectors = this.getSectors(pieData);
     const layerClass = classNames('recharts-pie', className);
 
@@ -358,6 +361,9 @@ class Pie extends Component {
           {this.renderSectors(sectors)}
         </g>
         {label && this.renderLabels(sectors)}
+        {Label.renderCallByParent(this.props)}
+        {(!isAnimationActive || isAnimationFinished) &&
+          LabelList.renderCallByParent(this.props, sectors)}
       </Layer>
     );
   }

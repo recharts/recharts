@@ -10,6 +10,7 @@ import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
+import LabelList from '../component/LabelList';
 import ErrorBar from './ErrorBar';
 import { getValueByDataKey, uniqueId } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
@@ -372,10 +373,12 @@ class Line extends Component {
   }
 
   render() {
-    const { dot, points, label, className, xAxis, yAxis, top, left, width, height } = this.props;
+    const { dot, points, label, className, xAxis, yAxis, top, left, width,
+      height, isAnimationActive } = this.props;
 
     if (!points || !points.length) { return null; }
 
+    const { isAnimationFinished } = this.state;
     const hasSinglePoint = points.length === 1;
     const layerClass = classNames('recharts-line', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
@@ -393,6 +396,8 @@ class Line extends Component {
         {this.renderErrorBar()}
         {(hasSinglePoint || dot) && this.renderDots()}
         {label && this.renderLabels()}
+        {(!isAnimationActive || isAnimationFinished) &&
+          LabelList.renderCallByParent(this.props, points)}
       </Layer>
     );
   }

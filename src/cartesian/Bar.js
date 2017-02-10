@@ -9,6 +9,7 @@ import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import ErrorBar from './ErrorBar';
+import LabelList from '../component/LabelList';
 import pureRender from '../util/PureRender';
 import { getValueByDataKey, uniqueId } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
@@ -258,10 +259,12 @@ class Bar extends Component {
   }
 
   render() {
-    const { data, className, label, xAxis, yAxis, left, top, width, height } = this.props;
+    const { data, className, label, xAxis, yAxis, left, top, width, height,
+      isAnimationActive } = this.props;
 
     if (!data || !data.length) { return null; }
 
+    const { isAnimationFinished } = this.state;
     const layerClass = classNames('recharts-bar', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
 
@@ -286,6 +289,8 @@ class Bar extends Component {
           </Layer>
         )}
         {this.renderErrorBar()}
+        {(!isAnimationActive || isAnimationFinished) &&
+          LabelList.renderCallByParent(this.props, data)}
       </Layer>
     );
   }
