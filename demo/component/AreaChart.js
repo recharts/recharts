@@ -165,7 +165,7 @@ export default class AreaChartDemo extends Component {
             >
               <LabelList position="top" />
             </Area>
-            <Legend layout="vertical" align="left" verticalAlign="middle" />
+            <Legend layout="vertical" align="left" verticalAlign="middle" />\
           </AreaChart>
         </div>
 
