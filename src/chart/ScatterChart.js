@@ -175,8 +175,12 @@ class ScatterChart extends Component {
       top: margin.top || 0, bottom: margin.bottom || 0,
     };
 
-    offset[xAxis.orientation] += xAxis.height;
-    offset[yAxis.orientation] += yAxis.width;
+    if (!xAxis.hide && !xAxis.mirror) {
+      offset[xAxis.orientation] += xAxis.height;
+    }
+    if (!yAxis.hide && !yAxis.mirror) {
+      offset[yAxis.orientation] += yAxis.width;
+    }
 
     if (legendItem && this.legendInstance) {
       const legendBox = this.legendInstance.getBBox();
@@ -197,7 +201,13 @@ class ScatterChart extends Component {
    * @return {Object} Configuration
    */
   getFormatAxis(axis, offset, axisType) {
-    const { orientation, domain, tickFormat, padding = {} } = axis;
+    const { orientation, domain, mirror, tickFormat, padding = {} } = axis;
+    const position = {
+      left: offset.left,
+      right: offset.left + offset.width,
+      top: offset.top,
+      bottom: offset.top + offset.height,
+    };
     const range = axisType === 'xAxis' ? [
       offset.left + (padding.left || 0),
       offset.left + offset.width - (padding.right || 0),
@@ -207,9 +217,7 @@ class ScatterChart extends Component {
     ];
 
     const scale = parseScale(axis).domain(domain).range(range);
-
     const ticks = getTicksOfScale(scale, axis);
-
     if (tickFormat) {
       scale.tickFormat(tickFormat);
     }
@@ -217,10 +225,12 @@ class ScatterChart extends Component {
     let x, y;
 
     if (axisType === 'xAxis') {
+      const needSpace = (orientation === 'top' && !mirror) || (orientation === 'bottom' && mirror);
       x = offset.left;
-      y = orientation === 'top' ? offset.top - axis.height : offset.top + offset.height;
+      y = position[orientation] - needSpace * axis.height;
     } else {
-      x = orientation === 'left' ? offset.left - axis.width : offset.right;
+      const needSpace = (orientation === 'left' && !mirror) || (orientation === 'right' && mirror);
+      x = position[orientation] - needSpace * axis.width;
       y = offset.top;
     }
 

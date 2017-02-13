@@ -328,9 +328,9 @@ class CartesianAxis extends Component {
       props = {
         ...props,
         x1: x,
-        y1: x + needHeight * height,
+        y1: y + needHeight * height,
         x2: x + width,
-        y2: x + needHeight * height,
+        y2: y + needHeight * height,
       };
     } else {
       const needWidth = (orientation === 'left' && !mirror) || (orientation === 'right' && mirror);
