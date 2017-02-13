@@ -17,6 +17,8 @@ const renderContent = (content, props) => {
   return React.createElement(DefaultLegendContent, props);
 };
 
+const EPS = 1;
+
 @pureRender
 class Legend extends Component {
   static displayName = 'Legend';
@@ -53,6 +55,7 @@ class Legend extends Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
+    onBBoxUpdate: PropTypes.func,
   };
 
   static defaultProps = {
@@ -78,10 +81,27 @@ class Legend extends Component {
     return null;
   }
 
-  getBBox() {
-    if (!this.wrapperNode) { return null; }
+  state = {
+    boxWidth: -1,
+    boxHeight: -1,
+  };
 
-    return this.wrapperNode.getBoundingClientRect ? this.wrapperNode.getBoundingClientRect() : null;
+  componentDidMount() {
+    this.updateBBox();
+  }
+
+  componentDidUpdate() {
+    this.updateBBox();
+  }
+
+  getBBox() {
+    const { boxWidth, boxHeight } = this.state;
+
+    if (boxWidth >= 0 && boxHeight >= 0) {
+      return { width: boxWidth, height: boxHeight };
+    }
+
+    return null;
   }
 
   getDefaultPosition(style) {
@@ -113,6 +133,29 @@ class Legend extends Component {
     }
 
     return { ...hPos, ...vPos };
+  }
+
+  updateBBox() {
+    const { boxWidth, boxHeight } = this.state;
+    const { onBBoxUpdate } = this.props;
+
+    if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
+      const box = this.wrapperNode.getBoundingClientRect();
+
+      if (Math.abs(box.width - boxWidth) > EPS || Math.abs(box.height - boxHeight) > EPS) {
+        this.setState({
+          boxWidth: box.width,
+          boxHeight: box.height,
+        }, () => {
+          onBBoxUpdate(box);
+        });
+      }
+    } else if (boxWidth !== -1 || boxHeight !== -1) {
+      this.setState({
+        boxWidth: -1,
+        boxHeight: -1,
+      }, () => { onBBoxUpdate(null); });
+    }
   }
 
   render() {

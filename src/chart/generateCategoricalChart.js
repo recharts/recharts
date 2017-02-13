@@ -78,7 +78,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       super(props);
 
       const defaultState = this.createDefaultState(props);
-      this.state = { ...defaultState, updateId: 0, isLegendReady: true,
+      this.state = { ...defaultState, updateId: 0,
         ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState }) };
       this.validateAxes();
       this.uniqueChartId = uniqueId('recharts');
@@ -93,16 +93,6 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     componentDidMount() {
       if (!_.isNil(this.props.syncId)) {
         this.addListener();
-      }
-
-      if (this.legendInstance) {
-        const { dataStartIndex, dataEndIndex } = this.state;
-
-        this.setState(
-          this.updateStateOfAxisMapsOffsetAndStackGroups({
-            props: this.props, dataStartIndex, dataEndIndex,
-          })
-        );
       }
     }
 
@@ -613,6 +603,18 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       };
     }
 
+    handleLegendBBoxUpdate = (box) => {
+      if (box && this.legendInstance) {
+        const { dataStartIndex, dataEndIndex } = this.state;
+
+        this.setState(
+          this.updateStateOfAxisMapsOffsetAndStackGroups({
+            props: this.props, dataStartIndex, dataEndIndex,
+          })
+        );
+      }
+    };
+
     handleReceiveSyncEvent = (cId, chartId, data) => {
       const { syncId, layout } = this.props;
 
@@ -630,6 +632,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         } else if (!_.isNil(data.activeTooltipIndex)) {
           const { chartX, chartY, activeTooltipIndex } = data;
           const { offset, tooltipTicks } = this.state;
+          if (!offset) { return; }
           const viewBox = { ...offset, x: offset.left, y: offset.top };
           // When a categotical chart is combined with another chart, the value of chartX
           // and chartY may beyond the boundaries.
@@ -926,6 +929,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         chartHeight: height,
         margin,
         ref: (legend) => { this.legendInstance = legend; },
+        onBBoxUpdate: this.handleLegendBBoxUpdate,
       });
     }
 
