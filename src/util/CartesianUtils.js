@@ -391,7 +391,7 @@ export const getLegendProps = (children, graphicItems, width) => {
 
       return {
         dataKey,
-        type: legendType || 'square',
+        type: legendItem.props.iconType || legendType || 'square',
         color: getMainColorOfGraphicItem(child),
         value: name || dataKey,
         payload: child.props,

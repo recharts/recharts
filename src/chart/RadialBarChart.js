@@ -230,7 +230,7 @@ class RadialBarChart extends Component {
 
     const legendData = (legendItem.props && legendItem.props.payload) ||
       data.map(entry => ({
-        type: 'square',
+        type: legendItem.props.iconType || 'square',
         color: entry.fill || '#000',
         value: entry.name,
         payload: entry,

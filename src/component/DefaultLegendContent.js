@@ -16,6 +16,10 @@ class DefaultLegendContent extends Component {
   static propTypes = {
     content: PropTypes.element,
     iconSize: PropTypes.number,
+    iconType: PropTypes.oneOf([
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond',
+      'star', 'triangle', 'wye',
+    ]),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     align: PropTypes.oneOf(['center', 'left', 'right']),
     verticalAlign: PropTypes.oneOf(['top', 'bottom', 'middle']),

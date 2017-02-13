@@ -116,7 +116,8 @@ export class PieChart extends Component {
 
         return result.concat(data.map(entry => (
           {
-            type: child.props.legendType, value: entry[nameKey],
+            type: legendItem.props.iconType || child.props.legendType,
+            value: entry[nameKey],
             color: entry.fill,
             payload: entry,
           }
