@@ -75,8 +75,8 @@ class Legend extends Component {
   }
 
   getBBox() {
+    return null;
     if (!this.wrapperNode) { return null; }
-
     return this.wrapperNode.getBoundingClientRect ? this.wrapperNode.getBoundingClientRect() : null;
   }
 
@@ -123,7 +123,7 @@ class Legend extends Component {
 
     return (
       <div
-        className="recharts-legend-wrapper"
+        className={`recharts-legend-wrapper recharts-legend-wrapper-align-${this.props.align} recharts-legend-wrapper-vertical-align-${this.props.verticalAlign}`}
         style={outerStyle}
         ref={(node) => { this.wrapperNode = node; }}
       >
