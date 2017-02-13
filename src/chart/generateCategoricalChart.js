@@ -338,15 +338,21 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const ids = Object.keys(axisMap);
       const steps = {
         left: offset.left,
+        leftMirror: offset.left,
         right: width - offset.right,
+        rightMirror: width - offset.right,
         top: offset.top,
+        topMirror: offset.top,
         bottom: height - offset.bottom,
+        bottomMirror: height - offset.bottom,
       };
 
       return ids.reduce((result, id) => {
         const axis = axisMap[id];
-        const { orientation, domain, padding = {} } = axis;
-        let range, x, y;
+        const { orientation, domain, padding = {}, mirror } = axis;
+        const offsetKey = `${orientation}${mirror ? 'Mirror' : ''}`;
+
+        let range, x, y, needSpace;
 
         if (axisType === 'xAxis') {
           range = [
@@ -368,10 +374,12 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         const ticks = getTicksOfScale(scale, axis);
 
         if (axisType === 'xAxis') {
+          needSpace = (orientation === 'top' && !mirror) || (orientation === 'bottom' && mirror);
           x = offset.left;
-          y = orientation === 'top' ? steps[orientation] - axis.height : steps[orientation];
+          y = steps[offsetKey] - needSpace * axis.height;
         } else {
-          x = orientation === 'left' ? steps[orientation] - axis.width : steps[orientation];
+          needSpace = (orientation === 'left' && !mirror) || (orientation === 'right' && mirror);
+          x = steps[offsetKey] - needSpace * axis.width;
           y = offset.top;
         }
 
@@ -382,11 +390,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           width: axisType === 'xAxis' ? offset.width : axis.width,
           height: axisType === 'yAxis' ? offset.height : axis.height,
         };
-
         if (!axis.hide && axisType === 'xAxis') {
-          steps[orientation] += (orientation === 'top' ? -1 : 1) * finalAxis.height;
+          steps[offsetKey] += (needSpace ? -1 : 1) * finalAxis.height;
         } else if (!axis.hide) {
-          steps[orientation] += (orientation === 'left' ? -1 : 1) * finalAxis.width;
+          steps[offsetKey] += (needSpace ? -1 : 1) * finalAxis.width;
         }
 
         return { ...result, [id]: finalAxis };

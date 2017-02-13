@@ -234,26 +234,26 @@ class CartesianAxis extends Component {
     switch (orientation) {
       case 'top':
         x1 = x2 = data.coordinate;
-        y1 = ty = y + height - sign * finalTickSize;
-        y2 = y + height;
+        y2 = y + (!mirror) * height;
+        y1 = ty = y2 - sign * finalTickSize;
         tx = tickCoord;
         break;
       case 'left':
         y1 = y2 = data.coordinate;
-        x1 = tx = x + width - sign * finalTickSize;
-        x2 = x + width;
+        x2 = x + (!mirror) * width;
+        x1 = tx = x2 - sign * finalTickSize;
         ty = tickCoord;
         break;
       case 'right':
         y1 = y2 = data.coordinate;
-        x1 = tx = x + sign * finalTickSize;
-        x2 = x;
+        x2 = x + mirror * width;
+        x1 = tx = x2 + sign * finalTickSize;
         ty = tickCoord;
         break;
       default:
         x1 = x2 = data.coordinate;
-        y1 = ty = y + sign * finalTickSize;
-        y2 = y;
+        y2 = y + mirror * height;
+        y1 = ty = y2 + sign * finalTickSize;
         tx = tickCoord;
         break;
     }
@@ -316,26 +316,31 @@ class CartesianAxis extends Component {
   }
 
   renderAxisLine() {
-    const { x, y, width, height, orientation, axisLine } = this.props;
+    const { x, y, width, height, orientation, axisLine, mirror } = this.props;
     let props = {
       ...getPresentationAttributes(this.props),
       fill: 'none',
       ...getPresentationAttributes(axisLine),
     };
 
-    switch (orientation) {
-      case 'top':
-        props = { ...props, x1: x, y1: y + height, x2: x + width, y2: y + height };
-        break;
-      case 'left':
-        props = { ...props, x1: x + width, y1: y, x2: x + width, y2: y + height };
-        break;
-      case 'right':
-        props = { ...props, x1: x, y1: y, x2: x, y2: y + height };
-        break;
-      default:
-        props = { ...props, x1: x, y1: y, x2: x + width, y2: y };
-        break;
+    if (orientation === 'top' || orientation === 'bottom') {
+      const needHeight = (orientation === 'top' && !mirror) || (orientation === 'bottom' && mirror);
+      props = {
+        ...props,
+        x1: x,
+        y1: x + needHeight * height,
+        x2: x + width,
+        y2: x + needHeight * height,
+      };
+    } else {
+      const needWidth = (orientation === 'left' && !mirror) || (orientation === 'right' && mirror);
+      props = {
+        ...props,
+        x1: x + needWidth * width,
+        y1: y,
+        x2: x + needWidth * width,
+        y2: y + height,
+      };
     }
 
     return <line className="recharts-cartesian-axis-line" {...props} />;
