@@ -29,6 +29,10 @@ class Legend extends Component {
     width: PropTypes.number,
     height: PropTypes.number,
     iconSize: PropTypes.number,
+    iconType: PropTypes.oneOf([
+      'line', 'square', 'rect', 'circle', 'cross', 'diamond',
+      'star', 'triangle', 'wye',
+    ]),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     align: PropTypes.oneOf(['center', 'left', 'right']),
     verticalAlign: PropTypes.oneOf(['top', 'bottom', 'middle']),

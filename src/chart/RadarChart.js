@@ -361,7 +361,7 @@ class RadarChart extends Component {
 
         return {
           dataKey,
-          type: legendType || 'square',
+          type: legendItem.props.iconType || legendType || 'square',
           color: child.props.stroke || child.props.fill,
           value: name || dataKey,
           payload: child.props,
