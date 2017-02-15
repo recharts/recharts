@@ -40,9 +40,6 @@ class Bar extends Component {
     maxBarSize: PropTypes.number,
 
     shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
-    label: PropTypes.oneOfType([
-      PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element,
-    ]),
     data: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -162,76 +159,6 @@ class Bar extends Component {
     });
   }
 
-  renderLabelItem(option, props, value) {
-    let labelItem = null;
-
-    if (React.isValidElement(option)) {
-      labelItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
-      labelItem = option(props);
-    } else {
-      labelItem = (
-        <Text
-          {...props}
-          key={props.key}
-          className="recharts-bar-label"
-        >
-          {_.isArray(value) ? value[1] : value}
-        </Text>
-      );
-    }
-
-    return labelItem;
-  }
-
-  renderLabels() {
-    const { isAnimationActive } = this.props;
-
-    if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
-
-    const { data, label, layout } = this.props;
-    const barProps = getPresentationAttributes(this.props);
-    const customLabelProps = getPresentationAttributes(label);
-
-    const labels = data.map((entry, i) => {
-      let textAnchor = 'middle';
-      let dominantBaseline = 'central';
-      let x = 0;
-      let y = 0;
-
-      if (layout === 'vertical') {
-        textAnchor = entry.width < 0 ? 'end' : 'start';
-        x = entry.x + entry.width + (entry.width < 0 ? -1 : 1) * 5;
-        y = entry.y + entry.height / 2;
-      } else {
-        dominantBaseline = entry.height < 0 ? 'hanging' : 'inherit';
-        x = entry.x + entry.width / 2;
-        y = entry.y - (entry.height < 0 ? -1 : 1) * 5;
-      }
-
-      const labelProps = {
-        dominantBaseline,
-        textAnchor,
-        ...barProps,
-        ...entry,
-        ...customLabelProps,
-        x,
-        y,
-        index: i,
-        key: `label-${i}`,
-        payload: entry.payload,
-      };
-
-      let labelValue = entry.value;
-      if (label === true && entry.value && labelProps.label) {
-        labelValue = labelProps.label;
-      }
-      return this.renderLabelItem(label, labelProps, labelValue);
-    });
-
-    return <Layer className="recharts-bar-labels">{labels}</Layer>;
-  }
-
   renderErrorBar() {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
@@ -286,11 +213,6 @@ class Bar extends Component {
         >
           {this.renderRectangles()}
         </Layer>
-        {label && (
-          <Layer className="recharts-bar-rectangle-labels">
-            {this.renderLabels()}
-          </Layer>
-        )}
         {this.renderErrorBar()}
         {(!isAnimationActive || isAnimationFinished) &&
           LabelList.renderCallByParent(this.props, data)}

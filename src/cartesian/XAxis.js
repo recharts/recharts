@@ -52,9 +52,6 @@ class XAxis extends Component {
         'threshold']),
       PropTypes.func,
     ]),
-    label: PropTypes.oneOfType([
-      PropTypes.number, PropTypes.string, PropTypes.func, PropTypes.element,
-    ]),
     tick: PropTypes.oneOfType([
       PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element,
     ]),

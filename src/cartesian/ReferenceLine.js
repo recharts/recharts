@@ -45,10 +45,6 @@ class ReferenceLine extends Component {
       height: PropTypes.number,
     }),
 
-    label: PropTypes.oneOfType([
-      PropTypes.number, PropTypes.string, PropTypes.element, PropTypes.func,
-    ]),
-
     xAxis: PropTypes.object,
     yAxis: PropTypes.object,
 
@@ -107,56 +103,6 @@ class ReferenceLine extends Component {
     return null;
   }
 
-  getLabelProps(isX, isY) {
-    const { xAxis, yAxis, labelPosition } = this.props;
-
-    if (isY) {
-      const axis = yAxis;
-
-      if (axis.orientation === 'left' && labelPosition === 'end') {
-        return { dx: 6, dy: 6, textAnchor: 'start' };
-      }
-      if (axis.orientation === 'right' && labelPosition === 'start') {
-        return { dx: 6, dy: 6, textAnchor: 'start' };
-      }
-      return { dx: -6, dy: 6, textAnchor: 'end' };
-    } else if (isX) {
-      const axis = xAxis;
-
-      if (axis.orientation === 'top') {
-        return { dy: 6, textAnchor: 'middle' };
-      }
-      return { dy: -6, textAnchor: 'middle' };
-    }
-
-    return null;
-  }
-
-  renderLabel(isX, isY, end) {
-    const { label, stroke } = this.props;
-    const props = {
-      ...getPresentationAttributes(label),
-      stroke: 'none',
-      fill: stroke,
-      ...end,
-      ...this.getLabelProps(isX, isY),
-    };
-
-    if (React.isValidElement(label)) {
-      return React.cloneElement(label, props);
-    } else if (_.isFunction(label)) {
-      return label(props);
-    } else if (isNumOrStr(label)) {
-      return (
-        <g className="recharts-reference-line-label">
-          <Text {...props}>{label}</Text>
-        </g>
-      );
-    }
-
-    return null;
-  }
-
   render() {
     const { x, y, labelPosition, shape } = this.props;
     const isX = isNumOrStr(x);
@@ -181,7 +127,6 @@ class ReferenceLine extends Component {
     return (
       <Layer className="recharts-reference-line">
         {renderLine(shape, props)}
-        {this.renderLabel(isX, isY, (labelPosition === 'start' ? start : end))}
         {Label.renderCallByParent(this.props, {
           x: Math.min(props.x1, props.x2),
           y: Math.min(props.y1, props.y2),
