@@ -2,7 +2,7 @@ import React from 'react';
 import { changeNumberOfData } from './utils';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, Brush, Legend,
   ReferenceArea, ReferenceLine, ReferenceDot, ResponsiveContainer,
-  LabelList } from 'recharts';
+  LabelList, Label } from 'recharts';
 
 const data = [
   { name: 'Page A', uv: 4000, pv: 2400, amt: 2400, time: 1 },
@@ -77,12 +77,6 @@ const renderCustomizedActiveDot = (props) => {
   return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke} key={`dot-${dataKey}`}/>;
 };
 
-const renderLabel = (props) => {
-  const { x, y, textAnchor, value, index } = props;
-
-  return <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={`label-${index}`}>{value[1]}</text>
-};
-
 const RenderRect = (props) => {
   return <rect x={20} y={20} width={100} height={20} stroke="#000"/>;
 };
@@ -128,7 +122,9 @@ export default React.createClass({
             margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
             syncId="test"
           >
-            <XAxis dataKey="time" type="number" label="province"/>
+            <XAxis dataKey="time" type="number">
+              <Label position="insideTopRight" offset={-30}>province</Label>
+            </XAxis>
             <YAxis />
             <Tooltip />
             <Area
@@ -138,9 +134,10 @@ export default React.createClass({
               stroke="#ff7300"
               fill="#ff7300"
               dot
-              label={renderLabel}
               activeDot={renderCustomizedActiveDot}
-            />
+            >
+              <LabelList position="top" />
+            </Area>
             <Area
               stackId="0"
               type="monotone"
@@ -181,10 +178,11 @@ export default React.createClass({
               dataKey="uv"
               stroke="#ff7300"
               fill="#ff7300"
-              label={renderLabel}
               dot
               activeDot={renderCustomizedActiveDot}
-            />
+            >
+              <LabelList position="top" />
+            </Area>
             <Area stackId="0"
               type="monotone"
               dataKey="pv"
@@ -205,7 +203,9 @@ export default React.createClass({
             margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
             stackOffset="silhouette"
           >
-            <XAxis dataKey="name" label="province" />
+            <XAxis dataKey="name">
+              <Label position="insideBottom">province</Label>
+            </XAxis>
             <YAxis />
             <Tooltip />
             <Area stackId="0"
@@ -213,10 +213,11 @@ export default React.createClass({
               dataKey="uv"
               stroke="#ff7300"
               fill="#ff7300"
-              label={renderLabel}
               dot
               activeDot={renderCustomizedActiveDot}
-            />
+            >
+              <LabelList position="top" />
+            </Area>
             <Area stackId="0"
               type="monotone"
               dataKey="pv"
@@ -247,14 +248,20 @@ export default React.createClass({
             data={data}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
-            <YAxis label="uv" type="number" yAxisId={0} stroke="#ff7300" />
-            <YAxis label="pv" type="number" orientation="right" yAxisId={1} stroke="#387908" />
-            <YAxis label="amt"
+            <YAxis type="number" yAxisId={0} stroke="#ff7300">
+              <Label position="top" offset={10}>uv</Label>
+            </YAxis>
+            <YAxis type="number" orientation="right" yAxisId={1} stroke="#387908">
+              <Label position="top" offset={10}>pv</Label>
+            </YAxis>
+            <YAxis
               type="number"
               orientation="right"
               yAxisId={2}
               stroke="#38abc8"
-            />
+            >
+              <Label position="top" offset={10}>amt</Label>
+            </YAxis>
             <XAxis dataKey="name" interval={0}/>
             <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" strokeWidth={2} yAxisId={0} />
             <Area dataKey="pv" stroke="#387908" fill="#387908" strokeWidth={2} yAxisId={1} />
@@ -322,7 +329,9 @@ export default React.createClass({
                 <stop offset="95%" stopColor="rgba(0, 136, 254, 0)" />
               </linearGradient>
             </defs>
-            <XAxis dataKey="name" label="province" />
+            <XAxis dataKey="name">
+              <Label position="insideBottom" value="province" />
+            </XAxis>
             <YAxis />
             <Tooltip />
             <Area

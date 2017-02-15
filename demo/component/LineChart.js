@@ -142,7 +142,6 @@ export default React.createClass({
               dataKey="uv"
               stroke="#ff7300"
               dot={renderSpecialDot}
-              label={renderLabel}
               strokeOpacity={opacity}
               strokeDasharray="3 3"
             >
