@@ -380,26 +380,26 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
   it('should only render Line once when the mouse enters and moves', () => {
     const wrapper = mount(chart);
 
-    spies.forEach(el => expect(el.callCount).to.equal(2));
-    expect(axisSpy.callCount).to.equal(4);
+    spies.forEach(el => expect(el.callCount).to.equal(1));
+    expect(axisSpy.callCount).to.equal(2);
 
     wrapper.simulate('mouseEnter', { pageX: 30, pageY: 200 });
     wrapper.simulate('mouseMove', { pageX: 200, pageY: 200 });
     wrapper.simulate('mouseLeave');
 
-    spies.forEach(el => expect(el.callCount).to.equal(2));
-    expect(axisSpy.callCount).to.equal(4);
+    spies.forEach(el => expect(el.callCount).to.equal(1));
+    expect(axisSpy.callCount).to.equal(2);
   });
 
   // protect against the future where someone might mess up our clean rendering
   it('should only render Line once when the brush moves but doesn\'t change start/end indices', () => {
     const wrapper = mount(chart);
 
-    spies.forEach(el => expect(el.callCount).to.equal(2));
-    expect(axisSpy.callCount).to.equal(4);
+    spies.forEach(el => expect(el.callCount).to.equal(1));
+    expect(axisSpy.callCount).to.equal(2);
     wrapper.instance().handleBrushChange({ startIndex: 0, endIndex: data.length - 1 });
-    spies.forEach(el => expect(el.callCount).to.equal(2));
-    expect(axisSpy.callCount).to.equal(4);
+    spies.forEach(el => expect(el.callCount).to.equal(1));
+    expect(axisSpy.callCount).to.equal(2);
   });
 
 });
