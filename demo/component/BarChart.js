@@ -112,7 +112,6 @@ const RenderLabel = (props) => {
 
   return null;
 };
-
 const CustomTick = function() {
   const { payload, x, y } = this.props;
 
@@ -283,7 +282,8 @@ export default class Demo extends Component {
             <Legend />
             <Tooltip />
             <CartesianGrid vertical={false}/>
-            <Bar yAxisId="a" dataKey="uv" label={<RenderLabel />} onAnimationStart={this.handleBarAnimationStart} onAnimationEnd={this.handleBarAnimationEnd} >
+            <Bar yAxisId="a" dataKey="uv" onAnimationStart={this.handleBarAnimationStart} onAnimationEnd={this.handleBarAnimationEnd} >
+              <LabelList fill="#000" angle={-45} />
               {
                 data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
@@ -374,9 +374,13 @@ export default class Demo extends Component {
             <YAxis />
             <Tooltip />
             <CartesianGrid vertical={false}/>
-            <Bar stackId="0" dataKey="uv" fill="#ff7300" label={RenderLabel} />
+            <Bar stackId="0" dataKey="uv" fill="#ff7300">
+              <LabelList />
+            </Bar>
             <Bar stackId="0" dataKey="pv" fill="#387908" />
-            <Bar dataKey="amt" fill="#387908" label={RenderLabel}/>
+            <Bar dataKey="amt" fill="#387908">
+              <LabelList />
+            </Bar>
             <Legend layout="vertical" />
           </BarChart>
         </div>

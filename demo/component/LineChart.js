@@ -396,7 +396,6 @@ export default class Demo extends Component {
               dataKey="uv"
               stroke="#ff7300"
               dot={renderSpecialDot}
-              label={renderLabel}
               strokeOpacity={opacity}
               strokeDasharray="3 3"
             >
