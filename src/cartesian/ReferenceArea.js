@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
-import Text from '../component/Text';
 import Label from '../component/Label';
 import { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';

@@ -13,7 +13,7 @@ import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
-import { uniqueId, mathSign } from '../util/DataUtils';
+import { mathSign } from '../util/DataUtils';
 import LabelList from '../component/LabelList';
 
 const RADIAN = Math.PI / 180;
@@ -249,7 +249,7 @@ class RadialBar extends Component {
   }
 
   render() {
-    const { data, className, background, label, isAnimationActive } = this.props;
+    const { data, className, background, isAnimationActive } = this.props;
 
     if (!data || !data.length) { return null; }
 
