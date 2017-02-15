@@ -1,3 +1,17 @@
+## 0.20.7 (Feb 15, 2017)
+
+### fix
+
+- Fix stack chart when only have one stacked element
+- Fix the offset when the boundary box update
+- Fix position of XAxis in ScatterChart when the orientation is right
+- Use DataUtils.uniqueId to replace lodash.uniqueId
+
+### feat
+
+- Add props `mirror` in XAxis and YAxis, support mirror ticks
+- Add props iconType to the props of Legend which can specify the icon type of legend
+
 ## 0.20.6 (Feb 08, 2017)
 
 ### fix
