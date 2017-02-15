@@ -61,12 +61,6 @@ class ScatterChart extends Component {
     isTooltipActive: false,
     activeItem: null,
   };
-
-  componentDidMount() {
-    if (this.legendInstance) {
-      this.forceUpdate();
-    }
-  }
   /**
    * Compose the data of each group
    * @param  {Object} item        An instance of Scatter
@@ -280,6 +274,12 @@ class ScatterChart extends Component {
 
     return content;
   }
+
+  handleLegendBBoxUpdate = (box) => {
+    if (box && this.legendInstance) {
+      this.forceUpdate();
+    }
+  };
   /**
    * The handler of mouse entering a scatter
    * @param {Object} el The active scatter
@@ -390,6 +390,7 @@ class ScatterChart extends Component {
       chartHeight: height,
       margin,
       ref: (legend) => { this.legendInstance = legend; },
+      onBBoxUpdate: this.handleLegendBBoxUpdate,
     });
   }
 
