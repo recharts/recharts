@@ -147,14 +147,20 @@ class Legend extends Component {
           boxWidth: box.width,
           boxHeight: box.height,
         }, () => {
-          onBBoxUpdate(box);
+          if (onBBoxUpdate) {
+            onBBoxUpdate(box);
+          }
         });
       }
     } else if (boxWidth !== -1 || boxHeight !== -1) {
       this.setState({
         boxWidth: -1,
         boxHeight: -1,
-      }, () => { onBBoxUpdate(null); });
+      }, () => {
+        if (onBBoxUpdate) {
+          onBBoxUpdate(null);
+        }
+      });
     }
   }
 
