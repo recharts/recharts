@@ -192,7 +192,6 @@ class Bar extends Component {
   render() {
     const { hide, data, className, xAxis, yAxis, left, top,
       width, height, isAnimationActive } = this.props;
-
     if (hide || !data || !data.length) { return null; }
 
     const { isAnimationFinished } = this.state;
