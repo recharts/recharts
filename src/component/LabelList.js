@@ -3,7 +3,6 @@ import _ from 'lodash';
 import Label from './Label';
 import Layer from '../container/Layer';
 import { getPresentationAttributes, findAllByType } from '../util/ReactUtils';
-import { isNumber, isPercent, getPercentValue } from '../util/DataUtils';
 
 const propTypes = {
   data: PropTypes.arrayOf(PropTypes.object),

@@ -5,7 +5,6 @@ import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
-import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 import Label from '../component/Label';
@@ -55,7 +54,6 @@ class ReferenceLine extends Component {
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
-    labelPosition: PropTypes.oneOf(['start', 'end']),
     shape: PropTypes.func,
   };
 
@@ -68,7 +66,6 @@ class ReferenceLine extends Component {
     stroke: '#ccc',
     fillOpacity: 1,
     strokeWidth: 1,
-    labelPosition: 'end',
   };
 
   getEndPoints(isX, isY) {
@@ -103,7 +100,7 @@ class ReferenceLine extends Component {
   }
 
   render() {
-    const { x, y, labelPosition, shape } = this.props;
+    const { x, y, shape } = this.props;
     const isX = isNumOrStr(x);
     const isY = isNumOrStr(y);
 

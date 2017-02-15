@@ -8,7 +8,6 @@ import _ from 'lodash';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
-import Text from '../component/Text';
 import LabelList from '../component/LabelList';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
@@ -266,7 +265,7 @@ class Area extends Component {
   }
 
   render() {
-    const { dot, label, points, className, top, left, xAxis, yAxis, width,
+    const { dot, points, className, top, left, xAxis, yAxis, width,
       height, isAnimationActive } = this.props;
 
     if (!points || !points.length) { return null; }

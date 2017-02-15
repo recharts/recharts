@@ -6,7 +6,6 @@ import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Dot from '../shape/Dot';
-import Text from '../component/Text';
 import Label from '../component/Label';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';

@@ -10,7 +10,7 @@ import Text from '../component/Text';
 import Label from '../component/Label';
 import { isSsr, PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
-import { isNumber, isNumOrStr } from '../util/DataUtils';
+import { isNumber } from '../util/DataUtils';
 
 class CartesianAxis extends Component {
 
