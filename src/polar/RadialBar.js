@@ -248,49 +248,6 @@ class RadialBar extends Component {
     });
   }
 
-  renderLabelItem(option, props, value) {
-    let labelItem;
-
-    if (React.isValidElement(option)) {
-      labelItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
-      labelItem = option(props);
-    } else {
-      const id = uniqueId('recharts-defs-');
-      const filteredProps = getPresentationAttributes(props);
-      const path = this.getLabelPathArc(props, value, filteredProps);
-
-      labelItem = (
-        <text {...filteredProps} key={props.key} className="recharts-radial-bar-label">
-          <defs><path id={id} d={path} /></defs>
-          <textPath xlinkHref={`#${id}`}>{value}</textPath>
-        </text>
-      );
-    }
-
-    return labelItem;
-  }
-
-  renderLabels(sectors) {
-    const { isAnimationActive } = this.props;
-    if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
-
-    const { label } = this.props;
-
-    return sectors.map((entry, i) => {
-      const props = {
-        fontSize: 10,
-        ...entry,
-        ...getPresentationAttributes(label),
-        index: i,
-        key: `label-${i}`,
-      };
-
-      return this.renderLabelItem(label, props, entry.value);
-    });
-  }
-
-
   render() {
     const { data, className, background, label, isAnimationActive } = this.props;
 
@@ -314,13 +271,6 @@ class RadialBar extends Component {
           {this.renderSectors(sectors)}
         </Layer>
 
-        {
-          label && (
-            <Layer className="recharts-radial-bar-labels">
-              {this.renderLabels(sectors)}
-            </Layer>
-          )
-        }
         {(!isAnimationActive || isAnimationFinished) &&
           LabelList.renderCallByParent({
             ...this.props,

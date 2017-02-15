@@ -1,4 +1,4 @@
-import React, { PropTypes, cloneElement } from 'react';
+import React, { PropTypes, cloneElement, isValidElement } from 'react';
 import _ from 'lodash';
 import Text from './Text';
 import { getPresentationAttributes, findAllByType } from '../util/ReactUtils';
@@ -35,6 +35,7 @@ const propTypes = {
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
   ]),
+  content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
 };
 
 const defaultProps = {
@@ -42,15 +43,14 @@ const defaultProps = {
 };
 
 const getLabel = (props) => {
-  if (!_.isNil(props.children)) { return props.children; }
-
   const { value, formatter } = props;
+  const label = _.isNil(props.children) ? value : props.children;
 
   if (_.isFunction(formatter)) {
-    return formatter(value);
+    return formatter(label);
   }
 
-  return value;
+  return label;
 };
 
 const getDeltaAngle = (startAngle, endAngle) => {
@@ -272,9 +272,12 @@ const getAttrsOfCartesianLabel = (props) => {
 const isPolar = viewBox => isNumber(viewBox.cx);
 
 function Label(props) {
-  const { viewBox, position, value, children } = props;
+  const { viewBox, position, value, children, content } = props;
 
   if (!viewBox || (_.isNil(value) && _.isNil(children))) { return null; }
+
+  if (isValidElement(content)) { return cloneElement(content, props); }
+  if (isValidElement(content)) { return content(props); }
 
   const isPolarLabel = isPolar(viewBox);
   const label = getLabel(props);

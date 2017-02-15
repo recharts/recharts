@@ -32,9 +32,6 @@ class CartesianAxis extends Component {
       width: PropTypes.number,
       height: PropTypes.number,
     }),
-    label: PropTypes.oneOfType([
-      PropTypes.number, PropTypes.string, PropTypes.func, PropTypes.element,
-    ]),
     tick: PropTypes.oneOfType([
       PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element,
     ]),
@@ -302,21 +299,6 @@ class CartesianAxis extends Component {
     return verticalAnchor;
   }
 
-  getLabelProps() {
-    const { x, y, width, height, orientation } = this.props;
-
-    switch (orientation) {
-      case 'left':
-        return { x: x + width, y: y - 6, textAnchor: 'middle' };
-      case 'right':
-        return { x, y: y - 6, textAnchor: 'middle' };
-      case 'top':
-        return { x: x + width + 6, y: y + height + 6, textAnchor: 'start' };
-      default:
-        return { x: x + width + 6, y: y + 6, textAnchor: 'start' };
-    }
-  }
-
   renderAxisLine() {
     const { x, y, width, height, orientation, axisLine, mirror } = this.props;
     let props = {
@@ -423,32 +405,6 @@ class CartesianAxis extends Component {
         {items}
       </g>
     );
-  }
-
-  renderLabel() {
-    const { label, stroke, orientation, viewBox } = this.props;
-    const presentation = getPresentationAttributes(this.props);
-
-    if (React.isValidElement(label)) {
-      return React.cloneElement(label, { ...presentation, orientation, viewBox });
-    } else if (_.isFunction(label)) {
-      return label(this.props);
-    } else if (isNumOrStr(label)) {
-      const props = {
-        ...presentation,
-        stroke: 'none',
-        fill: stroke,
-        ...this.getLabelProps(),
-      };
-
-      return (
-        <g className="recharts-cartesian-axis-label">
-          <Text {...props}>{label}</Text>
-        </g>
-      );
-    }
-
-    return null;
   }
 
   render() {

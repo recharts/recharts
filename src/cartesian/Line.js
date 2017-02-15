@@ -49,9 +49,6 @@ class Line extends Component {
     dot: PropTypes.oneOfType([
       PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
     ]),
-    label: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
-    ]),
 
     top: PropTypes.number,
     left: PropTypes.number,
@@ -185,55 +182,6 @@ class Line extends Component {
     this.setState({ isAnimationFinished: false });
     this.props.onAnimationStart();
   };
-
-  renderLabelItem(option, props, value) {
-    let labelItem;
-
-    if (React.isValidElement(option)) {
-      labelItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
-      labelItem = option(props);
-    } else {
-      labelItem = (
-        <Text
-          key={props.key}
-          {...props}
-          className="recharts-line-label"
-        >
-          {value}
-        </Text>
-      );
-    }
-
-    return labelItem;
-  }
-
-  renderLabels() {
-    const { isAnimationActive } = this.props;
-
-    if (isAnimationActive && !this.state.isAnimationFinished) {
-      return null;
-    }
-
-    const { points, label } = this.props;
-    const lineProps = getPresentationAttributes(this.props);
-    const customLabelProps = getPresentationAttributes(label);
-
-    const labels = points.map((entry, i) => {
-      const labelProps = {
-        textAnchor: 'middle',
-        ...entry,
-        ...lineProps,
-        ...customLabelProps,
-        index: i,
-        key: `label-${i}`,
-      };
-
-      return this.renderLabelItem(label, labelProps, entry.value);
-    });
-
-    return <Layer className="recharts-line-labels">{labels}</Layer>;
-  }
 
   renderErrorBar() {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
@@ -394,7 +342,6 @@ class Line extends Component {
         {!hasSinglePoint && this.renderCurve(needClip)}
         {this.renderErrorBar()}
         {(hasSinglePoint || dot) && this.renderDots()}
-        {label && this.renderLabels()}
         {(!isAnimationActive || isAnimationFinished) &&
           LabelList.renderCallByParent(this.props, points)}
       </Layer>

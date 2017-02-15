@@ -23,10 +23,6 @@ class ReferenceDot extends Component {
     ...EVENT_ATTRIBUTES,
     r: PropTypes.number,
 
-    label: PropTypes.oneOfType([
-      PropTypes.number, PropTypes.string, PropTypes.func, PropTypes.element,
-    ]),
-
     xAxis: PropTypes.shape({ scale: PropTypes.func }),
     yAxis: PropTypes.shape({ scale: PropTypes.func }),
 
@@ -64,33 +60,6 @@ class ReferenceDot extends Component {
     if (validateCoordinateInRange(result.cx, xScale) &&
       validateCoordinateInRange(result.cy, yScale)) {
       return result;
-    }
-
-    return null;
-  }
-
-  renderLabel(coordinate) {
-    const { label, stroke } = this.props;
-    const props = {
-      ...getPresentationAttributes(label),
-      stroke: 'none',
-      fill: stroke,
-      x: coordinate.cx,
-      y: coordinate.cy,
-      textAnchor: 'middle',
-      verticalAnchor: 'middle',
-    };
-
-    if (React.isValidElement(label)) {
-      return React.cloneElement(label, props);
-    } else if (_.isFunction(label)) {
-      return label(props);
-    } else if (isNumOrStr(label)) {
-      return (
-        <g className="recharts-reference-dot-label">
-          <Text {...props}>{label}</Text>
-        </g>
-      );
     }
 
     return null;
