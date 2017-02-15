@@ -280,6 +280,9 @@ function Label(props) {
   if (isValidElement(content)) { return cloneElement(content, props); }
   if (_.isFunction(content)) { return content(props); }
 
+  if (isValidElement(content)) { return cloneElement(content, props); }
+  if (isValidElement(content)) { return content(props); }
+
   const isPolarLabel = isPolar(viewBox);
   const label = getLabel(props);
   const attrs = getPresentationAttributes(props);
