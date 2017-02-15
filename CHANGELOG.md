@@ -1,3 +1,9 @@
+## 0.20.8 (Feb 15, 2017)
+
+### fix
+
+- Fix bug when onBBoxUpdate of Legend is null
+
 ## 0.20.7 (Feb 15, 2017)
 
 ### fix
