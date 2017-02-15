@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Text from '../component/Text';
+import Label from '../component/Label';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
@@ -31,9 +32,6 @@ class PolarRadiusAxis extends Component {
     })),
     orientation: PropTypes.oneOf(['left', 'right', 'middle']),
     axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
-    label: PropTypes.oneOfType([
-      PropTypes.number, PropTypes.string, PropTypes.element, PropTypes.func,
-    ]),
     tick: PropTypes.oneOfType([
       PropTypes.bool, PropTypes.object, PropTypes.element, PropTypes.func,
     ]),
@@ -94,6 +92,20 @@ class PolarRadiusAxis extends Component {
     }
 
     return textAnchor;
+  }
+
+  getViewBox() {
+    const { cx, cy, angle, ticks } = this.props;
+    const maxRadiusTick = _.maxBy(ticks, entry => (entry.radius || 0));
+    const minRadiusTick = _.minBy(ticks, entry => (entry.radius || 0));
+
+    return {
+      cx, cy,
+      startAngle: angle,
+      endAngle: angle,
+      innerRadius: minRadiusTick.radius || 0,
+      outerRadius: maxRadiusTick.radius || 0,
+    };
   }
 
   renderAxisLine() {
@@ -174,36 +186,6 @@ class PolarRadiusAxis extends Component {
     return <Layer className="recharts-polar-radius-axis-ticks">{items}</Layer>;
   }
 
-  renderLabel() {
-    const { label } = this.props;
-    const { ticks, angle, stroke, ...others } = this.props;
-    const maxRadiusTick = _.maxBy(ticks, entry => (entry.radius || 0));
-    const radius = maxRadiusTick.radius || 0;
-    const coord = this.getTickValueCoord({ radius: radius + 10 });
-    const props = {
-      ...others,
-      stroke: 'none',
-      fill: stroke,
-      ...coord,
-      textAnchor: 'middle',
-      transform: `rotate(${90 - angle}, ${coord.x}, ${coord.y})`,
-    };
-
-    if (React.isValidElement(label)) {
-      return React.cloneElement(label, props);
-    } else if (_.isFunction(label)) {
-      return label(props);
-    } else if (isNumOrStr(label)) {
-      return (
-        <Layer className="recharts-polar-radius-axis-label">
-          <Text {...props}>{label}</Text>
-        </Layer>
-      );
-    }
-
-    return null;
-  }
-
   render() {
     const { ticks, axisLine, tick } = this.props;
 
@@ -213,7 +195,7 @@ class PolarRadiusAxis extends Component {
       <Layer className="recharts-polar-radius-axis">
         {axisLine && this.renderAxisLine()}
         {tick && this.renderTicks()}
-        {this.renderLabel()}
+        {Label.renderCallByParent(this.props, this.getViewBox())}
       </Layer>
     );
   }

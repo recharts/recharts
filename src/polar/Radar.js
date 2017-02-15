@@ -37,9 +37,6 @@ class Radar extends Component {
     dot: PropTypes.oneOfType([
       PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool,
     ]),
-    label: PropTypes.oneOfType([
-      PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool,
-    ]),
     legendType: PropTypes.oneOf([
       'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square',
       'star', 'triangle', 'wye',
@@ -57,7 +54,6 @@ class Radar extends Component {
 
   static defaultProps = {
     dot: false,
-    label: false,
     legendType: 'rect',
     isAnimationActive: !isSsr(),
     animationBegin: 0,
@@ -121,52 +117,6 @@ class Radar extends Component {
     );
   }
 
-  renderLabelItem(option, props, value) {
-    let labelItem;
-
-    if (React.isValidElement(option)) {
-      labelItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
-      labelItem = option(props);
-    } else {
-      labelItem = (
-        <Text
-          key={props.key}
-          {...props}
-          className="recharts-radar-label"
-        >
-          {value}
-        </Text>
-      );
-    }
-
-    return labelItem;
-  }
-
-  renderLabels() {
-    const { points, label } = this.props;
-    const baseProps = getPresentationAttributes(this.props);
-    const customLabelProps = getPresentationAttributes(label);
-
-    const labels = points.map((entry, i) => {
-      const labelProps = {
-        textAnchor: 'middle',
-        ...baseProps,
-        stroke: 'none',
-        fill: (baseProps && baseProps.stroke) || '#666',
-        ...customLabelProps,
-        ...entry,
-        index: i,
-        key: `label-${i}`,
-        payload: entry,
-      };
-
-      return this.renderLabelItem(label, labelProps, entry.value);
-    });
-
-    return <Layer className="recharts-radar-labels">{labels}</Layer>;
-  }
-
   renderDotItem(option, props) {
     let dotItem;
 
@@ -215,7 +165,6 @@ class Radar extends Component {
     return (
       <Layer className={layerClass}>
         {this.renderPolygon()}
-        {label && this.renderLabels()}
         {dot && this.renderDots()}
         {(!isAnimationActive || isAnimationFinished) &&
           LabelList.renderCallByParent(this.props, points)}

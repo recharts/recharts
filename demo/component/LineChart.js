@@ -130,8 +130,8 @@ export default React.createClass({
               onMouseEnter={this.handleLegendMouseEnter}
               onMouseLeave={this.handleLegendMouseLeave}
             />
-            <XAxis type="number" dataKey="pv">
-              <Label value="x轴" position="right" />
+            <XAxis type="number" dataKey="pv" height={40}>
+              <Label value="x轴" position="insideBottom" />
             </XAxis>
             <YAxis type="number">
               <Label value="y轴" position="insideLeft" angle={90} />
@@ -146,7 +146,7 @@ export default React.createClass({
               strokeOpacity={opacity}
               strokeDasharray="3 3"
             >
-              <LabelList />
+              <LabelList position="bottom" offset={10} />
             </Line>
             <Brush dataKey="name" height={30} />
           </LineChart>

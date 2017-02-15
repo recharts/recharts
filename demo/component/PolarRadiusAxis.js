@@ -1,5 +1,5 @@
 import React from 'react';
-import { Surface, PolarRadiusAxis } from 'recharts';
+import { Surface, PolarRadiusAxis, Label } from 'recharts';
 
 export default React.createClass({
   handleActive(data, index, e) {
@@ -21,11 +21,13 @@ export default React.createClass({
         <PolarRadiusAxis
           cx={500}
           cy={500}
-          angle={120}
+          angle={30}
           ticks={ticks}
           cursor="pointer"
           onMouseEnter={this.handleActive}
-        />
+        >
+          <Label position="outside" offset={20}>test</Label>
+        </PolarRadiusAxis>
       </Surface>
     );
   }
