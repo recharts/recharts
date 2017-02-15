@@ -12,7 +12,6 @@ import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES,
 import Polygon from '../shape/Polygon';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
-import Text from '../component/Text';
 import LabelList from '../component/LabelList';
 
 @pureRender
@@ -157,7 +156,7 @@ class Radar extends Component {
   }
 
   render() {
-    const { className, points, label, dot, isAnimationActive } = this.props;
+    const { className, points, dot, isAnimationActive } = this.props;
 
     if (!points || !points.length) { return null; }
 

@@ -10,7 +10,6 @@ import pureRender from '../util/PureRender';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
-import Text from '../component/Text';
 import LabelList from '../component/LabelList';
 import ErrorBar from './ErrorBar';
 import { getValueByDataKey, uniqueId } from '../util/DataUtils';
@@ -320,7 +319,7 @@ class Line extends Component {
   }
 
   render() {
-    const { dot, points, label, className, xAxis, yAxis, top, left, width,
+    const { dot, points, className, xAxis, yAxis, top, left, width,
       height, isAnimationActive } = this.props;
 
     if (!points || !points.length) { return null; }

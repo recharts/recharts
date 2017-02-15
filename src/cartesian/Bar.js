@@ -8,7 +8,6 @@ import Animate, { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
-import Text from '../component/Text';
 import ErrorBar from './ErrorBar';
 import LabelList from '../component/LabelList';
 import pureRender from '../util/PureRender';
@@ -189,7 +188,7 @@ class Bar extends Component {
   }
 
   render() {
-    const { data, className, label, xAxis, yAxis, left, top, width, height,
+    const { data, className, xAxis, yAxis, left, top, width, height,
       isAnimationActive } = this.props;
 
     if (!data || !data.length) { return null; }

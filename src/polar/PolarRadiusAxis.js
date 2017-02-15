@@ -11,7 +11,6 @@ import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-import { isNumOrStr } from '../util/DataUtils';
 
 @pureRender
 class PolarRadiusAxis extends Component {
