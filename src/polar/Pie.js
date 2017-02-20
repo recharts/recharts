@@ -25,6 +25,7 @@ class Pie extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
     ...EVENT_ATTRIBUTES,
+    id : PropTypes.string,
     className: PropTypes.string,
     animationId: PropTypes.number,
     cx: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -192,12 +193,12 @@ class Pie extends Component {
   };
 
   renderClipPath() {
-    const { cx, cy, maxRadius, startAngle, isAnimationActive, animationDuration,
+    const { id, cx, cy, maxRadius, startAngle, isAnimationActive, animationDuration,
       animationEasing, animationBegin, animationId } = this.props;
 
     return (
       <defs>
-        <clipPath id={this.id}>
+        <clipPath id={id || this.id}>
           <Animate
             easing={animationEasing}
             isActive={isAnimationActive}
