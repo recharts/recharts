@@ -8,6 +8,7 @@ import Layer from '../container/Layer';
 import Text from '../component/Text';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';
+import Rectangle from '../shape/Rectangle';
 
 @pureRender
 class ReferenceArea extends Component {
@@ -134,7 +135,7 @@ class ReferenceArea extends Component {
       rect = option(props);
     } else {
       rect = (
-        <rect
+        <Rectangle
           {...props}
           className="recharts-reference-area-rect"
         />
@@ -159,7 +160,7 @@ class ReferenceArea extends Component {
 
     return (
       <Layer className="recharts-reference-area">
-        {this.renderRect(shape, { ...getPresentationAttributes(this.props), ...rect })}
+        {this.renderRect(shape, { ...this.props, ...rect })}
         {this.renderLabel(rect)}
       </Layer>
     );
