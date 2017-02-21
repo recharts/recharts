@@ -7,7 +7,7 @@ import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
 import { getBandSizeOfAxis, getAnyElementOfObject, getValueByDataKey,
-  findPositionOfBar } from '../util/DataUtils';
+  findPositionOfBar, truncateByDomain } from '../util/DataUtils';
 import { getPresentationAttributes, findChildByType, findAllByType } from '../util/ReactUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Cell from '../component/Cell';
@@ -31,7 +31,13 @@ const getBaseValue = ({ props, xAxis, yAxis }) => {
   const domain = numberAxis.scale.domain();
 
   if (numberAxis.type === 'number') {
-    return Math.max(Math.min(domain[0], domain[1]), 0);
+    const min = Math.min(domain[0], domain[1]);
+    const max = Math.max(domain[0], domain[1]);
+
+    if (min <= 0 && max >= 0) { return 0; }
+    if (max < 0) { return max; }
+
+    return min;
   }
 
   return domain[0];
@@ -52,6 +58,8 @@ const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
   const { layout, dataStartIndex, dataEndIndex } = props;
   const { dataKey, children, minPointSize } = item.props;
   const pos = findPositionOfBar(barPosition, item);
+  const stackedDomain = stackedData && layout === 'horizontal' ?
+    yAxis.scale.domain() : xAxis.scale.domain();
 
   if (!pos) { return []; }
 
@@ -61,11 +69,12 @@ const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
 
   return data.map((entry, index) => {
     const value = stackedData ?
-      stackedData[dataStartIndex + index] :
+      truncateByDomain(stackedData[dataStartIndex + index], stackedDomain) :
       [baseValue, getValueByDataKey(entry, dataKey)];
     let x, y, width, height;
 
     if (layout === 'horizontal') {
+
       x = getCategoryAxisCoordinate({
         axis: xAxis,
         ticks: xTicks,
@@ -79,6 +88,7 @@ const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
       height = xAxis.orientation === 'top' ?
               yAxis.scale(value[1]) - yAxis.scale(value[0]) :
               yAxis.scale(value[0]) - yAxis.scale(value[1]);
+
       if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
         const delta = Math.sign(height || minPointSize) *
           (Math.abs(minPointSize) - Math.abs(height));
