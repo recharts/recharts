@@ -35,7 +35,6 @@ const getBaseValue = (props, xAxis, yAxis) => {
   const numberAxis = layout === 'horizontal' ? yAxis : xAxis;
   const domain = numberAxis.scale.domain();
 
-
   if (numberAxis.type === 'number') {
     const max = Math.max(domain[0], domain[1]);
     const min = Math.min(domain[0], domain[1]);

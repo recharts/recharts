@@ -235,3 +235,28 @@ export const findPositionOfBar = (barPosition, child) => {
 
   return null;
 };
+
+export const truncateByDomain = (value, domain) => {
+  if (!domain || domain.length !== 2 || !isNumber(domain[0]) ||
+    !isNumber(domain[1])) {
+    return value;
+  }
+
+  const min = Math.min(domain[0], domain[1]);
+  const max = Math.max(domain[0], domain[1]);
+
+  const result = [value[0], value[1]];
+  if (!isNumber(value[0]) || value[0] < min) {
+    result[0] = min;
+  }
+
+  if (!isNumber(value[1]) || value[1] > max) {
+    result[1] = max;
+  }
+
+  if (result[0] > max) { result[0] = max; }
+
+  if (result[1] < min) { result[1] = min; }
+
+  return result;
+};
