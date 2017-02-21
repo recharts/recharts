@@ -6,7 +6,8 @@ import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
+  filterEventAttributes } from '../util/ReactUtils';
 import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';
 
 const renderLine = (option, props) => {
@@ -168,6 +169,7 @@ class ReferenceLine extends Component {
     const [start, end] = endPoints;
     const props = {
       ...getPresentationAttributes(this.props),
+      ...filterEventAttributes(this.props),
       x1: start.x,
       y1: start.y,
       x2: end.x,
