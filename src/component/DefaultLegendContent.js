@@ -31,6 +31,7 @@ class DefaultLegendContent extends Component {
         'star', 'triangle', 'wye',
       ]),
     })),
+    formatter: PropTypes.func,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
@@ -95,7 +96,7 @@ class DefaultLegendContent extends Component {
    * @return {ReactElement} Items
    */
   renderItems() {
-    const { payload, iconSize, layout } = this.props;
+    const { payload, iconSize, layout, formatter } = this.props;
     const viewBox = { x: 0, y: 0, width: SIZE, height: SIZE };
     const itemStyle = {
       display: layout === 'horizontal' ? 'inline-block' : 'block',
@@ -103,19 +104,25 @@ class DefaultLegendContent extends Component {
     };
     const svgStyle = { display: 'inline-block', verticalAlign: 'middle', marginRight: 4 };
 
-    return payload.map((entry, i) => (
-      <li
-        className={`recharts-legend-item legend-item-${i}`}
-        style={itemStyle}
-        key={`legend-item-${i}`}
-        {...filterEventsOfChild(this.props, entry, i)}
-      >
-        <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
-          {this.renderIcon(entry, iconSize)}
-        </Surface>
-        <span className="recharts-legend-item-text">{entry.value}</span>
-      </li>
-    ));
+    return payload.map((entry, i) => {
+      const finalFormatter = entry.formatter || formatter;
+
+      return (
+        <li
+          className={`recharts-legend-item legend-item-${i}`}
+          style={itemStyle}
+          key={`legend-item-${i}`}
+          {...filterEventsOfChild(this.props, entry, i)}
+        >
+          <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
+            {this.renderIcon(entry, iconSize)}
+          </Surface>
+          <span className="recharts-legend-item-text">
+            {finalFormatter ? finalFormatter(entry.value, entry, i) : entry.value}
+          </span>
+        </li>
+      );
+    });
   }
 
   render() {

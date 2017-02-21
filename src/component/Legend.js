@@ -52,6 +52,7 @@ class Legend extends Component {
         'star', 'triangle', 'wye',
       ]),
     })),
+    formatter: PropTypes.func,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
