@@ -280,6 +280,13 @@ class TextDemo extends Component {
           </Text>
         </svg>
 
+        <h2>dx && dy</h2>
+        <svg width={this.state.resizeSvg ? this.state.width : 300} style={styles.svg}>
+          <Text x={50} y={50} dx={10} dy={-10}  width={this.state.width} verticalAnchor="start">
+            {this.state.exampleText}
+          </Text>
+        </svg>
+
       </div>
     );
   }
