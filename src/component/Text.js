@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { isNumOrStr } from '../util/DataUtils';
+import { isNumber, isNumOrStr } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
 import { getStringSize } from '../util/DOMUtils';
 
@@ -115,6 +115,8 @@ class Text extends Component {
 
   render() {
     const {
+      dx,
+      dy,
       textAnchor,
       verticalAnchor,
       scaleToFit,
@@ -125,9 +127,10 @@ class Text extends Component {
       ...textProps
     } = this.props;
     const { wordsByLines } = this.state;
-    const { x, y } = textProps;
 
-    if (!isNumOrStr(x) || !isNumOrStr(y)) { return null; }
+    if (!isNumOrStr(textProps.x) || !isNumOrStr(textProps.y)) { return null; }
+    const x = textProps.x + (isNumber(dx) ? dx : 0);
+    const y = textProps.y + (isNumber(dy) ? dy : 0);
 
     let startDy;
     switch (verticalAnchor) {
@@ -159,6 +162,8 @@ class Text extends Component {
     return (
       <text
         {...getPresentationAttributes(textProps)}
+        x={x}
+        y={y}
         className={classNames('recharts-text', className)}
         textAnchor={textAnchor}
       >
