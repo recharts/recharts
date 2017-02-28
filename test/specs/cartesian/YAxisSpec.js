@@ -28,6 +28,30 @@ describe('<YAxis />', () => {
     expect(wrapper.find(CartesianAxis).length).to.equal(3);
   });
 
+  it("Don't render empty tick", () => {
+    const areaData = [
+      { day: '05-01', weather: 'sunny' },
+      { day: '05-02' },
+      { day: '05-03', weather: 'cloudy' },
+      { day: '05-04', weather: 'rain' },
+    ];
+    const wrapper = render(
+      <AreaChart
+        width={400}
+        height={400}
+        data={areaData}
+      >
+        <XAxis dataKey="day" />
+        <YAxis type="category" />
+        <Area type="stepAfter" dataKey="weather" stroke="#0088FE" />
+      </AreaChart>
+    );
+
+    const yAxisTicks = wrapper.find('.recharts-y-axis .recharts-cartesian-axis-tick-value tspan');
+
+    expect(yAxisTicks.length).to.equal(3);
+  });
+
   it('Don\'t render anything', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
