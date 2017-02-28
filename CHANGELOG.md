@@ -1,3 +1,20 @@
+## 0.21.0 (Feb 28, 2017)
+
+### feat
+
+- Support band area and band bar
+- support customized horizontal line and vertical line in CartesianGrid
+- support customized events in ReferenceArea, ReferenceLine
+- add formatter in `Legend`
+
+### fix
+
+- Fix empty tick when category axis has nil values
+- fix the propTypes of fontSize
+- support props dx and dy in Text
+- fix bug of stacked bar when spcify domain of axis
+- fix the barSize of bars in <Bar /> when too many bars
+
 ## 0.20.8 (Feb 15, 2017)
 
 ### fix
