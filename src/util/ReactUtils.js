@@ -28,7 +28,7 @@ export const PRESENTATION_ATTRIBUTES = {
   floodOpacity: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   font: PropTypes.string,
   fontFamily: PropTypes.string,
-  fontSize: PropTypes.number,
+  fontSize: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   fontSizeAdjust: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   fontStretch: PropTypes.oneOf([
     'normal', 'wider', 'narrower', 'ultra-condensed', 'extra-condensed',
