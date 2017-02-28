@@ -181,12 +181,13 @@ export const calculateDomainOfTicks = (ticks, type) => {
 
 /**
  * Get domain of data by key
- * @param  {Array} data   The data displayed in the chart
- * @param  {String} key  The unique key of a group of data
- * @param  {String} type The type of axis
+ * @param  {Array}   data      The data displayed in the chart
+ * @param  {String}  key       The unique key of a group of data
+ * @param  {String}  type      The type of axis
+ * @param  {Boolean} filterNil Whether or not filter nil values
  * @return {Array} Domain of data
  */
-export const getDomainOfDataByKey = (data, key, type) => {
+export const getDomainOfDataByKey = (data, key, type, filterNil) => {
   if (type === 'number') {
     const domain = data
       .map(entry => getValueByDataKey(entry, key))
@@ -195,7 +196,11 @@ export const getDomainOfDataByKey = (data, key, type) => {
     return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
   }
 
-  return data.map((entry) => {
+  const validateData = filterNil ?
+    data.filter(entry => !_.isNil(getValueByDataKey(entry, key))) :
+    data;
+
+  return validateData.map((entry) => {
     const value = getValueByDataKey(entry, key);
 
     return isNumOrStr(value) ? value : '';
@@ -227,13 +232,16 @@ export const getDomainOfStackGroups = (stackGroups, startIndex, endIndex) => (
 
 /**
  * Get domain of data by the configuration of item element
- * @param  {Array} data   The data displayed in the chart
- * @param  {Array} items  The instances of item
- * @param  {String} type  The type of axis, number - Number Axis, category - Category Axis
+ * @param  {Array}   data      The data displayed in the chart
+ * @param  {Array}   items     The instances of item
+ * @param  {String}  type      The type of axis, number - Number Axis, category - Category Axis
+ * @param  {Boolean} filterNil Whether or not filter nil values
  * @return {Array}        Domain
  */
-export const getDomainOfItemsWithSameAxis = (data, items, type) => {
-  const domains = items.map(item => getDomainOfDataByKey(data, item.props.dataKey, type));
+export const getDomainOfItemsWithSameAxis = (data, items, type, filterNil) => {
+  const domains = items.map(item => getDomainOfDataByKey(
+      data, item.props.dataKey, type, filterNil
+  ));
 
   if (type === 'number') {
     // Calculate the domain of number axis

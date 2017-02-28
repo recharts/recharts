@@ -193,12 +193,15 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           if (dataKey) {
             domain = getDomainOfDataByKey(displayedData, dataKey, type);
 
-            if (type === 'category') {
+            if (type === 'category' && isCategorial) {
               const duplicate = hasDuplicate(domain);
               duplicateDomain = duplicate ? domain : null;
 
               // When category axis has duplicated text, serial numbers are used to generate scale
               domain = duplicate ? _.range(0, len) : domain;
+            } else if (type === 'category') {
+              // eliminate undefined or null or empty string
+              domain = domain.filter(entry => (entry !== '' && !_.isNil(entry)));
             }
 
             if (isCategorial && type === 'number') {
@@ -214,7 +217,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             );
           } else {
             domain = getDomainOfItemsWithSameAxis(
-              displayedData, graphicalItems.filter(entry => entry.props[axisIdKey] === axisId), type
+              displayedData,
+              graphicalItems.filter(entry => entry.props[axisIdKey] === axisId),
+              type,
+              true
             );
           }
           if (type === 'number') {
