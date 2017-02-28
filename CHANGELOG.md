@@ -1,3 +1,9 @@
+## 0.21.1 (Feb 28, 2017)
+
+### fix
+
+- Update recharts-scale to fix bug of ticks
+
 ## 0.21.0 (Feb 28, 2017)
 
 ### feat
