@@ -6,7 +6,7 @@ import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import { isSsr } from '../util/ReactUtils';
-import { isNumOrStr, isNumber } from '../util/DataUtils';
+import { isNumber } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
 
 const EPS = 1;
@@ -42,7 +42,7 @@ const propTypes = {
   label: PropTypes.any,
   payload: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.any,
-    value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    value: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.array]),
     unit: PropTypes.any,
   })),
 
@@ -127,7 +127,7 @@ class Tooltip extends Component {
   render() {
     const { payload, isAnimationActive, animationDuration, animationEasing } = this.props;
     const hasPayload = payload && payload.length &&
-      payload.filter(entry => isNumOrStr(entry.value)).length;
+      payload.filter(entry => !_.isNil(entry.value)).length;
     const { content, viewBox, coordinate, position, active, offset, wrapperStyle } = this.props;
     let outerStyle = {
       pointerEvents: 'none',

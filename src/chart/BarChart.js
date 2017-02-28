@@ -68,10 +68,17 @@ const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
   const cells = findAllByType(children, Cell);
 
   return data.map((entry, index) => {
-    const value = stackedData ?
-      truncateByDomain(stackedData[dataStartIndex + index], stackedDomain) :
-      [baseValue, getValueByDataKey(entry, dataKey)];
-    let x, y, width, height;
+    let value, x, y, width, height;
+
+    if (stackedData) {
+      value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
+    } else {
+      value = getValueByDataKey(entry, dataKey);
+
+      if (!_.isArray(value)) {
+        value = [baseValue, value];
+      }
+    }
 
     if (layout === 'horizontal') {
 

@@ -87,6 +87,18 @@ const data02 = [
   { name: '201511', uv: 3.27, pv: 6.74 },
 ];
 
+const rangeData = [
+  { day: '05-01', temperature: [-1, 10] },
+  { day: '05-02', temperature: [2, 15] },
+  { day: '05-03', temperature: [3, 12] },
+  { day: '05-04', temperature: [4, 12] },
+  { day: '05-05', temperature: [12, 16] },
+  { day: '05-06', temperature: [5, 16] },
+  { day: '05-07', temperature: [3, 12] },
+  { day: '05-08', temperature: [0, 8] },
+  { day: '05-09', temperature: [-3, 5] },
+];
+
 const RenderLabel = (props) => {
   const { x, y, textAnchor, key, value, index, ...others } = props;
 
@@ -365,6 +377,21 @@ export default React.createClass({
             <Bar stackId="0" dataKey="pv" fill="#387908" />
             <Bar dataKey="amt" fill="#387908" label={RenderLabel}/>
             <Legend layout="vertical" />
+          </BarChart>
+        </div>
+
+        <p>AreaChart of range values</p>
+        <div className="area-chart-wrapper">
+          <BarChart
+            width={400}
+            height={400}
+            data={rangeData}
+            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+          >
+            <XAxis dataKey="day" />
+            <YAxis />
+            <Bar dataKey="temperature" fill="#ff7300" />
+            <Tooltip />
           </BarChart>
         </div>
 

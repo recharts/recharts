@@ -67,11 +67,22 @@ const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, bandSize, dataKe
   const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
   const hasStack = stackedData && stackedData.length;
   const baseValue = getBaseValue(props, xAxis, yAxis);
+  let isRange = false;
 
   const points = data.map((entry, index) => {
-    const value = hasStack ?
-      stackedData[dataStartIndex + index] :
-      [baseValue, getValueByDataKey(entry, dataKey)];
+    let value;
+
+    if (hasStack) {
+      value = stackedData[dataStartIndex + index];
+    } else {
+      value = getValueByDataKey(entry, dataKey);
+
+      if (!_.isArray(value)) {
+        value = [baseValue, value];
+      } else {
+        isRange = true;
+      }
+    }
 
     if (layout === 'horizontal') {
       return {
@@ -91,14 +102,10 @@ const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, bandSize, dataKe
   });
 
   let baseLine;
-  if (hasStack) {
-    baseLine = stackedData.slice(dataStartIndex, dataEndIndex + 1).map((entry, index) => ({
-      x: layout === 'horizontal' ?
-          getCategoryAxisCoordinate({ axis: xAxis, ticks: xTicks, bandSize, entry, index }) :
-          xAxis.scale(entry[0]),
-      y: layout === 'horizontal' ?
-         yAxis.scale(entry[0]) :
-         getCategoryAxisCoordinate({ axis: yAxis, ticks: yTicks, bandSize, entry, index }),
+  if (hasStack || isRange) {
+    baseLine = points.map(entry => ({
+      x: layout === 'horizontal' ? entry.x : xAxis.scale(entry && entry.value[0]),
+      y: layout === 'horizontal' ? yAxis.scale(entry && entry.value[0]) : entry.y,
     }));
   } else if (layout === 'horizontal') {
     baseLine = yAxis.scale(baseValue);
@@ -106,7 +113,7 @@ const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, bandSize, dataKe
     baseLine = xAxis.scale(baseValue);
   }
 
-  return { points, baseLine, layout };
+  return { points, baseLine, layout, isRange };
 };
 
 @AnimationDecorator
@@ -188,7 +195,7 @@ export class AreaChart extends Component {
         from="scale(0)"
         to="scale(1)"
         duration={400}
-        key={`dot-${childIndex}`}
+        key={`dot-${childIndex}-${props.pointType}`}
         attributeName="transform"
       >
         <Layer style={{ transformOrigin: 'center center' }}>
@@ -218,8 +225,11 @@ export class AreaChart extends Component {
     const areaItems = items.reduce((result, child, i) => {
       const { dataKey, activeDot } = child.props;
       const currentComposedData = allComposedData[i];
+      const { isRange } = currentComposedData;
       const activePoint = currentComposedData.points &&
         currentComposedData.points[activeTooltipIndex];
+      const basePoint = isRange && currentComposedData.baseLine &&
+        currentComposedData.baseLine[activeTooltipIndex];
 
       if (hasDot && activeDot && activePoint) {
         const dotProps = {
@@ -231,9 +241,20 @@ export class AreaChart extends Component {
           strokeWidth: 2, stroke: '#fff',
           payload: activePoint.payload,
           value: activePoint.value,
+          pointType: 'activePoint',
           ...getPresentationAttributes(activeDot),
         };
+
         dotItems.push(this.renderActiveDot(activeDot, dotProps, i));
+
+        if (basePoint) {
+          dotItems.push(this.renderActiveDot(activeDot, {
+            ...dotProps,
+            cx: basePoint.x,
+            cy: basePoint.y,
+            pointType: 'basePoint',
+          }, i));
+        }
       }
 
       const area = React.cloneElement(child, {
