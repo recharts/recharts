@@ -51,12 +51,13 @@ class Area extends Component {
     label: PropTypes.oneOfType([
       PropTypes.func, PropTypes.element, PropTypes.object, PropTypes.bool,
     ]),
+
     // have curve configuration
-    curve: PropTypes.bool,
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     baseLine: PropTypes.oneOfType([
       PropTypes.number, PropTypes.array,
     ]),
+    isRange: PropTypes.bool,
     points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number,
@@ -84,9 +85,7 @@ class Area extends Component {
     points: [],
     dot: false,
     label: false,
-    curve: true,
     activeDot: true,
-
 
     isAnimationActive: !isSsr(),
     animationBegin: 0,
@@ -112,11 +111,11 @@ class Area extends Component {
   };
 
   renderCurve() {
-    const { layout, type, curve, points, connectNulls } = this.props;
+    const { layout, type, stroke, points, baseLine, connectNulls, isRange } = this.props;
 
     return (
       <g>
-        {curve && (
+        {stroke !== 'none' && (
           <Curve
             {...getPresentationAttributes(this.props)}
             className="recharts-area-curve"
@@ -125,6 +124,17 @@ class Area extends Component {
             connectNulls={connectNulls}
             fill="none"
             points={points}
+          />
+        )}
+        {stroke !== 'none' && isRange && (
+          <Curve
+            {...getPresentationAttributes(this.props)}
+            className="recharts-area-curve"
+            layout={layout}
+            type={type}
+            connectNulls={connectNulls}
+            fill="none"
+            points={baseLine}
           />
         )}
         <Curve

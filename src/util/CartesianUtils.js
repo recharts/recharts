@@ -188,23 +188,27 @@ export const calculateDomainOfTicks = (ticks, type) => {
  * @return {Array} Domain of data
  */
 export const getDomainOfDataByKey = (data, key, type, filterNil) => {
+  const flattenData = data.reduce((result, entry) => {
+    const value = getValueByDataKey(entry, key);
+
+    if (_.isArray(value)) {
+      return [...result, ...value];
+    }
+
+    return [...result, value];
+  }, []);
+
   if (type === 'number') {
-    const domain = data
-      .map(entry => getValueByDataKey(entry, key))
-      .filter(isNumber);
+    const domain = flattenData.filter(isNumber);
 
     return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
   }
 
   const validateData = filterNil ?
-    data.filter(entry => !_.isNil(getValueByDataKey(entry, key))) :
-    data;
+    flattenData.filter(entry => !_.isNil(entry)) :
+    flattenData;
 
-  return validateData.map((entry) => {
-    const value = getValueByDataKey(entry, key);
-
-    return isNumOrStr(value) ? value : '';
-  });
+  return validateData.map(entry => (isNumOrStr(entry) ? entry : ''));
 };
 
 const getDomainOfSingle = data => (
