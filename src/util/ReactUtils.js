@@ -288,6 +288,11 @@ const SVG_TAGS = ['a', 'altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',
   'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect', 'script',
   'set', 'stop', 'style', 'svg', 'switch', 'symbol', 'text', 'textPath', 'title',
   'tref', 'tspan', 'use', 'view', 'vkern'];
+
+const isSvgElement = child => (
+  child && child.type && _.isString(child.type) && SVG_TAGS.indexOf(child.type) >= 0
+);
+
 /**
  * Filter all the svg elements of children
  * @param  {Array} children The children of a react element
@@ -341,4 +346,26 @@ export const isChildrenEqual = (nextChildren, prevChildren) => {
   }
 
   return true;
+};
+
+
+export const renderByOrder = (children, renderMap) => {
+  const elements = [];
+  const record = {};
+
+  Children.forEach(children, (child) => {
+    if (child && isSvgElement(child)) {
+      elements.push(child);
+    } else if (child && renderMap[getDisplayName(child.type)]) {
+      const displayName = getDisplayName(child.type);
+      const { handler, once } = renderMap[displayName];
+
+      if ((once && !record[displayName]) || !once) {
+        elements.push(handler(child));
+        record[displayName] = true;
+      }
+    }
+  });
+
+  return elements;
 };
