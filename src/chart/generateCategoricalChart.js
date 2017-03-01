@@ -9,7 +9,8 @@ import Legend from '../component/Legend';
 
 import { warn } from '../util/LogUtils';
 import { findAllByType, findChildByType, filterSvgElements, getDisplayName,
-  getPresentationAttributes, validateWidthHeight, isChildrenEqual } from '../util/ReactUtils';
+  getPresentationAttributes, validateWidthHeight, isChildrenEqual,
+  renderByOrder } from '../util/ReactUtils';
 
 import CartesianAxis from '../cartesian/CartesianAxis';
 import CartesianGrid from '../cartesian/CartesianGrid';
@@ -40,7 +41,7 @@ const originCoordinate = { x: 0, y: 0 };
 
 const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
   class CategoricalChartWrapper extends Component {
-    static displayName = getDisplayName(ChartComponent);
+    static displayName = `${getDisplayName(ChartComponent)}Wrapper`;
 
     static propTypes = {
       ...ChartComponent.propTypes,
@@ -861,6 +862,17 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       };
     }
 
+    renderXAxes = () => {
+      const { xAxisMap } = this.state;
+
+      return this.renderAxes(xAxisMap, 'x-axis');
+    };
+
+    renderYAxes = () => {
+      const { yAxisMap } = this.state;
+
+      return this.renderAxes(yAxisMap, 'y-axis');
+    };
     /**
      * Draw axes
      * @param {Object} axisMap The configuration of all x-axes or y-axes
@@ -901,7 +913,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
      * Draw grid
      * @return {ReactElement} The instance of grid
      */
-    renderGrid() {
+    renderGrid = () => {
       const { xAxisMap, yAxisMap, offset } = this.state;
       const { children, width, height } = this.props;
       const gridItem = findChildByType(children, CartesianGrid);
@@ -925,7 +937,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         verticalCoordinatesGenerator: this.verticalCoordinatesGenerator,
         horizontalCoordinatesGenerator: this.horizontalCoordinatesGenerator,
       });
-    }
+    };
     /**
      * Draw legend
      * @return {ReactElement}            The instance of Legend
@@ -973,7 +985,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       });
     }
 
-    renderBrush() {
+    renderBrush = () => {
       const { children, margin, data } = this.props;
       const { offset, dataStartIndex, dataEndIndex, updateId } = this.state;
       const brushItem = findChildByType(children, Brush);
@@ -982,6 +994,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       // TODO: update brush when children update
       return React.cloneElement(brushItem, {
+        key: 'brush',
         onChange: combineEventHandlers(this.handleBrushChange, null, brushItem.props.onChange),
         data,
         x: offset.left,
@@ -991,34 +1004,27 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         endIndex: dataEndIndex,
         updateId: `brush-${updateId}`,
       });
+    };
 
-    }
-
-    renderReferenceElements(isFront, Compt) {
-      const { children } = this.props;
-      const elements = findAllByType(children, Compt);
-
-      if (!elements || !elements.length) { return null; }
-
+    renderReferenceElement = (element, index) => {
+      if (!element) { return null; }
       const { xAxisMap, yAxisMap, offset } = this.state;
-      const keyPrefix = `${getDisplayName(Compt)}-${isFront ? 'front' : 'back'}`;
+      const { xAxisId, yAxisId } = element.props;
 
-      return elements.filter(entry => (isFront === entry.props.isFront)).map((entry, i) => {
-        const { xAxisId, yAxisId } = entry.props;
-
-        return React.cloneElement(entry, {
-          key: `${keyPrefix}-${i}`,
-          xAxis: xAxisMap[xAxisId],
-          yAxis: yAxisMap[yAxisId],
-          viewBox: {
-            x: offset.left,
-            y: offset.top,
-            width: offset.width,
-            height: offset.height,
-          },
-        });
+      return React.cloneElement(element, {
+        key: `element-${index}`,
+        xAxis: xAxisMap[xAxisId],
+        yAxis: yAxisMap[yAxisId],
+        viewBox: {
+          x: offset.left,
+          y: offset.top,
+          width: offset.width,
+          height: offset.height,
+        },
       });
-    }
+    };
+
+    renderCompactChart = () => (<ChartComponent key="chart" {...this.props} {...this.state} />);
 
     renderChart() {
       const { children, width, height, ...others } = this.props;
@@ -1050,7 +1056,12 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { data } = this.props;
       if (!validateWidthHeight(this) || !data || !data.length) { return null; }
 
-      const { className, width, height, style, compact } = this.props;
+      const { children, className, width, height, style, compact, ...others } = this.props;
+
+      // The "compact" mode is mainly used as the panorama within Brush
+      if (compact) {
+        return this.renderCompactChart();
+      }
 
       const events = {
         onMouseEnter: this.handleMouseEnter,
@@ -1061,11 +1072,19 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         onMouseUp: this.handleMouseUp,
         onTouchMove: this.handleTouchMove,
       };
-
-      // The "compact" mode is mainly used as the panorama within Brush
-      if (compact) {
-        return this.renderChart();
-      }
+      const attrs = getPresentationAttributes(others);
+      const map = {
+        CartesianGrid: { handler: this.renderGrid, once: true },
+        ReferenceArea: { handler: this.renderReferenceElement },
+        ReferenceLine: { handler: this.renderReferenceElement },
+        ReferenceDot: { handler: this.renderReferenceElement },
+        XAxis: { handler: this.renderXAxes, once: true },
+        YAxis: { handler: this.renderYAxes, once: true },
+        Brush: { handler: this.renderBrush, once: true },
+        Bar: { handler: this.renderChart, once: true },
+        Line: { handler: this.renderChart, once: true },
+        Area: { handler: this.renderChart, once: true },
+      };
 
       return (
         <div
@@ -1074,7 +1093,11 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           {...events}
           ref={(node) => { this.container = node; }}
         >
-          {this.renderChart()}
+          <Surface {...attrs} width={width} height={height}>
+            {
+              renderByOrder(children, map)
+            }
+          </Surface>
           {this.renderLegend()}
           {this.renderTooltip()}
         </div>
