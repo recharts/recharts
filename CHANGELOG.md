@@ -1,3 +1,9 @@
+## 0.21.2(Mar 01, 2017)
+
+### fix
+
+- fix ticks for specified domain
+
 ## 0.21.1 (Feb 28, 2017)
 
 ### fix
