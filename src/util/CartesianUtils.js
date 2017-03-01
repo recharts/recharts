@@ -1,4 +1,4 @@
-import { getNiceTickValues, getTickValues } from 'recharts-scale';
+import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
 import {
   stack as shapeStack, stackOrderNone, stackOffsetExpand,
   stackOffsetNone, stackOffsetSilhouette, stackOffsetWiggle,
@@ -438,7 +438,7 @@ export const getTicksOfScale = (scale, opts) => {
     return { niceTicks: tickValues };
   } else if (tickCount && type === 'number') {
     const domain = scale.domain();
-    const tickValues = getTickValues(domain, tickCount, allowDecimals);
+    const tickValues = getTickValuesFixedDomain(domain, tickCount, allowDecimals);
 
     return { niceTicks: tickValues };
   }

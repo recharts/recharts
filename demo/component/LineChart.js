@@ -183,7 +183,7 @@ export default React.createClass({
         <p>LineChart with three y-axes</p>
         <div className='line-chart-wrapper' style={{ margin: 40 }}>
           <LineChart width={600} height={400} data={data}>
-            <YAxis type='number' yAxisId={0} ticks={[0, 250]}/>
+            <YAxis type='number' yAxisId={0} domain={[0, 1020]}/>
             <YAxis type='number' orientation='right' yAxisId={1}/>
             <YAxis type='number' orientation='right' yAxisId={2}/>
             <XAxis dataKey='name'/>
