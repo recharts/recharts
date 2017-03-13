@@ -7,7 +7,7 @@ import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Dot from '../shape/Dot';
 import Text from '../component/Text';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes, filterEventAttributes } from '../util/ReactUtils';
 import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';
 
 @pureRender
@@ -17,6 +17,7 @@ class ReferenceDot extends Component {
 
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
+    ...EVENT_ATTRIBUTES,
     r: PropTypes.number,
 
     label: PropTypes.oneOfType([
@@ -126,9 +127,15 @@ class ReferenceDot extends Component {
 
     const { shape } = this.props;
 
+    const dotProps = {
+      ...getPresentationAttributes(this.props),
+      ...filterEventAttributes(this.props),
+      ...coordinate,
+    };
+
     return (
       <Layer className="recharts-reference-dot">
-        {this.renderDot(shape, { ...getPresentationAttributes(this.props), ...coordinate })}
+        {this.renderDot(shape, dotProps)}
         {this.renderLabel(coordinate)}
       </Layer>
     );
