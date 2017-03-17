@@ -286,6 +286,7 @@ var BarChart = (_dec = composedDataDecorator({ getComposedData: getComposedData 
   dataStartIndex: PropTypes.number,
   dataEndIndex: PropTypes.number,
   data: PropTypes.array,
+  gridOnTop: PropTypes.bool,
   isTooltipActive: PropTypes.bool,
   activeTooltipIndex: PropTypes.number,
   xAxisMap: PropTypes.object,
@@ -302,7 +303,8 @@ var BarChart = (_dec = composedDataDecorator({ getComposedData: getComposedData 
   animationId: PropTypes.number
 }, _class2.defaultProps = {
   barCategoryGap: '10%',
-  barGap: 4
+  barGap: 4,
+  gridOnTop: true
 }, _temp)) || _class) || _class);
 
 

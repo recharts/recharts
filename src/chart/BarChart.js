@@ -147,6 +147,7 @@ class BarChart extends Component {
     dataStartIndex: PropTypes.number,
     dataEndIndex: PropTypes.number,
     data: PropTypes.array,
+    gridOnTop: PropTypes.bool,
     isTooltipActive: PropTypes.bool,
     activeTooltipIndex: PropTypes.number,
     xAxisMap: PropTypes.object,
@@ -169,6 +170,7 @@ class BarChart extends Component {
   static defaultProps = {
     barCategoryGap: '10%',
     barGap: 4,
+    gridOnTop: true,
   };
 
   renderCursor({ xAxisMap, yAxisMap, offset }) {

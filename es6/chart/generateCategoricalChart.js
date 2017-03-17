@@ -1176,6 +1176,8 @@ var generateCategoricalChart = function generateCategoricalChart(ChartComponent,
             style = _props7.style,
             others = _objectWithoutProperties(_props7, ['children', 'className', 'width', 'height', 'style']);
 
+        var _props$gridOnTop = this.props.gridOnTop,
+            gridOnTop = _props$gridOnTop === undefined ? true : _props$gridOnTop;
         var _state7 = this.state,
             xAxisMap = _state7.xAxisMap,
             yAxisMap = _state7.yAxisMap;
@@ -1205,7 +1207,7 @@ var generateCategoricalChart = function generateCategoricalChart(ChartComponent,
           React.createElement(
             Surface,
             _extends({}, attrs, { width: width, height: height }),
-            this.renderGrid(),
+            gridOnTop && this.renderGrid(),
             this.renderReferenceElements(false, ReferenceArea),
             this.renderReferenceElements(false, ReferenceLine),
             this.renderReferenceElements(false, ReferenceDot),
@@ -1216,7 +1218,8 @@ var generateCategoricalChart = function generateCategoricalChart(ChartComponent,
             this.renderReferenceElements(true, ReferenceLine),
             this.renderReferenceElements(true, ReferenceDot),
             this.renderBrush(),
-            filterSvgElements(children)
+            filterSvgElements(children),
+            !gridOnTop && this.renderGrid()
           ),
           this.renderLegend(),
           this.renderTooltip()
@@ -1230,6 +1233,7 @@ var generateCategoricalChart = function generateCategoricalChart(ChartComponent,
     width: PropTypes.number,
     height: PropTypes.number,
     data: PropTypes.arrayOf(PropTypes.object),
+    gridOnTop: PropTypes.bool,
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     stackOffset: PropTypes.oneOf(['sign', 'expand', 'none', 'wiggle', 'silhouette']),
     throttleDelay: PropTypes.number,
@@ -1248,6 +1252,7 @@ var generateCategoricalChart = function generateCategoricalChart(ChartComponent,
     onMouseMove: PropTypes.func
   }), _class.defaultProps = {
     layout: 'horizontal',
+    gridOnTop: true,
     stackOffset: 'none',
     margin: { top: 5, right: 5, bottom: 5, left: 5 }
   }, _temp);

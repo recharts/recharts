@@ -5404,6 +5404,8 @@ var generateCategoricalChart = function generateCategoricalChart(ChartComponent,
             style = _props7.style,
             others = _objectWithoutProperties(_props7, ['children', 'className', 'width', 'height', 'style']);
 
+        var _props$gridOnTop = this.props.gridOnTop,
+            gridOnTop = _props$gridOnTop === undefined ? true : _props$gridOnTop;
         var _state7 = this.state,
             xAxisMap = _state7.xAxisMap,
             yAxisMap = _state7.yAxisMap;
@@ -5433,7 +5435,7 @@ var generateCategoricalChart = function generateCategoricalChart(ChartComponent,
           __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(
             __WEBPACK_IMPORTED_MODULE_7__container_Surface__["a" /* default */],
             _extends({}, attrs, { width: width, height: height }),
-            this.renderGrid(),
+            gridOnTop && this.renderGrid(),
             this.renderReferenceElements(false, __WEBPACK_IMPORTED_MODULE_17__cartesian_ReferenceArea__["a" /* default */]),
             this.renderReferenceElements(false, __WEBPACK_IMPORTED_MODULE_15__cartesian_ReferenceLine__["a" /* default */]),
             this.renderReferenceElements(false, __WEBPACK_IMPORTED_MODULE_16__cartesian_ReferenceDot__["a" /* default */]),
@@ -5444,7 +5446,8 @@ var generateCategoricalChart = function generateCategoricalChart(ChartComponent,
             this.renderReferenceElements(true, __WEBPACK_IMPORTED_MODULE_15__cartesian_ReferenceLine__["a" /* default */]),
             this.renderReferenceElements(true, __WEBPACK_IMPORTED_MODULE_16__cartesian_ReferenceDot__["a" /* default */]),
             this.renderBrush(),
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__util_ReactUtils__["g" /* filterSvgElements */])(children)
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__util_ReactUtils__["g" /* filterSvgElements */])(children),
+            !gridOnTop && this.renderGrid()
           ),
           this.renderLegend(),
           this.renderTooltip()
@@ -5458,6 +5461,7 @@ var generateCategoricalChart = function generateCategoricalChart(ChartComponent,
     width: __WEBPACK_IMPORTED_MODULE_5_react__["PropTypes"].number,
     height: __WEBPACK_IMPORTED_MODULE_5_react__["PropTypes"].number,
     data: __WEBPACK_IMPORTED_MODULE_5_react__["PropTypes"].arrayOf(__WEBPACK_IMPORTED_MODULE_5_react__["PropTypes"].object),
+    gridOnTop: __WEBPACK_IMPORTED_MODULE_5_react__["PropTypes"].bool,
     layout: __WEBPACK_IMPORTED_MODULE_5_react__["PropTypes"].oneOf(['horizontal', 'vertical']),
     stackOffset: __WEBPACK_IMPORTED_MODULE_5_react__["PropTypes"].oneOf(['sign', 'expand', 'none', 'wiggle', 'silhouette']),
     throttleDelay: __WEBPACK_IMPORTED_MODULE_5_react__["PropTypes"].number,
@@ -5476,6 +5480,7 @@ var generateCategoricalChart = function generateCategoricalChart(ChartComponent,
     onMouseMove: __WEBPACK_IMPORTED_MODULE_5_react__["PropTypes"].func
   }), _class.defaultProps = {
     layout: 'horizontal',
+    gridOnTop: true,
     stackOffset: 'none',
     margin: { top: 5, right: 5, bottom: 5, left: 5 }
   }, _temp);
@@ -12880,6 +12885,7 @@ var BarChart = (_dec = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__util_
   dataStartIndex: __WEBPACK_IMPORTED_MODULE_2_react__["PropTypes"].number,
   dataEndIndex: __WEBPACK_IMPORTED_MODULE_2_react__["PropTypes"].number,
   data: __WEBPACK_IMPORTED_MODULE_2_react__["PropTypes"].array,
+  gridOnTop: __WEBPACK_IMPORTED_MODULE_2_react__["PropTypes"].bool,
   isTooltipActive: __WEBPACK_IMPORTED_MODULE_2_react__["PropTypes"].bool,
   activeTooltipIndex: __WEBPACK_IMPORTED_MODULE_2_react__["PropTypes"].number,
   xAxisMap: __WEBPACK_IMPORTED_MODULE_2_react__["PropTypes"].object,
@@ -12896,7 +12902,8 @@ var BarChart = (_dec = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__util_
   animationId: __WEBPACK_IMPORTED_MODULE_2_react__["PropTypes"].number
 }, _class2.defaultProps = {
   barCategoryGap: '10%',
-  barGap: 4
+  barGap: 4,
+  gridOnTop: true
 }, _temp)) || _class) || _class);
 
 

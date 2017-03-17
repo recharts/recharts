@@ -47,6 +47,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       width: PropTypes.number,
       height: PropTypes.number,
       data: PropTypes.arrayOf(PropTypes.object),
+      gridOnTop: PropTypes.bool,
       layout: PropTypes.oneOf(['horizontal', 'vertical']),
       stackOffset: PropTypes.oneOf(['sign', 'expand', 'none', 'wiggle', 'silhouette']),
       throttleDelay: PropTypes.number,
@@ -70,6 +71,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
     static defaultProps = {
       layout: 'horizontal',
+      gridOnTop: true,
       stackOffset: 'none',
       margin: { top: 5, right: 5, bottom: 5, left: 5 },
     };
@@ -1014,6 +1016,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       if (!validateWidthHeight(this) || !data || !data.length) { return null; }
 
       const { children, className, width, height, style, ...others } = this.props;
+      const { gridOnTop = true } = this.props;
       const { xAxisMap, yAxisMap } = this.state;
 
       const events = {
@@ -1035,7 +1038,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           ref={(node) => { this.container = node; }}
         >
           <Surface {...attrs} width={width} height={height}>
-            {this.renderGrid()}
+            {gridOnTop && this.renderGrid()}
             {this.renderReferenceElements(false, ReferenceArea)}
             {this.renderReferenceElements(false, ReferenceLine)}
             {this.renderReferenceElements(false, ReferenceDot)}
@@ -1050,6 +1053,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             {this.renderReferenceElements(true, ReferenceDot)}
             {this.renderBrush()}
             {filterSvgElements(children)}
+            {!gridOnTop && this.renderGrid()}
           </Surface>
           {this.renderLegend()}
           {this.renderTooltip()}
