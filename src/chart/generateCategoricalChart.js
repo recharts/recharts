@@ -44,6 +44,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     static propTypes = {
       ...ChartComponent.propTypes,
       syncId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      compact: PropTypes.bool,
       width: PropTypes.number,
       height: PropTypes.number,
       data: PropTypes.arrayOf(PropTypes.object),
@@ -1013,7 +1014,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { data } = this.props;
       if (!validateWidthHeight(this) || !data || !data.length) { return null; }
 
-      const { children, className, width, height, style, ...others } = this.props;
+      const { children, className, width, height, style, compact, ...others } = this.props;
       const { xAxisMap, yAxisMap } = this.state;
 
       const events = {
@@ -1026,6 +1027,18 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         onTouchMove: this.handleTouchMove,
       };
       const attrs = getPresentationAttributes(others);
+
+      // The "compact" mode is mainly used as the panoram within Brush
+      if (compact) {
+        return (
+          <Surface {...attrs} width={width} height={height}>
+            <ChartComponent
+              {...this.props}
+              {...this.state}
+            />
+          </Surface>
+        );
+      }
 
       return (
         <div
