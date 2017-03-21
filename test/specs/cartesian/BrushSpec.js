@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { Surface, Brush } from 'recharts';
+import { Surface, Brush, LineChart, Line } from 'recharts';
 import Layer from '../../../src/container/Layer';
 import sinon from 'sinon';
 import { mount, render } from 'enzyme';
@@ -29,6 +29,18 @@ describe('<Brush />', () => {
     );
     expect(wrapper.find('.recharts-brush-traveller').length).to.equal(0);
     expect(wrapper.find('.recharts-brush-slide').length).to.equal(0);
+  });
+
+  it('Render panoram when specified LineChart as child', () => {
+    const wrapper = render(
+      <Brush x={100} y={50} width={400} height={40} data={data}>
+        <LineChart>
+          <Line />
+        </LineChart>
+      </Brush>
+    );
+    expect(wrapper.find('.recharts-line-chart-wrapper').length).to.equal(1);
+    expect(wrapper.find('.recharts-line').length).to.equal(1);
   });
 
   it('mouse enter and mouse leave on traveller will set isTextActive true', () => {
