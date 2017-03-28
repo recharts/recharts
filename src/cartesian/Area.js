@@ -50,7 +50,6 @@ class Area extends Component {
       PropTypes.func, PropTypes.element, PropTypes.object, PropTypes.bool,
     ]),
     hide: PropTypes.bool,
-
     // have curve configuration
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     baseLine: PropTypes.oneOfType([
