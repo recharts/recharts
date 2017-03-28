@@ -39,18 +39,43 @@ function LabelList(props) {
 LabelList.propTypes = propTypes;
 LabelList.displayName = 'LabelList';
 
+const parseLabelList = (label, data) => {
+  if (!label) { return null; }
 
-const renderCallByParent = (parentProps, data) => {
-  if (!parentProps || !parentProps.children) { return null; }
+  if (label === true) {
+    return <LabelList key="labelList-implicit" data={data} />;
+  }
+
+  if (React.isValidElement(label) || _.isFunction(label)) {
+    return <LabelList key="labelList-implicit" data={data} content={label} />;
+  }
+
+  if (_.isObject(label)) {
+    return <LabelList data={data} {...label} key="labelList-implicit" />;
+  }
+
+  return null;
+};
+
+const renderCallByParent = (parentProps, data, ckeckPropsLabel = true) => {
+  if (!parentProps || (!parentProps.children && (ckeckPropsLabel && !parentProps.label))) {
+    return null;
+  }
   const { children } = parentProps;
 
-  return findAllByType(children, LabelList).map((child, index) =>
+  const explicitChilren = findAllByType(children, LabelList).map((child, index) =>
     cloneElement(child, {
       data,
       key: `labelList-${index}`,
     })
   );
+  if (!ckeckPropsLabel) { return explicitChilren; }
+
+  const implicitLabelList = parseLabelList(parentProps.label, data);
+
+  return [implicitLabelList, ...explicitChilren];
 };
+
 LabelList.renderCallByParent = renderCallByParent;
 LabelList.defaultProps = defaultProps;
 

@@ -46,14 +46,11 @@ class Area extends Component {
     dot: PropTypes.oneOfType([
       PropTypes.func, PropTypes.element, PropTypes.object, PropTypes.bool,
     ]),
-<<<<<<< HEAD
-=======
     label: PropTypes.oneOfType([
       PropTypes.func, PropTypes.element, PropTypes.object, PropTypes.bool,
     ]),
     hide: PropTypes.bool,
 
->>>>>>> feat: add props `hide` for each graphic Component
     // have curve configuration
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     baseLine: PropTypes.oneOfType([

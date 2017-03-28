@@ -353,7 +353,7 @@ export const renderByOrder = (children, renderMap) => {
   const elements = [];
   const record = {};
 
-  Children.forEach(children, (child) => {
+  Children.forEach(children, (child, index) => {
     if (child && isSvgElement(child)) {
       elements.push(child);
     } else if (child && renderMap[getDisplayName(child.type)]) {
@@ -361,7 +361,7 @@ export const renderByOrder = (children, renderMap) => {
       const { handler, once } = renderMap[displayName];
 
       if ((once && !record[displayName]) || !once) {
-        elements.push(handler(child));
+        elements.push(handler(child, index));
         record[displayName] = true;
       }
     }

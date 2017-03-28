@@ -361,9 +361,9 @@ class Pie extends Component {
           {this.renderSectors(sectors)}
         </g>
         {label && this.renderLabels(sectors)}
-        {Label.renderCallByParent(this.props)}
+        {Label.renderCallByParent(this.props, null, false)}
         {(!isAnimationActive || isAnimationFinished) &&
-          LabelList.renderCallByParent(this.props, sectors)}
+          LabelList.renderCallByParent(this.props, sectors, false)}
       </Layer>
     );
   }
