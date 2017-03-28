@@ -112,11 +112,12 @@ export class PieChart extends Component {
     const { width, height, margin } = this.props;
     const legendData = (legendItem.props && legendItem.props.payload) ||
       items.reduce((result, child, i) => {
-        const { nameKey } = child.props;
+        const { nameKey, hide } = child.props;
         const data = allComposedData[i];
 
         return result.concat(data.map(entry => (
           {
+            inactive: hide,
             type: legendItem.props.iconType || child.props.legendType,
             value: entry[nameKey],
             color: entry.fill,

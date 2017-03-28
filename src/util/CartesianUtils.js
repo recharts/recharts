@@ -98,7 +98,10 @@ export const getStackedData = (data, stackItems, offsetType) => {
 
 export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, offsetType) => {
   const stackGroups = items.reduce((result, item) => {
-    const { stackId } = item.props;
+    const { stackId, hide } = item.props;
+
+    if (hide) { return result; }
+
     const axisId = item.props[numericAxisId];
     const parentGroup = result[axisId] || { hasStack: false, stackGroups: {} };
 
@@ -381,6 +384,7 @@ export const getMainColorOfGraphicItem = (item) => {
   switch (displayName) {
     case 'Line':
     case 'Area':
+    case 'Radar':
       result = item.props.stroke;
       break;
     default:
@@ -398,9 +402,10 @@ export const getLegendProps = (children, graphicItems, width) => {
 
   const legendData = (legendItem.props && legendItem.props.payload) ||
     graphicItems.map((child) => {
-      const { dataKey, name, legendType } = child.props;
+      const { dataKey, name, legendType, hide } = child.props;
 
       return {
+        inactive: hide,
         dataKey,
         type: legendItem.props.iconType || legendType || 'square',
         color: getMainColorOfGraphicItem(child),

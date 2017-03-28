@@ -40,6 +40,7 @@ class Line extends Component {
     legendType: PropTypes.oneOf(LEGEND_TYPES),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     connectNulls: PropTypes.bool,
+    hide: PropTypes.bool,
 
      // whether have dot in line
     activeDot: PropTypes.oneOfType([
@@ -89,6 +90,7 @@ class Line extends Component {
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
+    hide: false,
 
     onAnimationStart: () => {},
     onAnimationEnd: () => {},
@@ -319,10 +321,10 @@ class Line extends Component {
   }
 
   render() {
-    const { dot, points, className, xAxis, yAxis, top, left, width,
-      height, isAnimationActive } = this.props;
+    const { hide, dot, points, label, className, xAxis, yAxis, top, left,
+      width, height, isAnimationActive } = this.props;
 
-    if (!points || !points.length) { return null; }
+    if (hide || !points || !points.length) { return null; }
 
     const { isAnimationFinished } = this.state;
     const hasSinglePoint = points.length === 1;

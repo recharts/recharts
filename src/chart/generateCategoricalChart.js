@@ -225,7 +225,9 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           } else {
             domain = getDomainOfItemsWithSameAxis(
               displayedData,
-              graphicalItems.filter(entry => entry.props[axisIdKey] === axisId),
+              graphicalItems.filter(item => (
+                item.props[axisIdKey] === axisId && !item.props.hide
+              )),
               type,
               true
             );
@@ -301,7 +303,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             domain = parseSpecifiedDomain(Axis.defaultProps.domain,
               getDomainOfItemsWithSameAxis(
                 displayedData,
-                graphicalItems.filter(entry => entry.props[axisIdKey] === axisId), 'number'
+                graphicalItems.filter(item => (
+                  item.props[axisIdKey] === axisId && !item.props.hide
+                )),
+                'number'
               ),
               Axis.defaultProps.allowDataOverflow
             );
@@ -463,18 +468,21 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         return null;
       }
 
-      return graphicalItems.map((child) => {
+      return graphicalItems.reduce((result, child) => {
+        const { hide } = child.props;
+        if (hide) { return result; }
+
         const { dataKey, name, unit, formatter } = child.props;
 
-        return {
+        return [...result, {
           ...getPresentationAttributes(child),
           dataKey, unit, formatter,
           name: name || dataKey,
           color: getMainColorOfGraphicItem(child),
           value: getValueByDataKey(data[activeIndex], dataKey),
           payload: data[activeIndex],
-        };
-      });
+        }];
+      }, []);
     }
 
     /**

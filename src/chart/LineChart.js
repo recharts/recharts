@@ -154,11 +154,11 @@ export class LineChart extends Component {
     const dotItems = [];
 
     const lineItems = items.map((child, i) => {
-      const { dataKey, stroke, activeDot } = child.props;
+      const { hide, dataKey, stroke, activeDot } = child.props;
       const points = allComposedData[i];
       const activePoint = points[activeTooltipIndex];
 
-      if (hasDot && activeDot && activePoint) {
+      if (!hide && hasDot && activeDot && activePoint) {
         const dotProps = {
           index: activeTooltipIndex,
           dataKey,

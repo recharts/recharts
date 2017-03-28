@@ -53,6 +53,7 @@ class RadialBar extends Component {
     background: PropTypes.oneOfType([
       PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element,
     ]),
+    hide: PropTypes.bool,
 
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
@@ -67,6 +68,7 @@ class RadialBar extends Component {
   };
 
   static defaultProps = {
+    hide: false,
     startAngle: 180,
     endAngle: 0,
     maxAngle: 135,
@@ -249,9 +251,9 @@ class RadialBar extends Component {
   }
 
   render() {
-    const { data, className, background, isAnimationActive } = this.props;
+    const { hide, data, className, background, isAnimationActive } = this.props;
 
-    if (!data || !data.length) { return null; }
+    if (hide || !data || !data.length) { return null; }
 
     const { isAnimationFinished } = this.state;
     const sectors = this.getSectors();
