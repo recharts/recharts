@@ -338,16 +338,42 @@ const parseViewBox = (props) => {
   return {};
 };
 
-const renderCallByParent = (parentProps, viewBox) => {
-  if (!parentProps || !parentProps.children) { return null; }
-  const { children } = parentProps;
+const parseLabel = (label, viewBox) => {
+  if (!label) { return null; }
 
-  return findAllByType(children, Label).map((child, index) =>
+  if (label === true) {
+    return <Label key="label-implicit" viewBox={viewBox} />;
+  }
+
+  if (React.isValidElement(label) || _.isFunction(label)) {
+    return <Label key="label-implicit" content={label} viewBox={viewBox} />;
+  }
+
+  if (_.isObject(label)) {
+    return <Label viewBox={viewBox} {...label} key="label-implicit" />;
+  }
+
+  return null;
+};
+
+const renderCallByParent = (parentProps, viewBox, ckeckPropsLabel = true) => {
+  if (!parentProps || (!parentProps.children && (ckeckPropsLabel && !parentProps.label))) {
+    return null;
+  }
+  const { children } = parentProps;
+  const parentViewBox = parseViewBox(parentProps);
+
+  const explicitChilren = findAllByType(children, Label).map((child, index) =>
     cloneElement(child, {
-      viewBox: viewBox || parseViewBox(parentProps),
+      viewBox: viewBox || parentViewBox,
       key: `label-${index}`,
     })
   );
+
+  if (!ckeckPropsLabel) { return explicitChilren; }
+  const implicitLabel = parseLabel(parentProps.label, parentViewBox);
+
+  return [implicitLabel, ...explicitChilren];
 };
 
 Label.parseViewBox = parseViewBox;
