@@ -1,9 +1,9 @@
-Do you want to request a feature or report a bug?
+# Do you want to request a feature or report a bug?
 
-What is the current behavior?
+# What is the current behavior?
 
-If the current behavior is a bug, please provide the steps to reproduce and if possible a minimal demo of the problem via https://jsfiddle.net or similar (template: http://jsfiddle.net/9y45ut13/).
+# If the current behavior is a bug, please provide the steps to reproduce and if possible a minimal demo of the problem via https://jsfiddle.net or similar (template: http://jsfiddle.net/9y45ut13/).
 
-What is the expected behavior?
+# What is the expected behavior?
 
-Which versions of Recharts, and which browser / OS are affected by this issue? Did this work in previous versions of Recharts?
+# Which versions of Recharts, and which browser / OS are affected by this issue? Did this work in previous versions of Recharts?
