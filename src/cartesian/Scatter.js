@@ -60,6 +60,7 @@ class Scatter extends Component {
       }),
       payload: PropTypes.any,
     })),
+    hide: PropTypes.bool,
 
     isAnimationActive: PropTypes.bool,
     animationId: PropTypes.number,
@@ -77,6 +78,7 @@ class Scatter extends Component {
     lineJointType: 'linear',
     data: [],
     shape: 'circle',
+    hide: false,
 
     isAnimationActive: !isSsr(),
     animationBegin: 0,
@@ -219,9 +221,10 @@ class Scatter extends Component {
   }
 
   render() {
-    const { points, line, className, xAxis, yAxis, left, top, width, height } = this.props;
+    const { hide, points, line, className, xAxis, yAxis, left, top, width,
+      height } = this.props;
 
-    if (!points || !points.length) { return null; }
+    if (hide || !points || !points.length) { return null; }
 
     const layerClass = classNames('recharts-scatter', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);

@@ -37,6 +37,7 @@ class Bar extends Component {
     legendType: PropTypes.oneOf(LEGEND_TYPES),
     minPointSize: PropTypes.number,
     maxBarSize: PropTypes.number,
+    hide: PropTypes.number,
 
     shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
     data: PropTypes.arrayOf(PropTypes.shape({
@@ -62,6 +63,7 @@ class Bar extends Component {
     yAxisId: 0,
     legendType: 'rect',
     minPointSize: 0,
+    hide: false,
     // data of bar
     data: [],
     layout: 'vertical',
@@ -188,10 +190,10 @@ class Bar extends Component {
   }
 
   render() {
-    const { data, className, xAxis, yAxis, left, top, width, height,
-      isAnimationActive } = this.props;
+    const { hide, data, className, label, xAxis, yAxis, left, top,
+      width, height, isAnimationActive } = this.props;
 
-    if (!data || !data.length) { return null; }
+    if (hide || !data || !data.length) { return null; }
 
     const { isAnimationFinished } = this.state;
     const layerClass = classNames('recharts-bar', className);

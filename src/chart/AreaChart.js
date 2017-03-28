@@ -224,7 +224,7 @@ export class AreaChart extends Component {
     const { animationId } = this.props;
 
     const areaItems = items.reduce((result, child, i) => {
-      const { dataKey, activeDot } = child.props;
+      const { dataKey, activeDot, hide } = child.props;
       const currentComposedData = allComposedData[i];
       const { isRange } = currentComposedData;
       const activePoint = currentComposedData.points &&
@@ -232,7 +232,7 @@ export class AreaChart extends Component {
       const basePoint = isRange && currentComposedData.baseLine &&
         currentComposedData.baseLine[activeTooltipIndex];
 
-      if (hasDot && activeDot && activePoint) {
+      if (!hide && hasDot && activeDot && activePoint) {
         const dotProps = {
           index: activeTooltipIndex,
           dataKey,

@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import pureRender from '../util/PureRender';
 import Surface from '../container/Surface';
 import Symbols from '../shape/Symbols';
@@ -27,6 +28,7 @@ class DefaultLegendContent extends Component {
       id: PropTypes.any,
       type: PropTypes.oneOf(LEGEND_TYPES),
     })),
+    inactiveColor: PropTypes.string,
     formatter: PropTypes.func,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
@@ -38,6 +40,7 @@ class DefaultLegendContent extends Component {
     layout: 'horizontal',
     align: 'center',
     verticalAlign: 'middle',
+    inactiveColor: '#ccc',
   };
 
   /**
@@ -46,10 +49,11 @@ class DefaultLegendContent extends Component {
    * @return {String} Path element
    */
   renderIcon(data) {
-    const { color } = data;
+    const { inactiveColor } = this.props;
     const halfSize = SIZE / 2;
     const sixthSize = SIZE / 6;
     const thirdSize = SIZE / 3;
+    const color = data.inactive ? inactiveColor : data.color;
 
     if (data.type === 'line') {
       return (
@@ -102,6 +106,11 @@ class DefaultLegendContent extends Component {
 
     return payload.map((entry, i) => {
       const finalFormatter = entry.formatter || formatter;
+      const className = classNames({
+        'recharts-legend-item': true,
+        [`legend-item-${i}`]: true,
+        inactive: entry.inactive,
+      });
 
       if (entry.type === 'none') {
         return null;
@@ -109,13 +118,13 @@ class DefaultLegendContent extends Component {
 
       return (
         <li
-          className={`recharts-legend-item legend-item-${i}`}
+          className={className}
           style={itemStyle}
           key={`legend-item-${i}`}
           {...filterEventsOfChild(this.props, entry, i)}
         >
           <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
-            {this.renderIcon(entry, iconSize)}
+            {this.renderIcon(entry)}
           </Surface>
           <span className="recharts-legend-item-text">
             {finalFormatter ? finalFormatter(entry.value, entry, i) : entry.value}

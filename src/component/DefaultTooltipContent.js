@@ -56,13 +56,14 @@ class DefaultTooltipContent extends Component {
           color: entry.color || '#000',
           ...itemStyle,
         };
+        const hasName = isNumOrStr(entry.name);
         const finalFormatter = entry.formatter || formatter || defaultFormatter;
 
         return (
           <li className="recharts-tooltip-item" key={`tooltip-item-${i}`} style={finalItemStyle}>
-            {entry.name ? <span className="recharts-tooltip-item-name">{entry.name}</span> : null}
+            {hasName ? <span className="recharts-tooltip-item-name">{entry.name}</span> : null}
             {
-              entry.name ?
+              hasName ?
                 <span className="recharts-tooltip-item-separator">{separator}</span> :
                 null
             }

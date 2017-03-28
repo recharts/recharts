@@ -46,6 +46,14 @@ class Area extends Component {
     dot: PropTypes.oneOfType([
       PropTypes.func, PropTypes.element, PropTypes.object, PropTypes.bool,
     ]),
+<<<<<<< HEAD
+=======
+    label: PropTypes.oneOfType([
+      PropTypes.func, PropTypes.element, PropTypes.object, PropTypes.bool,
+    ]),
+    hide: PropTypes.bool,
+
+>>>>>>> feat: add props `hide` for each graphic Component
     // have curve configuration
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     baseLine: PropTypes.oneOfType([
@@ -79,6 +87,7 @@ class Area extends Component {
     points: [],
     dot: false,
     activeDot: true,
+    hide: false,
 
     isAnimationActive: !isSsr(),
     animationBegin: 0,
@@ -263,10 +272,10 @@ class Area extends Component {
   }
 
   render() {
-    const { dot, points, className, top, left, xAxis, yAxis, width,
-      height, isAnimationActive } = this.props;
+    const { hide, dot, label, points, className, top, left, xAxis, yAxis,
+      width, height, isAnimationActive } = this.props;
 
-    if (!points || !points.length) { return null; }
+    if (hide || !points || !points.length) { return null; }
 
     const { isAnimationFinished } = this.state;
     const hasSinglePoint = points.length === 1;

@@ -134,6 +134,7 @@ export default class AreaChartDemo extends Component {
               fill="#ff7300"
               dot
               activeDot={renderCustomizedActiveDot}
+              hide
             >
               <LabelList position="top" />
             </Area>

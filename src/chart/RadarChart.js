@@ -19,6 +19,7 @@ import PolarRadiusAxis from '../polar/PolarRadiusAxis';
 import { validateWidthHeight, findChildByType, findAllByType, filterSvgElements,
   getPresentationAttributes } from '../util/ReactUtils';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
+import { getLegendProps } from '../util/CartesianUtils';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { getPercentValue, parseSpecifiedDomain, combineEventHandlers,
   parseScale, getValueByDataKey } from '../util/DataUtils';
@@ -351,27 +352,15 @@ class RadarChart extends Component {
    * @return {ReactElement}            The instance of Legend
    */
   renderLegend(items) {
-    const { children } = this.props;
-    const legendItem = findChildByType(children, Legend);
-    if (!legendItem) { return null; }
+    const { width, height, margin, children } = this.props;
+    const legendWidth = width - (margin.left || 0) - (margin.right || 0);
+    const legendHeight = height - (margin.top || 0) - (margin.bottom || 0);
+    const props = getLegendProps(children, items, legendWidth, legendHeight);
 
-    const { width, height, margin } = this.props;
-    const legendData = (legendItem.props && legendItem.props.payload) ||
-      items.map((child) => {
-        const { dataKey, name, legendType } = child.props;
+    if (!props) { return null; }
 
-        return {
-          dataKey,
-          type: legendItem.props.iconType || legendType || 'square',
-          color: child.props.stroke || child.props.fill,
-          value: name || dataKey,
-          payload: child.props,
-        };
-      }, this);
-
-    return React.cloneElement(legendItem, {
-      ...Legend.getWithHeight(legendItem, width),
-      payload: legendData,
+    return React.createElement(Legend, {
+      ...props,
       chartWidth: width,
       chartHeight: height,
       margin,

@@ -42,6 +42,7 @@ class Radar extends Component {
       PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool,
     ]),
     legendType: PropTypes.oneOf(LEGEND_TYPES),
+    hide: PropTypes.bool,
 
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
@@ -54,6 +55,7 @@ class Radar extends Component {
   };
 
   static defaultProps = {
+    hide: false,
     dot: false,
     legendType: 'rect',
     isAnimationActive: !isSsr(),
@@ -156,9 +158,9 @@ class Radar extends Component {
   }
 
   render() {
-    const { className, points, dot, isAnimationActive } = this.props;
+    const { hide, className, points, dot, isAnimationActive } = this.props;
 
-    if (!points || !points.length) { return null; }
+    if (hide || !points || !points.length) { return null; }
 
     const { isAnimationFinished } = this.state;
     const layerClass = classNames('recharts-radar', className);

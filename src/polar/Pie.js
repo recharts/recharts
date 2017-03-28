@@ -46,6 +46,7 @@ class Pie extends Component {
     legendType: PropTypes.oneOf(LEGEND_TYPES),
     maxRadius: PropTypes.number,
 
+    hide: PropTypes.bool,
     labelLine: PropTypes.oneOfType([
       PropTypes.object, PropTypes.func, PropTypes.element, PropTypes.bool,
     ]),
@@ -93,6 +94,7 @@ class Pie extends Component {
     nameKey: 'name',
     valueKey: 'value',
     labelLine: true,
+    hide: false,
     data: [],
     minAngle: 0,
     isAnimationActive: !isSsr(),
@@ -338,11 +340,11 @@ class Pie extends Component {
   }
 
   render() {
-    const { data, composedData, className, label, cx, cy, innerRadius,
+    const { hide, data, composedData, className, label, cx, cy, innerRadius,
       outerRadius, isAnimationActive } = this.props;
     const pieData = composedData || data;
 
-    if (!pieData || !pieData.length || !isNumber(cx)
+    if (hide || !pieData || !pieData.length || !isNumber(cx)
       || !isNumber(cy) || !isNumber(innerRadius)
       || !isNumber(outerRadius)) {
       return null;
