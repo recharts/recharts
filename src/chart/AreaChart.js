@@ -10,15 +10,25 @@ import Dot from '../shape/Dot';
 import Curve from '../shape/Curve';
 import { getPresentationAttributes, findChildByType } from '../util/ReactUtils';
 import { getMainColorOfGraphicItem } from '../util/CartesianUtils';
-import { isNumber, getValueByDataKey } from '../util/DataUtils';
+import { isNumber, getValueByDataKey, getPercentValue } from '../util/DataUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Area from '../cartesian/Area';
 import AnimationDecorator from '../util/AnimationDecorator';
 import composedDataDecorator from '../util/ComposedDataDecorator';
 
 
-const getCategoryAxisCoordinate = ({ axis, ticks, bandSize, entry, index }) => {
+const getCategoryAxisCoordinate = ({ axis, ticks, bandSize, entry, index, barCategoryGap, pullToEdges }) => {
   if (axis.type === 'category') {
+    if (pullToEdges === true) {
+      const offset = getPercentValue(barCategoryGap, bandSize, 0, true);
+      const edgeOffset = (bandSize - 2 * offset);
+      if (index === 0) {
+        return ticks[index] ? (ticks[index].coordinate + bandSize / 2) - (edgeOffset / 2) : null;
+      }
+      if (index === ticks.length - 1) {
+        return ticks[index] ? (ticks[index].coordinate + bandSize / 2) + (edgeOffset / 2) : null;
+      }
+    }
     return ticks[index] ? ticks[index].coordinate + bandSize / 2 : null;
   }
 
@@ -63,7 +73,7 @@ const getBaseValue = (props, xAxis, yAxis) => {
  */
 const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, bandSize, dataKey,
   stackedData }) => {
-  const { layout, dataStartIndex, dataEndIndex } = props;
+  const { layout, dataStartIndex, dataEndIndex, barCategoryGap, pullToEdges } = props;
   const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
   const hasStack = stackedData && stackedData.length;
   const baseValue = getBaseValue(props, xAxis, yAxis);
@@ -86,7 +96,7 @@ const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, bandSize, dataKe
 
     if (layout === 'horizontal') {
       return {
-        x: getCategoryAxisCoordinate({ axis: xAxis, ticks: xTicks, bandSize, entry, index }),
+        x: getCategoryAxisCoordinate({ axis: xAxis, ticks: xTicks, bandSize, entry, index, barCategoryGap, pullToEdges }),
         y: _.isNil(value[1]) ? null : yAxis.scale(value[1]),
         value,
         payload: entry,
@@ -95,7 +105,7 @@ const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, bandSize, dataKe
 
     return {
       x: _.isNil(value[1]) ? null : xAxis.scale(value[1]),
-      y: getCategoryAxisCoordinate({ axis: yAxis, ticks: yTicks, bandSize, entry, index }),
+      y: getCategoryAxisCoordinate({ axis: yAxis, ticks: yTicks, bandSize, entry, index, barCategoryGap, pullToEdges }),
       value,
       payload: entry,
     };
