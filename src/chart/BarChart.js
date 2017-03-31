@@ -54,7 +54,7 @@ const getBaseValue = ({ props, xAxis, yAxis }) => {
  * @param {Array} stackedData  The stacked data of a bar item
  * @return{Array} Composed data
  */
-const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
+export const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
   xTicks, yTicks, stackedData }) => {
   const { layout, dataStartIndex, dataEndIndex } = props;
   const { dataKey, children, minPointSize } = item.props;
@@ -132,7 +132,7 @@ const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
 
 @AnimationDecorator
 @composedDataDecorator({ getComposedData })
-class BarChart extends Component {
+export class BarChart extends Component {
 
   static displayName = 'BarChart';
 
@@ -234,5 +234,4 @@ class BarChart extends Component {
   }
 }
 
-export default generateCategoricalChart(BarChart, Bar);
-export { BarChart };
+export default generateCategoricalChart('BarChart', Bar);

@@ -62,7 +62,7 @@ const getBaseValue = (props, xAxis, yAxis) => {
  * the stackedData is an array of min value and max value
  * @return {Array} Composed data
  */
-const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, bandSize, dataKey,
+ export const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, bandSize, dataKey,
   stackedData }) => {
   const { layout, dataStartIndex, dataEndIndex } = props;
   const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
@@ -291,4 +291,4 @@ export class AreaChart extends Component {
   }
 }
 
-export default generateCategoricalChart(AreaChart, Area);
+export default generateCategoricalChart('AreaChart', Area);

@@ -1,5 +1,9 @@
 import _ from 'lodash';
 import * as d3Scales from 'd3-scale';
+import {
+  stack as shapeStack, stackOrderNone, stackOffsetExpand,
+  stackOffsetNone, stackOffsetSilhouette, stackOffsetWiggle,
+} from 'd3-shape';
 
 export const mathSign = (value) => {
   if (value === 0) { return 0; }
@@ -283,4 +287,104 @@ export const truncateByDomain = (value, domain) => {
   if (result[1] < min) { result[1] = min; }
 
   return result;
+};
+
+
+
+/* eslint no-param-reassign: 0 */
+const offsetSign = (series) => {
+  const n = series.length;
+  if (n <= 0) { return; }
+
+  for (let j = 0, m = series[0].length; j < m; ++j) {
+    let positive = 0;
+    let negative = 0;
+
+    for (let i = 0; i < n; ++i) {
+      const value = isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
+
+      if (value >= 0) {
+        series[i][j][0] = positive;
+        series[i][j][1] = positive + value;
+        positive = series[i][j][1];
+      } else {
+        series[i][j][0] = negative;
+        series[i][j][1] = negative + value;
+        negative = series[i][j][1];
+      }
+    }
+  }
+};
+
+const STACK_OFFSET_MAP = {
+  sign: offsetSign,
+  expand: stackOffsetExpand,
+  none: stackOffsetNone,
+  silhouette: stackOffsetSilhouette,
+  wiggle: stackOffsetWiggle,
+};
+
+
+export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, offsetType) => {
+  if (!data) { return null; }
+
+  const stackGroups = items.reduce((result, item) => {
+    const { stackId, hide } = item.props;
+
+    if (hide) { return result; }
+
+    const axisId = item.props[numericAxisId];
+    const parentGroup = result[axisId] || { hasStack: false, stackGroups: {} };
+
+    if (isNumOrStr(stackId)) {
+      const childGroup = parentGroup.stackGroups[stackId] || {
+        numericAxisId, cateAxisId, items: [],
+      };
+
+      childGroup.items = [item].concat(childGroup.items);
+
+      parentGroup.hasStack = true;
+
+      parentGroup.stackGroups[stackId] = childGroup;
+    } else {
+      parentGroup.stackGroups[uniqueId('_stackId_')] = {
+        numericAxisId, cateAxisId, items: [item],
+      };
+    }
+
+    return { ...result, [axisId]: parentGroup };
+  }, {});
+
+  return Object.keys(stackGroups).reduce((result, axisId) => {
+    const group = stackGroups[axisId];
+
+    if (group.hasStack) {
+      group.stackGroups = Object.keys(group.stackGroups).reduce((res, stackId) => {
+        const g = group.stackGroups[stackId];
+
+        return {
+          ...res,
+          [stackId]: {
+            numericAxisId,
+            cateAxisId,
+            items: g.items,
+            stackedData: getStackedData(data, g.items, offsetType),
+          },
+        };
+      }, {});
+    }
+
+    return { ...result, [axisId]: group };
+  }, {});
+};
+
+export const getStackedData = (data, stackItems, offsetType) => {
+  const dataKeys = stackItems.map(item => item.props.dataKey);
+  const stack = shapeStack()
+                .keys(dataKeys)
+                .value((d, key) => +getValueByDataKey(d, key, 0))
+                .order(stackOrderNone)
+                .offset(STACK_OFFSET_MAP[offsetType]);
+
+  return stack(data);
 };

@@ -34,7 +34,7 @@ const getCategoryAxisCoordinate = ({ axis, ticks, bandSize, entry, index }) => {
  * @param  {String} dataKey The unique key of a group
  * @return {Array}  Composed data
  */
-const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey, bandSize }) => {
+export const getComposedData = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey, bandSize }) => {
   const { layout, dataStartIndex, dataEndIndex } = props;
   const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
 
@@ -202,4 +202,5 @@ export class LineChart extends Component {
   }
 }
 
-export default generateCategoricalChart(LineChart, Line);
+export default generateCategoricalChart('LineChart', Line);
+

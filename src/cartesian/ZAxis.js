@@ -11,6 +11,7 @@ class ZAxis extends Component {
   static displayName = 'ZAxis';
 
   static propTypes = {
+    type: PropTypes.oneOf(['number', 'category']),
     // The name of data displayed in the axis
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     // The unit of data displayed in the axis
@@ -33,6 +34,7 @@ class ZAxis extends Component {
     zAxisId: 0,
     range: [64, 64],
     scale: 'auto',
+    type: 'number',
   };
 
   render() {

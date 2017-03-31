@@ -1,8 +1,4 @@
 import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
-import {
-  stack as shapeStack, stackOrderNone, stackOffsetExpand,
-  stackOffsetNone, stackOffsetSilhouette, stackOffsetWiggle,
-} from 'd3-shape';
 import _ from 'lodash';
 import { findAllByType, findChildByType } from './ReactUtils';
 import { getPercentValue, isNumber, isNumOrStr, getValueByDataKey,
@@ -83,68 +79,6 @@ export const detectReferenceElementsDomain = (children, domain, axisId, axisType
   }
 
   return finalDomain;
-};
-
-export const getStackedData = (data, stackItems, offsetType) => {
-  const dataKeys = stackItems.map(item => item.props.dataKey);
-  const stack = shapeStack()
-                .keys(dataKeys)
-                .value((d, key) => +getValueByDataKey(d, key, 0))
-                .order(stackOrderNone)
-                .offset(STACK_OFFSET_MAP[offsetType]);
-
-  return stack(data);
-};
-
-export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, offsetType) => {
-  const stackGroups = items.reduce((result, item) => {
-    const { stackId, hide } = item.props;
-
-    if (hide) { return result; }
-
-    const axisId = item.props[numericAxisId];
-    const parentGroup = result[axisId] || { hasStack: false, stackGroups: {} };
-
-    if (isNumOrStr(stackId)) {
-      const childGroup = parentGroup.stackGroups[stackId] || {
-        numericAxisId, cateAxisId, items: [],
-      };
-
-      childGroup.items = [item].concat(childGroup.items);
-
-      parentGroup.hasStack = true;
-
-      parentGroup.stackGroups[stackId] = childGroup;
-    } else {
-      parentGroup.stackGroups[uniqueId('_stackId_')] = {
-        numericAxisId, cateAxisId, items: [item],
-      };
-    }
-
-    return { ...result, [axisId]: parentGroup };
-  }, {});
-
-  return Object.keys(stackGroups).reduce((result, axisId) => {
-    const group = stackGroups[axisId];
-
-    if (group.hasStack) {
-      group.stackGroups = Object.keys(group.stackGroups).reduce((res, stackId) => {
-        const g = group.stackGroups[stackId];
-
-        return {
-          ...res,
-          [stackId]: {
-            numericAxisId,
-            cateAxisId,
-            items: g.items,
-            stackedData: getStackedData(data, g.items, offsetType),
-          },
-        };
-      }, {});
-    }
-
-    return { ...result, [axisId]: group };
-  }, {});
 };
 
 export const getStackedDataOfItem = (item, stackGroups) => {
@@ -458,6 +392,8 @@ export const getTicksOfScale = (scale, opts) => {
  * @return {Object} The size of all groups
  */
 export const getBarSizeList = ({ barSize: globalSize, stackGroups = {} }) => {
+  if (!stackGroups) { return {}; }
+
   const result = {};
   const numericAxisIds = Object.keys(stackGroups);
 

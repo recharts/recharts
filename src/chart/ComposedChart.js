@@ -9,6 +9,7 @@ import Tooltip from '../component/Tooltip';
 import Line from '../cartesian/Line';
 import Bar from '../cartesian/Bar';
 import Area from '../cartesian/Area';
+import Scatter from '../cartesian/Scatter';
 import Rectangle from '../shape/Rectangle';
 import generateCategoricalChart from './generateCategoricalChart';
 import { getBandSizeOfAxis, getAnyElementOfObject } from '../util/DataUtils';
@@ -17,10 +18,13 @@ import pureRender from '../util/PureRender';
 import { AreaChart } from './AreaChart';
 import { LineChart } from './LineChart';
 import { BarChart } from './BarChart';
+import { ScatterChart } from './ScatterChart';
 import composedDataDecorator from '../util/ComposedDataDecorator';
 
-const GRAPHICAL_TYPES = ['Area', 'Bar', 'Line'];
-const GRAPHICAL_MAP = { Area: AreaChart, Bar: BarChart, Line: LineChart };
+const GRAPHICAL_TYPES = ['Area', 'Bar', 'Line', 'AnimationDecorator(Scatter)'];
+const GRAPHICAL_MAP = {
+  Area: AreaChart, Bar: BarChart, Line: LineChart, 'AnimationDecorator(Scatter)': ScatterChart,
+};
 
 @pureRender
 @composedDataDecorator({})
@@ -105,8 +109,6 @@ class ComposedChart extends Component {
 
     return (
       <Layer className="recharts-composed">
-        {this.renderCursor({ xAxisMap, yAxisMap, offset })}
-
         {
           filteredItems.map(({ items, type }) => {
             const Chart = GRAPHICAL_MAP[type];
@@ -122,4 +124,4 @@ class ComposedChart extends Component {
   }
 }
 
-export default generateCategoricalChart(ComposedChart, [Line, Area, Bar]);
+export default generateCategoricalChart('ComposedChart', [Line, Area, Bar, Scatter]);

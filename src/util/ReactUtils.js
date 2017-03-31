@@ -108,6 +108,25 @@ export const EVENT_ATTRIBUTES = {
   onMouseOut: PropTypes.func,
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,
+  onTouchEnd: PropTypes.func,
+  onTouchMove: PropTypes.func,
+  onTouchStart: PropTypes.func,
+  onTouchCancel: PropTypes.func,
+};
+
+const REACT_BROWSER_EVENT_MAP = {
+  click: 'onClick',
+  mousedown: 'onMouseDown',
+  mouseup: 'onMouseUp',
+  mouseover: 'onMouseOver',
+  mousemove: 'onMouseMove',
+  mouseout: 'onMouseOut',
+  mouseenter: 'onMouseEnter',
+  mouseleave: 'onMouseLeave',
+  touchcancel: 'onTouchCancel',
+  touchend: 'onTouchEnd',
+  touchmove: 'onTouchMove',
+  touchstart: 'onTouchStart',
 };
 
 export const LEGEND_TYPES = [
@@ -213,7 +232,7 @@ export const getPresentationAttributes = (el) => {
  * @param  {Object} el A react element or the props of a react element
  * @return {Object}    attributes or null
  */
-export const filterEventAttributes = (el) => {
+export const filterEventAttributes = (el, newHandler) => {
   if (!el || _.isFunction(el)) { return null; }
 
   const props = React.isValidElement(el) ? el.props : el;
@@ -225,7 +244,7 @@ export const filterEventAttributes = (el) => {
   for (const i in props) {
     if ({}.hasOwnProperty.call(props, i) && EVENT_ATTRIBUTES[i]) {
       if (!out) out = {};
-      out[i] = props[i];
+      out[i] = newHandler || props[i];
     }
   }
   return out;
@@ -348,7 +367,6 @@ export const isChildrenEqual = (nextChildren, prevChildren) => {
   return true;
 };
 
-
 export const renderByOrder = (children, renderMap) => {
   const elements = [];
   const record = {};
@@ -361,11 +379,21 @@ export const renderByOrder = (children, renderMap) => {
       const { handler, once } = renderMap[displayName];
 
       if ((once && !record[displayName]) || !once) {
-        elements.push(handler(child, index));
+        elements.push(handler(child, displayName, index));
         record[displayName] = true;
       }
     }
   });
 
   return elements;
+};
+
+export const getReactEventByType = (e) => {
+  const type = e && e.type;
+
+  if (type && REACT_BROWSER_EVENT_MAP[type]) {
+    return REACT_BROWSER_EVENT_MAP[type];
+  }
+
+  return null;
 };

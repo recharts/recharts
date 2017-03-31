@@ -73,21 +73,21 @@ export default class Demo extends Component {
         <p>Simple ScatterChart</p>
         <div className="scatter-chart-wrapper">
           <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
-            <XAxis dataKey="x" name="stature" unit="cm" />
-            <YAxis dataKey="y" name="weight" unit="kg" />
-            <Scatter name="A school" data={data01} fill="#ff7300" />
+            <XAxis type="number" dataKey="x" name="stature" unit="cm" />
+            <YAxis type="number" dataKey="y" name="weight" unit="kg" />
             <CartesianGrid />
             <Tooltip />
             <Legend/>
+            <Scatter name="A school" data={data01} fill="#ff7300" />
           </ScatterChart>
         </div>
 
         <p>ScatterChart of three dimension data</p>
         <div className="scatter-chart-wrapper">
           <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
-            <XAxis dataKey="x" name="stature" unit="cm" />
-            <YAxis dataKey="y" name="weight" unit="kg" />
-            <ZAxis dataKey="z" range={[50, 1200]} name="score" unit="km" />
+            <XAxis type="number" dataKey="x" name="stature" unit="cm" />
+            <YAxis type="number" dataKey="y" name="weight" unit="kg" />
+            <ZAxis type="number" dataKey="z" range={[50, 1200]} name="score" unit="km" />
             <CartesianGrid />
             <Scatter name="A school" data={data01} fillOpacity={0.3} fill="#ff7300" />
             <Scatter name="B school" data={data02} fill="#347300" />
@@ -103,29 +103,29 @@ export default class Demo extends Component {
         <p>ScatterChart with customized error bars</p>
         <div className="scatter-chart-wrapper">
           <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
-            <XAxis dataKey="x" name="stature" unit="cm" />
-            <YAxis dataKey="y" name="weight" unit="kg" />
+            <XAxis type="number" dataKey="x" name="stature" unit="cm" />
+            <YAxis type="number" dataKey="y" name="weight" unit="kg" />
+            <CartesianGrid />
+            <Tooltip />
+            <Legend/>
             <Scatter name="A school" data={data01} fill="#ff7300">
               <ErrorBar dataKey="errorY" width={0} strokeWidth={1} stroke="blue" direction="y" />
               <ErrorBar dataKey="errorX" width={4} strokeWidth={2} stroke="green" opacity={0.8} direction="x" />
             </Scatter>
-            <CartesianGrid />
-            <Tooltip />
-            <Legend/>
           </ScatterChart>
         </div>
 
         <p>ScatterChart which has joint line</p>
         <div className="scatter-chart-wrapper">
           <ScatterChart width={800} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
-            <XAxis dataKey="x" name="stature" unit="cm" />
+            <XAxis type="number" dataKey="x" name="stature" unit="cm" />
             <YAxis dataKey="y" name="weight" unit="kg" />
             <ZAxis range={[64]} />
-            <Scatter line lineJointType="monotoneX" shape="wye" legendType="wye" data={data03} fill="#ff7300" />
-            <Scatter line shape="square" legendType="square" data={data04} fill="#347300" />
             <CartesianGrid />
             <Tooltip cursor={{ stroke: '#808080', strokeDasharray: '5 5' }}/>
             <Legend/>
+            <Scatter line lineJointType="monotoneX" shape="wye" legendType="wye" data={data03} fill="#ff7300" />
+            <Scatter line shape="square" legendType="square" data={data04} fill="#347300" />
           </ScatterChart>
         </div>
       </div>

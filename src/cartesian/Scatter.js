@@ -54,8 +54,8 @@ class Scatter extends Component {
       cy: PropTypes.number,
       size: PropTypes.number,
       node: PropTypes.shape({
-        x: PropTypes.number,
-        y: PropTypes.number,
+        x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         z: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       }),
       payload: PropTypes.any,
