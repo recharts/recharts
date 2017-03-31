@@ -44,6 +44,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     static propTypes = {
       ...ChartComponent.propTypes,
       syncId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      compact: PropTypes.bool,
       width: PropTypes.number,
       height: PropTypes.number,
       data: PropTypes.arrayOf(PropTypes.object),
@@ -1009,12 +1010,37 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       });
     }
 
+    renderChart() {
+      const { children, width, height, ...others } = this.props;
+      const { xAxisMap, yAxisMap } = this.state;
+      const attrs = getPresentationAttributes(others);
+
+      return (
+        <Surface {...attrs} width={width} height={height}>
+          {this.renderGrid()}
+          {this.renderReferenceElements(false, ReferenceArea)}
+          {this.renderReferenceElements(false, ReferenceLine)}
+          {this.renderReferenceElements(false, ReferenceDot)}
+          {this.renderAxes(xAxisMap, 'x-axis')}
+          {this.renderAxes(yAxisMap, 'y-axis')}
+          <ChartComponent
+            {...this.props}
+            {...this.state}
+          />
+          {this.renderReferenceElements(true, ReferenceArea)}
+          {this.renderReferenceElements(true, ReferenceLine)}
+          {this.renderReferenceElements(true, ReferenceDot)}
+          {this.renderBrush()}
+          {filterSvgElements(children)}
+        </Surface>
+      );
+    }
+
     render() {
       const { data } = this.props;
       if (!validateWidthHeight(this) || !data || !data.length) { return null; }
 
-      const { children, className, width, height, style, ...others } = this.props;
-      const { xAxisMap, yAxisMap } = this.state;
+      const { className, width, height, style, compact } = this.props;
 
       const events = {
         onMouseEnter: this.handleMouseEnter,
@@ -1025,7 +1051,11 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         onMouseUp: this.handleMouseUp,
         onTouchMove: this.handleTouchMove,
       };
-      const attrs = getPresentationAttributes(others);
+
+      // The "compact" mode is mainly used as the panorama within Brush
+      if (compact) {
+        return this.renderChart();
+      }
 
       return (
         <div
@@ -1034,23 +1064,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           {...events}
           ref={(node) => { this.container = node; }}
         >
-          <Surface {...attrs} width={width} height={height}>
-            {this.renderGrid()}
-            {this.renderReferenceElements(false, ReferenceArea)}
-            {this.renderReferenceElements(false, ReferenceLine)}
-            {this.renderReferenceElements(false, ReferenceDot)}
-            {this.renderAxes(xAxisMap, 'x-axis')}
-            {this.renderAxes(yAxisMap, 'y-axis')}
-            <ChartComponent
-              {...this.props}
-              {...this.state}
-            />
-            {this.renderReferenceElements(true, ReferenceArea)}
-            {this.renderReferenceElements(true, ReferenceLine)}
-            {this.renderReferenceElements(true, ReferenceDot)}
-            {this.renderBrush()}
-            {filterSvgElements(children)}
-          </Surface>
+          {this.renderChart()}
           {this.renderLegend()}
           {this.renderTooltip()}
         </div>

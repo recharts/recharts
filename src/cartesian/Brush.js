@@ -9,6 +9,11 @@ import { getValueByDataKey } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
+import AreaChart from '../chart/AreaChart';
+import BarChart from '../chart/BarChart';
+import ComposedChart from '../chart/ComposedChart';
+import LineChart from '../chart/LineChart';
+import { findChildByType } from '../util/ReactUtils';
 
 @pureRender
 class Brush extends Component {
@@ -25,12 +30,20 @@ class Brush extends Component {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     travellerWidth: PropTypes.number,
+    padding: PropTypes.shape({
+      top: PropTypes.number,
+      right: PropTypes.number,
+      bottom: PropTypes.number,
+      left: PropTypes.number,
+    }),
 
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
     data: PropTypes.array,
     startIndex: PropTypes.number,
     endIndex: PropTypes.number,
     tickFormatter: PropTypes.func,
+
+    children: PropTypes.node,
 
     onChange: PropTypes.func,
     updateId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -44,6 +57,7 @@ class Brush extends Component {
     travellerWidth: 5,
     fill: '#fff',
     stroke: '#666',
+    padding: { top: 1, right: 1, bottom: 1, left: 1 },
   };
 
   constructor(props) {
@@ -280,6 +294,26 @@ class Brush extends Component {
     );
   }
 
+  renderPanorama() {
+    const { x, y, width, height, data, children, padding } = this.props;
+    const chartElement = findChildByType(children,
+      [AreaChart, BarChart, ComposedChart, LineChart]);
+
+    if (!chartElement) {
+      return <noscript />;
+    }
+
+    return React.cloneElement(chartElement, {
+      x,
+      y,
+      width,
+      height,
+      margin: padding,
+      compact: true,
+      data,
+    });
+  }
+
   renderTraveller(startX, id) {
     const { y, travellerWidth, height, stroke } = this.props;
     const lineY = Math.floor(y + height / 2) - 1;
@@ -379,12 +413,13 @@ class Brush extends Component {
   }
 
   render() {
-    const { data, className } = this.props;
+    const { data, className, children } = this.props;
     const { startX, endX, isTextActive, isSlideMoving, isTravellerMoving } = this.state;
 
     if (!data || !data.length) { return null; }
 
     const layerClass = classNames('recharts-brush', className);
+    const isPanoramic = React.Children.count(children) === 1;
 
     return (
       <Layer
@@ -396,6 +431,7 @@ class Brush extends Component {
         onTouchMove={this.handleTouchMove}
       >
         {this.renderBackground()}
+        {isPanoramic && this.renderPanorama()}
         {this.renderSlide(startX, endX)}
         {this.renderTraveller(startX, 'startX')}
         {this.renderTraveller(endX, 'endX')}
