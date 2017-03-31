@@ -346,7 +346,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       return ids.reduce((result, id) => {
         const axis = axisMap[id];
-        const { orientation, domain, padding = {}, mirror } = axis;
+        const { orientation, domain, padding = {}, mirror, reversed } = axis;
         const offsetKey = `${orientation}${mirror ? 'Mirror' : ''}`;
 
         let range, x, y, needSpace;
@@ -364,6 +364,10 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             offset.top + (padding.top || 0),
             offset.top + offset.height - (padding.bottom || 0),
           ];
+        }
+
+        if (reversed) {
+          range = [range[1], range[0]];
         }
 
         const scale = parseScale(axis, displayName);

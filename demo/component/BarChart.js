@@ -265,10 +265,10 @@ export default React.createClass({
         <div className="bar-chart-wrapper">
           <BarChart width={400} height={400} data={data} layout="vertical" maxBarSize={10} >
             <XAxis type="number" />
-            <YAxis dataKey="name" type="category"/>
+            <YAxis dataKey="name" type="category" orientation="right" />
             <CartesianGrid horizontal={false} />
             <Bar dataKey="uv" fill="#ff7300" maxBarSize={15} isAnimationActive={false} />
-            <Bar dataKey="pv" fill="#387908" />
+            <Bar dataKey="pv" fill="#387908" label />
             <Tooltip />
           </BarChart>
         </div>
@@ -361,6 +361,7 @@ export default React.createClass({
         <p>BarChart of custom bar (2)</p>
         <div className="bar-chart-wrapper">
           <BarChart width={500} height={250} barCategoryGap={0} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+            <YAxis reversed hide />
             <XAxis axisLine={false} tickLine={false} dataKey="name" tick={<CustomAxis />}/>
             <Bar dataKey="uv" barGap={0} fill="#387908" shape={<BarTwo />} label />
           </BarChart>

@@ -64,6 +64,7 @@ class XAxis extends Component {
     interval: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf([
       'preserveStart', 'preserveEnd', 'preserveStartEnd',
     ])]),
+    reversed: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -80,6 +81,7 @@ class XAxis extends Component {
     padding: { left: 0, right: 0 },
     allowDataOverflow: false,
     scale: 'auto',
+    reversed: false,
   };
 
   render() {
