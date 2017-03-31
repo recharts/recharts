@@ -621,59 +621,6 @@ const generateCategoricalChart = (chartName, GraphicalChild, eventType = 'axis')
 
       return formatedItems;
     }
-
-    getCursorRectangle() {
-      const { layout } = this.props;
-      const { activeCoordinate, offset, tooltipAxisBandSize } = this.state;
-      const halfSize = tooltipAxisBandSize / 2;
-
-      return {
-        stroke: 'none',
-        fill: '#ccc',
-        x: layout === 'horizontal' ? activeCoordinate.x - halfSize : offset.left + 0.5,
-        y: layout === 'horizontal' ? offset.top + 0.5 : activeCoordinate.y - halfSize,
-        width: layout === 'horizontal' ? tooltipAxisBandSize : offset.width - 1,
-        height: layout === 'horizontal' ? offset.height - 1 : tooltipAxisBandSize,
-      };
-    }
-
-    getCursorPoints() {
-      const { layout } = this.props;
-      const { activeCoordinate, offset } = this.state;
-
-      let x1, y1, x2, y2;
-
-      if (layout === 'horizontal') {
-        x1 = activeCoordinate.x;
-        x2 = x1;
-        y1 = offset.top;
-        y2 = offset.top + offset.height;
-      } else {
-        y1 = activeCoordinate.y;
-        y2 = y1;
-        x1 = offset.left;
-        x2 = offset.left + offset.width;
-      }
-
-      return [{ x: x1, y: y1 }, { x: x2, y: y2 }];
-    }
-
-    parseEventsOfWrapper() {
-      const { children } = this.props;
-      const tooltipItem = findChildByType(children, Tooltip);
-      const tooltipEvents = tooltipItem && eventType === 'axis' ? {
-        onMouseEnter: this.handleMouseEnter,
-        onMouseMove: this.handleMouseMove,
-        onMouseLeave: this.handleMouseLeave,
-        onTouchMove: this.handleTouchMove,
-      } : {};
-      const outerEvents = filterEventAttributes(this.props, this.handleOuterEvent);
-
-      return {
-        ...outerEvents,
-        ...tooltipEvents,
-      };
-    }
     /**
      * The AxisMaps are expensive to render on large data sets
      * so provide the ability to store them in state and only update them when necessary
@@ -1277,7 +1224,6 @@ const generateCategoricalChart = (chartName, GraphicalChild, eventType = 'axis')
         },
       });
     };
-
 
     renderActiveDot(option, props) {
       let dot;

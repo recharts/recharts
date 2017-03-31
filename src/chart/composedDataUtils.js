@@ -171,7 +171,6 @@ const getComposedDataOfBar = ({ props, item, barPosition, bandSize, xAxis, yAxis
       y = yAxis.scale(value[1]);
       width = pos.size;
       height = yAxis.scale(value[0]) - yAxis.scale(value[1]);
-
       if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
         const delta = Math.sign(height || minPointSize) *
           (Math.abs(minPointSize) - Math.abs(height));
