@@ -109,7 +109,11 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             { props: nextProps, ...defaultState }) }
         );
       } else if (!isChildrenEqual(nextProps.children, children)) {
-        const defaultState = this.createDefaultState(nextProps);
+        const { dataStartIndex, dataEndIndex } = this.state;
+        // Don't update brush
+        const defaultState = {
+          ...this.createDefaultState(nextProps), dataEndIndex, dataStartIndex,
+        };
         this.setState({ ...defaultState,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
             { props: nextProps, ...defaultState }) }
