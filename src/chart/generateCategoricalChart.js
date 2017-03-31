@@ -19,7 +19,7 @@ import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
-import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate,
+import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate, checkDomainOfScale,
   combineEventHandlers, parseScale, getValueByDataKey, uniqueId } from '../util/DataUtils';
 import { calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
@@ -372,6 +372,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
         const scale = parseScale(axis, displayName);
         scale.domain(domain).range(range);
+        checkDomainOfScale(scale);
         const ticks = getTicksOfScale(scale, axis);
 
         if (axisType === 'xAxis') {

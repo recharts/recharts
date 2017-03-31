@@ -306,8 +306,9 @@ export const getCoordinatesOfGrid = (ticks, min, max) => {
 export const getTicksOfAxis = (axis, isGrid, isAll) => {
   if (!axis) return null;
   const scale = axis.scale;
-  const { duplicateDomain, type } = axis;
-  const offset = (isGrid || isAll) && type === 'category' ? scale.bandwidth() / 2 : 0;
+  const { duplicateDomain, type, domain } = axis;
+  const offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ?
+    scale.bandwidth() / 2 : 0;
 
   // The ticks setted by user should only affect the ticks adjacent to axis line
   if (isGrid && (axis.ticks || axis.niceTicks)) {
@@ -338,10 +339,10 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
-  return scale.domain().map((entry, index) => (
+  return (duplicateDomain || domain).map((entry, index) => (
     {
       coordinate: scale(entry) + offset,
-      value: duplicateDomain ? duplicateDomain[entry] : entry,
+      value: entry,
       index,
     }
   ));
@@ -423,7 +424,7 @@ export const getLegendProps = (children, graphicItems, width) => {
 export const getTicksOfScale = (scale, opts) => {
   const { type, tickCount, originalDomain, allowDecimals } = opts;
 
-  if (opts.scale !== 'auto' && opts.scale !== 'linear') {
+  if (opts.scale !== 'auto' || opts.scale !== 'linear') {
     return null;
   }
 
