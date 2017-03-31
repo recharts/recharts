@@ -31,7 +31,7 @@ describe('<Brush />', () => {
     expect(wrapper.find('.recharts-brush-slide').length).to.equal(0);
   });
 
-  it('Render panoram when specified LineChart as child', () => {
+  it('Render panorama when specified LineChart as child', () => {
     const wrapper = render(
       <Brush x={100} y={50} width={400} height={40} data={data}>
         <LineChart>

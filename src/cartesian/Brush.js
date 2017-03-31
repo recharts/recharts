@@ -30,6 +30,12 @@ class Brush extends Component {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     travellerWidth: PropTypes.number,
+    padding: PropTypes.shape({
+      top: PropTypes.number,
+      right: PropTypes.number,
+      bottom: PropTypes.number,
+      left: PropTypes.number,
+    }),
 
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
     data: PropTypes.array,
@@ -37,12 +43,6 @@ class Brush extends Component {
     endIndex: PropTypes.number,
     tickFormatter: PropTypes.func,
 
-    panoramMargin: PropTypes.shape({
-      top: PropTypes.number,
-      right: PropTypes.number,
-      bottom: PropTypes.number,
-      left: PropTypes.number,
-    }),
     children: PropTypes.node,
 
     onChange: PropTypes.func,
@@ -57,7 +57,7 @@ class Brush extends Component {
     travellerWidth: 5,
     fill: '#fff',
     stroke: '#666',
-    panoramMargin: { top: 1, right: 1, bottom: 1, left: 1 },
+    padding: { top: 1, right: 1, bottom: 1, left: 1 },
   };
 
   constructor(props) {
@@ -294,8 +294,8 @@ class Brush extends Component {
     );
   }
 
-  renderPanoram() {
-    const { x, y, width, height, data, children, panoramMargin } = this.props;
+  renderPanorama() {
+    const { x, y, width, height, data, children, padding } = this.props;
     const chartElement = findChildByType(children,
       [AreaChart, BarChart, ComposedChart, LineChart]);
 
@@ -308,7 +308,7 @@ class Brush extends Component {
       y,
       width,
       height,
-      margin: panoramMargin,
+      margin: padding,
       compact: true,
       data,
     });
@@ -431,7 +431,7 @@ class Brush extends Component {
         onTouchMove={this.handleTouchMove}
       >
         {this.renderBackground()}
-        {isPanoramic && this.renderPanoram()}
+        {isPanoramic && this.renderPanorama()}
         {this.renderSlide(startX, endX)}
         {this.renderTraveller(startX, 'startX')}
         {this.renderTraveller(endX, 'endX')}

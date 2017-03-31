@@ -1028,7 +1028,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       };
       const attrs = getPresentationAttributes(others);
 
-      // The "compact" mode is mainly used as the panoram within Brush
+      // The "compact" mode is mainly used as the panorama within Brush
       if (compact) {
         return (
           <Surface {...attrs} width={width} height={height}>
