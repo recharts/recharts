@@ -39,7 +39,7 @@ export default ({ getComposedData, ChildComponent }) => WrappedComponent =>
      *          for a given child(graphcalItem) of the overall Chart
      */
     calculateExpensiveState({ props }) {
-      const { children, graphicalItems, xAxisMap, yAxisMap, stackGroups,
+      const { children, graphicalItems, xAxisMap, yAxisMap, zAxisMap, stackGroups,
         layout, offset, barSize, barGap, barCategoryGap,
         maxBarSize: globalMaxBarSize } = props;
 
@@ -52,13 +52,14 @@ export default ({ getComposedData, ChildComponent }) => WrappedComponent =>
       let axisTicks;
       const allComposedData = [];
       items.forEach((item) => {
-        const { xAxisId, yAxisId, dataKey, maxBarSize: childMaxBarSize } = item.props;
-        let xAxis, yAxis, xTicks, yTicks, barPosition, stackedData, bandSize;
+        const { xAxisId, yAxisId, zAxisId, dataKey, maxBarSize: childMaxBarSize } = item.props;
+        let xAxis, yAxis, zAxis, xTicks, yTicks, barPosition, stackedData, bandSize;
 
         if (xAxisMap || yAxisMap) {
 
           xAxis = xAxisMap[xAxisId];
           yAxis = yAxisMap[yAxisId];
+          zAxis = zAxisMap && !_.isNil(zAxisId) ? zAxisMap[zAxisId] : null,
 
           xTicks = getTicksOfAxis(xAxis);
           yTicks = getTicksOfAxis(yAxis);
@@ -80,11 +81,11 @@ export default ({ getComposedData, ChildComponent }) => WrappedComponent =>
           barPosition = getBarPosition({
             barGap, barCategoryGap, bandSize, sizeList: sizeList[cateAxisId], maxBarSize,
           });
-
         }
 
-        const composedData = getComposedData && getComposedData({ props,
-          xAxis, yAxis, xTicks, yTicks, dataKey, item, bandSize, barPosition, offset, stackedData,
+        const composedData = getComposedData && getComposedData({
+          props, xAxis, yAxis, zAxis, xTicks, yTicks, dataKey, item, bandSize,
+          barPosition, offset, stackedData,
         }) || {};
         allComposedData.push(composedData);
       });

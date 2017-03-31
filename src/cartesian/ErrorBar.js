@@ -76,9 +76,9 @@ class ErrorBar extends Component {
 
       return (
         <Layer className="recharts-errorBar" key={i} {...props}>
-          <line {...coordsTop} />;
-          <line {...coordsMid} />;
-          <line {...coordsBot} />;
+          <line {...coordsTop} />
+          <line {...coordsMid} />
+          <line {...coordsBot} />
         </Layer>
       );
 
