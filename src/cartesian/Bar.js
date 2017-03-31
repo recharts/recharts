@@ -193,20 +193,26 @@ class Bar extends Component {
     const { data, label, layout } = this.props;
     const barProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);
-    const textAnchor = layout === 'vertical' ? 'start' : 'middle';
+
+
     const labels = data.map((entry, i) => {
+      let textAnchor = 'middle';
+      let dominantBaseline = 'central';
       let x = 0;
       let y = 0;
 
       if (layout === 'vertical') {
-        x = 5 + entry.x + entry.width;
-        y = 5 + entry.y + entry.height / 2;
+        textAnchor = entry.width < 0 ? 'end' : 'start';
+        x = entry.x + entry.width + (entry.width < 0 ? -1 : 1) * 5;
+        y = entry.y + entry.height / 2;
       } else {
+        dominantBaseline = entry.height < 0 ? 'hanging' : 'inherit';
         x = entry.x + entry.width / 2;
-        y = entry.y - 5;
+        y = entry.y - (entry.height < 0 ? -1 : 1) * 5;
       }
 
       const labelProps = {
+        dominantBaseline,
         textAnchor,
         ...barProps,
         ...entry,

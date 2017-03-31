@@ -81,7 +81,6 @@ const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
     }
 
     if (layout === 'horizontal') {
-
       x = getCategoryAxisCoordinate({
         axis: xAxis,
         ticks: xTicks,
@@ -90,11 +89,9 @@ const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
         entry,
         index,
       });
-      y = yAxis.scale(xAxis.orientation === 'top' ? value[0] : value[1]);
+      y = yAxis.scale(value[1]);
       width = pos.size;
-      height = xAxis.orientation === 'top' ?
-              yAxis.scale(value[1]) - yAxis.scale(value[0]) :
-              yAxis.scale(value[0]) - yAxis.scale(value[1]);
+      height = yAxis.scale(value[0]) - yAxis.scale(value[1]);
 
       if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
         const delta = Math.sign(height || minPointSize) *
@@ -104,7 +101,7 @@ const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
         height += delta;
       }
     } else {
-      x = xAxis.scale(yAxis.orientation === 'left' ? value[0] : value[1]);
+      x = xAxis.scale(value[0]);
       y = getCategoryAxisCoordinate({
         axis: yAxis,
         ticks: yTicks,
@@ -113,9 +110,7 @@ const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
         entry,
         index,
       });
-      width = yAxis.orientation === 'left' ?
-              xAxis.scale(value[1]) - xAxis.scale(value[0]) :
-              xAxis.scale(value[0]) - xAxis.scale(value[1]);
+      width = xAxis.scale(value[1]) - xAxis.scale(value[0]);
       height = pos.size;
 
       if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
