@@ -111,7 +111,7 @@ export const getBandSizeOfAxis = (axis, ticks) => {
     return axis.scale.bandwidth();
   }
 
-  if (axis && axis.type === 'number' && ticks) {
+  if (axis && ticks && ticks.length >= 2) {
     const orderedTicks = _.sortBy(ticks, o => o.coordinate);
     let bandSize = Infinity;
 
@@ -211,6 +211,23 @@ export const parseScale = ({ scale, type }, chartType) => {
   }
 
   return _.isFunction(scale) ? scale : d3Scales.scalePoint();
+};
+
+export const checkDomainOfScale = (scale) => {
+  const domain = scale.domain();
+
+  if (!domain || domain.length <= 2) { return; }
+
+  const len = domain.length;
+  const range = scale.range();
+  const min = Math.min(range[0], range[1]);
+  const max = Math.max(range[0], range[1]);
+  const first = scale(domain[0]);
+  const last = scale(domain[len - 1]);
+
+  if (first < min || first > max || last < min || last > max) {
+    scale.domain([domain[0], domain[len - 1]]);
+  }
 };
 
 export const getValueByDataKey = (obj, dataKey, defaultValue) => {
