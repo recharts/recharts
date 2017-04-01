@@ -510,7 +510,7 @@ export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = []
       sum -= (len - 1) * realBarGap;
       realBarGap = 0;
     }
-    if (sum >= bandSize) {
+    if (sum >= bandSize && fullBarSize > 0) {
       useFull = true;
       fullBarSize *= 0.9;
       sum = len * fullBarSize;

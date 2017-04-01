@@ -156,6 +156,7 @@ class BarChart extends Component {
     barCategoryGap: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     barGap: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     barSize: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    maxBarSize: PropTypes.number,
     // used internally
     isComposed: PropTypes.bool,
     animationId: PropTypes.number,

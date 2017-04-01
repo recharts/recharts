@@ -189,7 +189,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       // Eliminate duplicated axes
       const axisMap = axes.reduce((result, child) => {
-        const { type, dataKey, allowDataOverflow } = child.props;
+        const { type, dataKey, allowDataOverflow, scale } = child.props;
         const axisId = child.props[axisIdKey];
 
         if (!result[axisId]) {
@@ -209,7 +209,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
               domain = domain.filter(entry => (entry !== '' && !_.isNil(entry)));
             }
 
-            if (isCategorial && type === 'number') {
+            if (isCategorial && (type === 'number' || scale !== 'auto')) {
               categoricalDomain = getDomainOfDataByKey(displayedData, dataKey, 'category');
             }
           } else if (isCategorial) {
@@ -392,7 +392,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         const finalAxis = {
           ...axis,
           ...ticks,
-          x, y, scale,
+          range, x, y, scale,
           width: axisType === 'xAxis' ? offset.width : axis.width,
           height: axisType === 'yAxis' ? offset.height : axis.height,
         };
