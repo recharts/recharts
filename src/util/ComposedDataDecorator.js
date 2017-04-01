@@ -59,8 +59,8 @@ export default ({ getComposedData, ChildComponent }) => WrappedComponent =>
           xAxis = xAxisMap[xAxisId];
           yAxis = yAxisMap[yAxisId];
 
-          xTicks = getTicksOfAxis(xAxis, false, true);
-          yTicks = getTicksOfAxis(yAxis, false, true);
+          xTicks = getTicksOfAxis(xAxis);
+          yTicks = getTicksOfAxis(yAxis);
 
           // axisTicks is more global - only need to set once
           axisTicks = axisTicks || (layout === 'horizontal' ? xTicks : yTicks);

@@ -107,7 +107,7 @@ export const validateCoordinateInRange = (coordinate, scale) => {
  * @return {Number} Size
  */
 export const getBandSizeOfAxis = (axis, ticks) => {
-  if (axis && axis.type === 'category' && axis.scale && axis.scale.bandwidth) {
+  if (axis && axis.scale && axis.scale.bandwidth) {
     return axis.scale.bandwidth();
   }
 
@@ -212,7 +212,7 @@ export const parseScale = ({ scale, type }, chartType) => {
 
   return _.isFunction(scale) ? scale : d3Scales.scalePoint();
 };
-
+const EPS = 1e-4;
 export const checkDomainOfScale = (scale) => {
   const domain = scale.domain();
 
@@ -220,8 +220,8 @@ export const checkDomainOfScale = (scale) => {
 
   const len = domain.length;
   const range = scale.range();
-  const min = Math.min(range[0], range[1]);
-  const max = Math.max(range[0], range[1]);
+  const min = Math.min(range[0], range[1]) - EPS;
+  const max = Math.max(range[0], range[1]) + EPS;
   const first = scale(domain[0]);
   const last = scale(domain[len - 1]);
 
