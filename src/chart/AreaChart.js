@@ -221,6 +221,7 @@ export class AreaChart extends Component {
     const hasDot = tooltipItem && isTooltipActive;
     const dotItems = [];
     const { animationId } = this.props;
+    const lastActivePoint = allComposedData[items.length - 1].points && allComposedData[items.length - 1].points[activeTooltipIndex];
 
     const areaItems = items.reduce((result, child, i) => {
       const { dataKey, activeDot } = child.props;
@@ -245,15 +246,26 @@ export class AreaChart extends Component {
           ...getPresentationAttributes(activeDot),
         };
 
-        dotItems.push(this.renderActiveDot(activeDot, dotProps, i));
+        const pushDotItem = () => {
+          dotItems.push(this.renderActiveDot(activeDot, dotProps, i));
 
-        if (basePoint) {
-          dotItems.push(this.renderActiveDot(activeDot, {
-            ...dotProps,
-            cx: basePoint.x,
-            cy: basePoint.y,
-            pointType: 'basePoint',
-          }, i));
+          if (basePoint) {
+            dotItems.push(this.renderActiveDot(activeDot, {
+              ...dotProps,
+              cx: basePoint.x,
+              cy: basePoint.y,
+              pointType: 'basePoint',
+            }, i));
+          }          
+        }
+        
+        // @Note: if there are mutliple
+        // active points, and the active point is under the last active point
+        // we do not render it
+        if ( activePoint.y != lastActivePoint.y && i != items.length - 1) {
+          pushDotItem();
+        } else if (i === items.length - 1) {
+          pushDotItem();
         }
       }
 
