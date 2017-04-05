@@ -1,4 +1,4 @@
-export function shallowEqual(a, b, exclude) {
+export function shallowEqual(a, b) {
   /* eslint-disable no-restricted-syntax */
   for (const key in a) {
     if ({}.hasOwnProperty.call(a, key) &&
