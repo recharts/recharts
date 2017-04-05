@@ -49,6 +49,44 @@ describe('<CartesianAxis />', () => {
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(0);
   });
 
+  it('Renders ticks when interval="preserveStartEnd"', () => {
+    const wrapper = render(
+      <Surface width={500} height={500}>
+        <CartesianAxis
+          orientation="bottom"
+          y={100}
+          width={400}
+          height={50}
+          viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
+          ticks={ticks}
+          label="test"
+          interval="preserveStartEnd"
+        />
+      </Surface>
+    );
+
+    expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
+  });
+
+  it('Renders ticks when interval="preserveStart"', () => {
+    const wrapper = render(
+      <Surface width={500} height={500}>
+        <CartesianAxis
+          orientation="bottom"
+          y={100}
+          width={400}
+          height={50}
+          viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
+          ticks={ticks}
+          label="test"
+          interval="preserveStart"
+        />
+      </Surface>
+    );
+
+    expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
+  });
+
   it('Renders 5 ticks in a CartesianAxis which has orientation top', () => {
     const wrapper = render(
       <Surface width={500} height={500}>

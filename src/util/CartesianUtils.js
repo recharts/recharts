@@ -13,7 +13,7 @@ import ReferenceArea from '../cartesian/ReferenceArea';
 import Legend from '../component/Legend';
 
 /* eslint no-param-reassign: 0 */
-const offsetSign = (series) => {
+export const offsetSign = (series) => {
   const n = series.length;
   if (n <= 0) { return; }
 
@@ -424,7 +424,7 @@ export const getLegendProps = (children, graphicItems, width) => {
 export const getTicksOfScale = (scale, opts) => {
   const { type, tickCount, originalDomain, allowDecimals } = opts;
 
-  if (opts.scale !== 'auto' || opts.scale !== 'linear') {
+  if (opts.scale !== 'auto' && opts.scale !== 'linear') {
     return null;
   }
 
