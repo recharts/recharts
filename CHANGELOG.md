@@ -1,3 +1,15 @@
+## 0.22.0(Apr 05, 2017)
+
+### feat
+
+- Add event handlers to component  Dot
+- Support embedded chart as a panoram in Brush
+- Add props reversed to `XAxis` and `YAxis` to reverse the range of axis
+
+### fix
+
+- Fix error or time scale
+
 ## 0.21.2(Mar 01, 2017)
 
 ### fix
