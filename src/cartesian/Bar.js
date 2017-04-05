@@ -194,7 +194,6 @@ class Bar extends Component {
     const barProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);
 
-
     const labels = data.map((entry, i) => {
       let textAnchor = 'middle';
       let dominantBaseline = 'central';
