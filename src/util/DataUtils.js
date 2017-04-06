@@ -290,7 +290,7 @@ export const truncateByDomain = (value, domain) => {
 };
 
 /* eslint no-param-reassign: 0 */
-const offsetSign = (series) => {
+export const offsetSign = (series) => {
   const n = series.length;
   if (n <= 0) { return; }
 

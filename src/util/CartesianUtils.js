@@ -7,39 +7,6 @@ import ReferenceLine from '../cartesian/ReferenceLine';
 import ReferenceArea from '../cartesian/ReferenceArea';
 import Legend from '../component/Legend';
 
-/* eslint no-param-reassign: 0 */
-export const offsetSign = (series) => {
-  const n = series.length;
-  if (n <= 0) { return; }
-
-  for (let j = 0, m = series[0].length; j < m; ++j) {
-    let positive = 0;
-    let negative = 0;
-
-    for (let i = 0; i < n; ++i) {
-      const value = isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
-
-      if (value >= 0) {
-        series[i][j][0] = positive;
-        series[i][j][1] = positive + value;
-        positive = series[i][j][1];
-      } else {
-        series[i][j][0] = negative;
-        series[i][j][1] = negative + value;
-        negative = series[i][j][1];
-      }
-    }
-  }
-};
-
-const STACK_OFFSET_MAP = {
-  sign: offsetSign,
-  expand: stackOffsetExpand,
-  none: stackOffsetNone,
-  silhouette: stackOffsetSilhouette,
-  wiggle: stackOffsetWiggle,
-};
-
 export const detectReferenceElementsDomain = (children, domain, axisId, axisType) => {
   const lines = findAllByType(children, ReferenceLine);
   const dots = findAllByType(children, ReferenceDot);
