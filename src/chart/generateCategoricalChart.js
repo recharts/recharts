@@ -1032,54 +1032,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       });
     };
 
-    renderCompactChart = () => (<ChartComponent key="chart" {...this.props} {...this.state} />);
-
-    renderChart() {
-      const { children, width, height, ...others } = this.props;
-      const { xAxisMap, yAxisMap } = this.state;
-      const attrs = getPresentationAttributes(others);
-
-      return (
-        <Surface {...attrs} width={width} height={height}>
-          {this.renderGrid()}
-          {this.renderReferenceElements(false, ReferenceArea)}
-          {this.renderReferenceElements(false, ReferenceLine)}
-          {this.renderReferenceElements(false, ReferenceDot)}
-          {this.renderAxes(xAxisMap, 'x-axis')}
-          {this.renderAxes(yAxisMap, 'y-axis')}
-          <ChartComponent
-            {...this.props}
-            {...this.state}
-          />
-          {this.renderReferenceElements(true, ReferenceArea)}
-          {this.renderReferenceElements(true, ReferenceLine)}
-          {this.renderReferenceElements(true, ReferenceDot)}
-          {this.renderBrush()}
-          {filterSvgElements(children)}
-        </Surface>
-      );
-    }
+    renderChart = () => (<ChartComponent key="chart" {...this.props} {...this.state} />);
 
     render() {
       const { data } = this.props;
       if (!validateWidthHeight(this) || !data || !data.length) { return null; }
 
       const { children, className, width, height, style, compact, ...others } = this.props;
-
-      // The "compact" mode is mainly used as the panorama within Brush
-      if (compact) {
-        return this.renderCompactChart();
-      }
-
-      const events = {
-        onMouseEnter: this.handleMouseEnter,
-        onMouseMove: this.handleMouseMove,
-        onMouseLeave: this.handleMouseLeave,
-        onClick: this.handleClick,
-        onMouseDown: this.handleMouseDown,
-        onMouseUp: this.handleMouseUp,
-        onTouchMove: this.handleTouchMove,
-      };
       const attrs = getPresentationAttributes(others);
       const map = {
         CartesianGrid: { handler: this.renderGrid, once: true },
@@ -1094,6 +1053,26 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         Area: { handler: this.renderChart, once: true },
       };
 
+      // The "compact" mode is mainly used as the panorama within Brush
+      if (compact) {
+        return (
+          <Surface {...attrs} width={width} height={height}>
+            {
+              renderByOrder(children, map)
+            }
+          </Surface>
+        );
+      }
+
+      const events = {
+        onMouseEnter: this.handleMouseEnter,
+        onMouseMove: this.handleMouseMove,
+        onMouseLeave: this.handleMouseLeave,
+        onClick: this.handleClick,
+        onMouseDown: this.handleMouseDown,
+        onMouseUp: this.handleMouseUp,
+        onTouchMove: this.handleTouchMove,
+      };
       return (
         <div
           className={classNames('recharts-wrapper', className)}
