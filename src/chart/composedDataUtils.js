@@ -136,7 +136,7 @@ const getBaseValueOfBar = ({ props, xAxis, yAxis }) => {
  */
 const getComposedDataOfBar = ({ props, item, barPosition, bandSize, xAxis, yAxis,
   xTicks, yTicks, stackedData, dataStartIndex, dataEndIndex }) => {
-  const { layout, dataStartIndex, dataEndIndex } = props;
+  const { layout } = props;
   const { dataKey, children, minPointSize } = item.props;
   const pos = findPositionOfBar(barPosition, item);
   const stackedDomain = stackedData && layout === 'horizontal' ?
@@ -145,7 +145,7 @@ const getComposedDataOfBar = ({ props, item, barPosition, bandSize, xAxis, yAxis
   if (!pos) { return []; }
 
   const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
-  const baseValue = getBaseValue({ props, xAxis, yAxis });
+  const baseValue = getBaseValueOfBar({ props, xAxis, yAxis });
   const cells = findAllByType(children, Cell);
 
   return data.map((entry, index) => {
@@ -162,7 +162,7 @@ const getComposedDataOfBar = ({ props, item, barPosition, bandSize, xAxis, yAxis
     }
 
     if (layout === 'horizontal') {
-      x = getCategoryAxisCoordinate({
+      x = getCategoryAxisCoordinateOfBar({
         axis: xAxis,
         ticks: xTicks,
         bandSize,
@@ -183,7 +183,7 @@ const getComposedDataOfBar = ({ props, item, barPosition, bandSize, xAxis, yAxis
       }
     } else {
       x = xAxis.scale(value[0]);
-      y = getCategoryAxisCoordinate({
+      y = getCategoryAxisCoordinateOfBar({
         axis: yAxis,
         ticks: yTicks,
         bandSize,
