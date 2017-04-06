@@ -37,7 +37,7 @@ class Bar extends Component {
     legendType: PropTypes.oneOf(LEGEND_TYPES),
     minPointSize: PropTypes.number,
     maxBarSize: PropTypes.number,
-    hide: PropTypes.number,
+    hide: PropTypes.bool,
 
     shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
     data: PropTypes.arrayOf(PropTypes.shape({
