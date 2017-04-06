@@ -392,6 +392,7 @@ export default class Demo extends Component {
             </YAxis>
             <Tooltip />
             <Line
+              key="uv"
               type="monotone"
               dataKey="uv"
               stroke="#ff7300"

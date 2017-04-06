@@ -59,7 +59,7 @@ export default ({ getComposedData, ChildComponent }) => WrappedComponent =>
 
           xAxis = xAxisMap[xAxisId];
           yAxis = yAxisMap[yAxisId];
-          zAxis = zAxisMap && !_.isNil(zAxisId) ? zAxisMap[zAxisId] : null,
+          zAxis = (zAxisMap && !_.isNil(zAxisId)) ? zAxisMap[zAxisId] : null;
 
           xTicks = getTicksOfAxis(xAxis);
           yTicks = getTicksOfAxis(yAxis);

@@ -229,8 +229,9 @@ export const getPresentationAttributes = (el) => {
 
 /**
  * get all the event attribute of svg element
- * @param  {Object} el A react element or the props of a react element
- * @return {Object}    attributes or null
+ * @param  {Object}   el         A react element or the props of a react element
+ * @param  {Function} newHandler New handler of event
+ * @return {Object}              attributes or null
  */
 export const filterEventAttributes = (el, newHandler) => {
   if (!el || _.isFunction(el)) { return null; }

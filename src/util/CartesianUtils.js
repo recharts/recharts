@@ -1,8 +1,7 @@
 import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
 import _ from 'lodash';
 import { findAllByType, findChildByType } from './ReactUtils';
-import { getPercentValue, isNumber, isNumOrStr, getValueByDataKey,
-  uniqueId } from './DataUtils';
+import { getPercentValue, isNumber, isNumOrStr, getValueByDataKey } from './DataUtils';
 import ReferenceDot from '../cartesian/ReferenceDot';
 import ReferenceLine from '../cartesian/ReferenceLine';
 import ReferenceArea from '../cartesian/ReferenceArea';

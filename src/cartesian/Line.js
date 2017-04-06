@@ -321,7 +321,7 @@ class Line extends Component {
   }
 
   render() {
-    const { hide, dot, points, label, className, xAxis, yAxis, top, left,
+    const { hide, dot, points, className, xAxis, yAxis, top, left,
       width, height, isAnimationActive } = this.props;
 
     if (hide || !points || !points.length) { return null; }

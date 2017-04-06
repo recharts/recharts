@@ -269,7 +269,7 @@ class Area extends Component {
   }
 
   render() {
-    const { hide, dot, label, points, className, top, left, xAxis, yAxis,
+    const { hide, dot, points, className, top, left, xAxis, yAxis,
       width, height, isAnimationActive } = this.props;
 
     if (hide || !points || !points.length) { return null; }

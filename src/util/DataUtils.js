@@ -289,8 +289,6 @@ export const truncateByDomain = (value, domain) => {
   return result;
 };
 
-
-
 /* eslint no-param-reassign: 0 */
 const offsetSign = (series) => {
   const n = series.length;
@@ -324,6 +322,16 @@ const STACK_OFFSET_MAP = {
   wiggle: stackOffsetWiggle,
 };
 
+export const getStackedData = (data, stackItems, offsetType) => {
+  const dataKeys = stackItems.map(item => item.props.dataKey);
+  const stack = shapeStack()
+                .keys(dataKeys)
+                .value((d, key) => +getValueByDataKey(d, key, 0))
+                .order(stackOrderNone)
+                .offset(STACK_OFFSET_MAP[offsetType]);
+
+  return stack(data);
+};
 
 export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, offsetType) => {
   if (!data) { return null; }
@@ -376,15 +384,4 @@ export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, o
 
     return { ...result, [axisId]: group };
   }, {});
-};
-
-export const getStackedData = (data, stackItems, offsetType) => {
-  const dataKeys = stackItems.map(item => item.props.dataKey);
-  const stack = shapeStack()
-                .keys(dataKeys)
-                .value((d, key) => +getValueByDataKey(d, key, 0))
-                .order(stackOrderNone)
-                .offset(STACK_OFFSET_MAP[offsetType]);
-
-  return stack(data);
 };

@@ -267,9 +267,9 @@ export default class Demo extends Component {
             <XAxis padding={{ left: 20, right: 100 }} type="number" dataKey="time" />
             <YAxis type="number"/>
             <CartesianGrid horizontal={false} />
+            <Tooltip />
             <Bar dataKey="uv" fill="#ff7300" maxBarSize={15} isAnimationActive={false} />
             <Bar dataKey="pv" fill="#387908" />
-            <Tooltip />
           </BarChart>
         </div>
 
@@ -342,10 +342,10 @@ export default class Demo extends Component {
           <BarChart width={1100} height={250} barGap={2} barSize={6} data={data02} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
             <XAxis dataKey="name" />
             <YAxis tickCount={7} />
+            <CartesianGrid />
             <Bar dataKey="uv" fill="#ff7300" />
             <Bar dataKey="pv" fill="#387908" />
             <Tooltip />
-            <CartesianGrid />
             <Brush dataKey="name" height={30} />
             <ReferenceLine type="horizontal" value={0} stroke="#666" />
           </BarChart>
@@ -395,8 +395,8 @@ export default class Demo extends Component {
           >
             <XAxis dataKey="day" />
             <YAxis />
-            <Bar dataKey="temperature" fill="#ff7300" />
             <Tooltip />
+            <Bar dataKey="temperature" fill="#ff7300" />
           </BarChart>
         </div>
 
