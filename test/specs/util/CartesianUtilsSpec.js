@@ -1,9 +1,13 @@
 import { expect } from 'chai';
+import { scaleLinear, scaleBand } from 'd3-scale';
 import {
   calculateActiveTickIndex,
   calculateDomainOfTicks,
   getDomainOfStackGroups,
   getDomainOfDataByKey,
+  offsetSign,
+  getTicksOfScale,
+  appendOffsetOfLegend,
 } from '../../../src/util/CartesianUtils';
 
 describe('calculateActiveTickIndex', () => {
@@ -105,4 +109,49 @@ describe('getDomainOfDataByKey', () => {
     });
   });
 });
+
+describe('offsetSign', () => {
+  describe('of data', () => {
+    const data = [
+      [[0, 1], [0, 2], [0, -5]],
+      [[0, -1], [0, 2], [0, -5]],
+    ];
+    const offsetData = offsetSign(data);
+
+    it('should change', () => {
+      expect(data).to.deep.equal([[[0, 1], [0, 2], [0, -5]], [[0, -1], [2, 4], [-5, -10]]]);
+    });
+  });
+});
+
+describe('getTicksOfScale', () => {
+  describe('of linear scale with auto domain', () => {
+    const scale = scaleLinear();
+    const opts = {
+      scale: 'linear',
+      type: 'number',
+      tickCount: 5,
+      originalDomain: ['auto', 'auto'],
+      allowDecimals: true,
+    };
+    const result = getTicksOfScale(scale, opts);
+
+    expect(result.niceTicks).to.deep.equal([0, 0.25, 0.5, 0.75, 1]);
+  });
+
+  describe('of linear scale with specified domain', () => {
+    const scale = scaleLinear();
+    const opts = {
+      scale: 'linear',
+      type: 'number',
+      tickCount: 5,
+      originalDomain: [0, 100],
+      allowDecimals: true,
+    };
+    const result = getTicksOfScale(scale, opts);
+
+    expect(result.niceTicks).to.deep.equal([0, 0.25, 0.5, 0.75, 1]);
+  });
+});
+
 

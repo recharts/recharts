@@ -263,9 +263,9 @@ export default React.createClass({
 
         <p>BarChart of layout vertical</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={400} height={400} data={data} layout="vertical" maxBarSize={10} >
-            <XAxis type="number" />
-            <YAxis dataKey="name" type="category"/>
+          <BarChart width={400} height={400} data={data.slice(0, 1)} maxBarSize={10} >
+            <XAxis padding={{ left: 20, right: 100 }} type="number" dataKey="time" />
+            <YAxis type="number"/>
             <CartesianGrid horizontal={false} />
             <Bar dataKey="uv" fill="#ff7300" maxBarSize={15} isAnimationActive={false} />
             <Bar dataKey="pv" fill="#387908" />

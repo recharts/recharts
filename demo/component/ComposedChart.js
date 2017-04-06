@@ -1,5 +1,5 @@
 import React from 'react';
-import { ResponsiveContainer, ComposedChart, Line, Bar, Area, XAxis, YAxis,
+import { ResponsiveContainer, ComposedChart, LineChart, Line, Bar, Area, XAxis, YAxis,
   ReferenceLine, ReferenceDot, Tooltip, Legend, CartesianGrid, Brush } from 'recharts';
 
 const data = [
@@ -30,7 +30,11 @@ export default React.createClass({
               <Area type="monotone" dataKey='amt' fill="#8884d8" stroke="#8884d8" />
               <Line type="monotone" dataKey="uv" stroke="#ff7300" />
               <Bar dataKey="pv" barSize={20} fill="#413ea0" />
-              <Brush/>
+              <Brush>
+                <LineChart>
+                  <Line dataKey="uv" stroke="#ff7300" dot={false} />
+                </LineChart>
+              </Brush>
             </ComposedChart>
           </ResponsiveContainer>
         </div>

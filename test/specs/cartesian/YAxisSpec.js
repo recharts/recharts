@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { Surface, AreaChart, Area, XAxis, YAxis, CartesianAxis } from 'recharts';
+import { Surface, AreaChart, Area, XAxis, YAxis, CartesianAxis, Text } from 'recharts';
 import { mount, render } from 'enzyme';
 
 describe('<YAxis />', () => {
@@ -26,6 +26,32 @@ describe('<YAxis />', () => {
     );
 
     expect(wrapper.find(CartesianAxis).length).to.equal(3);
+  });
+
+  it('Render 4 ticks', () => {
+    const wrapper = mount(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis type="number" stroke="#ff7300" />
+        <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>
+    );
+    const ticks = wrapper.find(Text);
+
+    expect(ticks.length).to.equal(4);
+    expect(ticks.first().props().y).to.equal(297.5);
+  });
+
+  it('Render ticks reversed', () => {
+    const wrapper = mount(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis reversed type="number" stroke="#ff7300" />
+        <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>
+    );
+    const ticks = wrapper.find(Text);
+
+    expect(ticks.length).to.equal(4);
+    expect(ticks.first().props().y).to.equal(102.5);
   });
 
   it("Don't render empty tick", () => {
