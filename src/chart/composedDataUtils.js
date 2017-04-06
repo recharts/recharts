@@ -1,9 +1,10 @@
 import _ from 'lodash';
-import { getBandSizeOfAxis, getAnyElementOfObject, getValueByDataKey,
+import { getValueByDataKey,
   findPositionOfBar, truncateByDomain, isNumOrStr, isNumber } from '../util/DataUtils';
-import { getPresentationAttributes, findChildByType, findAllByType,
+import { findAllByType,
   getDisplayName } from '../util/ReactUtils';
 import Cell from '../component/Cell';
+import ZAxis from '../cartesian/ZAxis';
 
 const getCategoryAxisCoordinate = ({ axis, ticks, bandSize, entry, index }) => {
   if (axis.type === 'category') {
@@ -135,7 +136,7 @@ const getBaseValueOfBar = ({ props, xAxis, yAxis }) => {
  */
 const getComposedDataOfBar = ({ props, item, barPosition, bandSize, xAxis, yAxis,
   xTicks, yTicks, stackedData, dataStartIndex, dataEndIndex }) => {
-  const { layout } = props;
+  const { layout, dataStartIndex, dataEndIndex } = props;
   const { dataKey, children, minPointSize } = item.props;
   const pos = findPositionOfBar(barPosition, item);
   const stackedDomain = stackedData && layout === 'horizontal' ?
@@ -144,7 +145,7 @@ const getComposedDataOfBar = ({ props, item, barPosition, bandSize, xAxis, yAxis
   if (!pos) { return []; }
 
   const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
-  const baseValue = getBaseValueOfBar({ props, xAxis, yAxis });
+  const baseValue = getBaseValue({ props, xAxis, yAxis });
   const cells = findAllByType(children, Cell);
 
   return data.map((entry, index) => {
@@ -161,8 +162,7 @@ const getComposedDataOfBar = ({ props, item, barPosition, bandSize, xAxis, yAxis
     }
 
     if (layout === 'horizontal') {
-
-      x = getCategoryAxisCoordinateOfBar({
+      x = getCategoryAxisCoordinate({
         axis: xAxis,
         ticks: xTicks,
         bandSize,
@@ -170,11 +170,9 @@ const getComposedDataOfBar = ({ props, item, barPosition, bandSize, xAxis, yAxis
         entry,
         index,
       });
-      y = yAxis.scale(xAxis.orientation === 'top' ? value[0] : value[1]);
+      y = yAxis.scale(value[1]);
       width = pos.size;
-      height = xAxis.orientation === 'top' ?
-              yAxis.scale(value[1]) - yAxis.scale(value[0]) :
-              yAxis.scale(value[0]) - yAxis.scale(value[1]);
+      height = yAxis.scale(value[0]) - yAxis.scale(value[1]);
 
       if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
         const delta = Math.sign(height || minPointSize) *
@@ -184,8 +182,8 @@ const getComposedDataOfBar = ({ props, item, barPosition, bandSize, xAxis, yAxis
         height += delta;
       }
     } else {
-      x = xAxis.scale(yAxis.orientation === 'left' ? value[0] : value[1]);
-      y = getCategoryAxisCoordinateOfBar({
+      x = xAxis.scale(value[0]);
+      y = getCategoryAxisCoordinate({
         axis: yAxis,
         ticks: yTicks,
         bandSize,
@@ -193,9 +191,7 @@ const getComposedDataOfBar = ({ props, item, barPosition, bandSize, xAxis, yAxis
         entry,
         index,
       });
-      width = yAxis.orientation === 'left' ?
-              xAxis.scale(value[1]) - xAxis.scale(value[0]) :
-              xAxis.scale(value[0]) - xAxis.scale(value[1]);
+      width = xAxis.scale(value[1]) - xAxis.scale(value[0]);
       height = pos.size;
 
       if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
@@ -258,9 +254,8 @@ const getComposedDataOfLine = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey,
  * @param  {String} dataKey The unique key of a group
  * @return {Array}  Composed data
  */
-const getComposedDataOfScatter = ({ props, xAxis, yAxis, zAxis, xTicks, yTicks,
-  dataKey, item, dataStartIndex, dataEndIndex }) => {
-  const { layout } = props;
+const getComposedDataOfScatter = ({ props, xAxis, yAxis, zAxis,
+  item, dataStartIndex, dataEndIndex }) => {
   const cells = findAllByType(item.props.children, Cell);
   const xAxisDataKey = _.isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
   const yAxisDataKey = _.isNil(yAxis.dataKey) ? item.props.dataKey : yAxis.dataKey;
@@ -301,34 +296,26 @@ const getComposedDataOfScatter = ({ props, xAxis, yAxis, zAxis, xTicks, yTicks,
   });
 };
 
-const getCalculatedPropsOfScatter = (input) => {
-  return {
-    onMouseLeave: input.onItemMouseLeave,
-    onMouseEnter: input.onItemMouseEnter,
-    points: getComposedDataOfScatter(input),
-  };
-};
+const getCalculatedPropsOfScatter = input => ({
+  onMouseLeave: input.onItemMouseLeave,
+  onMouseEnter: input.onItemMouseEnter,
+  points: getComposedDataOfScatter(input),
+});
 
-const getCalculatedPropsOfLine = (input) => {
-  return {
-    layout: input.layout,
-    points: getComposedDataOfLine(input),
-  }
-};
+const getCalculatedPropsOfLine = input => ({
+  layout: input.layout,
+  points: getComposedDataOfLine(input),
+});
 
-const getCalculatedPropsOfBar = (input) => {
-  return {
-    data: getComposedDataOfBar(input),
-    layout: input.layout,
-  };
-};
+const getCalculatedPropsOfBar = input => ({
+  data: getComposedDataOfBar(input),
+  layout: input.layout,
+});
 
-const getCalculatedPropsOfArea = (input) => {
-  return {
-    ...getComposedDataOfArea(input),
-    layout: input.layout,
-  };
-};
+const getCalculatedPropsOfArea = input => ({
+  ...getComposedDataOfArea(input),
+  layout: input.layout,
+});
 
 export const getComposeFnOfItem = (item) => {
   if (!item) { return null; }
@@ -354,4 +341,4 @@ export const getComposeFnOfItem = (item) => {
   }
 
   return null;
-}
+};
