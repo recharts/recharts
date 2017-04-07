@@ -458,7 +458,7 @@ class ScatterChart extends Component {
       finalStrokeWidth = activeGroupId === `scatter-${i}` ? finalStrokeWidth + 2 : finalStrokeWidth;
 
       return React.cloneElement(child, {
-        key: `scatter-${i}`,
+        key: child.key || `scatter-${i}`,
         groupId: `scatter-${i}`,
         strokeWidth: finalStrokeWidth,
         onMouseLeave: this.handleScatterMouseLeave,

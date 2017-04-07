@@ -262,7 +262,7 @@ class RadarChart extends Component {
         ...getPresentationAttributes(el),
         animationId: this.props.animationId,
         points: this.getComposedData(el, scale, cx, cy),
-        key: `radar-${index}`,
+        key: el.key || `radar-${index}`,
         onMouseEnter: combineEventHandlers(
           this.handleMouseEnter, onMouseEnter, el.props.onMouseEnter),
         onMouseLeave: combineEventHandlers(
