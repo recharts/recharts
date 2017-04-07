@@ -407,7 +407,7 @@ export const getLegendProps = (children, graphicItems, width) => {
         value: name || dataKey,
         payload: child.props,
       };
-    }, this);
+    });
 
   return {
     ...legendItem.props,
