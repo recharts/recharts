@@ -258,7 +258,7 @@ export class AreaChart extends Component {
       }
 
       const area = React.cloneElement(child, {
-        key: `area-${i}`,
+        key: child.key || `area-${i}`,
         ...currentComposedData,
         ...offset,
         animationId,

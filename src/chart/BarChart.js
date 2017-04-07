@@ -210,7 +210,7 @@ class BarChart extends Component {
 
     return items.map((child, i) =>
       React.cloneElement(child, {
-        key: `bar-${i}`,
+        key: child.key || `bar-${i}`,
         layout,
         animationId,
         ...offset,
