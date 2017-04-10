@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import _ from 'lodash';
 import Smooth from 'react-smooth';
 import Surface from '../container/Surface';
+import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Legend from '../component/Legend';
 import Curve from '../shape/Curve';
