@@ -245,13 +245,12 @@ const getComposedDataOfLine = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey,
 
 /**
  * Compose the data of each group
- * @param {Object} props The props from the component
  * @param  {Object} xAxis   The configuration of x-axis
  * @param  {Object} yAxis   The configuration of y-axis
  * @param  {String} dataKey The unique key of a group
  * @return {Array}  Composed data
  */
-const getComposedDataOfScatter = ({ props, xAxis, yAxis, zAxis,
+const getComposedDataOfScatter = ({ xAxis, yAxis, zAxis,
   item, displayedData }) => {
   const cells = findAllByType(item.props.children, Cell);
   const xAxisDataKey = _.isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
