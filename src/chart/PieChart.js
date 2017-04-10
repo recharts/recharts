@@ -154,11 +154,11 @@ export class PieChart extends Component {
   }
 
   calculateExpensiveState(props) {
-    const { width, height, margin, children } = props;
+    const { width, height, margin } = props;
     const graphicalItems = findAllByType(props.children, Pie);
     const maxPieRadius = getMaxRadius(width, height, margin);
 
-    return graphicalItems.map((item, index) => {
+    return graphicalItems.map((item) => {
       const cx = getPercentValue(item.props.cx, width, width / 2);
       const cy = getPercentValue(item.props.cy, height, height / 2);
       const innerRadius = getPercentValue(item.props.innerRadius, maxPieRadius, 0);
