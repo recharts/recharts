@@ -111,7 +111,7 @@ export const EVENT_ATTRIBUTES = {
 
 export const LEGEND_TYPES = [
   'line', 'square', 'rect', 'circle', 'cross', 'diamond',
-  'star', 'triangle', 'wye',
+  'star', 'triangle', 'wye', 'none',
 ];
 
 /**
