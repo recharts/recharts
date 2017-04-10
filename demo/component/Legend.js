@@ -23,15 +23,15 @@ const data3 = [
 ];
 
 export default React.createClass({
-  render () {
+  render() {
     return (
       <div>
         <div style={{ position: 'relative', height: 200 }}>
           <Legend width={500} height={30} payload={data} />
         </div>
 
-        <div style={{ position: 'relative', height: 200 }}>
-          <Legend layout='vertical' width={200} height={100} payload={data2} />
+        <div style={{ position: 'relative', height: 200, left: 100 }}>
+          <Legend layout="vertical" width={200} height={100} payload={data2} />
         </div>
 
         <div style={{ position: 'relative', height: 200 }}>
@@ -39,6 +39,5 @@ export default React.createClass({
         </div>
       </div>
     );
-  }
+  },
 });
-
