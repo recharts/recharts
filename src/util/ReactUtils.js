@@ -108,6 +108,12 @@ export const EVENT_ATTRIBUTES = {
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,
 };
+
+export const LEGEND_TYPES = [
+  'line', 'square', 'rect', 'circle', 'cross', 'diamond',
+  'star', 'triangle', 'wye',
+];
+
 /**
  * Get the display name of a component
  * @param  {Object} Comp Specified Component

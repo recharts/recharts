@@ -10,8 +10,8 @@ import Layer from '../container/Layer';
 import Sector from '../shape/Sector';
 import Curve from '../shape/Curve';
 import Text from '../component/Text';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
-  filterEventsOfChild, isSsr } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
+  getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
 import { isNumber, getValueByDataKey, uniqueId } from '../util/DataUtils';
@@ -40,10 +40,7 @@ class Pie extends Component {
     data: PropTypes.arrayOf(PropTypes.object),
     composedData: PropTypes.arrayOf(PropTypes.object),
     minAngle: PropTypes.number,
-    legendType: PropTypes.oneOf([
-      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
-      'triangle', 'wye',
-    ]),
+    legendType: PropTypes.oneOf(LEGEND_TYPES),
     maxRadius: PropTypes.number,
 
     labelLine: PropTypes.oneOfType([

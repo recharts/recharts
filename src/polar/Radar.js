@@ -6,7 +6,8 @@ import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
 import pureRender from '../util/PureRender';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES,
+  getPresentationAttributes, isSsr } from '../util/ReactUtils';
 import Polygon from '../shape/Polygon';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
@@ -39,10 +40,7 @@ class Radar extends Component {
     label: PropTypes.oneOfType([
       PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool,
     ]),
-    legendType: PropTypes.oneOf([
-      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square',
-      'star', 'triangle', 'wye',
-    ]),
+    legendType: PropTypes.oneOf(LEGEND_TYPES),
 
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,

@@ -12,7 +12,7 @@ import Layer from '../container/Layer';
 import Text from '../component/Text';
 import ErrorBar from './ErrorBar';
 import { getValueByDataKey, uniqueId } from '../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, isSsr, findChildByType } from '../util/ReactUtils';
 
 const FACTOR = 1.0000001;
@@ -36,10 +36,7 @@ class Line extends Component {
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     yAxis: PropTypes.object,
     xAxis: PropTypes.object,
-    legendType: PropTypes.oneOf([
-      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
-      'triangle', 'wye',
-    ]),
+    legendType: PropTypes.oneOf(LEGEND_TYPES),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     connectNulls: PropTypes.bool,
 

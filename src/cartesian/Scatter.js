@@ -7,8 +7,8 @@ import classNames from 'classnames';
 import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
-  filterEventsOfChild, isSsr, findAllByType } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
+  getPresentationAttributes, filterEventsOfChild, isSsr, findAllByType } from '../util/ReactUtils';
 import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
 import ErrorBar from './ErrorBar';
@@ -36,10 +36,7 @@ class Scatter extends Component {
       'basis', 'basisClosed', 'basisOpen', 'linear', 'linearClosed', 'natural',
       'monotoneX', 'monotoneY', 'monotone', 'step', 'stepBefore', 'stepAfter',
     ]), PropTypes.func]),
-    legendType: PropTypes.oneOf([
-      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'star',
-      'triangle', 'wye',
-    ]),
+    legendType: PropTypes.oneOf(LEGEND_TYPES),
     className: PropTypes.string,
 
     activeIndex: PropTypes.number,
