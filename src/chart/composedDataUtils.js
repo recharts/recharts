@@ -41,14 +41,13 @@ const getBaseValueOfArea = (props, xAxis, yAxis) => {
 };
 
 const getComposedDataOfArea = ({ props, xAxis, yAxis, xTicks, yTicks, bandSize,
-  dataKey, stackedData, dataStartIndex, dataEndIndex }) => {
+  dataKey, stackedData, dataStartIndex, displayedData }) => {
   const { layout } = props;
-  const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
   const hasStack = stackedData && stackedData.length;
   const baseValue = getBaseValueOfArea(props, xAxis, yAxis);
   let isRange = false;
 
-  const points = data.map((entry, index) => {
+  const points = displayedData.map((entry, index) => {
     let value;
 
     if (hasStack) {
@@ -135,7 +134,7 @@ const getBaseValueOfBar = ({ props, xAxis, yAxis }) => {
  * @return{Array} Composed data
  */
 const getComposedDataOfBar = ({ props, item, barPosition, bandSize, xAxis, yAxis,
-  xTicks, yTicks, stackedData, dataStartIndex, dataEndIndex }) => {
+  xTicks, yTicks, stackedData, dataStartIndex, displayedData }) => {
   const { layout } = props;
   const { dataKey, children, minPointSize } = item.props;
   const pos = findPositionOfBar(barPosition, item);
@@ -144,11 +143,10 @@ const getComposedDataOfBar = ({ props, item, barPosition, bandSize, xAxis, yAxis
 
   if (!pos) { return []; }
 
-  const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
   const baseValue = getBaseValueOfBar({ props, xAxis, yAxis });
   const cells = findAllByType(children, Cell);
 
-  return data.map((entry, index) => {
+  return displayedData.map((entry, index) => {
     let value, x, y, width, height;
 
     if (stackedData) {
@@ -220,11 +218,10 @@ const getComposedDataOfBar = ({ props, item, barPosition, bandSize, xAxis, yAxis
  * @return {Array}  Composed data
  */
 const getComposedDataOfLine = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey,
-  bandSize, dataStartIndex, dataEndIndex }) => {
+  bandSize, displayedData }) => {
   const { layout } = props;
-  const data = props.data.slice(dataStartIndex, dataEndIndex + 1);
 
-  return data.map((entry, index) => {
+  return displayedData.map((entry, index) => {
     const value = getValueByDataKey(entry, dataKey);
 
     if (layout === 'horizontal') {
@@ -255,20 +252,17 @@ const getComposedDataOfLine = ({ props, xAxis, yAxis, xTicks, yTicks, dataKey,
  * @return {Array}  Composed data
  */
 const getComposedDataOfScatter = ({ props, xAxis, yAxis, zAxis,
-  item, dataStartIndex, dataEndIndex }) => {
+  item, displayedData }) => {
   const cells = findAllByType(item.props.children, Cell);
   const xAxisDataKey = _.isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
   const yAxisDataKey = _.isNil(yAxis.dataKey) ? item.props.dataKey : yAxis.dataKey;
   const zAxisDataKey = zAxis && zAxis.dataKey;
-  const data = props.data ?
-    props.data.slice(dataStartIndex, dataEndIndex + 1) :
-    item.props.data;
   const defaultRangeZ = zAxis ? zAxis.range : ZAxis.defaultProps.range;
   const defaultZ = defaultRangeZ && defaultRangeZ[0];
   const xOffset = xAxis.scale.bandwidth ? xAxis.scale.bandwidth() / 2 : 0;
   const yOffset = yAxis.scale.bandwidth ? yAxis.scale.bandwidth() / 2 : 0;
 
-  return data.map((entry, index) => {
+  return displayedData.map((entry, index) => {
     const x = entry[xAxisDataKey];
     const y = entry[yAxisDataKey];
     const z = (!_.isNil(zAxisDataKey) && entry[zAxisDataKey]) || '-';

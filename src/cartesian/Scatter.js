@@ -88,10 +88,13 @@ class Scatter extends Component {
 
   state = { activeIndex: -1, isAnimationFinished: false };
 
-  componentDidMount() {
-    const { animationDuration } = this.props;
-    window.setTimeout(() => this.setState({ isAnimationFinished: true }), animationDuration);
-  }
+  handleAnimationEnd = () => {
+    this.setState({ isAnimationFinished: true });
+  };
+
+  handleAnimationStart = () => {
+    this.setState({ isAnimationFinished: false });
+  };
 
   id = uniqueId('recharts-scatter-');
 
@@ -134,6 +137,8 @@ class Scatter extends Component {
             isActive={isAnimationActive}
             key={animationId}
             easing={animationEasing}
+            onAnimationEnd={this.handleAnimationEnd}
+            onAnimationStart={this.handleAnimationStart}
           >
             {
               ({ size }) => {

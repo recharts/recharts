@@ -88,6 +88,11 @@ function CustomizedAxisTick(props) {
     </g>
   );
 }
+const renderLabel = (props) => {
+  const { index, x, y } = props;
+
+  return <text x={x} y={y} className="customized-label">{index}</text>;
+};
 
 export default class AreaChartDemo extends Component {
 
@@ -146,6 +151,7 @@ export default class AreaChartDemo extends Component {
               fill="#82ca9d"
               dot
               activeDot={renderCustomizedActiveDot}
+              label={renderLabel}
             />
             <Area
               stackId="0"
@@ -159,7 +165,7 @@ export default class AreaChartDemo extends Component {
             >
               <LabelList position="top" />
             </Area>
-            <Legend layout="vertical" />
+            <Legend layout="vertical" align="left" verticalAlign="middle" />
           </AreaChart>
         </div>
 
@@ -368,8 +374,8 @@ export default class AreaChartDemo extends Component {
           >
             <XAxis dataKey="day" />
             <YAxis />
-            <Area dataKey="temperature" stroke="#0088FE" />
             <Tooltip />
+            <Area dataKey="temperature" stroke="#0088FE" />
           </AreaChart>
         </div>
       </div>

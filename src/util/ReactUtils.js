@@ -350,7 +350,6 @@ export const isChildrenEqual = (nextChildren, prevChildren) => {
   if (nextChildren === prevChildren) { return true; }
 
   if (Children.count(nextChildren) !== Children.count(prevChildren)) { return false; }
-
   const count = Children.count(nextChildren);
 
   if (count === 0) { return true; }
@@ -369,7 +368,7 @@ export const isChildrenEqual = (nextChildren, prevChildren) => {
 };
 
 export const renderByOrder = (children, renderMap) => {
-  const elements = [];
+  let elements = [];
   const record = {};
 
   Children.forEach(children, (child, index) => {
@@ -380,7 +379,14 @@ export const renderByOrder = (children, renderMap) => {
       const { handler, once } = renderMap[displayName];
 
       if ((once && !record[displayName]) || !once) {
-        elements.push(handler(child, displayName, index));
+        const results = handler(child, displayName, index);
+
+        if (_.isArray(results)) {
+          elements = [elements, ...results];
+        } else {
+          elements.push(results);
+        }
+
         record[displayName] = true;
       }
     }

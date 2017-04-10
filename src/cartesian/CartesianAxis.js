@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import classNames from 'classnames';
 import { shallowEqual } from '../util/PureRender';
 import { getStringSize } from '../util/DOMUtils';
 import Layer from '../container/Layer';
@@ -20,6 +21,7 @@ class CartesianAxis extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
     ...EVENT_ATTRIBUTES,
+    className: PropTypes.string,
     x: PropTypes.number,
     y: PropTypes.number,
     width: PropTypes.number,
@@ -408,7 +410,7 @@ class CartesianAxis extends Component {
   }
 
   render() {
-    const { axisLine, width, height, ticksGenerator } = this.props;
+    const { axisLine, width, height, ticksGenerator, className } = this.props;
     const { ticks, ...noTicksProps } = this.props;
     let finalTicks = ticks;
 
@@ -422,7 +424,7 @@ class CartesianAxis extends Component {
     }
 
     return (
-      <Layer className="recharts-cartesian-axis">
+      <Layer className={classNames('recharts-cartesian-axis', className)}>
         {axisLine && this.renderAxisLine()}
         {this.renderTicks(finalTicks)}
         {Label.renderCallByParent(this.props)}

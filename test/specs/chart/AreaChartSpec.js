@@ -83,6 +83,8 @@ describe('<AreaChart />', () => {
         y: 21,
       },
     });
+
+    expect(wrapper.find('.customized-active-dot').length).to.equal(1);
   });
 
   it('Renders 4 path in a stacked AreaChart', () => {
@@ -116,8 +118,8 @@ describe('<AreaChart />', () => {
     );
     expect(wrapper.find('.recharts-area-dots').length).to.equal(1);
     expect(wrapper.find('.recharts-area-dot').length).to.equal(6);
-    expect(wrapper.find('.recharts-area-labels').length).to.equal(1);
-    expect(wrapper.find('.recharts-area-label').length).to.equal(6);
+    expect(wrapper.find('.recharts-label-list').length).to.equal(1);
+    expect(wrapper.find('.recharts-label').length).to.equal(6);
   });
 
   it('Render empty when data is empty', () => {

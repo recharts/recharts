@@ -64,6 +64,16 @@ class Radar extends Component {
     animationEasing: 'ease',
   };
 
+  state = { isAnimationFinished: false };
+
+  handleAnimationEnd = () => {
+    this.setState({ isAnimationFinished: true });
+  };
+
+  handleAnimationStart = () => {
+    this.setState({ isAnimationFinished: false });
+  };
+
   handleMouseEnter = (e) => {
     const { onMouseEnter } = this.props;
 
@@ -108,6 +118,8 @@ class Radar extends Component {
           easing={animationEasing}
           duration={animationDuration}
           key={animationId}
+          onAnimationEnd={this.handleAnimationEnd}
+          onAnimationStart={this.handleAnimationStart}
         >
           <Polygon
             onMouseEnter={this.handleMouseEnter}

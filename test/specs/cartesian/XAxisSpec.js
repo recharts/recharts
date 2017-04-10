@@ -61,7 +61,7 @@ describe('<XAxis />', () => {
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>
     );
-    expect(wrapper.find('.recharts-x-axis .recharts-cartesian-axis-tick').length).to.equal(2);
+    expect(wrapper.find('.xAxis .recharts-cartesian-axis-tick').length).to.equal(2);
   });
 
   it('Render duplicated ticks of XAxis', () => {

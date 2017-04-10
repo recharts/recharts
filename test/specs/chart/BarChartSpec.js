@@ -29,8 +29,8 @@ describe('<BarChart />', () => {
       </BarChart>
     );
 
-    expect(wrapper.find('.recharts-bar-rectangle-labels').length).to.equal(1);
-    expect(wrapper.find('.recharts-bar-label').length).to.equal(4);
+    expect(wrapper.find('.recharts-label-list').length).to.equal(1);
+    expect(wrapper.find('.recharts-label').length).to.equal(4);
   });
 
   it('Renders 4 bar labels when label is set to be a react element', () => {

@@ -29,7 +29,7 @@ describe('<ReferenceArea />', () => {
       </BarChart>
     );
     expect(wrapper.find('.recharts-reference-area-rect').length).to.equal(2);
-    expect(wrapper.find('.recharts-reference-area-label').length).to.equal(2);
+    expect(wrapper.find('.recharts-label').length).to.equal(2);
   });
 
   it('Don\'t render any rect in ReferenceArea when no x or y is set', () => {
@@ -42,7 +42,7 @@ describe('<ReferenceArea />', () => {
       </BarChart>
     );
     expect(wrapper.find('.recharts-reference-area-rect').length).to.equal(0);
-    expect(wrapper.find('.recharts-reference-area-label').length).to.equal(0);
+    expect(wrapper.find('.recharts-label').length).to.equal(0);
   });
 
   it("Don't render any line or label when reference area is outside domain in ReferenceArea", () => {
@@ -56,7 +56,7 @@ describe('<ReferenceArea />', () => {
       </BarChart>
     );
     expect(wrapper.find('.recharts-reference-area-rect').length).to.equal(0);
-    expect(wrapper.find('.recharts-reference-area-label').length).to.equal(0);
+    expect(wrapper.find('.recharts-label').length).to.equal(0);
   });
 
   it('Render line and label when alwaysShow is true in ReferenceArea', () => {
@@ -105,7 +105,7 @@ describe('<ReferenceArea />', () => {
       </BarChart>
     );
 
-    expect(wrapper.find('.recharts-reference-area-label').length).to.equal(0);
+    expect(wrapper.find('.recharts-label').length).to.equal(0);
   });
 
   it('Render custom lable when label is set to react element', () => {
