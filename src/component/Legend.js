@@ -20,6 +20,7 @@ const renderContent = (content, props) => {
 };
 
 const EPS = 1;
+const ICON_TYPES = LEGEND_TYPES.filter(type => type !== 'none');
 
 @pureRender
 class Legend extends Component {
@@ -33,7 +34,7 @@ class Legend extends Component {
     width: PropTypes.number,
     height: PropTypes.number,
     iconSize: PropTypes.number,
-    iconType: PropTypes.oneOf(LEGEND_TYPES),
+    iconType: PropTypes.oneOf(ICON_TYPES),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     align: PropTypes.oneOf(['center', 'left', 'right']),
     verticalAlign: PropTypes.oneOf(['top', 'bottom', 'middle']),
