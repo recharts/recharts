@@ -8,6 +8,7 @@ import Symbols from '../shape/Symbols';
 import { filterEventsOfChild, LEGEND_TYPES } from '../util/ReactUtils';
 
 const SIZE = 32;
+const ICON_TYPES = LEGEND_TYPES.filter(type => type !== 'none');
 
 @pureRender
 class DefaultLegendContent extends Component {
@@ -16,7 +17,7 @@ class DefaultLegendContent extends Component {
   static propTypes = {
     content: PropTypes.element,
     iconSize: PropTypes.number,
-    iconType: PropTypes.oneOf(LEGEND_TYPES),
+    iconType: PropTypes.oneOf(ICON_TYPES),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     align: PropTypes.oneOf(['center', 'left', 'right']),
     verticalAlign: PropTypes.oneOf(['top', 'bottom', 'middle']),
