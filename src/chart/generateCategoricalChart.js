@@ -1351,7 +1351,7 @@ const generateCategoricalChart = (chartName, GraphicalChild, eventType = 'axis')
       const { points, isRange, baseLine } = item.props;
       const { activeDot, hide } = item.item.props;
       const hasActive = !hide && isTooltipActive && tooltipItem && activeDot &&
-        activeTooltipIndex >= 0;
+        activeTooltipIndex >= 0 && points[activeTooltipIndex];
 
       if (hasActive) {
         const activePoint = points[activeTooltipIndex];
