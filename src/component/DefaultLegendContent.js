@@ -101,6 +101,10 @@ class DefaultLegendContent extends Component {
     return payload.map((entry, i) => {
       const finalFormatter = entry.formatter || formatter;
 
+      if (entry.type === 'none') {
+        return null;
+      }
+
       return (
         <li
           className={`recharts-legend-item legend-item-${i}`}
