@@ -95,6 +95,20 @@ class Area extends Component {
     onAnimationEnd: () => {},
   };
 
+  static renderDotItem = (option, props) => {
+    let dotItem;
+
+    if (React.isValidElement(option)) {
+      dotItem = React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      dotItem = option(props);
+    } else {
+      dotItem = <Dot {...props} className="recharts-area-dot" />;
+    }
+
+    return dotItem;
+  };
+
   state = { isAnimationFinished: true };
 
   id = uniqueId('recharts-area-');
@@ -226,20 +240,6 @@ class Area extends Component {
     );
   }
 
-  renderDotItem(option, props) {
-    let dotItem;
-
-    if (React.isValidElement(option)) {
-      dotItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
-      dotItem = option(props);
-    } else {
-      dotItem = <Dot {...props} className="recharts-area-dot" />;
-    }
-
-    return dotItem;
-  }
-
   renderDots() {
     const { isAnimationActive } = this.props;
 
@@ -262,7 +262,7 @@ class Area extends Component {
         payload: entry.payload,
       };
 
-      return this.renderDotItem(dot, dotProps);
+      return this.constructor.renderDotItem(dot, dotProps);
     });
 
     return <Layer className="recharts-area-dots">{dots}</Layer>;

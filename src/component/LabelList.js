@@ -20,12 +20,13 @@ function LabelList(props) {
   if (!data || !data.length) { return null; }
 
   return (
-    <Layer>
+    <Layer className="recharts-label-list">
       {
         data.map((entry, index) => (
           <Label
             {...getPresentationAttributes(entry)}
             {...others}
+            index={index}
             value={valueAccessor(entry, index)}
             viewBox={Label.parseViewBox(_.isNil(clockWise) ? entry : { ...entry, clockWise })}
             key={`label-${index}`}

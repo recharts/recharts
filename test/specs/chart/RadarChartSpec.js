@@ -39,7 +39,7 @@ describe('<RadarChart />', () => {
         <Radar isAnimationActive={false} label dataKey="value" />
       </RadarChart>
     );
-    expect(wrapper.find('.recharts-radar-label').length).to.equal(8);
+    expect(wrapper.find('.recharts-label').length).to.equal(8);
   });
 
   it('Render 1 PolarGrid 1 PolarAngleAxis and 1 PolarRadiusAxis in simple Radar', () => {

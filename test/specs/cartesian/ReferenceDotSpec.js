@@ -28,7 +28,7 @@ describe('<ReferenceDot />', () => {
       </BarChart>
     );
     expect(wrapper.find('.recharts-reference-dot-dot').length).to.equal(1);
-    expect(wrapper.find('.recharts-reference-dot-label').length).to.equal(1);
+    expect(wrapper.find('.recharts-label').length).to.equal(1);
   });
 
   it("Don't render any dot or label when reference dot is outside domain in ReferenceDot", () => {
@@ -41,7 +41,7 @@ describe('<ReferenceDot />', () => {
       </BarChart>
     );
     expect(wrapper.find('.recharts-reference-dot-dot').length).to.equal(0);
-    expect(wrapper.find('.recharts-reference-dot-label').length).to.equal(0);
+    expect(wrapper.find('.recharts-label').length).to.equal(0);
   });
 
   it('Render 1 line and 1 label when alwaysShow is true in ReferenceDot', () => {
@@ -54,7 +54,7 @@ describe('<ReferenceDot />', () => {
       </BarChart>
     );
     expect(wrapper.find('.recharts-reference-dot-dot').length).to.equal(1);
-    expect(wrapper.find('.recharts-reference-dot-label').length).to.equal(1);
+    expect(wrapper.find('.recharts-label').length).to.equal(1);
   });
 
   it('Render custom lable when label is set to be a react element', () => {
@@ -93,7 +93,7 @@ describe('<ReferenceDot />', () => {
         <ReferenceDot x="201106" y={20} stroke="#666" label={{}} alwaysShow />
       </BarChart>
     );
-    expect(wrapper.find('.recharts-reference-dot-label').length).to.equal(0);
+    expect(wrapper.find('.recharts-label').length).to.equal(0);
   });
 
   it("Don\'t render any dot when x or y is not specified", () => {

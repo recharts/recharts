@@ -109,7 +109,7 @@ describe('<LineChart />', () => {
         <Line isAnimationActive={false} label type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>
     );
-    expect(wrapper.find('.recharts-line-label').length).to.equal(6);
+    expect(wrapper.find('.recharts-label').length).to.equal(6);
   });
 
   it('Renders 6 labels when label is setted to be a function', () => {

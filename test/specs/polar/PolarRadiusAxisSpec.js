@@ -26,7 +26,7 @@ describe('<PolarRadiusAxis />', () => {
     );
 
     expect(wrapper.find('.recharts-polar-radius-axis-tick').length).to.equal(5);
-    expect(wrapper.find('.recharts-polar-radius-axis-label').length).to.equal(1);
+    expect(wrapper.find('.recharts-label').length).to.equal(1);
   });
 
   it('Renders 5 ticks when orientation is set to be left', () => {
@@ -43,7 +43,7 @@ describe('<PolarRadiusAxis />', () => {
     );
 
     expect(wrapper.find('.recharts-polar-radius-axis-tick').length).to.equal(5);
-    expect(wrapper.find('.recharts-polar-radius-axis-label').length).to.equal(1);
+    expect(wrapper.find('.recharts-label').length).to.equal(1);
   });
 
   it('Renders 5 ticks when tick is set to be a function', () => {
@@ -66,7 +66,7 @@ describe('<PolarRadiusAxis />', () => {
     );
 
     expect(wrapper.find('.customized-tick').length).to.equal(5);
-    expect(wrapper.find('.recharts-polar-radius-axis-label').length).to.equal(1);
+    expect(wrapper.find('.recharts-label').length).to.equal(1);
   });
 
   it('Renders 5 ticks when tick is set to be a react element', () => {
@@ -89,7 +89,7 @@ describe('<PolarRadiusAxis />', () => {
     );
 
     expect(wrapper.find('.customized-tick').length).to.equal(5);
-    expect(wrapper.find('.recharts-polar-radius-axis-label').length).to.equal(1);
+    expect(wrapper.find('.recharts-label').length).to.equal(1);
   });
 
   it('Renders label when label is set to be a function', () => {
@@ -149,6 +149,6 @@ describe('<PolarRadiusAxis />', () => {
     );
 
     expect(wrapper.find('.recharts-polar-radius-axis-tick').length).to.equal(0);
-    expect(wrapper.find('.recharts-polar-radius-axis-label').length).to.equal(0);
+    expect(wrapper.find('.recharts-label').length).to.equal(0);
   });
 });

@@ -39,7 +39,7 @@ describe('<Brush />', () => {
         </LineChart>
       </Brush>
     );
-    expect(wrapper.find('.recharts-line-chart-wrapper').length).to.equal(1);
+
     expect(wrapper.find('.recharts-line').length).to.equal(1);
   });
 

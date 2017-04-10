@@ -2,7 +2,7 @@ import React, { PropTypes, cloneElement, isValidElement } from 'react';
 import _ from 'lodash';
 import Text from './Text';
 import { getPresentationAttributes, findAllByType } from '../util/ReactUtils';
-import { isNumber, isPercent, getPercentValue, uniqueId } from '../util/DataUtils';
+import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 
 const cartesianViewBoxShape = PropTypes.shape({
@@ -274,10 +274,11 @@ const isPolar = viewBox => isNumber(viewBox.cx);
 function Label(props) {
   const { viewBox, position, value, children, content } = props;
 
-  if (!viewBox || (_.isNil(value) && _.isNil(children))) { return null; }
+  if (!viewBox || (_.isNil(value) && _.isNil(children) &&
+    !isValidElement(content) && !_.isFunction(content))) { return null; }
 
   if (isValidElement(content)) { return cloneElement(content, props); }
-  if (isValidElement(content)) { return content(props); }
+  if (_.isFunction(content)) { return content(props); }
 
   const isPolarLabel = isPolar(viewBox);
   const label = getLabel(props);
@@ -294,6 +295,7 @@ function Label(props) {
 
   return (
     <Text
+      className="recharts-label"
       {...attrs}
       {...positionAttrs}
     >{label}</Text>
@@ -345,7 +347,11 @@ const parseLabel = (label, viewBox) => {
     return <Label key="label-implicit" viewBox={viewBox} />;
   }
 
-  if (React.isValidElement(label) || _.isFunction(label)) {
+  if (isNumOrStr(label)) {
+    return <Label key="label-implicit" viewBox={viewBox} value={label} />;
+  }
+
+  if (isValidElement(label) || _.isFunction(label)) {
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
   }
 

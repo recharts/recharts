@@ -73,7 +73,7 @@ describe('<YAxis />', () => {
       </AreaChart>
     );
 
-    const yAxisTicks = wrapper.find('.recharts-y-axis .recharts-cartesian-axis-tick-value tspan');
+    const yAxisTicks = wrapper.find('.yAxis .recharts-cartesian-axis-tick-value tspan');
 
     expect(yAxisTicks.length).to.equal(3);
   });

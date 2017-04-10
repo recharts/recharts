@@ -5,7 +5,6 @@ import {
   calculateDomainOfTicks,
   getDomainOfStackGroups,
   getDomainOfDataByKey,
-  offsetSign,
   getTicksOfScale,
   appendOffsetOfLegend,
 } from '../../../src/util/CartesianUtils';
@@ -106,20 +105,6 @@ describe('getDomainOfDataByKey', () => {
     it('should calculate the correct domain even if there is no data for certain items in the set', () => {
       expect(getDomainOfDataByKey(data, 'actual', 'number')).to.deep.equal([35.4, 42.5]);
       expect(getDomainOfDataByKey(data, 'benchmark', 'number')).to.deep.equal([31.86, 35.4]);
-    });
-  });
-});
-
-describe('offsetSign', () => {
-  describe('of data', () => {
-    const data = [
-      [[0, 1], [0, 2], [0, -5]],
-      [[0, -1], [0, 2], [0, -5]],
-    ];
-    const offsetData = offsetSign(data);
-
-    it('should change', () => {
-      expect(data).to.deep.equal([[[0, 1], [0, 2], [0, -5]], [[0, -1], [2, 4], [-5, -10]]]);
     });
   });
 });

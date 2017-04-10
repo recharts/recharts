@@ -28,7 +28,7 @@ describe('<CartesianAxis />', () => {
     );
 
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
-    expect(wrapper.find('.recharts-cartesian-axis-label').length).to.equal(1);
+    expect(wrapper.find('.recharts-label').length).to.equal(1);
   });
 
   it('Renders no ticks in simple CartesianAxis', () => {
@@ -103,7 +103,7 @@ describe('<CartesianAxis />', () => {
     );
 
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
-    expect(wrapper.find('.recharts-cartesian-axis-label').length).to.equal(1);
+    expect(wrapper.find('.recharts-label').length).to.equal(1);
   });
 
   it('Renders 5 ticks in a CartesianAxis which has orientation left', () => {
@@ -122,10 +122,10 @@ describe('<CartesianAxis />', () => {
     );
 
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
-    expect(wrapper.find('.recharts-cartesian-axis-label').length).to.equal(1);
+    expect(wrapper.find('.recharts-label').length).to.equal(1);
   });
 
-  it('Renders 5 ticks in a CartesianAxis which has orientation left', () => {
+  it('Renders 5 ticks in a CartesianAxis which has orientation right', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
         <CartesianAxis
@@ -141,11 +141,11 @@ describe('<CartesianAxis />', () => {
     );
 
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
-    expect(wrapper.find('.recharts-cartesian-axis-label').length).to.equal(1);
+    expect(wrapper.find('.recharts-label').length).to.equal(1);
   });
 
 
-  it('Renders 5 ticks in a CartesianAxis which has orientation left', () => {
+  it('Renders label when label is a function', () => {
     const renderLabel = (props) => {
       const { x, y, width, height } = props;
 
@@ -169,7 +169,7 @@ describe('<CartesianAxis />', () => {
     expect(wrapper.find('.customized-label').length).to.equal(1);
   });
 
-  it('Renders 5 ticks in a CartesianAxis which has orientation right', () => {
+  it('Renders label when label is a react element', () => {
     const Label = (props) => {
       const { x, y, width, height } = props;
 

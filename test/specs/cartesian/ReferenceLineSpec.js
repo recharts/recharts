@@ -29,7 +29,7 @@ describe('<ReferenceLine />', () => {
       </BarChart>
     );
     expect(wrapper.find('.recharts-reference-line-line').length).to.equal(2);
-    expect(wrapper.find('.recharts-reference-line-label').length).to.equal(2);
+    expect(wrapper.find('.recharts-label').length).to.equal(2);
   });
 
   it('Renders 1 line in ReferenceLine in vertical barchart', () => {
@@ -43,7 +43,7 @@ describe('<ReferenceLine />', () => {
       </BarChart>
     );
     expect(wrapper.find('.recharts-reference-line-line').length).to.equal(2);
-    expect(wrapper.find('.recharts-reference-line-label').length).to.equal(2);
+    expect(wrapper.find('.recharts-label').length).to.equal(2);
   });
   it('Don\'t renders 1 line in ReferenceLine when no x or y is set', () => {
     const wrapper = render(
@@ -55,7 +55,7 @@ describe('<ReferenceLine />', () => {
       </BarChart>
     );
     expect(wrapper.find('.recharts-reference-line-line').length).to.equal(0);
-    expect(wrapper.find('.recharts-reference-line-label').length).to.equal(0);
+    expect(wrapper.find('.recharts-label').length).to.equal(0);
   });
 
   it("Don't render any line or label when reference line is outside domain in ReferenceLine", () => {
@@ -69,7 +69,7 @@ describe('<ReferenceLine />', () => {
       </BarChart>
     );
     expect(wrapper.find('.recharts-reference-line-line').length).to.equal(0);
-    expect(wrapper.find('.recharts-reference-line-label').length).to.equal(0);
+    expect(wrapper.find('.recharts-label').length).to.equal(0);
   });
 
   it('Render line and label when alwaysShow is true in ReferenceLine', () => {
@@ -83,7 +83,7 @@ describe('<ReferenceLine />', () => {
       </BarChart>
     );
     expect(wrapper.find('.recharts-reference-line-line').length).to.equal(2);
-    expect(wrapper.find('.recharts-reference-line-label').length).to.equal(2);
+    expect(wrapper.find('.recharts-label').length).to.equal(2);
   });
 
   it('Render 1 line and 1 label when label is set to be a function in ReferenceLine', () => {
@@ -120,7 +120,7 @@ describe('<ReferenceLine />', () => {
       </BarChart>
     );
 
-    expect(wrapper.find('.recharts-reference-line-label').length).to.equal(0);
+    expect(wrapper.find('.recharts-label').length).to.equal(0);
   });
 
   it('Render custom lable when label is set to react element', () => {

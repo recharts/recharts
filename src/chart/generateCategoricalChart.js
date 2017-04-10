@@ -2,11 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import _ from 'lodash';
+import Smooth from 'react-smooth';
 import Surface from '../container/Surface';
+import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Legend from '../component/Legend';
 import Curve from '../shape/Curve';
 import Cross from '../shape/Cross';
+import Dot from '../shape/Dot';
 import Rectangle from '../shape/Rectangle';
 
 import { warn } from '../util/LogUtils';
@@ -116,17 +119,28 @@ const generateCategoricalChart = (chartName, GraphicalChild, eventType = 'axis')
       });
     };
 
-    static getDisplayedData = (props, { graphicalItems, dataStartIndex, dataEndIndex }) => {
+    static getDisplayedData = (props, { graphicalItems, dataStartIndex, dataEndIndex }, item) => {
       const { data } = props;
 
-      if (data && isNumber(dataStartIndex) && isNumber(dataEndIndex)) {
+      if (data && data.length && isNumber(dataStartIndex) && isNumber(dataEndIndex)) {
         return data.slice(dataStartIndex, dataEndIndex + 1);
       }
 
-      return graphicalItems.reduce((result, item) => ([
-        ...result, ...item.props.data,
-      ]), []);
+      if (item && item.props) {
+        return item.props.data || [];
+      }
+
+      return graphicalItems.reduce((result, child) => {
+        const itemData = child.props.data;
+
+        if (itemData && itemData.length) {
+          return [...result, ...itemData];
+        }
+
+        return result;
+      }, []);
     };
+
     /**
      * Calculate the scale function, position, width, height of axes
      * @param  {Object} props    Latest props
@@ -556,6 +570,9 @@ const generateCategoricalChart = (chartName, GraphicalChild, eventType = 'axis')
       const formatedItems = [];
 
       graphicalItems.forEach((item, index) => {
+        const displayedData = this.constructor.getDisplayedData(
+          props, { dataStartIndex, dataEndIndex }, item
+        );
         const { xAxisId, yAxisId, zAxisId, dataKey, maxBarSize: childMaxBarSize } = item.props;
         let xAxis, yAxis, zAxis, xTicks, yTicks, barPosition, stackedData, bandSize;
 
@@ -588,7 +605,7 @@ const generateCategoricalChart = (chartName, GraphicalChild, eventType = 'axis')
           formatedItems.push({
             props: {
               ...componsedFn({
-                props, xAxis, yAxis, zAxis, xTicks, yTicks, dataKey, item, bandSize,
+                displayedData, props, xAxis, yAxis, zAxis, xTicks, yTicks, dataKey, item, bandSize,
                 barPosition, offset, stackedData, layout, dataStartIndex, dataEndIndex,
                 onItemMouseLeave: this.handleItemMouseLeave,
                 onItemMouseEnter: this.handleItemMouseEnter,
@@ -1147,6 +1164,7 @@ const generateCategoricalChart = (chartName, GraphicalChild, eventType = 'axis')
       return (
         <CartesianAxis
           {...axisOptions}
+          className={axisOptions.axisType}
           key={element.key || `${displayName}-${index}`}
           viewBox={{ x: 0, y: 0, width, height }}
           ticksGenerator={this.axesTicksGenerator}
@@ -1260,14 +1278,98 @@ const generateCategoricalChart = (chartName, GraphicalChild, eventType = 'axis')
       });
     };
 
-    renderGraphicChild = (element) => {
-      const item = this.filterFormatItem(element);
 
-      if (item) {
-        return React.cloneElement(item.item, item.props);
+    renderActiveDot(option, props) {
+      let dot;
+
+      if (React.isValidElement(option)) {
+        dot = React.cloneElement(option, props);
+      } else if (_.isFunction(option)) {
+        dot = option(props);
+      } else {
+        dot = <Dot {...props} />;
       }
 
-      return null;
+      return (
+        <Smooth
+          from="scale(0)"
+          to="scale(1)"
+          duration={400}
+          key={props.key}
+          attributeName="transform"
+        >
+          <Layer style={{ transformOrigin: 'center center' }}>
+            {dot}
+          </Layer>
+        </Smooth>
+      );
+    }
+
+    renderActivePoints({ item, activePoint, basePoint, childIndex, isRange }) {
+      const result = [];
+      const { key } = item.props;
+      const { activeDot, dataKey } = item.item.props;
+      const dotProps = {
+        index: childIndex,
+        dataKey,
+        cx: activePoint.x,
+        cy: activePoint.y,
+        r: 4,
+        fill: getMainColorOfGraphicItem(item.item),
+        strokeWidth: 2,
+        stroke: '#fff',
+        payload: activePoint.payload,
+        value: activePoint.value,
+        key: `${key}-activePoint-${childIndex}`,
+        ...getPresentationAttributes(activeDot),
+      };
+
+      result.push(this.renderActiveDot(activeDot, dotProps, childIndex));
+
+      if (basePoint) {
+        result.push(this.renderActiveDot(activeDot, {
+          ...dotProps,
+          cx: basePoint.x,
+          cy: basePoint.y,
+          key: `${key}-basePoint-${childIndex}`,
+        }, childIndex));
+      } else if (isRange) {
+        result.push(null);
+      }
+
+      return result;
+    }
+
+    renderGraphicChild = (element) => {
+      const item = this.filterFormatItem(element);
+      if (!item) { return null; }
+
+      const graphicalItem = React.cloneElement(item.item, item.props);
+      const { isTooltipActive, activeTooltipIndex } = this.state;
+      const { children } = this.props;
+      const tooltipItem = findChildByType(children, Tooltip);
+      const { points, isRange, baseLine } = item.props;
+      const { activeDot, hide } = item.item.props;
+      const hasActive = !hide && isTooltipActive && tooltipItem && activeDot &&
+        activeTooltipIndex >= 0;
+
+      if (hasActive) {
+        const activePoint = points[activeTooltipIndex];
+        const basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+
+        return [
+          graphicalItem,
+          ...this.renderActivePoints({
+            item, activePoint, basePoint, childIndex: activeTooltipIndex,
+            isRange,
+          }),
+        ];
+      }
+
+      if (isRange) { return [graphicalItem, null, null]; }
+
+      return [graphicalItem, null];
+      // return graphicalItem;
     };
 
     render() {

@@ -8,7 +8,7 @@ describe('<Radar />', () => {
     { x: 200, y: 230, cx: 250, cy: 250, angle: 30, radius: 60, value: 4 },
     { x: 300, y: 405, cx: 250, cy: 250, angle: 90, radius: 60, value: 4 },
     { x: 100, y: 600, cx: 250, cy: 250, angle: 150, radius: 60, value: 4 },
-    { x: 90, value: 400, cx: 250, cy: 250, angle: 210, radius: 60, value: 4 },
+    { x: 90, y: 400, cx: 250, cy: 250, angle: 210, radius: 60, value: 4 },
   ];
 
   it('Render a polygon in a simple Radar', () => {
