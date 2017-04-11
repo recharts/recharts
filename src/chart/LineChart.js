@@ -169,7 +169,7 @@ export class LineChart extends Component {
       }
 
       return React.cloneElement(child, {
-        key: `line-${i}`,
+        key: child.key || `line-${i}`,
         ...offset,
         layout,
         points,

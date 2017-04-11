@@ -419,6 +419,7 @@ export default React.createClass({
         </div>
 
         <p>LineChart with two y-axes</p>
+        <button onClick={() => this.setState({newLine: !this.state.newLine})}>Add another line</button>
         <div className='line-chart-wrapper' style={{ padding: 40 }}>
           <LineChart
             width={400}
@@ -430,8 +431,9 @@ export default React.createClass({
             <XAxis dataKey='name' interval="preserveStartEnd" />
             <Tooltip/>
             <CartesianGrid stroke='#f5f5f5'/>
-            <Line type='monotone' dataKey='uv' stroke='#ff7300' yAxisId={0} activeDot={{fill: '#ff7300', stroke: 'none'}}/>
-            <Line type='monotone' dataKey='pv' stroke='#387908' yAxisId={1} activeDot={{fill: '#387908', stroke: 'none', r: 6}}/>
+            <Line type='monotone' key={'0'} dataKey='uv' stroke='#ff7300' yAxisId={0} activeDot={{fill: '#ff7300', stroke: 'none'}}/>
+            {this.state.newLine && <Line type='monotone' key={'1'} dataKey='amt' stroke='#132908' yAxisId={1} activeDot={{fill: '#132908', stroke: 'none', r: 6}}/>}
+            <Line type='monotone' key={'2'} dataKey='pv' stroke='#387908' yAxisId={1} activeDot={{fill: '#387908', stroke: 'none', r: 6}}/>
           </LineChart>
         </div>
 

@@ -170,7 +170,7 @@ export class PieChart extends Component {
       const maxRadius = getMaxRadius(width, height, margin);
 
       return React.cloneElement(child, {
-        key: `recharts-pie-${i}`,
+        key: child.key || `recharts-pie-${i}`,
         cx,
         cy,
         maxRadius: child.props.maxRadius || Math.sqrt(width * width + height * height) / 2,
