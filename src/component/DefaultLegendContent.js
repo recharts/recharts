@@ -5,9 +5,10 @@ import React, { Component, PropTypes } from 'react';
 import pureRender from '../util/PureRender';
 import Surface from '../container/Surface';
 import Symbols from '../shape/Symbols';
-import { filterEventsOfChild } from '../util/ReactUtils';
+import { filterEventsOfChild, LEGEND_TYPES } from '../util/ReactUtils';
 
 const SIZE = 32;
+const ICON_TYPES = LEGEND_TYPES.filter(type => type !== 'none');
 
 @pureRender
 class DefaultLegendContent extends Component {
@@ -16,20 +17,14 @@ class DefaultLegendContent extends Component {
   static propTypes = {
     content: PropTypes.element,
     iconSize: PropTypes.number,
-    iconType: PropTypes.oneOf([
-      'line', 'square', 'rect', 'circle', 'cross', 'diamond',
-      'star', 'triangle', 'wye',
-    ]),
+    iconType: PropTypes.oneOf(ICON_TYPES),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     align: PropTypes.oneOf(['center', 'left', 'right']),
     verticalAlign: PropTypes.oneOf(['top', 'bottom', 'middle']),
     payload: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.any,
       id: PropTypes.any,
-      type: PropTypes.oneOf([
-        'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square',
-        'star', 'triangle', 'wye',
-      ]),
+      type: PropTypes.oneOf(LEGEND_TYPES),
     })),
     formatter: PropTypes.func,
     onMouseEnter: PropTypes.func,
@@ -106,6 +101,10 @@ class DefaultLegendContent extends Component {
 
     return payload.map((entry, i) => {
       const finalFormatter = entry.formatter || formatter;
+
+      if (entry.type === 'none') {
+        return null;
+      }
 
       return (
         <li

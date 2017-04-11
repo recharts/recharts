@@ -6,6 +6,8 @@ import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import DefaultLegendContent from './DefaultLegendContent';
 import { isNumber } from '../util/DataUtils';
+import { LEGEND_TYPES } from '../util/ReactUtils';
+
 
 const renderContent = (content, props) => {
   if (React.isValidElement(content)) {
@@ -18,6 +20,7 @@ const renderContent = (content, props) => {
 };
 
 const EPS = 1;
+const ICON_TYPES = LEGEND_TYPES.filter(type => type !== 'none');
 
 @pureRender
 class Legend extends Component {
@@ -31,10 +34,7 @@ class Legend extends Component {
     width: PropTypes.number,
     height: PropTypes.number,
     iconSize: PropTypes.number,
-    iconType: PropTypes.oneOf([
-      'line', 'square', 'rect', 'circle', 'cross', 'diamond',
-      'star', 'triangle', 'wye',
-    ]),
+    iconType: PropTypes.oneOf(ICON_TYPES),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     align: PropTypes.oneOf(['center', 'left', 'right']),
     verticalAlign: PropTypes.oneOf(['top', 'bottom', 'middle']),
@@ -47,10 +47,7 @@ class Legend extends Component {
     payload: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.any,
       id: PropTypes.any,
-      type: PropTypes.oneOf([
-        'line', 'square', 'rect', 'circle', 'cross', 'diamond',
-        'star', 'triangle', 'wye',
-      ]),
+      type: PropTypes.oneOf(LEGEND_TYPES),
     })),
     formatter: PropTypes.func,
     onMouseEnter: PropTypes.func,

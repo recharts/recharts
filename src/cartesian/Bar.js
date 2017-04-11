@@ -11,8 +11,8 @@ import Text from '../component/Text';
 import ErrorBar from './ErrorBar';
 import pureRender from '../util/PureRender';
 import { getValueByDataKey, uniqueId } from '../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
-  filterEventsOfChild, isSsr, findChildByType } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
+  getPresentationAttributes, filterEventsOfChild, isSsr, findChildByType } from '../util/ReactUtils';
 
 @pureRender
 class Bar extends Component {
@@ -33,10 +33,7 @@ class Bar extends Component {
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
-    legendType: PropTypes.oneOf([
-      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
-      'triangle', 'wye',
-    ]),
+    legendType: PropTypes.oneOf(LEGEND_TYPES),
     minPointSize: PropTypes.number,
     maxBarSize: PropTypes.number,
 
