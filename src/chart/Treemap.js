@@ -1,7 +1,8 @@
 /**
  * @fileOverview TreemapChart
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Smooth from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';

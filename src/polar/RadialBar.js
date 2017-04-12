@@ -1,7 +1,8 @@
 /**
  * @fileOverview Render a group of radial bar
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';

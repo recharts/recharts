@@ -1,4 +1,5 @@
-import React, { PropTypes, Children } from 'react';
+import React, { Children } from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { isNumber } from './DataUtils';
 import { shallowEqual } from './PureRender';
