@@ -1,7 +1,8 @@
 /**
  * @fileOverview Default Legend Content
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import pureRender from '../util/PureRender';
 import Surface from '../container/Surface';
 import Symbols from '../shape/Symbols';
