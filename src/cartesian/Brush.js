@@ -1,7 +1,7 @@
 /**
  * @fileOverview Brush
  */
-import React, { Component } from 'react';
+import React, { Component, Children } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { scalePoint } from 'd3-scale';
@@ -10,10 +10,6 @@ import { getValueByDataKey } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
-import AreaChart from '../chart/AreaChart';
-import BarChart from '../chart/BarChart';
-import ComposedChart from '../chart/ComposedChart';
-import LineChart from '../chart/LineChart';
 import { findChildByType } from '../util/ReactUtils';
 
 @pureRender
@@ -297,12 +293,9 @@ class Brush extends Component {
 
   renderPanorama() {
     const { x, y, width, height, data, children, padding } = this.props;
-    const chartElement = findChildByType(children,
-      [AreaChart, BarChart, ComposedChart, LineChart]);
+    const chartElement = Children.only(children);
 
-    if (!chartElement) {
-      return <noscript />;
-    }
+    if (!chartElement) { return null; }
 
     return React.cloneElement(chartElement, {
       x,

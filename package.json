@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "build": "npm run build-cjs && npm run build-es6 && rimraf umd && npm run build-umd && npm run build-min",
-    "build-cjs": "rimraf lib && babel ./src -d lib --plugins=transform-es2015-modules-commonjs",
+    "build-cjs": "rimraf lib && cross-env NODE_ENV=commonjs babel ./src -d lib",
     "build-es6": "rimraf es6 && babel ./src -d es6",
     "build-umd": "cross-env NODE_ENV=development webpack src/index.js umd/Recharts.js",
     "build-min": "cross-env NODE_ENV=production webpack src/index.js umd/Recharts.min.js",
