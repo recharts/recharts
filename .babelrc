@@ -1,5 +1,5 @@
 {
-  plugins: [
+  "plugins": [
     "transform-export-extensions",
     "transform-decorators-legacy",
     "transform-class-properties",
@@ -7,10 +7,15 @@
     "transform-function-bind",
     "lodash"
   ],
-  presets: [["es2015", { "modules": false }], "react"],
-  env: {
-    test: {
-      plugins: ["transform-es2015-modules-commonjs", "istanbul"]
+  "presets": [["es2015", { "modules": false }], "react"],
+  "env": {
+    "test": {
+      "plugins": ["transform-es2015-modules-commonjs", "istanbul"]
+    },
+    "commonjs": {
+      "plugins": [
+        ["transform-es2015-modules-commonjs", { "loose": false }]
+      ]
     }
   }
 }
