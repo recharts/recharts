@@ -129,6 +129,11 @@ const REACT_BROWSER_EVENT_MAP = {
   touchstart: 'onTouchStart',
 };
 
+export const SCALE_TYPES = [
+  'auto', 'linear', 'pow', 'sqrt', 'log', 'identity', 'time', 'band', 'point',
+  'ordinal', 'quantile', 'quantize', 'utcTime', 'sequential', 'threshold',
+];
+
 export const LEGEND_TYPES = [
   'line', 'square', 'rect', 'circle', 'cross', 'diamond',
   'star', 'triangle', 'wye', 'none',

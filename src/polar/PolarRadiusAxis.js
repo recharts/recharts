@@ -16,19 +16,22 @@ import { polarToCartesian } from '../util/PolarUtils';
 class PolarRadiusAxis extends Component {
 
   static displayName = 'PolarRadiusAxis';
+  static axisType = 'radiusAxis';
 
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
     ...EVENT_ATTRIBUTES,
+    type: PropTypes.oneOf(['number', 'category']),
     cx: PropTypes.number,
     cy: PropTypes.number,
     hide: PropTypes.bool,
+    radiusAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
     angle: PropTypes.number,
     tickCount: PropTypes.number,
     ticks: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.any,
-      radius: PropTypes.value,
+      coordinate: PropTypes.number,
     })),
     orientation: PropTypes.oneOf(['left', 'right', 'middle']),
     axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
@@ -51,6 +54,8 @@ class PolarRadiusAxis extends Component {
   };
 
   static defaultProps = {
+    type: 'number',
+    radiusAxisId: 0,
     cx: 0,
     cy: 0,
     angle: 0,
@@ -66,13 +71,13 @@ class PolarRadiusAxis extends Component {
 
   /**
    * Calculate the coordinate of tick
-   * @param  {Object} radius The data of a simple tick
+   * @param  {Number} coordinate The radius of tick
    * @return {Object} (x, y)
    */
-  getTickValueCoord({ radius }) {
+  getTickValueCoord({ coordinate }) {
     const { angle, cx, cy } = this.props;
 
-    return polarToCartesian(cx, cy, radius, angle);
+    return polarToCartesian(cx, cy, coordinate, angle);
   }
 
   getTickTextAnchor() {
@@ -96,23 +101,23 @@ class PolarRadiusAxis extends Component {
 
   getViewBox() {
     const { cx, cy, angle, ticks } = this.props;
-    const maxRadiusTick = _.maxBy(ticks, entry => (entry.radius || 0));
-    const minRadiusTick = _.minBy(ticks, entry => (entry.radius || 0));
+    const maxRadiusTick = _.maxBy(ticks, entry => (entry.coordinate || 0));
+    const minRadiusTick = _.minBy(ticks, entry => (entry.coordinate || 0));
 
     return {
       cx, cy,
       startAngle: angle,
       endAngle: angle,
-      innerRadius: minRadiusTick.radius || 0,
-      outerRadius: maxRadiusTick.radius || 0,
+      innerRadius: minRadiusTick.coordinate || 0,
+      outerRadius: maxRadiusTick.coordinate || 0,
     };
   }
 
   renderAxisLine() {
     const { cx, cy, angle, ticks, axisLine, ...others } = this.props;
     const extent = ticks.reduce((result, entry) => [
-      Math.min(result[0], entry.radius),
-      Math.max(result[1], entry.radius),
+      Math.min(result[0], entry.coordinate),
+      Math.max(result[1], entry.coordinate),
     ], [Infinity, -Infinity]);
     const point0 = polarToCartesian(cx, cy, extent[0], angle);
     const point1 = polarToCartesian(cx, cy, extent[1], angle);

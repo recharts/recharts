@@ -50,9 +50,9 @@ export default class Demo extends Component {
         <br/>
         <p>A simple RadarChart</p>
         <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
-          <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
           <PolarGrid />
           <PolarAngleAxis dataKey="subject" />
+          <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
         </RadarChart>
 
         <p>A RadarChart of two students' score</p>
@@ -64,14 +64,17 @@ export default class Demo extends Component {
           height={500}
           data={data}
         >
-          <Radar name="Mike"
+          <PolarGrid />
+          <Radar
+            name="Mike"
             dataKey="A"
             stroke="#8884d8"
             fill="#8884d8"
             fillOpacity={0.6}
             onMouseEnter={this.handleMouseEnter}
           />
-          <Radar name="Lily"
+          <Radar
+            name="Lily"
             dataKey="B"
             stroke="#82ca9d"
             fill="#82ca9d"
@@ -79,7 +82,6 @@ export default class Demo extends Component {
             animationBegin={180}
           />
           <Tooltip />
-          <PolarGrid />
           <Legend />
           <PolarRadiusAxis domain={[0, 150]} label="score"/>
         </RadarChart>

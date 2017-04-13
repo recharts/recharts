@@ -3,11 +3,18 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import generateCategoricalChart from './generateCategoricalChart';
+import PolarGrid from '../polar/PolarGrid';
+import PolarAngleAxis from '../polar/PolarAngleAxis';
+import PolarRadiusAxis from '../polar/PolarRadiusAxis';
+import { getMaxRadius, polarToCartesian, formatAxisMap } from '../util/PolarUtils';
+import RadialBar from '../polar/RadialBar';
+
+
 import classNames from 'classnames';
 import { scaleBand } from 'd3-scale';
 import _ from 'lodash';
 import Surface from '../container/Surface';
-import RadialBar from '../polar/RadialBar';
 import { getPercentValue, combineEventHandlers, getValueByDataKey,
   findPositionOfBar } from '../util/DataUtils';
 import Cell from '../component/Cell';
@@ -15,7 +22,6 @@ import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 import { findChildByType, findAllByType, validateWidthHeight, filterSvgElements,
   getPresentationAttributes } from '../util/ReactUtils';
-import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import pureRender from '../util/PureRender';
 
 @pureRender
@@ -327,4 +333,34 @@ class RadialBarChart extends Component {
   }
 }
 
-export default RadialBarChart;
+// export default RadialBarChart;
+
+
+
+export default generateCategoricalChart({
+  chartName: 'RadialBarChart',
+  GraphicalChild: RadialBar,
+  axisComponents: [
+    { axisType: 'angleAxis', AxisComp: PolarAngleAxis },
+    { axisType: 'radiusAxis', AxisComp: PolarRadiusAxis },
+  ],
+  formatAxisMap,
+  defaultProps: {
+    layout: 'radial',
+    startAngle: 0,
+    endAngle: 360,
+    cx: '50%',
+    cy: '50%',
+    innerRadius: 0,
+    outerRadius: '80%',
+  },
+  propTypes: {
+    layout: PropTypes.oneOf(['radial']),
+    startAngle: PropTypes.number,
+    endAngle: PropTypes.number,
+    cx: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    cy: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    innerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    outerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  },
+});

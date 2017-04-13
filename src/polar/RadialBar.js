@@ -26,6 +26,8 @@ class RadialBar extends Component {
   static propTypes = {
     ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
+    angleAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    radiusAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
     activeShape: PropTypes.oneOfType([
       PropTypes.object, PropTypes.func, PropTypes.element,
@@ -33,12 +35,8 @@ class RadialBar extends Component {
     activeIndex: PropTypes.number,
 
     cornerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    cx: PropTypes.number,
-    cy: PropTypes.number,
-    startAngle: PropTypes.number,
-    endAngle: PropTypes.number,
-    maxAngle: PropTypes.number,
-    minAngle: PropTypes.number,
+    minPointSize: PropTypes.number,
+    maxBarSize: PropTypes.number,
     data: PropTypes.arrayOf(PropTypes.shape({
       cx: PropTypes.number,
       cy: PropTypes.number,
@@ -68,11 +66,10 @@ class RadialBar extends Component {
   };
 
   static defaultProps = {
+    angleAxisId: 0,
+    radiusAxisId: 0,
+    minPointSize: 0,
     hide: false,
-    startAngle: 180,
-    endAngle: 0,
-    maxAngle: 135,
-    minAngle: 0,
     legendType: 'rect',
     data: [],
     isAnimationActive: !isSsr(),
@@ -91,71 +88,6 @@ class RadialBar extends Component {
     const deltaAngle = Math.min(Math.abs(endAngle - startAngle), 360);
 
     return sign * deltaAngle;
-  }
-
-  getSectors() {
-    const { cx, cy, startAngle,
-           data, minAngle, maxAngle } = this.props;
-    const maxValue = Math.max.apply(null, data.map(entry => Math.abs(entry.value)));
-    const absMinAngle = Math.abs(minAngle);
-    const absMaxAngle = Math.abs(maxAngle);
-    const deltaAngle = this.getDeltaAngle();
-    const gapAngle = Math.min(Math.abs(absMaxAngle - absMinAngle), 360);
-
-    const sectors = data.map((entry) => {
-      const value = entry.value;
-      const tempEndAngle = maxValue === 0 ? startAngle :
-        startAngle + mathSign(value * deltaAngle) * (
-          absMinAngle + gapAngle * Math.abs(entry.value) / maxValue
-        );
-
-      return {
-        ...entry,
-        cx, cy,
-        startAngle,
-        endAngle: tempEndAngle,
-        payload: entry,
-      };
-    });
-
-    return sectors;
-  }
-
-  getLabelPathArc(data, labelContent, style) {
-    const { label } = this.props;
-    const labelProps = React.isValidElement(label) ? label.props : label;
-    const offsetRadius = labelProps.offsetRadius || 2;
-    const orientation = labelProps.orientation || 'inner';
-    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = data;
-    const clockWise = this.getDeltaAngle() < 0 && (data.value > 0);
-    const radius = clockWise ?
-      innerRadius + offsetRadius :
-      Math.max(outerRadius - offsetRadius, 0);
-
-    if (radius <= 0) { return ''; }
-
-    const labelSize = getStringSize(labelContent, style);
-    const deltaAngle = labelSize.width / (radius * RADIAN);
-    let tempStartAngle, tempEndAngle;
-
-    if (clockWise) {
-      tempStartAngle = orientation === 'inner' ?
-        Math.min(endAngle + deltaAngle, startAngle) : endAngle;
-      tempEndAngle = tempStartAngle - deltaAngle;
-    } else {
-      tempStartAngle = orientation === 'inner' ?
-        Math.max(endAngle - deltaAngle, startAngle) : endAngle;
-      tempEndAngle = tempStartAngle + deltaAngle;
-    }
-
-    const startPoint = polarToCartesian(cx, cy, radius, tempStartAngle);
-    const endPoint = polarToCartesian(cx, cy, radius, tempEndAngle);
-
-    return `M${startPoint.x},${startPoint.y}
-            A${radius},${radius},0,
-            ${deltaAngle >= 180 ? 1 : 0},
-            ${clockWise ? 1 : 0},
-            ${endPoint.x},${endPoint.y}`;
   }
 
   handleAnimationEnd = () => {
@@ -181,14 +113,14 @@ class RadialBar extends Component {
   }
 
   renderSectors(sectors) {
-    const { shape, activeShape, activeIndex, cornerRadius } = this.props;
+    const { cx, cy, shape, activeShape, activeIndex, cornerRadius, ...others } = this.props;
     const {
       animationEasing,
       animationDuration,
       animationBegin,
       isAnimationActive,
     } = this.props;
-    const baseProps = getPresentationAttributes(this.props);
+    const baseProps = getPresentationAttributes(others);
 
     return sectors.map((entry, i) => {
       const { startAngle, endAngle } = entry;
@@ -227,20 +159,21 @@ class RadialBar extends Component {
   }
 
   renderBackground(sectors) {
-    const { startAngle, endAngle, background, cornerRadius } = this.props;
-    const backgroundProps = getPresentationAttributes(background);
+    const { cornerRadius } = this.props;
+    const backgroundProps = getPresentationAttributes(this.props.background);
 
     return sectors.map((entry, i) => {
       // eslint-disable-next-line no-unused-vars
-      const { value, ...rest } = entry;
+      const { value, background, ...rest } = entry;
+
+      if (!background) { return null; }
+
       const props = {
         cornerRadius,
         ...rest,
         fill: '#eee',
-        ...backgroundProps,
+        ...background,
         ...filterEventsOfChild(this.props, entry, i),
-        startAngle,
-        endAngle,
         index: i,
         key: `sector-${i}`,
         className: 'recharts-radial-bar-background-sector',
@@ -256,7 +189,6 @@ class RadialBar extends Component {
     if (hide || !data || !data.length) { return null; }
 
     const { isAnimationFinished } = this.state;
-    const sectors = this.getSectors();
     const layerClass = classNames('recharts-area', className);
 
     return (
@@ -264,20 +196,20 @@ class RadialBar extends Component {
         {
           background && (
             <Layer className="recharts-radial-bar-background">
-              {this.renderBackground(sectors)}
+              {this.renderBackground(data)}
             </Layer>
           )
         }
 
         <Layer className="recharts-radial-bar-sectors">
-          {this.renderSectors(sectors)}
+          {this.renderSectors(data)}
         </Layer>
 
         {(!isAnimationActive || isAnimationFinished) &&
           LabelList.renderCallByParent({
             ...this.props,
             clockWise: this.getDeltaAngle() < 0,
-          }, sectors)
+          }, data)
         }
       </Layer>
     );
