@@ -1,7 +1,8 @@
 /**
  * @fileOverview Tooltip
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import DefaultTooltipContent from './DefaultTooltipContent';

@@ -1,7 +1,8 @@
 /**
  * @fileOverview Line Chart
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Smooth from 'react-smooth';
 import _ from 'lodash';
 import Layer from '../container/Layer';
