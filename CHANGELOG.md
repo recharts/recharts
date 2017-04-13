@@ -1,4 +1,16 @@
-## 0.22.0(Apr 05, 2017)
+## 0.22.1 (Apr 13, 2017)
+
+### feat
+
+- Add legendType: ‘none’ to not render coresponding legend item
+- use prop-types instead of React.PropTypes
+
+### fix
+
+- Fix re-rendering element bug when adding new elements
+- Fix circular dependence of Brush.js and LineChart.js 
+
+## 0.22.0 (Apr 05, 2017)
 
 ### feat
 
@@ -10,7 +22,7 @@
 
 - Fix error or time scale
 
-## 0.21.2(Mar 01, 2017)
+## 0.21.2 (Mar 01, 2017)
 
 ### fix
 
