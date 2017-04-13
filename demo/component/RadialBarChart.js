@@ -51,10 +51,19 @@ export default class Demo extends Component {
           change data
         </a>
         <br/>
-        <p>RadialBarChart</p>
+        {/*<p>RadialBarChart</p>
         <div className="radial-bar-chart-wrapper">
-          <RadialBarChart width={500} height={300} cx={150} cy={150} innerRadius={20} outerRadius={140} barSize={10} data={data}>
-            <RadialBar minAngle={15} background dataKey="uv" >
+          <RadialBarChart
+            width={500}
+            height={300}
+            cx={150}
+            cy={150}
+            innerRadius={20}
+            outerRadius={140}
+            barSize={10}
+            data={data}
+          >
+            <RadialBar minPointSize={15} background dataKey="uv" >
               {
                 data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={colors[index]}/>
@@ -65,12 +74,22 @@ export default class Demo extends Component {
             <Legend iconSize={10} width={120} height={140} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
             <Tooltip/>
           </RadialBarChart>
-        </div>
+        </div>*/}
 
         <p>RadialBarChart with positive and negative value</p>
         <div className="radial-bar-chart-wrapper">
-          <RadialBarChart width={500} height={300} cx={150} cy={150} innerRadius={20} outerRadius={140} data={data}>
-            <RadialBar startAngle={90} endAngle={-270} background dataKey="pv">
+          <RadialBarChart
+            width={500}
+            height={300}
+            cx={150}
+            cy={150}
+            innerRadius={20}
+            outerRadius={140}
+            data={data}
+            startAngle={90}
+            endAngle={-270}
+          >
+            <RadialBar background dataKey="pv">
               <LabelList position="end" />
             </RadialBar>
             <Legend iconSize={10} width={120} height={140} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
@@ -78,15 +97,21 @@ export default class Demo extends Component {
           </RadialBarChart>
         </div>
 
-        <p>RadialBarChart wrapped by ResponsiveContainer</p>
+        {/*<p>RadialBarChart wrapped by ResponsiveContainer</p>
         <div className="radial-bar-chart-wrapper">
           <ResponsiveContainer>
-            <RadialBarChart data={data} cx="50%" cy="90%" innerRadius="20%" outerRadius="90%" >
-              <RadialBar minAngle={15} label={label} background dataKey="uv" />
+            <RadialBarChart
+              data={data}
+              cx="50%"
+              cy="50%"
+              innerRadius="20%"
+              outerRadius="90%"
+            >
+              <RadialBar minPointSize={15} label={label} background dataKey="uv" />
               <Legend iconSize={10} width={120} height={140} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
             </RadialBarChart>
           </ResponsiveContainer>
-        </div>
+        </div>*/}
       </div>
     );
   }

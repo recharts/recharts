@@ -23,6 +23,8 @@ class Radar extends Component {
     ...PRESENTATION_ATTRIBUTES,
     className: PropTypes.string,
     dataKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.func]).isRequired,
+    angleAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    radiusAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
     points: PropTypes.arrayOf(PropTypes.shape({
       x: PropTypes.number,
@@ -55,6 +57,8 @@ class Radar extends Component {
   };
 
   static defaultProps = {
+    angleAxisId: 0,
+    radiusAxisId: 0,
     hide: false,
     dot: false,
     legendType: 'rect',

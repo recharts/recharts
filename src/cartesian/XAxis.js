@@ -4,6 +4,7 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import pureRender from '../util/PureRender';
+import { SCALE_TYPES } from '../util/ReactUtils';
 
 @pureRender
 class XAxis extends Component {
@@ -46,12 +47,7 @@ class XAxis extends Component {
       right: PropTypes.number,
     }),
     allowDataOverflow: PropTypes.bool,
-    scale: PropTypes.oneOfType([
-      PropTypes.oneOf(['auto', 'linear', 'pow', 'sqrt', 'log', 'identity', 'time',
-        'band', 'point', 'ordinal', 'quantile', 'quantize', 'utcTime', 'sequential',
-        'threshold']),
-      PropTypes.func,
-    ]),
+    scale: PropTypes.oneOfType([ PropTypes.oneOf(SCALE_TYPES), PropTypes.func ]),
     tick: PropTypes.oneOfType([
       PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element,
     ]),

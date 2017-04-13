@@ -3,6 +3,14 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import generateCategoricalChart from './generateCategoricalChart';
+
+import Radar from '../polar/Radar';
+import PolarGrid from '../polar/PolarGrid';
+import PolarAngleAxis from '../polar/PolarAngleAxis';
+import PolarRadiusAxis from '../polar/PolarRadiusAxis';
+import { polarToCartesian, getMaxRadius, formatAxisMap } from '../util/PolarUtils';
+
 import classNames from 'classnames';
 import { scalePoint } from 'd3-scale';
 import { getNiceTickValues } from 'recharts-scale';
@@ -11,16 +19,10 @@ import Surface from '../container/Surface';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';
 
-import Radar from '../polar/Radar';
-import PolarGrid from '../polar/PolarGrid';
-import PolarAngleAxis from '../polar/PolarAngleAxis';
-import PolarRadiusAxis from '../polar/PolarRadiusAxis';
-
 import { validateWidthHeight, findChildByType, findAllByType, filterSvgElements,
   getPresentationAttributes } from '../util/ReactUtils';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
 import { getLegendProps } from '../util/CartesianUtils';
-import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { getPercentValue, parseSpecifiedDomain, combineEventHandlers,
   parseScale, getValueByDataKey } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
@@ -43,9 +45,9 @@ class RadarChart extends Component {
 
     cx: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     cy: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    startAngle: PropTypes.number,
     innerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     outerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    startAngle: PropTypes.number,
     clockWise: PropTypes.bool,
 
     data: PropTypes.array,
@@ -406,4 +408,32 @@ class RadarChart extends Component {
   }
 }
 
-export default RadarChart;
+// export default RadarChart;
+
+export default generateCategoricalChart({
+  chartName: 'RadarChart',
+  GraphicalChild: Radar,
+  axisComponents: [
+    { axisType: 'angleAxis', AxisComp: PolarAngleAxis },
+    { axisType: 'radiusAxis', AxisComp: PolarRadiusAxis },
+  ],
+  formatAxisMap,
+  defaultProps: {
+    layout: 'centric',
+    startAngle: 0,
+    endAngle: 360,
+    cx: '50%',
+    cy: '50%',
+    innerRadius: 0,
+    outerRadius: '80%',
+  },
+  propTypes: {
+    layout: PropTypes.oneOf(['centric']),
+    startAngle: PropTypes.number,
+    endAngle: PropTypes.number,
+    cx: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    cy: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    innerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    outerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  },
+});

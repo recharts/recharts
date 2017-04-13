@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
 import * as d3Scales from 'd3-scale';
 import {
   stack as shapeStack, stackOrderNone, stackOffsetExpand,
@@ -384,4 +385,50 @@ export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, o
 
     return { ...result, [axisId]: group };
   }, {});
+};
+
+/**
+ * get domain of ticks
+ * @param  {Array} ticks Ticks of axis
+ * @param  {String} type  The type of axis
+ * @return {Array} domain
+ */
+export const calculateDomainOfTicks = (ticks, type) => {
+  if (type === 'number') {
+    return [Math.min.apply(null, ticks), Math.max.apply(null, ticks)];
+  }
+
+  return ticks;
+};
+
+/**
+ * Configure the scale function of axis
+ * @param {Object} scale The scale function
+ * @param {Object} opts  The configuration of axis
+ * @return {Object}      null
+ */
+export const getTicksOfScale = (scale, opts) => {
+  const { type, tickCount, originalDomain, allowDecimals } = opts;
+
+  if (opts.scale !== 'auto' && opts.scale !== 'linear') {
+    return null;
+  }
+
+  if (tickCount && type === 'number' && originalDomain && (
+    originalDomain[0] === 'auto' || originalDomain[1] === 'auto')) {
+    // Calculate the ticks by the number of grid when the axis is a number axis
+    const domain = scale.domain();
+    const tickValues = getNiceTickValues(domain, tickCount, allowDecimals);
+
+    scale.domain(calculateDomainOfTicks(tickValues, type));
+
+    return { niceTicks: tickValues };
+  } else if (tickCount && type === 'number') {
+    const domain = scale.domain();
+    const tickValues = getTickValuesFixedDomain(domain, tickCount, allowDecimals);
+
+    return { niceTicks: tickValues };
+  }
+
+  return null;
 };
