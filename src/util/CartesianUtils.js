@@ -339,10 +339,10 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
-  return (duplicateDomain || domain).map((entry, index) => (
+  return scale.domain().map((entry, index) => (
     {
       coordinate: scale(entry) + offset,
-      value: entry,
+      value: duplicateDomain ? duplicateDomain[entry] : entry,
       index,
     }
   ));
