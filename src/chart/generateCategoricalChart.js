@@ -29,10 +29,9 @@ import { calculateActiveTickIndex,
   getTicksOfAxis, isCategorialAxis, getTicksOfScale,
   appendOffsetOfLegend, getBarSizeList, getBarPosition, getStackedDataOfItem,
 } from '../util/CartesianUtils';
+import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/PureRender';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
-import { getComposeFnOfItem } from './composedDataUtils';
-
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
   yAxis: ['left', 'right'],
@@ -149,7 +148,7 @@ const generateCategoricalChart = ({
       const defaultState = this.constructor.createDefaultState(props);
       this.state = { ...defaultState, updateId: 0,
         ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState }) };
-      // this.validateAxes();
+
       this.uniqueChartId = uniqueId('recharts');
 
       if (props.throttleDelay) {
@@ -402,6 +401,68 @@ const generateCategoricalChart = ({
 
       return axisMap;
     }
+    inRange(x, y) {
+      const { layout } = this.props;
+
+      if (layout === 'horizontal' || layout === 'vertical') {
+        const { offset } = this.state;
+        const isInRange = x >= offset.left && y <= (offset.left + offset.width) &&
+          y >= offset.top && y <= offset.top + offset.height;
+
+        return isInRange ? { x, y } : null;
+      }
+
+      const { angleAxisMap, radiusAxisMap } = this.state;
+
+      if (angleAxisMap && radiusAxisMap) {
+        const angleAxis = getAnyElementOfObject(angleAxisMap);
+
+        return inRangeOfSector({ x, y }, angleAxis);
+      }
+    }
+
+    calculateTooltipPos(rangeObj) {
+      const { layout } = this.props;
+
+      if (layout === 'horizontal') { return rangeObj.x; }
+      if (layout === 'vertical') { return rangeObj.y; }
+      if (layout === 'centric') { return rangeObj.angle; }
+
+      return rangeObj.radius;
+    }
+
+    getActiveCoordinate(tooltipTicks, activeIndex, rangeObj) {
+      const { layout } = this.props;
+      const entry = tooltipTicks[activeIndex];
+
+      if (entry) {
+        if (layout === 'horizontal') {
+          return { x: entry.coordinate, y: e.chartY };
+        } else if (layout === 'vertical') {
+          return { x: e.chartX, y: entry.coordinate };
+        } else if (layout === 'centric') {
+          const angle = entry.coordinate;
+          const radius = rangeObj.radius;
+
+          return {
+            ...rangeObj,
+            ...polarToCartesian(rangeObj.cx, rangeObj.cy, radius, angle),
+            angle, radius,
+          };
+        } else {
+          const radius = entry.coordinate;
+          const angle = rangeObj.angle;
+
+          return {
+            ...rangeObj,
+            ...polarToCartesian(rangeObj.cx, rangeObj.cy, radius, angle),
+            angle, radius,
+          };
+        }
+      }
+
+      return originCoordinate;
+    }
     /**
      * Get the information of mouse in chart, return null when the mouse is not in the chart
      * @param  {Object} event    The event object
@@ -413,12 +474,10 @@ const generateCategoricalChart = ({
       const { offset } = this.state;
       const containerOffset = getOffset(this.container);
       const e = calculateChartCoordinate(event, containerOffset);
-      const isIn = e.chartX >= offset.left
-        && e.chartX <= offset.left + offset.width
-        && e.chartY >= offset.top
-        && e.chartY <= offset.top + offset.height;
+      const rangeObj = this.inRange(e.chartX, e.chartY);
+      if (!rangeObj) { return null; }
 
-      if (!isIn) { return null; }
+      console.log(rangeObj.angle);
 
       const { xAxisMap, yAxisMap } = this.state;
 
@@ -433,23 +492,18 @@ const generateCategoricalChart = ({
 
       const { layout } = this.props;
       const { orderedTooltipTicks: ticks, tooltipAxis: axis, tooltipTicks } = this.state;
-      const pos = layout === 'horizontal' ? e.chartX : e.chartY;
+      const pos = this.calculateTooltipPos(rangeObj);
       const activeIndex = calculateActiveTickIndex(pos, ticks, axis);
 
       if (activeIndex >= 0 && tooltipTicks) {
         const activeLabel = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;
         const activePayload = this.getTooltipContent(activeIndex);
-        const activeCoordinate = tooltipTicks[activeIndex] ? {
-          x: layout === 'horizontal' ? tooltipTicks[activeIndex].coordinate : e.chartX,
-          y: layout === 'horizontal' ? e.chartY : tooltipTicks[activeIndex].coordinate,
-        } : originCoordinate;
+        const activeCoordinate = this.getActiveCoordinate(ticks, activeIndex, rangeObj);
 
         return {
           ...e,
           activeTooltipIndex: activeIndex,
-          activeLabel,
-          activePayload,
-          activeCoordinate,
+          activeLabel, activePayload, activeCoordinate,
         };
       }
 
@@ -522,8 +576,7 @@ const generateCategoricalChart = ({
         const barPosition = hasBar && getBarPosition({
           barGap, barCategoryGap, bandSize, sizeList: sizeList[cateAxisId], maxBarSize,
         });
-
-        const componsedFn = getComposeFnOfItem(item);
+        const componsedFn = item && item.type && item.type.getComposedData;
 
         if (componsedFn) {
           formatedItems.push({
@@ -573,12 +626,20 @@ const generateCategoricalChart = ({
         x2 = x1;
         y1 = offset.top;
         y2 = offset.top + offset.height;
-      } else {
+      } else if (layout === 'vertical') {
         y1 = activeCoordinate.y;
         y2 = y1;
         x1 = offset.left;
         x2 = offset.left + offset.width;
-      }
+      } else if (!_.isNil(activeCoordinate.cx) || !_.isNil(activeCoordinate.cy)) {
+        const { cx, cy, innerRadius, outerRadius, angle } = activeCoordinate;
+        const innerPoint = polarToCartesian(cx, cy, innerRadius, angle);
+        const outerPoint = polarToCartesian(cx, cy, outerRadius, angle);
+        x1 = innerPoint.x;
+        y1 = innerPoint.y;
+        x2 = outerPoint.x;
+        y2 = outerPoint.y;
+    }
 
       return [{ x: x1, y: y1 }, { x: x2, y: y2 }];
     }
@@ -936,44 +997,6 @@ const generateCategoricalChart = ({
       }
     };
 
-    // validateAxes() {
-    //   const { layout, children } = this.props;
-    //   const xAxes = findAllByType(children, XAxis);
-    //   const yAxes = findAllByType(children, YAxis);
-
-    //   if (layout === 'horizontal' && xAxes && xAxes.length) {
-    //     xAxes.forEach((axis) => {
-    //       warn(axis.props.type === 'category' || (axis.props.type === 'number' &&
-    //         !_.isNil(axis.props.dataKey)),
-    //         `x-axis should be a category axis or a number axis which has specifed dataKey
-    //          when the layout is horizontal`
-    //       );
-    //     });
-    //   } else if (layout === 'vertical') {
-    //     warn(yAxes && yAxes.length,
-    //       `You should add <YAxis type="number" /> in ${chartName}.
-    //        The layout is vertical now, y-axis should be category axis,
-    //        but y-axis is number axis when no YAxis is added.`
-    //     );
-    //     warn(xAxes && xAxes.length,
-    //       `You should add <XAxis /> in ${chartName}.
-    //       The layout is vertical now, x-axis is category when no XAxis is added.`
-    //     );
-
-    //     if (yAxes && yAxes.length) {
-    //       yAxes.forEach((axis) => {
-    //         warn(axis.props.type === 'category' || (axis.props.type === 'number' &&
-    //           !_.isNil(axis.props.dataKey)),
-    //           `y-axis should be a category axis or a number axis which has specifed dataKey
-    //            when the layout is vertical`
-    //         );
-    //       });
-    //     }
-    //   }
-
-    //   return null;
-    // }
-
     triggerSyncEvent(data) {
       const { syncId } = this.props;
 
@@ -1069,7 +1092,10 @@ const generateCategoricalChart = ({
         ...axisOption,
         className: axisType,
         key: element.key || `${displayName}-${index}`,
-        ticks: getTicksOfAxis(axisOption, true),
+        ticks: getTicksOfAxis(axisOption, true).map(entry => ({
+          ...entry,
+          coordinate: entry.coordinate - entry.offset,
+        })),
       });
     };
 
@@ -1293,7 +1319,7 @@ const generateCategoricalChart = ({
       const item = this.filterFormatItem(element);
       if (!item) { return null; }
 
-      const graphicalItem = cloneElement(item.item, item.props);
+      const graphicalItem = cloneElement(element, item.props);
       const { isTooltipActive, activeTooltipIndex } = this.state;
       const { children } = this.props;
       const tooltipItem = findChildByType(children, Tooltip);
@@ -1318,7 +1344,6 @@ const generateCategoricalChart = ({
       if (isRange) { return [graphicalItem, null, null]; }
 
       return [graphicalItem, null];
-      // return graphicalItem;
     };
 
     render() {
@@ -1339,7 +1364,8 @@ const generateCategoricalChart = ({
         Area: { handler: this.renderGraphicChild },
         Radar: { handler: this.renderGraphicChild },
         RadialBar: { handler: this.renderGraphicChild },
-        'AnimationDecorator(Scatter)': { handler: this.renderGraphicChild },
+        Scatter: { handler: this.renderGraphicChild },
+        Pie: { handler: this.renderGraphicChild },
         Tooltip: { handler: this.renderCursor, once: true },
         PolarGrid: { handler: this.renderPolarGrid, once: true },
         PolarAngleAxis: { handler: this.renderPolarAxis },

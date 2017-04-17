@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { RadialBarChart, RadialBar, Cell, Legend, Tooltip, ResponsiveContainer,
-  LabelList } from 'recharts';
+  LabelList, PolarAngleAxis } from 'recharts';
 import { changeNumberOfData } from './utils';
 import { scaleOrdinal, schemeCategory10 } from 'd3-scale';
 
@@ -74,7 +74,7 @@ export default class Demo extends Component {
             <Legend iconSize={10} width={120} height={140} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
             <Tooltip/>
           </RadialBarChart>
-        </div>*/}
+        </div>
 
         <p>RadialBarChart with positive and negative value</p>
         <div className="radial-bar-chart-wrapper">
@@ -97,7 +97,7 @@ export default class Demo extends Component {
           </RadialBarChart>
         </div>
 
-        {/*<p>RadialBarChart wrapped by ResponsiveContainer</p>
+        <p>RadialBarChart wrapped by ResponsiveContainer</p>
         <div className="radial-bar-chart-wrapper">
           <ResponsiveContainer>
             <RadialBarChart
@@ -112,6 +112,37 @@ export default class Demo extends Component {
             </RadialBarChart>
           </ResponsiveContainer>
         </div>*/}
+
+        <p>Stacked RadialBarChart wrapped by ResponsiveContainer</p>
+        <div className="radial-bar-chart-wrapper">
+          <ResponsiveContainer>
+            <RadialBarChart
+              data={data}
+              cx="50%"
+              cy="50%"
+              innerRadius="20%"
+              outerRadius="90%"
+            >
+              <PolarAngleAxis type="number" range={[0, 300]} />
+              <RadialBar stackId="stack" minPointSize={15} background dataKey="uv">
+                {
+                  data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill="#8884d8" />
+                  ))
+                }
+              </RadialBar>
+              <RadialBar stackId="stack" minPointSize={15} dataKey="uv" animationBegin={1500}>
+                {
+                  data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill="#83a6ed" />
+                  ))
+                }
+              </RadialBar>
+              <Legend iconSize={10} width={120} height={140} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
+            </RadialBarChart>
+          </ResponsiveContainer>
+        </div>
+
       </div>
     );
   }

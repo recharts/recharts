@@ -9,6 +9,8 @@ import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, isSsr } from '../util/ReactUtils';
+import { getValueByDataKey } from '../util/DataUtils';
+import { polarToCartesian } from '../util/PolarUtils';
 import Polygon from '../shape/Polygon';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
@@ -37,8 +39,12 @@ class Radar extends Component {
       payload: PropTypes.object,
     })),
     shape: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
+    activeDot: PropTypes.oneOfType([
+      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
+    ]),
+    // whether have dot in poly line
     dot: PropTypes.oneOfType([
-      PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool,
+      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
     ]),
     label: PropTypes.oneOfType([
       PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool,
@@ -60,12 +66,31 @@ class Radar extends Component {
     angleAxisId: 0,
     radiusAxisId: 0,
     hide: false,
+    activeDot: true,
     dot: false,
     legendType: 'rect',
     isAnimationActive: !isSsr(),
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
+  };
+
+  static getComposedData = ({ item, props, radiusAxis, angleAxis, displayedData, dataKey }) => {
+    const { cx, cy } = angleAxis;
+    const points = displayedData.map((entry, i) => {
+      const name = getValueByDataKey(entry, angleAxis.dataKey, i);
+      const value = getValueByDataKey(entry, dataKey, 0);
+      const angle = angleAxis.scale(name);
+      const radius = radiusAxis.scale(value);
+
+      return {
+        ...polarToCartesian(cx, cy, radius, angle),
+        name, value, cx, cy, radius, angle,
+        payload: entry,
+      };
+    });
+
+    return { points };
   };
 
   state = { isAnimationFinished: false };

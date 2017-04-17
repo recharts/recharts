@@ -65,6 +65,7 @@ export default class Demo extends Component {
           data={data}
         >
           <PolarGrid />
+          <Tooltip />
           <Radar
             name="Mike"
             dataKey="A"
@@ -81,7 +82,6 @@ export default class Demo extends Component {
             fillOpacity={0.6}
             animationBegin={180}
           />
-          <Tooltip />
           <Legend />
           <PolarRadiusAxis domain={[0, 150]} label="score"/>
         </RadarChart>
@@ -90,13 +90,13 @@ export default class Demo extends Component {
         <div style={{ width: '100%', height: '100%' }}>
           <ResponsiveContainer>
             <RadarChart data={data}>
-              <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6}>
-                <LabelList />
-              </Radar>
               <PolarGrid />
               <PolarAngleAxis dataKey="subject" />
               <PolarRadiusAxis />
               <Tooltip />
+              <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6}>
+                <LabelList />
+              </Radar>
             </RadarChart>
           </ResponsiveContainer>
         </div>
