@@ -86,7 +86,7 @@ export default React.createClass({
             <YAxis dataKey="y" name="weight" unit="kg" />
             <ZAxis dataKey="z" range={[50, 1200]} name="score" unit="km" />
             <CartesianGrid />
-            <Scatter name="A school" data={data01} fillOpactity={0.3} fill="#ff7300" />
+            <Scatter name="A school" data={data01} fillOpacity={0.3} fill="#ff7300" />
             <Scatter name="B school" data={data02} fill="#347300" />
             <Tooltip/>
             <Legend/>

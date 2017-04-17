@@ -30,7 +30,7 @@ describe('ScatterChart of three dimension data', () => {
         <YAxis dataKey="y" name="weight" unit="kg" />
         <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km" />
         <CartesianGrid />
-        <Scatter name="A school" data={data01} fillOpactity={0.3} fill="#ff7300" />
+        <Scatter name="A school" data={data01} fillOpacity={0.3} fill="#ff7300" />
         <Scatter name="B school" data={data02} fill="#347300" />
         <Tooltip />
         <Legend />
@@ -50,7 +50,7 @@ describe('ScatterChart of three dimension data', () => {
         <YAxis dataKey="y" name="weight" unit="kg" />
         <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km" />
         <CartesianGrid />
-        <Scatter name="A school" data={[]} fillOpactity={0.3} fill="#ff7300" />
+        <Scatter name="A school" data={[]} fillOpacity={0.3} fill="#ff7300" />
         <Tooltip />
         <Legend layout="vertical" />
       </ScatterChart>
@@ -66,7 +66,7 @@ describe('ScatterChart of three dimension data', () => {
         <YAxis dataKey="y" name="weight" unit="kg" />
         <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km" />
         <CartesianGrid />
-        <Scatter name="A school" data={data01} fillOpactity={0.3} fill="#ff7300" />
+        <Scatter name="A school" data={data01} fillOpacity={0.3} fill="#ff7300" />
         <Scatter name="B school" data={data02} fill="#347300" />
         <Tooltip />
         <Legend />
