@@ -13,7 +13,8 @@ import LabelList from '../component/LabelList';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, isSsr } from '../util/ReactUtils';
-import { isNumber, uniqueId } from '../util/DataUtils';
+import { isNumber, uniqueId, getValueByDataKey,
+  getCateCoordinateOfLine } from '../util/DataUtils';
 
 @pureRender
 class Area extends Component {
@@ -92,6 +93,84 @@ class Area extends Component {
 
     onAnimationStart: () => {},
     onAnimationEnd: () => {},
+  };
+
+  static getBaseValue  = (props, xAxis, yAxis) => {
+    const { layout, baseValue } = props;
+
+    if (isNumber(baseValue)) { return baseValue; }
+
+    const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
+    const domain = numericAxis.scale.domain();
+
+    if (numericAxis.type === 'number') {
+      const max = Math.max(domain[0], domain[1]);
+      const min = Math.min(domain[0], domain[1]);
+
+      if (baseValue === 'dataMin') { return min; }
+      if (baseValue === 'dataMax') { return max; }
+
+      return max < 0 ? max : Math.max(Math.min(domain[0], domain[1]), 0);
+    }
+
+    if (baseValue === 'dataMin') { return domain[0]; }
+    if (baseValue === 'dataMax') { return domain[1]; }
+
+    return domain[0];
+  };
+
+  static getComposedData = ({ props, xAxis, yAxis, xAxisTicks, yAxisTicks, bandSize,
+    dataKey, stackedData, dataStartIndex, displayedData }) => {
+    const { layout } = props;
+    const hasStack = stackedData && stackedData.length;
+    const baseValue = Area.getBaseValue(props, xAxis, yAxis);
+    let isRange = false;
+
+    const points = displayedData.map((entry, index) => {
+      let value;
+
+      if (hasStack) {
+        value = stackedData[dataStartIndex + index];
+      } else {
+        value = getValueByDataKey(entry, dataKey);
+
+        if (!_.isArray(value)) {
+          value = [baseValue, value];
+        } else {
+          isRange = true;
+        }
+      }
+
+      if (layout === 'horizontal') {
+        return {
+          x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
+          y: _.isNil(value[1]) ? null : yAxis.scale(value[1]),
+          value,
+          payload: entry,
+        };
+      }
+
+      return {
+        x: _.isNil(value[1]) ? null : xAxis.scale(value[1]),
+        y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
+        value,
+        payload: entry,
+      };
+    });
+
+    let baseLine;
+    if (hasStack || isRange) {
+      baseLine = points.map(entry => ({
+        x: layout === 'horizontal' ? entry.x : xAxis.scale(entry && entry.value[0]),
+        y: layout === 'horizontal' ? yAxis.scale(entry && entry.value[0]) : entry.y,
+      }));
+    } else if (layout === 'horizontal') {
+      baseLine = yAxis.scale(baseValue);
+    } else {
+      baseLine = xAxis.scale(baseValue);
+    }
+
+    return { points, baseLine, layout, isRange };
   };
 
   static renderDotItem = (option, props) => {

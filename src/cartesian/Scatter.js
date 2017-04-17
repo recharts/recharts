@@ -10,13 +10,13 @@ import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, filterEventsOfChild, isSsr, findAllByType } from '../util/ReactUtils';
+import ZAxis from './ZAxis';
 import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
 import ErrorBar from './ErrorBar';
-import { getValueByDataKey, uniqueId } from '../util/DataUtils';
-import AnimationDecorator from '../util/AnimationDecorator';
+import Cell from '../component/Cell';
+import { getValueByDataKey, uniqueId, isNumOrStr } from '../util/DataUtils';
 
-@AnimationDecorator
 @pureRender
 class Scatter extends Component {
 
@@ -84,6 +84,57 @@ class Scatter extends Component {
     animationBegin: 0,
     animationDuration: 400,
     animationEasing: 'linear',
+  };
+
+  /**
+   * Compose the data of each group
+   * @param  {Object} xAxis   The configuration of x-axis
+   * @param  {Object} yAxis   The configuration of y-axis
+   * @param  {String} dataKey The unique key of a group
+   * @return {Array}  Composed data
+   */
+  static getComposedData = ({ xAxis, yAxis, zAxis, item, displayedData, onItemMouseLeave,
+    onItemMouseEnter }) => {
+    const cells = findAllByType(item.props.children, Cell);
+    const xAxisDataKey = _.isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
+    const yAxisDataKey = _.isNil(yAxis.dataKey) ? item.props.dataKey : yAxis.dataKey;
+    const zAxisDataKey = zAxis && zAxis.dataKey;
+    const defaultRangeZ = zAxis ? zAxis.range : ZAxis.defaultProps.range;
+    const defaultZ = defaultRangeZ && defaultRangeZ[0];
+    const xOffset = xAxis.scale.bandwidth ? xAxis.scale.bandwidth() / 2 : 0;
+    const yOffset = yAxis.scale.bandwidth ? yAxis.scale.bandwidth() / 2 : 0;
+    const points = displayedData.map((entry, index) => {
+      const x = entry[xAxisDataKey];
+      const y = entry[yAxisDataKey];
+      const z = (!_.isNil(zAxisDataKey) && entry[zAxisDataKey]) || '-';
+      const tooltipPayload = [
+        { name: xAxis.name || xAxis.dataKey, unit: xAxis.unit || '', value: x, payload: entry },
+        { name: yAxis.name || yAxis.dataKey, unit: yAxis.unit || '', value: y, payload: entry },
+      ];
+
+      if (z !== '-') {
+        tooltipPayload.push({
+          name: zAxis.name || zAxis.dataKey, unit: zAxis.unit || '', value: z, payload: entry,
+        });
+      }
+
+      return {
+        ...entry,
+        cx: isNumOrStr(x) ? xAxis.scale(x) + xOffset : null,
+        cy: isNumOrStr(y) ? yAxis.scale(y) + yOffset : null,
+        size: z !== '-' ? zAxis.scale(z) : defaultZ,
+        node: { x, y, z },
+        tooltipPayload,
+        payload: entry,
+        ...(cells && cells[index] && cells[index].props),
+      };
+    });
+
+    return {
+      onMouseLeave: onItemMouseLeave,
+      onMouseEnter: onItemMouseEnter,
+      points,
+    };
   };
 
   state = { activeIndex: -1, isAnimationFinished: false };

@@ -198,8 +198,9 @@ export const getCoordinatesOfGrid = (ticks, min, max) => {
 export const getTicksOfAxis = (axis, isGrid, isAll) => {
   if (!axis) return null;
   const scale = axis.scale;
-  const { duplicateDomain, type } = axis;
-  const offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ?
+  const { duplicateDomain, type, domain } = axis;
+  const offset = ((isGrid || isAll) && type === 'category' && scale.bandwidth &&
+    axis.axisType !== 'angleAxis') ?
     scale.bandwidth() / 2 : 0;
 
   // The ticks setted by user should only affect the ticks adjacent to axis line
@@ -210,6 +211,7 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
       return {
         coordinate: scale(scaleContent) + offset,
         value: entry,
+        offset,
       };
     });
   }
@@ -220,13 +222,14 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
         coordinate: scale(entry),
         value: entry,
         index,
+        offset,
       }
     ));
   }
 
   if (scale.ticks && !isAll) {
     return scale.ticks(axis.tickCount).map(entry => (
-      { coordinate: scale(entry) + offset, value: entry }
+      { coordinate: scale(entry) + offset, value: entry, offset }
     ));
   }
 
@@ -236,6 +239,7 @@ export const getTicksOfAxis = (axis, isGrid, isAll) => {
       coordinate: scale(entry) + offset,
       value: duplicateDomain ? duplicateDomain[entry] : entry,
       index,
+      offset,
     }
   ));
 };

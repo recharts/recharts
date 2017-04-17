@@ -9,11 +9,13 @@ import _ from 'lodash';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
 import ErrorBar from './ErrorBar';
+import Cell from '../component/Cell';
 import LabelList from '../component/LabelList';
 import pureRender from '../util/PureRender';
-import { getValueByDataKey, uniqueId } from '../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
-  getPresentationAttributes, filterEventsOfChild, isSsr, findChildByType } from '../util/ReactUtils';
+import { getValueByDataKey, uniqueId, getCateCoordinateOfBar,
+  truncateByDomain, getBaseValueOfBar, findPositionOfBar } from '../util/DataUtils';
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, findChildByType,
+  findAllByType, getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 
 @pureRender
 class Bar extends Component {
@@ -74,6 +76,92 @@ class Bar extends Component {
 
     onAnimationStart: () => {},
     onAnimationEnd: () => {},
+  };
+
+  /**
+   * Compose the data of each group
+   * @param {Object} props Props for the component
+   * @param {Object} item        An instance of Bar
+   * @param {Array} barPosition The offset and size of each bar
+   * @param {Object} xAxis       The configuration of x-axis
+   * @param {Object} yAxis       The configuration of y-axis
+   * @param {Array} stackedData  The stacked data of a bar item
+   * @return{Array} Composed data
+   */
+  static getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
+    xAxisTicks, yAxisTicks, stackedData, dataStartIndex, displayedData }) => {
+    const pos = findPositionOfBar(barPosition, item);
+    if (!pos) { return []; }
+
+    const { layout } = props;
+    const { dataKey, children, minPointSize } = item.props;
+    const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
+    const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
+    const baseValue = getBaseValueOfBar({ props, numericAxis });
+    const cells = findAllByType(children, Cell);
+
+    const rects = displayedData.map((entry, index) => {
+      let value, x, y, width, height;
+
+      if (stackedData) {
+        value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
+      } else {
+        value = getValueByDataKey(entry, dataKey);
+
+        if (!_.isArray(value)) {
+          value = [baseValue, value];
+        }
+      }
+
+      if (layout === 'horizontal') {
+        x = getCateCoordinateOfBar({
+          axis: xAxis,
+          ticks: xAxisTicks,
+          bandSize,
+          offset: pos.offset,
+          entry,
+          index,
+        });
+        y = yAxis.scale(value[1]);
+        width = pos.size;
+        height = yAxis.scale(value[0]) - yAxis.scale(value[1]);
+
+        if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
+          const delta = Math.sign(height || minPointSize) *
+            (Math.abs(minPointSize) - Math.abs(height));
+
+          y -= delta;
+          height += delta;
+        }
+      } else {
+        x = xAxis.scale(value[0]);
+        y = getCateCoordinateOfBar({
+          axis: yAxis,
+          ticks: yAxisTicks,
+          bandSize,
+          offset: pos.offset,
+          entry,
+          index,
+        });
+        width = xAxis.scale(value[1]) - xAxis.scale(value[0]);
+        height = pos.size;
+
+        if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
+          const delta = Math.sign(width || minPointSize) *
+            (Math.abs(minPointSize) - Math.abs(width));
+          width += delta;
+        }
+      }
+
+      return {
+        ...entry,
+        x, y, width, height, value: stackedData ? value : value[1],
+        payload: entry,
+        ...(cells && cells[index] && cells[index].props),
+      };
+    });
+
+    return { data: rects, layout };
   };
 
   state = { isAnimationFinished: false };

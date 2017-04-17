@@ -2,6 +2,10 @@ import { getPercentValue, parseScale, checkDomainOfScale, getTicksOfScale } from
 
 export const RADIAN = Math.PI / 180;
 
+export const degreeToRadian = angle => angle * Math.PI / 180;
+
+export const radianToDegree = angleInRadian => angleInRadian * 180 / Math.PI;
+
 export const polarToCartesian = (cx, cy, radius, angle) => ({
   x: cx + Math.cos(-RADIAN * angle) * radius,
   y: cy + Math.sin(-RADIAN * angle) * radius,
@@ -36,18 +40,24 @@ export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
   return ids.reduce((result, id) => {
     const axis = axisMap[id];
     const { orientation, domain, padding = {}, mirror, reversed } = axis;
+    console.log(axis);
     const offsetKey = `${orientation}${mirror ? 'Mirror' : ''}`;
 
     let range, x, y, needSpace;
 
-    if (axisType === 'angleAxis') {
-      range = [ startAngle, endAngle ];
-    } else if (axisType === 'radiusAxis') {
-      range = [ innerRadius, outerRadius ];
-    }
+    if (_.isNil(range, axis.range)) {
+      if (axisType === 'angleAxis') {
+        range = [ startAngle, endAngle ];
+      } else if (axisType === 'radiusAxis') {
+        range = [ innerRadius, outerRadius ];
+      }
 
-    if (reversed) {
-      range = [range[1], range[0]];
+      if (reversed) {
+        range = [range[1], range[0]];
+      }
+    } else {
+      console.log(range);
+      range = axis.range;
     }
 
     const scale = parseScale(axis, chartName);
@@ -64,4 +74,69 @@ export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
 
     return { ...result, [id]: finalAxis };
   }, {});
+};
+
+export const distanceBetweenPoints = (point, anotherPoint) => {
+  const { x: x1, y: y1 } = point;
+  const { x: x2, y: y2 } = anotherPoint;
+
+  return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+};
+
+export const getAngleOfPoint = ({ x, y }, { cx, cy }) => {
+  const radius = distanceBetweenPoints({ x, y }, { x: cx, y: cy });
+
+  if (radius <= 0) { return { radius }; }
+
+  const cos = (x - cx) / radius;
+  let angleInRadian = Math.acos(cos);
+
+  if (y > cy) {
+    angleInRadian = 2 * Math.PI - angleInRadian;
+  }
+
+  return { radius, angle: radianToDegree(angleInRadian), angleInRadian };
+};
+
+export const formatAngleOfSector = ({ startAngle, endAngle }) => {
+  const startCnt = Math.floor(startAngle / 360);
+  const endCnt = Math.floor(endAngle / 360);
+  const min = Math.min(startCnt, endCnt);
+
+  return {
+    startAngle: startAngle - min * 360,
+    endAngle: endAngle - min * 360,
+  };
+};
+
+export const inRangeOfSector = ({ x, y }, sector) => {
+  const { radius, angle, angleInRadian } = getAngleOfPoint({ x, y }, sector);
+  const { innerRadius, outerRadius } = sector;
+
+  if (radius < innerRadius|| radius > outerRadius) {
+    return false;
+  }
+
+  if (radius === 0) { return true; }
+
+  const { startAngle, endAngle } = formatAngleOfSector(sector);
+  const min  = Math.min(startAngle, endAngle);
+  const max  = Math.min(startAngle, endAngle);
+  let formatAngle = angle;
+
+  while (formatAngle > endAngle) {
+    formatAngle -= 360;
+  }
+
+  while (formatAngle <  startAngle) {
+    formatAngle += 360;
+  }
+
+  const inRange = formatAngle >= startAngle && formatAngle <= endAngle;
+
+  if (inRange) {
+    return { ...sector, radius, angle: formatAngle };
+  }
+
+  return null;
 };

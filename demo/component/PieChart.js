@@ -9,7 +9,7 @@ const colors = scaleOrdinal(schemeCategory10).range();
 const data01 = [
   { name: 'Group A', value: 400, v: 89 },
   { name: 'Group B', value: 300, v: 100 },
-  { name: 'Group C', value: null, v: 200 },
+  { name: 'Group C', value: 200, v: 200 },
   { name: 'Group D', value: 200, v: 20 },
   { name: 'Group E', value: 278, v: 40 },
   { name: 'Group F', value: 189, v: 60 },
@@ -141,20 +141,38 @@ export default class Demo extends Component {
         <div className="pie-chart-wrapper">
           <PieChart width={800} height={400}>
             <Legend />
-            <Pie cx={200} cy={200} startAngle={180} endAngle={0} outerRadius={80} label>
+            <Pie
+              data={data01}
+              dataKey="value"
+              cx={200}
+              cy={200}
+              startAngle={180}
+              endAngle={0}
+              outerRadius={80}
+              label
+            >
               {
                 data01.map((entry, index) => (
-                  <Cell key={`slice-${index}`} name={entry.name} value={entry.value} fill={colors[index % 10]}/>
+                  <Cell key={`slice-${index}`} fill={colors[index % 10]}/>
                 ))
               }
               <Label value="test" position="outside" />
               <LabelList position="outside" />
             </Pie>
-            <Pie cx={600} cy={200} startAngle={180} endAngle={-180} innerRadius={60} outerRadius={80}
-              label={renderLabelContent}>
+            <Pie
+              data={data02}
+              dataKey="value"
+              cx={600}
+              cy={200}
+              startAngle={180}
+              endAngle={-180}
+              innerRadius={60}
+              outerRadius={80}
+              label={renderLabelContent}
+            >
               {
                 data02.map((entry, index) => (
-                  <Cell key={`slice-${index}`} name={entry.name} value={entry.value} fill={colors[index % 10]}/>
+                  <Cell key={`slice-${index}`} fill={colors[index % 10]}/>
                 ))
               }
               <Label width={50}>测试换行 测试杭欢</Label>
@@ -167,8 +185,8 @@ export default class Demo extends Component {
         <div className="pie-chart-wrapper">
           <PieChart width={400} height={400}>
             <Legend verticalAlign="top"/>
-            <Pie data={data01} cx={200} cy={200} innerRadius={50} outerRadius={80}/>
-            <Pie data={data03} cx={200} cy={200} innerRadius={80} outerRadius={100}/>
+            <Pie data={data01} dataKey="value" cx={200} cy={200} innerRadius={50} outerRadius={80}/>
+            <Pie data={data03} dataKey="value" cx={200} cy={200} innerRadius={80} outerRadius={100}/>
           </PieChart>
         </div>
 
@@ -177,8 +195,8 @@ export default class Demo extends Component {
           <ResponsiveContainer>
             <PieChart>
               <Tooltip />
-              <Pie data={data01} innerRadius="25%" outerRadius="40%"/>
-              <Pie data={data01} nameKey="name" valueKey="v" innerRadius="45%" outerRadius="80%"/>
+              <Pie data={data01} dataKey="value" innerRadius="25%" outerRadius="40%"/>
+              <Pie data={data01} dataKey="v" innerRadius="45%" outerRadius="80%"/>
               <Tooltip/>
             </PieChart>
           </ResponsiveContainer>
@@ -187,17 +205,19 @@ export default class Demo extends Component {
         <p>PieChart wrapped by ResponsiveContainer</p>
         <div className="pie-chart-wrapper" style={{ width: '50%', height: '100%', backgroundColor: '#f5f5f5' }}>
           <ResponsiveContainer>
-            <PieChart onClick={this.onPieEnter}>
+            <PieChart>
               <Pie
                 data={data01}
+                dataKey="value"
                 innerRadius="25%"
                 outerRadius="40%"
                 activeIndex={this.state.activeIndex}
                 activeShape={renderActiveShape}
+                onClick={this.onPieEnter}
               >
                 {
                   data01.map((entry, index) => (
-                    <Cell key={`slice-${index}`} name={entry.name} value={entry.value} fill={colors[index % 10]}/>
+                    <Cell key={`slice-${index}`} fill={colors[index % 10]}/>
                   ))
                 }
                 <Label value="test" />

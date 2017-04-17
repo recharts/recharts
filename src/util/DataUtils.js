@@ -350,7 +350,7 @@ export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, o
         numericAxisId, cateAxisId, items: [],
       };
 
-      childGroup.items = [item].concat(childGroup.items);
+      childGroup.items.push(item);
 
       parentGroup.hasStack = true;
 
@@ -431,4 +431,40 @@ export const getTicksOfScale = (scale, opts) => {
   }
 
   return null;
+};
+
+export const getCateCoordinateOfLine = ({ axis, ticks, bandSize, entry, index }) => {
+  if (axis.type === 'category') {
+    return ticks[index] ? ticks[index].coordinate + bandSize / 2 : null;
+  }
+
+  const value = getValueByDataKey(entry, axis.dataKey);
+
+  return !_.isNil(value) ? axis.scale(value) : null;
+};
+
+export const getCateCoordinateOfBar = ({ axis, ticks, offset, bandSize, entry, index }) => {
+  if (axis.type === 'category') {
+    return ticks[index] ? ticks[index].coordinate + offset : null;
+  }
+  const value = getValueByDataKey(entry, axis.dataKey, axis.domain[index]);
+
+  return !_.isNil(value) ? axis.scale(value) - bandSize / 2 + offset : null;
+};
+
+
+export const getBaseValueOfBar = ({ props, numericAxis }) => {
+  const domain = numericAxis.scale.domain();
+
+  if (numericAxis.type === 'number') {
+    const min = Math.min(domain[0], domain[1]);
+    const max = Math.max(domain[0], domain[1]);
+
+    if (min <= 0 && max >= 0) { return 0; }
+    if (max < 0) { return max; }
+
+    return min;
+  }
+
+  return domain[0];
 };

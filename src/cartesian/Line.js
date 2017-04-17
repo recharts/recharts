@@ -12,7 +12,7 @@ import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
 import ErrorBar from './ErrorBar';
-import { getValueByDataKey, uniqueId } from '../util/DataUtils';
+import { getValueByDataKey, uniqueId, getCateCoordinateOfLine } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, isSsr, findChildByType } from '../util/ReactUtils';
 
@@ -95,6 +95,42 @@ class Line extends Component {
     onAnimationStart: () => {},
     onAnimationEnd: () => {},
   };
+
+  /**
+   * Compose the data of each group
+   * @param {Object} props The props from the component
+   * @param  {Object} xAxis   The configuration of x-axis
+   * @param  {Object} yAxis   The configuration of y-axis
+   * @param  {String} dataKey The unique key of a group
+   * @return {Array}  Composed data
+   */
+  static getComposedData = ({ props, xAxis, yAxis, xAxisTicks, yAxisTicks, dataKey,
+    bandSize, displayedData }) => {
+    const { layout } = props;
+
+    const points = displayedData.map((entry, index) => {
+      const value = getValueByDataKey(entry, dataKey);
+
+      if (layout === 'horizontal') {
+        return {
+          x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
+          y: _.isNil(value) ? null : yAxis.scale(value),
+          value,
+          payload: entry,
+        };
+      }
+
+      return {
+        x: _.isNil(value) ? null : xAxis.scale(value),
+        y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
+        value,
+        payload: entry,
+      };
+    });
+
+    return { points, layout };
+  };
+
 
   state = {
     isAnimationFinished: true,

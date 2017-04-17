@@ -9,12 +9,15 @@ import _ from 'lodash';
 import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
 import { getStringSize } from '../util/DOMUtils';
-import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES,
+import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES, findAllByType,
   getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
 import { mathSign } from '../util/DataUtils';
 import LabelList from '../component/LabelList';
+import Cell from '../component/Cell';
+import { getCateCoordinateOfBar, findPositionOfBar, getBaseValueOfBar,
+  truncateByDomain, getValueByDataKey } from '../util/DataUtils';
 
 const RADIAN = Math.PI / 180;
 
@@ -33,6 +36,7 @@ class RadialBar extends Component {
       PropTypes.object, PropTypes.func, PropTypes.element,
     ]),
     activeIndex: PropTypes.number,
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
 
     cornerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     minPointSize: PropTypes.number,
@@ -76,6 +80,87 @@ class RadialBar extends Component {
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
+  };
+
+  static getComposedData = ({ item, props, radiusAxis, radiusAxisTicks, angleAxis, angleAxisTicks,
+    displayedData, dataKey, stackedData, barPosition, bandSize, dataStartIndex }) => {
+    const pos = findPositionOfBar(barPosition, item);
+    if (!pos) { return []; }
+
+    const { cx, cy } = angleAxis;
+    const { layout } = props;
+    const { children, minPointSize } = item.props;
+    const numericAxis = layout === 'radial' ? angleAxis : radiusAxis;
+    const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
+    const baseValue = getBaseValueOfBar({ props, numericAxis });
+    const cells = findAllByType(children, Cell);
+    const sectors = displayedData.map((entry, index) => {
+      let value, innerRadius, outerRadius, startAngle, endAngle, backgroundSector;
+
+      if (stackedData) {
+        value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
+      } else {
+        value = getValueByDataKey(entry, dataKey);
+        if (!_.isArray(value)) { value = [baseValue, value]; }
+      }
+
+      if (layout === 'radial') {
+        innerRadius = getCateCoordinateOfBar({
+          axis: radiusAxis,
+          ticks: radiusAxisTicks,
+          bandSize,
+          offset: pos.offset,
+          entry,
+          index,
+        });
+        endAngle = angleAxis.scale(value[1]);
+        startAngle = angleAxis.scale(value[0]);
+        outerRadius = innerRadius + pos.size;
+        const deltaAngle = endAngle - startAngle;
+
+        if (Math.abs(minPointSize) > 0 && Math.abs(deltaAngle) < Math.abs(minPointSize)) {
+          const delta = Math.sign(deltaAngle || minPointSize) *
+            (Math.abs(minPointSize) - Math.abs(deltaAngle));
+
+          endAngle += delta;
+        }
+        backgroundSector = {
+          background: {
+            cx, cy, innerRadius, outerRadius, startAngle: props.startAngle, endAngle: props.endAngle,
+          },
+        };
+      } else {
+        innerRadius = radiusAxis.scale(value[0]);
+        outerRadius = xAxis.scale(value[1]);
+        startAngle = getCateCoordinateOfBar({
+          axis: yAxis,
+          ticks: yAxisTicks,
+          bandSize,
+          offset: pos.offset,
+          entry,
+          index,
+        });
+        endAngle = startAngle + pos.size;
+        const deltaRadius = outerRadius - innerRadius;
+
+        if (Math.abs(minPointSize) > 0 && Math.abs(deltaRadius) < Math.abs(minPointSize)) {
+          const delta = Math.sign(deltaRadius || minPointSize) *
+            (Math.abs(minPointSize) - Math.abs(deltaRadius));
+          outerRadius += delta;
+        }
+      }
+
+      return {
+        ...entry,
+        ...backgroundSector,
+        payload: entry,
+        value: stackedData ? value : value[1],
+        cx, cy, innerRadius, outerRadius, startAngle, endAngle,
+        ...(cells && cells[index] && cells[index].props),
+      };
+    });
+
+    return { data: sectors, layout };
   };
 
   state = {

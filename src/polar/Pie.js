@@ -13,13 +13,15 @@ import Curve from '../shape/Curve';
 import Text from '../component/Text';
 import Label from '../component/Label';
 import LabelList from '../component/LabelList';
+import Cell from '../component/Cell';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
-  getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
-import { polarToCartesian } from '../util/PolarUtils';
+  getPresentationAttributes, findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
+import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
-import { isNumber, getValueByDataKey, uniqueId, mathSign } from '../util/DataUtils';
+import { isNumber, getValueByDataKey, uniqueId, getPercentValue } from '../util/DataUtils';
 
-@AnimationDecorator
+// @AnimationDecorator
+
 @pureRender
 class Pie extends Component {
 
@@ -38,13 +40,13 @@ class Pie extends Component {
     innerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     outerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     cornerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    nameKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    valueKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
     data: PropTypes.arrayOf(PropTypes.object),
     minAngle: PropTypes.number,
     legendType: PropTypes.oneOf(LEGEND_TYPES),
     maxRadius: PropTypes.number,
 
+    sectors: PropTypes.arrayOf(PropTypes.object),
     hide: PropTypes.bool,
     labelLine: PropTypes.oneOfType([
       PropTypes.object, PropTypes.func, PropTypes.element, PropTypes.bool,
@@ -90,17 +92,107 @@ class Pie extends Component {
     // The outer radius of sectors
     outerRadius: '80%',
     paddingAngle: 0,
-    nameKey: 'name',
-    valueKey: 'value',
     labelLine: true,
     hide: false,
-    data: [],
     minAngle: 0,
     isAnimationActive: !isSsr(),
     animationBegin: 400,
     animationDuration: 1500,
     animationEasing: 'ease',
   };
+
+  static parseDeltaAngle = ({ startAngle, endAngle }) => {
+    const sign = Math.sign(endAngle - startAngle);
+    const deltaAngle = Math.min(Math.abs(endAngle - startAngle), 360);
+
+    return sign * deltaAngle;
+  };
+
+  static getRealPieData = (item) => {
+    const { data, children } = item.props;
+    const presentationProps = getPresentationAttributes(item.props);
+    const cells = findAllByType(children, Cell);
+
+    if (data && data.length) {
+      return data.map((entry, index) => ({
+        payload: entry,
+        ...presentationProps,
+        ...entry,
+        ...(cells && cells[index] && cells[index].props),
+      }));
+    }
+
+    if (cells && cells.length) {
+      return cells.map(cell => ({ ...presentationProps, ...cell.props }));
+    }
+
+    return [];
+  };
+
+  static parseCoordinateOfPie = (item, offset) => {
+    const { top, left, bottom, right, width, height } = offset;
+    const maxPieRadius = getMaxRadius(width, height);
+    const cx = left + getPercentValue(item.props.cx, width, width / 2);
+    const cy = top + getPercentValue(item.props.cy, height, height / 2);
+    const innerRadius = getPercentValue(item.props.innerRadius, maxPieRadius, 0);
+    const outerRadius = getPercentValue(item.props.outerRadius, maxPieRadius, maxPieRadius * 0.8);
+    const maxRadius = item.props.maxRadius || Math.sqrt(width * width + height * height) / 2;
+
+    return { cx, cy, innerRadius, outerRadius, maxRadius };
+  }
+
+  static getComposedData = ({ item, offset }) => {
+    const pieData = Pie.getRealPieData(item);
+    if (!pieData || !pieData.length) { return []; }
+
+    const { cornerRadius, startAngle, endAngle, paddingAngle, minAngle, dataKey,
+      children } = item.props;
+    const coordinate = Pie.parseCoordinateOfPie(item, offset);
+    const cells = findAllByType(children, Cell);
+    const len = pieData.length;
+    const deltaAngle = Pie.parseDeltaAngle({ startAngle, endAngle });
+    const absDeltaAngle = Math.abs(deltaAngle);
+    const totalPadingAngle = (absDeltaAngle >= 360 ? len : (len - 1)) * paddingAngle;
+    const sum = pieData.reduce((result, entry) => {
+      const val = getValueByDataKey(entry, dataKey, 0);
+      return result + (isNumber(val) ? val : 0);
+    }, 0);
+    let sectors = [];
+    let prev;
+
+    if (sum > 0) {
+      sectors = pieData.map((entry, i) => {
+        const val = getValueByDataKey(entry, dataKey, 0);
+        const percent = (isNumber(val) ? val : 0) / sum;
+        let tempStartAngle;
+
+        if (i) {
+          tempStartAngle = (deltaAngle < 0 ? prev.endAngle : prev.startAngle)
+            + Math.sign(deltaAngle) * paddingAngle;
+        } else {
+          tempStartAngle = startAngle;
+        }
+
+        const tempEndAngle = tempStartAngle + Math.sign(deltaAngle) * (
+          minAngle + percent * (absDeltaAngle - len * minAngle - totalPadingAngle)
+        );
+
+        prev = {
+          percent, cornerRadius,
+          ...entry,
+          ...coordinate,
+          value: getValueByDataKey(entry, dataKey),
+          startAngle: deltaAngle < 0 ? tempStartAngle : tempEndAngle,
+          endAngle: deltaAngle < 0 ? tempEndAngle : tempStartAngle,
+          midAngle: (tempStartAngle + tempEndAngle) / 2,
+        };
+
+        return prev;
+      });
+    }
+
+    return { ...coordinate, sectors };
+  }
 
   state = { isAnimationFinished: false };
 
@@ -213,7 +305,7 @@ class Pie extends Component {
     if (isAnimationActive && !this.state.isAnimationFinished) {
       return null;
     }
-    const { label, labelLine, valueKey } = this.props;
+    const { label, labelLine, dataKey } = this.props;
     const pieProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);
     const customLabelLineProps = getPresentationAttributes(labelLine);
@@ -245,7 +337,7 @@ class Pie extends Component {
       return (
         <Layer key={`label-${i}`}>
           {labelLine && this.renderLabelLineItem(labelLine, lineProps)}
-          {this.renderLabelItem(label, labelProps, getValueByDataKey(entry, valueKey))}
+          {this.renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey))}
         </Layer>
       );
     });
