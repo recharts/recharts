@@ -1,3 +1,12 @@
+## 0.22.2 (Apr 18, 2017)
+
+
+### fix
+
+- fix spelling error of fillOpacity
+- fix bug of axis when has duplicated ticks
+
+
 ## 0.22.1 (Apr 13, 2017)
 
 ### feat
