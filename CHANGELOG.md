@@ -1,5 +1,10 @@
-## 0.22.2 (Apr 18, 2017)
+## 0.22.3 (Apr 19, 2017)
 
+### refactor
+
+- add mathSign in DataUtils to replace Math.sign
+
+## 0.22.2 (Apr 18, 2017)
 
 ### fix
 
