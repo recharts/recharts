@@ -15,7 +15,7 @@ import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import AnimationDecorator from '../util/AnimationDecorator';
-import { isNumber, getValueByDataKey, uniqueId } from '../util/DataUtils';
+import { isNumber, getValueByDataKey, uniqueId, mathSign } from '../util/DataUtils';
 
 @AnimationDecorator
 @pureRender
@@ -103,7 +103,7 @@ class Pie extends Component {
 
   getDeltaAngle() {
     const { startAngle, endAngle } = this.props;
-    const sign = Math.sign(endAngle - startAngle);
+    const sign = mathSign(endAngle - startAngle);
     const deltaAngle = Math.min(Math.abs(endAngle - startAngle), 360);
 
     return sign * deltaAngle;
@@ -129,12 +129,12 @@ class Pie extends Component {
 
         if (i) {
           tempStartAngle = (deltaAngle < 0 ? prev.endAngle : prev.startAngle)
-            + Math.sign(deltaAngle) * paddingAngle;
+            + mathSign(deltaAngle) * paddingAngle;
         } else {
           tempStartAngle = startAngle;
         }
 
-        const tempEndAngle = tempStartAngle + Math.sign(deltaAngle) * (
+        const tempEndAngle = tempStartAngle + mathSign(deltaAngle) * (
           minAngle + percent * (absDeltaAngle - len * minAngle - totalPadingAngle)
         );
 

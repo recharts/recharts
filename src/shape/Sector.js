@@ -8,10 +8,10 @@ import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';
-import { getPercentValue } from '../util/DataUtils';
+import { getPercentValue, mathSign } from '../util/DataUtils';
 
 const getDeltaAngle = (startAngle, endAngle) => {
-  const sign = Math.sign(endAngle - startAngle);
+  const sign = mathSign(endAngle - startAngle);
   const deltaAngle = Math.min(Math.abs(endAngle - startAngle), 359.999);
 
   return sign * deltaAngle;
@@ -62,7 +62,7 @@ const getSectorPath = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle 
 
 const getSectorWithCorner = ({ cx, cy, innerRadius, outerRadius, cornerRadius, startAngle,
   endAngle }) => {
-  const sign = Math.sign(endAngle - startAngle);
+  const sign = mathSign(endAngle - startAngle);
   const { circleTangency: soct, lineTangency: solt, theta: sot } =
     getTangentCircle({
       cx, cy, radius: outerRadius, angle: startAngle, sign, cornerRadius,

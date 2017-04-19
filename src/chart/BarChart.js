@@ -8,7 +8,7 @@ import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
 import { getBandSizeOfAxis, getAnyElementOfObject, getValueByDataKey,
-  findPositionOfBar, truncateByDomain } from '../util/DataUtils';
+  findPositionOfBar, truncateByDomain, mathSign } from '../util/DataUtils';
 import { getPresentationAttributes, findChildByType, findAllByType } from '../util/ReactUtils';
 import generateCategoricalChart from './generateCategoricalChart';
 import Cell from '../component/Cell';
@@ -95,7 +95,7 @@ const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
       height = yAxis.scale(value[0]) - yAxis.scale(value[1]);
 
       if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
-        const delta = Math.sign(height || minPointSize) *
+        const delta = mathSign(height || minPointSize) *
           (Math.abs(minPointSize) - Math.abs(height));
 
         y -= delta;
@@ -115,7 +115,7 @@ const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
       height = pos.size;
 
       if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
-        const delta = Math.sign(width || minPointSize) *
+        const delta = mathSign(width || minPointSize) *
           (Math.abs(minPointSize) - Math.abs(width));
         width += delta;
       }

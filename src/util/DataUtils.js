@@ -1,6 +1,13 @@
 import _ from 'lodash';
 import * as d3Scales from 'd3-scale';
 
+export const mathSign = (value) => {
+  if (value === 0) { return 0; }
+  if (value > 0) { return 1; }
+
+  return -1;
+};
+
 export const isPercent = value => (
   _.isString(value) && value.indexOf('%') === value.length - 1
 );

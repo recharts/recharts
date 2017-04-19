@@ -3,7 +3,7 @@ import { scaleLinear, scaleBand } from 'd3-scale';
 import { getPercentValue, validateCoordinateInRange,
   getBandSizeOfAxis, getAnyElementOfObject,
   parseSpecifiedDomain, hasDuplicate, parseScale,
-  getValueByDataKey } from '../../../src/util/DataUtils';
+  getValueByDataKey, mathSign } from '../../../src/util/DataUtils';
 
 describe('getPercentValue', () => {
   it('DataUtils.getPercentValue("25%", 1) should return 0.25 ', () => {
@@ -110,5 +110,21 @@ describe('getValueByDataKey', () => {
 
   it('of object', () => {
     expect(getValueByDataKey(data, {}, 0)).to.equal(0);
+  });
+});
+
+
+describe('mathSign', () => {
+
+  it('(0)', () => {
+    expect(mathSign(0)).to.equal(0);
+  });
+
+  it('(100)', () => {
+    expect(mathSign(100)).to.equal(1);
+  });
+
+  it('(-100)', () => {
+    expect(mathSign(-100)).to.equal(-1);
   });
 });
