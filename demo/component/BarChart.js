@@ -261,7 +261,7 @@ export default class Demo extends Component {
         </a>
         <br/>
 
-        <p>BarChart of layout vertical</p>
+        {/*<p>BarChart of layout vertical</p>
         <div className="bar-chart-wrapper">
           <BarChart width={400} height={400} data={data.slice(0, 1)} maxBarSize={10} >
             <XAxis padding={{ left: 20, right: 100 }} type="number" dataKey="time" />
@@ -271,7 +271,7 @@ export default class Demo extends Component {
             <Bar dataKey="uv" fill="#ff7300" maxBarSize={15} isAnimationActive={false} />
             <Bar dataKey="pv" fill="#387908" />
           </BarChart>
-        </div>
+        </div>*/}
 
         <p>Simple BarChart (Click on rectangles and open console )</p>
         <div className="bar-chart-wrapper" style={{textAlign: 'right'}}>
@@ -300,7 +300,7 @@ export default class Demo extends Component {
           </BarChart>
         </div>
 
-        <p>BarChart with error bars</p>
+        {/*<p>BarChart with error bars</p>
         <div className="bar-chart-wrapper" style={{textAlign: 'right'}}>
           <BarChart width={400} height={400} data={data} onClick={this.handlePvBarClick}>
             <XAxis dataKey="name" />
@@ -398,7 +398,7 @@ export default class Demo extends Component {
             <Tooltip />
             <Bar dataKey="temperature" fill="#ff7300" />
           </BarChart>
-        </div>
+        </div>*/}
 
       </div>
     );

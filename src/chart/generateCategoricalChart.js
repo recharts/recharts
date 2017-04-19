@@ -13,8 +13,8 @@ import Dot from '../shape/Dot';
 import Rectangle from '../shape/Rectangle';
 
 import { warn } from '../util/LogUtils';
-import { findAllByType, findChildByType, getDisplayName,
-  getPresentationAttributes, validateWidthHeight, isChildrenEqual,
+import { findAllByType, findChildByType, getDisplayName, parseChildIndex,
+  getPresentationAttributes, validateWidthHeight, isChildrenEqual, isSingleChildEqual,
   renderByOrder, getReactEventByType, filterEventAttributes } from '../util/ReactUtils';
 
 import CartesianAxis from '../cartesian/CartesianAxis';
@@ -146,8 +146,9 @@ const generateCategoricalChart = ({
       super(props);
 
       const defaultState = this.constructor.createDefaultState(props);
+      const updateId = 0;
       this.state = { ...defaultState, updateId: 0,
-        ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState }) };
+        ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState, updateId }) };
 
       this.uniqueChartId = uniqueId('recharts');
 
@@ -166,14 +167,15 @@ const generateCategoricalChart = ({
 
     componentWillReceiveProps(nextProps) {
       const { data, children, width, height, layout, stackOffset, margin } = this.props;
+      const { updateId } = this.state;
 
       if (nextProps.data !== data || nextProps.width !== width ||
         nextProps.height !== height || nextProps.layout !== layout ||
         nextProps.stackOffset !== stackOffset || !shallowEqual(nextProps.margin, margin)) {
         const defaultState = this.constructor.createDefaultState(nextProps);
-        this.setState({ ...defaultState, updateId: this.state.updateId + 1,
+        this.setState({ ...defaultState, updateId: updateId + 1,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
-            { props: nextProps, ...defaultState }) }
+            { props: nextProps, ...defaultState, updateId: updateId + 1 }) }
         );
       } else if (!isChildrenEqual(nextProps.children, children)) {
         const { dataStartIndex, dataEndIndex } = this.state;
@@ -183,7 +185,7 @@ const generateCategoricalChart = ({
         };
         this.setState({ ...defaultState,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
-            { props: nextProps, ...defaultState }) }
+            { props: nextProps, ...defaultState, updateId }) }
         );
       }
       // add syncId
@@ -437,9 +439,9 @@ const generateCategoricalChart = ({
 
       if (entry) {
         if (layout === 'horizontal') {
-          return { x: entry.coordinate, y: e.chartY };
+          return { x: entry.coordinate, y: rangeObj.y };
         } else if (layout === 'vertical') {
-          return { x: e.chartX, y: entry.coordinate };
+          return { x: rangeObj.x, y: entry.coordinate };
         } else if (layout === 'centric') {
           const angle = entry.coordinate;
           const radius = rangeObj.radius;
@@ -476,8 +478,6 @@ const generateCategoricalChart = ({
       const e = calculateChartCoordinate(event, containerOffset);
       const rangeObj = this.inRange(e.chartX, e.chartY);
       if (!rangeObj) { return null; }
-
-      console.log(rangeObj.angle);
 
       const { xAxisMap, yAxisMap } = this.state;
 
@@ -541,7 +541,8 @@ const generateCategoricalChart = ({
     }
 
     getFormatItems(props, currentState) {
-      const { graphicalItems, stackGroups, offset, dataStartIndex, dataEndIndex } = currentState;
+      const { graphicalItems, stackGroups, offset, updateId, dataStartIndex,
+        dataEndIndex } = currentState;
       const { barSize, layout, barGap, barCategoryGap, maxBarSize: globalMaxBarSize } = props;
       const { numericAxisName, cateAxisName } = this.getAxisNameByLayout(layout);
       const hasBar = this.constructor.hasBar(graphicalItems);
@@ -591,7 +592,9 @@ const generateCategoricalChart = ({
               key: item.key || `item-${index}`,
               [numericAxisName]: axisObj[numericAxisName],
               [cateAxisName]: axisObj[cateAxisName],
+              animationId: updateId,
             },
+            childIndex: parseChildIndex(item, props.children),
             item,
           });
         }
@@ -678,12 +681,13 @@ const generateCategoricalChart = ({
      * the brush so it's important that this method is called _after_
      * the state is updated with any new start/end indices
      *
-     * @param {Object} props The props object to be used for updating the axismaps
+     * @param {Object} props          The props object to be used for updating the axismaps
      * @param {Number} dataStartIndex The start index of the data series when a brush is applied
-     * @param {Number} dataEndIndex The end index of the data series when a brush is applied
+     * @param {Number} dataEndIndex   The end index of the data series when a brush is applied
+     * @param {Number} updateId       The update id
      * @return {Object} state New state to set
      */
-    updateStateOfAxisMapsOffsetAndStackGroups({ props, dataStartIndex, dataEndIndex }) {
+    updateStateOfAxisMapsOffsetAndStackGroups({ props, dataStartIndex, dataEndIndex, updateId }) {
       if (!validateWidthHeight({ props })) { return null; }
 
       const { children, layout, stackOffset, data } = props;
@@ -718,8 +722,7 @@ const generateCategoricalChart = ({
       const ticksObj = this.tooltipTicksGenerator(cateAxisMap);
 
       const formatedGraphicalItems = this.getFormatItems(props, {
-        ...axisObj,
-        dataStartIndex, dataEndIndex,
+        ...axisObj, dataStartIndex, dataEndIndex, updateId,
         graphicalItems, stackGroups, offset,
       });
 
@@ -803,11 +806,11 @@ const generateCategoricalChart = ({
 
     handleLegendBBoxUpdate = (box) => {
       if (box && this.legendInstance) {
-        const { dataStartIndex, dataEndIndex } = this.state;
+        const { dataStartIndex, dataEndIndex, updateId } = this.state;
 
         this.setState(
           this.updateStateOfAxisMapsOffsetAndStackGroups({
-            props: this.props, dataStartIndex, dataEndIndex,
+            props: this.props, dataStartIndex, dataEndIndex, updateId,
           })
         );
       }
@@ -815,6 +818,7 @@ const generateCategoricalChart = ({
 
     handleReceiveSyncEvent = (cId, chartId, data) => {
       const { syncId, layout } = this.props;
+      const { updateId } = this.state;
 
       if (syncId === cId && chartId !== this.uniqueChartId) {
         const { dataStartIndex, dataEndIndex } = data;
@@ -824,7 +828,7 @@ const generateCategoricalChart = ({
             dataStartIndex,
             dataEndIndex,
             ...this.updateStateOfAxisMapsOffsetAndStackGroups(
-              { props: this.props, dataStartIndex, dataEndIndex }
+              { props: this.props, dataStartIndex, dataEndIndex, updateId }
             ),
           });
         } else if (!_.isNil(data.activeTooltipIndex)) {
@@ -854,11 +858,13 @@ const generateCategoricalChart = ({
     handleBrushChange = ({ startIndex, endIndex }) => {
       // Only trigger changes if the extents of the brush have actually changed
       if (startIndex !== this.state.dataStartIndex || endIndex !== this.state.dataEndIndex) {
+        const { updateId } = this.state;
+
         this.setState({
           dataStartIndex: startIndex,
           dataEndIndex: endIndex,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
-            { props: this.props, dataStartIndex: startIndex, dataEndIndex: endIndex }
+            { props: this.props, dataStartIndex: startIndex, dataEndIndex: endIndex, updateId }
           ),
         });
 
@@ -1034,13 +1040,16 @@ const generateCategoricalChart = ({
       };
     }
 
-    filterFormatItem(item) {
+    filterFormatItem(item, displayName, childIndex) {
       const { formatedGraphicalItems } = this.state;
 
       for (let i = 0, len = formatedGraphicalItems.length; i < len; i++) {
         const entry = formatedGraphicalItems[i];
+        console.log(displayName, getDisplayName(entry.item));
 
-        if (entry.item === item) {
+        if (entry.item === item || entry.props.key === item.key || (
+          displayName === getDisplayName(entry.item.type) && childIndex === entry.childIndex
+        )) {
           return entry;
         }
       }
@@ -1315,8 +1324,8 @@ const generateCategoricalChart = ({
       return result;
     }
 
-    renderGraphicChild = (element) => {
-      const item = this.filterFormatItem(element);
+    renderGraphicChild = (element, displayName, index) => {
+      const item = this.filterFormatItem(element, displayName, index);
       if (!item) { return null; }
 
       const graphicalItem = cloneElement(element, item.props);

@@ -71,7 +71,7 @@ class Bar extends Component {
     layout: 'vertical',
     isAnimationActive: !isSsr(),
     animationBegin: 0,
-    animationDuration: 1500,
+    animationDuration: 400,
     animationEasing: 'ease',
 
     onAnimationStart: () => {},
@@ -167,6 +167,18 @@ class Bar extends Component {
   state = { isAnimationFinished: false };
   id = uniqueId('recharts-bar-');
 
+  componentWillReceiveProps(nextProps) {
+    const { animationId, data } = this.props;
+
+    if (nextProps.animationId !== animationId) {
+      this.cachePrevData(data);
+    }
+  }
+
+  cachePrevData = (data) => {
+    this.setState({ prevData: data });
+  };
+
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
     this.props.onAnimationEnd();
@@ -195,32 +207,47 @@ class Bar extends Component {
     const { data, shape, layout, isAnimationActive, animationBegin,
       animationDuration, animationEasing, animationId } = this.props;
     const baseProps = getPresentationAttributes(this.props);
+    const { prevData } = this.state;
     const getStyle = isBegin => ({
       transform: `scale${layout === 'vertical' ? 'X' : 'Y'}(${isBegin ? 0 : 1})`,
     });
 
-    return data.map((entry, index) => {
+    return data.map((entry, i) => {
       const { x, y, width, height } = entry;
-      const props = { ...baseProps, ...entry, index };
+      const props = { ...baseProps, ...entry, index: i };
+      const isUpdate = animationId >= 1 && prevData[i];
+      let from, to;
+
+      if (layout === 'horizontal') {
+        from = isUpdate ? {
+          x: prevData[i].x, y: prevData[i].y, width: prevData[i].width, height: prevData[i].height,
+        } : { y: entry.y + entry.height, height: 0 };
+        to = isUpdate ? {
+          x: entry.x, y: entry.y, width: entry.width, height: entry.height,
+        } : { y: entry.y, height: entry.height };
+      } else {
+        from = isUpdate ? {
+          x: prevData[i].x, y: prevData[i].y, width: prevData[i].width, height: prevData[i].height,
+        } : { width: 0 };
+        to = isUpdate ? {
+          x: entry.x, y: entry.y, width: entry.x, height: entry.height,
+        } : { width: entry.width };
+      }
 
       if (_.isNil(entry.value) || !isAnimationActive) {
         return (
           <Layer
             className="recharts-bar-rectangle"
-            {...filterEventsOfChild(this.props, entry, index)}
-            key={`rectangle-${index}`}
+            {...filterEventsOfChild(this.props, entry, i)}
+            key={`rectangle-${i}`}
           >
             {this.renderRectangle(shape, props)}
           </Layer>
         );
       }
 
-      let transformOrigin = '';
-
-      if (layout === 'vertical') {
-        transformOrigin = `${x}px ${y + height / 2}px`;
-      } else {
-        transformOrigin = `${x + width / 2}px ${y + height}px`;
+      if (i === 0) {
+        console.log(from, to);
       }
 
       return (
@@ -229,20 +256,26 @@ class Bar extends Component {
           duration={animationDuration}
           isActive={isAnimationActive}
           easing={animationEasing}
-          from={getStyle(true)}
-          to={getStyle(false)}
-          key={`rectangle-${index}-${animationId}`}
+          from={from}
+          to={to}
+          key={`rectangle-${i}-${animationId}`}
           onAnimationEnd={this.handleAnimationEnd}
           onAnimationStart={this.handleAnimationStart}
         >
-          <Layer
-            className="recharts-bar-rectangle"
-            style={translateStyle({ transformOrigin })}
-            {...filterEventsOfChild(this.props, entry, index)}
-            key={`rectangle-${index}`}
-          >
-            {this.renderRectangle(shape, props)}
-          </Layer>
+          {
+            stepProps => {
+              if (i === 0) { console.log(stepProps); }
+              return (
+                <Layer
+                  className="recharts-bar-rectangle"
+                  {...filterEventsOfChild(this.props, entry, i)}
+                  key={`rectangle-${i}`}
+                >
+                  {this.renderRectangle(shape, { ...props, ...stepProps })}
+                </Layer>
+              );
+            }
+          }
         </Animate>
       );
     });

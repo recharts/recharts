@@ -166,7 +166,7 @@ export const findAllByType = (children, type) => {
     types = [getDisplayName(type)];
   }
 
-  React.Children.forEach(children, (child) => {
+  React.Children.forEach(children, (child, index) => {
     const childType = child && child.type && (child.type.displayName || child.type.name);
     if (types.indexOf(childType) !== -1) {
       result.push(child);
@@ -408,4 +408,15 @@ export const getReactEventByType = (e) => {
   }
 
   return null;
+};
+
+export const parseChildIndex = (child, children) => {
+  let result = -1;
+  Children.forEach(children, (entry, index) => {
+    if (entry === child) {
+      result = index;
+    }
+  })
+
+  return result;
 };
