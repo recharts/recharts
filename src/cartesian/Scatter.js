@@ -137,7 +137,18 @@ class Scatter extends Component {
     };
   };
 
+  componentWillReceiveProps(nextProps) {
+    const { animationId, points } = this.props;
+    if (nextProps.animationId !== animationId) {
+      this.cachePrevPoints(points);
+    }
+  }
+
   state = { activeIndex: -1, isAnimationFinished: false };
+
+  cachePrevPoints = (points) => {
+    this.setState({ prevPoints: points });
+  };
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
@@ -167,13 +178,14 @@ class Scatter extends Component {
     const { points, shape, activeShape, activeIndex, animationBegin,
       animationDuration, isAnimationActive, animationEasing, animationId } = this.props;
     const baseProps = getPresentationAttributes(this.props);
+    const { prevPoints } = this.state;
 
     return points.map((entry, i) => {
-      const props = {
-        key: `symbol-${i}`,
-        ...baseProps,
-        ...entry,
-      };
+      const props = { key: `symbol-${i}`, ...baseProps, ...entry };
+      const isUpdate = animationId >= 1 && prevPoints[i];
+      const from = isUpdate ? { cx: prevPoints[i].cx, cy: prevPoints.cy } : { size: 0 };
+      const to = isUpdate ? { cx: entry.cx, cy: entry.cy } : { size: props.size };
+
       return (
         <Layer
           className="recharts-scatter-symbol"
@@ -181,8 +193,8 @@ class Scatter extends Component {
           key={`symbol-${i}`}
         >
           <Animate
-            from={{ size: 0 }}
-            to={{ size: props.size }}
+            from={from}
+            to={to}
             duration={animationDuration}
             begin={animationBegin}
             isActive={isAnimationActive}
