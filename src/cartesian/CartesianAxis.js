@@ -10,7 +10,7 @@ import Layer from '../container/Layer';
 import Text from '../component/Text';
 import { isSsr, PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
-import { isNumber, isNumOrStr } from '../util/DataUtils';
+import { isNumber, isNumOrStr, mathSign } from '../util/DataUtils';
 
 class CartesianAxis extends Component {
 
@@ -106,7 +106,7 @@ class CartesianAxis extends Component {
     const sizeKey = (orientation === 'top' || orientation === 'bottom') ? 'width' : 'height';
     const result = (ticks || []).slice();
     const len = result.length;
-    const sign = len >= 2 ? Math.sign(result[1].coordinate - result[0].coordinate) : 1;
+    const sign = len >= 2 ? mathSign(result[1].coordinate - result[0].coordinate) : 1;
 
     let start, end;
 
@@ -171,7 +171,7 @@ class CartesianAxis extends Component {
     const sizeKey = (orientation === 'top' || orientation === 'bottom') ? 'width' : 'height';
     const result = (ticks || []).slice();
     const len = result.length;
-    const sign = len >= 2 ? Math.sign(result[1].coordinate - result[0].coordinate) : 1;
+    const sign = len >= 2 ? mathSign(result[1].coordinate - result[0].coordinate) : 1;
 
     let start, end;
 

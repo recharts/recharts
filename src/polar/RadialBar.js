@@ -13,7 +13,7 @@ import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
-import { uniqueId } from '../util/DataUtils';
+import { uniqueId, mathSign } from '../util/DataUtils';
 
 const RADIAN = Math.PI / 180;
 
@@ -84,7 +84,7 @@ class RadialBar extends Component {
 
   getDeltaAngle() {
     const { startAngle, endAngle } = this.props;
-    const sign = Math.sign(endAngle - startAngle);
+    const sign = mathSign(endAngle - startAngle);
     const deltaAngle = Math.min(Math.abs(endAngle - startAngle), 360);
 
     return sign * deltaAngle;
@@ -102,7 +102,7 @@ class RadialBar extends Component {
     const sectors = data.map((entry) => {
       const value = entry.value;
       const tempEndAngle = maxValue === 0 ? startAngle :
-        startAngle + Math.sign(value * deltaAngle) * (
+        startAngle + mathSign(value * deltaAngle) * (
           absMinAngle + gapAngle * Math.abs(entry.value) / maxValue
         );
 
