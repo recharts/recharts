@@ -68,12 +68,14 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       onMouseLeave: PropTypes.func,
       onMouseEnter: PropTypes.func,
       onMouseMove: PropTypes.func,
+      gridOnTop: PropTypes.bool
     };
 
     static defaultProps = {
       layout: 'horizontal',
       stackOffset: 'none',
       margin: { top: 5, right: 5, bottom: 5, left: 5 },
+      gridOnTop: false,
     };
 
     constructor(props) {
@@ -1021,13 +1023,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     }
 
     renderChart() {
-      const { children, width, height, ...others } = this.props;
+      const { children, width, height, gridOnTop, ...others } = this.props;
       const { xAxisMap, yAxisMap } = this.state;
       const attrs = getPresentationAttributes(others);
 
       return (
         <Surface {...attrs} width={width} height={height}>
-          {this.renderGrid()}
+          {!gridOnTop && this.renderGrid()}
           {this.renderReferenceElements(false, ReferenceArea)}
           {this.renderReferenceElements(false, ReferenceLine)}
           {this.renderReferenceElements(false, ReferenceDot)}
@@ -1037,6 +1039,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             {...this.props}
             {...this.state}
           />
+          {gridOnTop && this.renderGrid()}
           {this.renderReferenceElements(true, ReferenceArea)}
           {this.renderReferenceElements(true, ReferenceLine)}
           {this.renderReferenceElements(true, ReferenceDot)}
@@ -1050,8 +1053,8 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       const { data } = this.props;
       if (!validateWidthHeight(this) || !data || !data.length) { return null; }
 
-      const { className, width, height, style, compact } = this.props;
 
+      const { className, width, height, style, compact } = this.props;
       const events = {
         onMouseEnter: this.handleMouseEnter,
         onMouseMove: this.handleMouseMove,
