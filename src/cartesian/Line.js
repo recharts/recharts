@@ -268,7 +268,8 @@ class Line extends Component {
     } else if (_.isFunction(option)) {
       dotItem = option(props);
     } else {
-      dotItem = <Dot {...props} className="recharts-line-dot" />;
+      const className = option.className || 'recharts-line-dot';
+      dotItem = <Dot {...props} className={className} />;
     }
 
     return dotItem;
