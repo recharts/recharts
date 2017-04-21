@@ -121,7 +121,8 @@ export class LineChart extends Component {
     } else if (_.isFunction(option)) {
       dot = option(props);
     } else {
-      dot = <Dot {...props} className="recharts-line-active-dot" />;
+      const className = option.className || 'recharts-line-active-dot';
+      dot = <Dot {...props} className={className} />;
     }
 
     return (
