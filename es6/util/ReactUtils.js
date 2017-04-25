@@ -3,7 +3,8 @@ import _isString from 'lodash/isString';
 import _isObject from 'lodash/isObject';
 import _isFunction from 'lodash/isFunction';
 import _isArray from 'lodash/isArray';
-import React, { PropTypes, Children } from 'react';
+import React, { Children } from 'react';
+import PropTypes from 'prop-types';
 
 import { isNumber } from './DataUtils';
 import { shallowEqual } from './PureRender';
@@ -92,6 +93,9 @@ export var EVENT_ATTRIBUTES = {
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func
 };
+
+export var LEGEND_TYPES = ['line', 'square', 'rect', 'circle', 'cross', 'diamond', 'star', 'triangle', 'wye', 'none'];
+
 /**
  * Get the display name of a component
  * @param  {Object} Comp Specified Component

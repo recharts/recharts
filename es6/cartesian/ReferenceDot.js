@@ -15,13 +15,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Reference Line
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Dot from '../shape/Dot';
 import Text from '../component/Text';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes, filterEventAttributes } from '../util/ReactUtils';
 import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';
 
 var ReferenceDot = pureRender(_class = (_temp = _class2 = function (_Component) {
@@ -131,17 +132,19 @@ var ReferenceDot = pureRender(_class = (_temp = _class2 = function (_Component) 
       var shape = this.props.shape;
 
 
+      var dotProps = _extends({}, getPresentationAttributes(this.props), filterEventAttributes(this.props), coordinate);
+
       return React.createElement(
         Layer,
         { className: 'recharts-reference-dot' },
-        this.renderDot(shape, _extends({}, getPresentationAttributes(this.props), coordinate)),
+        this.renderDot(shape, dotProps),
         this.renderLabel(coordinate)
       );
     }
   }]);
 
   return ReferenceDot;
-}(Component), _class2.displayName = 'ReferenceDot', _class2.propTypes = _extends({}, PRESENTATION_ATTRIBUTES, {
+}(Component), _class2.displayName = 'ReferenceDot', _class2.propTypes = _extends({}, PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, {
   r: PropTypes.number,
 
   label: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.func, PropTypes.element]),

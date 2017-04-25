@@ -15,7 +15,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Scatter Chart
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
@@ -519,7 +520,7 @@ var ScatterChart = pureRender(_class = (_temp2 = _class2 = function (_Component)
         finalStrokeWidth = activeGroupId === 'scatter-' + i ? finalStrokeWidth + 2 : finalStrokeWidth;
 
         return React.cloneElement(child, _extends({
-          key: 'scatter-' + i,
+          key: child.key || 'scatter-' + i,
           groupId: 'scatter-' + i,
           strokeWidth: finalStrokeWidth,
           onMouseLeave: _this3.handleScatterMouseLeave,

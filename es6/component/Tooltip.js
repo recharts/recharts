@@ -16,7 +16,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Tooltip
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { translateStyle } from 'react-smooth';
 
 import DefaultTooltipContent from './DefaultTooltipContent';

@@ -19,7 +19,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Area Chart
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Smooth from 'react-smooth';
 
 import Layer from '../container/Layer';
@@ -302,7 +303,7 @@ export var AreaChart = (_dec = composedDataDecorator({ getComposedData: getCompo
         }
 
         var area = React.cloneElement(child, _extends({
-          key: 'area-' + i
+          key: child.key || 'area-' + i
         }, currentComposedData, offset, {
           animationId: animationId,
           layout: layout,

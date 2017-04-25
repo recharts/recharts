@@ -17,7 +17,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Radar Chart
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { scalePoint } from 'd3-scale';
 import { getNiceTickValues } from 'recharts-scale';
@@ -286,7 +287,7 @@ var RadarChart = AnimationDecorator(_class = pureRender(_class = (_temp2 = _clas
         return React.cloneElement(el, _extends({}, baseProps, getPresentationAttributes(el), {
           animationId: _this3.props.animationId,
           points: _this3.getComposedData(el, scale, cx, cy),
-          key: 'radar-' + index,
+          key: el.key || 'radar-' + index,
           onMouseEnter: combineEventHandlers(_this3.handleMouseEnter, onMouseEnter, el.props.onMouseEnter),
           onMouseLeave: combineEventHandlers(_this3.handleMouseLeave, onMouseLeave, el.props.onMouseLeave),
           onClick: combineEventHandlers(null, onClick, el.props.onClick)

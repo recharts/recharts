@@ -15,11 +15,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Legend
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import pureRender from '../util/PureRender';
 import DefaultLegendContent from './DefaultLegendContent';
 import { isNumber } from '../util/DataUtils';
+import { LEGEND_TYPES } from '../util/ReactUtils';
 
 var renderContent = function renderContent(content, props) {
   if (React.isValidElement(content)) {
@@ -32,6 +34,9 @@ var renderContent = function renderContent(content, props) {
 };
 
 var EPS = 1;
+var ICON_TYPES = LEGEND_TYPES.filter(function (type) {
+  return type !== 'none';
+});
 
 var Legend = pureRender(_class = (_temp2 = _class2 = function (_Component) {
   _inherits(Legend, _Component);
@@ -206,7 +211,7 @@ var Legend = pureRender(_class = (_temp2 = _class2 = function (_Component) {
   width: PropTypes.number,
   height: PropTypes.number,
   iconSize: PropTypes.number,
-  iconType: PropTypes.oneOf(['line', 'square', 'rect', 'circle', 'cross', 'diamond', 'star', 'triangle', 'wye']),
+  iconType: PropTypes.oneOf(ICON_TYPES),
   layout: PropTypes.oneOf(['horizontal', 'vertical']),
   align: PropTypes.oneOf(['center', 'left', 'right']),
   verticalAlign: PropTypes.oneOf(['top', 'bottom', 'middle']),
@@ -219,7 +224,7 @@ var Legend = pureRender(_class = (_temp2 = _class2 = function (_Component) {
   payload: PropTypes.arrayOf(PropTypes.shape({
     value: PropTypes.any,
     id: PropTypes.any,
-    type: PropTypes.oneOf(['line', 'square', 'rect', 'circle', 'cross', 'diamond', 'star', 'triangle', 'wye'])
+    type: PropTypes.oneOf(LEGEND_TYPES)
   })),
   formatter: PropTypes.func,
   onMouseEnter: PropTypes.func,

@@ -11,7 +11,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Y Axis
  */
-import { Component, PropTypes } from 'react';
+import { Component } from 'react';
+import PropTypes from 'prop-types';
 import pureRender from '../util/PureRender';
 
 var YAxis = pureRender(_class = (_temp = _class2 = function (_Component) {
@@ -70,7 +71,8 @@ var YAxis = pureRender(_class = (_temp = _class2 = function (_Component) {
   tickLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
   minTickGap: PropTypes.number,
   tickSize: PropTypes.number,
-  interval: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf(['preserveStart', 'preserveEnd', 'preserveStartEnd'])])
+  interval: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf(['preserveStart', 'preserveEnd', 'preserveStartEnd'])]),
+  reversed: PropTypes.bool
 }, _class2.defaultProps = {
   allowDecimals: true,
   hide: false,
@@ -84,7 +86,8 @@ var YAxis = pureRender(_class = (_temp = _class2 = function (_Component) {
   domain: [0, 'auto'],
   padding: { top: 0, bottom: 0 },
   allowDataOverflow: false,
-  scale: 'auto'
+  scale: 'auto',
+  reversed: false
 }, _temp)) || _class;
 
 export default YAxis;

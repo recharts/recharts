@@ -17,7 +17,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Render a group of bar
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Animate, { translateStyle } from 'react-smooth';
 
@@ -27,7 +28,7 @@ import Text from '../component/Text';
 import ErrorBar from './ErrorBar';
 import pureRender from '../util/PureRender';
 import { getValueByDataKey, uniqueId } from '../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes, filterEventsOfChild, isSsr, findChildByType } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, getPresentationAttributes, filterEventsOfChild, isSsr, findChildByType } from '../util/ReactUtils';
 
 var Bar = pureRender(_class = (_temp2 = _class2 = function (_Component) {
   _inherits(Bar, _Component);
@@ -184,20 +185,25 @@ var Bar = pureRender(_class = (_temp2 = _class2 = function (_Component) {
 
       var barProps = getPresentationAttributes(this.props);
       var customLabelProps = getPresentationAttributes(label);
-      var textAnchor = layout === 'vertical' ? 'start' : 'middle';
+
       var labels = data.map(function (entry, i) {
+        var textAnchor = 'middle';
+        var dominantBaseline = 'central';
         var x = 0;
         var y = 0;
 
         if (layout === 'vertical') {
-          x = 5 + entry.x + entry.width;
-          y = 5 + entry.y + entry.height / 2;
+          textAnchor = entry.width < 0 ? 'end' : 'start';
+          x = entry.x + entry.width + (entry.width < 0 ? -1 : 1) * 5;
+          y = entry.y + entry.height / 2;
         } else {
+          dominantBaseline = entry.height < 0 ? 'hanging' : 'inherit';
           x = entry.x + entry.width / 2;
-          y = entry.y - 5;
+          y = entry.y - (entry.height < 0 ? -1 : 1) * 5;
         }
 
         var labelProps = _extends({
+          dominantBaseline: dominantBaseline,
           textAnchor: textAnchor
         }, barProps, entry, customLabelProps, {
           x: x,
@@ -325,7 +331,7 @@ var Bar = pureRender(_class = (_temp2 = _class2 = function (_Component) {
   unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
-  legendType: PropTypes.oneOf(['line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye']),
+  legendType: PropTypes.oneOf(LEGEND_TYPES),
   minPointSize: PropTypes.number,
   maxBarSize: PropTypes.number,
 

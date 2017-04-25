@@ -1,8 +1,6 @@
 import _isNil from 'lodash/isNil';
 import _isArray from 'lodash/isArray';
 
-var _this = this;
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -20,7 +18,7 @@ import ReferenceArea from '../cartesian/ReferenceArea';
 import Legend from '../component/Legend';
 
 /* eslint no-param-reassign: 0 */
-var offsetSign = function offsetSign(series) {
+export var offsetSign = function offsetSign(series) {
   var n = series.length;
   if (n <= 0) {
     return;
@@ -324,9 +322,10 @@ export var getTicksOfAxis = function getTicksOfAxis(axis, isGrid, isAll) {
   if (!axis) return null;
   var scale = axis.scale;
   var duplicateDomain = axis.duplicateDomain,
-      type = axis.type;
+      type = axis.type,
+      domain = axis.domain;
 
-  var offset = (isGrid || isAll) && type === 'category' ? scale.bandwidth() / 2 : 0;
+  var offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ? scale.bandwidth() / 2 : 0;
 
   // The ticks setted by user should only affect the ticks adjacent to axis line
   if (isGrid && (axis.ticks || axis.niceTicks)) {
@@ -427,7 +426,7 @@ export var getLegendProps = function getLegendProps(children, graphicItems, widt
       value: name || dataKey,
       payload: child.props
     };
-  }, _this);
+  });
 
   return _extends({}, legendItem.props, Legend.getWithHeight(legendItem, width), {
     payload: legendData
@@ -551,7 +550,7 @@ export var getBarPosition = function getBarPosition(_ref2) {
         sum -= (len - 1) * realBarGap;
         realBarGap = 0;
       }
-      if (sum >= bandSize) {
+      if (sum >= bandSize && fullBarSize > 0) {
         useFull = true;
         fullBarSize *= 0.9;
         sum = len * fullBarSize;

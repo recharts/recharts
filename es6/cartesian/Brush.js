@@ -16,7 +16,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Brush
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component, Children } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { scalePoint } from 'd3-scale';
 
@@ -24,6 +25,7 @@ import { getValueByDataKey } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
+import { findChildByType } from '../util/ReactUtils';
 
 var Brush = pureRender(_class = (_temp = _class2 = function (_Component) {
   _inherits(Brush, _Component);
@@ -319,13 +321,41 @@ var Brush = pureRender(_class = (_temp = _class2 = function (_Component) {
       });
     }
   }, {
+    key: 'renderPanorama',
+    value: function renderPanorama() {
+      var _props6 = this.props,
+          x = _props6.x,
+          y = _props6.y,
+          width = _props6.width,
+          height = _props6.height,
+          data = _props6.data,
+          children = _props6.children,
+          padding = _props6.padding;
+
+      var chartElement = Children.only(children);
+
+      if (!chartElement) {
+        return null;
+      }
+
+      return React.cloneElement(chartElement, {
+        x: x,
+        y: y,
+        width: width,
+        height: height,
+        margin: padding,
+        compact: true,
+        data: data
+      });
+    }
+  }, {
     key: 'renderTraveller',
     value: function renderTraveller(startX, id) {
-      var _props6 = this.props,
-          y = _props6.y,
-          travellerWidth = _props6.travellerWidth,
-          height = _props6.height,
-          stroke = _props6.stroke;
+      var _props7 = this.props,
+          y = _props7.y,
+          travellerWidth = _props7.travellerWidth,
+          height = _props7.height,
+          stroke = _props7.stroke;
 
       var lineY = Math.floor(y + height / 2) - 1;
       var x = Math.max(startX, this.props.x);
@@ -369,10 +399,10 @@ var Brush = pureRender(_class = (_temp = _class2 = function (_Component) {
   }, {
     key: 'renderSlide',
     value: function renderSlide(startX, endX) {
-      var _props7 = this.props,
-          y = _props7.y,
-          height = _props7.height,
-          stroke = _props7.stroke;
+      var _props8 = this.props,
+          y = _props8.y,
+          height = _props8.height,
+          stroke = _props8.stroke;
 
 
       return React.createElement('rect', {
@@ -394,13 +424,13 @@ var Brush = pureRender(_class = (_temp = _class2 = function (_Component) {
   }, {
     key: 'renderText',
     value: function renderText() {
-      var _props8 = this.props,
-          startIndex = _props8.startIndex,
-          endIndex = _props8.endIndex,
-          y = _props8.y,
-          height = _props8.height,
-          travellerWidth = _props8.travellerWidth,
-          stroke = _props8.stroke;
+      var _props9 = this.props,
+          startIndex = _props9.startIndex,
+          endIndex = _props9.endIndex,
+          y = _props9.y,
+          height = _props9.height,
+          travellerWidth = _props9.travellerWidth,
+          stroke = _props9.stroke;
       var _state3 = this.state,
           startX = _state3.startX,
           endX = _state3.endX;
@@ -441,9 +471,10 @@ var Brush = pureRender(_class = (_temp = _class2 = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _props9 = this.props,
-          data = _props9.data,
-          className = _props9.className;
+      var _props10 = this.props,
+          data = _props10.data,
+          className = _props10.className,
+          children = _props10.children;
       var _state4 = this.state,
           startX = _state4.startX,
           endX = _state4.endX,
@@ -457,6 +488,7 @@ var Brush = pureRender(_class = (_temp = _class2 = function (_Component) {
       }
 
       var layerClass = classNames('recharts-brush', className);
+      var isPanoramic = React.Children.count(children) === 1;
 
       return React.createElement(
         Layer,
@@ -469,6 +501,7 @@ var Brush = pureRender(_class = (_temp = _class2 = function (_Component) {
           onTouchMove: this.handleTouchMove
         },
         this.renderBackground(),
+        isPanoramic && this.renderPanorama(),
         this.renderSlide(startX, endX),
         this.renderTraveller(startX, 'startX'),
         this.renderTraveller(endX, 'endX'),
@@ -488,12 +521,20 @@ var Brush = pureRender(_class = (_temp = _class2 = function (_Component) {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   travellerWidth: PropTypes.number,
+  padding: PropTypes.shape({
+    top: PropTypes.number,
+    right: PropTypes.number,
+    bottom: PropTypes.number,
+    left: PropTypes.number
+  }),
 
   dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
   data: PropTypes.array,
   startIndex: PropTypes.number,
   endIndex: PropTypes.number,
   tickFormatter: PropTypes.func,
+
+  children: PropTypes.node,
 
   onChange: PropTypes.func,
   updateId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
@@ -504,7 +545,8 @@ var Brush = pureRender(_class = (_temp = _class2 = function (_Component) {
   height: 40,
   travellerWidth: 5,
   fill: '#fff',
-  stroke: '#666'
+  stroke: '#666',
+  padding: { top: 1, right: 1, bottom: 1, left: 1 }
 }, _temp)) || _class;
 
 export default Brush;

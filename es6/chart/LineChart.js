@@ -16,7 +16,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Line Chart
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Smooth from 'react-smooth';
 
 import Layer from '../container/Layer';
@@ -210,7 +211,7 @@ export var LineChart = (_dec = composedDataDecorator({ getComposedData: getCompo
         }
 
         return React.cloneElement(child, _extends({
-          key: 'line-' + i
+          key: child.key || 'line-' + i
         }, offset, {
           layout: layout,
           points: points,

@@ -15,7 +15,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Pie Chart
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Surface from '../container/Surface';
 import Legend from '../component/Legend';
@@ -211,7 +212,7 @@ export var PieChart = (_dec = composedDataDecorator({ getComposedData: getCompos
         var maxRadius = getMaxRadius(width, height, margin);
 
         return React.cloneElement(child, {
-          key: 'recharts-pie-' + i,
+          key: child.key || 'recharts-pie-' + i,
           cx: cx,
           cy: cy,
           maxRadius: child.props.maxRadius || Math.sqrt(width * width + height * height) / 2,

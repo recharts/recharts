@@ -17,12 +17,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Radar
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 
 import pureRender from '../util/PureRender';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
 import Polygon from '../shape/Polygon';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
@@ -258,7 +259,7 @@ var Radar = pureRender(_class = (_temp2 = _class2 = function (_Component) {
   shape: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
   dot: PropTypes.oneOfType([PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool]),
   label: PropTypes.oneOfType([PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool]),
-  legendType: PropTypes.oneOf(['line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye']),
+  legendType: PropTypes.oneOf(LEGEND_TYPES),
 
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,

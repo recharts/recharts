@@ -17,14 +17,15 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Render a group of radial bar
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 
 import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
 import { getStringSize } from '../util/DOMUtils';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES, getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
 import { uniqueId } from '../util/DataUtils';
@@ -357,7 +358,7 @@ var RadialBar = pureRender(_class = (_temp2 = _class2 = function (_Component) {
     outerRadius: PropTypes.number,
     value: PropTypes.value
   })),
-  legendType: PropTypes.oneOf(['line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye']),
+  legendType: PropTypes.oneOf(LEGEND_TYPES),
   label: PropTypes.oneOfType([PropTypes.bool, PropTypes.func, PropTypes.element, PropTypes.object]),
   background: PropTypes.oneOfType([PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element]),
 

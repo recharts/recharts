@@ -116,11 +116,11 @@ export var validateCoordinateInRange = function validateCoordinateInRange(coordi
  * @return {Number} Size
  */
 export var getBandSizeOfAxis = function getBandSizeOfAxis(axis, ticks) {
-  if (axis && axis.type === 'category' && axis.scale && axis.scale.bandwidth) {
+  if (axis && axis.scale && axis.scale.bandwidth) {
     return axis.scale.bandwidth();
   }
 
-  if (axis && axis.type === 'number' && ticks) {
+  if (axis && ticks && ticks.length >= 2) {
     var orderedTicks = _sortBy(ticks, function (o) {
       return o.coordinate;
     });
@@ -227,6 +227,25 @@ export var parseScale = function parseScale(_ref, chartType) {
   }
 
   return _isFunction(scale) ? scale : d3Scales.scalePoint();
+};
+var EPS = 1e-4;
+export var checkDomainOfScale = function checkDomainOfScale(scale) {
+  var domain = scale.domain();
+
+  if (!domain || domain.length <= 2) {
+    return;
+  }
+
+  var len = domain.length;
+  var range = scale.range();
+  var min = Math.min(range[0], range[1]) - EPS;
+  var max = Math.max(range[0], range[1]) + EPS;
+  var first = scale(domain[0]);
+  var last = scale(domain[len - 1]);
+
+  if (first < min || first > max || last < min || last > max) {
+    scale.domain([domain[0], domain[len - 1]]);
+  }
 };
 
 export var getValueByDataKey = function getValueByDataKey(obj, dataKey, defaultValue) {

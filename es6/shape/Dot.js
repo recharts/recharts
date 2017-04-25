@@ -13,10 +13,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Dot
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import pureRender from '../util/PureRender';
-import { getPresentationAttributes } from '../util/ReactUtils';
+import { getPresentationAttributes, filterEventAttributes } from '../util/ReactUtils';
 
 var Dot = pureRender(_class = (_temp = _class2 = function (_Component) {
   _inherits(Dot, _Component);
@@ -39,7 +40,7 @@ var Dot = pureRender(_class = (_temp = _class2 = function (_Component) {
       var layerClass = classNames('recharts-dot', className);
 
       if (cx === +cx && cy === +cy && r === +r) {
-        return React.createElement('circle', _extends({}, getPresentationAttributes(this.props), {
+        return React.createElement('circle', _extends({}, getPresentationAttributes(this.props), filterEventAttributes(this.props), {
           className: layerClass,
           cx: cx,
           cy: cy,

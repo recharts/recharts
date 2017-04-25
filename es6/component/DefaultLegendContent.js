@@ -13,13 +13,17 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Default Legend Content
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import pureRender from '../util/PureRender';
 import Surface from '../container/Surface';
 import Symbols from '../shape/Symbols';
-import { filterEventsOfChild } from '../util/ReactUtils';
+import { filterEventsOfChild, LEGEND_TYPES } from '../util/ReactUtils';
 
 var SIZE = 32;
+var ICON_TYPES = LEGEND_TYPES.filter(function (type) {
+  return type !== 'none';
+});
 
 var DefaultLegendContent = pureRender(_class = (_temp = _class2 = function (_Component) {
   _inherits(DefaultLegendContent, _Component);
@@ -99,6 +103,10 @@ var DefaultLegendContent = pureRender(_class = (_temp = _class2 = function (_Com
       return payload.map(function (entry, i) {
         var finalFormatter = entry.formatter || formatter;
 
+        if (entry.type === 'none') {
+          return null;
+        }
+
         return React.createElement(
           'li',
           _extends({
@@ -150,14 +158,14 @@ var DefaultLegendContent = pureRender(_class = (_temp = _class2 = function (_Com
 }(Component), _class2.displayName = 'Legend', _class2.propTypes = {
   content: PropTypes.element,
   iconSize: PropTypes.number,
-  iconType: PropTypes.oneOf(['line', 'square', 'rect', 'circle', 'cross', 'diamond', 'star', 'triangle', 'wye']),
+  iconType: PropTypes.oneOf(ICON_TYPES),
   layout: PropTypes.oneOf(['horizontal', 'vertical']),
   align: PropTypes.oneOf(['center', 'left', 'right']),
   verticalAlign: PropTypes.oneOf(['top', 'bottom', 'middle']),
   payload: PropTypes.arrayOf(PropTypes.shape({
     value: PropTypes.any,
     id: PropTypes.any,
-    type: PropTypes.oneOf(['line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye'])
+    type: PropTypes.oneOf(LEGEND_TYPES)
   })),
   formatter: PropTypes.func,
   onMouseEnter: PropTypes.func,

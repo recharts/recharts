@@ -19,7 +19,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Radar Bar Chart
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { scaleBand } from 'd3-scale';
 
@@ -329,7 +330,7 @@ var RadialBarChart = pureRender(_class = (_temp2 = _class2 = function (_Componen
 
 
         return React.cloneElement(child, _extends({}, center, {
-          key: 'radial-bar-' + i,
+          key: child.key || 'radial-bar-' + i,
           onMouseEnter: combineEventHandlers(_this2.handleMouseEnter, onMouseEnter, childOnMouseEnter),
           onMouseLeave: combineEventHandlers(_this2.handleMouseLeave, onMouseLeave, childOnMouseLeave),
           onClick: combineEventHandlers(null, onClick, childOnClick),

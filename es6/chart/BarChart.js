@@ -16,7 +16,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Bar Chart
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
@@ -129,7 +130,6 @@ var getComposedData = function getComposedData(_ref3) {
     }
 
     if (layout === 'horizontal') {
-
       x = getCategoryAxisCoordinate({
         axis: xAxis,
         ticks: xTicks,
@@ -138,9 +138,9 @@ var getComposedData = function getComposedData(_ref3) {
         entry: entry,
         index: index
       });
-      y = yAxis.scale(xAxis.orientation === 'top' ? value[0] : value[1]);
+      y = yAxis.scale(value[1]);
       width = pos.size;
-      height = xAxis.orientation === 'top' ? yAxis.scale(value[1]) - yAxis.scale(value[0]) : yAxis.scale(value[0]) - yAxis.scale(value[1]);
+      height = yAxis.scale(value[0]) - yAxis.scale(value[1]);
 
       if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
         var delta = Math.sign(height || minPointSize) * (Math.abs(minPointSize) - Math.abs(height));
@@ -149,7 +149,7 @@ var getComposedData = function getComposedData(_ref3) {
         height += delta;
       }
     } else {
-      x = xAxis.scale(yAxis.orientation === 'left' ? value[0] : value[1]);
+      x = xAxis.scale(value[0]);
       y = getCategoryAxisCoordinate({
         axis: yAxis,
         ticks: yTicks,
@@ -158,7 +158,7 @@ var getComposedData = function getComposedData(_ref3) {
         entry: entry,
         index: index
       });
-      width = yAxis.orientation === 'left' ? xAxis.scale(value[1]) - xAxis.scale(value[0]) : xAxis.scale(value[0]) - xAxis.scale(value[1]);
+      width = xAxis.scale(value[1]) - xAxis.scale(value[0]);
       height = pos.size;
 
       if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
@@ -248,7 +248,7 @@ var BarChart = (_dec = composedDataDecorator({ getComposedData: getComposedData 
 
       return items.map(function (child, i) {
         return React.cloneElement(child, _extends({
-          key: 'bar-' + i,
+          key: child.key || 'bar-' + i,
           layout: layout,
           animationId: animationId
         }, offset, {
@@ -298,6 +298,7 @@ var BarChart = (_dec = composedDataDecorator({ getComposedData: getComposedData 
   barCategoryGap: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   barGap: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   barSize: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  maxBarSize: PropTypes.number,
   // used internally
   isComposed: PropTypes.bool,
   animationId: PropTypes.number

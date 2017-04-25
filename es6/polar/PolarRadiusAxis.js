@@ -18,7 +18,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview The axis of polar coordinate system
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import pureRender from '../util/PureRender';
 import Text from '../component/Text';

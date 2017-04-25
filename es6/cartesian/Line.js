@@ -21,7 +21,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Line
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 
@@ -32,7 +33,7 @@ import Layer from '../container/Layer';
 import Text from '../component/Text';
 import ErrorBar from './ErrorBar';
 import { getValueByDataKey, uniqueId } from '../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes, isSsr, findChildByType } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, getPresentationAttributes, isSsr, findChildByType } from '../util/ReactUtils';
 
 var FACTOR = 1.0000001;
 
@@ -427,7 +428,7 @@ var Line = pureRender(_class = (_temp2 = _class2 = function (_Component) {
   xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   yAxis: PropTypes.object,
   xAxis: PropTypes.object,
-  legendType: PropTypes.oneOf(['line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye']),
+  legendType: PropTypes.oneOf(LEGEND_TYPES),
   layout: PropTypes.oneOf(['horizontal', 'vertical']),
   connectNulls: PropTypes.bool,
 

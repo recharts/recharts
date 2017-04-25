@@ -15,7 +15,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Render a group of error bar
 */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Layer from '../container/Layer';
 import { getPresentationAttributes } from '../util/ReactUtils';
 

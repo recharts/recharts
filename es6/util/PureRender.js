@@ -1,4 +1,3 @@
-
 export function shallowEqual(a, b) {
   /* eslint-disable no-restricted-syntax */
   for (var key in a) {

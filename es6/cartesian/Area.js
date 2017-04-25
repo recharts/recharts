@@ -16,7 +16,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @fileOverview Area
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 
@@ -25,7 +26,7 @@ import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import pureRender from '../util/PureRender';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
 import { isNumber, uniqueId } from '../util/DataUtils';
 
 var Area = pureRender(_class = (_temp2 = _class2 = function (_Component) {
@@ -381,7 +382,7 @@ var Area = pureRender(_class = (_temp2 = _class2 = function (_Component) {
   yAxis: PropTypes.object,
   xAxis: PropTypes.object,
   stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  legendType: PropTypes.oneOf(['line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye']),
+  legendType: PropTypes.oneOf(LEGEND_TYPES),
   connectNulls: PropTypes.bool,
 
   activeDot: PropTypes.oneOfType([PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool]),
