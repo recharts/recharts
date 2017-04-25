@@ -10,7 +10,6 @@ import { getValueByDataKey } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
-import { findChildByType } from '../util/ReactUtils';
 
 @pureRender
 class Brush extends Component {

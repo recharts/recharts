@@ -306,7 +306,7 @@ export const getCoordinatesOfGrid = (ticks, min, max) => {
 export const getTicksOfAxis = (axis, isGrid, isAll) => {
   if (!axis) return null;
   const scale = axis.scale;
-  const { duplicateDomain, type, domain } = axis;
+  const { duplicateDomain, type } = axis;
   const offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ?
     scale.bandwidth() / 2 : 0;
 
