@@ -452,10 +452,11 @@ class CartesianAxis extends Component {
 
   render() {
     const { axisLine, width, height, ticksGenerator } = this.props;
-    let { ticks, ...noTicksProps } = this.props;
+    const { ticks, ...noTicksProps } = this.props;
+    let finalTicks = ticks;
 
     if (_.isFunction(ticksGenerator)) {
-      ticks = (ticks && ticks.length > 0) ? ticksGenerator(this.props) :
+      finalTicks = (ticks && ticks.length > 0) ? ticksGenerator(this.props) :
         ticksGenerator(noTicksProps);
     }
 
@@ -466,7 +467,7 @@ class CartesianAxis extends Component {
     return (
       <Layer className="recharts-cartesian-axis">
         {axisLine && this.renderAxisLine()}
-        {this.renderTicks(ticks)}
+        {this.renderTicks(finalTicks)}
         {this.renderLabel()}
       </Layer>
     );

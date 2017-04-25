@@ -7,7 +7,7 @@ import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';
 import Rectangle from '../shape/Rectangle';
 

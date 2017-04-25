@@ -59,7 +59,7 @@ class CartesianGrid extends Component {
     } else if (_.isFunction(option)) {
       lineItem = option(props);
     } else {
-      const { x1, y1, x2, y2, key, fill, ...others } = props;
+      const { x1, y1, x2, y2, key, ...others } = props;
 
       lineItem = (
         <line
