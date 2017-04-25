@@ -1,7 +1,8 @@
 /**
  * @fileOverview Radar Chart
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { scalePoint } from 'd3-scale';
 import { getNiceTickValues } from 'recharts-scale';
@@ -262,7 +263,7 @@ class RadarChart extends Component {
         ...getPresentationAttributes(el),
         animationId: this.props.animationId,
         points: this.getComposedData(el, scale, cx, cy),
-        key: `radar-${index}`,
+        key: el.key || `radar-${index}`,
         onMouseEnter: combineEventHandlers(
           this.handleMouseEnter, onMouseEnter, el.props.onMouseEnter),
         onMouseLeave: combineEventHandlers(

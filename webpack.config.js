@@ -47,6 +47,12 @@ var config = {
       commonjs: 'react-addons-transition-group',
       amd: 'react-addons-transition-group',
     },
+    'prop-types': {
+      root: 'PropTypes',
+      commonjs2: 'prop-types',
+      commonjs: 'prop-types',
+      amd: 'prop-types',
+    },
   },
 
   plugins: [

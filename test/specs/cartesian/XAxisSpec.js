@@ -63,4 +63,56 @@ describe('<XAxis />', () => {
     );
     expect(wrapper.find('.recharts-x-axis .recharts-cartesian-axis-tick').length).to.equal(2);
   });
+
+  it('Render duplicated ticks of XAxis', () => {
+    const lineData = [
+      {name: "03/07/2017", balance: 23126.11},
+      {name: "03/02/2017", balance: 23137.39},
+      {name: "03/01/2017", balance: 24609.55},
+      {name: "03/01/2017", balance: 26827.66},
+      {name: "02/24/2017", balance: 26807.66},
+      {name: "02/21/2017", balance: 23835.62},
+      {name: "02/16/2017", balance: 23829.62}
+    ];
+
+    const wrapper = render(
+      <LineChart
+        width={600}
+        height={300}
+        data={lineData}
+        margin={{top: 5, right: 30, left: 20, bottom: 5}}
+      >
+        <XAxis dataKey="name" interval={0} />
+        <YAxis/>
+        <Line type="monotone" dataKey="balance" stroke="#8884d8" activeDot={{r: 8}}/>
+      </LineChart>
+    );
+    expect(wrapper.find('.recharts-x-axis .recharts-cartesian-axis-tick').length).to.equal(lineData.length);
+  });
+
+  it('Render duplicated ticks of XAxis', () => {
+    const lineData = [
+      {name: "03/07/2017", balance: 23126.11},
+      {name: "03/02/2017", balance: 23137.39},
+      {name: "03/01/2017", balance: 24609.55},
+      {name: "03/01/2017", balance: 26827.66},
+      {name: "02/24/2017", balance: 26807.66},
+      {name: "02/21/2017", balance: 23835.62},
+      {name: "02/16/2017", balance: 23829.62}
+    ];
+
+    const wrapper = render(
+      <LineChart
+        width={600}
+        height={300}
+        data={lineData}
+        margin={{top: 5, right: 30, left: 20, bottom: 5}}
+      >
+        <XAxis dataKey="name" scale="time" interval={0} />
+        <YAxis/>
+        <Line type="monotone" dataKey="balance" stroke="#8884d8" activeDot={{r: 8}}/>
+      </LineChart>
+    );
+    expect(wrapper.find('.recharts-x-axis .recharts-cartesian-axis-tick').length).to.equal(lineData.length);
+  });
 });

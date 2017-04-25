@@ -1,7 +1,8 @@
 /**
  * @fileOverview Bar Chart
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
@@ -81,7 +82,6 @@ const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
     }
 
     if (layout === 'horizontal') {
-
       x = getCategoryAxisCoordinate({
         axis: xAxis,
         ticks: xTicks,
@@ -90,11 +90,9 @@ const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
         entry,
         index,
       });
-      y = yAxis.scale(xAxis.orientation === 'top' ? value[0] : value[1]);
+      y = yAxis.scale(value[1]);
       width = pos.size;
-      height = xAxis.orientation === 'top' ?
-              yAxis.scale(value[1]) - yAxis.scale(value[0]) :
-              yAxis.scale(value[0]) - yAxis.scale(value[1]);
+      height = yAxis.scale(value[0]) - yAxis.scale(value[1]);
 
       if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
         const delta = Math.sign(height || minPointSize) *
@@ -104,7 +102,7 @@ const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
         height += delta;
       }
     } else {
-      x = xAxis.scale(yAxis.orientation === 'left' ? value[0] : value[1]);
+      x = xAxis.scale(value[0]);
       y = getCategoryAxisCoordinate({
         axis: yAxis,
         ticks: yTicks,
@@ -113,9 +111,7 @@ const getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
         entry,
         index,
       });
-      width = yAxis.orientation === 'left' ?
-              xAxis.scale(value[1]) - xAxis.scale(value[0]) :
-              xAxis.scale(value[0]) - xAxis.scale(value[1]);
+      width = xAxis.scale(value[1]) - xAxis.scale(value[0]);
       height = pos.size;
 
       if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
@@ -162,6 +158,7 @@ class BarChart extends Component {
     barCategoryGap: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     barGap: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     barSize: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    maxBarSize: PropTypes.number,
     // used internally
     isComposed: PropTypes.bool,
     animationId: PropTypes.number,
@@ -216,7 +213,7 @@ class BarChart extends Component {
 
     return items.map((child, i) =>
       React.cloneElement(child, {
-        key: `bar-${i}`,
+        key: child.key || `bar-${i}`,
         layout,
         animationId,
         ...offset,

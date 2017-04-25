@@ -1,10 +1,11 @@
 /**
  * @fileOverview Dot
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import pureRender from '../util/PureRender';
-import { getPresentationAttributes } from '../util/ReactUtils';
+import { getPresentationAttributes, filterEventAttributes } from '../util/ReactUtils';
 
 @pureRender
 class Dot extends Component {
@@ -25,6 +26,7 @@ class Dot extends Component {
       return (
         <circle
           {...getPresentationAttributes(this.props)}
+          {...filterEventAttributes(this.props)}
           className={layerClass}
           cx={cx}
           cy={cy}

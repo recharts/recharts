@@ -13,7 +13,7 @@ import ReferenceArea from '../cartesian/ReferenceArea';
 import Legend from '../component/Legend';
 
 /* eslint no-param-reassign: 0 */
-const offsetSign = (series) => {
+export const offsetSign = (series) => {
   const n = series.length;
   if (n <= 0) { return; }
 
@@ -306,8 +306,9 @@ export const getCoordinatesOfGrid = (ticks, min, max) => {
 export const getTicksOfAxis = (axis, isGrid, isAll) => {
   if (!axis) return null;
   const scale = axis.scale;
-  const { duplicateDomain, type } = axis;
-  const offset = (isGrid || isAll) && type === 'category' ? scale.bandwidth() / 2 : 0;
+  const { duplicateDomain, type, domain } = axis;
+  const offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ?
+    scale.bandwidth() / 2 : 0;
 
   // The ticks setted by user should only affect the ticks adjacent to axis line
   if (isGrid && (axis.ticks || axis.niceTicks)) {
@@ -406,7 +407,7 @@ export const getLegendProps = (children, graphicItems, width) => {
         value: name || dataKey,
         payload: child.props,
       };
-    }, this);
+    });
 
   return {
     ...legendItem.props,
@@ -509,7 +510,7 @@ export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = []
       sum -= (len - 1) * realBarGap;
       realBarGap = 0;
     }
-    if (sum >= bandSize) {
+    if (sum >= bandSize && fullBarSize > 0) {
       useFull = true;
       fullBarSize *= 0.9;
       sum = len * fullBarSize;

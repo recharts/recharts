@@ -1,4 +1,37 @@
-## 0.21.2(Mar 01, 2017)
+## 0.22.2 (Apr 18, 2017)
+
+
+### fix
+
+- fix spelling error of fillOpacity
+- fix bug of axis when has duplicated ticks
+
+
+## 0.22.1 (Apr 13, 2017)
+
+### feat
+
+- Add legendType: ‘none’ to not render coresponding legend item
+- use prop-types instead of React.PropTypes
+
+### fix
+
+- Fix re-rendering element bug when adding new elements
+- Fix circular dependence of Brush.js and LineChart.js 
+
+## 0.22.0 (Apr 05, 2017)
+
+### feat
+
+- Add event handlers to component  Dot
+- Support embedded chart as a panoram in Brush
+- Add props reversed to `XAxis` and `YAxis` to reverse the range of axis
+
+### fix
+
+- Fix error or time scale
+
+## 0.21.2 (Mar 01, 2017)
 
 ### fix
 

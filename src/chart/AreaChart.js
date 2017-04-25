@@ -1,7 +1,8 @@
 /**
  * @fileOverview Area Chart
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Smooth from 'react-smooth';
 import _ from 'lodash';
 import Layer from '../container/Layer';
@@ -258,7 +259,7 @@ export class AreaChart extends Component {
       }
 
       const area = React.cloneElement(child, {
-        key: `area-${i}`,
+        key: child.key || `area-${i}`,
         ...currentComposedData,
         ...offset,
         animationId,

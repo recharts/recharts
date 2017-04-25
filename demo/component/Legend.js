@@ -22,23 +22,33 @@ const data3 = [
   { value: 'Sony', type: 'line', color: '#ff7812' },
 ];
 
+const data4 = [
+  { value: 'Apple', color: '#ff7300' },
+  { value: 'Samsung', color: '#bb7300' },
+  { value: 'Huawei', color: '#bb7300' },
+  { value: 'Sony', type: 'none' },
+];
+
 export default React.createClass({
-  render () {
+  render() {
     return (
       <div>
         <div style={{ position: 'relative', height: 200 }}>
           <Legend width={500} height={30} payload={data} />
         </div>
 
-        <div style={{ position: 'relative', height: 200 }}>
-          <Legend layout='vertical' width={200} height={100} payload={data2} />
+        <div style={{ position: 'relative', height: 200, left: 100 }}>
+          <Legend layout="vertical" width={200} height={100} payload={data2} />
         </div>
 
         <div style={{ position: 'relative', height: 200 }}>
           <Legend width={200} height={30} payload={data3} />
         </div>
+
+        <div style={{ position: 'relative', height: 200 }}>
+          <Legend width={200} height={30} payload={data4} />
+        </div>
       </div>
     );
-  }
+  },
 });
-

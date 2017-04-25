@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import _ from 'lodash';
 import Surface from '../container/Surface';
@@ -19,7 +20,7 @@ import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import Brush from '../cartesian/Brush';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
-import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate,
+import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate, checkDomainOfScale,
   combineEventHandlers, parseScale, getValueByDataKey, uniqueId } from '../util/DataUtils';
 import { calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
@@ -44,6 +45,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
     static propTypes = {
       ...ChartComponent.propTypes,
       syncId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      compact: PropTypes.bool,
       width: PropTypes.number,
       height: PropTypes.number,
       data: PropTypes.arrayOf(PropTypes.object),
@@ -110,7 +112,11 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
             { props: nextProps, ...defaultState }) }
         );
       } else if (!isChildrenEqual(nextProps.children, children)) {
-        const defaultState = this.createDefaultState(nextProps);
+        const { dataStartIndex, dataEndIndex } = this.state;
+        // Don't update brush
+        const defaultState = {
+          ...this.createDefaultState(nextProps), dataEndIndex, dataStartIndex,
+        };
         this.setState({ ...defaultState,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
             { props: nextProps, ...defaultState }) }
@@ -186,7 +192,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       // Eliminate duplicated axes
       const axisMap = axes.reduce((result, child) => {
-        const { type, dataKey, allowDataOverflow } = child.props;
+        const { type, dataKey, allowDataOverflow, scale } = child.props;
         const axisId = child.props[axisIdKey];
 
         if (!result[axisId]) {
@@ -206,7 +212,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
               domain = domain.filter(entry => (entry !== '' && !_.isNil(entry)));
             }
 
-            if (isCategorial && type === 'number') {
+            if (isCategorial && (type === 'number' || scale !== 'auto')) {
               categoricalDomain = getDomainOfDataByKey(displayedData, dataKey, 'category');
             }
           } else if (isCategorial) {
@@ -347,7 +353,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
 
       return ids.reduce((result, id) => {
         const axis = axisMap[id];
-        const { orientation, domain, padding = {}, mirror } = axis;
+        const { orientation, domain, padding = {}, mirror, reversed } = axis;
         const offsetKey = `${orientation}${mirror ? 'Mirror' : ''}`;
 
         let range, x, y, needSpace;
@@ -367,8 +373,13 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           ];
         }
 
+        if (reversed) {
+          range = [range[1], range[0]];
+        }
+
         const scale = parseScale(axis, displayName);
         scale.domain(domain).range(range);
+        checkDomainOfScale(scale);
         const ticks = getTicksOfScale(scale, axis);
 
         if (axisType === 'xAxis') {
@@ -384,7 +395,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         const finalAxis = {
           ...axis,
           ...ticks,
-          x, y, scale,
+          range, x, y, scale,
           width: axisType === 'xAxis' ? offset.width : axis.width,
           height: axisType === 'yAxis' ? offset.height : axis.height,
         };
@@ -1011,13 +1022,39 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
       });
     }
 
+    renderChart() {
+      const { children, width, height, ...others } = this.props;
+      const { xAxisMap, yAxisMap } = this.state;
+      const { gridOnTop = true } = this.props;
+      const attrs = getPresentationAttributes(others);
+
+      return (
+        <Surface {...attrs} width={width} height={height}>
+          {gridOnTop && this.renderGrid()}
+          {this.renderReferenceElements(false, ReferenceArea)}
+          {this.renderReferenceElements(false, ReferenceLine)}
+          {this.renderReferenceElements(false, ReferenceDot)}
+          {this.renderAxes(xAxisMap, 'x-axis')}
+          {this.renderAxes(yAxisMap, 'y-axis')}
+          <ChartComponent
+            {...this.props}
+            {...this.state}
+          />
+          {!gridOnTop && this.renderGrid()}
+          {this.renderReferenceElements(true, ReferenceArea)}
+          {this.renderReferenceElements(true, ReferenceLine)}
+          {this.renderReferenceElements(true, ReferenceDot)}
+          {this.renderBrush()}
+          {filterSvgElements(children)}
+        </Surface>
+      );
+    }
+
     render() {
       const { data } = this.props;
       if (!validateWidthHeight(this) || !data || !data.length) { return null; }
 
-      const { children, className, width, height, style, ...others } = this.props;
-      const { gridOnTop = true } = this.props;
-      const { xAxisMap, yAxisMap } = this.state;
+      const { className, width, height, style, compact } = this.props;
 
       const events = {
         onMouseEnter: this.handleMouseEnter,
@@ -1028,7 +1065,11 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
         onMouseUp: this.handleMouseUp,
         onTouchMove: this.handleTouchMove,
       };
-      const attrs = getPresentationAttributes(others);
+
+      // The "compact" mode is mainly used as the panorama within Brush
+      if (compact) {
+        return this.renderChart();
+      }
 
       return (
         <div
@@ -1037,24 +1078,7 @@ const generateCategoricalChart = (ChartComponent, GraphicalChild) => {
           {...events}
           ref={(node) => { this.container = node; }}
         >
-          <Surface {...attrs} width={width} height={height}>
-            {gridOnTop && this.renderGrid()}
-            {this.renderReferenceElements(false, ReferenceArea)}
-            {this.renderReferenceElements(false, ReferenceLine)}
-            {this.renderReferenceElements(false, ReferenceDot)}
-            {this.renderAxes(xAxisMap, 'x-axis')}
-            {this.renderAxes(yAxisMap, 'y-axis')}
-            <ChartComponent
-              {...this.props}
-              {...this.state}
-            />
-            {this.renderReferenceElements(true, ReferenceArea)}
-            {this.renderReferenceElements(true, ReferenceLine)}
-            {this.renderReferenceElements(true, ReferenceDot)}
-            {this.renderBrush()}
-            {filterSvgElements(children)}
-            {!gridOnTop && this.renderGrid()}
-          </Surface>
+          {this.renderChart()}
           {this.renderLegend()}
           {this.renderTooltip()}
         </div>

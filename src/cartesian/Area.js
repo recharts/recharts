@@ -1,7 +1,8 @@
 /**
  * @fileOverview Area
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';
@@ -10,7 +11,7 @@ import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import pureRender from '../util/PureRender';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, isSsr } from '../util/ReactUtils';
 import { isNumber, uniqueId } from '../util/DataUtils';
 
@@ -35,10 +36,7 @@ class Area extends Component {
     yAxis: PropTypes.object,
     xAxis: PropTypes.object,
     stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    legendType: PropTypes.oneOf([
-      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
-      'triangle', 'wye',
-    ]),
+    legendType: PropTypes.oneOf(LEGEND_TYPES),
     connectNulls: PropTypes.bool,
 
     activeDot: PropTypes.oneOfType([

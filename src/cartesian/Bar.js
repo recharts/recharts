@@ -1,7 +1,8 @@
 /**
  * @fileOverview Render a group of bar
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Animate, { translateStyle } from 'react-smooth';
 import _ from 'lodash';
@@ -11,8 +12,8 @@ import Text from '../component/Text';
 import ErrorBar from './ErrorBar';
 import pureRender from '../util/PureRender';
 import { getValueByDataKey, uniqueId } from '../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
-  filterEventsOfChild, isSsr, findChildByType } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
+  getPresentationAttributes, filterEventsOfChild, isSsr, findChildByType } from '../util/ReactUtils';
 
 @pureRender
 class Bar extends Component {
@@ -33,10 +34,7 @@ class Bar extends Component {
     unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
-    legendType: PropTypes.oneOf([
-      'line', 'square', 'rect', 'circle', 'cross', 'diamond', 'square', 'star',
-      'triangle', 'wye',
-    ]),
+    legendType: PropTypes.oneOf(LEGEND_TYPES),
     minPointSize: PropTypes.number,
     maxBarSize: PropTypes.number,
 
@@ -193,20 +191,25 @@ class Bar extends Component {
     const { data, label, layout } = this.props;
     const barProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);
-    const textAnchor = layout === 'vertical' ? 'start' : 'middle';
+
     const labels = data.map((entry, i) => {
+      let textAnchor = 'middle';
+      let dominantBaseline = 'central';
       let x = 0;
       let y = 0;
 
       if (layout === 'vertical') {
-        x = 5 + entry.x + entry.width;
-        y = 5 + entry.y + entry.height / 2;
+        textAnchor = entry.width < 0 ? 'end' : 'start';
+        x = entry.x + entry.width + (entry.width < 0 ? -1 : 1) * 5;
+        y = entry.y + entry.height / 2;
       } else {
+        dominantBaseline = entry.height < 0 ? 'hanging' : 'inherit';
         x = entry.x + entry.width / 2;
-        y = entry.y - 5;
+        y = entry.y - (entry.height < 0 ? -1 : 1) * 5;
       }
 
       const labelProps = {
+        dominantBaseline,
         textAnchor,
         ...barProps,
         ...entry,

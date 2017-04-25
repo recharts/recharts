@@ -1,7 +1,8 @@
 /**
  * @fileOverview Pie Chart
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Surface from '../container/Surface';
 import Legend from '../component/Legend';
@@ -170,7 +171,7 @@ export class PieChart extends Component {
       const maxRadius = getMaxRadius(width, height, margin);
 
       return React.cloneElement(child, {
-        key: `recharts-pie-${i}`,
+        key: child.key || `recharts-pie-${i}`,
         cx,
         cy,
         maxRadius: child.props.maxRadius || Math.sqrt(width * width + height * height) / 2,

@@ -1,7 +1,8 @@
 /**
  * @fileOverview Scatter Chart
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
@@ -458,7 +459,7 @@ class ScatterChart extends Component {
       finalStrokeWidth = activeGroupId === `scatter-${i}` ? finalStrokeWidth + 2 : finalStrokeWidth;
 
       return React.cloneElement(child, {
-        key: `scatter-${i}`,
+        key: child.key || `scatter-${i}`,
         groupId: `scatter-${i}`,
         strokeWidth: finalStrokeWidth,
         onMouseLeave: this.handleScatterMouseLeave,

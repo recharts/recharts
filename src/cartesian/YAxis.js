@@ -1,7 +1,8 @@
 /**
  * @fileOverview Y Axis
  */
-import { Component, PropTypes } from 'react';
+import { Component } from 'react';
+import PropTypes from 'prop-types';
 import pureRender from '../util/PureRender';
 
 @pureRender
@@ -64,6 +65,7 @@ class YAxis extends Component {
     interval: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf([
       'preserveStart', 'preserveEnd', 'preserveStartEnd',
     ])]),
+    reversed: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -80,6 +82,7 @@ class YAxis extends Component {
     padding: { top: 0, bottom: 0 },
     allowDataOverflow: false,
     scale: 'auto',
+    reversed: false,
   };
 
   render() {

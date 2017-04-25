@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import { LineChart, Line, Bar } from 'recharts';
 import { getPresentationAttributes, filterEventAttributes, filterEventsOfChild,
   getDisplayName, withoutType, validateWidthHeight, filterSvgElements,
+  isSingleChildEqual, isChildrenEqual,
 } from '../../../src/util/ReactUtils';
 import { mount, render } from 'enzyme';
 
@@ -123,8 +124,9 @@ describe('ReactUtils', () => {
         <text x="0" y="0">12</text>
       </LineChart>
     ));
+    const children = wrapper.props().children;
 
-    expect(wrapper.props.children).to.equal(wrapper.props.children);
+    expect(isChildrenEqual(children, children)).to.be.true;
   });
 
   it('isChildrenEqual when children has null children', () => {
@@ -137,7 +139,67 @@ describe('ReactUtils', () => {
         {null}
       </LineChart>
     ));
+    const anotherWrapper = mount((
+      <LineChart width={200} height={200}>
+        <Line dataKey="a" />
+        <Line dataKey="b" />
+        <rect x="0" y="0" width="20" height="20" />
+        <text x="0" y="0">12</text>
+        {null}
+      </LineChart>
+    ));
+    const children = wrapper.props().children;
+    const anotherChildren = anotherWrapper.props().children;
 
-    expect(wrapper.props.children).to.equal(wrapper.props.children);
+    expect(isChildrenEqual(children, anotherChildren)).to.be.true;
+  });
+
+  it('isChildrenEqual return true when children has same props', () => {
+    const wrapper = mount((
+      <LineChart width={200} height={200}>
+        <Line dataKey="a" />
+        <Line dataKey="b" />
+        <rect x="0" y="0" width="20" height="20" />
+        <text x="0" y="0">12</text>
+      </LineChart>
+    ));
+    const newWrapper = mount((
+      <LineChart width={200} height={200}>
+        <Line dataKey="a" />
+        <Line dataKey="b" />
+        <rect x="0" y="0" width="20" height="20" />
+      </LineChart>
+    ));
+
+    expect(isChildrenEqual(wrapper.props().children, newWrapper.props().children)).to.be.false;
+  });
+  it('isChildrenEqual return false when single child are not equal', () => {
+    const wrapper = mount((
+      <LineChart width={200} height={200}>
+        <Line dataKey="a" />
+      </LineChart>
+    ));
+    const newWrapper = mount((
+      <LineChart width={200} height={200}>
+        <Line dataKey="b" />
+      </LineChart>
+    ));
+
+    expect(isChildrenEqual(wrapper.props().children, newWrapper.props().children)).to.be.false;
+  });
+
+  it("isChildrenEqual return false when one has child and another don't has child", () => {
+    const wrapper = mount((
+      <LineChart width={200} height={200}>
+        {null}
+      </LineChart>
+    ));
+    const newWrapper = mount((
+      <LineChart width={200} height={200}>
+        <Line dataKey="b" />
+      </LineChart>
+    ));
+
+    expect(isChildrenEqual(wrapper.props().children, newWrapper.props().children)).to.be.false;
   });
 });

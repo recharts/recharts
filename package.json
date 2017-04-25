@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "0.21.3",
+  "version": "0.22.2-patched",
   "description": "React charts",
   "main": "lib/index",
   "module": "es6/index",
@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "build": "npm run build-cjs && npm run build-es6 && rimraf umd && npm run build-umd && npm run build-min",
-    "build-cjs": "rimraf lib && babel ./src -d lib --plugins=transform-es2015-modules-commonjs",
+    "build-cjs": "rimraf lib && cross-env NODE_ENV=commonjs babel ./src -d lib",
     "build-es6": "rimraf es6 && babel ./src -d es6",
     "build-umd": "cross-env NODE_ENV=development webpack src/index.js umd/Recharts.js",
     "build-min": "cross-env NODE_ENV=production webpack src/index.js umd/Recharts.min.js",
@@ -53,6 +53,7 @@
     "d3-scale": "1.0.4",
     "d3-shape": "1.0.4",
     "lodash": "~4.17.4",
+    "prop-types": "~15.5.7",
     "react-resize-detector": "0.3.3",
     "react-smooth": "0.1.20",
     "recharts-scale": "0.3.0",

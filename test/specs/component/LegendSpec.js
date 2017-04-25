@@ -31,4 +31,19 @@ describe('<Legend />', () => {
     expect(wrapper.find('.recharts-default-legend').length).to.equal(0);
     expect(wrapper.find('.customized-legend').length).to.equal(1);
   });
+
+  it('Does not render items with a type of `none`', () => {
+    const dataWithNone = [
+      { value: 'Apple', color: '#ff7300' },
+      { value: 'Samsung', color: '#bb7300' },
+      { value: 'Huawei', color: '#887300' },
+      { value: 'Sony', type: 'none' },
+    ];
+    const wrapper = render(
+      <Legend width={500} height={30} payload={dataWithNone} />
+    );
+
+    expect(wrapper.find('.recharts-default-legend').length).to.equal(1);
+    expect(wrapper.find('.recharts-default-legend .recharts-legend-item').length).to.equal(3);
+  });
 });

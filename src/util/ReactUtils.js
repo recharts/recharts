@@ -1,4 +1,5 @@
-import React, { PropTypes, Children } from 'react';
+import React, { Children } from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { isNumber } from './DataUtils';
 import { shallowEqual } from './PureRender';
@@ -108,6 +109,12 @@ export const EVENT_ATTRIBUTES = {
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,
 };
+
+export const LEGEND_TYPES = [
+  'line', 'square', 'rect', 'circle', 'cross', 'diamond',
+  'star', 'triangle', 'wye', 'none',
+];
+
 /**
  * Get the display name of a component
  * @param  {Object} Comp Specified Component

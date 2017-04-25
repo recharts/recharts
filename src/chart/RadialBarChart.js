@@ -1,7 +1,8 @@
 /**
  * @fileOverview Radar Bar Chart
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { scaleBand } from 'd3-scale';
 import _ from 'lodash';
@@ -286,7 +287,7 @@ class RadialBarChart extends Component {
 
       return React.cloneElement(child, {
         ...center,
-        key: `radial-bar-${i}`,
+        key: child.key || `radial-bar-${i}`,
         onMouseEnter: combineEventHandlers(this.handleMouseEnter, onMouseEnter, childOnMouseEnter),
         onMouseLeave: combineEventHandlers(this.handleMouseLeave, onMouseLeave, childOnMouseLeave),
         onClick: combineEventHandlers(null, onClick, childOnClick),
