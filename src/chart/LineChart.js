@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Smooth from 'react-smooth';
 import _ from 'lodash';
+import classNames from 'classnames';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Curve from '../shape/Curve';
@@ -121,7 +122,7 @@ export class LineChart extends Component {
     } else if (_.isFunction(option)) {
       dot = option(props);
     } else {
-      const className = option.className || 'recharts-line-active-dot';
+      const className = classNames('recharts-line-active-dot', option.className);
       dot = <Dot {...props} className={className} />;
     }
 
