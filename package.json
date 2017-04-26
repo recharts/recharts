@@ -55,7 +55,7 @@
     "lodash": "~4.17.4",
     "prop-types": "~15.5.7",
     "react-resize-detector": "0.3.3",
-    "react-smooth": "0.2.0",
+    "react-smooth": "0.3.0",
     "recharts-scale": "0.3.0",
     "reduce-css-calc": "1.3.0"
   },
