@@ -1,3 +1,13 @@
+## 0.22.4 (Apr 26, 2017)
+
+### fix 
+
+- fix dot customized className
+
+### dep
+
+- update react-smooth, and react-transition-group
+
 ## 0.22.3 (Apr 19, 2017)
 
 ### refactor
