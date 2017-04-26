@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Surface, Brush } from 'recharts';
 
-export default React.createClass({
+export default class Demo extends Component {
+
+  static displayName = 'BrushDemo';
+
   render () {
     let data = [
         '2015-10-01',
@@ -42,5 +45,5 @@ export default React.createClass({
       </Surface>
     );
   }
-});
+}
 

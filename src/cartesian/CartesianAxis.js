@@ -460,7 +460,7 @@ class CartesianAxis extends Component {
         ticksGenerator(noTicksProps);
     }
 
-    if (width <= 0 || height <= 0 || !ticks || !ticks.length) {
+    if (width <= 0 || height <= 0 || !finalTicks || !finalTicks.length) {
       return null;
     }
 

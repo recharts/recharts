@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Surface, Legend } from 'recharts';
 
 const data = [
@@ -29,7 +29,10 @@ const data4 = [
   { value: 'Sony', type: 'none' },
 ];
 
-export default React.createClass({
+export default class Demo extends Component {
+
+  static displayName = 'LegendDemo';
+
   render() {
     return (
       <div>
@@ -50,5 +53,5 @@ export default React.createClass({
         </div>
       </div>
     );
-  },
-});
+  }
+}

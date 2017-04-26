@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Surface, PolarGrid } from 'recharts';
 
-export default React.createClass({
+export default class Demo extends Component {
+
+  static displayName = 'PolarGridDemo';
+
   render () {
     const polarAngles = [0, 30, 60, 90, 145, 180, 200, 270, 300];
     const polarRadius = [10, 20, 40, 80];
@@ -21,5 +24,5 @@ export default React.createClass({
       </Surface>
     );
   }
-});
+}
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { RadialBarChart, RadialBar, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
 import { changeNumberOfData } from './utils';
 import { scaleOrdinal, schemeCategory10 } from 'd3-scale';
@@ -17,14 +17,17 @@ const data = [
 
 const initilaState = { data };
 
-export default React.createClass({
+export default class Demo extends Component {
+
+  static displayName = 'RadialBarChartDemo';
+
   getInitialState() {
     return initilaState;
-  },
+  }
 
   handleChangeData() {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
-  },
+  }
 
   render () {
     const { data } = this.state;
@@ -83,5 +86,5 @@ export default React.createClass({
       </div>
     );
   }
-});
+}
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { ScatterChart, Scatter, CartesianGrid, Tooltip, Legend,
  XAxis, YAxis, ZAxis, ReferenceLine, ReferenceDot, ReferenceArea, ErrorBar } from 'recharts';
 import { changeNumberOfData } from './utils';
@@ -45,14 +45,17 @@ const initilaState = {
   data04,
 };
 
-export default React.createClass({
+export default class Demo extends Component {
+
+  static displayName = 'ScatterChartDemo';
+
   getInitialState() {
     return initilaState;
-  },
+  }
 
   handleChangeData() {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
-  },
+  }
 
   render () {
     const { data01, data02, data03, data04 } = this.state;
@@ -128,4 +131,4 @@ export default React.createClass({
       </div>
     );
   }
-});
+}

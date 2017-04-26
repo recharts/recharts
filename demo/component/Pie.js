@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Surface, Pie } from 'recharts';
 
 const data = [
@@ -7,8 +7,8 @@ const data = [
   { name: 'iphone5', value: 600, fill: '#907213' }
 ];
 
-export default React.createClass({
-  displayName: 'PieDemo',
+export default class PieDemo extends React.Component {
+  static displayName = 'PieDemo';
 
   render () {
     return (
@@ -27,6 +27,6 @@ export default React.createClass({
       </Surface>
     );
   }
-});
+}
 
 

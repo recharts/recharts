@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Surface, Sector } from 'recharts';
 
-export default React.createClass({
+export default class Demo extends Component {
+
+  static displayName = 'SectorDemo';
+
   render () {
     return (
       <Surface width={500} height={1000}>
@@ -19,6 +22,6 @@ export default React.createClass({
       </Surface>
     );
   }
-});
+}
 
 

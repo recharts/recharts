@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {Surface, PolarAngleAxis} from 'recharts';
 
 const ticks = [
@@ -10,10 +10,13 @@ const ticks = [
   { value: '600', angle: 290 },
 ];
 
-export default React.createClass({
+export default class Demo extends Component {
+
+  static displayName = 'PolarAngleAxisDemo';
+
   handleActive(data, index, e) {
     console.log(data, index);
-  },
+  }
 
   render () {
     return (
@@ -30,4 +33,4 @@ export default React.createClass({
       </Surface>
     );
   }
-});
+}

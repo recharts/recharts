@@ -1,7 +1,11 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Tooltip, Layer } from 'recharts';
 
-class DemoSankeyLink extends Component {
+export default class Demo extends Component {
+
+  static displayName = 'SankeyLinkDemo';
+
   static propTypes = {
     sourceX: PropTypes.number,
     targetX: PropTypes.number,
@@ -53,4 +57,3 @@ class DemoSankeyLink extends Component {
   }
 }
 
-export default DemoSankeyLink;

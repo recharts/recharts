@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Surface, Curve, Layer } from 'recharts';
 import { curveBundle, curveCardinal, curveCardinalClosed, curveCardinalOpen,
   curveCatmullRomOpen  } from 'd3-shape';
 import { scaleOrdinal, schemeCategory10 } from 'd3-scale';
 
-export default React.createClass({
+export default class Demo extends Component {
+
+  static displayName = 'CurveDemo';
+
   render () {
     const points = [
       { x: 10, y: 40 },
@@ -95,6 +98,6 @@ export default React.createClass({
       </Surface>
     );
   }
-});
+}
 
 
