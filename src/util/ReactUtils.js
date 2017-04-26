@@ -166,7 +166,7 @@ export const findAllByType = (children, type) => {
     types = [getDisplayName(type)];
   }
 
-  React.Children.forEach(children, (child, index) => {
+  React.Children.forEach(children, (child) => {
     const childType = child && child.type && (child.type.displayName || child.type.name);
     if (types.indexOf(childType) !== -1) {
       result.push(child);
@@ -416,7 +416,7 @@ export const parseChildIndex = (child, children) => {
     if (entry === child) {
       result = index;
     }
-  })
+  });
 
   return result;
 };

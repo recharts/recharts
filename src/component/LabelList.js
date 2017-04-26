@@ -1,4 +1,5 @@
-import React, { PropTypes, cloneElement } from 'react';
+import React, { cloneElement } from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Label from './Label';
 import Layer from '../container/Layer';

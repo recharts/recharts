@@ -335,31 +335,31 @@ export default class Demo extends Component {
 
   state = initilaState;
 
-  handleChangeData() {
+  handleChangeData = () => {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
-  }
+  };
 
-  handleClick(data, e) {
+  handleClick = (data, e) => {
     console.log(data);
-  }
+  };
 
-  handleLegendMouseEnter() {
+  handleLegendMouseEnter = () => {
     this.setState({
       opacity: 0.5,
     });
-  }
+  };
 
-  handleLegendMouseLeave() {
+  handleLegendMouseLeave = () => {
     this.setState({
       opacity: 1,
     });
-  }
+  };
 
-  handleChangeAnotherState() {
+  handleChangeAnotherState = () => {
     this.setState({
       anotherState: !this.state.anotherState,
     })
-  }
+  };
 
   render() {
     const { data, data01, data02, opacity } = this.state;

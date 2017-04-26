@@ -22,13 +22,11 @@ export default class Demo extends Component {
 
   static displayName = 'RadialBarChartDemo';
 
-  getInitialState() {
-    return initilaState;
-  }
+  state = initilaState;
 
-  handleChangeData() {
+  handleChangeData = () => {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
-  }
+  };
 
   render () {
     const { data } = this.state;

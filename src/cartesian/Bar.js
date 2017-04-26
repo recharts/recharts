@@ -165,7 +165,6 @@ class Bar extends Component {
   };
 
   state = { isAnimationFinished: false };
-  id = uniqueId('recharts-bar-');
 
   componentWillReceiveProps(nextProps) {
     const { animationId, data } = this.props;
@@ -174,6 +173,8 @@ class Bar extends Component {
       this.cachePrevData(data);
     }
   }
+
+  id = uniqueId('recharts-bar-');
 
   cachePrevData = (data) => {
     this.setState({ prevData: data });
@@ -246,10 +247,6 @@ class Bar extends Component {
         );
       }
 
-      if (i === 0) {
-        console.log(from, to);
-      }
-
       return (
         <Animate
           begin={animationBegin}
@@ -263,18 +260,15 @@ class Bar extends Component {
           onAnimationStart={this.handleAnimationStart}
         >
           {
-            stepProps => {
-              if (i === 0) { console.log(stepProps); }
-              return (
-                <Layer
-                  className="recharts-bar-rectangle"
-                  {...filterEventsOfChild(this.props, entry, i)}
-                  key={`rectangle-${i}`}
-                >
-                  {this.renderRectangle(shape, { ...props, ...stepProps })}
-                </Layer>
-              );
-            }
+            stepProps => (
+              <Layer
+                className="recharts-bar-rectangle"
+                {...filterEventsOfChild(this.props, entry, i)}
+                key={`rectangle-${i}`}
+              >
+                {this.renderRectangle(shape, { ...props, ...stepProps })}
+              </Layer>
+            )
           }
         </Animate>
       );

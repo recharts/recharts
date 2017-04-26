@@ -227,25 +227,23 @@ export default class Demo extends Component {
 
   static displayName = 'BarChartDemo';
 
-  getInitialState() {
-    return initilaState;
-  }
+  state = initilaState;
 
-  handleChangeData() {
+  handleChangeData = () => {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
-  }
+  };
 
-  handlePvBarClick(data, index, e) {
+  handlePvBarClick = (data, index, e) => {
     console.log(`Pv Bar (${index}) Click: `, data);
-  }
+  };
 
-  handleBarAnimationStart() {
+  handleBarAnimationStart = () => {
     console.log('Animation start');
-  }
+  };
 
-  handleBarAnimationEnd() {
+  handleBarAnimationEnd = () => {
     console.log('Animation end');
-  }
+  };
 
   render() {
     const { data, data01, data02 } = this.state;

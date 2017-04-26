@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import generateCategoricalChart from './generateCategoricalChart';
 import PolarGrid from '../polar/PolarGrid';
@@ -11,7 +12,6 @@ import PolarRadiusAxis from '../polar/PolarRadiusAxis';
 import { getMaxRadius, polarToCartesian, formatAxisMap } from '../util/PolarUtils';
 import Pie from '../polar/Pie';
 
-import classNames from 'classnames';
 import Surface from '../container/Surface';
 import Legend from '../component/Legend';
 import Tooltip from '../component/Tooltip';

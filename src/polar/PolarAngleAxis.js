@@ -32,7 +32,7 @@ class PolarAngleAxis extends Component {
     cy: PropTypes.number,
     radius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     hide: PropTypes.bool,
-    scale: PropTypes.oneOfType([ PropTypes.oneOf(SCALE_TYPES), PropTypes.func ]),
+    scale: PropTypes.oneOfType([PropTypes.oneOf(SCALE_TYPES), PropTypes.func]),
 
     axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
     axisLineType: PropTypes.oneOf(['polygon', 'circle']),

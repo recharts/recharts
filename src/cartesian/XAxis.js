@@ -47,7 +47,7 @@ class XAxis extends Component {
       right: PropTypes.number,
     }),
     allowDataOverflow: PropTypes.bool,
-    scale: PropTypes.oneOfType([ PropTypes.oneOf(SCALE_TYPES), PropTypes.func ]),
+    scale: PropTypes.oneOfType([PropTypes.oneOf(SCALE_TYPES), PropTypes.func]),
     tick: PropTypes.oneOfType([
       PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element,
     ]),
