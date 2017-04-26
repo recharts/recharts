@@ -107,22 +107,20 @@ export default class Demo extends Component {
 
   static displayName = 'PieChartDemo';
 
-  onPieEnter(data, index) {
+  onPieEnter = (data, index) => {
     this.setState({
       activeIndex: index,
     });
-  }
+  };
 
-  getInitialState() {
-    return {
-      ...initilaState,
-      activeIndex: 0,
-    };
-  }
+  state = {
+    ...initilaState,
+    activeIndex: 0,
+  };
 
-  handleChangeData() {
+  handleChangeData = () => {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
-  }
+  };
 
   render () {
     const { data01, data02, data03 } = this.state;

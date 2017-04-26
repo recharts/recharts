@@ -453,7 +453,7 @@ export const getCateCoordinateOfBar = ({ axis, ticks, offset, bandSize, entry, i
 };
 
 
-export const getBaseValueOfBar = ({ props, numericAxis }) => {
+export const getBaseValueOfBar = ({ numericAxis }) => {
   const domain = numericAxis.scale.domain();
 
   if (numericAxis.type === 'number') {

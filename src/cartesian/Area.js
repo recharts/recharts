@@ -95,7 +95,7 @@ class Area extends Component {
     onAnimationEnd: () => {},
   };
 
-  static getBaseValue  = (props, xAxis, yAxis) => {
+  static getBaseValue = (props, xAxis, yAxis) => {
     const { layout, baseValue } = props;
 
     if (isNumber(baseValue)) { return baseValue; }

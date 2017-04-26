@@ -13,11 +13,10 @@ import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES, findAllByType,
   getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
-import { mathSign } from '../util/DataUtils';
 import LabelList from '../component/LabelList';
 import Cell from '../component/Cell';
 import { getCateCoordinateOfBar, findPositionOfBar, getBaseValueOfBar,
-  truncateByDomain, getValueByDataKey } from '../util/DataUtils';
+  truncateByDomain, getValueByDataKey, mathSign } from '../util/DataUtils';
 
 const RADIAN = Math.PI / 180;
 
@@ -126,15 +125,16 @@ class RadialBar extends Component {
         }
         backgroundSector = {
           background: {
-            cx, cy, innerRadius, outerRadius, startAngle: props.startAngle, endAngle: props.endAngle,
+            cx, cy, innerRadius, outerRadius, startAngle: props.startAngle,
+            endAngle: props.endAngle,
           },
         };
       } else {
         innerRadius = radiusAxis.scale(value[0]);
-        outerRadius = xAxis.scale(value[1]);
+        outerRadius = radiusAxis.scale(value[1]);
         startAngle = getCateCoordinateOfBar({
-          axis: yAxis,
-          ticks: yAxisTicks,
+          axis: angleAxis,
+          ticks: angleAxisTicks,
           bandSize,
           offset: pos.offset,
           entry,
@@ -258,6 +258,7 @@ class RadialBar extends Component {
         ...rest,
         fill: '#eee',
         ...background,
+        ...backgroundProps,
         ...filterEventsOfChild(this.props, entry, i),
         index: i,
         key: `sector-${i}`,

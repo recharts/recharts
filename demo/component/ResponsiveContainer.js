@@ -165,13 +165,11 @@ export default class Demo extends Component {
 
   static displayName = 'ResponsiveContainerDemo';
 
-  getInitialState() {
-    return initilaState;
-  }
+  state = initilaState;
 
-  handleChangeData() {
+  handleChangeData = () => {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
-  }
+  };
 
   render() {
     const { data, data01, data02 } = this.state;
@@ -215,7 +213,7 @@ export default class Demo extends Component {
         <div className="pie-chart-wrapper" style={{ width: '100%', height: '400px', backgroundColor: '#f5f5f5' }}>
           <ResponsiveContainer>
             <PieChart>
-              <Pie data={data03} nameKey="name" valueKey="v" innerRadius="45%" outerRadius="80%" />
+              <Pie data={data03} nameKey="name" dataKey="v" innerRadius="45%" outerRadius="80%" />
             </PieChart>
           </ResponsiveContainer>
         </div>

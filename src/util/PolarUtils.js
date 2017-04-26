@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { getPercentValue, parseScale, checkDomainOfScale, getTicksOfScale } from './DataUtils';
 
 export const RADIAN = Math.PI / 180;
@@ -29,7 +30,7 @@ export const getMaxRadius = (width, height, offset = {
  * @return {Object} Configuration
  */
 export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
-  const { width, height, startAngle, endAngle, layout } = props;
+  const { width, height, startAngle, endAngle } = props;
   const cx = getPercentValue(props.cx, width, width / 2);
   const cy = getPercentValue(props.cy, height, height / 2);
   const maxRadius = getMaxRadius(width, height, offset);
@@ -39,24 +40,20 @@ export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
 
   return ids.reduce((result, id) => {
     const axis = axisMap[id];
-    const { orientation, domain, padding = {}, mirror, reversed } = axis;
-    console.log(axis);
-    const offsetKey = `${orientation}${mirror ? 'Mirror' : ''}`;
-
-    let range, x, y, needSpace;
+    const { orientation, domain, mirror, reversed } = axis;
+    let range;
 
     if (_.isNil(range, axis.range)) {
       if (axisType === 'angleAxis') {
-        range = [ startAngle, endAngle ];
+        range = [startAngle, endAngle];
       } else if (axisType === 'radiusAxis') {
-        range = [ innerRadius, outerRadius ];
+        range = [innerRadius, outerRadius];
       }
 
       if (reversed) {
         range = [range[1], range[0]];
       }
     } else {
-      console.log(range);
       range = axis.range;
     }
 
@@ -110,25 +107,23 @@ export const formatAngleOfSector = ({ startAngle, endAngle }) => {
 };
 
 export const inRangeOfSector = ({ x, y }, sector) => {
-  const { radius, angle, angleInRadian } = getAngleOfPoint({ x, y }, sector);
+  const { radius, angle } = getAngleOfPoint({ x, y }, sector);
   const { innerRadius, outerRadius } = sector;
 
-  if (radius < innerRadius|| radius > outerRadius) {
+  if (radius < innerRadius || radius > outerRadius) {
     return false;
   }
 
   if (radius === 0) { return true; }
 
   const { startAngle, endAngle } = formatAngleOfSector(sector);
-  const min  = Math.min(startAngle, endAngle);
-  const max  = Math.min(startAngle, endAngle);
   let formatAngle = angle;
 
   while (formatAngle > endAngle) {
     formatAngle -= 360;
   }
 
-  while (formatAngle <  startAngle) {
+  while (formatAngle < startAngle) {
     formatAngle += 360;
   }
 

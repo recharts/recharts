@@ -137,14 +137,14 @@ class Scatter extends Component {
     };
   };
 
+  state = { activeIndex: -1, isAnimationFinished: false };
+
   componentWillReceiveProps(nextProps) {
     const { animationId, points } = this.props;
     if (nextProps.animationId !== animationId) {
       this.cachePrevPoints(points);
     }
   }
-
-  state = { activeIndex: -1, isAnimationFinished: false };
 
   cachePrevPoints = (points) => {
     this.setState({ prevPoints: points });

@@ -1,4 +1,5 @@
-import React, { PropTypes, cloneElement, isValidElement } from 'react';
+import React, { cloneElement, isValidElement } from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Text from './Text';
 import { getPresentationAttributes, findAllByType } from '../util/ReactUtils';

@@ -98,13 +98,11 @@ export default class AreaChartDemo extends Component {
 
   static displayName = 'AreaChartDemo';
 
-  getInitialState() {
-    return initilaState;
-  }
+  state = initilaState;
 
-  handleChangeData() {
+  handleChangeData = () => {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
-  }
+  };
 
   render() {
     const { data, data01, data02 } = this.state;
