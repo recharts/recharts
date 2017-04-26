@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { PieChart, Pie, Legend, Cell, Tooltip, ResponsiveContainer, Sector } from 'recharts';
 import { scaleOrdinal, schemeCategory10 } from 'd3-scale';
 import { changeNumberOfData } from './utils';
@@ -102,23 +102,26 @@ const renderActiveShape = (props) => {
   );
 };
 
-export default React.createClass({
+export default class Demo extends Component {
+
+  static displayName = 'PieChartDemo';
+
   onPieEnter(data, index) {
     this.setState({
       activeIndex: index,
     });
-  },
+  }
 
   getInitialState() {
     return {
       ...initilaState,
       activeIndex: 0,
     };
-  },
+  }
 
   handleChangeData() {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
-  },
+  }
 
   render () {
     const { data01, data02, data03 } = this.state;
@@ -200,5 +203,5 @@ export default React.createClass({
       </div>
     );
   }
-});
+}
 

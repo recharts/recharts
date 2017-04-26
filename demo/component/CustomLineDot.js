@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-export default React.createClass({
+export default class Demo extends Component {
+
+  static displayName = 'CustomLineDotDemo';
+
   render() {
     const { cx, cy, stroke, payload } = this.props;
 
@@ -20,4 +23,4 @@ export default React.createClass({
       </svg>
     );
   }
-});
+}

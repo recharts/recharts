@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { changeNumberOfData } from './utils';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, Brush, Legend,
   ReferenceArea, ReferenceLine, ReferenceDot, ResponsiveContainer } from 'recharts';
@@ -45,30 +45,28 @@ const rangeData = [
 
 const initilaState = { data, data01, data02 };
 
-const CustomTooltip = React.createClass({
-  render() {
-    const { active, payload, external, label } = this.props;
+const CustomTooltip = (props) => {
+  const { active, payload, external, label } = props;
 
-    if (active) {
-      const style = {
-        padding: 6,
-        backgroundColor: '#fff',
-        border: '1px solid #ccc',
-      };
+  if (active) {
+    const style = {
+      padding: 6,
+      backgroundColor: '#fff',
+      border: '1px solid #ccc',
+    };
 
-      const currData = external.filter(entry => (entry.name === label))[0];
+    const currData = external.filter(entry => (entry.name === label))[0];
 
-      return (
-        <div className="area-chart-tooltip" style={style}>
-          <p>{payload[0].name + ' : '}<em>{payload[0].value}</em></p>
-          <p>{'uv : '}<em>{currData.uv}</em></p>
-        </div>
-      );
-    }
+    return (
+      <div className="area-chart-tooltip" style={style}>
+        <p>{payload[0].name + ' : '}<em>{payload[0].value}</em></p>
+        <p>{'uv : '}<em>{currData.uv}</em></p>
+      </div>
+    );
+  }
 
-    return null;
-  },
-});
+  return null;
+};
 
 const renderCustomizedActiveDot = (props) => {
   const { cx, cy, stroke, index, dataKey } = props;
@@ -96,16 +94,17 @@ function CustomizedAxisTick(props) {
   );
 }
 
-export default React.createClass({
-  displayName: 'AreaChartDemo',
+export default class AreaChartDemo extends Component {
+
+  static displayName = 'AreaChartDemo';
 
   getInitialState() {
     return initilaState;
-  },
+  }
 
   handleChangeData() {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
-  },
+  }
 
   render() {
     const { data, data01, data02 } = this.state;
@@ -360,5 +359,5 @@ export default React.createClass({
         </div>
       </div>
     );
-  },
-});
+  }
+};

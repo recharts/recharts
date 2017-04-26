@@ -1,12 +1,13 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router';
+import PropTypes from 'prop-types';
 import components from '../component/index';
 
-const App = React.createClass({
-  propTypes: {
+class App extends Component {
+  static propTypes = {
     params: PropTypes.object,
     location: PropTypes.object,
-  },
+  };
 
   renderList() {
     const items = Object.keys(components).map(key => {
@@ -37,7 +38,7 @@ const App = React.createClass({
         {items}
       </div>
     );
-  },
+  }
 
   renderPageDetail() {
     const { params, location } = this.props;
@@ -51,7 +52,7 @@ const App = React.createClass({
         {components[group] && components[group][page] ? React.createElement(components[group][page]) : null}
       </div>
     );
-  },
+  }
 
   render() {
     const { location, params } = this.props;
@@ -61,7 +62,7 @@ const App = React.createClass({
     }
 
     return this.renderPageDetail();
-  },
-});
+  }
+}
 
 export default App;

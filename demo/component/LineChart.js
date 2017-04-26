@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import CustomLineDot from './CustomLineDot';
 import { changeNumberOfData } from './utils';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine,
@@ -328,38 +328,37 @@ const specifiedDomain = [0.01, 'auto'];
 const specifiedTicks = [0.01, 0.1, 1, 10, 100, 1000];
 const specifiedMargin = { top: 20, right: 20, bottom: 20, left: 20 };
 
-export default React.createClass({
-  displayName: 'LineChartDemo',
+export default class Demo extends Component {
 
-  getInitialState() {
-    return initilaState;
-  },
+  static displayName = 'LineChartDemo';
+
+  state = initilaState;
 
   handleChangeData() {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
-  },
+  }
 
   handleClick(data, e) {
     console.log(data);
-  },
+  }
 
   handleLegendMouseEnter() {
     this.setState({
       opacity: 0.5,
     });
-  },
+  }
 
   handleLegendMouseLeave() {
     this.setState({
       opacity: 1,
     });
-  },
+  }
 
   handleChangeAnotherState() {
     this.setState({
       anotherState: !this.state.anotherState,
     })
-  },
+  }
 
   render() {
     const { data, data01, data02, opacity } = this.state;
@@ -525,4 +524,4 @@ export default React.createClass({
       </div>
     );
   }
-});
+}

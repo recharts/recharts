@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
 import { BarChart, Bar, Brush, Cell, CartesianGrid, ReferenceLine, ReferenceDot,
   XAxis, YAxis, Tooltip, Legend, ErrorBar } from 'recharts';
 import { scaleOrdinal, schemeCategory10 } from 'd3-scale';
@@ -144,7 +144,7 @@ if (x === +x && y === +y) {
 return null;
 };
 
-const BarTwo = React.createClass({
+class BarTwo extends Component {
   getPath () {
     const { x, y, width, height } = this.props;
 
@@ -158,16 +158,16 @@ const BarTwo = React.createClass({
     }
 
     return null;
-  },
+  }
 
   render () {
     const {fill, fillOpacity} = this.props;
 
     return <path d={this.getPath()} stroke='none' fillOpacity={fillOpacity} fill={fill}/>;
   }
-});
+}
 
-const CustomAxis = React.createClass({
+class CustomAxis extends Component {
   getIcon () {
     const { x, y, payload } = this.props;
     let icon;
@@ -204,7 +204,7 @@ const CustomAxis = React.createClass({
     }
 
     return icon;
-  },
+  }
 
   render() {
     const { x, y, payload } = this.props;
@@ -216,7 +216,7 @@ const CustomAxis = React.createClass({
       </g>
     )
   }
-});
+}
 
 const initilaState = {
   data,
@@ -224,28 +224,29 @@ const initilaState = {
   data02,
 };
 
-export default React.createClass({
-  displayName: 'BarChartDemo',
+export default class Demo extends Component {
+
+  static displayName = 'BarChartDemo';
 
   getInitialState() {
     return initilaState;
-  },
+  }
 
   handleChangeData() {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
-  },
+  }
 
   handlePvBarClick(data, index, e) {
     console.log(`Pv Bar (${index}) Click: `, data);
-  },
+  }
 
   handleBarAnimationStart() {
     console.log('Animation start');
-  },
+  }
 
   handleBarAnimationEnd() {
     console.log('Animation end');
-  },
+  }
 
   render() {
     const { data, data01, data02 } = this.state;
@@ -398,4 +399,4 @@ export default React.createClass({
       </div>
     );
   }
-});
+}

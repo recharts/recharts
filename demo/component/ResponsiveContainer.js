@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { changeNumberOfData } from './utils';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid,
   Line, LineChart, Legend, ResponsiveContainer, PieChart, Pie, Bar,
@@ -161,16 +161,17 @@ const data09 = [
 
 const initilaState = { data, data01, data02 };
 
-export default React.createClass({
-  displayName: 'AreaChartDemo',
+export default class Demo extends Component {
+
+  static displayName = 'ResponsiveContainerDemo';
 
   getInitialState() {
     return initilaState;
-  },
+  }
 
   handleChangeData() {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
-  },
+  }
 
   render() {
     const { data, data01, data02 } = this.state;
@@ -378,5 +379,5 @@ export default React.createClass({
         </div>
       </div>
     );
-  },
-});
+  }
+}

@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Surface, CartesianAxis } from 'recharts';
 
-export default React.createClass({
+export default class Demo extends Component {
+
+  static displayName = 'CartesianAxisDemo';
+
   render () {
     let ticks = [
       { value: 10, coord: 50 },
@@ -48,6 +51,6 @@ export default React.createClass({
       </Surface>
     );
   }
-});
+}
 
 

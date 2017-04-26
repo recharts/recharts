@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Surface, Radar, RadarChart, PolarGrid, Legend, Tooltip,
          PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import DemoRadarItem from './DemoRadarItem';
@@ -15,7 +15,10 @@ const data = [
 
 const initilaState = { data };
 
-class RadarChartDemo extends React.Component {
+export default class Demo extends Component {
+
+  static displayName = 'RadarChartDemo';
+
   constructor() {
     super();
 
@@ -96,6 +99,3 @@ class RadarChartDemo extends React.Component {
     );
   }
 }
-
-
-export default RadarChartDemo;

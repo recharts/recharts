@@ -1,7 +1,7 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
 import { Rectangle, Layer } from 'recharts';
 
-function DemoSankeyNode({ x, y, width, height, index, payload, containerWidth}) {
+export default function DemoSankeyNode({ x, y, width, height, index, payload, containerWidth}) {
   const isOut = x + width + 6 > containerWidth;
   return (
     <Layer key={`CustomNode${index}`}>
@@ -27,5 +27,3 @@ function DemoSankeyNode({ x, y, width, height, index, payload, containerWidth}) 
     </Layer>
   );
 }
-
-export default DemoSankeyNode;

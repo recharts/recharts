@@ -1,7 +1,8 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
-class DemoTreemapItem extends Component {
-  static displayName = 'DemoTreemapItem';
+export default class Demo extends Component {
+  static displayName = 'TreemapItemDemo';
 
   static propTypes = {
     root: PropTypes.object,
@@ -68,5 +69,3 @@ class DemoTreemapItem extends Component {
     );
   }
 }
-
-export default DemoTreemapItem;
