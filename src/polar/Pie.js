@@ -143,8 +143,7 @@ class Pie extends Component {
     const pieData = Pie.getRealPieData(item);
     if (!pieData || !pieData.length) { return []; }
 
-    const { cornerRadius, startAngle, endAngle, paddingAngle, minAngle, dataKey,
-      children } = item.props;
+    const { cornerRadius, startAngle, endAngle, paddingAngle, minAngle, dataKey } = item.props;
     const coordinate = Pie.parseCoordinateOfPie(item, offset);
     const len = pieData.length;
     const deltaAngle = Pie.parseDeltaAngle({ startAngle, endAngle });

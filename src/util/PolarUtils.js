@@ -40,7 +40,7 @@ export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
 
   return ids.reduce((result, id) => {
     const axis = axisMap[id];
-    const { orientation, domain, mirror, reversed } = axis;
+    const { domain, reversed } = axis;
     let range;
 
     if (_.isNil(range, axis.range)) {
