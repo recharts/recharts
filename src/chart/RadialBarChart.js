@@ -1,13 +1,11 @@
 /**
  * @fileOverview Radar Bar Chart
  */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import generateCategoricalChart from './generateCategoricalChart';
-import PolarGrid from '../polar/PolarGrid';
 import PolarAngleAxis from '../polar/PolarAngleAxis';
 import PolarRadiusAxis from '../polar/PolarRadiusAxis';
-import { getMaxRadius, polarToCartesian, formatAxisMap } from '../util/PolarUtils';
+import { formatAxisMap } from '../util/PolarUtils';
 import RadialBar from '../polar/RadialBar';
 
 export default generateCategoricalChart({

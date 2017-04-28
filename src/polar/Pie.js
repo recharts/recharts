@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
+import { interpolateNumber } from 'd3-interpolate';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Sector from '../shape/Sector';
@@ -17,10 +18,7 @@ import Cell from '../component/Cell';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
-import AnimationDecorator from '../util/AnimationDecorator';
 import { isNumber, getValueByDataKey, uniqueId, getPercentValue } from '../util/DataUtils';
-
-// @AnimationDecorator
 
 @pureRender
 class Pie extends Component {
@@ -130,7 +128,7 @@ class Pie extends Component {
   };
 
   static parseCoordinateOfPie = (item, offset) => {
-    const { top, left, bottom, right, width, height } = offset;
+    const { top, left, width, height } = offset;
     const maxPieRadius = getMaxRadius(width, height);
     const cx = left + getPercentValue(item.props.cx, width, width / 2);
     const cy = top + getPercentValue(item.props.cy, height, height / 2);
@@ -148,7 +146,6 @@ class Pie extends Component {
     const { cornerRadius, startAngle, endAngle, paddingAngle, minAngle, dataKey,
       children } = item.props;
     const coordinate = Pie.parseCoordinateOfPie(item, offset);
-    const cells = findAllByType(children, Cell);
     const len = pieData.length;
     const deltaAngle = Pie.parseDeltaAngle({ startAngle, endAngle });
     const absDeltaAngle = Math.abs(deltaAngle);
@@ -196,6 +193,14 @@ class Pie extends Component {
 
   state = { isAnimationFinished: false };
 
+  componentWillReceiveProps(nextProps) {
+    const { animationId, sectors } = this.props;
+
+    if (nextProps.animationId !== animationId) {
+      this.cachePrevData(sectors);
+    }
+  }
+
   getTextAnchor(x, cx) {
     if (x > cx) {
       return 'start';
@@ -206,6 +211,9 @@ class Pie extends Component {
     return 'middle';
   }
 
+  cachePrevData = (sectors) => {
+    this.setState({ prevSectors: sectors });
+  };
 
   id = uniqueId('recharts-pie-');
 
@@ -357,7 +365,7 @@ class Pie extends Component {
     return <Sector {...props} />;
   }
 
-  renderSectors(sectors) {
+  renderSectorsStatically(sectors) {
     const { activeShape } = this.props;
 
     return sectors.map((entry, i) => (
@@ -369,6 +377,82 @@ class Pie extends Component {
         {this.renderSectorItem(this.isActiveIndex(i) ? activeShape : null, entry)}
       </Layer>
     ));
+  }
+
+  renderSectorsWithAnimation() {
+    const { sectors, isAnimationActive, animationBegin, animationDuration,
+      animationEasing, animationId } = this.props;
+    const { prevSectors } = this.state;
+
+    return (
+      <Animate
+        begin={animationBegin}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+        from={{ t: 0 }}
+        to={{ t: 1 }}
+        key={`pie-${animationId}`}
+        onAnimationEnd={this.handleAnimationEnd}
+      >
+        {
+          ({ t }) => {
+            const stepData = [];
+            const first = sectors && sectors[0];
+            let curAngle = first.startAngle;
+
+            sectors.forEach((entry, index) => {
+              const prev = prevSectors && prevSectors[index];
+
+              if (prev) {
+                const angleIp = interpolateNumber(
+                  prev.endAngle - prev.startAngle,
+                  entry.endAngle - entry.startAngle
+                );
+                const latest = {
+                  ...entry,
+                  startAngle: curAngle,
+                  endAngle: curAngle + angleIp(t),
+                };
+
+                stepData.push(latest);
+                curAngle = latest.endAngle;
+              } else {
+                const { endAngle, startAngle } = entry;
+                const interpolatorAngle = interpolateNumber(0, endAngle - startAngle);
+                const deltaAngle = interpolatorAngle(t);
+                const latest = {
+                  ...entry,
+                  startAngle: curAngle,
+                  endAngle: curAngle + deltaAngle,
+                };
+
+                stepData.push(latest);
+                curAngle = latest.endAngle;
+              }
+            });
+
+            return (
+              <Layer>
+                {this.renderSectorsStatically(stepData)}
+              </Layer>
+            );
+          }
+        }
+      </Animate>
+    );
+  }
+
+  renderSectors() {
+    const { sectors, isAnimationActive } = this.props;
+    const { prevSectors } = this.state;
+
+    if (isAnimationActive && sectors && sectors.length &&
+      (!prevSectors || !_.isEqual(prevSectors, sectors))) {
+      return this.renderSectorsWithAnimation();
+    }
+
+    return this.renderSectorsStatically(sectors);
   }
 
   render() {
@@ -386,9 +470,8 @@ class Pie extends Component {
 
     return (
       <Layer className={layerClass}>
-        {this.renderClipPath()}
         <g clipPath={`url(#${this.id})`}>
-          {this.renderSectors(sectors)}
+          {this.renderSectors()}
         </g>
         {label && this.renderLabels(sectors)}
         {Label.renderCallByParent(this.props, null, false)}

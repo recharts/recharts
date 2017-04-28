@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
+import { interpolateNumber } from 'd3-interpolate';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
@@ -141,6 +142,7 @@ class Scatter extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { animationId, points } = this.props;
+
     if (nextProps.animationId !== animationId) {
       this.cachePrevPoints(points);
     }
@@ -174,17 +176,12 @@ class Scatter extends Component {
     return symbol;
   }
 
-  renderSymbols() {
-    const { points, shape, activeShape, activeIndex, animationBegin,
-      animationDuration, isAnimationActive, animationEasing, animationId } = this.props;
+  renderSymbolsStatically(points) {
+    const { shape, activeShape, activeIndex } = this.props;
     const baseProps = getPresentationAttributes(this.props);
-    const { prevPoints } = this.state;
 
     return points.map((entry, i) => {
       const props = { key: `symbol-${i}`, ...baseProps, ...entry };
-      const isUpdate = animationId >= 1 && prevPoints[i];
-      const from = isUpdate ? { cx: prevPoints[i].cx, cy: prevPoints.cy } : { size: 0 };
-      const to = isUpdate ? { cx: entry.cx, cy: entry.cy } : { size: props.size };
 
       return (
         <Layer
@@ -192,28 +189,73 @@ class Scatter extends Component {
           {...filterEventsOfChild(this.props, entry, i)}
           key={`symbol-${i}`}
         >
-          <Animate
-            from={from}
-            to={to}
-            duration={animationDuration}
-            begin={animationBegin}
-            isActive={isAnimationActive}
-            key={animationId}
-            easing={animationEasing}
-            onAnimationEnd={this.handleAnimationEnd}
-            onAnimationStart={this.handleAnimationStart}
-          >
-            {
-              ({ size }) => {
-                const finalProps = { ...props, size };
-
-                return this.renderSymbolItem(activeIndex === i ? activeShape : shape, finalProps);
-              }
-            }
-          </Animate>
+          {this.renderSymbolItem(activeIndex === i ? activeShape : shape, props)}
         </Layer>
       );
     });
+  }
+
+  renderSymbolsWithAnimation() {
+    const { points, isAnimationActive, animationBegin, animationDuration,
+      animationEasing, animationId } = this.props;
+    const { prevPoints } = this.state;
+
+    return (
+      <Animate
+        begin={animationBegin}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+        from={{ t: 0 }}
+        to={{ t: 1 }}
+        key={`pie-${animationId}`}
+        onAnimationEnd={this.handleAnimationEnd}
+        onAnimationStart={this.handleAnimationStart}
+      >
+        {
+          ({ t }) => {
+            const stepData = points.map((entry, index) => {
+              const prev = prevPoints && prevPoints[index];
+
+              if (prev) {
+                const interpolatorCx = interpolateNumber(prev.cx, entry.cx);
+                const interpolatorCy = interpolateNumber(prev.cy, entry.cy);
+                const interpolatorSize = interpolateNumber(prev.size, entry.size);
+
+                return {
+                  ...entry,
+                  cx: interpolatorCx(t),
+                  cy: interpolatorCy(t),
+                  size: interpolatorSize(t),
+                };
+              }
+
+              const interpolator = interpolateNumber(0, entry.size);
+
+              return { ...entry, size: interpolator(t) };
+            });
+
+            return (
+              <Layer>
+                {this.renderSymbolsStatically(stepData)}
+              </Layer>
+            );
+          }
+        }
+      </Animate>
+    );
+  }
+
+  renderSymbols() {
+    const { points, isAnimationActive } = this.props;
+    const { prevPoints } = this.state;
+
+    if (isAnimationActive && points && points.length &&
+      (!prevPoints || !_.isEqual(prevPoints, points))) {
+      return this.renderSymbolsWithAnimation();
+    }
+
+    return this.renderSymbolsStatically(points);
   }
 
   renderErrorBar() {

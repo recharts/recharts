@@ -12,22 +12,21 @@ import Cross from '../shape/Cross';
 import Dot from '../shape/Dot';
 import Rectangle from '../shape/Rectangle';
 
-import { warn } from '../util/LogUtils';
 import { findAllByType, findChildByType, getDisplayName, parseChildIndex,
-  getPresentationAttributes, validateWidthHeight, isChildrenEqual, isSingleChildEqual,
+  getPresentationAttributes, validateWidthHeight, isChildrenEqual,
   renderByOrder, getReactEventByType, filterEventAttributes } from '../util/ReactUtils';
 
 import CartesianAxis from '../cartesian/CartesianAxis';
 import Brush from '../cartesian/Brush';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
 import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate,
-  combineEventHandlers, parseScale, getValueByDataKey, uniqueId,
-  getStackGroupsByAxisId, isNumber, getBandSizeOfAxis, checkDomainOfScale } from '../util/DataUtils';
+  combineEventHandlers, getValueByDataKey, uniqueId,
+  getStackGroupsByAxisId, isNumber, getBandSizeOfAxis } from '../util/DataUtils';
 import { calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
   getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
-  getTicksOfAxis, isCategorialAxis, getTicksOfScale,
-  appendOffsetOfLegend, getBarSizeList, getBarPosition, getStackedDataOfItem,
+  getTicksOfAxis, isCategorialAxis, appendOffsetOfLegend, getBarSizeList,
+  getBarPosition, getStackedDataOfItem,
 } from '../util/CartesianUtils';
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/PureRender';
@@ -179,15 +178,22 @@ const generateCategoricalChart = ({
             { props: nextProps, ...defaultState, updateId: updateId + 1 }) }
         );
       } else if (!isChildrenEqual(nextProps.children, children)) {
+        const hasGlobalData = !_.isNil(nextProps.data);
+        const newUpdateId = hasGlobalData ? updateId : updateId + 1;
         const { dataStartIndex, dataEndIndex } = this.state;
         // Don't update brush
         const defaultState = {
           ...this.constructor.createDefaultState(nextProps), dataEndIndex, dataStartIndex,
         };
-        this.setState({ ...defaultState,
-          ...this.updateStateOfAxisMapsOffsetAndStackGroups(
-            { props: nextProps, ...defaultState, updateId }) }
-        );
+        this.setState({
+          ...defaultState,
+          updateId: newUpdateId,
+          ...this.updateStateOfAxisMapsOffsetAndStackGroups({
+            props: nextProps,
+            ...defaultState,
+            updateId: newUpdateId,
+          }),
+        });
       }
       // add syncId
       if (_.isNil(this.props.syncId) && !_.isNil(nextProps.syncId)) {
@@ -1172,7 +1178,7 @@ const generateCategoricalChart = ({
     };
 
     renderPolarGrid = (element) => {
-      const { radiusAxisMap, angleAxisMap, offset } = this.state;
+      const { radiusAxisMap, angleAxisMap } = this.state;
       const radiusAxis = getAnyElementOfObject(radiusAxisMap);
       const angleAxis = getAnyElementOfObject(angleAxisMap);
       const { cx, cy, innerRadius, outerRadius } = angleAxis;
