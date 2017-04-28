@@ -5,20 +5,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
+import { interpolateNumber } from 'd3-interpolate';
 import _ from 'lodash';
 import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
-import { getStringSize } from '../util/DOMUtils';
 import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES, findAllByType,
   getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
-import { polarToCartesian } from '../util/PolarUtils';
 import LabelList from '../component/LabelList';
 import Cell from '../component/Cell';
 import { getCateCoordinateOfBar, findPositionOfBar, getBaseValueOfBar,
   truncateByDomain, getValueByDataKey, mathSign } from '../util/DataUtils';
-
-const RADIAN = Math.PI / 180;
 
 @pureRender
 class RadialBar extends Component {
@@ -167,6 +164,14 @@ class RadialBar extends Component {
     isAnimationFinished: false,
   };
 
+  componentWillReceiveProps(nextProps) {
+    const { animationId, data } = this.props;
+
+    if (nextProps.animationId !== animationId) {
+      this.cachePrevData(data);
+    }
+  }
+
   getDeltaAngle() {
     const { startAngle, endAngle } = this.props;
     const sign = mathSign(endAngle - startAngle);
@@ -174,6 +179,10 @@ class RadialBar extends Component {
 
     return sign * deltaAngle;
   }
+
+  cachePrevData = (data) => {
+    this.setState({ prevData: data });
+  };
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
@@ -197,50 +206,87 @@ class RadialBar extends Component {
     return sectorShape;
   }
 
-  renderSectors(sectors) {
-    const { cx, cy, shape, activeShape, activeIndex, cornerRadius, ...others } = this.props;
-    const {
-      animationEasing,
-      animationDuration,
-      animationBegin,
-      isAnimationActive,
-    } = this.props;
+  renderSectorsStatically(sectors) {
+    const { shape, activeShape, activeIndex, cornerRadius, ...others } = this.props;
     const baseProps = getPresentationAttributes(others);
 
     return sectors.map((entry, i) => {
-      const { startAngle, endAngle } = entry;
+      const props = {
+        ...baseProps,
+        cornerRadius,
+        ...entry,
+        ...filterEventsOfChild(this.props, entry, i),
+        key: `sector-${i}`,
+        className: 'recharts-radial-bar-sector',
+      };
 
-      return (
-        <Animate
-          from={{ angle: startAngle }}
-          to={{ angle: endAngle }}
-          begin={animationBegin}
-          isActive={isAnimationActive}
-          duration={animationDuration}
-          easing={animationEasing}
-          shouldReAnimate
-          key={`aniamte-${i}`}
-          onAnimationStart={this.handleAnimationStart}
-          onAnimationEnd={this.handleAnimationEnd}
-        >
-          {
-          ({ angle }) => {
-            const props = {
-              ...baseProps,
-              cornerRadius,
-              ...entry,
-              ...filterEventsOfChild(this.props, entry, i),
-              endAngle: angle,
-              key: `sector-${i}`,
-              className: 'recharts-radial-bar-sector',
-            };
+      return this.renderSectorShape(i === activeIndex ? activeShape : shape, props);
+    });
+  }
 
-            return this.renderSectorShape(i === activeIndex ? activeShape : shape, props);
+  renderSectorsWithAnimation() {
+    const { data, isAnimationActive, animationBegin, animationDuration,
+      animationEasing, animationId } = this.props;
+    const { prevData } = this.state;
+
+    return (
+      <Animate
+        begin={animationBegin}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+        from={{ t: 0 }}
+        to={{ t: 1 }}
+        key={`radialBar-${animationId}`}
+        onAnimationStart={this.handleAnimationStart}
+        onAnimationEnd={this.handleAnimationEnd}
+      >
+        {
+          ({ t }) => {
+            const stepData = data.map((entry, index) => {
+              const prev = prevData && prevData[index];
+
+              if (prev) {
+                const interpolatorStartAngle = interpolateNumber(
+                  prev.startAngle, entry.startAngle
+                );
+                const interpolatorEndAngle = interpolateNumber(
+                  prev.endAngle, entry.endAngle
+                );
+
+                return {
+                  ...entry,
+                  startAngle: interpolatorStartAngle(t),
+                  endAngle: interpolatorEndAngle(t),
+                };
+              }
+              const { endAngle, startAngle } = entry;
+              const interpolator = interpolateNumber(startAngle, endAngle);
+
+              return { ...entry, endAngle: interpolator(t) };
+            });
+
+            return (
+              <Layer>
+                {this.renderSectorsStatically(stepData)}
+              </Layer>
+            );
           }
         }
-        </Animate>
-      );
-    });
+      </Animate>
+    );
+  }
+
+  renderSectors() {
+    const { data, isAnimationActive } = this.props;
+    const { prevData } = this.state;
+
+    if (isAnimationActive && data && data.length &&
+      (!prevData || !_.isEqual(prevData, data))) {
+      return this.renderSectorsWithAnimation();
+    }
+
+    return this.renderSectorsStatically(data);
   }
 
   renderBackground(sectors) {

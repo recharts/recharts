@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
+import { interpolateNumber } from 'd3-interpolate';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, isSsr } from '../util/ReactUtils';
@@ -75,7 +76,7 @@ class Radar extends Component {
     animationEasing: 'ease',
   };
 
-  static getComposedData = ({ item, props, radiusAxis, angleAxis, displayedData, dataKey }) => {
+  static getComposedData = ({ radiusAxis, angleAxis, displayedData, dataKey }) => {
     const { cx, cy } = angleAxis;
     const points = displayedData.map((entry, i) => {
       const name = getValueByDataKey(entry, angleAxis.dataKey, i);
@@ -94,6 +95,18 @@ class Radar extends Component {
   };
 
   state = { isAnimationFinished: false };
+
+  componentWillReceiveProps(nextProps) {
+    const { animationId, points } = this.props;
+
+    if (nextProps.animationId !== animationId) {
+      this.cachePrevData(points);
+    }
+  }
+
+  cachePrevData = (points) => {
+    this.setState({ prevPoints: points });
+  };
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
@@ -119,48 +132,6 @@ class Radar extends Component {
     }
   };
 
-  renderPolygon() {
-    /* eslint-disable no-unused-vars */
-    const { shape, points, animationDuration, animationEasing, animationBegin,
-      isAnimationActive, animationId, dataKey, className, ...others } = this.props;
-    /* eslint-enable no-unused-vars */
-
-    if (React.isValidElement(shape)) {
-      return React.cloneElement(shape, { ...others, points });
-    } else if (_.isFunction(shape)) {
-      return shape(this.props);
-    }
-
-    const point = points[0];
-    const transformPoints = points.map(p => (
-      { x: p.x - point.cx, y: p.y - point.cy }
-    ));
-
-    return (
-      <Layer className="recharts-radar-polygon" transform={`translate(${point.cx}, ${point.cy})`}>
-        <Animate
-          from="scale(0)"
-          to="scale(1)"
-          attributeName="transform"
-          isActive={isAnimationActive}
-          begin={animationBegin}
-          easing={animationEasing}
-          duration={animationDuration}
-          key={animationId}
-          onAnimationEnd={this.handleAnimationEnd}
-          onAnimationStart={this.handleAnimationStart}
-        >
-          <Polygon
-            onMouseEnter={this.handleMouseEnter}
-            onMouseLeave={this.handleMouseLeave}
-            {...getPresentationAttributes(this.props)}
-            points={transformPoints}
-          />
-        </Animate>
-      </Layer>
-    );
-  }
-
   renderDotItem(option, props) {
     let dotItem;
 
@@ -175,8 +146,8 @@ class Radar extends Component {
     return dotItem;
   }
 
-  renderDots() {
-    const { dot, points } = this.props;
+  renderDots(points) {
+    const { dot } = this.props;
     const baseProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
 
@@ -198,8 +169,97 @@ class Radar extends Component {
     return <Layer className="recharts-radar-dots">{dots}</Layer>;
   }
 
+  renderPolygonStatically(points) {
+    const { shape, dot } = this.props;
+
+    let radar;
+    if (React.isValidElement(shape)) {
+      radar = React.cloneElement(shape, { ...this.props, points });
+    } else if (_.isFunction(shape)) {
+      radar = shape({ ...this.props, points });
+    } else {
+      radar = (
+        <Polygon
+          onMouseEnter={this.handleMouseEnter}
+          onMouseLeave={this.handleMouseLeave}
+          {...getPresentationAttributes(this.props)}
+          points={points}
+        />
+      );
+    }
+
+    return (
+      <Layer className="recharts-radar-polygon">
+        {radar}
+        {dot ? this.renderDots(points) : null}
+      </Layer>
+    );
+  }
+
+  renderPolygonWithAnimation() {
+    const { points, isAnimationActive, animationBegin, animationDuration,
+      animationEasing, animationId } = this.props;
+    const { prevPoints } = this.state;
+
+    return (
+      <Animate
+        begin={animationBegin}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+        from={{ t: 0 }}
+        to={{ t: 1 }}
+        key={`radar-${animationId}`}
+        onAnimationEnd={this.handleAnimationEnd}
+        onAnimationStart={this.handleAnimationStart}
+      >
+        {
+          ({ t }) => {
+            const stepData = points.map((entry, index) => {
+              const prev = prevPoints && prevPoints[index];
+
+              if (prev) {
+                const interpolatorX = interpolateNumber(prev.x, entry.x);
+                const interpolatorY = interpolateNumber(prev.y, entry.y);
+
+                return {
+                  ...entry,
+                  x: interpolatorX(t),
+                  y: interpolatorY(t),
+                };
+              }
+
+              const interpolatorX = interpolateNumber(entry.cx, entry.x);
+              const interpolatorY = interpolateNumber(entry.cy, entry.y);
+
+              return {
+                ...entry,
+                x: interpolatorX(t),
+                y: interpolatorY(t),
+              };
+            });
+
+            return this.renderPolygonStatically(stepData);
+          }
+        }
+      </Animate>
+    );
+  }
+
+  renderPolygon() {
+    const { points, isAnimationActive } = this.props;
+    const { prevPoints } = this.state;
+
+    if (isAnimationActive && points && points.length &&
+      (!prevPoints || !_.isEqual(prevPoints, points))) {
+      return this.renderPolygonWithAnimation();
+    }
+
+    return this.renderPolygonStatically(points);
+  }
+
   render() {
-    const { hide, className, points, dot, isAnimationActive } = this.props;
+    const { hide, className, points, isAnimationActive } = this.props;
 
     if (hide || !points || !points.length) { return null; }
 
@@ -209,7 +269,6 @@ class Radar extends Component {
     return (
       <Layer className={layerClass}>
         {this.renderPolygon()}
-        {dot && this.renderDots()}
         {(!isAnimationActive || isAnimationFinished) &&
           LabelList.renderCallByParent(this.props, points)}
       </Layer>

@@ -4,7 +4,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Animate, { translateStyle } from 'react-smooth';
+import Animate from 'react-smooth';
+import { interpolateNumber } from 'd3-interpolate';
 import _ from 'lodash';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
@@ -204,75 +205,96 @@ class Bar extends Component {
     return rectangle;
   }
 
-  renderRectangles() {
-    const { data, shape, layout, isAnimationActive, animationBegin,
-      animationDuration, animationEasing, animationId } = this.props;
+  renderRectanglesStatically(data) {
+    const { shape } = this.props;
     const baseProps = getPresentationAttributes(this.props);
-    const { prevData } = this.state;
-    const getStyle = isBegin => ({
-      transform: `scale${layout === 'vertical' ? 'X' : 'Y'}(${isBegin ? 0 : 1})`,
-    });
 
-    return data.map((entry, i) => {
-      const { x, y, width, height } = entry;
+    return data && data.map((entry, i) => {
       const props = { ...baseProps, ...entry, index: i };
-      const isUpdate = animationId >= 1 && prevData[i];
-      let from, to;
-
-      if (layout === 'horizontal') {
-        from = isUpdate ? {
-          x: prevData[i].x, y: prevData[i].y, width: prevData[i].width, height: prevData[i].height,
-        } : { y: entry.y + entry.height, height: 0 };
-        to = isUpdate ? {
-          x: entry.x, y: entry.y, width: entry.width, height: entry.height,
-        } : { y: entry.y, height: entry.height };
-      } else {
-        from = isUpdate ? {
-          x: prevData[i].x, y: prevData[i].y, width: prevData[i].width, height: prevData[i].height,
-        } : { width: 0 };
-        to = isUpdate ? {
-          x: entry.x, y: entry.y, width: entry.x, height: entry.height,
-        } : { width: entry.width };
-      }
-
-      if (_.isNil(entry.value) || !isAnimationActive) {
-        return (
-          <Layer
-            className="recharts-bar-rectangle"
-            {...filterEventsOfChild(this.props, entry, i)}
-            key={`rectangle-${i}`}
-          >
-            {this.renderRectangle(shape, props)}
-          </Layer>
-        );
-      }
 
       return (
-        <Animate
-          begin={animationBegin}
-          duration={animationDuration}
-          isActive={isAnimationActive}
-          easing={animationEasing}
-          from={from}
-          to={to}
-          key={`rectangle-${i}-${animationId}`}
-          onAnimationEnd={this.handleAnimationEnd}
-          onAnimationStart={this.handleAnimationStart}
+        <Layer
+          className="recharts-bar-rectangle"
+          {...filterEventsOfChild(this.props, entry, i)}
+          key={`rectangle-${i}`}
         >
-          {
-            stepProps => (
-              <Layer
-                className="recharts-bar-rectangle"
-                {...filterEventsOfChild(this.props, entry, i)}
-                key={`rectangle-${i}`}
-              >
-                {this.renderRectangle(shape, { ...props, ...stepProps })}
-              </Layer>
-            )
-          }
-        </Animate>
+          {this.renderRectangle(shape, props)}
+        </Layer>
       );
     });
+  }
+
+  renderRectanglesWithAnimation() {
+    const { data, layout, isAnimationActive, animationBegin,
+      animationDuration, animationEasing, animationId } = this.props;
+    const { prevData } = this.state;
+
+    return (
+      <Animate
+        begin={animationBegin}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+        from={{ t: 0 }}
+        to={{ t: 1 }}
+        key={`bar-${animationId}`}
+        onAnimationEnd={this.handleAnimationEnd}
+        onAnimationStart={this.handleAnimationStart}
+      >
+        {
+          ({ t }) => {
+            const stepData = data.map((entry, index) => {
+              const prev = prevData && prevData[index];
+
+              if (prev) {
+                const interpolatorX = interpolateNumber(prev.x, entry.x);
+                const interpolatorY = interpolateNumber(prev.y, entry.y);
+                const interpolatorWidth = interpolateNumber(prev.width, entry.width);
+                const interpolatorHeight = interpolateNumber(prev.height, entry.height);
+
+                return {
+                  ...entry,
+                  x: interpolatorX(t),
+                  y: interpolatorY(t),
+                  width: interpolatorWidth(t),
+                  height: interpolatorHeight(t),
+                };
+              }
+
+              if (layout === 'horizontal') {
+                const interpolator = interpolateNumber(0, entry.height);
+                const h = interpolator(t);
+
+                return { ...entry, y: entry.y + entry.height - h, height: h };
+              }
+
+              const interpolator = interpolateNumber(0, entry.width);
+              const w = interpolator(t);
+
+              return { ...entry, width: w };
+            });
+
+            return (
+              <Layer>
+                {this.renderRectanglesStatically(stepData)}
+              </Layer>
+            );
+          }
+        }
+      </Animate>
+    );
+  }
+
+  renderRectangles() {
+    const { data, isAnimationActive } = this.props;
+    const { prevData } = this.state;
+
+    if (isAnimationActive && data && data.length &&
+      (!prevData || !_.isEqual(prevData, data))) {
+      return this.renderRectanglesWithAnimation();
+    }
+
+    return this.renderRectanglesStatically(data);
   }
 
   renderErrorBar() {
