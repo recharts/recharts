@@ -173,7 +173,9 @@ export default class Demo extends Component {
                   <Cell key={`slice-${index}`} fill={colors[index % 10]}/>
                 ))
               }
-              <Label width={50}>测试换行 测试杭欢</Label>
+              <Label width={50} position="center">
+                测试换行 测试杭欢
+              </Label>
             </Pie>
           </PieChart>
         </div>
@@ -192,10 +194,9 @@ export default class Demo extends Component {
         <div className="pie-chart-wrapper" style={{ width: '50%', height: '100%', backgroundColor: '#f5f5f5' }}>
           <ResponsiveContainer>
             <PieChart>
-              <Tooltip />
-              <Pie data={data01} dataKey="value" innerRadius="25%" outerRadius="40%"/>
+              <Pie data={data01} nameKey="name" dataKey="value" innerRadius="25%" outerRadius="40%"/>
               <Pie data={data01} dataKey="v" innerRadius="45%" outerRadius="80%"/>
-              <Tooltip/>
+              <Tooltip />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -212,6 +213,7 @@ export default class Demo extends Component {
                 activeIndex={this.state.activeIndex}
                 activeShape={renderActiveShape}
                 onClick={this.onPieEnter}
+                isAnimationActive={false}
               >
                 {
                   data01.map((entry, index) => (

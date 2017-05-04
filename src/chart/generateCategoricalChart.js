@@ -9,6 +9,7 @@ import Tooltip from '../component/Tooltip';
 import Legend from '../component/Legend';
 import Curve from '../shape/Curve';
 import Cross from '../shape/Cross';
+import Sector from '../shape/Sector';
 import Dot from '../shape/Dot';
 import Rectangle from '../shape/Rectangle';
 
@@ -564,7 +565,6 @@ const generateCategoricalChart = ({
                 onItemMouseLeave: this.handleItemMouseLeave,
                 onItemMouseEnter: this.handleItemMouseEnter,
               }),
-              ...offset,
               key: item.key || `item-${index}`,
               [numericAxisName]: axisObj[numericAxisName],
               [cateAxisName]: axisObj[cateAxisName],
@@ -611,13 +611,24 @@ const generateCategoricalChart = ({
         x1 = offset.left;
         x2 = offset.left + offset.width;
       } else if (!_.isNil(activeCoordinate.cx) || !_.isNil(activeCoordinate.cy)) {
-        const { cx, cy, innerRadius, outerRadius, angle } = activeCoordinate;
-        const innerPoint = polarToCartesian(cx, cy, innerRadius, angle);
-        const outerPoint = polarToCartesian(cx, cy, outerRadius, angle);
-        x1 = innerPoint.x;
-        y1 = innerPoint.y;
-        x2 = outerPoint.x;
-        y2 = outerPoint.y;
+        if (layout === 'centric') {
+          const { cx, cy, innerRadius, outerRadius, angle } = activeCoordinate;
+          const innerPoint = polarToCartesian(cx, cy, innerRadius, angle);
+          const outerPoint = polarToCartesian(cx, cy, outerRadius, angle);
+          x1 = innerPoint.x;
+          y1 = innerPoint.y;
+          x2 = outerPoint.x;
+          y2 = outerPoint.y;
+        } else {
+          const { cx, cy, radius, startAngle, endAngle } = activeCoordinate;
+          const startPoint = polarToCartesian(cx, cy, radius, startAngle);
+          const endPoint = polarToCartesian(cx, cy, radius, endAngle);
+
+          return {
+            points: [startPoint, endPoint],
+            cx, cy, radius, startAngle, endAngle,
+          };
+        }
       }
 
       return [{ x: x1, y: y1 }, { x: x2, y: y2 }];
@@ -925,7 +936,7 @@ const generateCategoricalChart = ({
         isTooltipActive: true,
         activeItem: el,
         activePayload: el.tooltipPayload,
-        activeCoordinate: { x: el.cx, y: el.cy },
+        activeCoordinate: el.tooltipPosition || { x: el.cx, y: el.cy },
       });
     };
     /**
@@ -1071,6 +1082,7 @@ const generateCategoricalChart = ({
       if (!element || !element.props.cursor || !isTooltipActive || !activeCoordinate) {
         return null;
       }
+      const { layout } = this.props;
       let restProps;
       let cursorComp = Curve;
 
@@ -1080,6 +1092,18 @@ const generateCategoricalChart = ({
       } else if (chartName === 'BarChart') {
         restProps = this.getCursorRectangle();
         cursorComp = Rectangle;
+      } else if (layout === 'radial') {
+        const { cx, cy, radius, startAngle, endAngle, points } = this.getCursorPoints();
+        const delta = endAngle - startAngle;
+        restProps = {
+          // path: `
+          //   M${points[0].x},${points[0].y}
+          //   A${radius},${radius},0,${+(Math.abs(delta) > 180)},${+(delta < 0)},
+          //   ${points[1].x},${points[1].y}
+          // `,
+          cx, cy, startAngle, endAngle, innerRadius: radius, outerRadius: radius,
+        };
+        cursorComp = Sector;
       } else {
         restProps = { points: this.getCursorPoints() };
         cursorComp = Curve;

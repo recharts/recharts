@@ -52,6 +52,7 @@ class Curve extends Component {
     ]),
     points: PropTypes.arrayOf(PropTypes.object),
     connectNulls: PropTypes.bool,
+    path: PropTypes.string,
     pathRef: PropTypes.func,
   };
 
@@ -107,16 +108,19 @@ class Curve extends Component {
   }
 
   render() {
-    const { className, points, pathRef } = this.props;
+    const { className, points, path, pathRef } = this.props;
 
-    if (!points || !points.length) { return null; }
+    if ((!points || !points.length) && !path) { return null; }
+
+    const realPath = (points && points.length) ?
+      this.getPath() : path;
 
     return (
       <path
         {...getPresentationAttributes(this.props)}
         {...filterEventAttributes(this.props)}
         className={classNames('recharts-curve', className)}
-        d={this.getPath()}
+        d={realPath}
         ref={pathRef}
       />
     );

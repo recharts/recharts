@@ -13,7 +13,7 @@ import ErrorBar from './ErrorBar';
 import Cell from '../component/Cell';
 import LabelList from '../component/LabelList';
 import pureRender from '../util/PureRender';
-import { getValueByDataKey, uniqueId, getCateCoordinateOfBar,
+import { getValueByDataKey, uniqueId, getCateCoordinateOfBar, mathSign,
   truncateByDomain, getBaseValueOfBar, findPositionOfBar } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, findChildByType,
   findAllByType, getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
@@ -83,14 +83,14 @@ class Bar extends Component {
    * Compose the data of each group
    * @param {Object} props Props for the component
    * @param {Object} item        An instance of Bar
-   * @param {Array} barPosition The offset and size of each bar
+   * @param {Array} barPosition  The offset and size of each bar
    * @param {Object} xAxis       The configuration of x-axis
    * @param {Object} yAxis       The configuration of y-axis
    * @param {Array} stackedData  The stacked data of a bar item
    * @return{Array} Composed data
    */
   static getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
-    xAxisTicks, yAxisTicks, stackedData, dataStartIndex, displayedData }) => {
+    xAxisTicks, yAxisTicks, stackedData, dataStartIndex, displayedData, offset }) => {
     const pos = findPositionOfBar(barPosition, item);
     if (!pos) { return []; }
 
@@ -128,7 +128,7 @@ class Bar extends Component {
         height = yAxis.scale(value[0]) - yAxis.scale(value[1]);
 
         if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
-          const delta = Math.sign(height || minPointSize) *
+          const delta = mathSign(height || minPointSize) *
             (Math.abs(minPointSize) - Math.abs(height));
 
           y -= delta;
@@ -148,7 +148,7 @@ class Bar extends Component {
         height = pos.size;
 
         if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
-          const delta = Math.sign(width || minPointSize) *
+          const delta = mathSign(width || minPointSize) *
             (Math.abs(minPointSize) - Math.abs(width));
           width += delta;
         }
@@ -162,7 +162,7 @@ class Bar extends Component {
       };
     });
 
-    return { data: rects, layout };
+    return { data: rects, layout, ...offset };
   };
 
   state = { isAnimationFinished: false };

@@ -18,7 +18,8 @@ import Cell from '../component/Cell';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
-import { isNumber, getValueByDataKey, uniqueId, getPercentValue } from '../util/DataUtils';
+import { isNumber, getValueByDataKey, uniqueId, getPercentValue,
+  mathSign } from '../util/DataUtils';
 
 @pureRender
 class Pie extends Component {
@@ -39,6 +40,7 @@ class Pie extends Component {
     outerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     cornerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
+    nameKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
     data: PropTypes.arrayOf(PropTypes.object),
     minAngle: PropTypes.number,
     legendType: PropTypes.oneOf(LEGEND_TYPES),
@@ -100,7 +102,7 @@ class Pie extends Component {
   };
 
   static parseDeltaAngle = ({ startAngle, endAngle }) => {
-    const sign = Math.sign(endAngle - startAngle);
+    const sign = mathSign(endAngle - startAngle);
     const deltaAngle = Math.min(Math.abs(endAngle - startAngle), 360);
 
     return sign * deltaAngle;
@@ -139,16 +141,18 @@ class Pie extends Component {
     return { cx, cy, innerRadius, outerRadius, maxRadius };
   }
 
-  static getComposedData = ({ item, offset }) => {
+  static getComposedData = ({ item, offset, onItemMouseLeave, onItemMouseEnter }) => {
     const pieData = Pie.getRealPieData(item);
     if (!pieData || !pieData.length) { return []; }
 
-    const { cornerRadius, startAngle, endAngle, paddingAngle, minAngle, dataKey } = item.props;
+    const { cornerRadius, startAngle, endAngle, paddingAngle, dataKey, nameKey } = item.props;
+    const minAngle = Math.abs(item.props.minAngle);
     const coordinate = Pie.parseCoordinateOfPie(item, offset);
     const len = pieData.length;
     const deltaAngle = Pie.parseDeltaAngle({ startAngle, endAngle });
     const absDeltaAngle = Math.abs(deltaAngle);
     const totalPadingAngle = (absDeltaAngle >= 360 ? len : (len - 1)) * paddingAngle;
+    const realTotalAngle = absDeltaAngle - len * minAngle - totalPadingAngle;
     const sum = pieData.reduce((result, entry) => {
       const val = getValueByDataKey(entry, dataKey, 0);
       return result + (isNumber(val) ? val : 0);
@@ -159,35 +163,44 @@ class Pie extends Component {
     if (sum > 0) {
       sectors = pieData.map((entry, i) => {
         const val = getValueByDataKey(entry, dataKey, 0);
+        const name = getValueByDataKey(entry, nameKey, i);
         const percent = (isNumber(val) ? val : 0) / sum;
         let tempStartAngle;
 
         if (i) {
-          tempStartAngle = (deltaAngle < 0 ? prev.endAngle : prev.startAngle)
-            + Math.sign(deltaAngle) * paddingAngle;
+          tempStartAngle = prev.endAngle + mathSign(deltaAngle) * paddingAngle;
         } else {
           tempStartAngle = startAngle;
         }
 
-        const tempEndAngle = tempStartAngle + Math.sign(deltaAngle) * (
-          minAngle + percent * (absDeltaAngle - len * minAngle - totalPadingAngle)
+        const tempEndAngle = tempStartAngle + mathSign(deltaAngle) *
+          (minAngle + percent * realTotalAngle);
+        const midAngle = (tempStartAngle + tempEndAngle) / 2;
+        const middleRadius = (coordinate.innerRadius + coordinate.outerRadius) / 2;
+        const tooltipPayload = [{ name, value: val, payload: entry }];
+        const tooltipPosition = polarToCartesian(
+          coordinate.cx, coordinate.cy, middleRadius, midAngle
         );
 
         prev = {
-          percent, cornerRadius,
+          percent, cornerRadius, name, tooltipPayload, midAngle, middleRadius, tooltipPosition,
           ...entry,
           ...coordinate,
           value: getValueByDataKey(entry, dataKey),
-          startAngle: deltaAngle < 0 ? tempStartAngle : tempEndAngle,
-          endAngle: deltaAngle < 0 ? tempEndAngle : tempStartAngle,
-          midAngle: (tempStartAngle + tempEndAngle) / 2,
+          startAngle: tempStartAngle,
+          endAngle: tempEndAngle,
         };
 
         return prev;
       });
     }
 
-    return { ...coordinate, sectors };
+    return {
+      ...coordinate,
+      sectors,
+      onMouseLeave: onItemMouseLeave,
+      onMouseEnter: onItemMouseEnter,
+    };
   }
 
   state = { isAnimationFinished: false };
@@ -420,11 +433,7 @@ class Pie extends Component {
                 const { endAngle, startAngle } = entry;
                 const interpolatorAngle = interpolateNumber(0, endAngle - startAngle);
                 const deltaAngle = interpolatorAngle(t);
-                const latest = {
-                  ...entry,
-                  startAngle: curAngle,
-                  endAngle: curAngle + deltaAngle,
-                };
+                const latest = { ...entry, startAngle: curAngle, endAngle: curAngle + deltaAngle };
 
                 stepData.push(latest);
                 curAngle = latest.endAngle;
@@ -450,7 +459,6 @@ class Pie extends Component {
       (!prevSectors || !_.isEqual(prevSectors, sectors))) {
       return this.renderSectorsWithAnimation();
     }
-
     return this.renderSectorsStatically(sectors);
   }
 

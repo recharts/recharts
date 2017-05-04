@@ -192,7 +192,6 @@ export default class AreaChartDemo extends Component {
               dataKey="pv"
               stroke="#387908"
               fill="#387908"
-              animationBegin={1300}
               dot
               activeDot={renderCustomizedActiveDot}
             >
@@ -227,7 +226,6 @@ export default class AreaChartDemo extends Component {
               dataKey="pv"
               stroke="#387908"
               fill="#387908"
-              animationBegin={1300}
               dot
               activeDot={renderCustomizedActiveDot}
             />

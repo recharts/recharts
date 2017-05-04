@@ -95,7 +95,7 @@ class Scatter extends Component {
    * @return {Array}  Composed data
    */
   static getComposedData = ({ xAxis, yAxis, zAxis, item, displayedData, onItemMouseLeave,
-    onItemMouseEnter }) => {
+    onItemMouseEnter, offset }) => {
     const cells = findAllByType(item.props.children, Cell);
     const xAxisDataKey = _.isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
     const yAxisDataKey = _.isNil(yAxis.dataKey) ? item.props.dataKey : yAxis.dataKey;
@@ -112,6 +112,7 @@ class Scatter extends Component {
         { name: xAxis.name || xAxis.dataKey, unit: xAxis.unit || '', value: x, payload: entry },
         { name: yAxis.name || yAxis.dataKey, unit: yAxis.unit || '', value: y, payload: entry },
       ];
+      const tooltipPosition = { x, y };
 
       if (z !== '-') {
         tooltipPayload.push({
@@ -126,6 +127,7 @@ class Scatter extends Component {
         size: z !== '-' ? zAxis.scale(z) : defaultZ,
         node: { x, y, z },
         tooltipPayload,
+        tooltipPosition,
         payload: entry,
         ...(cells && cells[index] && cells[index].props),
       };
@@ -135,6 +137,7 @@ class Scatter extends Component {
       onMouseLeave: onItemMouseLeave,
       onMouseEnter: onItemMouseEnter,
       points,
+      ...offset,
     };
   };
 

@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
+import { interpolateNumber } from 'd3-interpolate';
 import _ from 'lodash';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
@@ -90,9 +91,6 @@ class Area extends Component {
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
-
-    onAnimationStart: () => {},
-    onAnimationEnd: () => {},
   };
 
   static getBaseValue = (props, xAxis, yAxis) => {
@@ -120,7 +118,7 @@ class Area extends Component {
   };
 
   static getComposedData = ({ props, xAxis, yAxis, xAxisTicks, yAxisTicks, bandSize,
-    dataKey, stackedData, dataStartIndex, displayedData }) => {
+    dataKey, stackedData, dataStartIndex, displayedData, offset }) => {
     const { layout } = props;
     const hasStack = stackedData && stackedData.length;
     const baseValue = Area.getBaseValue(props, xAxis, yAxis);
@@ -170,7 +168,7 @@ class Area extends Component {
       baseLine = xAxis.scale(baseValue);
     }
 
-    return { points, baseLine, layout, isRange };
+    return { points, baseLine, layout, isRange, ...offset };
   };
 
   static renderDotItem = (option, props) => {
@@ -189,52 +187,68 @@ class Area extends Component {
 
   state = { isAnimationFinished: true };
 
+  componentWillReceiveProps(nextProps) {
+    const { animationId, points, baseLine } = this.props;
+
+    if (nextProps.animationId !== animationId) {
+      this.cachePrevData(points, baseLine);
+    }
+  }
+
   id = uniqueId('recharts-area-');
 
+  cachePrevData = (points, baseLine) => {
+    this.setState({
+      prevPoints: points,
+      prevBaseLine: baseLine,
+    });
+  };
+
   handleAnimationEnd = () => {
+    const { onAnimationEnd } = this.props;
+
     this.setState({ isAnimationFinished: true });
-    this.props.onAnimationEnd();
+
+    if (_.isFunction(onAnimationEnd)) {
+      onAnimationEnd();
+    }
   };
 
   handleAnimationStart = () => {
+    const { onAnimationStart } = this.props;
     this.setState({ isAnimationFinished: false });
-    this.props.onAnimationStart();
+
+    if (_.isFunction(onAnimationStart)) {
+      onAnimationStart();
+    }
   };
 
-  renderCurve() {
-    const { layout, type, stroke, points, baseLine, connectNulls, isRange } = this.props;
+  renderDots() {
+    const { isAnimationActive } = this.props;
 
-    return (
-      <g>
-        {stroke !== 'none' && (
-          <Curve
-            {...getPresentationAttributes(this.props)}
-            className="recharts-area-curve"
-            layout={layout}
-            type={type}
-            connectNulls={connectNulls}
-            fill="none"
-            points={points}
-          />
-        )}
-        {stroke !== 'none' && isRange && (
-          <Curve
-            {...getPresentationAttributes(this.props)}
-            className="recharts-area-curve"
-            layout={layout}
-            type={type}
-            connectNulls={connectNulls}
-            fill="none"
-            points={baseLine}
-          />
-        )}
-        <Curve
-          {...this.props}
-          stroke="none"
-          className="recharts-area-area"
-        />
-      </g>
-    );
+    if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
+
+    const { dot, points } = this.props;
+    const areaProps = getPresentationAttributes(this.props);
+    const customDotProps = getPresentationAttributes(dot);
+
+    const dots = points.map((entry, i) => {
+      const dotProps = {
+        key: `dot-${i}`,
+        r: 3,
+        ...areaProps,
+        ...customDotProps,
+        cx: entry.x,
+        cy: entry.y,
+        index: i,
+        value: entry.value,
+        payload: entry.payload,
+      };
+
+      return this.constructor.renderDotItem(dot, dotProps);
+    });
+
+    return <Layer className="recharts-area-dots">{dots}</Layer>;
   }
 
   renderHorizontalRect(alpha) {
@@ -293,57 +307,127 @@ class Area extends Component {
     return this.renderHorizontalRect(alpha);
   }
 
-  renderClipPath() {
-    const { isAnimationActive, animationDuration, animationEasing,
-      animationBegin, animationId } = this.props;
+  renderAreaStatically(points, baseLine, needClip) {
+    const { layout, type, stroke, connectNulls, isRange } = this.props;
 
     return (
-      <defs>
-        <clipPath id={`animationClipPath-${this.id}`}>
-          <Animate
-            easing={animationEasing}
-            isActive={isAnimationActive}
-            duration={animationDuration}
-            key={animationId}
-            animationBegin={animationBegin}
-            onAnimationStart={this.handleAnimationStart}
-            onAnimationEnd={this.handleAnimationEnd}
-            from={{ alpha: 0 }}
-            to={{ alpha: 1 }}
-          >
-            {({ alpha }) => this.renderClipRect(alpha)}
-          </Animate>
-        </clipPath>
-      </defs>
+      <Layer clipPath={needClip ? `url(#clipPath-${this.id})` : null}>
+        {stroke !== 'none' && (
+          <Curve
+            {...getPresentationAttributes(this.props)}
+            className="recharts-area-curve"
+            layout={layout}
+            type={type}
+            connectNulls={connectNulls}
+            fill="none"
+            points={points}
+          />
+        )}
+        {stroke !== 'none' && isRange && (
+          <Curve
+            {...getPresentationAttributes(this.props)}
+            className="recharts-area-curve"
+            layout={layout}
+            type={type}
+            connectNulls={connectNulls}
+            fill="none"
+            points={baseLine}
+          />
+        )}
+        <Curve
+          {...this.props}
+          points={points}
+          baseLine={baseLine}
+          stroke="none"
+          className="recharts-area-area"
+        />
+      </Layer>
     );
   }
 
-  renderDots() {
-    const { isAnimationActive } = this.props;
+  renderAreaWithAnimation(needClip) {
+    const { points, baseLine, isAnimationActive, animationBegin,
+      animationDuration, animationEasing, animationId } = this.props;
+    const { prevPoints, prevBaseLine } = this.state;
 
-    if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
+    return (
+      <Animate
+        begin={animationBegin}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+        from={{ t: 0 }}
+        to={{ t: 1 }}
+        key={`area-${animationId}`}
+        onAnimationEnd={this.handleAnimationEnd}
+        onAnimationStart={this.handleAnimationStart}
+      >
+        {
+          ({ t }) => {
+            if (prevPoints) {
+              // update animtaion
+              const stepPoints = points.map((entry, index) => {
+                if (prevPoints[index]) {
+                  const prev = prevPoints[index];
+                  const interpolatorX = interpolateNumber(prev.x, entry.x);
+                  const interpolatorY = interpolateNumber(prev.y, entry.y);
 
-    const { dot, points } = this.props;
-    const areaProps = getPresentationAttributes(this.props);
-    const customDotProps = getPresentationAttributes(dot);
+                  return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+                }
 
-    const dots = points.map((entry, i) => {
-      const dotProps = {
-        key: `dot-${i}`,
-        r: 3,
-        ...areaProps,
-        ...customDotProps,
-        cx: entry.x,
-        cy: entry.y,
-        index: i,
-        value: entry.value,
-        payload: entry.payload,
-      };
+                return entry;
+              });
+              let stepBaseLine;
 
-      return this.constructor.renderDotItem(dot, dotProps);
-    });
+              if (isNumber(baseLine)) {
+                const interpolator = interpolateNumber(prevBaseLine, baseLine);
+                stepBaseLine = interpolator(t);
+              } else {
+                stepBaseLine = baseLine.map((entry, index) => {
+                  if (prevBaseLine[index]) {
+                    const prev = prevBaseLine[index];
+                    const interpolatorX = interpolateNumber(prev.x, entry.x);
+                    const interpolatorY = interpolateNumber(prev.y, entry.y);
 
-    return <Layer className="recharts-area-dots">{dots}</Layer>;
+                    return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+                  }
+
+                  return entry;
+                });
+              }
+
+              return this.renderAreaStatically(stepPoints, stepBaseLine, needClip);
+            }
+
+            return (
+              <Layer>
+                <defs>
+                  <clipPath id={`animationClipPath-${this.id}`}>
+                    {this.renderClipRect(t)}
+                  </clipPath>
+                </defs>
+                <Layer clipPath={`url(#animationClipPath-${this.id})`}>
+                  {this.renderAreaStatically(points, baseLine, needClip)}
+                </Layer>
+              </Layer>
+            );
+          }
+        }
+      </Animate>
+    );
+  }
+
+  renderArea(needClip) {
+    const { points, baseLine, isAnimationActive } = this.props;
+    const { prevPoints, prevBaseLine, totalLength } = this.state;
+
+    if (isAnimationActive && points && points.length &&
+      ((!prevPoints && totalLength > 0) || !_.isEqual(prevPoints, points) ||
+        !_.isEqual(prevBaseLine, baseLine))) {
+      return this.renderAreaWithAnimation(needClip);
+    }
+
+    return this.renderAreaStatically(points, baseLine, needClip);
   }
 
   render() {
@@ -366,18 +450,7 @@ class Area extends Component {
             </clipPath>
           </defs>
         ) : null}
-        {
-          !hasSinglePoint ? this.renderClipPath() : null
-        }
-        {
-          !hasSinglePoint ? (
-            <Layer clipPath={needClip ? `url(#clipPath-${this.id})` : null}>
-              <Layer clipPath={`url(#animationClipPath-${this.id})`}>
-                {this.renderCurve()}
-              </Layer>
-            </Layer>
-          ) : null
-        }
+        {!hasSinglePoint ? this.renderArea(needClip) : null}
         {(dot || hasSinglePoint) && this.renderDots()}
         {(!isAnimationActive || isAnimationFinished) &&
           LabelList.renderCallByParent(this.props, points)}

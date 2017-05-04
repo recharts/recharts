@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Text from './Text';
 import { getPresentationAttributes, findAllByType } from '../util/ReactUtils';
-import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId } from '../util/DataUtils';
+import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId,
+  mathSign } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 
 const cartesianViewBoxShape = PropTypes.shape({
@@ -30,7 +31,7 @@ const propTypes = {
     'top', 'left', 'right', 'bottom', 'inside', 'outside',
     'insideLeft', 'insideRight', 'insideTop', 'insideBottom',
     'insideTopLeft', 'insideBottomLeft', 'insideTopRight', 'insideBottomRight',
-    'insideStart', 'insideEnd', 'end',
+    'insideStart', 'insideEnd', 'end', 'center',
   ]),
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
@@ -55,7 +56,7 @@ const getLabel = (props) => {
 };
 
 const getDeltaAngle = (startAngle, endAngle) => {
-  const sign = Math.sign(endAngle - startAngle);
+  const sign = mathSign(endAngle - startAngle);
   const deltaAngle = Math.min(Math.abs(endAngle - startAngle), 360);
 
   return sign * deltaAngle;
