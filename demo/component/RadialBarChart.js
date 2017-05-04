@@ -49,7 +49,7 @@ export default class Demo extends Component {
           change data
         </a>
         <br/>
-        {/*<p>RadialBarChart</p>
+        <p>RadialBarChart</p>
         <div className="radial-bar-chart-wrapper">
           <RadialBarChart
             width={500}
@@ -109,7 +109,7 @@ export default class Demo extends Component {
               <Legend iconSize={10} width={120} height={140} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
             </RadialBarChart>
           </ResponsiveContainer>
-        </div>*/}
+        </div>
 
         <p>Stacked RadialBarChart wrapped by ResponsiveContainer</p>
         <div className="radial-bar-chart-wrapper">
