@@ -27,7 +27,7 @@ import { calculateActiveTickIndex,
   detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
   getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
   getTicksOfAxis, isCategorialAxis, appendOffsetOfLegend, getBarSizeList,
-  getBarPosition, getStackedDataOfItem,
+  getBarPosition, getStackedDataOfItem, parseErrorBarsOfAxis,
 } from '../util/CartesianUtils';
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/PureRender';
@@ -285,6 +285,19 @@ const generateCategoricalChart = ({
             } else if (type === 'category') {
               // eliminate undefined or null or empty string
               domain = domain.filter(entry => (entry !== '' && !_.isNil(entry)));
+            } else if (type === 'number') {
+              const errorBarsDomain = parseErrorBarsOfAxis(
+                displayedData,
+                graphicalItems.filter(item => (
+                  item.props[axisIdKey] === axisId && !item.props.hide
+                )),
+                dataKey,
+                axisType,
+              );
+
+              if (errorBarsDomain) {
+                domain = errorBarsDomain;
+              }
             }
 
             if (isCategorial && (type === 'number' || scale !== 'auto')) {

@@ -5,6 +5,7 @@ import { getPercentValue, isNumber, isNumOrStr, getValueByDataKey, getTicksOfSca
 import ReferenceDot from '../cartesian/ReferenceDot';
 import ReferenceLine from '../cartesian/ReferenceLine';
 import ReferenceArea from '../cartesian/ReferenceArea';
+import ErrorBar from '../cartesian/ErrorBar';
 import Legend from '../component/Legend';
 
 export const detectReferenceElementsDomain = (children, domain, axisId, axisType) => {
@@ -124,6 +125,57 @@ export const getDomainOfStackGroups = (stackGroups, startIndex, endIndex) => (
     .map(result => (result === Infinity || result === -Infinity ? 0 : result))
 );
 
+export const getDomainOfErrorBars = (data, item, dataKey, axisType) => {
+  const { children } = item.props;
+  const errorBars = findAllByType(children, ErrorBar)
+    .filter((errorBarChild) => {
+      const { direction } = errorBarChild.props;
+
+      return (_.isNil(direction) || _.isNil(axisType)) ?
+        true : (axisType.indexOf(direction) >= 0);
+    });
+
+  if (errorBars && errorBars.length) {
+    const keys = errorBars.map(errorBarChild => errorBarChild.props.dataKey);
+
+    return data.reduce((result, entry) => {
+      const entryValue = getValueByDataKey(entry, dataKey, 0);
+      const mainValue = _.isArray(entryValue) ?
+        [_.min(entryValue), _.max(entryValue)] : [entryValue, entryValue];
+      const errorDomain = keys.reduce((prevErrorArr, k) => {
+        const errorValue = getValueByDataKey(entry, k, 0);
+        const lowerValue = mainValue[0] - Math.abs(
+          _.isArray(errorValue) ? errorValue[0] : errorValue
+        );
+        const upperValue = mainValue[1] + Math.abs(
+          _.isArray(errorValue) ? errorValue[1] : errorValue
+        );
+
+        return [
+          Math.min(lowerValue, prevErrorArr[0]),
+          Math.max(upperValue, prevErrorArr[1]),
+        ];
+      }, [Infinity, -Infinity]);
+
+      return [Math.min(errorDomain[0], result[0]), Math.max(errorDomain[1], result[1])];
+    }, [Infinity, -Infinity]);
+  }
+
+  return null;
+};
+export const parseErrorBarsOfAxis = (data, items, dataKey, axisType) => {
+  const domains = items
+    .map(item => getDomainOfErrorBars(data, item, dataKey, axisType))
+    .filter(entry => !_.isNil(entry));
+
+  if (domains && domains.length) {
+    return domains.reduce((result, entry) => (
+      [Math.min(result[0], entry[0]), Math.max(result[1], entry[1])]
+    ), [Infinity, -Infinity]);
+  }
+
+  return null;
+};
 /**
  * Get domain of data by the configuration of item element
  * @param  {Array}   data      The data displayed in the chart
@@ -133,9 +185,15 @@ export const getDomainOfStackGroups = (stackGroups, startIndex, endIndex) => (
  * @return {Array}        Domain
  */
 export const getDomainOfItemsWithSameAxis = (data, items, type, filterNil) => {
-  const domains = items.map(item => getDomainOfDataByKey(
-      data, item.props.dataKey, type, filterNil
-  ));
+  const domains = items.map((item) => {
+    const { children, dataKey } = item.props;
+
+    if (type === 'number' && dataKey) {
+      return getDomainOfErrorBars(data, item, dataKey) ||
+        getDomainOfDataByKey(data, dataKey, type, filterNil);
+    }
+    return getDomainOfDataByKey(data, dataKey, type, filterNil);
+  });
 
   if (type === 'number') {
     // Calculate the domain of number axis
