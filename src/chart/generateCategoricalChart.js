@@ -41,7 +41,7 @@ const ORIENT_MAP = {
 const originCoordinate = { x: 0, y: 0 };
 
 const generateCategoricalChart = ({
-  chartName, GraphicalChild, eventType = 'axis', axisComponents,
+  chartName, GraphicalChild, eventType = 'axis', axisComponents, legendContent,
   formatAxisMap, defaultProps, propTypes,
 }) => {
   class CategoricalChartWrapper extends Component {
@@ -1096,11 +1096,6 @@ const generateCategoricalChart = ({
         const { cx, cy, radius, startAngle, endAngle, points } = this.getCursorPoints();
         const delta = endAngle - startAngle;
         restProps = {
-          // path: `
-          //   M${points[0].x},${points[0].y}
-          //   A${radius},${radius},0,${+(Math.abs(delta) > 180)},${+(delta < 0)},
-          //   ${points[1].x},${points[1].y}
-          // `,
           cx, cy, startAngle, endAngle, innerRadius: radius, outerRadius: radius,
         };
         cursorComp = Sector;
@@ -1219,12 +1214,14 @@ const generateCategoricalChart = ({
      * @return {ReactElement}            The instance of Legend
      */
     renderLegend() {
-      const { graphicalItems } = this.state;
+      const { formatedGraphicalItems } = this.state;
       const { children, width, height } = this.props;
       const margin = this.props.margin || {};
       const legendWidth = width - (margin.left || 0) - (margin.right || 0);
       const legendHeight = height - (margin.top || 0) - (margin.bottom || 0);
-      const props = getLegendProps(children, graphicalItems, legendWidth, legendHeight);
+      const props = getLegendProps({
+        children, formatedGraphicalItems, legendWidth, legendHeight, legendContent,
+      });
 
       if (!props) { return null; }
 

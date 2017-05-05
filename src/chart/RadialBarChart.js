@@ -11,6 +11,7 @@ import RadialBar from '../polar/RadialBar';
 export default generateCategoricalChart({
   chartName: 'RadialBarChart',
   GraphicalChild: RadialBar,
+  legendContent: 'children',
   axisComponents: [
     { axisType: 'angleAxis', AxisComp: PolarAngleAxis },
     { axisType: 'radiusAxis', AxisComp: PolarRadiusAxis },

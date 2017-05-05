@@ -288,28 +288,48 @@ export const getMainColorOfGraphicItem = (item) => {
   return result;
 };
 
-export const getLegendProps = (children, graphicItems, width) => {
+export const getLegendProps = ({
+  children, formatedGraphicalItems, legendWidth, legendHeight, legendContent,
+}) => {
   const legendItem = findChildByType(children, Legend);
-
   if (!legendItem) { return null; }
 
-  const legendData = (legendItem.props && legendItem.props.payload) ||
-    graphicItems.map((child) => {
-      const { dataKey, name, legendType, hide } = child.props;
+  let legendData;
+  if (legendItem.props && legendItem.props.payload) {
+    legendData = (legendItem.props && legendItem.props.payload);
+  } else if (legendContent === 'children') {
+    legendData = formatedGraphicalItems.reduce((result, { item, props }, i) => {
+      const { nameKey } = item.props;
+      const data = props.sectors || props.data;
+
+      return result.concat(data.map(entry => (
+        {
+          type: legendItem.props.iconType || item.props.legendType,
+          value: entry.name,
+          color: entry.fill,
+          payload: entry,
+        }
+      )));
+    }, []);
+  } else {
+    legendData = formatedGraphicalItems.map(({ item, props }) => {
+      const { dataKey, name, legendType, hide } = item.props;
 
       return {
         inactive: hide,
         dataKey,
         type: legendItem.props.iconType || legendType || 'square',
-        color: getMainColorOfGraphicItem(child),
+        color: getMainColorOfGraphicItem(item),
         value: name || dataKey,
-        payload: child.props,
+        payload: item.props,
       };
     });
+  }
+
 
   return {
     ...legendItem.props,
-    ...Legend.getWithHeight(legendItem, width),
+    ...Legend.getWithHeight(legendItem, legendWidth),
     payload: legendData,
   };
 };
