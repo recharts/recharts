@@ -12,6 +12,7 @@ export default generateCategoricalChart({
   chartName: 'PieChart',
   GraphicalChild: Pie,
   eventType: 'item',
+  legendContent: 'children',
   axisComponents: [
     { axisType: 'angleAxis', AxisComp: PolarAngleAxis },
     { axisType: 'radiusAxis', AxisComp: PolarRadiusAxis },
