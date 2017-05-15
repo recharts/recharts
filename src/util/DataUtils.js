@@ -118,18 +118,22 @@ export const getBandSizeOfAxis = (axis, ticks) => {
     return axis.scale.bandwidth();
   }
 
-  if (axis && ticks && ticks.length >= 2) {
-    const orderedTicks = _.sortBy(ticks, o => o.coordinate);
-    let bandSize = Infinity;
+  if (axis && ticks) {
+    if (ticks.length === 1) {
+      return axis.width;
+    } else if (ticks.length >= 2) {
+      const orderedTicks = _.sortBy(ticks, o => o.coordinate);
+      let bandSize = Infinity;
 
-    for (let i = 1, len = orderedTicks.length; i < len; i++) {
-      const cur = orderedTicks[i];
-      const prev = orderedTicks[i - 1];
+      for (let i = 1, len = orderedTicks.length; i < len; i++) {
+        const cur = orderedTicks[i];
+        const prev = orderedTicks[i - 1];
 
-      bandSize = Math.min((cur.coordinate || 0) - (prev.coordinate || 0), bandSize);
+        bandSize = Math.min((cur.coordinate || 0) - (prev.coordinate || 0), bandSize);
+      }
+
+      return bandSize === Infinity ? 0 : bandSize;
     }
-
-    return bandSize === Infinity ? 0 : bandSize;
   }
 
   return 0;
