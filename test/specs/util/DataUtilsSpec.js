@@ -45,6 +45,12 @@ describe('getBandSizeOfAxis', () => {
     const ticks = [{ coordinate: 13 }, { coordinate: 15 }, { coordinate: 20 }];
     expect(getBandSizeOfAxis(axis, ticks)).to.equal(2);
   });
+
+  it('DataUtils.getBandSizeOfAxis() should return axis.width when ticks.length === 1 ', () => {
+    const axis = { width: 600 };
+    const ticks = [{ coordinate: 20 }];
+    expect(getBandSizeOfAxis(axis, ticks)).to.equal(600);
+  });
 });
 
 describe('getAnyElementOfObject', () => {
