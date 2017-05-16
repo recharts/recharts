@@ -189,6 +189,7 @@ class BarChart extends Component {
       y: layout === 'horizontal' ? offset.top + 0.5 : start,
       width: layout === 'horizontal' ? bandSize : offset.width - 1,
       height: layout === 'horizontal' ? offset.height - 1 : bandSize,
+      payload: this.props.data[activeTooltipIndex],
     };
 
     return React.isValidElement(tooltipItem.props.cursor) ?
