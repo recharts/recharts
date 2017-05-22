@@ -76,9 +76,9 @@ class CartesianAxis extends Component {
   };
 
   static getTicks(props) {
-    const { ticks, viewBox, minTickGap, orientation, interval, tickFormatter } = props;
+    const { tick, ticks, viewBox, minTickGap, orientation, interval, tickFormatter } = props;
 
-    if (!ticks || !ticks.length) { return []; }
+    if (!ticks || !ticks.length || !tick) { return []; }
 
     if (isNumber(interval) || isSsr()) {
       return CartesianAxis.getNumberIntervalTicks(ticks, isNumber(interval) ? interval : 0);

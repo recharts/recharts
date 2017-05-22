@@ -258,4 +258,21 @@ describe('<CartesianAxis />', () => {
     expect(wrapper.find('.customized-tick').length).to.equal(ticks.length);
   });
 
+  it('Renders no ticks when tick is set to false', () => {
+    const wrapper = render(
+      <Surface width={500} height={500}>
+        <CartesianAxis
+          orientation="bottom"
+          y={100}
+          width={400}
+          height={50}
+          viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
+          tick={false}
+        />
+      </Surface>
+    );
+
+    expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(0);
+  });
+
 });
