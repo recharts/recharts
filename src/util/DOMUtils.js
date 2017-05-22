@@ -61,14 +61,19 @@ export const getStringSize = (text, style = {}) => {
 
   try {
     let measurementSpan = document.getElementById(MEASUREMENT_SPAN_ID);
+    const textNode = document.createTextNode('');
     if (!measurementSpan) {
       measurementSpan = document.createElement('span');
       measurementSpan.setAttribute('id', MEASUREMENT_SPAN_ID);
+      measurementSpan.setAttribute('style', getStyleString(SPAN_STYLE));
+      measurementSpan.appendChild(textNode);
       document.body.appendChild(measurementSpan);
     }
 
-    measurementSpan.setAttribute('style', getStyleString({ ...SPAN_STYLE, ...style }));
-    measurementSpan.textContent = str;
+    if (styleString !== '') {
+      measurementSpan.setAttribute('style', getStyleString({ ...SPAN_STYLE, ...style }));
+    }
+    textNode.nodeValue = str;
 
     const rect = measurementSpan.getBoundingClientRect();
     const result = { width: rect.width, height: rect.height };
