@@ -18,8 +18,8 @@ import Cell from '../component/Cell';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
-import { isNumber, getValueByDataKey, uniqueId, getPercentValue,
-  mathSign } from '../util/DataUtils';
+import { isNumber, uniqueId, getPercentValue, mathSign } from '../util/DataUtils';
+import { getValueByDataKey } from '../util/ChartUtils';
 
 @pureRender
 class Pie extends Component {

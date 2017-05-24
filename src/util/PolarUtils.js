@@ -1,5 +1,6 @@
 import _ from 'lodash';
-import { getPercentValue, parseScale, checkDomainOfScale, getTicksOfScale } from './DataUtils';
+import { getPercentValue } from './DataUtils';
+import { parseScale, checkDomainOfScale, getTicksOfScale } from './ChartUtils';
 
 export const RADIAN = Math.PI / 180;
 

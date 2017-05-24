@@ -9,7 +9,8 @@ import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 import Label from '../component/Label';
-import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';
+import { isNumOrStr } from '../util/DataUtils';
+import { validateCoordinateInRange } from '../util/ChartUtils';
 
 const renderLine = (option, props) => {
   let line;

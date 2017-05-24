@@ -12,7 +12,7 @@ import Rectangle from '../shape/Rectangle';
 import pureRender, { shallowEqual } from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, EVENT_ATTRIBUTES,
   filterSvgElements, validateWidthHeight, findChildByType } from '../util/ReactUtils';
-import { getValueByDataKey } from '../util/DataUtils';
+import { getValueByDataKey } from '../util/ChartUtils';
 
 const defaultCoordinateOfTooltip = { x: 0, y: 0 };
 

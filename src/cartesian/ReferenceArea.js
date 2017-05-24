@@ -8,7 +8,8 @@ import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Label from '../component/Label';
 import { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
-import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';
+import { isNumOrStr } from '../util/DataUtils';
+import { validateCoordinateInRange } from '../util/ChartUtils';
 import Rectangle from '../shape/Rectangle';
 
 @pureRender

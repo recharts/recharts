@@ -16,7 +16,8 @@ import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
 import ErrorBar from './ErrorBar';
 import Cell from '../component/Cell';
-import { getValueByDataKey, uniqueId, isNumOrStr } from '../util/DataUtils';
+import { uniqueId, isNumOrStr } from '../util/DataUtils';
+import { getValueByDataKey } from '../util/ChartUtils';
 
 @pureRender
 class Scatter extends Component {
@@ -112,22 +113,20 @@ class Scatter extends Component {
         { name: xAxis.name || xAxis.dataKey, unit: xAxis.unit || '', value: x, payload: entry },
         { name: yAxis.name || yAxis.dataKey, unit: yAxis.unit || '', value: y, payload: entry },
       ];
-      const tooltipPosition = { x, y };
 
       if (z !== '-') {
         tooltipPayload.push({
           name: zAxis.name || zAxis.dataKey, unit: zAxis.unit || '', value: z, payload: entry,
         });
       }
-
+      const cx = isNumOrStr(x) ? xAxis.scale(x) + xOffset : null;
+      const cy = isNumOrStr(y) ? yAxis.scale(y) + yOffset : null;
       return {
-        ...entry,
-        cx: isNumOrStr(x) ? xAxis.scale(x) + xOffset : null,
-        cy: isNumOrStr(y) ? yAxis.scale(y) + yOffset : null,
+        ...entry, cx, cy,
         size: z !== '-' ? zAxis.scale(z) : defaultZ,
         node: { x, y, z },
         tooltipPayload,
-        tooltipPosition,
+        tooltipPosition: { x: cx, y: cy },
         payload: entry,
         ...(cells && cells[index] && cells[index].props),
       };

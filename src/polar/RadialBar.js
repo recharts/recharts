@@ -14,8 +14,9 @@ import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES, findAllByType,
 import pureRender from '../util/PureRender';
 import LabelList from '../component/LabelList';
 import Cell from '../component/Cell';
-import { getCateCoordinateOfBar, findPositionOfBar, getBaseValueOfBar,
-  truncateByDomain, getValueByDataKey, mathSign } from '../util/DataUtils';
+import { mathSign } from '../util/DataUtils';
+import { getCateCoordinateOfBar, findPositionOfBar, getValueByDataKey,
+  truncateByDomain, getBaseValueOfBar } from '../util/ChartUtils';
 
 @pureRender
 class RadialBar extends Component {

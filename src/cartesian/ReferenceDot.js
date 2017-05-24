@@ -10,7 +10,8 @@ import Dot from '../shape/Dot';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
   getPresentationAttributes, filterEventAttributes } from '../util/ReactUtils';
 import Label from '../component/Label';
-import { validateCoordinateInRange, isNumOrStr } from '../util/DataUtils';
+import { isNumOrStr } from '../util/DataUtils';
+import { validateCoordinateInRange } from '../util/ChartUtils';
 
 @pureRender
 class ReferenceDot extends Component {
