@@ -201,28 +201,39 @@ export const combineEventHandlers = (defaultHandler, parentHandler, childHandler
 };
 /**
  * Parse the scale function of axis
- * @param  {String}   options.scale The specified scale type
- * @param  {String}   options.type  The type of axis
+ * @param  {Object}   axis          The option of axis
  * @param  {String}   chartType     The displayName of chart
  * @return {Function}               The scale funcion
  */
-export const parseScale = ({ scale, type }, chartType) => {
+export const parseScale = (axis, chartType) => {
+  const { scale, type, layout, axisType } = axis;
   if (scale === 'auto') {
-    if (type === 'category' && chartType && (chartType.indexOf('LineChart') >= 0 ||
-      chartType.indexOf('AreaChart') >= 0)) {
-      return d3Scales.scalePoint();
-    } else if (type === 'category') {
-      return d3Scales.scaleBand();
+    if (layout === 'radial' && axisType === 'radiusAxis') {
+      return { scale: d3Scales.scaleBand(), realScaleType: 'band' };
+    } else if (layout === 'radial' && axisType === 'angleAxis') {
+      return { scale: d3Scales.scaleLinear(), realScaleType: 'linear' };
     }
 
-    return d3Scales.scaleLinear();
+    if (type === 'category' && chartType && (chartType.indexOf('LineChart') >= 0 ||
+      chartType.indexOf('AreaChart') >= 0)) {
+      return { scale: d3Scales.scalePoint(), realScaleType: 'point' };
+    } else if (type === 'category') {
+      return { scale: d3Scales.scaleBand(), realScaleType: 'band' };
+    }
+
+    return { scale: d3Scales.scaleLinear(), realScaleType: 'linear' };
   } else if (_.isString(scale)) {
     const name = `scale${scale.slice(0, 1).toUpperCase()}${scale.slice(1)}`;
 
-    return (d3Scales[name] || d3Scales.scalePoint)();
+    return {
+      scale: (d3Scales[name] || d3Scales.scalePoint)(),
+      realScaleType: d3Scales[name] ? name : 'point',
+    };
   }
 
-  return _.isFunction(scale) ? scale : d3Scales.scalePoint();
+  return _.isFunction(scale) ?
+    { scale } :
+    { scale: d3Scales.scalePoint(), realScaleType: 'point' };
 };
 const EPS = 1e-4;
 export const checkDomainOfScale = (scale) => {
@@ -408,9 +419,10 @@ export const calculateDomainOfTicks = (ticks, type) => {
  * @return {Object}      null
  */
 export const getTicksOfScale = (scale, opts) => {
-  const { type, tickCount, originalDomain, allowDecimals } = opts;
+  const { realScaleType, type, tickCount, originalDomain, allowDecimals } = opts;
+  const scaleType = realScaleType || opts.scale;
 
-  if (opts.scale !== 'auto' && opts.scale !== 'linear') {
+  if (scaleType !== 'auto' && scaleType !== 'linear') {
     return null;
   }
 

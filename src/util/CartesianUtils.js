@@ -356,7 +356,7 @@ export const getLegendProps = ({
   if (legendItem.props && legendItem.props.payload) {
     legendData = (legendItem.props && legendItem.props.payload);
   } else if (legendContent === 'children') {
-    legendData = formatedGraphicalItems.reduce((result, { item, props }, i) => {
+    legendData = (formatedGraphicalItems || []).reduce((result, { item, props }, i) => {
       const { nameKey } = item.props;
       const data = props.sectors || props.data;
 
@@ -370,7 +370,7 @@ export const getLegendProps = ({
       )));
     }, []);
   } else {
-    legendData = formatedGraphicalItems.map(({ item, props }) => {
+    legendData = (formatedGraphicalItems || []).map(({ item, props }) => {
       const { dataKey, name, legendType, hide } = item.props;
 
       return {
@@ -519,7 +519,7 @@ export const appendOffsetOfLegend = (offset, items, props, legendBox) => {
   const { children, width, height, margin } = props;
   const legendWidth = width - (margin.left || 0) - (margin.right || 0);
   const legendHeight = height - (margin.top || 0) - (margin.bottom || 0);
-  const legendProps = getLegendProps(children, items, legendWidth, legendHeight);
+  const legendProps = getLegendProps({ children, items, legendWidth, legendHeight });
   let newOffset = offset;
 
   if (legendProps) {
@@ -590,10 +590,10 @@ export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
       range = [range[1], range[0]];
     }
 
-    const scale = parseScale(axis, chartName);
+    const { scale, realScaleType } = parseScale(axis, chartName);
     scale.domain(domain).range(range);
     checkDomainOfScale(scale);
-    const ticks = getTicksOfScale(scale, axis);
+    const ticks = getTicksOfScale(scale, { ...axis, realScaleType });
 
     if (axisType === 'xAxis') {
       needSpace = (orientation === 'top' && !mirror) || (orientation === 'bottom' && mirror);
@@ -608,7 +608,7 @@ export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
     const finalAxis = {
       ...axis,
       ...ticks,
-      x, y, scale,
+      realScaleType, x, y, scale,
       width: axisType === 'xAxis' ? offset.width : axis.width,
       height: axisType === 'yAxis' ? offset.height : axis.height,
     };

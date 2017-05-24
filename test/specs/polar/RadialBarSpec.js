@@ -5,10 +5,10 @@ import { mount, render } from 'enzyme';
 
 describe('<RadialBar />', () => {
   const data = [
-    { cx: 250, cy: 250, innerRadius: 0, outerRadius: 0, value: 50 },
-    { cx: 250, cy: 250, innerRadius: 30, outerRadius: 40, value: 50 },
-    { cx: 250, cy: 250, innerRadius: 50, outerRadius: 60, value: 50 },
-    { cx: 250, cy: 250, innerRadius: 70, outerRadius: 80, value: 50 },
+    { cx: 250, cy: 250, innerRadius: 0, outerRadius: 0, startAngle: 0, endAngle: 60, value: 50 },
+    { cx: 250, cy: 250, innerRadius: 30, outerRadius: 40, startAngle: 0, endAngle: 60, value: 50 },
+    { cx: 250, cy: 250, innerRadius: 50, outerRadius: 60, startAngle: 0, endAngle: 60, value: 50 },
+    { cx: 250, cy: 250, innerRadius: 70, outerRadius: 80, startAngle: 0, endAngle: 60, value: 50 },
   ];
 
   it('Render 5 sectors', () => {
