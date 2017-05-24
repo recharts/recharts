@@ -57,16 +57,16 @@ export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
       range = axis.range;
     }
 
-    const scale = parseScale(axis, chartName);
+    const { realScaleType, scale } = parseScale(axis, chartName);
     scale.domain(domain).range(range);
     checkDomainOfScale(scale);
-    const ticks = getTicksOfScale(scale, axis);
+    const ticks = getTicksOfScale(scale, { ...axis, realScaleType });
 
     const finalAxis = {
       ...axis,
       ...ticks,
       radius: outerRadius,
-      scale, cx, cy, innerRadius, outerRadius, startAngle, endAngle,
+      realScaleType, scale, cx, cy, innerRadius, outerRadius, startAngle, endAngle,
     };
 
     return { ...result, [id]: finalAxis };

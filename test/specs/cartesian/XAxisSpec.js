@@ -87,7 +87,7 @@ describe('<XAxis />', () => {
         <Line type="monotone" dataKey="balance" stroke="#8884d8" activeDot={{r: 8}}/>
       </LineChart>
     );
-    expect(wrapper.find('.recharts-x-axis .recharts-cartesian-axis-tick').length).to.equal(lineData.length);
+    expect(wrapper.find('.recharts-xAxis .recharts-cartesian-axis-tick').length).to.equal(lineData.length);
   });
 
   it('Render duplicated ticks of XAxis', () => {
@@ -113,6 +113,6 @@ describe('<XAxis />', () => {
         <Line type="monotone" dataKey="balance" stroke="#8884d8" activeDot={{r: 8}}/>
       </LineChart>
     );
-    expect(wrapper.find('.recharts-x-axis .recharts-cartesian-axis-tick').length).to.equal(lineData.length);
+    expect(wrapper.find('.recharts-xAxis .recharts-cartesian-axis-tick').length).to.equal(lineData.length);
   });
 });

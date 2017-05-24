@@ -340,6 +340,7 @@ const generateCategoricalChart = ({
               duplicateDomain,
               originalDomain: child.props.domain,
               isCategorial,
+              layout,
             },
           };
         }
@@ -413,8 +414,9 @@ const generateCategoricalChart = ({
               domain,
               originalDomain: Axis.defaultProps.domain,
               isCategorial,
+              layout,
               // specify scale when no Axis
-              scale: isCategorial ? 'band' : 'linear',
+              // scale: isCategorial ? 'band' : 'linear',
             },
           };
         }
@@ -610,7 +612,6 @@ const generateCategoricalChart = ({
     getCursorPoints() {
       const { layout } = this.props;
       const { activeCoordinate, offset } = this.state;
-
       let x1, y1, x2, y2;
 
       if (layout === 'horizontal') {
@@ -826,6 +827,7 @@ const generateCategoricalChart = ({
 
       if (legendItem && this.legendInstance) {
         const legendBox = this.legendInstance.getBBox();
+
         offset = appendOffsetOfLegend(offset, graphicalItems, props, legendBox);
       }
 
@@ -1175,7 +1177,7 @@ const generateCategoricalChart = ({
       return (
         <CartesianAxis
           {...axisOptions}
-          className={axisOptions.axisType}
+          className={`recharts-${axisOptions.axisType} ${axisOptions.axisType}`}
           key={element.key || `${displayName}-${index}`}
           viewBox={{ x: 0, y: 0, width, height }}
           ticksGenerator={this.axesTicksGenerator}

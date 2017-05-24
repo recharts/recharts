@@ -37,7 +37,7 @@ describe('<RadialBarChart />', () => {
         />
       </RadialBarChart>
     );
-    expect(wrapper.find('.recharts-radial-bar-sector').length).to.equal(7);
+    expect(wrapper.find('.recharts-radial-bar-sector').length).to.equal(data.length);
   });
 
   it('Don\'t renders any sectors when no RadialBar is added', () => {

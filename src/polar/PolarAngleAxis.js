@@ -56,6 +56,7 @@ class PolarAngleAxis extends Component {
     scale: 'auto',
     cx: 0,
     cy: 0,
+    domain: [0, 'auto'],
     orientation: 'outer',
     axisLine: true,
     tickLine: true,

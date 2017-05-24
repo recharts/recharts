@@ -218,9 +218,12 @@ describe('<LineChart />', () => {
       </LineChart>
     );
 
+    const chartWidth = width - margin.left - margin.right;
+    const dotSpacing = chartWidth / (data.length - 1);
+
 		// simulate entering just past Page A to test snapping of the cursor line
     expect(wrapper.find('.recharts-tooltip-cursor').length).to.equal(0);
-    wrapper.simulate('mouseEnter', { pageX: margin.left + 10, pageY: height / 2 });
+    wrapper.simulate('mouseEnter', { pageX: margin.left + 0.1 * dotSpacing, pageY: height / 2 });
 
     let tooltipCursors = wrapper.find('.recharts-tooltip-cursor');
     expect(tooltipCursors.length).to.equal(1);
@@ -231,10 +234,8 @@ describe('<LineChart />', () => {
     expect(tooltipCursors.at(0).props().d).to.equal(`M${expectedX},${margin.top}L${expectedX},${chartBottom}`);
 
 		// simulate moving 10 pixels past the PageC Dot
-    const chartWidth = width - margin.left - margin.right;
-    const dotSpacing = chartWidth / (data.length - 1);
     expectedX = margin.left + dotSpacing * 2;
-    wrapper.simulate('mouseMove', { pageX: expectedX + 10, pageY: height / 2 });
+    wrapper.simulate('mouseMove', { pageX: expectedX + 0.1 * dotSpacing, pageY: height / 2 });
 
     tooltipCursors = wrapper.find('.recharts-tooltip-cursor');
     expect(tooltipCursors.length).to.equal(1);
