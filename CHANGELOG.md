@@ -1,3 +1,15 @@
+## 1.0.0-alpha.0(May 24, 2017)
+
+### refactor
+
+- refactor PolarCharts
+- refactor Animation
+- refactor Label and LabelLis
+
+### fix
+
+- fix scale of ErrorBar
+
 ## 0.22.4 (Apr 26, 2017)
 
 ### fix 
