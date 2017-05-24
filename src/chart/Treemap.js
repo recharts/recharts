@@ -13,7 +13,7 @@ import { findChildByType, getPresentationAttributes, filterSvgElements,
   validateWidthHeight, isSsr } from '../util/ReactUtils';
 import Tooltip from '../component/Tooltip';
 import pureRender from '../util/PureRender';
-import { getValueByDataKey } from '../util/DataUtils';
+import { getValueByDataKey } from '../util/ChartUtils';
 
 const computeNode = ({ depth, node, index, valueKey }) => {
   const { children } = node;

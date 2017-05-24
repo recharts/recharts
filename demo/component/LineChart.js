@@ -10,8 +10,8 @@ const data = [
   { name: 'Page A', uv: 1000, pv: 2400, amt: 2400, uvError: [75, 20] },
   { name: 'Page B', uv: 300, pv: 4567, amt: 2400, uvError: [90, 40] },
   { name: 'Page C', uv: 280, pv: 1398, amt: 2400, uvError: 40 },
-  { name: 'Page B', uv: 200, pv: 9800, amt: 2400, uvError: 20 },
-  { name: 'Page C', uv: 278, pv: 3908, amt: 2400, uvError: 28 },
+  { name: 'Page D', uv: 200, pv: 9800, amt: 2400, uvError: 20 },
+  { name: 'Page E', uv: 278, pv: 3908, amt: 2400, uvError: 28 },
   { name: 'Page F', uv: 189, pv: 4800, amt: 2400, uvError: [90, 20] },
   { name: 'Page G', uv: 189, pv: 4800, amt: 2400, uvError: [28, 40] },
   { name: 'Page H', uv: 189, pv: 4800, amt: 2400, uvError: 28 },
@@ -376,7 +376,7 @@ export default class Demo extends Component {
         <button onClick={this.handleChangeAnotherState}>switch another state</button>
         <br/>
 
-        {/*<p>A simple LineChart with fixed domain y-axis</p>
+        <p>A simple LineChart with fixed domain y-axis</p>
         <div className='line-chart-wrapper'>
           <LineChart width={400} height={400} data={data02} syncId="test">
             <CartesianGrid stroke='#f5f5f5' fill="#e6e6e6" />
@@ -422,7 +422,7 @@ export default class Demo extends Component {
             <Tooltip />
             <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300' />
           </LineChart>
-        </div>*/}
+        </div>
 
         <p>LineChart with two y-axes</p>
         <button onClick={() => this.setState({newLine: !this.state.newLine})}>Add another line</button>
@@ -434,7 +434,7 @@ export default class Demo extends Component {
             margin={{top: 10, bottom: 10, left: 30, right: 30}}
             onClick={this.handleClick}
           >
-            <XAxis dataKey='name' interval={0} />
+            <XAxis dataKey='name' />
             <CartesianGrid stroke='#f5f5f5'/>
             <Brush />
             <Line type='monotone' key={'0'} dataKey='uv' stroke='#ff7300' yAxisId={0} activeDot={{fill: '#ff7300', stroke: 'none'}}/>
@@ -444,7 +444,7 @@ export default class Demo extends Component {
           </LineChart>
         </div>
 
-        {/*<p>LineChart with three y-axes</p>
+        <p>LineChart with three y-axes</p>
         <div className='line-chart-wrapper' style={{ margin: 40 }}>
           <LineChart width={600} height={400} data={data}>
             <YAxis type='number' yAxisId={0} domain={[0, 1020]}/>
@@ -528,7 +528,7 @@ export default class Demo extends Component {
               </AreaChart>
             </Brush>
           </LineChart>
-        </div>*/}
+        </div>
       </div>
     );
   }

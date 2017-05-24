@@ -10,8 +10,8 @@ import { interpolateNumber } from 'd3-interpolate';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, isSsr } from '../util/ReactUtils';
-import { getValueByDataKey } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
+import { getValueByDataKey } from '../util/ChartUtils';
 import Polygon from '../shape/Polygon';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';

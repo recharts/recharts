@@ -20,15 +20,13 @@ import { findAllByType, findChildByType, getDisplayName, parseChildIndex,
 import CartesianAxis from '../cartesian/CartesianAxis';
 import Brush from '../cartesian/Brush';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
-import { parseSpecifiedDomain, getAnyElementOfObject, hasDuplicate,
-  combineEventHandlers, getValueByDataKey, uniqueId,
-  getStackGroupsByAxisId, isNumber, getBandSizeOfAxis } from '../util/DataUtils';
-import { calculateActiveTickIndex,
-  detectReferenceElementsDomain, getMainColorOfGraphicItem, getDomainOfStackGroups,
-  getDomainOfDataByKey, getLegendProps, getDomainOfItemsWithSameAxis, getCoordinatesOfGrid,
-  getTicksOfAxis, isCategorialAxis, appendOffsetOfLegend, getBarSizeList,
-  getBarPosition, getStackedDataOfItem, parseErrorBarsOfAxis,
-} from '../util/CartesianUtils';
+import { getAnyElementOfObject, hasDuplicate, uniqueId, isNumber } from '../util/DataUtils';
+import { calculateActiveTickIndex, getMainColorOfGraphicItem, getBarSizeList,
+  getBarPosition, appendOffsetOfLegend, getLegendProps, combineEventHandlers,
+  getTicksOfAxis, getCoordinatesOfGrid, getStackedDataOfItem, parseErrorBarsOfAxis,
+  getBandSizeOfAxis, getStackGroupsByAxisId, getValueByDataKey, isCategorialAxis,
+  getDomainOfItemsWithSameAxis, getDomainOfStackGroups, getDomainOfDataByKey,
+  detectReferenceElementsDomain, parseSpecifiedDomain } from '../util/ChartUtils';
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/PureRender';
 import { eventCenter, SYNC_EVENT } from '../util/Events';

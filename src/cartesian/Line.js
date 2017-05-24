@@ -13,9 +13,10 @@ import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
 import ErrorBar from './ErrorBar';
-import { getValueByDataKey, uniqueId, getCateCoordinateOfLine } from '../util/DataUtils';
+import { uniqueId } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, filterEventAttributes,
   getPresentationAttributes, isSsr, findChildByType } from '../util/ReactUtils';
+import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 
 const FACTOR = 1.0000001;
 

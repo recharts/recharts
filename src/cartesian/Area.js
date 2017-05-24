@@ -14,8 +14,9 @@ import LabelList from '../component/LabelList';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, isSsr } from '../util/ReactUtils';
-import { isNumber, uniqueId, getValueByDataKey,
-  getCateCoordinateOfLine } from '../util/DataUtils';
+import { isNumber, uniqueId } from '../util/DataUtils';
+import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
+
 
 @pureRender
 class Area extends Component {

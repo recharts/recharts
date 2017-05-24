@@ -40,6 +40,7 @@ require('./specs/component/LegendSpec');
 require('./specs/component/TooltipSpec');
 require('./specs/component/ResponsiveContainerSpec');
 require('./specs/component/TextSpec');
+require('./specs/component/LabelSpec');
 
 // shape
 require('./specs/shape/CrossSpec');
@@ -57,3 +58,4 @@ require('./specs/util/DataUtilsSpec');
 require('./specs/util/ReactUtilsSpec');
 require('./specs/util/LogUtilsSpec');
 require('./specs/util/DOMUtilsSpec');
+require('./specs/util/ChartUtilsSpec');

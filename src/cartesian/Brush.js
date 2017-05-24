@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { scalePoint } from 'd3-scale';
 import _ from 'lodash';
-import { getValueByDataKey } from '../util/DataUtils';
+import { getValueByDataKey } from '../util/ChartUtils';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
