@@ -1067,7 +1067,7 @@ const generateCategoricalChart = ({
 
       return {
         tooltipTicks,
-        orderedTooltipTicks: _.sortBy(tooltipTicks, o => o.coordinate),
+        orderedTooltipTicks: _.sortBy(tooltipTicks, [o => o.coordinate]),
         tooltipAxis: axis,
         tooltipAxisBandSize: getBandSizeOfAxis(axis),
       };
