@@ -378,6 +378,7 @@ class CartesianAxis extends Component {
         ...customTickProps,
         ...tickCoord,
         index: i, payload: entry,
+        totalTicks: finalTicks.length,
       };
 
       return (
