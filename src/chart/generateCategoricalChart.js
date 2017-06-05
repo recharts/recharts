@@ -120,17 +120,7 @@ const generateCategoricalChart = ({
     };
 
     static getDisplayedData = (props, { graphicalItems, dataStartIndex, dataEndIndex }, item) => {
-      const { data } = props;
-
-      if (data && data.length && isNumber(dataStartIndex) && isNumber(dataEndIndex)) {
-        return data.slice(dataStartIndex, dataEndIndex + 1);
-      }
-
-      if (item && item.props) {
-        return item.props.data || [];
-      }
-
-      return graphicalItems.reduce((result, child) => {
+      const itemsData = (graphicalItems || []).reduce((result, child) => {
         const itemData = child.props.data;
 
         if (itemData && itemData.length) {
@@ -139,6 +129,21 @@ const generateCategoricalChart = ({
 
         return result;
       }, []);
+      if (itemsData && itemsData.length > 0) {
+        return itemsData;
+      }
+
+      if (item && item.props && item.props.data && item.props.data.length > 0) {
+        return item.props.data;
+      }
+
+      const { data } = props;
+
+        if (data && data.length && isNumber(dataStartIndex) && isNumber(dataEndIndex)) {
+        return data.slice(dataStartIndex, dataEndIndex + 1);
+      }
+
+      return [];
     };
 
     constructor(props) {
