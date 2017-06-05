@@ -263,7 +263,9 @@ const generateCategoricalChart = ({
       stackGroups, dataStartIndex, dataEndIndex }) {
       const { layout, children, stackOffset } = props;
       const displayedData = this.constructor.getDisplayedData(props, {
-        graphicalItems, dataStartIndex, dataEndIndex,
+        graphicalItems: graphicalItems.filter(item => item.props[axisIdKey] === axisId),
+        dataStartIndex,
+        dataEndIndex,
       });
       const len = displayedData.length;
       const isCategorial = isCategorialAxis(layout, axisType);
