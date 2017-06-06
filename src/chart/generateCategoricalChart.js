@@ -262,18 +262,18 @@ const generateCategoricalChart = ({
     getAxisMapByAxes(props, { axes, graphicalItems, axisType, axisIdKey,
       stackGroups, dataStartIndex, dataEndIndex }) {
       const { layout, children, stackOffset } = props;
-      const displayedData = this.constructor.getDisplayedData(props, {
-        graphicalItems: graphicalItems.filter(item => item.props[axisIdKey] === axisId),
-        dataStartIndex,
-        dataEndIndex,
-      });
-      const len = displayedData.length;
       const isCategorial = isCategorialAxis(layout, axisType);
 
       // Eliminate duplicated axes
       const axisMap = axes.reduce((result, child) => {
         const { type, dataKey, allowDataOverflow, scale } = child.props;
         const axisId = child.props[axisIdKey];
+        const displayedData = this.constructor.getDisplayedData(props, {
+          graphicalItems: graphicalItems.filter(item => item.props[axisIdKey] === axisId),
+          dataStartIndex,
+          dataEndIndex,
+        });
+        const len = displayedData.length;
 
         if (!result[axisId]) {
           let domain, duplicateDomain, categoricalDomain;
