@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import classNames from 'classnames';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Dot from '../shape/Dot';
@@ -31,6 +32,7 @@ class ReferenceDot extends Component {
     x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
+    className: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
@@ -97,7 +99,7 @@ class ReferenceDot extends Component {
 
     if (!coordinate) { return null; }
 
-    const { shape } = this.props;
+    const { shape, className } = this.props;
 
     const dotProps = {
       ...getPresentationAttributes(this.props),
@@ -106,7 +108,7 @@ class ReferenceDot extends Component {
     };
 
     return (
-      <Layer className="recharts-reference-dot">
+      <Layer className={classNames('recharts-reference-dot', className)}>
         {this.renderDot(shape, dotProps)}
         {Label.renderCallByParent(this.props, {
           x: coordinate.x - r,

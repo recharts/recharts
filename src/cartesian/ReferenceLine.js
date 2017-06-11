@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import classNames from 'classnames';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
@@ -53,6 +54,7 @@ class ReferenceLine extends Component {
     x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
+    className: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
@@ -102,7 +104,7 @@ class ReferenceLine extends Component {
   }
 
   render() {
-    const { x, y, shape } = this.props;
+    const { x, y, shape, className } = this.props;
     const isX = isNumOrStr(x);
     const isY = isNumOrStr(y);
 
@@ -123,7 +125,7 @@ class ReferenceLine extends Component {
     };
 
     return (
-      <Layer className="recharts-reference-line">
+      <Layer className={classNames('recharts-reference-line', className)}>
         {renderLine(shape, props)}
         {Label.renderCallByParent(this.props, {
           x: Math.min(props.x1, props.x2),
