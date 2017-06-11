@@ -2,6 +2,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import { mount, render } from 'enzyme';
+import sinon from 'sinon';
 
 describe('<RadarChart />', () => {
   const data = [
@@ -68,5 +69,19 @@ describe('<RadarChart />', () => {
     expect(wrapper.find('.recharts-polar-grid .recharts-polar-grid-angle line').length).to.equal(8);
     expect(wrapper.find('.recharts-polar-angle-axis .recharts-polar-angle-axis-tick').length).to.equal(8);
     expect(wrapper.find('.recharts-polar-radius-axis .recharts-polar-radius-axis-tick').length).to.equal(5);
+  });
+
+  it('click on Sector should invoke onClick callback', () => {
+    const onClick = sinon.spy(Radar.prototype, 'render');
+    const wrapper = mount(
+      <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
+        <Radar dataKey="value" onClick={onClick} />
+      </RadarChart>
+    );
+    const radars = wrapper.find(Radar);
+    const radar = radars.at(0);
+
+    radar.simulate('click');
+    expect(onClick.callCount).to.equal(1);
   });
 });
