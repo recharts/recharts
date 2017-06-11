@@ -1317,17 +1317,9 @@ const generateCategoricalChart = ({
       }
 
       return (
-        <Smooth
-          from="scale(0)"
-          to="scale(1)"
-          duration={400}
-          key={props.key}
-          attributeName="transform"
-        >
-          <Layer style={{ transformOrigin: 'center center' }}>
-            {dot}
-          </Layer>
-        </Smooth>
+        <Layer className="recharts-active-dot" key={props.key}>
+          {dot}
+        </Layer>
       );
     }
 

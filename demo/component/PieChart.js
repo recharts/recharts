@@ -107,7 +107,7 @@ export default class Demo extends Component {
 
   static displayName = 'PieChartDemo';
 
-  onPieEnter = (data, index) => {
+  onPieEnter = (data, index, e) => {
     this.setState({
       activeIndex: index,
     });
