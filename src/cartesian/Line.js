@@ -282,7 +282,7 @@ class Line extends Component {
   }
 
   renderCurveStatically(points, needClip, props) {
-    const { type, layout } = this.props;
+    const { type, layout, connectNulls } = this.props;
     const curveProps = {
       ...getPresentationAttributes(this.props),
       ...filterEventAttributes(this.props),
@@ -291,7 +291,7 @@ class Line extends Component {
       clipPath: needClip ? `url(#clipPath-${this.id})` : null,
       points,
       ...props,
-      type, layout,
+      type, layout, connectNulls,
     };
 
     return <Curve {...curveProps} pathRef={this.pathRef} />;
