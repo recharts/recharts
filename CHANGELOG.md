@@ -1,5 +1,17 @@
 ## 1.0.0-alpha.0(May 24, 2017)
 
+### fix
+
+- update the propType of the props data or Bar
+- fix the type of Curve
+- fix connectNulls of `Line`
+- update version of recharts-scale to fix #713
+- fix valueKey of Pie temporarily and add logs when use deprecated "valueKey"
+- bind events to Radar
+- fix animation of active-dot
+
+## 1.0.0-alpha.0(May 24, 2017)
+
 ### refactor
 
 - refactor PolarCharts
