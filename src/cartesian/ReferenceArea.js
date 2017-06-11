@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import classNames from 'classnames';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Label from '../component/Label';
@@ -36,6 +37,7 @@ class ReferenceArea extends Component {
     y1: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     y2: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
+    className: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
@@ -118,7 +120,7 @@ class ReferenceArea extends Component {
   }
 
   render() {
-    const { x1, x2, y1, y2 } = this.props;
+    const { x1, x2, y1, y2, className } = this.props;
     const hasX = isNumOrStr(x1) && isNumOrStr(x2);
     const hasY = isNumOrStr(y1) && isNumOrStr(y2);
 
@@ -131,7 +133,7 @@ class ReferenceArea extends Component {
     const { shape } = this.props;
 
     return (
-      <Layer className="recharts-reference-area">
+      <Layer className={classNames('recharts-reference-area', className)}>
         {this.renderRect(shape, { ...this.props, ...rect })}
         {Label.renderCallByParent(this.props, rect)}
       </Layer>
