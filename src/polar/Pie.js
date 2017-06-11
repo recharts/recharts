@@ -20,6 +20,7 @@ import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { isNumber, uniqueId, getPercentValue, mathSign } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
+import { warn } from '../util/LogUtils';
 
 @pureRender
 class Pie extends Component {
@@ -41,6 +42,7 @@ class Pie extends Component {
     cornerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
     nameKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
+    valueKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
     data: PropTypes.arrayOf(PropTypes.object),
     minAngle: PropTypes.number,
     legendType: PropTypes.oneOf(LEGEND_TYPES),
@@ -145,7 +147,8 @@ class Pie extends Component {
     const pieData = Pie.getRealPieData(item);
     if (!pieData || !pieData.length) { return []; }
 
-    const { cornerRadius, startAngle, endAngle, paddingAngle, dataKey, nameKey } = item.props;
+    const { cornerRadius, startAngle, endAngle, paddingAngle, dataKey, nameKey,
+      valueKey } = item.props;
     const minAngle = Math.abs(item.props.minAngle);
     const coordinate = Pie.parseCoordinateOfPie(item, offset);
     const len = pieData.length;
@@ -153,8 +156,22 @@ class Pie extends Component {
     const absDeltaAngle = Math.abs(deltaAngle);
     const totalPadingAngle = (absDeltaAngle >= 360 ? len : (len - 1)) * paddingAngle;
     const realTotalAngle = absDeltaAngle - len * minAngle - totalPadingAngle;
+    let realDataKey = dataKey;
+
+    if (_.isNil(dataKey) && _.isNil(valueKey)) {
+      warn(false,
+      `Use "dataKey" to specify the value of pie,
+      the props "valueKey" will be deprecated in 1.1.0`);
+      realDataKey = 'value';
+    } else if (_.isNil(dataKey)) {
+      warn(false,
+      `Use "dataKey" to specify the value of pie,
+      the props "valueKey" will be deprecated in 1.1.0`);
+      realDataKey = valueKey;
+    }
+
     const sum = pieData.reduce((result, entry) => {
-      const val = getValueByDataKey(entry, dataKey, 0);
+      const val = getValueByDataKey(entry, realDataKey, 0);
       return result + (isNumber(val) ? val : 0);
     }, 0);
     let sectors = [];
@@ -162,7 +179,7 @@ class Pie extends Component {
 
     if (sum > 0) {
       sectors = pieData.map((entry, i) => {
-        const val = getValueByDataKey(entry, dataKey, 0);
+        const val = getValueByDataKey(entry, realDataKey, 0);
         const name = getValueByDataKey(entry, nameKey, i);
         const percent = (isNumber(val) ? val : 0) / sum;
         let tempStartAngle;
@@ -186,7 +203,7 @@ class Pie extends Component {
           percent, cornerRadius, name, tooltipPayload, midAngle, middleRadius, tooltipPosition,
           ...entry,
           ...coordinate,
-          value: getValueByDataKey(entry, dataKey),
+          value: getValueByDataKey(entry, realDataKey),
           startAngle: tempStartAngle,
           endAngle: tempEndAngle,
         };
