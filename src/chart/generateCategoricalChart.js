@@ -673,7 +673,7 @@ const generateCategoricalChart = ({
 
       if (layout === 'horizontal' || layout === 'vertical') {
         const { offset } = this.state;
-        const isInRange = x >= offset.left && y <= (offset.left + offset.width) &&
+        const isInRange = x >= offset.left && x <= (offset.left + offset.width) &&
           y >= offset.top && y <= offset.top + offset.height;
 
         return isInRange ? { x, y } : null;
