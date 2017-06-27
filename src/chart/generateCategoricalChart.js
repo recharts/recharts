@@ -969,8 +969,8 @@ const generateCategoricalChart = ({
     handleMouseMove = (e) => {
       if (e && _.isFunction(e.persist)) {
         e.persist();
-        this.triggeredAfterMouseMove(e);
       }
+      this.triggeredAfterMouseMove(e);
     }
     /**
      * The handler if mouse leaving chart
