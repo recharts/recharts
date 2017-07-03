@@ -379,7 +379,7 @@ const renderCallByParent = (parentProps, viewBox, ckeckPropsLabel = true) => {
   );
 
   if (!ckeckPropsLabel) { return explicitChilren; }
-  const implicitLabel = parseLabel(parentProps.label, parentViewBox);
+  const implicitLabel = parseLabel(parentProps.label, viewBox || parentViewBox);
 
   return [implicitLabel, ...explicitChilren];
 };
