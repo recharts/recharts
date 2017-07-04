@@ -108,7 +108,7 @@ class ResponsiveContainer extends Component {
       }
     }
 
-    warn(calculatedWidth > 0 && calculatedHeight > 0,
+    warn(calculatedWidth > 0 || calculatedHeight > 0,
       `The width(%s) and height(%s) of chart should be greater than 0,
        please check the style of container, or the props width(%s) and height(%s),
        or add a minWidth(%s) or minHeight(%s) or use aspect(%s) to control the
