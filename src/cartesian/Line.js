@@ -4,7 +4,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
-import { interpolateNumber } from 'd3-interpolate';
 import classNames from 'classnames';
 import _ from 'lodash';
 import pureRender from '../util/PureRender';
@@ -13,7 +12,7 @@ import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
 import ErrorBar from './ErrorBar';
-import { uniqueId } from '../util/DataUtils';
+import { uniqueId, interpolateNumber } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, filterEventAttributes,
   getPresentationAttributes, isSsr, findChildByType } from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
