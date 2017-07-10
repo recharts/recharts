@@ -4,11 +4,13 @@ import _ from 'lodash';
 import Label from './Label';
 import Layer from '../container/Layer';
 import { getPresentationAttributes, findAllByType } from '../util/ReactUtils';
+import { getValueByDataKey } from '../util/ChartUtils';
 
 const propTypes = {
   data: PropTypes.arrayOf(PropTypes.object),
   valueAccessor: PropTypes.func,
   clockWise: PropTypes.bool,
+  dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
 };
 
 const defaultProps = {
@@ -16,23 +18,29 @@ const defaultProps = {
 };
 
 function LabelList(props) {
-  const { data, valueAccessor, clockWise, ...others } = props;
+  const { data, valueAccessor, dataKey, clockWise, ...others } = props;
 
   if (!data || !data.length) { return null; }
 
   return (
     <Layer className="recharts-label-list">
       {
-        data.map((entry, index) => (
-          <Label
-            {...getPresentationAttributes(entry)}
-            {...others}
-            index={index}
-            value={valueAccessor(entry, index)}
-            viewBox={Label.parseViewBox(_.isNil(clockWise) ? entry : { ...entry, clockWise })}
-            key={`label-${index}`}
-          />
-        ))
+        data.map((entry, index) => {
+          const value = _.isNil(dataKey) ?
+            valueAccessor(entry, index) :
+            getValueByDataKey(entry && entry.payload, dataKey);
+
+          return (
+            <Label
+              {...getPresentationAttributes(entry)}
+              {...others}
+              index={index}
+              value={value}
+              viewBox={Label.parseViewBox(_.isNil(clockWise) ? entry : { ...entry, clockWise })}
+              key={`label-${index}`}
+            />
+          );
+        })
       }
     </Layer>
   );
