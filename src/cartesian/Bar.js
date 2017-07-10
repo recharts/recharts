@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
-import { interpolateNumber } from 'd3-interpolate';
 import _ from 'lodash';
 import Rectangle from '../shape/Rectangle';
 import Layer from '../container/Layer';
@@ -13,7 +12,7 @@ import ErrorBar from './ErrorBar';
 import Cell from '../component/Cell';
 import LabelList from '../component/LabelList';
 import pureRender from '../util/PureRender';
-import { uniqueId, mathSign } from '../util/DataUtils';
+import { uniqueId, mathSign, interpolateNumber } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, findChildByType,
   findAllByType, getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { getCateCoordinateOfBar, getValueByDataKey, truncateByDomain, getBaseValueOfBar,

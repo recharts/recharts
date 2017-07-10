@@ -86,3 +86,11 @@ export const hasDuplicate = (ary) => {
 
   return false;
 };
+
+export const interpolateNumber = (numberA, numberB) => {
+  if (isNumber(numberA) && isNumber(numberB)) {
+    return t => (numberA + t * (numberB - numberA));
+  }
+
+  return () => numberB;
+};

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { interpolateNumber } from 'd3-interpolate';
+import { interpolateNumber } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES, filterEventAttributes,
   getPresentationAttributes, isSsr } from '../util/ReactUtils';

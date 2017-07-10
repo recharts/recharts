@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
-import { interpolateNumber } from 'd3-interpolate';
 import _ from 'lodash';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
@@ -14,7 +13,7 @@ import LabelList from '../component/LabelList';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, isSsr } from '../util/ReactUtils';
-import { isNumber, uniqueId } from '../util/DataUtils';
+import { isNumber, uniqueId, interpolateNumber } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 
 

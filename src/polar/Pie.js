@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { interpolateNumber } from 'd3-interpolate';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Sector from '../shape/Sector';
@@ -18,7 +17,7 @@ import Cell from '../component/Cell';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
-import { isNumber, uniqueId, getPercentValue, mathSign } from '../util/DataUtils';
+import { isNumber, uniqueId, getPercentValue, mathSign, interpolateNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { warn } from '../util/LogUtils';
 

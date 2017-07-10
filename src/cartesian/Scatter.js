@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { interpolateNumber } from 'd3-interpolate';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
@@ -16,7 +15,7 @@ import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
 import ErrorBar from './ErrorBar';
 import Cell from '../component/Cell';
-import { uniqueId, isNumOrStr } from '../util/DataUtils';
+import { uniqueId, isNumOrStr, interpolateNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 
 @pureRender
