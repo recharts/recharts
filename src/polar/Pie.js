@@ -342,7 +342,7 @@ class Pie extends Component {
     if (isAnimationActive && !this.state.isAnimationFinished) {
       return null;
     }
-    const { label, labelLine, dataKey } = this.props;
+    const { label, labelLine, dataKey, valueKey } = this.props;
     const pieProps = getPresentationAttributes(this.props);
     const customLabelProps = getPresentationAttributes(label);
     const customLabelLineProps = getPresentationAttributes(labelLine);
@@ -370,11 +370,18 @@ class Pie extends Component {
         ...customLabelLineProps,
         points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
       };
+      let realDataKey = dataKey;
+      // TODO: compatible to lower versions
+      if (_.isNil(dataKey) && _.isNil(valueKey)) {
+        realDataKey = 'value';
+      } else if (_.isNil(dataKey)) {
+        realDataKey = valueKey;
+      }
 
       return (
         <Layer key={`label-${i}`}>
           {labelLine && this.renderLabelLineItem(labelLine, lineProps)}
-          {this.renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey))}
+          {this.renderLabelItem(label, labelProps, getValueByDataKey(entry, realDataKey))}
         </Layer>
       );
     });
