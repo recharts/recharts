@@ -205,6 +205,7 @@ class Pie extends Component {
           value: getValueByDataKey(entry, realDataKey),
           startAngle: tempStartAngle,
           endAngle: tempEndAngle,
+          payload: entry,
         };
 
         return prev;

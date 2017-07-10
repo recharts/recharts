@@ -404,7 +404,7 @@ export default class Demo extends Component {
               strokeOpacity={opacity}
               strokeDasharray="3 3"
             >
-              <LabelList position="bottom" offset={10} />
+              <LabelList position="bottom" offset={10} dataKey="name" />
             </Line>
             <Brush dataKey="name" height={30} />
           </LineChart>
