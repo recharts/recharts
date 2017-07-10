@@ -575,8 +575,12 @@ const generateCategoricalChart = ({
               ...componsedFn({
                 ...axisObj, displayedData, props, dataKey, item, bandSize,
                 barPosition, offset, stackedData, layout, dataStartIndex, dataEndIndex,
-                onItemMouseLeave: this.handleItemMouseLeave,
-                onItemMouseEnter: this.handleItemMouseEnter,
+                onItemMouseLeave: combineEventHandlers(
+                  this.handleItemMouseLeave, null, item.props.onMouseLeave
+                ),
+                onItemMouseEnter: combineEventHandlers(
+                  this.handleItemMouseEnter, null, item.props.onMouseEnter
+                ),
               }),
               key: item.key || `item-${index}`,
               [numericAxisName]: axisObj[numericAxisName],
@@ -996,7 +1000,7 @@ const generateCategoricalChart = ({
         const mouse = this.getMouseInfo(e);
         const handler = this.props[eventName];
 
-        handler(mouse);
+        handler(mouse, e);
       }
     };
 

@@ -122,6 +122,10 @@ export default class Demo extends Component {
     this.setState(() => _.mapValues(initilaState, changeNumberOfData));
   };
 
+  handlePieChartEnter = (a, b, c) => {
+    console.log(a, b, c);
+  };
+
   render () {
     const { data01, data02, data03 } = this.state;
 
@@ -204,7 +208,7 @@ export default class Demo extends Component {
         <p>PieChart wrapped by ResponsiveContainer</p>
         <div className="pie-chart-wrapper" style={{ width: '50%', height: '100%', backgroundColor: '#f5f5f5' }}>
           <ResponsiveContainer>
-            <PieChart>
+            <PieChart onMouseEnter={this.handlePieChartEnter}>
               <Pie
                 data={data01}
                 dataKey="value"
@@ -212,7 +216,7 @@ export default class Demo extends Component {
                 outerRadius="40%"
                 activeIndex={this.state.activeIndex}
                 activeShape={renderActiveShape}
-                onClick={this.onPieEnter}
+                onMouseEnter={this.onPieEnter}
                 isAnimationActive={false}
               >
                 {

@@ -6,6 +6,10 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine,
   Label, LabelList } from 'recharts';
 import { scalePow, scaleLog } from 'd3-scale';
 
+function Hello() {
+  return <div>Hello</div>;
+}
+
 const data = [
   { name: 'Page A', uv: 1000, pv: 2400, amt: 2400, uvError: [75, 20] },
   { name: 'Page B', uv: 300, pv: 4567, amt: 2400, uvError: [90, 40] },
@@ -384,7 +388,7 @@ export default class Demo extends Component {
               onMouseEnter={this.handleLegendMouseEnter}
               onMouseLeave={this.handleLegendMouseLeave}
             />
-            <XAxis type="number" dataKey="pv" height={40}>
+            <XAxis type="number" dataKey="pv" height={40} label={<Hello />}>
               <Label value="x轴" position="insideBottom" />
             </XAxis>
             <YAxis type="number">
