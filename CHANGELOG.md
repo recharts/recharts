@@ -1,3 +1,21 @@
+## 1.0.0-alpha.2(Jul 10, 2017)
+
+### feat
+
+- Add props className to ReferenceLine, ReferenceDot, ReferenceArea
+- Specify the contents of LabelList by `dataKey`
+
+### fix
+
+- Fix faulty logic check in inRange function
+- onTouchMove event call method that handle tooltip and active dot draw
+- Show tooltip on drag movement on touch devices
+- Fix viewBox of Label when render implicit label
+- Fix label of Pie
+- Fix events of Pie and PieChart
+- Fix bug of interplateNumber
+- Fix the bug of parsing "dataMin - 0.05" like domain
+
 ## 1.0.0-alpha.1(Jun 11, 2017)
 
 ### fix
