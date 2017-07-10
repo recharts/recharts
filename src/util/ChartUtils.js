@@ -856,8 +856,8 @@ export const getDomainOfStackGroups = (stackGroups, startIndex, endIndex) => (
     .map(result => (result === Infinity || result === -Infinity ? 0 : result))
 );
 
-const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([\d]+)$/;
-const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([\d]+)$/;
+export const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
+export const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 
 export const parseSpecifiedDomain = (specifiedDomain, dataDomain, allowDataOverflow) => {
   if (!_.isArray(specifiedDomain)) {
