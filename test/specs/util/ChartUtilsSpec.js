@@ -5,7 +5,7 @@ import {
   getDomainOfDataByKey, appendOffsetOfLegend,
   validateCoordinateInRange, getBandSizeOfAxis, calculateDomainOfTicks,
   parseSpecifiedDomain,  parseScale, getTicksOfScale, getValueByDataKey,
-  offsetSign } from '../../../src/util/ChartUtils';
+  offsetSign, MIN_VALUE_REG, MAX_VALUE_REG } from '../../../src/util/ChartUtils';
 
 describe('validateCoordinateInRange', () => {
   it('DataUtils.validateCoordinateInRange(1) should return false ', () => {
@@ -191,6 +191,34 @@ describe('getDomainOfStackGroups', () => {
     };
 
     expect(getDomainOfStackGroups(stackData, 0, 1)).to.deep.equal([0, 0]);
+  });
+});
+
+describe('MIN_VALUE_REG ', () => {
+  it('.exec("dataMin - 0.233") is true', () => {
+    expect(MIN_VALUE_REG.test('dataMin - 0.233')).to.be.true;
+  });
+
+  it('.exec("dataMin - 233") is true', () => {
+    expect(MIN_VALUE_REG.test('dataMin - 233')).to.be.true;
+  });
+
+  it('.exec("dataMin - 233,") is false', () => {
+    expect(MIN_VALUE_REG.test('dataMin - 233,')).to.be.false;
+  });
+});
+
+describe('MAX_VALUE_REG ', () => {
+  it('.exec("dataMax + 0.233") is true', () => {
+    expect(MAX_VALUE_REG.test('dataMax + 0.233')).to.be.true;
+  });
+
+  it('.exec("dataMax + 233") is true', () => {
+    expect(MAX_VALUE_REG.test('dataMax + 233')).to.be.true;
+  });
+
+  it('.exec("dataMax + 233,") is false', () => {
+    expect(MAX_VALUE_REG.test('dataMax + 233,')).to.be.false;
   });
 });
 

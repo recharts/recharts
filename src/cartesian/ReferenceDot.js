@@ -111,8 +111,8 @@ class ReferenceDot extends Component {
       <Layer className={classNames('recharts-reference-dot', className)}>
         {this.renderDot(shape, dotProps)}
         {Label.renderCallByParent(this.props, {
-          x: coordinate.x - r,
-          y: coordinate.y - r,
+          x: coordinate.cx - r,
+          y: coordinate.cy - r,
           width: 2 * r,
           height: 2 * r,
         })}
