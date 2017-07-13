@@ -358,13 +358,19 @@ export const isChildrenEqual = (nextChildren, prevChildren) => {
   const count = Children.count(nextChildren);
 
   if (count === 0) { return true; }
-  if (count === 1) { return isSingleChildEqual(nextChildren, prevChildren); }
+  if (count === 1) {
+    return isSingleChildEqual(Children.only(nextChildren), Children.only(prevChildren));
+  }
 
   for (let i = 0; i < count; i++) {
     const nextChild = nextChildren[i];
     const prevChild = prevChildren[i];
 
-    if (!isSingleChildEqual(nextChild, prevChild)) {
+    if (_.isArray(nextChild) || _.isArray(prevChild)) {
+      if (!isChildrenEqual(nextChild, prevChild)) {
+        return false;
+      }
+    } else if (!isSingleChildEqual(nextChild, prevChild)) {
       return false;
     }
   }
