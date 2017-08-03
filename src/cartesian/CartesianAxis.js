@@ -410,7 +410,10 @@ class CartesianAxis extends Component {
   }
 
   render() {
-    const { axisLine, width, height, ticksGenerator, className } = this.props;
+    const { axisLine, width, height, ticksGenerator, className, hide } = this.props;
+
+    if (hide) { return null; }
+
     const { ticks, ...noTicksProps } = this.props;
     let finalTicks = ticks;
 
