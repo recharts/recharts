@@ -1,3 +1,10 @@
+## 1.0.0-alpha.2(Aug 12, 2017)
+
+### fix
+
+- fix bug of isChildrenEqual
+- fix "hide" props of YAxis
+
 ## 1.0.0-alpha.2(Jul 10, 2017)
 
 ### feat
