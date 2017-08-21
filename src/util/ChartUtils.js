@@ -110,7 +110,7 @@ export const getLegendProps = ({
   } else if (legendContent === 'children') {
     legendData = (formatedGraphicalItems || []).reduce((result, { item, props }, i) => {
       const { nameKey } = item.props;
-      const data = props.sectors || props.data;
+      const data = props.sectors || props.data || [];
 
       return result.concat(data.map(entry => (
         {
