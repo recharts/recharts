@@ -100,6 +100,7 @@ class Pie extends Component {
     animationBegin: 400,
     animationDuration: 1500,
     animationEasing: 'ease',
+    nameKey: 'name',
   };
 
   static parseDeltaAngle = ({ startAngle, endAngle }) => {
