@@ -76,7 +76,7 @@ class CartesianAxis extends Component {
   };
 
   static getTicks(props) {
-    const { tick, ticks, viewBox, minTickGap, orientation, interval, tickFormatter } = props;
+    const { tick, ticks, viewBox, minTickGap, orientation, interval, tickFormatter, unit } = props;
 
     if (!ticks || !ticks.length || !tick) { return []; }
 
@@ -86,25 +86,30 @@ class CartesianAxis extends Component {
 
     if (interval === 'preserveStartEnd') {
       return CartesianAxis.getTicksStart({
-        ticks, tickFormatter, viewBox, orientation, minTickGap,
+        ticks, tickFormatter, viewBox, orientation, minTickGap, unit,
       }, true);
     } else if (interval === 'preserveStart') {
       return CartesianAxis.getTicksStart({
-        ticks, tickFormatter, viewBox, orientation, minTickGap,
+        ticks, tickFormatter, viewBox, orientation, minTickGap, unit,
       });
     }
 
-    return CartesianAxis.getTicksEnd({ ticks, tickFormatter, viewBox, orientation, minTickGap });
+    return CartesianAxis.getTicksEnd({
+      ticks, tickFormatter, viewBox, orientation, minTickGap, unit,
+    });
   }
 
   static getNumberIntervalTicks(ticks, interval) {
     return ticks.filter((entry, i) => (i % (interval + 1) === 0));
   }
 
-  static getTicksStart({ ticks, tickFormatter, viewBox, orientation, minTickGap }, preserveEnd) {
+  static getTicksStart({
+    ticks, tickFormatter, viewBox, orientation, minTickGap, unit,
+  }, preserveEnd) {
     const { x, y, width, height } = viewBox;
     const sizeKey = (orientation === 'top' || orientation === 'bottom') ? 'width' : 'height';
     const result = (ticks || []).slice();
+    const unitSize = unit ? getStringSize(unit)[sizeKey] : 0;
     const len = result.length;
     const sign = len >= 2 ? mathSign(result[1].coordinate - result[0].coordinate) : 1;
 
@@ -122,7 +127,7 @@ class CartesianAxis extends Component {
       // Try to guarantee the tail to be displayed
       let tail = ticks[len - 1];
       const tailContent = _.isFunction(tickFormatter) ? tickFormatter(tail.value) : tail.value;
-      const tailSize = getStringSize(tailContent)[sizeKey];
+      const tailSize = getStringSize(tailContent)[sizeKey] + unitSize;
       const tailGap = sign * (tail.coordinate + sign * tailSize / 2 - end);
       result[len - 1] = tail = {
         ...tail,
@@ -142,7 +147,7 @@ class CartesianAxis extends Component {
     for (let i = 0; i < count; i++) {
       let entry = result[i];
       const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value;
-      const size = getStringSize(content)[sizeKey];
+      const size = getStringSize(content)[sizeKey] + unitSize;
 
       if (i === 0) {
         const gap = sign * (entry.coordinate - sign * size / 2 - start);
@@ -166,9 +171,10 @@ class CartesianAxis extends Component {
     return result.filter(entry => entry.isShow);
   }
 
-  static getTicksEnd({ ticks, tickFormatter, viewBox, orientation, minTickGap }) {
+  static getTicksEnd({ ticks, tickFormatter, viewBox, orientation, minTickGap, unit }) {
     const { x, y, width, height } = viewBox;
     const sizeKey = (orientation === 'top' || orientation === 'bottom') ? 'width' : 'height';
+    const unitSize = unit ? getStringSize(unit)[sizeKey] : 0;
     const result = (ticks || []).slice();
     const len = result.length;
     const sign = len >= 2 ? mathSign(result[1].coordinate - result[0].coordinate) : 1;
@@ -186,7 +192,7 @@ class CartesianAxis extends Component {
     for (let i = len - 1; i >= 0; i--) {
       let entry = result[i];
       const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value;
-      const size = getStringSize(content)[sizeKey];
+      const size = getStringSize(content)[sizeKey] + unitSize;
 
       if (i === len - 1) {
         const gap = sign * (entry.coordinate + sign * size / 2 - end);
@@ -359,7 +365,7 @@ class CartesianAxis extends Component {
    * @return {ReactComponent} renderedTicks
    */
   renderTicks(ticks) {
-    const { tickLine, stroke, tick, tickFormatter } = this.props;
+    const { tickLine, stroke, tick, tickFormatter, unit } = this.props;
     const finalTicks = CartesianAxis.getTicks({ ...this.props, ticks });
     const textAnchor = this.getTickTextAnchor();
     const verticalAnchor = this.getTickVerticalAnchor();
@@ -396,7 +402,7 @@ class CartesianAxis extends Component {
           {tick && this.renderTickItem(
             tick,
             tickProps,
-            _.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value
+            `${_.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value}${unit || ''}`
           )}
         </Layer>
       );
