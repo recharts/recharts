@@ -12,7 +12,7 @@
 
 ### feat
 
-- Render unit when the props unit of XAxis , YAxis is specified
+- Render unit when the props unit of XAxis, YAxis is specified
 - Add default nameKey to "name" property in Pie
 - Add props className and id to ResponsiveContainer
 
