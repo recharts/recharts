@@ -139,7 +139,7 @@ const generateCategoricalChart = ({
 
       const { data } = props;
 
-        if (data && data.length && isNumber(dataStartIndex) && isNumber(dataEndIndex)) {
+      if (data && data.length && isNumber(dataStartIndex) && isNumber(dataEndIndex)) {
         return data.slice(dataStartIndex, dataEndIndex + 1);
       }
 

@@ -1,3 +1,25 @@
+## 1.0.0-alpha.4(Aug 21, 2017)
+
+### fix
+
+- Fix error 'Cannot read property 'map' of undefined' in Pie
+- Fix bug of parsing the width of Brush
+- Don't render any path when width === 0 || height === 0 in Rectangle
+### refactor
+
+- Avoid calculating ticks if tick is set to false
+- Update the order of parsing data in mixed components
+
+### feat
+
+- Render unit when the props unit of XAxis , YAxis is specified
+- Add default nameKey to "name" property in Pie
+- Add props className and id to ResponsiveContainer
+
+### dep
+
+- Update recharts-scale to fix bug of ticks
+
 ## 1.0.0-alpha.3(Aug 12, 2017)
 
 ### fix
