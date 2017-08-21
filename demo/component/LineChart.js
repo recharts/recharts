@@ -391,7 +391,7 @@ export default class Demo extends Component {
             <XAxis type="number" dataKey="pv" height={40} label={<Hello />}>
               <Label value="x轴" position="insideBottom" />
             </XAxis>
-            <YAxis type="number">
+            <YAxis type="number" unit="%">
               <Label value="y轴" position="insideLeft" angle={90} />
             </YAxis>
             <Tooltip />
