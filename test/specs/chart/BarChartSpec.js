@@ -14,8 +14,8 @@ describe('<BarChart />', () => {
   it('Renders 8 bars in simple BarChart', () => {
     const wrapper = render(
       <BarChart width={100} height={50} data={data}>
-        <Bar dataKey="uv" fill="#ff7300" />
-        <Bar dataKey="pv" fill="#387908" />
+        <Bar dataKey="uv" fill="#ff7300" isAnimationActive={false} />
+        <Bar dataKey="pv" fill="#387908" isAnimationActive={false} />
       </BarChart>
     );
 
@@ -76,8 +76,8 @@ describe('<BarChart />', () => {
       <BarChart width={100} height={50} data={data} layout="vertical">
         <XAxis type="number" />
         <YAxis type="category" dataKey="name" />
-        <Bar dataKey="uv" fill="#ff7300" />
-        <Bar dataKey="pv" fill="#387908" />
+        <Bar dataKey="uv" fill="#ff7300" isAnimationActive={false} />
+        <Bar dataKey="pv" fill="#387908" isAnimationActive={false} />
       </BarChart>
     );
 
@@ -88,8 +88,8 @@ describe('<BarChart />', () => {
     const wrapper = render(
       <BarChart width={100} height={50} data={data}>
         <YAxis />
-        <Bar dataKey="uv" stackId="test" fill="#ff7300" />
-        <Bar dataKey="pv" stackId="test" fill="#387908" />
+        <Bar dataKey="uv" stackId="test" fill="#ff7300" isAnimationActive={false} />
+        <Bar dataKey="pv" stackId="test" fill="#387908" isAnimationActive={false} />
       </BarChart>
     );
 
@@ -100,7 +100,7 @@ describe('<BarChart />', () => {
     const wrapper = render(
       <BarChart width={100} height={50} data={data}>
         <YAxis />
-        <Bar dataKey="uv" stackId="test" fill="#ff7300" />
+        <Bar dataKey="uv" stackId="test" fill="#ff7300" isAnimationActive={false} />
       </BarChart>
     );
 

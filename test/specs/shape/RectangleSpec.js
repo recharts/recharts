@@ -38,6 +38,18 @@ describe('<Rectangle />', () => {
     expect(path.length - path.split('A').join('').length).to.equal(4);
   });
 
+  it("Dont't Render anything when height === 0 || width === 0", () => {
+    const wrapper = render(
+      <Surface width={400} height={400}>
+        <Rectangle x={50} y={200} width={80} height={0} radius={5} fill="#ff7300" />
+        <Rectangle x={50} y={200} width={0} height={30} radius={5} fill="#ff7300" />
+      </Surface>
+    );
+
+    const rects = wrapper.find('.recharts-rectangle');
+    expect(rects.length).to.equal(0);
+  });
+
   it('Don\'t render any path when x, y, width or height is not a number', () => {
     const wrapper = render(
       <Surface width={400} height={400}>

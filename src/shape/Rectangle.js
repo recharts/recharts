@@ -130,7 +130,8 @@ class Rectangle extends Component {
     const { animationEasing, animationDuration, animationBegin,
       isAnimationActive, isUpdateAnimationActive } = this.props;
 
-    if (x !== +x || y !== +y || width !== +width || height !== +height) { return null; }
+    if (x !== +x || y !== +y || width !== +width || height !== +height || width === 0 ||
+      height === 0) { return null; }
 
     const layerClass = classNames('recharts-rectangle', className);
 
