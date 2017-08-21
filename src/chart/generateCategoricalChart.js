@@ -1291,7 +1291,8 @@ const generateCategoricalChart = ({
         data,
         x: offset.left,
         y: offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
-        width: offset.width,
+        width: isNumber(element.props.width) && element.props.width ?
+          element.props.width : offset.width,
         startIndex: dataStartIndex,
         endIndex: dataEndIndex,
         updateId: `brush-${updateId}`,
