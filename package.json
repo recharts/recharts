@@ -29,7 +29,7 @@
     "test": "cross-env NODE_ENV=test karma start test/karma.conf.js",
     "lint": "eslint src",
     "autofix": "eslint src --fix",
-    "bundle-analyse": "cross-env NODE_ENV=analyse webpack src/index.js umd/Recharts.js"
+    "bundle-analyse": "cross-env NODE_ENV=analyse webpack src/index.js umd/Recharts.js",
     "postinstall": "npm run build"
   },
   "pre-commit": [
