@@ -1,10 +1,11 @@
-var path = require('path');
-var LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
-var webpack = require('webpack');
-var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-var env = process.env.NODE_ENV;
+const path = require('path');
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
+const webpack = require('webpack');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-var config = {
+const env = process.env.NODE_ENV;
+
+const config = {
   entry: './src/index.js',
 
   output: {
@@ -24,14 +25,6 @@ var config = {
         plugins: ['lodash'],
       },
     }],
-  },
-
-  resolve: {
-    alias: {
-      react: path.resolve(__dirname, './node_modules/react'),
-      'react-transition-group':
-          path.resolve(__dirname, './node_modules/react-transition-group'),
-    },
   },
 
   externals: {
@@ -58,7 +51,7 @@ var config = {
   plugins: [
     new LodashModuleReplacementPlugin({
       collections: true,
-      shorthands: true
+      shorthands: true,
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(env),
