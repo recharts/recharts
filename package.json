@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "classnames": "2.2.5",
-    "core-js": "2.4.1",
+    "core-js": "2.5.1",
     "d3-interpolate": "^1.1.5",
     "d3-scale": "1.0.6",
     "d3-shape": "1.2.0",
@@ -76,7 +76,7 @@
     "babel-preset-react": "^6.16.0",
     "chai": "^3.5.0",
     "chai-enzyme": "^0.5.2",
-    "cross-env": "^3.1.4",
+    "cross-env": "^5.0.5",
     "enzyme": "^2.6.0",
     "escope": "^3.6.0",
     "eslint": "^3.8.1",
