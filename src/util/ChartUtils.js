@@ -108,8 +108,7 @@ export const getLegendProps = ({
   if (legendItem.props && legendItem.props.payload) {
     legendData = (legendItem.props && legendItem.props.payload);
   } else if (legendContent === 'children') {
-    legendData = (formatedGraphicalItems || []).reduce((result, { item, props }, i) => {
-      const { nameKey } = item.props;
+    legendData = (formatedGraphicalItems || []).reduce((result, { item, props }) => {
       const data = props.sectors || props.data || [];
 
       return result.concat(data.map(entry => (
@@ -122,7 +121,7 @@ export const getLegendProps = ({
       )));
     }, []);
   } else {
-    legendData = (formatedGraphicalItems || []).map(({ item, props }) => {
+    legendData = (formatedGraphicalItems || []).map(({ item }) => {
       const { dataKey, name, legendType, hide } = item.props;
 
       return {
@@ -354,7 +353,7 @@ export const parseErrorBarsOfAxis = (data, items, dataKey, axisType) => {
  */
 export const getDomainOfItemsWithSameAxis = (data, items, type, filterNil) => {
   const domains = items.map((item) => {
-    const { children, dataKey } = item.props;
+    const { dataKey } = item.props;
 
     if (type === 'number' && dataKey) {
       return getDomainOfErrorBars(data, item, dataKey) ||
