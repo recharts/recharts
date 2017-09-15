@@ -99,7 +99,7 @@ export const getMainColorOfGraphicItem = (item) => {
 };
 
 export const getLegendProps = ({
-  children, formatedGraphicalItems, legendWidth, legendHeight, legendContent,
+  children, formatedGraphicalItems, legendWidth, legendContent,
 }) => {
   const legendItem = findChildByType(children, Legend);
   if (!legendItem) { return null; }
