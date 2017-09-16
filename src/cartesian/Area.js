@@ -312,6 +312,13 @@ class Area extends Component {
 
     return (
       <Layer clipPath={needClip ? `url(#clipPath-${this.id})` : null}>
+        <Curve
+          {...this.props}
+          points={points}
+          baseLine={baseLine}
+          stroke="none"
+          className="recharts-area-area"
+        />
         {stroke !== 'none' && (
           <Curve
             {...getPresentationAttributes(this.props)}
@@ -334,13 +341,6 @@ class Area extends Component {
             points={baseLine}
           />
         )}
-        <Curve
-          {...this.props}
-          points={points}
-          baseLine={baseLine}
-          stroke="none"
-          className="recharts-area-area"
-        />
       </Layer>
     );
   }
