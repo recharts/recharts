@@ -636,12 +636,12 @@ export const getStackedData = (data, stackItems, offsetType) => {
 };
 
 export const getStackGroupsByAxisId = (
-  data, _items, numericAxisId, cateAxisId, offsetType, reverseGroupOrder
+  data, _items, numericAxisId, cateAxisId, offsetType, reverseStackOrder
 ) => {
   if (!data) { return null; }
 
   // reversing items to affect render order (for layering)
-  const items = reverseGroupOrder ? _items.reverse() : _items;
+  const items = reverseStackOrder ? _items.reverse() : _items;
 
   const stackGroups = items.reduce((result, item) => {
     const { stackId, hide } = item.props;

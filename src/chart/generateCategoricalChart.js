@@ -76,7 +76,7 @@ const generateCategoricalChart = ({
       onMouseMove: PropTypes.func,
       onMouseDown: PropTypes.func,
       onMouseUp: PropTypes.func,
-      reverseGroupOrder: PropTypes.bool,
+      reverseStackOrder: PropTypes.bool,
       ...propTypes,
     };
 
@@ -86,7 +86,7 @@ const generateCategoricalChart = ({
       barCategoryGap: '10%',
       barGap: 4,
       margin: { top: 5, right: 5, bottom: 5, left: 5 },
-      reverseGroupOrder: false,
+      reverseStackOrder: false,
       ...defaultProps,
     };
 
@@ -735,11 +735,11 @@ const generateCategoricalChart = ({
     updateStateOfAxisMapsOffsetAndStackGroups({ props, dataStartIndex, dataEndIndex, updateId }) {
       if (!validateWidthHeight({ props })) { return null; }
 
-      const { children, layout, stackOffset, data, reverseGroupOrder } = props;
+      const { children, layout, stackOffset, data, reverseStackOrder } = props;
       const { numericAxisName, cateAxisName } = this.getAxisNameByLayout(layout);
       const graphicalItems = findAllByType(children, GraphicalChild);
       const stackGroups = getStackGroupsByAxisId(
-        data, graphicalItems, `${numericAxisName}Id`, `${cateAxisName}Id`, stackOffset, reverseGroupOrder
+        data, graphicalItems, `${numericAxisName}Id`, `${cateAxisName}Id`, stackOffset, reverseStackOrder
       );
       const axisObj = axisComponents.reduce((result, entry) => {
         const name = `${entry.axisType}Map`;
