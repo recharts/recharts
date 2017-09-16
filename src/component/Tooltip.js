@@ -57,6 +57,7 @@ const propTypes = {
     'linear',
   ]),
   itemSorter: PropTypes.func,
+  filterNull: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -74,6 +75,7 @@ const defaultProps = {
   animationEasing: 'ease',
   animationDuration: 400,
   itemSorter: () => -1,
+  filterNull: true,
 };
 
 const renderContent = (content, props) => {
@@ -126,9 +128,11 @@ class Tooltip extends Component {
   }
 
   render() {
-    const { payload, isAnimationActive, animationDuration, animationEasing } = this.props;
-    const hasPayload = payload && payload.length &&
-      payload.filter(entry => !_.isNil(entry.value)).length;
+    const { payload, isAnimationActive, animationDuration, animationEasing,
+      filterNull } = this.props;
+    const finalPayload = filterNull && payload && payload.length ?
+      payload.filter(entry => !_.isNil(entry.value)) : payload;
+    const hasPayload = finalPayload && finalPayload.length;
     const { content, viewBox, coordinate, position, active, offset, wrapperStyle } = this.props;
     let outerStyle = {
       pointerEvents: 'none',
@@ -182,7 +186,7 @@ class Tooltip extends Component {
         style={outerStyle}
         ref={(node) => { this.wrapperNode = node; }}
       >
-        {renderContent(content, this.props)}
+        {renderContent(content, { ...this.props, payload: finalPayload })}
       </div>
     );
   }
