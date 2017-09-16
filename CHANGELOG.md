@@ -1,3 +1,26 @@
+## 1.0.0-alpha.5(Sep 16, 2017)
+
+### fix
+
+- Don't check for animation when it is disabled
+- fix bug of paddingAngle when isAnimationActive is true
+
+### feat
+
+- add props filterNull to `Tooltip`, null values will not be filtered when filterNull = false
+
+### refactor
+
+- Allowing length in different unit in ResponsiveContainer
+  By allowing type: String on 'minHeight', 'minWidth', 'maxHeight' property, developers can use length in different units like em, pt etc.
+- Render curve with fill first in Area
+
+
+### dep
+
+- remove react-transition-group in peer dependencies
+- Updates resize-detector to 0.6, close #705, fix the problem with strange scrollbars appearing over the charts
+
 ## 1.0.0-alpha.4(Aug 21, 2017)
 
 ### fix
