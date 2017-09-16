@@ -16,6 +16,7 @@ describe('<Bar />', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
         <Bar
+          dataKey="x"
           isAnimationActive={false}
           data={data}
           label={{ label: 'test' }}
@@ -30,6 +31,7 @@ describe('<Bar />', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
         <Bar
+          dataKey="x"
           isAnimationActive={false}
           layout="vertical"
           data={data}
@@ -45,6 +47,7 @@ describe('<Bar />', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
         <Bar
+          dataKey="uv"
           data={[]}
         />
       </Surface>
