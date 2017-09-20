@@ -22,9 +22,13 @@ const propTypes = {
   }),
 
   active: PropTypes.bool,
+  corner: PropTypes.bool,
   separator: PropTypes.string,
   formatter: PropTypes.func,
   offset: PropTypes.number,
+
+  cornerSettings: PropTypes.object,
+  layout: PropTypes.string,
 
   itemStyle: PropTypes.object,
   labelStyle: PropTypes.object,
@@ -130,6 +134,7 @@ class Tooltip extends Component {
     const hasPayload = payload && payload.length &&
       payload.filter(entry => !_.isNil(entry.value)).length;
     const { content, viewBox, coordinate, position, active, offset, wrapperStyle } = this.props;
+    const { layout, corner, cornerSettings } = this.props;
     let outerStyle = {
       pointerEvents: 'none',
       visibility: active && hasPayload ? 'visible' : 'hidden',
@@ -137,7 +142,27 @@ class Tooltip extends Component {
       top: 0,
       ...wrapperStyle,
     };
-    let translateX, translateY;
+
+    let translateX, translateY, cornerBeforeStyle, cornerAfterStyle;
+
+    const cornerStyle = {
+      position: 'absolute',
+      margin: 'auto',
+      width: 0,
+      height: 0,
+      zIndex: 1,
+    };
+    let offsetCorner = 0;
+    let cornerDefaults = {
+      width: 8,
+      height: 8,
+      colorAfter: '#fff',
+      colorBefore: '#ccc',
+    };
+    cornerDefaults = {
+      ...cornerDefaults,
+      ...cornerSettings,
+    };
 
     if (position && isNumber(position.x) && isNumber(position.y)) {
       translateX = position.x;
@@ -145,16 +170,56 @@ class Tooltip extends Component {
     } else {
       const { boxWidth, boxHeight } = this.state;
 
+      // if corner enabled in the props
+      if (corner) {
+        offsetCorner += cornerDefaults.width;
+        if (_.isString(layout) && layout.toLowerCase() === 'horizontal') {
+          const cornerDirection = (coordinate.x + boxWidth + offset > (viewBox.x + viewBox.width)) ? 'left' : 'right';
+          cornerAfterStyle = {
+            top: 0,
+            bottom: 0,
+            [`${cornerDirection}`]: '100%',
+            [`border${_.startCase(cornerDirection)}`]: `${cornerDefaults.width}px solid ${cornerDefaults.colorAfter}`,
+            borderTop: `${cornerDefaults.height}px solid transparent`,
+            borderBottom: `${cornerDefaults.height}px solid transparent`,
+            [`margin${_.startCase(cornerDirection)}`]: '-2px',
+          };
+          cornerBeforeStyle = {
+            ...cornerAfterStyle,
+            [`margin${_.startCase(cornerDirection)}`]: 0,
+            [`border${_.startCase(cornerDirection)}`]: `${cornerDefaults.width}px solid ${cornerDefaults.colorBefore}`,
+            zIndex: -1,
+          };
+        } else if (_.isString(layout) && layout.toLowerCase() === 'vertical') {
+          const cornerDirection = (coordinate.y + boxHeight + offset > (viewBox.y + viewBox.height)) ? 'top' : 'bottom';
+          cornerAfterStyle = {
+            left: 0,
+            right: 0,
+            [`${cornerDirection}`]: '100%',
+            [`border${_.startCase(cornerDirection)}`]: `${cornerDefaults.width}px solid ${cornerDefaults.colorAfter}`,
+            borderLeft: `${cornerDefaults.height}px solid transparent`,
+            borderRight: `${cornerDefaults.height}px solid transparent`,
+            [`margin${_.startCase(cornerDirection)}`]: '-2px',
+          };
+          cornerBeforeStyle = {
+            ...cornerAfterStyle,
+            [`margin${_.startCase(cornerDirection)}`]: 0,
+            [`border${_.startCase(cornerDirection)}`]: `${cornerDefaults.width}px solid ${cornerDefaults.colorBefore}`,
+            zIndex: -1,
+          };
+        }
+      }
+
       if (boxWidth > 0 && boxHeight > 0 && coordinate) {
         translateX = position && isNumber(position.x) ? position.x : Math.max(
           coordinate.x + boxWidth + offset > (viewBox.x + viewBox.width) ?
-          coordinate.x - boxWidth - offset :
-          coordinate.x + offset, viewBox.x);
+          coordinate.x - boxWidth - offset - offsetCorner :
+          coordinate.x + offset + offsetCorner, viewBox.x);
 
         translateY = position && isNumber(position.y) ? position.y : Math.max(
           coordinate.y + boxHeight + offset > (viewBox.y + viewBox.height) ?
-          coordinate.y - boxHeight - offset :
-          coordinate.y + offset, viewBox.y);
+          coordinate.y - boxHeight - offset - offsetCorner :
+          coordinate.y + offset + offsetCorner, viewBox.y);
       } else {
         outerStyle.visibility = 'hidden';
       }
@@ -176,12 +241,22 @@ class Tooltip extends Component {
       };
     }
 
+    cornerAfterStyle = {
+      ...cornerStyle,
+      ...cornerAfterStyle,
+    };
+
+    cornerBeforeStyle = {
+      ...cornerStyle,
+      ...cornerBeforeStyle,
+    };
     return (
       <div
         className="recharts-tooltip-wrapper"
         style={outerStyle}
         ref={(node) => { this.wrapperNode = node; }}
       >
+        {_.isBoolean(corner) && corner && <div className="recharts-tooltip-wrapper-corner"><span style={cornerAfterStyle} /><span style={cornerBeforeStyle} /></div>}
         {renderContent(content, this.props)}
       </div>
     );
