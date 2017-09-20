@@ -260,7 +260,8 @@ class Scatter extends Component {
   }
 
   renderErrorBar() {
-    if (!this.state.isAnimationFinished) { return null; }
+    const { isAnimationActive } = this.props;
+    if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
     const { points, xAxis, yAxis, children } = this.props;
     const errorBarItems = findAllByType(children, ErrorBar);
