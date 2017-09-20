@@ -207,6 +207,7 @@ class Pie extends Component {
           startAngle: tempStartAngle,
           endAngle: tempEndAngle,
           payload: entry,
+          paddingAngle: mathSign(deltaAngle) * paddingAngle,
         };
 
         return prev;
@@ -440,6 +441,7 @@ class Pie extends Component {
 
             sectors.forEach((entry, index) => {
               const prev = prevSectors && prevSectors[index];
+              const paddingAngle = index > 0 ? entry.paddingAngle : 0;
 
               if (prev) {
                 const angleIp = interpolateNumber(
@@ -448,8 +450,8 @@ class Pie extends Component {
                 );
                 const latest = {
                   ...entry,
-                  startAngle: curAngle,
-                  endAngle: curAngle + angleIp(t),
+                  startAngle: curAngle + paddingAngle,
+                  endAngle: curAngle + angleIp(t) + paddingAngle,
                 };
 
                 stepData.push(latest);
@@ -458,7 +460,11 @@ class Pie extends Component {
                 const { endAngle, startAngle } = entry;
                 const interpolatorAngle = interpolateNumber(0, endAngle - startAngle);
                 const deltaAngle = interpolatorAngle(t);
-                const latest = { ...entry, startAngle: curAngle, endAngle: curAngle + deltaAngle };
+                const latest = {
+                  ...entry,
+                  startAngle: curAngle + paddingAngle,
+                  endAngle: curAngle + deltaAngle + paddingAngle,
+                };
 
                 stepData.push(latest);
                 curAngle = latest.endAngle;
