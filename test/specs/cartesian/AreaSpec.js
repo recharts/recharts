@@ -105,4 +105,23 @@ describe('<Area />', () => {
     expect(wrapper.find('.recharts-area-curve').length).to.equal(0);
     expect(wrapper.find('.recharts-area-dot').length).to.equal(0);
   });
+
+  it('renders the curve with the stroke on top (2nd) of the curve with the fill (1st)', () => {
+    const wrapper = mount(
+      <Surface width={500} height={500}>
+        <Area
+          points={data}
+          baseLine={200}
+          stroke="teal"
+          fill="teal"
+        />
+      </Surface>
+    );
+
+    expect(wrapper.find('.recharts-curve').length).to.equal(2);
+    expect(wrapper.find('.recharts-curve').first().prop('stroke')).to.equal('none');
+    expect(wrapper.find('.recharts-curve').first().prop('fill')).to.equal('teal');
+    expect(wrapper.find('.recharts-curve').last().prop('stroke')).to.equal('teal');
+    expect(wrapper.find('.recharts-curve').last().prop('fill')).to.equal('none');
+  });
 });

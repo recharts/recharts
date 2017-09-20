@@ -59,7 +59,7 @@ describe('<CartesianGrid />', () => {
         />
       </Surface>
     );
-    expect(wrapper.find('.recharts-cartesian-gridstripes-vertical').children()).to.have.length(4);
+    expect(wrapper.find('.recharts-cartesian-gridstripes-vertical').children()).to.have.length(5);
   });
 
   it('Render 5 horizontal background lines in simple CartesianGrid', () => {
@@ -74,6 +74,6 @@ describe('<CartesianGrid />', () => {
         />
       </Surface>
     );
-    expect(wrapper.find('.recharts-cartesian-gridstripes-horizontal').children()).to.have.length(5);
+    expect(wrapper.find('.recharts-cartesian-gridstripes-horizontal').children()).to.have.length(6);
   });
 });

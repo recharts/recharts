@@ -171,6 +171,7 @@ export default class Demo extends Component {
               innerRadius={60}
               outerRadius={80}
               label={renderLabelContent}
+              paddingAngle={5}
             >
               {
                 data02.map((entry, index) => (
