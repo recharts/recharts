@@ -34,7 +34,7 @@ class CartesianGrid extends Component {
     chartWidth: PropTypes.number,
     chartHeight: PropTypes.number,
     verticalFill: PropTypes.arrayOf(PropTypes.string),
-    horizontalFill: PropTypes.arrayOf(PropTypes.string)
+    horizontalFill: PropTypes.arrayOf(PropTypes.string),
   };
 
   static defaultProps = {
@@ -53,7 +53,7 @@ class CartesianGrid extends Component {
     fill: 'none',
     // The fill of colors of grid lines
     verticalFill: [],
-    horizontalFill: []
+    horizontalFill: [],
   };
 
   renderLineItem(option, props) {
@@ -146,19 +146,19 @@ class CartesianGrid extends Component {
     if (!verticalFill || !verticalFill.length) { return null; }
 
     const { fillOpacity, x, y, width, height } = this.props;
-    let verticalPointsUpdated = verticalPoints;
+    const verticalPointsUpdated = verticalPoints;
     if (x !== verticalPoints[0]) {
       verticalPointsUpdated.unshift(0);
     }
 
     const items = verticalPointsUpdated.map((entry, i) => {
-      let lineWidth = Math.max(verticalPointsUpdated[i + 1] ? verticalPointsUpdated[i + 1] - entry :  (x + width - entry));
-      if (lineWidth <= 0) { return null;}
-      let colorIndex = i % verticalFill.length;
+      const lineWidth = verticalPointsUpdated[i + 1] ? verticalPointsUpdated[i + 1] - entry : (x + width - entry);
+      if (lineWidth <= 0) { return null; }
+      const colorIndex = i % verticalFill.length;
       return (
         <rect
           key={i}
-          x={Math.round(entry+x-x)}
+          x={Math.round(entry + x - x)}
           y={y}
           width={lineWidth}
           height={height}
@@ -167,12 +167,12 @@ class CartesianGrid extends Component {
           fillOpacity={fillOpacity}
           className="recharts-cartesian-grid-bg"
         />
-      )
+      );
     });
 
     return <g className="recharts-cartesian-gridstripes-vertical">{items}</g>;
   }
-  
+
 
   /**
    * Draw horizontal grid stripes filled by colors
@@ -184,19 +184,19 @@ class CartesianGrid extends Component {
     if (!horizontalFill || !horizontalFill.length) { return null; }
 
     const { fillOpacity, x, y, width, height } = this.props;
-    let horizontalPointsUpdated = horizontalPoints;
+    const horizontalPointsUpdated = horizontalPoints;
     if (y !== horizontalPoints[0]) {
       horizontalPointsUpdated.unshift(0);
     }
 
     const items = horizontalPointsUpdated.map((entry, i) => {
-      let lineHeight = Math.max(horizontalPointsUpdated[i + 1] ? horizontalPointsUpdated[i + 1] - entry :  (y + height - entry));
-      if (lineHeight <= 0) { return null;}
-      let colorIndex = i % horizontalFill.length;
+      const lineHeight = horizontalPointsUpdated[i + 1] ? horizontalPointsUpdated[i + 1] - entry : (y + height - entry);
+      if (lineHeight <= 0) { return null; }
+      const colorIndex = i % horizontalFill.length;
       return (
         <rect
           key={i}
-          y={Math.round(entry+y-y)}
+          y={Math.round(entry + y - y)}
           x={x}
           height={lineHeight}
           width={width}
@@ -205,7 +205,7 @@ class CartesianGrid extends Component {
           fillOpacity={fillOpacity}
           className="recharts-cartesian-grid-bg"
         />
-      )
+      );
     });
 
     return <g className="recharts-cartesian-gridstripes-horizontal">{items}</g>;

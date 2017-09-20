@@ -36,6 +36,37 @@ describe('<Tooltip />', () => {
     expect(wrapper.find(Tooltip).length).to.equal(1);
   });
 
+  it('Render tooltip with the custom corner', () => {
+    const enableCorner = true;
+    const cornerSettings = {
+      width: 6,
+      height: 7
+    };
+    const wrapper = mount(
+      <AreaChart width={100} height={50} data={data}>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip corner={true} cornerSettings={cornerSettings}/>
+      </AreaChart>
+    );
+
+    // I simulate to hover on the AreaChart, then the tooltip should show!
+    wrapper.setState({
+      isTooltipActive: true,
+      chartX: 86,
+      chartY: 21,
+      activeTooltipIndex: 4,
+      activeTooltipLabel: 4,
+      activeTooltipCoord: {
+        x: 95,
+        y: 21,
+      },
+    });
+  
+    expect(enableCorner).to.be.a('boolean');
+    expect(cornerSettings).to.be.an('object');
+    expect(wrapper.find(Tooltip).find('.recharts-tooltip-wrapper-corner').length).to.equal(1);
+  });
+
   // it('Render customized tooltip when content is set to be a react element', () => {
   //   const Customized = () => {
   //     return <div className="customized"/>
