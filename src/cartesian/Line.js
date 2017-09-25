@@ -17,8 +17,6 @@ import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, filterEventAtt
   getPresentationAttributes, isSsr, findChildByType } from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 
-const FACTOR = 1.0000001;
-
 @pureRender
 class Line extends Component {
 
@@ -298,7 +296,7 @@ class Line extends Component {
 
   renderCurveWithAnimation(needClip) {
     const { points, strokeDasharray, isAnimationActive, animationBegin,
-      animationDuration, animationEasing, animationId, ...other } = this.props;
+      animationDuration, animationEasing, animationId } = this.props;
     const { prevPoints, totalLength } = this.state;
 
     return (

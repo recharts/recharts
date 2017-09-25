@@ -21,6 +21,7 @@ describe('<Area />', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
         <Area
+          dataKey="x"
           isAnimationActive={false}
           baseLine={200}
           points={data}
@@ -41,6 +42,7 @@ describe('<Area />', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
         <Area
+          dataKey="x"
           isAnimationActive={false}
           baseLine={200}
           points={data}
@@ -61,6 +63,7 @@ describe('<Area />', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
         <Area
+          dataKey="x"
           isAnimationActive={false}
           baseLine={200}
           points={data}
@@ -81,6 +84,7 @@ describe('<Area />', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
         <Area
+          dataKey="x"
           isAnimationActive={false}
           baseLine={200}
           points={data}
@@ -96,6 +100,7 @@ describe('<Area />', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
         <Area
+          dataKey="x"
           points={[]}
         />
       </Surface>

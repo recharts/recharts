@@ -1,5 +1,5 @@
-var path = require('path');
-var webpack = require('webpack');
+const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   context: __dirname,
@@ -8,19 +8,19 @@ module.exports = {
     './index.js',
   ],
   output: {
-    path: __dirname + '/build',
+    path: path.join(__dirname, '/build'),
     filename: 'bundle.js',
   },
   plugins: [
-     new webpack.LoaderOptionsPlugin({
-       debug: true
-     })
-    // new webpack.HotModuleReplacementPlugin(),
-    // new webpack.NoErrorsPlugin()
+    new webpack.LoaderOptionsPlugin({
+      debug: true,
+    }),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
   ],
   resolve: {
     alias: {
-      'recharts': path.join(__dirname, '..', 'src/index.js'),
+      recharts: path.join(__dirname, '..', 'src/index.js'),
     },
   },
   module: {

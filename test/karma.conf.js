@@ -3,9 +3,9 @@
 
 'use strict';
 
-var path = require('path');
+const path = require('path');
 
-module.exports = function (config) {
+module.exports = (config) => {
   if (process.env.RELEASE) {
     config.singleRun = true;
   }
@@ -57,9 +57,10 @@ module.exports = function (config) {
       externals: {
         jsdom: 'window',
         'react/lib/ExecutionEnvironment': true,
-        'react/addons': true,
         'react/lib/ReactContext': 'window',
         'text-encoding': 'window',
+        'react/addons': 'react',
+        'react-addons-test-utils': 'react-dom',
       },
       resolve: {
         alias: {
@@ -102,11 +103,6 @@ module.exports = function (config) {
       }],
     },
 
-    webpackMiddleware: {
-      // webpack-dev-middleware configuration
-      stats: 'errors-only',
-    },
-
     // web server port
     port: 9876,
 
@@ -114,8 +110,10 @@ module.exports = function (config) {
     colors: true,
 
     // level of logging
-    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_INFO,
+    // possible values:
+    // config.LOG_DISABLE || config.LOG_ERROR ||
+    // config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+    logLevel: config.LOG_ERROR,
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
