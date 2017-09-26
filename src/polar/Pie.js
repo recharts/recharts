@@ -226,7 +226,9 @@ class Pie extends Component {
   componentWillReceiveProps(nextProps) {
     const { animationId, sectors } = this.props;
 
-    if (nextProps.animationId !== animationId) {
+    if (nextProps.isAnimationActive !== this.props.isAnimationActive) {
+      this.cachePrevData([]);
+    } else if (nextProps.animationId !== animationId) {
       this.cachePrevData(sectors);
     }
   }
