@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import components from '../component/index';
 
@@ -12,18 +12,16 @@ class App extends Component {
   renderList() {
     const items = Object.keys(components).map(key => {
       const group = components[key];
-      const list = Object.keys(group).map(c => {
-        const entry = group[c];
-
+      const list = Object.keys(group).map((c) => {
         return (
-          <li key={'component-' + c}>
+          <li key={`component-${c}`}>
             <Link to={{ pathname: '/', query: { page: c, group: key } }}>{c}</Link>
           </li>
         );
       });
 
       return (
-        <div key={'group-' + key} className="component-list-container">
+        <div key={`group-${key}`} className="component-list-container">
           <p className="group-name">{key}</p>
           <ul className="component-list">
             {list}
@@ -41,7 +39,7 @@ class App extends Component {
   }
 
   renderPageDetail() {
-    const { params, location } = this.props;
+    const { location } = this.props;
     const { query } = location;
     const { group, page } = query;
 
@@ -49,13 +47,16 @@ class App extends Component {
       <div className="component-wrapper">
         <p className="back"><Link to={{ pathname: '/' }}>Back to homepage</Link></p>
         <p className="title">{page}</p>
-        {components[group] && components[group][page] ? React.createElement(components[group][page]) : null}
+        {
+          components[group] &&
+          components[group][page] ? React.createElement(components[group][page]) : null
+        }
       </div>
     );
   }
 
   render() {
-    const { location, params } = this.props;
+    const { location } = this.props;
 
     if (!location.query || !location.query.page) {
       return this.renderList();

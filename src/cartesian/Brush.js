@@ -265,13 +265,13 @@ class Brush extends Component {
       this.scale = scalePoint().domain(_.range(0, len))
                     .range([x, x + width - travellerWidth]);
       this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
-      this.state = {
+      this.setState({
         isTextActive: false,
         isSlideMoving: false,
         isTravellerMoving: false,
         startX: this.scale(startIndex),
         endX: this.scale(endIndex),
-      };
+      });
     }
   }
 

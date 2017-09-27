@@ -34,7 +34,13 @@
     "object-property-newline": 0,
     "react/no-unused-prop-types": 0,
     "class-methods-use-this": 1,
-    "import/no-named-as-default": 0
+    "import/no-named-as-default": 0,
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": ["demo/**", "test/**", "*.config.js", "scripts/**"]
+      }
+    ]
   },
   "plugins": [
     "react"
