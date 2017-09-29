@@ -51,6 +51,14 @@ describe('parseSpecifiedDomain', () => {
     const result = parseSpecifiedDomain(['dataMin - 10', 'dataMax + 10'], domain);
     expect(result).to.deep.equal([10, 110]);
   });
+
+  it('DataUtils.parseSpecifiedDomain([dataMin => (0 - Math.abs(dataMin)), dataMax => (dataMax * 2)], domain) should return [-20, 200] ', () => {
+    const result = parseSpecifiedDomain(
+      [dataMin => (0 - Math.abs(dataMin)), dataMax => (dataMax * 2)],
+      domain
+    );
+    expect(result).to.deep.equal([-20, 200]);
+  });
 });
 
 
