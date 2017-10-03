@@ -55,7 +55,7 @@ class ReferenceArea extends Component {
     strokeWidth: 1,
   };
 
-  getRect(hasX, hasY) {
+  getRect(hasX1, hasX2, hasY1, hasY2, hasX, hasY) {
     const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2, xAxis,
       yAxis } = this.props;
     const xScale = xAxis.scale;
@@ -66,24 +66,27 @@ class ReferenceArea extends Component {
     const yRange = yScale.range();
     let x1, x2, y1, y2;
 
-    if (hasX && isNumOrStr(xValue1)) {
+    if (hasX1) {
       x1 = xScale(xValue1) + xOffset;
-    } else if (hasY) {
+    } else {
       x1 = xRange[0];
     }
-    if (hasX && isNumOrStr(xValue2)) {
+
+    if (hasX2) {
       x2 = xScale(xValue2) + xOffset;
-    } else if (hasY) {
+    } else {
       x2 = xRange[1];
     }
-    if (hasY && isNumOrStr(yValue1)) {
+
+    if (hasY1) {
       y1 = yScale(yValue1) + yOffset;
-    } else if (hasX) {
+    } else {
       y1 = yRange[0];
     }
-    if (hasY && isNumOrStr(yValue2)) {
+
+    if (hasY2) {
       y2 = yScale(yValue2) + yOffset;
-    } else if (hasX) {
+    } else {
       y2 = yRange[1];
     }
 
@@ -121,12 +124,17 @@ class ReferenceArea extends Component {
 
   render() {
     const { x1, x2, y1, y2, className } = this.props;
-    const hasX = isNumOrStr(x1) && isNumOrStr(x2);
-    const hasY = isNumOrStr(y1) && isNumOrStr(y2);
 
-    if (!hasX && !hasY) { return null; }
+    const hasX1 = isNumOrStr(x1);
+    const hasX2 = isNumOrStr(x2);
+    const hasY1 = isNumOrStr(y1);
+    const hasY2 = isNumOrStr(y2);
+    const hasX = hasX1 && hasX2;
+    const hasY = hasY1 && hasY2;
 
-    const rect = this.getRect(hasX, hasY);
+    if (!hasX1 && !hasX2 && !hasY1 && !hasY2) { return null; }
+
+    const rect = this.getRect(hasX1, hasX2, hasY1, hasY2, hasX, hasY);
 
     if (!rect) { return null; }
 
