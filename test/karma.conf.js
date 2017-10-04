@@ -6,11 +6,9 @@
 var path = require('path');
 
 module.exports = function (config) {
-  if (process.env.RELEASE) {
-    config.singleRun = true;
-  }
 
   config.set({
+    singleRun: !!process.env.RELEASE,
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '../',
@@ -68,11 +66,6 @@ module.exports = function (config) {
         },
       },
     },
-
-    webpackMiddleware: {
-      stats: 'errors-only',
-    },
-
     plugins: [
       'karma-webpack',
       'karma-mocha',
@@ -114,7 +107,8 @@ module.exports = function (config) {
     colors: true,
 
     // level of logging
-    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+    // possible values: config.LOG_DISABLE || config.LOG_ERROR ||
+    // config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
 
     // start these browsers
