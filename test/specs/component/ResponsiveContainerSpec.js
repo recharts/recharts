@@ -2,30 +2,29 @@ import React from 'react';
 import chai, { expect } from 'chai';
 import chaiEnzyme from 'chai-enzyme';
 import { ResponsiveContainer } from 'recharts';
-import { mount, render } from 'enzyme';
-import sinon from 'sinon';
+import { mount } from 'enzyme';
 
 chai.use(chaiEnzyme());
 
 describe('<ResponsiveContainer />', () => {
 
   it('Render a wrapper container in ResponsiveContainer', () => {
-    const wrapper = render(
+    const wrapper = mount(
       <ResponsiveContainer>
         <div className="inside">Inside</div>
       </ResponsiveContainer>
     );
 
+
     expect(wrapper.find('.recharts-responsive-container').length).to.equal(1);
   });
 
   it('Renders with minHeight and minWidth when provided', () => {
-    const wrapper = render(
+    const wrapper = mount(
       <ResponsiveContainer minWidth={200} minHeight={100}>
         <div className="inside">Inside</div>
       </ResponsiveContainer>
     );
-
     expect(wrapper.find('.recharts-responsive-container')).to.have.style('min-width').equal('200px');
     expect(wrapper.find('.recharts-responsive-container')).to.have.style('min-height').equal('100px');
   });

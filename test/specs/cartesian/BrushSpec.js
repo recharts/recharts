@@ -1,8 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
 import { Surface, Brush, LineChart, Line } from 'recharts';
-import Layer from '../../../src/container/Layer';
-import sinon from 'sinon';
 import { mount, render } from 'enzyme';
 
 describe('<Brush />', () => {

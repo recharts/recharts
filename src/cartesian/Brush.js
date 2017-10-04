@@ -63,6 +63,7 @@ class Brush extends Component {
       startX: this.handleTravellerDragStart.bind(this, 'startX'),
       endX: this.handleTravellerDragStart.bind(this, 'endX'),
     };
+    this.state = {};
 
     if (props.data && props.data.length) {
       this.updateScale(props);
@@ -265,13 +266,18 @@ class Brush extends Component {
       this.scale = scalePoint().domain(_.range(0, len))
                     .range([x, x + width - travellerWidth]);
       this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
-      this.setState({
+      const state = {
         isTextActive: false,
         isSlideMoving: false,
         isTravellerMoving: false,
         startX: this.scale(startIndex),
         endX: this.scale(endIndex),
-      });
+      };
+      if (this.state) {
+        this.setState(state);
+      } else {
+        this.state = state;
+      }
     }
   }
 
