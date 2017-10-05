@@ -274,7 +274,7 @@ const getAttrsOfCartesianLabel = (props) => {
 const isPolar = viewBox => isNumber(viewBox.cx);
 
 function Label(props) {
-  const { viewBox, position, value, children, content } = props;
+  const { viewBox, position, value, children, content, className } = props;
 
   if (!viewBox || (_.isNil(value) && _.isNil(children) &&
     !isValidElement(content) && !_.isFunction(content))) { return null; }
@@ -297,7 +297,7 @@ function Label(props) {
 
   return (
     <Text
-      className="recharts-label"
+      className={"recharts-label" + (className ? ' ' + className : '')}
       {...attrs}
       {...positionAttrs}
     >{label}</Text>
