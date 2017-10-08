@@ -15,7 +15,7 @@ const data = [
 	{ name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
 ];
 
-describe('<LineChart />', () => {
+describe.only('<LineChart />', () => {
 
   it('Render 1 line in simple LineChart', () => {
     const wrapper = render(
@@ -266,7 +266,7 @@ describe('<LineChart />', () => {
     expect(onMouseUp.calledOnce).to.equal(true);
   });
 
-  it('should show tooltip cursor on MouseEnter and MouseMove and hide on MouseLeave', () => {
+  it.only('should show tooltip cursor on MouseEnter and MouseMove and hide on MouseLeave', () => {
     const margin = { top: 20, right: 20, bottom: 20, left: 20 };
     const height = 400;
     const width = 400;
@@ -285,13 +285,14 @@ describe('<LineChart />', () => {
     expect(wrapper.find('.recharts-tooltip-cursor').length).to.equal(0);
     wrapper.simulate('mouseEnter', { pageX: margin.left + 0.1 * dotSpacing, pageY: height / 2 });
 
+    console.log(wrapper.html());
     let tooltipCursors = wrapper.find('.recharts-tooltip-cursor');
     expect(tooltipCursors.length).to.equal(1);
 
     // make sure tooltip is in the right spot.
     const chartBottom = height - margin.top - 2 * margin.bottom;
     let expectedX = margin.left;
-    // expect(tooltipCursors.at(0).props().d).to.equal(`M${expectedX},${margin.top}L${expectedX},${chartBottom}`);
+    expect(tooltipCursors.at(0).props().d).to.equal(`M${expectedX},${margin.top}L${expectedX},${chartBottom}`);
 
     // simulate moving 10 pixels past the PageC Dot
     expectedX = margin.left + dotSpacing * 2;

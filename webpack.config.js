@@ -27,13 +27,6 @@ const config = {
     }],
   },
 
-  resolve: {
-    alias: {
-      react: path.resolve(__dirname, './node_modules/react'),
-      'react-transition-group':
-          path.resolve(__dirname, './node_modules/react-transition-group'),
-    },
-  },
   devtool: 'source-map',
 
   externals: {
@@ -42,12 +35,6 @@ const config = {
       commonjs2: 'react',
       commonjs: 'react',
       amd: 'react',
-    },
-    'react-transition-group': {
-      root: ['ReactTransitionGroup'],
-      commonjs2: 'react-transition-group',
-      commonjs: 'react-transition-group',
-      amd: 'react-transition-group',
     },
     'prop-types': {
       root: 'PropTypes',

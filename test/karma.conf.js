@@ -17,7 +17,7 @@ module.exports = function (config) {
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['mocha', 'chai'],
 
-    // list of files / patterns to l/oad in the browser
+    // list of files / patterns to load in the browser
     files: [
       { pattern: 'test/index.js', included: true, watched: false },
     ],
@@ -46,7 +46,7 @@ module.exports = function (config) {
           exclude: [
             path.resolve('node_modules/'),
           ],
-          loader: 'babel-loader',
+          loader: 'babel-loader'
         }, {
           test: /\.json$/,
           loader: 'json-loader',
@@ -55,14 +55,15 @@ module.exports = function (config) {
       externals: {
         jsdom: 'window',
         'react/lib/ExecutionEnvironment': true,
-        'react/addons': true,
+        'react/addons': 'react',
         'react/lib/ReactContext': 'window',
         'text-encoding': 'window',
+        'react-addons-test-utils': 'react-dom'
       },
       resolve: {
         alias: {
           sinon: 'sinon/pkg/sinon',
-          recharts: path.resolve('./src/index.js'),
+          recharts: path.resolve('src/index.js'),
         },
       },
     },
