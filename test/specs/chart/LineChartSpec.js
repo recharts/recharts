@@ -15,8 +15,7 @@ const data = [
 	{ name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
 ];
 
-// TODO: fix lincharts
-describe.skip('<LineChart />', () => {
+describe('<LineChart />', () => {
 
   it('Render 1 line in simple LineChart', () => {
     const wrapper = render(
@@ -286,9 +285,8 @@ describe.skip('<LineChart />', () => {
     expect(wrapper.find('.recharts-tooltip-cursor').length).to.equal(0);
     wrapper.simulate('mouseEnter', { pageX: margin.left + 0.1 * dotSpacing, pageY: height / 2 });
 
-    // TODO: fix bug
     let tooltipCursors = wrapper.find('.recharts-tooltip-cursor');
-    // expect(tooltipCursors.length).to.equal(1);
+    expect(tooltipCursors.length).to.equal(1);
 
     // make sure tooltip is in the right spot.
     const chartBottom = height - margin.top - 2 * margin.bottom;
@@ -324,9 +322,8 @@ describe.skip('<LineChart />', () => {
     );
 
     const lineDots = wrapper.find('.recharts-line-dots');
-    // TODO: bug fix
-    // expect(lineDots.length).to.equal(1);
-    // expect(lineDots.children().length).to.equal(6);
+    expect(lineDots.length).to.equal(1);
+    expect(lineDots.children().length).to.equal(6);
 
 		// verify one of the dots that we expect to move when the brush happens
     expect(lineDots.childAt(2).props().payload).to.equal(data[2]);
