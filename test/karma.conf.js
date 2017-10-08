@@ -47,6 +47,9 @@ module.exports = function (config) {
             path.resolve('node_modules/'),
           ],
           loader: 'babel-loader',
+          query: {
+            presets: ['airbnb'],
+          },
         }, {
           test: /\.json$/,
           loader: 'json-loader',
