@@ -1,6 +1,7 @@
 import React, { cloneElement, isValidElement } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import classNames from 'classnames';
 import Text from './Text';
 import { getPresentationAttributes, findAllByType } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId,
@@ -37,6 +38,7 @@ const propTypes = {
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
   ]),
+  className: PropTypes.string,
   content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
 };
 
@@ -63,7 +65,7 @@ const getDeltaAngle = (startAngle, endAngle) => {
 };
 
 const renderRadialLabel = (labelProps, label, attrs) => {
-  const { position, viewBox, offset } = labelProps;
+  const { position, viewBox, offset, className } = labelProps;
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle,
     clockWise } = viewBox;
   const radius = (innerRadius + outerRadius) / 2;
@@ -95,7 +97,7 @@ const renderRadialLabel = (labelProps, label, attrs) => {
     <text
       {...attrs}
       dominantBaseline="central"
-      className="recharts-radial-bar-label"
+      className={classNames('recharts-radial-bar-label', className)}
     >
       <defs><path id={id} d={path} /></defs>
       <textPath xlinkHref={`#${id}`}>{label}</textPath>
@@ -274,7 +276,7 @@ const getAttrsOfCartesianLabel = (props) => {
 const isPolar = viewBox => isNumber(viewBox.cx);
 
 function Label(props) {
-  const { viewBox, position, value, children, content } = props;
+  const { viewBox, position, value, children, content, className = '' } = props;
 
   if (!viewBox || (_.isNil(value) && _.isNil(children) &&
     !isValidElement(content) && !_.isFunction(content))) { return null; }
@@ -297,7 +299,7 @@ function Label(props) {
 
   return (
     <Text
-      className="recharts-label"
+      className={classNames('recharts-label', className)}
       {...attrs}
       {...positionAttrs}
     >{label}</Text>
