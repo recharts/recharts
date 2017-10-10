@@ -635,8 +635,13 @@ export const getStackedData = (data, stackItems, offsetType) => {
   return stack(data);
 };
 
-export const getStackGroupsByAxisId = (data, items, numericAxisId, cateAxisId, offsetType) => {
+export const getStackGroupsByAxisId = (
+  data, _items, numericAxisId, cateAxisId, offsetType, reverseStackOrder
+) => {
   if (!data) { return null; }
+
+  // reversing items to affect render order (for layering)
+  const items = reverseStackOrder ? _items.reverse() : _items;
 
   const stackGroups = items.reduce((result, item) => {
     const { stackId, hide } = item.props;
@@ -931,4 +936,3 @@ export const getBandSizeOfAxis = (axis, ticks) => {
 
   return 0;
 };
-
