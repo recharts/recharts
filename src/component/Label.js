@@ -1,6 +1,7 @@
 import React, { cloneElement, isValidElement } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import classNames from 'classnames';
 import Text from './Text';
 import { getPresentationAttributes, findAllByType } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId,
@@ -96,7 +97,7 @@ const renderRadialLabel = (labelProps, label, attrs) => {
     <text
       {...attrs}
       dominantBaseline="central"
-      className={`recharts-radial-bar-label ${className}`}
+      className={classNames('recharts-radial-bar-label', className)}
     >
       <defs><path id={id} d={path} /></defs>
       <textPath xlinkHref={`#${id}`}>{label}</textPath>
@@ -298,7 +299,7 @@ function Label(props) {
 
   return (
     <Text
-      className={`recharts-label ${className}`}
+      className={classNames('recharts-label', className)}
       {...attrs}
       {...positionAttrs}
     >{label}</Text>
