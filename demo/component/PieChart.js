@@ -44,7 +44,7 @@ const data03 = [
   { name: 'F3', value: 51 },
 ];
 
-const initilaState = { data01, data02, data03 };
+const initialState = { data01, data02, data03 };
 
 const renderLabelContent = (props) => {
   const { value, percent, x, y, midAngle } = props;
@@ -114,12 +114,12 @@ export default class Demo extends Component {
   };
 
   state = {
-    ...initilaState,
+    ...initialState,
     activeIndex: 0,
   };
 
   handleChangeData = () => {
-    this.setState(() => _.mapValues(initilaState, changeNumberOfData));
+    this.setState(() => _.mapValues(initialState, changeNumberOfData));
   };
 
   handlePieChartEnter = (a, b, c) => {

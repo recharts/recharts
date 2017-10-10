@@ -14,7 +14,7 @@ const data = [
   { subject: 'History', A: 65, B: 85 },
 ];
 
-const initilaState = { data };
+const initialState = { data };
 
 export default class Demo extends Component {
 
@@ -23,12 +23,12 @@ export default class Demo extends Component {
   constructor() {
     super();
 
-    this.state = initilaState;
+    this.state = initialState;
     this.handleChangeData = this.handleChangeData.bind(this);
   }
 
   handleChangeData() {
-    this.setState(() => _.mapValues(initilaState, changeNumberOfData));
+    this.setState(() => _.mapValues(initialState, changeNumberOfData));
   }
 
   handleMouseEnter(props) {
