@@ -873,7 +873,7 @@ export const parseSpecifiedDomain = (specifiedDomain, dataDomain, allowDataOverf
     const value = +MIN_VALUE_REG.exec(specifiedDomain[0])[1];
 
     domain[0] = dataDomain[0] - value;
-  } else if (toString.call(specifiedDomain[0]) === '[object Function]') {
+  } else if (_.isFunction(specifiedDomain[0])) {
     domain[0] = specifiedDomain[0](dataDomain[0]);
   } else {
     domain[0] = dataDomain[0];
@@ -886,7 +886,7 @@ export const parseSpecifiedDomain = (specifiedDomain, dataDomain, allowDataOverf
     const value = +MAX_VALUE_REG.exec(specifiedDomain[1])[1];
 
     domain[1] = dataDomain[1] + value;
-  } else if (toString.call(specifiedDomain[1]) === '[object Function]') {
+  } else if (_.isFunction(specifiedDomain[1])) {
     domain[1] = specifiedDomain[1](dataDomain[1]);
   } else {
     domain[1] = dataDomain[1];
