@@ -22,6 +22,7 @@ class YAxis extends Component {
     domain: PropTypes.arrayOf(PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number,
+      PropTypes.func,
       PropTypes.oneOf(['auto', 'dataMin', 'dataMax']),
     ])),
     // The key of data displayed in the axis
