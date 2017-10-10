@@ -38,7 +38,7 @@ const data04 = [
   { x: 120, y: 190 },
 ];
 
-const initilaState = {
+const initialState = {
   data01,
   data02,
   data03,
@@ -49,10 +49,10 @@ export default class Demo extends Component {
 
   static displayName = 'ScatterChartDemo';
 
-  state = initilaState;
+  state = initialState;
 
   handleChangeData = () => {
-    this.setState(() => _.mapValues(initilaState, changeNumberOfData));
+    this.setState(() => _.mapValues(initialState, changeNumberOfData));
   };
 
   render () {

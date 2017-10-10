@@ -217,7 +217,7 @@ class CustomAxis extends Component {
   }
 }
 
-const initilaState = {
+const initialState = {
   data,
   data01,
   data02,
@@ -227,10 +227,10 @@ export default class Demo extends Component {
 
   static displayName = 'BarChartDemo';
 
-  state = initilaState;
+  state = initialState;
 
   handleChangeData = () => {
-    this.setState(() => _.mapValues(initilaState, changeNumberOfData));
+    this.setState(() => _.mapValues(initialState, changeNumberOfData));
   };
 
   handlePvBarClick = (data, index, e) => {

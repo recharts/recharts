@@ -159,16 +159,16 @@ const data09 = [
   { name: 'Page G', uv: 3490 },
 ];
 
-const initilaState = { data, data01, data02 };
+const initialState = { data, data01, data02 };
 
 export default class Demo extends Component {
 
   static displayName = 'ResponsiveContainerDemo';
 
-  state = initilaState;
+  state = initialState;
 
   handleChangeData = () => {
-    this.setState(() => _.mapValues(initilaState, changeNumberOfData));
+    this.setState(() => _.mapValues(initialState, changeNumberOfData));
   };
 
   render() {

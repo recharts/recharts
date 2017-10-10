@@ -44,7 +44,7 @@ const rangeData = [
   { day: '05-09', temperature: [-3, 5] },
 ];
 
-const initilaState = { data, data01, data02 };
+const initialState = { data, data01, data02 };
 
 const CustomTooltip = (props) => {
   const { active, payload, external, label } = props;
@@ -98,10 +98,10 @@ export default class AreaChartDemo extends Component {
 
   static displayName = 'AreaChartDemo';
 
-  state = initilaState;
+  state = initialState;
 
   handleChangeData = () => {
-    this.setState(() => _.mapValues(initilaState, changeNumberOfData));
+    this.setState(() => _.mapValues(initialState, changeNumberOfData));
   };
 
   render() {

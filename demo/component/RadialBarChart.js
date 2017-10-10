@@ -16,16 +16,16 @@ const data = [
   { name: 'unknow', uv: 6.67, pv: 4800, fill: '#ffc658' },
 ];
 
-const initilaState = { data };
+const initialState = { data };
 
 export default class Demo extends Component {
 
   static displayName = 'RadialBarChartDemo';
 
-  state = initilaState;
+  state = initialState;
 
   handleChangeData = () => {
-    this.setState(() => _.mapValues(initilaState, changeNumberOfData));
+    this.setState(() => _.mapValues(initialState, changeNumberOfData));
   };
 
   render () {

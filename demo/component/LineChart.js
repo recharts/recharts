@@ -300,7 +300,7 @@ const data03 = [
   { date: 'Dec 30 2016', price: 115.82 },
 ];
 
-const initilaState = {
+const initialState = {
   data,
   data01,
   data02,
@@ -337,10 +337,10 @@ export default class Demo extends Component {
 
   static displayName = 'LineChartDemo';
 
-  state = initilaState;
+  state = initialState;
 
   handleChangeData = () => {
-    this.setState(() => _.mapValues(initilaState, changeNumberOfData));
+    this.setState(() => _.mapValues(initialState, changeNumberOfData));
   };
 
   handleClick = (data, e) => {
