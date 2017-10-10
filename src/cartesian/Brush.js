@@ -307,10 +307,10 @@ class Brush extends Component {
     });
   }
 
-  renderTraveller(startX, id) {
+  renderTraveller(travellerX, id) {
     const { y, travellerWidth, height, stroke } = this.props;
     const lineY = Math.floor(y + height / 2) - 1;
-    const x = Math.max(startX, this.props.x);
+    const x = Math.max(travellerX, this.props.x);
 
     return (
       <Layer
