@@ -16,7 +16,7 @@ import Symbols from '../shape/Symbols';
 import ErrorBar from './ErrorBar';
 import Cell from '../component/Cell';
 import { uniqueId, isNumOrStr, interpolateNumber } from '../util/DataUtils';
-import { getValueByDataKey } from '../util/ChartUtils';
+import { getValueByDataKey, getCateCoordinateOfLine } from '../util/ChartUtils';
 
 @pureRender
 class Scatter extends Component {
@@ -95,15 +95,15 @@ class Scatter extends Component {
    * @return {Array}  Composed data
    */
   static getComposedData = ({ xAxis, yAxis, zAxis, item, displayedData, onItemMouseLeave,
-    onItemMouseEnter, offset }) => {
+    onItemMouseEnter, offset, xAxisTicks, yAxisTicks }) => {
     const cells = findAllByType(item.props.children, Cell);
     const xAxisDataKey = _.isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
     const yAxisDataKey = _.isNil(yAxis.dataKey) ? item.props.dataKey : yAxis.dataKey;
     const zAxisDataKey = zAxis && zAxis.dataKey;
     const defaultRangeZ = zAxis ? zAxis.range : ZAxis.defaultProps.range;
     const defaultZ = defaultRangeZ && defaultRangeZ[0];
-    const xOffset = xAxis.scale.bandwidth ? xAxis.scale.bandwidth() / 2 : 0;
-    const yOffset = yAxis.scale.bandwidth ? yAxis.scale.bandwidth() / 2 : 0;
+    const xBandSize = xAxis.scale.bandwidth ? xAxis.scale.bandwidth() : 0;
+    const yBandSize = yAxis.scale.bandwidth ? yAxis.scale.bandwidth() : 0;
     const points = displayedData.map((entry, index) => {
       const x = entry[xAxisDataKey];
       const y = entry[yAxisDataKey];
@@ -118,8 +118,12 @@ class Scatter extends Component {
           name: zAxis.name || zAxis.dataKey, unit: zAxis.unit || '', value: z, payload: entry,
         });
       }
-      const cx = isNumOrStr(x) ? xAxis.scale(x) + xOffset : null;
-      const cy = isNumOrStr(y) ? yAxis.scale(y) + yOffset : null;
+      const cx = getCateCoordinateOfLine({
+        axis: xAxis, ticks: xAxisTicks, bandSize: xBandSize, entry, index,
+      });
+      const cy = getCateCoordinateOfLine({
+        axis: yAxis, ticks: xAxisTicks, bandSize: yBandSize, entry, index,
+      });
       return {
         ...entry, cx, cy,
         size: z !== '-' ? zAxis.scale(z) : defaultZ,
@@ -335,7 +339,6 @@ class Scatter extends Component {
   render() {
     const { hide, points, line, className, xAxis, yAxis, left, top, width,
       height } = this.props;
-
     if (hide || !points || !points.length) { return null; }
 
     const layerClass = classNames('recharts-scatter', className);

@@ -38,11 +38,16 @@ const data04 = [
   { x: 120, y: 190 },
 ];
 
+const data05 = [{x: 100, y: 200, z: 200}, {x: 100, y: 100, z: 260},
+  {x: 170, y: 300, z: 400}, {x: 140, y: 250, z: 280},
+  {x: 150, y: 400, z: 500}, {x: 110, y: 280, z: 200}];
+
 const initialState = {
   data01,
   data02,
   data03,
   data04,
+  data05,
 };
 
 export default class Demo extends Component {
@@ -124,6 +129,19 @@ export default class Demo extends Component {
             <Legend/>
             <Scatter line lineJointType="monotoneX" shape="wye" legendType="wye" data={data03} fill="#ff7300" />
             <Scatter line shape="square" legendType="square" data={data04} fill="#347300" />
+          </ScatterChart>
+        </div>
+
+        <p>ScatterChart which has default x-axis</p>
+        <div className="scatter-chart-wrapper">
+          <ScatterChart width={400} height={400} margin={{top: 20, right: 20, bottom: 20, left: 20}}>
+            <XAxis dataKey={'x'} name='stature' unit='cm' />
+            <YAxis dataKey={'y'} name='weight' unit='kg'/>
+            <ZAxis dataKey={'z'} range={[60, 400]} name='score' unit='km'/>
+            <CartesianGrid />
+            <Tooltip cursor={{strokeDasharray: '3 3'}}/>
+            <Legend/>
+            <Scatter name='A school' data={data05} legendType="square" fill='#8884d8' shape="square"/>
           </ScatterChart>
         </div>
       </div>
