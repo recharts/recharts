@@ -1,3 +1,21 @@
+## 1.0.0-alpha.6(Oct 10, 2017)
+
+### feat
+
+- Add props `reverseStackOrder` to reverse the order of stacked items
+- Allow an arbirary domain for cartesian X and Y axes
+- Added className prop for Label
+
+### fix
+
+- Fix confused parameter `startX` in <Brush />
+- Fix ScatterChart when the type of XAxis is "category"
+
+### docs
+
+- Fix typo initilaState -> initialState
+
+
 ## 1.0.0-alpha.5(Sep 16, 2017)
 
 ### fix
