@@ -55,7 +55,7 @@ class ReferenceArea extends Component {
     strokeWidth: 1,
   };
 
-  getRect(hasX1, hasX2, hasY1, hasY2, hasX, hasY) {
+  getRect(hasX1, hasX2, hasY1, hasY2) {
     const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2, xAxis,
       yAxis } = this.props;
     const xScale = xAxis.scale;
@@ -134,7 +134,7 @@ class ReferenceArea extends Component {
 
     if (!hasX1 && !hasX2 && !hasY1 && !hasY2) { return null; }
 
-    const rect = this.getRect(hasX1, hasX2, hasY1, hasY2, hasX, hasY);
+    const rect = this.getRect(hasX1, hasX2, hasY1, hasY2);
 
     if (!rect) { return null; }
 
