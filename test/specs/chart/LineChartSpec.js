@@ -282,11 +282,11 @@ describe.only('<LineChart />', () => {
     const dotSpacing = chartWidth / (data.length - 1);
 
     // simulate entering just past Page A to test snapping of the cursor line
-    expect(wrapper.find('.recharts-tooltip-cursor').length).to.equal(0);
+    expect(wrapper.find('.recharts-tooltip-cursor').hostNodes().length).to.equal(0);
     wrapper.simulate('mouseEnter', { pageX: margin.left + 0.1 * dotSpacing, pageY: height / 2 });
 
     console.log(wrapper.html());
-    let tooltipCursors = wrapper.find('.recharts-tooltip-cursor');
+    let tooltipCursors = wrapper.find('.recharts-tooltip-cursor').hostNodes();
     expect(tooltipCursors.length).to.equal(1);
 
     // make sure tooltip is in the right spot.
@@ -298,7 +298,7 @@ describe.only('<LineChart />', () => {
     expectedX = margin.left + dotSpacing * 2;
     wrapper.simulate('mouseMove', { pageX: expectedX + 0.1 * dotSpacing, pageY: height / 2 });
 
-    tooltipCursors = wrapper.find('.recharts-tooltip-cursor');
+    tooltipCursors = wrapper.find('.recharts-tooltip-cursor').hostNodes();
     expect(tooltipCursors.length).to.equal(1);
 
 
@@ -306,7 +306,7 @@ describe.only('<LineChart />', () => {
 
     // simulate leaving the area
     wrapper.simulate('mouseLeave');
-    expect(wrapper.find('.recharts-tooltip-cursor').length).to.equal(0);
+    expect(wrapper.find('.recharts-tooltip-cursor').hostNodes.length).to.equal(0);
 
   });
 
