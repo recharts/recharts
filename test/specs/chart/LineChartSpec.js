@@ -285,7 +285,6 @@ describe('<LineChart />', () => {
     expect(wrapper.find('.recharts-tooltip-cursor').hostNodes().length).to.equal(0);
     wrapper.simulate('mouseEnter', { pageX: margin.left + 0.1 * dotSpacing, pageY: height / 2 });
 
-    console.log(wrapper.html());
     let tooltipCursors = wrapper.find('.recharts-tooltip-cursor').hostNodes();
     expect(tooltipCursors.length).to.equal(1);
 
