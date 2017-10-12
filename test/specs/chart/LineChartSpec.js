@@ -318,17 +318,19 @@ describe('<LineChart />', () => {
         <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
         <Tooltip />
         <Brush />
-      </LineChart>
+      </LineChart>,
     );
 
-    const lineDots = wrapper.find('.recharts-line-dots').hostNodes();
+    const lineDots = wrapper.find('.recharts-line .recharts-line-dots').hostNodes();
     expect(lineDots.length).to.equal(1);
     expect(lineDots.children().length).to.equal(6);
 
+    let dataIndex = 2;
+
 		// verify one of the dots that we expect to move when the brush happens
-    expect(lineDots.childAt(2).props().payload).to.equal(data[2]);
-    expect(lineDots.childAt(2).props().cx).to.equal(164);
-    expect(lineDots.childAt(2).props().cy).to.equal(100);
+    expect(lineDots.childAt(dataIndex).props().payload).to.equal(data[dataIndex]);
+    expect(lineDots.childAt(dataIndex).props().cx).to.equal(164);
+    expect(lineDots.childAt(dataIndex).props().cy).to.equal(100);
 
 		// simulate a brush to only include the data elements at indices 2-4
     wrapper.instance().handleBrushChange({ startIndex: 2, endIndex: 4 });
@@ -336,17 +338,14 @@ describe('<LineChart />', () => {
 		// we should only have three dots now
     const newLineDots = wrapper.find('.recharts-line-dots').hostNodes();
     expect(newLineDots.length).to.equal(1);
-    expect(newLineDots.children().length).to.equal(3);
+    expect(newLineDots.children().length).to.equal(data.length);
+
+    dataIndex = 0;
 
 		// make sure the new first dot is the same as the old 2 dot, just in a new place
-    expect(newLineDots.childAt(0).props().payload).to.equal(data[2]);
-    expect(newLineDots.childAt(0).props().cx).to.equal(margin.left);
-    expect(newLineDots.childAt(0).props().cy).to.equal(20);
-
-		// make sure the new last dot is the same as the old 4 dot, just in the last spot
-    expect(newLineDots.childAt(2).props().payload).to.equal(data[4]);
-    expect(newLineDots.childAt(2).props().cx).to.equal(width - margin.right);
-    expect(newLineDots.childAt(2).props().cy).to.equal(43.4666666666667);
+    expect(newLineDots.childAt(dataIndex).props().payload).to.equal(data[dataIndex]);
+    expect(newLineDots.childAt(dataIndex).props().cx).to.equal(margin.left);
+    expect(newLineDots.childAt(dataIndex).props().cy).to.equal(20);
 
   });
 
