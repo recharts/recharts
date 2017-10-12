@@ -15,7 +15,7 @@ const data = [
 	{ name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
 ];
 
-describe.only('<LineChart />', () => {
+describe('<LineChart />', () => {
 
   it('Render 1 line in simple LineChart', () => {
     const wrapper = render(
@@ -266,7 +266,7 @@ describe.only('<LineChart />', () => {
     expect(onMouseUp.calledOnce).to.equal(true);
   });
 
-  it.only('should show tooltip cursor on MouseEnter and MouseMove and hide on MouseLeave', () => {
+  it('should show tooltip cursor on MouseEnter and MouseMove and hide on MouseLeave', () => {
     const margin = { top: 20, right: 20, bottom: 20, left: 20 };
     const height = 400;
     const width = 400;
@@ -322,7 +322,7 @@ describe.only('<LineChart />', () => {
       </LineChart>
     );
 
-    const lineDots = wrapper.find('.recharts-line-dots');
+    const lineDots = wrapper.find('.recharts-line-dots').hostNodes();
     expect(lineDots.length).to.equal(1);
     expect(lineDots.children().length).to.equal(6);
 
@@ -335,7 +335,7 @@ describe.only('<LineChart />', () => {
     wrapper.instance().handleBrushChange({ startIndex: 2, endIndex: 4 });
 
 		// we should only have three dots now
-    const newLineDots = wrapper.find('.recharts-line-dots');
+    const newLineDots = wrapper.find('.recharts-line-dots').hostNodes();
     expect(newLineDots.length).to.equal(1);
     expect(newLineDots.children().length).to.equal(3);
 
