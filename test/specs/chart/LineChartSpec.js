@@ -333,7 +333,7 @@ describe('<LineChart />', () => {
     expect(lineDots.childAt(dataIndex).props().cy).to.equal(100);
 
 		// simulate a brush to only include the data elements at indices 2-4
-    wrapper.instance().handleBrushChange({ startIndex: 2, endIndex: 4 });
+    wrapper.instance().handleBrushChange({ startIndex: 2, endIndex: 5 });
 
 		// we should only have three dots now
     const newLineDots = wrapper.find('.recharts-line-dots').hostNodes();
@@ -346,6 +346,13 @@ describe('<LineChart />', () => {
     expect(newLineDots.childAt(dataIndex).props().payload).to.equal(data[dataIndex]);
     expect(newLineDots.childAt(dataIndex).props().cx).to.equal(margin.left);
     expect(newLineDots.childAt(dataIndex).props().cy).to.equal(20);
+
+    dataIndex = 2;
+
+    // verify one of the dots that we expect to move when the brush happens
+    expect(newLineDots.childAt(dataIndex).props().payload).to.equal(data[dataIndex]);
+    expect(newLineDots.childAt(dataIndex).props().cx).to.equal(164);
+    expect(newLineDots.childAt(dataIndex).props().cy).to.equal(100);
 
   });
 
