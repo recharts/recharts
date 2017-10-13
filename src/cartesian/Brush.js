@@ -26,6 +26,7 @@ class Brush extends Component {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     travellerWidth: PropTypes.number,
+    gap: PropTypes.number,
     padding: PropTypes.shape({
       top: PropTypes.number,
       right: PropTypes.number,
@@ -51,6 +52,7 @@ class Brush extends Component {
     width: 0,
     height: 40,
     travellerWidth: 5,
+    gap: 1,
     fill: '#fff',
     stroke: '#666',
     padding: { top: 1, right: 1, bottom: 1, left: 1 },
@@ -117,14 +119,15 @@ class Brush extends Component {
   }
 
   getIndex({ startX, endX }) {
+    const { gap, data } = this.props;
+    const lastIndex = data.length - 1;
     const min = Math.min(startX, endX);
     const max = Math.max(startX, endX);
     const minIndex = this.getIndexInRange(this.scaleValues, min);
     const maxIndex = this.getIndexInRange(this.scaleValues, max);
-
     return {
-      startIndex: minIndex,
-      endIndex: maxIndex,
+      startIndex: minIndex - minIndex % gap,
+      endIndex: maxIndex === lastIndex ? lastIndex : maxIndex - maxIndex % gap,
     };
   }
 
@@ -231,13 +234,13 @@ class Brush extends Component {
   }
 
   handleTravellerMove(e) {
-    const { brushMoveStartX, movingTravellerId } = this.state;
+    const { brushMoveStartX, movingTravellerId, endX, startX } = this.state;
     const prevValue = this.state[movingTravellerId];
-    const { x, width, travellerWidth, onChange } = this.props;
 
+    const { x, width, travellerWidth, onChange, gap, data } = this.props;
     const params = { startX: this.state.startX, endX: this.state.endX };
-    let delta = e.pageX - brushMoveStartX;
 
+    let delta = e.pageX - brushMoveStartX;
     if (delta > 0) {
       delta = Math.min(delta, x + width - travellerWidth - prevValue);
     } else if (delta < 0) {
@@ -245,14 +248,30 @@ class Brush extends Component {
     }
 
     params[movingTravellerId] = prevValue + delta;
+
     const newIndex = this.getIndex(params);
+    const { startIndex, endIndex } = newIndex;
+    const isFullGap = () => {
+      const lastIndex = data.length - 1;
+      if ((movingTravellerId === 'startX'
+        && (endX > startX ? startIndex % gap === 0 : endIndex % gap === 0))
+        || (endX < startX && endIndex === lastIndex)
+      || (movingTravellerId === 'endX'
+        && (endX > startX ? endIndex % gap === 0 : startIndex % gap === 0)
+        || (endX > startX && endIndex === lastIndex))) {
+        return true;
+      }
+      return false;
+    };
 
     this.setState({
       [movingTravellerId]: prevValue + delta,
       brushMoveStartX: e.pageX,
     }, () => {
       if (onChange) {
-        onChange(newIndex);
+        if (isFullGap()) {
+          onChange(newIndex);
+        }
       }
     });
   }
