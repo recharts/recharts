@@ -116,10 +116,17 @@ export default class Demo extends Component {
   state = {
     ...initialState,
     activeIndex: 0,
+    animation: false,
   };
 
   handleChangeData = () => {
     this.setState(() => _.mapValues(initialState, changeNumberOfData));
+  };
+
+  handleChangeAnimation = () => {
+    this.setState({
+      animation: !this.state.animation,
+    });
   };
 
   handlePieChartEnter = (a, b, c) => {
@@ -141,6 +148,7 @@ export default class Demo extends Component {
         <br/>
         <p>Simple PieChart</p>
         <div className="pie-chart-wrapper">
+          <button onClick={this.handleChangeAnimation}>change animation</button>
           <PieChart width={800} height={400}>
             <Legend />
             <Pie
@@ -172,6 +180,7 @@ export default class Demo extends Component {
               outerRadius={80}
               label={renderLabelContent}
               paddingAngle={5}
+              isAnimationActive={this.state.animation}
             >
               {
                 data02.map((entry, index) => (
