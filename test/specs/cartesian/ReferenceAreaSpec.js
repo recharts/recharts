@@ -32,7 +32,20 @@ describe('<ReferenceArea />', () => {
     expect(wrapper.find('.recharts-label').length).to.equal(2);
   });
 
-  it('Don\'t render any rect in ReferenceArea when no x or y is set', () => {
+  it('Don\'t render any rect in ReferenceArea when no x1, x2, y1 or y2 is set', () => {
+    const wrapper = render(
+      <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
+        <XAxis dataKey="name" orientation="top" />
+        <YAxis tickCount={7} orientation="right" />
+        <Bar dataKey="uv" />
+        <ReferenceArea stroke="#666" label="0" />
+      </BarChart>
+    );
+    expect(wrapper.find('.recharts-reference-area-rect').length).to.equal(0);
+    expect(wrapper.find('.recharts-label').length).to.equal(0);
+  });
+
+  it('Render a rect in ReferenceArea when x1, x2, y1 or y2 is set', () => {
     const wrapper = render(
       <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
         <XAxis dataKey="name" orientation="top" />
@@ -41,8 +54,8 @@ describe('<ReferenceArea />', () => {
         <ReferenceArea x1="201106" stroke="#666" label="0" />
       </BarChart>
     );
-    expect(wrapper.find('.recharts-reference-area-rect').length).to.equal(0);
-    expect(wrapper.find('.recharts-label').length).to.equal(0);
+    expect(wrapper.find('.recharts-reference-area-rect').length).to.equal(1);
+    expect(wrapper.find('.recharts-label').length).to.equal(1);
   });
 
   it("Don't render any line or label when reference area is outside domain in ReferenceArea", () => {
