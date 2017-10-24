@@ -1,3 +1,14 @@
+## 1.0.0-beta.0(Oct 24, 2017)
+
+#### feat
+
+- Allow ReferenceArea to cover available space
+- Support React 16
+
+### fix
+
+- Fix bug of animation when toggle the value of `isAnimationActive`
+
 ## 1.0.0-alpha.6(Oct 10, 2017)
 
 ### feat
