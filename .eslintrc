@@ -34,7 +34,29 @@
     "object-property-newline": 0,
     "react/no-unused-prop-types": 0,
     "class-methods-use-this": 1,
-    "import/no-named-as-default": 0
+    "import/no-named-as-default": 0,
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": ["demo/**", "test/**", "*.config.js", "scripts/**", "**/Spec.js"]
+      }
+    ],
+    // Errors introduced while upgrading eslint & plugins
+    "no-restricted-properties": 1,
+    "prefer-destructuring": 1,
+    "object-curly-newline": 1,
+    "function-paren-newline": 1,
+    "react/require-default-props": 1,
+    "indent": 1,
+    "no-restricted-globals": 1,
+    "comma-dangle": 1,
+    "react/default-props-match-prop-types": 1,
+    "react/no-array-index-key": 1,
+    "no-multi-assign": 1,
+    "react/jsx-closing-tag-location": 1,
+    "react/no-unused-state": 1,
+    "react/prefer-stateless-function": 1
+
   },
   "plugins": [
     "react"

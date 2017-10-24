@@ -281,31 +281,31 @@ describe('<LineChart />', () => {
     const chartWidth = width - margin.left - margin.right;
     const dotSpacing = chartWidth / (data.length - 1);
 
-		// simulate entering just past Page A to test snapping of the cursor line
-    expect(wrapper.find('.recharts-tooltip-cursor').length).to.equal(0);
+    // simulate entering just past Page A to test snapping of the cursor line
+    expect(wrapper.find('.recharts-tooltip-cursor').hostNodes().length).to.equal(0);
     wrapper.simulate('mouseEnter', { pageX: margin.left + 0.1 * dotSpacing, pageY: height / 2 });
 
-    let tooltipCursors = wrapper.find('.recharts-tooltip-cursor');
+    let tooltipCursors = wrapper.find('.recharts-tooltip-cursor').hostNodes();
     expect(tooltipCursors.length).to.equal(1);
 
-		// make sure tooltip is in the right spot.
+    // make sure tooltip is in the right spot.
     const chartBottom = height - margin.top - 2 * margin.bottom;
     let expectedX = margin.left;
     expect(tooltipCursors.at(0).props().d).to.equal(`M${expectedX},${margin.top}L${expectedX},${chartBottom}`);
 
-		// simulate moving 10 pixels past the PageC Dot
+    // simulate moving 10 pixels past the PageC Dot
     expectedX = margin.left + dotSpacing * 2;
     wrapper.simulate('mouseMove', { pageX: expectedX + 0.1 * dotSpacing, pageY: height / 2 });
 
-    tooltipCursors = wrapper.find('.recharts-tooltip-cursor');
+    tooltipCursors = wrapper.find('.recharts-tooltip-cursor').hostNodes();
     expect(tooltipCursors.length).to.equal(1);
 
 
     expect(tooltipCursors.at(0).props().d).to.equal(`M${expectedX},${margin.top}L${expectedX},${chartBottom}`);
 
-		// simulate leaving the area
+    // simulate leaving the area
     wrapper.simulate('mouseLeave');
-    expect(wrapper.find('.recharts-tooltip-cursor').length).to.equal(0);
+    expect(wrapper.find('.recharts-tooltip-cursor').hostNodes.length).to.equal(0);
 
   });
 
@@ -318,35 +318,41 @@ describe('<LineChart />', () => {
         <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
         <Tooltip />
         <Brush />
-      </LineChart>
+      </LineChart>,
     );
 
-    const lineDots = wrapper.find('.recharts-line-dots');
+    const lineDots = wrapper.find('.recharts-line .recharts-line-dots').hostNodes();
     expect(lineDots.length).to.equal(1);
     expect(lineDots.children().length).to.equal(6);
 
+    let dataIndex = 2;
+
 		// verify one of the dots that we expect to move when the brush happens
-    expect(lineDots.childAt(2).props().payload).to.equal(data[2]);
-    expect(lineDots.childAt(2).props().cx).to.equal(164);
-    expect(lineDots.childAt(2).props().cy).to.equal(100);
+    expect(lineDots.childAt(dataIndex).props().payload).to.equal(data[dataIndex]);
+    expect(lineDots.childAt(dataIndex).props().cx).to.equal(164);
+    expect(lineDots.childAt(dataIndex).props().cy).to.equal(100);
 
 		// simulate a brush to only include the data elements at indices 2-4
-    wrapper.instance().handleBrushChange({ startIndex: 2, endIndex: 4 });
+    wrapper.instance().handleBrushChange({ startIndex: 2, endIndex: 5 });
 
 		// we should only have three dots now
-    const newLineDots = wrapper.find('.recharts-line-dots');
+    const newLineDots = wrapper.find('.recharts-line-dots').hostNodes();
     expect(newLineDots.length).to.equal(1);
-    expect(newLineDots.children().length).to.equal(3);
+    expect(newLineDots.children().length).to.equal(data.length);
+
+    dataIndex = 0;
 
 		// make sure the new first dot is the same as the old 2 dot, just in a new place
-    expect(newLineDots.childAt(0).props().payload).to.equal(data[2]);
-    expect(newLineDots.childAt(0).props().cx).to.equal(margin.left);
-    expect(newLineDots.childAt(0).props().cy).to.equal(20);
+    expect(newLineDots.childAt(dataIndex).props().payload).to.equal(data[dataIndex]);
+    expect(newLineDots.childAt(dataIndex).props().cx).to.equal(margin.left);
+    expect(newLineDots.childAt(dataIndex).props().cy).to.equal(20);
 
-		// make sure the new last dot is the same as the old 4 dot, just in the last spot
-    expect(newLineDots.childAt(2).props().payload).to.equal(data[4]);
-    expect(newLineDots.childAt(2).props().cx).to.equal(width - margin.right);
-    expect(newLineDots.childAt(2).props().cy).to.equal(43.4666666666667);
+    dataIndex = 2;
+
+    // verify one of the dots that we expect to move when the brush happens
+    expect(newLineDots.childAt(dataIndex).props().payload).to.equal(data[dataIndex]);
+    expect(newLineDots.childAt(dataIndex).props().cx).to.equal(164);
+    expect(newLineDots.childAt(dataIndex).props().cy).to.equal(100);
 
   });
 

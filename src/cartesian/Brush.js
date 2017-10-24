@@ -64,20 +64,23 @@ class Brush extends Component {
       endX: this.handleTravellerDragStart.bind(this, 'endX'),
     };
 
-    if (props.data && props.data.length) {
-      this.updateScale(props);
-    } else {
-      this.state = {};
-    }
+    this.state = props.data && props.data.length ? this.updateScale(props) : {};
   }
 
   componentWillReceiveProps(nextProps) {
     const { data, width, x, travellerWidth, updateId } = this.props;
 
-    if (nextProps.data !== data || nextProps.updateId !== updateId) {
-      this.updateScale(nextProps);
-    } else if (nextProps.width !== width || nextProps.x !== x ||
-      nextProps.travellerWidth !== travellerWidth) {
+    if (
+      (nextProps.data !== data || nextProps.updateId !== updateId) &&
+      nextProps.data &&
+      nextProps.data.length
+    ) {
+      this.setState(this.updateScale(nextProps));
+    } else if (
+      nextProps.width !== width ||
+      nextProps.x !== x ||
+      nextProps.travellerWidth !== travellerWidth
+    ) {
       this.scale.range([nextProps.x, nextProps.x + nextProps.width - nextProps.travellerWidth]);
       this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
 
@@ -259,20 +262,18 @@ class Brush extends Component {
 
   updateScale(props) {
     const { data, startIndex, endIndex, x, width, travellerWidth } = props;
-
-    if (data && data.length) {
-      const len = data.length;
-      this.scale = scalePoint().domain(_.range(0, len))
-                    .range([x, x + width - travellerWidth]);
-      this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
-      this.state = {
-        isTextActive: false,
-        isSlideMoving: false,
-        isTravellerMoving: false,
-        startX: this.scale(startIndex),
-        endX: this.scale(endIndex),
-      };
-    }
+    const len = data.length;
+    this.scale = scalePoint()
+      .domain(_.range(0, len))
+      .range([x, x + width - travellerWidth]);
+    this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
+    return {
+      isTextActive: false,
+      isSlideMoving: false,
+      isTravellerMoving: false,
+      startX: this.scale(startIndex),
+      endX: this.scale(endIndex),
+    };
   }
 
   renderBackground() {
