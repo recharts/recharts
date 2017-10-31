@@ -22,7 +22,7 @@ describe('<Legend />', () => {
 
   it('Render customized legend when content is set to be a react element', () => {
     const CustomizedLegend = () =>
-      <div className="customized-legend">test</div>
+      <div className='customized-legend'>test</div>
     ;
     const wrapper = render(
       <Legend width={500} height={30} payload={data} content={<CustomizedLegend />} />
@@ -47,7 +47,7 @@ describe('<Legend />', () => {
     expect(wrapper.find('.recharts-default-legend .recharts-legend-item').length).to.equal(3);
   });
 
-  it('Renders `strokeDasharray` (if present) in Legend when iconType is set to `line`', () => {
+  it('Renders `strokeDasharray` (if present) in Legend when iconType is set to `plainline`', () => {
 
     const data = [
       {name: 'Page A', uv: 4000, pv: 2400, amt: 2400},
@@ -61,9 +61,9 @@ describe('<Legend />', () => {
 
     const wrapper = render(
       <LineChart width={600} height={300} data={data} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
-        <Legend />
-        <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{r: 8}} strokeDasharray="5 5" />
-        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        <Legend iconType='plainline' />
+        <Line type='monotone' dataKey='pv' stroke='#8884d8' activeDot={{r: 8}} strokeDasharray='5 5' />
+        <Line type='monotone' dataKey='uv' stroke='#82ca9d' />
       </LineChart>
     );
 
@@ -74,7 +74,7 @@ describe('<Legend />', () => {
 
   });
 
-  it('Does not render `strokeDasharray` (if not present) in Legend when iconType is set to `line`', () => {
+  it('Does not render `strokeDasharray` (if not present) in Legend when iconType is set to `plainline`', () => {
 
     const data = [
       {name: 'Page A', uv: 4000, pv: 2400, amt: 2400},
@@ -88,9 +88,9 @@ describe('<Legend />', () => {
 
     const wrapper = render(
       <LineChart width={600} height={300} data={data} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
-        <Legend />
-        <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{r: 8}} />
-        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        <Legend iconType='plainline' />
+        <Line type='monotone' dataKey='pv' stroke='#8884d8' activeDot={{r: 8}} />
+        <Line type='monotone' dataKey='uv' stroke='#82ca9d' />
       </LineChart>
     );
 
