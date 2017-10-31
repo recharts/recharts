@@ -69,12 +69,12 @@ describe('<Legend />', () => {
 
     expect(wrapper.find('.recharts-default-legend').length).to.equal(1);
     expect(wrapper.find('.recharts-default-legend .recharts-legend-item').length).to.equal(2);
-    expect(wrapper.find('.recharts-default-legend .recharts-legend-item path').length).to.equal(1);
-    expect(wrapper.find('.recharts-default-legend .recharts-legend-item line').length).to.equal(1);
+    expect(wrapper.find('.recharts-default-legend .recharts-legend-item path').length).to.equal(0);
+    expect(wrapper.find('.recharts-default-legend .recharts-legend-item line').length).to.equal(2);
 
   });
 
-  it('Does not render `strokeDasharray` (if not present) in Legend when iconType is set to `plainline`', () => {
+  it('Does not render `strokeDasharray` (if not present) in Legend when iconType is set to something else than `plainline`', () => {
 
     const data = [
       {name: 'Page A', uv: 4000, pv: 2400, amt: 2400},
@@ -88,8 +88,8 @@ describe('<Legend />', () => {
 
     const wrapper = render(
       <LineChart width={600} height={300} data={data} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
-        <Legend iconType='plainline' />
-        <Line type='monotone' dataKey='pv' stroke='#8884d8' activeDot={{r: 8}} />
+        <Legend iconType='line' />
+        <Line type='monotone' dataKey='pv' stroke='#8884d8' activeDot={{r: 8}} strokeDasharray='5 5' />
         <Line type='monotone' dataKey='uv' stroke='#82ca9d' />
       </LineChart>
     );
