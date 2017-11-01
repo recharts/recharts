@@ -1,5 +1,5 @@
 /**
- * @fileOverview Reference Line
+ * @fileOverview Reference Dot
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
