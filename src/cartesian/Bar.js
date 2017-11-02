@@ -301,9 +301,9 @@ class Bar extends Component {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
     const { data, xAxis, yAxis, layout, children } = this.props;
-    const errorBarItem = findChildByType(children, ErrorBar);
+    const errorBarItems = findAllByType(children, ErrorBar);
 
-    if (!errorBarItem) { return null; }
+    if (!errorBarItems) { return null; }
 
     const offset = (layout === 'vertical') ? data[0].height / 2 : data[0].width / 2;
 
@@ -316,13 +316,16 @@ class Bar extends Component {
       };
     }
 
-    return React.cloneElement(errorBarItem, {
-      data,
-      xAxis,
-      yAxis,
-      layout,
-      offset,
-      dataPointFormatter,
+    return errorBarItems.map((item, i) => {
+      return React.cloneElement(item, {
+        key: i,
+        data,
+        xAxis,
+        yAxis,
+        layout,
+        offset,
+        dataPointFormatter,
+      });
     });
   }
 
