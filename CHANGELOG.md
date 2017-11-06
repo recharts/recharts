@@ -1,6 +1,17 @@
+## 1.0.0-beta.1(Nov 06, 2017)
+
+### feat
+
+- Add index to line props in Pie
+- Update ReferenceDot.js
+
+### chore
+
+- update react-resize-detector, react-smooth to support react16
+
 ## 1.0.0-beta.0(Oct 24, 2017)
 
-#### feat
+### feat
 
 - Allow ReferenceArea to cover available space
 - Support React 16
