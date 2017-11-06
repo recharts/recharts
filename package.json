@@ -57,7 +57,7 @@
     "lodash": "~4.17.4",
     "prop-types": "^15.6.0",
     "react-resize-detector": "1.1.0",
-    "react-smooth": "0.3.0",
+    "react-smooth": "1.0.0",
     "recharts-scale": "0.3.2",
     "reduce-css-calc": "1.3.0"
   },
@@ -101,7 +101,6 @@
     "mocha": "^4.0.1",
     "pre-commit": "^1.1.3",
     "react": "^16.0.0",
-    "react-addons-test-utils": "^15.6.2",
     "react-dom": "^16.0.0",
     "react-hot-loader": "^1.3.0",
     "react-router-dom": "^4.2.2",
