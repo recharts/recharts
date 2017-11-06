@@ -57,11 +57,11 @@ class App extends Component {
     const group = /group=([a-zA-Z]+)/.exec(search);
     const component = /component=([a-zA-Z]+)/.exec(search);
 
-    if (group && group.length === 2 && component && component === 2) {
-      return this.renderList();
+    if (group && group.length === 2 && component && component.length === 2) {
+      return this.renderPageDetail(group[1], component[1]);
     }
 
-    return this.renderPageDetail(group[1], component[1]);
+    return this.renderList();
   }
 }
 
