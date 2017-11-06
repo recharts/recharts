@@ -15,7 +15,7 @@ class App extends Component {
       const list = Object.keys(group).map((c) => {
         return (
           <li key={`component-${c}`}>
-            <Link to={{ pathname: `/${key}/${c}` }}>{c}</Link>
+            <Link to={{ pathname: '/', search: `?group=${key}&component=${c}` }}>{c}</Link>
           </li>
         );
       });
@@ -53,14 +53,15 @@ class App extends Component {
 
   render() {
     const { location } = this.props;
-    const { pathname = '' } = location;
-    const arr = pathname.split('/').filter(entry => (!!entry));
+    const { search } = location;
+    const group = /group=([a-zA-Z]+)/.exec(search);
+    const component = /component=([a-zA-Z]+)/.exec(search);
 
-    if (pathname === '/' || arr.length < 2) {
+    if (group && group.length === 2 && component && component === 2) {
       return this.renderList();
     }
 
-    return this.renderPageDetail(arr[0], arr[1]);
+    return this.renderPageDetail(group[1], component[1]);
   }
 }
 
