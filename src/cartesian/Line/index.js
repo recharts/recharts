@@ -6,16 +6,16 @@ import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import pureRender from '../util/PureRender';
-import Curve from '../shape/Curve';
-import Dot from '../shape/Dot';
-import Layer from '../container/Layer';
-import LabelList from '../component/LabelList';
-import ErrorBar from './ErrorBar';
-import { uniqueId, interpolateNumber } from '../util/DataUtils';
+import pureRender from '../../util/PureRender';
+import Curve from '../../shape/Curve';
+import Dot from '../../shape/Dot';
+import Layer from '../../container/Layer';
+import LabelList from '../../component/LabelList';
+import { uniqueId, interpolateNumber } from '../../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, filterEventAttributes,
-  getPresentationAttributes, isSsr, findChildByType } from '../util/ReactUtils';
-import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
+  getPresentationAttributes, isSsr } from '../../util/ReactUtils';
+import { getCateCoordinateOfLine, getValueByDataKey } from '../../util/ChartUtils';
+import renderErrorBar from './render/ErrorBar';
 
 const FACTOR = 1.0000001;
 
@@ -214,32 +214,6 @@ class Line extends Component {
     this.props.onAnimationStart();
   };
 
-  renderErrorBar() {
-    if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
-
-    const { points, xAxis, yAxis, layout, children } = this.props;
-    const errorBarItem = findChildByType(children, ErrorBar);
-
-    if (!errorBarItem) { return null; }
-
-    function dataPointFormatter(dataPoint, dataKey) {
-      return {
-        x: dataPoint.x,
-        y: dataPoint.y,
-        value: dataPoint.value,
-        errorVal: getValueByDataKey(dataPoint.payload, dataKey),
-      };
-    }
-
-    return React.cloneElement(errorBarItem, {
-      data: points,
-      xAxis,
-      yAxis,
-      layout,
-      dataPointFormatter,
-    });
-  }
-
   renderDotItem(option, props) {
     let dotItem;
 
@@ -385,7 +359,7 @@ class Line extends Component {
           </defs>
         ) : null}
         {!hasSinglePoint && this.renderCurve(needClip)}
-        {this.renderErrorBar()}
+        {renderErrorBar(this)}
         {(hasSinglePoint || dot) && this.renderDots()}
         {(!isAnimationActive || isAnimationFinished) &&
           LabelList.renderCallByParent(this.props, points)}
