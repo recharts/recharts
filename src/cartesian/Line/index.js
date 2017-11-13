@@ -11,9 +11,10 @@ import Dot from '../../shape/Dot';
 import Layer from '../../container/Layer';
 import LabelList from '../../component/LabelList';
 import { uniqueId, interpolateNumber } from '../../util/DataUtils';
-import { filterEventAttributes, getPresentationAttributes, isSsr } from '../../util/ReactUtils';
+import { filterEventAttributes, getPresentationAttributes } from '../../util/ReactUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../../util/ChartUtils';
 import PropTypes from './propTypes';
+import DefaultProps from './defaultProps';
 import renderErrorBar from './render/ErrorBar';
 
 const FACTOR = 1.0000001;
@@ -25,26 +26,7 @@ class Line extends Component {
 
   static propTypes = PropTypes;
 
-  static defaultProps = {
-    xAxisId: 0,
-    yAxisId: 0,
-    connectNulls: false,
-    activeDot: true,
-    dot: true,
-    legendType: 'line',
-    stroke: '#3182bd',
-    strokeWidth: 1,
-    fill: '#fff',
-    points: [],
-    isAnimationActive: !isSsr(),
-    animationBegin: 0,
-    animationDuration: 1500,
-    animationEasing: 'ease',
-    hide: false,
-
-    onAnimationStart: () => {},
-    onAnimationEnd: () => {},
-  };
+  static defaultProps = DefaultProps;
 
   /**
    * Compose the data of each group
