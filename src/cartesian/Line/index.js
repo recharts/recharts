@@ -2,7 +2,6 @@
  * @fileOverview Line
  */
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -12,9 +11,9 @@ import Dot from '../../shape/Dot';
 import Layer from '../../container/Layer';
 import LabelList from '../../component/LabelList';
 import { uniqueId, interpolateNumber } from '../../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, filterEventAttributes,
-  getPresentationAttributes, isSsr } from '../../util/ReactUtils';
+import { filterEventAttributes, getPresentationAttributes, isSsr } from '../../util/ReactUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../../util/ChartUtils';
+import PropTypes from './propTypes';
 import renderErrorBar from './render/ErrorBar';
 
 const FACTOR = 1.0000001;
@@ -24,57 +23,7 @@ class Line extends Component {
 
   static displayName = 'Line';
 
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    ...EVENT_ATTRIBUTES,
-    className: PropTypes.string,
-    type: PropTypes.oneOfType([PropTypes.oneOf([
-      'basis', 'basisClosed', 'basisOpen', 'linear', 'linearClosed', 'natural',
-      'monotoneX', 'monotoneY', 'monotone', 'step', 'stepBefore', 'stepAfter',
-    ]), PropTypes.func]),
-    unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    yAxis: PropTypes.object,
-    xAxis: PropTypes.object,
-    legendType: PropTypes.oneOf(LEGEND_TYPES),
-    layout: PropTypes.oneOf(['horizontal', 'vertical']),
-    connectNulls: PropTypes.bool,
-    hide: PropTypes.bool,
-
-     // whether have dot in line
-    activeDot: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
-    ]),
-    dot: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
-    ]),
-
-    top: PropTypes.number,
-    left: PropTypes.number,
-    width: PropTypes.number,
-    height: PropTypes.number,
-    points: PropTypes.arrayOf(PropTypes.shape({
-      x: PropTypes.number,
-      y: PropTypes.number,
-      value: PropTypes.value,
-    })),
-    onAnimationStart: PropTypes.func,
-    onAnimationEnd: PropTypes.func,
-
-    isAnimationActive: PropTypes.bool,
-    animationBegin: PropTypes.number,
-    animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf([
-      'ease',
-      'ease-in',
-      'ease-out',
-      'ease-in-out',
-      'linear',
-    ]),
-    animationId: PropTypes.number,
-  };
+  static propTypes = PropTypes;
 
   static defaultProps = {
     xAxisId: 0,
