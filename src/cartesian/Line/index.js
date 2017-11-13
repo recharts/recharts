@@ -15,6 +15,7 @@ import { filterEventAttributes, getPresentationAttributes } from '../../util/Rea
 import { getCateCoordinateOfLine, getValueByDataKey } from '../../util/ChartUtils';
 import PropTypes from './propTypes';
 import DefaultProps from './defaultProps';
+import InitialState from './initialState';
 import renderErrorBar from './render/ErrorBar';
 
 const FACTOR = 1.0000001;
@@ -63,11 +64,7 @@ class Line extends Component {
     return { points, layout, ...offset };
   };
 
-
-  state = {
-    isAnimationFinished: true,
-    totalLength: 0,
-  };
+  state = InitialState;
 
   /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
