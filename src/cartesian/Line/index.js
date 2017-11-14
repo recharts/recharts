@@ -6,8 +6,7 @@ import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
 import pureRender from '../../util/PureRender';
-import Curve from '../../shape/Curve';
-import Dot from '../../shape/Dot';
+import Curve from '../../shape/Curve'
 import Layer from '../../container/Layer';
 import LabelList from '../../component/LabelList';
 import { uniqueId, interpolateNumber } from '../../util/DataUtils';
@@ -17,6 +16,7 @@ import PropTypes from './propTypes';
 import DefaultProps from './defaultProps';
 import InitialState from './initialState';
 import renderErrorBar from './render/ErrorBar';
+import renderDots from './render/Dots';
 
 const FACTOR = 1.0000001;
 
@@ -142,46 +142,6 @@ class Line extends Component {
     this.props.onAnimationStart();
   };
 
-  renderDotItem(option, props) {
-    let dotItem;
-
-    if (React.isValidElement(option)) {
-      dotItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
-      dotItem = option(props);
-    } else {
-      const className = classNames('recharts-line-dot', option.className);
-      dotItem = <Dot {...props} className={className} />;
-    }
-
-    return dotItem;
-  }
-
-  renderDots() {
-    const { isAnimationActive } = this.props;
-
-    if (isAnimationActive && !this.state.isAnimationFinished) {
-      return null;
-    }
-    const { dot, points } = this.props;
-    const lineProps = getPresentationAttributes(this.props);
-    const customDotProps = getPresentationAttributes(dot);
-    const dots = points.map((entry, i) => {
-      const dotProps = {
-        key: `dot-${i}`,
-        r: 3,
-        ...lineProps,
-        ...customDotProps,
-        value: entry.value,
-        cx: entry.x, cy: entry.y, index: i, payload: entry.payload,
-      };
-
-      return this.renderDotItem(dot, dotProps);
-    });
-
-    return <Layer className="recharts-line-dots" key="dots">{dots}</Layer>;
-  }
-
   renderCurveStatically(points, needClip, props) {
     const { type, layout, connectNulls } = this.props;
     const curveProps = {
@@ -288,7 +248,7 @@ class Line extends Component {
         ) : null}
         {!hasSinglePoint && this.renderCurve(needClip)}
         {renderErrorBar(this)}
-        {(hasSinglePoint || dot) && this.renderDots()}
+        {renderDots(this)}
         {(!isAnimationActive || isAnimationFinished) &&
           LabelList.renderCallByParent(this.props, points)}
       </Layer>
