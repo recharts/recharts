@@ -41,6 +41,20 @@ describe('<YAxis />', () => {
     expect(ticks.first().props().y).to.equal(297.5);
   });
 
+  it('Render 4 ticks', () => {
+    const wrapper = mount(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis type="number" stroke="#ff7300" ticks={[0, 400, 800, 1200]} />
+        <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>
+    );
+    const ticks = wrapper.find(Text);
+
+    expect(ticks.at(0).text()).to.equal('400');
+    expect(ticks.at(1).text()).to.equal('800');
+    expect(ticks.at(2).text()).to.equal('1200');
+  });
+
   it('Render ticks reversed', () => {
     const wrapper = mount(
       <AreaChart width={600} height={400} data={data}>

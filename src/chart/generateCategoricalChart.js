@@ -268,7 +268,7 @@ const generateCategoricalChart = ({
 
       // Eliminate duplicated axes
       const axisMap = axes.reduce((result, child) => {
-        const { type, dataKey, allowDataOverflow, scale } = child.props;
+        const { type, dataKey, allowDataOverflow, scale, ticks } = child.props;
         const axisId = child.props[axisIdKey];
         const displayedData = this.constructor.getDisplayedData(props, {
           graphicalItems: graphicalItems.filter(item => item.props[axisIdKey] === axisId),
@@ -330,7 +330,7 @@ const generateCategoricalChart = ({
           }
           if (type === 'number') {
             // To detect wether there is any reference lines whose props alwaysShow is true
-            domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
+            domain = detectReferenceElementsDomain(children, domain, axisId, axisType, ticks);
 
             if (child.props.domain) {
               domain = parseSpecifiedDomain(child.props.domain, domain, allowDataOverflow);
