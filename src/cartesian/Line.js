@@ -14,7 +14,7 @@ import LabelList from '../component/LabelList';
 import ErrorBar from './ErrorBar';
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, filterEventAttributes,
-  getPresentationAttributes, isSsr, findChildByType } from '../util/ReactUtils';
+  getPresentationAttributes, isSsr, findAllByType } from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 
 const FACTOR = 1.0000001;
@@ -218,9 +218,9 @@ class Line extends Component {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
     const { points, xAxis, yAxis, layout, children } = this.props;
-    const errorBarItem = findChildByType(children, ErrorBar);
+    const errorBarItems = findAllByType(children, ErrorBar);
 
-    if (!errorBarItem) { return null; }
+    if (!errorBarItems) { return null; }
 
     function dataPointFormatter(dataPoint, dataKey) {
       return {
@@ -231,12 +231,15 @@ class Line extends Component {
       };
     }
 
-    return React.cloneElement(errorBarItem, {
-      data: points,
-      xAxis,
-      yAxis,
-      layout,
-      dataPointFormatter,
+    return errorBarItems.map((item, i) => {
+      return React.cloneElement(item, {
+        key: i,
+        data: points,
+        xAxis,
+        yAxis,
+        layout,
+        dataPointFormatter,
+      });
     });
   }
 
