@@ -231,16 +231,14 @@ class Line extends Component {
       };
     }
 
-    return errorBarItems.map((item, i) => {
-      return React.cloneElement(item, {
-        key: i,
-        data: points,
-        xAxis,
-        yAxis,
-        layout,
-        dataPointFormatter,
-      });
-    });
+    return errorBarItems.map((item, i) => React.cloneElement(item, {
+      key: i,
+      data: points,
+      xAxis,
+      yAxis,
+      layout,
+      dataPointFormatter,
+    }));
   }
 
   renderDotItem(option, props) {
