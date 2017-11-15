@@ -106,6 +106,7 @@ export default class AreaChartDemo extends Component {
 
   render() {
     const { data, data01, data02 } = this.state;
+    let verticalFill=['#5ab8ff', '#eee'];
 
     return (
       <div className="area-charts">
@@ -128,7 +129,7 @@ export default class AreaChartDemo extends Component {
               <Label position="insideTopRight" offset={-30}>province</Label>
             </XAxis>
             <YAxis />
-            <Tooltip />
+            <Tooltip corner={true} cornerSettings={{width: 7, height: 7}} />
             <Area
               stackId="0"
               type="monotone"
@@ -293,7 +294,7 @@ export default class AreaChartDemo extends Component {
               strokeWidth={2}
               xAxisId={1}
             />
-            <Tooltip />
+            <Tooltip corner={true}/>
           </AreaChart>
         </div>
 

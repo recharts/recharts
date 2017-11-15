@@ -6,6 +6,8 @@ import { render } from 'enzyme';
 describe('<CartesianGrid />', () => {
   const horizontalPoints = [10, 20, 30, 100, 400];
   const verticalPoints = [100, 200, 300, 400];
+  const verticalFill=['#5ab8ff', '#eee'];
+  const horizontalFill=['#faffb0', '#ededed'];
 
   it('Render 5 horizontal lines and 4 vertical lines in simple CartesianGrid', () => {
     const wrapper = render(
@@ -43,5 +45,35 @@ describe('<CartesianGrid />', () => {
       </Surface>
     );
     expect(wrapper.find('line').length).to.equal(0);
+  });
+
+  it('Render 4 vertical background lines in simple CartesianGrid', () => {
+    const wrapper = render(
+      <Surface width={500} height={500}>
+        <CartesianGrid
+          width={500}
+          height={500}
+          verticalFill={verticalFill}
+          verticalPoints={verticalPoints}
+          horizontalPoints={horizontalPoints}
+        />
+      </Surface>
+    );
+    expect(wrapper.find('.recharts-cartesian-gridstripes-vertical').children()).to.have.length(5);
+  });
+
+  it('Render 5 horizontal background lines in simple CartesianGrid', () => {
+    const wrapper = render(
+      <Surface width={500} height={500}>
+        <CartesianGrid
+          width={500}
+          height={500}
+          horizontalFill={horizontalFill}
+          verticalPoints={verticalPoints}
+          horizontalPoints={horizontalPoints}
+        />
+      </Surface>
+    );
+    expect(wrapper.find('.recharts-cartesian-gridstripes-horizontal').children()).to.have.length(6);
   });
 });

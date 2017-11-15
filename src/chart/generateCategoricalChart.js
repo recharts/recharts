@@ -1271,7 +1271,7 @@ const generateCategoricalChart = ({
       if (!tooltipItem) { return null; }
 
       const { isTooltipActive, activeCoordinate, activePayload,
-        activeLabel, offset } = this.state;
+        activeLabel, offset, tooltipAxis } = this.state;
 
       return cloneElement(tooltipItem, {
         viewBox: { ...offset, x: offset.left, y: offset.top },
@@ -1279,6 +1279,7 @@ const generateCategoricalChart = ({
         label: activeLabel,
         payload: isTooltipActive ? activePayload : [],
         coordinate: activeCoordinate,
+        layout: tooltipAxis.layout,
       });
     }
 
