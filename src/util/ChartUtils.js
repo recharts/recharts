@@ -776,7 +776,9 @@ export const getBaseValueOfBar = ({ numericAxis }) => {
   return domain[0];
 };
 
-export const detectReferenceElementsDomain = (children, domain, axisId, axisType) => {
+export const detectReferenceElementsDomain = (
+  children, domain, axisId, axisType, specifiedTicks
+) => {
   const lines = findAllByType(children, ReferenceLine);
   const dots = findAllByType(children, ReferenceDot);
   const elements = lines.concat(dots);
@@ -809,6 +811,16 @@ export const detectReferenceElementsDomain = (children, domain, axisId, axisType
 
         return [Math.min(result[0], value1, value2), Math.max(result[1], value1, value2)];
       }
+      return result;
+    }, finalDomain);
+  }
+
+  if (specifiedTicks && specifiedTicks.length) {
+    finalDomain = specifiedTicks.reduce((result, tick) => {
+      if (isNumber(tick)) {
+        return [Math.min(result[0], tick), Math.max(result[1], tick)];
+      }
+
       return result;
     }, finalDomain);
   }

@@ -27,12 +27,29 @@ describe('<ErrorBar />', () => {
     expect(wrapper.find('.recharts-errorBar').length).to.equal(4);
   });
 
+  it('Renders Multiple Error Bars in Bar', () => {
+    const wrapper = render(
+      <BarChart data={barData} width={500} height={500} layout="vertical">
+        <Bar
+          isAnimationActive={false}
+          label={{ label: 'test' }}
+          dataKey="uv"
+        >
+          <ErrorBar dataKey="uvError" />
+          <ErrorBar dataKey="pvError" />
+        </Bar>
+      </BarChart>,
+    );
+
+    expect(wrapper.find('.recharts-errorBar').length).to.equal(8);
+  });
+
   const lineData = [
-    { name: 'Page A', uv: 1000, pv: 2400, amt: 2400, uvError: [75, 20] },
-    { name: 'Page B', uv: 300, pv: 4567, amt: 2400, uvError: [90, 40] },
-    { name: 'Page C', uv: 280, pv: 1398, amt: 2400, uvError: 40 },
-    { name: 'Page D', uv: 200, pv: 9800, amt: 2400, uvError: 20 },
-    { name: 'Page I', uv: 189, pv: 4800, amt: 2400, uvError: 28 },
+    { name: 'Page A', uv: 1000, pv: 2400, amt: 2400, uvError: [75, 20], pvError: [90, 40] },
+    { name: 'Page B', uv: 300, pv: 4567, amt: 2400, uvError: [90, 40], pvError: [75, 20] },
+    { name: 'Page C', uv: 280, pv: 1398, amt: 2400, uvError: 40, pvError: 20 },
+    { name: 'Page D', uv: 200, pv: 9800, amt: 2400, uvError: 20, pvError: 28 },
+    { name: 'Page I', uv: 189, pv: 4800, amt: 2400, uvError: 28, pvError: 40 },
   ];
 
   it('Renders Error Bars in Line', () => {
@@ -49,5 +66,22 @@ describe('<ErrorBar />', () => {
     );
 
     expect(wrapper.find('.recharts-errorBar').length).to.equal(5);
+  });
+
+  it('Renders Multiple Error Bars in Line', () => {
+    const wrapper = render(
+      <LineChart data={lineData} width={500} height={500}>
+        <Line
+          isAnimationActive={false}
+          label={{ label: 'test' }}
+          dataKey="uv"
+        >
+          <ErrorBar dataKey="uvError" />
+          <ErrorBar dataKey="pvError" />
+        </Line>
+      </LineChart>,
+    );
+
+    expect(wrapper.find('.recharts-errorBar').length).to.equal(10);
   });
 });

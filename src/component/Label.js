@@ -300,8 +300,8 @@ function Label(props) {
   return (
     <Text
       className={classNames('recharts-label', className)}
-      {...attrs}
       {...positionAttrs}
+      {...attrs}
     >{label}</Text>
   );
 }

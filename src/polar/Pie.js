@@ -17,7 +17,7 @@ import Cell from '../component/Cell';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
-import { isNumber, uniqueId, getPercentValue, mathSign, interpolateNumber } from '../util/DataUtils';
+import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { warn } from '../util/LogUtils';
 
@@ -74,6 +74,7 @@ class Pie extends Component {
       'spring',
       'linear',
     ]),
+    id: PropTypes.string,
   };
 
   static defaultProps = {
@@ -101,6 +102,7 @@ class Pie extends Component {
     animationDuration: 1500,
     animationEasing: 'ease',
     nameKey: 'name',
+    id: uniqueId('recharts-pie-'),
   };
 
   static parseDeltaAngle = ({ startAngle, endAngle }) => {
@@ -248,8 +250,6 @@ class Pie extends Component {
     this.setState({ prevSectors: sectors });
   };
 
-  id = uniqueId('recharts-pie-');
-
   isActiveIndex(i) {
     const { activeIndex } = this.props;
 
@@ -268,11 +268,11 @@ class Pie extends Component {
 
   renderClipPath() {
     const { cx, cy, maxRadius, startAngle, isAnimationActive, animationDuration,
-      animationEasing, animationBegin, animationId } = this.props;
+      animationEasing, animationBegin, animationId, id } = this.props;
 
     return (
       <defs>
-        <clipPath id={this.id}>
+        <clipPath id={id}>
           <Animate
             easing={animationEasing}
             isActive={isAnimationActive}
@@ -498,7 +498,7 @@ class Pie extends Component {
 
   render() {
     const { hide, sectors, className, label, cx, cy, innerRadius,
-      outerRadius, isAnimationActive } = this.props;
+      outerRadius, isAnimationActive, id } = this.props;
 
     if (hide || !sectors || !sectors.length || !isNumber(cx)
       || !isNumber(cy) || !isNumber(innerRadius)
@@ -511,7 +511,7 @@ class Pie extends Component {
 
     return (
       <Layer className={layerClass}>
-        <g clipPath={`url(#${this.id})`}>
+        <g clipPath={`url(#${id})`}>
           {this.renderSectors()}
         </g>
         {label && this.renderLabels(sectors)}

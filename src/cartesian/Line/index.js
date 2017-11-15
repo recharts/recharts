@@ -11,7 +11,6 @@ import Layer from '../../container/Layer';
 import LabelList from '../../component/LabelList';
 import { uniqueId, interpolateNumber } from '../../util/DataUtils';
 import { filterEventAttributes, getPresentationAttributes } from '../../util/ReactUtils';
-import { getCateCoordinateOfLine, getValueByDataKey } from '../../util/ChartUtils';
 import PropTypes from './propTypes';
 import DefaultProps from './defaultProps';
 import getComposedData from './getComposedData';
