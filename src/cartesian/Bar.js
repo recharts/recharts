@@ -316,17 +316,15 @@ class Bar extends Component {
       };
     }
 
-    return errorBarItems.map((item, i) => {
-      return React.cloneElement(item, {
-        key: i,
-        data,
-        xAxis,
-        yAxis,
-        layout,
-        offset,
-        dataPointFormatter,
-      });
-    });
+    return errorBarItems.map((item, i) => React.cloneElement(item, {
+      key: i,
+      data,
+      xAxis,
+      yAxis,
+      layout,
+      offset,
+      dataPointFormatter,
+    }));
   }
 
   render() {

@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { isNumber } from '../util/DataUtils';
 
 @pureRender
 class CartesianGrid extends Component {
@@ -36,10 +37,6 @@ class CartesianGrid extends Component {
   };
 
   static defaultProps = {
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
     horizontal: true,
     vertical: true,
     // The ordinates of horizontal grid lines
@@ -156,18 +153,23 @@ class CartesianGrid extends Component {
     const { x, y, width, height, horizontal, vertical, horizontalCoordinatesGenerator,
       verticalCoordinatesGenerator, xAxis, yAxis, offset, chartWidth, chartHeight } = this.props;
 
-    if (width <= 0 || height <= 0 || x !== +x || y !== +y) {
+    if (!isNumber(width) || width <= 0 || !isNumber(height) || height <= 0 ||
+      !isNumber(x) || x !== +x || !isNumber(y) || y !== +y) {
       return null;
     }
 
     let { horizontalPoints, verticalPoints } = this.props;
 
-    if (_.isFunction(horizontalCoordinatesGenerator)) {
+    // No horizontal points are specified
+    if ((!horizontalPoints || !horizontalPoints.length) &&
+      _.isFunction(horizontalCoordinatesGenerator)) {
       horizontalPoints = horizontalCoordinatesGenerator({ yAxis, width: chartWidth,
         height: chartHeight, offset });
     }
 
-    if (_.isFunction(verticalCoordinatesGenerator)) {
+    // No vertical points are specified
+    if ((!verticalPoints || !verticalPoints.length) &&
+      _.isFunction(verticalCoordinatesGenerator)) {
       verticalPoints = verticalCoordinatesGenerator({ xAxis, width: chartWidth,
         height: chartHeight, offset });
     }

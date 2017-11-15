@@ -1205,13 +1205,14 @@ const generateCategoricalChart = ({
       const { width, height } = this.props;
       const xAxis = getAnyElementOfObject(xAxisMap);
       const yAxis = getAnyElementOfObject(yAxisMap);
+      const props = element.props || {};
 
       return cloneElement(element, {
         key: element.key || 'grid',
-        x: offset.left,
-        y: offset.top,
-        width: offset.width,
-        height: offset.height,
+        x: isNumber(props.x) ? props.x : offset.left,
+        y: isNumber(props.y) ? props.y : offset.top,
+        width: isNumber(props.width) ? props.width : offset.width,
+        height: isNumber(props.height) ? props.height : offset.height,
         xAxis,
         yAxis,
         offset,
