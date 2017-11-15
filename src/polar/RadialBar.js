@@ -35,8 +35,8 @@ class RadialBar extends Component {
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
 
     cornerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    minPointSize: PropTypes.number,
-    maxBarSize: PropTypes.number,
+    minAngle: PropTypes.number,
+    maxAngle: PropTypes.number,
     data: PropTypes.arrayOf(PropTypes.shape({
       cx: PropTypes.number,
       cy: PropTypes.number,
@@ -68,7 +68,8 @@ class RadialBar extends Component {
   static defaultProps = {
     angleAxisId: 0,
     radiusAxisId: 0,
-    minPointSize: 0,
+    maxAngle: 135,
+    minAngle: 0,
     hide: false,
     legendType: 'rect',
     data: [],
@@ -85,7 +86,7 @@ class RadialBar extends Component {
 
     const { cx, cy } = angleAxis;
     const { layout } = props;
-    const { children, minPointSize } = item.props;
+    const { children, minAngle, maxAngle } = item.props;
     const numericAxis = layout === 'radial' ? angleAxis : radiusAxis;
     const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
     const baseValue = getBaseValueOfBar({ props, numericAxis });
@@ -114,12 +115,17 @@ class RadialBar extends Component {
         outerRadius = innerRadius + pos.size;
         const deltaAngle = endAngle - startAngle;
 
-        if (Math.abs(minPointSize) > 0 && Math.abs(deltaAngle) < Math.abs(minPointSize)) {
-          const delta = mathSign(deltaAngle || minPointSize) *
-            (Math.abs(minPointSize) - Math.abs(deltaAngle));
+        if (Math.abs(minAngle) > 0 && Math.abs(deltaAngle) < Math.abs(minAngle)) {
+          const delta = mathSign(deltaAngle || minAngle) *
+            (Math.abs(minAngle) - Math.abs(deltaAngle));
 
           endAngle += delta;
         }
+
+        if (Math.abs(maxAngle) > 0 && Math.abs(deltaAngle) > Math.abs(maxAngle)) {
+          endAngle = maxAngle;
+        }
+
         backgroundSector = {
           background: {
             cx, cy, innerRadius, outerRadius, startAngle: props.startAngle,
@@ -140,9 +146,9 @@ class RadialBar extends Component {
         endAngle = startAngle + pos.size;
         const deltaRadius = outerRadius - innerRadius;
 
-        if (Math.abs(minPointSize) > 0 && Math.abs(deltaRadius) < Math.abs(minPointSize)) {
-          const delta = mathSign(deltaRadius || minPointSize) *
-            (Math.abs(minPointSize) - Math.abs(deltaRadius));
+        if (Math.abs(minAngle) > 0 && Math.abs(deltaRadius) < Math.abs(minAngle)) {
+          const delta = mathSign(deltaRadius || minAngle) *
+            (Math.abs(minAngle) - Math.abs(deltaRadius));
           outerRadius += delta;
         }
       }
