@@ -6,7 +6,7 @@ import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
 import pureRender from '../../util/PureRender';
-import Curve from '../../shape/Curve'
+import Curve from '../../shape/Curve';
 import Layer from '../../container/Layer';
 import LabelList from '../../component/LabelList';
 import { uniqueId, interpolateNumber } from '../../util/DataUtils';
@@ -14,6 +14,7 @@ import { filterEventAttributes, getPresentationAttributes } from '../../util/Rea
 import { getCateCoordinateOfLine, getValueByDataKey } from '../../util/ChartUtils';
 import PropTypes from './propTypes';
 import DefaultProps from './defaultProps';
+import getComposedData from './getComposedData';
 import InitialState from './initialState';
 import renderErrorBar from './render/ErrorBar';
 import renderDots from './render/Dots';
@@ -29,40 +30,7 @@ class Line extends Component {
 
   static defaultProps = DefaultProps;
 
-  /**
-   * Compose the data of each group
-   * @param {Object} props The props from the component
-   * @param  {Object} xAxis   The configuration of x-axis
-   * @param  {Object} yAxis   The configuration of y-axis
-   * @param  {String} dataKey The unique key of a group
-   * @return {Array}  Composed data
-   */
-  static getComposedData = ({ props, xAxis, yAxis, xAxisTicks, yAxisTicks, dataKey,
-    bandSize, displayedData, offset }) => {
-    const { layout } = props;
-
-    const points = displayedData.map((entry, index) => {
-      const value = getValueByDataKey(entry, dataKey);
-
-      if (layout === 'horizontal') {
-        return {
-          x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-          y: _.isNil(value) ? null : yAxis.scale(value),
-          value,
-          payload: entry,
-        };
-      }
-
-      return {
-        x: _.isNil(value) ? null : xAxis.scale(value),
-        y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
-        value,
-        payload: entry,
-      };
-    });
-
-    return { points, layout, ...offset };
-  };
+  static getComposedData = getComposedData;
 
   state = InitialState;
 
