@@ -25,12 +25,10 @@ const renderDots = (context) => {
   const { isAnimationFinished } = context.state;
 
   if (!dot || !points.length) {
-      console.log( 'null1', dot , points );
     return null;
   }
 
   if (isAnimationActive && !isAnimationFinished) {
-    console.log( 'null2' );
     return null;
   }
 
