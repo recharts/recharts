@@ -12,6 +12,8 @@ export default class Demo extends Component {
     return (
       <Surface width={500} height={500}>
         <CartesianGrid
+          x={0}
+          y={0}
           width={500}
           height={500}
           verticalPoints={verticalPoints}
