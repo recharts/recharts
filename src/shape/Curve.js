@@ -118,7 +118,7 @@ class Curve extends Component {
     return (
       <path
         {...getPresentationAttributes(this.props)}
-        {...filterEventAttributes(this.props)}
+        {...filterEventAttributes(this.props, null, true)}
         className={classNames('recharts-curve', className)}
         d={realPath}
         ref={pathRef}

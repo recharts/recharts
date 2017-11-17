@@ -249,7 +249,13 @@ describe('<LineChart />', () => {
   });
 
   it('click on Curve should invoke onClick callback', () => {
-    const onClick = sinon.spy();
+    let propsOfCallback;
+    let eventOfCallback;
+    const onClick = sinon.spy((props, event) => {
+      propsOfCallback = props;
+      eventOfCallback = event;
+      console.log(propsOfCallback, eventOfCallback);
+    });
     const onMouseDown = sinon.spy();
     const onMouseUp = sinon.spy();
     const wrapper = mount(
@@ -264,6 +270,8 @@ describe('<LineChart />', () => {
     expect(onClick.calledOnce).to.equal(true);
     expect(onMouseDown.calledOnce).to.equal(true);
     expect(onMouseUp.calledOnce).to.equal(true);
+    expect(propsOfCallback).to.include.all.keys(['className', 'points', 'connectNulls', 'type']);
+    expect(eventOfCallback).to.include.all.keys(['currentTarget', 'target']);
   });
 
   it('should show tooltip cursor on MouseEnter and MouseMove and hide on MouseLeave', () => {
@@ -353,10 +361,7 @@ describe('<LineChart />', () => {
     expect(newLineDots.childAt(dataIndex).props().payload).to.equal(data[dataIndex]);
     expect(newLineDots.childAt(dataIndex).props().cx).to.equal(164);
     expect(newLineDots.childAt(dataIndex).props().cy).to.equal(100);
-
   });
-
-
 });
 
 

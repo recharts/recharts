@@ -268,7 +268,7 @@ const generateCategoricalChart = ({
 
       // Eliminate duplicated axes
       const axisMap = axes.reduce((result, child) => {
-        const { type, dataKey, allowDataOverflow, scale } = child.props;
+        const { type, dataKey, allowDataOverflow, scale, ticks } = child.props;
         const axisId = child.props[axisIdKey];
         const displayedData = this.constructor.getDisplayedData(props, {
           graphicalItems: graphicalItems.filter(item => item.props[axisIdKey] === axisId),
@@ -330,7 +330,7 @@ const generateCategoricalChart = ({
           }
           if (type === 'number') {
             // To detect wether there is any reference lines whose props alwaysShow is true
-            domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
+            domain = detectReferenceElementsDomain(children, domain, axisId, axisType, ticks);
 
             if (child.props.domain) {
               domain = parseSpecifiedDomain(child.props.domain, domain, allowDataOverflow);
@@ -1205,13 +1205,14 @@ const generateCategoricalChart = ({
       const { width, height } = this.props;
       const xAxis = getAnyElementOfObject(xAxisMap);
       const yAxis = getAnyElementOfObject(yAxisMap);
+      const props = element.props || {};
 
       return cloneElement(element, {
         key: element.key || 'grid',
-        x: offset.left,
-        y: offset.top,
-        width: offset.width,
-        height: offset.height,
+        x: isNumber(props.x) ? props.x : offset.left,
+        y: isNumber(props.y) ? props.y : offset.top,
+        width: isNumber(props.width) ? props.width : offset.width,
+        height: isNumber(props.height) ? props.height : offset.height,
         xAxis,
         yAxis,
         offset,
@@ -1354,6 +1355,7 @@ const generateCategoricalChart = ({
         value: activePoint.value,
         key: `${key}-activePoint-${childIndex}`,
         ...getPresentationAttributes(activeDot),
+        ...filterEventAttributes(activeDot),
       };
 
       result.push(this.renderActiveDot(activeDot, dotProps, childIndex));
