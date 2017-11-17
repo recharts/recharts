@@ -1,3 +1,20 @@
+## 1.0.0-beta.2(Nov 17, 2017)
+
+### fix
+
+- fix attributes order of <Label />
+- fix the domain of Axis when specify `ticks`
+
+### feat
+
+- allow set x, y, width, height, horizontalPoints, verticalPoints of CartesianGrid
+- add props to the parameters of callbacks
+
+### refactor
+
+- add id prop to Pie Component
+- Update Bar and Line to allow them to recognise multiple ErrorBars
+
 ## 1.0.0-beta.1(Nov 06, 2017)
 
 ### feat
