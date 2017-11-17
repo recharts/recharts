@@ -12,7 +12,7 @@ import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
-  getPresentationAttributes, isSsr } from '../util/ReactUtils';
+  getPresentationAttributes, isSsr, filterEventAttributes } from '../util/ReactUtils';
 import { isNumber, uniqueId, interpolateNumber } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 
@@ -231,6 +231,7 @@ class Area extends Component {
     const { dot, points } = this.props;
     const areaProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
+    const dotEvents = filterEventAttributes(dot);
 
     const dots = points.map((entry, i) => {
       const dotProps = {
@@ -238,6 +239,7 @@ class Area extends Component {
         r: 3,
         ...areaProps,
         ...customDotProps,
+        ...dotEvents,
         cx: entry.x,
         cy: entry.y,
         index: i,

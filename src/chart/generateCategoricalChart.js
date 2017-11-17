@@ -1355,6 +1355,7 @@ const generateCategoricalChart = ({
         value: activePoint.value,
         key: `${key}-activePoint-${childIndex}`,
         ...getPresentationAttributes(activeDot),
+        ...filterEventAttributes(activeDot),
       };
 
       result.push(this.renderActiveDot(activeDot, dotProps, childIndex));
