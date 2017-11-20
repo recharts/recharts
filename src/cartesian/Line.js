@@ -301,7 +301,8 @@ class Line extends Component {
 
   renderCurveWithAnimation(needClip) {
     const { points, strokeDasharray, isAnimationActive, animationBegin,
-      animationDuration, animationEasing, animationId, ...other } = this.props;
+      animationDuration, animationEasing, animationId, width, height, ...other
+    } = this.props;
     const { prevPoints, totalLength } = this.state;
 
     return (
@@ -328,7 +329,10 @@ class Line extends Component {
                   return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
                 }
 
-                return entry;
+                // magic number of faking previous x and y location
+                const interpolatorX = interpolateNumber(width * 2, entry.x);
+                const interpolatorY = interpolateNumber(height / 2, entry.y);
+                return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
               });
               return this.renderCurveStatically(stepData, needClip);
             }
