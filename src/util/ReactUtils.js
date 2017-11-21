@@ -367,7 +367,7 @@ export const isChildrenEqual = (nextChildren, prevChildren) => {
 
   if (count === 0) { return true; }
   if (count === 1) {
-    return isSingleChildEqual(Children.only(nextChildren), Children.only(prevChildren));
+    return isSingleChildEqual(nextChildren, prevChildren);
   }
 
   for (let i = 0; i < count; i++) {
