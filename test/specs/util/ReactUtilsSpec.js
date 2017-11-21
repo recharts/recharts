@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { LineChart, Line, Bar } from 'recharts';
+import { LineChart, Line, Bar, XAxis, YAxis } from 'recharts';
 import { getPresentationAttributes, filterEventAttributes, filterEventsOfChild,
   getDisplayName, withoutType, validateWidthHeight, filterSvgElements,
   isSingleChildEqual, isChildrenEqual,
@@ -201,5 +201,40 @@ describe('ReactUtils', () => {
     ));
 
     expect(isChildrenEqual(wrapper.props().children, newWrapper.props().children)).to.be.false;
+  });
+
+  it("isChildrenEqual returns correctly a single child array is supplied", (done) => {
+    class LineChartContainer extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            data : [
+              {name: 'A', time: 6},
+              {name: 'B', time: 2},
+              {name: 'C', time: 4}
+            ],
+            dataKeys : ["time"],
+            additionalStateItem : false
+          };
+        }
+        render() {
+            return (
+              <LineChart width={600} height={300} data={this.state.data}
+                margin={{top: 5, right: 30, left: 20, bottom: 5}}>
+                <XAxis dataKey="name"/>
+                <YAxis/>
+                {this.state.dataKeys.map((key,i) =>
+                    <Line dataKey={key} key={i} type="monotone"/>
+                )}
+              </LineChart>
+            );
+        }
+    };
+
+    const wrapper = mount(<LineChartContainer />);
+    wrapper.setProps({ additionalStateItem: true });
+
+    expect(true).to.be.true;
+    done();
   });
 });
