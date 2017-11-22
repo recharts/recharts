@@ -1290,10 +1290,10 @@ const generateCategoricalChart = ({
         key: element.key || '_recharts-brush',
         onChange: combineEventHandlers(this.handleBrushChange, null, element.props.onChange),
         data,
-        x: offset.left,
-        y: offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
-        width: isNumber(element.props.width) && element.props.width ?
-          element.props.width : offset.width,
+        x: isNumber(element.props.x) ? element.props.x : offset.left,
+        y: isNumber(element.props.y) ? element.props.y :
+          (offset.top + offset.height + offset.brushBottom - (margin.bottom || 0)),
+        width: isNumber(element.props.width) ? element.props.width : offset.width,
         startIndex: dataStartIndex,
         endIndex: dataEndIndex,
         updateId: `brush-${updateId}`,

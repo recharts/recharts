@@ -10,6 +10,7 @@ import { getValueByDataKey } from '../util/ChartUtils';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
+import { isNumber } from '../util/DataUtils';
 
 @pureRender
 class Brush extends Component {
@@ -46,9 +47,6 @@ class Brush extends Component {
   };
 
   static defaultProps = {
-    x: 0,
-    y: 0,
-    width: 0,
     height: 40,
     travellerWidth: 5,
     fill: '#fff',
@@ -407,10 +405,11 @@ class Brush extends Component {
   }
 
   render() {
-    const { data, className, children } = this.props;
+    const { data, className, children, x, y, width, height } = this.props;
     const { startX, endX, isTextActive, isSlideMoving, isTravellerMoving } = this.state;
 
-    if (!data || !data.length) { return null; }
+    if (!data || !data.length || !isNumber(x) || !isNumber(y) || !isNumber(width) ||
+      !isNumber(height) || width <= 0 || height <= 0) { return null; }
 
     const layerClass = classNames('recharts-brush', className);
     const isPanoramic = React.Children.count(children) === 1;
