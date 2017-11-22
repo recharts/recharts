@@ -119,6 +119,8 @@ class Line extends Component {
 
   /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
+    if (!this.props.isAnimationActive) { return; }
+
     const totalLength = this.getTotalLength();
     this.setState({ totalLength });
   }
