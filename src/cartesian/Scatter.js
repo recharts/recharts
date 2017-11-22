@@ -133,7 +133,17 @@ class Scatter extends Component {
     };
   };
 
-  state = { activeIndex: -1 };
+  constructor(props) {
+    super(props);
+    this.state = this.createDefaultState();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  createDefaultState() {
+    return {
+      activeIndex: -1
+    };
+  }
 
   id = uniqueId('recharts-scatter-');
 

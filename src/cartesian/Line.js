@@ -112,7 +112,10 @@ class Line extends Component {
     return { points, layout, ...offset };
   };
 
-  state = { totalLength: 0 }
+  constructor(props) {
+    super(props);
+    this.state = this.createDefaultState();
+  }
 
   /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
@@ -147,6 +150,13 @@ class Line extends Component {
     return [...this.repeat(lines, count), ...remainLines, ...emptyLines]
       .map(line => `${line}px`)
       .join(', ');
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  createDefaultState() {
+    return {
+      totalLength: 0,
+    };
   }
 
   id = uniqueId('recharts-line-');

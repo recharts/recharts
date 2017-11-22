@@ -151,7 +151,13 @@ class Bar extends Component {
     return { data: rects, layout, ...offset };
   };
 
-  state = {};
+  constructor(props) {
+    super(props);
+    this.state = this.createDefaultState();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  createDefaultState() {}
 
   id = uniqueId('recharts-bar-');
 

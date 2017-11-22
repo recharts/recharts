@@ -172,7 +172,13 @@ class Area extends Component {
     return dotItem;
   };
 
-  state = {};
+  constructor(props) {
+    super(props);
+    this.state = this.createDefaultState();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  createDefaultState() {}
 
   id = uniqueId('recharts-area-');
 

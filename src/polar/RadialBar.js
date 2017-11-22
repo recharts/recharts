@@ -150,7 +150,10 @@ class RadialBar extends Component {
     return { data: sectors, layout };
   };
 
-  state = {};
+  constructor(props) {
+    super(props);
+    this.state = this.createDefaultState();
+  }
 
   getDeltaAngle() {
     const { startAngle, endAngle } = this.props;
@@ -159,6 +162,9 @@ class RadialBar extends Component {
 
     return sign * deltaAngle;
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  createDefaultState() {}
 
   renderSectorShape(shape, props) {
     let sectorShape;

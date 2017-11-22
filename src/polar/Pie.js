@@ -210,7 +210,10 @@ class Pie extends Component {
     };
   }
 
-  state = {};
+  constructor(props) {
+    super(props);
+    this.state = this.createDefaultState();
+  }
 
   getTextAnchor(x, cx) {
     if (x > cx) {
@@ -221,6 +224,9 @@ class Pie extends Component {
 
     return 'middle';
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  createDefaultState() {}
 
   isActiveIndex(i) {
     const { activeIndex } = this.props;

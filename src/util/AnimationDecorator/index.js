@@ -103,7 +103,7 @@ function renderWithAnimation(componentName) {
 export default function animationDecorator(component) {
 
   const {
-    renderDots, renderErrorBar, renderLabelList, renderLabels, state,
+    renderDots, renderErrorBar, renderLabelList, renderLabels, createDefaultState,
   } = component.prototype;
 
   component.propTypes = {
@@ -116,15 +116,17 @@ export default function animationDecorator(component) {
     ...component.defaultProps,
   };
 
-  component.prototype.state = Object.assign({},
-    state && (_.isFunction(state) ? state.call(this) : state),
-    { ...InitialState },
-  );
-
   component.prototype.componentWillReceiveProps = componentWillReceiveProps;
   component.prototype.handleAnimationStart = handleAnimationStart;
   component.prototype.handleAnimationEnd = handleAnimationEnd;
   component.prototype.renderWithAnimation = renderWithAnimation(getDisplayName(component));
+
+  if (createDefaultState) {
+    component.prototype.createDefaultState = () => ({
+      ...(_.isFunction(createDefaultState) ? createDefaultState.call(this) : createDefaultState),
+      ...InitialState,
+    });
+  }
 
   if (renderDots) {
     component.prototype.renderDots = renderDotsFn(renderDots);

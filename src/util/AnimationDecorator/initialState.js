@@ -1,3 +1,3 @@
 export default {
-  isAnimationFinished: false,
+  isAnimationFinished: true,
 };
