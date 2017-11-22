@@ -135,8 +135,8 @@ export const SCALE_TYPES = [
 ];
 
 export const LEGEND_TYPES = [
-  'line', 'square', 'rect', 'circle', 'cross', 'diamond',
-  'star', 'triangle', 'wye', 'none',
+  'plainline', 'line', 'square', 'rect', 'circle', 'cross',
+  'diamond', 'star', 'triangle', 'wye', 'none',
 ];
 
 /**
