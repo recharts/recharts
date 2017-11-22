@@ -61,7 +61,7 @@ export default class Demo extends Component {
             barSize={10}
             data={data}
           >
-            <RadialBar minPointSize={15} background dataKey="uv" >
+            <RadialBar minAngle={15} background dataKey="uv" >
               {
                 data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={colors[index]}/>
@@ -123,8 +123,7 @@ export default class Demo extends Component {
               innerRadius="20%"
               outerRadius="90%"
             >
-              <RadialBar minPointSize={15} label={label} background dataKey="uv" />
-
+              <RadialBar minAngle={15} label={label} background dataKey="uv" />
             </RadialBarChart>
           </ResponsiveContainer>
         </div>
@@ -142,14 +141,14 @@ export default class Demo extends Component {
               endAngle={180}
             >
               <PolarAngleAxis type="number" domain={[0, 100]} />
-              <RadialBar stackId="stack" minPointSize={15} background dataKey="uv">
+              <RadialBar stackId="stack" minAngle={15} background dataKey="uv">
                 {
                   data.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill="#8884d8" />
                   ))
                 }
               </RadialBar>
-              <RadialBar stackId="stack" minPointSize={15} dataKey="uv" animationBegin={1500}>
+              <RadialBar stackId="stack" minAngle={15} dataKey="uv" animationBegin={1500}>
                 {
                   data.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill="#83a6ed" />
