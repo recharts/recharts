@@ -34,42 +34,42 @@ function handleAnimationStart() {
 }
 
 function renderDotsFn(fn) {
-  return function () {
+  return function (...args) {
     const { isAnimationActive } = this.props;
     const { isAnimationFinished } = this.state;
     if (isAnimationActive && !isAnimationFinished) return null;
 
-    return fn.call(this);
+    return fn.apply(this, args);
   };
 }
 
 function renderErrorBarFn(fn) {
-  return function () {
+  return function (...args) {
     const { isAnimationActive } = this.props;
     const { isAnimationFinished } = this.state;
     if (isAnimationActive && !isAnimationFinished) return null;
 
-    return fn.call(this);
+    return fn.apply(this, args);
   };
 }
 
 function renderLabelListFn(fn) {
-  return function () {
+  return function (...args) {
     const { isAnimationActive } = this.props;
     const { isAnimationFinished } = this.state;
     if (isAnimationActive && !isAnimationFinished) return null;
 
-    return fn.call(this);
+    return fn.apply(this, args);
   };
 }
 
 function renderLabelsFn(fn) {
-  return function () {
+  return function (...args) {
     const { isAnimationActive } = this.props;
     const { isAnimationFinished } = this.state;
     if (isAnimationActive && !isAnimationFinished) return null;
 
-    return fn.call(this);
+    return fn.apply(this, args);
   };
 }
 
