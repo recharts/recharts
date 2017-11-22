@@ -147,7 +147,7 @@ class Radar extends Component {
   }
 
   renderDots(points) {
-    const { dot } = this.props;
+    const { dot, dataKey } = this.props;
     const baseProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
 
@@ -157,6 +157,7 @@ class Radar extends Component {
         r: 3,
         ...baseProps,
         ...customDotProps,
+        dataKey,
         cx: entry.x,
         cy: entry.y,
         index: i,

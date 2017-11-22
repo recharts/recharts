@@ -228,7 +228,7 @@ class Area extends Component {
 
     if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
-    const { dot, points } = this.props;
+    const { dot, points, dataKey } = this.props;
     const areaProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
     const dotEvents = filterEventAttributes(dot);
@@ -240,6 +240,7 @@ class Area extends Component {
         ...areaProps,
         ...customDotProps,
         ...dotEvents,
+        dataKey,
         cx: entry.x,
         cy: entry.y,
         index: i,

@@ -260,7 +260,7 @@ class Line extends Component {
     if (isAnimationActive && !this.state.isAnimationFinished) {
       return null;
     }
-    const { dot, points } = this.props;
+    const { dot, points, dataKey } = this.props;
     const lineProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
     const dotEvents = filterEventAttributes(dot);
@@ -272,6 +272,7 @@ class Line extends Component {
         ...customDotProps,
         ...dotEvents,
         value: entry.value,
+        dataKey,
         cx: entry.x, cy: entry.y, index: i, payload: entry.payload,
       };
 
