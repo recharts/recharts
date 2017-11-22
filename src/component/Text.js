@@ -7,9 +7,11 @@ import { isNumber, isNumOrStr } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
 import { getStringSize } from '../util/DOMUtils';
 
+const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
+
 const calculateWordWidths = (props) => {
   try {
-    const words = !_.isNil(props.children) ? props.children.toString().split(/\s+/) : [];
+    const words = !_.isNil(props.children) ? props.children.toString().split(BREAKING_SPACES) : [];
     const wordsWithComputedWidth = words.map(word => (
       { word, width: getStringSize(word, props.style).width }
     ));
@@ -90,7 +92,7 @@ class Text extends Component {
   }
 
   updateWordsWithoutCalculate(props) {
-    const words = !_.isNil(props.children) ? props.children.toString().split(/\s+/) : [];
+    const words = !_.isNil(props.children) ? props.children.toString().split(BREAKING_SPACES) : [];
     this.setState({ wordsByLines: [{ words }] });
   }
 
