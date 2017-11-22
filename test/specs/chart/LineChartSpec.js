@@ -288,7 +288,6 @@ describe('<LineChart />', () => {
     const onClick = sinon.spy((props, event) => {
       propsOfCallback = props;
       eventOfCallback = event;
-      console.log(propsOfCallback, eventOfCallback);
     });
     const onMouseDown = sinon.spy();
     const onMouseUp = sinon.spy();

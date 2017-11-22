@@ -383,7 +383,7 @@ export default class Demo extends Component {
           </BarChart>
         </div>
 
-        <p>AreaChart of range values</p>
+        <p>BarChart of range values</p>
         <div className="area-chart-wrapper">
           <BarChart
             width={400}
@@ -395,6 +395,24 @@ export default class Demo extends Component {
             <YAxis />
             <Tooltip />
             <Bar dataKey="temperature" fill="#ff7300" />
+          </BarChart>
+        </div>
+
+
+        <p>BarChart of range values</p>
+        <div className="area-chart-wrapper">
+          <BarChart
+            width={1400}
+            height={400}
+            data={data}
+            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+            layout="vertical"
+          >
+            <XAxis type="number" />
+            <YAxis dataKey="name" type="category" />
+            <Tooltip />
+            <Bar dataKey="uv" fill="#ff7300" maxBarSize={20} label />
+            <Bar dataKey="pv" fill="#387908" />
           </BarChart>
         </div>
 
