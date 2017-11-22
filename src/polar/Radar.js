@@ -92,7 +92,11 @@ class Radar extends Component {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  createDefaultState() {}
+  createDefaultState() {
+    return {
+      isAnimationFinished: false,
+    };
+  }
 
   handleMouseEnter = (e) => {
     const { onMouseEnter } = this.props;

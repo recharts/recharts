@@ -107,8 +107,8 @@ export default function animationDecorator(component) {
   } = component.prototype;
 
   component.propTypes = {
-    ...component.propTypes,
     ...PropTypes,
+    ...component.propTypes,
   };
 
   component.defaultProps = {
@@ -121,12 +121,10 @@ export default function animationDecorator(component) {
   component.prototype.handleAnimationEnd = handleAnimationEnd;
   component.prototype.renderWithAnimation = renderWithAnimation(getDisplayName(component));
 
-  if (createDefaultState) {
-    component.prototype.createDefaultState = () => ({
-      ...(_.isFunction(createDefaultState) ? createDefaultState.call(this) : createDefaultState),
-      ...InitialState,
-    });
-  }
+  component.prototype.createDefaultState = () => ({
+    ...InitialState,
+    ...createDefaultState.call(this),
+  });
 
   if (renderDots) {
     component.prototype.renderDots = renderDotsFn(renderDots);
