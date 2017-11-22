@@ -226,7 +226,8 @@ class Bar extends Component {
 
   renderRectanglesWithAnimation() {
     const { data, layout, isAnimationActive, animationBegin,
-      animationDuration, animationEasing, animationId } = this.props;
+      animationDuration, animationEasing, animationId, width,
+    } = this.props;
     const { prevData } = this.state;
 
     return (
@@ -262,10 +263,17 @@ class Bar extends Component {
               }
 
               if (layout === 'horizontal') {
-                const interpolator = interpolateNumber(0, entry.height);
-                const h = interpolator(t);
+                // magic number of faking previous x location
+                const interpolatorX = interpolateNumber(width * 2, entry.x);
+                const interpolatorHeight = interpolateNumber(0, entry.height);
+                const h = interpolatorHeight(t);
 
-                return { ...entry, y: entry.y + entry.height - h, height: h };
+                return {
+                  ...entry,
+                  x: interpolatorX(t),
+                  y: entry.y + entry.height - h,
+                  height: h,
+                };
               }
 
               const interpolator = interpolateNumber(0, entry.width);
