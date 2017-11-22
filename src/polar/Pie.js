@@ -162,12 +162,12 @@ class Pie extends Component {
 
     if (_.isNil(dataKey) && _.isNil(valueKey)) {
       warn(false,
-      `Use "dataKey" to specify the value of pie,
+        `Use "dataKey" to specify the value of pie,
       the props "valueKey" will be deprecated in 1.1.0`);
       realDataKey = 'value';
     } else if (_.isNil(dataKey)) {
       warn(false,
-      `Use "dataKey" to specify the value of pie,
+        `Use "dataKey" to specify the value of pie,
       the props "valueKey" will be deprecated in 1.1.0`);
       realDataKey = valueKey;
     }

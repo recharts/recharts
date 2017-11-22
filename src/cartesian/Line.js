@@ -14,10 +14,8 @@ import LabelList from '../component/LabelList';
 import ErrorBar from './ErrorBar';
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, filterEventAttributes,
-  getPresentationAttributes, isSsr, findAllByType, getReactEventByType } from '../util/ReactUtils';
+  getPresentationAttributes, isSsr, findAllByType } from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
-
-const FACTOR = 1.0000001;
 
 @pureRender
 class Line extends Component {
@@ -43,7 +41,7 @@ class Line extends Component {
     connectNulls: PropTypes.bool,
     hide: PropTypes.bool,
 
-     // whether have dot in line
+    // whether have dot in line
     activeDot: PropTypes.oneOfType([
       PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
     ]),

@@ -47,7 +47,7 @@ export const getPercentValue = (percent, totalValue, defaultValue = 0, validate 
     value = +percent;
   }
 
-  if (isNaN(value)) {
+  if (_.isNaN(value)) {
     value = defaultValue;
   }
 

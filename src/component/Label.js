@@ -302,7 +302,9 @@ function Label(props) {
       className={classNames('recharts-label', className)}
       {...attrs}
       {...positionAttrs}
-    >{label}</Text>
+    >
+      {label}
+    </Text>
   );
 }
 

@@ -47,32 +47,32 @@ class DefaultTooltipContent extends Component {
       const listStyle = { padding: 0, margin: 0 };
 
       const items = payload.sort(itemSorter)
-      .map((entry, i) => {
-        const finalItemStyle = {
-          display: 'block',
-          paddingTop: 4,
-          paddingBottom: 4,
-          color: entry.color || '#000',
-          ...itemStyle,
-        };
-        const hasName = isNumOrStr(entry.name);
-        const finalFormatter = entry.formatter || formatter || defaultFormatter;
+        .map((entry, i) => {
+          const finalItemStyle = {
+            display: 'block',
+            paddingTop: 4,
+            paddingBottom: 4,
+            color: entry.color || '#000',
+            ...itemStyle,
+          };
+          const hasName = isNumOrStr(entry.name);
+          const finalFormatter = entry.formatter || formatter || defaultFormatter;
 
-        return (
-          <li className="recharts-tooltip-item" key={`tooltip-item-${i}`} style={finalItemStyle}>
-            {hasName ? <span className="recharts-tooltip-item-name">{entry.name}</span> : null}
-            {
-              hasName ?
-                <span className="recharts-tooltip-item-separator">{separator}</span> :
-                null
-            }
-            <span className="recharts-tooltip-item-value">
-              {finalFormatter ? finalFormatter(entry.value, entry.name, entry, i) : entry.value}
-            </span>
-            <span className="recharts-tooltip-item-unit">{entry.unit || ''}</span>
-          </li>
-        );
-      });
+          return (
+            <li className="recharts-tooltip-item" key={`tooltip-item-${i}`} style={finalItemStyle}>
+              {hasName ? <span className="recharts-tooltip-item-name">{entry.name}</span> : null}
+              {
+                hasName ?
+                  <span className="recharts-tooltip-item-separator">{separator}</span> :
+                  null
+              }
+              <span className="recharts-tooltip-item-value">
+                {finalFormatter ? finalFormatter(entry.value, entry.name, entry, i) : entry.value}
+              </span>
+              <span className="recharts-tooltip-item-unit">{entry.unit || ''}</span>
+            </li>
+          );
+        });
 
       return <ul className="recharts-tooltip-item-list" style={listStyle}>{items}</ul>;
     }

@@ -15,7 +15,7 @@ import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
 import ErrorBar from './ErrorBar';
 import Cell from '../component/Cell';
-import { uniqueId, isNumOrStr, interpolateNumber } from '../util/DataUtils';
+import { uniqueId, interpolateNumber } from '../util/DataUtils';
 import { getValueByDataKey, getCateCoordinateOfLine } from '../util/ChartUtils';
 
 @pureRender
@@ -95,7 +95,7 @@ class Scatter extends Component {
    * @return {Array}  Composed data
    */
   static getComposedData = ({ xAxis, yAxis, zAxis, item, displayedData, onItemMouseLeave,
-    onItemMouseEnter, offset, xAxisTicks, yAxisTicks }) => {
+    onItemMouseEnter, offset, xAxisTicks }) => {
     const cells = findAllByType(item.props.children, Cell);
     const xAxisDataKey = _.isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
     const yAxisDataKey = _.isNil(yAxis.dataKey) ? item.props.dataKey : yAxis.dataKey;
@@ -143,7 +143,7 @@ class Scatter extends Component {
     };
   };
 
-  state = { activeIndex: -1, isAnimationFinished: false };
+  state = { isAnimationFinished: false };
 
   componentWillReceiveProps(nextProps) {
     const { animationId, points } = this.props;

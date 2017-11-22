@@ -56,19 +56,19 @@ class DefaultLegendContent extends Component {
     const color = data.inactive ? inactiveColor : data.color;
 
     if (data.type === 'plainline') {
-        return (
-          <line
-            strokeWidth={4}
-            fill="none"
-            stroke={color}
-            strokeDasharray={data.payload.strokeDasharray}
-            x1={0}
-            y1={halfSize}
-            x2={SIZE}
-            y2={halfSize}
-            className="recharts-legend-icon"
-          />
-        );
+      return (
+        <line
+          strokeWidth={4}
+          fill="none"
+          stroke={color}
+          strokeDasharray={data.payload.strokeDasharray}
+          x1={0}
+          y1={halfSize}
+          x2={SIZE}
+          y2={halfSize}
+          className="recharts-legend-icon"
+        />
+      );
     } else if (data.type === 'line') {
       return (
         <path

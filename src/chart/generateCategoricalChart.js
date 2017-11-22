@@ -2,7 +2,6 @@ import React, { Component, cloneElement, isValidElement, createElement } from 'r
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import _ from 'lodash';
-import Smooth from 'react-smooth';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
@@ -90,7 +89,7 @@ const generateCategoricalChart = ({
       ...defaultProps,
     };
 
-     /**
+    /**
      * Returns default, reset state for the categorical chart.
      * @param {Object} props Props object to use when creating the default state
      * @return {Object} Whole new state
@@ -1119,8 +1118,7 @@ const generateCategoricalChart = ({
         restProps = this.getCursorRectangle();
         cursorComp = Rectangle;
       } else if (layout === 'radial') {
-        const { cx, cy, radius, startAngle, endAngle, points } = this.getCursorPoints();
-        const delta = endAngle - startAngle;
+        const { cx, cy, radius, startAngle, endAngle } = this.getCursorPoints();
         restProps = {
           cx, cy, startAngle, endAngle, innerRadius: radius, outerRadius: radius,
         };
