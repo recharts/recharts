@@ -239,6 +239,40 @@ describe('<LineChart />', () => {
     expect(wrapper.find('.customized-dot').length).to.equal(6);
   });
 
+  it("Renders 3 lines before and after a parents state change", () => {
+    class LineChartContainer extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            data : [
+              {name: 'A', time: 6},
+              {name: 'B', time: 2},
+              {name: 'C', time: 4}
+            ],
+            dataKeys : ["time"],
+            additionalStateItem : false
+          };
+        }
+        render() {
+            return (
+              <LineChart width={600} height={300} data={this.state.data}
+                margin={{top: 5, right: 30, left: 20, bottom: 5}}>
+                {this.state.dataKeys.map((key,i) =>
+                    <Line dataKey={key} key={i} type="monotone"/>
+                )}
+              </LineChart>
+            );
+        }
+    };
+
+    const wrapper = mount(<LineChartContainer />);
+    expect(wrapper.find(LineChart).children().props().children).to.have.lengthOf(3);
+
+    wrapper.setProps({ additionalStateItem: true });
+
+    expect(wrapper.find(LineChart).children().props().children).to.have.lengthOf(3);
+  });
+
   it('click on Curve should invoke onClick callback', () => {
     const wrapper = mount(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
