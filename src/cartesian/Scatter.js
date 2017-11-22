@@ -3,9 +3,9 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
+import animationDecorator from '../util/AnimationDecorator/';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
@@ -18,6 +18,7 @@ import Cell from '../component/Cell';
 import { uniqueId, isNumOrStr, interpolateNumber } from '../util/DataUtils';
 import { getValueByDataKey, getCateCoordinateOfLine } from '../util/ChartUtils';
 
+@animationDecorator
 @pureRender
 class Scatter extends Component {
 
@@ -62,12 +63,6 @@ class Scatter extends Component {
       payload: PropTypes.any,
     })),
     hide: PropTypes.bool,
-
-    isAnimationActive: PropTypes.bool,
-    animationId: PropTypes.number,
-    animationBegin: PropTypes.number,
-    animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
   };
 
   static defaultProps = {
@@ -80,11 +75,6 @@ class Scatter extends Component {
     data: [],
     shape: 'circle',
     hide: false,
-
-    isAnimationActive: !isSsr(),
-    animationBegin: 0,
-    animationDuration: 400,
-    animationEasing: 'linear',
   };
 
   /**
@@ -143,27 +133,7 @@ class Scatter extends Component {
     };
   };
 
-  state = { activeIndex: -1, isAnimationFinished: false };
-
-  componentWillReceiveProps(nextProps) {
-    const { animationId, points } = this.props;
-
-    if (nextProps.animationId !== animationId) {
-      this.cachePrevPoints(points);
-    }
-  }
-
-  cachePrevPoints = (points) => {
-    this.setState({ prevPoints: points });
-  };
-
-  handleAnimationEnd = () => {
-    this.setState({ isAnimationFinished: true });
-  };
-
-  handleAnimationStart = () => {
-    this.setState({ isAnimationFinished: false });
-  };
+  state = { activeIndex: -1 };
 
   id = uniqueId('recharts-scatter-');
 
@@ -200,54 +170,35 @@ class Scatter extends Component {
     });
   }
 
-  renderSymbolsWithAnimation() {
-    const { points, isAnimationActive, animationBegin, animationDuration,
-      animationEasing, animationId } = this.props;
+  renderSymbolsWithAnimation({ t }) {
+    const { points } = this.props;
     const { prevPoints } = this.state;
 
+    const stepData = points.map((entry, index) => {
+      const prev = prevPoints && prevPoints[index];
+
+      if (prev) {
+        const interpolatorCx = interpolateNumber(prev.cx, entry.cx);
+        const interpolatorCy = interpolateNumber(prev.cy, entry.cy);
+        const interpolatorSize = interpolateNumber(prev.size, entry.size);
+
+        return {
+          ...entry,
+          cx: interpolatorCx(t),
+          cy: interpolatorCy(t),
+          size: interpolatorSize(t),
+        };
+      }
+
+      const interpolator = interpolateNumber(0, entry.size);
+
+      return { ...entry, size: interpolator(t) };
+    });
+
     return (
-      <Animate
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        from={{ t: 0 }}
-        to={{ t: 1 }}
-        key={`pie-${animationId}`}
-        onAnimationEnd={this.handleAnimationEnd}
-        onAnimationStart={this.handleAnimationStart}
-      >
-        {
-          ({ t }) => {
-            const stepData = points.map((entry, index) => {
-              const prev = prevPoints && prevPoints[index];
-
-              if (prev) {
-                const interpolatorCx = interpolateNumber(prev.cx, entry.cx);
-                const interpolatorCy = interpolateNumber(prev.cy, entry.cy);
-                const interpolatorSize = interpolateNumber(prev.size, entry.size);
-
-                return {
-                  ...entry,
-                  cx: interpolatorCx(t),
-                  cy: interpolatorCy(t),
-                  size: interpolatorSize(t),
-                };
-              }
-
-              const interpolator = interpolateNumber(0, entry.size);
-
-              return { ...entry, size: interpolator(t) };
-            });
-
-            return (
-              <Layer>
-                {this.renderSymbolsStatically(stepData)}
-              </Layer>
-            );
-          }
-        }
-      </Animate>
+      <Layer>
+        {this.renderSymbolsStatically(stepData)}
+      </Layer>
     );
   }
 
@@ -257,16 +208,13 @@ class Scatter extends Component {
 
     if (isAnimationActive && points && points.length &&
       (!prevPoints || !_.isEqual(prevPoints, points))) {
-      return this.renderSymbolsWithAnimation();
+      return this.renderWithAnimation(this.renderSymbolsWithAnimation);
     }
 
     return this.renderSymbolsStatically(points);
   }
 
   renderErrorBar() {
-    const { isAnimationActive } = this.props;
-    if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
-
     const { points, xAxis, yAxis, children } = this.props;
     const errorBarItems = findAllByType(children, ErrorBar);
 
