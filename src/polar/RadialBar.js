@@ -4,12 +4,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Animate from 'react-smooth';
 import _ from 'lodash';
 import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES, findAllByType,
   getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
+import animationDecorator from '../util/AnimationDecorator/';
 import pureRender from '../util/PureRender';
 import LabelList from '../component/LabelList';
 import Cell from '../component/Cell';
@@ -17,6 +17,7 @@ import { mathSign, interpolateNumber } from '../util/DataUtils';
 import { getCateCoordinateOfBar, findPositionOfBar, getValueByDataKey,
   truncateByDomain, getBaseValueOfBar } from '../util/ChartUtils';
 
+@animationDecorator
 @pureRender
 class RadialBar extends Component {
 
@@ -56,13 +57,6 @@ class RadialBar extends Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
-
-    isAnimationActive: PropTypes.bool,
-    animationBegin: PropTypes.number,
-    animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf([
-      'ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear', 'spring',
-    ]),
   };
 
   static defaultProps = {
@@ -72,10 +66,6 @@ class RadialBar extends Component {
     hide: false,
     legendType: 'rect',
     data: [],
-    isAnimationActive: !isSsr(),
-    animationBegin: 0,
-    animationDuration: 1500,
-    animationEasing: 'ease',
   };
 
   static getComposedData = ({ item, props, radiusAxis, radiusAxisTicks, angleAxis, angleAxisTicks,
@@ -160,17 +150,7 @@ class RadialBar extends Component {
     return { data: sectors, layout };
   };
 
-  state = {
-    isAnimationFinished: false,
-  };
-
-  componentWillReceiveProps(nextProps) {
-    const { animationId, data } = this.props;
-
-    if (nextProps.animationId !== animationId) {
-      this.cachePrevData(data);
-    }
-  }
+  state = {};
 
   getDeltaAngle() {
     const { startAngle, endAngle } = this.props;
@@ -179,18 +159,6 @@ class RadialBar extends Component {
 
     return sign * deltaAngle;
   }
-
-  cachePrevData = (data) => {
-    this.setState({ prevData: data });
-  };
-
-  handleAnimationEnd = () => {
-    this.setState({ isAnimationFinished: true });
-  };
-
-  handleAnimationStart = () => {
-    this.setState({ isAnimationFinished: false });
-  };
 
   renderSectorShape(shape, props) {
     let sectorShape;
@@ -224,56 +192,37 @@ class RadialBar extends Component {
     });
   }
 
-  renderSectorsWithAnimation() {
-    const { data, isAnimationActive, animationBegin, animationDuration,
-      animationEasing, animationId } = this.props;
+  renderSectorsWithAnimation({ t }) {
+    const { data } = this.props;
     const { prevData } = this.state;
 
+    const stepData = data.map((entry, index) => {
+      const prev = prevData && prevData[index];
+
+      if (prev) {
+        const interpolatorStartAngle = interpolateNumber(
+          prev.startAngle, entry.startAngle
+        );
+        const interpolatorEndAngle = interpolateNumber(
+          prev.endAngle, entry.endAngle
+        );
+
+        return {
+          ...entry,
+          startAngle: interpolatorStartAngle(t),
+          endAngle: interpolatorEndAngle(t),
+        };
+      }
+      const { endAngle, startAngle } = entry;
+      const interpolator = interpolateNumber(startAngle, endAngle);
+
+      return { ...entry, endAngle: interpolator(t) };
+    });
+
     return (
-      <Animate
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        from={{ t: 0 }}
-        to={{ t: 1 }}
-        key={`radialBar-${animationId}`}
-        onAnimationStart={this.handleAnimationStart}
-        onAnimationEnd={this.handleAnimationEnd}
-      >
-        {
-          ({ t }) => {
-            const stepData = data.map((entry, index) => {
-              const prev = prevData && prevData[index];
-
-              if (prev) {
-                const interpolatorStartAngle = interpolateNumber(
-                  prev.startAngle, entry.startAngle
-                );
-                const interpolatorEndAngle = interpolateNumber(
-                  prev.endAngle, entry.endAngle
-                );
-
-                return {
-                  ...entry,
-                  startAngle: interpolatorStartAngle(t),
-                  endAngle: interpolatorEndAngle(t),
-                };
-              }
-              const { endAngle, startAngle } = entry;
-              const interpolator = interpolateNumber(startAngle, endAngle);
-
-              return { ...entry, endAngle: interpolator(t) };
-            });
-
-            return (
-              <Layer>
-                {this.renderSectorsStatically(stepData)}
-              </Layer>
-            );
-          }
-        }
-      </Animate>
+      <Layer>
+        {this.renderSectorsStatically(stepData)}
+      </Layer>
     );
   }
 
@@ -283,7 +232,7 @@ class RadialBar extends Component {
 
     if (isAnimationActive && data && data.length &&
       (!prevData || !_.isEqual(prevData, data))) {
-      return this.renderSectorsWithAnimation();
+      return this.renderWithAnimation(this.renderSectorsWithAnimation);
     }
 
     return this.renderSectorsStatically(data);
@@ -315,6 +264,14 @@ class RadialBar extends Component {
     });
   }
 
+  renderLabelList() {
+    const { data } = this.props;
+    return LabelList.renderCallByParent({
+      ...this.props,
+      clockWise: this.getDeltaAngle() < 0,
+    }, data);
+  }
+
   render() {
     const { hide, data, className, background, isAnimationActive } = this.props;
 
@@ -336,13 +293,7 @@ class RadialBar extends Component {
         <Layer className="recharts-radial-bar-sectors">
           {this.renderSectors(data)}
         </Layer>
-
-        {(!isAnimationActive || isAnimationFinished) &&
-          LabelList.renderCallByParent({
-            ...this.props,
-            clockWise: this.getDeltaAngle() < 0,
-          }, data)
-        }
+        {this.renderLabelList()}
       </Layer>
     );
   }
