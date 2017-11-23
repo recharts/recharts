@@ -1,3 +1,20 @@
+## 1.0.0-beta.3(Nov 23, 2017)
+
+### feat
+
+- Add datakey to proops of customized dot
+
+### fix
+
+- Removed the use of `Children.only` from the isSingleChildEqual call. Appears to resolve the issue logged at https://github.com/recharts/recharts/issues/935
+- Fix Line Animation with given Magic Number
+- Don't break text contents on non-breaking spaces
+- Support for "strokeDasharray" in <Legend/>
+- Fix Bar Animation with the given Magic Number
+- Fix position of `<Label />`
+- Fix exception of AreaChart when all the values are null
+- Fix the orders of polar angle ticks in RadarChart
+
 ## 1.0.0-beta.2(Nov 17, 2017)
 
 ### fix
