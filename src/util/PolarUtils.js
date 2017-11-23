@@ -82,7 +82,7 @@ export const distanceBetweenPoints = (point, anotherPoint) => {
   const { x: x1, y: y1 } = point;
   const { x: x2, y: y2 } = anotherPoint;
 
-  return Math.sqrt(((x1 - x2) ** 2) + ((y1 - y2) ** 2));
+  return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
 };
 
 export const getAngleOfPoint = ({ x, y }, { cx, cy }) => {
