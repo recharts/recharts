@@ -282,10 +282,20 @@ function Label(props) {
     !isValidElement(content) && !_.isFunction(content))) { return null; }
 
   if (isValidElement(content)) { return cloneElement(content, props); }
-  if (_.isFunction(content)) { return content(props); }
+
+  let label;
+  if (_.isFunction(content)) {
+    label = content(props);
+
+    if (isValidElement(label)) {
+      return label;
+    }
+    console.log(label);
+  } else {
+    label = getLabel(props);
+  }
 
   const isPolarLabel = isPolar(viewBox);
-  const label = getLabel(props);
   const attrs = getPresentationAttributes(props);
 
   if (isPolarLabel && (position === 'insideStart' ||

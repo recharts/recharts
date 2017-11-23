@@ -88,4 +88,15 @@ describe('<Label />', () => {
     expect(label.attr('x')).to.equal(`${cartesianViewBox.x + cartesianViewBox.width / 2}`);
     expect(label.attr('y')).to.equal(`${cartesianViewBox.y + cartesianViewBox.height / 2}`);
   });
+
+  it('Render label when content is a function, and return a simple string.', () => {
+    const wrapper = render(
+      <Surface>
+        <Label viewBox={cartesianViewBox} value="text" position="center" content={({ value }) => (`${value}%`)}/>
+      </Surface>
+    );
+    const label = wrapper.find('.recharts-label');
+    expect(label.length).to.equal(1);
+    expect(label.text()).to.equal('text%');
+  });
 });
