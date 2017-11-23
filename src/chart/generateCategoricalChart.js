@@ -435,7 +435,9 @@ const generateCategoricalChart = ({
 
     getActiveCoordinate(tooltipTicks, activeIndex, rangeObj) {
       const { layout } = this.props;
-      const entry = tooltipTicks[activeIndex];
+      const entry = _.get(tooltipTicks.filter(tick => (
+        tick && (tick.index === activeIndex)
+      )), '[0]');
 
       if (entry) {
         if (layout === 'horizontal') {
@@ -491,7 +493,7 @@ const generateCategoricalChart = ({
 
       const { orderedTooltipTicks: ticks, tooltipAxis: axis, tooltipTicks } = this.state;
       const pos = this.calculateTooltipPos(rangeObj);
-      const activeIndex = calculateActiveTickIndex(pos, ticks, axis);
+      const activeIndex = calculateActiveTickIndex(pos, ticks, tooltipTicks, axis);
 
       if (activeIndex >= 0 && tooltipTicks) {
         const activeLabel = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;
@@ -1152,10 +1154,7 @@ const generateCategoricalChart = ({
         ...axisOption,
         className: axisType,
         key: element.key || `${displayName}-${index}`,
-        ticks: getTicksOfAxis(axisOption, true).map(entry => ({
-          ...entry,
-          coordinate: entry.coordinate - entry.offset,
-        })),
+        ticks: getTicksOfAxis(axisOption, true),
       });
     };
 

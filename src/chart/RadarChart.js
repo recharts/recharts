@@ -18,8 +18,8 @@ export default generateCategoricalChart({
   formatAxisMap,
   defaultProps: {
     layout: 'centric',
-    startAngle: 0,
-    endAngle: 360,
+    startAngle: 360,
+    endAngle: 0,
     cx: '50%',
     cy: '50%',
     innerRadius: 0,

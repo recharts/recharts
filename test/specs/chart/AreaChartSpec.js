@@ -48,8 +48,8 @@ describe('<AreaChart />', () => {
 
     expect(areaPath.length).to.equal(1);
     expect(curvePath.length).to.equal(1);
-    expect(areaPath.attr('d')).to.be.empty;
-    expect(curvePath.attr('d')).to.be.empty;
+    expect(areaPath.attr('d')).to.be.undefined;
+    expect(curvePath.attr('d')).to.be.undefined;
   });
 
   it('Renders customized active dot when activeDot is set to be a ReactElement', () => {
