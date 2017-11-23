@@ -67,7 +67,7 @@ export const calculateActiveTickIndex = (coordinate, ticks, unsortedTicks, axis)
         const before = i > 0 ? unsortedTicks[i - 1].coordinate : unsortedTicks[len - 1].coordinate;
         const cur = unsortedTicks[i].coordinate;
         const after = i >= len - 1 ? unsortedTicks[0].coordinate : unsortedTicks[i + 1].coordinate;
-        let sameDirectionCoord, diffDirectionCoord;
+        let sameDirectionCoord;
 
         if (mathSign(cur - before) !== mathSign(after - cur)) {
           const diffInterval = [];
