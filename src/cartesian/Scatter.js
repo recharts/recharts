@@ -40,6 +40,7 @@ class Scatter extends Component {
     ]), PropTypes.func]),
     legendType: PropTypes.oneOf(LEGEND_TYPES),
     className: PropTypes.string,
+    name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
     activeIndex: PropTypes.number,
     activeShape: PropTypes.oneOfType([
