@@ -14,6 +14,7 @@
 - Fix position of `<Label />`
 - Fix exception of AreaChart when all the values are null
 - Fix the orders of polar angle ticks in RadarChart
+- Replace ** width Math.pow
 
 ## 1.0.0-beta.2(Nov 17, 2017)
 
