@@ -1,3 +1,11 @@
+## 1.0.0-beta.4(Nov 24, 2017)
+
+### fix
+
+- fix Label when content is a function and return simple string
+- add name to propTypes of Scatter
+- fix ** error of lib/
+
 ## 1.0.0-beta.3(Nov 23, 2017)
 
 ### feat
