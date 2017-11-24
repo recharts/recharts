@@ -1,3 +1,10 @@
+## 1.0.0-beta.5(Nov 24, 2017)
+
+### fix
+
+- fix `isChildrenEqual` when chart has a single child in an array
+- support LabelList in ScatterChart
+
 ## 1.0.0-beta.4(Nov 24, 2017)
 
 ### fix
