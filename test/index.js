@@ -46,6 +46,7 @@ require('./specs/component/TooltipSpec');
 require('./specs/component/ResponsiveContainerSpec');
 require('./specs/component/TextSpec');
 require('./specs/component/LabelSpec');
+require('./specs/component/LabelListSpec');
 
 // shape
 require('./specs/shape/CrossSpec');

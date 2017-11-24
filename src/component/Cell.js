@@ -1,21 +1,16 @@
 /**
  * @fileOverview Cross
  */
-import { Component } from 'react';
-
+import React from 'react';
 import { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 
-class Cell extends Component {
-
-  static displayName = 'Cell';
-
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-  };
-
-  render() {
-    return null;
-  }
+function Cell() {
+  return null;
 }
+
+Cell.propTypes = {
+  ...PRESENTATION_ATTRIBUTES,
+};
+Cell.displayName = 'Cell';
 
 export default Cell;

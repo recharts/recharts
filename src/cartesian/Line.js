@@ -14,12 +14,9 @@ import LabelList from '../component/LabelList';
 import ErrorBar from './ErrorBar';
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, filterEventAttributes,
-  getPresentationAttributes, findAllByType, getReactEventByType } from '../util/ReactUtils';
+  getPresentationAttributes, findAllByType } from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 
-const FACTOR = 1.0000001;
-
-@animationDecorator
 @pureRender
 class Line extends Component {
 
@@ -44,7 +41,7 @@ class Line extends Component {
     connectNulls: PropTypes.bool,
     hide: PropTypes.bool,
 
-     // whether have dot in line
+    // whether have dot in line
     activeDot: PropTypes.oneOfType([
       PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
     ]),
@@ -219,7 +216,7 @@ class Line extends Component {
   }
 
   renderDots() {
-    const { dot, points } = this.props;
+    const { dot, points, dataKey } = this.props;
     const lineProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
     const dotEvents = filterEventAttributes(dot);
@@ -231,6 +228,7 @@ class Line extends Component {
         ...customDotProps,
         ...dotEvents,
         value: entry.value,
+        dataKey,
         cx: entry.x, cy: entry.y, index: i, payload: entry.payload,
       };
 

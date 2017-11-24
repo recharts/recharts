@@ -202,4 +202,28 @@ describe('ReactUtils', () => {
 
     expect(isChildrenEqual(wrapper.props().children, newWrapper.props().children)).to.be.false;
   });
+
+  it("isChildrenEqual return true when only has a child in an array", () => {
+    const linesA = ['any'].map((entry) => {
+      return <Line dataKey={entry} />;
+    });
+    linesA.props = { any: 'A'};
+    const linesB = ['any'].map((entry) => {
+      return <Line dataKey={entry} />;
+    });
+    linesB.props = { any: 'B' };
+
+    const wrapper = mount((
+      <LineChart width={200} height={200}>
+        {linesA}
+      </LineChart>
+    ));
+    const newWrapper = mount((
+      <LineChart width={200} height={200}>
+        {linesB}
+      </LineChart>
+    ));
+
+    expect(isChildrenEqual(wrapper.props().children, newWrapper.props().children)).to.be.true;
+  });
 });

@@ -8,6 +8,7 @@ import _ from 'lodash';
 import animationDecorator from '../util/AnimationDecorator/';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
+import LabelList from '../component/LabelList';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, filterEventsOfChild, isSsr, findAllByType } from '../util/ReactUtils';
 import ZAxis from './ZAxis';
@@ -15,7 +16,7 @@ import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
 import ErrorBar from './ErrorBar';
 import Cell from '../component/Cell';
-import { uniqueId, isNumOrStr, interpolateNumber } from '../util/DataUtils';
+import { uniqueId, interpolateNumber } from '../util/DataUtils';
 import { getValueByDataKey, getCateCoordinateOfLine } from '../util/ChartUtils';
 
 @animationDecorator
@@ -41,6 +42,7 @@ class Scatter extends Component {
     ]), PropTypes.func]),
     legendType: PropTypes.oneOf(LEGEND_TYPES),
     className: PropTypes.string,
+    name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
     activeIndex: PropTypes.number,
     activeShape: PropTypes.oneOfType([
@@ -85,7 +87,7 @@ class Scatter extends Component {
    * @return {Array}  Composed data
    */
   static getComposedData = ({ xAxis, yAxis, zAxis, item, displayedData, onItemMouseLeave,
-    onItemMouseEnter, offset, xAxisTicks, yAxisTicks }) => {
+    onItemMouseEnter, offset, xAxisTicks }) => {
     const cells = findAllByType(item.props.children, Cell);
     const xAxisDataKey = _.isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
     const yAxisDataKey = _.isNil(yAxis.dataKey) ? item.props.dataKey : yAxis.dataKey;
@@ -114,9 +116,16 @@ class Scatter extends Component {
       const cy = getCateCoordinateOfLine({
         axis: yAxis, ticks: xAxisTicks, bandSize: yBandSize, entry, index,
       });
+      const size = z !== '-' ? zAxis.scale(z) : defaultZ;
+      const radius = Math.sqrt(Math.max(size, 0) / Math.PI);
+
       return {
         ...entry, cx, cy,
-        size: z !== '-' ? zAxis.scale(z) : defaultZ,
+        x: cx - radius,
+        y: cy - radius,
+        width: 2 * radius,
+        height: 2 * radius,
+        size,
         node: { x, y, z },
         tooltipPayload,
         tooltipPosition: { x: cx, y: cy },
@@ -298,7 +307,7 @@ class Scatter extends Component {
     const { hide, points, line, className, xAxis, yAxis, left, top, width,
       height } = this.props;
     if (hide || !points || !points.length) { return null; }
-
+    const { isAnimationActive, isAnimationFinished } = this.state;
     const layerClass = classNames('recharts-scatter', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
 
@@ -319,6 +328,8 @@ class Scatter extends Component {
         <Layer key="recharts-scatter-symbols">
           {this.renderSymbols()}
         </Layer>
+        {(!isAnimationActive || isAnimationFinished) &&
+          LabelList.renderCallByParent(this.props, points)}
       </Layer>
     );
   }

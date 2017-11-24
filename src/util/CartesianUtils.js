@@ -1,5 +1,4 @@
-import { getPercentValue, isNumber, isNumOrStr } from './DataUtils';
-import { getValueByDataKey, getTicksOfScale, parseScale, checkDomainOfScale } from './ChartUtils';
+import { getTicksOfScale, parseScale, checkDomainOfScale } from './ChartUtils';
 
 /**
  * Calculate the scale function, position, width, height of axes

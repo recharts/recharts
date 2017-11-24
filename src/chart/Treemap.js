@@ -19,15 +19,15 @@ const computeNode = ({ depth, node, index, valueKey }) => {
   const { children } = node;
   const childDepth = depth + 1;
   const computedChildren = children && children.length ?
-      children.map((child, i) => (
-        computeNode({ depth: childDepth, node: child, index: i, valueKey })
-      )) : null;
+    children.map((child, i) => (
+      computeNode({ depth: childDepth, node: child, index: i, valueKey })
+    )) : null;
   let value;
 
   if (children && children.length) {
     value = computedChildren.reduce((result, child) => (result + child.value), 0);
   } else {
-    value = isNaN(node[valueKey]) || node[valueKey] <= 0 ? 0 : node[valueKey];
+    value = _.isNaN(node[valueKey]) || node[valueKey] <= 0 ? 0 : node[valueKey];
   }
 
   return {
@@ -50,7 +50,7 @@ const getAreaOfChildren = (children, areaValueRatio) => {
 
     return {
       ...child,
-      area: (isNaN(area) || area <= 0) ? 0 : area,
+      area: (_.isNaN(area) || area <= 0) ? 0 : area,
     };
   });
 };
@@ -67,9 +67,9 @@ const getWorstScore = (row, parentSize, aspectRatio) => {
   ), { min: Infinity, max: 0 });
 
   return rowArea ? Math.max(
-      (parentArea * max * aspectRatio) / rowArea,
-      rowArea / (parentArea * min * aspectRatio)
-    ) : Infinity;
+    (parentArea * max * aspectRatio) / rowArea,
+    rowArea / (parentArea * min * aspectRatio)
+  ) : Infinity;
 };
 
 const horizontalPosition = (row, parentSize, parentRect, isFlush) => {

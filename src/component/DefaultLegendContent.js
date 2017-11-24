@@ -56,7 +56,8 @@ class DefaultLegendContent extends Component {
     const color = data.inactive ? inactiveColor : data.color;
 
     if (data.type === 'plainline') {
-        return <line
+      return (
+        <line
           strokeWidth={4}
           fill="none"
           stroke={color}
@@ -65,8 +66,9 @@ class DefaultLegendContent extends Component {
           y1={halfSize}
           x2={SIZE}
           y2={halfSize}
-          className={'recharts-legend-icon'}
+          className="recharts-legend-icon"
         />
+      );
     } else if (data.type === 'line') {
       return (
         <path

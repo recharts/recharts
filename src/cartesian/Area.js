@@ -183,7 +183,7 @@ class Area extends Component {
   id = uniqueId('recharts-area-');
 
   renderDots() {
-    const { dot, points } = this.props;
+    const { dot, points, dataKey } = this.props;
     const areaProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
     const dotEvents = filterEventAttributes(dot);
@@ -195,6 +195,7 @@ class Area extends Component {
         ...areaProps,
         ...customDotProps,
         ...dotEvents,
+        dataKey,
         cx: entry.x,
         cy: entry.y,
         index: i,
@@ -217,18 +218,22 @@ class Area extends Component {
 
     if (isNumber(baseLine)) {
       maxY = Math.max(baseLine, maxY);
-    } else {
+    } else if (baseLine && _.isArray(baseLine) && baseLine.length) {
       maxY = Math.max(Math.max.apply(null, baseLine.map(entry => (entry.y || 0))), maxY);
     }
 
-    return (
-      <rect
-        x={startX < endX ? startX : startX - width}
-        y={0}
-        width={width}
-        height={maxY + (strokeWidth || 1)}
-      />
-    );
+    if (isNumber(maxY)) {
+      return (
+        <rect
+          x={startX < endX ? startX : startX - width}
+          y={0}
+          width={width}
+          height={maxY + (strokeWidth || 1)}
+        />
+      );
+    }
+
+    return null;
   }
 
   renderVerticalRect(alpha) {
@@ -240,18 +245,22 @@ class Area extends Component {
 
     if (isNumber(baseLine)) {
       maxX = Math.max(baseLine, maxX);
-    } else {
+    } else if (baseLine && _.isArray(baseLine) && baseLine.length) {
       maxX = Math.max(Math.max.apply(null, baseLine.map(entry => (entry.x || 0))), maxX);
     }
 
-    return (
-      <rect
-        x={0}
-        y={startY < endY ? startY : startY - height}
-        width={maxX + (strokeWidth || 1)}
-        height={height}
-      />
-    );
+    if (isNumber(maxX)) {
+      return (
+        <rect
+          x={0}
+          y={startY < endY ? startY : startY - height}
+          width={maxX + (strokeWidth || 1)}
+          height={height}
+        />
+      );
+    }
+
+    return null;
   }
 
   renderClipRect(alpha) {

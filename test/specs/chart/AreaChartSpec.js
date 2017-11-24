@@ -37,6 +37,21 @@ describe('<AreaChart />', () => {
     expect(wrapper.find('.recharts-area-dot').length).to.equal(1);
   });
 
+  it('Renders empty path when all the datas are null', () => {
+    const wrapper = render(
+      <AreaChart width={100} height={50} data={data}>
+        <Area type="monotone" dataKey="any" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>
+    );
+    const areaPath = wrapper.find('.recharts-area-area');
+    const curvePath = wrapper.find('.recharts-area-curve');
+
+    expect(areaPath.length).to.equal(1);
+    expect(curvePath.length).to.equal(1);
+    expect(areaPath.attr('d')).to.be.undefined;
+    expect(curvePath.attr('d')).to.be.undefined;
+  });
+
   it('Renders customized active dot when activeDot is set to be a ReactElement', () => {
     const ActiveDot = ({ cx, cy }) => <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
     const wrapper = mount(

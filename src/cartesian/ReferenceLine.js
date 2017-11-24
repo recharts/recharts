@@ -84,8 +84,8 @@ class ReferenceLine extends Component {
 
       if (validateCoordinateInRange(coord, scale)) {
         return yAxis.orientation === 'left' ?
-            [{ x, y: coord }, { x: x + width, y: coord }] :
-            [{ x: x + width, y: coord }, { x, y: coord }];
+          [{ x, y: coord }, { x: x + width, y: coord }] :
+          [{ x: x + width, y: coord }, { x, y: coord }];
       }
     } else if (isX) {
       const value = this.props.x;
@@ -95,8 +95,8 @@ class ReferenceLine extends Component {
 
       if (validateCoordinateInRange(coord, scale)) {
         return xAxis.orientation === 'top' ?
-           [{ x: coord, y }, { x: coord, y: y + height }] :
-           [{ x: coord, y: y + height }, { x: coord, y }];
+          [{ x: coord, y }, { x: coord, y: y + height }] :
+          [{ x: coord, y: y + height }, { x: coord, y }];
       }
     }
 

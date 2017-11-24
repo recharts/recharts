@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { ScatterChart, Scatter, CartesianGrid, Tooltip, Legend,
- XAxis, YAxis, ZAxis, ReferenceLine, ReferenceDot, ReferenceArea, ErrorBar } from 'recharts';
+ XAxis, YAxis, ZAxis, ReferenceLine, ReferenceDot, ReferenceArea, ErrorBar,
+ LabelList } from 'recharts';
 import { changeNumberOfData } from './utils';
 
 const data01 = [
@@ -81,7 +82,7 @@ export default class Demo extends Component {
             <CartesianGrid />
             <Tooltip />
             <Legend/>
-            <Scatter name="A school" data={data01} fill="#ff7300" />
+            <Scatter name="A school" data={data01} fill="#ff7300" label={{ dataKey: 'x' }} />
           </ScatterChart>
         </div>
 

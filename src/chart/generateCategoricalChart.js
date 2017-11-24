@@ -2,7 +2,6 @@ import React, { Component, cloneElement, isValidElement, createElement } from 'r
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import _ from 'lodash';
-import Smooth from 'react-smooth';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
@@ -90,7 +89,7 @@ const generateCategoricalChart = ({
       ...defaultProps,
     };
 
-     /**
+    /**
      * Returns default, reset state for the categorical chart.
      * @param {Object} props Props object to use when creating the default state
      * @return {Object} Whole new state
@@ -436,7 +435,9 @@ const generateCategoricalChart = ({
 
     getActiveCoordinate(tooltipTicks, activeIndex, rangeObj) {
       const { layout } = this.props;
-      const entry = tooltipTicks[activeIndex];
+      const entry = _.get(tooltipTicks.filter(tick => (
+        tick && (tick.index === activeIndex)
+      )), '[0]');
 
       if (entry) {
         if (layout === 'horizontal') {
@@ -492,7 +493,7 @@ const generateCategoricalChart = ({
 
       const { orderedTooltipTicks: ticks, tooltipAxis: axis, tooltipTicks } = this.state;
       const pos = this.calculateTooltipPos(rangeObj);
-      const activeIndex = calculateActiveTickIndex(pos, ticks, axis);
+      const activeIndex = calculateActiveTickIndex(pos, ticks, tooltipTicks, axis);
 
       if (activeIndex >= 0 && tooltipTicks) {
         const activeLabel = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;
@@ -1119,8 +1120,7 @@ const generateCategoricalChart = ({
         restProps = this.getCursorRectangle();
         cursorComp = Rectangle;
       } else if (layout === 'radial') {
-        const { cx, cy, radius, startAngle, endAngle, points } = this.getCursorPoints();
-        const delta = endAngle - startAngle;
+        const { cx, cy, radius, startAngle, endAngle } = this.getCursorPoints();
         restProps = {
           cx, cy, startAngle, endAngle, innerRadius: radius, outerRadius: radius,
         };
@@ -1154,10 +1154,7 @@ const generateCategoricalChart = ({
         ...axisOption,
         className: axisType,
         key: element.key || `${displayName}-${index}`,
-        ticks: getTicksOfAxis(axisOption, true).map(entry => ({
-          ...entry,
-          coordinate: entry.coordinate - entry.offset,
-        })),
+        ticks: getTicksOfAxis(axisOption, true),
       });
     };
 
@@ -1292,10 +1289,10 @@ const generateCategoricalChart = ({
         key: element.key || '_recharts-brush',
         onChange: combineEventHandlers(this.handleBrushChange, null, element.props.onChange),
         data,
-        x: offset.left,
-        y: offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
-        width: isNumber(element.props.width) && element.props.width ?
-          element.props.width : offset.width,
+        x: isNumber(element.props.x) ? element.props.x : offset.left,
+        y: isNumber(element.props.y) ? element.props.y :
+          (offset.top + offset.height + offset.brushBottom - (margin.bottom || 0)),
+        width: isNumber(element.props.width) ? element.props.width : offset.width,
         startIndex: dataStartIndex,
         endIndex: dataEndIndex,
         updateId: `brush-${updateId}`,
