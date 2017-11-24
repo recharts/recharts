@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
+import LabelList from '../component/LabelList';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, filterEventsOfChild, isSsr, findAllByType } from '../util/ReactUtils';
 import ZAxis from './ZAxis';
@@ -125,9 +126,16 @@ class Scatter extends Component {
       const cy = getCateCoordinateOfLine({
         axis: yAxis, ticks: xAxisTicks, bandSize: yBandSize, entry, index,
       });
+      const size = z !== '-' ? zAxis.scale(z) : defaultZ;
+      const radius = Math.sqrt(Math.max(size, 0) / Math.PI);
+
       return {
         ...entry, cx, cy,
-        size: z !== '-' ? zAxis.scale(z) : defaultZ,
+        x: cx - radius,
+        y: cy - radius,
+        width: 2 * radius,
+        height: 2 * radius,
+        size,
         node: { x, y, z },
         tooltipPayload,
         tooltipPosition: { x: cx, y: cy },
@@ -341,7 +349,7 @@ class Scatter extends Component {
     const { hide, points, line, className, xAxis, yAxis, left, top, width,
       height } = this.props;
     if (hide || !points || !points.length) { return null; }
-
+    const { isAnimationActive, isAnimationFinished } = this.state;
     const layerClass = classNames('recharts-scatter', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
 
@@ -362,6 +370,8 @@ class Scatter extends Component {
         <Layer key="recharts-scatter-symbols">
           {this.renderSymbols()}
         </Layer>
+        {(!isAnimationActive || isAnimationFinished) &&
+          LabelList.renderCallByParent(this.props, points)}
       </Layer>
     );
   }
