@@ -293,15 +293,20 @@ export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = []
       originalSize >>= 0;
     }
     const size = (maxBarSize === +maxBarSize) ? Math.min(originalSize, maxBarSize) : originalSize;
+    // when maxBarSize is small, each bar should only be divided by realBarGap, not wide empty space
+    const sum = len * size + (len - 1) * barGap;
+    let prev = { offset: (-size - barGap + (bandSize - sum) / 2), size: 0 };
 
-    result = sizeList.reduce((res, entry, i) => {
+    result = sizeList.reduce((res, entry) => {
       const newRes = [...res, {
         item: entry.item,
         position: {
-          offset: offset + (originalSize + realBarGap) * i + (originalSize - size) / 2,
+          offset: prev.offset + size + realBarGap,
           size,
         },
       }];
+
+      prev = newRes[newRes.length - 1].position;
 
       if (entry.stackList && entry.stackList.length) {
         entry.stackList.forEach((item) => {
