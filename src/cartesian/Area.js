@@ -4,19 +4,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Animate from 'react-smooth';
 import _ from 'lodash';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
+import animationDecorator from '../util/AnimationDecorator/';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   getPresentationAttributes, isSsr, filterEventAttributes } from '../util/ReactUtils';
 import { isNumber, uniqueId, interpolateNumber } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 
-
+@animationDecorator
 @pureRender
 class Area extends Component {
 
@@ -63,14 +63,6 @@ class Area extends Component {
       y: PropTypes.number,
       value: PropTypes.oneOfType([PropTypes.number, PropTypes.array]),
     })),
-    onAnimationStart: PropTypes.func,
-    onAnimationEnd: PropTypes.func,
-
-    animationId: PropTypes.number,
-    isAnimationActive: PropTypes.bool,
-    animationBegin: PropTypes.number,
-    animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
   };
 
   static defaultProps = {
@@ -86,11 +78,6 @@ class Area extends Component {
     dot: false,
     activeDot: true,
     hide: false,
-
-    isAnimationActive: !isSsr(),
-    animationBegin: 0,
-    animationDuration: 1500,
-    animationEasing: 'ease',
   };
 
   static getBaseValue = (props, xAxis, yAxis) => {
@@ -185,49 +172,17 @@ class Area extends Component {
     return dotItem;
   };
 
-  state = { isAnimationFinished: true };
-
-  componentWillReceiveProps(nextProps) {
-    const { animationId, points, baseLine } = this.props;
-
-    if (nextProps.animationId !== animationId) {
-      this.cachePrevData(points, baseLine);
-    }
+  constructor(props) {
+    super(props);
+    this.state = this.createDefaultState();
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  createDefaultState() {}
 
   id = uniqueId('recharts-area-');
 
-  cachePrevData = (points, baseLine) => {
-    this.setState({
-      prevPoints: points,
-      prevBaseLine: baseLine,
-    });
-  };
-
-  handleAnimationEnd = () => {
-    const { onAnimationEnd } = this.props;
-
-    this.setState({ isAnimationFinished: true });
-
-    if (_.isFunction(onAnimationEnd)) {
-      onAnimationEnd();
-    }
-  };
-
-  handleAnimationStart = () => {
-    const { onAnimationStart } = this.props;
-    this.setState({ isAnimationFinished: false });
-
-    if (_.isFunction(onAnimationStart)) {
-      onAnimationStart();
-    }
-  };
-
   renderDots() {
-    const { isAnimationActive } = this.props;
-
-    if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
-
     const { dot, points, dataKey } = this.props;
     const areaProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
@@ -356,75 +311,56 @@ class Area extends Component {
     );
   }
 
-  renderAreaWithAnimation(needClip) {
-    const { points, baseLine, isAnimationActive, animationBegin,
-      animationDuration, animationEasing, animationId } = this.props;
+  renderAreaWithAnimation({ t }, needClip) {
+    const { points, baseLine } = this.props;
     const { prevPoints, prevBaseLine } = this.state;
 
-    return (
-      <Animate
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        from={{ t: 0 }}
-        to={{ t: 1 }}
-        key={`area-${animationId}`}
-        onAnimationEnd={this.handleAnimationEnd}
-        onAnimationStart={this.handleAnimationStart}
-      >
-        {
-          ({ t }) => {
-            if (prevPoints) {
-              // update animtaion
-              const stepPoints = points.map((entry, index) => {
-                if (prevPoints[index]) {
-                  const prev = prevPoints[index];
-                  const interpolatorX = interpolateNumber(prev.x, entry.x);
-                  const interpolatorY = interpolateNumber(prev.y, entry.y);
+    if (prevPoints) {
+      // update animtaion
+      const stepPoints = points.map((entry, index) => {
+        if (prevPoints[index]) {
+          const prev = prevPoints[index];
+          const interpolatorX = interpolateNumber(prev.x, entry.x);
+          const interpolatorY = interpolateNumber(prev.y, entry.y);
 
-                  return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
-                }
-
-                return entry;
-              });
-              let stepBaseLine;
-
-              if (isNumber(baseLine)) {
-                const interpolator = interpolateNumber(prevBaseLine, baseLine);
-                stepBaseLine = interpolator(t);
-              } else {
-                stepBaseLine = baseLine.map((entry, index) => {
-                  if (prevBaseLine[index]) {
-                    const prev = prevBaseLine[index];
-                    const interpolatorX = interpolateNumber(prev.x, entry.x);
-                    const interpolatorY = interpolateNumber(prev.y, entry.y);
-
-                    return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
-                  }
-
-                  return entry;
-                });
-              }
-
-              return this.renderAreaStatically(stepPoints, stepBaseLine, needClip);
-            }
-
-            return (
-              <Layer>
-                <defs>
-                  <clipPath id={`animationClipPath-${this.id}`}>
-                    {this.renderClipRect(t)}
-                  </clipPath>
-                </defs>
-                <Layer clipPath={`url(#animationClipPath-${this.id})`}>
-                  {this.renderAreaStatically(points, baseLine, needClip)}
-                </Layer>
-              </Layer>
-            );
-          }
+          return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
         }
-      </Animate>
+
+        return entry;
+      });
+      let stepBaseLine;
+
+      if (isNumber(baseLine)) {
+        const interpolator = interpolateNumber(prevBaseLine, baseLine);
+        stepBaseLine = interpolator(t);
+      } else {
+        stepBaseLine = baseLine.map((entry, index) => {
+          if (prevBaseLine[index]) {
+            const prev = prevBaseLine[index];
+            const interpolatorX = interpolateNumber(prev.x, entry.x);
+            const interpolatorY = interpolateNumber(prev.y, entry.y);
+
+            return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+          }
+
+          return entry;
+        });
+      }
+
+      return this.renderAreaStatically(stepPoints, stepBaseLine, needClip);
+    }
+
+    return (
+      <Layer>
+        <defs>
+          <clipPath id={`animationClipPath-${this.id}`}>
+            {this.renderClipRect(t)}
+          </clipPath>
+        </defs>
+        <Layer clipPath={`url(#animationClipPath-${this.id})`}>
+          {this.renderAreaStatically(points, baseLine, needClip)}
+        </Layer>
+      </Layer>
     );
   }
 
@@ -435,19 +371,24 @@ class Area extends Component {
     if (isAnimationActive && points && points.length &&
       ((!prevPoints && totalLength > 0) || !_.isEqual(prevPoints, points) ||
         !_.isEqual(prevBaseLine, baseLine))) {
-      return this.renderAreaWithAnimation(needClip);
+      return this.renderWithAnimation(this.renderAreaWithAnimation, needClip);
     }
 
     return this.renderAreaStatically(points, baseLine, needClip);
   }
 
+  renderLabelList() {
+    const { points } = this.props;
+    return LabelList.renderCallByParent(this.props, points);
+  }
+
   render() {
     const { hide, dot, points, className, top, left, xAxis, yAxis,
-      width, height, isAnimationActive } = this.props;
+      width, height,
+    } = this.props;
 
     if (hide || !points || !points.length) { return null; }
 
-    const { isAnimationFinished } = this.state;
     const hasSinglePoint = points.length === 1;
     const layerClass = classNames('recharts-area', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
@@ -463,8 +404,7 @@ class Area extends Component {
         ) : null}
         {!hasSinglePoint ? this.renderArea(needClip) : null}
         {(dot || hasSinglePoint) && this.renderDots()}
-        {(!isAnimationActive || isAnimationFinished) &&
-          LabelList.renderCallByParent(this.props, points)}
+        {this.renderLabelList()}
       </Layer>
     );
   }
