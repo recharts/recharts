@@ -22,9 +22,9 @@ class Brush extends Component {
 
     fill: PropTypes.string,
     stroke: PropTypes.string,
-    x: PropTypes.number.isRequired,
-    y: PropTypes.number.isRequired,
-    width: PropTypes.number.isRequired,
+    x: PropTypes.number,
+    y: PropTypes.number,
+    width: PropTypes.number,
     height: PropTypes.number.isRequired,
     travellerWidth: PropTypes.number,
     padding: PropTypes.shape({
