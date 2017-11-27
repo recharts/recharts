@@ -245,6 +245,35 @@ export default class Demo extends Component {
     console.log('Animation end');
   };
 
+  handleMoreData = () => {
+    const { data } = this.state;
+    const count = data.length;
+    console.log(count);
+
+    this.setState({
+      data: [...data, ..._.range(1 + Math.ceil(data.length * Math.random())).map((entry, index) => {
+        console.log(index);
+        return {
+          name: `random${Math.random()}`.slice(0, 10),
+          uv: 3000 * Math.random(),
+          pv: 3000 * Math.random(),
+          amt: 5000 * Math.random(),
+          time: count + index,
+          uvError: 100 * Math.random(),
+          pvError: 50 * Math.random()
+        };
+      })],
+    });
+  };
+
+  handleLessData = () => {
+    const { data } = this.state;
+
+    this.setState({
+      data: data.slice(0, Math.ceil(data.length * Math.random())),
+    });
+  };
+
   render() {
     const { data, data01, data02 } = this.state;
 
@@ -272,6 +301,11 @@ export default class Demo extends Component {
         </div>
 
         <p>Simple BarChart (Click on rectangles and open console )</p>
+        <p>
+          <a onClick={this.handleMoreData}>more data</a>
+          <span style={{ margin: '0 20px' }}>|</span>
+          <a onClick={this.handleLessData}>less data</a>
+        </p>
         <div className="bar-chart-wrapper" style={{textAlign: 'right'}}>
           <BarChart width={400} height={400} data={data} onClick={this.handlePvBarClick}>
             <XAxis dataKey="name" />

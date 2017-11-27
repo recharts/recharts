@@ -263,14 +263,11 @@ class Bar extends Component {
               }
 
               if (layout === 'horizontal') {
-                // magic number of faking previous x location
-                const interpolatorX = interpolateNumber(width * 2, entry.x);
                 const interpolatorHeight = interpolateNumber(0, entry.height);
                 const h = interpolatorHeight(t);
 
                 return {
                   ...entry,
-                  x: interpolatorX(t),
                   y: entry.y + entry.height - h,
                   height: h,
                 };
