@@ -375,7 +375,7 @@ class Sankey extends Component {
       nextProps.height !== height || !shallowEqual(nextProps.margin, margin) ||
       nextProps.iterations !== iterations || nextProps.nodeWidth !== nodeWidth ||
       nextProps.nodePadding !== nodePadding || nextProps.nameKey !== nameKey) {
-      this.setState(this.createDefaultState(this.props));
+      this.setState(this.createDefaultState(nextProps));
     }
   }
   /**
