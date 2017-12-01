@@ -58,6 +58,7 @@ const propTypes = {
   ]),
   itemSorter: PropTypes.func,
   filterNull: PropTypes.bool,
+  gpuRender: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -76,6 +77,7 @@ const defaultProps = {
   animationDuration: 400,
   itemSorter: () => -1,
   filterNull: true,
+  gpuRender: false,
 };
 
 const renderContent = (content, props) => {
@@ -167,7 +169,7 @@ class Tooltip extends Component {
     outerStyle = {
       ...outerStyle,
       ...translateStyle({
-        transform: `translate(${translateX}px, ${translateY}px)`,
+        transform: this.props.gpuRender ? `translate3d(${translateX}px, ${translateY}px, 0)` : `translate(${translateX}px, ${translateY}px)`,
       }),
     };
 
