@@ -175,10 +175,10 @@ class Pie extends Component {
       const val = getValueByDataKey(entry, realDataKey, 0);
       return result + (isNumber(val) ? val : 0);
     }, 0);
-    let sectors = [];
-    let prev;
+    let sectors;
 
     if (sum > 0) {
+      let prev;
       sectors = pieData.map((entry, i) => {
         const val = getValueByDataKey(entry, realDataKey, 0);
         const name = getValueByDataKey(entry, nameKey, i);
@@ -218,6 +218,7 @@ class Pie extends Component {
     return {
       ...coordinate,
       sectors,
+      data: pieData,
       onMouseLeave: onItemMouseLeave,
       onMouseEnter: onItemMouseEnter,
     };

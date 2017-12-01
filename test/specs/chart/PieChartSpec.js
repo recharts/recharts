@@ -40,6 +40,25 @@ describe('<PieChart />', () => {
     expect(wrapper.find('.recharts-pie-sector').length).to.equal(6);
   });
 
+  it('Renders legend when all the values are 0', () => {
+    const emptyData = [
+      { name: 'Group A', value: 0 },
+      { name: 'Group B', value: 0 },
+      { name: 'Group C', value: 0 },
+      { name: 'Group D', value: 0 },
+      { name: 'Group E', value: 0 },
+      { name: 'Group F', value: 0 },
+    ];
+    const wrapper = render(
+      <PieChart width={800} height={400}>
+        <Pie dataKey="value" isAnimationActive={false} cx={200} cy={200} outerRadius={80} />
+        <Legend />
+      </PieChart>
+    );
+
+    expect(wrapper.find('.recharts-legend-item').length).to.equal(emptyData.length);
+  });
+
   it('Don\'t renders any sectors when width or height is smaller than 0', () => {
     const wrapper = render(
       <PieChart width={0} height={400}>
