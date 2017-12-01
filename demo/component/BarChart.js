@@ -365,7 +365,7 @@ export default class Demo extends Component {
         <p>Tiny BarChart</p>
         <div className="bar-chart-wrapper">
           <BarChart width={150} height={40} data={data}>
-            <Bar dataKey="uv" fill="#ff7300" onClick={this.handlePvBarClick} />
+            <Bar dataKey="uv" fill="#ff7300" onClick={this.handlePvBarClick} background />
           </BarChart>
         </div>
 
@@ -374,10 +374,10 @@ export default class Demo extends Component {
           <BarChart width={1100} height={250} barGap={2} barSize={6} data={data02} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
             <XAxis dataKey="name" />
             <YAxis tickCount={7} />
+            <Tooltip />
             <CartesianGrid />
             <Bar dataKey="uv" fill="#ff7300" />
             <Bar dataKey="pv" fill="#387908" />
-            <Tooltip />
             <Brush dataKey="name" height={30} />
             <ReferenceLine type="horizontal" value={0} stroke="#666" />
           </BarChart>
