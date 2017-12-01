@@ -97,6 +97,8 @@ export const PRESENTATION_ATTRIBUTES = {
   x: PropTypes.number,
   y: PropTypes.number,
   r: PropTypes.number,
+  // The radius of Rectangle
+  radius: PropTypes.oneOfType([PropTypes.number, PropTypes.array]),
 };
 
 export const EVENT_ATTRIBUTES = {

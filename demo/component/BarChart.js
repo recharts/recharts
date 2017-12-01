@@ -432,8 +432,7 @@ export default class Demo extends Component {
           </BarChart>
         </div>
 
-
-        <p>BarChart of range values</p>
+        <p>Horziontal BarChart</p>
         <div className="area-chart-wrapper">
           <BarChart
             width={1400}
@@ -445,7 +444,7 @@ export default class Demo extends Component {
             <XAxis type="number" />
             <YAxis dataKey="name" type="category" />
             <Tooltip />
-            <Bar dataKey="uv" fill="#ff7300" maxBarSize={20} label />
+            <Bar dataKey="uv" fill="#ff7300" maxBarSize={20} label radius={[0, 5, 5, 0]} />
             <Bar dataKey="pv" fill="#387908" />
           </BarChart>
         </div>
