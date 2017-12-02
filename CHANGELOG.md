@@ -1,3 +1,16 @@
+## 1.0.0-beta.6(Dec 02, 2017)
+
+### feat
+
+- Add props `background` to support background rectange in <Bar />
+- add props `tickMargin` which set the space between text and tick line
+
+### fix
+
+- update PRESENTATION_ATTRIBUTES to allow set the radius of each <Rectangle /> of BarChart
+- render Legend when all values of Pie is 0
+- fix animation of intial <Bar />
+
 ## 1.0.0-beta.5(Nov 24, 2017)
 
 ### fix
