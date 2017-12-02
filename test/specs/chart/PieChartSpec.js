@@ -51,7 +51,7 @@ describe('<PieChart />', () => {
     ];
     const wrapper = render(
       <PieChart width={800} height={400}>
-        <Pie dataKey="value" isAnimationActive={false} cx={200} cy={200} outerRadius={80} />
+        <Pie dataKey="value" data={emptyData} isAnimationActive={false} cx={200} cy={200} outerRadius={80} />
         <Legend />
       </PieChart>
     );
