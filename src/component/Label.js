@@ -290,7 +290,6 @@ function Label(props) {
     if (isValidElement(label)) {
       return label;
     }
-    console.log(label);
   } else {
     label = getLabel(props);
   }
