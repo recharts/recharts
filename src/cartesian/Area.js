@@ -393,6 +393,9 @@ class Area extends Component {
               if (isNumber(baseLine)) {
                 const interpolator = interpolateNumber(prevBaseLine, baseLine);
                 stepBaseLine = interpolator(t);
+              } else if (_.isNil(baseLine) || _.isNaN(baseLine)) {
+                const interpolator = interpolateNumber(prevBaseLine, 0);
+                stepBaseLine = interpolator(t);
               } else {
                 stepBaseLine = baseLine.map((entry, index) => {
                   if (prevBaseLine[index]) {
