@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
@@ -138,15 +137,13 @@ class Text extends Component {
     let startDy;
     switch (verticalAnchor) {
       case 'start':
-        startDy = reduceCSSCalc(`calc(${capHeight})`);
+        startDy = `calc(${capHeight})`;
         break;
       case 'middle':
-        startDy = reduceCSSCalc(
-          `calc(${(wordsByLines.length - 1) / 2} * -${lineHeight} + (${capHeight} / 2))`
-        );
+        startDy = `calc(${(wordsByLines.length - 1) / 2} * -${lineHeight} + (${capHeight} / 2))`;
         break;
       default:
-        startDy = reduceCSSCalc(`calc(${wordsByLines.length - 1} * -${lineHeight})`);
+        startDy = `calc(${wordsByLines.length - 1} * -${lineHeight})`;
         break;
     }
 
