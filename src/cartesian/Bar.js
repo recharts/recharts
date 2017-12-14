@@ -59,6 +59,7 @@ class Bar extends Component {
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
     animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
+    id: PropTypes.string,
   };
 
   static defaultProps = {
@@ -362,25 +363,26 @@ class Bar extends Component {
 
   render() {
     const { hide, data, className, xAxis, yAxis, left, top,
-      width, height, isAnimationActive, background } = this.props;
+      width, height, isAnimationActive, background, id } = this.props;
     if (hide || !data || !data.length) { return null; }
 
     const { isAnimationFinished } = this.state;
     const layerClass = classNames('recharts-bar', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
+    const clipPathId = _.isNil(id) ? this.id : id;
 
     return (
       <Layer className={layerClass}>
         {needClip ? (
           <defs>
-            <clipPath id={`clipPath-${this.id}`}>
+            <clipPath id={`clipPath-${clipPathId}`}>
               <rect x={left} y={top} width={width} height={height} />
             </clipPath>
           </defs>
         ) : null}
         <Layer
           className="recharts-bar-rectangles"
-          clipPath={needClip ? `url(#clipPath-${this.id})` : null}
+          clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}
         >
           {background ? this.renderBackground() : null}
           {this.renderRectangles()}

@@ -76,6 +76,7 @@ const generateCategoricalChart = ({
       onMouseDown: PropTypes.func,
       onMouseUp: PropTypes.func,
       reverseStackOrder: PropTypes.bool,
+      id: PropTypes.string,
       ...propTypes,
     };
 
@@ -155,7 +156,7 @@ const generateCategoricalChart = ({
       this.state = { ...defaultState, updateId: 0,
         ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState, updateId }) };
 
-      this.uniqueChartId = uniqueId('recharts');
+      this.uniqueChartId = _.isNil(props.id) ? uniqueId('recharts') : props.id;
 
       if (props.throttleDelay) {
         this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove,

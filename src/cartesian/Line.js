@@ -72,6 +72,7 @@ class Line extends Component {
       'linear',
     ]),
     animationId: PropTypes.number,
+    id: PropTypes.string,
   };
 
   static defaultProps = {
@@ -283,13 +284,14 @@ class Line extends Component {
   }
 
   renderCurveStatically(points, needClip, props) {
-    const { type, layout, connectNulls } = this.props;
+    const { type, layout, connectNulls, id } = this.props;
+    const clipPathId = _.isNil(id) ? this.id : id;
     const curveProps = {
       ...getPresentationAttributes(this.props),
       ...filterEventAttributes(this.props),
       fill: 'none',
       className: 'recharts-line-curve',
-      clipPath: needClip ? `url(#clipPath-${this.id})` : null,
+      clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
       points,
       ...props,
       type, layout, connectNulls,
@@ -372,7 +374,7 @@ class Line extends Component {
 
   render() {
     const { hide, dot, points, className, xAxis, yAxis, top, left,
-      width, height, isAnimationActive } = this.props;
+      width, height, isAnimationActive, id } = this.props;
 
     if (hide || !points || !points.length) { return null; }
 
@@ -380,12 +382,13 @@ class Line extends Component {
     const hasSinglePoint = points.length === 1;
     const layerClass = classNames('recharts-line', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
+    const clipPathId = _.isNil(id) ? this.id : id;
 
     return (
       <Layer className={layerClass}>
         {needClip ? (
           <defs>
-            <clipPath id={`clipPath-${this.id}`}>
+            <clipPath id={`clipPath-${clipPathId}`}>
               <rect x={left} y={top} width={width} height={height} />
             </clipPath>
           </defs>

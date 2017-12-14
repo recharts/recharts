@@ -91,7 +91,7 @@ const renderRadialLabel = (labelProps, label, attrs) => {
   const path = `M${startPoint.x},${startPoint.y}
     A${radius},${radius},0,1,${direction ? 0 : 1},
     ${endPoint.x},${endPoint.y}`;
-  const id = uniqueId('recharts-radial-line-');
+  const id = _.isNil(labelProps.id) ? uniqueId('recharts-radial-line-') : labelProps.id;
 
   return (
     <text
