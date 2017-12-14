@@ -5,7 +5,7 @@ import {
   stack as shapeStack, stackOrderNone, stackOffsetExpand,
   stackOffsetNone, stackOffsetSilhouette, stackOffsetWiggle,
 } from 'd3-shape';
-import { isNumOrStr, uniqueId, isNumber, getPercentValue, mathSign } from './DataUtils';
+import { isNumOrStr, uniqueId, isNumber, getPercentValue, mathSign, findEntryInArray } from './DataUtils';
 import ReferenceDot from '../cartesian/ReferenceDot';
 import ReferenceLine from '../cartesian/ReferenceLine';
 import ReferenceArea from '../cartesian/ReferenceArea';
@@ -789,6 +789,15 @@ export const getTicksOfScale = (scale, opts) => {
 
 export const getCateCoordinateOfLine = ({ axis, ticks, bandSize, entry, index }) => {
   if (axis.type === 'category') {
+    // find coordinate of category axis by the value of category
+    if (!axis.allowDuplicatedCategory && axis.dataKey && !_.isNil(entry[axis.dataKey])) {
+      const matchedTick = findEntryInArray(ticks, 'value', entry[axis.dataKey]);
+
+      if (matchedTick) {
+        return matchedTick.coordinate + bandSize / 2;
+      }
+    }
+
     return ticks[index] ? ticks[index].coordinate + bandSize / 2 : null;
   }
 
