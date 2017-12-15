@@ -435,9 +435,7 @@ const generateCategoricalChart = ({
 
     getActiveCoordinate(tooltipTicks, activeIndex, rangeObj) {
       const { layout } = this.props;
-      const entry = _.get(tooltipTicks.filter(tick => (
-        tick && (tick.index === activeIndex)
-      )), '[0]');
+      const entry = tooltipTicks.find(tick => tick && (tick.index === activeIndex));
 
       if (entry) {
         if (layout === 'horizontal') {
