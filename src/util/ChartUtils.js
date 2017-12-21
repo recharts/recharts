@@ -1008,3 +1008,21 @@ export const getBandSizeOfAxis = (axis, ticks) => {
 
   return 0;
 };
+/**
+ * parse the domain of a category axis when a domain is specified
+ * @param   {Array}        specifiedDomain  The domain specified by users
+ * @param   {Array}        calculatedDomain The domain calculated by dateKey
+ * @param   {ReactElement} axisChild        The axis element
+ * @returns {Array}        domains
+ */
+export const parseDomainOfCategoryAxis = (specifiedDomain, calculatedDomain, axisChild) => {
+  if (!specifiedDomain || !specifiedDomain.length) {
+    return calculatedDomain;
+  }
+
+  if (_.isEqual(specifiedDomain, _.get(axisChild, 'type.defaultProps.domain'))) {
+    return calculatedDomain;
+  }
+
+  return specifiedDomain;
+};

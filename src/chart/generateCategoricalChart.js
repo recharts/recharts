@@ -25,7 +25,7 @@ import { calculateActiveTickIndex, getMainColorOfGraphicItem, getBarSizeList,
   getTicksOfAxis, getCoordinatesOfGrid, getStackedDataOfItem, parseErrorBarsOfAxis,
   getBandSizeOfAxis, getStackGroupsByAxisId, getValueByDataKey, isCategorialAxis,
   getDomainOfItemsWithSameAxis, getDomainOfStackGroups, getDomainOfDataByKey,
-  detectReferenceElementsDomain, parseSpecifiedDomain } from '../util/ChartUtils';
+  detectReferenceElementsDomain, parseSpecifiedDomain, parseDomainOfCategoryAxis } from '../util/ChartUtils';
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/PureRender';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
@@ -291,19 +291,20 @@ const generateCategoricalChart = ({
                 duplicateDomain = domain;
                 // When category axis has duplicated text, serial numbers are used to generate scale
                 domain = _.range(0, len);
-              } else {
-                // remove duplicated category and eliminate undefined or null or empty string
-                domain = (child.props.domain || domain || []).reduce((finalDomain, entry) => (
-                  (finalDomain.indexOf(entry) >= 0 || entry === '' || _.isNil(entry)) ?
-                    finalDomain : [...finalDomain, entry]
-                ), []);
+              } else if (!allowDuplicatedCategory) {
+                // remove duplicated category
+                domain = parseDomainOfCategoryAxis(child.props.domain, domain, child)
+                  .reduce((finalDomain, entry) => (
+                    finalDomain.indexOf(entry) >= 0 ? finalDomain : [...finalDomain, entry]
+                  ), []);
               }
             } else if (type === 'category') {
               if (!allowDuplicatedCategory) {
-                domain = (child.props.domain || domain || []).reduce((finalDomain, entry) => (
-                  (finalDomain.indexOf(entry) >= 0 || entry === '' || _.isNil(entry)) ?
-                    finalDomain : [...finalDomain, entry]
-                ), []);
+                domain = parseDomainOfCategoryAxis(child.props.domain, domain, child)
+                  .reduce((finalDomain, entry) => (
+                    (finalDomain.indexOf(entry) >= 0 || entry === '' || _.isNil(entry)) ?
+                      finalDomain : [...finalDomain, entry]
+                  ), []);
               } else {
                 // eliminate undefined or null or empty string
                 domain = domain.filter(entry => (entry !== '' && !_.isNil(entry)));
