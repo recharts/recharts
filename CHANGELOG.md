@@ -1,3 +1,18 @@
+## 1.0.0-beta.7(Dec 21, 2017)
+
+### feat
+
+- Add props `allowDuplicatedCategory` to XAxis, YAxis, PolarAngleAxis, PolarRadiusAxis, to remove duplicated category when type="category"
+- Add props id in <Area />, <Bar />, <Line />, <Scatter />, <Label />, <LabelList /> for SSR
+- Support specify domain of category type axis when allowDuplicatedCategory is false, add cooresponding "xAis", "yAxis", "zAxis" to the props or customized shape of Scatter
+
+### fix
+
+- Fx sanketartAngle and endAngle of RadarChart diagram not re-rendering when updating data prop
+- Fix animation of AreaChart when baseLine is NaN / undefined
+- Fix default startAngle and endAngle of RadarChart
+- Use cloneElement to create Legend
+
 ## 1.0.0-beta.6(Dec 02, 2017)
 
 ### feat
