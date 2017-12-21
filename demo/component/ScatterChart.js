@@ -43,6 +43,13 @@ const data05 = [{x: 100, y: 200, z: 200}, {x: 100, y: 100, z: 260},
   {x: 170, y: 300, z: 400}, {x: 140, y: 250, z: 280},
   {x: 150, y: 400, z: 500}, {x: 110, y: 280, z: 200}];
 
+const data06 = [
+  { x: 0, y: 'Sun', z: 78 },
+  { x: 0, y: 'Mon', z: 40 },
+  { x: 0, y: 'Tue', z: 60 },
+  { x: 3, y: 'Wed', z: 100 },
+];
+
 const initialState = {
   data01,
   data02,
@@ -60,6 +67,15 @@ export default class Demo extends Component {
   handleChangeData = () => {
     this.setState(() => _.mapValues(initialState, changeNumberOfData));
   };
+
+  renderSquare = (props) => {
+    const { cx, cy, size, xAxis, yAxis, zAxis } = props;
+    const xBandSize = xAxis.bandSize;
+    const yBandSize = yAxis.bandSize;
+
+    return <rect x={cx - xAxis.bandSize / 2} y={cy - yAxis.bandSize / 2} width={xAxis.bandSize} height={yAxis.bandSize} fill="red" fillOpacity={size} />;
+  }
+
 
   render () {
     const { data01, data02, data03, data04 } = this.state;
@@ -143,6 +159,19 @@ export default class Demo extends Component {
             <Tooltip cursor={{strokeDasharray: '3 3'}}/>
             <Legend/>
             <Scatter name='A school' data={data05} legendType="square" fill='#8884d8' shape="square"/>
+          </ScatterChart>
+        </div>
+
+        <p>ScatterChart filled by squares</p>
+        <div className="scatter-chart-wrapper">
+          <ScatterChart width={900} height={300} margin={{top: 20, right: 20, bottom: 20, left: 20}}>
+            <XAxis dataKey="x" type="category" allowDuplicatedCategory={false} domain={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]} allowDuplicatedCategory={false} name="hour"  />
+            <YAxis dataKey="y" type="category" allowDuplicatedCategory={false} domain={['Sun', 'Sat', 'Fri', 'Thu', 'Wed', 'Tue', 'Mon']} allowDuplicatedCategory={false} name="week" />
+            <ZAxis dataKey="z" range={[0.2, 1]} name="score" />
+            <Tooltip cursor={{strokeDasharray: '3 3'}}/>
+            <CartesianGrid fill="#999" />
+            <Legend/>
+            <Scatter name='A school' data={data06} legendType="square" fill='#8884d8' shape={this.renderSquare}/>
           </ScatterChart>
         </div>
       </div>

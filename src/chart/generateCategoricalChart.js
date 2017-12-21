@@ -292,14 +292,22 @@ const generateCategoricalChart = ({
                 // When category axis has duplicated text, serial numbers are used to generate scale
                 domain = _.range(0, len);
               } else {
-                // remove duplicated category
-                domain = domain.reduce((finalDomain, entry) => (
-                  finalDomain.indexOf(entry) >= 0 ? finalDomain : [...finalDomain, entry]
+                // remove duplicated category and eliminate undefined or null or empty string
+                domain = (child.props.domain || domain || []).reduce((finalDomain, entry) => (
+                  (finalDomain.indexOf(entry) >= 0 || entry === '' || _.isNil(entry)) ?
+                    finalDomain : [...finalDomain, entry]
                 ), []);
               }
             } else if (type === 'category') {
-              // eliminate undefined or null or empty string
-              domain = domain.filter(entry => (entry !== '' && !_.isNil(entry)));
+              if (!allowDuplicatedCategory) {
+                domain = (child.props.domain || domain || []).reduce((finalDomain, entry) => (
+                  (finalDomain.indexOf(entry) >= 0 || entry === '' || _.isNil(entry)) ?
+                    finalDomain : [...finalDomain, entry]
+                ), []);
+              } else {
+                // eliminate undefined or null or empty string
+                domain = domain.filter(entry => (entry !== '' && !_.isNil(entry)));
+              }
             } else if (type === 'number') {
               const errorBarsDomain = parseErrorBarsOfAxis(
                 displayedData,

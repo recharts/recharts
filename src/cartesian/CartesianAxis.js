@@ -431,7 +431,7 @@ class CartesianAxis extends Component {
 
     if (_.isFunction(ticksGenerator)) {
       finalTicks = (ticks && ticks.length > 0) ? ticksGenerator(this.props) :
-        ticksGenerator(noTicksProps);
+      ticksGenerator(noTicksProps);
     }
 
     if (width <= 0 || height <= 0 || !finalTicks || !finalTicks.length) {

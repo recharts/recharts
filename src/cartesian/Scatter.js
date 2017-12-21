@@ -133,6 +133,7 @@ class Scatter extends Component {
         ...entry, cx, cy,
         x: cx - radius,
         y: cy - radius,
+        xAxis, yAxis, zAxis,
         width: 2 * radius,
         height: 2 * radius,
         size,
