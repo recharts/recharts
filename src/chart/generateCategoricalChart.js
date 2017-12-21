@@ -1279,8 +1279,10 @@ const generateCategoricalChart = ({
 
       if (!props) { return null; }
 
-      return createElement(Legend, {
-        ...props,
+      const { item, ...otherProps } = props;
+
+      return cloneElement(item, {
+        ...otherProps,
         chartWidth: width,
         chartHeight: height,
         margin,

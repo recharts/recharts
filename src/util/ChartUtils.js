@@ -189,6 +189,7 @@ export const getLegendProps = ({
     ...legendItem.props,
     ...Legend.getWithHeight(legendItem, legendWidth),
     payload: legendData,
+    item: legendItem,
   };
 };
 /**
