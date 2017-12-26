@@ -486,14 +486,15 @@ export const combineEventHandlers = (defaultHandler, parentHandler, childHandler
     customizedHandler = parentHandler;
   }
 
-  if (_.isFunction(defaultHandler) || customizedHandler) {
+  if (_isFunction(defaultHandler) || _isFunction(customizedHandler)) {
     return (arg1, arg2, arg3, arg4) => {
-      if (_.isFunction(defaultHandler)) {
-        defaultHandler(arg1, arg2, arg3, arg4);
-      }
-
-      if (_.isFunction(customizedHandler)) {
-        customizedHandler(arg1, arg2, arg3, arg4);
+      if (_isFunction(customizedHandler) && _isFunction(defaultHandler)) {
+        new Promise(resolve => {
+          customizedHandler(arg1, arg2, arg3, arg4);
+          resolve();
+        }).then(() => defaultHandler(arg1, arg2, arg3, arg4));
+      } else {
+        _isFunction(customizedHandler) ? customizedHandler(arg1, arg2, arg3, arg4) : defaultHandler(arg1, arg2, arg3, arg4);
       }
     };
   }
