@@ -138,4 +138,26 @@ describe('<Sankey />', () => {
   it('renders 68 links in simple SankeyChart', () => {
     expect(wrapper.find('.recharts-sankey-link').length).to.equal(68);
   });
+
+  it('re-renders links and nodes when data changes', () => {
+    const wrapper = mount(<Sankey width={1000} height={500} data={data} />);
+    expect(wrapper.render().find('.recharts-sankey-node').length).to.equal(48);
+    expect(wrapper.render().find('.recharts-sankey-link').length).to.equal(68);
+
+    const newData = {
+      ...data,
+      nodes: [
+        ...data.nodes,
+        { name: "New Node" }
+      ],
+      links: [
+        ...data.links,
+        { source: 2, target: data.nodes.length, value: 100.0 }
+      ]
+    };
+    wrapper.setProps({ data: newData });
+
+    expect(wrapper.render().find('.recharts-sankey-node').length).to.equal(49);
+    expect(wrapper.render().find('.recharts-sankey-link').length).to.equal(69);
+  })
 });

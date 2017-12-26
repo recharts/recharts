@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { symbol as shapeSymbol, symbolCircle, symbolCross, symbolDiamond,
- symbolSquare, symbolStar, symbolTriangle, symbolWye } from 'd3-shape';
+  symbolSquare, symbolStar, symbolTriangle, symbolWye } from 'd3-shape';
 import classNames from 'classnames';
 import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
@@ -86,7 +86,6 @@ class Symbols extends Component {
     const { className, cx, cy, size } = this.props;
 
     if (cx === +cx && cy === +cy && size === +size) {
-
       return (
         <path
           {...getPresentationAttributes(this.props)}

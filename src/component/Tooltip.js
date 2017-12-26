@@ -152,13 +152,13 @@ class Tooltip extends Component {
       if (boxWidth > 0 && boxHeight > 0 && coordinate) {
         translateX = position && isNumber(position.x) ? position.x : Math.max(
           coordinate.x + boxWidth + offset > (viewBox.x + viewBox.width) ?
-          coordinate.x - boxWidth - offset :
-          coordinate.x + offset, viewBox.x);
+            coordinate.x - boxWidth - offset :
+            coordinate.x + offset, viewBox.x);
 
         translateY = position && isNumber(position.y) ? position.y : Math.max(
           coordinate.y + boxHeight + offset > (viewBox.y + viewBox.height) ?
-          coordinate.y - boxHeight - offset :
-          coordinate.y + offset, viewBox.y);
+            coordinate.y - boxHeight - offset :
+            coordinate.y + offset, viewBox.y);
       } else {
         outerStyle.visibility = 'hidden';
       }

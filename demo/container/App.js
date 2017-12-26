@@ -15,7 +15,7 @@ class App extends Component {
       const list = Object.keys(group).map((c) => {
         return (
           <li key={`component-${c}`}>
-            <Link to={{ pathname: '/', query: { page: c, group: key } }}>{c}</Link>
+            <Link to={{ pathname: '/', search: `?group=${key}&component=${c}` }}>{c}</Link>
           </li>
         );
       });
@@ -38,11 +38,7 @@ class App extends Component {
     );
   }
 
-  renderPageDetail() {
-    const { location } = this.props;
-    const { query } = location;
-    const { group, page } = query;
-
+  renderPageDetail(group, page) {
     return (
       <div className="component-wrapper">
         <p className="back"><Link to={{ pathname: '/' }}>Back to homepage</Link></p>
@@ -57,12 +53,15 @@ class App extends Component {
 
   render() {
     const { location } = this.props;
+    const { search } = location;
+    const group = /group=([a-zA-Z]+)/.exec(search);
+    const component = /component=([a-zA-Z]+)/.exec(search);
 
-    if (!location.query || !location.query.page) {
-      return this.renderList();
+    if (group && group.length === 2 && component && component.length === 2) {
+      return this.renderPageDetail(group[1], component[1]);
     }
 
-    return this.renderPageDetail();
+    return this.renderList();
   }
 }
 

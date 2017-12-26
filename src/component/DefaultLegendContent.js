@@ -55,7 +55,21 @@ class DefaultLegendContent extends Component {
     const thirdSize = SIZE / 3;
     const color = data.inactive ? inactiveColor : data.color;
 
-    if (data.type === 'line') {
+    if (data.type === 'plainline') {
+      return (
+        <line
+          strokeWidth={4}
+          fill="none"
+          stroke={color}
+          strokeDasharray={data.payload.strokeDasharray}
+          x1={0}
+          y1={halfSize}
+          x2={SIZE}
+          y2={halfSize}
+          className="recharts-legend-icon"
+        />
+      );
+    } else if (data.type === 'line') {
       return (
         <path
           strokeWidth={4}

@@ -239,6 +239,40 @@ describe('<LineChart />', () => {
     expect(wrapper.find('.customized-dot').length).to.equal(6);
   });
 
+  it("Renders 3 lines before and after a parents state change", () => {
+    class LineChartContainer extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            data : [
+              {name: 'A', time: 6},
+              {name: 'B', time: 2},
+              {name: 'C', time: 4}
+            ],
+            dataKeys : ["time"],
+            additionalStateItem : false
+          };
+        }
+        render() {
+            return (
+              <LineChart width={600} height={300} data={this.state.data}
+                margin={{top: 5, right: 30, left: 20, bottom: 5}}>
+                {this.state.dataKeys.map((key,i) =>
+                    <Line dataKey={key} key={i} type="monotone"/>
+                )}
+              </LineChart>
+            );
+        }
+    };
+
+    const wrapper = mount(<LineChartContainer />);
+    expect(wrapper.find(LineChart).children().props().children).to.have.lengthOf(3);
+
+    wrapper.setProps({ additionalStateItem: true });
+
+    expect(wrapper.find(LineChart).children().props().children).to.have.lengthOf(3);
+  });
+
   it('click on Curve should invoke onClick callback', () => {
     const wrapper = mount(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
@@ -249,7 +283,12 @@ describe('<LineChart />', () => {
   });
 
   it('click on Curve should invoke onClick callback', () => {
-    const onClick = sinon.spy();
+    let propsOfCallback;
+    let eventOfCallback;
+    const onClick = sinon.spy((props, event) => {
+      propsOfCallback = props;
+      eventOfCallback = event;
+    });
     const onMouseDown = sinon.spy();
     const onMouseUp = sinon.spy();
     const wrapper = mount(
@@ -264,6 +303,8 @@ describe('<LineChart />', () => {
     expect(onClick.calledOnce).to.equal(true);
     expect(onMouseDown.calledOnce).to.equal(true);
     expect(onMouseUp.calledOnce).to.equal(true);
+    expect(propsOfCallback).to.include.all.keys(['className', 'points', 'connectNulls', 'type']);
+    expect(eventOfCallback).to.include.all.keys(['currentTarget', 'target']);
   });
 
   it('should show tooltip cursor on MouseEnter and MouseMove and hide on MouseLeave', () => {
@@ -353,10 +394,7 @@ describe('<LineChart />', () => {
     expect(newLineDots.childAt(dataIndex).props().payload).to.equal(data[dataIndex]);
     expect(newLineDots.childAt(dataIndex).props().cx).to.equal(164);
     expect(newLineDots.childAt(dataIndex).props().cy).to.equal(100);
-
   });
-
-
 });
 
 

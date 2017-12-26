@@ -26,7 +26,7 @@ class Dot extends Component {
       return (
         <circle
           {...getPresentationAttributes(this.props)}
-          {...filterEventAttributes(this.props)}
+          {...filterEventAttributes(this.props, null, true)}
           className={layerClass}
           cx={cx}
           cy={cy}

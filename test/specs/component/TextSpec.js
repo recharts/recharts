@@ -68,4 +68,13 @@ describe('<Text />', () => {
 
     expect(wrapperNan.text()).to.not.contain('anything');
   });
+
+  it("Only split contents on breaking spaces", () => {
+    const testString = "These spaces\tshould\nbreak,\rbut\xA0these\xA0should\xA0not.";
+    const wrapper = shallow(
+      <Text width="auto">{testString}</Text>
+    );
+
+    expect(wrapper.instance().state.wordsByLines.length).to.equal(5);
+  })
 });

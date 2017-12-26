@@ -31,7 +31,8 @@ export const getMaxRadius = (width, height, offset = {
  * @return {Object} Configuration
  */
 export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
-  const { width, height, startAngle, endAngle } = props;
+  const { width, height } = props;
+  let { startAngle, endAngle } = props;
   const cx = getPercentValue(props.cx, width, width / 2);
   const cy = getPercentValue(props.cy, height, height / 2);
   const maxRadius = getMaxRadius(width, height, offset);
@@ -44,7 +45,7 @@ export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
     const { domain, reversed } = axis;
     let range;
 
-    if (_.isNil(range, axis.range)) {
+    if (_.isNil(axis.range)) {
       if (axisType === 'angleAxis') {
         range = [startAngle, endAngle];
       } else if (axisType === 'radiusAxis') {
@@ -56,6 +57,8 @@ export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
       }
     } else {
       range = axis.range;
+      startAngle = range[0];
+      endAngle = range[1];
     }
 
     const { realScaleType, scale } = parseScale(axis, chartName);
@@ -66,6 +69,7 @@ export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
     const finalAxis = {
       ...axis,
       ...ticks,
+      range,
       radius: outerRadius,
       realScaleType, scale, cx, cy, innerRadius, outerRadius, startAngle, endAngle,
     };
@@ -78,7 +82,7 @@ export const distanceBetweenPoints = (point, anotherPoint) => {
   const { x: x1, y: y1 } = point;
   const { x: x2, y: y2 } = anotherPoint;
 
-  return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+  return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
 };
 
 export const getAngleOfPoint = ({ x, y }, { cx, cy }) => {
@@ -107,6 +111,14 @@ export const formatAngleOfSector = ({ startAngle, endAngle }) => {
   };
 };
 
+const reverseFormatAngleOfSetor = (angle, { startAngle, endAngle }) => {
+  const startCnt = Math.floor(startAngle / 360);
+  const endCnt = Math.floor(endAngle / 360);
+  const min = Math.min(startCnt, endCnt);
+
+  return angle + min * 360;
+};
+
 export const inRangeOfSector = ({ x, y }, sector) => {
   const { radius, angle } = getAngleOfPoint({ x, y }, sector);
   const { innerRadius, outerRadius } = sector;
@@ -119,19 +131,28 @@ export const inRangeOfSector = ({ x, y }, sector) => {
 
   const { startAngle, endAngle } = formatAngleOfSector(sector);
   let formatAngle = angle;
+  let inRange;
 
-  while (formatAngle > endAngle) {
-    formatAngle -= 360;
+  if (startAngle <= endAngle) {
+    while (formatAngle > endAngle) {
+      formatAngle -= 360;
+    }
+    while (formatAngle < startAngle) {
+      formatAngle += 360;
+    }
+    inRange = formatAngle >= startAngle && formatAngle <= endAngle;
+  } else {
+    while (formatAngle > startAngle) {
+      formatAngle -= 360;
+    }
+    while (formatAngle < endAngle) {
+      formatAngle += 360;
+    }
+    inRange = formatAngle >= endAngle && formatAngle <= startAngle;
   }
-
-  while (formatAngle < startAngle) {
-    formatAngle += 360;
-  }
-
-  const inRange = formatAngle >= startAngle && formatAngle <= endAngle;
 
   if (inRange) {
-    return { ...sector, radius, angle: formatAngle };
+    return { ...sector, radius, angle: reverseFormatAngleOfSetor(formatAngle, sector) };
   }
 
   return null;

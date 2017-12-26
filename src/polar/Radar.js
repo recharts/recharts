@@ -76,14 +76,13 @@ class Radar extends Component {
     animationEasing: 'ease',
   };
 
-  static getComposedData = ({ radiusAxis, angleAxis, displayedData, dataKey }) => {
+  static getComposedData = ({ radiusAxis, angleAxis, displayedData, dataKey, bandSize }) => {
     const { cx, cy } = angleAxis;
     const points = displayedData.map((entry, i) => {
       const name = getValueByDataKey(entry, angleAxis.dataKey, i);
       const value = getValueByDataKey(entry, dataKey, 0);
-      const angle = angleAxis.scale(name);
+      const angle = angleAxis.scale(name) + (bandSize || 0);
       const radius = radiusAxis.scale(value);
-
       return {
         ...polarToCartesian(cx, cy, radius, angle),
         name, value, cx, cy, radius, angle,
@@ -147,7 +146,7 @@ class Radar extends Component {
   }
 
   renderDots(points) {
-    const { dot } = this.props;
+    const { dot, dataKey } = this.props;
     const baseProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
 
@@ -157,6 +156,7 @@ class Radar extends Component {
         r: 3,
         ...baseProps,
         ...customDotProps,
+        dataKey,
         cx: entry.x,
         cy: entry.y,
         index: i,

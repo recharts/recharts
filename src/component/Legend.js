@@ -114,8 +114,8 @@ class Legend extends Component {
         hPos = { left: ((chartWidth || 0) - box.width) / 2 };
       } else {
         hPos = align === 'right' ?
-              { right: (margin && margin.right) || 0 } :
-              { left: (margin && margin.left) || 0 };
+          { right: (margin && margin.right) || 0 } :
+          { left: (margin && margin.left) || 0 };
       }
     }
 
@@ -126,8 +126,8 @@ class Legend extends Component {
         vPos = { top: ((chartHeight || 0) - box.height) / 2 };
       } else {
         vPos = verticalAlign === 'bottom' ?
-              { bottom: (margin && margin.bottom) || 0 } :
-              { top: (margin && margin.top) || 0 };
+          { bottom: (margin && margin.bottom) || 0 } :
+          { top: (margin && margin.top) || 0 };
       }
     }
 

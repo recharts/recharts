@@ -47,7 +47,7 @@ export const getPercentValue = (percent, totalValue, defaultValue = 0, validate 
     value = +percent;
   }
 
-  if (isNaN(value)) {
+  if (_.isNaN(value)) {
     value = defaultValue;
   }
 
@@ -93,4 +93,10 @@ export const interpolateNumber = (numberA, numberB) => {
   }
 
   return () => numberB;
+};
+
+export const findEntryInArray = (ary, specifiedKey, specifiedValue) => {
+  if (!ary || !ary.length) { return null; }
+
+  return ary.find(entry => (entry && _.get(entry, specifiedKey) === specifiedValue));
 };

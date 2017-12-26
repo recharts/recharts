@@ -97,6 +97,8 @@ export const PRESENTATION_ATTRIBUTES = {
   x: PropTypes.number,
   y: PropTypes.number,
   r: PropTypes.number,
+  // The radius of Rectangle
+  radius: PropTypes.oneOfType([PropTypes.number, PropTypes.array]),
 };
 
 export const EVENT_ATTRIBUTES = {
@@ -135,8 +137,8 @@ export const SCALE_TYPES = [
 ];
 
 export const LEGEND_TYPES = [
-  'line', 'square', 'rect', 'circle', 'cross', 'diamond',
-  'star', 'triangle', 'wye', 'none',
+  'plainline', 'line', 'square', 'rect', 'circle', 'cross',
+  'diamond', 'star', 'triangle', 'wye', 'none',
 ];
 
 /**
@@ -232,13 +234,21 @@ export const getPresentationAttributes = (el) => {
   return out;
 };
 
+const getEventHandlerOfElement = (originalHandler, props) => (
+  (e) => {
+    originalHandler(props, e);
+
+    return null;
+  }
+);
 /**
  * get all the event attribute of svg element
- * @param  {Object}   el         A react element or the props of a react element
- * @param  {Function} newHandler New handler of event
- * @return {Object}              attributes or null
+ * @param  {Object}   el           A react element or the props of a react element
+ * @param  {Function} newHandler   New handler of event
+ * @param  {Boolean}  wrapCallback Wrap callback and return more parameters or not
+ * @return {Object}                attributes or null
  */
-export const filterEventAttributes = (el, newHandler) => {
+export const filterEventAttributes = (el, newHandler, wrapCallback = false) => {
   if (!el || _.isFunction(el)) { return null; }
 
   const props = React.isValidElement(el) ? el.props : el;
@@ -250,13 +260,13 @@ export const filterEventAttributes = (el, newHandler) => {
   for (const i in props) {
     if ({}.hasOwnProperty.call(props, i) && EVENT_ATTRIBUTES[i]) {
       if (!out) out = {};
-      out[i] = newHandler || props[i];
+      out[i] = newHandler || (wrapCallback ? getEventHandlerOfElement(props[i], props) : props[i]);
     }
   }
   return out;
 };
 
-const getEventHandler = (originalHandler, data, index) => (
+const getEventHandlerOfChild = (originalHandler, data, index) => (
   (e) => {
     originalHandler(data, index, e);
 
@@ -272,7 +282,7 @@ export const filterEventsOfChild = (props, data, index) => {
   for (const i in props) {
     if ({}.hasOwnProperty.call(props, i) && EVENT_ATTRIBUTES[i] && _.isFunction(props[i])) {
       if (!out) out = {};
-      out[i] = getEventHandler(props[i], data, index);
+      out[i] = getEventHandlerOfChild(props[i], data, index);
     }
   }
   return out;
@@ -359,7 +369,10 @@ export const isChildrenEqual = (nextChildren, prevChildren) => {
 
   if (count === 0) { return true; }
   if (count === 1) {
-    return isSingleChildEqual(Children.only(nextChildren), Children.only(prevChildren));
+    return isSingleChildEqual(
+      _.isArray(nextChildren) ? nextChildren[0] : nextChildren,
+      _.isArray(prevChildren) ? prevChildren[0] : prevChildren,
+    );
   }
 
   for (let i = 0; i < count; i++) {

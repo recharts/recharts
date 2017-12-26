@@ -91,7 +91,7 @@ const renderRadialLabel = (labelProps, label, attrs) => {
   const path = `M${startPoint.x},${startPoint.y}
     A${radius},${radius},0,1,${direction ? 0 : 1},
     ${endPoint.x},${endPoint.y}`;
-  const id = uniqueId('recharts-radial-line-');
+  const id = _.isNil(labelProps.id) ? uniqueId('recharts-radial-line-') : labelProps.id;
 
   return (
     <text
@@ -282,10 +282,19 @@ function Label(props) {
     !isValidElement(content) && !_.isFunction(content))) { return null; }
 
   if (isValidElement(content)) { return cloneElement(content, props); }
-  if (_.isFunction(content)) { return content(props); }
+
+  let label;
+  if (_.isFunction(content)) {
+    label = content(props);
+
+    if (isValidElement(label)) {
+      return label;
+    }
+  } else {
+    label = getLabel(props);
+  }
 
   const isPolarLabel = isPolar(viewBox);
-  const label = getLabel(props);
   const attrs = getPresentationAttributes(props);
 
   if (isPolarLabel && (position === 'insideStart' ||
@@ -302,7 +311,9 @@ function Label(props) {
       className={classNames('recharts-label', className)}
       {...attrs}
       {...positionAttrs}
-    >{label}</Text>
+    >
+      {label}
+    </Text>
   );
 }
 

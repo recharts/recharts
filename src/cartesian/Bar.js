@@ -13,7 +13,7 @@ import Cell from '../component/Cell';
 import LabelList from '../component/LabelList';
 import pureRender from '../util/PureRender';
 import { uniqueId, mathSign, interpolateNumber } from '../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, findChildByType,
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
   findAllByType, getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { getCateCoordinateOfBar, getValueByDataKey, truncateByDomain, getBaseValueOfBar,
   findPositionOfBar } from '../util/ChartUtils';
@@ -59,6 +59,7 @@ class Bar extends Component {
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
     animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
+    id: PropTypes.string,
   };
 
   static defaultProps = {
@@ -102,7 +103,7 @@ class Bar extends Component {
     const cells = findAllByType(children, Cell);
 
     const rects = displayedData.map((entry, index) => {
-      let value, x, y, width, height;
+      let value, x, y, width, height, background;
 
       if (stackedData) {
         value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
@@ -126,6 +127,7 @@ class Bar extends Component {
         y = yAxis.scale(value[1]);
         width = pos.size;
         height = yAxis.scale(value[0]) - yAxis.scale(value[1]);
+        background = { x, y: yAxis.y, width, height: yAxis.height };
 
         if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
           const delta = mathSign(height || minPointSize) *
@@ -146,6 +148,7 @@ class Bar extends Component {
         });
         width = xAxis.scale(value[1]) - xAxis.scale(value[0]);
         height = pos.size;
+        background = { x: xAxis.x, y, width: xAxis.width, height };
 
         if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
           const delta = mathSign(width || minPointSize) *
@@ -158,6 +161,7 @@ class Bar extends Component {
         ...entry,
         x, y, width, height, value: stackedData ? value : value[1],
         payload: entry,
+        background,
         ...(cells && cells[index] && cells[index].props),
       };
     });
@@ -226,7 +230,8 @@ class Bar extends Component {
 
   renderRectanglesWithAnimation() {
     const { data, layout, isAnimationActive, animationBegin,
-      animationDuration, animationEasing, animationId } = this.props;
+      animationDuration, animationEasing, animationId, width,
+    } = this.props;
     const { prevData } = this.state;
 
     return (
@@ -262,10 +267,14 @@ class Bar extends Component {
               }
 
               if (layout === 'horizontal') {
-                const interpolator = interpolateNumber(0, entry.height);
-                const h = interpolator(t);
+                const interpolatorHeight = interpolateNumber(0, entry.height);
+                const h = interpolatorHeight(t);
 
-                return { ...entry, y: entry.y + entry.height - h, height: h };
+                return {
+                  ...entry,
+                  y: entry.y + entry.height - h,
+                  height: h,
+                };
               }
 
               const interpolator = interpolateNumber(0, entry.width);
@@ -297,13 +306,38 @@ class Bar extends Component {
     return this.renderRectanglesStatically(data);
   }
 
+  renderBackground(sectors) {
+    const { data } = this.props;
+    const backgroundProps = getPresentationAttributes(this.props.background);
+
+    return data.map((entry, i) => {
+      // eslint-disable-next-line no-unused-vars
+      const { value, background, ...rest } = entry;
+
+      if (!background) { return null; }
+
+      const props = {
+        ...rest,
+        fill: '#eee',
+        ...background,
+        ...backgroundProps,
+        ...filterEventsOfChild(this.props, entry, i),
+        index: i,
+        key: `background-bar-${i}`,
+        className: 'recharts-bar-background-rectangle',
+      };
+
+      return this.renderRectangle(background, props);
+    });
+  }
+
   renderErrorBar() {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
     const { data, xAxis, yAxis, layout, children } = this.props;
-    const errorBarItem = findChildByType(children, ErrorBar);
+    const errorBarItems = findAllByType(children, ErrorBar);
 
-    if (!errorBarItem) { return null; }
+    if (!errorBarItems) { return null; }
 
     const offset = (layout === 'vertical') ? data[0].height / 2 : data[0].width / 2;
 
@@ -316,38 +350,41 @@ class Bar extends Component {
       };
     }
 
-    return React.cloneElement(errorBarItem, {
+    return errorBarItems.map((item, i) => React.cloneElement(item, {
+      key: i,
       data,
       xAxis,
       yAxis,
       layout,
       offset,
       dataPointFormatter,
-    });
+    }));
   }
 
   render() {
     const { hide, data, className, xAxis, yAxis, left, top,
-      width, height, isAnimationActive } = this.props;
+      width, height, isAnimationActive, background, id } = this.props;
     if (hide || !data || !data.length) { return null; }
 
     const { isAnimationFinished } = this.state;
     const layerClass = classNames('recharts-bar', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
+    const clipPathId = _.isNil(id) ? this.id : id;
 
     return (
       <Layer className={layerClass}>
         {needClip ? (
           <defs>
-            <clipPath id={`clipPath-${this.id}`}>
+            <clipPath id={`clipPath-${clipPathId}`}>
               <rect x={left} y={top} width={width} height={height} />
             </clipPath>
           </defs>
         ) : null}
         <Layer
           className="recharts-bar-rectangles"
-          clipPath={needClip ? `url(#clipPath-${this.id})` : null}
+          clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}
         >
+          {background ? this.renderBackground() : null}
           {this.renderRectangles()}
         </Layer>
         {this.renderErrorBar()}

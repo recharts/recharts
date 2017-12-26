@@ -300,6 +300,24 @@ const data03 = [
   { date: 'Dec 30 2016', price: 115.82 },
 ];
 
+const series = [
+  {name: 'Series 1', data: [
+    {category: 'A', value: Math.random()},
+    {category: 'B', value: Math.random()},
+    {category: 'C', value: Math.random()}
+  ]},
+  {name: 'Series 2', data: [
+    {category: 'B', value: Math.random()},
+    {category: 'C', value: Math.random()},
+    {category: 'D', value: Math.random()}
+  ]},
+  {name: 'Series 3', data: [
+    {category: 'C', value: Math.random()},
+    {category: 'D', value: Math.random()},
+    {category: 'E', value: Math.random()}
+  ]},
+];
+
 const initialState = {
   data,
   data01,
@@ -347,11 +365,19 @@ export default class Demo extends Component {
     console.log(data);
   };
 
+  handleLineClick = (data, e) => {
+    console.log('callback', data, e);
+  };
+
   handleLegendMouseEnter = () => {
     this.setState({
       opacity: 0.5,
     });
   };
+
+  handleClickDot = (data, e) => {
+    console.log('dot click', data, e);
+  }
 
   handleLegendMouseLeave = () => {
     this.setState({
@@ -436,15 +462,23 @@ export default class Demo extends Component {
             height={400}
             data={data}
             margin={{top: 10, bottom: 10, left: 30, right: 30}}
-            onClick={this.handleClick}
           >
             <XAxis dataKey='name' />
             <CartesianGrid stroke='#f5f5f5'/>
             <Brush />
-            <Line type='monotone' key={'0'} dataKey='uv' stroke='#ff7300' yAxisId={0} activeDot={{fill: '#ff7300', stroke: 'none'}}/>
+            <Tooltip filterNull={false} />
+            <Line
+              type="monotone"
+              key="0"
+              dataKey="uv"
+              stroke="#ff7300"
+              strokeWidth={5}
+              yAxisId={0}
+              activeDot={{ onClick: this.handleClickDot }}
+              onClick={this.handleLineClick}
+            />
             {this.state.newLine && <Line type='monotone' key={'1'} dataKey='amt' stroke='#132908' yAxisId={1} activeDot={{fill: '#132908', stroke: 'none', r: 6}}/>}
             <Line type='monotone' key={'2'} dataKey='pv' stroke='#387908' yAxisId={1} activeDot={{fill: '#387908', stroke: 'none', r: 6}}/>
-            <Tooltip filterNull={false} />
           </LineChart>
         </div>
 
@@ -533,6 +567,21 @@ export default class Demo extends Component {
             </Brush>
           </LineChart>
         </div>
+
+        <p>LineChart repeates categories on x axis</p>
+        <div className="line-chart-wrapper">
+          <LineChart width={600} height={300}>
+            <XAxis dataKey="category" type="category" allowDuplicatedCategory={false} />
+            <YAxis dataKey="value"/>
+            <CartesianGrid strokeDasharray="3 3"/>
+            <Tooltip/>
+            <Legend />
+            {series.map(s => (
+              <Line dataKey="value" data={s.data} name={s.name} key={s.name} />
+            ))}
+          </LineChart>
+        </div>
+
       </div>
     );
   }

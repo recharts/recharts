@@ -39,7 +39,7 @@ class Cross extends Component {
 
   render() {
     const { x, y, width, height, top, left,
-        className } = this.props;
+      className } = this.props;
 
     if (!isNumber(x) || !isNumber(y) || !isNumber(width)
       || !isNumber(height) || !isNumber(top) || !isNumber(left)) {
