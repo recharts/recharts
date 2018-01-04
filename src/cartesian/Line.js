@@ -154,6 +154,13 @@ class Line extends Component {
   }
 
   getTotalLength() {
+    const hasData = this.props.points.reduce((acc, point) => {
+      const val = point.value;
+      return acc && (val !== null && val !== undefined);
+    }, true);
+
+    if (!hasData) { return 0; }
+
     const curveDom = this.mainCurve;
     const totalLength = (curveDom && curveDom.getTotalLength && curveDom.getTotalLength()) || 0;
 
