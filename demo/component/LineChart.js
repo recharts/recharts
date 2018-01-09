@@ -444,7 +444,7 @@ export default class Demo extends Component {
             <YAxis type='number' orientation='right' yAxisId={2}/>
             <XAxis dataKey='name'/>
             <Tooltip position={{y: 200}} />
-            <CartesianGrid stroke='#f5f5f5'/>
+            <CartesianGrid stroke='#f5f5f5' verticalFill={['rgba(0, 0, 0, 0.2)', 'rgba(255, 255, 255, 0.3)']} horizontalFill={['#ccc', '#fff']} />
             <Line dataKey='uv' stroke='#ff7300' strokeWidth={2} yAxisId={0}/>
             <Line dataKey='pv' stroke='#387908' strokeWidth={2} yAxisId={1}/>
             <Line dataKey='amt' stroke='#38abc8' strokeWidth={2} yAxisId={2}/>
