@@ -155,9 +155,12 @@ class Line extends Component {
 
   getTotalLength() {
     const curveDom = this.mainCurve;
-    const totalLength = (curveDom && curveDom.getTotalLength && curveDom.getTotalLength()) || 0;
 
-    return totalLength;
+    try {
+      return (curveDom && curveDom.getTotalLength && curveDom.getTotalLength()) || 0;
+    } catch (err) {
+      return 0;
+    }
   }
 
   getStrokeDasharray(length, totalLength, lines) {
