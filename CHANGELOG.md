@@ -1,3 +1,17 @@
+## 1.0.0-beta.8(Jan 09, 2018)
+
+### feat
+
+- Add props `useTranslate3d` to control whether use translate3d or translate in <Tooltip />
+- Add props `verticalFill` and `horizontalFill` in `<CartesianGrid />` to show grid background
+- Add  `visibleTicksCount` in props of customized tick of `<CartesianAxis />`
+
+### fix
+
+- Replace lodash _.get with simple Array.prototype.find
+- Prevent texts from being selected when dragging the brush
+- Add try...catch... when getTotalLength is called by a svg path to fix IE bug  
+
 ## 1.0.0-beta.7(Dec 21, 2017)
 
 ### feat
