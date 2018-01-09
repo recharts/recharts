@@ -11,6 +11,7 @@ import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import { isNumber } from '../util/DataUtils';
+import { generatePrefixStyle } from '../util/CssPrefixUtils';
 
 @pureRender
 class Brush extends Component {
@@ -413,6 +414,7 @@ class Brush extends Component {
 
     const layerClass = classNames('recharts-brush', className);
     const isPanoramic = React.Children.count(children) === 1;
+    const style = generatePrefixStyle('userSelect', 'none');
 
     return (
       <Layer
@@ -422,6 +424,7 @@ class Brush extends Component {
         onMouseUp={this.handleDragEnd}
         onTouchEnd={this.handleDragEnd}
         onTouchMove={this.handleTouchMove}
+        style={style}
       >
         {this.renderBackground()}
         {isPanoramic && this.renderPanorama()}
