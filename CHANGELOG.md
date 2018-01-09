@@ -1,6 +1,12 @@
+## 0.22.5 (Jan 09, 2018)
+
+### feat
+
+- support horizontalFill, and verticalFill in CartesianGrid
+
 ## 0.22.4 (Apr 26, 2017)
 
-### fix 
+### fix
 
 - fix dot customized className
 
@@ -32,7 +38,7 @@
 ### fix
 
 - Fix re-rendering element bug when adding new elements
-- Fix circular dependence of Brush.js and LineChart.js 
+- Fix circular dependence of Brush.js and LineChart.js
 
 ## 0.22.0 (Apr 05, 2017)
 
@@ -182,7 +188,7 @@
 
 ### fix
 
-- Fix the `chartId` in `handleReceiveSyncEvent` of `generateCategoricalChart` 
+- Fix the `chartId` in `handleReceiveSyncEvent` of `generateCategoricalChart`
 
 ## 0.19.1(Dec 15, 2016)
 
