@@ -8,3 +8,4 @@ coverage
 npm-debug.log
 *.orig
 .idea/
+.justconf/

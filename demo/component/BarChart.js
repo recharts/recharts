@@ -245,6 +245,35 @@ export default class Demo extends Component {
     console.log('Animation end');
   };
 
+  handleMoreData = () => {
+    const { data } = this.state;
+    const count = data.length;
+    console.log(count);
+
+    this.setState({
+      data: [...data, ..._.range(1 + Math.ceil(data.length * Math.random())).map((entry, index) => {
+        console.log(index);
+        return {
+          name: `random${Math.random()}`.slice(0, 10),
+          uv: 3000 * Math.random(),
+          pv: 3000 * Math.random(),
+          amt: 5000 * Math.random(),
+          time: count + index,
+          uvError: 100 * Math.random(),
+          pvError: 50 * Math.random()
+        };
+      })],
+    });
+  };
+
+  handleLessData = () => {
+    const { data } = this.state;
+
+    this.setState({
+      data: data.slice(0, Math.ceil(data.length * Math.random())),
+    });
+  };
+
   render() {
     const { data, data01, data02 } = this.state;
 
@@ -272,6 +301,11 @@ export default class Demo extends Component {
         </div>
 
         <p>Simple BarChart (Click on rectangles and open console )</p>
+        <p>
+          <a onClick={this.handleMoreData}>more data</a>
+          <span style={{ margin: '0 20px' }}>|</span>
+          <a onClick={this.handleLessData}>less data</a>
+        </p>
         <div className="bar-chart-wrapper" style={{textAlign: 'right'}}>
           <BarChart width={400} height={400} data={data} onClick={this.handlePvBarClick}>
             <XAxis dataKey="name" />
@@ -331,7 +365,7 @@ export default class Demo extends Component {
         <p>Tiny BarChart</p>
         <div className="bar-chart-wrapper">
           <BarChart width={150} height={40} data={data}>
-            <Bar dataKey="uv" fill="#ff7300" onClick={this.handlePvBarClick} />
+            <Bar dataKey="uv" fill="#ff7300" onClick={this.handlePvBarClick} background />
           </BarChart>
         </div>
 
@@ -340,10 +374,10 @@ export default class Demo extends Component {
           <BarChart width={1100} height={250} barGap={2} barSize={6} data={data02} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
             <XAxis dataKey="name" />
             <YAxis tickCount={7} />
+            <Tooltip />
             <CartesianGrid />
             <Bar dataKey="uv" fill="#ff7300" />
             <Bar dataKey="pv" fill="#387908" />
-            <Tooltip />
             <Brush dataKey="name" height={30} />
             <ReferenceLine type="horizontal" value={0} stroke="#666" />
           </BarChart>
@@ -398,8 +432,7 @@ export default class Demo extends Component {
           </BarChart>
         </div>
 
-
-        <p>BarChart of range values</p>
+        <p>Horziontal BarChart</p>
         <div className="area-chart-wrapper">
           <BarChart
             width={1400}
@@ -411,7 +444,7 @@ export default class Demo extends Component {
             <XAxis type="number" />
             <YAxis dataKey="name" type="category" />
             <Tooltip />
-            <Bar dataKey="uv" fill="#ff7300" maxBarSize={20} label />
+            <Bar dataKey="uv" fill="#ff7300" maxBarSize={20} label radius={[0, 5, 5, 0]} />
             <Bar dataKey="pv" fill="#387908" />
           </BarChart>
         </div>

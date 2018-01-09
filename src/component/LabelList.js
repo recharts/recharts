@@ -7,6 +7,7 @@ import { getPresentationAttributes, findAllByType } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 
 const propTypes = {
+  id: PropTypes.string,
   data: PropTypes.arrayOf(PropTypes.object),
   valueAccessor: PropTypes.func,
   clockWise: PropTypes.bool,
@@ -18,7 +19,7 @@ const defaultProps = {
 };
 
 function LabelList(props) {
-  const { data, valueAccessor, dataKey, clockWise, ...others } = props;
+  const { data, valueAccessor, dataKey, clockWise, id, ...others } = props;
 
   if (!data || !data.length) { return null; }
 
@@ -29,11 +30,15 @@ function LabelList(props) {
           const value = _.isNil(dataKey) ?
             valueAccessor(entry, index) :
             getValueByDataKey(entry && entry.payload, dataKey);
+          const idProps = _.isNil(id) ? {} : {
+            id: `${id}-${index}`,
+          };
 
           return (
             <Label
               {...getPresentationAttributes(entry)}
               {...others}
+              {...idProps}
               index={index}
               value={value}
               viewBox={Label.parseViewBox(_.isNil(clockWise) ? entry : { ...entry, clockWise })}

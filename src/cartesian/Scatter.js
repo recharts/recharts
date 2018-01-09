@@ -133,6 +133,7 @@ class Scatter extends Component {
         ...entry, cx, cy,
         x: cx - radius,
         y: cy - radius,
+        xAxis, yAxis, zAxis,
         width: 2 * radius,
         height: 2 * radius,
         size,
@@ -347,20 +348,21 @@ class Scatter extends Component {
 
   render() {
     const { hide, points, line, className, xAxis, yAxis, left, top, width,
-      height } = this.props;
+      height, id } = this.props;
     if (hide || !points || !points.length) { return null; }
     const { isAnimationActive, isAnimationFinished } = this.state;
     const layerClass = classNames('recharts-scatter', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
+    const clipPathId = _.isNil(id) ? this.id : id;
 
     return (
       <Layer
         className={layerClass}
-        clipPath={needClip ? `url(#clipPath-${this.id})` : null}
+        clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}
       >
         {needClip ? (
           <defs>
-            <clipPath id={`clipPath-${this.id}`}>
+            <clipPath id={`clipPath-${clipPathId}`}>
               <rect x={left} y={top} width={width} height={height} />
             </clipPath>
           </defs>

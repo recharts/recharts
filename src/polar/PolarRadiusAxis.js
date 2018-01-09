@@ -51,6 +51,7 @@ class PolarRadiusAxis extends Component {
       PropTypes.func,
     ]),
     allowDataOverflow: PropTypes.bool,
+    allowDuplicatedCategory: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -67,6 +68,7 @@ class PolarRadiusAxis extends Component {
     domain: [0, 'auto'],
     allowDataOverflow: false,
     scale: 'auto',
+    allowDuplicatedCategory: true,
   };
 
   /**

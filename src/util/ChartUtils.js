@@ -5,7 +5,7 @@ import {
   stack as shapeStack, stackOrderNone, stackOffsetExpand,
   stackOffsetNone, stackOffsetSilhouette, stackOffsetWiggle,
 } from 'd3-shape';
-import { isNumOrStr, uniqueId, isNumber, getPercentValue, mathSign } from './DataUtils';
+import { isNumOrStr, uniqueId, isNumber, getPercentValue, mathSign, findEntryInArray } from './DataUtils';
 import ReferenceDot from '../cartesian/ReferenceDot';
 import ReferenceLine from '../cartesian/ReferenceLine';
 import ReferenceArea from '../cartesian/ReferenceArea';
@@ -189,6 +189,7 @@ export const getLegendProps = ({
     ...legendItem.props,
     ...Legend.getWithHeight(legendItem, legendWidth),
     payload: legendData,
+    item: legendItem,
   };
 };
 /**
@@ -538,10 +539,10 @@ export const combineEventHandlers = (defaultHandler, parentHandler, childHandler
       if (_.isFunction(defaultHandler)) {
         defaultHandler(arg1, arg2, arg3, arg4);
       }
-
       if (_.isFunction(customizedHandler)) {
         customizedHandler(arg1, arg2, arg3, arg4);
       }
+
     };
   }
 
@@ -789,6 +790,15 @@ export const getTicksOfScale = (scale, opts) => {
 
 export const getCateCoordinateOfLine = ({ axis, ticks, bandSize, entry, index }) => {
   if (axis.type === 'category') {
+    // find coordinate of category axis by the value of category
+    if (!axis.allowDuplicatedCategory && axis.dataKey && !_.isNil(entry[axis.dataKey])) {
+      const matchedTick = findEntryInArray(ticks, 'value', entry[axis.dataKey]);
+
+      if (matchedTick) {
+        return matchedTick.coordinate + bandSize / 2;
+      }
+    }
+
     return ticks[index] ? ticks[index].coordinate + bandSize / 2 : null;
   }
 
@@ -998,4 +1008,22 @@ export const getBandSizeOfAxis = (axis, ticks) => {
   }
 
   return 0;
+};
+/**
+ * parse the domain of a category axis when a domain is specified
+ * @param   {Array}        specifiedDomain  The domain specified by users
+ * @param   {Array}        calculatedDomain The domain calculated by dateKey
+ * @param   {ReactElement} axisChild        The axis element
+ * @returns {Array}        domains
+ */
+export const parseDomainOfCategoryAxis = (specifiedDomain, calculatedDomain, axisChild) => {
+  if (!specifiedDomain || !specifiedDomain.length) {
+    return calculatedDomain;
+  }
+
+  if (_.isEqual(specifiedDomain, _.get(axisChild, 'type.defaultProps.domain'))) {
+    return calculatedDomain;
+  }
+
+  return specifiedDomain;
 };

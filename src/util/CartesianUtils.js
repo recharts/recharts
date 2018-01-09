@@ -1,4 +1,4 @@
-import { getTicksOfScale, parseScale, checkDomainOfScale } from './ChartUtils';
+import { getTicksOfScale, parseScale, checkDomainOfScale, getBandSizeOfAxis } from './ChartUtils';
 
 /**
  * Calculate the scale function, position, width, height of axes
@@ -73,6 +73,9 @@ export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
       width: axisType === 'xAxis' ? offset.width : axis.width,
       height: axisType === 'yAxis' ? offset.height : axis.height,
     };
+
+    finalAxis.bandSize = getBandSizeOfAxis(finalAxis, ticks);
+
     if (!axis.hide && axisType === 'xAxis') {
       steps[offsetKey] += (needSpace ? -1 : 1) * finalAxis.height;
     } else if (!axis.hide) {

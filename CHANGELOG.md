@@ -1,3 +1,51 @@
+## 1.0.0-beta.9(Jan 09, 2018)
+
+### fix
+
+- Fix `verticalFill` and `horizontalFill` in `<CartesianGrid />` when points are unordered
+
+## 1.0.0-beta.8(Jan 09, 2018)
+
+### feat
+
+- Add props `useTranslate3d` to control whether use translate3d or translate in <Tooltip />
+- Add props `verticalFill` and `horizontalFill` in `<CartesianGrid />` to show grid background
+- Add  `visibleTicksCount` in props of customized tick of `<CartesianAxis />`
+
+### fix
+
+- Replace lodash _.get with simple Array.prototype.find
+- Prevent texts from being selected when dragging the brush
+- Add try...catch... when getTotalLength is called by a svg path to fix IE bug  
+
+## 1.0.0-beta.7(Dec 21, 2017)
+
+### feat
+
+- Add props `allowDuplicatedCategory` to XAxis, YAxis, PolarAngleAxis, PolarRadiusAxis, to remove duplicated category when type="category"
+- Add props id in <Area />, <Bar />, <Line />, <Scatter />, <Label />, <LabelList /> for SSR
+- Support specify domain of category type axis when allowDuplicatedCategory is false, add cooresponding "xAis", "yAxis", "zAxis" to the props or customized shape of Scatter
+
+### fix
+
+- Fx sanketartAngle and endAngle of RadarChart diagram not re-rendering when updating data prop
+- Fix animation of AreaChart when baseLine is NaN / undefined
+- Fix default startAngle and endAngle of RadarChart
+- Use cloneElement to create Legend
+
+## 1.0.0-beta.6(Dec 02, 2017)
+
+### feat
+
+- Add props `background` to support background rectange in <Bar />
+- add props `tickMargin` which set the space between text and tick line
+
+### fix
+
+- update PRESENTATION_ATTRIBUTES to allow set the radius of each <Rectangle /> of BarChart
+- render Legend when all values of Pie is 0
+- fix animation of intial <Bar />
+
 ## 1.0.0-beta.5(Nov 24, 2017)
 
 ### fix

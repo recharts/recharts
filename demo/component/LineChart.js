@@ -300,6 +300,24 @@ const data03 = [
   { date: 'Dec 30 2016', price: 115.82 },
 ];
 
+const series = [
+  {name: 'Series 1', data: [
+    {category: 'A', value: Math.random()},
+    {category: 'B', value: Math.random()},
+    {category: 'C', value: Math.random()}
+  ]},
+  {name: 'Series 2', data: [
+    {category: 'B', value: Math.random()},
+    {category: 'C', value: Math.random()},
+    {category: 'D', value: Math.random()}
+  ]},
+  {name: 'Series 3', data: [
+    {category: 'C', value: Math.random()},
+    {category: 'D', value: Math.random()},
+    {category: 'E', value: Math.random()}
+  ]},
+];
+
 const initialState = {
   data,
   data01,
@@ -427,7 +445,7 @@ export default class Demo extends Component {
             margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
             syncId="test"
           >
-            <CartesianGrid stroke='#f5f5f5'/>
+            <CartesianGrid stroke='#f5f5f5' verticalFill={['rgba(0, 0, 0, 0.2)', 'rgba(255, 255, 255, 0.3)']} horizontalFill={['#ccc', '#fff']} />
             <Legend />
             <XAxis />
             <YAxis scale={scale} domain={[0.01, 'auto']} ticks={[0.01, 0.1, 1, 10, 100, 1000]} />
@@ -549,6 +567,21 @@ export default class Demo extends Component {
             </Brush>
           </LineChart>
         </div>
+
+        <p>LineChart repeates categories on x axis</p>
+        <div className="line-chart-wrapper">
+          <LineChart width={600} height={300}>
+            <XAxis dataKey="category" type="category" allowDuplicatedCategory={false} />
+            <YAxis dataKey="value"/>
+            <CartesianGrid strokeDasharray="3 3"/>
+            <Tooltip/>
+            <Legend />
+            {series.map(s => (
+              <Line dataKey="value" data={s.data} name={s.name} key={s.name} />
+            ))}
+          </LineChart>
+        </div>
+
       </div>
     );
   }

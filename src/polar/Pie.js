@@ -102,7 +102,6 @@ class Pie extends Component {
     animationDuration: 1500,
     animationEasing: 'ease',
     nameKey: 'name',
-    id: uniqueId('recharts-pie-'),
   };
 
   static parseDeltaAngle = ({ startAngle, endAngle }) => {
@@ -176,10 +175,10 @@ class Pie extends Component {
       const val = getValueByDataKey(entry, realDataKey, 0);
       return result + (isNumber(val) ? val : 0);
     }, 0);
-    let sectors = [];
-    let prev;
+    let sectors;
 
     if (sum > 0) {
+      let prev;
       sectors = pieData.map((entry, i) => {
         const val = getValueByDataKey(entry, realDataKey, 0);
         const name = getValueByDataKey(entry, nameKey, i);
@@ -219,12 +218,13 @@ class Pie extends Component {
     return {
       ...coordinate,
       sectors,
+      data: pieData,
       onMouseLeave: onItemMouseLeave,
       onMouseEnter: onItemMouseEnter,
     };
   }
 
-  state = { isAnimationFinished: false };
+  state = { isAnimationFinished: false, isAnimationStarted: false };
 
   componentWillReceiveProps(nextProps) {
     const { animationId, sectors } = this.props;
@@ -246,6 +246,8 @@ class Pie extends Component {
     return 'middle';
   }
 
+  id = uniqueId('recharts-pie-');
+
   cachePrevData = (sectors) => {
     this.setState({ prevSectors: sectors });
   };
@@ -266,45 +268,10 @@ class Pie extends Component {
     });
   };
 
-  renderClipPath() {
-    const { cx, cy, maxRadius, startAngle, isAnimationActive, animationDuration,
-      animationEasing, animationBegin, animationId, id } = this.props;
-
-    return (
-      <defs>
-        <clipPath id={id}>
-          <Animate
-            easing={animationEasing}
-            isActive={isAnimationActive}
-            duration={animationDuration}
-            key={animationId}
-            animationBegin={animationBegin}
-            onAnimationEnd={this.handleAnimationEnd}
-            from={{
-              endAngle: startAngle,
-            }}
-            to={{
-              outerRadius: Math.max(this.props.outerRadius, maxRadius || 0),
-              innerRadius: 0,
-              endAngle: this.props.endAngle,
-            }}
-          >
-            {
-              ({ outerRadius, innerRadius, endAngle }) => (
-                <Sector
-                  cx={cx}
-                  cy={cy}
-                  outerRadius={outerRadius}
-                  innerRadius={innerRadius}
-                  startAngle={startAngle}
-                  endAngle={endAngle}
-                />
-              )
-            }
-          </Animate>
-        </clipPath>
-      </defs>
-    );
+  handleAnimationStart = () => {
+    this.setState({
+      isAnimationStarted: true,
+    });
   }
 
   renderLabelLineItem(option, props) {
@@ -511,7 +478,7 @@ class Pie extends Component {
 
     return (
       <Layer className={layerClass}>
-        <g clipPath={`url(#${id})`}>
+        <g clipPath={`url(#${_.isNil(id) ? this.id : id})`}>
           {this.renderSectors()}
         </g>
         {label && this.renderLabels(sectors)}

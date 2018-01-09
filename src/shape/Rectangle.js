@@ -113,12 +113,16 @@ class Rectangle extends Component {
   /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
     if (this.node && this.node.getTotalLength) {
-      const totalLength = this.node.getTotalLength();
+      try {
+        const totalLength = this.node.getTotalLength();
 
-      if (totalLength) {
-        this.setState({
-          totalLength,
-        });
+        if (totalLength) {
+          this.setState({
+            totalLength,
+          });
+        }
+      } catch (err) {
+        // calculate total length error
       }
     }
 

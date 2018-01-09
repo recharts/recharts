@@ -48,6 +48,7 @@ class PolarAngleAxis extends Component {
     stroke: PropTypes.string,
     orientation: PropTypes.oneOf(['inner', 'outer']),
     tickFormatter: PropTypes.func,
+    allowDuplicatedCategory: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -62,6 +63,7 @@ class PolarAngleAxis extends Component {
     tickLine: true,
     tick: true,
     hide: false,
+    allowDuplicatedCategory: true,
   };
 
   /**
