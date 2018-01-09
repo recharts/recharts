@@ -445,7 +445,7 @@ export default class Demo extends Component {
             margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
             syncId="test"
           >
-            <CartesianGrid stroke='#f5f5f5'/>
+            <CartesianGrid stroke='#f5f5f5' verticalFill={['rgba(0, 0, 0, 0.2)', 'rgba(255, 255, 255, 0.3)']} horizontalFill={['#ccc', '#fff']} />
             <Legend />
             <XAxis />
             <YAxis scale={scale} domain={[0.01, 'auto']} ticks={[0.01, 0.1, 1, 10, 100, 1000]} />
