@@ -1,3 +1,9 @@
+## 1.0.0-beta.9(Jan 09, 2018)
+
+### fix
+
+- Fix `verticalFill` and `horizontalFill` in `<CartesianGrid />` when points are unordered
+
 ## 1.0.0-beta.8(Jan 09, 2018)
 
 ### feat

@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "1.0.0-beta.8",
+  "version": "1.0.0-beta.9",
   "description": "React charts",
   "main": "lib/index",
   "module": "es6/index",
