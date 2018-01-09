@@ -539,10 +539,10 @@ export const combineEventHandlers = (defaultHandler, parentHandler, childHandler
       if (_.isFunction(defaultHandler)) {
         defaultHandler(arg1, arg2, arg3, arg4);
       }
-
       if (_.isFunction(customizedHandler)) {
         customizedHandler(arg1, arg2, arg3, arg4);
       }
+
     };
   }
 

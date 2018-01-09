@@ -184,6 +184,7 @@ const generateCategoricalChart = ({
             { props: nextProps, ...defaultState, updateId: updateId + 1 }) }
         );
       } else if (!isChildrenEqual(nextProps.children, children)) {
+        // update configuration in chilren
         const hasGlobalData = !_.isNil(nextProps.data);
         const newUpdateId = hasGlobalData ? updateId : updateId + 1;
         const { dataStartIndex, dataEndIndex } = this.state;
@@ -191,6 +192,7 @@ const generateCategoricalChart = ({
         const defaultState = {
           ...this.constructor.createDefaultState(nextProps), dataEndIndex, dataStartIndex,
         };
+
         this.setState({
           ...defaultState,
           updateId: newUpdateId,
@@ -935,13 +937,13 @@ const generateCategoricalChart = ({
       if (startIndex !== this.state.dataStartIndex || endIndex !== this.state.dataEndIndex) {
         const { updateId } = this.state;
 
-        this.setState({
+        this.setState(() => ({
           dataStartIndex: startIndex,
           dataEndIndex: endIndex,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
             { props: this.props, dataStartIndex: startIndex, dataEndIndex: endIndex, updateId }
           ),
-        });
+        }));
 
         this.triggerSyncEvent({
           dataStartIndex: startIndex,
@@ -987,21 +989,21 @@ const generateCategoricalChart = ({
      * @return {Object} no return
      */
     handleItemMouseEnter = (el) => {
-      this.setState({
+      this.setState(() => ({
         isTooltipActive: true,
         activeItem: el,
         activePayload: el.tooltipPayload,
         activeCoordinate: el.tooltipPosition || { x: el.cx, y: el.cy },
-      });
+      }));
     };
     /**
      * The handler of mouse leaving a scatter
      * @return {Object} no return
      */
     handleItemMouseLeave = () => {
-      this.setState({
+      this.setState(() => ({
         isTooltipActive: false,
-      });
+      }));
     };
     /**
      * The handler of mouse moving in chart

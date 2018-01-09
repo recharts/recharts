@@ -345,12 +345,21 @@ export const filterSvgElements = (children) => {
 
   return svgElements;
 };
-
 export const isSingleChildEqual = (nextChild, prevChild) => {
   if (_.isNil(nextChild) && _.isNil(prevChild)) {
     return true;
   } else if (!_.isNil(nextChild) && !_.isNil(prevChild)) {
-    return shallowEqual(nextChild.props, prevChild.props);
+    const { children: nextChildren, ...nextProps } = nextChild.props || {};
+    const { children: prevChildren, ...prevProps } = prevChild.props || {};
+
+    if (nextChildren && prevChildren) {
+      // eslint-disable-next-line no-use-before-define
+      return shallowEqual(nextProps, prevProps) && isChildrenEqual(nextChildren, prevChildren);
+    } else if (!nextChildren && !prevChildren) {
+      return shallowEqual(nextProps, prevProps);
+    }
+
+    return false;
   }
 
   return false;

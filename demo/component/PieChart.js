@@ -133,6 +133,9 @@ export default class Demo extends Component {
     console.log(a, b, c);
   };
 
+  handleEnter = (e, activeIndex) => this.setState({ activeIndex });
+  handleLeave = () => this.setState({ activeIndex: -1 });
+
   render () {
     const { data01, data02, data03 } = this.state;
 
@@ -232,6 +235,34 @@ export default class Demo extends Component {
                 {
                   data01.map((entry, index) => (
                     <Cell key={`slice-${index}`} fill={colors[index % 10]}/>
+                  ))
+                }
+                <Label value="test" />
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        <p>PieChart has bug about tooltip</p>
+        <div className="pie-chart-wrapper" style={{ width: '50%', height: '100%', backgroundColor: '#f5f5f5' }}>
+          <ResponsiveContainer>
+            <PieChart>
+              <Pie
+                data={data01}
+                dataKey="value"
+                innerRadius="25%"
+                outerRadius="40%"
+                onMouseEnter={this.handleEnter}
+                onMouseLeave={this.handleLeave}
+              >
+                <Tooltip />
+                {
+                  data01.map((entry, index) => (
+                    <Cell
+                      key={`slice-${index}`}
+                      fill={colors[index % 10]}
+                      fillOpacity={this.state.activeIndex === index ? 1 : 0.25}
+                    />
                   ))
                 }
                 <Label value="test" />
