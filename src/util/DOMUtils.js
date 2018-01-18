@@ -67,7 +67,13 @@ export const getStringSize = (text, style = {}) => {
       document.body.appendChild(measurementSpan);
     }
 
-    measurementSpan.setAttribute('style', getStyleString({ ...SPAN_STYLE, ...style }));
+    // Need to use CSS Object Model (CSSOM) to be able to comply with Content Security Policy (CSP) 
+    // https://en.wikipedia.org/wiki/Content_Security_Policy
+    const measurementSpanStyle = { ...SPAN_STYLE, ...style };
+    Object.keys(measurementSpanStyle).map(styleKey => {
+      measurementSpan.style[styleKey] = measurementSpanStyle[styleKey];
+    });
+
     measurementSpan.textContent = str;
 
     const rect = measurementSpan.getBoundingClientRect();
