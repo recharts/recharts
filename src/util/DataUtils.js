@@ -100,3 +100,32 @@ export const findEntryInArray = (ary, specifiedKey, specifiedValue) => {
 
   return ary.find(entry => (entry && _.get(entry, specifiedKey) === specifiedValue));
 };
+
+export const getlinearRegression = (data) => {
+  let xsum = 0, ysum = 0;
+  for (let i = 0; i < data.length; i++) {
+    xsum += data[i].cx;
+    ysum += data[i].cy;
+  }
+  var xmean = xsum / data.length;
+  var ymean = ysum / data.length;
+  let num = 0;
+  let den = 0;
+  for (let i = 0; i < data.length; i++) {
+    let x = data[i].cx;
+    let y = data[i].cy;
+    num += (x - xmean) * (y - ymean);
+    den += (x - xmean) * (x - xmean);
+  }
+  const a = num / den,
+    b = ymean - a * xmean,
+    xmin = Math.min.apply(0, data.map(elem => elem.cx)),
+    xmax = Math.max.apply(0, data.map(elem => elem.cx));
+
+  return {
+    xmin,
+    xmax,
+    a,
+    b
+  };
+};
