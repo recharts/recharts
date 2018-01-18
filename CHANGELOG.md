@@ -23,7 +23,7 @@
 ### feat
 
 - Add props `allowDuplicatedCategory` to XAxis, YAxis, PolarAngleAxis, PolarRadiusAxis, to remove duplicated category when type="category"
-- Add props id in <Area />, <Bar />, <Line />, <Scatter />, <Label />, <LabelList /> for SSR
+- Add props id in `<Area />`, `<Bar />`, `<Line />`, `<Scatter />`, `<Label />`, `<LabelList />` for SSR
 - Support specify domain of category type axis when allowDuplicatedCategory is false, add cooresponding "xAis", "yAxis", "zAxis" to the props or customized shape of Scatter
 
 ### fix
@@ -37,14 +37,14 @@
 
 ### feat
 
-- Add props `background` to support background rectange in <Bar />
+- Add props `background` to support background rectange in `<Bar />`
 - add props `tickMargin` which set the space between text and tick line
 
 ### fix
 
-- update PRESENTATION_ATTRIBUTES to allow set the radius of each <Rectangle /> of BarChart
+- update PRESENTATION_ATTRIBUTES to allow set the radius of each `<Rectangle />` of BarChart
 - render Legend when all values of Pie is 0
-- fix animation of intial <Bar />
+- fix animation of intial `<Bar />`
 
 ## 1.0.0-beta.5(Nov 24, 2017)
 
@@ -83,7 +83,7 @@
 
 ### fix
 
-- fix attributes order of <Label />
+- fix attributes order of `<Label />`
 - fix the domain of Axis when specify `ticks`
 
 ### feat
@@ -128,7 +128,7 @@
 
 ### fix
 
-- Fix confused parameter `startX` in <Brush />
+- Fix confused parameter `startX` in `<Brush />`
 - Fix ScatterChart when the type of XAxis is "category"
 
 ### docs
@@ -305,7 +305,7 @@
 - fix the propTypes of fontSize
 - support props dx and dy in Text
 - fix bug of stacked bar when spcify domain of axis
-- fix the barSize of bars in <Bar /> when too many bars
+- fix the barSize of bars in `<Bar />` when too many bars
 
 ## 0.20.8 (Feb 15, 2017)
 
@@ -543,7 +543,7 @@
 
 - support empty margin in generateCategoricalChart
 - fix the label of RadialBarChart
-- fix the bug of <Text>{0}</Text>
+- fix the bug of `<Text>{0}</Text>`
 - fix the bug of ScatterChart when margin lose some attributes
 
 ### Feat
