@@ -31,15 +31,7 @@ export const getValueByDataKey = (obj, dataKey, defaultValue) => {
  * @return {Array} Domain of data
  */
 export const getDomainOfDataByKey = (data, key, type, filterNil) => {
-  const flattenData = data.reduce((result, entry) => {
-    const value = getValueByDataKey(entry, key);
-
-    if (_.isArray(value)) {
-      return [...result, ...value];
-    }
-
-    return [...result, value];
-  }, []);
+  const flattenData = _.flatMap(data, entry => getValueByDataKey(entry, key));
 
   if (type === 'number') {
     const domain = flattenData.filter(isNumber);
