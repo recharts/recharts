@@ -45,8 +45,7 @@
   "homepage": "https://github.com/recharts/recharts",
   "peerDependencies": {
     "react": "^15.0.0 || ^16.0.0",
-    "react-dom": "^15.0.0 || ^16.0.0",
-    "react-transition-group": "^2.2.1"
+    "react-dom": "^15.0.0 || ^16.0.0"
   },
   "dependencies": {
     "classnames": "2.2.5",
