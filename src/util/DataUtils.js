@@ -101,31 +101,38 @@ export const findEntryInArray = (ary, specifiedKey, specifiedValue) => {
   return ary.find(entry => (entry && _.get(entry, specifiedKey) === specifiedValue));
 };
 
-export const getlinearRegression = (data) => {
-  let xsum = 0, ysum = 0;
-  for (let i = 0; i < data.length; i++) {
+/**
+ * The least square linear regression
+ * @param {Array} data The array of points
+ * @returns {Object} The domain of x, and the parameter of linear function
+ */
+export const getLinearRegression = (data) => {
+  if (!data || !data.length) { return null; }
+
+  const len = data.length;
+  let xsum = 0;
+  let ysum = 0;
+  let xysum = 0;
+  let xxsum = 0;
+  let xmin = Infinity;
+  let xmax = -Infinity;
+
+  for (let i = 0; i < len; i++) {
     xsum += data[i].cx;
     ysum += data[i].cy;
+    xysum += data[i].cx * data[i].cy;
+    xxsum += data[i].cx * data[i].cx;
+    xmin = Math.min(xmin, data[i].cx);
+    xmax = Math.max(xmax, data[i].cx);
   }
-  var xmean = xsum / data.length;
-  var ymean = ysum / data.length;
-  let num = 0;
-  let den = 0;
-  for (let i = 0; i < data.length; i++) {
-    let x = data[i].cx;
-    let y = data[i].cy;
-    num += (x - xmean) * (y - ymean);
-    den += (x - xmean) * (x - xmean);
-  }
-  const a = num / den,
-    b = ymean - a * xmean,
-    xmin = Math.min.apply(0, data.map(elem => elem.cx)),
-    xmax = Math.max.apply(0, data.map(elem => elem.cx));
+
+  const a = len * xxsum !== xsum * xsum ?
+    ((len * xysum - xsum * ysum) / (len * xxsum - xsum * xsum)) : 0;
 
   return {
     xmin,
     xmax,
     a,
-    b
+    b: (ysum - a * xsum) / len,
   };
 };

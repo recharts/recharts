@@ -16,7 +16,7 @@ import Curve from '../shape/Curve';
 import Symbols from '../shape/Symbols';
 import ErrorBar from './ErrorBar';
 import Cell from '../component/Cell';
-import { uniqueId, interpolateNumber, getlinearRegression } from '../util/DataUtils';
+import { uniqueId, interpolateNumber, getLinearRegression } from '../util/DataUtils';
 import { getValueByDataKey, getCateCoordinateOfLine } from '../util/ChartUtils';
 
 @pureRender
@@ -323,9 +323,9 @@ class Scatter extends Component {
     if (lineType === 'joint') {
       linePoints = points.map(entry => ({ x: entry.cx, y: entry.cy }));
     } else if (lineType === 'fitting') {
-      const { xmin, xmax, a, b} = getlinearRegression(points);
-      const linearExp = x => a * x + b 
-      linePoints = [{ x: xmin, y : linearExp(xmin) }, { x: xmax, y: linearExp(xmax) }];
+      const { xmin, xmax, a, b } = getLinearRegression(points);
+      const linearExp = x => a * x + b;
+      linePoints = [{ x: xmin, y: linearExp(xmin) }, { x: xmax, y: linearExp(xmax) }];
     }
     const lineProps = {
       ...scatterProps,

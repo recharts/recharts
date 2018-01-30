@@ -158,7 +158,7 @@ export default class Demo extends Component {
             <CartesianGrid />
             <Tooltip cursor={{strokeDasharray: '3 3'}}/>
             <Legend/>
-            <Scatter name='A school' data={data05} legendType="square" fill='#8884d8' shape="square"/>
+            <Scatter line lineType="fitting" name='A school' data={data05} legendType="square" fill='#8884d8' shape="square"/>
           </ScatterChart>
         </div>
 
