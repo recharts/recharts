@@ -1,3 +1,19 @@
+## 1.0.0-beta.10(Jan 31, 2018)
+
+### fix
+
+- fix Scatter Chart:lineType 'fitting' does not work
+- Update to allow CSP compliance on setting styles
+- Remove react-transition-group from peerDependencies
+
+### refactor
+
+- Replace flatmap of reduce to _.flatmap in getDomainOfDataByKey
+
+### feat
+
+- Add the gap of props for brush
+
 ## 1.0.0-beta.9(Jan 09, 2018)
 
 ### fix
