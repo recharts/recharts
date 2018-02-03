@@ -12,7 +12,7 @@ import { LEGEND_TYPES } from '../util/ReactUtils';
 
 const renderContent = (content, props) => {
   if (React.isValidElement(content)) {
-    return React.cloneElement(content, props);
+    return content;
   } else if (_.isFunction(content)) {
     return content(props);
   }
