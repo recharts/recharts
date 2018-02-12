@@ -133,7 +133,7 @@ const REACT_BROWSER_EVENT_MAP = {
 
 export const SCALE_TYPES = [
   'auto', 'linear', 'pow', 'sqrt', 'log', 'identity', 'time', 'band', 'point',
-  'ordinal', 'quantile', 'quantize', 'utcTime', 'sequential', 'threshold',
+  'ordinal', 'quantile', 'quantize', 'utc', 'sequential', 'threshold',
 ];
 
 export const LEGEND_TYPES = [
