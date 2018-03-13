@@ -742,6 +742,8 @@ const generateCategoricalChart = ({
         onMouseMove: this.handleMouseMove,
         onMouseLeave: this.handleMouseLeave,
         onTouchMove: this.handleTouchMove,
+        onTouchStart: this.handleTouchStart,
+        onTouchEnd: this.handleTouchEnd,
       } : {};
       const outerEvents = filterEventAttributes(this.props, this.handleOuterEvent);
 
@@ -1077,6 +1079,18 @@ const generateCategoricalChart = ({
     handleTouchMove = (e) => {
       if (e.changedTouches != null && e.changedTouches.length > 0) {
         this.handleMouseMove(e.changedTouches[0]);
+      }
+    };
+
+    handleTouchStart = (e) => {
+      if (e.changedTouches != null && e.changedTouches.length > 0) {
+        this.handleMouseDown(e.changedTouches[0]);
+      }
+    };
+
+    handleTouchEnd = (e) => {
+      if (e.changedTouches != null && e.changedTouches.length > 0) {
+        this.handleMouseUp(e.changedTouches[0]);
       }
     };
 
