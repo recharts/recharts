@@ -24,7 +24,7 @@ class ZAxis extends Component {
     range: PropTypes.arrayOf(PropTypes.number),
     scale: PropTypes.oneOfType([
       PropTypes.oneOf(['auto', 'linear', 'pow', 'sqrt', 'log', 'identity', 'time',
-        'band', 'point', 'ordinal', 'quantile', 'quantize', 'utcTime', 'sequential',
+        'band', 'point', 'ordinal', 'quantile', 'quantize', 'utc', 'sequential',
         'threshold']),
       PropTypes.func,
     ]),
