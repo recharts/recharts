@@ -33,7 +33,7 @@ The best way to get your bug fixed is to provide a reduced test case. jsFiddle  
 + Make sure your code lints (`npm run lint`) - we've done our best to make sure these rules match our internal linting guidelines.
 
 
-## <a name="code"></a>code Guide
+## <a name="code"></a>Code Guide
 
 Our linter will catch most styling issues that may exist in your code.
 You can check the status of your code styling by simply running: `npm run lint`
