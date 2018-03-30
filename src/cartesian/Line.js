@@ -258,8 +258,8 @@ class Line extends Component {
     return dotItem;
   }
 
-  renderDots() {
-    const { isAnimationActive } = this.props;
+  renderDots(needClip) {
+    const { isAnimationActive, id } = this.props;
 
     if (isAnimationActive && !this.state.isAnimationFinished) {
       return null;
@@ -268,6 +268,7 @@ class Line extends Component {
     const lineProps = getPresentationAttributes(this.props);
     const customDotProps = getPresentationAttributes(dot);
     const dotEvents = filterEventAttributes(dot);
+    const clipPathId = _.isNil(id) ? this.id : id;
     const dots = points.map((entry, i) => {
       const dotProps = {
         key: `dot-${i}`,
@@ -282,8 +283,11 @@ class Line extends Component {
 
       return this.renderDotItem(dot, dotProps);
     });
+    const dotsProps = {
+      clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
+    };
 
-    return <Layer className="recharts-line-dots" key="dots">{dots}</Layer>;
+    return <Layer className="recharts-line-dots" key="dots" {...dotsProps}>{dots}</Layer>;
   }
 
   renderCurveStatically(points, needClip, props) {
@@ -398,7 +402,7 @@ class Line extends Component {
         ) : null}
         {!hasSinglePoint && this.renderCurve(needClip)}
         {this.renderErrorBar()}
-        {(hasSinglePoint || dot) && this.renderDots()}
+        {(hasSinglePoint || dot) && this.renderDots(needClip)}
         {(!isAnimationActive || isAnimationFinished) &&
           LabelList.renderCallByParent(this.props, points)}
       </Layer>
