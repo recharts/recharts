@@ -18,7 +18,7 @@ const propTypes = {
     x: PropTypes.number,
     y: PropTypes.number,
     width: PropTypes.number,
-    height: PropTypes.number
+    height: PropTypes.number,
   }),
 
   active: PropTypes.bool,
@@ -29,30 +29,22 @@ const propTypes = {
   itemStyle: PropTypes.object,
   labelStyle: PropTypes.object,
   wrapperStyle: PropTypes.object,
-  cursor: PropTypes.oneOfType([
-    PropTypes.bool,
-    PropTypes.element,
-    PropTypes.object
-  ]),
+  cursor: PropTypes.oneOfType([PropTypes.bool, PropTypes.element, PropTypes.object]),
 
   coordinate: PropTypes.shape({
     x: PropTypes.number,
-    y: PropTypes.number
+    y: PropTypes.number,
   }),
   position: PropTypes.shape({
     x: PropTypes.number,
-    y: PropTypes.number
+    y: PropTypes.number,
   }),
 
   label: PropTypes.any,
   payload: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.any,
-      value: PropTypes.oneOfType([
-        PropTypes.number,
-        PropTypes.string,
-        PropTypes.array
-      ]),
+      value: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.array]),
       unit: PropTypes.any
     })
   ),
@@ -64,11 +56,11 @@ const propTypes = {
     'ease-in',
     'ease-out',
     'ease-in-out',
-    'linear'
+    'linear',
   ]),
   itemSorter: PropTypes.func,
   filterNull: PropTypes.bool,
-  useTranslate3d: PropTypes.bool
+  useTranslate3d: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -87,7 +79,7 @@ const defaultProps = {
   animationDuration: 400,
   itemSorter: () => -1,
   filterNull: true,
-  useTranslate3d: false
+  useTranslate3d: false,
 };
 
 const renderContent = (content, props) => {
@@ -108,7 +100,7 @@ class Tooltip extends Component {
 
   state = {
     boxWidth: -1,
-    boxHeight: -1
+    boxHeight: -1,
   };
 
   componentDidMount() {
@@ -125,44 +117,27 @@ class Tooltip extends Component {
     if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
       const box = this.wrapperNode.getBoundingClientRect();
 
-      if (
-        Math.abs(box.width - boxWidth) > EPS ||
-        Math.abs(box.height - boxHeight) > EPS
-      ) {
+      if (Math.abs(box.width - boxWidth) > EPS || Math.abs(box.height - boxHeight) > EPS) {
         this.setState({
           boxWidth: box.width,
-          boxHeight: box.height
+          boxHeight: box.height,
         });
       }
     } else if (boxWidth !== -1 || boxHeight !== -1) {
       this.setState({
         boxWidth: -1,
-        boxHeight: -1
+        boxHeight: -1,
       });
     }
   }
 
   render() {
-    const {
-      payload,
-      isAnimationActive,
-      animationDuration,
-      animationEasing,
-      filterNull
-    } = this.props;
-    const finalPayload =
-      filterNull && payload && payload.length
-        ? payload.filter(entry => !_.isNil(entry.value))
-        : payload;
+    const { payload, isAnimationActive, animationDuration, animationEasing,
+      filterNull } = this.props;
+    const finalPayload = filterNull && payload && payload.length ?
+      payload.filter(entry => !_.isNil(entry.value)) : payload;
     const hasPayload = finalPayload && finalPayload.length;
-    const {
-      content,
-      viewBox,
-      coordinate,
-      position,
-      active,
-      offset
-    } = this.props;
+    const { content, viewBox, coordinate, position, active, offset } = this.props;
     const wrapperStyle = { ...this.props.wrapperStyle };
     let translateX, translateY;
     const { boxWidth, boxHeight } = this.state;
@@ -171,43 +146,31 @@ class Tooltip extends Component {
       coordinate.x + boxWidth + offset > viewBox.x + viewBox.width;
 
     if (boxWidth > 0 && boxHeight > 0 && coordinate) {
-      translateX =
-        position && isNumber(position.x)
-          ? position.x
-          : Math.max(
-              dataToRight
-                ? coordinate.x - boxWidth - offset
-                : coordinate.x + offset,
-              viewBox.x
-            );
+      translateX = position && isNumber(position.x) ? position.x : Math.max(
+        dataToRight ?
+          coordinate.x - boxWidth - offset :
+          coordinate.x + offset, viewBox.x);
 
-      translateY =
-        position && isNumber(position.y)
-          ? position.y
-          : Math.max(
-              coordinate.y + boxHeight + offset > viewBox.y + viewBox.height
-                ? coordinate.y - boxHeight - offset
-                : coordinate.y + offset,
-              viewBox.y
-            );
+      translateY = position && isNumber(position.y) ? position.y : Math.max(
+        coordinate.y + boxHeight + offset > viewBox.y + viewBox.height ?
+          coordinate.y - boxHeight - offset :
+          coordinate.y + offset, viewBox.y);
     } else {
       wrapperStyle.visibility = 'hidden';
     }
 
     let positionStyle = {
       ...translateStyle({
-        transform: this.props.useTranslate3d
-          ? `translate3d(${translateX}px, ${translateY}px, 0)`
-          : `translate(${translateX}px, ${translateY}px)`
-      })
+        transform: this.props.useTranslate3d ? `translate3d(${translateX}px, ${translateY}px, 0)` : `translate(${translateX}px, ${translateY}px)`,
+      }),
     };
 
     if (isAnimationActive && active) {
       positionStyle = {
         ...positionStyle,
         ...translateStyle({
-          transition: `transform ${animationDuration}ms ${animationEasing}`
-        })
+          transition: `transform ${animationDuration}ms ${animationEasing}`,
+        }),
       };
     }
 
@@ -219,12 +182,8 @@ class Tooltip extends Component {
       right: dataToRight ? -5 : boxWidth,
       borderTop: '5px solid transparent',
       borderBottom: '5px solid transparent',
-      borderLeft: dataToRight
-        ? `5px solid ${wrapperStyle.borderColor || 'black'}`
-        : '',
-      borderRight: dataToRight
-        ? ''
-        : `5px solid ${wrapperStyle.borderColor || 'black'}`
+      borderLeft: dataToRight ? `5px solid ${wrapperStyle.borderColor || 'black'}` : '',
+      borderRight: dataToRight ? '' : `5px solid ${wrapperStyle.borderColor || 'black'}`,
     };
 
     return (
@@ -234,7 +193,7 @@ class Tooltip extends Component {
           position: 'absolute',
           top: 0,
           pointerEvents: 'none',
-          visibility: active && hasPayload ? 'visible' : 'hidden'
+          visibility: active && hasPayload ? 'visible' : 'hidden',
         }}
       >
         <div className="reacharts-tooltip-arrow" style={arrowStyle} />
