@@ -41,13 +41,11 @@ const propTypes = {
   }),
 
   label: PropTypes.any,
-  payload: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.any,
-      value: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.array]),
-      unit: PropTypes.any
-    })
-  ),
+  payload: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.any,
+    value: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.array]),
+    unit: PropTypes.any
+  })),
 
   isAnimationActive: PropTypes.bool,
   animationDuration: PropTypes.number,
