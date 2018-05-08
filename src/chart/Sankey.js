@@ -110,9 +110,6 @@ const getNodesTree = ({ nodes, links }, width, nodeWidth) => {
     for (let i = 0, len = tree.length; i < len; i++) {
       const node = tree[i];
 
-      if (!node.targetNodes.length) {
-        node.depth = maxDepth;
-      }
       node.x = node.depth * childWidth;
       node.dx = nodeWidth;
     }
