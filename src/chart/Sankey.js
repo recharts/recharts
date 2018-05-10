@@ -54,12 +54,18 @@ const searchTargetsAndSources = (links, id) => {
     const link = links[i];
 
     if (link.source === id) {
-      targetNodes.push(link.target);
+      targetNodes.push({
+        target_index: link.target,
+        value: link.value
+      });
       targetLinks.push(i);
     }
 
     if (link.target === id) {
-      sourceNodes.push(link.source);
+      sourceNodes.push({
+        source_index: link.source,
+        value: link.value
+      });
       sourceLinks.push(i);
     }
   }
@@ -69,9 +75,9 @@ const searchTargetsAndSources = (links, id) => {
 
 const updateDepthOfTargets = (tree, curNode) => {
   const targetNodes = curNode.targetNodes;
-
   for (let i = 0, len = targetNodes.length; i < len; i++) {
-    const target = tree[targetNodes[i]];
+    const index = targetNodes[i].target_index;
+    const target = tree[index];
 
     if (target) {
       target.depth = Math.max(curNode.depth + 1, target.depth);
