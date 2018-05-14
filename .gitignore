@@ -1,7 +1,6 @@
 .DS_Store
 *.log
 node_modules
-es6
 coverage
 npm-debug.log
 *.orig
