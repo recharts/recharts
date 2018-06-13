@@ -1498,7 +1498,7 @@ const generateCategoricalChart = ({
       return (
         <div
           className={classNames('recharts-wrapper', className)}
-          style={{ ...style, position: 'relative', cursor: 'default', width, height }}
+          style={{ position: 'relative', cursor: 'default', width, height, ...style }}
           {...events}
           ref={(node) => { this.container = node; }}
         >
