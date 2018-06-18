@@ -32,7 +32,7 @@ const propTypes = {
     'top', 'left', 'right', 'bottom', 'inside', 'outside',
     'insideLeft', 'insideRight', 'insideTop', 'insideBottom',
     'insideTopLeft', 'insideBottomLeft', 'insideTopRight', 'insideBottomRight',
-    'insideStart', 'insideEnd', 'end', 'center',
+    'insideStart', 'insideEnd', 'end', 'center', 'centerTop', 'centerBottom'
   ]),
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
@@ -127,6 +127,24 @@ const getAttrsOfPolarLabel = (props) => {
       y: cy,
       textAnchor: 'middle',
       verticalAnchor: 'middle',
+    };
+  }
+
+  if (position === 'centerTop') {
+    return {
+      x: cx,
+      y: cy,
+      textAnchor: 'middle',
+      verticalAnchor: 'start',
+    };
+  }
+
+  if (position === 'centerBottom') {
+    return {
+      x: cx,
+      y: cy,
+      textAnchor: 'middle',
+      verticalAnchor: 'end',
     };
   }
 
