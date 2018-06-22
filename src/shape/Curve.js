@@ -72,8 +72,9 @@ class Curve extends Component {
     let lineFunction;
 
     if (_.isArray(baseLine)) {
+      const formatBaseLine = connectNulls ? baseLine.filter(base => defined(base)) : baseLine;
       const areaPoints = formatPoints.map((entry, index) => (
-        { ...entry, base: baseLine[index] }
+        { ...entry, base: formatBaseLine[index] }
       ));
       if (layout === 'vertical') {
         lineFunction = shapeArea().y(getY).x1(getX).x0(d => d.base.x);
