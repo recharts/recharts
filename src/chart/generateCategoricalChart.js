@@ -1176,6 +1176,7 @@ const generateCategoricalChart = ({
       const key = element.key || '_recharts-cursor';
       const cursorProps = {
         stroke: '#ccc',
+        pointerEvents: 'none',
         ...offset,
         ...restProps,
         ...getPresentationAttributes(element.props.cursor),
