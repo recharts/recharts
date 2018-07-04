@@ -10,7 +10,7 @@ import Layer from '../container/Layer';
 import Label from '../component/Label';
 import { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 import { isNumOrStr } from '../util/DataUtils';
-import { validateCoordinateInRange } from '../util/ChartUtils';
+import { LabeledScaleHelper, rectWithPoints } from '../util/CartesianUtils';
 import Rectangle from '../shape/Rectangle';
 
 @pureRender
@@ -58,46 +58,21 @@ class ReferenceArea extends Component {
   getRect(hasX1, hasX2, hasY1, hasY2) {
     const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2, xAxis,
       yAxis } = this.props;
-    const xScale = xAxis.scale;
-    const yScale = yAxis.scale;
-    const xOffset = xScale.bandwidth ? xScale.bandwidth() / 2 : 0;
-    const yOffset = yScale.bandwidth ? yScale.bandwidth() / 2 : 0;
-    const xRange = xScale.range();
-    const yRange = yScale.range();
-    let x1, x2, y1, y2;
 
-    if (hasX1) {
-      x1 = xScale(xValue1) + xOffset;
-    } else {
-      x1 = xRange[0];
-    }
+    const scale = LabeledScaleHelper.create({ x: xAxis.scale, y: yAxis.scale });
 
-    if (hasX2) {
-      x2 = xScale(xValue2) + xOffset;
-    } else {
-      x2 = xRange[1];
-    }
+    const p1 = {
+      x: hasX1 ? scale.x.apply(xValue1) : scale.x.rangeMin,
+      y: hasY1 ? scale.y.apply(yValue1) : scale.y.rangeMin,
+    };
 
-    if (hasY1) {
-      y1 = yScale(yValue1) + yOffset;
-    } else {
-      y1 = yRange[0];
-    }
+    const p2 = {
+      x: hasX2 ? scale.x.apply(xValue2) : scale.x.rangeMax,
+      y: hasY2 ? scale.y.apply(yValue2) : scale.y.rangeMax,
+    };
 
-    if (hasY2) {
-      y2 = yScale(yValue2) + yOffset;
-    } else {
-      y2 = yRange[1];
-    }
-
-    if (validateCoordinateInRange(x1, xScale) && validateCoordinateInRange(x2, xScale) &&
-      validateCoordinateInRange(y1, yScale) && validateCoordinateInRange(y2, yScale)) {
-      return {
-        x: Math.min(x1, x2),
-        y: Math.min(y1, y2),
-        width: Math.abs(x2 - x1),
-        height: Math.abs(y2 - y1),
-      };
+    if (scale.isInRange(p1) && scale.isInRange(p2)) {
+      return rectWithPoints(p1, p2);
     }
 
     return null;

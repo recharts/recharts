@@ -3,15 +3,10 @@ import { scaleLinear, scaleBand } from 'd3-scale';
 import {
   calculateActiveTickIndex, getDomainOfStackGroups,
   getDomainOfDataByKey, appendOffsetOfLegend,
-  validateCoordinateInRange, getBandSizeOfAxis, calculateDomainOfTicks,
+  getBandSizeOfAxis, calculateDomainOfTicks,
   parseSpecifiedDomain,  parseScale, getTicksOfScale, getValueByDataKey,
   offsetSign, MIN_VALUE_REG, MAX_VALUE_REG } from '../../../src/util/ChartUtils';
 
-describe('validateCoordinateInRange', () => {
-  it('DataUtils.validateCoordinateInRange(1) should return false ', () => {
-    expect(validateCoordinateInRange(1)).to.equal(false);
-  });
-});
 
 describe('getBandSizeOfAxis', () => {
   it('DataUtils.getBandSizeOfAxis() should return 0 ', () => {
