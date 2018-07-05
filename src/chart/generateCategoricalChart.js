@@ -69,6 +69,7 @@ const generateCategoricalChart = ({
         PropTypes.arrayOf(PropTypes.node),
         PropTypes.node,
       ]),
+      defaultShowTooltip: PropTypes.bool,
       onClick: PropTypes.func,
       onMouseLeave: PropTypes.func,
       onMouseEnter: PropTypes.func,
@@ -96,7 +97,7 @@ const generateCategoricalChart = ({
      * @return {Object} Whole new state
      */
     static createDefaultState = (props) => {
-      const { children, isTooltipActive } = props;
+      const { children, defaultShowTooltip } = props;
       const brushItem = findChildByType(children, Brush);
       const startIndex = (brushItem && brushItem.props && brushItem.props.startIndex) || 0;
       const endIndex = (brushItem && brushItem.props && brushItem.props.endIndex)
@@ -107,7 +108,7 @@ const generateCategoricalChart = ({
         dataStartIndex: startIndex,
         dataEndIndex: endIndex,
         activeTooltipIndex: -1,
-        isTooltipActive: isTooltipActive || false,
+        isTooltipActive: !_.isNil(defaultShowTooltip) ? defaultShowTooltip : false,
       };
     };
 

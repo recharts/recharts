@@ -1,3 +1,20 @@
+## 1.0.0(Jul 05, 2018)
+
+### fix
+
+- #1195 Replace axis scale value `utcTime` with `utc`
+- Clip dots of <Line />
+
+
+### refactor
+
+- use lodash-es for es6 build
+
+### feat
+
+- Add touchStart & touchEnd event handling
+- Add explicit prop `defaultShowTooltip`  to activate tooltip
+
 ## 1.0.0-beta.10(Jan 31, 2018)
 
 ### fix
