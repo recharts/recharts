@@ -151,7 +151,7 @@ const getAttrsOfCartesianLabel = (props) => {
       x: x + width / 2,
       y: y - sign * offset,
       textAnchor: 'middle',
-      verticalAnchor: 'end',
+      verticalAnchor: sign > 0 ? 'end' : 'start',
     };
   }
 
