@@ -8,7 +8,7 @@
     "lodash",
     "use-lodash-es"
   ],
-  "presets": [["es2015", { "modules": false }], "react"],
+  "presets": [["env", { "modules": false }], "react"],
   "env": {
     "test": {
       "plugins": ["transform-es2015-modules-commonjs", "istanbul"]
