@@ -5,10 +5,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
+import classNames from 'classnames';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import { isSsr } from '../util/ReactUtils';
 import { isNumber } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
+
+const CLS_PREFIX = 'recharts-tooltip-wrapper';
 
 const EPS = 1;
 
@@ -182,9 +185,16 @@ class Tooltip extends Component {
       };
     }
 
+    const cls = classNames(CLS_PREFIX, {
+      [`${CLS_PREFIX}-right`]: isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX >= coordinate.x,
+      [`${CLS_PREFIX}-left`]: isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX < coordinate.x,
+      [`${CLS_PREFIX}-bottom`]: isNumber(translateY) && coordinate && isNumber(coordinate.y) && translateY >= coordinate.y,
+      [`${CLS_PREFIX}-top`]: isNumber(translateY) && coordinate && isNumber(coordinate.y) && translateY < coordinate.y,
+    });
+
     return (
       <div
-        className="recharts-tooltip-wrapper"
+        className={cls}
         style={outerStyle}
         ref={(node) => { this.wrapperNode = node; }}
       >
