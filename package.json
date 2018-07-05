@@ -25,7 +25,7 @@
     "build-es6": "rimraf es6 && babel ./src -d es6",
     "build-umd": "cross-env NODE_ENV=development webpack src/index.js umd/Recharts.js",
     "build-min": "cross-env NODE_ENV=production webpack src/index.js umd/Recharts.min.js",
-    "demo": "webpack-dev-server --progress --port 3000 --content-base demo --inline --config demo/webpack.config.js",
+    "demo": "webpack-dev-server --progress --port 3000 --host 127.0.0.1 --content-base demo --inline --config demo/webpack.config.js",
     "test": "cross-env NODE_ENV=test karma start test/karma.conf.js",
     "lint": "eslint src",
     "autofix": "eslint src --fix",

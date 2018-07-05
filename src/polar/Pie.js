@@ -465,7 +465,7 @@ class Pie extends Component {
 
   render() {
     const { hide, sectors, className, label, cx, cy, innerRadius,
-      outerRadius, isAnimationActive, id } = this.props;
+      outerRadius, isAnimationActive, prevSectors, id } = this.props;
 
     if (hide || !sectors || !sectors.length || !isNumber(cx)
       || !isNumber(cy) || !isNumber(innerRadius)
@@ -473,7 +473,6 @@ class Pie extends Component {
       return null;
     }
 
-    const { isAnimationFinished } = this.state;
     const layerClass = classNames('recharts-pie', className);
 
     return (
@@ -483,7 +482,7 @@ class Pie extends Component {
         </g>
         {label && this.renderLabels(sectors)}
         {Label.renderCallByParent(this.props, null, false)}
-        {(!isAnimationActive || isAnimationFinished) &&
+        {(!isAnimationActive || (prevSectors && _.isEqual(prevSectors, sectors))) &&
           LabelList.renderCallByParent(this.props, sectors, false)}
       </Layer>
     );
