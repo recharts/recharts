@@ -3,17 +3,23 @@
 ### fix
 
 - #1195 Replace axis scale value `utcTime` with `utc`
+- remove wrapperStyle on DefaultTooltipContent
 - Clip dots of <Line />
-
+- Move style spread to after default styles to allow overriding
+- Fixing range area chart bottom bound. Base line needed to be filterted for connecting
+ null
+- Fix tooltips that disappear while mouse still over a scatter point
 
 ### refactor
 
 - use lodash-es for es6 build
+- Factor out some scale- and rect-related functions
 
 ### feat
 
 - Add touchStart & touchEnd event handling
 - Add explicit prop `defaultShowTooltip`  to activate tooltip
+- Position the 'top' label outside the element for negative heights
 
 ## 1.0.0-beta.10(Jan 31, 2018)
 
