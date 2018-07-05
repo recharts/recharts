@@ -230,7 +230,7 @@ class Bar extends Component {
 
   renderRectanglesWithAnimation() {
     const { data, layout, isAnimationActive, animationBegin,
-      animationDuration, animationEasing, animationId, width,
+      animationDuration, animationEasing, animationId,
     } = this.props;
     const { prevData } = this.state;
 
@@ -306,7 +306,7 @@ class Bar extends Component {
     return this.renderRectanglesStatically(data);
   }
 
-  renderBackground(sectors) {
+  renderBackground() {
     const { data } = this.props;
     const backgroundProps = getPresentationAttributes(this.props.background);
 
@@ -351,7 +351,7 @@ class Bar extends Component {
     }
 
     return errorBarItems.map((item, i) => React.cloneElement(item, {
-      key: i,
+      key: `error-bar-${i}`,
       data,
       xAxis,
       yAxis,

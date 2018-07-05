@@ -156,7 +156,7 @@ class CartesianGrid extends Component {
       const colorIndex = i % verticalFill.length;
       return (
         <rect
-          key={i}
+          key={`react-${i}`}
           x={Math.round(entry + x - x)}
           y={y}
           width={lineWidth}
@@ -194,7 +194,7 @@ class CartesianGrid extends Component {
       const colorIndex = i % horizontalFill.length;
       return (
         <rect
-          key={i}
+          key={`react-${i}`}
           y={Math.round(entry + y - y)}
           x={x}
           height={lineHeight}
