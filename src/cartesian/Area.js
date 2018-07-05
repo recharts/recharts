@@ -163,13 +163,13 @@ class Area extends Component {
       baseLine = points.map((entry) => {
         if (layout === 'horizontal') {
           return {
-            x: entry.x ? entry.x : null,
-            y: entry.y ? yAxis.scale(entry && entry.value[0]) : null,
+            x: entry.x,
+            y: !_.isNil(_.get(entry, 'value[0]')) ? yAxis.scale(_.get(entry, 'value[0]')) : null,
           };
         }
         return {
-          x: entry.x ? xAxis.scale(entry && entry.value[0]) : null,
-          y: entry.y ? entry.y : null
+          x: !_.isNil(_.get(entry, 'value[0]')) ? xAxis.scale(_.get(entry, 'value[0]')) : null,
+          y: entry.y,
         };
       });
     } else if (layout === 'horizontal') {
