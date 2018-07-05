@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import ReactResizeDetector from 'react-resize-detector';
-import _ from 'lodash';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
@@ -37,48 +36,13 @@ class ResponsiveContainer extends Component {
       containerWidth: -1,
       containerHeight: -1,
     };
-
-    this.handleResize = props.debounce > 0 ?
-      _.debounce(this.updateDimensionsImmediate, props.debounce) :
-      this.updateDimensionsImmediate;
   }
 
-  /* eslint-disable  react/no-did-mount-set-state */
-  componentDidMount() {
-    this.mounted = true;
+  updateDimensionsImmediate = (containerWidth, containerHeight) => {
+    const { containerWidth: oldWidth, containerHeight: oldHeight } = this.state;
 
-    const size = this.getContainerSize();
-
-    if (size) {
-      this.setState(size);
-    }
-  }
-
-  componentWillUnmount() {
-    this.mounted = false;
-  }
-
-  getContainerSize() {
-    if (!this.container) { return null; }
-
-    return {
-      containerWidth: this.container.clientWidth,
-      containerHeight: this.container.clientHeight,
-    };
-  }
-
-  updateDimensionsImmediate = () => {
-    if (!this.mounted) { return; }
-
-    const newSize = this.getContainerSize();
-
-    if (newSize) {
-      const { containerWidth: oldWidth, containerHeight: oldHeight } = this.state;
-      const { containerWidth, containerHeight } = newSize;
-
-      if (containerWidth !== oldWidth || containerHeight !== oldHeight) {
-        this.setState({ containerWidth, containerHeight });
-      }
+    if (containerWidth !== oldWidth || containerHeight !== oldHeight) {
+      this.setState({ containerWidth, containerHeight });
     }
   };
 
@@ -127,9 +91,9 @@ class ResponsiveContainer extends Component {
   }
 
   render() {
-    const { minWidth, minHeight, width, height, maxHeight, id, className } = this.props;
+    const { minWidth, minHeight, width, height, maxHeight, id, className, debounce } = this.props;
     const style = { width, height, minWidth, minHeight, maxHeight };
-
+    const resizeDetectorProps = debounce > 0 ? { refreshMode: 'debounce', refreshRate: debounce } : {};
     return (
       <div
         id={id}
@@ -138,7 +102,12 @@ class ResponsiveContainer extends Component {
         ref={(node) => { this.container = node; }}
       >
         {this.renderChart()}
-        <ReactResizeDetector handleWidth handleHeight onResize={this.handleResize} />
+        <ReactResizeDetector
+          handleWidth
+          handleHeight
+          onResize={this.updateDimensionsImmediate}
+          {...resizeDetectorProps}
+        />
       </div>
     );
   }
