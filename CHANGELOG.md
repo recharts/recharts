@@ -1,3 +1,9 @@
+## 1.0.1(Jul 05, 2016)
+
+### fix
+
+- only use babel-es in es6/, fix #1372
+
 ## 1.0.0(Jul 05, 2018)
 
 ### fix
