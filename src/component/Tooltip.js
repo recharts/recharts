@@ -44,7 +44,7 @@ const propTypes = {
   payload: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.any,
     value: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.array]),
-    unit: PropTypes.any,
+    unit: PropTypes.any
   })),
 
   isAnimationActive: PropTypes.bool,
@@ -135,60 +135,75 @@ class Tooltip extends Component {
     const finalPayload = filterNull && payload && payload.length ?
       payload.filter(entry => !_.isNil(entry.value)) : payload;
     const hasPayload = finalPayload && finalPayload.length;
-    const { content, viewBox, coordinate, position, active, offset, wrapperStyle } = this.props;
-    let outerStyle = {
-      pointerEvents: 'none',
-      visibility: active && hasPayload ? 'visible' : 'hidden',
-      position: 'absolute',
-      top: 0,
-      ...wrapperStyle,
-    };
+    const { content, viewBox, coordinate, position, active, offset } = this.props;
+    const wrapperStyle = { ...this.props.wrapperStyle };
     let translateX, translateY;
+    const { boxWidth, boxHeight } = this.state;
 
-    if (position && isNumber(position.x) && isNumber(position.y)) {
-      translateX = position.x;
-      translateY = position.y;
+    const dataToRight =
+      coordinate.x + boxWidth + offset > viewBox.x + viewBox.width;
+
+    if (boxWidth > 0 && boxHeight > 0 && coordinate) {
+      translateX = position && isNumber(position.x) ? position.x : Math.max(
+        dataToRight ?
+          coordinate.x - boxWidth - offset :
+          coordinate.x + offset, viewBox.x);
+
+      translateY = position && isNumber(position.y) ? position.y : Math.max(
+        coordinate.y + boxHeight + offset > viewBox.y + viewBox.height ?
+          coordinate.y - boxHeight - offset :
+          coordinate.y + offset, viewBox.y);
     } else {
-      const { boxWidth, boxHeight } = this.state;
-
-      if (boxWidth > 0 && boxHeight > 0 && coordinate) {
-        translateX = position && isNumber(position.x) ? position.x : Math.max(
-          coordinate.x + boxWidth + offset > (viewBox.x + viewBox.width) ?
-            coordinate.x - boxWidth - offset :
-            coordinate.x + offset, viewBox.x);
-
-        translateY = position && isNumber(position.y) ? position.y : Math.max(
-          coordinate.y + boxHeight + offset > (viewBox.y + viewBox.height) ?
-            coordinate.y - boxHeight - offset :
-            coordinate.y + offset, viewBox.y);
-      } else {
-        outerStyle.visibility = 'hidden';
-      }
+      wrapperStyle.visibility = 'hidden';
     }
 
-    outerStyle = {
-      ...outerStyle,
+    let positionStyle = {
       ...translateStyle({
         transform: this.props.useTranslate3d ? `translate3d(${translateX}px, ${translateY}px, 0)` : `translate(${translateX}px, ${translateY}px)`,
       }),
     };
 
     if (isAnimationActive && active) {
-      outerStyle = {
-        ...outerStyle,
+      positionStyle = {
+        ...positionStyle,
         ...translateStyle({
           transition: `transform ${animationDuration}ms ${animationEasing}`,
         }),
       };
     }
 
+    const arrowStyle = {
+      position: 'absolute',
+      width: 0,
+      height: 0,
+      top: 10,
+      right: dataToRight ? -5 : boxWidth,
+      borderTop: '5px solid transparent',
+      borderBottom: '5px solid transparent',
+      borderLeft: dataToRight ? `5px solid ${wrapperStyle.borderColor || 'black'}` : '',
+      borderRight: dataToRight ? '' : `5px solid ${wrapperStyle.borderColor || 'black'}`,
+    };
+
     return (
       <div
-        className="recharts-tooltip-wrapper"
-        style={outerStyle}
-        ref={(node) => { this.wrapperNode = node; }}
+        style={{
+          ...positionStyle,
+          position: 'absolute',
+          top: 0,
+          pointerEvents: 'none',
+          visibility: active && hasPayload ? 'visible' : 'hidden',
+        }}
       >
-        {renderContent(content, { ...this.props, payload: finalPayload })}
+        <div className="reacharts-tooltip-arrow" style={arrowStyle} />
+        <div
+          className="recharts-tooltip-wrapper"
+          style={wrapperStyle}
+          ref={node => {
+            this.wrapperNode = node;
+          }}
+        >
+          {renderContent(content, { ...this.props, payload: finalPayload })}
+        </div>
       </div>
     );
   }
