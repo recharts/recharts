@@ -460,6 +460,7 @@ class Pie extends Component {
       (!prevSectors || !_.isEqual(prevSectors, sectors))) {
       return this.renderSectorsWithAnimation();
     }
+    this.handleAnimationEnd();
     return this.renderSectorsStatically(sectors);
   }
 
