@@ -22,7 +22,7 @@
   "scripts": {
     "build": "npm run build-cjs && npm run build-es6 && rimraf umd && npm run build-umd && npm run build-min",
     "build-cjs": "rimraf lib && cross-env NODE_ENV=commonjs babel ./src -d lib",
-    "build-es6": "rimraf es6 && babel ./src -d es6",
+    "build-es6": "rimraf es6 && cross-env NODE_ENV=es6 babel ./src -d es6",
     "build-umd": "cross-env NODE_ENV=development webpack src/index.js umd/Recharts.js",
     "build-min": "cross-env NODE_ENV=production webpack src/index.js umd/Recharts.min.js",
     "demo": "webpack-dev-server --progress --port 3000 --host 127.0.0.1 --content-base demo --inline --config demo/webpack.config.js",

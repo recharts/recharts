@@ -5,13 +5,15 @@
     "transform-class-properties",
     "transform-object-rest-spread",
     "transform-function-bind",
-    "lodash",
-    "use-lodash-es"
+    "lodash"
   ],
   "presets": [["env", { "modules": false }], "react"],
   "env": {
     "test": {
       "plugins": ["transform-es2015-modules-commonjs", "istanbul"]
+    },
+    "es6": {
+      "plugins": ["use-lodash-es"] 
     },
     "commonjs": {
       "plugins": [
