@@ -961,19 +961,6 @@ export const parseSpecifiedDomain = (specifiedDomain, dataDomain, allowDataOverf
   return domain;
 };
 
-export const validateCoordinateInRange = (coordinate, scale) => {
-  if (!scale) { return false; }
-
-  const range = scale.range();
-  const first = range[0];
-  const last = range[range.length - 1];
-  const isValidate = first <= last ?
-    (coordinate >= first && coordinate <= last) :
-    (coordinate >= last && coordinate <= first);
-
-  return isValidate;
-};
-
 /**
  * Calculate the size between two category
  * @param  {Object} axis  The options of axis

@@ -12,7 +12,7 @@ import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
   getPresentationAttributes, filterEventAttributes } from '../util/ReactUtils';
 import Label from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
-import { validateCoordinateInRange } from '../util/ChartUtils';
+import { LabeledScaleHelper } from '../util/CartesianUtils';
 
 @pureRender
 class ReferenceDot extends Component {
@@ -52,19 +52,11 @@ class ReferenceDot extends Component {
 
   getCoordinate() {
     const { x, y, xAxis, yAxis } = this.props;
-    const xScale = xAxis.scale;
-    const yScale = yAxis.scale;
-    const result = {
-      cx: xScale(x) + (xScale.bandwidth ? xScale.bandwidth() / 2 : 0),
-      cy: yScale(y) + (yScale.bandwidth ? yScale.bandwidth() / 2 : 0),
-    };
+    const scales = LabeledScaleHelper.create({ x: xAxis.scale, y: yAxis.scale });
 
-    if (validateCoordinateInRange(result.cx, xScale) &&
-      validateCoordinateInRange(result.cy, yScale)) {
-      return result;
-    }
+    const result = scales.apply({ x, y }, { bandAware: true });
 
-    return null;
+    return scales.isInRange(result) ? result : null;
   }
 
   renderDot(option, props) {
@@ -99,20 +91,23 @@ class ReferenceDot extends Component {
 
     if (!coordinate) { return null; }
 
+    const { x: cx, y: cy } = coordinate;
+
     const { shape, className } = this.props;
 
     const dotProps = {
       ...getPresentationAttributes(this.props),
       ...filterEventAttributes(this.props),
-      ...coordinate,
+      cx,
+      cy,
     };
 
     return (
       <Layer className={classNames('recharts-reference-dot', className)}>
         {this.renderDot(shape, dotProps)}
         {Label.renderCallByParent(this.props, {
-          x: coordinate.cx - r,
-          y: coordinate.cy - r,
+          x: cx - r,
+          y: cy - r,
           width: 2 * r,
           height: 2 * r,
         })}
