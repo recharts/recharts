@@ -825,6 +825,17 @@ export const getBaseValueOfBar = ({ numericAxis }) => {
   return domain[0];
 };
 
+export const ifOverflowMatches = (props, value) => {
+  const { alwaysShow } = props;
+  let { ifOverflow } = props;
+
+  if (alwaysShow) {
+    ifOverflow = 'extendDomain';
+  }
+
+  return ifOverflow === value;
+};
+
 export const detectReferenceElementsDomain = (
   children, domain, axisId, axisType, specifiedTicks
 ) => {
@@ -838,7 +849,8 @@ export const detectReferenceElementsDomain = (
 
   if (elements.length) {
     finalDomain = elements.reduce((result, el) => {
-      if (el.props[idKey] === axisId && el.props.alwaysShow &&
+      if (el.props[idKey] === axisId &&
+        ifOverflowMatches(el.props, 'extendDomain') &&
         isNumber(el.props[valueKey])) {
         const value = el.props[valueKey];
 
@@ -853,7 +865,8 @@ export const detectReferenceElementsDomain = (
     const key2 = `${valueKey}2`;
 
     finalDomain = areas.reduce((result, el) => {
-      if (el.props[idKey] === axisId && el.props.alwaysShow &&
+      if (el.props[idKey] === axisId &&
+        ifOverflowMatches(el.props, 'extendDomain') &&
         (isNumber(el.props[key1]) && isNumber(el.props[key2]))) {
         const value1 = el.props[key1];
         const value2 = el.props[key2];
