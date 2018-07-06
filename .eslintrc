@@ -53,7 +53,7 @@
     "comma-dangle": "off",
     "react/default-props-match-prop-types": "off",
     "react/no-array-index-key": "warn",
-    "no-multi-assign": "warn",
+    "no-multi-assign": "off",
     "react/jsx-closing-tag-location": "warn",
     "react/no-unused-state": "warn",
     "react/prefer-stateless-function": "warn"
