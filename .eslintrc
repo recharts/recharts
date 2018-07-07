@@ -15,13 +15,11 @@
     "react/react-in-jsx-scope": "error",
     "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
 
-    // Disable until Flow supports let and const
-    "no-var": "off",
-    "vars-on-top": "off",
+    "no-var": "error",
 
     // Temporarily disabled for test/* until babel/babel-eslint#33 is resolved
     "padded-blocks": "off",
-    "react/jsx-no-bind": "off",
+    "react/jsx-no-bind": "error",
 
     "strict": "off",
     "no-unused-vars": "error",
