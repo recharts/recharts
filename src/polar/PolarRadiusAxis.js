@@ -137,7 +137,7 @@ class PolarRadiusAxis extends Component {
     return <line className="recharts-polar-radius-axis-line" {...props} />;
   }
 
-  renderTickItem(option, props, value) {
+  static renderTickItem(option, props, value) {
     let tickItem;
 
     if (React.isValidElement(option)) {
@@ -183,7 +183,7 @@ class PolarRadiusAxis extends Component {
           key={`tick-${i}`}
           {...filterEventsOfChild(this.props, entry, i)}
         >
-          {this.renderTickItem(
+          {this.constructor.renderTickItem(
             tick, tickProps, tickFormatter ? tickFormatter(entry.value) : entry.value
           )}
         </Layer>

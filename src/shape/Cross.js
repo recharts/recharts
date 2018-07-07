@@ -33,7 +33,7 @@ class Cross extends Component {
     height: 0,
   };
 
-  getPath(x, y, width, height, top, left) {
+  static getPath(x, y, width, height, top, left) {
     return `M${x},${top}v${height}M${left},${y}h${width}`;
   }
 
@@ -50,7 +50,7 @@ class Cross extends Component {
       <path
         {...getPresentationAttributes(this.props)}
         className={classNames('recharts-cross', className)}
-        d={this.getPath(x, y, width, height, top, left)}
+        d={this.constructor.getPath(x, y, width, height, top, left)}
       />
     );
   }

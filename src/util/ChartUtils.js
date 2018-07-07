@@ -84,7 +84,7 @@ export const calculateActiveTickIndex = (coordinate, ticks, unsortedTicks, axis)
           if ((coordinate > sameInterval[0] && coordinate <= sameInterval[1]) || (
             coordinate >= diffInterval[0] && coordinate <= diffInterval[1]
           )) {
-            index = unsortedTicks[i].index;
+            ({ index } = unsortedTicks[i]);
             break;
           }
         } else {
@@ -92,7 +92,7 @@ export const calculateActiveTickIndex = (coordinate, ticks, unsortedTicks, axis)
           const max = Math.max(before, after);
 
           if (coordinate > (min + cur) / 2 && coordinate <= (max + cur) / 2) {
-            index = unsortedTicks[i].index;
+            ({ index } = unsortedTicks[i]);
             break;
           }
         }
@@ -104,7 +104,7 @@ export const calculateActiveTickIndex = (coordinate, ticks, unsortedTicks, axis)
           (i > 0 && i < len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2
             && coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2) ||
           (i === len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2)) {
-          index = ticks[i].index;
+          ({ index } = ticks[i]);
           break;
         }
       }
@@ -122,7 +122,7 @@ export const calculateActiveTickIndex = (coordinate, ticks, unsortedTicks, axis)
  * @return {String}            Color
  */
 export const getMainColorOfGraphicItem = (item) => {
-  const displayName = item.type.displayName;
+  const { type: { displayName } } = item;
   let result;
 
   switch (displayName) {
@@ -465,7 +465,7 @@ export const getCoordinatesOfGrid = (ticks, min, max) => {
  */
 export const getTicksOfAxis = (axis, isGrid, isAll) => {
   if (!axis) return null;
-  const scale = axis.scale;
+  const { scale } = axis;
   const { duplicateDomain, type, range } = axis;
   let offset = ((isGrid || isAll) && type === 'category' && scale.bandwidth) ?
     scale.bandwidth() / 2 : 0;
@@ -643,6 +643,7 @@ export const offsetSign = (series) => {
     for (let i = 0; i < n; ++i) {
       const value = _.isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
 
+      /* eslint-disable prefer-destructuring */
       if (value >= 0) {
         series[i][j][0] = positive;
         series[i][j][1] = positive + value;
@@ -652,6 +653,7 @@ export const offsetSign = (series) => {
         series[i][j][1] = negative + value;
         negative = series[i][j][1];
       }
+      /* eslint-enable prefer-destructuring */
     }
   }
 };
@@ -932,6 +934,7 @@ export const parseSpecifiedDomain = (specifiedDomain, dataDomain, allowDataOverf
 
   const domain = [];
 
+  /* eslint-disable prefer-destructuring */
   if (isNumber(specifiedDomain[0])) {
     domain[0] = allowDataOverflow ?
       specifiedDomain[0] : Math.min(specifiedDomain[0], dataDomain[0]);
@@ -957,6 +960,7 @@ export const parseSpecifiedDomain = (specifiedDomain, dataDomain, allowDataOverf
   } else {
     domain[1] = dataDomain[1];
   }
+  /* eslint-enable prefer-destructuring */
 
   return domain;
 };
