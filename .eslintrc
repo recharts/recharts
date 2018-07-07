@@ -13,7 +13,7 @@
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
     "react/react-in-jsx-scope": "error",
-    "react/jsx-filename-extension": ["warn", { "extensions": [".js", ".jsx"] }],
+    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
 
     // Disable until Flow supports let and const
     "no-var": "off",
@@ -24,7 +24,7 @@
     "react/jsx-no-bind": "off",
 
     "strict": "off",
-    "no-unused-vars": "warn",
+    "no-unused-vars": "error",
     "one-var": ["error", { "uninitialized": "always" }],
     "one-var-declaration-per-line": ["error", "initializations"],
     "no-mixed-operators": "off",
@@ -34,7 +34,7 @@
     "no-bitwise": "off",
     "object-property-newline": "off",
     "react/no-unused-prop-types": "off",
-    "class-methods-use-this": "warn",
+    "class-methods-use-this": "error",
     "import/no-named-as-default": "off",
     "import/no-extraneous-dependencies": [
       "error",
@@ -43,20 +43,20 @@
       }
     ],
     // Errors introduced while upgrading eslint & plugins
-    "no-restricted-properties": "warn",
-    "prefer-destructuring": "warn",
+    "no-restricted-properties": "error",
+    "prefer-destructuring": "error",
     "object-curly-newline": "off",
     "function-paren-newline": "off",
     "react/require-default-props": "off",
-    "indent": "warn",
-    "no-restricted-globals": "warn",
+    "indent": "error",
+    "no-restricted-globals": "error",
     "comma-dangle": "off",
     "react/default-props-match-prop-types": "off",
     "react/no-array-index-key": "warn",
     "no-multi-assign": "off",
-    "react/jsx-closing-tag-location": "warn",
-    "react/no-unused-state": "warn",
-    "react/prefer-stateless-function": "warn"
+    "react/jsx-closing-tag-location": "error",
+    "react/no-unused-state": "error",
+    "react/prefer-stateless-function": "error"
 
   },
   "plugins": [
