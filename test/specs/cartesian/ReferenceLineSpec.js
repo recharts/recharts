@@ -45,6 +45,19 @@ describe('<ReferenceLine />', () => {
     expect(wrapper.find('.recharts-reference-line-line').length).to.equal(2);
     expect(wrapper.find('.recharts-label').length).to.equal(2);
   });
+  it('Renders line segment in ReferenceLine when segment is set', () => {
+    const wrapper = render(
+      <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
+        <XAxis dataKey="name" orientation="top" />
+        <YAxis tickCount={7} orientation="right" />
+        <Bar dataKey="uv" />
+        <ReferenceLine x="201106" stroke="#666" label="201106" />
+        <ReferenceLine y={0} stroke="#666" label="0" labelPosition="start" />
+      </BarChart>
+    );
+    expect(wrapper.find('.recharts-reference-line-line').length).to.equal(2);
+    expect(wrapper.find('.recharts-label').length).to.equal(2);
+  });
   it('Don\'t renders 1 line in ReferenceLine when no x or y is set', () => {
     const wrapper = render(
       <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>

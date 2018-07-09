@@ -56,6 +56,10 @@ class ReferenceLine extends Component {
     ifOverflow: PropTypes.oneOf(['clip', 'discard', 'keep', 'extendDomain']),
     x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    segment: PropTypes.arrayOf(PropTypes.shape({
+      x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    })),
 
     className: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -75,9 +79,8 @@ class ReferenceLine extends Component {
     strokeWidth: 1,
   };
 
-  getEndPoints(scales, isFixedX, isFixedY) {
-    const { viewBox } = this.props;
-    const { x, y, width, height } = viewBox;
+  getEndPoints(scales, isFixedX, isFixedY, isSegment) {
+    const { viewBox: { x, y, width, height } } = this.props;
 
     if (isFixedY) {
       const { y: yCoord, yAxis: { orientation } } = this.props;
@@ -107,6 +110,17 @@ class ReferenceLine extends Component {
         { x: coord, y },
       ];
       return orientation === 'top' ? points.reverse() : points;
+    } else if (isSegment) {
+      const { segment } = this.props;
+
+      const points = segment.map(p => scales.apply(p));
+
+      if (ifOverflowMatches(this.props, 'discard') &&
+        _.some(points, p => !scales.isInRange(p))) {
+        return null;
+      }
+
+      return points;
     }
 
     return null;
@@ -116,6 +130,7 @@ class ReferenceLine extends Component {
     const {
       x: fixedX,
       y: fixedY,
+      segment,
       xAxis,
       yAxis,
       shape,
@@ -131,8 +146,9 @@ class ReferenceLine extends Component {
 
     const isX = isNumOrStr(fixedX);
     const isY = isNumOrStr(fixedY);
+    const isSegment = segment && segment.length === 2;
 
-    const endPoints = this.getEndPoints(scales, isX, isY);
+    const endPoints = this.getEndPoints(scales, isX, isY, isSegment);
     if (!endPoints) { return null; }
 
     const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = endPoints;
