@@ -56,8 +56,10 @@
     "no-multi-assign": 1,
     "react/jsx-closing-tag-location": 1,
     "react/no-unused-state": 1,
-    "react/prefer-stateless-function": 1
+    "react/prefer-stateless-function": 1,
 
+    // Errors Expected linebreaks to be 'LF' but found 'CRLF'
+    "linebreak-style": ["error", "windows"]
   },
   "plugins": [
     "react"
