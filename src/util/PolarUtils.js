@@ -56,9 +56,8 @@ export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
         range = [range[1], range[0]];
       }
     } else {
-      range = axis.range;
-      startAngle = range[0];
-      endAngle = range[1];
+      ({ range } = axis);
+      [startAngle, endAngle] = range;
     }
 
     const { realScaleType, scale } = parseScale(axis, chartName);
@@ -82,7 +81,7 @@ export const distanceBetweenPoints = (point, anotherPoint) => {
   const { x: x1, y: y1 } = point;
   const { x: x2, y: y2 } = anotherPoint;
 
-  return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
+  return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
 };
 
 export const getAngleOfPoint = ({ x, y }, { cx, cy }) => {

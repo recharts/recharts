@@ -45,7 +45,7 @@ export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
         offset.top + offset.height - (padding.bottom || 0),
       ];
     } else {
-      range = axis.range;
+      ({ range } = axis);
     }
 
     if (reversed) {

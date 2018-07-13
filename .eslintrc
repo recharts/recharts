@@ -7,35 +7,33 @@
   },
   "parser": "babel-eslint",
   "rules": {
-    "valid-jsdoc": 2,
-    
-    "react/sort-comp": 0,
-    "react/jsx-uses-react": 2,
-    "react/jsx-uses-vars": 2,
-    "react/react-in-jsx-scope": 2,
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "valid-jsdoc": "error",
 
-    // Disable until Flow supports let and const
-    "no-var": 0,
-    "vars-on-top": 0,
+    "react/sort-comp": "off",
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error",
+    "react/react-in-jsx-scope": "error",
+    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
+
+    "no-var": "error",
 
     // Temporarily disabled for test/* until babel/babel-eslint#33 is resolved
-    "padded-blocks": 0,
-    "react/jsx-no-bind": 0,
+    "padded-blocks": "off",
+    "react/jsx-no-bind": "error",
 
-    "strict": 0,
-    "no-unused-vars": 1,
+    "strict": "off",
+    "no-unused-vars": "error",
     "one-var": ["error", { "uninitialized": "always" }],
     "one-var-declaration-per-line": ["error", "initializations"],
-    "no-mixed-operators": 0,
-    "no-plusplus": 0,
-    "import/prefer-default-export": 0,
-    "react/forbid-prop-types": 0,
-    "no-bitwise": 0,
-    "object-property-newline": 0,
-    "react/no-unused-prop-types": 0,
-    "class-methods-use-this": 1,
-    "import/no-named-as-default": 0,
+    "no-mixed-operators": "off",
+    "no-plusplus": "off",
+    "import/prefer-default-export": "off",
+    "react/forbid-prop-types": "off",
+    "no-bitwise": "off",
+    "object-property-newline": "off",
+    "react/no-unused-prop-types": "off",
+    "class-methods-use-this": "error",
+    "import/no-named-as-default": "off",
     "import/no-extraneous-dependencies": [
       "error",
       {
@@ -43,20 +41,20 @@
       }
     ],
     // Errors introduced while upgrading eslint & plugins
-    "no-restricted-properties": 1,
-    "prefer-destructuring": 1,
-    "object-curly-newline": 0,
-    "function-paren-newline": 0,
-    "react/require-default-props": 0,
-    "indent": 1,
-    "no-restricted-globals": 1,
-    "comma-dangle": 0,
-    "react/default-props-match-prop-types": 0,
-    "react/no-array-index-key": 1,
-    "no-multi-assign": 1,
-    "react/jsx-closing-tag-location": 1,
-    "react/no-unused-state": 1,
-    "react/prefer-stateless-function": 1
+    "no-restricted-properties": "error",
+    "prefer-destructuring": "error",
+    "object-curly-newline": "off",
+    "function-paren-newline": "off",
+    "react/require-default-props": "off",
+    "indent": "error",
+    "no-restricted-globals": "error",
+    "comma-dangle": "off",
+    "react/default-props-match-prop-types": "off",
+    "react/no-array-index-key": "warn",
+    "no-multi-assign": "off",
+    "react/jsx-closing-tag-location": "error",
+    "react/no-unused-state": "error",
+    "react/prefer-stateless-function": "error"
 
   },
   "plugins": [

@@ -466,7 +466,7 @@ const generateCategoricalChart = ({
           return { x: rangeObj.x, y: entry.coordinate };
         } else if (layout === 'centric') {
           const angle = entry.coordinate;
-          const radius = rangeObj.radius;
+          const { radius } = rangeObj;
 
           return {
             ...rangeObj,
@@ -476,7 +476,7 @@ const generateCategoricalChart = ({
         }
 
         const radius = entry.coordinate;
-        const angle = rangeObj.angle;
+        const { angle } = rangeObj;
 
         return {
           ...rangeObj,
@@ -576,7 +576,7 @@ const generateCategoricalChart = ({
       const { graphicalItems, stackGroups, offset, updateId, dataStartIndex,
         dataEndIndex } = currentState;
       const { barSize, layout, barGap, barCategoryGap, maxBarSize: globalMaxBarSize } = props;
-      const { numericAxisName, cateAxisName } = this.getAxisNameByLayout(layout);
+      const { numericAxisName, cateAxisName } = this.constructor.getAxisNameByLayout(layout);
       const hasBar = this.constructor.hasBar(graphicalItems);
       const sizeList = hasBar && getBarSizeList({ barSize, stackGroups });
       const formatedItems = [];
@@ -692,7 +692,7 @@ const generateCategoricalChart = ({
       return [{ x: x1, y: y1 }, { x: x2, y: y2 }];
     }
 
-    getAxisNameByLayout(layout) {
+    static getAxisNameByLayout(layout) {
       if (layout === 'horizontal') {
         return { numericAxisName: 'yAxis', cateAxisName: 'xAxis' };
       } else if (layout === 'vertical') {
@@ -771,7 +771,7 @@ const generateCategoricalChart = ({
       if (!validateWidthHeight({ props })) { return null; }
 
       const { children, layout, stackOffset, data, reverseStackOrder } = props;
-      const { numericAxisName, cateAxisName } = this.getAxisNameByLayout(layout);
+      const { numericAxisName, cateAxisName } = this.constructor.getAxisNameByLayout(layout);
       const graphicalItems = findAllByType(children, GraphicalChild);
       const stackGroups = getStackGroupsByAxisId(
         data, graphicalItems, `${numericAxisName}Id`, `${cateAxisName}Id`, stackOffset, reverseStackOrder
@@ -843,7 +843,7 @@ const generateCategoricalChart = ({
 
       const offsetH = Object.keys(yAxisMap).reduce((result, id) => {
         const entry = yAxisMap[id];
-        const orientation = entry.orientation;
+        const { orientation } = entry;
 
         if (!entry.mirror && !entry.hide) {
           return { ...result, [orientation]: result[orientation] + entry.width };
@@ -854,7 +854,7 @@ const generateCategoricalChart = ({
 
       const offsetV = Object.keys(xAxisMap).reduce((result, id) => {
         const entry = xAxisMap[id];
-        const orientation = entry.orientation;
+        const { orientation } = entry;
 
         if (!entry.mirror && !entry.hide) {
           return { ...result, [orientation]: result[orientation] + entry.height };
@@ -1193,7 +1193,7 @@ const generateCategoricalChart = ({
     };
 
     renderPolarAxis = (element, displayName, index) => {
-      const axisType = element.type.axisType;
+      const { type: { axisType } } = element;
       const axisMap = this.state[`${axisType}Map`];
       const axisOption = axisMap[element.props[`${axisType}Id`]];
 
@@ -1368,7 +1368,7 @@ const generateCategoricalChart = ({
       });
     };
 
-    renderActiveDot(option, props) {
+    static renderActiveDot(option, props) {
       let dot;
 
       if (isValidElement(option)) {
@@ -1406,10 +1406,10 @@ const generateCategoricalChart = ({
         ...filterEventAttributes(activeDot),
       };
 
-      result.push(this.renderActiveDot(activeDot, dotProps, childIndex));
+      result.push(this.constructor.renderActiveDot(activeDot, dotProps, childIndex));
 
       if (basePoint) {
-        result.push(this.renderActiveDot(activeDot, {
+        result.push(this.constructor.renderActiveDot(activeDot, {
           ...dotProps,
           cx: basePoint.x,
           cy: basePoint.y,

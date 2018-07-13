@@ -102,7 +102,7 @@ class Brush extends Component {
     }
   }
 
-  getIndexInRange(range, x) {
+  static getIndexInRange(range, x) {
     const len = range.length;
     let start = 0;
     let end = len - 1;
@@ -125,8 +125,8 @@ class Brush extends Component {
     const lastIndex = data.length - 1;
     const min = Math.min(startX, endX);
     const max = Math.max(startX, endX);
-    const minIndex = this.getIndexInRange(this.scaleValues, min);
-    const maxIndex = this.getIndexInRange(this.scaleValues, max);
+    const minIndex = this.constructor.getIndexInRange(this.scaleValues, min);
+    const maxIndex = this.constructor.getIndexInRange(this.scaleValues, max);
     return {
       startIndex: minIndex - minIndex % gap,
       endIndex: maxIndex === lastIndex ? lastIndex : maxIndex - maxIndex % gap,

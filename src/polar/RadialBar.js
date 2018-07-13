@@ -192,7 +192,7 @@ class RadialBar extends Component {
     this.setState({ isAnimationFinished: false });
   };
 
-  renderSectorShape(shape, props) {
+  static renderSectorShape(shape, props) {
     let sectorShape;
 
     if (React.isValidElement(shape)) {
@@ -220,7 +220,7 @@ class RadialBar extends Component {
         className: 'recharts-radial-bar-sector',
       };
 
-      return this.renderSectorShape(i === activeIndex ? activeShape : shape, props);
+      return this.constructor.renderSectorShape(i === activeIndex ? activeShape : shape, props);
     });
   }
 
@@ -311,7 +311,7 @@ class RadialBar extends Component {
         className: 'recharts-radial-bar-background-sector',
       };
 
-      return this.renderSectorShape(background, props);
+      return this.constructor.renderSectorShape(background, props);
     });
   }
 
