@@ -224,7 +224,7 @@ class Pie extends Component {
     };
   }
 
-  state = { isAnimationFinished: false, isAnimationStarted: false };
+  state = { isAnimationFinished: false };
 
   componentWillReceiveProps(nextProps) {
     const { animationId, sectors } = this.props;
@@ -236,7 +236,7 @@ class Pie extends Component {
     }
   }
 
-  getTextAnchor(x, cx) {
+  static getTextAnchor(x, cx) {
     if (x > cx) {
       return 'start';
     } else if (x < cx) {
@@ -270,11 +270,11 @@ class Pie extends Component {
 
   handleAnimationStart = () => {
     this.setState({
-      isAnimationStarted: true,
+      isAnimationFinished: false,
     });
   }
 
-  renderLabelLineItem(option, props) {
+  static renderLabelLineItem(option, props) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     } else if (_.isFunction(option)) {
@@ -284,7 +284,7 @@ class Pie extends Component {
     return <Curve {...props} type="linear" className="recharts-pie-label-line" />;
   }
 
-  renderLabelItem(option, props, value) {
+  static renderLabelItem(option, props, value) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     }
@@ -330,7 +330,7 @@ class Pie extends Component {
         stroke: 'none',
         ...customLabelProps,
         index: i,
-        textAnchor: this.getTextAnchor(endPoint.x, entry.cx),
+        textAnchor: this.constructor.getTextAnchor(endPoint.x, entry.cx),
         ...endPoint,
       };
       const lineProps = {
@@ -352,8 +352,12 @@ class Pie extends Component {
 
       return (
         <Layer key={`label-${i}`}>
-          {labelLine && this.renderLabelLineItem(labelLine, lineProps)}
-          {this.renderLabelItem(label, labelProps, getValueByDataKey(entry, realDataKey))}
+          {labelLine && this.constructor.renderLabelLineItem(labelLine, lineProps)}
+          {this.constructor.renderLabelItem(
+            label,
+            labelProps,
+            getValueByDataKey(entry, realDataKey)
+          )}
         </Layer>
       );
     });
@@ -361,7 +365,7 @@ class Pie extends Component {
     return <Layer className="recharts-pie-labels">{labels}</Layer>;
   }
 
-  renderSectorItem(option, props) {
+  static renderSectorItem(option, props) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     } else if (_.isFunction(option)) {
@@ -382,7 +386,7 @@ class Pie extends Component {
         {...filterEventsOfChild(this.props, entry, i)}
         key={`sector-${i}`}
       >
-        {this.renderSectorItem(this.isActiveIndex(i) ? activeShape : null, entry)}
+        {this.constructor.renderSectorItem(this.isActiveIndex(i) ? activeShape : null, entry)}
       </Layer>
     ));
   }
@@ -401,6 +405,7 @@ class Pie extends Component {
         from={{ t: 0 }}
         to={{ t: 1 }}
         key={`pie-${animationId}`}
+        onAnimationStart={this.handleAnimationStart}
         onAnimationEnd={this.handleAnimationEnd}
       >
         {

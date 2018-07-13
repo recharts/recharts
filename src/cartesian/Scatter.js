@@ -177,7 +177,7 @@ class Scatter extends Component {
 
   id = uniqueId('recharts-scatter-');
 
-  renderSymbolItem(option, props) {
+  static renderSymbolItem(option, props) {
     let symbol;
 
     if (React.isValidElement(option)) {
@@ -204,7 +204,7 @@ class Scatter extends Component {
           {...filterEventsOfChild(this.props, entry, i)}
           key={`symbol-${i}`}
         >
-          {this.renderSymbolItem(activeIndex === i ? activeShape : shape, props)}
+          {this.constructor.renderSymbolItem(activeIndex === i ? activeShape : shape, props)}
         </Layer>
       );
     });

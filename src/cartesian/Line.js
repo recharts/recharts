@@ -180,7 +180,7 @@ class Line extends Component {
 
     const emptyLines = remainLines.length % 2 === 0 ? [0, restLength] : [restLength];
 
-    return [...this.repeat(lines, count), ...remainLines, ...emptyLines]
+    return [...this.constructor.repeat(lines, count), ...remainLines, ...emptyLines]
       .map(line => `${line}px`)
       .join(', ');
   }
@@ -195,7 +195,7 @@ class Line extends Component {
     this.mainCurve = node;
   };
 
-  repeat(lines, count) {
+  static repeat(lines, count) {
     const linesUnit = lines.length % 2 !== 0 ? [...lines, 0] : lines;
     let result = [];
 
@@ -243,7 +243,7 @@ class Line extends Component {
     }));
   }
 
-  renderDotItem(option, props) {
+  static renderDotItem(option, props) {
     let dotItem;
 
     if (React.isValidElement(option)) {
@@ -280,7 +280,7 @@ class Line extends Component {
         cx: entry.x, cy: entry.y, index: i, payload: entry.payload,
       };
 
-      return this.renderDotItem(dot, dotProps);
+      return this.constructor.renderDotItem(dot, dotProps);
     });
     const dotsProps = {
       clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
@@ -290,7 +290,7 @@ class Line extends Component {
   }
 
   renderCurveStatically(points, needClip, clipPathId, props) {
-    const { type, layout, connectNulls, id } = this.props;
+    const { type, layout, connectNulls } = this.props;
     const curveProps = {
       ...getPresentationAttributes(this.props),
       ...filterEventAttributes(this.props),
@@ -307,7 +307,7 @@ class Line extends Component {
 
   renderCurveWithAnimation(needClip, clipPathId) {
     const { points, strokeDasharray, isAnimationActive, animationBegin,
-      animationDuration, animationEasing, animationId, width, height, ...other
+      animationDuration, animationEasing, animationId, width, height
     } = this.props;
     const { prevPoints, totalLength } = this.state;
 

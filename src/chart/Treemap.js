@@ -144,7 +144,7 @@ const position = (row, parentSize, parentRect, isFlush) => {
 
 // Recursively arranges the specified node's children into squarified rows.
 const squarify = (node, aspectRatio) => {
-  const children = node.children;
+  const { children } = node;
 
   if (children && children.length) {
     let rect = filterRect(node);
@@ -159,6 +159,7 @@ const squarify = (node, aspectRatio) => {
 
     while (tempChildren.length > 0) {
       // row first
+      // eslint-disable-next-line prefer-destructuring
       row.push(child = tempChildren[0]);
       row.area += child.area;
 
@@ -228,18 +229,18 @@ class Treemap extends Component {
     animationEasing: 'linear',
   };
 
-  state = this.createDefaultState();
+  state = this.constructor.createDefaultState();
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.data !== this.props.data) {
-      this.setState(this.createDefaultState());
+      this.setState(this.constructor.createDefaultState());
     }
   }
   /**
    * Returns default, reset state for the treemap chart.
    * @return {Object} Whole new state
    */
-  createDefaultState() {
+  static createDefaultState() {
     return {
       isTooltipActive: false,
       activeNode: null,
@@ -325,7 +326,7 @@ class Treemap extends Component {
           >
             <Layer {...event}>
               {
-              this.renderContentItem(content, {
+              this.constructor.renderContentItem(content, {
                 ...nodeProps,
                 isAnimationActive,
                 isUpdateAnimationActive: !isUpdateAnimationActive,
@@ -343,7 +344,7 @@ class Treemap extends Component {
     );
   }
 
-  renderContentItem(content, nodeProps) {
+  static renderContentItem(content, nodeProps) {
     if (React.isValidElement(content)) {
       return React.cloneElement(content, nodeProps);
     } else if (_.isFunction(content)) {

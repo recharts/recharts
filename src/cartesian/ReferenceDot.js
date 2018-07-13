@@ -59,7 +59,7 @@ class ReferenceDot extends Component {
     return scales.isInRange(result) ? result : null;
   }
 
-  renderDot(option, props) {
+  static renderDot(option, props) {
     let dot;
 
     if (React.isValidElement(option)) {
@@ -104,7 +104,7 @@ class ReferenceDot extends Component {
 
     return (
       <Layer className={classNames('recharts-reference-dot', className)}>
-        {this.renderDot(shape, dotProps)}
+        {this.constructor.renderDot(shape, dotProps)}
         {Label.renderCallByParent(this.props, {
           x: cx - r,
           y: cy - r,
