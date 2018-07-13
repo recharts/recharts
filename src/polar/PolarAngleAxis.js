@@ -130,7 +130,7 @@ class PolarAngleAxis extends Component {
     return <Polygon className="recharts-polar-angle-axis-line" {...props} points={points} />;
   }
 
-  renderTickItem(option, props, value) {
+  static renderTickItem(option, props, value) {
     let tickItem;
 
     if (React.isValidElement(option)) {
@@ -184,7 +184,7 @@ class PolarAngleAxis extends Component {
               {...lineCoord}
             />
           )}
-          {tick && this.renderTickItem(
+          {tick && this.constructor.renderTickItem(
             tick, tickProps, tickFormatter ? tickFormatter(entry.value) : entry.value
           )}
         </Layer>

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
 import Text from './Text';
-import { getPresentationAttributes, findAllByType } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, findAllByType } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId,
   mathSign } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
@@ -24,6 +24,7 @@ const polarViewBoxShape = PropTypes.shape({
 });
 
 const propTypes = {
+  ...PRESENTATION_ATTRIBUTES,
   viewBox: PropTypes.oneOfType([cartesianViewBoxShape, polarViewBoxShape]),
   formatter: PropTypes.func,
   value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),

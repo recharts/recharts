@@ -195,7 +195,7 @@ class Bar extends Component {
     this.props.onAnimationStart();
   };
 
-  renderRectangle(option, props) {
+  static renderRectangle(option, props) {
     let rectangle;
 
     if (React.isValidElement(option)) {
@@ -222,7 +222,7 @@ class Bar extends Component {
           {...filterEventsOfChild(this.props, entry, i)}
           key={`rectangle-${i}`}
         >
-          {this.renderRectangle(shape, props)}
+          {this.constructor.renderRectangle(shape, props)}
         </Layer>
       );
     });
@@ -327,7 +327,7 @@ class Bar extends Component {
         className: 'recharts-bar-background-rectangle',
       };
 
-      return this.renderRectangle(background, props);
+      return this.constructor.renderRectangle(background, props);
     });
   }
 

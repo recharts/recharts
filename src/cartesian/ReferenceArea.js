@@ -83,7 +83,7 @@ class ReferenceArea extends Component {
     return rectWithPoints(p1, p2);
   }
 
-  renderRect(option, props) {
+  static renderRect(option, props) {
     let rect;
 
     if (React.isValidElement(option)) {
@@ -127,7 +127,7 @@ class ReferenceArea extends Component {
 
     return (
       <Layer className={classNames('recharts-reference-area', className)}>
-        {this.renderRect(shape, { clipPath, ...this.props, ...rect })}
+        {this.constructor.renderRect(shape, { clipPath, ...this.props, ...rect })}
         {Label.renderCallByParent(this.props, rect)}
       </Layer>
     );

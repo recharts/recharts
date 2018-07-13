@@ -53,7 +53,7 @@ class CartesianGrid extends Component {
     horizontalFill: [],
   };
 
-  renderLineItem(option, props) {
+  static renderLineItem(option, props) {
     let lineItem;
 
     if (React.isValidElement(option)) {
@@ -100,7 +100,7 @@ class CartesianGrid extends Component {
         index: i,
       };
 
-      return this.renderLineItem(horizontal, props);
+      return this.constructor.renderLineItem(horizontal, props);
     });
 
     return <g className="recharts-cartesian-grid-horizontal">{items}</g>;
@@ -127,7 +127,7 @@ class CartesianGrid extends Component {
         index: i,
       };
 
-      return this.renderLineItem(vertical, props);
+      return this.constructor.renderLineItem(vertical, props);
     });
 
     return <g className="recharts-cartesian-grid-vertical">{items}</g>;
