@@ -36,7 +36,7 @@ const calculateAreaSize = (size, sizeType, type) => {
       const angle = 18 * RADIAN;
 
       return 1.25 * size * size * (
-        Math.tan(angle) - Math.tan(angle * 2) * Math.pow(Math.tan(angle), 2)
+        Math.tan(angle) - Math.tan(angle * 2) * Math.tan(angle) ** 2
       );
     }
     case 'triangle':

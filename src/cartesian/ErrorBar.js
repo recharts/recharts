@@ -43,15 +43,13 @@ class ErrorBar extends Component {
         highBound;
 
       if (Array.isArray(errorVal)) {
-        lowBound = errorVal[0];
-        highBound = errorVal[1];
+        ([lowBound, highBound] = errorVal);
       } else {
-        lowBound = errorVal;
-        highBound = errorVal;
+        lowBound = highBound = errorVal;
       }
 
       if (layout === 'vertical') {
-        scale = xAxis.scale;
+        ({ scale } = xAxis);
         xMid = value;
         yMid = y + offset;
         xMin = scale(xMid - lowBound);
@@ -62,7 +60,7 @@ class ErrorBar extends Component {
         coordsMid = { x1: xMin, y1: yMid, x2: xMax, y2: yMid };
         coordsBot = { x1: xMin, y1: yMin, x2: xMin, y2: yMax };
       } else if (layout === 'horizontal') {
-        scale = yAxis.scale;
+        ({ scale } = yAxis);
         xMid = x + offset;
         yMid = value;
         xMin = xMid - width;

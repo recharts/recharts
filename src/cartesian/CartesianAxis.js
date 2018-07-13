@@ -344,7 +344,7 @@ class CartesianAxis extends Component {
     return <line className="recharts-cartesian-axis-line" {...props} />;
   }
 
-  renderTickItem(option, props, value) {
+  static renderTickItem(option, props, value) {
     let tickItem;
 
     if (React.isValidElement(option)) {
@@ -406,7 +406,7 @@ class CartesianAxis extends Component {
               {...lineCoord}
             />
           )}
-          {tick && this.renderTickItem(
+          {tick && this.constructor.renderTickItem(
             tick,
             tickProps,
             `${_.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value}${unit || ''}`

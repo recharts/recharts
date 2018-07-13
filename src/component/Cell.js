@@ -1,7 +1,6 @@
 /**
  * @fileOverview Cross
  */
-import React from 'react';
 import { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 
 function Cell() {
