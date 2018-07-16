@@ -53,7 +53,7 @@ class ReferenceLine extends Component {
 
     isFront: PropTypes.bool,
     alwaysShow: PropTypes.bool,
-    ifOverflow: PropTypes.oneOf(['clip', 'discard', 'keep', 'extendDomain']),
+    ifOverflow: PropTypes.oneOf(['hidden', 'visible', 'discard', 'extendDomain']),
     x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     segment: PropTypes.arrayOf(PropTypes.shape({
@@ -153,7 +153,7 @@ class ReferenceLine extends Component {
 
     const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = endPoints;
 
-    const clipPath = ifOverflowMatches(this.props, 'clip') ?
+    const clipPath = ifOverflowMatches(this.props, 'hidden') ?
       `url(#${clipPathId})` :
       undefined;
 
