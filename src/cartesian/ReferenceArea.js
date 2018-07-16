@@ -35,7 +35,7 @@ class ReferenceArea extends Component {
 
     isFront: PropTypes.bool,
     alwaysShow: PropTypes.bool,
-    ifOverflow: PropTypes.oneOf(['clip', 'discard', 'keep', 'extendDomain']),
+    ifOverflow: PropTypes.oneOf(['hidden', 'visible', 'discard', 'extendDomain']),
     x1: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     x2: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     y1: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -121,7 +121,7 @@ class ReferenceArea extends Component {
 
     const { shape } = this.props;
 
-    const clipPath = ifOverflowMatches(this.props, 'clip') ?
+    const clipPath = ifOverflowMatches(this.props, 'hidden') ?
       `url(#${clipPathId})` :
       undefined;
 

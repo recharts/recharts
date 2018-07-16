@@ -113,7 +113,7 @@ describe('<ReferenceLine />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceLine y={20} stroke="#666" label={renderLabel} ifOverflow="keep" labelPosition="start" />
+        <ReferenceLine y={20} stroke="#666" label={renderLabel} ifOverflow="visible" labelPosition="start" />
       </BarChart>
     );
     expect(wrapper.find('.recharts-reference-line-line').length).to.equal(1);
@@ -143,7 +143,7 @@ describe('<ReferenceLine />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceLine y={20} stroke="#666" ifOverflow="keep" label={<Label text="Custom Text" />} />
+        <ReferenceLine y={20} stroke="#666" ifOverflow="visible" label={<Label text="Custom Text" />} />
       </BarChart>
     );
     expect(wrapper.find('.recharts-reference-line text').text()).to.equal('Custom Text');

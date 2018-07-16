@@ -31,7 +31,7 @@ class ReferenceDot extends Component {
 
     isFront: PropTypes.bool,
     alwaysShow: PropTypes.bool,
-    ifOverflow: PropTypes.oneOf(['clip', 'discard', 'keep', 'extendDomain']),
+    ifOverflow: PropTypes.oneOf(['hidden', 'visible', 'discard', 'extendDomain']),
     x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
@@ -108,7 +108,7 @@ class ReferenceDot extends Component {
 
     const { shape, className } = this.props;
 
-    const clipPath = ifOverflowMatches(this.props, 'clip') ?
+    const clipPath = ifOverflowMatches(this.props, 'hidden') ?
       `url(#${clipPathId})` :
       undefined;
 
