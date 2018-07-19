@@ -1,4 +1,13 @@
-## 1.0.1(Jul 05, 2016)
+## 1.1.0(Jul 19, 2018)
+
+### feat
+
+- Allow reference areas which extend past the canvas bounds
+- Allow to add more classes in tooltips
+- Reference line segment by specifying a pair of
+ endpoints
+
+## 1.0.1(Jul 05, 2018)
 
 ### fix
 
