@@ -72,7 +72,20 @@ describe('<ReferenceLine />', () => {
     expect(wrapper.find('.recharts-label').length).to.equal(0);
   });
 
-  it('Render line and label when alwaysShow is true in ReferenceLine', () => {
+  it('Render line and label when ifOverflow is extendDomain in ReferenceLine', () => {
+    const wrapper = render(
+      <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
+        <XAxis dataKey="name" />
+        <YAxis tickCount={7} />
+        <Bar dataKey="uv" />
+        <ReferenceLine x="201102" label="test" stroke="#666" />
+        <ReferenceLine y={20} stroke="#666" label="20" ifOverflow="extendDomain" labelPosition="start" />
+      </BarChart>
+    );
+    expect(wrapper.find('.recharts-reference-line-line').length).to.equal(2);
+    expect(wrapper.find('.recharts-label').length).to.equal(2);
+  });
+  it('Render line and label when (deprecated) alwaysShow is true in ReferenceLine', () => {
     const wrapper = render(
       <BarChart width={1100} height={250} barGap={2} barSize={6} data={data} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
         <XAxis dataKey="name" />
@@ -100,7 +113,7 @@ describe('<ReferenceLine />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceLine y={20} stroke="#666" label={renderLabel} alwaysShow labelPosition="start" />
+        <ReferenceLine y={20} stroke="#666" label={renderLabel} ifOverflow="visible" labelPosition="start" />
       </BarChart>
     );
     expect(wrapper.find('.recharts-reference-line-line').length).to.equal(1);
@@ -116,7 +129,7 @@ describe('<ReferenceLine />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceLine y={20} stroke="#666" label={{ a: 1 }} alwaysShow labelPosition="start" />
+        <ReferenceLine y={20} stroke="#666" label={{ a: 1 }} labelPosition="start" />
       </BarChart>
     );
 
@@ -130,7 +143,7 @@ describe('<ReferenceLine />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceLine y={20} stroke="#666" label={<Label text="Custom Text" />} alwaysShow />
+        <ReferenceLine y={20} stroke="#666" ifOverflow="visible" label={<Label text="Custom Text" />} />
       </BarChart>
     );
     expect(wrapper.find('.recharts-reference-line text').text()).to.equal('Custom Text');

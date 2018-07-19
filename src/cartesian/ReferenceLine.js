@@ -10,8 +10,10 @@ import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 import Label from '../component/Label';
+import { ifOverflowMatches } from '../util/ChartUtils';
 import { isNumOrStr } from '../util/DataUtils';
 import { LabeledScaleHelper, rectWithCoords } from '../util/CartesianUtils';
+import { warn } from '../util/LogUtils';
 
 const renderLine = (option, props) => {
   let line;
@@ -51,6 +53,7 @@ class ReferenceLine extends Component {
 
     isFront: PropTypes.bool,
     alwaysShow: PropTypes.bool,
+    ifOverflow: PropTypes.oneOf(['hidden', 'visible', 'discard', 'extendDomain']),
     x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
@@ -63,7 +66,7 @@ class ReferenceLine extends Component {
 
   static defaultProps = {
     isFront: false,
-    alwaysShow: false,
+    ifOverflow: 'discard',
     xAxisId: 0,
     yAxisId: 0,
     fill: 'none',
@@ -79,23 +82,31 @@ class ReferenceLine extends Component {
     if (isFixedY) {
       const { y: yCoord, yAxis: { orientation } } = this.props;
       const coord = scales.y.apply(yCoord);
-      if (scales.y.isInRange(coord)) {
-        const points = [
-          { x: x + width, y: coord },
-          { x, y: coord },
-        ];
-        return orientation === 'left' ? points.reverse() : points;
+
+      if (ifOverflowMatches(this.props, 'discard') &&
+        !scales.y.isInRange(coord)) {
+        return null;
       }
+
+      const points = [
+        { x: x + width, y: coord },
+        { x, y: coord },
+      ];
+      return orientation === 'left' ? points.reverse() : points;
     } else if (isFixedX) {
       const { x: xCoord, xAxis: { orientation } } = this.props;
       const coord = scales.x.apply(xCoord);
-      if (scales.x.isInRange(coord)) {
-        const points = [
-          { x: coord, y: y + height },
-          { x: coord, y },
-        ];
-        return orientation === 'top' ? points.reverse() : points;
+
+      if (ifOverflowMatches(this.props, 'discard') &&
+        !scales.x.isInRange(coord)) {
+        return null;
       }
+
+      const points = [
+        { x: coord, y: y + height },
+        { x: coord, y },
+      ];
+      return orientation === 'top' ? points.reverse() : points;
     }
 
     return null;
@@ -109,7 +120,12 @@ class ReferenceLine extends Component {
       yAxis,
       shape,
       className,
+      alwaysShow,
+      clipPathId,
     } = this.props;
+
+    warn(alwaysShow !== undefined,
+      'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
     const scales = LabeledScaleHelper.create({ x: xAxis.scale, y: yAxis.scale });
 
@@ -121,7 +137,12 @@ class ReferenceLine extends Component {
 
     const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = endPoints;
 
+    const clipPath = ifOverflowMatches(this.props, 'hidden') ?
+      `url(#${clipPathId})` :
+      undefined;
+
     const props = {
+      clipPath,
       ...getPresentationAttributes(this.props),
       ...filterEventAttributes(this.props),
       x1,

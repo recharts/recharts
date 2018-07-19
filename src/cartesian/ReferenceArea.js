@@ -8,10 +8,13 @@ import classNames from 'classnames';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Label from '../component/Label';
-import { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
-import { isNumOrStr } from '../util/DataUtils';
 import { LabeledScaleHelper, rectWithPoints } from '../util/CartesianUtils';
+import { ifOverflowMatches } from '../util/ChartUtils';
+import { isNumOrStr } from '../util/DataUtils';
+import { warn } from '../util/LogUtils';
+import { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 import Rectangle from '../shape/Rectangle';
+
 
 @pureRender
 class ReferenceArea extends Component {
@@ -32,6 +35,7 @@ class ReferenceArea extends Component {
 
     isFront: PropTypes.bool,
     alwaysShow: PropTypes.bool,
+    ifOverflow: PropTypes.oneOf(['hidden', 'visible', 'discard', 'extendDomain']),
     x1: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     x2: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     y1: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -45,7 +49,7 @@ class ReferenceArea extends Component {
 
   static defaultProps = {
     isFront: false,
-    alwaysShow: false,
+    ifOverflow: 'discard',
     xAxisId: 0,
     yAxisId: 0,
     r: 10,
@@ -71,11 +75,12 @@ class ReferenceArea extends Component {
       y: hasY2 ? scale.y.apply(yValue2) : scale.y.rangeMax,
     };
 
-    if (scale.isInRange(p1) && scale.isInRange(p2)) {
-      return rectWithPoints(p1, p2);
+    if (ifOverflowMatches(this.props, 'discard') &&
+      (!scale.isInRange(p1) || !scale.isInRange(p2))) {
+      return null;
     }
 
-    return null;
+    return rectWithPoints(p1, p2);
   }
 
   static renderRect(option, props) {
@@ -98,7 +103,10 @@ class ReferenceArea extends Component {
   }
 
   render() {
-    const { x1, x2, y1, y2, className } = this.props;
+    const { x1, x2, y1, y2, className, alwaysShow, clipPathId } = this.props;
+
+    warn(alwaysShow !== undefined,
+      'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
     const hasX1 = isNumOrStr(x1);
     const hasX2 = isNumOrStr(x2);
@@ -113,9 +121,13 @@ class ReferenceArea extends Component {
 
     const { shape } = this.props;
 
+    const clipPath = ifOverflowMatches(this.props, 'hidden') ?
+      `url(#${clipPathId})` :
+      undefined;
+
     return (
       <Layer className={classNames('recharts-reference-area', className)}>
-        {this.constructor.renderRect(shape, { ...this.props, ...rect })}
+        {this.constructor.renderRect(shape, { clipPath, ...this.props, ...rect })}
         {Label.renderCallByParent(this.props, rect)}
       </Layer>
     );

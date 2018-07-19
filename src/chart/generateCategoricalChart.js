@@ -158,6 +158,7 @@ const generateCategoricalChart = ({
         ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState, updateId }) };
 
       this.uniqueChartId = _.isNil(props.id) ? uniqueId('recharts') : props.id;
+      this.clipPathId = `${this.uniqueChartId}-clip`;
 
       if (props.throttleDelay) {
         this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove,
@@ -1349,6 +1350,7 @@ const generateCategoricalChart = ({
 
     renderReferenceElement = (element, displayName, index) => {
       if (!element) { return null; }
+      const { clipPathId } = this;
       const { xAxisMap, yAxisMap, offset } = this.state;
       const { xAxisId, yAxisId } = element.props;
 
@@ -1362,6 +1364,7 @@ const generateCategoricalChart = ({
           width: offset.width,
           height: offset.height,
         },
+        clipPathId,
       });
     };
 
@@ -1459,6 +1462,18 @@ const generateCategoricalChart = ({
       return [graphicalItem, null];
     };
 
+    renderClipPath() {
+      const { clipPathId } = this;
+      const { offset: { left, top, height, width } } = this.state;
+
+      return (
+        <clipPath id={clipPathId}>
+          <rect x={left} y={top} height={height} width={width} />
+        </clipPath>
+      );
+    }
+
+
     render() {
       if (!validateWidthHeight(this)) { return null; }
 
@@ -1489,6 +1504,7 @@ const generateCategoricalChart = ({
       if (compact) {
         return (
           <Surface {...attrs} width={width} height={height}>
+            {this.renderClipPath()}
             {
               renderByOrder(children, map)
             }
@@ -1505,6 +1521,7 @@ const generateCategoricalChart = ({
           ref={(node) => { this.container = node; }}
         >
           <Surface {...attrs} width={width} height={height}>
+            {this.renderClipPath()}
             {
               renderByOrder(children, map)
             }

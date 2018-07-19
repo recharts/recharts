@@ -12,7 +12,9 @@ import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
   getPresentationAttributes, filterEventAttributes } from '../util/ReactUtils';
 import Label from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
+import { ifOverflowMatches } from '../util/ChartUtils';
 import { LabeledScaleHelper } from '../util/CartesianUtils';
+import { warn } from '../util/LogUtils';
 
 @pureRender
 class ReferenceDot extends Component {
@@ -29,6 +31,7 @@ class ReferenceDot extends Component {
 
     isFront: PropTypes.bool,
     alwaysShow: PropTypes.bool,
+    ifOverflow: PropTypes.oneOf(['hidden', 'visible', 'discard', 'extendDomain']),
     x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
@@ -36,11 +39,13 @@ class ReferenceDot extends Component {
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
+
+    clipPathId: PropTypes.string,
   };
 
   static defaultProps = {
     isFront: false,
-    alwaysShow: false,
+    ifOverflow: 'discard',
     xAxisId: 0,
     yAxisId: 0,
     r: 10,
@@ -56,7 +61,12 @@ class ReferenceDot extends Component {
 
     const result = scales.apply({ x, y }, { bandAware: true });
 
-    return scales.isInRange(result) ? result : null;
+    if (ifOverflowMatches(this.props, 'discard') &&
+      !scales.isInRange(result)) {
+      return null;
+    }
+
+    return result;
   }
 
   static renderDot(option, props) {
@@ -81,9 +91,12 @@ class ReferenceDot extends Component {
   }
 
   render() {
-    const { x, y, r } = this.props;
+    const { x, y, r, alwaysShow, clipPathId } = this.props;
     const isX = isNumOrStr(x);
     const isY = isNumOrStr(y);
+
+    warn(alwaysShow !== undefined,
+      'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
     if (!isX || !isY) { return null; }
 
@@ -95,7 +108,12 @@ class ReferenceDot extends Component {
 
     const { shape, className } = this.props;
 
+    const clipPath = ifOverflowMatches(this.props, 'hidden') ?
+      `url(#${clipPathId})` :
+      undefined;
+
     const dotProps = {
+      clipPath,
       ...getPresentationAttributes(this.props),
       ...filterEventAttributes(this.props),
       cx,
