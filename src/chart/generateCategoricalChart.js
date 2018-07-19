@@ -76,6 +76,10 @@ const generateCategoricalChart = ({
       onMouseMove: PropTypes.func,
       onMouseDown: PropTypes.func,
       onMouseUp: PropTypes.func,
+      onTouchStart: PropTypes.func,
+      onTouchMove: PropTypes.func,
+      onTouchEnd: PropTypes.func,
+      onTouchCancel: PropTypes.func,
       reverseStackOrder: PropTypes.bool,
       id: PropTypes.string,
       ...propTypes,
@@ -746,6 +750,7 @@ const generateCategoricalChart = ({
         onTouchMove: this.handleTouchMove,
         onTouchStart: this.handleTouchStart,
         onTouchEnd: this.handleTouchEnd,
+        onTouchCancel: this.handleTouchCancel,
       } : {};
       const outerEvents = filterEventAttributes(this.props, this.handleOuterEvent);
 
@@ -1080,19 +1085,33 @@ const generateCategoricalChart = ({
 
     handleTouchMove = (e) => {
       if (e.changedTouches != null && e.changedTouches.length > 0) {
-        this.handleMouseMove(e.changedTouches[0]);
+        const { onTouchMove } = this.props;
+        const mouse = this.getMouseInfo(e.changedTouches[0]);
+        onTouchMove(mouse, e.changedTouches[0]);
       }
     };
 
     handleTouchStart = (e) => {
       if (e.changedTouches != null && e.changedTouches.length > 0) {
-        this.handleMouseDown(e.changedTouches[0]);
+        const { onTouchStart } = this.props;
+        const mouse = this.getMouseInfo(e.changedTouches[0]);
+        onTouchStart(mouse, e.changedTouches[0]);
       }
     };
 
     handleTouchEnd = (e) => {
       if (e.changedTouches != null && e.changedTouches.length > 0) {
-        this.handleMouseUp(e.changedTouches[0]);
+        const { onTouchEnd } = this.props;
+        const mouse = this.getMouseInfo(e.changedTouches[0]);
+        onTouchEnd(mouse, e.changedTouches[0]);
+      }
+    };
+
+    handleTouchCancel = (e) => {
+      if (e.changedTouches != null && e.changedTouches.length > 0) {
+        const { onTouchCancel } = this.props;
+        const mouse = this.getMouseInfo(e.changedTouches[0]);
+        onTouchCancel(mouse, e.changedTouches[0]);
       }
     };
 
