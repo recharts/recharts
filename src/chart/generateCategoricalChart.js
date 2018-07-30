@@ -189,21 +189,15 @@ const generateCategoricalChart = ({
         // update configuration in chilren
         const hasGlobalData = !_.isNil(nextProps.data);
         const newUpdateId = hasGlobalData ? updateId : updateId + 1;
-        const { dataStartIndex, dataEndIndex } = this.state;
-        // Don't update brush
-        const defaultState = {
-          ...this.constructor.createDefaultState(nextProps), dataEndIndex, dataStartIndex,
-        };
 
-        this.setState({
-          ...defaultState,
+        this.setState(prevState => ({
           updateId: newUpdateId,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups({
             props: nextProps,
-            ...defaultState,
+            ...prevState,
             updateId: newUpdateId,
           }),
-        });
+        }));
       }
       // add syncId
       if (_.isNil(this.props.syncId) && !_.isNil(nextProps.syncId)) {
