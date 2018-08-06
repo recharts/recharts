@@ -1262,8 +1262,10 @@ const generateCategoricalChart = ({
         offset,
         chartWidth: width,
         chartHeight: height,
-        verticalCoordinatesGenerator: this.verticalCoordinatesGenerator,
-        horizontalCoordinatesGenerator: this.horizontalCoordinatesGenerator,
+        verticalCoordinatesGenerator:
+          props.verticalCoordinatesGenerator || this.verticalCoordinatesGenerator,
+        horizontalCoordinatesGenerator:
+          props.horizontalCoordinatesGenerator || this.horizontalCoordinatesGenerator,
       });
     };
 
