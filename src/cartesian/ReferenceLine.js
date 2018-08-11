@@ -139,7 +139,7 @@ class ReferenceLine extends Component {
       clipPathId,
     } = this.props;
 
-    warn(alwaysShow !== undefined,
+    warn(alwaysShow === undefined,
       'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
     const scales = LabeledScaleHelper.create({ x: xAxis.scale, y: yAxis.scale });
