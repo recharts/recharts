@@ -29,7 +29,8 @@
     "test": "cross-env NODE_ENV=test karma start test/karma.conf.js",
     "lint": "eslint src",
     "autofix": "eslint src --fix",
-    "bundle-analyse": "cross-env NODE_ENV=analyse webpack src/index.js umd/Recharts.js"
+    "bundle-analyse": "cross-env NODE_ENV=analyse webpack src/index.js umd/Recharts.js",
+    "postinstall": "postinstall-build es6 --script=build-es6"
   },
   "pre-commit": [],
   "pre-push": [
@@ -57,6 +58,7 @@
     "d3-shape": "1.2.0",
     "lodash": "~4.17.4",
     "lodash-es": "~4.17.4",
+    "postinstall-build": "^5.0.1",
     "prop-types": "^15.6.0",
     "react-resize-detector": "1.1.0",
     "react-smooth": "1.0.0",
