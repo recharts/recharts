@@ -640,6 +640,7 @@ const generateCategoricalChart = ({
       return {
         stroke: 'none',
         fill: '#ccc',
+        pointerEvents: 'all',
         x: layout === 'horizontal' ? activeCoordinate.x - halfSize : offset.left + 0.5,
         y: layout === 'horizontal' ? offset.top + 0.5 : activeCoordinate.y - halfSize,
         width: layout === 'horizontal' ? tooltipAxisBandSize : offset.width - 1,
@@ -1156,7 +1157,7 @@ const generateCategoricalChart = ({
       if (chartName === 'ScatterChart') {
         restProps = activeCoordinate;
         cursorComp = Cross;
-      } else if (chartName === 'BarChart') {
+      } else if (chartName === 'BarChart' || chartName === 'ComposedChart') {
         restProps = this.getCursorRectangle();
         cursorComp = Rectangle;
       } else if (layout === 'radial') {
