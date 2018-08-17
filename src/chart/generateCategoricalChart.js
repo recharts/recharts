@@ -1175,7 +1175,7 @@ const generateCategoricalChart = ({
       if (chartName === 'ScatterChart') {
         restProps = activeCoordinate;
         cursorComp = Cross;
-      } else if (chartName === 'BarChart') {
+      } else if (chartName === 'BarChart' || chartName === 'ComposedChart') {
         restProps = this.getCursorRectangle();
         cursorComp = Rectangle;
       } else if (layout === 'radial') {
