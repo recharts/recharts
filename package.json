@@ -25,6 +25,7 @@
   ],
   "scripts": {
     "build": "npm run build-cjs && npm run build-es6 && rimraf umd && npm run build-umd && npm run build-min",
+    "build-for-nutshell": "yarn run build-cjs && yarn run build-es6",
     "build-cjs": "rimraf lib && cross-env NODE_ENV=commonjs babel ./src -d lib",
     "build-es6": "rimraf es6 && cross-env NODE_ENV=es6 babel ./src -d es6",
     "build-umd": "cross-env NODE_ENV=development webpack src/index.js -o umd/Recharts.js",
@@ -33,7 +34,8 @@
     "test": "cross-env NODE_ENV=test karma start test/karma.conf.js",
     "lint": "eslint src",
     "autofix": "eslint src --fix",
-    "analyse": "cross-env NODE_ENV=analyse webpack src/index.js -o umd/Recharts.js"
+    "analyse": "cross-env NODE_ENV=analyse webpack src/index.js -o umd/Recharts.js",
+    "prepare": "yarn run build-for-nutshell"
   },
   "pre-commit": [],
   "pre-push": [
