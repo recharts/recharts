@@ -43,6 +43,7 @@ class Pie extends Component {
     nameKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
     valueKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
     data: PropTypes.arrayOf(PropTypes.object),
+    blendStroke: PropTypes.bool,
     minAngle: PropTypes.number,
     legendType: PropTypes.oneOf(LEGEND_TYPES),
     maxRadius: PropTypes.number,
@@ -102,6 +103,8 @@ class Pie extends Component {
     animationDuration: 1500,
     animationEasing: 'ease',
     nameKey: 'name',
+    // Match each sector's stroke color to it's fill color
+    blendStroke: false
   };
 
   static parseDeltaAngle = ({ startAngle, endAngle }) => {
@@ -378,17 +381,25 @@ class Pie extends Component {
   }
 
   renderSectorsStatically(sectors) {
-    const { activeShape } = this.props;
+    const { activeShape, blendStroke } = this.props;
 
-    return sectors.map((entry, i) => (
-      <Layer
-        className="recharts-pie-sector"
-        {...filterEventsOfChild(this.props, entry, i)}
-        key={`sector-${i}`}
-      >
-        {this.constructor.renderSectorItem(this.isActiveIndex(i) ? activeShape : null, entry)}
-      </Layer>
-    ));
+    return sectors.map((entry, i) => {
+      const sectorOptions = this.isActiveIndex(i) ? activeShape : null;
+      const sectorProps = {
+        ...entry,
+        stroke: blendStroke ? entry.fill : entry.stroke
+      };
+
+      return (
+        <Layer
+          className="recharts-pie-sector"
+          {...filterEventsOfChild(this.props, entry, i)}
+          key={`sector-${i}`}
+        >
+          {this.constructor.renderSectorItem(sectorOptions, sectorProps)}
+        </Layer>
+      );
+    });
   }
 
   renderSectorsWithAnimation() {
