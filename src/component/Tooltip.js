@@ -32,6 +32,7 @@ const propTypes = {
   itemStyle: PropTypes.object,
   labelStyle: PropTypes.object,
   wrapperStyle: PropTypes.object,
+  contentStyle: PropTypes.object,
   cursor: PropTypes.oneOfType([PropTypes.bool, PropTypes.element, PropTypes.object]),
 
   coordinate: PropTypes.shape({
@@ -72,6 +73,7 @@ const defaultProps = {
   cursorStyle: {},
   separator: ' : ',
   wrapperStyle: {},
+  contentStyle: {},
   itemStyle: {},
   labelStyle: {},
   cursor: true,
