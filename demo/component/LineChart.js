@@ -547,7 +547,7 @@ export default class Demo extends Component {
           </LineChart>
         </div>
 
-        <p>LineChart with panoramic brush</p>
+        <p>LineChart with panoramic brush and custom tooltip styles</p>
         <div className="line-chart-wrapper">
           <LineChart
             width={600} height={400} data={data03}
@@ -556,7 +556,14 @@ export default class Demo extends Component {
             <CartesianGrid vertical={false} />
             <XAxis dataKey="date" label="Date" />
             <YAxis domain={['auto', 'auto']} label="Stock Price" />
-            <Tooltip />
+            <Tooltip
+              wrapperStyle={{
+                borderColor: 'white',
+                boxShadow: '2px 2px 3px 0px rgb(204, 204, 204)',
+              }}
+              contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.8)' }}
+              labelStyle={{ fontWeight: 'bold', color: '#666666' }}
+            />
             <Line dataKey="price" stroke="#ff7300" dot={false} />
             <Brush dataKey="date" startIndex={data03.length - 40}>
               <AreaChart>
