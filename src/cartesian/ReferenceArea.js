@@ -105,7 +105,7 @@ class ReferenceArea extends Component {
   render() {
     const { x1, x2, y1, y2, className, alwaysShow, clipPathId } = this.props;
 
-    warn(alwaysShow !== undefined,
+    warn(alwaysShow === undefined,
       'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
     const hasX1 = isNumOrStr(x1);
