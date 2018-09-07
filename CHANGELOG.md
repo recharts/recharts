@@ -1,3 +1,17 @@
+## 1.2.0(Sep 7, 2018)
+
+### feat
+
+- Add blendStroke prop to Pie component
+- Adding contentStyle prop to Tooltip for styling DefaultTooltipContent
+
+### fix
+
+- Fixed typo of playload -> payload in Radar chart
+- Fix PieChart animation event handlers not firing
+- Fix alwaysShow warn() condition in ReferenceLine
+- Fix Tooltip disappears when using setState()
+
 ## 1.1.0(Jul 19, 2018)
 
 ### feat
