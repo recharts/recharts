@@ -95,7 +95,7 @@ class ReferenceDot extends Component {
     const isX = isNumOrStr(x);
     const isY = isNumOrStr(y);
 
-    warn(alwaysShow !== undefined,
+    warn(alwaysShow === undefined,
       'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
     if (!isX || !isY) { return null; }
