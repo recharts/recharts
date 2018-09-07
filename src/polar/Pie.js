@@ -266,15 +266,27 @@ class Pie extends Component {
   }
 
   handleAnimationEnd = () => {
+    const { onAnimationEnd } = this.props;
+
     this.setState({
       isAnimationFinished: true,
     });
+
+    if (_.isFunction(onAnimationEnd)) {
+      onAnimationEnd();
+    }
   };
 
   handleAnimationStart = () => {
+    const { onAnimationStart } = this.props;
+
     this.setState({
       isAnimationFinished: false,
     });
+
+    if (_.isFunction(onAnimationStart)) {
+      onAnimationStart();
+    }
   }
 
   static renderLabelLineItem(option, props) {
