@@ -160,7 +160,7 @@ class Radar extends Component {
         cx: entry.x,
         cy: entry.y,
         index: i,
-        playload: entry,
+        payload: entry,
       };
 
       return this.constructor.renderDotItem(dot, dotProps);
