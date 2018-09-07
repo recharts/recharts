@@ -24,6 +24,7 @@ class DefaultTooltipContent extends Component {
     wrapperClassName: PropTypes.string,
     labelClassName: PropTypes.string,
     formatter: PropTypes.func,
+    contentStyle: PropTypes.object,
     itemStyle: PropTypes.object,
     labelStyle: PropTypes.object,
     labelFormatter: PropTypes.func,
@@ -38,6 +39,7 @@ class DefaultTooltipContent extends Component {
 
   static defaultProps = {
     separator: ' : ',
+    contentStyle: {},
     itemStyle: {},
     labelStyle: {},
   };
@@ -85,6 +87,7 @@ class DefaultTooltipContent extends Component {
   render() {
     const {
       wrapperClassName,
+      contentStyle,
       labelClassName,
       labelStyle,
       label,
@@ -96,6 +99,7 @@ class DefaultTooltipContent extends Component {
       backgroundColor: '#fff',
       border: '1px solid #ccc',
       whiteSpace: 'nowrap',
+      ...contentStyle,
     };
     const finalLabelStyle = {
       margin: 0,
