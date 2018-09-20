@@ -1,6 +1,5 @@
 import { expect } from 'chai';
-import { getNiceTickValues, getTickValues,
-  getTickValuesFixedDomain } from '../../../src/util/ScaleUtils';
+import { getNiceTickValues, getTickValuesFixedDomain } from '../../../src/util/ScaleUtils';
 
 describe('getNiceTickValues of equal values', () => {
   describe('of positive integer has odd tick count', () => {
@@ -276,109 +275,6 @@ describe('getNiceTickValues of unequal values', () => {
 
   });
 });
-
-describe('getTickValues of unequal values', () => {
-  describe('of positive integer', () => {
-    const [min, max, count] = [1, 5, 5];
-    const scales = getTickValues([min, max], count);
-
-    it('should return [1, 2, 3, 4, 5]', () => {
-      expect(scales).to.eql([1, 2, 3, 4, 5]);
-    });
-  });
-
-  describe('of negative to positive integer & has odd ticks', () => {
-    const [min, max, count] = [-5, 95, 7];
-    const scales = getTickValues([min, max], count);
-
-    it('should return scales [-5, 15, 35, 55, 75, 95]', () => {
-      expect(scales).to.eql([-5, 15, 35, 55, 75, 95]);
-    });
-  });
-
-  describe('of negative integerr', () => {
-    const [min, max, count] = [-105, -25, 6];
-    const scales = getTickValues([min, max], count);
-
-    it('should return scales [-105, -85, -65, -45, -25]', () => {
-      expect(scales).to.eql([-105, -85, -65, -45, -25]);
-    });
-  });
-
-  describe('of min is bigger than max & has odd ticks', () => {
-    const [min, max, count] = [67, 5, 5];
-    const scales = getTickValues([min, max], count);
-
-    it('should return scales of [65, 45, 25, 5]', () => {
-      expect(scales).to.eql([65, 45, 25, 5]);
-    });
-
-  });
-
-  describe('of min is bigger than max & has even ticks', () => {
-    const [min, max, count] = [67, 5, 4];
-    const scales = getTickValues([min, max], count);
-
-    it('should return scales of [55, 30, 5]', () => {
-      expect(scales).to.eql([55, 30, 5]);
-    });
-
-  });
-
-  describe('of float [-4.10389, 0.59414, 7]', () => {
-    const [min, max, count] = [-4.10389, 0.59414, 7];
-    const scales = getTickValues([min, max], count);
-
-    it(`should return scales of [-4.10389, -3.30389, -2.50389,
-      -1.70389, -0.90389, -0.10389]`, () => {
-      expect(scales).to.eql([
-        -4.10389,
-        -3.30389,
-        -2.50389,
-        -1.70389,
-        -0.90389,
-        -0.10389,
-      ]);
-    });
-
-  });
-
-  describe('of float [-4.10389, 0.59414, 7] not allow decimals', () => {
-    const [min, max, count] = [-4.10389, 0.59414, 7];
-    const scales = getTickValues([min, max], count, false);
-
-    it('should return scales of [-4.10389, -3.10389, -2.10389, -1.10389, -0.10389]', () => {
-      expect(scales).to.eql([
-        -4.10389,
-        -3.10389,
-        -2.10389,
-        -1.10389,
-        -0.10389,
-      ]);
-    });
-  });
-
-  describe('of integers [0, 14, 5]', () => {
-    const [min, max, count] = [0, 14, 5];
-    const scales = getTickValues([min, max], count);
-
-    it('should return integers of [0, 4, 8, 12]', () => {
-      expect(scales).to.eql([0, 4, 8, 12]);
-    });
-
-  });
-
-  describe('of integers [0, 1e+100, 6]', () => {
-    const [min, max, count] = [0, 1e+100, 6];
-    const scales = getTickValues([min, max], count);
-
-    it('should return integers of [0, 2e+99, 4e+99, 6e+99, 8e+99, 1e+100]', () => {
-      expect(scales).to.eql([0, 2e+99, 4e+99, 6e+99, 8e+99, 1e+100]);
-    });
-
-  });
-});
-
 
 describe('getTickValuesFixedDomain of unequal values', () => {
   describe('of positive integer', () => {

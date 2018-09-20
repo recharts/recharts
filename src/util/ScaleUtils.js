@@ -4,8 +4,6 @@
  * @date 2015-09-17
  */
 import Decimal from 'decimal.js-light';
-
-import { compose, range, memoize, map, reverse } from './ScaleUtilsUtils';
 import Arithmetic from './ScaleUtilsArithmetic';
 
 /**
@@ -87,12 +85,11 @@ function getTickOfSingleValue(value, tickCount, allowDecimals) {
 
   const middleIndex = Math.floor((tickCount - 1) / 2);
 
-  const fn = compose(
-    map(n => middle.add(new Decimal(n - middleIndex).mul(step)).toNumber()),
-    range
-  );
-
-  return fn(0, tickCount);
+  const arr = [];
+  for (let i = 0; i < tickCount; ++i) {
+    arr[i] = middle.add(new Decimal(i - middleIndex).mul(step)).toNumber();
+  }
+  return arr;
 }
 
 /**
@@ -177,28 +174,7 @@ function getNiceTickValuesFn([min, max], tickCount = 6, allowDecimals = true) {
 
   const values = Arithmetic.rangeStep(tickMin, tickMax.add(new Decimal(0.1).mul(step)), step);
 
-  return min > max ? reverse(values) : values;
-}
-
-function getTickValuesFn([min, max], tickCount = 6, allowDecimals = true) {
-  // More than two ticks should be return
-  const count = Math.max(tickCount, 2);
-  const [cormin, cormax] = getValidInterval([min, max]);
-
-  if (cormin === cormax) {
-    return getTickOfSingleValue(cormin, tickCount, allowDecimals);
-  }
-
-  const step = getFormatStep(new Decimal(cormax).sub(cormin).div(count - 1), allowDecimals, 0);
-
-  const fn = compose(
-    map(n => new Decimal(cormin).add(new Decimal(n).mul(step)).toNumber()),
-    range
-  );
-
-  const values = fn(0, count).filter(entry => (entry >= cormin && entry <= cormax));
-
-  return min > max ? reverse(values) : values;
+  return min > max ? values.reverse() : values;
 }
 
 function getTickValuesFixedDomainFn([min, max], tickCount, allowDecimals = true) {
@@ -218,9 +194,24 @@ function getTickValuesFixedDomainFn([min, max], tickCount, allowDecimals = true)
     cormax,
   ];
 
-  return min > max ? reverse(values) : values;
+  return min > max ? values.reverse() : values;
 }
 
+const memoize = (fn) => {
+  let lastArgs = null;
+  let lastResult = null;
+
+  return (...args) => {
+    if (lastArgs && args.every((val, i) => val === lastArgs[i])) {
+      return lastResult;
+    }
+
+    lastArgs = args;
+    lastResult = fn(...args);
+
+    return lastResult;
+  };
+};
+
 export const getNiceTickValues = memoize(getNiceTickValuesFn);
-export const getTickValues = memoize(getTickValuesFn);
 export const getTickValuesFixedDomain = memoize(getTickValuesFixedDomainFn);
