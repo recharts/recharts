@@ -137,7 +137,7 @@ function calculateStep(min, max, tickCount, allowDecimals, correctionFactor = 0)
 
   let belowCount = Math.ceil(middle.sub(min).div(step).toNumber());
   let upCount = Math.ceil(new Decimal(max).sub(middle).div(step)
-                          .toNumber());
+    .toNumber());
   const scaleCount = belowCount + upCount + 1;
 
   if (scaleCount > tickCount) {

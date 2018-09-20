@@ -22,7 +22,7 @@ function getDigitCount(value) {
     result = 1;
   } else {
     result = Math.floor(new Decimal(value).abs().log(10)
-                        .toNumber()) + 1;
+      .toNumber()) + 1;
   }
 
   return result;

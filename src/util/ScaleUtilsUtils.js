@@ -6,7 +6,7 @@ export const PLACE_HOLDER = {
 
 const isPlaceHolder = val => val === PLACE_HOLDER;
 
-const curry0 = (fn) => function _curried(...args) {
+const curry0 = fn => function _curried(...args) {
   if (args.length === 0 || args.length === 1 && isPlaceHolder(args[0])) {
     return _curried;
   }
@@ -67,11 +67,11 @@ export const compose = (...args) => {
   return (...composeArgs) =>
     tailsFn.reduce((res, fn) =>
       fn(res),
-      firstFn(...composeArgs)
-  );
+    firstFn(...composeArgs)
+    );
 };
 
-export const reverse = arr => {
+export const reverse = (arr) => {
   if (Array.isArray(arr)) {
     return arr.reverse();
   }
@@ -80,7 +80,7 @@ export const reverse = arr => {
   return arr.split('').reverse.join('');
 };
 
-export const memoize = fn => {
+export const memoize = (fn) => {
   let lastArgs = null;
   let lastResult = null;
 
