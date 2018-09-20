@@ -106,6 +106,15 @@ function getTickOfSingleValue(value, tickCount, allowDecimals) {
  * @return {Object}  The step, minimum value of ticks, maximum value of ticks
  */
 function calculateStep(min, max, tickCount, allowDecimals, correctionFactor = 0) {
+  // dirty hack
+  if (!Number.isFinite((max - min) / (tickCount - 1))) {
+    return {
+      step: new Decimal(0),
+      tickMin: new Decimal(0),
+      tickMax: new Decimal(0),
+    };
+  }
+
   // The step which is easy to understand between two ticks
   const step = getFormatStep(
     new Decimal(max).sub(min).div(tickCount - 1),
