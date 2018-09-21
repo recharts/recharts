@@ -1934,6 +1934,10 @@ decamelize@^1.0.0, decamelize@^1.1.1, decamelize@^1.1.2:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/decamelize/-/decamelize-1.2.0.tgz#f6534d15148269b20352e7bee26f501f9a191290"
 
+decimal.js-light@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/decimal.js-light/-/decimal.js-light-2.4.1.tgz#3260d025fa504f30b94b0ef8721f0b4d37dcfc72"
+
 deep-eql@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/deep-eql/-/deep-eql-3.0.1.tgz#dfc9404400ad1c8fe023e7da1df1c147c4b444df"
