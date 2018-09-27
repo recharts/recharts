@@ -1,23 +1,41 @@
 {
   "plugins": [
-    "transform-export-extensions",
-    "transform-decorators-legacy",
-    "transform-class-properties",
-    "transform-object-rest-spread",
-    "transform-function-bind",
-    "lodash"
+    "@babel/plugin-proposal-export-default-from",
+    "@babel/plugin-proposal-export-namespace-from",
+    [
+      "@babel/plugin-proposal-decorators",
+      {
+        "legacy": true
+      }
+    ],
+    ["@babel/plugin-proposal-class-properties", { "loose": true }],
+    "@babel/plugin-proposal-object-rest-spread",
+    "@babel/plugin-proposal-function-bind"
   ],
-  "presets": [["env", { "modules": false }], "react"],
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "modules": false
+      }
+    ],
+    "@babel/preset-react"
+  ],
   "env": {
     "test": {
-      "plugins": ["transform-es2015-modules-commonjs", "istanbul"]
-    },
-    "es6": {
-      "plugins": ["use-lodash-es"] 
+      "plugins": [
+        "@babel/plugin-transform-modules-commonjs",
+        "istanbul"
+      ]
     },
     "commonjs": {
       "plugins": [
-        ["transform-es2015-modules-commonjs", { "loose": false }]
+        [
+          "@babel/plugin-transform-modules-commonjs",
+          {
+            "loose": false
+          }
+        ]
       ]
     }
   }
