@@ -1,0 +1,12 @@
+{
+  "umd/Recharts.js": {
+    "bundled": 1637343,
+    "minified": 618104,
+    "gzipped": 186233
+  },
+  "umd/Recharts.min.js": {
+    "bundled": 1006056,
+    "minified": 436878,
+    "gzipped": 130180
+  }
+}
