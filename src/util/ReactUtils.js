@@ -147,10 +147,10 @@ export const LEGEND_TYPES = [
  * @return {String}      Display name of Component
  */
 export const getDisplayName = (Comp) => {
-  if (!Comp) { return ''; }
   if (typeof Comp === 'string') {
     return Comp;
   }
+  if (!Comp) { return ''; }
   return Comp.displayName || Comp.name || 'Component';
 };
 

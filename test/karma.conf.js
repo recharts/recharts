@@ -5,7 +5,7 @@
 
 var path = require('path');
 
-module.exports = function (config) {
+module.exports = function config(config) {
 
   config.set({
     singleRun: !!process.env.RELEASE,
@@ -41,13 +41,14 @@ module.exports = function (config) {
         noParse: [
           /node_modules\/sinon\//,
         ],
-        loaders: [{
+        rules: [{
           test: /\.js$/,
           exclude: [
             path.resolve('node_modules/'),
           ],
-          loader: 'babel-loader'
+          loader: 'babel-loader',
         }, {
+          type: 'javascript/auto',
           test: /\.json$/,
           loader: 'json-loader',
         }],

@@ -20,15 +20,6 @@ describe('ReactUtils', () => {
     expect(result).to.equal('test');
   });
 
-  it('getDisplayName return the same of function when has a function as input', () => {
-    function test() {
-
-    }
-    const result = getDisplayName(test);
-
-    expect(result).to.equal('test');
-  });
-
   it('getDisplayName return the "Component" when has an object as input', () => {
     const test = {};
     const result = getDisplayName(test);

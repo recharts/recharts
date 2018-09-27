@@ -9,21 +9,24 @@ const config = {
   entry: './src/index.js',
 
   output: {
+    path: path.resolve(__dirname, 'umd'),
     library: 'Recharts',
     libraryTarget: 'umd',
   },
 
   module: {
-    loaders: [{
+    rules: [{
       test: /\.(js|jsx)$/,
       exclude: /node_modules/,
       include: [
         path.resolve(__dirname, 'src'),
       ],
-      loader: 'babel-loader',
-      query: {
-        plugins: ['lodash'],
-      },
+      use: {
+        loader: 'babel-loader',
+        query: {
+          plugins: ['lodash'],
+        },
+      }
     }],
   },
 
@@ -61,21 +64,12 @@ if (env === 'analyse') {
   );
 }
 
+if (env === 'development') {
+  config.mode = 'development';
+}
+
 if (env === 'production') {
-  config.plugins.push(
-    new webpack.optimize.UglifyJsPlugin({
-      compressor: {
-        pure_getters: true,
-        unsafe: true,
-        unsafe_comps: true,
-        warnings: false,
-      },
-      output: {
-        comments: false,
-      },
-      sourceMap: false,
-    })
-  );
+  config.mode = 'production';
 }
 
 module.exports = config;

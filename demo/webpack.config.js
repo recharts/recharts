@@ -2,29 +2,28 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
+  mode: 'development',
   context: __dirname,
   devtool: '#inline-source-map',
   entry: [
     './index.js',
   ],
   output: {
-    path: __dirname + '/build',
+    path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js',
   },
   plugins: [
-     new webpack.LoaderOptionsPlugin({
-       debug: true
-     })
-    // new webpack.HotModuleReplacementPlugin(),
-    // new webpack.NoErrorsPlugin()
+    new webpack.LoaderOptionsPlugin({
+      debug: true
+    })
   ],
   resolve: {
     alias: {
-      'recharts': path.join(__dirname, '..', 'src/index.js'),
+      recharts: path.join(__dirname, '..', 'src/index.js'),
     },
   },
   module: {
-    loaders: [{
+    rules: [{
       test: /\.js$/,
       loaders: ['babel-loader'],
       include: [
