@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { PieChart, Pie, Legend, Cell, Tooltip, ResponsiveContainer, Sector,
   Label, LabelList } from 'recharts';
-import { scaleOrdinal, schemeCategory10 } from 'd3-scale';
+import { scaleOrdinal } from 'd3-scale';
+import { schemeCategory10 } from 'd3-scale-chromatic';
 import { changeNumberOfData } from './utils';
 
 const colors = scaleOrdinal(schemeCategory10).range();
