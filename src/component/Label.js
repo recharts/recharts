@@ -347,7 +347,7 @@ const parseViewBox = (props) => {
   if (isNumber(width) && isNumber(height)) {
     if (isNumber(x) && isNumber(y)) {
       return { x, y, width, height };
-    } else if (isNumber(top) && isNumber(left)) {
+    } if (isNumber(top) && isNumber(left)) {
       return { x: top, y: left, width, height };
     }
   }
@@ -403,11 +403,10 @@ const renderCallByParent = (parentProps, viewBox, ckeckPropsLabel = true) => {
   const { children } = parentProps;
   const parentViewBox = parseViewBox(parentProps);
 
-  const explicitChilren = findAllByType(children, Label).map((child, index) =>
-    cloneElement(child, {
-      viewBox: viewBox || parentViewBox,
-      key: `label-${index}`,
-    })
+  const explicitChilren = findAllByType(children, Label).map((child, index) => cloneElement(child, {
+    viewBox: viewBox || parentViewBox,
+    key: `label-${index}`,
+  })
   );
 
   if (!ckeckPropsLabel) { return explicitChilren; }

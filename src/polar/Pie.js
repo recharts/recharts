@@ -242,7 +242,7 @@ class Pie extends Component {
   static getTextAnchor(x, cx) {
     if (x > cx) {
       return 'start';
-    } else if (x < cx) {
+    } if (x < cx) {
       return 'end';
     }
 
@@ -292,7 +292,7 @@ class Pie extends Component {
   static renderLabelLineItem(option, props) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } if (_.isFunction(option)) {
       return option(props);
     }
 
@@ -383,9 +383,9 @@ class Pie extends Component {
   static renderSectorItem(option, props) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } if (_.isFunction(option)) {
       return option(props);
-    } else if (_.isPlainObject(option)) {
+    } if (_.isPlainObject(option)) {
       return <Sector {...props} {...option} />;
     }
 
@@ -495,9 +495,9 @@ class Pie extends Component {
     const { hide, sectors, className, label, cx, cy, innerRadius,
       outerRadius, isAnimationActive, prevSectors, id } = this.props;
 
-    if (hide || !sectors || !sectors.length || !isNumber(cx)
-      || !isNumber(cy) || !isNumber(innerRadius)
-      || !isNumber(outerRadius)) {
+    if (hide || !sectors || !sectors.length || !isNumber(cx) ||
+      !isNumber(cy) || !isNumber(innerRadius) ||
+      !isNumber(outerRadius)) {
       return null;
     }
 

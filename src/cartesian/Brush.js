@@ -255,12 +255,12 @@ class Brush extends Component {
     const { startIndex, endIndex } = newIndex;
     const isFullGap = () => {
       const lastIndex = data.length - 1;
-      if ((movingTravellerId === 'startX'
-        && (endX > startX ? startIndex % gap === 0 : endIndex % gap === 0))
-        || (endX < startX && endIndex === lastIndex)
-      || (movingTravellerId === 'endX'
-        && (endX > startX ? endIndex % gap === 0 : startIndex % gap === 0)
-        || (endX > startX && endIndex === lastIndex))) {
+      if ((movingTravellerId === 'startX' &&
+        (endX > startX ? startIndex % gap === 0 : endIndex % gap === 0)) ||
+        (endX < startX && endIndex === lastIndex) ||
+      (movingTravellerId === 'endX' &&
+        (endX > startX ? endIndex % gap === 0 : startIndex % gap === 0) ||
+        (endX > startX && endIndex === lastIndex))) {
         return true;
       }
       return false;

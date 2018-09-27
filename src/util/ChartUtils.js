@@ -101,8 +101,8 @@ export const calculateActiveTickIndex = (coordinate, ticks, unsortedTicks, axis)
       // ticks are distributed in a single direction
       for (let i = 0; i < len; i++) {
         if ((i === 0 && coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2) ||
-          (i > 0 && i < len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2
-            && coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2) ||
+          (i > 0 && i < len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2 &&
+            coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2) ||
           (i === len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2)) {
           ({ index } = ticks[i]);
           break;
@@ -551,19 +551,19 @@ export const parseScale = (axis, chartType) => {
   if (scale === 'auto') {
     if (layout === 'radial' && axisType === 'radiusAxis') {
       return { scale: d3Scales.scaleBand(), realScaleType: 'band' };
-    } else if (layout === 'radial' && axisType === 'angleAxis') {
+    } if (layout === 'radial' && axisType === 'angleAxis') {
       return { scale: d3Scales.scaleLinear(), realScaleType: 'linear' };
     }
 
     if (type === 'category' && chartType && (chartType.indexOf('LineChart') >= 0 ||
       chartType.indexOf('AreaChart') >= 0)) {
       return { scale: d3Scales.scalePoint(), realScaleType: 'point' };
-    } else if (type === 'category') {
+    } if (type === 'category') {
       return { scale: d3Scales.scaleBand(), realScaleType: 'band' };
     }
 
     return { scale: d3Scales.scaleLinear(), realScaleType: 'linear' };
-  } else if (_.isString(scale)) {
+  } if (_.isString(scale)) {
     const name = `scale${scale.slice(0, 1).toUpperCase()}${scale.slice(1)}`;
 
     return {
@@ -772,7 +772,7 @@ export const getTicksOfScale = (scale, opts) => {
     scale.domain(calculateDomainOfTicks(tickValues, type));
 
     return { niceTicks: tickValues };
-  } else if (tickCount && type === 'number') {
+  } if (tickCount && type === 'number') {
     const domain = scale.domain();
     const tickValues = getTickValuesFixedDomain(domain, tickCount, allowDecimals);
 

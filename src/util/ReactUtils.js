@@ -201,8 +201,8 @@ export const withoutType = (children, type) => {
   }
 
   React.Children.forEach(children, (child) => {
-    if (child && child.type && child.type.displayName
-      && types.indexOf(child.type.displayName) !== -1) {
+    if (child && child.type && child.type.displayName &&
+      types.indexOf(child.type.displayName) !== -1) {
       return;
     }
     newChildren.push(child);
@@ -348,14 +348,14 @@ export const filterSvgElements = (children) => {
 export const isSingleChildEqual = (nextChild, prevChild) => {
   if (_.isNil(nextChild) && _.isNil(prevChild)) {
     return true;
-  } else if (!_.isNil(nextChild) && !_.isNil(prevChild)) {
+  } if (!_.isNil(nextChild) && !_.isNil(prevChild)) {
     const { children: nextChildren, ...nextProps } = nextChild.props || {};
     const { children: prevChildren, ...prevProps } = prevChild.props || {};
 
     if (nextChildren && prevChildren) {
       // eslint-disable-next-line no-use-before-define
       return shallowEqual(nextProps, prevProps) && isChildrenEqual(nextChildren, prevChildren);
-    } else if (!nextChildren && !prevChildren) {
+    } if (!nextChildren && !prevChildren) {
       return shallowEqual(nextProps, prevProps);
     }
 

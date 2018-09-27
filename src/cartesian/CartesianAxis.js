@@ -90,7 +90,7 @@ class CartesianAxis extends Component {
       return CartesianAxis.getTicksStart({
         ticks, tickFormatter, viewBox, orientation, minTickGap, unit,
       }, true);
-    } else if (interval === 'preserveStart') {
+    } if (interval === 'preserveStart') {
       return CartesianAxis.getTicksStart({
         ticks, tickFormatter, viewBox, orientation, minTickGap, unit,
       });

@@ -236,6 +236,7 @@ class Treemap extends Component {
       this.setState(this.constructor.createDefaultState());
     }
   }
+
   /**
    * Returns default, reset state for the treemap chart.
    * @return {Object} Whole new state
@@ -246,6 +247,7 @@ class Treemap extends Component {
       activeNode: null,
     };
   }
+
   handleMouseEnter(node, e) {
     const { onMouseEnter, children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
@@ -347,7 +349,7 @@ class Treemap extends Component {
   static renderContentItem(content, nodeProps) {
     if (React.isValidElement(content)) {
       return React.cloneElement(content, nodeProps);
-    } else if (_.isFunction(content)) {
+    } if (_.isFunction(content)) {
       return content(nodeProps);
     }
 

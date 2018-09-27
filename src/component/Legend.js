@@ -13,7 +13,7 @@ import { LEGEND_TYPES } from '../util/ReactUtils';
 const renderContent = (content, props) => {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
-  } else if (_.isFunction(content)) {
+  } if (_.isFunction(content)) {
     return content(props);
   }
 
@@ -71,7 +71,7 @@ class Legend extends Component {
       return {
         height: item.props.height,
       };
-    } else if (layout === 'horizontal') {
+    } if (layout === 'horizontal') {
       return {
         width: item.props.width || chartWidth,
       };

@@ -378,6 +378,7 @@ class Sankey extends Component {
       this.setState(this.constructor.createDefaultState(nextProps));
     }
   }
+
   /**
    * Returns default, reset state for the sankey chart.
    * @param  {Object} props The latest props
@@ -441,7 +442,7 @@ class Sankey extends Component {
   static renderLinkItem(option, props) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } if (_.isFunction(option)) {
       return option(props);
     }
 
@@ -513,7 +514,7 @@ class Sankey extends Component {
   static renderNodeItem(option, props) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } if (_.isFunction(option)) {
       return option(props);
     }
 

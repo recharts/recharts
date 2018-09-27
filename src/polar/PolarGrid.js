@@ -50,6 +50,7 @@ class PolarGrid extends Component {
 
     return path;
   }
+
   /**
    * Draw axis of radial line
    * @return {[type]} The lines
@@ -85,6 +86,7 @@ class PolarGrid extends Component {
       </g>
     );
   }
+
   /**
    * Draw concentric circles
    * @param {Number} radius The radius of circle
@@ -112,6 +114,7 @@ class PolarGrid extends Component {
       />
     );
   }
+
   /**
    * Draw concentric polygons
    * @param {Number} radius     The radius of polygon

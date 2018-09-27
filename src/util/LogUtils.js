@@ -22,4 +22,3 @@ export const warn = (condition, format, a, b, c, d, e, f) => {
     }
   }
 };
-

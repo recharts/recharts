@@ -96,7 +96,7 @@ class ReferenceLine extends Component {
         { x, y: coord },
       ];
       return orientation === 'left' ? points.reverse() : points;
-    } else if (isFixedX) {
+    } if (isFixedX) {
       const { x: xCoord, xAxis: { orientation } } = this.props;
       const coord = scales.x.apply(xCoord);
 
@@ -110,7 +110,7 @@ class ReferenceLine extends Component {
         { x: coord, y },
       ];
       return orientation === 'top' ? points.reverse() : points;
-    } else if (isSegment) {
+    } if (isSegment) {
       const { segment } = this.props;
 
       const points = segment.map(p => scales.apply(p));

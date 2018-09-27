@@ -235,8 +235,9 @@ class Area extends Component {
 
   renderDots() {
     const { isAnimationActive } = this.props;
+    const { isAnimationFinished } = this.state;
 
-    if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
+    if (isAnimationActive && !isAnimationFinished) { return null; }
 
     const { dot, points, dataKey } = this.props;
     const areaProps = getPresentationAttributes(this.props);

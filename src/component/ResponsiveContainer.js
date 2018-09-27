@@ -11,6 +11,7 @@ import { warn } from '../util/LogUtils';
 
 class ResponsiveContainer extends Component {
   static displayName = 'ResponsiveContainer';
+
   static propTypes = {
     aspect: PropTypes.number,
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

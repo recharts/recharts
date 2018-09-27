@@ -16,6 +16,7 @@ import { polarToCartesian } from '../util/PolarUtils';
 class PolarRadiusAxis extends Component {
 
   static displayName = 'PolarRadiusAxis';
+
   static axisType = 'radiusAxis';
 
   static propTypes = {

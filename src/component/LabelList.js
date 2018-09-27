@@ -78,11 +78,10 @@ const renderCallByParent = (parentProps, data, ckeckPropsLabel = true) => {
   }
   const { children } = parentProps;
 
-  const explicitChilren = findAllByType(children, LabelList).map((child, index) =>
-    cloneElement(child, {
-      data,
-      key: `labelList-${index}`,
-    })
+  const explicitChilren = findAllByType(children, LabelList).map((child, index) => cloneElement(child, {
+    data,
+    key: `labelList-${index}`,
+  })
   );
   if (!ckeckPropsLabel) { return explicitChilren; }
 

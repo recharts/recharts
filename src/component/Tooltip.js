@@ -88,7 +88,7 @@ const defaultProps = {
 const renderContent = (content, props) => {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
-  } else if (_.isFunction(content)) {
+  } if (_.isFunction(content)) {
     return content(props);
   }
 
@@ -98,7 +98,9 @@ const renderContent = (content, props) => {
 @pureRender
 class Tooltip extends Component {
   static displayName = 'Tooltip';
+
   static propTypes = propTypes;
+
   static defaultProps = defaultProps;
 
   state = {

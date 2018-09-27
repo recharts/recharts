@@ -22,6 +22,7 @@
     "react/jsx-no-bind": "error",
 
     "strict": "off",
+    "operator-linebreak": ["error", "after"],
     "no-unused-vars": "error",
     "one-var": ["error", { "uninitialized": "always" }],
     "one-var-declaration-per-line": ["error", "initializations"],
@@ -40,6 +41,7 @@
         "devDependencies": ["demo/**", "test/**", "*.config.js", "scripts/**", "**/Spec.js"]
       }
     ],
+    "max-len": "warn",
     // Errors introduced while upgrading eslint & plugins
     "no-restricted-properties": "error",
     "prefer-destructuring": "error",
@@ -52,6 +54,8 @@
     "react/default-props-match-prop-types": "off",
     "react/no-array-index-key": "warn",
     "no-multi-assign": "off",
+    "react/no-access-state-in-setstate": "off",
+    "react/destructuring-assignment": ["off"],
     "react/jsx-closing-tag-location": "error",
     "react/no-unused-state": "error",
     "react/prefer-stateless-function": "error"

@@ -61,6 +61,7 @@ class Curve extends Component {
     points: [],
     connectNulls: false,
   };
+
   /**
    * Calculate the path of curve
    * @return {String} path
@@ -84,7 +85,7 @@ class Curve extends Component {
       lineFunction.defined(defined).curve(curveFactory);
 
       return lineFunction(areaPoints);
-    } else if (layout === 'vertical' && isNumber(baseLine)) {
+    } if (layout === 'vertical' && isNumber(baseLine)) {
       lineFunction = shapeArea().y(getY).x1(getX).x0(baseLine);
     } else if (isNumber(baseLine)) {
       lineFunction = shapeArea().x(getX).y1(getY).y0(baseLine);

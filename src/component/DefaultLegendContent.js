@@ -69,7 +69,7 @@ class DefaultLegendContent extends Component {
           className="recharts-legend-icon"
         />
       );
-    } else if (data.type === 'line') {
+    } if (data.type === 'line') {
       return (
         <path
           strokeWidth={4}
@@ -82,7 +82,7 @@ class DefaultLegendContent extends Component {
           className="recharts-legend-icon"
         />
       );
-    } else if (data.type === 'rect') {
+    } if (data.type === 'rect') {
       return (
         <path
           stroke="none"
