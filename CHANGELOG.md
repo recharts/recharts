@@ -1,3 +1,9 @@
+## 1.3.0(Sep 28, 2018)
+
+### feat
+
+- upgrade recharts-scale to 0.4.0, to fix the calculation of big float
+
 ## 1.2.0(Sep 7, 2018)
 
 ### feat
