@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "React charts",
   "main": "lib/index",
   "module": "es6/index",
@@ -57,7 +57,7 @@
     "d3-shape": "~1.2.0",
     "lodash": "~4.17.4",
     "prop-types": "~15.6.0",
-    "react-resize-detector": "~3.1.0",
+    "react-resize-detector": "~2.3.0",
     "react-smooth": "~1.0.0",
     "recharts-scale": "^0.4.0",
     "reduce-css-calc": "~1.3.0"
