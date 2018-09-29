@@ -1,3 +1,9 @@
+## 1.3.1(Sep 29, 2018)
+
+### fix
+
+- fix the react-resize-detector don't match react 15
+
 ## 1.3.0(Sep 28, 2018)
 
 ### feat
@@ -90,7 +96,7 @@
 
 - Replace lodash _.get with simple Array.prototype.find
 - Prevent texts from being selected when dragging the brush
-- Add try...catch... when getTotalLength is called by a svg path to fix IE bug  
+- Add try...catch... when getTotalLength is called by a svg path to fix IE bug
 
 ## 1.0.0-beta.7(Dec 21, 2017)
 
@@ -306,7 +312,7 @@
 
 ## 0.22.4 (Apr 26, 2017)
 
-### fix 
+### fix
 
 - fix dot customized className
 
@@ -338,7 +344,7 @@
 ### fix
 
 - Fix re-rendering element bug when adding new elements
-- Fix circular dependence of Brush.js and LineChart.js 
+- Fix circular dependence of Brush.js and LineChart.js
 
 ## 0.22.0 (Apr 05, 2017)
 
@@ -488,7 +494,7 @@
 
 ### fix
 
-- Fix the `chartId` in `handleReceiveSyncEvent` of `generateCategoricalChart` 
+- Fix the `chartId` in `handleReceiveSyncEvent` of `generateCategoricalChart`
 
 ## 0.19.1(Dec 15, 2016)
 
