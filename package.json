@@ -5,6 +5,7 @@
   "main": "lib/index",
   "module": "es6/index",
   "jsnext:main": "es6/index",
+  "sideEffects": false,
   "files": [
     "*.md",
     "demo",
