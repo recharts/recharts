@@ -34,7 +34,7 @@ export const getDomainOfDataByKey = (data, key, type, filterNil) => {
   const flattenData = _.flatMap(data, entry => getValueByDataKey(entry, key));
 
   if (type === 'number') {
-    const domain = flattenData.filter(isNumber);
+    const domain = flattenData.filter(entry => (isNumber(entry) ? entry : parseFloat(entry, 10)));
 
     return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
   }
