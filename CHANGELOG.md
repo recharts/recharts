@@ -1,8 +1,15 @@
+## 1.3.2(Oct 07, 2018)
+
+### fix
+
+- Fix axis type error
+- Fix add sideEffects flag to enable tree-shaing
+
 ## 1.3.1(Sep 29, 2018)
 
 ### fix
 
-- fix the react-resize-detector don't match react 15
+- Fix the react-resize-detector don't match react 15
 
 ## 1.3.0(Sep 28, 2018)
 
