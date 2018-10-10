@@ -1,3 +1,13 @@
+## 1.3.3(Oct 10, 2018)
+
+### feat
+
+- find yAxisWithNiceTicks and choose it over getAnyElementOfObject
+
+### fix 
+
+- update recharts-scale to 0.4.2 to fix bug of DecimalError when data is Inifinity, fix #1493
+
 ## 1.3.2(Oct 07, 2018)
 
 ### fix
