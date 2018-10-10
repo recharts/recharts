@@ -374,6 +374,7 @@ export default class AreaChartDemo extends Component {
             <Area dataKey="temperature" stroke="#0088FE" />
           </AreaChart>
         </div>
+
       </div>
     );
   }
