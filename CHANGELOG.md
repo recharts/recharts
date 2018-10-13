@@ -1,10 +1,16 @@
+## 1.3.4(Oct 13, 2018)
+
+### fix
+
+- Fix domain calculation with 0 values (#1519)
+
 ## 1.3.3(Oct 10, 2018)
 
 ### feat
 
 - find yAxisWithNiceTicks and choose it over getAnyElementOfObject
 
-### fix 
+### fix
 
 - update recharts-scale to 0.4.2 to fix bug of DecimalError when data is Inifinity, fix #1493
 
