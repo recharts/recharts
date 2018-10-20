@@ -756,7 +756,7 @@ export const calculateDomainOfTicks = (ticks, type) => {
  * @return {Object}      null
  */
 export const getTicksOfScale = (scale, opts) => {
-  const { realScaleType, type, tickCount, originalDomain, allowDecimals, hide:axisHidden } = opts;
+  const { realScaleType, type, tickCount, originalDomain, allowDecimals, hide : axisHidden } = opts;
   const scaleType = realScaleType || opts.scale;
 
   if (scaleType !== 'auto' && scaleType !== 'linear') {
