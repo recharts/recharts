@@ -756,7 +756,7 @@ export const calculateDomainOfTicks = (ticks, type) => {
  * @return {Object}      null
  */
 export const getTicksOfScale = (scale, opts) => {
-  const { realScaleType, type, tickCount, originalDomain, allowDecimals } = opts;
+  const { realScaleType, type, tickCount, originalDomain, allowDecimals, hide:axisHidden } = opts;
   const scaleType = realScaleType || opts.scale;
 
   if (scaleType !== 'auto' && scaleType !== 'linear') {
@@ -769,7 +769,11 @@ export const getTicksOfScale = (scale, opts) => {
     const domain = scale.domain();
     const tickValues = getNiceTickValues(domain, tickCount, allowDecimals);
 
-    scale.domain(calculateDomainOfTicks(tickValues, type));
+    // Don't update the domain based on the ticks if we're not showing the YAxis component
+    // This means keeping the chart height consistent with the 'height' provided by the client
+    if (!axisHidden) {
+      scale.domain(calculateDomainOfTicks(tickValues, type));
+    }
 
     return { niceTicks: tickValues };
   } if (tickCount && type === 'number') {
