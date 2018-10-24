@@ -1,5 +1,4 @@
 const path = require('path');
-const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const webpack = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
@@ -54,10 +53,6 @@ const config = {
   },
 
   plugins: [
-    new LodashModuleReplacementPlugin({
-      collections: true,
-      shorthands: true,
-    }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(env),
     }),

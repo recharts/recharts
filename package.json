@@ -103,7 +103,6 @@
     "karma-mocha": "^1.3.0",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^4.0.0-rc.2",
-    "lodash-webpack-plugin": "^0.11.4",
     "mocha": "^4.0.1",
     "pre-commit": "^1.1.3",
     "react": "^16.0.0",
