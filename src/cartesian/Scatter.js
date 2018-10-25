@@ -97,7 +97,7 @@ class Scatter extends Component {
    * @return {Array}  Composed data
    */
   static getComposedData = ({ xAxis, yAxis, zAxis, item, displayedData, onItemMouseLeave,
-    onItemMouseEnter, offset, xAxisTicks }) => {
+    onItemMouseEnter, offset, xAxisTicks, yAxisTicks }) => {
     const cells = findAllByType(item.props.children, Cell);
     const xAxisDataKey = _.isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
     const yAxisDataKey = _.isNil(yAxis.dataKey) ? item.props.dataKey : yAxis.dataKey;
