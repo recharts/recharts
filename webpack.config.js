@@ -29,8 +29,6 @@ const config = {
     }],
   },
 
-  devtool: 'source-map',
-
   externals: {
     react: {
       root: 'React',
@@ -67,6 +65,7 @@ if (env === 'analyse') {
 
 if (env === 'development') {
   config.mode = 'development';
+  config.devtool = 'source-map';
 }
 
 if (env === 'production') {
