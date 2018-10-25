@@ -1,3 +1,16 @@
+## 1.3.5(Oct 25, 2018)
+
+### fix
+
+- use lodash _.values instead of Object.values
+- perfer YAxis which has finite domain and nice ticks when a chart has many YAxes
+- fix <Area /> for expected length height attribute
+
+### chore
+
+- add babel-plugin-lodash in babelrc
+- update webpack.config.js to remove sourceMap in umd/Recharts.min.js
+
 ## 1.3.4(Oct 13, 2018)
 
 ### fix
