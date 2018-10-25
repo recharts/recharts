@@ -124,7 +124,7 @@ class Scatter extends Component {
         axis: xAxis, ticks: xAxisTicks, bandSize: xBandSize, entry, index,
       });
       const cy = getCateCoordinateOfLine({
-        axis: yAxis, ticks: xAxisTicks, bandSize: yBandSize, entry, index,
+        axis: yAxis, ticks: yAxisTicks, bandSize: yBandSize, entry, index,
       });
       const size = z !== '-' ? zAxis.scale(z) : defaultZ;
       const radius = Math.sqrt(Math.max(size, 0) / Math.PI);
