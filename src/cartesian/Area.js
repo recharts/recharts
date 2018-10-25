@@ -284,7 +284,7 @@ class Area extends Component {
           x={startX < endX ? startX : startX - width}
           y={0}
           width={width}
-          height={maxY + (strokeWidth || 1)}
+          height={parseInt(maxY + (strokeWidth || 1), 10)}
         />
       );
     }
@@ -311,7 +311,7 @@ class Area extends Component {
           x={0}
           y={startY < endY ? startY : startY - height}
           width={maxX + (strokeWidth || 1)}
-          height={height}
+          height={parseInt(height, 10)}
         />
       );
     }
@@ -473,7 +473,7 @@ class Area extends Component {
         {needClip ? (
           <defs>
             <clipPath id={`clipPath-${clipPathId}`}>
-              <rect x={left} y={top} width={width} height={height} />
+              <rect x={left} y={top} width={width} height={parseInt(height, 10)} />
             </clipPath>
           </defs>
         ) : null}
