@@ -143,7 +143,7 @@ class CartesianGrid extends Component {
     if (!verticalFill || !verticalFill.length) { return null; }
 
     const { fillOpacity, x, y, width, height } = this.props;
-    const verticalPointsUpdated = verticalPoints.slice().sort((a, b) => ((a - b) > 0));
+    const verticalPointsUpdated = verticalPoints.slice().sort((a, b) => a - b);
 
     if (x !== verticalPointsUpdated[0]) {
       verticalPointsUpdated.unshift(0);
@@ -182,7 +182,7 @@ class CartesianGrid extends Component {
     if (!horizontalFill || !horizontalFill.length) { return null; }
 
     const { fillOpacity, x, y, width, height } = this.props;
-    const horizontalPointsUpdated = horizontalPoints.slice().sort((a, b) => ((a - b) > 0));
+    const horizontalPointsUpdated = horizontalPoints.slice().sort((a, b) => a - b);
     if (y !== horizontalPointsUpdated[0]) {
       horizontalPointsUpdated.unshift(0);
     }
