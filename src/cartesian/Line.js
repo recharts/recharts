@@ -62,6 +62,7 @@ class Line extends Component {
     onAnimationEnd: PropTypes.func,
 
     isAnimationActive: PropTypes.bool,
+    animateNewValues: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
     animationEasing: PropTypes.oneOf([
@@ -87,6 +88,7 @@ class Line extends Component {
     fill: '#fff',
     points: [],
     isAnimationActive: !isSsr(),
+    animateNewValues: true,
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
@@ -309,6 +311,7 @@ class Line extends Component {
     const { points, strokeDasharray, isAnimationActive, animationBegin,
       animationDuration, animationEasing, animationId, width, height
     } = this.props;
+    const that = this;
     const { prevPoints, totalLength } = this.state;
 
     return (
@@ -336,9 +339,12 @@ class Line extends Component {
                 }
 
                 // magic number of faking previous x and y location
-                const interpolatorX = interpolateNumber(width * 2, entry.x);
-                const interpolatorY = interpolateNumber(height / 2, entry.y);
-                return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+                if (that.animateNewValues) {
+                  const interpolatorX = interpolateNumber(width * 2, entry.x);
+                  const interpolatorY = interpolateNumber(height / 2, entry.y);
+                  return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+                }
+                return { ...entry, x: entry.x, y: entry.y };
               });
               return this.renderCurveStatically(stepData, needClip, clipPathId);
             }
