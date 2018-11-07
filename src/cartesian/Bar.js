@@ -327,7 +327,7 @@ class Bar extends Component {
         className: 'recharts-bar-background-rectangle',
       };
 
-      return this.constructor.renderRectangle(background, props);
+      return this.constructor.renderRectangle(this.props.background, props);
     });
   }
 
