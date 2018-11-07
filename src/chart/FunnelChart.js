@@ -9,7 +9,7 @@ export default generateCategoricalChart({
   chartName: 'FunnelChart',
   GraphicalChild: Funnel,
   eventType: 'item',
-  axisComponents:[],
+  axisComponents: [],
   defaultProps: {
     layout: 'centric',
   },
