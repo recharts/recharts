@@ -11,8 +11,6 @@ import Layer from '../container/Layer';
 import Trapezoid from '../shape/Trapezoid';
 import Curve from '../shape/Curve';
 import Text from '../component/Text';
-import Label from '../component/Label';
-import LabelList from '../component/LabelList';
 import Cell from '../component/Cell';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
   getPresentationAttributes, findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
@@ -101,7 +99,7 @@ class Funnel extends Component {
   static getRealWidthHeight = (item, offset) => {
     const customWidth = item.props.width;
     const { width, height, left, right, top, bottom } = offset;
-    let realHeight = height;
+    const realHeight = height;
     let realWidth = width;
 
     if (_.isNumber(customWidth)) {
@@ -113,9 +111,9 @@ class Funnel extends Component {
     return {
       realWidth: realWidth - left - right - 50,
       realHeight: realHeight - bottom - top,
-      offsetX: ( width - realWidth ) / 2,
-      offsetY:  ( height - realHeight ) / 2,
-    }
+      offsetX: (width - realWidth) / 2,
+      offsetY: (height - realHeight) / 2,
+    };
   }
 
   static getComposedData = ({ item, offset, onItemMouseLeave, onItemMouseEnter }) => {
@@ -127,7 +125,7 @@ class Funnel extends Component {
     const len = funnelData.length;
     const rowHeight = realHeight / len;
 
-    let trapezoids = funnelData.map((entry, i) => {
+    const trapezoids = funnelData.map((entry, i) => {
       const val = getValueByDataKey(entry, dataKey, 0);
       const name = getValueByDataKey(entry, nameKey, i);
       let nextVal = 0;
@@ -135,7 +133,7 @@ class Funnel extends Component {
         nextVal = getValueByDataKey(funnelData[i + 1], dataKey, 0);
       }
 
-      const x = (maxValue - val) *  realWidth / (2 * maxValue) + top + 25 + offsetX;
+      const x = (maxValue - val) * realWidth / (2 * maxValue) + top + 25 + offsetX;
       const y = realHeight / len * i + left + offsetY;
       const upperWidth = val / maxValue * realWidth;
       const lowerWidth = nextVal / maxValue * realWidth;
@@ -145,18 +143,19 @@ class Funnel extends Component {
         x: x + upperWidth / 2,
         y: y + rowHeight / 2,
       };
+
       return {
-          x,
-          y,
-          upperWidth,
-          lowerWidth,
-          height: rowHeight,
-          name,
-          val,
-          tooltipPayload,
-          tooltipPosition,
-          ...entry,
-          payload: entry
+        x,
+        y,
+        upperWidth,
+        lowerWidth,
+        height: rowHeight,
+        name,
+        val,
+        tooltipPayload,
+        tooltipPosition,
+        ..._.omit(entry, 'width'),
+        payload: entry
       };
     });
 
@@ -270,7 +269,7 @@ class Funnel extends Component {
       return null;
     }
     const { label, labelLine, dataKey } = this.props;
-    const funnelProps = getPresentationAttributes(this.props);
+    const funnelProps = _.omit(getPresentationAttributes(this.props), 'width');
     const customLabelProps = getPresentationAttributes(label);
     const customLabelLineProps = getPresentationAttributes(labelLine);
 
