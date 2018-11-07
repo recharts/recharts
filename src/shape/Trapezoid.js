@@ -84,33 +84,35 @@ class Trapezoid extends Component {
       isAnimationActive, isUpdateAnimationActive } = this.props;
 
     if (x !== +x || y !== +y ||
-      upperWidth !== +upperWidth || lowerWidth !== +lowerWidth || height !== +height
-      || (upperWidth === 0 && lowerWidth === 0) || height === 0) { return null; }
+      upperWidth !== +upperWidth || lowerWidth !== +lowerWidth || height !== +height ||
+      (upperWidth === 0 && lowerWidth === 0) || height === 0) { return null; }
 
     const layerClass = classNames('recharts-trapezoid', className);
 
     if (!isUpdateAnimationActive) {
-      return (<g>
-        <path
-          {...getPresentationAttributes(this.props)}
-          {...filterEventAttributes(this.props)}
-          className={layerClass}
-          d={getTrapezoidPath(x, y, upperWidth, lowerWidth, height)}
-        />
-      </g>);
+      return (
+        <g>
+          <path
+            {...getPresentationAttributes(this.props)}
+            {...filterEventAttributes(this.props)}
+            className={layerClass}
+            d={getTrapezoidPath(x, y, upperWidth, lowerWidth, height)}
+          />
+        </g>
+      );
     }
 
     return (
       <Animate
         canBegin={totalLength > 0}
-        from={{ width, height, x, y }}
-        to={{ width, height, x, y }}
+        from={{ upperWidth, height, x, y }}
+        to={{ upperWidth, height, x, y }}
         duration={animationDuration}
         animationEasing={animationEasing}
         isActive={isUpdateAnimationActive}
       >
         {
-        ({ width: currWidth, height: currHeight, x: currX, y: currY }) => (
+        ({ upperWidth: currUpperWidth, lowerWidth: currLowerWidth, height: currHeight, x: currX, y: currY }) => (
           <Animate
             canBegin={totalLength > 0}
             from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
@@ -125,7 +127,7 @@ class Trapezoid extends Component {
               {...getPresentationAttributes(this.props)}
               {...filterEventAttributes(this.props)}
               className={layerClass}
-              d={getTrapezoidPath(currX, currY, currWidth, currHeight, radius)}
+              d={getTrapezoidPath(currX, currY, currUpperWidth, currLowerWidth, height)}
               ref={(node) => { this.node = node; }}
             />
           </Animate>

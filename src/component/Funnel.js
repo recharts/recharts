@@ -10,8 +10,8 @@ import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Trapezoid from '../shape/Trapezoid';
 import Curve from '../shape/Curve';
-import Text from '../component/Text';
-import Cell from '../component/Cell';
+import Text from './Text';
+import Cell from './Cell';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
   getPresentationAttributes, findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { interpolateNumber, uniqueId } from '../util/DataUtils';
@@ -296,7 +296,7 @@ class Funnel extends Component {
 
       if (label.position === 'right') {
         const labelX = entry.x + entry.upperWidth - (entry.upperWidth - entry.lowerWidth) / 4;
-        const labelY = entry.y + entry.height / 2
+        const labelY = entry.y + entry.height / 2;
         labelProps = {
           ...labelProps,
           textAnchor: 'start',
