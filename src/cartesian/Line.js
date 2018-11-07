@@ -311,7 +311,6 @@ class Line extends Component {
     const { points, strokeDasharray, isAnimationActive, animationBegin,
       animationDuration, animationEasing, animationId, width, height
     } = this.props;
-    const that = this;
     const { prevPoints, totalLength } = this.state;
 
     return (
@@ -339,7 +338,7 @@ class Line extends Component {
                 }
 
                 // magic number of faking previous x and y location
-                if (that.animateNewValues) {
+                if (this.animateNewValues) {
                   const interpolatorX = interpolateNumber(width * 2, entry.x);
                   const interpolatorY = interpolateNumber(height / 2, entry.y);
                   return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
