@@ -127,7 +127,7 @@ class Trapezoid extends Component {
               {...getPresentationAttributes(this.props)}
               {...filterEventAttributes(this.props)}
               className={layerClass}
-              d={getTrapezoidPath(currX, currY, currUpperWidth, currLowerWidth, height)}
+              d={getTrapezoidPath(currX, currY, currUpperWidth, currLowerWidth, currHeight)}
               ref={(node) => { this.node = node; }}
             />
           </Animate>
