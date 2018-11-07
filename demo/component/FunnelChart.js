@@ -50,7 +50,7 @@ export default class Demo extends Component {
                 // }}
                 // label={{ position: 'right' }}
                 // labelLine
-                isAnimationActive={false}
+                isAnimationActive={true}
               >
                 {
                   data01.map((entry, index) => (
