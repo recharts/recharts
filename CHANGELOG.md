@@ -1,3 +1,14 @@
+## 1.3.6(Nov 07, 2018)
+
+### fix
+
+- Fix bug preventing use of functions or custom components for the Bar background prop
+- Fix incorrect sort logic in stripe rendering
+
+### feat
+
+- Added animateNewValues property to Line
+
 ## 1.3.5(Oct 25, 2018)
 
 ### fix
