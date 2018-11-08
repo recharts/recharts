@@ -35,7 +35,6 @@ class Trapezoid extends Component {
     lowerWidth: PropTypes.number,
     height: PropTypes.number,
 
-    isAnimationActive: PropTypes.bool,
     isUpdateAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
@@ -48,7 +47,6 @@ class Trapezoid extends Component {
     upperWidth: 0,
     lowerWidth: 0,
     height: 0,
-    isAnimationActive: false,
     isUpdateAnimationActive: false,
     animationBegin: 0,
     animationDuration: 1500,
@@ -80,8 +78,7 @@ class Trapezoid extends Component {
   render() {
     const { x, y, upperWidth, lowerWidth, height, className } = this.props;
     const { totalLength } = this.state;
-    const { animationEasing, animationDuration, animationBegin,
-      isAnimationActive, isUpdateAnimationActive } = this.props;
+    const { animationEasing, animationDuration, animationBegin, isUpdateAnimationActive } = this.props;
 
     if (x !== +x || y !== +y ||
       upperWidth !== +upperWidth || lowerWidth !== +lowerWidth || height !== +height ||
@@ -101,12 +98,11 @@ class Trapezoid extends Component {
         </g>
       );
     }
-
     return (
       <Animate
         canBegin={totalLength > 0}
-        from={{ upperWidth, height, x, y }}
-        to={{ upperWidth, height, x, y }}
+        from={{ upperWidth: 0, lowerWidth: 0, height, x, y }}
+        to={{ upperWidth, lowerWidth, height, x, y }}
         duration={animationDuration}
         animationEasing={animationEasing}
         isActive={isUpdateAnimationActive}
@@ -120,7 +116,6 @@ class Trapezoid extends Component {
             attributeName="strokeDasharray"
             begin={animationBegin}
             duration={animationDuration}
-            isActive={isAnimationActive}
             easing={animationEasing}
           >
             <path

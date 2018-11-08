@@ -15,6 +15,7 @@ export default class Demo extends Component {
           upperWidth={100}
           lowerWidth={50}
           height={50}
+          isUpdateAnimationActive
         />
         <Trapezoid
           fill="#f00"
@@ -23,6 +24,7 @@ export default class Demo extends Component {
           upperWidth={100}
           lowerWidth={0}
           height={50}
+          isUpdateAnimationActive
         />
       </Surface>
     );

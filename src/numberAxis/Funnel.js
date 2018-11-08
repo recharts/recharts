@@ -9,12 +9,11 @@ import _ from 'lodash';
 import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Trapezoid from '../shape/Trapezoid';
-import Curve from '../shape/Curve';
-import Text from './Text';
-import Cell from './Cell';
+import LabelList from '../component/LabelList';
+import Cell from '../component/Cell';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
   getPresentationAttributes, findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
-import { interpolateNumber, uniqueId } from '../util/DataUtils';
+import { interpolateNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 
 @pureRender
@@ -30,15 +29,8 @@ class Funnel extends Component {
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
     nameKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
     data: PropTypes.arrayOf(PropTypes.object),
-    width: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
     trapezoids: PropTypes.arrayOf(PropTypes.object),
     hide: PropTypes.bool,
-    labelLine: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.func, PropTypes.element, PropTypes.bool,
-    ]),
-    label: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.func, PropTypes.element, PropTypes.bool,
-    ]),
     activeShape: PropTypes.oneOfType([
       PropTypes.object, PropTypes.func, PropTypes.element,
     ]),
@@ -55,17 +47,12 @@ class Funnel extends Component {
       'spring',
       'linear',
     ]),
-    id: PropTypes.string,
   };
 
   static defaultProps = {
     stroke: '#fff',
     fill: '#808080',
     legendType: 'rect',
-    // The abscissa of pole
-    cx: '0%',
-    // The ordinate of pole
-    cy: '0%',
     labelLine: true,
     hide: false,
     isAnimationActive: !isSsr(),
@@ -147,6 +134,7 @@ class Funnel extends Component {
       return {
         x,
         y,
+        width: Math.max(upperWidth, lowerWidth),
         upperWidth,
         lowerWidth,
         height: rowHeight,
@@ -179,20 +167,26 @@ class Funnel extends Component {
     }
   }
 
-  static getTextAnchor(x, cx) {
-    if (x > cx) {
-      return 'start';
-    } if (x < cx) {
-      return 'end';
-    }
-
-    return 'middle';
-  }
-
-  id = uniqueId('recharts-pie-');
-
   cachePrevData = (trapezoids) => {
     this.setState({ prevTrapezoids: trapezoids });
+  };
+
+  handleAnimationEnd = () => {
+    const { onAnimationEnd } = this.props;
+    this.setState({ isAnimationFinished: true });
+
+    if (_.isFunction(onAnimationEnd)) {
+      onAnimationEnd();
+    }
+  };
+
+  handleAnimationStart = () => {
+    const { onAnimationStart } = this.props;
+    this.setState({ isAnimationFinished: false });
+
+    if (_.isFunction(onAnimationStart)) {
+      onAnimationStart();
+    }
   };
 
   isActiveIndex(i) {
@@ -203,133 +197,6 @@ class Funnel extends Component {
     }
 
     return i === activeIndex;
-  }
-
-  handleAnimationEnd = () => {
-    const { onAnimationEnd } = this.props;
-
-    this.setState({
-      isAnimationFinished: true,
-    });
-
-    if (_.isFunction(onAnimationEnd)) {
-      onAnimationEnd();
-    }
-  };
-
-  handleAnimationStart = () => {
-    const { onAnimationStart } = this.props;
-
-    this.setState({
-      isAnimationFinished: false,
-    });
-
-    if (_.isFunction(onAnimationStart)) {
-      onAnimationStart();
-    }
-  }
-
-  static renderLabelLineItem(option, props) {
-    if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
-    } if (_.isFunction(option)) {
-      return option(props);
-    }
-
-    return <Curve {...props} type="linear" className="recharts-funnel-label-line" />;
-  }
-
-  static renderLabelItem(option, props, value) {
-    if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
-    }
-    let label = value;
-    if (_.isFunction(option)) {
-      label = option(props);
-      if (React.isValidElement(label)) {
-        return label;
-      }
-    }
-
-    const { name } = props;
-    return (
-      <Text
-        {...props}
-        verticalAnchor="middle"
-        className="recharts-funnel-label-text"
-      >
-        {`${name}:${label}`}
-      </Text>
-    );
-  }
-
-  renderLabels(trapezoids) {
-    const { isAnimationActive } = this.props;
-    if (isAnimationActive && !this.state.isAnimationFinished) {
-      return null;
-    }
-    const { label, labelLine, dataKey } = this.props;
-    const funnelProps = _.omit(getPresentationAttributes(this.props), 'width');
-    const customLabelProps = getPresentationAttributes(label);
-    const customLabelLineProps = getPresentationAttributes(labelLine);
-
-    const labels = trapezoids.map((entry, i) => {
-      let labelProps = {
-        ...funnelProps,
-        ...entry,
-        stroke: '#000',
-        fill: '#000',
-        ...customLabelProps,
-        index: i,
-        textAnchor: 'middle',
-        x: entry.x + entry.upperWidth / 2,
-        y: entry.y + entry.height / 2,
-      };
-      let lineProps = {
-        ...funnelProps,
-        ...entry,
-        fill: 'none',
-        stroke: entry.fill,
-        ...customLabelLineProps,
-        index: i,
-      };
-
-      if (label.position === 'right') {
-        const labelX = entry.x + entry.upperWidth - (entry.upperWidth - entry.lowerWidth) / 4;
-        const labelY = entry.y + entry.height / 2;
-        labelProps = {
-          ...labelProps,
-          textAnchor: 'start',
-          stroke: entry.fill,
-          x: labelX + 20,
-          y: labelY,
-        };
-        lineProps = {
-          fill: entry.fill,
-          stroke: entry.fill,
-          points: [{
-            x: labelX + 5,
-            y: labelY,
-          }, {
-            x: labelX + 15,
-            y: labelY,
-          }],
-        };
-      }
-
-      return (
-        <Layer key={`label-${i}`}>
-          {labelLine && this.constructor.renderLabelLineItem(labelLine, lineProps)}
-          {this.constructor.renderLabelItem(
-            label,
-            labelProps,
-            getValueByDataKey(entry, dataKey)
-          )}
-        </Layer>
-      );
-    });
-
-    return <Layer className="recharts-funnel-labels">{labels}</Layer>;
   }
 
   static renderTrapezoidItem(option, props) {
@@ -370,6 +237,7 @@ class Funnel extends Component {
     const { trapezoids, isAnimationActive, animationBegin, animationDuration,
       animationEasing, animationId } = this.props;
     const { prevTrapezoids } = this.state;
+
     return (
       <Animate
         begin={animationBegin}
@@ -379,34 +247,51 @@ class Funnel extends Component {
         from={{ t: 0 }}
         to={{ t: 1 }}
         key={`funnel-${animationId}`}
-        onAnimationEnd={this.handleAnimationEnd}
         onAnimationStart={this.handleAnimationStart}
+        onAnimationEnd={this.handleAnimationEnd}
       >
         {
           ({ t }) => {
             const stepData = trapezoids.map((entry, index) => {
               const prev = prevTrapezoids && prevTrapezoids[index];
+
               if (prev) {
                 const interpolatorX = interpolateNumber(prev.x, entry.x);
                 const interpolatorY = interpolateNumber(prev.y, entry.y);
+                const interpolatorUpperWidth = interpolateNumber(prev.upperWidth, entry.upperWidth);
+                const interpolatorLowerWidth = interpolateNumber(prev.lowerWidth, entry.lowerWidth);
+                const interpolatorHeight = interpolateNumber(prev.height, entry.height);
 
                 return {
                   ...entry,
                   x: interpolatorX(t),
                   y: interpolatorY(t),
+                  upperWidth: interpolatorUpperWidth(t),
+                  lowerWidth: interpolatorLowerWidth(t),
+                  height: interpolatorHeight(t),
                 };
               }
 
-              const interpolatorX = interpolateNumber(0, entry.x);
-              const interpolatorY = interpolateNumber(0, entry.y);
+              const interpolatorX = interpolateNumber(entry.x + entry.upperWidth / 2, entry.x);
+              const interpolatorY = interpolateNumber(entry.y + entry.height / 2, entry.y);
+              const interpolatorUpperWidth = interpolateNumber(0, entry.upperWidth);
+              const interpolatorLowerWidth = interpolateNumber(0, entry.lowerWidth);
+              const interpolatorHeight = interpolateNumber(0, entry.height);
 
               return {
                 ...entry,
                 x: interpolatorX(t),
                 y: interpolatorY(t),
+                upperWidth: interpolatorUpperWidth(t),
+                lowerWidth: interpolatorLowerWidth(t),
+                height: interpolatorHeight(t),
               };
             });
-            return this.renderTrapezoidsStatically(stepData);
+            return (
+              <Layer>
+                {this.renderTrapezoidsStatically(stepData)}
+              </Layer>
+            );
           }
         }
       </Animate>
@@ -425,7 +310,9 @@ class Funnel extends Component {
   }
 
   render() {
-    const { hide, trapezoids, className, label } = this.props;
+    const { hide, trapezoids, className, isAnimationActive } = this.props;
+    const { isAnimationFinished } = this.state;
+
     if (hide || !trapezoids || !trapezoids.length) {
       return null;
     }
@@ -435,7 +322,8 @@ class Funnel extends Component {
     return (
       <Layer className={layerClass}>
         {this.renderTrapezoids()}
-        {label && this.renderLabels(trapezoids)}
+        {(!isAnimationActive || isAnimationFinished) &&
+          LabelList.renderCallByParent(this.props, trapezoids)}
       </Layer>
     );
   }
