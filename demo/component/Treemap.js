@@ -369,7 +369,8 @@ const data = [{
     },
     { name: 'Visualization', size: 16540 },
   ],
-}][2].children;
+}];
+//[2].children;
 
 class DemoTreemap extends Component {
   static displayName = 'DemoTreemap';
@@ -383,7 +384,17 @@ class DemoTreemap extends Component {
 
     return (
       <div className="treemap-charts">
-
+        <a
+          href="javascript:void(0)"
+          className="btn"
+          onClick={() => {
+            this.setState({
+              data: changeData(data),
+            });
+          }}
+        >
+          change data
+        </a>
         <br/>
         <div className="treemap-chart-wrapper">
           <Treemap
@@ -396,17 +407,6 @@ class DemoTreemap extends Component {
         </div>
         <br />
         <p>Treemap</p>
-        <a
-          href="javascript:void(0)"
-          className="btn"
-          onClick={() => {
-            this.setState({
-              data: changeData(data),
-            });
-          }}
-        >
-          change data
-        </a>
         <div className="treemap-chart-wrapper">
           <Treemap
             width={500}
@@ -417,6 +417,29 @@ class DemoTreemap extends Component {
             dataKey="size"
             ratio={1}
             content={<DemoTreemapItem bgColors={ColorPlatte} />}
+          >
+            <Tooltip />
+          </Treemap>
+        </div>
+        <p>Treemap</p>
+        <div className="treemap-chart-wrapper">
+          <Treemap
+            width={500}
+            height={250}
+            data={this.state.data}
+            isAnimationActive={false}
+            nameKey="name"
+            dataKey="size"
+            ratio={1}
+            type="nest"
+            nestIndexContent={(item) => {
+              return (
+                <div>
+                  {`${item.name || 'root'}`}
+                </div>
+              );
+            }
+            }
           >
             <Tooltip />
           </Treemap>
