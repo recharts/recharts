@@ -292,6 +292,7 @@ class Treemap extends Component {
   static createDefaultState() {
     return {
       isTooltipActive: false,
+      isAnimationFinished: false,
       activeNode: null,
       currentRoot: null,
       formatRoot: null,
@@ -334,6 +335,24 @@ class Treemap extends Component {
       onMouseLeave(node, e);
     }
   }
+
+  handleAnimationEnd = () => {
+    const { onAnimationEnd } = this.props;
+    this.setState({ isAnimationFinished: true });
+
+    if (_.isFunction(onAnimationEnd)) {
+      onAnimationEnd();
+    }
+  };
+
+  handleAnimationStart = () => {
+    const { onAnimationStart } = this.props;
+    this.setState({ isAnimationFinished: false });
+
+    if (_.isFunction(onAnimationStart)) {
+      onAnimationStart();
+    }
+  };
 
   handleClick(node) {
     const { onClick, type } = this.props;
@@ -384,11 +403,11 @@ class Treemap extends Component {
 
   renderAnimatedItem(content, nodeProps, isLeaf) {
     const { isAnimationActive, animationBegin, animationDuration,
-      animationEasing, isUpdateAnimationActive, type } = this.props;
-    const { width, height, x, y } = nodeProps;
+      animationEasing, isUpdateAnimationActive, type, animationId } = this.props;
+    const { isAnimationFinished } = this.state;
+    const { width, height, x, y, depth } = nodeProps;
     const translateX = parseInt((Math.random() * 2 - 1) * width, 10);
     let event = {};
-
     if (isLeaf || (type === 'nest')) {
       event = {
         onMouseEnter: this.handleMouseEnter.bind(this, nodeProps),
@@ -397,14 +416,17 @@ class Treemap extends Component {
       };
     }
 
-    // todo: 动画渲染过程中，仅渲染一级节点
     return (
       <Smooth
+        begin={animationBegin}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+        key={`treemap-${animationId}`}
         from={{ x, y, width, height }}
         to={{ x, y, width, height }}
-        duration={animationDuration}
-        easing={animationEasing}
-        isActive={isUpdateAnimationActive}
+        onAnimationStart={this.handleAnimationStart}
+        onAnimationEnd={this.handleAnimationEnd}
       >
         {
         ({ x: currX, y: currY, width: currWidth, height: currHeight }) => (
@@ -419,16 +441,22 @@ class Treemap extends Component {
           >
             <Layer {...event}>
               {
-              this.constructor.renderContentItem(content, {
-                ...nodeProps,
-                isAnimationActive,
-                isUpdateAnimationActive: !isUpdateAnimationActive,
-                width: currWidth,
-                height: currHeight,
-                x: currX,
-                y: currY,
-              })
-            }
+                (() => {
+                  // 动画渲染过程中，仅渲染一级节点
+                  if (depth > 2 && !isAnimationFinished) {
+                    return null;
+                  }
+                  return this.constructor.renderContentItem(content, {
+                    ...nodeProps,
+                    isAnimationActive,
+                    isUpdateAnimationActive: !isUpdateAnimationActive,
+                    width: currWidth,
+                    height: currHeight,
+                    x: currX,
+                    y: currY,
+                  }, type);
+                })()
+              }
             </Layer>
           </Smooth>
         )
@@ -437,17 +465,16 @@ class Treemap extends Component {
     );
   }
 
-  static renderContentItem(content, nodeProps) {
+  static renderContentItem(content, nodeProps, type) {
     if (React.isValidElement(content)) {
       return React.cloneElement(content, nodeProps);
     } if (_.isFunction(content)) {
       return content(nodeProps);
     }
-
     // 加强默认形状
     const { x, y, width, height, index } = nodeProps;
     let arrow = null;
-    if (width > 10 && height > 10 && nodeProps.children) {
+    if (width > 10 && height > 10 && nodeProps.children && type === 'nest') {
       arrow = (
         <Polygon
           points={[
@@ -465,10 +492,11 @@ class Treemap extends Component {
         <text x={x + 8} y={y + height / 2 + 7} fontSize={14}>{nodeProps.name}</text>
       );
     }
+
     return (
       <g>
         <Rectangle
-          fill={ColorPlatte[index % ColorPlatte.length]}
+          fill={nodeProps.depth < 2 ? ColorPlatte[index % ColorPlatte.length] : 'rgba(255,255,255,0)'}
           stroke="#fff"
           {...nodeProps}
         />
