@@ -530,9 +530,7 @@ class Treemap extends Component {
     const isLeaf = !node.children || !node.children.length;
 
     const { currentRoot } = this.state;
-    const isCurrentRootChild = (currentRoot.children || []).filter((item) => {
-      return (item.depth === node.depth) && (item.name === node.name);
-    });
+    const isCurrentRootChild = (currentRoot.children || []).filter(item => item.depth === node.depth && item.name === node.name);
 
     if (!isCurrentRootChild.length && root.depth && type === 'nest') {
       return null;
