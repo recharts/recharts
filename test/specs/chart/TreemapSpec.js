@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { Treemap } from 'recharts';
-import { shallow, render } from 'enzyme';
+import { mount, render } from 'enzyme';
 
 const data = [
   { rank: '1', name: 'A', children: [
@@ -32,7 +32,7 @@ const data = [
 
 describe('<Treemap />', () => {
   it('renders 20 rectangles in simple TreemapChart', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
       <Treemap
         width={500}
         height={250}
@@ -47,7 +47,7 @@ describe('<Treemap />', () => {
   });
 
   it('renders 21 rectangles in simple TreemapChart', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
       <Treemap
         width={500}
         height={250}

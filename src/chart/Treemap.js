@@ -401,7 +401,7 @@ class Treemap extends Component {
     });
   }
 
-  renderAnimatedItem(content, nodeProps, isLeaf) {
+  renderItem(content, nodeProps, isLeaf) {
     const { isAnimationActive, animationBegin, animationDuration,
       animationEasing, isUpdateAnimationActive, type, animationId } = this.props;
     const { isAnimationFinished } = this.state;
@@ -414,6 +414,24 @@ class Treemap extends Component {
         onMouseLeave: this.handleMouseLeave.bind(this, nodeProps),
         onClick: this.handleClick.bind(this, nodeProps),
       };
+    }
+
+    if (!isAnimationActive) {
+      return (
+        <Layer {...event}>
+          {
+            this.constructor.renderContentItem(content, {
+              ...nodeProps,
+              isAnimationActive: false,
+              isUpdateAnimationActive: false,
+              width,
+              height,
+              x,
+              y,
+            }, type)
+          }
+        </Layer>
+      );
     }
 
     return (
@@ -498,7 +516,7 @@ class Treemap extends Component {
         <Rectangle
           fill={nodeProps.depth < 2 ? ColorPlatte[index % ColorPlatte.length] : 'rgba(255,255,255,0)'}
           stroke="#fff"
-          {...nodeProps}
+          {..._.omit(nodeProps, 'children')}
         />
         {arrow}
         {text}
@@ -521,7 +539,7 @@ class Treemap extends Component {
     }
     return (
       <Layer key={`recharts-treemap-node-${i}`} className={`recharts-treemap-depth-${node.depth}`}>
-        {this.renderAnimatedItem(content, nodeProps, isLeaf)}
+        {this.renderItem(content, nodeProps, isLeaf)}
         {
           node.children && node.children.length ?
             node.children.map((child, index) => this.renderNode(node, child, index)) : null

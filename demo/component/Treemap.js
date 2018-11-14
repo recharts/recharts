@@ -402,7 +402,7 @@ class DemoTreemap extends Component {
             height={250}
             data={this.state.data}
             dataKey="size"
-            isAnimationActive={false}
+            isAnimationActive
           />
         </div>
         <br />
