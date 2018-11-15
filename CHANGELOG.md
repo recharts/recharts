@@ -1,3 +1,10 @@
+## 1.4.0(Nov 15, 2018)
+
+### feat
+
+- Add FunnelChart and Trapezoid
+- Add nested Treemap
+
 ## 1.3.6(Nov 07, 2018)
 
 ### fix
