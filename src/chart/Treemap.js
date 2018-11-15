@@ -216,6 +216,7 @@ class Treemap extends Component {
     ]),
     type: PropTypes.string,
     colorPanel: PropTypes.array,
+    // customize nest index content
     nestIndexContent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
 
     onMouseEnter: PropTypes.func,
@@ -490,7 +491,7 @@ class Treemap extends Component {
     } if (_.isFunction(content)) {
       return content(nodeProps);
     }
-    // 加强默认形状
+    // optimize default shape
     const { x, y, width, height, index } = nodeProps;
     let arrow = null;
     if (width > 10 && height > 10 && nodeProps.children && type === 'nest') {
