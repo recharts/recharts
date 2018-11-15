@@ -18,6 +18,7 @@ import pureRender from '../util/PureRender';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { COLOR_PANEL } from '../util/Constants';
 import { getStringSize } from '../util/DOMUtils';
+import { uniqueId } from '../util/DataUtils';
 
 const computeNode = ({ depth, node, index, valueKey }) => {
   const { children } = node;
@@ -463,7 +464,7 @@ class Treemap extends Component {
             <Layer {...event}>
               {
                 (() => {
-                  // 动画渲染过程中，仅渲染一级节点
+                  // when animation Duration , only render depth=1 nodes
                   if (depth > 2 && !isAnimationFinished) {
                     return null;
                   }
@@ -588,7 +589,7 @@ class Treemap extends Component {
     });
   }
 
-  // 渲染层级
+  // render nest treemap
   renderNestIndex() {
     const { nameKey, nestIndexContent } = this.props;
     const { nestIndex } = this.state;
@@ -614,7 +615,7 @@ class Treemap extends Component {
               // eslint-disable-next-line jsx-a11y/click-events-have-key-events
               <div
                 onClick={this.handleNestIndex.bind(this, item, i)}
-                key={`nest-index-${i}`}
+                key={`nest-index-${uniqueId()}`}
                 className="recharts-treemap-nest-index-box"
                 style={{
                   cursor: 'pointer',
