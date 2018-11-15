@@ -69,7 +69,7 @@ export default class Demo extends Component {
                     <Cell key={`slice-${index}`} fill={colors1[index % 10]} className="custom-cell" />
                   ))
                 }
-                <LabelList position="right" fill="#000" stroke="#000" dataKey="name" />
+                <LabelList position="right" fill="#000" stroke="none" dataKey="name" />
               </Funnel>
             </FunnelChart>
           </ResponsiveContainer>
@@ -89,7 +89,7 @@ export default class Demo extends Component {
                     <Cell key={`slice-${index}`} fill={colors1[index % 10]} />
                   ))
                 }
-                <LabelList position="right" fill="#000" stroke="#000" dataKey="name" />
+                <LabelList position="right" fill="#000" stroke="none" dataKey="name" />
               </Funnel>
               <Funnel
                 dataKey="value"
@@ -102,7 +102,7 @@ export default class Demo extends Component {
                     <Cell key={`slice-${index}`} fill={colors2[index % 10]} />
                   ))
                 }
-                <LabelList position="center" fill="#fff" stroke="#fff" dataKey="value" />
+                <LabelList position="center" fill="#fff" stroke="none" dataKey="value" />
               </Funnel>
             </FunnelChart>
           </ResponsiveContainer>
