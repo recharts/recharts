@@ -16,7 +16,7 @@ import Tooltip from '../component/Tooltip';
 import Polygon from '../shape/Polygon';
 import pureRender from '../util/PureRender';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { ColorPlatte } from '../util/Constants';
+import { COLOR_PANEL } from '../util/Constants';
 import { getStringSize } from '../util/DOMUtils';
 
 const computeNode = ({ depth, node, index, valueKey }) => {
@@ -215,6 +215,7 @@ class Treemap extends Component {
       PropTypes.node,
     ]),
     type: PropTypes.string,
+    colorPanel: PropTypes.array,
     nestIndexContent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
 
     onMouseEnter: PropTypes.func,
@@ -403,7 +404,7 @@ class Treemap extends Component {
 
   renderItem(content, nodeProps, isLeaf) {
     const { isAnimationActive, animationBegin, animationDuration,
-      animationEasing, isUpdateAnimationActive, type, animationId } = this.props;
+      animationEasing, isUpdateAnimationActive, type, animationId, colorPanel } = this.props;
     const { isAnimationFinished } = this.state;
     const { width, height, x, y, depth } = nodeProps;
     const translateX = parseInt((Math.random() * 2 - 1) * width, 10);
@@ -428,7 +429,7 @@ class Treemap extends Component {
               height,
               x,
               y,
-            }, type)
+            }, type, colorPanel)
           }
         </Layer>
       );
@@ -472,7 +473,7 @@ class Treemap extends Component {
                     height: currHeight,
                     x: currX,
                     y: currY,
-                  }, type);
+                  }, type, colorPanel);
                 })()
               }
             </Layer>
@@ -483,7 +484,7 @@ class Treemap extends Component {
     );
   }
 
-  static renderContentItem(content, nodeProps, type) {
+  static renderContentItem(content, nodeProps, type, colorPanel) {
     if (React.isValidElement(content)) {
       return React.cloneElement(content, nodeProps);
     } if (_.isFunction(content)) {
@@ -511,10 +512,11 @@ class Treemap extends Component {
       );
     }
 
+    const colors = colorPanel || COLOR_PANEL;
     return (
       <g>
         <Rectangle
-          fill={nodeProps.depth < 2 ? ColorPlatte[index % ColorPlatte.length] : 'rgba(255,255,255,0)'}
+          fill={nodeProps.depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)'}
           stroke="#fff"
           {..._.omit(nodeProps, 'children')}
         />

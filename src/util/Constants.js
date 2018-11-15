@@ -1,4 +1,4 @@
-export const ColorPlatte = [
+export const COLOR_PANEL = [
   '#1890FF',
   '#66B5FF',
   '#41D9C7',

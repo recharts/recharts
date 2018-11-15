@@ -403,6 +403,7 @@ class DemoTreemap extends Component {
             data={this.state.data}
             dataKey="size"
             isAnimationActive
+            // colorPanel={['red', 'blue', 'yellow']}
           />
         </div>
         <br />
