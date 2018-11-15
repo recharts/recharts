@@ -27,6 +27,9 @@ require('./specs/polar/PieSpec');
 require('./specs/polar/RadialBarSpec');
 require('./specs/polar/RadarSpec');
 
+// number axis chart component
+require('./specs/numberAxis/FunnelSpec');
+
 // chart
 require('./specs/chart/AreaChartSpec');
 require('./specs/chart/BarChartSpec');
@@ -38,6 +41,7 @@ require('./specs/chart/TreemapSpec');
 require('./specs/chart/RadialBarChartSpec');
 require('./specs/chart/ComposedChartSpec');
 require('./specs/chart/SankeySpec');
+require('./specs/chart/FunnelChartSpec');
 
 // general component
 require('./specs/component/CellSpec');
@@ -56,6 +60,7 @@ require('./specs/shape/RectangleSpec');
 require('./specs/shape/SectorSpec');
 require('./specs/shape/PolygonSpec');
 require('./specs/shape/SymbolsSpec');
+require('./specs/shape/TrapezoidSpec');
 
 // util
 require('./specs/util/CartesianUtilsSpec');

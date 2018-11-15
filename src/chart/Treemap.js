@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /**
  * @fileOverview TreemapChart
  */
@@ -12,8 +13,12 @@ import Rectangle from '../shape/Rectangle';
 import { findChildByType, getPresentationAttributes, filterSvgElements,
   validateWidthHeight, isSsr } from '../util/ReactUtils';
 import Tooltip from '../component/Tooltip';
+import Polygon from '../shape/Polygon';
 import pureRender from '../util/PureRender';
 import { getValueByDataKey } from '../util/ChartUtils';
+import { COLOR_PANEL } from '../util/Constants';
+import { getStringSize } from '../util/DOMUtils';
+import { uniqueId } from '../util/DataUtils';
 
 const computeNode = ({ depth, node, index, valueKey }) => {
   const { children } = node;
@@ -181,7 +186,10 @@ const squarify = (node, aspectRatio) => {
       row.length = row.area = 0;
     }
 
-    return { ...node, children: scaleChildren.map(c => squarify(c, aspectRatio)) };
+    return {
+      ...node,
+      children: scaleChildren.map(c => squarify(c, aspectRatio))
+    };
   }
 
   return node;
@@ -207,6 +215,11 @@ class Treemap extends Component {
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
     ]),
+    // optional values flat/nest, flat show whole treemap, nest only show depth=1 node
+    type: PropTypes.oneOf(['flat', 'nest']),
+    colorPanel: PropTypes.array,
+    // customize nest index content
+    nestIndexContent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
 
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
@@ -227,13 +240,52 @@ class Treemap extends Component {
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'linear',
+    type: 'flat',
   };
 
   state = this.constructor.createDefaultState();
 
+  componentDidMount() {
+    const { type, width, height, data, dataKey, aspectRatio } = this.props;
+    const { formatRoot, currentRoot, nestIndex } = this.computeRoot({ type, width, height, data, dataKey, aspectRatio });
+
+    this.setState({
+      formatRoot,
+      currentRoot,
+      nestIndex,
+    });
+  }
+
+  computeRoot({ type, width, height, data, dataKey, aspectRatio }) {
+    const root = computeNode({
+      depth: 0,
+      node: { children: data, x: 0, y: 0, width, height },
+      index: 0,
+      valueKey: dataKey,
+    });
+
+    const formatRoot = squarify(root, aspectRatio);
+    const { nestIndex } = this.state;
+    if (type === 'nest') {
+      nestIndex.push(root);
+    }
+
+    return {
+      formatRoot,
+      currentRoot: root,
+      nestIndex,
+    };
+  }
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.data !== this.props.data) {
-      this.setState(this.constructor.createDefaultState());
+      const { type, width, height, data, dataKey, aspectRatio } = nextProps;
+      const nextRoot = this.computeRoot({ type, width, height, data, dataKey, aspectRatio });
+      this.setState({
+        ...this.constructor.createDefaultState(),
+        ...nextRoot,
+        nestIndex: [nextRoot.currentRoot],
+      });
     }
   }
 
@@ -244,7 +296,11 @@ class Treemap extends Component {
   static createDefaultState() {
     return {
       isTooltipActive: false,
+      isAnimationFinished: false,
       activeNode: null,
+      currentRoot: null,
+      formatRoot: null,
+      nestIndex: [],
     };
   }
 
@@ -284,22 +340,79 @@ class Treemap extends Component {
     }
   }
 
-  handleClick(node) {
-    const { onClick } = this.props;
+  handleAnimationEnd = () => {
+    const { onAnimationEnd } = this.props;
+    this.setState({ isAnimationFinished: true });
 
+    if (_.isFunction(onAnimationEnd)) {
+      onAnimationEnd();
+    }
+  };
+
+  handleAnimationStart = () => {
+    const { onAnimationStart } = this.props;
+    this.setState({ isAnimationFinished: false });
+
+    if (_.isFunction(onAnimationStart)) {
+      onAnimationStart();
+    }
+  };
+
+  handleClick(node) {
+    const { onClick, type } = this.props;
+    if (type === 'nest' && node.children) {
+      const { width, height, dataKey, aspectRatio } = this.props;
+      const root = computeNode({
+        depth: 0,
+        node: { ...node, x: 0, y: 0, width, height },
+        index: 0,
+        valueKey: dataKey,
+      });
+
+      const formatRoot = squarify(root, aspectRatio);
+
+      const { nestIndex } = this.state;
+      nestIndex.push(node);
+
+      this.setState({
+        formatRoot,
+        currentRoot: root,
+        nestIndex,
+      });
+    }
     if (onClick) {
       onClick(node);
     }
   }
 
-  renderAnimatedItem(content, nodeProps, isLeaf) {
+  handleNestIndex(node, i) {
+    let { nestIndex } = this.state;
+    const { width, height, dataKey, aspectRatio } = this.props;
+    const root = computeNode({
+      depth: 0,
+      node: { ...node, x: 0, y: 0, width, height },
+      index: 0,
+      valueKey: dataKey,
+    });
+
+    const formatRoot = squarify(root, aspectRatio);
+
+    nestIndex = nestIndex.slice(0, i + 1);
+    this.setState({
+      formatRoot,
+      currentRoot: node,
+      nestIndex
+    });
+  }
+
+  renderItem(content, nodeProps, isLeaf) {
     const { isAnimationActive, animationBegin, animationDuration,
-      animationEasing, isUpdateAnimationActive } = this.props;
-    const { width, height, x, y } = nodeProps;
+      animationEasing, isUpdateAnimationActive, type, animationId, colorPanel } = this.props;
+    const { isAnimationFinished } = this.state;
+    const { width, height, x, y, depth } = nodeProps;
     const translateX = parseInt((Math.random() * 2 - 1) * width, 10);
     let event = {};
-
-    if (isLeaf) {
+    if (isLeaf || (type === 'nest')) {
       event = {
         onMouseEnter: this.handleMouseEnter.bind(this, nodeProps),
         onMouseLeave: this.handleMouseLeave.bind(this, nodeProps),
@@ -307,13 +420,35 @@ class Treemap extends Component {
       };
     }
 
+    if (!isAnimationActive) {
+      return (
+        <Layer {...event}>
+          {
+            this.constructor.renderContentItem(content, {
+              ...nodeProps,
+              isAnimationActive: false,
+              isUpdateAnimationActive: false,
+              width,
+              height,
+              x,
+              y,
+            }, type, colorPanel)
+          }
+        </Layer>
+      );
+    }
+
     return (
       <Smooth
+        begin={animationBegin}
+        duration={animationDuration}
+        isActive={isAnimationActive}
+        easing={animationEasing}
+        key={`treemap-${animationId}`}
         from={{ x, y, width, height }}
         to={{ x, y, width, height }}
-        duration={animationDuration}
-        easing={animationEasing}
-        isActive={isUpdateAnimationActive}
+        onAnimationStart={this.handleAnimationStart}
+        onAnimationEnd={this.handleAnimationEnd}
       >
         {
         ({ x: currX, y: currY, width: currWidth, height: currHeight }) => (
@@ -328,16 +463,22 @@ class Treemap extends Component {
           >
             <Layer {...event}>
               {
-              this.constructor.renderContentItem(content, {
-                ...nodeProps,
-                isAnimationActive,
-                isUpdateAnimationActive: !isUpdateAnimationActive,
-                width: currWidth,
-                height: currHeight,
-                x: currX,
-                y: currY,
-              })
-            }
+                (() => {
+                  // when animation Duration , only render depth=1 nodes
+                  if (depth > 2 && !isAnimationFinished) {
+                    return null;
+                  }
+                  return this.constructor.renderContentItem(content, {
+                    ...nodeProps,
+                    isAnimationActive,
+                    isUpdateAnimationActive: !isUpdateAnimationActive,
+                    width: currWidth,
+                    height: currHeight,
+                    x: currX,
+                    y: currY,
+                  }, type, colorPanel);
+                })()
+              }
             </Layer>
           </Smooth>
         )
@@ -346,30 +487,62 @@ class Treemap extends Component {
     );
   }
 
-  static renderContentItem(content, nodeProps) {
+  static renderContentItem(content, nodeProps, type, colorPanel) {
     if (React.isValidElement(content)) {
       return React.cloneElement(content, nodeProps);
     } if (_.isFunction(content)) {
       return content(nodeProps);
     }
+    // optimize default shape
+    const { x, y, width, height, index } = nodeProps;
+    let arrow = null;
+    if (width > 10 && height > 10 && nodeProps.children && type === 'nest') {
+      arrow = (
+        <Polygon
+          points={[
+            { x: x + 2, y: y + height / 2 },
+            { x: x + 6, y: y + height / 2 + 3 },
+            { x: x + 2, y: y + height / 2 + 6 },
+          ]}
+        />
+      );
+    }
+    let text = null;
+    const nameSize = getStringSize(nodeProps.name);
+    if (width > 20 && height > 20 && nameSize.width < width && nameSize.height < height) {
+      text = (
+        <text x={x + 8} y={y + height / 2 + 7} fontSize={14}>{nodeProps.name}</text>
+      );
+    }
 
+    const colors = colorPanel || COLOR_PANEL;
     return (
-      <Rectangle
-        fill="#fff"
-        stroke="#000"
-        {...nodeProps}
-      />
+      <g>
+        <Rectangle
+          fill={nodeProps.depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)'}
+          stroke="#fff"
+          {..._.omit(nodeProps, 'children')}
+        />
+        {arrow}
+        {text}
+      </g>
     );
   }
 
   renderNode(root, node, i) {
-    const { content } = this.props;
+    const { content, type } = this.props;
     const nodeProps = { ...getPresentationAttributes(this.props), ...node, root };
     const isLeaf = !node.children || !node.children.length;
 
+    const { currentRoot } = this.state;
+    const isCurrentRootChild = (currentRoot.children || []).filter(item => item.depth === node.depth && item.name === node.name);
+
+    if (!isCurrentRootChild.length && root.depth && type === 'nest') {
+      return null;
+    }
     return (
       <Layer key={`recharts-treemap-node-${i}`} className={`recharts-treemap-depth-${node.depth}`}>
-        {this.renderAnimatedItem(content, nodeProps, isLeaf)}
+        {this.renderItem(content, nodeProps, isLeaf)}
         {
           node.children && node.children.length ?
             node.children.map((child, index) => this.renderNode(node, child, index)) : null
@@ -379,16 +552,11 @@ class Treemap extends Component {
   }
 
   renderAllNodes() {
-    const { width, height, data, dataKey, aspectRatio } = this.props;
+    const { formatRoot } = this.state;
 
-    const root = computeNode({
-      depth: 0,
-      node: { children: data, x: 0, y: 0, width, height },
-      index: 0,
-      valueKey: dataKey,
-    });
-
-    const formatRoot = squarify(root, aspectRatio);
+    if (!formatRoot) {
+      return null;
+    }
 
     return this.renderNode(formatRoot, formatRoot, 0);
   }
@@ -421,10 +589,56 @@ class Treemap extends Component {
     });
   }
 
+  // render nest treemap
+  renderNestIndex() {
+    const { nameKey, nestIndexContent } = this.props;
+    const { nestIndex } = this.state;
+
+    return (
+      <div
+        className="recharts-treemap-nest-index-wrapper"
+        style={{ marginTop: '10px', textAlign: 'center' }}
+      >
+        {
+          nestIndex.map((item, i) => {
+            const name = _.get(item, nameKey, 'root');
+            let content = null;
+            if (React.isValidElement(nestIndexContent)) {
+              content = React.cloneElement(nestIndexContent, item, i);
+            } if (_.isFunction(nestIndexContent)) {
+              content = nestIndexContent(item, i);
+            } else {
+              content = name;
+            }
+
+            return (
+              // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+              <div
+                onClick={this.handleNestIndex.bind(this, item, i)}
+                key={`nest-index-${uniqueId()}`}
+                className="recharts-treemap-nest-index-box"
+                style={{
+                  cursor: 'pointer',
+                  display: 'inline-block',
+                  padding: '0 7px',
+                  background: '#000',
+                  color: '#fff',
+                  marginRight: '3px',
+                }}
+              >
+                {content}
+              </div>
+            );
+          })
+        }
+      </div>
+    );
+  }
+
   render() {
     if (!validateWidthHeight(this)) { return null; }
 
-    const { width, height, className, style, children, ...others } = this.props;
+    const { width, height, className, style, children, type, ...others } = this.props;
     const attrs = getPresentationAttributes(others);
 
     return (
@@ -437,6 +651,7 @@ class Treemap extends Component {
           {filterSvgElements(children)}
         </Surface>
         {this.renderTooltip()}
+        {type === 'nest' && this.renderNestIndex()}
       </div>
     );
   }

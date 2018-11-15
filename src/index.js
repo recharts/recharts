@@ -51,3 +51,7 @@ export ScatterChart from './chart/ScatterChart';
 export AreaChart from './chart/AreaChart';
 export RadialBarChart from './chart/RadialBarChart';
 export ComposedChart from './chart/ComposedChart';
+
+export Funnel from './numberAxis/Funnel';
+export FunnelChart from './chart/FunnelChart';
+export Trapezoid from './shape/Trapezoid';

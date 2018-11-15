@@ -26,6 +26,9 @@ import Sankey from './Sankey';
 
 import ResponsiveContainer from './ResponsiveContainer';
 
+import FunnelChart from './FunnelChart';
+import Trapezoid from './Trapezoid';
+
 export default {
   chartWrapper: {
     LineChart,
@@ -38,6 +41,7 @@ export default {
     RadialBarChart,
     Treemap,
     Sankey,
+    FunnelChart,
   },
 
   polar: {
@@ -62,6 +66,7 @@ export default {
     Curve,
     Rectangle,
     Sector,
+    Trapezoid,
   },
 
   other: {

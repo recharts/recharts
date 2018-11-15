@@ -1506,6 +1506,7 @@ const generateCategoricalChart = ({
         RadialBar: { handler: this.renderGraphicChild },
         Scatter: { handler: this.renderGraphicChild },
         Pie: { handler: this.renderGraphicChild },
+        Funnel: { handler: this.renderGraphicChild },
         Tooltip: { handler: this.renderCursor, once: true },
         PolarGrid: { handler: this.renderPolarGrid, once: true },
         PolarAngleAxis: { handler: this.renderPolarAxis },

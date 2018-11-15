@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Treemap, Tooltip } from 'recharts';
-import DemoTreemapItem from './DemoTreemapItem';
 import _ from 'lodash';
+import DemoTreemapItem from './DemoTreemapItem';
 import { changeNumberOfData as changeData } from './utils';
 
 const data = [{
@@ -369,7 +369,8 @@ const data = [{
     },
     { name: 'Visualization', size: 16540 },
   ],
-}][2].children;
+}];
+// [2].children;
 
 class DemoTreemap extends Component {
   static displayName = 'DemoTreemap';
@@ -383,20 +384,7 @@ class DemoTreemap extends Component {
 
     return (
       <div className="treemap-charts">
-
-        <br/>
-        <div className="treemap-chart-wrapper">
-          <Treemap
-            width={500}
-            height={250}
-            data={this.state.data}
-            dataKey="size"
-            isUpdateAnimationActive={false}
-          />
-        </div>
-        <br />
-        <p>Treemap</p>
-        <a
+        <button
           href="javascript:void(0)"
           className="btn"
           onClick={() => {
@@ -406,7 +394,20 @@ class DemoTreemap extends Component {
           }}
         >
           change data
-        </a>
+        </button>
+        <br />
+        <div className="treemap-chart-wrapper">
+          <Treemap
+            width={500}
+            height={250}
+            data={this.state.data}
+            dataKey="size"
+            isAnimationActive
+            // colorPanel={['red', 'blue', 'yellow']}
+          />
+        </div>
+        <br />
+        <p>Treemap</p>
         <div className="treemap-chart-wrapper">
           <Treemap
             width={500}
@@ -417,6 +418,29 @@ class DemoTreemap extends Component {
             dataKey="size"
             ratio={1}
             content={<DemoTreemapItem bgColors={ColorPlatte} />}
+          >
+            <Tooltip />
+          </Treemap>
+        </div>
+        <p>Treemap</p>
+        <div className="treemap-chart-wrapper">
+          <Treemap
+            width={500}
+            height={250}
+            data={data}
+            isAnimationActive={false}
+            nameKey="name"
+            dataKey="size"
+            ratio={1}
+            type="nest"
+            nestIndexContent={(item) => {
+              return (
+                <div>
+                  {`${item.name || 'root'}`}
+                </div>
+              );
+            }
+            }
           >
             <Tooltip />
           </Treemap>

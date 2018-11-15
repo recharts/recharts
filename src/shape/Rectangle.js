@@ -138,7 +138,6 @@ class Rectangle extends Component {
       height === 0) { return null; }
 
     const layerClass = classNames('recharts-rectangle', className);
-
     if (!isUpdateAnimationActive) {
       return (
         <path
