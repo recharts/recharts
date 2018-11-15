@@ -214,7 +214,8 @@ class Treemap extends Component {
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
     ]),
-    type: PropTypes.string,
+    // optional values flat/nest, flat show whole treemap, nest only show depth=1 node
+    type: PropTypes.oneOf(['flat', 'nest']),
     colorPanel: PropTypes.array,
     // customize nest index content
     nestIndexContent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
