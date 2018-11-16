@@ -597,7 +597,7 @@ class Treemap extends Component {
     return (
       <div
         className="recharts-treemap-nest-index-wrapper"
-        style={{ marginTop: '10px', textAlign: 'center' }}
+        style={{ marginTop: '8px', textAlign: 'center' }}
       >
         {
           nestIndex.map((item, i) => {
@@ -646,7 +646,7 @@ class Treemap extends Component {
         className={classNames('recharts-wrapper', className)}
         style={{ ...style, position: 'relative', cursor: 'default', width, height }}
       >
-        <Surface {...attrs} width={width} height={height}>
+        <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
           {this.renderAllNodes()}
           {filterSvgElements(children)}
         </Surface>
