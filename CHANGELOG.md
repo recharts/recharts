@@ -1,3 +1,9 @@
+## 1.4.1(Nov 16, 2018)
+
+### fix
+
+- Fix height of TreeMap
+
 ## 1.4.0(Nov 15, 2018)
 
 ### feat
