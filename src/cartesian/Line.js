@@ -328,9 +328,11 @@ class Line extends Component {
         {
           ({ t }) => {
             if (prevPoints) {
+              const prevPointsDiffFactor = prevPoints.length / points.length;
               const stepData = points.map((entry, index) => {
-                if (prevPoints[index]) {
-                  const prev = prevPoints[index];
+                const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
+                if (prevPoints[prevPointIndex]) {
+                  const prev = prevPoints[prevPointIndex];
                   const interpolatorX = interpolateNumber(prev.x, entry.x);
                   const interpolatorY = interpolateNumber(prev.y, entry.y);
 

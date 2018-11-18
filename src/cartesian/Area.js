@@ -388,10 +388,12 @@ class Area extends Component {
         {
           ({ t }) => {
             if (prevPoints) {
+              const prevPointsDiffFactor = prevPoints.length / points.length;
               // update animtaion
               const stepPoints = points.map((entry, index) => {
-                if (prevPoints[index]) {
-                  const prev = prevPoints[index];
+                const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
+                if (prevPoints[prevPointIndex]) {
+                  const prev = prevPoints[prevPointIndex];
                   const interpolatorX = interpolateNumber(prev.x, entry.x);
                   const interpolatorY = interpolateNumber(prev.y, entry.y);
 
@@ -410,8 +412,9 @@ class Area extends Component {
                 stepBaseLine = interpolator(t);
               } else {
                 stepBaseLine = baseLine.map((entry, index) => {
-                  if (prevBaseLine[index]) {
-                    const prev = prevBaseLine[index];
+                  const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
+                  if (prevBaseLine[prevPointIndex]) {
+                    const prev = prevBaseLine[prevPointIndex];
                     const interpolatorX = interpolateNumber(prev.x, entry.x);
                     const interpolatorY = interpolateNumber(prev.y, entry.y);
 

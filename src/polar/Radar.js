@@ -216,8 +216,9 @@ class Radar extends Component {
       >
         {
           ({ t }) => {
+            const prevPointsDiffFactor = prevPoints && prevPoints.length / points.length;
             const stepData = points.map((entry, index) => {
-              const prev = prevPoints && prevPoints[index];
+              const prev = prevPoints && prevPoints[Math.floor(index * prevPointsDiffFactor)];
 
               if (prev) {
                 const interpolatorX = interpolateNumber(prev.x, entry.x);
