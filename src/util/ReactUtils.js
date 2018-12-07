@@ -50,6 +50,7 @@ export const PRESENTATION_ATTRIBUTES = {
   kerning: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   letterSpacing: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   lightingColor: PropTypes.string,
+  lineHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   markerEnd: PropTypes.string,
   markerMid: PropTypes.string,
   markerStart: PropTypes.string,
