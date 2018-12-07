@@ -1255,7 +1255,7 @@ const generateCategoricalChart = ({
       const { xAxisMap, yAxisMap, offset } = this.state;
       const { width, height } = this.props;
       const xAxis = getAnyElementOfObject(xAxisMap);
-      const yAxisWithFiniteDomain = _.find(yAxisMap, axis => _.every(axis.domain, _.isFinite));
+      const yAxisWithFiniteDomain = _.find(yAxisMap, axis => _.every(axis.domain, Number.isFinite));
       const yAxis = yAxisWithFiniteDomain || getAnyElementOfObject(yAxisMap);
       const props = element.props || {};
 
