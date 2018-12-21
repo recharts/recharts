@@ -1,3 +1,14 @@
+## 1.4.2(Dec 21,2018)
+
+### refactor
+
+- Refactor transition of <Area />, <Line />, <Radar />, make transition more smoothly when the length of dataset changes
+
+### fix
+
+- replace lodash isFinite with Number.isFinite, meanwhile add polyfill core-js's Number polyfill in order to use Number.usFinite directly
+- updated area chart to cut off dots on left most axis
+
 ## 1.4.1(Nov 16, 2018)
 
 ### fix
