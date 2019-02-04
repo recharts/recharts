@@ -251,9 +251,12 @@ class Pie extends Component {
 
   id = uniqueId('recharts-pie-');
 
-  cachePrevData = (sectors) => {
-    this.setState({ prevSectors: sectors });
-  };
+  cachePrevData(sectors) {
+    if (sectors !== this.state.prevSectors) {
+      this.setState({ prevSectors: sectors });
+    }
+    return null;
+  }
 
   isActiveIndex(i) {
     const { activeIndex } = this.props;

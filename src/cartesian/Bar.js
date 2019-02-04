@@ -181,9 +181,12 @@ class Bar extends Component {
 
   id = uniqueId('recharts-bar-');
 
-  cachePrevData = (data) => {
-    this.setState({ prevData: data });
-  };
+  cachePrevData(data) {
+    if (data !== this.state.prevData) {
+      this.setState({ prevData: data });
+    }
+    return null;
+  }
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
