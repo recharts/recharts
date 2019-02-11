@@ -493,7 +493,7 @@ class Pie extends Component {
 
   render() {
     const { hide, sectors, className, label, cx, cy, innerRadius,
-      outerRadius, isAnimationActive, prevSectors, id } = this.props;
+      outerRadius, isAnimationActive, prevSectors } = this.props;
 
     if (hide || !sectors || !sectors.length || !isNumber(cx) ||
       !isNumber(cy) || !isNumber(innerRadius) ||
@@ -505,9 +505,7 @@ class Pie extends Component {
 
     return (
       <Layer className={layerClass}>
-        <g clipPath={`url(#${_.isNil(id) ? this.id : id})`}>
-          {this.renderSectors()}
-        </g>
+        {this.renderSectors()}
         {label && this.renderLabels(sectors)}
         {Label.renderCallByParent(this.props, null, false)}
         {(!isAnimationActive || (prevSectors && _.isEqual(prevSectors, sectors))) &&
