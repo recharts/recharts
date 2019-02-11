@@ -2,7 +2,7 @@
  * @fileOverview Default Tooltip Content
  */
 import _ from 'lodash';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import pureRender from '../util/PureRender';
@@ -59,20 +59,25 @@ class DefaultTooltipContent extends Component {
             color: entry.color || '#000',
             ...itemStyle,
           };
-          const hasName = isNumOrStr(entry.name);
           const finalFormatter = entry.formatter || formatter || defaultFormatter;
-
+          let { name, value } = entry;
+          if (finalFormatter) {
+            const formatted = finalFormatter(value, name, entry, i);
+            if (Array.isArray(formatted)) {
+              [value, name] = formatted;
+            } else {
+              value = formatted;
+            }
+          }
           return (
             <li className="recharts-tooltip-item" key={`tooltip-item-${i}`} style={finalItemStyle}>
-              {hasName ? <span className="recharts-tooltip-item-name">{entry.name}</span> : null}
-              {
-                hasName ?
-                  <span className="recharts-tooltip-item-separator">{separator}</span> :
-                  null
-              }
-              <span className="recharts-tooltip-item-value">
-                {finalFormatter ? finalFormatter(entry.value, entry.name, entry, i) : entry.value}
-              </span>
+              {isNumOrStr(name) && (
+                <Fragment>
+                  <span className="recharts-tooltip-item-name">{name}</span>
+                  <span className="recharts-tooltip-item-separator">{separator}</span>
+                </Fragment>
+              )}
+              <span className="recharts-tooltip-item-value">{value}</span>
               <span className="recharts-tooltip-item-unit">{entry.unit || ''}</span>
             </li>
           );
