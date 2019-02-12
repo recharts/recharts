@@ -1,3 +1,4 @@
+/* eslint-disable react/no-multi-comp */
 import React, { Component } from 'react';
 import { BarChart, Bar, Brush, Cell, CartesianGrid, ReferenceLine, ReferenceDot,
   XAxis, YAxis, Tooltip, Legend, ErrorBar, LabelList } from 'recharts';
@@ -113,14 +114,14 @@ const RenderLabel = (props) => {
 
   return null;
 };
-const CustomTick = function() {
+const CustomTick = function () {
   const { payload, x, y } = this.props;
 
   return <text x={x} y={y} fill="#666" textAnchor="middle" dy={-4}>{payload.province}</text>;
 };
 
-const CustomAxisTick = function() {
-  const {x, y, payload} = this.props;
+const CustomAxisTick = function () {
+  const { x, y, payload } = this.props;
 
   return (
     <g transform={`translate(${x},${y})`}>
@@ -130,22 +131,22 @@ const CustomAxisTick = function() {
 };
 
 const CustomBar = (props) => {
-const { x, y, width, height, fill } = props;
+  const { x, y, width, height, fill } = props;
 
-if (x === +x && y === +y) {
-  const path = `M${x},${y + height}
+  if (x === +x && y === +y) {
+    const path = `M${x},${y + height}
           C${x + width / 3},${y + height} ${x + width / 2},${y + height / 3} ${x + width / 2}, ${y}
           C${x + width / 2},${y + height / 3} ${x + 2 * width / 3},${y + height} ${x + width}, ${y + height}
           Z`;
 
-  return <path d={path} stroke='none' fill={fill}/>;
-}
+    return <path d={path} stroke="none" fill={fill} />;
+  }
 
-return null;
+  return null;
 };
 
 class BarTwo extends Component {
-  getPath () {
+  getPath() {
     const { x, y, width, height } = this.props;
 
     if (x === +x && y === +y) {
@@ -160,19 +161,19 @@ class BarTwo extends Component {
     return null;
   }
 
-  render () {
-    const {fill, fillOpacity} = this.props;
+  render() {
+    const { fill, fillOpacity } = this.props;
 
-    return <path d={this.getPath()} stroke='none' fillOpacity={fillOpacity} fill={fill}/>;
+    return <path d={this.getPath()} stroke="none" fillOpacity={fillOpacity} fill={fill} />;
   }
 }
 
 class CustomAxis extends Component {
-  getIcon () {
+  getIcon() {
     const { x, y, payload } = this.props;
     let icon;
 
-    switch(payload.value) {
+    switch (payload.value) {
       case 'food':
         icon = (
           <svg x={x - 10} y={y} width={20} height={20} version="1.1" viewBox="0 0 1024 1024">
@@ -214,7 +215,7 @@ class CustomAxis extends Component {
         {this.getIcon()}
         <text textAnchor="middle" x={x} y={y} dy={34}>{payload.value}</text>
       </g>
-    )
+    );
   }
 }
 
@@ -287,13 +288,13 @@ export default class Demo extends Component {
         >
           change data
         </a>
-        <br/>
+        <br />
 
         <p>BarChart of layout vertical</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={400} height={400} data={data.slice(0, 1)} maxBarSize={10} >
+          <BarChart width={400} height={400} data={data.slice(0, 1)} maxBarSize={10}>
             <XAxis padding={{ left: 20, right: 100 }} type="number" dataKey="time" />
-            <YAxis type="number"/>
+            <YAxis type="number" />
             <CartesianGrid horizontal={false} />
             <Tooltip />
             <Bar dataKey="uv" fill="#ff7300" maxBarSize={15} isAnimationActive={false} />
@@ -307,26 +308,26 @@ export default class Demo extends Component {
           <span style={{ margin: '0 20px' }}>|</span>
           <a onClick={this.handleLessData}>less data</a>
         </p>
-        <div className="bar-chart-wrapper" style={{textAlign: 'right'}}>
+        <div className="bar-chart-wrapper" style={{ textAlign: 'right' }}>
           <BarChart width={400} height={400} data={data} onClick={this.handlePvBarClick}>
             <XAxis dataKey="name" />
             <YAxis yAxisId="a" />
             <YAxis yAxisId="b" orientation="right" />
             <Legend />
             <Tooltip />
-            <CartesianGrid vertical={false}/>
-            <Bar yAxisId="a" dataKey="uv" onAnimationStart={this.handleBarAnimationStart} onAnimationEnd={this.handleBarAnimationEnd} >
+            <CartesianGrid vertical={false} />
+            <Bar yAxisId="a" dataKey="uv" onAnimationStart={this.handleBarAnimationStart} onAnimationEnd={this.handleBarAnimationEnd}>
               <LabelList fill="#000" angle={-45} />
               {
                 data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
+                  <Cell key={`cell-${index}`} fill={colors[index % 20]} />
                 ))
               }
             </Bar>
             <Bar yAxisId="b" dataKey="pv" label>
               {
                 data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
+                  <Cell key={`cell-${index}`} fill={colors[index % 20]} />
                 ))
               }
             </Bar>
@@ -334,18 +335,18 @@ export default class Demo extends Component {
         </div>
 
         <p>BarChart with error bars</p>
-        <div className="bar-chart-wrapper" style={{textAlign: 'right'}}>
+        <div className="bar-chart-wrapper" style={{ textAlign: 'right' }}>
           <BarChart width={400} height={400} data={data} onClick={this.handlePvBarClick}>
             <XAxis dataKey="name" />
             <YAxis yAxisId="a" />
             <YAxis yAxisId="b" orientation="right" />
             <Legend />
             <Tooltip />
-            <CartesianGrid vertical={false}/>
+            <CartesianGrid vertical={false} />
             <Bar yAxisId="a" dataKey="uv" onAnimationStart={this.handleBarAnimationStart} onAnimationEnd={this.handleBarAnimationEnd}>
               {
                 data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
+                  <Cell key={`cell-${index}`} fill={colors[index % 20]} />
                 ))
               }
               <ErrorBar dataKey="uvError" />
@@ -353,14 +354,13 @@ export default class Demo extends Component {
             <Bar yAxisId="b" dataKey="pv" errorBar={{ errorKey: 'pvError', width: 10, strokeWidth: 1, fill: 'black' }}>
               {
                 data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={colors[index % 20]}/>
+                  <Cell key={`cell-${index}`} fill={colors[index % 20]} />
                 ))
               }
               <ErrorBar dataKey="pvError" />
             </Bar>
           </BarChart>
         </div>
-
 
 
         <p>Tiny BarChart</p>
@@ -371,14 +371,14 @@ export default class Demo extends Component {
         </div>
 
         <p>BarChart of positive and negative values</p>
-        <div className="bar-chart-wrapper" style={{ userSelect: "none", WebkitUserSelect: "none" }}>
+        <div className="bar-chart-wrapper" style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>
           <BarChart width={1100} height={250} barGap={2} barSize={6} data={data02} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
             <XAxis dataKey="name" />
             <YAxis tickCount={7} />
             <Tooltip />
             <CartesianGrid />
-            <Bar dataKey="uv" fill="#ff7300" />
-            <Bar dataKey="pv" fill="#387908" />
+            <Bar dataKey="uv" fill="#ff7300" radius={[5, 5, 5, 5]} />
+            <Bar dataKey="pv" fill="#387908" radius={[5, 5, 5, 5]} />
             <Brush dataKey="name" height={30} />
             <ReferenceLine type="horizontal" value={0} stroke="#666" />
           </BarChart>
@@ -386,7 +386,7 @@ export default class Demo extends Component {
 
         <p>BarChart of custom bar (1)</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={500} height={250} barCategoryGap={0} data={data}  margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
+          <BarChart width={500} height={250} barCategoryGap={0} data={data} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
             <XAxis dataKey="name" />
             <Bar dataKey="uv" barGap={0} fill="#ff7300" shape={CustomBar} />
           </BarChart>
@@ -395,7 +395,7 @@ export default class Demo extends Component {
         <p>BarChart of custom bar (2)</p>
         <div className="bar-chart-wrapper">
           <BarChart width={500} height={250} barCategoryGap={0} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-            <XAxis axisLine={false} tickLine={false} dataKey="name" tick={<CustomAxis />}/>
+            <XAxis axisLine={false} tickLine={false} dataKey="name" tick={<CustomAxis />} />
             <Bar dataKey="uv" barGap={0} fill="#387908" shape={<BarTwo />} label />
           </BarChart>
         </div>
@@ -406,7 +406,7 @@ export default class Demo extends Component {
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
-            <CartesianGrid vertical={false}/>
+            <CartesianGrid vertical={false} />
             <Bar stackId="0" dataKey="uv" fill="#ff7300">
               <LabelList />
             </Bar>
@@ -445,7 +445,7 @@ export default class Demo extends Component {
             <XAxis type="number" />
             <YAxis dataKey="name" type="category" />
             <Tooltip />
-            <Bar dataKey="uv" fill="#ff7300" maxBarSize={20} label radius={[0, 5, 5, 0]} />
+            <Bar dataKey="uv" fill="#ff7300" maxBarSize={20} label radius={[10, 10, 10, 10]} />
             <Bar dataKey="pv" fill="#387908" />
           </BarChart>
         </div>
