@@ -439,7 +439,7 @@ class Pie extends Component {
 
             sectors.forEach((entry, index) => {
               const prev = prevSectors && prevSectors[index];
-              const paddingAngle = index > 0 ? entry.paddingAngle : 0;
+              const paddingAngle = index > 0 ? _.get(entry, 'paddingAngle', 0) : 0;
 
               if (prev) {
                 const angleIp = interpolateNumber(
