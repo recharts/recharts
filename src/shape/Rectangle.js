@@ -10,7 +10,6 @@ import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 
 const getRectangePath = (x, y, width, height, radius) => {
-  console.log(x, y, width, height, radius);
   const maxRadius = Math.min(Math.abs(width) / 2, Math.abs(height) / 2);
   const ySign = height >= 0 ? 1 : -1;
   const xSign = width >= 0 ? 1 : -1;
