@@ -1,4 +1,24 @@
-## 1.4.2(Dec 21,2018)
+## 1.4.3(Feb 12, 2019)
+
+### fix
+
+- fix bug of <Rectangle /> when width < 0 && `radius` is not null, fix #1596
+- fix paddingAngle of Pie when render only <Pie /> not <PieChart />
+- fix onMouseEnter and Tooltip for Pie on FireFox
+
+### feat
+
+- Make the timeOut timer for the brush configurable through props
+- Allow to format name in Tooltips
+
+### dep
+
+- Update lodash version to 4.17.5 and install webpack-dev-server@3.1.14 dev dependency
+- Updated package.json to mark effectful modules
+- chore: update version of sinon, from 4.x to 7.x
+
+
+## 1.4.2(Dec 21, 2018)
 
 ### refactor
 
