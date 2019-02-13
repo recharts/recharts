@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import CustomLineDot from './CustomLineDot';
-import { changeNumberOfData } from './utils';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine,
   ReferenceDot, Tooltip, CartesianGrid, Legend, Brush, ErrorBar, AreaChart, Area,
   Label, LabelList } from 'recharts';
 import { scalePow, scaleLog } from 'd3-scale';
+import CustomLineDot from './CustomLineDot';
+import { changeNumberOfData } from './utils';
 
 function Hello() {
   return <div>Hello</div>;
@@ -301,21 +301,21 @@ const data03 = [
 ];
 
 const series = [
-  {name: 'Series 1', data: [
-    {category: 'A', value: Math.random()},
-    {category: 'B', value: Math.random()},
-    {category: 'C', value: Math.random()}
-  ]},
-  {name: 'Series 2', data: [
-    {category: 'B', value: Math.random()},
-    {category: 'C', value: Math.random()},
-    {category: 'D', value: Math.random()}
-  ]},
-  {name: 'Series 3', data: [
-    {category: 'C', value: Math.random()},
-    {category: 'D', value: Math.random()},
-    {category: 'E', value: Math.random()}
-  ]},
+  { name: 'Series 1', data: [
+    { category: 'A', value: Math.random() },
+    { category: 'B', value: Math.random() },
+    { category: 'C', value: Math.random() }
+  ] },
+  { name: 'Series 2', data: [
+    { category: 'B', value: Math.random() },
+    { category: 'C', value: Math.random() },
+    { category: 'D', value: Math.random() }
+  ] },
+  { name: 'Series 3', data: [
+    { category: 'C', value: Math.random() },
+    { category: 'D', value: Math.random() },
+    { category: 'E', value: Math.random() }
+  ] },
 ];
 
 const initialState = {
@@ -330,7 +330,7 @@ const renderSpecialDot = (props) => {
   const { cx, cy, stroke, key } = props;
 
   if (cx === +cx && cy === +cy) {
-    return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke} key={key}/>;
+    return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke} key={key} />;
   }
 
   return null;
@@ -340,7 +340,7 @@ const renderLabel = (props) => {
   const { x, y, textAnchor, key, value } = props;
 
   if (x === +x && y === +y) {
-    return <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={key}>{value}</text>
+    return <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={key}>{value}</text>;
   }
 
   return null;
@@ -388,14 +388,14 @@ export default class Demo extends Component {
   handleChangeAnotherState = () => {
     this.setState({
       anotherState: !this.state.anotherState,
-    })
+    });
   };
 
   render() {
     const { data, data01, data02, opacity } = this.state;
 
     return (
-      <div className='line-charts'>
+      <div className="line-charts">
         <a
           href="javascript: void(0);"
           className="btn update"
@@ -404,12 +404,12 @@ export default class Demo extends Component {
           change data
         </a>
         <button onClick={this.handleChangeAnotherState}>switch another state</button>
-        <br/>
+        <br />
 
         <p>A simple LineChart with fixed domain y-axis</p>
-        <div className='line-chart-wrapper'>
+        <div className="line-chart-wrapper">
           <LineChart width={400} height={400} data={data02} syncId="test">
-            <CartesianGrid stroke='#f5f5f5' fill="#e6e6e6" />
+            <CartesianGrid stroke="#f5f5f5" fill="#e6e6e6" />
             <Legend
               onMouseEnter={this.handleLegendMouseEnter}
               onMouseLeave={this.handleLegendMouseLeave}
@@ -436,7 +436,7 @@ export default class Demo extends Component {
           </LineChart>
         </div>
 
-        <p>A simple LineChart with customized line dot</p>
+        {/* <p>A simple LineChart with customized line dot</p>
         <div className='line-chart-wrapper'>
           <LineChart
             width={400}
@@ -587,7 +587,7 @@ export default class Demo extends Component {
               <Line dataKey="value" data={s.data} name={s.name} key={s.name} />
             ))}
           </LineChart>
-        </div>
+        </div> */}
 
       </div>
     );
