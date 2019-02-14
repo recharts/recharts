@@ -1479,9 +1479,11 @@ const generateCategoricalChart = ({
       const { offset: { left, top, height, width } } = this.state;
 
       return (
-        <clipPath id={clipPathId}>
-          <rect x={left} y={top} height={height} width={width} />
-        </clipPath>
+        <defs>
+          <clipPath id={clipPathId}>
+            <rect x={left} y={top} height={height} width={width} />
+          </clipPath>
+        </defs>
       );
     }
 
