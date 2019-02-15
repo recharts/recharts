@@ -2,7 +2,7 @@
  * @fileOverview Default Tooltip Content
  */
 import _ from 'lodash';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import pureRender from '../util/PureRender';
@@ -71,12 +71,8 @@ class DefaultTooltipContent extends Component {
           }
           return (
             <li className="recharts-tooltip-item" key={`tooltip-item-${i}`} style={finalItemStyle}>
-              {isNumOrStr(name) && (
-                <Fragment>
-                  <span className="recharts-tooltip-item-name">{name}</span>
-                  <span className="recharts-tooltip-item-separator">{separator}</span>
-                </Fragment>
-              )}
+              {isNumOrStr(name) ? <span className="recharts-tooltip-item-name">{name}</span> : null}
+              {isNumOrStr(name) ? <span className="recharts-tooltip-item-separator">{separator}</span> : null}
               <span className="recharts-tooltip-item-value">{value}</span>
               <span className="recharts-tooltip-item-unit">{entry.unit || ''}</span>
             </li>
