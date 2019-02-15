@@ -121,10 +121,10 @@ class Scatter extends Component {
         });
       }
       const cx = getCateCoordinateOfLine({
-        axis: xAxis, ticks: xAxisTicks, bandSize: xBandSize, entry, index,
+        axis: xAxis, ticks: xAxisTicks, bandSize: xBandSize, entry, index, dataKey: xAxisDataKey,
       });
       const cy = getCateCoordinateOfLine({
-        axis: yAxis, ticks: xAxisTicks, bandSize: yBandSize, entry, index,
+        axis: yAxis, ticks: xAxisTicks, bandSize: yBandSize, entry, index, dataKey: yAxisDataKey,
       });
       const size = z !== '-' ? zAxis.scale(z) : defaultZ;
       const radius = Math.sqrt(Math.max(size, 0) / Math.PI);

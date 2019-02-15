@@ -782,7 +782,7 @@ export const getTicksOfScale = (scale, opts) => {
   return null;
 };
 
-export const getCateCoordinateOfLine = ({ axis, ticks, bandSize, entry, index }) => {
+export const getCateCoordinateOfLine = ({ axis, ticks, bandSize, entry, index, dataKey }) => {
   if (axis.type === 'category') {
     // find coordinate of category axis by the value of category
     if (!axis.allowDuplicatedCategory && axis.dataKey && !_.isNil(entry[axis.dataKey])) {
@@ -796,7 +796,7 @@ export const getCateCoordinateOfLine = ({ axis, ticks, bandSize, entry, index })
     return ticks[index] ? ticks[index].coordinate + bandSize / 2 : null;
   }
 
-  const value = getValueByDataKey(entry, axis.dataKey);
+  const value = getValueByDataKey(entry, !_.isNil(dataKey) ? dataKey : axis.dataKey);
 
   return !_.isNil(value) ? axis.scale(value) : null;
 };
