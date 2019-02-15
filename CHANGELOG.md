@@ -1,3 +1,15 @@
+## 1.5.0(Feb 15, 2019)
+
+### fix
+
+- fix the bug of ReferenceLine when calculate coordinates, fix #1643
+- fix bug of Scatter in ComposedChart
+
+### feat
+
+- allow aria-* attributes and "role", "focusable", "tabIndex" of charts, fix #1226, fix #1584
+- add new props "paylodUniqBy" to Tooltip and Legend 
+
 ## 1.4.4(Feb 15, 2019)
 
 ### fix
