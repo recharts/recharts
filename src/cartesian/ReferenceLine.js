@@ -84,7 +84,7 @@ class ReferenceLine extends Component {
 
     if (isFixedY) {
       const { y: yCoord, yAxis: { orientation } } = this.props;
-      const coord = scales.y.apply(yCoord);
+      const coord = scales.y.apply(yCoord, { bandAware: true });
 
       if (ifOverflowMatches(this.props, 'discard') &&
         !scales.y.isInRange(coord)) {
@@ -98,7 +98,7 @@ class ReferenceLine extends Component {
       return orientation === 'left' ? points.reverse() : points;
     } if (isFixedX) {
       const { x: xCoord, xAxis: { orientation } } = this.props;
-      const coord = scales.x.apply(xCoord);
+      const coord = scales.x.apply(xCoord, { bandAware: true });
 
       if (ifOverflowMatches(this.props, 'discard') &&
         !scales.x.isInRange(coord)) {
@@ -113,7 +113,7 @@ class ReferenceLine extends Component {
     } if (isSegment) {
       const { segment } = this.props;
 
-      const points = segment.map(p => scales.apply(p));
+      const points = segment.map(p => scales.apply(p, { bandAware: true }));
 
       if (ifOverflowMatches(this.props, 'discard') &&
         _.some(points, p => !scales.isInRange(p))) {

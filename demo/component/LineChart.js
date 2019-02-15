@@ -436,7 +436,7 @@ export default class Demo extends Component {
           </LineChart>
         </div>
 
-        {/* <p>A simple LineChart with customized line dot</p>
+        <p>A simple LineChart with customized line dot</p>
         <div className='line-chart-wrapper'>
           <LineChart
             width={400}
@@ -587,7 +587,7 @@ export default class Demo extends Component {
               <Line dataKey="value" data={s.data} name={s.name} key={s.name} />
             ))}
           </LineChart>
-        </div> */}
+        </div>
 
       </div>
     );
