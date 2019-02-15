@@ -111,13 +111,13 @@ class Scatter extends Component {
       const y = entry[yAxisDataKey];
       const z = (!_.isNil(zAxisDataKey) && entry[zAxisDataKey]) || '-';
       const tooltipPayload = [
-        { name: xAxis.name || xAxis.dataKey, unit: xAxis.unit || '', value: x, payload: entry },
-        { name: yAxis.name || yAxis.dataKey, unit: yAxis.unit || '', value: y, payload: entry },
+        { name: xAxis.name || xAxis.dataKey, unit: xAxis.unit || '', value: x, payload: entry, dataKey: xAxisDataKey },
+        { name: yAxis.name || yAxis.dataKey, unit: yAxis.unit || '', value: y, payload: entry, dataKey: yAxisDataKey },
       ];
 
       if (z !== '-') {
         tooltipPayload.push({
-          name: zAxis.name || zAxis.dataKey, unit: zAxis.unit || '', value: z, payload: entry,
+          name: zAxis.name || zAxis.dataKey, unit: zAxis.unit || '', value: z, payload: entry, dataKey: zAxisDataKey,
         });
       }
       const cx = getCateCoordinateOfLine({

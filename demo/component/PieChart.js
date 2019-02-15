@@ -154,7 +154,7 @@ export default class Demo extends Component {
         <div className="pie-chart-wrapper">
           <button onClick={this.handleChangeAnimation}>change animation</button>
           <PieChart width={800} height={400}>
-            <Legend />
+            <Legend paylodUniqBy />
             <Pie
               data={data01}
               dataKey="value"

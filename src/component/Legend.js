@@ -10,6 +10,19 @@ import { isNumber } from '../util/DataUtils';
 import { LEGEND_TYPES } from '../util/ReactUtils';
 
 
+const defaultUniqBy = entry => entry.value;
+const getUniqPaylod = (option, payload) => {
+  if (option === true) {
+    return _.uniqBy(payload, defaultUniqBy);
+  }
+
+  if (_.isFunction(option)) {
+    return _.uniqBy(payload, option);
+  }
+
+  return payload;
+};
+
 const renderContent = (content, props) => {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
@@ -50,6 +63,7 @@ class Legend extends Component {
       id: PropTypes.any,
       type: PropTypes.oneOf(LEGEND_TYPES),
     })),
+    paylodUniqBy: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     formatter: PropTypes.func,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
@@ -164,7 +178,7 @@ class Legend extends Component {
   }
 
   render() {
-    const { content, width, height, wrapperStyle } = this.props;
+    const { content, width, height, wrapperStyle, paylodUniqBy, payload } = this.props;
     const outerStyle = {
       position: 'absolute',
       width: width || 'auto',
@@ -179,7 +193,7 @@ class Legend extends Component {
         style={outerStyle}
         ref={(node) => { this.wrapperNode = node; }}
       >
-        {renderContent(content, this.props)}
+        {renderContent(content, { ...this.props, payload: getUniqPaylod(paylodUniqBy, payload) })}
       </div>
     );
   }

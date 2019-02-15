@@ -125,7 +125,7 @@ class Funnel extends Component {
       const upperWidth = val / maxValue * realWidth;
       const lowerWidth = nextVal / maxValue * realWidth;
 
-      const tooltipPayload = [{ name, value: val, payload: entry }];
+      const tooltipPayload = [{ name, value: val, payload: entry, dataKey }];
       const tooltipPosition = {
         x: x + upperWidth / 2,
         y: y + rowHeight / 2,

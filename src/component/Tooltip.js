@@ -15,6 +15,19 @@ const CLS_PREFIX = 'recharts-tooltip-wrapper';
 
 const EPS = 1;
 
+const defaultUniqBy = entry => entry.dataKey;
+const getUniqPaylod = (option, payload) => {
+  if (option === true) {
+    return _.uniqBy(payload, defaultUniqBy);
+  }
+
+  if (_.isFunction(option)) {
+    return _.uniqBy(payload, option);
+  }
+
+  return payload;
+};
+
 const propTypes = {
   content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
   viewBox: PropTypes.shape({
@@ -50,6 +63,7 @@ const propTypes = {
     value: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.array]),
     unit: PropTypes.any,
   })),
+  paylodUniqBy: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
 
   isAnimationActive: PropTypes.bool,
   animationDuration: PropTypes.number,
@@ -138,9 +152,9 @@ class Tooltip extends Component {
 
   render() {
     const { payload, isAnimationActive, animationDuration, animationEasing,
-      filterNull } = this.props;
-    const finalPayload = filterNull && payload && payload.length ?
-      payload.filter(entry => !_.isNil(entry.value)) : payload;
+      filterNull, paylodUniqBy } = this.props;
+    const finalPayload = getUniqPaylod(paylodUniqBy, filterNull && payload && payload.length ?
+      payload.filter(entry => !_.isNil(entry.value)) : payload);
     const hasPayload = finalPayload && finalPayload.length;
     const { content, viewBox, coordinate, position, active, offset, wrapperStyle } = this.props;
     let outerStyle = {

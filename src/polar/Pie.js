@@ -198,7 +198,7 @@ class Pie extends Component {
           (minAngle + percent * realTotalAngle);
         const midAngle = (tempStartAngle + tempEndAngle) / 2;
         const middleRadius = (coordinate.innerRadius + coordinate.outerRadius) / 2;
-        const tooltipPayload = [{ name, value: val, payload: entry }];
+        const tooltipPayload = [{ name, value: val, payload: entry, dataKey: realDataKey }];
         const tooltipPosition = polarToCartesian(
           coordinate.cx, coordinate.cy, middleRadius, midAngle
         );
