@@ -1,3 +1,11 @@
+## 1.4.4(Feb 15, 2019)
+
+### fix
+
+- fix the bug of automatically calculate the y-coordinate of yAxis tick when tick has unit, fix #1623
+- render clipPath in <defs />, fix bug in generateCategoricalChart, fix #1592
+- remove React.Fragment in DefaultTooltipContent, fix #1645
+
 ## 1.4.3(Feb 12, 2019)
 
 ### fix
