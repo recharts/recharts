@@ -146,7 +146,7 @@ export const PRESENTATION_ATTRIBUTES = {
   focusable: PropTypes.string,
   tabIndex: PropTypes.string,
   style: PropTypes.object,
-  
+
   width: PropTypes.number,
   height: PropTypes.number,
   dx: PropTypes.number,
