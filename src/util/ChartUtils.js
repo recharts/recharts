@@ -35,8 +35,18 @@ export const getDomainOfDataByKey = (data, key, type, filterNil) => {
 
   if (type === 'number') {
     const domain = flattenData.filter(entry => isNumber(entry) || parseFloat(entry, 10));
-
-    return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
+    let len = domain.length;
+    let min = Number.MAX_VALUE;
+    let max = -Number.MAX_VALUE:
+    while(len--){
+      if(min > domain[len]){
+        min = domain[len];
+      }
+      if(max < domain[len]){
+        max = domain[len];
+      }      
+    }
+    return [min,max];
   }
 
   const validateData = filterNil ?
