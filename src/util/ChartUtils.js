@@ -38,11 +38,11 @@ export const getDomainOfDataByKey = (data, key, type, filterNil) => {
     let len = domain.length;
     let min = Number.MAX_VALUE;
     let max = -Number.MAX_VALUE;
-    while(len--){
+    while (len--) {
       if(min > domain[len]){
         min = domain[len];
       }
-      if(max < domain[len]){
+      if (max < domain[len]) {
         max = domain[len];
       }      
     }
