@@ -39,14 +39,14 @@ export const getDomainOfDataByKey = (data, key, type, filterNil) => {
     let min = Number.MAX_VALUE;
     let max = -Number.MAX_VALUE;
     while (len--) {
-      if(min > domain[len]){
+      if (min > domain[len]) {
         min = domain[len];
       }
       if (max < domain[len]) {
         max = domain[len];
-      }      
+      }
     }
-    return [min,max];
+    return [min, max];
   }
 
   const validateData = filterNil ?
