@@ -68,6 +68,7 @@ class Area extends Component {
     onAnimationEnd: PropTypes.func,
     animationId: PropTypes.number,
     isAnimationActive: PropTypes.bool,
+    restartAnimationOnChange: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
     animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
@@ -90,6 +91,7 @@ class Area extends Component {
     hide: false,
 
     isAnimationActive: !isSsr(),
+    restartAnimationOnChange: false,
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
@@ -198,9 +200,9 @@ class Area extends Component {
   state = { isAnimationFinished: true };
 
   componentWillReceiveProps(nextProps) {
-    const { animationId, points, baseLine } = this.props;
+    const { restartAnimationOnChange, animationId, points, baseLine } = this.props;
 
-    if (nextProps.animationId !== animationId) {
+    if (!restartAnimationOnChange && nextProps.animationId !== animationId) {
       this.cachePrevData(points, baseLine);
     }
   }

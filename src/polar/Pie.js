@@ -65,6 +65,8 @@ class Pie extends Component {
     activeIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
 
     isAnimationActive: PropTypes.bool,
+    restartAnimationOnChange: PropTypes.bool,
+
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
     animationEasing: PropTypes.oneOf([
@@ -99,6 +101,7 @@ class Pie extends Component {
     hide: false,
     minAngle: 0,
     isAnimationActive: !isSsr(),
+    restartAnimationOnChange: false,
     animationBegin: 400,
     animationDuration: 1500,
     animationEasing: 'ease',
@@ -230,9 +233,9 @@ class Pie extends Component {
   state = { isAnimationFinished: false };
 
   componentWillReceiveProps(nextProps) {
-    const { animationId, sectors } = this.props;
+    const { restartAnimationOnChange, animationId, sectors } = this.props;
 
-    if (nextProps.isAnimationActive !== this.props.isAnimationActive) {
+    if (restartAnimationOnChange || nextProps.isAnimationActive !== this.props.isAnimationActive) {
       this.cachePrevData([]);
     } else if (nextProps.animationId !== animationId) {
       this.cachePrevData(sectors);

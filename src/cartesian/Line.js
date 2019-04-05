@@ -62,6 +62,8 @@ class Line extends Component {
     onAnimationEnd: PropTypes.func,
 
     isAnimationActive: PropTypes.bool,
+    restartAnimationOnChange: PropTypes.bool,
+
     animateNewValues: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
@@ -148,9 +150,9 @@ class Line extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { animationId, points } = this.props;
+    const { restartAnimationOnChange, animationId, points } = this.props;
 
-    if (nextProps.animationId !== animationId) {
+    if (!restartAnimationOnChange && nextProps.animationId !== animationId) {
       this.cachePrevData(points);
     }
   }

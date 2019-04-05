@@ -56,6 +56,7 @@ class Bar extends Component {
 
     animationId: PropTypes.number,
     isAnimationActive: PropTypes.bool,
+    restartAnimationOnChange: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
     animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
@@ -72,6 +73,7 @@ class Bar extends Component {
     data: [],
     layout: 'vertical',
     isAnimationActive: !isSsr(),
+    restartAnimationOnChange: false,
     animationBegin: 0,
     animationDuration: 400,
     animationEasing: 'ease',
@@ -172,9 +174,9 @@ class Bar extends Component {
   state = { isAnimationFinished: false };
 
   componentWillReceiveProps(nextProps) {
-    const { animationId, data } = this.props;
+    const { restartAnimationOnChange, animationId, data } = this.props;
 
-    if (nextProps.animationId !== animationId) {
+    if (!restartAnimationOnChange && nextProps.animationId !== animationId) {
       this.cachePrevData(data);
     }
   }

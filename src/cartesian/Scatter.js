@@ -66,6 +66,8 @@ class Scatter extends Component {
     hide: PropTypes.bool,
 
     isAnimationActive: PropTypes.bool,
+    restartAnimationOnChange: PropTypes.bool,
+
     animationId: PropTypes.number,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
@@ -156,9 +158,9 @@ class Scatter extends Component {
   state = { isAnimationFinished: false };
 
   componentWillReceiveProps(nextProps) {
-    const { animationId, points } = this.props;
+    const { restartAnimationOnChange, animationId, points } = this.props;
 
-    if (nextProps.animationId !== animationId) {
+    if (!restartAnimationOnChange && nextProps.animationId !== animationId) {
       this.cachePrevPoints(points);
     }
   }
