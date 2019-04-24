@@ -93,10 +93,22 @@ class Brush extends Component {
       });
     }
   }
+  
+  componentDidMount() {
+    document.addEventListener('mousemove', this.handleDrag);
+    document.addEventListener('mouseup', this.handleDragEnd);
+    document.addEventListener('touchemove', this.handleTouchMove);
+    document.addEventListener('touchend', this.handleDragEnd);
+  }
 
   componentWillUnmount() {
     this.scale = null;
     this.scaleValues = null;
+
+    document.removeEventListener('mousemove', this.handleDrag);
+    document.removeEventListener('mouseup', this.handleDragEnd);
+    document.removeEventListener('touchemove', this.handleTouchMove);
+    document.removeEventListener('touchend', this.handleDragEnd);
 
     if (this.leaveTimer) {
       clearTimeout(this.leaveTimer);
@@ -247,8 +259,14 @@ class Brush extends Component {
     let delta = e.pageX - brushMoveStartX;
     if (delta > 0) {
       delta = Math.min(delta, x + width - travellerWidth - prevValue);
+      if (prevValue + delta > e.pageX - travellerWidth / 2) {
+        delta = 0;
+      }
     } else if (delta < 0) {
       delta = Math.max(delta, x - prevValue);
+      if (prevValue + delta < e.pageX - travellerWidth * 2) {
+        delta = 0;
+      }
     }
 
     params[movingTravellerId] = prevValue + delta;
@@ -440,11 +458,7 @@ class Brush extends Component {
     return (
       <Layer
         className={layerClass}
-        onMouseMove={this.handleDrag}
         onMouseLeave={this.handleLeaveWrapper}
-        onMouseUp={this.handleDragEnd}
-        onTouchEnd={this.handleDragEnd}
-        onTouchMove={this.handleTouchMove}
         style={style}
       >
         {this.renderBackground()}
