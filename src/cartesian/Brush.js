@@ -246,30 +246,24 @@ class Brush extends Component {
       isTravellerMoving: true,
       movingTravellerId: id,
       brushMoveStartX: event.pageX,
+      travalerMoveStartX: this.state[id],
     });
   }
 
   handleTravellerMove(e) {
-    const { brushMoveStartX, movingTravellerId, endX, startX } = this.state;
-    const prevValue = this.state[movingTravellerId];
+    const { brushMoveStartX, movingTravellerId, travalerMoveStartX, endX, startX } = this.state;
 
     const { x, width, travellerWidth, onChange, gap, data } = this.props;
     const params = { startX: this.state.startX, endX: this.state.endX };
 
     let delta = e.pageX - brushMoveStartX;
     if (delta > 0) {
-      delta = Math.min(delta, x + width - travellerWidth - prevValue);
-      if (prevValue + delta > e.pageX - travellerWidth / 2) {
-        delta = 0;
-      }
+      delta = Math.min(delta, x + width - travellerWidth - travalerMoveStartX);
     } else if (delta < 0) {
-      delta = Math.max(delta, x - prevValue);
-      if (prevValue + delta < e.pageX - travellerWidth * 2) {
-        delta = 0;
-      }
+      delta = Math.max(delta, x - travalerMoveStartX);
     }
 
-    params[movingTravellerId] = prevValue + delta;
+    params[movingTravellerId] = travalerMoveStartX + delta;
 
     const newIndex = this.getIndex(params);
     const { startIndex, endIndex } = newIndex;
@@ -287,8 +281,7 @@ class Brush extends Component {
     };
 
     this.setState({
-      [movingTravellerId]: prevValue + delta,
-      brushMoveStartX: e.pageX,
+      [movingTravellerId]: travalerMoveStartX + delta,
     }, () => {
       if (onChange) {
         if (isFullGap()) {
