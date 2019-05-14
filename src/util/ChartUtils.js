@@ -743,7 +743,7 @@ export const getStackGroupsByAxisId = (
  */
 export const calculateDomainOfTicks = (ticks, type) => {
   if (type === 'number') {
-    return [_.min(null, ticks), _.max(ticks)];
+    return [_.min(ticks), _.max(ticks)];
   }
 
   return ticks;
