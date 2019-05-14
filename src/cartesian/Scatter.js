@@ -97,7 +97,7 @@ class Scatter extends Component {
    * @return {Array}  Composed data
    */
   static getComposedData = ({ xAxis, yAxis, zAxis, item, displayedData, onItemMouseLeave,
-    onItemMouseEnter, offset, xAxisTicks }) => {
+    onItemMouseEnter, offset, xAxisTicks, yAxisTicks }) => {
     const cells = findAllByType(item.props.children, Cell);
     const xAxisDataKey = _.isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
     const yAxisDataKey = _.isNil(yAxis.dataKey) ? item.props.dataKey : yAxis.dataKey;
@@ -124,7 +124,7 @@ class Scatter extends Component {
         axis: xAxis, ticks: xAxisTicks, bandSize: xBandSize, entry, index, dataKey: xAxisDataKey,
       });
       const cy = getCateCoordinateOfLine({
-        axis: yAxis, ticks: xAxisTicks, bandSize: yBandSize, entry, index, dataKey: yAxisDataKey,
+        axis: yAxis, ticks: yAxisTicks, bandSize: yBandSize, entry, index, dataKey: yAxisDataKey,
       });
       const size = z !== '-' ? zAxis.scale(z) : defaultZ;
       const radius = Math.sqrt(Math.max(size, 0) / Math.PI);
