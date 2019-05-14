@@ -1,3 +1,17 @@
+## 1.6.0(May 14, 2019)
+
+### fix
+
+- Use y-axis ticks to determine y-axis category
+- fix bug in ThreeMap inside ResponsiveContainer, fix #1692
+- Avoid same keys on label and line, fixes #1302
+- use _.max to replace Math.max.apply, use _.min to replace Math.min.apply
+
+### feat
+
+- Adds forceCornerRadius prop to RadialBar
+- calculate width with aspect and height when width is falsey
+
 ## 1.5.0(Feb 15, 2019)
 
 ### fix
