@@ -60,8 +60,8 @@ const getSectorPath = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle 
   return path;
 };
 
-const getSectorWithCorner = ({ cx, cy, innerRadius, outerRadius, cornerRadius, startAngle,
-  endAngle }) => {
+const getSectorWithCorner = ({ cx, cy, innerRadius, outerRadius, cornerRadius, forceCornerRadius,
+  startAngle, endAngle }) => {
   const sign = mathSign(endAngle - startAngle);
   const { circleTangency: soct, lineTangency: solt, theta: sot } =
     getTangentCircle({
@@ -74,6 +74,12 @@ const getSectorWithCorner = ({ cx, cy, innerRadius, outerRadius, cornerRadius, s
   const outerArcAngle = Math.abs(startAngle - endAngle) - sot - eot;
 
   if (outerArcAngle < 0) {
+    if (forceCornerRadius) {
+      return `M ${solt.x},${solt.y}
+        a${cornerRadius},${cornerRadius},0,0,1,${cornerRadius * 2},0
+        a${cornerRadius},${cornerRadius},0,0,1,${-cornerRadius * 2},0
+      `;
+    }
     return getSectorPath({
       cx, cy, innerRadius, outerRadius, startAngle, endAngle,
     });
@@ -140,7 +146,7 @@ class Sector extends Component {
   };
 
   render() {
-    const { cx, cy, innerRadius, outerRadius, cornerRadius, startAngle, endAngle,
+    const { cx, cy, innerRadius, outerRadius, cornerRadius, forceCornerRadius, startAngle, endAngle,
       className } = this.props;
 
     if (outerRadius < innerRadius || startAngle === endAngle) { return null; }
@@ -154,6 +160,7 @@ class Sector extends Component {
       path = getSectorWithCorner({
         cx, cy, innerRadius, outerRadius,
         cornerRadius: Math.min(cr, deltaRadius / 2),
+        forceCornerRadius,
         startAngle, endAngle,
       });
     } else {
