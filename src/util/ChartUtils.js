@@ -36,7 +36,7 @@ export const getDomainOfDataByKey = (data, key, type, filterNil) => {
   if (type === 'number') {
     const domain = flattenData.filter(entry => isNumber(entry) || parseFloat(entry, 10));
 
-    return [Math.min.apply(null, domain), Math.max.apply(null, domain)];
+    return [_.min(domain), _.max(domain)];
   }
 
   const validateData = filterNil ?
@@ -743,7 +743,7 @@ export const getStackGroupsByAxisId = (
  */
 export const calculateDomainOfTicks = (ticks, type) => {
   if (type === 'number') {
-    return [Math.min.apply(null, ticks), Math.max.apply(null, ticks)];
+    return [_.min(null, ticks), _.max(ticks)];
   }
 
   return ticks;
@@ -916,8 +916,8 @@ export const getStackedDataOfItem = (item, stackGroups) => {
 
 const getDomainOfSingle = data => (
   data.reduce((result, entry) => [
-    Math.min.apply(null, entry.concat([result[0]]).filter(isNumber)),
-    Math.max.apply(null, entry.concat([result[1]]).filter(isNumber)),
+    _.min(entry.concat([result[0]]).filter(isNumber)),
+    _.max(entry.concat([result[1]]).filter(isNumber)),
   ], [Infinity, -Infinity])
 );
 
