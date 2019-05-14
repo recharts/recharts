@@ -356,6 +356,7 @@ class Pie extends Component {
         ...customLabelLineProps,
         index: i,
         points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
+        key: 'line'
       };
       let realDataKey = dataKey;
       // TODO: compatible to lower versions
