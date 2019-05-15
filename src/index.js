@@ -10,6 +10,7 @@ export Cell from './component/Cell';
 export Text from './component/Text';
 export Label from './component/Label';
 export LabelList from './component/LabelList';
+export Customer from './component/Customer';
 
 export Sector from './shape/Sector';
 export Curve from './shape/Curve';

@@ -1474,6 +1474,11 @@ const generateCategoricalChart = ({
       return [graphicalItem, null];
     };
 
+    renderCustomer = element => cloneElement(element, {
+      ...this.props,
+      ...this.state
+    })
+
     renderClipPath() {
       const { clipPathId } = this;
       const { offset: { left, top, height, width } } = this.state;
@@ -1513,6 +1518,7 @@ const generateCategoricalChart = ({
         PolarGrid: { handler: this.renderPolarGrid, once: true },
         PolarAngleAxis: { handler: this.renderPolarAxis },
         PolarRadiusAxis: { handler: this.renderPolarAxis },
+        Customer: { handler: this.renderCustomer }
       };
 
       // The "compact" mode is mainly used as the panorama within Brush
