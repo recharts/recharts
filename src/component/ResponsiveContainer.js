@@ -100,12 +100,19 @@ class ResponsiveContainer extends Component {
       'The aspect(%s) must be greater than zero.',
       aspect);
 
-    const calculatedWidth = isPercent(width) ? containerWidth : width;
+    let calculatedWidth = isPercent(width) ? containerWidth : width;
     let calculatedHeight = isPercent(height) ? containerHeight : height;
 
     if (aspect && aspect > 0) {
       // Preserve the desired aspect ratio
-      calculatedHeight = calculatedWidth / aspect;
+      if (calculatedWidth) {
+        // Will default to using width for aspect ratio
+        calculatedHeight = calculatedWidth / aspect;
+      } else if (calculatedHeight) {
+        // But we should also take height into consideration
+        calculatedWidth = calculatedHeight * aspect;
+      }
+
       // if maxHeight is set, overwrite if calculatedHeight is greater than maxHeight
       if (maxHeight && (calculatedHeight > maxHeight)) {
         calculatedHeight = maxHeight;

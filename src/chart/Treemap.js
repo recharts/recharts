@@ -244,11 +244,13 @@ class Treemap extends Component {
   };
 
   state = this.constructor.createDefaultState();
-
+  
   componentDidMount() {
     const { type, width, height, data, dataKey, aspectRatio } = this.props;
-    const { formatRoot, currentRoot, nestIndex } = this.computeRoot({ type, width, height, data, dataKey, aspectRatio });
-
+    const {
+      formatRoot, currentRoot, nestIndex
+    } = this.computeRoot({ type, width, height, data, dataKey, aspectRatio });
+  
     this.setState({
       formatRoot,
       currentRoot,
@@ -278,8 +280,10 @@ class Treemap extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.data !== this.props.data) {
-      const { type, width, height, data, dataKey, aspectRatio } = nextProps;
+    const { type, width, height, data, dataKey, aspectRatio } = nextProps;
+   
+    if (data !== this.props.data || type !== this.props.type || width !== this.props.width || 
+      height !== this.props.height || dataKey !== this.props.dataKey || aspectRatio !== this.props.aspectRatio) {
       const nextRoot = this.computeRoot({ type, width, height, data, dataKey, aspectRatio });
       this.setState({
         ...this.constructor.createDefaultState(),

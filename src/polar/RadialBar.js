@@ -35,6 +35,7 @@ class RadialBar extends Component {
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
 
     cornerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    forceCornerRadius: PropTypes.bool,
     minPointSize: PropTypes.number,
     maxBarSize: PropTypes.number,
     data: PropTypes.arrayOf(PropTypes.shape({
@@ -218,6 +219,7 @@ class RadialBar extends Component {
         ...filterEventsOfChild(this.props, entry, i),
         key: `sector-${i}`,
         className: 'recharts-radial-bar-sector',
+        forceCornerRadius: others.forceCornerRadius,
       };
 
       return this.constructor.renderSectorShape(i === activeIndex ? activeShape : shape, props);

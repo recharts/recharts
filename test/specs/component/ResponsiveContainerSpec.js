@@ -57,8 +57,8 @@ describe('<ResponsiveContainer />', () => {
       </ResponsiveContainer>
     );
 
-    expect(wrapper.find('.inside')).to.have.attr('width').equal('0');
-    expect(wrapper.find('.inside')).to.have.attr('height').equal('0');
+    expect(wrapper.find('.inside')).to.have.attr('width').equal('600');
+    expect(wrapper.find('.inside')).to.have.attr('height').equal('300');
   });
 
   // Note that we force height and width here which will trigger a warning.
