@@ -23,6 +23,8 @@ export default function Customer({ component, ...props }) {
   return <Layer className="recharts-customer-wrapper">{child}</Layer>;
 }
 
+Customer.displayName = 'Customer';
+
 Customer.propTypes = {
   component: PropTypes.oneOfType([PropTypes.element, PropTypes.func]).isRequired
 };
