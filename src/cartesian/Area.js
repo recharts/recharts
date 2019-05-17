@@ -272,12 +272,12 @@ class Area extends Component {
     const startX = points[0].x;
     const endX = points[points.length - 1].x;
     const width = alpha * Math.abs(startX - endX);
-    let maxY = Math.max.apply(null, points.map(entry => (entry.y || 0)));
+    let maxY = _.max(points.map(entry => (entry.y || 0)));
 
     if (isNumber(baseLine)) {
       maxY = Math.max(baseLine, maxY);
     } else if (baseLine && _.isArray(baseLine) && baseLine.length) {
-      maxY = Math.max(Math.max.apply(null, baseLine.map(entry => (entry.y || 0))), maxY);
+      maxY = Math.max(_.max(baseLine.map(entry => (entry.y || 0))), maxY);
     }
 
     if (isNumber(maxY)) {
@@ -299,12 +299,12 @@ class Area extends Component {
     const startY = points[0].y;
     const endY = points[points.length - 1].y;
     const height = alpha * Math.abs(startY - endY);
-    let maxX = Math.max.apply(null, points.map(entry => (entry.x || 0)));
+    let maxX = _.max(points.map(entry => (entry.x || 0)));
 
     if (isNumber(baseLine)) {
       maxX = Math.max(baseLine, maxX);
     } else if (baseLine && _.isArray(baseLine) && baseLine.length) {
-      maxX = Math.max(Math.max.apply(null, baseLine.map(entry => (entry.x || 0))), maxX);
+      maxX = Math.max(_.max(baseLine.map(entry => (entry.x || 0))), maxX);
     }
 
     if (isNumber(maxX)) {
