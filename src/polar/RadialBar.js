@@ -36,6 +36,7 @@ class RadialBar extends Component {
 
     cornerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     forceCornerRadius: PropTypes.bool,
+    cornerIsExternal: PropTypes.bool,
     minPointSize: PropTypes.number,
     maxBarSize: PropTypes.number,
     data: PropTypes.arrayOf(PropTypes.shape({
@@ -77,6 +78,8 @@ class RadialBar extends Component {
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
+    forceCornerRadius: false,
+    cornerIsExternal: false,
   };
 
   static getComposedData = ({ item, props, radiusAxis, radiusAxisTicks, angleAxis, angleAxisTicks,
@@ -220,6 +223,7 @@ class RadialBar extends Component {
         key: `sector-${i}`,
         className: 'recharts-radial-bar-sector',
         forceCornerRadius: others.forceCornerRadius,
+        cornerIsExternal: others.cornerIsExternal,
       };
 
       return this.constructor.renderSectorShape(i === activeIndex ? activeShape : shape, props);

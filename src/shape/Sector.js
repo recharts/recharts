@@ -18,17 +18,17 @@ const getDeltaAngle = (startAngle, endAngle) => {
 };
 
 const getTangentCircle = ({ cx, cy, radius, angle, sign, isExternal,
-  cornerRadius }) => {
+  cornerRadius, cornerIsExternal }) => {
   const centerRadius = cornerRadius * (isExternal ? 1 : -1) + radius;
   const theta = Math.asin(cornerRadius / centerRadius) / RADIAN;
-  const centerAngle = angle + sign * theta;
+  const centerAngle = cornerIsExternal ? angle : angle + sign * theta;
   const center = polarToCartesian(cx, cy, centerRadius, centerAngle);
   // The coordinate of point which is tangent to the circle
   const circleTangency = polarToCartesian(cx, cy, radius, centerAngle);
   // The coordinate of point which is tangent to the radius line
+  const lineTangencyAngle = cornerIsExternal ? angle - sign * theta : angle;
   const lineTangency = polarToCartesian(
-    cx, cy, centerRadius * Math.cos(theta * RADIAN), angle);
-
+    cx, cy, centerRadius * Math.cos(theta * RADIAN), lineTangencyAngle);
   return { center, circleTangency, lineTangency, theta };
 };
 
@@ -61,15 +61,17 @@ const getSectorPath = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle 
 };
 
 const getSectorWithCorner = ({ cx, cy, innerRadius, outerRadius, cornerRadius, forceCornerRadius,
-  startAngle, endAngle }) => {
+  cornerIsExternal, startAngle, endAngle }) => {
   const sign = mathSign(endAngle - startAngle);
   const { circleTangency: soct, lineTangency: solt, theta: sot } =
     getTangentCircle({
       cx, cy, radius: outerRadius, angle: startAngle, sign, cornerRadius,
+      cornerIsExternal,
     });
   const { circleTangency: eoct, lineTangency: eolt, theta: eot } =
     getTangentCircle({
       cx, cy, radius: outerRadius, angle: endAngle, sign: -sign, cornerRadius,
+      cornerIsExternal,
     });
   const outerArcAngle = Math.abs(startAngle - endAngle) - sot - eot;
 
@@ -94,11 +96,11 @@ const getSectorWithCorner = ({ cx, cy, innerRadius, outerRadius, cornerRadius, f
   if (innerRadius > 0) {
     const { circleTangency: sict, lineTangency: silt, theta: sit } =
       getTangentCircle({
-        cx, cy, radius: innerRadius, angle: startAngle, sign, isExternal: true, cornerRadius,
+        cx, cy, radius: innerRadius, angle: startAngle, sign, isExternal: true, cornerRadius, cornerIsExternal,
       });
     const { circleTangency: eict, lineTangency: eilt, theta: eit } =
       getTangentCircle({
-        cx, cy, radius: innerRadius, angle: endAngle, sign: -sign, isExternal: true, cornerRadius,
+        cx, cy, radius: innerRadius, angle: endAngle, sign: -sign, isExternal: true, cornerRadius, cornerIsExternal,
       });
     const innerArcAngle = Math.abs(startAngle - endAngle) - sit - eit;
 
@@ -133,6 +135,8 @@ class Sector extends Component {
     startAngle: PropTypes.number,
     endAngle: PropTypes.number,
     cornerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    forceCornerRadius: PropTypes.bool,
+    cornerIsExternal: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -143,11 +147,13 @@ class Sector extends Component {
     startAngle: 0,
     endAngle: 0,
     cornerRadius: 0,
+    forceCornerRadius: false,
+    cornerIsExternal: false,
   };
 
   render() {
-    const { cx, cy, innerRadius, outerRadius, cornerRadius, forceCornerRadius, startAngle, endAngle,
-      className } = this.props;
+    const { cx, cy, innerRadius, outerRadius, cornerRadius, forceCornerRadius, cornerIsExternal,
+      startAngle, endAngle, className } = this.props;
 
     if (outerRadius < innerRadius || startAngle === endAngle) { return null; }
 
@@ -161,6 +167,7 @@ class Sector extends Component {
         cx, cy, innerRadius, outerRadius,
         cornerRadius: Math.min(cr, deltaRadius / 2),
         forceCornerRadius,
+        cornerIsExternal,
         startAngle, endAngle,
       });
     } else {
