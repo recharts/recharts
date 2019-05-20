@@ -41,6 +41,97 @@ describe('<YAxis />', () => {
     expect(ticks.first().props().y).to.equal(297.5);
   });
 
+  it('Render 4 ticks when domain={[0, 10000]}', () => {
+    const wrapper = mount(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis type="number" stroke="#ff7300" domain={[0, 10000]} />
+        <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Area dataKey="pv" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>
+    );
+    const ticks = wrapper.find(Text);
+
+    expect(ticks.length).to.equal(4);
+    expect(ticks.last().props().children).to.equal('10000');
+  });
+
+  it('Render 4 ticks when domain={[0, "dataMax"]}', () => {
+    const wrapper = mount(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis type="number" stroke="#ff7300" domain={[0, 'dataMax']} />
+        <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Area dataKey="pv" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>
+    );
+    const ticks = wrapper.find(Text);
+    
+    expect(ticks.length).to.equal(3);
+    expect(ticks.last().props().children).to.equal('9800');
+  });
+
+  it('Render 4 ticks when domain={[0, "dataMax - 100"]}', () => {
+    const wrapper = mount(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis type="number" stroke="#ff7300" domain={[0, 'dataMax - 100']} />
+        <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Area dataKey="pv" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>
+    );
+    const ticks = wrapper.find(Text);
+
+    expect(ticks.length).to.equal(3);
+    expect(ticks.last().props().children).to.equal('9800');
+  });
+
+  it('Render 1 ticks when domain={[0, 1000]} and dataKey is "noExist" ', () => {
+    const wrapper = mount(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis stroke="#ff7300" domain={[0, 1000]} />
+        <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>
+    );
+    const ticks = wrapper.find(Text);
+
+    expect(ticks.length).to.equal(4);
+    expect(ticks.first().props().y).to.equal(297.5);
+  });
+
+  it('Render 1 ticks when domain={[0, "dataMax + 100"]} and dataKey is "noExist" ', () => {
+    const wrapper = mount(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis stroke="#ff7300" domain={[0, 'dataMax + 100']} />
+        <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>
+    );
+    const ticks = wrapper.find(Text);
+
+    expect(ticks.length).to.equal(0);
+  });
+
+  it('Render 1 ticks when domain={[0, "dataMax - 100"]} and dataKey is "noExist" ', () => {
+    const wrapper = mount(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis stroke="#ff7300" domain={[0, 'dataMax - 100']} />
+        <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>
+    );
+    const ticks = wrapper.find(Text);
+
+    expect(ticks.length).to.equal(0);
+  });
+
+  it('Render 1 ticks when domain={["auto, "auto"]} and dataKey is "noExist" ', () => {
+    const wrapper = mount(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis stroke="#ff7300" domain={["auto", "auto"]} />
+        <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>
+    );
+    const ticks = wrapper.find(Text);
+
+    expect(ticks.length).to.equal(0);
+  });
+
   it('Render 4 ticks', () => {
     const wrapper = mount(
       <AreaChart width={600} height={400} data={data}>
