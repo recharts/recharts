@@ -50,7 +50,7 @@ class DefaultTooltipContent extends Component {
     if (payload && payload.length) {
       const listStyle = { padding: 0, margin: 0 };
 
-      const items = payload.sort(itemSorter)
+      const items = (itemSorter ? _.sortBy(payload, itemSorter) : payload)
         .map((entry, i) => {
           if (entry.type === 'none') {
             return null;

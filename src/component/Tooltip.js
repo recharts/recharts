@@ -20,7 +20,7 @@ const getUniqPaylod = (option, payload) => {
   if (option === true) {
     return _.uniqBy(payload, defaultUniqBy);
   }
-
+  
   if (_.isFunction(option)) {
     return _.uniqBy(payload, option);
   }
@@ -95,7 +95,6 @@ const defaultProps = {
   isAnimationActive: !isSsr(),
   animationEasing: 'ease',
   animationDuration: 400,
-  itemSorter: () => -1,
   filterNull: true,
   useTranslate3d: false,
 };

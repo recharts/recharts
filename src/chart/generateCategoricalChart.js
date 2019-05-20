@@ -542,7 +542,6 @@ const generateCategoricalChart = ({
         activeIndex >= displayedData.length) {
         return null;
       }
-
       // get data by activeIndex when the axis don't allow duplicated category
       return graphicalItems.reduce((result, child) => {
         const { hide } = child.props;
@@ -1308,7 +1307,7 @@ const generateCategoricalChart = ({
       });
 
       if (!props) { return null; }
-
+      
       const { item, ...otherProps } = props;
 
       return cloneElement(item, {
