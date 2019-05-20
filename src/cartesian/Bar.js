@@ -13,7 +13,7 @@ import Cell from '../component/Cell';
 import LabelList from '../component/LabelList';
 import pureRender from '../util/PureRender';
 import { uniqueId, mathSign, interpolateNumber } from '../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES,
   findAllByType, getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { getCateCoordinateOfBar, getValueByDataKey, truncateByDomain, getBaseValueOfBar,
   findPositionOfBar } from '../util/ChartUtils';
@@ -38,6 +38,7 @@ class Bar extends Component {
     name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
     legendType: PropTypes.oneOf(LEGEND_TYPES),
+    tooltipType: PropTypes.oneOf(TOOLTIP_TYPES),
     minPointSize: PropTypes.number,
     maxBarSize: PropTypes.number,
     hide: PropTypes.bool,

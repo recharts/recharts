@@ -549,7 +549,7 @@ const generateCategoricalChart = ({
 
         if (hide) { return result; }
 
-        const { dataKey, name, unit, formatter, data } = child.props;
+        const { dataKey, name, unit, formatter, data, tooltipType } = child.props;
         let payload;
 
         if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
@@ -560,12 +560,14 @@ const generateCategoricalChart = ({
         }
 
         if (!payload) { return result; }
+
         return [...result, {
           ...getPresentationAttributes(child),
           dataKey, unit, formatter,
           name: name || dataKey,
           color: getMainColorOfGraphicItem(child),
           value: getValueByDataKey(payload, dataKey),
+          type: tooltipType,
           payload,
         }];
       }, []);

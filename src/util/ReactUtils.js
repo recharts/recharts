@@ -198,6 +198,10 @@ export const LEGEND_TYPES = [
   'diamond', 'star', 'triangle', 'wye', 'none',
 ];
 
+export const TOOLTIP_TYPES = [
+  'none',
+];
+
 /**
  * Get the display name of a component
  * @param  {Object} Comp Specified Component

@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import _ from 'lodash';
 import { interpolateNumber } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
-import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES, filterEventAttributes,
+import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES, filterEventAttributes,
   getPresentationAttributes, isSsr } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -51,6 +51,7 @@ class Radar extends Component {
       PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool,
     ]),
     legendType: PropTypes.oneOf(LEGEND_TYPES),
+    tooltipType: PropTypes.oneOf(TOOLTIP_TYPES),
     hide: PropTypes.bool,
 
     onMouseEnter: PropTypes.func,

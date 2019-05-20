@@ -8,7 +8,7 @@ import Animate from 'react-smooth';
 import _ from 'lodash';
 import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
-import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES, findAllByType,
+import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES, findAllByType,
   getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import pureRender from '../util/PureRender';
 import LabelList from '../component/LabelList';
@@ -47,6 +47,7 @@ class RadialBar extends Component {
       value: PropTypes.value,
     })),
     legendType: PropTypes.oneOf(LEGEND_TYPES),
+    tooltipType: PropTypes.oneOf(TOOLTIP_TYPES),
     label: PropTypes.oneOfType([
       PropTypes.bool, PropTypes.func, PropTypes.element, PropTypes.object,
     ]),

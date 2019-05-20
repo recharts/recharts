@@ -52,6 +52,10 @@ class DefaultTooltipContent extends Component {
 
       const items = payload.sort(itemSorter)
         .map((entry, i) => {
+          if (entry.type === 'none') {
+            return null;
+          }
+
           const finalItemStyle = {
             display: 'block',
             paddingTop: 4,

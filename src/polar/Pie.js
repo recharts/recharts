@@ -14,7 +14,7 @@ import Text from '../component/Text';
 import Label from '../component/Label';
 import LabelList from '../component/LabelList';
 import Cell from '../component/Cell';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES,
   getPresentationAttributes, findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
@@ -46,6 +46,7 @@ class Pie extends Component {
     blendStroke: PropTypes.bool,
     minAngle: PropTypes.number,
     legendType: PropTypes.oneOf(LEGEND_TYPES),
+    tooltipType: PropTypes.oneOf(TOOLTIP_TYPES),
     maxRadius: PropTypes.number,
 
     sectors: PropTypes.arrayOf(PropTypes.object),
@@ -152,7 +153,7 @@ class Pie extends Component {
     if (!pieData || !pieData.length) { return []; }
 
     const { cornerRadius, startAngle, endAngle, paddingAngle, dataKey, nameKey,
-      valueKey } = item.props;
+      valueKey, tooltipType } = item.props;
     const minAngle = Math.abs(item.props.minAngle);
     const coordinate = Pie.parseCoordinateOfPie(item, offset);
     const len = pieData.length;
@@ -198,7 +199,7 @@ class Pie extends Component {
           (minAngle + percent * realTotalAngle);
         const midAngle = (tempStartAngle + tempEndAngle) / 2;
         const middleRadius = (coordinate.innerRadius + coordinate.outerRadius) / 2;
-        const tooltipPayload = [{ name, value: val, payload: entry, dataKey: realDataKey }];
+        const tooltipPayload = [{ name, value: val, payload: entry, dataKey: realDataKey, type: tooltipType }];
         const tooltipPosition = polarToCartesian(
           coordinate.cx, coordinate.cy, middleRadius, midAngle
         );

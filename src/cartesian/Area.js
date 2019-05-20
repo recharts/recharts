@@ -11,7 +11,7 @@ import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
 import pureRender from '../util/PureRender';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES,
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES,
   getPresentationAttributes, isSsr, filterEventAttributes } from '../util/ReactUtils';
 import { isNumber, uniqueId, interpolateNumber } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
@@ -39,6 +39,7 @@ class Area extends Component {
     xAxis: PropTypes.object,
     stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     legendType: PropTypes.oneOf(LEGEND_TYPES),
+    tooltipType: PropTypes.oneOf(TOOLTIP_TYPES),
     connectNulls: PropTypes.bool,
 
     activeDot: PropTypes.oneOfType([

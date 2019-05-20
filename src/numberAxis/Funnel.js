@@ -11,7 +11,7 @@ import Layer from '../container/Layer';
 import Trapezoid from '../shape/Trapezoid';
 import LabelList from '../component/LabelList';
 import Cell from '../component/Cell';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES,
   getPresentationAttributes, findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { interpolateNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -34,6 +34,8 @@ class Funnel extends Component {
     activeShape: PropTypes.oneOfType([
       PropTypes.object, PropTypes.func, PropTypes.element,
     ]),
+    legendType: PropTypes.oneOf(LEGEND_TYPES),
+    tooltipType: PropTypes.oneOf(TOOLTIP_TYPES),
     activeIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
 
     isAnimationActive: PropTypes.bool,
@@ -105,7 +107,7 @@ class Funnel extends Component {
 
   static getComposedData = ({ item, offset, onItemMouseLeave, onItemMouseEnter }) => {
     const funnelData = Funnel.getRealFunnelData(item);
-    const { dataKey, nameKey } = item.props;
+    const { dataKey, nameKey, tooltipType } = item.props;
     const { left, top } = offset;
     const { realHeight, realWidth, offsetX, offsetY } = Funnel.getRealWidthHeight(item, offset);
     const maxValue = getValueByDataKey(funnelData[0], dataKey, 0);
@@ -125,7 +127,7 @@ class Funnel extends Component {
       const upperWidth = val / maxValue * realWidth;
       const lowerWidth = nextVal / maxValue * realWidth;
 
-      const tooltipPayload = [{ name, value: val, payload: entry, dataKey }];
+      const tooltipPayload = [{ name, value: val, payload: entry, dataKey, type: tooltipType }];
       const tooltipPosition = {
         x: x + upperWidth / 2,
         y: y + rowHeight / 2,

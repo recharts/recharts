@@ -13,7 +13,7 @@ import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
 import ErrorBar from './ErrorBar';
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, filterEventAttributes,
+import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES, filterEventAttributes,
   getPresentationAttributes, isSsr, findAllByType } from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 
@@ -37,6 +37,7 @@ class Line extends Component {
     yAxis: PropTypes.object,
     xAxis: PropTypes.object,
     legendType: PropTypes.oneOf(LEGEND_TYPES),
+    tooltipType: PropTypes.oneOf(TOOLTIP_TYPES),
     layout: PropTypes.oneOf(['horizontal', 'vertical']),
     connectNulls: PropTypes.bool,
     hide: PropTypes.bool,

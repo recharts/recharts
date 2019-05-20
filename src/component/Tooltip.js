@@ -7,7 +7,7 @@ import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import classNames from 'classnames';
 import DefaultTooltipContent from './DefaultTooltipContent';
-import { isSsr } from '../util/ReactUtils';
+import { TOOLTIP_TYPES, isSsr } from '../util/ReactUtils';
 import { isNumber } from '../util/DataUtils';
 import pureRender from '../util/PureRender';
 
@@ -62,6 +62,7 @@ const propTypes = {
     name: PropTypes.any,
     value: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.array]),
     unit: PropTypes.any,
+    type: PropTypes.oneOf(TOOLTIP_TYPES)
   })),
   paylodUniqBy: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
 
