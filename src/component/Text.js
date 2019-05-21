@@ -98,7 +98,7 @@ class Text extends Component {
 
   calculateWordsByLines(wordsWithComputedWidth, spaceWidth, lineWidth) {
     const { scaleToFit } = this.props;
-    return wordsWithComputedWidth.reduce((result, { word, width }) => {
+    return (wordsWithComputedWidth || []).reduce((result, { word, width }) => {
       const currentLine = result[result.length - 1];
 
       if (currentLine && (lineWidth == null || scaleToFit ||

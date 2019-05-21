@@ -385,7 +385,15 @@ const parseLabel = (label, viewBox) => {
     return <Label key="label-implicit" viewBox={viewBox} value={label} />;
   }
 
-  if (isValidElement(label) || _.isFunction(label)) {
+  if (isValidElement(label)) {
+    if (label.type === Label) {
+      return cloneElement(label, { key: 'label-implicit', viewBox });
+    }
+
+    return <Label key="label-implicit" content={label} viewBox={viewBox} />;
+  }
+
+  if (_.isFunction(label)) {
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
   }
 

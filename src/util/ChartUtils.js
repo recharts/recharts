@@ -36,7 +36,7 @@ export const getDomainOfDataByKey = (data, key, type, filterNil) => {
   if (type === 'number') {
     const domain = flattenData.filter(entry => isNumber(entry) || parseFloat(entry, 10));
 
-    return [_.min(domain), _.max(domain)];
+    return domain.length ? [_.min(domain), _.max(domain)] : [Infinity, -Infinity];
   }
 
   const validateData = filterNil ?

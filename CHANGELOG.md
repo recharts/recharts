@@ -1,3 +1,11 @@
+## 1.6.1 (May 20, 2019)
+
+### fix
+
+- fix "Maximum call stack size exceeded" error when use label={<Label />}
+- fix bug of "Cannot read property reduce of undefined in Text.js"
+- fix `getDomainOfDataByKey` when all the values are null or undefined
+
 ## 1.6.0(May 14, 2019)
 
 ### fix
