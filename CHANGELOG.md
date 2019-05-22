@@ -1,3 +1,17 @@
+## 1.6.2 (May 22, 2019)
+
+### feat
+
+- Add cornerIsExternal prop to center rounded corner at radial bar edge
+- Add new component `Customized` to render customized content which can user internal state and props
+- Add props `tooltipType="none"` to hide tooltip data for Area, Bar, Line, Scatter, Funnel, Pie, Radar, RadialBar
+
+### fix
+
+- fix the order of tooltip items when not specify itemSorter
+- Fix typo in example of RadialBarChart
+
+
 ## 1.6.1 (May 20, 2019)
 
 ### fix
