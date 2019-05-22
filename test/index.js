@@ -51,7 +51,7 @@ require('./specs/component/ResponsiveContainerSpec');
 require('./specs/component/TextSpec');
 require('./specs/component/LabelSpec');
 require('./specs/component/LabelListSpec');
-require('./specs/component/CustomerSpec');
+require('./specs/component/CustomizedSpec');
 
 // shape
 require('./specs/shape/CrossSpec');
