@@ -52,6 +52,7 @@ class Bar extends Component {
       radius: PropTypes.oneOfType([PropTypes.number, PropTypes.array]),
       value: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.array]),
     })),
+
     onAnimationStart: PropTypes.func,
     onAnimationEnd: PropTypes.func,
 

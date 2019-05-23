@@ -59,6 +59,7 @@ class Line extends Component {
       y: PropTypes.number,
       value: PropTypes.value,
     })),
+
     onAnimationStart: PropTypes.func,
     onAnimationEnd: PropTypes.func,
 

@@ -67,6 +67,7 @@ class Area extends Component {
 
     onAnimationStart: PropTypes.func,
     onAnimationEnd: PropTypes.func,
+
     animationId: PropTypes.number,
     isAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,

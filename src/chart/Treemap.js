@@ -221,6 +221,9 @@ class Treemap extends Component {
     // customize nest index content
     nestIndexContent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
 
+    onAnimationStart: PropTypes.func,
+    onAnimationEnd: PropTypes.func,
+
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,

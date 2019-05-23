@@ -54,6 +54,8 @@ class Radar extends Component {
     tooltipType: PropTypes.oneOf(TOOLTIP_TYPES),
     hide: PropTypes.bool,
 
+    onAnimationStart: PropTypes.func,
+    onAnimationEnd: PropTypes.func,
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     onClick: PropTypes.func,
@@ -109,11 +111,22 @@ class Radar extends Component {
   };
 
   handleAnimationEnd = () => {
+    const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
+
+    if (_.isFunction(onAnimationEnd)) {
+      onAnimationEnd();
+    }
   };
 
   handleAnimationStart = () => {
+    const { onAnimationStart } = this.props;
+
     this.setState({ isAnimationFinished: false });
+
+    if (_.isFunction(onAnimationStart)) {
+      onAnimationStart();
+    }
   };
 
   handleMouseEnter = (e) => {

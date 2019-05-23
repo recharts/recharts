@@ -65,6 +65,8 @@ class Pie extends Component {
     ]),
     activeIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
 
+    onAnimationStart: PropTypes.func,
+    onAnimationEnd: PropTypes.func,
     isAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
