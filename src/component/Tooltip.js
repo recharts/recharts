@@ -20,7 +20,7 @@ const getUniqPaylod = (option, payload) => {
   if (option === true) {
     return _.uniqBy(payload, defaultUniqBy);
   }
-  
+
   if (_.isFunction(option)) {
     return _.uniqBy(payload, option);
   }
