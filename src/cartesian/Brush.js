@@ -102,6 +102,8 @@ class Brush extends Component {
       clearTimeout(this.leaveTimer);
       this.leaveTimer = null;
     }
+    document.removeEventListener('mousemove', this.handleDrag);
+    document.removeEventListener('touchmove', this.handleTouchMove);
     document.removeEventListener('mouseup', this.handleDragEnd);
     document.removeEventListener('touchend', this.handleDragEnd);
   }
@@ -168,6 +170,8 @@ class Brush extends Component {
       isTravellerMoving: false,
       isSlideMoving: false,
     });
+    document.removeEventListener('mousemove', this.handleDrag);
+    document.removeEventListener('touchmove', this.handleTouchMove);
     document.removeEventListener('mouseup', this.handleDragEnd);
     document.removeEventListener('touchend', this.handleDragEnd);
   };
@@ -198,6 +202,8 @@ class Brush extends Component {
       isSlideMoving: true,
       slideMoveStartX: event.pageX,
     });
+    document.addEventListener('mousemove', this.handleDrag);
+    document.addEventListener('touchmove', this.handleTouchMove);
     document.addEventListener('mouseup', this.handleDragEnd);
     document.addEventListener('touchend', this.handleDragEnd);
   };
@@ -241,6 +247,8 @@ class Brush extends Component {
       movingTravellerId: id,
       brushMoveStartX: event.pageX,
     });
+    document.addEventListener('mousemove', this.handleDrag);
+    document.addEventListener('touchmove', this.handleTouchMove);
     document.addEventListener('mouseup', this.handleDragEnd);
     document.addEventListener('touchend', this.handleDragEnd);
   }
@@ -295,6 +303,12 @@ class Brush extends Component {
       .domain(_.range(0, len))
       .range([x, x + width - travellerWidth]);
     this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
+
+    document.removeEventListener('mousemove', this.handleDrag);
+    document.removeEventListener('touchmove', this.handleTouchMove);
+    document.removeEventListener('mouseup', this.handleDragEnd);
+    document.removeEventListener('touchend', this.handleDragEnd);
+
     return {
       isTextActive: false,
       isSlideMoving: false,
@@ -302,8 +316,6 @@ class Brush extends Component {
       startX: this.scale(startIndex),
       endX: this.scale(endIndex),
     };
-    document.removeEventListener('mouseup', this.handleDragEnd);
-    document.removeEventListener('touchend', this.handleDragEnd);
   }
 
   renderBackground() {
@@ -450,9 +462,7 @@ class Brush extends Component {
     return (
       <Layer
         className={layerClass}
-        onMouseMove={this.handleDrag}
         onMouseLeave={this.handleLeaveWrapper}
-        onTouchMove={this.handleTouchMove}
         style={style}
       >
         {this.renderBackground()}
