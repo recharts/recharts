@@ -198,6 +198,8 @@ class Brush extends Component {
       isSlideMoving: true,
       slideMoveStartX: event.pageX,
     });
+    document.addEventListener('mouseup', this.handleDragEnd);
+    document.addEventListener('touchend', this.handleDragEnd);
   };
 
   handleSlideDrag(e) {
@@ -300,6 +302,8 @@ class Brush extends Component {
       startX: this.scale(startIndex),
       endX: this.scale(endIndex),
     };
+    document.removeEventListener('mouseup', this.handleDragEnd);
+    document.removeEventListener('touchend', this.handleDragEnd);
   }
 
   renderBackground() {
