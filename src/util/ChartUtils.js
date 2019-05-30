@@ -129,6 +129,7 @@ export const getMainColorOfGraphicItem = (item) => {
   switch (displayName) {
     case 'Line':
       result = stroke;
+      break;
     case 'Area':
     case 'Radar':
       result = stroke && stroke !== 'none' ? stroke : fill;
