@@ -448,8 +448,6 @@ class Brush extends Component {
         className={layerClass}
         onMouseMove={this.handleDrag}
         onMouseLeave={this.handleLeaveWrapper}
-        onMouseUp={this.handleDragEnd}
-        onTouchEnd={this.handleDragEnd}
         onTouchMove={this.handleTouchMove}
         style={style}
       >
