@@ -102,6 +102,8 @@ class Brush extends Component {
       clearTimeout(this.leaveTimer);
       this.leaveTimer = null;
     }
+    document.removeEventListener('mouseup', this.handleDragEnd);
+    document.removeEventListener('touchend', this.handleDragEnd);
   }
 
   static getIndexInRange(range, x) {
@@ -166,6 +168,8 @@ class Brush extends Component {
       isTravellerMoving: false,
       isSlideMoving: false,
     });
+    document.removeEventListener('mouseup', this.handleDragEnd);
+    document.removeEventListener('touchend', this.handleDragEnd);
   };
 
   handleLeaveWrapper = () => {
@@ -235,6 +239,8 @@ class Brush extends Component {
       movingTravellerId: id,
       brushMoveStartX: event.pageX,
     });
+    document.addEventListener('mouseup', this.handleDragEnd);
+    document.addEventListener('touchend', this.handleDragEnd);
   }
 
   handleTravellerMove(e) {
