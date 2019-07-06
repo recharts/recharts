@@ -13,9 +13,9 @@ Recharts is a **Redefined** chart library built with [React](https://facebook.gi
 
 The main purpose of this library is to help you to write charts in React applications without any pain. Main principles of Recharts are:
 
-1. **Simply** deploy with React components
-1. **Native** SVG support, lightweight depending only on some D3 submodules
-1. **Declarative** components, components of charts are purely presentational
+1. **Simply** deploy with React components.
+1. **Native** SVG support, lightweight depending only on some D3 submodules.
+1. **Declarative** components, components of charts are purely presentational.
 
 ## Examples
 
@@ -48,11 +48,9 @@ NPM is the easiest and fastest way to get started using Recharts. It is also the
 $ npm install recharts
 ```
 
-
 ### umd
 
 The UMD build is also available on unpkg.com:
-
 
 ```html
  <script src="https://unpkg.com/react/umd/react.production.min.js"></script>
@@ -74,14 +72,13 @@ $ npm run build
 
 ## Demo
 
-To examine the demos in your local build, execute
-
+To examine the demos in your local build, execute:
 
 ```sh
 $ npm run[-script] demo
 ```
 
-and then browse to http://localhost:3000
+and then browse to http://localhost:3000.
 
 ## Module Formats
 
@@ -97,4 +94,4 @@ We are looking for like-minded people who share the same idea about Recharts. Th
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2015-2017 Recharts Group
+Copyright (c) 2015-2017 Recharts Group.
