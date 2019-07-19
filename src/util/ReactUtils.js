@@ -486,7 +486,7 @@ export const renderByOrder = (children, renderMap) => {
     }
   });
 
-  return elements;
+  return elements.reverse();
 };
 
 export const getReactEventByType = (e) => {
