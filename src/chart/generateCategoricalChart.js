@@ -180,10 +180,9 @@ const generateCategoricalChart = ({
       if (nextProps.data !== data || nextProps.width !== width ||
         nextProps.height !== height || nextProps.layout !== layout ||
         nextProps.stackOffset !== stackOffset || !shallowEqual(nextProps.margin, margin)) {
-        const defaultState = this.constructor.createDefaultState(nextProps);
-        this.setState({ ...defaultState, updateId: updateId + 1,
+        this.setState({ ...this.state, updateId: updateId + 1,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
-            { props: nextProps, ...defaultState, updateId: updateId + 1 }) }
+            { props: nextProps, ...this.state, updateId: updateId + 1 }) }
         );
       } else if (!isChildrenEqual(nextProps.children, children)) {
         // update configuration in chilren
