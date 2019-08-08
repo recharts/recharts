@@ -123,16 +123,19 @@ export const calculateActiveTickIndex = (coordinate, ticks, unsortedTicks, axis)
  */
 export const getMainColorOfGraphicItem = (item) => {
   const { type: { displayName } } = item;
+  const { stroke, fill } = item.props;
   let result;
 
   switch (displayName) {
     case 'Line':
+      result = stroke;
+      break;
     case 'Area':
     case 'Radar':
-      result = item.props.stroke;
+      result = stroke && stroke !== 'none' ? stroke : fill;
       break;
     default:
-      result = item.props.fill;
+      result = fill;
       break;
   }
 

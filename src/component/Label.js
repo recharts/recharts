@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
 import Text from './Text';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, findAllByType } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, findAllByType, filterEventAttributes } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId,
   mathSign } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
@@ -315,6 +315,7 @@ function Label(props) {
 
   const isPolarLabel = isPolar(viewBox);
   const attrs = getPresentationAttributes(props);
+  const events = filterEventAttributes(props);
 
   if (isPolarLabel && (position === 'insideStart' ||
     position === 'insideEnd' || position === 'end')) {
@@ -330,6 +331,7 @@ function Label(props) {
       className={classNames('recharts-label', className)}
       {...attrs}
       {...positionAttrs}
+      {...events}
     >
       {label}
     </Text>

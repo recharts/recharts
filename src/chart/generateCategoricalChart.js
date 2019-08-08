@@ -555,7 +555,7 @@ const generateCategoricalChart = ({
           // graphic child has data props
           payload = findEntryInArray(data || displayedData, tooltipAxis.dataKey, activeLabel);
         } else {
-          payload = displayedData[activeIndex];
+          payload = (data || displayedData)[activeIndex];
         }
 
         if (!payload) { return result; }
@@ -1448,12 +1448,17 @@ const generateCategoricalChart = ({
       const hasActive = !hide && isTooltipActive && tooltipItem && activeDot &&
         activeTooltipIndex >= 0;
 
+      function findWithPayload(entry) {
+        return tooltipAxis.dataKey(entry.payload);
+      }
+
       if (hasActive) {
         let activePoint, basePoint;
 
         if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
-          activePoint = findEntryInArray(points, `payload.${tooltipAxis.dataKey}`, activeLabel);
-          basePoint = isRange && baseLine && findEntryInArray(baseLine, `payload.${tooltipAxis.dataKey}`, activeLabel);
+          const specifiedKey = typeof tooltipAxis.dataKey === 'function' ? findWithPayload : 'payload.'.concat(tooltipAxis.dataKey);
+          activePoint = findEntryInArray(points, specifiedKey, activeLabel);
+          basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
         } else {
           activePoint = points[activeTooltipIndex];
           basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
