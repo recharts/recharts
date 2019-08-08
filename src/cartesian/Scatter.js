@@ -288,7 +288,7 @@ class Scatter extends Component {
       return {
         x: dataPoint.cx,
         y: dataPoint.cy,
-        value: dataPoint.y,
+        value: dataPoint.node.y,
         errorVal: getValueByDataKey(dataPoint, dataKey),
       };
     }
@@ -297,7 +297,7 @@ class Scatter extends Component {
       return {
         x: dataPoint.cx,
         y: dataPoint.cy,
-        value: dataPoint.x,
+        value: dataPoint.node.x,
         errorVal: getValueByDataKey(dataPoint, dataKey),
       };
     }
