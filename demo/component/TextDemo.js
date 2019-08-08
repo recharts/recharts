@@ -287,6 +287,15 @@ class TextDemo extends Component {
           </Text>
         </svg>
 
+        <h2>Event Handler</h2>
+        <svg width={this.state.resizeSvg ? this.state.width : 300} style={styles.svg}>
+          { /* eslint-disable no-alert */}
+          <Text x={0} width={this.state.width} verticalAnchor="start" onClick={() => window.alert('You clicked a Text Element')}>
+            Click me!
+          </Text>
+          { /* eslint-enable no-alert */}
+        </svg>
+
       </div>
     );
   }

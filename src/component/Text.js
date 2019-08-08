@@ -4,7 +4,7 @@ import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr } from '../util/ReactUtils';
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr, filterEventAttributes } from '../util/ReactUtils';
 import { getStringSize } from '../util/DOMUtils';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
@@ -165,6 +165,7 @@ class Text extends Component {
     return (
       <text
         {...getPresentationAttributes(textProps)}
+        {...filterEventAttributes(textProps)}
         x={x}
         y={y}
         className={classNames('recharts-text', className)}
