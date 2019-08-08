@@ -1,3 +1,16 @@
+## 1.7.0 (Aug 08, 2019)
+
+### feat
+
+- allow events on Text and Label components
+- Enable Tooltip's `translate` style
+- Added position props for ReferenceLine to allow to control offset of it
+
+### fix
+
+- handle `dataKey` as function, get correct data array for tooltip
+- fix style of legend in case of area and radar use fill for fallback color
+
 ## 1.6.2 (May 22, 2019)
 
 ### feat
