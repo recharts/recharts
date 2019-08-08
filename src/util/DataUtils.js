@@ -98,7 +98,10 @@ export const interpolateNumber = (numberA, numberB) => {
 export const findEntryInArray = (ary, specifiedKey, specifiedValue) => {
   if (!ary || !ary.length) { return null; }
 
-  return ary.find(entry => (entry && _.get(entry, specifiedKey) === specifiedValue));
+  return ary.find(entry => (
+    entry &&
+    (typeof specifiedKey === 'function' ? specifiedKey(entry) : _.get(entry, specifiedKey)) === specifiedValue
+  ));
 };
 
 /**
