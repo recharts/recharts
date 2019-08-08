@@ -60,6 +60,7 @@ class ReferenceLine extends Component {
       x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     })),
+    position: PropTypes.oneOf(['middle', 'start', 'end']),
 
     className: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -77,14 +78,15 @@ class ReferenceLine extends Component {
     stroke: '#ccc',
     fillOpacity: 1,
     strokeWidth: 1,
+    position: 'middle'
   };
 
   getEndPoints(scales, isFixedX, isFixedY, isSegment) {
-    const { viewBox: { x, y, width, height } } = this.props;
+    const { viewBox: { x, y, width, height }, position } = this.props;
 
     if (isFixedY) {
       const { y: yCoord, yAxis: { orientation } } = this.props;
-      const coord = scales.y.apply(yCoord, { bandAware: true });
+      const coord = scales.y.apply(yCoord, { position });
 
       if (ifOverflowMatches(this.props, 'discard') &&
         !scales.y.isInRange(coord)) {
@@ -98,7 +100,7 @@ class ReferenceLine extends Component {
       return orientation === 'left' ? points.reverse() : points;
     } if (isFixedX) {
       const { x: xCoord, xAxis: { orientation } } = this.props;
-      const coord = scales.x.apply(xCoord, { bandAware: true });
+      const coord = scales.x.apply(xCoord, { position });
 
       if (ifOverflowMatches(this.props, 'discard') &&
         !scales.x.isInRange(coord)) {
@@ -113,7 +115,7 @@ class ReferenceLine extends Component {
     } if (isSegment) {
       const { segment } = this.props;
 
-      const points = segment.map(p => scales.apply(p, { bandAware: true }));
+      const points = segment.map(p => scales.apply(p, { position }));
 
       if (ifOverflowMatches(this.props, 'discard') &&
         _.some(points, p => !scales.isInRange(p))) {

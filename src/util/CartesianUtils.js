@@ -132,9 +132,26 @@ export class ScaleHelper {
     return this.scale.bandwidth;
   }
 
-  apply(value, { bandAware } = {}) {
+  apply(value, { bandAware, position } = {}) {
     if (value === undefined) {
       return undefined;
+    } if (position) {
+      switch (position) {
+        case 'start': {
+          return this.scale(value);
+        }
+        case 'middle': {
+          const offset = this.bandwidth ? this.bandwidth() / 2 : 0;
+          return this.scale(value) + offset;
+        }
+        case 'end': {
+          const offset = this.bandwidth ? this.bandwidth() : 0;
+          return this.scale(value) + offset;
+        }
+        default: {
+          return this.scale(value);
+        }
+      }
     } if (bandAware) {
       const offset = this.bandwidth ? this.bandwidth() / 2 : 0;
       return this.scale(value) + offset;
