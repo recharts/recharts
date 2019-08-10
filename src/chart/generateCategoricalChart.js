@@ -555,7 +555,7 @@ const generateCategoricalChart = ({
           // graphic child has data props
           payload = findEntryInArray(data || displayedData, tooltipAxis.dataKey, activeLabel);
         } else {
-          payload = data[activeIndex] || displayedData[activeIndex];
+          payload = data && data[activeIndex] ? data[activeIndex] : displayedData[activeIndex];
         }
 
         if (!payload) { return result; }
