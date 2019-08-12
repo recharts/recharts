@@ -283,7 +283,7 @@ class Treemap extends Component {
     };
   }
 
-  componentDidUpdate(nextProps) {
+  componentDidUpdate(prevProps) {
     const { type, width, height, data, dataKey, aspectRatio } = nextProps;
 
     if (data !== this.props.data || type !== this.props.type || width !== this.props.width ||

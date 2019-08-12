@@ -70,7 +70,7 @@ class Brush extends Component {
     this.state = props.data && props.data.length ? this.updateScale(props) : {};
   }
 
-  componentDidUpdate(nextProps) {
+  componentDidUpdate(prevProps) {
     const { data, width, x, travellerWidth, updateId } = this.props;
 
     if (

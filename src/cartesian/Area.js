@@ -199,7 +199,7 @@ class Area extends Component {
 
   state = { isAnimationFinished: true };
 
-  componentDidUpdate(nextProps) {
+  componentDidUpdate(prevProps) {
     const { animationId, points, baseLine } = this.props;
 
     if (nextProps.animationId !== animationId) {

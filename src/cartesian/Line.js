@@ -149,7 +149,7 @@ class Line extends Component {
     this.setState({ totalLength });
   }
 
-  componentDidUpdate(nextProps) {
+  componentDidUpdate(prevProps) {
     const { animationId, points } = this.props;
 
     if (nextProps.animationId !== animationId) {

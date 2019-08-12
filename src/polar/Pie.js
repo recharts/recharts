@@ -232,7 +232,7 @@ class Pie extends Component {
 
   state = { isAnimationFinished: false };
 
-  componentDidUpdate(nextProps) {
+  componentDidUpdate(prevProps) {
     const { animationId, sectors } = this.props;
 
     if (nextProps.isAnimationActive !== this.props.isAnimationActive) {

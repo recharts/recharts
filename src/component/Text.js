@@ -54,7 +54,7 @@ class Text extends Component {
     this.updateWordsByLines(this.props, true);
   }
 
-  componentDidUpdate(nextProps) {
+  componentDidUpdate(prevProps) {
     if ((nextProps.width !== this.props.width || nextProps.scaleToFit !== this.props.scaleToFit)) {
       const needCalculate = (
         this.props.children !== nextProps.children ||

@@ -173,7 +173,7 @@ const generateCategoricalChart = ({
       }
     }
 
-    componentDidUpdate(nextProps) {
+    componentDidUpdate(prevProps) {
       const { data, children, width, height, layout, stackOffset, margin } = this.props;
       const { updateId } = this.state;
 
