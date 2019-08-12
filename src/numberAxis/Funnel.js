@@ -162,7 +162,7 @@ class Funnel extends Component {
 
   state = { isAnimationFinished: false };
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(nextProps) {
     const { animationId, trapezoids } = this.props;
 
     if (nextProps.isAnimationActive !== this.props.isAnimationActive) {

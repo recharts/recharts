@@ -203,6 +203,7 @@ class Treemap extends Component {
     width: PropTypes.number,
     height: PropTypes.number,
     data: PropTypes.array,
+    animationId: PropTypes.number,
     style: PropTypes.object,
     aspectRatio: PropTypes.number,
     content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
@@ -282,7 +283,7 @@ class Treemap extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(nextProps) {
     const { type, width, height, data, dataKey, aspectRatio } = nextProps;
 
     if (data !== this.props.data || type !== this.props.type || width !== this.props.width ||

@@ -54,12 +54,14 @@ class Text extends Component {
     this.updateWordsByLines(this.props, true);
   }
 
-  componentWillReceiveProps(nextProps) {
-    const needCalculate = (
-      this.props.children !== nextProps.children ||
-      this.props.style !== nextProps.style
-    );
-    this.updateWordsByLines(nextProps, needCalculate);
+  componentDidUpdate(nextProps) {
+    if ((nextProps.width !== this.props.width || nextProps.scaleToFit !== this.props.scaleToFit)) {
+      const needCalculate = (
+        this.props.children !== nextProps.children ||
+        this.props.style !== nextProps.style
+      );
+      this.updateWordsByLines(nextProps, needCalculate);
+    }
   }
 
   updateWordsByLines(props, needCalculate) {

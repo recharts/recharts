@@ -173,7 +173,7 @@ class Bar extends Component {
 
   state = { isAnimationFinished: false };
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(nextProps) {
     const { animationId, data } = this.props;
 
     if (nextProps.animationId !== animationId) {

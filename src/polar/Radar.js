@@ -98,7 +98,7 @@ class Radar extends Component {
 
   state = { isAnimationFinished: false };
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(nextProps) {
     const { animationId, points } = this.props;
 
     if (nextProps.animationId !== animationId) {

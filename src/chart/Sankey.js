@@ -369,7 +369,7 @@ class Sankey extends Component {
     this.state = this.constructor.createDefaultState(props);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(nextProps) {
     const { data, width, height, margin, iterations, nodeWidth, nodePadding, nameKey } = this.props;
     if (nextProps.data !== data || nextProps.width !== width ||
       nextProps.height !== height || !shallowEqual(nextProps.margin, margin) ||
