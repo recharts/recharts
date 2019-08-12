@@ -177,34 +177,34 @@ const generateCategoricalChart = ({
       const { data, children, width, height, layout, stackOffset, margin } = this.props;
       const { updateId } = this.state;
 
-      if (nextProps.data !== data || nextProps.width !== width ||
-        nextProps.height !== height || nextProps.layout !== layout ||
-        nextProps.stackOffset !== stackOffset || !shallowEqual(nextProps.margin, margin)) {
-        const defaultState = this.constructor.createDefaultState(nextProps);
+      if (prevProps.data !== data || prevProps.width !== width ||
+        prevProps.height !== height || prevProps.layout !== layout ||
+        prevProps.stackOffset !== stackOffset || !shallowEqual(prevProps.margin, margin)) {
+        const defaultState = this.constructor.createDefaultState(prevProps);
         this.setState({ ...defaultState, updateId: updateId + 1,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
-            { props: nextProps, ...defaultState, updateId: updateId + 1 }) }
+            { props: prevProps, ...defaultState, updateId: updateId + 1 }) }
         );
-      } else if (!isChildrenEqual(nextProps.children, children)) {
+      } else if (!isChildrenEqual(prevProps.children, children)) {
         // update configuration in chilren
-        const hasGlobalData = !_.isNil(nextProps.data);
+        const hasGlobalData = !_.isNil(prevProps.data);
         const newUpdateId = hasGlobalData ? updateId : updateId + 1;
 
         this.setState(prevState => ({
           updateId: newUpdateId,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups({
-            props: nextProps,
+            props: prevProps,
             ...prevState,
             updateId: newUpdateId,
           }),
         }));
       }
       // add syncId
-      if (_.isNil(this.props.syncId) && !_.isNil(nextProps.syncId)) {
+      if (_.isNil(this.props.syncId) && !_.isNil(prevProps.syncId)) {
         this.addListener();
       }
       // remove syncId
-      if (!_.isNil(this.props.syncId) && _.isNil(nextProps.syncId)) {
+      if (!_.isNil(this.props.syncId) && _.isNil(prevProps.syncId)) {
         this.removeListener();
       }
     }

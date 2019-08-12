@@ -202,7 +202,7 @@ class Area extends Component {
   componentDidUpdate(prevProps) {
     const { animationId, points, baseLine } = this.props;
 
-    if (nextProps.animationId !== animationId) {
+    if (prevProps.animationId !== animationId) {
       this.cachePrevData(points, baseLine);
     }
   }

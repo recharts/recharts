@@ -22,7 +22,7 @@ export default function (WrappedComponent) {
     componentDidUpdate(prevProps) {
       const { animationId } = this.state;
 
-      if (this.props.data !== nextProps.data) {
+      if (this.props.data !== prevProps.data) {
         this.setState({
           animationId: animationId + 1,
         });

@@ -160,7 +160,7 @@ class Scatter extends Component {
   componentDidUpdate(prevProps) {
     const { animationId, points } = this.props;
 
-    if (nextProps.animationId !== animationId) {
+    if (prevProps.animationId !== animationId) {
       this.cachePrevPoints(points);
     }
   }

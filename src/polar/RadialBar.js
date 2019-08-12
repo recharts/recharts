@@ -174,7 +174,7 @@ class RadialBar extends Component {
   componentDidUpdate(prevProps) {
     const { animationId, data } = this.props;
 
-    if (nextProps.animationId !== animationId) {
+    if (prevProps.animationId !== animationId) {
       this.cachePrevData(data);
     }
   }

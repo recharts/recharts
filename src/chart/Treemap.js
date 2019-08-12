@@ -284,7 +284,7 @@ class Treemap extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { type, width, height, data, dataKey, aspectRatio } = nextProps;
+    const { type, width, height, data, dataKey, aspectRatio } = prevProps;
 
     if (data !== this.props.data || type !== this.props.type || width !== this.props.width ||
       height !== this.props.height || dataKey !== this.props.dataKey || aspectRatio !== this.props.aspectRatio) {
