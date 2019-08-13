@@ -233,8 +233,7 @@ class Treemap extends Component {
     isUpdateAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
-    animationId: PropTypes.string,
+    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear'])
   };
 
   static defaultProps = {
