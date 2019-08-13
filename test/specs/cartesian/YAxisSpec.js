@@ -178,9 +178,10 @@ describe('<YAxis />', () => {
       </AreaChart>
     );
 
-    const yAxisTicks = wrapper.find('.yAxis .recharts-cartesian-axis-tick-value tspan');
-
-    expect(yAxisTicks.length).to.equal(3);
+    setTimeout(() => {
+      const yAxisTicks = wrapper.find('.yAxis .recharts-cartesian-axis-tick-value tspan');
+      expect(yAxisTicks.length).to.equal(3);
+    }, 1000);
   });
 
   it('Don\'t render anything', () => {

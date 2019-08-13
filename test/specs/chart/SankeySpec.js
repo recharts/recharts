@@ -159,7 +159,7 @@ describe('<Sankey />', () => {
     setTimeout(() => {
       expect(wrapper.render().find('.recharts-sankey-node').length).to.equal(49);
       expect(wrapper.render().find('.recharts-sankey-link').length).to.equal(69);
-    }, 3000);
+    }, 1000);
 
   });
 });

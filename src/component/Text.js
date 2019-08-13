@@ -46,11 +46,14 @@ class Text extends Component {
     verticalAnchor: 'end', // Maintain compat with existing charts / default SVG behavior
   };
 
-  state = {
-    wordsByLines: [],
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      wordsByLines: []
+    };
+  }
 
-  componentWillMount() {
+  componentDidMount() {
     this.updateWordsByLines(this.props, true);
   }
 
