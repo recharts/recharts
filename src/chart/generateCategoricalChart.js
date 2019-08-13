@@ -174,37 +174,37 @@ const generateCategoricalChart = ({
     }
 
     componentDidUpdate(prevProps) {
-      const { data, children, width, height, layout, stackOffset, margin } = this.props;
+      const { data, children, width, height, layout, stackOffset, margin } = prevProps;
       const { updateId } = this.state;
 
-      if (prevProps.data !== data || prevProps.width !== width ||
-        prevProps.height !== height || prevProps.layout !== layout ||
-        prevProps.stackOffset !== stackOffset || !shallowEqual(prevProps.margin, margin)) {
-        const defaultState = this.constructor.createDefaultState(prevProps);
+      if (this.props.data !== data || this.props.width !== width ||
+        this.props.height !== height || this.props.layout !== layout ||
+        this.props.stackOffset !== stackOffset || !shallowEqual(this.props.margin, margin)) {
+        const defaultState = this.constructor.createDefaultState(this.props);
         this.setState({ ...defaultState, updateId: updateId + 1,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
-            { props: prevProps, ...defaultState, updateId: updateId + 1 }) }
+            { props: this.props, ...defaultState, updateId: updateId + 1 }) }
         );
-      } else if (!isChildrenEqual(prevProps.children, children)) {
+      } else if (!isChildrenEqual(this.props.children, children)) {
         // update configuration in chilren
-        const hasGlobalData = !_.isNil(prevProps.data);
+        const hasGlobalData = !_.isNil(this.props.data);
         const newUpdateId = hasGlobalData ? updateId : updateId + 1;
 
         this.setState(prevState => ({
           updateId: newUpdateId,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups({
-            props: prevProps,
+            props: this.props,
             ...prevState,
             updateId: newUpdateId,
           }),
         }));
       }
       // add syncId
-      if (_.isNil(this.props.syncId) && !_.isNil(prevProps.syncId)) {
+      if (_.isNil(this.props.syncId) && !_.isNil(this.props.syncId)) {
         this.addListener();
       }
       // remove syncId
-      if (!_.isNil(this.props.syncId) && _.isNil(prevProps.syncId)) {
+      if (!_.isNil(this.props.syncId) && _.isNil(this.props.syncId)) {
         this.removeListener();
       }
     }

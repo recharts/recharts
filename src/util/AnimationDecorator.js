@@ -20,7 +20,7 @@ export default function (WrappedComponent) {
     };
 
     componentDidUpdate(prevProps) {
-      const { animationId } = this.state;
+      const { animationId } = prevProps;
 
       if (this.props.data !== prevProps.data) {
         this.setState({

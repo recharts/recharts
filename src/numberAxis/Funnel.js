@@ -163,11 +163,11 @@ class Funnel extends Component {
   state = { isAnimationFinished: false };
 
   componentDidUpdate(prevProps) {
-    const { animationId, trapezoids } = this.props;
+    const { animationId, trapezoids, isAnimationActive } = prevProps;
 
-    if (prevProps.isAnimationActive !== this.props.isAnimationActive) {
+    if (this.props.isAnimationActive !== isAnimationActive) {
       this.cachePrevData([]);
-    } else if (prevProps.animationId !== animationId) {
+    } else if (this.props.animationId !== animationId) {
       this.cachePrevData(trapezoids);
     }
   }

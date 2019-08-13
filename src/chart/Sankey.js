@@ -370,12 +370,12 @@ class Sankey extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { data, width, height, margin, iterations, nodeWidth, nodePadding, nameKey } = this.props;
-    if (prevProps.data !== data || prevProps.width !== width ||
-      prevProps.height !== height || !shallowEqual(prevProps.margin, margin) ||
-      prevProps.iterations !== iterations || prevProps.nodeWidth !== nodeWidth ||
-      prevProps.nodePadding !== nodePadding || prevProps.nameKey !== nameKey) {
-      this.setState(this.constructor.createDefaultState(prevProps));
+    const { data, width, height, margin, iterations, nodeWidth, nodePadding, nameKey } = prevProps;
+    if (this.props.data !== data || this.props.width !== width ||
+      this.props.height !== height || !shallowEqual(this.props.margin, margin) ||
+      this.props.iterations !== iterations || this.props.nodeWidth !== nodeWidth ||
+      this.props.nodePadding !== nodePadding || this.props.nameKey !== nameKey) {
+      this.setState(this.constructor.createDefaultState(this.props));
     }
   }
 

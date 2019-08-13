@@ -60,7 +60,7 @@ class Text extends Component {
         this.props.children !== prevProps.children ||
         this.props.style !== prevProps.style
       );
-      this.updateWordsByLines(prevProps, needCalculate);
+      this.updateWordsByLines(this.props, needCalculate);
     }
   }
 

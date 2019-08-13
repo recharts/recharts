@@ -71,25 +71,25 @@ class Brush extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { data, width, x, travellerWidth, updateId } = this.props;
+    const { data, width, x, travellerWidth, updateId } = prevProps;
 
     if (
-      (prevProps.data !== data || prevProps.updateId !== updateId) &&
-      prevProps.data &&
-      prevProps.data.length
+      (this.props.data !== data || this.props.updateId !== updateId) &&
+      this.props.data &&
+      this.props.data.length
     ) {
-      this.setState(this.updateScale(prevProps));
+      this.setState(this.updateScale(this.props));
     } else if (
-      prevProps.width !== width ||
-      prevProps.x !== x ||
-      prevProps.travellerWidth !== travellerWidth
+      this.props.width !== width ||
+      this.props.x !== x ||
+      this.props.travellerWidth !== travellerWidth
     ) {
-      this.scale.range([prevProps.x, prevProps.x + prevProps.width - prevProps.travellerWidth]);
+      this.scale.range([this.props.x, this.props.x + this.props.width - this.props.travellerWidth]);
       this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
 
       this.setState({
-        startX: this.scale(prevProps.startIndex),
-        endX: this.scale(prevProps.endIndex),
+        startX: this.scale(this.props.startIndex),
+        endX: this.scale(this.props.endIndex),
       });
     }
   }
