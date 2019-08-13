@@ -14,7 +14,7 @@ describe('<Text />', () => {
 
   it('Wraps long text if not enough width', () => {
     const wrapper = shallow(
-      <Text width={200} style={{ fontFamily: 'Courier' }}>This is really long text</Text>
+      <Text width={200} style={{ fontFamily: 'Courier' }}>This is really long text for 200px</Text>
     );
 
     expect(wrapper.instance().state.wordsByLines.length).to.equal(2);
