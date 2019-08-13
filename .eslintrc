@@ -58,7 +58,8 @@
     "react/destructuring-assignment": ["off"],
     "react/jsx-closing-tag-location": "error",
     "react/no-unused-state": "error",
-    "react/prefer-stateless-function": "error"
+    "react/prefer-stateless-function": "error",
+    "import/no-cycle": "warn"
 
   },
   "plugins": [
