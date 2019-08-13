@@ -1,3 +1,9 @@
+## 1.7.1 (Aug 13, 2019)
+
+### fix
+
+- Fix bar chart tooltip (#1837)
+
 ## 1.7.0 (Aug 08, 2019)
 
 ### feat
@@ -57,7 +63,7 @@
 ### feat
 
 - allow aria-* attributes and "role", "focusable", "tabIndex" of charts, fix #1226, fix #1584
-- add new props "paylodUniqBy" to Tooltip and Legend 
+- add new props "paylodUniqBy" to Tooltip and Legend
 
 ## 1.4.4(Feb 15, 2019)
 
