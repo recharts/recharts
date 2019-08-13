@@ -9,7 +9,6 @@
   "rules": {
     "valid-jsdoc": "error",
     "react/no-did-update-set-state": "warn",
-    "import/no-cycle": "warn",
     "react/sort-comp": "off",
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
