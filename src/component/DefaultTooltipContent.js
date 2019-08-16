@@ -103,7 +103,7 @@ class DefaultTooltipContent extends Component {
       padding: 10,
       backgroundColor: '#fff',
       border: '1px solid #ccc',
-      whiteSpace: 'nowrap',
+      overflow: 'hidden',
       ...contentStyle,
     };
     const finalLabelStyle = {
