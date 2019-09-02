@@ -439,6 +439,11 @@ class Sankey extends Component {
     }
   }
 
+  handleClick(el, type, e) {
+    const { onClick } = this.props;
+    if (onClick) onClick(el, type, e);
+  }
+
   static renderLinkItem(option, props) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
@@ -498,6 +503,7 @@ class Sankey extends Component {
             const events = {
               onMouseEnter: this.handleMouseEnter.bind(this, linkProps, 'link'),
               onMouseLeave: this.handleMouseLeave.bind(this, linkProps, 'link'),
+              onClick: this.handleClick.bind(this, linkProps, 'link')
             };
 
             return (
@@ -550,6 +556,7 @@ class Sankey extends Component {
             const events = {
               onMouseEnter: this.handleMouseEnter.bind(this, nodeProps, 'node'),
               onMouseLeave: this.handleMouseLeave.bind(this, nodeProps, 'node'),
+              onClick: this.handleClick.bind(this, nodeProps, 'node')
             };
 
             return (
