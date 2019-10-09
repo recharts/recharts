@@ -113,13 +113,14 @@ class ReferenceArea extends Component {
     const hasY1 = isNumOrStr(y1);
     const hasY2 = isNumOrStr(y2);
 
-    if (!hasX1 && !hasX2 && !hasY1 && !hasY2) { return null; }
+    const { shape } = this.props;
+
+    if (!hasX1 && !hasX2 && !hasY1 && !hasY2 && !shape) { return null; }
 
     const rect = this.getRect(hasX1, hasX2, hasY1, hasY2);
 
-    if (!rect) { return null; }
+    if (!rect && !shape) { return null; }
 
-    const { shape } = this.props;
 
     const clipPath = ifOverflowMatches(this.props, 'hidden') ?
       `url(#${clipPathId})` :
