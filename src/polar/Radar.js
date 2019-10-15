@@ -98,10 +98,10 @@ class Radar extends Component {
 
   state = { isAnimationFinished: false };
 
-  componentWillReceiveProps(nextProps) {
-    const { animationId, points } = this.props;
+  componentDidUpdate(prevProps) {
+    const { animationId, points } = prevProps;
 
-    if (nextProps.animationId !== animationId) {
+    if (this.props.animationId !== animationId) {
       this.cachePrevData(points);
     }
   }

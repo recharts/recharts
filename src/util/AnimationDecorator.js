@@ -19,10 +19,10 @@ export default function (WrappedComponent) {
       animationId: 0,
     };
 
-    componentWillReceiveProps(nextProps) {
-      const { animationId } = this.state;
+    componentDidUpdate(prevProps) {
+      const { animationId } = prevProps;
 
-      if (this.props.data !== nextProps.data) {
+      if (this.props.data !== prevProps.data) {
         this.setState({
           animationId: animationId + 1,
         });

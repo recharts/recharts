@@ -70,26 +70,26 @@ class Brush extends Component {
     this.state = props.data && props.data.length ? this.updateScale(props) : {};
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { data, width, x, travellerWidth, updateId } = this.props;
+  componentDidUpdate(prevProps) {
+    const { data, width, x, travellerWidth, updateId } = prevProps;
 
     if (
-      (nextProps.data !== data || nextProps.updateId !== updateId) &&
-      nextProps.data &&
-      nextProps.data.length
+      (this.props.data !== data || this.props.updateId !== updateId) &&
+      this.props.data &&
+      this.props.data.length
     ) {
-      this.setState(this.updateScale(nextProps));
+      this.setState(this.updateScale(this.props));
     } else if (
-      nextProps.width !== width ||
-      nextProps.x !== x ||
-      nextProps.travellerWidth !== travellerWidth
+      this.props.width !== width ||
+      this.props.x !== x ||
+      this.props.travellerWidth !== travellerWidth
     ) {
-      this.scale.range([nextProps.x, nextProps.x + nextProps.width - nextProps.travellerWidth]);
+      this.scale.range([this.props.x, this.props.x + this.props.width - this.props.travellerWidth]);
       this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
 
       this.setState({
-        startX: this.scale(nextProps.startIndex),
-        endX: this.scale(nextProps.endIndex),
+        startX: this.scale(this.props.startIndex),
+        endX: this.scale(this.props.endIndex),
       });
     }
   }

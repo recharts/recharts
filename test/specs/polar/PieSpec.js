@@ -160,8 +160,10 @@ describe('<Pie />', () => {
       </Surface>
     );
 
-    expect(wrapper.find('.recharts-pie-label-text').length).to.equal(sectors.length);
-    expect(wrapper.find('.recharts-pie-label-text').first().text()).to.equal('A: 40');
+    setTimeout(() => {
+      expect(wrapper.find('.recharts-pie-label-text').length).to.equal(sectors.length);
+      expect(wrapper.find('.recharts-pie-label-text').first().text()).to.equal('A: 40');
+    }, 1000);
   });
 
   it('Render customized label when label is set to be a react element', () => {

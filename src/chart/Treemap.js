@@ -203,6 +203,7 @@ class Treemap extends Component {
     width: PropTypes.number,
     height: PropTypes.number,
     data: PropTypes.array,
+    animationId: PropTypes.number,
     style: PropTypes.object,
     aspectRatio: PropTypes.number,
     content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
@@ -232,8 +233,7 @@ class Treemap extends Component {
     isUpdateAnimationActive: PropTypes.bool,
     animationBegin: PropTypes.number,
     animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
-    animationId: PropTypes.string,
+    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear'])
   };
 
   static defaultProps = {
@@ -283,8 +283,8 @@ class Treemap extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { type, width, height, data, dataKey, aspectRatio } = nextProps;
+  componentDidUpdate(prevProps) {
+    const { type, width, height, data, dataKey, aspectRatio } = prevProps;
 
     if (data !== this.props.data || type !== this.props.type || width !== this.props.width ||
       height !== this.props.height || dataKey !== this.props.dataKey || aspectRatio !== this.props.aspectRatio) {

@@ -148,7 +148,7 @@ describe('<Sankey />', () => {
       ...data,
       nodes: [
         ...data.nodes,
-        { name: "New Node" }
+        { name: 'New Node' }
       ],
       links: [
         ...data.links,
@@ -156,8 +156,10 @@ describe('<Sankey />', () => {
       ]
     };
     wrapper.setProps({ data: newData });
+    setTimeout(() => {
+      expect(wrapper.render().find('.recharts-sankey-node').length).to.equal(49);
+      expect(wrapper.render().find('.recharts-sankey-link').length).to.equal(69);
+    }, 1000);
 
-    expect(wrapper.render().find('.recharts-sankey-node').length).to.equal(49);
-    expect(wrapper.render().find('.recharts-sankey-link').length).to.equal(69);
-  })
+  });
 });

@@ -46,20 +46,25 @@ class Text extends Component {
     verticalAnchor: 'end', // Maintain compat with existing charts / default SVG behavior
   };
 
-  state = {
-    wordsByLines: [],
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      wordsByLines: []
+    };
+  }
 
-  componentWillMount() {
+  componentDidMount() {
     this.updateWordsByLines(this.props, true);
   }
 
-  componentWillReceiveProps(nextProps) {
-    const needCalculate = (
-      this.props.children !== nextProps.children ||
-      this.props.style !== nextProps.style
-    );
-    this.updateWordsByLines(nextProps, needCalculate);
+  componentDidUpdate(prevProps) {
+    if ((prevProps.width !== this.props.width || prevProps.scaleToFit !== this.props.scaleToFit)) {
+      const needCalculate = (
+        this.props.children !== prevProps.children ||
+        this.props.style !== prevProps.style
+      );
+      this.updateWordsByLines(this.props, needCalculate);
+    }
   }
 
   updateWordsByLines(props, needCalculate) {
