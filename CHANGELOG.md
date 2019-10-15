@@ -1,3 +1,9 @@
+## 1.8.0 (Oct 15, 2019)
+
+### refactor
+
+- react unsafe methods refactored
+
 ## 1.7.1 (Aug 13, 2019)
 
 ### fix
