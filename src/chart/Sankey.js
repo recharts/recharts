@@ -500,6 +500,7 @@ class Sankey extends PureComponent {
             };
 
             return (
+              // eslint-disable-next-line react/no-array-index-key
               <Layer key={`link${i}`} {...events}>
                 {this.constructor.renderLinkItem(linkContent, linkProps)}
               </Layer>
@@ -552,6 +553,7 @@ class Sankey extends PureComponent {
             };
 
             return (
+              // eslint-disable-next-line react/no-array-index-key
               <Layer key={`node${i}`} {...events}>
                 {this.constructor.renderNodeItem(nodeContent, nodeProps)}
               </Layer>

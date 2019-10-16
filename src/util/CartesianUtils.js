@@ -99,7 +99,9 @@ export const rectWithPoints = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => ({
  * @param  {Object} coords     x1, x2, y1, and y2
  * @return {Object} object
  */
-export const rectWithCoords = ({ x1, y1, x2, y2 }) => rectWithPoints({ x: x1, y: y1 }, { x: x2, y: y2 });
+export const rectWithCoords = ({
+  x1, y1, x2, y2,
+}) => rectWithPoints({ x: x1, y: y1 }, { x: x2, y: y2 });
 
 export class ScaleHelper {
   static EPS = 1e-4;

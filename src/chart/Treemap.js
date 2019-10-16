@@ -284,8 +284,13 @@ class Treemap extends PureComponent {
   componentDidUpdate(prevProps) {
     const { type, width, height, data, dataKey, aspectRatio } = prevProps;
 
-    if (data !== this.props.data || type !== this.props.type || width !== this.props.width ||
-      height !== this.props.height || dataKey !== this.props.dataKey || aspectRatio !== this.props.aspectRatio) {
+    if (data !== this.props.data ||
+      type !== this.props.type ||
+      width !== this.props.width ||
+      height !== this.props.height ||
+      dataKey !== this.props.dataKey ||
+      aspectRatio !== this.props.aspectRatio
+    ) {
       const nextRoot = this.computeRoot({ type, width, height, data, dataKey, aspectRatio });
       this.setState({
         ...this.constructor.createDefaultState(),
@@ -541,12 +546,15 @@ class Treemap extends PureComponent {
     const isLeaf = !node.children || !node.children.length;
 
     const { currentRoot } = this.state;
-    const isCurrentRootChild = (currentRoot.children || []).filter(item => item.depth === node.depth && item.name === node.name);
+    const isCurrentRootChild =
+      (currentRoot.children || [])
+        .filter(item => item.depth === node.depth && item.name === node.name);
 
     if (!isCurrentRootChild.length && root.depth && type === 'nest') {
       return null;
     }
     return (
+      // eslint-disable-next-line react/no-array-index-key
       <Layer key={`recharts-treemap-node-${i}`} className={`recharts-treemap-depth-${node.depth}`}>
         {this.renderItem(content, nodeProps, isLeaf)}
         {

@@ -95,11 +95,23 @@ const getSectorWithCorner = ({ cx, cy, innerRadius, outerRadius, cornerRadius, f
   if (innerRadius > 0) {
     const { circleTangency: sict, lineTangency: silt, theta: sit } =
       getTangentCircle({
-        cx, cy, radius: innerRadius, angle: startAngle, sign, isExternal: true, cornerRadius, cornerIsExternal,
+        cx,
+        cy,
+        radius: innerRadius,
+        angle: startAngle,
+        sign,
+        isExternal: true,
+        cornerRadius, cornerIsExternal,
       });
     const { circleTangency: eict, lineTangency: eilt, theta: eit } =
       getTangentCircle({
-        cx, cy, radius: innerRadius, angle: endAngle, sign: -sign, isExternal: true, cornerRadius, cornerIsExternal,
+        cx,
+        cy,
+        radius: innerRadius,
+        angle: endAngle,
+        sign: -sign,
+        isExternal: true,
+        cornerRadius, cornerIsExternal,
       });
     const innerArcAngle = Math.abs(startAngle - endAngle) - sit - eit;
 

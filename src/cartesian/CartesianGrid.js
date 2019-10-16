@@ -154,7 +154,7 @@ class CartesianGrid extends PureComponent {
       const colorIndex = i % verticalFill.length;
       return (
         <rect
-          key={`react-${i}`}
+          key={`react-${i}`} // eslint-disable-line react/no-array-index-key
           x={Math.round(entry + x - x)}
           y={y}
           width={lineWidth}
@@ -192,7 +192,7 @@ class CartesianGrid extends PureComponent {
       const colorIndex = i % horizontalFill.length;
       return (
         <rect
-          key={`react-${i}`}
+          key={`react-${i}`} // eslint-disable-line react/no-array-index-key
           y={Math.round(entry + y - y)}
           x={x}
           height={lineHeight}

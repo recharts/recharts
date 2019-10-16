@@ -12,8 +12,16 @@ import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
 import ErrorBar from './ErrorBar';
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES, filterEventAttributes,
-  getPresentationAttributes, isSsr, findAllByType } from '../util/ReactUtils';
+import {
+  PRESENTATION_ATTRIBUTES,
+  EVENT_ATTRIBUTES,
+  LEGEND_TYPES,
+  TOOLTIP_TYPES,
+  filterEventAttributes,
+  getPresentationAttributes,
+  isSsr,
+  findAllByType
+} from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 
 class Line extends PureComponent {
@@ -236,7 +244,7 @@ class Line extends PureComponent {
     }
 
     return errorBarItems.map((item, i) => React.cloneElement(item, {
-      key: i,
+      key: i, // eslint-disable-line react/no-array-index-key
       data: points,
       xAxis,
       yAxis,

@@ -202,7 +202,7 @@ class Scatter extends PureComponent {
         <Layer
           className="recharts-scatter-symbol"
           {...filterEventsOfChild(this.props, entry, i)}
-          key={`symbol-${i}`}
+          key={`symbol-${i}`} // eslint-disable-line react/no-array-index-key
         >
           {this.constructor.renderSymbolItem(activeIndex === i ? activeShape : shape, props)}
         </Layer>
@@ -304,7 +304,7 @@ class Scatter extends PureComponent {
       const { direction } = item.props;
 
       return React.cloneElement(item, {
-        key: i,
+        key: i, // eslint-disable-line react/no-array-index-key
         data: points,
         xAxis,
         yAxis,

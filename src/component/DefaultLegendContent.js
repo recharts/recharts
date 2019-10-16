@@ -132,7 +132,7 @@ class DefaultLegendContent extends PureComponent {
         <li
           className={className}
           style={itemStyle}
-          key={`legend-item-${i}`}
+          key={`legend-item-${i}`} // eslint-disable-line react/no-array-index-key
           {...filterEventsOfChild(this.props, entry, i)}
         >
           <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>

@@ -76,7 +76,12 @@ class Trapezoid extends PureComponent {
   render() {
     const { x, y, upperWidth, lowerWidth, height, className } = this.props;
     const { totalLength } = this.state;
-    const { animationEasing, animationDuration, animationBegin, isUpdateAnimationActive } = this.props;
+    const {
+      animationEasing,
+      animationDuration,
+      animationBegin,
+      isUpdateAnimationActive,
+    } = this.props;
 
     if (x !== +x || y !== +y ||
       upperWidth !== +upperWidth || lowerWidth !== +lowerWidth || height !== +height ||
@@ -106,7 +111,13 @@ class Trapezoid extends PureComponent {
         isActive={isUpdateAnimationActive}
       >
         {
-        ({ upperWidth: currUpperWidth, lowerWidth: currLowerWidth, height: currHeight, x: currX, y: currY }) => (
+        ({
+          upperWidth: currUpperWidth,
+          lowerWidth: currLowerWidth,
+          height: currHeight,
+          x: currX,
+          y: currY,
+        }) => (
           <Animate
             canBegin={totalLength > 0}
             from={`0px ${totalLength === -1 ? 1 : totalLength}px`}

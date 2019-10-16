@@ -199,7 +199,13 @@ class Pie extends PureComponent {
           (minAngle + percent * realTotalAngle);
         const midAngle = (tempStartAngle + tempEndAngle) / 2;
         const middleRadius = (coordinate.innerRadius + coordinate.outerRadius) / 2;
-        const tooltipPayload = [{ name, value: val, payload: entry, dataKey: realDataKey, type: tooltipType }];
+        const tooltipPayload = [{
+          name,
+          value: val,
+          payload: entry,
+          dataKey: realDataKey,
+          type: tooltipType
+        }];
         const tooltipPosition = polarToCartesian(
           coordinate.cx, coordinate.cy, middleRadius, midAngle
         );
@@ -368,6 +374,7 @@ class Pie extends PureComponent {
       }
 
       return (
+        // eslint-disable-next-line react/no-array-index-key
         <Layer key={`label-${i}`}>
           {labelLine && this.constructor.renderLabelLineItem(labelLine, lineProps)}
           {this.constructor.renderLabelItem(
@@ -408,7 +415,7 @@ class Pie extends PureComponent {
         <Layer
           className="recharts-pie-sector"
           {...filterEventsOfChild(this.props, entry, i)}
-          key={`sector-${i}`}
+          key={`sector-${i}`} // eslint-disable-line react/no-array-index-key
         >
           {this.constructor.renderSectorItem(sectorOptions, sectorProps)}
         </Layer>

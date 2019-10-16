@@ -178,6 +178,7 @@ class Text extends Component {
       >
         {
         wordsByLines.map((line, index) => (
+          // eslint-disable-next-line react/no-array-index-key
           <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={index}>
             {line.words.join(' ')}
           </tspan>

@@ -228,7 +228,7 @@ class Funnel extends PureComponent {
         <Layer
           className="recharts-funnel-trapezoid"
           {...filterEventsOfChild(this.props, entry, i)}
-          key={`trapezoid-${i}`}
+          key={`trapezoid-${i}`} // eslint-disable-line react/no-array-index-key
         >
           {this.constructor.renderTrapezoidItem(trapezoidOptions, trapezoidProps)}
         </Layer>

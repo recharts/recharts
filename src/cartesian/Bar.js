@@ -220,7 +220,7 @@ class Bar extends PureComponent {
         <Layer
           className="recharts-bar-rectangle"
           {...filterEventsOfChild(this.props, entry, i)}
-          key={`rectangle-${i}`}
+          key={`rectangle-${i}`} // eslint-disable-line react/no-array-index-key
         >
           {this.constructor.renderRectangle(shape, props)}
         </Layer>
@@ -351,7 +351,7 @@ class Bar extends PureComponent {
     }
 
     return errorBarItems.map((item, i) => React.cloneElement(item, {
-      key: `error-bar-${i}`,
+      key: `error-bar-${i}`, // eslint-disable-line react/no-array-index-key
       data,
       xAxis,
       yAxis,

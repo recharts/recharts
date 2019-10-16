@@ -72,6 +72,7 @@ class DefaultTooltipContent extends PureComponent {
             }
           }
           return (
+            // eslint-disable-next-line react/no-array-index-key
             <li className="recharts-tooltip-item" key={`tooltip-item-${i}`} style={finalItemStyle}>
               {isNumOrStr(name) ? <span className="recharts-tooltip-item-name">{name}</span> : null}
               {isNumOrStr(name) ? <span className="recharts-tooltip-item-separator">{separator}</span> : null}

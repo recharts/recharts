@@ -72,7 +72,7 @@ class PolarGrid extends PureComponent {
             return (
               <line
                 {...props}
-                key={`line-${i}`}
+                key={`line-${i}`} // eslint-disable-line react/no-array-index-key
                 x1={start.x}
                 y1={start.y}
                 x2={end.x}

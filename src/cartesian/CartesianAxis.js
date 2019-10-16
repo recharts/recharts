@@ -398,7 +398,7 @@ class CartesianAxis extends Component {
       return (
         <Layer
           className="recharts-cartesian-axis-tick"
-          key={`tick-${i}`}
+          key={`tick-${i}`} // eslint-disable-line react/no-array-index-key
           {...filterEventsOfChild(this.props, entry, i)}
         >
           {tickLine && (

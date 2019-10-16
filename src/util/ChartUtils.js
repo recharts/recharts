@@ -101,7 +101,8 @@ export const calculateActiveTickIndex = (coordinate, ticks, unsortedTicks, axis)
       // ticks are distributed in a single direction
       for (let i = 0; i < len; i++) {
         if ((i === 0 && coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2) ||
-          (i > 0 && i < len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2 &&
+          (i > 0 && i < len - 1 &&
+            coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2 &&
             coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2) ||
           (i === len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2)) {
           ({ index } = ticks[i]);
