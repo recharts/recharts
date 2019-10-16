@@ -2,10 +2,9 @@
  * @fileOverview Default Tooltip Content
  */
 import _ from 'lodash';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import pureRender from '../util/PureRender';
 import { isNumOrStr } from '../util/DataUtils';
 
 const defaultFormatter = value => (
@@ -14,8 +13,7 @@ const defaultFormatter = value => (
     value
 );
 
-@pureRender
-class DefaultTooltipContent extends Component {
+class DefaultTooltipContent extends PureComponent {
 
   static displayName = 'DefaultTooltipContent';
 
@@ -74,6 +72,7 @@ class DefaultTooltipContent extends Component {
             }
           }
           return (
+            // eslint-disable-next-line react/no-array-index-key
             <li className="recharts-tooltip-item" key={`tooltip-item-${i}`} style={finalItemStyle}>
               {isNumOrStr(name) ? <span className="recharts-tooltip-item-name">{name}</span> : null}
               {isNumOrStr(name) ? <span className="recharts-tooltip-item-separator">{separator}</span> : null}

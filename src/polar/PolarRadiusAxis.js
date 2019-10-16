@@ -1,10 +1,9 @@
 /**
  * @fileOverview The axis of polar coordinate system
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import pureRender from '../util/PureRender';
 import Text from '../component/Text';
 import Label from '../component/Label';
 import Layer from '../container/Layer';
@@ -12,8 +11,7 @@ import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventsOfChild } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 
-@pureRender
-class PolarRadiusAxis extends Component {
+class PolarRadiusAxis extends PureComponent {
 
   static displayName = 'PolarRadiusAxis';
 
@@ -181,7 +179,7 @@ class PolarRadiusAxis extends Component {
       return (
         <Layer
           className="recharts-polar-radius-axis-tick"
-          key={`tick-${i}`}
+          key={`tick-${i}`} // eslint-disable-line react/no-array-index-key
           {...filterEventsOfChild(this.props, entry, i)}
         >
           {this.constructor.renderTickItem(

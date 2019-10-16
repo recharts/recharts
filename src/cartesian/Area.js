@@ -1,7 +1,7 @@
 /**
  * @fileOverview Area
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
@@ -10,15 +10,13 @@ import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
-import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES,
   getPresentationAttributes, isSsr, filterEventAttributes } from '../util/ReactUtils';
 import { isNumber, uniqueId, interpolateNumber } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 
 
-@pureRender
-class Area extends Component {
+class Area extends PureComponent {
 
   static displayName = 'Area';
 

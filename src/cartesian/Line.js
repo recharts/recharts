@@ -1,24 +1,30 @@
 /**
  * @fileOverview Line
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import pureRender from '../util/PureRender';
 import Curve from '../shape/Curve';
 import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
 import ErrorBar from './ErrorBar';
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES, filterEventAttributes,
-  getPresentationAttributes, isSsr, findAllByType } from '../util/ReactUtils';
+import {
+  PRESENTATION_ATTRIBUTES,
+  EVENT_ATTRIBUTES,
+  LEGEND_TYPES,
+  TOOLTIP_TYPES,
+  filterEventAttributes,
+  getPresentationAttributes,
+  isSsr,
+  findAllByType
+} from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 
-@pureRender
-class Line extends Component {
+class Line extends PureComponent {
 
   static displayName = 'Line';
 
@@ -238,7 +244,7 @@ class Line extends Component {
     }
 
     return errorBarItems.map((item, i) => React.cloneElement(item, {
-      key: i,
+      key: i, // eslint-disable-line react/no-array-index-key
       data: points,
       xAxis,
       yAxis,

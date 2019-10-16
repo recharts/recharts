@@ -42,7 +42,7 @@ function LabelList(props) {
               index={index}
               value={value}
               viewBox={Label.parseViewBox(_.isNil(clockWise) ? entry : { ...entry, clockWise })}
-              key={`label-${index}`}
+              key={`label-${index}`} // eslint-disable-line react/no-array-index-key
             />
           );
         })
@@ -78,11 +78,11 @@ const renderCallByParent = (parentProps, data, ckeckPropsLabel = true) => {
   }
   const { children } = parentProps;
 
-  const explicitChilren = findAllByType(children, LabelList).map((child, index) => cloneElement(child, {
-    data,
-    key: `labelList-${index}`,
-  })
-  );
+  const explicitChilren =
+    findAllByType(children, LabelList).map((child, index) => cloneElement(child, {
+      data,
+      key: `labelList-${index}`,
+    }));
   if (!ckeckPropsLabel) { return explicitChilren; }
 
   const implicitLabelList = parseLabelList(parentProps.label, data);

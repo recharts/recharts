@@ -1,10 +1,9 @@
 /**
  * @fileOverview Default Legend Content
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import pureRender from '../util/PureRender';
 import Surface from '../container/Surface';
 import Symbols from '../shape/Symbols';
 import { filterEventsOfChild, LEGEND_TYPES } from '../util/ReactUtils';
@@ -12,8 +11,7 @@ import { filterEventsOfChild, LEGEND_TYPES } from '../util/ReactUtils';
 const SIZE = 32;
 const ICON_TYPES = LEGEND_TYPES.filter(type => type !== 'none');
 
-@pureRender
-class DefaultLegendContent extends Component {
+class DefaultLegendContent extends PureComponent {
   static displayName = 'Legend';
 
   static propTypes = {
@@ -134,7 +132,7 @@ class DefaultLegendContent extends Component {
         <li
           className={className}
           style={itemStyle}
-          key={`legend-item-${i}`}
+          key={`legend-item-${i}`} // eslint-disable-line react/no-array-index-key
           {...filterEventsOfChild(this.props, entry, i)}
         >
           <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>

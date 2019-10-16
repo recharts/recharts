@@ -25,9 +25,10 @@ import { calculateActiveTickIndex, getMainColorOfGraphicItem, getBarSizeList,
   getTicksOfAxis, getCoordinatesOfGrid, getStackedDataOfItem, parseErrorBarsOfAxis,
   getBandSizeOfAxis, getStackGroupsByAxisId, getValueByDataKey, isCategorialAxis,
   getDomainOfItemsWithSameAxis, getDomainOfStackGroups, getDomainOfDataByKey,
-  detectReferenceElementsDomain, parseSpecifiedDomain, parseDomainOfCategoryAxis } from '../util/ChartUtils';
+  parseSpecifiedDomain, parseDomainOfCategoryAxis } from '../util/ChartUtils';
+import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDomain';
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
-import { shallowEqual } from '../util/PureRender';
+import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
 
 const ORIENT_MAP = {
@@ -39,7 +40,8 @@ const originCoordinate = { x: 0, y: 0 };
 
 const generateCategoricalChart = ({
   chartName, GraphicalChild, eventType = 'axis', axisComponents, legendContent,
-  formatAxisMap, defaultProps, propTypes,
+  formatAxisMap, defaultProps,
+  propTypes, // eslint-disable-line react/forbid-foreign-prop-types
 }) => {
   class CategoricalChartWrapper extends Component {
     static displayName = chartName;
@@ -181,6 +183,7 @@ const generateCategoricalChart = ({
         this.props.height !== height || this.props.layout !== layout ||
         this.props.stackOffset !== stackOffset || !shallowEqual(this.props.margin, margin)) {
         const defaultState = this.constructor.createDefaultState(this.props);
+        // eslint-disable-next-line react/no-did-update-set-state
         this.setState({ ...defaultState, updateId: updateId + 1,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
             { props: this.props, ...defaultState, updateId: updateId + 1 }) }
@@ -190,6 +193,7 @@ const generateCategoricalChart = ({
         const hasGlobalData = !_.isNil(this.props.data);
         const newUpdateId = hasGlobalData ? updateId : updateId + 1;
 
+        // eslint-disable-next-line react/no-did-update-set-state
         this.setState(prevState => ({
           updateId: newUpdateId,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups({
@@ -1112,14 +1116,18 @@ const generateCategoricalChart = ({
       }
     }
 
-    verticalCoordinatesGenerator = ({ xAxis, width, height, offset }) => getCoordinatesOfGrid(CartesianAxis.getTicks({
+    verticalCoordinatesGenerator = ({
+      xAxis, width, height, offset,
+    }) => getCoordinatesOfGrid(CartesianAxis.getTicks({
       ...CartesianAxis.defaultProps,
       ...xAxis,
       ticks: getTicksOfAxis(xAxis, true),
       viewBox: { x: 0, y: 0, width, height },
     }), offset.left, offset.left + offset.width);
 
-    horizontalCoordinatesGenerator = ({ yAxis, width, height, offset }) => getCoordinatesOfGrid(CartesianAxis.getTicks({
+    horizontalCoordinatesGenerator = ({
+      yAxis, width, height, offset,
+    }) => getCoordinatesOfGrid(CartesianAxis.getTicks({
       ...CartesianAxis.defaultProps, ...yAxis,
       ticks: getTicksOfAxis(yAxis, true),
       viewBox: { x: 0, y: 0, width, height },

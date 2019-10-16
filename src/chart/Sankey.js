@@ -1,7 +1,7 @@
 /**
  * @file TreemapChart
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -9,7 +9,7 @@ import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
-import pureRender, { shallowEqual } from '../util/PureRender';
+import { shallowEqual } from '../util/ShallowEqual';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, EVENT_ATTRIBUTES,
   filterSvgElements, validateWidthHeight, findChildByType } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -310,8 +310,7 @@ const getPayloadOfTooltip = (el, type, nameKey) => {
   return [];
 };
 
-@pureRender
-class Sankey extends Component {
+class Sankey extends PureComponent {
   static displayName = 'Sankey';
 
   static propTypes = {
@@ -375,6 +374,7 @@ class Sankey extends Component {
       this.props.height !== height || !shallowEqual(this.props.margin, margin) ||
       this.props.iterations !== iterations || this.props.nodeWidth !== nodeWidth ||
       this.props.nodePadding !== nodePadding || this.props.nameKey !== nameKey) {
+      // eslint-disable-next-line react/no-did-update-set-state
       this.setState(this.constructor.createDefaultState(this.props));
     }
   }
@@ -501,6 +501,7 @@ class Sankey extends Component {
             };
 
             return (
+              // eslint-disable-next-line react/no-array-index-key
               <Layer key={`link${i}`} {...events}>
                 {this.constructor.renderLinkItem(linkContent, linkProps)}
               </Layer>
@@ -553,6 +554,7 @@ class Sankey extends Component {
             };
 
             return (
+              // eslint-disable-next-line react/no-array-index-key
               <Layer key={`node${i}`} {...events}>
                 {this.constructor.renderNodeItem(nodeContent, nodeProps)}
               </Layer>

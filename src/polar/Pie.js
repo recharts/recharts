@@ -1,12 +1,11 @@
 /**
  * @fileOverview Render sectors of a pie
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Sector from '../shape/Sector';
 import Curve from '../shape/Curve';
@@ -21,8 +20,7 @@ import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from
 import { getValueByDataKey } from '../util/ChartUtils';
 import { warn } from '../util/LogUtils';
 
-@pureRender
-class Pie extends Component {
+class Pie extends PureComponent {
 
   static displayName = 'Pie';
 
@@ -201,7 +199,13 @@ class Pie extends Component {
           (minAngle + percent * realTotalAngle);
         const midAngle = (tempStartAngle + tempEndAngle) / 2;
         const middleRadius = (coordinate.innerRadius + coordinate.outerRadius) / 2;
-        const tooltipPayload = [{ name, value: val, payload: entry, dataKey: realDataKey, type: tooltipType }];
+        const tooltipPayload = [{
+          name,
+          value: val,
+          payload: entry,
+          dataKey: realDataKey,
+          type: tooltipType
+        }];
         const tooltipPosition = polarToCartesian(
           coordinate.cx, coordinate.cy, middleRadius, midAngle
         );
@@ -370,6 +374,7 @@ class Pie extends Component {
       }
 
       return (
+        // eslint-disable-next-line react/no-array-index-key
         <Layer key={`label-${i}`}>
           {labelLine && this.constructor.renderLabelLineItem(labelLine, lineProps)}
           {this.constructor.renderLabelItem(
@@ -410,7 +415,7 @@ class Pie extends Component {
         <Layer
           className="recharts-pie-sector"
           {...filterEventsOfChild(this.props, entry, i)}
-          key={`sector-${i}`}
+          key={`sector-${i}`} // eslint-disable-line react/no-array-index-key
         >
           {this.constructor.renderSectorItem(sectorOptions, sectorProps)}
         </Layer>

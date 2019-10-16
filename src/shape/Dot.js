@@ -1,14 +1,12 @@
 /**
  * @fileOverview Dot
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import pureRender from '../util/PureRender';
 import { getPresentationAttributes, filterEventAttributes } from '../util/ReactUtils';
 
-@pureRender
-class Dot extends Component {
+class Dot extends PureComponent {
   static displayName = 'Dot';
 
   static propTypes = {

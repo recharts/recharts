@@ -1,16 +1,15 @@
 /**
  * @fileOverview Reference Line
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
-import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 import Label from '../component/Label';
-import { ifOverflowMatches } from '../util/ChartUtils';
+import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { LabeledScaleHelper, rectWithCoords } from '../util/CartesianUtils';
 import { warn } from '../util/LogUtils';
@@ -34,8 +33,7 @@ const renderLine = (option, props) => {
   return line;
 };
 
-@pureRender
-class ReferenceLine extends Component {
+class ReferenceLine extends PureComponent {
 
   static displayName = 'ReferenceLine';
 

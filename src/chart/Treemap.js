@@ -2,7 +2,7 @@
 /**
  * @fileOverview TreemapChart
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Smooth from 'react-smooth';
 import classNames from 'classnames';
@@ -14,7 +14,6 @@ import { findChildByType, getPresentationAttributes, filterSvgElements,
   validateWidthHeight, isSsr } from '../util/ReactUtils';
 import Tooltip from '../component/Tooltip';
 import Polygon from '../shape/Polygon';
-import pureRender from '../util/PureRender';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { COLOR_PANEL } from '../util/Constants';
 import { getStringSize } from '../util/DOMUtils';
@@ -195,8 +194,7 @@ const squarify = (node, aspectRatio) => {
   return node;
 };
 
-@pureRender
-class Treemap extends Component {
+class Treemap extends PureComponent {
   static displayName = 'Treemap';
 
   static propTypes = {
@@ -286,9 +284,15 @@ class Treemap extends Component {
   componentDidUpdate(prevProps) {
     const { type, width, height, data, dataKey, aspectRatio } = prevProps;
 
-    if (data !== this.props.data || type !== this.props.type || width !== this.props.width ||
-      height !== this.props.height || dataKey !== this.props.dataKey || aspectRatio !== this.props.aspectRatio) {
+    if (data !== this.props.data ||
+      type !== this.props.type ||
+      width !== this.props.width ||
+      height !== this.props.height ||
+      dataKey !== this.props.dataKey ||
+      aspectRatio !== this.props.aspectRatio
+    ) {
       const nextRoot = this.computeRoot({ type, width, height, data, dataKey, aspectRatio });
+      // eslint-disable-next-line react/no-did-update-set-state
       this.setState({
         ...this.constructor.createDefaultState(),
         ...nextRoot,
@@ -543,12 +547,15 @@ class Treemap extends Component {
     const isLeaf = !node.children || !node.children.length;
 
     const { currentRoot } = this.state;
-    const isCurrentRootChild = (currentRoot.children || []).filter(item => item.depth === node.depth && item.name === node.name);
+    const isCurrentRootChild =
+      (currentRoot.children || [])
+        .filter(item => item.depth === node.depth && item.name === node.name);
 
     if (!isCurrentRootChild.length && root.depth && type === 'nest') {
       return null;
     }
     return (
+      // eslint-disable-next-line react/no-array-index-key
       <Layer key={`recharts-treemap-node-${i}`} className={`recharts-treemap-depth-${node.depth}`}>
         {this.renderItem(content, nodeProps, isLeaf)}
         {

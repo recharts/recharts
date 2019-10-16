@@ -1,15 +1,13 @@
 /**
  * @fileOverview Cartesian Grid
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 import { isNumber } from '../util/DataUtils';
 
-@pureRender
-class CartesianGrid extends Component {
+class CartesianGrid extends PureComponent {
 
   static displayName = 'CartesianGrid';
 
@@ -156,7 +154,7 @@ class CartesianGrid extends Component {
       const colorIndex = i % verticalFill.length;
       return (
         <rect
-          key={`react-${i}`}
+          key={`react-${i}`} // eslint-disable-line react/no-array-index-key
           x={Math.round(entry + x - x)}
           y={y}
           width={lineWidth}
@@ -194,7 +192,7 @@ class CartesianGrid extends Component {
       const colorIndex = i % horizontalFill.length;
       return (
         <rect
-          key={`react-${i}`}
+          key={`react-${i}`} // eslint-disable-line react/no-array-index-key
           y={Math.round(entry + y - y)}
           x={x}
           height={lineHeight}

@@ -1,20 +1,18 @@
 /**
  * @fileOverview Brush
  */
-import React, { Component, Children } from 'react';
+import React, { PureComponent, Children } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { scalePoint } from 'd3-scale';
 import _ from 'lodash';
 import { getValueByDataKey } from '../util/ChartUtils';
-import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import { isNumber } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 
-@pureRender
-class Brush extends Component {
+class Brush extends PureComponent {
 
   static displayName = 'Brush';
 
@@ -78,6 +76,7 @@ class Brush extends Component {
       this.props.data &&
       this.props.data.length
     ) {
+      // eslint-disable-next-line react/no-did-update-set-state
       this.setState(this.updateScale(this.props));
     } else if (
       this.props.width !== width ||
@@ -87,6 +86,7 @@ class Brush extends Component {
       this.scale.range([this.props.x, this.props.x + this.props.width - this.props.travellerWidth]);
       this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
 
+      // eslint-disable-next-line react/no-did-update-set-state
       this.setState({
         startX: this.scale(this.props.startIndex),
         endX: this.scale(this.props.endIndex),

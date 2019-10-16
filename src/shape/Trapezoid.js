@@ -1,11 +1,10 @@
 /**
  * @fileOverview Rectangle
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
-import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 
@@ -20,8 +19,7 @@ const getTrapezoidPath = (x, y, upperWidth, lowerWidth, height) => {
   return path;
 };
 
-@pureRender
-class Trapezoid extends Component {
+class Trapezoid extends PureComponent {
 
   static displayName = 'Trapezoid';
 
@@ -78,7 +76,12 @@ class Trapezoid extends Component {
   render() {
     const { x, y, upperWidth, lowerWidth, height, className } = this.props;
     const { totalLength } = this.state;
-    const { animationEasing, animationDuration, animationBegin, isUpdateAnimationActive } = this.props;
+    const {
+      animationEasing,
+      animationDuration,
+      animationBegin,
+      isUpdateAnimationActive,
+    } = this.props;
 
     if (x !== +x || y !== +y ||
       upperWidth !== +upperWidth || lowerWidth !== +lowerWidth || height !== +height ||
@@ -108,7 +111,13 @@ class Trapezoid extends Component {
         isActive={isUpdateAnimationActive}
       >
         {
-        ({ upperWidth: currUpperWidth, lowerWidth: currLowerWidth, height: currHeight, x: currX, y: currY }) => (
+        ({
+          upperWidth: currUpperWidth,
+          lowerWidth: currLowerWidth,
+          height: currHeight,
+          x: currX,
+          y: currY,
+        }) => (
           <Animate
             canBegin={totalLength > 0}
             from={`0px ${totalLength === -1 ? 1 : totalLength}px`}

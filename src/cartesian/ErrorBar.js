@@ -73,6 +73,7 @@ class ErrorBar extends Component {
       }
 
       return (
+        // eslint-disable-next-line react/no-array-index-key
         <Layer className="recharts-errorBar" key={`bar-${i}`} {...props}>
           <line {...coordsTop} />
           <line {...coordsMid} />

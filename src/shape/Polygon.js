@@ -1,10 +1,9 @@
 /**
  * @fileOverview Polygon
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 
@@ -18,8 +17,7 @@ const getPolygonPoints = points => (
   }, []).join(' ')
 );
 
-@pureRender
-class Polygon extends Component {
+class Polygon extends PureComponent {
 
   static displayName = 'Polygon';
 

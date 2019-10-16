@@ -1,14 +1,12 @@
 /**
  * @fileOverview Polar Grid
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import pureRender from '../util/PureRender';
 import { polarToCartesian } from '../util/PolarUtils';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
 
-@pureRender
-class PolarGrid extends Component {
+class PolarGrid extends PureComponent {
 
   static displayName = 'PolarGrid';
 
@@ -74,7 +72,7 @@ class PolarGrid extends Component {
             return (
               <line
                 {...props}
-                key={`line-${i}`}
+                key={`line-${i}`} // eslint-disable-line react/no-array-index-key
                 x1={start.x}
                 y1={start.y}
                 x2={end.x}
