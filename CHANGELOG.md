@@ -1,3 +1,17 @@
+## 1.8.1 (Oct 16, 2019)
+
+### fix
+
+- Fixed Text Component crash
+- Fixed eslint errors in src/
+
+
+### feat
+
+- Add props of <Brush /> to always show text
+- Add onClick event to sankey chart
+- Shape prop can be used without any other prop in reference area
+
 ## 1.8.0 (Oct 15, 2019)
 
 ### refactor
