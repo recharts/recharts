@@ -1,12 +1,11 @@
 /**
  * @fileOverview Render sectors of a funnel
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Trapezoid from '../shape/Trapezoid';
 import LabelList from '../component/LabelList';
@@ -16,8 +15,7 @@ import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES,
 import { interpolateNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 
-@pureRender
-class Funnel extends Component {
+class Funnel extends PureComponent {
 
   static displayName = 'Funnel';
 

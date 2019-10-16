@@ -1,12 +1,10 @@
 /**
  * @fileOverview Y Axis
  */
-import { Component } from 'react';
+import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import pureRender from '../util/PureRender';
 
-@pureRender
-class YAxis extends Component {
+class YAxis extends PureComponent {
 
   static displayName = 'YAxis';
 

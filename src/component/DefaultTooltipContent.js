@@ -2,10 +2,9 @@
  * @fileOverview Default Tooltip Content
  */
 import _ from 'lodash';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import pureRender from '../util/PureRender';
 import { isNumOrStr } from '../util/DataUtils';
 
 const defaultFormatter = value => (
@@ -14,8 +13,7 @@ const defaultFormatter = value => (
     value
 );
 
-@pureRender
-class DefaultTooltipContent extends Component {
+class DefaultTooltipContent extends PureComponent {
 
   static displayName = 'DefaultTooltipContent';
 

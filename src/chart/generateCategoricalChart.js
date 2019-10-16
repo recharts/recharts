@@ -27,7 +27,7 @@ import { calculateActiveTickIndex, getMainColorOfGraphicItem, getBarSizeList,
   getDomainOfItemsWithSameAxis, getDomainOfStackGroups, getDomainOfDataByKey,
   detectReferenceElementsDomain, parseSpecifiedDomain, parseDomainOfCategoryAxis } from '../util/ChartUtils';
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
-import { shallowEqual } from '../util/PureRender';
+import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
 
 const ORIENT_MAP = {

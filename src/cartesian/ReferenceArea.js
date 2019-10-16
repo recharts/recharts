@@ -1,11 +1,10 @@
 /**
  * @fileOverview Reference Line
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
-import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Label from '../component/Label';
 import { LabeledScaleHelper, rectWithPoints } from '../util/CartesianUtils';
@@ -16,8 +15,7 @@ import { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';
 import Rectangle from '../shape/Rectangle';
 
 
-@pureRender
-class ReferenceArea extends Component {
+class ReferenceArea extends PureComponent {
 
   static displayName = 'ReferenceArea';
 

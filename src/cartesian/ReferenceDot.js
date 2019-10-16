@@ -1,11 +1,10 @@
 /**
  * @fileOverview Reference Dot
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
-import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Dot from '../shape/Dot';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
@@ -16,8 +15,7 @@ import { ifOverflowMatches } from '../util/ChartUtils';
 import { LabeledScaleHelper } from '../util/CartesianUtils';
 import { warn } from '../util/LogUtils';
 
-@pureRender
-class ReferenceDot extends Component {
+class ReferenceDot extends PureComponent {
 
   static displayName = 'ReferenceDot';
 

@@ -1,12 +1,11 @@
 /**
  * @fileOverview Render sectors of a pie
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Sector from '../shape/Sector';
 import Curve from '../shape/Curve';
@@ -21,8 +20,7 @@ import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from
 import { getValueByDataKey } from '../util/ChartUtils';
 import { warn } from '../util/LogUtils';
 
-@pureRender
-class Pie extends Component {
+class Pie extends PureComponent {
 
   static displayName = 'Pie';
 

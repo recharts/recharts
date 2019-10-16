@@ -1,12 +1,11 @@
 /**
  * @fileOverview Render a group of scatters
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES,
@@ -19,8 +18,7 @@ import Cell from '../component/Cell';
 import { uniqueId, interpolateNumber, getLinearRegression } from '../util/DataUtils';
 import { getValueByDataKey, getCateCoordinateOfLine } from '../util/ChartUtils';
 
-@pureRender
-class Scatter extends Component {
+class Scatter extends PureComponent {
 
   static displayName = 'Scatter';
 

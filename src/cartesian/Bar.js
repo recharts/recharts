@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render a group of bar
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
@@ -11,15 +11,13 @@ import Layer from '../container/Layer';
 import ErrorBar from './ErrorBar';
 import Cell from '../component/Cell';
 import LabelList from '../component/LabelList';
-import pureRender from '../util/PureRender';
 import { uniqueId, mathSign, interpolateNumber } from '../util/DataUtils';
 import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES,
   findAllByType, getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { getCateCoordinateOfBar, getValueByDataKey, truncateByDomain, getBaseValueOfBar,
   findPositionOfBar } from '../util/ChartUtils';
 
-@pureRender
-class Bar extends Component {
+class Bar extends PureComponent {
 
   static displayName = 'Bar';
 

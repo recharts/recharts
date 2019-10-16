@@ -2,7 +2,7 @@
 /**
  * @fileOverview TreemapChart
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Smooth from 'react-smooth';
 import classNames from 'classnames';
@@ -14,7 +14,6 @@ import { findChildByType, getPresentationAttributes, filterSvgElements,
   validateWidthHeight, isSsr } from '../util/ReactUtils';
 import Tooltip from '../component/Tooltip';
 import Polygon from '../shape/Polygon';
-import pureRender from '../util/PureRender';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { COLOR_PANEL } from '../util/Constants';
 import { getStringSize } from '../util/DOMUtils';
@@ -195,8 +194,7 @@ const squarify = (node, aspectRatio) => {
   return node;
 };
 
-@pureRender
-class Treemap extends Component {
+class Treemap extends PureComponent {
   static displayName = 'Treemap';
 
   static propTypes = {

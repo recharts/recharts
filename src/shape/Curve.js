@@ -1,14 +1,13 @@
 /**
  * @fileOverview Curve
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { line as shapeLine, area as shapeArea, curveBasisClosed, curveBasisOpen,
   curveBasis, curveLinearClosed, curveLinear, curveMonotoneX, curveMonotoneY,
   curveNatural, curveStep, curveStepAfter, curveStepBefore } from 'd3-shape';
 import classNames from 'classnames';
 import _ from 'lodash';
-import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 import { isNumber } from '../util/DataUtils';
@@ -34,8 +33,7 @@ const getCurveFactory = (type, layout) => {
   return CURVE_FACTORIES[name] || curveLinear;
 };
 
-@pureRender
-class Curve extends Component {
+class Curve extends PureComponent {
 
   static displayName = 'Curve';
 

@@ -2,7 +2,7 @@ import React, { Children } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { isNumber } from './DataUtils';
-import { shallowEqual } from './PureRender';
+import { shallowEqual } from './ShallowEqual';
 
 export const PRESENTATION_ATTRIBUTES = {
   'aria-current': PropTypes.string, // state

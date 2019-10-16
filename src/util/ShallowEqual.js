@@ -13,12 +13,3 @@ export function shallowEqual(a, b) {
   }
   return true;
 }
-
-function shouldComponentUpdate(props, state) {
-  return !shallowEqual(props, this.props) || !shallowEqual(state, this.state);
-}
-
-export default function pureRenderDecorator(component) {
-  // eslint-disable-next-line no-param-reassign
-  component.prototype.shouldComponentUpdate = shouldComponentUpdate;
-}

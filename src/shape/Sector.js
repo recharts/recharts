@@ -1,10 +1,9 @@
 /**
  * @fileOverview Sector
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';
@@ -120,8 +119,7 @@ const getSectorWithCorner = ({ cx, cy, innerRadius, outerRadius, cornerRadius, f
   return path;
 };
 
-@pureRender
-class Sector extends Component {
+class Sector extends PureComponent {
 
   static displayName = 'Sector';
 

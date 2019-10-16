@@ -1,7 +1,7 @@
 /**
  * @fileOverview Tooltip
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
@@ -9,7 +9,6 @@ import classNames from 'classnames';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import { TOOLTIP_TYPES, isSsr } from '../util/ReactUtils';
 import { isNumber } from '../util/DataUtils';
-import pureRender from '../util/PureRender';
 
 const CLS_PREFIX = 'recharts-tooltip-wrapper';
 
@@ -109,8 +108,7 @@ const renderContent = (content, props) => {
   return React.createElement(DefaultTooltipContent, props);
 };
 
-@pureRender
-class Tooltip extends Component {
+class Tooltip extends PureComponent {
   static displayName = 'Tooltip';
 
   static propTypes = propTypes;

@@ -1,12 +1,11 @@
 /**
  * @fileOverview Curve
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { symbol as shapeSymbol, symbolCircle, symbolCross, symbolDiamond,
   symbolSquare, symbolStar, symbolTriangle, symbolWye } from 'd3-shape';
 import classNames from 'classnames';
-import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 
@@ -48,8 +47,7 @@ const calculateAreaSize = (size, sizeType, type) => {
   }
 };
 
-@pureRender
-class Symbols extends Component {
+class Symbols extends PureComponent {
 
   static displayName = 'Symbols';
 

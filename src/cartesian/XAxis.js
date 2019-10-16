@@ -1,13 +1,11 @@
 /**
  * @fileOverview X Axis
  */
-import { Component } from 'react';
+import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import pureRender from '../util/PureRender';
 import { SCALE_TYPES } from '../util/ReactUtils';
 
-@pureRender
-class XAxis extends Component {
+class XAxis extends PureComponent {
 
   static displayName = 'XAxis';
 

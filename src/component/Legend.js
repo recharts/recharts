@@ -1,10 +1,9 @@
 /**
  * @fileOverview Legend
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import pureRender from '../util/PureRender';
 import DefaultLegendContent from './DefaultLegendContent';
 import { isNumber } from '../util/DataUtils';
 import { LEGEND_TYPES } from '../util/ReactUtils';
@@ -36,8 +35,7 @@ const renderContent = (content, props) => {
 const EPS = 1;
 const ICON_TYPES = LEGEND_TYPES.filter(type => type !== 'none');
 
-@pureRender
-class Legend extends Component {
+class Legend extends PureComponent {
   static displayName = 'Legend';
 
   static propTypes = {

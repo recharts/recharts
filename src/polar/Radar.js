@@ -1,13 +1,12 @@
 /**
  * @fileOverview Radar
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { interpolateNumber } from '../util/DataUtils';
-import pureRender from '../util/PureRender';
 import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES, filterEventAttributes,
   getPresentationAttributes, isSsr } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
@@ -17,8 +16,7 @@ import Dot from '../shape/Dot';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
 
-@pureRender
-class Radar extends Component {
+class Radar extends PureComponent {
 
   static displayName = 'Radar';
 

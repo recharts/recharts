@@ -1,20 +1,18 @@
 /**
  * @fileOverview Brush
  */
-import React, { Component, Children } from 'react';
+import React, { PureComponent, Children } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { scalePoint } from 'd3-scale';
 import _ from 'lodash';
 import { getValueByDataKey } from '../util/ChartUtils';
-import pureRender from '../util/PureRender';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import { isNumber } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 
-@pureRender
-class Brush extends Component {
+class Brush extends PureComponent {
 
   static displayName = 'Brush';
 

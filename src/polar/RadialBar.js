@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render a group of radial bar
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
@@ -10,15 +10,13 @@ import Sector from '../shape/Sector';
 import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES, findAllByType,
   getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
-import pureRender from '../util/PureRender';
 import LabelList from '../component/LabelList';
 import Cell from '../component/Cell';
 import { mathSign, interpolateNumber } from '../util/DataUtils';
 import { getCateCoordinateOfBar, findPositionOfBar, getValueByDataKey,
   truncateByDomain, getBaseValueOfBar } from '../util/ChartUtils';
 
-@pureRender
-class RadialBar extends Component {
+class RadialBar extends PureComponent {
 
   static displayName = 'RadialBar';
 
