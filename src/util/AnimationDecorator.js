@@ -23,6 +23,7 @@ export default function (WrappedComponent) {
       const { animationId } = prevProps;
 
       if (this.props.data !== prevProps.data) {
+        // eslint-disable-next-line react/no-did-update-set-state
         this.setState({
           animationId: animationId + 1,
         });

@@ -40,7 +40,8 @@ const originCoordinate = { x: 0, y: 0 };
 
 const generateCategoricalChart = ({
   chartName, GraphicalChild, eventType = 'axis', axisComponents, legendContent,
-  formatAxisMap, defaultProps, propTypes,
+  formatAxisMap, defaultProps,
+  propTypes, // eslint-disable-line react/forbid-foreign-prop-types
 }) => {
   class CategoricalChartWrapper extends Component {
     static displayName = chartName;
@@ -182,6 +183,7 @@ const generateCategoricalChart = ({
         this.props.height !== height || this.props.layout !== layout ||
         this.props.stackOffset !== stackOffset || !shallowEqual(this.props.margin, margin)) {
         const defaultState = this.constructor.createDefaultState(this.props);
+        // eslint-disable-next-line react/no-did-update-set-state
         this.setState({ ...defaultState, updateId: updateId + 1,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
             { props: this.props, ...defaultState, updateId: updateId + 1 }) }
@@ -191,6 +193,7 @@ const generateCategoricalChart = ({
         const hasGlobalData = !_.isNil(this.props.data);
         const newUpdateId = hasGlobalData ? updateId : updateId + 1;
 
+        // eslint-disable-next-line react/no-did-update-set-state
         this.setState(prevState => ({
           updateId: newUpdateId,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups({

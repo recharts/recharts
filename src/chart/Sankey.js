@@ -374,6 +374,7 @@ class Sankey extends PureComponent {
       this.props.height !== height || !shallowEqual(this.props.margin, margin) ||
       this.props.iterations !== iterations || this.props.nodeWidth !== nodeWidth ||
       this.props.nodePadding !== nodePadding || this.props.nameKey !== nameKey) {
+      // eslint-disable-next-line react/no-did-update-set-state
       this.setState(this.constructor.createDefaultState(this.props));
     }
   }

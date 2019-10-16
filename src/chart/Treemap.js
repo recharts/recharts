@@ -292,6 +292,7 @@ class Treemap extends PureComponent {
       aspectRatio !== this.props.aspectRatio
     ) {
       const nextRoot = this.computeRoot({ type, width, height, data, dataKey, aspectRatio });
+      // eslint-disable-next-line react/no-did-update-set-state
       this.setState({
         ...this.constructor.createDefaultState(),
         ...nextRoot,
