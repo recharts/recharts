@@ -49,7 +49,7 @@ class Text extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      wordsByLines: []
+      wordsByLines: this.getWordsByLines(props, true),
     };
   }
 
@@ -68,6 +68,12 @@ class Text extends Component {
   }
 
   updateWordsByLines(props, needCalculate) {
+    this.setState({
+      wordsByLines: this.getWordsByLines(props, needCalculate),
+    });
+  }
+
+  getWordsByLines(props, needCalculate) {
     // Only perform calculations if using features that require them (multiline, scaleToFit)
     if ((props.width || props.scaleToFit) && !isSsr()) {
       if (needCalculate) {
@@ -79,26 +85,29 @@ class Text extends Component {
           this.wordsWithComputedWidth = wordsWithComputedWidth;
           this.spaceWidth = spaceWidth;
         } else {
-          this.updateWordsWithoutCalculate(props);
-
-          return;
+          return this.getWordsWithoutCalculate(props);
         }
       }
 
-      const wordsByLines = this.calculateWordsByLines(
+      return this.calculateWordsByLines(
         this.wordsWithComputedWidth,
         this.spaceWidth,
         props.width
       );
-      this.setState({ wordsByLines });
-    } else {
-      this.updateWordsWithoutCalculate(props);
     }
+    return this.getWordsWithoutCalculate(props);
   }
 
   updateWordsWithoutCalculate(props) {
     const words = !_.isNil(props.children) ? props.children.toString().split(BREAKING_SPACES) : [];
     this.setState({ wordsByLines: [{ words }] });
+  }
+
+  getWordsWithoutCalculate = (props) => {
+    const words = !_.isNil(props.children) ?
+      props.children.toString().split(BREAKING_SPACES) :
+      [];
+    return [{ words }];
   }
 
   calculateWordsByLines(wordsWithComputedWidth, spaceWidth, lineWidth) {
