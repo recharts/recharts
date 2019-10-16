@@ -98,11 +98,6 @@ class Text extends Component {
     return this.getWordsWithoutCalculate(props);
   }
 
-  updateWordsWithoutCalculate(props) {
-    const words = !_.isNil(props.children) ? props.children.toString().split(BREAKING_SPACES) : [];
-    this.setState({ wordsByLines: [{ words }] });
-  }
-
   getWordsWithoutCalculate = (props) => {
     const words = !_.isNil(props.children) ?
       props.children.toString().split(BREAKING_SPACES) :
