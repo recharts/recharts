@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import Layer from '../container/Layer';
 import Label from '../component/Label';
 import { LabeledScaleHelper, rectWithPoints } from '../util/CartesianUtils';
-import { ifOverflowMatches } from '../util/ChartUtils';
+import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { PRESENTATION_ATTRIBUTES } from '../util/ReactUtils';

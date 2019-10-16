@@ -11,7 +11,7 @@ import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES,
   getPresentationAttributes, filterEventAttributes } from '../util/ReactUtils';
 import Label from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
-import { ifOverflowMatches } from '../util/ChartUtils';
+import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { LabeledScaleHelper } from '../util/CartesianUtils';
 import { warn } from '../util/LogUtils';
 

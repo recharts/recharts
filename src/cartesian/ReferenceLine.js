@@ -9,7 +9,7 @@ import Layer from '../container/Layer';
 import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
   filterEventAttributes } from '../util/ReactUtils';
 import Label from '../component/Label';
-import { ifOverflowMatches } from '../util/ChartUtils';
+import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { LabeledScaleHelper, rectWithCoords } from '../util/CartesianUtils';
 import { warn } from '../util/LogUtils';
