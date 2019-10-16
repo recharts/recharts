@@ -45,6 +45,7 @@ class Brush extends PureComponent {
     onChange: PropTypes.func,
     updateId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     leaveTimeOut: PropTypes.number,
+    alwaysShowText: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -55,6 +56,7 @@ class Brush extends PureComponent {
     stroke: '#666',
     padding: { top: 1, right: 1, bottom: 1, left: 1 },
     leaveTimeOut: 1000,
+    alwaysShowText: false
   };
 
   constructor(props) {
@@ -427,7 +429,7 @@ class Brush extends PureComponent {
   }
 
   render() {
-    const { data, className, children, x, y, width, height } = this.props;
+    const { data, className, children, x, y, width, height, alwaysShowText } = this.props;
     const { startX, endX, isTextActive, isSlideMoving, isTravellerMoving } = this.state;
 
     if (!data || !data.length || !isNumber(x) || !isNumber(y) || !isNumber(width) ||
@@ -452,7 +454,7 @@ class Brush extends PureComponent {
         {this.renderSlide(startX, endX)}
         {this.renderTraveller(startX, 'startX')}
         {this.renderTraveller(endX, 'endX')}
-        {(isTextActive || isSlideMoving || isTravellerMoving) && this.renderText()}
+        {(isTextActive || isSlideMoving || isTravellerMoving || alwaysShowText) && this.renderText()}
       </Layer>
     );
   }

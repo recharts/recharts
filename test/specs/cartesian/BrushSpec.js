@@ -76,4 +76,11 @@ describe('<Brush />', () => {
     wrapper.simulate('mouseMove');
     wrapper.simulate('mouseLeave');
   });
+
+  it('render text when alwaysShowText is true', () => {
+    const wrapper = mount(
+      <Brush x={100} y={50} width={400} height={40} data={data} alwaysShowText />
+    );
+    expect(wrapper.find('.recharts-layer.recharts-brush-texts').length).to.equal(1);
+  });
 });
