@@ -281,8 +281,9 @@ class Treemap extends PureComponent {
     };
   }
 
-  componentDidUpdate(prevProps) {
-    const { type, width, height, data, dataKey, aspectRatio } = prevProps;
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const { type, width, height, data, dataKey, aspectRatio } = nextProps;
 
     if (data !== this.props.data ||
       type !== this.props.type ||
@@ -292,7 +293,6 @@ class Treemap extends PureComponent {
       aspectRatio !== this.props.aspectRatio
     ) {
       const nextRoot = this.computeRoot({ type, width, height, data, dataKey, aspectRatio });
-      // eslint-disable-next-line react/no-did-update-set-state
       this.setState({
         ...this.constructor.createDefaultState(),
         ...nextRoot,
@@ -300,6 +300,7 @@ class Treemap extends PureComponent {
       });
     }
   }
+
 
   /**
    * Returns default, reset state for the treemap chart.

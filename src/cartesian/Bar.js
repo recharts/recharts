@@ -171,10 +171,11 @@ class Bar extends PureComponent {
 
   state = { isAnimationFinished: false };
 
-  componentDidUpdate(prevProps) {
-    const { animationId, data } = prevProps;
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const { animationId, data } = this.props;
 
-    if (this.props.animationId !== animationId) {
+    if (nextProps.animationId !== animationId) {
       this.cachePrevData(data);
     }
   }
