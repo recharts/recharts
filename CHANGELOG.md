@@ -1,3 +1,9 @@
+## 1.8.2 (Oct 17, 2019)
+
+### fix
+
+- Used UNSAFE_componentWillReceiveProps to replace componentDidUpdate
+
 ## 1.8.1 (Oct 16, 2019)
 
 ### fix
