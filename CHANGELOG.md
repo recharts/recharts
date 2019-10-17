@@ -1,3 +1,9 @@
+## 1.8.3 (Oct 17, 2019)
+
+### fix
+
+- fix: rollback to componentWillReceiveProps, fix crash in react@15
+
 ## 1.8.2 (Oct 17, 2019)
 
 ### fix
