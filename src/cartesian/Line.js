@@ -155,10 +155,11 @@ class Line extends PureComponent {
     this.setState({ totalLength });
   }
 
-  componentDidUpdate(prevProps) {
-    const { animationId, points } = prevProps;
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const { animationId, points } = this.props;
 
-    if (this.props.animationId !== animationId) {
+    if (nextProps.animationId !== animationId) {
       this.cachePrevData(points);
     }
   }

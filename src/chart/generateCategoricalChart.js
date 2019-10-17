@@ -175,40 +175,39 @@ const generateCategoricalChart = ({
       }
     }
 
-    componentDidUpdate(prevProps) {
-      const { data, children, width, height, layout, stackOffset, margin } = prevProps;
+    // eslint-disable-next-line camelcase
+    UNSAFE_componentWillReceiveProps(nextProps) {
+      const { data, children, width, height, layout, stackOffset, margin } = this.props;
       const { updateId } = this.state;
 
-      if (this.props.data !== data || this.props.width !== width ||
-        this.props.height !== height || this.props.layout !== layout ||
-        this.props.stackOffset !== stackOffset || !shallowEqual(this.props.margin, margin)) {
-        const defaultState = this.constructor.createDefaultState(this.props);
-        // eslint-disable-next-line react/no-did-update-set-state
+      if (nextProps.data !== data || nextProps.width !== width ||
+        nextProps.height !== height || nextProps.layout !== layout ||
+        nextProps.stackOffset !== stackOffset || !shallowEqual(nextProps.margin, margin)) {
+        const defaultState = this.constructor.createDefaultState(nextProps);
         this.setState({ ...defaultState, updateId: updateId + 1,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
-            { props: this.props, ...defaultState, updateId: updateId + 1 }) }
+            { props: nextProps, ...defaultState, updateId: updateId + 1 }) }
         );
-      } else if (!isChildrenEqual(this.props.children, children)) {
+      } else if (!isChildrenEqual(nextProps.children, children)) {
         // update configuration in chilren
-        const hasGlobalData = !_.isNil(this.props.data);
+        const hasGlobalData = !_.isNil(nextProps.data);
         const newUpdateId = hasGlobalData ? updateId : updateId + 1;
 
-        // eslint-disable-next-line react/no-did-update-set-state
         this.setState(prevState => ({
           updateId: newUpdateId,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups({
-            props: this.props,
+            props: nextProps,
             ...prevState,
             updateId: newUpdateId,
           }),
         }));
       }
       // add syncId
-      if (_.isNil(this.props.syncId) && !_.isNil(this.props.syncId)) {
+      if (_.isNil(this.props.syncId) && !_.isNil(nextProps.syncId)) {
         this.addListener();
       }
       // remove syncId
-      if (!_.isNil(this.props.syncId) && _.isNil(this.props.syncId)) {
+      if (!_.isNil(this.props.syncId) && _.isNil(nextProps.syncId)) {
         this.removeListener();
       }
     }

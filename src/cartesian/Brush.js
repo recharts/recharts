@@ -70,28 +70,27 @@ class Brush extends PureComponent {
     this.state = props.data && props.data.length ? this.updateScale(props) : {};
   }
 
-  componentDidUpdate(prevProps) {
-    const { data, width, x, travellerWidth, updateId } = prevProps;
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const { data, width, x, travellerWidth, updateId } = this.props;
 
     if (
-      (this.props.data !== data || this.props.updateId !== updateId) &&
-      this.props.data &&
-      this.props.data.length
+      (nextProps.data !== data || nextProps.updateId !== updateId) &&
+      nextProps.data &&
+      nextProps.data.length
     ) {
-      // eslint-disable-next-line react/no-did-update-set-state
-      this.setState(this.updateScale(this.props));
+      this.setState(this.updateScale(nextProps));
     } else if (
-      this.props.width !== width ||
-      this.props.x !== x ||
-      this.props.travellerWidth !== travellerWidth
+      nextProps.width !== width ||
+      nextProps.x !== x ||
+      nextProps.travellerWidth !== travellerWidth
     ) {
-      this.scale.range([this.props.x, this.props.x + this.props.width - this.props.travellerWidth]);
+      this.scale.range([nextProps.x, nextProps.x + nextProps.width - nextProps.travellerWidth]);
       this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
 
-      // eslint-disable-next-line react/no-did-update-set-state
       this.setState({
-        startX: this.scale(this.props.startIndex),
-        endX: this.scale(this.props.endIndex),
+        startX: this.scale(nextProps.startIndex),
+        endX: this.scale(nextProps.endIndex),
       });
     }
   }
@@ -454,7 +453,8 @@ class Brush extends PureComponent {
         {this.renderSlide(startX, endX)}
         {this.renderTraveller(startX, 'startX')}
         {this.renderTraveller(endX, 'endX')}
-        {(isTextActive || isSlideMoving || isTravellerMoving || alwaysShowText) && this.renderText()}
+        {(isTextActive || isSlideMoving || isTravellerMoving || alwaysShowText) &&
+          this.renderText()}
       </Layer>
     );
   }

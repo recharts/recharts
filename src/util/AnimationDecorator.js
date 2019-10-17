@@ -19,11 +19,11 @@ export default function (WrappedComponent) {
       animationId: 0,
     };
 
-    componentDidUpdate(prevProps) {
-      const { animationId } = prevProps;
+    // eslint-disable-next-line camelcase
+    UNSAFE_componentWillReceiveProps(nextProps) {
+      const { animationId } = this.state;
 
-      if (this.props.data !== prevProps.data) {
-        // eslint-disable-next-line react/no-did-update-set-state
+      if (this.props.data !== nextProps.data) {
         this.setState({
           animationId: animationId + 1,
         });
