@@ -198,7 +198,7 @@ class Area extends PureComponent {
   state = { isAnimationFinished: true };
 
   // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const { animationId, points, baseLine } = this.props;
 
     if (nextProps.animationId !== animationId) {

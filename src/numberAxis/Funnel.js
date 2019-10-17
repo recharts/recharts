@@ -161,7 +161,7 @@ class Funnel extends PureComponent {
   state = { isAnimationFinished: false };
 
   // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const { animationId, trapezoids } = this.props;
 
     if (nextProps.isAnimationActive !== this.props.isAnimationActive) {

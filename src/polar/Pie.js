@@ -237,7 +237,7 @@ class Pie extends PureComponent {
   state = { isAnimationFinished: false };
 
   // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const { animationId, sectors } = this.props;
 
     if (nextProps.isAnimationActive !== this.props.isAnimationActive) {

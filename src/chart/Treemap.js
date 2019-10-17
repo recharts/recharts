@@ -282,7 +282,7 @@ class Treemap extends PureComponent {
   }
 
   // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const { type, width, height, data, dataKey, aspectRatio } = nextProps;
 
     if (data !== this.props.data ||
