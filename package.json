@@ -62,7 +62,7 @@
     "lodash": "^4.17.5",
     "prop-types": "^15.6.0",
     "react-resize-detector": "^2.3.0",
-    "react-smooth": "^1.0.0",
+    "react-smooth": "^1.0.5",
     "recharts-scale": "^0.4.2",
     "reduce-css-calc": "^1.3.0"
   },
