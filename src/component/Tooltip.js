@@ -28,6 +28,10 @@ const getUniqPaylod = (option, payload) => {
 };
 
 const propTypes = {
+  allowEscapeViewBox: PropTypes.shape({
+    x: PropTypes.boolean,
+    y: PropTypes.boolean,
+  }),
   content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
   viewBox: PropTypes.shape({
     x: PropTypes.number,
@@ -81,6 +85,7 @@ const propTypes = {
 
 const defaultProps = {
   active: false,
+  allowEscapeViewBox: { x: false, y: false },
   offset: 10,
   viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
   coordinate: { x: 0, y: 0 },
@@ -148,13 +153,34 @@ class Tooltip extends PureComponent {
     }
   }
 
+  getTranslate = ({ key, tooltipDimension, viewBoxDimension }) => {
+    const { allowEscapeViewBox, coordinate, offset, position, viewBox } = this.props;
+
+    if (position && isNumber(position[key])) {
+      return position[key];
+    }
+
+    const restricted = coordinate[key] - tooltipDimension - offset;
+    const unrestricted = coordinate[key] + offset;
+    if (allowEscapeViewBox[key]) {
+      return unrestricted;
+    }
+
+    const tooltipBoundary = coordinate[key] + tooltipDimension + offset;
+    const viewBoxBoundary = viewBox[key] + viewBoxDimension;
+    if (tooltipBoundary > viewBoxBoundary) {
+      return Math.max(restricted, viewBox[key]);
+    }
+    return Math.max(unrestricted, viewBox[key]);
+  };
+
   render() {
     const { payload, isAnimationActive, animationDuration, animationEasing,
       filterNull, paylodUniqBy } = this.props;
     const finalPayload = getUniqPaylod(paylodUniqBy, filterNull && payload && payload.length ?
       payload.filter(entry => !_.isNil(entry.value)) : payload);
     const hasPayload = finalPayload && finalPayload.length;
-    const { content, viewBox, coordinate, position, active, offset, wrapperStyle } = this.props;
+    const { content, viewBox, coordinate, position, active, wrapperStyle } = this.props;
     let outerStyle = {
       pointerEvents: 'none',
       visibility: active && hasPayload ? 'visible' : 'hidden',
@@ -171,15 +197,17 @@ class Tooltip extends PureComponent {
       const { boxWidth, boxHeight } = this.state;
 
       if (boxWidth > 0 && boxHeight > 0 && coordinate) {
-        translateX = position && isNumber(position.x) ? position.x : Math.max(
-          coordinate.x + boxWidth + offset > (viewBox.x + viewBox.width) ?
-            coordinate.x - boxWidth - offset :
-            coordinate.x + offset, viewBox.x);
+        translateX = this.getTranslate({
+          key: 'x',
+          tooltipDimension: boxWidth,
+          viewBoxDimension: viewBox.width,
+        });
 
-        translateY = position && isNumber(position.y) ? position.y : Math.max(
-          coordinate.y + boxHeight + offset > (viewBox.y + viewBox.height) ?
-            coordinate.y - boxHeight - offset :
-            coordinate.y + offset, viewBox.y);
+        translateY = this.getTranslate({
+          key: 'y',
+          tooltipDimension: boxHeight,
+          viewBoxDimension: viewBox.height,
+        });
       } else {
         outerStyle.visibility = 'hidden';
       }
