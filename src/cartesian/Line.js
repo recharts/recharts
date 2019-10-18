@@ -156,7 +156,7 @@ class Line extends PureComponent {
   }
 
   // eslint-disable-next-line camelcase
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { animationId, points } = this.props;
 
     if (nextProps.animationId !== animationId) {

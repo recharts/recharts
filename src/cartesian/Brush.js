@@ -71,7 +71,7 @@ class Brush extends PureComponent {
   }
 
   // eslint-disable-next-line camelcase
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { data, width, x, travellerWidth, updateId } = this.props;
 
     if (
