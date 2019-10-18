@@ -1,27 +1,26 @@
 /**
  * @fileOverview Cross
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent, SVGProps } from 'react';
 import classNames from 'classnames';
+// @ts-ignore
 import { isNumber } from '../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+// @ts-ignore
+import { getPresentationAttributes } from '../util/ReactUtils';
 
-class Cross extends PureComponent {
+interface CrossProps {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  top?: number;
+  left?: number;
+  className?: number;
+}
 
-  static displayName = 'Cross';
+type Props = SVGProps<SVGPathElement> & CrossProps;
 
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    x: PropTypes.number,
-    y: PropTypes.number,
-    width: PropTypes.number,
-    height: PropTypes.number,
-    top: PropTypes.number,
-    left: PropTypes.number,
-    className: PropTypes.string,
-  };
-
+class Cross extends PureComponent<Props> {
   static defaultProps = {
     x: 0,
     y: 0,
@@ -31,7 +30,7 @@ class Cross extends PureComponent {
     height: 0,
   };
 
-  static getPath(x, y, width, height, top, left) {
+  static getPath(x: number, y: number, width: number, height: number, top: number, left: number) {
     return `M${x},${top}v${height}M${left},${y}h${width}`;
   }
 
@@ -48,7 +47,7 @@ class Cross extends PureComponent {
       <path
         {...getPresentationAttributes(this.props)}
         className={classNames('recharts-cross', className)}
-        d={this.constructor.getPath(x, y, width, height, top, left)}
+        d={Cross.getPath(x, y, width, height, top, left)}
       />
     );
   }
