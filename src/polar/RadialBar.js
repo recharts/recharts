@@ -170,7 +170,7 @@ class RadialBar extends PureComponent {
   };
 
   // eslint-disable-next-line camelcase
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { animationId, data } = this.props;
 
     if (nextProps.animationId !== animationId) {

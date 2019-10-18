@@ -369,7 +369,7 @@ class Sankey extends PureComponent {
   }
 
   // eslint-disable-next-line camelcase
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { data, width, height, margin, iterations, nodeWidth, nodePadding, nameKey } = this.props;
     if (nextProps.data !== data || nextProps.width !== width ||
       nextProps.height !== height || !shallowEqual(nextProps.margin, margin) ||
