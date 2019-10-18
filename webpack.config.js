@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const env = process.env.NODE_ENV;
 
@@ -14,19 +14,36 @@ const config = {
   },
 
   module: {
-    rules: [{
-      test: /\.(js|jsx)$/,
-      exclude: /node_modules/,
-      include: [
-        path.resolve(__dirname, 'src'),
-      ],
-      use: {
-        loader: 'babel-loader',
-        query: {
-          plugins: ['lodash'],
-        },
+    rules: [
+      {
+        test: /\.(js|jsx|ts|tsx)$/,
+        exclude: /node_modules/,
+        include: [
+          path.resolve(__dirname, 'src'),
+        ],
+        use: {
+          loader: 'babel-loader',
+          query: {
+            plugins: ['lodash'],
+          },
+        }
+      },
+      {
+        test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
+        include: [
+          path.resolve(__dirname, 'src'),
+        ],
+        use: {
+          loader: 'ts-loader',
+        }
       }
-    }],
+    ],
+  },
+
+  devtool: 'inline-source-map',
+  resolve: {
+    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
   },
 
   externals: {
