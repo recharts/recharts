@@ -1,12 +1,11 @@
 /**
  * @fileOverview Cross
  */
-import React, { PureComponent, SVGProps } from 'react';
+import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 // @ts-ignore
 import { isNumber } from '../util/DataUtils';
-// @ts-ignore
-import { getPresentationAttributes } from '../util/ReactUtils';
+import { PresentationAttributes } from '../util/types';
 
 interface CrossProps {
   x?: number;
@@ -18,7 +17,7 @@ interface CrossProps {
   className?: number;
 }
 
-type Props = SVGProps<SVGPathElement> & CrossProps;
+type Props = PresentationAttributes<SVGPathElement> & CrossProps;
 
 class Cross extends PureComponent<Props> {
   static defaultProps = {
@@ -36,7 +35,7 @@ class Cross extends PureComponent<Props> {
 
   render() {
     const { x, y, width, height, top, left,
-      className } = this.props;
+      className, ...rest } = this.props;
 
     if (!isNumber(x) || !isNumber(y) || !isNumber(width) ||
       !isNumber(height) || !isNumber(top) || !isNumber(left)) {
@@ -45,7 +44,7 @@ class Cross extends PureComponent<Props> {
 
     return (
       <path
-        {...getPresentationAttributes(this.props)}
+        {...rest}
         className={classNames('recharts-cross', className)}
         d={Cross.getPath(x, y, width, height, top, left)}
       />
