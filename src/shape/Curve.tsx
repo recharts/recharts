@@ -1,28 +1,39 @@
 /**
  * @fileOverview Curve
  */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, SVGProps } from 'react';
 import PropTypes from 'prop-types';
-import { line as shapeLine, area as shapeArea, curveBasisClosed, curveBasisOpen,
+import { line as shapeLine, area as shapeArea, CurveFactory, curveBasisClosed, curveBasisOpen,
   curveBasis, curveLinearClosed, curveLinear, curveMonotoneX, curveMonotoneY,
   curveNatural, curveStep, curveStepAfter, curveStepBefore } from 'd3-shape';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
-  filterEventAttributes } from '../util/ReactUtils';
+import { LayoutType } from '../util/types';
+// @ts-ignore
+import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, filterEventAttributes } from '../util/ReactUtils';
+// @ts-ignore
 import { isNumber } from '../util/DataUtils';
 
-const CURVE_FACTORIES = {
+interface CurveFactories {
+  [index: string] : CurveFactory;
+}
+
+const CURVE_FACTORIES: CurveFactories = {
   curveBasisClosed, curveBasisOpen, curveBasis, curveLinearClosed, curveLinear,
   curveMonotoneX, curveMonotoneY, curveNatural, curveStep, curveStepAfter,
   curveStepBefore,
 };
 
-const defined = p => p.x === +p.x && p.y === +p.y;
-const getX = p => p.x;
-const getY = p => p.y;
+type CurveType = 'basis' | 'basisClosed' | 'basisOpen' | 'linear' | 'linearClosed' | 'natural' |
+  'monotoneX' | 'monotoneY' | 'monotone' | 'step' | 'stepBefore' | 'stepAfter' | CurveFactory;
 
-const getCurveFactory = (type, layout) => {
+type Point = [number, number];
+
+const defined = (p: Point) => p[0] === +p[0] && p[1] === +p[1];
+const getX = (p: Point) => p[0];
+const getY = (p: Point) => p[1];
+
+const getCurveFactory = (type: CurveType, layout: LayoutType) => {
   if (_.isFunction(type)) { return type; }
 
   const name = `curve${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
@@ -33,30 +44,23 @@ const getCurveFactory = (type, layout) => {
   return CURVE_FACTORIES[name] || curveLinear;
 };
 
-class Curve extends PureComponent {
+interface CurveProps {
+  className?: string;
+  type?: CurveType;
+  layout?: LayoutType;
+  baseLine?: number | Array<Point>;
+  points?: Array<Point>;
+  connectNulls?: boolean;
+  path?: string;
+  pathRef?: Function;
+}
 
-  static displayName = 'Curve';
+type Props = SVGProps<SVGPathElement> & CurveProps;
 
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    className: PropTypes.string,
-    type: PropTypes.oneOfType([PropTypes.oneOf([
-      'basis', 'basisClosed', 'basisOpen', 'linear', 'linearClosed', 'natural',
-      'monotoneX', 'monotoneY', 'monotone', 'step', 'stepBefore', 'stepAfter',
-    ]), PropTypes.func]),
-    layout: PropTypes.oneOf(['horizontal', 'vertical']),
-    baseLine: PropTypes.oneOfType([
-      PropTypes.number, PropTypes.array,
-    ]),
-    points: PropTypes.arrayOf(PropTypes.object),
-    connectNulls: PropTypes.bool,
-    path: PropTypes.string,
-    pathRef: PropTypes.func,
-  };
-
+class Curve extends PureComponent<Props> {
   static defaultProps = {
     type: 'linear',
-    points: [],
+    points: [] as Point[],
     connectNulls: false,
   };
 
@@ -76,9 +80,9 @@ class Curve extends PureComponent {
         { ...entry, base: formatBaseLine[index] }
       ));
       if (layout === 'vertical') {
-        lineFunction = shapeArea().y(getY).x1(getX).x0(d => d.base.x);
+        lineFunction = shapeArea().y(getY).x1(getX).x0(d => d[0]);
       } else {
-        lineFunction = shapeArea().x(getX).y1(getY).y0(d => d.base.y);
+        lineFunction = shapeArea().x(getX).y1(getY).y0(d => d[1]);
       }
       lineFunction.defined(defined).curve(curveFactory);
 
