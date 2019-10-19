@@ -1,19 +1,17 @@
 /**
  * @fileOverview Layer
  */
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { ReactNode, SVGProps } from 'react';
 import classNames from 'classnames';
 
-const propTypes = {
-  className: PropTypes.string,
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node,
-  ]),
-};
+interface LayerProps {
+  className?: string;
+  children?: ReactNode;
+}
 
-function Layer(props) {
+type Props = SVGProps<SVGGElement> & LayerProps;
+
+function Layer(props: Props) {
   const { children, className, ...others } = props;
   const layerClass = classNames('recharts-layer', className);
 
@@ -23,7 +21,5 @@ function Layer(props) {
     </g>
   );
 }
-
-Layer.propTypes = propTypes;
 
 export default Layer;
