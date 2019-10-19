@@ -2,13 +2,14 @@
  * @fileOverview Rectangle
  */
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
+// @ts-ignore
 import Animate from 'react-smooth';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
-  filterEventAttributes } from '../util/ReactUtils';
+import { PresentationAttributes } from '../util/types';
 
-const getRectangePath = (x, y, width, height, radius) => {
+type RectRadius = [number, number, number, number];
+
+const getRectangePath = (x: number, y: number, width: number, height: number, radius: number | RectRadius) => {
   const maxRadius = Math.min(Math.abs(width) / 2, Math.abs(height) / 2);
   const ySign = height >= 0 ? 1 : -1;
   const xSign = width >= 0 ? 1 : -1;
@@ -16,7 +17,7 @@ const getRectangePath = (x, y, width, height, radius) => {
   let path;
 
   if (maxRadius > 0 && radius instanceof Array) {
-    const newRadius = [];
+    const newRadius: RectRadius = [0, 0, 0, 0];
     for (let i = 0, len = 4; i < len; i++) {
       newRadius[i] = radius[i] > maxRadius ? maxRadius : radius[i];
     }
@@ -66,29 +67,23 @@ const getRectangePath = (x, y, width, height, radius) => {
   return path;
 };
 
-class Rectangle extends PureComponent {
+interface RectangleProps {
+  className?: string;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  radius?: number | RectRadius;
+  isAnimationActive?: boolean;
+  isUpdateAnimationActive?: boolean;
+  animationBegin?: number;
+  animationDuration?: number;
+  animationEasing?: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
+}
 
-  static displayName = 'Rectangle';
+type Props = PresentationAttributes<SVGPathElement> & RectangleProps;
 
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    ...EVENT_ATTRIBUTES,
-    className: PropTypes.string,
-    x: PropTypes.number,
-    y: PropTypes.number,
-    width: PropTypes.number,
-    height: PropTypes.number,
-    radius: PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.array,
-    ]),
-    isAnimationActive: PropTypes.bool,
-    isUpdateAnimationActive: PropTypes.bool,
-    animationBegin: PropTypes.number,
-    animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
-  };
-
+class Rectangle extends PureComponent<Props> {
   static defaultProps = {
     x: 0,
     y: 0,
@@ -109,6 +104,8 @@ class Rectangle extends PureComponent {
     totalLength: -1,
   };
 
+  private node: SVGPathElement;
+
   /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
     if (this.node && this.node.getTotalLength) {
@@ -128,7 +125,7 @@ class Rectangle extends PureComponent {
   }
 
   render() {
-    const { x, y, width, height, radius, className } = this.props;
+    const { x, y, width, height, radius, className, ...rest } = this.props;
     const { totalLength } = this.state;
     const { animationEasing, animationDuration, animationBegin,
       isAnimationActive, isUpdateAnimationActive } = this.props;
@@ -140,8 +137,7 @@ class Rectangle extends PureComponent {
     if (!isUpdateAnimationActive) {
       return (
         <path
-          {...getPresentationAttributes(this.props)}
-          {...filterEventAttributes(this.props)}
+          {...rest}
           className={layerClass}
           d={getRectangePath(x, y, width, height, radius)}
         />
@@ -158,7 +154,7 @@ class Rectangle extends PureComponent {
         isActive={isUpdateAnimationActive}
       >
         {
-        ({ width: currWidth, height: currHeight, x: currX, y: currY }) => (
+        ({ width: currWidth, height: currHeight, x: currX, y: currY }: any) => (
           <Animate
             canBegin={totalLength > 0}
             from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
@@ -170,8 +166,7 @@ class Rectangle extends PureComponent {
             easing={animationEasing}
           >
             <path
-              {...getPresentationAttributes(this.props)}
-              {...filterEventAttributes(this.props)}
+              {...rest}
               className={layerClass}
               d={getRectangePath(currX, currY, currWidth, currHeight, radius)}
               ref={(node) => { this.node = node; }}
