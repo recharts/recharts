@@ -7,9 +7,7 @@ import { line as shapeLine, area as shapeArea, CurveFactory, curveBasisClosed, c
   curveNatural, curveStep, curveStepAfter, curveStepBefore } from 'd3-shape';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { LayoutType } from '../util/types';
-// @ts-ignore
-import { getPresentationAttributes, filterEventAttributes } from '../util/ReactUtils';
+import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
 // @ts-ignore
 import { isNumber } from '../util/DataUtils';
 
@@ -27,6 +25,7 @@ type CurveType = 'basis' | 'basisClosed' | 'basisOpen' | 'linear' | 'linearClose
   'monotoneX' | 'monotoneY' | 'monotone' | 'step' | 'stepBefore' | 'stepAfter' | CurveFactory;
 
 interface Point<T> {
+  base?: Point<T>
   x: number;
   y: number;
   value: number;
@@ -56,10 +55,10 @@ interface CurveProps<T> {
   points?: Array<Point<T>>;
   connectNulls?: boolean;
   path?: string;
-  pathRef?: Function;
+  pathRef?: (ref: SVGPathElement) => void;
 }
 
-type Props<T> = SVGProps<SVGPathElement> & CurveProps<T>;
+type Props<T> = PresentationAttributesWithProps<CurveProps<T>, SVGPathElement> & CurveProps<T>;
 
 class Curve<T> extends PureComponent<Props<T>> {
   static defaultProps = {
@@ -84,9 +83,9 @@ class Curve<T> extends PureComponent<Props<T>> {
         { ...entry, base: formatBaseLine[index] }
       ));
       if (layout === 'vertical') {
-        lineFunction = shapeArea<Point<T>>().y(getY).x1(getX).x0(d => d.x);
+        lineFunction = shapeArea<Point<T>>().y(getY).x1(getX).x0(d => d.base.x);
       } else {
-        lineFunction = shapeArea<Point<T>>().x(getX).y1(getY).y0(d => d.y);
+        lineFunction = shapeArea<Point<T>>().x(getX).y1(getY).y0(d => d.base.y);
       }
       lineFunction.defined(defined).curve(curveFactory);
 
@@ -106,7 +105,7 @@ class Curve<T> extends PureComponent<Props<T>> {
   }
 
   render() {
-    const { className, points, path, pathRef } = this.props;
+    const { className, points, path, pathRef, ...rest } = this.props;
 
     if ((!points || !points.length) && !path) { return null; }
 
@@ -115,8 +114,8 @@ class Curve<T> extends PureComponent<Props<T>> {
 
     return (
       <path
-        {...getPresentationAttributes(this.props)}
-        {...filterEventAttributes(this.props, null, true)}
+        {...rest}
+        {...adaptEventHandlers(this.props)}
         className={classNames('recharts-curve', className)}
         d={realPath}
         ref={pathRef}
