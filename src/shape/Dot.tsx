@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-import { PresentationAttributes } from '../util/types';
+import { PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
 
 interface DotProps {
   className?: string;
@@ -12,7 +12,7 @@ interface DotProps {
   r?: number;
 }
 
-type Props = PresentationAttributes<SVGCircleElement> & DotProps;
+type Props = PresentationAttributesWithProps<DotProps, SVGCircleElement> & DotProps;
 
 class Dot extends PureComponent<Props> {
   render() {
@@ -23,6 +23,7 @@ class Dot extends PureComponent<Props> {
       return (
         <circle
           {...rest}
+          {...adaptEventHandlers(this.props)}
           className={layerClass}
           cx={cx}
           cy={cy}
