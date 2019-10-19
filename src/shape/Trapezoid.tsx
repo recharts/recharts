@@ -2,13 +2,12 @@
  * @fileOverview Rectangle
  */
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
+// @ts-ignore
 import Animate from 'react-smooth';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
-  filterEventAttributes } from '../util/ReactUtils';
+import { PresentationAttributes } from '../util/types';
 
-const getTrapezoidPath = (x, y, upperWidth, lowerWidth, height) => {
+const getTrapezoidPath = (x: number, y: number, upperWidth: number, lowerWidth: number, height: number) => {
   const widthGap = upperWidth - lowerWidth;
   let path;
   path = `M ${x},${y}`;
@@ -19,26 +18,23 @@ const getTrapezoidPath = (x, y, upperWidth, lowerWidth, height) => {
   return path;
 };
 
-class Trapezoid extends PureComponent {
+interface TrapezoidProps {
+  className?: string;
+  x?: number;
+  y?: number;
+  upperWidth?: number;
+  lowerWidth?: number;
+  height?: number;
 
-  static displayName = 'Trapezoid';
+  isUpdateAnimationActive?: boolean;
+  animationBegin?: number;
+  animationDuration?: number;
+  animationEasing?: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
+}
 
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    ...EVENT_ATTRIBUTES,
-    className: PropTypes.string,
-    x: PropTypes.number,
-    y: PropTypes.number,
-    upperWidth: PropTypes.number,
-    lowerWidth: PropTypes.number,
-    height: PropTypes.number,
+type Props = PresentationAttributes<SVGPathElement> & TrapezoidProps;
 
-    isUpdateAnimationActive: PropTypes.bool,
-    animationBegin: PropTypes.number,
-    animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
-  };
-
+class Trapezoid extends PureComponent<Props> {
   static defaultProps = {
     x: 0,
     y: 0,
@@ -54,6 +50,8 @@ class Trapezoid extends PureComponent {
   state = {
     totalLength: -1,
   };
+
+  private node: SVGPathElement;
 
   /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
@@ -74,7 +72,7 @@ class Trapezoid extends PureComponent {
   }
 
   render() {
-    const { x, y, upperWidth, lowerWidth, height, className } = this.props;
+    const { x, y, upperWidth, lowerWidth, height, className, ...rest } = this.props;
     const { totalLength } = this.state;
     const {
       animationEasing,
@@ -93,8 +91,7 @@ class Trapezoid extends PureComponent {
       return (
         <g>
           <path
-            {...getPresentationAttributes(this.props)}
-            {...filterEventAttributes(this.props)}
+            {...rest}
             className={layerClass}
             d={getTrapezoidPath(x, y, upperWidth, lowerWidth, height)}
           />
@@ -117,7 +114,7 @@ class Trapezoid extends PureComponent {
           height: currHeight,
           x: currX,
           y: currY,
-        }) => (
+        }: any) => (
           <Animate
             canBegin={totalLength > 0}
             from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
@@ -128,8 +125,7 @@ class Trapezoid extends PureComponent {
             easing={animationEasing}
           >
             <path
-              {...getPresentationAttributes(this.props)}
-              {...filterEventAttributes(this.props)}
+              {...rest}
               className={layerClass}
               d={getTrapezoidPath(currX, currY, currUpperWidth, currLowerWidth, currHeight)}
               ref={(node) => { this.node = node; }}
