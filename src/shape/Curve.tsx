@@ -1,7 +1,7 @@
 /**
  * @fileOverview Curve
  */
-import React, { PureComponent, SVGProps } from 'react';
+import React, { PureComponent } from 'react';
 import { line as shapeLine, area as shapeArea, CurveFactory, curveBasisClosed, curveBasisOpen,
   curveBasis, curveLinearClosed, curveLinear, curveMonotoneX, curveMonotoneY,
   curveNatural, curveStep, curveStepAfter, curveStepBefore } from 'd3-shape';
