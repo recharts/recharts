@@ -3,15 +3,14 @@
  */
 import React, { PureComponent } from 'react';
 import { symbol as shapeSymbol, symbolCircle, symbolCross, symbolDiamond,
-  symbolSquare, symbolStar, symbolTriangle, symbolWye, SymbolType } from 'd3-shape';
+  symbolSquare, symbolStar, symbolTriangle, symbolWye, SymbolType as D3SymbolType } from 'd3-shape';
 import classNames from 'classnames';
-import { PresentationAttributes } from '../util/types';
+import { PresentationAttributes, SymbolType } from '../util/types';
 
-type SymbolTypeName = 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye'
 type SizeType = 'area' | 'diameter';
 
 interface SymbolFactory {
-  [type: string]: SymbolType
+  [type: string]: D3SymbolType
 }
 
 const SYMBOL_FACTORIES: SymbolFactory = {
@@ -20,13 +19,13 @@ const SYMBOL_FACTORIES: SymbolFactory = {
 };
 const RADIAN = Math.PI / 180;
 
-const getSymbolFactory = (type: SymbolTypeName) => {
+const getSymbolFactory = (type: SymbolType) => {
   const name = `symbol${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
 
   return SYMBOL_FACTORIES[name] || symbolCircle;
 };
 
-const calculateAreaSize = (size: number, sizeType: SizeType, type: SymbolTypeName) => {
+const calculateAreaSize = (size: number, sizeType: SizeType, type: SymbolType) => {
   if (sizeType === 'area') { return size; }
 
   switch (type) {
@@ -54,7 +53,7 @@ const calculateAreaSize = (size: number, sizeType: SizeType, type: SymbolTypeNam
 
 interface SymbolsProp {
   className?: string;
-  type: SymbolTypeName;
+  type: SymbolType;
   cx?: number;
   cy?: number;
   size?: number;

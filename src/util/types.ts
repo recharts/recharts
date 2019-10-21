@@ -28,6 +28,10 @@ export type PresentationAttributesWithProps<P, T> = AriaAttributes &
   DOMAttributesWithProps<P, T> &
   SVGProps<T>;
 
+export type SymbolType = 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye'
+export type LegendType = 'plainline' | 'line' | 'square' | 'rect' | 'circle' | 'cross' |
+  'diamond' | 'star' | 'triangle' | 'wye' | 'none'
+
 //
 // Event Handler Types -- Copied from @types/react/index.d.ts and adapted for Props.
 //
