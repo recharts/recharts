@@ -1,15 +1,29 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component, CSSProperties } from 'react';
+// @ts-ignore
 import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
 import _ from 'lodash';
+// @ts-ignore
 import { isNumber, isNumOrStr } from '../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, isSsr, filterEventAttributes } from '../util/ReactUtils';
+// @ts-ignore
+import { getPresentationAttributes, isSsr, filterEventAttributes } from '../util/ReactUtils';
+import { PresentationAttributes } from '../util/types';
+// @ts-ignore
 import { getStringSize } from '../util/DOMUtils';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
-const calculateWordWidths = (props) => {
+interface WordWithComputedWidth {
+  word: string;
+  width: number;
+}
+
+interface CalculatedWordWidths {
+  wordsWithComputedWidth: Array<WordWithComputedWidth>;
+  spaceWidth: number;
+}
+
+const calculateWordWidths = (props: Props): CalculatedWordWidths => {
   try {
     const words = !_.isNil(props.children) ? props.children.toString().split(BREAKING_SPACES) : [];
     const wordsWithComputedWidth = words.map(word => (
@@ -24,18 +38,27 @@ const calculateWordWidths = (props) => {
   }
 };
 
+interface TextProps {
+  scaleToFit?: boolean;
+  angle?: number;
+  textAnchor?: 'start' | 'middle' | 'end' | 'inherit';
+  verticalAnchor?: 'start' | 'middle' | 'end';
+  style?: CSSProperties;
+  lineHeight?: number | string;
+}
 
-class Text extends Component {
+type Props = PresentationAttributes<SVGTextElement> & TextProps;
 
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    scaleToFit: PropTypes.bool,
-    angle: PropTypes.number,
-    textAnchor: PropTypes.oneOf(['start', 'middle', 'end', 'inherit']),
-    verticalAnchor: PropTypes.oneOf(['start', 'middle', 'end']),
-    style: PropTypes.object,
-  };
+interface Words {
+  words: Array<string>;
+  width?: number;
+}
 
+interface State {
+  wordsByLines: Array<Words>;
+}
+
+class Text extends Component<Props, State> {
   static defaultProps = {
     x: 0,
     y: 0,
@@ -46,7 +69,7 @@ class Text extends Component {
     verticalAnchor: 'end', // Maintain compat with existing charts / default SVG behavior
   };
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     this.state = {
       wordsByLines: this.getWordsByLines(props, true),
@@ -57,7 +80,7 @@ class Text extends Component {
     this.updateWordsByLines(this.props, true);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     if ((prevProps.width !== this.props.width || prevProps.scaleToFit !== this.props.scaleToFit)) {
       const needCalculate = (
         this.props.children !== prevProps.children ||
@@ -67,45 +90,48 @@ class Text extends Component {
     }
   }
 
-  updateWordsByLines(props, needCalculate) {
+  updateWordsByLines(props: Props, needCalculate: boolean) {
     this.setState({
       wordsByLines: this.getWordsByLines(props, needCalculate),
     });
   }
 
-  getWordsByLines(props, needCalculate) {
+  getWordsByLines(props: Props, needCalculate: boolean) {
     // Only perform calculations if using features that require them (multiline, scaleToFit)
     if ((props.width || props.scaleToFit) && !isSsr()) {
+      let wordsWithComputedWidth: Array<WordWithComputedWidth>;
+      let spaceWidth: number;
+
       if (needCalculate) {
         const wordWidths = calculateWordWidths(props);
 
         if (wordWidths) {
-          const { wordsWithComputedWidth, spaceWidth } = wordWidths;
+          const { wordsWithComputedWidth: wcw, spaceWidth: sw } = wordWidths;
 
-          this.wordsWithComputedWidth = wordsWithComputedWidth;
-          this.spaceWidth = spaceWidth;
+          wordsWithComputedWidth = wcw;
+          spaceWidth = sw;
         } else {
           return this.getWordsWithoutCalculate(props);
         }
       }
 
       return this.calculateWordsByLines(
-        this.wordsWithComputedWidth,
-        this.spaceWidth,
+        wordsWithComputedWidth,
+        spaceWidth,
         props.width
       );
     }
     return this.getWordsWithoutCalculate(props);
   }
 
-  getWordsWithoutCalculate = (props) => {
+  getWordsWithoutCalculate = (props: Props): Array<Words> => {
     const words = !_.isNil(props.children) ?
       props.children.toString().split(BREAKING_SPACES) :
       [];
     return [{ words }];
   }
 
-  calculateWordsByLines(wordsWithComputedWidth, spaceWidth, lineWidth) {
+  calculateWordsByLines(wordsWithComputedWidth: Array<WordWithComputedWidth>, spaceWidth: number, lineWidth: number | string): Array<Words> {
     const { scaleToFit } = this.props;
     return (wordsWithComputedWidth || []).reduce((result, { word, width }) => {
       const currentLine = result[result.length - 1];
@@ -141,10 +167,10 @@ class Text extends Component {
     const { wordsByLines } = this.state;
 
     if (!isNumOrStr(textProps.x) || !isNumOrStr(textProps.y)) { return null; }
-    const x = textProps.x + (isNumber(dx) ? dx : 0);
-    const y = textProps.y + (isNumber(dy) ? dy : 0);
+    const x = (textProps.x as number) + (isNumber(dx) ? (dx as number) : 0);
+    const y = (textProps.y as number) + (isNumber(dy) ? (dy as number) : 0);
 
-    let startDy;
+    let startDy: number;
     switch (verticalAnchor) {
       case 'start':
         startDy = reduceCSSCalc(`calc(${capHeight})`);
@@ -162,7 +188,8 @@ class Text extends Component {
     const transforms = [];
     if (scaleToFit) {
       const lineWidth = wordsByLines[0].width;
-      transforms.push(`scale(${this.props.width / lineWidth})`);
+      const width = this.props.width;
+      transforms.push(`scale(${(isNumber(width) ? (width as number) / lineWidth : 1) / lineWidth})`);
     }
     if (angle) {
       transforms.push(`rotate(${angle}, ${x}, ${y})`);
@@ -173,8 +200,7 @@ class Text extends Component {
 
     return (
       <text
-        {...getPresentationAttributes(textProps)}
-        {...filterEventAttributes(textProps)}
+        {...textProps}
         x={x}
         y={y}
         className={classNames('recharts-text', className)}
