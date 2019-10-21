@@ -19,7 +19,7 @@ interface SurfaceProps {
   children?: ReactNode;
 }
 
-type Props = PresentationAttributes<SVGSVGElement> & SurfaceProps;
+type Props = Omit<PresentationAttributes<SVGSVGElement>, 'viewBox'> & SurfaceProps;
 
 function Surface(props: Props) {
   const { children, width, height, viewBox, className, style, ...others } = props;
