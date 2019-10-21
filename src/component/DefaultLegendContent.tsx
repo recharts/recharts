@@ -1,7 +1,7 @@
 /**
  * @fileOverview Default Legend Content
  */
-import React, { PureComponent, ReactNode, MouseEvent, ReactText } from 'react';
+import React, { PureComponent, ReactNode, MouseEvent, ReactText, ReactElement } from 'react';
 import classNames from 'classnames';
 import Surface from '../container/Surface';
 import Symbols from '../shape/Symbols';
@@ -10,12 +10,13 @@ import { filterEventsOfChild } from '../util/ReactUtils';
 import { LegendType, LayoutType, SymbolType } from '../util/types';
 
 const SIZE = 32;
-type IconType = Omit<LegendType, 'none'>;
-type HorizontalAlignmentType = 'center' | 'left' | 'right';
-type VerticalAlignmentType = 'top' | 'bottom' | 'middle';
-type Formatter<TValue, TID> = (value: any, entry: Payload<TValue, TID>, index: number) => ReactNode
+export type ContentType<TValue, TID> = ReactElement | ((props: Props<TValue, TID>) => ReactNode)
+export type IconType = Omit<LegendType, 'none'>;
+export type HorizontalAlignmentType = 'center' | 'left' | 'right';
+export type VerticalAlignmentType = 'top' | 'bottom' | 'middle';
+export type Formatter<TValue, TID> = (value: any, entry: Payload<TValue, TID>, index: number) => ReactNode
 
-interface Payload<TValue, TID> {
+export interface Payload<TValue, TID> {
   value: TValue;
   id: TID;
   type: LegendType;
@@ -27,8 +28,8 @@ interface Payload<TValue, TID> {
   inactive?: boolean;
 }
 
-interface Props<TValue, TID> {
-  content?: ReactNode;
+export interface Props<TValue, TID> {
+  content?: ContentType<TValue, TID>;
   iconSize?: number;
   iconType?: IconType;
   layout?: LayoutType;
