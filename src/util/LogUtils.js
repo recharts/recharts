@@ -1,7 +1,7 @@
 /* eslint no-console: 0 */
 const isDev = process.env.NODE_ENV !== 'production';
 
-export const warn = (condition, format, a, b, c, d, e, f) => {
+export const warn = (condition, format, ...args) => {
   if (isDev && typeof console !== 'undefined' && console.warn) {
     if (format === undefined) {
       console.warn('LogUtils requires an error message argument');
@@ -14,7 +14,6 @@ export const warn = (condition, format, a, b, c, d, e, f) => {
           'for the full error message and additional helpful warnings.'
         );
       } else {
-        const args = [a, b, c, d, e, f];
         let argIndex = 0;
 
         console.warn(format.replace(/%s/g, () => args[argIndex++]));
