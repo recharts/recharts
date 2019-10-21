@@ -2,39 +2,45 @@
  * @fileOverview Default Tooltip Content
  */
 import _ from 'lodash';
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent, CSSProperties, ReactNode } from 'react';
 import classNames from 'classnames';
+// @ts-ignore
 import { isNumOrStr } from '../util/DataUtils';
 
-const defaultFormatter = value => (
-  (_.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1])) ?
+function defaultFormatter<T>(value: T) {
+  return (_.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1])) ?
     value.join(' ~ ') :
     value
-);
+}
 
-class DefaultTooltipContent extends PureComponent {
+type ValueType = number | string | Array<number | string>;
+type Formatter<TValue extends ValueType, TName> = (value: TValue, name: TName, item: Payload<TValue, TName>, index: number) => [ReactNode, ReactNode] | ReactNode
 
+interface Payload<TValue extends ValueType, TName> {
+  type: string;
+  color: string;
+  formatter: Formatter<TValue, TName>;
+  name?: TName;
+  value?: TValue;
+  unit?: ReactNode;
+}
+
+interface Props<TValue extends ValueType, TName> {
+  separator?: string;
+  wrapperClassName?: string;
+  labelClassName?: string;
+  formatter?: Function;
+  contentStyle?: CSSProperties;
+  itemStyle?: CSSProperties;
+  labelStyle?: CSSProperties;
+  labelFormatter?: (label: any) => ReactNode;
+  label: any;
+  payload: Array<Payload<TValue, TName>>;
+  itemSorter?: (item: Payload<TValue, TName>) => number | string;
+}
+
+class DefaultTooltipContent<TValue extends ValueType, TName> extends PureComponent<Props<TValue, TName>> {
   static displayName = 'DefaultTooltipContent';
-
-  static propTypes = {
-    separator: PropTypes.string,
-    wrapperClassName: PropTypes.string,
-    labelClassName: PropTypes.string,
-    formatter: PropTypes.func,
-    contentStyle: PropTypes.object,
-    itemStyle: PropTypes.object,
-    labelStyle: PropTypes.object,
-    labelFormatter: PropTypes.func,
-    label: PropTypes.any,
-    payload: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.any,
-      value: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.array]),
-      unit: PropTypes.any,
-    })),
-    itemSorter: PropTypes.func,
-  };
-
   static defaultProps = {
     separator: ' : ',
     contentStyle: {},
@@ -97,7 +103,7 @@ class DefaultTooltipContent extends PureComponent {
       label,
       labelFormatter,
     } = this.props;
-    const finalStyle = {
+    const finalStyle: CSSProperties = {
       margin: 0,
       padding: 10,
       backgroundColor: '#fff',
