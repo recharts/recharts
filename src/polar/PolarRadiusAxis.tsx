@@ -1,57 +1,49 @@
 /**
  * @fileOverview The axis of polar coordinate system
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent, ReactElement } from 'react';
 import _ from 'lodash';
-import Text from '../component/Text';
+import Text, { Props as TextProps } from '../component/Text';
 import Label from '../component/Label';
 import Layer from '../container/Layer';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
-  filterEventsOfChild } from '../util/ReactUtils';
+// @ts-ignore
+import { filterEventsOfChild } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
+import { PresentationAttributes, filterProps, ScaleType } from '../util/types';
 
-class PolarRadiusAxis extends PureComponent {
+
+type PolarRadiusAxisTick = PresentationAttributes<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
+interface TickIem {
+  value?: any;
+  coordinate?: number;
+}
+
+interface PolarRadiusAxisProps {
+  type?: 'number' | 'category';
+  cx?: number;
+  cy?: number;
+  hide?: number;
+  radiusAxisId?: string | number;
+  angle?: number;
+  tickCount?: number;
+  orientation?: 'left' | 'right' | 'middle';
+  axisLine?: PresentationAttributes<SVGLineElement> | boolean;
+  domain?: Array<'auto' | 'dataMin' | 'dataMax' | number>;
+  scale?: Function | ScaleType;
+  allowDataOverflow?: boolean;
+  allowDuplicatedCategory?: boolean;
+  tickFormatter?: (value: any) => string;
+  tick?: PolarRadiusAxisTick;
+  ticks?: TickIem[]
+}
+
+export type Props = PresentationAttributes<SVGElement> & PolarRadiusAxisProps;
+
+class PolarRadiusAxis extends PureComponent<Props> {
 
   static displayName = 'PolarRadiusAxis';
 
   static axisType = 'radiusAxis';
-
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    ...EVENT_ATTRIBUTES,
-    type: PropTypes.oneOf(['number', 'category']),
-    cx: PropTypes.number,
-    cy: PropTypes.number,
-    hide: PropTypes.bool,
-    radiusAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-
-    angle: PropTypes.number,
-    tickCount: PropTypes.number,
-    ticks: PropTypes.arrayOf(PropTypes.shape({
-      value: PropTypes.any,
-      coordinate: PropTypes.number,
-    })),
-    orientation: PropTypes.oneOf(['left', 'right', 'middle']),
-    axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
-    tick: PropTypes.oneOfType([
-      PropTypes.bool, PropTypes.object, PropTypes.element, PropTypes.func,
-    ]),
-    stroke: PropTypes.string,
-    tickFormatter: PropTypes.func,
-    domain: PropTypes.arrayOf(PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.oneOf(['auto', 'dataMin', 'dataMax']),
-    ])),
-    scale: PropTypes.oneOfType([
-      PropTypes.oneOf(['auto', 'linear', 'pow', 'sqrt', 'log', 'identity', 'time',
-        'band', 'point', 'ordinal', 'quantile', 'quantize', 'utc', 'sequential',
-        'threshold']),
-      PropTypes.func,
-    ]),
-    allowDataOverflow: PropTypes.bool,
-    allowDuplicatedCategory: PropTypes.bool,
-  };
 
   static defaultProps = {
     type: 'number',
@@ -75,7 +67,7 @@ class PolarRadiusAxis extends PureComponent {
    * @param  {Number} coordinate The radius of tick
    * @return {Object} (x, y)
    */
-  getTickValueCoord({ coordinate }) {
+  getTickValueCoord({ coordinate }: TickIem) {
     const { angle, cx, cy } = this.props;
 
     return polarToCartesian(cx, cy, coordinate, angle);
@@ -102,8 +94,8 @@ class PolarRadiusAxis extends PureComponent {
 
   getViewBox() {
     const { cx, cy, angle, ticks } = this.props;
-    const maxRadiusTick = _.maxBy(ticks, entry => (entry.coordinate || 0));
-    const minRadiusTick = _.minBy(ticks, entry => (entry.coordinate || 0));
+    const maxRadiusTick = _.maxBy(ticks, (entry: TickIem) => (entry.coordinate || 0));
+    const minRadiusTick = _.minBy(ticks, (entry: TickIem) => (entry.coordinate || 0));
 
     return {
       cx, cy,
@@ -124,9 +116,9 @@ class PolarRadiusAxis extends PureComponent {
     const point1 = polarToCartesian(cx, cy, extent[1], angle);
 
     const props = {
-      ...getPresentationAttributes(others),
+      ...filterProps(others),
       fill: 'none',
-      ...getPresentationAttributes(axisLine),
+      ...filterProps(axisLine),
       x1: point0.x,
       y1: point0.y,
       x2: point1.x,
@@ -136,7 +128,7 @@ class PolarRadiusAxis extends PureComponent {
     return <line className="recharts-polar-radius-axis-line" {...props} />;
   }
 
-  static renderTickItem(option, props, value) {
+  static renderTickItem(option: PolarRadiusAxisTick, props: any, value: string | number) {
     let tickItem;
 
     if (React.isValidElement(option)) {
@@ -160,8 +152,8 @@ class PolarRadiusAxis extends PureComponent {
   renderTicks() {
     const { ticks, tick, angle, tickFormatter, stroke, ...others } = this.props;
     const textAnchor = this.getTickTextAnchor();
-    const axisProps = getPresentationAttributes(others);
-    const customTickProps = getPresentationAttributes(tick);
+    const axisProps = filterProps(others);
+    const customTickProps = filterProps(tick);
 
     const items = ticks.map((entry, i) => {
       const coord = this.getTickValueCoord(entry);
@@ -182,7 +174,7 @@ class PolarRadiusAxis extends PureComponent {
           key={`tick-${i}`} // eslint-disable-line react/no-array-index-key
           {...filterEventsOfChild(this.props, entry, i)}
         >
-          {this.constructor.renderTickItem(
+          {PolarRadiusAxis.renderTickItem(
             tick, tickProps, tickFormatter ? tickFormatter(entry.value) : entry.value
           )}
         </Layer>

@@ -7,7 +7,6 @@ import ReactResizeDetector from 'react-resize-detector';
 import _ from 'lodash';
 // @ts-ignore
 import { isPercent } from '../util/DataUtils';
-// @ts-ignore
 import { warn } from '../util/LogUtils';
 
 interface Props {
