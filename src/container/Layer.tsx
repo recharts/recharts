@@ -3,6 +3,7 @@
  */
 import React, { ReactNode, SVGProps } from 'react';
 import classNames from 'classnames';
+import { filterProps } from '../util/types';
 
 interface LayerProps {
   className?: string;
@@ -16,7 +17,7 @@ function Layer(props: Props) {
   const layerClass = classNames('recharts-layer', className);
 
   return (
-    <g className={layerClass} {...others}>
+    <g className={layerClass} {...filterProps(others)}>
       {children}
     </g>
   );

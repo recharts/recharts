@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import { symbol as shapeSymbol, symbolCircle, symbolCross, symbolDiamond,
   symbolSquare, symbolStar, symbolTriangle, symbolWye, SymbolType as D3SymbolType } from 'd3-shape';
 import classNames from 'classnames';
-import { PresentationAttributes, SymbolType } from '../util/types';
+import { PresentationAttributes, SymbolType, filterProps } from '../util/types';
 
 type SizeType = 'area' | 'diameter';
 
@@ -83,12 +83,12 @@ class Symbols extends PureComponent<Props> {
   }
 
   render() {
-    const { className, cx, cy, size, ...rest } = this.props;
+    const { className, cx, cy, size } = this.props;
 
     if (cx === +cx && cy === +cy && size === +size) {
       return (
         <path
-          {...rest}
+          {...filterProps(this.props)}
           className={classNames('recharts-symbols', className)}
           transform={`translate(${cx}, ${cy})`}
           d={this.getPath()}

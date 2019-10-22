@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 // @ts-ignore
 import Animate from 'react-smooth';
-import { PresentationAttributes, AnimationTiming } from '../util/types';
+import { PresentationAttributes, AnimationTiming, filterProps } from '../util/types';
 
 type RectRadius = [number, number, number, number];
 
@@ -125,7 +125,7 @@ class Rectangle extends PureComponent<Props> {
   }
 
   render() {
-    const { x, y, width, height, radius, className, ...rest } = this.props;
+    const { x, y, width, height, radius, className } = this.props;
     const { totalLength } = this.state;
     const { animationEasing, animationDuration, animationBegin,
       isAnimationActive, isUpdateAnimationActive } = this.props;
@@ -137,7 +137,7 @@ class Rectangle extends PureComponent<Props> {
     if (!isUpdateAnimationActive) {
       return (
         <path
-          {...rest}
+          {...filterProps(this.props)}
           className={layerClass}
           d={getRectangePath(x, y, width, height, radius)}
         />
@@ -166,7 +166,7 @@ class Rectangle extends PureComponent<Props> {
             easing={animationEasing}
           >
             <path
-              {...rest}
+              {...filterProps(this.props)}
               className={layerClass}
               d={getRectangePath(currX, currY, currWidth, currHeight, radius)}
               ref={(node) => { this.node = node; }}

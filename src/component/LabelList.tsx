@@ -4,9 +4,10 @@ import _ from 'lodash';
 import Label, { ContentType } from './Label';
 import Layer from '../container/Layer';
 // @ts-ignore
-import { getPresentationAttributes, findAllByType } from '../util/ReactUtils';
+import { findAllByType } from '../util/ReactUtils';
 // @ts-ignore
 import { getValueByDataKey } from '../util/ChartUtils';
+import { filterProps } from '../util/types';
 
 const propTypes = {
   id: PropTypes.string,
@@ -52,7 +53,7 @@ function LabelList<T extends Data>(props: Props<T>) {
 
           return (
             <Label
-              {...getPresentationAttributes(entry)}
+              {...filterProps(entry) as any}
               {...others}
               {...idProps}
               index={index}
