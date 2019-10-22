@@ -557,7 +557,7 @@ export const parseScale = (axis, chartType) => {
     }
 
     if (type === 'category' && chartType && (chartType.indexOf('LineChart') >= 0 ||
-      chartType.indexOf('AreaChart') >= 0 || chartType.indexOf('ComposedChart') >= 0)) {
+      chartType.indexOf('AreaChart') >= 0)) {
       return { scale: d3Scales.scalePoint(), realScaleType: 'point' };
     } if (type === 'category') {
       return { scale: d3Scales.scaleBand(), realScaleType: 'band' };
