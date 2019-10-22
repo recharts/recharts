@@ -7,7 +7,7 @@ import { line as shapeLine, area as shapeArea, CurveFactory, curveBasisClosed, c
   curveNatural, curveStep, curveStepAfter, curveStepBefore } from 'd3-shape';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
+import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers, filterProps } from '../util/types';
 // @ts-ignore
 import { isNumber } from '../util/DataUtils';
 
@@ -105,7 +105,7 @@ class Curve<T> extends PureComponent<Props<T>> {
   }
 
   render() {
-    const { className, points, path, pathRef, ...rest } = this.props;
+    const { className, points, path, pathRef } = this.props;
 
     if ((!points || !points.length) && !path) { return null; }
 
@@ -114,7 +114,7 @@ class Curve<T> extends PureComponent<Props<T>> {
 
     return (
       <path
-        {...rest}
+        {...filterProps(this.props)}
         {...adaptEventHandlers(this.props)}
         className={classNames('recharts-curve', className)}
         d={realPath}

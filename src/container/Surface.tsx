@@ -3,7 +3,7 @@
  */
 import React, { ReactNode, CSSProperties } from 'react';
 import classNames from 'classnames';
-import { PresentationAttributes } from '../util/types';
+import { PresentationAttributes, filterProps } from '../util/types';
 
 interface SurfaceProps {
   width: number;
@@ -28,7 +28,7 @@ function Surface(props: Props) {
 
   return (
     <svg
-      {...others}
+      {...filterProps(others)}
       className={layerClass}
       width={width}
       height={height}

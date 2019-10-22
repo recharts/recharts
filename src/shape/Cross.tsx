@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 // @ts-ignore
 import { isNumber } from '../util/DataUtils';
-import { PresentationAttributes } from '../util/types';
+import { PresentationAttributes, filterProps } from '../util/types';
 
 interface CrossProps {
   x?: number;
@@ -35,7 +35,7 @@ class Cross extends PureComponent<Props> {
 
   render() {
     const { x, y, width, height, top, left,
-      className, ...rest } = this.props;
+      className } = this.props;
 
     if (!isNumber(x) || !isNumber(y) || !isNumber(width) ||
       !isNumber(height) || !isNumber(top) || !isNumber(left)) {
@@ -44,7 +44,7 @@ class Cross extends PureComponent<Props> {
 
     return (
       <path
-        {...rest}
+        {...filterProps(this.props)}
         className={classNames('recharts-cross', className)}
         d={Cross.getPath(x, y, width, height, top, left)}
       />

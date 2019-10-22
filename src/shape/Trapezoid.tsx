@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 // @ts-ignore
 import Animate from 'react-smooth';
-import { PresentationAttributes, AnimationTiming } from '../util/types';
+import { PresentationAttributes, AnimationTiming, filterProps } from '../util/types';
 
 const getTrapezoidPath = (x: number, y: number, upperWidth: number, lowerWidth: number, height: number) => {
   const widthGap = upperWidth - lowerWidth;
@@ -72,7 +72,7 @@ class Trapezoid extends PureComponent<Props> {
   }
 
   render() {
-    const { x, y, upperWidth, lowerWidth, height, className, ...rest } = this.props;
+    const { x, y, upperWidth, lowerWidth, height, className } = this.props;
     const { totalLength } = this.state;
     const {
       animationEasing,
@@ -91,7 +91,7 @@ class Trapezoid extends PureComponent<Props> {
       return (
         <g>
           <path
-            {...rest}
+            {...filterProps(this.props)}
             className={layerClass}
             d={getTrapezoidPath(x, y, upperWidth, lowerWidth, height)}
           />
@@ -125,7 +125,7 @@ class Trapezoid extends PureComponent<Props> {
             easing={animationEasing}
           >
             <path
-              {...rest}
+              {...filterProps(this.props)}
               className={layerClass}
               d={getTrapezoidPath(currX, currY, currUpperWidth, currLowerWidth, currHeight)}
               ref={(node) => { this.node = node; }}

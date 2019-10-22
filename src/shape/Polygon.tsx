@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-import { PresentationAttributes } from '../util/types';
+import { PresentationAttributes, filterProps } from '../util/types';
 
 interface Point {
   x: number;
@@ -29,7 +29,7 @@ type Props = PresentationAttributes<SVGPolygonElement> & PolygonProps;
 
 class Polygon extends PureComponent<Props> {
   render() {
-    const { points, className, ...rest } = this.props;
+    const { points, className } = this.props;
 
     if (!points || !points.length) { return null; }
 
@@ -37,7 +37,7 @@ class Polygon extends PureComponent<Props> {
 
     return (
       <polygon
-        {...rest}
+        {...filterProps(this.props)}
         className={layerClass}
         points={getPolygonPoints(points)}
       />

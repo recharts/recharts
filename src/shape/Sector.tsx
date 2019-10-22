@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-import { PresentationAttributes } from '../util/types';
+import { PresentationAttributes, filterProps } from '../util/types';
 // @ts-ignore
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';
 // @ts-ignore
@@ -194,7 +194,7 @@ class Sector extends PureComponent<Props> {
 
   render() {
     const { cx, cy, innerRadius, outerRadius, cornerRadius, forceCornerRadius, cornerIsExternal,
-      startAngle, endAngle, className, ...rest } = this.props;
+      startAngle, endAngle, className } = this.props;
 
     if (outerRadius < innerRadius || startAngle === endAngle) { return null; }
 
@@ -217,7 +217,7 @@ class Sector extends PureComponent<Props> {
 
     return (
       <path
-        {...rest}
+        {...filterProps(this.props)}
         className={layerClass}
         d={path}
       />

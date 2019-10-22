@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-import { PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
+import { PresentationAttributesWithProps, adaptEventHandlers, filterProps } from '../util/types';
 
 interface DotProps {
   className?: string;
@@ -16,13 +16,13 @@ type Props = PresentationAttributesWithProps<DotProps, SVGCircleElement> & DotPr
 
 class Dot extends PureComponent<Props> {
   render() {
-    const { cx, cy, r, className, ...rest } = this.props;
+    const { cx, cy, r, className } = this.props;
     const layerClass = classNames('recharts-dot', className);
 
     if (cx === +cx && cy === +cy && r === +r) {
       return (
         <circle
-          {...rest}
+          {...filterProps(this.props)}
           {...adaptEventHandlers(this.props)}
           className={layerClass}
           cx={cx}

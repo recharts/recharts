@@ -1,14 +1,14 @@
-import React, { cloneElement, isValidElement, ReactNode, ReactElement } from 'react';
+import React, { cloneElement, isValidElement, ReactNode, ReactElement, SVGProps } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
 import Text from './Text';
 // @ts-ignore
-import { getPresentationAttributes, findAllByType, filterEventAttributes } from '../util/ReactUtils';
+import { findAllByType } from '../util/ReactUtils';
 // @ts-ignore
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign } from '../util/DataUtils';
 // @ts-ignore
 import { polarToCartesian } from '../util/PolarUtils';
-import { PresentationAttributes } from '../util/types';
+import { PresentationAttributes, filterProps, adaptEventHandlers } from '../util/types';
 
 interface CartesianViewBox {
   x?: number;
@@ -316,8 +316,8 @@ function Label(props: Props) {
   }
 
   const isPolarLabel = isPolar(viewBox);
-  const attrs = getPresentationAttributes(props);
-  const events = filterEventAttributes(props);
+  const attrs = filterProps(props);
+  const events = adaptEventHandlers(props);
 
   if (isPolarLabel && (position === 'insideStart' ||
     position === 'insideEnd' || position === 'end')) {
@@ -332,7 +332,7 @@ function Label(props: Props) {
     <Text
       className={classNames('recharts-label', className)}
       {...attrs}
-      {...positionAttrs}
+      {...positionAttrs as any}
       {...events}
     >
       {label}
