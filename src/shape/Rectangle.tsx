@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 // @ts-ignore
 import Animate from 'react-smooth';
-import { PresentationAttributes } from '../util/types';
+import { PresentationAttributes, AnimationTiming } from '../util/types';
 
 type RectRadius = [number, number, number, number];
 
@@ -78,7 +78,7 @@ interface RectangleProps {
   isUpdateAnimationActive?: boolean;
   animationBegin?: number;
   animationDuration?: number;
-  animationEasing?: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
+  animationEasing?: AnimationTiming;
 }
 
 type Props = PresentationAttributes<SVGPathElement> & RectangleProps;
