@@ -1,3 +1,9 @@
+## 1.8.4 (Oct 22, 2019)
+
+### fix
+
+- Adding Composed chart to rescaled charts, to fix #1887
+
 ## 1.8.3 (Oct 17, 2019)
 
 ### fix
