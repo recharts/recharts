@@ -47,7 +47,7 @@ interface TextProps {
   lineHeight?: number | string;
 }
 
-type Props = PresentationAttributes<SVGTextElement> & TextProps;
+export type Props = PresentationAttributes<SVGTextElement> & TextProps;
 
 interface Words {
   words: Array<string>;
