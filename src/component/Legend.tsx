@@ -11,7 +11,7 @@ import { isNumber } from '../util/DataUtils';
 type UniqueFunc<TValue, TID> = (entry: Payload<TValue, TID>) => unknown
 type UniqueOption<TValue, TID> = boolean | UniqueFunc<TValue, TID>;
 function defaultUniqBy<TValue, TID>(entry: Payload<TValue, TID>) { return entry.value };
-function getUniqPaylod<TValue, TID>(option: UniqueOption<TValue, TID>, payload: Array<Payload<TValue, TID>>) {
+function getUniqPayload<TValue, TID>(option: UniqueOption<TValue, TID>, payload: Array<Payload<TValue, TID>>) {
   if (option === true) {
     return _.uniqBy(payload, defaultUniqBy);
   }
@@ -57,6 +57,7 @@ interface State {
 }
 
 class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
+  static displayName = 'Legend';
   static defaultProps = {
     iconSize: 14,
     layout: 'horizontal',
@@ -180,7 +181,7 @@ class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
         style={outerStyle}
         ref={(node) => { this.wrapperNode = node; }}
       >
-        {renderContent(content, { ...this.props, payload: getUniqPaylod(payloadUniqBy, payload) })}
+        {renderContent(content, { ...this.props, payload: getUniqPayload(payloadUniqBy, payload) })}
       </div>
     );
   }

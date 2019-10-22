@@ -271,3 +271,6 @@ export const adaptEventHandlers = (props: Record<string, any>) => {
 
   return out;
 }
+
+// Animation Types => TODO: Should be moved when react-smooth is typescriptified.
+export type AnimationTiming = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';

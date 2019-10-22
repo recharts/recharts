@@ -2,7 +2,7 @@
  * @fileOverview Default Tooltip Content
  */
 import _ from 'lodash';
-import React, { PureComponent, CSSProperties, ReactNode } from 'react';
+import React, { PureComponent, CSSProperties, ReactElement, ReactNode } from 'react';
 import classNames from 'classnames';
 // @ts-ignore
 import { isNumOrStr } from '../util/DataUtils';
@@ -13,19 +13,21 @@ function defaultFormatter<T>(value: T) {
     value
 }
 
-type ValueType = number | string | Array<number | string>;
-type Formatter<TValue extends ValueType, TName> = (value: TValue, name: TName, item: Payload<TValue, TName>, index: number) => [ReactNode, ReactNode] | ReactNode
+export type TooltipType = 'none';
+export type ValueType = number | string | Array<number | string>;
+export type Formatter<TValue extends ValueType, TName> = (value: TValue, name: TName, item: Payload<TValue, TName>, index: number) => [ReactNode, ReactNode] | ReactNode
 
-interface Payload<TValue extends ValueType, TName> {
-  type: string;
-  color: string;
-  formatter: Formatter<TValue, TName>;
+export interface Payload<TValue extends ValueType, TName> {
+  type?: TooltipType;
+  color?: string;
+  formatter?: Formatter<TValue, TName>;
   name?: TName;
   value?: TValue;
   unit?: ReactNode;
+  dataKey?: string | number;
 }
 
-interface Props<TValue extends ValueType, TName> {
+export interface Props<TValue extends ValueType, TName> {
   separator?: string;
   wrapperClassName?: string;
   labelClassName?: string;
@@ -34,8 +36,8 @@ interface Props<TValue extends ValueType, TName> {
   itemStyle?: CSSProperties;
   labelStyle?: CSSProperties;
   labelFormatter?: (label: any) => ReactNode;
-  label: any;
-  payload: Array<Payload<TValue, TName>>;
+  label?: any;
+  payload?: Array<Payload<TValue, TName>>;
   itemSorter?: (item: Payload<TValue, TName>) => number | string;
 }
 

@@ -6,7 +6,7 @@ import _ from 'lodash';
 // @ts-ignore
 import { isNumber, isNumOrStr } from '../util/DataUtils';
 // @ts-ignore
-import { getPresentationAttributes, isSsr, filterEventAttributes } from '../util/ReactUtils';
+import { isSsr } from '../util/ReactUtils';
 import { PresentationAttributes } from '../util/types';
 // @ts-ignore
 import { getStringSize } from '../util/DOMUtils';
