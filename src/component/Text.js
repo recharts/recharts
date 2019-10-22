@@ -58,7 +58,8 @@ class Text extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if ((prevProps.width !== this.props.width || prevProps.scaleToFit !== this.props.scaleToFit)) {
+    if (prevProps.width !== this.props.width || prevProps.scaleToFit !== this.props.scaleToFit || 
+      prevProps.children !== this.props.children || prevProps.style !== this.props.style) {
       const needCalculate = (
         this.props.children !== prevProps.children ||
         this.props.style !== prevProps.style
