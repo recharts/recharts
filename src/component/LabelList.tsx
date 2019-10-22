@@ -1,10 +1,13 @@
 import React, { cloneElement } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import Label from './Label';
+import Label, { ContentType } from './Label';
 import Layer from '../container/Layer';
-import { getPresentationAttributes, findAllByType } from '../util/ReactUtils';
+// @ts-ignore
+import { findAllByType } from '../util/ReactUtils';
+// @ts-ignore
 import { getValueByDataKey } from '../util/ChartUtils';
+import { filterProps } from '../util/types';
 
 const propTypes = {
   id: PropTypes.string,
@@ -14,11 +17,25 @@ const propTypes = {
   dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
 };
 
+interface Data {
+  value?: number | string | Array<number | string>;
+  payload?: any
+}
+
+interface Props<T extends Data> {
+  id?: string;
+  data: Array<T>;
+  valueAccessor?: Function;
+  clockWise?: boolean;
+  dataKey?: string | number | Function;
+  content?: ContentType;
+}
+
 const defaultProps = {
-  valueAccessor: entry => (_.isArray(entry.value) ? _.last(entry.value) : entry.value),
+  valueAccessor: (entry: Data) => (_.isArray(entry.value) ? _.last(entry.value) : entry.value),
 };
 
-function LabelList(props) {
+function LabelList<T extends Data>(props: Props<T>) {
   const { data, valueAccessor, dataKey, clockWise, id, ...others } = props;
 
   if (!data || !data.length) { return null; }
@@ -36,7 +53,7 @@ function LabelList(props) {
 
           return (
             <Label
-              {...getPresentationAttributes(entry)}
+              {...filterProps(entry) as any}
               {...others}
               {...idProps}
               index={index}
@@ -54,7 +71,7 @@ function LabelList(props) {
 LabelList.propTypes = propTypes;
 LabelList.displayName = 'LabelList';
 
-const parseLabelList = (label, data) => {
+function parseLabelList<T extends Data>(label: any, data: Array<T>) {
   if (!label) { return null; }
 
   if (label === true) {
@@ -72,14 +89,14 @@ const parseLabelList = (label, data) => {
   return null;
 };
 
-const renderCallByParent = (parentProps, data, ckeckPropsLabel = true) => {
+function renderCallByParent<T extends Data>(parentProps: any, data: Array<T>, ckeckPropsLabel = true) {
   if (!parentProps || (!parentProps.children && (ckeckPropsLabel && !parentProps.label))) {
     return null;
   }
   const { children } = parentProps;
 
   const explicitChilren =
-    findAllByType(children, LabelList).map((child, index) => cloneElement(child, {
+    findAllByType(children, LabelList).map((child: any, index: number) => cloneElement(child, {
       data,
       key: `labelList-${index}`,
     }));

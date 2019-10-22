@@ -1,16 +1,17 @@
 /**
  * @fileOverview Legend
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent, ReactNode, CSSProperties } from 'react';
 import _ from 'lodash';
 import DefaultLegendContent from './DefaultLegendContent';
+import { Payload, Props as DefaultProps, ContentType } from './DefaultLegendContent';
+// @ts-ignore
 import { isNumber } from '../util/DataUtils';
-import { LEGEND_TYPES } from '../util/ReactUtils';
 
-
-const defaultUniqBy = entry => entry.value;
-const getUniqPaylod = (option, payload) => {
+type UniqueFunc<TValue, TID> = (entry: Payload<TValue, TID>) => unknown
+type UniqueOption<TValue, TID> = boolean | UniqueFunc<TValue, TID>;
+function defaultUniqBy<TValue, TID>(entry: Payload<TValue, TID>) { return entry.value };
+function getUniqPayload<TValue, TID>(option: UniqueOption<TValue, TID>, payload: Array<Payload<TValue, TID>>) {
   if (option === true) {
     return _.uniqBy(payload, defaultUniqBy);
   }
@@ -22,61 +23,50 @@ const getUniqPaylod = (option, payload) => {
   return payload;
 };
 
-const renderContent = (content, props) => {
+function renderContent<TValue, TID>(content: ContentType<TValue, TID>, props: Props<TValue, TID>) {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
   } if (_.isFunction(content)) {
     return content(props);
   }
 
-  return React.createElement(DefaultLegendContent, props);
+  return <DefaultLegendContent {...props} />
 };
 
 const EPS = 1;
-const ICON_TYPES = LEGEND_TYPES.filter(type => type !== 'none');
 
-class Legend extends PureComponent {
-  static displayName = 'Legend';
-
-  static propTypes = {
-    content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
-    wrapperStyle: PropTypes.object,
-    chartWidth: PropTypes.number,
-    chartHeight: PropTypes.number,
-    width: PropTypes.number,
-    height: PropTypes.number,
-    iconSize: PropTypes.number,
-    iconType: PropTypes.oneOf(ICON_TYPES),
-    layout: PropTypes.oneOf(['horizontal', 'vertical']),
-    align: PropTypes.oneOf(['center', 'left', 'right']),
-    verticalAlign: PropTypes.oneOf(['top', 'bottom', 'middle']),
-    margin: PropTypes.shape({
-      top: PropTypes.number,
-      left: PropTypes.number,
-      bottom: PropTypes.number,
-      right: PropTypes.number,
-    }),
-    payload: PropTypes.arrayOf(PropTypes.shape({
-      value: PropTypes.any,
-      id: PropTypes.any,
-      type: PropTypes.oneOf(LEGEND_TYPES),
-    })),
-    paylodUniqBy: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
-    formatter: PropTypes.func,
-    onMouseEnter: PropTypes.func,
-    onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func,
-    onBBoxUpdate: PropTypes.func,
+type Props<TValue, TID> = DefaultProps<TValue, TID> & {
+  wrapperStyle?: CSSProperties;
+  chartWidth?: number;
+  chartHeight?: number;
+  width?: number;
+  height?: number;
+  margin?: {
+    top?: number;
+    left?: number;
+    bottom?: number;
+    right?: number;
   };
+  payloadUniqBy?: UniqueOption<TValue, TID>;
+  onBBoxUpdate?: (box: ClientRect | DOMRect | null) => void;
+};
 
+interface State {
+  boxWidth: number;
+  boxHeight: number;
+}
+
+class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
+  static displayName = 'Legend';
   static defaultProps = {
     iconSize: 14,
     layout: 'horizontal',
     align: 'center',
     verticalAlign: 'bottom',
   };
+  private wrapperNode: HTMLDivElement;
 
-  static getWithHeight(item, chartWidth) {
+  static getWithHeight(item: any, chartWidth: number) {
     const { layout } = item.props;
 
     if (layout === 'vertical' && isNumber(item.props.height)) {
@@ -115,7 +105,7 @@ class Legend extends PureComponent {
     return null;
   }
 
-  getDefaultPosition(style) {
+  getDefaultPosition(style: CSSProperties) {
     const { layout, align, verticalAlign, margin, chartWidth, chartHeight } = this.props;
     let hPos, vPos;
 
@@ -176,8 +166,8 @@ class Legend extends PureComponent {
   }
 
   render() {
-    const { content, width, height, wrapperStyle, paylodUniqBy, payload } = this.props;
-    const outerStyle = {
+    const { content, width, height, wrapperStyle, payloadUniqBy, payload } = this.props;
+    const outerStyle: CSSProperties = {
       position: 'absolute',
       width: width || 'auto',
       height: height || 'auto',
@@ -191,7 +181,7 @@ class Legend extends PureComponent {
         style={outerStyle}
         ref={(node) => { this.wrapperNode = node; }}
       >
-        {renderContent(content, { ...this.props, payload: getUniqPaylod(paylodUniqBy, payload) })}
+        {renderContent(content, { ...this.props, payload: getUniqPayload(payloadUniqBy, payload) })}
       </div>
     );
   }

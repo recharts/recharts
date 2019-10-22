@@ -2,20 +2,19 @@
  * @fileOverview Dot
  */
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { getPresentationAttributes, filterEventAttributes } from '../util/ReactUtils';
+import { PresentationAttributesWithProps, adaptEventHandlers, filterProps } from '../util/types';
 
-class Dot extends PureComponent {
-  static displayName = 'Dot';
+interface DotProps {
+  className?: string;
+  cx?: number;
+  cy?: number;
+  r?: number;
+}
 
-  static propTypes = {
-    className: PropTypes.string,
-    cx: PropTypes.number,
-    cy: PropTypes.number,
-    r: PropTypes.number,
-  };
+type Props = PresentationAttributesWithProps<DotProps, SVGCircleElement> & DotProps;
 
+class Dot extends PureComponent<Props> {
   render() {
     const { cx, cy, r, className } = this.props;
     const layerClass = classNames('recharts-dot', className);
@@ -23,8 +22,8 @@ class Dot extends PureComponent {
     if (cx === +cx && cy === +cy && r === +r) {
       return (
         <circle
-          {...getPresentationAttributes(this.props)}
-          {...filterEventAttributes(this.props, null, true)}
+          {...filterProps(this.props)}
+          {...adaptEventHandlers(this.props)}
           className={layerClass}
           cx={cx}
           cy={cy}

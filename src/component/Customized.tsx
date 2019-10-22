@@ -1,17 +1,22 @@
 /**
  * @fileOverview Customized
  */
-import React, { isValidElement, cloneElement } from 'react';
-import PropTypes from 'prop-types';
+import React, { isValidElement, cloneElement, Component, FunctionComponent } from 'react';
 import _ from 'lodash';
 import Layer from '../container/Layer';
+// @ts-ignore
 import { warn } from '../util/LogUtils';
+
+type Comp<P> = FunctionComponent<P> | Component<P>
+type Props<P, C extends Comp<P>> = P & {
+  component: C
+};
 
 /**
  * custom svg elements by rechart instance props and state.
  * @returns {Object}   svg elements
  */
-export default function Customized({ component, ...props }) {
+export default function Customized<P, C extends Comp<P>>({ component, ...props }: Props<P, C>) {
   let child;
   if (isValidElement(component)) {
     child = cloneElement(component, props);
@@ -24,7 +29,3 @@ export default function Customized({ component, ...props }) {
 }
 
 Customized.displayName = 'Customized';
-
-Customized.propTypes = {
-  component: PropTypes.oneOfType([PropTypes.element, PropTypes.func]).isRequired
-};

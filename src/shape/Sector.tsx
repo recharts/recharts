@@ -2,22 +2,53 @@
  * @fileOverview Sector
  */
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
-  filterEventAttributes } from '../util/ReactUtils';
+import { PresentationAttributes, filterProps } from '../util/types';
+// @ts-ignore
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';
+// @ts-ignore
 import { getPercentValue, mathSign } from '../util/DataUtils';
 
-const getDeltaAngle = (startAngle, endAngle) => {
+const getDeltaAngle = (startAngle: number, endAngle: number) => {
   const sign = mathSign(endAngle - startAngle);
   const deltaAngle = Math.min(Math.abs(endAngle - startAngle), 359.999);
 
   return sign * deltaAngle;
 };
 
-const getTangentCircle = ({ cx, cy, radius, angle, sign, isExternal,
-  cornerRadius, cornerIsExternal }) => {
+interface SectorDef {
+  cx?: number;
+  cy?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  startAngle?: number;
+  endAngle?: number;
+  cornerRadius?: number;
+  forceCornerRadius?: boolean;
+  cornerIsExternal?: boolean;
+}
+
+interface TangentCircleDef {
+  cx?: number;
+  cy?: number;
+  radius?: number;
+  angle?: number;
+  sign?: number;
+  isExternal?: boolean;
+  cornerRadius?: number;
+  cornerIsExternal?: boolean;
+}
+
+const getTangentCircle = ({
+  cx,
+  cy,
+  radius,
+  angle,
+  sign,
+  isExternal,
+  cornerRadius,
+  cornerIsExternal,
+}: TangentCircleDef) => {
   const centerRadius = cornerRadius * (isExternal ? 1 : -1) + radius;
   const theta = Math.asin(cornerRadius / centerRadius) / RADIAN;
   const centerAngle = cornerIsExternal ? angle : angle + sign * theta;
@@ -31,7 +62,7 @@ const getTangentCircle = ({ cx, cy, radius, angle, sign, isExternal,
   return { center, circleTangency, lineTangency, theta };
 };
 
-const getSectorPath = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle }) => {
+const getSectorPath = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle }: SectorDef) => {
   const angle = getDeltaAngle(startAngle, endAngle);
 
   // When the angle of sector equals to 360, star point and end point coincide
@@ -59,8 +90,17 @@ const getSectorPath = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle 
   return path;
 };
 
-const getSectorWithCorner = ({ cx, cy, innerRadius, outerRadius, cornerRadius, forceCornerRadius,
-  cornerIsExternal, startAngle, endAngle }) => {
+const getSectorWithCorner = ({
+  cx,
+  cy,
+  innerRadius,
+  outerRadius,
+  cornerRadius,
+  forceCornerRadius,
+  cornerIsExternal,
+  startAngle,
+  endAngle,
+}: SectorDef) => {
   const sign = mathSign(endAngle - startAngle);
   const { circleTangency: soct, lineTangency: solt, theta: sot } =
     getTangentCircle({
@@ -101,7 +141,8 @@ const getSectorWithCorner = ({ cx, cy, innerRadius, outerRadius, cornerRadius, f
         angle: startAngle,
         sign,
         isExternal: true,
-        cornerRadius, cornerIsExternal,
+        cornerRadius,
+        cornerIsExternal,
       });
     const { circleTangency: eict, lineTangency: eilt, theta: eit } =
       getTangentCircle({
@@ -111,7 +152,8 @@ const getSectorWithCorner = ({ cx, cy, innerRadius, outerRadius, cornerRadius, f
         angle: endAngle,
         sign: -sign,
         isExternal: true,
-        cornerRadius, cornerIsExternal,
+        cornerRadius,
+        cornerIsExternal,
       });
     const innerArcAngle = Math.abs(startAngle - endAngle) - sit - eit;
 
@@ -131,24 +173,13 @@ const getSectorWithCorner = ({ cx, cy, innerRadius, outerRadius, cornerRadius, f
   return path;
 };
 
-class Sector extends PureComponent {
+interface SectorProps extends SectorDef {
+  className?: string;
+}
 
-  static displayName = 'Sector';
+type Props = PresentationAttributes<SVGPathElement> & SectorProps;
 
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    className: PropTypes.string,
-    cx: PropTypes.number,
-    cy: PropTypes.number,
-    innerRadius: PropTypes.number,
-    outerRadius: PropTypes.number,
-    startAngle: PropTypes.number,
-    endAngle: PropTypes.number,
-    cornerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    forceCornerRadius: PropTypes.bool,
-    cornerIsExternal: PropTypes.bool,
-  };
-
+class Sector extends PureComponent<Props> {
   static defaultProps = {
     cx: 0,
     cy: 0,
@@ -186,8 +217,7 @@ class Sector extends PureComponent {
 
     return (
       <path
-        {...getPresentationAttributes(this.props)}
-        {...filterEventAttributes(this.props)}
+        {...filterProps(this.props)}
         className={layerClass}
         d={path}
       />

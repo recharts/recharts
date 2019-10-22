@@ -1,21 +1,28 @@
 /**
  * @fileOverview Tooltip
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent, CSSProperties, ReactNode, ReactElement, ReactText } from 'react';
+// @ts-ignore
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import classNames from 'classnames';
 import DefaultTooltipContent from './DefaultTooltipContent';
-import { TOOLTIP_TYPES, isSsr } from '../util/ReactUtils';
+import { ValueType, Payload, Props as DefaultProps } from './DefaultTooltipContent'
+// @ts-ignore
+import { isSsr } from '../util/ReactUtils';
+// @ts-ignore
 import { isNumber } from '../util/DataUtils';
+import { AnimationTiming } from '../util/types';
 
 const CLS_PREFIX = 'recharts-tooltip-wrapper';
 
 const EPS = 1;
+export type ContentType<TValue extends ValueType, TName> = ReactElement | ((props: Props<TValue, TName>) => ReactNode)
 
-const defaultUniqBy = entry => entry.dataKey;
-const getUniqPaylod = (option, payload) => {
+type UniqueFunc<TValue extends ValueType, TName> = (entry: Payload<TValue, TName>) => unknown
+type UniqueOption<TValue extends ValueType, TName> = boolean | UniqueFunc<TValue, TName>;
+function defaultUniqBy<TValue extends ValueType, TName>(entry: Payload<TValue, TName>) { return entry.dataKey };
+function getUniqPayload<TValue extends ValueType, TName>(option: UniqueOption<TValue, TName>, payload: Array<Payload<TValue, TName>>) {
   if (option === true) {
     return _.uniqBy(payload, defaultUniqBy);
   }
@@ -27,103 +34,79 @@ const getUniqPaylod = (option, payload) => {
   return payload;
 };
 
-const propTypes = {
-  allowEscapeViewBox: PropTypes.shape({
-    x: PropTypes.boolean,
-    y: PropTypes.boolean,
-  }),
-  content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
-  viewBox: PropTypes.shape({
-    x: PropTypes.number,
-    y: PropTypes.number,
-    width: PropTypes.number,
-    height: PropTypes.number,
-  }),
-
-  active: PropTypes.bool,
-  separator: PropTypes.string,
-  formatter: PropTypes.func,
-  offset: PropTypes.number,
-
-  itemStyle: PropTypes.object,
-  labelStyle: PropTypes.object,
-  wrapperStyle: PropTypes.object,
-  contentStyle: PropTypes.object,
-  cursor: PropTypes.oneOfType([PropTypes.bool, PropTypes.element, PropTypes.object]),
-
-  coordinate: PropTypes.shape({
-    x: PropTypes.number,
-    y: PropTypes.number,
-  }),
-  position: PropTypes.shape({
-    x: PropTypes.number,
-    y: PropTypes.number,
-  }),
-
-  label: PropTypes.any,
-  payload: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.any,
-    value: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.array]),
-    unit: PropTypes.any,
-    type: PropTypes.oneOf(TOOLTIP_TYPES)
-  })),
-  paylodUniqBy: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
-
-  isAnimationActive: PropTypes.bool,
-  animationDuration: PropTypes.number,
-  animationEasing: PropTypes.oneOf([
-    'ease',
-    'ease-in',
-    'ease-out',
-    'ease-in-out',
-    'linear',
-  ]),
-  itemSorter: PropTypes.func,
-  filterNull: PropTypes.bool,
-  useTranslate3d: PropTypes.bool,
-};
-
-const defaultProps = {
-  active: false,
-  allowEscapeViewBox: { x: false, y: false },
-  offset: 10,
-  viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
-  coordinate: { x: 0, y: 0 },
-  cursorStyle: {},
-  separator: ' : ',
-  wrapperStyle: {},
-  contentStyle: {},
-  itemStyle: {},
-  labelStyle: {},
-  cursor: true,
-  isAnimationActive: !isSsr(),
-  animationEasing: 'ease',
-  animationDuration: 400,
-  filterNull: true,
-  useTranslate3d: false,
-};
-
-const renderContent = (content, props) => {
+function renderContent<TValue extends ValueType, TName>(content: ContentType<TValue, TName>, props: Props<TValue, TName>) {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
   } if (_.isFunction(content)) {
     return content(props);
   }
 
-  return React.createElement(DefaultTooltipContent, props);
+  return <DefaultTooltipContent {...props} />
 };
 
-class Tooltip extends PureComponent {
+type Props<TValue extends ValueType, TName> = DefaultProps<TValue, TName> & {
+  allowEscapeViewBox?: {
+    x?: boolean;
+    y?: boolean;
+  };
+  content?: ContentType<TValue, TName>
+  viewBox?: {
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+  };
+  active?: boolean;
+  offset?: number;
+  wrapperStyle?: CSSProperties;
+  cursor?: boolean | ReactElement | {
+    strokeDasharray: ReactText;
+    stroke?: string;
+  };
+  coordinate?: {
+    x?: number;
+    y?: number;
+  }
+  position?: {
+    x?: number;
+    y?: number;
+  }
+  payloadUniqBy: UniqueOption<TValue, TName>;
+  isAnimationActive?: boolean;
+  animationDuration?: number;
+  animationEasing?: AnimationTiming;
+  filterNull?: boolean;
+  useTranslate3d?: boolean;
+}
+
+class Tooltip<TValue extends ValueType, TName> extends PureComponent<Props<TValue, TName>> {
   static displayName = 'Tooltip';
-
-  static propTypes = propTypes;
-
-  static defaultProps = defaultProps;
+  static defaultProps = {
+    active: false,
+    allowEscapeViewBox: { x: false, y: false },
+    offset: 10,
+    viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
+    coordinate: { x: 0, y: 0 },
+    cursorStyle: {},
+    separator: ' : ',
+    wrapperStyle: {},
+    contentStyle: {},
+    itemStyle: {},
+    labelStyle: {},
+    cursor: true,
+    isAnimationActive: !isSsr(),
+    animationEasing: 'ease',
+    animationDuration: 400,
+    filterNull: true,
+    useTranslate3d: false,
+  };
 
   state = {
     boxWidth: -1,
     boxHeight: -1,
   };
+
+  private wrapperNode: HTMLDivElement;
 
   componentDidMount() {
     this.updateBBox();
@@ -153,7 +136,11 @@ class Tooltip extends PureComponent {
     }
   }
 
-  getTranslate = ({ key, tooltipDimension, viewBoxDimension }) => {
+  getTranslate = ({ key, tooltipDimension, viewBoxDimension }: {
+    key: 'x' | 'y';
+    tooltipDimension: number;
+    viewBoxDimension: number;
+  }) => {
     const { allowEscapeViewBox, coordinate, offset, position, viewBox } = this.props;
 
     if (position && isNumber(position[key])) {
@@ -176,12 +163,12 @@ class Tooltip extends PureComponent {
 
   render() {
     const { payload, isAnimationActive, animationDuration, animationEasing,
-      filterNull, paylodUniqBy } = this.props;
-    const finalPayload = getUniqPaylod(paylodUniqBy, filterNull && payload && payload.length ?
+      filterNull, payloadUniqBy } = this.props;
+    const finalPayload = getUniqPayload(payloadUniqBy, filterNull && payload && payload.length ?
       payload.filter(entry => !_.isNil(entry.value)) : payload);
     const hasPayload = finalPayload && finalPayload.length;
     const { content, viewBox, coordinate, position, active, wrapperStyle } = this.props;
-    let outerStyle = {
+    let outerStyle: CSSProperties = {
       pointerEvents: 'none',
       visibility: active && hasPayload ? 'visible' : 'hidden',
       position: 'absolute',
