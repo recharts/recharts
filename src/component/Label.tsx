@@ -28,7 +28,7 @@ interface PolarViewBox {
 }
 
 type ViewBox = CartesianViewBox | PolarViewBox;
-type ContentType = ReactElement | ((props: Props) => ReactNode)
+export type ContentType = ReactElement | ((props: Props) => ReactNode)
 
 interface LabelProps {
   viewBox?: ViewBox;
