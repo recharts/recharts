@@ -1,3 +1,10 @@
+## 1.8.5 (Oct 22, 2019)
+
+### fix
+
+- revert [PR#1916](https://github.com/recharts/recharts/pull/1916)
+- fix Text update, fix #1914
+
 ## 1.8.4 (Oct 22, 2019)
 
 ### fix
