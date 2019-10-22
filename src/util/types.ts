@@ -8,7 +8,6 @@ import {
   DragEvent,
   FocusEvent,
   FormEvent,
-  ChangeEvent,
   KeyboardEvent,
   MouseEvent,
   TouchEvent,
@@ -50,7 +49,6 @@ type CompositionEventHandler<P, T = Element> = EventHandler<
 type DragEventHandler<P, T = Element> = EventHandler<P, DragEvent<T>>;
 type FocusEventHandler<P, T = Element> = EventHandler<P, FocusEvent<T>>;
 type FormEventHandler<P, T = Element> = EventHandler<P, FormEvent<T>>;
-type ChangeEventHandler<P, T = Element> = EventHandler<P, ChangeEvent<T>>;
 type KeyboardEventHandler<P, T = Element> = EventHandler<P, KeyboardEvent<T>>;
 type MouseEventHandler<P, T = Element> = EventHandler<P, MouseEvent<T>>;
 type TouchEventHandler<P, T = Element> = EventHandler<P, TouchEvent<T>>;
