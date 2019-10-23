@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render sectors of a pie
  */
-import React, { PureComponent, FunctionComponent, Component, ReactNode, ReactElement } from 'react';
+import React, { PureComponent, ReactElement } from 'react';
 // @ts-ignore
 import Animate from 'react-smooth';
 import classNames from 'classnames';

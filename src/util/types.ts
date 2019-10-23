@@ -39,23 +39,8 @@ export interface Coordinate {
   x: number;
   y: number;
 };
-export enum ScaleType {
-  AUTO = 'auto',
-  LINEAR = 'linear', 
-  POW = 'pow', 
-  SQRT = 'sqrt', 
-  LOG = 'log',
-  IDENTITY = 'identity', 
-  TIME = 'time', 
-  BAND = 'band', 
-  POINT = 'point',
-  ORDINAL = 'ordinal', 
-  QUANTILE = 'quantile', 
-  QUANTIZE = 'quantize', 
-  UTC = 'utc', 
-  SEQUENTIAL = 'sequential', 
-  THRESHOLD = 'threshold',
-};
+export type ScaleType = 'auto' | 'linear' | 'pow' | 'sqrt' | 'log' | 'identity' | 'time' | 'band' | 
+  'point' | 'ordinal' | 'quantile' | 'quantize' | 'utc' | 'sequential' | 'threshold';
 
 //
 // Event Handler Types -- Copied from @types/react/index.d.ts and adapted for Props.
