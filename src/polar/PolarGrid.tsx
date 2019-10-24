@@ -2,25 +2,24 @@
  * @fileOverview Polar Grid
  */
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import { polarToCartesian } from '../util/PolarUtils';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+import { filterProps, PresentationAttributes } from '../util/types';
 
-class PolarGrid extends PureComponent {
+interface PolarGridProps {
+  cx?: number;
+  cy?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+
+  polarAngles?: number[];
+  polarRadius?: number[];
+  gridType?: 'polygon' | 'circle';
+};
+type Props = PresentationAttributes<SVGPathElement> & PolarGridProps;
+
+class PolarGrid extends PureComponent<Props> {
 
   static displayName = 'PolarGrid';
-
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    cx: PropTypes.number,
-    cy: PropTypes.number,
-    innerRadius: PropTypes.number,
-    outerRadius: PropTypes.number,
-
-    polarAngles: PropTypes.arrayOf(PropTypes.number),
-    polarRadius: PropTypes.arrayOf(PropTypes.number),
-    gridType: PropTypes.oneOf(['polygon', 'circle']),
-  };
 
   static defaultProps = {
     cx: 0,
@@ -30,7 +29,7 @@ class PolarGrid extends PureComponent {
     gridType: 'polygon',
   };
 
-  getPolygonPath(radius) {
+  getPolygonPath(radius: number) {
     const { cx, cy, polarAngles } = this.props;
 
     let path = '';
@@ -59,7 +58,7 @@ class PolarGrid extends PureComponent {
     if (!polarAngles || !polarAngles.length) { return null; }
     const props = {
       stroke: '#ccc',
-      ...getPresentationAttributes(this.props),
+      ...filterProps(this.props),
     };
 
     return (
@@ -92,11 +91,11 @@ class PolarGrid extends PureComponent {
    * @param {Object} extraProps Extra props
    * @return {ReactElement} circle
    */
-  renderConcentricCircle(radius, index, extraProps) {
+  renderConcentricCircle(radius: number, index: number, extraProps?: PresentationAttributes<SVGCircleElement>) {
     const { cx, cy } = this.props;
     const props = {
       stroke: '#ccc',
-      ...getPresentationAttributes(this.props),
+      ...filterProps(this.props),
       fill: 'none',
       ...extraProps,
     };
@@ -120,10 +119,10 @@ class PolarGrid extends PureComponent {
    * @param {Object} extraProps Extra props
    * @return {ReactElement} polygon
    */
-  renderConcentricPolygon(radius, index, extraProps) {
+  renderConcentricPolygon(radius: number, index: number, extraProps?: PresentationAttributes<SVGPathElement>) {
     const props = {
       stroke: '#ccc',
-      ...getPresentationAttributes(this.props),
+      ...filterProps(this.props),
       fill: 'none',
       ...extraProps,
     };

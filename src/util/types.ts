@@ -16,8 +16,12 @@ import {
   WheelEvent,
   AnimationEvent,
   TransitionEvent,
-  ReactNode
+  ReactNode,
+  Component,
+  isValidElement,
+  FunctionComponent
 } from 'react';
+import _ from 'lodash';
 
 export type LayoutType = 'horizontal' | 'vertical';
 export type PresentationAttributes<T> = AriaAttributes &
@@ -27,9 +31,16 @@ export type PresentationAttributesWithProps<P, T> = AriaAttributes &
   DOMAttributesWithProps<P, T> &
   SVGProps<T>;
 
-export type SymbolType = 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye'
+export type SymbolType = 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye';
 export type LegendType = 'plainline' | 'line' | 'square' | 'rect' | 'circle' | 'cross' |
-  'diamond' | 'star' | 'triangle' | 'wye' | 'none'
+  'diamond' | 'star' | 'triangle' | 'wye' | 'none';
+export type TooltipType = 'none';
+export interface Coordinate {
+  x: number;
+  y: number;
+};
+export type ScaleType = 'auto' | 'linear' | 'pow' | 'sqrt' | 'log' | 'identity' | 'time' | 'band' | 
+  'point' | 'ordinal' | 'quantile' | 'quantize' | 'utc' | 'sequential' | 'threshold';
 
 //
 // Event Handler Types -- Copied from @types/react/index.d.ts and adapted for Props.
@@ -308,12 +319,22 @@ const EventKeys = ['children', 'dangerouslySetInnerHTML', 'onCopy', 'onCopyCaptu
 'onLostPointerCapture', 'onLostPointerCaptureCapture', 'onScroll', 'onScrollCapture', 'onWheel', 'onWheelCapture', 'onAnimationStart', 'onAnimationStartCapture',
 'onAnimationEnd', 'onAnimationEndCapture', 'onAnimationIteration', 'onAnimationIterationCapture', 'onTransitionEnd', 'onTransitionEndCapture', ];
 
-export const filterProps = (props: Record<string, any>) => {
+export const filterProps = (props: Record<string, any> | Component | FunctionComponent | boolean) => {
+  if (!props || typeof props === 'function' || typeof props === 'boolean') { return null; }
+
+  let inputProps = props as Record<string, any>;
+
+  if (isValidElement(props)) {
+    inputProps = props.props as Record<string, any>;
+  }
+
+  if (!_.isObject(props)) { return null; }
+
   const out: Record<string, any> = {};
 
-  for (const i in props) {
+  for (const i in inputProps) {
     if (SVGPropKeys.includes(i) || EventKeys.includes(i)) {
-      out[i] = props[i];
+      out[i] = inputProps[i];
     }
   }
 
@@ -334,3 +355,25 @@ export const adaptEventHandlers = (props: Record<string, any>) => {
 
 // Animation Types => TODO: Should be moved when react-smooth is typescriptified.
 export type AnimationTiming = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
+
+/** the offset of a chart, which define the blank space all around */
+export interface ChartOffset {
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+  width?: number;
+  height?: number;
+}
+
+export interface GeometrySector {
+  cx?: number;
+  cy?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  startAngle?: number;
+  endAngle?: number;
+  cornerRadius?: number;
+  forceCornerRadius?: boolean;
+  cornerIsExternal?: boolean;
+}

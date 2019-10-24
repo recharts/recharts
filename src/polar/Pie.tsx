@@ -1,99 +1,110 @@
 /**
  * @fileOverview Render sectors of a pie
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent, ReactElement } from 'react';
+// @ts-ignore
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
 import Layer from '../container/Layer';
-import Sector from '../shape/Sector';
+import Sector, { Props as SectorProps } from '../shape/Sector';
 import Curve from '../shape/Curve';
 import Text from '../component/Text';
 import Label from '../component/Label';
 import LabelList from '../component/LabelList';
-import Cell from '../component/Cell';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES,
-  getPresentationAttributes, findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
+import Cell, { Props as CellProps } from '../component/Cell';
+// @ts-ignore
+import { findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
+// @ts-ignore
 import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
+// @ts-ignore
 import { getValueByDataKey } from '../util/ChartUtils';
 import { warn } from '../util/LogUtils';
+import { LegendType, TooltipType, AnimationTiming, PresentationAttributes, filterProps, Coordinate, ChartOffset } from '../util/types';
 
-class Pie extends PureComponent {
+interface PieDef {
+  /** The abscissa of pole in polar coordinate  */
+  cx?: number | string;
+  /** The ordinate of pole in polar coordinate  */
+  cy?: number | string;
+  /** The start angle of first sector */
+  startAngle?: number;
+  /** The end angle of last sector */
+  endAngle?: number;
+  paddingAngle?: number;
+  /** The inner radius of sectors */
+  innerRadius?: number | string;
+  /** The outer radius of sectors */
+  outerRadius?: number | string;
+  cornerRadius?: number | string;
+}
+
+type PieActiveShape = ReactElement<SVGElement> | ((props: any) => SVGElement) | SectorProps;
+type PieLabelLine = ReactElement<SVGElement> | ((props: any) => SVGElement) | PresentationAttributes<SVGPathElement> | boolean;
+type Pielabel = ReactElement<SVGElement> | ((props: any) => SVGElement) | { offsetRadius: number; } | boolean;
+type PieSectorDataItem = SectorProps & {
+  percent?: number; 
+  name?: string | number;
+  midAngle?: number;
+  middleRadius?: number; 
+  tooltipPosition?: Coordinate;
+  value?: number;
+  paddingAngle?: number;
+};
+
+interface PieProps extends PieDef {
+  className?: string;
+  animationId?: number;
+  dataKey: string | number | Function;
+  nameKey?: string | number | Function;
+  valueKey?: string | number | Function;
+  /** Match each sector's stroke color to it's fill color */
+  blendStroke?: boolean;
+  /** The minimum angle for no-zero element */
+  minAngle?: number;
+  legendType?: LegendType;
+  tooltipType?: TooltipType;
+  /** the max radius of pie */
+  maxRadius?: number;
+  hide?: boolean;
+  /** the input data */
+  data?: any[];
+  sectors?: PieSectorDataItem[];
+  activeShape?: PieActiveShape;
+  labelLine?: PieLabelLine;
+  label?: Pielabel;
+
+  activeIndex?: number | number[];
+  animationEasing?: AnimationTiming;
+  isAnimationActive?: boolean;
+  animationBegin?: number;
+  animationDuration?: number;
+  onAnimationEnd?: () => void;
+  onAnimationStart?: () => void;
+  id?: string;
+}
+
+interface State {
+  isAnimationFinished?: boolean;
+  prevSectors?: PieSectorDataItem[];
+}
+
+type Props = PresentationAttributes<SVGElement> & PieProps;
+
+class Pie extends PureComponent<Props, State> {
 
   static displayName = 'Pie';
-
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    ...EVENT_ATTRIBUTES,
-    className: PropTypes.string,
-    animationId: PropTypes.number,
-    cx: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    cy: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    startAngle: PropTypes.number,
-    endAngle: PropTypes.number,
-    paddingAngle: PropTypes.number,
-    innerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    outerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    cornerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
-    nameKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
-    valueKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
-    data: PropTypes.arrayOf(PropTypes.object),
-    blendStroke: PropTypes.bool,
-    minAngle: PropTypes.number,
-    legendType: PropTypes.oneOf(LEGEND_TYPES),
-    tooltipType: PropTypes.oneOf(TOOLTIP_TYPES),
-    maxRadius: PropTypes.number,
-
-    sectors: PropTypes.arrayOf(PropTypes.object),
-    hide: PropTypes.bool,
-    labelLine: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.func, PropTypes.element, PropTypes.bool,
-    ]),
-    label: PropTypes.oneOfType([
-      PropTypes.shape({
-        offsetRadius: PropTypes.number,
-      }),
-      PropTypes.func, PropTypes.element, PropTypes.bool,
-    ]),
-    activeShape: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.func, PropTypes.element,
-    ]),
-    activeIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
-
-    onAnimationStart: PropTypes.func,
-    onAnimationEnd: PropTypes.func,
-    isAnimationActive: PropTypes.bool,
-    animationBegin: PropTypes.number,
-    animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf([
-      'ease',
-      'ease-in',
-      'ease-out',
-      'ease-in-out',
-      'spring',
-      'linear',
-    ]),
-    id: PropTypes.string,
-  };
 
   static defaultProps = {
     stroke: '#fff',
     fill: '#808080',
     legendType: 'rect',
-    // The abscissa of pole
     cx: '50%',
-    // The ordinate of pole
     cy: '50%',
-    // The start angle of first sector
     startAngle: 0,
-    // The direction of drawing sectors
     endAngle: 360,
-    // The inner radius of sectors
     innerRadius: 0,
-    // The outer radius of sectors
     outerRadius: '80%',
     paddingAngle: 0,
     labelLine: true,
@@ -104,20 +115,19 @@ class Pie extends PureComponent {
     animationDuration: 1500,
     animationEasing: 'ease',
     nameKey: 'name',
-    // Match each sector's stroke color to it's fill color
     blendStroke: false
   };
 
-  static parseDeltaAngle = ({ startAngle, endAngle }) => {
+  static parseDeltaAngle = (startAngle: number, endAngle: number) => {
     const sign = mathSign(endAngle - startAngle);
     const deltaAngle = Math.min(Math.abs(endAngle - startAngle), 360);
 
     return sign * deltaAngle;
   };
 
-  static getRealPieData = (item) => {
+  static getRealPieData = (item: Pie) => {
     const { data, children } = item.props;
-    const presentationProps = getPresentationAttributes(item.props);
+    const presentationProps = filterProps(item.props);
     const cells = findAllByType(children, Cell);
 
     if (data && data.length) {
@@ -130,13 +140,13 @@ class Pie extends PureComponent {
     }
 
     if (cells && cells.length) {
-      return cells.map(cell => ({ ...presentationProps, ...cell.props }));
+      return cells.map((cell: ReactElement<CellProps>) => ({ ...presentationProps, ...cell.props }));
     }
 
     return [];
   };
 
-  static parseCoordinateOfPie = (item, offset) => {
+  static parseCoordinateOfPie = (item: Pie, offset: ChartOffset) => {
     const { top, left, width, height } = offset;
     const maxPieRadius = getMaxRadius(width, height);
     const cx = left + getPercentValue(item.props.cx, width, width / 2);
@@ -148,16 +158,21 @@ class Pie extends PureComponent {
     return { cx, cy, innerRadius, outerRadius, maxRadius };
   }
 
-  static getComposedData = ({ item, offset, onItemMouseLeave, onItemMouseEnter }) => {
+  static getComposedData = ({ item, offset, onItemMouseLeave, onItemMouseEnter }: {
+    item: Pie,
+    offset: ChartOffset,
+    onItemMouseLeave: (event: React.MouseEvent<SVGElement, MouseEvent>) => void,
+    onItemMouseEnter: (event: React.MouseEvent<SVGElement, MouseEvent>) => void,
+  }): Omit<Props, 'dataKey'> => {
     const pieData = Pie.getRealPieData(item);
-    if (!pieData || !pieData.length) { return []; }
+    if (!pieData || !pieData.length) { return null; }
 
     const { cornerRadius, startAngle, endAngle, paddingAngle, dataKey, nameKey,
       valueKey, tooltipType } = item.props;
     const minAngle = Math.abs(item.props.minAngle);
     const coordinate = Pie.parseCoordinateOfPie(item, offset);
     const len = pieData.length;
-    const deltaAngle = Pie.parseDeltaAngle({ startAngle, endAngle });
+    const deltaAngle = Pie.parseDeltaAngle(startAngle, endAngle);
     const absDeltaAngle = Math.abs(deltaAngle);
     const totalPadingAngle = (absDeltaAngle >= 360 ? len : (len - 1)) * paddingAngle;
     const realTotalAngle = absDeltaAngle - len * minAngle - totalPadingAngle;
@@ -175,15 +190,15 @@ class Pie extends PureComponent {
       realDataKey = valueKey;
     }
 
-    const sum = pieData.reduce((result, entry) => {
+    const sum = pieData.reduce((result: number, entry: any) => {
       const val = getValueByDataKey(entry, realDataKey, 0);
       return result + (isNumber(val) ? val : 0);
     }, 0);
     let sectors;
 
     if (sum > 0) {
-      let prev;
-      sectors = pieData.map((entry, i) => {
+      let prev: PieSectorDataItem;
+      sectors = pieData.map((entry: any, i: number) => {
         const val = getValueByDataKey(entry, realDataKey, 0);
         const name = getValueByDataKey(entry, nameKey, i);
         const percent = (isNumber(val) ? val : 0) / sum;
@@ -234,10 +249,10 @@ class Pie extends PureComponent {
     };
   }
 
-  state = { isAnimationFinished: false };
+  state: State = { isAnimationFinished: false };
 
   // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps: Props) {
     const { animationId, sectors } = this.props;
 
     if (nextProps.isAnimationActive !== this.props.isAnimationActive) {
@@ -247,7 +262,7 @@ class Pie extends PureComponent {
     }
   }
 
-  static getTextAnchor(x, cx) {
+  static getTextAnchor(x: number, cx: number) {
     if (x > cx) {
       return 'start';
     } if (x < cx) {
@@ -259,11 +274,11 @@ class Pie extends PureComponent {
 
   id = uniqueId('recharts-pie-');
 
-  cachePrevData = (sectors) => {
+  cachePrevData = (sectors: PieSectorDataItem[]) => {
     this.setState({ prevSectors: sectors });
   };
 
-  isActiveIndex(i) {
+  isActiveIndex(i: number) {
     const { activeIndex } = this.props;
 
     if (Array.isArray(activeIndex)) {
@@ -297,7 +312,7 @@ class Pie extends PureComponent {
     }
   }
 
-  static renderLabelLineItem(option, props) {
+  static renderLabelLineItem(option: PieLabelLine, props: any) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     } if (_.isFunction(option)) {
@@ -307,7 +322,7 @@ class Pie extends PureComponent {
     return <Curve {...props} type="linear" className="recharts-pie-label-line" />;
   }
 
-  static renderLabelItem(option, props, value) {
+  static renderLabelItem(option: Pielabel, props: any, value: any) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     }
@@ -330,17 +345,17 @@ class Pie extends PureComponent {
     );
   }
 
-  renderLabels(sectors) {
+  renderLabels(sectors: PieSectorDataItem[]) {
     const { isAnimationActive } = this.props;
 
     if (isAnimationActive && !this.state.isAnimationFinished) {
       return null;
     }
     const { label, labelLine, dataKey, valueKey } = this.props;
-    const pieProps = getPresentationAttributes(this.props);
-    const customLabelProps = getPresentationAttributes(label);
-    const customLabelLineProps = getPresentationAttributes(labelLine);
-    const offsetRadius = (label && label.offsetRadius) || 20;
+    const pieProps = filterProps(this.props);
+    const customLabelProps = filterProps(label);
+    const customLabelLineProps = filterProps(labelLine);
+    const offsetRadius = (label && (label as any).offsetRadius) || 20;
 
     const labels = sectors.map((entry, i) => {
       const midAngle = (entry.startAngle + entry.endAngle) / 2;
@@ -353,7 +368,7 @@ class Pie extends PureComponent {
         stroke: 'none',
         ...customLabelProps,
         index: i,
-        textAnchor: this.constructor.getTextAnchor(endPoint.x, entry.cx),
+        textAnchor: Pie.getTextAnchor(endPoint.x, entry.cx),
         ...endPoint,
       };
       const lineProps = {
@@ -377,8 +392,8 @@ class Pie extends PureComponent {
       return (
         // eslint-disable-next-line react/no-array-index-key
         <Layer key={`label-${i}`}>
-          {labelLine && this.constructor.renderLabelLineItem(labelLine, lineProps)}
-          {this.constructor.renderLabelItem(
+          {labelLine && Pie.renderLabelLineItem(labelLine, lineProps)}
+          {Pie.renderLabelItem(
             label,
             labelProps,
             getValueByDataKey(entry, realDataKey)
@@ -390,7 +405,7 @@ class Pie extends PureComponent {
     return <Layer className="recharts-pie-labels">{labels}</Layer>;
   }
 
-  static renderSectorItem(option, props) {
+  static renderSectorItem(option: PieActiveShape, props: any) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     } if (_.isFunction(option)) {
@@ -402,7 +417,7 @@ class Pie extends PureComponent {
     return <Sector {...props} />;
   }
 
-  renderSectorsStatically(sectors) {
+  renderSectorsStatically(sectors: PieSectorDataItem[]) {
     const { activeShape, blendStroke } = this.props;
 
     return sectors.map((entry, i) => {
@@ -418,7 +433,7 @@ class Pie extends PureComponent {
           {...filterEventsOfChild(this.props, entry, i)}
           key={`sector-${i}`} // eslint-disable-line react/no-array-index-key
         >
-          {this.constructor.renderSectorItem(sectorOptions, sectorProps)}
+          {Pie.renderSectorItem(sectorOptions, sectorProps)}
         </Layer>
       );
     });
@@ -442,8 +457,8 @@ class Pie extends PureComponent {
         onAnimationEnd={this.handleAnimationEnd}
       >
         {
-          ({ t }) => {
-            const stepData = [];
+          ({ t }: { t: number}) => {
+            const stepData: PieSectorDataItem[] = [];
             const first = sectors && sectors[0];
             let curAngle = first.startAngle;
 
@@ -503,7 +518,8 @@ class Pie extends PureComponent {
 
   render() {
     const { hide, sectors, className, label, cx, cy, innerRadius,
-      outerRadius, isAnimationActive, prevSectors } = this.props;
+      outerRadius, isAnimationActive } = this.props;
+    const { prevSectors } = this.state;
 
     if (hide || !sectors || !sectors.length || !isNumber(cx) ||
       !isNumber(cy) || !isNumber(innerRadius) ||

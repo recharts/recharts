@@ -3,14 +3,9 @@
  */
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-import { PresentationAttributes, filterProps } from '../util/types';
+import { PresentationAttributes, filterProps, Coordinate } from '../util/types';
 
-interface Point {
-  x: number;
-  y: number;
-}
-
-const getPolygonPoints = (points: Array<Point>) => (
+const getPolygonPoints = (points: Array<Coordinate>) => (
   points.reduce((result, entry) => {
     if (entry.x === +entry.x && entry.y === +entry.y) {
       result.push([entry.x, entry.y]);
@@ -22,10 +17,10 @@ const getPolygonPoints = (points: Array<Point>) => (
 
 interface PolygonProps {
   className?: string;
-  points?: Array<Point>
+  points?: Array<Coordinate>
 }
 
-type Props = PresentationAttributes<SVGPolygonElement> & PolygonProps;
+type Props = Omit<PresentationAttributes<SVGPolygonElement>, 'points'> & PolygonProps;
 
 class Polygon extends PureComponent<Props> {
   render() {

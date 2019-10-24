@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-import { PresentationAttributes, filterProps } from '../util/types';
+import { PresentationAttributes, filterProps, GeometrySector } from '../util/types';
 // @ts-ignore
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';
 // @ts-ignore
@@ -16,17 +16,6 @@ const getDeltaAngle = (startAngle: number, endAngle: number) => {
   return sign * deltaAngle;
 };
 
-interface SectorDef {
-  cx?: number;
-  cy?: number;
-  innerRadius?: number;
-  outerRadius?: number;
-  startAngle?: number;
-  endAngle?: number;
-  cornerRadius?: number;
-  forceCornerRadius?: boolean;
-  cornerIsExternal?: boolean;
-}
 
 interface TangentCircleDef {
   cx?: number;
@@ -62,7 +51,7 @@ const getTangentCircle = ({
   return { center, circleTangency, lineTangency, theta };
 };
 
-const getSectorPath = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle }: SectorDef) => {
+const getSectorPath = ({ cx, cy, innerRadius, outerRadius, startAngle, endAngle }: GeometrySector) => {
   const angle = getDeltaAngle(startAngle, endAngle);
 
   // When the angle of sector equals to 360, star point and end point coincide
@@ -100,7 +89,7 @@ const getSectorWithCorner = ({
   cornerIsExternal,
   startAngle,
   endAngle,
-}: SectorDef) => {
+}: GeometrySector) => {
   const sign = mathSign(endAngle - startAngle);
   const { circleTangency: soct, lineTangency: solt, theta: sot } =
     getTangentCircle({
@@ -173,11 +162,11 @@ const getSectorWithCorner = ({
   return path;
 };
 
-interface SectorProps extends SectorDef {
+interface SectorProps extends GeometrySector {
   className?: string;
 }
 
-type Props = PresentationAttributes<SVGPathElement> & SectorProps;
+export type Props = PresentationAttributes<SVGPathElement> & SectorProps;
 
 class Sector extends PureComponent<Props> {
   static defaultProps = {

@@ -1,68 +1,75 @@
 /**
  * @fileOverview Radar
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent, ReactElement, MouseEvent } from 'react';
+// @ts-ignore
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
+// @ts-ignore
 import { interpolateNumber } from '../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES, filterEventAttributes,
-  getPresentationAttributes, isSsr } from '../util/ReactUtils';
+// @ts-ignore
+import { isSsr } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
+// @ts-ignore
 import { getValueByDataKey } from '../util/ChartUtils';
 import Polygon from '../shape/Polygon';
-import Dot from '../shape/Dot';
+import Dot, { Props as DotProps } from '../shape/Dot';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
+import { PresentationAttributes, LegendType, TooltipType, AnimationTiming, filterProps } from '../util/types';
+import { Props as PolarAngleAxisProps } from './PolarAngleAxis';
+import { Props as PolarRadiusAxisProps } from './PolarRadiusAxis';
 
-class Radar extends PureComponent {
+interface RadarPoint {
+  x: number;
+  y: number;
+  cx?: number;
+  cy?: number;
+  angle?: number;
+  radius?: number;
+  value?: number;
+  payload?: any;
+}
+
+type RadarDot = ReactElement<SVGElement> | ((props: any) => SVGElement) | DotProps | boolean;
+
+interface RadarProps {
+  className?: string;
+  dataKey: number | string | Function;
+  angleAxisId?: string | number;
+  radiusAxisId?: string | number;
+  points?: RadarPoint[];
+  shape?: ReactElement<SVGElement> | ((props: any) => SVGElement);
+  activeDot?: RadarDot;
+  dot?: RadarDot;
+  legendType?: LegendType;
+  tooltipType?: TooltipType;
+  hide?: boolean;
+
+  label?: any;
+  onAnimationStart?: () => void;
+  onAnimationEnd?: () => void;
+  animationBegin?: number;
+  animationDuration?: number;
+  isAnimationActive?: boolean;
+  animationId?: number;
+  animationEasing?: AnimationTiming;
+
+  onMouseEnter?: (props: any, e: MouseEvent<SVGPolygonElement>) => void;
+  onMouseLeave?: (props: any, e: MouseEvent<SVGPolygonElement>) => void;
+}
+
+type Props = Omit<PresentationAttributes<SVGElement>, 'onMouseEnter' | 'onMouseLeave'> & RadarProps;
+
+interface State {
+  isAnimationFinished?: boolean;
+  prevPoints?: RadarPoint[];
+}
+
+class Radar extends PureComponent<Props, State> {
 
   static displayName = 'Radar';
-
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    className: PropTypes.string,
-    dataKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.func]).isRequired,
-    angleAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    radiusAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-
-    points: PropTypes.arrayOf(PropTypes.shape({
-      x: PropTypes.number,
-      y: PropTypes.number,
-      cx: PropTypes.number,
-      cy: PropTypes.number,
-      angle: PropTypes.number,
-      radius: PropTypes.number,
-      value: PropTypes.number,
-      payload: PropTypes.object,
-    })),
-    shape: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
-    activeDot: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
-    ]),
-    // whether have dot in poly line
-    dot: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
-    ]),
-    label: PropTypes.oneOfType([
-      PropTypes.element, PropTypes.func, PropTypes.object, PropTypes.bool,
-    ]),
-    legendType: PropTypes.oneOf(LEGEND_TYPES),
-    tooltipType: PropTypes.oneOf(TOOLTIP_TYPES),
-    hide: PropTypes.bool,
-
-    onAnimationStart: PropTypes.func,
-    onAnimationEnd: PropTypes.func,
-    onMouseEnter: PropTypes.func,
-    onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func,
-    isAnimationActive: PropTypes.bool,
-    animationId: PropTypes.number,
-    animationBegin: PropTypes.number,
-    animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
-  };
 
   static defaultProps = {
     angleAxisId: 0,
@@ -77,7 +84,13 @@ class Radar extends PureComponent {
     animationEasing: 'ease',
   };
 
-  static getComposedData = ({ radiusAxis, angleAxis, displayedData, dataKey, bandSize }) => {
+  static getComposedData = ({ radiusAxis, angleAxis, displayedData, dataKey, bandSize }: {
+    radiusAxis: PolarRadiusAxisProps & { scale: (value: any) => number; };
+    angleAxis: PolarAngleAxisProps & { scale: (value: any) => number; };
+    displayedData: any[];
+    dataKey: RadarProps['dataKey'];
+    bandSize: number;
+  }) => {
     const { cx, cy } = angleAxis;
     const points = displayedData.map((entry, i) => {
       const name = getValueByDataKey(entry, angleAxis.dataKey, i);
@@ -94,10 +107,10 @@ class Radar extends PureComponent {
     return { points };
   };
 
-  state = { isAnimationFinished: false };
+  state: State = { isAnimationFinished: false };
 
   // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps: Props) {
     const { animationId, points } = this.props;
 
     if (nextProps.animationId !== animationId) {
@@ -105,7 +118,7 @@ class Radar extends PureComponent {
     }
   }
 
-  cachePrevData = (points) => {
+  cachePrevData = (points: RadarPoint[]) => {
     this.setState({ prevPoints: points });
   };
 
@@ -128,7 +141,7 @@ class Radar extends PureComponent {
     }
   };
 
-  handleMouseEnter = (e) => {
+  handleMouseEnter = (e: MouseEvent<SVGPolygonElement>) => {
     const { onMouseEnter } = this.props;
 
     if (onMouseEnter) {
@@ -136,7 +149,7 @@ class Radar extends PureComponent {
     }
   };
 
-  handleMouseLeave = (e) => {
+  handleMouseLeave = (e: MouseEvent<SVGPolygonElement>) => {
     const { onMouseLeave } = this.props;
 
     if (onMouseLeave) {
@@ -144,7 +157,7 @@ class Radar extends PureComponent {
     }
   };
 
-  static renderDotItem(option, props) {
+  static renderDotItem(option: RadarDot, props: any) {
     let dotItem;
 
     if (React.isValidElement(option)) {
@@ -158,10 +171,10 @@ class Radar extends PureComponent {
     return dotItem;
   }
 
-  renderDots(points) {
+  renderDots(points: RadarPoint[]) {
     const { dot, dataKey } = this.props;
-    const baseProps = getPresentationAttributes(this.props);
-    const customDotProps = getPresentationAttributes(dot);
+    const baseProps = filterProps(this.props);
+    const customDotProps = filterProps(dot);
 
     const dots = points.map((entry, i) => {
       const dotProps = {
@@ -176,27 +189,26 @@ class Radar extends PureComponent {
         payload: entry,
       };
 
-      return this.constructor.renderDotItem(dot, dotProps);
+      return Radar.renderDotItem(dot, dotProps);
     });
 
     return <Layer className="recharts-radar-dots">{dots}</Layer>;
   }
 
-  renderPolygonStatically(points) {
+  renderPolygonStatically(points: RadarPoint[]) {
     const { shape, dot } = this.props;
 
     let radar;
     if (React.isValidElement(shape)) {
-      radar = React.cloneElement(shape, { ...this.props, points });
+      radar = React.cloneElement(shape, { ...this.props, points } as any);
     } else if (_.isFunction(shape)) {
       radar = shape({ ...this.props, points });
     } else {
       radar = (
         <Polygon
-          {...filterEventAttributes(this.props)}
+          {...filterProps(this.props)}
           onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}
-          {...getPresentationAttributes(this.props)}
           points={points}
         />
       );
@@ -228,7 +240,7 @@ class Radar extends PureComponent {
         onAnimationStart={this.handleAnimationStart}
       >
         {
-          ({ t }) => {
+          ({ t }: { t : number}) => {
             const prevPointsDiffFactor = prevPoints && prevPoints.length / points.length;
             const stepData = points.map((entry, index) => {
               const prev = prevPoints && prevPoints[Math.floor(index * prevPointsDiffFactor)];

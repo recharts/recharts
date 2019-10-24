@@ -12,7 +12,7 @@ interface DotProps {
   r?: number;
 }
 
-type Props = PresentationAttributesWithProps<DotProps, SVGCircleElement> & DotProps;
+export type Props = PresentationAttributesWithProps<DotProps, SVGCircleElement> & DotProps;
 
 class Dot extends PureComponent<Props> {
   render() {
