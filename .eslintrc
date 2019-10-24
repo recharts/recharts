@@ -60,7 +60,13 @@
     "react/no-unused-state": "error",
     "react/prefer-stateless-function": "error",
     "import/no-cycle": "warn"
-
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
   },
   "plugins": [
     "react"

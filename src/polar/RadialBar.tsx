@@ -1,72 +1,75 @@
 /**
  * @fileOverview Render a group of radial bar
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent, ReactElement, ReactNode } from 'react';
 import classNames from 'classnames';
+// @ts-ignore
 import Animate from 'react-smooth';
 import _ from 'lodash';
-import Sector from '../shape/Sector';
+import Sector, { Props as SectorProps } from '../shape/Sector';
 import Layer from '../container/Layer';
-import { PRESENTATION_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES, findAllByType,
-  getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
+// @ts-ignore
+import { findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import LabelList from '../component/LabelList';
 import Cell from '../component/Cell';
+// @ts-ignore
 import { mathSign, interpolateNumber } from '../util/DataUtils';
-import { getCateCoordinateOfBar, findPositionOfBar, getValueByDataKey,
-  truncateByDomain, getBaseValueOfBar } from '../util/ChartUtils';
+// @ts-ignore
+import { getCateCoordinateOfBar, findPositionOfBar, getValueByDataKey, truncateByDomain, getBaseValueOfBar } from '../util/ChartUtils';
+import { LegendType, TooltipType, AnimationTiming, filterProps, PresentationAttributes } from '../util/types';
+import { Props as PolarAngleAxisProps } from './PolarAngleAxis';
+import { Props as PolarRadiusAxisProps } from './PolarRadiusAxis';
 
-class RadialBar extends PureComponent {
+
+type RadialBarDataItem = SectorProps & {
+  value?: any;
+  payload?: any;
+  background?: SectorProps;
+}
+
+type RadialBarShape = ReactElement | ((props: Props) => ReactNode);
+type RadialBarBackground =  ReactElement | ((props: Props) => ReactNode) | SectorProps | boolean;
+
+interface RadialBarProps {
+  animationId?: string | number;
+  className?: string;
+  angleAxisId?: string | number;
+  radiusAxisId?: string | number;
+  startAngle?: number;
+  endAngle?: number;
+  shape?: RadialBarShape;
+  activeShape?: RadialBarShape;
+  activeIndex?: number;
+  dataKey: string | number | Function;
+  cornerRadius?: string | number;
+  forceCornerRadius?: boolean;
+  cornerIsExternal?: boolean;  
+  minPointSize?: number;
+  maxBarSize?: number;
+  data?: RadialBarDataItem[];
+  legendType?: LegendType;
+  tooltipType?: TooltipType;
+  hide?: boolean;
+  label?: any;
+  background?: RadialBarBackground;
+  onAnimationStart?: () => void;
+  onAnimationEnd?: () => void;
+  isAnimationActive?: boolean;
+  animationBegin?: number;
+  animationDuration?: number;
+  animationEasing?: AnimationTiming;
+}
+
+type Props = PresentationAttributes<SVGElement> & RadialBarProps;
+
+interface State {
+  isAnimationFinished?: boolean;
+  prevData?: RadialBarDataItem[];
+}
+
+class RadialBar extends PureComponent<Props, State> {
 
   static displayName = 'RadialBar';
-
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    className: PropTypes.string,
-    angleAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    radiusAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
-    activeShape: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.func, PropTypes.element,
-    ]),
-    activeIndex: PropTypes.number,
-    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
-
-    cornerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    forceCornerRadius: PropTypes.bool,
-    cornerIsExternal: PropTypes.bool,
-    minPointSize: PropTypes.number,
-    maxBarSize: PropTypes.number,
-    data: PropTypes.arrayOf(PropTypes.shape({
-      cx: PropTypes.number,
-      cy: PropTypes.number,
-      innerRadius: PropTypes.number,
-      outerRadius: PropTypes.number,
-      value: PropTypes.value,
-    })),
-    legendType: PropTypes.oneOf(LEGEND_TYPES),
-    tooltipType: PropTypes.oneOf(TOOLTIP_TYPES),
-    label: PropTypes.oneOfType([
-      PropTypes.bool, PropTypes.func, PropTypes.element, PropTypes.object,
-    ]),
-    background: PropTypes.oneOfType([
-      PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element,
-    ]),
-    hide: PropTypes.bool,
-
-    onAnimationStart: PropTypes.func,
-    onAnimationEnd: PropTypes.func,
-    onMouseEnter: PropTypes.func,
-    onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func,
-
-    isAnimationActive: PropTypes.bool,
-    animationBegin: PropTypes.number,
-    animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf([
-      'ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear', 'spring',
-    ]),
-  };
 
   static defaultProps = {
     angleAxisId: 0,
@@ -74,7 +77,7 @@ class RadialBar extends PureComponent {
     minPointSize: 0,
     hide: false,
     legendType: 'rect',
-    data: [],
+    data: [] as RadialBarDataItem[],
     isAnimationActive: !isSsr(),
     animationBegin: 0,
     animationDuration: 1500,
@@ -84,9 +87,22 @@ class RadialBar extends PureComponent {
   };
 
   static getComposedData = ({ item, props, radiusAxis, radiusAxisTicks, angleAxis, angleAxisTicks,
-    displayedData, dataKey, stackedData, barPosition, bandSize, dataStartIndex }) => {
+    displayedData, dataKey, stackedData, barPosition, bandSize, dataStartIndex }: {
+      item: RadialBar;
+      props: any;
+      radiusAxis: PolarRadiusAxisProps & { scale: any };
+      radiusAxisTicks: PolarRadiusAxisProps['ticks'];
+      angleAxis: PolarAngleAxisProps & { scale: any };
+      angleAxisTicks: PolarAngleAxisProps['ticks'];
+      displayedData: any[];
+      dataKey: Props['dataKey'];
+      stackedData?: any[];
+      barPosition?: any[];
+      bandSize?: number;
+      dataStartIndex: number;
+    }) => {
     const pos = findPositionOfBar(barPosition, item);
-    if (!pos) { return []; }
+    if (!pos) { return null; }
 
     const { cx, cy } = angleAxis;
     const { layout } = props;
@@ -95,7 +111,7 @@ class RadialBar extends PureComponent {
     const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
     const baseValue = getBaseValueOfBar({ props, numericAxis });
     const cells = findAllByType(children, Cell);
-    const sectors = displayedData.map((entry, index) => {
+    const sectors = displayedData.map((entry: any, index: number) => {
       let value, innerRadius, outerRadius, startAngle, endAngle, backgroundSector;
 
       if (stackedData) {
@@ -165,12 +181,12 @@ class RadialBar extends PureComponent {
     return { data: sectors, layout };
   };
 
-  state = {
+  state: State = {
     isAnimationFinished: false,
   };
 
   // eslint-disable-next-line camelcase
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps: Props) {
     const { animationId, data } = this.props;
 
     if (nextProps.animationId !== animationId) {
@@ -186,7 +202,7 @@ class RadialBar extends PureComponent {
     return sign * deltaAngle;
   }
 
-  cachePrevData = (data) => {
+  cachePrevData = (data: RadialBarDataItem[]) => {
     this.setState({ prevData: data });
   };
 
@@ -209,7 +225,7 @@ class RadialBar extends PureComponent {
     }
   };
 
-  static renderSectorShape(shape, props) {
+  static renderSectorShape(shape: RadialBarBackground, props: any) {
     let sectorShape;
 
     if (React.isValidElement(shape)) {
@@ -223,9 +239,9 @@ class RadialBar extends PureComponent {
     return sectorShape;
   }
 
-  renderSectorsStatically(sectors) {
+  renderSectorsStatically(sectors: SectorProps[]) {
     const { shape, activeShape, activeIndex, cornerRadius, ...others } = this.props;
-    const baseProps = getPresentationAttributes(others);
+    const baseProps = filterProps(others);
 
     return sectors.map((entry, i) => {
       const props = {
@@ -239,7 +255,7 @@ class RadialBar extends PureComponent {
         cornerIsExternal: others.cornerIsExternal,
       };
 
-      return this.constructor.renderSectorShape(i === activeIndex ? activeShape : shape, props);
+      return RadialBar.renderSectorShape(i === activeIndex ? activeShape : shape, props);
     });
   }
 
@@ -261,7 +277,7 @@ class RadialBar extends PureComponent {
         onAnimationEnd={this.handleAnimationEnd}
       >
         {
-          ({ t }) => {
+          ({ t }: { t: number }) => {
             const stepData = data.map((entry, index) => {
               const prev = prevData && prevData[index];
 
@@ -308,9 +324,9 @@ class RadialBar extends PureComponent {
     return this.renderSectorsStatically(data);
   }
 
-  renderBackground(sectors) {
+  renderBackground(sectors?: RadialBarDataItem[]) {
     const { cornerRadius } = this.props;
-    const backgroundProps = getPresentationAttributes(this.props.background);
+    const backgroundProps = filterProps(this.props.background);
 
     return sectors.map((entry, i) => {
       // eslint-disable-next-line no-unused-vars
@@ -330,7 +346,7 @@ class RadialBar extends PureComponent {
         className: 'recharts-radial-bar-background-sector',
       };
 
-      return this.constructor.renderSectorShape(background, props);
+      return RadialBar.renderSectorShape(background, props);
     });
   }
 
@@ -353,7 +369,7 @@ class RadialBar extends PureComponent {
         }
 
         <Layer className="recharts-radial-bar-sectors">
-          {this.renderSectors(data)}
+          {this.renderSectors()}
         </Layer>
 
         {(!isAnimationActive || isAnimationFinished) &&

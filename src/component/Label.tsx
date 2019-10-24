@@ -1,53 +1,55 @@
-import React, { cloneElement, isValidElement } from 'react';
-import PropTypes from 'prop-types';
+import React, { cloneElement, isValidElement, ReactNode, ReactElement, SVGProps } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
 import Text from './Text';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, findAllByType, filterEventAttributes } from '../util/ReactUtils';
-import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId,
-  mathSign } from '../util/DataUtils';
+// @ts-ignore
+import { findAllByType } from '../util/ReactUtils';
+// @ts-ignore
+import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign } from '../util/DataUtils';
+// @ts-ignore
 import { polarToCartesian } from '../util/PolarUtils';
+import { PresentationAttributes, filterProps, adaptEventHandlers } from '../util/types';
 
-const cartesianViewBoxShape = PropTypes.shape({
-  x: PropTypes.number,
-  y: PropTypes.number,
-  width: PropTypes.number,
-  height: PropTypes.number,
-});
-const polarViewBoxShape = PropTypes.shape({
-  cx: PropTypes.number,
-  cy: PropTypes.number,
-  innerRadius: PropTypes.number,
-  outerRadius: PropTypes.number,
-  startAngle: PropTypes.number,
-  endAngle: PropTypes.number,
-});
+interface CartesianViewBox {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+}
 
-const propTypes = {
-  ...PRESENTATION_ATTRIBUTES,
-  viewBox: PropTypes.oneOfType([cartesianViewBoxShape, polarViewBoxShape]),
-  formatter: PropTypes.func,
-  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  offset: PropTypes.number,
-  position: PropTypes.oneOf([
-    'top', 'left', 'right', 'bottom', 'inside', 'outside',
-    'insideLeft', 'insideRight', 'insideTop', 'insideBottom',
-    'insideTopLeft', 'insideBottomLeft', 'insideTopRight', 'insideBottomRight',
-    'insideStart', 'insideEnd', 'end', 'center', 'centerTop', 'centerBottom'
-  ]),
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node,
-  ]),
-  className: PropTypes.string,
-  content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
-};
+interface PolarViewBox {
+  cx?: number;
+  cy?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  startAngle?: number;
+  endAngle?: number;
+  clockWise?: boolean;
+}
 
-const defaultProps = {
-  offset: 5,
-};
+type ViewBox = CartesianViewBox | PolarViewBox;
+export type ContentType = ReactElement | ((props: Props) => ReactNode)
 
-const getLabel = (props) => {
+interface LabelProps {
+  viewBox?: ViewBox;
+  formatter?: Function;
+  value?: number | string;
+  offset?: number;
+  position?: 'top' | 'left' | 'right' | 'bottom' | 'inside' | 'outside' |
+    'insideLeft' | 'insideRight' | 'insideTop' | 'insideBottom' |
+    'insideTopLeft' | 'insideBottomLeft' | 'insideTopRight' | 'insideBottomRight' |
+    'insideStart' | 'insideEnd' | 'end' | 'center' | 'centerTop' | 'centerBottom' | {
+      x?: number
+      y?: number
+    }
+  children?: ReactNode;
+  className?: string;
+  content?: ContentType;
+}
+
+type Props = Omit<PresentationAttributes<SVGTextElement>, 'viewBox'> & LabelProps;
+
+const getLabel = (props: Props) => {
   const { value, formatter } = props;
   const label = _.isNil(props.children) ? value : props.children;
 
@@ -58,17 +60,17 @@ const getLabel = (props) => {
   return label;
 };
 
-const getDeltaAngle = (startAngle, endAngle) => {
+const getDeltaAngle = (startAngle: number, endAngle: number) => {
   const sign = mathSign(endAngle - startAngle);
   const deltaAngle = Math.min(Math.abs(endAngle - startAngle), 360);
 
   return sign * deltaAngle;
 };
 
-const renderRadialLabel = (labelProps, label, attrs) => {
+const renderRadialLabel = (labelProps: Props, label: ReactNode, attrs: PresentationAttributes<SVGTextElement>) => {
   const { position, viewBox, offset, className } = labelProps;
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle,
-    clockWise } = viewBox;
+    clockWise } = (viewBox as PolarViewBox);
   const radius = (innerRadius + outerRadius) / 2;
   const deltaAngle = getDeltaAngle(startAngle, endAngle);
   const sign = deltaAngle >= 0 ? 1 : -1;
@@ -106,9 +108,9 @@ const renderRadialLabel = (labelProps, label, attrs) => {
   );
 };
 
-const getAttrsOfPolarLabel = (props) => {
+const getAttrsOfPolarLabel = (props: Props) => {
   const { viewBox, offset, position } = props;
-  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = viewBox;
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = (viewBox as PolarViewBox);
   const midAngle = (startAngle + endAngle) / 2;
 
   if (position === 'outside') {
@@ -160,9 +162,9 @@ const getAttrsOfPolarLabel = (props) => {
   };
 };
 
-const getAttrsOfCartesianLabel = (props) => {
+const getAttrsOfCartesianLabel = (props: Props) => {
   const { viewBox, offset, position } = props;
-  const { x, y, width, height } = viewBox;
+  const { x, y, width, height } = (viewBox as CartesianViewBox);
   const sign = height >= 0 ? 1 : -1;
 
   if (position === 'top') {
@@ -292,9 +294,9 @@ const getAttrsOfCartesianLabel = (props) => {
   };
 };
 
-const isPolar = viewBox => isNumber(viewBox.cx);
+const isPolar = (viewBox: CartesianViewBox | PolarViewBox) => isNumber((viewBox as PolarViewBox).cx);
 
-function Label(props) {
+function Label(props: Props) {
   const { viewBox, position, value, children, content, className = '' } = props;
 
   if (!viewBox || (_.isNil(value) && _.isNil(children) &&
@@ -302,7 +304,7 @@ function Label(props) {
 
   if (isValidElement(content)) { return cloneElement(content, props); }
 
-  let label;
+  let label: ReactNode;
   if (_.isFunction(content)) {
     label = content(props);
 
@@ -314,8 +316,8 @@ function Label(props) {
   }
 
   const isPolarLabel = isPolar(viewBox);
-  const attrs = getPresentationAttributes(props);
-  const events = filterEventAttributes(props);
+  const attrs = filterProps(props);
+  const events = adaptEventHandlers(props);
 
   if (isPolarLabel && (position === 'insideStart' ||
     position === 'insideEnd' || position === 'end')) {
@@ -330,7 +332,7 @@ function Label(props) {
     <Text
       className={classNames('recharts-label', className)}
       {...attrs}
-      {...positionAttrs}
+      {...positionAttrs as any}
       {...events}
     >
       {label}
@@ -339,10 +341,11 @@ function Label(props) {
 }
 
 Label.displayName = 'Label';
-Label.defaultProps = defaultProps;
-Label.propTypes = propTypes;
+Label.defaultProps = {
+  offset: 5,
+};
 
-const parseViewBox = (props) => {
+const parseViewBox = (props: any) => {
   const { cx, cy, angle, startAngle, endAngle, r, radius, innerRadius, outerRadius,
     x, y, top, left, width, height, clockWise } = props;
 
@@ -376,7 +379,7 @@ const parseViewBox = (props) => {
   return {};
 };
 
-const parseLabel = (label, viewBox) => {
+const parseLabel = (label: any, viewBox: ViewBox) => {
   if (!label) { return null; }
 
   if (label === true) {
@@ -389,7 +392,7 @@ const parseLabel = (label, viewBox) => {
 
   if (isValidElement(label)) {
     if (label.type === Label) {
-      return cloneElement(label, { key: 'label-implicit', viewBox });
+      return cloneElement(label as any, { key: 'label-implicit', viewBox });
     }
 
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
@@ -406,14 +409,14 @@ const parseLabel = (label, viewBox) => {
   return null;
 };
 
-const renderCallByParent = (parentProps, viewBox, ckeckPropsLabel = true) => {
+const renderCallByParent = (parentProps: any, viewBox: ViewBox, ckeckPropsLabel = true) => {
   if (!parentProps || (!parentProps.children && (ckeckPropsLabel && !parentProps.label))) {
     return null;
   }
   const { children } = parentProps;
   const parentViewBox = parseViewBox(parentProps);
 
-  const explicitChilren = findAllByType(children, Label).map((child, index) => cloneElement(child, {
+  const explicitChilren = findAllByType(children, Label).map((child: any, index: number) => cloneElement(child, {
     viewBox: viewBox || parentViewBox,
     key: `label-${index}`,
   })

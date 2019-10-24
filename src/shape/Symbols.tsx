@@ -2,26 +2,30 @@
  * @fileOverview Curve
  */
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import { symbol as shapeSymbol, symbolCircle, symbolCross, symbolDiamond,
-  symbolSquare, symbolStar, symbolTriangle, symbolWye } from 'd3-shape';
+  symbolSquare, symbolStar, symbolTriangle, symbolWye, SymbolType as D3SymbolType } from 'd3-shape';
 import classNames from 'classnames';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
-  filterEventAttributes } from '../util/ReactUtils';
+import { PresentationAttributes, SymbolType, filterProps } from '../util/types';
 
-const SYMBOL_FACTORIES = {
+type SizeType = 'area' | 'diameter';
+
+interface SymbolFactory {
+  [type: string]: D3SymbolType
+}
+
+const SYMBOL_FACTORIES: SymbolFactory = {
   symbolCircle, symbolCross, symbolDiamond,
   symbolSquare, symbolStar, symbolTriangle, symbolWye,
 };
 const RADIAN = Math.PI / 180;
 
-const getSymbolFactory = (type) => {
+const getSymbolFactory = (type: SymbolType) => {
   const name = `symbol${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
 
   return SYMBOL_FACTORIES[name] || symbolCircle;
 };
 
-const calculateAreaSize = (size, sizeType, type) => {
+const calculateAreaSize = (size: number, sizeType: SizeType, type: SymbolType) => {
   if (sizeType === 'area') { return size; }
 
   switch (type) {
@@ -47,20 +51,18 @@ const calculateAreaSize = (size, sizeType, type) => {
   }
 };
 
-class Symbols extends PureComponent {
+interface SymbolsProp {
+  className?: string;
+  type: SymbolType;
+  cx?: number;
+  cy?: number;
+  size?: number;
+  sizeType?: SizeType;
+}
 
-  static displayName = 'Symbols';
+type Props = PresentationAttributes<SVGPathElement> & SymbolsProp;
 
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    className: PropTypes.string,
-    type: PropTypes.oneOf(['circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye']),
-    cx: PropTypes.number,
-    cy: PropTypes.number,
-    size: PropTypes.number,
-    sizeType: PropTypes.oneOf(['area', 'diameter']),
-  };
-
+class Symbols extends PureComponent<Props> {
   static defaultProps = {
     type: 'circle',
     size: 64,
@@ -86,8 +88,7 @@ class Symbols extends PureComponent {
     if (cx === +cx && cy === +cy && size === +size) {
       return (
         <path
-          {...getPresentationAttributes(this.props)}
-          {...filterEventAttributes(this.props)}
+          {...filterProps(this.props)}
           className={classNames('recharts-symbols', className)}
           transform={`translate(${cx}, ${cy})`}
           d={this.getPath()}

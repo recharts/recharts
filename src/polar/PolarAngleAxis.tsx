@@ -1,54 +1,50 @@
 /**
  * @fileOverview Axis of radial direction
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent, ReactElement } from 'react';
 import _ from 'lodash';
 import Layer from '../container/Layer';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, SCALE_TYPES,
-  getPresentationAttributes, filterEventsOfChild } from '../util/ReactUtils';
 import Dot from '../shape/Dot';
 import Polygon from '../shape/Polygon';
-import Text from '../component/Text';
+import Text, { Props as TextProps } from '../component/Text';
+// @ts-ignore
+import { filterEventsOfChild } from '../util/ReactUtils';
+import { PresentationAttributes, ScaleType, filterProps } from '../util/types';
 import { polarToCartesian } from '../util/PolarUtils';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
+interface TickItem {
+  value?: any;
+  coordinate: number;
+}
+type PolarAngleAxisTick = PresentationAttributes<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
+interface PolarAngleAxisProps {
+  type?: 'number' | 'category';
+  angleAxisId?: string | number;
+  dataKey?: number | string | Function;
+  cx?: number;
+  cy?: number;
+  radius?: number;
+  hide?: boolean;
+  scale: Function | ScaleType;
 
-class PolarAngleAxis extends PureComponent {
+  axisLine?: PresentationAttributes<SVGLineElement> | boolean;
+  axisLineType?: 'polygon' | 'circle';
+  tickLine?: PresentationAttributes<SVGLineElement> & { size: number } | boolean;
+  tick?: PolarAngleAxisTick;
+  ticks?: TickItem[];
+  orientation?: 'inner' | 'outer';
+  tickFormatter?: (value: any) => string;
+  allowDuplicatedCategory?: boolean;
+};
+export type Props = PresentationAttributes<SVGTextElement> & PolarAngleAxisProps;
+
+class PolarAngleAxis extends PureComponent<Props> {
 
   static displayName = 'PolarAngleAxis';
 
   static axisType = 'angleAxis';
-
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    ...EVENT_ATTRIBUTES,
-    type: PropTypes.oneOf(['number', 'category']),
-    angleAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    dataKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.func]),
-    cx: PropTypes.number,
-    cy: PropTypes.number,
-    radius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    hide: PropTypes.bool,
-    scale: PropTypes.oneOfType([PropTypes.oneOf(SCALE_TYPES), PropTypes.func]),
-
-    axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
-    axisLineType: PropTypes.oneOf(['polygon', 'circle']),
-    tickLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
-    tick: PropTypes.oneOfType([
-      PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element,
-    ]),
-
-    ticks: PropTypes.arrayOf(PropTypes.shape({
-      value: PropTypes.any,
-      coordinate: PropTypes.number,
-    })),
-    stroke: PropTypes.string,
-    orientation: PropTypes.oneOf(['inner', 'outer']),
-    tickFormatter: PropTypes.func,
-    allowDuplicatedCategory: PropTypes.bool,
-  };
 
   static defaultProps = {
     type: 'category',
@@ -72,9 +68,9 @@ class PolarAngleAxis extends PureComponent {
    *                  (x1, y1): The end point close to text,
    *                  (x2, y2): The end point close to axis
    */
-  getTickLineCoord(data) {
+  getTickLineCoord(data: TickItem) {
     const { cx, cy, radius, orientation, tickLine } = this.props;
-    const tickLineSize = (tickLine && tickLine.size) || 8;
+    const tickLineSize = (tickLine && typeof tickLine === 'object' && tickLine.size) || 8;
     const p1 = polarToCartesian(cx, cy, radius, data.coordinate);
     const p2 = polarToCartesian(
       cx, cy,
@@ -89,7 +85,7 @@ class PolarAngleAxis extends PureComponent {
    * @param  {Object} data Data of ticks
    * @return {String} text-anchor
    */
-  getTickTextAnchor(data) {
+  getTickTextAnchor(data: TickItem) {
     const { orientation } = this.props;
     const cos = Math.cos(-data.coordinate * RADIAN);
     let textAnchor;
@@ -108,9 +104,9 @@ class PolarAngleAxis extends PureComponent {
   renderAxisLine() {
     const { cx, cy, radius, axisLine, axisLineType } = this.props;
     const props = {
-      ...getPresentationAttributes(this.props),
+      ...filterProps(this.props),
       fill: 'none',
-      ...getPresentationAttributes(axisLine),
+      ...filterProps(axisLine),
     };
 
     if (axisLineType === 'circle') {
@@ -130,7 +126,7 @@ class PolarAngleAxis extends PureComponent {
     return <Polygon className="recharts-polar-angle-axis-line" {...props} points={points} />;
   }
 
-  static renderTickItem(option, props, value) {
+  static renderTickItem(option: PolarAngleAxisTick, props: any, value: string | number) {
     let tickItem;
 
     if (React.isValidElement(option)) {
@@ -153,10 +149,10 @@ class PolarAngleAxis extends PureComponent {
 
   renderTicks() {
     const { ticks, tick, tickLine, tickFormatter, stroke } = this.props;
-    const axisProps = getPresentationAttributes(this.props);
-    const customTickProps = getPresentationAttributes(tick);
+    const axisProps = filterProps(this.props);
+    const customTickProps = filterProps(tick);
     const tickLineProps = {
-      ...axisProps, fill: 'none', ...getPresentationAttributes(tickLine),
+      ...axisProps, fill: 'none', ...filterProps(tickLine),
     };
 
     const items = ticks.map((entry, i) => {
@@ -165,10 +161,13 @@ class PolarAngleAxis extends PureComponent {
       const tickProps = {
         textAnchor,
         ...axisProps,
-        stroke: 'none', fill: stroke,
+        stroke: 'none', 
+        fill: stroke,
         ...customTickProps,
-        index: i, payload: entry,
-        x: lineCoord.x2, y: lineCoord.y2,
+        index: i, 
+        payload: entry,
+        x: lineCoord.x2, 
+        y: lineCoord.y2,
       };
 
       return (
@@ -184,7 +183,7 @@ class PolarAngleAxis extends PureComponent {
               {...lineCoord}
             />
           )}
-          {tick && this.constructor.renderTickItem(
+          {tick && PolarAngleAxis.renderTickItem(
             tick, tickProps, tickFormatter ? tickFormatter(entry.value) : entry.value
           )}
         </Layer>

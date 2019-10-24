@@ -2,27 +2,41 @@
  * @fileOverview Curve
  */
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { line as shapeLine, area as shapeArea, curveBasisClosed, curveBasisOpen,
+import { line as shapeLine, area as shapeArea, CurveFactory, curveBasisClosed, curveBasisOpen,
   curveBasis, curveLinearClosed, curveLinear, curveMonotoneX, curveMonotoneY,
   curveNatural, curveStep, curveStepAfter, curveStepBefore } from 'd3-shape';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
-  filterEventAttributes } from '../util/ReactUtils';
+import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers, filterProps } from '../util/types';
+// @ts-ignore
 import { isNumber } from '../util/DataUtils';
 
-const CURVE_FACTORIES = {
+interface CurveFactories {
+  [index: string] : CurveFactory;
+}
+
+const CURVE_FACTORIES: CurveFactories = {
   curveBasisClosed, curveBasisOpen, curveBasis, curveLinearClosed, curveLinear,
   curveMonotoneX, curveMonotoneY, curveNatural, curveStep, curveStepAfter,
   curveStepBefore,
 };
 
-const defined = p => p.x === +p.x && p.y === +p.y;
-const getX = p => p.x;
-const getY = p => p.y;
+type CurveType = 'basis' | 'basisClosed' | 'basisOpen' | 'linear' | 'linearClosed' | 'natural' |
+  'monotoneX' | 'monotoneY' | 'monotone' | 'step' | 'stepBefore' | 'stepAfter' | CurveFactory;
 
-const getCurveFactory = (type, layout) => {
+interface Point<T> {
+  base?: Point<T>
+  x: number;
+  y: number;
+  value: number;
+  payload: T;
+}
+
+const defined = <T extends {}>(p: Point<T>) => p.x === +p.x && p.y === +p.y;
+const getX = <T extends {}>(p: Point<T>) => p.x;
+const getY = <T extends {}>(p: Point<T>) => p.y;
+
+const getCurveFactory = (type: CurveType, layout: LayoutType) => {
   if (_.isFunction(type)) { return type; }
 
   const name = `curve${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
@@ -33,30 +47,23 @@ const getCurveFactory = (type, layout) => {
   return CURVE_FACTORIES[name] || curveLinear;
 };
 
-class Curve extends PureComponent {
+interface CurveProps<T> {
+  className?: string;
+  type?: CurveType;
+  layout?: LayoutType;
+  baseLine?: number | Array<Point<T>>;
+  points?: Array<Point<T>>;
+  connectNulls?: boolean;
+  path?: string;
+  pathRef?: (ref: SVGPathElement) => void;
+}
 
-  static displayName = 'Curve';
+type Props<T> = PresentationAttributesWithProps<CurveProps<T>, SVGPathElement> & CurveProps<T>;
 
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    className: PropTypes.string,
-    type: PropTypes.oneOfType([PropTypes.oneOf([
-      'basis', 'basisClosed', 'basisOpen', 'linear', 'linearClosed', 'natural',
-      'monotoneX', 'monotoneY', 'monotone', 'step', 'stepBefore', 'stepAfter',
-    ]), PropTypes.func]),
-    layout: PropTypes.oneOf(['horizontal', 'vertical']),
-    baseLine: PropTypes.oneOfType([
-      PropTypes.number, PropTypes.array,
-    ]),
-    points: PropTypes.arrayOf(PropTypes.object),
-    connectNulls: PropTypes.bool,
-    path: PropTypes.string,
-    pathRef: PropTypes.func,
-  };
-
+class Curve<T> extends PureComponent<Props<T>> {
   static defaultProps = {
     type: 'linear',
-    points: [],
+    points: [] as any[],
     connectNulls: false,
   };
 
@@ -76,19 +83,19 @@ class Curve extends PureComponent {
         { ...entry, base: formatBaseLine[index] }
       ));
       if (layout === 'vertical') {
-        lineFunction = shapeArea().y(getY).x1(getX).x0(d => d.base.x);
+        lineFunction = shapeArea<Point<T>>().y(getY).x1(getX).x0(d => d.base.x);
       } else {
-        lineFunction = shapeArea().x(getX).y1(getY).y0(d => d.base.y);
+        lineFunction = shapeArea<Point<T>>().x(getX).y1(getY).y0(d => d.base.y);
       }
       lineFunction.defined(defined).curve(curveFactory);
 
       return lineFunction(areaPoints);
     } if (layout === 'vertical' && isNumber(baseLine)) {
-      lineFunction = shapeArea().y(getY).x1(getX).x0(baseLine);
+      lineFunction = shapeArea<Point<T>>().y(getY).x1(getX).x0(baseLine);
     } else if (isNumber(baseLine)) {
-      lineFunction = shapeArea().x(getX).y1(getY).y0(baseLine);
+      lineFunction = shapeArea<Point<T>>().x(getX).y1(getY).y0(baseLine);
     } else {
-      lineFunction = shapeLine().x(getX).y(getY);
+      lineFunction = shapeLine<Point<T>>().x(getX).y(getY);
     }
 
     lineFunction.defined(defined)
@@ -107,8 +114,8 @@ class Curve extends PureComponent {
 
     return (
       <path
-        {...getPresentationAttributes(this.props)}
-        {...filterEventAttributes(this.props, null, true)}
+        {...filterProps(this.props)}
+        {...adaptEventHandlers(this.props)}
         className={classNames('recharts-curve', className)}
         d={realPath}
         ref={pathRef}

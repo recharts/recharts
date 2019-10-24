@@ -1,37 +1,44 @@
 /**
  * @fileOverview Wrapper component to make charts adapt to the size of parent * DOM
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component, ReactElement } from 'react';
 import classNames from 'classnames';
 import ReactResizeDetector from 'react-resize-detector';
 import _ from 'lodash';
+// @ts-ignore
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
-class ResponsiveContainer extends Component {
-  static displayName = 'ResponsiveContainer';
+interface Props {
+  aspect?: number;
+  width?: string | number;
+  height?: string | number;
+  minWidth?: string | number;
+  minHeight?: string | number;
+  maxHeight?: number;
+  children: ReactElement;
+  debounce?: number;
+  id?: string | number;
+  className?: string | number;
+}
 
-  static propTypes = {
-    aspect: PropTypes.number,
-    width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    minHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    minWidth: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    children: PropTypes.node.isRequired,
-    debounce: PropTypes.number,
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    className: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  };
+interface State {
+  containerWidth: number;
+  containerHeight: number;
+}
 
+class ResponsiveContainer extends Component<Props, State> {
   static defaultProps = {
     width: '100%',
     height: '100%',
     debounce: 0,
   };
 
-  constructor(props) {
+  private handleResize: () => void;
+  private mounted: boolean;
+  private container: HTMLDivElement;
+
+  constructor(props: Props) {
     super(props);
 
     this.state = {
@@ -100,8 +107,8 @@ class ResponsiveContainer extends Component {
       'The aspect(%s) must be greater than zero.',
       aspect);
 
-    let calculatedWidth = isPercent(width) ? containerWidth : width;
-    let calculatedHeight = isPercent(height) ? containerHeight : height;
+    let calculatedWidth: number = isPercent(width) ? containerWidth : (width as number);
+    let calculatedHeight: number = isPercent(height) ? containerHeight : (height as number);
 
     if (aspect && aspect > 0) {
       // Preserve the desired aspect ratio
@@ -140,7 +147,7 @@ class ResponsiveContainer extends Component {
 
     return (
       <div
-        id={id}
+        id={`${id}`}
         className={classNames('recharts-responsive-container', className)}
         style={style}
         ref={(node) => { this.container = node; }}

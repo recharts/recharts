@@ -20,7 +20,7 @@ export default function (WrappedComponent) {
     };
 
     // eslint-disable-next-line camelcase
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       const { animationId } = this.state;
 
       if (this.props.data !== nextProps.data) {

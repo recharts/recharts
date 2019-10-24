@@ -1,38 +1,50 @@
 /**
  * @fileOverview Default Legend Content
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent, ReactNode, MouseEvent, ReactText, ReactElement } from 'react';
 import classNames from 'classnames';
 import Surface from '../container/Surface';
 import Symbols from '../shape/Symbols';
-import { filterEventsOfChild, LEGEND_TYPES } from '../util/ReactUtils';
+// @ts-ignore
+import { filterEventsOfChild } from '../util/ReactUtils';
+import { LegendType, LayoutType, SymbolType } from '../util/types';
 
 const SIZE = 32;
-const ICON_TYPES = LEGEND_TYPES.filter(type => type !== 'none');
+export type ContentType<TValue, TID> = ReactElement | ((props: Props<TValue, TID>) => ReactNode)
+export type IconType = Omit<LegendType, 'none'>;
+export type HorizontalAlignmentType = 'center' | 'left' | 'right';
+export type VerticalAlignmentType = 'top' | 'bottom' | 'middle';
+export type Formatter<TValue, TID> = (value: any, entry: Payload<TValue, TID>, index: number) => ReactNode
 
-class DefaultLegendContent extends PureComponent {
-  static displayName = 'Legend';
-
-  static propTypes = {
-    content: PropTypes.element,
-    iconSize: PropTypes.number,
-    iconType: PropTypes.oneOf(ICON_TYPES),
-    layout: PropTypes.oneOf(['horizontal', 'vertical']),
-    align: PropTypes.oneOf(['center', 'left', 'right']),
-    verticalAlign: PropTypes.oneOf(['top', 'bottom', 'middle']),
-    payload: PropTypes.arrayOf(PropTypes.shape({
-      value: PropTypes.any,
-      id: PropTypes.any,
-      type: PropTypes.oneOf(LEGEND_TYPES),
-    })),
-    inactiveColor: PropTypes.string,
-    formatter: PropTypes.func,
-    onMouseEnter: PropTypes.func,
-    onMouseLeave: PropTypes.func,
-    onClick: PropTypes.func,
+export interface Payload<TValue, TID> {
+  value: TValue;
+  id: TID;
+  type: LegendType;
+  color: string;
+  payload: {
+    strokeDasharray: ReactText;
   };
+  formatter?: Formatter<TValue, TID>;
+  inactive?: boolean;
+}
 
+export interface Props<TValue, TID> {
+  content?: ContentType<TValue, TID>;
+  iconSize?: number;
+  iconType?: IconType;
+  layout?: LayoutType;
+  align?: HorizontalAlignmentType;
+  verticalAlign?: VerticalAlignmentType;
+  payload?: Array<Payload<TValue, TID>>;
+  inactiveColor?: string;
+  formatter?: Formatter<TValue, TID>;
+  onMouseEnter?: (event: MouseEvent) => void;
+  onMouseLeave?: (event: MouseEvent) => void;
+  onClick?: (event: MouseEvent) => void;
+}
+
+class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>> {
+  static displayName = 'Legend';
   static defaultProps = {
     iconSize: 14,
     layout: 'horizontal',
@@ -46,7 +58,7 @@ class DefaultLegendContent extends PureComponent {
    * @param {Object} data Data of each legend item
    * @return {String} Path element
    */
-  renderIcon(data) {
+  renderIcon(data: Payload<TValue, TID>) {
     const { inactiveColor } = this.props;
     const halfSize = SIZE / 2;
     const sixthSize = SIZE / 6;
@@ -98,7 +110,7 @@ class DefaultLegendContent extends PureComponent {
         cy={halfSize}
         size={SIZE}
         sizeType="diameter"
-        type={data.type}
+        type={data.type as SymbolType}
       />
     );
   }

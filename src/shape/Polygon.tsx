@@ -2,12 +2,10 @@
  * @fileOverview Polygon
  */
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes,
-  filterEventAttributes } from '../util/ReactUtils';
+import { PresentationAttributes, filterProps, Coordinate } from '../util/types';
 
-const getPolygonPoints = points => (
+const getPolygonPoints = (points: Array<Coordinate>) => (
   points.reduce((result, entry) => {
     if (entry.x === +entry.x && entry.y === +entry.y) {
       result.push([entry.x, entry.y]);
@@ -17,19 +15,14 @@ const getPolygonPoints = points => (
   }, []).join(' ')
 );
 
-class Polygon extends PureComponent {
+interface PolygonProps {
+  className?: string;
+  points?: Array<Coordinate>
+}
 
-  static displayName = 'Polygon';
+type Props = Omit<PresentationAttributes<SVGPolygonElement>, 'points'> & PolygonProps;
 
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    className: PropTypes.string,
-    points: PropTypes.arrayOf(PropTypes.shape({
-      x: PropTypes.number,
-      y: PropTypes.number,
-    })),
-  };
-
+class Polygon extends PureComponent<Props> {
   render() {
     const { points, className } = this.props;
 
@@ -39,8 +32,7 @@ class Polygon extends PureComponent {
 
     return (
       <polygon
-        {...getPresentationAttributes(this.props)}
-        {...filterEventAttributes(this.props)}
+        {...filterProps(this.props)}
         className={layerClass}
         points={getPolygonPoints(points)}
       />
