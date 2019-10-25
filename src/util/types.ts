@@ -22,6 +22,7 @@ import {
   FunctionComponent
 } from 'react';
 import _ from 'lodash';
+import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'd3-scale';
 
 export type LayoutType = 'horizontal' | 'vertical';
 export type PolarLayoutType = 'radial' | 'centric';
@@ -331,25 +332,35 @@ export const filterProps = (props: Record<string, any> | Component | FunctionCom
     inputProps = props.props as Record<string, any>;
   }
 
-  if (!_.isObject(props)) { return null; }
+  if (!_.isObject(inputProps)) { return null; }
 
   const out: Record<string, any> = {};
 
   for (const i in inputProps) {
-    if (SVGPropKeys.includes(i) || EventKeys.includes(i)) {
-      out[i] = inputProps[i];
+    if (SVGPropKeys.includes(i)) {
+      out[i] = (inputProps as any)[i];
     }
   }
 
   return out;
 }
 
-export const adaptEventHandlers = (props: Record<string, any>) => {
+export const adaptEventHandlers = (props: Record<string, any> | Component | FunctionComponent | boolean) => {
+  if (!props || typeof props === 'function' || typeof props === 'boolean') { return null; }
+
+  let inputProps = props as Record<string, any>;
+
+  if (isValidElement(props)) {
+    inputProps = props.props as Record<string, any>;
+  }
+
+  if (!_.isObject(inputProps)) { return null; }
+
   const out: Record<string, (e: Event) => void> = {};
 
-  for (const i in props) {
+  for (const i in inputProps) {
     if (EventKeys.includes(i)) {
-      out[i] = (e: Event) => props[i](props, e);
+      out[i] = (e: Event) => inputProps[i](inputProps, e);
     }
   }
 
@@ -369,6 +380,13 @@ export interface ChartOffset {
   height?: number;
 }
 
+export interface Padding {
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+}
+
 export interface GeometrySector {
   cx?: number;
   cy?: number;
@@ -380,3 +398,12 @@ export interface GeometrySector {
   forceCornerRadius?: boolean;
   cornerIsExternal?: boolean;
 }
+
+export interface ViewBox {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+}
+
+export type D3Scale<T> = D3ScaleContinuousNumeric<T, number>;

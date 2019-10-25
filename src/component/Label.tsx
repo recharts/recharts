@@ -409,7 +409,7 @@ const parseLabel = (label: any, viewBox: ViewBox) => {
   return null;
 };
 
-const renderCallByParent = (parentProps: any, viewBox: ViewBox, ckeckPropsLabel = true) => {
+const renderCallByParent = (parentProps: any, viewBox?: ViewBox, ckeckPropsLabel = true) => {
   if (!parentProps || (!parentProps.children && (ckeckPropsLabel && !parentProps.label))) {
     return null;
   }

@@ -32,7 +32,7 @@ interface TrapezoidProps {
   animationEasing?: AnimationTiming;
 }
 
-type Props = PresentationAttributes<SVGPathElement> & TrapezoidProps;
+export type Props = PresentationAttributes<SVGPathElement> & TrapezoidProps;
 
 class Trapezoid extends PureComponent<Props> {
   static defaultProps = {

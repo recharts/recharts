@@ -3,7 +3,7 @@
  */
 import { ScaleType } from '../util/types';
 
-interface Props {
+export interface Props {
   type?: 'number' | 'category';
   /** The name of data displayed in the axis */ 
   name?: string | number;

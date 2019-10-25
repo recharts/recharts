@@ -60,7 +60,7 @@ interface SymbolsProp {
   sizeType?: SizeType;
 }
 
-type Props = PresentationAttributes<SVGPathElement> & SymbolsProp;
+export type Props = PresentationAttributes<SVGPathElement> & SymbolsProp;
 
 class Symbols extends PureComponent<Props> {
   static defaultProps = {

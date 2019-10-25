@@ -4,7 +4,7 @@
 import { ReactElement } from 'react';
 import { ScaleType, PresentationAttributes } from '../util/types';
 
-interface Props {
+export interface Props {
   allowDecimals?: boolean;
   allowDuplicatedCategory?: boolean;
   hide?: boolean;

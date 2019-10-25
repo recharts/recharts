@@ -81,7 +81,7 @@ interface RectangleProps {
   animationEasing?: AnimationTiming;
 }
 
-type Props = PresentationAttributes<SVGPathElement> & RectangleProps;
+export type Props = PresentationAttributes<SVGPathElement> & RectangleProps;
 
 class Rectangle extends PureComponent<Props> {
   static defaultProps = {

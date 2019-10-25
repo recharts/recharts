@@ -1,57 +1,62 @@
 /**
  * @fileOverview Cartesian Axis
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { ReactElement, PureComponent, ReactNode } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
+// @ts-ignore
 import { shallowEqual } from '../util/ShallowEqual';
+// @ts-ignore
 import { getStringSize } from '../util/DOMUtils';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import Label from '../component/Label';
-import { isSsr, PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, getPresentationAttributes,
-  filterEventsOfChild } from '../util/ReactUtils';
+// @ts-ignore
+import { isSsr, filterEventsOfChild } from '../util/ReactUtils';
+// @ts-ignore
 import { isNumber, mathSign } from '../util/DataUtils';
+import { ViewBox, PresentationAttributes, filterProps } from '../util/types';
 
-class CartesianAxis extends Component {
+interface TickItem {
+  coordinate?: number;
+  tickCoord?: number;
+  tickSize?: number;
+  value?: any;
+  isShow?: boolean;
+}
+
+interface CartesianAxisProps {
+  className?: string;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  unit?: string | number;
+  orientation?: 'top' | 'bottom' | 'left' | 'right';
+  // The viewBox of svg
+  viewBox?: ViewBox;
+  tick?: PresentationAttributes<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
+  axisLine?: boolean | PresentationAttributes<SVGLineElement>;
+  tickLine?: boolean | PresentationAttributes<SVGLineElement>;
+  mirror?: boolean;
+  tickMargin: number;
+  hide?: boolean;
+
+  minTickGap?: number;
+  ticks?: TickItem[];
+  tickSize?: number;
+  /** The formatter function of tick */ 
+  tickFormatter?: (value: any) => string;
+  ticksGenerator?: (props?: CartesianAxisProps) => TickItem[];
+  interval?: number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
+};
+
+type Props = PresentationAttributes<SVGElement> & CartesianAxisProps;
+
+
+class CartesianAxis extends PureComponent<Props> {
 
   static displayName = 'CartesianAxis';
-
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    ...EVENT_ATTRIBUTES,
-    className: PropTypes.string,
-    x: PropTypes.number,
-    y: PropTypes.number,
-    width: PropTypes.number,
-    height: PropTypes.number,
-    orientation: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
-    // The viewBox of svg
-    viewBox: PropTypes.shape({
-      x: PropTypes.number,
-      y: PropTypes.number,
-      width: PropTypes.number,
-      height: PropTypes.number,
-    }),
-    tick: PropTypes.oneOfType([
-      PropTypes.bool, PropTypes.func, PropTypes.object, PropTypes.element,
-    ]),
-    axisLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
-    tickLine: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
-    mirror: PropTypes.bool,
-    tickMargin: PropTypes.number.isRequired,
-
-    minTickGap: PropTypes.number,
-    ticks: PropTypes.array,
-    tickSize: PropTypes.number,
-    stroke: PropTypes.string,
-    tickFormatter: PropTypes.func,
-    ticksGenerator: PropTypes.func,
-    interval: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf([
-      'preserveStart', 'preserveEnd', 'preserveStartEnd',
-    ])]),
-  };
 
   static defaultProps = {
     x: 0,
@@ -62,7 +67,7 @@ class CartesianAxis extends Component {
     // The orientation of axis
     orientation: 'bottom',
     // The ticks
-    ticks: [],
+    ticks: [] as CartesianAxisProps['ticks'],
 
     stroke: '#666',
     tickLine: true,
@@ -77,13 +82,13 @@ class CartesianAxis extends Component {
     interval: 'preserveEnd',
   };
 
-  static getTicks(props) {
+  static getTicks(props: Props) {
     const { tick, ticks, viewBox, minTickGap, orientation, interval, tickFormatter, unit } = props;
 
     if (!ticks || !ticks.length || !tick) { return []; }
 
     if (isNumber(interval) || isSsr()) {
-      return CartesianAxis.getNumberIntervalTicks(ticks, isNumber(interval) ? interval : 0);
+      return CartesianAxis.getNumberIntervalTicks(ticks, typeof interval === 'number' && isNumber(interval) ? interval : 0);
     }
 
     if (interval === 'preserveStartEnd') {
@@ -101,13 +106,13 @@ class CartesianAxis extends Component {
     });
   }
 
-  static getNumberIntervalTicks(ticks, interval) {
+  static getNumberIntervalTicks(ticks: TickItem[], interval: number) {
     return ticks.filter((entry, i) => (i % (interval + 1) === 0));
   }
 
   static getTicksStart({
     ticks, tickFormatter, viewBox, orientation, minTickGap, unit,
-  }, preserveEnd) {
+  }: Omit<Props, 'tickMargin'>, preserveEnd?: boolean) {
     const { x, y, width, height } = viewBox;
     const sizeKey = (orientation === 'top' || orientation === 'bottom') ? 'width' : 'height';
     const result = (ticks || []).slice();
@@ -174,7 +179,7 @@ class CartesianAxis extends Component {
     return result.filter(entry => entry.isShow);
   }
 
-  static getTicksEnd({ ticks, tickFormatter, viewBox, orientation, minTickGap, unit }) {
+  static getTicksEnd({ ticks, tickFormatter, viewBox, orientation, minTickGap, unit }: Omit<Props, 'tickMargin'>) {
     const { x, y, width, height } = viewBox;
     const sizeKey = (orientation === 'top' || orientation === 'bottom') ? 'width' : 'height';
     // we need add the width of 'unit' only when sizeKey === 'width'
@@ -220,12 +225,12 @@ class CartesianAxis extends Component {
     return result.filter(entry => entry.isShow);
   }
 
-  shouldComponentUpdate({ viewBox, ...restProps }, state) {
+  shouldComponentUpdate({ viewBox, ...restProps }: Props) {
     // props.viewBox is sometimes generated every time -
     // check that specially as object equality is likely to fail
     const { viewBox: viewBoxOld, ...restPropsOld } = this.props;
     return !shallowEqual(viewBox, viewBoxOld) ||
-      !shallowEqual(restProps, restPropsOld) || !shallowEqual(state, this.state);
+      !shallowEqual(restProps, restPropsOld);
   }
 
   /**
@@ -234,7 +239,7 @@ class CartesianAxis extends Component {
    * @return {Object} (x1, y1): The coordinate of endpoint close to tick text
    *  (x2, y2): The coordinate of endpoint close to axis
    */
-  getTickLineCoord(data) {
+  getTickLineCoord(data: TickItem) {
     const { x, y, width, height, orientation, tickSize, mirror, tickMargin } = this.props;
     let x1, x2, y1, y2, tx, ty;
 
@@ -245,28 +250,28 @@ class CartesianAxis extends Component {
     switch (orientation) {
       case 'top':
         x1 = x2 = data.coordinate;
-        y2 = y + (!mirror) * height;
+        y2 = y + (+!mirror) * height;
         y1 = y2 - sign * finalTickSize;
         ty = y1 - sign * tickMargin;
         tx = tickCoord;
         break;
       case 'left':
         y1 = y2 = data.coordinate;
-        x2 = x + (!mirror) * width;
+        x2 = x + (+!mirror) * width;
         x1 = x2 - sign * finalTickSize;
         tx = x1 - sign * tickMargin;
         ty = tickCoord;
         break;
       case 'right':
         y1 = y2 = data.coordinate;
-        x2 = x + mirror * width;
+        x2 = x + (+mirror) * width;
         x1 = x2 + sign * finalTickSize;
         tx = x1 + sign * tickMargin;
         ty = tickCoord;
         break;
       default:
         x1 = x2 = data.coordinate;
-        y2 = y + mirror * height;
+        y2 = y + (+mirror) * height;
         y1 = y2 + sign * finalTickSize;
         ty = y1 + sign * tickMargin;
         tx = tickCoord;
@@ -316,15 +321,14 @@ class CartesianAxis extends Component {
   }
 
   renderAxisLine() {
-    const { x, y, width, height, orientation, axisLine, mirror } = this.props;
-    let props = {
-      ...getPresentationAttributes(this.props),
+    const { x, y, width, height, orientation, mirror } = this.props;
+    let props: PresentationAttributes<SVGLineElement> = {
+      ...filterProps(this.props),
       fill: 'none',
-      ...getPresentationAttributes(axisLine),
     };
 
     if (orientation === 'top' || orientation === 'bottom') {
-      const needHeight = (orientation === 'top' && !mirror) || (orientation === 'bottom' && mirror);
+      const needHeight = +((orientation === 'top' && !mirror) || (orientation === 'bottom' && mirror));
       props = {
         ...props,
         x1: x,
@@ -333,7 +337,7 @@ class CartesianAxis extends Component {
         y2: y + needHeight * height,
       };
     } else {
-      const needWidth = (orientation === 'left' && !mirror) || (orientation === 'right' && mirror);
+      const needWidth = +((orientation === 'left' && !mirror) || (orientation === 'right' && mirror));
       props = {
         ...props,
         x1: x + needWidth * width,
@@ -346,7 +350,7 @@ class CartesianAxis extends Component {
     return <line className="recharts-cartesian-axis-line" {...props} />;
   }
 
-  static renderTickItem(option, props, value) {
+  static renderTickItem(option: Props['tick'], props: any, value: ReactNode) {
     let tickItem;
 
     if (React.isValidElement(option)) {
@@ -372,15 +376,15 @@ class CartesianAxis extends Component {
    * @param {Array} ticks The ticks to actually render (overrides what was passed in props)
    * @return {ReactComponent} renderedTicks
    */
-  renderTicks(ticks) {
+  renderTicks(ticks: TickItem[]) {
     const { tickLine, stroke, tick, tickFormatter, unit } = this.props;
     const finalTicks = CartesianAxis.getTicks({ ...this.props, ticks });
     const textAnchor = this.getTickTextAnchor();
     const verticalAnchor = this.getTickVerticalAnchor();
-    const axisProps = getPresentationAttributes(this.props);
-    const customTickProps = getPresentationAttributes(tick);
+    const axisProps = filterProps(this.props);
+    const customTickProps = filterProps(tick);
     const tickLineProps = {
-      ...axisProps, fill: 'none', ...getPresentationAttributes(tickLine),
+      ...axisProps, fill: 'none', ...filterProps(tickLine),
     };
     const items = finalTicks.map((entry, i) => {
       const { line: lineCoord, tick: tickCoord } = this.getTickLineCoord(entry);
@@ -408,7 +412,7 @@ class CartesianAxis extends Component {
               {...lineCoord}
             />
           )}
-          {tick && this.constructor.renderTickItem(
+          {tick && CartesianAxis.renderTickItem(
             tick,
             tickProps,
             `${_.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value}${unit || ''}`

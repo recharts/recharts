@@ -1,75 +1,91 @@
 /**
  * @fileOverview Render a group of scatters
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent, ReactElement } from 'react';
+// @ts-ignore
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES,
-  getPresentationAttributes, filterEventsOfChild, isSsr, findAllByType } from '../util/ReactUtils';
+// @ts-ignore
+import { filterEventsOfChild, isSsr, findAllByType } from '../util/ReactUtils';
 import ZAxis from './ZAxis';
-import Curve from '../shape/Curve';
-import Symbols from '../shape/Symbols';
-import ErrorBar from './ErrorBar';
+import Curve, { Props as CurveProps, CurveType } from '../shape/Curve';
+import Symbols, { Props as SymbolsProps } from '../shape/Symbols';
+import ErrorBar, { Props as ErrorBarProps } from './ErrorBar';
 import Cell from '../component/Cell';
+// @ts-ignore
 import { uniqueId, interpolateNumber, getLinearRegression } from '../util/DataUtils';
+// @ts-ignore
 import { getValueByDataKey, getCateCoordinateOfLine } from '../util/ChartUtils';
+import { LegendType, PresentationAttributes, SymbolType, AnimationTiming, filterProps, D3Scale, ChartOffset } from '../util/types';
+import { TooltipType } from '../component/DefaultTooltipContent';
+import { Props as XAxisProps } from './XAxis';
+import { Props as YAxisProps } from './YAxis';
+import { Props as ZAxisProps } from './ZAxis';
 
-class Scatter extends PureComponent {
+interface ScattterPointNode {
+  x?: number | string;
+  y?: number | string;
+  z?: number | string;
+}
+
+interface ScatterPointItem {
+  cx?: number;
+  cy?: number;
+  size?: number;
+  node?: ScattterPointNode;
+  payload?: any;
+}
+
+interface ScatterProps {
+  data?: any[];
+  xAxisId?: string | number;
+  yAxisId?: string | number;
+  zAxisId?: string | number;
+
+  left?: number;
+  top?: number;
+
+  yAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  xAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  zAxis?: Omit<ZAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+
+  dataKey?: string | number | Function;
+
+
+  line?: ReactElement<SVGElement> | ((props: any) => SVGElement) | CurveProps | boolean;
+  lineType?: 'fitting' | 'joint';
+  lineJointType?: CurveType;
+  legendType?: LegendType
+  tooltipType?: TooltipType
+  className: string;
+  name?: string | number;
+
+  activeIndex?: number;
+  activeShape?: ReactElement<SVGElement> | ((props: any) => SVGElement) | SymbolsProps;
+  shape?: SymbolType | ReactElement<SVGElement> | ((props: any) => SVGElement);
+  points?: ScatterPointItem[];
+  hide?: boolean;
+
+  isAnimationActive?: boolean;
+  animationId?: number;
+  animationBegin?: number;
+  animationDuration?: number;
+  animationEasing?: AnimationTiming;
+};
+
+type Props = PresentationAttributes<SVGElement> & ScatterProps;
+
+interface State {
+  isAnimationFinished?: boolean;
+  prevPoints?: ScatterPointItem[];
+}
+
+class Scatter extends PureComponent<Props, State> {
 
   static displayName = 'Scatter';
-
-  static propTypes = {
-    ...EVENT_ATTRIBUTES,
-    ...PRESENTATION_ATTRIBUTES,
-
-    xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    zAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    line: PropTypes.oneOfType([
-      PropTypes.bool, PropTypes.object, PropTypes.func, PropTypes.element,
-    ]),
-    lineType: PropTypes.oneOf(['fitting', 'joint']),
-    lineJointType: PropTypes.oneOfType([PropTypes.oneOf([
-      'basis', 'basisClosed', 'basisOpen', 'linear', 'linearClosed', 'natural',
-      'monotoneX', 'monotoneY', 'monotone', 'step', 'stepBefore', 'stepAfter',
-    ]), PropTypes.func]),
-    legendType: PropTypes.oneOf(LEGEND_TYPES),
-    tooltipType: PropTypes.oneOf(TOOLTIP_TYPES),
-    className: PropTypes.string,
-    name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-
-    activeIndex: PropTypes.number,
-    activeShape: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.func, PropTypes.element,
-    ]),
-    shape: PropTypes.oneOfType([
-      PropTypes.oneOf(['circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye']),
-      PropTypes.element,
-      PropTypes.func,
-    ]),
-    points: PropTypes.arrayOf(PropTypes.shape({
-      cx: PropTypes.number,
-      cy: PropTypes.number,
-      size: PropTypes.number,
-      node: PropTypes.shape({
-        x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-        y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-        z: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-      }),
-      payload: PropTypes.any,
-    })),
-    hide: PropTypes.bool,
-
-    isAnimationActive: PropTypes.bool,
-    animationId: PropTypes.number,
-    animationBegin: PropTypes.number,
-    animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
-  };
 
   static defaultProps = {
     xAxisId: 0,
@@ -78,7 +94,7 @@ class Scatter extends PureComponent {
     legendType: 'circle',
     lineType: 'joint',
     lineJointType: 'linear',
-    data: [],
+    data: [] as any[],
     shape: 'circle',
     hide: false,
 
@@ -96,7 +112,20 @@ class Scatter extends PureComponent {
    * @return {Array}  Composed data
    */
   static getComposedData = ({ xAxis, yAxis, zAxis, item, displayedData, onItemMouseLeave,
-    onItemMouseEnter, offset, xAxisTicks, yAxisTicks }) => {
+    onItemMouseEnter, offset, xAxisTicks, yAxisTicks }: {
+      props: Props;
+      xAxis: Props['xAxis'];
+      yAxis: Props['yAxis'];
+      zAxis: Props['zAxis'];
+      xAxisTicks: XAxisProps['ticks'];
+      yAxisTicks: YAxisProps['ticks'];
+      item: Scatter;
+      onItemMouseLeave: PresentationAttributes<SVGElement>['onMouseLeave'];
+      onItemMouseEnter: PresentationAttributes<SVGElement>['onMouseLeave'];
+      bandSize: number;
+      displayedData: any[];
+      offset: ChartOffset;
+    }) => {
     const { tooltipType } = item.props;
     const cells = findAllByType(item.props.children, Cell);
     const xAxisDataKey = _.isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
@@ -104,12 +133,12 @@ class Scatter extends PureComponent {
     const zAxisDataKey = zAxis && zAxis.dataKey;
     const defaultRangeZ = zAxis ? zAxis.range : ZAxis.defaultProps.range;
     const defaultZ = defaultRangeZ && defaultRangeZ[0];
-    const xBandSize = xAxis.scale.bandwidth ? xAxis.scale.bandwidth() : 0;
-    const yBandSize = yAxis.scale.bandwidth ? yAxis.scale.bandwidth() : 0;
+    const xBandSize = (xAxis.scale as any).bandwidth ? (xAxis.scale as any).bandwidth() : 0;
+    const yBandSize = (yAxis.scale as any).bandwidth ? (yAxis.scale as any).bandwidth() : 0;
     const points = displayedData.map((entry, index) => {
-      const x = entry[xAxisDataKey];
-      const y = entry[yAxisDataKey];
-      const z = (!_.isNil(zAxisDataKey) && entry[zAxisDataKey]) || '-';
+      const x = getValueByDataKey(entry, xAxisDataKey);
+      const y = getValueByDataKey(entry, yAxisDataKey);
+      const z = (!_.isNil(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
       const tooltipPayload = [
         { name: xAxis.name || xAxis.dataKey, unit: xAxis.unit || '', value: x, payload: entry, dataKey: xAxisDataKey, type: tooltipType },
         { name: yAxis.name || yAxis.dataKey, unit: yAxis.unit || '', value: y, payload: entry, dataKey: yAxisDataKey, type: tooltipType },
@@ -153,10 +182,10 @@ class Scatter extends PureComponent {
     };
   };
 
-  state = { isAnimationFinished: false };
+  state: State = { isAnimationFinished: false };
 
   // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps: Props) {
     const { animationId, points } = this.props;
 
     if (nextProps.animationId !== animationId) {
@@ -164,7 +193,7 @@ class Scatter extends PureComponent {
     }
   }
 
-  cachePrevPoints = (points) => {
+  cachePrevPoints = (points: ScatterPointItem[]) => {
     this.setState({ prevPoints: points });
   };
 
@@ -178,23 +207,23 @@ class Scatter extends PureComponent {
 
   id = uniqueId('recharts-scatter-');
 
-  static renderSymbolItem(option, props) {
+  static renderSymbolItem(option: Props['activeShape'] | Props['shape'], props: any) {
     let symbol;
 
     if (React.isValidElement(option)) {
       symbol = React.cloneElement(option, props);
     } else if (_.isFunction(option)) {
       symbol = option(props);
-    } else {
+    } else if (typeof option === 'string') {
       symbol = <Symbols {...props} type={option} />;
     }
 
     return symbol;
   }
 
-  renderSymbolsStatically(points) {
+  renderSymbolsStatically(points: ScatterPointItem[]) {
     const { shape, activeShape, activeIndex } = this.props;
-    const baseProps = getPresentationAttributes(this.props);
+    const baseProps = filterProps(this.props);
 
     return points.map((entry, i) => {
       const props = { key: `symbol-${i}`, ...baseProps, ...entry };
@@ -205,7 +234,7 @@ class Scatter extends PureComponent {
           {...filterEventsOfChild(this.props, entry, i)}
           key={`symbol-${i}`} // eslint-disable-line react/no-array-index-key
         >
-          {this.constructor.renderSymbolItem(activeIndex === i ? activeShape : shape, props)}
+          {Scatter.renderSymbolItem(activeIndex === i ? activeShape : shape, props)}
         </Layer>
       );
     });
@@ -229,7 +258,7 @@ class Scatter extends PureComponent {
         onAnimationStart={this.handleAnimationStart}
       >
         {
-          ({ t }) => {
+          ({ t }: { t: number }) => {
             const stepData = points.map((entry, index) => {
               const prev = prevPoints && prevPoints[index];
 
@@ -283,25 +312,25 @@ class Scatter extends PureComponent {
 
     if (!errorBarItems) { return null; }
 
-    function dataPointFormatterY(dataPoint, dataKey) {
+    function dataPointFormatterY(dataPoint: ScatterPointItem, dataKey: Props['dataKey']) {
       return {
         x: dataPoint.cx,
         y: dataPoint.cy,
-        value: dataPoint.node.y,
+        value: +dataPoint.node.y,
         errorVal: getValueByDataKey(dataPoint, dataKey),
       };
     }
 
-    function dataPointFormatterX(dataPoint, dataKey) {
+    function dataPointFormatterX(dataPoint: ScatterPointItem, dataKey: Props['dataKey']) {
       return {
         x: dataPoint.cx,
         y: dataPoint.cy,
-        value: dataPoint.node.x,
+        value: +dataPoint.node.x,
         errorVal: getValueByDataKey(dataPoint, dataKey),
       };
     }
 
-    return errorBarItems.map((item, i) => {
+    return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) => {
       const { direction } = item.props;
 
       return React.cloneElement(item, {
@@ -317,15 +346,15 @@ class Scatter extends PureComponent {
 
   renderLine() {
     const { points, line, lineType, lineJointType } = this.props;
-    const scatterProps = getPresentationAttributes(this.props);
-    const customLineProps = getPresentationAttributes(line);
+    const scatterProps = filterProps(this.props);
+    const customLineProps = filterProps(line);
     let linePoints, lineItem;
 
     if (lineType === 'joint') {
       linePoints = points.map(entry => ({ x: entry.cx, y: entry.cy }));
     } else if (lineType === 'fitting') {
       const { xmin, xmax, a, b } = getLinearRegression(points);
-      const linearExp = x => a * x + b;
+      const linearExp = (x: number) => a * x + b;
       linePoints = [{ x: xmin, y: linearExp(xmin) }, { x: xmax, y: linearExp(xmax) }];
     }
     const lineProps = {
@@ -337,7 +366,7 @@ class Scatter extends PureComponent {
     };
 
     if (React.isValidElement(line)) {
-      lineItem = React.cloneElement(line, lineProps);
+      lineItem = React.cloneElement(line as any, lineProps);
     } else if (_.isFunction(line)) {
       lineItem = line(lineProps);
     } else {
@@ -353,9 +382,9 @@ class Scatter extends PureComponent {
 
   render() {
     const { hide, points, line, className, xAxis, yAxis, left, top, width,
-      height, id } = this.props;
+      height, id, isAnimationActive } = this.props;
     if (hide || !points || !points.length) { return null; }
-    const { isAnimationActive, isAnimationFinished } = this.state;
+    const { isAnimationFinished } = this.state;
     const layerClass = classNames('recharts-scatter', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
     const clipPathId = _.isNil(id) ? this.id : id;

@@ -1,79 +1,90 @@
 /**
  * @fileOverview Area
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent, ReactElement } from 'react';
 import classNames from 'classnames';
+// @ts-ignore
 import Animate from 'react-smooth';
 import _ from 'lodash';
-import Curve from '../shape/Curve';
-import Dot from '../shape/Dot';
+import Curve, { CurveType, Point as CurvePoint } from '../shape/Curve';
+import Dot, { Props as DotProps } from '../shape/Dot';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES,
-  getPresentationAttributes, isSsr, filterEventAttributes } from '../util/ReactUtils';
+// @ts-ignore
+import { isSsr } from '../util/ReactUtils';
+// @ts-ignore
 import { isNumber, uniqueId, interpolateNumber } from '../util/DataUtils';
+// @ts-ignore
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
+import { Props as XAxisProps } from './XAxis';
+import { Props as YAxisProps } from './YAxis';
+import { D3Scale, LegendType, TooltipType, AnimationTiming, PresentationAttributes, filterProps, adaptEventHandlers, ChartOffset, Coordinate } from '../util/types';
+
+type AreaDot = ReactElement<SVGElement> | ((props: any) => SVGElement) | DotProps | boolean;
+interface AreaPointItem extends CurvePoint {
+  value?: number | number[];
+  payload?: any;
+}
 
 
-class Area extends PureComponent {
+interface InternalAreaProps {
+  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  top?: number;
+  left?: number;
+  width?: number;
+  height?: number;
+  points?: AreaPointItem[];
+  baseLine?: number | Coordinate[];
+}
+
+interface AreaProps extends InternalAreaProps {
+  className?: string;
+  dataKey: string | number | Function;
+  type?: CurveType;
+  unit?: string | number;
+  name?: string | number;
+  xAxisId?: string | number;
+  yAxisId?: string | number;
+
+  stackId?: string | number;
+  legendType?: LegendType;
+  tooltipType?: TooltipType
+  connectNulls?: boolean;
+  // whether have dot in line
+  activeDot?: AreaDot; 
+  dot?: AreaDot;
+  
+  label?: any;
+  layout?: 'horizontal' | 'vertical';
+  hide?: boolean;
+  baseValue?: number | 'dataMin' | 'dataMax';
+  isRange?: boolean;
+
+  onAnimationStart?: () => void;
+  onAnimationEnd?: () => void;
+
+  isAnimationActive?: boolean;
+  animateNewValues?: boolean;
+  animationBegin?: number;
+  animationDuration?: number;
+  animationEasing?: AnimationTiming;
+  animationId?: number;
+  id?: string;
+};
+
+type Props = PresentationAttributes<SVGElement> & AreaProps;
+
+interface State {
+  prevPoints?: AreaPointItem[];
+  prevBaseLine?: number | any[];
+  isAnimationFinished?: boolean;
+  totalLength?: number;
+}
+
+class Area extends PureComponent<Props, State> {
 
   static displayName = 'Area';
-
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    ...EVENT_ATTRIBUTES,
-    className: PropTypes.string,
-    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
-    type: PropTypes.oneOfType([PropTypes.oneOf([
-      'basis', 'basisClosed', 'basisOpen', 'linear', 'linearClosed', 'natural',
-      'monotoneX', 'monotoneY', 'monotone', 'step', 'stepBefore', 'stepAfter',
-    ]), PropTypes.func]),
-    unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    yAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    xAxisId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    yAxis: PropTypes.object,
-    xAxis: PropTypes.object,
-    stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    legendType: PropTypes.oneOf(LEGEND_TYPES),
-    tooltipType: PropTypes.oneOf(TOOLTIP_TYPES),
-    connectNulls: PropTypes.bool,
-
-    activeDot: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
-    ]),
-    // dot configuration
-    dot: PropTypes.oneOfType([
-      PropTypes.func, PropTypes.element, PropTypes.object, PropTypes.bool,
-    ]),
-    label: PropTypes.oneOfType([
-      PropTypes.func, PropTypes.element, PropTypes.object, PropTypes.bool,
-    ]),
-    hide: PropTypes.bool,
-    // have curve configuration
-    layout: PropTypes.oneOf(['horizontal', 'vertical']),
-    baseLine: PropTypes.oneOfType([
-      PropTypes.number, PropTypes.array,
-    ]),
-    isRange: PropTypes.bool,
-    points: PropTypes.arrayOf(PropTypes.shape({
-      x: PropTypes.number,
-      y: PropTypes.number,
-      value: PropTypes.oneOfType([PropTypes.number, PropTypes.array]),
-    })),
-
-    onAnimationStart: PropTypes.func,
-    onAnimationEnd: PropTypes.func,
-
-    animationId: PropTypes.number,
-    isAnimationActive: PropTypes.bool,
-    animationBegin: PropTypes.number,
-    animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
-
-    id: PropTypes.string,
-  };
 
   static defaultProps = {
     stroke: '#3182bd',
@@ -84,7 +95,7 @@ class Area extends PureComponent {
     legendType: 'line',
     connectNulls: false,
     // points of area
-    points: [],
+    points: [] as AreaPointItem[],
     dot: false,
     activeDot: true,
     hide: false,
@@ -95,10 +106,10 @@ class Area extends PureComponent {
     animationEasing: 'ease',
   };
 
-  static getBaseValue = (props, xAxis, yAxis) => {
+  static getBaseValue = (props: Props, xAxis: Props['xAxis'], yAxis: Props['yAxis']): number => {
     const { layout, baseValue } = props;
 
-    if (isNumber(baseValue)) { return baseValue; }
+    if (isNumber(baseValue) && typeof baseValue === 'number') { return baseValue; }
 
     const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
     const domain = numericAxis.scale.domain();
@@ -120,7 +131,20 @@ class Area extends PureComponent {
   };
 
   static getComposedData = ({ props, xAxis, yAxis, xAxisTicks, yAxisTicks, bandSize,
-    dataKey, stackedData, dataStartIndex, displayedData, offset }) => {
+    dataKey, stackedData, dataStartIndex, displayedData, offset }: {
+      props: Props;
+      item: Area;
+      bandSize: number;
+      xAxis: InternalAreaProps['xAxis'];
+      yAxis: InternalAreaProps['yAxis'];
+      xAxisTicks: XAxisProps['ticks'];
+      yAxisTicks: YAxisProps['ticks'];
+      stackedData: number[][];
+      dataStartIndex: number;
+      offset: ChartOffset;
+      displayedData: any[];
+      dataKey: Props['dataKey'];
+    }) => {
     const { layout } = props;
     const hasStack = stackedData && stackedData.length;
     const baseValue = Area.getBaseValue(props, xAxis, yAxis);
@@ -181,7 +205,7 @@ class Area extends PureComponent {
     return { points, baseLine, layout, isRange, ...offset };
   };
 
-  static renderDotItem = (option, props) => {
+  static renderDotItem = (option: AreaDot, props: any) => {
     let dotItem;
 
     if (React.isValidElement(option)) {
@@ -195,10 +219,10 @@ class Area extends PureComponent {
     return dotItem;
   };
 
-  state = { isAnimationFinished: true };
+  state: State = { isAnimationFinished: true };
 
   // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps: Props) {
     const { animationId, points, baseLine } = this.props;
 
     if (nextProps.animationId !== animationId) {
@@ -208,7 +232,7 @@ class Area extends PureComponent {
 
   id = uniqueId('recharts-area-');
 
-  cachePrevData = (points, baseLine) => {
+  cachePrevData = (points: AreaPointItem[], baseLine: Props['baseLine']) => {
     this.setState({
       prevPoints: points,
       prevBaseLine: baseLine,
@@ -234,16 +258,16 @@ class Area extends PureComponent {
     }
   };
 
-  renderDots(needClip, clipPathId) {
+  renderDots(needClip: boolean, clipPathId: string) {
     const { isAnimationActive } = this.props;
     const { isAnimationFinished } = this.state;
 
     if (isAnimationActive && !isAnimationFinished) { return null; }
 
     const { dot, points, dataKey } = this.props;
-    const areaProps = getPresentationAttributes(this.props);
-    const customDotProps = getPresentationAttributes(dot);
-    const dotEvents = filterEventAttributes(dot);
+    const areaProps = filterProps(this.props);
+    const customDotProps = filterProps(dot);
+    const dotEvents = adaptEventHandlers(dot);
 
     const dots = points.map((entry, i) => {
       const dotProps = {
@@ -260,7 +284,7 @@ class Area extends PureComponent {
         payload: entry.payload,
       };
 
-      return this.constructor.renderDotItem(dot, dotProps);
+      return Area.renderDotItem(dot, dotProps);
     });
     const dotsProps = {
       clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
@@ -268,14 +292,14 @@ class Area extends PureComponent {
     return <Layer className="recharts-area-dots" {...dotsProps}>{dots}</Layer>;
   }
 
-  renderHorizontalRect(alpha) {
+  renderHorizontalRect(alpha: number) {
     const { baseLine, points, strokeWidth } = this.props;
     const startX = points[0].x;
     const endX = points[points.length - 1].x;
     const width = alpha * Math.abs(startX - endX);
     let maxY = _.max(points.map(entry => (entry.y || 0)));
 
-    if (isNumber(baseLine)) {
+    if (isNumber(baseLine) && typeof baseLine === 'number') {
       maxY = Math.max(baseLine, maxY);
     } else if (baseLine && _.isArray(baseLine) && baseLine.length) {
       maxY = Math.max(_.max(baseLine.map(entry => (entry.y || 0))), maxY);
@@ -287,7 +311,7 @@ class Area extends PureComponent {
           x={startX < endX ? startX : startX - width}
           y={0}
           width={width}
-          height={parseInt(maxY + (strokeWidth || 1), 10)}
+          height={Math.floor(maxY + (strokeWidth ? parseInt(`${strokeWidth}`, 10) : 1))}
         />
       );
     }
@@ -295,14 +319,14 @@ class Area extends PureComponent {
     return null;
   }
 
-  renderVerticalRect(alpha) {
+  renderVerticalRect(alpha: number) {
     const { baseLine, points, strokeWidth } = this.props;
     const startY = points[0].y;
     const endY = points[points.length - 1].y;
     const height = alpha * Math.abs(startY - endY);
     let maxX = _.max(points.map(entry => (entry.x || 0)));
 
-    if (isNumber(baseLine)) {
+    if (isNumber(baseLine) && typeof baseLine === 'number') {
       maxX = Math.max(baseLine, maxX);
     } else if (baseLine && _.isArray(baseLine) && baseLine.length) {
       maxX = Math.max(_.max(baseLine.map(entry => (entry.x || 0))), maxX);
@@ -313,8 +337,8 @@ class Area extends PureComponent {
         <rect
           x={0}
           y={startY < endY ? startY : startY - height}
-          width={maxX + (strokeWidth || 1)}
-          height={parseInt(height, 10)}
+          width={maxX + (strokeWidth ? parseInt(`${strokeWidth}`, 10) : 1)}
+          height={Math.floor(height)}
         />
       );
     }
@@ -322,7 +346,7 @@ class Area extends PureComponent {
     return null;
   }
 
-  renderClipRect(alpha) {
+  renderClipRect(alpha: number) {
     const { layout } = this.props;
 
     if (layout === 'vertical') {
@@ -332,13 +356,14 @@ class Area extends PureComponent {
     return this.renderHorizontalRect(alpha);
   }
 
-  renderAreaStatically(points, baseLine, needClip, clipPathId) {
-    const { layout, type, stroke, connectNulls, isRange } = this.props;
+  renderAreaStatically(points: AreaPointItem[], baseLine: Props['baseLine'], needClip: boolean, clipPathId: string) {
+    const { layout, type, stroke, connectNulls, isRange, ref, ...others } = this.props;
 
     return (
       <Layer clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
         <Curve
-          {...this.props}
+          {...filterProps(others)}
+          {...adaptEventHandlers(others)}
           points={points}
           baseLine={baseLine}
           stroke="none"
@@ -346,7 +371,7 @@ class Area extends PureComponent {
         />
         {stroke !== 'none' && (
           <Curve
-            {...getPresentationAttributes(this.props)}
+            {...filterProps(this.props)}
             className="recharts-area-curve"
             layout={layout}
             type={type}
@@ -357,20 +382,20 @@ class Area extends PureComponent {
         )}
         {stroke !== 'none' && isRange && (
           <Curve
-            {...getPresentationAttributes(this.props)}
+            {...filterProps(this.props)}
             className="recharts-area-curve"
             layout={layout}
             type={type}
             connectNulls={connectNulls}
             fill="none"
-            points={baseLine}
+            points={baseLine as CurvePoint[]}
           />
         )}
       </Layer>
     );
   }
 
-  renderAreaWithAnimation(needClip, clipPathId) {
+  renderAreaWithAnimation(needClip: boolean, clipPathId: string) {
     const { points, baseLine, isAnimationActive, animationBegin,
       animationDuration, animationEasing, animationId } = this.props;
     const { prevPoints, prevBaseLine } = this.state;
@@ -389,7 +414,7 @@ class Area extends PureComponent {
         onAnimationStart={this.handleAnimationStart}
       >
         {
-          ({ t }) => {
+          ({ t }: { t: number }) => {
             if (prevPoints) {
               const prevPointsDiffFactor = prevPoints.length / points.length;
               // update animtaion
@@ -407,17 +432,17 @@ class Area extends PureComponent {
               });
               let stepBaseLine;
 
-              if (isNumber(baseLine)) {
+              if (isNumber(baseLine) && typeof baseLine === 'number') {
                 const interpolator = interpolateNumber(prevBaseLine, baseLine);
                 stepBaseLine = interpolator(t);
               } else if (_.isNil(baseLine) || _.isNaN(baseLine)) {
                 const interpolator = interpolateNumber(prevBaseLine, 0);
                 stepBaseLine = interpolator(t);
               } else {
-                stepBaseLine = baseLine.map((entry, index) => {
+                stepBaseLine = (baseLine as Coordinate[]).map((entry, index) => {
                   const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-                  if (prevBaseLine[prevPointIndex]) {
-                    const prev = prevBaseLine[prevPointIndex];
+                  if ((prevBaseLine as Coordinate[])[prevPointIndex]) {
+                    const prev = (prevBaseLine as Coordinate[])[prevPointIndex];
                     const interpolatorX = interpolateNumber(prev.x, entry.x);
                     const interpolatorY = interpolateNumber(prev.y, entry.y);
 
@@ -449,7 +474,7 @@ class Area extends PureComponent {
     );
   }
 
-  renderArea(needClip, clipPathId) {
+  renderArea(needClip: boolean, clipPathId: string) {
     const { points, baseLine, isAnimationActive } = this.props;
     const { prevPoints, prevBaseLine, totalLength } = this.state;
 
@@ -479,7 +504,7 @@ class Area extends PureComponent {
         {needClip ? (
           <defs>
             <clipPath id={`clipPath-${clipPathId}`}>
-              <rect x={left} y={top} width={width} height={parseInt(height, 10)} />
+              <rect x={left} y={top} width={width} height={Math.floor(height)} />
             </clipPath>
           </defs>
         ) : null}
