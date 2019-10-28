@@ -18,7 +18,7 @@ import { isNumber, uniqueId, interpolateNumber } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { D3Scale, LegendType, TooltipType, AnimationTiming, PresentationAttributes, filterProps, adaptEventHandlers, ChartOffset, Coordinate } from '../util/types';
+import { D3Scale, LegendType, TooltipType, AnimationTiming, PresentationAttributes, filterProps, ChartOffset, Coordinate } from '../util/types';
 
 type AreaDot = ReactElement<SVGElement> | ((props: any) => SVGElement) | DotProps | boolean;
 interface AreaPointItem extends CurvePoint {
@@ -266,8 +266,7 @@ class Area extends PureComponent<Props, State> {
 
     const { dot, points, dataKey } = this.props;
     const areaProps = filterProps(this.props);
-    const customDotProps = filterProps(dot);
-    const dotEvents = adaptEventHandlers(dot);
+    const customDotProps = filterProps(dot, true);
 
     const dots = points.map((entry, i) => {
       const dotProps = {
@@ -275,7 +274,6 @@ class Area extends PureComponent<Props, State> {
         r: 3,
         ...areaProps,
         ...customDotProps,
-        ...dotEvents,
         dataKey,
         cx: entry.x,
         cy: entry.y,
@@ -362,8 +360,7 @@ class Area extends PureComponent<Props, State> {
     return (
       <Layer clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
         <Curve
-          {...filterProps(others)}
-          {...adaptEventHandlers(others)}
+          {...filterProps(others, true)}
           points={points}
           baseLine={baseLine}
           stroke="none"

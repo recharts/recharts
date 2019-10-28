@@ -14,7 +14,7 @@ import { ifOverflowMatches } from '../util/IfOverflowMatches';
 // @ts-ignore
 import { LabeledScaleHelper } from '../util/CartesianUtils';
 import { warn } from '../util/LogUtils';
-import { D3Scale, filterProps, adaptEventHandlers } from '../util/types';
+import { D3Scale, filterProps } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 
@@ -79,15 +79,14 @@ function ReferenceDot(props: Props) {
 
     const dotProps = {
       clipPath,
-      ...filterProps(props),
-      ...adaptEventHandlers(props),
+      ...filterProps(props, true),
       cx,
       cy,
     };
 
     return (
       <Layer className={classNames('recharts-reference-dot', className)}>
-        {this.constructor.renderDot(shape, dotProps)}
+        {ReferenceDot.renderDot(shape, dotProps)}
         {Label.renderCallByParent(props, {
           x: cx - r,
           y: cy - r,

@@ -1,7 +1,7 @@
 /**
  * @fileOverview Cartesian Axis
  */
-import React, { ReactElement, PureComponent, ReactNode } from 'react';
+import React, { ReactElement, ReactNode, Component } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
 // @ts-ignore
@@ -54,7 +54,7 @@ interface CartesianAxisProps {
 type Props = PresentationAttributes<SVGElement> & CartesianAxisProps;
 
 
-class CartesianAxis extends PureComponent<Props> {
+class CartesianAxis extends Component<Props> {
 
   static displayName = 'CartesianAxis';
 

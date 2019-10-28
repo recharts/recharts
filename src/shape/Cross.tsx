@@ -44,7 +44,7 @@ class Cross extends PureComponent<Props> {
 
     return (
       <path
-        {...filterProps(this.props)}
+        {...filterProps(this.props, true)}
         className={classNames('recharts-cross', className)}
         d={Cross.getPath(x, y, width, height, top, left)}
       />

@@ -19,7 +19,7 @@ import { isSsr, findAllByType } from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { D3Scale, LegendType, TooltipType, AnimationTiming, adaptEventHandlers, filterProps, ChartOffset } from '../util/types';
+import { D3Scale, LegendType, TooltipType, AnimationTiming, filterProps, ChartOffset } from '../util/types';
 
 type LineDot = ReactElement<SVGElement> | ((props: any) => SVGElement) | DotProps | boolean;
 
@@ -286,15 +286,13 @@ class Line extends PureComponent<Props, State> {
     }
     const { dot, points, dataKey } = this.props;
     const lineProps = filterProps(this.props);
-    const customDotProps = filterProps(dot);
-    const dotEvents = adaptEventHandlers(dot);
+    const customDotProps = filterProps(dot, true);
     const dots = points.map((entry, i) => {
       const dotProps = {
         key: `dot-${i}`,
         r: 3,
         ...lineProps,
         ...customDotProps,
-        ...dotEvents,
         value: entry.value,
         dataKey,
         cx: entry.x, cy: entry.y, index: i, payload: entry.payload,
@@ -312,8 +310,7 @@ class Line extends PureComponent<Props, State> {
   renderCurveStatically(points: LinePointItem[], needClip: boolean, clipPathId: string, props?: { strokeDasharray: string }) {
     const { type, layout, connectNulls, ref, ...others } = this.props;
     const curveProps = {
-      ...filterProps(others),
-      ...adaptEventHandlers(others),
+      ...filterProps(others, true),
       fill: 'none',
       className: 'recharts-line-curve',
       clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,

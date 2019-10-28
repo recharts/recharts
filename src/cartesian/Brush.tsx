@@ -14,7 +14,7 @@ import { isNumber } from '../util/DataUtils';
 // @ts-ignore
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 
-import { Padding, PresentationAttributes, D3Scale } from '../util/types';
+import { Padding, PresentationAttributes } from '../util/types';
 
 interface BrushStartEndIndex {
   startIndex?: number;
@@ -208,6 +208,7 @@ class Brush extends PureComponent<Props, State> {
     this.setState({
       isTextActive: true,
     });
+
   };
 
   handleLeaveSlideOrTraveller = () => {
@@ -257,6 +258,7 @@ class Brush extends PureComponent<Props, State> {
   }
 
   handleTravellerDragStart(id: BrushTravellerId, e: MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) {
+    console.log(e);
     const event = isTouch(e) ? e.changedTouches[0] : e;
 
     this.setState({

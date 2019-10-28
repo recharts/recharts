@@ -19,7 +19,7 @@ describe('<LabelList />', () => {
         <XAxis dataKey="x" name="stature" unit="cm" />
         <YAxis dataKey="y" name="weight" unit="kg" />
         <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km" />
-        <Scatter name="A school" data={data}>
+        <Scatter name="A school" data={data} isAnimationActive={false}>
           <LabelList dataKey="x" />
         </Scatter>
       </ScatterChart>

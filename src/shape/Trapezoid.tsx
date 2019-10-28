@@ -91,7 +91,7 @@ class Trapezoid extends PureComponent<Props> {
       return (
         <g>
           <path
-            {...filterProps(this.props)}
+            {...filterProps(this.props, true)}
             className={layerClass}
             d={getTrapezoidPath(x, y, upperWidth, lowerWidth, height)}
           />
@@ -125,7 +125,7 @@ class Trapezoid extends PureComponent<Props> {
             easing={animationEasing}
           >
             <path
-              {...filterProps(this.props)}
+              {...filterProps(this.props, true)}
               className={layerClass}
               d={getTrapezoidPath(currX, currY, currUpperWidth, currLowerWidth, currHeight)}
               ref={(node) => { this.node = node; }}

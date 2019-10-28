@@ -32,7 +32,7 @@ class Polygon extends PureComponent<Props> {
 
     return (
       <polygon
-        {...filterProps(this.props)}
+        {...filterProps(this.props, true)}
         className={layerClass}
         points={getPolygonPoints(points)}
       />

@@ -13,7 +13,7 @@ import { isNumOrStr } from '../util/DataUtils';
 // @ts-ignore
 import { LabeledScaleHelper, rectWithCoords } from '../util/CartesianUtils';
 import { warn } from '../util/LogUtils';
-import { ViewBox, D3Scale, PresentationAttributes, filterProps, adaptEventHandlers } from '../util/types';
+import { ViewBox, D3Scale, PresentationAttributes, filterProps } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 
@@ -148,8 +148,7 @@ function ReferenceLine(props: Props) {
 
   const lineProps = {
     clipPath,
-    ...filterProps(props),
-    ...adaptEventHandlers(props),
+    ...filterProps(props, true),
     x1,
     y1,
     x2,

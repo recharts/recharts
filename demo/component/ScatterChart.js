@@ -131,6 +131,7 @@ export default class Demo extends Component {
             <Scatter name="A school" data={data01} fill="#ff7300">
               <ErrorBar dataKey="errorY" width={0} strokeWidth={1} stroke="blue" direction="y" />
               <ErrorBar dataKey="errorX" width={4} strokeWidth={2} stroke="green" opacity={0.8} direction="x" />
+              <LabelList dataKey="x" />
             </Scatter>
           </ScatterChart>
         </div>

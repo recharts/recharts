@@ -137,7 +137,7 @@ class Rectangle extends PureComponent<Props> {
     if (!isUpdateAnimationActive) {
       return (
         <path
-          {...filterProps(this.props)}
+          {...filterProps(this.props, true)}
           className={layerClass}
           d={getRectangePath(x, y, width, height, radius)}
         />
@@ -166,7 +166,7 @@ class Rectangle extends PureComponent<Props> {
             easing={animationEasing}
           >
             <path
-              {...filterProps(this.props)}
+              {...filterProps(this.props, true)}
               className={layerClass}
               d={getRectangePath(currX, currY, currWidth, currHeight, radius)}
               ref={(node) => { this.node = node; }}

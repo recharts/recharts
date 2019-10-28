@@ -290,7 +290,7 @@ const SVGPropKeys = ['className', 'color', 'height', 'id', 'lang', 'max', 'media
 'offset', 'opacity', 'operator', 'order', 'orient', 'orientation', 'origin', 'overflow', 'overlinePosition', 'overlineThickness' ,
 'paintOrder', 'panose1', 'pathLength', 'patternContentUnits', 'patternTransform', 'patternUnits', 'pointerEvents', 'points' ,
 'pointsAtX', 'pointsAtY', 'pointsAtZ', 'preserveAlpha', 'preserveAspectRatio', 'primitiveUnits', 'r', 'radius', 'refX', 'refY', 'renderingIntent' ,
-'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures', 'restart', 'result', 'rotate', 'rx', 'ry', 'scale', 'seed' ,
+'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures', 'restart', 'result', 'rotate', 'rx', 'ry', 'seed' ,
 'shapeRendering', 'slope', 'spacing', 'specularConstant', 'specularExponent', 'speed', 'spreadMethod', 'startOffset', 'stdDeviation', 'stemh', 'stemv' ,
 'stitchTiles', 'stopColor', 'stopOpacity', 'strikethroughPosition', 'strikethroughThickness', 'string', 'stroke', 'strokeDasharray', 'strokeDashoffset' ,
 'strokeLinecap', 'strokeLinejoin', 'strokeMiterlimit', 'strokeOpacity', 'strokeWidth', 'surfaceScale', 'systemLanguage', 'tableValues', 'targetX' ,
@@ -323,7 +323,7 @@ const EventKeys = ['children', 'dangerouslySetInnerHTML', 'onCopy', 'onCopyCaptu
 'onLostPointerCapture', 'onLostPointerCaptureCapture', 'onScroll', 'onScrollCapture', 'onWheel', 'onWheelCapture', 'onAnimationStart', 'onAnimationStartCapture',
 'onAnimationEnd', 'onAnimationEndCapture', 'onAnimationIteration', 'onAnimationIterationCapture', 'onTransitionEnd', 'onTransitionEndCapture', ];
 
-export const filterProps = (props: Record<string, any> | Component | FunctionComponent | boolean) => {
+export const filterProps = (props: Record<string, any> | Component | FunctionComponent | boolean, includeEvents?: boolean) => {
   if (!props || typeof props === 'function' || typeof props === 'boolean') { return null; }
 
   let inputProps = props as Record<string, any>;
@@ -337,15 +337,15 @@ export const filterProps = (props: Record<string, any> | Component | FunctionCom
   const out: Record<string, any> = {};
 
   for (const i in inputProps) {
-    if (SVGPropKeys.includes(i)) {
+    if (SVGPropKeys.includes(i) || (includeEvents && EventKeys.includes(i))) {
       out[i] = (inputProps as any)[i];
     }
   }
 
   return out;
-}
+};
 
-export const adaptEventHandlers = (props: Record<string, any> | Component | FunctionComponent | boolean) => {
+export const adaptEventHandlers = (props: Record<string, any> | Component | FunctionComponent | boolean, newHandler?: ((e?: Event) => any)): Record<string, (e?: Event) => any> => {
   if (!props || typeof props === 'function' || typeof props === 'boolean') { return null; }
 
   let inputProps = props as Record<string, any>;
@@ -360,12 +360,12 @@ export const adaptEventHandlers = (props: Record<string, any> | Component | Func
 
   for (const i in inputProps) {
     if (EventKeys.includes(i)) {
-      out[i] = (e: Event) => inputProps[i](inputProps, e);
+      out[i] = newHandler || ((e: Event) => inputProps[i](inputProps, e));
     }
   }
 
   return out;
-}
+};
 
 // Animation Types => TODO: Should be moved when react-smooth is typescriptified.
 export type AnimationTiming = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';

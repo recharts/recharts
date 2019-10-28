@@ -206,7 +206,7 @@ class Sector extends PureComponent<Props> {
 
     return (
       <path
-        {...filterProps(this.props)}
+        {...filterProps(this.props, true)}
         className={layerClass}
         d={path}
       />
