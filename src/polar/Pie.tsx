@@ -21,7 +21,7 @@ import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from
 // @ts-ignore
 import { getValueByDataKey } from '../util/ChartUtils';
 import { warn } from '../util/LogUtils';
-import { LegendType, TooltipType, AnimationTiming, PresentationAttributes, filterProps, Coordinate, ChartOffset } from '../util/types';
+import { LegendType, TooltipType, AnimationTiming, PresentationAttributes, filterProps, Coordinate, ChartOffset, DataKey } from '../util/types';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -44,10 +44,10 @@ type PieActiveShape = ReactElement<SVGElement> | ((props: any) => SVGElement) | 
 type PieLabelLine = ReactElement<SVGElement> | ((props: any) => SVGElement) | PresentationAttributes<SVGPathElement> | boolean;
 type Pielabel = ReactElement<SVGElement> | ((props: any) => SVGElement) | { offsetRadius: number; } | boolean;
 type PieSectorDataItem = SectorProps & {
-  percent?: number; 
+  percent?: number;
   name?: string | number;
   midAngle?: number;
-  middleRadius?: number; 
+  middleRadius?: number;
   tooltipPosition?: Coordinate;
   value?: number;
   paddingAngle?: number;
@@ -56,9 +56,9 @@ type PieSectorDataItem = SectorProps & {
 interface PieProps extends PieDef {
   className?: string;
   animationId?: number;
-  dataKey: string | number | Function;
-  nameKey?: string | number | Function;
-  valueKey?: string | number | Function;
+  dataKey: DataKey<any>;
+  nameKey?: DataKey<any>;
+  valueKey?: DataKey<any>;
   /** Match each sector's stroke color to it's fill color */
   blendStroke?: boolean;
   /** The minimum angle for no-zero element */
@@ -521,9 +521,9 @@ class Pie extends PureComponent<Props, State> {
       outerRadius, isAnimationActive } = this.props;
     const { prevSectors } = this.state;
 
-    if (hide || !sectors || !sectors.length || !isNumber(cx) ||
-      !isNumber(cy) || !isNumber(innerRadius) ||
-      !isNumber(outerRadius)) {
+    if (hide || !sectors || !sectors.length || !isNumber(cx as number) ||
+      !isNumber(cy as number) || !isNumber(innerRadius as number) ||
+      !isNumber(outerRadius as number)) {
       return null;
     }
 

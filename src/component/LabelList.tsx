@@ -7,7 +7,7 @@ import Layer from '../container/Layer';
 import { findAllByType } from '../util/ReactUtils';
 // @ts-ignore
 import { getValueByDataKey } from '../util/ChartUtils';
-import { filterProps } from '../util/types';
+import { filterProps, DataKey } from '../util/types';
 
 const propTypes = {
   id: PropTypes.string,
@@ -27,7 +27,7 @@ interface Props<T extends Data> {
   data: Array<T>;
   valueAccessor?: Function;
   clockWise?: boolean;
-  dataKey?: string | number | Function;
+  dataKey?: DataKey<T>;
   content?: ContentType;
 }
 

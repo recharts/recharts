@@ -24,6 +24,9 @@ import {
 import _ from 'lodash';
 
 export type LayoutType = 'horizontal' | 'vertical';
+export type PolarLayoutType = 'radial' | 'centric';
+export type AxisType = 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis';
+export type DataKey<T> = string | number | ((obj: T) => any);
 export type PresentationAttributes<T> = AriaAttributes &
   DOMAttributes<T> &
   SVGProps<T>;
@@ -39,7 +42,7 @@ export interface Coordinate {
   x: number;
   y: number;
 };
-export type ScaleType = 'auto' | 'linear' | 'pow' | 'sqrt' | 'log' | 'identity' | 'time' | 'band' | 
+export type ScaleType = 'auto' | 'linear' | 'pow' | 'sqrt' | 'log' | 'identity' | 'time' | 'band' |
   'point' | 'ordinal' | 'quantile' | 'quantize' | 'utc' | 'sequential' | 'threshold';
 
 //

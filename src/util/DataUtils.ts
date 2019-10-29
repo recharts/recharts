@@ -7,7 +7,7 @@ export const mathSign = (value: number) => {
   return -1;
 };
 
-export const isPercent = (value: string) => (
+export const isPercent = (value: string | number) => (
   _.isString(value) && value.indexOf('%') === value.length - 1
 );
 
@@ -95,7 +95,7 @@ export const interpolateNumber = (numberA: number, numberB: number) => {
   return () => numberB;
 };
 
-export function findEntryInArray<T>(ary: Array<T>, specifiedKey: number | ((entry: T) => unknown), specifiedValue: any) {
+export function findEntryInArray<T>(ary: Array<T>, specifiedKey: number | string | ((entry: T) => unknown), specifiedValue: any) {
   if (!ary || !ary.length) { return null; }
 
   return ary.find(entry => (

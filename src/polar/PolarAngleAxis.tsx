@@ -9,20 +9,17 @@ import Polygon from '../shape/Polygon';
 import Text, { Props as TextProps } from '../component/Text';
 // @ts-ignore
 import { filterEventsOfChild } from '../util/ReactUtils';
-import { PresentationAttributes, ScaleType, filterProps } from '../util/types';
+import { PresentationAttributes, ScaleType, filterProps, DataKey } from '../util/types';
 import { polarToCartesian } from '../util/PolarUtils';
+import { TickItem } from './types';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
-interface TickItem {
-  value?: any;
-  coordinate: number;
-}
 type PolarAngleAxisTick = PresentationAttributes<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
 interface PolarAngleAxisProps {
   type?: 'number' | 'category';
   angleAxisId?: string | number;
-  dataKey?: number | string | Function;
+  dataKey?: DataKey<any>;
   cx?: number;
   cy?: number;
   radius?: number;
@@ -161,12 +158,12 @@ class PolarAngleAxis extends PureComponent<Props> {
       const tickProps = {
         textAnchor,
         ...axisProps,
-        stroke: 'none', 
+        stroke: 'none',
         fill: stroke,
         ...customTickProps,
-        index: i, 
+        index: i,
         payload: entry,
-        x: lineCoord.x2, 
+        x: lineCoord.x2,
         y: lineCoord.y2,
       };
 
