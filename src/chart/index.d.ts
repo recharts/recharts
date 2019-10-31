@@ -1,4 +1,4 @@
-type ILayout = 'horizontal' | 'vertical' | 'centric';
+type ILayout = 'horizontal' | 'vertical' | 'centric' | 'radial';
 
 interface IMargin {
   top?: number;
@@ -33,6 +33,13 @@ interface ICommonPropTypes {
   onMouseUp?: any;
   reverseStackOrder?: boolean;
   id?: string;
+
+  startAngle?: number;
+  endAngle?: number;
+  cx?: number | string;
+  cy?: number | string;
+  innerRadius?: number | string;
+  outerRadius?: number | string;
 }
 
 interface IPiePropTypes {
@@ -72,6 +79,8 @@ interface ITreemapNode {
   index: number;
   children: any;
   name: string;
+  value: number;
+  [k: string]: any;
 }
 
 export {

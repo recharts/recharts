@@ -7,6 +7,7 @@ import Radar from '../polar/Radar';
 import PolarAngleAxis from '../polar/PolarAngleAxis';
 import PolarRadiusAxis from '../polar/PolarRadiusAxis';
 import { formatAxisMap } from '../util/PolarUtils';
+import { ICategoricalChart } from './index.d';
 
 export default generateCategoricalChart({
   chartName: 'RadarChart',
@@ -25,13 +26,4 @@ export default generateCategoricalChart({
     innerRadius: 0,
     outerRadius: '80%',
   },
-  propTypes: {
-    layout: PropTypes.oneOf(['centric']),
-    startAngle: PropTypes.number,
-    endAngle: PropTypes.number,
-    cx: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    cy: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    innerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    outerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  },
-});
+} as ICategoricalChart);

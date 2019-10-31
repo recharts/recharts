@@ -18,18 +18,24 @@ import { getValueByDataKey } from '../util/ChartUtils';
 import { COLOR_PANEL } from '../util/Constants';
 import { getStringSize } from '../util/DOMUtils';
 import { uniqueId } from '../util/DataUtils';
+import { ITreemapNode } from './index.d';
 
-const computeNode = ({ depth, node, index, valueKey }: any) => {
+const computeNode = ({ depth, node, index, valueKey }: {
+  depth: number;
+  node: ITreemapNode;
+  index: number;
+  valueKey: string | number;
+}) => {
   const { children } = node;
   const childDepth = depth + 1;
   const computedChildren = children && children.length ?
-    children.map((child: any, i: number) => (
+    children.map((child: ITreemapNode, i: number) => (
       computeNode({ depth: childDepth, node: child, index: i, valueKey })
     )) : null;
   let value;
 
   if (children && children.length) {
-    value = computedChildren.reduce((result: any, child: any) => (result + child.value), 0);
+    value = computedChildren.reduce((result: any, child: ITreemapNode) => (result + child.value), 0);
   } else {
     value = _.isNaN(node[valueKey]) || node[valueKey] <= 0 ? 0 : node[valueKey];
   }
@@ -46,10 +52,10 @@ const filterRect = (node: ITreemapNode) => (
 );
 
 // Compute the area for each child based on value & scale.
-const getAreaOfChildren = (children: any[], areaValueRatio: number) => {
+const getAreaOfChildren = (children: ITreemapNode[], areaValueRatio: number) => {
   const ratio = areaValueRatio < 0 ? 0 : areaValueRatio;
 
-  return children.map((child: any) => {
+  return children.map((child: ITreemapNode) => {
     const area = child.value * ratio;
 
     return {
@@ -60,7 +66,7 @@ const getAreaOfChildren = (children: any[], areaValueRatio: number) => {
 };
 
 // Computes the score for the specified row, as the worst aspect ratio.
-const getWorstScore = (row: any, parentSize: any, aspectRatio: any) => {
+const getWorstScore = (row: any, parentSize: number, aspectRatio: number) => {
   const parentArea = parentSize * parentSize;
   const rowArea = row.area * row.area;
   const { min, max } = row.reduce((result: any, child: any) => (
@@ -76,7 +82,7 @@ const getWorstScore = (row: any, parentSize: any, aspectRatio: any) => {
   ) : Infinity;
 };
 
-const horizontalPosition = (row: any, parentSize: any, parentRect: any, isFlush: any) => {
+const horizontalPosition = (row: any, parentSize: number, parentRect: ITreemapNode, isFlush: boolean) => {
   let rowHeight = parentSize ? Math.round(row.area / parentSize) : 0;
 
   if (isFlush || rowHeight > parentRect.height) {
@@ -108,7 +114,7 @@ const horizontalPosition = (row: any, parentSize: any, parentRect: any, isFlush:
   };
 };
 
-const verticalPosition = (row: any, parentSize: any, parentRect: any, isFlush: any) => {
+const verticalPosition = (row: any, parentSize: number, parentRect: ITreemapNode, isFlush: boolean): ITreemapNode => {
   let rowWidth = parentSize ? Math.round(row.area / parentSize) : 0;
 
   if (isFlush || rowWidth > parentRect.width) {
@@ -138,7 +144,7 @@ const verticalPosition = (row: any, parentSize: any, parentRect: any, isFlush: a
   };
 };
 
-const position = (row: any, parentSize: any, parentRect: any, isFlush: any) => {
+const position = (row: any, parentSize: number, parentRect: ITreemapNode, isFlush: boolean): ITreemapNode => {
   if (parentSize === parentRect.width) {
     return horizontalPosition(row, parentSize, parentRect, isFlush);
   }
@@ -147,13 +153,13 @@ const position = (row: any, parentSize: any, parentRect: any, isFlush: any) => {
 };
 
 // Recursively arranges the specified node's children into squarified rows.
-const squarify = (node: any, aspectRatio: any): any => {
+const squarify = (node: ITreemapNode, aspectRatio: number): ITreemapNode => {
   const { children } = node;
 
   if (children && children.length) {
-    let rect = filterRect(node);
+    let rect = filterRect(node) as any;
     // maybe a bug
-    const row = [] as any[];
+    const row = [] as any;
     let best = Infinity; // the best row score so far
     let child, score; // the current row score
     let size = Math.min(rect.width, rect.height); // initial orientation
@@ -195,8 +201,6 @@ const squarify = (node: any, aspectRatio: any): any => {
   return node;
 };
 
-type func = () => {};
-
 class Props {
   width: number;
   height: number
@@ -204,12 +208,14 @@ class Props {
   animationId: number
   style: any;
   aspectRatio: number = 0.5 * (1 + Math.sqrt(5));
-  content: React.ReactElement | func;
+  // TODO content dataKey needs to support func
+  content: React.ReactElement;
   fill: string;
   stroke: string;
   className: string;
-  nameKey: string | number | func;
-  dataKey: string | number | func = 'value';
+  // TODO nameKey dataKey needs to support func
+  nameKey: string | number;
+  dataKey: string | number = 'value';
   children: any;
 
   // optional values flat/nest, flat show whole treemap, nest only show depth=1 node
@@ -218,8 +224,8 @@ class Props {
   // customize nest index content
   nestIndexContent: React.ReactElement | ((item: any, i: number) => any);
 
-  onAnimationStart: func;
-  onAnimationEnd: func;
+  onAnimationStart: () => {};
+  onAnimationEnd: () => {};
 
   onMouseEnter: (node: ITreemapNode, e: any) => {};
   onMouseLeave: (node: ITreemapNode, e: any) => {};
@@ -235,10 +241,10 @@ class Props {
 class State {
   isTooltipActive: boolean = false;
   isAnimationFinished: boolean = false;
-  activeNode: any = null;
-  formatRoot: any = null;
-  currentRoot: any = null;
-  nestIndex: any[] = [];
+  activeNode: ITreemapNode = null;
+  formatRoot: ITreemapNode = null;
+  currentRoot: ITreemapNode = null;
+  nestIndex: ITreemapNode[] = [];
 }
 
 class Treemap extends PureComponent<Props, State> {
@@ -259,10 +265,17 @@ class Treemap extends PureComponent<Props, State> {
     });
   }
 
-  computeRoot({ type, width, height, data, dataKey, aspectRatio }: any) {
+  computeRoot({ type, width, height, data, dataKey, aspectRatio }: {
+    type: string,
+    width: number,
+    height: number,
+    data: any,
+    dataKey: string | number,
+    aspectRatio: number,
+  }): any {
     const root = computeNode({
       depth: 0,
-      node: { children: data, x: 0, y: 0, width, height },
+      node: { children: data, x: 0, y: 0, width, height } as ITreemapNode,
       index: 0,
       valueKey: dataKey,
     });
@@ -400,10 +413,12 @@ class Treemap extends PureComponent<Props, State> {
     });
   }
 
-  renderItem(content: any, nodeProps: ITreemapNode, isLeaf: boolean): any {
+  renderItem(content: any, nodeProps: ITreemapNode, isLeaf: boolean): React.ReactElement {
     const { isAnimationActive, animationBegin, animationDuration,
       animationEasing, isUpdateAnimationActive, type, animationId, colorPanel } = this.props;
+    const { isAnimationFinished } = this.state;
     const { width, height, x, y, depth } = nodeProps;
+    const translateX = parseInt(`${(Math.random() * 2 - 1) * width}`, 10);
     let event = {} as any;
     if (isLeaf || (type === 'nest')) {
       event = {
@@ -480,7 +495,7 @@ class Treemap extends PureComponent<Props, State> {
     );
   }
 
-  static renderContentItem(content: any, nodeProps: ITreemapNode, type: string, colorPanel: any) {
+  static renderContentItem(content: any, nodeProps: ITreemapNode, type: string, colorPanel: string[]): React.ReactElement {
     if (React.isValidElement(content)) {
       return React.cloneElement(content, nodeProps);
     } if (_.isFunction(content)) {
@@ -522,7 +537,7 @@ class Treemap extends PureComponent<Props, State> {
     );
   }
 
-  renderNode(root: any, node: ITreemapNode, i: number) {
+  renderNode(root: ITreemapNode, node: ITreemapNode, i: number): React.ReactElement {
     const { content, type } = this.props;
     const nodeProps = { ...getPresentationAttributes(this.props), ...node, root };
     const isLeaf = !node.children || !node.children.length;
@@ -530,7 +545,7 @@ class Treemap extends PureComponent<Props, State> {
     const { currentRoot } = this.state;
     const isCurrentRootChild =
       (currentRoot.children || [])
-        .filter((item: any) => item.depth === node.depth && item.name === node.name);
+        .filter((item: ITreemapNode) => item.depth === node.depth && item.name === node.name);
 
     if (!isCurrentRootChild.length && root.depth && type === 'nest') {
       return null;
@@ -541,13 +556,13 @@ class Treemap extends PureComponent<Props, State> {
         {this.renderItem(content, nodeProps, isLeaf)}
         {
           node.children && node.children.length ?
-            node.children.map((child: any, index: number) => this.renderNode(node, child, index)) : null
+            node.children.map((child: ITreemapNode, index: number) => this.renderNode(node, child, index)) : null
         }
       </Layer>
     );
   }
 
-  renderAllNodes() {
+  renderAllNodes(): React.ReactElement {
     const { formatRoot } = this.state;
 
     if (!formatRoot) {

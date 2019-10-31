@@ -1,21 +1,19 @@
 /**
- * @fileOverview Scatter Chart
+ * @fileOverview Bar Chart
  */
 import generateCategoricalChart from './generateCategoricalChart';
-import Scatter from '../cartesian/Scatter';
+import Bar from '../cartesian/Bar';
 import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
-import ZAxis from '../cartesian/ZAxis';
 import { formatAxisMap } from '../util/CartesianUtils';
+import { ICategoricalChart } from './index.d';
 
 export default generateCategoricalChart({
-  chartName: 'ScatterChart',
-  GraphicalChild: Scatter,
-  eventType: 'single',
+  chartName: 'BarChart',
+  GraphicalChild: Bar,
   axisComponents: [
     { axisType: 'xAxis', AxisComp: XAxis },
     { axisType: 'yAxis', AxisComp: YAxis },
-    { axisType: 'zAxis', AxisComp: ZAxis },
   ],
   formatAxisMap,
-});
+} as ICategoricalChart);

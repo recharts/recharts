@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import generateCategoricalChart from './generateCategoricalChart';
 import Funnel from '../numberAxis/Funnel';
+import { ICategoricalChart } from './index.d';
 
 export default generateCategoricalChart({
   chartName: 'FunnelChart',
@@ -13,7 +14,4 @@ export default generateCategoricalChart({
   defaultProps: {
     layout: 'centric',
   },
-  propTypes: {
-    layout: PropTypes.oneOf(['centric']),
-  }
-});
+} as ICategoricalChart);
