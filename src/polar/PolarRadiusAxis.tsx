@@ -10,7 +10,7 @@ import Layer from '../container/Layer';
 import { filterEventsOfChild } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { PresentationAttributes, filterProps, ScaleType } from '../util/types';
-import { TickItem } from './types';
+import { TickItem } from './TickItem';
 
 type PolarRadiusAxisTick = PresentationAttributes<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
 interface PolarRadiusAxisProps {

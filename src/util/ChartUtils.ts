@@ -13,7 +13,9 @@ import Legend from '../component/Legend';
 // @ts-ignore
 import { findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 import { ReactElement, ReactNode } from 'react';
-import { RadiusAxisProps, AngleAxisProps, TickItem } from '../polar/types';
+// TODO: Cause of circular dependency. Needs refactor.
+// import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
+import { TickItem } from '../polar/TickItem';
 import RadialBar from '../polar/RadialBar';
 import { LayoutType, PolarLayoutType, AxisType } from './types';
 
@@ -849,7 +851,7 @@ export const getCateCoordinateOfLine = ({ axis, ticks, bandSize, entry, index, d
 };
 
 export const getCateCoordinateOfBar = ({ axis, ticks, offset, bandSize, entry, index }: {
-  axis: RadiusAxisProps & { dataKey?: any }; // TODO: should dataKey be included in RadiusAxisProps?
+  axis: any; // RadiusAxisProps & { dataKey?: any }; // TODO: should dataKey be included in RadiusAxisProps?
   ticks: Array<TickItem>;
   offset: any;
   bandSize: number;
@@ -866,7 +868,7 @@ export const getCateCoordinateOfBar = ({ axis, ticks, offset, bandSize, entry, i
 
 
 export const getBaseValueOfBar = ({ numericAxis }: {
-  numericAxis: AngleAxisProps | RadiusAxisProps
+  numericAxis: any // AngleAxisProps | RadiusAxisProps
 }) => {
   const domain = numericAxis.scale.domain();
 

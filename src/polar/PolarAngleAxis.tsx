@@ -11,7 +11,7 @@ import Text, { Props as TextProps } from '../component/Text';
 import { filterEventsOfChild } from '../util/ReactUtils';
 import { PresentationAttributes, ScaleType, filterProps, DataKey } from '../util/types';
 import { polarToCartesian } from '../util/PolarUtils';
-import { TickItem } from './types';
+import { TickItem } from './TickItem';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;

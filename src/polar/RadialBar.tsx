@@ -17,7 +17,9 @@ import { mathSign, interpolateNumber } from '../util/DataUtils';
 // @ts-ignore
 import { getCateCoordinateOfBar, findPositionOfBar, getValueByDataKey, truncateByDomain, getBaseValueOfBar } from '../util/ChartUtils';
 import { LegendType, TooltipType, AnimationTiming, filterProps, PresentationAttributes } from '../util/types';
-import { AngleAxisProps, RadiusAxisProps, TickItem } from './types';
+// TODO: Cause of circular dependency. Needs refactoring of functions that need them.
+// import { AngleAxisProps, RadiusAxisProps } from './types';
+import { TickItem } from './TickItem';
 
 type RadialBarDataItem = SectorProps & {
   value?: any;
@@ -88,9 +90,9 @@ class RadialBar extends PureComponent<Props, State> {
     displayedData, dataKey, stackedData, barPosition, bandSize, dataStartIndex }: {
       item: RadialBar;
       props: any;
-      radiusAxis: RadiusAxisProps;
+      radiusAxis: any; // RadiusAxisProps;
       radiusAxisTicks: Array<TickItem>;
-      angleAxis: AngleAxisProps;
+      angleAxis: any; // AngleAxisProps;
       angleAxisTicks: Array<TickItem>;
       displayedData: any[];
       dataKey: Props['dataKey'];
