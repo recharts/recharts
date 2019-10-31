@@ -1,31 +1,16 @@
 /**
  * @fileOverview Y Axis
  */
-import { ReactElement } from 'react';
-import { ScaleType, PresentationAttributes } from '../util/types';
+import { BaseAxisProps, AxisInterval } from '../util/types';
 
-export interface Props {
-  allowDecimals?: boolean;
-  allowDuplicatedCategory?: boolean;
-  hide?: boolean;
-  /** The name of data displayed in the axis */ 
-  name?: string | number;
-  /** The unit of data displayed in the axis */ 
-  unit?: string | number;
+export interface Props extends BaseAxisProps {
   /** The unique id of y-axis */
   yAxisId?: string | number;
-  domain?: (string | number | Function | 'auto' | 'dataMin' | 'dataMax')[];
-  /** The key of data displayed in the axis */ 
-  dataKey?: string | number | Function;
   /**
    * Ticks can be any type when the axis is the type of category
    * Ticks must be numbers when the axis is the type of number
    */
   ticks?: (string | number)[];
-  /** The count of ticks */
-  tickCount?: number;
-  /** The formatter function of tick */ 
-  tickFormatter?: (value: any) => string;
   /** The width of axis, which need to be setted by user */
   width?: number;
   /** The height of axis which is usually calculated in Chart */
@@ -33,19 +18,12 @@ export interface Props {
   mirror?: boolean;
   /** The orientation of axis */
   orientation?: 'left' | 'right';
-  type?: 'number' | 'category';
   padding?: {
     top?: number;
     bottom?: number;
   };
-  allowDataOverflow?: boolean;
-  scale?: ScaleType | Function;
-  tick?: PresentationAttributes<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
-  axisLine?: boolean | PresentationAttributes<SVGLineElement>;
-  tickLine?: boolean | PresentationAttributes<SVGTextElement>;
   minTickGap?: number;
-  tickSize?: number;
-  interval?: number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
+  interval?: AxisInterval;
   reversed?: boolean;
 };
 

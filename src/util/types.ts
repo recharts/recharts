@@ -19,7 +19,8 @@ import {
   ReactNode,
   Component,
   isValidElement,
-  FunctionComponent
+  FunctionComponent,
+  ReactElement
 } from 'react';
 import _ from 'lodash';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'd3-scale';
@@ -407,3 +408,55 @@ export interface ViewBox {
 }
 
 export type D3Scale<T> = D3ScaleContinuousNumeric<T, number>;
+
+export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | 'dataMax';
+/** The domain of axis */
+export type AxisDomain = [AxisDomainItem, AxisDomainItem];
+
+/** The props definition of base axis */
+export interface BaseAxisProps {
+  /** The type of axis */
+  type?: 'number' | 'category';
+  /** The key of data displayed in the axis */ 
+  dataKey?: string | number | Function;
+  /** Whether or not display the axis */
+  hide?: boolean;
+  /** The scale type or functor of scale */
+  scale?: ScaleType | Function;
+  /** The option for tick */
+  tick?: PresentationAttributes<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
+  /** The count of ticks */
+  tickCount?: number;
+  /** The option for axisLine */
+  axisLine?: boolean | PresentationAttributes<SVGLineElement>;
+  /** The option for tickLine */
+  tickLine?: boolean | PresentationAttributes<SVGTextElement>;
+  /** The size of tick line */
+  tickSize?: number;
+  /** The formatter function of tick */ 
+  tickFormatter?: (value: any) => string;
+  /**
+   * When domain of the axis is specified and the type of the axis is 'number', 
+   * if allowDataOverflow is set to be false, 
+   * the domain will be adjusted when the minimum value of data is smaller than domain[0] or 
+   * the maximum value of data is greater than domain[1] so that the axis displays all data values. 
+   * If set to true, graphic elements (line, area, bars) will be clipped to conform to the specified domain.
+   */
+  allowDataOverflow?: boolean;
+  /**
+   * Allow the axis has duplicated categorys or not when the type of axis is "category".
+   */
+  allowDuplicatedCategory?: boolean;
+  /**
+   * Allow the ticks of axis to be decimals or not.
+   */
+  allowDecimals?: boolean;
+  /** The domain of scale in this axis */
+  domain?: AxisDomain;
+  /** The name of data displayed in the axis */ 
+  name?: string | number;
+  /** The unit of data displayed in the axis */ 
+  unit?: string | number;
+};
+
+export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
