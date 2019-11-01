@@ -10,14 +10,9 @@ import Layer from '../container/Layer';
 import { filterEventsOfChild } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { PresentationAttributes, filterProps, ScaleType } from '../util/types';
-
+import { TickItem } from './TickItem';
 
 type PolarRadiusAxisTick = PresentationAttributes<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
-interface TickIem {
-  value?: any;
-  coordinate?: number;
-}
-
 interface PolarRadiusAxisProps {
   type?: 'number' | 'category';
   cx?: number;
@@ -34,7 +29,7 @@ interface PolarRadiusAxisProps {
   allowDuplicatedCategory?: boolean;
   tickFormatter?: (value: any) => string;
   tick?: PolarRadiusAxisTick;
-  ticks?: TickIem[]
+  ticks?: TickItem[]
 }
 
 export type Props = PresentationAttributes<SVGElement> & PolarRadiusAxisProps;
@@ -67,7 +62,7 @@ class PolarRadiusAxis extends PureComponent<Props> {
    * @param  {Number} coordinate The radius of tick
    * @return {Object} (x, y)
    */
-  getTickValueCoord({ coordinate }: TickIem) {
+  getTickValueCoord({ coordinate }: TickItem) {
     const { angle, cx, cy } = this.props;
 
     return polarToCartesian(cx, cy, coordinate, angle);
@@ -94,8 +89,8 @@ class PolarRadiusAxis extends PureComponent<Props> {
 
   getViewBox() {
     const { cx, cy, angle, ticks } = this.props;
-    const maxRadiusTick = _.maxBy(ticks, (entry: TickIem) => (entry.coordinate || 0));
-    const minRadiusTick = _.minBy(ticks, (entry: TickIem) => (entry.coordinate || 0));
+    const maxRadiusTick = _.maxBy(ticks, (entry: TickItem) => (entry.coordinate || 0));
+    const minRadiusTick = _.minBy(ticks, (entry: TickItem) => (entry.coordinate || 0));
 
     return {
       cx, cy,

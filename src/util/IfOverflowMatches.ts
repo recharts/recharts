@@ -1,4 +1,4 @@
-export const ifOverflowMatches = (props, value) => {
+export const ifOverflowMatches = (props: any, value: string) => {
   const { alwaysShow } = props;
   let { ifOverflow } = props;
 

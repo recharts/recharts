@@ -1,12 +1,18 @@
+// @ts-ignore
 import ReferenceDot from '../cartesian/ReferenceDot';
+// @ts-ignore
 import ReferenceLine from '../cartesian/ReferenceLine';
+// @ts-ignore
 import ReferenceArea from '../cartesian/ReferenceArea';
 import { ifOverflowMatches } from './IfOverflowMatches';
+// @ts-ignore
 import { findAllByType } from './ReactUtils';
+// @ts-ignore
 import { isNumber } from './DataUtils';
+import { ReactNode } from 'react';
 
 export const detectReferenceElementsDomain = (
-  children, domain, axisId, axisType, specifiedTicks
+  children: ReactNode, domain: number[], axisId: string, axisType: string, specifiedTicks: any[]
 ) => {
   const lines = findAllByType(children, ReferenceLine);
   const dots = findAllByType(children, ReferenceDot);
@@ -17,7 +23,7 @@ export const detectReferenceElementsDomain = (
   let finalDomain = domain;
 
   if (elements.length) {
-    finalDomain = elements.reduce((result, el) => {
+    finalDomain = elements.reduce((result: number[], el: any) => {
       if (el.props[idKey] === axisId &&
         ifOverflowMatches(el.props, 'extendDomain') &&
         isNumber(el.props[valueKey])) {
@@ -33,7 +39,7 @@ export const detectReferenceElementsDomain = (
     const key1 = `${valueKey}1`;
     const key2 = `${valueKey}2`;
 
-    finalDomain = areas.reduce((result, el) => {
+    finalDomain = areas.reduce((result: number[], el: any) => {
       if (el.props[idKey] === axisId &&
         ifOverflowMatches(el.props, 'extendDomain') &&
         (isNumber(el.props[key1]) && isNumber(el.props[key2]))) {
