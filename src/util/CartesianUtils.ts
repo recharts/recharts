@@ -175,27 +175,34 @@ export class ScaleHelper {
   }
 }
 
-export class LabeledScaleHelper {
-  private scales: any;
+type ScaleResult<T> = {
+  [P in keyof T]: number;
+}
+type Scales<T> = {
+  [P in keyof T]: ScaleHelper;
+}
+type ScalesApply<T> = (coord: { [P in keyof T]: any }, options: any) => ScaleResult<T>;
+type ScalesIsInRange<T> = (coord: { [P in keyof T]: any }) => boolean;
+type LabeledScales<T> = Scales<T> & { apply: ScalesApply<T> } & { isInRange: ScalesIsInRange<T> };
 
-  static create(obj: any) {
-    return new this(obj);
-  }
-
-  constructor(scales: any) {
-    this.scales = _.mapValues(scales, ScaleHelper.create);
-    Object.assign(this, this.scales);
-  }
-
-  apply(coords: Array<Coordinate>, { bandAware }: any = {}) {
-    const { scales } = this;
-    return _.mapValues(
-      coords,
-      (value, label) => scales[label].apply(value, { bandAware }));
-  }
-
-  isInRange(coords: Array<Coordinate>) {
-    const { scales } = this;
-    return _.every(coords, (value, label) => scales[label].isInRange(value));
-  }
+export const createLabeldScales = (options: Record<string, any>): LabeledScales<Record<string, any>> => {
+  const scales: Scales<Record<string, any>> = Object.keys(options).reduce((res, key: string) => {
+    return {
+      ...res,
+      [key]: ScaleHelper.create(options[key])
+    }
+  }, {});
+  
+  return {
+    ...scales,
+    apply(coord: any, { bandAware }: any = {}) {
+      return _.mapValues(
+        coord,
+        (value, label) => scales[label].apply(value, { bandAware }));
+    },
+  
+    isInRange(coord: any) {
+      return _.every(coord, (value, label) => scales[label].isInRange(value));
+    }  
+  } as LabeledScales<Record<string, any>>;
 }

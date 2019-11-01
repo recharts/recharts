@@ -11,7 +11,7 @@ export const isPercent = (value: string | number) => (
   _.isString(value) && value.indexOf('%') === value.length - 1
 );
 
-export const isNumber = (value: number) => (
+export const isNumber = (value: any) => (
   _.isNumber(value) && !_.isNaN(value)
 );
 
@@ -109,7 +109,7 @@ export function findEntryInArray<T>(ary: Array<T>, specifiedKey: number | string
  * @param {Array} data The array of points
  * @returns {Object} The domain of x, and the parameter of linear function
  */
-export const getLinearRegression = (data: Array<{cx: number; cy: number}>) => {
+export const getLinearRegression = (data: Array<{cx?: number; cy?: number}>) => {
   if (!data || !data.length) { return null; }
 
   const len = data.length;

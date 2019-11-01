@@ -15,9 +15,7 @@ import { findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 import { ReactElement, ReactNode } from 'react';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
-import { TickItem } from '../polar/TickItem';
-import RadialBar from '../polar/RadialBar';
-import { LayoutType, PolarLayoutType, AxisType } from './types';
+import { LayoutType, PolarLayoutType, AxisType, TickItem } from './types';
 
 export function getValueByDataKey<T>(obj: T, dataKey: string | number | ((obj: T) => any), defaultValue?: any) {
   if (_.isNil(obj) || _.isNil(dataKey)) { return defaultValue; }
@@ -636,7 +634,7 @@ export const checkDomainOfScale = (scale: any) => {
   }
 };
 
-export const findPositionOfBar = (barPosition: any[], child: RadialBar) => {
+export const findPositionOfBar = (barPosition: any[], child: ReactNode) => {
   if (!barPosition) { return null; }
 
   for (let i = 0, len = barPosition.length; i < len; i++) {
@@ -830,7 +828,7 @@ export const getCateCoordinateOfLine = ({ axis, ticks, bandSize, entry, index, d
   bandSize: number;
   entry: any;
   index: number;
-  dataKey: string | number | ((obj: any) => any)
+  dataKey?: string | number | ((obj: any) => any)
 }) => {
   if (axis.type === 'category') {
     // find coordinate of category axis by the value of category

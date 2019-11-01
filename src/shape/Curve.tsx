@@ -21,20 +21,17 @@ const CURVE_FACTORIES: CurveFactories = {
   curveStepBefore,
 };
 
-type CurveType = 'basis' | 'basisClosed' | 'basisOpen' | 'linear' | 'linearClosed' | 'natural' |
+export type CurveType = 'basis' | 'basisClosed' | 'basisOpen' | 'linear' | 'linearClosed' | 'natural' |
   'monotoneX' | 'monotoneY' | 'monotone' | 'step' | 'stepBefore' | 'stepAfter' | CurveFactory;
 
-interface Point<T> {
-  base?: Point<T>
+export interface Point {
   x: number;
   y: number;
-  value: number;
-  payload: T;
 }
 
-const defined = <T extends {}>(p: Point<T>) => p.x === +p.x && p.y === +p.y;
-const getX = <T extends {}>(p: Point<T>) => p.x;
-const getY = <T extends {}>(p: Point<T>) => p.y;
+const defined = (p: Point) => p.x === +p.x && p.y === +p.y;
+const getX = (p: Point) => p.x;
+const getY = (p: Point) => p.y;
 
 const getCurveFactory = (type: CurveType, layout: LayoutType) => {
   if (_.isFunction(type)) { return type; }
@@ -47,20 +44,20 @@ const getCurveFactory = (type: CurveType, layout: LayoutType) => {
   return CURVE_FACTORIES[name] || curveLinear;
 };
 
-interface CurveProps<T> {
+interface CurveProps {
   className?: string;
   type?: CurveType;
   layout?: LayoutType;
-  baseLine?: number | Array<Point<T>>;
-  points?: Array<Point<T>>;
+  baseLine?: number | Array<Point>;
+  points?: Array<Point>;
   connectNulls?: boolean;
   path?: string;
   pathRef?: (ref: SVGPathElement) => void;
 }
 
-type Props<T> = PresentationAttributesWithProps<CurveProps<T>, SVGPathElement> & CurveProps<T>;
+export type Props = Omit<PresentationAttributesWithProps<CurveProps, SVGPathElement>, 'type' | 'points'> & CurveProps;
 
-class Curve<T> extends PureComponent<Props<T>> {
+class Curve extends PureComponent<Props> {
   static defaultProps = {
     type: 'linear',
     points: [] as any[],
@@ -83,19 +80,19 @@ class Curve<T> extends PureComponent<Props<T>> {
         { ...entry, base: formatBaseLine[index] }
       ));
       if (layout === 'vertical') {
-        lineFunction = shapeArea<Point<T>>().y(getY).x1(getX).x0(d => d.base.x);
+        lineFunction = shapeArea<Point & { base: Point; }>().y(getY).x1(getX).x0(d => d.base.x);
       } else {
-        lineFunction = shapeArea<Point<T>>().x(getX).y1(getY).y0(d => d.base.y);
+        lineFunction = shapeArea<Point & { base: Point; }>().x(getX).y1(getY).y0(d => d.base.y);
       }
       lineFunction.defined(defined).curve(curveFactory);
 
       return lineFunction(areaPoints);
     } if (layout === 'vertical' && isNumber(baseLine)) {
-      lineFunction = shapeArea<Point<T>>().y(getY).x1(getX).x0(baseLine);
+      lineFunction = shapeArea<Point>().y(getY).x1(getX).x0(baseLine);
     } else if (isNumber(baseLine)) {
-      lineFunction = shapeArea<Point<T>>().x(getX).y1(getY).y0(baseLine);
+      lineFunction = shapeArea<Point>().x(getX).y1(getY).y0(baseLine);
     } else {
-      lineFunction = shapeLine<Point<T>>().x(getX).y(getY);
+      lineFunction = shapeLine<Point>().x(getX).y(getY);
     }
 
     lineFunction.defined(defined)

@@ -1,56 +1,66 @@
 /**
  * @fileOverview Render sectors of a funnel
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent, ReactElement } from 'react';
+// @ts-ignore
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
 import Layer from '../container/Layer';
-import Trapezoid from '../shape/Trapezoid';
+import Trapezoid, { Props as TrapezoidProps } from '../shape/Trapezoid';
 import LabelList from '../component/LabelList';
-import Cell from '../component/Cell';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES,
-  getPresentationAttributes, findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
+import Cell, { Props as CellProps } from '../component/Cell';
+// @ts-ignore
+import { getPresentationAttributes, findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
+// @ts-ignore
 import { interpolateNumber } from '../util/DataUtils';
+// @ts-ignore
 import { getValueByDataKey } from '../util/ChartUtils';
+import { LegendType, TooltipType, AnimationTiming, ChartOffset, PresentationAttributes, DataKey } from '../util/types';
 
-class Funnel extends PureComponent {
+
+interface FunnelTrapezoidItem extends TrapezoidProps {
+  value?: number | string;
+  payload?: any;
+}
+
+interface InternalFunnelProps {
+  trapezoids?: FunnelTrapezoidItem[];
+  animationId?: number;
+}
+
+interface FunnelProps extends InternalFunnelProps {
+  className?: string;
+  dataKey: DataKey<any>;
+  nameKey?: DataKey<any>;
+  data?: any[];
+  hide?: boolean;
+  activeShape: ReactElement<SVGElement> | ((props: any) => SVGElement) | TrapezoidProps;
+  legendType?: LegendType;
+  tooltipType?: TooltipType;
+  activeIndex?: number | number[];
+
+  onAnimationStart?: () => void;
+  onAnimationEnd?: () => void;
+
+  isAnimationActive?: boolean;
+  animateNewValues?: boolean;
+  animationBegin?: number;
+  animationDuration?: number;
+  animationEasing?: AnimationTiming;
+  id?: string;
+};
+
+type Props = TrapezoidProps & FunnelProps;
+
+interface State {
+  readonly prevTrapezoids?: FunnelTrapezoidItem[];
+  readonly isAnimationFinished?: boolean;
+}
+
+class Funnel extends PureComponent<Props, State> {
 
   static displayName = 'Funnel';
-
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    ...EVENT_ATTRIBUTES,
-    className: PropTypes.string,
-    animationId: PropTypes.number,
-    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
-    nameKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
-    data: PropTypes.arrayOf(PropTypes.object),
-    trapezoids: PropTypes.arrayOf(PropTypes.object),
-    hide: PropTypes.bool,
-    activeShape: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.func, PropTypes.element,
-    ]),
-    legendType: PropTypes.oneOf(LEGEND_TYPES),
-    tooltipType: PropTypes.oneOf(TOOLTIP_TYPES),
-    activeIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
-
-    onAnimationStart: PropTypes.func,
-    onAnimationEnd: PropTypes.func,
-
-    isAnimationActive: PropTypes.bool,
-    animationBegin: PropTypes.number,
-    animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf([
-      'ease',
-      'ease-in',
-      'ease-out',
-      'ease-in-out',
-      'spring',
-      'linear',
-    ]),
-  };
 
   static defaultProps = {
     stroke: '#fff',
@@ -65,7 +75,7 @@ class Funnel extends PureComponent {
     nameKey: 'name',
   };
 
-  static getRealFunnelData = (item) => {
+  static getRealFunnelData = (item: Funnel) => {
     const { data, children } = item.props;
     const presentationProps = getPresentationAttributes(item.props);
     const cells = findAllByType(children, Cell);
@@ -80,13 +90,13 @@ class Funnel extends PureComponent {
     }
 
     if (cells && cells.length) {
-      return cells.map(cell => ({ ...presentationProps, ...cell.props }));
+      return cells.map((cell: ReactElement<CellProps>) => ({ ...presentationProps, ...cell.props }));
     }
 
     return [];
   };
 
-  static getRealWidthHeight = (item, offset) => {
+  static getRealWidthHeight = (item: Funnel, offset: ChartOffset) => {
     const customWidth = item.props.width;
     const { width, height, left, right, top, bottom } = offset;
     const realHeight = height;
@@ -106,7 +116,12 @@ class Funnel extends PureComponent {
     };
   }
 
-  static getComposedData = ({ item, offset, onItemMouseLeave, onItemMouseEnter }) => {
+  static getComposedData = ({ item, offset, onItemMouseLeave, onItemMouseEnter }: {
+    item: Funnel;
+    offset: ChartOffset;
+    onItemMouseLeave: PresentationAttributes<SVGElement>['onMouseLeave'];
+    onItemMouseEnter: PresentationAttributes<SVGElement>['onMouseEnter'];
+  }) => {
     const funnelData = Funnel.getRealFunnelData(item);
     const { dataKey, nameKey, tooltipType } = item.props;
     const { left, top } = offset;
@@ -115,7 +130,7 @@ class Funnel extends PureComponent {
     const len = funnelData.length;
     const rowHeight = realHeight / len;
 
-    const trapezoids = funnelData.map((entry, i) => {
+    const trapezoids = funnelData.map((entry: any, i: number) => {
       const val = getValueByDataKey(entry, dataKey, 0);
       const name = getValueByDataKey(entry, nameKey, i);
       let nextVal = 0;
@@ -158,10 +173,10 @@ class Funnel extends PureComponent {
     };
   }
 
-  state = { isAnimationFinished: false };
+  state: State = { isAnimationFinished: false };
 
   // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps: Props) {
     const { animationId, trapezoids } = this.props;
 
     if (nextProps.isAnimationActive !== this.props.isAnimationActive) {
@@ -171,7 +186,7 @@ class Funnel extends PureComponent {
     }
   }
 
-  cachePrevData = (trapezoids) => {
+  cachePrevData = (trapezoids: FunnelTrapezoidItem[]) => {
     this.setState({ prevTrapezoids: trapezoids });
   };
 
@@ -193,7 +208,7 @@ class Funnel extends PureComponent {
     }
   };
 
-  isActiveIndex(i) {
+  isActiveIndex(i: number) {
     const { activeIndex } = this.props;
 
     if (Array.isArray(activeIndex)) {
@@ -203,7 +218,7 @@ class Funnel extends PureComponent {
     return i === activeIndex;
   }
 
-  static renderTrapezoidItem(option, props) {
+  static renderTrapezoidItem(option: Props['activeShape'], props: any) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     } if (_.isFunction(option)) {
@@ -215,7 +230,7 @@ class Funnel extends PureComponent {
     return <Trapezoid {...props} />;
   }
 
-  renderTrapezoidsStatically(trapezoids) {
+  renderTrapezoidsStatically(trapezoids: FunnelTrapezoidItem[]) {
     const { activeShape } = this.props;
 
     return trapezoids.map((entry, i) => {
@@ -231,7 +246,7 @@ class Funnel extends PureComponent {
           {...filterEventsOfChild(this.props, entry, i)}
           key={`trapezoid-${i}`} // eslint-disable-line react/no-array-index-key
         >
-          {this.constructor.renderTrapezoidItem(trapezoidOptions, trapezoidProps)}
+          {Funnel.renderTrapezoidItem(trapezoidOptions, trapezoidProps)}
         </Layer>
       );
     });
@@ -255,7 +270,7 @@ class Funnel extends PureComponent {
         onAnimationEnd={this.handleAnimationEnd}
       >
         {
-          ({ t }) => {
+          ({ t }: { t: number }) => {
             const stepData = trapezoids.map((entry, index) => {
               const prev = prevTrapezoids && prevTrapezoids[index];
 

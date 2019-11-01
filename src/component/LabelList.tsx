@@ -53,7 +53,7 @@ function LabelList<T extends Data>(props: Props<T>) {
 
           return (
             <Label
-              {...filterProps(entry) as any}
+              {...filterProps(entry, true) as any}
               {...others}
               {...idProps}
               index={index}

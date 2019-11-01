@@ -16,10 +16,9 @@ import Cell from '../component/Cell';
 import { mathSign, interpolateNumber } from '../util/DataUtils';
 // @ts-ignore
 import { getCateCoordinateOfBar, findPositionOfBar, getValueByDataKey, truncateByDomain, getBaseValueOfBar } from '../util/ChartUtils';
-import { LegendType, TooltipType, AnimationTiming, filterProps, PresentationAttributes } from '../util/types';
+import { LegendType, TooltipType, AnimationTiming, filterProps, PresentationAttributes, TickItem } from '../util/types';
 // TODO: Cause of circular dependency. Needs refactoring of functions that need them.
 // import { AngleAxisProps, RadiusAxisProps } from './types';
-import { TickItem } from './TickItem';
 
 type RadialBarDataItem = SectorProps & {
   value?: any;

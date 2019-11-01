@@ -9,26 +9,20 @@ import Layer from '../container/Layer';
 // @ts-ignore
 import { filterEventsOfChild } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-import { PresentationAttributes, filterProps, ScaleType } from '../util/types';
-import { TickItem } from './TickItem';
+import { PresentationAttributes, filterProps, BaseAxisProps, TickItem } from '../util/types';
 
-type PolarRadiusAxisTick = PresentationAttributes<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
-interface PolarRadiusAxisProps {
-  type?: 'number' | 'category';
+
+interface TickIem {
+  value?: any;
+  coordinate?: number;
+}
+
+interface PolarRadiusAxisProps extends BaseAxisProps {
   cx?: number;
   cy?: number;
-  hide?: number;
   radiusAxisId?: string | number;
   angle?: number;
-  tickCount?: number;
   orientation?: 'left' | 'right' | 'middle';
-  axisLine?: PresentationAttributes<SVGLineElement> | boolean;
-  domain?: Array<'auto' | 'dataMin' | 'dataMax' | number>;
-  scale?: Function | ScaleType;
-  allowDataOverflow?: boolean;
-  allowDuplicatedCategory?: boolean;
-  tickFormatter?: (value: any) => string;
-  tick?: PolarRadiusAxisTick;
   ticks?: TickItem[]
 }
 
@@ -123,7 +117,7 @@ class PolarRadiusAxis extends PureComponent<Props> {
     return <line className="recharts-polar-radius-axis-line" {...props} />;
   }
 
-  static renderTickItem(option: PolarRadiusAxisTick, props: any, value: string | number) {
+  static renderTickItem(option: Props['tick'], props: any, value: string | number) {
     let tickItem;
 
     if (React.isValidElement(option)) {

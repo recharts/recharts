@@ -57,7 +57,7 @@ export const getStyleString = (style: CSSProperties) => (
   ), '')
 );
 
-export const getStringSize = (text: string, style: CSSProperties = {}) => {
+export const getStringSize = (text: string | number, style: CSSProperties = {}) => {
   if (text === undefined || text === null || isSsr()) { return { width: 0, height: 0 }; }
 
   const str = `${text}`;

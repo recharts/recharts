@@ -206,7 +206,7 @@ class Radar extends PureComponent<Props, State> {
     } else {
       radar = (
         <Polygon
-          {...filterProps(this.props)}
+          {...filterProps(this.props, true)}
           onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}
           points={points}

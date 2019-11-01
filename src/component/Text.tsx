@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
 // @ts-ignore
 import { isSsr } from '../util/ReactUtils';
-import { PresentationAttributes } from '../util/types';
+import { PresentationAttributes, filterProps } from '../util/types';
 // @ts-ignore
 import { getStringSize } from '../util/DOMUtils';
 
@@ -201,7 +201,7 @@ class Text extends Component<Props, State> {
 
     return (
       <text
-        {...textProps}
+        {...filterProps(textProps, true)}
         x={x}
         y={y}
         className={classNames('recharts-text', className)}

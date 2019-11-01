@@ -1,66 +1,87 @@
 /**
  * @fileOverview Render a group of bar
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent, ReactElement } from 'react';
 import classNames from 'classnames';
+// @ts-ignore
 import Animate from 'react-smooth';
 import _ from 'lodash';
-import Rectangle from '../shape/Rectangle';
+import Rectangle, { Props as RectangleProps } from '../shape/Rectangle';
 import Layer from '../container/Layer';
-import ErrorBar from './ErrorBar';
+import ErrorBar, { Props as ErrorBarProps } from './ErrorBar';
 import Cell from '../component/Cell';
 import LabelList from '../component/LabelList';
+// @ts-ignore
 import { uniqueId, mathSign, interpolateNumber } from '../util/DataUtils';
-import { PRESENTATION_ATTRIBUTES, EVENT_ATTRIBUTES, LEGEND_TYPES, TOOLTIP_TYPES,
-  findAllByType, getPresentationAttributes, filterEventsOfChild, isSsr } from '../util/ReactUtils';
-import { getCateCoordinateOfBar, getValueByDataKey, truncateByDomain, getBaseValueOfBar,
-  findPositionOfBar } from '../util/ChartUtils';
+// @ts-ignore
+import { findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
+// @ts-ignore
+import { getCateCoordinateOfBar, getValueByDataKey, truncateByDomain, getBaseValueOfBar, findPositionOfBar } from '../util/ChartUtils';
+import { Props as XAxisProps } from './XAxis';
+import { Props as YAxisProps } from './YAxis';
+import { D3Scale, TooltipType, LegendType, AnimationTiming, PresentationAttributes, filterProps, ChartOffset, DataKey, TickItem } from '../util/types';
 
-class Bar extends PureComponent {
+interface BarRectangleItem extends RectangleProps {
+  value?: number;
+  /** the coordinate of background rectangle */
+  background?: {
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+  };
+}
+
+interface InternalBarProps {
+  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number>; x?: number; width?: number; };
+  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number>; y?: number; height?: number; };
+  data?: BarRectangleItem[];
+  top?: number;
+  left?: number;
+}
+
+type RectangleShapeType = ReactElement<SVGElement> | ((props: any) => SVGElement) | RectangleProps | boolean;
+
+interface BarProps extends InternalBarProps {
+  className?: string;
+  layout?: 'horizontal' | 'vertical';
+  xAxisId?: string | number;
+  yAxisId?: string | number;
+  stackId?: string | number;
+  barSize?: number;
+  unit?: string | number;
+  name?: string | number;
+  dataKey: DataKey<any>;
+  tooltipType?: TooltipType;
+  legendType?: LegendType;
+  minPointSize?: number;
+  maxBarSize?: number;
+  hide?: boolean;
+  shape?: ReactElement<SVGElement> | ((props: any) => SVGElement);
+  background?: RectangleShapeType; 
+  
+  
+  onAnimationStart?: () => void;
+  onAnimationEnd?: () => void;
+
+  isAnimationActive?: boolean;
+  animationBegin?: number;
+  animationDuration?: number;
+  animationEasing?: AnimationTiming;
+  animationId?: number;
+  id?: string;
+};
+
+type Props = PresentationAttributes<SVGPathElement> & BarProps;
+
+interface State {
+  readonly isAnimationFinished?: boolean;
+  readonly prevData?: BarRectangleItem[];
+}
+
+class Bar extends PureComponent<Props, State> {
 
   static displayName = 'Bar';
-
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    ...EVENT_ATTRIBUTES,
-    className: PropTypes.string,
-    layout: PropTypes.oneOf(['vertical', 'horizontal']),
-    xAxisId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    yAxisId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    yAxis: PropTypes.object,
-    xAxis: PropTypes.object,
-    stackId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    barSize: PropTypes.number,
-    unit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    name: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]).isRequired,
-    legendType: PropTypes.oneOf(LEGEND_TYPES),
-    tooltipType: PropTypes.oneOf(TOOLTIP_TYPES),
-    minPointSize: PropTypes.number,
-    maxBarSize: PropTypes.number,
-    hide: PropTypes.bool,
-
-    shape: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
-    data: PropTypes.arrayOf(PropTypes.shape({
-      x: PropTypes.number,
-      y: PropTypes.number,
-      width: PropTypes.number,
-      height: PropTypes.number,
-      radius: PropTypes.oneOfType([PropTypes.number, PropTypes.array]),
-      value: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.array]),
-    })),
-
-    onAnimationStart: PropTypes.func,
-    onAnimationEnd: PropTypes.func,
-
-    animationId: PropTypes.number,
-    isAnimationActive: PropTypes.bool,
-    animationBegin: PropTypes.number,
-    animationDuration: PropTypes.number,
-    animationEasing: PropTypes.oneOf(['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']),
-    id: PropTypes.string,
-  };
 
   static defaultProps = {
     xAxisId: 0,
@@ -69,7 +90,7 @@ class Bar extends PureComponent {
     minPointSize: 0,
     hide: false,
     // data of bar
-    data: [],
+    data: [] as BarRectangleItem[],
     layout: 'vertical',
     isAnimationActive: !isSsr(),
     animationBegin: 0,
@@ -91,15 +112,28 @@ class Bar extends PureComponent {
    * @return{Array} Composed data
    */
   static getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
-    xAxisTicks, yAxisTicks, stackedData, dataStartIndex, displayedData, offset }) => {
+    xAxisTicks, yAxisTicks, stackedData, dataStartIndex, displayedData, offset }: {
+      props: Props;
+      item: Bar;
+      barPosition: any;
+      bandSize: number;
+      xAxis: InternalBarProps['xAxis'];
+      yAxis: InternalBarProps['yAxis'];
+      xAxisTicks: TickItem[];
+      yAxisTicks: TickItem[];
+      stackedData: number[][];
+      dataStartIndex: number;
+      offset: ChartOffset;
+      displayedData: any[];
+    }) => {
     const pos = findPositionOfBar(barPosition, item);
-    if (!pos) { return []; }
+    if (!pos) { return ; }
 
     const { layout } = props;
     const { dataKey, children, minPointSize } = item.props;
     const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
     const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
-    const baseValue = getBaseValueOfBar({ props, numericAxis });
+    const baseValue = getBaseValueOfBar({ numericAxis });
     const cells = findAllByType(children, Cell);
 
     const rects = displayedData.map((entry, index) => {
@@ -169,10 +203,10 @@ class Bar extends PureComponent {
     return { data: rects, layout, ...offset };
   };
 
-  state = { isAnimationFinished: false };
+  state: State = { isAnimationFinished: false };
 
   // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps: Props) {
     const { animationId, data } = this.props;
 
     if (nextProps.animationId !== animationId) {
@@ -182,7 +216,7 @@ class Bar extends PureComponent {
 
   id = uniqueId('recharts-bar-');
 
-  cachePrevData = (data) => {
+  cachePrevData = (data: BarRectangleItem[]) => {
     this.setState({ prevData: data });
   };
 
@@ -196,7 +230,7 @@ class Bar extends PureComponent {
     this.props.onAnimationStart();
   };
 
-  static renderRectangle(option, props) {
+  static renderRectangle(option: RectangleShapeType, props: any) {
     let rectangle;
 
     if (React.isValidElement(option)) {
@@ -210,9 +244,9 @@ class Bar extends PureComponent {
     return rectangle;
   }
 
-  renderRectanglesStatically(data) {
+  renderRectanglesStatically(data: BarRectangleItem[]) {
     const { shape } = this.props;
-    const baseProps = getPresentationAttributes(this.props);
+    const baseProps = filterProps(this.props);
 
     return data && data.map((entry, i) => {
       const props = { ...baseProps, ...entry, index: i };
@@ -223,7 +257,7 @@ class Bar extends PureComponent {
           {...filterEventsOfChild(this.props, entry, i)}
           key={`rectangle-${i}`} // eslint-disable-line react/no-array-index-key
         >
-          {this.constructor.renderRectangle(shape, props)}
+          {Bar.renderRectangle(shape, props)}
         </Layer>
       );
     });
@@ -248,7 +282,7 @@ class Bar extends PureComponent {
         onAnimationStart={this.handleAnimationStart}
       >
         {
-          ({ t }) => {
+          ({ t }: { t: number }) => {
             const stepData = data.map((entry, index) => {
               const prev = prevData && prevData[index];
 
@@ -309,7 +343,7 @@ class Bar extends PureComponent {
 
   renderBackground() {
     const { data } = this.props;
-    const backgroundProps = getPresentationAttributes(this.props.background);
+    const backgroundProps = filterProps(this.props.background);
 
     return data.map((entry, i) => {
       // eslint-disable-next-line no-unused-vars
@@ -328,7 +362,7 @@ class Bar extends PureComponent {
         className: 'recharts-bar-background-rectangle',
       };
 
-      return this.constructor.renderRectangle(this.props.background, props);
+      return Bar.renderRectangle(this.props.background, props);
     });
   }
 
@@ -342,7 +376,7 @@ class Bar extends PureComponent {
 
     const offset = (layout === 'vertical') ? data[0].height / 2 : data[0].width / 2;
 
-    function dataPointFormatter(dataPoint, dataKey) {
+    function dataPointFormatter(dataPoint: BarRectangleItem, dataKey: Props['dataKey']) {
       return {
         x: dataPoint.x,
         y: dataPoint.y,
@@ -351,7 +385,7 @@ class Bar extends PureComponent {
       };
     }
 
-    return errorBarItems.map((item, i) => React.cloneElement(item, {
+    return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) => React.cloneElement(item, {
       key: `error-bar-${i}`, // eslint-disable-line react/no-array-index-key
       data,
       xAxis,
