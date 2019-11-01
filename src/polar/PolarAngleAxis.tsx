@@ -6,7 +6,7 @@ import _ from 'lodash';
 import Layer from '../container/Layer';
 import Dot from '../shape/Dot';
 import Polygon from '../shape/Polygon';
-import Text, { Props as TextProps } from '../component/Text';
+import Text from '../component/Text';
 // @ts-ignore
 import { filterEventsOfChild } from '../util/ReactUtils';
 import { PresentationAttributes, BaseAxisProps, filterProps } from '../util/types';

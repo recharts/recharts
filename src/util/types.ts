@@ -418,7 +418,7 @@ export interface BaseAxisProps {
   /** The type of axis */
   type?: 'number' | 'category';
   /** The key of data displayed in the axis */ 
-  dataKey?: string | number | Function;
+  dataKey?: DataKey<any>;
   /** Whether or not display the axis */
   hide?: boolean;
   /** The scale type or functor of scale */
