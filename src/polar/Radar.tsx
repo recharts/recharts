@@ -17,7 +17,7 @@ import Polygon from '../shape/Polygon';
 import Dot, { Props as DotProps } from '../shape/Dot';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
-import { PresentationAttributes, LegendType, TooltipType, AnimationTiming, filterProps } from '../util/types';
+import { PresentationAttributes, LegendType, TooltipType, AnimationTiming, filterProps, DataKey } from '../util/types';
 import { Props as PolarAngleAxisProps } from './PolarAngleAxis';
 import { Props as PolarRadiusAxisProps } from './PolarRadiusAxis';
 
@@ -36,7 +36,7 @@ type RadarDot = ReactElement<SVGElement> | ((props: any) => SVGElement) | DotPro
 
 interface RadarProps {
   className?: string;
-  dataKey: number | string | Function;
+  dataKey: DataKey<any>;
   angleAxisId?: string | number;
   radiusAxisId?: string | number;
   points?: RadarPoint[];

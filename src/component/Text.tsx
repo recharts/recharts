@@ -168,8 +168,8 @@ class Text extends Component<Props, State> {
     const { wordsByLines } = this.state;
 
     if (!isNumOrStr(textProps.x) || !isNumOrStr(textProps.y)) { return null; }
-    const x = (textProps.x as number) + (isNumber(dx) ? (dx as number) : 0);
-    const y = (textProps.y as number) + (isNumber(dy) ? (dy as number) : 0);
+    const x = (textProps.x as number) + (isNumber(dx as number) ? (dx as number) : 0);
+    const y = (textProps.y as number) + (isNumber(dy as number) ? (dy as number) : 0);
 
     let startDy: number;
     switch (verticalAnchor) {
@@ -190,7 +190,7 @@ class Text extends Component<Props, State> {
     if (scaleToFit) {
       const lineWidth = wordsByLines[0].width;
       const width = this.props.width;
-      transforms.push(`scale(${(isNumber(width) ? (width as number) / lineWidth : 1) / lineWidth})`);
+      transforms.push(`scale(${(isNumber(width as number) ? (width as number) / lineWidth : 1) / lineWidth})`);
     }
     if (angle) {
       transforms.push(`rotate(${angle}, ${x}, ${y})`);

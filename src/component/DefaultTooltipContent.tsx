@@ -2,7 +2,7 @@
  * @fileOverview Default Tooltip Content
  */
 import _ from 'lodash';
-import React, { PureComponent, CSSProperties, ReactElement, ReactNode } from 'react';
+import React, { PureComponent, CSSProperties, ReactNode } from 'react';
 import classNames from 'classnames';
 // @ts-ignore
 import { isNumOrStr } from '../util/DataUtils';
@@ -15,9 +15,10 @@ function defaultFormatter<T>(value: T) {
 
 export type TooltipType = 'none';
 export type ValueType = number | string | Array<number | string>;
-export type Formatter<TValue extends ValueType, TName> = (value: TValue, name: TName, item: Payload<TValue, TName>, index: number) => [ReactNode, ReactNode] | ReactNode
+export type NameType = number | string;
+export type Formatter<TValue extends ValueType, TName extends NameType> = (value: TValue, name: TName, item: Payload<TValue, TName>, index: number) => [ReactNode, ReactNode] | ReactNode
 
-export interface Payload<TValue extends ValueType, TName> {
+export interface Payload<TValue extends ValueType, TName extends NameType> {
   type?: TooltipType;
   color?: string;
   formatter?: Formatter<TValue, TName>;
@@ -27,7 +28,7 @@ export interface Payload<TValue extends ValueType, TName> {
   dataKey?: string | number;
 }
 
-export interface Props<TValue extends ValueType, TName> {
+export interface Props<TValue extends ValueType, TName extends NameType> {
   separator?: string;
   wrapperClassName?: string;
   labelClassName?: string;
@@ -41,7 +42,7 @@ export interface Props<TValue extends ValueType, TName> {
   itemSorter?: (item: Payload<TValue, TName>) => number | string;
 }
 
-class DefaultTooltipContent<TValue extends ValueType, TName> extends PureComponent<Props<TValue, TName>> {
+class DefaultTooltipContent<TValue extends ValueType, TName extends NameType> extends PureComponent<Props<TValue, TName>> {
   static displayName = 'DefaultTooltipContent';
   static defaultProps = {
     separator: ' : ',

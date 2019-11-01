@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { getTicksOfScale, parseScale, checkDomainOfScale, getBandSizeOfAxis } from './ChartUtils';
+import { Coordinate, AxisType } from './types';
 
 /**
  * Calculate the scale function, position, width, height of axes
@@ -10,10 +11,10 @@ import { getTicksOfScale, parseScale, checkDomainOfScale, getBandSizeOfAxis } fr
  * @param  {String} chartName The name of chart
  * @return {Object} Configuration
  */
-export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
+export const formatAxisMap = (props: any, axisMap: any, offset: any, axisType: AxisType, chartName: string) => {
   const { width, height, layout } = props;
   const ids = Object.keys(axisMap);
-  const steps = {
+  const steps: Record<string, any> = {
     left: offset.left,
     leftMirror: offset.left,
     right: width - offset.right,
@@ -75,7 +76,7 @@ export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
       height: axisType === 'yAxis' ? offset.height : axis.height,
     };
 
-    finalAxis.bandSize = getBandSizeOfAxis(finalAxis, ticks);
+    finalAxis.bandSize = getBandSizeOfAxis(finalAxis, ticks as any);
 
     if (!axis.hide && axisType === 'xAxis') {
       steps[offsetKey] += (needSpace ? -1 : 1) * finalAxis.height;
@@ -87,7 +88,7 @@ export const formatAxisMap = (props, axisMap, offset, axisType, chartName) => {
   }, {});
 };
 
-export const rectWithPoints = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => ({
+export const rectWithPoints = ({ x: x1, y: y1 }: Coordinate, { x: x2, y: y2 }: Coordinate) => ({
   x: Math.min(x1, x2),
   y: Math.min(y1, y2),
   width: Math.abs(x2 - x1),
@@ -101,16 +102,17 @@ export const rectWithPoints = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => ({
  */
 export const rectWithCoords = ({
   x1, y1, x2, y2,
-}) => rectWithPoints({ x: x1, y: y1 }, { x: x2, y: y2 });
+}: { x1: number; y1: number; x2: number; y2: number; }) => rectWithPoints({ x: x1, y: y1 }, { x: x2, y: y2 });
 
 export class ScaleHelper {
   static EPS = 1e-4;
+  private scale: any;
 
-  static create(obj) {
+  static create(obj: any) {
     return new ScaleHelper(obj);
   }
 
-  constructor(scale) {
+  constructor(scale: any) {
     this.scale = scale;
   }
 
@@ -134,7 +136,7 @@ export class ScaleHelper {
     return this.scale.bandwidth;
   }
 
-  apply(value, { bandAware, position } = {}) {
+  apply(value: any, { bandAware, position }: { bandAware?: boolean; position?: any } = {}) {
     if (value === undefined) {
       return undefined;
     } if (position) {
@@ -161,7 +163,7 @@ export class ScaleHelper {
     return this.scale(value);
   }
 
-  isInRange(value) {
+  isInRange(value: number) {
     const range = this.range();
 
     const first = range[0];
@@ -174,23 +176,25 @@ export class ScaleHelper {
 }
 
 export class LabeledScaleHelper {
-  static create(obj) {
+  private scales: any;
+
+  static create(obj: any) {
     return new this(obj);
   }
 
-  constructor(scales) {
+  constructor(scales: any) {
     this.scales = _.mapValues(scales, ScaleHelper.create);
     Object.assign(this, this.scales);
   }
 
-  apply(coords, { bandAware } = {}) {
+  apply(coords: Array<Coordinate>, { bandAware }: any = {}) {
     const { scales } = this;
     return _.mapValues(
       coords,
       (value, label) => scales[label].apply(value, { bandAware }));
   }
 
-  isInRange(coords) {
+  isInRange(coords: Array<Coordinate>) {
     const { scales } = this;
     return _.every(coords, (value, label) => scales[label].isInRange(value));
   }
