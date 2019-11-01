@@ -7,12 +7,9 @@ import classNames from 'classnames';
 import Layer from '../container/Layer';
 import Dot, { Props as DotProps } from '../shape/Dot';
 import Label from '../component/Label';
-// @ts-ignore
 import { isNumOrStr } from '../util/DataUtils';
-// @ts-ignore
 import { ifOverflowMatches } from '../util/IfOverflowMatches';
-// @ts-ignore
-import { LabeledScaleHelper } from '../util/CartesianUtils';
+import { createLabeldScales } from '../util/CartesianUtils';
 import { warn } from '../util/LogUtils';
 import { D3Scale, filterProps } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
@@ -43,7 +40,7 @@ type Props = DotProps & ReferenceDotProps;
 
 const getCoordinate = (props: Props) => {
   const { x, y, xAxis, yAxis } = props;
-  const scales = LabeledScaleHelper.create({ x: xAxis.scale, y: yAxis.scale });
+  const scales = createLabeldScales({ x: xAxis.scale, y: yAxis.scale });
 
   const result = scales.apply({ x, y }, { bandAware: true });
 

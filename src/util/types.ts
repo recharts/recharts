@@ -460,3 +460,8 @@ export interface BaseAxisProps {
 };
 
 export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
+
+export interface TickItem {
+  value?: any;
+  coordinate: number;
+}

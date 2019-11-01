@@ -6,12 +6,9 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import Layer from '../container/Layer';
 import Label from '../component/Label';
-// @ts-ignore
 import { ifOverflowMatches } from '../util/IfOverflowMatches';
-// @ts-ignore
 import { isNumOrStr } from '../util/DataUtils';
-// @ts-ignore
-import { LabeledScaleHelper, rectWithCoords } from '../util/CartesianUtils';
+import { createLabeldScales, rectWithCoords } from '../util/CartesianUtils';
 import { warn } from '../util/LogUtils';
 import { ViewBox, D3Scale, PresentationAttributes, filterProps } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
@@ -68,7 +65,7 @@ const renderLine = (option: ReferenceLineProps['shape'], props: any) => {
 
 
 // TODO: ScaleHelper
-const getEndPoints = (scales: LabeledScaleHelper, isFixedX: boolean, isFixedY: boolean, isSegment: boolean, props: Props) => {
+const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegment: boolean, props: Props) => {
   const { viewBox: { x, y, width, height }, position } = props;
 
   if (isFixedY) {
@@ -131,7 +128,7 @@ function ReferenceLine(props: Props) {
   warn(alwaysShow === undefined,
     'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
-  const scales = LabeledScaleHelper.create({ x: xAxis.scale, y: yAxis.scale });
+  const scales = createLabeldScales({ x: xAxis.scale, y: yAxis.scale });
 
   const isX = isNumOrStr(fixedX);
   const isY = isNumOrStr(fixedY);

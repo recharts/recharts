@@ -9,8 +9,7 @@ import Layer from '../container/Layer';
 // @ts-ignore
 import { filterEventsOfChild } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-import { PresentationAttributes, filterProps, BaseAxisProps } from '../util/types';
-import { TickItem } from './TickItem';
+import { PresentationAttributes, filterProps, BaseAxisProps, TickItem } from '../util/types';
 
 
 interface TickIem {

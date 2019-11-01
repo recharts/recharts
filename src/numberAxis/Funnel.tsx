@@ -16,7 +16,7 @@ import { getPresentationAttributes, findAllByType, filterEventsOfChild, isSsr } 
 import { interpolateNumber } from '../util/DataUtils';
 // @ts-ignore
 import { getValueByDataKey } from '../util/ChartUtils';
-import { LegendType, TooltipType, AnimationTiming, ChartOffset, PresentationAttributes } from '../util/types';
+import { LegendType, TooltipType, AnimationTiming, ChartOffset, PresentationAttributes, DataKey } from '../util/types';
 
 
 interface FunnelTrapezoidItem extends TrapezoidProps {
@@ -31,8 +31,8 @@ interface InternalFunnelProps {
 
 interface FunnelProps extends InternalFunnelProps {
   className?: string;
-  dataKey: string | number | Function;
-  nameKey?: string | number | Function;
+  dataKey: DataKey<any>;
+  nameKey?: DataKey<any>;
   data?: any[];
   hide?: boolean;
   activeShape: ReactElement<SVGElement> | ((props: any) => SVGElement) | TrapezoidProps;

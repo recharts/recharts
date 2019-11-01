@@ -14,7 +14,7 @@ import { isNumber } from '../util/DataUtils';
 // @ts-ignore
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 
-import { Padding, PresentationAttributes } from '../util/types';
+import { Padding, PresentationAttributes, DataKey } from '../util/types';
 
 interface BrushStartEndIndex {
   startIndex?: number;
@@ -37,7 +37,7 @@ interface BrushProps extends InternalBrushProps {
   gap?: number;
   padding?: Padding;
 
-  dataKey?: string | number | Function;
+  dataKey?: DataKey<any>;
   startIndex?: number;
   endIndex?: number;
   tickFormatter?: (value: any) => ReactText;

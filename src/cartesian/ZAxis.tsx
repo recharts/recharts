@@ -1,7 +1,7 @@
 /**
  * @fileOverview Z Axis
  */
-import { ScaleType } from '../util/types';
+import { ScaleType, DataKey } from '../util/types';
 
 export interface Props {
   type?: 'number' | 'category';
@@ -12,7 +12,7 @@ export interface Props {
   /** The unique id of z-axis */
   zAxisId?: string | number;
   /** The key of data displayed in the axis */
-  dataKey?: string | number | Function; 
+  dataKey?: DataKey<any>; 
   /** The range of axis */
   range?: number[];
   scale?: ScaleType | Function;

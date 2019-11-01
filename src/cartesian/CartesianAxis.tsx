@@ -15,13 +15,11 @@ import Label from '../component/Label';
 import { isSsr, filterEventsOfChild } from '../util/ReactUtils';
 // @ts-ignore
 import { isNumber, mathSign } from '../util/DataUtils';
-import { ViewBox, PresentationAttributes, filterProps } from '../util/types';
+import { ViewBox, PresentationAttributes, filterProps, TickItem } from '../util/types';
 
-interface TickItem {
-  coordinate?: number;
+interface CartesianTickItem extends TickItem {
   tickCoord?: number;
   tickSize?: number;
-  value?: any;
   isShow?: boolean;
 }
 
@@ -43,11 +41,11 @@ interface CartesianAxisProps {
   hide?: boolean;
 
   minTickGap?: number;
-  ticks?: TickItem[];
+  ticks?: CartesianTickItem[];
   tickSize?: number;
   /** The formatter function of tick */ 
   tickFormatter?: (value: any) => string;
-  ticksGenerator?: (props?: CartesianAxisProps) => TickItem[];
+  ticksGenerator?: (props?: CartesianAxisProps) => CartesianTickItem[];
   interval?: number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
 };
 
@@ -106,7 +104,7 @@ class CartesianAxis extends Component<Props> {
     });
   }
 
-  static getNumberIntervalTicks(ticks: TickItem[], interval: number) {
+  static getNumberIntervalTicks(ticks: CartesianTickItem[], interval: number) {
     return ticks.filter((entry, i) => (i % (interval + 1) === 0));
   }
 
@@ -239,7 +237,7 @@ class CartesianAxis extends Component<Props> {
    * @return {Object} (x1, y1): The coordinate of endpoint close to tick text
    *  (x2, y2): The coordinate of endpoint close to axis
    */
-  getTickLineCoord(data: TickItem) {
+  getTickLineCoord(data: CartesianTickItem) {
     const { x, y, width, height, orientation, tickSize, mirror, tickMargin } = this.props;
     let x1, x2, y1, y2, tx, ty;
 
@@ -376,7 +374,7 @@ class CartesianAxis extends Component<Props> {
    * @param {Array} ticks The ticks to actually render (overrides what was passed in props)
    * @return {ReactComponent} renderedTicks
    */
-  renderTicks(ticks: TickItem[]) {
+  renderTicks(ticks: CartesianTickItem[]) {
     const { tickLine, stroke, tick, tickFormatter, unit } = this.props;
     const finalTicks = CartesianAxis.getTicks({ ...this.props, ticks });
     const textAnchor = this.getTickTextAnchor();

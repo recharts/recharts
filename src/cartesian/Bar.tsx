@@ -19,7 +19,7 @@ import { findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
 import { getCateCoordinateOfBar, getValueByDataKey, truncateByDomain, getBaseValueOfBar, findPositionOfBar } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { D3Scale, TooltipType, LegendType, AnimationTiming, PresentationAttributes, filterProps, ChartOffset } from '../util/types';
+import { D3Scale, TooltipType, LegendType, AnimationTiming, PresentationAttributes, filterProps, ChartOffset, DataKey, TickItem } from '../util/types';
 
 interface BarRectangleItem extends RectangleProps {
   value?: number;
@@ -51,7 +51,7 @@ interface BarProps extends InternalBarProps {
   barSize?: number;
   unit?: string | number;
   name?: string | number;
-  dataKey: string | number | Function;
+  dataKey: DataKey<any>;
   tooltipType?: TooltipType;
   legendType?: LegendType;
   minPointSize?: number;
@@ -119,8 +119,8 @@ class Bar extends PureComponent<Props, State> {
       bandSize: number;
       xAxis: InternalBarProps['xAxis'];
       yAxis: InternalBarProps['yAxis'];
-      xAxisTicks: XAxisProps['ticks'];
-      yAxisTicks: YAxisProps['ticks'];
+      xAxisTicks: TickItem[];
+      yAxisTicks: TickItem[];
       stackedData: number[][];
       dataStartIndex: number;
       offset: ChartOffset;
@@ -133,7 +133,7 @@ class Bar extends PureComponent<Props, State> {
     const { dataKey, children, minPointSize } = item.props;
     const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
     const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
-    const baseValue = getBaseValueOfBar({ props, numericAxis });
+    const baseValue = getBaseValueOfBar({ numericAxis });
     const cells = findAllByType(children, Cell);
 
     const rects = displayedData.map((entry, index) => {

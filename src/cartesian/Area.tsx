@@ -18,7 +18,7 @@ import { isNumber, uniqueId, interpolateNumber } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { D3Scale, LegendType, TooltipType, AnimationTiming, PresentationAttributes, filterProps, ChartOffset, Coordinate } from '../util/types';
+import { D3Scale, LegendType, TooltipType, AnimationTiming, PresentationAttributes, filterProps, ChartOffset, Coordinate, DataKey, TickItem } from '../util/types';
 
 type AreaDot = ReactElement<SVGElement> | ((props: any) => SVGElement) | DotProps | boolean;
 interface AreaPointItem extends CurvePoint {
@@ -40,7 +40,7 @@ interface InternalAreaProps {
 
 interface AreaProps extends InternalAreaProps {
   className?: string;
-  dataKey: string | number | Function;
+  dataKey: DataKey<any>;
   type?: CurveType;
   unit?: string | number;
   name?: string | number;
@@ -77,7 +77,7 @@ type Props = PresentationAttributes<SVGElement> & AreaProps;
 
 interface State {
   prevPoints?: AreaPointItem[];
-  prevBaseLine?: number | any[];
+  prevBaseLine?: number | Coordinate[];
   isAnimationFinished?: boolean;
   totalLength?: number;
 }
@@ -137,8 +137,8 @@ class Area extends PureComponent<Props, State> {
       bandSize: number;
       xAxis: InternalAreaProps['xAxis'];
       yAxis: InternalAreaProps['yAxis'];
-      xAxisTicks: XAxisProps['ticks'];
-      yAxisTicks: YAxisProps['ticks'];
+      xAxisTicks: TickItem[];
+      yAxisTicks: TickItem[];
       stackedData: number[][];
       dataStartIndex: number;
       offset: ChartOffset;
@@ -430,10 +430,10 @@ class Area extends PureComponent<Props, State> {
               let stepBaseLine;
 
               if (isNumber(baseLine) && typeof baseLine === 'number') {
-                const interpolator = interpolateNumber(prevBaseLine, baseLine);
+                const interpolator = interpolateNumber(prevBaseLine as number, baseLine);
                 stepBaseLine = interpolator(t);
               } else if (_.isNil(baseLine) || _.isNaN(baseLine)) {
-                const interpolator = interpolateNumber(prevBaseLine, 0);
+                const interpolator = interpolateNumber(prevBaseLine as number, 0);
                 stepBaseLine = interpolator(t);
               } else {
                 stepBaseLine = (baseLine as Coordinate[]).map((entry, index) => {

@@ -19,7 +19,7 @@ import { isSsr, findAllByType } from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { D3Scale, LegendType, TooltipType, AnimationTiming, filterProps, ChartOffset } from '../util/types';
+import { D3Scale, LegendType, TooltipType, AnimationTiming, filterProps, ChartOffset, DataKey, TickItem } from '../util/types';
 
 type LineDot = ReactElement<SVGElement> | ((props: any) => SVGElement) | DotProps | boolean;
 
@@ -45,7 +45,7 @@ interface LineProps extends InternalLineProps {
   name?: string | number;
   yAxisId?: string | number;
   xAxisId?: string | number;
-  dataKey?: string | number | Function;
+  dataKey?: DataKey<any>;
   legendType?: LegendType;
   tooltipType?: TooltipType
   layout?: 'horizontal' | 'vertical';
@@ -115,8 +115,8 @@ class Line extends PureComponent<Props, State> {
       props: Props;
       xAxis: Props['xAxis'];
       yAxis: Props['yAxis'];
-      xAxisTicks: XAxisProps['ticks'];
-      yAxisTicks: YAxisProps['ticks'];
+      xAxisTicks: TickItem[];
+      yAxisTicks: TickItem[];
       dataKey: Props['dataKey'];
       bandSize: number;
       displayedData: any[];

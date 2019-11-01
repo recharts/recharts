@@ -19,7 +19,7 @@ import Cell from '../component/Cell';
 import { uniqueId, interpolateNumber, getLinearRegression } from '../util/DataUtils';
 // @ts-ignore
 import { getValueByDataKey, getCateCoordinateOfLine } from '../util/ChartUtils';
-import { LegendType, PresentationAttributes, SymbolType, AnimationTiming, filterProps, D3Scale, ChartOffset } from '../util/types';
+import { LegendType, PresentationAttributes, SymbolType, AnimationTiming, filterProps, D3Scale, ChartOffset, DataKey, TickItem } from '../util/types';
 import { TooltipType } from '../component/DefaultTooltipContent';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
@@ -52,7 +52,7 @@ interface ScatterProps {
   xAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   zAxis?: Omit<ZAxisProps, 'scale'> & { scale: D3Scale<string | number> };
 
-  dataKey?: string | number | Function;
+  dataKey?: DataKey<any>;
 
 
   line?: ReactElement<SVGElement> | ((props: any) => SVGElement) | CurveProps | boolean;
@@ -117,8 +117,8 @@ class Scatter extends PureComponent<Props, State> {
       xAxis: Props['xAxis'];
       yAxis: Props['yAxis'];
       zAxis: Props['zAxis'];
-      xAxisTicks: XAxisProps['ticks'];
-      yAxisTicks: YAxisProps['ticks'];
+      xAxisTicks: TickItem[];
+      yAxisTicks: TickItem[];
       item: Scatter;
       onItemMouseLeave: PresentationAttributes<SVGElement>['onMouseLeave'];
       onItemMouseEnter: PresentationAttributes<SVGElement>['onMouseLeave'];

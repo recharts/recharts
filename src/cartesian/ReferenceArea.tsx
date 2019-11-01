@@ -6,11 +6,8 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import Layer from '../container/Layer';
 import Label from '../component/Label';
-// @ts-ignore
-import { LabeledScaleHelper, rectWithPoints } from '../util/CartesianUtils';
-// @ts-ignore
+import { createLabeldScales, rectWithPoints } from '../util/CartesianUtils';
 import { ifOverflowMatches } from '../util/IfOverflowMatches';
-// @ts-ignore
 import { isNumOrStr } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import Rectangle, { Props as RectangleProps } from '../shape/Rectangle';
@@ -48,20 +45,20 @@ const getRect = (hasX1: boolean, hasX2: boolean, hasY1: boolean, hasY2: boolean,
   const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2, xAxis,
     yAxis } = props;
 
-  const scale = LabeledScaleHelper.create({ x: xAxis.scale, y: yAxis.scale });
+  const scales = createLabeldScales({ x: xAxis.scale, y: yAxis.scale });
 
   const p1 = {
-    x: hasX1 ? scale.x.apply(xValue1) : scale.x.rangeMin,
-    y: hasY1 ? scale.y.apply(yValue1) : scale.y.rangeMin,
+    x: hasX1 ? scales.x.apply(xValue1) : scales.x.rangeMin,
+    y: hasY1 ? scales.y.apply(yValue1) : scales.y.rangeMin,
   };
 
   const p2 = {
-    x: hasX2 ? scale.x.apply(xValue2) : scale.x.rangeMax,
-    y: hasY2 ? scale.y.apply(yValue2) : scale.y.rangeMax,
+    x: hasX2 ? scales.x.apply(xValue2) : scales.x.rangeMax,
+    y: hasY2 ? scales.y.apply(yValue2) : scales.y.rangeMax,
   };
 
   if (ifOverflowMatches(props, 'discard') &&
-    (!scale.isInRange(p1) || !scale.isInRange(p2))) {
+    (!scales.isInRange(p1) || !scales.isInRange(p2))) {
     return null;
   }
 

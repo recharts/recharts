@@ -9,9 +9,8 @@ import Polygon from '../shape/Polygon';
 import Text from '../component/Text';
 // @ts-ignore
 import { filterEventsOfChild } from '../util/ReactUtils';
-import { PresentationAttributes, BaseAxisProps, filterProps } from '../util/types';
+import { PresentationAttributes, BaseAxisProps, filterProps, TickItem } from '../util/types';
 import { polarToCartesian } from '../util/PolarUtils';
-import { TickItem } from './TickItem';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;

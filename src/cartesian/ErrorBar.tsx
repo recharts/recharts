@@ -5,9 +5,8 @@ import React from 'react';
 import Layer from '../container/Layer';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { PresentationAttributes, filterProps, D3Scale } from '../util/types';
+import { PresentationAttributes, filterProps, D3Scale, DataKey } from '../util/types';
 
-type DataKeyType = string | number | Function;
 interface ErrorBarDataItem {
   x: number;
   y: number;
@@ -20,13 +19,13 @@ interface InternalErrorBarProps {
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   data?: any[];
   layout?: 'horizontal' | 'vertical';
-  dataPointFormatter?: (entry: any, dataKey: DataKeyType) => ErrorBarDataItem;
+  dataPointFormatter?: (entry: any, dataKey: DataKey<any>) => ErrorBarDataItem;
   /** The offset between central and the given coordinate, often set by <Bar/> */
   offset?: number;
 }
 
 interface ErrorBarProps extends InternalErrorBarProps {
-  dataKey: DataKeyType;
+  dataKey: DataKey<any>;
   /** the width of the error bar ends */
   width?: number;
   /** 
