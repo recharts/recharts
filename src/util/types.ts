@@ -19,11 +19,16 @@ import {
   ReactNode,
   Component,
   isValidElement,
-  FunctionComponent
+  FunctionComponent,
+  ReactElement
 } from 'react';
 import _ from 'lodash';
+import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'd3-scale';
 
 export type LayoutType = 'horizontal' | 'vertical';
+export type PolarLayoutType = 'radial' | 'centric';
+export type AxisType = 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis';
+export type DataKey<T> = string | number | ((obj: T) => any);
 export type PresentationAttributes<T> = AriaAttributes &
   DOMAttributes<T> &
   SVGProps<T>;
@@ -39,7 +44,7 @@ export interface Coordinate {
   x: number;
   y: number;
 };
-export type ScaleType = 'auto' | 'linear' | 'pow' | 'sqrt' | 'log' | 'identity' | 'time' | 'band' | 
+export type ScaleType = 'auto' | 'linear' | 'pow' | 'sqrt' | 'log' | 'identity' | 'time' | 'band' |
   'point' | 'ordinal' | 'quantile' | 'quantize' | 'utc' | 'sequential' | 'threshold';
 
 //
@@ -286,7 +291,7 @@ const SVGPropKeys = ['className', 'color', 'height', 'id', 'lang', 'max', 'media
 'offset', 'opacity', 'operator', 'order', 'orient', 'orientation', 'origin', 'overflow', 'overlinePosition', 'overlineThickness' ,
 'paintOrder', 'panose1', 'pathLength', 'patternContentUnits', 'patternTransform', 'patternUnits', 'pointerEvents', 'points' ,
 'pointsAtX', 'pointsAtY', 'pointsAtZ', 'preserveAlpha', 'preserveAspectRatio', 'primitiveUnits', 'r', 'radius', 'refX', 'refY', 'renderingIntent' ,
-'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures', 'restart', 'result', 'rotate', 'rx', 'ry', 'scale', 'seed' ,
+'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures', 'restart', 'result', 'rotate', 'rx', 'ry', 'seed' ,
 'shapeRendering', 'slope', 'spacing', 'specularConstant', 'specularExponent', 'speed', 'spreadMethod', 'startOffset', 'stdDeviation', 'stemh', 'stemv' ,
 'stitchTiles', 'stopColor', 'stopOpacity', 'strikethroughPosition', 'strikethroughThickness', 'string', 'stroke', 'strokeDasharray', 'strokeDashoffset' ,
 'strokeLinecap', 'strokeLinejoin', 'strokeMiterlimit', 'strokeOpacity', 'strokeWidth', 'surfaceScale', 'systemLanguage', 'tableValues', 'targetX' ,
@@ -319,7 +324,7 @@ const EventKeys = ['children', 'dangerouslySetInnerHTML', 'onCopy', 'onCopyCaptu
 'onLostPointerCapture', 'onLostPointerCaptureCapture', 'onScroll', 'onScrollCapture', 'onWheel', 'onWheelCapture', 'onAnimationStart', 'onAnimationStartCapture',
 'onAnimationEnd', 'onAnimationEndCapture', 'onAnimationIteration', 'onAnimationIterationCapture', 'onTransitionEnd', 'onTransitionEndCapture', ];
 
-export const filterProps = (props: Record<string, any> | Component | FunctionComponent | boolean) => {
+export const filterProps = (props: Record<string, any> | Component | FunctionComponent | boolean, includeEvents?: boolean) => {
   if (!props || typeof props === 'function' || typeof props === 'boolean') { return null; }
 
   let inputProps = props as Record<string, any>;
@@ -328,30 +333,40 @@ export const filterProps = (props: Record<string, any> | Component | FunctionCom
     inputProps = props.props as Record<string, any>;
   }
 
-  if (!_.isObject(props)) { return null; }
+  if (!_.isObject(inputProps)) { return null; }
 
   const out: Record<string, any> = {};
 
   for (const i in inputProps) {
-    if (SVGPropKeys.includes(i) || EventKeys.includes(i)) {
-      out[i] = inputProps[i];
+    if (SVGPropKeys.includes(i) || (includeEvents && EventKeys.includes(i))) {
+      out[i] = (inputProps as any)[i];
     }
   }
 
   return out;
-}
+};
 
-export const adaptEventHandlers = (props: Record<string, any>) => {
+export const adaptEventHandlers = (props: Record<string, any> | Component | FunctionComponent | boolean, newHandler?: ((e?: Event) => any)): Record<string, (e?: Event) => any> => {
+  if (!props || typeof props === 'function' || typeof props === 'boolean') { return null; }
+
+  let inputProps = props as Record<string, any>;
+
+  if (isValidElement(props)) {
+    inputProps = props.props as Record<string, any>;
+  }
+
+  if (!_.isObject(inputProps)) { return null; }
+
   const out: Record<string, (e: Event) => void> = {};
 
-  for (const i in props) {
+  for (const i in inputProps) {
     if (EventKeys.includes(i)) {
-      out[i] = (e: Event) => props[i](props, e);
+      out[i] = newHandler || ((e: Event) => inputProps[i](inputProps, e));
     }
   }
 
   return out;
-}
+};
 
 // Animation Types => TODO: Should be moved when react-smooth is typescriptified.
 export type AnimationTiming = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
@@ -366,6 +381,13 @@ export interface ChartOffset {
   height?: number;
 }
 
+export interface Padding {
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+}
+
 export interface GeometrySector {
   cx?: number;
   cy?: number;
@@ -376,4 +398,70 @@ export interface GeometrySector {
   cornerRadius?: number;
   forceCornerRadius?: boolean;
   cornerIsExternal?: boolean;
+}
+
+export interface ViewBox {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+}
+
+export type D3Scale<T> = D3ScaleContinuousNumeric<T, number>;
+
+export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | 'dataMax';
+/** The domain of axis */
+export type AxisDomain = [AxisDomainItem, AxisDomainItem];
+
+/** The props definition of base axis */
+export interface BaseAxisProps {
+  /** The type of axis */
+  type?: 'number' | 'category';
+  /** The key of data displayed in the axis */ 
+  dataKey?: DataKey<any>;
+  /** Whether or not display the axis */
+  hide?: boolean;
+  /** The scale type or functor of scale */
+  scale?: ScaleType | Function;
+  /** The option for tick */
+  tick?: PresentationAttributes<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
+  /** The count of ticks */
+  tickCount?: number;
+  /** The option for axisLine */
+  axisLine?: boolean | PresentationAttributes<SVGLineElement>;
+  /** The option for tickLine */
+  tickLine?: boolean | PresentationAttributes<SVGTextElement>;
+  /** The size of tick line */
+  tickSize?: number;
+  /** The formatter function of tick */ 
+  tickFormatter?: (value: any) => string;
+  /**
+   * When domain of the axis is specified and the type of the axis is 'number', 
+   * if allowDataOverflow is set to be false, 
+   * the domain will be adjusted when the minimum value of data is smaller than domain[0] or 
+   * the maximum value of data is greater than domain[1] so that the axis displays all data values. 
+   * If set to true, graphic elements (line, area, bars) will be clipped to conform to the specified domain.
+   */
+  allowDataOverflow?: boolean;
+  /**
+   * Allow the axis has duplicated categorys or not when the type of axis is "category".
+   */
+  allowDuplicatedCategory?: boolean;
+  /**
+   * Allow the ticks of axis to be decimals or not.
+   */
+  allowDecimals?: boolean;
+  /** The domain of scale in this axis */
+  domain?: AxisDomain;
+  /** The name of data displayed in the axis */ 
+  name?: string | number;
+  /** The unit of data displayed in the axis */ 
+  unit?: string | number;
+};
+
+export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
+
+export interface TickItem {
+  value?: any;
+  coordinate: number;
 }

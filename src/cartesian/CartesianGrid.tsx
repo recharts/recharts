@@ -1,57 +1,63 @@
 /**
  * @fileOverview Cartesian Grid
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent, ReactElement } from 'react';
 import _ from 'lodash';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes } from '../util/ReactUtils';
+// @ts-ignore
 import { isNumber } from '../util/DataUtils';
+import { PresentationAttributes, ChartOffset, D3Scale, filterProps } from '../util/types';
 
-class CartesianGrid extends PureComponent {
+import { Props as XAxisProps } from './XAxis';
+import { Props as YAxisProps } from './YAxis';
+
+type GridLineType = PresentationAttributes<SVGLineElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
+
+interface IntrnalCartesianGridProps {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  horizontalCoordinatesGenerator?: (props: any) => number[];
+  verticalCoordinatesGenerator?: (props: any) => number[];
+  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  offset?: ChartOffset;
+  chartWidth?: number;
+  chartHeight?: number;
+}
+
+interface CartesianGridProps extends IntrnalCartesianGridProps {
+  horizontal?: GridLineType;
+  vertical?: GridLineType;
+  horizontalPoints?: number[];
+  verticalPoints?: number[];
+  verticalFill?: string[];
+  horizontalFill?: string[];
+};
+
+type Props = PresentationAttributes<SVGElement> & CartesianGridProps;
+
+class CartesianGrid extends PureComponent<Props> {
 
   static displayName = 'CartesianGrid';
 
-  static propTypes = {
-    ...PRESENTATION_ATTRIBUTES,
-    x: PropTypes.number,
-    y: PropTypes.number,
-    width: PropTypes.number,
-    height: PropTypes.number,
-    horizontal: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
-    ]),
-    vertical: PropTypes.oneOfType([
-      PropTypes.object, PropTypes.element, PropTypes.func, PropTypes.bool,
-    ]),
-    horizontalPoints: PropTypes.arrayOf(PropTypes.number),
-    verticalPoints: PropTypes.arrayOf(PropTypes.number),
-    horizontalCoordinatesGenerator: PropTypes.func,
-    verticalCoordinatesGenerator: PropTypes.func,
-    xAxis: PropTypes.object,
-    yAxis: PropTypes.object,
-    offset: PropTypes.object,
-    chartWidth: PropTypes.number,
-    chartHeight: PropTypes.number,
-    verticalFill: PropTypes.arrayOf(PropTypes.string),
-    horizontalFill: PropTypes.arrayOf(PropTypes.string),
-  };
 
   static defaultProps = {
     horizontal: true,
     vertical: true,
     // The ordinates of horizontal grid lines
-    horizontalPoints: [],
+    horizontalPoints: [] as CartesianGridProps['horizontalPoints'],
     // The abscissas of vertical grid lines
-    verticalPoints: [],
+    verticalPoints: [] as CartesianGridProps['verticalPoints'],
 
     stroke: '#ccc',
     fill: 'none',
     // The fill of colors of grid lines
-    verticalFill: [],
-    horizontalFill: [],
+    verticalFill: [] as CartesianGridProps['verticalFill'],
+    horizontalFill: [] as CartesianGridProps['horizontalFill'],
   };
 
-  static renderLineItem(option, props) {
+  static renderLineItem(option: GridLineType, props: any) {
     let lineItem;
 
     if (React.isValidElement(option)) {
@@ -63,7 +69,7 @@ class CartesianGrid extends PureComponent {
 
       lineItem = (
         <line
-          {...getPresentationAttributes(others)}
+          {...filterProps(others)}
           x1={x1}
           y1={y1}
           x2={x2}
@@ -82,7 +88,7 @@ class CartesianGrid extends PureComponent {
    * @param {Array} horizontalPoints either passed in as props or generated from function
    * @return {Group} Horizontal lines
    */
-  renderHorizontal(horizontalPoints) {
+  renderHorizontal(horizontalPoints: number[]) {
     const { x, width, horizontal } = this.props;
 
     if (!horizontalPoints || !horizontalPoints.length) { return null; }
@@ -98,7 +104,7 @@ class CartesianGrid extends PureComponent {
         index: i,
       };
 
-      return this.constructor.renderLineItem(horizontal, props);
+      return CartesianGrid.renderLineItem(horizontal, props);
     });
 
     return <g className="recharts-cartesian-grid-horizontal">{items}</g>;
@@ -109,7 +115,7 @@ class CartesianGrid extends PureComponent {
    * @param {Array} verticalPoints either passed in as props or generated from function
    * @return {Group} Vertical lines
    */
-  renderVertical(verticalPoints) {
+  renderVertical(verticalPoints: number[]) {
     const { y, height, vertical } = this.props;
 
     if (!verticalPoints || !verticalPoints.length) { return null; }
@@ -125,7 +131,7 @@ class CartesianGrid extends PureComponent {
         index: i,
       };
 
-      return this.constructor.renderLineItem(vertical, props);
+      return CartesianGrid.renderLineItem(vertical, props);
     });
 
     return <g className="recharts-cartesian-grid-vertical">{items}</g>;
@@ -136,7 +142,7 @@ class CartesianGrid extends PureComponent {
    * @param {Array} verticalPoints either passed in as props or generated from function
    * @return {Group} Vertical stripes
    */
-  renderVerticalStripes(verticalPoints) {
+  renderVerticalStripes(verticalPoints: number[]) {
     const { verticalFill } = this.props;
     if (!verticalFill || !verticalFill.length) { return null; }
 
@@ -175,7 +181,7 @@ class CartesianGrid extends PureComponent {
    * @param {Array} horizontalPoints either passed in as props or generated from function
    * @return {Group} Horizontal stripes
    */
-  renderHorizontalStripes(horizontalPoints) {
+  renderHorizontalStripes(horizontalPoints: number[]) {
     const { horizontalFill } = this.props;
     if (!horizontalFill || !horizontalFill.length) { return null; }
 

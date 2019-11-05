@@ -16,10 +16,9 @@ import Cell from '../component/Cell';
 import { mathSign, interpolateNumber } from '../util/DataUtils';
 // @ts-ignore
 import { getCateCoordinateOfBar, findPositionOfBar, getValueByDataKey, truncateByDomain, getBaseValueOfBar } from '../util/ChartUtils';
-import { LegendType, TooltipType, AnimationTiming, filterProps, PresentationAttributes } from '../util/types';
-import { Props as PolarAngleAxisProps } from './PolarAngleAxis';
-import { Props as PolarRadiusAxisProps } from './PolarRadiusAxis';
-
+import { LegendType, TooltipType, AnimationTiming, filterProps, PresentationAttributes, TickItem } from '../util/types';
+// TODO: Cause of circular dependency. Needs refactoring of functions that need them.
+// import { AngleAxisProps, RadiusAxisProps } from './types';
 
 type RadialBarDataItem = SectorProps & {
   value?: any;
@@ -40,10 +39,10 @@ interface RadialBarProps {
   shape?: RadialBarShape;
   activeShape?: RadialBarShape;
   activeIndex?: number;
-  dataKey: string | number | Function;
+  dataKey: string | number | ((obj: any) => any);
   cornerRadius?: string | number;
   forceCornerRadius?: boolean;
-  cornerIsExternal?: boolean;  
+  cornerIsExternal?: boolean;
   minPointSize?: number;
   maxBarSize?: number;
   data?: RadialBarDataItem[];
@@ -90,10 +89,10 @@ class RadialBar extends PureComponent<Props, State> {
     displayedData, dataKey, stackedData, barPosition, bandSize, dataStartIndex }: {
       item: RadialBar;
       props: any;
-      radiusAxis: PolarRadiusAxisProps & { scale: any };
-      radiusAxisTicks: PolarRadiusAxisProps['ticks'];
-      angleAxis: PolarAngleAxisProps & { scale: any };
-      angleAxisTicks: PolarAngleAxisProps['ticks'];
+      radiusAxis: any; // RadiusAxisProps;
+      radiusAxisTicks: Array<TickItem>;
+      angleAxis: any; // AngleAxisProps;
+      angleAxisTicks: Array<TickItem>;
       displayedData: any[];
       dataKey: Props['dataKey'];
       stackedData?: any[];
@@ -109,7 +108,7 @@ class RadialBar extends PureComponent<Props, State> {
     const { children, minPointSize } = item.props;
     const numericAxis = layout === 'radial' ? angleAxis : radiusAxis;
     const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
-    const baseValue = getBaseValueOfBar({ props, numericAxis });
+    const baseValue = getBaseValueOfBar({ numericAxis });
     const cells = findAllByType(children, Cell);
     const sectors = displayedData.map((entry: any, index: number) => {
       let value, innerRadius, outerRadius, startAngle, endAngle, backgroundSector;

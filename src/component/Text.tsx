@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
 // @ts-ignore
 import { isSsr } from '../util/ReactUtils';
-import { PresentationAttributes } from '../util/types';
+import { PresentationAttributes, filterProps } from '../util/types';
 // @ts-ignore
 import { getStringSize } from '../util/DOMUtils';
 
@@ -81,7 +81,8 @@ class Text extends Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    if ((prevProps.width !== this.props.width || prevProps.scaleToFit !== this.props.scaleToFit)) {
+    if ((prevProps.width !== this.props.width || prevProps.scaleToFit !== this.props.scaleToFit ||
+      prevProps.children !== this.props.children || prevProps.style !== this.props.style)) {
       const needCalculate = (
         this.props.children !== prevProps.children ||
         this.props.style !== prevProps.style
@@ -167,8 +168,8 @@ class Text extends Component<Props, State> {
     const { wordsByLines } = this.state;
 
     if (!isNumOrStr(textProps.x) || !isNumOrStr(textProps.y)) { return null; }
-    const x = (textProps.x as number) + (isNumber(dx) ? (dx as number) : 0);
-    const y = (textProps.y as number) + (isNumber(dy) ? (dy as number) : 0);
+    const x = (textProps.x as number) + (isNumber(dx as number) ? (dx as number) : 0);
+    const y = (textProps.y as number) + (isNumber(dy as number) ? (dy as number) : 0);
 
     let startDy: number;
     switch (verticalAnchor) {
@@ -189,7 +190,7 @@ class Text extends Component<Props, State> {
     if (scaleToFit) {
       const lineWidth = wordsByLines[0].width;
       const width = this.props.width;
-      transforms.push(`scale(${(isNumber(width) ? (width as number) / lineWidth : 1) / lineWidth})`);
+      transforms.push(`scale(${(isNumber(width as number) ? (width as number) / lineWidth : 1) / lineWidth})`);
     }
     if (angle) {
       transforms.push(`rotate(${angle}, ${x}, ${y})`);
@@ -200,7 +201,7 @@ class Text extends Component<Props, State> {
 
     return (
       <text
-        {...textProps}
+        {...filterProps(textProps, true)}
         x={x}
         y={y}
         className={classNames('recharts-text', className)}

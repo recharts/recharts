@@ -1,42 +1,28 @@
 /**
  * @fileOverview Axis of radial direction
  */
-import React, { PureComponent, ReactElement } from 'react';
+import React, { PureComponent } from 'react';
 import _ from 'lodash';
 import Layer from '../container/Layer';
 import Dot from '../shape/Dot';
 import Polygon from '../shape/Polygon';
-import Text, { Props as TextProps } from '../component/Text';
+import Text from '../component/Text';
 // @ts-ignore
 import { filterEventsOfChild } from '../util/ReactUtils';
-import { PresentationAttributes, ScaleType, filterProps } from '../util/types';
+import { PresentationAttributes, BaseAxisProps, filterProps, TickItem } from '../util/types';
 import { polarToCartesian } from '../util/PolarUtils';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
-interface TickItem {
-  value?: any;
-  coordinate: number;
-}
-type PolarAngleAxisTick = PresentationAttributes<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
-interface PolarAngleAxisProps {
-  type?: 'number' | 'category';
+interface PolarAngleAxisProps extends BaseAxisProps {
   angleAxisId?: string | number;
-  dataKey?: number | string | Function;
   cx?: number;
   cy?: number;
   radius?: number;
-  hide?: boolean;
-  scale: Function | ScaleType;
 
-  axisLine?: PresentationAttributes<SVGLineElement> | boolean;
   axisLineType?: 'polygon' | 'circle';
-  tickLine?: PresentationAttributes<SVGLineElement> & { size: number } | boolean;
-  tick?: PolarAngleAxisTick;
   ticks?: TickItem[];
   orientation?: 'inner' | 'outer';
-  tickFormatter?: (value: any) => string;
-  allowDuplicatedCategory?: boolean;
 };
 export type Props = PresentationAttributes<SVGTextElement> & PolarAngleAxisProps;
 
@@ -56,6 +42,7 @@ class PolarAngleAxis extends PureComponent<Props> {
     orientation: 'outer',
     axisLine: true,
     tickLine: true,
+    tickSize: 8,
     tick: true,
     hide: false,
     allowDuplicatedCategory: true,
@@ -69,8 +56,8 @@ class PolarAngleAxis extends PureComponent<Props> {
    *                  (x2, y2): The end point close to axis
    */
   getTickLineCoord(data: TickItem) {
-    const { cx, cy, radius, orientation, tickLine } = this.props;
-    const tickLineSize = (tickLine && typeof tickLine === 'object' && tickLine.size) || 8;
+    const { cx, cy, radius, orientation, tickSize } = this.props;
+    const tickLineSize = tickSize || 8;
     const p1 = polarToCartesian(cx, cy, radius, data.coordinate);
     const p2 = polarToCartesian(
       cx, cy,
@@ -126,7 +113,7 @@ class PolarAngleAxis extends PureComponent<Props> {
     return <Polygon className="recharts-polar-angle-axis-line" {...props} points={points} />;
   }
 
-  static renderTickItem(option: PolarAngleAxisTick, props: any, value: string | number) {
+  static renderTickItem(option: PolarAngleAxisProps['tick'], props: any, value: string | number) {
     let tickItem;
 
     if (React.isValidElement(option)) {
@@ -161,12 +148,12 @@ class PolarAngleAxis extends PureComponent<Props> {
       const tickProps = {
         textAnchor,
         ...axisProps,
-        stroke: 'none', 
+        stroke: 'none',
         fill: stroke,
         ...customTickProps,
-        index: i, 
+        index: i,
         payload: entry,
-        x: lineCoord.x2, 
+        x: lineCoord.x2,
         y: lineCoord.y2,
       };
 

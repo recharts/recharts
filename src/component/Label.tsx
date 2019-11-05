@@ -8,7 +8,7 @@ import { findAllByType } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign } from '../util/DataUtils';
 // @ts-ignore
 import { polarToCartesian } from '../util/PolarUtils';
-import { PresentationAttributes, filterProps, adaptEventHandlers } from '../util/types';
+import { PresentationAttributes, filterProps } from '../util/types';
 
 interface CartesianViewBox {
   x?: number;
@@ -316,8 +316,7 @@ function Label(props: Props) {
   }
 
   const isPolarLabel = isPolar(viewBox);
-  const attrs = filterProps(props);
-  const events = adaptEventHandlers(props);
+  const attrs = filterProps(props, true);
 
   if (isPolarLabel && (position === 'insideStart' ||
     position === 'insideEnd' || position === 'end')) {
@@ -333,7 +332,6 @@ function Label(props: Props) {
       className={classNames('recharts-label', className)}
       {...attrs}
       {...positionAttrs as any}
-      {...events}
     >
       {label}
     </Text>
@@ -409,7 +407,7 @@ const parseLabel = (label: any, viewBox: ViewBox) => {
   return null;
 };
 
-const renderCallByParent = (parentProps: any, viewBox: ViewBox, ckeckPropsLabel = true) => {
+const renderCallByParent = (parentProps: any, viewBox?: ViewBox, ckeckPropsLabel = true) => {
   if (!parentProps || (!parentProps.children && (ckeckPropsLabel && !parentProps.label))) {
     return null;
   }

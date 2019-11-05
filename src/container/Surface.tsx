@@ -28,7 +28,7 @@ function Surface(props: Props) {
 
   return (
     <svg
-      {...filterProps(others)}
+      {...filterProps(others, true)}
       className={layerClass}
       width={width}
       height={height}
