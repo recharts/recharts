@@ -15,7 +15,7 @@ import { findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 import { ReactElement, ReactNode } from 'react';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
-import { LayoutType, PolarLayoutType, AxisType, TickItem } from './types';
+import { LayoutType, PolarLayoutType, AxisType, TickItem, BaseAxisProps } from './types';
 
 export function getValueByDataKey<T>(obj: T, dataKey: string | number | ((obj: T) => any), defaultValue?: any) {
   if (_.isNil(obj) || _.isNil(dataKey)) { return defaultValue; }
@@ -34,7 +34,7 @@ export function getValueByDataKey<T>(obj: T, dataKey: string | number | ((obj: T
  * @param  {Boolean} filterNil Whether or not filter nil values
  * @return {Array} Domain of data
  */
-export function getDomainOfDataByKey<T>(data: Array<T>, key: string, type: string, filterNil: boolean) {
+export function getDomainOfDataByKey<T>(data: Array<T>, key: string, type: string, filterNil?: boolean) {
   const flattenData = _.flatMap(data, entry => getValueByDataKey(entry, key));
 
   if (type === 'number') {
@@ -55,12 +55,7 @@ interface Tick {
   coordinate: number;
 }
 
-interface Axis {
-  axisType: string;
-  range: Array<number>;
-}
-
-export const calculateActiveTickIndex = (coordinate: number, ticks: Array<Tick>, unsortedTicks: Array<Tick>, axis: Axis) => {
+export const calculateActiveTickIndex = (coordinate: number, ticks: Array<Tick>, unsortedTicks: Array<Tick>, axis: BaseAxisProps) => {
   let index = -1;
   const len = ticks.length;
 
@@ -167,12 +162,12 @@ interface FormatedGraphicalItem {
 export const getLegendProps = ({
   children, formatedGraphicalItems, legendWidth, legendContent,
 }: {
-  children: ReactNode;
+  children: any;
   formatedGraphicalItems: Array<FormatedGraphicalItem>;
   legendWidth: number;
   legendContent?: any;
 }) => {
-  const legendItem = findChildByType(children, Legend);
+  const legendItem = findChildByType(children, Legend.displayName);
   if (!legendItem) { return null; }
 
   let legendData;
@@ -220,7 +215,7 @@ export const getLegendProps = ({
  * @return {Object} The size of all groups
  */
 export const getBarSizeList = ({ barSize: globalSize, stackGroups = {} }: {
-  barSize: any;
+  barSize: number | string;
   stackGroups: any;
 }) => {
   if (!stackGroups) { return {}; }
@@ -376,7 +371,7 @@ export const appendOffsetOfLegend = (offset: any, items: Array<FormatedGraphical
 
 export const getDomainOfErrorBars = (data: any[], item: any, dataKey: any, axisType?: AxisType) => {
   const { children } = item.props;
-  const errorBars = findAllByType(children, ErrorBar)
+  const errorBars = findAllByType(children, 'ErrorBar')
     .filter((errorBarChild: any) => {
       const { direction } = errorBarChild.props;
 
@@ -433,7 +428,7 @@ export const parseErrorBarsOfAxis = (data: any[], items: any[], dataKey: any, ax
  * @param  {Boolean} filterNil Whether or not filter nil values
  * @return {Array}        Domain
  */
-export const getDomainOfItemsWithSameAxis = (data: any[], items: any[], type: string, filterNil: boolean) => {
+export const getDomainOfItemsWithSameAxis = (data: any[], items: any[], type: string, filterNil?: boolean) => {
   const domains = items.map((item) => {
     const { dataKey } = item.props;
 
@@ -503,7 +498,7 @@ export const getCoordinatesOfGrid = (ticks: Array<Tick>, min: number, max: numbe
  * @param {Boolean} isAll Return the ticks of all the points or not
  * @return {Array}  Ticks
  */
-export const getTicksOfAxis = (axis: any, isGrid: boolean, isAll: boolean) => {
+export const getTicksOfAxis = (axis: any, isGrid?: boolean, isAll?: boolean): TickItem[] => {
   if (!axis) return null;
   const { scale } = axis;
   const { duplicateDomain, type, range } = axis;
@@ -975,7 +970,7 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
  * @param  {Array}  ticks The ticks of axis
  * @return {Number} Size
  */
-export const getBandSizeOfAxis = (axis: any, ticks: Array<Tick>) => {
+export const getBandSizeOfAxis = (axis: any, ticks?: Array<Tick>) => {
   if (axis && axis.scale && axis.scale.bandwidth) {
     return axis.scale.bandwidth();
   }

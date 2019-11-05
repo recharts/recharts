@@ -1,7 +1,6 @@
 /**
  * @fileOverview Radar Chart
  */
-import PropTypes from 'prop-types';
 import generateCategoricalChart from './generateCategoricalChart';
 import Radar from '../polar/Radar';
 import PolarAngleAxis from '../polar/PolarAngleAxis';

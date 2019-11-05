@@ -1,11 +1,5 @@
-type ILayout = 'horizontal' | 'vertical' | 'centric' | 'radial';
-
-interface IMargin {
-  top?: number;
-  right?: number;
-  bottom?: number;
-  left?: number;
-}
+import { IEvent, IPresentationAttributes } from '../util/ReactUtils';
+import { Margin, LayoutType, BaseAxisProps } from '../util/types';
 
 interface ICommonPropTypes {
   syncId?: number | string;
@@ -13,10 +7,10 @@ interface ICommonPropTypes {
   width?: number;
   height?: number;
   data?: any[];
-  layout?: ILayout;
+  layout?: LayoutType;
   stackOffset?: 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette';
   throttleDelay?: number;
-  margin?: IMargin;
+  margin?: Margin;
   barCategoryGap?: number | string;
   barGap?: number | string;
   barSize?: number | string;
@@ -46,28 +40,15 @@ interface IPiePropTypes {
 
 }
 
-interface ICategoricalChart {
+interface CategoricalChart {
   chartName?: string;
   GraphicalChild?: any;
   eventType?: string;
-  axisComponents?: any;
+  axisComponents?: BaseAxisProps[];
   legendContent?: any;
   formatAxisMap?: any;
   defaultProps?: any;
   propTypes?: any;
-}
-
-interface ICoordinate {
-  xAxis?: any;
-  yAxis?: any;
-  width: any;
-  height: any;
-  offset: any;
-}
-
-interface IAxis {
-  axisType: string;
-
 }
 
 interface ITreemapNode {
@@ -77,18 +58,36 @@ interface ITreemapNode {
   height: number;
   depth: number;
   index: number;
-  children: any;
+  children?: any;
   name: string;
   value: number;
   [k: string]: any;
 }
 
+interface ISankeyNode {
+  x: number;
+  y: number;
+  dx: number;
+  dy: number;
+  depth: number;
+  value: number;
+}
+interface ISankeyLink {
+  target: number;
+  source: number;
+  value: number;
+  sy: number;
+  dy: number;
+  ty: number;
+}
+
 export {
-  IMargin,
   ICommonPropTypes,
-  ICategoricalChart,
-  ICoordinate,
-  IAxis,
-  ILayout,
+  CategoricalChart,
+  LayoutType,
   ITreemapNode,
+  IPresentationAttributes,
+  IEvent,
+  ISankeyNode,
+  ISankeyLink,
 };

@@ -2,7 +2,6 @@
  * @file TreemapChart
  */
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import _ from 'lodash';
 import Surface from '../container/Surface';
@@ -10,24 +9,23 @@ import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
 import { shallowEqual } from '../util/ShallowEqual';
-import { PRESENTATION_ATTRIBUTES, getPresentationAttributes, EVENT_ATTRIBUTES,
-  filterSvgElements, validateWidthHeight, findChildByType } from '../util/ReactUtils';
+import { getPresentationAttributes, filterSvgElements, validateWidthHeight, findChildByType } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { IMargin } from '.';
+import { IMargin, IPresentationAttributes, IEvent, ISankeyLink, ISankeyNode } from './index.d';
 
 const defaultCoordinateOfTooltip = { x: 0, y: 0 };
 
-const interpolationGenerator = (a: number, b: number): any => {
+const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
   const kb = b - ka;
   return (t: any) => ka + kb * t;
 };
-const centerY = (node: INode) => (node.y + node.dy / 2);
-const getValue = (entry: ILink) => ((entry && entry.value) || 0);
-const getSumOfIds = (links: any, ids: any) => (
+const centerY = (node: ISankeyNode) => (node.y + node.dy / 2);
+const getValue = (entry: ISankeyLink) => ((entry && entry.value) || 0);
+const getSumOfIds = (links: ISankeyLink[], ids: number[]) => (
   ids.reduce((result: any, id: any) => (result + getValue(links[id])), 0)
 );
-const getSumWithWeightedSource = (tree: any, links: any, ids: any) => (
+const getSumWithWeightedSource = (tree: any, links: ISankeyLink[], ids: number[]) => (
   ids.reduce((result: any, id: any) => {
     const link = links[id];
     const sourceNode = tree[link.source];
@@ -35,8 +33,8 @@ const getSumWithWeightedSource = (tree: any, links: any, ids: any) => (
     return result + centerY(sourceNode) * getValue(links[id]);
   }, 0)
 );
-const getSumWithWeightedTarget = (tree: any, links: any, ids: any) => (
-  ids.reduce((result: any, id: any) => {
+const getSumWithWeightedTarget = (tree: any, links: ISankeyLink[], ids: number[]) => (
+  ids.reduce((result: number, id: number) => {
     const link = links[id];
     const targetNode = tree[link.target];
 
@@ -45,11 +43,11 @@ const getSumWithWeightedTarget = (tree: any, links: any, ids: any) => (
 );
 const ascendingY = (a: any, b: any) => (a.y - b.y);
 
-const searchTargetsAndSources = (links: any, id: any) => {
-  const sourceNodes = [];
-  const sourceLinks = [];
-  const targetNodes = [];
-  const targetLinks = [];
+const searchTargetsAndSources = (links: ISankeyLink[], id: number) => {
+  const sourceNodes: number[] = [];
+  const sourceLinks: number[] = [];
+  const targetNodes: number[] = [];
+  const targetLinks: number[] = [];
 
   for (let i = 0, len = links.length; i < len; i++) {
     const link = links[i];
@@ -104,7 +102,7 @@ const getNodesTree = ({ nodes, links }: any, width: number, nodeWidth: number): 
       updateDepthOfTargets(tree, node);
     }
   }
-  const maxDepth = _.maxBy(tree, (entry: INode) => entry.depth).depth;
+  const maxDepth = _.maxBy(tree, (entry: ISankeyNode) => entry.depth).depth;
 
   if (maxDepth >= 1) {
     const childWidth = (width - nodeWidth) / maxDepth;
@@ -261,8 +259,8 @@ const computeData = ({ data, width, height, iterations, nodeWidth, nodePadding }
   nodeWidth: number,
   nodePadding: number,
 }): {
-  nodes: INode[],
-  links: ILink[]
+  nodes: ISankeyNode[],
+  links: ISankeyLink[]
 } => {
   const { links } = data;
   const { tree } = getNodesTree(data, width, nodeWidth);
@@ -321,34 +319,15 @@ const getPayloadOfTooltip = (el: any, type: string, nameKey: string | number) =>
   return [];
 };
 
-interface INode {
-  x: number;
-  y: number;
-  dx: number;
-  dy: number;
-  depth: number;
-  value: number;
-}
-interface ILink {
-  target: number;
-  source: number;
-  value: number;
-  sy: number;
-  dy: number;
-  ty: number;
-}
-
-class Props {
-  // ...PRESENTATION_ATTRIBUTES,
-  // ...EVENT_ATTRIBUTES,
+class Props implements IPresentationAttributes, IEvent {
   // TODO nameKey  dataKey 需要支持 func
   nameKey: string | number = 'name';
   dataKey: string | number = 'value';
   width: number;
   height: number;
   data: {
-    node: INode[];
-    links: ILink[];
+    node: ISankeyNode[];
+    links: ISankeyLink[];
   };
   nodePadding: number = 10;
   nodeWidth: number = 10;
@@ -361,7 +340,7 @@ class Props {
   style: any;
 
   className: string;
-  children: INode[] | INode;
+  children: any;
   margin: IMargin = { top: 5, right: 5, bottom: 5, left: 5 };
 
   onClick: any;
@@ -381,8 +360,8 @@ class State {
   activeElement: any = null;
   activeElementType: any = null;
   isTooltipActive: boolean = false;
-  nodes: INode[] = [];
-  links: ILink[] = [];
+  nodes: ISankeyNode[] = [];
+  links: ISankeyLink[] = [];
 }
 
 class Sankey extends PureComponent<Props, State> {
@@ -431,9 +410,9 @@ class Sankey extends PureComponent<Props, State> {
     };
   }
 
-  handleMouseEnter(el: any, type: string, e: any) {
+  handleMouseEnter(el: React.ReactElement, type: string, e: any) {
     const { onMouseEnter, children } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip);
+    const tooltipItem = findChildByType(children, Tooltip.displayName);
 
     if (tooltipItem) {
       this.setState({
@@ -450,9 +429,9 @@ class Sankey extends PureComponent<Props, State> {
     }
   }
 
-  handleMouseLeave(el: any, type: string, e: any) {
+  handleMouseLeave(el: React.ReactElement, type: string, e: any) {
     const { onMouseLeave, children } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip);
+    const tooltipItem = findChildByType(children, Tooltip.displayName);
 
     if (tooltipItem) {
       this.setState({
@@ -467,7 +446,7 @@ class Sankey extends PureComponent<Props, State> {
     }
   }
 
-  handleClick(el: any, type: string, e: any) {
+  handleClick(el: React.ReactElement, type: string, e: any) {
     const { onClick } = this.props;
     if (onClick) onClick(el, type, e);
   }
@@ -498,7 +477,7 @@ class Sankey extends PureComponent<Props, State> {
     );
   }
 
-  renderLinks(links: ILink[], nodes: INode[]) {
+  renderLinks(links: ISankeyLink[], nodes: ISankeyNode[]) {
     const { linkCurvature, link: linkContent, margin } = this.props;
     const top = margin.top || 0;
     const left = margin.left || 0;
@@ -506,7 +485,7 @@ class Sankey extends PureComponent<Props, State> {
     return (
       <Layer className="recharts-sankey-links" key="recharts-sankey-links">
         {
-          links.map((link: ILink, i: number) => {
+          links.map((link: ISankeyLink, i: number) => {
             const { sy: sourceRelativeY, ty: targetRelativeY, dy: linkWidth } = link;
             const source = nodes[link.source];
             const target = nodes[link.target];
@@ -563,7 +542,7 @@ class Sankey extends PureComponent<Props, State> {
     );
   }
 
-  renderNodes(nodes: INode[]) {
+  renderNodes(nodes: ISankeyNode[]) {
     const { node: nodeContent, margin } = this.props;
     const top = margin.top || 0;
     const left = margin.left || 0;
@@ -602,7 +581,7 @@ class Sankey extends PureComponent<Props, State> {
 
   renderTooltip() {
     const { children, width, height, nameKey } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip);
+    const tooltipItem = findChildByType(children, Tooltip.displayName);
 
     if (!tooltipItem) { return null; }
 

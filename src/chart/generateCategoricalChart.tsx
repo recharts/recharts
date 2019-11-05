@@ -11,6 +11,7 @@ import Sector from '../shape/Sector';
 import Dot from '../shape/Dot';
 import Rectangle from '../shape/Rectangle';
 
+// @ts-ignore
 import { findAllByType, findChildByType, getDisplayName, parseChildIndex,
   getPresentationAttributes, validateWidthHeight, isChildrenEqual,
   renderByOrder, getReactEventByType, filterEventAttributes } from '../util/ReactUtils';
@@ -29,44 +30,52 @@ import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDo
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
-import {  IMargin,
+import {
   ICommonPropTypes,
-  ICategoricalChart,
-  ICoordinate,
-  IAxis,
-  ILayout,
-} from '.';
+  CategoricalChart,
+  LayoutType,
+} from './index.d';
+import {Margin, ViewBox, ChartOffset, BaseAxisProps, Coordinate, ChartCoordinate, TickItem} from '../util/types';
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
   yAxis: ['left', 'right'],
 };
 
-const originCoordinate = { x: 0, y: 0 };
+const originCoordinate: Coordinate = { x: 0, y: 0 };
 
-class IState {
-  chartX: number;
-  chartY: number;
-  dataStartIndex: number;
-  dataEndIndex: number;
-  activeTooltipIndex: number;
-  isTooltipActive: boolean;
+class State {
+  chartX?: number;
+  chartY?: number;
+  dataStartIndex?: number;
+  dataEndIndex?: number;
+  activeTooltipIndex?: number;
+  isTooltipActive?: boolean;
   updateId?: number;
-  xAxisMap?: any;
-  yAxisMap?: any;
+  xAxisMap?: {
+    [k: string]: BaseAxisProps;
+  };
+  yAxisMap?: {
+    [k: string]: BaseAxisProps;
+  };
   orderedTooltipTicks?: any;
-  tooltipAxis?: any;
-  tooltipTicks?: any;
+  tooltipAxis?: BaseAxisProps;
+  tooltipTicks?: TickItem[];
   graphicalItems?: any;
-  activeCoordinate?: any;
-  offset?: any;
+  activeCoordinate?: ChartCoordinate;
+  offset?: ChartOffset;
   angleAxisMap?: any;
   radiusAxisMap?: any;
   formatedGraphicalItems?: any;
-  activePayload?: any;
-  tooltipAxisBandSize?: any;
+  /** active tooltip payload */
+  activePayload?: any[];
+  tooltipAxisBandSize?: number;
+  /** active item */
   activeItem?: any;
-  activeLabel?: any;
+  /** Active label of data */
+  activeLabel?: string;
+  xValue?: number;
+  yValue?: number;
 }
 
 const generateCategoricalChart = ({
@@ -77,9 +86,8 @@ const generateCategoricalChart = ({
   legendContent,
   formatAxisMap,
   defaultProps,
-  propTypes, // eslint-disable-line react/forbid-foreign-prop-types
-}: ICategoricalChart) => {
-  class CategoricalChartWrapper extends Component<ICommonPropTypes, IState> {
+}: CategoricalChart) => {
+  class CategoricalChartWrapper extends Component<ICommonPropTypes, State> {
     static displayName = chartName;
 
     uniqueChartId: any;
@@ -92,7 +100,7 @@ const generateCategoricalChart = ({
       stackOffset: 'none',
       barCategoryGap: '10%',
       barGap: 4,
-      margin: { top: 5, right: 5, bottom: 5, left: 5 } as IMargin,
+      margin: { top: 5, right: 5, bottom: 5, left: 5 } as Margin,
       reverseStackOrder: false,
       ...defaultProps,
     };
@@ -102,9 +110,9 @@ const generateCategoricalChart = ({
      * @param {Object} props Props object to use when creating the default state
      * @return {Object} Whole new state
      */
-    static createDefaultState = (props: ICommonPropTypes): IState => {
+    static createDefaultState = (props: ICommonPropTypes): State => {
       const { children, defaultShowTooltip } = props;
-      const brushItem = findChildByType(children, Brush);
+      const brushItem = findChildByType(children, Brush.displayName);
       const startIndex = (brushItem && brushItem.props && brushItem.props.startIndex) || 0;
       const endIndex = (brushItem && brushItem.props && brushItem.props.endIndex) ||
       ((props.data && (props.data.length - 1)) || 0);
@@ -461,7 +469,7 @@ const generateCategoricalChart = ({
       return axisMap;
     }
 
-    getActiveCoordinate(tooltipTicks: any, activeIndex: any, rangeObj: any): any {
+    getActiveCoordinate(tooltipTicks: TickItem[], activeIndex: any, rangeObj: any): ChartCoordinate {
       const { layout } = this.props;
       const entry = tooltipTicks.find((tick: any) => tick && (tick.index === activeIndex));
 
@@ -543,7 +551,7 @@ const generateCategoricalChart = ({
      * @param  {String} activeLabel    Active label of data
      * @return {Array}                 The content of tooltip
      */
-    getTooltipContent(activeIndex: number, activeLabel?: string) {
+    getTooltipContent(activeIndex: number, activeLabel?: string): any[] {
       const { graphicalItems, tooltipAxis } = this.state;
       const displayedData = (this.constructor as any).getDisplayedData(this.props, this.state);
 
@@ -701,7 +709,7 @@ const generateCategoricalChart = ({
       return [{ x: x1, y: y1 }, { x: x2, y: y2 }];
     }
 
-    static getAxisNameByLayout(layout: ILayout) {
+    static getAxisNameByLayout(layout: LayoutType) {
       if (layout === 'horizontal') {
         return { numericAxisName: 'yAxis', cateAxisName: 'xAxis' };
       } if (layout === 'vertical') {
@@ -747,7 +755,7 @@ const generateCategoricalChart = ({
 
     parseEventsOfWrapper() {
       const { children } = this.props;
-      const tooltipItem = findChildByType(children, Tooltip);
+      const tooltipItem = findChildByType(children, Tooltip.displayName);
       const tooltipEvents = tooltipItem && eventType === 'axis' ? {
         onMouseEnter: this.handleMouseEnter,
         onMouseMove: this.handleMouseMove,
@@ -847,11 +855,11 @@ const generateCategoricalChart = ({
      * @param  {Object} yAxisMap       The configuration of y-axis
      * @return {Object} The offset of main part in the svg element
      */
-    calculateOffset({ props, graphicalItems, xAxisMap = {}, yAxisMap = {} }: any) {
+    calculateOffset({ props, graphicalItems, xAxisMap = {} as BaseAxisProps, yAxisMap = {} as BaseAxisProps }: any) {
       const { width, height, children } = props;
       const margin = props.margin || {};
-      const brushItem = findChildByType(children, Brush);
-      const legendItem = findChildByType(children, Legend);
+      const brushItem = findChildByType(children, Brush.displayName);
+      const legendItem = findChildByType(children, Legend.displayName);
 
       const offsetH = Object.keys(yAxisMap).reduce((result: any, id: any) => {
         const entry = yAxisMap[id];
@@ -928,7 +936,7 @@ const generateCategoricalChart = ({
           const { chartX, chartY, activeTooltipIndex } = data;
           const { offset, tooltipTicks } = this.state;
           if (!offset) { return; }
-          const viewBox = { ...offset, x: offset.left, y: offset.top };
+          const viewBox: ViewBox = { ...offset, x: offset.left, y: offset.top };
           // When a categotical chart is combined with another chart, the value of chartX
           // and chartY may beyond the boundaries.
           const validateChartX = Math.min(chartX, viewBox.x + viewBox.width);
@@ -978,7 +986,7 @@ const generateCategoricalChart = ({
       const mouse = this.getMouseInfo(e);
 
       if (mouse) {
-        const nextState = { ...mouse, isTooltipActive: true };
+        const nextState: State = { ...mouse, isTooltipActive: true };
         this.setState(nextState);
         this.triggerSyncEvent(nextState);
 
@@ -991,7 +999,7 @@ const generateCategoricalChart = ({
     triggeredAfterMouseMove = (e: any): any => {
       const { onMouseMove } = this.props;
       const mouse = this.getMouseInfo(e);
-      const nextState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
+      const nextState: State = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
 
       this.setState(nextState);
       this.triggerSyncEvent(nextState);
@@ -1124,7 +1132,7 @@ const generateCategoricalChart = ({
 
     verticalCoordinatesGenerator = ({
       xAxis, width, height, offset,
-    }: ICoordinate) => getCoordinatesOfGrid(CartesianAxis.getTicks({
+    }: ChartCoordinate) => getCoordinatesOfGrid(CartesianAxis.getTicks({
       ...CartesianAxis.defaultProps,
       ...xAxis,
       ticks: getTicksOfAxis(xAxis, true),
@@ -1133,7 +1141,7 @@ const generateCategoricalChart = ({
 
     horizontalCoordinatesGenerator = ({
       yAxis, width, height, offset,
-    }: ICoordinate) => getCoordinatesOfGrid(CartesianAxis.getTicks({
+    }: ChartCoordinate) => getCoordinatesOfGrid(CartesianAxis.getTicks({
       ...CartesianAxis.defaultProps, ...yAxis,
       ticks: getTicksOfAxis(yAxis, true),
       viewBox: { x: 0, y: 0, width, height },
@@ -1247,7 +1255,7 @@ const generateCategoricalChart = ({
      * @param {Number} index        The index of element
      * @return {ReactElement}       The instance of x-axes
      */
-    renderAxis(axisOptions: IAxis, element: any, displayName: string, index: number): React.ReactElement {
+    renderAxis(axisOptions: BaseAxisProps, element: any, displayName: string, index: number): React.ReactElement {
       const { width, height } = this.props;
 
       return (
@@ -1255,6 +1263,7 @@ const generateCategoricalChart = ({
           {...axisOptions}
           className={`recharts-${axisOptions.axisType} ${axisOptions.axisType}`}
           key={element.key || `${displayName}-${index}`}
+          // @ts-ignore
           viewBox={{ x: 0, y: 0, width, height }}
           ticksGenerator={this.axesTicksGenerator}
         />
@@ -1314,10 +1323,10 @@ const generateCategoricalChart = ({
       const { formatedGraphicalItems } = this.state;
       const { children, width, height } = this.props;
       const margin = this.props.margin || {};
-      const legendWidth = width - (margin.left || 0) - (margin.right || 0);
-      const legendHeight = height - (margin.top || 0) - (margin.bottom || 0);
+      const legendWidth: number = width - (margin.left || 0) - (margin.right || 0);
+      const legendHeight: number = height - (margin.top || 0) - (margin.bottom || 0);
       const props = getLegendProps({
-        children, formatedGraphicalItems, legendWidth, legendHeight, legendContent,
+        children, formatedGraphicalItems, legendWidth, legendContent,
       });
 
       if (!props) { return null; }
@@ -1340,7 +1349,7 @@ const generateCategoricalChart = ({
      */
     renderTooltip = (): React.ReactElement => {
       const { children } = this.props;
-      const tooltipItem = findChildByType(children, Tooltip);
+      const tooltipItem = findChildByType(children, Tooltip.displayName);
 
       if (!tooltipItem) { return null; }
 
@@ -1456,7 +1465,7 @@ const generateCategoricalChart = ({
       const graphicalItem = cloneElement(element, item.props);
       const { isTooltipActive, tooltipAxis, activeTooltipIndex, activeLabel } = this.state;
       const { children } = this.props;
-      const tooltipItem = findChildByType(children, Tooltip);
+      const tooltipItem = findChildByType(children, Tooltip.displayName);
       const { points, isRange, baseLine } = item.props;
       const { activeDot, hide } = item.item.props;
       const hasActive = !hide && isTooltipActive && tooltipItem && activeDot &&

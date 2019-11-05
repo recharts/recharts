@@ -79,8 +79,8 @@ class CartesianAxis extends Component<Props> {
     tickMargin: 2,
     interval: 'preserveEnd',
   };
-
-  static getTicks(props: Props) {
+  // todo Array<Tick>
+  static getTicks(props: Props): any[] {
     const { tick, ticks, viewBox, minTickGap, orientation, interval, tickFormatter, unit } = props;
 
     if (!ticks || !ticks.length || !tick) { return []; }

@@ -1,7 +1,6 @@
 /**
  * @fileOverview Funnel Chart
  */
-import PropTypes from 'prop-types';
 import generateCategoricalChart from './generateCategoricalChart';
 import Funnel from '../numberAxis/Funnel';
 import { ICategoricalChart } from './index.d';

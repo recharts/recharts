@@ -20,7 +20,7 @@ export const isNumOrStr = (value: number | string) => (
 );
 
 let idCounter = 0;
-export const uniqueId = (prefix: string) => {
+export const uniqueId = (prefix?: string) => {
   const id = ++idCounter;
 
   return `${prefix || ''}${id}`;

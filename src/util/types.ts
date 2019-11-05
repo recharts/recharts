@@ -25,7 +25,7 @@ import {
 import _ from 'lodash';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'd3-scale';
 
-export type LayoutType = 'horizontal' | 'vertical';
+export type LayoutType = 'horizontal' | 'vertical' | 'centric' | 'radial';
 export type PolarLayoutType = 'radial' | 'centric';
 export type AxisType = 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis';
 export type DataKey<T> = string | number | ((obj: T) => any);
@@ -44,6 +44,23 @@ export interface Coordinate {
   x: number;
   y: number;
 };
+
+export interface ChartCoordinate extends Coordinate {
+  xAxis?: any;
+  yAxis?: any;
+  width?: any;
+  height?: any;
+  offset?: ChartOffset;
+  angle?: number;
+  radius?: number;
+  cx?: number;
+  cy?: number;
+  startAngle?: number;
+  endAngle?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+}
+
 export type ScaleType = 'auto' | 'linear' | 'pow' | 'sqrt' | 'log' | 'identity' | 'time' | 'band' |
   'point' | 'ordinal' | 'quantile' | 'quantize' | 'utc' | 'sequential' | 'threshold';
 
@@ -379,6 +396,7 @@ export interface ChartOffset {
   right?: number;
   width?: number;
   height?: number;
+  brushBottom?: number;
 }
 
 export interface Padding {
@@ -457,6 +475,9 @@ export interface BaseAxisProps {
   name?: string | number;
   /** The unit of data displayed in the axis */ 
   unit?: string | number;
+  /** The type of axis */
+  axisType?: AxisType;
+  range: Array<number>;
 };
 
 export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
@@ -464,4 +485,11 @@ export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveS
 export interface TickItem {
   value?: any;
   coordinate: number;
+}
+
+export interface Margin {
+  top?: number;
+  right?: number;
+  bottom?: number;
+  left?: number;
 }
