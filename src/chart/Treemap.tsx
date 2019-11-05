@@ -3,6 +3,7 @@
  * @fileOverview TreemapChart
  */
 import React, { PureComponent } from 'react';
+// @ts-ignore
 import Smooth from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';

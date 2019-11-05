@@ -12,7 +12,7 @@ import { shallowEqual } from '../util/ShallowEqual';
 import { getPresentationAttributes, filterSvgElements, validateWidthHeight, findChildByType } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { SankeyLink, SankeyNode } from './types';
-import { Margin, DataKey } from '../util/types';
+import { Margin, DataKey, DOMAttributesWithProps, PresentationAttributes } from '../util/types';
 
 const defaultCoordinateOfTooltip = { x: 0, y: 0 };
 
@@ -320,7 +320,7 @@ const getPayloadOfTooltip = (el: any, type: string, nameKey: DataKey<any>) => {
   return [];
 };
 
-class Props implements IPresentationAttributes, IEvent {
+class Props implements PresentationAttributes<any>, DOMAttributesWithProps<any, any> {
   nameKey: DataKey<any> = 'name';
   dataKey: DataKey<any> = 'value';
   width: number;
