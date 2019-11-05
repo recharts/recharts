@@ -477,7 +477,7 @@ export interface BaseAxisProps {
   unit?: string | number;
   /** The type of axis */
   axisType?: AxisType;
-  range: Array<number>;
+  range?: Array<number>;
   /** axis react component */
   AxisComp?: any;
 };
