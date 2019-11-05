@@ -127,7 +127,7 @@ class Scatter extends PureComponent<Props, State> {
       offset: ChartOffset;
     }) => {
     const { tooltipType } = item.props;
-    const cells = findAllByType(item.props.children, Cell);
+    const cells = findAllByType(item.props.children, Cell.displayName);
     const xAxisDataKey = _.isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
     const yAxisDataKey = _.isNil(yAxis.dataKey) ? item.props.dataKey : yAxis.dataKey;
     const zAxisDataKey = zAxis && zAxis.dataKey;

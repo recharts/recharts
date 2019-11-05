@@ -592,7 +592,7 @@ class Treemap extends PureComponent<Props, State> {
       value: getValueByDataKey(activeNode, dataKey),
     }] : [];
 
-    return React.cloneElement(tooltipItem, {
+    return React.cloneElement(tooltipItem as React.DetailedReactHTMLElement<any, HTMLElement>, {
       viewBox,
       active: isTooltipActive,
       coordinate,

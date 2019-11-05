@@ -1,6 +1,7 @@
 import React, { Children } from 'react';
 import _ from 'lodash';
 import { keys } from 'ts-transformer-keys';
+import { ReactNode } from 'react';
 import { isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
 import { PresentationAttributes, DOMAttributesWithProps } from './types';
@@ -53,8 +54,8 @@ export const getDisplayName = (Comp: any) => {
  * Find and return all matched children by type. `type` can be a React element class or
  * string
  */
-export const findAllByType = (children: React.ReactElement[], type: string | string[]) => {
-  const result: React.ReactElement[] = [];
+export const findAllByType = (children: ReactNode, type: string | string[]): React.DetailedReactHTMLElement<any, HTMLElement>[] => {
+  const result: React.DetailedReactHTMLElement<any, HTMLElement>[] = [];
   let types: string[] = [];
 
   if (_.isArray(type)) {
@@ -63,7 +64,7 @@ export const findAllByType = (children: React.ReactElement[], type: string | str
     types = [getDisplayName(type)];
   }
 
-  React.Children.forEach(children, (child: React.ReactElement) => {
+  React.Children.forEach(children, (child: React.DetailedReactHTMLElement<any, HTMLElement>) => {
     // @ts-ignore
     const childType = child && child.type && (child.type.displayName || child.type.name);
     if (types.indexOf(childType) !== -1) {
@@ -77,7 +78,7 @@ export const findAllByType = (children: React.ReactElement[], type: string | str
  * Return the first matched child by type, return null otherwise.
  * `type` can be a React element class or string.
  */
-export const findChildByType = (children: React.ReactElement[], type: string) => {
+export const findChildByType = (children: ReactNode[], type: string): React.DetailedReactHTMLElement<any, HTMLElement> => {
   const result = findAllByType(children, type);
 
   return result && result[0];
@@ -86,8 +87,8 @@ export const findChildByType = (children: React.ReactElement[], type: string) =>
 /*
  * Create a new array of children excluding the ones matched the type
  */
-export const withoutType = (children: React.ReactElement[], type: string) => {
-  const newChildren: React.ReactElement[] = [];
+export const withoutType = (children: ReactNode, type: string) => {
+  const newChildren: ReactNode[] = [];
   let types: string[];
 
   if (_.isArray(type)) {
