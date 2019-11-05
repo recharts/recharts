@@ -134,7 +134,7 @@ class Bar extends PureComponent<Props, State> {
     const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
     const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
     const baseValue = getBaseValueOfBar({ numericAxis });
-    const cells = findAllByType(children, Cell);
+    const cells = findAllByType(children, Cell.displayName);
 
     const rects = displayedData.map((entry, index) => {
       let value, x, y, width, height, background;
@@ -370,7 +370,7 @@ class Bar extends PureComponent<Props, State> {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
     const { data, xAxis, yAxis, layout, children } = this.props;
-    const errorBarItems = findAllByType(children, ErrorBar);
+    const errorBarItems = findAllByType(children, ErrorBar.displayName);
 
     if (!errorBarItems) { return null; }
 

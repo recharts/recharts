@@ -308,7 +308,7 @@ class Scatter extends PureComponent<Props, State> {
     if (isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
     const { points, xAxis, yAxis, children } = this.props;
-    const errorBarItems = findAllByType(children, ErrorBar);
+    const errorBarItems = findAllByType(children, ErrorBar.displayName);
 
     if (!errorBarItems) { return null; }
 
