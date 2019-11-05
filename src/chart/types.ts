@@ -1,7 +1,6 @@
-import { IEvent, IPresentationAttributes } from '../util/ReactUtils';
 import { Margin, LayoutType, BaseAxisProps } from '../util/types';
 
-interface ICommonPropTypes {
+interface CommonPropTypes {
   syncId?: number | string;
   compact?: boolean;
   width?: number;
@@ -36,10 +35,6 @@ interface ICommonPropTypes {
   outerRadius?: number | string;
 }
 
-interface IPiePropTypes {
-
-}
-
 interface CategoricalChart {
   chartName?: string;
   GraphicalChild?: any;
@@ -51,7 +46,7 @@ interface CategoricalChart {
   propTypes?: any;
 }
 
-interface ITreemapNode {
+interface TreemapNode {
   x: number;
   y: number;
   width: number;
@@ -64,7 +59,7 @@ interface ITreemapNode {
   [k: string]: any;
 }
 
-interface ISankeyNode {
+interface SankeyNode {
   x: number;
   y: number;
   dx: number;
@@ -72,7 +67,7 @@ interface ISankeyNode {
   depth: number;
   value: number;
 }
-interface ISankeyLink {
+interface SankeyLink {
   target: number;
   source: number;
   value: number;
@@ -82,12 +77,10 @@ interface ISankeyLink {
 }
 
 export {
-  ICommonPropTypes,
+  CommonPropTypes,
   CategoricalChart,
   LayoutType,
-  ITreemapNode,
-  IPresentationAttributes,
-  IEvent,
-  ISankeyNode,
-  ISankeyLink,
+  TreemapNode,
+  SankeyNode,
+  SankeyLink,
 };

@@ -6,7 +6,7 @@ import Area from '../cartesian/Area';
 import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import { formatAxisMap } from '../util/CartesianUtils';
-import { ICategoricalChart } from './index.d';
+import { CategoricalChart } from './types';
 
 export default generateCategoricalChart({
   chartName: 'AreaChart',
@@ -16,4 +16,4 @@ export default generateCategoricalChart({
     { axisType: 'yAxis', AxisComp: YAxis },
   ],
   formatAxisMap,
-} as ICategoricalChart);
+} as CategoricalChart);

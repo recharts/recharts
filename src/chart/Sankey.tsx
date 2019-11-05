@@ -11,7 +11,8 @@ import Rectangle from '../shape/Rectangle';
 import { shallowEqual } from '../util/ShallowEqual';
 import { getPresentationAttributes, filterSvgElements, validateWidthHeight, findChildByType } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { IMargin, IPresentationAttributes, IEvent, ISankeyLink, ISankeyNode } from './index.d';
+import { SankeyLink, SankeyNode } from './types';
+import { Margin, DataKey } from '../util/types';
 
 const defaultCoordinateOfTooltip = { x: 0, y: 0 };
 
@@ -20,12 +21,12 @@ const interpolationGenerator = (a: number, b: number) => {
   const kb = b - ka;
   return (t: any) => ka + kb * t;
 };
-const centerY = (node: ISankeyNode) => (node.y + node.dy / 2);
-const getValue = (entry: ISankeyLink) => ((entry && entry.value) || 0);
-const getSumOfIds = (links: ISankeyLink[], ids: number[]) => (
+const centerY = (node: SankeyNode) => (node.y + node.dy / 2);
+const getValue = (entry: SankeyLink) => ((entry && entry.value) || 0);
+const getSumOfIds = (links: SankeyLink[], ids: number[]) => (
   ids.reduce((result: any, id: any) => (result + getValue(links[id])), 0)
 );
-const getSumWithWeightedSource = (tree: any, links: ISankeyLink[], ids: number[]) => (
+const getSumWithWeightedSource = (tree: any, links: SankeyLink[], ids: number[]) => (
   ids.reduce((result: any, id: any) => {
     const link = links[id];
     const sourceNode = tree[link.source];
@@ -33,7 +34,7 @@ const getSumWithWeightedSource = (tree: any, links: ISankeyLink[], ids: number[]
     return result + centerY(sourceNode) * getValue(links[id]);
   }, 0)
 );
-const getSumWithWeightedTarget = (tree: any, links: ISankeyLink[], ids: number[]) => (
+const getSumWithWeightedTarget = (tree: any, links: SankeyLink[], ids: number[]) => (
   ids.reduce((result: number, id: number) => {
     const link = links[id];
     const targetNode = tree[link.target];
@@ -43,7 +44,7 @@ const getSumWithWeightedTarget = (tree: any, links: ISankeyLink[], ids: number[]
 );
 const ascendingY = (a: any, b: any) => (a.y - b.y);
 
-const searchTargetsAndSources = (links: ISankeyLink[], id: number) => {
+const searchTargetsAndSources = (links: SankeyLink[], id: number) => {
   const sourceNodes: number[] = [];
   const sourceLinks: number[] = [];
   const targetNodes: number[] = [];
@@ -102,7 +103,7 @@ const getNodesTree = ({ nodes, links }: any, width: number, nodeWidth: number): 
       updateDepthOfTargets(tree, node);
     }
   }
-  const maxDepth = _.maxBy(tree, (entry: ISankeyNode) => entry.depth).depth;
+  const maxDepth = _.maxBy(tree, (entry: SankeyNode) => entry.depth).depth;
 
   if (maxDepth >= 1) {
     const childWidth = (width - nodeWidth) / maxDepth;
@@ -259,8 +260,8 @@ const computeData = ({ data, width, height, iterations, nodeWidth, nodePadding }
   nodeWidth: number,
   nodePadding: number,
 }): {
-  nodes: ISankeyNode[],
-  links: ISankeyLink[]
+  nodes: SankeyNode[],
+  links: SankeyLink[]
 } => {
   const { links } = data;
   const { tree } = getNodesTree(data, width, nodeWidth);
@@ -296,7 +297,7 @@ const getCoordinateOfTooltip = (el: any, type: string) => {
   };
 };
 
-const getPayloadOfTooltip = (el: any, type: string, nameKey: string | number) => {
+const getPayloadOfTooltip = (el: any, type: string, nameKey: DataKey<any>) => {
   const { payload } = el;
   if (type === 'node') {
     return [{
@@ -320,14 +321,13 @@ const getPayloadOfTooltip = (el: any, type: string, nameKey: string | number) =>
 };
 
 class Props implements IPresentationAttributes, IEvent {
-  // TODO nameKey  dataKey 需要支持 func
-  nameKey: string | number = 'name';
-  dataKey: string | number = 'value';
+  nameKey: DataKey<any> = 'name';
+  dataKey: DataKey<any> = 'value';
   width: number;
   height: number;
   data: {
-    node: ISankeyNode[];
-    links: ISankeyLink[];
+    node: SankeyNode[];
+    links: SankeyLink[];
   };
   nodePadding: number = 10;
   nodeWidth: number = 10;
@@ -341,7 +341,7 @@ class Props implements IPresentationAttributes, IEvent {
 
   className: string;
   children: any;
-  margin: IMargin = { top: 5, right: 5, bottom: 5, left: 5 };
+  margin: Margin = { top: 5, right: 5, bottom: 5, left: 5 };
 
   onClick: any;
 
@@ -360,8 +360,8 @@ class State {
   activeElement: any = null;
   activeElementType: any = null;
   isTooltipActive: boolean = false;
-  nodes: ISankeyNode[] = [];
-  links: ISankeyLink[] = [];
+  nodes: SankeyNode[] = [];
+  links: SankeyLink[] = [];
 }
 
 class Sankey extends PureComponent<Props, State> {
@@ -477,7 +477,7 @@ class Sankey extends PureComponent<Props, State> {
     );
   }
 
-  renderLinks(links: ISankeyLink[], nodes: ISankeyNode[]) {
+  renderLinks(links: SankeyLink[], nodes: SankeyNode[]) {
     const { linkCurvature, link: linkContent, margin } = this.props;
     const top = margin.top || 0;
     const left = margin.left || 0;
@@ -485,7 +485,7 @@ class Sankey extends PureComponent<Props, State> {
     return (
       <Layer className="recharts-sankey-links" key="recharts-sankey-links">
         {
-          links.map((link: ISankeyLink, i: number) => {
+          links.map((link: SankeyLink, i: number) => {
             const { sy: sourceRelativeY, ty: targetRelativeY, dy: linkWidth } = link;
             const source = nodes[link.source];
             const target = nodes[link.target];
@@ -542,7 +542,7 @@ class Sankey extends PureComponent<Props, State> {
     );
   }
 
-  renderNodes(nodes: ISankeyNode[]) {
+  renderNodes(nodes: SankeyNode[]) {
     const { node: nodeContent, margin } = this.props;
     const top = margin.top || 0;
     const left = margin.left || 0;

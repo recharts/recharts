@@ -3,7 +3,7 @@
  */
 import generateCategoricalChart from './generateCategoricalChart';
 import Funnel from '../numberAxis/Funnel';
-import { ICategoricalChart } from './index.d';
+import { CategoricalChart } from './types';
 
 export default generateCategoricalChart({
   chartName: 'FunnelChart',
@@ -13,4 +13,4 @@ export default generateCategoricalChart({
   defaultProps: {
     layout: 'centric',
   },
-} as ICategoricalChart);
+} as CategoricalChart);

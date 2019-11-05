@@ -15,7 +15,7 @@ import Label from '../component/Label';
 import { isSsr, filterEventsOfChild } from '../util/ReactUtils';
 // @ts-ignore
 import { isNumber, mathSign } from '../util/DataUtils';
-import { ViewBox, PresentationAttributes, filterProps, TickItem } from '../util/types';
+import { ViewBox, PresentationAttributes, filterProps, TickItem, BaseAxisProps } from '../util/types';
 
 interface CartesianTickItem extends TickItem {
   tickCoord?: number;
@@ -23,7 +23,7 @@ interface CartesianTickItem extends TickItem {
   isShow?: boolean;
 }
 
-interface CartesianAxisProps {
+export interface CartesianAxisProps {
   className?: string;
   x?: number;
   y?: number;

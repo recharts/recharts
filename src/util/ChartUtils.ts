@@ -15,9 +15,9 @@ import { findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 import { ReactElement, ReactNode } from 'react';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
-import { LayoutType, PolarLayoutType, AxisType, TickItem, BaseAxisProps } from './types';
+import { LayoutType, PolarLayoutType, AxisType, TickItem, BaseAxisProps, DataKey } from './types';
 
-export function getValueByDataKey<T>(obj: T, dataKey: string | number | ((obj: T) => any), defaultValue?: any) {
+export function getValueByDataKey<T>(obj: T, dataKey: DataKey<any>, defaultValue?: any) {
   if (_.isNil(obj) || _.isNil(dataKey)) { return defaultValue; }
 
   if (isNumOrStr(dataKey as string)) { return _.get(obj, dataKey as string, defaultValue); }
@@ -50,12 +50,7 @@ export function getDomainOfDataByKey<T>(data: Array<T>, key: string, type: strin
   return validateData.map(entry => (isNumOrStr(entry) ? entry : ''));
 };
 
-interface Tick {
-  index: number;
-  coordinate: number;
-}
-
-export const calculateActiveTickIndex = (coordinate: number, ticks: Array<Tick>, unsortedTicks: Array<Tick>, axis: BaseAxisProps) => {
+export const calculateActiveTickIndex = (coordinate: number, ticks: Array<TickItem>, unsortedTicks: Array<TickItem>, axis: BaseAxisProps) => {
   let index = -1;
   const len = ticks.length;
 
@@ -475,7 +470,7 @@ export const isCategorialAxis = (layout: LayoutType | PolarLayoutType, axisType:
  * @param {Number} max   The maximun value of axis
  * @return {Array}       Coordinates
  */
-export const getCoordinatesOfGrid = (ticks: Array<Tick>, min: number, max: number) => {
+export const getCoordinatesOfGrid = (ticks: Array<TickItem>, min: number, max: number) => {
   let hasMin, hasMax;
 
   const values = ticks.map((entry) => {
@@ -508,7 +503,7 @@ export const getTicksOfAxis = (axis: any, isGrid?: boolean, isAll?: boolean): Ti
 
   // The ticks setted by user should only affect the ticks adjacent to axis line
   if (isGrid && (axis.ticks || axis.niceTicks)) {
-    return (axis.ticks || axis.niceTicks).map((entry: Tick) => {
+    return (axis.ticks || axis.niceTicks).map((entry: TickItem) => {
       const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
       return {
@@ -776,7 +771,7 @@ export const getStackGroupsByAxisId = (
  * @param  {String} type  The type of axis
  * @return {Array} domain
  */
-export const calculateDomainOfTicks = (ticks: Array<Tick>, type: string) => {
+export const calculateDomainOfTicks = (ticks: Array<TickItem>, type: string) => {
   if (type === 'number') {
     return [_.min(ticks), _.max(ticks)];
   }
@@ -970,7 +965,7 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
  * @param  {Array}  ticks The ticks of axis
  * @return {Number} Size
  */
-export const getBandSizeOfAxis = (axis: any, ticks?: Array<Tick>) => {
+export const getBandSizeOfAxis = (axis: any, ticks?: Array<TickItem>) => {
   if (axis && axis.scale && axis.scale.bandwidth) {
     return axis.scale.bandwidth();
   }

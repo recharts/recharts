@@ -11,7 +11,6 @@ import Sector from '../shape/Sector';
 import Dot from '../shape/Dot';
 import Rectangle from '../shape/Rectangle';
 
-// @ts-ignore
 import { findAllByType, findChildByType, getDisplayName, parseChildIndex,
   getPresentationAttributes, validateWidthHeight, isChildrenEqual,
   renderByOrder, getReactEventByType, filterEventAttributes } from '../util/ReactUtils';
@@ -30,12 +29,8 @@ import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDo
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
-import {
-  ICommonPropTypes,
-  CategoricalChart,
-  LayoutType,
-} from './index.d';
-import {Margin, ViewBox, ChartOffset, BaseAxisProps, Coordinate, ChartCoordinate, TickItem} from '../util/types';
+import { CommonPropTypes, CategoricalChart, LayoutType } from './index.d';
+import { Margin, ViewBox, ChartOffset, BaseAxisProps, Coordinate, ChartCoordinate, TickItem} from '../util/types';
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
@@ -87,7 +82,7 @@ const generateCategoricalChart = ({
   formatAxisMap,
   defaultProps,
 }: CategoricalChart) => {
-  class CategoricalChartWrapper extends Component<ICommonPropTypes, State> {
+  class CategoricalChartWrapper extends Component<CommonPropTypes, State> {
     static displayName = chartName;
 
     uniqueChartId: any;
@@ -95,7 +90,7 @@ const generateCategoricalChart = ({
     legendInstance: any;
 
     // todo join specific chart propTypes
-    static defaultProps: ICommonPropTypes = {
+    static defaultProps: CommonPropTypes = {
       layout: 'horizontal',
       stackOffset: 'none',
       barCategoryGap: '10%',
@@ -110,7 +105,7 @@ const generateCategoricalChart = ({
      * @param {Object} props Props object to use when creating the default state
      * @return {Object} Whole new state
      */
-    static createDefaultState = (props: ICommonPropTypes): State => {
+    static createDefaultState = (props: CommonPropTypes): State => {
       const { children, defaultShowTooltip } = props;
       const brushItem = findChildByType(children, Brush.displayName);
       const startIndex = (brushItem && brushItem.props && brushItem.props.startIndex) || 0;
@@ -136,7 +131,7 @@ const generateCategoricalChart = ({
       });
     };
 
-    static getDisplayedData = (props: ICommonPropTypes, { graphicalItems, dataStartIndex, dataEndIndex }: any, item: any): any[] => {
+    static getDisplayedData = (props: CommonPropTypes, { graphicalItems, dataStartIndex, dataEndIndex }: any, item?: any): any[] => {
       const itemsData = (graphicalItems || []).reduce((result: any, child: any) => {
         const itemData = child.props.data;
 
@@ -165,10 +160,10 @@ const generateCategoricalChart = ({
 
     container?: any;
 
-    constructor(props: ICommonPropTypes) {
+    constructor(props: CommonPropTypes) {
       super(props);
 
-      const defaultState = (this.constructor as any).createDefaultState(props);
+      const defaultState = CategoricalChartWrapper.createDefaultState(props);
       const updateId = 0;
       this.state = { ...defaultState, updateId: 0,
         ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState, updateId }) };
@@ -190,14 +185,14 @@ const generateCategoricalChart = ({
     }
 
     // eslint-disable-next-line camelcase
-    UNSAFE_componentWillReceiveProps(nextProps: ICommonPropTypes) {
+    UNSAFE_componentWillReceiveProps(nextProps: CommonPropTypes) {
       const { data, children, width, height, layout, stackOffset, margin } = this.props;
       const { updateId } = this.state;
 
       if (nextProps.data !== data || nextProps.width !== width ||
         nextProps.height !== height || nextProps.layout !== layout ||
         nextProps.stackOffset !== stackOffset || !shallowEqual(nextProps.margin, margin)) {
-        const defaultState = (this.constructor as any).createDefaultState(nextProps);
+        const defaultState = CategoricalChartWrapper.createDefaultState(nextProps);
         this.setState({ ...defaultState, updateId: updateId + 1,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
             { props: nextProps, ...defaultState, updateId: updateId + 1 }) }
@@ -245,7 +240,7 @@ const generateCategoricalChart = ({
    * @param {Number} dataEndIndex    The end index of the data series when a brush is applied
    * @return {Object}          Configuration
    */
-    getAxisMap(props: ICommonPropTypes, { axisType = 'xAxis', AxisComp, graphicalItems, stackGroups, dataStartIndex,
+    getAxisMap(props: CommonPropTypes, { axisType = 'xAxis', AxisComp, graphicalItems, stackGroups, dataStartIndex,
       dataEndIndex }: any) {
       const { children } = props;
       const axisIdKey = `${axisType}Id`;
@@ -278,7 +273,7 @@ const generateCategoricalChart = ({
      * @param {Number} dataEndIndex   The end index of the data series when a brush is applied
      * @return {Object}      Configuration
      */
-    getAxisMapByAxes(props: ICommonPropTypes, { axes, graphicalItems, axisType, axisIdKey,
+    getAxisMapByAxes(props: CommonPropTypes, { axes, graphicalItems, axisType, axisIdKey,
       stackGroups, dataStartIndex, dataEndIndex }: any) {
       const { layout, children, stackOffset } = props;
       const isCategorial = isCategorialAxis(layout, axisType);
@@ -288,7 +283,7 @@ const generateCategoricalChart = ({
         const { type, dataKey, allowDataOverflow, allowDuplicatedCategory,
           scale, ticks } = child.props;
         const axisId = child.props[axisIdKey];
-        const displayedData = (this.constructor as any).getDisplayedData(props, {
+        const displayedData = CategoricalChartWrapper.getDisplayedData(props, {
           graphicalItems: graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId),
           dataStartIndex,
           dataEndIndex,
@@ -404,10 +399,10 @@ const generateCategoricalChart = ({
      * @param {Number} dataEndIndex   The end index of the data series when a brush is applied
      * @return {Object}               Configuration
      */
-    getAxisMapByItems(props: ICommonPropTypes, { graphicalItems, Axis, axisType, axisIdKey,
+    getAxisMapByItems(props: CommonPropTypes, { graphicalItems, Axis, axisType, axisIdKey,
       stackGroups, dataStartIndex, dataEndIndex }: any): any {
       const { layout, children } = props;
-      const displayedData = (this.constructor as any).getDisplayedData(props, {
+      const displayedData = CategoricalChartWrapper.getDisplayedData(props, {
         graphicalItems, dataStartIndex, dataEndIndex,
       });
       const len = displayedData.length;
@@ -553,7 +548,7 @@ const generateCategoricalChart = ({
      */
     getTooltipContent(activeIndex: number, activeLabel?: string): any[] {
       const { graphicalItems, tooltipAxis } = this.state;
-      const displayedData = (this.constructor as any).getDisplayedData(this.props, this.state);
+      const displayedData = CategoricalChartWrapper.getDisplayedData(this.props, this.state);
 
       if (activeIndex < 0 || !graphicalItems || !graphicalItems.length ||
         activeIndex >= displayedData.length) {
@@ -589,17 +584,17 @@ const generateCategoricalChart = ({
       }, []);
     }
 
-    getFormatItems(props: ICommonPropTypes, currentState: any): any[] {
+    getFormatItems(props: CommonPropTypes, currentState: any): any[] {
       const { graphicalItems, stackGroups, offset, updateId, dataStartIndex,
         dataEndIndex } = currentState;
       const { barSize, layout, barGap, barCategoryGap, maxBarSize: globalMaxBarSize } = props;
-      const { numericAxisName, cateAxisName } = (this.constructor as any).getAxisNameByLayout(layout);
-      const hasBar = (this.constructor as any).hasBar(graphicalItems);
+      const { numericAxisName, cateAxisName } = CategoricalChartWrapper.getAxisNameByLayout(layout);
+      const hasBar = CategoricalChartWrapper.hasBar(graphicalItems);
       const sizeList = hasBar && getBarSizeList({ barSize, stackGroups });
       const formatedItems = [] as any[];
 
       graphicalItems.forEach((item: any, index: number) => {
-        const displayedData = (this.constructor as any).getDisplayedData(
+        const displayedData = CategoricalChartWrapper.getDisplayedData(
           props, { dataStartIndex, dataEndIndex }, item
         );
         const { dataKey, maxBarSize: childMaxBarSize } = item.props;
@@ -789,7 +784,7 @@ const generateCategoricalChart = ({
       if (!validateWidthHeight({ props })) { return null; }
 
       const { children, layout, stackOffset, data, reverseStackOrder } = props;
-      const { numericAxisName, cateAxisName } = (this.constructor as any).getAxisNameByLayout(layout);
+      const { numericAxisName, cateAxisName } = CategoricalChartWrapper.getAxisNameByLayout(layout);
       const graphicalItems = findAllByType(children, GraphicalChild);
       const stackGroups = getStackGroupsByAxisId(
         data, graphicalItems, `${numericAxisName}Id`, `${cateAxisName}Id`, stackOffset, reverseStackOrder
@@ -1147,10 +1142,10 @@ const generateCategoricalChart = ({
       viewBox: { x: 0, y: 0, width, height },
     }), offset.top, offset.top + offset.height);
 
-    axesTicksGenerator = (axis: any) => getTicksOfAxis(axis, true);
+    axesTicksGenerator = (axis?: any) => getTicksOfAxis(axis, true);
 
     tooltipTicksGenerator = (axisMap: any) => {
-      const axis = getAnyElementOfObject(axisMap);
+      const axis: BaseAxisProps = getAnyElementOfObject(axisMap);
       const tooltipTicks = getTicksOfAxis(axis, false, true);
 
       return {
@@ -1257,14 +1252,14 @@ const generateCategoricalChart = ({
      */
     renderAxis(axisOptions: BaseAxisProps, element: any, displayName: string, index: number): React.ReactElement {
       const { width, height } = this.props;
-
+      // TODO  CartesianAxisProps need mix BaseAxisProps
       return (
+        // @ts-ignore
         <CartesianAxis
           {...axisOptions}
           className={`recharts-${axisOptions.axisType} ${axisOptions.axisType}`}
           key={element.key || `${displayName}-${index}`}
-          // @ts-ignore
-          viewBox={{ x: 0, y: 0, width, height }}
+          viewBox={{ x: 0, y: 0, width, height } as any}
           ticksGenerator={this.axesTicksGenerator}
         />
       );
@@ -1404,9 +1399,9 @@ const generateCategoricalChart = ({
       });
     };
 
-    static renderActiveDot(option: any, props: any): React.ReactElement {
+    static renderActiveDot (option: any, props: any): React.ReactElement {
       let dot;
-
+    
       if (isValidElement(option)) {
         dot = cloneElement(option, props);
       } else if (_.isFunction(option)) {
@@ -1414,7 +1409,7 @@ const generateCategoricalChart = ({
       } else {
         dot = <Dot {...props} />;
       }
-
+    
       return (
         <Layer className="recharts-active-dot" key={props.key}>
           {dot}
@@ -1442,15 +1437,15 @@ const generateCategoricalChart = ({
         ...filterEventAttributes(activeDot),
       };
 
-      result.push((this.constructor as any).renderActiveDot(activeDot, dotProps, childIndex));
+      result.push(CategoricalChartWrapper.renderActiveDot(activeDot, dotProps));
 
       if (basePoint) {
-        result.push((this.constructor as any).renderActiveDot(activeDot, {
+        result.push(CategoricalChartWrapper.renderActiveDot(activeDot, {
           ...dotProps,
           cx: basePoint.x,
           cy: basePoint.y,
           key: `${key}-basePoint-${childIndex}`,
-        }, childIndex));
+        }));
       } else if (isRange) {
         result.push(null);
       }
@@ -1472,6 +1467,8 @@ const generateCategoricalChart = ({
         activeTooltipIndex >= 0;
 
       function findWithPayload(entry: any) {
+        // TODO needs to verify dataKey is Function
+        // @ts-ignore
         return tooltipAxis.dataKey(entry.payload);
       }
 
@@ -1479,7 +1476,8 @@ const generateCategoricalChart = ({
         let activePoint, basePoint;
 
         if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
-          const specifiedKey = typeof tooltipAxis.dataKey === 'function' ? findWithPayload : 'payload.'.concat(tooltipAxis.dataKey);
+          // number transform to string
+          const specifiedKey = typeof tooltipAxis.dataKey === 'function' ? findWithPayload : 'payload.'.concat(tooltipAxis.dataKey.toString());
           activePoint = findEntryInArray(points, specifiedKey, activeLabel);
           basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
         } else {

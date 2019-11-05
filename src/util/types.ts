@@ -94,7 +94,7 @@ type TransitionEventHandler<P, T = Element> = EventHandler<
   TransitionEvent<T>
 >;
 
-interface DOMAttributesWithProps<P, T> {
+export interface DOMAttributesWithProps<P, T> {
   children?: ReactNode;
   dangerouslySetInnerHTML?: {
     __html: string;
@@ -478,6 +478,8 @@ export interface BaseAxisProps {
   /** The type of axis */
   axisType?: AxisType;
   range: Array<number>;
+  /** axis react component */
+  AxisComp?: any;
 };
 
 export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
@@ -485,6 +487,7 @@ export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveS
 export interface TickItem {
   value?: any;
   coordinate: number;
+  index: number;
 }
 
 export interface Margin {

@@ -7,7 +7,7 @@ import PolarAngleAxis from '../polar/PolarAngleAxis';
 import PolarRadiusAxis from '../polar/PolarRadiusAxis';
 import { formatAxisMap } from '../util/PolarUtils';
 import Pie from '../polar/Pie';
-import { ICategoricalChart } from './index.d';
+import { CategoricalChart } from './types';
 
 export default generateCategoricalChart({
   chartName: 'PieChart',
@@ -28,4 +28,4 @@ export default generateCategoricalChart({
     innerRadius: 0,
     outerRadius: '80%',
   },
-} as ICategoricalChart);
+} as CategoricalChart);
