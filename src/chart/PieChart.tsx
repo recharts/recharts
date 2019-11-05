@@ -1,7 +1,6 @@
 /**
  * @fileOverview Pie Chart
  */
-import PropTypes from 'prop-types';
 import generateCategoricalChart from './generateCategoricalChart';
 import PolarAngleAxis from '../polar/PolarAngleAxis';
 import PolarRadiusAxis from '../polar/PolarRadiusAxis';

@@ -43,7 +43,6 @@ interface CategoricalChart {
   legendContent?: any;
   formatAxisMap?: any;
   defaultProps?: any;
-  propTypes?: any;
 }
 
 interface TreemapNode {
