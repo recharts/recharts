@@ -1,6 +1,6 @@
 import { Margin, LayoutType, BaseAxisProps } from '../util/types';
 
-interface CommonPropTypes {
+interface CategoricalChartPropTypes {
   syncId?: number | string;
   compact?: boolean;
   width?: number;
@@ -76,7 +76,7 @@ interface SankeyLink {
 }
 
 export {
-  CommonPropTypes,
+  CategoricalChartPropTypes,
   CategoricalChart,
   LayoutType,
   TreemapNode,

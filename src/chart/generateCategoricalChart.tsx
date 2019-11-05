@@ -29,7 +29,7 @@ import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDo
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
-import { CommonPropTypes, CategoricalChart, LayoutType } from './index.d';
+import { CategoricalChartPropTypes, CategoricalChart, LayoutType } from './types';
 import { Margin, ViewBox, ChartOffset, BaseAxisProps, Coordinate, ChartCoordinate, TickItem} from '../util/types';
 
 const ORIENT_MAP = {
@@ -82,7 +82,7 @@ const generateCategoricalChart = ({
   formatAxisMap,
   defaultProps,
 }: CategoricalChart) => {
-  class CategoricalChartWrapper extends Component<CommonPropTypes, State> {
+  class CategoricalChartWrapper extends Component<CategoricalChartPropTypes, State> {
     static displayName = chartName;
 
     uniqueChartId: any;
@@ -90,7 +90,7 @@ const generateCategoricalChart = ({
     legendInstance: any;
 
     // todo join specific chart propTypes
-    static defaultProps: CommonPropTypes = {
+    static defaultProps: CategoricalChartPropTypes = {
       layout: 'horizontal',
       stackOffset: 'none',
       barCategoryGap: '10%',
@@ -105,7 +105,7 @@ const generateCategoricalChart = ({
      * @param {Object} props Props object to use when creating the default state
      * @return {Object} Whole new state
      */
-    static createDefaultState = (props: CommonPropTypes): State => {
+    static createDefaultState = (props: CategoricalChartPropTypes): State => {
       const { children, defaultShowTooltip } = props;
       const brushItem = findChildByType(children, Brush.displayName);
       const startIndex = (brushItem && brushItem.props && brushItem.props.startIndex) || 0;
@@ -131,7 +131,7 @@ const generateCategoricalChart = ({
       });
     };
 
-    static getDisplayedData = (props: CommonPropTypes, { graphicalItems, dataStartIndex, dataEndIndex }: any, item?: any): any[] => {
+    static getDisplayedData = (props: CategoricalChartPropTypes, { graphicalItems, dataStartIndex, dataEndIndex }: any, item?: any): any[] => {
       const itemsData = (graphicalItems || []).reduce((result: any, child: any) => {
         const itemData = child.props.data;
 
@@ -160,7 +160,7 @@ const generateCategoricalChart = ({
 
     container?: any;
 
-    constructor(props: CommonPropTypes) {
+    constructor(props: CategoricalChartPropTypes) {
       super(props);
 
       const defaultState = CategoricalChartWrapper.createDefaultState(props);
@@ -185,7 +185,7 @@ const generateCategoricalChart = ({
     }
 
     // eslint-disable-next-line camelcase
-    UNSAFE_componentWillReceiveProps(nextProps: CommonPropTypes) {
+    UNSAFE_componentWillReceiveProps(nextProps: CategoricalChartPropTypes) {
       const { data, children, width, height, layout, stackOffset, margin } = this.props;
       const { updateId } = this.state;
 
@@ -240,7 +240,7 @@ const generateCategoricalChart = ({
    * @param {Number} dataEndIndex    The end index of the data series when a brush is applied
    * @return {Object}          Configuration
    */
-    getAxisMap(props: CommonPropTypes, { axisType = 'xAxis', AxisComp, graphicalItems, stackGroups, dataStartIndex,
+    getAxisMap(props: CategoricalChartPropTypes, { axisType = 'xAxis', AxisComp, graphicalItems, stackGroups, dataStartIndex,
       dataEndIndex }: any) {
       const { children } = props;
       const axisIdKey = `${axisType}Id`;
@@ -273,7 +273,7 @@ const generateCategoricalChart = ({
      * @param {Number} dataEndIndex   The end index of the data series when a brush is applied
      * @return {Object}      Configuration
      */
-    getAxisMapByAxes(props: CommonPropTypes, { axes, graphicalItems, axisType, axisIdKey,
+    getAxisMapByAxes(props: CategoricalChartPropTypes, { axes, graphicalItems, axisType, axisIdKey,
       stackGroups, dataStartIndex, dataEndIndex }: any) {
       const { layout, children, stackOffset } = props;
       const isCategorial = isCategorialAxis(layout, axisType);
@@ -399,7 +399,7 @@ const generateCategoricalChart = ({
      * @param {Number} dataEndIndex   The end index of the data series when a brush is applied
      * @return {Object}               Configuration
      */
-    getAxisMapByItems(props: CommonPropTypes, { graphicalItems, Axis, axisType, axisIdKey,
+    getAxisMapByItems(props: CategoricalChartPropTypes, { graphicalItems, Axis, axisType, axisIdKey,
       stackGroups, dataStartIndex, dataEndIndex }: any): any {
       const { layout, children } = props;
       const displayedData = CategoricalChartWrapper.getDisplayedData(props, {
@@ -584,7 +584,7 @@ const generateCategoricalChart = ({
       }, []);
     }
 
-    getFormatItems(props: CommonPropTypes, currentState: any): any[] {
+    getFormatItems(props: CategoricalChartPropTypes, currentState: any): any[] {
       const { graphicalItems, stackGroups, offset, updateId, dataStartIndex,
         dataEndIndex } = currentState;
       const { barSize, layout, barGap, barCategoryGap, maxBarSize: globalMaxBarSize } = props;
