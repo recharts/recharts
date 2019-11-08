@@ -33,7 +33,7 @@ export const getDomainOfDataByKey = (data, key, type, filterNil) => {
   if (type === 'number') {
     const domain = flattenData.filter(entry => isNumber(entry) || parseFloat(entry, 10));
 
-    return domain.length ? [_.min(domain), _.max(domain)] : [Infinity, -Infinity];
+    return domain.length ? [Math.min(...domain), Math.max(...domain)] : [Infinity, -Infinity];
   }
 
   const validateData = filterNil ?
@@ -351,7 +351,7 @@ export const getDomainOfErrorBars = (data, item, dataKey, axisType) => {
     return data.reduce((result, entry) => {
       const entryValue = getValueByDataKey(entry, dataKey, 0);
       const mainValue = _.isArray(entryValue) ?
-        [_.min(entryValue), _.max(entryValue)] : [entryValue, entryValue];
+        [Math.min(...entryValue), Math.max(...entryValue)] : [entryValue, entryValue];
       const errorDomain = keys.reduce((prevErrorArr, k) => {
         const errorValue = getValueByDataKey(entry, k, 0);
         const lowerValue = mainValue[0] - Math.abs(
@@ -744,7 +744,7 @@ export const getStackGroupsByAxisId = (
  */
 export const calculateDomainOfTicks = (ticks, type) => {
   if (type === 'number') {
-    return [_.min(ticks), _.max(ticks)];
+    return [Math.min(...ticks), Math.max(...ticks)];
   }
 
   return ticks;
@@ -852,8 +852,8 @@ export const getStackedDataOfItem = (item, stackGroups) => {
 
 const getDomainOfSingle = data => (
   data.reduce((result, entry) => [
-    _.min(entry.concat([result[0]]).filter(isNumber)),
-    _.max(entry.concat([result[1]]).filter(isNumber)),
+    Math.min(...entry.concat([result[0]]).filter(isNumber)),
+    Math.max(...entry.concat([result[1]]).filter(isNumber)),
   ], [Infinity, -Infinity])
 );
 

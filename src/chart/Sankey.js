@@ -138,7 +138,7 @@ const getDepthTree = (tree) => {
 };
 
 const updateYOfTree = (depthTree, height, nodePadding, links) => {
-  const yRatio = _.min(depthTree.map(nodes => (
+  const yRatio = Math.min(...depthTree.map(nodes => (
     (height - (nodes.length - 1) * nodePadding) / _.sumBy(nodes, getValue)
   )));
 
