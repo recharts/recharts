@@ -1,5 +1,5 @@
-import 'core-js/es6/math';
-import 'core-js/es6/number';
+import 'core-js/es/math';
+import 'core-js/es/number';
 /* eslint no-proto: 0 */
 const testObject = {};
 
