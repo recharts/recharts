@@ -797,6 +797,9 @@ export const getTicksOfScale = (scale: any, opts: any) => {
     originalDomain[0] === 'auto' || originalDomain[1] === 'auto')) {
     // Calculate the ticks by the number of grid when the axis is a number axis
     const domain = scale.domain();
+    if (!domain.length) {
+      return null;
+    }
     const tickValues = getNiceTickValues(domain, tickCount, allowDecimals);
 
     scale.domain(calculateDomainOfTicks(tickValues, type));
