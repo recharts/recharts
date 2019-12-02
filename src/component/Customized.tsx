@@ -4,7 +4,6 @@
 import React, { isValidElement, cloneElement, Component, FunctionComponent } from 'react';
 import _ from 'lodash';
 import Layer from '../container/Layer';
-// @ts-ignore
 import { warn } from '../util/LogUtils';
 
 type Comp<P> = FunctionComponent<P> | Component<P>

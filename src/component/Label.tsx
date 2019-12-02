@@ -2,11 +2,8 @@ import React, { cloneElement, isValidElement, ReactNode, ReactElement, SVGProps 
 import _ from 'lodash';
 import classNames from 'classnames';
 import Text from './Text';
-// @ts-ignore
 import { findAllByType } from '../util/ReactUtils';
-// @ts-ignore
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign } from '../util/DataUtils';
-// @ts-ignore
 import { polarToCartesian } from '../util/PolarUtils';
 import { PresentationAttributes, filterProps } from '../util/types';
 

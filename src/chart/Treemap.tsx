@@ -10,7 +10,7 @@ import _ from 'lodash';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Rectangle from '../shape/Rectangle';
-import { findChildByType, getPresentationAttributes, filterSvgElements,
+import { findChildByType, filterSvgElements,
   validateWidthHeight, isSsr } from '../util/ReactUtils';
 import Tooltip from '../component/Tooltip';
 import Polygon from '../shape/Polygon';
@@ -19,7 +19,7 @@ import { COLOR_PANEL } from '../util/Constants';
 import { getStringSize } from '../util/DOMUtils';
 import { uniqueId } from '../util/DataUtils';
 import { TreemapNode } from './types';
-import { DataKey } from '../util/types';
+import { DataKey, filterProps } from '../util/types';
 
 const computeNode = ({ depth, node, index, valueKey }: {
   depth: number;
@@ -540,7 +540,7 @@ class Treemap extends PureComponent<Props, State> {
 
   renderNode(root: TreemapNode, node: TreemapNode, i: number): React.ReactElement {
     const { content, type } = this.props;
-    const nodeProps = { ...getPresentationAttributes(this.props), ...node, root };
+    const nodeProps = { ...filterProps(this.props), ...node, root };
     const isLeaf = !node.children || !node.children.length;
 
     const { currentRoot } = this.state;
@@ -653,7 +653,7 @@ class Treemap extends PureComponent<Props, State> {
     if (!validateWidthHeight(this)) { return null; }
 
     const { width, height, className, style, children, type, ...others } = this.props;
-    const attrs = getPresentationAttributes(others);
+    const attrs = filterProps(others);
 
     return (
       <div

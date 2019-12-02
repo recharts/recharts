@@ -10,11 +10,8 @@ import Curve, { CurveType, Point as CurvePoint } from '../shape/Curve';
 import Dot, { Props as DotProps } from '../shape/Dot';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
-// @ts-ignore
 import { isSsr } from '../util/ReactUtils';
-// @ts-ignore
 import { isNumber, uniqueId, interpolateNumber } from '../util/DataUtils';
-// @ts-ignore
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';

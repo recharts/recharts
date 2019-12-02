@@ -341,50 +341,6 @@ const EventKeys = ['children', 'dangerouslySetInnerHTML', 'onCopy', 'onCopyCaptu
 'onLostPointerCapture', 'onLostPointerCaptureCapture', 'onScroll', 'onScrollCapture', 'onWheel', 'onWheelCapture', 'onAnimationStart', 'onAnimationStartCapture',
 'onAnimationEnd', 'onAnimationEndCapture', 'onAnimationIteration', 'onAnimationIterationCapture', 'onTransitionEnd', 'onTransitionEndCapture', ];
 
-export const filterProps = (props: Record<string, any> | Component | FunctionComponent | boolean, includeEvents?: boolean) => {
-  if (!props || typeof props === 'function' || typeof props === 'boolean') { return null; }
-
-  let inputProps = props as Record<string, any>;
-
-  if (isValidElement(props)) {
-    inputProps = props.props as Record<string, any>;
-  }
-
-  if (!_.isObject(inputProps)) { return null; }
-
-  const out: Record<string, any> = {};
-
-  for (const i in inputProps) {
-    if (SVGPropKeys.includes(i) || (includeEvents && EventKeys.includes(i))) {
-      out[i] = (inputProps as any)[i];
-    }
-  }
-
-  return out;
-};
-
-export const adaptEventHandlers = (props: Record<string, any> | Component | FunctionComponent | boolean, newHandler?: ((e?: Event) => any)): Record<string, (e?: Event) => any> => {
-  if (!props || typeof props === 'function' || typeof props === 'boolean') { return null; }
-
-  let inputProps = props as Record<string, any>;
-
-  if (isValidElement(props)) {
-    inputProps = props.props as Record<string, any>;
-  }
-
-  if (!_.isObject(inputProps)) { return null; }
-
-  const out: Record<string, (e: Event) => void> = {};
-
-  for (const i in inputProps) {
-    if (EventKeys.includes(i)) {
-      out[i] = newHandler || ((e: Event) => inputProps[i](inputProps, e));
-    }
-  }
-
-  return out;
-};
-
 // Animation Types => TODO: Should be moved when react-smooth is typescriptified.
 export type AnimationTiming = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
 
@@ -496,3 +452,75 @@ export interface Margin {
   bottom?: number;
   left?: number;
 }
+
+
+
+export const filterProps = (props: Record<string, any> | Component | FunctionComponent | boolean, includeEvents?: boolean) => {
+  if (!props || typeof props === 'function' || typeof props === 'boolean') { return null; }
+
+  let inputProps = props as Record<string, any>;
+
+  if (isValidElement(props)) {
+    inputProps = props.props as Record<string, any>;
+  }
+
+  if (!_.isObject(inputProps)) { return null; }
+
+  const out: Record<string, any> = {};
+
+  for (const i in inputProps) {
+    if (SVGPropKeys.includes(i) || (includeEvents && EventKeys.includes(i))) {
+      out[i] = (inputProps as any)[i];
+    }
+  }
+
+  return out;
+};
+
+export const adaptEventHandlers = (props: Record<string, any> | Component | FunctionComponent | boolean, newHandler?: ((e?: Event) => any)): Record<string, (e?: Event) => any> => {
+  if (!props || typeof props === 'function' || typeof props === 'boolean') { return null; }
+
+  let inputProps = props as Record<string, any>;
+
+  if (isValidElement(props)) {
+    inputProps = props.props as Record<string, any>;
+  }
+
+  if (!_.isObject(inputProps)) { return null; }
+
+  const out: Record<string, (e: Event) => void> = {};
+
+  for (const i in inputProps) {
+    if (EventKeys.includes(i)) {
+      out[i] = newHandler || ((e: Event) => inputProps[i](inputProps, e));
+    }
+  }
+
+  return out;
+};
+
+
+const getEventHandlerOfChild = (originalHandler: Function, data: any, index: number) => (
+  (e: Event): void => {
+    originalHandler(data, index, e);
+
+    return null;
+  }
+);
+
+export const adaptEventsOfChild = (props: Record<string, any>, data: any, index: number): Record<string, (e?: Event) => any> => {
+  if (!_.isObject(props) || typeof props !== 'object') { return null; }
+
+  let out: Record<string, (e: Event) => void> = null;
+
+  for (const i in props) {
+    // @ts-ignore
+    const item = props[i];
+    if (EventKeys.includes(i) && typeof item === 'function') {
+      if (!out) out = {};
+      out[i] = getEventHandlerOfChild(item, data, index);
+    }
+  }
+  return out;
+};
+

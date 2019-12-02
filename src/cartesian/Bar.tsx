@@ -11,15 +11,12 @@ import Layer from '../container/Layer';
 import ErrorBar, { Props as ErrorBarProps } from './ErrorBar';
 import Cell from '../component/Cell';
 import LabelList from '../component/LabelList';
-// @ts-ignore
 import { uniqueId, mathSign, interpolateNumber } from '../util/DataUtils';
-// @ts-ignore
-import { findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
-// @ts-ignore
+import { findAllByType, isSsr } from '../util/ReactUtils';
 import { getCateCoordinateOfBar, getValueByDataKey, truncateByDomain, getBaseValueOfBar, findPositionOfBar } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { D3Scale, TooltipType, LegendType, AnimationTiming, PresentationAttributes, filterProps, ChartOffset, DataKey, TickItem } from '../util/types';
+import { D3Scale, TooltipType, LegendType, AnimationTiming, PresentationAttributes, filterProps, ChartOffset, DataKey, TickItem, adaptEventsOfChild } from '../util/types';
 
 interface BarRectangleItem extends RectangleProps {
   value?: number;
@@ -254,7 +251,7 @@ class Bar extends PureComponent<Props, State> {
       return (
         <Layer
           className="recharts-bar-rectangle"
-          {...filterEventsOfChild(this.props, entry, i)}
+          {...adaptEventsOfChild(this.props, entry, i)}
           key={`rectangle-${i}`} // eslint-disable-line react/no-array-index-key
         >
           {Bar.renderRectangle(shape, props)}
@@ -356,7 +353,7 @@ class Bar extends PureComponent<Props, State> {
         fill: '#eee',
         ...background,
         ...backgroundProps,
-        ...filterEventsOfChild(this.props, entry, i),
+        ...adaptEventsOfChild(this.props, entry, i),
         index: i,
         key: `background-bar-${i}`,
         className: 'recharts-bar-background-rectangle',

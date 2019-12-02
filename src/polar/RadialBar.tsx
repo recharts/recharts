@@ -8,15 +8,12 @@ import Animate from 'react-smooth';
 import _ from 'lodash';
 import Sector, { Props as SectorProps } from '../shape/Sector';
 import Layer from '../container/Layer';
-// @ts-ignore
-import { findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
+import { findAllByType, isSsr } from '../util/ReactUtils';
 import LabelList from '../component/LabelList';
 import Cell from '../component/Cell';
-// @ts-ignore
 import { mathSign, interpolateNumber } from '../util/DataUtils';
-// @ts-ignore
 import { getCateCoordinateOfBar, findPositionOfBar, getValueByDataKey, truncateByDomain, getBaseValueOfBar } from '../util/ChartUtils';
-import { LegendType, TooltipType, AnimationTiming, filterProps, PresentationAttributes, TickItem } from '../util/types';
+import { LegendType, TooltipType, AnimationTiming, filterProps, PresentationAttributes, TickItem, adaptEventsOfChild } from '../util/types';
 // TODO: Cause of circular dependency. Needs refactoring of functions that need them.
 // import { AngleAxisProps, RadiusAxisProps } from './types';
 
@@ -247,7 +244,7 @@ class RadialBar extends PureComponent<Props, State> {
         ...baseProps,
         cornerRadius,
         ...entry,
-        ...filterEventsOfChild(this.props, entry, i),
+        ...adaptEventsOfChild(this.props, entry, i),
         key: `sector-${i}`,
         className: 'recharts-radial-bar-sector',
         forceCornerRadius: others.forceCornerRadius,
@@ -339,7 +336,7 @@ class RadialBar extends PureComponent<Props, State> {
         fill: '#eee',
         ...background,
         ...backgroundProps,
-        ...filterEventsOfChild(this.props, entry, i),
+        ...adaptEventsOfChild(this.props, entry, i),
         index: i,
         key: `sector-${i}`,
         className: 'recharts-radial-bar-background-sector',

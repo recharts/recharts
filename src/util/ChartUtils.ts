@@ -7,10 +7,7 @@ import {
   stackOffsetNone, stackOffsetSilhouette, stackOffsetWiggle,
 } from 'd3-shape';
 import { isNumOrStr, uniqueId, isNumber, getPercentValue, mathSign, findEntryInArray } from './DataUtils';
-// @ts-ignore
-import ErrorBar from '../cartesian/ErrorBar';
 import Legend from '../component/Legend';
-// @ts-ignore
 import { findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 import { ReactElement, ReactNode } from 'react';
 // TODO: Cause of circular dependency. Needs refactor.

@@ -7,11 +7,8 @@ import { scalePoint, ScalePoint } from 'd3-scale';
 import _ from 'lodash';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
-// @ts-ignore
 import { getValueByDataKey } from '../util/ChartUtils';
-// @ts-ignore
 import { isNumber } from '../util/DataUtils';
-// @ts-ignore
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 
 import { Padding, PresentationAttributes, DataKey } from '../util/types';

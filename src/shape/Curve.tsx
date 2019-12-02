@@ -8,7 +8,6 @@ import { line as shapeLine, area as shapeArea, CurveFactory, curveBasisClosed, c
 import classNames from 'classnames';
 import _ from 'lodash';
 import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers, filterProps } from '../util/types';
-// @ts-ignore
 import { isNumber } from '../util/DataUtils';
 
 interface CurveFactories {

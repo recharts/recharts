@@ -4,7 +4,6 @@
 import _ from 'lodash';
 import React, { PureComponent, CSSProperties, ReactNode } from 'react';
 import classNames from 'classnames';
-// @ts-ignore
 import { isNumOrStr } from '../util/DataUtils';
 
 function defaultFormatter<T>(value: T) {

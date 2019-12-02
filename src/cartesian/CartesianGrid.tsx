@@ -3,7 +3,6 @@
  */
 import React, { PureComponent, ReactElement } from 'react';
 import _ from 'lodash';
-// @ts-ignore
 import { isNumber } from '../util/DataUtils';
 import { PresentationAttributes, ChartOffset, D3Scale, filterProps } from '../util/types';
 

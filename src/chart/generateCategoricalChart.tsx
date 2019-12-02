@@ -12,8 +12,8 @@ import Dot from '../shape/Dot';
 import Rectangle from '../shape/Rectangle';
 
 import { findAllByType, findChildByType, getDisplayName, parseChildIndex,
-  getPresentationAttributes, validateWidthHeight, isChildrenEqual,
-  renderByOrder, getReactEventByType, filterEventAttributes } from '../util/ReactUtils';
+  validateWidthHeight, isChildrenEqual,
+  renderByOrder, getReactEventByType } from '../util/ReactUtils';
 
 import CartesianAxis from '../cartesian/CartesianAxis';
 import Brush from '../cartesian/Brush';
@@ -30,7 +30,7 @@ import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
 import { CategoricalChartPropTypes, CategoricalChart, LayoutType } from './types';
-import { Margin, ViewBox, ChartOffset, BaseAxisProps, Coordinate, ChartCoordinate, TickItem} from '../util/types';
+import { Margin, ViewBox, ChartOffset, BaseAxisProps, Coordinate, ChartCoordinate, TickItem, filterProps, adaptEventHandlers } from '../util/types';
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
@@ -573,7 +573,7 @@ const generateCategoricalChart = ({
         if (!payload) { return result; }
 
         return [...result, {
-          ...getPresentationAttributes(child),
+          ...filterProps(child),
           dataKey, unit, formatter,
           name: name || dataKey,
           color: getMainColorOfGraphicItem(child),
@@ -759,7 +759,7 @@ const generateCategoricalChart = ({
         onTouchStart: this.handleTouchStart,
         onTouchEnd: this.handleTouchEnd,
       } : {};
-      const outerEvents = filterEventAttributes(this.props, this.handleOuterEvent);
+      const outerEvents = adaptEventHandlers(this.props, this.handleOuterEvent);
 
       return {
         ...outerEvents,
@@ -1204,7 +1204,7 @@ const generateCategoricalChart = ({
         pointerEvents: 'none',
         ...offset,
         ...restProps,
-        ...getPresentationAttributes(element.props.cursor),
+        ...filterProps(element.props.cursor),
         payload: activePayload,
         key,
         className: 'recharts-tooltip-cursor',
@@ -1433,8 +1433,8 @@ const generateCategoricalChart = ({
         payload: activePoint.payload,
         value: activePoint.value,
         key: `${key}-activePoint-${childIndex}`,
-        ...getPresentationAttributes(activeDot),
-        ...filterEventAttributes(activeDot),
+        ...filterProps(activeDot),
+        ...adaptEventHandlers(activeDot),
       };
 
       result.push(CategoricalChartWrapper.renderActiveDot(activeDot, dotProps));
@@ -1524,7 +1524,7 @@ const generateCategoricalChart = ({
       if (!validateWidthHeight(this)) { return null; }
 
       const { children, className, width, height, style, compact, ...others } = this.props;
-      const attrs = getPresentationAttributes(others);
+      const attrs = filterProps(others);
       const map = {
         CartesianGrid: { handler: this.renderGrid, once: true },
         ReferenceArea: { handler: this.renderReferenceElement },

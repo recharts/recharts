@@ -8,9 +8,7 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import DefaultTooltipContent from './DefaultTooltipContent';
 import { ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent'
-// @ts-ignore
 import { isSsr } from '../util/ReactUtils';
-// @ts-ignore
 import { isNumber } from '../util/DataUtils';
 import { AnimationTiming } from '../util/types';
 

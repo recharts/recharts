@@ -7,9 +7,7 @@ import Layer from '../container/Layer';
 import Dot from '../shape/Dot';
 import Polygon from '../shape/Polygon';
 import Text from '../component/Text';
-// @ts-ignore
-import { filterEventsOfChild } from '../util/ReactUtils';
-import { PresentationAttributes, BaseAxisProps, filterProps, TickItem } from '../util/types';
+import { PresentationAttributes, BaseAxisProps, filterProps, TickItem, adaptEventsOfChild } from '../util/types';
 import { polarToCartesian } from '../util/PolarUtils';
 
 const RADIAN = Math.PI / 180;
@@ -161,7 +159,7 @@ class PolarAngleAxis extends PureComponent<Props> {
         <Layer
           className="recharts-polar-angle-axis-tick"
           key={`tick-${i}`} // eslint-disable-line react/no-array-index-key
-          {...filterEventsOfChild(this.props, entry, i)}
+          {...adaptEventsOfChild(this.props, entry, i)}
         >
           {tickLine && (
             <line

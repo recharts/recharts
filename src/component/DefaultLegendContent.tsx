@@ -5,9 +5,7 @@ import React, { PureComponent, ReactNode, MouseEvent, ReactText, ReactElement } 
 import classNames from 'classnames';
 import Surface from '../container/Surface';
 import Symbols from '../shape/Symbols';
-// @ts-ignore
-import { filterEventsOfChild } from '../util/ReactUtils';
-import { LegendType, LayoutType, SymbolType } from '../util/types';
+import { LegendType, LayoutType, SymbolType, adaptEventsOfChild } from '../util/types';
 
 const SIZE = 32;
 export type ContentType<TValue, TID> = ReactElement | ((props: Props<TValue, TID>) => ReactNode)
@@ -145,7 +143,7 @@ class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>
           className={className}
           style={itemStyle}
           key={`legend-item-${i}`} // eslint-disable-line react/no-array-index-key
-          {...filterEventsOfChild(this.props, entry, i)}
+          {...adaptEventsOfChild(this.props, entry, i)}
         >
           <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
             {this.renderIcon(entry)}

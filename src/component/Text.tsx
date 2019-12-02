@@ -3,12 +3,9 @@ import React, { Component, CSSProperties } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
 import _ from 'lodash';
-// @ts-ignore
 import { isNumber, isNumOrStr } from '../util/DataUtils';
-// @ts-ignore
 import { isSsr } from '../util/ReactUtils';
 import { PresentationAttributes, filterProps } from '../util/types';
-// @ts-ignore
 import { getStringSize } from '../util/DOMUtils';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;

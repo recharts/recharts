@@ -1,13 +1,8 @@
-// @ts-ignore
 import ReferenceDot from '../cartesian/ReferenceDot';
-// @ts-ignore
 import ReferenceLine from '../cartesian/ReferenceLine';
-// @ts-ignore
 import ReferenceArea from '../cartesian/ReferenceArea';
 import { ifOverflowMatches } from './IfOverflowMatches';
-// @ts-ignore
 import { findAllByType } from './ReactUtils';
-// @ts-ignore
 import { isNumber } from './DataUtils';
 import { ReactNode } from 'react';
 

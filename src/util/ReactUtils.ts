@@ -1,10 +1,8 @@
 import React, { Children } from 'react';
 import _ from 'lodash';
-import { keys } from 'ts-transformer-keys';
 import { ReactNode } from 'react';
 import { isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
-import { PresentationAttributes, DOMAttributesWithProps } from './types';
 
 const REACT_BROWSER_EVENT_MAP: any = {
   click: 'onClick',
@@ -106,88 +104,6 @@ export const withoutType = (children: ReactNode, type: string) => {
   });
 
   return newChildren;
-};
-
-/**
- * get all the presentation attribute of svg element
- * @param  {Object} el A react element or the props of a react element
- * @return {Object}    attributes or null
- */
-export const getPresentationAttributes = (el: any) => {
-  if (!el || _.isFunction(el)) { return null; }
-
-  const props = React.isValidElement(el) ? el.props : el;
-
-  if (!_.isObject(props)) { return null; }
-
-  let out = null;
-  // eslint-disable-next-line no-restricted-syntax
-  for (const i in props) {
-    if ({}.hasOwnProperty.call(props, i) && keys<PresentationAttributes<any>>().indexOf(i as any) >= 0) {
-      if (!out) out = {};
-      // @ts-ignore
-      out[i] = props[i];
-    }
-  }
-  return out;
-};
-
-const getEventHandlerOfElement = (originalHandler: any, props: any) => (
-  (e: any): any => {
-    originalHandler(props, e);
-
-    return null;
-  }
-);
-/**
- * get all the event attribute of svg element
- * @param  {Object}   el           A react element or the props of a react element
- * @param  {Function} newHandler   New handler of event
- * @param  {Boolean}  wrapCallback Wrap callback and return more parameters or not
- * @return {Object}                attributes or null
- */
-export const filterEventAttributes = (el: any, newHandler?: any, wrapCallback: boolean = false): any => {
-  if (!el || _.isFunction(el)) { return null; }
-
-  const props = React.isValidElement(el) ? el.props : el;
-
-  if (!_.isObject(props)) { return null; }
-
-  let out: any = {};
-  // eslint-disable-next-line no-restricted-syntax
-  for (const i in props) {
-    if ({}.hasOwnProperty.call(props, i) && keys<DOMAttributesWithProps<any, any>>().indexOf(i as any) >= 0) {
-      if (!out) out = {};
-      // @ts-ignore
-      const eventHandler = props[i];
-      out[i] = newHandler || (wrapCallback ? getEventHandlerOfElement(eventHandler, props) : eventHandler);
-    }
-  }
-  return out;
-};
-
-const getEventHandlerOfChild = (originalHandler: eventFunc, data: any, index: number) => (
-  (e: any): null => {
-    originalHandler(data, index, e);
-
-    return null;
-  }
-);
-
-export const filterEventsOfChild = (props: any, data: any, index: number): any => {
-  if (!_.isObject(props)) { return null; }
-
-  let out: any = null;
-  // eslint-disable-next-line no-restricted-syntax
-  for (const i in props) {
-    // @ts-ignore
-    if ({}.hasOwnProperty.call(props, i) &&keys<IEvent>().indexOf(i as any) >= 0 && _.isFunction(props[i])) {
-      if (!out) out = {};
-      // @ts-ignore
-      out[i] = getEventHandlerOfChild(props[i], data, index);
-    }
-  }
-  return out;
 };
 
 /**

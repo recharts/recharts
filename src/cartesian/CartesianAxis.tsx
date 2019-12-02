@@ -4,18 +4,14 @@
 import React, { ReactElement, ReactNode, Component } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
-// @ts-ignore
 import { shallowEqual } from '../util/ShallowEqual';
-// @ts-ignore
 import { getStringSize } from '../util/DOMUtils';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import Label from '../component/Label';
-// @ts-ignore
-import { isSsr, filterEventsOfChild } from '../util/ReactUtils';
-// @ts-ignore
+import { isSsr } from '../util/ReactUtils';
 import { isNumber, mathSign } from '../util/DataUtils';
-import { ViewBox, PresentationAttributes, filterProps, TickItem, BaseAxisProps } from '../util/types';
+import { ViewBox, PresentationAttributes, filterProps, TickItem, adaptEventsOfChild } from '../util/types';
 
 interface CartesianTickItem extends TickItem {
   tickCoord?: number;
@@ -401,7 +397,7 @@ class CartesianAxis extends Component<Props> {
         <Layer
           className="recharts-cartesian-axis-tick"
           key={`tick-${i}`} // eslint-disable-line react/no-array-index-key
-          {...filterEventsOfChild(this.props, entry, i)}
+          {...adaptEventsOfChild(this.props, entry, i)}
         >
           {tickLine && (
             <line

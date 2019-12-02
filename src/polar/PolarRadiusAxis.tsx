@@ -1,15 +1,13 @@
 /**
  * @fileOverview The axis of polar coordinate system
  */
-import React, { PureComponent, ReactElement } from 'react';
+import React, { PureComponent } from 'react';
 import _ from 'lodash';
-import Text, { Props as TextProps } from '../component/Text';
+import Text from '../component/Text';
 import Label from '../component/Label';
 import Layer from '../container/Layer';
-// @ts-ignore
-import { filterEventsOfChild } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-import { PresentationAttributes, filterProps, BaseAxisProps, TickItem } from '../util/types';
+import { PresentationAttributes, filterProps, BaseAxisProps, TickItem, adaptEventsOfChild } from '../util/types';
 
 
 interface TickIem {
@@ -161,7 +159,7 @@ class PolarRadiusAxis extends PureComponent<Props> {
         <Layer
           className="recharts-polar-radius-axis-tick"
           key={`tick-${i}`} // eslint-disable-line react/no-array-index-key
-          {...filterEventsOfChild(this.props, entry, i)}
+          {...adaptEventsOfChild(this.props, entry, i)}
         >
           {PolarRadiusAxis.renderTickItem(
             tick, tickProps, tickFormatter ? tickFormatter(entry.value) : entry.value

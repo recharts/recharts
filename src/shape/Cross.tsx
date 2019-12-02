@@ -3,7 +3,6 @@
  */
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-// @ts-ignore
 import { isNumber } from '../util/DataUtils';
 import { PresentationAttributes, filterProps } from '../util/types';
 

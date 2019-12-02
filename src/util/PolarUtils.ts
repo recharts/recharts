@@ -1,7 +1,5 @@
 import _ from 'lodash';
-// @ts-ignore
 import { getPercentValue } from './DataUtils';
-// @ts-ignore
 import { parseScale, checkDomainOfScale, getTicksOfScale } from './ChartUtils';
 import { Coordinate, ChartOffset, GeometrySector } from './types';
 

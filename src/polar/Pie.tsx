@@ -13,15 +13,12 @@ import Text from '../component/Text';
 import Label from '../component/Label';
 import LabelList from '../component/LabelList';
 import Cell, { Props as CellProps } from '../component/Cell';
-// @ts-ignore
-import { findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
+import { findAllByType, isSsr } from '../util/ReactUtils';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
-// @ts-ignore
 import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
-// @ts-ignore
 import { getValueByDataKey } from '../util/ChartUtils';
 import { warn } from '../util/LogUtils';
-import { LegendType, TooltipType, AnimationTiming, PresentationAttributes, filterProps, Coordinate, ChartOffset, DataKey } from '../util/types';
+import { LegendType, TooltipType, AnimationTiming, PresentationAttributes, filterProps, Coordinate, ChartOffset, DataKey, adaptEventsOfChild } from '../util/types';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -430,7 +427,7 @@ class Pie extends PureComponent<Props, State> {
       return (
         <Layer
           className="recharts-pie-sector"
-          {...filterEventsOfChild(this.props, entry, i)}
+          {...adaptEventsOfChild(this.props, entry, i)}
           key={`sector-${i}`} // eslint-disable-line react/no-array-index-key
         >
           {Pie.renderSectorItem(sectorOptions, sectorProps)}

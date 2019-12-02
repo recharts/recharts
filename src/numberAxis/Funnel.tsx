@@ -10,13 +10,10 @@ import Layer from '../container/Layer';
 import Trapezoid, { Props as TrapezoidProps } from '../shape/Trapezoid';
 import LabelList from '../component/LabelList';
 import Cell, { Props as CellProps } from '../component/Cell';
-// @ts-ignore
-import { getPresentationAttributes, findAllByType, filterEventsOfChild, isSsr } from '../util/ReactUtils';
-// @ts-ignore
+import { findAllByType, isSsr } from '../util/ReactUtils';
 import { interpolateNumber } from '../util/DataUtils';
-// @ts-ignore
 import { getValueByDataKey } from '../util/ChartUtils';
-import { LegendType, TooltipType, AnimationTiming, ChartOffset, PresentationAttributes, DataKey } from '../util/types';
+import { LegendType, TooltipType, AnimationTiming, ChartOffset, PresentationAttributes, DataKey, filterProps, adaptEventsOfChild } from '../util/types';
 
 
 interface FunnelTrapezoidItem extends TrapezoidProps {
@@ -77,7 +74,7 @@ class Funnel extends PureComponent<Props, State> {
 
   static getRealFunnelData = (item: Funnel) => {
     const { data, children } = item.props;
-    const presentationProps = getPresentationAttributes(item.props);
+    const presentationProps = filterProps(item.props);
     const cells = findAllByType(children, Cell.displayName);
 
     if (data && data.length) {
@@ -243,7 +240,7 @@ class Funnel extends PureComponent<Props, State> {
       return (
         <Layer
           className="recharts-funnel-trapezoid"
-          {...filterEventsOfChild(this.props, entry, i)}
+          {...adaptEventsOfChild(this.props, entry, i)}
           key={`trapezoid-${i}`} // eslint-disable-line react/no-array-index-key
         >
           {Funnel.renderTrapezoidItem(trapezoidOptions, trapezoidProps)}

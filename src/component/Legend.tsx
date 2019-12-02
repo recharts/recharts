@@ -5,7 +5,6 @@ import React, { PureComponent, ReactNode, CSSProperties } from 'react';
 import _ from 'lodash';
 import DefaultLegendContent from './DefaultLegendContent';
 import { Payload, Props as DefaultProps, ContentType } from './DefaultLegendContent';
-// @ts-ignore
 import { isNumber } from '../util/DataUtils';
 
 type UniqueFunc<TValue, TID> = (entry: Payload<TValue, TID>) => unknown

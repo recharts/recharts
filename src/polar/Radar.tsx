@@ -6,12 +6,9 @@ import React, { PureComponent, ReactElement, MouseEvent } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-// @ts-ignore
 import { interpolateNumber } from '../util/DataUtils';
-// @ts-ignore
 import { isSsr } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-// @ts-ignore
 import { getValueByDataKey } from '../util/ChartUtils';
 import Polygon from '../shape/Polygon';
 import Dot, { Props as DotProps } from '../shape/Dot';

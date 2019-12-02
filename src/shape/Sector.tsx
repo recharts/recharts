@@ -4,9 +4,7 @@
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import { PresentationAttributes, filterProps, GeometrySector } from '../util/types';
-// @ts-ignore
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';
-// @ts-ignore
 import { getPercentValue, mathSign } from '../util/DataUtils';
 
 const getDeltaAngle = (startAngle: number, endAngle: number) => {

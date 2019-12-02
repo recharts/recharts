@@ -5,7 +5,6 @@ import React, { Component, ReactElement } from 'react';
 import classNames from 'classnames';
 import ReactResizeDetector from 'react-resize-detector';
 import _ from 'lodash';
-// @ts-ignore
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 

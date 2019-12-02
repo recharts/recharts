@@ -8,18 +8,15 @@ import classNames from 'classnames';
 import _ from 'lodash';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
-// @ts-ignore
-import { filterEventsOfChild, isSsr, findAllByType } from '../util/ReactUtils';
+import { isSsr, findAllByType } from '../util/ReactUtils';
 import ZAxis from './ZAxis';
 import Curve, { Props as CurveProps, CurveType } from '../shape/Curve';
 import Symbols, { Props as SymbolsProps } from '../shape/Symbols';
 import ErrorBar, { Props as ErrorBarProps } from './ErrorBar';
 import Cell from '../component/Cell';
-// @ts-ignore
 import { uniqueId, interpolateNumber, getLinearRegression } from '../util/DataUtils';
-// @ts-ignore
 import { getValueByDataKey, getCateCoordinateOfLine } from '../util/ChartUtils';
-import { LegendType, PresentationAttributes, SymbolType, AnimationTiming, filterProps, D3Scale, ChartOffset, DataKey, TickItem } from '../util/types';
+import { LegendType, PresentationAttributes, SymbolType, AnimationTiming, filterProps, D3Scale, ChartOffset, DataKey, TickItem, adaptEventsOfChild } from '../util/types';
 import { TooltipType } from '../component/DefaultTooltipContent';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
@@ -231,7 +228,7 @@ class Scatter extends PureComponent<Props, State> {
       return (
         <Layer
           className="recharts-scatter-symbol"
-          {...filterEventsOfChild(this.props, entry, i)}
+          {...adaptEventsOfChild(this.props, entry, i)}
           key={`symbol-${i}`} // eslint-disable-line react/no-array-index-key
         >
           {Scatter.renderSymbolItem(activeIndex === i ? activeShape : shape, props)}

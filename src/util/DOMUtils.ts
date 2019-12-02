@@ -1,4 +1,3 @@
-// @ts-ignore
 import { isSsr } from './ReactUtils';
 import { CSSProperties, MouseEvent } from 'react';
 

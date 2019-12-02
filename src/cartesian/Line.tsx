@@ -11,11 +11,8 @@ import Dot, { Props as DotProps } from '../shape/Dot';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
 import ErrorBar, { Props as ErrorBarProps } from './ErrorBar';
-// @ts-ignore
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
-// @ts-ignore
 import { isSsr, findAllByType } from '../util/ReactUtils';
-// @ts-ignore
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';

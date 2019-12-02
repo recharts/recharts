@@ -9,10 +9,10 @@ import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
 import Rectangle from '../shape/Rectangle';
 import { shallowEqual } from '../util/ShallowEqual';
-import { getPresentationAttributes, filterSvgElements, validateWidthHeight, findChildByType } from '../util/ReactUtils';
+import { filterSvgElements, validateWidthHeight, findChildByType } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { SankeyLink, SankeyNode } from './types';
-import { Margin, DataKey, DOMAttributesWithProps, PresentationAttributes } from '../util/types';
+import { Margin, DataKey, DOMAttributesWithProps, PresentationAttributes, filterProps } from '../util/types';
 
 const defaultCoordinateOfTooltip = { x: 0, y: 0 };
 
@@ -472,7 +472,7 @@ class Sankey extends PureComponent<Props, State> {
         stroke="#333"
         strokeWidth={linkWidth}
         strokeOpacity="0.2"
-        {...getPresentationAttributes(others)}
+        {...filterProps(others)}
       />
     );
   }
@@ -505,7 +505,7 @@ class Sankey extends PureComponent<Props, State> {
               linkWidth,
               index: i,
               payload: { ...link, source, target },
-              ...getPresentationAttributes(linkContent),
+              ...filterProps(linkContent),
             };
             const events = {
               onMouseEnter: this.handleMouseEnter.bind(this, linkProps, 'link'),
@@ -553,7 +553,7 @@ class Sankey extends PureComponent<Props, State> {
           nodes.map((node, i) => {
             const { x, y, dx, dy } = node;
             const nodeProps = {
-              ...getPresentationAttributes(nodeContent),
+              ...filterProps(nodeContent),
               x: x + left,
               y: y + top,
               width: dx,
@@ -607,7 +607,7 @@ class Sankey extends PureComponent<Props, State> {
 
     const { width, height, className, style, children, ...others } = this.props;
     const { links, nodes } = this.state;
-    const attrs = getPresentationAttributes(others);
+    const attrs = filterProps(others);
 
     return (
       <div

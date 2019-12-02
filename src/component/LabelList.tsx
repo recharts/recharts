@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Label, { ContentType } from './Label';
 import Layer from '../container/Layer';
-// @ts-ignore
 import { findAllByType } from '../util/ReactUtils';
-// @ts-ignore
 import { getValueByDataKey } from '../util/ChartUtils';
 import { filterProps, DataKey } from '../util/types';
 
