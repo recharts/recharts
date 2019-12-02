@@ -1,21 +1,19 @@
 /**
- * @fileOverview Scatter Chart
+ * @fileOverview Area Chart
  */
 import generateCategoricalChart from './generateCategoricalChart';
-import Scatter from '../cartesian/Scatter';
+import Area from '../cartesian/Area';
 import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
-import ZAxis from '../cartesian/ZAxis';
 import { formatAxisMap } from '../util/CartesianUtils';
+import { CategoricalChart } from './types';
 
 export default generateCategoricalChart({
-  chartName: 'ScatterChart',
-  GraphicalChild: Scatter,
-  eventType: 'single',
+  chartName: 'AreaChart',
+  GraphicalChild: Area,
   axisComponents: [
     { axisType: 'xAxis', AxisComp: XAxis },
     { axisType: 'yAxis', AxisComp: YAxis },
-    { axisType: 'zAxis', AxisComp: ZAxis },
   ],
   formatAxisMap,
-});
+} as CategoricalChart);

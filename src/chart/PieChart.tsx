@@ -1,12 +1,12 @@
 /**
  * @fileOverview Pie Chart
  */
-import PropTypes from 'prop-types';
 import generateCategoricalChart from './generateCategoricalChart';
 import PolarAngleAxis from '../polar/PolarAngleAxis';
 import PolarRadiusAxis from '../polar/PolarRadiusAxis';
 import { formatAxisMap } from '../util/PolarUtils';
 import Pie from '../polar/Pie';
+import { CategoricalChart } from './types';
 
 export default generateCategoricalChart({
   chartName: 'PieChart',
@@ -27,13 +27,4 @@ export default generateCategoricalChart({
     innerRadius: 0,
     outerRadius: '80%',
   },
-  propTypes: {
-    layout: PropTypes.oneOf(['centric']),
-    startAngle: PropTypes.number,
-    endAngle: PropTypes.number,
-    cx: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    cy: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    innerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    outerRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  },
-});
+} as CategoricalChart);

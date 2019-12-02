@@ -115,5 +115,6 @@ ErrorBar.defaultProps = {
   offset: 0,
   layout: 'horizontal',
 };
+ErrorBar.displayName = 'ErrorBar';
 
 export default ErrorBar;

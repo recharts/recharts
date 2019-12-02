@@ -15,9 +15,9 @@ import { findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 import { ReactElement, ReactNode } from 'react';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
-import { LayoutType, PolarLayoutType, AxisType, TickItem } from './types';
+import { LayoutType, PolarLayoutType, AxisType, TickItem, BaseAxisProps, DataKey } from './types';
 
-export function getValueByDataKey<T>(obj: T, dataKey: string | number | ((obj: T) => any), defaultValue?: any) {
+export function getValueByDataKey<T>(obj: T, dataKey: DataKey<any>, defaultValue?: any) {
   if (_.isNil(obj) || _.isNil(dataKey)) { return defaultValue; }
 
   if (isNumOrStr(dataKey as string)) { return _.get(obj, dataKey as string, defaultValue); }
@@ -34,7 +34,7 @@ export function getValueByDataKey<T>(obj: T, dataKey: string | number | ((obj: T
  * @param  {Boolean} filterNil Whether or not filter nil values
  * @return {Array} Domain of data
  */
-export function getDomainOfDataByKey<T>(data: Array<T>, key: string, type: string, filterNil: boolean) {
+export function getDomainOfDataByKey<T>(data: Array<T>, key: string, type: string, filterNil?: boolean) {
   const flattenData = _.flatMap(data, entry => getValueByDataKey(entry, key));
 
   if (type === 'number') {
@@ -50,17 +50,7 @@ export function getDomainOfDataByKey<T>(data: Array<T>, key: string, type: strin
   return validateData.map(entry => (isNumOrStr(entry) ? entry : ''));
 };
 
-interface Tick {
-  index: number;
-  coordinate: number;
-}
-
-interface Axis {
-  axisType: string;
-  range: Array<number>;
-}
-
-export const calculateActiveTickIndex = (coordinate: number, ticks: Array<Tick>, unsortedTicks: Array<Tick>, axis: Axis) => {
+export const calculateActiveTickIndex = (coordinate: number, ticks: Array<TickItem>, unsortedTicks: Array<TickItem>, axis: BaseAxisProps) => {
   let index = -1;
   const len = ticks.length;
 
@@ -167,12 +157,12 @@ interface FormatedGraphicalItem {
 export const getLegendProps = ({
   children, formatedGraphicalItems, legendWidth, legendContent,
 }: {
-  children: ReactNode;
+  children: any;
   formatedGraphicalItems: Array<FormatedGraphicalItem>;
   legendWidth: number;
   legendContent?: any;
 }) => {
-  const legendItem = findChildByType(children, Legend);
+  const legendItem = findChildByType(children, Legend.displayName);
   if (!legendItem) { return null; }
 
   let legendData;
@@ -220,7 +210,7 @@ export const getLegendProps = ({
  * @return {Object} The size of all groups
  */
 export const getBarSizeList = ({ barSize: globalSize, stackGroups = {} }: {
-  barSize: any;
+  barSize: number | string;
   stackGroups: any;
 }) => {
   if (!stackGroups) { return {}; }
@@ -376,7 +366,7 @@ export const appendOffsetOfLegend = (offset: any, items: Array<FormatedGraphical
 
 export const getDomainOfErrorBars = (data: any[], item: any, dataKey: any, axisType?: AxisType) => {
   const { children } = item.props;
-  const errorBars = findAllByType(children, ErrorBar)
+  const errorBars = findAllByType(children, 'ErrorBar')
     .filter((errorBarChild: any) => {
       const { direction } = errorBarChild.props;
 
@@ -433,7 +423,7 @@ export const parseErrorBarsOfAxis = (data: any[], items: any[], dataKey: any, ax
  * @param  {Boolean} filterNil Whether or not filter nil values
  * @return {Array}        Domain
  */
-export const getDomainOfItemsWithSameAxis = (data: any[], items: any[], type: string, filterNil: boolean) => {
+export const getDomainOfItemsWithSameAxis = (data: any[], items: any[], type: string, filterNil?: boolean) => {
   const domains = items.map((item) => {
     const { dataKey } = item.props;
 
@@ -480,7 +470,7 @@ export const isCategorialAxis = (layout: LayoutType | PolarLayoutType, axisType:
  * @param {Number} max   The maximun value of axis
  * @return {Array}       Coordinates
  */
-export const getCoordinatesOfGrid = (ticks: Array<Tick>, min: number, max: number) => {
+export const getCoordinatesOfGrid = (ticks: Array<TickItem>, min: number, max: number) => {
   let hasMin, hasMax;
 
   const values = ticks.map((entry) => {
@@ -503,7 +493,7 @@ export const getCoordinatesOfGrid = (ticks: Array<Tick>, min: number, max: numbe
  * @param {Boolean} isAll Return the ticks of all the points or not
  * @return {Array}  Ticks
  */
-export const getTicksOfAxis = (axis: any, isGrid: boolean, isAll: boolean) => {
+export const getTicksOfAxis = (axis: any, isGrid?: boolean, isAll?: boolean): TickItem[] => {
   if (!axis) return null;
   const { scale } = axis;
   const { duplicateDomain, type, range } = axis;
@@ -513,7 +503,7 @@ export const getTicksOfAxis = (axis: any, isGrid: boolean, isAll: boolean) => {
 
   // The ticks setted by user should only affect the ticks adjacent to axis line
   if (isGrid && (axis.ticks || axis.niceTicks)) {
-    return (axis.ticks || axis.niceTicks).map((entry: Tick) => {
+    return (axis.ticks || axis.niceTicks).map((entry: TickItem) => {
       const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
       return {
@@ -781,7 +771,7 @@ export const getStackGroupsByAxisId = (
  * @param  {String} type  The type of axis
  * @return {Array} domain
  */
-export const calculateDomainOfTicks = (ticks: Array<Tick>, type: string) => {
+export const calculateDomainOfTicks = (ticks: Array<TickItem>, type: string) => {
   if (type === 'number') {
     return [_.min(ticks), _.max(ticks)];
   }
@@ -975,7 +965,7 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
  * @param  {Array}  ticks The ticks of axis
  * @return {Number} Size
  */
-export const getBandSizeOfAxis = (axis: any, ticks: Array<Tick>) => {
+export const getBandSizeOfAxis = (axis: any, ticks?: Array<TickItem>) => {
   if (axis && axis.scale && axis.scale.bandwidth) {
     return axis.scale.bandwidth();
   }

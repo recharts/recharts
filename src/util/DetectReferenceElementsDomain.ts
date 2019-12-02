@@ -12,12 +12,12 @@ import { isNumber } from './DataUtils';
 import { ReactNode } from 'react';
 
 export const detectReferenceElementsDomain = (
-  children: ReactNode, domain: number[], axisId: string, axisType: string, specifiedTicks: any[]
+  children: ReactNode[], domain: number[], axisId: string, axisType: string, specifiedTicks?: any[]
 ) => {
-  const lines = findAllByType(children, ReferenceLine);
-  const dots = findAllByType(children, ReferenceDot);
+  const lines = findAllByType(children, ReferenceLine.displayName);
+  const dots = findAllByType(children, ReferenceDot.displayName);
   const elements = lines.concat(dots);
-  const areas = findAllByType(children, ReferenceArea);
+  const areas = findAllByType(children, ReferenceArea.displayName);
   const idKey = `${axisType}Id`;
   const valueKey = axisType[0];
   let finalDomain = domain;

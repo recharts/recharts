@@ -78,7 +78,7 @@ class Funnel extends PureComponent<Props, State> {
   static getRealFunnelData = (item: Funnel) => {
     const { data, children } = item.props;
     const presentationProps = getPresentationAttributes(item.props);
-    const cells = findAllByType(children, Cell);
+    const cells = findAllByType(children, Cell.displayName);
 
     if (data && data.length) {
       return data.map((entry, index) => ({

@@ -238,7 +238,7 @@ class Line extends PureComponent<Props, State> {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
 
     const { points, xAxis, yAxis, layout, children } = this.props;
-    const errorBarItems = findAllByType(children, ErrorBar);
+    const errorBarItems = findAllByType(children, ErrorBar.displayName);
 
     if (!errorBarItems) { return null; }
 

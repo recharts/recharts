@@ -1,5 +1,7 @@
 # Recharts
 
+[![Sponsors on Open Collective](https://opencollective.com/recharts/sponsors/badge.svg)](https://opencollective.com/recharts#sponsors)
+[![Backers on Open Collective](https://opencollective.com/recharts/backers/badge.svg)](https://opencollective.com/recharts#backer)
 [![Rocket.Chat](https://demo.rocket.chat/images/join-chat.svg)](https://demo.rocket.chat/channel/recharts)
 [![Build Status](https://travis-ci.org/recharts/recharts.svg)](https://travis-ci.org/recharts/recharts)
 [![Coverage Status](https://coveralls.io/repos/recharts/recharts/badge.svg?branch=master&service=github)](https://coveralls.io/github/recharts/recharts?branch=master)
@@ -90,8 +92,12 @@ We'd love :heart: to hear what you think we should build. Please create an issue
 
 We are looking for like-minded people who share the same idea about Recharts. The goal of this project is create a more flexible charting library for the  React community.
 
+## Sponsoring
+
+Most of the core team members do this open source work in their free time. If you use recharts for a important work, and you'd like us to invest more time on it, please [donate](https://opencollective.com/recharts#sponsors). Thanks!
+
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2015-2017 Recharts Group.
+Copyright (c) 2015-2019 Recharts Group.
