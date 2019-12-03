@@ -1,3 +1,10 @@
+## 2.0.0-beta.1 (Dec 03, 2019)
+
+### fix
+
+- fix error parameters in `appendOffsetOfLegend`
+- fix style of <Area /> 
+
 ## 2.0.0-beta.0 (Dec 03, 2019)
 
 ### feat
