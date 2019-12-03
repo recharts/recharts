@@ -1,3 +1,10 @@
+## 2.0.0-beta.0 (Dec 03, 2019)
+
+### feat
+
+- Only support react@16
+- Use typescript to rewrite src/
+
 ## 1.8.5 (Oct 22, 2019)
 
 ### fix
