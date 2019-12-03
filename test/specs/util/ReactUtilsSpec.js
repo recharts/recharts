@@ -1,10 +1,10 @@
 import React from 'react';
 import { expect } from 'chai';
 import { LineChart, Line, Bar } from 'recharts';
-import { getPresentationAttributes, filterEventAttributes, filterEventsOfChild,
-  getDisplayName, withoutType, validateWidthHeight, filterSvgElements,
+import { getDisplayName, withoutType, validateWidthHeight, filterSvgElements,
   isSingleChildEqual, isChildrenEqual,
 } from '../../../src/util/ReactUtils';
+import { filterProps, adaptEventHandlers, adaptEventsOfChild } from '../../../src/util/types';
 import { mount, render } from 'enzyme';
 
 describe('ReactUtils', () => {
@@ -27,8 +27,8 @@ describe('ReactUtils', () => {
     expect(result).to.equal('Component');
   });
 
-  it('filterEventAttributes return event attributes', () => {
-    const result = filterEventAttributes(
+  it('adaptEventHandlers return event attributes', () => {
+    const result = adaptEventHandlers(
       {
         a: 1,
         onMouseEnter: () => {},
@@ -38,15 +38,15 @@ describe('ReactUtils', () => {
     expect(result).to.not.include.keys('a');
   });
 
-  it('filterEventAttributes return null when input is not a react element', () => {
-    expect(filterEventAttributes(null)).to.equal(null);
-    expect(filterEventAttributes(() => {})).to.equal(null);
-    expect(filterEventAttributes(1)).to.equal(null);
+  it('adaptEventHandlers return null when input is not a react element', () => {
+    expect(adaptEventHandlers(null)).to.equal(null);
+    expect(adaptEventHandlers(() => {})).to.equal(null);
+    expect(adaptEventHandlers(1)).to.equal(null);
   });
 
-  it('filterEventsOfChild return null when input is not a props', () => {
-    expect(filterEventsOfChild(null)).to.equal(null);
-    expect(filterEventsOfChild(1)).to.equal(null);
+  it('adaptEventsOfChild return null when input is not a props', () => {
+    expect(adaptEventsOfChild(null)).to.equal(null);
+    expect(adaptEventsOfChild(1)).to.equal(null);
   });
 
   it('validateWidthHeight return false when input is not a react element', () => {
@@ -65,8 +65,8 @@ describe('ReactUtils', () => {
     expect(validateWidthHeight(wrapper)).to.equal(false);
   });
 
-  it('getPresentationAttributes return presentation attributes', () => {
-    const result = getPresentationAttributes(
+  it('filterProps return presentation attributes', () => {
+    const result = filterProps(
       {
         stroke: '#000',
         fill: '#000',

@@ -255,7 +255,6 @@ class Brush extends PureComponent<Props, State> {
   }
 
   handleTravellerDragStart(id: BrushTravellerId, e: MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) {
-    console.log(e);
     const event = isTouch(e) ? e.changedTouches[0] : e;
 
     this.setState({

@@ -366,6 +366,7 @@ class State {
 
 class Sankey extends PureComponent<Props, State> {
   static displayName = 'Sankey';
+  static defaultProps = new Props();
 
   state = new State();
 
@@ -479,8 +480,8 @@ class Sankey extends PureComponent<Props, State> {
 
   renderLinks(links: SankeyLink[], nodes: SankeyNode[]) {
     const { linkCurvature, link: linkContent, margin } = this.props;
-    const top = margin.top || 0;
-    const left = margin.left || 0;
+    const top = _.get(margin, 'top') || 0;
+    const left = _.get(margin, 'left') || 0;
 
     return (
       <Layer className="recharts-sankey-links" key="recharts-sankey-links">
@@ -544,8 +545,8 @@ class Sankey extends PureComponent<Props, State> {
 
   renderNodes(nodes: SankeyNode[]) {
     const { node: nodeContent, margin } = this.props;
-    const top = margin.top || 0;
-    const left = margin.left || 0;
+    const top = _.get(margin, 'top') || 0;
+    const left = _.get(margin, 'left') || 0;
 
     return (
       <Layer className="recharts-sankey-nodes" key="recharts-sankey-nodes">

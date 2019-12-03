@@ -27,6 +27,7 @@ const computeNode = ({ depth, node, index, valueKey }: {
   index: number;
   valueKey: DataKey<any>;
 }) => {
+  debugger;
   const { children } = node;
   const childDepth = depth + 1;
   const computedChildren = children && children.length ?
@@ -137,8 +138,10 @@ const verticalPosition = (row: any, parentSize: number, parentRect: TreemapNode,
     );
     curY += child.height;
   }
-  child.z = false;
-  child.height += parentRect.y + parentRect.height - curY;
+  if (child) {
+    child.z = false;
+    child.height += parentRect.y + parentRect.height - curY;
+  }
 
   return {
     ...parentRect,
@@ -250,6 +253,7 @@ class State {
 
 class Treemap extends PureComponent<Props, State> {
   static displayName = 'Treemap';
+  static defaultProps = new Props();
 
   state = new State();
 
@@ -307,6 +311,7 @@ class Treemap extends PureComponent<Props, State> {
     ) {
       const nextRoot = this.computeRoot({ type, width, height, data, dataKey, aspectRatio });
       this.setState({
+        ...(new State()),
         ...nextRoot,
         nestIndex: [nextRoot.currentRoot],
       });
