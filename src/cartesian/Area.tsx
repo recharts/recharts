@@ -359,7 +359,10 @@ class Area extends PureComponent<Props, State> {
         <Curve
           {...filterProps(others, true)}
           points={points}
+          connectNulls={connectNulls}
+          type={type}
           baseLine={baseLine}
+          layout={layout}
           stroke="none"
           className="recharts-area-area"
         />

@@ -155,7 +155,7 @@ export const getLegendProps = ({
   children, formatedGraphicalItems, legendWidth, legendContent,
 }: {
   children: any;
-  formatedGraphicalItems: Array<FormatedGraphicalItem>;
+  formatedGraphicalItems?: Array<FormatedGraphicalItem>;
   legendWidth: number;
   legendContent?: any;
 }) => {
@@ -337,9 +337,8 @@ export const getBarPosition = ({ barGap, barCategoryGap, bandSize, sizeList = []
 export const appendOffsetOfLegend = (offset: any, items: Array<FormatedGraphicalItem>, props: any, legendBox: any) => {
   const { children, width, height, margin } = props;
   const legendWidth = width - (margin.left || 0) - (margin.right || 0);
-  // TODO: check legendHeight is necessary.
   // const legendHeight = height - (margin.top || 0) - (margin.bottom || 0);
-  const legendProps = getLegendProps({ children, formatedGraphicalItems: items, legendWidth });
+  const legendProps = getLegendProps({ children, legendWidth });
   let newOffset = offset;
 
   if (legendProps) {
