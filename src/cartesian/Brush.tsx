@@ -1,7 +1,7 @@
 /**
  * @fileOverview Brush
  */
-import React, { PureComponent, Children, ReactText, MouseEvent, ReactElement, TouchEvent } from 'react';
+import React, { PureComponent, Children, ReactText, ReactElement, TouchEvent, FC } from 'react';
 import classNames from 'classnames';
 import { scalePoint, ScalePoint } from 'd3-scale';
 import _ from 'lodash';
@@ -26,25 +26,39 @@ interface InternalBrushProps {
   updateId?: string | number;
 }
 
+interface TravellerProps {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fill: string;
+  stroke: string;
+}
+
 interface BrushProps extends InternalBrushProps {
   className?: string;
-
   height: number;
+  backgroundFill?: string;
+  backgroundStroke?: string;
+  slideFill?: string;
+  slideStroke?: string;
+  slideOpacity?: number;
+  slideStrokeWidth?: number;
+  travellerContent?: FC<TravellerProps>;
+  travellerFill?: string;
+  travellerStroke?: string;
   travellerWidth?: number;
   gap?: number;
   padding?: Padding;
-
   dataKey?: DataKey<any>;
   startIndex?: number;
   endIndex?: number;
   tickFormatter?: (value: any) => ReactText;
-
   children?: ReactElement;
-
   onChange?: (newIndex: BrushStartEndIndex) => void;
   leaveTimeOut?: number;
   alwaysShowText?: boolean;
-};
+}
 
 type Props = PresentationAttributes<SVGElement> & BrushProps;
 
@@ -61,8 +75,8 @@ interface State {
   brushMoveStartX?: number;
 }
 
-const isTouch = (e: TouchEvent<SVGElement> | MouseEvent<SVGElement>): e is TouchEvent<SVGElement> => {
-  return (e as TouchEvent<SVGElement>).changedTouches && !!(e as TouchEvent<SVGElement>).changedTouches.length; 
+const isTouch = (e: TouchEvent<SVGElement> | React.MouseEvent<SVGElement>): e is TouchEvent<SVGElement> => {
+  return (e as TouchEvent<SVGElement>).changedTouches && !!(e as TouchEvent<SVGElement>).changedTouches.length;
 };
 
 class Brush extends PureComponent<Props, State> {
@@ -94,7 +108,7 @@ class Brush extends PureComponent<Props, State> {
   leaveTimer?: number;
   scale?: ScalePoint<number>;
   scaleValues?: number[];
-  travellerDragStartHandlers?: Record<BrushTravellerId, (event: MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) => void>;
+  travellerDragStartHandlers?: Record<BrushTravellerId, (event: React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) => void>;
 
   // eslint-disable-next-line camelcase
   UNSAFE_componentWillReceiveProps(nextProps: Props) {
@@ -169,7 +183,7 @@ class Brush extends PureComponent<Props, State> {
     return _.isFunction(tickFormatter) ? tickFormatter(text) : text;
   }
 
-  handleDrag = (e: React.Touch | MouseEvent<SVGGElement>) => {
+  handleDrag = (e: React.Touch | React.MouseEvent<SVGGElement>) => {
     if (this.leaveTimer) {
       clearTimeout(this.leaveTimer);
       this.leaveTimer = null;
@@ -214,7 +228,7 @@ class Brush extends PureComponent<Props, State> {
     });
   };
 
-  handleSlideDragStart = (e: TouchEvent<SVGRectElement> | MouseEvent<SVGRectElement>) => {
+  handleSlideDragStart = (e: TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => {
     const event = isTouch(e) ? e.changedTouches[0] : e;
 
     this.setState({
@@ -224,7 +238,7 @@ class Brush extends PureComponent<Props, State> {
     });
   };
 
-  handleSlideDrag(e: React.Touch | MouseEvent<SVGGElement>) {
+  handleSlideDrag(e: React.Touch | React.MouseEvent<SVGGElement>) {
     const { slideMoveStartX, startX, endX } = this.state;
     const { x, width, travellerWidth, startIndex, endIndex, onChange } = this.props;
     let delta = e.pageX - slideMoveStartX;
@@ -254,7 +268,7 @@ class Brush extends PureComponent<Props, State> {
     });
   }
 
-  handleTravellerDragStart(id: BrushTravellerId, e: MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) {
+  handleTravellerDragStart(id: BrushTravellerId, e: React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) {
     const event = isTouch(e) ? e.changedTouches[0] : e;
 
     this.setState({
@@ -265,7 +279,7 @@ class Brush extends PureComponent<Props, State> {
     });
   }
 
-  handleTravellerMove(e: React.Touch | MouseEvent<SVGGElement>) {
+  handleTravellerMove(e: React.Touch | React.MouseEvent<SVGGElement>) {
     const { brushMoveStartX, movingTravellerId, endX, startX } = this.state;
     const prevValue = this.state[movingTravellerId];
 
@@ -325,12 +339,14 @@ class Brush extends PureComponent<Props, State> {
   }
 
   renderBackground() {
-    const { x, y, width, height, fill, stroke } = this.props;
+    const { x, y, width, height, fill, stroke,
+      backgroundFill = fill,
+      backgroundStroke = stroke } = this.props;
 
     return (
       <rect
-        stroke={stroke}
-        fill={fill}
+        stroke={backgroundStroke}
+        fill={backgroundFill}
         x={x}
         y={y}
         width={width}
@@ -357,9 +373,12 @@ class Brush extends PureComponent<Props, State> {
   }
 
   renderTraveller(travellerX: number, id: BrushTravellerId) {
-    const { y, travellerWidth, height, stroke } = this.props;
+    const { x, y, height, travellerWidth, stroke,
+      travellerContent: TravellerContent,
+      travellerFill = stroke,
+      travellerStroke = 'none' } = this.props;
     const lineY = Math.floor(y + height / 2) - 1;
-    const x = Math.max(travellerX, this.props.x);
+    const startingX = Math.max(travellerX, x);
 
     return (
       <Layer
@@ -370,36 +389,44 @@ class Brush extends PureComponent<Props, State> {
         onTouchStart={this.travellerDragStartHandlers[id]}
         style={{ cursor: 'col-resize' }}
       >
-        <rect
-          x={x}
-          y={y}
-          width={travellerWidth}
-          height={height}
-          fill={stroke}
-          stroke="none"
-        />
-        <line
-          x1={x + 1}
-          y1={lineY}
-          x2={x + travellerWidth - 1}
-          y2={lineY}
-          fill="none"
-          stroke="#fff"
-        />
-        <line
-          x1={x + 1}
-          y1={lineY + 2}
-          x2={x + travellerWidth - 1}
-          y2={lineY + 2}
-          fill="none"
-          stroke="#fff"
-        />
+        { TravellerContent
+          ? <TravellerContent x={startingX} y={y} width={travellerWidth} height={height} fill={ travellerFill } stroke={ travellerStroke } />
+          : <>
+          <rect
+            x={startingX}
+            y={y}
+            width={travellerWidth}
+            height={height}
+            fill={travellerFill}
+            stroke={travellerStroke}
+          />
+          <line
+            x1={startingX + 1}
+            y1={lineY}
+            x2={startingX + travellerWidth - 1}
+            y2={lineY}
+            fill="none"
+            stroke="#fff"
+          />
+          <line
+            x1={startingX + 1}
+            y1={lineY + 2}
+            x2={startingX + travellerWidth - 1}
+            y2={lineY + 2}
+            fill="none"
+            stroke="#fff"
+          />
+          </>}
       </Layer>
     );
   }
 
   renderSlide(startX: number, endX: number) {
-    const { y, height, stroke } = this.props;
+    const { y, height, stroke,
+      slideFill = stroke,
+      slideStroke = 'none',
+      slideOpacity = 0.2,
+      slideStrokeWidth = 1 }= this.props;
 
     return (
       <rect
@@ -409,9 +436,10 @@ class Brush extends PureComponent<Props, State> {
         onMouseDown={this.handleSlideDragStart}
         onTouchStart={this.handleSlideDragStart}
         style={{ cursor: 'move' }}
-        stroke="none"
-        fill={stroke}
-        fillOpacity={0.2}
+        stroke={slideStroke}
+        fill={slideFill}
+        fillOpacity={slideOpacity}
+        strokeWidth={slideStrokeWidth}
         x={Math.min(startX, endX)}
         y={y}
         width={Math.abs(endX - startX)}
@@ -455,7 +483,7 @@ class Brush extends PureComponent<Props, State> {
   }
 
   render() {
-    const { data, className, children, x, y, width, height, alwaysShowText } = this.props;
+    const { data, className, children, x, y, width, height, alwaysShowText, travellerWidth } = this.props;
     const { startX, endX, isTextActive, isSlideMoving, isTravellerMoving } = this.state;
 
     if (!data || !data.length || !isNumber(x) || !isNumber(y) || !isNumber(width) ||
@@ -477,7 +505,7 @@ class Brush extends PureComponent<Props, State> {
       >
         {this.renderBackground()}
         {isPanoramic && this.renderPanorama()}
-        {this.renderSlide(startX, endX)}
+        {this.renderSlide(startX, endX + travellerWidth)}
         {this.renderTraveller(startX, 'startX')}
         {this.renderTraveller(endX, 'endX')}
         {(isTextActive || isSlideMoving || isTravellerMoving || alwaysShowText) &&

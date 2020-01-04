@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine,
   ReferenceDot, Tooltip, CartesianGrid, Legend, Brush, ErrorBar, AreaChart, Area,
   Label, LabelList } from 'recharts';
@@ -351,6 +351,31 @@ const specifiedDomain = [0.01, 'auto'];
 const specifiedTicks = [0.01, 0.1, 1, 10, 100, 1000];
 const specifiedMargin = { top: 20, right: 20, bottom: 20, left: 20 };
 
+const customTraveler = ({ x, y, width, height, fill, stroke }) => {
+  const lineY = Math.floor(y + height / 2) - 1;
+  return (
+    <>
+      <rect
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        fill={fill}
+        stroke={stroke}
+      />
+      <line
+        x1={x + 1}
+        y1={lineY}
+        x2={x + width - 1}
+        y2={lineY}
+        fill="none"
+        stroke="red"
+        strokeWidth={3}
+      />
+    </>
+  );
+};
+
 export default class Demo extends Component {
 
   static displayName = 'LineChartDemo';
@@ -547,7 +572,7 @@ export default class Demo extends Component {
           </LineChart>
         </div>
 
-        <p>LineChart with panoramic brush and custom tooltip styles</p>
+        <p>LineChart with panoramic brush, custom tooltip styles and custom traveller</p>
         <div className="line-chart-wrapper">
           <LineChart
             width={600} height={400} data={data03}
@@ -565,7 +590,14 @@ export default class Demo extends Component {
               labelStyle={{ fontWeight: 'bold', color: '#666666' }}
             />
             <Line dataKey="price" stroke="#ff7300" dot={false} />
-            <Brush dataKey="date" startIndex={data03.length - 40}>
+            <Brush
+              dataKey="date"
+              startIndex={data03.length - 40}
+              travellerWidth={15}
+              travellerContent={customTraveler}
+              backgroundStroke="none"
+              slideFill='blue'
+            >
               <AreaChart>
                 <CartesianGrid />
                 <YAxis hide domain={['auto', 'auto']} />

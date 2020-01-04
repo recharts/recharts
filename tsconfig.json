@@ -8,6 +8,7 @@
     "removeComments": true,
     "esModuleInterop": true,
     "sourceMap": true,
+    "declaration": true,
     "target": "es5"
   },
   "include": [
