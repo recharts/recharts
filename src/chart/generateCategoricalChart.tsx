@@ -225,6 +225,10 @@ const generateCategoricalChart = ({
       if (!_.isNil(this.props.syncId)) {
         this.removeListener();
       }
+      this.cancelThrottledTriggerAfterMouseMove();
+    }
+
+    cancelThrottledTriggerAfterMouseMove() {
       if (typeof (this.triggeredAfterMouseMove as any).cancel === 'function') {
         (this.triggeredAfterMouseMove as any).cancel();
       }
@@ -1055,6 +1059,8 @@ const generateCategoricalChart = ({
       if (_.isFunction(onMouseLeave)) {
         onMouseLeave(nextState, e);
       }
+
+      this.cancelThrottledTriggerAfterMouseMove();
     };
 
     handleOuterEvent = (e: any) => {
