@@ -1,4 +1,4 @@
-import React, { cloneElement, isValidElement, ReactNode, ReactElement, SVGProps } from 'react';
+import React, { cloneElement, isValidElement, ReactNode, ReactElement, createElement } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
 import Text from './Text';
@@ -303,7 +303,7 @@ function Label(props: Props) {
 
   let label: ReactNode;
   if (_.isFunction(content)) {
-    label = content(props);
+    label = createElement((content as any), props);
 
     if (isValidElement(label)) {
       return label;
