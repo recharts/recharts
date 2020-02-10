@@ -162,58 +162,69 @@ const getAttrsOfPolarLabel = (props: Props) => {
 const getAttrsOfCartesianLabel = (props: Props) => {
   const { viewBox, offset, position } = props;
   const { x, y, width, height } = (viewBox as CartesianViewBox);
-  const sign = height >= 0 ? 1 : -1;
+	
+	// Define vertical offsets and position inverts based on the value being positive or negative
+	const verticalSign = height >= 0 ? 1 : -1;
+	const verticalOffset = verticalSign * offset;
+	const verticalEnd = verticalSign > 0 ? 'end' : 'start';
+	const verticalStart = verticalSign > 0 ? 'start' : 'end';
+
+	// Define horizontal offsets and position inverts based on the value being positive or negative
+	const horizontalSign = width >= 0 ? 1 : -1;
+	const horizontalOffset = horizontalSign * offset;
+	const horizontalEnd = horizontalSign > 0 ? 'end' : 'start';
+	const horizontalStart = horizontalSign > 0 ? 'start' : 'end';
 
   if (position === 'top') {
     return {
       x: x + width / 2,
-      y: y - sign * offset,
+      y: y - verticalSign * offset,
       textAnchor: 'middle',
-      verticalAnchor: sign > 0 ? 'end' : 'start',
+      verticalAnchor: verticalEnd,
     };
   }
 
   if (position === 'bottom') {
     return {
       x: x + width / 2,
-      y: y + height + sign * offset,
+      y: y + height + verticalOffset,
       textAnchor: 'middle',
-      verticalAnchor: 'start',
+      verticalAnchor: verticalStart,
     };
   }
 
   if (position === 'left') {
     return {
-      x: x - offset,
+      x: x - horizontalOffset,
       y: y + height / 2,
-      textAnchor: 'end',
+      textAnchor: horizontalEnd,
       verticalAnchor: 'middle',
     };
   }
 
   if (position === 'right') {
     return {
-      x: x + width + offset,
+      x: x + width + horizontalOffset,
       y: y + height / 2,
-      textAnchor: 'start',
+      textAnchor: horizontalStart,
       verticalAnchor: 'middle',
     };
   }
 
   if (position === 'insideLeft') {
     return {
-      x: x + offset,
+      x: x + horizontalOffset,
       y: y + height / 2,
-      textAnchor: 'start',
+      textAnchor: horizontalStart,
       verticalAnchor: 'middle',
     };
   }
 
   if (position === 'insideRight') {
     return {
-      x: x + width - offset,
+      x: x + width - horizontalOffset,
       y: y + height / 2,
-      textAnchor: 'end',
+      textAnchor: horizontalEnd,
       verticalAnchor: 'middle',
     };
   }
@@ -221,54 +232,54 @@ const getAttrsOfCartesianLabel = (props: Props) => {
   if (position === 'insideTop') {
     return {
       x: x + width / 2,
-      y: y + sign * offset,
+      y: y + verticalOffset,
       textAnchor: 'middle',
-      verticalAnchor: 'start',
+      verticalAnchor: verticalStart,
     };
   }
 
   if (position === 'insideBottom') {
     return {
       x: x + width / 2,
-      y: y + height - sign * offset,
+      y: y + height - verticalOffset,
       textAnchor: 'middle',
-      verticalAnchor: 'end',
+      verticalAnchor: verticalEnd,
     };
   }
 
   if (position === 'insideTopLeft') {
     return {
-      x: x + offset,
-      y: y + sign * offset,
-      textAnchor: 'start',
-      verticalAnchor: 'start',
+      x: x + horizontalOffset,
+      y: y + verticalOffset,
+      textAnchor: horizontalStart,
+      verticalAnchor: verticalStart,
     };
   }
 
   if (position === 'insideTopRight') {
     return {
-      x: x + width - offset,
-      y: y + sign * offset,
-      textAnchor: 'end',
-      verticalAnchor: 'start',
+      x: x + width - horizontalOffset,
+      y: y + verticalOffset,
+      textAnchor: horizontalEnd,
+      verticalAnchor: verticalStart,
     };
   }
 
   if (position === 'insideBottomLeft') {
     return {
-      x: x + offset,
-      y: y + height - sign * offset,
-      textAnchor: 'start',
-      verticalAnchor: 'end',
+      x: x + horizontalOffset,
+      y: y + height - verticalOffset,
+      textAnchor: horizontalStart,
+      verticalAnchor: verticalEnd,
     };
   }
 
   if (position === 'insideBottomRight') {
     return {
-      x: x + width - offset,
-      y: y + height - sign * offset,
-      textAnchor: 'end',
-      verticalAnchor: 'end',
+      x: x + width - horizontalOffset,
+      y: y + height - verticalOffset,
+      textAnchor: horizontalEnd,
+      verticalAnchor: verticalEnd,
     };
   }
 
