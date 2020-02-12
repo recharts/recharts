@@ -40,7 +40,7 @@ export interface CartesianAxisProps {
   ticks?: CartesianTickItem[];
   tickSize?: number;
   /** The formatter function of tick */ 
-  tickFormatter?: (value: any) => string;
+  tickFormatter?: (value: any, index: number) => string;
   ticksGenerator?: (props?: CartesianAxisProps) => CartesianTickItem[];
   interval?: number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
 };
@@ -128,7 +128,7 @@ class CartesianAxis extends Component<Props> {
     if (preserveEnd) {
       // Try to guarantee the tail to be displayed
       let tail = ticks[len - 1];
-      const tailContent = _.isFunction(tickFormatter) ? tickFormatter(tail.value) : tail.value;
+      const tailContent = _.isFunction(tickFormatter) ? tickFormatter(tail.value, len - 1) : tail.value;
       const tailSize = getStringSize(tailContent)[sizeKey] + unitSize;
       const tailGap = sign * (tail.coordinate + sign * tailSize / 2 - end);
       result[len - 1] = tail = {
@@ -148,7 +148,7 @@ class CartesianAxis extends Component<Props> {
     const count = preserveEnd ? len - 1 : len;
     for (let i = 0; i < count; i++) {
       let entry = result[i];
-      const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value;
+      const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value, i) : entry.value;
       const size = getStringSize(content)[sizeKey] + unitSize;
 
       if (i === 0) {
@@ -194,7 +194,7 @@ class CartesianAxis extends Component<Props> {
 
     for (let i = len - 1; i >= 0; i--) {
       let entry = result[i];
-      const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value;
+      const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value, len - i -1) : entry.value;
       const size = getStringSize(content)[sizeKey] + unitSize;
 
       if (i === len - 1) {
@@ -409,7 +409,7 @@ class CartesianAxis extends Component<Props> {
           {tick && CartesianAxis.renderTickItem(
             tick,
             tickProps,
-            `${_.isFunction(tickFormatter) ? tickFormatter(entry.value) : entry.value}${unit || ''}`
+            `${_.isFunction(tickFormatter) ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`
           )}
         </Layer>
       );

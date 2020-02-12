@@ -162,7 +162,7 @@ class PolarRadiusAxis extends PureComponent<Props> {
           {...adaptEventsOfChild(this.props, entry, i)}
         >
           {PolarRadiusAxis.renderTickItem(
-            tick, tickProps, tickFormatter ? tickFormatter(entry.value) : entry.value
+            tick, tickProps, tickFormatter ? tickFormatter(entry.value, i) : entry.value
           )}
         </Layer>
       );

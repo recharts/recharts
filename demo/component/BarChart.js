@@ -1,7 +1,9 @@
 /* eslint-disable react/no-multi-comp */
 import React, { Component } from 'react';
-import { BarChart, Bar, Brush, Cell, CartesianGrid, ReferenceLine, ReferenceDot,
-  XAxis, YAxis, Tooltip, Legend, ErrorBar, LabelList } from 'recharts';
+import {
+  BarChart, Bar, Brush, Cell, CartesianGrid, ReferenceLine, ReferenceDot,
+  XAxis, YAxis, Tooltip, Legend, ErrorBar, LabelList
+} from 'recharts';
 import { scaleOrdinal } from 'd3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
 import _ from 'lodash';
@@ -367,6 +369,19 @@ export default class Demo extends Component {
         <div className="bar-chart-wrapper">
           <BarChart width={150} height={40} data={data}>
             <Bar dataKey="uv" fill="#ff7300" onClick={this.handlePvBarClick} background />
+          </BarChart>
+        </div>
+
+        <p>BarChart with tickFormatter</p>
+        <div className="bar-chart-wrapper">
+          <BarChart width={500} height={300} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" tickFormatter={(value, i) => `${value}.${i}`} />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="pv" fill="#8884d8" />
+            <Bar dataKey="uv" fill="#82ca9d" />
           </BarChart>
         </div>
 

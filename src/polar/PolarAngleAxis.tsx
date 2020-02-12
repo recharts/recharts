@@ -169,7 +169,7 @@ class PolarAngleAxis extends PureComponent<Props> {
             />
           )}
           {tick && PolarAngleAxis.renderTickItem(
-            tick, tickProps, tickFormatter ? tickFormatter(entry.value) : entry.value
+            tick, tickProps, tickFormatter ? tickFormatter(entry.value, i) : entry.value
           )}
         </Layer>
       );
