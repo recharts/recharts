@@ -118,9 +118,10 @@ describe('<AreaChart />', () => {
       <AreaChart width={100} height={50} data={data} layout="vertical">
         <XAxis type="number" />
         <YAxis dataKey="name" type="category" />
-        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Area id="testArea" type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>
     );
+    expect(wrapper.find('#testArea')).to.have.lengthOf(1);
     expect(wrapper.find('.recharts-area-area').length).to.equal(1);
     expect(wrapper.find('.recharts-area-curve').length).to.equal(1);
   });

@@ -22,11 +22,14 @@ describe('<ComposedChart />', () => {
         <XAxis dataKey="name" />
         <YAxis />
         <CartesianGrid stroke="#f5f5f5" />
-        <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
-        <Bar dataKey="pv" barSize={20} fill="#413ea0" />
-        <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+        <Area id="testArea" type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
+        <Bar id="testBar" dataKey="pv" barSize={20} fill="#413ea0" />
+        <Line id="testLine" type="monotone" dataKey="uv" stroke="#ff7300" />
       </ComposedChart>
     );
+    expect(wrapper.find('#testArea')).to.have.lengthOf(1);
+    expect(wrapper.find('#testBar')).to.have.lengthOf(1);
+    expect(wrapper.find('#testLine')).to.have.lengthOf(1);
     expect(wrapper.find('.recharts-line .recharts-line-curve').length).to.equal(1);
     expect(wrapper.find('.recharts-bar').length).to.equal(1);
     expect(wrapper.find('.recharts-area .recharts-area-area').length).to.equal(1);

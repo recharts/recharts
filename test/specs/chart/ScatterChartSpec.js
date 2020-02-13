@@ -30,13 +30,14 @@ describe('ScatterChart of three dimension data', () => {
         <YAxis dataKey="y" name="weight" unit="kg" />
         <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km" />
         <CartesianGrid />
-        <Scatter name="A school" data={data01} fillOpacity={0.3} fill="#ff7300" />
+        <Scatter id="testScatter" name="A school" data={data01} fillOpacity={0.3} fill="#ff7300" />
         <Scatter name="B school" data={data02} fill="#347300" />
         <Tooltip />
         <Legend />
       </ScatterChart>
     );
 
+    expect(wrapper.find('#testScatter')).to.have.lengthOf(1);
     expect(wrapper.find('.recharts-scatter').length).to.equal(2);
     expect(wrapper.find('.recharts-legend-item').length).to.equal(2);
     expect(wrapper.find('.recharts-scatter-symbol').length).to.equal(data01.length + data02.length);

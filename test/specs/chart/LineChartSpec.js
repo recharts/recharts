@@ -65,13 +65,14 @@ describe('<LineChart />', () => {
       <LineChart width={400} height={400} data={breakData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis />
         <YAxis type="category" />
-        <Line type="monotone" connectNulls={false} dataKey="uv" stroke="#ff7300" />
+        <Line id="testLine" type="monotone" connectNulls={false} dataKey="uv" stroke="#ff7300" />
       </LineChart>
     );
     const curves = wrapper.find('.recharts-line .recharts-line-curve');
     expect(curves.length).to.equal(1);
     const path = curves[0].attribs.d;
     expect(path.length - path.split('M').join('').length).to.equal(2);
+    expect(wrapper.find('#testLine')).to.have.lengthOf(1);
   });
 
    it('Render one paths when connectNulls is true', () => {

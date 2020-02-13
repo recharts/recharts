@@ -107,6 +107,17 @@ describe('<BarChart />', () => {
     expect(wrapper.find('.recharts-rectangle').length).to.equal(4);
   });
 
+  it('Render Bar with Id', () => {
+    const wrapper = render(
+      <BarChart width={100} height={50} data={data}>
+        <YAxis />
+        <Bar id="testBar" dataKey="uv" stackId="test" fill="#ff7300" isAnimationActive={false} />
+      </BarChart>
+    );
+
+    expect(wrapper.find('#testBar')).to.have.lengthOf(1);
+  });
+
   // it('Renders tooltip when Tooltip item is added', () => {
   //   const wrapper = mount(
   //     <BarChart width={100} height={50} data={data}>
