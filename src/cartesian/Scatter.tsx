@@ -388,6 +388,7 @@ class Scatter extends PureComponent<Props, State> {
 
     return (
       <Layer
+        id={id}
         className={layerClass}
         clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}
       >

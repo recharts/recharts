@@ -98,7 +98,7 @@ export default class Demo extends Component {
             <CartesianGrid />
             <Tooltip />
             <Legend/>
-            <Scatter name="A school" data={data01} fill="#ff7300" label={{ dataKey: 'x' }} />
+            <Scatter id="idScatter" name="A school" data={data01} fill="#ff7300" label={{ dataKey: 'x' }} />
           </ScatterChart>
         </div>
 

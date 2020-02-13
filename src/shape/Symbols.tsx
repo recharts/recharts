@@ -89,6 +89,7 @@ class Symbols extends PureComponent<Props> {
       return (
         <path
           {...filterProps(this.props, true)}
+          id={null}
           className={classNames('recharts-symbols', className)}
           transform={`translate(${cx}, ${cy})`}
           d={this.getPath()}

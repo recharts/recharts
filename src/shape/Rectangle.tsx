@@ -138,6 +138,7 @@ class Rectangle extends PureComponent<Props> {
       return (
         <path
           {...filterProps(this.props, true)}
+          id={null}
           className={layerClass}
           d={getRectangePath(x, y, width, height, radius)}
         />
@@ -167,6 +168,7 @@ class Rectangle extends PureComponent<Props> {
           >
             <path
               {...filterProps(this.props, true)}
+              id={null}
               className={layerClass}
               d={getRectangePath(currX, currY, currWidth, currHeight, radius)}
               ref={(node) => { this.node = node; }}

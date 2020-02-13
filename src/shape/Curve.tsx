@@ -111,6 +111,7 @@ class Curve extends PureComponent<Props> {
     return (
       <path
         {...filterProps(this.props)}
+        id={null}
         {...adaptEventHandlers(this.props)}
         className={classNames('recharts-curve', className)}
         d={realPath}

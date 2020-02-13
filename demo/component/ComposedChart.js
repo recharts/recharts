@@ -30,9 +30,9 @@ export default class Demo extends Component {
               <Legend layout="vertical" align="right" verticalAlign="middle"/>
               <CartesianGrid stroke="#f5f5f5" />
               <Tooltip />
-              <Area type="monotone" dataKey='amt' fill="#8884d8" stroke="#8884d8" />
-              <Line type="monotone" dataKey="uv" stroke="#ff7300" />
-              <Bar dataKey="pv" barSize={20} fill="#413ea0" />
+              <Area id="idArea" type="monotone" dataKey='amt' fill="#8884d8" stroke="#8884d8" />
+              <Line id="idLine" type="monotone" dataKey="uv" stroke="#ff7300" />
+              <Bar id="idBar" dataKey="pv" barSize={20} fill="#413ea0" />
               <ReferenceLine x="Page C" stroke="red" label="Max PV PAGE" />
               <ReferenceDot x="Page C" y={1300} stroke="red" />
               <Brush>

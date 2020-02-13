@@ -23,6 +23,7 @@ class Dot extends PureComponent<Props> {
       return (
         <circle
           {...filterProps(this.props)}
+          id={null}
           {...adaptEventHandlers(this.props)}
           className={layerClass}
           cx={cx}

@@ -316,7 +316,7 @@ export default class Demo extends Component {
             <Legend />
             <Tooltip />
             <CartesianGrid vertical={false} />
-            <Bar yAxisId="a" dataKey="uv" onAnimationStart={this.handleBarAnimationStart} onAnimationEnd={this.handleBarAnimationEnd}>
+            <Bar id="testBar" yAxisId="a" dataKey="uv" onAnimationStart={this.handleBarAnimationStart} onAnimationEnd={this.handleBarAnimationEnd}>
               <LabelList fill="#000" angle={-45} />
               {
                 data.map((entry, index) => (

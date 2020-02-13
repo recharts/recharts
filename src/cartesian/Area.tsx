@@ -497,7 +497,7 @@ class Area extends PureComponent<Props, State> {
     const clipPathId = _.isNil(id) ? this.id : id;
 
     return (
-      <Layer className={layerClass}>
+      <Layer id={id} className={layerClass}>
         {needClip ? (
           <defs>
             <clipPath id={`clipPath-${clipPathId}`}>

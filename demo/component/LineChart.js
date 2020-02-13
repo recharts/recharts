@@ -422,6 +422,7 @@ export default class Demo extends Component {
             </YAxis>
             <Tooltip />
             <Line
+              id="testId"
               key="uv"
               type="monotone"
               dataKey="uv"
