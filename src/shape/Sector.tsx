@@ -99,7 +99,9 @@ const getSectorWithCorner = ({
       cx, cy, radius: outerRadius, angle: endAngle, sign: -sign, cornerRadius,
       cornerIsExternal,
     });
-  const outerArcAngle = Math.abs(startAngle - endAngle) - sot - eot;
+    const outerArcAngle = cornerIsExternal
+      ? Math.abs(startAngle - endAngle) + sot + eot
+      : Math.abs(startAngle - endAngle) - sot - eot;
 
   if (outerArcAngle < 0) {
     if (forceCornerRadius) {
@@ -142,7 +144,9 @@ const getSectorWithCorner = ({
         cornerRadius,
         cornerIsExternal,
       });
-    const innerArcAngle = Math.abs(startAngle - endAngle) - sit - eit;
+      const innerArcAngle = cornerIsExternal
+        ? Math.abs(startAngle - endAngle) + sit + eit
+        : Math.abs(startAngle - endAngle) - sit - eit;
 
     if (innerArcAngle < 0) {
       return `${path}L${cx},${cy}Z`;
