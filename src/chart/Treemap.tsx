@@ -27,7 +27,6 @@ const computeNode = ({ depth, node, index, valueKey }: {
   index: number;
   valueKey: DataKey<any>;
 }) => {
-  debugger;
   const { children } = node;
   const childDepth = depth + 1;
   const computedChildren = children && children.length ?
