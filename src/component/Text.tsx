@@ -111,13 +111,13 @@ class Text extends Component<Props, State> {
         } else {
           return this.getWordsWithoutCalculate(props);
         }
-      }
 
-      return this.calculateWordsByLines(
-        wordsWithComputedWidth,
-        spaceWidth,
-        props.width
-      );
+        return this.calculateWordsByLines(
+          wordsWithComputedWidth,
+          spaceWidth,
+          props.width
+        );
+      }
     }
     return this.getWordsWithoutCalculate(props);
   }
