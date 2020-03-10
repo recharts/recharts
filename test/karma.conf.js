@@ -70,7 +70,7 @@ module.exports = function config(config) {
       resolve: {
         alias: {
           sinon: 'sinon/pkg/sinon',
-          recharts: path.resolve('src/index.js'),
+          recharts: path.resolve('src/index.ts'),
         },
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
       },
