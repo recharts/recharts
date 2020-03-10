@@ -62,7 +62,7 @@ interface State {
 }
 
 const isTouch = (e: TouchEvent<SVGElement> | MouseEvent<SVGElement>): e is TouchEvent<SVGElement> => {
-  return (e as TouchEvent<SVGElement>).changedTouches && !!(e as TouchEvent<SVGElement>).changedTouches.length; 
+  return (e as TouchEvent<SVGElement>).changedTouches && !!(e as TouchEvent<SVGElement>).changedTouches.length;
 };
 
 class Brush extends PureComponent<Props, State> {
@@ -129,6 +129,8 @@ class Brush extends PureComponent<Props, State> {
       clearTimeout(this.leaveTimer);
       this.leaveTimer = null;
     }
+
+    this.detachDragEndListener();
   }
 
   static getIndexInRange(range: number[], x: number) {
@@ -188,11 +190,22 @@ class Brush extends PureComponent<Props, State> {
     }
   };
 
+  attachDragEndListener() {
+    window.addEventListener('mouseup', this.handleDragEnd, true);
+    window.addEventListener('touchend', this.handleDragEnd, true);
+  }
+
+  detachDragEndListener() {
+    window.removeEventListener('mouseup', this.handleDragEnd, true);
+    window.removeEventListener('touchend', this.handleDragEnd, true);
+  }
+
   handleDragEnd = () => {
     this.setState({
       isTravellerMoving: false,
       isSlideMoving: false,
     });
+    this.detachDragEndListener();
   };
 
   handleLeaveWrapper = () => {
@@ -222,6 +235,8 @@ class Brush extends PureComponent<Props, State> {
       isSlideMoving: true,
       slideMoveStartX: event.pageX,
     });
+
+    this.attachDragEndListener();
   };
 
   handleSlideDrag(e: React.Touch | MouseEvent<SVGGElement>) {
@@ -263,6 +278,8 @@ class Brush extends PureComponent<Props, State> {
       movingTravellerId: id,
       brushMoveStartX: event.pageX,
     });
+
+    this.attachDragEndListener();
   }
 
   handleTravellerMove(e: React.Touch | MouseEvent<SVGGElement>) {
@@ -470,8 +487,6 @@ class Brush extends PureComponent<Props, State> {
         className={layerClass}
         onMouseMove={this.handleDrag}
         onMouseLeave={this.handleLeaveWrapper}
-        onMouseUp={this.handleDragEnd}
-        onTouchEnd={this.handleDragEnd}
         onTouchMove={this.handleTouchMove}
         style={style}
       >
