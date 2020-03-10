@@ -26,7 +26,7 @@ function renderContent<TValue, TID>(content: ContentType<TValue, TID>, props: Pr
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
   } if (_.isFunction(content)) {
-    return content(props);
+    return React.createElement((content as any), props);
   }
 
   return <DefaultLegendContent {...props} />

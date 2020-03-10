@@ -36,7 +36,7 @@ function renderContent<TValue extends ValueType, TName extends NameType>(content
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
   } if (_.isFunction(content)) {
-    return content(props);
+    return React.createElement((content as any), props);
   }
 
   return <DefaultTooltipContent {...props} />

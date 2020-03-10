@@ -1,7 +1,7 @@
 /**
  * @fileOverview Customized
  */
-import React, { isValidElement, cloneElement, Component, FunctionComponent } from 'react';
+import React, { isValidElement, cloneElement, createElement, Component, FunctionComponent } from 'react';
 import _ from 'lodash';
 import Layer from '../container/Layer';
 import { warn } from '../util/LogUtils';
@@ -20,7 +20,7 @@ export default function Customized<P, C extends Comp<P>>({ component, ...props }
   if (isValidElement(component)) {
     child = cloneElement(component, props);
   } else if (_.isFunction(component)) {
-    child = component(props);
+    child = createElement(component, (props as any));
   } else {
     warn(false, 'Customized\'s props `component` must be React.element or Function, but got %s.', typeof component);
   }
