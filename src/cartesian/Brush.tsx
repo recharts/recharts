@@ -37,7 +37,7 @@ interface BrushProps extends InternalBrushProps {
   dataKey?: DataKey<any>;
   startIndex?: number;
   endIndex?: number;
-  tickFormatter?: (value: any) => ReactText;
+  tickFormatter?: (value: any, index: number) => ReactText;
 
   children?: ReactElement;
 
@@ -168,7 +168,7 @@ class Brush extends PureComponent<Props, State> {
     const { data, tickFormatter, dataKey } = this.props;
     const text = getValueByDataKey(data[index], dataKey, index);
 
-    return _.isFunction(tickFormatter) ? tickFormatter(text) : text;
+    return _.isFunction(tickFormatter) ? tickFormatter(text, index) : text;
   }
 
   handleDrag = (e: React.Touch | MouseEvent<SVGGElement>) => {

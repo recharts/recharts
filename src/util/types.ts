@@ -408,7 +408,7 @@ export interface BaseAxisProps {
   /** The size of tick line */
   tickSize?: number;
   /** The formatter function of tick */ 
-  tickFormatter?: (value: any) => string;
+  tickFormatter?: (value: any, index: number) => string;
   /**
    * When domain of the axis is specified and the type of the axis is 'number', 
    * if allowDataOverflow is set to be false, 
