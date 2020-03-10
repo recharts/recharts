@@ -9,6 +9,7 @@
 - Move draging-end listener to the window for brush 
 - Fix trigger after mouse leave
 - Added the angle as key which need to be used in the Label align
+- Rewrite index.js to index.ts
 
 ### feat
 
