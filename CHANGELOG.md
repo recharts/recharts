@@ -1,3 +1,20 @@
+## 2.0.0-beta.2 (Mar 10, 2020)
+
+### fix
+
+- Do word line calculation only when needed
+- Fixes arc angles when `cornerIsExternal` is used
+- Invert cartesian label position based on negative values
+- Fix usage of hooks in Tooltip, Label, Legend and Customized
+- Move draging-end listener to the window for brush 
+- Fix trigger after mouse leave
+- Added the angle as key which need to be used in the Label align
+
+### feat
+
+- Added index to tickFormatter
+- Allow axis line customization through axisLine prop
+
 ## 2.0.0-beta.1 (Dec 03, 2019)
 
 ### fix
