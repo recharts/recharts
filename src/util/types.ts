@@ -317,7 +317,7 @@ const SVGPropKeys = ['className', 'color', 'height', 'id', 'lang', 'max', 'media
 'version', 'vertAdvY', 'vertOriginX', 'vertOriginY', 'vHanging', 'vIdeographic', 'viewBox', 'viewTarget', 'visibility', 'vMathematical' ,
 'widths', 'wordSpacing', 'writingMode', 'x1', 'x2', 'x', 'xChannelSelector', 'xHeight', 'xlinkActuate', 'xlinkArcrole', 'xlinkHref', 'xlinkRole' ,
 'xlinkShow', 'xlinkTitle', 'xlinkType', 'xmlBase', 'xmlLang', 'xmlns', 'xmlnsXlink', 'xmlSpace', 'y1', 'y2', 'y', 'yChannelSelector' ,
-'z', 'zoomAndPan', 'ref', 'key'];
+'z', 'zoomAndPan', 'ref', 'key', 'angle'];
 
 const EventKeys = ['children', 'dangerouslySetInnerHTML', 'onCopy', 'onCopyCapture', 'onCut', 'onCutCapture', 'onPaste', 'onPasteCapture',
 'onCompositionEnd', 'onCompositionEndCapture', 'onCompositionStart', 'onCompositionStartCapture', 'onCompositionUpdate', 'onCompositionUpdateCapture',
