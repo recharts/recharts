@@ -315,9 +315,10 @@ class CartesianAxis extends Component<Props> {
   }
 
   renderAxisLine() {
-    const { x, y, width, height, orientation, mirror } = this.props;
+    const { x, y, width, height, orientation, mirror, axisLine } = this.props;
     let props: PresentationAttributes<SVGLineElement> = {
       ...filterProps(this.props),
+      ...filterProps(axisLine),
       fill: 'none',
     };
 
