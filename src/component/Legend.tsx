@@ -1,15 +1,17 @@
 /**
  * @fileOverview Legend
  */
-import React, { PureComponent, ReactNode, CSSProperties } from 'react';
+import React, { PureComponent, CSSProperties } from 'react';
 import _ from 'lodash';
-import DefaultLegendContent from './DefaultLegendContent';
-import { Payload, Props as DefaultProps, ContentType } from './DefaultLegendContent';
+import DefaultLegendContent, { Payload, Props as DefaultProps, ContentType } from './DefaultLegendContent';
+
 import { isNumber } from '../util/DataUtils';
 
-type UniqueFunc<TValue, TID> = (entry: Payload<TValue, TID>) => unknown
+type UniqueFunc<TValue, TID> = (entry: Payload<TValue, TID>) => unknown;
 type UniqueOption<TValue, TID> = boolean | UniqueFunc<TValue, TID>;
-function defaultUniqBy<TValue, TID>(entry: Payload<TValue, TID>) { return entry.value };
+function defaultUniqBy<TValue, TID>(entry: Payload<TValue, TID>) {
+  return entry.value;
+}
 function getUniqPayload<TValue, TID>(option: UniqueOption<TValue, TID>, payload: Array<Payload<TValue, TID>>) {
   if (option === true) {
     return _.uniqBy(payload, defaultUniqBy);
@@ -20,17 +22,18 @@ function getUniqPayload<TValue, TID>(option: UniqueOption<TValue, TID>, payload:
   }
 
   return payload;
-};
+}
 
 function renderContent<TValue, TID>(content: ContentType<TValue, TID>, props: Props<TValue, TID>) {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
-  } if (_.isFunction(content)) {
-    return React.createElement((content as any), props);
+  }
+  if (_.isFunction(content)) {
+    return React.createElement(content as any, props);
   }
 
-  return <DefaultLegendContent {...props} />
-};
+  return <DefaultLegendContent {...props} />;
+}
 
 const EPS = 1;
 
@@ -57,12 +60,14 @@ interface State {
 
 class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
   static displayName = 'Legend';
+
   static defaultProps = {
     iconSize: 14,
     layout: 'horizontal',
     align: 'center',
     verticalAlign: 'bottom',
   };
+
   private wrapperNode: HTMLDivElement;
 
   static getWithHeight(item: any, chartWidth: number) {
@@ -72,7 +77,8 @@ class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
       return {
         height: item.props.height,
       };
-    } if (layout === 'horizontal') {
+    }
+    if (layout === 'horizontal') {
       return {
         width: item.props.width || chartWidth,
       };
@@ -108,27 +114,30 @@ class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
     const { layout, align, verticalAlign, margin, chartWidth, chartHeight } = this.props;
     let hPos, vPos;
 
-    if (!style || ((style.left === undefined || style.left === null) && (
-      style.right === undefined || style.right === null))) {
+    if (
+      !style ||
+      ((style.left === undefined || style.left === null) && (style.right === undefined || style.right === null))
+    ) {
       if (align === 'center' && layout === 'vertical') {
         const box = this.getBBox() || { width: 0 };
         hPos = { left: ((chartWidth || 0) - box.width) / 2 };
       } else {
-        hPos = align === 'right' ?
-          { right: (margin && margin.right) || 0 } :
-          { left: (margin && margin.left) || 0 };
+        hPos = align === 'right' ? { right: (margin && margin.right) || 0 } : { left: (margin && margin.left) || 0 };
       }
     }
 
-    if (!style || ((style.top === undefined || style.top === null) && (
-      style.bottom === undefined || style.bottom === null))) {
+    if (
+      !style ||
+      ((style.top === undefined || style.top === null) && (style.bottom === undefined || style.bottom === null))
+    ) {
       if (verticalAlign === 'middle') {
         const box = this.getBBox() || { height: 0 };
         vPos = { top: ((chartHeight || 0) - box.height) / 2 };
       } else {
-        vPos = verticalAlign === 'bottom' ?
-          { bottom: (margin && margin.bottom) || 0 } :
-          { top: (margin && margin.top) || 0 };
+        vPos =
+          verticalAlign === 'bottom'
+            ? { bottom: (margin && margin.bottom) || 0 }
+            : { top: (margin && margin.top) || 0 };
       }
     }
 
@@ -143,24 +152,30 @@ class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
       const box = this.wrapperNode.getBoundingClientRect();
 
       if (Math.abs(box.width - boxWidth) > EPS || Math.abs(box.height - boxHeight) > EPS) {
-        this.setState({
-          boxWidth: box.width,
-          boxHeight: box.height,
-        }, () => {
-          if (onBBoxUpdate) {
-            onBBoxUpdate(box);
-          }
-        });
+        this.setState(
+          {
+            boxWidth: box.width,
+            boxHeight: box.height,
+          },
+          () => {
+            if (onBBoxUpdate) {
+              onBBoxUpdate(box);
+            }
+          },
+        );
       }
     } else if (boxWidth !== -1 || boxHeight !== -1) {
-      this.setState({
-        boxWidth: -1,
-        boxHeight: -1,
-      }, () => {
-        if (onBBoxUpdate) {
-          onBBoxUpdate(null);
-        }
-      });
+      this.setState(
+        {
+          boxWidth: -1,
+          boxHeight: -1,
+        },
+        () => {
+          if (onBBoxUpdate) {
+            onBBoxUpdate(null);
+          }
+        },
+      );
     }
   }
 
@@ -178,7 +193,9 @@ class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
       <div
         className="recharts-legend-wrapper"
         style={outerStyle}
-        ref={(node) => { this.wrapperNode = node; }}
+        ref={node => {
+          this.wrapperNode = node;
+        }}
       >
         {renderContent(content, { ...this.props, payload: getUniqPayload(payloadUniqBy, payload) })}
       </div>

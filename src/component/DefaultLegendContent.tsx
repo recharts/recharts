@@ -8,11 +8,11 @@ import Symbols from '../shape/Symbols';
 import { LegendType, LayoutType, SymbolType, adaptEventsOfChild } from '../util/types';
 
 const SIZE = 32;
-export type ContentType<TValue, TID> = ReactElement | ((props: Props<TValue, TID>) => ReactNode)
+export type ContentType<TValue, TID> = ReactElement | ((props: Props<TValue, TID>) => ReactNode);
 export type IconType = Omit<LegendType, 'none'>;
 export type HorizontalAlignmentType = 'center' | 'left' | 'right';
 export type VerticalAlignmentType = 'top' | 'bottom' | 'middle';
-export type Formatter<TValue, TID> = (value: any, entry: Payload<TValue, TID>, index: number) => ReactNode
+export type Formatter<TValue, TID> = (value: any, entry: Payload<TValue, TID>, index: number) => ReactNode;
 
 export interface Payload<TValue, TID> {
   value: TValue;
@@ -43,6 +43,7 @@ export interface Props<TValue, TID> {
 
 class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>> {
   static displayName = 'Legend';
+
   static defaultProps = {
     iconSize: 14,
     layout: 'horizontal',
@@ -77,7 +78,8 @@ class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>
           className="recharts-legend-icon"
         />
       );
-    } if (data.type === 'line') {
+    }
+    if (data.type === 'line') {
       return (
         <path
           strokeWidth={4}
@@ -90,12 +92,13 @@ class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>
           className="recharts-legend-icon"
         />
       );
-    } if (data.type === 'rect') {
+    }
+    if (data.type === 'rect') {
       return (
         <path
           stroke="none"
           fill={color}
-          d={`M0,${SIZE / 8}h${SIZE}v${SIZE * 3 / 4}h${-SIZE}z`}
+          d={`M0,${SIZE / 8}h${SIZE}v${(SIZE * 3) / 4}h${-SIZE}z`}
           className="recharts-legend-icon"
         />
       );
@@ -159,7 +162,9 @@ class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>
   render() {
     const { payload, layout, align } = this.props;
 
-    if (!payload || !payload.length) { return null; }
+    if (!payload || !payload.length) {
+      return null;
+    }
 
     const finalStyle = {
       padding: 0,

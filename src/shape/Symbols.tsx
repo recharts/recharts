@@ -2,20 +2,34 @@
  * @fileOverview Curve
  */
 import React, { PureComponent } from 'react';
-import { symbol as shapeSymbol, symbolCircle, symbolCross, symbolDiamond,
-  symbolSquare, symbolStar, symbolTriangle, symbolWye, SymbolType as D3SymbolType } from 'd3-shape';
+import {
+  symbol as shapeSymbol,
+  symbolCircle,
+  symbolCross,
+  symbolDiamond,
+  symbolSquare,
+  symbolStar,
+  symbolTriangle,
+  symbolWye,
+  SymbolType as D3SymbolType,
+} from 'd3-shape';
 import classNames from 'classnames';
 import { PresentationAttributes, SymbolType, filterProps } from '../util/types';
 
 type SizeType = 'area' | 'diameter';
 
 interface SymbolFactory {
-  [type: string]: D3SymbolType
+  [type: string]: D3SymbolType;
 }
 
 const SYMBOL_FACTORIES: SymbolFactory = {
-  symbolCircle, symbolCross, symbolDiamond,
-  symbolSquare, symbolStar, symbolTriangle, symbolWye,
+  symbolCircle,
+  symbolCross,
+  symbolDiamond,
+  symbolSquare,
+  symbolStar,
+  symbolTriangle,
+  symbolWye,
 };
 const RADIAN = Math.PI / 180;
 
@@ -26,28 +40,28 @@ const getSymbolFactory = (type: SymbolType) => {
 };
 
 const calculateAreaSize = (size: number, sizeType: SizeType, type: SymbolType) => {
-  if (sizeType === 'area') { return size; }
+  if (sizeType === 'area') {
+    return size;
+  }
 
   switch (type) {
     case 'cross':
-      return 5 * size * size / 9;
+      return (5 * size * size) / 9;
     case 'diamond':
-      return 0.5 * size * size / Math.sqrt(3);
+      return (0.5 * size * size) / Math.sqrt(3);
     case 'square':
       return size * size;
     case 'star': {
       const angle = 18 * RADIAN;
 
-      return 1.25 * size * size * (
-        Math.tan(angle) - Math.tan(angle * 2) * Math.tan(angle) ** 2
-      );
+      return 1.25 * size * size * (Math.tan(angle) - Math.tan(angle * 2) * Math.tan(angle) ** 2);
     }
     case 'triangle':
-      return Math.sqrt(3) * size * size / 4;
+      return (Math.sqrt(3) * size * size) / 4;
     case 'wye':
-      return (21 - 10 * Math.sqrt(3)) * size * size / 8;
+      return ((21 - 10 * Math.sqrt(3)) * size * size) / 8;
     default:
-      return Math.PI * size * size / 4;
+      return (Math.PI * size * size) / 4;
   }
 };
 
@@ -76,7 +90,8 @@ class Symbols extends PureComponent<Props> {
   getPath() {
     const { size, sizeType, type } = this.props;
     const symbolFactory = getSymbolFactory(type);
-    const symbol = shapeSymbol().type(symbolFactory)
+    const symbol = shapeSymbol()
+      .type(symbolFactory)
       .size(calculateAreaSize(size, sizeType, type));
 
     return symbol();

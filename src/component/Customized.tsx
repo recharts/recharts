@@ -6,9 +6,9 @@ import _ from 'lodash';
 import Layer from '../container/Layer';
 import { warn } from '../util/LogUtils';
 
-type Comp<P> = FunctionComponent<P> | Component<P>
+type Comp<P> = FunctionComponent<P> | Component<P>;
 type Props<P, C extends Comp<P>> = P & {
-  component: C
+  component: C;
 };
 
 /**
@@ -20,9 +20,9 @@ export default function Customized<P, C extends Comp<P>>({ component, ...props }
   if (isValidElement(component)) {
     child = cloneElement(component, props);
   } else if (_.isFunction(component)) {
-    child = createElement(component, (props as any));
+    child = createElement(component, props as any);
   } else {
-    warn(false, 'Customized\'s props `component` must be React.element or Function, but got %s.', typeof component);
+    warn(false, "Customized's props `component` must be React.element or Function, but got %s.", typeof component);
   }
   return <Layer className="recharts-customized-wrapper">{child}</Layer>;
 }

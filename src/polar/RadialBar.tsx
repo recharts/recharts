@@ -3,7 +3,6 @@
  */
 import React, { PureComponent, ReactElement, ReactNode } from 'react';
 import classNames from 'classnames';
-// @ts-ignore
 import Animate from 'react-smooth';
 import _ from 'lodash';
 import Sector, { Props as SectorProps } from '../shape/Sector';
@@ -12,8 +11,22 @@ import { findAllByType, isSsr } from '../util/ReactUtils';
 import LabelList from '../component/LabelList';
 import Cell from '../component/Cell';
 import { mathSign, interpolateNumber } from '../util/DataUtils';
-import { getCateCoordinateOfBar, findPositionOfBar, getValueByDataKey, truncateByDomain, getBaseValueOfBar } from '../util/ChartUtils';
-import { LegendType, TooltipType, AnimationTiming, filterProps, PresentationAttributes, TickItem, adaptEventsOfChild } from '../util/types';
+import {
+  getCateCoordinateOfBar,
+  findPositionOfBar,
+  getValueByDataKey,
+  truncateByDomain,
+  getBaseValueOfBar,
+} from '../util/ChartUtils';
+import {
+  LegendType,
+  TooltipType,
+  AnimationTiming,
+  filterProps,
+  PresentationAttributes,
+  TickItem,
+  adaptEventsOfChild,
+} from '../util/types';
 // TODO: Cause of circular dependency. Needs refactoring of functions that need them.
 // import { AngleAxisProps, RadiusAxisProps } from './types';
 
@@ -21,10 +34,10 @@ type RadialBarDataItem = SectorProps & {
   value?: any;
   payload?: any;
   background?: SectorProps;
-}
+};
 
 type RadialBarShape = ReactElement | ((props: Props) => ReactNode);
-type RadialBarBackground =  ReactElement | ((props: Props) => ReactNode) | SectorProps | boolean;
+type RadialBarBackground = ReactElement | ((props: Props) => ReactNode) | SectorProps | boolean;
 
 interface RadialBarProps {
   animationId?: string | number;
@@ -64,7 +77,6 @@ interface State {
 }
 
 class RadialBar extends PureComponent<Props, State> {
-
   static displayName = 'RadialBar';
 
   static defaultProps = {
@@ -82,23 +94,37 @@ class RadialBar extends PureComponent<Props, State> {
     cornerIsExternal: false,
   };
 
-  static getComposedData = ({ item, props, radiusAxis, radiusAxisTicks, angleAxis, angleAxisTicks,
-    displayedData, dataKey, stackedData, barPosition, bandSize, dataStartIndex }: {
-      item: RadialBar;
-      props: any;
-      radiusAxis: any; // RadiusAxisProps;
-      radiusAxisTicks: Array<TickItem>;
-      angleAxis: any; // AngleAxisProps;
-      angleAxisTicks: Array<TickItem>;
-      displayedData: any[];
-      dataKey: Props['dataKey'];
-      stackedData?: any[];
-      barPosition?: any[];
-      bandSize?: number;
-      dataStartIndex: number;
-    }) => {
+  static getComposedData = ({
+    item,
+    props,
+    radiusAxis,
+    radiusAxisTicks,
+    angleAxis,
+    angleAxisTicks,
+    displayedData,
+    dataKey,
+    stackedData,
+    barPosition,
+    bandSize,
+    dataStartIndex,
+  }: {
+    item: RadialBar;
+    props: any;
+    radiusAxis: any; // RadiusAxisProps;
+    radiusAxisTicks: Array<TickItem>;
+    angleAxis: any; // AngleAxisProps;
+    angleAxisTicks: Array<TickItem>;
+    displayedData: any[];
+    dataKey: Props['dataKey'];
+    stackedData?: any[];
+    barPosition?: any[];
+    bandSize?: number;
+    dataStartIndex: number;
+  }) => {
     const pos = findPositionOfBar(barPosition, item);
-    if (!pos) { return null; }
+    if (!pos) {
+      return null;
+    }
 
     const { cx, cy } = angleAxis;
     const { layout } = props;
@@ -114,7 +140,9 @@ class RadialBar extends PureComponent<Props, State> {
         value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
       } else {
         value = getValueByDataKey(entry, dataKey);
-        if (!_.isArray(value)) { value = [baseValue, value]; }
+        if (!_.isArray(value)) {
+          value = [baseValue, value];
+        }
       }
 
       if (layout === 'radial') {
@@ -132,14 +160,17 @@ class RadialBar extends PureComponent<Props, State> {
         const deltaAngle = endAngle - startAngle;
 
         if (Math.abs(minPointSize) > 0 && Math.abs(deltaAngle) < Math.abs(minPointSize)) {
-          const delta = mathSign(deltaAngle || minPointSize) *
-            (Math.abs(minPointSize) - Math.abs(deltaAngle));
+          const delta = mathSign(deltaAngle || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaAngle));
 
           endAngle += delta;
         }
         backgroundSector = {
           background: {
-            cx, cy, innerRadius, outerRadius, startAngle: props.startAngle,
+            cx,
+            cy,
+            innerRadius,
+            outerRadius,
+            startAngle: props.startAngle,
             endAngle: props.endAngle,
           },
         };
@@ -158,8 +189,7 @@ class RadialBar extends PureComponent<Props, State> {
         const deltaRadius = outerRadius - innerRadius;
 
         if (Math.abs(minPointSize) > 0 && Math.abs(deltaRadius) < Math.abs(minPointSize)) {
-          const delta = mathSign(deltaRadius || minPointSize) *
-            (Math.abs(minPointSize) - Math.abs(deltaRadius));
+          const delta = mathSign(deltaRadius || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaRadius));
           outerRadius += delta;
         }
       }
@@ -169,7 +199,12 @@ class RadialBar extends PureComponent<Props, State> {
         ...backgroundSector,
         payload: entry,
         value: stackedData ? value : value[1],
-        cx, cy, innerRadius, outerRadius, startAngle, endAngle,
+        cx,
+        cy,
+        innerRadius,
+        outerRadius,
+        startAngle,
+        endAngle,
         ...(cells && cells[index] && cells[index].props),
       };
     });
@@ -256,8 +291,7 @@ class RadialBar extends PureComponent<Props, State> {
   }
 
   renderSectorsWithAnimation() {
-    const { data, isAnimationActive, animationBegin, animationDuration,
-      animationEasing, animationId } = this.props;
+    const { data, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = this.props;
     const { prevData } = this.state;
 
     return (
@@ -272,38 +306,28 @@ class RadialBar extends PureComponent<Props, State> {
         onAnimationStart={this.handleAnimationStart}
         onAnimationEnd={this.handleAnimationEnd}
       >
-        {
-          ({ t }: { t: number }) => {
-            const stepData = data.map((entry, index) => {
-              const prev = prevData && prevData[index];
+        {({ t }: { t: number }) => {
+          const stepData = data.map((entry, index) => {
+            const prev = prevData && prevData[index];
 
-              if (prev) {
-                const interpolatorStartAngle = interpolateNumber(
-                  prev.startAngle, entry.startAngle
-                );
-                const interpolatorEndAngle = interpolateNumber(
-                  prev.endAngle, entry.endAngle
-                );
+            if (prev) {
+              const interpolatorStartAngle = interpolateNumber(prev.startAngle, entry.startAngle);
+              const interpolatorEndAngle = interpolateNumber(prev.endAngle, entry.endAngle);
 
-                return {
-                  ...entry,
-                  startAngle: interpolatorStartAngle(t),
-                  endAngle: interpolatorEndAngle(t),
-                };
-              }
-              const { endAngle, startAngle } = entry;
-              const interpolator = interpolateNumber(startAngle, endAngle);
+              return {
+                ...entry,
+                startAngle: interpolatorStartAngle(t),
+                endAngle: interpolatorEndAngle(t),
+              };
+            }
+            const { endAngle, startAngle } = entry;
+            const interpolator = interpolateNumber(startAngle, endAngle);
 
-              return { ...entry, endAngle: interpolator(t) };
-            });
+            return { ...entry, endAngle: interpolator(t) };
+          });
 
-            return (
-              <Layer>
-                {this.renderSectorsStatically(stepData)}
-              </Layer>
-            );
-          }
-        }
+          return <Layer>{this.renderSectorsStatically(stepData)}</Layer>;
+        }}
       </Animate>
     );
   }
@@ -312,8 +336,7 @@ class RadialBar extends PureComponent<Props, State> {
     const { data, isAnimationActive } = this.props;
     const { prevData } = this.state;
 
-    if (isAnimationActive && data && data.length &&
-      (!prevData || !_.isEqual(prevData, data))) {
+    if (isAnimationActive && data && data.length && (!prevData || !_.isEqual(prevData, data))) {
       return this.renderSectorsWithAnimation();
     }
 
@@ -328,7 +351,9 @@ class RadialBar extends PureComponent<Props, State> {
       // eslint-disable-next-line no-unused-vars
       const { value, background, ...rest } = entry;
 
-      if (!background) { return null; }
+      if (!background) {
+        return null;
+      }
 
       const props = {
         cornerRadius,
@@ -349,31 +374,27 @@ class RadialBar extends PureComponent<Props, State> {
   render() {
     const { hide, data, className, background, isAnimationActive } = this.props;
 
-    if (hide || !data || !data.length) { return null; }
+    if (hide || !data || !data.length) {
+      return null;
+    }
 
     const { isAnimationFinished } = this.state;
     const layerClass = classNames('recharts-area', className);
 
     return (
       <Layer className={layerClass}>
-        {
-          background && (
-            <Layer className="recharts-radial-bar-background">
-              {this.renderBackground(data)}
-            </Layer>
-          )
-        }
+        {background && <Layer className="recharts-radial-bar-background">{this.renderBackground(data)}</Layer>}
 
-        <Layer className="recharts-radial-bar-sectors">
-          {this.renderSectors()}
-        </Layer>
+        <Layer className="recharts-radial-bar-sectors">{this.renderSectors()}</Layer>
 
         {(!isAnimationActive || isAnimationFinished) &&
-          LabelList.renderCallByParent({
-            ...this.props,
-            clockWise: this.getDeltaAngle() < 0,
-          }, data)
-        }
+          LabelList.renderCallByParent(
+            {
+              ...this.props,
+              clockWise: this.getDeltaAngle() < 0,
+            },
+            data,
+          )}
       </Layer>
     );
   }

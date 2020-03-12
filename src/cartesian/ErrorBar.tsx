@@ -1,6 +1,6 @@
 /**
  * @fileOverview Render a group of error bar
-*/
+ */
 import React from 'react';
 import Layer from '../container/Layer';
 import { Props as XAxisProps } from './XAxis';
@@ -28,9 +28,9 @@ interface ErrorBarProps extends InternalErrorBarProps {
   dataKey: DataKey<any>;
   /** the width of the error bar ends */
   width?: number;
-  /** 
-   * Only used for ScatterChart with error bars in two directions. 
-   * Only accepts a value of "x" or "y" and makes the error bars lie in that direction. 
+  /**
+   * Only used for ScatterChart with error bars in two directions.
+   * Only accepts a value of "x" or "y" and makes the error bars lie in that direction.
    */
   direction?: 'x' | 'y';
 }
@@ -38,20 +38,20 @@ interface ErrorBarProps extends InternalErrorBarProps {
 export type Props = PresentationAttributes<SVGLineElement> & ErrorBarProps;
 
 function ErrorBar(props: Props) {
-  const { offset, layout, width, dataKey, data,
-    dataPointFormatter, xAxis, yAxis, ...others } = props;
+  const { offset, layout, width, dataKey, data, dataPointFormatter, xAxis, yAxis, ...others } = props;
   const svgProps = filterProps(others);
   const errorBars = data.map((entry, i) => {
     const { x, y, value, errorVal } = dataPointFormatter(entry, dataKey);
 
-    if (!errorVal) { return null; }
+    if (!errorVal) {
+      return null;
+    }
 
-    let lineCoordinates = [];
-    let lowBound;
-    let highBound;
+    const lineCoordinates = [];
+    let lowBound, highBound;
 
     if (Array.isArray(errorVal)) {
-      ([lowBound, highBound] = errorVal);
+      [lowBound, highBound] = errorVal;
     } else {
       lowBound = highBound = errorVal;
     }
@@ -95,17 +95,14 @@ function ErrorBar(props: Props) {
     return (
       // eslint-disable-next-line react/no-array-index-key
       <Layer className="recharts-errorBar" key={`bar-${i}`} {...svgProps}>
-        {lineCoordinates.map((coordinates, index) => (<line {...coordinates} key={`line-${index}`} />))}
+        {lineCoordinates.map((coordinates, index) => (
+          <line {...coordinates} key={`line-${index}`} />
+        ))}
       </Layer>
     );
   });
 
-
-  return (
-    <Layer className="recharts-errorBars">
-      {errorBars}
-    </Layer>
-  );
+  return <Layer className="recharts-errorBars">{errorBars}</Layer>;
 }
 
 ErrorBar.defaultProps = {

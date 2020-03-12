@@ -8,9 +8,10 @@
     "removeComments": true,
     "esModuleInterop": true,
     "sourceMap": true,
+    "skipLibCheck": true,
     "target": "es5"
   },
   "include": [
-    "./src/**/*"
+    "./src/**/*", "types.d.ts"
   ]
 }

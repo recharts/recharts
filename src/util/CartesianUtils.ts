@@ -33,18 +33,12 @@ export const formatAxisMap = (props: any, axisMap: any, offset: any, axisType: A
     let range, x, y, needSpace;
 
     if (axisType === 'xAxis') {
-      range = [
-        offset.left + (padding.left || 0),
-        offset.left + offset.width - (padding.right || 0),
-      ];
+      range = [offset.left + (padding.left || 0), offset.left + offset.width - (padding.right || 0)];
     } else if (axisType === 'yAxis') {
-      range = layout === 'horizontal' ? [
-        offset.top + offset.height - (padding.bottom || 0),
-        offset.top + (padding.top || 0),
-      ] : [
-        offset.top + (padding.top || 0),
-        offset.top + offset.height - (padding.bottom || 0),
-      ];
+      range =
+        layout === 'horizontal'
+          ? [offset.top + offset.height - (padding.bottom || 0), offset.top + (padding.top || 0)]
+          : [offset.top + (padding.top || 0), offset.top + offset.height - (padding.bottom || 0)];
     } else {
       ({ range } = axis);
     }
@@ -71,7 +65,10 @@ export const formatAxisMap = (props: any, axisMap: any, offset: any, axisType: A
     const finalAxis = {
       ...axis,
       ...ticks,
-      realScaleType, x, y, scale,
+      realScaleType,
+      x,
+      y,
+      scale,
       width: axisType === 'xAxis' ? offset.width : axis.width,
       height: axisType === 'yAxis' ? offset.height : axis.height,
     };
@@ -100,12 +97,12 @@ export const rectWithPoints = ({ x: x1, y: y1 }: Coordinate, { x: x2, y: y2 }: C
  * @param  {Object} coords     x1, x2, y1, and y2
  * @return {Object} object
  */
-export const rectWithCoords = ({
-  x1, y1, x2, y2,
-}: { x1: number; y1: number; x2: number; y2: number; }) => rectWithPoints({ x: x1, y: y1 }, { x: x2, y: y2 });
+export const rectWithCoords = ({ x1, y1, x2, y2 }: { x1: number; y1: number; x2: number; y2: number }) =>
+  rectWithPoints({ x: x1, y: y1 }, { x: x2, y: y2 });
 
 export class ScaleHelper {
   static EPS = 1e-4;
+
   private scale: any;
 
   static create(obj: any) {
@@ -139,7 +136,8 @@ export class ScaleHelper {
   apply(value: any, { bandAware, position }: { bandAware?: boolean; position?: any } = {}) {
     if (value === undefined) {
       return undefined;
-    } if (position) {
+    }
+    if (position) {
       switch (position) {
         case 'start': {
           return this.scale(value);
@@ -156,7 +154,8 @@ export class ScaleHelper {
           return this.scale(value);
         }
       }
-    } if (bandAware) {
+    }
+    if (bandAware) {
       const offset = this.bandwidth ? this.bandwidth() / 2 : 0;
       return this.scale(value) + offset;
     }
@@ -169,40 +168,37 @@ export class ScaleHelper {
     const first = range[0];
     const last = range[range.length - 1];
 
-    return first <= last ?
-      (value >= first && value <= last) :
-      (value >= last && value <= first);
+    return first <= last ? value >= first && value <= last : value >= last && value <= first;
   }
 }
 
 type ScaleResult<T> = {
   [P in keyof T]: number;
-}
+};
 type Scales<T> = {
   [P in keyof T]: ScaleHelper;
-}
+};
 type ScalesApply<T> = (coord: { [P in keyof T]: any }, options: any) => ScaleResult<T>;
 type ScalesIsInRange<T> = (coord: { [P in keyof T]: any }) => boolean;
 type LabeledScales<T> = Scales<T> & { apply: ScalesApply<T> } & { isInRange: ScalesIsInRange<T> };
 
 export const createLabeldScales = (options: Record<string, any>): LabeledScales<Record<string, any>> => {
-  const scales: Scales<Record<string, any>> = Object.keys(options).reduce((res, key: string) => {
-    return {
+  const scales: Scales<Record<string, any>> = Object.keys(options).reduce(
+    (res, key: string) => ({
       ...res,
-      [key]: ScaleHelper.create(options[key])
-    }
-  }, {});
-  
+      [key]: ScaleHelper.create(options[key]),
+    }),
+    {},
+  );
+
   return {
     ...scales,
     apply(coord: any, { bandAware }: any = {}) {
-      return _.mapValues(
-        coord,
-        (value, label) => scales[label].apply(value, { bandAware }));
+      return _.mapValues(coord, (value, label) => scales[label].apply(value, { bandAware }));
     },
-  
+
     isInRange(coord: any) {
       return _.every(coord, (value, label) => scales[label].isInRange(value));
-    }  
+    },
   } as LabeledScales<Record<string, any>>;
-}
+};

@@ -3,7 +3,6 @@
  */
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-// @ts-ignore
 import Animate from 'react-smooth';
 import { PresentationAttributes, AnimationTiming, filterProps } from '../util/types';
 
@@ -13,7 +12,7 @@ const getRectangePath = (x: number, y: number, width: number, height: number, ra
   const maxRadius = Math.min(Math.abs(width) / 2, Math.abs(height) / 2);
   const ySign = height >= 0 ? 1 : -1;
   const xSign = width >= 0 ? 1 : -1;
-  const clockWise = ((height >= 0 && width >= 0) || (height < 0 && width < 0)) ? 1 : 0;
+  const clockWise = (height >= 0 && width >= 0) || (height < 0 && width < 0) ? 1 : 0;
   let path;
 
   if (maxRadius > 0 && radius instanceof Array) {
@@ -47,7 +46,6 @@ const getRectangePath = (x: number, y: number, width: number, height: number, ra
         ${x},${y + height - ySign * newRadius[3]}`;
     }
     path += 'Z';
-
   } else if (maxRadius > 0 && radius === +radius && radius > 0) {
     const newRadius = Math.min(maxRadius, radius);
 
@@ -59,7 +57,6 @@ const getRectangePath = (x: number, y: number, width: number, height: number, ra
             A ${newRadius},${newRadius},0,0,${clockWise},${x + width - xSign * newRadius},${y + height}
             L ${x + xSign * newRadius},${y + height}
             A ${newRadius},${newRadius},0,0,${clockWise},${x},${y + height - ySign * newRadius} Z`;
-
   } else {
     path = `M ${x},${y} h ${width} v ${height} h ${-width} Z`;
   }
@@ -121,17 +118,22 @@ class Rectangle extends PureComponent<Props> {
         // calculate total length error
       }
     }
-
   }
 
   render() {
     const { x, y, width, height, radius, className } = this.props;
     const { totalLength } = this.state;
-    const { animationEasing, animationDuration, animationBegin,
-      isAnimationActive, isUpdateAnimationActive } = this.props;
+    const {
+      animationEasing,
+      animationDuration,
+      animationBegin,
+      isAnimationActive,
+      isUpdateAnimationActive,
+    } = this.props;
 
-    if (x !== +x || y !== +y || width !== +width || height !== +height || width === 0 ||
-      height === 0) { return null; }
+    if (x !== +x || y !== +y || width !== +width || height !== +height || width === 0 || height === 0) {
+      return null;
+    }
 
     const layerClass = classNames('recharts-rectangle', className);
     if (!isUpdateAnimationActive) {
@@ -153,8 +155,7 @@ class Rectangle extends PureComponent<Props> {
         animationEasing={animationEasing}
         isActive={isUpdateAnimationActive}
       >
-        {
-        ({ width: currWidth, height: currHeight, x: currX, y: currY }: any) => (
+        {({ width: currWidth, height: currHeight, x: currX, y: currY }: any) => (
           <Animate
             canBegin={totalLength > 0}
             from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
@@ -169,11 +170,12 @@ class Rectangle extends PureComponent<Props> {
               {...filterProps(this.props, true)}
               className={layerClass}
               d={getRectangePath(currX, currY, currWidth, currHeight, radius)}
-              ref={(node) => { this.node = node; }}
+              ref={node => {
+                this.node = node;
+              }}
             />
           </Animate>
-        )
-      }
+        )}
       </Animate>
     );
   }

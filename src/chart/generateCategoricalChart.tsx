@@ -11,26 +11,61 @@ import Sector from '../shape/Sector';
 import Dot from '../shape/Dot';
 import Rectangle from '../shape/Rectangle';
 
-import { findAllByType, findChildByType, getDisplayName, parseChildIndex,
-  validateWidthHeight, isChildrenEqual,
-  renderByOrder, getReactEventByType } from '../util/ReactUtils';
+import {
+  findAllByType,
+  findChildByType,
+  getDisplayName,
+  parseChildIndex,
+  validateWidthHeight,
+  isChildrenEqual,
+  renderByOrder,
+  getReactEventByType,
+} from '../util/ReactUtils';
 
 import CartesianAxis from '../cartesian/CartesianAxis';
 import Brush from '../cartesian/Brush';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
 import { getAnyElementOfObject, hasDuplicate, uniqueId, isNumber, findEntryInArray } from '../util/DataUtils';
-import { calculateActiveTickIndex, getMainColorOfGraphicItem, getBarSizeList,
-  getBarPosition, appendOffsetOfLegend, getLegendProps, combineEventHandlers,
-  getTicksOfAxis, getCoordinatesOfGrid, getStackedDataOfItem, parseErrorBarsOfAxis,
-  getBandSizeOfAxis, getStackGroupsByAxisId, getValueByDataKey, isCategorialAxis,
-  getDomainOfItemsWithSameAxis, getDomainOfStackGroups, getDomainOfDataByKey,
-  parseSpecifiedDomain, parseDomainOfCategoryAxis } from '../util/ChartUtils';
+import {
+  calculateActiveTickIndex,
+  getMainColorOfGraphicItem,
+  getBarSizeList,
+  getBarPosition,
+  appendOffsetOfLegend,
+  getLegendProps,
+  combineEventHandlers,
+  getTicksOfAxis,
+  getCoordinatesOfGrid,
+  getStackedDataOfItem,
+  parseErrorBarsOfAxis,
+  getBandSizeOfAxis,
+  getStackGroupsByAxisId,
+  getValueByDataKey,
+  isCategorialAxis,
+  getDomainOfItemsWithSameAxis,
+  getDomainOfStackGroups,
+  getDomainOfDataByKey,
+  parseSpecifiedDomain,
+  parseDomainOfCategoryAxis,
+} from '../util/ChartUtils';
 import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDomain';
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
-import { CategoricalChartPropTypes, CategoricalChart, LayoutType } from './types';
-import { Margin, ViewBox, ChartOffset, BaseAxisProps, Coordinate, ChartCoordinate, TickItem, filterProps, adaptEventHandlers } from '../util/types';
+import {
+  LayoutType,
+  CategoricalChartPropTypes,
+  CategoricalChart,
+  Margin,
+  ViewBox,
+  ChartOffset,
+  BaseAxisProps,
+  Coordinate,
+  ChartCoordinate,
+  TickItem,
+  filterProps,
+  adaptEventHandlers,
+} from '../util/types';
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
@@ -39,37 +74,60 @@ const ORIENT_MAP = {
 
 const originCoordinate: Coordinate = { x: 0, y: 0 };
 
-class State {
+interface State {
   chartX?: number;
+
   chartY?: number;
+
   dataStartIndex?: number;
+
   dataEndIndex?: number;
+
   activeTooltipIndex?: number;
+
   isTooltipActive?: boolean;
+
   updateId?: number;
+
   xAxisMap?: {
     [k: string]: BaseAxisProps;
   };
+
   yAxisMap?: {
     [k: string]: BaseAxisProps;
   };
+
   orderedTooltipTicks?: any;
+
   tooltipAxis?: BaseAxisProps;
+
   tooltipTicks?: TickItem[];
+
   graphicalItems?: any;
+
   activeCoordinate?: ChartCoordinate;
+
   offset?: ChartOffset;
+
   angleAxisMap?: any;
+
   radiusAxisMap?: any;
+
   formatedGraphicalItems?: any;
+
   /** active tooltip payload */
   activePayload?: any[];
+
   tooltipAxisBandSize?: number;
+
   /** active item */
   activeItem?: any;
+
   /** Active label of data */
   activeLabel?: string;
+
   xValue?: number;
+
   yValue?: number;
 }
 
@@ -86,7 +144,9 @@ const generateCategoricalChart = ({
     static displayName = chartName;
 
     uniqueChartId: any;
+
     clipPathId: any;
+
     legendInstance: any;
 
     // todo join specific chart propTypes
@@ -109,8 +169,8 @@ const generateCategoricalChart = ({
       const { children, defaultShowTooltip } = props;
       const brushItem = findChildByType(children, Brush.displayName);
       const startIndex = (brushItem && brushItem.props && brushItem.props.startIndex) || 0;
-      const endIndex = (brushItem && brushItem.props && brushItem.props.endIndex) ||
-      ((props.data && (props.data.length - 1)) || 0);
+      const endIndex =
+        (brushItem && brushItem.props && brushItem.props.endIndex) || (props.data && props.data.length - 1) || 0;
       return {
         chartX: 0,
         chartY: 0,
@@ -122,7 +182,9 @@ const generateCategoricalChart = ({
     };
 
     static hasBar = (graphicalItems: any[]): any[] | boolean => {
-      if (!graphicalItems || !graphicalItems.length) { return false; }
+      if (!graphicalItems || !graphicalItems.length) {
+        return false;
+      }
 
       return graphicalItems.some((item: any) => {
         const name = getDisplayName(item && item.type);
@@ -131,7 +193,11 @@ const generateCategoricalChart = ({
       });
     };
 
-    static getDisplayedData = (props: CategoricalChartPropTypes, { graphicalItems, dataStartIndex, dataEndIndex }: any, item?: any): any[] => {
+    static getDisplayedData = (
+      props: CategoricalChartPropTypes,
+      { graphicalItems, dataStartIndex, dataEndIndex }: any,
+      item?: any,
+    ): any[] => {
       const itemsData = (graphicalItems || []).reduce((result: any, child: any) => {
         const itemData = child.props.data;
 
@@ -165,15 +231,17 @@ const generateCategoricalChart = ({
 
       const defaultState = CategoricalChartWrapper.createDefaultState(props);
       const updateId = 0;
-      this.state = { ...defaultState, updateId: 0,
-        ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState, updateId }) };
+      this.state = {
+        ...defaultState,
+        updateId: 0,
+        ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState, updateId }),
+      };
 
       this.uniqueChartId = _.isNil(props.id) ? uniqueId('recharts') : props.id;
       this.clipPathId = `${this.uniqueChartId}-clip`;
 
       if (props.throttleDelay) {
-        this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove,
-          props.throttleDelay);
+        this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove, props.throttleDelay);
       }
     }
 
@@ -189,14 +257,24 @@ const generateCategoricalChart = ({
       const { data, children, width, height, layout, stackOffset, margin } = this.props;
       const { updateId } = this.state;
 
-      if (nextProps.data !== data || nextProps.width !== width ||
-        nextProps.height !== height || nextProps.layout !== layout ||
-        nextProps.stackOffset !== stackOffset || !shallowEqual(nextProps.margin, margin)) {
+      if (
+        nextProps.data !== data ||
+        nextProps.width !== width ||
+        nextProps.height !== height ||
+        nextProps.layout !== layout ||
+        nextProps.stackOffset !== stackOffset ||
+        !shallowEqual(nextProps.margin, margin)
+      ) {
         const defaultState = CategoricalChartWrapper.createDefaultState(nextProps);
-        this.setState({ ...defaultState, updateId: updateId + 1,
-          ...this.updateStateOfAxisMapsOffsetAndStackGroups(
-            { props: nextProps, ...defaultState, updateId: updateId + 1 }) }
-        );
+        this.setState({
+          ...defaultState,
+          updateId: updateId + 1,
+          ...this.updateStateOfAxisMapsOffsetAndStackGroups({
+            props: nextProps,
+            ...defaultState,
+            updateId: updateId + 1,
+          }),
+        });
       } else if (!isChildrenEqual(nextProps.children, children)) {
         // update configuration in chilren
         const hasGlobalData = !_.isNil(nextProps.data);
@@ -235,17 +313,19 @@ const generateCategoricalChart = ({
     }
 
     /**
-   * Get the configuration of all x-axis or y-axis
-   * @param  {Object} props          Latest props
-   * @param  {String} axisType       The type of axis
-   * @param  {Array}  graphicalItems The instances of item
-   * @param  {Object} stackGroups    The items grouped by axisId and stackId
-   * @param {Number} dataStartIndex  The start index of the data series when a brush is applied
-   * @param {Number} dataEndIndex    The end index of the data series when a brush is applied
-   * @return {Object}          Configuration
-   */
-    getAxisMap(props: CategoricalChartPropTypes, { axisType = 'xAxis', AxisComp, graphicalItems, stackGroups, dataStartIndex,
-      dataEndIndex }: any) {
+     * Get the configuration of all x-axis or y-axis
+     * @param  {Object} props          Latest props
+     * @param  {String} axisType       The type of axis
+     * @param  {Array}  graphicalItems The instances of item
+     * @param  {Object} stackGroups    The items grouped by axisId and stackId
+     * @param {Number} dataStartIndex  The start index of the data series when a brush is applied
+     * @param {Number} dataEndIndex    The end index of the data series when a brush is applied
+     * @return {Object}          Configuration
+     */
+    getAxisMap(
+      props: CategoricalChartPropTypes,
+      { axisType = 'xAxis', AxisComp, graphicalItems, stackGroups, dataStartIndex, dataEndIndex }: any,
+    ) {
       const { children } = props;
       const axisIdKey = `${axisType}Id`;
       // Get all the instance of Axis
@@ -254,12 +334,25 @@ const generateCategoricalChart = ({
       let axisMap = {};
 
       if (axes && axes.length) {
-        axisMap = this.getAxisMapByAxes(props, { axes, graphicalItems, axisType, axisIdKey,
-          stackGroups, dataStartIndex, dataEndIndex });
+        axisMap = this.getAxisMapByAxes(props, {
+          axes,
+          graphicalItems,
+          axisType,
+          axisIdKey,
+          stackGroups,
+          dataStartIndex,
+          dataEndIndex,
+        });
       } else if (graphicalItems && graphicalItems.length) {
         axisMap = this.getAxisMapByItems(props, {
           Axis: AxisComp,
-          graphicalItems, axisType, axisIdKey, stackGroups, dataStartIndex, dataEndIndex });
+          graphicalItems,
+          axisType,
+          axisIdKey,
+          stackGroups,
+          dataStartIndex,
+          dataEndIndex,
+        });
       }
 
       return axisMap;
@@ -277,15 +370,16 @@ const generateCategoricalChart = ({
      * @param {Number} dataEndIndex   The end index of the data series when a brush is applied
      * @return {Object}      Configuration
      */
-    getAxisMapByAxes(props: CategoricalChartPropTypes, { axes, graphicalItems, axisType, axisIdKey,
-      stackGroups, dataStartIndex, dataEndIndex }: any) {
+    getAxisMapByAxes = (
+      props: CategoricalChartPropTypes,
+      { axes, graphicalItems, axisType, axisIdKey, stackGroups, dataStartIndex, dataEndIndex }: any,
+    ) => {
       const { layout, children, stackOffset } = props;
       const isCategorial = isCategorialAxis(layout, axisType);
 
       // Eliminate duplicated axes
       const axisMap = axes.reduce((result: any, child: any) => {
-        const { type, dataKey, allowDataOverflow, allowDuplicatedCategory,
-          scale, ticks } = child.props;
+        const { type, dataKey, allowDataOverflow, allowDuplicatedCategory, scale, ticks } = child.props;
         const axisId = child.props[axisIdKey];
         const displayedData = CategoricalChartWrapper.getDisplayedData(props, {
           graphicalItems: graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId),
@@ -309,28 +403,29 @@ const generateCategoricalChart = ({
                 domain = _.range(0, len);
               } else if (!allowDuplicatedCategory) {
                 // remove duplicated category
-                domain = parseDomainOfCategoryAxis(child.props.domain, domain, child)
-                  .reduce((finalDomain: any, entry: any) => (
-                    finalDomain.indexOf(entry) >= 0 ? finalDomain : [...finalDomain, entry]
-                  ), []);
+                domain = parseDomainOfCategoryAxis(child.props.domain, domain, child).reduce(
+                  (finalDomain: any, entry: any) =>
+                    finalDomain.indexOf(entry) >= 0 ? finalDomain : [...finalDomain, entry],
+                  [],
+                );
               }
             } else if (type === 'category') {
               if (!allowDuplicatedCategory) {
-                domain = parseDomainOfCategoryAxis(child.props.domain, domain, child)
-                  .reduce((finalDomain: any, entry: any) => (
-                    (finalDomain.indexOf(entry) >= 0 || entry === '' || _.isNil(entry)) ?
-                      finalDomain : [...finalDomain, entry]
-                  ), []);
+                domain = parseDomainOfCategoryAxis(child.props.domain, domain, child).reduce(
+                  (finalDomain: any, entry: any) =>
+                    finalDomain.indexOf(entry) >= 0 || entry === '' || _.isNil(entry)
+                      ? finalDomain
+                      : [...finalDomain, entry],
+                  [],
+                );
               } else {
                 // eliminate undefined or null or empty string
-                domain = domain.filter((entry: any) => (entry !== '' && !_.isNil(entry)));
+                domain = domain.filter((entry: any) => entry !== '' && !_.isNil(entry));
               }
             } else if (type === 'number') {
               const errorBarsDomain = parseErrorBarsOfAxis(
                 displayedData,
-                graphicalItems.filter((item: any) => (
-                  item.props[axisIdKey] === axisId && !item.props.hide
-                )),
+                graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
                 dataKey,
                 axisType,
               );
@@ -345,20 +440,18 @@ const generateCategoricalChart = ({
             }
           } else if (isCategorial) {
             domain = _.range(0, len);
-          } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack &&
-            type === 'number') {
+          } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack && type === 'number') {
             // when stackOffset is 'expand', the domain may be calculated as [0, 1.000000000002]
-            domain = stackOffset === 'expand' ? [0, 1] : getDomainOfStackGroups(
-              stackGroups[axisId].stackGroups, dataStartIndex, dataEndIndex
-            );
+            domain =
+              stackOffset === 'expand'
+                ? [0, 1]
+                : getDomainOfStackGroups(stackGroups[axisId].stackGroups, dataStartIndex, dataEndIndex);
           } else {
             domain = getDomainOfItemsWithSameAxis(
               displayedData,
-              graphicalItems.filter((item: any) => (
-                item.props[axisIdKey] === axisId && !item.props.hide
-              )),
+              graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
               type,
-              true
+              true,
             );
           }
           if (type === 'number') {
@@ -388,7 +481,7 @@ const generateCategoricalChart = ({
         return result;
       }, {});
       return axisMap;
-    }
+    };
 
     /**
      * Get the configuration of axis by the options of item,
@@ -403,11 +496,15 @@ const generateCategoricalChart = ({
      * @param {Number} dataEndIndex   The end index of the data series when a brush is applied
      * @return {Object}               Configuration
      */
-    getAxisMapByItems(props: CategoricalChartPropTypes, { graphicalItems, Axis, axisType, axisIdKey,
-      stackGroups, dataStartIndex, dataEndIndex }: any): any {
+    getAxisMapByItems = (
+      props: CategoricalChartPropTypes,
+      { graphicalItems, Axis, axisType, axisIdKey, stackGroups, dataStartIndex, dataEndIndex }: any,
+    ) => {
       const { layout, children } = props;
       const displayedData = CategoricalChartWrapper.getDisplayedData(props, {
-        graphicalItems, dataStartIndex, dataEndIndex,
+        graphicalItems,
+        dataStartIndex,
+        dataEndIndex,
       });
       const len = displayedData.length;
       const isCategorial = isCategorialAxis(layout, axisType);
@@ -427,20 +524,17 @@ const generateCategoricalChart = ({
           if (isCategorial) {
             domain = _.range(0, len);
           } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack) {
-            domain = getDomainOfStackGroups(
-              stackGroups[axisId].stackGroups, dataStartIndex, dataEndIndex
-            );
+            domain = getDomainOfStackGroups(stackGroups[axisId].stackGroups, dataStartIndex, dataEndIndex);
             domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
           } else {
-            domain = parseSpecifiedDomain(Axis.defaultProps.domain,
+            domain = parseSpecifiedDomain(
+              Axis.defaultProps.domain,
               getDomainOfItemsWithSameAxis(
                 displayedData,
-                graphicalItems.filter((item: any) => (
-                  item.props[axisIdKey] === axisId && !item.props.hide
-                )),
-                'number'
+                graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
+                'number',
               ),
-              Axis.defaultProps.allowDataOverflow
+              Axis.defaultProps.allowDataOverflow,
             );
             domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
           }
@@ -466,25 +560,28 @@ const generateCategoricalChart = ({
       }, {});
 
       return axisMap;
-    }
+    };
 
     getActiveCoordinate(tooltipTicks: TickItem[], activeIndex: any, rangeObj: any): ChartCoordinate {
       const { layout } = this.props;
-      const entry = tooltipTicks.find((tick: any) => tick && (tick.index === activeIndex));
+      const entry = tooltipTicks.find((tick: any) => tick && tick.index === activeIndex);
 
       if (entry) {
         if (layout === 'horizontal') {
           return { x: entry.coordinate, y: rangeObj.y };
-        } if (layout === 'vertical') {
+        }
+        if (layout === 'vertical') {
           return { x: rangeObj.x, y: entry.coordinate };
-        } if (layout === 'centric') {
+        }
+        if (layout === 'centric') {
           const angle = entry.coordinate;
           const { radius } = rangeObj;
 
           return {
             ...rangeObj,
             ...polarToCartesian(rangeObj.cx, rangeObj.cy, radius, angle),
-            angle, radius,
+            angle,
+            radius,
           };
         }
 
@@ -494,7 +591,8 @@ const generateCategoricalChart = ({
         return {
           ...rangeObj,
           ...polarToCartesian(rangeObj.cx, rangeObj.cy, radius, angle),
-          angle, radius,
+          angle,
+          radius,
         };
       }
 
@@ -507,12 +605,16 @@ const generateCategoricalChart = ({
      * @return {Object}          Mouse data
      */
     getMouseInfo(event: any) {
-      if (!this.container) { return null; }
+      if (!this.container) {
+        return null;
+      }
 
       const containerOffset = getOffset(this.container);
       const e = calculateChartCoordinate(event, containerOffset);
       const rangeObj = this.inRange(e.chartX, e.chartY);
-      if (!rangeObj) { return null; }
+      if (!rangeObj) {
+        return null;
+      }
 
       const { xAxisMap, yAxisMap } = this.state;
 
@@ -537,7 +639,9 @@ const generateCategoricalChart = ({
         return {
           ...e,
           activeTooltipIndex: activeIndex,
-          activeLabel, activePayload, activeCoordinate,
+          activeLabel,
+          activePayload,
+          activeCoordinate,
         };
       }
 
@@ -554,15 +658,16 @@ const generateCategoricalChart = ({
       const { graphicalItems, tooltipAxis } = this.state;
       const displayedData = CategoricalChartWrapper.getDisplayedData(this.props, this.state);
 
-      if (activeIndex < 0 || !graphicalItems || !graphicalItems.length ||
-        activeIndex >= displayedData.length) {
+      if (activeIndex < 0 || !graphicalItems || !graphicalItems.length || activeIndex >= displayedData.length) {
         return null;
       }
       // get data by activeIndex when the axis don't allow duplicated category
       return graphicalItems.reduce((result: any, child: any) => {
         const { hide } = child.props;
 
-        if (hide) { return result; }
+        if (hide) {
+          return result;
+        }
 
         const { dataKey, name, unit, formatter, data, tooltipType } = child.props;
         let payload;
@@ -574,23 +679,29 @@ const generateCategoricalChart = ({
           payload = (data && data[activeIndex]) || displayedData[activeIndex];
         }
 
-        if (!payload) { return result; }
+        if (!payload) {
+          return result;
+        }
 
-        return [...result, {
-          ...filterProps(child),
-          dataKey, unit, formatter,
-          name: name || dataKey,
-          color: getMainColorOfGraphicItem(child),
-          value: getValueByDataKey(payload, dataKey),
-          type: tooltipType,
-          payload,
-        }];
+        return [
+          ...result,
+          {
+            ...filterProps(child),
+            dataKey,
+            unit,
+            formatter,
+            name: name || dataKey,
+            color: getMainColorOfGraphicItem(child),
+            value: getValueByDataKey(payload, dataKey),
+            type: tooltipType,
+            payload,
+          },
+        ];
       }, []);
     }
 
     getFormatItems(props: CategoricalChartPropTypes, currentState: any): any[] {
-      const { graphicalItems, stackGroups, offset, updateId, dataStartIndex,
-        dataEndIndex } = currentState;
+      const { graphicalItems, stackGroups, offset, updateId, dataStartIndex, dataEndIndex } = currentState;
       const { barSize, layout, barGap, barCategoryGap, maxBarSize: globalMaxBarSize } = props;
       const { numericAxisName, cateAxisName } = CategoricalChartWrapper.getAxisNameByLayout(layout);
       const hasBar = CategoricalChartWrapper.hasBar(graphicalItems);
@@ -598,9 +709,7 @@ const generateCategoricalChart = ({
       const formatedItems = [] as any[];
 
       graphicalItems.forEach((item: any, index: number) => {
-        const displayedData = CategoricalChartWrapper.getDisplayedData(
-          props, { dataStartIndex, dataEndIndex }, item
-        );
+        const displayedData = CategoricalChartWrapper.getDisplayedData(props, { dataStartIndex, dataEndIndex }, item);
         const { dataKey, maxBarSize: childMaxBarSize } = item.props;
         const numericAxisId = item.props[`${numericAxisName}Id`];
         const cateAxisId = item.props[`${cateAxisName}Id`];
@@ -617,28 +726,42 @@ const generateCategoricalChart = ({
         }, {});
         const cateAxis = axisObj[cateAxisName];
         const cateTicks = axisObj[`${cateAxisName}Ticks`];
-        const stackedData = stackGroups && stackGroups[numericAxisId] &&
-            stackGroups[numericAxisId].hasStack &&
-            getStackedDataOfItem(item, stackGroups[numericAxisId].stackGroups);
+        const stackedData =
+          stackGroups &&
+          stackGroups[numericAxisId] &&
+          stackGroups[numericAxisId].hasStack &&
+          getStackedDataOfItem(item, stackGroups[numericAxisId].stackGroups);
         const bandSize = getBandSizeOfAxis(cateAxis, cateTicks);
         const maxBarSize = _.isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
-        const barPosition = hasBar && getBarPosition({
-          barGap, barCategoryGap, bandSize, sizeList: sizeList[cateAxisId], maxBarSize,
-        });
+        const barPosition =
+          hasBar &&
+          getBarPosition({
+            barGap,
+            barCategoryGap,
+            bandSize,
+            sizeList: sizeList[cateAxisId],
+            maxBarSize,
+          });
         const componsedFn = item && item.type && item.type.getComposedData;
 
         if (componsedFn) {
           formatedItems.push({
             props: {
               ...componsedFn({
-                ...axisObj, displayedData, props, dataKey, item, bandSize,
-                barPosition, offset, stackedData, layout, dataStartIndex, dataEndIndex,
-                onItemMouseLeave: combineEventHandlers(
-                  this.handleItemMouseLeave, null, item.props.onMouseLeave
-                ),
-                onItemMouseEnter: combineEventHandlers(
-                  this.handleItemMouseEnter, null, item.props.onMouseEnter
-                ),
+                ...axisObj,
+                displayedData,
+                props,
+                dataKey,
+                item,
+                bandSize,
+                barPosition,
+                offset,
+                stackedData,
+                layout,
+                dataStartIndex,
+                dataEndIndex,
+                onItemMouseLeave: combineEventHandlers(this.handleItemMouseLeave, null, item.props.onMouseLeave),
+                onItemMouseEnter: combineEventHandlers(this.handleItemMouseEnter, null, item.props.onMouseEnter),
               }),
               key: item.key || `item-${index}`,
               [numericAxisName]: axisObj[numericAxisName],
@@ -700,20 +823,29 @@ const generateCategoricalChart = ({
 
           return {
             points: [startPoint, endPoint],
-            cx, cy, radius, startAngle, endAngle,
+            cx,
+            cy,
+            radius,
+            startAngle,
+            endAngle,
           };
         }
       }
 
-      return [{ x: x1, y: y1 }, { x: x2, y: y2 }];
+      return [
+        { x: x1, y: y1 },
+        { x: x2, y: y2 },
+      ];
     }
 
     static getAxisNameByLayout(layout: LayoutType) {
       if (layout === 'horizontal') {
         return { numericAxisName: 'yAxis', cateAxisName: 'xAxis' };
-      } if (layout === 'vertical') {
+      }
+      if (layout === 'vertical') {
         return { numericAxisName: 'xAxis', cateAxisName: 'yAxis' };
-      } if (layout === 'centric') {
+      }
+      if (layout === 'centric') {
         return { numericAxisName: 'radiusAxis', cateAxisName: 'angleAxis' };
       }
 
@@ -723,9 +855,15 @@ const generateCategoricalChart = ({
     calculateTooltipPos(rangeObj: any): any {
       const { layout } = this.props;
 
-      if (layout === 'horizontal') { return rangeObj.x; }
-      if (layout === 'vertical') { return rangeObj.y; }
-      if (layout === 'centric') { return rangeObj.angle; }
+      if (layout === 'horizontal') {
+        return rangeObj.x;
+      }
+      if (layout === 'vertical') {
+        return rangeObj.y;
+      }
+      if (layout === 'centric') {
+        return rangeObj.angle;
+      }
 
       return rangeObj.radius;
     }
@@ -735,8 +873,8 @@ const generateCategoricalChart = ({
 
       if (layout === 'horizontal' || layout === 'vertical') {
         const { offset } = this.state;
-        const isInRange = x >= offset.left && x <= (offset.left + offset.width) &&
-          y >= offset.top && y <= offset.top + offset.height;
+        const isInRange =
+          x >= offset.left && x <= offset.left + offset.width && y >= offset.top && y <= offset.top + offset.height;
 
         return isInRange ? { x, y } : null;
       }
@@ -755,14 +893,17 @@ const generateCategoricalChart = ({
     parseEventsOfWrapper() {
       const { children } = this.props;
       const tooltipItem = findChildByType(children, Tooltip.displayName);
-      const tooltipEvents = tooltipItem && eventType === 'axis' ? {
-        onMouseEnter: this.handleMouseEnter,
-        onMouseMove: this.handleMouseMove,
-        onMouseLeave: this.handleMouseLeave,
-        onTouchMove: this.handleTouchMove,
-        onTouchStart: this.handleTouchStart,
-        onTouchEnd: this.handleTouchEnd,
-      } : {};
+      const tooltipEvents =
+        tooltipItem && eventType === 'axis'
+          ? {
+              onMouseEnter: this.handleMouseEnter,
+              onMouseMove: this.handleMouseMove,
+              onMouseLeave: this.handleMouseLeave,
+              onTouchMove: this.handleTouchMove,
+              onTouchStart: this.handleTouchStart,
+              onTouchEnd: this.handleTouchEnd,
+            }
+          : {};
       const outerEvents = adaptEventHandlers(this.props, this.handleOuterEvent);
 
       return {
@@ -785,13 +926,20 @@ const generateCategoricalChart = ({
      * @return {Object} state New state to set
      */
     updateStateOfAxisMapsOffsetAndStackGroups({ props, dataStartIndex, dataEndIndex, updateId }: any): any {
-      if (!validateWidthHeight({ props })) { return null; }
+      if (!validateWidthHeight({ props })) {
+        return null;
+      }
 
       const { children, layout, stackOffset, data, reverseStackOrder } = props;
       const { numericAxisName, cateAxisName } = CategoricalChartWrapper.getAxisNameByLayout(layout);
       const graphicalItems = findAllByType(children, GraphicalChild);
       const stackGroups = getStackGroupsByAxisId(
-        data, graphicalItems, `${numericAxisName}Id`, `${cateAxisName}Id`, stackOffset, reverseStackOrder
+        data,
+        graphicalItems,
+        `${numericAxisName}Id`,
+        `${cateAxisName}Id`,
+        stackOffset,
+        reverseStackOrder,
       );
       const axisObj = axisComponents.reduce((result: any, entry: any) => {
         const name = `${entry.axisType}Map`;
@@ -810,22 +958,29 @@ const generateCategoricalChart = ({
 
       const offset = this.calculateOffset({ ...axisObj, props, graphicalItems });
 
-      Object.keys(axisObj).forEach((key) => {
-        axisObj[key] = formatAxisMap(
-          props, axisObj[key], offset, key.replace('Map', ''), chartName
-        );
+      Object.keys(axisObj).forEach(key => {
+        axisObj[key] = formatAxisMap(props, axisObj[key], offset, key.replace('Map', ''), chartName);
       });
       const cateAxisMap = axisObj[`${cateAxisName}Map`];
       const ticksObj = this.tooltipTicksGenerator(cateAxisMap);
 
       const formatedGraphicalItems = this.getFormatItems(props, {
-        ...axisObj, dataStartIndex, dataEndIndex, updateId,
-        graphicalItems, stackGroups, offset,
+        ...axisObj,
+        dataStartIndex,
+        dataEndIndex,
+        updateId,
+        graphicalItems,
+        stackGroups,
+        offset,
       });
 
       return {
-        formatedGraphicalItems, graphicalItems, offset, stackGroups,
-        ...ticksObj, ...axisObj,
+        formatedGraphicalItems,
+        graphicalItems,
+        offset,
+        stackGroups,
+        ...ticksObj,
+        ...axisObj,
       };
     }
 
@@ -860,27 +1015,33 @@ const generateCategoricalChart = ({
       const brushItem = findChildByType(children, Brush.displayName);
       const legendItem = findChildByType(children, Legend.displayName);
 
-      const offsetH = Object.keys(yAxisMap).reduce((result: any, id: any) => {
-        const entry = yAxisMap[id];
-        const { orientation } = entry;
+      const offsetH = Object.keys(yAxisMap).reduce(
+        (result: any, id: any) => {
+          const entry = yAxisMap[id];
+          const { orientation } = entry;
 
-        if (!entry.mirror && !entry.hide) {
-          return { ...result, [orientation]: result[orientation] + entry.width };
-        }
+          if (!entry.mirror && !entry.hide) {
+            return { ...result, [orientation]: result[orientation] + entry.width };
+          }
 
-        return result;
-      }, { left: margin.left || 0, right: margin.right || 0 });
+          return result;
+        },
+        { left: margin.left || 0, right: margin.right || 0 },
+      );
 
-      const offsetV = Object.keys(xAxisMap).reduce((result, id) => {
-        const entry = xAxisMap[id];
-        const { orientation } = entry;
+      const offsetV = Object.keys(xAxisMap).reduce(
+        (result, id) => {
+          const entry = xAxisMap[id];
+          const { orientation } = entry;
 
-        if (!entry.mirror && !entry.hide) {
-          return { ...result, [orientation]: _.get(result, `${orientation}`) + entry.height };
-        }
+          if (!entry.mirror && !entry.hide) {
+            return { ...result, [orientation]: _.get(result, `${orientation}`) + entry.height };
+          }
 
-        return result;
-      }, { top: margin.top || 0, bottom: margin.bottom || 0 });
+          return result;
+        },
+        { top: margin.top || 0, bottom: margin.bottom || 0 },
+      );
 
       let offset = { ...offsetV, ...offsetH };
 
@@ -910,8 +1071,11 @@ const generateCategoricalChart = ({
 
         this.setState(
           this.updateStateOfAxisMapsOffsetAndStackGroups({
-            props: this.props, dataStartIndex, dataEndIndex, updateId,
-          })
+            props: this.props,
+            dataStartIndex,
+            dataEndIndex,
+            updateId,
+          }),
         );
       }
     };
@@ -927,26 +1091,32 @@ const generateCategoricalChart = ({
           this.setState({
             dataStartIndex,
             dataEndIndex,
-            ...this.updateStateOfAxisMapsOffsetAndStackGroups(
-              { props: this.props, dataStartIndex, dataEndIndex, updateId }
-            ),
+            ...this.updateStateOfAxisMapsOffsetAndStackGroups({
+              props: this.props,
+              dataStartIndex,
+              dataEndIndex,
+              updateId,
+            }),
           });
         } else if (!_.isNil(data.activeTooltipIndex)) {
           const { chartX, chartY, activeTooltipIndex } = data;
           const { offset, tooltipTicks } = this.state;
-          if (!offset) { return; }
+          if (!offset) {
+            return;
+          }
           const viewBox: ViewBox = { ...offset, x: offset.left, y: offset.top };
           // When a categotical chart is combined with another chart, the value of chartX
           // and chartY may beyond the boundaries.
           const validateChartX = Math.min(chartX, viewBox.x + viewBox.width);
           const validateChartY = Math.min(chartY, viewBox.y + viewBox.height);
-          const activeLabel = tooltipTicks[activeTooltipIndex] &&
-            tooltipTicks[activeTooltipIndex].value;
+          const activeLabel = tooltipTicks[activeTooltipIndex] && tooltipTicks[activeTooltipIndex].value;
           const activePayload: any = this.getTooltipContent(activeTooltipIndex);
-          const activeCoordinate = tooltipTicks[activeTooltipIndex] ? {
-            x: layout === 'horizontal' ? tooltipTicks[activeTooltipIndex].coordinate : validateChartX,
-            y: layout === 'horizontal' ? validateChartY : tooltipTicks[activeTooltipIndex].coordinate,
-          } : originCoordinate;
+          const activeCoordinate = tooltipTicks[activeTooltipIndex]
+            ? {
+                x: layout === 'horizontal' ? tooltipTicks[activeTooltipIndex].coordinate : validateChartX,
+                y: layout === 'horizontal' ? validateChartY : tooltipTicks[activeTooltipIndex].coordinate,
+              }
+            : originCoordinate;
 
           this.setState({ ...data, activeLabel, activeCoordinate, activePayload });
         } else {
@@ -963,9 +1133,12 @@ const generateCategoricalChart = ({
         this.setState(() => ({
           dataStartIndex: startIndex,
           dataEndIndex: endIndex,
-          ...this.updateStateOfAxisMapsOffsetAndStackGroups(
-            { props: this.props, dataStartIndex: startIndex, dataEndIndex: endIndex, updateId }
-          ),
+          ...this.updateStateOfAxisMapsOffsetAndStackGroups({
+            props: this.props,
+            dataStartIndex: startIndex,
+            dataEndIndex: endIndex,
+            updateId,
+          }),
         }));
 
         this.triggerSyncEvent({
@@ -1006,7 +1179,7 @@ const generateCategoricalChart = ({
       if (_.isFunction(onMouseMove)) {
         onMouseMove(nextState, e);
       }
-    }
+    };
 
     /**
      * The handler of mouse entering a scatter
@@ -1042,7 +1215,7 @@ const generateCategoricalChart = ({
         e.persist();
       }
       this.triggeredAfterMouseMove(e);
-    }
+    };
 
     /**
      * The handler if mouse leaving chart
@@ -1131,22 +1304,29 @@ const generateCategoricalChart = ({
       }
     }
 
-    verticalCoordinatesGenerator = ({
-      xAxis, width, height, offset,
-    }: ChartCoordinate) => getCoordinatesOfGrid(CartesianAxis.getTicks({
-      ...CartesianAxis.defaultProps,
-      ...xAxis,
-      ticks: getTicksOfAxis(xAxis, true),
-      viewBox: { x: 0, y: 0, width, height },
-    }), offset.left, offset.left + offset.width);
+    verticalCoordinatesGenerator = ({ xAxis, width, height, offset }: ChartCoordinate) =>
+      getCoordinatesOfGrid(
+        CartesianAxis.getTicks({
+          ...CartesianAxis.defaultProps,
+          ...xAxis,
+          ticks: getTicksOfAxis(xAxis, true),
+          viewBox: { x: 0, y: 0, width, height },
+        }),
+        offset.left,
+        offset.left + offset.width,
+      );
 
-    horizontalCoordinatesGenerator = ({
-      yAxis, width, height, offset,
-    }: ChartCoordinate) => getCoordinatesOfGrid(CartesianAxis.getTicks({
-      ...CartesianAxis.defaultProps, ...yAxis,
-      ticks: getTicksOfAxis(yAxis, true),
-      viewBox: { x: 0, y: 0, width, height },
-    }), offset.top, offset.top + offset.height);
+    horizontalCoordinatesGenerator = ({ yAxis, width, height, offset }: ChartCoordinate) =>
+      getCoordinatesOfGrid(
+        CartesianAxis.getTicks({
+          ...CartesianAxis.defaultProps,
+          ...yAxis,
+          ticks: getTicksOfAxis(yAxis, true),
+          viewBox: { x: 0, y: 0, width, height },
+        }),
+        offset.top,
+        offset.top + offset.height,
+      );
 
     axesTicksGenerator = (axis?: any) => getTicksOfAxis(axis, true);
 
@@ -1160,7 +1340,7 @@ const generateCategoricalChart = ({
         tooltipAxis: axis,
         tooltipAxisBandSize: getBandSizeOfAxis(axis),
       };
-    }
+    };
 
     filterFormatItem(item: any, displayName: any, childIndex: any) {
       const { formatedGraphicalItems } = this.state;
@@ -1168,9 +1348,11 @@ const generateCategoricalChart = ({
       for (let i = 0, len = formatedGraphicalItems.length; i < len; i++) {
         const entry = formatedGraphicalItems[i];
 
-        if (entry.item === item || entry.props.key === item.key || (
-          displayName === getDisplayName(entry.item.type) && childIndex === entry.childIndex
-        )) {
+        if (
+          entry.item === item ||
+          entry.props.key === item.key ||
+          (displayName === getDisplayName(entry.item.type) && childIndex === entry.childIndex)
+        ) {
           return entry;
         }
       }
@@ -1197,7 +1379,12 @@ const generateCategoricalChart = ({
       } else if (layout === 'radial') {
         const { cx, cy, radius, startAngle, endAngle }: any = this.getCursorPoints();
         restProps = {
-          cx, cy, startAngle, endAngle, innerRadius: radius, outerRadius: radius,
+          cx,
+          cy,
+          startAngle,
+          endAngle,
+          innerRadius: radius,
+          outerRadius: radius,
         };
         cursorComp = Sector;
       } else {
@@ -1216,9 +1403,9 @@ const generateCategoricalChart = ({
         className: 'recharts-tooltip-cursor',
       };
 
-      return isValidElement(element.props.cursor) ?
-        cloneElement(element.props.cursor, cursorProps) :
-        createElement(cursorComp, cursorProps);
+      return isValidElement(element.props.cursor)
+        ? cloneElement(element.props.cursor, cursorProps)
+        : createElement(cursorComp, cursorProps);
     };
 
     renderPolarAxis = (element: any, displayName: string, index: number) => {
@@ -1258,11 +1445,10 @@ const generateCategoricalChart = ({
      */
     renderAxis(axisOptions: BaseAxisProps, element: any, displayName: string, index: number): React.ReactElement {
       const { width, height } = this.props;
-      // TODO  CartesianAxisProps need mix BaseAxisProps
+
       return (
-        // @ts-ignore
         <CartesianAxis
-          {...axisOptions}
+          {...(axisOptions as any)}
           className={`recharts-${axisOptions.axisType} ${axisOptions.axisType}`}
           key={element.key || `${displayName}-${index}`}
           viewBox={{ x: 0, y: 0, width, height } as any}
@@ -1295,14 +1481,12 @@ const generateCategoricalChart = ({
         offset,
         chartWidth: width,
         chartHeight: height,
-        verticalCoordinatesGenerator:
-          props.verticalCoordinatesGenerator || this.verticalCoordinatesGenerator,
-        horizontalCoordinatesGenerator:
-          props.horizontalCoordinatesGenerator || this.horizontalCoordinatesGenerator,
+        verticalCoordinatesGenerator: props.verticalCoordinatesGenerator || this.verticalCoordinatesGenerator,
+        horizontalCoordinatesGenerator: props.horizontalCoordinatesGenerator || this.horizontalCoordinatesGenerator,
       });
     };
 
-    renderPolarGrid = (element: React.ReactElement): React.ReactElement  => {
+    renderPolarGrid = (element: React.ReactElement): React.ReactElement => {
       const { radiusAxisMap, angleAxisMap } = this.state;
       const radiusAxis = getAnyElementOfObject(radiusAxisMap);
       const angleAxis = getAnyElementOfObject(angleAxisMap);
@@ -1311,7 +1495,10 @@ const generateCategoricalChart = ({
       return cloneElement(element, {
         polarAngles: getTicksOfAxis(angleAxis, true).map((entry: any) => entry.coordinate),
         polarRadius: getTicksOfAxis(radiusAxis, true).map((entry: any) => entry.coordinate),
-        cx, cy, innerRadius, outerRadius,
+        cx,
+        cy,
+        innerRadius,
+        outerRadius,
         key: element.key || 'polar-grid',
       });
     };
@@ -1325,12 +1512,16 @@ const generateCategoricalChart = ({
       const { children, width, height } = this.props;
       const margin = this.props.margin || {};
       const legendWidth: number = width - (margin.left || 0) - (margin.right || 0);
-      const legendHeight: number = height - (margin.top || 0) - (margin.bottom || 0);
       const props = getLegendProps({
-        children, formatedGraphicalItems, legendWidth, legendContent,
+        children,
+        formatedGraphicalItems,
+        legendWidth,
+        legendContent,
       });
 
-      if (!props) { return null; }
+      if (!props) {
+        return null;
+      }
 
       const { item, ...otherProps } = props;
 
@@ -1339,10 +1530,12 @@ const generateCategoricalChart = ({
         chartWidth: width,
         chartHeight: height,
         margin,
-        ref: (legend: any) => { this.legendInstance = legend; },
+        ref: (legend: any) => {
+          this.legendInstance = legend;
+        },
         onBBoxUpdate: this.handleLegendBBoxUpdate,
       });
-    }
+    };
 
     /**
      * Draw Tooltip
@@ -1352,10 +1545,11 @@ const generateCategoricalChart = ({
       const { children } = this.props;
       const tooltipItem = findChildByType(children, Tooltip.displayName);
 
-      if (!tooltipItem) { return null; }
+      if (!tooltipItem) {
+        return null;
+      }
 
-      const { isTooltipActive, activeCoordinate, activePayload,
-        activeLabel, offset } = this.state;
+      const { isTooltipActive, activeCoordinate, activePayload, activeLabel, offset } = this.state;
 
       return cloneElement(tooltipItem, {
         viewBox: { ...offset, x: offset.left, y: offset.top },
@@ -1364,7 +1558,7 @@ const generateCategoricalChart = ({
         payload: isTooltipActive ? activePayload : [],
         coordinate: activeCoordinate,
       });
-    }
+    };
 
     renderBrush = (element: React.ReactElement) => {
       const { margin, data } = this.props;
@@ -1376,8 +1570,9 @@ const generateCategoricalChart = ({
         onChange: combineEventHandlers(this.handleBrushChange, null, element.props.onChange),
         data,
         x: isNumber(element.props.x) ? element.props.x : offset.left,
-        y: isNumber(element.props.y) ? element.props.y :
-          (offset.top + offset.height + offset.brushBottom - (margin.bottom || 0)),
+        y: isNumber(element.props.y)
+          ? element.props.y
+          : offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
         width: isNumber(element.props.width) ? element.props.width : offset.width,
         startIndex: dataStartIndex,
         endIndex: dataEndIndex,
@@ -1385,8 +1580,10 @@ const generateCategoricalChart = ({
       });
     };
 
-    renderReferenceElement = (element: React.ReactElement , displayName: string, index: number): React.ReactElement  => {
-      if (!element) { return null; }
+    renderReferenceElement = (element: React.ReactElement, displayName: string, index: number): React.ReactElement => {
+      if (!element) {
+        return null;
+      }
       const { clipPathId } = this;
       const { xAxisMap, yAxisMap, offset } = this.state;
       const { xAxisId, yAxisId } = element.props;
@@ -1405,9 +1602,9 @@ const generateCategoricalChart = ({
       });
     };
 
-    static renderActiveDot (option: any, props: any): React.ReactElement {
+    static renderActiveDot(option: any, props: any): React.ReactElement {
       let dot;
-    
+
       if (isValidElement(option)) {
         dot = cloneElement(option, props);
       } else if (_.isFunction(option)) {
@@ -1415,7 +1612,7 @@ const generateCategoricalChart = ({
       } else {
         dot = <Dot {...props} />;
       }
-    
+
       return (
         <Layer className="recharts-active-dot" key={props.key}>
           {dot}
@@ -1423,7 +1620,7 @@ const generateCategoricalChart = ({
       );
     }
 
-    renderActivePoints({ item, activePoint, basePoint, childIndex, isRange }: any): any[] {
+    renderActivePoints = ({ item, activePoint, basePoint, childIndex, isRange }: any) => {
       const result = [];
       const { key } = item.props;
       const { activeDot, dataKey } = item.item.props;
@@ -1446,22 +1643,26 @@ const generateCategoricalChart = ({
       result.push(CategoricalChartWrapper.renderActiveDot(activeDot, dotProps));
 
       if (basePoint) {
-        result.push(CategoricalChartWrapper.renderActiveDot(activeDot, {
-          ...dotProps,
-          cx: basePoint.x,
-          cy: basePoint.y,
-          key: `${key}-basePoint-${childIndex}`,
-        }));
+        result.push(
+          CategoricalChartWrapper.renderActiveDot(activeDot, {
+            ...dotProps,
+            cx: basePoint.x,
+            cy: basePoint.y,
+            key: `${key}-basePoint-${childIndex}`,
+          }),
+        );
       } else if (isRange) {
         result.push(null);
       }
 
       return result;
-    }
+    };
 
-    renderGraphicChild = (element: React.ReactElement , displayName: string, index: number): any[] => {
+    renderGraphicChild = (element: React.ReactElement, displayName: string, index: number): any[] => {
       const item = this.filterFormatItem(element, displayName, index);
-      if (!item) { return null; }
+      if (!item) {
+        return null;
+      }
 
       const graphicalItem = cloneElement(element, item.props);
       const { isTooltipActive, tooltipAxis, activeTooltipIndex, activeLabel } = this.state;
@@ -1469,13 +1670,11 @@ const generateCategoricalChart = ({
       const tooltipItem = findChildByType(children, Tooltip.displayName);
       const { points, isRange, baseLine } = item.props;
       const { activeDot, hide } = item.item.props;
-      const hasActive = !hide && isTooltipActive && tooltipItem && activeDot &&
-        activeTooltipIndex >= 0;
+      const hasActive = !hide && isTooltipActive && tooltipItem && activeDot && activeTooltipIndex >= 0;
 
       function findWithPayload(entry: any) {
         // TODO needs to verify dataKey is Function
-        // @ts-ignore
-        return tooltipAxis.dataKey(entry.payload);
+        return typeof tooltipAxis.dataKey === 'function' ? tooltipAxis.dataKey(entry.payload) : null;
       }
 
       if (hasActive) {
@@ -1483,7 +1682,10 @@ const generateCategoricalChart = ({
 
         if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
           // number transform to string
-          const specifiedKey = typeof tooltipAxis.dataKey === 'function' ? findWithPayload : 'payload.'.concat(tooltipAxis.dataKey.toString());
+          const specifiedKey =
+            typeof tooltipAxis.dataKey === 'function'
+              ? findWithPayload
+              : 'payload.'.concat(tooltipAxis.dataKey.toString());
           activePoint = findEntryInArray(points, specifiedKey, activeLabel);
           basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
         } else {
@@ -1495,26 +1697,34 @@ const generateCategoricalChart = ({
           return [
             graphicalItem,
             ...this.renderActivePoints({
-              item, activePoint, basePoint, childIndex: activeTooltipIndex,
+              item,
+              activePoint,
+              basePoint,
+              childIndex: activeTooltipIndex,
               isRange,
             }),
           ];
         }
       }
 
-      if (isRange) { return [graphicalItem, null, null]; }
+      if (isRange) {
+        return [graphicalItem, null, null];
+      }
 
       return [graphicalItem, null];
     };
 
-    renderCustomized = (element: React.ReactElement ): React.ReactElement  => cloneElement(element, {
-      ...this.props,
-      ...this.state
-    })
+    renderCustomized = (element: React.ReactElement): React.ReactElement =>
+      cloneElement(element, {
+        ...this.props,
+        ...this.state,
+      });
 
     renderClipPath() {
       const { clipPathId } = this;
-      const { offset: { left, top, height, width } } = this.state;
+      const {
+        offset: { left, top, height, width },
+      } = this.state;
 
       return (
         <defs>
@@ -1525,9 +1735,10 @@ const generateCategoricalChart = ({
       );
     }
 
-
     render() {
-      if (!validateWidthHeight(this)) { return null; }
+      if (!validateWidthHeight(this)) {
+        return null;
+      }
 
       const { children, className, width, height, style, compact, ...others } = this.props;
       const attrs = filterProps(others);
@@ -1551,7 +1762,7 @@ const generateCategoricalChart = ({
         PolarGrid: { handler: this.renderPolarGrid, once: true },
         PolarAngleAxis: { handler: this.renderPolarAxis },
         PolarRadiusAxis: { handler: this.renderPolarAxis },
-        Customized: { handler: this.renderCustomized }
+        Customized: { handler: this.renderCustomized },
       } as any;
 
       // The "compact" mode is mainly used as the panorama within Brush
@@ -1559,9 +1770,7 @@ const generateCategoricalChart = ({
         return (
           <Surface {...attrs} width={width} height={height}>
             {this.renderClipPath()}
-            {
-              renderByOrder(children, map)
-            }
+            {renderByOrder(children, map)}
           </Surface>
         );
       }
@@ -1572,13 +1781,13 @@ const generateCategoricalChart = ({
           className={classNames('recharts-wrapper', className)}
           style={{ position: 'relative', cursor: 'default', width, height, ...style }}
           {...events}
-          ref={(node) => { this.container = node; }}
+          ref={node => {
+            this.container = node;
+          }}
         >
           <Surface {...attrs} width={width} height={height}>
             {this.renderClipPath()}
-            {
-              renderByOrder(children, map)
-            }
+            {renderByOrder(children, map)}
           </Surface>
           {this.renderLegend()}
           {this.renderTooltip()}

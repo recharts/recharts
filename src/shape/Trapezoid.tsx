@@ -3,7 +3,6 @@
  */
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-// @ts-ignore
 import Animate from 'react-smooth';
 import { PresentationAttributes, AnimationTiming, filterProps } from '../util/types';
 
@@ -68,22 +67,24 @@ class Trapezoid extends PureComponent<Props> {
         // calculate total length error
       }
     }
-
   }
 
   render() {
     const { x, y, upperWidth, lowerWidth, height, className } = this.props;
     const { totalLength } = this.state;
-    const {
-      animationEasing,
-      animationDuration,
-      animationBegin,
-      isUpdateAnimationActive,
-    } = this.props;
+    const { animationEasing, animationDuration, animationBegin, isUpdateAnimationActive } = this.props;
 
-    if (x !== +x || y !== +y ||
-      upperWidth !== +upperWidth || lowerWidth !== +lowerWidth || height !== +height ||
-      (upperWidth === 0 && lowerWidth === 0) || height === 0) { return null; }
+    if (
+      x !== +x ||
+      y !== +y ||
+      upperWidth !== +upperWidth ||
+      lowerWidth !== +lowerWidth ||
+      height !== +height ||
+      (upperWidth === 0 && lowerWidth === 0) ||
+      height === 0
+    ) {
+      return null;
+    }
 
     const layerClass = classNames('recharts-trapezoid', className);
 
@@ -107,14 +108,19 @@ class Trapezoid extends PureComponent<Props> {
         animationEasing={animationEasing}
         isActive={isUpdateAnimationActive}
       >
-        {
-        ({
+        {({
           upperWidth: currUpperWidth,
           lowerWidth: currLowerWidth,
           height: currHeight,
           x: currX,
           y: currY,
-        }: any) => (
+        }: {
+          upperWidth: number;
+          lowerWidth: number;
+          height: number;
+          x: number;
+          y: number;
+        }) => (
           <Animate
             canBegin={totalLength > 0}
             from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
@@ -128,11 +134,12 @@ class Trapezoid extends PureComponent<Props> {
               {...filterProps(this.props, true)}
               className={layerClass}
               d={getTrapezoidPath(currX, currY, currUpperWidth, currLowerWidth, currHeight)}
-              ref={(node) => { this.node = node; }}
+              ref={node => {
+                this.node = node;
+              }}
             />
           </Animate>
-        )
-      }
+        )}
       </Animate>
     );
   }

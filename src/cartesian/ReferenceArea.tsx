@@ -32,18 +32,16 @@ interface ReferenceAreaProps extends InternalReferenceAreaProps {
   y1?: number | string;
   y2?: number | string;
 
-
   className?: number | string;
   yAxisId?: number | string;
   xAxisId?: number | string;
   shape?: ReactElement<SVGElement> | ((props: any) => SVGElement);
-};
+}
 
 type Props = RectangleProps & ReferenceAreaProps;
 
 const getRect = (hasX1: boolean, hasX2: boolean, hasY1: boolean, hasY2: boolean, props: Props) => {
-  const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2, xAxis,
-    yAxis } = props;
+  const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2, xAxis, yAxis } = props;
 
   const scales = createLabeldScales({ x: xAxis.scale, y: yAxis.scale });
 
@@ -57,44 +55,43 @@ const getRect = (hasX1: boolean, hasX2: boolean, hasY1: boolean, hasY2: boolean,
     y: hasY2 ? scales.y.apply(yValue2) : scales.y.rangeMax,
   };
 
-  if (ifOverflowMatches(props, 'discard') &&
-    (!scales.isInRange(p1) || !scales.isInRange(p2))) {
+  if (ifOverflowMatches(props, 'discard') && (!scales.isInRange(p1) || !scales.isInRange(p2))) {
     return null;
   }
 
   return rectWithPoints(p1, p2);
-}
+};
 
 function ReferenceArea(props: Props) {
   const { x1, x2, y1, y2, className, alwaysShow, clipPathId } = props;
 
-    warn(alwaysShow === undefined,
-      'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
+  warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
-    const hasX1 = isNumOrStr(x1);
-    const hasX2 = isNumOrStr(x2);
-    const hasY1 = isNumOrStr(y1);
-    const hasY2 = isNumOrStr(y2);
+  const hasX1 = isNumOrStr(x1);
+  const hasX2 = isNumOrStr(x2);
+  const hasY1 = isNumOrStr(y1);
+  const hasY2 = isNumOrStr(y2);
 
-    const { shape } = props;
+  const { shape } = props;
 
-    if (!hasX1 && !hasX2 && !hasY1 && !hasY2 && !shape) { return null; }
+  if (!hasX1 && !hasX2 && !hasY1 && !hasY2 && !shape) {
+    return null;
+  }
 
-    const rect = getRect(hasX1, hasX2, hasY1, hasY2, props);
+  const rect = getRect(hasX1, hasX2, hasY1, hasY2, props);
 
-    if (!rect && !shape) { return null; }
+  if (!rect && !shape) {
+    return null;
+  }
 
+  const clipPath = ifOverflowMatches(props, 'hidden') ? `url(#${clipPathId})` : undefined;
 
-    const clipPath = ifOverflowMatches(props, 'hidden') ?
-      `url(#${clipPathId})` :
-      undefined;
-
-    return (
-      <Layer className={classNames('recharts-reference-area', className)}>
-        {ReferenceArea.renderRect(shape, { clipPath, ...filterProps(props, true), ...rect })}
-        {Label.renderCallByParent(props, rect)}
-      </Layer>
-    );
+  return (
+    <Layer className={classNames('recharts-reference-area', className)}>
+      {ReferenceArea.renderRect(shape, { clipPath, ...filterProps(props, true), ...rect })}
+      {Label.renderCallByParent(props, rect)}
+    </Layer>
+  );
 }
 
 ReferenceArea.displayName = 'ReferenceArea';
@@ -118,15 +115,10 @@ ReferenceArea.renderRect = (option: ReferenceAreaProps['shape'], props: any) => 
   } else if (_.isFunction(option)) {
     rect = option(props);
   } else {
-    rect = (
-      <Rectangle
-        {...props}
-        className="recharts-reference-area-rect"
-      />
-    );
+    rect = <Rectangle {...props} className="recharts-reference-area-rect" />;
   }
 
   return rect;
-}
+};
 
 export default ReferenceArea;

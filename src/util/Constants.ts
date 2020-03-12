@@ -22,5 +22,5 @@ export const COLOR_PANEL = [
   '#DD81E6',
   '#F04864',
   '#FA7D92',
-  '#D598D9'
+  '#D598D9',
 ];

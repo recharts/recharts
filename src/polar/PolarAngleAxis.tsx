@@ -21,11 +21,10 @@ interface PolarAngleAxisProps extends BaseAxisProps {
   axisLineType?: 'polygon' | 'circle';
   ticks?: TickItem[];
   orientation?: 'inner' | 'outer';
-};
+}
 export type Props = PresentationAttributes<SVGTextElement> & PolarAngleAxisProps;
 
 class PolarAngleAxis extends PureComponent<Props> {
-
   static displayName = 'PolarAngleAxis';
 
   static axisType = 'angleAxis';
@@ -57,10 +56,7 @@ class PolarAngleAxis extends PureComponent<Props> {
     const { cx, cy, radius, orientation, tickSize } = this.props;
     const tickLineSize = tickSize || 8;
     const p1 = polarToCartesian(cx, cy, radius, data.coordinate);
-    const p2 = polarToCartesian(
-      cx, cy,
-      radius + (orientation === 'inner' ? -1 : 1) * tickLineSize, data.coordinate
-    );
+    const p2 = polarToCartesian(cx, cy, radius + (orientation === 'inner' ? -1 : 1) * tickLineSize, data.coordinate);
 
     return { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y };
   }
@@ -95,15 +91,7 @@ class PolarAngleAxis extends PureComponent<Props> {
     };
 
     if (axisLineType === 'circle') {
-      return (
-        <Dot
-          className="recharts-polar-angle-axis-line"
-          {...props}
-          cx={cx}
-          cy={cy}
-          r={radius}
-        />
-      );
+      return <Dot className="recharts-polar-angle-axis-line" {...props} cx={cx} cy={cy} r={radius} />;
     }
     const { ticks } = this.props;
     const points = ticks.map(entry => polarToCartesian(cx, cy, radius, entry.coordinate));
@@ -120,10 +108,7 @@ class PolarAngleAxis extends PureComponent<Props> {
       tickItem = option(props);
     } else {
       tickItem = (
-        <Text
-          {...props}
-          className="recharts-polar-angle-axis-tick-value"
-        >
+        <Text {...props} className="recharts-polar-angle-axis-tick-value">
           {value}
         </Text>
       );
@@ -137,7 +122,9 @@ class PolarAngleAxis extends PureComponent<Props> {
     const axisProps = filterProps(this.props);
     const customTickProps = filterProps(tick);
     const tickLineProps = {
-      ...axisProps, fill: 'none', ...filterProps(tickLine),
+      ...axisProps,
+      fill: 'none',
+      ...filterProps(tickLine),
     };
 
     const items = ticks.map((entry, i) => {
@@ -161,16 +148,9 @@ class PolarAngleAxis extends PureComponent<Props> {
           key={`tick-${i}`} // eslint-disable-line react/no-array-index-key
           {...adaptEventsOfChild(this.props, entry, i)}
         >
-          {tickLine && (
-            <line
-              className="recharts-polar-angle-axis-tick-line"
-              {...tickLineProps}
-              {...lineCoord}
-            />
-          )}
-          {tick && PolarAngleAxis.renderTickItem(
-            tick, tickProps, tickFormatter ? tickFormatter(entry.value, i) : entry.value
-          )}
+          {tickLine && <line className="recharts-polar-angle-axis-tick-line" {...tickLineProps} {...lineCoord} />}
+          {tick &&
+            PolarAngleAxis.renderTickItem(tick, tickProps, tickFormatter ? tickFormatter(entry.value, i) : entry.value)}
         </Layer>
       );
     });
@@ -181,7 +161,9 @@ class PolarAngleAxis extends PureComponent<Props> {
   render() {
     const { ticks, radius, axisLine } = this.props;
 
-    if (radius <= 0 || !ticks || !ticks.length) { return null; }
+    if (radius <= 0 || !ticks || !ticks.length) {
+      return null;
+    }
 
     return (
       <Layer className="recharts-polar-angle-axis">

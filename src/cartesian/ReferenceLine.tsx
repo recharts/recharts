@@ -15,7 +15,7 @@ import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 
 interface InternalReferenceLineProps {
-  viewBox?: ViewBox
+  viewBox?: ViewBox;
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   clipPathId?: number | string;
@@ -40,7 +40,7 @@ interface ReferenceLineProps extends InternalReferenceLineProps {
   yAxisId?: number | string;
   xAxisId?: number | string;
   shape?: ReactElement<SVGElement> | ((props: any) => SVGElement);
-};
+}
 
 type Props = PresentationAttributes<SVGLineElement> & ReferenceLineProps;
 
@@ -52,28 +52,27 @@ const renderLine = (option: ReferenceLineProps['shape'], props: any) => {
   } else if (_.isFunction(option)) {
     line = option(props);
   } else {
-    line = (
-      <line
-        {...props}
-        className="recharts-reference-line-line"
-      />
-    );
+    line = <line {...props} className="recharts-reference-line-line" />;
   }
 
   return line;
 };
 
-
 // TODO: ScaleHelper
 const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegment: boolean, props: Props) => {
-  const { viewBox: { x, y, width, height }, position } = props;
+  const {
+    viewBox: { x, y, width, height },
+    position,
+  } = props;
 
   if (isFixedY) {
-    const { y: yCoord, yAxis: { orientation } } = props;
+    const {
+      y: yCoord,
+      yAxis: { orientation },
+    } = props;
     const coord = scales.y.apply(yCoord, { position });
 
-    if (ifOverflowMatches(props, 'discard') &&
-      !scales.y.isInRange(coord)) {
+    if (ifOverflowMatches(props, 'discard') && !scales.y.isInRange(coord)) {
       return null;
     }
 
@@ -82,12 +81,15 @@ const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegme
       { x, y: coord },
     ];
     return orientation === 'left' ? points.reverse() : points;
-  } if (isFixedX) {
-    const { x: xCoord, xAxis: { orientation } } = props;
+  }
+  if (isFixedX) {
+    const {
+      x: xCoord,
+      xAxis: { orientation },
+    } = props;
     const coord = scales.x.apply(xCoord, { position });
 
-    if (ifOverflowMatches(props, 'discard') &&
-      !scales.x.isInRange(coord)) {
+    if (ifOverflowMatches(props, 'discard') && !scales.x.isInRange(coord)) {
       return null;
     }
 
@@ -96,13 +98,13 @@ const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegme
       { x: coord, y },
     ];
     return orientation === 'top' ? points.reverse() : points;
-  } if (isSegment) {
+  }
+  if (isSegment) {
     const { segment } = props;
 
     const points = segment.map(p => scales.apply(p, { position }));
 
-    if (ifOverflowMatches(props, 'discard') &&
-      _.some(points, p => !scales.isInRange(p))) {
+    if (ifOverflowMatches(props, 'discard') && _.some(points, p => !scales.isInRange(p))) {
       return null;
     }
 
@@ -110,23 +112,12 @@ const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegme
   }
 
   return null;
-}
+};
 
 function ReferenceLine(props: Props) {
-  const {
-    x: fixedX,
-    y: fixedY,
-    segment,
-    xAxis,
-    yAxis,
-    shape,
-    className,
-    alwaysShow,
-    clipPathId,
-  } = props;
+  const { x: fixedX, y: fixedY, segment, xAxis, yAxis, shape, className, alwaysShow, clipPathId } = props;
 
-  warn(alwaysShow === undefined,
-    'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
+  warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
   const scales = createLabeldScales({ x: xAxis.scale, y: yAxis.scale });
 
@@ -135,13 +126,13 @@ function ReferenceLine(props: Props) {
   const isSegment = segment && segment.length === 2;
 
   const endPoints = getEndPoints(scales, isX, isY, isSegment, props);
-  if (!endPoints) { return null; }
+  if (!endPoints) {
+    return null;
+  }
 
   const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = endPoints;
 
-  const clipPath = ifOverflowMatches(props, 'hidden') ?
-    `url(#${clipPathId})` :
-    undefined;
+  const clipPath = ifOverflowMatches(props, 'hidden') ? `url(#${clipPathId})` : undefined;
 
   const lineProps = {
     clipPath,
@@ -170,7 +161,7 @@ ReferenceLine.defaultProps = {
   stroke: '#ccc',
   fillOpacity: 1,
   strokeWidth: 1,
-  position: 'middle'
+  position: 'middle',
 };
 
 export default ReferenceLine;

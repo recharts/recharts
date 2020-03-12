@@ -34,7 +34,7 @@ interface ReferenceDotProps extends InternalReferenceDotProps {
   yAxisId?: number | string;
   xAxisId?: number | string;
   shape?: ReactElement<SVGElement> | ((props: any) => SVGElement);
-};
+}
 
 type Props = DotProps & ReferenceDotProps;
 
@@ -44,8 +44,7 @@ const getCoordinate = (props: Props) => {
 
   const result = scales.apply({ x, y }, { bandAware: true });
 
-  if (ifOverflowMatches(props, 'discard') &&
-    !scales.isInRange(result)) {
+  if (ifOverflowMatches(props, 'discard') && !scales.isInRange(result)) {
     return null;
   }
 
@@ -54,44 +53,45 @@ const getCoordinate = (props: Props) => {
 
 function ReferenceDot(props: Props) {
   const { x, y, r, alwaysShow, clipPathId } = props;
-    const isX = isNumOrStr(x);
-    const isY = isNumOrStr(y);
+  const isX = isNumOrStr(x);
+  const isY = isNumOrStr(y);
 
-    warn(alwaysShow === undefined,
-      'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
+  warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
-    if (!isX || !isY) { return null; }
+  if (!isX || !isY) {
+    return null;
+  }
 
-    const coordinate = getCoordinate(props);
+  const coordinate = getCoordinate(props);
 
-    if (!coordinate) { return null; }
+  if (!coordinate) {
+    return null;
+  }
 
-    const { x: cx, y: cy } = coordinate;
+  const { x: cx, y: cy } = coordinate;
 
-    const { shape, className } = props;
+  const { shape, className } = props;
 
-    const clipPath = ifOverflowMatches(props, 'hidden') ?
-      `url(#${clipPathId})` :
-      undefined;
+  const clipPath = ifOverflowMatches(props, 'hidden') ? `url(#${clipPathId})` : undefined;
 
-    const dotProps = {
-      clipPath,
-      ...filterProps(props, true),
-      cx,
-      cy,
-    };
+  const dotProps = {
+    clipPath,
+    ...filterProps(props, true),
+    cx,
+    cy,
+  };
 
-    return (
-      <Layer className={classNames('recharts-reference-dot', className)}>
-        {ReferenceDot.renderDot(shape, dotProps)}
-        {Label.renderCallByParent(props, {
-          x: cx - r,
-          y: cy - r,
-          width: 2 * r,
-          height: 2 * r,
-        })}
-      </Layer>
-    );
+  return (
+    <Layer className={classNames('recharts-reference-dot', className)}>
+      {ReferenceDot.renderDot(shape, dotProps)}
+      {Label.renderCallByParent(props, {
+        x: cx - r,
+        y: cy - r,
+        width: 2 * r,
+        height: 2 * r,
+      })}
+    </Layer>
+  );
 }
 
 ReferenceDot.displayName = 'ReferenceDot';
@@ -114,14 +114,7 @@ ReferenceDot.renderDot = (option: Props['shape'], props: any) => {
   } else if (_.isFunction(option)) {
     dot = option(props);
   } else {
-    dot = (
-      <Dot
-        {...props}
-        cx={props.cx}
-        cy={props.cy}
-        className="recharts-reference-dot-dot"
-      />
-    );
+    dot = <Dot {...props} cx={props.cx} cy={props.cy} className="recharts-reference-dot-dot" />;
   }
 
   return dot;

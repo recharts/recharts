@@ -3,7 +3,6 @@
  */
 import React, { PureComponent, ReactElement } from 'react';
 import classNames from 'classnames';
-// @ts-ignore
 import Animate from 'react-smooth';
 import _ from 'lodash';
 import Rectangle, { Props as RectangleProps } from '../shape/Rectangle';
@@ -13,10 +12,27 @@ import Cell from '../component/Cell';
 import LabelList from '../component/LabelList';
 import { uniqueId, mathSign, interpolateNumber } from '../util/DataUtils';
 import { findAllByType, isSsr } from '../util/ReactUtils';
-import { getCateCoordinateOfBar, getValueByDataKey, truncateByDomain, getBaseValueOfBar, findPositionOfBar } from '../util/ChartUtils';
+import {
+  getCateCoordinateOfBar,
+  getValueByDataKey,
+  truncateByDomain,
+  getBaseValueOfBar,
+  findPositionOfBar,
+} from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { D3Scale, TooltipType, LegendType, AnimationTiming, PresentationAttributes, filterProps, ChartOffset, DataKey, TickItem, adaptEventsOfChild } from '../util/types';
+import {
+  D3Scale,
+  TooltipType,
+  LegendType,
+  AnimationTiming,
+  PresentationAttributes,
+  filterProps,
+  ChartOffset,
+  DataKey,
+  TickItem,
+  adaptEventsOfChild,
+} from '../util/types';
 
 interface BarRectangleItem extends RectangleProps {
   value?: number;
@@ -30,8 +46,8 @@ interface BarRectangleItem extends RectangleProps {
 }
 
 interface InternalBarProps {
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number>; x?: number; width?: number; };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number>; y?: number; height?: number; };
+  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number>; x?: number; width?: number };
+  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number>; y?: number; height?: number };
   data?: BarRectangleItem[];
   top?: number;
   left?: number;
@@ -55,9 +71,8 @@ interface BarProps extends InternalBarProps {
   maxBarSize?: number;
   hide?: boolean;
   shape?: ReactElement<SVGElement> | ((props: any) => SVGElement);
-  background?: RectangleShapeType; 
-  
-  
+  background?: RectangleShapeType;
+
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
 
@@ -67,7 +82,7 @@ interface BarProps extends InternalBarProps {
   animationEasing?: AnimationTiming;
   animationId?: number;
   id?: string;
-};
+}
 
 type Props = PresentationAttributes<SVGPathElement> & BarProps;
 
@@ -77,7 +92,6 @@ interface State {
 }
 
 class Bar extends PureComponent<Props, State> {
-
   static displayName = 'Bar';
 
   static defaultProps = {
@@ -93,9 +107,6 @@ class Bar extends PureComponent<Props, State> {
     animationBegin: 0,
     animationDuration: 400,
     animationEasing: 'ease',
-
-    onAnimationStart: () => {},
-    onAnimationEnd: () => {},
   };
 
   /**
@@ -108,23 +119,37 @@ class Bar extends PureComponent<Props, State> {
    * @param {Array} stackedData  The stacked data of a bar item
    * @return{Array} Composed data
    */
-  static getComposedData = ({ props, item, barPosition, bandSize, xAxis, yAxis,
-    xAxisTicks, yAxisTicks, stackedData, dataStartIndex, displayedData, offset }: {
-      props: Props;
-      item: Bar;
-      barPosition: any;
-      bandSize: number;
-      xAxis: InternalBarProps['xAxis'];
-      yAxis: InternalBarProps['yAxis'];
-      xAxisTicks: TickItem[];
-      yAxisTicks: TickItem[];
-      stackedData: number[][];
-      dataStartIndex: number;
-      offset: ChartOffset;
-      displayedData: any[];
-    }) => {
+  static getComposedData = ({
+    props,
+    item,
+    barPosition,
+    bandSize,
+    xAxis,
+    yAxis,
+    xAxisTicks,
+    yAxisTicks,
+    stackedData,
+    dataStartIndex,
+    displayedData,
+    offset,
+  }: {
+    props: Props;
+    item: Bar;
+    barPosition: any;
+    bandSize: number;
+    xAxis: InternalBarProps['xAxis'];
+    yAxis: InternalBarProps['yAxis'];
+    xAxisTicks: TickItem[];
+    yAxisTicks: TickItem[];
+    stackedData: number[][];
+    dataStartIndex: number;
+    offset: ChartOffset;
+    displayedData: any[];
+  }) => {
     const pos = findPositionOfBar(barPosition, item);
-    if (!pos) { return ; }
+    if (!pos) {
+      return null;
+    }
 
     const { layout } = props;
     const { dataKey, children, minPointSize } = item.props;
@@ -161,8 +186,7 @@ class Bar extends PureComponent<Props, State> {
         background = { x, y: yAxis.y, width, height: yAxis.height };
 
         if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
-          const delta = mathSign(height || minPointSize) *
-            (Math.abs(minPointSize) - Math.abs(height));
+          const delta = mathSign(height || minPointSize) * (Math.abs(minPointSize) - Math.abs(height));
 
           y -= delta;
           height += delta;
@@ -182,15 +206,18 @@ class Bar extends PureComponent<Props, State> {
         background = { x: xAxis.x, y, width: xAxis.width, height };
 
         if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
-          const delta = mathSign(width || minPointSize) *
-            (Math.abs(minPointSize) - Math.abs(width));
+          const delta = mathSign(width || minPointSize) * (Math.abs(minPointSize) - Math.abs(width));
           width += delta;
         }
       }
 
       return {
         ...entry,
-        x, y, width, height, value: stackedData ? value : value[1],
+        x,
+        y,
+        width,
+        height,
+        value: stackedData ? value : value[1],
         payload: entry,
         background,
         ...(cells && cells[index] && cells[index].props),
@@ -218,13 +245,21 @@ class Bar extends PureComponent<Props, State> {
   };
 
   handleAnimationEnd = () => {
+    const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
-    this.props.onAnimationEnd();
+
+    if (onAnimationEnd) {
+      onAnimationEnd();
+    }
   };
 
   handleAnimationStart = () => {
+    const { onAnimationStart } = this.props;
     this.setState({ isAnimationFinished: false });
-    this.props.onAnimationStart();
+
+    if (onAnimationStart) {
+      onAnimationStart();
+    }
   };
 
   static renderRectangle(option: RectangleShapeType, props: any) {
@@ -245,24 +280,33 @@ class Bar extends PureComponent<Props, State> {
     const { shape } = this.props;
     const baseProps = filterProps(this.props);
 
-    return data && data.map((entry, i) => {
-      const props = { ...baseProps, ...entry, index: i };
+    return (
+      data &&
+      data.map((entry, i) => {
+        const props = { ...baseProps, ...entry, index: i };
 
-      return (
-        <Layer
-          className="recharts-bar-rectangle"
-          {...adaptEventsOfChild(this.props, entry, i)}
-          key={`rectangle-${i}`} // eslint-disable-line react/no-array-index-key
-        >
-          {Bar.renderRectangle(shape, props)}
-        </Layer>
-      );
-    });
+        return (
+          <Layer
+            className="recharts-bar-rectangle"
+            {...adaptEventsOfChild(this.props, entry, i)}
+            key={`rectangle-${i}`} // eslint-disable-line react/no-array-index-key
+          >
+            {Bar.renderRectangle(shape, props)}
+          </Layer>
+        );
+      })
+    );
   }
 
   renderRectanglesWithAnimation() {
-    const { data, layout, isAnimationActive, animationBegin,
-      animationDuration, animationEasing, animationId,
+    const {
+      data,
+      layout,
+      isAnimationActive,
+      animationBegin,
+      animationDuration,
+      animationEasing,
+      animationId,
     } = this.props;
     const { prevData } = this.state;
 
@@ -278,50 +322,44 @@ class Bar extends PureComponent<Props, State> {
         onAnimationEnd={this.handleAnimationEnd}
         onAnimationStart={this.handleAnimationStart}
       >
-        {
-          ({ t }: { t: number }) => {
-            const stepData = data.map((entry, index) => {
-              const prev = prevData && prevData[index];
+        {({ t }: { t: number }) => {
+          const stepData = data.map((entry, index) => {
+            const prev = prevData && prevData[index];
 
-              if (prev) {
-                const interpolatorX = interpolateNumber(prev.x, entry.x);
-                const interpolatorY = interpolateNumber(prev.y, entry.y);
-                const interpolatorWidth = interpolateNumber(prev.width, entry.width);
-                const interpolatorHeight = interpolateNumber(prev.height, entry.height);
+            if (prev) {
+              const interpolatorX = interpolateNumber(prev.x, entry.x);
+              const interpolatorY = interpolateNumber(prev.y, entry.y);
+              const interpolatorWidth = interpolateNumber(prev.width, entry.width);
+              const interpolatorHeight = interpolateNumber(prev.height, entry.height);
 
-                return {
-                  ...entry,
-                  x: interpolatorX(t),
-                  y: interpolatorY(t),
-                  width: interpolatorWidth(t),
-                  height: interpolatorHeight(t),
-                };
-              }
+              return {
+                ...entry,
+                x: interpolatorX(t),
+                y: interpolatorY(t),
+                width: interpolatorWidth(t),
+                height: interpolatorHeight(t),
+              };
+            }
 
-              if (layout === 'horizontal') {
-                const interpolatorHeight = interpolateNumber(0, entry.height);
-                const h = interpolatorHeight(t);
+            if (layout === 'horizontal') {
+              const interpolatorHeight = interpolateNumber(0, entry.height);
+              const h = interpolatorHeight(t);
 
-                return {
-                  ...entry,
-                  y: entry.y + entry.height - h,
-                  height: h,
-                };
-              }
+              return {
+                ...entry,
+                y: entry.y + entry.height - h,
+                height: h,
+              };
+            }
 
-              const interpolator = interpolateNumber(0, entry.width);
-              const w = interpolator(t);
+            const interpolator = interpolateNumber(0, entry.width);
+            const w = interpolator(t);
 
-              return { ...entry, width: w };
-            });
+            return { ...entry, width: w };
+          });
 
-            return (
-              <Layer>
-                {this.renderRectanglesStatically(stepData)}
-              </Layer>
-            );
-          }
-        }
+          return <Layer>{this.renderRectanglesStatically(stepData)}</Layer>;
+        }}
       </Animate>
     );
   }
@@ -330,8 +368,7 @@ class Bar extends PureComponent<Props, State> {
     const { data, isAnimationActive } = this.props;
     const { prevData } = this.state;
 
-    if (isAnimationActive && data && data.length &&
-      (!prevData || !_.isEqual(prevData, data))) {
+    if (isAnimationActive && data && data.length && (!prevData || !_.isEqual(prevData, data))) {
       return this.renderRectanglesWithAnimation();
     }
 
@@ -346,7 +383,9 @@ class Bar extends PureComponent<Props, State> {
       // eslint-disable-next-line no-unused-vars
       const { value, background, ...rest } = entry;
 
-      if (!background) { return null; }
+      if (!background) {
+        return null;
+      }
 
       const props = {
         ...rest,
@@ -364,14 +403,18 @@ class Bar extends PureComponent<Props, State> {
   }
 
   renderErrorBar() {
-    if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
+    if (this.props.isAnimationActive && !this.state.isAnimationFinished) {
+      return null;
+    }
 
     const { data, xAxis, yAxis, layout, children } = this.props;
     const errorBarItems = findAllByType(children, ErrorBar.displayName);
 
-    if (!errorBarItems) { return null; }
+    if (!errorBarItems) {
+      return null;
+    }
 
-    const offset = (layout === 'vertical') ? data[0].height / 2 : data[0].width / 2;
+    const offset = layout === 'vertical' ? data[0].height / 2 : data[0].width / 2;
 
     function dataPointFormatter(dataPoint: BarRectangleItem, dataKey: Props['dataKey']) {
       return {
@@ -382,21 +425,37 @@ class Bar extends PureComponent<Props, State> {
       };
     }
 
-    return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) => React.cloneElement(item, {
-      key: `error-bar-${i}`, // eslint-disable-line react/no-array-index-key
-      data,
-      xAxis,
-      yAxis,
-      layout,
-      offset,
-      dataPointFormatter,
-    }));
+    return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) =>
+      React.cloneElement(item, {
+        key: `error-bar-${i}`, // eslint-disable-line react/no-array-index-key
+        data,
+        xAxis,
+        yAxis,
+        layout,
+        offset,
+        dataPointFormatter,
+      }),
+    );
   }
 
   render() {
-    const { hide, data, className, xAxis, yAxis, left, top,
-      width, height, isAnimationActive, background, id } = this.props;
-    if (hide || !data || !data.length) { return null; }
+    const {
+      hide,
+      data,
+      className,
+      xAxis,
+      yAxis,
+      left,
+      top,
+      width,
+      height,
+      isAnimationActive,
+      background,
+      id,
+    } = this.props;
+    if (hide || !data || !data.length) {
+      return null;
+    }
 
     const { isAnimationFinished } = this.state;
     const layerClass = classNames('recharts-bar', className);
@@ -412,16 +471,12 @@ class Bar extends PureComponent<Props, State> {
             </clipPath>
           </defs>
         ) : null}
-        <Layer
-          className="recharts-bar-rectangles"
-          clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}
-        >
+        <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
           {background ? this.renderBackground() : null}
           {this.renderRectangles()}
         </Layer>
         {this.renderErrorBar()}
-        {(!isAnimationActive || isAnimationFinished) &&
-          LabelList.renderCallByParent(this.props, data)}
+        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, data)}
       </Layer>
     );
   }

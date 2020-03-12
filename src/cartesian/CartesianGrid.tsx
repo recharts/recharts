@@ -9,7 +9,11 @@ import { PresentationAttributes, ChartOffset, D3Scale, filterProps } from '../ut
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 
-type GridLineType = PresentationAttributes<SVGLineElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
+type GridLineType =
+  | PresentationAttributes<SVGLineElement>
+  | ReactElement<SVGElement>
+  | ((props: any) => SVGElement)
+  | boolean;
 
 interface IntrnalCartesianGridProps {
   x?: number;
@@ -32,14 +36,12 @@ interface CartesianGridProps extends IntrnalCartesianGridProps {
   verticalPoints?: number[];
   verticalFill?: string[];
   horizontalFill?: string[];
-};
+}
 
 type Props = PresentationAttributes<SVGElement> & CartesianGridProps;
 
 class CartesianGrid extends PureComponent<Props> {
-
   static displayName = 'CartesianGrid';
-
 
   static defaultProps = {
     horizontal: true,
@@ -66,17 +68,7 @@ class CartesianGrid extends PureComponent<Props> {
     } else {
       const { x1, y1, x2, y2, key, ...others } = props;
 
-      lineItem = (
-        <line
-          {...filterProps(others)}
-          x1={x1}
-          y1={y1}
-          x2={x2}
-          y2={y2}
-          fill="none"
-          key={key}
-        />
-      );
+      lineItem = <line {...filterProps(others)} x1={x1} y1={y1} x2={x2} y2={y2} fill="none" key={key} />;
     }
 
     return lineItem;
@@ -90,7 +82,9 @@ class CartesianGrid extends PureComponent<Props> {
   renderHorizontal(horizontalPoints: number[]) {
     const { x, width, horizontal } = this.props;
 
-    if (!horizontalPoints || !horizontalPoints.length) { return null; }
+    if (!horizontalPoints || !horizontalPoints.length) {
+      return null;
+    }
 
     const items = horizontalPoints.map((entry, i) => {
       const props = {
@@ -117,7 +111,9 @@ class CartesianGrid extends PureComponent<Props> {
   renderVertical(verticalPoints: number[]) {
     const { y, height, vertical } = this.props;
 
-    if (!verticalPoints || !verticalPoints.length) { return null; }
+    if (!verticalPoints || !verticalPoints.length) {
+      return null;
+    }
 
     const items = verticalPoints.map((entry, i) => {
       const props = {
@@ -143,7 +139,9 @@ class CartesianGrid extends PureComponent<Props> {
    */
   renderVerticalStripes(verticalPoints: number[]) {
     const { verticalFill } = this.props;
-    if (!verticalFill || !verticalFill.length) { return null; }
+    if (!verticalFill || !verticalFill.length) {
+      return null;
+    }
 
     const { fillOpacity, x, y, width, height } = this.props;
     const verticalPointsUpdated = verticalPoints.slice().sort((a, b) => a - b);
@@ -153,9 +151,10 @@ class CartesianGrid extends PureComponent<Props> {
     }
 
     const items = verticalPointsUpdated.map((entry, i) => {
-      const lineWidth = verticalPointsUpdated[i + 1] ?
-        verticalPointsUpdated[i + 1] - entry : (x + width - entry);
-      if (lineWidth <= 0) { return null; }
+      const lineWidth = verticalPointsUpdated[i + 1] ? verticalPointsUpdated[i + 1] - entry : x + width - entry;
+      if (lineWidth <= 0) {
+        return null;
+      }
       const colorIndex = i % verticalFill.length;
       return (
         <rect
@@ -182,7 +181,9 @@ class CartesianGrid extends PureComponent<Props> {
    */
   renderHorizontalStripes(horizontalPoints: number[]) {
     const { horizontalFill } = this.props;
-    if (!horizontalFill || !horizontalFill.length) { return null; }
+    if (!horizontalFill || !horizontalFill.length) {
+      return null;
+    }
 
     const { fillOpacity, x, y, width, height } = this.props;
     const horizontalPointsUpdated = horizontalPoints.slice().sort((a, b) => a - b);
@@ -191,9 +192,10 @@ class CartesianGrid extends PureComponent<Props> {
     }
 
     const items = horizontalPointsUpdated.map((entry, i) => {
-      const lineHeight = horizontalPointsUpdated[i + 1] ?
-        horizontalPointsUpdated[i + 1] - entry : (y + height - entry);
-      if (lineHeight <= 0) { return null; }
+      const lineHeight = horizontalPointsUpdated[i + 1] ? horizontalPointsUpdated[i + 1] - entry : y + height - entry;
+      if (lineHeight <= 0) {
+        return null;
+      }
       const colorIndex = i % horizontalFill.length;
       return (
         <rect
@@ -213,11 +215,12 @@ class CartesianGrid extends PureComponent<Props> {
     return <g className="recharts-cartesian-gridstripes-horizontal">{items}</g>;
   }
 
-
   renderBackground() {
     const { fill } = this.props;
 
-    if (!fill || fill === 'none') { return null; }
+    if (!fill || fill === 'none') {
+      return null;
+    }
 
     const { fillOpacity, x, y, width, height } = this.props;
 
@@ -236,28 +239,45 @@ class CartesianGrid extends PureComponent<Props> {
   }
 
   render() {
-    const { x, y, width, height, horizontal, vertical, horizontalCoordinatesGenerator,
-      verticalCoordinatesGenerator, xAxis, yAxis, offset, chartWidth, chartHeight } = this.props;
+    const {
+      x,
+      y,
+      width,
+      height,
+      horizontal,
+      vertical,
+      horizontalCoordinatesGenerator,
+      verticalCoordinatesGenerator,
+      xAxis,
+      yAxis,
+      offset,
+      chartWidth,
+      chartHeight,
+    } = this.props;
 
-    if (!isNumber(width) || width <= 0 || !isNumber(height) || height <= 0 ||
-      !isNumber(x) || x !== +x || !isNumber(y) || y !== +y) {
+    if (
+      !isNumber(width) ||
+      width <= 0 ||
+      !isNumber(height) ||
+      height <= 0 ||
+      !isNumber(x) ||
+      x !== +x ||
+      !isNumber(y) ||
+      y !== +y
+    ) {
       return null;
     }
 
     let { horizontalPoints, verticalPoints } = this.props;
 
     // No horizontal points are specified
-    if ((!horizontalPoints || !horizontalPoints.length) &&
-      _.isFunction(horizontalCoordinatesGenerator)) {
-      horizontalPoints = horizontalCoordinatesGenerator({ yAxis, width: chartWidth,
-        height: chartHeight, offset });
+    if ((!horizontalPoints || !horizontalPoints.length) && _.isFunction(horizontalCoordinatesGenerator)) {
+      horizontalPoints = horizontalCoordinatesGenerator({ yAxis, width: chartWidth, height: chartHeight, offset });
     }
 
     // No vertical points are specified
-    if ((!verticalPoints || !verticalPoints.length) &&
-      _.isFunction(verticalCoordinatesGenerator)) {
-      verticalPoints = verticalCoordinatesGenerator({ xAxis, width: chartWidth,
-        height: chartHeight, offset });
+    if ((!verticalPoints || !verticalPoints.length) && _.isFunction(verticalCoordinatesGenerator)) {
+      verticalPoints = verticalCoordinatesGenerator({ xAxis, width: chartWidth, height: chartHeight, offset });
     }
 
     return (

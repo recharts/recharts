@@ -5,7 +5,7 @@ import { PresentationAttributes } from '../util/types';
 
 export type Props = PresentationAttributes<SVGElement>;
 
-function Cell({}: Props): null {
+function Cell(props: Props): null {
   return null;
 }
 Cell.displayName = 'Cell';

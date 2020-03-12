@@ -9,7 +9,6 @@ import Layer from '../container/Layer';
 import { polarToCartesian } from '../util/PolarUtils';
 import { PresentationAttributes, filterProps, BaseAxisProps, TickItem, adaptEventsOfChild } from '../util/types';
 
-
 interface TickIem {
   value?: any;
   coordinate?: number;
@@ -21,13 +20,12 @@ interface PolarRadiusAxisProps extends BaseAxisProps {
   radiusAxisId?: string | number;
   angle?: number;
   orientation?: 'left' | 'right' | 'middle';
-  ticks?: TickItem[]
+  ticks?: TickItem[];
 }
 
 export type Props = PresentationAttributes<SVGElement> & PolarRadiusAxisProps;
 
 class PolarRadiusAxis extends PureComponent<Props> {
-
   static displayName = 'PolarRadiusAxis';
 
   static axisType = 'radiusAxis';
@@ -81,11 +79,12 @@ class PolarRadiusAxis extends PureComponent<Props> {
 
   getViewBox() {
     const { cx, cy, angle, ticks } = this.props;
-    const maxRadiusTick = _.maxBy(ticks, (entry: TickItem) => (entry.coordinate || 0));
-    const minRadiusTick = _.minBy(ticks, (entry: TickItem) => (entry.coordinate || 0));
+    const maxRadiusTick = _.maxBy(ticks, (entry: TickItem) => entry.coordinate || 0);
+    const minRadiusTick = _.minBy(ticks, (entry: TickItem) => entry.coordinate || 0);
 
     return {
-      cx, cy,
+      cx,
+      cy,
       startAngle: angle,
       endAngle: angle,
       innerRadius: minRadiusTick.coordinate || 0,
@@ -95,10 +94,10 @@ class PolarRadiusAxis extends PureComponent<Props> {
 
   renderAxisLine() {
     const { cx, cy, angle, ticks, axisLine, ...others } = this.props;
-    const extent = ticks.reduce((result, entry) => [
-      Math.min(result[0], entry.coordinate),
-      Math.max(result[1], entry.coordinate),
-    ], [Infinity, -Infinity]);
+    const extent = ticks.reduce(
+      (result, entry) => [Math.min(result[0], entry.coordinate), Math.max(result[1], entry.coordinate)],
+      [Infinity, -Infinity],
+    );
     const point0 = polarToCartesian(cx, cy, extent[0], angle);
     const point1 = polarToCartesian(cx, cy, extent[1], angle);
 
@@ -124,10 +123,7 @@ class PolarRadiusAxis extends PureComponent<Props> {
       tickItem = option(props);
     } else {
       tickItem = (
-        <Text
-          {...props}
-          className="recharts-polar-radius-axis-tick-value"
-        >
+        <Text {...props} className="recharts-polar-radius-axis-tick-value">
           {value}
         </Text>
       );
@@ -148,7 +144,8 @@ class PolarRadiusAxis extends PureComponent<Props> {
         textAnchor,
         transform: `rotate(${90 - angle}, ${coord.x}, ${coord.y})`,
         ...axisProps,
-        stroke: 'none', fill: stroke,
+        stroke: 'none',
+        fill: stroke,
         ...customTickProps,
         index: i,
         ...coord,
@@ -161,9 +158,7 @@ class PolarRadiusAxis extends PureComponent<Props> {
           key={`tick-${i}`} // eslint-disable-line react/no-array-index-key
           {...adaptEventsOfChild(this.props, entry, i)}
         >
-          {PolarRadiusAxis.renderTickItem(
-            tick, tickProps, tickFormatter ? tickFormatter(entry.value, i) : entry.value
-          )}
+          {PolarRadiusAxis.renderTickItem(tick, tickProps, tickFormatter ? tickFormatter(entry.value, i) : entry.value)}
         </Layer>
       );
     });
@@ -174,7 +169,9 @@ class PolarRadiusAxis extends PureComponent<Props> {
   render() {
     const { ticks, axisLine, tick } = this.props;
 
-    if (!ticks || !ticks.length) { return null; }
+    if (!ticks || !ticks.length) {
+      return null;
+    }
 
     return (
       <Layer className="recharts-polar-radius-axis">

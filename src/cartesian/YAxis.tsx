@@ -25,7 +25,7 @@ export interface Props extends BaseAxisProps {
   minTickGap?: number;
   interval?: AxisInterval;
   reversed?: boolean;
-};
+}
 
 function YAxis(props: Props): SVGElement {
   return null;
@@ -48,6 +48,6 @@ YAxis.defaultProps = {
   allowDataOverflow: false,
   scale: 'auto',
   reversed: false,
-}
+};
 
 export default YAxis;

@@ -1,5 +1,5 @@
-import { isSsr } from './ReactUtils';
 import { CSSProperties, MouseEvent } from 'react';
+import { isSsr } from './ReactUtils';
 
 interface StringCache {
   widthCache: Record<string, any>;
@@ -21,10 +21,26 @@ const SPAN_STYLE = {
   whiteSpace: 'pre',
 };
 const STYLE_LIST = [
-  'minWidth', 'maxWidth', 'width', 'minHeight', 'maxHeight', 'height',
-  'top', 'left', 'fontSize', 'lineHeight', 'padding', 'margin',
-  'paddingLeft', 'paddingRight', 'paddingTop', 'paddingBottom',
-  'marginLeft', 'marginRight', 'marginTop', 'marginBottom',
+  'minWidth',
+  'maxWidth',
+  'width',
+  'minHeight',
+  'maxHeight',
+  'height',
+  'top',
+  'left',
+  'fontSize',
+  'lineHeight',
+  'padding',
+  'margin',
+  'paddingLeft',
+  'paddingRight',
+  'paddingTop',
+  'paddingBottom',
+  'marginLeft',
+  'marginRight',
+  'marginTop',
+  'marginBottom',
 ];
 const MEASUREMENT_SPAN_ID = 'recharts_measurement_span';
 
@@ -50,20 +66,24 @@ function camelToMiddleLine(text: string) {
   return formatStrs.join('');
 }
 
-export const getStyleString = (style: CSSProperties) => (
-  Object.keys(style).reduce((result, s) => (
-    `${result}${camelToMiddleLine(s)}:${autoCompleteStyle(s, (style as Record<string, any>)[s])};`
-  ), '')
-);
+export const getStyleString = (style: CSSProperties) =>
+  Object.keys(style).reduce(
+    (result, s) => `${result}${camelToMiddleLine(s)}:${autoCompleteStyle(s, (style as Record<string, any>)[s])};`,
+    '',
+  );
 
 export const getStringSize = (text: string | number, style: CSSProperties = {}) => {
-  if (text === undefined || text === null || isSsr()) { return { width: 0, height: 0 }; }
+  if (text === undefined || text === null || isSsr()) {
+    return { width: 0, height: 0 };
+  }
 
   const str = `${text}`;
   const styleString = getStyleString(style);
   const cacheKey = `${str}-${styleString}`;
 
-  if (stringCache.widthCache[cacheKey]) { return stringCache.widthCache[cacheKey]; }
+  if (stringCache.widthCache[cacheKey]) {
+    return stringCache.widthCache[cacheKey];
+  }
 
   try {
     let measurementSpan = document.getElementById(MEASUREMENT_SPAN_ID);
@@ -75,7 +95,7 @@ export const getStringSize = (text: string | number, style: CSSProperties = {}) 
     // Need to use CSS Object Model (CSSOM) to be able to comply with Content Security Policy (CSP)
     // https://en.wikipedia.org/wiki/Content_Security_Policy
     const measurementSpanStyle: Record<string, any> = { ...SPAN_STYLE, ...style };
-    Object.keys(measurementSpanStyle).map((styleKey) => {
+    Object.keys(measurementSpanStyle).map(styleKey => {
       (measurementSpan.style as Record<string, any>)[styleKey] = measurementSpanStyle[styleKey];
       return styleKey;
     });
@@ -125,9 +145,7 @@ export const getOffset = (el: HTMLElement): ContainerOffset => {
  * @param  {Object} offset The offset of main part in the svg element
  * @return {Object}        {chartX, chartY}
  */
-export const calculateChartCoordinate = (event: MouseEvent, offset: ContainerOffset) => (
-  {
-    chartX: Math.round(event.pageX - offset.left),
-    chartY: Math.round(event.pageY - offset.top),
-  }
-);
+export const calculateChartCoordinate = (event: MouseEvent, offset: ContainerOffset) => ({
+  chartX: Math.round(event.pageX - offset.left),
+  chartY: Math.round(event.pageY - offset.top),
+});

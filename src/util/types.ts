@@ -20,7 +20,7 @@ import {
   Component,
   isValidElement,
   FunctionComponent,
-  ReactElement
+  ReactElement,
 } from 'react';
 import _ from 'lodash';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'd3-scale';
@@ -29,21 +29,27 @@ export type LayoutType = 'horizontal' | 'vertical' | 'centric' | 'radial';
 export type PolarLayoutType = 'radial' | 'centric';
 export type AxisType = 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis';
 export type DataKey<T> = string | number | ((obj: T) => any);
-export type PresentationAttributes<T> = AriaAttributes &
-  DOMAttributes<T> &
-  SVGProps<T>;
-export type PresentationAttributesWithProps<P, T> = AriaAttributes &
-  DOMAttributesWithProps<P, T> &
-  SVGProps<T>;
+export type PresentationAttributes<T> = AriaAttributes & DOMAttributes<T> & SVGProps<T>;
+export type PresentationAttributesWithProps<P, T> = AriaAttributes & DOMAttributesWithProps<P, T> & SVGProps<T>;
 
 export type SymbolType = 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye';
-export type LegendType = 'plainline' | 'line' | 'square' | 'rect' | 'circle' | 'cross' |
-  'diamond' | 'star' | 'triangle' | 'wye' | 'none';
+export type LegendType =
+  | 'plainline'
+  | 'line'
+  | 'square'
+  | 'rect'
+  | 'circle'
+  | 'cross'
+  | 'diamond'
+  | 'star'
+  | 'triangle'
+  | 'wye'
+  | 'none';
 export type TooltipType = 'none';
 export interface Coordinate {
   x: number;
   y: number;
-};
+}
 
 export interface ChartCoordinate extends Coordinate {
   xAxis?: any;
@@ -61,8 +67,22 @@ export interface ChartCoordinate extends Coordinate {
   outerRadius?: number;
 }
 
-export type ScaleType = 'auto' | 'linear' | 'pow' | 'sqrt' | 'log' | 'identity' | 'time' | 'band' |
-  'point' | 'ordinal' | 'quantile' | 'quantize' | 'utc' | 'sequential' | 'threshold';
+export type ScaleType =
+  | 'auto'
+  | 'linear'
+  | 'pow'
+  | 'sqrt'
+  | 'log'
+  | 'identity'
+  | 'time'
+  | 'band'
+  | 'point'
+  | 'ordinal'
+  | 'quantile'
+  | 'quantize'
+  | 'utc'
+  | 'sequential'
+  | 'threshold';
 
 //
 // Event Handler Types -- Copied from @types/react/index.d.ts and adapted for Props.
@@ -75,10 +95,7 @@ type EventHandler<P, E extends SyntheticEvent<any>> = {
 type ReactEventHandler<P, T = Element> = EventHandler<P, SyntheticEvent<T>>;
 
 type ClipboardEventHandler<P, T = Element> = EventHandler<P, ClipboardEvent<T>>;
-type CompositionEventHandler<P, T = Element> = EventHandler<
-  P,
-  CompositionEvent<T>
->;
+type CompositionEventHandler<P, T = Element> = EventHandler<P, CompositionEvent<T>>;
 type DragEventHandler<P, T = Element> = EventHandler<P, DragEvent<T>>;
 type FocusEventHandler<P, T = Element> = EventHandler<P, FocusEvent<T>>;
 type FormEventHandler<P, T = Element> = EventHandler<P, FormEvent<T>>;
@@ -89,10 +106,7 @@ type PointerEventHandler<P, T = Element> = EventHandler<P, PointerEvent<T>>;
 type UIEventHandler<P, T = Element> = EventHandler<P, UIEvent<T>>;
 type WheelEventHandler<P, T = Element> = EventHandler<P, WheelEvent<T>>;
 type AnimationEventHandler<P, T = Element> = EventHandler<P, AnimationEvent<T>>;
-type TransitionEventHandler<P, T = Element> = EventHandler<
-  P,
-  TransitionEvent<T>
->;
+type TransitionEventHandler<P, T = Element> = EventHandler<P, TransitionEvent<T>>;
 
 export interface DOMAttributesWithProps<P, T> {
   children?: ReactNode;
@@ -291,55 +305,431 @@ export interface DOMAttributesWithProps<P, T> {
   onTransitionEndCapture?: TransitionEventHandler<P, T>;
 }
 
-const SVGPropKeys = ['className', 'color', 'height', 'id', 'lang', 'max', 'media', 'method', 'min', 'name', 'style', 'target' ,
-'type', 'width', 'role', 'tabIndex', 'accentHeight', 'accumulate', 'additive', 'alignmentBaseline', 'allowReorder' ,
-'alphabetic', 'amplitude', 'arabicForm', 'ascent', 'attributeName', 'attributeType', 'autoReverse' ,
-'azimuth', 'baseFrequency', 'baselineShift', 'baseProfile', 'bbox', 'begin', 'bias', 'by', 'calcMode', 'capHeight' ,
-'clip', 'clipPath', 'clipPathUnits', 'clipRule', 'colorInterpolation', 'colorInterpolationFilters', 'colorProfile' ,
-'colorRendering', 'contentScriptType', 'contentStyleType', 'cursor', 'cx', 'cy', 'd', 'decelerate', 'descent', 'diffuseConstant' ,
-'direction', 'display', 'divisor', 'dominantBaseline', 'dur', 'dx', 'dy', 'edgeMode', 'elevation', 'enableBackground' ,
-'end', 'exponent', 'externalResourcesRequired', 'fill', 'fillOpacity', 'fillRule', 'filter', 'filterRes', 'filterUnits' ,
-'floodColor', 'floodOpacity', 'focusable', 'fontFamily', 'fontSize', 'fontSizeAdjust', 'fontStretch', 'fontStyle', 'fontVariant' ,
-'fontWeight', 'format', 'from', 'fx', 'fy', 'g1', 'g2', 'glyphName', 'glyphOrientationHorizontal', 'glyphOrientationVertical' ,
-'glyphRef', 'gradientTransform', 'gradientUnits', 'hanging', 'horizAdvX', 'horizOriginX', 'href', 'ideographic', 'imageRendering' ,
-'in2', 'in', 'intercept', 'k1', 'k2', 'k3', 'k4', 'k', 'kernelMatrix', 'kernelUnitLength', 'kerning', 'keyPoints', 'keySplines' ,
-'keyTimes', 'lengthAdjust', 'letterSpacing', 'lightingColor', 'limitingConeAngle', 'local', 'markerEnd', 'markerHeight', 'markerMid' ,
-'markerStart', 'markerUnits', 'markerWidth', 'mask', 'maskContentUnits', 'maskUnits', 'mathematical', 'mode', 'numOctaves' ,
-'offset', 'opacity', 'operator', 'order', 'orient', 'orientation', 'origin', 'overflow', 'overlinePosition', 'overlineThickness' ,
-'paintOrder', 'panose1', 'pathLength', 'patternContentUnits', 'patternTransform', 'patternUnits', 'pointerEvents', 'points' ,
-'pointsAtX', 'pointsAtY', 'pointsAtZ', 'preserveAlpha', 'preserveAspectRatio', 'primitiveUnits', 'r', 'radius', 'refX', 'refY', 'renderingIntent' ,
-'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures', 'restart', 'result', 'rotate', 'rx', 'ry', 'seed' ,
-'shapeRendering', 'slope', 'spacing', 'specularConstant', 'specularExponent', 'speed', 'spreadMethod', 'startOffset', 'stdDeviation', 'stemh', 'stemv' ,
-'stitchTiles', 'stopColor', 'stopOpacity', 'strikethroughPosition', 'strikethroughThickness', 'string', 'stroke', 'strokeDasharray', 'strokeDashoffset' ,
-'strokeLinecap', 'strokeLinejoin', 'strokeMiterlimit', 'strokeOpacity', 'strokeWidth', 'surfaceScale', 'systemLanguage', 'tableValues', 'targetX' ,
-'targetY', 'textAnchor', 'textDecoration', 'textLength', 'textRendering', 'to', 'transform', 'u1', 'u2' ,
-'underlinePosition', 'underlineThickness', 'unicode', 'unicodeBidi', 'unicodeRange', 'unitsPerEm', 'vAlphabetic', 'values', 'vectorEffect' ,
-'version', 'vertAdvY', 'vertOriginX', 'vertOriginY', 'vHanging', 'vIdeographic', 'viewBox', 'viewTarget', 'visibility', 'vMathematical' ,
-'widths', 'wordSpacing', 'writingMode', 'x1', 'x2', 'x', 'xChannelSelector', 'xHeight', 'xlinkActuate', 'xlinkArcrole', 'xlinkHref', 'xlinkRole' ,
-'xlinkShow', 'xlinkTitle', 'xlinkType', 'xmlBase', 'xmlLang', 'xmlns', 'xmlnsXlink', 'xmlSpace', 'y1', 'y2', 'y', 'yChannelSelector' ,
-'z', 'zoomAndPan', 'ref', 'key', 'angle'];
+const SVGPropKeys = [
+  'className',
+  'color',
+  'height',
+  'id',
+  'lang',
+  'max',
+  'media',
+  'method',
+  'min',
+  'name',
+  'style',
+  'target',
+  'type',
+  'width',
+  'role',
+  'tabIndex',
+  'accentHeight',
+  'accumulate',
+  'additive',
+  'alignmentBaseline',
+  'allowReorder',
+  'alphabetic',
+  'amplitude',
+  'arabicForm',
+  'ascent',
+  'attributeName',
+  'attributeType',
+  'autoReverse',
+  'azimuth',
+  'baseFrequency',
+  'baselineShift',
+  'baseProfile',
+  'bbox',
+  'begin',
+  'bias',
+  'by',
+  'calcMode',
+  'capHeight',
+  'clip',
+  'clipPath',
+  'clipPathUnits',
+  'clipRule',
+  'colorInterpolation',
+  'colorInterpolationFilters',
+  'colorProfile',
+  'colorRendering',
+  'contentScriptType',
+  'contentStyleType',
+  'cursor',
+  'cx',
+  'cy',
+  'd',
+  'decelerate',
+  'descent',
+  'diffuseConstant',
+  'direction',
+  'display',
+  'divisor',
+  'dominantBaseline',
+  'dur',
+  'dx',
+  'dy',
+  'edgeMode',
+  'elevation',
+  'enableBackground',
+  'end',
+  'exponent',
+  'externalResourcesRequired',
+  'fill',
+  'fillOpacity',
+  'fillRule',
+  'filter',
+  'filterRes',
+  'filterUnits',
+  'floodColor',
+  'floodOpacity',
+  'focusable',
+  'fontFamily',
+  'fontSize',
+  'fontSizeAdjust',
+  'fontStretch',
+  'fontStyle',
+  'fontVariant',
+  'fontWeight',
+  'format',
+  'from',
+  'fx',
+  'fy',
+  'g1',
+  'g2',
+  'glyphName',
+  'glyphOrientationHorizontal',
+  'glyphOrientationVertical',
+  'glyphRef',
+  'gradientTransform',
+  'gradientUnits',
+  'hanging',
+  'horizAdvX',
+  'horizOriginX',
+  'href',
+  'ideographic',
+  'imageRendering',
+  'in2',
+  'in',
+  'intercept',
+  'k1',
+  'k2',
+  'k3',
+  'k4',
+  'k',
+  'kernelMatrix',
+  'kernelUnitLength',
+  'kerning',
+  'keyPoints',
+  'keySplines',
+  'keyTimes',
+  'lengthAdjust',
+  'letterSpacing',
+  'lightingColor',
+  'limitingConeAngle',
+  'local',
+  'markerEnd',
+  'markerHeight',
+  'markerMid',
+  'markerStart',
+  'markerUnits',
+  'markerWidth',
+  'mask',
+  'maskContentUnits',
+  'maskUnits',
+  'mathematical',
+  'mode',
+  'numOctaves',
+  'offset',
+  'opacity',
+  'operator',
+  'order',
+  'orient',
+  'orientation',
+  'origin',
+  'overflow',
+  'overlinePosition',
+  'overlineThickness',
+  'paintOrder',
+  'panose1',
+  'pathLength',
+  'patternContentUnits',
+  'patternTransform',
+  'patternUnits',
+  'pointerEvents',
+  'points',
+  'pointsAtX',
+  'pointsAtY',
+  'pointsAtZ',
+  'preserveAlpha',
+  'preserveAspectRatio',
+  'primitiveUnits',
+  'r',
+  'radius',
+  'refX',
+  'refY',
+  'renderingIntent',
+  'repeatCount',
+  'repeatDur',
+  'requiredExtensions',
+  'requiredFeatures',
+  'restart',
+  'result',
+  'rotate',
+  'rx',
+  'ry',
+  'seed',
+  'shapeRendering',
+  'slope',
+  'spacing',
+  'specularConstant',
+  'specularExponent',
+  'speed',
+  'spreadMethod',
+  'startOffset',
+  'stdDeviation',
+  'stemh',
+  'stemv',
+  'stitchTiles',
+  'stopColor',
+  'stopOpacity',
+  'strikethroughPosition',
+  'strikethroughThickness',
+  'string',
+  'stroke',
+  'strokeDasharray',
+  'strokeDashoffset',
+  'strokeLinecap',
+  'strokeLinejoin',
+  'strokeMiterlimit',
+  'strokeOpacity',
+  'strokeWidth',
+  'surfaceScale',
+  'systemLanguage',
+  'tableValues',
+  'targetX',
+  'targetY',
+  'textAnchor',
+  'textDecoration',
+  'textLength',
+  'textRendering',
+  'to',
+  'transform',
+  'u1',
+  'u2',
+  'underlinePosition',
+  'underlineThickness',
+  'unicode',
+  'unicodeBidi',
+  'unicodeRange',
+  'unitsPerEm',
+  'vAlphabetic',
+  'values',
+  'vectorEffect',
+  'version',
+  'vertAdvY',
+  'vertOriginX',
+  'vertOriginY',
+  'vHanging',
+  'vIdeographic',
+  'viewBox',
+  'viewTarget',
+  'visibility',
+  'vMathematical',
+  'widths',
+  'wordSpacing',
+  'writingMode',
+  'x1',
+  'x2',
+  'x',
+  'xChannelSelector',
+  'xHeight',
+  'xlinkActuate',
+  'xlinkArcrole',
+  'xlinkHref',
+  'xlinkRole',
+  'xlinkShow',
+  'xlinkTitle',
+  'xlinkType',
+  'xmlBase',
+  'xmlLang',
+  'xmlns',
+  'xmlnsXlink',
+  'xmlSpace',
+  'y1',
+  'y2',
+  'y',
+  'yChannelSelector',
+  'z',
+  'zoomAndPan',
+  'ref',
+  'key',
+  'angle',
+];
 
-const EventKeys = ['children', 'dangerouslySetInnerHTML', 'onCopy', 'onCopyCapture', 'onCut', 'onCutCapture', 'onPaste', 'onPasteCapture',
-'onCompositionEnd', 'onCompositionEndCapture', 'onCompositionStart', 'onCompositionStartCapture', 'onCompositionUpdate', 'onCompositionUpdateCapture',
-'onFocus', 'onFocusCapture', 'onBlur', 'onBlurCapture', 'onChange', 'onChangeCapture', 'onBeforeInput',
-'onBeforeInputCapture', 'onInput', 'onInputCapture', 'onReset', 'onResetCapture', 'onSubmit', 'onSubmitCapture', 'onInvalid',
-'onInvalidCapture', 'onLoad', 'onLoadCapture', 'onError', 'onErrorCapture', 'onKeyDown', 'onKeyDownCapture', 'onKeyPress',
-'onKeyPressCapture', 'onKeyUp', 'onKeyUpCapture', 'onAbort', 'onAbortCapture', 'onCanPlay', 'onCanPlayCapture', 'onCanPlayThrough',
-'onCanPlayThroughCapture', 'onDurationChange', 'onDurationChangeCapture', 'onEmptied', 'onEmptiedCapture', 'onEncrypted', 'onEncryptedCapture',
-'onEnded', 'onEndedCapture', 'onLoadedData', 'onLoadedDataCapture', 'onLoadedMetadata', 'onLoadedMetadataCapture',
-'onLoadStart', 'onLoadStartCapture', 'onPause', 'onPauseCapture', 'onPlay', 'onPlayCapture', 'onPlaying', 'onPlayingCapture', 'onProgress', 'onProgressCapture',
-'onRateChange', 'onRateChangeCapture', 'onSeeked', 'onSeekedCapture', 'onSeeking', 'onSeekingCapture', 'onStalled', 'onStalledCapture',
-'onSuspend', 'onSuspendCapture', 'onTimeUpdate', 'onTimeUpdateCapture', 'onVolumeChange', 'onVolumeChangeCapture', 'onWaiting', 'onWaitingCapture',
-'onAuxClick', 'onAuxClickCapture', 'onClick', 'onClickCapture', 'onContextMenu', 'onContextMenuCapture', 'onDoubleClick', 'onDoubleClickCapture', 'onDrag',
-'onDragCapture', 'onDragEnd', 'onDragEndCapture', 'onDragEnter', 'onDragEnterCapture', 'onDragExit', 'onDragExitCapture', 'onDragLeave', 'onDragLeaveCapture',
-'onDragOver', 'onDragOverCapture', 'onDragStart', 'onDragStartCapture', 'onDrop', 'onDropCapture', 'onMouseDown', 'onMouseDownCapture',
-'onMouseEnter', 'onMouseLeave', 'onMouseMove', 'onMouseMoveCapture', 'onMouseOut', 'onMouseOutCapture', 'onMouseOver', 'onMouseOverCapture',
-'onMouseUp', 'onMouseUpCapture', 'onSelect', 'onSelectCapture', 'onTouchCancel', 'onTouchCancelCapture', 'onTouchEnd', 'onTouchEndCapture', 'onTouchMove',
-'onTouchMoveCapture', 'onTouchStart', 'onTouchStartCapture', 'onPointerDown', 'onPointerDownCapture', 'onPointerMove', 'onPointerMoveCapture',
-'onPointerUp', 'onPointerUpCapture', 'onPointerCancel', 'onPointerCancelCapture', 'onPointerEnter', 'onPointerEnterCapture', 'onPointerLeave',
-'onPointerLeaveCapture', 'onPointerOver', 'onPointerOverCapture', 'onPointerOut', 'onPointerOutCapture', 'onGotPointerCapture', 'onGotPointerCaptureCapture',
-'onLostPointerCapture', 'onLostPointerCaptureCapture', 'onScroll', 'onScrollCapture', 'onWheel', 'onWheelCapture', 'onAnimationStart', 'onAnimationStartCapture',
-'onAnimationEnd', 'onAnimationEndCapture', 'onAnimationIteration', 'onAnimationIterationCapture', 'onTransitionEnd', 'onTransitionEndCapture', ];
+const EventKeys = [
+  'children',
+  'dangerouslySetInnerHTML',
+  'onCopy',
+  'onCopyCapture',
+  'onCut',
+  'onCutCapture',
+  'onPaste',
+  'onPasteCapture',
+  'onCompositionEnd',
+  'onCompositionEndCapture',
+  'onCompositionStart',
+  'onCompositionStartCapture',
+  'onCompositionUpdate',
+  'onCompositionUpdateCapture',
+  'onFocus',
+  'onFocusCapture',
+  'onBlur',
+  'onBlurCapture',
+  'onChange',
+  'onChangeCapture',
+  'onBeforeInput',
+  'onBeforeInputCapture',
+  'onInput',
+  'onInputCapture',
+  'onReset',
+  'onResetCapture',
+  'onSubmit',
+  'onSubmitCapture',
+  'onInvalid',
+  'onInvalidCapture',
+  'onLoad',
+  'onLoadCapture',
+  'onError',
+  'onErrorCapture',
+  'onKeyDown',
+  'onKeyDownCapture',
+  'onKeyPress',
+  'onKeyPressCapture',
+  'onKeyUp',
+  'onKeyUpCapture',
+  'onAbort',
+  'onAbortCapture',
+  'onCanPlay',
+  'onCanPlayCapture',
+  'onCanPlayThrough',
+  'onCanPlayThroughCapture',
+  'onDurationChange',
+  'onDurationChangeCapture',
+  'onEmptied',
+  'onEmptiedCapture',
+  'onEncrypted',
+  'onEncryptedCapture',
+  'onEnded',
+  'onEndedCapture',
+  'onLoadedData',
+  'onLoadedDataCapture',
+  'onLoadedMetadata',
+  'onLoadedMetadataCapture',
+  'onLoadStart',
+  'onLoadStartCapture',
+  'onPause',
+  'onPauseCapture',
+  'onPlay',
+  'onPlayCapture',
+  'onPlaying',
+  'onPlayingCapture',
+  'onProgress',
+  'onProgressCapture',
+  'onRateChange',
+  'onRateChangeCapture',
+  'onSeeked',
+  'onSeekedCapture',
+  'onSeeking',
+  'onSeekingCapture',
+  'onStalled',
+  'onStalledCapture',
+  'onSuspend',
+  'onSuspendCapture',
+  'onTimeUpdate',
+  'onTimeUpdateCapture',
+  'onVolumeChange',
+  'onVolumeChangeCapture',
+  'onWaiting',
+  'onWaitingCapture',
+  'onAuxClick',
+  'onAuxClickCapture',
+  'onClick',
+  'onClickCapture',
+  'onContextMenu',
+  'onContextMenuCapture',
+  'onDoubleClick',
+  'onDoubleClickCapture',
+  'onDrag',
+  'onDragCapture',
+  'onDragEnd',
+  'onDragEndCapture',
+  'onDragEnter',
+  'onDragEnterCapture',
+  'onDragExit',
+  'onDragExitCapture',
+  'onDragLeave',
+  'onDragLeaveCapture',
+  'onDragOver',
+  'onDragOverCapture',
+  'onDragStart',
+  'onDragStartCapture',
+  'onDrop',
+  'onDropCapture',
+  'onMouseDown',
+  'onMouseDownCapture',
+  'onMouseEnter',
+  'onMouseLeave',
+  'onMouseMove',
+  'onMouseMoveCapture',
+  'onMouseOut',
+  'onMouseOutCapture',
+  'onMouseOver',
+  'onMouseOverCapture',
+  'onMouseUp',
+  'onMouseUpCapture',
+  'onSelect',
+  'onSelectCapture',
+  'onTouchCancel',
+  'onTouchCancelCapture',
+  'onTouchEnd',
+  'onTouchEndCapture',
+  'onTouchMove',
+  'onTouchMoveCapture',
+  'onTouchStart',
+  'onTouchStartCapture',
+  'onPointerDown',
+  'onPointerDownCapture',
+  'onPointerMove',
+  'onPointerMoveCapture',
+  'onPointerUp',
+  'onPointerUpCapture',
+  'onPointerCancel',
+  'onPointerCancelCapture',
+  'onPointerEnter',
+  'onPointerEnterCapture',
+  'onPointerLeave',
+  'onPointerLeaveCapture',
+  'onPointerOver',
+  'onPointerOverCapture',
+  'onPointerOut',
+  'onPointerOutCapture',
+  'onGotPointerCapture',
+  'onGotPointerCaptureCapture',
+  'onLostPointerCapture',
+  'onLostPointerCaptureCapture',
+  'onScroll',
+  'onScrollCapture',
+  'onWheel',
+  'onWheelCapture',
+  'onAnimationStart',
+  'onAnimationStartCapture',
+  'onAnimationEnd',
+  'onAnimationEndCapture',
+  'onAnimationIteration',
+  'onAnimationIterationCapture',
+  'onTransitionEnd',
+  'onTransitionEndCapture',
+];
 
 // Animation Types => TODO: Should be moved when react-smooth is typescriptified.
 export type AnimationTiming = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
@@ -391,7 +781,7 @@ export type AxisDomain = [AxisDomainItem, AxisDomainItem];
 export interface BaseAxisProps {
   /** The type of axis */
   type?: 'number' | 'category';
-  /** The key of data displayed in the axis */ 
+  /** The key of data displayed in the axis */
   dataKey?: DataKey<any>;
   /** Whether or not display the axis */
   hide?: boolean;
@@ -407,13 +797,13 @@ export interface BaseAxisProps {
   tickLine?: boolean | PresentationAttributes<SVGTextElement>;
   /** The size of tick line */
   tickSize?: number;
-  /** The formatter function of tick */ 
+  /** The formatter function of tick */
   tickFormatter?: (value: any, index: number) => string;
   /**
-   * When domain of the axis is specified and the type of the axis is 'number', 
-   * if allowDataOverflow is set to be false, 
-   * the domain will be adjusted when the minimum value of data is smaller than domain[0] or 
-   * the maximum value of data is greater than domain[1] so that the axis displays all data values. 
+   * When domain of the axis is specified and the type of the axis is 'number',
+   * if allowDataOverflow is set to be false,
+   * the domain will be adjusted when the minimum value of data is smaller than domain[0] or
+   * the maximum value of data is greater than domain[1] so that the axis displays all data values.
    * If set to true, graphic elements (line, area, bars) will be clipped to conform to the specified domain.
    */
   allowDataOverflow?: boolean;
@@ -427,16 +817,16 @@ export interface BaseAxisProps {
   allowDecimals?: boolean;
   /** The domain of scale in this axis */
   domain?: AxisDomain;
-  /** The name of data displayed in the axis */ 
-  name?: string | number;
-  /** The unit of data displayed in the axis */ 
+  /** The name of data displayed in the axis */
+  name?: string;
+  /** The unit of data displayed in the axis */
   unit?: string | number;
   /** The type of axis */
   axisType?: AxisType;
   range?: Array<number>;
   /** axis react component */
   AxisComp?: any;
-};
+}
 
 export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
 
@@ -453,10 +843,13 @@ export interface Margin {
   left?: number;
 }
 
-
-
-export const filterProps = (props: Record<string, any> | Component | FunctionComponent | boolean, includeEvents?: boolean) => {
-  if (!props || typeof props === 'function' || typeof props === 'boolean') { return null; }
+export const filterProps = (
+  props: Record<string, any> | Component | FunctionComponent | boolean,
+  includeEvents?: boolean,
+) => {
+  if (!props || typeof props === 'function' || typeof props === 'boolean') {
+    return null;
+  }
 
   let inputProps = props as Record<string, any>;
 
@@ -464,21 +857,28 @@ export const filterProps = (props: Record<string, any> | Component | FunctionCom
     inputProps = props.props as Record<string, any>;
   }
 
-  if (!_.isObject(inputProps)) { return null; }
+  if (!_.isObject(inputProps)) {
+    return null;
+  }
 
   const out: Record<string, any> = {};
 
-  for (const i in inputProps) {
-    if (SVGPropKeys.includes(i) || (includeEvents && EventKeys.includes(i))) {
-      out[i] = (inputProps as any)[i];
+  Object.keys(inputProps).forEach(key => {
+    if (SVGPropKeys.includes(key) || (includeEvents && EventKeys.includes(key))) {
+      out[key] = (inputProps as any)[key];
     }
-  }
+  });
 
   return out;
 };
 
-export const adaptEventHandlers = (props: Record<string, any> | Component | FunctionComponent | boolean, newHandler?: ((e?: Event) => any)): Record<string, (e?: Event) => any> => {
-  if (!props || typeof props === 'function' || typeof props === 'boolean') { return null; }
+export const adaptEventHandlers = (
+  props: Record<string, any> | Component | FunctionComponent | boolean,
+  newHandler?: (e?: Event) => any,
+): Record<string, (e?: Event) => any> => {
+  if (!props || typeof props === 'function' || typeof props === 'boolean') {
+    return null;
+  }
 
   let inputProps = props as Record<string, any>;
 
@@ -486,41 +886,119 @@ export const adaptEventHandlers = (props: Record<string, any> | Component | Func
     inputProps = props.props as Record<string, any>;
   }
 
-  if (!_.isObject(inputProps)) { return null; }
+  if (!_.isObject(inputProps)) {
+    return null;
+  }
 
   const out: Record<string, (e: Event) => void> = {};
 
-  for (const i in inputProps) {
-    if (EventKeys.includes(i)) {
-      out[i] = newHandler || ((e: Event) => inputProps[i](inputProps, e));
+  Object.keys(inputProps).forEach(key => {
+    if (EventKeys.includes(key)) {
+      out[key] = newHandler || ((e: Event) => inputProps[key](inputProps, e));
     }
-  }
+  });
 
   return out;
 };
 
+const getEventHandlerOfChild = (originalHandler: Function, data: any, index: number) => (e: Event): void => {
+  originalHandler(data, index, e);
 
-const getEventHandlerOfChild = (originalHandler: Function, data: any, index: number) => (
-  (e: Event): void => {
-    originalHandler(data, index, e);
+  return null;
+};
 
+export const adaptEventsOfChild = (
+  props: Record<string, any>,
+  data: any,
+  index: number,
+): Record<string, (e?: Event) => any> => {
+  if (!_.isObject(props) || typeof props !== 'object') {
     return null;
   }
-);
-
-export const adaptEventsOfChild = (props: Record<string, any>, data: any, index: number): Record<string, (e?: Event) => any> => {
-  if (!_.isObject(props) || typeof props !== 'object') { return null; }
 
   let out: Record<string, (e: Event) => void> = null;
 
-  for (const i in props) {
-    // @ts-ignore
-    const item = props[i];
-    if (EventKeys.includes(i) && typeof item === 'function') {
+  Object.keys(props).forEach((key: string) => {
+    const item = (props as any)[key];
+    if (EventKeys.includes(key) && typeof item === 'function') {
       if (!out) out = {};
-      out[i] = getEventHandlerOfChild(item, data, index);
+      out[key] = getEventHandlerOfChild(item, data, index);
     }
-  }
+  });
   return out;
 };
 
+export interface CategoricalChartPropTypes {
+  syncId?: number | string;
+  compact?: boolean;
+  width?: number;
+  height?: number;
+  data?: any[];
+  layout?: LayoutType;
+  stackOffset?: 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette';
+  throttleDelay?: number;
+  margin?: Margin;
+  barCategoryGap?: number | string;
+  barGap?: number | string;
+  barSize?: number | string;
+  maxBarSize?: number;
+  style?: any;
+  className?: string;
+  children?: any;
+  defaultShowTooltip?: boolean;
+  onClick?: any;
+  onMouseLeave?: any;
+  onMouseEnter?: any;
+  onMouseMove?: any;
+  onMouseDown?: any;
+  onMouseUp?: any;
+  reverseStackOrder?: boolean;
+  id?: string;
+
+  startAngle?: number;
+  endAngle?: number;
+  cx?: number | string;
+  cy?: number | string;
+  innerRadius?: number | string;
+  outerRadius?: number | string;
+}
+
+export interface CategoricalChart {
+  chartName?: string;
+  GraphicalChild?: any;
+  eventType?: string;
+  axisComponents?: BaseAxisProps[];
+  legendContent?: any;
+  formatAxisMap?: any;
+  defaultProps?: any;
+}
+
+export interface TreemapNode {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  depth: number;
+  index: number;
+  children?: any;
+  name: string;
+  value: number;
+  [k: string]: any;
+}
+
+export interface SankeyNode {
+  x: number;
+  y: number;
+  dx: number;
+  dy: number;
+  depth: number;
+  value: number;
+}
+export interface SankeyLink {
+  target: number;
+  source: number;
+  value: number;
+  sy: number;
+  dy: number;
+  ty: number;
+}

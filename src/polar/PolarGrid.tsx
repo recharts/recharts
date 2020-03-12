@@ -14,11 +14,10 @@ interface PolarGridProps {
   polarAngles?: number[];
   polarRadius?: number[];
   gridType?: 'polygon' | 'circle';
-};
+}
 type Props = PresentationAttributes<SVGPathElement> & PolarGridProps;
 
 class PolarGrid extends PureComponent<Props> {
-
   static displayName = 'PolarGrid';
 
   static defaultProps = {
@@ -55,7 +54,9 @@ class PolarGrid extends PureComponent<Props> {
   renderPolarAngles() {
     const { cx, cy, innerRadius, outerRadius, polarAngles } = this.props;
 
-    if (!polarAngles || !polarAngles.length) { return null; }
+    if (!polarAngles || !polarAngles.length) {
+      return null;
+    }
     const props = {
       stroke: '#ccc',
       ...filterProps(this.props),
@@ -63,23 +64,21 @@ class PolarGrid extends PureComponent<Props> {
 
     return (
       <g className="recharts-polar-grid-angle">
-        {
-          polarAngles.map((entry, i) => {
-            const start = polarToCartesian(cx, cy, innerRadius, entry);
-            const end = polarToCartesian(cx, cy, outerRadius, entry);
+        {polarAngles.map((entry, i) => {
+          const start = polarToCartesian(cx, cy, innerRadius, entry);
+          const end = polarToCartesian(cx, cy, outerRadius, entry);
 
-            return (
-              <line
-                {...props}
-                key={`line-${i}`} // eslint-disable-line react/no-array-index-key
-                x1={start.x}
-                y1={start.y}
-                x2={end.x}
-                y2={end.y}
-              />
-            );
-          })
-        }
+          return (
+            <line
+              {...props}
+              key={`line-${i}`} // eslint-disable-line react/no-array-index-key
+              x1={start.x}
+              y1={start.y}
+              x2={end.x}
+              y2={end.y}
+            />
+          );
+        })}
       </g>
     );
   }
@@ -145,17 +144,15 @@ class PolarGrid extends PureComponent<Props> {
   renderConcentricPath() {
     const { polarRadius, gridType } = this.props;
 
-    if (!polarRadius || !polarRadius.length) { return null; }
+    if (!polarRadius || !polarRadius.length) {
+      return null;
+    }
 
     return (
       <g className="recharts-polar-grid-concentric">
-        {
-          polarRadius.map((entry, i) => (
-            gridType === 'circle' ?
-              this.renderConcentricCircle(entry, i) :
-              this.renderConcentricPolygon(entry, i)
-          ))
-        }
+        {polarRadius.map((entry, i) =>
+          gridType === 'circle' ? this.renderConcentricCircle(entry, i) : this.renderConcentricPolygon(entry, i),
+        )}
       </g>
     );
   }
@@ -163,7 +160,9 @@ class PolarGrid extends PureComponent<Props> {
   render() {
     const { outerRadius } = this.props;
 
-    if (outerRadius <= 0) { return null; }
+    if (outerRadius <= 0) {
+      return null;
+    }
 
     return (
       <g className="recharts-polar-grid">

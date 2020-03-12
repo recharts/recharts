@@ -2,7 +2,6 @@
  * @fileOverview Render sectors of a funnel
  */
 import React, { PureComponent, ReactElement } from 'react';
-// @ts-ignore
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -13,8 +12,16 @@ import Cell, { Props as CellProps } from '../component/Cell';
 import { findAllByType, isSsr } from '../util/ReactUtils';
 import { interpolateNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { LegendType, TooltipType, AnimationTiming, ChartOffset, PresentationAttributes, DataKey, filterProps, adaptEventsOfChild } from '../util/types';
-
+import {
+  LegendType,
+  TooltipType,
+  AnimationTiming,
+  ChartOffset,
+  PresentationAttributes,
+  DataKey,
+  filterProps,
+  adaptEventsOfChild,
+} from '../util/types';
 
 interface FunnelTrapezoidItem extends TrapezoidProps {
   value?: number | string;
@@ -46,7 +53,7 @@ interface FunnelProps extends InternalFunnelProps {
   animationDuration?: number;
   animationEasing?: AnimationTiming;
   id?: string;
-};
+}
 
 type Props = TrapezoidProps & FunnelProps;
 
@@ -56,7 +63,6 @@ interface State {
 }
 
 class Funnel extends PureComponent<Props, State> {
-
   static displayName = 'Funnel';
 
   static defaultProps = {
@@ -102,7 +108,7 @@ class Funnel extends PureComponent<Props, State> {
     if (_.isNumber(customWidth)) {
       realWidth = customWidth;
     } else if (_.isString(customWidth)) {
-      realWidth = realWidth * parseFloat(customWidth) / 100;
+      realWidth = (realWidth * parseFloat(customWidth)) / 100;
     }
 
     return {
@@ -111,9 +117,14 @@ class Funnel extends PureComponent<Props, State> {
       offsetX: (width - realWidth) / 2,
       offsetY: (height - realHeight) / 2,
     };
-  }
+  };
 
-  static getComposedData = ({ item, offset, onItemMouseLeave, onItemMouseEnter }: {
+  static getComposedData = ({
+    item,
+    offset,
+    onItemMouseLeave,
+    onItemMouseEnter,
+  }: {
     item: Funnel;
     offset: ChartOffset;
     onItemMouseLeave: PresentationAttributes<SVGElement>['onMouseLeave'];
@@ -131,14 +142,14 @@ class Funnel extends PureComponent<Props, State> {
       const val = getValueByDataKey(entry, dataKey, 0);
       const name = getValueByDataKey(entry, nameKey, i);
       let nextVal = 0;
-      if (i !== (len - 1)) {
+      if (i !== len - 1) {
         nextVal = getValueByDataKey(funnelData[i + 1], dataKey, 0);
       }
 
-      const x = (maxValue - val) * realWidth / (2 * maxValue) + top + 25 + offsetX;
-      const y = realHeight / len * i + left + offsetY;
-      const upperWidth = val / maxValue * realWidth;
-      const lowerWidth = nextVal / maxValue * realWidth;
+      const x = ((maxValue - val) * realWidth) / (2 * maxValue) + top + 25 + offsetX;
+      const y = (realHeight / len) * i + left + offsetY;
+      const upperWidth = (val / maxValue) * realWidth;
+      const lowerWidth = (nextVal / maxValue) * realWidth;
 
       const tooltipPayload = [{ name, value: val, payload: entry, dataKey, type: tooltipType }];
       const tooltipPosition = {
@@ -158,7 +169,7 @@ class Funnel extends PureComponent<Props, State> {
         tooltipPayload,
         tooltipPosition,
         ..._.omit(entry, 'width'),
-        payload: entry
+        payload: entry,
       };
     });
 
@@ -168,7 +179,7 @@ class Funnel extends PureComponent<Props, State> {
       onMouseLeave: onItemMouseLeave,
       onMouseEnter: onItemMouseEnter,
     };
-  }
+  };
 
   state: State = { isAnimationFinished: false };
 
@@ -218,9 +229,11 @@ class Funnel extends PureComponent<Props, State> {
   static renderTrapezoidItem(option: Props['activeShape'], props: any) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
-    } if (_.isFunction(option)) {
+    }
+    if (_.isFunction(option)) {
       return option(props);
-    } if (_.isPlainObject(option)) {
+    }
+    if (_.isPlainObject(option)) {
       return <Trapezoid {...props} {...option} />;
     }
 
@@ -234,7 +247,7 @@ class Funnel extends PureComponent<Props, State> {
       const trapezoidOptions = this.isActiveIndex(i) ? activeShape : null;
       const trapezoidProps = {
         ...entry,
-        stroke: entry.stroke
+        stroke: entry.stroke,
       };
 
       return (
@@ -250,8 +263,14 @@ class Funnel extends PureComponent<Props, State> {
   }
 
   renderTrapezoidsWithAnimation() {
-    const { trapezoids, isAnimationActive, animationBegin, animationDuration,
-      animationEasing, animationId } = this.props;
+    const {
+      trapezoids,
+      isAnimationActive,
+      animationBegin,
+      animationDuration,
+      animationEasing,
+      animationId,
+    } = this.props;
     const { prevTrapezoids } = this.state;
 
     return (
@@ -266,33 +285,16 @@ class Funnel extends PureComponent<Props, State> {
         onAnimationStart={this.handleAnimationStart}
         onAnimationEnd={this.handleAnimationEnd}
       >
-        {
-          ({ t }: { t: number }) => {
-            const stepData = trapezoids.map((entry, index) => {
-              const prev = prevTrapezoids && prevTrapezoids[index];
+        {({ t }: { t: number }) => {
+          const stepData = trapezoids.map((entry, index) => {
+            const prev = prevTrapezoids && prevTrapezoids[index];
 
-              if (prev) {
-                const interpolatorX = interpolateNumber(prev.x, entry.x);
-                const interpolatorY = interpolateNumber(prev.y, entry.y);
-                const interpolatorUpperWidth = interpolateNumber(prev.upperWidth, entry.upperWidth);
-                const interpolatorLowerWidth = interpolateNumber(prev.lowerWidth, entry.lowerWidth);
-                const interpolatorHeight = interpolateNumber(prev.height, entry.height);
-
-                return {
-                  ...entry,
-                  x: interpolatorX(t),
-                  y: interpolatorY(t),
-                  upperWidth: interpolatorUpperWidth(t),
-                  lowerWidth: interpolatorLowerWidth(t),
-                  height: interpolatorHeight(t),
-                };
-              }
-
-              const interpolatorX = interpolateNumber(entry.x + entry.upperWidth / 2, entry.x);
-              const interpolatorY = interpolateNumber(entry.y + entry.height / 2, entry.y);
-              const interpolatorUpperWidth = interpolateNumber(0, entry.upperWidth);
-              const interpolatorLowerWidth = interpolateNumber(0, entry.lowerWidth);
-              const interpolatorHeight = interpolateNumber(0, entry.height);
+            if (prev) {
+              const interpolatorX = interpolateNumber(prev.x, entry.x);
+              const interpolatorY = interpolateNumber(prev.y, entry.y);
+              const interpolatorUpperWidth = interpolateNumber(prev.upperWidth, entry.upperWidth);
+              const interpolatorLowerWidth = interpolateNumber(prev.lowerWidth, entry.lowerWidth);
+              const interpolatorHeight = interpolateNumber(prev.height, entry.height);
 
               return {
                 ...entry,
@@ -302,14 +304,25 @@ class Funnel extends PureComponent<Props, State> {
                 lowerWidth: interpolatorLowerWidth(t),
                 height: interpolatorHeight(t),
               };
-            });
-            return (
-              <Layer>
-                {this.renderTrapezoidsStatically(stepData)}
-              </Layer>
-            );
-          }
-        }
+            }
+
+            const interpolatorX = interpolateNumber(entry.x + entry.upperWidth / 2, entry.x);
+            const interpolatorY = interpolateNumber(entry.y + entry.height / 2, entry.y);
+            const interpolatorUpperWidth = interpolateNumber(0, entry.upperWidth);
+            const interpolatorLowerWidth = interpolateNumber(0, entry.lowerWidth);
+            const interpolatorHeight = interpolateNumber(0, entry.height);
+
+            return {
+              ...entry,
+              x: interpolatorX(t),
+              y: interpolatorY(t),
+              upperWidth: interpolatorUpperWidth(t),
+              lowerWidth: interpolatorLowerWidth(t),
+              height: interpolatorHeight(t),
+            };
+          });
+          return <Layer>{this.renderTrapezoidsStatically(stepData)}</Layer>;
+        }}
       </Animate>
     );
   }
@@ -318,8 +331,12 @@ class Funnel extends PureComponent<Props, State> {
     const { trapezoids, isAnimationActive } = this.props;
     const { prevTrapezoids } = this.state;
 
-    if (isAnimationActive && trapezoids && trapezoids.length &&
-      (!prevTrapezoids || !_.isEqual(prevTrapezoids, trapezoids))) {
+    if (
+      isAnimationActive &&
+      trapezoids &&
+      trapezoids.length &&
+      (!prevTrapezoids || !_.isEqual(prevTrapezoids, trapezoids))
+    ) {
       return this.renderTrapezoidsWithAnimation();
     }
     return this.renderTrapezoidsStatically(trapezoids);
@@ -338,8 +355,7 @@ class Funnel extends PureComponent<Props, State> {
     return (
       <Layer className={layerClass}>
         {this.renderTrapezoids()}
-        {(!isAnimationActive || isAnimationFinished) &&
-          LabelList.renderCallByParent(this.props, trapezoids)}
+        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, trapezoids)}
       </Layer>
     );
   }

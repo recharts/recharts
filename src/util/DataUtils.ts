@@ -1,23 +1,21 @@
 import _ from 'lodash';
 
 export const mathSign = (value: number) => {
-  if (value === 0) { return 0; }
-  if (value > 0) { return 1; }
+  if (value === 0) {
+    return 0;
+  }
+  if (value > 0) {
+    return 1;
+  }
 
   return -1;
 };
 
-export const isPercent = (value: string | number) => (
-  _.isString(value) && value.indexOf('%') === value.length - 1
-);
+export const isPercent = (value: string | number) => _.isString(value) && value.indexOf('%') === value.length - 1;
 
-export const isNumber = (value: any) => (
-  _.isNumber(value) && !_.isNaN(value)
-);
+export const isNumber = (value: any) => _.isNumber(value) && !_.isNaN(value);
 
-export const isNumOrStr = (value: number | string) => (
-  isNumber(value as number) || _.isString(value)
-);
+export const isNumOrStr = (value: number | string) => isNumber(value as number) || _.isString(value);
 
 let idCounter = 0;
 export const uniqueId = (prefix?: string) => {
@@ -33,7 +31,7 @@ export const uniqueId = (prefix?: string) => {
  * @param {Boolean} validate      If set to be true, the result will be validated
  * @return {Number} value
  */
-export const getPercentValue = (percent: number | string, totalValue: number, defaultValue: number = 0, validate: boolean = false) => {
+export const getPercentValue = (percent: number | string, totalValue: number, defaultValue = 0, validate = false) => {
   if (!isNumber(percent as number) && !_.isString(percent)) {
     return defaultValue;
   }
@@ -42,7 +40,7 @@ export const getPercentValue = (percent: number | string, totalValue: number, de
 
   if (isPercent(percent as string)) {
     const index = (percent as string).indexOf('%');
-    value = totalValue * parseFloat((percent as string).slice(0, index)) / 100;
+    value = (totalValue * parseFloat((percent as string).slice(0, index))) / 100;
   } else {
     value = +percent;
   }
@@ -59,7 +57,9 @@ export const getPercentValue = (percent: number | string, totalValue: number, de
 };
 
 export const getAnyElementOfObject = (obj: any) => {
-  if (!obj) { return null; }
+  if (!obj) {
+    return null;
+  }
 
   const keys = Object.keys(obj);
 
@@ -71,7 +71,9 @@ export const getAnyElementOfObject = (obj: any) => {
 };
 
 export const hasDuplicate = (ary: Array<any>) => {
-  if (!_.isArray(ary)) { return false; }
+  if (!_.isArray(ary)) {
+    return false;
+  }
 
   const len = ary.length;
   const cache: Record<string, any> = {};
@@ -89,28 +91,37 @@ export const hasDuplicate = (ary: Array<any>) => {
 
 export const interpolateNumber = (numberA: number, numberB: number) => {
   if (isNumber(numberA) && isNumber(numberB)) {
-    return (t: number) => (numberA + t * (numberB - numberA));
+    return (t: number) => numberA + t * (numberB - numberA);
   }
 
   return () => numberB;
 };
 
-export function findEntryInArray<T>(ary: Array<T>, specifiedKey: number | string | ((entry: T) => unknown), specifiedValue: any) {
-  if (!ary || !ary.length) { return null; }
+export function findEntryInArray<T>(
+  ary: Array<T>,
+  specifiedKey: number | string | ((entry: T) => unknown),
+  specifiedValue: any,
+) {
+  if (!ary || !ary.length) {
+    return null;
+  }
 
-  return ary.find(entry => (
-    entry &&
-    (typeof specifiedKey === 'function' ? specifiedKey(entry) : _.get(entry, specifiedKey)) === specifiedValue
-  ));
-};
+  return ary.find(
+    entry =>
+      entry &&
+      (typeof specifiedKey === 'function' ? specifiedKey(entry) : _.get(entry, specifiedKey)) === specifiedValue,
+  );
+}
 
 /**
  * The least square linear regression
  * @param {Array} data The array of points
  * @returns {Object} The domain of x, and the parameter of linear function
  */
-export const getLinearRegression = (data: Array<{cx?: number; cy?: number}>) => {
-  if (!data || !data.length) { return null; }
+export const getLinearRegression = (data: Array<{ cx?: number; cy?: number }>) => {
+  if (!data || !data.length) {
+    return null;
+  }
 
   const len = data.length;
   let xsum = 0;
@@ -129,8 +140,7 @@ export const getLinearRegression = (data: Array<{cx?: number; cy?: number}>) => 
     xmax = Math.max(xmax, data[i].cx);
   }
 
-  const a = len * xxsum !== xsum * xsum ?
-    ((len * xysum - xsum * ysum) / (len * xxsum - xsum * xsum)) : 0;
+  const a = len * xxsum !== xsum * xsum ? (len * xysum - xsum * ysum) / (len * xxsum - xsum * xsum) : 0;
 
   return {
     xmin,

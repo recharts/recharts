@@ -2,7 +2,6 @@
  * @fileOverview Line
  */
 import React, { PureComponent, ReactElement } from 'react';
-// @ts-ignore
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -16,7 +15,16 @@ import { isSsr, findAllByType } from '../util/ReactUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { D3Scale, LegendType, TooltipType, AnimationTiming, filterProps, ChartOffset, DataKey, TickItem } from '../util/types';
+import {
+  D3Scale,
+  LegendType,
+  TooltipType,
+  AnimationTiming,
+  filterProps,
+  ChartOffset,
+  DataKey,
+  TickItem,
+} from '../util/types';
 
 type LineDot = ReactElement<SVGElement> | ((props: any) => SVGElement) | DotProps | boolean;
 
@@ -44,13 +52,13 @@ interface LineProps extends InternalLineProps {
   xAxisId?: string | number;
   dataKey?: DataKey<any>;
   legendType?: LegendType;
-  tooltipType?: TooltipType
+  tooltipType?: TooltipType;
   layout?: 'horizontal' | 'vertical';
   connectNulls?: boolean;
   hide?: boolean;
 
   // whether have dot in line
-  activeDot?: LineDot; 
+  activeDot?: LineDot;
   dot?: LineDot;
 
   onAnimationStart?: () => void;
@@ -63,7 +71,7 @@ interface LineProps extends InternalLineProps {
   animationEasing?: AnimationTiming;
   animationId?: number;
   id?: string;
-};
+}
 
 type Props = Omit<CurveProps, 'points' | 'pathRef'> & LineProps;
 
@@ -74,7 +82,6 @@ interface State {
 }
 
 class Line extends PureComponent<Props, State> {
-
   static displayName = 'Line';
 
   static defaultProps = {
@@ -94,9 +101,6 @@ class Line extends PureComponent<Props, State> {
     animationDuration: 1500,
     animationEasing: 'ease',
     hide: false,
-
-    onAnimationStart: () => {},
-    onAnimationEnd: () => {},
   };
 
   /**
@@ -107,18 +111,27 @@ class Line extends PureComponent<Props, State> {
    * @param  {String} dataKey The unique key of a group
    * @return {Array}  Composed data
    */
-  static getComposedData = ({ props, xAxis, yAxis, xAxisTicks, yAxisTicks, dataKey,
-    bandSize, displayedData, offset }: {
-      props: Props;
-      xAxis: Props['xAxis'];
-      yAxis: Props['yAxis'];
-      xAxisTicks: TickItem[];
-      yAxisTicks: TickItem[];
-      dataKey: Props['dataKey'];
-      bandSize: number;
-      displayedData: any[];
-      offset: ChartOffset;
-    }) => {
+  static getComposedData = ({
+    props,
+    xAxis,
+    yAxis,
+    xAxisTicks,
+    yAxisTicks,
+    dataKey,
+    bandSize,
+    displayedData,
+    offset,
+  }: {
+    props: Props;
+    xAxis: Props['xAxis'];
+    yAxis: Props['yAxis'];
+    xAxisTicks: TickItem[];
+    yAxisTicks: TickItem[];
+    dataKey: Props['dataKey'];
+    bandSize: number;
+    displayedData: any[];
+    offset: ChartOffset;
+  }) => {
     const { layout } = props;
 
     const points = displayedData.map((entry, index) => {
@@ -153,7 +166,9 @@ class Line extends PureComponent<Props, State> {
 
   /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
-    if (!this.props.isAnimationActive) { return; }
+    if (!this.props.isAnimationActive) {
+      return;
+    }
 
     const totalLength = this.getTotalLength();
     this.setState({ totalLength });
@@ -178,7 +193,7 @@ class Line extends PureComponent<Props, State> {
     }
   }
 
-  getStrokeDasharray(length: number, totalLength: number, lines: number[]) {
+  getStrokeDasharray = (length: number, totalLength: number, lines: number[]) => {
     const lineLength = lines.reduce((pre, next) => pre + next);
 
     const count = Math.floor(length / lineLength);
@@ -195,10 +210,8 @@ class Line extends PureComponent<Props, State> {
 
     const emptyLines = remainLines.length % 2 === 0 ? [0, restLength] : [restLength];
 
-    return [...Line.repeat(lines, count), ...remainLines, ...emptyLines]
-      .map(line => `${line}px`)
-      .join(', ');
-  }
+    return [...Line.repeat(lines, count), ...remainLines, ...emptyLines].map(line => `${line}px`).join(', ');
+  };
 
   id = uniqueId('recharts-line-');
 
@@ -223,21 +236,31 @@ class Line extends PureComponent<Props, State> {
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
-    this.props.onAnimationEnd();
+
+    if (this.props.onAnimationEnd) {
+      this.props.onAnimationEnd();
+    }
   };
 
   handleAnimationStart = () => {
     this.setState({ isAnimationFinished: false });
-    this.props.onAnimationStart();
+
+    if (this.props.onAnimationStart) {
+      this.props.onAnimationStart();
+    }
   };
 
   renderErrorBar() {
-    if (this.props.isAnimationActive && !this.state.isAnimationFinished) { return null; }
+    if (this.props.isAnimationActive && !this.state.isAnimationFinished) {
+      return null;
+    }
 
     const { points, xAxis, yAxis, layout, children } = this.props;
     const errorBarItems = findAllByType(children, ErrorBar.displayName);
 
-    if (!errorBarItems) { return null; }
+    if (!errorBarItems) {
+      return null;
+    }
 
     function dataPointFormatter(dataPoint: LinePointItem, dataKey: Props['dataKey']) {
       return {
@@ -248,16 +271,16 @@ class Line extends PureComponent<Props, State> {
       };
     }
 
-    return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) => {
-      return React.cloneElement(item, {
-        key: i,
+    return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) =>
+      React.cloneElement(item, {
+        key: `bar-${i}`,
         data: points,
         xAxis,
         yAxis,
         layout,
         dataPointFormatter,
-      });
-    });
+      }),
+    );
   }
 
   static renderDotItem(option: LineDot, props: any) {
@@ -292,7 +315,10 @@ class Line extends PureComponent<Props, State> {
         ...customDotProps,
         value: entry.value,
         dataKey,
-        cx: entry.x, cy: entry.y, index: i, payload: entry.payload,
+        cx: entry.x,
+        cy: entry.y,
+        index: i,
+        payload: entry.payload,
       };
 
       return Line.renderDotItem(dot, dotProps);
@@ -301,10 +327,19 @@ class Line extends PureComponent<Props, State> {
       clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
     };
 
-    return <Layer className="recharts-line-dots" key="dots" {...dotsProps}>{dots}</Layer>;
+    return (
+      <Layer className="recharts-line-dots" key="dots" {...dotsProps}>
+        {dots}
+      </Layer>
+    );
   }
 
-  renderCurveStatically(points: LinePointItem[], needClip: boolean, clipPathId: string, props?: { strokeDasharray: string }) {
+  renderCurveStatically(
+    points: LinePointItem[],
+    needClip: boolean,
+    clipPathId: string,
+    props?: { strokeDasharray: string },
+  ) {
     const { type, layout, connectNulls, ref, ...others } = this.props;
     const curveProps = {
       ...filterProps(others, true),
@@ -313,15 +348,26 @@ class Line extends PureComponent<Props, State> {
       clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
       points,
       ...props,
-      type, layout, connectNulls,
+      type,
+      layout,
+      connectNulls,
     };
 
     return <Curve {...curveProps} pathRef={this.pathRef} />;
   }
 
   renderCurveWithAnimation(needClip: boolean, clipPathId: string) {
-    const { points, strokeDasharray, isAnimationActive, animationBegin,
-      animationDuration, animationEasing, animationId, animateNewValues, width, height
+    const {
+      points,
+      strokeDasharray,
+      isAnimationActive,
+      animationBegin,
+      animationDuration,
+      animationEasing,
+      animationId,
+      animateNewValues,
+      width,
+      height,
     } = this.props;
     const { prevPoints, totalLength } = this.state;
 
@@ -337,49 +383,44 @@ class Line extends PureComponent<Props, State> {
         onAnimationEnd={this.handleAnimationEnd}
         onAnimationStart={this.handleAnimationStart}
       >
-        {
-          ({ t }: { t: number }) => {
-            if (prevPoints) {
-              const prevPointsDiffFactor = prevPoints.length / points.length;
-              const stepData = points.map((entry, index) => {
-                const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-                if (prevPoints[prevPointIndex]) {
-                  const prev = prevPoints[prevPointIndex];
-                  const interpolatorX = interpolateNumber(prev.x, entry.x);
-                  const interpolatorY = interpolateNumber(prev.y, entry.y);
+        {({ t }: { t: number }) => {
+          if (prevPoints) {
+            const prevPointsDiffFactor = prevPoints.length / points.length;
+            const stepData = points.map((entry, index) => {
+              const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
+              if (prevPoints[prevPointIndex]) {
+                const prev = prevPoints[prevPointIndex];
+                const interpolatorX = interpolateNumber(prev.x, entry.x);
+                const interpolatorY = interpolateNumber(prev.y, entry.y);
 
-                  return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
-                }
+                return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+              }
 
-                // magic number of faking previous x and y location
-                if (animateNewValues) {
-                  const interpolatorX = interpolateNumber(width * 2, entry.x);
-                  const interpolatorY = interpolateNumber(height / 2, entry.y);
-                  return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
-                }
-                return { ...entry, x: entry.x, y: entry.y };
-              });
-              return this.renderCurveStatically(stepData, needClip, clipPathId);
-            }
-            const interpolator = interpolateNumber(0, totalLength);
-            const curLength = interpolator(t);
-            let currentStrokeDasharray;
-
-            if (strokeDasharray) {
-              const lines = (`${strokeDasharray}`).split(/[,\s]+/gim)
-                .map(num => parseFloat(num));
-              currentStrokeDasharray = this.getStrokeDasharray(
-                curLength, totalLength, lines
-              );
-            } else {
-              currentStrokeDasharray = `${curLength}px ${totalLength - curLength}px`;
-            }
-
-            return this.renderCurveStatically(points, needClip, clipPathId, {
-              strokeDasharray: currentStrokeDasharray,
+              // magic number of faking previous x and y location
+              if (animateNewValues) {
+                const interpolatorX = interpolateNumber(width * 2, entry.x);
+                const interpolatorY = interpolateNumber(height / 2, entry.y);
+                return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+              }
+              return { ...entry, x: entry.x, y: entry.y };
             });
+            return this.renderCurveStatically(stepData, needClip, clipPathId);
           }
-        }
+          const interpolator = interpolateNumber(0, totalLength);
+          const curLength = interpolator(t);
+          let currentStrokeDasharray;
+
+          if (strokeDasharray) {
+            const lines = `${strokeDasharray}`.split(/[,\s]+/gim).map(num => parseFloat(num));
+            currentStrokeDasharray = this.getStrokeDasharray(curLength, totalLength, lines);
+          } else {
+            currentStrokeDasharray = `${curLength}px ${totalLength - curLength}px`;
+          }
+
+          return this.renderCurveStatically(points, needClip, clipPathId, {
+            strokeDasharray: currentStrokeDasharray,
+          });
+        }}
       </Animate>
     );
   }
@@ -388,8 +429,12 @@ class Line extends PureComponent<Props, State> {
     const { points, isAnimationActive } = this.props;
     const { prevPoints, totalLength } = this.state;
 
-    if (isAnimationActive && points && points.length &&
-      ((!prevPoints && totalLength > 0) || !_.isEqual(prevPoints, points))) {
+    if (
+      isAnimationActive &&
+      points &&
+      points.length &&
+      ((!prevPoints && totalLength > 0) || !_.isEqual(prevPoints, points))
+    ) {
       return this.renderCurveWithAnimation(needClip, clipPathId);
     }
 
@@ -397,10 +442,11 @@ class Line extends PureComponent<Props, State> {
   }
 
   render() {
-    const { hide, dot, points, className, xAxis, yAxis, top, left,
-      width, height, isAnimationActive, id } = this.props;
+    const { hide, dot, points, className, xAxis, yAxis, top, left, width, height, isAnimationActive, id } = this.props;
 
-    if (hide || !points || !points.length) { return null; }
+    if (hide || !points || !points.length) {
+      return null;
+    }
 
     const { isAnimationFinished } = this.state;
     const hasSinglePoint = points.length === 1;
@@ -420,8 +466,7 @@ class Line extends PureComponent<Props, State> {
         {!hasSinglePoint && this.renderCurve(needClip, clipPathId)}
         {this.renderErrorBar()}
         {(hasSinglePoint || dot) && this.renderDots(needClip, clipPathId)}
-        {(!isAnimationActive || isAnimationFinished) &&
-          LabelList.renderCallByParent(this.props, points)}
+        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
       </Layer>
     );
   }

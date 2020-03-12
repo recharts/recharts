@@ -2,12 +2,11 @@
  * @fileOverview Tooltip
  */
 import React, { PureComponent, CSSProperties, ReactNode, ReactElement, ReactText } from 'react';
-// @ts-ignore
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import classNames from 'classnames';
-import DefaultTooltipContent from './DefaultTooltipContent';
-import { ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent'
+import DefaultTooltipContent, { ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
+
 import { isSsr } from '../util/ReactUtils';
 import { isNumber } from '../util/DataUtils';
 import { AnimationTiming } from '../util/types';
@@ -15,12 +14,19 @@ import { AnimationTiming } from '../util/types';
 const CLS_PREFIX = 'recharts-tooltip-wrapper';
 
 const EPS = 1;
-export type ContentType<TValue extends ValueType, TName extends NameType> = ReactElement | ((props: Props<TValue, TName>) => ReactNode)
+export type ContentType<TValue extends ValueType, TName extends NameType> =
+  | ReactElement
+  | ((props: Props<TValue, TName>) => ReactNode);
 
-type UniqueFunc<TValue extends ValueType, TName extends NameType> = (entry: Payload<TValue, TName>) => unknown
+type UniqueFunc<TValue extends ValueType, TName extends NameType> = (entry: Payload<TValue, TName>) => unknown;
 type UniqueOption<TValue extends ValueType, TName extends NameType> = boolean | UniqueFunc<TValue, TName>;
-function defaultUniqBy<TValue extends ValueType, TName extends NameType>(entry: Payload<TValue, TName>) { return entry.dataKey };
-function getUniqPayload<TValue extends ValueType, TName extends NameType>(option: UniqueOption<TValue, TName>, payload: Array<Payload<TValue, TName>>) {
+function defaultUniqBy<TValue extends ValueType, TName extends NameType>(entry: Payload<TValue, TName>) {
+  return entry.dataKey;
+}
+function getUniqPayload<TValue extends ValueType, TName extends NameType>(
+  option: UniqueOption<TValue, TName>,
+  payload: Array<Payload<TValue, TName>>,
+) {
   if (option === true) {
     return _.uniqBy(payload, defaultUniqBy);
   }
@@ -30,24 +36,28 @@ function getUniqPayload<TValue extends ValueType, TName extends NameType>(option
   }
 
   return payload;
-};
+}
 
-function renderContent<TValue extends ValueType, TName extends NameType>(content: ContentType<TValue, TName>, props: Props<TValue, TName>) {
+function renderContent<TValue extends ValueType, TName extends NameType>(
+  content: ContentType<TValue, TName>,
+  props: Props<TValue, TName>,
+) {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
-  } if (_.isFunction(content)) {
-    return React.createElement((content as any), props);
+  }
+  if (_.isFunction(content)) {
+    return React.createElement(content as any, props);
   }
 
-  return <DefaultTooltipContent {...props} />
-};
+  return <DefaultTooltipContent {...props} />;
+}
 
 type Props<TValue extends ValueType, TName extends NameType> = DefaultProps<TValue, TName> & {
   allowEscapeViewBox?: {
     x?: boolean;
     y?: boolean;
   };
-  content?: ContentType<TValue, TName>
+  content?: ContentType<TValue, TName>;
   viewBox?: {
     x?: number;
     y?: number;
@@ -57,28 +67,32 @@ type Props<TValue extends ValueType, TName extends NameType> = DefaultProps<TVal
   active?: boolean;
   offset?: number;
   wrapperStyle?: CSSProperties;
-  cursor?: boolean | ReactElement | {
-    strokeDasharray: ReactText;
-    stroke?: string;
-  };
+  cursor?:
+    | boolean
+    | ReactElement
+    | {
+        strokeDasharray: ReactText;
+        stroke?: string;
+      };
   coordinate?: {
     x?: number;
     y?: number;
-  }
+  };
   position?: {
     x?: number;
     y?: number;
-  }
+  };
   payloadUniqBy: UniqueOption<TValue, TName>;
   isAnimationActive?: boolean;
   animationDuration?: number;
   animationEasing?: AnimationTiming;
   filterNull?: boolean;
   useTranslate3d?: boolean;
-}
+};
 
 class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComponent<Props<TValue, TName>> {
   static displayName = 'Tooltip';
+
   static defaultProps = {
     active: false,
     allowEscapeViewBox: { x: false, y: false },
@@ -134,7 +148,11 @@ class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComp
     }
   }
 
-  getTranslate = ({ key, tooltipDimension, viewBoxDimension }: {
+  getTranslate = ({
+    key,
+    tooltipDimension,
+    viewBoxDimension,
+  }: {
     key: 'x' | 'y';
     tooltipDimension: number;
     viewBoxDimension: number;
@@ -160,10 +178,11 @@ class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComp
   };
 
   render() {
-    const { payload, isAnimationActive, animationDuration, animationEasing,
-      filterNull, payloadUniqBy } = this.props;
-    const finalPayload = getUniqPayload(payloadUniqBy, filterNull && payload && payload.length ?
-      payload.filter(entry => !_.isNil(entry.value)) : payload);
+    const { payload, isAnimationActive, animationDuration, animationEasing, filterNull, payloadUniqBy } = this.props;
+    const finalPayload = getUniqPayload(
+      payloadUniqBy,
+      filterNull && payload && payload.length ? payload.filter(entry => !_.isNil(entry.value)) : payload,
+    );
     const hasPayload = finalPayload && finalPayload.length;
     const { content, viewBox, coordinate, position, active, wrapperStyle } = this.props;
     let outerStyle: CSSProperties = {
@@ -200,7 +219,9 @@ class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComp
 
     outerStyle = {
       ...translateStyle({
-        transform: this.props.useTranslate3d ? `translate3d(${translateX}px, ${translateY}px, 0)` : `translate(${translateX}px, ${translateY}px)`,
+        transform: this.props.useTranslate3d
+          ? `translate3d(${translateX}px, ${translateY}px, 0)`
+          : `translate(${translateX}px, ${translateY}px)`,
       }),
       ...outerStyle,
     };
@@ -215,9 +236,11 @@ class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComp
     }
 
     const cls = classNames(CLS_PREFIX, {
-      [`${CLS_PREFIX}-right`]: isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX >= coordinate.x,
+      [`${CLS_PREFIX}-right`]:
+        isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX >= coordinate.x,
       [`${CLS_PREFIX}-left`]: isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX < coordinate.x,
-      [`${CLS_PREFIX}-bottom`]: isNumber(translateY) && coordinate && isNumber(coordinate.y) && translateY >= coordinate.y,
+      [`${CLS_PREFIX}-bottom`]:
+        isNumber(translateY) && coordinate && isNumber(coordinate.y) && translateY >= coordinate.y,
       [`${CLS_PREFIX}-top`]: isNumber(translateY) && coordinate && isNumber(coordinate.y) && translateY < coordinate.y,
     });
 
@@ -225,7 +248,9 @@ class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComp
       <div
         className={cls}
         style={outerStyle}
-        ref={(node) => { this.wrapperNode = node; }}
+        ref={node => {
+          this.wrapperNode = node;
+        }}
       >
         {renderContent(content, { ...this.props, payload: finalPayload })}
       </div>

@@ -2,26 +2,59 @@
  * @fileOverview Curve
  */
 import React, { PureComponent } from 'react';
-import { line as shapeLine, area as shapeArea, CurveFactory, curveBasisClosed, curveBasisOpen,
-  curveBasis, curveLinearClosed, curveLinear, curveMonotoneX, curveMonotoneY,
-  curveNatural, curveStep, curveStepAfter, curveStepBefore } from 'd3-shape';
+import {
+  line as shapeLine,
+  area as shapeArea,
+  CurveFactory,
+  curveBasisClosed,
+  curveBasisOpen,
+  curveBasis,
+  curveLinearClosed,
+  curveLinear,
+  curveMonotoneX,
+  curveMonotoneY,
+  curveNatural,
+  curveStep,
+  curveStepAfter,
+  curveStepBefore,
+} from 'd3-shape';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers, filterProps } from '../util/types';
 import { isNumber } from '../util/DataUtils';
 
 interface CurveFactories {
-  [index: string] : CurveFactory;
+  [index: string]: CurveFactory;
 }
 
 const CURVE_FACTORIES: CurveFactories = {
-  curveBasisClosed, curveBasisOpen, curveBasis, curveLinearClosed, curveLinear,
-  curveMonotoneX, curveMonotoneY, curveNatural, curveStep, curveStepAfter,
+  curveBasisClosed,
+  curveBasisOpen,
+  curveBasis,
+  curveLinearClosed,
+  curveLinear,
+  curveMonotoneX,
+  curveMonotoneY,
+  curveNatural,
+  curveStep,
+  curveStepAfter,
   curveStepBefore,
 };
 
-export type CurveType = 'basis' | 'basisClosed' | 'basisOpen' | 'linear' | 'linearClosed' | 'natural' |
-  'monotoneX' | 'monotoneY' | 'monotone' | 'step' | 'stepBefore' | 'stepAfter' | CurveFactory;
+export type CurveType =
+  | 'basis'
+  | 'basisClosed'
+  | 'basisOpen'
+  | 'linear'
+  | 'linearClosed'
+  | 'natural'
+  | 'monotoneX'
+  | 'monotoneY'
+  | 'monotone'
+  | 'step'
+  | 'stepBefore'
+  | 'stepAfter'
+  | CurveFactory;
 
 export interface Point {
   x: number;
@@ -33,7 +66,9 @@ const getX = (p: Point) => p.x;
 const getY = (p: Point) => p.y;
 
 const getCurveFactory = (type: CurveType, layout: LayoutType) => {
-  if (_.isFunction(type)) { return type; }
+  if (_.isFunction(type)) {
+    return type;
+  }
 
   const name = `curve${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
 
@@ -75,27 +110,39 @@ class Curve extends PureComponent<Props> {
 
     if (_.isArray(baseLine)) {
       const formatBaseLine = connectNulls ? baseLine.filter(base => defined(base)) : baseLine;
-      const areaPoints = formatPoints.map((entry, index) => (
-        { ...entry, base: formatBaseLine[index] }
-      ));
+      const areaPoints = formatPoints.map((entry, index) => ({ ...entry, base: formatBaseLine[index] }));
       if (layout === 'vertical') {
-        lineFunction = shapeArea<Point & { base: Point; }>().y(getY).x1(getX).x0(d => d.base.x);
+        lineFunction = shapeArea<Point & { base: Point }>()
+          .y(getY)
+          .x1(getX)
+          .x0(d => d.base.x);
       } else {
-        lineFunction = shapeArea<Point & { base: Point; }>().x(getX).y1(getY).y0(d => d.base.y);
+        lineFunction = shapeArea<Point & { base: Point }>()
+          .x(getX)
+          .y1(getY)
+          .y0(d => d.base.y);
       }
       lineFunction.defined(defined).curve(curveFactory);
 
       return lineFunction(areaPoints);
-    } if (layout === 'vertical' && isNumber(baseLine)) {
-      lineFunction = shapeArea<Point>().y(getY).x1(getX).x0(baseLine);
+    }
+    if (layout === 'vertical' && isNumber(baseLine)) {
+      lineFunction = shapeArea<Point>()
+        .y(getY)
+        .x1(getX)
+        .x0(baseLine);
     } else if (isNumber(baseLine)) {
-      lineFunction = shapeArea<Point>().x(getX).y1(getY).y0(baseLine);
+      lineFunction = shapeArea<Point>()
+        .x(getX)
+        .y1(getY)
+        .y0(baseLine);
     } else {
-      lineFunction = shapeLine<Point>().x(getX).y(getY);
+      lineFunction = shapeLine<Point>()
+        .x(getX)
+        .y(getY);
     }
 
-    lineFunction.defined(defined)
-      .curve(curveFactory);
+    lineFunction.defined(defined).curve(curveFactory);
 
     return lineFunction(formatPoints);
   }
@@ -103,10 +150,11 @@ class Curve extends PureComponent<Props> {
   render() {
     const { className, points, path, pathRef } = this.props;
 
-    if ((!points || !points.length) && !path) { return null; }
+    if ((!points || !points.length) && !path) {
+      return null;
+    }
 
-    const realPath = (points && points.length) ?
-      this.getPath() : path;
+    const realPath = points && points.length ? this.getPath() : path;
 
     return (
       <path

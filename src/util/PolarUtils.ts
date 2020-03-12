@@ -5,22 +5,29 @@ import { Coordinate, ChartOffset, GeometrySector } from './types';
 
 export const RADIAN = Math.PI / 180;
 
-export const degreeToRadian = (angle: number) => angle * Math.PI / 180;
+export const degreeToRadian = (angle: number) => (angle * Math.PI) / 180;
 
-export const radianToDegree = (angleInRadian: number) => angleInRadian * 180 / Math.PI;
+export const radianToDegree = (angleInRadian: number) => (angleInRadian * 180) / Math.PI;
 
 export const polarToCartesian = (cx: number, cy: number, radius: number, angle: number): Coordinate => ({
   x: cx + Math.cos(-RADIAN * angle) * radius,
   y: cy + Math.sin(-RADIAN * angle) * radius,
 });
 
-export const getMaxRadius = (width: number, height: number, offset: ChartOffset = {
-  top: 0, right: 0, bottom: 0, left: 0,
-}) => (
+export const getMaxRadius = (
+  width: number,
+  height: number,
+  offset: ChartOffset = {
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+  },
+) =>
   Math.min(
     Math.abs(width - (offset.left || 0) - (offset.right || 0)),
-    Math.abs(height - (offset.top || 0) - (offset.bottom || 0))
-  ) / 2);
+    Math.abs(height - (offset.top || 0) - (offset.bottom || 0)),
+  ) / 2;
 
 /**
  * Calculate the scale function, position, width, height of axes
@@ -31,7 +38,13 @@ export const getMaxRadius = (width: number, height: number, offset: ChartOffset 
  * @param  {String} chartName The name of chart
  * @return {Object} Configuration
  */
-export const formatAxisMap = (props: any, axisMap: any, offset: ChartOffset, axisType: 'angleAxis' | 'radiusAxis', chartName: string) => {
+export const formatAxisMap = (
+  props: any,
+  axisMap: any,
+  offset: ChartOffset,
+  axisType: 'angleAxis' | 'radiusAxis',
+  chartName: string,
+) => {
   const { width, height } = props;
   let { startAngle, endAngle } = props;
   const cx = getPercentValue(props.cx, width, width / 2);
@@ -71,7 +84,14 @@ export const formatAxisMap = (props: any, axisMap: any, offset: ChartOffset, axi
       ...ticks,
       range,
       radius: outerRadius,
-      realScaleType, scale, cx, cy, innerRadius, outerRadius, startAngle, endAngle,
+      realScaleType,
+      scale,
+      cx,
+      cy,
+      innerRadius,
+      outerRadius,
+      startAngle,
+      endAngle,
     };
 
     return { ...result, [id]: finalAxis };
@@ -88,7 +108,9 @@ export const distanceBetweenPoints = (point: Coordinate, anotherPoint: Coordinat
 export const getAngleOfPoint = ({ x, y }: Coordinate, { cx, cy }: GeometrySector) => {
   const radius = distanceBetweenPoints({ x, y }, { x: cx, y: cy });
 
-  if (radius <= 0) { return { radius }; }
+  if (radius <= 0) {
+    return { radius };
+  }
 
   const cos = (x - cx) / radius;
   let angleInRadian = Math.acos(cos);
@@ -127,7 +149,9 @@ export const inRangeOfSector = ({ x, y }: Coordinate, sector: GeometrySector) =>
     return false;
   }
 
-  if (radius === 0) { return true; }
+  if (radius === 0) {
+    return true;
+  }
 
   const { startAngle, endAngle } = formatAngleOfSector(sector);
   let formatAngle = angle;

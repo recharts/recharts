@@ -2,7 +2,6 @@
  * @fileOverview Radar
  */
 import React, { PureComponent, ReactElement, MouseEvent } from 'react';
-// @ts-ignore
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -65,7 +64,6 @@ interface State {
 }
 
 class Radar extends PureComponent<Props, State> {
-
   static displayName = 'Radar';
 
   static defaultProps = {
@@ -81,9 +79,15 @@ class Radar extends PureComponent<Props, State> {
     animationEasing: 'ease',
   };
 
-  static getComposedData = ({ radiusAxis, angleAxis, displayedData, dataKey, bandSize }: {
-    radiusAxis: PolarRadiusAxisProps & { scale: (value: any) => number; };
-    angleAxis: PolarAngleAxisProps & { scale: (value: any) => number; };
+  static getComposedData = ({
+    radiusAxis,
+    angleAxis,
+    displayedData,
+    dataKey,
+    bandSize,
+  }: {
+    radiusAxis: PolarRadiusAxisProps & { scale: (value: any) => number };
+    angleAxis: PolarAngleAxisProps & { scale: (value: any) => number };
     displayedData: any[];
     dataKey: RadarProps['dataKey'];
     bandSize: number;
@@ -96,7 +100,12 @@ class Radar extends PureComponent<Props, State> {
       const radius = radiusAxis.scale(value);
       return {
         ...polarToCartesian(cx, cy, radius, angle),
-        name, value, cx, cy, radius, angle,
+        name,
+        value,
+        cx,
+        cy,
+        radius,
+        angle,
         payload: entry,
       };
     });
@@ -220,8 +229,7 @@ class Radar extends PureComponent<Props, State> {
   }
 
   renderPolygonWithAnimation() {
-    const { points, isAnimationActive, animationBegin, animationDuration,
-      animationEasing, animationId } = this.props;
+    const { points, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = this.props;
     const { prevPoints } = this.state;
 
     return (
@@ -236,36 +244,34 @@ class Radar extends PureComponent<Props, State> {
         onAnimationEnd={this.handleAnimationEnd}
         onAnimationStart={this.handleAnimationStart}
       >
-        {
-          ({ t }: { t : number}) => {
-            const prevPointsDiffFactor = prevPoints && prevPoints.length / points.length;
-            const stepData = points.map((entry, index) => {
-              const prev = prevPoints && prevPoints[Math.floor(index * prevPointsDiffFactor)];
+        {({ t }: { t: number }) => {
+          const prevPointsDiffFactor = prevPoints && prevPoints.length / points.length;
+          const stepData = points.map((entry, index) => {
+            const prev = prevPoints && prevPoints[Math.floor(index * prevPointsDiffFactor)];
 
-              if (prev) {
-                const interpolatorX = interpolateNumber(prev.x, entry.x);
-                const interpolatorY = interpolateNumber(prev.y, entry.y);
-
-                return {
-                  ...entry,
-                  x: interpolatorX(t),
-                  y: interpolatorY(t),
-                };
-              }
-
-              const interpolatorX = interpolateNumber(entry.cx, entry.x);
-              const interpolatorY = interpolateNumber(entry.cy, entry.y);
+            if (prev) {
+              const interpolatorX = interpolateNumber(prev.x, entry.x);
+              const interpolatorY = interpolateNumber(prev.y, entry.y);
 
               return {
                 ...entry,
                 x: interpolatorX(t),
                 y: interpolatorY(t),
               };
-            });
+            }
 
-            return this.renderPolygonStatically(stepData);
-          }
-        }
+            const interpolatorX = interpolateNumber(entry.cx, entry.x);
+            const interpolatorY = interpolateNumber(entry.cy, entry.y);
+
+            return {
+              ...entry,
+              x: interpolatorX(t),
+              y: interpolatorY(t),
+            };
+          });
+
+          return this.renderPolygonStatically(stepData);
+        }}
       </Animate>
     );
   }
@@ -274,8 +280,7 @@ class Radar extends PureComponent<Props, State> {
     const { points, isAnimationActive } = this.props;
     const { prevPoints } = this.state;
 
-    if (isAnimationActive && points && points.length &&
-      (!prevPoints || !_.isEqual(prevPoints, points))) {
+    if (isAnimationActive && points && points.length && (!prevPoints || !_.isEqual(prevPoints, points))) {
       return this.renderPolygonWithAnimation();
     }
 
@@ -285,7 +290,9 @@ class Radar extends PureComponent<Props, State> {
   render() {
     const { hide, className, points, isAnimationActive } = this.props;
 
-    if (hide || !points || !points.length) { return null; }
+    if (hide || !points || !points.length) {
+      return null;
+    }
 
     const { isAnimationFinished } = this.state;
     const layerClass = classNames('recharts-radar', className);
@@ -293,8 +300,7 @@ class Radar extends PureComponent<Props, State> {
     return (
       <Layer className={layerClass}>
         {this.renderPolygon()}
-        {(!isAnimationActive || isAnimationFinished) &&
-          LabelList.renderCallByParent(this.props, points)}
+        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
       </Layer>
     );
   }

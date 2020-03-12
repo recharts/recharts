@@ -11,7 +11,7 @@ export const warn = (condition: boolean, format: string, ...args: any[]) => {
       if (format === undefined) {
         console.warn(
           'Minified exception occurred; use the non-minified dev environment ' +
-          'for the full error message and additional helpful warnings.'
+            'for the full error message and additional helpful warnings.',
         );
       } else {
         let argIndex = 0;

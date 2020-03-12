@@ -34,7 +34,9 @@ class ResponsiveContainer extends Component<Props, State> {
   };
 
   private handleResize: () => void;
+
   private mounted: boolean;
+
   private container: HTMLDivElement;
 
   constructor(props: Props) {
@@ -45,9 +47,8 @@ class ResponsiveContainer extends Component<Props, State> {
       containerHeight: -1,
     };
 
-    this.handleResize = props.debounce > 0 ?
-      _.debounce(this.updateDimensionsImmediate, props.debounce) :
-      this.updateDimensionsImmediate;
+    this.handleResize =
+      props.debounce > 0 ? _.debounce(this.updateDimensionsImmediate, props.debounce) : this.updateDimensionsImmediate;
   }
 
   /* eslint-disable  react/no-did-mount-set-state */
@@ -66,7 +67,9 @@ class ResponsiveContainer extends Component<Props, State> {
   }
 
   getContainerSize() {
-    if (!this.container) { return null; }
+    if (!this.container) {
+      return null;
+    }
 
     return {
       containerWidth: this.container.clientWidth,
@@ -75,7 +78,9 @@ class ResponsiveContainer extends Component<Props, State> {
   }
 
   updateDimensionsImmediate = () => {
-    if (!this.mounted) { return; }
+    if (!this.mounted) {
+      return;
+    }
 
     const newSize = this.getContainerSize();
 
@@ -92,19 +97,21 @@ class ResponsiveContainer extends Component<Props, State> {
   renderChart() {
     const { containerWidth, containerHeight } = this.state;
 
-    if (containerWidth < 0 || containerHeight < 0) { return null; }
+    if (containerWidth < 0 || containerHeight < 0) {
+      return null;
+    }
 
     const { aspect, width, height, minWidth, minHeight, maxHeight, children } = this.props;
 
-    warn(isPercent(width) || isPercent(height),
+    warn(
+      isPercent(width) || isPercent(height),
       `The width(%s) and height(%s) are both fixed numbers,
        maybe you don't need to use a ResponsiveContainer.`,
-      width, height
+      width,
+      height,
     );
 
-    warn(!aspect || aspect > 0,
-      'The aspect(%s) must be greater than zero.',
-      aspect);
+    warn(!aspect || aspect > 0, 'The aspect(%s) must be greater than zero.', aspect);
 
     let calculatedWidth: number = isPercent(width) ? containerWidth : (width as number);
     let calculatedHeight: number = isPercent(height) ? containerHeight : (height as number);
@@ -120,24 +127,30 @@ class ResponsiveContainer extends Component<Props, State> {
       }
 
       // if maxHeight is set, overwrite if calculatedHeight is greater than maxHeight
-      if (maxHeight && (calculatedHeight > maxHeight)) {
+      if (maxHeight && calculatedHeight > maxHeight) {
         calculatedHeight = maxHeight;
       }
     }
 
-    warn(calculatedWidth > 0 || calculatedHeight > 0,
+    warn(
+      calculatedWidth > 0 || calculatedHeight > 0,
       `The width(%s) and height(%s) of chart should be greater than 0,
        please check the style of container, or the props width(%s) and height(%s),
        or add a minWidth(%s) or minHeight(%s) or use aspect(%s) to control the
        height and width.`,
-      calculatedWidth, calculatedHeight, width, height, minWidth, minHeight, aspect
+      calculatedWidth,
+      calculatedHeight,
+      width,
+      height,
+      minWidth,
+      minHeight,
+      aspect,
     );
 
     return React.cloneElement(children, {
       width: calculatedWidth,
       height: calculatedHeight,
     });
-
   }
 
   render() {
@@ -149,7 +162,9 @@ class ResponsiveContainer extends Component<Props, State> {
         id={`${id}`}
         className={classNames('recharts-responsive-container', className)}
         style={style}
-        ref={(node) => { this.container = node; }}
+        ref={node => {
+          this.container = node;
+        }}
       >
         {this.renderChart()}
         <ReactResizeDetector handleWidth handleHeight onResize={this.handleResize} />

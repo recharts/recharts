@@ -2,7 +2,6 @@
  * @fileOverview Render sectors of a pie
  */
 import React, { PureComponent, ReactElement } from 'react';
-// @ts-ignore
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -18,7 +17,17 @@ import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { warn } from '../util/LogUtils';
-import { LegendType, TooltipType, AnimationTiming, PresentationAttributes, filterProps, Coordinate, ChartOffset, DataKey, adaptEventsOfChild } from '../util/types';
+import {
+  LegendType,
+  TooltipType,
+  AnimationTiming,
+  PresentationAttributes,
+  filterProps,
+  Coordinate,
+  ChartOffset,
+  DataKey,
+  adaptEventsOfChild,
+} from '../util/types';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -38,8 +47,12 @@ interface PieDef {
 }
 
 type PieActiveShape = ReactElement<SVGElement> | ((props: any) => SVGElement) | SectorProps;
-type PieLabelLine = ReactElement<SVGElement> | ((props: any) => SVGElement) | PresentationAttributes<SVGPathElement> | boolean;
-type Pielabel = ReactElement<SVGElement> | ((props: any) => SVGElement) | { offsetRadius: number; } | boolean;
+type PieLabelLine =
+  | ReactElement<SVGElement>
+  | ((props: any) => SVGElement)
+  | PresentationAttributes<SVGPathElement>
+  | boolean;
+type Pielabel = ReactElement<SVGElement> | ((props: any) => SVGElement) | { offsetRadius: number } | boolean;
 type PieSectorDataItem = SectorProps & {
   percent?: number;
   name?: string | number;
@@ -90,7 +103,6 @@ interface State {
 type Props = PresentationAttributes<SVGElement> & PieProps;
 
 class Pie extends PureComponent<Props, State> {
-
   static displayName = 'Pie';
 
   static defaultProps = {
@@ -112,7 +124,7 @@ class Pie extends PureComponent<Props, State> {
     animationDuration: 1500,
     animationEasing: 'ease',
     nameKey: 'name',
-    blendStroke: false
+    blendStroke: false,
   };
 
   static parseDeltaAngle = (startAngle: number, endAngle: number) => {
@@ -153,37 +165,47 @@ class Pie extends PureComponent<Props, State> {
     const maxRadius = item.props.maxRadius || Math.sqrt(width * width + height * height) / 2;
 
     return { cx, cy, innerRadius, outerRadius, maxRadius };
-  }
+  };
 
-  static getComposedData = ({ item, offset, onItemMouseLeave, onItemMouseEnter }: {
-    item: Pie,
-    offset: ChartOffset,
-    onItemMouseLeave: (event: React.MouseEvent<SVGElement, MouseEvent>) => void,
-    onItemMouseEnter: (event: React.MouseEvent<SVGElement, MouseEvent>) => void,
+  static getComposedData = ({
+    item,
+    offset,
+    onItemMouseLeave,
+    onItemMouseEnter,
+  }: {
+    item: Pie;
+    offset: ChartOffset;
+    onItemMouseLeave: (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
+    onItemMouseEnter: (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
   }): Omit<Props, 'dataKey'> => {
     const pieData = Pie.getRealPieData(item);
-    if (!pieData || !pieData.length) { return null; }
+    if (!pieData || !pieData.length) {
+      return null;
+    }
 
-    const { cornerRadius, startAngle, endAngle, paddingAngle, dataKey, nameKey,
-      valueKey, tooltipType } = item.props;
+    const { cornerRadius, startAngle, endAngle, paddingAngle, dataKey, nameKey, valueKey, tooltipType } = item.props;
     const minAngle = Math.abs(item.props.minAngle);
     const coordinate = Pie.parseCoordinateOfPie(item, offset);
     const len = pieData.length;
     const deltaAngle = Pie.parseDeltaAngle(startAngle, endAngle);
     const absDeltaAngle = Math.abs(deltaAngle);
-    const totalPadingAngle = (absDeltaAngle >= 360 ? len : (len - 1)) * paddingAngle;
+    const totalPadingAngle = (absDeltaAngle >= 360 ? len : len - 1) * paddingAngle;
     const realTotalAngle = absDeltaAngle - len * minAngle - totalPadingAngle;
     let realDataKey = dataKey;
 
     if (_.isNil(dataKey) && _.isNil(valueKey)) {
-      warn(false,
+      warn(
+        false,
         `Use "dataKey" to specify the value of pie,
-      the props "valueKey" will be deprecated in 1.1.0`);
+      the props "valueKey" will be deprecated in 1.1.0`,
+      );
       realDataKey = 'value';
     } else if (_.isNil(dataKey)) {
-      warn(false,
+      warn(
+        false,
         `Use "dataKey" to specify the value of pie,
-      the props "valueKey" will be deprecated in 1.1.0`);
+      the props "valueKey" will be deprecated in 1.1.0`,
+      );
       realDataKey = valueKey;
     }
 
@@ -207,23 +229,28 @@ class Pie extends PureComponent<Props, State> {
           tempStartAngle = startAngle;
         }
 
-        const tempEndAngle = tempStartAngle + mathSign(deltaAngle) *
-          (minAngle + percent * realTotalAngle);
+        const tempEndAngle = tempStartAngle + mathSign(deltaAngle) * (minAngle + percent * realTotalAngle);
         const midAngle = (tempStartAngle + tempEndAngle) / 2;
         const middleRadius = (coordinate.innerRadius + coordinate.outerRadius) / 2;
-        const tooltipPayload = [{
-          name,
-          value: val,
-          payload: entry,
-          dataKey: realDataKey,
-          type: tooltipType
-        }];
-        const tooltipPosition = polarToCartesian(
-          coordinate.cx, coordinate.cy, middleRadius, midAngle
-        );
+        const tooltipPayload = [
+          {
+            name,
+            value: val,
+            payload: entry,
+            dataKey: realDataKey,
+            type: tooltipType,
+          },
+        ];
+        const tooltipPosition = polarToCartesian(coordinate.cx, coordinate.cy, middleRadius, midAngle);
 
         prev = {
-          percent, cornerRadius, name, tooltipPayload, midAngle, middleRadius, tooltipPosition,
+          percent,
+          cornerRadius,
+          name,
+          tooltipPayload,
+          midAngle,
+          middleRadius,
+          tooltipPosition,
           ...entry,
           ...coordinate,
           value: getValueByDataKey(entry, realDataKey),
@@ -244,7 +271,7 @@ class Pie extends PureComponent<Props, State> {
       onMouseLeave: onItemMouseLeave,
       onMouseEnter: onItemMouseEnter,
     };
-  }
+  };
 
   state: State = { isAnimationFinished: false };
 
@@ -262,7 +289,8 @@ class Pie extends PureComponent<Props, State> {
   static getTextAnchor(x: number, cx: number) {
     if (x > cx) {
       return 'start';
-    } if (x < cx) {
+    }
+    if (x < cx) {
       return 'end';
     }
 
@@ -307,12 +335,13 @@ class Pie extends PureComponent<Props, State> {
     if (_.isFunction(onAnimationStart)) {
       onAnimationStart();
     }
-  }
+  };
 
   static renderLabelLineItem(option: PieLabelLine, props: any) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
-    } if (_.isFunction(option)) {
+    }
+    if (_.isFunction(option)) {
       return option(props);
     }
 
@@ -332,11 +361,7 @@ class Pie extends PureComponent<Props, State> {
     }
 
     return (
-      <Text
-        {...props}
-        alignmentBaseline="middle"
-        className="recharts-pie-label-text"
-      >
+      <Text {...props} alignmentBaseline="middle" className="recharts-pie-label-text">
         {label}
       </Text>
     );
@@ -356,9 +381,7 @@ class Pie extends PureComponent<Props, State> {
 
     const labels = sectors.map((entry, i) => {
       const midAngle = (entry.startAngle + entry.endAngle) / 2;
-      const endPoint = polarToCartesian(
-        entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle
-      );
+      const endPoint = polarToCartesian(entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle);
       const labelProps = {
         ...pieProps,
         ...entry,
@@ -376,7 +399,7 @@ class Pie extends PureComponent<Props, State> {
         ...customLabelLineProps,
         index: i,
         points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
-        key: 'line'
+        key: 'line',
       };
       let realDataKey = dataKey;
       // TODO: compatible to lower versions
@@ -390,11 +413,7 @@ class Pie extends PureComponent<Props, State> {
         // eslint-disable-next-line react/no-array-index-key
         <Layer key={`label-${i}`}>
           {labelLine && Pie.renderLabelLineItem(labelLine, lineProps)}
-          {Pie.renderLabelItem(
-            label,
-            labelProps,
-            getValueByDataKey(entry, realDataKey)
-          )}
+          {Pie.renderLabelItem(label, labelProps, getValueByDataKey(entry, realDataKey))}
         </Layer>
       );
     });
@@ -405,9 +424,11 @@ class Pie extends PureComponent<Props, State> {
   static renderSectorItem(option: PieActiveShape, props: any) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
-    } if (_.isFunction(option)) {
+    }
+    if (_.isFunction(option)) {
       return option(props);
-    } if (_.isPlainObject(option)) {
+    }
+    if (_.isPlainObject(option)) {
       return <Sector {...props} {...option} />;
     }
 
@@ -421,7 +442,7 @@ class Pie extends PureComponent<Props, State> {
       const sectorOptions = this.isActiveIndex(i) ? activeShape : null;
       const sectorProps = {
         ...entry,
-        stroke: blendStroke ? entry.fill : entry.stroke
+        stroke: blendStroke ? entry.fill : entry.stroke,
       };
 
       return (
@@ -437,8 +458,7 @@ class Pie extends PureComponent<Props, State> {
   }
 
   renderSectorsWithAnimation() {
-    const { sectors, isAnimationActive, animationBegin, animationDuration,
-      animationEasing, animationId } = this.props;
+    const { sectors, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = this.props;
     const { prevSectors } = this.state;
 
     return (
@@ -453,51 +473,42 @@ class Pie extends PureComponent<Props, State> {
         onAnimationStart={this.handleAnimationStart}
         onAnimationEnd={this.handleAnimationEnd}
       >
-        {
-          ({ t }: { t: number}) => {
-            const stepData: PieSectorDataItem[] = [];
-            const first = sectors && sectors[0];
-            let curAngle = first.startAngle;
+        {({ t }: { t: number }) => {
+          const stepData: PieSectorDataItem[] = [];
+          const first = sectors && sectors[0];
+          let curAngle = first.startAngle;
 
-            sectors.forEach((entry, index) => {
-              const prev = prevSectors && prevSectors[index];
-              const paddingAngle = index > 0 ? _.get(entry, 'paddingAngle', 0) : 0;
+          sectors.forEach((entry, index) => {
+            const prev = prevSectors && prevSectors[index];
+            const paddingAngle = index > 0 ? _.get(entry, 'paddingAngle', 0) : 0;
 
-              if (prev) {
-                const angleIp = interpolateNumber(
-                  prev.endAngle - prev.startAngle,
-                  entry.endAngle - entry.startAngle
-                );
-                const latest = {
-                  ...entry,
-                  startAngle: curAngle + paddingAngle,
-                  endAngle: curAngle + angleIp(t) + paddingAngle,
-                };
+            if (prev) {
+              const angleIp = interpolateNumber(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle);
+              const latest = {
+                ...entry,
+                startAngle: curAngle + paddingAngle,
+                endAngle: curAngle + angleIp(t) + paddingAngle,
+              };
 
-                stepData.push(latest);
-                curAngle = latest.endAngle;
-              } else {
-                const { endAngle, startAngle } = entry;
-                const interpolatorAngle = interpolateNumber(0, endAngle - startAngle);
-                const deltaAngle = interpolatorAngle(t);
-                const latest = {
-                  ...entry,
-                  startAngle: curAngle + paddingAngle,
-                  endAngle: curAngle + deltaAngle + paddingAngle,
-                };
+              stepData.push(latest);
+              curAngle = latest.endAngle;
+            } else {
+              const { endAngle, startAngle } = entry;
+              const interpolatorAngle = interpolateNumber(0, endAngle - startAngle);
+              const deltaAngle = interpolatorAngle(t);
+              const latest = {
+                ...entry,
+                startAngle: curAngle + paddingAngle,
+                endAngle: curAngle + deltaAngle + paddingAngle,
+              };
 
-                stepData.push(latest);
-                curAngle = latest.endAngle;
-              }
-            });
+              stepData.push(latest);
+              curAngle = latest.endAngle;
+            }
+          });
 
-            return (
-              <Layer>
-                {this.renderSectorsStatically(stepData)}
-              </Layer>
-            );
-          }
-        }
+          return <Layer>{this.renderSectorsStatically(stepData)}</Layer>;
+        }}
       </Animate>
     );
   }
@@ -506,21 +517,25 @@ class Pie extends PureComponent<Props, State> {
     const { sectors, isAnimationActive } = this.props;
     const { prevSectors } = this.state;
 
-    if (isAnimationActive && sectors && sectors.length &&
-      (!prevSectors || !_.isEqual(prevSectors, sectors))) {
+    if (isAnimationActive && sectors && sectors.length && (!prevSectors || !_.isEqual(prevSectors, sectors))) {
       return this.renderSectorsWithAnimation();
     }
     return this.renderSectorsStatically(sectors);
   }
 
   render() {
-    const { hide, sectors, className, label, cx, cy, innerRadius,
-      outerRadius, isAnimationActive } = this.props;
+    const { hide, sectors, className, label, cx, cy, innerRadius, outerRadius, isAnimationActive } = this.props;
     const { prevSectors } = this.state;
 
-    if (hide || !sectors || !sectors.length || !isNumber(cx as number) ||
-      !isNumber(cy as number) || !isNumber(innerRadius as number) ||
-      !isNumber(outerRadius as number)) {
+    if (
+      hide ||
+      !sectors ||
+      !sectors.length ||
+      !isNumber(cx as number) ||
+      !isNumber(cy as number) ||
+      !isNumber(innerRadius as number) ||
+      !isNumber(outerRadius as number)
+    ) {
       return null;
     }
 

@@ -25,20 +25,38 @@ interface PolarViewBox {
 }
 
 type ViewBox = CartesianViewBox | PolarViewBox;
-export type ContentType = ReactElement | ((props: Props) => ReactNode)
+export type ContentType = ReactElement | ((props: Props) => ReactNode);
 
 interface LabelProps {
   viewBox?: ViewBox;
   formatter?: Function;
   value?: number | string;
   offset?: number;
-  position?: 'top' | 'left' | 'right' | 'bottom' | 'inside' | 'outside' |
-    'insideLeft' | 'insideRight' | 'insideTop' | 'insideBottom' |
-    'insideTopLeft' | 'insideBottomLeft' | 'insideTopRight' | 'insideBottomRight' |
-    'insideStart' | 'insideEnd' | 'end' | 'center' | 'centerTop' | 'centerBottom' | {
-      x?: number
-      y?: number
-    }
+  position?:
+    | 'top'
+    | 'left'
+    | 'right'
+    | 'bottom'
+    | 'inside'
+    | 'outside'
+    | 'insideLeft'
+    | 'insideRight'
+    | 'insideTop'
+    | 'insideBottom'
+    | 'insideTopLeft'
+    | 'insideBottomLeft'
+    | 'insideTopRight'
+    | 'insideBottomRight'
+    | 'insideStart'
+    | 'insideEnd'
+    | 'end'
+    | 'center'
+    | 'centerTop'
+    | 'centerBottom'
+    | {
+        x?: number;
+        y?: number;
+      };
   children?: ReactNode;
   className?: string;
   content?: ContentType;
@@ -66,8 +84,7 @@ const getDeltaAngle = (startAngle: number, endAngle: number) => {
 
 const renderRadialLabel = (labelProps: Props, label: ReactNode, attrs: PresentationAttributes<SVGTextElement>) => {
   const { position, viewBox, offset, className } = labelProps;
-  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle,
-    clockWise } = (viewBox as PolarViewBox);
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise } = viewBox as PolarViewBox;
   const radius = (innerRadius + outerRadius) / 2;
   const deltaAngle = getDeltaAngle(startAngle, endAngle);
   const sign = deltaAngle >= 0 ? 1 : -1;
@@ -94,12 +111,10 @@ const renderRadialLabel = (labelProps: Props, label: ReactNode, attrs: Presentat
   const id = _.isNil(labelProps.id) ? uniqueId('recharts-radial-line-') : labelProps.id;
 
   return (
-    <text
-      {...attrs}
-      dominantBaseline="central"
-      className={classNames('recharts-radial-bar-label', className)}
-    >
-      <defs><path id={id} d={path} /></defs>
+    <text {...attrs} dominantBaseline="central" className={classNames('recharts-radial-bar-label', className)}>
+      <defs>
+        <path id={id} d={path} />
+      </defs>
       <textPath xlinkHref={`#${id}`}>{label}</textPath>
     </text>
   );
@@ -107,7 +122,7 @@ const renderRadialLabel = (labelProps: Props, label: ReactNode, attrs: Presentat
 
 const getAttrsOfPolarLabel = (props: Props) => {
   const { viewBox, offset, position } = props;
-  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = (viewBox as PolarViewBox);
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle } = viewBox as PolarViewBox;
   const midAngle = (startAngle + endAngle) / 2;
 
   if (position === 'outside') {
@@ -161,19 +176,19 @@ const getAttrsOfPolarLabel = (props: Props) => {
 
 const getAttrsOfCartesianLabel = (props: Props) => {
   const { viewBox, offset, position } = props;
-  const { x, y, width, height } = (viewBox as CartesianViewBox);
-	
-	// Define vertical offsets and position inverts based on the value being positive or negative
-	const verticalSign = height >= 0 ? 1 : -1;
-	const verticalOffset = verticalSign * offset;
-	const verticalEnd = verticalSign > 0 ? 'end' : 'start';
-	const verticalStart = verticalSign > 0 ? 'start' : 'end';
+  const { x, y, width, height } = viewBox as CartesianViewBox;
 
-	// Define horizontal offsets and position inverts based on the value being positive or negative
-	const horizontalSign = width >= 0 ? 1 : -1;
-	const horizontalOffset = horizontalSign * offset;
-	const horizontalEnd = horizontalSign > 0 ? 'end' : 'start';
-	const horizontalStart = horizontalSign > 0 ? 'start' : 'end';
+  // Define vertical offsets and position inverts based on the value being positive or negative
+  const verticalSign = height >= 0 ? 1 : -1;
+  const verticalOffset = verticalSign * offset;
+  const verticalEnd = verticalSign > 0 ? 'end' : 'start';
+  const verticalStart = verticalSign > 0 ? 'start' : 'end';
+
+  // Define horizontal offsets and position inverts based on the value being positive or negative
+  const horizontalSign = width >= 0 ? 1 : -1;
+  const horizontalOffset = horizontalSign * offset;
+  const horizontalEnd = horizontalSign > 0 ? 'end' : 'start';
+  const horizontalStart = horizontalSign > 0 ? 'start' : 'end';
 
   if (position === 'top') {
     return {
@@ -283,7 +298,9 @@ const getAttrsOfCartesianLabel = (props: Props) => {
     };
   }
 
-  if (_.isObject(position) && (isNumber(position.x) || isPercent(position.x)) &&
+  if (
+    _.isObject(position) &&
+    (isNumber(position.x) || isPercent(position.x)) &&
     (isNumber(position.y) || isPercent(position.y))
   ) {
     return {
@@ -307,14 +324,17 @@ const isPolar = (viewBox: CartesianViewBox | PolarViewBox) => isNumber((viewBox 
 function Label(props: Props) {
   const { viewBox, position, value, children, content, className = '' } = props;
 
-  if (!viewBox || (_.isNil(value) && _.isNil(children) &&
-    !isValidElement(content) && !_.isFunction(content))) { return null; }
+  if (!viewBox || (_.isNil(value) && _.isNil(children) && !isValidElement(content) && !_.isFunction(content))) {
+    return null;
+  }
 
-  if (isValidElement(content)) { return cloneElement(content, props); }
+  if (isValidElement(content)) {
+    return cloneElement(content, props);
+  }
 
   let label: ReactNode;
   if (_.isFunction(content)) {
-    label = createElement((content as any), props);
+    label = createElement(content as any, props);
 
     if (isValidElement(label)) {
       return label;
@@ -326,21 +346,14 @@ function Label(props: Props) {
   const isPolarLabel = isPolar(viewBox);
   const attrs = filterProps(props, true);
 
-  if (isPolarLabel && (position === 'insideStart' ||
-    position === 'insideEnd' || position === 'end')) {
+  if (isPolarLabel && (position === 'insideStart' || position === 'insideEnd' || position === 'end')) {
     return renderRadialLabel(props, label, attrs);
   }
 
-  const positionAttrs = isPolarLabel ?
-    getAttrsOfPolarLabel(props) :
-    getAttrsOfCartesianLabel(props);
+  const positionAttrs = isPolarLabel ? getAttrsOfPolarLabel(props) : getAttrsOfCartesianLabel(props);
 
   return (
-    <Text
-      className={classNames('recharts-label', className)}
-      {...attrs}
-      {...positionAttrs as any}
-    >
+    <Text className={classNames('recharts-label', className)} {...attrs} {...(positionAttrs as any)}>
       {label}
     </Text>
   );
@@ -352,13 +365,30 @@ Label.defaultProps = {
 };
 
 const parseViewBox = (props: any) => {
-  const { cx, cy, angle, startAngle, endAngle, r, radius, innerRadius, outerRadius,
-    x, y, top, left, width, height, clockWise } = props;
+  const {
+    cx,
+    cy,
+    angle,
+    startAngle,
+    endAngle,
+    r,
+    radius,
+    innerRadius,
+    outerRadius,
+    x,
+    y,
+    top,
+    left,
+    width,
+    height,
+    clockWise,
+  } = props;
 
   if (isNumber(width) && isNumber(height)) {
     if (isNumber(x) && isNumber(y)) {
       return { x, y, width, height };
-    } if (isNumber(top) && isNumber(left)) {
+    }
+    if (isNumber(top) && isNumber(left)) {
       return { x: top, y: left, width, height };
     }
   }
@@ -369,7 +399,8 @@ const parseViewBox = (props: any) => {
 
   if (isNumber(cx) && isNumber(cy)) {
     return {
-      cx, cy,
+      cx,
+      cy,
       startAngle: startAngle || angle || 0,
       endAngle: endAngle || angle || 0,
       innerRadius: innerRadius || 0,
@@ -386,7 +417,9 @@ const parseViewBox = (props: any) => {
 };
 
 const parseLabel = (label: any, viewBox: ViewBox) => {
-  if (!label) { return null; }
+  if (!label) {
+    return null;
+  }
 
   if (label === true) {
     return <Label key="label-implicit" viewBox={viewBox} />;
@@ -416,19 +449,22 @@ const parseLabel = (label: any, viewBox: ViewBox) => {
 };
 
 const renderCallByParent = (parentProps: any, viewBox?: ViewBox, ckeckPropsLabel = true) => {
-  if (!parentProps || (!parentProps.children && (ckeckPropsLabel && !parentProps.label))) {
+  if (!parentProps || (!parentProps.children && ckeckPropsLabel && !parentProps.label)) {
     return null;
   }
   const { children } = parentProps;
   const parentViewBox = parseViewBox(parentProps);
 
-  const explicitChilren = findAllByType(children, Label.displayName).map((child: any, index: number) => cloneElement(child, {
-    viewBox: viewBox || parentViewBox,
-    key: `label-${index}`,
-  })
+  const explicitChilren = findAllByType(children, Label.displayName).map((child: any, index: number) =>
+    cloneElement(child, {
+      viewBox: viewBox || parentViewBox,
+      key: `label-${index}`,
+    }),
   );
 
-  if (!ckeckPropsLabel) { return explicitChilren; }
+  if (!ckeckPropsLabel) {
+    return explicitChilren;
+  }
   const implicitLabel = parseLabel(parentProps.label, viewBox || parentViewBox);
 
   return [implicitLabel, ...explicitChilren];

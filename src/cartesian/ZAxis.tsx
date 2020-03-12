@@ -5,14 +5,14 @@ import { ScaleType, DataKey } from '../util/types';
 
 export interface Props {
   type?: 'number' | 'category';
-  /** The name of data displayed in the axis */ 
+  /** The name of data displayed in the axis */
   name?: string | number;
   /** The unit of data displayed in the axis */
   unit?: string | number;
   /** The unique id of z-axis */
   zAxisId?: string | number;
   /** The key of data displayed in the axis */
-  dataKey?: DataKey<any>; 
+  dataKey?: DataKey<any>;
   /** The range of axis */
   range?: number[];
   scale?: ScaleType | Function;

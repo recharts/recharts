@@ -6,7 +6,7 @@ import PolarAngleAxis from '../polar/PolarAngleAxis';
 import PolarRadiusAxis from '../polar/PolarRadiusAxis';
 import { formatAxisMap } from '../util/PolarUtils';
 import Pie from '../polar/Pie';
-import { CategoricalChart } from './types';
+import { CategoricalChart } from '../util/types';
 
 export default generateCategoricalChart({
   chartName: 'PieChart',

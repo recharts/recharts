@@ -6,7 +6,7 @@ import Line from '../cartesian/Line';
 import XAxis from '../cartesian/XAxis';
 import YAxis from '../cartesian/YAxis';
 import { formatAxisMap } from '../util/CartesianUtils';
-import { CategoricalChart } from './types';
+import { CategoricalChart } from '../util/types';
 
 export default generateCategoricalChart({
   chartName: 'LineChart',

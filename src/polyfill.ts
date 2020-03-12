@@ -6,7 +6,7 @@ const testObject = {} as any;
 if (!(Object.setPrototypeOf || testObject.__proto__)) {
   const nativeGetPrototypeOf = Object.getPrototypeOf;
 
-  Object.getPrototypeOf = (object) => {
+  Object.getPrototypeOf = object => {
     if (object.__proto__) {
       return object.__proto__;
     }

@@ -44,7 +44,7 @@ interface BrushProps extends InternalBrushProps {
   onChange?: (newIndex: BrushStartEndIndex) => void;
   leaveTimeOut?: number;
   alwaysShowText?: boolean;
-};
+}
 
 type Props = PresentationAttributes<SVGElement> & BrushProps;
 
@@ -61,12 +61,10 @@ interface State {
   brushMoveStartX?: number;
 }
 
-const isTouch = (e: TouchEvent<SVGElement> | MouseEvent<SVGElement>): e is TouchEvent<SVGElement> => {
-  return (e as TouchEvent<SVGElement>).changedTouches && !!(e as TouchEvent<SVGElement>).changedTouches.length;
-};
+const isTouch = (e: TouchEvent<SVGElement> | MouseEvent<SVGElement>): e is TouchEvent<SVGElement> =>
+  (e as TouchEvent<SVGElement>).changedTouches && !!(e as TouchEvent<SVGElement>).changedTouches.length;
 
 class Brush extends PureComponent<Props, State> {
-
   static displayName = 'Brush';
 
   static defaultProps = {
@@ -77,7 +75,7 @@ class Brush extends PureComponent<Props, State> {
     stroke: '#666',
     padding: { top: 1, right: 1, bottom: 1, left: 1 },
     leaveTimeOut: 1000,
-    alwaysShowText: false
+    alwaysShowText: false,
   };
 
   constructor(props: Props) {
@@ -92,25 +90,23 @@ class Brush extends PureComponent<Props, State> {
   }
 
   leaveTimer?: number;
+
   scale?: ScalePoint<number>;
+
   scaleValues?: number[];
-  travellerDragStartHandlers?: Record<BrushTravellerId, (event: MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) => void>;
+
+  travellerDragStartHandlers?: Record<
+    BrushTravellerId,
+    (event: MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) => void
+  >;
 
   // eslint-disable-next-line camelcase
   UNSAFE_componentWillReceiveProps(nextProps: Props) {
     const { data, width, x, travellerWidth, updateId } = this.props;
 
-    if (
-      (nextProps.data !== data || nextProps.updateId !== updateId) &&
-      nextProps.data &&
-      nextProps.data.length
-    ) {
+    if ((nextProps.data !== data || nextProps.updateId !== updateId) && nextProps.data && nextProps.data.length) {
       this.setState(this.updateScale(nextProps));
-    } else if (
-      nextProps.width !== width ||
-      nextProps.x !== x ||
-      nextProps.travellerWidth !== travellerWidth
-    ) {
+    } else if (nextProps.width !== width || nextProps.x !== x || nextProps.travellerWidth !== travellerWidth) {
       this.scale.range([nextProps.x, nextProps.x + nextProps.width - nextProps.travellerWidth]);
       this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
 
@@ -151,7 +147,7 @@ class Brush extends PureComponent<Props, State> {
     return x >= range[end] ? end : start;
   }
 
-  getIndex({ startX, endX }: { startX: number; endX: number; }) {
+  getIndex({ startX, endX }: { startX: number; endX: number }) {
     const { gap, data } = this.props;
     const lastIndex = data.length - 1;
     const min = Math.min(startX, endX);
@@ -159,8 +155,8 @@ class Brush extends PureComponent<Props, State> {
     const minIndex = Brush.getIndexInRange(this.scaleValues, min);
     const maxIndex = Brush.getIndexInRange(this.scaleValues, max);
     return {
-      startIndex: minIndex - minIndex % gap,
-      endIndex: maxIndex === lastIndex ? lastIndex : maxIndex - maxIndex % gap,
+      startIndex: minIndex - (minIndex % gap),
+      endIndex: maxIndex === lastIndex ? lastIndex : maxIndex - (maxIndex % gap),
     };
   }
 
@@ -218,7 +214,6 @@ class Brush extends PureComponent<Props, State> {
     this.setState({
       isTextActive: true,
     });
-
   };
 
   handleLeaveSlideOrTraveller = () => {
@@ -245,11 +240,7 @@ class Brush extends PureComponent<Props, State> {
     let delta = e.pageX - slideMoveStartX;
 
     if (delta > 0) {
-      delta = Math.min(
-        delta,
-        x + width - travellerWidth - endX,
-        x + width - travellerWidth - startX
-      );
+      delta = Math.min(delta, x + width - travellerWidth - endX, x + width - travellerWidth - startX);
     } else if (delta < 0) {
       delta = Math.max(delta, x - startX, x - endX);
     }
@@ -302,27 +293,30 @@ class Brush extends PureComponent<Props, State> {
     const { startIndex, endIndex } = newIndex;
     const isFullGap = () => {
       const lastIndex = data.length - 1;
-      if ((movingTravellerId === 'startX' &&
-        (endX > startX ? startIndex % gap === 0 : endIndex % gap === 0)) ||
+      if (
+        (movingTravellerId === 'startX' && (endX > startX ? startIndex % gap === 0 : endIndex % gap === 0)) ||
         (endX < startX && endIndex === lastIndex) ||
-      (movingTravellerId === 'endX' &&
-        (endX > startX ? endIndex % gap === 0 : startIndex % gap === 0) ||
-        (endX > startX && endIndex === lastIndex))) {
+        (movingTravellerId === 'endX' && (endX > startX ? endIndex % gap === 0 : startIndex % gap === 0)) ||
+        (endX > startX && endIndex === lastIndex)
+      ) {
         return true;
       }
       return false;
     };
 
-    this.setState({
-      [movingTravellerId]: prevValue + delta,
-      brushMoveStartX: e.pageX,
-    }, () => {
-      if (onChange) {
-        if (isFullGap()) {
-          onChange(newIndex);
+    this.setState(
+      {
+        [movingTravellerId]: prevValue + delta,
+        brushMoveStartX: e.pageX,
+      },
+      () => {
+        if (onChange) {
+          if (isFullGap()) {
+            onChange(newIndex);
+          }
         }
-      }
-    });
+      },
+    );
   }
 
   updateScale(props: Props) {
@@ -344,23 +338,16 @@ class Brush extends PureComponent<Props, State> {
   renderBackground() {
     const { x, y, width, height, fill, stroke } = this.props;
 
-    return (
-      <rect
-        stroke={stroke}
-        fill={fill}
-        x={x}
-        y={y}
-        width={width}
-        height={height}
-      />
-    );
+    return <rect stroke={stroke} fill={fill} x={x} y={y} width={width} height={height} />;
   }
 
   renderPanorama() {
     const { x, y, width, height, data, children, padding } = this.props;
     const chartElement = Children.only(children);
 
-    if (!chartElement) { return null; }
+    if (!chartElement) {
+      return null;
+    }
 
     return React.cloneElement(chartElement, {
       x,
@@ -387,30 +374,9 @@ class Brush extends PureComponent<Props, State> {
         onTouchStart={this.travellerDragStartHandlers[id]}
         style={{ cursor: 'col-resize' }}
       >
-        <rect
-          x={x}
-          y={y}
-          width={travellerWidth}
-          height={height}
-          fill={stroke}
-          stroke="none"
-        />
-        <line
-          x1={x + 1}
-          y1={lineY}
-          x2={x + travellerWidth - 1}
-          y2={lineY}
-          fill="none"
-          stroke="#fff"
-        />
-        <line
-          x1={x + 1}
-          y1={lineY + 2}
-          x2={x + travellerWidth - 1}
-          y2={lineY + 2}
-          fill="none"
-          stroke="#fff"
-        />
+        <rect x={x} y={y} width={travellerWidth} height={height} fill={stroke} stroke="none" />
+        <line x1={x + 1} y1={lineY} x2={x + travellerWidth - 1} y2={lineY} fill="none" stroke="#fff" />
+        <line x1={x + 1} y1={lineY + 2} x2={x + travellerWidth - 1} y2={lineY + 2} fill="none" stroke="#fff" />
       </Layer>
     );
   }
@@ -438,8 +404,7 @@ class Brush extends PureComponent<Props, State> {
   }
 
   renderText() {
-    const { startIndex, endIndex, y, height, travellerWidth,
-      stroke } = this.props;
+    const { startIndex, endIndex, y, height, travellerWidth, stroke } = this.props;
     const { startX, endX } = this.state;
     const offset = 5;
     const attrs = {
@@ -475,8 +440,18 @@ class Brush extends PureComponent<Props, State> {
     const { data, className, children, x, y, width, height, alwaysShowText } = this.props;
     const { startX, endX, isTextActive, isSlideMoving, isTravellerMoving } = this.state;
 
-    if (!data || !data.length || !isNumber(x) || !isNumber(y) || !isNumber(width) ||
-      !isNumber(height) || width <= 0 || height <= 0) { return null; }
+    if (
+      !data ||
+      !data.length ||
+      !isNumber(x) ||
+      !isNumber(y) ||
+      !isNumber(width) ||
+      !isNumber(height) ||
+      width <= 0 ||
+      height <= 0
+    ) {
+      return null;
+    }
 
     const layerClass = classNames('recharts-brush', className);
     const isPanoramic = React.Children.count(children) === 1;
@@ -495,8 +470,7 @@ class Brush extends PureComponent<Props, State> {
         {this.renderSlide(startX, endX)}
         {this.renderTraveller(startX, 'startX')}
         {this.renderTraveller(endX, 'endX')}
-        {(isTextActive || isSlideMoving || isTravellerMoving || alwaysShowText) &&
-          this.renderText()}
+        {(isTextActive || isSlideMoving || isTravellerMoving || alwaysShowText) && this.renderText()}
       </Layer>
     );
   }

@@ -3,7 +3,6 @@
  */
 import React, { PureComponent, ReactElement } from 'react';
 import classNames from 'classnames';
-// @ts-ignore
 import Animate from 'react-smooth';
 import _ from 'lodash';
 import Curve, { CurveType, Point as CurvePoint } from '../shape/Curve';
@@ -15,14 +14,24 @@ import { isNumber, uniqueId, interpolateNumber } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { D3Scale, LegendType, TooltipType, AnimationTiming, PresentationAttributes, filterProps, ChartOffset, Coordinate, DataKey, TickItem } from '../util/types';
+import {
+  D3Scale,
+  LegendType,
+  TooltipType,
+  AnimationTiming,
+  PresentationAttributes,
+  filterProps,
+  ChartOffset,
+  Coordinate,
+  DataKey,
+  TickItem,
+} from '../util/types';
 
 type AreaDot = ReactElement<SVGElement> | ((props: any) => SVGElement) | DotProps | boolean;
 interface AreaPointItem extends CurvePoint {
   value?: number | number[];
   payload?: any;
 }
-
 
 interface InternalAreaProps {
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
@@ -46,12 +55,12 @@ interface AreaProps extends InternalAreaProps {
 
   stackId?: string | number;
   legendType?: LegendType;
-  tooltipType?: TooltipType
+  tooltipType?: TooltipType;
   connectNulls?: boolean;
   // whether have dot in line
-  activeDot?: AreaDot; 
+  activeDot?: AreaDot;
   dot?: AreaDot;
-  
+
   label?: any;
   layout?: 'horizontal' | 'vertical';
   hide?: boolean;
@@ -68,7 +77,7 @@ interface AreaProps extends InternalAreaProps {
   animationEasing?: AnimationTiming;
   animationId?: number;
   id?: string;
-};
+}
 
 type Props = PresentationAttributes<SVGElement> & AreaProps;
 
@@ -80,7 +89,6 @@ interface State {
 }
 
 class Area extends PureComponent<Props, State> {
-
   static displayName = 'Area';
 
   static defaultProps = {
@@ -106,7 +114,9 @@ class Area extends PureComponent<Props, State> {
   static getBaseValue = (props: Props, xAxis: Props['xAxis'], yAxis: Props['yAxis']): number => {
     const { layout, baseValue } = props;
 
-    if (isNumber(baseValue) && typeof baseValue === 'number') { return baseValue; }
+    if (isNumber(baseValue) && typeof baseValue === 'number') {
+      return baseValue;
+    }
 
     const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
     const domain = numericAxis.scale.domain();
@@ -115,33 +125,52 @@ class Area extends PureComponent<Props, State> {
       const max = Math.max(domain[0], domain[1]);
       const min = Math.min(domain[0], domain[1]);
 
-      if (baseValue === 'dataMin') { return min; }
-      if (baseValue === 'dataMax') { return max; }
+      if (baseValue === 'dataMin') {
+        return min;
+      }
+      if (baseValue === 'dataMax') {
+        return max;
+      }
 
       return max < 0 ? max : Math.max(Math.min(domain[0], domain[1]), 0);
     }
 
-    if (baseValue === 'dataMin') { return domain[0]; }
-    if (baseValue === 'dataMax') { return domain[1]; }
+    if (baseValue === 'dataMin') {
+      return domain[0];
+    }
+    if (baseValue === 'dataMax') {
+      return domain[1];
+    }
 
     return domain[0];
   };
 
-  static getComposedData = ({ props, xAxis, yAxis, xAxisTicks, yAxisTicks, bandSize,
-    dataKey, stackedData, dataStartIndex, displayedData, offset }: {
-      props: Props;
-      item: Area;
-      bandSize: number;
-      xAxis: InternalAreaProps['xAxis'];
-      yAxis: InternalAreaProps['yAxis'];
-      xAxisTicks: TickItem[];
-      yAxisTicks: TickItem[];
-      stackedData: number[][];
-      dataStartIndex: number;
-      offset: ChartOffset;
-      displayedData: any[];
-      dataKey: Props['dataKey'];
-    }) => {
+  static getComposedData = ({
+    props,
+    xAxis,
+    yAxis,
+    xAxisTicks,
+    yAxisTicks,
+    bandSize,
+    dataKey,
+    stackedData,
+    dataStartIndex,
+    displayedData,
+    offset,
+  }: {
+    props: Props;
+    item: Area;
+    bandSize: number;
+    xAxis: InternalAreaProps['xAxis'];
+    yAxis: InternalAreaProps['yAxis'];
+    xAxisTicks: TickItem[];
+    yAxisTicks: TickItem[];
+    stackedData: number[][];
+    dataStartIndex: number;
+    offset: ChartOffset;
+    displayedData: any[];
+    dataKey: Props['dataKey'];
+  }) => {
     const { layout } = props;
     const hasStack = stackedData && stackedData.length;
     const baseValue = Area.getBaseValue(props, xAxis, yAxis);
@@ -181,7 +210,7 @@ class Area extends PureComponent<Props, State> {
 
     let baseLine;
     if (hasStack || isRange) {
-      baseLine = points.map((entry) => {
+      baseLine = points.map(entry => {
         if (layout === 'horizontal') {
           return {
             x: entry.x,
@@ -259,7 +288,9 @@ class Area extends PureComponent<Props, State> {
     const { isAnimationActive } = this.props;
     const { isAnimationFinished } = this.state;
 
-    if (isAnimationActive && !isAnimationFinished) { return null; }
+    if (isAnimationActive && !isAnimationFinished) {
+      return null;
+    }
 
     const { dot, points, dataKey } = this.props;
     const areaProps = filterProps(this.props);
@@ -284,7 +315,11 @@ class Area extends PureComponent<Props, State> {
     const dotsProps = {
       clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
     };
-    return <Layer className="recharts-area-dots" {...dotsProps}>{dots}</Layer>;
+    return (
+      <Layer className="recharts-area-dots" {...dotsProps}>
+        {dots}
+      </Layer>
+    );
   }
 
   renderHorizontalRect(alpha: number) {
@@ -292,12 +327,12 @@ class Area extends PureComponent<Props, State> {
     const startX = points[0].x;
     const endX = points[points.length - 1].x;
     const width = alpha * Math.abs(startX - endX);
-    let maxY = _.max(points.map(entry => (entry.y || 0)));
+    let maxY = _.max(points.map(entry => entry.y || 0));
 
     if (isNumber(baseLine) && typeof baseLine === 'number') {
       maxY = Math.max(baseLine, maxY);
     } else if (baseLine && _.isArray(baseLine) && baseLine.length) {
-      maxY = Math.max(_.max(baseLine.map(entry => (entry.y || 0))), maxY);
+      maxY = Math.max(_.max(baseLine.map(entry => entry.y || 0)), maxY);
     }
 
     if (isNumber(maxY)) {
@@ -319,12 +354,12 @@ class Area extends PureComponent<Props, State> {
     const startY = points[0].y;
     const endY = points[points.length - 1].y;
     const height = alpha * Math.abs(startY - endY);
-    let maxX = _.max(points.map(entry => (entry.x || 0)));
+    let maxX = _.max(points.map(entry => entry.x || 0));
 
     if (isNumber(baseLine) && typeof baseLine === 'number') {
       maxX = Math.max(baseLine, maxX);
     } else if (baseLine && _.isArray(baseLine) && baseLine.length) {
-      maxX = Math.max(_.max(baseLine.map(entry => (entry.x || 0))), maxX);
+      maxX = Math.max(_.max(baseLine.map(entry => entry.x || 0)), maxX);
     }
 
     if (isNumber(maxX)) {
@@ -393,8 +428,15 @@ class Area extends PureComponent<Props, State> {
   }
 
   renderAreaWithAnimation(needClip: boolean, clipPathId: string) {
-    const { points, baseLine, isAnimationActive, animationBegin,
-      animationDuration, animationEasing, animationId } = this.props;
+    const {
+      points,
+      baseLine,
+      isAnimationActive,
+      animationBegin,
+      animationDuration,
+      animationEasing,
+      animationId,
+    } = this.props;
     const { prevPoints, prevBaseLine } = this.state;
     // const clipPathId = _.isNil(id) ? this.id : id;
 
@@ -410,15 +452,35 @@ class Area extends PureComponent<Props, State> {
         onAnimationEnd={this.handleAnimationEnd}
         onAnimationStart={this.handleAnimationStart}
       >
-        {
-          ({ t }: { t: number }) => {
-            if (prevPoints) {
-              const prevPointsDiffFactor = prevPoints.length / points.length;
-              // update animtaion
-              const stepPoints = points.map((entry, index) => {
+        {({ t }: { t: number }) => {
+          if (prevPoints) {
+            const prevPointsDiffFactor = prevPoints.length / points.length;
+            // update animtaion
+            const stepPoints = points.map((entry, index) => {
+              const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
+              if (prevPoints[prevPointIndex]) {
+                const prev = prevPoints[prevPointIndex];
+                const interpolatorX = interpolateNumber(prev.x, entry.x);
+                const interpolatorY = interpolateNumber(prev.y, entry.y);
+
+                return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+              }
+
+              return entry;
+            });
+            let stepBaseLine;
+
+            if (isNumber(baseLine) && typeof baseLine === 'number') {
+              const interpolator = interpolateNumber(prevBaseLine as number, baseLine);
+              stepBaseLine = interpolator(t);
+            } else if (_.isNil(baseLine) || _.isNaN(baseLine)) {
+              const interpolator = interpolateNumber(prevBaseLine as number, 0);
+              stepBaseLine = interpolator(t);
+            } else {
+              stepBaseLine = (baseLine as Coordinate[]).map((entry, index) => {
                 const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-                if (prevPoints[prevPointIndex]) {
-                  const prev = prevPoints[prevPointIndex];
+                if ((prevBaseLine as Coordinate[])[prevPointIndex]) {
+                  const prev = (prevBaseLine as Coordinate[])[prevPointIndex];
                   const interpolatorX = interpolateNumber(prev.x, entry.x);
                   const interpolatorY = interpolateNumber(prev.y, entry.y);
 
@@ -427,46 +489,22 @@ class Area extends PureComponent<Props, State> {
 
                 return entry;
               });
-              let stepBaseLine;
-
-              if (isNumber(baseLine) && typeof baseLine === 'number') {
-                const interpolator = interpolateNumber(prevBaseLine as number, baseLine);
-                stepBaseLine = interpolator(t);
-              } else if (_.isNil(baseLine) || _.isNaN(baseLine)) {
-                const interpolator = interpolateNumber(prevBaseLine as number, 0);
-                stepBaseLine = interpolator(t);
-              } else {
-                stepBaseLine = (baseLine as Coordinate[]).map((entry, index) => {
-                  const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-                  if ((prevBaseLine as Coordinate[])[prevPointIndex]) {
-                    const prev = (prevBaseLine as Coordinate[])[prevPointIndex];
-                    const interpolatorX = interpolateNumber(prev.x, entry.x);
-                    const interpolatorY = interpolateNumber(prev.y, entry.y);
-
-                    return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
-                  }
-
-                  return entry;
-                });
-              }
-
-              return this.renderAreaStatically(stepPoints, stepBaseLine, needClip, clipPathId);
             }
 
-            return (
-              <Layer>
-                <defs>
-                  <clipPath id={`animationClipPath-${clipPathId}`}>
-                    {this.renderClipRect(t)}
-                  </clipPath>
-                </defs>
-                <Layer clipPath={`url(#animationClipPath-${clipPathId})`}>
-                  {this.renderAreaStatically(points, baseLine, needClip, clipPathId)}
-                </Layer>
-              </Layer>
-            );
+            return this.renderAreaStatically(stepPoints, stepBaseLine, needClip, clipPathId);
           }
-        }
+
+          return (
+            <Layer>
+              <defs>
+                <clipPath id={`animationClipPath-${clipPathId}`}>{this.renderClipRect(t)}</clipPath>
+              </defs>
+              <Layer clipPath={`url(#animationClipPath-${clipPathId})`}>
+                {this.renderAreaStatically(points, baseLine, needClip, clipPathId)}
+              </Layer>
+            </Layer>
+          );
+        }}
       </Animate>
     );
   }
@@ -475,9 +513,12 @@ class Area extends PureComponent<Props, State> {
     const { points, baseLine, isAnimationActive } = this.props;
     const { prevPoints, prevBaseLine, totalLength } = this.state;
 
-    if (isAnimationActive && points && points.length &&
-      ((!prevPoints && totalLength > 0) || !_.isEqual(prevPoints, points) ||
-        !_.isEqual(prevBaseLine, baseLine))) {
+    if (
+      isAnimationActive &&
+      points &&
+      points.length &&
+      ((!prevPoints && totalLength > 0) || !_.isEqual(prevPoints, points) || !_.isEqual(prevBaseLine, baseLine))
+    ) {
       return this.renderAreaWithAnimation(needClip, clipPathId);
     }
 
@@ -485,10 +526,11 @@ class Area extends PureComponent<Props, State> {
   }
 
   render() {
-    const { hide, dot, points, className, top, left, xAxis, yAxis,
-      width, height, isAnimationActive, id } = this.props;
+    const { hide, dot, points, className, top, left, xAxis, yAxis, width, height, isAnimationActive, id } = this.props;
 
-    if (hide || !points || !points.length) { return null; }
+    if (hide || !points || !points.length) {
+      return null;
+    }
 
     const { isAnimationFinished } = this.state;
     const hasSinglePoint = points.length === 1;
@@ -507,8 +549,7 @@ class Area extends PureComponent<Props, State> {
         ) : null}
         {!hasSinglePoint ? this.renderArea(needClip, clipPathId) : null}
         {(dot || hasSinglePoint) && this.renderDots(needClip, clipPathId)}
-        {(!isAnimationActive || isAnimationFinished) &&
-          LabelList.renderCallByParent(this.props, points)}
+        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
       </Layer>
     );
   }

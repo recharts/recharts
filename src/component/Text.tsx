@@ -1,5 +1,4 @@
 import React, { Component, CSSProperties } from 'react';
-// @ts-ignore
 import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -23,9 +22,7 @@ interface CalculatedWordWidths {
 const calculateWordWidths = (props: Props): CalculatedWordWidths => {
   try {
     const words = !_.isNil(props.children) ? props.children.toString().split(BREAKING_SPACES) : [];
-    const wordsWithComputedWidth = words.map(word => (
-      { word, width: getStringSize(word, props.style).width }
-    ));
+    const wordsWithComputedWidth = words.map(word => ({ word, width: getStringSize(word, props.style).width }));
 
     const spaceWidth = getStringSize('\u00A0', props.style).width;
 
@@ -78,12 +75,13 @@ class Text extends Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    if ((prevProps.width !== this.props.width || prevProps.scaleToFit !== this.props.scaleToFit ||
-      prevProps.children !== this.props.children || prevProps.style !== this.props.style)) {
-      const needCalculate = (
-        this.props.children !== prevProps.children ||
-        this.props.style !== prevProps.style
-      );
+    if (
+      prevProps.width !== this.props.width ||
+      prevProps.scaleToFit !== this.props.scaleToFit ||
+      prevProps.children !== this.props.children ||
+      prevProps.style !== this.props.style
+    ) {
+      const needCalculate = this.props.children !== prevProps.children || this.props.style !== prevProps.style;
       this.updateWordsByLines(this.props, needCalculate);
     }
   }
@@ -97,8 +95,7 @@ class Text extends Component<Props, State> {
   getWordsByLines(props: Props, needCalculate: boolean) {
     // Only perform calculations if using features that require them (multiline, scaleToFit)
     if ((props.width || props.scaleToFit) && !isSsr()) {
-      let wordsWithComputedWidth: Array<WordWithComputedWidth>;
-      let spaceWidth: number;
+      let wordsWithComputedWidth: Array<WordWithComputedWidth>, spaceWidth: number;
 
       if (needCalculate) {
         const wordWidths = calculateWordWidths(props);
@@ -112,30 +109,27 @@ class Text extends Component<Props, State> {
           return this.getWordsWithoutCalculate(props);
         }
 
-        return this.calculateWordsByLines(
-          wordsWithComputedWidth,
-          spaceWidth,
-          props.width
-        );
+        return this.calculateWordsByLines(wordsWithComputedWidth, spaceWidth, props.width);
       }
     }
     return this.getWordsWithoutCalculate(props);
   }
 
   getWordsWithoutCalculate = (props: Props): Array<Words> => {
-    const words = !_.isNil(props.children) ?
-      props.children.toString().split(BREAKING_SPACES) :
-      [];
+    const words = !_.isNil(props.children) ? props.children.toString().split(BREAKING_SPACES) : [];
     return [{ words }];
-  }
+  };
 
-  calculateWordsByLines(wordsWithComputedWidth: Array<WordWithComputedWidth>, spaceWidth: number, lineWidth: number | string): Array<Words> {
+  calculateWordsByLines(
+    wordsWithComputedWidth: Array<WordWithComputedWidth>,
+    spaceWidth: number,
+    lineWidth: number | string,
+  ): Array<Words> {
     const { scaleToFit } = this.props;
     return (wordsWithComputedWidth || []).reduce((result, { word, width }) => {
       const currentLine = result[result.length - 1];
 
-      if (currentLine && (lineWidth == null || scaleToFit ||
-        (currentLine.width + width + spaceWidth) < lineWidth)) {
+      if (currentLine && (lineWidth == null || scaleToFit || currentLine.width + width + spaceWidth < lineWidth)) {
         // Word can be added to an existing line
         currentLine.words.push(word);
         currentLine.width += width + spaceWidth;
@@ -164,7 +158,9 @@ class Text extends Component<Props, State> {
     } = this.props;
     const { wordsByLines } = this.state;
 
-    if (!isNumOrStr(textProps.x) || !isNumOrStr(textProps.y)) { return null; }
+    if (!isNumOrStr(textProps.x) || !isNumOrStr(textProps.y)) {
+      return null;
+    }
     const x = (textProps.x as number) + (isNumber(dx as number) ? (dx as number) : 0);
     const y = (textProps.y as number) + (isNumber(dy as number) ? (dy as number) : 0);
 
@@ -174,9 +170,7 @@ class Text extends Component<Props, State> {
         startDy = reduceCSSCalc(`calc(${capHeight})`);
         break;
       case 'middle':
-        startDy = reduceCSSCalc(
-          `calc(${(wordsByLines.length - 1) / 2} * -${lineHeight} + (${capHeight} / 2))`
-        );
+        startDy = reduceCSSCalc(`calc(${(wordsByLines.length - 1) / 2} * -${lineHeight} + (${capHeight} / 2))`);
         break;
       default:
         startDy = reduceCSSCalc(`calc(${wordsByLines.length - 1} * -${lineHeight})`);
@@ -186,7 +180,7 @@ class Text extends Component<Props, State> {
     const transforms = [];
     if (scaleToFit) {
       const lineWidth = wordsByLines[0].width;
-      const width = this.props.width;
+      const { width } = this.props;
       transforms.push(`scale(${(isNumber(width as number) ? (width as number) / lineWidth : 1) / lineWidth})`);
     }
     if (angle) {
@@ -204,14 +198,12 @@ class Text extends Component<Props, State> {
         className={classNames('recharts-text', className)}
         textAnchor={textAnchor}
       >
-        {
-        wordsByLines.map((line, index) => (
+        {wordsByLines.map((line, index) => (
           // eslint-disable-next-line react/no-array-index-key
           <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={index}>
             {line.words.join(' ')}
           </tspan>
-        ))
-      }
+        ))}
       </text>
     );
   }

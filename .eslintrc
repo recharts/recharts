@@ -1,19 +1,43 @@
 {
-  "extends": "eslint-config-airbnb",
+  "extends": [
+    "eslint:recommended", 
+    "plugin:@typescript-eslint/recommended", 
+    "plugin:react/recommended", 
+    "eslint-config-airbnb",
+    "prettier/@typescript-eslint",
+    "plugin:prettier/recommended",
+    "prettier"
+  ],
   "env": {
     "browser": true,
     "mocha": true,
     "node": true
   },
-  "parser": "babel-eslint",
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "react",
+    "@typescript-eslint"
+  ],
   "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "printWidth": 120,
+        "semi": true,
+        "singleQuote": true,
+        "tabWidth": 2,
+        "useTabs": false,
+        "trailingComma": "all"
+      }
+    ],
+    "import/extensions": "off",
     "valid-jsdoc": "error",
     "react/no-did-update-set-state": "warn",
     "react/sort-comp": "off",
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
     "react/react-in-jsx-scope": "error",
-    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
+    "react/jsx-filename-extension": ["error", { "extensions": [".ts", ".tsx"] }],
 
     "no-var": "error",
 
@@ -22,8 +46,7 @@
     "react/jsx-no-bind": "error",
 
     "strict": "off",
-    "operator-linebreak": ["error", "after"],
-    "no-unused-vars": "error",
+    "no-unused-vars": "off",
     "one-var": ["error", { "uninitialized": "always" }],
     "one-var-declaration-per-line": ["error", "initializations"],
     "no-mixed-operators": "off",
@@ -41,14 +64,13 @@
         "devDependencies": ["demo/**", "test/**", "*.config.js", "scripts/**", "**/Spec.js"]
       }
     ],
-    "max-len": "warn",
+    "max-len": ["warn", 120],
     // Errors introduced while upgrading eslint & plugins
     "no-restricted-properties": "error",
     "prefer-destructuring": "error",
     "object-curly-newline": "off",
     "function-paren-newline": "off",
     "react/require-default-props": "off",
-    "indent": "error",
     "no-restricted-globals": "error",
     "comma-dangle": "off",
     "react/default-props-match-prop-types": "off",
@@ -59,7 +81,13 @@
     "react/jsx-closing-tag-location": "error",
     "react/no-unused-state": "error",
     "react/prefer-stateless-function": "error",
-    "import/no-cycle": "warn"
+    "import/no-cycle": "warn",
+    "react/jsx-props-no-spreading": "off",
+    "react/state-in-constructor": "off",
+    "react/static-property-placement": "off",
+
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   },
   "settings": {
     "import/resolver": {
@@ -67,8 +95,5 @@
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
     }
-  },
-  "plugins": [
-    "react"
-  ]
+  }
 }

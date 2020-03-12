@@ -1,6 +1,6 @@
-import React, { Children } from 'react';
+import React, { Children, ReactNode } from 'react';
 import _ from 'lodash';
-import { ReactNode } from 'react';
+
 import { isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
 
@@ -19,21 +19,41 @@ const REACT_BROWSER_EVENT_MAP: any = {
   touchstart: 'onTouchStart',
 };
 
-type eventFunc = (data: any, index: number, e: any) => {}
+type eventFunc = (data: any, index: number, e: any) => {};
 
 export const SCALE_TYPES = [
-  'auto', 'linear', 'pow', 'sqrt', 'log', 'identity', 'time', 'band', 'point',
-  'ordinal', 'quantile', 'quantize', 'utc', 'sequential', 'threshold',
+  'auto',
+  'linear',
+  'pow',
+  'sqrt',
+  'log',
+  'identity',
+  'time',
+  'band',
+  'point',
+  'ordinal',
+  'quantile',
+  'quantize',
+  'utc',
+  'sequential',
+  'threshold',
 ];
 
 export const LEGEND_TYPES = [
-  'plainline', 'line', 'square', 'rect', 'circle', 'cross',
-  'diamond', 'star', 'triangle', 'wye', 'none',
-];
-
-export const TOOLTIP_TYPES = [
+  'plainline',
+  'line',
+  'square',
+  'rect',
+  'circle',
+  'cross',
+  'diamond',
+  'star',
+  'triangle',
+  'wye',
   'none',
 ];
+
+export const TOOLTIP_TYPES = ['none'];
 
 /**
  * Get the display name of a component
@@ -44,7 +64,9 @@ export const getDisplayName = (Comp: any) => {
   if (typeof Comp === 'string') {
     return Comp;
   }
-  if (!Comp) { return ''; }
+  if (!Comp) {
+    return '';
+  }
   return Comp.displayName || Comp.name || 'Component';
 };
 
@@ -52,7 +74,10 @@ export const getDisplayName = (Comp: any) => {
  * Find and return all matched children by type. `type` can be a React element class or
  * string
  */
-export const findAllByType = (children: ReactNode, type: string | string[]): React.DetailedReactHTMLElement<any, HTMLElement>[] => {
+export const findAllByType = (
+  children: ReactNode,
+  type: string | string[],
+): React.DetailedReactHTMLElement<any, HTMLElement>[] => {
   const result: React.DetailedReactHTMLElement<any, HTMLElement>[] = [];
   let types: string[] = [];
 
@@ -63,8 +88,7 @@ export const findAllByType = (children: ReactNode, type: string | string[]): Rea
   }
 
   React.Children.forEach(children, (child: React.DetailedReactHTMLElement<any, HTMLElement>) => {
-    // @ts-ignore
-    const childType = child && child.type && (child.type.displayName || child.type.name);
+    const childType = _.get(child, 'type.displayName') || _.get(child, 'type.name');
     if (types.indexOf(childType) !== -1) {
       result.push(child);
     }
@@ -76,7 +100,10 @@ export const findAllByType = (children: ReactNode, type: string | string[]): Rea
  * Return the first matched child by type, return null otherwise.
  * `type` can be a React element class or string.
  */
-export const findChildByType = (children: ReactNode[], type: string): React.DetailedReactHTMLElement<any, HTMLElement> => {
+export const findChildByType = (
+  children: ReactNode[],
+  type: string,
+): React.DetailedReactHTMLElement<any, HTMLElement> => {
   const result = findAllByType(children, type);
 
   return result && result[0];
@@ -95,9 +122,10 @@ export const withoutType = (children: ReactNode, type: string) => {
     types = [getDisplayName(type)];
   }
 
-  React.Children.forEach(children, (child) => {
-    // @ts-ignore
-    if (child && child.type && child.type.displayName && types.indexOf(child.type.displayName) !== -1) {
+  React.Children.forEach(children, child => {
+    const displayName = _.get(child, 'type.displayName');
+
+    if (displayName && types.indexOf(displayName) !== -1) {
       return;
     }
     newChildren.push(child);
@@ -112,39 +140,104 @@ export const withoutType = (children: ReactNode, type: string) => {
  * @return {Boolean}   true If the props width and height are number, and greater than 0
  */
 export const validateWidthHeight = (el: any): boolean => {
-  if (!el || !el.props) { return false; }
+  if (!el || !el.props) {
+    return false;
+  }
   const { width, height } = el.props;
 
-  if (!isNumber(width) || width <= 0 ||
-    !isNumber(height) || height <= 0) {
+  if (!isNumber(width) || width <= 0 || !isNumber(height) || height <= 0) {
     return false;
   }
 
   return true;
 };
 
-export const isSsr = (): boolean => (
-  !(typeof window !== 'undefined' && window.document && window.document.createElement &&
-    window.setTimeout)
-);
+export const isSsr = (): boolean =>
+  !(typeof window !== 'undefined' && window.document && window.document.createElement && window.setTimeout);
 
-const SVG_TAGS: string[] = ['a', 'altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',
-  'animateColor', 'animateMotion', 'animateTransform', 'circle', 'clipPath',
-  'color-profile', 'cursor', 'defs', 'desc', 'ellipse', 'feBlend', 'feColormatrix',
-  'feComponentTransfer', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting',
-  'feDisplacementMap', 'feDistantLight', 'feFlood', 'feFuncA', 'feFuncB', 'feFuncG',
-  'feFuncR', 'feGaussianBlur', 'feImage', 'feMerge', 'feMergeNode', 'feMorphology',
-  'feOffset', 'fePointLight', 'feSpecularLighting', 'feSpotLight', 'feTile',
-  'feTurbulence', 'filter', 'font', 'font-face', 'font-face-format', 'font-face-name',
-  'font-face-url', 'foreignObject', 'g', 'glyph', 'glyphRef', 'hkern', 'image',
-  'line', 'lineGradient', 'marker', 'mask', 'metadata', 'missing-glyph', 'mpath',
-  'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect', 'script',
-  'set', 'stop', 'style', 'svg', 'switch', 'symbol', 'text', 'textPath', 'title',
-  'tref', 'tspan', 'use', 'view', 'vkern'];
+const SVG_TAGS: string[] = [
+  'a',
+  'altGlyph',
+  'altGlyphDef',
+  'altGlyphItem',
+  'animate',
+  'animateColor',
+  'animateMotion',
+  'animateTransform',
+  'circle',
+  'clipPath',
+  'color-profile',
+  'cursor',
+  'defs',
+  'desc',
+  'ellipse',
+  'feBlend',
+  'feColormatrix',
+  'feComponentTransfer',
+  'feComposite',
+  'feConvolveMatrix',
+  'feDiffuseLighting',
+  'feDisplacementMap',
+  'feDistantLight',
+  'feFlood',
+  'feFuncA',
+  'feFuncB',
+  'feFuncG',
+  'feFuncR',
+  'feGaussianBlur',
+  'feImage',
+  'feMerge',
+  'feMergeNode',
+  'feMorphology',
+  'feOffset',
+  'fePointLight',
+  'feSpecularLighting',
+  'feSpotLight',
+  'feTile',
+  'feTurbulence',
+  'filter',
+  'font',
+  'font-face',
+  'font-face-format',
+  'font-face-name',
+  'font-face-url',
+  'foreignObject',
+  'g',
+  'glyph',
+  'glyphRef',
+  'hkern',
+  'image',
+  'line',
+  'lineGradient',
+  'marker',
+  'mask',
+  'metadata',
+  'missing-glyph',
+  'mpath',
+  'path',
+  'pattern',
+  'polygon',
+  'polyline',
+  'radialGradient',
+  'rect',
+  'script',
+  'set',
+  'stop',
+  'style',
+  'svg',
+  'switch',
+  'symbol',
+  'text',
+  'textPath',
+  'title',
+  'tref',
+  'tspan',
+  'use',
+  'view',
+  'vkern',
+];
 
-const isSvgElement = (child: any) => (
-  child && child.type && _.isString(child.type) && SVG_TAGS.indexOf(child.type) >= 0
-);
+const isSvgElement = (child: any) => child && child.type && _.isString(child.type) && SVG_TAGS.indexOf(child.type) >= 0;
 
 /**
  * Filter all the svg elements of children
@@ -155,33 +248,14 @@ export const filterSvgElements = (children: React.ReactElement[]): React.ReactEl
   const svgElements = [] as React.ReactElement[];
 
   React.Children.forEach(children, (entry: React.ReactElement) => {
-    if (entry && entry.type && _.isString(entry.type) &&
-      SVG_TAGS.indexOf(entry.type) >= 0) {
+    if (entry && entry.type && _.isString(entry.type) && SVG_TAGS.indexOf(entry.type) >= 0) {
       svgElements.push(entry);
     }
   });
 
   return svgElements;
 };
-export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: React.ReactElement): boolean => {
-  if (_.isNil(nextChild) && _.isNil(prevChild)) {
-    return true;
-  } if (!_.isNil(nextChild) && !_.isNil(prevChild)) {
-    const { children: nextChildren, ...nextProps } = nextChild.props || {};
-    const { children: prevChildren, ...prevProps } = prevChild.props || {};
 
-    if (nextChildren && prevChildren) {
-      // eslint-disable-next-line no-use-before-define
-      return shallowEqual(nextProps, prevProps) && isChildrenEqual(nextChildren, prevChildren);
-    } if (!nextChildren && !prevChildren) {
-      return shallowEqual(nextProps, prevProps);
-    }
-
-    return false;
-  }
-
-  return false;
-};
 /**
  * Wether props of children changed
  * @param  {Object} nextChildren The latest children
@@ -189,13 +263,20 @@ export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: Rea
  * @return {Boolean}             equal or not
  */
 export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren: React.ReactElement[]): boolean => {
-  if (nextChildren === prevChildren) { return true; }
+  if (nextChildren === prevChildren) {
+    return true;
+  }
 
-  if (Children.count(nextChildren) !== Children.count(prevChildren)) { return false; }
+  if (Children.count(nextChildren) !== Children.count(prevChildren)) {
+    return false;
+  }
   const count = Children.count(nextChildren);
 
-  if (count === 0) { return true; }
+  if (count === 0) {
+    return true;
+  }
   if (count === 1) {
+    // eslint-disable-next-line no-use-before-define,@typescript-eslint/no-use-before-define
     return isSingleChildEqual(
       _.isArray(nextChildren) ? nextChildren[0] : nextChildren,
       _.isArray(prevChildren) ? prevChildren[0] : prevChildren,
@@ -210,12 +291,35 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
       if (!isChildrenEqual(nextChild, prevChild)) {
         return false;
       }
+      // eslint-disable-next-line no-use-before-define,@typescript-eslint/no-use-before-define
     } else if (!isSingleChildEqual(nextChild, prevChild)) {
       return false;
     }
   }
 
   return true;
+};
+
+export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: React.ReactElement): boolean => {
+  if (_.isNil(nextChild) && _.isNil(prevChild)) {
+    return true;
+  }
+  if (!_.isNil(nextChild) && !_.isNil(prevChild)) {
+    const { children: nextChildren, ...nextProps } = nextChild.props || {};
+    const { children: prevChildren, ...prevProps } = prevChild.props || {};
+
+    if (nextChildren && prevChildren) {
+      // eslint-disable-next-line no-use-before-define
+      return shallowEqual(nextProps, prevProps) && isChildrenEqual(nextChildren, prevChildren);
+    }
+    if (!nextChildren && !prevChildren) {
+      return shallowEqual(nextProps, prevProps);
+    }
+
+    return false;
+  }
+
+  return false;
 };
 
 export const renderByOrder = (children: React.ReactElement[], renderMap: any) => {

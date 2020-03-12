@@ -11,8 +11,7 @@ import Rectangle from '../shape/Rectangle';
 import { shallowEqual } from '../util/ShallowEqual';
 import { filterSvgElements, validateWidthHeight, findChildByType } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { SankeyLink, SankeyNode } from './types';
-import { Margin, DataKey, DOMAttributesWithProps, PresentationAttributes, filterProps } from '../util/types';
+import { Margin, DataKey, PresentationAttributes, filterProps, SankeyLink, SankeyNode } from '../util/types';
 
 const defaultCoordinateOfTooltip = { x: 0, y: 0 };
 
@@ -21,28 +20,25 @@ const interpolationGenerator = (a: number, b: number) => {
   const kb = b - ka;
   return (t: any) => ka + kb * t;
 };
-const centerY = (node: SankeyNode) => (node.y + node.dy / 2);
-const getValue = (entry: SankeyLink) => ((entry && entry.value) || 0);
-const getSumOfIds = (links: SankeyLink[], ids: number[]) => (
-  ids.reduce((result: any, id: any) => (result + getValue(links[id])), 0)
-);
-const getSumWithWeightedSource = (tree: any, links: SankeyLink[], ids: number[]) => (
+const centerY = (node: SankeyNode) => node.y + node.dy / 2;
+const getValue = (entry: SankeyLink) => (entry && entry.value) || 0;
+const getSumOfIds = (links: SankeyLink[], ids: number[]) =>
+  ids.reduce((result: any, id: any) => result + getValue(links[id]), 0);
+const getSumWithWeightedSource = (tree: any, links: SankeyLink[], ids: number[]) =>
   ids.reduce((result: any, id: any) => {
     const link = links[id];
     const sourceNode = tree[link.source];
 
     return result + centerY(sourceNode) * getValue(links[id]);
-  }, 0)
-);
-const getSumWithWeightedTarget = (tree: any, links: SankeyLink[], ids: number[]) => (
+  }, 0);
+const getSumWithWeightedTarget = (tree: any, links: SankeyLink[], ids: number[]) =>
   ids.reduce((result: number, id: number) => {
     const link = links[id];
     const targetNode = tree[link.target];
 
     return result + centerY(targetNode) * getValue(links[id]);
-  }, 0)
-);
-const ascendingY = (a: any, b: any) => (a.y - b.y);
+  }, 0);
+const ascendingY = (a: any, b: any) => a.y - b.y;
 
 const searchTargetsAndSources = (links: SankeyLink[], id: number) => {
   const sourceNodes: number[] = [];
@@ -88,10 +84,7 @@ const getNodesTree = ({ nodes, links }: any, width: number, nodeWidth: number): 
     return {
       ...entry,
       ...result,
-      value: Math.max(
-        getSumOfIds(links, result.sourceLinks),
-        getSumOfIds(links, result.targetLinks)
-      ),
+      value: Math.max(getSumOfIds(links, result.sourceLinks), getSumOfIds(links, result.targetLinks)),
       depth: 0,
     };
   });
@@ -138,9 +131,9 @@ const getDepthTree = (tree: any): any[] => {
 };
 
 const updateYOfTree = (depthTree: any, height: number, nodePadding: number, links: any) => {
-  const yRatio: number = _.min(depthTree.map((nodes: any) => (
-    (height - (nodes.length - 1) * nodePadding) / _.sumBy(nodes, getValue)
-  )));
+  const yRatio: number = _.min(
+    depthTree.map((nodes: any) => (height - (nodes.length - 1) * nodePadding) / _.sumBy(nodes, getValue)),
+  );
 
   for (let d = 0, maxDepth = depthTree.length; d < maxDepth; d++) {
     for (let i = 0, len = depthTree[d].length; i < len; i++) {
@@ -229,8 +222,8 @@ const updateYOfLinks = (tree: any, links: any) => {
     let sy = 0;
     let ty = 0;
 
-    node.targetLinks.sort((a: any, b: any) => (tree[links[a].target].y - tree[links[b].target].y));
-    node.sourceLinks.sort((a: any, b: any) => (tree[links[a].source].y - tree[links[b].source].y));
+    node.targetLinks.sort((a: any, b: any) => tree[links[a].target].y - tree[links[b].target].y);
+    node.sourceLinks.sort((a: any, b: any) => tree[links[a].source].y - tree[links[b].source].y);
 
     for (let j = 0, tLen = node.targetLinks.length; j < tLen; j++) {
       const link = links[node.targetLinks[j]];
@@ -252,16 +245,23 @@ const updateYOfLinks = (tree: any, links: any) => {
   }
 };
 
-const computeData = ({ data, width, height, iterations, nodeWidth, nodePadding } : {
-  data: any,
-  width: number,
-  height: number,
-  iterations: any,
-  nodeWidth: number,
-  nodePadding: number,
+const computeData = ({
+  data,
+  width,
+  height,
+  iterations,
+  nodeWidth,
+  nodePadding,
+}: {
+  data: any;
+  width: number;
+  height: number;
+  iterations: any;
+  nodeWidth: number;
+  nodePadding: number;
 }): {
-  nodes: SankeyNode[],
-  links: SankeyLink[]
+  nodes: SankeyNode[];
+  links: SankeyLink[];
 } => {
   const { links } = data;
   const { tree } = getNodesTree(data, width, nodeWidth);
@@ -272,7 +272,7 @@ const computeData = ({ data, width, height, iterations, nodeWidth, nodePadding }
 
   let alpha = 1;
   for (let i = 1; i <= iterations; i++) {
-    relaxRightToLeft(tree, depthTree, newLinks, alpha *= 0.99);
+    relaxRightToLeft(tree, depthTree, newLinks, (alpha *= 0.99));
 
     resolveCollisions(depthTree, height, nodePadding);
 
@@ -300,75 +300,102 @@ const getCoordinateOfTooltip = (el: any, type: string) => {
 const getPayloadOfTooltip = (el: any, type: string, nameKey: DataKey<any>) => {
   const { payload } = el;
   if (type === 'node') {
-    return [{
-      payload: el,
-      name: getValueByDataKey(payload, nameKey, ''),
-      value: getValueByDataKey(payload, 'value'),
-    }];
+    return [
+      {
+        payload: el,
+        name: getValueByDataKey(payload, nameKey, ''),
+        value: getValueByDataKey(payload, 'value'),
+      },
+    ];
   }
   if (payload.source && payload.target) {
     const sourceName = getValueByDataKey(payload.source, nameKey, '');
     const targetName = getValueByDataKey(payload.target, nameKey, '');
 
-    return [{
-      payload: el,
-      name: `${sourceName} - ${targetName}`,
-      value: getValueByDataKey(payload, 'value'),
-    }];
+    return [
+      {
+        payload: el,
+        name: `${sourceName} - ${targetName}`,
+        value: getValueByDataKey(payload, 'value'),
+      },
+    ];
   }
 
   return [];
 };
 
-class Props implements PresentationAttributes<any>, DOMAttributesWithProps<any, any> {
-  nameKey: DataKey<any> = 'name';
-  dataKey: DataKey<any> = 'value';
-  width: number;
-  height: number;
+interface SankeyProps {
+  nameKey?: DataKey<any>;
+
+  dataKey?: DataKey<any>;
+
+  width?: number;
+
+  height?: number;
+
   data: {
     node: SankeyNode[];
     links: SankeyLink[];
   };
-  nodePadding: number = 10;
-  nodeWidth: number = 10;
-  linkCurvature: number = 0.5;
-  iterations: number = 32;
+
+  nodePadding?: number;
+
+  nodeWidth?: number;
+
+  linkCurvature?: number;
+
+  iterations?: number;
+
   // TODO object  func
-  node: React.ReactElement;
-  link: React.ReactElement;
+  node?: React.ReactElement;
 
-  style: any;
+  link?: React.ReactElement;
 
-  className: string;
-  children: any;
-  margin: Margin = { top: 5, right: 5, bottom: 5, left: 5 };
+  style?: any;
 
-  onClick: any;
+  className?: string;
 
-  onMouseEnter: any;
-  onMouseLeave: any;
+  children?: any;
 
-  sourceX: any;
-  sourceY: any;
-  sourceControlX: any;
-  targetX: any;
-  targetY: any;
-  targetControlX: any;
-  linkWidth: any;
+  margin?: Margin;
+
+  onClick?: any;
+
+  onMouseEnter?: any;
+
+  onMouseLeave?: any;
 }
-class State {
-  activeElement: any = null;
-  activeElementType: any = null;
-  isTooltipActive: boolean = false;
-  nodes: SankeyNode[] = [];
-  links: SankeyLink[] = [];
+
+type Props = PresentationAttributes<SVGElement> & SankeyProps;
+
+interface State {
+  activeElement?: any;
+  activeElementType?: any;
+  isTooltipActive: boolean;
+  nodes: SankeyNode[];
+  links: SankeyLink[];
 }
 
 class Sankey extends PureComponent<Props, State> {
   static displayName = 'Sankey';
-  static defaultProps = new Props();
 
-  state = new State();
+  static defaultProps = {
+    nameKey: 'name',
+    dataKey: 'value',
+    nodePadding: 10,
+    nodeWidth: 10,
+    linkCurvature: 0.5,
+    iterations: 32,
+    margin: { top: 5, right: 5, bottom: 5, left: 5 },
+  };
+
+  state = {
+    activeElement: null as any,
+    activeElementType: null as any,
+    isTooltipActive: false,
+    nodes: [] as SankeyNode[],
+    links: [] as SankeyLink[],
+  };
 
   constructor(props: Props) {
     super(props);
@@ -379,10 +406,16 @@ class Sankey extends PureComponent<Props, State> {
   // eslint-disable-next-line camelcase
   UNSAFE_componentWillReceiveProps(nextProps: Props) {
     const { data, width, height, margin, iterations, nodeWidth, nodePadding, nameKey } = this.props;
-    if (nextProps.data !== data || nextProps.width !== width ||
-      nextProps.height !== height || !shallowEqual(nextProps.margin, margin) ||
-      nextProps.iterations !== iterations || nextProps.nodeWidth !== nodeWidth ||
-      nextProps.nodePadding !== nodePadding || nextProps.nameKey !== nameKey) {
+    if (
+      nextProps.data !== data ||
+      nextProps.width !== width ||
+      nextProps.height !== height ||
+      !shallowEqual(nextProps.margin, margin) ||
+      nextProps.iterations !== iterations ||
+      nextProps.nodeWidth !== nodeWidth ||
+      nextProps.nodePadding !== nodePadding ||
+      nextProps.nameKey !== nameKey
+    ) {
       this.setState((this.constructor as any).createDefaultState(nextProps));
     }
   }
@@ -400,14 +433,17 @@ class Sankey extends PureComponent<Props, State> {
       data,
       width: contentWidth,
       height: contentHeight,
-      iterations, nodeWidth, nodePadding,
+      iterations,
+      nodeWidth,
+      nodePadding,
     });
 
     return {
       activeElement: null,
       activeElementType: null,
       isTooltipActive: false,
-      nodes, links,
+      nodes,
+      links,
     };
   }
 
@@ -416,15 +452,18 @@ class Sankey extends PureComponent<Props, State> {
     const tooltipItem = findChildByType(children, Tooltip.displayName);
 
     if (tooltipItem) {
-      this.setState({
-        activeElement: el,
-        activeElementType: type,
-        isTooltipActive: true,
-      }, () => {
-        if (onMouseEnter) {
-          onMouseEnter(el, type, e);
-        }
-      });
+      this.setState(
+        {
+          activeElement: el,
+          activeElementType: type,
+          isTooltipActive: true,
+        },
+        () => {
+          if (onMouseEnter) {
+            onMouseEnter(el, type, e);
+          }
+        },
+      );
     } else if (onMouseEnter) {
       onMouseEnter(el, type, e);
     }
@@ -435,13 +474,16 @@ class Sankey extends PureComponent<Props, State> {
     const tooltipItem = findChildByType(children, Tooltip.displayName);
 
     if (tooltipItem) {
-      this.setState({
-        isTooltipActive: false,
-      }, () => {
-        if (onMouseLeave) {
-          onMouseLeave(el, type, e);
-        }
-      });
+      this.setState(
+        {
+          isTooltipActive: false,
+        },
+        () => {
+          if (onMouseLeave) {
+            onMouseLeave(el, type, e);
+          }
+        },
+      );
     } else if (onMouseLeave) {
       onMouseLeave(el, type, e);
     }
@@ -452,15 +494,15 @@ class Sankey extends PureComponent<Props, State> {
     if (onClick) onClick(el, type, e);
   }
 
-  static renderLinkItem(option: any, props: Props) {
+  static renderLinkItem(option: any, props: any) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
-    } if (_.isFunction(option)) {
+    }
+    if (_.isFunction(option)) {
       return option(props);
     }
 
-    const { sourceX, sourceY, sourceControlX, targetX, targetY, targetControlX, linkWidth,
-      ...others } = props;
+    const { sourceX, sourceY, sourceControlX, targetX, targetY, targetControlX, linkWidth, ...others } = props;
 
     return (
       <path
@@ -485,43 +527,45 @@ class Sankey extends PureComponent<Props, State> {
 
     return (
       <Layer className="recharts-sankey-links" key="recharts-sankey-links">
-        {
-          links.map((link: SankeyLink, i: number) => {
-            const { sy: sourceRelativeY, ty: targetRelativeY, dy: linkWidth } = link;
-            const source = nodes[link.source];
-            const target = nodes[link.target];
-            const sourceX = source.x + source.dx + left;
-            const targetX = target.x + left;
-            const interpolationFunc = interpolationGenerator(sourceX, targetX);
-            const sourceControlX = interpolationFunc(linkCurvature);
-            const targetControlX = interpolationFunc(1 - linkCurvature);
-            const sourceY = source.y + sourceRelativeY + linkWidth / 2 + top;
-            const targetY = target.y + targetRelativeY + linkWidth / 2 + top;
+        {links.map((link: SankeyLink, i: number) => {
+          const { sy: sourceRelativeY, ty: targetRelativeY, dy: linkWidth } = link;
+          const source = nodes[link.source];
+          const target = nodes[link.target];
+          const sourceX = source.x + source.dx + left;
+          const targetX = target.x + left;
+          const interpolationFunc = interpolationGenerator(sourceX, targetX);
+          const sourceControlX = interpolationFunc(linkCurvature);
+          const targetControlX = interpolationFunc(1 - linkCurvature);
+          const sourceY = source.y + sourceRelativeY + linkWidth / 2 + top;
+          const targetY = target.y + targetRelativeY + linkWidth / 2 + top;
 
-            const linkProps = {
-              sourceX, targetX,
-              sourceY, targetY,
-              sourceControlX, targetControlX,
-              sourceRelativeY, targetRelativeY,
-              linkWidth,
-              index: i,
-              payload: { ...link, source, target },
-              ...filterProps(linkContent),
-            };
-            const events = {
-              onMouseEnter: this.handleMouseEnter.bind(this, linkProps, 'link'),
-              onMouseLeave: this.handleMouseLeave.bind(this, linkProps, 'link'),
-              onClick: this.handleClick.bind(this, linkProps, 'link')
-            };
+          const linkProps = {
+            sourceX,
+            targetX,
+            sourceY,
+            targetY,
+            sourceControlX,
+            targetControlX,
+            sourceRelativeY,
+            targetRelativeY,
+            linkWidth,
+            index: i,
+            payload: { ...link, source, target },
+            ...filterProps(linkContent),
+          };
+          const events = {
+            onMouseEnter: this.handleMouseEnter.bind(this, linkProps, 'link'),
+            onMouseLeave: this.handleMouseLeave.bind(this, linkProps, 'link'),
+            onClick: this.handleClick.bind(this, linkProps, 'link'),
+          };
 
-            return (
-              // eslint-disable-next-line react/no-array-index-key
-              <Layer key={`link${i}`} {...events}>
-                {(this.constructor as any).renderLinkItem(linkContent, linkProps)}
-              </Layer>
-            );
-          })
-        }
+          return (
+            // eslint-disable-next-line react/no-array-index-key
+            <Layer key={`link${i}`} {...events}>
+              {(this.constructor as any).renderLinkItem(linkContent, linkProps)}
+            </Layer>
+          );
+        })}
       </Layer>
     );
   }
@@ -529,18 +573,12 @@ class Sankey extends PureComponent<Props, State> {
   static renderNodeItem(option: any, props: Props) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
-    } if (_.isFunction(option)) {
+    }
+    if (_.isFunction(option)) {
       return option(props);
     }
 
-    return (
-      <Rectangle
-        className="recharts-sankey-node"
-        fill="#0088fe"
-        fillOpacity="0.8"
-        {...props}
-      />
-    );
+    return <Rectangle className="recharts-sankey-node" fill="#0088fe" fillOpacity="0.8" {...filterProps(props)} />;
   }
 
   renderNodes(nodes: SankeyNode[]) {
@@ -550,32 +588,30 @@ class Sankey extends PureComponent<Props, State> {
 
     return (
       <Layer className="recharts-sankey-nodes" key="recharts-sankey-nodes">
-        {
-          nodes.map((node, i) => {
-            const { x, y, dx, dy } = node;
-            const nodeProps = {
-              ...filterProps(nodeContent),
-              x: x + left,
-              y: y + top,
-              width: dx,
-              height: dy,
-              index: i,
-              payload: node,
-            };
-            const events = {
-              onMouseEnter: this.handleMouseEnter.bind(this, nodeProps, 'node'),
-              onMouseLeave: this.handleMouseLeave.bind(this, nodeProps, 'node'),
-              onClick: this.handleClick.bind(this, nodeProps, 'node')
-            };
+        {nodes.map((node, i) => {
+          const { x, y, dx, dy } = node;
+          const nodeProps = {
+            ...filterProps(nodeContent),
+            x: x + left,
+            y: y + top,
+            width: dx,
+            height: dy,
+            index: i,
+            payload: node,
+          };
+          const events = {
+            onMouseEnter: this.handleMouseEnter.bind(this, nodeProps, 'node'),
+            onMouseLeave: this.handleMouseLeave.bind(this, nodeProps, 'node'),
+            onClick: this.handleClick.bind(this, nodeProps, 'node'),
+          };
 
-            return (
-              // eslint-disable-next-line react/no-array-index-key
-              <Layer key={`node${i}`} {...events}>
-                {(this.constructor as any).renderNodeItem(nodeContent, nodeProps)}
-              </Layer>
-            );
-          })
-        }
+          return (
+            // eslint-disable-next-line react/no-array-index-key
+            <Layer key={`node${i}`} {...events}>
+              {(this.constructor as any).renderNodeItem(nodeContent, nodeProps)}
+            </Layer>
+          );
+        })}
       </Layer>
     );
   }
@@ -584,15 +620,16 @@ class Sankey extends PureComponent<Props, State> {
     const { children, width, height, nameKey } = this.props;
     const tooltipItem = findChildByType(children, Tooltip.displayName);
 
-    if (!tooltipItem) { return null; }
+    if (!tooltipItem) {
+      return null;
+    }
 
     const { isTooltipActive, activeElement, activeElementType } = this.state;
     const viewBox = { x: 0, y: 0, width, height };
-    const coordinate = activeElement ?
-      getCoordinateOfTooltip(activeElement, activeElementType) :
-      defaultCoordinateOfTooltip;
-    const payload = activeElement ?
-      getPayloadOfTooltip(activeElement, activeElementType, nameKey) : [];
+    const coordinate = activeElement
+      ? getCoordinateOfTooltip(activeElement, activeElementType)
+      : defaultCoordinateOfTooltip;
+    const payload = activeElement ? getPayloadOfTooltip(activeElement, activeElementType, nameKey) : [];
 
     return React.cloneElement(tooltipItem, {
       viewBox,
@@ -604,7 +641,9 @@ class Sankey extends PureComponent<Props, State> {
   }
 
   render() {
-    if (!validateWidthHeight(this)) { return null; }
+    if (!validateWidthHeight(this)) {
+      return null;
+    }
 
     const { width, height, className, style, children, ...others } = this.props;
     const { links, nodes } = this.state;
