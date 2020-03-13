@@ -304,9 +304,7 @@ export interface DOMAttributesWithProps<P, T> {
   onTransitionEnd?: TransitionEventHandler<P, T>;
   onTransitionEndCapture?: TransitionEventHandler<P, T>;
 }
-const SVGContainerPropKeys = [
-  'viewBox',
-]
+const SVGContainerPropKeys = ['viewBox'];
 const SVGElementPropKeys = [
   'className',
   'color',
@@ -566,7 +564,6 @@ const SVGElementPropKeys = [
   'key',
   'angle',
 ];
-
 
 const EventKeys = [
   'children',
@@ -868,7 +865,11 @@ export const filterProps = (
 
   Object.keys(inputProps).forEach(key => {
     // viewBox only exist in <svg />
-    if (SVGElementPropKeys.includes(key) || (isSvg && SVGContainerPropKeys.includes(key) ) || (includeEvents && EventKeys.includes(key))) {
+    if (
+      SVGElementPropKeys.includes(key) ||
+      (isSvg && SVGContainerPropKeys.includes(key)) ||
+      (includeEvents && EventKeys.includes(key))
+    ) {
       out[key] = (inputProps as any)[key];
     }
   });

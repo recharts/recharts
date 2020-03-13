@@ -733,7 +733,7 @@ const generateCategoricalChart = ({
           getStackedDataOfItem(item, stackGroups[numericAxisId].stackGroups);
         const itemIsBar = getDisplayName(item.type).indexOf('Bar') >= 0;
         const bandSize = getBandSizeOfAxis(cateAxis, cateTicks);
-        let barPosition = []
+        let barPosition = [];
 
         if (itemIsBar) {
           const barBandSize = getBandSizeOfAxis(cateAxis, cateTicks, true);
@@ -748,7 +748,10 @@ const generateCategoricalChart = ({
           });
 
           if (barBandSize !== bandSize) {
-            barPosition = barPosition.map((pos: { item: any; position: { offset: number; size: number } }) => ({ ...pos, position: { ...pos.position, offset: pos.position.offset - barBandSize / 2 } }))
+            barPosition = barPosition.map((pos: { item: any; position: { offset: number; size: number } }) => ({
+              ...pos,
+              position: { ...pos.position, offset: pos.position.offset - barBandSize / 2 },
+            }));
           }
         }
         const componsedFn = item && item.type && item.type.getComposedData;
