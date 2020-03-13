@@ -44,7 +44,7 @@ const getRect = (hasX1: boolean, hasX2: boolean, hasY1: boolean, hasY2: boolean,
   const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2, xAxis, yAxis } = props;
 
   const scales = createLabeldScales({ x: xAxis.scale, y: yAxis.scale });
-  
+
   const p1 = {
     x: hasX1 ? scales.x.apply(xValue1, { position: 'start' }) : scales.x.rangeMin,
     y: hasY1 ? scales.y.apply(yValue1, { position: 'start' }) : scales.y.rangeMin,

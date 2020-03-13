@@ -345,11 +345,11 @@ function Label(props: Props) {
 
   const isPolarLabel = isPolar(viewBox);
   const attrs = filterProps(props, true);
-  
+
   if (isPolarLabel && (position === 'insideStart' || position === 'insideEnd' || position === 'end')) {
     return renderRadialLabel(props, label, attrs);
   }
-  
+
   const positionAttrs = isPolarLabel ? getAttrsOfPolarLabel(props) : getAttrsOfCartesianLabel(props);
 
   return (

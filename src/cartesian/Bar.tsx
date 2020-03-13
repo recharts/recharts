@@ -380,7 +380,7 @@ class Bar extends PureComponent<Props, State> {
     const backgroundProps = filterProps(this.props.background);
 
     return data.map((entry, i) => {
-      // eslint-disable-next-line no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { value, background, ...rest } = entry;
 
       if (!background) {

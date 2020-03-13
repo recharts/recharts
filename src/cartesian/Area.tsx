@@ -387,6 +387,7 @@ class Area extends PureComponent<Props, State> {
   }
 
   renderAreaStatically(points: AreaPointItem[], baseLine: Props['baseLine'], needClip: boolean, clipPathId: string) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { layout, type, stroke, connectNulls, isRange, ref, ...others } = this.props;
 
     return (
