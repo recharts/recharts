@@ -1,3 +1,16 @@
+## 2.0.0-beta.3 (Mar 13, 2020)
+
+### fix
+
+- fix range of ReferenceArea of BarChart, fix #2045
+- fix className of axis line, fix ##2024
+- fix ComposedChart when has multiple <Bar/>, fix #2031
+- fix ComposedChart when specify scale of <XAxis />, fix #2010
+
+### chore
+
+- update eslint and add .prettierrc
+
 ## 2.0.0-beta.2 (Mar 10, 2020)
 
 ### fix
