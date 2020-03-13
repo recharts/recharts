@@ -535,7 +535,7 @@ export const getTicksOfAxis = (axis: any, isGrid?: boolean, isAll?: boolean): Ti
   const { duplicateDomain, type, range } = axis;
   let offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ? scale.bandwidth() / 2 : 0;
   offset = axis.axisType === 'angleAxis' ? mathSign(range[0] - range[1]) * 2 * offset : offset;
-
+  
   // The ticks setted by user should only affect the ticks adjacent to axis line
   if (isGrid && (axis.ticks || axis.niceTicks)) {
     return (axis.ticks || axis.niceTicks).map((entry: TickItem) => {
@@ -549,9 +549,10 @@ export const getTicksOfAxis = (axis: any, isGrid?: boolean, isAll?: boolean): Ti
     });
   }
 
+  // When axis is a categorial axis, but the type of axis is number or the scale of axis is not "auto"
   if (axis.isCategorial && axis.categoricalDomain) {
     return axis.categoricalDomain.map((entry: any, index: number) => ({
-      coordinate: scale(entry),
+      coordinate: scale(entry) + offset,
       value: entry,
       index,
       offset,
@@ -1057,9 +1058,13 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
  * @param  {Array}  ticks The ticks of axis
  * @return {Number} Size
  */
-export const getBandSizeOfAxis = (axis: any, ticks?: Array<TickItem>) => {
+export const getBandSizeOfAxis = (axis: any, ticks?: Array<TickItem>, isBar?: boolean) => {
   if (axis && axis.scale && axis.scale.bandwidth) {
-    return axis.scale.bandwidth();
+    const bandWidth = axis.scale.bandwidth();
+
+    if (!isBar || bandWidth > 0) {
+      return bandWidth;
+    }
   }
 
   if (axis && ticks && ticks.length >= 2) {

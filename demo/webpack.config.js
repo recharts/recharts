@@ -19,7 +19,7 @@ module.exports = {
   ],
   resolve: {
     alias: {
-      recharts: path.join(__dirname, '..', 'src/index.js'),
+      recharts: path.join(__dirname, '..', 'src/index.ts'),
     },
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
   },

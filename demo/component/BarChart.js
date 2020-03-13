@@ -294,7 +294,7 @@ export default class Demo extends Component {
 
         <p>BarChart of layout vertical</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={400} height={400} data={data.slice(0, 1)} maxBarSize={10}>
+          <BarChart width={400} height={400} data={data.slice(0, 1)} maxBarSize={10} barSize={10}>
             <XAxis padding={{ left: 20, right: 100 }} type="number" dataKey="time" />
             <YAxis type="number" />
             <CartesianGrid horizontal={false} />
