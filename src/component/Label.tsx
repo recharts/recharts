@@ -345,15 +345,15 @@ function Label(props: Props) {
 
   const isPolarLabel = isPolar(viewBox);
   const attrs = filterProps(props, true);
-
+  
   if (isPolarLabel && (position === 'insideStart' || position === 'insideEnd' || position === 'end')) {
     return renderRadialLabel(props, label, attrs);
   }
-
+  
   const positionAttrs = isPolarLabel ? getAttrsOfPolarLabel(props) : getAttrsOfCartesianLabel(props);
 
   return (
-    <Text className={classNames('recharts-label', className)} {...attrs} {...(positionAttrs as any)}>
+    <Text className={classNames('recharts-label', className)} {...(positionAttrs as any)} {...attrs}>
       {label}
     </Text>
   );
