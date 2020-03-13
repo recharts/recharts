@@ -1,7 +1,7 @@
 /* eslint-disable react/no-multi-comp */
 import React, { Component } from 'react';
 import {
-  BarChart, Bar, Brush, Cell, CartesianGrid, ReferenceLine, ReferenceDot,
+  BarChart, Bar, Brush, Cell, CartesianGrid, ReferenceLine, ReferenceArea,
   XAxis, YAxis, Tooltip, Legend, ErrorBar, LabelList
 } from 'recharts';
 import { scaleOrdinal } from 'd3-scale';
@@ -502,6 +502,7 @@ export default class Demo extends Component {
             <YAxis type="number" />
             <XAxis dataKey="name" type="category" />
             <Tooltip />
+            <ReferenceArea x1="food" x2="cosmetic"/>
             <Bar dataKey="uv" fill="#ff7300" label />
             <Bar dataKey="pv" fill="#387908">
               <LabelList position="top" invertNegativesOn="vertical" />

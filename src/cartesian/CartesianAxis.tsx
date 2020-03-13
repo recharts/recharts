@@ -368,7 +368,7 @@ class CartesianAxis extends Component<Props> {
       };
     }
 
-    return <line className="recharts-cartesian-axis-line" {...props} />;
+    return <line {...props} className={classNames('recharts-cartesian-axis-line', _.get(axisLine, 'className'))} />;
   }
 
   static renderTickItem(option: Props['tick'], props: any, value: ReactNode) {
@@ -427,7 +427,7 @@ class CartesianAxis extends Component<Props> {
           key={`tick-${i}`} // eslint-disable-line react/no-array-index-key
           {...adaptEventsOfChild(this.props, entry, i)}
         >
-          {tickLine && <line className="recharts-cartesian-axis-tick-line" {...tickLineProps} {...lineCoord} />}
+          {tickLine && <line {...tickLineProps} {...lineCoord} className={classNames('recharts-cartesian-axis-tick-line', _.get(tickLine, 'className'))} />}
           {tick &&
             CartesianAxis.renderTickItem(
               tick,

@@ -44,15 +44,15 @@ const getRect = (hasX1: boolean, hasX2: boolean, hasY1: boolean, hasY2: boolean,
   const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2, xAxis, yAxis } = props;
 
   const scales = createLabeldScales({ x: xAxis.scale, y: yAxis.scale });
-
+  
   const p1 = {
-    x: hasX1 ? scales.x.apply(xValue1) : scales.x.rangeMin,
-    y: hasY1 ? scales.y.apply(yValue1) : scales.y.rangeMin,
+    x: hasX1 ? scales.x.apply(xValue1, { position: 'start' }) : scales.x.rangeMin,
+    y: hasY1 ? scales.y.apply(yValue1, { position: 'start' }) : scales.y.rangeMin,
   };
 
   const p2 = {
-    x: hasX2 ? scales.x.apply(xValue2) : scales.x.rangeMax,
-    y: hasY2 ? scales.y.apply(yValue2) : scales.y.rangeMax,
+    x: hasX2 ? scales.x.apply(xValue2, { position: 'end' }) : scales.x.rangeMax,
+    y: hasY2 ? scales.y.apply(yValue2, { position: 'end' }) : scales.y.rangeMax,
   };
 
   if (ifOverflowMatches(props, 'discard') && (!scales.isInRange(p1) || !scales.isInRange(p2))) {
