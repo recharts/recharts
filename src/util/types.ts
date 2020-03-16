@@ -304,7 +304,7 @@ export interface DOMAttributesWithProps<P, T> {
   onTransitionEnd?: TransitionEventHandler<P, T>;
   onTransitionEndCapture?: TransitionEventHandler<P, T>;
 }
-const SVGContainerPropKeys = ['viewBox'];
+const SVGContainerPropKeys = ['viewBox', 'children'];
 const SVGElementPropKeys = [
   'className',
   'color',
@@ -566,7 +566,6 @@ const SVGElementPropKeys = [
 ];
 
 const EventKeys = [
-  'children',
   'dangerouslySetInnerHTML',
   'onCopy',
   'onCopyCapture',
