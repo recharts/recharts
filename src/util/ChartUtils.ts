@@ -748,7 +748,7 @@ export const getStackedData = (data: any, stackItems: any, offsetType: string) =
   const dataKeys = stackItems.map((item: any) => item.props.dataKey);
   const stack = shapeStack()
     .keys(dataKeys)
-    .value((d, key) => +getValueByDataKey(d, key, 0))
+    .value((d, key) => Math.max(+getValueByDataKey(d, key, 0), 0))
     .order(stackOrderNone)
     .offset(STACK_OFFSET_MAP[offsetType]);
 

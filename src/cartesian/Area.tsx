@@ -177,12 +177,13 @@ class Area extends PureComponent<Props, State> {
     let isRange = false;
 
     const points = displayedData.map((entry, index) => {
+      const originalValue = getValueByDataKey(entry, dataKey);
       let value;
 
       if (hasStack) {
         value = stackedData[dataStartIndex + index];
       } else {
-        value = getValueByDataKey(entry, dataKey);
+        value = originalValue;
 
         if (!_.isArray(value)) {
           value = [baseValue, value];
@@ -191,17 +192,18 @@ class Area extends PureComponent<Props, State> {
         }
       }
 
+      const isBreakPoint = _.isNil(value[1]) || (hasStack && _.isNil(originalValue));
       if (layout === 'horizontal') {
         return {
           x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-          y: _.isNil(value[1]) ? null : yAxis.scale(value[1]),
+          y: isBreakPoint? null : yAxis.scale(value[1]),
           value,
           payload: entry,
         };
       }
 
       return {
-        x: _.isNil(value[1]) ? null : xAxis.scale(value[1]),
+        x: isBreakPoint ? null : xAxis.scale(value[1]),
         y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
         value,
         payload: entry,
