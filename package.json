@@ -5,6 +5,7 @@
   "main": "lib/index",
   "module": "es6/index",
   "jsnext:main": "es6/index",
+  "types": "types/index.d.ts",
   "sideEffects": [
     "./*/index.js",
     "./*/polyfill.js"
@@ -15,7 +16,8 @@
     "es6",
     "lib",
     "umd",
-    "src"
+    "src",
+    "types"
   ],
   "keywords": [
     "react",
