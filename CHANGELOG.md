@@ -1,3 +1,20 @@
+## 2.0.0-beta.4 (Mar 17, 2020)
+
+### fix
+
+- fix error of <Curve /> when add child to <Line />, fix #2051
+- fix Stack AreaChart when some values is negative, fix #1667
+- fix stack AreaChart when some values is nill, fix #1601
+
+### dep
+
+- Upgrade reduce-css-calc
+
+### chore
+
+- add types
+
+
 ## 2.0.0-beta.3 (Mar 13, 2020)
 
 ### fix
