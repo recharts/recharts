@@ -27,6 +27,15 @@ validate_semver $next_version
 
 next_ref="v$next_version"
 
+next_npm_tag="latest"
+
+if [[ $next_version =~ "beta" ]]; then
+  next_npm_tag="beta"
+fi
+if [[ $next_version =~ "alpha" ]]; then
+  next_npm_tag="next"
+fi
+
 npm test
 
 vim CHANGELOG.md
@@ -46,4 +55,4 @@ git push origin $next_ref
 
 node scripts/build.js
 
-npm publish
+npm publish --tag $next_npm_tag
