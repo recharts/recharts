@@ -35,7 +35,7 @@ const symbolFactories: SymbolFactory = {
 const RADIAN = Math.PI / 180;
 
 const getSymbolFactory = (type: SymbolType) => {
-  const name = `symbol${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
+  const name = `symbol${_.upperFirst(type)}`;
 
   return symbolFactories[name] || symbolCircle;
 };

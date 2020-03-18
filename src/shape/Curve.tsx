@@ -70,7 +70,7 @@ const getCurveFactory = (type: CurveType, layout: LayoutType) => {
     return type;
   }
 
-  const name = `curve${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
+  const name = `curve${_.upperFirst(type)}`;
 
   if (name === 'curveMonotone' && layout) {
     return CURVE_FACTORIES[`${name}${layout === 'vertical' ? 'Y' : 'X'}`];

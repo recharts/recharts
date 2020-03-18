@@ -635,7 +635,7 @@ export const parseScale = (axis: any, chartType: string) => {
     return { scale: d3Scales.scaleLinear(), realScaleType: 'linear' };
   }
   if (_.isString(scale)) {
-    const name = `scale${scale.slice(0, 1).toUpperCase()}${scale.slice(1)}`;
+    const name = `scale${_.upperFirst(scale)}`;
 
     return {
       scale: ((d3Scales as Record<string, any>)[name] || d3Scales.scalePoint)(),
