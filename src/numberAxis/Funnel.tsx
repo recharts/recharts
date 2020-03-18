@@ -9,7 +9,8 @@ import Layer from '../container/Layer';
 import Trapezoid, { Props as TrapezoidProps } from '../shape/Trapezoid';
 import LabelList from '../component/LabelList';
 import Cell, { Props as CellProps } from '../component/Cell';
-import { findAllByType, isSsr } from '../util/ReactUtils';
+import { findAllByType } from '../util/ReactUtils';
+import Global from '../util/Global';
 import { interpolateNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import {
@@ -71,7 +72,7 @@ class Funnel extends PureComponent<Props, State> {
     legendType: 'rect',
     labelLine: true,
     hide: false,
-    isAnimationActive: !isSsr(),
+    isAnimationActive: !Global.isSsr,
     animationBegin: 400,
     animationDuration: 1500,
     animationEasing: 'ease',

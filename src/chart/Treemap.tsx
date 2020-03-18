@@ -9,7 +9,8 @@ import _ from 'lodash';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Rectangle from '../shape/Rectangle';
-import { findChildByType, filterSvgElements, validateWidthHeight, isSsr } from '../util/ReactUtils';
+import { findChildByType, filterSvgElements, validateWidthHeight } from '../util/ReactUtils';
+import Global from '../util/Global';
 import Tooltip from '../component/Tooltip';
 import Polygon from '../shape/Polygon';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -296,8 +297,8 @@ class Treemap extends PureComponent<Props, State> {
     aspectRatio: 0.5 * (1 + Math.sqrt(5)),
     dataKey: 'value',
     type: 'flat',
-    isAnimationActive: !isSsr(),
-    isUpdateAnimationActive: !isSsr(),
+    isAnimationActive: !Global.isSsr,
+    isUpdateAnimationActive: !Global.isSsr,
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'linear',

@@ -6,7 +6,7 @@ import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { interpolateNumber } from '../util/DataUtils';
-import { isSsr } from '../util/ReactUtils';
+import Global from '../util/Global';
 import { polarToCartesian } from '../util/PolarUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import Polygon from '../shape/Polygon';
@@ -73,7 +73,7 @@ class Radar extends PureComponent<Props, State> {
     activeDot: true,
     dot: false,
     legendType: 'rect',
-    isAnimationActive: !isSsr(),
+    isAnimationActive: !Global.isSsr,
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',

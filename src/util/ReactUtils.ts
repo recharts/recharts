@@ -152,9 +152,6 @@ export const validateWidthHeight = (el: any): boolean => {
   return true;
 };
 
-export const isSsr = (): boolean =>
-  !(typeof window !== 'undefined' && window.document && window.document.createElement && window.setTimeout);
-
 const SVG_TAGS: string[] = [
   'a',
   'altGlyph',

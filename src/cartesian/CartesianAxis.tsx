@@ -9,7 +9,7 @@ import { getStringSize } from '../util/DOMUtils';
 import Layer from '../container/Layer';
 import Text from '../component/Text';
 import Label from '../component/Label';
-import { isSsr } from '../util/ReactUtils';
+import Global from '../util/Global';
 import { isNumber, mathSign } from '../util/DataUtils';
 import { ViewBox, PresentationAttributes, filterProps, TickItem, adaptEventsOfChild } from '../util/types';
 
@@ -82,7 +82,7 @@ class CartesianAxis extends Component<Props> {
       return [];
     }
 
-    if (isNumber(interval) || isSsr()) {
+    if (isNumber(interval) || Global.isSsr) {
       return CartesianAxis.getNumberIntervalTicks(
         ticks,
         typeof interval === 'number' && isNumber(interval) ? interval : 0,

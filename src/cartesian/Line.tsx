@@ -11,7 +11,8 @@ import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
 import ErrorBar, { Props as ErrorBarProps } from './ErrorBar';
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
-import { isSsr, findAllByType } from '../util/ReactUtils';
+import { findAllByType } from '../util/ReactUtils';
+import Global from '../util/Global';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
@@ -95,7 +96,7 @@ class Line extends PureComponent<Props, State> {
     strokeWidth: 1,
     fill: '#fff',
     points: [] as LinePointItem[],
-    isAnimationActive: !isSsr(),
+    isAnimationActive: !Global.isSsr,
     animateNewValues: true,
     animationBegin: 0,
     animationDuration: 1500,

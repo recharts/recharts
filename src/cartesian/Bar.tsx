@@ -11,7 +11,8 @@ import ErrorBar, { Props as ErrorBarProps } from './ErrorBar';
 import Cell from '../component/Cell';
 import LabelList from '../component/LabelList';
 import { uniqueId, mathSign, interpolateNumber } from '../util/DataUtils';
-import { findAllByType, isSsr } from '../util/ReactUtils';
+import { findAllByType } from '../util/ReactUtils';
+import Global from '../util/Global';
 import {
   getCateCoordinateOfBar,
   getValueByDataKey,
@@ -103,7 +104,7 @@ class Bar extends PureComponent<Props, State> {
     // data of bar
     data: [] as BarRectangleItem[],
     layout: 'vertical',
-    isAnimationActive: !isSsr(),
+    isAnimationActive: !Global.isSsr,
     animationBegin: 0,
     animationDuration: 400,
     animationEasing: 'ease',

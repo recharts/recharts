@@ -9,7 +9,7 @@ import Curve, { CurveType, Point as CurvePoint } from '../shape/Curve';
 import Dot, { Props as DotProps } from '../shape/Dot';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
-import { isSsr } from '../util/ReactUtils';
+import Global from '../util/Global';
 import { isNumber, uniqueId, interpolateNumber } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
@@ -105,7 +105,7 @@ class Area extends PureComponent<Props, State> {
     activeDot: true,
     hide: false,
 
-    isAnimationActive: !isSsr(),
+    isAnimationActive: !Global.isSsr,
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',

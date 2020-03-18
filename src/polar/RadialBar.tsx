@@ -7,7 +7,8 @@ import Animate from 'react-smooth';
 import _ from 'lodash';
 import Sector, { Props as SectorProps } from '../shape/Sector';
 import Layer from '../container/Layer';
-import { findAllByType, isSsr } from '../util/ReactUtils';
+import { findAllByType } from '../util/ReactUtils';
+import Global from '../util/Global';
 import LabelList from '../component/LabelList';
 import Cell from '../component/Cell';
 import { mathSign, interpolateNumber } from '../util/DataUtils';
@@ -86,7 +87,7 @@ class RadialBar extends PureComponent<Props, State> {
     hide: false,
     legendType: 'rect',
     data: [] as RadialBarDataItem[],
-    isAnimationActive: !isSsr(),
+    isAnimationActive: !Global.isSsr,
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',

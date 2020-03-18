@@ -7,7 +7,7 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import DefaultTooltipContent, { ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
 
-import { isSsr } from '../util/ReactUtils';
+import Global from '../util/Global';
 import { isNumber } from '../util/DataUtils';
 import { AnimationTiming } from '../util/types';
 
@@ -106,7 +106,7 @@ class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComp
     itemStyle: {},
     labelStyle: {},
     cursor: true,
-    isAnimationActive: !isSsr(),
+    isAnimationActive: !Global.isSsr,
     animationEasing: 'ease',
     animationDuration: 400,
     filterNull: true,

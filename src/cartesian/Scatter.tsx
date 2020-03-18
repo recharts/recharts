@@ -7,7 +7,8 @@ import classNames from 'classnames';
 import _ from 'lodash';
 import Layer from '../container/Layer';
 import LabelList from '../component/LabelList';
-import { isSsr, findAllByType } from '../util/ReactUtils';
+import { findAllByType } from '../util/ReactUtils';
+import Global from '../util/Global';
 import ZAxis, { Props as ZAxisProps } from './ZAxis';
 import Curve, { Props as CurveProps, CurveType } from '../shape/Curve';
 import Symbols, { Props as SymbolsProps } from '../shape/Symbols';
@@ -102,7 +103,7 @@ class Scatter extends PureComponent<Props, State> {
     shape: 'circle',
     hide: false,
 
-    isAnimationActive: !isSsr(),
+    isAnimationActive: !Global.isSsr,
     animationBegin: 0,
     animationDuration: 400,
     animationEasing: 'linear',

@@ -3,7 +3,7 @@ import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
-import { isSsr } from '../util/ReactUtils';
+import Global from '../util/Global';
 import { PresentationAttributes, filterProps } from '../util/types';
 import { getStringSize } from '../util/DOMUtils';
 
@@ -94,7 +94,7 @@ class Text extends Component<Props, State> {
 
   getWordsByLines(props: Props, needCalculate: boolean) {
     // Only perform calculations if using features that require them (multiline, scaleToFit)
-    if ((props.width || props.scaleToFit) && !isSsr()) {
+    if ((props.width || props.scaleToFit) && !Global.isSsr) {
       let wordsWithComputedWidth: Array<WordWithComputedWidth>, spaceWidth: number;
 
       if (needCalculate) {

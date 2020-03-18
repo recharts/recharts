@@ -12,7 +12,8 @@ import Text from '../component/Text';
 import Label from '../component/Label';
 import LabelList from '../component/LabelList';
 import Cell, { Props as CellProps } from '../component/Cell';
-import { findAllByType, isSsr } from '../util/ReactUtils';
+import { findAllByType } from '../util/ReactUtils';
+import Global from '../util/Global';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -119,7 +120,7 @@ class Pie extends PureComponent<Props, State> {
     labelLine: true,
     hide: false,
     minAngle: 0,
-    isAnimationActive: !isSsr(),
+    isAnimationActive: !Global.isSsr,
     animationBegin: 400,
     animationDuration: 1500,
     animationEasing: 'ease',
