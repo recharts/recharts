@@ -932,42 +932,7 @@ export const adaptEventsOfChild = (
   return out;
 };
 
-export interface CategoricalChartPropTypes {
-  syncId?: number | string;
-  compact?: boolean;
-  width?: number;
-  height?: number;
-  data?: any[];
-  layout?: LayoutType;
-  stackOffset?: 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette';
-  throttleDelay?: number;
-  margin?: Margin;
-  barCategoryGap?: number | string;
-  barGap?: number | string;
-  barSize?: number | string;
-  maxBarSize?: number;
-  style?: any;
-  className?: string;
-  children?: any;
-  defaultShowTooltip?: boolean;
-  onClick?: any;
-  onMouseLeave?: any;
-  onMouseEnter?: any;
-  onMouseMove?: any;
-  onMouseDown?: any;
-  onMouseUp?: any;
-  reverseStackOrder?: boolean;
-  id?: string;
-
-  startAngle?: number;
-  endAngle?: number;
-  cx?: number | string;
-  cy?: number | string;
-  innerRadius?: number | string;
-  outerRadius?: number | string;
-}
-
-export interface CategoricalChart {
+export interface CategoricalChartOptions {
   chartName?: string;
   GraphicalChild?: any;
   eventType?: string;

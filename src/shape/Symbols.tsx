@@ -2,6 +2,7 @@
  * @fileOverview Curve
  */
 import React, { PureComponent } from 'react';
+import _ from 'lodash';
 import {
   symbol as shapeSymbol,
   symbolCircle,
@@ -22,7 +23,7 @@ interface SymbolFactory {
   [type: string]: D3SymbolType;
 }
 
-const SYMBOL_FACTORIES: SymbolFactory = {
+const symbolFactories: SymbolFactory = {
   symbolCircle,
   symbolCross,
   symbolDiamond,
@@ -36,7 +37,7 @@ const RADIAN = Math.PI / 180;
 const getSymbolFactory = (type: SymbolType) => {
   const name = `symbol${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
 
-  return SYMBOL_FACTORIES[name] || symbolCircle;
+  return symbolFactories[name] || symbolCircle;
 };
 
 const calculateAreaSize = (size: number, sizeType: SizeType, type: SymbolType) => {
@@ -82,6 +83,10 @@ class Symbols extends PureComponent<Props> {
     size: 64,
     sizeType: 'area',
   };
+
+  static registerSymbol = (key: string, factory: D3SymbolType) => {
+    symbolFactories[`symbol${_.upperFirst(key)}`] = factory;
+  }
 
   /**
    * Calculate the path of curve

@@ -6,7 +6,7 @@ import Radar from '../polar/Radar';
 import PolarAngleAxis from '../polar/PolarAngleAxis';
 import PolarRadiusAxis from '../polar/PolarRadiusAxis';
 import { formatAxisMap } from '../util/PolarUtils';
-import { CategoricalChart } from '../util/types';
+import { CategoricalChartOptions } from '../util/types';
 
 export default generateCategoricalChart({
   chartName: 'RadarChart',
@@ -25,4 +25,4 @@ export default generateCategoricalChart({
     innerRadius: 0,
     outerRadius: '80%',
   },
-} as CategoricalChart);
+} as CategoricalChartOptions);

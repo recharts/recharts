@@ -54,8 +54,7 @@ import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
 import {
   LayoutType,
-  CategoricalChartPropTypes,
-  CategoricalChart,
+  CategoricalChartOptions,
   Margin,
   ViewBox,
   ChartOffset,
@@ -74,7 +73,7 @@ const ORIENT_MAP = {
 
 const originCoordinate: Coordinate = { x: 0, y: 0 };
 
-interface State {
+export interface CategoricalChartState {
   chartX?: number;
 
   chartY?: number;
@@ -131,6 +130,41 @@ interface State {
   yValue?: number;
 }
 
+export interface CategoricalChartProps {
+  syncId?: number | string;
+  compact?: boolean;
+  width?: number;
+  height?: number;
+  data?: any[];
+  layout?: LayoutType;
+  stackOffset?: 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette';
+  throttleDelay?: number;
+  margin?: Margin;
+  barCategoryGap?: number | string;
+  barGap?: number | string;
+  barSize?: number | string;
+  maxBarSize?: number;
+  style?: any;
+  className?: string;
+  children?: any;
+  defaultShowTooltip?: boolean;
+  onClick?: any;
+  onMouseLeave?: any;
+  onMouseEnter?: any;
+  onMouseMove?: any;
+  onMouseDown?: any;
+  onMouseUp?: any;
+  reverseStackOrder?: boolean;
+  id?: string;
+
+  startAngle?: number;
+  endAngle?: number;
+  cx?: number | string;
+  cy?: number | string;
+  innerRadius?: number | string;
+  outerRadius?: number | string;
+}
+
 const generateCategoricalChart = ({
   chartName,
   GraphicalChild,
@@ -139,8 +173,7 @@ const generateCategoricalChart = ({
   legendContent,
   formatAxisMap,
   defaultProps,
-}: CategoricalChart) => {
-  class CategoricalChartWrapper extends Component<CategoricalChartPropTypes, State> {
+}: CategoricalChartOptions) => class CategoricalChartWrapper extends Component<CategoricalChartProps, CategoricalChartState> {
     static displayName = chartName;
 
     uniqueChartId: any;
@@ -150,7 +183,7 @@ const generateCategoricalChart = ({
     legendInstance: any;
 
     // todo join specific chart propTypes
-    static defaultProps: CategoricalChartPropTypes = {
+    static defaultProps: CategoricalChartProps = {
       layout: 'horizontal',
       stackOffset: 'none',
       barCategoryGap: '10%',
@@ -165,7 +198,7 @@ const generateCategoricalChart = ({
      * @param {Object} props Props object to use when creating the default state
      * @return {Object} Whole new state
      */
-    static createDefaultState = (props: CategoricalChartPropTypes): State => {
+    static createDefaultState = (props: CategoricalChartProps): CategoricalChartState => {
       const { children, defaultShowTooltip } = props;
       const brushItem = findChildByType(children, Brush.displayName);
       const startIndex = (brushItem && brushItem.props && brushItem.props.startIndex) || 0;
@@ -194,7 +227,7 @@ const generateCategoricalChart = ({
     };
 
     static getDisplayedData = (
-      props: CategoricalChartPropTypes,
+      props: CategoricalChartProps,
       { graphicalItems, dataStartIndex, dataEndIndex }: any,
       item?: any,
     ): any[] => {
@@ -226,7 +259,7 @@ const generateCategoricalChart = ({
 
     container?: any;
 
-    constructor(props: CategoricalChartPropTypes) {
+    constructor(props: CategoricalChartProps) {
       super(props);
 
       const defaultState = CategoricalChartWrapper.createDefaultState(props);
@@ -253,9 +286,9 @@ const generateCategoricalChart = ({
     }
 
     // eslint-disable-next-line camelcase
-    UNSAFE_componentWillReceiveProps(nextProps: CategoricalChartPropTypes) {
+    UNSAFE_componentWillReceiveProps(nextProps: CategoricalChartProps) {
       const { data, children, width, height, layout, stackOffset, margin } = this.props;
-      const { updateId } = this.state;
+      const { updateId, isTooltipActive, activeItem, activeLabel, activePayload, activeCoordinate } = this.state;
 
       if (
         nextProps.data !== data ||
@@ -323,7 +356,7 @@ const generateCategoricalChart = ({
      * @return {Object}          Configuration
      */
     getAxisMap(
-      props: CategoricalChartPropTypes,
+      props: CategoricalChartProps,
       { axisType = 'xAxis', AxisComp, graphicalItems, stackGroups, dataStartIndex, dataEndIndex }: any,
     ) {
       const { children } = props;
@@ -371,7 +404,7 @@ const generateCategoricalChart = ({
      * @return {Object}      Configuration
      */
     getAxisMapByAxes = (
-      props: CategoricalChartPropTypes,
+      props: CategoricalChartProps,
       { axes, graphicalItems, axisType, axisIdKey, stackGroups, dataStartIndex, dataEndIndex }: any,
     ) => {
       const { layout, children, stackOffset } = props;
@@ -497,7 +530,7 @@ const generateCategoricalChart = ({
      * @return {Object}               Configuration
      */
     getAxisMapByItems = (
-      props: CategoricalChartPropTypes,
+      props: CategoricalChartProps,
       { graphicalItems, Axis, axisType, axisIdKey, stackGroups, dataStartIndex, dataEndIndex }: any,
     ) => {
       const { layout, children } = props;
@@ -700,7 +733,7 @@ const generateCategoricalChart = ({
       }, []);
     }
 
-    getFormatItems(props: CategoricalChartPropTypes, currentState: any): any[] {
+    getFormatItems(props: CategoricalChartProps, currentState: any): any[] {
       const { graphicalItems, stackGroups, offset, updateId, dataStartIndex, dataEndIndex } = currentState;
       const { barSize, layout, barGap, barCategoryGap, maxBarSize: globalMaxBarSize } = props;
       const { numericAxisName, cateAxisName } = CategoricalChartWrapper.getAxisNameByLayout(layout);
@@ -1170,7 +1203,7 @@ const generateCategoricalChart = ({
       const mouse = this.getMouseInfo(e);
 
       if (mouse) {
-        const nextState: State = { ...mouse, isTooltipActive: true };
+        const nextState: CategoricalChartState = { ...mouse, isTooltipActive: true };
         this.setState(nextState);
         this.triggerSyncEvent(nextState);
 
@@ -1183,7 +1216,7 @@ const generateCategoricalChart = ({
     triggeredAfterMouseMove = (e: any): any => {
       const { onMouseMove } = this.props;
       const mouse = this.getMouseInfo(e);
-      const nextState: State = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
+      const nextState: CategoricalChartState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
 
       this.setState(nextState);
       this.triggerSyncEvent(nextState);
@@ -1807,8 +1840,5 @@ const generateCategoricalChart = ({
       );
     }
   }
-
-  return CategoricalChartWrapper;
-};
 
 export default generateCategoricalChart;
