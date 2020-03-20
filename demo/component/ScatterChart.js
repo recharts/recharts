@@ -175,6 +175,17 @@ export default class Demo extends Component {
             <Scatter name='A school' data={data06} legendType="square" fill='#8884d8' shape={this.renderSquare}/>
           </ScatterChart>
         </div>
+
+        <p>point chart</p>
+        <div className="scatter-chart-wrapper">
+          <ScatterChart width={900} height={300} margin={{top: 20, right: 20, bottom: 20, left: 20}} data={data06}>
+            <XAxis dataKey="y" />
+            <Tooltip cursor={{strokeDasharray: '3 3'}}/>
+            <CartesianGrid fill="#999" />
+            <Legend/>
+            <Scatter name='A school' dataKey="x" legendType="square" fill='#8884d8' />
+          </ScatterChart>
+        </div>
       </div>
     );
   }

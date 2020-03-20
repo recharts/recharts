@@ -158,7 +158,7 @@ class Scatter extends PureComponent<Props, State> {
       const z = (!_.isNil(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
       const tooltipPayload = [
         {
-          name: xAxis.name || xAxis.dataKey,
+          name: _.isNil(xAxis.dataKey) ? item.props.name : (xAxis.name || xAxis.dataKey),
           unit: xAxis.unit || '',
           value: x,
           payload: entry,
@@ -166,7 +166,7 @@ class Scatter extends PureComponent<Props, State> {
           type: tooltipType,
         },
         {
-          name: yAxis.name || yAxis.dataKey,
+          name: _.isNil(yAxis.dataKey) ? item.props.name : (yAxis.name || yAxis.dataKey),
           unit: yAxis.unit || '',
           value: y,
           payload: entry,
