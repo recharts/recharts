@@ -18,6 +18,7 @@ export type Formatter<TValue extends ValueType, TName extends NameType> = (
   name: TName,
   item: Payload<TValue, TName>,
   index: number,
+  payload: Array<Payload<TValue, TName>>
 ) => [ReactNode, ReactNode] | ReactNode;
 
 export interface Payload<TValue extends ValueType, TName extends NameType> {
@@ -38,7 +39,7 @@ export interface Props<TValue extends ValueType, TName extends NameType> {
   contentStyle?: CSSProperties;
   itemStyle?: CSSProperties;
   labelStyle?: CSSProperties;
-  labelFormatter?: (label: any) => ReactNode;
+  labelFormatter?: (label: any, payload: Array<Payload<TValue, TName>>) => ReactNode;
   label?: any;
   payload?: Array<Payload<TValue, TName>>;
   itemSorter?: (item: Payload<TValue, TName>) => number | string;
@@ -77,7 +78,7 @@ class DefaultTooltipContent<TValue extends ValueType, TName extends NameType> ex
         const finalFormatter = entry.formatter || formatter || defaultFormatter;
         let { name, value } = entry;
         if (finalFormatter) {
-          const formatted = finalFormatter(value, name, entry, i);
+          const formatted = finalFormatter(value, name, entry, i, payload);
           if (Array.isArray(formatted)) {
             [value, name] = formatted;
           } else {
@@ -106,7 +107,7 @@ class DefaultTooltipContent<TValue extends ValueType, TName extends NameType> ex
   }
 
   render() {
-    const { wrapperClassName, contentStyle, labelClassName, labelStyle, label, labelFormatter } = this.props;
+    const { wrapperClassName, contentStyle, labelClassName, labelStyle, label, labelFormatter, payload } = this.props;
     const finalStyle: CSSProperties = {
       margin: 0,
       padding: 10,
@@ -125,7 +126,7 @@ class DefaultTooltipContent<TValue extends ValueType, TName extends NameType> ex
     const labelCN = classNames('recharts-tooltip-label', labelClassName);
 
     if (hasLabel && labelFormatter) {
-      finalLabel = labelFormatter(label);
+      finalLabel = labelFormatter(label, payload);
     }
 
     return (
