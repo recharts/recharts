@@ -192,6 +192,7 @@ class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComp
       visibility: active && hasPayload ? 'visible' : 'hidden',
       position: 'absolute',
       top: 0,
+      left: 0,
       ...wrapperStyle,
     };
     let translateX, translateY;
