@@ -224,8 +224,6 @@ class Scatter extends PureComponent<Props, State> {
       };
     });
 
-
-
     return {
       onMouseLeave: _.isFunction(onItemMouseLeave) ? onItemMouseLeave : item.props.onMouseLeave,
       onMouseEnter: _.isFunction(onItemMouseEnter) ? onItemMouseEnter : item.props.onMouseEnter,

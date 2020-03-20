@@ -12,10 +12,79 @@ const data = [
   { name: 'Page F', uv: 1400, pv: 680, amt: 1700 },
 ];
 
+const timeData = [
+  {
+    x: new Date("2019-07-04T00:00:00.000Z"),
+    y: 5
+  },
+  {
+    x: new Date("2019-07-05T00:00:00.000Z"),
+    y: 30
+  },
+  {
+    x: new Date("2019-07-06T00:00:00.000Z"),
+    y: 50
+  },
+  {
+    x: new Date("2019-07-07T00:00:00.000Z"),
+    y: 43
+  },
+  {
+    x: new Date("2019-07-08T00:00:00.000Z"),
+    y: 20
+  },
+  {
+    x: new Date("2019-07-09T00:00:00.000Z"),
+    y: -20
+  },
+  {
+    x: new Date("2019-07-10T00:00:00.000Z"),
+    y: 30
+  }
+];
+
 // eslint-disable-next-line react/prefer-stateless-function
 export default class Demo extends Component {
 
   static displayName = 'ComposedChartDemo';
+
+  renderTimeChart() {
+    const from = new Date("2019-07-04T00:00:00.000Z");
+    const to = new Date("2019-07-10T00:00:00.000Z");
+
+    return (
+      <div>
+        <p>A ComposedChart of time scale</p>
+        <div className="composed-chart-wrapper">
+          <ComposedChart
+            width={600}
+            height={400}
+            data={timeData}
+            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+          >
+            <CartesianGrid stroke="#f5f5f5" />
+            {/* <XAxis dataKey="x" /> */}
+            <XAxis
+              dataKey="x"
+              domain={[
+                from.getTime(),
+                to.getTime()
+              ]}
+              scale="time"
+              type="number"
+              tick={{ fontSize: 10, fill: "red", position: "top" }}
+            />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Area type="monotone" dataKey="y" fill="#8884d8" stroke="#8884d8" />
+            <Bar dataKey="y" barSize={20} fill="#413ea0" />
+            <Line type="monotone" dataKey="y" stroke="#ff7300" />
+          </ComposedChart>  
+        </div>
+      </div>
+    );
+  }
 
   render () {
     return (
@@ -35,11 +104,11 @@ export default class Demo extends Component {
               <Bar dataKey="pv" barSize={20} fill="#413ea0" />
               <ReferenceLine x="Page C" stroke="red" label="Max PV PAGE" />
               <ReferenceDot x="Page C" y={1300} stroke="red" />
-              {/* <Brush>
+              <Brush>
                 <LineChart>
                   <Line dataKey="uv" stroke="#ff7300" dot={false} />
                 </LineChart>
-              </Brush> */}
+              </Brush>
             </ComposedChart>
           </ResponsiveContainer>
         </div>
@@ -91,6 +160,7 @@ export default class Demo extends Component {
             </ComposedChart>
           </ResponsiveContainer>
         </div>
+        {this.renderTimeChart()}
       </div>
     );
   }

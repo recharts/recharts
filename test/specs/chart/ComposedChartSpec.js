@@ -3,7 +3,6 @@ import { expect } from 'chai';
 import { ComposedChart, Line, Bar, Area, XAxis, YAxis, Legend,
  CartesianGrid, Tooltip } from 'recharts';
 import { mount, render } from 'enzyme';
-import sinon from 'sinon';
 
 describe('<ComposedChart />', () => {
   const data = [{ name: 'Page A', uv: 590, pv: 800, amt: 1400 },

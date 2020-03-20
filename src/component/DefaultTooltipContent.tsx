@@ -119,7 +119,7 @@ class DefaultTooltipContent<TValue extends ValueType, TName extends NameType> ex
       margin: 0,
       ...labelStyle,
     };
-    const hasLabel = isNumOrStr(label);
+    const hasLabel = !_.isNil(label);
     let finalLabel = hasLabel ? label : '';
     const wrapperCN = classNames('recharts-default-tooltip', wrapperClassName);
     const labelCN = classNames('recharts-tooltip-label', labelClassName);
@@ -131,7 +131,7 @@ class DefaultTooltipContent<TValue extends ValueType, TName extends NameType> ex
     return (
       <div className={wrapperCN} style={finalStyle}>
         <p className={labelCN} style={finalLabelStyle}>
-          {finalLabel}
+          {React.isValidElement(finalLabel) ? finalLabel : `${finalLabel}`}
         </p>
         {this.renderContent()}
       </div>

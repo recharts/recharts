@@ -100,6 +100,53 @@ describe('<XAxis />', () => {
     expect(wrapper.find('.recharts-xAxis .recharts-cartesian-axis-tick').length).to.equal(lineData.length);
   });
 
+  it('Render ticks of when the scale of XAxis is time', () => {
+    const timeData = [
+      {
+        x: new Date("2019-07-04T00:00:00.000Z"),
+        y: 5
+      },
+      {
+        x: new Date("2019-07-05T00:00:00.000Z"),
+        y: 30
+      },
+      {
+        x: new Date("2019-07-06T00:00:00.000Z"),
+        y: 50
+      },
+      {
+        x: new Date("2019-07-07T00:00:00.000Z"),
+        y: 43
+      },
+      {
+        x: new Date("2019-07-08T00:00:00.000Z"),
+        y: 20
+      },
+      {
+        x: new Date("2019-07-09T00:00:00.000Z"),
+        y: -20
+      },
+      {
+        x: new Date("2019-07-10T00:00:00.000Z"),
+        y: 30
+      }
+    ];
+
+    const wrapper = render(
+      <LineChart
+        width={600}
+        height={300}
+        data={timeData}
+        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+      >
+        <XAxis dataKey="x" domain={[timeData[0].x.getTime(), timeData[timeData.length - 1].x.getTime()]} scale="time" type="number" />
+        <YAxis />
+        <Line type="monotone" dataKey="y" stroke="#8884d8" activeDot={{ r: 8 }} />
+      </LineChart>
+    );
+    expect(wrapper.find('.recharts-xAxis .recharts-cartesian-axis-tick').length).to.equal(1);
+  });
+
   it('Render duplicated ticks of XAxis', () => {
     const lineData = [
       { name: "03/07/2017", balance: 23126.11 },

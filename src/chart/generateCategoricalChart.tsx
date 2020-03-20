@@ -1215,6 +1215,7 @@ const generateCategoricalChart = ({
     handleMouseEnter = (e: any) => {
       const { onMouseEnter } = this.props;
       const mouse = this.getMouseInfo(e);
+      
 
       if (mouse) {
         const nextState: CategoricalChartState = { ...mouse, isTooltipActive: true };
@@ -1231,7 +1232,7 @@ const generateCategoricalChart = ({
       const { onMouseMove } = this.props;
       const mouse = this.getMouseInfo(e);
       const nextState: CategoricalChartState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
-
+      
       this.setState(nextState);
       this.triggerSyncEvent(nextState);
 
