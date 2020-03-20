@@ -124,9 +124,10 @@ class Scatter extends PureComponent<Props, State> {
     displayedData,
     onItemMouseLeave,
     onItemMouseEnter,
-    offset,
+    onItemClick,
     xAxisTicks,
     yAxisTicks,
+    offset,
   }: {
     props: Props;
     xAxis: Props['xAxis'];
@@ -135,8 +136,9 @@ class Scatter extends PureComponent<Props, State> {
     xAxisTicks: TickItem[];
     yAxisTicks: TickItem[];
     item: Scatter;
-    onItemMouseLeave: PresentationAttributes<SVGElement>['onMouseLeave'];
-    onItemMouseEnter: PresentationAttributes<SVGElement>['onMouseLeave'];
+    onItemMouseLeave?: PresentationAttributes<SVGElement>['onMouseLeave'];
+    onItemMouseEnter?: PresentationAttributes<SVGElement>['onMouseLeave'];
+    onItemClick?: PresentationAttributes<SVGElement>['onClick'];
     bandSize: number;
     displayedData: any[];
     offset: ChartOffset;
@@ -222,9 +224,12 @@ class Scatter extends PureComponent<Props, State> {
       };
     });
 
+
+
     return {
-      onMouseLeave: onItemMouseLeave,
-      onMouseEnter: onItemMouseEnter,
+      onMouseLeave: _.isFunction(onItemMouseLeave) ? onItemMouseLeave : item.props.onMouseLeave,
+      onMouseEnter: _.isFunction(onItemMouseEnter) ? onItemMouseEnter : item.props.onMouseEnter,
+      onClick: _.isFunction(onItemClick) ? onItemClick : item.props.onClick,
       points,
       ...offset,
     };

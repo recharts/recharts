@@ -111,7 +111,7 @@ export default class Demo extends Component {
             <CartesianGrid />
             <Scatter name="A school" data={data01} fillOpacity={0.3} fill="#ff7300" />
             <Scatter name="B school" data={data02} fill="#347300" />
-            <Tooltip/>
+            <Tooltip trigger="click" />
             <Legend/>
             <ReferenceArea x1={250} x2={300} alwaysShow label="any label" />
             <ReferenceLine x={159} stroke="red"/>

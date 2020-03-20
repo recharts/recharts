@@ -125,11 +125,13 @@ class Funnel extends PureComponent<Props, State> {
     offset,
     onItemMouseLeave,
     onItemMouseEnter,
+    onItemClick,
   }: {
     item: Funnel;
     offset: ChartOffset;
-    onItemMouseLeave: PresentationAttributes<SVGElement>['onMouseLeave'];
-    onItemMouseEnter: PresentationAttributes<SVGElement>['onMouseEnter'];
+    onItemMouseLeave?: PresentationAttributes<SVGElement>['onMouseLeave'];
+    onItemMouseEnter?: PresentationAttributes<SVGElement>['onMouseEnter'];
+    onItemClick?: PresentationAttributes<SVGElement>['onClick'];
   }) => {
     const funnelData = Funnel.getRealFunnelData(item);
     const { dataKey, nameKey, tooltipType } = item.props;
@@ -177,8 +179,9 @@ class Funnel extends PureComponent<Props, State> {
     return {
       trapezoids,
       data: funnelData,
-      onMouseLeave: onItemMouseLeave,
-      onMouseEnter: onItemMouseEnter,
+      onMouseLeave: _.isFunction(onItemMouseLeave) ? onItemMouseLeave : item.props.onMouseLeave,
+      onMouseEnter: _.isFunction(onItemMouseEnter) ? onItemMouseEnter : item.props.onMouseEnter,
+      onClick: _.isFunction(onItemClick) ? onItemClick : item.props.onClick,
     };
   };
 

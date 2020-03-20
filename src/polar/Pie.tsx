@@ -173,11 +173,13 @@ class Pie extends PureComponent<Props, State> {
     offset,
     onItemMouseLeave,
     onItemMouseEnter,
+    onItemClick,
   }: {
     item: Pie;
     offset: ChartOffset;
-    onItemMouseLeave: (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
-    onItemMouseEnter: (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
+    onItemMouseLeave?: (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
+    onItemMouseEnter?: (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
+    onItemClick?: (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
   }): Omit<Props, 'dataKey'> => {
     const pieData = Pie.getRealPieData(item);
     if (!pieData || !pieData.length) {
@@ -269,8 +271,9 @@ class Pie extends PureComponent<Props, State> {
       ...coordinate,
       sectors,
       data: pieData,
-      onMouseLeave: onItemMouseLeave,
-      onMouseEnter: onItemMouseEnter,
+      onMouseLeave: _.isFunction(onItemMouseLeave) ? onItemMouseLeave : item.props.onMouseLeave,
+      onMouseEnter: _.isFunction(onItemMouseEnter) ? onItemMouseEnter : item.props.onMouseEnter,
+      onClick: _.isFunction(onItemClick) ? onItemClick : item.props.onClick,
     };
   };
 

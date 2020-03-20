@@ -740,6 +740,8 @@ const generateCategoricalChart = ({
       const hasBar = CategoricalChartWrapper.hasBar(graphicalItems);
       const sizeList = hasBar && getBarSizeList({ barSize, stackGroups });
       const formatedItems = [] as any[];
+      const tooltipItem = findChildByType(props.children, Tooltip.displayName);
+      const isTooltipTriggerByClick = tooltipItem && tooltipItem.props.trigger === 'click';
 
       graphicalItems.forEach((item: any, index: number) => {
         const displayedData = CategoricalChartWrapper.getDisplayedData(props, { dataStartIndex, dataEndIndex }, item);
@@ -790,6 +792,12 @@ const generateCategoricalChart = ({
         const componsedFn = item && item.type && item.type.getComposedData;
 
         if (componsedFn) {
+          const itemEvents = isTooltipTriggerByClick ? {
+            onItemClick: combineEventHandlers(this.handleItemMouseEnter, null, item.props.onCLick),
+          } : {
+            onItemMouseLeave: combineEventHandlers(this.handleItemMouseLeave, null, item.props.onMouseLeave),
+            onItemMouseEnter: combineEventHandlers(this.handleItemMouseEnter, null, item.props.onMouseEnter),
+          };
           formatedItems.push({
             props: {
               ...componsedFn({
@@ -805,8 +813,7 @@ const generateCategoricalChart = ({
                 layout,
                 dataStartIndex,
                 dataEndIndex,
-                onItemMouseLeave: combineEventHandlers(this.handleItemMouseLeave, null, item.props.onMouseLeave),
-                onItemMouseEnter: combineEventHandlers(this.handleItemMouseEnter, null, item.props.onMouseEnter),
+                ...itemEvents,
               }),
               key: item.key || `item-${index}`,
               [numericAxisName]: axisObj[numericAxisName],
@@ -938,17 +945,24 @@ const generateCategoricalChart = ({
     parseEventsOfWrapper() {
       const { children } = this.props;
       const tooltipItem = findChildByType(children, Tooltip.displayName);
-      const tooltipEvents =
-        tooltipItem && eventType === 'axis'
-          ? {
-              onMouseEnter: this.handleMouseEnter,
-              onMouseMove: this.handleMouseMove,
-              onMouseLeave: this.handleMouseLeave,
-              onTouchMove: this.handleTouchMove,
-              onTouchStart: this.handleTouchStart,
-              onTouchEnd: this.handleTouchEnd,
-            }
-          : {};
+      let tooltipEvents: any = {};
+
+      if (tooltipItem && eventType === 'axis') {
+        if (tooltipItem.props.trigger === 'click') {
+          tooltipEvents = {
+            onClick: this.handleClick
+          }
+        } else {
+          tooltipEvents = {
+            onMouseEnter: this.handleMouseEnter,
+            onMouseMove: this.handleMouseMove,
+            onMouseLeave: this.handleMouseLeave,
+            onTouchMove: this.handleTouchMove,
+            onTouchStart: this.handleTouchStart,
+            onTouchEnd: this.handleTouchEnd,
+          }
+        }
+      }
       const outerEvents = adaptEventHandlers(this.props, this.handleOuterEvent);
 
       return {
@@ -1295,11 +1309,16 @@ const generateCategoricalChart = ({
 
     handleClick = (e: any) => {
       const { onClick } = this.props;
+      const mouse = this.getMouseInfo(e);
 
-      if (_.isFunction(onClick)) {
-        const mouse = this.getMouseInfo(e);
+      if (mouse) {
+        const nextState: CategoricalChartState = { ...mouse, isTooltipActive: true };
+        this.setState(nextState);
+        this.triggerSyncEvent(nextState);
 
-        onClick(mouse, e);
+        if (_.isFunction(onClick)) {
+          onClick(nextState, e);
+        }
       }
     };
 

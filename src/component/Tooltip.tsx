@@ -82,6 +82,7 @@ type Props<TValue extends ValueType, TName extends NameType> = DefaultProps<TVal
     x?: number;
     y?: number;
   };
+  trigger?: 'hover' | 'click',
   payloadUniqBy: UniqueOption<TValue, TName>;
   isAnimationActive?: boolean;
   animationDuration?: number;
@@ -106,6 +107,7 @@ class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComp
     itemStyle: {},
     labelStyle: {},
     cursor: true,
+    trigger: 'hover',
     isAnimationActive: !Global.isSsr,
     animationEasing: 'ease',
     animationDuration: 400,

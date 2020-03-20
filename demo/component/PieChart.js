@@ -214,7 +214,7 @@ export default class Demo extends Component {
             <PieChart>
               <Pie data={data01} nameKey="name" dataKey="value" innerRadius="25%" outerRadius="40%"/>
               <Pie data={data01} dataKey="v" innerRadius="45%" outerRadius="80%"/>
-              <Tooltip />
+              <Tooltip trigger="click" />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -244,7 +244,7 @@ export default class Demo extends Component {
           </ResponsiveContainer>
         </div>
 
-        <p>PieChart has bug about tooltip</p>
+        {/* <p>PieChart has bug about tooltip</p>
         <div className="pie-chart-wrapper" style={{ width: '50%', height: '100%', backgroundColor: '#f5f5f5' }}>
           <ResponsiveContainer>
             <PieChart>
@@ -256,7 +256,6 @@ export default class Demo extends Component {
                 onMouseEnter={this.handleEnter}
                 onMouseLeave={this.handleLeave}
               >
-                <Tooltip />
                 {
                   data01.map((entry, index) => (
                     <Cell
@@ -270,7 +269,7 @@ export default class Demo extends Component {
               </Pie>
             </PieChart>
           </ResponsiveContainer>
-        </div>
+        </div> */}
       </div>
     );
   }

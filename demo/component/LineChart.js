@@ -420,7 +420,7 @@ export default class Demo extends Component {
             <YAxis type="number" unit="%" width={80}>
               <Label value="y轴" position="insideLeft" angle={90} />
             </YAxis>
-            <Tooltip />
+            <Tooltip trigger="click" />
             <Line
               key="uv"
               type="monotone"
