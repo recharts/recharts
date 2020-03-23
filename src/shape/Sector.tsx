@@ -106,7 +106,7 @@ const getSectorWithCorner = ({
     cornerIsExternal,
   });
   const outerArcAngle = cornerIsExternal
-    ? Math.abs(startAngle - endAngle) + sot + eot
+    ? Math.abs(startAngle - endAngle)
     : Math.abs(startAngle - endAngle) - sot - eot;
 
   if (outerArcAngle < 0) {
@@ -154,7 +154,7 @@ const getSectorWithCorner = ({
       cornerIsExternal,
     });
     const innerArcAngle = cornerIsExternal
-      ? Math.abs(startAngle - endAngle) + sit + eit
+      ? Math.abs(startAngle - endAngle)
       : Math.abs(startAngle - endAngle) - sit - eit;
 
     if (innerArcAngle < 0) {
