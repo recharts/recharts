@@ -196,7 +196,7 @@ class Area extends PureComponent<Props, State> {
       if (layout === 'horizontal') {
         return {
           x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-          y: isBreakPoint? null : yAxis.scale(value[1]),
+          y: isBreakPoint ? null : yAxis.scale(value[1]),
           value,
           payload: entry,
         };
