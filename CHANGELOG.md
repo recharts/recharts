@@ -1,3 +1,23 @@
+## 2.0.0-beta.5 (Mar 26, 2020)
+
+### fix
+
+- fix types of generateCategoricalChart
+- fix position of tooltip when the categorical axis has time scale
+- fix position of tooltip when direction is rtl
+- fix name of Scatter in tooltip
+- Fix outerArcAngle and innerArcAngle when cornerIsExternal == true
+- fix IE 11 supoort because of d3-scale@3.x
+
+### feat
+
+- add Global setting, include "isSsr"
+- support tooltip trigger by click event
+- add static method `registerSymbol` to Symbols
+- add payload to formatter and labelFormatter in Tooltip
+- allow domain of axis to change the order of categories
+
+
 ## 2.0.0-beta.4 (Mar 17, 2020)
 
 ### fix
