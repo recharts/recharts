@@ -406,7 +406,7 @@ export default class Demo extends Component {
         <button onClick={this.handleChangeAnotherState}>switch another state</button>
         <br />
 
-        <p>A simple LineChart with fixed domain y-axis</p>
+        {/* <p>A simple LineChart with fixed domain y-axis</p>
         <div className="line-chart-wrapper">
           <LineChart width={400} height={400} data={data02} syncId="test">
             <CartesianGrid stroke="#f5f5f5" fill="#e6e6e6" />
@@ -533,7 +533,7 @@ export default class Demo extends Component {
             <Line dataKey='uv' type="monotone" stroke='#ff7300' strokeWidth={2} xAxisId={0} />
             <Line dataKey='pv' type="monotone" stroke='#387908' strokeWidth={2} xAxisId={1} />
           </LineChart>
-        </div>
+        </div> */}
 
         <p>LineChart of discrete values</p>
         <div className="line-chart-wrapper">
@@ -541,13 +541,13 @@ export default class Demo extends Component {
             width={400} height={400} data={data01}
             margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             <XAxis dataKey="day" />
-            <YAxis type="category" />
+            <YAxis type="category" domain={['cloudy', 'rain', 'sunny']} />
             <Tooltip />
             <Line type="stepAfter" dataKey="weather" stroke="#ff7300" />
           </LineChart>
         </div>
 
-        <p>LineChart with panoramic brush and custom tooltip styles</p>
+        {/* <p>LineChart with panoramic brush and custom tooltip styles</p>
         <div className="line-chart-wrapper">
           <LineChart
             width={600} height={400} data={data03}
@@ -587,7 +587,7 @@ export default class Demo extends Component {
               <Line dataKey="value" data={s.data} name={s.name} key={s.name} />
             ))}
           </LineChart>
-        </div>
+        </div> */}
 
       </div>
     );

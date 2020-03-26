@@ -486,7 +486,7 @@ export const getDomainOfItemsWithSameAxis = (data: any[], items: any[], type: st
   }, []);
 };
 
-export const isCategorialAxis = (layout: LayoutType | PolarLayoutType, axisType: AxisType) =>
+export const isCategoricalAxis = (layout: LayoutType | PolarLayoutType, axisType: AxisType) =>
   (layout === 'horizontal' && axisType === 'xAxis') ||
   (layout === 'vertical' && axisType === 'yAxis') ||
   (layout === 'centric' && axisType === 'angleAxis') ||
@@ -551,7 +551,7 @@ export const getTicksOfAxis = (axis: any, isGrid?: boolean, isAll?: boolean): Ti
   }
 
   // When axis is a categorial axis, but the type of axis is number or the scale of axis is not "auto"
-  if (axis.isCategorial && axis.categoricalDomain) {
+  if (axis.isCategorical && axis.categoricalDomain) {
     return axis.categoricalDomain.map((entry: any, index: number) => ({
       coordinate: scale(entry) + offset,
       value: entry,

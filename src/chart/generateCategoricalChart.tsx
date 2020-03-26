@@ -41,7 +41,7 @@ import {
   getBandSizeOfAxis,
   getStackGroupsByAxisId,
   getValueByDataKey,
-  isCategorialAxis,
+  isCategoricalAxis,
   getDomainOfItemsWithSameAxis,
   getDomainOfStackGroups,
   getDomainOfDataByKey,
@@ -408,7 +408,7 @@ const generateCategoricalChart = ({
       { axes, graphicalItems, axisType, axisIdKey, stackGroups, dataStartIndex, dataEndIndex }: any,
     ) => {
       const { layout, children, stackOffset } = props;
-      const isCategorial = isCategorialAxis(layout, axisType);
+      const isCategorical = isCategoricalAxis(layout, axisType);
 
       // Eliminate duplicated axes
       const axisMap = axes.reduce((result: any, child: any) => {
@@ -425,9 +425,11 @@ const generateCategoricalChart = ({
           let domain, duplicateDomain, categoricalDomain;
 
           if (dataKey) {
+            // has dataKey in <Axis />
             domain = getDomainOfDataByKey(displayedData, dataKey, type);
 
-            if (type === 'category' && isCategorial) {
+            if (type === 'category' && isCategorical) {
+              // the field type is category data and this axis is catrgorical axis
               const duplicate = hasDuplicate(domain);
 
               if (allowDuplicatedCategory && duplicate) {
@@ -443,6 +445,7 @@ const generateCategoricalChart = ({
                 );
               }
             } else if (type === 'category') {
+              // the field type is category data and this axis is numerical axis
               if (!allowDuplicatedCategory) {
                 domain = parseDomainOfCategoryAxis(child.props.domain, domain, child).reduce(
                   (finalDomain: any, entry: any) =>
@@ -456,6 +459,7 @@ const generateCategoricalChart = ({
                 domain = domain.filter((entry: any) => entry !== '' && !_.isNil(entry));
               }
             } else if (type === 'number') {
+              // the field type is numerical
               const errorBarsDomain = parseErrorBarsOfAxis(
                 displayedData,
                 graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
@@ -468,10 +472,11 @@ const generateCategoricalChart = ({
               }
             }
 
-            if (isCategorial && (type === 'number' || scale !== 'auto')) {
+            if (isCategorical && (type === 'number' || scale !== 'auto')) {
               categoricalDomain = getDomainOfDataByKey(displayedData, dataKey, 'category');
             }
-          } else if (isCategorial) {
+          } else if (isCategorical) {
+            // the axis is a categorical axis
             domain = _.range(0, len);
           } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack && type === 'number') {
             // when stackOffset is 'expand', the domain may be calculated as [0, 1.000000000002]
@@ -487,12 +492,20 @@ const generateCategoricalChart = ({
               true,
             );
           }
+
           if (type === 'number') {
             // To detect wether there is any reference lines whose props alwaysShow is true
             domain = detectReferenceElementsDomain(children, domain, axisId, axisType, ticks);
 
             if (child.props.domain) {
               domain = parseSpecifiedDomain(child.props.domain, domain, allowDataOverflow);
+            }
+          } else if (type === 'category' && child.props.domain) {
+            const axisDomain = child.props.domain;
+            const isDomainValidate = domain.every((entry: string | number) => axisDomain.indexOf(entry) >= 0);
+
+            if (isDomainValidate) {
+              domain = axisDomain;
             }
           }
 
@@ -505,7 +518,7 @@ const generateCategoricalChart = ({
               categoricalDomain,
               duplicateDomain,
               originalDomain: child.props.domain,
-              isCategorial,
+              isCategorical,
               layout,
             },
           };
@@ -540,7 +553,7 @@ const generateCategoricalChart = ({
         dataEndIndex,
       });
       const len = displayedData.length;
-      const isCategorial = isCategorialAxis(layout, axisType);
+      const isCategorical = isCategoricalAxis(layout, axisType);
       let index = -1;
 
       // The default type of x-axis is category axis,
@@ -554,7 +567,7 @@ const generateCategoricalChart = ({
           index++;
           let domain;
 
-          if (isCategorial) {
+          if (isCategorical) {
             domain = _.range(0, len);
           } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack) {
             domain = getDomainOfStackGroups(stackGroups[axisId].stackGroups, dataStartIndex, dataEndIndex);
@@ -581,10 +594,10 @@ const generateCategoricalChart = ({
               orientation: _.get(ORIENT_MAP, `${axisType}.${index % 2}`, null),
               domain,
               originalDomain: Axis.defaultProps.domain,
-              isCategorial,
+              isCategorical,
               layout,
               // specify scale when no Axis
-              // scale: isCategorial ? 'band' : 'linear',
+              // scale: isCategorical ? 'band' : 'linear',
             },
           };
         }
