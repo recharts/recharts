@@ -52,7 +52,7 @@ export function getDomainOfDataByKey<T>(data: Array<T>, key: string, type: strin
   const validateData = filterNil ? flattenData.filter(entry => !_.isNil(entry)) : flattenData;
 
   // 支持Date类型的x轴
-  return validateData.map(entry => (isNumOrStr(entry) || (entry instanceof Date) ? entry : ''));
+  return validateData.map(entry => (isNumOrStr(entry) || entry instanceof Date ? entry : ''));
 }
 
 export const calculateActiveTickIndex = (

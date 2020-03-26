@@ -86,7 +86,7 @@ class Symbols extends PureComponent<Props> {
 
   static registerSymbol = (key: string, factory: D3SymbolType) => {
     symbolFactories[`symbol${_.upperFirst(key)}`] = factory;
-  }
+  };
 
   /**
    * Calculate the path of curve

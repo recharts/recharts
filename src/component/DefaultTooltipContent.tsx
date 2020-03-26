@@ -18,7 +18,7 @@ export type Formatter<TValue extends ValueType, TName extends NameType> = (
   name: TName,
   item: Payload<TValue, TName>,
   index: number,
-  payload: Array<Payload<TValue, TName>>
+  payload: Array<Payload<TValue, TName>>,
 ) => [ReactNode, ReactNode] | ReactNode;
 
 export interface Payload<TValue extends ValueType, TName extends NameType> {

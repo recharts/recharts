@@ -173,7 +173,8 @@ const generateCategoricalChart = ({
   legendContent,
   formatAxisMap,
   defaultProps,
-}: CategoricalChartOptions) => class CategoricalChartWrapper extends Component<CategoricalChartProps, CategoricalChartState> {
+}: CategoricalChartOptions) =>
+  class CategoricalChartWrapper extends Component<CategoricalChartProps, CategoricalChartState> {
     static displayName = chartName;
 
     uniqueChartId: any;
@@ -805,12 +806,14 @@ const generateCategoricalChart = ({
         const componsedFn = item && item.type && item.type.getComposedData;
 
         if (componsedFn) {
-          const itemEvents = isTooltipTriggerByClick ? {
-            onItemClick: combineEventHandlers(this.handleItemMouseEnter, null, item.props.onCLick),
-          } : {
-            onItemMouseLeave: combineEventHandlers(this.handleItemMouseLeave, null, item.props.onMouseLeave),
-            onItemMouseEnter: combineEventHandlers(this.handleItemMouseEnter, null, item.props.onMouseEnter),
-          };
+          const itemEvents = isTooltipTriggerByClick
+            ? {
+                onItemClick: combineEventHandlers(this.handleItemMouseEnter, null, item.props.onCLick),
+              }
+            : {
+                onItemMouseLeave: combineEventHandlers(this.handleItemMouseLeave, null, item.props.onMouseLeave),
+                onItemMouseEnter: combineEventHandlers(this.handleItemMouseEnter, null, item.props.onMouseEnter),
+              };
           formatedItems.push({
             props: {
               ...componsedFn({
@@ -963,8 +966,8 @@ const generateCategoricalChart = ({
       if (tooltipItem && eventType === 'axis') {
         if (tooltipItem.props.trigger === 'click') {
           tooltipEvents = {
-            onClick: this.handleClick
-          }
+            onClick: this.handleClick,
+          };
         } else {
           tooltipEvents = {
             onMouseEnter: this.handleMouseEnter,
@@ -973,7 +976,7 @@ const generateCategoricalChart = ({
             onTouchMove: this.handleTouchMove,
             onTouchStart: this.handleTouchStart,
             onTouchEnd: this.handleTouchEnd,
-          }
+          };
         }
       }
       const outerEvents = adaptEventHandlers(this.props, this.handleOuterEvent);
@@ -1228,7 +1231,6 @@ const generateCategoricalChart = ({
     handleMouseEnter = (e: any) => {
       const { onMouseEnter } = this.props;
       const mouse = this.getMouseInfo(e);
-      
 
       if (mouse) {
         const nextState: CategoricalChartState = { ...mouse, isTooltipActive: true };
@@ -1245,7 +1247,7 @@ const generateCategoricalChart = ({
       const { onMouseMove } = this.props;
       const mouse = this.getMouseInfo(e);
       const nextState: CategoricalChartState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
-      
+
       this.setState(nextState);
       this.triggerSyncEvent(nextState);
 
@@ -1872,6 +1874,6 @@ const generateCategoricalChart = ({
         </div>
       );
     }
-  }
+  };
 
 export default generateCategoricalChart;
