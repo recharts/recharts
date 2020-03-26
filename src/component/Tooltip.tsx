@@ -83,7 +83,7 @@ type Props<TValue extends ValueType, TName extends NameType> = DefaultProps<TVal
     y?: number;
   };
   trigger?: 'hover' | 'click',
-  payloadUniqBy: UniqueOption<TValue, TName>;
+  payloadUniqBy?: UniqueOption<TValue, TName>;
   isAnimationActive?: boolean;
   animationDuration?: number;
   animationEasing?: AnimationTiming;

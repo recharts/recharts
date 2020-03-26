@@ -24,7 +24,7 @@ export interface Props extends BaseAxisProps {
   interval?: AxisInterval;
   reversed?: boolean;
 }
-function XAxis(props: Props): SVGElement {
+function XAxis(props: Props): any {
   return null;
 }
 

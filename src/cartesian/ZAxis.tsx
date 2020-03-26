@@ -18,7 +18,7 @@ export interface Props {
   scale?: ScaleType | Function;
 }
 
-function ZAxis(props: Props): SVGElement {
+function ZAxis(props: Props): any {
   return null;
 }
 

@@ -27,7 +27,7 @@ export interface Props extends BaseAxisProps {
   reversed?: boolean;
 }
 
-function YAxis(props: Props): SVGElement {
+function YAxis(props: Props): any {
   return null;
 }
 
