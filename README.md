@@ -92,6 +92,12 @@ We'd love :heart: to hear what you think we should build. Please create an issue
 
 We are looking for like-minded people who share the same idea about Recharts. The goal of this project is create a more flexible charting library for the  React community.
 
+## Backers
+[Become a backer](https://opencollective.com/recharts#backer) and get your image on our README on Github with a link to your site.
+
+<a href="https://opencollective.com/recharts/backer/0/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/0/avatar.svg?requireActive=false"></a>
+<a href="https://opencollective.com/recharts/backer/1/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/1/avatar.svg?requireActive=false"></a>
+
 ## Sponsoring
 
 Most of the core team members do this open source work in their free time. If you use recharts for a important work, and you'd like us to invest more time on it, please [donate](https://opencollective.com/recharts#sponsors). Thanks!
