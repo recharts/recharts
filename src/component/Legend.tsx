@@ -92,15 +92,23 @@ class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
     boxHeight: -1,
   };
 
-  componentDidMount() {
+  public componentDidMount() {
     this.updateBBox();
   }
 
-  componentDidUpdate() {
+  public componentDidUpdate() {
     this.updateBBox();
   }
 
-  getBBox() {
+  public getBBox() {
+    if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
+      return this.wrapperNode.getBoundingClientRect();
+    }
+
+    return null;
+  }
+
+  private getBBoxSnapshot() {
     const { boxWidth, boxHeight } = this.state;
 
     if (boxWidth >= 0 && boxHeight >= 0) {
@@ -110,7 +118,7 @@ class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
     return null;
   }
 
-  getDefaultPosition(style: CSSProperties) {
+  private getDefaultPosition(style: CSSProperties) {
     const { layout, align, verticalAlign, margin, chartWidth, chartHeight } = this.props;
     let hPos, vPos;
 
@@ -119,7 +127,7 @@ class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
       ((style.left === undefined || style.left === null) && (style.right === undefined || style.right === null))
     ) {
       if (align === 'center' && layout === 'vertical') {
-        const box = this.getBBox() || { width: 0 };
+        const box = this.getBBoxSnapshot() || { width: 0 };
         hPos = { left: ((chartWidth || 0) - box.width) / 2 };
       } else {
         hPos = align === 'right' ? { right: (margin && margin.right) || 0 } : { left: (margin && margin.left) || 0 };
@@ -131,7 +139,7 @@ class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
       ((style.top === undefined || style.top === null) && (style.bottom === undefined || style.bottom === null))
     ) {
       if (verticalAlign === 'middle') {
-        const box = this.getBBox() || { height: 0 };
+        const box = this.getBBoxSnapshot() || { height: 0 };
         vPos = { top: ((chartHeight || 0) - box.height) / 2 };
       } else {
         vPos =
@@ -144,7 +152,7 @@ class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
     return { ...hPos, ...vPos };
   }
 
-  updateBBox() {
+  private updateBBox() {
     const { boxWidth, boxHeight } = this.state;
     const { onBBoxUpdate } = this.props;
 
@@ -179,7 +187,7 @@ class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
     }
   }
 
-  render() {
+  public render() {
     const { content, width, height, wrapperStyle, payloadUniqBy, payload } = this.props;
     const outerStyle: CSSProperties = {
       position: 'absolute',
