@@ -353,7 +353,7 @@ function Label(props: Props) {
   const positionAttrs = isPolarLabel ? getAttrsOfPolarLabel(props) : getAttrsOfCartesianLabel(props);
 
   return (
-    <Text className={classNames('recharts-label', className)} {...(positionAttrs as any)} {...attrs}>
+    <Text className={classNames('recharts-label', className)} {...attrs} {...(positionAttrs as any)}>
       {label}
     </Text>
   );

@@ -575,7 +575,7 @@ export default class Demo extends Component {
           </LineChart>
         </div>
 
-        <p>LineChart repeates categories on x axis</p>
+        <p>LineChart repeats categories on x axis</p>
         <div className="line-chart-wrapper">
           <LineChart width={600} height={300}>
             <XAxis dataKey="category" type="category" allowDuplicatedCategory={false} />
