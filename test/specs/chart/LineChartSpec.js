@@ -1,4 +1,4 @@
-/* eslint-disable max-len, react/prop-types */
+/* eslint-disable max-len */
 import React from 'react';
 import { expect } from 'chai';
 // eslint-disable-next-line import/no-unresolved

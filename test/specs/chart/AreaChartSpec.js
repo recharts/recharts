@@ -5,7 +5,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, Brush, Legend, CartesianAxis } 
 import { mount, render } from 'enzyme';
 import sinon from 'sinon';
 
-/* eslint-disable max-len, react/prop-types */
+/* eslint-disable max-len */
 
 const data = [{ name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
   { name: 'Page B', uv: 300, pv: 4567, amt: 2400 },
