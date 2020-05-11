@@ -103,6 +103,16 @@ const rangeData = [
   { day: '05-09', temperature: [-3, 5] },
 ];
 
+const pageData = [
+  { name: 'Page A', uv: 300, pv: 2600, amt: 3400 },
+  { name: 'Page B', uv: 400, pv: 4367, amt: 6400 },
+  { name: 'Page C', uv: 300, pv: 1398, amt: 2400 },
+  { name: 'Page D', uv: 200, pv: 9800, amt: 2400 },
+  { name: 'Page E', uv: 278, pv: 3908, amt: 2400 },
+  { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
+  { name: 'Page G', uv: 189, pv: 4800, amt: 2400 },
+];
+
 const RenderLabel = (props) => {
   const { x, y, textAnchor, key, value, index, ...others } = props;
 
@@ -462,6 +472,24 @@ export default class Demo extends Component {
             <Tooltip />
             <Bar dataKey="uv" fill="#ff7300" maxBarSize={20} label radius={[10, 10, 10, 10]} />
             <Bar dataKey="pv" fill="#387908" />
+          </BarChart>
+        </div>
+
+        <p>Label alignment on Vertical BarChart when all data are positive</p>
+        <div className="area-chart-wrapper">
+          <BarChart
+            width={800}
+            height={800}
+            data={pageData}
+            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+            layout="vertical"
+          >
+            <XAxis type="number" />
+            <YAxis dataKey="name" type="category" />
+            <Tooltip />
+            <Bar dataKey="pv" fill="#387908">
+              <LabelList position="right" />
+            </Bar>
           </BarChart>
         </div>
 
