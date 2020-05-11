@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import { FunnelChart, Funnel, Tooltip } from 'recharts';
 import { render } from 'enzyme';
 
-/* eslint-disable max-len, react/prop-types */
+/* eslint-disable max-len */
 
 const data = [
   { value: 100, name: '展现' },

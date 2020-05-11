@@ -62,7 +62,6 @@
     "d3-scale": "^3.1.0",
     "d3-shape": "^1.3.5",
     "lodash": "^4.17.5",
-    "prop-types": "^15.6.0",
     "react-resize-detector": "^4.2.1",
     "react-smooth": "^1.0.5",
     "recharts-scale": "^0.4.2",

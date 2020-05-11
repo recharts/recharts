@@ -1,23 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Tooltip, Layer } from 'recharts';
+import { Layer } from 'recharts';
 
 export default class Demo extends Component {
 
   static displayName = 'SankeyLinkDemo';
-
-  static propTypes = {
-    sourceX: PropTypes.number,
-    targetX: PropTypes.number,
-    sourceY: PropTypes.number,
-    targetY: PropTypes.number,
-    sourceControlX: PropTypes.number,
-    targetControlX: PropTypes.number,
-    sourceRelativeY: PropTypes.number,
-    targetRelativeY: PropTypes.number,
-    linkWidth: PropTypes.number,
-    index: PropTypes.number,
-  }
 
   state = {
     fill: 'url(#linkGradient)',
@@ -27,7 +13,6 @@ export default class Demo extends Component {
     const { sourceX, targetX,
       sourceY, targetY,
       sourceControlX, targetControlX,
-      sourceRelativeY, targetRelativeY,
       linkWidth,
       index,
     } = this.props;
