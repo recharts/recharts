@@ -1,4 +1,5 @@
-import EventEmitter from 'events';
+import EventEmitter from 'eventemitter3';
+
 
 const eventCenter: any = new EventEmitter();
 

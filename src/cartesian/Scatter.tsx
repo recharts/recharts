@@ -55,8 +55,8 @@ interface ScatterProps {
   left?: number;
   top?: number;
 
-  yAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  xAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   zAxis?: Omit<ZAxisProps, 'scale'> & { scale: D3Scale<string | number> };
 
   dataKey?: DataKey<any>;

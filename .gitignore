@@ -10,3 +10,4 @@ npm-debug.log
 .idea/
 .justconf/
 types
+build
