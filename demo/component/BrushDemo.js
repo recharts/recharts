@@ -61,6 +61,12 @@ export default class Demo extends Component {
     });
   }
 
+  renderTraveller = (props) => {
+    const { x, y, width, height } = props;
+
+    return <path d={`M${x + width / 2},${y}L${x + width},${y + height / 2}L${x + width / 2},${y + height}L${x},${y + height / 2}Z`} fill="red" stroke="none" />
+  }
+
   render () {
     const { simple, gap } = this.state;
 
@@ -77,6 +83,7 @@ export default class Demo extends Component {
             height={40}
             data={this.data}
             onChange={this.handleChange}
+            traveller={this.renderTraveller}
           />
         </Surface>
         <p>Brush has specified gap</p>

@@ -11,8 +11,10 @@ import { getValueByDataKey } from '../util/ChartUtils';
 import { isNumber } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 
-import { Padding, PresentationAttributes, DataKey } from '../util/types';
+import { Padding, PresentationAttributes, DataKey, filterProps } from '../util/types';
 
+
+type BrushTravellerType = ReactElement<SVGElement> | ((props: any) => SVGElement);
 interface BrushStartEndIndex {
   startIndex?: number;
   endIndex?: number;
@@ -31,6 +33,7 @@ interface BrushProps extends InternalBrushProps {
 
   height: number;
   travellerWidth?: number;
+  traveller?: BrushTravellerType;
   gap?: number;
   padding?: Padding;
 
@@ -99,6 +102,33 @@ class Brush extends PureComponent<Props, State> {
     BrushTravellerId,
     (event: MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) => void
   >;
+
+  static renderDefaultTraveller(props: any) {
+    const { x, y, width, height, stroke } = props;
+    const lineY = Math.floor(y + height / 2) - 1;
+
+    return (
+      <>
+        <rect x={x} y={y} width={width} height={height} fill={stroke} stroke="none" />
+        <line x1={x + 1} y1={lineY} x2={x + width - 1} y2={lineY} fill="none" stroke="#fff" />
+        <line x1={x + 1} y1={lineY + 2} x2={x + width - 1} y2={lineY + 2} fill="none" stroke="#fff" />
+      </>
+    );
+  }
+
+  static renderTraveller(option: BrushTravellerType, props: any) {
+    let rectangle;
+
+    if (React.isValidElement(option)) {
+      rectangle = React.cloneElement(option, props);
+    } else if (_.isFunction(option)) {
+      rectangle = option(props);
+    } else {
+      rectangle = Brush.renderDefaultTraveller(props);
+    }
+
+    return rectangle;
+  }
 
   // eslint-disable-next-line camelcase
   UNSAFE_componentWillReceiveProps(nextProps: Props) {
@@ -367,10 +397,16 @@ class Brush extends PureComponent<Props, State> {
     });
   }
 
-  renderTraveller(travellerX: number, id: BrushTravellerId) {
-    const { y, travellerWidth, height, stroke } = this.props;
-    const lineY = Math.floor(y + height / 2) - 1;
+  renderTravellerLayer(travellerX: number, id: BrushTravellerId) {
+    const { y, travellerWidth, height, traveller } = this.props;
     const x = Math.max(travellerX, this.props.x);
+    const travellerProps = {
+      ...filterProps(this.props),
+      x,
+      y,
+      width: travellerWidth,
+      height,
+    }
 
     return (
       <Layer
@@ -381,15 +417,15 @@ class Brush extends PureComponent<Props, State> {
         onTouchStart={this.travellerDragStartHandlers[id]}
         style={{ cursor: 'col-resize' }}
       >
-        <rect x={x} y={y} width={travellerWidth} height={height} fill={stroke} stroke="none" />
-        <line x1={x + 1} y1={lineY} x2={x + travellerWidth - 1} y2={lineY} fill="none" stroke="#fff" />
-        <line x1={x + 1} y1={lineY + 2} x2={x + travellerWidth - 1} y2={lineY + 2} fill="none" stroke="#fff" />
+        {Brush.renderTraveller(traveller, travellerProps)}
       </Layer>
     );
   }
 
   renderSlide(startX: number, endX: number) {
-    const { y, height, stroke } = this.props;
+    const { y, height, stroke, travellerWidth } = this.props;
+    const x = Math.min(startX, endX) + travellerWidth;
+    const width = Math.max(Math.abs(endX - startX) - travellerWidth, 0);
 
     return (
       <rect
@@ -402,9 +438,9 @@ class Brush extends PureComponent<Props, State> {
         stroke="none"
         fill={stroke}
         fillOpacity={0.2}
-        x={Math.min(startX, endX)}
+        x={x}
         y={y}
-        width={Math.abs(endX - startX)}
+        width={width}
         height={height}
       />
     );
@@ -475,8 +511,8 @@ class Brush extends PureComponent<Props, State> {
         {this.renderBackground()}
         {isPanoramic && this.renderPanorama()}
         {this.renderSlide(startX, endX)}
-        {this.renderTraveller(startX, 'startX')}
-        {this.renderTraveller(endX, 'endX')}
+        {this.renderTravellerLayer(startX, 'startX')}
+        {this.renderTravellerLayer(endX, 'endX')}
         {(isTextActive || isSlideMoving || isTravellerMoving || alwaysShowText) && this.renderText()}
       </Layer>
     );
