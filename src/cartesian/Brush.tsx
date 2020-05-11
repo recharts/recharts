@@ -86,7 +86,7 @@ class Brush extends PureComponent<Props, State> {
       endX: this.handleTravellerDragStart.bind(this, 'endX'),
     };
 
-    this.state = props.data && props.data.length ? this.updateScale(props) : {};
+    this.state = props.data && props.data.length ? this.createScale(props) : {};
   }
 
   leaveTimer?: number;
@@ -104,9 +104,13 @@ class Brush extends PureComponent<Props, State> {
   UNSAFE_componentWillReceiveProps(nextProps: Props) {
     const { data, width, x, travellerWidth, updateId } = this.props;
 
-    if ((nextProps.data !== data || nextProps.updateId !== updateId) && nextProps.data && nextProps.data.length) {
-      this.setState(this.updateScale(nextProps));
-    } else if (nextProps.width !== width || nextProps.x !== x || nextProps.travellerWidth !== travellerWidth) {
+    if ((nextProps.data !== data || nextProps.updateId !== updateId)) {
+      if (nextProps.data && nextProps.data.length) {
+        this.setState(this.createScale(nextProps));
+      } else {
+        this.removeScale();
+      }
+    } else if (this.scale && nextProps.width !== width || nextProps.x !== x || nextProps.travellerWidth !== travellerWidth) {
       this.scale.range([nextProps.x, nextProps.x + nextProps.width - nextProps.travellerWidth]);
       this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
 
@@ -118,9 +122,7 @@ class Brush extends PureComponent<Props, State> {
   }
 
   componentWillUnmount() {
-    this.scale = null;
-    this.scaleValues = null;
-
+    this.removeScale();
     if (this.leaveTimer) {
       clearTimeout(this.leaveTimer);
       this.leaveTimer = null;
@@ -319,7 +321,7 @@ class Brush extends PureComponent<Props, State> {
     );
   }
 
-  updateScale(props: Props) {
+  createScale(props: Props) {
     const { data, startIndex, endIndex, x, width, travellerWidth } = props;
     const len = data.length;
     this.scale = scalePoint<number>()
@@ -333,6 +335,11 @@ class Brush extends PureComponent<Props, State> {
       startX: this.scale(startIndex),
       endX: this.scale(endIndex),
     };
+  }
+
+  removeScale() {
+    this.scale = null;
+    this.scaleValues = null;
   }
 
   renderBackground() {
