@@ -1,20 +1,7 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 export default class Demo extends Component {
   static displayName = 'TreemapItemDemo';
-
-  static propTypes = {
-    root: PropTypes.object,
-    depth: PropTypes.number,
-    x: PropTypes.number,
-    y: PropTypes.number,
-    width: PropTypes.number,
-    height: PropTypes.number,
-    index: PropTypes.number,
-    payload: PropTypes.object,
-    bgColors: PropTypes.arrayOf(PropTypes.string),
-  };
 
   static defaultProps = {};
 
@@ -23,7 +10,7 @@ export default class Demo extends Component {
   }
 
   render() {
-    const { root, depth, x, y, width, height, index, rank, name, bgColors } = this.props;
+    const { depth, x, y, width, height, index, name, bgColors } = this.props;
 
     return (
       <g>

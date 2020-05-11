@@ -1,19 +1,10 @@
 import React, { cloneElement } from 'react';
-import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Label, { ContentType } from './Label';
 import Layer from '../container/Layer';
 import { findAllByType } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { filterProps, DataKey } from '../util/types';
-
-const propTypes = {
-  id: PropTypes.string,
-  data: PropTypes.arrayOf(PropTypes.object),
-  valueAccessor: PropTypes.func,
-  clockWise: PropTypes.bool,
-  dataKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
-};
 
 interface Data {
   value?: number | string | Array<number | string>;
@@ -64,7 +55,6 @@ function LabelList<T extends Data>(props: Props<T>) {
   );
 }
 
-LabelList.propTypes = propTypes;
 LabelList.displayName = 'LabelList';
 
 function parseLabelList<T extends Data>(label: any, data: Array<T>) {
