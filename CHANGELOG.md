@@ -1,3 +1,16 @@
+## 2.0.0-beta.6 (May 12, 2020)
+
+### fix
+
+- fix error of Brush when data is empty, but chart width or height or Brush update, fix #2093
+- fix build error , fix #2120
+- fix attrs of <Label />, reverts previous change: now `positionAttrs` is again after `attrs`
+- Get legend wrapper boundingRect to correctly compute legend offset, fix #2062
+
+### feat
+
+- support customized traveller of Brush, fix #1600
+
 ## 2.0.0-beta.5 (Mar 26, 2020)
 
 ### fix
