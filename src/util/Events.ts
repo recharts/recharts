@@ -1,6 +1,5 @@
 import EventEmitter from 'eventemitter3';
 
-
 const eventCenter: any = new EventEmitter();
 
 if (eventCenter.setMaxListeners) {
