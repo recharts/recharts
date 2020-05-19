@@ -10,9 +10,7 @@ import Text from '../component/Text';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { isNumber } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
-
 import { Padding, PresentationAttributes, DataKey, filterProps } from '../util/types';
-
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: any) => SVGElement);
 interface BrushStartEndIndex {
@@ -134,13 +132,17 @@ class Brush extends PureComponent<Props, State> {
   UNSAFE_componentWillReceiveProps(nextProps: Props) {
     const { data, width, x, travellerWidth, updateId } = this.props;
 
-    if ((nextProps.data !== data || nextProps.updateId !== updateId)) {
+    if (nextProps.data !== data || nextProps.updateId !== updateId) {
       if (nextProps.data && nextProps.data.length) {
         this.setState(this.createScale(nextProps));
       } else {
         this.removeScale();
       }
-    } else if (this.scale && nextProps.width !== width || nextProps.x !== x || nextProps.travellerWidth !== travellerWidth) {
+    } else if (
+      (this.scale && nextProps.width !== width) ||
+      nextProps.x !== x ||
+      nextProps.travellerWidth !== travellerWidth
+    ) {
       this.scale.range([nextProps.x, nextProps.x + nextProps.width - nextProps.travellerWidth]);
       this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
 
@@ -406,7 +408,7 @@ class Brush extends PureComponent<Props, State> {
       y,
       width: travellerWidth,
       height,
-    }
+    };
 
     return (
       <Layer
