@@ -96,6 +96,7 @@ We are looking for like-minded people who share the same idea about Recharts. Th
 
 <a href="https://opencollective.com/recharts/backer/0/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/0/avatar.svg?requireActive=false"></a>
 <a href="https://opencollective.com/recharts/backer/1/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/1/avatar.svg?requireActive=false"></a>
+<a href="https://opencollective.com/recharts/backer/2/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/2/avatar.svg?requireActive=false"></a>
 
 ## Sponsoring
 
@@ -105,4 +106,4 @@ Most of the core team members do this open source work in their free time. If yo
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2015-2019 Recharts Group.
+Copyright (c) 2015-2020 Recharts Group.
