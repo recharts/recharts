@@ -1316,6 +1316,10 @@ const generateCategoricalChart = ({
 
       const event = _.get(this.props, `${eventName}`);
       if (eventName && _.isFunction(event)) {
+        if (/.*touch.*/i.test(eventName)) {
+          e = e.changedTouches[0];
+        }
+
         const mouse = this.getMouseInfo(e);
         const handler = event;
 
