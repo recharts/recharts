@@ -775,7 +775,6 @@ export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | '
 /** The domain of axis */
 export type AxisDomain = [AxisDomainItem, AxisDomainItem];
 
-
 /** The props definition of base axis */
 export interface BaseAxisProps {
   /** The type of axis */
