@@ -300,7 +300,6 @@ const generateCategoricalChart = ({
         nextProps.stackOffset !== stackOffset ||
         !shallowEqual(nextProps.margin, margin)
       ) {
-
         // Fixes https://github.com/recharts/recharts/issues/2143
         const keepFromPrevState = {
           // (chartX, chartY) are (0,0) in default state, but we want to keep the last mouse position to avoid
@@ -314,8 +313,8 @@ const generateCategoricalChart = ({
 
           // The tooltip should stay active when it was active in the previous render. If this is not
           // the case, the tooltip disappears and immediately re-appears, causing a flickering effect
-          isTooltipActive: this.state.isTooltipActive
-        }
+          isTooltipActive: this.state.isTooltipActive,
+        };
 
         const defaultState = CategoricalChartWrapper.createDefaultState(nextProps);
 
