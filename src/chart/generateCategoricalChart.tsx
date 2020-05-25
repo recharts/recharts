@@ -205,6 +205,7 @@ const generateCategoricalChart = ({
       const startIndex = (brushItem && brushItem.props && brushItem.props.startIndex) || 0;
       const endIndex =
         (brushItem && brushItem.props && brushItem.props.endIndex) || (props.data && props.data.length - 1) || 0;
+
       return {
         chartX: 0,
         chartY: 0,
@@ -266,6 +267,7 @@ const generateCategoricalChart = ({
       const defaultState = CategoricalChartWrapper.createDefaultState(props);
       const updateId = 0;
       this.state = {
+        
         ...defaultState,
         updateId: 0,
         ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState, updateId }),
@@ -289,7 +291,7 @@ const generateCategoricalChart = ({
     // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps: CategoricalChartProps) {
       const { data, children, width, height, layout, stackOffset, margin } = this.props;
-      const { updateId, isTooltipActive, activeItem, activeLabel, activePayload, activeCoordinate } = this.state;
+      const { updateId } = this.state;
 
       if (
         nextProps.data !== data ||
@@ -299,13 +301,33 @@ const generateCategoricalChart = ({
         nextProps.stackOffset !== stackOffset ||
         !shallowEqual(nextProps.margin, margin)
       ) {
+
+        // Fixes https://github.com/recharts/recharts/issues/2143
+        const keepFromPrevState = {
+          // (chartX, chartY) are (0,0) in default state, but we want to keep the last mouse position to avoid
+          // any flickering
+          chartX: this.state.chartX,
+          chartY: this.state.chartY,
+
+          // Keep the index of the active tooltip in order to prevent blinking active dot when
+          // state changes
+          activeTooltipIndex: this.state.activeTooltipIndex,
+
+          // The tooltip should stay active when it was active in the previous render. If this is not
+          // the case, the tooltip disappears and immediately re-appears, causing a flickering effect
+          isTooltipActive: this.state.isTooltipActive
+        }
+
         const defaultState = CategoricalChartWrapper.createDefaultState(nextProps);
+
         this.setState({
           ...defaultState,
+          ...keepFromPrevState,
           updateId: updateId + 1,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups({
             props: nextProps,
             ...defaultState,
+            ...keepFromPrevState, // TODO needed?
             updateId: updateId + 1,
           }),
         });
