@@ -775,6 +775,7 @@ export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | '
 /** The domain of axis */
 export type AxisDomain = [AxisDomainItem, AxisDomainItem];
 
+
 /** The props definition of base axis */
 export interface BaseAxisProps {
   /** The type of axis */
@@ -824,6 +825,8 @@ export interface BaseAxisProps {
   range?: Array<number>;
   /** axis react component */
   AxisComp?: any;
+  /** Needed to allow usage of the label prop on the X and Y axis */
+  label?: string | number | ReactElement | object ;
 }
 
 export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
