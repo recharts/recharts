@@ -267,7 +267,6 @@ const generateCategoricalChart = ({
       const defaultState = CategoricalChartWrapper.createDefaultState(props);
       const updateId = 0;
       this.state = {
-        
         ...defaultState,
         updateId: 0,
         ...this.updateStateOfAxisMapsOffsetAndStackGroups({ props, ...defaultState, updateId }),
