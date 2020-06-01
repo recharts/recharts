@@ -448,26 +448,26 @@ const parseLabel = (label: any, viewBox: ViewBox) => {
   return null;
 };
 
-const renderCallByParent = (parentProps: any, viewBox?: ViewBox, ckeckPropsLabel = true) => {
-  if (!parentProps || (!parentProps.children && ckeckPropsLabel && !parentProps.label)) {
+const renderCallByParent = (parentProps: any, viewBox?: ViewBox, checkPropsLabel = true) => {
+  if (!parentProps || (!parentProps.children && checkPropsLabel && !parentProps.label)) {
     return null;
   }
   const { children } = parentProps;
   const parentViewBox = parseViewBox(parentProps);
 
-  const explicitChilren = findAllByType(children, Label.displayName).map((child: any, index: number) =>
+  const explicitChildren = findAllByType(children, Label.displayName).map((child: any, index: number) =>
     cloneElement(child, {
       viewBox: viewBox || parentViewBox,
       key: `label-${index}`,
     }),
   );
 
-  if (!ckeckPropsLabel) {
-    return explicitChilren;
+  if (!checkPropsLabel) {
+    return explicitChildren;
   }
   const implicitLabel = parseLabel(parentProps.label, viewBox || parentViewBox);
 
-  return [implicitLabel, ...explicitChilren];
+  return [implicitLabel, ...explicitChildren];
 };
 
 Label.parseViewBox = parseViewBox;
