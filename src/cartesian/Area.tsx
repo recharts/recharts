@@ -27,7 +27,7 @@ import {
   TickItem,
 } from '../util/types';
 
-type AreaDot = ReactElement<SVGElement> | ((props: any) => SVGElement) | DotProps | boolean;
+type AreaDot = ReactElement<SVGElement> | ((props: any) => SVGElement) | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
 interface AreaPointItem extends CurvePoint {
   value?: number | number[];
   payload?: any;
