@@ -12,7 +12,7 @@ import { polarToCartesian } from '../util/PolarUtils';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
-interface PolarAngleAxisProps extends BaseAxisProps {
+export interface PolarAngleAxisProps extends BaseAxisProps {
   angleAxisId?: string | number;
   cx?: number;
   cy?: number;

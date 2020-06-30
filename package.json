@@ -35,7 +35,8 @@
     "test": "cross-env NODE_ENV=test karma start test/karma.conf.js",
     "lint": "eslint './src/**/*.?(ts|tsx)'",
     "autofix": "eslint './src/**/*.?(ts|tsx)' --fix",
-    "analyse": "cross-env NODE_ENV=analyse webpack src/index.ts -o umd/Recharts.js"
+    "analyse": "cross-env NODE_ENV=analyse webpack src/index.ts -o umd/Recharts.js",
+    "tsc": "tsc"
   },
   "pre-commit": [],
   "pre-push": [
