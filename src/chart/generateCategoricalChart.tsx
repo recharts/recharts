@@ -1,6 +1,6 @@
 import React, { Component, cloneElement, isValidElement, createElement } from 'react';
 import classNames from 'classnames';
-import _ from 'lodash';
+import _, { range } from 'lodash';
 import Surface from '../container/Surface';
 import Layer from '../container/Layer';
 import Tooltip from '../component/Tooltip';
@@ -307,9 +307,8 @@ const generateCategoricalChart = ({
           chartX: this.state.chartX,
           chartY: this.state.chartY,
 
-          // Keep the index of the active tooltip in order to prevent blinking active dot when
-          // state changes
-          activeTooltipIndex: this.state.activeTooltipIndex,
+          // Update the current tooltip data
+          ...this.getTooltipData(),
 
           // The tooltip should stay active when it was active in the previous render. If this is not
           // the case, the tooltip disappears and immediately re-appears, causing a flickering effect
@@ -667,6 +666,35 @@ const generateCategoricalChart = ({
     }
 
     /**
+     * Returns tooltip data based on a mouse position (as a parameter or in state)
+     * @param  {Object} rangeObj  { x, y } coordinates
+     * @return {Object}           Tooltip data data
+     */
+    getTooltipData(rangeObj?: any) {
+      const rangeData = rangeObj || { x: this.state.chartX, y: this.state.chartY };
+
+      const pos = this.calculateTooltipPos(rangeData);
+      const { orderedTooltipTicks: ticks, tooltipAxis: axis, tooltipTicks } = this.state;
+
+      const activeIndex = calculateActiveTickIndex(pos, ticks, tooltipTicks, axis);
+
+      if (activeIndex >= 0 && tooltipTicks) {
+        const activeLabel = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;
+        const activePayload = this.getTooltipContent(activeIndex, activeLabel);
+        const activeCoordinate = this.getActiveCoordinate(ticks, activeIndex, rangeData);
+
+        return {
+          activeTooltipIndex: activeIndex,
+          activeLabel,
+          activePayload,
+          activeCoordinate,
+        };
+      }
+
+      return null;
+    }
+
+    /**
      * Get the information of mouse in chart, return null when the mouse is not in the chart
      * @param  {Object} event    The event object
      * @return {Object}          Mouse data
@@ -694,21 +722,12 @@ const generateCategoricalChart = ({
         return { ...e, xValue, yValue };
       }
 
-      const { orderedTooltipTicks: ticks, tooltipAxis: axis, tooltipTicks } = this.state;
-      const pos = this.calculateTooltipPos(rangeObj);
-      const activeIndex = calculateActiveTickIndex(pos, ticks, tooltipTicks, axis);
+      const toolTipData = this.getTooltipData(rangeObj);
 
-      if (activeIndex >= 0 && tooltipTicks) {
-        const activeLabel = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;
-        const activePayload = this.getTooltipContent(activeIndex, activeLabel);
-        const activeCoordinate = this.getActiveCoordinate(ticks, activeIndex, rangeObj);
-
+      if (toolTipData) {
         return {
           ...e,
-          activeTooltipIndex: activeIndex,
-          activeLabel,
-          activePayload,
-          activeCoordinate,
+          ...toolTipData,
         };
       }
 
