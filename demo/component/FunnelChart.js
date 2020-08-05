@@ -29,7 +29,7 @@ const data02 = [
   { value: 50, name: '点击' },
   { value: 30, name: '访问' },
   { value: 20, name: '咨询' },
-  { value: 6, name: '订单' },
+  { value: [10, 5], name: '订单' },
 ];
 
 
