@@ -824,6 +824,8 @@ export interface BaseAxisProps {
   range?: Array<number>;
   /** axis react component */
   AxisComp?: any;
+  /** Needed to allow usage of the label prop on the X and Y axis */
+  label?: string | number | ReactElement | object ;
 }
 
 export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
