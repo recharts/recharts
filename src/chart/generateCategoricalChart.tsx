@@ -300,6 +300,8 @@ const generateCategoricalChart = ({
         nextProps.stackOffset !== stackOffset ||
         !shallowEqual(nextProps.margin, margin)
       ) {
+        const defaultState = CategoricalChartWrapper.createDefaultState(nextProps);
+
         // Fixes https://github.com/recharts/recharts/issues/2143
         const keepFromPrevState = {
           // (chartX, chartY) are (0,0) in default state, but we want to keep the last mouse position to avoid
@@ -307,25 +309,27 @@ const generateCategoricalChart = ({
           chartX: this.state.chartX,
           chartY: this.state.chartY,
 
-          // Update the current tooltip data
-          ...this.getTooltipData(),
-
           // The tooltip should stay active when it was active in the previous render. If this is not
           // the case, the tooltip disappears and immediately re-appears, causing a flickering effect
           isTooltipActive: this.state.isTooltipActive,
         };
 
-        const defaultState = CategoricalChartWrapper.createDefaultState(nextProps);
+        const updatesToState = {
+          ...this.getTooltipData(),  // Update the current tooltip data (in case it changes without mouse interaction)
+          updateId: updateId + 1,
+        };
 
-        this.setState({
+        const newState = {
           ...defaultState,
           ...keepFromPrevState,
-          updateId: updateId + 1,
+          ...updatesToState,
+        };
+
+        this.setState({
+          ...newState,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups({
             props: nextProps,
-            ...defaultState,
-            ...keepFromPrevState, // TODO needed?
-            updateId: updateId + 1,
+            ...newState
           }),
         });
       } else if (!isChildrenEqual(nextProps.children, children)) {
