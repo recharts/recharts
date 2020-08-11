@@ -205,6 +205,7 @@ const generateCategoricalChart = ({
       const startIndex = (brushItem && brushItem.props && brushItem.props.startIndex) || 0;
       const endIndex =
         (brushItem && brushItem.props && brushItem.props.endIndex) || (props.data && props.data.length - 1) || 0;
+
       return {
         chartX: 0,
         chartY: 0,
@@ -289,7 +290,7 @@ const generateCategoricalChart = ({
     // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps: CategoricalChartProps) {
       const { data, children, width, height, layout, stackOffset, margin } = this.props;
-      const { updateId, isTooltipActive, activeItem, activeLabel, activePayload, activeCoordinate } = this.state;
+      const { updateId } = this.state;
 
       if (
         nextProps.data !== data ||
@@ -300,13 +301,35 @@ const generateCategoricalChart = ({
         !shallowEqual(nextProps.margin, margin)
       ) {
         const defaultState = CategoricalChartWrapper.createDefaultState(nextProps);
-        this.setState({
-          ...defaultState,
+
+        // Fixes https://github.com/recharts/recharts/issues/2143
+        const keepFromPrevState = {
+          // (chartX, chartY) are (0,0) in default state, but we want to keep the last mouse position to avoid
+          // any flickering
+          chartX: this.state.chartX,
+          chartY: this.state.chartY,
+
+          // The tooltip should stay active when it was active in the previous render. If this is not
+          // the case, the tooltip disappears and immediately re-appears, causing a flickering effect
+          isTooltipActive: this.state.isTooltipActive,
+        };
+
+        const updatesToState = {
+          ...this.getTooltipData(),  // Update the current tooltip data (in case it changes without mouse interaction)
           updateId: updateId + 1,
+        };
+
+        const newState = {
+          ...defaultState,
+          ...keepFromPrevState,
+          ...updatesToState,
+        };
+
+        this.setState({
+          ...newState,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups({
             props: nextProps,
-            ...defaultState,
-            updateId: updateId + 1,
+            ...newState
           }),
         });
       } else if (!isChildrenEqual(nextProps.children, children)) {
@@ -647,6 +670,35 @@ const generateCategoricalChart = ({
     }
 
     /**
+     * Returns tooltip data based on a mouse position (as a parameter or in state)
+     * @param  {Object} rangeObj  { x, y } coordinates
+     * @return {Object}           Tooltip data data
+     */
+    getTooltipData(rangeObj?: any) {
+      const rangeData = rangeObj || { x: this.state.chartX, y: this.state.chartY };
+
+      const pos = this.calculateTooltipPos(rangeData);
+      const { orderedTooltipTicks: ticks, tooltipAxis: axis, tooltipTicks } = this.state;
+
+      const activeIndex = calculateActiveTickIndex(pos, ticks, tooltipTicks, axis);
+
+      if (activeIndex >= 0 && tooltipTicks) {
+        const activeLabel = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;
+        const activePayload = this.getTooltipContent(activeIndex, activeLabel);
+        const activeCoordinate = this.getActiveCoordinate(ticks, activeIndex, rangeData);
+
+        return {
+          activeTooltipIndex: activeIndex,
+          activeLabel,
+          activePayload,
+          activeCoordinate,
+        };
+      }
+
+      return null;
+    }
+
+    /**
      * Get the information of mouse in chart, return null when the mouse is not in the chart
      * @param  {Object} event    The event object
      * @return {Object}          Mouse data
@@ -674,21 +726,12 @@ const generateCategoricalChart = ({
         return { ...e, xValue, yValue };
       }
 
-      const { orderedTooltipTicks: ticks, tooltipAxis: axis, tooltipTicks } = this.state;
-      const pos = this.calculateTooltipPos(rangeObj);
-      const activeIndex = calculateActiveTickIndex(pos, ticks, tooltipTicks, axis);
+      const toolTipData = this.getTooltipData(rangeObj);
 
-      if (activeIndex >= 0 && tooltipTicks) {
-        const activeLabel = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;
-        const activePayload = this.getTooltipContent(activeIndex, activeLabel);
-        const activeCoordinate = this.getActiveCoordinate(ticks, activeIndex, rangeObj);
-
+      if (toolTipData) {
         return {
           ...e,
-          activeTooltipIndex: activeIndex,
-          activeLabel,
-          activePayload,
-          activeCoordinate,
+          ...toolTipData,
         };
       }
 
