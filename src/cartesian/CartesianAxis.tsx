@@ -419,6 +419,7 @@ class CartesianAxis extends Component<Props> {
         index: i,
         payload: entry,
         visibleTicksCount: finalTicks.length,
+        tickFormatter
       };
 
       return (
