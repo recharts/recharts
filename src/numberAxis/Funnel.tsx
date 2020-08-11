@@ -142,11 +142,23 @@ class Funnel extends PureComponent<Props, State> {
     const rowHeight = realHeight / len;
 
     const trapezoids = funnelData.map((entry: any, i: number) => {
-      const val = getValueByDataKey(entry, dataKey, 0);
+      const rawVal = getValueByDataKey(entry, dataKey, 0);
       const name = getValueByDataKey(entry, nameKey, i);
-      let nextVal = 0;
+      let val = rawVal;
+      let nextVal;
+
       if (i !== len - 1) {
         nextVal = getValueByDataKey(funnelData[i + 1], dataKey, 0);
+
+        if (nextVal instanceof Array) {
+          nextVal = nextVal[0];
+        }
+      }
+      else if (rawVal instanceof Array && rawVal.length === 2) {
+        [val, nextVal] = rawVal;
+      }
+      else {
+        nextVal = 0;
       }
 
       const x = ((maxValue - val) * realWidth) / (2 * maxValue) + top + 25 + offsetX;
