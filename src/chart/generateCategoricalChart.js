@@ -518,7 +518,7 @@ const generateCategoricalChart = ({
 
       const toolTipData = this.getTooltipData(rangeObj);
 
-      if(toolTipData) {
+      if (toolTipData) {
         return {
           ...e,
           ...toolTipData,
@@ -530,7 +530,7 @@ const generateCategoricalChart = ({
     }
 
 
-     /**
+    /**
      * Returns tooltip data based on a mouse position (as a parameter or in state)
      * @param  {Object} rangeObj  { x, y } coordinates
      * @return {Object}           Tooltip data data
@@ -1483,11 +1483,6 @@ const generateCategoricalChart = ({
       const hasActive = !hide && isTooltipActive && tooltipItem && activeDot &&
         activeTooltipIndex >= 0;
 
-        if(isTooltipActive && !hasActive){
-          debugger;
-          console.log({hasActive})
-        }
-        
 
       function findWithPayload(entry) {
         return tooltipAxis.dataKey(entry.payload);
