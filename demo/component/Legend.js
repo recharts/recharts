@@ -29,9 +29,9 @@ const data4 = [
   { value: 'Sony', type: 'none' },
 ];
 
-export default class PeriodicallyRefreshData extends Component {
+export default class LegendDemo extends Component {
 
-  static displayName = 'PeriodicallyRefreshData';
+  static displayName = 'LegendDemo';
 
   render() {
     return (
