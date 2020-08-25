@@ -187,6 +187,7 @@ const generateCategoricalChart = ({
         this.setState(oldState => ({ ...defaultState, updateId: updateId + 1,
           chartX: oldState.chartX,
           chartY: oldState.chartY,
+          ...this.getTooltipData(),
           isTooltipActive: oldState.isTooltipActive,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
             { props: nextProps, ...defaultState, updateId: updateId + 1 }) })
@@ -515,19 +516,43 @@ const generateCategoricalChart = ({
         return { ...e, xValue, yValue };
       }
 
+      const toolTipData = this.getTooltipData(rangeObj);
+
+      if(toolTipData) {
+        return {
+          ...e,
+          ...toolTipData,
+        };
+      }
+
+
+      return null;
+    }
+
+
+     /**
+     * Returns tooltip data based on a mouse position (as a parameter or in state)
+     * @param  {Object} rangeObj  { x, y } coordinates
+     * @return {Object}           Tooltip data data
+     */
+    getTooltipData(rangeObj) {
+      const rangeData = rangeObj || { x: this.state.chartX, y: this.state.chartY };
+
+      const pos = this.calculateTooltipPos(rangeData);
       const { orderedTooltipTicks: ticks, tooltipAxis: axis, tooltipTicks } = this.state;
-      const pos = this.calculateTooltipPos(rangeObj);
+
       const activeIndex = calculateActiveTickIndex(pos, ticks, tooltipTicks, axis);
 
       if (activeIndex >= 0 && tooltipTicks) {
         const activeLabel = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;
         const activePayload = this.getTooltipContent(activeIndex, activeLabel);
-        const activeCoordinate = this.getActiveCoordinate(ticks, activeIndex, rangeObj);
+        const activeCoordinate = this.getActiveCoordinate(ticks, activeIndex, rangeData);
 
         return {
-          ...e,
           activeTooltipIndex: activeIndex,
-          activeLabel, activePayload, activeCoordinate,
+          activeLabel,
+          activePayload,
+          activeCoordinate,
         };
       }
 
@@ -1457,6 +1482,12 @@ const generateCategoricalChart = ({
       const { activeDot, hide } = item.item.props;
       const hasActive = !hide && isTooltipActive && tooltipItem && activeDot &&
         activeTooltipIndex >= 0;
+
+        if(isTooltipActive && !hasActive){
+          debugger;
+          console.log({hasActive})
+        }
+        
 
       function findWithPayload(entry) {
         return tooltipAxis.dataKey(entry.payload);
