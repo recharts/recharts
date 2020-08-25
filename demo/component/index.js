@@ -28,6 +28,7 @@ import ResponsiveContainer from './ResponsiveContainer';
 
 import FunnelChart from './FunnelChart';
 import Trapezoid from './Trapezoid';
+import PeriodicallyRefreshData from './PeriodicallyRefreshData';
 
 export default {
   chartWrapper: {
@@ -71,5 +72,6 @@ export default {
 
   other: {
     ResponsiveContainer,
+    PeriodicallyRefreshData
   }
 };

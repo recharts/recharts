@@ -184,9 +184,12 @@ const generateCategoricalChart = ({
         nextProps.height !== height || nextProps.layout !== layout ||
         nextProps.stackOffset !== stackOffset || !shallowEqual(nextProps.margin, margin)) {
         const defaultState = this.constructor.createDefaultState(nextProps);
-        this.setState({ ...defaultState, updateId: updateId + 1,
+        this.setState(oldState => ({ ...defaultState, updateId: updateId + 1,
+          chartX: oldState.chartX,
+          hartY: oldState.chartY,
+          isTooltipActive: oldState.isTooltipActive,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
-            { props: nextProps, ...defaultState, updateId: updateId + 1 }) }
+            { props: nextProps, ...defaultState, updateId: updateId + 1 }) })
         );
       } else if (!isChildrenEqual(nextProps.children, children)) {
         // update configuration in chilren
