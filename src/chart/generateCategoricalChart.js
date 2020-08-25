@@ -186,7 +186,7 @@ const generateCategoricalChart = ({
         const defaultState = this.constructor.createDefaultState(nextProps);
         this.setState(oldState => ({ ...defaultState, updateId: updateId + 1,
           chartX: oldState.chartX,
-          hartY: oldState.chartY,
+          chartY: oldState.chartY,
           isTooltipActive: oldState.isTooltipActive,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups(
             { props: nextProps, ...defaultState, updateId: updateId + 1 }) })
