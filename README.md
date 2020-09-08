@@ -89,7 +89,7 @@ and then browse to http://localhost:3000.
 
 We'd love :heart: to hear what you think we should build. Please create an issue to write your usage or ideas.
 
-We are looking for like-minded people who share the same idea about Recharts. The goal of this project is create a more flexible charting library for the  React community.
+We are looking for like-minded people who share the same idea about Recharts. The goal of this project is to create a more flexible charting library for the  React community.
 
 ## Backers
 [Become a backer](https://opencollective.com/recharts#backer) and get your image on our README on Github with a link to your site.
