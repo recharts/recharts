@@ -1,3 +1,19 @@
+## 2.0.0-beta.7 (Sep 08, 2020)
+
+### fix
+
+- Fix flickering tooltip by keeping the isTooltipActive flag from the previous state
+- fix(AreaDot Type): add option to use a function that returns a react element
+- Fix typescript error in polar radar
+- Fix typos in Label.renderCallByParent 
+- Add type definition for label prop on XAxis, YAxis and ZAxis
+
+### feat
+
+- Pass tickFormatter as a prop to customized tick component
+- Allow array value for last data element in Funnel to set bottom width instead of forcing 0
+-  Add payloadIndex to cursor props
+
 ## 2.0.0-beta.6 (May 12, 2020)
 
 ### fix
