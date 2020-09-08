@@ -315,7 +315,7 @@ const generateCategoricalChart = ({
         };
 
         const updatesToState = {
-          ...this.getTooltipData(),  // Update the current tooltip data (in case it changes without mouse interaction)
+          ...this.getTooltipData(), // Update the current tooltip data (in case it changes without mouse interaction)
           updateId: updateId + 1,
         };
 
@@ -329,7 +329,7 @@ const generateCategoricalChart = ({
           ...newState,
           ...this.updateStateOfAxisMapsOffsetAndStackGroups({
             props: nextProps,
-            ...newState
+            ...newState,
           }),
         });
       } else if (!isChildrenEqual(nextProps.children, children)) {
@@ -1490,7 +1490,7 @@ const generateCategoricalChart = ({
     }
 
     renderCursor = (element: any) => {
-      const { isTooltipActive, activeCoordinate, activePayload, offset } = this.state;
+      const { isTooltipActive, activeCoordinate, activePayload, offset, activeTooltipIndex } = this.state;
 
       if (!element || !element.props.cursor || !isTooltipActive || !activeCoordinate) {
         return null;
@@ -1528,6 +1528,7 @@ const generateCategoricalChart = ({
         ...restProps,
         ...filterProps(element.props.cursor),
         payload: activePayload,
+        payloadIndex: activeTooltipIndex,
         key,
         className: 'recharts-tooltip-cursor',
       };

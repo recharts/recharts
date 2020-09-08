@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import {
   BarChart, Bar, Brush, Cell, CartesianGrid, ReferenceLine, ReferenceArea,
-  XAxis, YAxis, Tooltip, Legend, ErrorBar, LabelList
+  XAxis, YAxis, Tooltip, Legend, ErrorBar, LabelList, Rectangle
 } from 'recharts';
 import { scaleOrdinal } from 'd3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
@@ -156,6 +156,11 @@ const CustomBar = (props) => {
 
   return null;
 };
+
+const CustomCursor = (props) => {
+  const { x, y, width, height, fill, payloadIndex } = props;
+  return (<Rectangle x={x} y={y} fill={fill} width={width} height={height} onMouseEnter={() => console.log(payloadIndex)} />);
+}
 
 class BarTwo extends Component {
   getPath() {
@@ -541,6 +546,18 @@ export default class Demo extends Component {
             <Bar dataKey="bmk" fill="#183a91">
               <LabelList position="insideTop" fill="#ffffff" invertNegativesOn="vertical" />
             </Bar>
+          </BarChart>
+        </div>
+
+        <p>Custom cursor with hover action</p>
+        <div className="bar-chart-wrapper">
+          <BarChart width={500} height={300} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip cursor={<CustomCursor />} />
+            <Legend />
+            <Bar dataKey="pv" fill="#8884d8" />
           </BarChart>
         </div>
 
