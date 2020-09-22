@@ -2,7 +2,6 @@
 
 [![Sponsors on Open Collective](https://opencollective.com/recharts/sponsors/badge.svg)](https://opencollective.com/recharts#sponsors)
 [![Backers on Open Collective](https://opencollective.com/recharts/backers/badge.svg)](https://opencollective.com/recharts#backer)
-[![Rocket.Chat](https://demo.rocket.chat/images/join-chat.svg)](https://demo.rocket.chat/channel/recharts)
 [![Build Status](https://travis-ci.org/recharts/recharts.svg)](https://travis-ci.org/recharts/recharts)
 [![Coverage Status](https://coveralls.io/repos/recharts/recharts/badge.svg?branch=master&service=github)](https://coveralls.io/github/recharts/recharts?branch=master)
 [![npm version](https://badge.fury.io/js/recharts.svg)](http://badge.fury.io/js/recharts)
@@ -97,6 +96,9 @@ We are looking for like-minded people who share the same idea about Recharts. Th
 <a href="https://opencollective.com/recharts/backer/0/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/0/avatar.svg?requireActive=false"></a>
 <a href="https://opencollective.com/recharts/backer/1/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/1/avatar.svg?requireActive=false"></a>
 <a href="https://opencollective.com/recharts/backer/2/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/2/avatar.svg?requireActive=false"></a>
+<a href="https://opencollective.com/recharts/backer/3/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/3/avatar.svg?requireActive=false"></a>
+<a href="https://opencollective.com/recharts/backer/4/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/4/avatar.svg?requireActive=false"></a>
+<a href="https://opencollective.com/recharts/backer/5/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/5/avatar.svg?requireActive=false"></a>
 
 ## Sponsoring
 
