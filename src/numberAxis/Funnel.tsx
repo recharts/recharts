@@ -151,13 +151,11 @@ class Funnel extends PureComponent<Props, State> {
         nextVal = getValueByDataKey(funnelData[i + 1], dataKey, 0);
 
         if (nextVal instanceof Array) {
-          nextVal = nextVal[0];
+          [nextVal] = nextVal;
         }
-      }
-      else if (rawVal instanceof Array && rawVal.length === 2) {
+      } else if (rawVal instanceof Array && rawVal.length === 2) {
         [val, nextVal] = rawVal;
-      }
-      else {
+      } else {
         nextVal = 0;
       }
 
