@@ -4,6 +4,7 @@ import * as d3Scales from 'd3-scale';
 import {
   stack as shapeStack,
   stackOrderNone,
+  stackOffsetDiverging,
   stackOffsetExpand,
   stackOffsetNone,
   stackOffsetSilhouette,
@@ -739,6 +740,7 @@ export const offsetSign = (series: any) => {
 
 const STACK_OFFSET_MAP: Record<string, any> = {
   sign: offsetSign,
+  diverging: stackOffsetDiverging,
   expand: stackOffsetExpand,
   none: stackOffsetNone,
   silhouette: stackOffsetSilhouette,

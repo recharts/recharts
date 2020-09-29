@@ -137,7 +137,7 @@ export interface CategoricalChartProps {
   height?: number;
   data?: any[];
   layout?: LayoutType;
-  stackOffset?: 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette';
+  stackOffset?: 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette' | 'diverging';
   throttleDelay?: number;
   margin?: Margin;
   barCategoryGap?: number | string;
