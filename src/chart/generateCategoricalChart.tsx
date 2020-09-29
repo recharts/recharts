@@ -1198,7 +1198,7 @@ const generateCategoricalChart = ({
       }
     };
 
-    handleReceiveSyncEvent = (cId: any, chartId: any, data: any) => {
+    handleReceiveSyncEvent = (cId: number | string, chartId: string, data: CategoricalChartState) => {
       const { syncId, layout } = this.props;
       const { updateId } = this.state;
 
@@ -1425,7 +1425,7 @@ const generateCategoricalChart = ({
       }
     };
 
-    triggerSyncEvent(data: any) {
+    triggerSyncEvent(data: CategoricalChartState) {
       const { syncId } = this.props;
 
       if (!_.isNil(syncId)) {
