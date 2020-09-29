@@ -4,7 +4,6 @@ import * as d3Scales from 'd3-scale';
 import {
   stack as shapeStack,
   stackOrderNone,
-  stackOffsetDiverging,
   stackOffsetExpand,
   stackOffsetNone,
   stackOffsetSilhouette,
@@ -716,13 +715,12 @@ export const offsetSign = (series: any) => {
     return;
   }
 
-  for (let j = 0, m = series[0].length; j < m; ++j) {
+  for (let j = 0; j < series[0].length; ++j) {
     let positive = 0;
     let negative = 0;
 
     for (let i = 0; i < n; ++i) {
       const value = _.isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
-
       /* eslint-disable prefer-destructuring */
       if (value >= 0) {
         series[i][j][0] = positive;
@@ -740,18 +738,17 @@ export const offsetSign = (series: any) => {
 
 const STACK_OFFSET_MAP: Record<string, any> = {
   sign: offsetSign,
-  diverging: stackOffsetDiverging,
   expand: stackOffsetExpand,
   none: stackOffsetNone,
   silhouette: stackOffsetSilhouette,
   wiggle: stackOffsetWiggle,
-};
+} as const;
 
-export const getStackedData = (data: any, stackItems: any, offsetType: string) => {
+export const getStackedData = (data: any, stackItems: any, offsetType: keyof typeof STACK_OFFSET_MAP) => {
   const dataKeys = stackItems.map((item: any) => item.props.dataKey);
   const stack = shapeStack()
     .keys(dataKeys)
-    .value((d, key) => Math.max(+getValueByDataKey(d, key, 0), 0))
+    .value((d, key) => getValueByDataKey(d, key, 0))
     .order(stackOrderNone)
     .offset(STACK_OFFSET_MAP[offsetType]);
 
