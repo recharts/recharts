@@ -1,5 +1,3 @@
-import './polyfill';
-
 export { default as Surface } from './container/Surface';
 export { default as Layer } from './container/Layer';
 

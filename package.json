@@ -7,8 +7,7 @@
   "jsnext:main": "es6/index",
   "types": "types/index.d.ts",
   "sideEffects": [
-    "./*/index.js",
-    "./*/polyfill.js"
+    "./*/index.js"
   ],
   "files": [
     "*.md",
