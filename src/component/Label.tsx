@@ -45,6 +45,7 @@ interface LabelProps {
   children?: ReactNode;
   className?: string;
   content?: ContentType;
+  angle?: number;
 }
 
 type Props = Omit<PresentationAttributes<SVGTextElement>, 'viewBox'> & LabelProps;

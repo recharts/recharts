@@ -480,6 +480,9 @@ export interface BaseAxisProps {
   range?: Array<number>;
   /** axis react component */
   AxisComp?: any;
+  /** SVG passthrough props. Note: this isn't exhaustive */
+  fontFamily?: string;
+  fontSize?: string | number;
 };
 
 export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
