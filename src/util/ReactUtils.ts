@@ -245,7 +245,7 @@ export const filterSvgElements = (children: React.ReactElement[]): React.ReactEl
   const svgElements = [] as React.ReactElement[];
 
   React.Children.forEach(children, (entry: React.ReactElement) => {
-    if (entry && entry.type && _.isString(entry.type) && SVG_TAGS.indexOf(entry.type) >= 0) {
+    if (isSvgElement(entry)) {
       svgElements.push(entry);
     }
   });
@@ -320,31 +320,26 @@ export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: Rea
 };
 
 export const renderByOrder = (children: React.ReactElement[], renderMap: any) => {
-  let elements: React.ReactElement[] = [];
+  const elements: React.ReactElement[] = [];
   const record: any = {};
 
   Children.forEach(children, (child, index) => {
-    if (child && isSvgElement(child)) {
+    if (isSvgElement(child)) {
       elements.push(child);
-    } else if (child && renderMap[getDisplayName(child.type)]) {
+    } else if (child) {
       const displayName = getDisplayName(child.type);
-      const { handler, once } = renderMap[displayName];
+      const { handler, once } = renderMap[displayName] || {};
 
-      if ((once && !record[displayName]) || !once) {
+      if (handler && (!once || !record[displayName])) {
         const results = handler(child, displayName, index);
 
-        if (_.isArray(results)) {
-          elements = [elements, ...results];
-        } else {
-          elements.push(results);
-        }
-
+        elements.push(results);
         record[displayName] = true;
       }
     }
   });
 
-  return elements;
+  return _.flatten(elements);
 };
 
 export const getReactEventByType = (e: any) => {
