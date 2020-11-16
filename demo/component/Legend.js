@@ -29,7 +29,7 @@ const data4 = [
   { value: 'Sony', type: 'none' },
 ];
 
-export default class Demo extends Component {
+export default class LegendDemo extends Component {
 
   static displayName = 'LegendDemo';
 
