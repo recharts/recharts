@@ -121,7 +121,7 @@ class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>
    * @return {ReactElement} Items
    */
   renderItems() {
-    const { payload, iconSize, layout, formatter } = this.props;
+    const { payload, iconSize, layout, formatter, inactiveColor } = this.props;
     const viewBox = { x: 0, y: 0, width: SIZE, height: SIZE };
     const itemStyle = {
       display: layout === 'horizontal' ? 'inline-block' : 'block',
@@ -140,6 +140,8 @@ class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>
       if (entry.type === 'none') {
         return null;
       }
+      
+      const color = entry.inactive ? inactiveColor : entry.color;
 
       return (
         <li
@@ -151,7 +153,7 @@ class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>
           <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
             {this.renderIcon(entry)}
           </Surface>
-          <span className="recharts-legend-item-text">
+          <span className="recharts-legend-item-text" style={{color}}>
             {finalFormatter ? finalFormatter(entry.value, entry, i) : entry.value}
           </span>
         </li>
