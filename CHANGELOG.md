@@ -1,3 +1,16 @@
+## 2.0.0-beta.8 (Nov 16, 2020)
+
+### fix
+
+-  Add color change for inactive legend label
+- fix stackOffset="sign" in #2292, and add props stackOffset="positive" to fix #1667
+
+### refactor
+
+- update `filterSvgElements` and `renderByOrder`
+- Replace core-js polyfill and remove babel-polyfill
+
+
 ## 2.0.0-beta.7 (Sep 08, 2020)
 
 ### fix
