@@ -737,19 +737,49 @@ export const offsetSign = (series: any) => {
   }
 };
 
+/* eslint no-param-reassign: 0 */
+export const offsetPositive = (series: any) => {
+  const n = series.length;
+  if (n <= 0) {
+    return;
+  }
+
+  for (let j = 0, m = series[0].length; j < m; ++j) {
+    let positive = 0;
+    let negative = 0;
+
+    for (let i = 0; i < n; ++i) {
+      const value = _.isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
+
+      /* eslint-disable prefer-destructuring */
+      if (value >= 0) {
+        series[i][j][0] = positive;
+        series[i][j][1] = positive + value;
+        positive = series[i][j][1];
+      } else {
+        series[i][j][0] = 0;
+        series[i][j][1] = 0;
+        negative = series[i][j][1];
+      }
+      /* eslint-enable prefer-destructuring */
+    }
+  }
+};
+
 const STACK_OFFSET_MAP: Record<string, any> = {
   sign: offsetSign,
   expand: stackOffsetExpand,
   none: stackOffsetNone,
   silhouette: stackOffsetSilhouette,
   wiggle: stackOffsetWiggle,
+  positive: offsetPositive,
 };
 
 export const getStackedData = (data: any, stackItems: any, offsetType: string) => {
   const dataKeys = stackItems.map((item: any) => item.props.dataKey);
   const stack = shapeStack()
     .keys(dataKeys)
-    .value((d, key) => Math.max(+getValueByDataKey(d, key, 0), 0))
+    .value((d, key) => +getValueByDataKey(d, key, 0))
     .order(stackOrderNone)
     .offset(STACK_OFFSET_MAP[offsetType]);
 
