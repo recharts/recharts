@@ -157,7 +157,7 @@ const getSectorWithCorner = ({
       ? Math.abs(startAngle - endAngle)
       : Math.abs(startAngle - endAngle) - sit - eit;
 
-    if (innerArcAngle < 0) {
+    if (innerArcAngle < 0 && cornerRadius === 0) {
       return `${path}L${cx},${cy}Z`;
     }
 
