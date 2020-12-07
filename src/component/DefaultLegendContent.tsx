@@ -103,6 +103,9 @@ class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>
         />
       );
     }
+    if (React.isValidElement(data.legendIcon)) {
+      return React.cloneElement(data.legendIcon);
+    }
 
     return (
       <Symbols
