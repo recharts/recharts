@@ -77,7 +77,10 @@ const updateDepthOfTargets = (tree: any, curNode: any) => {
   }
 };
 
-const getNodesTree = ({ nodes, links }: any, width: number, nodeWidth: number): any => {
+const getNodesTree = ({ nodes, links }: {
+    nodes: SankeyNode[];
+    links: SankeyLink[];
+  }, width: number, nodeWidth: number): any => {
   const tree = nodes.map((entry: any, index: number) => {
     const result = searchTargetsAndSources(links, index);
 
@@ -253,7 +256,10 @@ const computeData = ({
   nodeWidth,
   nodePadding,
 }: {
-  data: any;
+  data: {
+    nodes: SankeyNode[];
+    links: SankeyLink[];
+  };
   width: number;
   height: number;
   iterations: any;
@@ -334,7 +340,7 @@ interface SankeyProps {
   height?: number;
 
   data: {
-    node: SankeyNode[];
+    nodes: SankeyNode[];
     links: SankeyLink[];
   };
 
