@@ -47,13 +47,6 @@ interface PieDef {
   cornerRadius?: number | string;
 }
 
-type PieActiveShape = ReactElement<SVGElement> | ((props: any) => SVGElement) | SectorProps;
-type PieLabelLine =
-  | ReactElement<SVGElement>
-  | ((props: any) => SVGElement)
-  | PresentationAttributes<SVGPathElement>
-  | boolean;
-type Pielabel = ReactElement<SVGElement> | ((props: any) => SVGElement) | { offsetRadius: number } | boolean;
 type PieSectorDataItem = SectorProps & {
   percent?: number;
   name?: string | number;
@@ -63,6 +56,13 @@ type PieSectorDataItem = SectorProps & {
   value?: number;
   paddingAngle?: number;
 };
+type Pielabel = ReactElement<SVGElement> | ((props: PieSectorDataItem & Record<string, any>) => SVGElement) | { offsetRadius: number } | boolean;
+type PieActiveShape = ReactElement<SVGElement> | ((props: PieSectorDataItem) => SVGElement) | SectorProps;
+type PieLabelLine =
+  | ReactElement<SVGElement>
+  | ((props: any) => SVGElement)
+  | PresentationAttributes<SVGPathElement>
+  | boolean;
 
 interface PieProps extends PieDef {
   className?: string;
