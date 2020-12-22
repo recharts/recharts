@@ -60,7 +60,7 @@
     "eventemitter3": "^4.0.1",
     "lodash": "^4.17.19",
     "react-resize-detector": "^4.2.1",
-    "react-smooth": "^1.0.5",
+    "react-smooth": "^1.0.6",
     "recharts-scale": "^0.4.2",
     "reduce-css-calc": "^2.1.7"
   },
