@@ -24,6 +24,7 @@ export interface Payload<TValue, TID> {
   };
   formatter?: Formatter<TValue, TID>;
   inactive?: boolean;
+  legendIcon?: ReactElement;
 }
 
 export interface Props<TValue, TID> {
@@ -143,7 +144,7 @@ class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>
       if (entry.type === 'none') {
         return null;
       }
-      
+
       const color = entry.inactive ? inactiveColor : entry.color;
 
       return (
@@ -156,7 +157,7 @@ class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>
           <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
             {this.renderIcon(entry)}
           </Surface>
-          <span className="recharts-legend-item-text" style={{color}}>
+          <span className="recharts-legend-item-text" style={{ color }}>
             {finalFormatter ? finalFormatter(entry.value, entry, i) : entry.value}
           </span>
         </li>
