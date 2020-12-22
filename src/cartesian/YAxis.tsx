@@ -1,9 +1,9 @@
 /**
  * @fileOverview Y Axis
  */
-import { BaseAxisProps, AxisInterval } from '../util/types';
+import { BaseAxisProps, AxisInterval, PresentationAttributes } from '../util/types';
 
-export interface Props extends BaseAxisProps {
+interface YAxisProps extends BaseAxisProps {
   /** The unique id of y-axis */
   yAxisId?: string | number;
   /**
@@ -26,6 +26,9 @@ export interface Props extends BaseAxisProps {
   interval?: AxisInterval;
   reversed?: boolean;
 }
+
+
+export type Props = PresentationAttributes<SVGElement> & YAxisProps;
 
 function YAxis(props: Props): any {
   return null;

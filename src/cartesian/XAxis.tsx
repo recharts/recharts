@@ -1,10 +1,10 @@
 /**
  * @fileOverview X Axis
  */
-import { BaseAxisProps, AxisInterval } from '../util/types';
+import { BaseAxisProps, AxisInterval, PresentationAttributes } from '../util/types';
 
 /** Define of XAxis props */
-export interface Props extends BaseAxisProps {
+interface XAxisProps extends BaseAxisProps {
   /** The unique id of x-axis */
   xAxisId?: string | number;
   /** The width of axis which is usually calculated internally */
@@ -23,7 +23,13 @@ export interface Props extends BaseAxisProps {
   minTickGap?: number;
   interval?: AxisInterval;
   reversed?: boolean;
+  /** the rotate angle of tick */
+  angle?: number;
 }
+
+
+export type Props = PresentationAttributes<SVGElement> & XAxisProps;
+
 function XAxis(props: Props): any {
   return null;
 }
