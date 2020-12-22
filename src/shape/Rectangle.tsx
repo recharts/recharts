@@ -8,7 +8,7 @@ import { PresentationAttributes, AnimationTiming, filterProps } from '../util/ty
 
 type RectRadius = [number, number, number, number];
 
-const getRectangePath = (x: number, y: number, width: number, height: number, radius: number | RectRadius) => {
+const getRectanglePath = (x: number, y: number, width: number, height: number, radius: number | RectRadius) => {
   const maxRadius = Math.min(Math.abs(width) / 2, Math.abs(height) / 2);
   const ySign = height >= 0 ? 1 : -1;
   const xSign = width >= 0 ? 1 : -1;
@@ -141,7 +141,7 @@ class Rectangle extends PureComponent<Props> {
         <path
           {...filterProps(this.props, true)}
           className={layerClass}
-          d={getRectangePath(x, y, width, height, radius)}
+          d={getRectanglePath(x, y, width, height, radius)}
         />
       );
     }
@@ -169,7 +169,7 @@ class Rectangle extends PureComponent<Props> {
             <path
               {...filterProps(this.props, true)}
               className={layerClass}
-              d={getRectangePath(currX, currY, currWidth, currHeight, radius)}
+              d={getRectanglePath(currX, currY, currWidth, currHeight, radius)}
               ref={node => {
                 this.node = node;
               }}
