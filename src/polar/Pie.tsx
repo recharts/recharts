@@ -94,6 +94,9 @@ interface PieProps extends PieDef {
   onAnimationEnd?: () => void;
   onAnimationStart?: () => void;
   id?: string;
+  onMouseEnter?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseLeave?: (data: any, index: number, e: React.MouseEvent) => void;
+  onClick?: (data: any, index: number, e: React.MouseEvent) => void;
 }
 
 interface State {
@@ -101,7 +104,7 @@ interface State {
   prevSectors?: PieSectorDataItem[];
 }
 
-type Props = PresentationAttributes<SVGElement> & PieProps;
+export type Props = PresentationAttributes<SVGElement> & PieProps;
 
 class Pie extends PureComponent<Props, State> {
   static displayName = 'Pie';

@@ -37,7 +37,7 @@ function renderContent<TValue, TID>(content: ContentType<TValue, TID>, props: Pr
 
 const EPS = 1;
 
-type Props<TValue, TID> = DefaultProps<TValue, TID> & {
+export type Props<TValue, TID> = DefaultProps<TValue, TID> & {
   wrapperStyle?: CSSProperties;
   chartWidth?: number;
   chartHeight?: number;

@@ -42,7 +42,7 @@ interface ReferenceLineProps extends InternalReferenceLineProps {
   shape?: ReactElement<SVGElement> | ((props: any) => SVGElement);
 }
 
-type Props = PresentationAttributes<SVGLineElement> & ReferenceLineProps;
+export type Props = PresentationAttributes<SVGLineElement> & ReferenceLineProps;
 
 const renderLine = (option: ReferenceLineProps['shape'], props: any) => {
   let line;

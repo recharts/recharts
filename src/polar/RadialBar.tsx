@@ -70,7 +70,7 @@ interface RadialBarProps {
   animationEasing?: AnimationTiming;
 }
 
-type Props = PresentationAttributes<SVGElement> & RadialBarProps;
+export type Props = PresentationAttributes<SVGElement> & RadialBarProps;
 
 interface State {
   isAnimationFinished?: boolean;

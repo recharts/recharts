@@ -10,7 +10,7 @@ interface LayerProps {
   children?: ReactNode;
 }
 
-type Props = SVGProps<SVGGElement> & LayerProps;
+export type Props = SVGProps<SVGGElement> & LayerProps;
 
 function Layer(props: Props) {
   const { children, className, ...others } = props;

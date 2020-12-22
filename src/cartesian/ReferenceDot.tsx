@@ -36,7 +36,7 @@ interface ReferenceDotProps extends InternalReferenceDotProps {
   shape?: ReactElement<SVGElement> | ((props: any) => SVGElement);
 }
 
-type Props = DotProps & ReferenceDotProps;
+export type Props = DotProps & ReferenceDotProps;
 
 const getCoordinate = (props: Props) => {
   const { x, y, xAxis, yAxis } = props;

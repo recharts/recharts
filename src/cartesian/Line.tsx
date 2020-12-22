@@ -74,7 +74,7 @@ interface LineProps extends InternalLineProps {
   id?: string;
 }
 
-type Props = Omit<CurveProps, 'points' | 'pathRef'> & LineProps;
+export type Props = Omit<CurveProps, 'points' | 'pathRef'> & LineProps;
 
 interface State {
   isAnimationFinished?: boolean;

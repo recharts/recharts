@@ -15,7 +15,7 @@ interface PolarGridProps {
   polarRadius?: number[];
   gridType?: 'polygon' | 'circle';
 }
-type Props = PresentationAttributes<SVGPathElement> & PolarGridProps;
+export type Props = PresentationAttributes<SVGPathElement> & PolarGridProps;
 
 class PolarGrid extends PureComponent<Props> {
   static displayName = 'PolarGrid';

@@ -16,7 +16,7 @@ interface CrossProps {
   className?: number;
 }
 
-type Props = PresentationAttributes<SVGPathElement> & CrossProps;
+export type Props = PresentationAttributes<SVGPathElement> & CrossProps;
 
 class Cross extends PureComponent<Props> {
   static defaultProps = {

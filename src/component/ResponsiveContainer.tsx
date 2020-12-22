@@ -8,7 +8,7 @@ import _ from 'lodash';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
-interface Props {
+export interface Props {
   aspect?: number;
   width?: string | number;
   height?: string | number;

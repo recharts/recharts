@@ -62,7 +62,7 @@ interface LabelProps {
   content?: ContentType;
 }
 
-type Props = Omit<PresentationAttributes<SVGTextElement>, 'viewBox'> & LabelProps;
+export type Props = Omit<PresentationAttributes<SVGTextElement>, 'viewBox'> & LabelProps;
 
 const getLabel = (props: Props) => {
   const { value, formatter } = props;

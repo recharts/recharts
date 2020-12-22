@@ -82,7 +82,7 @@ interface ScatterProps {
   animationEasing?: AnimationTiming;
 }
 
-type Props = PresentationAttributes<SVGElement> & ScatterProps;
+export type Props = PresentationAttributes<SVGElement> & ScatterProps;
 
 interface State {
   isAnimationFinished?: boolean;

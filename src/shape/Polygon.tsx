@@ -21,7 +21,7 @@ interface PolygonProps {
   points?: Array<Coordinate>;
 }
 
-type Props = Omit<PresentationAttributes<SVGPolygonElement>, 'points'> & PolygonProps;
+export type Props = Omit<PresentationAttributes<SVGPolygonElement>, 'points'> & PolygonProps;
 
 class Polygon extends PureComponent<Props> {
   render() {

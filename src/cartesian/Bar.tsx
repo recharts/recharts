@@ -34,6 +34,7 @@ import {
   TickItem,
   adaptEventsOfChild,
 } from '../util/types';
+import { ContentType } from '../component/Label';
 
 interface BarRectangleItem extends RectangleProps {
   value?: number;
@@ -83,9 +84,15 @@ interface BarProps extends InternalBarProps {
   animationEasing?: AnimationTiming;
   animationId?: number;
   id?: string;
+  label?: boolean | ReactElement<SVGElement> | ((props: any) => SVGElement) | {
+    id?: string;
+    valueAccessor?: Function;
+    dataKey?: DataKey<any>;
+    content?: ContentType;
+  };
 }
 
-type Props = PresentationAttributes<SVGPathElement> & BarProps;
+export type Props = PresentationAttributes<SVGPathElement> & BarProps;
 
 interface State {
   readonly isAnimationFinished?: boolean;

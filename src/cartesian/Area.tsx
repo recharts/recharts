@@ -84,7 +84,7 @@ interface AreaProps extends InternalAreaProps {
   id?: string;
 }
 
-type Props = PresentationAttributes<SVGElement> & AreaProps;
+export type Props = PresentationAttributes<SVGElement> & AreaProps;
 
 interface State {
   prevPoints?: AreaPointItem[];

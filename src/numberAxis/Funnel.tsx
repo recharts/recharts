@@ -56,7 +56,7 @@ interface FunnelProps extends InternalFunnelProps {
   id?: string;
 }
 
-type Props = TrapezoidProps & FunnelProps;
+export type Props = TrapezoidProps & FunnelProps;
 
 interface State {
   readonly prevTrapezoids?: FunnelTrapezoidItem[];

@@ -11,7 +11,7 @@ interface Data {
   payload?: any;
 }
 
-interface Props<T extends Data> {
+export interface Props<T extends Data> {
   id?: string;
   data: Array<T>;
   valueAccessor?: Function;

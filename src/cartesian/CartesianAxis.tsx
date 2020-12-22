@@ -45,7 +45,7 @@ export interface CartesianAxisProps {
   interval?: number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
 }
 
-type Props = PresentationAttributes<SVGElement> & CartesianAxisProps;
+export type Props = PresentationAttributes<SVGElement> & CartesianAxisProps;
 
 class CartesianAxis extends Component<Props> {
   static displayName = 'CartesianAxis';

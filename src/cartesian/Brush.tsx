@@ -47,7 +47,7 @@ interface BrushProps extends InternalBrushProps {
   alwaysShowText?: boolean;
 }
 
-type Props = PresentationAttributes<SVGElement> & BrushProps;
+export type Props = PresentationAttributes<SVGElement> & BrushProps;
 
 type BrushTravellerId = 'startX' | 'endX';
 

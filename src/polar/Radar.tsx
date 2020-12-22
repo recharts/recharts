@@ -56,7 +56,7 @@ interface RadarProps {
   onMouseLeave?: (props: any, e: MouseEvent<SVGPolygonElement>) => void;
 }
 
-type Props = Omit<PresentationAttributes<SVGElement>, 'onMouseEnter' | 'onMouseLeave'> & RadarProps;
+export type Props = Omit<PresentationAttributes<SVGElement>, 'onMouseEnter' | 'onMouseLeave'> & RadarProps;
 
 interface State {
   isAnimationFinished?: boolean;
