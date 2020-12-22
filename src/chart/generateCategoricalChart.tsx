@@ -764,7 +764,8 @@ const generateCategoricalChart = ({
 
         if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
           // graphic child has data props
-          payload = findEntryInArray(data || displayedData, tooltipAxis.dataKey, activeLabel);
+          const entries = (data === undefined) ? displayedData : data;
+          payload = findEntryInArray(entries, tooltipAxis.dataKey, activeLabel);
         } else {
           payload = (data && data[activeIndex]) || displayedData[activeIndex];
         }
