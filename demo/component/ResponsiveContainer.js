@@ -308,7 +308,7 @@ export default class Demo extends Component {
           <ResponsiveContainer>
             <RadarChart outerRadius={150} data={data05}>
               <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-              <PolarGrid />
+              <PolarGrid radialLines={true} />
               <PolarAngleAxis dataKey="subject" />
               <PolarRadiusAxis />
             </RadarChart>

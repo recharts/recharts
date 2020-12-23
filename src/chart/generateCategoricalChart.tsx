@@ -1618,6 +1618,7 @@ const generateCategoricalChart = ({
     };
 
     renderPolarGrid = (element: React.ReactElement): React.ReactElement => {
+      const { radialLines } = element.props;
       const { radiusAxisMap, angleAxisMap } = this.state;
       const radiusAxis = getAnyElementOfObject(radiusAxisMap);
       const angleAxis = getAnyElementOfObject(angleAxisMap);
@@ -1631,6 +1632,7 @@ const generateCategoricalChart = ({
         innerRadius,
         outerRadius,
         key: element.key || 'polar-grid',
+        radialLines
       });
     };
 
