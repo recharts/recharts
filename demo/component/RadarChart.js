@@ -6,12 +6,12 @@ import DemoRadarItem from './DemoRadarItem';
 import { changeNumberOfData } from './utils';
 
 const data = [
-  { subject: 'Math', A: 120, B: 110 },
-  { subject: 'Chinese', A: 98, B: 130 },
-  { subject: 'English', A: 86, B: 130 },
-  { subject: 'Geography', A: 99, B: 100 },
-  { subject: 'Physics', A: 85, B: 90 },
-  { subject: 'History', A: 65, B: 85 },
+  { subject: 'Math', A: 120, B: 110, C: [80, 120] },
+  { subject: 'Chinese', A: 98, B: 130, C: [90, 113] },
+  { subject: 'English', A: 86, B: 130, C: [70, 134] },
+  { subject: 'Geography', A: null, B: 100, C: [88, 130] },
+  { subject: 'Physics', A: 85, B: 90, C: [55, 110] },
+  { subject: 'History', A: 65, B: 85, C: [60, 120] },
 ];
 
 const initialState = { data };
@@ -55,6 +55,14 @@ export default class Demo extends Component {
           <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
         </RadarChart>
 
+        <p>A range RadarChart</p>
+        <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
+          <PolarGrid />
+          <PolarAngleAxis dataKey="subject" />
+          <Tooltip />
+          <Radar name="standard" dataKey="C" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+        </RadarChart>
+
         <p>A RadarChart of two students' score</p>
         <RadarChart
           cx={300}
@@ -94,7 +102,7 @@ export default class Demo extends Component {
               <PolarAngleAxis dataKey="subject" />
               <PolarRadiusAxis />
               <Tooltip />
-              <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6}>
+              <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} connectNulls>
                 <LabelList />
               </Radar>
             </RadarChart>
