@@ -3,6 +3,7 @@
  */
 import React, { PureComponent, ReactNode, MouseEvent, ReactText, ReactElement } from 'react';
 import classNames from 'classnames';
+import _ from 'lodash';
 import Surface from '../container/Surface';
 import Symbols from '../shape/Symbols';
 import { LegendType, LayoutType, SymbolType, adaptEventsOfChild } from '../util/types';
@@ -24,6 +25,7 @@ export interface Payload<TValue, TID> {
   };
   formatter?: Formatter<TValue, TID>;
   inactive?: boolean;
+  legendIcon?: ReactElement<SVGElement>;
 }
 
 export interface Props<TValue, TID> {
@@ -104,7 +106,8 @@ class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>
       );
     }
     if (React.isValidElement(data.legendIcon)) {
-      return React.cloneElement(data.legendIcon);
+      const iconProps: any = _.omit(data, 'legendIcon');
+      return React.cloneElement(data.legendIcon, iconProps);
     }
 
     return (
@@ -143,7 +146,7 @@ class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>
       if (entry.type === 'none') {
         return null;
       }
-      
+
       const color = entry.inactive ? inactiveColor : entry.color;
 
       return (
@@ -156,7 +159,7 @@ class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>
           <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
             {this.renderIcon(entry)}
           </Surface>
-          <span className="recharts-legend-item-text" style={{color}}>
+          <span className="recharts-legend-item-text" style={{ color }}>
             {finalFormatter ? finalFormatter(entry.value, entry, i) : entry.value}
           </span>
         </li>
