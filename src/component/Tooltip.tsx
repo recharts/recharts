@@ -9,7 +9,7 @@ import DefaultTooltipContent, { ValueType, NameType, Payload, Props as DefaultPr
 
 import Global from '../util/Global';
 import { isNumber } from '../util/DataUtils';
-import { AnimationTiming } from '../util/types';
+import { AnimationTiming, PresentationAttributes } from '../util/types';
 
 const CLS_PREFIX = 'recharts-tooltip-wrapper';
 
@@ -70,10 +70,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   cursor?:
     | boolean
     | ReactElement
-    | {
-        strokeDasharray: ReactText;
-        stroke?: string;
-      };
+    | PresentationAttributes<SVGElement>;
   coordinate?: {
     x?: number;
     y?: number;
