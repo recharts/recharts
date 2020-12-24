@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Surface, Legend } from 'recharts';
+import CustomLegendIcon from './CustomLegendIcon';
 
 const data = [
   { value: 'Apple', color: '#ff7300' },
@@ -29,6 +30,13 @@ const data4 = [
   { value: 'Sony', type: 'none' },
 ];
 
+const data5 = [
+  { value: 'Apple', color: '#ff7300', legendIcon: <CustomLegendIcon /> },
+  { value: 'Samsung', color: '#bb7300', legendIcon: <CustomLegendIcon /> },
+  { value: 'Huawei', color: '#887300', legendIcon: <CustomLegendIcon /> },
+  { value: 'Sony', color: '#667300', legendIcon: <CustomLegendIcon /> },
+];
+
 export default class Demo extends Component {
 
   static displayName = 'LegendDemo';
@@ -50,6 +58,10 @@ export default class Demo extends Component {
 
         <div style={{ position: 'relative', height: 200 }}>
           <Legend width={200} height={30} payload={data4} />
+        </div>
+
+        <div style={{ position: 'relative', height: 200 }}>
+          <Legend width={200} height={30} payload={data5} />
         </div>
       </div>
     );
