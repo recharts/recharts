@@ -56,7 +56,7 @@ import {
   LayoutType,
   CategoricalChartOptions,
   Margin,
-  ViewBox,
+  CartesianViewBox,
   ChartOffset,
   BaseAxisProps,
   Coordinate,
@@ -1223,7 +1223,7 @@ const generateCategoricalChart = ({
           if (!offset) {
             return;
           }
-          const viewBox: ViewBox = { ...offset, x: offset.left, y: offset.top };
+          const viewBox: CartesianViewBox = { ...offset, x: offset.left, y: offset.top };
           // When a categotical chart is combined with another chart, the value of chartX
           // and chartY may beyond the boundaries.
           const validateChartX = Math.min(chartX, viewBox.x + viewBox.width);

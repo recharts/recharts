@@ -4,11 +4,12 @@ import Label, { ContentType } from './Label';
 import Layer from '../container/Layer';
 import { findAllByType } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { filterProps, DataKey } from '../util/types';
+import { filterProps, DataKey, ViewBox } from '../util/types';
 
 interface Data {
   value?: number | string | Array<number | string>;
   payload?: any;
+  parentViewBox?: ViewBox;
 }
 
 export interface Props<T extends Data> {
@@ -18,6 +19,7 @@ export interface Props<T extends Data> {
   clockWise?: boolean;
   dataKey?: DataKey<T>;
   content?: ContentType;
+  textBreakAll?: boolean;
 }
 
 const defaultProps = {
@@ -25,7 +27,7 @@ const defaultProps = {
 };
 
 function LabelList<T extends Data>(props: Props<T>) {
-  const { data, valueAccessor, dataKey, clockWise, id, ...others } = props;
+  const { data, valueAccessor, dataKey, clockWise, id, textBreakAll, ...others } = props;
 
   if (!data || !data.length) {
     return null;
@@ -44,8 +46,10 @@ function LabelList<T extends Data>(props: Props<T>) {
             {...(filterProps(entry, true) as any)}
             {...others}
             {...idProps}
+            parentViewBox={entry.parentViewBox}
             index={index}
             value={value}
+            textBreakAll={textBreakAll}
             viewBox={Label.parseViewBox(_.isNil(clockWise) ? entry : { ...entry, clockWise })}
             key={`label-${index}`} // eslint-disable-line react/no-array-index-key
           />

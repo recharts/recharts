@@ -10,12 +10,12 @@ import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { createLabeldScales, rectWithCoords } from '../util/CartesianUtils';
 import { warn } from '../util/LogUtils';
-import { ViewBox, D3Scale, PresentationAttributes, filterProps } from '../util/types';
+import { CartesianViewBox, D3Scale, PresentationAttributes, filterProps } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 
 interface InternalReferenceLineProps {
-  viewBox?: ViewBox;
+  viewBox?: CartesianViewBox;
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   clipPathId?: number | string;

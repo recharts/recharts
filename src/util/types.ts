@@ -762,13 +762,6 @@ export interface GeometrySector {
   cornerIsExternal?: boolean;
 }
 
-export interface ViewBox {
-  x?: number;
-  y?: number;
-  width?: number;
-  height?: number;
-}
-
 export type D3Scale<T> = D3ScaleContinuousNumeric<T, number>;
 
 export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | 'dataMax';
@@ -842,6 +835,25 @@ export interface Margin {
   bottom?: number;
   left?: number;
 }
+
+export interface CartesianViewBox {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+}
+
+export interface PolarViewBox {
+  cx?: number;
+  cy?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  startAngle?: number;
+  endAngle?: number;
+  clockWise?: boolean;
+}
+
+export type ViewBox = CartesianViewBox | PolarViewBox;
 
 export const filterProps = (
   props: Record<string, any> | Component | FunctionComponent | boolean,

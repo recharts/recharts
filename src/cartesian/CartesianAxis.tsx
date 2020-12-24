@@ -11,7 +11,7 @@ import Text from '../component/Text';
 import Label from '../component/Label';
 import Global from '../util/Global';
 import { isNumber, mathSign } from '../util/DataUtils';
-import { ViewBox, PresentationAttributes, filterProps, TickItem, adaptEventsOfChild } from '../util/types';
+import { CartesianViewBox, PresentationAttributes, filterProps, TickItem, adaptEventsOfChild } from '../util/types';
 
 interface CartesianTickItem extends TickItem {
   tickCoord?: number;
@@ -28,7 +28,7 @@ export interface CartesianAxisProps {
   unit?: string | number;
   orientation?: 'top' | 'bottom' | 'left' | 'right';
   // The viewBox of svg
-  viewBox?: ViewBox;
+  viewBox?: CartesianViewBox;
   tick?: PresentationAttributes<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
   axisLine?: boolean | PresentationAttributes<SVGLineElement>;
   tickLine?: boolean | PresentationAttributes<SVGLineElement>;

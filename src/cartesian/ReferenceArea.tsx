@@ -11,13 +11,13 @@ import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import Rectangle, { Props as RectangleProps } from '../shape/Rectangle';
-import { ViewBox, D3Scale, filterProps } from '../util/types';
+import { CartesianViewBox, D3Scale, filterProps } from '../util/types';
 
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 
 interface InternalReferenceAreaProps {
-  viewBox?: ViewBox;
+  viewBox?: CartesianViewBox;
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   clipPathId?: number | string;
