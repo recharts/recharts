@@ -74,6 +74,7 @@ interface BarProps extends InternalBarProps {
   hide?: boolean;
   shape?: ReactElement<SVGElement> | ((props: any) => SVGElement);
   background?: RectangleShapeType;
+  radius?: number | [number, number, number, number];
 
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
