@@ -3,7 +3,6 @@
  */
 import React, { PureComponent, ReactNode, MouseEvent, ReactText, ReactElement } from 'react';
 import classNames from 'classnames';
-import _ from 'lodash';
 import Surface from '../container/Surface';
 import Symbols from '../shape/Symbols';
 import { LegendType, LayoutType, SymbolType, adaptEventsOfChild } from '../util/types';
@@ -106,7 +105,8 @@ class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>
       );
     }
     if (React.isValidElement(data.legendIcon)) {
-      const iconProps: any = _.omit(data, 'legendIcon');
+      const iconProps: any = { ...data };
+      delete iconProps.legendIcon;
       return React.cloneElement(data.legendIcon, iconProps);
     }
 
