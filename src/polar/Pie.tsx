@@ -195,7 +195,7 @@ class Pie extends PureComponent<Props, State> {
     const len = pieData.length;
     const deltaAngle = Pie.parseDeltaAngle(startAngle, endAngle);
     const absDeltaAngle = Math.abs(deltaAngle);
-    
+
     let realDataKey = dataKey;
 
     if (_.isNil(dataKey) && _.isNil(valueKey)) {
@@ -214,7 +214,7 @@ class Pie extends PureComponent<Props, State> {
       realDataKey = valueKey;
     }
 
-    const notZeroItemCount = pieData.filter(entry => (getValueByDataKey(entry, realDataKey, 0) !== 0)).length;
+    const notZeroItemCount = pieData.filter(entry => getValueByDataKey(entry, realDataKey, 0) !== 0).length;
     const totalPadingAngle = (absDeltaAngle >= 360 ? notZeroItemCount : notZeroItemCount - 1) * paddingAngle;
     const realTotalAngle = absDeltaAngle - notZeroItemCount * minAngle - totalPadingAngle;
 
@@ -238,7 +238,8 @@ class Pie extends PureComponent<Props, State> {
           tempStartAngle = startAngle;
         }
 
-        const tempEndAngle = tempStartAngle + mathSign(deltaAngle) * ((val !== 0 ? minAngle : 0) + percent * realTotalAngle);
+        const tempEndAngle =
+          tempStartAngle + mathSign(deltaAngle) * ((val !== 0 ? minAngle : 0) + percent * realTotalAngle);
         const midAngle = (tempStartAngle + tempEndAngle) / 2;
         const middleRadius = (coordinate.innerRadius + coordinate.outerRadius) / 2;
         const tooltipPayload = [

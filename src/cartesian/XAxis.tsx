@@ -27,7 +27,6 @@ interface XAxisProps extends BaseAxisProps {
   angle?: number;
 }
 
-
 export type Props = PresentationAttributes<SVGElement> & XAxisProps;
 
 function XAxis(props: Props): any {

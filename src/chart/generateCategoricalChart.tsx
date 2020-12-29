@@ -764,7 +764,7 @@ const generateCategoricalChart = ({
 
         if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
           // graphic child has data props
-          const entries = (data === undefined) ? displayedData : data;
+          const entries = data === undefined ? displayedData : data;
           payload = findEntryInArray(entries, tooltipAxis.dataKey, activeLabel);
         } else {
           payload = (data && data[activeIndex]) || displayedData[activeIndex];
@@ -1632,7 +1632,7 @@ const generateCategoricalChart = ({
         innerRadius,
         outerRadius,
         key: element.key || 'polar-grid',
-        radialLines
+        radialLines,
       });
     };
 

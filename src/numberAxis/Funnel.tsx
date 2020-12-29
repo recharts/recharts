@@ -140,7 +140,10 @@ class Funnel extends PureComponent<Props, State> {
     const { dataKey, nameKey, tooltipType, lastShapeType, reversed } = item.props;
     const { left, top } = offset;
     const { realHeight, realWidth, offsetX, offsetY } = Funnel.getRealWidthHeight(item, offset);
-    const maxValue = Math.max.apply(null, funnelData.map(entry => getValueByDataKey(entry, dataKey, 0)));
+    const maxValue = Math.max.apply(
+      null,
+      funnelData.map(entry => getValueByDataKey(entry, dataKey, 0)),
+    );
     const len = funnelData.length;
     const rowHeight = realHeight / len;
     const parentViewBox = { x: offset.left, y: offset.top, width: offset.width, height: offset.height };
@@ -195,7 +198,7 @@ class Funnel extends PureComponent<Props, State> {
           y,
           width: Math.abs(upperWidth - lowerWidth) / 2 + Math.min(upperWidth, lowerWidth),
           height: rowHeight,
-        }
+        },
       };
     });
 
@@ -210,8 +213,9 @@ class Funnel extends PureComponent<Props, State> {
           y: entry.y - index * rowHeight + (len - 1 - index) * rowHeight,
           tooltipPosition: { ...entry.tooltipPosition, y: newY + rowHeight / 2 },
           labelViewBox: {
-            ...entry.labelViewBox, y: newY,
-          }
+            ...entry.labelViewBox,
+            y: newY,
+          },
         };
       });
     }

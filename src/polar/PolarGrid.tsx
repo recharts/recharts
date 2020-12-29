@@ -37,7 +37,7 @@ class PolarGrid extends PureComponent<Props> {
 
     polarAngles.forEach((angle, i) => {
       const point = polarToCartesian(cx, cy, radius, angle);
-      
+
       if (i) {
         path += `L ${point.x},${point.y}`;
       } else {
