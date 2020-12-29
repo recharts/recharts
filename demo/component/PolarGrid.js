@@ -20,6 +20,7 @@ export default class Demo extends Component {
           height={500}
           polarAngles={polarAngles}
           polarRadius={polarRadius}
+          radialLines={true}
         />
       </Surface>
     );
