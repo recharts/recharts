@@ -22,7 +22,6 @@ export interface Payload<TValue, TID> {
   payload: {
     strokeDasharray: ReactText;
   };
-  legendIcon?: ReactElement;
   formatter?: Formatter<TValue, TID>;
   inactive?: boolean;
   legendIcon?: ReactElement<SVGElement>;
