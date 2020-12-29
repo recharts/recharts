@@ -1,3 +1,33 @@
+## 2.0.0 (Dec 29, 2020)
+
+### fix
+
+- fix minAngle for 0 in PieChart, fix ##2237
+- fix type error of <Bar />, fix #2335
+- fix type error of cursor in <Tooltip />, fix #2178
+- fix Props of XAxis, fix #2128
+- export Props of components, fix #2319, #2156, #2203
+- Fix typo, getRectangePath -> getRectanglePath in Rectangle
+- Allow Duplicated Category for bar charts not using correct entries for custom tool tips
+- Fixing typescript array coalesce
+- fix types error of sankey, fix #2280
+- Fixed SVG path for pie charts when corner radius is set to a value other than zero (#2331)
+
+### feat
+
+- add props `reversed` to `<Funnel /> 
+- add `breakAll` props to `<Text />` to allow break all for chinese 
+- fix width of labelList in Funnel; fix #2056, #1866
+- support range RadarChart and add props `connectNulls` to <Radar />, fix #1890
+- Add ability to pass in custom legend icon.
+
+### deps
+
+- upgrade react-resize-detector to 5.2.0 and fix ts error, fix #2300
+- update react-smooth to 1.0.6
+- upgrade d3 packages
+
+
 ## 2.0.0-beta.8 (Nov 16, 2020)
 
 ### fix
