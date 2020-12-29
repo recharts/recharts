@@ -1,6 +1,7 @@
 /**
  * @fileOverview X Axis
  */
+import type { FunctionComponent } from 'react';
 import { BaseAxisProps, AxisInterval, PresentationAttributes } from '../util/types';
 
 /** Define of XAxis props */
@@ -30,9 +31,7 @@ interface XAxisProps extends BaseAxisProps {
 
 export type Props = PresentationAttributes<SVGElement> & XAxisProps;
 
-function XAxis(props: Props): any {
-  return null;
-}
+const XAxis: FunctionComponent<Props> = () => null;
 
 XAxis.displayName = 'XAxis';
 XAxis.defaultProps = {

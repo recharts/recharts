@@ -85,8 +85,6 @@ const calculateWordsByLines = (
       result.push(newLine);
     }
 
-    console.log(result);
-
     return result;
   }, []);
 }
@@ -168,8 +166,6 @@ class Text extends Component<Props, State> {
       ...textProps
     } = this.props;
     const { wordsByLines } = this.state;
-
-    console.log(textProps.x, textProps.y, this.props.children, wordsByLines, this.props);
 
     if (!isNumOrStr(textProps.x) || !isNumOrStr(textProps.y)) {
       return null;
