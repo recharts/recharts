@@ -274,6 +274,7 @@ class Line extends PureComponent<Props, State> {
 
     return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) =>
       React.cloneElement(item, {
+        // eslint-disable-next-line react/no-array-index-key
         key: `bar-${i}`,
         data: points,
         xAxis,

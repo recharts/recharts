@@ -50,7 +50,7 @@ export type Props<TValue, TID> = DefaultProps<TValue, TID> & {
     right?: number;
   };
   payloadUniqBy?: UniqueOption<TValue, TID>;
-  onBBoxUpdate?: (box: ClientRect | DOMRect | null) => void;
+  onBBoxUpdate?: (box: DOMRect | null) => void;
 };
 
 interface State {
