@@ -24,7 +24,7 @@
 ### deps
 
 - upgrade react-resize-detector to 5.2.0 and fix ts error, fix #2300
-- update react-smooth to 1.0.6
+- update react-smooth to 1.0.6 to fix bug after upgrading d3
 - upgrade d3 packages
 
 
