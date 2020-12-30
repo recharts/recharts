@@ -182,7 +182,7 @@ type ScalesApply<T> = (coord: { [P in keyof T]: any }, options: any) => ScaleRes
 type ScalesIsInRange<T> = (coord: { [P in keyof T]: any }) => boolean;
 type LabeledScales<T> = Scales<T> & { apply: ScalesApply<T> } & { isInRange: ScalesIsInRange<T> };
 
-export const createLabeldScales = (options: Record<string, any>): LabeledScales<Record<string, any>> => {
+export const createLabeledScales = (options: Record<string, any>): LabeledScales<Record<string, any>> => {
   const scales: Scales<Record<string, any>> = Object.keys(options).reduce(
     (res, key: string) => ({
       ...res,

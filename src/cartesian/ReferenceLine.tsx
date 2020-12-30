@@ -8,7 +8,7 @@ import Layer from '../container/Layer';
 import Label from '../component/Label';
 import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
-import { createLabeldScales, rectWithCoords } from '../util/CartesianUtils';
+import { createLabeledScales, rectWithCoords } from '../util/CartesianUtils';
 import { warn } from '../util/LogUtils';
 import { ViewBox, D3Scale, PresentationAttributes, filterProps } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
@@ -119,7 +119,7 @@ function ReferenceLine(props: Props) {
 
   warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
-  const scales = createLabeldScales({ x: xAxis.scale, y: yAxis.scale });
+  const scales = createLabeledScales({ x: xAxis.scale, y: yAxis.scale });
 
   const isX = isNumOrStr(fixedX);
   const isY = isNumOrStr(fixedY);

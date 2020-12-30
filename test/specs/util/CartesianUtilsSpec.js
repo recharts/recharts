@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { scaleLinear, scaleBand } from 'd3-scale';
-import { ScaleHelper, createLabeldScales } from '../../../src/util/CartesianUtils';
+import { ScaleHelper, createLabeledScales } from '../../../src/util/CartesianUtils';
 
 
 describe('ScaleHelper', () => {
@@ -47,7 +47,7 @@ describe('ScaleHelper', () => {
 
 describe('createLabeldScales', () => {
   it('apply() should return the expected values', () => {
-    const scales = createLabeldScales({
+    const scales = createLabeledScales({
       x: scaleBand().domain([0, 1, 2, 3]).range([0, 100]),
       y: scaleLinear().domain([-200, 200]).range([0, 50]),
     });
@@ -56,7 +56,7 @@ describe('createLabeldScales', () => {
   });
 
   it('isInRange() should return the expected values', () => {
-    const scales = createLabeldScales({
+    const scales = createLabeledScales({
       x: scaleBand().domain([0, 1, 2, 3]).range([0, 100]),
       y: scaleLinear().domain([-200, 200]).range([0, 50]),
     });

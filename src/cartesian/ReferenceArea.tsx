@@ -6,7 +6,7 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import Layer from '../container/Layer';
 import Label from '../component/Label';
-import { createLabeldScales, rectWithPoints } from '../util/CartesianUtils';
+import { createLabeledScales, rectWithPoints } from '../util/CartesianUtils';
 import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
@@ -43,7 +43,7 @@ type Props = RectangleProps & ReferenceAreaProps;
 const getRect = (hasX1: boolean, hasX2: boolean, hasY1: boolean, hasY2: boolean, props: Props) => {
   const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2, xAxis, yAxis } = props;
 
-  const scales = createLabeldScales({ x: xAxis.scale, y: yAxis.scale });
+  const scales = createLabeledScales({ x: xAxis.scale, y: yAxis.scale });
 
   const p1 = {
     x: hasX1 ? scales.x.apply(xValue1, { position: 'start' }) : scales.x.rangeMin,
