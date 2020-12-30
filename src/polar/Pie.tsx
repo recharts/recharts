@@ -5,15 +5,15 @@ import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import Layer from '../container/Layer';
-import Sector, { Props as SectorProps } from '../shape/Sector';
-import Curve from '../shape/Curve';
-import Text from '../component/Text';
-import Label from '../component/Label';
-import LabelList from '../component/LabelList';
-import Cell, { Props as CellProps } from '../component/Cell';
+import { Layer } from '../container/Layer';
+import { Sector, Props as SectorProps } from '../shape/Sector';
+import { Curve } from '../shape/Curve';
+import { Text } from '../component/Text';
+import { Label } from '../component/Label';
+import { LabelList } from '../component/LabelList';
+import { Cell, Props as CellProps } from '../component/Cell';
 import { findAllByType } from '../util/ReactUtils';
-import Global from '../util/Global';
+import { Global } from '../util/Global';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -106,7 +106,7 @@ interface State {
 
 export type Props = PresentationAttributes<SVGElement> & PieProps;
 
-class Pie extends PureComponent<Props, State> {
+export class Pie extends PureComponent<Props, State> {
   static displayName = 'Pie';
 
   static defaultProps = {
@@ -562,5 +562,3 @@ class Pie extends PureComponent<Props, State> {
     );
   }
 }
-
-export default Pie;

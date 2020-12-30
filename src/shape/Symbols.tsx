@@ -77,7 +77,7 @@ interface SymbolsProp {
 
 export type Props = PresentationAttributes<SVGPathElement> & SymbolsProp;
 
-class Symbols extends PureComponent<Props> {
+export class Symbols extends PureComponent<Props> {
   static defaultProps = {
     type: 'circle',
     size: 64,
@@ -117,5 +117,3 @@ class Symbols extends PureComponent<Props> {
     return null;
   }
 }
-
-export default Symbols;

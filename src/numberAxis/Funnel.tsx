@@ -5,12 +5,12 @@ import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import Layer from '../container/Layer';
-import Trapezoid, { Props as TrapezoidProps } from '../shape/Trapezoid';
-import LabelList from '../component/LabelList';
-import Cell, { Props as CellProps } from '../component/Cell';
+import { Layer } from '../container/Layer';
+import { Trapezoid, Props as TrapezoidProps } from '../shape/Trapezoid';
+import { LabelList } from '../component/LabelList';
+import { Cell, Props as CellProps } from '../component/Cell';
 import { findAllByType } from '../util/ReactUtils';
-import Global from '../util/Global';
+import { Global } from '../util/Global';
 import { interpolateNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import {
@@ -65,7 +65,7 @@ interface State {
   readonly isAnimationFinished?: boolean;
 }
 
-class Funnel extends PureComponent<Props, State> {
+export class Funnel extends PureComponent<Props, State> {
   static displayName = 'Funnel';
 
   static defaultProps = {
@@ -408,5 +408,3 @@ class Funnel extends PureComponent<Props, State> {
     );
   }
 }
-
-export default Funnel;

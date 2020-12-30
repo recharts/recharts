@@ -6,10 +6,10 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import { shallowEqual } from '../util/ShallowEqual';
 import { getStringSize } from '../util/DOMUtils';
-import Layer from '../container/Layer';
-import Text from '../component/Text';
-import Label from '../component/Label';
-import Global from '../util/Global';
+import { Layer } from '../container/Layer';
+import { Text } from '../component/Text';
+import { Label } from '../component/Label';
+import { Global } from '../util/Global';
 import { isNumber, mathSign } from '../util/DataUtils';
 import { CartesianViewBox, PresentationAttributes, filterProps, TickItem, adaptEventsOfChild } from '../util/types';
 
@@ -47,7 +47,7 @@ export interface CartesianAxisProps {
 
 export type Props = PresentationAttributes<SVGElement> & CartesianAxisProps;
 
-class CartesianAxis extends Component<Props> {
+export class CartesianAxis extends Component<Props> {
   static displayName = 'CartesianAxis';
 
   static defaultProps = {
@@ -475,5 +475,3 @@ class CartesianAxis extends Component<Props> {
     );
   }
 }
-
-export default CartesianAxis;

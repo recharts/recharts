@@ -5,14 +5,14 @@ import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import Curve, { CurveType, Props as CurveProps, Point as CurvePoint } from '../shape/Curve';
-import Dot, { Props as DotProps } from '../shape/Dot';
-import Layer from '../container/Layer';
-import LabelList from '../component/LabelList';
-import ErrorBar, { Props as ErrorBarProps } from './ErrorBar';
+import { Curve, CurveType, Props as CurveProps, Point as CurvePoint } from '../shape/Curve';
+import { Dot, Props as DotProps } from '../shape/Dot';
+import { Layer } from '../container/Layer';
+import { LabelList } from '../component/LabelList';
+import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
 import { findAllByType } from '../util/ReactUtils';
-import Global from '../util/Global';
+import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
@@ -82,7 +82,7 @@ interface State {
   prevPoints?: LinePointItem[];
 }
 
-class Line extends PureComponent<Props, State> {
+export class Line extends PureComponent<Props, State> {
   static displayName = 'Line';
 
   static defaultProps = {
@@ -474,5 +474,3 @@ class Line extends PureComponent<Props, State> {
     );
   }
 }
-
-export default Line;

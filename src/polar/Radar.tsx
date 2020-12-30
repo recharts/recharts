@@ -6,13 +6,13 @@ import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { interpolateNumber } from '../util/DataUtils';
-import Global from '../util/Global';
+import { Global } from '../util/Global';
 import { polarToCartesian } from '../util/PolarUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import Polygon from '../shape/Polygon';
-import Dot, { Props as DotProps } from '../shape/Dot';
-import Layer from '../container/Layer';
-import LabelList from '../component/LabelList';
+import { Polygon } from '../shape/Polygon';
+import { Dot, Props as DotProps } from '../shape/Dot';
+import { Layer } from '../container/Layer';
+import { LabelList } from '../component/LabelList';
 import { PresentationAttributes, LegendType, TooltipType, AnimationTiming, filterProps, DataKey } from '../util/types';
 import { Props as PolarAngleAxisProps } from './PolarAngleAxis';
 import { Props as PolarRadiusAxisProps } from './PolarRadiusAxis';
@@ -67,7 +67,7 @@ interface State {
   prevPoints?: RadarPoint[];
 }
 
-class Radar extends PureComponent<Props, State> {
+export class Radar extends PureComponent<Props, State> {
   static displayName = 'Radar';
 
   static defaultProps = {
@@ -338,5 +338,3 @@ class Radar extends PureComponent<Props, State> {
     );
   }
 }
-
-export default Radar;

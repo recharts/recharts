@@ -1,14 +1,14 @@
 /**
  * @fileOverview Line Chart
  */
-import generateCategoricalChart from './generateCategoricalChart';
-import Line from '../cartesian/Line';
-import XAxis from '../cartesian/XAxis';
-import YAxis from '../cartesian/YAxis';
+import { generateCategoricalChart } from './generateCategoricalChart';
+import { Line } from '../cartesian/Line';
+import { XAxis } from '../cartesian/XAxis';
+import { YAxis } from '../cartesian/YAxis';
 import { formatAxisMap } from '../util/CartesianUtils';
 import { CategoricalChartOptions } from '../util/types';
 
-export default generateCategoricalChart({
+export const LineChart = generateCategoricalChart({
   chartName: 'LineChart',
   GraphicalChild: Line,
   axisComponents: [

@@ -4,13 +4,13 @@
 import React, { ReactElement } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
-import Layer from '../container/Layer';
-import Label from '../component/Label';
+import { Layer } from '../container/Layer';
+import { Label } from '../component/Label';
 import { createLabeldScales, rectWithPoints } from '../util/CartesianUtils';
 import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
-import Rectangle, { Props as RectangleProps } from '../shape/Rectangle';
+import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { CartesianViewBox, D3Scale, filterProps } from '../util/types';
 
 import { Props as XAxisProps } from './XAxis';
@@ -62,7 +62,7 @@ const getRect = (hasX1: boolean, hasX2: boolean, hasY1: boolean, hasY2: boolean,
   return rectWithPoints(p1, p2);
 };
 
-function ReferenceArea(props: Props) {
+export function ReferenceArea(props: Props) {
   const { x1, x2, y1, y2, className, alwaysShow, clipPathId } = props;
 
   warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
@@ -120,5 +120,3 @@ ReferenceArea.renderRect = (option: ReferenceAreaProps['shape'], props: any) => 
 
   return rect;
 };
-
-export default ReferenceArea;

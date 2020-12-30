@@ -26,7 +26,7 @@ interface State {
   containerHeight: number;
 }
 
-class ResponsiveContainer extends Component<Props, State> {
+export class ResponsiveContainer extends Component<Props, State> {
   static defaultProps = {
     width: '100%',
     height: '100%',
@@ -172,5 +172,3 @@ class ResponsiveContainer extends Component<Props, State> {
     );
   }
 }
-
-export default ResponsiveContainer;

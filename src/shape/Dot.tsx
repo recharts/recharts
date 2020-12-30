@@ -14,7 +14,7 @@ interface DotProps {
 
 export type Props = PresentationAttributesWithProps<DotProps, SVGCircleElement> & DotProps;
 
-class Dot extends PureComponent<Props> {
+export class Dot extends PureComponent<Props> {
   render() {
     const { cx, cy, r, className } = this.props;
     const layerClass = classNames('recharts-dot', className);
@@ -35,5 +35,3 @@ class Dot extends PureComponent<Props> {
     return null;
   }
 }
-
-export default Dot;

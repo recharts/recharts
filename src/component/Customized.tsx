@@ -3,7 +3,7 @@
  */
 import React, { isValidElement, cloneElement, createElement, Component, FunctionComponent } from 'react';
 import _ from 'lodash';
-import Layer from '../container/Layer';
+import { Layer } from '../container/Layer';
 import { warn } from '../util/LogUtils';
 
 type Comp<P> = FunctionComponent<P> | Component<P>;
@@ -15,7 +15,7 @@ export type Props<P, C extends Comp<P>> = P & {
  * custom svg elements by rechart instance props and state.
  * @returns {Object}   svg elements
  */
-export default function Customized<P, C extends Comp<P>>({ component, ...props }: Props<P, C>) {
+export function Customized<P, C extends Comp<P>>({ component, ...props }: Props<P, C>) {
   let child;
   if (isValidElement(component)) {
     child = cloneElement(component, props);

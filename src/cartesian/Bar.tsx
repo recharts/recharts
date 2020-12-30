@@ -5,14 +5,14 @@ import React, { PureComponent, ReactElement } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';
-import Rectangle, { Props as RectangleProps } from '../shape/Rectangle';
-import Layer from '../container/Layer';
-import ErrorBar, { Props as ErrorBarProps } from './ErrorBar';
-import Cell from '../component/Cell';
-import LabelList from '../component/LabelList';
+import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
+import { Layer } from '../container/Layer';
+import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
+import { Cell } from '../component/Cell';
+import { LabelList } from '../component/LabelList';
 import { uniqueId, mathSign, interpolateNumber } from '../util/DataUtils';
 import { findAllByType } from '../util/ReactUtils';
-import Global from '../util/Global';
+import { Global } from '../util/Global';
 import {
   getCateCoordinateOfBar,
   getValueByDataKey,
@@ -104,7 +104,7 @@ interface State {
   readonly prevData?: BarRectangleItem[];
 }
 
-class Bar extends PureComponent<Props, State> {
+export class Bar extends PureComponent<Props, State> {
   static displayName = 'Bar';
 
   static defaultProps = {
@@ -494,5 +494,3 @@ class Bar extends PureComponent<Props, State> {
     );
   }
 }
-
-export default Bar;

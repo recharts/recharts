@@ -11,7 +11,7 @@ import {
 } from 'd3-shape';
 import { ReactElement, ReactNode } from 'react';
 import { isNumOrStr, uniqueId, isNumber, getPercentValue, mathSign, findEntryInArray } from './DataUtils';
-import Legend from '../component/Legend';
+import { Legend } from '../component/Legend';
 import { findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';

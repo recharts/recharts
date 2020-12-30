@@ -1,5 +1,5 @@
 import { CSSProperties, MouseEvent } from 'react';
-import Global from './Global';
+import { Global } from './Global';
 
 interface StringCache {
   widthCache: Record<string, any>;

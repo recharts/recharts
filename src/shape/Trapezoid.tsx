@@ -33,7 +33,7 @@ interface TrapezoidProps {
 
 export type Props = PresentationAttributes<SVGPathElement> & TrapezoidProps;
 
-class Trapezoid extends PureComponent<Props> {
+export class Trapezoid extends PureComponent<Props> {
   static defaultProps = {
     x: 0,
     y: 0,
@@ -144,5 +144,3 @@ class Trapezoid extends PureComponent<Props> {
     );
   }
 }
-
-export default Trapezoid;

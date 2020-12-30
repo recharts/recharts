@@ -5,9 +5,9 @@ import React, { PureComponent, CSSProperties, ReactNode, ReactElement } from 're
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import classNames from 'classnames';
-import DefaultTooltipContent, { ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
+import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
 
-import Global from '../util/Global';
+import { Global } from '../util/Global';
 import { isNumber } from '../util/DataUtils';
 import { AnimationTiming, PresentationAttributes } from '../util/types';
 
@@ -85,7 +85,9 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   useTranslate3d?: boolean;
 };
 
-class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComponent<TooltipProps<TValue, TName>> {
+export class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComponent<
+  TooltipProps<TValue, TName>
+> {
   static displayName = 'Tooltip';
 
   static defaultProps = {
@@ -254,5 +256,3 @@ class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComp
     );
   }
 }
-
-export default Tooltip;

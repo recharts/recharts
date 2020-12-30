@@ -30,7 +30,7 @@ interface XAxisProps extends BaseAxisProps {
 
 export type Props = PresentationAttributes<SVGElement> & XAxisProps;
 
-const XAxis: FunctionComponent<Props> = () => null;
+export const XAxis: FunctionComponent<Props> = () => null;
 
 XAxis.displayName = 'XAxis';
 XAxis.defaultProps = {
@@ -50,5 +50,3 @@ XAxis.defaultProps = {
   reversed: false,
   allowDuplicatedCategory: true,
 };
-
-export default XAxis;

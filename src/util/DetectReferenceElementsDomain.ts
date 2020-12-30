@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
-import ReferenceDot from '../cartesian/ReferenceDot';
-import ReferenceLine from '../cartesian/ReferenceLine';
-import ReferenceArea from '../cartesian/ReferenceArea';
+import { ReferenceDot } from '../cartesian/ReferenceDot';
+import { ReferenceLine } from '../cartesian/ReferenceLine';
+import { ReferenceArea } from '../cartesian/ReferenceArea';
 import { ifOverflowMatches } from './IfOverflowMatches';
 import { findAllByType } from './ReactUtils';
 import { isNumber } from './DataUtils';

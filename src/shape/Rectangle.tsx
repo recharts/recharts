@@ -80,7 +80,7 @@ interface RectangleProps {
 
 export type Props = PresentationAttributes<SVGPathElement> & RectangleProps;
 
-class Rectangle extends PureComponent<Props> {
+export class Rectangle extends PureComponent<Props> {
   static defaultProps = {
     x: 0,
     y: 0,
@@ -180,5 +180,3 @@ class Rectangle extends PureComponent<Props> {
     );
   }
 }
-
-export default Rectangle;
