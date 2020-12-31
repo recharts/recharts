@@ -15,8 +15,8 @@
 
 ### feat
 
-- add props `reversed` to `<Funnel /> 
-- add `breakAll` props to `<Text />` to allow break all for chinese 
+- add props `reversed` to `<Funnel />`
+- add `breakAll` props to `<Text />` to allow break all for chinese
 - fix width of labelList in Funnel; fix #2056, #1866
 - support range RadarChart and add props `connectNulls` to <Radar />, fix #1890
 - add ability to pass in custom legend icon.
@@ -48,7 +48,7 @@
 - Fix flickering tooltip by keeping the isTooltipActive flag from the previous state
 - fix(AreaDot Type): add option to use a function that returns a react element
 - Fix typescript error in polar radar
-- Fix typos in Label.renderCallByParent 
+- Fix typos in Label.renderCallByParent
 - Add type definition for label prop on XAxis, YAxis and ZAxis
 
 ### feat
@@ -128,7 +128,7 @@
 - Fixes arc angles when `cornerIsExternal` is used
 - Invert cartesian label position based on negative values
 - Fix usage of hooks in Tooltip, Label, Legend and Customized
-- Move draging-end listener to the window for brush 
+- Move draging-end listener to the window for brush
 - Fix trigger after mouse leave
 - Added the angle as key which need to be used in the Label align
 - Rewrite index.js to index.ts, update scripts in package.json
@@ -143,7 +143,7 @@
 ### fix
 
 - fix error parameters in `appendOffsetOfLegend`
-- fix style of <Area /> 
+- fix style of <Area />
 
 ## 2.0.0-beta.0 (Dec 03, 2019)
 
