@@ -32,9 +32,6 @@ const config = {
         ],
         use: {
           loader: 'babel-loader',
-          query: {
-            plugins: ['lodash'],
-          },
         }
       },
       {
@@ -50,7 +47,7 @@ const config = {
     ],
   },
 
-  devtool: 'inline-source-map',
+  devtool: 'inline-cheap-source-map',
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
   },
