@@ -1,10 +1,10 @@
 const path = require('path');
-const {LoaderOptionsPlugin} = require('webpack');
+const webpack = require('webpack');
 
 module.exports = {
   mode: 'development',
   context: __dirname,
-  devtool: 'inline-source-map',
+  devtool: '#inline-source-map',
   entry: [
     './index.js',
   ],
@@ -13,7 +13,7 @@ module.exports = {
     filename: 'bundle.js',
   },
   plugins: [
-    new LoaderOptionsPlugin({
+    new webpack.LoaderOptionsPlugin({
       debug: true
     })
   ],
@@ -26,7 +26,7 @@ module.exports = {
   module: {
     rules: [{
       test: /\.(js|ts|tsx)$/,
-      use: { loader: 'babel-loader' },
+      loaders: ['babel-loader'],
       include: [
         __dirname,
         path.join(__dirname, '..', 'src'),
