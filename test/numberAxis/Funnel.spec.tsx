@@ -1,8 +1,7 @@
 import React from 'react';
-import { expect } from 'chai';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { FunnelChart, Funnel, Cell, LabelList } from 'recharts';
-import { render } from 'enzyme';
+import { FunnelChart, Funnel, Cell, LabelList } from './../../src/index';
+import { render, unmountComponentAtNode } from "react-dom";
+import { act } from "react-dom/test-utils";
 import { scaleOrdinal } from 'd3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
 
@@ -16,22 +15,40 @@ const data = [
 
 const colors1 = scaleOrdinal(schemeCategory10).range();
 
+let container = null;
+beforeEach(() => {
+  // setup a DOM element as a render target
+  container = document.createElement("div");
+  document.body.appendChild(container);
+});
+
+afterEach(() => {
+  // cleanup on exiting
+  unmountComponentAtNode(container);
+  container.remove();
+  container = null;
+});
+
+
 describe('<Funnel />', () => {
   it('Render 5 Trapezoid in a simple funnel', () => {
-    const wrapper = render(
-      <FunnelChart width={500} height={500}>
-        <Funnel
-          dataKey="value"
-          data={data}
-        />
-      </FunnelChart>
-    );
+    act(() => {
+      render(
+        <FunnelChart width={500} height={500}>
+          <Funnel
+            dataKey="value"
+            data={data}
+          />
+        </FunnelChart>, container
+      );
+    });
 
-    expect(wrapper.find('.recharts-funnel-trapezoid').length).to.equal(5);
+    expect(container.querySelectorAll('.recharts-funnel-trapezoid').length).toEqual(5);
   });
 
   it('Render 5 Trapezoid with animation in a simple funnel', () => {
-    const wrapper = render(
+    act(() => {
+      render(
       <FunnelChart width={500} height={500}>
         <Funnel
           dataKey="value"
@@ -39,41 +56,43 @@ describe('<Funnel />', () => {
           isAnimationActive
           animationEasing="spring"
         />
-      </FunnelChart>
-    );
+      </FunnelChart>, container);
+    });
 
-    expect(wrapper.find('.recharts-funnel-trapezoid').length).to.equal(5);
+    expect(container.querySelectorAll('.recharts-funnel-trapezoid').length).toBe(5);
   });
 
   it('Don\'t render any Trapezoid when data is empty', () => {
-    const wrapper = render(
+    act(() => {
+      render(
       <FunnelChart width={500} height={500}>
         <Funnel
           data={[]}
         />
-      </FunnelChart>
-    );
+      </FunnelChart>, container);
+    });
 
-    expect(wrapper.find('.recharts-funnel-trapezoid').length).to.equal(0);
+    expect(container.querySelectorAll('.recharts-funnel-trapezoid').length).toBe(0);
   });
 
   it('Don\'t render any Trapezoid when set hide', () => {
-    const wrapper = render(
+    act(() => {
+      render(
       <FunnelChart width={500} height={500}>
         <Funnel
           dataKey="value"
           data={data}
           hide
         />
-      </FunnelChart>
-    );
+      </FunnelChart>, container);
+    });
 
-    expect(wrapper.find('.recharts-funnel-trapezoid').length).to.equal(0);
+    expect(container.querySelectorAll('.recharts-funnel-trapezoid').length).toBe(0);
   });
 
 
   it('active shape in simple funnel', () => {
-    const wrapper = render(
+    act(() => {render(
       <FunnelChart width={500} height={500}>
         <Funnel
           dataKey="value"
@@ -99,14 +118,16 @@ describe('<Funnel />', () => {
             ))
           }
         </Funnel>
-      </FunnelChart>
-    );
+      </FunnelChart>, container
+    )
+  });
 
-    expect(wrapper.find('.custom-active-shape').length).to.equal(1);
+    expect(container.querySelectorAll('.custom-active-shape').length).toBe(1);
   });
 
   it('Renders funnel custom cell in simple FunnelChart', () => {
-    const wrapper = render(
+    act(() => {
+      render(
       <FunnelChart width={500} height={300}>
         <Funnel
           dataKey="value"
@@ -119,13 +140,14 @@ describe('<Funnel />', () => {
             ))
           }
         </Funnel>
-      </FunnelChart>
-    );
-    expect(wrapper.find('.custom-cell').length).to.equal(5);
+      </FunnelChart>, container);
+    });
+    expect(container.querySelectorAll('.custom-cell').length).toBe(5);
   });
 
   it('Renders funnel custom label in simple FunnelChart', () => {
-    const wrapper = render(
+    act(() => {
+      render(
       <FunnelChart width={500} height={300}>
         <Funnel
           dataKey="value"
@@ -139,8 +161,8 @@ describe('<Funnel />', () => {
           }
           <LabelList position="right" fill="#000" stroke="#000" dataKey="name" className="custom-label" />
         </Funnel>
-      </FunnelChart>
-    );
-    expect(wrapper.find('.custom-label').length).to.equal(5);
+      </FunnelChart>, container);
+    });
+    expect(container.querySelectorAll('.custom-label').length).toBe(5);
   });
 });
