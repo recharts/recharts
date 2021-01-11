@@ -1,6 +1,7 @@
 /**
  * @fileOverview Z Axis
  */
+import type { FunctionComponent } from 'react';
 import { ScaleType, DataKey, AxisDomain } from '../util/types';
 
 export interface Props {
@@ -20,9 +21,7 @@ export interface Props {
   domain?: AxisDomain;
 }
 
-function ZAxis(props: Props): any {
-  return null;
-}
+const ZAxis: FunctionComponent<Props> = () => null;
 
 ZAxis.displayName = 'ZAxis';
 ZAxis.defaultProps = {

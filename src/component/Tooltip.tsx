@@ -1,7 +1,7 @@
 /**
  * @fileOverview Tooltip
  */
-import React, { PureComponent, CSSProperties, ReactNode, ReactElement, ReactText } from 'react';
+import React, { PureComponent, CSSProperties, ReactNode, ReactElement } from 'react';
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import classNames from 'classnames';

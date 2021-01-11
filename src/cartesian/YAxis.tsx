@@ -1,6 +1,7 @@
 /**
  * @fileOverview Y Axis
  */
+import type { FunctionComponent } from 'react';
 import { BaseAxisProps, AxisInterval, PresentationAttributes } from '../util/types';
 
 interface YAxisProps extends BaseAxisProps {
@@ -29,9 +30,7 @@ interface YAxisProps extends BaseAxisProps {
 
 export type Props = PresentationAttributes<SVGElement> & YAxisProps;
 
-function YAxis(props: Props): any {
-  return null;
-}
+const YAxis: FunctionComponent<Props> = () => null;
 
 YAxis.displayName = 'YAxis';
 YAxis.defaultProps = {

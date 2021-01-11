@@ -19,8 +19,6 @@ const REACT_BROWSER_EVENT_MAP: any = {
   touchstart: 'onTouchStart',
 };
 
-type eventFunc = (data: any, index: number, e: any) => {};
-
 export const SCALE_TYPES = [
   'auto',
   'linear',

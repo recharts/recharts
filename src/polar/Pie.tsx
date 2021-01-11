@@ -192,7 +192,6 @@ class Pie extends PureComponent<Props, State> {
     const { cornerRadius, startAngle, endAngle, paddingAngle, dataKey, nameKey, valueKey, tooltipType } = item.props;
     const minAngle = Math.abs(item.props.minAngle);
     const coordinate = Pie.parseCoordinateOfPie(item, offset);
-    const len = pieData.length;
     const deltaAngle = Pie.parseDeltaAngle(startAngle, endAngle);
     const absDeltaAngle = Math.abs(deltaAngle);
 
