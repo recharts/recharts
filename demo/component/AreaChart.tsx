@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { changeNumberOfData } from './utils';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, Brush, Legend,
-  ReferenceArea, ReferenceLine, ReferenceDot, ResponsiveContainer,
+import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, Legend,
+  ReferenceArea, ReferenceLine, ReferenceDot,
   LabelList, Label } from 'recharts';
 
 const data = [
@@ -47,7 +47,7 @@ const rangeData = [
 
 const initialState = { data, data01, data02 };
 
-const CustomTooltip = (props) => {
+const CustomTooltip: React.FunctionComponent = (props: any) => {
   const { active, payload, external, label } = props;
 
   if (active) {
@@ -70,7 +70,7 @@ const CustomTooltip = (props) => {
   return null;
 };
 
-const renderCustomizedActiveDot = (props) => {
+const renderCustomizedActiveDot: React.FunctionComponent = (props: any) => {
   const { cx, cy, stroke, index, dataKey } = props;
 
   return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke} key={`dot-${dataKey}`}/>;
