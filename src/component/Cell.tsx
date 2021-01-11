@@ -6,8 +6,6 @@ import { PresentationAttributes } from '../util/types';
 
 export type Props = PresentationAttributes<SVGElement>;
 
-const Cell: FunctionComponent<Props> = () => null;
+export const Cell: FunctionComponent<Props> = () => null;
 
 Cell.displayName = 'Cell';
-
-export default Cell;

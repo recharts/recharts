@@ -4,10 +4,10 @@
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import _ from 'lodash';
-import Surface from '../container/Surface';
-import Layer from '../container/Layer';
-import Tooltip from '../component/Tooltip';
-import Rectangle from '../shape/Rectangle';
+import { Surface } from '../container/Surface';
+import { Layer } from '../container/Layer';
+import { Tooltip } from '../component/Tooltip';
+import { Rectangle } from '../shape/Rectangle';
 import { shallowEqual } from '../util/ShallowEqual';
 import { filterSvgElements, validateWidthHeight, findChildByType } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -389,7 +389,7 @@ interface State {
   links: SankeyLink[];
 }
 
-class Sankey extends PureComponent<Props, State> {
+export class Sankey extends PureComponent<Props, State> {
   static displayName = 'Sankey';
 
   static defaultProps = {
@@ -677,5 +677,3 @@ class Sankey extends PureComponent<Props, State> {
     );
   }
 }
-
-export default Sankey;

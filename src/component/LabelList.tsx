@@ -1,7 +1,7 @@
 import React, { cloneElement } from 'react';
 import _ from 'lodash';
-import Label, { ContentType } from './Label';
-import Layer from '../container/Layer';
+import { Label, ContentType } from './Label';
+import { Layer } from '../container/Layer';
 import { findAllByType } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { filterProps, DataKey, ViewBox } from '../util/types';
@@ -26,7 +26,7 @@ const defaultProps = {
   valueAccessor: (entry: Data) => (_.isArray(entry.value) ? _.last(entry.value) : entry.value),
 };
 
-function LabelList<T extends Data>(props: Props<T>) {
+export function LabelList<T extends Data>(props: Props<T>) {
   const { data, valueAccessor, dataKey, clockWise, id, textBreakAll, ...others } = props;
 
   if (!data || !data.length) {
@@ -104,5 +104,3 @@ function renderCallByParent<T extends Data>(parentProps: any, data: Array<T>, ck
 
 LabelList.renderCallByParent = renderCallByParent;
 LabelList.defaultProps = defaultProps;
-
-export default LabelList;

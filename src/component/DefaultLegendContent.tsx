@@ -3,8 +3,8 @@
  */
 import React, { PureComponent, ReactNode, MouseEvent, ReactText, ReactElement } from 'react';
 import classNames from 'classnames';
-import Surface from '../container/Surface';
-import Symbols from '../shape/Symbols';
+import { Surface } from '../container/Surface';
+import { Symbols } from '../shape/Symbols';
 import { LegendType, LayoutType, SymbolType, adaptEventsOfChild } from '../util/types';
 
 const SIZE = 32;
@@ -42,7 +42,7 @@ export interface Props<TValue, TID> {
   onClick?: (event: MouseEvent) => void;
 }
 
-class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>> {
+export class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>> {
   static displayName = 'Legend';
 
   static defaultProps = {
@@ -187,5 +187,3 @@ class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>
     );
   }
 }
-
-export default DefaultLegendContent;

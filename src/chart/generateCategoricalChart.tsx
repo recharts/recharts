@@ -1,15 +1,15 @@
 import React, { Component, cloneElement, isValidElement, createElement } from 'react';
 import classNames from 'classnames';
 import _ from 'lodash';
-import Surface from '../container/Surface';
-import Layer from '../container/Layer';
-import Tooltip from '../component/Tooltip';
-import Legend from '../component/Legend';
-import Curve from '../shape/Curve';
-import Cross from '../shape/Cross';
-import Sector from '../shape/Sector';
-import Dot from '../shape/Dot';
-import Rectangle from '../shape/Rectangle';
+import { Surface } from '../container/Surface';
+import { Layer } from '../container/Layer';
+import { Tooltip } from '../component/Tooltip';
+import { Legend } from '../component/Legend';
+import { Curve } from '../shape/Curve';
+import { Cross } from '../shape/Cross';
+import { Sector } from '../shape/Sector';
+import { Dot } from '../shape/Dot';
+import { Rectangle } from '../shape/Rectangle';
 
 import {
   findAllByType,
@@ -22,8 +22,8 @@ import {
   getReactEventByType,
 } from '../util/ReactUtils';
 
-import CartesianAxis from '../cartesian/CartesianAxis';
-import Brush from '../cartesian/Brush';
+import { CartesianAxis } from '../cartesian/CartesianAxis';
+import { Brush } from '../cartesian/Brush';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
 import { getAnyElementOfObject, hasDuplicate, uniqueId, isNumber, findEntryInArray } from '../util/DataUtils';
 import {
@@ -169,7 +169,7 @@ export interface CategoricalChartProps {
   outerRadius?: number | string;
 }
 
-const generateCategoricalChart = ({
+export const generateCategoricalChart = ({
   chartName,
   GraphicalChild,
   eventType = 'axis',
@@ -1932,5 +1932,3 @@ const generateCategoricalChart = ({
       );
     }
   };
-
-export default generateCategoricalChart;

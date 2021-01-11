@@ -3,7 +3,7 @@
  */
 import React, { PureComponent, CSSProperties } from 'react';
 import _ from 'lodash';
-import DefaultLegendContent, { Payload, Props as DefaultProps, ContentType } from './DefaultLegendContent';
+import { DefaultLegendContent, Payload, Props as DefaultProps, ContentType } from './DefaultLegendContent';
 
 import { isNumber } from '../util/DataUtils';
 
@@ -58,7 +58,7 @@ interface State {
   boxHeight: number;
 }
 
-class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
+export class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
   static displayName = 'Legend';
 
   static defaultProps = {
@@ -210,5 +210,3 @@ class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
     );
   }
 }
-
-export default Legend;

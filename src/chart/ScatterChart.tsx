@@ -1,15 +1,15 @@
 /**
  * @fileOverview Scatter Chart
  */
-import generateCategoricalChart from './generateCategoricalChart';
-import Scatter from '../cartesian/Scatter';
-import XAxis from '../cartesian/XAxis';
-import YAxis from '../cartesian/YAxis';
-import ZAxis from '../cartesian/ZAxis';
+import { generateCategoricalChart } from './generateCategoricalChart';
+import { Scatter } from '../cartesian/Scatter';
+import { XAxis } from '../cartesian/XAxis';
+import { YAxis } from '../cartesian/YAxis';
+import { ZAxis } from '../cartesian/ZAxis';
 import { formatAxisMap } from '../util/CartesianUtils';
 import { CategoricalChartOptions } from '../util/types';
 
-export default generateCategoricalChart({
+export const ScatterChart = generateCategoricalChart({
   chartName: 'ScatterChart',
   GraphicalChild: Scatter,
   eventType: 'single',

@@ -3,7 +3,7 @@ import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
-import Global from '../util/Global';
+import { Global } from '../util/Global';
 import { PresentationAttributes, filterProps } from '../util/types';
 import { getStringSize } from '../util/DOMUtils';
 
@@ -117,7 +117,7 @@ const getWordsByLines = (props: Props, needCalculate: boolean) => {
   return getWordsWithoutCalculate(props.children);
 };
 
-class Text extends Component<Props, State> {
+export class Text extends Component<Props, State> {
   static defaultProps = {
     x: 0,
     y: 0,
@@ -221,5 +221,3 @@ class Text extends Component<Props, State> {
     );
   }
 }
-
-export default Text;

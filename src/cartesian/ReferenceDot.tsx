@@ -4,9 +4,9 @@
 import React, { ReactElement } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
-import Layer from '../container/Layer';
-import Dot, { Props as DotProps } from '../shape/Dot';
-import Label from '../component/Label';
+import { Layer } from '../container/Layer';
+import { Dot, Props as DotProps } from '../shape/Dot';
+import { Label } from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
 import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { createLabeldScales } from '../util/CartesianUtils';
@@ -51,7 +51,7 @@ const getCoordinate = (props: Props) => {
   return result;
 };
 
-function ReferenceDot(props: Props) {
+export function ReferenceDot(props: Props) {
   const { x, y, r, alwaysShow, clipPathId } = props;
   const isX = isNumOrStr(x);
   const isY = isNumOrStr(y);
@@ -119,5 +119,3 @@ ReferenceDot.renderDot = (option: Props['shape'], props: any) => {
 
   return dot;
 };
-
-export default ReferenceDot;

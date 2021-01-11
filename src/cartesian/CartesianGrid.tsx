@@ -40,7 +40,7 @@ interface CartesianGridProps extends IntrnalCartesianGridProps {
 
 export type Props = PresentationAttributes<SVGElement> & CartesianGridProps;
 
-class CartesianGrid extends PureComponent<Props> {
+export class CartesianGrid extends PureComponent<Props> {
   static displayName = 'CartesianGrid';
 
   static defaultProps = {
@@ -292,5 +292,3 @@ class CartesianGrid extends PureComponent<Props> {
     );
   }
 }
-
-export default CartesianGrid;

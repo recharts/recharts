@@ -4,8 +4,8 @@
 import React, { ReactElement } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
-import Layer from '../container/Layer';
-import Label from '../component/Label';
+import { Layer } from '../container/Layer';
+import { Label } from '../component/Label';
 import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { createLabeldScales, rectWithCoords } from '../util/CartesianUtils';
@@ -114,7 +114,7 @@ const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegme
   return null;
 };
 
-function ReferenceLine(props: Props) {
+export function ReferenceLine(props: Props) {
   const { x: fixedX, y: fixedY, segment, xAxis, yAxis, shape, className, alwaysShow, clipPathId } = props;
 
   warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
@@ -163,5 +163,3 @@ ReferenceLine.defaultProps = {
   strokeWidth: 1,
   position: 'middle',
 };
-
-export default ReferenceLine;

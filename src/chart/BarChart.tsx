@@ -1,14 +1,14 @@
 /**
  * @fileOverview Bar Chart
  */
-import generateCategoricalChart from './generateCategoricalChart';
-import Bar from '../cartesian/Bar';
-import XAxis from '../cartesian/XAxis';
-import YAxis from '../cartesian/YAxis';
+import { generateCategoricalChart } from './generateCategoricalChart';
+import { Bar } from '../cartesian/Bar';
+import { XAxis } from '../cartesian/XAxis';
+import { YAxis } from '../cartesian/YAxis';
 import { formatAxisMap } from '../util/CartesianUtils';
 import { CategoricalChartOptions } from '../util/types';
 
-export default generateCategoricalChart({
+export const BarChart = generateCategoricalChart({
   chartName: 'BarChart',
   GraphicalChild: Bar,
   axisComponents: [

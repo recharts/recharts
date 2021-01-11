@@ -45,7 +45,7 @@ export interface Props<TValue extends ValueType, TName extends NameType> {
   itemSorter?: (item: Payload<TValue, TName>) => number | string;
 }
 
-class DefaultTooltipContent<TValue extends ValueType, TName extends NameType> extends PureComponent<
+export class DefaultTooltipContent<TValue extends ValueType, TName extends NameType> extends PureComponent<
   Props<TValue, TName>
 > {
   static displayName = 'DefaultTooltipContent';
@@ -139,5 +139,3 @@ class DefaultTooltipContent<TValue extends ValueType, TName extends NameType> ex
     );
   }
 }
-
-export default DefaultTooltipContent;

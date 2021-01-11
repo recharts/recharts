@@ -3,9 +3,9 @@
  */
 import React, { PureComponent } from 'react';
 import _ from 'lodash';
-import Text from '../component/Text';
-import Label from '../component/Label';
-import Layer from '../container/Layer';
+import { Text } from '../component/Text';
+import { Label } from '../component/Label';
+import { Layer } from '../container/Layer';
 import { polarToCartesian } from '../util/PolarUtils';
 import { PresentationAttributes, filterProps, BaseAxisProps, TickItem, adaptEventsOfChild } from '../util/types';
 
@@ -20,7 +20,7 @@ export interface PolarRadiusAxisProps extends BaseAxisProps {
 
 export type Props = PresentationAttributes<SVGElement> & PolarRadiusAxisProps;
 
-class PolarRadiusAxis extends PureComponent<Props> {
+export class PolarRadiusAxis extends PureComponent<Props> {
   static displayName = 'PolarRadiusAxis';
 
   static axisType = 'radiusAxis';
@@ -177,5 +177,3 @@ class PolarRadiusAxis extends PureComponent<Props> {
     );
   }
 }
-
-export default PolarRadiusAxis;

@@ -18,7 +18,7 @@ interface PolarGridProps {
 }
 export type Props = PresentationAttributes<SVGPathElement> & PolarGridProps;
 
-class PolarGrid extends PureComponent<Props> {
+export class PolarGrid extends PureComponent<Props> {
   static displayName = 'PolarGrid';
 
   static defaultProps = {
@@ -174,5 +174,3 @@ class PolarGrid extends PureComponent<Props> {
     );
   }
 }
-
-export default PolarGrid;

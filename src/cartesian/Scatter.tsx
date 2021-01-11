@@ -5,15 +5,15 @@ import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import Layer from '../container/Layer';
-import LabelList from '../component/LabelList';
+import { Layer } from '../container/Layer';
+import { LabelList } from '../component/LabelList';
 import { findAllByType } from '../util/ReactUtils';
-import Global from '../util/Global';
-import ZAxis, { Props as ZAxisProps } from './ZAxis';
-import Curve, { Props as CurveProps, CurveType } from '../shape/Curve';
-import Symbols, { Props as SymbolsProps } from '../shape/Symbols';
-import ErrorBar, { Props as ErrorBarProps } from './ErrorBar';
-import Cell from '../component/Cell';
+import { Global } from '../util/Global';
+import { ZAxis, Props as ZAxisProps } from './ZAxis';
+import { Curve, Props as CurveProps, CurveType } from '../shape/Curve';
+import { Symbols, Props as SymbolsProps } from '../shape/Symbols';
+import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
+import { Cell } from '../component/Cell';
 import { uniqueId, interpolateNumber, getLinearRegression } from '../util/DataUtils';
 import { getValueByDataKey, getCateCoordinateOfLine } from '../util/ChartUtils';
 import {
@@ -89,7 +89,7 @@ interface State {
   prevPoints?: ScatterPointItem[];
 }
 
-class Scatter extends PureComponent<Props, State> {
+export class Scatter extends PureComponent<Props, State> {
   static displayName = 'Scatter';
 
   static defaultProps = {
@@ -457,5 +457,3 @@ class Scatter extends PureComponent<Props, State> {
     );
   }
 }
-
-export default Scatter;

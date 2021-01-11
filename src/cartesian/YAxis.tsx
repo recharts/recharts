@@ -30,7 +30,7 @@ interface YAxisProps extends BaseAxisProps {
 
 export type Props = PresentationAttributes<SVGElement> & YAxisProps;
 
-const YAxis: FunctionComponent<Props> = () => null;
+export const YAxis: FunctionComponent<Props> = () => null;
 
 YAxis.displayName = 'YAxis';
 YAxis.defaultProps = {
@@ -50,5 +50,3 @@ YAxis.defaultProps = {
   scale: 'auto',
   reversed: false,
 };
-
-export default YAxis;

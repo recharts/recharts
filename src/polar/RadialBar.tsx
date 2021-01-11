@@ -5,12 +5,12 @@ import React, { PureComponent, ReactElement, ReactNode } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';
-import Sector, { Props as SectorProps } from '../shape/Sector';
-import Layer from '../container/Layer';
+import { Sector, Props as SectorProps } from '../shape/Sector';
+import { Layer } from '../container/Layer';
 import { findAllByType } from '../util/ReactUtils';
-import Global from '../util/Global';
-import LabelList from '../component/LabelList';
-import Cell from '../component/Cell';
+import { Global } from '../util/Global';
+import { LabelList } from '../component/LabelList';
+import { Cell } from '../component/Cell';
 import { mathSign, interpolateNumber } from '../util/DataUtils';
 import {
   getCateCoordinateOfBar,
@@ -77,7 +77,7 @@ interface State {
   prevData?: RadialBarDataItem[];
 }
 
-class RadialBar extends PureComponent<Props, State> {
+export class RadialBar extends PureComponent<Props, State> {
   static displayName = 'RadialBar';
 
   static defaultProps = {
@@ -400,5 +400,3 @@ class RadialBar extends PureComponent<Props, State> {
     );
   }
 }
-
-export default RadialBar;

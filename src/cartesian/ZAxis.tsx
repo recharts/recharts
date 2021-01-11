@@ -21,7 +21,7 @@ export interface Props {
   domain?: AxisDomain;
 }
 
-const ZAxis: FunctionComponent<Props> = () => null;
+export const ZAxis: FunctionComponent<Props> = () => null;
 
 ZAxis.displayName = 'ZAxis';
 ZAxis.defaultProps = {
@@ -30,5 +30,3 @@ ZAxis.defaultProps = {
   scale: 'auto',
   type: 'number',
 };
-
-export default ZAxis;

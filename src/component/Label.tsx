@@ -1,7 +1,7 @@
 import React, { cloneElement, isValidElement, ReactNode, ReactElement, createElement } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
-import Text from './Text';
+import { Text } from './Text';
 import { findAllByType } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
@@ -362,7 +362,7 @@ const getAttrsOfCartesianLabel = (props: Props) => {
 
 const isPolar = (viewBox: CartesianViewBox | PolarViewBox) => isNumber((viewBox as PolarViewBox).cx);
 
-function Label(props: Props) {
+export function Label(props: Props) {
   const { viewBox, position, value, children, content, className = '', textBreakAll } = props;
 
   if (!viewBox || (_.isNil(value) && _.isNil(children) && !isValidElement(content) && !_.isFunction(content))) {
@@ -523,5 +523,3 @@ const renderCallByParent = (parentProps: any, viewBox?: ViewBox, checkPropsLabel
 
 Label.parseViewBox = parseViewBox;
 Label.renderCallByParent = renderCallByParent;
-
-export default Label;

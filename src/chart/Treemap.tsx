@@ -6,13 +6,13 @@ import React, { PureComponent } from 'react';
 import Smooth from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import Surface from '../container/Surface';
-import Layer from '../container/Layer';
-import Rectangle from '../shape/Rectangle';
+import { Surface } from '../container/Surface';
+import { Layer } from '../container/Layer';
+import { Rectangle } from '../shape/Rectangle';
 import { findChildByType, filterSvgElements, validateWidthHeight } from '../util/ReactUtils';
-import Global from '../util/Global';
-import Tooltip from '../component/Tooltip';
-import Polygon from '../shape/Polygon';
+import { Global } from '../util/Global';
+import { Tooltip } from '../component/Tooltip';
+import { Polygon } from '../shape/Polygon';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { COLOR_PANEL } from '../util/Constants';
 import { getStringSize } from '../util/DOMUtils';
@@ -290,7 +290,7 @@ const defaultState: State = {
   nestIndex: [] as TreemapNode[],
 };
 
-class Treemap extends PureComponent<Props, State> {
+export class Treemap extends PureComponent<Props, State> {
   static displayName = 'Treemap';
 
   static defaultProps = {
@@ -770,5 +770,3 @@ class Treemap extends PureComponent<Props, State> {
     );
   }
 }
-
-export default Treemap;

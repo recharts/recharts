@@ -72,7 +72,7 @@ interface PolygonProps {
 
 export type Props = Omit<PresentationAttributes<SVGPolygonElement>, 'points'> & PolygonProps;
 
-class Polygon extends PureComponent<Props> {
+export class Polygon extends PureComponent<Props> {
   render() {
     const { points, className, baseLinePoints, connectNulls, ...others } = this.props;
 
@@ -116,5 +116,3 @@ class Polygon extends PureComponent<Props> {
     );
   }
 }
-
-export default Polygon;

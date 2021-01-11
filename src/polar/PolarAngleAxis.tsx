@@ -3,10 +3,10 @@
  */
 import React, { PureComponent } from 'react';
 import _ from 'lodash';
-import Layer from '../container/Layer';
-import Dot from '../shape/Dot';
-import Polygon from '../shape/Polygon';
-import Text from '../component/Text';
+import { Layer } from '../container/Layer';
+import { Dot } from '../shape/Dot';
+import { Polygon } from '../shape/Polygon';
+import { Text } from '../component/Text';
 import { PresentationAttributes, BaseAxisProps, filterProps, TickItem, adaptEventsOfChild } from '../util/types';
 import { polarToCartesian } from '../util/PolarUtils';
 
@@ -24,7 +24,7 @@ export interface PolarAngleAxisProps extends BaseAxisProps {
 }
 export type Props = PresentationAttributes<SVGTextElement> & PolarAngleAxisProps;
 
-class PolarAngleAxis extends PureComponent<Props> {
+export class PolarAngleAxis extends PureComponent<Props> {
   static displayName = 'PolarAngleAxis';
 
   static axisType = 'angleAxis';
@@ -173,5 +173,3 @@ class PolarAngleAxis extends PureComponent<Props> {
     );
   }
 }
-
-export default PolarAngleAxis;

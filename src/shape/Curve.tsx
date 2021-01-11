@@ -91,7 +91,7 @@ interface CurveProps {
 
 export type Props = Omit<PresentationAttributesWithProps<CurveProps, SVGPathElement>, 'type' | 'points'> & CurveProps;
 
-class Curve extends PureComponent<Props> {
+export class Curve extends PureComponent<Props> {
   static defaultProps = {
     type: 'linear',
     points: [] as any[],
@@ -159,5 +159,3 @@ class Curve extends PureComponent<Props> {
     );
   }
 }
-
-export default Curve;

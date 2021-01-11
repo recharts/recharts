@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { Surface, Pie, Sector } from 'recharts';
-import Layer from '../../../src/container/Layer';
+import { Layer } from '../../../src/container/Layer';
 import { mount, render } from 'enzyme';
 import sinon from 'sinon';
 

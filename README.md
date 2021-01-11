@@ -2,7 +2,7 @@
 
 [![Sponsors on Open Collective](https://opencollective.com/recharts/sponsors/badge.svg)](https://opencollective.com/recharts#sponsors)
 [![Backers on Open Collective](https://opencollective.com/recharts/backers/badge.svg)](https://opencollective.com/recharts#backer)
-[![Build Status](https://github.com/recharts/recharts/workflows/ci/badge.svg)](https://github.com/recharts/recharts/actions)
+[![Build Status](https://github.com/recharts/recharts/workflows/Node.js CI/badge.svg)](https://github.com/recharts/recharts/actions)
 [![Coverage Status](https://coveralls.io/repos/recharts/recharts/badge.svg?branch=master&service=github)](https://coveralls.io/github/recharts/recharts?branch=master)
 [![npm version](https://badge.fury.io/js/recharts.svg)](http://badge.fury.io/js/recharts)
 [![npm downloads](https://img.shields.io/npm/dm/recharts.svg?style=flat-square)](https://www.npmjs.com/package/recharts)
