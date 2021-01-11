@@ -184,10 +184,12 @@ const getAttrsOfCartesianLabel = (props: Props) => {
 
     return {
       ...attrs,
-      ...(parentViewBox ? {
-        height: Math.max(y - (parentViewBox as CartesianViewBox).y, 0),
-        width,
-      } : {})
+      ...(parentViewBox
+        ? {
+            height: Math.max(y - (parentViewBox as CartesianViewBox).y, 0),
+            width,
+          }
+        : {}),
     };
   }
 
@@ -201,10 +203,15 @@ const getAttrsOfCartesianLabel = (props: Props) => {
 
     return {
       ...attrs,
-      ...(parentViewBox ? {
-        height: Math.max((parentViewBox as CartesianViewBox).y + (parentViewBox as CartesianViewBox).height - (y + height), 0),
-        width,
-      } : {})
+      ...(parentViewBox
+        ? {
+            height: Math.max(
+              (parentViewBox as CartesianViewBox).y + (parentViewBox as CartesianViewBox).height - (y + height),
+              0,
+            ),
+            width,
+          }
+        : {}),
     };
   }
 
@@ -214,14 +221,16 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       y: y + height / 2,
       textAnchor: horizontalEnd,
       verticalAnchor: 'middle',
-    }
+    };
 
     return {
       ...attrs,
-      ...(parentViewBox ? {
-        width: Math.max(attrs.x - (parentViewBox as CartesianViewBox).x, 0),
-        height,
-      } : {})
+      ...(parentViewBox
+        ? {
+            width: Math.max(attrs.x - (parentViewBox as CartesianViewBox).x, 0),
+            height,
+          }
+        : {}),
     };
   }
 
@@ -234,10 +243,15 @@ const getAttrsOfCartesianLabel = (props: Props) => {
     };
     return {
       ...attrs,
-      ...(parentViewBox ? {
-        width: Math.max((parentViewBox as CartesianViewBox).x + (parentViewBox as CartesianViewBox).width - attrs.x, 0),
-        height,
-      } : {})
+      ...(parentViewBox
+        ? {
+            width: Math.max(
+              (parentViewBox as CartesianViewBox).x + (parentViewBox as CartesianViewBox).width - attrs.x,
+              0,
+            ),
+            height,
+          }
+        : {}),
     };
   }
 
@@ -382,7 +396,12 @@ function Label(props: Props) {
   console.log('positionAttrs', positionAttrs);
 
   return (
-    <Text className={classNames('recharts-label', className)} {...attrs} {...(positionAttrs as any)} breakAll={textBreakAll}>
+    <Text
+      className={classNames('recharts-label', className)}
+      {...attrs}
+      {...(positionAttrs as any)}
+      breakAll={textBreakAll}
+    >
       {label}
     </Text>
   );

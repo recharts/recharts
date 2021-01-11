@@ -89,7 +89,7 @@ const calculateWordsByLines = (
 
     return result;
   }, []);
-}
+};
 
 const getWordsWithoutCalculate = (children: React.ReactNode): Array<Words> => {
   const words = !_.isNil(children) ? children.toString().split(BREAKING_SPACES) : [];
@@ -117,7 +117,7 @@ const getWordsByLines = (props: Props, needCalculate: boolean) => {
     }
   }
   return getWordsWithoutCalculate(props.children);
-}
+};
 
 class Text extends Component<Props, State> {
   static defaultProps = {
@@ -133,13 +133,17 @@ class Text extends Component<Props, State> {
   state: State = {};
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    if (nextProps.width !== prevState.prevWidth || 
-      nextProps.scaleToFit !== prevState.prevScaleToFit || 
-      nextProps.children !== prevState.prevChildren || 
-      nextProps.style !== prevState.prevStyle || 
+    if (
+      nextProps.width !== prevState.prevWidth ||
+      nextProps.scaleToFit !== prevState.prevScaleToFit ||
+      nextProps.children !== prevState.prevChildren ||
+      nextProps.style !== prevState.prevStyle ||
       nextProps.breakAll !== prevState.prevBreakAll
     ) {
-      const needCalculate = nextProps.children !== prevState.prevChildren || nextProps.style !== prevState.prevStyle || nextProps.breakAll !== prevState.prevBreakAll;
+      const needCalculate =
+        nextProps.children !== prevState.prevChildren ||
+        nextProps.style !== prevState.prevStyle ||
+        nextProps.breakAll !== prevState.prevBreakAll;
 
       return {
         prevWidth: nextProps.width,

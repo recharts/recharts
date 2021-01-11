@@ -130,8 +130,8 @@ class Radar extends PureComponent<Props, State> {
           const baseValue = _.first(point.value);
           const radius = _.isNil(baseValue) ? undefined : radiusAxis.scale(baseValue);
 
-          baseLinePoints.push({ 
-            ...point, 
+          baseLinePoints.push({
+            ...point,
             radius,
             ...polarToCartesian(cx, cy, radius, point.angle),
           });

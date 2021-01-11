@@ -27,7 +27,6 @@ interface YAxisProps extends BaseAxisProps {
   reversed?: boolean;
 }
 
-
 export type Props = PresentationAttributes<SVGElement> & YAxisProps;
 
 function YAxis(props: Props): any {

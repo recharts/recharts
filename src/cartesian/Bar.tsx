@@ -85,12 +85,16 @@ interface BarProps extends InternalBarProps {
   animationEasing?: AnimationTiming;
   animationId?: number;
   id?: string;
-  label?: boolean | ReactElement<SVGElement> | ((props: any) => SVGElement) | {
-    id?: string;
-    valueAccessor?: Function;
-    dataKey?: DataKey<any>;
-    content?: ContentType;
-  };
+  label?:
+    | boolean
+    | ReactElement<SVGElement>
+    | ((props: any) => SVGElement)
+    | {
+        id?: string;
+        valueAccessor?: Function;
+        dataKey?: DataKey<any>;
+        content?: ContentType;
+      };
 }
 
 export type Props = PresentationAttributes<SVGPathElement> & BarProps;

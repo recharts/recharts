@@ -9,10 +9,9 @@ const isValidatePoint = (point: Coordinate) => {
   return point && point.x === +point.x && point.y === +point.y;
 };
 
-
 const getParsedPoints = (points: Coordinate[] = []) => {
   let segmentPoints: Coordinate[][] = [[]];
-  
+
   points.forEach(entry => {
     if (isValidatePoint(entry)) {
       segmentPoints[segmentPoints.length - 1].push(entry);
@@ -23,7 +22,7 @@ const getParsedPoints = (points: Coordinate[] = []) => {
   });
 
   if (isValidatePoint(points[0])) {
-    segmentPoints[segmentPoints.length - 1].push(points[0])
+    segmentPoints[segmentPoints.length - 1].push(points[0]);
   }
 
   if (segmentPoints[segmentPoints.length - 1].length <= 0) {
@@ -37,26 +36,32 @@ const getSinglePolygonPath = (points: Coordinate[], connectNulls?: boolean) => {
   let segmentPoints = getParsedPoints(points);
 
   if (connectNulls) {
-    segmentPoints = [segmentPoints.reduce((res: Coordinate[], segPoints: Coordinate[]) => {
-      return [...res, ...segPoints];
-    }, [])]
+    segmentPoints = [
+      segmentPoints.reduce((res: Coordinate[], segPoints: Coordinate[]) => {
+        return [...res, ...segPoints];
+      }, []),
+    ];
   }
 
-  const polygonPath = segmentPoints.map(segPoints => {
-    return segPoints.reduce((path: string, point: Coordinate, index: number) => {
-      return `${path}${index === 0 ? 'M' : 'L'}${point.x},${point.y}`;
-    }, '');
-  }).join('');
+  const polygonPath = segmentPoints
+    .map(segPoints => {
+      return segPoints.reduce((path: string, point: Coordinate, index: number) => {
+        return `${path}${index === 0 ? 'M' : 'L'}${point.x},${point.y}`;
+      }, '');
+    })
+    .join('');
 
   return segmentPoints.length === 1 ? `${polygonPath}Z` : polygonPath;
 };
 
-
 const getRanglePath = (points: Coordinate[], baseLinePoints: Coordinate[], connectNulls?: boolean) => {
   const outerPath = getSinglePolygonPath(points, connectNulls);
 
-  return `${outerPath.slice(-1) === 'Z' ? outerPath.slice(0, -1) : outerPath}L${getSinglePolygonPath(baseLinePoints.reverse(), connectNulls).slice(1)}`;
-}
+  return `${outerPath.slice(-1) === 'Z' ? outerPath.slice(0, -1) : outerPath}L${getSinglePolygonPath(
+    baseLinePoints.reverse(),
+    connectNulls,
+  ).slice(1)}`;
+};
 
 interface PolygonProps {
   className?: string;
@@ -83,16 +88,32 @@ class Polygon extends PureComponent<Props> {
 
       return (
         <g className={layerClass}>
-          <path {...filterProps(others, true)} fill={rangePath.slice(-1) === 'Z' ? others.fill : 'none'} stroke="none" d={rangePath} />
-          {hasStroke ? <path {...filterProps(others, true)} fill="none" d={getSinglePolygonPath(points, connectNulls)} /> : null}
-          {hasStroke ? <path {...filterProps(others, true)} fill="none" d={getSinglePolygonPath(baseLinePoints, connectNulls)} /> : null}
+          <path
+            {...filterProps(others, true)}
+            fill={rangePath.slice(-1) === 'Z' ? others.fill : 'none'}
+            stroke="none"
+            d={rangePath}
+          />
+          {hasStroke ? (
+            <path {...filterProps(others, true)} fill="none" d={getSinglePolygonPath(points, connectNulls)} />
+          ) : null}
+          {hasStroke ? (
+            <path {...filterProps(others, true)} fill="none" d={getSinglePolygonPath(baseLinePoints, connectNulls)} />
+          ) : null}
         </g>
       );
     }
 
     const singlePath = getSinglePolygonPath(points, connectNulls);
 
-    return <path {...filterProps(others, true)} fill={singlePath.slice(-1) === 'Z' ? others.fill : 'none'} className={layerClass} d={singlePath} />;
+    return (
+      <path
+        {...filterProps(others, true)}
+        fill={singlePath.slice(-1) === 'Z' ? others.fill : 'none'}
+        className={layerClass}
+        d={singlePath}
+      />
+    );
   }
 }
 

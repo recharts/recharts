@@ -67,10 +67,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   active?: boolean;
   offset?: number;
   wrapperStyle?: CSSProperties;
-  cursor?:
-    | boolean
-    | ReactElement
-    | PresentationAttributes<SVGElement>;
+  cursor?: boolean | ReactElement | PresentationAttributes<SVGElement>;
   coordinate?: {
     x?: number;
     y?: number;

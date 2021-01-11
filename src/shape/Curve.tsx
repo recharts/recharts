@@ -127,19 +127,11 @@ class Curve extends PureComponent<Props> {
       return lineFunction(areaPoints);
     }
     if (layout === 'vertical' && isNumber(baseLine)) {
-      lineFunction = shapeArea<Point>()
-        .y(getY)
-        .x1(getX)
-        .x0(baseLine);
+      lineFunction = shapeArea<Point>().y(getY).x1(getX).x0(baseLine);
     } else if (isNumber(baseLine)) {
-      lineFunction = shapeArea<Point>()
-        .x(getX)
-        .y1(getY)
-        .y0(baseLine);
+      lineFunction = shapeArea<Point>().x(getX).y1(getY).y0(baseLine);
     } else {
-      lineFunction = shapeLine<Point>()
-        .x(getX)
-        .y(getY);
+      lineFunction = shapeLine<Point>().x(getX).y(getY);
     }
 
     lineFunction.defined(defined).curve(curveFactory);

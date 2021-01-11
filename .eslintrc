@@ -1,8 +1,8 @@
 {
   "extends": [
-    "eslint:recommended", 
-    "plugin:@typescript-eslint/recommended", 
-    "plugin:react/recommended", 
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
     "eslint-config-airbnb",
     "prettier/@typescript-eslint",
     "plugin:prettier/recommended",
@@ -27,7 +27,8 @@
         "singleQuote": true,
         "tabWidth": 2,
         "useTabs": false,
-        "trailingComma": "all"
+        "trailingComma": "all",
+        "arrowParens": "avoid",
       }
     ],
     "import/extensions": "off",
@@ -51,13 +52,11 @@
     "one-var-declaration-per-line": ["error", "initializations"],
     "no-mixed-operators": "off",
     "no-plusplus": "off",
-    "import/prefer-default-export": "off",
     "react/forbid-prop-types": "off",
     "no-bitwise": "off",
     "object-property-newline": "off",
     "react/no-unused-prop-types": "off",
     "class-methods-use-this": "error",
-    "import/no-named-as-default": "off",
     "import/no-extraneous-dependencies": [
       "error",
       {
@@ -81,13 +80,21 @@
     "react/jsx-closing-tag-location": "error",
     "react/no-unused-state": "error",
     "react/prefer-stateless-function": "error",
-    "import/no-cycle": "warn",
     "react/jsx-props-no-spreading": "off",
     "react/state-in-constructor": "off",
     "react/static-property-placement": "off",
+    "import/prefer-default-export": "off",
+    "import/no-named-as-default":"error",
+    "import/no-cycle": "error",
+    "import/no-default-export": "error",
+
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"],
 
     "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/ban-types": "off",
   },
   "settings": {
     "import/resolver": {

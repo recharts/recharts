@@ -1,0 +1,31 @@
+name: Node.js CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x, 15.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install packages
+      run: sudo apt-get install firefox xvfb
+
+    - name: Setup node ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Test
+      run: |
+        tsc --noEmit
+        npm run lint
+        xvfb-run --auto-servernum -- ./node_modules/karma/bin/karma start test/karma.conf.js --browsers Firefox --single-run --no-auto-watch --capture-timeout 60000

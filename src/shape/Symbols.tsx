@@ -95,9 +95,7 @@ class Symbols extends PureComponent<Props> {
   getPath() {
     const { size, sizeType, type } = this.props;
     const symbolFactory = getSymbolFactory(type);
-    const symbol = shapeSymbol()
-      .type(symbolFactory)
-      .size(calculateAreaSize(size, sizeType, type));
+    const symbol = shapeSymbol().type(symbolFactory).size(calculateAreaSize(size, sizeType, type));
 
     return symbol();
   }
