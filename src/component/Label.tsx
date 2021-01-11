@@ -1,34 +1,17 @@
 import React, { cloneElement, isValidElement, ReactNode, ReactElement, createElement } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
-import Text from './Text';
+import { Text } from './Text';
 import { findAllByType } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-import { PresentationAttributes, filterProps } from '../util/types';
+import { PresentationAttributes, filterProps, ViewBox, PolarViewBox, CartesianViewBox } from '../util/types';
 
-interface CartesianViewBox {
-  x?: number;
-  y?: number;
-  width?: number;
-  height?: number;
-}
-
-interface PolarViewBox {
-  cx?: number;
-  cy?: number;
-  innerRadius?: number;
-  outerRadius?: number;
-  startAngle?: number;
-  endAngle?: number;
-  clockWise?: boolean;
-}
-
-type ViewBox = CartesianViewBox | PolarViewBox;
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
 
 interface LabelProps {
   viewBox?: ViewBox;
+  parentViewBox?: ViewBox;
   formatter?: Function;
   value?: number | string;
   offset?: number;
@@ -60,9 +43,10 @@ interface LabelProps {
   children?: ReactNode;
   className?: string;
   content?: ContentType;
+  textBreakAll?: boolean;
 }
 
-type Props = Omit<PresentationAttributes<SVGTextElement>, 'viewBox'> & LabelProps;
+export type Props = Omit<PresentationAttributes<SVGTextElement>, 'viewBox'> & LabelProps;
 
 const getLabel = (props: Props) => {
   const { value, formatter } = props;
@@ -175,7 +159,7 @@ const getAttrsOfPolarLabel = (props: Props) => {
 };
 
 const getAttrsOfCartesianLabel = (props: Props) => {
-  const { viewBox, offset, position } = props;
+  const { viewBox, parentViewBox, offset, position } = props;
   const { x, y, width, height } = viewBox as CartesianViewBox;
 
   // Define vertical offsets and position inverts based on the value being positive or negative
@@ -191,40 +175,87 @@ const getAttrsOfCartesianLabel = (props: Props) => {
   const horizontalStart = horizontalSign > 0 ? 'start' : 'end';
 
   if (position === 'top') {
-    return {
+    const attrs = {
       x: x + width / 2,
       y: y - verticalSign * offset,
       textAnchor: 'middle',
       verticalAnchor: verticalEnd,
     };
+
+    return {
+      ...attrs,
+      ...(parentViewBox
+        ? {
+            height: Math.max(y - (parentViewBox as CartesianViewBox).y, 0),
+            width,
+          }
+        : {}),
+    };
   }
 
   if (position === 'bottom') {
-    return {
+    const attrs = {
       x: x + width / 2,
       y: y + height + verticalOffset,
       textAnchor: 'middle',
       verticalAnchor: verticalStart,
     };
+
+    return {
+      ...attrs,
+      ...(parentViewBox
+        ? {
+            height: Math.max(
+              (parentViewBox as CartesianViewBox).y + (parentViewBox as CartesianViewBox).height - (y + height),
+              0,
+            ),
+            width,
+          }
+        : {}),
+    };
   }
 
   if (position === 'left') {
-    return {
+    const attrs = {
       x: x - horizontalOffset,
       y: y + height / 2,
       textAnchor: horizontalEnd,
       verticalAnchor: 'middle',
     };
+
+    return {
+      ...attrs,
+      ...(parentViewBox
+        ? {
+            width: Math.max(attrs.x - (parentViewBox as CartesianViewBox).x, 0),
+            height,
+          }
+        : {}),
+    };
   }
 
   if (position === 'right') {
-    return {
+    const attrs = {
       x: x + width + horizontalOffset,
       y: y + height / 2,
       textAnchor: horizontalStart,
       verticalAnchor: 'middle',
     };
+    return {
+      ...attrs,
+      ...(parentViewBox
+        ? {
+            width: Math.max(
+              (parentViewBox as CartesianViewBox).x + (parentViewBox as CartesianViewBox).width - attrs.x,
+              0,
+            ),
+            height,
+          }
+        : {}),
+    };
   }
+
+  const sizeAttrs = parentViewBox ? { width, height } : {};
 
   if (position === 'insideLeft') {
     return {
@@ -232,6 +263,7 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       y: y + height / 2,
       textAnchor: horizontalStart,
       verticalAnchor: 'middle',
+      ...sizeAttrs,
     };
   }
 
@@ -241,6 +273,7 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       y: y + height / 2,
       textAnchor: horizontalEnd,
       verticalAnchor: 'middle',
+      ...sizeAttrs,
     };
   }
 
@@ -250,6 +283,7 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       y: y + verticalOffset,
       textAnchor: 'middle',
       verticalAnchor: verticalStart,
+      ...sizeAttrs,
     };
   }
 
@@ -259,6 +293,7 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       y: y + height - verticalOffset,
       textAnchor: 'middle',
       verticalAnchor: verticalEnd,
+      ...sizeAttrs,
     };
   }
 
@@ -268,6 +303,7 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       y: y + verticalOffset,
       textAnchor: horizontalStart,
       verticalAnchor: verticalStart,
+      ...sizeAttrs,
     };
   }
 
@@ -277,6 +313,7 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       y: y + verticalOffset,
       textAnchor: horizontalEnd,
       verticalAnchor: verticalStart,
+      ...sizeAttrs,
     };
   }
 
@@ -286,6 +323,7 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       y: y + height - verticalOffset,
       textAnchor: horizontalStart,
       verticalAnchor: verticalEnd,
+      ...sizeAttrs,
     };
   }
 
@@ -295,6 +333,7 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       y: y + height - verticalOffset,
       textAnchor: horizontalEnd,
       verticalAnchor: verticalEnd,
+      ...sizeAttrs,
     };
   }
 
@@ -308,6 +347,7 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       y: y + getPercentValue(position.y, height),
       textAnchor: 'end',
       verticalAnchor: 'end',
+      ...sizeAttrs,
     };
   }
 
@@ -316,13 +356,14 @@ const getAttrsOfCartesianLabel = (props: Props) => {
     y: y + height / 2,
     textAnchor: 'middle',
     verticalAnchor: 'middle',
+    ...sizeAttrs,
   };
 };
 
 const isPolar = (viewBox: CartesianViewBox | PolarViewBox) => isNumber((viewBox as PolarViewBox).cx);
 
-function Label(props: Props) {
-  const { viewBox, position, value, children, content, className = '' } = props;
+export function Label(props: Props) {
+  const { viewBox, position, value, children, content, className = '', textBreakAll } = props;
 
   if (!viewBox || (_.isNil(value) && _.isNil(children) && !isValidElement(content) && !_.isFunction(content))) {
     return null;
@@ -353,7 +394,12 @@ function Label(props: Props) {
   const positionAttrs = isPolarLabel ? getAttrsOfPolarLabel(props) : getAttrsOfCartesianLabel(props);
 
   return (
-    <Text className={classNames('recharts-label', className)} {...attrs} {...(positionAttrs as any)}>
+    <Text
+      className={classNames('recharts-label', className)}
+      {...attrs}
+      {...(positionAttrs as any)}
+      breakAll={textBreakAll}
+    >
       {label}
     </Text>
   );
@@ -382,7 +428,12 @@ const parseViewBox = (props: any) => {
     width,
     height,
     clockWise,
+    labelViewBox,
   } = props;
+
+  if (labelViewBox) {
+    return labelViewBox;
+  }
 
   if (isNumber(width) && isNumber(height)) {
     if (isNumber(x) && isNumber(y)) {
@@ -472,5 +523,3 @@ const renderCallByParent = (parentProps: any, viewBox?: ViewBox, checkPropsLabel
 
 Label.parseViewBox = parseViewBox;
 Label.renderCallByParent = renderCallByParent;
-
-export default Label;

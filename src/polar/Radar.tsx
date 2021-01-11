@@ -6,13 +6,13 @@ import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { interpolateNumber } from '../util/DataUtils';
-import Global from '../util/Global';
+import { Global } from '../util/Global';
 import { polarToCartesian } from '../util/PolarUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import Polygon from '../shape/Polygon';
-import Dot, { Props as DotProps } from '../shape/Dot';
-import Layer from '../container/Layer';
-import LabelList from '../component/LabelList';
+import { Polygon } from '../shape/Polygon';
+import { Dot, Props as DotProps } from '../shape/Dot';
+import { Layer } from '../container/Layer';
+import { LabelList } from '../component/LabelList';
 import { PresentationAttributes, LegendType, TooltipType, AnimationTiming, filterProps, DataKey } from '../util/types';
 import { Props as PolarAngleAxisProps } from './PolarAngleAxis';
 import { Props as PolarRadiusAxisProps } from './PolarRadiusAxis';
@@ -26,6 +26,7 @@ interface RadarPoint {
   radius?: number;
   value?: number;
   payload?: any;
+  name?: string;
 }
 
 type RadarDot = ReactElement<SVGElement> | ((props: any) => SVGElement) | DotProps | boolean;
@@ -36,12 +37,15 @@ interface RadarProps {
   angleAxisId?: string | number;
   radiusAxisId?: string | number;
   points?: RadarPoint[];
+  baseLinePoints?: RadarPoint[];
+  isRange?: boolean;
   shape?: ReactElement<SVGElement> | ((props: any) => SVGElement);
   activeDot?: RadarDot;
   dot?: RadarDot;
   legendType?: LegendType;
   tooltipType?: TooltipType;
   hide?: boolean;
+  connectNulls?: boolean;
 
   label?: any;
   onAnimationStart?: () => void;
@@ -56,14 +60,14 @@ interface RadarProps {
   onMouseLeave?: (props: any, e: MouseEvent<SVGPolygonElement>) => void;
 }
 
-type Props = Omit<PresentationAttributes<SVGElement>, 'onMouseEnter' | 'onMouseLeave'> & RadarProps;
+export type Props = Omit<PresentationAttributes<SVGElement>, 'onMouseEnter' | 'onMouseLeave'> & RadarProps;
 
 interface State {
   isAnimationFinished?: boolean;
   prevPoints?: RadarPoint[];
 }
 
-class Radar extends PureComponent<Props, State> {
+export class Radar extends PureComponent<Props, State> {
   static displayName = 'Radar';
 
   static defaultProps = {
@@ -93,12 +97,21 @@ class Radar extends PureComponent<Props, State> {
     bandSize: number;
   }) => {
     const { cx, cy } = angleAxis;
-    const points = displayedData.map((entry, i) => {
+    let isRange = false;
+    const points: RadarPoint[] = [];
+
+    displayedData.forEach((entry, i) => {
       const name = getValueByDataKey(entry, angleAxis.dataKey, i);
-      const value = getValueByDataKey(entry, dataKey, 0);
+      const value = getValueByDataKey(entry, dataKey);
       const angle = angleAxis.scale(name) + (bandSize || 0);
-      const radius = radiusAxis.scale(value);
-      return {
+      const pointValue = _.isArray(value) ? _.last(value) : value;
+      const radius = _.isNil(pointValue) ? undefined : radiusAxis.scale(pointValue);
+
+      if (_.isArray(value) && value.length >= 2) {
+        isRange = true;
+      }
+
+      points.push({
         ...polarToCartesian(cx, cy, radius, angle),
         name,
         value,
@@ -107,10 +120,28 @@ class Radar extends PureComponent<Props, State> {
         radius,
         angle,
         payload: entry,
-      };
+      });
     });
+    const baseLinePoints: RadarPoint[] = [];
 
-    return { points };
+    if (isRange) {
+      points.forEach(point => {
+        if (_.isArray(point.value)) {
+          const baseValue = _.first(point.value);
+          const radius = _.isNil(baseValue) ? undefined : radiusAxis.scale(baseValue);
+
+          baseLinePoints.push({
+            ...point,
+            radius,
+            ...polarToCartesian(cx, cy, radius, point.angle),
+          });
+        } else {
+          baseLinePoints.push(point);
+        }
+      });
+    }
+
+    return { points, isRange, baseLinePoints };
   };
 
   state: State = { isAnimationFinished: false };
@@ -202,7 +233,7 @@ class Radar extends PureComponent<Props, State> {
   }
 
   renderPolygonStatically(points: RadarPoint[]) {
-    const { shape, dot } = this.props;
+    const { shape, dot, isRange, baseLinePoints, connectNulls } = this.props;
 
     let radar;
     if (React.isValidElement(shape)) {
@@ -216,6 +247,8 @@ class Radar extends PureComponent<Props, State> {
           onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}
           points={points}
+          baseLinePoints={isRange ? baseLinePoints : null}
+          connectNulls={connectNulls}
         />
       );
     }
@@ -277,10 +310,10 @@ class Radar extends PureComponent<Props, State> {
   }
 
   renderPolygon() {
-    const { points, isAnimationActive } = this.props;
+    const { points, isAnimationActive, isRange } = this.props;
     const { prevPoints } = this.state;
 
-    if (isAnimationActive && points && points.length && (!prevPoints || !_.isEqual(prevPoints, points))) {
+    if (isAnimationActive && points && points.length && !isRange && (!prevPoints || !_.isEqual(prevPoints, points))) {
       return this.renderPolygonWithAnimation();
     }
 
@@ -305,5 +338,3 @@ class Radar extends PureComponent<Props, State> {
     );
   }
 }
-
-export default Radar;

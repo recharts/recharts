@@ -5,11 +5,11 @@ import React, { PureComponent, ReactElement } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';
-import Curve, { CurveType, Point as CurvePoint } from '../shape/Curve';
-import Dot, { Props as DotProps } from '../shape/Dot';
-import Layer from '../container/Layer';
-import LabelList from '../component/LabelList';
-import Global from '../util/Global';
+import { Curve, CurveType, Point as CurvePoint } from '../shape/Curve';
+import { Dot, Props as DotProps } from '../shape/Dot';
+import { Layer } from '../container/Layer';
+import { LabelList } from '../component/LabelList';
+import { Global } from '../util/Global';
 import { isNumber, uniqueId, interpolateNumber } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
@@ -84,7 +84,7 @@ interface AreaProps extends InternalAreaProps {
   id?: string;
 }
 
-type Props = PresentationAttributes<SVGElement> & AreaProps;
+export type Props = PresentationAttributes<SVGElement> & AreaProps;
 
 interface State {
   prevPoints?: AreaPointItem[];
@@ -93,7 +93,7 @@ interface State {
   totalLength?: number;
 }
 
-class Area extends PureComponent<Props, State> {
+export class Area extends PureComponent<Props, State> {
   static displayName = 'Area';
 
   static defaultProps = {
@@ -562,5 +562,3 @@ class Area extends PureComponent<Props, State> {
     );
   }
 }
-
-export default Area;

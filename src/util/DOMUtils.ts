@@ -1,5 +1,5 @@
 import { CSSProperties, MouseEvent } from 'react';
-import Global from './Global';
+import { Global } from './Global';
 
 interface StringCache {
   widthCache: Record<string, any>;
@@ -90,6 +90,7 @@ export const getStringSize = (text: string | number, style: CSSProperties = {}) 
     if (!measurementSpan) {
       measurementSpan = document.createElement('span');
       measurementSpan.setAttribute('id', MEASUREMENT_SPAN_ID);
+      measurementSpan.setAttribute('aria-hidden', 'true');
       document.body.appendChild(measurementSpan);
     }
     // Need to use CSS Object Model (CSSOM) to be able to comply with Content Security Policy (CSP)

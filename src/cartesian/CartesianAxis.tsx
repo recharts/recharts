@@ -6,12 +6,12 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import { shallowEqual } from '../util/ShallowEqual';
 import { getStringSize } from '../util/DOMUtils';
-import Layer from '../container/Layer';
-import Text from '../component/Text';
-import Label from '../component/Label';
-import Global from '../util/Global';
+import { Layer } from '../container/Layer';
+import { Text } from '../component/Text';
+import { Label } from '../component/Label';
+import { Global } from '../util/Global';
 import { isNumber, mathSign } from '../util/DataUtils';
-import { ViewBox, PresentationAttributes, filterProps, TickItem, adaptEventsOfChild } from '../util/types';
+import { CartesianViewBox, PresentationAttributes, filterProps, TickItem, adaptEventsOfChild } from '../util/types';
 
 interface CartesianTickItem extends TickItem {
   tickCoord?: number;
@@ -28,7 +28,7 @@ export interface CartesianAxisProps {
   unit?: string | number;
   orientation?: 'top' | 'bottom' | 'left' | 'right';
   // The viewBox of svg
-  viewBox?: ViewBox;
+  viewBox?: CartesianViewBox;
   tick?: PresentationAttributes<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
   axisLine?: boolean | PresentationAttributes<SVGLineElement>;
   tickLine?: boolean | PresentationAttributes<SVGLineElement>;
@@ -45,9 +45,9 @@ export interface CartesianAxisProps {
   interval?: number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
 }
 
-type Props = PresentationAttributes<SVGElement> & CartesianAxisProps;
+export type Props = PresentationAttributes<SVGElement> & CartesianAxisProps;
 
-class CartesianAxis extends Component<Props> {
+export class CartesianAxis extends Component<Props> {
   static displayName = 'CartesianAxis';
 
   static defaultProps = {
@@ -475,5 +475,3 @@ class CartesianAxis extends Component<Props> {
     );
   }
 }
-
-export default CartesianAxis;

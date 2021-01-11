@@ -5,12 +5,12 @@ import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import Layer from '../container/Layer';
-import Trapezoid, { Props as TrapezoidProps } from '../shape/Trapezoid';
-import LabelList from '../component/LabelList';
-import Cell, { Props as CellProps } from '../component/Cell';
+import { Layer } from '../container/Layer';
+import { Trapezoid, Props as TrapezoidProps } from '../shape/Trapezoid';
+import { LabelList } from '../component/LabelList';
+import { Cell, Props as CellProps } from '../component/Cell';
 import { findAllByType } from '../util/ReactUtils';
-import Global from '../util/Global';
+import { Global } from '../util/Global';
 import { interpolateNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import {
@@ -44,6 +44,8 @@ interface FunnelProps extends InternalFunnelProps {
   legendType?: LegendType;
   tooltipType?: TooltipType;
   activeIndex?: number | number[];
+  lastShapeType?: 'triangle' | 'rectangle';
+  reversed?: boolean;
 
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
@@ -56,14 +58,14 @@ interface FunnelProps extends InternalFunnelProps {
   id?: string;
 }
 
-type Props = TrapezoidProps & FunnelProps;
+export type Props = TrapezoidProps & FunnelProps;
 
 interface State {
   readonly prevTrapezoids?: FunnelTrapezoidItem[];
   readonly isAnimationFinished?: boolean;
 }
 
-class Funnel extends PureComponent<Props, State> {
+export class Funnel extends PureComponent<Props, State> {
   static displayName = 'Funnel';
 
   static defaultProps = {
@@ -77,6 +79,7 @@ class Funnel extends PureComponent<Props, State> {
     animationDuration: 1500,
     animationEasing: 'ease',
     nameKey: 'name',
+    lastShapeType: 'triangle',
   };
 
   static getRealFunnelData = (item: Funnel) => {
@@ -134,14 +137,18 @@ class Funnel extends PureComponent<Props, State> {
     onItemClick?: PresentationAttributes<SVGElement>['onClick'];
   }) => {
     const funnelData = Funnel.getRealFunnelData(item);
-    const { dataKey, nameKey, tooltipType } = item.props;
+    const { dataKey, nameKey, tooltipType, lastShapeType, reversed } = item.props;
     const { left, top } = offset;
     const { realHeight, realWidth, offsetX, offsetY } = Funnel.getRealWidthHeight(item, offset);
-    const maxValue = getValueByDataKey(funnelData[0], dataKey, 0);
+    const maxValue = Math.max.apply(
+      null,
+      funnelData.map(entry => getValueByDataKey(entry, dataKey, 0)),
+    );
     const len = funnelData.length;
     const rowHeight = realHeight / len;
+    const parentViewBox = { x: offset.left, y: offset.top, width: offset.width, height: offset.height };
 
-    const trapezoids = funnelData.map((entry: any, i: number) => {
+    let trapezoids = funnelData.map((entry: any, i: number) => {
       const rawVal = getValueByDataKey(entry, dataKey, 0);
       const name = getValueByDataKey(entry, nameKey, i);
       let val = rawVal;
@@ -155,12 +162,14 @@ class Funnel extends PureComponent<Props, State> {
         }
       } else if (rawVal instanceof Array && rawVal.length === 2) {
         [val, nextVal] = rawVal;
+      } else if (lastShapeType === 'rectangle') {
+        nextVal = val;
       } else {
         nextVal = 0;
       }
 
       const x = ((maxValue - val) * realWidth) / (2 * maxValue) + top + 25 + offsetX;
-      const y = (realHeight / len) * i + left + offsetY;
+      const y = rowHeight * i + left + offsetY;
       const upperWidth = (val / maxValue) * realWidth;
       const lowerWidth = (nextVal / maxValue) * realWidth;
 
@@ -183,8 +192,33 @@ class Funnel extends PureComponent<Props, State> {
         tooltipPosition,
         ..._.omit(entry, 'width'),
         payload: entry,
+        parentViewBox,
+        labelViewBox: {
+          x: x + (upperWidth - lowerWidth) / 4,
+          y,
+          width: Math.abs(upperWidth - lowerWidth) / 2 + Math.min(upperWidth, lowerWidth),
+          height: rowHeight,
+        },
       };
     });
+
+    if (reversed) {
+      trapezoids = trapezoids.map((entry, index) => {
+        const newY = entry.y - index * rowHeight + (len - 1 - index) * rowHeight;
+        return {
+          ...entry,
+          upperWidth: entry.lowerWidth,
+          lowerWidth: entry.upperWidth,
+          x: entry.x - (entry.lowerWidth - entry.upperWidth) / 2,
+          y: entry.y - index * rowHeight + (len - 1 - index) * rowHeight,
+          tooltipPosition: { ...entry.tooltipPosition, y: newY + rowHeight / 2 },
+          labelViewBox: {
+            ...entry.labelViewBox,
+            y: newY,
+          },
+        };
+      });
+    }
 
     return {
       trapezoids,
@@ -374,5 +408,3 @@ class Funnel extends PureComponent<Props, State> {
     );
   }
 }
-
-export default Funnel;

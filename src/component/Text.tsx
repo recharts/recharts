@@ -3,7 +3,7 @@ import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
-import Global from '../util/Global';
+import { Global } from '../util/Global';
 import { PresentationAttributes, filterProps } from '../util/types';
 import { getStringSize } from '../util/DOMUtils';
 
@@ -21,10 +21,18 @@ interface CalculatedWordWidths {
 
 const calculateWordWidths = (props: Props): CalculatedWordWidths => {
   try {
-    const words = !_.isNil(props.children) ? props.children.toString().split(BREAKING_SPACES) : [];
+    let words: string[] = [];
+    if (!_.isNil(props.children)) {
+      if (props.breakAll) {
+        words = props.children.toString().split('');
+      } else {
+        words = props.children.toString().split(BREAKING_SPACES);
+      }
+    }
+
     const wordsWithComputedWidth = words.map(word => ({ word, width: getStringSize(word, props.style).width }));
 
-    const spaceWidth = getStringSize('\u00A0', props.style).width;
+    const spaceWidth = props.breakAll ? 0 : getStringSize('\u00A0', props.style).width;
 
     return { wordsWithComputedWidth, spaceWidth };
   } catch (e) {
@@ -39,6 +47,7 @@ interface TextProps {
   verticalAnchor?: 'start' | 'middle' | 'end';
   style?: CSSProperties;
   lineHeight?: number | string;
+  breakAll?: boolean;
 }
 
 export type Props = PresentationAttributes<SVGTextElement> & TextProps;
@@ -49,10 +58,66 @@ interface Words {
 }
 
 interface State {
-  wordsByLines: Array<Words>;
+  wordsByLines?: Array<Words>;
+  prevWidth?: number;
+  prevScaleToFit?: boolean;
+  prevChildren?: React.ReactChildren;
+  prevStyle?: CSSProperties;
+  prevBreakAll?: boolean;
 }
 
-class Text extends Component<Props, State> {
+const calculateWordsByLines = (
+  wordsWithComputedWidth: Array<WordWithComputedWidth>,
+  spaceWidth: number,
+  lineWidth: number | string,
+  scaleToFit?: boolean,
+): Array<Words> => {
+  return (wordsWithComputedWidth || []).reduce((result, { word, width }) => {
+    const currentLine = result[result.length - 1];
+
+    if (currentLine && (lineWidth == null || scaleToFit || currentLine.width + width + spaceWidth < lineWidth)) {
+      // Word can be added to an existing line
+      currentLine.words.push(word);
+      currentLine.width += width + spaceWidth;
+    } else {
+      // Add first word to line or word is too long to scaleToFit on existing line
+      const newLine = { words: [word], width };
+      result.push(newLine);
+    }
+
+    return result;
+  }, []);
+};
+
+const getWordsWithoutCalculate = (children: React.ReactNode): Array<Words> => {
+  const words = !_.isNil(children) ? children.toString().split(BREAKING_SPACES) : [];
+  return [{ words }];
+};
+
+const getWordsByLines = (props: Props, needCalculate: boolean) => {
+  // Only perform calculations if using features that require them (multiline, scaleToFit)
+  if ((props.width || props.scaleToFit) && !Global.isSsr) {
+    let wordsWithComputedWidth: Array<WordWithComputedWidth>, spaceWidth: number;
+
+    if (needCalculate) {
+      const wordWidths = calculateWordWidths(props);
+
+      if (wordWidths) {
+        const { wordsWithComputedWidth: wcw, spaceWidth: sw } = wordWidths;
+
+        wordsWithComputedWidth = wcw;
+        spaceWidth = sw;
+      } else {
+        return getWordsWithoutCalculate(props.children);
+      }
+
+      return calculateWordsByLines(wordsWithComputedWidth, spaceWidth, props.width, props.scaleToFit);
+    }
+  }
+  return getWordsWithoutCalculate(props.children);
+};
+
+export class Text extends Component<Props, State> {
   static defaultProps = {
     x: 0,
     y: 0,
@@ -63,84 +128,31 @@ class Text extends Component<Props, State> {
     verticalAnchor: 'end', // Maintain compat with existing charts / default SVG behavior
   };
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      wordsByLines: this.getWordsByLines(props, true),
-    };
-  }
+  state: State = {};
 
-  componentDidMount() {
-    this.updateWordsByLines(this.props, true);
-  }
-
-  componentDidUpdate(prevProps: Props) {
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     if (
-      prevProps.width !== this.props.width ||
-      prevProps.scaleToFit !== this.props.scaleToFit ||
-      prevProps.children !== this.props.children ||
-      prevProps.style !== this.props.style
+      nextProps.width !== prevState.prevWidth ||
+      nextProps.scaleToFit !== prevState.prevScaleToFit ||
+      nextProps.children !== prevState.prevChildren ||
+      nextProps.style !== prevState.prevStyle ||
+      nextProps.breakAll !== prevState.prevBreakAll
     ) {
-      const needCalculate = this.props.children !== prevProps.children || this.props.style !== prevProps.style;
-      this.updateWordsByLines(this.props, needCalculate);
+      const needCalculate =
+        nextProps.children !== prevState.prevChildren ||
+        nextProps.style !== prevState.prevStyle ||
+        nextProps.breakAll !== prevState.prevBreakAll;
+
+      return {
+        prevWidth: nextProps.width,
+        prevScaleToFit: nextProps.scaleToFit,
+        prevChildren: nextProps.children,
+        prevStyle: nextProps.style,
+        wordsByLines: getWordsByLines(nextProps, needCalculate),
+      };
     }
-  }
 
-  updateWordsByLines(props: Props, needCalculate: boolean) {
-    this.setState({
-      wordsByLines: this.getWordsByLines(props, needCalculate),
-    });
-  }
-
-  getWordsByLines(props: Props, needCalculate: boolean) {
-    // Only perform calculations if using features that require them (multiline, scaleToFit)
-    if ((props.width || props.scaleToFit) && !Global.isSsr) {
-      let wordsWithComputedWidth: Array<WordWithComputedWidth>, spaceWidth: number;
-
-      if (needCalculate) {
-        const wordWidths = calculateWordWidths(props);
-
-        if (wordWidths) {
-          const { wordsWithComputedWidth: wcw, spaceWidth: sw } = wordWidths;
-
-          wordsWithComputedWidth = wcw;
-          spaceWidth = sw;
-        } else {
-          return this.getWordsWithoutCalculate(props);
-        }
-
-        return this.calculateWordsByLines(wordsWithComputedWidth, spaceWidth, props.width);
-      }
-    }
-    return this.getWordsWithoutCalculate(props);
-  }
-
-  getWordsWithoutCalculate = (props: Props): Array<Words> => {
-    const words = !_.isNil(props.children) ? props.children.toString().split(BREAKING_SPACES) : [];
-    return [{ words }];
-  };
-
-  calculateWordsByLines(
-    wordsWithComputedWidth: Array<WordWithComputedWidth>,
-    spaceWidth: number,
-    lineWidth: number | string,
-  ): Array<Words> {
-    const { scaleToFit } = this.props;
-    return (wordsWithComputedWidth || []).reduce((result, { word, width }) => {
-      const currentLine = result[result.length - 1];
-
-      if (currentLine && (lineWidth == null || scaleToFit || currentLine.width + width + spaceWidth < lineWidth)) {
-        // Word can be added to an existing line
-        currentLine.words.push(word);
-        currentLine.width += width + spaceWidth;
-      } else {
-        // Add first word to line or word is too long to scaleToFit on existing line
-        const newLine = { words: [word], width };
-        result.push(newLine);
-      }
-
-      return result;
-    }, []);
+    return null;
   }
 
   render() {
@@ -154,6 +166,7 @@ class Text extends Component<Props, State> {
       lineHeight,
       capHeight,
       className,
+      breakAll,
       ...textProps
     } = this.props;
     const { wordsByLines } = this.state;
@@ -201,12 +214,10 @@ class Text extends Component<Props, State> {
         {wordsByLines.map((line, index) => (
           // eslint-disable-next-line react/no-array-index-key
           <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={index}>
-            {line.words.join(' ')}
+            {line.words.join(breakAll ? '' : ' ')}
           </tspan>
         ))}
       </text>
     );
   }
 }
-
-export default Text;

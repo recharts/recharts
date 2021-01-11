@@ -9,11 +9,11 @@ const colors1 = scaleOrdinal(schemeCategory10).range();
 const colors2 = scaleOrdinal(schemeCategory10).range();
 
 const data = [
-  { value: 100, name: '展现' },
-  { value: 80, name: '点击' },
-  { value: 50, name: '访问' },
-  { value: 40, name: '咨询' },
-  { value: 26, name: '订单' },
+  { value: 100, name: '展现展现展现展现展现展现展现展现展现展现展现展现' },
+  { value: 80, name: '点击点击点击点击点击点击点击点击点击点击点击点击点击点击' },
+  { value: 50, name: '访问访问访问访问访问访问访问访问访问访问访问访问访问访问访问' },
+  { value: 40, name: '咨询咨询咨询咨询咨询咨询咨询咨询咨询咨询咨询咨询咨询咨询咨询' },
+  { value: 26, name: '订单订单订单订单订单订单订单订单订单订单订单订单订单订单订单订单' },
 ];
 
 const data01 = [
@@ -30,6 +30,14 @@ const data02 = [
   { value: 30, name: '访问' },
   { value: 20, name: '咨询' },
   { value: [10, 5], name: '订单' },
+];
+
+const data03 = [
+  { value: 10, name: '展现' },
+  { value: 24, name: '点击' },
+  { value: 60, name: '访问' },
+  { value: 100, name: '咨询' },
+  { value: 150, name: '订单' },
 ];
 
 
@@ -62,6 +70,7 @@ export default class Demo extends Component {
               <Funnel
                 dataKey="value"
                 data={data}
+                reversed
                 isAnimationActive
               >
                 {
@@ -69,7 +78,7 @@ export default class Demo extends Component {
                     <Cell key={`slice-${index}`} fill={colors1[index % 10]} className="custom-cell" />
                   ))
                 }
-                <LabelList position="right" fill="#000" stroke="none" dataKey="name" />
+                <LabelList position="middle" fill="#000" stroke="none" dataKey="name" textBreakAll />
               </Funnel>
             </FunnelChart>
           </ResponsiveContainer>
@@ -136,6 +145,28 @@ export default class Demo extends Component {
                     <Cell key={`slice-${index}`} fill={colors1[index % 10]} opacity={0.5} />
                   ))
                 }
+              </Funnel>
+            </FunnelChart>
+          </ResponsiveContainer>
+        </div>
+
+        <p>reversed FunnelChart</p>
+        <div className="funnel-chart-wrapper" style={{ width: '50%', height: '300', backgroundColor: '#f5f5f5' }}>
+          <ResponsiveContainer>
+            <FunnelChart>
+              <Tooltip />
+              <Funnel
+                dataKey="value"
+                data={data03}
+                isAnimationActive
+                lastShapeType="rectangle"
+              >
+                {
+                  data03.map((entry, index) => (
+                    <Cell key={`slice-${index}`} fill={colors1[index % 10]} className="custom-cell" />
+                  ))
+                }
+                <LabelList position="right" fill="#000" stroke="none" dataKey="name" />
               </Funnel>
             </FunnelChart>
           </ResponsiveContainer>

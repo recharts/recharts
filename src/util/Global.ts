@@ -7,7 +7,7 @@ export interface GlobalConfig {
 
 export type GlobalConfigKeys = 'isSsr';
 
-const Global = {
+export const Global = {
   isSsr: parseIsSsrByDefault(),
 
   get: (key: 'isSsr') => {
@@ -28,5 +28,3 @@ const Global = {
     }
   },
 };
-
-export default Global;

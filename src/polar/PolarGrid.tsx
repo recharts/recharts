@@ -16,9 +16,9 @@ interface PolarGridProps {
   gridType?: 'polygon' | 'circle';
   radialLines: boolean;
 }
-type Props = PresentationAttributes<SVGPathElement> & PolarGridProps;
+export type Props = PresentationAttributes<SVGPathElement> & PolarGridProps;
 
-class PolarGrid extends PureComponent<Props> {
+export class PolarGrid extends PureComponent<Props> {
   static displayName = 'PolarGrid';
 
   static defaultProps = {
@@ -37,7 +37,7 @@ class PolarGrid extends PureComponent<Props> {
 
     polarAngles.forEach((angle, i) => {
       const point = polarToCartesian(cx, cy, radius, angle);
-      
+
       if (i) {
         path += `L ${point.x},${point.y}`;
       } else {
@@ -174,5 +174,3 @@ class PolarGrid extends PureComponent<Props> {
     );
   }
 }
-
-export default PolarGrid;

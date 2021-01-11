@@ -1,15 +1,15 @@
 /**
  * @fileOverview Tooltip
  */
-import React, { PureComponent, CSSProperties, ReactNode, ReactElement, ReactText } from 'react';
+import React, { PureComponent, CSSProperties, ReactNode, ReactElement } from 'react';
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import classNames from 'classnames';
-import DefaultTooltipContent, { ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
+import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
 
-import Global from '../util/Global';
+import { Global } from '../util/Global';
 import { isNumber } from '../util/DataUtils';
-import { AnimationTiming } from '../util/types';
+import { AnimationTiming, PresentationAttributes } from '../util/types';
 
 const CLS_PREFIX = 'recharts-tooltip-wrapper';
 
@@ -67,13 +67,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   active?: boolean;
   offset?: number;
   wrapperStyle?: CSSProperties;
-  cursor?:
-    | boolean
-    | ReactElement
-    | {
-        strokeDasharray: ReactText;
-        stroke?: string;
-      };
+  cursor?: boolean | ReactElement | PresentationAttributes<SVGElement>;
   coordinate?: {
     x?: number;
     y?: number;
@@ -91,7 +85,9 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   useTranslate3d?: boolean;
 };
 
-class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComponent<TooltipProps<TValue, TName>> {
+export class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComponent<
+  TooltipProps<TValue, TName>
+> {
   static displayName = 'Tooltip';
 
   static defaultProps = {
@@ -260,5 +256,3 @@ class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComp
     );
   }
 }
-
-export default Tooltip;

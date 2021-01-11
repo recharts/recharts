@@ -1,7 +1,8 @@
 /**
  * @fileOverview Z Axis
  */
-import { ScaleType, DataKey } from '../util/types';
+import type { FunctionComponent } from 'react';
+import { ScaleType, DataKey, AxisDomain } from '../util/types';
 
 export interface Props {
   type?: 'number' | 'category';
@@ -16,11 +17,11 @@ export interface Props {
   /** The range of axis */
   range?: number[];
   scale?: ScaleType | Function;
+  /** The domain of scale in this axis */
+  domain?: AxisDomain;
 }
 
-function ZAxis(props: Props): any {
-  return null;
-}
+export const ZAxis: FunctionComponent<Props> = () => null;
 
 ZAxis.displayName = 'ZAxis';
 ZAxis.defaultProps = {
@@ -29,5 +30,3 @@ ZAxis.defaultProps = {
   scale: 'auto',
   type: 'number',
 };
-
-export default ZAxis;

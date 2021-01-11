@@ -5,14 +5,14 @@ import React, { PureComponent, ReactElement } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';
-import Rectangle, { Props as RectangleProps } from '../shape/Rectangle';
-import Layer from '../container/Layer';
-import ErrorBar, { Props as ErrorBarProps } from './ErrorBar';
-import Cell from '../component/Cell';
-import LabelList from '../component/LabelList';
+import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
+import { Layer } from '../container/Layer';
+import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
+import { Cell } from '../component/Cell';
+import { LabelList } from '../component/LabelList';
 import { uniqueId, mathSign, interpolateNumber } from '../util/DataUtils';
 import { findAllByType } from '../util/ReactUtils';
-import Global from '../util/Global';
+import { Global } from '../util/Global';
 import {
   getCateCoordinateOfBar,
   getValueByDataKey,
@@ -34,6 +34,7 @@ import {
   TickItem,
   adaptEventsOfChild,
 } from '../util/types';
+import { ContentType } from '../component/Label';
 
 interface BarRectangleItem extends RectangleProps {
   value?: number;
@@ -73,6 +74,7 @@ interface BarProps extends InternalBarProps {
   hide?: boolean;
   shape?: ReactElement<SVGElement> | ((props: any) => SVGElement);
   background?: RectangleShapeType;
+  radius?: number | [number, number, number, number];
 
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
@@ -83,16 +85,26 @@ interface BarProps extends InternalBarProps {
   animationEasing?: AnimationTiming;
   animationId?: number;
   id?: string;
+  label?:
+    | boolean
+    | ReactElement<SVGElement>
+    | ((props: any) => SVGElement)
+    | {
+        id?: string;
+        valueAccessor?: Function;
+        dataKey?: DataKey<any>;
+        content?: ContentType;
+      };
 }
 
-type Props = PresentationAttributes<SVGPathElement> & BarProps;
+export type Props = PresentationAttributes<SVGPathElement> & BarProps;
 
 interface State {
   readonly isAnimationFinished?: boolean;
   readonly prevData?: BarRectangleItem[];
 }
 
-class Bar extends PureComponent<Props, State> {
+export class Bar extends PureComponent<Props, State> {
   static displayName = 'Bar';
 
   static defaultProps = {
@@ -482,5 +494,3 @@ class Bar extends PureComponent<Props, State> {
     );
   }
 }
-
-export default Bar;

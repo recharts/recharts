@@ -178,7 +178,7 @@ interface SectorProps extends GeometrySector {
 
 export type Props = PresentationAttributes<SVGPathElement> & SectorProps;
 
-class Sector extends PureComponent<Props> {
+export class Sector extends PureComponent<Props> {
   static defaultProps = {
     cx: 0,
     cy: 0,
@@ -233,5 +233,3 @@ class Sector extends PureComponent<Props> {
     return <path {...filterProps(this.props, true)} className={layerClass} d={path} />;
   }
 }
-
-export default Sector;

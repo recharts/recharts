@@ -5,15 +5,15 @@ import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import Layer from '../container/Layer';
-import Sector, { Props as SectorProps } from '../shape/Sector';
-import Curve from '../shape/Curve';
-import Text from '../component/Text';
-import Label from '../component/Label';
-import LabelList from '../component/LabelList';
-import Cell, { Props as CellProps } from '../component/Cell';
+import { Layer } from '../container/Layer';
+import { Sector, Props as SectorProps } from '../shape/Sector';
+import { Curve } from '../shape/Curve';
+import { Text } from '../component/Text';
+import { Label } from '../component/Label';
+import { LabelList } from '../component/LabelList';
+import { Cell, Props as CellProps } from '../component/Cell';
 import { findAllByType } from '../util/ReactUtils';
-import Global from '../util/Global';
+import { Global } from '../util/Global';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -94,6 +94,9 @@ interface PieProps extends PieDef {
   onAnimationEnd?: () => void;
   onAnimationStart?: () => void;
   id?: string;
+  onMouseEnter?: (data: any, index: number, e: React.MouseEvent) => void;
+  onMouseLeave?: (data: any, index: number, e: React.MouseEvent) => void;
+  onClick?: (data: any, index: number, e: React.MouseEvent) => void;
 }
 
 interface State {
@@ -101,9 +104,9 @@ interface State {
   prevSectors?: PieSectorDataItem[];
 }
 
-type Props = PresentationAttributes<SVGElement> & PieProps;
+export type Props = PresentationAttributes<SVGElement> & PieProps;
 
-class Pie extends PureComponent<Props, State> {
+export class Pie extends PureComponent<Props, State> {
   static displayName = 'Pie';
 
   static defaultProps = {
@@ -189,11 +192,9 @@ class Pie extends PureComponent<Props, State> {
     const { cornerRadius, startAngle, endAngle, paddingAngle, dataKey, nameKey, valueKey, tooltipType } = item.props;
     const minAngle = Math.abs(item.props.minAngle);
     const coordinate = Pie.parseCoordinateOfPie(item, offset);
-    const len = pieData.length;
     const deltaAngle = Pie.parseDeltaAngle(startAngle, endAngle);
     const absDeltaAngle = Math.abs(deltaAngle);
-    const totalPadingAngle = (absDeltaAngle >= 360 ? len : len - 1) * paddingAngle;
-    const realTotalAngle = absDeltaAngle - len * minAngle - totalPadingAngle;
+
     let realDataKey = dataKey;
 
     if (_.isNil(dataKey) && _.isNil(valueKey)) {
@@ -212,6 +213,10 @@ class Pie extends PureComponent<Props, State> {
       realDataKey = valueKey;
     }
 
+    const notZeroItemCount = pieData.filter(entry => getValueByDataKey(entry, realDataKey, 0) !== 0).length;
+    const totalPadingAngle = (absDeltaAngle >= 360 ? notZeroItemCount : notZeroItemCount - 1) * paddingAngle;
+    const realTotalAngle = absDeltaAngle - notZeroItemCount * minAngle - totalPadingAngle;
+
     const sum = pieData.reduce((result: number, entry: any) => {
       const val = getValueByDataKey(entry, realDataKey, 0);
       return result + (isNumber(val) ? val : 0);
@@ -227,12 +232,13 @@ class Pie extends PureComponent<Props, State> {
         let tempStartAngle;
 
         if (i) {
-          tempStartAngle = prev.endAngle + mathSign(deltaAngle) * paddingAngle;
+          tempStartAngle = prev.endAngle + mathSign(deltaAngle) * paddingAngle * (val !== 0 ? 1 : 0);
         } else {
           tempStartAngle = startAngle;
         }
 
-        const tempEndAngle = tempStartAngle + mathSign(deltaAngle) * (minAngle + percent * realTotalAngle);
+        const tempEndAngle =
+          tempStartAngle + mathSign(deltaAngle) * ((val !== 0 ? minAngle : 0) + percent * realTotalAngle);
         const midAngle = (tempStartAngle + tempEndAngle) / 2;
         const middleRadius = (coordinate.innerRadius + coordinate.outerRadius) / 2;
         const tooltipPayload = [
@@ -556,5 +562,3 @@ class Pie extends PureComponent<Props, State> {
     );
   }
 }
-
-export default Pie;

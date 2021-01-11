@@ -5,8 +5,8 @@ import React, { PureComponent, Children, ReactText, MouseEvent, ReactElement, To
 import classNames from 'classnames';
 import { scalePoint, ScalePoint } from 'd3-scale';
 import _ from 'lodash';
-import Layer from '../container/Layer';
-import Text from '../component/Text';
+import { Layer } from '../container/Layer';
+import { Text } from '../component/Text';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { isNumber } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
@@ -47,7 +47,7 @@ interface BrushProps extends InternalBrushProps {
   alwaysShowText?: boolean;
 }
 
-type Props = PresentationAttributes<SVGElement> & BrushProps;
+export type Props = PresentationAttributes<SVGElement> & BrushProps;
 
 type BrushTravellerId = 'startX' | 'endX';
 
@@ -65,7 +65,7 @@ interface State {
 const isTouch = (e: TouchEvent<SVGElement> | MouseEvent<SVGElement>): e is TouchEvent<SVGElement> =>
   (e as TouchEvent<SVGElement>).changedTouches && !!(e as TouchEvent<SVGElement>).changedTouches.length;
 
-class Brush extends PureComponent<Props, State> {
+export class Brush extends PureComponent<Props, State> {
   static displayName = 'Brush';
 
   static defaultProps = {
@@ -520,5 +520,3 @@ class Brush extends PureComponent<Props, State> {
     );
   }
 }
-
-export default Brush;

@@ -2,7 +2,7 @@
  * @fileOverview Render a group of error bar
  */
 import React from 'react';
-import Layer from '../container/Layer';
+import { Layer } from '../container/Layer';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { PresentationAttributes, filterProps, D3Scale, DataKey } from '../util/types';
@@ -37,7 +37,7 @@ interface ErrorBarProps extends InternalErrorBarProps {
 
 export type Props = PresentationAttributes<SVGLineElement> & ErrorBarProps;
 
-function ErrorBar(props: Props) {
+export function ErrorBar(props: Props) {
   const { offset, layout, width, dataKey, data, dataPointFormatter, xAxis, yAxis, ...others } = props;
   const svgProps = filterProps(others);
   const errorBars = data.map((entry, i) => {
@@ -96,6 +96,7 @@ function ErrorBar(props: Props) {
       // eslint-disable-next-line react/no-array-index-key
       <Layer className="recharts-errorBar" key={`bar-${i}`} {...svgProps}>
         {lineCoordinates.map((coordinates, index) => (
+          // eslint-disable-next-line react/no-array-index-key
           <line {...coordinates} key={`line-${index}`} />
         ))}
       </Layer>
@@ -113,5 +114,3 @@ ErrorBar.defaultProps = {
   layout: 'horizontal',
 };
 ErrorBar.displayName = 'ErrorBar';
-
-export default ErrorBar;

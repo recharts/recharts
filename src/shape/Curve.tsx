@@ -91,7 +91,7 @@ interface CurveProps {
 
 export type Props = Omit<PresentationAttributesWithProps<CurveProps, SVGPathElement>, 'type' | 'points'> & CurveProps;
 
-class Curve extends PureComponent<Props> {
+export class Curve extends PureComponent<Props> {
   static defaultProps = {
     type: 'linear',
     points: [] as any[],
@@ -127,19 +127,11 @@ class Curve extends PureComponent<Props> {
       return lineFunction(areaPoints);
     }
     if (layout === 'vertical' && isNumber(baseLine)) {
-      lineFunction = shapeArea<Point>()
-        .y(getY)
-        .x1(getX)
-        .x0(baseLine);
+      lineFunction = shapeArea<Point>().y(getY).x1(getX).x0(baseLine);
     } else if (isNumber(baseLine)) {
-      lineFunction = shapeArea<Point>()
-        .x(getX)
-        .y1(getY)
-        .y0(baseLine);
+      lineFunction = shapeArea<Point>().x(getX).y1(getY).y0(baseLine);
     } else {
-      lineFunction = shapeLine<Point>()
-        .x(getX)
-        .y(getY);
+      lineFunction = shapeLine<Point>().x(getX).y(getY);
     }
 
     lineFunction.defined(defined).curve(curveFactory);
@@ -167,5 +159,3 @@ class Curve extends PureComponent<Props> {
     );
   }
 }
-
-export default Curve;

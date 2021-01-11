@@ -1,15 +1,15 @@
 import React, { Component, cloneElement, isValidElement, createElement } from 'react';
 import classNames from 'classnames';
 import _ from 'lodash';
-import Surface from '../container/Surface';
-import Layer from '../container/Layer';
-import Tooltip from '../component/Tooltip';
-import Legend from '../component/Legend';
-import Curve from '../shape/Curve';
-import Cross from '../shape/Cross';
-import Sector from '../shape/Sector';
-import Dot from '../shape/Dot';
-import Rectangle from '../shape/Rectangle';
+import { Surface } from '../container/Surface';
+import { Layer } from '../container/Layer';
+import { Tooltip } from '../component/Tooltip';
+import { Legend } from '../component/Legend';
+import { Curve } from '../shape/Curve';
+import { Cross } from '../shape/Cross';
+import { Sector } from '../shape/Sector';
+import { Dot } from '../shape/Dot';
+import { Rectangle } from '../shape/Rectangle';
 
 import {
   findAllByType,
@@ -22,8 +22,8 @@ import {
   getReactEventByType,
 } from '../util/ReactUtils';
 
-import CartesianAxis from '../cartesian/CartesianAxis';
-import Brush from '../cartesian/Brush';
+import { CartesianAxis } from '../cartesian/CartesianAxis';
+import { Brush } from '../cartesian/Brush';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
 import { getAnyElementOfObject, hasDuplicate, uniqueId, isNumber, findEntryInArray } from '../util/DataUtils';
 import {
@@ -56,7 +56,7 @@ import {
   LayoutType,
   CategoricalChartOptions,
   Margin,
-  ViewBox,
+  CartesianViewBox,
   ChartOffset,
   BaseAxisProps,
   Coordinate,
@@ -65,6 +65,10 @@ import {
   filterProps,
   adaptEventHandlers,
 } from '../util/types';
+
+// use legacy isFinite only if there is a problem (aka IE)
+// eslint-disable-next-line no-restricted-globals
+const isFinit = Number.isFinite ? Number.isFinite : isFinite;
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
@@ -165,7 +169,7 @@ export interface CategoricalChartProps {
   outerRadius?: number | string;
 }
 
-const generateCategoricalChart = ({
+export const generateCategoricalChart = ({
   chartName,
   GraphicalChild,
   eventType = 'axis',
@@ -764,7 +768,7 @@ const generateCategoricalChart = ({
 
         if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
           // graphic child has data props
-          const entries = (data === undefined) ? displayedData : data;
+          const entries = data === undefined ? displayedData : data;
           payload = findEntryInArray(entries, tooltipAxis.dataKey, activeLabel);
         } else {
           payload = (data && data[activeIndex]) || displayedData[activeIndex];
@@ -1223,7 +1227,7 @@ const generateCategoricalChart = ({
           if (!offset) {
             return;
           }
-          const viewBox: ViewBox = { ...offset, x: offset.left, y: offset.top };
+          const viewBox: CartesianViewBox = { ...offset, x: offset.left, y: offset.top };
           // When a categotical chart is combined with another chart, the value of chartX
           // and chartY may beyond the boundaries.
           const validateChartX = Math.min(chartX, viewBox.x + viewBox.width);
@@ -1597,7 +1601,7 @@ const generateCategoricalChart = ({
       const { xAxisMap, yAxisMap, offset } = this.state;
       const { width, height } = this.props;
       const xAxis = getAnyElementOfObject(xAxisMap);
-      const yAxisWithFiniteDomain = _.find(yAxisMap, axis => _.every(axis.domain, isFinite));
+      const yAxisWithFiniteDomain = _.find(yAxisMap, axis => _.every(axis.domain, isFinit));
       const yAxis = yAxisWithFiniteDomain || getAnyElementOfObject(yAxisMap);
       const props = element.props || {};
 
@@ -1632,7 +1636,7 @@ const generateCategoricalChart = ({
         innerRadius,
         outerRadius,
         key: element.key || 'polar-grid',
-        radialLines
+        radialLines,
       });
     };
 
@@ -1928,5 +1932,3 @@ const generateCategoricalChart = ({
       );
     }
   };
-
-export default generateCategoricalChart;

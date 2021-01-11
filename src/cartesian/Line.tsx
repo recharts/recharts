@@ -5,14 +5,14 @@ import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
-import Curve, { CurveType, Props as CurveProps, Point as CurvePoint } from '../shape/Curve';
-import Dot, { Props as DotProps } from '../shape/Dot';
-import Layer from '../container/Layer';
-import LabelList from '../component/LabelList';
-import ErrorBar, { Props as ErrorBarProps } from './ErrorBar';
+import { Curve, CurveType, Props as CurveProps, Point as CurvePoint } from '../shape/Curve';
+import { Dot, Props as DotProps } from '../shape/Dot';
+import { Layer } from '../container/Layer';
+import { LabelList } from '../component/LabelList';
+import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
 import { findAllByType } from '../util/ReactUtils';
-import Global from '../util/Global';
+import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
@@ -74,7 +74,7 @@ interface LineProps extends InternalLineProps {
   id?: string;
 }
 
-type Props = Omit<CurveProps, 'points' | 'pathRef'> & LineProps;
+export type Props = Omit<CurveProps, 'points' | 'pathRef'> & LineProps;
 
 interface State {
   isAnimationFinished?: boolean;
@@ -82,7 +82,7 @@ interface State {
   prevPoints?: LinePointItem[];
 }
 
-class Line extends PureComponent<Props, State> {
+export class Line extends PureComponent<Props, State> {
   static displayName = 'Line';
 
   static defaultProps = {
@@ -274,6 +274,7 @@ class Line extends PureComponent<Props, State> {
 
     return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) =>
       React.cloneElement(item, {
+        // eslint-disable-next-line react/no-array-index-key
         key: `bar-${i}`,
         data: points,
         xAxis,
@@ -473,5 +474,3 @@ class Line extends PureComponent<Props, State> {
     );
   }
 }
-
-export default Line;

@@ -8,7 +8,7 @@ import _ from 'lodash';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
-interface Props {
+export interface Props {
   aspect?: number;
   width?: string | number;
   height?: string | number;
@@ -26,7 +26,7 @@ interface State {
   containerHeight: number;
 }
 
-class ResponsiveContainer extends Component<Props, State> {
+export class ResponsiveContainer extends Component<Props, State> {
   static defaultProps = {
     width: '100%',
     height: '100%',
@@ -172,5 +172,3 @@ class ResponsiveContainer extends Component<Props, State> {
     );
   }
 }
-
-export default ResponsiveContainer;

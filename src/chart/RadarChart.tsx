@@ -1,14 +1,14 @@
 /**
  * @fileOverview Radar Chart
  */
-import generateCategoricalChart from './generateCategoricalChart';
-import Radar from '../polar/Radar';
-import PolarAngleAxis from '../polar/PolarAngleAxis';
-import PolarRadiusAxis from '../polar/PolarRadiusAxis';
+import { generateCategoricalChart } from './generateCategoricalChart';
+import { Radar } from '../polar/Radar';
+import { PolarAngleAxis } from '../polar/PolarAngleAxis';
+import { PolarRadiusAxis } from '../polar/PolarRadiusAxis';
 import { formatAxisMap } from '../util/PolarUtils';
 import { CategoricalChartOptions } from '../util/types';
 
-export default generateCategoricalChart({
+export const RadarChart = generateCategoricalChart({
   chartName: 'RadarChart',
   GraphicalChild: Radar,
   axisComponents: [

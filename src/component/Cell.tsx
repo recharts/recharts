@@ -1,13 +1,11 @@
 /**
  * @fileOverview Cross
  */
+import type { FunctionComponent } from 'react';
 import { PresentationAttributes } from '../util/types';
 
 export type Props = PresentationAttributes<SVGElement>;
 
-function Cell(props: Props): null {
-  return null;
-}
-Cell.displayName = 'Cell';
+export const Cell: FunctionComponent<Props> = () => null;
 
-export default Cell;
+Cell.displayName = 'Cell';

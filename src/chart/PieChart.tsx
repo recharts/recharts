@@ -1,14 +1,14 @@
 /**
  * @fileOverview Pie Chart
  */
-import generateCategoricalChart from './generateCategoricalChart';
-import PolarAngleAxis from '../polar/PolarAngleAxis';
-import PolarRadiusAxis from '../polar/PolarRadiusAxis';
+import { generateCategoricalChart } from './generateCategoricalChart';
+import { PolarAngleAxis } from '../polar/PolarAngleAxis';
+import { PolarRadiusAxis } from '../polar/PolarRadiusAxis';
 import { formatAxisMap } from '../util/PolarUtils';
-import Pie from '../polar/Pie';
+import { Pie } from '../polar/Pie';
 import { CategoricalChartOptions } from '../util/types';
 
-export default generateCategoricalChart({
+export const PieChart = generateCategoricalChart({
   chartName: 'PieChart',
   GraphicalChild: Pie,
   eventType: 'item',

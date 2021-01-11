@@ -4,10 +4,10 @@
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import _ from 'lodash';
-import Surface from '../container/Surface';
-import Layer from '../container/Layer';
-import Tooltip from '../component/Tooltip';
-import Rectangle from '../shape/Rectangle';
+import { Surface } from '../container/Surface';
+import { Layer } from '../container/Layer';
+import { Tooltip } from '../component/Tooltip';
+import { Rectangle } from '../shape/Rectangle';
 import { shallowEqual } from '../util/ShallowEqual';
 import { filterSvgElements, validateWidthHeight, findChildByType } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -77,7 +77,17 @@ const updateDepthOfTargets = (tree: any, curNode: any) => {
   }
 };
 
-const getNodesTree = ({ nodes, links }: any, width: number, nodeWidth: number): any => {
+const getNodesTree = (
+  {
+    nodes,
+    links,
+  }: {
+    nodes: SankeyNode[];
+    links: SankeyLink[];
+  },
+  width: number,
+  nodeWidth: number,
+): any => {
   const tree = nodes.map((entry: any, index: number) => {
     const result = searchTargetsAndSources(links, index);
 
@@ -253,7 +263,10 @@ const computeData = ({
   nodeWidth,
   nodePadding,
 }: {
-  data: any;
+  data: {
+    nodes: SankeyNode[];
+    links: SankeyLink[];
+  };
   width: number;
   height: number;
   iterations: any;
@@ -334,7 +347,7 @@ interface SankeyProps {
   height?: number;
 
   data: {
-    node: SankeyNode[];
+    nodes: SankeyNode[];
     links: SankeyLink[];
   };
 
@@ -376,7 +389,7 @@ interface State {
   links: SankeyLink[];
 }
 
-class Sankey extends PureComponent<Props, State> {
+export class Sankey extends PureComponent<Props, State> {
   static displayName = 'Sankey';
 
   static defaultProps = {
@@ -664,5 +677,3 @@ class Sankey extends PureComponent<Props, State> {
     );
   }
 }
-
-export default Sankey;

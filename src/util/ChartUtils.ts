@@ -11,7 +11,7 @@ import {
 } from 'd3-shape';
 import { ReactElement, ReactNode } from 'react';
 import { isNumOrStr, uniqueId, isNumber, getPercentValue, mathSign, findEntryInArray } from './DataUtils';
-import Legend from '../component/Legend';
+import { Legend } from '../component/Legend';
 import { findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
@@ -746,7 +746,6 @@ export const offsetPositive = (series: any) => {
 
   for (let j = 0, m = series[0].length; j < m; ++j) {
     let positive = 0;
-    let negative = 0;
 
     for (let i = 0; i < n; ++i) {
       const value = _.isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
@@ -759,7 +758,6 @@ export const offsetPositive = (series: any) => {
       } else {
         series[i][j][0] = 0;
         series[i][j][1] = 0;
-        negative = series[i][j][1];
       }
       /* eslint-enable prefer-destructuring */
     }

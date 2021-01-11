@@ -3,7 +3,7 @@
  */
 import React, { PureComponent, CSSProperties } from 'react';
 import _ from 'lodash';
-import DefaultLegendContent, { Payload, Props as DefaultProps, ContentType } from './DefaultLegendContent';
+import { DefaultLegendContent, Payload, Props as DefaultProps, ContentType } from './DefaultLegendContent';
 
 import { isNumber } from '../util/DataUtils';
 
@@ -37,7 +37,7 @@ function renderContent<TValue, TID>(content: ContentType<TValue, TID>, props: Pr
 
 const EPS = 1;
 
-type Props<TValue, TID> = DefaultProps<TValue, TID> & {
+export type Props<TValue, TID> = DefaultProps<TValue, TID> & {
   wrapperStyle?: CSSProperties;
   chartWidth?: number;
   chartHeight?: number;
@@ -50,7 +50,7 @@ type Props<TValue, TID> = DefaultProps<TValue, TID> & {
     right?: number;
   };
   payloadUniqBy?: UniqueOption<TValue, TID>;
-  onBBoxUpdate?: (box: ClientRect | DOMRect | null) => void;
+  onBBoxUpdate?: (box: DOMRect | null) => void;
 };
 
 interface State {
@@ -58,7 +58,7 @@ interface State {
   boxHeight: number;
 }
 
-class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
+export class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
   static displayName = 'Legend';
 
   static defaultProps = {
@@ -210,5 +210,3 @@ class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
     );
   }
 }
-
-export default Legend;

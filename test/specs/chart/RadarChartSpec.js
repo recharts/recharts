@@ -22,7 +22,7 @@ describe('<RadarChart />', () => {
         <Radar dataKey="value" />
       </RadarChart>
     );
-    expect(wrapper.find('polygon').length).to.equal(1);
+    expect(wrapper.find('.recharts-polygon').length).to.equal(1);
   });
 
   it('Render 8 dots when dot is setted to be true', () => {
