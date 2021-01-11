@@ -9,7 +9,7 @@ import { Dot, Props as DotProps } from '../shape/Dot';
 import { Label } from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
 import { ifOverflowMatches } from '../util/IfOverflowMatches';
-import { createLabeldScales } from '../util/CartesianUtils';
+import { createLabeledScales } from '../util/CartesianUtils';
 import { warn } from '../util/LogUtils';
 import { D3Scale, filterProps } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
@@ -40,7 +40,7 @@ export type Props = DotProps & ReferenceDotProps;
 
 const getCoordinate = (props: Props) => {
   const { x, y, xAxis, yAxis } = props;
-  const scales = createLabeldScales({ x: xAxis.scale, y: yAxis.scale });
+  const scales = createLabeledScales({ x: xAxis.scale, y: yAxis.scale });
 
   const result = scales.apply({ x, y }, { bandAware: true });
 
