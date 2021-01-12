@@ -49,6 +49,7 @@ interface TextProps {
   lineHeight?: number | string;
   breakAll?: boolean;
   children?: string | number;
+  maxLines?: number;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'textAnchor' | 'verticalAnchor'> & TextProps;
@@ -68,26 +69,56 @@ interface State {
 }
 
 const calculateWordsByLines = (
-  wordsWithComputedWidth: Array<WordWithComputedWidth>,
+  props: Props,
+  initialWordsWithComputedWith: Array<WordWithComputedWidth>,
   spaceWidth: number,
   lineWidth: number | string,
   scaleToFit?: boolean,
 ): Array<Words> => {
-  return (wordsWithComputedWidth || []).reduce((result, { word, width }) => {
-    const currentLine = result[result.length - 1];
+  const shouldLimitLines = isNumber(props.maxLines);
 
-    if (currentLine && (lineWidth == null || scaleToFit || currentLine.width + width + spaceWidth < lineWidth)) {
-      // Word can be added to an existing line
-      currentLine.words.push(word);
-      currentLine.width += width + spaceWidth;
-    } else {
-      // Add first word to line or word is too long to scaleToFit on existing line
-      const newLine = { words: [word], width };
-      result.push(newLine);
-    }
+  const calculate = (words: Array<WordWithComputedWidth> = []) =>
+    words.reduce((result, { word, width }) => {
+      const currentLine = result[result.length - 1];
 
+      if (currentLine && (lineWidth == null || scaleToFit || currentLine.width + width + spaceWidth < lineWidth)) {
+        // Word can be added to an existing line
+        currentLine.words.push(word);
+        currentLine.width += width + spaceWidth;
+      } else {
+        // Add first word to line or word is too long to scaleToFit on existing line
+        const newLine = { words: [word], width };
+        result.push(newLine);
+      }
+
+      return result;
+    }, []);
+
+  const findLongestLine = (words: Array<Words>): Words =>
+    words.reduce((a: Words, b: Words) => (a.width > b.width ? a : b));
+
+  let wordsWithComputedWidth = initialWordsWithComputedWith;
+  let result = calculate(wordsWithComputedWidth);
+
+  if (!shouldLimitLines) {
     return result;
-  }, []);
+  }
+
+  let tempText = props.children as string;
+  const suffix = '…';
+
+  while (result.length > props.maxLines || findLongestLine(result).width > lineWidth) {
+    tempText = tempText.slice(0, -1);
+
+    wordsWithComputedWidth = calculateWordWidths({
+      ...props,
+      children: tempText + suffix,
+    }).wordsWithComputedWidth;
+
+    result = calculate(wordsWithComputedWidth);
+  }
+
+  return result;
 };
 
 const getWordsWithoutCalculate = (children: React.ReactNode): Array<Words> => {
@@ -112,7 +143,7 @@ const getWordsByLines = (props: Props, needCalculate: boolean) => {
         return getWordsWithoutCalculate(props.children);
       }
 
-      return calculateWordsByLines(wordsWithComputedWidth, spaceWidth, props.width, props.scaleToFit);
+      return calculateWordsByLines(props, wordsWithComputedWidth, spaceWidth, props.width, props.scaleToFit);
     }
   }
   return getWordsWithoutCalculate(props.children);
