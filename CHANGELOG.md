@@ -1,3 +1,18 @@
+## 2.0.1 (Jan 12, 2021)
+
+### fix
+
+- Fix typo, createLabeldScales -> createLabeledScales
+- Prefer Number.isFinite if available
+- fix types error
+- fix(package.json): disable side effects explicitly
+
+
+### feat
+
+- Add aria-hidden to measurementSpan
+
+
 ## 2.0.0 (Dec 29, 2020)
 
 ### fix
