@@ -53,7 +53,11 @@ type PieLabelLine =
   | ((props: any) => ReactElement<SVGElement>)
   | SVGProps<SVGPathElement>
   | boolean;
-type Pielabel = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | { offsetRadius: number } | boolean;
+type Pielabel =
+  | ReactElement<SVGElement>
+  | ((props: any) => ReactElement<SVGElement>)
+  | { offsetRadius: number }
+  | boolean;
 type PieSectorDataItem = SectorProps & {
   percent?: number;
   name?: string | number;

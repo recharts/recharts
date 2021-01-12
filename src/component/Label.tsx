@@ -50,8 +50,13 @@ interface LabelProps {
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;
 
-
-export type ImplicitLabelType = boolean | string | number | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | Props;
+export type ImplicitLabelType =
+  | boolean
+  | string
+  | number
+  | ReactElement<SVGElement>
+  | ((props: any) => ReactElement<SVGElement>)
+  | Props;
 
 const getLabel = (props: Props) => {
   const { value, formatter } = props;

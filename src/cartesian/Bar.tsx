@@ -55,7 +55,11 @@ interface InternalBarProps {
   left?: number;
 }
 
-type RectangleShapeType = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | RectangleProps | boolean;
+type RectangleShapeType =
+  | ReactElement<SVGElement>
+  | ((props: any) => ReactElement<SVGElement>)
+  | RectangleProps
+  | boolean;
 
 interface BarProps extends InternalBarProps {
   className?: string;

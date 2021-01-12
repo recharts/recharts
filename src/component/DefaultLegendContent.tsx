@@ -5,7 +5,13 @@ import React, { PureComponent, ReactNode, MouseEvent, ReactText, ReactElement } 
 import classNames from 'classnames';
 import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';
-import { LegendType, LayoutType, SymbolType, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
+import {
+  LegendType,
+  LayoutType,
+  SymbolType,
+  adaptEventsOfChild,
+  PresentationAttributesAdaptChildEvent,
+} from '../util/types';
 
 const SIZE = 32;
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
@@ -13,17 +19,17 @@ export type IconType = Omit<LegendType, 'none'>;
 export type HorizontalAlignmentType = 'center' | 'left' | 'right';
 export type VerticalAlignmentType = 'top' | 'bottom' | 'middle';
 export type Formatter = (
-  value: any, 
-  entry: { 
+  value: any,
+  entry: {
     value: any;
     id?: string;
     type?: LegendType;
     color?: string;
     payload?: {
       strokeDasharray: ReactText;
-    }
-  }, 
-  index: number
+    };
+  },
+  index: number,
 ) => ReactNode;
 
 export interface Payload {

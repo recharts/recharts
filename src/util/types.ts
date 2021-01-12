@@ -28,8 +28,12 @@ export type LayoutType = 'horizontal' | 'vertical' | 'centric' | 'radial';
 export type PolarLayoutType = 'radial' | 'centric';
 export type AxisType = 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis';
 export type DataKey<T> = string | number | ((obj: T) => any);
-export type PresentationAttributesWithProps<P, T> = AriaAttributes & DOMAttributesWithProps<P, T> & Omit<SVGProps<T>, keyof DOMAttributesWithProps<P, T>>;
-export type PresentationAttributesAdaptChildEvent<P, T> = AriaAttributes & DOMAttributesAdaptChildEvent<P, T> & Omit<SVGProps<T>, keyof DOMAttributesAdaptChildEvent<P, T>>;
+export type PresentationAttributesWithProps<P, T> = AriaAttributes &
+  DOMAttributesWithProps<P, T> &
+  Omit<SVGProps<T>, keyof DOMAttributesWithProps<P, T>>;
+export type PresentationAttributesAdaptChildEvent<P, T> = AriaAttributes &
+  DOMAttributesAdaptChildEvent<P, T> &
+  Omit<SVGProps<T>, keyof DOMAttributesAdaptChildEvent<P, T>>;
 
 export type SymbolType = 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye';
 export type LegendType =
@@ -325,7 +329,7 @@ type AdaptChildTransitionEventHandler<P, T = Element> = AdaptChildEventHandler<P
 export type DOMAttributesAdaptChildEvent<P, T> = {
   children?: ReactNode;
   dangerouslySetInnerHTML?: {
-      __html: string;
+    __html: string;
   };
 
   // Clipboard Events
@@ -517,7 +521,7 @@ export type DOMAttributesAdaptChildEvent<P, T> = {
   // Transition Events
   onTransitionEnd?: AdaptChildTransitionEventHandler<P, T>;
   onTransitionEndCapture?: AdaptChildTransitionEventHandler<P, T>;
-}
+};
 const SVGContainerPropKeys = ['viewBox', 'children'];
 const SVGElementPropKeys = [
   'className',

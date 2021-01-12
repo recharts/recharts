@@ -77,14 +77,7 @@ const updateDepthOfTargets = (tree: any, curNode: any) => {
   }
 };
 
-const getNodesTree = (
-  {
-    nodes,
-    links,
-  }: SankeyData,
-  width: number,
-  nodeWidth: number,
-): any => {
+const getNodesTree = ({ nodes, links }: SankeyData, width: number, nodeWidth: number): any => {
   const tree = nodes.map((entry: any, index: number) => {
     const result = searchTargetsAndSources(links, index);
 
@@ -340,11 +333,14 @@ interface LinkDataItem {
 interface SankeyData {
   nodes: any[];
   links: LinkDataItem[];
-};
+}
 
 type SankeyNodeOptions = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | RectangleProps;
 
-type SankeyLinkOptions = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | SVGProps<SVGPathElement>;
+type SankeyLinkOptions =
+  | ReactElement<SVGElement>
+  | ((props: any) => ReactElement<SVGElement>)
+  | SVGProps<SVGPathElement>;
 
 interface SankeyProps {
   nameKey?: DataKey<any>;

@@ -12,7 +12,7 @@ interface Data {
   parentViewBox?: ViewBox;
 }
 
-interface LabelList<T extends Data> {
+interface LabelListProps<T extends Data> {
   id?: string;
   data?: Array<T>;
   valueAccessor?: Function;
@@ -20,13 +20,17 @@ interface LabelList<T extends Data> {
   dataKey?: DataKey<T>;
   content?: ContentType;
   textBreakAll?: boolean;
-  position?: LabelProps["position"];
+  position?: LabelProps['position'];
   angle?: number;
 }
 
-export type Props<T> = SVGProps<SVGElement> & LabelList<T>;
+export type Props<T> = SVGProps<SVGElement> & LabelListProps<T>;
 
-export type ImplicitLabelListType<T> = boolean | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | Props<T>;
+export type ImplicitLabelListType<T> =
+  | boolean
+  | ReactElement<SVGElement>
+  | ((props: any) => ReactElement<SVGElement>)
+  | Props<T>;
 
 const defaultProps = {
   valueAccessor: (entry: Data) => (_.isArray(entry.value) ? _.last(entry.value) : entry.value),

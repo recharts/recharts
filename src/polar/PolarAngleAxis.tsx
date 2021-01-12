@@ -7,7 +7,13 @@ import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
 import { Polygon } from '../shape/Polygon';
 import { Text } from '../component/Text';
-import { BaseAxisProps, filterProps, TickItem, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
+import {
+  BaseAxisProps,
+  filterProps,
+  TickItem,
+  adaptEventsOfChild,
+  PresentationAttributesAdaptChildEvent,
+} from '../util/types';
 import { polarToCartesian } from '../util/PolarUtils';
 
 const RADIAN = Math.PI / 180;
