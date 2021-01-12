@@ -5,7 +5,7 @@ import React, { ReactElement } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { Layer } from '../container/Layer';
-import { Label } from '../component/Label';
+import { ImplicitLabelType, Label } from '../component/Label';
 import { createLabeledScales, rectWithPoints } from '../util/CartesianUtils';
 import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
@@ -35,7 +35,8 @@ interface ReferenceAreaProps extends InternalReferenceAreaProps {
   className?: number | string;
   yAxisId?: number | string;
   xAxisId?: number | string;
-  shape?: ReactElement<SVGElement> | ((props: any) => SVGElement);
+  shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
+  label?: ImplicitLabelType;
 }
 
 export type Props = RectangleProps & ReferenceAreaProps;

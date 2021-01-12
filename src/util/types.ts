@@ -1,6 +1,5 @@
 import {
   AriaAttributes,
-  DOMAttributes,
   SVGProps,
   SyntheticEvent,
   ClipboardEvent,
@@ -29,8 +28,8 @@ export type LayoutType = 'horizontal' | 'vertical' | 'centric' | 'radial';
 export type PolarLayoutType = 'radial' | 'centric';
 export type AxisType = 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis';
 export type DataKey<T> = string | number | ((obj: T) => any);
-export type PresentationAttributes<T> = AriaAttributes & DOMAttributes<T> & SVGProps<T>;
-export type PresentationAttributesWithProps<P, T> = AriaAttributes & DOMAttributesWithProps<P, T> & SVGProps<T>;
+export type PresentationAttributesWithProps<P, T> = AriaAttributes & DOMAttributesWithProps<P, T> & Omit<SVGProps<T>, keyof DOMAttributesWithProps<P, T>>;
+export type PresentationAttributesAdaptChildEvent<P, T> = AriaAttributes & DOMAttributesAdaptChildEvent<P, T> & Omit<SVGProps<T>, keyof DOMAttributesAdaptChildEvent<P, T>>;
 
 export type SymbolType = 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye';
 export type LegendType =
@@ -93,7 +92,6 @@ type EventHandler<P, E extends SyntheticEvent<any>> = {
 }['bivarianceHack'];
 
 type ReactEventHandler<P, T = Element> = EventHandler<P, SyntheticEvent<T>>;
-
 type ClipboardEventHandler<P, T = Element> = EventHandler<P, ClipboardEvent<T>>;
 type CompositionEventHandler<P, T = Element> = EventHandler<P, CompositionEvent<T>>;
 type DragEventHandler<P, T = Element> = EventHandler<P, DragEvent<T>>;
@@ -303,6 +301,222 @@ export interface DOMAttributesWithProps<P, T> {
   // Transition Events
   onTransitionEnd?: TransitionEventHandler<P, T>;
   onTransitionEndCapture?: TransitionEventHandler<P, T>;
+}
+
+type AdaptChildEventHandler<P, E extends SyntheticEvent<any>> = {
+  bivarianceHack(data: P, index: number, event: E): void;
+}['bivarianceHack'];
+
+type AdaptChildReactEventHandler<P, T = Element> = AdaptChildEventHandler<P, SyntheticEvent<T>>;
+type AdaptChildClipboardEventHandler<P, T = Element> = AdaptChildEventHandler<P, ClipboardEvent<T>>;
+type AdaptChildCompositionEventHandler<P, T = Element> = AdaptChildEventHandler<P, CompositionEvent<T>>;
+type AdaptChildDragEventHandler<P, T = Element> = AdaptChildEventHandler<P, DragEvent<T>>;
+type AdaptChildFocusEventHandler<P, T = Element> = AdaptChildEventHandler<P, FocusEvent<T>>;
+type AdaptChildFormEventHandler<P, T = Element> = AdaptChildEventHandler<P, FormEvent<T>>;
+type AdaptChildKeyboardEventHandler<P, T = Element> = AdaptChildEventHandler<P, KeyboardEvent<T>>;
+type AdaptChildMouseEventHandler<P, T = Element> = AdaptChildEventHandler<P, MouseEvent<T>>;
+type AdaptChildTouchEventHandler<P, T = Element> = AdaptChildEventHandler<P, TouchEvent<T>>;
+type AdaptChildPointerEventHandler<P, T = Element> = AdaptChildEventHandler<P, PointerEvent<T>>;
+type AdaptChildUIEventHandler<P, T = Element> = AdaptChildEventHandler<P, UIEvent<T>>;
+type AdaptChildWheelEventHandler<P, T = Element> = AdaptChildEventHandler<P, WheelEvent<T>>;
+type AdaptChildAnimationEventHandler<P, T = Element> = AdaptChildEventHandler<P, AnimationEvent<T>>;
+type AdaptChildTransitionEventHandler<P, T = Element> = AdaptChildEventHandler<P, TransitionEvent<T>>;
+
+export type DOMAttributesAdaptChildEvent<P, T> = {
+  children?: ReactNode;
+  dangerouslySetInnerHTML?: {
+      __html: string;
+  };
+
+  // Clipboard Events
+  onCopy?: AdaptChildClipboardEventHandler<P, T>;
+  onCopyCapture?: AdaptChildClipboardEventHandler<P, T>;
+  onCut?: AdaptChildClipboardEventHandler<P, T>;
+  onCutCapture?: AdaptChildClipboardEventHandler<P, T>;
+  onPaste?: AdaptChildClipboardEventHandler<P, T>;
+  onPasteCapture?: AdaptChildClipboardEventHandler<P, T>;
+
+  // Composition Events
+  onCompositionEnd?: AdaptChildCompositionEventHandler<P, T>;
+  onCompositionEndCapture?: AdaptChildCompositionEventHandler<P, T>;
+  onCompositionStart?: AdaptChildCompositionEventHandler<P, T>;
+  onCompositionStartCapture?: AdaptChildCompositionEventHandler<P, T>;
+  onCompositionUpdate?: AdaptChildCompositionEventHandler<P, T>;
+  onCompositionUpdateCapture?: AdaptChildCompositionEventHandler<P, T>;
+
+  // Focus Events
+  onFocus?: AdaptChildFocusEventHandler<P, T>;
+  onFocusCapture?: AdaptChildFocusEventHandler<P, T>;
+  onBlur?: AdaptChildFocusEventHandler<P, T>;
+  onBlurCapture?: AdaptChildFocusEventHandler<P, T>;
+
+  // Form Events
+  onChange?: AdaptChildFormEventHandler<P, T>;
+  onChangeCapture?: AdaptChildFormEventHandler<P, T>;
+  onBeforeInput?: AdaptChildFormEventHandler<P, T>;
+  onBeforeInputCapture?: AdaptChildFormEventHandler<P, T>;
+  onInput?: AdaptChildFormEventHandler<P, T>;
+  onInputCapture?: AdaptChildFormEventHandler<P, T>;
+  onReset?: AdaptChildFormEventHandler<P, T>;
+  onResetCapture?: AdaptChildFormEventHandler<P, T>;
+  onSubmit?: AdaptChildFormEventHandler<P, T>;
+  onSubmitCapture?: AdaptChildFormEventHandler<P, T>;
+  onInvalid?: AdaptChildFormEventHandler<P, T>;
+  onInvalidCapture?: AdaptChildFormEventHandler<P, T>;
+
+  // Image Events
+  onLoad?: AdaptChildReactEventHandler<P, T>;
+  onLoadCapture?: AdaptChildReactEventHandler<P, T>;
+  onError?: AdaptChildReactEventHandler<P, T>; // also a Media Event
+  onErrorCapture?: AdaptChildReactEventHandler<P, T>; // also a Media Event
+
+  // Keyboard Events
+  onKeyDown?: AdaptChildKeyboardEventHandler<P, T>;
+  onKeyDownCapture?: AdaptChildKeyboardEventHandler<P, T>;
+  onKeyPress?: AdaptChildKeyboardEventHandler<P, T>;
+  onKeyPressCapture?: AdaptChildKeyboardEventHandler<P, T>;
+  onKeyUp?: AdaptChildKeyboardEventHandler<P, T>;
+  onKeyUpCapture?: AdaptChildKeyboardEventHandler<P, T>;
+
+  // Media Events
+  onAbort?: AdaptChildReactEventHandler<P, T>;
+  onAbortCapture?: AdaptChildReactEventHandler<P, T>;
+  onCanPlay?: AdaptChildReactEventHandler<P, T>;
+  onCanPlayCapture?: AdaptChildReactEventHandler<P, T>;
+  onCanPlayThrough?: AdaptChildReactEventHandler<P, T>;
+  onCanPlayThroughCapture?: AdaptChildReactEventHandler<P, T>;
+  onDurationChange?: AdaptChildReactEventHandler<P, T>;
+  onDurationChangeCapture?: AdaptChildReactEventHandler<P, T>;
+  onEmptied?: AdaptChildReactEventHandler<P, T>;
+  onEmptiedCapture?: AdaptChildReactEventHandler<P, T>;
+  onEncrypted?: AdaptChildReactEventHandler<P, T>;
+  onEncryptedCapture?: AdaptChildReactEventHandler<P, T>;
+  onEnded?: AdaptChildReactEventHandler<P, T>;
+  onEndedCapture?: AdaptChildReactEventHandler<P, T>;
+  onLoadedData?: AdaptChildReactEventHandler<P, T>;
+  onLoadedDataCapture?: AdaptChildReactEventHandler<P, T>;
+  onLoadedMetadata?: AdaptChildReactEventHandler<P, T>;
+  onLoadedMetadataCapture?: AdaptChildReactEventHandler<P, T>;
+  onLoadStart?: AdaptChildReactEventHandler<P, T>;
+  onLoadStartCapture?: AdaptChildReactEventHandler<P, T>;
+  onPause?: AdaptChildReactEventHandler<P, T>;
+  onPauseCapture?: AdaptChildReactEventHandler<P, T>;
+  onPlay?: AdaptChildReactEventHandler<P, T>;
+  onPlayCapture?: AdaptChildReactEventHandler<P, T>;
+  onPlaying?: AdaptChildReactEventHandler<P, T>;
+  onPlayingCapture?: AdaptChildReactEventHandler<P, T>;
+  onProgress?: AdaptChildReactEventHandler<P, T>;
+  onProgressCapture?: AdaptChildReactEventHandler<P, T>;
+  onRateChange?: AdaptChildReactEventHandler<P, T>;
+  onRateChangeCapture?: AdaptChildReactEventHandler<P, T>;
+  onSeeked?: AdaptChildReactEventHandler<P, T>;
+  onSeekedCapture?: AdaptChildReactEventHandler<P, T>;
+  onSeeking?: AdaptChildReactEventHandler<P, T>;
+  onSeekingCapture?: AdaptChildReactEventHandler<P, T>;
+  onStalled?: AdaptChildReactEventHandler<P, T>;
+  onStalledCapture?: AdaptChildReactEventHandler<P, T>;
+  onSuspend?: AdaptChildReactEventHandler<P, T>;
+  onSuspendCapture?: AdaptChildReactEventHandler<P, T>;
+  onTimeUpdate?: AdaptChildReactEventHandler<P, T>;
+  onTimeUpdateCapture?: AdaptChildReactEventHandler<P, T>;
+  onVolumeChange?: AdaptChildReactEventHandler<P, T>;
+  onVolumeChangeCapture?: AdaptChildReactEventHandler<P, T>;
+  onWaiting?: AdaptChildReactEventHandler<P, T>;
+  onWaitingCapture?: AdaptChildReactEventHandler<P, T>;
+
+  // MouseEvents
+  onAuxClick?: AdaptChildMouseEventHandler<P, T>;
+  onAuxClickCapture?: AdaptChildMouseEventHandler<P, T>;
+  onClick?: AdaptChildMouseEventHandler<P, T>;
+  onClickCapture?: AdaptChildMouseEventHandler<P, T>;
+  onContextMenu?: AdaptChildMouseEventHandler<P, T>;
+  onContextMenuCapture?: AdaptChildMouseEventHandler<P, T>;
+  onDoubleClick?: AdaptChildMouseEventHandler<P, T>;
+  onDoubleClickCapture?: AdaptChildMouseEventHandler<P, T>;
+  onDrag?: AdaptChildDragEventHandler<P, T>;
+  onDragCapture?: AdaptChildDragEventHandler<P, T>;
+  onDragEnd?: AdaptChildDragEventHandler<P, T>;
+  onDragEndCapture?: AdaptChildDragEventHandler<P, T>;
+  onDragEnter?: AdaptChildDragEventHandler<P, T>;
+  onDragEnterCapture?: AdaptChildDragEventHandler<P, T>;
+  onDragExit?: AdaptChildDragEventHandler<P, T>;
+  onDragExitCapture?: AdaptChildDragEventHandler<P, T>;
+  onDragLeave?: AdaptChildDragEventHandler<P, T>;
+  onDragLeaveCapture?: AdaptChildDragEventHandler<P, T>;
+  onDragOver?: AdaptChildDragEventHandler<P, T>;
+  onDragOverCapture?: AdaptChildDragEventHandler<P, T>;
+  onDragStart?: AdaptChildDragEventHandler<P, T>;
+  onDragStartCapture?: AdaptChildDragEventHandler<P, T>;
+  onDrop?: AdaptChildDragEventHandler<P, T>;
+  onDropCapture?: AdaptChildDragEventHandler<P, T>;
+  onMouseDown?: AdaptChildMouseEventHandler<P, T>;
+  onMouseDownCapture?: AdaptChildMouseEventHandler<P, T>;
+  onMouseEnter?: AdaptChildMouseEventHandler<P, T>;
+  onMouseLeave?: AdaptChildMouseEventHandler<P, T>;
+  onMouseMove?: AdaptChildMouseEventHandler<P, T>;
+  onMouseMoveCapture?: AdaptChildMouseEventHandler<P, T>;
+  onMouseOut?: AdaptChildMouseEventHandler<P, T>;
+  onMouseOutCapture?: AdaptChildMouseEventHandler<P, T>;
+  onMouseOver?: AdaptChildMouseEventHandler<P, T>;
+  onMouseOverCapture?: AdaptChildMouseEventHandler<P, T>;
+  onMouseUp?: AdaptChildMouseEventHandler<P, T>;
+  onMouseUpCapture?: AdaptChildMouseEventHandler<P, T>;
+
+  // Selection Events
+  onSelect?: AdaptChildReactEventHandler<P, T>;
+  onSelectCapture?: AdaptChildReactEventHandler<P, T>;
+
+  // Touch Events
+  onTouchCancel?: AdaptChildTouchEventHandler<P, T>;
+  onTouchCancelCapture?: AdaptChildTouchEventHandler<P, T>;
+  onTouchEnd?: AdaptChildTouchEventHandler<P, T>;
+  onTouchEndCapture?: AdaptChildTouchEventHandler<P, T>;
+  onTouchMove?: AdaptChildTouchEventHandler<P, T>;
+  onTouchMoveCapture?: AdaptChildTouchEventHandler<P, T>;
+  onTouchStart?: AdaptChildTouchEventHandler<P, T>;
+  onTouchStartCapture?: AdaptChildTouchEventHandler<P, T>;
+
+  // Pointer Events
+  onPointerDown?: AdaptChildPointerEventHandler<P, T>;
+  onPointerDownCapture?: AdaptChildPointerEventHandler<P, T>;
+  onPointerMove?: AdaptChildPointerEventHandler<P, T>;
+  onPointerMoveCapture?: AdaptChildPointerEventHandler<P, T>;
+  onPointerUp?: AdaptChildPointerEventHandler<P, T>;
+  onPointerUpCapture?: AdaptChildPointerEventHandler<P, T>;
+  onPointerCancel?: AdaptChildPointerEventHandler<P, T>;
+  onPointerCancelCapture?: AdaptChildPointerEventHandler<P, T>;
+  onPointerEnter?: AdaptChildPointerEventHandler<P, T>;
+  onPointerEnterCapture?: AdaptChildPointerEventHandler<P, T>;
+  onPointerLeave?: AdaptChildPointerEventHandler<P, T>;
+  onPointerLeaveCapture?: AdaptChildPointerEventHandler<P, T>;
+  onPointerOver?: AdaptChildPointerEventHandler<P, T>;
+  onPointerOverCapture?: AdaptChildPointerEventHandler<P, T>;
+  onPointerOut?: AdaptChildPointerEventHandler<P, T>;
+  onPointerOutCapture?: AdaptChildPointerEventHandler<P, T>;
+  onGotPointerCapture?: AdaptChildPointerEventHandler<P, T>;
+  onGotPointerCaptureCapture?: AdaptChildPointerEventHandler<P, T>;
+  onLostPointerCapture?: AdaptChildPointerEventHandler<P, T>;
+  onLostPointerCaptureCapture?: AdaptChildPointerEventHandler<P, T>;
+
+  // UI Events
+  onScroll?: AdaptChildUIEventHandler<P, T>;
+  onScrollCapture?: AdaptChildUIEventHandler<P, T>;
+
+  // Wheel Events
+  onWheel?: AdaptChildWheelEventHandler<P, T>;
+  onWheelCapture?: AdaptChildWheelEventHandler<P, T>;
+
+  // Animation Events
+  onAnimationStart?: AdaptChildAnimationEventHandler<P, T>;
+  onAnimationStartCapture?: AdaptChildAnimationEventHandler<P, T>;
+  onAnimationEnd?: AdaptChildAnimationEventHandler<P, T>;
+  onAnimationEndCapture?: AdaptChildAnimationEventHandler<P, T>;
+  onAnimationIteration?: AdaptChildAnimationEventHandler<P, T>;
+  onAnimationIterationCapture?: AdaptChildAnimationEventHandler<P, T>;
+
+  // Transition Events
+  onTransitionEnd?: AdaptChildTransitionEventHandler<P, T>;
+  onTransitionEndCapture?: AdaptChildTransitionEventHandler<P, T>;
 }
 const SVGContainerPropKeys = ['viewBox', 'children'];
 const SVGElementPropKeys = [
@@ -766,7 +980,7 @@ export type D3Scale<T> = D3ScaleContinuousNumeric<T, number>;
 
 export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | 'dataMax';
 /** The domain of axis */
-export type AxisDomain = [AxisDomainItem, AxisDomainItem];
+export type AxisDomain = string[] | number[] | [AxisDomainItem, AxisDomainItem];
 
 /** The props definition of base axis */
 export interface BaseAxisProps {
@@ -779,13 +993,13 @@ export interface BaseAxisProps {
   /** The scale type or functor of scale */
   scale?: ScaleType | Function;
   /** The option for tick */
-  tick?: PresentationAttributes<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
+  tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
   /** The count of ticks */
   tickCount?: number;
   /** The option for axisLine */
-  axisLine?: boolean | PresentationAttributes<SVGLineElement>;
+  axisLine?: boolean | SVGProps<SVGLineElement>;
   /** The option for tickLine */
-  tickLine?: boolean | PresentationAttributes<SVGTextElement>;
+  tickLine?: boolean | SVGProps<SVGTextElement>;
   /** The size of tick line */
   tickSize?: number;
   /** The formatter function of tick */
@@ -826,7 +1040,7 @@ export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveS
 export interface TickItem {
   value?: any;
   coordinate: number;
-  index: number;
+  index?: number;
 }
 
 export interface Margin {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-export default class Demo extends Component {
+export default class Demo extends Component<any> {
 
   static displayName = 'CustomLineDotDemo';
 

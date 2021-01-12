@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Layer } from 'recharts';
 
-export default class Demo extends Component {
+export default class Demo extends Component<any, any> {
 
   static displayName = 'SankeyLinkDemo';
 

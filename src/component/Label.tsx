@@ -1,11 +1,11 @@
-import React, { cloneElement, isValidElement, ReactNode, ReactElement, createElement } from 'react';
+import React, { cloneElement, isValidElement, ReactNode, ReactElement, createElement, SVGProps } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { Text } from './Text';
 import { findAllByType } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-import { PresentationAttributes, filterProps, ViewBox, PolarViewBox, CartesianViewBox } from '../util/types';
+import { filterProps, ViewBox, PolarViewBox, CartesianViewBox } from '../util/types';
 
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
 
@@ -36,6 +36,7 @@ interface LabelProps {
     | 'center'
     | 'centerTop'
     | 'centerBottom'
+    | 'middle'
     | {
         x?: number;
         y?: number;
@@ -44,9 +45,13 @@ interface LabelProps {
   className?: string;
   content?: ContentType;
   textBreakAll?: boolean;
+  angle?: number;
 }
 
-export type Props = Omit<PresentationAttributes<SVGTextElement>, 'viewBox'> & LabelProps;
+export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;
+
+
+export type ImplicitLabelType = boolean | string | number | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | Props;
 
 const getLabel = (props: Props) => {
   const { value, formatter } = props;
@@ -66,7 +71,7 @@ const getDeltaAngle = (startAngle: number, endAngle: number) => {
   return sign * deltaAngle;
 };
 
-const renderRadialLabel = (labelProps: Props, label: ReactNode, attrs: PresentationAttributes<SVGTextElement>) => {
+const renderRadialLabel = (labelProps: Props, label: ReactNode, attrs: SVGProps<SVGTextElement>) => {
   const { position, viewBox, offset, className } = labelProps;
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, clockWise } = viewBox as PolarViewBox;
   const radius = (innerRadius + outerRadius) / 2;

@@ -1,9 +1,9 @@
 /**
  * @fileOverview Polar Grid
  */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, SVGProps } from 'react';
 import { polarToCartesian } from '../util/PolarUtils';
-import { filterProps, PresentationAttributes } from '../util/types';
+import { filterProps } from '../util/types';
 
 interface PolarGridProps {
   cx?: number;
@@ -16,7 +16,7 @@ interface PolarGridProps {
   gridType?: 'polygon' | 'circle';
   radialLines: boolean;
 }
-export type Props = PresentationAttributes<SVGPathElement> & PolarGridProps;
+export type Props = SVGProps<SVGPathElement> & PolarGridProps;
 
 export class PolarGrid extends PureComponent<Props> {
   static displayName = 'PolarGrid';
@@ -35,7 +35,7 @@ export class PolarGrid extends PureComponent<Props> {
 
     let path = '';
 
-    polarAngles.forEach((angle, i) => {
+    polarAngles.forEach((angle: number, i: number) => {
       const point = polarToCartesian(cx, cy, radius, angle);
 
       if (i) {
@@ -92,7 +92,7 @@ export class PolarGrid extends PureComponent<Props> {
    * @param {Object} extraProps Extra props
    * @return {ReactElement} circle
    */
-  renderConcentricCircle(radius: number, index: number, extraProps?: PresentationAttributes<SVGCircleElement>) {
+  renderConcentricCircle(radius: number, index: number, extraProps?: SVGProps<SVGCircleElement>) {
     const { cx, cy } = this.props;
     const props = {
       stroke: '#ccc',
@@ -120,7 +120,7 @@ export class PolarGrid extends PureComponent<Props> {
    * @param {Object} extraProps Extra props
    * @return {ReactElement} polygon
    */
-  renderConcentricPolygon(radius: number, index: number, extraProps?: PresentationAttributes<SVGPathElement>) {
+  renderConcentricPolygon(radius: number, index: number, extraProps?: SVGProps<SVGPathElement>) {
     const props = {
       stroke: '#ccc',
       ...filterProps(this.props),
@@ -152,7 +152,7 @@ export class PolarGrid extends PureComponent<Props> {
 
     return (
       <g className="recharts-polar-grid-concentric">
-        {polarRadius.map((entry, i) =>
+        {polarRadius.map((entry: number, i: number) =>
           gridType === 'circle' ? this.renderConcentricCircle(entry, i) : this.renderConcentricPolygon(entry, i),
         )}
       </g>

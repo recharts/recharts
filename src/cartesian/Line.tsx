@@ -27,7 +27,7 @@ import {
   TickItem,
 } from '../util/types';
 
-type LineDot = ReactElement<SVGElement> | ((props: any) => SVGElement) | DotProps | boolean;
+type LineDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
 
 interface LinePointItem extends CurvePoint {
   value?: number;
@@ -46,6 +46,7 @@ interface InternalLineProps {
 
 interface LineProps extends InternalLineProps {
   className?: string;
+  data?: any;
   type?: CurveType;
   unit?: string | number;
   name?: string | number;

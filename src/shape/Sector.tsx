@@ -1,9 +1,9 @@
 /**
  * @fileOverview Sector
  */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, SVGProps } from 'react';
 import classNames from 'classnames';
-import { PresentationAttributes, filterProps, GeometrySector } from '../util/types';
+import { filterProps, GeometrySector } from '../util/types';
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';
 import { getPercentValue, mathSign } from '../util/DataUtils';
 
@@ -176,7 +176,7 @@ interface SectorProps extends GeometrySector {
   className?: string;
 }
 
-export type Props = PresentationAttributes<SVGPathElement> & SectorProps;
+export type Props = SVGProps<SVGPathElement> & SectorProps;
 
 export class Sector extends PureComponent<Props> {
   static defaultProps = {

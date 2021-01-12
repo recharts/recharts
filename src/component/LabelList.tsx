@@ -1,6 +1,6 @@
-import React, { cloneElement } from 'react';
+import React, { cloneElement, ReactElement, SVGProps } from 'react';
 import _ from 'lodash';
-import { Label, ContentType } from './Label';
+import { Label, ContentType, Props as LabelProps } from './Label';
 import { Layer } from '../container/Layer';
 import { findAllByType } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -12,15 +12,21 @@ interface Data {
   parentViewBox?: ViewBox;
 }
 
-export interface Props<T extends Data> {
+interface LabelList<T extends Data> {
   id?: string;
-  data: Array<T>;
+  data?: Array<T>;
   valueAccessor?: Function;
   clockWise?: boolean;
   dataKey?: DataKey<T>;
   content?: ContentType;
   textBreakAll?: boolean;
+  position?: LabelProps["position"];
+  angle?: number;
 }
+
+export type Props<T> = SVGProps<SVGElement> & LabelList<T>;
+
+export type ImplicitLabelListType<T> = boolean | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | Props<T>;
 
 const defaultProps = {
   valueAccessor: (entry: Data) => (_.isArray(entry.value) ? _.last(entry.value) : entry.value),

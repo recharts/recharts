@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import * as _ from 'lodash';
 import { RadialBarChart, RadialBar, Cell, Legend, Tooltip, ResponsiveContainer,
   LabelList, PolarAngleAxis } from 'recharts';
 import { changeNumberOfData } from './utils';
@@ -65,7 +66,7 @@ export default class Demo extends Component {
             <RadialBar minPointSize={15} background dataKey="uv" >
               {
                 data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={colors[index]}/>
+                  <Cell key={`cell-${index}`} fill={colors[index] as string}/>
                 ))
               }
               <LabelList position="insideEnd" fill="#fff" fontSize={10} />

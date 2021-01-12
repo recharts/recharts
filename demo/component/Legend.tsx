@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Surface, Legend } from 'recharts';
+import { Surface, Legend, LegendType } from 'recharts';
 import CustomLegendIcon from './CustomLegendIcon';
 
 const data = [
@@ -10,24 +10,24 @@ const data = [
 ];
 
 const data2 = [
-  { value: 'Apple', type: 'circle', color: '#ff7300' },
-  { value: 'Samsung', type: 'circle', color: '#bb7300' },
-  { value: 'Huawei', type: 'circle', color: '#bb0067' },
-  { value: 'Sony', type: 'circle', color: '#167300' },
+  { value: 'Apple', type: 'circle' as LegendType, color: '#ff7300' },
+  { value: 'Samsung', type: 'circle' as LegendType, color: '#bb7300' },
+  { value: 'Huawei', type: 'circle' as LegendType, color: '#bb0067' },
+  { value: 'Sony', type: 'circle' as LegendType, color: '#167300' },
 ];
 
 const data3 = [
-  { value: 'Apple', type: 'line', color: '#ff7300' },
-  { value: 'Samsung', type: 'line', color: '#bb7300' },
-  { value: 'Huawei', type: 'line', color: '#bb7300' },
-  { value: 'Sony', type: 'line', color: '#ff7812' },
+  { value: 'Apple', type: 'line' as LegendType, color: '#ff7300' },
+  { value: 'Samsung', type: 'line' as LegendType, color: '#bb7300' },
+  { value: 'Huawei', type: 'line' as LegendType, color: '#bb7300' },
+  { value: 'Sony', type: 'line' as LegendType, color: '#ff7812' },
 ];
 
 const data4 = [
   { value: 'Apple', color: '#ff7300' },
   { value: 'Samsung', color: '#bb7300' },
   { value: 'Huawei', color: '#bb7300' },
-  { value: 'Sony', type: 'none' },
+  { value: 'Sony', type: 'none' as LegendType },
 ];
 
 const data5 = [

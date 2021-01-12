@@ -44,8 +44,8 @@ class TextDemo extends Component {
             x={this.state.x}
             y={this.state.y}
             width={this.state.width}
-            textAnchor={this.state.textAnchor}
-            verticalAnchor={this.state.verticalAnchor}
+            textAnchor={this.state.textAnchor as 'start' | 'middle' | 'end' | 'inherit'}
+            verticalAnchor={this.state.verticalAnchor as 'start' | 'middle' | 'end'}
             lineHeight={this.state.lineHeight}
             scaleToFit={this.state.scaleToFit}
             angle={this.state.angle}

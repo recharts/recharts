@@ -5,6 +5,7 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine, Refe
 import { scalePow, scaleLog } from 'd3-scale';
 import CustomLineDot from './CustomLineDot';
 import { changeNumberOfData } from './utils';
+import * as _ from 'lodash';
 
 function Hello() {
   return <div>Hello</div>;
@@ -326,7 +327,7 @@ const initialState = {
   anotherState: false,
 };
 
-const renderSpecialDot = (props) => {
+const renderSpecialDot: React.FunctionComponent<any> = (props: any) => {
   const { cx, cy, stroke, key } = props;
 
   if (cx === +cx && cy === +cy) {
@@ -336,7 +337,7 @@ const renderSpecialDot = (props) => {
   return null;
 };
 
-const renderLabel = (props) => {
+const renderLabel: React.FunctionComponent<any> = (props: any) => {
   const { x, y, textAnchor, key, value } = props;
 
   if (x === +x && y === +y) {
@@ -351,21 +352,21 @@ const specifiedDomain = [0.01, 'auto'];
 const specifiedTicks = [0.01, 0.1, 1, 10, 100, 1000];
 const specifiedMargin = { top: 20, right: 20, bottom: 20, left: 20 };
 
-export default class Demo extends Component {
+export default class Demo extends Component<any, any> {
 
   static displayName = 'LineChartDemo';
 
-  state = initialState;
+  state: any = initialState;
 
   handleChangeData = () => {
     this.setState(() => _.mapValues(initialState, changeNumberOfData));
   };
 
-  handleClick = (data, e) => {
+  handleClick = (data: any, e: React.MouseEvent) => {
     console.log(data);
   };
 
-  handleLineClick = (data, e) => {
+  handleLineClick = (data: any, e: React.MouseEvent) => {
     console.log('callback', data, e);
   };
 
@@ -375,7 +376,7 @@ export default class Demo extends Component {
     });
   };
 
-  handleClickDot = (data, e) => {
+  handleClickDot = (data: any, e: React.MouseEvent) => {
     console.log('dot click', data, e);
   }
 

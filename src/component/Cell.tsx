@@ -1,11 +1,10 @@
 /**
  * @fileOverview Cross
  */
-import type { FunctionComponent } from 'react';
-import { PresentationAttributes } from '../util/types';
+import type { FunctionComponent, SVGProps } from 'react';
 
-export type Props = PresentationAttributes<SVGElement>;
+export type Props = SVGProps<SVGElement>;
 
-export const Cell: FunctionComponent<Props> = () => null;
+export const Cell: FunctionComponent<Props> = (props: Props) => null;
 
 Cell.displayName = 'Cell';

@@ -385,7 +385,6 @@ class DemoTreemap extends Component {
     return (
       <div className="treemap-charts">
         <button
-          href="javascript:void(0)"
           className="btn"
           onClick={() => {
             this.setState({
@@ -416,7 +415,6 @@ class DemoTreemap extends Component {
             isAnimationActive={false}
             nameKey="name"
             dataKey="size"
-            ratio={1}
             content={<DemoTreemapItem bgColors={ColorPlatte} />}
           >
             <Tooltip />
@@ -431,7 +429,6 @@ class DemoTreemap extends Component {
             isAnimationActive={false}
             nameKey="name"
             dataKey="size"
-            ratio={1}
             type="nest"
             nestIndexContent={(item) => {
               return (

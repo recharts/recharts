@@ -5,44 +5,57 @@ import React, { PureComponent, ReactNode, MouseEvent, ReactText, ReactElement } 
 import classNames from 'classnames';
 import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';
-import { LegendType, LayoutType, SymbolType, adaptEventsOfChild } from '../util/types';
+import { LegendType, LayoutType, SymbolType, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
 
 const SIZE = 32;
-export type ContentType<TValue, TID> = ReactElement | ((props: Props<TValue, TID>) => ReactNode);
+export type ContentType = ReactElement | ((props: Props) => ReactNode);
 export type IconType = Omit<LegendType, 'none'>;
 export type HorizontalAlignmentType = 'center' | 'left' | 'right';
 export type VerticalAlignmentType = 'top' | 'bottom' | 'middle';
-export type Formatter<TValue, TID> = (value: any, entry: Payload<TValue, TID>, index: number) => ReactNode;
+export type Formatter = (
+  value: any, 
+  entry: { 
+    value: any;
+    id?: string;
+    type?: LegendType;
+    color?: string;
+    payload?: {
+      strokeDasharray: ReactText;
+    }
+  }, 
+  index: number
+) => ReactNode;
 
-export interface Payload<TValue, TID> {
-  value: TValue;
-  id: TID;
-  type: LegendType;
-  color: string;
-  payload: {
+export interface Payload {
+  value: any;
+  id?: string;
+  type?: LegendType;
+  color?: string;
+  payload?: {
     strokeDasharray: ReactText;
   };
-  formatter?: Formatter<TValue, TID>;
+  formatter?: Formatter;
   inactive?: boolean;
   legendIcon?: ReactElement<SVGElement>;
 }
-
-export interface Props<TValue, TID> {
-  content?: ContentType<TValue, TID>;
+interface InternalProps {
+  content?: ContentType;
   iconSize?: number;
   iconType?: IconType;
   layout?: LayoutType;
   align?: HorizontalAlignmentType;
   verticalAlign?: VerticalAlignmentType;
-  payload?: Array<Payload<TValue, TID>>;
+  payload?: Array<Payload>;
   inactiveColor?: string;
-  formatter?: Formatter<TValue, TID>;
+  formatter?: Formatter;
   onMouseEnter?: (event: MouseEvent) => void;
   onMouseLeave?: (event: MouseEvent) => void;
   onClick?: (event: MouseEvent) => void;
 }
 
-export class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValue, TID>> {
+export type Props = InternalProps & PresentationAttributesAdaptChildEvent<any, ReactElement>;
+
+export class DefaultLegendContent extends PureComponent<Props> {
   static displayName = 'Legend';
 
   static defaultProps = {
@@ -58,7 +71,7 @@ export class DefaultLegendContent<TValue, TID> extends PureComponent<Props<TValu
    * @param {Object} data Data of each legend item
    * @return {String} Path element
    */
-  renderIcon(data: Payload<TValue, TID>) {
+  renderIcon(data: Payload) {
     const { inactiveColor } = this.props;
     const halfSize = SIZE / 2;
     const sixthSize = SIZE / 6;

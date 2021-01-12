@@ -1,10 +1,10 @@
-import React, { Component, CSSProperties } from 'react';
+import React, { Component, CSSProperties, SVGProps } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
 import { Global } from '../util/Global';
-import { PresentationAttributes, filterProps } from '../util/types';
+import { filterProps } from '../util/types';
 import { getStringSize } from '../util/DOMUtils';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
@@ -50,7 +50,7 @@ interface TextProps {
   breakAll?: boolean;
 }
 
-export type Props = PresentationAttributes<SVGTextElement> & TextProps;
+export type Props = Omit<SVGProps<SVGTextElement>, 'textAnchor' | 'verticalAnchor'> & TextProps;
 
 interface Words {
   words: Array<string>;

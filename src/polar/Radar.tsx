@@ -1,7 +1,7 @@
 /**
  * @fileOverview Radar
  */
-import React, { PureComponent, ReactElement, MouseEvent } from 'react';
+import React, { PureComponent, ReactElement, MouseEvent, SVGProps } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -13,7 +13,7 @@ import { Polygon } from '../shape/Polygon';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
-import { PresentationAttributes, LegendType, TooltipType, AnimationTiming, filterProps, DataKey } from '../util/types';
+import { LegendType, TooltipType, AnimationTiming, filterProps, DataKey } from '../util/types';
 import { Props as PolarAngleAxisProps } from './PolarAngleAxis';
 import { Props as PolarRadiusAxisProps } from './PolarRadiusAxis';
 
@@ -29,7 +29,7 @@ interface RadarPoint {
   name?: string;
 }
 
-type RadarDot = ReactElement<SVGElement> | ((props: any) => SVGElement) | DotProps | boolean;
+type RadarDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
 
 interface RadarProps {
   className?: string;
@@ -39,7 +39,7 @@ interface RadarProps {
   points?: RadarPoint[];
   baseLinePoints?: RadarPoint[];
   isRange?: boolean;
-  shape?: ReactElement<SVGElement> | ((props: any) => SVGElement);
+  shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
   activeDot?: RadarDot;
   dot?: RadarDot;
   legendType?: LegendType;
@@ -60,7 +60,7 @@ interface RadarProps {
   onMouseLeave?: (props: any, e: MouseEvent<SVGPolygonElement>) => void;
 }
 
-export type Props = Omit<PresentationAttributes<SVGElement>, 'onMouseEnter' | 'onMouseLeave'> & RadarProps;
+export type Props = Omit<SVGProps<SVGElement>, 'onMouseEnter' | 'onMouseLeave'> & RadarProps;
 
 interface State {
   isAnimationFinished?: boolean;

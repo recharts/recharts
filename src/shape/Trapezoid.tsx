@@ -1,10 +1,10 @@
 /**
  * @fileOverview Rectangle
  */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, SVGProps } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
-import { PresentationAttributes, AnimationTiming, filterProps } from '../util/types';
+import { AnimationTiming, filterProps } from '../util/types';
 
 const getTrapezoidPath = (x: number, y: number, upperWidth: number, lowerWidth: number, height: number) => {
   const widthGap = upperWidth - lowerWidth;
@@ -31,7 +31,7 @@ interface TrapezoidProps {
   animationEasing?: AnimationTiming;
 }
 
-export type Props = PresentationAttributes<SVGPathElement> & TrapezoidProps;
+export type Props = SVGProps<SVGPathElement> & TrapezoidProps;
 
 export class Trapezoid extends PureComponent<Props> {
   static defaultProps = {

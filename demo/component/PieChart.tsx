@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component, ReactElement, ReactSVGElement } from 'react';
 import { PieChart, Pie, Legend, Cell, Tooltip, ResponsiveContainer, Sector,
   Label, LabelList } from 'recharts';
 import { scaleOrdinal } from 'd3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
 import { changeNumberOfData } from './utils';
+import * as _ from 'lodash';
 
 const colors = scaleOrdinal(schemeCategory10).range();
 
@@ -47,7 +48,7 @@ const data03 = [
 
 const initialState = { data01, data02, data03 };
 
-const renderLabelContent = (props) => {
+const renderLabelContent: React.FunctionComponent = (props: any) => {
   const { value, percent, x, y, midAngle } = props;
 
   return (
@@ -57,7 +58,7 @@ const renderLabelContent = (props) => {
     </g>
   );
 };
-const renderActiveShape = (props) => {
+const renderActiveShape: React.FunctionComponent = (props: any) => {
   const RADIAN = Math.PI / 180;
   const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle,
     fill, payload, percent } = props;
@@ -108,7 +109,7 @@ export default class Demo extends Component {
 
   static displayName = 'PieChartDemo';
 
-  onPieEnter = (data, index, e) => {
+  onPieEnter = (data: any, index: number, e: React.MouseEvent) => {
     this.setState({
       activeIndex: index,
     });
@@ -130,11 +131,9 @@ export default class Demo extends Component {
     });
   };
 
-  handlePieChartEnter = (a, b, c) => {
+  handlePieChartEnter = (a: any, b: number, c: React.MouseEvent) => {
     console.log(a, b, c);
   };
-
-  handleEnter = (e, activeIndex) => this.setState({ activeIndex });
   handleLeave = () => this.setState({ activeIndex: -1 });
 
   render () {
@@ -154,7 +153,7 @@ export default class Demo extends Component {
         <div className="pie-chart-wrapper">
           <button onClick={this.handleChangeAnimation}>change animation</button>
           <PieChart width={800} height={400}>
-            <Legend paylodUniqBy />
+            <Legend />
             <Pie
               data={data01}
               dataKey="value"
@@ -167,7 +166,7 @@ export default class Demo extends Component {
             >
               {
                 data01.map((entry, index) => (
-                  <Cell key={`slice-${index}`} fill={colors[index % 10]}/>
+                  <Cell key={`slice-${index}`} fill={colors[index % 10] as string}/>
                 ))
               }
               <Label value="test" position="outside" />
@@ -188,7 +187,7 @@ export default class Demo extends Component {
             >
               {
                 data02.map((entry, index) => (
-                  <Cell key={`slice-${index}`} fill={colors[index % 10]}/>
+                  <Cell key={`slice-${index}`} fill={colors[index % 10] as string}/>
                 ))
               }
               <Label width={50} position="center">
@@ -235,7 +234,7 @@ export default class Demo extends Component {
               >
                 {
                   data01.map((entry, index) => (
-                    <Cell key={`slice-${index}`} fill={colors[index % 10]}/>
+                    <Cell key={`slice-${index}`} fill={colors[index % 10] as string}/>
                   ))
                 }
                 <Label value="test" />

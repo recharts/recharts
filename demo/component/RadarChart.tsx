@@ -1,8 +1,8 @@
+import * as _ from 'lodash';
 import React, { Component } from 'react';
-import { Surface, Radar, RadarChart, PolarGrid, Legend, Tooltip,
+import { Radar, RadarChart, PolarGrid, Legend, Tooltip,
   PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
-  LabelList, Label } from 'recharts';
-import DemoRadarItem from './DemoRadarItem';
+  LabelList } from 'recharts';
 import { changeNumberOfData } from './utils';
 
 const data = [
@@ -16,12 +16,12 @@ const data = [
 
 const initialState = { data };
 
-export default class Demo extends Component {
+export default class Demo extends Component<any, any> {
 
   static displayName = 'RadarChartDemo';
 
-  constructor() {
-    super();
+  constructor(props: any) {
+    super(props);
 
     this.state = initialState;
     this.handleChangeData = this.handleChangeData.bind(this);
@@ -31,7 +31,7 @@ export default class Demo extends Component {
     this.setState(() => _.mapValues(initialState, changeNumberOfData));
   }
 
-  handleMouseEnter(props) {
+  handleMouseEnter(props: any) {
     console.log(props);
   }
 

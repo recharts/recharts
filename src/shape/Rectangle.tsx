@@ -1,10 +1,10 @@
 /**
  * @fileOverview Rectangle
  */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, SVGProps } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
-import { PresentationAttributes, AnimationTiming, filterProps } from '../util/types';
+import { AnimationTiming, filterProps } from '../util/types';
 
 type RectRadius = [number, number, number, number];
 
@@ -78,7 +78,7 @@ interface RectangleProps {
   animationEasing?: AnimationTiming;
 }
 
-export type Props = PresentationAttributes<SVGPathElement> & RectangleProps;
+export type Props = Omit<SVGProps<SVGPathElement>, 'radius'> & RectangleProps;
 
 export class Rectangle extends PureComponent<Props> {
   static defaultProps = {

@@ -1,9 +1,9 @@
 /**
  * @fileOverview Surface
  */
-import React, { ReactNode, CSSProperties } from 'react';
+import React, { ReactNode, CSSProperties, SVGProps } from 'react';
 import classNames from 'classnames';
-import { PresentationAttributes, filterProps } from '../util/types';
+import { filterProps } from '../util/types';
 
 interface SurfaceProps {
   width: number;
@@ -19,7 +19,7 @@ interface SurfaceProps {
   children?: ReactNode;
 }
 
-export type Props = Omit<PresentationAttributes<SVGSVGElement>, 'viewBox'> & SurfaceProps;
+export type Props = Omit<SVGProps<SVGSVGElement>, 'viewBox'> & SurfaceProps;
 
 export function Surface(props: Props) {
   const { children, width, height, viewBox, className, style, ...others } = props;

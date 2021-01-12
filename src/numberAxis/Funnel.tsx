@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render sectors of a funnel
  */
-import React, { PureComponent, ReactElement } from 'react';
+import React, { PureComponent, ReactElement, SVGProps } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -18,10 +18,10 @@ import {
   TooltipType,
   AnimationTiming,
   ChartOffset,
-  PresentationAttributes,
   DataKey,
   filterProps,
   adaptEventsOfChild,
+  PresentationAttributesAdaptChildEvent,
 } from '../util/types';
 
 interface FunnelTrapezoidItem extends TrapezoidProps {
@@ -40,7 +40,7 @@ interface FunnelProps extends InternalFunnelProps {
   nameKey?: DataKey<any>;
   data?: any[];
   hide?: boolean;
-  activeShape: ReactElement<SVGElement> | ((props: any) => SVGElement) | TrapezoidProps;
+  activeShape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | TrapezoidProps;
   legendType?: LegendType;
   tooltipType?: TooltipType;
   activeIndex?: number | number[];
@@ -58,7 +58,7 @@ interface FunnelProps extends InternalFunnelProps {
   id?: string;
 }
 
-export type Props = TrapezoidProps & FunnelProps;
+export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & TrapezoidProps & FunnelProps;
 
 interface State {
   readonly prevTrapezoids?: FunnelTrapezoidItem[];
@@ -88,7 +88,7 @@ export class Funnel extends PureComponent<Props, State> {
     const cells = findAllByType(children, Cell.displayName);
 
     if (data && data.length) {
-      return data.map((entry, index) => ({
+      return data.map((entry: any, index: number) => ({
         payload: entry,
         ...presentationProps,
         ...entry,
@@ -132,9 +132,9 @@ export class Funnel extends PureComponent<Props, State> {
   }: {
     item: Funnel;
     offset: ChartOffset;
-    onItemMouseLeave?: PresentationAttributes<SVGElement>['onMouseLeave'];
-    onItemMouseEnter?: PresentationAttributes<SVGElement>['onMouseEnter'];
-    onItemClick?: PresentationAttributes<SVGElement>['onClick'];
+    onItemMouseLeave?: SVGProps<SVGElement>['onMouseLeave'];
+    onItemMouseEnter?: SVGProps<SVGElement>['onMouseEnter'];
+    onItemClick?: SVGProps<SVGElement>['onClick'];
   }) => {
     const funnelData = Funnel.getRealFunnelData(item);
     const { dataKey, nameKey, tooltipType, lastShapeType, reversed } = item.props;
@@ -142,7 +142,7 @@ export class Funnel extends PureComponent<Props, State> {
     const { realHeight, realWidth, offsetX, offsetY } = Funnel.getRealWidthHeight(item, offset);
     const maxValue = Math.max.apply(
       null,
-      funnelData.map(entry => getValueByDataKey(entry, dataKey, 0)),
+      funnelData.map((entry: any) => getValueByDataKey(entry, dataKey, 0)),
     );
     const len = funnelData.length;
     const rowHeight = realHeight / len;
@@ -203,7 +203,7 @@ export class Funnel extends PureComponent<Props, State> {
     });
 
     if (reversed) {
-      trapezoids = trapezoids.map((entry, index) => {
+      trapezoids = trapezoids.map((entry: any, index: number) => {
         const newY = entry.y - index * rowHeight + (len - 1 - index) * rowHeight;
         return {
           ...entry,
@@ -334,7 +334,7 @@ export class Funnel extends PureComponent<Props, State> {
         onAnimationEnd={this.handleAnimationEnd}
       >
         {({ t }: { t: number }) => {
-          const stepData = trapezoids.map((entry, index) => {
+          const stepData = trapezoids.map((entry: any, index: number) => {
             const prev = prevTrapezoids && prevTrapezoids[index];
 
             if (prev) {

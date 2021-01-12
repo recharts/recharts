@@ -14,7 +14,7 @@ export default class Demo extends Component {
 
   static displayName = 'PolarAngleAxisDemo';
 
-  handleActive = (data, index, e) => {
+  handleActive = (data: any, index: number, e: React.MouseEvent) => {
     console.log(data, index);
   };
 

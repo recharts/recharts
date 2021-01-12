@@ -9,7 +9,7 @@ import { Sector, Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
 import { findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
-import { LabelList } from '../component/LabelList';
+import { ImplicitLabelListType, LabelList } from '../component/LabelList';
 import { Cell } from '../component/Cell';
 import { mathSign, interpolateNumber } from '../util/DataUtils';
 import {
@@ -24,9 +24,9 @@ import {
   TooltipType,
   AnimationTiming,
   filterProps,
-  PresentationAttributes,
   TickItem,
   adaptEventsOfChild,
+  PresentationAttributesAdaptChildEvent,
 } from '../util/types';
 // TODO: Cause of circular dependency. Needs refactoring of functions that need them.
 // import { AngleAxisProps, RadiusAxisProps } from './types';
@@ -60,7 +60,8 @@ interface RadialBarProps {
   legendType?: LegendType;
   tooltipType?: TooltipType;
   hide?: boolean;
-  label?: any;
+  label?: ImplicitLabelListType<any>;
+  stackId?: string | number;
   background?: RadialBarBackground;
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
@@ -70,7 +71,7 @@ interface RadialBarProps {
   animationEasing?: AnimationTiming;
 }
 
-export type Props = PresentationAttributes<SVGElement> & RadialBarProps;
+export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & RadialBarProps;
 
 interface State {
   isAnimationFinished?: boolean;

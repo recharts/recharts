@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { changeNumberOfData } from './utils';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, Legend,
   ReferenceArea, ReferenceLine, ReferenceDot,
@@ -47,7 +48,7 @@ const rangeData = [
 
 const initialState = { data, data01, data02 };
 
-const CustomTooltip: React.FunctionComponent = (props: any) => {
+const CustomTooltip: React.FunctionComponent<any> = (props: any) => {
   const { active, payload, external, label } = props;
 
   if (active) {
@@ -57,7 +58,7 @@ const CustomTooltip: React.FunctionComponent = (props: any) => {
       border: '1px solid #ccc',
     };
 
-    const currData = external.filter(entry => (entry.name === label))[0];
+    const currData = external.filter((entry: any) => (entry.name === label))[0];
 
     return (
       <div className="area-chart-tooltip" style={style}>
@@ -76,11 +77,11 @@ const renderCustomizedActiveDot: React.FunctionComponent = (props: any) => {
   return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke} key={`dot-${dataKey}`}/>;
 };
 
-const RenderRect = (props) => {
+const RenderRect: React.FunctionComponent<any> = (props: any) => {
   return <rect x={20} y={20} width={100} height={20} stroke="#000"/>;
 };
 
-function CustomizedAxisTick(props) {
+function CustomizedAxisTick(props: any) {
   const { x, y, stroke, payload } = props;
 
   return (
@@ -89,13 +90,13 @@ function CustomizedAxisTick(props) {
     </g>
   );
 }
-const renderLabel = (props) => {
+const renderLabel = (props: any) => {
   const { index, x, y } = props;
 
   return <text x={x} y={y} className="customized-label">{index}</text>;
 };
 
-export default class AreaChartDemo extends Component {
+export default class AreaChartDemo extends React.Component<any, any> {
 
   static displayName = 'AreaChartDemo';
 
@@ -305,8 +306,8 @@ export default class AreaChartDemo extends Component {
             data={data}
             margin={{ top: 10, right: 30, bottom: 10, left: 10 }}
           >
-            <XAxis dataKey="name" hasTick />
-            <YAxis tickCount={7} hasTick />
+            <XAxis dataKey="name" />
+            <YAxis tickCount={7} />
             <Tooltip content={<CustomTooltip external={data} />} />
             <CartesianGrid stroke="#f5f5f5" />
             <ReferenceArea x1="Page A" x2="Page E" />

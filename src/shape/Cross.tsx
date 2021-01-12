@@ -1,10 +1,10 @@
 /**
  * @fileOverview Cross
  */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, SVGProps } from 'react';
 import classNames from 'classnames';
 import { isNumber } from '../util/DataUtils';
-import { PresentationAttributes, filterProps } from '../util/types';
+import { filterProps } from '../util/types';
 
 interface CrossProps {
   x?: number;
@@ -16,7 +16,7 @@ interface CrossProps {
   className?: number;
 }
 
-export type Props = PresentationAttributes<SVGPathElement> & CrossProps;
+export type Props = SVGProps<SVGPathElement> & CrossProps;
 
 export class Cross extends PureComponent<Props> {
   static defaultProps = {

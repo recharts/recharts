@@ -1,12 +1,6 @@
-/*
- * change number in data
- */
+import * as _ from 'lodash'
 
-const randomChangeArray = (array) => {
-
-};
-
-export function changeNumberOfData(data) {
+export function changeNumberOfData(data: any): any {
   if (Array.isArray(data)) {
     return data.map(changeNumberOfData);
   }
@@ -14,7 +8,7 @@ export function changeNumberOfData(data) {
   if (typeof data === 'object') {
     return _.mapValues(data, val => {
       if (typeof val === 'number') {
-        return parseInt(val * Math.random() * 2, 10);
+        return Math.floor(val * Math.random() * 2);
       }
 
       return changeNumberOfData(val);

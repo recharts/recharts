@@ -75,7 +75,7 @@ export default class Demo extends Component {
               >
                 {
                   data01.map((entry, index) => (
-                    <Cell key={`slice-${index}`} fill={colors1[index % 10]} className="custom-cell" />
+                    <Cell key={`slice-${index}`} fill={colors1[index % 10] as string} className="custom-cell" />
                   ))
                 }
                 <LabelList position="middle" fill="#000" stroke="none" dataKey="name" textBreakAll />
@@ -95,7 +95,7 @@ export default class Demo extends Component {
               >
                 {
                   data01.map((entry, index) => (
-                    <Cell key={`slice-${index}`} fill={colors1[index % 10]} />
+                    <Cell key={`slice-${index}`} fill={colors1[index % 10] as string} />
                   ))
                 }
                 <LabelList position="right" fill="#000" stroke="none" dataKey="name" />
@@ -108,7 +108,7 @@ export default class Demo extends Component {
               >
                 {
                   data02.map((entry, index) => (
-                    <Cell key={`slice-${index}`} fill={colors2[index % 10]} />
+                    <Cell key={`slice-${index}`} fill={colors2[index % 10] as string} />
                   ))
                 }
                 <LabelList position="center" fill="#fff" stroke="none" dataKey="value" />
@@ -126,7 +126,7 @@ export default class Demo extends Component {
                 data={data}
                 activeIndex={1}
                 isAnimationActive={false}
-                activeShape={(payload) => {
+                activeShape={(payload: any) => {
                   return (
                     <rect
                       className="custom-active-shape"
@@ -142,7 +142,7 @@ export default class Demo extends Component {
               >
                 {
                   data.map((entry, index) => (
-                    <Cell key={`slice-${index}`} fill={colors1[index % 10]} opacity={0.5} />
+                    <Cell key={`slice-${index}`} fill={colors1[index % 10] as string} opacity={0.5} />
                   ))
                 }
               </Funnel>
@@ -163,7 +163,7 @@ export default class Demo extends Component {
               >
                 {
                   data03.map((entry, index) => (
-                    <Cell key={`slice-${index}`} fill={colors1[index % 10]} className="custom-cell" />
+                    <Cell key={`slice-${index}`} fill={colors1[index % 10] as string} className="custom-cell" />
                   ))
                 }
                 <LabelList position="right" fill="#000" stroke="none" dataKey="name" />

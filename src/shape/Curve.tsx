@@ -6,6 +6,7 @@ import {
   line as shapeLine,
   area as shapeArea,
   CurveFactory,
+  CurveBundleFactory,
   curveBasisClosed,
   curveBasisOpen,
   curveBasis,

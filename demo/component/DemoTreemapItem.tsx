@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
 
-export default class Demo extends Component {
+export default class Demo extends Component<any> {
   static displayName = 'TreemapItemDemo';
 
   static defaultProps = {};
-
-  constructor(props) {
-    super(props);
-  }
 
   render() {
     const { depth, x, y, width, height, index, name, bgColors } = this.props;

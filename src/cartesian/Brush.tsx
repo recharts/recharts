@@ -1,7 +1,7 @@
 /**
  * @fileOverview Brush
  */
-import React, { PureComponent, Children, ReactText, MouseEvent, ReactElement, TouchEvent } from 'react';
+import React, { PureComponent, Children, ReactText, MouseEvent, ReactElement, TouchEvent, SVGProps } from 'react';
 import classNames from 'classnames';
 import { scalePoint, ScalePoint } from 'd3-scale';
 import _ from 'lodash';
@@ -10,9 +10,9 @@ import { Text } from '../component/Text';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { isNumber } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
-import { Padding, PresentationAttributes, DataKey, filterProps } from '../util/types';
+import { Padding, DataKey, filterProps } from '../util/types';
 
-type BrushTravellerType = ReactElement<SVGElement> | ((props: any) => SVGElement);
+type BrushTravellerType = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
 interface BrushStartEndIndex {
   startIndex?: number;
   endIndex?: number;
@@ -47,7 +47,7 @@ interface BrushProps extends InternalBrushProps {
   alwaysShowText?: boolean;
 }
 
-export type Props = PresentationAttributes<SVGElement> & BrushProps;
+export type Props = SVGProps<SVGElement> & BrushProps;
 
 type BrushTravellerId = 'startX' | 'endX';
 

@@ -1,8 +1,8 @@
 /**
  * @fileOverview X Axis
  */
-import type { FunctionComponent } from 'react';
-import { BaseAxisProps, AxisInterval, PresentationAttributes } from '../util/types';
+import type { FunctionComponent, SVGProps } from 'react';
+import { BaseAxisProps, AxisInterval } from '../util/types';
 
 /** Define of XAxis props */
 interface XAxisProps extends BaseAxisProps {
@@ -28,7 +28,7 @@ interface XAxisProps extends BaseAxisProps {
   angle?: number;
 }
 
-export type Props = PresentationAttributes<SVGElement> & XAxisProps;
+export type Props = SVGProps<SVGElement> & XAxisProps;
 
 export const XAxis: FunctionComponent<Props> = () => null;
 

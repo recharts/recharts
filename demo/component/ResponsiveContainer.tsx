@@ -4,6 +4,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid,
   Line, LineChart, Legend, ResponsiveContainer, PieChart, Pie, Bar,
   BarChart, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ComposedChart,
   RadialBarChart, RadialBar, Treemap } from 'recharts';
+import * as _ from 'lodash';
 
 const data = [
   { name: 'Page A', uv: 4000, pv: 2400, amt: 2400, time: 1 },
@@ -235,7 +236,7 @@ export default class Demo extends Component {
         <p>A simple BarChart</p>
         <div className="line-chart-wrapper" style={{ width: '100%', height: '400px', backgroundColor: '#f5f5f5' }}>
           <ResponsiveContainer>
-            <BarChart width={400} height={400} data={dataBch} onClick={this.handlePvBarClick}>
+            <BarChart width={400} height={400} data={dataBch}>
               <XAxis dataKey="name" />
               <YAxis yAxisId="a" />
               <YAxis yAxisId="b" orientation="right" />
@@ -280,7 +281,7 @@ export default class Demo extends Component {
         </div>
         <div className="line-chart-wrapper" style={{ float: 'left', width: '50%', height: '400px', backgroundColor: '#f5f5f5' }}>
           <ResponsiveContainer>
-            <BarChart data={data04} onClick={this.handlePvBarClick}>
+            <BarChart data={data04}>
               <XAxis dataKey="name" />
               <YAxis yAxisId="a" />
               <YAxis yAxisId="b" orientation="right" />
@@ -334,7 +335,7 @@ export default class Demo extends Component {
         <div className="line-chart-wrapper" style={{ float: 'left', width: '100%', height: '400px', backgroundColor: '#f5f5f5' }}>
           <ResponsiveContainer>
             <RadialBarChart innerRadius={20} outerRadius={140} barSize={20} data={data07}>
-              <RadialBar minAngle={15} label background clockWise dataKey="uv" />
+              <RadialBar label background dataKey="uv" />
             </RadialBarChart>
           </ResponsiveContainer>
         </div>
@@ -343,7 +344,7 @@ export default class Demo extends Component {
             <Treemap
               data={data08}
               dataKey="size"
-              ratio={4 / 3}
+              aspectRatio={4 / 3}
               stroke="#fff"
               fill="#8884d8"
             />

@@ -7,7 +7,7 @@ import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
 import { Polygon } from '../shape/Polygon';
 import { Text } from '../component/Text';
-import { PresentationAttributes, BaseAxisProps, filterProps, TickItem, adaptEventsOfChild } from '../util/types';
+import { BaseAxisProps, filterProps, TickItem, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { polarToCartesian } from '../util/PolarUtils';
 
 const RADIAN = Math.PI / 180;
@@ -22,7 +22,7 @@ export interface PolarAngleAxisProps extends BaseAxisProps {
   ticks?: TickItem[];
   orientation?: 'inner' | 'outer';
 }
-export type Props = PresentationAttributes<SVGTextElement> & PolarAngleAxisProps;
+export type Props = PresentationAttributesAdaptChildEvent<any, SVGTextElement> & PolarAngleAxisProps;
 
 export class PolarAngleAxis extends PureComponent<Props> {
   static displayName = 'PolarAngleAxis';

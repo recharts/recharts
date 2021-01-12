@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Surface, Curve, Layer } from 'recharts';
+import { Surface, Curve, Layer, CurveProps } from 'recharts';
 import { curveBundle, curveCardinal, curveCardinalClosed, curveCardinalOpen,
-  curveCatmullRomOpen  } from 'd3-shape';
+  curveCatmullRomOpen, CurveFactory  } from 'd3-shape';
 import { scaleOrdinal } from 'd3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
 
@@ -25,15 +25,15 @@ export default class Demo extends Component {
         <Layer>
           <text x={10} y={20}>curveCardinalClosed</text>
           {
-            ticks.map((entry, index) => (
+            ticks.map((entry: any, index: number) => (
               <Layer key={`curve-${index}`}>
                 <Curve
-                  stroke={scale(entry)}
+                  stroke={scale(entry) as string}
                   fill="none"
                   type={curveCardinalClosed.tension(entry)}
                   points={points}
                 />
-                <text x={200} y={40 + index * 30} fill={scale(entry)}>
+                <text x={200} y={40 + index * 30} fill={scale(entry) as string}>
                   {`curveCardinalClosed.tension(${entry})`}
                 </text>
               </Layer>
@@ -50,15 +50,15 @@ export default class Demo extends Component {
         <Layer transform="translate(0, 200)">
           <text x={10} y={20}>curveCatmullRomOpen</text>
           {
-            ticks.map((entry, index) => (
+            ticks.map((entry: any, index: number) => (
               <Layer key={`curve-${index}`}>
                 <Curve
-                  stroke={scale(entry)}
+                  stroke={scale(entry) as string}
                   fill="none"
                   type={curveCatmullRomOpen.alpha(entry)}
                   points={points}
                 />
-                <text x={200} y={40 + index * 30} fill={scale(entry)}>
+                <text x={200} y={40 + index * 30} fill={scale(entry) as string}>
                   {`curveCatmullRomOpen.alpha(${entry})`}
                 </text>
               </Layer>
@@ -72,18 +72,18 @@ export default class Demo extends Component {
           }
         </Layer>
 
-        <Layer transform="translate(0, 400)">
+        {/* <Layer transform="translate(0, 400)">
           <text x={10} y={20}>curveBundle</text>
           {
-            ticks.map((entry, index) => (
+            ticks.map((entry: any, index: number) => (
               <Layer key={`curve-${index}`}>
                 <Curve
-                  stroke={scale(entry)}
+                  stroke={scale(entry) as string}
                   fill="none"
                   type={curveBundle.beta(entry)}
                   points={points}
                 />
-                <text x={200} y={40 + index * 30} fill={scale(entry)}>
+                <text x={200} y={40 + index * 30} fill={scale(entry) as string}>
                   {`curveBundle.beta(${entry})`}
                 </text>
               </Layer>
@@ -95,7 +95,7 @@ export default class Demo extends Component {
               <circle cx={entry.x} cy={entry.y} r={4} key={`circle-${index}`}/>
             ))
           }
-        </Layer>
+        </Layer> */}
       </Surface>
     );
   }

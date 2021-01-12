@@ -1,8 +1,8 @@
 /**
  * @fileOverview Y Axis
  */
-import type { FunctionComponent } from 'react';
-import { BaseAxisProps, AxisInterval, PresentationAttributes } from '../util/types';
+import type { FunctionComponent, SVGProps } from 'react';
+import { BaseAxisProps, AxisInterval } from '../util/types';
 
 interface YAxisProps extends BaseAxisProps {
   /** The unique id of y-axis */
@@ -28,7 +28,7 @@ interface YAxisProps extends BaseAxisProps {
   reversed?: boolean;
 }
 
-export type Props = PresentationAttributes<SVGElement> & YAxisProps;
+export type Props = Omit<SVGProps<SVGElement>, 'scale'> & YAxisProps;
 
 export const YAxis: FunctionComponent<Props> = () => null;
 

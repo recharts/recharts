@@ -1,7 +1,7 @@
 /**
  * @fileOverview Curve
  */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, SVGProps } from 'react';
 import _ from 'lodash';
 import {
   symbol as shapeSymbol,
@@ -15,7 +15,7 @@ import {
   SymbolType as D3SymbolType,
 } from 'd3-shape';
 import classNames from 'classnames';
-import { PresentationAttributes, SymbolType, filterProps } from '../util/types';
+import { SymbolType, filterProps } from '../util/types';
 
 type SizeType = 'area' | 'diameter';
 
@@ -75,7 +75,7 @@ interface SymbolsProp {
   sizeType?: SizeType;
 }
 
-export type Props = PresentationAttributes<SVGPathElement> & SymbolsProp;
+export type Props = SVGProps<SVGPathElement> & SymbolsProp;
 
 export class Symbols extends PureComponent<Props> {
   static defaultProps = {

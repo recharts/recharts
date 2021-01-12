@@ -1,7 +1,7 @@
 /**
  * @fileOverview Area
  */
-import React, { PureComponent, ReactElement } from 'react';
+import React, { PureComponent, ReactElement, SVGProps } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';
@@ -19,7 +19,6 @@ import {
   LegendType,
   TooltipType,
   AnimationTiming,
-  PresentationAttributes,
   filterProps,
   ChartOffset,
   Coordinate,
@@ -29,7 +28,7 @@ import {
 
 type AreaDot =
   | ReactElement<SVGElement>
-  | ((props: any) => SVGElement)
+  | ((props: any) => ReactElement<SVGElement>)
   | ((props: any) => ReactElement<SVGElement>)
   | DotProps
   | boolean;
@@ -84,7 +83,7 @@ interface AreaProps extends InternalAreaProps {
   id?: string;
 }
 
-export type Props = PresentationAttributes<SVGElement> & AreaProps;
+export type Props = SVGProps<SVGElement> & AreaProps;
 
 interface State {
   prevPoints?: AreaPointItem[];
@@ -217,7 +216,7 @@ export class Area extends PureComponent<Props, State> {
 
     let baseLine;
     if (hasStack || isRange) {
-      baseLine = points.map(entry => {
+      baseLine = points.map((entry: AreaPointItem) => {
         if (layout === 'horizontal') {
           return {
             x: entry.x,
@@ -303,7 +302,7 @@ export class Area extends PureComponent<Props, State> {
     const areaProps = filterProps(this.props);
     const customDotProps = filterProps(dot, true);
 
-    const dots = points.map((entry, i) => {
+    const dots = points.map((entry: AreaPointItem, i: number) => {
       const dotProps = {
         key: `dot-${i}`,
         r: 3,

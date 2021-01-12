@@ -1,16 +1,16 @@
 /**
  * @fileOverview Reference Line
  */
-import React, { ReactElement } from 'react';
+import React, { ReactElement, SVGProps } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { Layer } from '../container/Layer';
-import { Label } from '../component/Label';
+import { ImplicitLabelType, Label } from '../component/Label';
 import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { createLabeledScales, rectWithCoords } from '../util/CartesianUtils';
 import { warn } from '../util/LogUtils';
-import { CartesianViewBox, D3Scale, PresentationAttributes, filterProps } from '../util/types';
+import { CartesianViewBox, D3Scale, filterProps } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 
@@ -39,10 +39,11 @@ interface ReferenceLineProps extends InternalReferenceLineProps {
   className?: number | string;
   yAxisId?: number | string;
   xAxisId?: number | string;
-  shape?: ReactElement<SVGElement> | ((props: any) => SVGElement);
+  shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
+  label?: ImplicitLabelType;
 }
 
-export type Props = PresentationAttributes<SVGLineElement> & ReferenceLineProps;
+export type Props = SVGProps<SVGLineElement> & ReferenceLineProps;
 
 const renderLine = (option: ReferenceLineProps['shape'], props: any) => {
   let line;

@@ -6,7 +6,7 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import { Layer } from '../container/Layer';
 import { Dot, Props as DotProps } from '../shape/Dot';
-import { Label } from '../component/Label';
+import { ImplicitLabelType, Label } from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
 import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { createLabeledScales } from '../util/CartesianUtils';
@@ -33,7 +33,8 @@ interface ReferenceDotProps extends InternalReferenceDotProps {
   className?: number | string;
   yAxisId?: number | string;
   xAxisId?: number | string;
-  shape?: ReactElement<SVGElement> | ((props: any) => SVGElement);
+  shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
+  label?: ImplicitLabelType;
 }
 
 export type Props = DotProps & ReferenceDotProps;

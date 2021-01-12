@@ -113,7 +113,7 @@ const pageData = [
   { name: 'Page G', uv: 189, pv: 4800, amt: 2400 },
 ];
 
-const RenderLabel = (props) => {
+const RenderLabel = (props: any) => {
   const { x, y, textAnchor, key, value, index, ...others } = props;
 
   if (x === +x && y === +y) {
@@ -142,7 +142,7 @@ const CustomAxisTick = function () {
   );
 };
 
-const CustomBar = (props) => {
+const CustomBar: React.FunctionComponent<any> = (props: any) => {
   const { x, y, width, height, fill } = props;
 
   if (x === +x && y === +y) {
@@ -157,12 +157,12 @@ const CustomBar = (props) => {
   return null;
 };
 
-const CustomCursor = (props) => {
+const CustomCursor: React.FunctionComponent<any> = (props: any) => {
   const { x, y, width, height, fill, payloadIndex } = props;
   return (<Rectangle x={x} y={y} fill={fill} width={width} height={height} onMouseEnter={() => console.log(payloadIndex)} />);
 }
 
-class BarTwo extends Component {
+class BarTwo extends Component<any, any> {
   getPath() {
     const { x, y, width, height } = this.props;
 
@@ -185,7 +185,7 @@ class BarTwo extends Component {
   }
 }
 
-class CustomAxis extends Component {
+class CustomAxis extends Component<any> {
   getIcon() {
     const { x, y, payload } = this.props;
     let icon;
@@ -242,7 +242,7 @@ const initialState = {
   data02,
 };
 
-export default class Demo extends Component {
+export default class Demo extends Component<any, any> {
 
   static displayName = 'BarChartDemo';
 
@@ -252,7 +252,7 @@ export default class Demo extends Component {
     this.setState(() => _.mapValues(initialState, changeNumberOfData));
   };
 
-  handlePvBarClick = (data, index, e) => {
+  handlePvBarClick = (data: any, index: number, e: React.MouseEvent) => {
     console.log(`Pv Bar (${index}) Click: `, data);
   };
 
@@ -337,14 +337,14 @@ export default class Demo extends Component {
               <LabelList fill="#000" angle={-45} />
               {
                 data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={colors[index % 20]} />
+                  <Cell key={`cell-${index}`} fill={colors[index % 20] as string} />
                 ))
               }
             </Bar>
             <Bar yAxisId="b" dataKey="pv" label>
               {
                 data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={colors[index % 20]} />
+                  <Cell key={`cell-${index}`} fill={colors[index % 20] as string} />
                 ))
               }
             </Bar>
@@ -363,15 +363,15 @@ export default class Demo extends Component {
             <Bar yAxisId="a" dataKey="uv" onAnimationStart={this.handleBarAnimationStart} onAnimationEnd={this.handleBarAnimationEnd}>
               {
                 data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={colors[index % 20]} />
+                  <Cell key={`cell-${index}`} fill={colors[index % 20] as string} />
                 ))
               }
               <ErrorBar dataKey="uvError" />
             </Bar>
-            <Bar yAxisId="b" dataKey="pv" errorBar={{ errorKey: 'pvError', width: 10, strokeWidth: 1, fill: 'black' }}>
+            <Bar yAxisId="b" dataKey="pv">
               {
                 data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={colors[index % 20]} />
+                  <Cell key={`cell-${index}`} fill={colors[index % 20] as string} />
                 ))
               }
               <ErrorBar dataKey="pvError" />
@@ -391,7 +391,7 @@ export default class Demo extends Component {
         <div className="bar-chart-wrapper">
           <BarChart width={500} height={300} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" tickFormatter={(value, i) => `${value}.${i}`} />
+            <XAxis dataKey="name" tickFormatter={(value: string, i: number) => `${value}.${i}`} />
             <YAxis />
             <Tooltip />
             <Legend />
@@ -410,23 +410,23 @@ export default class Demo extends Component {
             <Bar dataKey="uv" fill="#ff7300" radius={[5, 5, 5, 5]} />
             <Bar dataKey="pv" fill="#387908" radius={[5, 5, 5, 5]} />
             <Brush dataKey="name" height={30} />
-            <ReferenceLine type="horizontal" value={0} stroke="#666" />
+            <ReferenceLine type="horizontal" y={0} stroke="#666" />
           </BarChart>
         </div>
 
         <p>BarChart of custom bar (1)</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={500} height={250} barCategoryGap={0} data={data} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
+          <BarChart width={500} height={250} barCategoryGap={0} barGap={0} data={data} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
             <XAxis dataKey="name" />
-            <Bar dataKey="uv" barGap={0} fill="#ff7300" shape={CustomBar} />
+            <Bar dataKey="uv" fill="#ff7300" shape={CustomBar} />
           </BarChart>
         </div>
 
         <p>BarChart of custom bar (2)</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={500} height={250} barCategoryGap={0} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <BarChart width={500} height={250} barCategoryGap={0} barGap={0} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             <XAxis axisLine={false} tickLine={false} dataKey="name" tick={<CustomAxis />} />
-            <Bar dataKey="uv" barGap={0} fill="#387908" shape={<BarTwo />} label />
+            <Bar dataKey="uv" fill="#387908" shape={<BarTwo />} label />
           </BarChart>
         </div>
 
@@ -512,13 +512,13 @@ export default class Demo extends Component {
             <Tooltip />
             <Bar dataKey="uv" fill="#ff7300" label />
             <Bar dataKey="pv" fill="#387908">
-              <LabelList position="right" invertNegativesOn="horizontal" />
+              <LabelList position="right" />
             </Bar>
             <Bar dataKey="amt" fill="#683a98">
               <LabelList position="left" />
             </Bar>
             <Bar dataKey="bmk" fill="#183a91">
-              <LabelList position="insideRight" fill="#ffffff" invertNegativesOn="horizontal" />
+              <LabelList position="insideRight" fill="#ffffff"/>
             </Bar>
           </BarChart>
         </div>
@@ -538,13 +538,13 @@ export default class Demo extends Component {
             <ReferenceArea x1="food" x2="cosmetic"/>
             <Bar dataKey="uv" fill="#ff7300" label />
             <Bar dataKey="pv" fill="#387908">
-              <LabelList position="top" invertNegativesOn="vertical" />
+              <LabelList position="top" />
             </Bar>
             <Bar dataKey="amt" fill="#683a98">
               <LabelList position="bottom" />
             </Bar>
             <Bar dataKey="bmk" fill="#183a91">
-              <LabelList position="insideTop" fill="#ffffff" invertNegativesOn="vertical" />
+              <LabelList position="insideTop" fill="#ffffff" />
             </Bar>
           </BarChart>
         </div>

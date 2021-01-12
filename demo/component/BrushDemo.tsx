@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Surface, Brush } from 'recharts';
 
-export default class Demo extends Component {
+export default class Demo extends Component<any, any> {
 
   static displayName = 'BrushDemo';
 
@@ -49,19 +49,19 @@ export default class Demo extends Component {
     },
   };
 
-  handleChange = (res) => {
+  handleChange = (res: any) => {
     this.setState({
       simple: res,
     });
   };
 
-  handleGapChange = (res) => {
+  handleGapChange = (res: any) => {
     this.setState({
       gap: res,
     });
   }
 
-  renderTraveller = (props) => {
+  renderTraveller = (props: any) => {
     const { x, y, width, height } = props;
 
     return <path d={`M${x + width / 2},${y}L${x + width},${y + height / 2}L${x + width / 2},${y + height}L${x},${y + height / 2}Z`} fill="red" stroke="none" />

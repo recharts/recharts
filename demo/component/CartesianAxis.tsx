@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Surface, CartesianAxis, Label } from 'recharts';
 
-export default class Demo extends Component {
+export default class Demo extends Component<any, any> {
 
   static displayName = 'CartesianAxisDemo';
 

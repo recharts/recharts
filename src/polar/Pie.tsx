@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render sectors of a pie
  */
-import React, { PureComponent, ReactElement } from 'react';
+import React, { PureComponent, ReactElement, SVGProps } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -22,12 +22,12 @@ import {
   LegendType,
   TooltipType,
   AnimationTiming,
-  PresentationAttributes,
   filterProps,
   Coordinate,
   ChartOffset,
   DataKey,
   adaptEventsOfChild,
+  PresentationAttributesAdaptChildEvent,
 } from '../util/types';
 
 interface PieDef {
@@ -47,13 +47,13 @@ interface PieDef {
   cornerRadius?: number | string;
 }
 
-type PieActiveShape = ReactElement<SVGElement> | ((props: any) => SVGElement) | SectorProps;
+type PieActiveShape = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | SectorProps;
 type PieLabelLine =
   | ReactElement<SVGElement>
-  | ((props: any) => SVGElement)
-  | PresentationAttributes<SVGPathElement>
+  | ((props: any) => ReactElement<SVGElement>)
+  | SVGProps<SVGPathElement>
   | boolean;
-type Pielabel = ReactElement<SVGElement> | ((props: any) => SVGElement) | { offsetRadius: number } | boolean;
+type Pielabel = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | { offsetRadius: number } | boolean;
 type PieSectorDataItem = SectorProps & {
   percent?: number;
   name?: string | number;
@@ -104,7 +104,7 @@ interface State {
   prevSectors?: PieSectorDataItem[];
 }
 
-export type Props = PresentationAttributes<SVGElement> & PieProps;
+export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & PieProps;
 
 export class Pie extends PureComponent<Props, State> {
   static displayName = 'Pie';

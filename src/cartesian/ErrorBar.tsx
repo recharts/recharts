@@ -1,11 +1,11 @@
 /**
  * @fileOverview Render a group of error bar
  */
-import React from 'react';
+import React, { SVGProps } from 'react';
 import { Layer } from '../container/Layer';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { PresentationAttributes, filterProps, D3Scale, DataKey } from '../util/types';
+import { filterProps, D3Scale, DataKey } from '../util/types';
 
 interface ErrorBarDataItem {
   x: number;
@@ -35,12 +35,12 @@ interface ErrorBarProps extends InternalErrorBarProps {
   direction?: 'x' | 'y';
 }
 
-export type Props = PresentationAttributes<SVGLineElement> & ErrorBarProps;
+export type Props = SVGProps<SVGLineElement> & ErrorBarProps;
 
 export function ErrorBar(props: Props) {
   const { offset, layout, width, dataKey, data, dataPointFormatter, xAxis, yAxis, ...others } = props;
   const svgProps = filterProps(others);
-  const errorBars = data.map((entry, i) => {
+  const errorBars = data.map((entry: any, i: number) => {
     const { x, y, value, errorVal } = dataPointFormatter(entry, dataKey);
 
     if (!errorVal) {

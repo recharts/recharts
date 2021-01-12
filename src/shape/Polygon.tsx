@@ -1,9 +1,9 @@
 /**
  * @fileOverview Polygon
  */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, SVGProps } from 'react';
 import classNames from 'classnames';
-import { PresentationAttributes, filterProps, Coordinate } from '../util/types';
+import { filterProps, Coordinate } from '../util/types';
 
 const isValidatePoint = (point: Coordinate) => {
   return point && point.x === +point.x && point.y === +point.y;
@@ -70,7 +70,7 @@ interface PolygonProps {
   connectNulls?: boolean;
 }
 
-export type Props = Omit<PresentationAttributes<SVGPolygonElement>, 'points'> & PolygonProps;
+export type Props = Omit<SVGProps<SVGPolygonElement>, 'points'> & PolygonProps;
 
 export class Polygon extends PureComponent<Props> {
   render() {

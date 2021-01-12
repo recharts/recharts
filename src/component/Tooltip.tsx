@@ -1,7 +1,7 @@
 /**
  * @fileOverview Tooltip
  */
-import React, { PureComponent, CSSProperties, ReactNode, ReactElement } from 'react';
+import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps } from 'react';
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import classNames from 'classnames';
@@ -9,7 +9,7 @@ import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultPr
 
 import { Global } from '../util/Global';
 import { isNumber } from '../util/DataUtils';
-import { AnimationTiming, PresentationAttributes } from '../util/types';
+import { AnimationTiming } from '../util/types';
 
 const CLS_PREFIX = 'recharts-tooltip-wrapper';
 
@@ -67,7 +67,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   active?: boolean;
   offset?: number;
   wrapperStyle?: CSSProperties;
-  cursor?: boolean | ReactElement | PresentationAttributes<SVGElement>;
+  cursor?: boolean | ReactElement | SVGProps<SVGElement>;
   coordinate?: {
     x?: number;
     y?: number;

@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import components from '../component/index';
 
-class App extends Component {
+class App extends Component<any> {
   renderList() {
     const items = Object.keys(components).map(key => {
-      const group = components[key];
+      const group = (components as any)[key];
       const list = Object.keys(group).map((c) => {
         return (
           <li key={`component-${c}`}>
@@ -32,14 +32,14 @@ class App extends Component {
     );
   }
 
-  renderPageDetail(group, page) {
+  renderPageDetail(group: string, page: string) {
     return (
       <div className="component-wrapper">
         <p className="back"><Link to={{ pathname: '/' }}>Back to homepage</Link></p>
         <p className="title">{page}</p>
         {
-          components[group] &&
-          components[group][page] ? React.createElement(components[group][page]) : null
+          (components as any)[group] &&
+          (components as any)[group][page] ? React.createElement((components as any)[group][page]) : null
         }
       </div>
     );

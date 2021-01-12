@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Surface, Trapezoid } from 'recharts';
 
-export default class Demo extends Component {
+export default class Demo extends Component<any> {
 
   static displayName = 'TrapezoidDemo';
 

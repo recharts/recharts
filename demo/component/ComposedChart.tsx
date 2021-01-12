@@ -72,7 +72,7 @@ export default class Demo extends Component {
               ]}
               scale="time"
               type="number"
-              tick={{ fontSize: 10, fill: "red", position: "top" }}
+              tick={{ fontSize: 10, fill: "red" }}
             />
             <YAxis />
             <Tooltip />
@@ -149,9 +149,9 @@ export default class Demo extends Component {
               margin={{ top: 20, right: 20, bottom: 5, left: 20 }}>
               <XAxis dataKey="name" />
               <YAxis />
-              <Legend layout="vertical" align="right" verticalAlign="middle" paylodUniqBy />
+              <Legend layout="vertical" align="right" verticalAlign="middle" />
               <CartesianGrid stroke="#f5f5f5" />
-              <Tooltip paylodUniqBy />
+              <Tooltip />
               <Area type="monotone" dataKey='amt' fill="#8884d8" stroke="#8884d8" />
               <Line type="monotone" dataKey="uv" stroke="#ff7300" />
               <Bar dataKey="pv" barSize={20} fill="#413ea0" />

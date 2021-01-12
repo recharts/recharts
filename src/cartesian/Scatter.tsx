@@ -1,12 +1,12 @@
 /**
  * @fileOverview Render a group of scatters
  */
-import React, { PureComponent, ReactElement } from 'react';
+import React, { PureComponent, ReactElement, SVGProps } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { Layer } from '../container/Layer';
-import { LabelList } from '../component/LabelList';
+import { ImplicitLabelListType, LabelList } from '../component/LabelList';
 import { findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { ZAxis, Props as ZAxisProps } from './ZAxis';
@@ -18,7 +18,6 @@ import { uniqueId, interpolateNumber, getLinearRegression } from '../util/DataUt
 import { getValueByDataKey, getCateCoordinateOfLine } from '../util/ChartUtils';
 import {
   LegendType,
-  PresentationAttributes,
   SymbolType,
   AnimationTiming,
   filterProps,
@@ -27,6 +26,7 @@ import {
   DataKey,
   TickItem,
   adaptEventsOfChild,
+  PresentationAttributesAdaptChildEvent,
 } from '../util/types';
 import { TooltipType } from '../component/DefaultTooltipContent';
 import { Props as XAxisProps } from './XAxis';
@@ -61,19 +61,20 @@ interface ScatterProps {
 
   dataKey?: DataKey<any>;
 
-  line?: ReactElement<SVGElement> | ((props: any) => SVGElement) | CurveProps | boolean;
+  line?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | CurveProps | boolean;
   lineType?: 'fitting' | 'joint';
   lineJointType?: CurveType;
   legendType?: LegendType;
   tooltipType?: TooltipType;
-  className: string;
+  className?: string;
   name?: string | number;
 
   activeIndex?: number;
-  activeShape?: ReactElement<SVGElement> | ((props: any) => SVGElement) | SymbolsProps;
-  shape?: SymbolType | ReactElement<SVGElement> | ((props: any) => SVGElement);
+  activeShape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | SymbolsProps;
+  shape?: SymbolType | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
   points?: ScatterPointItem[];
   hide?: boolean;
+  label?: ImplicitLabelListType<any>;
 
   isAnimationActive?: boolean;
   animationId?: number;
@@ -82,7 +83,7 @@ interface ScatterProps {
   animationEasing?: AnimationTiming;
 }
 
-export type Props = PresentationAttributes<SVGElement> & ScatterProps;
+export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & ScatterProps;
 
 interface State {
   isAnimationFinished?: boolean;
@@ -136,9 +137,9 @@ export class Scatter extends PureComponent<Props, State> {
     xAxisTicks: TickItem[];
     yAxisTicks: TickItem[];
     item: Scatter;
-    onItemMouseLeave?: PresentationAttributes<SVGElement>['onMouseLeave'];
-    onItemMouseEnter?: PresentationAttributes<SVGElement>['onMouseLeave'];
-    onItemClick?: PresentationAttributes<SVGElement>['onClick'];
+    onItemMouseLeave?: SVGProps<SVGElement>['onMouseLeave'];
+    onItemMouseEnter?: SVGProps<SVGElement>['onMouseLeave'];
+    onItemClick?: SVGProps<SVGElement>['onClick'];
     bandSize: number;
     displayedData: any[];
     offset: ChartOffset;

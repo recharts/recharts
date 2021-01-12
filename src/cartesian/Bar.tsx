@@ -27,12 +27,12 @@ import {
   TooltipType,
   LegendType,
   AnimationTiming,
-  PresentationAttributes,
   filterProps,
   ChartOffset,
   DataKey,
   TickItem,
   adaptEventsOfChild,
+  PresentationAttributesAdaptChildEvent,
 } from '../util/types';
 import { ContentType } from '../component/Label';
 
@@ -55,7 +55,7 @@ interface InternalBarProps {
   left?: number;
 }
 
-type RectangleShapeType = ReactElement<SVGElement> | ((props: any) => SVGElement) | RectangleProps | boolean;
+type RectangleShapeType = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | RectangleProps | boolean;
 
 interface BarProps extends InternalBarProps {
   className?: string;
@@ -72,7 +72,7 @@ interface BarProps extends InternalBarProps {
   minPointSize?: number;
   maxBarSize?: number;
   hide?: boolean;
-  shape?: ReactElement<SVGElement> | ((props: any) => SVGElement);
+  shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
   background?: RectangleShapeType;
   radius?: number | [number, number, number, number];
 
@@ -88,7 +88,7 @@ interface BarProps extends InternalBarProps {
   label?:
     | boolean
     | ReactElement<SVGElement>
-    | ((props: any) => SVGElement)
+    | ((props: any) => ReactElement<SVGElement>)
     | {
         id?: string;
         valueAccessor?: Function;
@@ -97,7 +97,7 @@ interface BarProps extends InternalBarProps {
       };
 }
 
-export type Props = PresentationAttributes<SVGPathElement> & BarProps;
+export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGPathElement>, 'radius'> & BarProps;
 
 interface State {
   readonly isAnimationFinished?: boolean;

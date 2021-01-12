@@ -1,18 +1,18 @@
 /**
  * @fileOverview Cartesian Grid
  */
-import React, { PureComponent, ReactElement } from 'react';
+import React, { PureComponent, ReactElement, SVGProps } from 'react';
 import _ from 'lodash';
 import { isNumber } from '../util/DataUtils';
-import { PresentationAttributes, ChartOffset, D3Scale, filterProps } from '../util/types';
+import { ChartOffset, D3Scale, filterProps } from '../util/types';
 
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 
 type GridLineType =
-  | PresentationAttributes<SVGLineElement>
+  | SVGProps<SVGLineElement>
   | ReactElement<SVGElement>
-  | ((props: any) => SVGElement)
+  | ((props: any) => ReactElement<SVGElement>)
   | boolean;
 
 interface IntrnalCartesianGridProps {
@@ -38,7 +38,7 @@ interface CartesianGridProps extends IntrnalCartesianGridProps {
   horizontalFill?: string[];
 }
 
-export type Props = PresentationAttributes<SVGElement> & CartesianGridProps;
+export type Props = SVGProps<SVGElement> & CartesianGridProps;
 
 export class CartesianGrid extends PureComponent<Props> {
   static displayName = 'CartesianGrid';

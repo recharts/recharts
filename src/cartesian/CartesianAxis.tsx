@@ -1,7 +1,7 @@
 /**
  * @fileOverview Cartesian Axis
  */
-import React, { ReactElement, ReactNode, Component } from 'react';
+import React, { ReactElement, ReactNode, Component, SVGProps } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { shallowEqual } from '../util/ShallowEqual';
@@ -11,7 +11,7 @@ import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { Global } from '../util/Global';
 import { isNumber, mathSign } from '../util/DataUtils';
-import { CartesianViewBox, PresentationAttributes, filterProps, TickItem, adaptEventsOfChild } from '../util/types';
+import { CartesianViewBox, filterProps, TickItem, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
 
 interface CartesianTickItem extends TickItem {
   tickCoord?: number;
@@ -29,12 +29,13 @@ export interface CartesianAxisProps {
   orientation?: 'top' | 'bottom' | 'left' | 'right';
   // The viewBox of svg
   viewBox?: CartesianViewBox;
-  tick?: PresentationAttributes<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => SVGElement) | boolean;
-  axisLine?: boolean | PresentationAttributes<SVGLineElement>;
-  tickLine?: boolean | PresentationAttributes<SVGLineElement>;
+  tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
+  axisLine?: boolean | SVGProps<SVGLineElement>;
+  tickLine?: boolean | SVGProps<SVGLineElement>;
   mirror?: boolean;
   tickMargin: number;
   hide?: boolean;
+  label?: any;
 
   minTickGap?: number;
   ticks?: CartesianTickItem[];
@@ -45,7 +46,7 @@ export interface CartesianAxisProps {
   interval?: number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
 }
 
-export type Props = PresentationAttributes<SVGElement> & CartesianAxisProps;
+export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'viewBox'> & CartesianAxisProps;
 
 export class CartesianAxis extends Component<Props> {
   static displayName = 'CartesianAxis';
@@ -342,7 +343,7 @@ export class CartesianAxis extends Component<Props> {
 
   renderAxisLine() {
     const { x, y, width, height, orientation, mirror, axisLine } = this.props;
-    let props: PresentationAttributes<SVGLineElement> = {
+    let props: SVGProps<SVGLineElement> = {
       ...filterProps(this.props),
       ...filterProps(axisLine),
       fill: 'none',

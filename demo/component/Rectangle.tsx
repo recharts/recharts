@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Surface, Rectangle } from 'recharts';
 
-class RectangleDemo extends Component {
+class RectangleDemo extends Component<any, any> {
   state = {
     x: 50,
     y: 50,
@@ -9,7 +9,7 @@ class RectangleDemo extends Component {
     height: 100,
   };
 
-  changeSize() {
+  changeSize = () => {
     this.setState({
       x: Math.random() * 50,
       y: Math.random() * 50,
@@ -26,10 +26,11 @@ class RectangleDemo extends Component {
         <a
           href="javascript:void(0);"
           className="btn"
-          onClick={::this.changeSize}
+          onClick={this.changeSize}
         >
           change size
         </a>
+
         <Surface width={500} height={500}>
           <Rectangle
             x={x}
@@ -42,6 +43,7 @@ class RectangleDemo extends Component {
             fill="none"
           />
         </Surface>
+
         <Surface width={500} height={500}>
           <Rectangle
             x={x}

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { ScatterChart, Scatter, CartesianGrid, Tooltip, Legend,
  XAxis, YAxis, ZAxis, ReferenceLine, ReferenceDot, ReferenceArea, ErrorBar,
  LabelList } from 'recharts';
+import * as _ from 'lodash';
 import { changeNumberOfData } from './utils';
 
 const data01 = [
@@ -68,7 +69,7 @@ export default class Demo extends Component {
     this.setState(() => _.mapValues(initialState, changeNumberOfData));
   };
 
-  renderSquare = (props) => {
+  renderSquare = (props: any) => {
     const { cx, cy, size, xAxis, yAxis, zAxis } = props;
     const xBandSize = xAxis.bandSize;
     const yBandSize = yAxis.bandSize;
@@ -166,8 +167,8 @@ export default class Demo extends Component {
         <p>ScatterChart filled by squares</p>
         <div className="scatter-chart-wrapper">
           <ScatterChart width={900} height={300} margin={{top: 20, right: 20, bottom: 20, left: 20}}>
-            <XAxis dataKey="x" type="category" allowDuplicatedCategory={false} domain={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]} allowDuplicatedCategory={false} name="hour"  />
-            <YAxis dataKey="y" type="category" allowDuplicatedCategory={false} domain={['Sun', 'Sat', 'Fri', 'Thu', 'Wed', 'Tue', 'Mon']} allowDuplicatedCategory={false} name="week" />
+            <XAxis dataKey="x" type="category" allowDuplicatedCategory={false} domain={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]} name="hour"  />
+            <YAxis dataKey="y" type="category" allowDuplicatedCategory={false} domain={['Sun', 'Sat', 'Fri', 'Thu', 'Wed', 'Tue', 'Mon']} name="week" />
             <ZAxis dataKey="z" range={[0.2, 1]} name="score" />
             <Tooltip cursor={{strokeDasharray: '3 3'}}/>
             <CartesianGrid fill="#999" />

@@ -1,17 +1,17 @@
 /**
  * @file TreemapChart
  */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, ReactElement, SVGProps } from 'react';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
-import { Rectangle } from '../shape/Rectangle';
+import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { shallowEqual } from '../util/ShallowEqual';
 import { filterSvgElements, validateWidthHeight, findChildByType } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { Margin, DataKey, PresentationAttributes, filterProps, SankeyLink, SankeyNode } from '../util/types';
+import { Margin, DataKey, filterProps, SankeyLink, SankeyNode } from '../util/types';
 
 const defaultCoordinateOfTooltip = { x: 0, y: 0 };
 
@@ -21,8 +21,8 @@ const interpolationGenerator = (a: number, b: number) => {
   return (t: any) => ka + kb * t;
 };
 const centerY = (node: SankeyNode) => node.y + node.dy / 2;
-const getValue = (entry: SankeyLink) => (entry && entry.value) || 0;
-const getSumOfIds = (links: SankeyLink[], ids: number[]) =>
+const getValue = (entry: LinkDataItem) => (entry && entry.value) || 0;
+const getSumOfIds = (links: LinkDataItem[], ids: number[]) =>
   ids.reduce((result: any, id: any) => result + getValue(links[id]), 0);
 const getSumWithWeightedSource = (tree: any, links: SankeyLink[], ids: number[]) =>
   ids.reduce((result: any, id: any) => {
@@ -40,7 +40,7 @@ const getSumWithWeightedTarget = (tree: any, links: SankeyLink[], ids: number[])
   }, 0);
 const ascendingY = (a: any, b: any) => a.y - b.y;
 
-const searchTargetsAndSources = (links: SankeyLink[], id: number) => {
+const searchTargetsAndSources = (links: LinkDataItem[], id: number) => {
   const sourceNodes: number[] = [];
   const sourceLinks: number[] = [];
   const targetNodes: number[] = [];
@@ -81,10 +81,7 @@ const getNodesTree = (
   {
     nodes,
     links,
-  }: {
-    nodes: SankeyNode[];
-    links: SankeyLink[];
-  },
+  }: SankeyData,
   width: number,
   nodeWidth: number,
 ): any => {
@@ -263,10 +260,7 @@ const computeData = ({
   nodeWidth,
   nodePadding,
 }: {
-  data: {
-    nodes: SankeyNode[];
-    links: SankeyLink[];
-  };
+  data: SankeyData;
   width: number;
   height: number;
   iterations: any;
@@ -337,6 +331,21 @@ const getPayloadOfTooltip = (el: any, type: string, nameKey: DataKey<any>) => {
   return [];
 };
 
+interface LinkDataItem {
+  source: number;
+  target: number;
+  [key: string]: any;
+}
+
+interface SankeyData {
+  nodes: any[];
+  links: LinkDataItem[];
+};
+
+type SankeyNodeOptions = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | RectangleProps;
+
+type SankeyLinkOptions = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | SVGProps<SVGPathElement>;
+
 interface SankeyProps {
   nameKey?: DataKey<any>;
 
@@ -346,10 +355,7 @@ interface SankeyProps {
 
   height?: number;
 
-  data: {
-    nodes: SankeyNode[];
-    links: SankeyLink[];
-  };
+  data: SankeyData;
 
   nodePadding?: number;
 
@@ -360,9 +366,9 @@ interface SankeyProps {
   iterations?: number;
 
   // TODO object  func
-  node?: React.ReactElement;
+  node?: SankeyNodeOptions;
 
-  link?: React.ReactElement;
+  link?: SankeyLinkOptions;
 
   style?: any;
 
@@ -379,7 +385,7 @@ interface SankeyProps {
   onMouseLeave?: any;
 }
 
-type Props = PresentationAttributes<SVGElement> & SankeyProps;
+type Props = SVGProps<SVGElement> & SankeyProps;
 
 interface State {
   activeElement?: any;

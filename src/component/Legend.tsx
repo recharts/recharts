@@ -7,12 +7,11 @@ import { DefaultLegendContent, Payload, Props as DefaultProps, ContentType } fro
 
 import { isNumber } from '../util/DataUtils';
 
-type UniqueFunc<TValue, TID> = (entry: Payload<TValue, TID>) => unknown;
-type UniqueOption<TValue, TID> = boolean | UniqueFunc<TValue, TID>;
-function defaultUniqBy<TValue, TID>(entry: Payload<TValue, TID>) {
+type UniqueOption = boolean | ((entry: Payload) => Payload);
+function defaultUniqBy(entry: Payload) {
   return entry.value;
 }
-function getUniqPayload<TValue, TID>(option: UniqueOption<TValue, TID>, payload: Array<Payload<TValue, TID>>) {
+function getUniqPayload(option: UniqueOption, payload: Array<Payload>) {
   if (option === true) {
     return _.uniqBy(payload, defaultUniqBy);
   }
@@ -24,7 +23,7 @@ function getUniqPayload<TValue, TID>(option: UniqueOption<TValue, TID>, payload:
   return payload;
 }
 
-function renderContent<TValue, TID>(content: ContentType<TValue, TID>, props: Props<TValue, TID>) {
+function renderContent(content: ContentType, props: Props) {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
   }
@@ -32,12 +31,14 @@ function renderContent<TValue, TID>(content: ContentType<TValue, TID>, props: Pr
     return React.createElement(content as any, props);
   }
 
-  return <DefaultLegendContent {...props} />;
+  const { ref, ...otherProps } = props;
+
+  return <DefaultLegendContent {...otherProps} />;
 }
 
 const EPS = 1;
 
-export type Props<TValue, TID> = DefaultProps<TValue, TID> & {
+export type Props = DefaultProps & {
   wrapperStyle?: CSSProperties;
   chartWidth?: number;
   chartHeight?: number;
@@ -49,7 +50,7 @@ export type Props<TValue, TID> = DefaultProps<TValue, TID> & {
     bottom?: number;
     right?: number;
   };
-  payloadUniqBy?: UniqueOption<TValue, TID>;
+  payloadUniqBy?: UniqueOption;
   onBBoxUpdate?: (box: DOMRect | null) => void;
 };
 
@@ -58,7 +59,7 @@ interface State {
   boxHeight: number;
 }
 
-export class Legend<TValue, TID> extends PureComponent<Props<TValue, TID>, State> {
+export class Legend extends PureComponent<Props, State> {
   static displayName = 'Legend';
 
   static defaultProps = {

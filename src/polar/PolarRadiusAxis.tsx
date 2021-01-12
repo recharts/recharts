@@ -7,7 +7,7 @@ import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { Layer } from '../container/Layer';
 import { polarToCartesian } from '../util/PolarUtils';
-import { PresentationAttributes, filterProps, BaseAxisProps, TickItem, adaptEventsOfChild } from '../util/types';
+import { filterProps, BaseAxisProps, TickItem, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
 
 export interface PolarRadiusAxisProps extends BaseAxisProps {
   cx?: number;
@@ -18,7 +18,7 @@ export interface PolarRadiusAxisProps extends BaseAxisProps {
   ticks?: TickItem[];
 }
 
-export type Props = PresentationAttributes<SVGElement> & PolarRadiusAxisProps;
+export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & PolarRadiusAxisProps;
 
 export class PolarRadiusAxis extends PureComponent<Props> {
   static displayName = 'PolarRadiusAxis';
