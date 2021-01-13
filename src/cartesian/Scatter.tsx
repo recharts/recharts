@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render a group of scatters
  */
-import React, { PureComponent, ReactElement, SVGProps } from 'react';
+import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -88,6 +88,8 @@ export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & Sca
 interface State {
   isAnimationFinished?: boolean;
   prevPoints?: ScatterPointItem[];
+  curPoints?: ScatterPointItem[];
+  prevAnimationId?: number;
 }
 
 export class Scatter extends PureComponent<Props, State> {
@@ -123,9 +125,6 @@ export class Scatter extends PureComponent<Props, State> {
     zAxis,
     item,
     displayedData,
-    onItemMouseLeave,
-    onItemMouseEnter,
-    onItemClick,
     xAxisTicks,
     yAxisTicks,
     offset,
@@ -137,9 +136,6 @@ export class Scatter extends PureComponent<Props, State> {
     xAxisTicks: TickItem[];
     yAxisTicks: TickItem[];
     item: Scatter;
-    onItemMouseLeave?: SVGProps<SVGElement>['onMouseLeave'];
-    onItemMouseEnter?: SVGProps<SVGElement>['onMouseLeave'];
-    onItemClick?: SVGProps<SVGElement>['onClick'];
     bandSize: number;
     displayedData: any[];
     offset: ChartOffset;
@@ -226,9 +222,6 @@ export class Scatter extends PureComponent<Props, State> {
     });
 
     return {
-      onMouseLeave: _.isFunction(onItemMouseLeave) ? onItemMouseLeave : item.props.onMouseLeave,
-      onMouseEnter: _.isFunction(onItemMouseEnter) ? onItemMouseEnter : item.props.onMouseEnter,
-      onClick: _.isFunction(onItemClick) ? onItemClick : item.props.onClick,
       points,
       ...offset,
     };
@@ -236,18 +229,22 @@ export class Scatter extends PureComponent<Props, State> {
 
   state: State = { isAnimationFinished: false };
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps: Props) {
-    const { animationId, points } = this.props;
-
-    if (nextProps.animationId !== animationId) {
-      this.cachePrevPoints(points);
+  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+    if (nextProps.animationId !== prevState.prevAnimationId) {
+      return {
+        prevAnimationId: nextProps.animationId,
+        curPoints: nextProps.points,
+        prevPoints: prevState.curPoints,
+      };
     }
-  }
+    if (nextProps.points !== prevState.curPoints) {
+      return {
+        curPoints: nextProps.points,
+      };
+    }
 
-  cachePrevPoints = (points: ScatterPointItem[]) => {
-    this.setState({ prevPoints: points });
-  };
+    return null;
+  }
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });

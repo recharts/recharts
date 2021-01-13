@@ -60,7 +60,52 @@ interface State {
   movingTravellerId?: BrushTravellerId;
   isTextActive?: boolean;
   brushMoveStartX?: number;
+
+  scale?: ScalePoint<number>;
+  scaleValues?: number[];
+
+  prevData?: any[];
+  prevWidth?: number;
+  prevX?: number;
+  prevTravellerWidth?: number;
+  prevUpdateId?: string | number;
 }
+
+const createScale = ({
+  data,
+  startIndex,
+  endIndex,
+  x,
+  width,
+  travellerWidth,
+}: {
+  data?: any[];
+  startIndex?: number;
+  endIndex?: number;
+  x?: number;
+  width?: number;
+  travellerWidth?: number;
+}) => {
+  if (!data || !data.length) {
+    return {};
+  }
+
+  const len = data.length;
+  const scale = scalePoint<number>()
+    .domain(_.range(0, len))
+    .range([x, x + width - travellerWidth]);
+  const scaleValues = scale.domain().map(entry => scale(entry));
+
+  return {
+    isTextActive: false,
+    isSlideMoving: false,
+    isTravellerMoving: false,
+    startX: scale(startIndex),
+    endX: scale(endIndex),
+    scale,
+    scaleValues,
+  };
+};
 
 const isTouch = (e: TouchEvent<SVGElement> | MouseEvent<SVGElement>): e is TouchEvent<SVGElement> =>
   (e as TouchEvent<SVGElement>).changedTouches && !!(e as TouchEvent<SVGElement>).changedTouches.length;
@@ -87,14 +132,10 @@ export class Brush extends PureComponent<Props, State> {
       endX: this.handleTravellerDragStart.bind(this, 'endX'),
     };
 
-    this.state = props.data && props.data.length ? this.createScale(props) : {};
+    this.state = {};
   }
 
   leaveTimer?: number;
-
-  scale?: ScalePoint<number>;
-
-  scaleValues?: number[];
 
   travellerDragStartHandlers?: Record<
     BrushTravellerId,
@@ -128,33 +169,45 @@ export class Brush extends PureComponent<Props, State> {
     return rectangle;
   }
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps: Props) {
-    const { data, width, x, travellerWidth, updateId } = this.props;
+  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+    const { data, width, x, travellerWidth, updateId, startIndex, endIndex } = nextProps;
 
-    if (nextProps.data !== data || nextProps.updateId !== updateId) {
-      if (nextProps.data && nextProps.data.length) {
-        this.setState(this.createScale(nextProps));
-      } else {
-        this.removeScale();
-      }
-    } else if (
-      (this.scale && nextProps.width !== width) ||
-      nextProps.x !== x ||
-      nextProps.travellerWidth !== travellerWidth
-    ) {
-      this.scale.range([nextProps.x, nextProps.x + nextProps.width - nextProps.travellerWidth]);
-      this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
-
-      this.setState({
-        startX: this.scale(nextProps.startIndex),
-        endX: this.scale(nextProps.endIndex),
-      });
+    if (data !== prevState.prevData || updateId !== prevState.prevUpdateId) {
+      return {
+        prevData: data,
+        prevTravellerWidth: travellerWidth,
+        prevUpdateId: updateId,
+        prevX: x,
+        prevWidth: width,
+        ...(data && data.length
+          ? createScale({ data, width, x, travellerWidth, startIndex, endIndex })
+          : { scale: null, scaleValues: null }),
+      };
     }
+    if (
+      prevState.scale &&
+      (width !== prevState.prevWidth || x !== prevState.prevX || travellerWidth !== prevState.prevTravellerWidth)
+    ) {
+      prevState.scale.range([x, x + width - travellerWidth]);
+
+      const scaleValues = prevState.scale.domain().map(entry => prevState.scale(entry));
+
+      return {
+        prevData: data,
+        prevTravellerWidth: travellerWidth,
+        prevUpdateId: updateId,
+        prevX: x,
+        prevWidth: width,
+        startX: prevState.scale(nextProps.startIndex),
+        endX: prevState.scale(nextProps.endIndex),
+        scaleValues,
+      };
+    }
+
+    return null;
   }
 
   componentWillUnmount() {
-    this.removeScale();
     if (this.leaveTimer) {
       clearTimeout(this.leaveTimer);
       this.leaveTimer = null;
@@ -182,12 +235,13 @@ export class Brush extends PureComponent<Props, State> {
   }
 
   getIndex({ startX, endX }: { startX: number; endX: number }) {
+    const { scaleValues } = this.state;
     const { gap, data } = this.props;
     const lastIndex = data.length - 1;
     const min = Math.min(startX, endX);
     const max = Math.max(startX, endX);
-    const minIndex = Brush.getIndexInRange(this.scaleValues, min);
-    const maxIndex = Brush.getIndexInRange(this.scaleValues, max);
+    const minIndex = Brush.getIndexInRange(scaleValues, min);
+    const maxIndex = Brush.getIndexInRange(scaleValues, max);
     return {
       startIndex: minIndex - (minIndex % gap),
       endIndex: maxIndex === lastIndex ? lastIndex : maxIndex - (maxIndex % gap),
@@ -351,27 +405,6 @@ export class Brush extends PureComponent<Props, State> {
         }
       },
     );
-  }
-
-  createScale(props: Props) {
-    const { data, startIndex, endIndex, x, width, travellerWidth } = props;
-    const len = data.length;
-    this.scale = scalePoint<number>()
-      .domain(_.range(0, len))
-      .range([x, x + width - travellerWidth]);
-    this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
-    return {
-      isTextActive: false,
-      isSlideMoving: false,
-      isTravellerMoving: false,
-      startX: this.scale(startIndex),
-      endX: this.scale(endIndex),
-    };
-  }
-
-  removeScale() {
-    this.scale = null;
-    this.scaleValues = null;
   }
 
   renderBackground() {

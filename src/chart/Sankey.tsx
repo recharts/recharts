@@ -389,6 +389,14 @@ interface State {
   isTooltipActive: boolean;
   nodes: SankeyNode[];
   links: SankeyLink[];
+
+  prevData?: SankeyData;
+  prevWidth?: number;
+  prevHeight?: number;
+  prevMargin?: Margin;
+  prevIterations?: number;
+  prevNodeWidth?: number;
+  prevNodePadding?: number;
 }
 
 export class Sankey extends PureComponent<Props, State> {
@@ -412,54 +420,47 @@ export class Sankey extends PureComponent<Props, State> {
     links: [] as SankeyLink[],
   };
 
-  constructor(props: Props) {
-    super(props);
+  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+    const { data, width, height, margin, iterations, nodeWidth, nodePadding } = nextProps;
 
-    this.state = (this.constructor as any).createDefaultState(props);
-  }
-
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps: Props) {
-    const { data, width, height, margin, iterations, nodeWidth, nodePadding, nameKey } = this.props;
     if (
-      nextProps.data !== data ||
-      nextProps.width !== width ||
-      nextProps.height !== height ||
-      !shallowEqual(nextProps.margin, margin) ||
-      nextProps.iterations !== iterations ||
-      nextProps.nodeWidth !== nodeWidth ||
-      nextProps.nodePadding !== nodePadding ||
-      nextProps.nameKey !== nameKey
+      data !== prevState.prevData ||
+      width !== prevState.prevWidth ||
+      height !== prevState.prevHeight ||
+      !shallowEqual(margin, prevState.prevMargin) ||
+      iterations !== prevState.prevIterations ||
+      nodeWidth !== prevState.prevNodeWidth ||
+      nodePadding !== prevState.prevNodePadding
     ) {
-      this.setState((this.constructor as any).createDefaultState(nextProps));
+      const contentWidth = width - ((margin && margin.left) || 0) - ((margin && margin.right) || 0);
+      const contentHeight = height - ((margin && margin.top) || 0) - ((margin && margin.bottom) || 0);
+      const { links, nodes } = computeData({
+        data,
+        width: contentWidth,
+        height: contentHeight,
+        iterations,
+        nodeWidth,
+        nodePadding,
+      });
+
+      return {
+        activeElement: null,
+        activeElementType: null,
+        isTooltipActive: false,
+        nodes,
+        links,
+
+        prevData: data,
+        prevWidth: iterations,
+        prevHeight: height,
+        prevMargin: margin,
+        prevNodePadding: nodePadding,
+        prevNodeWidth: nodeWidth,
+        prevIterations: iterations,
+      };
     }
-  }
 
-  /**
-   * Returns default, reset state for the sankey chart.
-   * @param  {Object} props The latest props
-   * @return {Object} Whole new state
-   */
-  static createDefaultState(props: Props): State {
-    const { data, width, height, margin, iterations, nodeWidth, nodePadding } = props;
-    const contentWidth = width - ((margin && margin.left) || 0) - ((margin && margin.right) || 0);
-    const contentHeight = height - ((margin && margin.top) || 0) - ((margin && margin.bottom) || 0);
-    const { links, nodes } = computeData({
-      data,
-      width: contentWidth,
-      height: contentHeight,
-      iterations,
-      nodeWidth,
-      nodePadding,
-    });
-
-    return {
-      activeElement: null,
-      activeElementType: null,
-      isTooltipActive: false,
-      nodes,
-      links,
-    };
+    return null;
   }
 
   handleMouseEnter(el: React.ReactElement, type: string, e: any) {

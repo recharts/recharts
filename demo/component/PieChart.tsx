@@ -243,7 +243,7 @@ export default class Demo extends Component {
           </ResponsiveContainer>
         </div>
 
-        {/* <p>PieChart has bug about tooltip</p>
+        <p>PieChart has bug about tooltip</p>
         <div className="pie-chart-wrapper" style={{ width: '50%', height: '100%', backgroundColor: '#f5f5f5' }}>
           <ResponsiveContainer>
             <PieChart>
@@ -252,14 +252,14 @@ export default class Demo extends Component {
                 dataKey="value"
                 innerRadius="25%"
                 outerRadius="40%"
-                onMouseEnter={this.handleEnter}
+                // onMouseEnter={this.handleEnter}
                 onMouseLeave={this.handleLeave}
               >
                 {
                   data01.map((entry, index) => (
                     <Cell
                       key={`slice-${index}`}
-                      fill={colors[index % 10]}
+                      fill={colors[index % 10] as string}
                       fillOpacity={this.state.activeIndex === index ? 1 : 0.25}
                     />
                   ))
@@ -268,7 +268,7 @@ export default class Demo extends Component {
               </Pie>
             </PieChart>
           </ResponsiveContainer>
-        </div> */}
+        </div>
       </div>
     );
   }

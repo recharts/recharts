@@ -48,6 +48,7 @@ interface TextProps {
   style?: CSSProperties;
   lineHeight?: number | string;
   breakAll?: boolean;
+  children?: React.ReactChildren;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'textAnchor' | 'verticalAnchor'> & TextProps;
@@ -59,7 +60,7 @@ interface Words {
 
 interface State {
   wordsByLines?: Array<Words>;
-  prevWidth?: number;
+  prevWidth?: string | number;
   prevScaleToFit?: boolean;
   prevChildren?: React.ReactChildren;
   prevStyle?: CSSProperties;
@@ -130,7 +131,7 @@ export class Text extends Component<Props, State> {
 
   state: State = {};
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
     if (
       nextProps.width !== prevState.prevWidth ||
       nextProps.scaleToFit !== prevState.prevScaleToFit ||

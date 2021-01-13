@@ -105,7 +105,10 @@ interface PieProps extends PieDef {
 
 interface State {
   isAnimationFinished?: boolean;
+  prevIsAnimationActive?: boolean;
   prevSectors?: PieSectorDataItem[];
+  curSectors?: PieSectorDataItem[];
+  prevAnimationId?: number;
 }
 
 export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & PieProps;
@@ -175,19 +178,7 @@ export class Pie extends PureComponent<Props, State> {
     return { cx, cy, innerRadius, outerRadius, maxRadius };
   };
 
-  static getComposedData = ({
-    item,
-    offset,
-    onItemMouseLeave,
-    onItemMouseEnter,
-    onItemClick,
-  }: {
-    item: Pie;
-    offset: ChartOffset;
-    onItemMouseLeave?: (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
-    onItemMouseEnter?: (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
-    onItemClick?: (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
-  }): Omit<Props, 'dataKey'> => {
+  static getComposedData = ({ item, offset }: { item: Pie; offset: ChartOffset }): Omit<Props, 'dataKey'> => {
     const pieData = Pie.getRealPieData(item);
     if (!pieData || !pieData.length) {
       return null;
@@ -281,23 +272,44 @@ export class Pie extends PureComponent<Props, State> {
       ...coordinate,
       sectors,
       data: pieData,
-      onMouseLeave: _.isFunction(onItemMouseLeave) ? onItemMouseLeave : item.props.onMouseLeave,
-      onMouseEnter: _.isFunction(onItemMouseEnter) ? onItemMouseEnter : item.props.onMouseEnter,
-      onClick: _.isFunction(onItemClick) ? onItemClick : item.props.onClick,
     };
   };
 
-  state: State = { isAnimationFinished: false };
+  constructor(props: Props) {
+    super(props);
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps: Props) {
-    const { animationId, sectors } = this.props;
+    this.state = {
+      isAnimationFinished: !props.isAnimationActive,
+      prevIsAnimationActive: props.isAnimationActive,
+      prevAnimationId: props.animationId,
+    };
+  }
 
-    if (nextProps.isAnimationActive !== this.props.isAnimationActive) {
-      this.cachePrevData([]);
-    } else if (nextProps.animationId !== animationId) {
-      this.cachePrevData(sectors);
+  state: State;
+
+  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+    if (prevState.prevIsAnimationActive !== nextProps.isAnimationActive) {
+      return {
+        prevIsAnimationActive: nextProps.isAnimationActive,
+        prevAnimationId: nextProps.animationId,
+        curSectors: nextProps.sectors,
+        prevSectors: [],
+      };
     }
+    if (nextProps.isAnimationActive && nextProps.animationId !== prevState.prevAnimationId) {
+      return {
+        prevAnimationId: nextProps.animationId,
+        curSectors: nextProps.sectors,
+        prevSectors: prevState.curSectors,
+      };
+    }
+    if (nextProps.sectors !== prevState.curSectors) {
+      return {
+        curSectors: nextProps.sectors,
+      };
+    }
+
+    return null;
   }
 
   static getTextAnchor(x: number, cx: number) {
@@ -312,10 +324,6 @@ export class Pie extends PureComponent<Props, State> {
   }
 
   id = uniqueId('recharts-pie-');
-
-  cachePrevData = (sectors: PieSectorDataItem[]) => {
-    this.setState({ prevSectors: sectors });
-  };
 
   isActiveIndex(i: number) {
     const { activeIndex } = this.props;
@@ -473,7 +481,7 @@ export class Pie extends PureComponent<Props, State> {
 
   renderSectorsWithAnimation() {
     const { sectors, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = this.props;
-    const { prevSectors } = this.state;
+    const { prevSectors, prevIsAnimationActive } = this.state;
 
     return (
       <Animate
@@ -483,7 +491,7 @@ export class Pie extends PureComponent<Props, State> {
         easing={animationEasing}
         from={{ t: 0 }}
         to={{ t: 1 }}
-        key={`pie-${animationId}`}
+        key={`pie-${animationId}-${prevIsAnimationActive}`}
         onAnimationStart={this.handleAnimationStart}
         onAnimationEnd={this.handleAnimationEnd}
       >
@@ -539,7 +547,7 @@ export class Pie extends PureComponent<Props, State> {
 
   render() {
     const { hide, sectors, className, label, cx, cy, innerRadius, outerRadius, isAnimationActive } = this.props;
-    const { prevSectors } = this.state;
+    const { isAnimationFinished } = this.state;
 
     if (
       hide ||
@@ -560,8 +568,7 @@ export class Pie extends PureComponent<Props, State> {
         {this.renderSectors()}
         {label && this.renderLabels(sectors)}
         {Label.renderCallByParent(this.props, null, false)}
-        {(!isAnimationActive || (prevSectors && _.isEqual(prevSectors, sectors))) &&
-          LabelList.renderCallByParent(this.props, sectors, false)}
+        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, sectors, false)}
       </Layer>
     );
   }

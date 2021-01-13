@@ -86,8 +86,11 @@ interface AreaProps extends InternalAreaProps {
 export type Props = SVGProps<SVGElement> & AreaProps;
 
 interface State {
+  prevAnimationId?: number;
   prevPoints?: AreaPointItem[];
   prevBaseLine?: number | Coordinate[];
+  curPoints?: AreaPointItem[];
+  curBaseLine?: number | Coordinate[];
   isAnimationFinished?: boolean;
   totalLength?: number;
 }
@@ -251,25 +254,31 @@ export class Area extends PureComponent<Props, State> {
     return dotItem;
   };
 
-  state: State = { isAnimationFinished: true };
+  state: State = {
+    isAnimationFinished: true,
+  };
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps: Props) {
-    const { animationId, points, baseLine } = this.props;
-
-    if (nextProps.animationId !== animationId) {
-      this.cachePrevData(points, baseLine);
+  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+    if (nextProps.animationId !== prevState.prevAnimationId) {
+      return {
+        prevAnimationId: nextProps.animationId,
+        curPoints: nextProps.points,
+        curBaseLine: nextProps.baseLine,
+        prevPoints: prevState.curPoints,
+        prevBaseLine: prevState.curBaseLine,
+      };
     }
+    if (nextProps.points !== prevState.curPoints || nextProps.baseLine !== prevState.curBaseLine) {
+      return {
+        curPoints: nextProps.points,
+        curBaseLine: nextProps.baseLine,
+      };
+    }
+
+    return null;
   }
 
   id = uniqueId('recharts-area-');
-
-  cachePrevData = (points: AreaPointItem[], baseLine: Props['baseLine']) => {
-    this.setState({
-      prevPoints: points,
-      prevBaseLine: baseLine,
-    });
-  };
 
   handleAnimationEnd = () => {
     const { onAnimationEnd } = this.props;

@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render sectors of a funnel
  */
-import React, { PureComponent, ReactElement, SVGProps } from 'react';
+import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -62,6 +62,8 @@ export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & Tra
 
 interface State {
   readonly prevTrapezoids?: FunnelTrapezoidItem[];
+  readonly curTrapezoids?: FunnelTrapezoidItem[];
+  readonly prevAnimationId?: number;
   readonly isAnimationFinished?: boolean;
 }
 
@@ -123,19 +125,7 @@ export class Funnel extends PureComponent<Props, State> {
     };
   };
 
-  static getComposedData = ({
-    item,
-    offset,
-    onItemMouseLeave,
-    onItemMouseEnter,
-    onItemClick,
-  }: {
-    item: Funnel;
-    offset: ChartOffset;
-    onItemMouseLeave?: SVGProps<SVGElement>['onMouseLeave'];
-    onItemMouseEnter?: SVGProps<SVGElement>['onMouseEnter'];
-    onItemClick?: SVGProps<SVGElement>['onClick'];
-  }) => {
+  static getComposedData = ({ item, offset }: { item: Funnel; offset: ChartOffset }) => {
     const funnelData = Funnel.getRealFunnelData(item);
     const { dataKey, nameKey, tooltipType, lastShapeType, reversed } = item.props;
     const { left, top } = offset;
@@ -223,28 +213,27 @@ export class Funnel extends PureComponent<Props, State> {
     return {
       trapezoids,
       data: funnelData,
-      onMouseLeave: _.isFunction(onItemMouseLeave) ? onItemMouseLeave : item.props.onMouseLeave,
-      onMouseEnter: _.isFunction(onItemMouseEnter) ? onItemMouseEnter : item.props.onMouseEnter,
-      onClick: _.isFunction(onItemClick) ? onItemClick : item.props.onClick,
     };
   };
 
   state: State = { isAnimationFinished: false };
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps: Props) {
-    const { animationId, trapezoids } = this.props;
-
-    if (nextProps.isAnimationActive !== this.props.isAnimationActive) {
-      this.cachePrevData([]);
-    } else if (nextProps.animationId !== animationId) {
-      this.cachePrevData(trapezoids);
+  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+    if (nextProps.animationId !== prevState.prevAnimationId) {
+      return {
+        prevAnimationId: nextProps.animationId,
+        curTrapezoids: nextProps.trapezoids,
+        prevTrapezoids: prevState.curTrapezoids,
+      };
     }
-  }
+    if (nextProps.trapezoids !== prevState.curTrapezoids) {
+      return {
+        curTrapezoids: nextProps.trapezoids,
+      };
+    }
 
-  cachePrevData = (trapezoids: FunnelTrapezoidItem[]) => {
-    this.setState({ prevTrapezoids: trapezoids });
-  };
+    return null;
+  }
 
   handleAnimationEnd = () => {
     const { onAnimationEnd } = this.props;

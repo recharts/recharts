@@ -274,6 +274,18 @@ interface State {
   currentRoot?: TreemapNode;
 
   nestIndex?: TreemapNode[];
+
+  prevData?: any[];
+
+  prevType?: 'flat' | 'nest';
+
+  prevWidth?: number;
+
+  prevHeight?: number;
+
+  prevDataKey?: DataKey<any>;
+
+  prevAspectRatio?: number;
 }
 
 const defaultState: State = {
@@ -308,78 +320,38 @@ export class Treemap extends PureComponent<Props, State> {
     ...defaultState,
   };
 
-  componentDidMount() {
-    const { type, width, height, data, dataKey, aspectRatio } = this.props;
-    const { formatRoot, currentRoot, nestIndex } = this.computeRoot({
-      type,
-      width,
-      height,
-      data,
-      dataKey,
-      aspectRatio,
-    });
-
-    this.setState({
-      formatRoot,
-      currentRoot,
-      nestIndex,
-    });
-  }
-
-  computeRoot({
-    type,
-    width,
-    height,
-    data,
-    dataKey,
-    aspectRatio,
-  }: {
-    type: string;
-    width: number;
-    height: number;
-    data: any;
-    dataKey: DataKey<any>;
-    aspectRatio: number;
-  }): any {
-    const root = computeNode({
-      depth: 0,
-      node: { children: data, x: 0, y: 0, width, height } as TreemapNode,
-      index: 0,
-      valueKey: dataKey,
-    });
-
-    const formatRoot = squarify(root, aspectRatio);
-    const { nestIndex } = this.state;
-    if (type === 'nest') {
-      nestIndex.push(root);
-    }
-
-    return {
-      formatRoot,
-      currentRoot: root,
-      nestIndex,
-    };
-  }
-
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps: Props) {
-    const { type, width, height, data, dataKey, aspectRatio } = nextProps;
-
+  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
     if (
-      data !== this.props.data ||
-      type !== this.props.type ||
-      width !== this.props.width ||
-      height !== this.props.height ||
-      dataKey !== this.props.dataKey ||
-      aspectRatio !== this.props.aspectRatio
+      nextProps.data !== prevState.prevData ||
+      nextProps.type !== prevState.prevType ||
+      nextProps.width !== prevState.prevWidth ||
+      nextProps.height !== prevState.prevHeight ||
+      nextProps.dataKey !== prevState.prevDataKey ||
+      nextProps.aspectRatio !== prevState.prevAspectRatio
     ) {
-      const nextRoot = this.computeRoot({ type, width, height, data, dataKey, aspectRatio });
-      this.setState({
-        ...defaultState,
-        ...nextRoot,
-        nestIndex: [nextRoot.currentRoot],
+      const root = computeNode({
+        depth: 0,
+        node: { children: nextProps.data, x: 0, y: 0, width: nextProps.width, height: nextProps.height } as TreemapNode,
+        index: 0,
+        valueKey: nextProps.dataKey,
       });
+      const formatRoot = squarify(root, nextProps.aspectRatio);
+
+      return {
+        ...defaultState,
+        formatRoot,
+        currentRoot: root,
+        nestIndex: [root],
+        prevAspectRatio: nextProps.aspectRatio,
+        prevData: nextProps.data,
+        prevWidth: nextProps.width,
+        prevHeight: nextProps.height,
+        prevDataKey: nextProps.dataKey,
+        prevType: nextProps.type,
+      };
     }
+
+    return null;
   }
 
   handleMouseEnter(node: TreemapNode, e: any) {

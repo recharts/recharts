@@ -81,6 +81,8 @@ interface State {
   isAnimationFinished?: boolean;
   totalLength?: number;
   prevPoints?: LinePointItem[];
+  curPoints?: LinePointItem[];
+  prevAnimationId?: number;
 }
 
 export class Line extends PureComponent<Props, State> {
@@ -176,13 +178,21 @@ export class Line extends PureComponent<Props, State> {
     this.setState({ totalLength });
   }
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps: Props) {
-    const { animationId, points } = this.props;
-
-    if (nextProps.animationId !== animationId) {
-      this.cachePrevData(points);
+  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+    if (nextProps.animationId !== prevState.prevAnimationId) {
+      return {
+        prevAnimationId: nextProps.animationId,
+        curPoints: nextProps.points,
+        prevPoints: prevState.curPoints,
+      };
     }
+    if (nextProps.points !== prevState.curPoints) {
+      return {
+        curPoints: nextProps.points,
+      };
+    }
+
+    return null;
   }
 
   getTotalLength() {
@@ -216,10 +226,6 @@ export class Line extends PureComponent<Props, State> {
   };
 
   id = uniqueId('recharts-line-');
-
-  cachePrevData = (points: LinePointItem[]) => {
-    this.setState({ prevPoints: points });
-  };
 
   pathRef = (node: SVGPathElement): void => {
     this.mainCurve = node;

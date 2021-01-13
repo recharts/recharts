@@ -106,6 +106,8 @@ export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGPathEleme
 interface State {
   readonly isAnimationFinished?: boolean;
   readonly prevData?: BarRectangleItem[];
+  readonly curData?: BarRectangleItem[];
+  readonly prevAnimationId?: number;
 }
 
 export class Bar extends PureComponent<Props, State> {
@@ -246,20 +248,24 @@ export class Bar extends PureComponent<Props, State> {
 
   state: State = { isAnimationFinished: false };
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps: Props) {
-    const { animationId, data } = this.props;
-
-    if (nextProps.animationId !== animationId) {
-      this.cachePrevData(data);
+  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+    if (nextProps.animationId !== prevState.prevAnimationId) {
+      return {
+        prevAnimationId: nextProps.animationId,
+        curData: nextProps.data,
+        prevData: prevState.curData,
+      };
     }
+    if (nextProps.data !== prevState.curData) {
+      return {
+        curData: nextProps.data,
+      };
+    }
+
+    return null;
   }
 
   id = uniqueId('recharts-bar-');
-
-  cachePrevData = (data: BarRectangleItem[]) => {
-    this.setState({ prevData: data });
-  };
 
   handleAnimationEnd = () => {
     const { onAnimationEnd } = this.props;

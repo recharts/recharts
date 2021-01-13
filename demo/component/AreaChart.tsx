@@ -62,7 +62,7 @@ const CustomTooltip: React.FunctionComponent<any> = (props: any) => {
 
     return (
       <div className="area-chart-tooltip" style={style}>
-        <p>{payload[0].name + ' : '}<em>{payload[0].value}</em></p>
+        <p>{payload?.[0]?.name + ' : '}<em>{payload?.[0]?.value}</em></p>
         <p>{'uv : '}<em>{currData.uv}</em></p>
       </div>
     );

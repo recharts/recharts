@@ -65,6 +65,8 @@ export type Props = Omit<SVGProps<SVGElement>, 'onMouseEnter' | 'onMouseLeave'> 
 interface State {
   isAnimationFinished?: boolean;
   prevPoints?: RadarPoint[];
+  curPoints?: RadarPoint[];
+  prevAnimationId?: number;
 }
 
 export class Radar extends PureComponent<Props, State> {
@@ -146,18 +148,22 @@ export class Radar extends PureComponent<Props, State> {
 
   state: State = { isAnimationFinished: false };
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps: Props) {
-    const { animationId, points } = this.props;
-
-    if (nextProps.animationId !== animationId) {
-      this.cachePrevData(points);
+  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+    if (nextProps.animationId !== prevState.prevAnimationId) {
+      return {
+        prevAnimationId: nextProps.animationId,
+        curPoints: nextProps.points,
+        prevPoints: prevState.curPoints,
+      };
     }
-  }
+    if (nextProps.points !== prevState.curPoints) {
+      return {
+        curPoints: nextProps.points,
+      };
+    }
 
-  cachePrevData = (points: RadarPoint[]) => {
-    this.setState({ prevPoints: points });
-  };
+    return null;
+  }
 
   handleAnimationEnd = () => {
     const { onAnimationEnd } = this.props;
