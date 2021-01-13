@@ -1,3 +1,9 @@
+## 2.0.3 (Jan 13, 2021)
+
+### refactor
+
+- use `getDerivedStateFromProps` to replace `UNSAFE_componentWillReceiveProps`, support react@17, #2385
+
 ## 2.0.2 (Jan 12, 2021)
 
 ### fix
