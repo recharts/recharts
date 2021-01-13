@@ -436,7 +436,7 @@ describe('<LineChart /> - Pure Rendering', () => {
     wrapper.simulate('mouseMove', { pageX: 200, pageY: 200 });
     wrapper.simulate('mouseLeave');
 
-    spies.forEach(el => expect(el.callCount).to.equal(1));
+    spies.forEach(el => expect(el.callCount).to.equal(3));
     expect(axisSpy.callCount).to.equal(2);
   });
 
@@ -492,7 +492,7 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
     wrapper.simulate('mouseMove', { pageX: 200, pageY: 200 });
     wrapper.simulate('mouseLeave');
 
-    spies.forEach(el => expect(el.callCount).to.equal(1));
+    spies.forEach(el => expect(el.callCount).to.equal(3));
     expect(axisSpy.callCount).to.equal(2);
   });
 
