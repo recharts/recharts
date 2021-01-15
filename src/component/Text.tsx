@@ -76,6 +76,7 @@ const calculateWordsByLines = (
   scaleToFit?: boolean,
 ): Array<Words> => {
   const shouldLimitLines = isNumber(props.maxLines);
+  const text = props.children as string;
 
   const calculate = (words: Array<WordWithComputedWidth> = []) =>
     words.reduce((result, { word, width }) => {
@@ -94,31 +95,64 @@ const calculateWordsByLines = (
       return result;
     }, []);
 
+  const originalResult = calculate(initialWordsWithComputedWith);
+
   const findLongestLine = (words: Array<Words>): Words =>
     words.reduce((a: Words, b: Words) => (a.width > b.width ? a : b));
 
-  let wordsWithComputedWidth = initialWordsWithComputedWith;
-  let result = calculate(wordsWithComputedWidth);
-
   if (!shouldLimitLines) {
-    return result;
+    return originalResult;
   }
 
-  let tempText = props.children as string;
   const suffix = '…';
 
-  while (result.length > props.maxLines || findLongestLine(result).width > lineWidth) {
-    tempText = tempText.slice(0, -1);
+  const checkOverflow = (index: number): [boolean, Words[]] => {
+    const tempText = text.slice(0, index);
 
-    wordsWithComputedWidth = calculateWordWidths({
+    const words = calculateWordWidths({
       ...props,
       children: tempText + suffix,
     }).wordsWithComputedWidth;
 
-    result = calculate(wordsWithComputedWidth);
+    const result = calculate(words);
+
+    const doesOverflow = result.length > props.maxLines || findLongestLine(result).width > lineWidth;
+
+    return [doesOverflow, result];
+  };
+
+  let start = 0;
+  let end = text.length - 1;
+
+  let iterations = 0;
+  let trimmedResult;
+
+  while (start <= end && iterations <= text.length - 1) {
+    const middle = Math.floor((start + end) / 2);
+    const prev = middle - 1;
+
+    const [doesPrevOverflow, result] = checkOverflow(prev);
+    const [doesMiddleOverflow] = checkOverflow(middle);
+
+    if (!doesPrevOverflow && !doesMiddleOverflow) {
+      start = middle + 1;
+    }
+
+    if (doesPrevOverflow && doesMiddleOverflow) {
+      end = middle - 1;
+    }
+
+    if (!doesPrevOverflow && doesMiddleOverflow) {
+      trimmedResult = result;
+      break;
+    }
+
+    iterations++;
   }
 
-  return result;
+  // Fallback to originalResult (result without trimming) if we cannot find the
+  // where to trim.  This should not happen :tm:
+  return trimmedResult || originalResult;
 };
 
 const getWordsWithoutCalculate = (children: React.ReactNode): Array<Words> => {
