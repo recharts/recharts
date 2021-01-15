@@ -29,6 +29,7 @@ export interface Payload<TValue extends ValueType, TName extends NameType> {
   value?: TValue;
   unit?: ReactNode;
   dataKey?: string | number;
+  payload?: any;
 }
 
 export interface Props<TValue extends ValueType, TName extends NameType> {
