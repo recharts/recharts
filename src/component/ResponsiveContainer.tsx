@@ -1,10 +1,10 @@
 /**
  * @fileOverview Wrapper component to make charts adapt to the size of parent * DOM
  */
-import React, { Component, ReactElement } from 'react';
 import classNames from 'classnames';
-import ReactResizeDetector from 'react-resize-detector';
 import _ from 'lodash';
+import React, { Component, ReactElement } from 'react';
+import ReactResizeDetector from 'react-resize-detector';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
@@ -160,15 +160,16 @@ export class ResponsiveContainer extends Component<Props, State> {
     const style = { width, height, minWidth, minHeight, maxHeight };
 
     return (
-      <div
-        id={`${id}`}
-        className={classNames('recharts-responsive-container', className)}
-        style={style}
-        ref={this.containerRef}
-      >
-        {this.renderChart()}
-        <ReactResizeDetector handleWidth handleHeight onResize={this.handleResize} targetRef={this.containerRef} />
-      </div>
+      <ReactResizeDetector handleWidth handleHeight onResize={this.handleResize} targetRef={this.containerRef}>
+        <div
+          id={`${id}`}
+          className={classNames('recharts-responsive-container', className)}
+          style={style}
+          ref={this.containerRef}
+        >
+          {this.renderChart()}
+        </div>
+      </ReactResizeDetector>
     );
   }
 }
