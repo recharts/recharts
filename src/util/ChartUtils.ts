@@ -57,7 +57,7 @@ export function getDomainOfDataByKey<T>(data: Array<T>, key: string, type: strin
 
 export const calculateActiveTickIndex = (
   coordinate: number,
-  ticks: Array<TickItem>,
+  ticks: Array<TickItem> = [],
   unsortedTicks: Array<TickItem>,
   axis: BaseAxisProps,
 ) => {
