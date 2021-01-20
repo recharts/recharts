@@ -37,7 +37,7 @@ export class ResponsiveContainer extends Component<Props, State> {
 
   private mounted: boolean;
 
-  private container: HTMLDivElement;
+  private containerRef: React.RefObject<HTMLDivElement>;
 
   constructor(props: Props) {
     super(props);
@@ -49,6 +49,8 @@ export class ResponsiveContainer extends Component<Props, State> {
 
     this.handleResize =
       props.debounce > 0 ? _.debounce(this.updateDimensionsImmediate, props.debounce) : this.updateDimensionsImmediate;
+
+    this.containerRef = React.createRef<HTMLDivElement>();
   }
 
   /* eslint-disable  react/no-did-mount-set-state */
@@ -67,13 +69,13 @@ export class ResponsiveContainer extends Component<Props, State> {
   }
 
   getContainerSize() {
-    if (!this.container) {
+    if (!this.containerRef.current) {
       return null;
     }
 
     return {
-      containerWidth: this.container.clientWidth,
-      containerHeight: this.container.clientHeight,
+      containerWidth: this.containerRef.current.clientWidth,
+      containerHeight: this.containerRef.current.clientHeight,
     };
   }
 
@@ -162,12 +164,10 @@ export class ResponsiveContainer extends Component<Props, State> {
         id={`${id}`}
         className={classNames('recharts-responsive-container', className)}
         style={style}
-        ref={node => {
-          this.container = node;
-        }}
+        ref={this.containerRef}
       >
         {this.renderChart()}
-        <ReactResizeDetector handleWidth handleHeight onResize={this.handleResize} />
+        <ReactResizeDetector handleWidth handleHeight onResize={this.handleResize} targetRef={this.containerRef} />
       </div>
     );
   }
