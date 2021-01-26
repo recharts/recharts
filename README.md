@@ -28,14 +28,16 @@ The main purpose of this library is to help you to write charts in React applica
   margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
 >
   <XAxis dataKey="name" />
+  <YAxis />
   <Tooltip />
+  <Legend />
   <CartesianGrid stroke="#f5f5f5" />
   <Line type="monotone" dataKey="uv" stroke="#ff7300" yAxisId={0} />
   <Line type="monotone" dataKey="pv" stroke="#387908" yAxisId={1} />
 </LineChart>
 ```
 
-All the components of Recharts are clearly separated. The lineChart is composed of x axis, tooltip, grid, and line items, and each of them is an independent React Component. The clear separation and composition of components is one of the principle Recharts follows.
+All the components of Recharts are clearly separated. The LineChart Component is composed of XAxis, YAxis, Tooltip, Legend, CartesianGrid, and Line items, each of which are independent React Components. The clear separation and composition of components is one of the principles Recharts follows.
 
 ## Installation
 

@@ -26,7 +26,11 @@ interface State {
   containerHeight: number;
 }
 
-export class ResponsiveContainer extends Component<Props, State> {
+interface SetState {
+  (arg: State): null;
+}
+
+export class ResponsiveContainer extends Component<Props, State, SetState> {
   static defaultProps = {
     width: '100%',
     height: '100%',
@@ -38,6 +42,10 @@ export class ResponsiveContainer extends Component<Props, State> {
   private mounted: boolean;
 
   private container: HTMLDivElement;
+
+  private state: State;
+
+  private setState: SetState;
 
   constructor(props: Props) {
     super(props);

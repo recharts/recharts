@@ -59,7 +59,11 @@ interface State {
   boxHeight: number;
 }
 
-export class Legend extends PureComponent<Props, State> {
+interface SetState {
+  (arg: State): null;
+}
+
+export class Legend extends PureComponent<Props, State, SetState> {
   static displayName = 'Legend';
 
   static defaultProps = {
@@ -70,6 +74,8 @@ export class Legend extends PureComponent<Props, State> {
   };
 
   private wrapperNode: HTMLDivElement;
+
+  private setState: SetState;
 
   static getWithHeight(item: any, chartWidth: number) {
     const { layout } = item.props;
