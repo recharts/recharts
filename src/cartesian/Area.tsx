@@ -223,7 +223,10 @@ export class Area extends PureComponent<Props, State> {
         if (layout === 'horizontal') {
           return {
             x: entry.x,
-            y: !_.isNil(_.get(entry, 'value[0]')) ? yAxis.scale(_.get(entry, 'value[0]')) : null,
+            y:
+              !_.isNil(_.get(entry, 'value[0]')) && !_.isNil(_.get(entry, 'y'))
+                ? yAxis.scale(_.get(entry, 'value[0]'))
+                : null,
           };
         }
         return {
