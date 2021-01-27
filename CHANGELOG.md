@@ -1,3 +1,22 @@
+## 2.0.4 (Jan 27, 2021)
+
+### feat
+
+- add maxLines prop to Text component
+
+
+### fix
+
+- Add `payload` to `Payload` interface
+- prevent rerender errors in ResponsiveContainer
+- Add PieLabel, PieLabelRenderProps types
+
+### deps
+
+- Upgrade react-resize-detector(4.x => 5.x) types to match the library
+
+
+
 ## 2.0.3 (Jan 13, 2021)
 
 ### refactor
