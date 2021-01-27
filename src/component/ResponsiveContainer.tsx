@@ -1,10 +1,10 @@
 /**
  * @fileOverview Wrapper component to make charts adapt to the size of parent * DOM
  */
-import React, { Component, ReactElement } from 'react';
 import classNames from 'classnames';
-import ReactResizeDetector from 'react-resize-detector';
 import _ from 'lodash';
+import React, { Component, ReactElement } from 'react';
+import ReactResizeDetector from 'react-resize-detector';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
@@ -37,7 +37,7 @@ export class ResponsiveContainer extends Component<Props, State> {
 
   private mounted: boolean;
 
-  private container: HTMLDivElement;
+  private containerRef: React.RefObject<HTMLDivElement>;
 
   constructor(props: Props) {
     super(props);
@@ -49,6 +49,8 @@ export class ResponsiveContainer extends Component<Props, State> {
 
     this.handleResize =
       props.debounce > 0 ? _.debounce(this.updateDimensionsImmediate, props.debounce) : this.updateDimensionsImmediate;
+
+    this.containerRef = React.createRef<HTMLDivElement>();
   }
 
   /* eslint-disable  react/no-did-mount-set-state */
@@ -67,13 +69,13 @@ export class ResponsiveContainer extends Component<Props, State> {
   }
 
   getContainerSize() {
-    if (!this.container) {
+    if (!this.containerRef.current) {
       return null;
     }
 
     return {
-      containerWidth: this.container.clientWidth,
-      containerHeight: this.container.clientHeight,
+      containerWidth: this.containerRef.current.clientWidth,
+      containerHeight: this.containerRef.current.clientHeight,
     };
   }
 
@@ -158,17 +160,16 @@ export class ResponsiveContainer extends Component<Props, State> {
     const style = { width, height, minWidth, minHeight, maxHeight };
 
     return (
-      <div
-        id={`${id}`}
-        className={classNames('recharts-responsive-container', className)}
-        style={style}
-        ref={node => {
-          this.container = node;
-        }}
-      >
-        {this.renderChart()}
-        <ReactResizeDetector handleWidth handleHeight onResize={this.handleResize} />
-      </div>
+      <ReactResizeDetector handleWidth handleHeight onResize={this.handleResize} targetRef={this.containerRef}>
+        <div
+          id={`${id}`}
+          className={classNames('recharts-responsive-container', className)}
+          style={style}
+          ref={this.containerRef}
+        >
+          {this.renderChart()}
+        </div>
+      </ReactResizeDetector>
     );
   }
 }
