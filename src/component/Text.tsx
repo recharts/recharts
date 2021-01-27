@@ -49,6 +49,7 @@ interface TextProps {
   lineHeight?: number | string;
   breakAll?: boolean;
   children?: string | number;
+  maxLines?: number;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'textAnchor' | 'verticalAnchor'> & TextProps;
@@ -68,26 +69,90 @@ interface State {
 }
 
 const calculateWordsByLines = (
-  wordsWithComputedWidth: Array<WordWithComputedWidth>,
+  props: Props,
+  initialWordsWithComputedWith: Array<WordWithComputedWidth>,
   spaceWidth: number,
   lineWidth: number | string,
   scaleToFit?: boolean,
 ): Array<Words> => {
-  return (wordsWithComputedWidth || []).reduce((result, { word, width }) => {
-    const currentLine = result[result.length - 1];
+  const shouldLimitLines = isNumber(props.maxLines);
+  const text = props.children as string;
 
-    if (currentLine && (lineWidth == null || scaleToFit || currentLine.width + width + spaceWidth < lineWidth)) {
-      // Word can be added to an existing line
-      currentLine.words.push(word);
-      currentLine.width += width + spaceWidth;
-    } else {
-      // Add first word to line or word is too long to scaleToFit on existing line
-      const newLine = { words: [word], width };
-      result.push(newLine);
+  const calculate = (words: Array<WordWithComputedWidth> = []) =>
+    words.reduce((result, { word, width }) => {
+      const currentLine = result[result.length - 1];
+
+      if (currentLine && (lineWidth == null || scaleToFit || currentLine.width + width + spaceWidth < lineWidth)) {
+        // Word can be added to an existing line
+        currentLine.words.push(word);
+        currentLine.width += width + spaceWidth;
+      } else {
+        // Add first word to line or word is too long to scaleToFit on existing line
+        const newLine = { words: [word], width };
+        result.push(newLine);
+      }
+
+      return result;
+    }, []);
+
+  const originalResult = calculate(initialWordsWithComputedWith);
+
+  const findLongestLine = (words: Array<Words>): Words =>
+    words.reduce((a: Words, b: Words) => (a.width > b.width ? a : b));
+
+  if (!shouldLimitLines) {
+    return originalResult;
+  }
+
+  const suffix = '…';
+
+  const checkOverflow = (index: number): [boolean, Words[]] => {
+    const tempText = text.slice(0, index);
+
+    const words = calculateWordWidths({
+      ...props,
+      children: tempText + suffix,
+    }).wordsWithComputedWidth;
+
+    const result = calculate(words);
+
+    const doesOverflow = result.length > props.maxLines || findLongestLine(result).width > lineWidth;
+
+    return [doesOverflow, result];
+  };
+
+  let start = 0;
+  let end = text.length - 1;
+
+  let iterations = 0;
+  let trimmedResult;
+
+  while (start <= end && iterations <= text.length - 1) {
+    const middle = Math.floor((start + end) / 2);
+    const prev = middle - 1;
+
+    const [doesPrevOverflow, result] = checkOverflow(prev);
+    const [doesMiddleOverflow] = checkOverflow(middle);
+
+    if (!doesPrevOverflow && !doesMiddleOverflow) {
+      start = middle + 1;
     }
 
-    return result;
-  }, []);
+    if (doesPrevOverflow && doesMiddleOverflow) {
+      end = middle - 1;
+    }
+
+    if (!doesPrevOverflow && doesMiddleOverflow) {
+      trimmedResult = result;
+      break;
+    }
+
+    iterations++;
+  }
+
+  // Fallback to originalResult (result without trimming) if we cannot find the
+  // where to trim.  This should not happen :tm:
+  return trimmedResult || originalResult;
 };
 
 const getWordsWithoutCalculate = (children: React.ReactNode): Array<Words> => {
@@ -112,7 +177,7 @@ const getWordsByLines = (props: Props, needCalculate: boolean) => {
         return getWordsWithoutCalculate(props.children);
       }
 
-      return calculateWordsByLines(wordsWithComputedWidth, spaceWidth, props.width, props.scaleToFit);
+      return calculateWordsByLines(props, wordsWithComputedWidth, spaceWidth, props.width, props.scaleToFit);
     }
   }
   return getWordsWithoutCalculate(props.children);
