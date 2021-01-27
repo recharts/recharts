@@ -46,7 +46,7 @@ export type { Props as PolarRadiusAxisProps } from './polar/PolarRadiusAxis';
 export { PolarAngleAxis } from './polar/PolarAngleAxis';
 export type { Props as PolarAngleAxisProps } from './polar/PolarAngleAxis';
 export { Pie } from './polar/Pie';
-export type { Props as PieProps } from './polar/Pie';
+export type { Props as PieProps, PieLabel, PieLabelRenderProps } from './polar/Pie';
 export { Radar } from './polar/Radar';
 export type { Props as RadarProps } from './polar/Radar';
 export { RadialBar } from './polar/RadialBar';
