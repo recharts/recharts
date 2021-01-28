@@ -78,6 +78,13 @@ const originCoordinate: Coordinate = { x: 0, y: 0 };
 // eslint-disable-next-line no-restricted-globals
 const isFinit = Number.isFinite ? Number.isFinite : isFinite;
 
+const defer = // eslint-disable-next-line no-nested-ternary
+  typeof requestAnimationFrame === 'function'
+    ? requestAnimationFrame
+    : typeof setImmediate === 'function'
+    ? setImmediate
+    : setTimeout;
+
 const calculateTooltipPos = (rangeObj: any, layout: LayoutType): any => {
   if (layout === 'horizontal') {
     return rangeObj.x;
@@ -1274,9 +1281,7 @@ export const generateCategoricalChart = ({
       const { syncId } = this.props;
 
       if (syncId === cId && chartId !== this.uniqueChartId) {
-        (window.requestAnimationFrame || window.setImmediate || window.setTimeout)(
-          this.applySyncEvent.bind(this, data),
-        );
+        defer(this.applySyncEvent.bind(this, data));
       }
     };
 
