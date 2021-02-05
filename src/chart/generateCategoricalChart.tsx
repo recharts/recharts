@@ -241,21 +241,21 @@ const getTooltipData = (state: CategoricalChartState, chartData: any[], layout: 
 
     const { x: mouseX, y: mouseY } = rangeData;
     const getActiveEntry = (o: object) => _.get(o, ['props', 'data', activeIndex]);
-    let activeChild = _.find(formatedGraphicalItems, (entry) => {
-        const activeEntry = getActiveEntry(entry);
-        if (activeEntry) {
-            const { x, width, y, height } = activeEntry;
+    let activeChild = _.find(formatedGraphicalItems, entry => {
+      const activeEntry = getActiveEntry(entry);
+      if (activeEntry) {
+        const { x, width, y, height } = activeEntry;
 
-            const includeX = width >= 0 ? mouseX >= x && mouseX < x + width : mouseX + width >= x && mouseX < x;
-            const includeY = height >= 0 ? mouseY >= y && mouseY < y + height : mouseY + height >= y && mouseY < y;
+        const includeX = width >= 0 ? mouseX >= x && mouseX < x + width : mouseX + width >= x && mouseX < x;
+        const includeY = height >= 0 ? mouseY >= y && mouseY < y + height : mouseY + height >= y && mouseY < y;
 
-            return includeX && includeY;
-        }
+        return includeX && includeY;
+      }
 
-        return false;
+      return false;
     });
     if (activeChild) {
-        activeChild = { item: activeChild.item, payload: getActiveEntry(activeChild) };
+      activeChild = { item: activeChild.item, payload: getActiveEntry(activeChild) };
     }
 
     return {
