@@ -10,14 +10,14 @@ const data1 = [
   { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
 ];
 
-// Reversed of data1
+// X Axis mirrored
 const data2 = [
-  { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
-  { name: 'Page E', uv: 278, pv: 3908, amt: 2400 },
-  { name: 'Page D', uv: 200, pv: 9800, amt: 2400 },
-  { name: 'Page C', uv: 300, pv: 1398, amt: 2400 },
-  { name: 'Page B', uv: 300, pv: 4567, amt: 2400 },
-  { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
+  { name: 'Page F', uv: 500, pv: 4800, amt: 2400 },
+  { name: 'Page E', uv: 550, pv: 3908, amt: 2400 },
+  { name: 'Page D', uv: 800, pv: 9800, amt: 2400 },
+  { name: 'Page C', uv: 100, pv: 1398, amt: 2400 },
+  { name: 'Page B', uv: 678, pv: 4567, amt: 2400 },
+  { name: 'Page A', uv: 230, pv: 2400, amt: 2400 },
 ];
 
 const margin = { top: 20, right: 20, bottom: 20, left: 20 };
@@ -61,7 +61,9 @@ export default class Demo extends Component<any, any> {
         </button>
         <p>
           Sync Method used:
-          {syncMethod === 'value' || syncMethod === 'index' ? syncMethod : 'callback function'}
+          {!syncMethod || syncMethod === 'value' || syncMethod === 'index'
+            ? syncMethod
+            : 'callback function (index + 1)'}
         </p>
         <p>A simple LineChart with syncId = test</p>
         <div className="line-chart-wrapper">

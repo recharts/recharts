@@ -514,14 +514,14 @@ describe("<LineChart /> - Rendering two line charts with syncId", () => {
   const height = 400;
   const width = 400;
 
-  // Reversed of data
+  // X Axis mirrored
   const data2 = [
-    { name: "Page F", uv: 189, pv: 4800, amt: 2400 },
-    { name: "Page E", uv: 278, pv: 3908, amt: 2400 },
-    { name: "Page D", uv: 200, pv: 9800, amt: 2400 },
-    { name: "Page C", uv: 300, pv: 1398, amt: 2400 },
-    { name: "Page B", uv: 300, pv: 4567, amt: 2400 },
-    { name: "Page A", uv: 400, pv: 2400, amt: 2400 },
+    { name: 'Page F', uv: 500, pv: 4800, amt: 2400 },
+    { name: 'Page E', uv: 550, pv: 3908, amt: 2400 },
+    { name: 'Page D', uv: 800, pv: 9800, amt: 2400 },
+    { name: 'Page C', uv: 100, pv: 1398, amt: 2400 },
+    { name: 'Page B', uv: 678, pv: 4567, amt: 2400 },
+    { name: 'Page A', uv: 230, pv: 2400, amt: 2400 },
   ];
 
   it("should show tooltips for both charts synced by index on MouseEnter and hide on MouseLeave", () => {    
@@ -571,7 +571,7 @@ describe("<LineChart /> - Rendering two line charts with syncId", () => {
 
     // make sure tooltips display the correct values, i.e. the value of the first item in the data
     expect(tooltipsValueWrapper.at(0).text()).to.equal("400");
-    expect(tooltipsValueWrapper.at(1).text()).to.equal("189"); 
+    expect(tooltipsValueWrapper.at(1).text()).to.equal("500"); 
 
     // Check the activeDots are highlighted
     const activeDotNodes = wrapper.find(".recharts-active-dot").hostNodes();
@@ -579,7 +579,7 @@ describe("<LineChart /> - Rendering two line charts with syncId", () => {
 
     const activeDotWrapper = wrapper.find(ActiveDot);
     expect(activeDotWrapper.at(0).props().value).to.equal(400);
-    expect(activeDotWrapper.at(1).props().value).to.equal(189); 
+    expect(activeDotWrapper.at(1).props().value).to.equal(500); 
  
     // simulate leaving the area
     wrapper.find(LineChart).at(0).simulate("mouseLeave");
@@ -631,7 +631,7 @@ describe("<LineChart /> - Rendering two line charts with syncId", () => {
 
     // make sure tooltips display the correct values, synced by data value
     expect(tooltipsValueWrapper.at(0).text()).to.equal("400");
-    expect(tooltipsValueWrapper.at(1).text()).to.equal("400");    
+    expect(tooltipsValueWrapper.at(1).text()).to.equal("230");    
 
     // Check the activeDots are highlighted
     const activeDotNodes = wrapper.find(".recharts-active-dot").hostNodes();
@@ -639,7 +639,7 @@ describe("<LineChart /> - Rendering two line charts with syncId", () => {
 
     const activeDotWrapper = wrapper.find(ActiveDot);
     expect(activeDotWrapper.at(0).props().value).to.equal(400);
-    expect(activeDotWrapper.at(1).props().value).to.equal(400); 
+    expect(activeDotWrapper.at(1).props().value).to.equal(230); 
 
     // simulate leaving the area
     wrapper.find(LineChart).at(0).simulate("mouseLeave");
@@ -693,7 +693,7 @@ describe("<LineChart /> - Rendering two line charts with syncId", () => {
 
     // make sure tooltips display the correct values, synced by data value
     expect(tooltipsValueWrapper.at(0).text()).to.equal("400");
-    expect(tooltipsValueWrapper.at(1).text()).to.equal("278");    
+    expect(tooltipsValueWrapper.at(1).text()).to.equal("550");    
 
     // Check the activeDots are highlighted
     const activeDotNodes = wrapper.find(".recharts-active-dot").hostNodes();
@@ -701,7 +701,7 @@ describe("<LineChart /> - Rendering two line charts with syncId", () => {
 
     const activeDotWrapper = wrapper.find(ActiveDot);
     expect(activeDotWrapper.at(0).props().value).to.equal(400);
-    expect(activeDotWrapper.at(1).props().value).to.equal(278); 
+    expect(activeDotWrapper.at(1).props().value).to.equal(550); 
 
     // simulate leaving the area
     wrapper.find(LineChart).at(0).simulate("mouseLeave");
