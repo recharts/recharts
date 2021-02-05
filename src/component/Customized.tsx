@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { Layer } from '../container/Layer';
 import { warn } from '../util/LogUtils';
 
-type Comp<P> = FunctionComponent<P> | Component<P>;
+type Comp<P> = FunctionComponent<P> | Component<P> | ReactElement<P>;
 export type Props<P, C extends Comp<P>> = P & {
   component: C;
 };
