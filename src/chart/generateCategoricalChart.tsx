@@ -239,8 +239,8 @@ const getTooltipData = (state: CategoricalChartState, chartData: any[], layout: 
     const activePayload = getTooltipContent(state, chartData, activeIndex, activeLabel);
     const activeCoordinate = getActiveCoordinate(layout, ticks, activeIndex, rangeData);
 
-    const { x: mouseX, y: mouseY } = rangeObj;
-    const getActiveEntry = (o) => _.get(o, ['props', 'data', activeIndex]);
+    const { x: mouseX, y: mouseY } = rangeData;
+    const getActiveEntry = (o: object) => _.get(o, ['props', 'data', activeIndex]);
     let activeChild = _.find(formatedGraphicalItems, (entry) => {
         const activeEntry = getActiveEntry(entry);
         if (activeEntry) {
