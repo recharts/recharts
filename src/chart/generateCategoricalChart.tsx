@@ -78,6 +78,13 @@ const originCoordinate: Coordinate = { x: 0, y: 0 };
 // eslint-disable-next-line no-restricted-globals
 const isFinit = Number.isFinite ? Number.isFinite : isFinite;
 
+const defer = // eslint-disable-next-line no-nested-ternary
+  typeof requestAnimationFrame === 'function'
+    ? requestAnimationFrame
+    : typeof setImmediate === 'function'
+    ? setImmediate
+    : setTimeout;
+
 const calculateTooltipPos = (rangeObj: any, layout: LayoutType): any => {
   if (layout === 'horizontal') {
     return rangeObj.x;
@@ -1270,51 +1277,11 @@ export const generateCategoricalChart = ({
       }
     };
 
-    handleReceiveSyncEvent = (cId: any, chartId: any, data: any) => {
-      const { syncId, layout } = this.props;
-      const { updateId } = this.state;
+    handleReceiveSyncEvent = (cId: number | string, chartId: string, data: CategoricalChartState) => {
+      const { syncId } = this.props;
 
       if (syncId === cId && chartId !== this.uniqueChartId) {
-        const { dataStartIndex, dataEndIndex } = data;
-
-        if (!_.isNil(data.dataStartIndex) || !_.isNil(data.dataEndIndex)) {
-          this.setState({
-            dataStartIndex,
-            dataEndIndex,
-            ...updateStateOfAxisMapsOffsetAndStackGroups(
-              {
-                props: this.props,
-                dataStartIndex,
-                dataEndIndex,
-                updateId,
-              },
-              this.state,
-            ),
-          });
-        } else if (!_.isNil(data.activeTooltipIndex)) {
-          const { chartX, chartY, activeTooltipIndex } = data;
-          const { offset, tooltipTicks } = this.state;
-          if (!offset) {
-            return;
-          }
-          const viewBox: CartesianViewBox = { ...offset, x: offset.left, y: offset.top };
-          // When a categotical chart is combined with another chart, the value of chartX
-          // and chartY may beyond the boundaries.
-          const validateChartX = Math.min(chartX, viewBox.x + viewBox.width);
-          const validateChartY = Math.min(chartY, viewBox.y + viewBox.height);
-          const activeLabel = tooltipTicks[activeTooltipIndex] && tooltipTicks[activeTooltipIndex].value;
-          const activePayload: any = getTooltipContent(this.state, this.props.data, activeTooltipIndex);
-          const activeCoordinate = tooltipTicks[activeTooltipIndex]
-            ? {
-                x: layout === 'horizontal' ? tooltipTicks[activeTooltipIndex].coordinate : validateChartX,
-                y: layout === 'horizontal' ? validateChartY : tooltipTicks[activeTooltipIndex].coordinate,
-              }
-            : originCoordinate;
-
-          this.setState({ ...data, activeLabel, activeCoordinate, activePayload });
-        } else {
-          this.setState(data);
-        }
+        defer(this.applySyncEvent.bind(this, data));
       }
     };
 
@@ -1503,11 +1470,56 @@ export const generateCategoricalChart = ({
       }
     };
 
-    triggerSyncEvent(data: any) {
+    triggerSyncEvent(data: CategoricalChartState) {
       const { syncId } = this.props;
 
       if (!_.isNil(syncId)) {
         eventCenter.emit(SYNC_EVENT, syncId, this.uniqueChartId, data);
+      }
+    }
+
+    applySyncEvent(data: CategoricalChartState) {
+      const { layout } = this.props;
+      const { updateId } = this.state;
+      const { dataStartIndex, dataEndIndex } = data;
+
+      if (!_.isNil(data.dataStartIndex) || !_.isNil(data.dataEndIndex)) {
+        this.setState({
+          dataStartIndex,
+          dataEndIndex,
+          ...updateStateOfAxisMapsOffsetAndStackGroups(
+            {
+              props: this.props,
+              dataStartIndex,
+              dataEndIndex,
+              updateId,
+            },
+            this.state,
+          ),
+        });
+      } else if (!_.isNil(data.activeTooltipIndex)) {
+        const { chartX, chartY, activeTooltipIndex } = data;
+        const { offset, tooltipTicks } = this.state;
+        if (!offset) {
+          return;
+        }
+        const viewBox: CartesianViewBox = { ...offset, x: offset.left, y: offset.top };
+        // When a categotical chart is combined with another chart, the value of chartX
+        // and chartY may beyond the boundaries.
+        const validateChartX = Math.min(chartX, viewBox.x + viewBox.width);
+        const validateChartY = Math.min(chartY, viewBox.y + viewBox.height);
+        const activeLabel = tooltipTicks[activeTooltipIndex] && tooltipTicks[activeTooltipIndex].value;
+        const activePayload: any = getTooltipContent(this.state, this.props.data, activeTooltipIndex);
+        const activeCoordinate = tooltipTicks[activeTooltipIndex]
+          ? {
+              x: layout === 'horizontal' ? tooltipTicks[activeTooltipIndex].coordinate : validateChartX,
+              y: layout === 'horizontal' ? validateChartY : tooltipTicks[activeTooltipIndex].coordinate,
+            }
+          : originCoordinate;
+
+        this.setState({ ...data, activeLabel, activeCoordinate, activePayload });
+      } else {
+        this.setState(data);
       }
     }
 
