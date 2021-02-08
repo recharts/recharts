@@ -2,7 +2,7 @@
  * @fileOverview Legend
  */
 import React, { PureComponent, CSSProperties } from 'react';
-import _ from 'lodash';
+import { isFunction, uniqBy } from 'lodash';
 import { DefaultLegendContent, Payload, Props as DefaultProps, ContentType } from './DefaultLegendContent';
 
 import { isNumber } from '../util/DataUtils';
@@ -13,11 +13,11 @@ function defaultUniqBy(entry: Payload) {
 }
 function getUniqPayload(option: UniqueOption, payload: Array<Payload>) {
   if (option === true) {
-    return _.uniqBy(payload, defaultUniqBy);
+    return uniqBy(payload, defaultUniqBy);
   }
 
-  if (_.isFunction(option)) {
-    return _.uniqBy(payload, option);
+  if (isFunction(option)) {
+    return uniqBy(payload, option);
   }
 
   return payload;
@@ -27,13 +27,14 @@ function renderContent(content: ContentType, props: Props) {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
   }
-  if (_.isFunction(content)) {
+  if (isFunction(content)) {
     return React.createElement(content as any, props);
   }
 
-  const { ref, ...otherProps } = props;
+  const propsWithoutRef = { ...props };
+  delete propsWithoutRef.ref;
 
-  return <DefaultLegendContent {...otherProps} />;
+  return <DefaultLegendContent {...propsWithoutRef} />;
 }
 
 const EPS = 1;
