@@ -23,7 +23,7 @@
     "react-component"
   ],
   "scripts": {
-    "build": "npm run build-cjs && npm run build-es6 && rimraf umd && npm run build-umd && npm run build-min",
+    "build": "rimraf types && npm run build-cjs && npm run build-es6 && rimraf umd && npm run build-umd && npm run build-min",
     "build-cjs": "rimraf lib && cross-env NODE_ENV=commonjs babel ./src -d lib --extensions '.js,.ts,.tsx'",
     "build-es6": "rimraf es6 && cross-env NODE_ENV=es6 babel ./src -d es6 --extensions '.js,.ts,.tsx'",
     "build-umd": "cross-env NODE_ENV=development webpack src/index.ts -o umd/Recharts.js",
