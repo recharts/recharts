@@ -1,3 +1,9 @@
+## 2.0.6 (Feb 08, 2021)
+
+### fix
+
+- fix types error in npm pkg, fix #2398
+
 ## 2.0.5 (Feb 08, 2021)
 
 ### feat
