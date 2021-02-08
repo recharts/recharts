@@ -1,6 +1,6 @@
 import React, { Component, cloneElement, isValidElement, createElement } from 'react';
 import classNames from 'classnames';
-import _ from 'lodash';
+import _, { isNil } from 'lodash';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
@@ -84,6 +84,12 @@ const defer = // eslint-disable-next-line no-nested-ternary
     : typeof setImmediate === 'function'
     ? setImmediate
     : setTimeout;
+const deferClear = // eslint-disable-next-line no-nested-ternary
+  typeof cancelAnimationFrame === 'function'
+    ? cancelAnimationFrame
+    : typeof clearImmediate === 'function'
+    ? clearImmediate
+    : clearTimeout;
 
 const calculateTooltipPos = (rangeObj: any, layout: LayoutType): any => {
   if (layout === 'horizontal') {
@@ -929,6 +935,8 @@ export const generateCategoricalChart = ({
 
     legendInstance: any;
 
+    deferId: any;
+
     // todo join specific chart propTypes
     static defaultProps: CategoricalChartProps = {
       layout: 'horizontal',
@@ -1077,6 +1085,7 @@ export const generateCategoricalChart = ({
     }
 
     componentWillUnmount() {
+      this.clearDeferId();
       if (!_.isNil(this.props.syncId)) {
         this.removeListener();
       }
@@ -1258,6 +1267,13 @@ export const generateCategoricalChart = ({
       }
     }
 
+    clearDeferId = () => {
+      if (!isNil(this.deferId) && deferClear) {
+        deferClear(this.deferId);
+      }
+      this.deferId = null;
+    }
+
     handleLegendBBoxUpdate = (box: any) => {
       if (box && this.legendInstance) {
         const { dataStartIndex, dataEndIndex, updateId } = this.state;
@@ -1281,7 +1297,8 @@ export const generateCategoricalChart = ({
       const { syncId } = this.props;
 
       if (syncId === cId && chartId !== this.uniqueChartId) {
-        defer(this.applySyncEvent.bind(this, data));
+        this.clearDeferId();
+        this.deferId = defer && defer(this.applySyncEvent.bind(this, data));
       }
     };
 
