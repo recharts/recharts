@@ -31,10 +31,12 @@ function renderContent(content: ContentType, props: Props) {
     return React.createElement(content as any, props);
   }
 
+  type PropsMinusRef = Omit<Props, 'ref'>;
+
   const propsWithoutRef = { ...props };
   delete propsWithoutRef.ref;
 
-  return <DefaultLegendContent {...propsWithoutRef} />;
+  return <DefaultLegendContent {...propsWithoutRef as PropsMinusRef} />;
 }
 
 const EPS = 1;
