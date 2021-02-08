@@ -1,3 +1,14 @@
+## 2.0.5 (Feb 08, 2021)
+
+### feat
+
+-  defer when syncing to other charts
+
+### fix
+
+- Fix Customized component types
+- fix child event not dispatched, fix #2414
+
 ## 2.0.4 (Jan 27, 2021)
 
 ### feat
