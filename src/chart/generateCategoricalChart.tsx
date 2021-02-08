@@ -1884,11 +1884,11 @@ export const generateCategoricalChart = ({
       const isTooltipTriggerByClick = tooltipItem && tooltipItem.props.trigger === 'click';
       const itemEvents = isTooltipTriggerByClick
         ? {
-            onClick: combineEventHandlers(this.handleItemMouseEnter, null, item.props.onCLick),
+            onClick: combineEventHandlers(this.handleItemMouseEnter, null, element.props.onCLick),
           }
         : {
-            onMouseLeave: combineEventHandlers(this.handleItemMouseLeave, null, item.props.onMouseLeave),
-            onMouseEnter: combineEventHandlers(this.handleItemMouseEnter, null, item.props.onMouseEnter),
+            onMouseLeave: combineEventHandlers(this.handleItemMouseLeave, null, element.props.onMouseLeave),
+            onMouseEnter: combineEventHandlers(this.handleItemMouseEnter, null, element.props.onMouseEnter),
           };
 
       const graphicalItem = cloneElement(element, { ...item.props, ...itemEvents });
