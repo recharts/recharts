@@ -39,7 +39,7 @@ export interface CartesianAxisProps {
   axisLine?: boolean | SVGProps<SVGLineElement>;
   tickLine?: boolean | SVGProps<SVGLineElement>;
   mirror?: boolean;
-  tickMargin: number;
+  tickMargin?: number;
   hide?: boolean;
   label?: any;
 
