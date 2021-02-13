@@ -26,6 +26,7 @@ interface YAxisProps extends BaseAxisProps {
   minTickGap?: number;
   interval?: AxisInterval;
   reversed?: boolean;
+  tickMargin?: number;
 }
 
 export type Props = Omit<SVGProps<SVGElement>, 'scale'> & YAxisProps;

@@ -26,6 +26,7 @@ interface XAxisProps extends BaseAxisProps {
   reversed?: boolean;
   /** the rotate angle of tick */
   angle?: number;
+  tickMargin?: number;
 }
 
 export type Props = SVGProps<SVGElement> & XAxisProps;

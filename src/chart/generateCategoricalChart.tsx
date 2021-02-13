@@ -1025,7 +1025,8 @@ export const generateCategoricalChart = ({
         };
 
         const updatesToState = {
-          ...getTooltipData(prevState, data, layout), // Update the current tooltip data (in case it changes without mouse interaction)
+          // Update the current tooltip data (in case it changes without mouse interaction)
+          ...getTooltipData(prevState, data, layout),
           updateId: prevState.updateId + 1,
         };
 
@@ -1274,7 +1275,7 @@ export const generateCategoricalChart = ({
         deferClear(this.deferId);
       }
       this.deferId = null;
-    }
+    };
 
     handleLegendBBoxUpdate = (box: any) => {
       if (box && this.legendInstance) {
