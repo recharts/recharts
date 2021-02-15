@@ -1529,11 +1529,14 @@ export const generateCategoricalChart = ({
           activeTooltipIndex = syncMethod(activeTooltipIndex, data);
         } else if (syncMethod === 'value') {
           // Set activeTooltipIndex to the index with the same value as data.activeLabel
-          tooltipTicks.forEach(({ value }: TickItem, index: number) => {
-            if (value === data.activeLabel) {
-              activeTooltipIndex = index;
+          // For loop instead of findIndex because the latter is very slow in some browsers
+          activeTooltipIndex = -1; // in case we cannot find the element
+          for(let i = 0; i < tooltipTicks.length; i++) {
+            if(tooltipTicks[i].value === data.activeLabel) {
+              activeTooltipIndex = i;
+              break;
             }
-          });
+          }
         }
         const viewBox: CartesianViewBox = { ...offset, x: offset.left, y: offset.top };
         // When a categotical chart is combined with another chart, the value of chartX
