@@ -162,7 +162,7 @@ export class ResponsiveContainer extends Component<Props, State> {
     return (
       <ReactResizeDetector handleWidth handleHeight onResize={this.handleResize} targetRef={this.containerRef}>
         <div
-          id={`${id}`}
+          {...(id != null ? { id: `${id}` } : {})}
           className={classNames('recharts-responsive-container', className)}
           style={style}
           ref={this.containerRef}
