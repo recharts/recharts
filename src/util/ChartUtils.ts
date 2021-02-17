@@ -623,9 +623,7 @@ export const parseScale = (axis: any, chartType: string) => {
     if (
       type === 'category' &&
       chartType &&
-      (chartType.indexOf('LineChart') >= 0 ||
-        chartType.indexOf('AreaChart') >= 0 ||
-        chartType.indexOf('ComposedChart') >= 0)
+      (chartType.indexOf('LineChart') >= 0 || chartType.indexOf('AreaChart') >= 0)
     ) {
       return { scale: d3Scales.scalePoint(), realScaleType: 'point' };
     }
