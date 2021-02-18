@@ -524,9 +524,11 @@ describe("<LineChart /> - Rendering two line charts with syncId", () => {
     { name: 'Page A', uv: 230, pv: 2400, amt: 2400 },
   ];
 
-  it("should show tooltips for both charts synced by index on MouseEnter and hide on MouseLeave", () => {    
+  const runAllPromises = () => new Promise(setImmediate);
+
+  it("should show tooltips for both charts synced by index on MouseEnter and hide on MouseLeave", async() => {    
     const ActiveDot = ({ cx, cy }) =>
-    <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
+      <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
 
     const chart1 = (
       <LineChart width={width} height={height} data={data} margin={margin} syncId="test">
@@ -563,6 +565,9 @@ describe("<LineChart /> - Rendering two line charts with syncId", () => {
         pageY: height / 2,
       });
 
+    await runAllPromises();
+    wrapper.update();
+
     // There are two tooltips - one for each LineChart as they have the same syncId
     const tooltipCursors = wrapper.find(".recharts-tooltip-cursor").hostNodes();
     expect(tooltipCursors.length).to.equal(2);
@@ -586,9 +591,9 @@ describe("<LineChart /> - Rendering two line charts with syncId", () => {
     expect(wrapper.find(".recharts-tooltip-cursor").hostNodes.length).to.equal(0);
   });
 
-  it("should show tooltips using syncMethod: 'value' for both charts on MouseEnter and hide on MouseLeave", () => {
+  it("should show tooltips using syncMethod: 'value' for both charts on MouseEnter and hide on MouseLeave", async() => {
     const ActiveDot = ({ cx, cy }) =>
-    <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
+      <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
 
     const chart1 = (
       <LineChart width={width} height={height} data={data} margin={margin} syncId="test" syncMethod="value">
@@ -622,9 +627,12 @@ describe("<LineChart /> - Rendering two line charts with syncId", () => {
         pageX: margin.left + 0.1 * dotSpacing,
         pageY: height / 2,
       });
+    
+    await runAllPromises();
+    wrapper.update();
 
     // There are two tooltips - one for each LineChart as they have the same syncId
-    let tooltipCursors = wrapper.find(".recharts-tooltip-cursor").hostNodes();
+    const tooltipCursors = wrapper.find(".recharts-tooltip-cursor").hostNodes();
     expect(tooltipCursors.length).to.equal(2);
 
     const tooltipsValueWrapper = wrapper.find(".recharts-tooltip-item-value");
@@ -646,9 +654,9 @@ describe("<LineChart /> - Rendering two line charts with syncId", () => {
     expect(wrapper.find(".recharts-tooltip-cursor").hostNodes.length).to.equal(0);
   });
 
-  it("should show tooltips using syncMethod: [function] for both charts on MouseEnter and hide on MouseLeave", () => {
+  it("should show tooltips using syncMethod: [function] for both charts on MouseEnter and hide on MouseLeave", async() => {
     const ActiveDot = ({ cx, cy }) =>
-    <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
+      <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
 
     const syncMethodFunction = index => index + 1;
 
@@ -684,9 +692,12 @@ describe("<LineChart /> - Rendering two line charts with syncId", () => {
         pageX: margin.left + 0.1 * dotSpacing,
         pageY: height / 2,
       });
+    
+    await runAllPromises();
+    wrapper.update();
 
     // There are two tooltips - one for each LineChart as they have the same syncId
-    let tooltipCursors = wrapper.find(".recharts-tooltip-cursor").hostNodes();
+    const tooltipCursors = wrapper.find(".recharts-tooltip-cursor").hostNodes();
     expect(tooltipCursors.length).to.equal(2);
 
     const tooltipsValueWrapper = wrapper.find(".recharts-tooltip-item-value");
