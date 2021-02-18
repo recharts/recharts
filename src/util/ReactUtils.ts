@@ -337,7 +337,7 @@ export const renderByOrder = (children: React.ReactElement[], renderMap: any) =>
     }
   });
 
-  return _.flatten(elements);
+  return _.flatten(elements).filter(element => !_.isNil(element));
 };
 
 export const getReactEventByType = (e: any) => {
