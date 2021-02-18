@@ -610,7 +610,7 @@ export const combineEventHandlers = (defaultHandler: Function, parentHandler: Fu
  * @param  {String}   chartType     The displayName of chart
  * @return {Function}               The scale funcion
  */
-export const parseScale = (axis: any, chartType: string) => {
+export const parseScale = (axis: any, chartType: string, hasBar?: boolean) => {
   const { scale, type, layout, axisType } = axis;
   if (scale === 'auto') {
     if (layout === 'radial' && axisType === 'radiusAxis') {
@@ -625,7 +625,7 @@ export const parseScale = (axis: any, chartType: string) => {
       chartType &&
       (chartType.indexOf('LineChart') >= 0 ||
         chartType.indexOf('AreaChart') >= 0 ||
-        chartType.indexOf('ComposedChart') >= 0)
+        (chartType.indexOf('ComposedChart') >= 0 && !hasBar))
     ) {
       return { scale: d3Scales.scalePoint(), realScaleType: 'point' };
     }
