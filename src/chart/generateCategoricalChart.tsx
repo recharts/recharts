@@ -1531,8 +1531,8 @@ export const generateCategoricalChart = ({
           // Set activeTooltipIndex to the index with the same value as data.activeLabel
           // For loop instead of findIndex because the latter is very slow in some browsers
           activeTooltipIndex = -1; // in case we cannot find the element
-          for(let i = 0; i < tooltipTicks.length; i++) {
-            if(tooltipTicks[i].value === data.activeLabel) {
+          for (let i = 0; i < tooltipTicks.length; i++) {
+            if (tooltipTicks[i].value === data.activeLabel) {
               activeTooltipIndex = i;
               break;
             }
