@@ -1,3 +1,13 @@
+## 2.0.7 (Feb 18, 2021)
+
+### fix
+
+- add missed type definition of tickMargin in XAxis, YAxis, fix #2427
+- filter out nil elements of chart
+- ensures `id="undefined"` is not rendered to the DOM when use ResponsiveContainer
+- fix auto scale type of ComposedChart, fix #2403
+- Fix .d.ts types that relay on d3
+
 ## 2.0.6 (Feb 08, 2021)
 
 ### fix
