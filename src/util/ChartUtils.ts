@@ -608,6 +608,7 @@ export const combineEventHandlers = (defaultHandler: Function, parentHandler: Fu
  * Parse the scale function of axis
  * @param  {Object}   axis          The option of axis
  * @param  {String}   chartType     The displayName of chart
+ * @param  {Boolean}  hasBar        if it has bars
  * @return {Function}               The scale function
  */
 export const parseScale = (axis: any, chartType: string, hasBar?: boolean) => {
