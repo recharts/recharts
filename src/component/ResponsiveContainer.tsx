@@ -15,7 +15,7 @@ export interface Props {
   minWidth?: string | number;
   minHeight?: string | number;
   maxHeight?: number;
-  children: ReactElement;
+  children: ReactElement | ReactElement[];
   debounce?: number;
   id?: string | number;
   className?: string | number;
