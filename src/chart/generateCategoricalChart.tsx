@@ -807,12 +807,12 @@ export const generateCategoricalChart = ({
           }));
         }
       }
-      const componsedFn = item && item.type && item.type.getComposedData;
+      const composedFn = item && item.type && item.type.getComposedData;
 
-      if (componsedFn) {
+      if (composedFn) {
         formatedItems.push({
           props: {
-            ...componsedFn({
+            ...composedFn({
               ...axisObj,
               displayedData,
               props,
@@ -1370,6 +1370,8 @@ export const generateCategoricalChart = ({
     /**
      * The handler of mouse entering a scatter
      * @param {Object} el     The active scatter
+     * @param {Number} index  the index of the item
+     * @param {Object} e      the click event
      * @return {Object} no return
      */
     handleItemMouseEnter = (el: any) => {

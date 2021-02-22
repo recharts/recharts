@@ -20,7 +20,7 @@ interface XAxisProps extends BaseAxisProps {
    * Ticks must be numbers when the axis is the type of number
    */
   ticks?: (string | number)[];
-  padding?: { left?: number; right?: number };
+  padding?: { left?: number; right?: number } | 'gap' | 'no-gap';
   minTickGap?: number;
   interval?: AxisInterval;
   reversed?: boolean;
