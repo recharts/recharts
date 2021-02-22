@@ -1,6 +1,6 @@
 import React, { Component, cloneElement, isValidElement, createElement } from 'react';
 import classNames from 'classnames';
-import _, { isNil } from 'lodash';
+import _, { isArray, isNil } from 'lodash';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
@@ -1713,15 +1713,16 @@ export const generateCategoricalChart = ({
     };
 
     renderPolarGrid = (element: React.ReactElement): React.ReactElement => {
-      const { radialLines } = element.props;
+      const { radialLines, polarAngles, polarRadius  } = element.props;
       const { radiusAxisMap, angleAxisMap } = this.state;
       const radiusAxis = getAnyElementOfObject(radiusAxisMap);
       const angleAxis = getAnyElementOfObject(angleAxisMap);
       const { cx, cy, innerRadius, outerRadius } = angleAxis;
+      const props = element.props || {};
 
       return cloneElement(element, {
-        polarAngles: getTicksOfAxis(angleAxis, true).map((entry: any) => entry.coordinate),
-        polarRadius: getTicksOfAxis(radiusAxis, true).map((entry: any) => entry.coordinate),
+        polarAngles: isArray(polarAngles) ? polarAngles : getTicksOfAxis(angleAxis, true).map((entry: any) => entry.coordinate),
+        polarRadius: isArray(polarRadius) ? polarRadius : getTicksOfAxis(radiusAxis, true).map((entry: any) => entry.coordinate),
         cx,
         cy,
         innerRadius,
