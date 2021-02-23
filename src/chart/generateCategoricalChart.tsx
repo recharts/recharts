@@ -1899,16 +1899,19 @@ export const generateCategoricalChart = ({
       const { points, isRange, baseLine } = item.props;
       const { activeDot, hide } = item.item.props;
       const hasActive = !hide && isTooltipActive && tooltipItem && activeDot && activeTooltipIndex >= 0;
+      let itemEvents = {};
 
-      const isTooltipTriggerByClick = tooltipItem && tooltipItem.props.trigger === 'click';
-      const itemEvents = isTooltipTriggerByClick
-        ? {
-            onClick: combineEventHandlers(this.handleItemMouseEnter, null, element.props.onCLick),
-          }
-        : {
-            onMouseLeave: combineEventHandlers(this.handleItemMouseLeave, null, element.props.onMouseLeave),
-            onMouseEnter: combineEventHandlers(this.handleItemMouseEnter, null, element.props.onMouseEnter),
-          };
+      if (eventType !== 'axis' && tooltipItem && tooltipItem.props.trigger === 'click') {
+        itemEvents = {
+          onClick: combineEventHandlers(this.handleItemMouseEnter, null, element.props.onCLick),
+        };
+      } else if (eventType !== 'axis') {
+        itemEvents = {
+          onMouseLeave: combineEventHandlers(this.handleItemMouseLeave, null, element.props.onMouseLeave),
+          onMouseEnter: combineEventHandlers(this.handleItemMouseEnter, null, element.props.onMouseEnter),
+        };
+      }
+
 
       const graphicalItem = cloneElement(element, { ...item.props, ...itemEvents });
 
