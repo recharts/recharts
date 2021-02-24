@@ -77,23 +77,27 @@ interface RectangleProps {
   animationEasing?: AnimationTiming;
 }
 
-
-export const isInRectangle = (point: { x: number, y: number }, rect: { x: number, y: number, width: number, height: number }) => {
-  if (!point || !rect) { return false; }
+export const isInRectangle = (
+  point: { x: number; y: number },
+  rect: { x: number; y: number; width: number; height: number },
+) => {
+  if (!point || !rect) {
+    return false;
+  }
   const { x: px, y: py } = point;
   const { x, y, width, height } = rect;
-  
+
   if (Math.abs(width) > 0 && Math.abs(height) > 0) {
     const minX = Math.min(x, x + width);
     const maxX = Math.max(x, x + width);
     const minY = Math.min(y, y + height);
     const maxY = Math.max(y, y + height);
 
-    return px >= minX && px <= maxX && py >= minY && py <= maxY; 
+    return px >= minX && px <= maxX && py >= minY && py <= maxY;
   }
 
   return false;
-}
+};
 
 export type Props = Omit<SVGProps<SVGPathElement>, 'radius'> & RectangleProps;
 

@@ -1140,7 +1140,7 @@ export const parseDomainOfCategoryAxis = (
 export const getTooltipItem = (graphicalItem: any, payload: any) => {
   const { dataKey, name, unit, formatter, tooltipType } = graphicalItem.props;
 
-   return {
+  return {
     ...filterProps(graphicalItem),
     dataKey,
     unit,
@@ -1152,4 +1152,3 @@ export const getTooltipItem = (graphicalItem: any, payload: any) => {
     payload,
   };
 };
-
