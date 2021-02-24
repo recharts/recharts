@@ -1,6 +1,6 @@
 import React, { Component, cloneElement, isValidElement, createElement } from 'react';
 import classNames from 'classnames';
-import _, { isArray, isNil } from 'lodash';
+import _, { isArray, isBoolean, isNil } from 'lodash';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
@@ -9,7 +9,7 @@ import { Curve } from '../shape/Curve';
 import { Cross } from '../shape/Cross';
 import { Sector } from '../shape/Sector';
 import { Dot } from '../shape/Dot';
-import { Rectangle } from '../shape/Rectangle';
+import { isInRectangle, Rectangle } from '../shape/Rectangle';
 
 import {
   findAllByType,
@@ -40,13 +40,13 @@ import {
   parseErrorBarsOfAxis,
   getBandSizeOfAxis,
   getStackGroupsByAxisId,
-  getValueByDataKey,
   isCategoricalAxis,
   getDomainOfItemsWithSameAxis,
   getDomainOfStackGroups,
   getDomainOfDataByKey,
   parseSpecifiedDomain,
   parseDomainOfCategoryAxis,
+  getTooltipItem,
 } from '../util/ChartUtils';
 import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDomain';
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
@@ -65,6 +65,7 @@ import {
   TickItem,
   filterProps,
   adaptEventHandlers,
+  GeometrySector,
 } from '../util/types';
 
 const ORIENT_MAP = {
@@ -199,7 +200,7 @@ const getTooltipContent = (
       return result;
     }
 
-    const { dataKey, name, unit, formatter, data, tooltipType } = child.props;
+    const { data } = child.props;
     let payload;
 
     if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
@@ -216,17 +217,7 @@ const getTooltipContent = (
 
     return [
       ...result,
-      {
-        ...filterProps(child),
-        dataKey,
-        unit,
-        formatter,
-        name: name || dataKey,
-        color: getMainColorOfGraphicItem(child),
-        value: getValueByDataKey(payload, dataKey),
-        type: tooltipType,
-        payload,
-      },
+      getTooltipItem(child, payload),
     ];
   }, []);
 };
@@ -757,7 +748,8 @@ export interface CategoricalChartProps {
 export const generateCategoricalChart = ({
   chartName,
   GraphicalChild,
-  eventType = 'axis',
+  defaultTooltipEventType = 'axis',
+  validateTooltipEventTypes = ['axis'],
   axisComponents,
   legendContent,
   formatAxisMap,
@@ -1099,6 +1091,19 @@ export const generateCategoricalChart = ({
       }
     }
 
+    getTooltipEventType() {
+      const tooltipItem = findChildByType(this.props.children, Tooltip.displayName);
+
+
+      if (tooltipItem && isBoolean(tooltipItem.props.shared)) {
+        const eventType = tooltipItem.props.shared ? 'axis' : 'item';
+
+        return validateTooltipEventTypes.indexOf(eventType) >= 0 ? eventType : defaultTooltipEventType;
+      }
+
+      return defaultTooltipEventType;
+    }
+
     /**
      * Get the information of mouse in chart, return null when the mouse is not in the chart
      * @param  {Object} event    The event object
@@ -1117,8 +1122,9 @@ export const generateCategoricalChart = ({
       }
 
       const { xAxisMap, yAxisMap } = this.state;
+      const tooltipEventType = this.getTooltipEventType();
 
-      if (eventType !== 'axis' && xAxisMap && yAxisMap) {
+      if (tooltipEventType !== 'axis' && xAxisMap && yAxisMap) {
         const xScale = getAnyElementOfObject(xAxisMap).scale;
         const yScale = getAnyElementOfObject(yAxisMap).scale;
         const xValue = xScale && xScale.invert ? xScale.invert(e.chartX) : null;
@@ -1224,10 +1230,11 @@ export const generateCategoricalChart = ({
 
     parseEventsOfWrapper() {
       const { children } = this.props;
+      const tooltipEventType = this.getTooltipEventType();
       const tooltipItem = findChildByType(children, Tooltip.displayName);
       let tooltipEvents: any = {};
 
-      if (tooltipItem && eventType === 'axis') {
+      if (tooltipItem && tooltipEventType === 'axis') {
         if (tooltipItem.props.trigger === 'click') {
           tooltipEvents = {
             onClick: this.handleClick,
@@ -1367,7 +1374,7 @@ export const generateCategoricalChart = ({
      * @param {Object} el     The active scatter
      * @return {Object} no return
      */
-    handleItemMouseEnter = (el: any) => {
+    handleItemMouseEnter = (el: any, index: number, e: React.MouseEvent) => {
       this.setState(() => ({
         isTooltipActive: true,
         activeItem: el,
@@ -1553,7 +1560,7 @@ export const generateCategoricalChart = ({
         offset.left + offset.width,
       );
 
-    horizontalCoordinatesGenerator = ({ yAxis, width, height, offset }: ChartCoordinate) =>
+      horizontalCoordinatesGenerator = ({ yAxis, width, height, offset }: ChartCoordinate) =>
       getCoordinatesOfGrid(
         CartesianAxis.getTicks({
           ...CartesianAxis.defaultProps,
@@ -1565,7 +1572,7 @@ export const generateCategoricalChart = ({
         offset.top + offset.height,
       );
 
-    axesTicksGenerator = (axis?: any) => getTicksOfAxis(axis, true);
+      axesTicksGenerator = (axis?: any) => getTicksOfAxis(axis, true);
 
     filterFormatItem(item: any, displayName: any, childIndex: any) {
       const { formatedGraphicalItems } = this.state;
@@ -1587,8 +1594,9 @@ export const generateCategoricalChart = ({
 
     renderCursor = (element: any) => {
       const { isTooltipActive, activeCoordinate, activePayload, offset, activeTooltipIndex } = this.state;
+      const tooltipEventType = this.getTooltipEventType();
 
-      if (!element || !element.props.cursor || !isTooltipActive || !activeCoordinate) {
+      if (!element || !element.props.cursor || !isTooltipActive || !activeCoordinate || tooltipEventType !== 'axis') {
         return null;
       }
       const { layout } = this.props;
@@ -1647,7 +1655,7 @@ export const generateCategoricalChart = ({
       });
     };
 
-    renderXAxis = (element: any, displayName: string, index: number) => {
+   renderXAxis = (element: any, displayName: string, index: number) => {
       const { xAxisMap } = this.state;
       const axisObj = xAxisMap[element.props.xAxisId];
 
@@ -1893,6 +1901,7 @@ export const generateCategoricalChart = ({
         return null;
       }
 
+      const tooltipEventType = this.getTooltipEventType();
       const { isTooltipActive, tooltipAxis, activeTooltipIndex, activeLabel } = this.state;
       const { children } = this.props;
       const tooltipItem = findChildByType(children, Tooltip.displayName);
@@ -1901,11 +1910,11 @@ export const generateCategoricalChart = ({
       const hasActive = !hide && isTooltipActive && tooltipItem && activeDot && activeTooltipIndex >= 0;
       let itemEvents = {};
 
-      if (eventType !== 'axis' && tooltipItem && tooltipItem.props.trigger === 'click') {
+      if (tooltipEventType !== 'axis' && tooltipItem && tooltipItem.props.trigger === 'click') {
         itemEvents = {
           onClick: combineEventHandlers(this.handleItemMouseEnter, null, element.props.onCLick),
         };
-      } else if (eventType !== 'axis') {
+      } else if (tooltipEventType !== 'axis') {
         itemEvents = {
           onMouseLeave: combineEventHandlers(this.handleItemMouseLeave, null, element.props.onMouseLeave),
           onMouseEnter: combineEventHandlers(this.handleItemMouseEnter, null, element.props.onMouseEnter),
@@ -1976,6 +1985,62 @@ export const generateCategoricalChart = ({
           </clipPath>
         </defs>
       );
+    }
+
+    public getXScales() {
+      const { xAxisMap } = this.state;
+
+      return xAxisMap ? Object.entries(xAxisMap).reduce((res: Record<string, Function>, [axisId, axisProps]: [string, BaseAxisProps]) => {
+        return { ...res, [axisId]: (axisProps as BaseAxisProps).scale }
+      }, {}) : null;
+    }
+
+    public getYScales() {
+      const { yAxisMap } = this.state;
+
+      return yAxisMap ? Object.entries(yAxisMap).reduce((res: Record<string, Function>, [axisId, axisProps]: [string, BaseAxisProps]) => {
+        return { ...res, [axisId]: (axisProps as BaseAxisProps).scale }
+      }, {}) : null;
+    }
+
+    public getXScaleByAxisId(axisId: string) {
+      return this.state.xAxisMap?.[axisId]?.scale;
+    }
+
+    public getYScaleByAxisId(axisId: string) {
+      return this.state.yAxisMap?.[axisId]?.scale;
+    }
+
+    public getItemByXY(chartXY: { x: number, y: number }) {
+      const { formatedGraphicalItems } = this.state;
+
+      if (formatedGraphicalItems && formatedGraphicalItems.length) {
+        for (let i = 0, len = formatedGraphicalItems.length; i < len; i++) {
+          const graphicalItem = formatedGraphicalItems[i];
+          const { props, item } = graphicalItem;
+          const itemDisplayName = getDisplayName(item.type)
+          
+          if (itemDisplayName === 'Bar') {
+            const activeBarItem = (props.data || []).find((entry: { x: number, y: number, width: number, height: number }) => {
+              return isInRectangle(chartXY, entry);
+            });
+
+            if (activeBarItem) {
+              return { graphicalItem, payload: activeBarItem };
+            }
+          } else if (itemDisplayName === 'RadialBar') {
+            const activeBarItem = (props.data || []).find((entry: GeometrySector) => {
+              return inRangeOfSector(chartXY, entry);
+            });
+
+            if (activeBarItem) {
+              return { graphicalItem, payload: activeBarItem };
+            }
+          }
+        }
+      }
+
+      return null;
     }
 
     render() {

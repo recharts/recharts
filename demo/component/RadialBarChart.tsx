@@ -25,10 +25,17 @@ export default class Demo extends Component {
   static displayName = 'RadialBarChartDemo';
 
   state = initialState;
+  chartRef = React.createRef<any>();
 
   handleChangeData = () => {
     this.setState(() => _.mapValues(initialState, changeNumberOfData));
   };
+
+  componentDidMount() {
+    if (this.chartRef) {
+      console.log(this.chartRef.current.getItemByXY({ x: 150, y: 100 }))
+    }
+  }
 
   render () {
     const { data } = this.state;
@@ -62,6 +69,7 @@ export default class Demo extends Component {
             outerRadius={140}
             barSize={10}
             data={data}
+            ref={this.chartRef}
           >
             <RadialBar minPointSize={15} background dataKey="uv" >
               {
@@ -111,6 +119,7 @@ export default class Demo extends Component {
             >
               <RadialBar minPointSize={15} background dataKey="uv" />
               <RadialBar minPointSize={15} background dataKey="amt" />
+              <Tooltip shared={true} />
             </RadialBarChart>
           </ResponsiveContainer>
         </div>
@@ -125,8 +134,8 @@ export default class Demo extends Component {
               innerRadius="20%"
               outerRadius="90%"
             >
+              <Tooltip shared={false} />
               <RadialBar minPointSize={15} label={label} background dataKey="uv" />
-
             </RadialBarChart>
           </ResponsiveContainer>
         </div>
@@ -143,6 +152,7 @@ export default class Demo extends Component {
               startAngle={0}
               endAngle={180}
             >
+              <Tooltip shared={false} />
               <PolarAngleAxis type="number" domain={[0, 100]} />
               <RadialBar stackId="stack" minPointSize={15} background dataKey="uv">
                 {
@@ -160,9 +170,8 @@ export default class Demo extends Component {
               </RadialBar>
               <Legend iconSize={10} width={120} height={140} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
             </RadialBarChart>
-          </ResponsiveContainer>
+          </ResponsiveContainer> 
         </div>
-
       </div>
     );
   }

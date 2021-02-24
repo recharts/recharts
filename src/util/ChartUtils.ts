@@ -15,7 +15,7 @@ import { Legend } from '../component/Legend';
 import { findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
-import { LayoutType, PolarLayoutType, AxisType, TickItem, BaseAxisProps, DataKey } from './types';
+import { LayoutType, PolarLayoutType, AxisType, TickItem, BaseAxisProps, DataKey, filterProps } from './types';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<any>, defaultValue?: any) {
   if (_.isNil(obj) || _.isNil(dataKey)) {
@@ -1136,3 +1136,20 @@ export const parseDomainOfCategoryAxis = (
 
   return specifiedDomain;
 };
+
+export const getTooltipItem = (graphicalItem: any, payload: any) => {
+  const { dataKey, name, unit, formatter, tooltipType } = graphicalItem.props;
+
+   return {
+    ...filterProps(graphicalItem),
+    dataKey,
+    unit,
+    formatter,
+    name: name || dataKey,
+    color: getMainColorOfGraphicItem(graphicalItem),
+    value: getValueByDataKey(payload, dataKey),
+    type: tooltipType,
+    payload,
+  };
+};
+

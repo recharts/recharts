@@ -12,7 +12,8 @@ import { CategoricalChartOptions } from '../util/types';
 export const ScatterChart = generateCategoricalChart({
   chartName: 'ScatterChart',
   GraphicalChild: Scatter,
-  eventType: 'single',
+  defaultTooltipEventType: 'item',
+  validateTooltipEventTypes: ['item'],
   axisComponents: [
     { axisType: 'xAxis', AxisComp: XAxis },
     { axisType: 'yAxis', AxisComp: YAxis },
