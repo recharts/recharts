@@ -1,3 +1,23 @@
+## 2.0.8 (Feb24, 2021)
+
+### feat
+
+- allow to show tooltip when hover or click bar item for <BarChart /> and <RadialBarChart />
+- add api `getXScales`, `getYScales`, `getXScaleByAxisId`, `getYScaleByAxisId`, `getItemByXY` to chart, fix #2422
+- Add SyncMethod to categorical charts
+- `findAllByType` searches for match inside of a fragment
+- allow to add customized `polarAngles` and `polarRadius` to <PolarGrid />, fix #2452
+
+### fix
+
+- fix Tooltip receive wrong payload when mouse enter <Line />, .etc, fix #2394
+- fix Treemap tooltip when use `dataKey` to specify value, fix #2428
+
+### deps
+
+- update react-resize-detector to 6.6.0, fix #2431
+
+
 ## 2.0.7 (Feb 18, 2021)
 
 ### fix
