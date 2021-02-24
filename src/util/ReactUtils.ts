@@ -1,5 +1,6 @@
 import React, { Children, ReactNode } from 'react';
 import _ from 'lodash';
+import { isFragment } from 'react-is';
 
 import { isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
@@ -76,7 +77,7 @@ export const findAllByType = (
   children: ReactNode,
   type: string | string[],
 ): React.DetailedReactHTMLElement<any, HTMLElement>[] => {
-  const result: React.DetailedReactHTMLElement<any, HTMLElement>[] = [];
+  let result: React.DetailedReactHTMLElement<any, HTMLElement>[] = [];
   let types: string[] = [];
 
   if (_.isArray(type)) {
@@ -86,6 +87,9 @@ export const findAllByType = (
   }
 
   React.Children.forEach(children, (child: React.DetailedReactHTMLElement<any, HTMLElement>) => {
+    if (isFragment(child)) {
+      result = result.concat(findAllByType(child.props.children, type));
+    }
     const childType = _.get(child, 'type.displayName') || _.get(child, 'type.name');
     if (types.indexOf(childType) !== -1) {
       result.push(child);
