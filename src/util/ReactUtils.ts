@@ -1,9 +1,9 @@
 import React, { Children, ReactNode } from 'react';
 import _ from 'lodash';
+import { isFragment } from 'react-is';
 
 import { isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
-import { isFragment } from 'react-is';
 
 const REACT_BROWSER_EVENT_MAP: any = {
   click: 'onClick',
