@@ -721,6 +721,7 @@ export interface CategoricalChartState {
 
 export interface CategoricalChartProps {
   syncId?: number | string;
+  syncMethod?: 'index' | 'value' | Function;
   compact?: boolean;
   width?: number;
   height?: number;
@@ -945,6 +946,7 @@ export const generateCategoricalChart = ({
       barGap: 4,
       margin: { top: 5, right: 5, bottom: 5, left: 5 } as Margin,
       reverseStackOrder: false,
+      syncMethod: 'index',
       ...defaultProps,
     };
 
@@ -1497,7 +1499,7 @@ export const generateCategoricalChart = ({
     }
 
     applySyncEvent(data: CategoricalChartState) {
-      const { layout } = this.props;
+      const { layout, syncMethod } = this.props;
       const { updateId } = this.state;
       const { dataStartIndex, dataEndIndex } = data;
 
@@ -1516,10 +1518,25 @@ export const generateCategoricalChart = ({
           ),
         });
       } else if (!_.isNil(data.activeTooltipIndex)) {
-        const { chartX, chartY, activeTooltipIndex } = data;
+        const { chartX, chartY } = data;
+        let { activeTooltipIndex } = data;
         const { offset, tooltipTicks } = this.state;
         if (!offset) {
           return;
+        }
+        if (typeof syncMethod === 'function') {
+          // Call a callback function. If there is an application specific algorithm
+          activeTooltipIndex = syncMethod(activeTooltipIndex, data);
+        } else if (syncMethod === 'value') {
+          // Set activeTooltipIndex to the index with the same value as data.activeLabel
+          // For loop instead of findIndex because the latter is very slow in some browsers
+          activeTooltipIndex = -1; // in case we cannot find the element
+          for (let i = 0; i < tooltipTicks.length; i++) {
+            if (tooltipTicks[i].value === data.activeLabel) {
+              activeTooltipIndex = i;
+              break;
+            }
+          }
         }
         const viewBox: CartesianViewBox = { ...offset, x: offset.left, y: offset.top };
         // When a categotical chart is combined with another chart, the value of chartX
@@ -1535,7 +1552,13 @@ export const generateCategoricalChart = ({
             }
           : originCoordinate;
 
-        this.setState({ ...data, activeLabel, activeCoordinate, activePayload });
+        this.setState({
+          ...data,
+          activeLabel,
+          activeCoordinate,
+          activePayload,
+          activeTooltipIndex,
+        });
       } else {
         this.setState(data);
       }
