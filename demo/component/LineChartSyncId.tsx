@@ -29,7 +29,7 @@ const initialState = {
 };
 
 // Example callback function that can be used to specify the algorithm
-const syncMethodFunction = (index: number, data: any) => index + 1;
+const syncMethodFunction = (_tooltipTicks: [], data: any) => data.activeTooltipIndex + 1;
 
 // eslint-disable-next-line import/no-default-export
 export default class Demo extends Component<any, any> {
