@@ -83,7 +83,7 @@ interface AreaProps extends InternalAreaProps {
   id?: string;
 }
 
-export type Props = SVGProps<SVGElement> & AreaProps;
+export type Props = Omit<SVGProps<SVGElement>, 'type'> & AreaProps;
 
 interface State {
   prevAnimationId?: number;
