@@ -1,0 +1,1 @@
+{"version":3,"file":"FunnelChart.js","sourceRoot":"","sources":["../../src/chart/FunnelChart.tsx"],"names":[],"mappings":";;;AAGA,uEAAsE;AACtE,+CAA8C;AAGjC,QAAA,WAAW,GAAG,mDAAwB,CAAC;IAClD,SAAS,EAAE,aAAa;IACxB,cAAc,EAAE,eAAM;IACtB,yBAAyB,EAAE,CAAC,MAAM,CAAC;IACnC,uBAAuB,EAAE,MAAM;IAC/B,cAAc,EAAE,EAAE;IAClB,YAAY,EAAE;QACZ,MAAM,EAAE,SAAS;KAClB;CACyB,CAAC,CAAC"}
