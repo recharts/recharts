@@ -331,7 +331,7 @@ export class Area extends PureComponent<Props, State> {
       return Area.renderDotItem(dot, dotProps);
     });
     const dotsProps = {
-      clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
+      clipPath: needClip ? `url(#clipPath-dots-${clipPathId})` : null,
     };
     return (
       <Layer className="recharts-area-dots" {...dotsProps}>
@@ -562,16 +562,23 @@ export class Area extends PureComponent<Props, State> {
     return (
       <Layer className={layerClass}>
         {needClipX || needClipY ? (
-          <defs>
-            <clipPath id={`clipPath-${clipPathId}`}>
-              <rect
-                x={needClipX ? left : left - width / 2}
-                y={needClipY ? top : top - height / 2}
-                width={needClipX ? width : width * 2}
-                height={needClipY ? height : height * 2}
-              />
-            </clipPath>
-          </defs>
+          <>
+            <defs>
+              <clipPath id={`clipPath-${clipPathId}`}>
+                <rect
+                  x={needClipX ? left : left - width / 2}
+                  y={needClipY ? top : top - height / 2}
+                  width={needClipX ? width : width * 2}
+                  height={needClipY ? height : height * 2}
+                />
+              </clipPath>
+            </defs>
+            <defs>
+              <clipPath id={`clipPath-dots-${clipPathId}`}>
+                <rect x={left - 8} y={top - 8} width={width + 8 * 2} height={height + 8 * 2} />
+              </clipPath>
+            </defs>
+          </>
         ) : null}
         {!hasSinglePoint ? this.renderArea(needClip, clipPathId) : null}
         {(dot || hasSinglePoint) && this.renderDots(needClip, clipPathId)}
