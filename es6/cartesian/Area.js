@@ -133,7 +133,7 @@ export var Area = /*#__PURE__*/function (_PureComponent) {
         return Area.renderDotItem(dot, dotProps);
       });
       var dotsProps = {
-        clipPath: needClip ? "url(#clipPath-".concat(clipPathId, ")") : null
+        clipPath: needClip ? "url(#clipPath-dots-".concat(clipPathId, ")") : null
       };
       return /*#__PURE__*/React.createElement(Layer, _extends({
         className: "recharts-area-dots"
@@ -394,14 +394,21 @@ export var Area = /*#__PURE__*/function (_PureComponent) {
       var clipPathId = _isNil(id) ? this.id : id;
       return /*#__PURE__*/React.createElement(Layer, {
         className: layerClass
-      }, needClipX || needClipY ? /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement("clipPath", {
+      }, needClipX || needClipY ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement("clipPath", {
         id: "clipPath-".concat(clipPathId)
       }, /*#__PURE__*/React.createElement("rect", {
         x: needClipX ? left : left - width / 2,
         y: needClipY ? top : top - height / 2,
         width: needClipX ? width : width * 2,
         height: needClipY ? height : height * 2
-      }))) : null, !hasSinglePoint ? this.renderArea(needClip, clipPathId) : null, (dot || hasSinglePoint) && this.renderDots(needClip, clipPathId), (!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points));
+      }))), /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement("clipPath", {
+        id: "clipPath-dots-".concat(clipPathId)
+      }, /*#__PURE__*/React.createElement("rect", {
+        x: left - 8,
+        y: top - 8,
+        width: width + 8 * 2,
+        height: height + 8 * 2
+      })))) : null, !hasSinglePoint ? this.renderArea(needClip, clipPathId) : null, (dot || hasSinglePoint) && this.renderDots(needClip, clipPathId), (!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points));
     }
   }], [{
     key: "getDerivedStateFromProps",

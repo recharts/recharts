@@ -47227,7 +47227,7 @@ var Area = function (_super) {
       return Area.renderDotItem(dot, dotProps);
     });
     var dotsProps = {
-      clipPath: needClip ? "url(#clipPath-" + clipPathId + ")" : null
+      clipPath: needClip ? "url(#clipPath-dots-" + clipPathId + ")" : null
     };
     return react_1["default"].createElement(Layer_1.Layer, __assign({
       className: "recharts-area-dots"
@@ -47475,14 +47475,21 @@ var Area = function (_super) {
     var clipPathId = lodash_1["default"].isNil(id) ? this.id : id;
     return react_1["default"].createElement(Layer_1.Layer, {
       className: layerClass
-    }, needClipX || needClipY ? react_1["default"].createElement("defs", null, react_1["default"].createElement("clipPath", {
+    }, needClipX || needClipY ? react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement("defs", null, react_1["default"].createElement("clipPath", {
       id: "clipPath-" + clipPathId
     }, react_1["default"].createElement("rect", {
       x: needClipX ? left : left - width / 2,
       y: needClipY ? top : top - height / 2,
       width: needClipX ? width : width * 2,
       height: needClipY ? height : height * 2
-    }))) : null, !hasSinglePoint ? this.renderArea(needClip, clipPathId) : null, (dot || hasSinglePoint) && this.renderDots(needClip, clipPathId), (!isAnimationActive || isAnimationFinished) && LabelList_1.LabelList.renderCallByParent(this.props, points));
+    }))), react_1["default"].createElement("defs", null, react_1["default"].createElement("clipPath", {
+      id: "clipPath-dots-" + clipPathId
+    }, react_1["default"].createElement("rect", {
+      x: left - 8,
+      y: top - 8,
+      width: width + 8 * 2,
+      height: height + 8 * 2
+    })))) : null, !hasSinglePoint ? this.renderArea(needClip, clipPathId) : null, (dot || hasSinglePoint) && this.renderDots(needClip, clipPathId), (!isAnimationActive || isAnimationFinished) && LabelList_1.LabelList.renderCallByParent(this.props, points));
   };
 
   Area.displayName = 'Area';
