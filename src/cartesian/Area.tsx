@@ -558,27 +558,29 @@ export class Area extends PureComponent<Props, State> {
     const needClipY = yAxis && yAxis.allowDataOverflow;
     const needClip = needClipX || needClipY;
     const clipPathId = _.isNil(id) ? this.id : id;
+    const dotRadius = filterProps(dot, true)?.r || 3;
 
     return (
       <Layer className={layerClass}>
         {needClipX || needClipY ? (
-          <>
-            <defs>
-              <clipPath id={`clipPath-${clipPathId}`}>
-                <rect
-                  x={needClipX ? left : left - width / 2}
-                  y={needClipY ? top : top - height / 2}
-                  width={needClipX ? width : width * 2}
-                  height={needClipY ? height : height * 2}
-                />
-              </clipPath>
-            </defs>
-            <defs>
-              <clipPath id={`clipPath-dots-${clipPathId}`}>
-                <rect x={left - 8} y={top - 8} width={width + 8 * 2} height={height + 8 * 2} />
-              </clipPath>
-            </defs>
-          </>
+          <defs>
+            <clipPath id={`clipPath-${clipPathId}`}>
+              <rect
+                x={needClipX ? left : left - width / 2}
+                y={needClipY ? top : top - height / 2}
+                width={needClipX ? width : width * 2}
+                height={needClipY ? height : height * 2}
+              />
+            </clipPath>
+            <clipPath id={`clipPath-dots-${clipPathId}`}>
+              <rect
+                x={left - dotRadius}
+                y={top - dotRadius}
+                width={width + dotRadius * 2}
+                height={height + dotRadius * 2}
+              />
+            </clipPath>
+          </defs>
         ) : null}
         {!hasSinglePoint ? this.renderArea(needClip, clipPathId) : null}
         {(dot || hasSinglePoint) && this.renderDots(needClip, clipPathId)}

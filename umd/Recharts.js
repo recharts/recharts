@@ -47448,19 +47448,21 @@ var Area = function (_super) {
   };
 
   Area.prototype.render = function () {
-    var _a = this.props,
-        hide = _a.hide,
-        dot = _a.dot,
-        points = _a.points,
-        className = _a.className,
-        top = _a.top,
-        left = _a.left,
-        xAxis = _a.xAxis,
-        yAxis = _a.yAxis,
-        width = _a.width,
-        height = _a.height,
-        isAnimationActive = _a.isAnimationActive,
-        id = _a.id;
+    var _a;
+
+    var _b = this.props,
+        hide = _b.hide,
+        dot = _b.dot,
+        points = _b.points,
+        className = _b.className,
+        top = _b.top,
+        left = _b.left,
+        xAxis = _b.xAxis,
+        yAxis = _b.yAxis,
+        width = _b.width,
+        height = _b.height,
+        isAnimationActive = _b.isAnimationActive,
+        id = _b.id;
 
     if (hide || !points || !points.length) {
       return null;
@@ -47473,23 +47475,24 @@ var Area = function (_super) {
     var needClipY = yAxis && yAxis.allowDataOverflow;
     var needClip = needClipX || needClipY;
     var clipPathId = lodash_1["default"].isNil(id) ? this.id : id;
+    var dotRadius = ((_a = types_1.filterProps(dot, true)) === null || _a === void 0 ? void 0 : _a.r) || 3;
     return react_1["default"].createElement(Layer_1.Layer, {
       className: layerClass
-    }, needClipX || needClipY ? react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement("defs", null, react_1["default"].createElement("clipPath", {
+    }, needClipX || needClipY ? react_1["default"].createElement("defs", null, react_1["default"].createElement("clipPath", {
       id: "clipPath-" + clipPathId
     }, react_1["default"].createElement("rect", {
       x: needClipX ? left : left - width / 2,
       y: needClipY ? top : top - height / 2,
       width: needClipX ? width : width * 2,
       height: needClipY ? height : height * 2
-    }))), react_1["default"].createElement("defs", null, react_1["default"].createElement("clipPath", {
+    })), react_1["default"].createElement("clipPath", {
       id: "clipPath-dots-" + clipPathId
     }, react_1["default"].createElement("rect", {
-      x: left - 8,
-      y: top - 8,
-      width: width + 8 * 2,
-      height: height + 8 * 2
-    })))) : null, !hasSinglePoint ? this.renderArea(needClip, clipPathId) : null, (dot || hasSinglePoint) && this.renderDots(needClip, clipPathId), (!isAnimationActive || isAnimationFinished) && LabelList_1.LabelList.renderCallByParent(this.props, points));
+      x: left - dotRadius,
+      y: top - dotRadius,
+      width: width + dotRadius * 2,
+      height: height + dotRadius * 2
+    }))) : null, !hasSinglePoint ? this.renderArea(needClip, clipPathId) : null, (dot || hasSinglePoint) && this.renderDots(needClip, clipPathId), (!isAnimationActive || isAnimationFinished) && LabelList_1.LabelList.renderCallByParent(this.props, points));
   };
 
   Area.displayName = 'Area';
@@ -50399,7 +50402,7 @@ var Line = function (_super) {
       return Line.renderDotItem(dot, dotProps);
     });
     var dotsProps = {
-      clipPath: needClip ? "url(#clipPath-" + clipPathId + ")" : null
+      clipPath: needClip ? "url(#clipPath-dots-" + clipPathId + ")" : null
     };
     return react_1["default"].createElement(Layer_1.Layer, __assign({
       className: "recharts-line-dots",
@@ -50532,19 +50535,21 @@ var Line = function (_super) {
   };
 
   Line.prototype.render = function () {
-    var _a = this.props,
-        hide = _a.hide,
-        dot = _a.dot,
-        points = _a.points,
-        className = _a.className,
-        xAxis = _a.xAxis,
-        yAxis = _a.yAxis,
-        top = _a.top,
-        left = _a.left,
-        width = _a.width,
-        height = _a.height,
-        isAnimationActive = _a.isAnimationActive,
-        id = _a.id;
+    var _a;
+
+    var _b = this.props,
+        hide = _b.hide,
+        dot = _b.dot,
+        points = _b.points,
+        className = _b.className,
+        xAxis = _b.xAxis,
+        yAxis = _b.yAxis,
+        top = _b.top,
+        left = _b.left,
+        width = _b.width,
+        height = _b.height,
+        isAnimationActive = _b.isAnimationActive,
+        id = _b.id;
 
     if (hide || !points || !points.length) {
       return null;
@@ -50557,6 +50562,7 @@ var Line = function (_super) {
     var needClipY = yAxis && yAxis.allowDataOverflow;
     var needClip = needClipX || needClipY;
     var clipPathId = lodash_1["default"].isNil(id) ? this.id : id;
+    var dotRadius = ((_a = types_1.filterProps(dot, true)) === null || _a === void 0 ? void 0 : _a.r) || 3;
     return react_1["default"].createElement(Layer_1.Layer, {
       className: layerClass
     }, needClipX || needClipY ? react_1["default"].createElement("defs", null, react_1["default"].createElement("clipPath", {
@@ -50566,6 +50572,13 @@ var Line = function (_super) {
       y: needClipY ? top : top - height / 2,
       width: needClipX ? width : width * 2,
       height: needClipY ? height : height * 2
+    }), "const dotRadius = filterProps(dot, true)?.r || 3;"), react_1["default"].createElement("clipPath", {
+      id: "clipPath-dots-" + clipPathId
+    }, react_1["default"].createElement("rect", {
+      x: left - dotRadius,
+      y: top - dotRadius,
+      width: width + dotRadius * 2,
+      height: height + dotRadius * 2
     }))) : null, !hasSinglePoint && this.renderCurve(needClip, clipPathId), this.renderErrorBar(), (hasSinglePoint || dot) && this.renderDots(needClip, clipPathId), (!isAnimationActive || isAnimationFinished) && LabelList_1.LabelList.renderCallByParent(this.props, points));
   };
 

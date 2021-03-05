@@ -367,6 +367,8 @@ export var Area = /*#__PURE__*/function (_PureComponent) {
   }, {
     key: "render",
     value: function render() {
+      var _filterProps;
+
       var _this$props7 = this.props,
           hide = _this$props7.hide,
           dot = _this$props7.dot,
@@ -392,23 +394,24 @@ export var Area = /*#__PURE__*/function (_PureComponent) {
       var needClipY = yAxis && yAxis.allowDataOverflow;
       var needClip = needClipX || needClipY;
       var clipPathId = _isNil(id) ? this.id : id;
+      var dotRadius = ((_filterProps = filterProps(dot, true)) === null || _filterProps === void 0 ? void 0 : _filterProps.r) || 3;
       return /*#__PURE__*/React.createElement(Layer, {
         className: layerClass
-      }, needClipX || needClipY ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement("clipPath", {
+      }, needClipX || needClipY ? /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement("clipPath", {
         id: "clipPath-".concat(clipPathId)
       }, /*#__PURE__*/React.createElement("rect", {
         x: needClipX ? left : left - width / 2,
         y: needClipY ? top : top - height / 2,
         width: needClipX ? width : width * 2,
         height: needClipY ? height : height * 2
-      }))), /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement("clipPath", {
+      })), /*#__PURE__*/React.createElement("clipPath", {
         id: "clipPath-dots-".concat(clipPathId)
       }, /*#__PURE__*/React.createElement("rect", {
-        x: left - 8,
-        y: top - 8,
-        width: width + 8 * 2,
-        height: height + 8 * 2
-      })))) : null, !hasSinglePoint ? this.renderArea(needClip, clipPathId) : null, (dot || hasSinglePoint) && this.renderDots(needClip, clipPathId), (!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points));
+        x: left - dotRadius,
+        y: top - dotRadius,
+        width: width + dotRadius * 2,
+        height: height + dotRadius * 2
+      }))) : null, !hasSinglePoint ? this.renderArea(needClip, clipPathId) : null, (dot || hasSinglePoint) && this.renderDots(needClip, clipPathId), (!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points));
     }
   }], [{
     key: "getDerivedStateFromProps",

@@ -333,7 +333,7 @@ export class Line extends PureComponent<Props, State> {
       return Line.renderDotItem(dot, dotProps);
     });
     const dotsProps = {
-      clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
+      clipPath: needClip ? `url(#clipPath-dots-${clipPathId})` : null,
     };
 
     return (
@@ -465,6 +465,7 @@ export class Line extends PureComponent<Props, State> {
     const needClipY = yAxis && yAxis.allowDataOverflow;
     const needClip = needClipX || needClipY;
     const clipPathId = _.isNil(id) ? this.id : id;
+    const dotRadius = filterProps(dot, true)?.r || 3;
 
     return (
       <Layer className={layerClass}>
@@ -476,6 +477,15 @@ export class Line extends PureComponent<Props, State> {
                 y={needClipY ? top : top - height / 2}
                 width={needClipX ? width : width * 2}
                 height={needClipY ? height : height * 2}
+              />
+              const dotRadius = filterProps(dot, true)?.r || 3;
+            </clipPath>
+            <clipPath id={`clipPath-dots-${clipPathId}`}>
+              <rect
+                x={left - dotRadius}
+                y={top - dotRadius}
+                width={width + dotRadius * 2}
+                height={height + dotRadius * 2}
               />
             </clipPath>
           </defs>
