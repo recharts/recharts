@@ -558,7 +558,8 @@ export class Area extends PureComponent<Props, State> {
     const needClipY = yAxis && yAxis.allowDataOverflow;
     const needClip = needClipX || needClipY;
     const clipPathId = _.isNil(id) ? this.id : id;
-    const dotRadius = filterProps(dot, true)?.r || 3;
+    const { r = 3, strokeWidth = 2 } = filterProps(dot, true);
+    const dotSize = r * 2 + strokeWidth;
 
     return (
       <Layer className={layerClass}>
@@ -573,12 +574,7 @@ export class Area extends PureComponent<Props, State> {
               />
             </clipPath>
             <clipPath id={`clipPath-dots-${clipPathId}`}>
-              <rect
-                x={left - dotRadius}
-                y={top - dotRadius}
-                width={width + dotRadius * 2}
-                height={height + dotRadius * 2}
-              />
+              <rect x={left - dotSize / 2} y={top - dotSize / 2} width={width + dotSize} height={height + dotSize} />
             </clipPath>
           </defs>
         ) : null}

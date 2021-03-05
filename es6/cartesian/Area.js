@@ -367,8 +367,6 @@ export var Area = /*#__PURE__*/function (_PureComponent) {
   }, {
     key: "render",
     value: function render() {
-      var _filterProps;
-
       var _this$props7 = this.props,
           hide = _this$props7.hide,
           dot = _this$props7.dot,
@@ -394,7 +392,14 @@ export var Area = /*#__PURE__*/function (_PureComponent) {
       var needClipY = yAxis && yAxis.allowDataOverflow;
       var needClip = needClipX || needClipY;
       var clipPathId = _isNil(id) ? this.id : id;
-      var dotRadius = ((_filterProps = filterProps(dot, true)) === null || _filterProps === void 0 ? void 0 : _filterProps.r) || 3;
+
+      var _filterProps = filterProps(dot, true),
+          _filterProps$r = _filterProps.r,
+          r = _filterProps$r === void 0 ? 3 : _filterProps$r,
+          _filterProps$strokeWi = _filterProps.strokeWidth,
+          strokeWidth = _filterProps$strokeWi === void 0 ? 2 : _filterProps$strokeWi;
+
+      var dotSize = r * 2 + strokeWidth;
       return /*#__PURE__*/React.createElement(Layer, {
         className: layerClass
       }, needClipX || needClipY ? /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement("clipPath", {
@@ -407,10 +412,10 @@ export var Area = /*#__PURE__*/function (_PureComponent) {
       })), /*#__PURE__*/React.createElement("clipPath", {
         id: "clipPath-dots-".concat(clipPathId)
       }, /*#__PURE__*/React.createElement("rect", {
-        x: left - dotRadius,
-        y: top - dotRadius,
-        width: width + dotRadius * 2,
-        height: height + dotRadius * 2
+        x: left - dotSize / 2,
+        y: top - dotSize / 2,
+        width: width + dotSize,
+        height: height + dotSize
       }))) : null, !hasSinglePoint ? this.renderArea(needClip, clipPathId) : null, (dot || hasSinglePoint) && this.renderDots(needClip, clipPathId), (!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points));
     }
   }], [{
