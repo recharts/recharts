@@ -69,6 +69,28 @@ export const getDisplayName = (Comp: any) => {
   return Comp.displayName || Comp.name || 'Component';
 };
 
+// `toArray` gets called multiple times during the render
+// so we can memoize last invocation (since reference to `children` is the same)
+let lastChildren: ReactNode | null = null;
+let lastResult: ReactNode[] | null = null;
+
+export const toArray = <T extends ReactNode>(children: T | T[]): T[] => {
+  if (children === lastChildren && _.isArray(lastResult)) {
+    return lastResult as T[];
+  }
+  let result: T[] = [];
+  Children.forEach(children, child => {
+    if (_.isNil(child)) return;
+    if (isFragment(child)) {
+      result = result.concat(toArray(child.props.children));
+    } else {
+      result.push(child);
+    }
+  });
+  lastResult = result;
+  return result;
+};
+
 /*
  * Find and return all matched children by type. `type` can be a React element class or
  * string
@@ -316,19 +338,6 @@ export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: Rea
   }
 
   return false;
-};
-
-export const toArray = <T extends React.ReactNode>(children: T | T[]): T[] => {
-  let result: T[] = [];
-  Children.forEach(children, child => {
-    if (_.isNil(child)) return;
-    if (isFragment(child)) {
-      result = result.concat(toArray(child.props.children));
-    } else {
-      result.push(child);
-    }
-  });
-  return result;
 };
 
 export const renderByOrder = (children: React.ReactElement[], renderMap: any) => {
