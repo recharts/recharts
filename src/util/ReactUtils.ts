@@ -88,6 +88,7 @@ export const toArray = <T extends ReactNode>(children: T | T[]): T[] => {
     }
   });
   lastResult = result;
+  lastChildren = children;
   return result;
 };
 
