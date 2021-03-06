@@ -1369,10 +1369,10 @@ export const generateCategoricalChart = ({
 
     /**
      * The handler of mouse entering a scatter
-     * @param {Object} el     The active scatter
+     * @param {Object} el The active scatter
      * @return {Object} no return
      */
-    handleItemMouseEnter = (el: any, index: number, e: React.MouseEvent) => {
+    handleItemMouseEnter = (el: any /* , index: number, e: React.MouseEvent */) => {
       this.setState(() => ({
         isTooltipActive: true,
         activeItem: el,
