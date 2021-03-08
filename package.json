@@ -86,7 +86,6 @@
     "@types/react": "^16.9.9",
     "@types/react-dom": "^16.9.2",
     "@types/react-is": "^17.0.0",
-    "@types/react-resize-detector": "^5.0.0",
     "@types/react-router-dom": "^5.1.7",
     "@typescript-eslint/eslint-plugin": "^4.11.0",
     "@typescript-eslint/parser": "^4.11.0",

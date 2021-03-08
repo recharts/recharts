@@ -658,7 +658,7 @@ describe("<LineChart /> - Rendering two line charts with syncId", () => {
     const ActiveDot = ({ cx, cy }) =>
       <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
 
-    const syncMethodFunction = index => index + 1;
+    const syncMethodFunction = (tooltipTicks, data) => data.activeTooltipIndex + 1;
 
     const chart1 = (
       <LineChart width={width} height={height} data={data} margin={margin} syncId="test" syncMethod={syncMethodFunction}>
