@@ -203,7 +203,7 @@ export var Line = /*#__PURE__*/function (_PureComponent) {
     }
   }, {
     key: "renderDots",
-    value: function renderDots(needClip, clipPathId) {
+    value: function renderDots(needClip, clipDot, clipPathId) {
       var isAnimationActive = this.props.isAnimationActive;
 
       if (isAnimationActive && !this.state.isAnimationFinished) {
@@ -232,7 +232,7 @@ export var Line = /*#__PURE__*/function (_PureComponent) {
         return Line.renderDotItem(dot, dotProps);
       });
       var dotsProps = {
-        clipPath: needClip ? "url(#clipPath-dots-".concat(clipPathId, ")") : null
+        clipPath: needClip ? "url(#clipPath-".concat(clipDot ? '' : 'dots-').concat(clipPathId, ")") : null
       };
       return /*#__PURE__*/React.createElement(Layer, _extends({
         className: "recharts-line-dots",
@@ -399,12 +399,16 @@ export var Line = /*#__PURE__*/function (_PureComponent) {
       var needClip = needClipX || needClipY;
       var clipPathId = _isNil(id) ? this.id : id;
 
-      var _filterProps = filterProps(dot, true),
-          _filterProps$r = _filterProps.r,
-          r = _filterProps$r === void 0 ? 3 : _filterProps$r,
-          _filterProps$strokeWi = _filterProps.strokeWidth,
-          strokeWidth = _filterProps$strokeWi === void 0 ? 2 : _filterProps$strokeWi;
+      var _ref2 = filterProps(dot) || {
+        r: 3,
+        strokeWidth: 2
+      },
+          r = _ref2.r,
+          strokeWidth = _ref2.strokeWidth;
 
+      var _ref3 = dot,
+          _ref3$clipDot = _ref3.clipDot,
+          clipDot = _ref3$clipDot === void 0 ? true : _ref3$clipDot;
       var dotSize = r * 2 + strokeWidth;
       return /*#__PURE__*/React.createElement(Layer, {
         className: layerClass
@@ -415,14 +419,14 @@ export var Line = /*#__PURE__*/function (_PureComponent) {
         y: needClipY ? top : top - height / 2,
         width: needClipX ? width : width * 2,
         height: needClipY ? height : height * 2
-      }), "const dotRadius = filterProps(dot, true)?.r || 3;"), /*#__PURE__*/React.createElement("clipPath", {
+      })), !clipDot && /*#__PURE__*/React.createElement("clipPath", {
         id: "clipPath-dots-".concat(clipPathId)
       }, /*#__PURE__*/React.createElement("rect", {
         x: left - dotSize / 2,
         y: top - dotSize / 2,
         width: width + dotSize,
         height: height + dotSize
-      }))) : null, !hasSinglePoint && this.renderCurve(needClip, clipPathId), this.renderErrorBar(), (hasSinglePoint || dot) && this.renderDots(needClip, clipPathId), (!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points));
+      }))) : null, !hasSinglePoint && this.renderCurve(needClip, clipPathId), this.renderErrorBar(), (hasSinglePoint || dot) && this.renderDots(needClip, clipDot, clipPathId), (!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points));
     }
   }], [{
     key: "getDerivedStateFromProps",
@@ -497,16 +501,16 @@ Line.defaultProps = {
   hide: false
 };
 
-Line.getComposedData = function (_ref2) {
-  var props = _ref2.props,
-      xAxis = _ref2.xAxis,
-      yAxis = _ref2.yAxis,
-      xAxisTicks = _ref2.xAxisTicks,
-      yAxisTicks = _ref2.yAxisTicks,
-      dataKey = _ref2.dataKey,
-      bandSize = _ref2.bandSize,
-      displayedData = _ref2.displayedData,
-      offset = _ref2.offset;
+Line.getComposedData = function (_ref4) {
+  var props = _ref4.props,
+      xAxis = _ref4.xAxis,
+      yAxis = _ref4.yAxis,
+      xAxisTicks = _ref4.xAxisTicks,
+      yAxisTicks = _ref4.yAxisTicks,
+      dataKey = _ref4.dataKey,
+      bandSize = _ref4.bandSize,
+      displayedData = _ref4.displayedData,
+      offset = _ref4.offset;
   var layout = props.layout;
   var points = displayedData.map(function (entry, index) {
     var value = getValueByDataKey(entry, dataKey);

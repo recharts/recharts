@@ -5,6 +5,7 @@ interface DotProps {
     cx?: number;
     cy?: number;
     r?: number;
+    clipDot?: boolean;
 }
 export declare type Props = PresentationAttributesWithProps<DotProps, SVGCircleElement> & DotProps;
 export declare class Dot extends PureComponent<Props> {

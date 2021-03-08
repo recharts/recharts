@@ -121,7 +121,7 @@ export declare class Line extends PureComponent<Props, State> {
     handleAnimationStart: () => void;
     renderErrorBar(): React.ReactElement<ErrorBarProps, string | React.JSXElementConstructor<any>>[];
     static renderDotItem(option: LineDot, props: any): JSX.Element;
-    renderDots(needClip: boolean, clipPathId: string): JSX.Element;
+    renderDots(needClip: boolean, clipDot: boolean, clipPathId: string): JSX.Element;
     renderCurveStatically(points: LinePointItem[], needClip: boolean, clipPathId: string, props?: {
         strokeDasharray: string;
     }): JSX.Element;

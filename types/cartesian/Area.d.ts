@@ -127,7 +127,7 @@ export declare class Area extends PureComponent<Props, State> {
     id: string;
     handleAnimationEnd: () => void;
     handleAnimationStart: () => void;
-    renderDots(needClip: boolean, clipPathId: string): JSX.Element;
+    renderDots(needClip: boolean, clipDot: boolean, clipPathId: string): JSX.Element;
     renderHorizontalRect(alpha: number): JSX.Element;
     renderVerticalRect(alpha: number): JSX.Element;
     renderClipRect(alpha: number): JSX.Element;
