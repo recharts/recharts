@@ -215,10 +215,7 @@ const getTooltipContent = (
       return result;
     }
 
-    return [
-      ...result,
-      getTooltipItem(child, payload),
-    ];
+    return [...result, getTooltipItem(child, payload)];
   }, []);
 };
 
@@ -1096,7 +1093,6 @@ export const generateCategoricalChart = ({
     getTooltipEventType() {
       const tooltipItem = findChildByType(this.props.children, Tooltip.displayName);
 
-
       if (tooltipItem && isBoolean(tooltipItem.props.shared)) {
         const eventType = tooltipItem.props.shared ? 'axis' : 'item';
 
@@ -1376,7 +1372,7 @@ export const generateCategoricalChart = ({
      * @param {Object} el     The active scatter
      * @return {Object} no return
      */
-    handleItemMouseEnter = (el: any, index: number, e: React.MouseEvent) => {
+    handleItemMouseEnter = (el: any) => {
       this.setState(() => ({
         isTooltipActive: true,
         activeItem: el,
@@ -1583,7 +1579,7 @@ export const generateCategoricalChart = ({
         offset.left + offset.width,
       );
 
-      horizontalCoordinatesGenerator = ({ yAxis, width, height, offset }: ChartCoordinate) =>
+    horizontalCoordinatesGenerator = ({ yAxis, width, height, offset }: ChartCoordinate) =>
       getCoordinatesOfGrid(
         CartesianAxis.getTicks({
           ...CartesianAxis.defaultProps,
@@ -1595,7 +1591,7 @@ export const generateCategoricalChart = ({
         offset.top + offset.height,
       );
 
-      axesTicksGenerator = (axis?: any) => getTicksOfAxis(axis, true);
+    axesTicksGenerator = (axis?: any) => getTicksOfAxis(axis, true);
 
     filterFormatItem(item: any, displayName: any, childIndex: any) {
       const { formatedGraphicalItems } = this.state;
@@ -1678,7 +1674,7 @@ export const generateCategoricalChart = ({
       });
     };
 
-   renderXAxis = (element: any, displayName: string, index: number) => {
+    renderXAxis = (element: any, displayName: string, index: number) => {
       const { xAxisMap } = this.state;
       const axisObj = xAxisMap[element.props.xAxisId];
 
@@ -1744,7 +1740,7 @@ export const generateCategoricalChart = ({
     };
 
     renderPolarGrid = (element: React.ReactElement): React.ReactElement => {
-      const { radialLines, polarAngles, polarRadius  } = element.props;
+      const { radialLines, polarAngles, polarRadius } = element.props;
       const { radiusAxisMap, angleAxisMap } = this.state;
       const radiusAxis = getAnyElementOfObject(radiusAxisMap);
       const angleAxis = getAnyElementOfObject(angleAxisMap);
@@ -1752,8 +1748,12 @@ export const generateCategoricalChart = ({
       const props = element.props || {};
 
       return cloneElement(element, {
-        polarAngles: isArray(polarAngles) ? polarAngles : getTicksOfAxis(angleAxis, true).map((entry: any) => entry.coordinate),
-        polarRadius: isArray(polarRadius) ? polarRadius : getTicksOfAxis(radiusAxis, true).map((entry: any) => entry.coordinate),
+        polarAngles: isArray(polarAngles)
+          ? polarAngles
+          : getTicksOfAxis(angleAxis, true).map((entry: any) => entry.coordinate),
+        polarRadius: isArray(polarRadius)
+          ? polarRadius
+          : getTicksOfAxis(radiusAxis, true).map((entry: any) => entry.coordinate),
         cx,
         cy,
         innerRadius,
@@ -1944,7 +1944,6 @@ export const generateCategoricalChart = ({
         };
       }
 
-
       const graphicalItem = cloneElement(element, { ...item.props, ...itemEvents });
 
       function findWithPayload(entry: any) {
@@ -2013,17 +2012,27 @@ export const generateCategoricalChart = ({
     public getXScales() {
       const { xAxisMap } = this.state;
 
-      return xAxisMap ? Object.entries(xAxisMap).reduce((res: Record<string, Function>, [axisId, axisProps]: [string, BaseAxisProps]) => {
-        return { ...res, [axisId]: (axisProps as BaseAxisProps).scale }
-      }, {}) : null;
+      return xAxisMap
+        ? Object.entries(xAxisMap).reduce(
+            (res: Record<string, Function>, [axisId, axisProps]: [string, BaseAxisProps]) => {
+              return { ...res, [axisId]: (axisProps as BaseAxisProps).scale };
+            },
+            {},
+          )
+        : null;
     }
 
     public getYScales() {
       const { yAxisMap } = this.state;
 
-      return yAxisMap ? Object.entries(yAxisMap).reduce((res: Record<string, Function>, [axisId, axisProps]: [string, BaseAxisProps]) => {
-        return { ...res, [axisId]: (axisProps as BaseAxisProps).scale }
-      }, {}) : null;
+      return yAxisMap
+        ? Object.entries(yAxisMap).reduce(
+            (res: Record<string, Function>, [axisId, axisProps]: [string, BaseAxisProps]) => {
+              return { ...res, [axisId]: (axisProps as BaseAxisProps).scale };
+            },
+            {},
+          )
+        : null;
     }
 
     public getXScaleByAxisId(axisId: string) {
@@ -2034,19 +2043,21 @@ export const generateCategoricalChart = ({
       return this.state.yAxisMap?.[axisId]?.scale;
     }
 
-    public getItemByXY(chartXY: { x: number, y: number }) {
+    public getItemByXY(chartXY: { x: number; y: number }) {
       const { formatedGraphicalItems } = this.state;
 
       if (formatedGraphicalItems && formatedGraphicalItems.length) {
         for (let i = 0, len = formatedGraphicalItems.length; i < len; i++) {
           const graphicalItem = formatedGraphicalItems[i];
           const { props, item } = graphicalItem;
-          const itemDisplayName = getDisplayName(item.type)
-          
+          const itemDisplayName = getDisplayName(item.type);
+
           if (itemDisplayName === 'Bar') {
-            const activeBarItem = (props.data || []).find((entry: { x: number, y: number, width: number, height: number }) => {
-              return isInRectangle(chartXY, entry);
-            });
+            const activeBarItem = (props.data || []).find(
+              (entry: { x: number; y: number; width: number; height: number }) => {
+                return isInRectangle(chartXY, entry);
+              },
+            );
 
             if (activeBarItem) {
               return { graphicalItem, payload: activeBarItem };
