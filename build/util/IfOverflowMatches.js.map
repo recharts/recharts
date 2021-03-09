@@ -1,1 +1,0 @@
-{"version":3,"file":"IfOverflowMatches.js","sourceRoot":"","sources":["../../src/util/IfOverflowMatches.ts"],"names":[],"mappings":";;;AAAO,IAAM,iBAAiB,GAAG,UAAC,KAAU,EAAE,KAAa;IACjD,IAAA,UAAU,GAAK,KAAK,WAAV,CAAW;IACvB,IAAA,UAAU,GAAK,KAAK,WAAV,CAAW;IAE3B,IAAI,UAAU,EAAE;QACd,UAAU,GAAG,cAAc,CAAC;KAC7B;IAED,OAAO,UAAU,KAAK,KAAK,CAAC;AAC9B,CAAC,CAAC;AATW,QAAA,iBAAiB,qBAS5B"}

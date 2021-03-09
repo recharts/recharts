@@ -1,13 +1,13 @@
 .DS_Store
 *.log
 node_modules
-#umd
-#lib
-#es6
+umd
+lib
+es6
 coverage
 npm-debug.log
 *.orig
 .idea/
 .justconf/
-#types
-# build
+types
+build
