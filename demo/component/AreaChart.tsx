@@ -382,7 +382,7 @@ export default class AreaChartDemo extends React.Component<any, any> {
           </AreaChart>
         </div>
 
-        <p>AreaChart with y axis allowDataOverflow</p>
+        <p>AreaChart with y axis allowDataOverflow and dot clipping turned off</p>
         <div className="area-chart-wrapper">
           <AreaChart width={400} height={400} data={data02} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             <XAxis dataKey="name" />

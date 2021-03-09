@@ -636,7 +636,7 @@ export default class Demo extends Component<any, any> {
           </LineChart>
         </div>
 
-        <p>LineChart with y axis allowDataOverflow</p>
+        <p>LineChart with y axis allowDataOverflow and dot clipping turned off</p>
         <div className="line-chart-wrapper">
           <LineChart width={600} height={300} data={data04}>
             <XAxis dataKey="name" />
