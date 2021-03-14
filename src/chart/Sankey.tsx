@@ -444,9 +444,7 @@ export class Sankey extends PureComponent<Props, State> {
       });
 
       return {
-        activeElement: null,
-        activeElementType: null,
-        isTooltipActive: false,
+        ...prevState,
         nodes,
         links,
 
@@ -644,7 +642,7 @@ export class Sankey extends PureComponent<Props, State> {
     const viewBox = { x: 0, y: 0, width, height };
     const coordinate = activeElement
       ? getCoordinateOfTooltip(activeElement, activeElementType)
-      : defaultCoordinateOfTooltip;
+      : defaultCoordinateOfTooltip; 
     const payload = activeElement ? getPayloadOfTooltip(activeElement, activeElementType, nameKey) : [];
 
     return React.cloneElement(tooltipItem, {
