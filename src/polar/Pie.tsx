@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render sectors of a pie
  */
-import React, { PureComponent, ReactElement, SVGProps } from 'react';
+import React, { PureComponent, ReactElement, ReactNode, SVGProps } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -53,9 +53,9 @@ type PieLabelLine =
   | ((props: any) => ReactElement<SVGElement>)
   | SVGProps<SVGPathElement>
   | boolean;
-type Pielabel =
+export type PieLabel<P = any> =
   | ReactElement<SVGElement>
-  | ((props: any) => ReactElement<SVGElement>)
+  | ((props: P) => ReactNode | ReactElement<SVGElement>)
   | { offsetRadius: number }
   | boolean;
 type PieSectorDataItem = SectorProps & {
@@ -88,7 +88,7 @@ interface PieProps extends PieDef {
   sectors?: PieSectorDataItem[];
   activeShape?: PieActiveShape;
   labelLine?: PieLabelLine;
-  label?: Pielabel;
+  label?: PieLabel;
 
   activeIndex?: number | number[];
   animationEasing?: AnimationTiming;
@@ -101,6 +101,17 @@ interface PieProps extends PieDef {
   onMouseEnter?: (data: any, index: number, e: React.MouseEvent) => void;
   onMouseLeave?: (data: any, index: number, e: React.MouseEvent) => void;
   onClick?: (data: any, index: number, e: React.MouseEvent) => void;
+}
+
+export interface PieLabelRenderProps extends PieDef {
+  name: string;
+  percent?: number;
+  stroke: string;
+  index?: number;
+  textAnchor: string;
+  x: number;
+  y: number;
+  [key: string]: any;
 }
 
 interface State {
@@ -370,7 +381,7 @@ export class Pie extends PureComponent<Props, State> {
     return <Curve {...props} type="linear" className="recharts-pie-label-line" />;
   }
 
-  static renderLabelItem(option: Pielabel, props: any, value: any) {
+  static renderLabelItem(option: PieLabel, props: any, value: any) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     }

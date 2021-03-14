@@ -77,6 +77,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
     y?: number;
   };
   trigger?: 'hover' | 'click';
+  shared?: boolean;
   payloadUniqBy?: UniqueOption<TValue, TName>;
   isAnimationActive?: boolean;
   animationDuration?: number;

@@ -8,7 +8,8 @@ import { CategoricalChartOptions } from '../util/types';
 export const FunnelChart = generateCategoricalChart({
   chartName: 'FunnelChart',
   GraphicalChild: Funnel,
-  eventType: 'item',
+  validateTooltipEventTypes: ['item'],
+  defaultTooltipEventType: 'item',
   axisComponents: [],
   defaultProps: {
     layout: 'centric',

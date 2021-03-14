@@ -14,6 +14,7 @@ import Rectangle from './Rectangle';
 import Sector from './Sector';
 
 import LineChart from './LineChart';
+import LineChartSyncId from './LineChartSyncId';
 import AreaChart from './AreaChart';
 import BarChart from './BarChart';
 import ComposedChart from './ComposedChart';
@@ -33,6 +34,7 @@ import BugReproduce from './BugReproduce';
 export default {
   chartWrapper: {
     LineChart,
+    LineChartSyncId,
     AreaChart,
     BarChart,
     ComposedChart,

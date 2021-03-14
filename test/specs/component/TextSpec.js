@@ -83,4 +83,44 @@ describe('<Text />', () => {
 
     expect(wrapper.instance().state.wordsByLines.length).to.equal(5);
   });
+
+  describe('maxLines', () => {
+    it('does not do anything when maxLines are not exceeded', () => {
+      const withMaxLines = shallow(
+        <Text width={500} maxLines={3}>test</Text>
+      )
+
+      const withoutMaxLines = shallow(
+        <Text width={500} maxLines={3}>test</Text>
+      )
+
+      expect(withMaxLines.text()).to.equal(withoutMaxLines.text());
+    });
+
+    it('limits the output to maxLines', () => {
+      const testString = 'Lorem ratione omnis fuga dignissimos in amet. Minus quam architecto non ea iste! Nihil amet in itaque error velit. Corporis autem sequi aut temporibus placeat. Perferendis quos veritatis quasi pariatur!'
+
+      const wrapper = shallow(<Text width={200} maxLines={2}>{testString}</Text>)
+
+      expect(wrapper.instance().state.wordsByLines <= 2)
+    });
+
+    it('adds an ellipsis at the end of the truncated line', () => {
+      const testString = 'Sit totam suscipit aliquid suscipit eius, cupiditate Aut excepturi ipsum ut suscipit facilis debitis Provident impedit a distinctio neque quaerat Optio quo quibusdam possimus provident accusantium. Molestiae similique nemo labore'
+
+      const wrapper = shallow(<Text width={200} maxLines={2}>{testString}</Text>)
+      const text = wrapper.text()
+
+      expect(text[text.length - 1]).to.equal("…")
+    });
+
+    it('adds an ellipsis at the end of a very long word', () => {
+      const testString = 'longwooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooord'
+
+      const wrapper = shallow(<Text width={200} maxLines={1}>{testString}</Text>)
+      const text = wrapper.text()
+
+      expect(text[text.length - 1]).to.equal("…")
+    });
+  });
 });

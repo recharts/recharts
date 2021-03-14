@@ -12,6 +12,8 @@ export const RadialBarChart = generateCategoricalChart({
   chartName: 'RadialBarChart',
   GraphicalChild: RadialBar,
   legendContent: 'children',
+  defaultTooltipEventType: 'axis',
+  validateTooltipEventTypes: ['axis', 'item'],
   axisComponents: [
     { axisType: 'angleAxis', AxisComp: PolarAngleAxis },
     { axisType: 'radiusAxis', AxisComp: PolarRadiusAxis },

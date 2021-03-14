@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { getTicksOfScale, parseScale, checkDomainOfScale, getBandSizeOfAxis } from './ChartUtils';
+import { findChildByType } from './ReactUtils';
 import { Coordinate, AxisType } from './types';
 
 /**
@@ -12,7 +13,7 @@ import { Coordinate, AxisType } from './types';
  * @return {Object} Configuration
  */
 export const formatAxisMap = (props: any, axisMap: any, offset: any, axisType: AxisType, chartName: string) => {
-  const { width, height, layout } = props;
+  const { width, height, layout, children } = props;
   const ids = Object.keys(axisMap);
   const steps: Record<string, any> = {
     left: offset.left,
@@ -24,6 +25,7 @@ export const formatAxisMap = (props: any, axisMap: any, offset: any, axisType: A
     bottom: height - offset.bottom,
     bottomMirror: height - offset.bottom,
   };
+  const hasBar = !!findChildByType(children, 'Bar');
 
   return ids.reduce((result, id) => {
     const axis = axisMap[id];
@@ -47,7 +49,7 @@ export const formatAxisMap = (props: any, axisMap: any, offset: any, axisType: A
       range = [range[1], range[0]];
     }
 
-    const { scale, realScaleType } = parseScale(axis, chartName);
+    const { scale, realScaleType } = parseScale(axis, chartName, hasBar);
     scale.domain(domain).range(range);
     checkDomainOfScale(scale);
     const ticks = getTicksOfScale(scale, { ...axis, realScaleType });

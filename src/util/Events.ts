@@ -1,6 +1,12 @@
 import EventEmitter from 'eventemitter3';
 
-const eventCenter: any = new EventEmitter();
+type CategoricalChartState = import('../chart/generateCategoricalChart').CategoricalChartState;
+
+interface EventCenter extends EventEmitter<EventTypes> {
+  setMaxListeners?(maxListeners: number): void;
+  _maxListeners?: number;
+}
+const eventCenter: EventCenter = new EventEmitter();
 
 if (eventCenter.setMaxListeners) {
   eventCenter.setMaxListeners(10);
@@ -8,3 +14,9 @@ if (eventCenter.setMaxListeners) {
 
 export { eventCenter };
 export const SYNC_EVENT = 'recharts.syncMouseEvents';
+
+// eslint-disable-next-line no-redeclare
+type SYNC_EVENT = typeof SYNC_EVENT;
+interface EventTypes {
+  [SYNC_EVENT](syncId: number | string, uniqueChartId: string, data: CategoricalChartState): void;
+}

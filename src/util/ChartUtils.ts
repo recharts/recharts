@@ -15,7 +15,7 @@ import { Legend } from '../component/Legend';
 import { findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
-import { LayoutType, PolarLayoutType, AxisType, TickItem, BaseAxisProps, DataKey } from './types';
+import { LayoutType, PolarLayoutType, AxisType, TickItem, BaseAxisProps, DataKey, filterProps } from './types';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<any>, defaultValue?: any) {
   if (_.isNil(obj) || _.isNil(dataKey)) {
@@ -57,7 +57,7 @@ export function getDomainOfDataByKey<T>(data: Array<T>, key: string, type: strin
 
 export const calculateActiveTickIndex = (
   coordinate: number,
-  ticks: Array<TickItem>,
+  ticks: Array<TickItem> = [],
   unsortedTicks: Array<TickItem>,
   axis: BaseAxisProps,
 ) => {
@@ -608,9 +608,10 @@ export const combineEventHandlers = (defaultHandler: Function, parentHandler: Fu
  * Parse the scale function of axis
  * @param  {Object}   axis          The option of axis
  * @param  {String}   chartType     The displayName of chart
- * @return {Function}               The scale funcion
+ * @param  {Boolean}  hasBar        if it has a bar
+ * @return {Function}               The scale function
  */
-export const parseScale = (axis: any, chartType: string) => {
+export const parseScale = (axis: any, chartType: string, hasBar?: boolean) => {
   const { scale, type, layout, axisType } = axis;
   if (scale === 'auto') {
     if (layout === 'radial' && axisType === 'radiusAxis') {
@@ -625,7 +626,7 @@ export const parseScale = (axis: any, chartType: string) => {
       chartType &&
       (chartType.indexOf('LineChart') >= 0 ||
         chartType.indexOf('AreaChart') >= 0 ||
-        chartType.indexOf('ComposedChart') >= 0)
+        (chartType.indexOf('ComposedChart') >= 0 && !hasBar))
     ) {
       return { scale: d3Scales.scalePoint(), realScaleType: 'point' };
     }
@@ -1134,4 +1135,20 @@ export const parseDomainOfCategoryAxis = (
   }
 
   return specifiedDomain;
+};
+
+export const getTooltipItem = (graphicalItem: any, payload: any) => {
+  const { dataKey, name, unit, formatter, tooltipType } = graphicalItem.props;
+
+  return {
+    ...filterProps(graphicalItem),
+    dataKey,
+    unit,
+    formatter,
+    name: name || dataKey,
+    color: getMainColorOfGraphicItem(graphicalItem),
+    value: getValueByDataKey(payload, dataKey),
+    type: tooltipType,
+    payload,
+  };
 };

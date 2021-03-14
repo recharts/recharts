@@ -1,3 +1,69 @@
+## 2.0.8 (Feb24, 2021)
+
+### feat
+
+- allow to show tooltip when hover or click bar item for <BarChart /> and <RadialBarChart />
+- add api `getXScales`, `getYScales`, `getXScaleByAxisId`, `getYScaleByAxisId`, `getItemByXY` to chart, fix #2422
+- Add SyncMethod to categorical charts
+- `findAllByType` searches for match inside of a fragment
+- allow to add customized `polarAngles` and `polarRadius` to <PolarGrid />, fix #2452
+
+### fix
+
+- fix Tooltip receive wrong payload when mouse enter <Line />, .etc, fix #2394
+- fix Treemap tooltip when use `dataKey` to specify value, fix #2428
+
+### deps
+
+- update react-resize-detector to 6.6.0, fix #2431
+
+
+## 2.0.7 (Feb 18, 2021)
+
+### fix
+
+- add missed type definition of tickMargin in XAxis, YAxis, fix #2427
+- filter out nil elements of chart
+- ensures `id="undefined"` is not rendered to the DOM when use ResponsiveContainer
+- fix auto scale type of ComposedChart, fix #2403
+- Fix .d.ts types that relay on d3
+
+## 2.0.6 (Feb 08, 2021)
+
+### fix
+
+- fix types error in npm pkg, fix #2398
+
+## 2.0.5 (Feb 08, 2021)
+
+### feat
+
+-  defer when syncing to other charts
+
+### fix
+
+- Fix Customized component types
+- fix child event not dispatched, fix #2414
+
+## 2.0.4 (Jan 27, 2021)
+
+### feat
+
+- add maxLines prop to Text component
+
+
+### fix
+
+- Add `payload` to `Payload` interface
+- prevent rerender errors in ResponsiveContainer
+- Add PieLabel, PieLabelRenderProps types
+
+### deps
+
+- Upgrade react-resize-detector(4.x => 5.x) types to match the library
+
+
+
 ## 2.0.3 (Jan 13, 2021)
 
 ### refactor
