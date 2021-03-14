@@ -86,4 +86,14 @@ describe('<ResponsiveContainer />', () => {
     expect(wrapper.find('.inside')).to.have.attr('height').equal('50');
   });
 
+  it('Renders without an id attribute when not passed', () => {
+    const wrapper = mount(
+      <ResponsiveContainer>
+        <div className="inside">Inside</div>
+      </ResponsiveContainer>
+    );
+
+    expect(wrapper.find('#undefined')).to.not.exist;
+  });
+
 });

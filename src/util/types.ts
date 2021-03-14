@@ -1168,7 +1168,8 @@ export const adaptEventsOfChild = (
 export interface CategoricalChartOptions {
   chartName?: string;
   GraphicalChild?: any;
-  eventType?: string;
+  defaultTooltipEventType?: string;
+  validateTooltipEventTypes?: string[];
   axisComponents?: BaseAxisProps[];
   legendContent?: any;
   formatAxisMap?: any;

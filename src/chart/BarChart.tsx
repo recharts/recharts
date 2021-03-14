@@ -11,6 +11,8 @@ import { CategoricalChartOptions } from '../util/types';
 export const BarChart = generateCategoricalChart({
   chartName: 'BarChart',
   GraphicalChild: Bar,
+  defaultTooltipEventType: 'axis',
+  validateTooltipEventTypes: ['axis', 'item'],
   axisComponents: [
     { axisType: 'xAxis', AxisComp: XAxis },
     { axisType: 'yAxis', AxisComp: YAxis },

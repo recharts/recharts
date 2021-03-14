@@ -18,6 +18,7 @@ import {
   getValueByDataKey,
   truncateByDomain,
   getBaseValueOfBar,
+  getTooltipItem,
 } from '../util/ChartUtils';
 import {
   LegendType,
@@ -28,6 +29,7 @@ import {
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
 } from '../util/types';
+import { polarToCartesian } from '../util/PolarUtils';
 // TODO: Cause of circular dependency. Needs refactoring of functions that need them.
 // import { AngleAxisProps, RadiusAxisProps } from './types';
 
@@ -210,6 +212,8 @@ export class RadialBar extends PureComponent<Props, State> {
         startAngle,
         endAngle,
         ...(cells && cells[index] && cells[index].props),
+        tooltipPayload: [getTooltipItem(item, entry)],
+        tooltipPosition: polarToCartesian(cx, cy, (innerRadius + outerRadius) / 2, (startAngle + endAngle) / 2),
       };
     });
 

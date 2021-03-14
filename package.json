@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "2.0.3",
+  "version": "2.0.8",
   "description": "React charts",
   "main": "lib/index",
   "module": "es6/index",
@@ -23,7 +23,7 @@
     "react-component"
   ],
   "scripts": {
-    "build": "npm run build-cjs && npm run build-es6 && rimraf umd && npm run build-umd && npm run build-min",
+    "build": "rimraf types && npm run build-cjs && npm run build-es6 && rimraf umd && npm run build-umd && npm run build-min",
     "build-cjs": "rimraf lib && cross-env NODE_ENV=commonjs babel ./src -d lib --extensions '.js,.ts,.tsx'",
     "build-es6": "rimraf es6 && cross-env NODE_ENV=es6 babel ./src -d es6 --extensions '.js,.ts,.tsx'",
     "build-umd": "cross-env NODE_ENV=development webpack src/index.ts -o umd/Recharts.js",
@@ -54,13 +54,16 @@
     "react-dom": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
+    "@types/d3-scale": "^3.0.0",
+    "@types/d3-shape": "^2.0.0",
     "classnames": "^2.2.5",
     "d3-interpolate": "^2.0.1",
     "d3-scale": "^3.2.3",
     "d3-shape": "^2.0.0",
     "eventemitter3": "^4.0.1",
     "lodash": "^4.17.19",
-    "react-resize-detector": "^5.2.0",
+    "react-resize-detector": "^6.6.0",
+    "react-is": "16.10.2",
     "react-smooth": "^1.0.6",
     "recharts-scale": "^0.4.2",
     "reduce-css-calc": "^2.1.7"
@@ -79,12 +82,10 @@
     "@babel/preset-typescript": "^7.6.0",
     "@babel/runtime": "^7.6.3",
     "@types/classnames": "^2.2.9",
-    "@types/d3-scale": "^3.0.0",
-    "@types/d3-shape": "^2.0.0",
     "@types/lodash": "^4.14.144",
     "@types/react": "^16.9.9",
     "@types/react-dom": "^16.9.2",
-    "@types/react-resize-detector": "^4.0.2",
+    "@types/react-is": "^17.0.0",
     "@types/react-router-dom": "^5.1.7",
     "@typescript-eslint/eslint-plugin": "^4.11.0",
     "@typescript-eslint/parser": "^4.11.0",

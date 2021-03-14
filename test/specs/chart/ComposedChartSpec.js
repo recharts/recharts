@@ -15,7 +15,9 @@ describe('<ComposedChart />', () => {
   it('Render 1 line, 1 area, 1bar in the ComposedChart', () => {
     const wrapper = render(
       <ComposedChart
-        width={800} height={400} data={data}
+        width={800} 
+        height={400} 
+        data={data}
         margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
       >
         <XAxis dataKey="name" />
@@ -48,6 +50,45 @@ describe('<ComposedChart />', () => {
     );
     expect(wrapper.find('.recharts-line .recharts-line-dot').length).to.equal(1);
     expect(wrapper.find('.recharts-bar .recharts-bar-rectangle').length).to.equal(1);
+  });
+
+  it('Generate point scale for x-axis, when has no <Bar /> in the ComposedChart', () => {
+    const wrapper = mount(
+      <ComposedChart
+        width={800} 
+        height={400} 
+        data={data}
+        margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+      >
+        <XAxis dataKey="name" />
+        <YAxis />
+        <CartesianGrid stroke="#f5f5f5" />
+        <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
+        <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+      </ComposedChart>
+    );
+    
+    expect(wrapper.state().xAxisMap[0].realScaleType).to.equal('point');
+  });
+
+  it('Generate point scale for x-axis, when has <Bar /> in the ComposedChart', () => {
+    const wrapper = mount(
+      <ComposedChart
+        width={800} 
+        height={400} 
+        data={data}
+        margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+      >
+        <XAxis dataKey="name" />
+        <YAxis />
+        <CartesianGrid stroke="#f5f5f5" />
+        <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
+        <Bar dataKey="pv" barSize={20} fill="#413ea0" />
+        <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+      </ComposedChart>
+    );
+    
+    expect(wrapper.state().xAxisMap[0].realScaleType).to.equal('band');
   });
 
   it('MouseEnter ComposedChart should show tooltip, active dot, and cursor', () => {

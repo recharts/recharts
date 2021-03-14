@@ -19,6 +19,8 @@ import { getStringSize } from '../util/DOMUtils';
 import { uniqueId } from '../util/DataUtils';
 import { DataKey, filterProps, TreemapNode } from '../util/types';
 
+const NODE_VALUE_KEY = 'value';
+
 const computeNode = ({
   depth,
   node,
@@ -38,19 +40,19 @@ const computeNode = ({
           computeNode({ depth: childDepth, node: child, index: i, valueKey }),
         )
       : null;
-  let value;
+  let nodeValue;
 
   if (children && children.length) {
-    value = computedChildren.reduce((result: any, child: TreemapNode) => result + child.value, 0);
+    nodeValue = computedChildren.reduce((result: any, child: TreemapNode) => result + child[NODE_VALUE_KEY], 0);
   } else {
     // TODO need to verify valueKey
-    value = _.isNaN(node[valueKey as string]) || node[valueKey as string] <= 0 ? 0 : node[valueKey as string];
+    nodeValue = _.isNaN(node[valueKey as string]) || node[valueKey as string] <= 0 ? 0 : node[valueKey as string];
   }
 
   return {
     ...node,
     children: computedChildren,
-    value,
+    [NODE_VALUE_KEY]: nodeValue,
     depth,
     index,
   };
@@ -63,7 +65,7 @@ const getAreaOfChildren = (children: TreemapNode[], areaValueRatio: number) => {
   const ratio = areaValueRatio < 0 ? 0 : areaValueRatio;
 
   return children.map((child: TreemapNode) => {
-    const area = child.value * ratio;
+    const area = child[NODE_VALUE_KEY] * ratio;
 
     return {
       ...child,
@@ -166,7 +168,7 @@ const squarify = (node: TreemapNode, aspectRatio: number): TreemapNode => {
     let best = Infinity; // the best row score so far
     let child, score; // the current row score
     let size = Math.min(rect.width, rect.height); // initial orientation
-    const scaleChildren = getAreaOfChildren(children, (rect.width * rect.height) / node.value);
+    const scaleChildren = getAreaOfChildren(children, (rect.width * rect.height) / node[NODE_VALUE_KEY]);
     const tempChildren = scaleChildren.slice();
 
     row.area = 0;
@@ -662,7 +664,7 @@ export class Treemap extends PureComponent<Props, State> {
             {
               payload: activeNode,
               name: getValueByDataKey(activeNode, nameKey, ''),
-              value: getValueByDataKey(activeNode, dataKey),
+              value: getValueByDataKey(activeNode, NODE_VALUE_KEY),
             },
           ]
         : [];
