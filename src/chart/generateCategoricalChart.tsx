@@ -1071,7 +1071,7 @@ export const generateCategoricalChart = ({
         this.addListener();
       }
       // remove syncId
-      if (!_.isNil(this.props.syncId) && _.isNil(prevProps.syncId)) {
+      if (!_.isNil(prevProps.syncId) && _.isNil(this.props.syncId)) {
         this.removeListener();
       }
     }
