@@ -444,9 +444,7 @@ export class Sankey extends PureComponent<Props, State> {
       });
 
       return {
-        activeElement: null,
-        activeElementType: null,
-        isTooltipActive: false,
+        ...prevState,
         nodes,
         links,
 
