@@ -8,9 +8,7 @@ const config = {
   entry: './src/index.ts',
 
   output: {
-    path: path.resolve(__dirname, 'umd'),
-    library: 'Recharts',
-    libraryTarget: 'umd',
+    filename: `Recharts${env === 'production' ? '.min' : ''}.js`,
   },
 
   module: {

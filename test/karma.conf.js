@@ -38,22 +38,40 @@ module.exports = function config(config) {
     webpack: {
       devtool: 'inline-source-map',
       module: {
-        noParse: [
-          /node_modules\/sinon\//,
-        ],
         rules: [{
           test: /\.(js|ts|tsx)$/,
-          exclude: [
-            path.resolve('node_modules/'),
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                '@babel/preset-env',
+                '@babel/preset-react'
+              ],
+              plugins: [
+                '@babel/transform-runtime'
+              ]
+            }
+          },
+          exclude: /node_modules/,
+          include: [
+            __dirname,
+            path.join(__dirname, '..', 'src'),
+            path.resolve(__dirname, '/node_modules/d3-scale'),
+            path.resolve(__dirname, '/node_modules/d3-array'),
+            path.resolve(__dirname, '/node_modules/d3-format'),
+            path.resolve(__dirname, '/node_modules/d3-time-format'),
+            path.resolve(__dirname, '/node_modules/d3-time'),
+            path.resolve(__dirname, '/node_modules/d3-shape'),
+            path.resolve(__dirname, '/node_modules/d3-color'),
+            path.resolve(__dirname, '/node_modules/d3-interpolate'),
+            path.resolve(__dirname, '/node_modules/d3-path'),
           ],
-          loader: 'babel-loader',
-        }, {
-          type: 'javascript/auto',
-          test: /\.json$/,
-          loader: 'json-loader',
         }, {
           test: /\.(ts|tsx)$/,
           exclude: /node_modules/,
+          include: [
+            path.resolve(__dirname, 'src'),
+          ],
           use: {
             loader: 'ts-loader',
           }

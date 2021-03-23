@@ -32,8 +32,8 @@ require('./specs/numberAxis/FunnelSpec');
 
 // chart
 require('./specs/chart/AreaChartSpec');
-require('./specs/chart/BarChartSpec');
-require('./specs/chart/LineChartSpec');
+require('./specs/chart/BarchartSpec');
+require('./specs/chart/LinechartSpec');
 require('./specs/chart/PieChartSpec');
 require('./specs/chart/RadarChartSpec');
 require('./specs/chart/ScatterChartSpec');
