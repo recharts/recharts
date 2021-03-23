@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import _ from 'lodash';
 import React, { Component, ReactElement } from 'react';
-import ReactResizeDetector from 'react-resize-detector';
+import ReactResizeDetector from 'react-resize-detector/build/withPolyfill';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
