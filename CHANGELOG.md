@@ -1,4 +1,17 @@
-## 2.0.8 (Feb24, 2021)
+## 2.0.9 (Mar 24, 2021)
+
+### chore
+
+- update test config and webpack, etc
+
+## fix
+
+- fix for missing sankey tooltips, fix #2496
+- added polyfill for ReactResizeDetector, fix #2504
+- fix condition to actually remove the listener, fix #2498
+- fix typing of <Area type /> prop, fix #2471
+
+## 2.0.8 (Feb 24, 2021)
 
 ### feat
 

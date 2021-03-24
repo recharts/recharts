@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "React charts",
   "main": "lib/index",
   "module": "es6/index",
@@ -23,11 +23,10 @@
     "react-component"
   ],
   "scripts": {
-    "build": "rimraf types && npm run build-cjs && npm run build-es6 && rimraf umd && npm run build-umd && npm run build-min",
+    "build": "rimraf types && npm run build-cjs && npm run build-es6 && rimraf umd && npm run build-umd",
     "build-cjs": "rimraf lib && cross-env NODE_ENV=commonjs babel ./src -d lib --extensions '.js,.ts,.tsx'",
     "build-es6": "rimraf es6 && cross-env NODE_ENV=es6 babel ./src -d es6 --extensions '.js,.ts,.tsx'",
-    "build-umd": "cross-env NODE_ENV=development BABEL_ENV=commonjs webpack --entry ./src/index.js -o umd",
-    "build-min": "cross-env NODE_ENV=production BABEL_ENV=commonjs webpack --entry ./src/index.js -o umd",
+    "build-umd": "rimraf umd && cross-env NODE_ENV=production BABEL_ENV=commonjs webpack --entry ./src/index.ts -o umd",
     "demo": "webpack serve --config demo/webpack.config.js --port 3000 --host 127.0.0.1 --progress --profile --content-base demo/",
     "test": "cross-env NODE_ENV=test karma start test/karma.conf.js",
     "lint": "eslint './src/**/*.?(ts|tsx)'",
@@ -64,9 +63,9 @@
     "lodash": "^4.17.19",
     "react-is": "16.10.2",
     "react-resize-detector": "^6.6.3",
-    "react-smooth": "^1.0.6",
-    "recharts-scale": "^0.4.2",
-    "reduce-css-calc": "^2.1.7"
+    "react-smooth": "^2.0.0",
+    "recharts-scale": "^0.4.4",
+    "reduce-css-calc": "^2.1.8"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.4",
@@ -126,6 +125,7 @@
     "react-test-renderer": "^16.12.0",
     "rimraf": "^3.0.2",
     "sinon": "^9.2.2",
+    "terser-webpack-plugin": "^5.1.1",
     "ts-loader": "^8.0.12",
     "typescript": "^4.1.3",
     "webpack": "^5.0.0",
