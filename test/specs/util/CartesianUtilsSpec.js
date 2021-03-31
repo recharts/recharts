@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import { scaleLinear, scaleBand } from 'd3-scale';
-import { ScaleHelper, createLabeldScales } from '../../../src/util/CartesianUtils';
-
+import { ScaleHelper, createLabeledScales } from '../../../src/util/CartesianUtils';
 
 describe('ScaleHelper', () => {
   it('apply() should return the expected value', () => {
@@ -21,7 +20,7 @@ describe('ScaleHelper', () => {
 
   it('apply() should return the expected value for band scale when bandAware = true', () => {
     const scale = new ScaleHelper(scaleBand().domain([0, 1, 2, 3]).range([0, 100]));
-    expect(scale.apply(2, { bandAware: true })).to.equal(50 + 25 / 2.);
+    expect(scale.apply(2, { bandAware: true })).to.equal(50 + 25 / 2.0);
   });
 
   it('apply() should return undefined for undefined', () => {
@@ -47,16 +46,19 @@ describe('ScaleHelper', () => {
 
 describe('createLabeldScales', () => {
   it('apply() should return the expected values', () => {
-    const scales = createLabeldScales({
+    const scales = createLabeledScales({
       x: scaleBand().domain([0, 1, 2, 3]).range([0, 100]),
       y: scaleLinear().domain([-200, 200]).range([0, 50]),
     });
-    expect(scales.apply({ x: 2 }, { bandAware: true })).to.deep.equal({ x: 50 + 25 / 2. });
+    expect(scales.apply({ x: 2 }, { bandAware: true })).to.deep.equal({ x: 50 + 25 / 2.0 });
+    expect(scales.apply({ x: 2 }, { bandAware: true, position: 'start' })).to.deep.equal({ x: 50 });
+    expect(scales.apply({ x: 2 }, { bandAware: true, position: 'middle' })).to.deep.equal({ x: 50 + 25 / 2.0 });
+    expect(scales.apply({ x: 2 }, { bandAware: true, position: 'end' })).to.deep.equal({ x: 50 + 25 });
     expect(scales.apply({ y: 100 }, { bandAware: true })).to.deep.equal({ y: 37.5 });
   });
 
   it('isInRange() should return the expected values', () => {
-    const scales = createLabeldScales({
+    const scales = createLabeledScales({
       x: scaleBand().domain([0, 1, 2, 3]).range([0, 100]),
       y: scaleLinear().domain([-200, 200]).range([0, 50]),
     });
