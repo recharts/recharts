@@ -22,6 +22,7 @@ interface LabelListProps<T extends Data> {
   textBreakAll?: boolean;
   position?: LabelProps['position'];
   angle?: number;
+  formatter?: Function;
 }
 
 export type Props<T> = SVGProps<SVGElement> & LabelListProps<T>;
