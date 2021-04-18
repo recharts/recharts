@@ -524,9 +524,9 @@ describe("<LineChart /> - Rendering two line charts with syncId", () => {
     { name: 'Page A', uv: 230, pv: 2400, amt: 2400 },
   ];
 
-  const runAllPromises = () => new Promise(setImmediate);
+  const runAllPromises = () => new Promise(resolve => setTimeout(resolve));
 
-  it("should show tooltips for both charts synced by index on MouseEnter and hide on MouseLeave", async() => {    
+  it("should show tooltips for both charts synced by index on MouseEnter and hide on MouseLeave", async() => {
     const ActiveDot = ({ cx, cy }) =>
       <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
 
@@ -585,7 +585,7 @@ describe("<LineChart /> - Rendering two line charts with syncId", () => {
     const activeDotWrapper = wrapper.find(ActiveDot);
     expect(activeDotWrapper.at(0).props().value).to.equal(400);
     expect(activeDotWrapper.at(1).props().value).to.equal(500); 
- 
+
     // simulate leaving the area
     wrapper.find(LineChart).at(0).simulate("mouseLeave");
     expect(wrapper.find(".recharts-tooltip-cursor").hostNodes.length).to.equal(0);

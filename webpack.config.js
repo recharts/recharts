@@ -1,16 +1,17 @@
 const path = require('path');
 const webpack = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const env = process.env.NODE_ENV;
 
 const config = {
+  devtool: 'source-map',
+
   entry: './src/index.ts',
 
   output: {
-    path: path.resolve(__dirname, 'umd'),
-    library: 'Recharts',
-    libraryTarget: 'umd',
+    filename: 'Recharts.js',
   },
 
   module: {
@@ -30,12 +31,7 @@ const config = {
           path.resolve(__dirname, '/node_modules/d3-interpolate'),
           path.resolve(__dirname, '/node_modules/d3-path'),
         ],
-        use: {
-          loader: 'babel-loader',
-          query: {
-            plugins: ['lodash'],
-          },
-        }
+        loader: 'babel-loader',
       },
       {
         test: /\.(ts|tsx)$/,
@@ -43,14 +39,11 @@ const config = {
         include: [
           path.resolve(__dirname, 'src'),
         ],
-        use: {
-          loader: 'ts-loader',
-        }
+        loader: 'ts-loader',
       }
     ],
   },
 
-  devtool: 'inline-source-map',
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
   },
@@ -79,6 +72,8 @@ const config = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(env),
+      __DEV__: false,
+      __DEVTOOLS__: false,
     }),
   ],
 };
@@ -89,13 +84,14 @@ if (env === 'analyse') {
   );
 }
 
-if (env === 'development') {
-  config.mode = 'development';
-  config.devtool = 'source-map';
-}
-
 if (env === 'production') {
   config.mode = 'production';
+  config.optimization = {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin(),
+    ],
+  };
 }
 
 module.exports = config;
