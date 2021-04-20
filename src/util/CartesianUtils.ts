@@ -228,8 +228,8 @@ export const createLabeledScales = (options: Record<string, any>): LabeledScales
 
   return {
     ...scales,
-    apply(coord: any, { bandAware }: any = {}) {
-      return _.mapValues(coord, (value, label) => scales[label].apply(value, { bandAware }));
+    apply(coord: any, { bandAware, position }: any = {}) {
+      return _.mapValues(coord, (value, label) => scales[label].apply(value, { bandAware, position }));
     },
 
     isInRange(coord: any) {

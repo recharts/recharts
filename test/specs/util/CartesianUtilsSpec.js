@@ -52,6 +52,9 @@ describe('createLabeldScales', () => {
       y: scaleLinear().domain([-200, 200]).range([0, 50]),
     });
     expect(scales.apply({ x: 2 }, { bandAware: true })).to.deep.equal({ x: 50 + 25 / 2. });
+    expect(scales.apply({ x: 2 }, { bandAware: true, position: 'start' })).to.deep.equal({ x: 50 });
+    expect(scales.apply({ x: 2 }, { bandAware: true, position: 'middle' })).to.deep.equal({ x: 50 + 25 / 2.0 });
+    expect(scales.apply({ x: 2 }, { bandAware: true, position: 'end' })).to.deep.equal({ x: 50 + 25 });
     expect(scales.apply({ y: 100 }, { bandAware: true })).to.deep.equal({ y: 37.5 });
   });
 
