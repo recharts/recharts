@@ -35,7 +35,7 @@ import {
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
 } from '../util/types';
-import { ContentType } from '../component/Label';
+import { ImplicitLabelType } from '../component/Label';
 
 interface BarRectangleItem extends RectangleProps {
   value?: number;
@@ -90,16 +90,7 @@ interface BarProps extends InternalBarProps {
   animationEasing?: AnimationTiming;
   animationId?: number;
   id?: string;
-  label?:
-    | boolean
-    | ReactElement<SVGElement>
-    | ((props: any) => ReactElement<SVGElement>)
-    | {
-        id?: string;
-        valueAccessor?: Function;
-        dataKey?: DataKey<any>;
-        content?: ContentType;
-      };
+  label?: ImplicitLabelType;
 }
 
 export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGPathElement>, 'radius'> & BarProps;
