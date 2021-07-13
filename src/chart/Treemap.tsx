@@ -649,7 +649,7 @@ export class Treemap extends PureComponent<Props, State> {
       return null;
     }
 
-    const { width, height, dataKey } = this.props;
+    const { width, height } = this.props;
     const { isTooltipActive, activeNode } = this.state;
     const viewBox = { x: 0, y: 0, width, height };
     const coordinate = activeNode
