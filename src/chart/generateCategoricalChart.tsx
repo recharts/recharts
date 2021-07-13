@@ -1617,7 +1617,13 @@ export const generateCategoricalChart = ({
       const { isTooltipActive, activeCoordinate, activePayload, offset, activeTooltipIndex } = this.state;
       const tooltipEventType = this.getTooltipEventType();
 
-      if (!element || !element.props.cursor || !isTooltipActive || !activeCoordinate || tooltipEventType !== 'axis') {
+      if (
+        !element ||
+        !element.props.cursor ||
+        !isTooltipActive ||
+        !activeCoordinate ||
+        (chartName !== 'ScatterChart' && tooltipEventType !== 'axis')
+      ) {
         return null;
       }
       const { layout } = this.props;
