@@ -1,4 +1,17 @@
-## 2.0.9 (Mar 24, 2021)
+## 2.0.10 (jul 13, 2021)
+
+### feat
+
+- Feat: Allow automated axis padding for "gap" and "no-gap" for barcharts with continuous axis #2457
+- Passthrough position attribute on createLabeledScales
+
+### fix
+
+- fix: barchart for a single data point #2512
+- fix: the bar label type definition #2582
+- fix: show scatter chart tooltip cross cursor #2592
+
+## 2.0.9 (mar 24, 2021)
 
 ### chore
 
