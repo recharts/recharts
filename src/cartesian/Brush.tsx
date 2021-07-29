@@ -4,7 +4,8 @@
 import React, { PureComponent, Children, ReactText, MouseEvent, ReactElement, TouchEvent, SVGProps } from 'react';
 import classNames from 'classnames';
 import { scalePoint, ScalePoint } from 'd3-scale';
-import _ from 'lodash';
+import range from 'lodash/range';
+import isFunction from 'lodash/isFunction';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -92,7 +93,7 @@ const createScale = ({
 
   const len = data.length;
   const scale = scalePoint<number>()
-    .domain(_.range(0, len))
+    .domain(range(0, len))
     .range([x, x + width - travellerWidth]);
   const scaleValues = scale.domain().map(entry => scale(entry));
 
@@ -160,7 +161,7 @@ export class Brush extends PureComponent<Props, State> {
 
     if (React.isValidElement(option)) {
       rectangle = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       rectangle = option(props);
     } else {
       rectangle = Brush.renderDefaultTraveller(props);
@@ -252,7 +253,7 @@ export class Brush extends PureComponent<Props, State> {
     const { data, tickFormatter, dataKey } = this.props;
     const text = getValueByDataKey(data[index], dataKey, index);
 
-    return _.isFunction(tickFormatter) ? tickFormatter(text, index) : text;
+    return isFunction(tickFormatter) ? tickFormatter(text, index) : text;
   }
 
   handleDrag = (e: React.Touch | MouseEvent<SVGGElement>) => {

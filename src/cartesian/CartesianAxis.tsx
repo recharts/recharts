@@ -2,7 +2,8 @@
  * @fileOverview Cartesian Axis
  */
 import React, { ReactElement, ReactNode, Component, SVGProps } from 'react';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import get from 'lodash/get';
 import classNames from 'classnames';
 import { shallowEqual } from '../util/ShallowEqual';
 import { getStringSize } from '../util/DOMUtils';
@@ -159,7 +160,7 @@ export class CartesianAxis extends Component<Props> {
     if (preserveEnd) {
       // Try to guarantee the tail to be displayed
       let tail = ticks[len - 1];
-      const tailContent = _.isFunction(tickFormatter) ? tickFormatter(tail.value, len - 1) : tail.value;
+      const tailContent = isFunction(tickFormatter) ? tickFormatter(tail.value, len - 1) : tail.value;
       const tailSize = getStringSize(tailContent)[sizeKey] + unitSize;
       const tailGap = sign * (tail.coordinate + (sign * tailSize) / 2 - end);
       result[len - 1] = tail = {
@@ -180,7 +181,7 @@ export class CartesianAxis extends Component<Props> {
     const count = preserveEnd ? len - 1 : len;
     for (let i = 0; i < count; i++) {
       let entry = result[i];
-      const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value, i) : entry.value;
+      const content = isFunction(tickFormatter) ? tickFormatter(entry.value, i) : entry.value;
       const size = getStringSize(content)[sizeKey] + unitSize;
 
       if (i === 0) {
@@ -227,7 +228,7 @@ export class CartesianAxis extends Component<Props> {
 
     for (let i = len - 1; i >= 0; i--) {
       let entry = result[i];
-      const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value, len - i - 1) : entry.value;
+      const content = isFunction(tickFormatter) ? tickFormatter(entry.value, len - i - 1) : entry.value;
       const size = getStringSize(content)[sizeKey] + unitSize;
 
       if (i === len - 1) {
@@ -375,7 +376,7 @@ export class CartesianAxis extends Component<Props> {
       };
     }
 
-    return <line {...props} className={classNames('recharts-cartesian-axis-line', _.get(axisLine, 'className'))} />;
+    return <line {...props} className={classNames('recharts-cartesian-axis-line', get(axisLine, 'className'))} />;
   }
 
   static renderTickItem(option: Props['tick'], props: any, value: ReactNode) {
@@ -383,7 +384,7 @@ export class CartesianAxis extends Component<Props> {
 
     if (React.isValidElement(option)) {
       tickItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       tickItem = option(props);
     } else {
       tickItem = (
@@ -439,14 +440,14 @@ export class CartesianAxis extends Component<Props> {
             <line
               {...tickLineProps}
               {...lineCoord}
-              className={classNames('recharts-cartesian-axis-tick-line', _.get(tickLine, 'className'))}
+              className={classNames('recharts-cartesian-axis-tick-line', get(tickLine, 'className'))}
             />
           )}
           {tick &&
             CartesianAxis.renderTickItem(
               tick,
               tickProps,
-              `${_.isFunction(tickFormatter) ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`,
+              `${isFunction(tickFormatter) ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`,
             )}
         </Layer>
       );
@@ -465,7 +466,7 @@ export class CartesianAxis extends Component<Props> {
     const { ticks, ...noTicksProps } = this.props;
     let finalTicks = ticks;
 
-    if (_.isFunction(ticksGenerator)) {
+    if (isFunction(ticksGenerator)) {
       finalTicks = ticks && ticks.length > 0 ? ticksGenerator(this.props) : ticksGenerator(noTicksProps);
     }
 

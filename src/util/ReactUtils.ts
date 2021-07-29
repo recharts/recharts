@@ -1,5 +1,9 @@
 import React, { Children, ReactNode } from 'react';
-import _ from 'lodash';
+import isArray from 'lodash/isArray';
+import get from 'lodash/get';
+import isNil from 'lodash/isNil';
+import isString from 'lodash/isString';
+import flatten from 'lodash/flatten';
 import { isFragment } from 'react-is';
 
 import { isNumber } from './DataUtils';
@@ -80,7 +84,7 @@ export const findAllByType = (
   let result: React.DetailedReactHTMLElement<any, HTMLElement>[] = [];
   let types: string[] = [];
 
-  if (_.isArray(type)) {
+  if (isArray(type)) {
     types = type.map(t => getDisplayName(t));
   } else {
     types = [getDisplayName(type)];
@@ -90,7 +94,7 @@ export const findAllByType = (
     if (isFragment(child)) {
       result = result.concat(findAllByType(child.props.children, type));
     }
-    const childType = _.get(child, 'type.displayName') || _.get(child, 'type.name');
+    const childType = get(child, 'type.displayName') || get(child, 'type.name');
     if (types.indexOf(childType) !== -1) {
       result.push(child);
     }
@@ -118,14 +122,14 @@ export const withoutType = (children: ReactNode, type: string) => {
   const newChildren: ReactNode[] = [];
   let types: string[];
 
-  if (_.isArray(type)) {
+  if (isArray(type)) {
     types = type.map(t => getDisplayName(t));
   } else {
     types = [getDisplayName(type)];
   }
 
   React.Children.forEach(children, child => {
-    const displayName = _.get(child, 'type.displayName');
+    const displayName = get(child, 'type.displayName');
 
     if (displayName && types.indexOf(displayName) !== -1) {
       return;
@@ -236,7 +240,7 @@ const SVG_TAGS: string[] = [
   'vkern',
 ];
 
-const isSvgElement = (child: any) => child && child.type && _.isString(child.type) && SVG_TAGS.indexOf(child.type) >= 0;
+const isSvgElement = (child: any) => child && child.type && isString(child.type) && SVG_TAGS.indexOf(child.type) >= 0;
 
 /**
  * Filter all the svg elements of children
@@ -277,8 +281,8 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
   if (count === 1) {
     // eslint-disable-next-line no-use-before-define,@typescript-eslint/no-use-before-define
     return isSingleChildEqual(
-      _.isArray(nextChildren) ? nextChildren[0] : nextChildren,
-      _.isArray(prevChildren) ? prevChildren[0] : prevChildren,
+      isArray(nextChildren) ? nextChildren[0] : nextChildren,
+      isArray(prevChildren) ? prevChildren[0] : prevChildren,
     );
   }
 
@@ -286,7 +290,7 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
     const nextChild: any = nextChildren[i];
     const prevChild: any = prevChildren[i];
 
-    if (_.isArray(nextChild) || _.isArray(prevChild)) {
+    if (isArray(nextChild) || isArray(prevChild)) {
       if (!isChildrenEqual(nextChild, prevChild)) {
         return false;
       }
@@ -300,10 +304,10 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
 };
 
 export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: React.ReactElement): boolean => {
-  if (_.isNil(nextChild) && _.isNil(prevChild)) {
+  if (isNil(nextChild) && isNil(prevChild)) {
     return true;
   }
-  if (!_.isNil(nextChild) && !_.isNil(prevChild)) {
+  if (!isNil(nextChild) && !isNil(prevChild)) {
     const { children: nextChildren, ...nextProps } = nextChild.props || {};
     const { children: prevChildren, ...prevProps } = prevChild.props || {};
 
@@ -341,7 +345,7 @@ export const renderByOrder = (children: React.ReactElement[], renderMap: any) =>
     }
   });
 
-  return _.flatten(elements).filter(element => !_.isNil(element));
+  return flatten(elements).filter(element => !isNil(element));
 };
 
 export const getReactEventByType = (e: any) => {

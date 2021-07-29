@@ -1,4 +1,5 @@
-import _ from 'lodash';
+import mapValues from 'lodash/mapValues';
+import every from 'lodash/every';
 import { getTicksOfScale, parseScale, checkDomainOfScale, getBandSizeOfAxis } from './ChartUtils';
 import { findChildByType } from './ReactUtils';
 import { Coordinate, AxisType } from './types';
@@ -71,9 +72,9 @@ export const formatAxisMap = (props: any, axisMap: any, offset: any, axisType: A
         layout === 'horizontal'
           ? [offset.top + offset.height - (padding.bottom || 0), offset.top + (padding.top || 0)]
           : [
-              offset.top + (padding.top || 0) + (calculatedPadding || 0),
-              offset.top + offset.height - (padding.bottom || 0) - (calculatedPadding || 0),
-            ];
+            offset.top + (padding.top || 0) + (calculatedPadding || 0),
+            offset.top + offset.height - (padding.bottom || 0) - (calculatedPadding || 0),
+          ];
     } else {
       ({ range } = axis);
     }
@@ -229,11 +230,11 @@ export const createLabeledScales = (options: Record<string, any>): LabeledScales
   return {
     ...scales,
     apply(coord: any, { bandAware, position }: any = {}) {
-      return _.mapValues(coord, (value, label) => scales[label].apply(value, { bandAware, position }));
+      return mapValues(coord, (value, label) => scales[label].apply(value, { bandAware, position }));
     },
 
     isInRange(coord: any) {
-      return _.every(coord, (value, label) => scales[label].isInRange(value));
+      return every(coord, (value, label) => scales[label].isInRange(value));
     },
   } as LabeledScales<Record<string, any>>;
 };

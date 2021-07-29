@@ -1,7 +1,7 @@
 import React, { Component, CSSProperties, SVGProps } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
-import _ from 'lodash';
+import isNil from 'lodash/isNil';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { filterProps } from '../util/types';
@@ -22,7 +22,7 @@ interface CalculatedWordWidths {
 const calculateWordWidths = (props: Props): CalculatedWordWidths => {
   try {
     let words: string[] = [];
-    if (!_.isNil(props.children)) {
+    if (!isNil(props.children)) {
       if (props.breakAll) {
         words = props.children.toString().split('');
       } else {
@@ -156,7 +156,7 @@ const calculateWordsByLines = (
 };
 
 const getWordsWithoutCalculate = (children: React.ReactNode): Array<Words> => {
-  const words = !_.isNil(children) ? children.toString().split(BREAKING_SPACES) : [];
+  const words = !isNil(children) ? children.toString().split(BREAKING_SPACES) : [];
   return [{ words }];
 };
 

@@ -1,4 +1,14 @@
-import _ from 'lodash';
+import isNil from 'lodash/isNil';
+import get from 'lodash/get';
+import isFunction from 'lodash/isFunction';
+import flatMap from 'lodash/flatMap';
+import min from 'lodash/min';
+import max from 'lodash/max';
+import isArray from 'lodash/isArray';
+import isString from 'lodash/isString';
+import upperFirst from 'lodash/upperFirst';
+import sortBy from 'lodash/sortBy';
+import isEqual from 'lodash/isEqual';
 import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
 import * as d3Scales from 'd3-scale';
 import {
@@ -18,15 +28,15 @@ import { findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 import { LayoutType, PolarLayoutType, AxisType, TickItem, BaseAxisProps, DataKey, filterProps } from './types';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<any>, defaultValue?: any) {
-  if (_.isNil(obj) || _.isNil(dataKey)) {
+  if (isNil(obj) || isNil(dataKey)) {
     return defaultValue;
   }
 
   if (isNumOrStr(dataKey as string)) {
-    return _.get(obj, dataKey as string, defaultValue);
+    return get(obj, dataKey as string, defaultValue);
   }
 
-  if (_.isFunction(dataKey)) {
+  if (isFunction(dataKey)) {
     return dataKey(obj);
   }
 
@@ -41,15 +51,15 @@ export function getValueByDataKey<T>(obj: T, dataKey: DataKey<any>, defaultValue
  * @return {Array} Domain of data
  */
 export function getDomainOfDataByKey<T>(data: Array<T>, key: string, type: string, filterNil?: boolean) {
-  const flattenData = _.flatMap(data, entry => getValueByDataKey(entry, key));
+  const flattenData = flatMap(data, entry => getValueByDataKey(entry, key));
 
   if (type === 'number') {
     const domain = flattenData.filter(entry => isNumber(entry) || parseFloat(entry));
 
-    return domain.length ? [_.min(domain), _.max(domain)] : [Infinity, -Infinity];
+    return domain.length ? [min(domain), max(domain)] : [Infinity, -Infinity];
   }
 
-  const validateData = filterNil ? flattenData.filter(entry => !_.isNil(entry)) : flattenData;
+  const validateData = filterNil ? flattenData.filter(entry => !isNil(entry)) : flattenData;
 
   // 支持Date类型的x轴
   return validateData.map(entry => (isNumOrStr(entry) || entry instanceof Date ? entry : ''));
@@ -262,7 +272,7 @@ export const getBarSizeList = ({
         result[cateId].push({
           item: barItems[0],
           stackList: barItems.slice(1),
-          barSize: _.isNil(selfSize) ? globalSize : selfSize,
+          barSize: isNil(selfSize) ? globalSize : selfSize,
         });
       }
     }
@@ -403,7 +413,7 @@ export const getDomainOfErrorBars = (data: any[], item: any, dataKey: any, axisT
   const errorBars = findAllByType(children, 'ErrorBar').filter((errorBarChild: any) => {
     const { direction } = errorBarChild.props;
 
-    return _.isNil(direction) || _.isNil(axisType) ? true : axisType.indexOf(direction) >= 0;
+    return isNil(direction) || isNil(axisType) ? true : axisType.indexOf(direction) >= 0;
   });
 
   if (errorBars && errorBars.length) {
@@ -412,12 +422,12 @@ export const getDomainOfErrorBars = (data: any[], item: any, dataKey: any, axisT
     return data.reduce(
       (result, entry) => {
         const entryValue = getValueByDataKey(entry, dataKey, 0);
-        const mainValue = _.isArray(entryValue) ? [_.min(entryValue), _.max(entryValue)] : [entryValue, entryValue];
+        const mainValue = isArray(entryValue) ? [min(entryValue), max(entryValue)] : [entryValue, entryValue];
         const errorDomain = keys.reduce(
           (prevErrorArr: [number, number], k: any) => {
             const errorValue = getValueByDataKey(entry, k, 0);
-            const lowerValue = mainValue[0] - Math.abs(_.isArray(errorValue) ? errorValue[0] : errorValue);
-            const upperValue = mainValue[1] + Math.abs(_.isArray(errorValue) ? errorValue[1] : errorValue);
+            const lowerValue = mainValue[0] - Math.abs(isArray(errorValue) ? errorValue[0] : errorValue);
+            const upperValue = mainValue[1] + Math.abs(isArray(errorValue) ? errorValue[1] : errorValue);
 
             return [Math.min(lowerValue, prevErrorArr[0]), Math.max(upperValue, prevErrorArr[1])];
           },
@@ -435,7 +445,7 @@ export const getDomainOfErrorBars = (data: any[], item: any, dataKey: any, axisT
 export const parseErrorBarsOfAxis = (data: any[], items: any[], dataKey: any, axisType: AxisType) => {
   const domains = items
     .map(item => getDomainOfErrorBars(data, item, dataKey, axisType))
-    .filter(entry => !_.isNil(entry));
+    .filter(entry => !isNil(entry));
 
   if (domains && domains.length) {
     return domains.reduce((result, entry) => [Math.min(result[0], entry[0]), Math.max(result[1], entry[1])], [
@@ -585,18 +595,18 @@ export const getTicksOfAxis = (axis: any, isGrid?: boolean, isAll?: boolean): Ti
 export const combineEventHandlers = (defaultHandler: Function, parentHandler: Function, childHandler: Function) => {
   let customizedHandler: Function;
 
-  if (_.isFunction(childHandler)) {
+  if (isFunction(childHandler)) {
     customizedHandler = childHandler;
-  } else if (_.isFunction(parentHandler)) {
+  } else if (isFunction(parentHandler)) {
     customizedHandler = parentHandler;
   }
 
-  if (_.isFunction(defaultHandler) || customizedHandler) {
+  if (isFunction(defaultHandler) || customizedHandler) {
     return (arg1: any, arg2: any, arg3: any, arg4: any) => {
-      if (_.isFunction(defaultHandler)) {
+      if (isFunction(defaultHandler)) {
         defaultHandler(arg1, arg2, arg3, arg4);
       }
-      if (_.isFunction(customizedHandler)) {
+      if (isFunction(customizedHandler)) {
         customizedHandler(arg1, arg2, arg3, arg4);
       }
     };
@@ -636,8 +646,8 @@ export const parseScale = (axis: any, chartType: string, hasBar?: boolean) => {
 
     return { scale: d3Scales.scaleLinear(), realScaleType: 'linear' };
   }
-  if (_.isString(scale)) {
-    const name = `scale${_.upperFirst(scale)}`;
+  if (isString(scale)) {
+    const name = `scale${upperFirst(scale)}`;
 
     return {
       scale: ((d3Scales as Record<string, any>)[name] || d3Scales.scalePoint)(),
@@ -645,7 +655,7 @@ export const parseScale = (axis: any, chartType: string, hasBar?: boolean) => {
     };
   }
 
-  return _.isFunction(scale) ? { scale } : { scale: d3Scales.scalePoint(), realScaleType: 'point' };
+  return isFunction(scale) ? { scale } : { scale: d3Scales.scalePoint(), realScaleType: 'point' };
 };
 const EPS = 1e-4;
 export const checkDomainOfScale = (scale: any) => {
@@ -721,7 +731,7 @@ export const offsetSign = (series: any) => {
     let negative = 0;
 
     for (let i = 0; i < n; ++i) {
-      const value = _.isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
+      const value = isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
 
       /* eslint-disable prefer-destructuring */
       if (value >= 0) {
@@ -749,7 +759,7 @@ export const offsetPositive = (series: any) => {
     let positive = 0;
 
     for (let i = 0; i < n; ++i) {
-      const value = _.isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
+      const value = isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
 
       /* eslint-disable prefer-destructuring */
       if (value >= 0) {
@@ -864,7 +874,7 @@ export const getStackGroupsByAxisId = (
  */
 export const calculateDomainOfTicks = (ticks: Array<TickItem>, type: string) => {
   if (type === 'number') {
-    return [_.min(ticks), _.max(ticks)];
+    return [min(ticks), max(ticks)];
   }
 
   return ticks;
@@ -928,7 +938,7 @@ export const getCateCoordinateOfLine = ({
 }) => {
   if (axis.type === 'category') {
     // find coordinate of category axis by the value of category
-    if (!axis.allowDuplicatedCategory && axis.dataKey && !_.isNil(entry[axis.dataKey])) {
+    if (!axis.allowDuplicatedCategory && axis.dataKey && !isNil(entry[axis.dataKey])) {
       const matchedTick = findEntryInArray(ticks, 'value', entry[axis.dataKey]);
 
       if (matchedTick) {
@@ -939,9 +949,9 @@ export const getCateCoordinateOfLine = ({
     return ticks[index] ? ticks[index].coordinate + bandSize / 2 : null;
   }
 
-  const value = getValueByDataKey(entry, !_.isNil(dataKey) ? dataKey : axis.dataKey);
+  const value = getValueByDataKey(entry, !isNil(dataKey) ? dataKey : axis.dataKey);
 
-  return !_.isNil(value) ? axis.scale(value) : null;
+  return !isNil(value) ? axis.scale(value) : null;
 };
 
 export const getCateCoordinateOfBar = ({
@@ -964,7 +974,7 @@ export const getCateCoordinateOfBar = ({
   }
   const value = getValueByDataKey(entry, axis.dataKey, axis.domain[index]);
 
-  return !_.isNil(value) ? axis.scale(value) - bandSize / 2 + offset : null;
+  return !isNil(value) ? axis.scale(value) - bandSize / 2 + offset : null;
 };
 
 export const getBaseValueOfBar = ({
@@ -1016,8 +1026,8 @@ export const getStackedDataOfItem = (item: any, stackGroups: any) => {
 const getDomainOfSingle = (data: Array<any>) =>
   data.reduce(
     (result, entry) => [
-      _.min(entry.concat([result[0]]).filter(isNumber)),
-      _.max(entry.concat([result[1]]).filter(isNumber)),
+      min(entry.concat([result[0]]).filter(isNumber)),
+      max(entry.concat([result[1]]).filter(isNumber)),
     ],
     [Infinity, -Infinity],
   );
@@ -1047,7 +1057,7 @@ export const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 export const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 
 export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allowDataOverflow: boolean) => {
-  if (!_.isArray(specifiedDomain)) {
+  if (!isArray(specifiedDomain)) {
     return dataDomain;
   }
 
@@ -1060,7 +1070,7 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
     const value = +MIN_VALUE_REG.exec(specifiedDomain[0])[1];
 
     domain[0] = dataDomain[0] - value;
-  } else if (_.isFunction(specifiedDomain[0])) {
+  } else if (isFunction(specifiedDomain[0])) {
     domain[0] = specifiedDomain[0](dataDomain[0]);
   } else {
     domain[0] = dataDomain[0];
@@ -1072,7 +1082,7 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
     const value = +MAX_VALUE_REG.exec(specifiedDomain[1])[1];
 
     domain[1] = dataDomain[1] + value;
-  } else if (_.isFunction(specifiedDomain[1])) {
+  } else if (isFunction(specifiedDomain[1])) {
     domain[1] = specifiedDomain[1](dataDomain[1]);
   } else {
     domain[1] = dataDomain[1];
@@ -1099,7 +1109,7 @@ export const getBandSizeOfAxis = (axis: any, ticks?: Array<TickItem>, isBar?: bo
   }
 
   if (axis && ticks && ticks.length >= 2) {
-    const orderedTicks = _.sortBy(ticks, o => o.coordinate);
+    const orderedTicks = sortBy(ticks, o => o.coordinate);
     let bandSize = Infinity;
 
     for (let i = 1, len = orderedTicks.length; i < len; i++) {
@@ -1130,7 +1140,7 @@ export const parseDomainOfCategoryAxis = (
     return calculatedDomain;
   }
 
-  if (_.isEqual(specifiedDomain, _.get(axisChild, 'type.defaultProps.domain'))) {
+  if (isEqual(specifiedDomain, get(axisChild, 'type.defaultProps.domain'))) {
     return calculatedDomain;
   }
 

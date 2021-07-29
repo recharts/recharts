@@ -21,7 +21,7 @@ import {
   FunctionComponent,
   ReactElement,
 } from 'react';
-import _ from 'lodash';
+import isObject from 'lodash/isObject';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'd3-scale';
 
 export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette';
@@ -1089,7 +1089,7 @@ export const filterProps = (
     inputProps = props.props as Record<string, any>;
   }
 
-  if (!_.isObject(inputProps)) {
+  if (!isObject(inputProps)) {
     return null;
   }
 
@@ -1123,7 +1123,7 @@ export const adaptEventHandlers = (
     inputProps = props.props as Record<string, any>;
   }
 
-  if (!_.isObject(inputProps)) {
+  if (!isObject(inputProps)) {
     return null;
   }
 
@@ -1149,7 +1149,7 @@ export const adaptEventsOfChild = (
   data: any,
   index: number,
 ): Record<string, (e?: Event) => any> => {
-  if (!_.isObject(props) || typeof props !== 'object') {
+  if (!isObject(props) || typeof props !== 'object') {
     return null;
   }
 

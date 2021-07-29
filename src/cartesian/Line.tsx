@@ -4,7 +4,9 @@
 import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import isNil from 'lodash/isNil';
+import isEqual from 'lodash/isEqual';
 import { Curve, CurveType, Props as CurveProps, Point as CurvePoint } from '../shape/Curve';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
@@ -144,14 +146,14 @@ export class Line extends PureComponent<Props, State> {
       if (layout === 'horizontal') {
         return {
           x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-          y: _.isNil(value) ? null : yAxis.scale(value),
+          y: isNil(value) ? null : yAxis.scale(value),
           value,
           payload: entry,
         };
       }
 
       return {
-        x: _.isNil(value) ? null : xAxis.scale(value),
+        x: isNil(value) ? null : xAxis.scale(value),
         y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
         value,
         payload: entry,
@@ -297,7 +299,7 @@ export class Line extends PureComponent<Props, State> {
 
     if (React.isValidElement(option)) {
       dotItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       dotItem = option(props);
     } else {
       const className = classNames('recharts-line-dot', option ? (option as DotProps).className : '');
@@ -443,7 +445,7 @@ export class Line extends PureComponent<Props, State> {
       isAnimationActive &&
       points &&
       points.length &&
-      ((!prevPoints && totalLength > 0) || !_.isEqual(prevPoints, points))
+      ((!prevPoints && totalLength > 0) || !isEqual(prevPoints, points))
     ) {
       return this.renderCurveWithAnimation(needClip, clipPathId);
     }
@@ -462,7 +464,7 @@ export class Line extends PureComponent<Props, State> {
     const hasSinglePoint = points.length === 1;
     const layerClass = classNames('recharts-line', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
-    const clipPathId = _.isNil(id) ? this.id : id;
+    const clipPathId = isNil(id) ? this.id : id;
 
     return (
       <Layer className={layerClass}>

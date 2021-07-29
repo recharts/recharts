@@ -4,7 +4,9 @@
 import React, { PureComponent, ReactElement, ReactNode } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import isArray from 'lodash/isArray';
+import isEqual from 'lodash/isEqual';
 import { Sector, Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
 import { findAllByType } from '../util/ReactUtils';
@@ -146,7 +148,7 @@ export class RadialBar extends PureComponent<Props, State> {
         value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
       } else {
         value = getValueByDataKey(entry, dataKey);
-        if (!_.isArray(value)) {
+        if (!isArray(value)) {
           value = [baseValue, value];
         }
       }
@@ -253,7 +255,7 @@ export class RadialBar extends PureComponent<Props, State> {
     const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
 
-    if (_.isFunction(onAnimationEnd)) {
+    if (isFunction(onAnimationEnd)) {
       onAnimationEnd();
     }
   };
@@ -263,7 +265,7 @@ export class RadialBar extends PureComponent<Props, State> {
 
     this.setState({ isAnimationFinished: false });
 
-    if (_.isFunction(onAnimationStart)) {
+    if (isFunction(onAnimationStart)) {
       onAnimationStart();
     }
   };
@@ -273,7 +275,7 @@ export class RadialBar extends PureComponent<Props, State> {
 
     if (React.isValidElement(shape)) {
       sectorShape = React.cloneElement(shape, props);
-    } else if (_.isFunction(shape)) {
+    } else if (isFunction(shape)) {
       sectorShape = shape(props);
     } else {
       sectorShape = React.createElement(Sector, props);
@@ -348,7 +350,7 @@ export class RadialBar extends PureComponent<Props, State> {
     const { data, isAnimationActive } = this.props;
     const { prevData } = this.state;
 
-    if (isAnimationActive && data && data.length && (!prevData || !_.isEqual(prevData, data))) {
+    if (isAnimationActive && data && data.length && (!prevData || !isEqual(prevData, data))) {
       return this.renderSectorsWithAnimation();
     }
 

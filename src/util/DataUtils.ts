@@ -1,4 +1,8 @@
-import _ from 'lodash';
+import get from 'lodash/get';
+import _isNaN from 'lodash/isNaN';
+import _isNumber from 'lodash/isNumber';
+import isArray from 'lodash/isArray';
+import isString from 'lodash/isString';
 
 export const mathSign = (value: number) => {
   if (value === 0) {
@@ -11,11 +15,11 @@ export const mathSign = (value: number) => {
   return -1;
 };
 
-export const isPercent = (value: string | number) => _.isString(value) && value.indexOf('%') === value.length - 1;
+export const isPercent = (value: string | number) => isString(value) && value.indexOf('%') === value.length - 1;
 
-export const isNumber = (value: any) => _.isNumber(value) && !_.isNaN(value);
+export const isNumber = (value: any) => _isNumber(value) && !_isNaN(value);
 
-export const isNumOrStr = (value: number | string) => isNumber(value as number) || _.isString(value);
+export const isNumOrStr = (value: number | string) => _isNumber(value as number) || isString(value);
 
 let idCounter = 0;
 export const uniqueId = (prefix?: string) => {
@@ -32,7 +36,7 @@ export const uniqueId = (prefix?: string) => {
  * @return {Number} value
  */
 export const getPercentValue = (percent: number | string, totalValue: number, defaultValue = 0, validate = false) => {
-  if (!isNumber(percent as number) && !_.isString(percent)) {
+  if (!isNumber(percent as number) && !isString(percent)) {
     return defaultValue;
   }
 
@@ -45,7 +49,7 @@ export const getPercentValue = (percent: number | string, totalValue: number, de
     value = +percent;
   }
 
-  if (_.isNaN(value)) {
+  if (_isNaN(value)) {
     value = defaultValue;
   }
 
@@ -71,7 +75,7 @@ export const getAnyElementOfObject = (obj: any) => {
 };
 
 export const hasDuplicate = (ary: Array<any>) => {
-  if (!_.isArray(ary)) {
+  if (!isArray(ary)) {
     return false;
   }
 
@@ -109,7 +113,7 @@ export function findEntryInArray<T>(
   return ary.find(
     entry =>
       entry &&
-      (typeof specifiedKey === 'function' ? specifiedKey(entry) : _.get(entry, specifiedKey)) === specifiedValue,
+      (typeof specifiedKey === 'function' ? specifiedKey(entry) : get(entry, specifiedKey)) === specifiedValue,
   );
 }
 

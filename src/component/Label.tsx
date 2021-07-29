@@ -1,5 +1,7 @@
 import React, { cloneElement, isValidElement, ReactNode, ReactElement, createElement, SVGProps } from 'react';
-import _ from 'lodash';
+import isObject from 'lodash/isObject';
+import isFunction from 'lodash/isFunction';
+import isNil from 'lodash/isNil';
 import classNames from 'classnames';
 import { Text } from './Text';
 import { findAllByType } from '../util/ReactUtils';
@@ -16,31 +18,31 @@ interface LabelProps {
   value?: number | string;
   offset?: number;
   position?:
-    | 'top'
-    | 'left'
-    | 'right'
-    | 'bottom'
-    | 'inside'
-    | 'outside'
-    | 'insideLeft'
-    | 'insideRight'
-    | 'insideTop'
-    | 'insideBottom'
-    | 'insideTopLeft'
-    | 'insideBottomLeft'
-    | 'insideTopRight'
-    | 'insideBottomRight'
-    | 'insideStart'
-    | 'insideEnd'
-    | 'end'
-    | 'center'
-    | 'centerTop'
-    | 'centerBottom'
-    | 'middle'
-    | {
-        x?: number;
-        y?: number;
-      };
+  | 'top'
+  | 'left'
+  | 'right'
+  | 'bottom'
+  | 'inside'
+  | 'outside'
+  | 'insideLeft'
+  | 'insideRight'
+  | 'insideTop'
+  | 'insideBottom'
+  | 'insideTopLeft'
+  | 'insideBottomLeft'
+  | 'insideTopRight'
+  | 'insideBottomRight'
+  | 'insideStart'
+  | 'insideEnd'
+  | 'end'
+  | 'center'
+  | 'centerTop'
+  | 'centerBottom'
+  | 'middle'
+  | {
+    x?: number;
+    y?: number;
+  };
   children?: ReactNode;
   className?: string;
   content?: ContentType;
@@ -60,9 +62,9 @@ export type ImplicitLabelType =
 
 const getLabel = (props: Props) => {
   const { value, formatter } = props;
-  const label = _.isNil(props.children) ? value : props.children;
+  const label = isNil(props.children) ? value : props.children;
 
-  if (_.isFunction(formatter)) {
+  if (isFunction(formatter)) {
     return formatter(label);
   }
 
@@ -102,7 +104,7 @@ const renderRadialLabel = (labelProps: Props, label: ReactNode, attrs: SVGProps<
   const path = `M${startPoint.x},${startPoint.y}
     A${radius},${radius},0,1,${direction ? 0 : 1},
     ${endPoint.x},${endPoint.y}`;
-  const id = _.isNil(labelProps.id) ? uniqueId('recharts-radial-line-') : labelProps.id;
+  const id = isNil(labelProps.id) ? uniqueId('recharts-radial-line-') : labelProps.id;
 
   return (
     <text {...attrs} dominantBaseline="central" className={classNames('recharts-radial-bar-label', className)}>
@@ -196,9 +198,9 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       ...attrs,
       ...(parentViewBox
         ? {
-            height: Math.max(y - (parentViewBox as CartesianViewBox).y, 0),
-            width,
-          }
+          height: Math.max(y - (parentViewBox as CartesianViewBox).y, 0),
+          width,
+        }
         : {}),
     };
   }
@@ -215,12 +217,12 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       ...attrs,
       ...(parentViewBox
         ? {
-            height: Math.max(
-              (parentViewBox as CartesianViewBox).y + (parentViewBox as CartesianViewBox).height - (y + height),
-              0,
-            ),
-            width,
-          }
+          height: Math.max(
+            (parentViewBox as CartesianViewBox).y + (parentViewBox as CartesianViewBox).height - (y + height),
+            0,
+          ),
+          width,
+        }
         : {}),
     };
   }
@@ -237,9 +239,9 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       ...attrs,
       ...(parentViewBox
         ? {
-            width: Math.max(attrs.x - (parentViewBox as CartesianViewBox).x, 0),
-            height,
-          }
+          width: Math.max(attrs.x - (parentViewBox as CartesianViewBox).x, 0),
+          height,
+        }
         : {}),
     };
   }
@@ -255,12 +257,12 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       ...attrs,
       ...(parentViewBox
         ? {
-            width: Math.max(
-              (parentViewBox as CartesianViewBox).x + (parentViewBox as CartesianViewBox).width - attrs.x,
-              0,
-            ),
-            height,
-          }
+          width: Math.max(
+            (parentViewBox as CartesianViewBox).x + (parentViewBox as CartesianViewBox).width - attrs.x,
+            0,
+          ),
+          height,
+        }
         : {}),
     };
   }
@@ -348,7 +350,7 @@ const getAttrsOfCartesianLabel = (props: Props) => {
   }
 
   if (
-    _.isObject(position) &&
+    isObject(position) &&
     (isNumber(position.x) || isPercent(position.x)) &&
     (isNumber(position.y) || isPercent(position.y))
   ) {
@@ -375,7 +377,7 @@ const isPolar = (viewBox: CartesianViewBox | PolarViewBox) => isNumber((viewBox 
 export function Label(props: Props) {
   const { viewBox, position, value, children, content, className = '', textBreakAll } = props;
 
-  if (!viewBox || (_.isNil(value) && _.isNil(children) && !isValidElement(content) && !_.isFunction(content))) {
+  if (!viewBox || (isNil(value) && isNil(children) && !isValidElement(content) && !isFunction(content))) {
     return null;
   }
 
@@ -384,7 +386,7 @@ export function Label(props: Props) {
   }
 
   let label: ReactNode;
-  if (_.isFunction(content)) {
+  if (isFunction(content)) {
     label = createElement(content as any, props);
 
     if (isValidElement(label)) {
@@ -498,11 +500,11 @@ const parseLabel = (label: any, viewBox: ViewBox) => {
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
   }
 
-  if (_.isFunction(label)) {
+  if (isFunction(label)) {
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
   }
 
-  if (_.isObject(label)) {
+  if (isObject(label)) {
     return <Label viewBox={viewBox} {...label} key="label-implicit" />;
   }
 

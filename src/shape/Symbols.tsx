@@ -2,7 +2,7 @@
  * @fileOverview Curve
  */
 import React, { PureComponent, SVGProps } from 'react';
-import _ from 'lodash';
+import upperFirst from 'lodash/upperFirst';
 import {
   symbol as shapeSymbol,
   symbolCircle,
@@ -35,7 +35,7 @@ const symbolFactories: SymbolFactory = {
 const RADIAN = Math.PI / 180;
 
 const getSymbolFactory = (type: SymbolType) => {
-  const name = `symbol${_.upperFirst(type)}`;
+  const name = `symbol${upperFirst(type)}`;
 
   return symbolFactories[name] || symbolCircle;
 };
@@ -85,7 +85,7 @@ export class Symbols extends PureComponent<Props> {
   };
 
   static registerSymbol = (key: string, factory: D3SymbolType) => {
-    symbolFactories[`symbol${_.upperFirst(key)}`] = factory;
+    symbolFactories[`symbol${upperFirst(key)}`] = factory;
   };
 
   /**

@@ -4,7 +4,12 @@
 import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
-import _ from 'lodash';
+import isNumber from 'lodash/isNumber';
+import isString from 'lodash/isString';
+import isFunction from 'lodash/isFunction';
+import omit from 'lodash/omit';
+import isPlainObject from 'lodash/isPlainObject';
+import isEqual from 'lodash/isEqual';
 import { Layer } from '../container/Layer';
 import { Trapezoid, Props as TrapezoidProps } from '../shape/Trapezoid';
 import { LabelList } from '../component/LabelList';
@@ -111,9 +116,9 @@ export class Funnel extends PureComponent<Props, State> {
     const realHeight = height;
     let realWidth = width;
 
-    if (_.isNumber(customWidth)) {
+    if (isNumber(customWidth)) {
       realWidth = customWidth;
-    } else if (_.isString(customWidth)) {
+    } else if (isString(customWidth)) {
       realWidth = (realWidth * parseFloat(customWidth)) / 100;
     }
 
@@ -180,7 +185,7 @@ export class Funnel extends PureComponent<Props, State> {
         val,
         tooltipPayload,
         tooltipPosition,
-        ..._.omit(entry, 'width'),
+        ...omit(entry, 'width'),
         payload: entry,
         parentViewBox,
         labelViewBox: {
@@ -239,7 +244,7 @@ export class Funnel extends PureComponent<Props, State> {
     const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
 
-    if (_.isFunction(onAnimationEnd)) {
+    if (isFunction(onAnimationEnd)) {
       onAnimationEnd();
     }
   };
@@ -248,7 +253,7 @@ export class Funnel extends PureComponent<Props, State> {
     const { onAnimationStart } = this.props;
     this.setState({ isAnimationFinished: false });
 
-    if (_.isFunction(onAnimationStart)) {
+    if (isFunction(onAnimationStart)) {
       onAnimationStart();
     }
   };
@@ -267,10 +272,10 @@ export class Funnel extends PureComponent<Props, State> {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     }
-    if (_.isFunction(option)) {
+    if (isFunction(option)) {
       return option(props);
     }
-    if (_.isPlainObject(option)) {
+    if (isPlainObject(option)) {
       return <Trapezoid {...props} {...option} />;
     }
 
@@ -372,7 +377,7 @@ export class Funnel extends PureComponent<Props, State> {
       isAnimationActive &&
       trapezoids &&
       trapezoids.length &&
-      (!prevTrapezoids || !_.isEqual(prevTrapezoids, trapezoids))
+      (!prevTrapezoids || !isEqual(prevTrapezoids, trapezoids))
     ) {
       return this.renderTrapezoidsWithAnimation();
     }

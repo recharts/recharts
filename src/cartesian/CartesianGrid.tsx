@@ -2,7 +2,7 @@
  * @fileOverview Cartesian Grid
  */
 import React, { PureComponent, ReactElement, SVGProps } from 'react';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
 import { isNumber } from '../util/DataUtils';
 import { ChartOffset, D3Scale, filterProps } from '../util/types';
 
@@ -63,7 +63,7 @@ export class CartesianGrid extends PureComponent<Props> {
 
     if (React.isValidElement(option)) {
       lineItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       lineItem = option(props);
     } else {
       const { x1, y1, x2, y2, key, ...others } = props;
@@ -271,12 +271,12 @@ export class CartesianGrid extends PureComponent<Props> {
     let { horizontalPoints, verticalPoints } = this.props;
 
     // No horizontal points are specified
-    if ((!horizontalPoints || !horizontalPoints.length) && _.isFunction(horizontalCoordinatesGenerator)) {
+    if ((!horizontalPoints || !horizontalPoints.length) && isFunction(horizontalCoordinatesGenerator)) {
       horizontalPoints = horizontalCoordinatesGenerator({ yAxis, width: chartWidth, height: chartHeight, offset });
     }
 
     // No vertical points are specified
-    if ((!verticalPoints || !verticalPoints.length) && _.isFunction(verticalCoordinatesGenerator)) {
+    if ((!verticalPoints || !verticalPoints.length) && isFunction(verticalCoordinatesGenerator)) {
       verticalPoints = verticalCoordinatesGenerator({ xAxis, width: chartWidth, height: chartHeight, offset });
     }
 

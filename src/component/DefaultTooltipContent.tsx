@@ -1,13 +1,15 @@
 /**
  * @fileOverview Default Tooltip Content
  */
-import _ from 'lodash';
+ import isArray from 'lodash/isArray';
+ import sortBy from 'lodash/sortBy';
+ import isNil from 'lodash/isNil';
 import React, { PureComponent, CSSProperties, ReactNode } from 'react';
 import classNames from 'classnames';
 import { isNumOrStr } from '../util/DataUtils';
 
 function defaultFormatter<T>(value: T) {
-  return _.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1]) ? value.join(' ~ ') : value;
+  return isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1]) ? value.join(' ~ ') : value;
 }
 
 export type TooltipType = 'none';
@@ -64,7 +66,7 @@ export class DefaultTooltipContent<TValue extends ValueType, TName extends NameT
     if (payload && payload.length) {
       const listStyle = { padding: 0, margin: 0 };
 
-      const items = (itemSorter ? _.sortBy(payload, itemSorter) : payload).map((entry, i) => {
+      const items = (itemSorter ? sortBy(payload, itemSorter) : payload).map((entry, i) => {
         if (entry.type === 'none') {
           return null;
         }
@@ -121,7 +123,7 @@ export class DefaultTooltipContent<TValue extends ValueType, TName extends NameT
       margin: 0,
       ...labelStyle,
     };
-    const hasLabel = !_.isNil(label);
+    const hasLabel = !isNil(label);
     let finalLabel = hasLabel ? label : '';
     const wrapperCN = classNames('recharts-default-tooltip', wrapperClassName);
     const labelCN = classNames('recharts-tooltip-label', labelClassName);

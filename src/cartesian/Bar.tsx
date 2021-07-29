@@ -4,7 +4,10 @@
 import React, { PureComponent, ReactElement } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import isNil from 'lodash/isNil';
+import isEqual from 'lodash/isEqual';
+import isArray from 'lodash/isArray';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
 import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
@@ -177,7 +180,7 @@ export class Bar extends PureComponent<Props, State> {
       } else {
         value = getValueByDataKey(entry, dataKey);
 
-        if (!_.isArray(value)) {
+        if (!isArray(value)) {
           value = [baseValue, value];
         }
       }
@@ -284,7 +287,7 @@ export class Bar extends PureComponent<Props, State> {
 
     if (React.isValidElement(option)) {
       rectangle = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       rectangle = option(props);
     } else {
       rectangle = <Rectangle {...props} />;
@@ -385,7 +388,7 @@ export class Bar extends PureComponent<Props, State> {
     const { data, isAnimationActive } = this.props;
     const { prevData } = this.state;
 
-    if (isAnimationActive && data && data.length && (!prevData || !_.isEqual(prevData, data))) {
+    if (isAnimationActive && data && data.length && (!prevData || !isEqual(prevData, data))) {
       return this.renderRectanglesWithAnimation();
     }
 
@@ -477,7 +480,7 @@ export class Bar extends PureComponent<Props, State> {
     const { isAnimationFinished } = this.state;
     const layerClass = classNames('recharts-bar', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
-    const clipPathId = _.isNil(id) ? this.id : id;
+    const clipPathId = isNil(id) ? this.id : id;
 
     return (
       <Layer className={layerClass}>

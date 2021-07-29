@@ -3,7 +3,9 @@
  */
 import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps } from 'react';
 import { translateStyle } from 'react-smooth';
-import _ from 'lodash';
+import isNil from 'lodash/isNil';
+import uniqBy from 'lodash/uniqBy';
+import isFunction from 'lodash/isFunction';
 import classNames from 'classnames';
 import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
 
@@ -28,11 +30,11 @@ function getUniqPayload<TValue extends ValueType, TName extends NameType>(
   payload: Array<Payload<TValue, TName>>,
 ) {
   if (option === true) {
-    return _.uniqBy(payload, defaultUniqBy);
+    return uniqBy(payload, defaultUniqBy);
   }
 
-  if (_.isFunction(option)) {
-    return _.uniqBy(payload, option);
+  if (isFunction(option)) {
+    return uniqBy(payload, option);
   }
 
   return payload;
@@ -45,7 +47,7 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
   }
-  if (_.isFunction(content)) {
+  if (isFunction(content)) {
     return React.createElement(content as any, props);
   }
 
@@ -180,7 +182,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
     const { payload, isAnimationActive, animationDuration, animationEasing, filterNull, payloadUniqBy } = this.props;
     const finalPayload = getUniqPayload(
       payloadUniqBy,
-      filterNull && payload && payload.length ? payload.filter(entry => !_.isNil(entry.value)) : payload,
+      filterNull && payload && payload.length ? payload.filter(entry => !isNil(entry.value)) : payload,
     );
     const hasPayload = finalPayload && finalPayload.length;
     const { content, viewBox, coordinate, position, active, wrapperStyle } = this.props;
