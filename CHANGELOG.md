@@ -1,5 +1,14 @@
-## 2.0.10 (jul 13, 2021)
+## 2.1.0 (aug 10, 2021)
 
+### feat
+
+- Wrap ResponsiveContainer with forwardRef
+
+### fix
+
+- Fix for recharts issue #1787
+- Add chart type to tooltip payload
+## 2.0.10 (jul 13, 2021)
 ### feat
 
 - Feat: Allow automated axis padding for "gap" and "no-gap" for barcharts with continuous axis #2457
