@@ -2,8 +2,8 @@
  * @fileOverview Wrapper component to make charts adapt to the size of parent * DOM
  */
 import classNames from 'classnames';
-import _ from 'lodash';
-import React, { Component, ReactElement } from 'react';
+import { default as lodashDebounce } from 'lodash/debounce';
+import React, { ReactElement, forwardRef, cloneElement, useState, useImperativeHandle, useRef, useEffect } from 'react';
 import ReactResizeDetector from 'react-resize-detector/build/withPolyfill';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
@@ -26,84 +26,56 @@ interface State {
   containerHeight: number;
 }
 
-export class ResponsiveContainer extends Component<Props, State> {
-  static defaultProps = {
-    width: '100%',
-    height: '100%',
-    debounce: 0,
-  };
+export const ResponsiveContainer = forwardRef((
+  { aspect, width = '100%', height = '100%', minWidth, minHeight, maxHeight, children, debounce = 0, id, className }: Props,
+  ref
+) => {
 
-  private handleResize: () => void;
+  const [sizes, setSizes] = useState<State>({
+    containerWidth: -1,
+    containerHeight: -1,
+  });
+  const containerRef = useRef<HTMLDivElement>(null);
+  useImperativeHandle(ref, () => containerRef, [containerRef])
 
-  private mounted: boolean;
+  let mounted: boolean;
 
-  private containerRef: React.RefObject<HTMLDivElement>;
-
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {
-      containerWidth: -1,
-      containerHeight: -1,
-    };
-
-    this.handleResize =
-      props.debounce > 0 ? _.debounce(this.updateDimensionsImmediate, props.debounce) : this.updateDimensionsImmediate;
-
-    this.containerRef = React.createRef<HTMLDivElement>();
-  }
-
-  /* eslint-disable  react/no-did-mount-set-state */
-  componentDidMount() {
-    this.mounted = true;
-
-    const size = this.getContainerSize();
-
-    if (size) {
-      this.setState(size);
-    }
-  }
-
-  componentWillUnmount() {
-    this.mounted = false;
-  }
-
-  getContainerSize() {
-    if (!this.containerRef.current) {
+  const getContainerSize = () => {
+    if (!containerRef.current) {
       return null;
     }
 
     return {
-      containerWidth: this.containerRef.current.clientWidth,
-      containerHeight: this.containerRef.current.clientHeight,
+      containerWidth: containerRef.current.clientWidth,
+      containerHeight: containerRef.current.clientHeight,
     };
   }
 
-  updateDimensionsImmediate = () => {
-    if (!this.mounted) {
+  const updateDimensionsImmediate = () => {
+    if (!mounted) {
       return;
     }
 
-    const newSize = this.getContainerSize();
+    const newSize = getContainerSize();
 
     if (newSize) {
-      const { containerWidth: oldWidth, containerHeight: oldHeight } = this.state;
+      const { containerWidth: oldWidth, containerHeight: oldHeight } = sizes;
       const { containerWidth, containerHeight } = newSize;
 
       if (containerWidth !== oldWidth || containerHeight !== oldHeight) {
-        this.setState({ containerWidth, containerHeight });
+        setSizes({ containerWidth, containerHeight });
       }
     }
   };
 
-  renderChart() {
-    const { containerWidth, containerHeight } = this.state;
+  const handleResize = debounce > 0 ? lodashDebounce(updateDimensionsImmediate, debounce) : updateDimensionsImmediate;
+
+  const renderChart = () => {
+    const { containerWidth, containerHeight } = sizes;
 
     if (containerWidth < 0 || containerHeight < 0) {
       return null;
     }
-
-    const { aspect, width, height, minWidth, minHeight, maxHeight, children } = this.props;
 
     warn(
       isPercent(width) || isPercent(height),
@@ -149,27 +121,36 @@ export class ResponsiveContainer extends Component<Props, State> {
       aspect,
     );
 
-    return React.cloneElement(children, {
+    return cloneElement(children, {
       width: calculatedWidth,
       height: calculatedHeight,
     });
-  }
+  }  
 
-  render() {
-    const { minWidth, minHeight, width, height, maxHeight, id, className } = this.props;
-    const style = { width, height, minWidth, minHeight, maxHeight };
+  useEffect(() => {
+    mounted = true;
 
-    return (
-      <ReactResizeDetector handleWidth handleHeight onResize={this.handleResize} targetRef={this.containerRef}>
-        <div
-          {...(id != null ? { id: `${id}` } : {})}
-          className={classNames('recharts-responsive-container', className)}
-          style={style}
-          ref={this.containerRef}
-        >
-          {this.renderChart()}
-        </div>
-      </ReactResizeDetector>
-    );
-  }
-}
+    const size = getContainerSize();
+
+    if (size) {
+      setSizes(size);
+    }
+
+    return () => { mounted = false };
+  }, [])
+
+  const style = { width, height, minWidth, minHeight, maxHeight };
+
+  return (
+    <ReactResizeDetector handleWidth handleHeight onResize={handleResize} targetRef={containerRef}>
+      <div
+        {...(id != null ? { id: `${id}` } : {})}
+        className={classNames('recharts-responsive-container', className)}
+        style={style}
+        ref={containerRef}
+      >
+        {renderChart()}
+      </div>
+    </ReactResizeDetector>
+  );
+});
