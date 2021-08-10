@@ -30,6 +30,7 @@ export interface Payload<TValue extends ValueType, TName extends NameType> {
   unit?: ReactNode;
   dataKey?: string | number;
   payload?: any;
+  chartType?: string;
 }
 
 export interface Props<TValue extends ValueType, TName extends NameType> {
