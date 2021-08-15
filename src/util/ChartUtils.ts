@@ -1148,7 +1148,7 @@ export const parseDomainOfCategoryAxis = (
 };
 
 export const getTooltipItem = (graphicalItem: any, payload: any) => {
-  const { dataKey, name, unit, formatter, tooltipType } = graphicalItem.props;
+  const { dataKey, name, unit, formatter, tooltipType, chartType } = graphicalItem.props;
 
   return {
     ...filterProps(graphicalItem),
@@ -1160,5 +1160,6 @@ export const getTooltipItem = (graphicalItem: any, payload: any) => {
     value: getValueByDataKey(payload, dataKey),
     type: tooltipType,
     payload,
+    chartType,
   };
 };
