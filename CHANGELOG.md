@@ -1,3 +1,15 @@
+## 2.1.2 (aug 24, 2021)
+
+### fix
+
+- Fixes undefined field reference when optional variables not supplied (#2630)
+- Fix fragment children (#2481)
+## 2.1.1 (aug 21, 2021)
+
+### fix
+
+- Fix: responsive container
+
 ## 2.1.0 (aug 10, 2021)
 
 ### feat
