@@ -759,7 +759,7 @@ export const generateCategoricalChart = ({
     const { numericAxisName, cateAxisName } = getAxisNameByLayout(layout);
     const hasBar = hasGraphicalBarItem(graphicalItems);
     const sizeList = hasBar && getBarSizeList({ barSize, stackGroups });
-    const formatedItems = [] as any[];
+    const formattedItems = [] as any[];
 
     graphicalItems.forEach((item: any, index: number) => {
       const displayedData = getDisplayedData(props.data, { dataStartIndex, dataEndIndex }, item);
@@ -810,7 +810,7 @@ export const generateCategoricalChart = ({
       const composedFn = item && item.type && item.type.getComposedData;
 
       if (composedFn) {
-        formatedItems.push({
+        formattedItems.push({
           props: {
             ...composedFn({
               ...axisObj,
@@ -837,7 +837,7 @@ export const generateCategoricalChart = ({
       }
     });
 
-    return formatedItems;
+    return formattedItems;
   };
 
   /**
@@ -1369,9 +1369,7 @@ export const generateCategoricalChart = ({
 
     /**
      * The handler of mouse entering a scatter
-     * @param {Object} el     The active scatter
-     * @param {Number} index  the index of the item
-     * @param {Object} e      the click event
+     * @param {Object} el The active scatter
      * @return {Object} no return
      */
     handleItemMouseEnter = (el: any) => {

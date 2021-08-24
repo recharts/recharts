@@ -9,6 +9,7 @@ import {
   isSingleChildEqual,
   isChildrenEqual,
   findAllByType,
+  toArray,
 } from '../../../src/util/ReactUtils';
 import { filterProps, adaptEventHandlers, adaptEventsOfChild } from '../../../src/util/types';
 import { mount, render } from 'enzyme';
@@ -252,5 +253,96 @@ describe('ReactUtils', () => {
     const lineChildren = findAllByType(children, Line.displayName);
     expect(lineChildren.length).to.equal(4);
     expect(lineChildren.map(child => child.key)).to.deep.equal(['a', 'b', 'c', 'd']);
+  });
+
+  describe('toArray', () => {
+    it('basic', () => {
+      const wrapper = mount(
+        <ul>
+          <li key="1">1</li>
+          <li key="2">2</li>
+          <li key="3">3</li>
+        </ul>,
+      );
+
+      const children = toArray(wrapper.props().children);
+      expect(children.length).to.equal(3);
+      expect(children.map(c => c.key)).to.deep.equal(['1', '2', '3']);
+    });
+
+    it('Array', () => {
+      const wrapper = mount(
+        <ul>
+          <li key="1">1</li>
+          {[<li key="2">2</li>, <li key="3">3</li>]}
+        </ul>,
+      );
+
+      const children = toArray(wrapper.props().children);
+      expect(children.length).to.equal(3);
+      expect(children.map(c => c.key)).to.deep.equal(['1', '2', '3']);
+    });
+
+    it('Ignores `undefined` and `null`', () => {
+      const wrapper = mount(
+        <ul>
+          {null}
+          <li key="1"></li>
+          {null}
+          {undefined}
+          <li key="2"></li>
+          {undefined}
+          <li key="3"></li>
+        </ul>,
+      );
+      const children = toArray(wrapper.props().children);
+      expect(children.length).to.equal(3);
+      expect(children.map(c => c.key)).to.deep.equal(['1', '2', '3']);
+    });
+
+    it('Iterable', () => {
+      const iterable = {
+        [Symbol.iterator]: function* () {
+          yield <li key="5">5</li>;
+          yield null;
+          yield <li key="6">6</li>;
+        },
+      };
+
+      const wrapper = mount(
+        <ul>
+          {[<li key="1">1</li>]}
+          <li key="2">2</li>
+          {null}
+          {new Set([<li key="3">3</li>, <li key="4">4</li>])}
+          {iterable}
+        </ul>,
+      );
+      const children = toArray(wrapper.props().children);
+      expect(children.length).to.equal(6);
+      expect(children.map(c => c.key)).to.deep.equal(['1', '2', '3', '4', '5', '6']);
+    });
+
+    it('Fragment', () => {
+      const wrapper = mount(
+        <ul>
+          <li key="1">1</li>
+          <>
+            <li key="2">2</li>
+            <li key="3">3</li>
+          </>
+          <React.Fragment>
+            <>
+              <li key="4">4</li>
+              <li key="5">5</li>
+            </>
+          </React.Fragment>
+        </ul>,
+      );
+
+      const children = toArray(wrapper.props().children);
+      expect(children.length).to.equal(5);
+      expect(children.map(c => c.key)).to.deep.equal(['1', '2', '3', '4', '5']);
+    });
   });
 });
