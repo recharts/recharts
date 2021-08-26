@@ -3,7 +3,7 @@
  */
 import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import _ from 'lodash';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
@@ -434,7 +434,7 @@ export class Scatter extends PureComponent<Props, State> {
       return null;
     }
     const { isAnimationFinished } = this.state;
-    const layerClass = classNames('recharts-scatter', className);
+    const layerClass = clsx('recharts-scatter', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
     const clipPathId = _.isNil(id) ? this.id : id;
 

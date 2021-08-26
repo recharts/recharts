@@ -18,7 +18,7 @@ import {
   curveStepAfter,
   curveStepBefore,
 } from 'd3-shape';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import _ from 'lodash';
 import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers, filterProps } from '../util/types';
 import { isNumber } from '../util/DataUtils';
@@ -152,7 +152,7 @@ export class Curve extends PureComponent<Props> {
       <path
         {...filterProps(this.props)}
         {...adaptEventHandlers(this.props)}
-        className={classNames('recharts-curve', className)}
+        className={clsx('recharts-curve', className)}
         d={realPath}
         ref={pathRef}
       />

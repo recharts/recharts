@@ -3,7 +3,7 @@
  */
 import React, { ReactElement, ReactNode, Component, SVGProps } from 'react';
 import _ from 'lodash';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { shallowEqual } from '../util/ShallowEqual';
 import { getStringSize } from '../util/DOMUtils';
 import { Layer } from '../container/Layer';
@@ -375,7 +375,7 @@ export class CartesianAxis extends Component<Props> {
       };
     }
 
-    return <line {...props} className={classNames('recharts-cartesian-axis-line', _.get(axisLine, 'className'))} />;
+    return <line {...props} className={clsx('recharts-cartesian-axis-line', _.get(axisLine, 'className'))} />;
   }
 
   static renderTickItem(option: Props['tick'], props: any, value: ReactNode) {
@@ -439,7 +439,7 @@ export class CartesianAxis extends Component<Props> {
             <line
               {...tickLineProps}
               {...lineCoord}
-              className={classNames('recharts-cartesian-axis-tick-line', _.get(tickLine, 'className'))}
+              className={clsx('recharts-cartesian-axis-tick-line', _.get(tickLine, 'className'))}
             />
           )}
           {tick &&
@@ -474,7 +474,7 @@ export class CartesianAxis extends Component<Props> {
     }
 
     return (
-      <Layer className={classNames('recharts-cartesian-axis', className)}>
+      <Layer className={clsx('recharts-cartesian-axis', className)}>
         {axisLine && this.renderAxisLine()}
         {this.renderTicks(finalTicks)}
         {Label.renderCallByParent(this.props)}

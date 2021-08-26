@@ -3,7 +3,7 @@
  */
 import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import _ from 'lodash';
 import { Layer } from '../container/Layer';
 import { Trapezoid, Props as TrapezoidProps } from '../shape/Trapezoid';
@@ -387,7 +387,7 @@ export class Funnel extends PureComponent<Props, State> {
       return null;
     }
 
-    const layerClass = classNames('recharts-trapezoids', className);
+    const layerClass = clsx('recharts-trapezoids', className);
 
     return (
       <Layer className={layerClass}>

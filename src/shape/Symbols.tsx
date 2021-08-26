@@ -14,7 +14,7 @@ import {
   symbolWye,
   SymbolType as D3SymbolType,
 } from 'd3-shape';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { SymbolType, filterProps } from '../util/types';
 
 type SizeType = 'area' | 'diameter';
@@ -107,7 +107,7 @@ export class Symbols extends PureComponent<Props> {
       return (
         <path
           {...filterProps(this.props, true)}
-          className={classNames('recharts-symbols', className)}
+          className={clsx('recharts-symbols', className)}
           transform={`translate(${cx}, ${cy})`}
           d={this.getPath()}
         />

@@ -2,7 +2,7 @@
  * @fileOverview Cross
  */
 import React, { PureComponent, SVGProps } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { isNumber } from '../util/DataUtils';
 import { filterProps } from '../util/types';
 
@@ -42,7 +42,7 @@ export class Cross extends PureComponent<Props> {
     return (
       <path
         {...filterProps(this.props, true)}
-        className={classNames('recharts-cross', className)}
+        className={clsx('recharts-cross', className)}
         d={Cross.getPath(x, y, width, height, top, left)}
       />
     );

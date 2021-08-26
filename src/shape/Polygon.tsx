@@ -2,7 +2,7 @@
  * @fileOverview Polygon
  */
 import React, { PureComponent, SVGProps } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { filterProps, Coordinate } from '../util/types';
 
 const isValidatePoint = (point: Coordinate) => {
@@ -80,7 +80,7 @@ export class Polygon extends PureComponent<Props> {
       return null;
     }
 
-    const layerClass = classNames('recharts-polygon', className);
+    const layerClass = clsx('recharts-polygon', className);
 
     if (baseLinePoints && baseLinePoints.length) {
       const hasStroke = others.stroke && others.stroke !== 'none';

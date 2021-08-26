@@ -4,7 +4,7 @@
 import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps } from 'react';
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
 
 import { Global } from '../util/Global';
@@ -235,7 +235,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       };
     }
 
-    const cls = classNames(CLS_PREFIX, {
+    const cls = clsx(CLS_PREFIX, {
       [`${CLS_PREFIX}-right`]:
         isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX >= coordinate.x,
       [`${CLS_PREFIX}-left`]: isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX < coordinate.x,

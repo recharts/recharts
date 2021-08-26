@@ -1,7 +1,7 @@
 /**
  * @fileOverview Wrapper component to make charts adapt to the size of parent * DOM
  */
-import classNames from 'classnames';
+import clsx from 'clsx';
 import _ from 'lodash';
 import React, { ReactElement, forwardRef, cloneElement, useState, useImperativeHandle, useRef, useEffect } from 'react';
 import ReactResizeDetector from 'react-resize-detector/build/withPolyfill';
@@ -158,7 +158,7 @@ export const ResponsiveContainer = forwardRef(
       <ReactResizeDetector handleWidth handleHeight onResize={handleResize} targetRef={containerRef}>
         <div
           {...(id != null ? { id: `${id}` } : {})}
-          className={classNames('recharts-responsive-container', className)}
+          className={clsx('recharts-responsive-container', className)}
           style={style}
           ref={containerRef}
         >

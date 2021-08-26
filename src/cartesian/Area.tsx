@@ -2,7 +2,7 @@
  * @fileOverview Area
  */
 import React, { PureComponent, ReactElement, SVGProps } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Animate from 'react-smooth';
 import _ from 'lodash';
 import { Curve, CurveType, Point as CurvePoint } from '../shape/Curve';
@@ -553,7 +553,7 @@ export class Area extends PureComponent<Props, State> {
 
     const { isAnimationFinished } = this.state;
     const hasSinglePoint = points.length === 1;
-    const layerClass = classNames('recharts-area', className);
+    const layerClass = clsx('recharts-area', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
     const clipPathId = _.isNil(id) ? this.id : id;
 

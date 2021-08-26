@@ -2,7 +2,7 @@
  * @fileOverview Render a group of radial bar
  */
 import React, { PureComponent, ReactElement, ReactNode } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Animate from 'react-smooth';
 import _ from 'lodash';
 import { Sector, Props as SectorProps } from '../shape/Sector';
@@ -391,7 +391,7 @@ export class RadialBar extends PureComponent<Props, State> {
     }
 
     const { isAnimationFinished } = this.state;
-    const layerClass = classNames('recharts-area', className);
+    const layerClass = clsx('recharts-area', className);
 
     return (
       <Layer className={layerClass}>

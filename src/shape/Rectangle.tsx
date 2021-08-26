@@ -2,7 +2,7 @@
  * @fileOverview Rectangle
  */
 import React, { PureComponent, SVGProps } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Animate from 'react-smooth';
 import { AnimationTiming, filterProps } from '../util/types';
 
@@ -156,7 +156,7 @@ export class Rectangle extends PureComponent<Props> {
       return null;
     }
 
-    const layerClass = classNames('recharts-rectangle', className);
+    const layerClass = clsx('recharts-rectangle', className);
     if (!isUpdateAnimationActive) {
       return (
         <path

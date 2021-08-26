@@ -2,7 +2,7 @@
  * @fileOverview Default Legend Content
  */
 import React, { PureComponent, ReactNode, MouseEvent, ReactText, ReactElement } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';
 import {
@@ -156,7 +156,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
 
     return payload.map((entry, i) => {
       const finalFormatter = entry.formatter || formatter;
-      const className = classNames({
+      const className = clsx({
         'recharts-legend-item': true,
         [`legend-item-${i}`]: true,
         inactive: entry.inactive,

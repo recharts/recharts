@@ -2,7 +2,7 @@
  * @fileOverview Dot
  */
 import React, { PureComponent } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { PresentationAttributesWithProps, adaptEventHandlers, filterProps } from '../util/types';
 
 interface DotProps {
@@ -17,7 +17,7 @@ export type Props = PresentationAttributesWithProps<DotProps, SVGCircleElement> 
 export class Dot extends PureComponent<Props> {
   render() {
     const { cx, cy, r, className } = this.props;
-    const layerClass = classNames('recharts-dot', className);
+    const layerClass = clsx('recharts-dot', className);
 
     if (cx === +cx && cy === +cy && r === +r) {
       return (

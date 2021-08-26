@@ -3,7 +3,7 @@
  */
 import React, { ReactElement } from 'react';
 import _ from 'lodash';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
 import { createLabeledScales, rectWithPoints } from '../util/CartesianUtils';
@@ -90,7 +90,7 @@ export function ReferenceArea(props: Props) {
   const clipPath = ifOverflowMatches(props, 'hidden') ? `url(#${clipPathId})` : undefined;
 
   return (
-    <Layer className={classNames('recharts-reference-area', className)}>
+    <Layer className={clsx('recharts-reference-area', className)}>
       {ReferenceArea.renderRect(shape, { clipPath, ...filterProps(props, true), ...rect })}
       {Label.renderCallByParent(props, rect)}
     </Layer>

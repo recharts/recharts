@@ -1,5 +1,5 @@
 import React, { Component, cloneElement, isValidElement, createElement } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import _, { isArray, isBoolean, isNil } from 'lodash';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
@@ -2126,7 +2126,7 @@ export const generateCategoricalChart = ({
       const events = this.parseEventsOfWrapper();
       return (
         <div
-          className={classNames('recharts-wrapper', className)}
+          className={clsx('recharts-wrapper', className)}
           style={{ position: 'relative', cursor: 'default', width, height, ...style }}
           {...events}
           ref={node => {

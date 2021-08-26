@@ -4,7 +4,7 @@
  */
 import React, { PureComponent } from 'react';
 import Smooth from 'react-smooth';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import _ from 'lodash';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
@@ -731,7 +731,7 @@ export class Treemap extends PureComponent<Props, State> {
 
     return (
       <div
-        className={classNames('recharts-wrapper', className)}
+        className={clsx('recharts-wrapper', className)}
         style={{ ...style, position: 'relative', cursor: 'default', width, height }}
       >
         <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>

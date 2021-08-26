@@ -3,7 +3,7 @@
  */
 import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import _ from 'lodash';
 import { Curve, CurveType, Props as CurveProps, Point as CurvePoint } from '../shape/Curve';
 import { Dot, Props as DotProps } from '../shape/Dot';
@@ -300,7 +300,7 @@ export class Line extends PureComponent<Props, State> {
     } else if (_.isFunction(option)) {
       dotItem = option(props);
     } else {
-      const className = classNames('recharts-line-dot', option ? (option as DotProps).className : '');
+      const className = clsx('recharts-line-dot', option ? (option as DotProps).className : '');
       dotItem = <Dot {...props} className={className} />;
     }
 
@@ -460,7 +460,7 @@ export class Line extends PureComponent<Props, State> {
 
     const { isAnimationFinished } = this.state;
     const hasSinglePoint = points.length === 1;
-    const layerClass = classNames('recharts-line', className);
+    const layerClass = clsx('recharts-line', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
     const clipPathId = _.isNil(id) ? this.id : id;
 

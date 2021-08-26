@@ -1,6 +1,6 @@
 import React, { Component, CSSProperties, SVGProps } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import _ from 'lodash';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
 import { Global } from '../util/Global';
@@ -274,7 +274,7 @@ export class Text extends Component<Props, State> {
         {...filterProps(textProps, true)}
         x={x}
         y={y}
-        className={classNames('recharts-text', className)}
+        className={clsx('recharts-text', className)}
         textAnchor={textAnchor}
       >
         {wordsByLines.map((line, index) => (

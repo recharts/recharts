@@ -2,7 +2,7 @@
  * @fileOverview Rectangle
  */
 import React, { PureComponent, SVGProps } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Animate from 'react-smooth';
 import { AnimationTiming, filterProps } from '../util/types';
 
@@ -86,7 +86,7 @@ export class Trapezoid extends PureComponent<Props> {
       return null;
     }
 
-    const layerClass = classNames('recharts-trapezoid', className);
+    const layerClass = clsx('recharts-trapezoid', className);
 
     if (!isUpdateAnimationActive) {
       return (

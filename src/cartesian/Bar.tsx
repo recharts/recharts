@@ -2,7 +2,7 @@
  * @fileOverview Render a group of bar
  */
 import React, { PureComponent, ReactElement } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Animate from 'react-smooth';
 import _ from 'lodash';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
@@ -475,7 +475,7 @@ export class Bar extends PureComponent<Props, State> {
     }
 
     const { isAnimationFinished } = this.state;
-    const layerClass = classNames('recharts-bar', className);
+    const layerClass = clsx('recharts-bar', className);
     const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
     const clipPathId = _.isNil(id) ? this.id : id;
 

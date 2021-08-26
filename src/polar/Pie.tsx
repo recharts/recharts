@@ -3,7 +3,7 @@
  */
 import React, { PureComponent, ReactElement, ReactNode, SVGProps } from 'react';
 import Animate from 'react-smooth';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import _ from 'lodash';
 import { Layer } from '../container/Layer';
 import { Sector, Props as SectorProps } from '../shape/Sector';
@@ -572,7 +572,7 @@ export class Pie extends PureComponent<Props, State> {
       return null;
     }
 
-    const layerClass = classNames('recharts-pie', className);
+    const layerClass = clsx('recharts-pie', className);
 
     return (
       <Layer className={layerClass}>
