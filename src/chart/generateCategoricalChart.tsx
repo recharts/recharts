@@ -1994,11 +1994,14 @@ export const generateCategoricalChart = ({
       return [graphicalItem, null];
     };
 
-    renderCustomized = (element: React.ReactElement): React.ReactElement =>
-      cloneElement(element, {
-        ...this.props,
-        ...this.state,
-      });
+    renderCustomized = (element: React.ReactElement, displayName: string, index: number): React.ReactElement => (
+      <React.Fragment key={`recharts-customized-${index}`}>
+        {cloneElement(element, {
+          ...this.props,
+          ...this.state,
+        })}
+      </React.Fragment>
+    );
 
     renderClipPath() {
       const { clipPathId } = this;
