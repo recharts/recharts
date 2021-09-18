@@ -1994,8 +1994,9 @@ export const generateCategoricalChart = ({
       return [graphicalItem, null];
     };
 
-    renderCustomized = (element: React.ReactElement): React.ReactElement =>
+    renderCustomized = (element: React.ReactElement, displayName: string, index: number): React.ReactElement =>
       cloneElement(element, {
+        key: `recharts-customized-${index}`,
         ...this.props,
         ...this.state,
       });
