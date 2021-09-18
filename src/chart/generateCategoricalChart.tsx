@@ -791,7 +791,7 @@ export const generateCategoricalChart = ({
       if (itemIsBar) {
         // 如果是bar，计算bar的位置
         const maxBarSize = _.isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
-        const barBandSize = getBandSizeOfAxis(cateAxis, cateTicks, true) || maxBarSize;
+        const barBandSize = getBandSizeOfAxis(cateAxis, cateTicks, true) ?? maxBarSize ?? 0;
         barPosition = getBarPosition({
           barGap,
           barCategoryGap,

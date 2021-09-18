@@ -1112,7 +1112,7 @@ export const getBandSizeOfAxis = (axis: any, ticks?: Array<TickItem>, isBar?: bo
     return bandSize === Infinity ? 0 : bandSize;
   }
 
-  return 0;
+  return isBar ? undefined : 0;
 };
 /**
  * parse the domain of a category axis when a domain is specified
