@@ -1,3 +1,10 @@
+## 2.1.3 (sep 18, 2021)
+
+### fix
+
+- fix: Customized component has no key (#2637)
+- Fix XAxis scale propery type (#2641)
+
 ## 2.1.2 (aug 24, 2021)
 
 ### fix
