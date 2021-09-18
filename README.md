@@ -99,7 +99,7 @@ We are looking for like-minded people who share the same idea about Recharts. Th
 <a href="https://opencollective.com/recharts/backer/3/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/3/avatar.svg?requireActive=false"></a>
 <a href="https://opencollective.com/recharts/backer/4/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/4/avatar.svg?requireActive=false"></a>
 <a href="https://opencollective.com/recharts/backer/5/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/5/avatar.svg?requireActive=false"></a>
-<a href="https://opencollective.com/recharts/backer/6/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/5/avatar.svg?requireActive=false"></a>
+<a href="https://opencollective.com/recharts/backer/6/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/6/avatar.svg?requireActive=false"></a>
 
 ## Sponsoring
 
