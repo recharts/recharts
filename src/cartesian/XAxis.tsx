@@ -29,7 +29,7 @@ interface XAxisProps extends BaseAxisProps {
   tickMargin?: number;
 }
 
-export type Props = SVGProps<SVGElement> & XAxisProps;
+export type Props = Omit<SVGProps<SVGElement>, 'scale'> & XAxisProps;
 
 export const XAxis: FunctionComponent<Props> = () => null;
 
