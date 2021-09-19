@@ -141,12 +141,6 @@ export const ResponsiveContainer = forwardRef(
     useEffect(() => {
       mounted.current = true;
 
-      const size = getContainerSize();
-
-      if (size) {
-        setSizes(size);
-      }
-
       return () => {
         mounted.current = false;
       };
