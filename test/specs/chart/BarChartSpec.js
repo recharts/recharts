@@ -166,4 +166,46 @@ describe('<BarChart />', () => {
     expect(wrapper.find('.customized-shape').length).to.equal(4);
   });
 
+  describe('1 bar', () => {
+    const onePointData = [
+      { number: 1, name: 'food', uv: 400, pv: 2400 },
+    ];
+
+    it('renders a bar if size is specified', () => {
+      const wrapper = mount(
+        <BarChart width={100} height={50} data={onePointData} barSize={20}>
+          <XAxis dataKey="number" type="number" />
+          <Bar dataKey="uv" name="uv" isAnimationActive={false} />
+        </BarChart>
+      );
+
+      console.log(wrapper.debug());
+      const rectangles = wrapper.find('Rectangle');
+      expect(rectangles.length).to.equal(1);
+
+      const rectangleProps = rectangles.at(0).props();
+      expect(rectangleProps).to.have.property('x', 85);
+      expect(rectangleProps).to.have.property('y', 5);
+      expect(rectangleProps).to.have.property('width', 20);
+      expect(rectangleProps).to.have.property('height', 10);
+    });
+
+    it('renders a bar if size is limited', () => {
+      const wrapper = mount(
+        <BarChart width={100} height={50} data={onePointData}>
+          <XAxis dataKey="number" type="number" />
+          <Bar dataKey="uv" name="uv" isAnimationActive={false} maxBarSize={40} />
+        </BarChart>
+      );
+
+      const rectangles = wrapper.find('Rectangle');
+      expect(rectangles.length).to.equal(1);
+
+      const rectangleProps = rectangles.at(0).props();
+      expect(rectangleProps).to.have.property('x', 79);
+      expect(rectangleProps).to.have.property('y', 5);
+      expect(rectangleProps).to.have.property('width', 32);
+      expect(rectangleProps).to.have.property('height', 10);
+    });
+  });
 });
