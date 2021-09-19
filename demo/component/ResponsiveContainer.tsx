@@ -206,6 +206,7 @@ export default class Demo extends Component {
                 animationBegin={1300}
                 dot
               />
+              <Legend />
             </AreaChart>
           </ResponsiveContainer>
         </div>
