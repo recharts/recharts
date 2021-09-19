@@ -1,3 +1,10 @@
+## 2.1.4 (sep 19, 2021)
+
+### fix
+
+- Fix: ResponsiveContainer makes legend overlapping with chart when re-rendering (#2660)
+- Fix: rendering of a single bar when maxBarSize is absent and barSize is present (#2659)
+
 ## 2.1.3 (sep 18, 2021)
 
 ### fix
