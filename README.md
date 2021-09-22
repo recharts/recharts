@@ -70,21 +70,6 @@ $ npm install
 $ npm run build
 ```
 
-### notice
-
-create-react-app can no longer run `build/test` since the d3-x packages are now published as modules.
-The following needs to be added to jest config
-
-```js
-{
-  "jest": {
-    "transformIgnorePatterns": [
-      "<rootDir>/node_modules/(?!d3-)"
-    ]
-  }
-}
-```
-
 ## Demo
 
 To examine the demos in your local build, execute:
