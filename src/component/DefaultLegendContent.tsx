@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';
 import {
+  DataKey,
   LegendType,
   LayoutType,
   SymbolType,
@@ -54,9 +55,9 @@ interface InternalProps {
   payload?: Array<Payload>;
   inactiveColor?: string;
   formatter?: Formatter;
-  onMouseEnter?: (event: MouseEvent) => void;
-  onMouseLeave?: (event: MouseEvent) => void;
-  onClick?: (event: MouseEvent) => void;
+  onMouseEnter?: (data: Payload & { dataKey?: DataKey<any> }, index: number, event: MouseEvent) => void;
+  onMouseLeave?: (data: Payload & { dataKey?: DataKey<any> }, index: number, event: MouseEvent) => void;
+  onClick?: (data: Payload & { dataKey?: DataKey<any> }, index: number, event: MouseEvent) => void;
 }
 
 export type Props = InternalProps & PresentationAttributesAdaptChildEvent<any, ReactElement>;
