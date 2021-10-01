@@ -60,6 +60,9 @@ interface RadarProps {
   onMouseLeave?: (props: any, e: MouseEvent<SVGPolygonElement>) => void;
 }
 
+type RadiusAxis = PolarRadiusAxisProps & { scale: (value: any) => number };
+type AngleAxis = PolarAngleAxisProps & { scale: (value: any) => number };
+
 export type Props = Omit<SVGProps<SVGElement>, 'onMouseEnter' | 'onMouseLeave'> & RadarProps;
 
 interface State {
@@ -92,8 +95,8 @@ export class Radar extends PureComponent<Props, State> {
     dataKey,
     bandSize,
   }: {
-    radiusAxis: PolarRadiusAxisProps & { scale: (value: any) => number };
-    angleAxis: PolarAngleAxisProps & { scale: (value: any) => number };
+    radiusAxis: RadiusAxis;
+    angleAxis: AngleAxis;
     displayedData: any[];
     dataKey: RadarProps['dataKey'];
     bandSize: number;
