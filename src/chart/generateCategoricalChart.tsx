@@ -679,7 +679,7 @@ export interface CategoricalChartState {
 
   radiusAxisMap?: any;
 
-  formatedGraphicalItems?: any;
+  formattedGraphicalItems?: any;
 
   /** active tooltip payload */
   activePayload?: any[];
@@ -896,7 +896,7 @@ export const generateCategoricalChart = ({
     const cateAxisMap = axisObj[`${cateAxisName}Map`];
     const ticksObj = tooltipTicksGenerator(cateAxisMap);
 
-    const formatedGraphicalItems = getFormatItems(props, {
+    const formattedGraphicalItems = getFormatItems(props, {
       ...axisObj,
       dataStartIndex,
       dataEndIndex,
@@ -907,7 +907,7 @@ export const generateCategoricalChart = ({
     });
 
     return {
-      formatedGraphicalItems,
+      formattedGraphicalItems,
       graphicalItems,
       offset,
       stackGroups,
@@ -1594,10 +1594,10 @@ export const generateCategoricalChart = ({
     axesTicksGenerator = (axis?: any) => getTicksOfAxis(axis, true);
 
     filterFormatItem(item: any, displayName: any, childIndex: any) {
-      const { formatedGraphicalItems } = this.state;
+      const { formattedGraphicalItems } = this.state;
 
-      for (let i = 0, len = formatedGraphicalItems.length; i < len; i++) {
-        const entry = formatedGraphicalItems[i];
+      for (let i = 0, len = formattedGraphicalItems.length; i < len; i++) {
+        const entry = formattedGraphicalItems[i];
 
         if (
           entry.item === item ||
@@ -1774,13 +1774,13 @@ export const generateCategoricalChart = ({
      * @return {ReactElement}            The instance of Legend
      */
     renderLegend = (): React.ReactElement => {
-      const { formatedGraphicalItems } = this.state;
+      const { formattedGraphicalItems } = this.state;
       const { children, width, height } = this.props;
       const margin = this.props.margin || {};
       const legendWidth: number = width - (margin.left || 0) - (margin.right || 0);
       const props = getLegendProps({
         children,
-        formatedGraphicalItems,
+        formattedGraphicalItems,
         legendWidth,
         legendContent,
       });
@@ -2051,11 +2051,11 @@ export const generateCategoricalChart = ({
     }
 
     public getItemByXY(chartXY: { x: number; y: number }) {
-      const { formatedGraphicalItems } = this.state;
+      const { formattedGraphicalItems } = this.state;
 
-      if (formatedGraphicalItems && formatedGraphicalItems.length) {
-        for (let i = 0, len = formatedGraphicalItems.length; i < len; i++) {
-          const graphicalItem = formatedGraphicalItems[i];
+      if (formattedGraphicalItems && formattedGraphicalItems.length) {
+        for (let i = 0, len = formattedGraphicalItems.length; i < len; i++) {
+          const graphicalItem = formattedGraphicalItems[i];
           const { props, item } = graphicalItem;
           const itemDisplayName = getDisplayName(item.type);
 
