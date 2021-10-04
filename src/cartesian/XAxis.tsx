@@ -23,7 +23,6 @@ interface XAxisProps extends BaseAxisProps {
   padding?: { left?: number; right?: number } | 'gap' | 'no-gap';
   minTickGap?: number;
   interval?: AxisInterval;
-  reversed?: boolean;
   /** the rotate angle of tick */
   angle?: number;
   tickMargin?: number;

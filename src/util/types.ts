@@ -997,6 +997,8 @@ export interface BaseAxisProps {
   hide?: boolean;
   /** The scale type or functor of scale */
   scale?: ScaleType | Function;
+  /** The option for reversed axis */
+  reversed?: boolean;
   /** The option for tick */
   tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
   /** The count of ticks */
