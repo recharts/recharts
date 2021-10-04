@@ -95,11 +95,8 @@ export const toArray = <T extends ReactNode>(children: T | T[]): T[] => {
  * Find and return all matched children by type. `type` can be a React element class or
  * string
  */
-export const findAllByType = (
-  children: ReactNode,
-  type: string | string[],
-): React.DetailedReactHTMLElement<any, HTMLElement>[] => {
-  const result: React.DetailedReactHTMLElement<any, HTMLElement>[] = [];
+export const findAllByType = (children: ReactNode, type: string | string[]): React.ReactElement[] => {
+  const result: React.ReactElement[] = [];
   let types: string[] = [];
 
   if (_.isArray(type)) {
@@ -108,7 +105,7 @@ export const findAllByType = (
     types = [getDisplayName(type)];
   }
 
-  toArray(children).forEach((child: React.DetailedReactHTMLElement<any, HTMLElement>) => {
+  toArray(children).forEach((child: React.ReactElement) => {
     const childType = _.get(child, 'type.displayName') || _.get(child, 'type.name');
     if (types.indexOf(childType) !== -1) {
       result.push(child);
@@ -121,10 +118,7 @@ export const findAllByType = (
  * Return the first matched child by type, return null otherwise.
  * `type` can be a React element class or string.
  */
-export const findChildByType = (
-  children: ReactNode[],
-  type: string,
-): React.DetailedReactHTMLElement<any, HTMLElement> => {
+export const findChildByType = (children: ReactNode[], type: string): React.ReactElement => {
   const result = findAllByType(children, type);
 
   return result && result[0];

@@ -128,7 +128,7 @@ const getActiveCoordinate = (
       }
     | { x: number; y: number },
 ): ChartCoordinate => {
-  const entry = tooltipTicks.find((tick: any) => tick && tick.index === activeIndex);
+  const entry = tooltipTicks.find(tick => tick && tick.index === activeIndex);
 
   if (entry) {
     if (layout === 'horizontal' && 'y' in rangeObj) {
@@ -171,7 +171,7 @@ const getDisplayedData = (
     dataStartIndex,
     dataEndIndex,
   }: {
-    graphicalItems?: React.DetailedReactHTMLElement<any, HTMLElement>[];
+    graphicalItems?: React.ReactElement[];
     dataStartIndex?: number;
     dataEndIndex?: number;
   },
@@ -214,7 +214,7 @@ const getTooltipContent = (
   chartData: any[],
   activeIndex: number,
   activeLabel?: string,
-): any[] => {
+) => {
   const { graphicalItems, tooltipAxis } = state;
   const displayedData = getDisplayedData(chartData, state);
 
@@ -324,8 +324,8 @@ const getAxisMapByAxes = (
     dataStartIndex,
     dataEndIndex,
   }: {
-    axes: React.DetailedReactHTMLElement<any, HTMLElement>[];
-    graphicalItems: React.DetailedReactHTMLElement<any, HTMLElement>[];
+    axes: React.ReactElement[];
+    graphicalItems: React.ReactElement[];
     axisType: AxisType;
     axisIdKey: string;
     stackGroups: any;
@@ -337,11 +337,11 @@ const getAxisMapByAxes = (
   const isCategorical = isCategoricalAxis(layout, axisType);
 
   // Eliminate duplicated axes
-  const axisMap = axes.reduce((result: any, child: any) => {
+  const axisMap = axes.reduce((result: any, child) => {
     const { type, dataKey, allowDataOverflow, allowDuplicatedCategory, scale, ticks } = child.props;
     const axisId = child.props[axisIdKey];
     const displayedData = getDisplayedData(props.data, {
-      graphicalItems: graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId),
+      graphicalItems: graphicalItems.filter(item => item.props[axisIdKey] === axisId),
       dataStartIndex,
       dataEndIndex,
     });
@@ -554,7 +554,7 @@ const getAxisMap = (
     dataStartIndex,
     dataEndIndex,
   }: BaseAxisProps & {
-    graphicalItems: React.DetailedReactHTMLElement<any, HTMLElement>[];
+    graphicalItems: React.ReactElement[];
     stackGroups: any;
     dataStartIndex?: number;
     dataEndIndex?: number;
@@ -747,7 +747,7 @@ export interface CategoricalChartState {
 
   tooltipTicks?: TickItem[];
 
-  graphicalItems?: any;
+  graphicalItems?: React.ReactElement[];
 
   activeCoordinate?: ChartCoordinate;
 

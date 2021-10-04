@@ -669,7 +669,7 @@ export class Treemap extends PureComponent<Props, State> {
           ]
         : [];
 
-    return React.cloneElement(tooltipItem as React.DetailedReactHTMLElement<any, HTMLElement>, {
+    return React.cloneElement(tooltipItem as React.ReactElement, {
       viewBox,
       active: isTooltipActive,
       coordinate,
