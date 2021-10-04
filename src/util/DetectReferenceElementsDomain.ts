@@ -7,11 +7,11 @@ import { findAllByType } from './ReactUtils';
 import { isNumber } from './DataUtils';
 
 export const detectReferenceElementsDomain = (
-  children: ReactNode[],
+  children: ReactNode,
   domain: number[],
   axisId: string,
   axisType: string,
-  specifiedTicks?: any[],
+  specifiedTicks?: number[],
 ) => {
   const lines = findAllByType(children, ReferenceLine.displayName);
   const dots = findAllByType(children, ReferenceDot.displayName);
@@ -22,7 +22,7 @@ export const detectReferenceElementsDomain = (
   let finalDomain = domain;
 
   if (elements.length) {
-    finalDomain = elements.reduce((result: number[], el: any) => {
+    finalDomain = elements.reduce((result: number[], el) => {
       if (el.props[idKey] === axisId && ifOverflowMatches(el.props, 'extendDomain') && isNumber(el.props[valueKey])) {
         const value = el.props[valueKey];
 
@@ -36,7 +36,7 @@ export const detectReferenceElementsDomain = (
     const key1 = `${valueKey}1`;
     const key2 = `${valueKey}2`;
 
-    finalDomain = areas.reduce((result: number[], el: any) => {
+    finalDomain = areas.reduce((result: number[], el) => {
       if (
         el.props[idKey] === axisId &&
         ifOverflowMatches(el.props, 'extendDomain') &&
@@ -53,7 +53,7 @@ export const detectReferenceElementsDomain = (
   }
 
   if (specifiedTicks && specifiedTicks.length) {
-    finalDomain = specifiedTicks.reduce((result, tick) => {
+    finalDomain = specifiedTicks.reduce((result: number[], tick) => {
       if (isNumber(tick)) {
         return [Math.min(result[0], tick), Math.max(result[1], tick)];
       }

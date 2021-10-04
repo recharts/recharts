@@ -95,7 +95,10 @@ export const toArray = <T extends ReactNode>(children: T | T[]): T[] => {
  * Find and return all matched children by type. `type` can be a React element class or
  * string
  */
-export const findAllByType = (children: ReactNode, type: string | string[]): React.ReactElement[] => {
+export const findAllByType = (
+  children: ReactNode,
+  type: string | string[] | ComponentClass | FunctionComponent,
+): React.ReactElement[] => {
   const result: React.ReactElement[] = [];
   let types: string[] = [];
 
@@ -105,10 +108,13 @@ export const findAllByType = (children: ReactNode, type: string | string[]): Rea
     types = [getDisplayName(type)];
   }
 
-  toArray(children).forEach((child: React.ReactElement) => {
-    const childType = _.get(child, 'type.displayName') || _.get(child, 'type.name');
-    if (types.indexOf(childType) !== -1) {
-      result.push(child);
+  toArray(children).forEach(child => {
+    if (typeof child === 'object' && 'type' in child && typeof child.type !== 'string') {
+      const childType = (child.type as FunctionComponent).displayName || child.type.name;
+
+      if (types.includes(childType)) {
+        result.push(child);
+      }
     }
   });
 
@@ -118,7 +124,7 @@ export const findAllByType = (children: ReactNode, type: string | string[]): Rea
  * Return the first matched child by type, return null otherwise.
  * `type` can be a React element class or string.
  */
-export const findChildByType = (children: ReactNode[], type: string): React.ReactElement => {
+export const findChildByType = (children: ReactNode, type: string): React.ReactElement => {
   const result = findAllByType(children, type);
 
   return result && result[0];
@@ -154,7 +160,7 @@ export const withoutType = (children: ReactNode, type: string) => {
  * @param  {Object} el A chart element
  * @return {Boolean}   true If the props width and height are number, and greater than 0
  */
-export const validateWidthHeight = (el: any): boolean => {
+export const validateWidthHeight = (el: { props: { width?: number; height?: number } }): boolean => {
   if (!el || !el.props) {
     return false;
   }
@@ -249,18 +255,24 @@ const SVG_TAGS: string[] = [
   'vkern',
 ];
 
-const isSvgElement = (child: any) => child && child.type && _.isString(child.type) && SVG_TAGS.indexOf(child.type) >= 0;
+const isSvgElement = (child: ReactNode) =>
+  child &&
+  typeof child === 'object' &&
+  'type' in child &&
+  child.type &&
+  _.isString(child.type) &&
+  SVG_TAGS.indexOf(child.type) >= 0;
 
 /**
  * Filter all the svg elements of children
  * @param  {Array} children The children of a react element
  * @return {Array}          All the svg elements
  */
-export const filterSvgElements = (children: React.ReactElement[]): React.ReactElement[] => {
+export const filterSvgElements = (children: ReactNode): React.ReactElement[] => {
   const svgElements = [] as React.ReactElement[];
 
-  toArray(children).forEach((entry: React.ReactElement) => {
-    if (isSvgElement(entry)) {
+  toArray(children).forEach(entry => {
+    if (typeof entry === 'object' && 'type' in entry && isSvgElement(entry)) {
       svgElements.push(entry);
     }
   });
@@ -274,7 +286,7 @@ export const filterSvgElements = (children: React.ReactElement[]): React.ReactEl
  * @param  {Object} prevChildren The prev children
  * @return {Boolean}             equal or not
  */
-export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren: React.ReactElement[]): boolean => {
+export const isChildrenEqual = (nextChildren: ReactNode, prevChildren: ReactNode): boolean => {
   if (nextChildren === prevChildren) {
     return true;
   }
@@ -295,9 +307,13 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
     );
   }
 
+  if (!_.isArray(nextChildren) || !_.isArray(prevChildren)) {
+    return false;
+  }
+
   for (let i = 0; i < count; i++) {
-    const nextChild: any = nextChildren[i];
-    const prevChild: any = prevChildren[i];
+    const nextChild: ReactNode = nextChildren[i];
+    const prevChild: ReactNode = prevChildren[i];
 
     if (_.isArray(nextChild) || _.isArray(prevChild)) {
       if (!isChildrenEqual(nextChild, prevChild)) {
@@ -312,16 +328,24 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
   return true;
 };
 
-export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: React.ReactElement): boolean => {
+export const isSingleChildEqual = (nextChild: ReactNode, prevChild: ReactNode): boolean => {
   if (_.isNil(nextChild) && _.isNil(prevChild)) {
     return true;
   }
-  if (!_.isNil(nextChild) && !_.isNil(prevChild)) {
+
+  if (nextChild === prevChild) {
+    return true;
+  }
+
+  if (typeof nextChild !== 'object' || typeof prevChild !== 'object') {
+    return false;
+  }
+
+  if (!_.isNil(nextChild) && !_.isNil(prevChild) && 'props' in nextChild && 'props' in prevChild) {
     const { children: nextChildren, ...nextProps } = nextChild.props || {};
     const { children: prevChildren, ...prevProps } = prevChild.props || {};
 
     if (nextChildren && prevChildren) {
-      // eslint-disable-next-line no-use-before-define
       return shallowEqual(nextProps, prevProps) && isChildrenEqual(nextChildren, prevChildren);
     }
     if (!nextChildren && !prevChildren) {
@@ -335,7 +359,7 @@ export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: Rea
 };
 
 export const renderByOrder = (
-  children: React.ReactElement[],
+  children: ReactNode,
   renderMap: Record<
     string,
     {
@@ -344,13 +368,13 @@ export const renderByOrder = (
     }
   >,
 ) => {
-  const elements: React.ReactElement[] = [];
+  const elements: ReactNode[] = [];
   const record: Record<string, boolean> = {};
 
   toArray(children).forEach((child, index) => {
     if (isSvgElement(child)) {
       elements.push(child);
-    } else if (child) {
+    } else if (child && typeof child === 'object' && 'type' in child) {
       const displayName = getDisplayName(child.type);
       const { handler, once } = renderMap[displayName] || {};
 
@@ -375,6 +399,6 @@ export const getReactEventByType = (eventType: string) => {
   return REACT_BROWSER_EVENT_MAP[eventType] ?? null;
 };
 
-export const parseChildIndex = (child: any, children: any[]) => {
+export const parseChildIndex = (child: ReactNode, children: ReactNode) => {
   return toArray(children).indexOf(child);
 };

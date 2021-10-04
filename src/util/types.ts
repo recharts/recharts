@@ -23,6 +23,7 @@ import {
 } from 'react';
 import _ from 'lodash';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'd3-scale';
+import { Series } from 'd3-shape';
 
 export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette';
 export type LayoutType = 'horizontal' | 'vertical' | 'centric' | 'radial';
@@ -54,6 +55,27 @@ export interface Coordinate {
   x: number;
   y: number;
 }
+
+export type StackGroups = {
+  [axisId: string]: {
+    hasStack: boolean;
+    stackGroups: StackGroup;
+  };
+};
+
+export type StackGroup = {
+  [stackId: string]: {
+    items: ReactElement[];
+    numericAxisId: string;
+    cateAxisId: string;
+    stackedData?: Series<
+      {
+        [key: string]: number;
+      },
+      string
+    >[];
+  };
+};
 
 export interface ChartCoordinate extends Coordinate {
   xAxis?: any;

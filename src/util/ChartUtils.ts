@@ -13,9 +13,21 @@ import { ReactElement, ReactNode } from 'react';
 import { isNumOrStr, uniqueId, isNumber, getPercentValue, mathSign, findEntryInArray } from './DataUtils';
 import { Legend } from '../component/Legend';
 import { findAllByType, findChildByType, getDisplayName } from './ReactUtils';
+
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
-import { LayoutType, PolarLayoutType, AxisType, TickItem, BaseAxisProps, DataKey, filterProps } from './types';
+import {
+  LayoutType,
+  PolarLayoutType,
+  AxisType,
+  TickItem,
+  BaseAxisProps,
+  DataKey,
+  filterProps,
+  StackGroup,
+  StackOffsetType,
+  StackGroups,
+} from './types';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<any>, defaultValue?: any) {
   if (_.isNil(obj) || _.isNil(dataKey)) {
@@ -232,7 +244,7 @@ export const getBarSizeList = ({
   stackGroups = {},
 }: {
   barSize: number | string;
-  stackGroups: any;
+  stackGroups: StackGroups;
 }) => {
   if (!stackGroups) {
     return {};
@@ -764,7 +776,7 @@ export const offsetPositive = (series: any) => {
   }
 };
 
-const STACK_OFFSET_MAP: Record<string, any> = {
+const STACK_OFFSET_MAP = {
   sign: offsetSign,
   expand: stackOffsetExpand,
   none: stackOffsetNone,
@@ -773,7 +785,7 @@ const STACK_OFFSET_MAP: Record<string, any> = {
   positive: offsetPositive,
 };
 
-export const getStackedData = (data: any, stackItems: any, offsetType: string) => {
+export const getStackedData = (data: any, stackItems: any, offsetType: StackOffsetType) => {
   const dataKeys = stackItems.map((item: any) => item.props.dataKey);
   const stack = shapeStack()
     .keys(dataKeys)
@@ -786,12 +798,12 @@ export const getStackedData = (data: any, stackItems: any, offsetType: string) =
 
 export const getStackGroupsByAxisId = (
   data: any,
-  _items: Array<any>,
+  _items: ReactElement[],
   numericAxisId: string,
   cateAxisId: string,
   offsetType: any,
   reverseStackOrder: boolean,
-) => {
+): StackGroups => {
   if (!data) {
     return null;
   }
@@ -799,7 +811,7 @@ export const getStackGroupsByAxisId = (
   // reversing items to affect render order (for layering)
   const items = reverseStackOrder ? _items.reverse() : _items;
 
-  const stackGroups = items.reduce((result, item) => {
+  const stackGroups = items.reduce((result: StackGroups, item) => {
     const { stackId, hide } = item.props;
 
     if (hide) {
@@ -832,7 +844,7 @@ export const getStackGroupsByAxisId = (
     return { ...result, [axisId]: parentGroup };
   }, {});
 
-  return Object.keys(stackGroups).reduce((result, axisId) => {
+  return Object.keys(stackGroups).reduce((result: StackGroups, axisId) => {
     const group = stackGroups[axisId];
 
     if (group.hasStack) {
@@ -861,7 +873,7 @@ export const getStackGroupsByAxisId = (
  * @param  {String} type  The type of axis
  * @return {Array} domain
  */
-export const calculateDomainOfTicks = (ticks: Array<TickItem>, type: string) => {
+export const calculateDomainOfTicks = (ticks: number[], type: string) => {
   if (type === 'number') {
     return [_.min(ticks), _.max(ticks)];
   }
@@ -894,7 +906,7 @@ export const getTicksOfScale = (scale: any, opts: any) => {
     if (!domain.length) {
       return null;
     }
-    const tickValues = getNiceTickValues(domain, tickCount, allowDecimals);
+    const tickValues: number[] = getNiceTickValues(domain, tickCount, allowDecimals);
 
     scale.domain(calculateDomainOfTicks(tickValues, type));
 
@@ -902,7 +914,7 @@ export const getTicksOfScale = (scale: any, opts: any) => {
   }
   if (tickCount && type === 'number') {
     const domain = scale.domain();
-    const tickValues = getTickValuesFixedDomain(domain, tickCount, allowDecimals);
+    const tickValues: number[] = getTickValuesFixedDomain(domain, tickCount, allowDecimals);
 
     return { niceTicks: tickValues };
   }
@@ -1021,11 +1033,11 @@ const getDomainOfSingle = (data: Array<any>) =>
     [Infinity, -Infinity],
   );
 
-export const getDomainOfStackGroups = (stackGroups: any, startIndex: number, endIndex: number) =>
-  Object.keys(stackGroups)
+export const getDomainOfStackGroups = (stackGroup: StackGroup, startIndex: number, endIndex: number) =>
+  Object.keys(stackGroup)
     .reduce(
       (result, stackId) => {
-        const group = stackGroups[stackId];
+        const group = stackGroup[stackId];
         const { stackedData } = group;
         const domain = stackedData.reduce(
           (res: [number, number], entry: any) => {
@@ -1136,7 +1148,7 @@ export const parseDomainOfCategoryAxis = (
   return specifiedDomain;
 };
 
-export const getTooltipItem = (graphicalItem: any, payload: any) => {
+export const getTooltipItem = (graphicalItem: ReactElement, payload: any) => {
   const { dataKey, name, unit, formatter, tooltipType, chartType } = graphicalItem.props;
 
   return {
