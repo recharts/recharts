@@ -1,7 +1,6 @@
-import React, { Children, ReactNode } from 'react';
 import _ from 'lodash';
+import React, { Children, ComponentClass, FunctionComponent, ReactElement, ReactNode } from 'react';
 import { isFragment } from 'react-is';
-
 import { isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
 
@@ -59,7 +58,7 @@ export const TOOLTIP_TYPES = ['none'];
  * @param  {Object} Comp Specified Component
  * @return {String}      Display name of Component
  */
-export const getDisplayName = (Comp: any) => {
+export const getDisplayName = (Comp: string | ComponentClass | FunctionComponent): string => {
   if (typeof Comp === 'string') {
     return Comp;
   }
@@ -341,7 +340,16 @@ export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: Rea
   return false;
 };
 
-export const renderByOrder = (children: React.ReactElement[], renderMap: any) => {
+export const renderByOrder = (
+  children: React.ReactElement[],
+  renderMap: Record<
+    string,
+    {
+      handler: (element: ReactElement, displayName: string, index: number) => ReactElement | ReactElement[];
+      once?: boolean;
+    }
+  >,
+) => {
   const elements: React.ReactElement[] = [];
   const record: Record<string, boolean> = {};
 
@@ -355,7 +363,12 @@ export const renderByOrder = (children: React.ReactElement[], renderMap: any) =>
       if (handler && (!once || !record[displayName])) {
         const results = handler(child, displayName, index);
 
-        elements.push(results);
+        if (Array.isArray(results)) {
+          elements.push(...results);
+        } else {
+          elements.push(results);
+        }
+
         record[displayName] = true;
       }
     }
