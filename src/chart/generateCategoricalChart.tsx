@@ -1,4 +1,4 @@
-import React, { Component, cloneElement, isValidElement, createElement } from 'react';
+import React, { cloneElement, Component, createElement, isValidElement, MouseEvent, Touch, TouchEvent } from 'react';
 import classNames from 'classnames';
 import _, { isArray, isBoolean, isNil } from 'lodash';
 import { Surface } from '../container/Surface';
@@ -1107,7 +1107,7 @@ export const generateCategoricalChart = ({
      * @param  {Object} event    The event object
      * @return {Object}          Mouse data
      */
-    getMouseInfo(event: any) {
+    getMouseInfo(event: MouseEvent | Touch) {
       if (!this.container) {
         return null;
       }
@@ -1123,10 +1123,10 @@ export const generateCategoricalChart = ({
       const tooltipEventType = this.getTooltipEventType();
 
       if (tooltipEventType !== 'axis' && xAxisMap && yAxisMap) {
-        const xScale = getAnyElementOfObject(xAxisMap).scale;
-        const yScale = getAnyElementOfObject(yAxisMap).scale;
-        const xValue = xScale && xScale.invert ? xScale.invert(e.chartX) : null;
-        const yValue = yScale && yScale.invert ? yScale.invert(e.chartY) : null;
+        const xReversed = getAnyElementOfObject(xAxisMap).reversed;
+        const yReversed = getAnyElementOfObject(yAxisMap).reversed;
+        const xValue = xReversed ? -e.chartX : e.chartX;
+        const yValue = yReversed ? -e.chartY : e.chartY;
 
         return { ...e, xValue, yValue };
       }
@@ -1339,7 +1339,7 @@ export const generateCategoricalChart = ({
      * @param  {Object} e              Event object
      * @return {Null}                  null
      */
-    handleMouseEnter = (e: any) => {
+    handleMouseEnter = (e: MouseEvent) => {
       const { onMouseEnter } = this.props;
       const mouse = this.getMouseInfo(e);
 
@@ -1354,7 +1354,7 @@ export const generateCategoricalChart = ({
       }
     };
 
-    triggeredAfterMouseMove = (e: any): any => {
+    triggeredAfterMouseMove = (e: MouseEvent | Touch) => {
       const { onMouseMove } = this.props;
       const mouse = this.getMouseInfo(e);
       const nextState: CategoricalChartState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
@@ -1396,8 +1396,8 @@ export const generateCategoricalChart = ({
      * @param  {Object} e        Event object
      * @return {Null} no return
      */
-    handleMouseMove = (e: any) => {
-      if (e && _.isFunction(e.persist)) {
+    handleMouseMove = (e: MouseEvent | Touch) => {
+      if (e && 'persist' in e && _.isFunction(e.persist)) {
         e.persist();
       }
       this.triggeredAfterMouseMove(e);
@@ -1408,7 +1408,7 @@ export const generateCategoricalChart = ({
      * @param {Object} e Event object
      * @return {Null} no return
      */
-    handleMouseLeave = (e: any) => {
+    handleMouseLeave = (e: MouseEvent) => {
       const { onMouseLeave } = this.props;
       const nextState = { isTooltipActive: false };
 
@@ -1422,13 +1422,16 @@ export const generateCategoricalChart = ({
       this.cancelThrottledTriggerAfterMouseMove();
     };
 
-    handleOuterEvent = (e: any) => {
-      const eventName = getReactEventByType(e);
+    handleOuterEvent = (e: TouchEvent | MouseEvent) => {
+      const eventName = getReactEventByType(e.type);
+
+      if (eventName === null) return;
 
       const event = _.get(this.props, `${eventName}`);
+
       if (eventName && _.isFunction(event)) {
         let mouse;
-        if (/.*touch.*/i.test(eventName)) {
+        if ('changedTouches' in e) {
           mouse = this.getMouseInfo(e.changedTouches[0]);
         } else {
           mouse = this.getMouseInfo(e);
@@ -1440,7 +1443,7 @@ export const generateCategoricalChart = ({
       }
     };
 
-    handleClick = (e: any) => {
+    handleClick = (e: MouseEvent) => {
       const { onClick } = this.props;
       const mouse = this.getMouseInfo(e);
 
@@ -1455,7 +1458,7 @@ export const generateCategoricalChart = ({
       }
     };
 
-    handleMouseDown = (e: any) => {
+    handleMouseDown = (e: MouseEvent | Touch) => {
       const { onMouseDown } = this.props;
 
       if (_.isFunction(onMouseDown)) {
@@ -1465,7 +1468,7 @@ export const generateCategoricalChart = ({
       }
     };
 
-    handleMouseUp = (e: any) => {
+    handleMouseUp = (e: MouseEvent | Touch) => {
       const { onMouseUp } = this.props;
 
       if (_.isFunction(onMouseUp)) {
@@ -1475,19 +1478,19 @@ export const generateCategoricalChart = ({
       }
     };
 
-    handleTouchMove = (e: any) => {
+    handleTouchMove = (e: TouchEvent) => {
       if (e.changedTouches != null && e.changedTouches.length > 0) {
         this.handleMouseMove(e.changedTouches[0]);
       }
     };
 
-    handleTouchStart = (e: any) => {
+    handleTouchStart = (e: TouchEvent) => {
       if (e.changedTouches != null && e.changedTouches.length > 0) {
         this.handleMouseDown(e.changedTouches[0]);
       }
     };
 
-    handleTouchEnd = (e: any) => {
+    handleTouchEnd = (e: TouchEvent) => {
       if (e.changedTouches != null && e.changedTouches.length > 0) {
         this.handleMouseUp(e.changedTouches[0]);
       }
@@ -1749,7 +1752,7 @@ export const generateCategoricalChart = ({
       const { radialLines, polarAngles, polarRadius } = element.props;
       const { radiusAxisMap, angleAxisMap } = this.state;
       const radiusAxis = getAnyElementOfObject(radiusAxisMap);
-      const angleAxis = getAnyElementOfObject(angleAxisMap);
+      const angleAxis = getAnyElementOfObject<any>(angleAxisMap);
       const { cx, cy, innerRadius, outerRadius } = angleAxis;
       const props = element.props || {};
 

@@ -1113,8 +1113,8 @@ export const filterProps = (
 
 export const adaptEventHandlers = (
   props: Record<string, any> | Component | FunctionComponent | boolean,
-  newHandler?: (e?: Event) => any,
-): Record<string, (e?: Event) => any> => {
+  newHandler?: (e?: SyntheticEvent) => void,
+): Record<string, (e?: SyntheticEvent) => void> => {
   if (!props || typeof props === 'function' || typeof props === 'boolean') {
     return null;
   }
@@ -1129,11 +1129,11 @@ export const adaptEventHandlers = (
     return null;
   }
 
-  const out: Record<string, (e: Event) => void> = {};
+  const out: Record<string, (e: SyntheticEvent) => void> = {};
 
   Object.keys(inputProps).forEach(key => {
     if (EventKeys.includes(key)) {
-      out[key] = newHandler || ((e: Event) => inputProps[key](inputProps, e));
+      out[key] = newHandler || ((e: SyntheticEvent) => inputProps[key](inputProps, e));
     }
   });
 

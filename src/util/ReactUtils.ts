@@ -4,7 +4,7 @@ import { isFragment } from 'react-is';
 import { isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
 
-const REACT_BROWSER_EVENT_MAP: any = {
+const REACT_BROWSER_EVENT_MAP: Record<string, string> = {
   click: 'onClick',
   mousedown: 'onMouseDown',
   mouseup: 'onMouseUp',
@@ -377,14 +377,8 @@ export const renderByOrder = (
   return elements;
 };
 
-export const getReactEventByType = (e: any) => {
-  const type = e && e.type;
-
-  if (type && REACT_BROWSER_EVENT_MAP[type]) {
-    return REACT_BROWSER_EVENT_MAP[type];
-  }
-
-  return null;
+export const getReactEventByType = (eventType: string) => {
+  return REACT_BROWSER_EVENT_MAP[eventType] ?? null;
 };
 
 export const parseChildIndex = (child: any, children: any[]) => {

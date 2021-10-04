@@ -56,7 +56,7 @@ export const getPercentValue = (percent: number | string, totalValue: number, de
   return value;
 };
 
-export const getAnyElementOfObject = (obj: any) => {
+export const getAnyElementOfObject = <T>(obj: Record<string, T>) => {
   if (!obj) {
     return null;
   }
