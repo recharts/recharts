@@ -66,6 +66,7 @@ import {
   filterProps,
   adaptEventHandlers,
   GeometrySector,
+  AxisType,
 } from '../util/types';
 
 const ORIENT_MAP = {
@@ -92,36 +93,51 @@ const deferClear = // eslint-disable-next-line no-nested-ternary
     ? clearImmediate
     : clearTimeout;
 
-const calculateTooltipPos = (rangeObj: any, layout: LayoutType): any => {
-  if (layout === 'horizontal') {
+const calculateTooltipPos = (
+  rangeObj:
+    | {
+        radius: number;
+        angle: number;
+      }
+    | { x: number; y: number },
+  layout: LayoutType,
+): number => {
+  if (layout === 'horizontal' && 'x' in rangeObj) {
     return rangeObj.x;
   }
-  if (layout === 'vertical') {
+  if (layout === 'vertical' && 'y' in rangeObj) {
     return rangeObj.y;
   }
-  if (layout === 'centric') {
+  if (layout === 'centric' && 'angle' in rangeObj) {
     return rangeObj.angle;
   }
 
-  return rangeObj.radius;
+  return 'radius' in rangeObj ? rangeObj.radius : 0;
 };
 
 const getActiveCoordinate = (
   layout: LayoutType,
   tooltipTicks: TickItem[],
-  activeIndex: any,
-  rangeObj: any,
+  activeIndex: number,
+  rangeObj:
+    | {
+        radius: number;
+        angle: number;
+        cx?: number;
+        cy?: number;
+      }
+    | { x: number; y: number },
 ): ChartCoordinate => {
   const entry = tooltipTicks.find((tick: any) => tick && tick.index === activeIndex);
 
   if (entry) {
-    if (layout === 'horizontal') {
+    if (layout === 'horizontal' && 'y' in rangeObj) {
       return { x: entry.coordinate, y: rangeObj.y };
     }
-    if (layout === 'vertical') {
+    if (layout === 'vertical' && 'x' in rangeObj) {
       return { x: rangeObj.x, y: entry.coordinate };
     }
-    if (layout === 'centric') {
+    if (layout === 'centric' && 'radius' in rangeObj) {
       const angle = entry.coordinate;
       const { radius } = rangeObj;
 
@@ -134,11 +150,12 @@ const getActiveCoordinate = (
     }
 
     const radius = entry.coordinate;
-    const { angle } = rangeObj;
+    const angle = 'angle' in rangeObj ? rangeObj.angle : 0;
+    const { cx, cy } = 'cx' in rangeObj ? rangeObj : { cx: 0, cy: 0 };
 
     return {
       ...rangeObj,
-      ...polarToCartesian(rangeObj.cx, rangeObj.cy, radius, angle),
+      ...polarToCartesian(cx, cy, radius, angle),
       angle,
       radius,
     };
@@ -147,8 +164,20 @@ const getActiveCoordinate = (
   return originCoordinate;
 };
 
-const getDisplayedData = (data: any[], { graphicalItems, dataStartIndex, dataEndIndex }: any, item?: any): any[] => {
-  const itemsData = (graphicalItems || []).reduce((result: any, child: any) => {
+const getDisplayedData = (
+  data: any[],
+  {
+    graphicalItems,
+    dataStartIndex,
+    dataEndIndex,
+  }: {
+    graphicalItems?: React.DetailedReactHTMLElement<any, HTMLElement>[];
+    dataStartIndex?: number;
+    dataEndIndex?: number;
+  },
+  item?: any,
+): any[] => {
+  const itemsData = (graphicalItems || []).reduce((result: any[], child) => {
     const itemData = child.props.data;
 
     if (itemData && itemData.length) {
@@ -227,8 +256,29 @@ const getTooltipContent = (
  * @param  {Object} rangeObj  { x, y } coordinates
  * @return {Object}           Tooltip data data
  */
-const getTooltipData = (state: CategoricalChartState, chartData: any[], layout: LayoutType, rangeObj?: any) => {
-  const rangeData = rangeObj || { x: state.chartX, y: state.chartY };
+const getTooltipData = (
+  state: CategoricalChartState,
+  chartData: any[],
+  layout: LayoutType,
+  rangeObj?:
+    | null
+    | boolean
+    | {
+        radius: number;
+        angle: number;
+        cx?: number;
+        cy?: number;
+        innerRadius?: number;
+        outerRadius?: number;
+        startAngle?: number;
+        endAngle?: number;
+        cornerRadius?: number;
+        forceCornerRadius?: boolean;
+        cornerIsExternal?: boolean;
+      }
+    | { x: number; y: number },
+) => {
+  const rangeData = (rangeObj !== true && rangeObj) || { x: state.chartX, y: state.chartY };
 
   const pos = calculateTooltipPos(rangeData, layout);
   const { orderedTooltipTicks: ticks, tooltipAxis: axis, tooltipTicks } = state;
@@ -265,7 +315,23 @@ const getTooltipData = (state: CategoricalChartState, chartData: any[], layout: 
  */
 const getAxisMapByAxes = (
   props: CategoricalChartProps,
-  { axes, graphicalItems, axisType, axisIdKey, stackGroups, dataStartIndex, dataEndIndex }: any,
+  {
+    axes,
+    graphicalItems,
+    axisType,
+    axisIdKey,
+    stackGroups,
+    dataStartIndex,
+    dataEndIndex,
+  }: {
+    axes: React.DetailedReactHTMLElement<any, HTMLElement>[];
+    graphicalItems: React.DetailedReactHTMLElement<any, HTMLElement>[];
+    axisType: AxisType;
+    axisIdKey: string;
+    stackGroups: any;
+    dataStartIndex?: number;
+    dataEndIndex?: number;
+  },
 ) => {
   const { layout, children, stackOffset } = props;
   const isCategorical = isCategoricalAxis(layout, axisType);
@@ -480,17 +546,27 @@ const getAxisMapByItems = (
  */
 const getAxisMap = (
   props: CategoricalChartProps,
-  { axisType = 'xAxis', AxisComp, graphicalItems, stackGroups, dataStartIndex, dataEndIndex }: any,
+  {
+    axisType = 'xAxis',
+    AxisComp,
+    graphicalItems,
+    stackGroups,
+    dataStartIndex,
+    dataEndIndex,
+  }: BaseAxisProps & {
+    graphicalItems: React.DetailedReactHTMLElement<any, HTMLElement>[];
+    stackGroups: any;
+    dataStartIndex?: number;
+    dataEndIndex?: number;
+  },
 ) => {
   const { children } = props;
   const axisIdKey = `${axisType}Id`;
   // Get all the instance of Axis
   const axes = findAllByType(children, AxisComp);
 
-  let axisMap = {};
-
   if (axes && axes.length) {
-    axisMap = getAxisMapByAxes(props, {
+    return getAxisMapByAxes(props, {
       axes,
       graphicalItems,
       axisType,
@@ -499,8 +575,10 @@ const getAxisMap = (
       dataStartIndex,
       dataEndIndex,
     });
-  } else if (graphicalItems && graphicalItems.length) {
-    axisMap = getAxisMapByItems(props, {
+  }
+
+  if (graphicalItems && graphicalItems.length) {
+    return getAxisMapByItems(props, {
       Axis: AxisComp,
       graphicalItems,
       axisType,
@@ -511,7 +589,7 @@ const getAxisMap = (
     });
   }
 
-  return axisMap;
+  return {};
 };
 
 const tooltipTicksGenerator = (axisMap: any) => {
@@ -753,13 +831,13 @@ export const generateCategoricalChart = ({
   formatAxisMap,
   defaultProps,
 }: CategoricalChartOptions) => {
-  const getFormatItems = (props: CategoricalChartProps, currentState: any): any[] => {
+  const getFormattedItems = (props: CategoricalChartProps, currentState: any) => {
     const { graphicalItems, stackGroups, offset, updateId, dataStartIndex, dataEndIndex } = currentState;
     const { barSize, layout, barGap, barCategoryGap, maxBarSize: globalMaxBarSize } = props;
     const { numericAxisName, cateAxisName } = getAxisNameByLayout(layout);
     const hasBar = hasGraphicalBarItem(graphicalItems);
     const sizeList = hasBar && getBarSizeList({ barSize, stackGroups });
-    const formattedItems = [] as any[];
+    const formattedItems: { item: any; props: any; childIndex: number }[] = [];
 
     graphicalItems.forEach((item: any, index: number) => {
       const displayedData = getDisplayedData(props.data, { dataStartIndex, dataEndIndex }, item);
@@ -855,7 +933,12 @@ export const generateCategoricalChart = ({
    * @return {Object} state New state to set
    */
   const updateStateOfAxisMapsOffsetAndStackGroups = (
-    { props, dataStartIndex, dataEndIndex, updateId }: any,
+    {
+      props,
+      dataStartIndex,
+      dataEndIndex,
+      updateId,
+    }: { props: any; dataStartIndex?: number; dataEndIndex?: number; updateId: number },
     prevState?: CategoricalChartState,
   ): any => {
     if (!validateWidthHeight({ props })) {
@@ -873,7 +956,7 @@ export const generateCategoricalChart = ({
       stackOffset,
       reverseStackOrder,
     );
-    const axisObj = axisComponents.reduce((result: any, entry: any) => {
+    const axisObj = axisComponents.reduce((result: any, entry: BaseAxisProps) => {
       const name = `${entry.axisType}Map`;
 
       return {
@@ -896,7 +979,7 @@ export const generateCategoricalChart = ({
     const cateAxisMap = axisObj[`${cateAxisName}Map`];
     const ticksObj = tooltipTicksGenerator(cateAxisMap);
 
-    const formattedGraphicalItems = getFormatItems(props, {
+    const formattedGraphicalItems = getFormattedItems(props, {
       ...axisObj,
       dataStartIndex,
       dataEndIndex,
@@ -1204,7 +1287,7 @@ export const generateCategoricalChart = ({
       ];
     }
 
-    inRange(x: number, y: number): any {
+    inRange(x: number, y: number) {
       const { layout } = this.props;
 
       if (layout === 'horizontal' || layout === 'vertical') {
