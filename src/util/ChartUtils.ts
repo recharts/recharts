@@ -9,7 +9,7 @@ import {
   stackOffsetSilhouette,
   stackOffsetWiggle,
 } from 'd3-shape';
-import { ReactElement, ReactNode } from 'react';
+import { PureComponent, ReactElement, ReactNode } from 'react';
 import { isNumOrStr, uniqueId, isNumber, getPercentValue, mathSign, findEntryInArray } from './DataUtils';
 import { Legend } from '../component/Legend';
 import { findAllByType, findChildByType, getDisplayName } from './ReactUtils';
@@ -151,7 +151,7 @@ export const calculateActiveTickIndex = (
  * @param  {ReactElement} item A graphic item
  * @return {String}            Color
  */
-export const getMainColorOfGraphicItem = (item: ReactElement) => {
+export const getMainColorOfGraphicItem = (item: ReactElement | PureComponent) => {
   const {
     type: { displayName },
   } = item as any; // TODO: check if displayName is valid.
@@ -1148,7 +1148,7 @@ export const parseDomainOfCategoryAxis = (
   return specifiedDomain;
 };
 
-export const getTooltipItem = (graphicalItem: ReactElement, payload: any) => {
+export const getTooltipItem = (graphicalItem: ReactElement | PureComponent, payload: any) => {
   const { dataKey, name, unit, formatter, tooltipType, chartType } = graphicalItem.props;
 
   return {

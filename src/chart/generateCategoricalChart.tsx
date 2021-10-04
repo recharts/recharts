@@ -856,7 +856,7 @@ export const generateCategoricalChart = ({
       const numericAxisId = item.props[`${numericAxisName}Id`];
       const cateAxisId = item.props[`${cateAxisName}Id`];
       const axisObj = axisComponents.reduce((result: any, entry) => {
-        const axisMap = currentState[`${entry.axisType}Map`];
+        const axisMap: any = currentState[`${entry.axisType}Map`];
         const id = item.props[`${entry.axisType}Id`];
         const axis = axisMap && axisMap[id];
 
