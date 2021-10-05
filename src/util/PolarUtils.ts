@@ -139,7 +139,7 @@ export const formatAngleOfSector = ({ startAngle, endAngle }: GeometrySector) =>
 
 const reverseFormatAngleOfSector = (angle: number, { startAngle, endAngle }: GeometrySector) => {
   if (startAngle === undefined || endAngle === undefined) {
-    return { startAngle, endAngle };
+    return angle;
   }
 
   const startCnt = Math.floor(startAngle / 360);
