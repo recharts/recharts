@@ -73,11 +73,16 @@ export const calculateActiveTickIndex = (
   unsortedTicks: Array<TickItem>,
   axis: BaseAxisProps,
 ) => {
-  let index = -1;
+  let index: number | undefined = -1;
   const len = ticks?.length ?? 0;
 
   if (len > 1) {
-    if (axis && axis.axisType === 'angleAxis' && Math.abs(Math.abs(axis.range[1] - axis.range[0]) - 360) <= 1e-6) {
+    if (
+      axis &&
+      axis.axisType === 'angleAxis' &&
+      axis.range &&
+      Math.abs(Math.abs(axis.range[1] - axis.range[0]) - 360) <= 1e-6
+    ) {
       const { range } = axis;
       // ticks are distributed in a circle
       for (let i = 0; i < len; i++) {
@@ -541,7 +546,7 @@ export const getCoordinatesOfGrid = (ticks: Array<TickItem>, min: number, max: n
  * @param {Boolean} isAll Return the ticks of all the points or not
  * @return {Array}  Ticks
  */
-export const getTicksOfAxis = (axis: any, isGrid?: boolean, isAll?: boolean): TickItem[] => {
+export const getTicksOfAxis = (axis: any, isGrid?: boolean, isAll?: boolean): TickItem[] | null => {
   if (!axis) return null;
   const { scale } = axis;
   const { duplicateDomain, type, range } = axis;
@@ -594,12 +599,14 @@ export const getTicksOfAxis = (axis: any, isGrid?: boolean, isAll?: boolean): Ti
  * @return {Function}                The combined handler
  */
 export const combineEventHandlers = (defaultHandler: Function, parentHandler: Function, childHandler: Function) => {
-  let customizedHandler: Function;
+  let customizedHandler: Function | null;
 
   if (_.isFunction(childHandler)) {
     customizedHandler = childHandler;
   } else if (_.isFunction(parentHandler)) {
     customizedHandler = parentHandler;
+  } else {
+    customizedHandler = null;
   }
 
   if (_.isFunction(defaultHandler) || customizedHandler) {
@@ -802,8 +809,8 @@ export const getStackGroupsByAxisId = (
   numericAxisId: string,
   cateAxisId: string,
   offsetType: any,
-  reverseStackOrder: boolean,
-): StackGroups => {
+  reverseStackOrder?: boolean,
+): StackGroups | null => {
   if (!data) {
     return null;
   }
@@ -1039,14 +1046,14 @@ export const getDomainOfStackGroups = (stackGroup: StackGroup, startIndex: numbe
       (result, stackId) => {
         const group = stackGroup[stackId];
         const { stackedData } = group;
-        const domain = stackedData.reduce(
-          (res: [number, number], entry: any) => {
+        const domain = stackedData?.reduce(
+          (res: [number, number], entry) => {
             const s = getDomainOfSingle(entry.slice(startIndex, endIndex + 1));
 
             return [Math.min(res[0], s[0]), Math.max(res[1], s[1])];
           },
           [Infinity, -Infinity],
-        );
+        ) ?? [Infinity, -Infinity];
 
         return [Math.min(domain[0], result[0]), Math.max(domain[1], result[1])];
       },
@@ -1068,7 +1075,7 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
   if (isNumber(specifiedDomain[0])) {
     domain[0] = allowDataOverflow ? specifiedDomain[0] : Math.min(specifiedDomain[0], dataDomain[0]);
   } else if (MIN_VALUE_REG.test(specifiedDomain[0])) {
-    const value = +MIN_VALUE_REG.exec(specifiedDomain[0])[1];
+    const value = +(MIN_VALUE_REG.exec(specifiedDomain[0])?.[1] ?? 0);
 
     domain[0] = dataDomain[0] - value;
   } else if (_.isFunction(specifiedDomain[0])) {
@@ -1080,7 +1087,7 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
   if (isNumber(specifiedDomain[1])) {
     domain[1] = allowDataOverflow ? specifiedDomain[1] : Math.max(specifiedDomain[1], dataDomain[1]);
   } else if (MAX_VALUE_REG.test(specifiedDomain[1])) {
-    const value = +MAX_VALUE_REG.exec(specifiedDomain[1])[1];
+    const value = +(MAX_VALUE_REG.exec(specifiedDomain[1])?.[1] ?? 0);
 
     domain[1] = dataDomain[1] + value;
   } else if (_.isFunction(specifiedDomain[1])) {

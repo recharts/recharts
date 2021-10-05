@@ -13,7 +13,7 @@ export const mathSign = (value: number) => {
 
 export const isPercent = (value: string | number) => _.isString(value) && value.indexOf('%') === value.length - 1;
 
-export const isNumber = (value: any) => _.isNumber(value) && !_.isNaN(value);
+export const isNumber = (value: unknown): value is number => _.isNumber(value) && !_.isNaN(value);
 
 export const isNumOrStr = (value: number | string) => isNumber(value as number) || _.isString(value);
 
@@ -131,14 +131,16 @@ export const getLinearRegression = (data: Array<{ cx?: number; cy?: number }>) =
   let xmin = Infinity;
   let xmax = -Infinity;
 
-  for (let i = 0; i < len; i++) {
-    xsum += data[i].cx;
-    ysum += data[i].cy;
-    xysum += data[i].cx * data[i].cy;
-    xxsum += data[i].cx * data[i].cx;
-    xmin = Math.min(xmin, data[i].cx);
-    xmax = Math.max(xmax, data[i].cx);
-  }
+  data.forEach(item => {
+    const cx = item.cx ?? NaN;
+    const cy = item.cy ?? NaN;
+    xsum += cx;
+    ysum += cy;
+    xysum += cx * cy;
+    xxsum += cx * cx;
+    xmin = Math.min(xmin, cx);
+    xmax = Math.max(xmax, cx);
+  });
 
   const a = len * xxsum !== xsum * xsum ? (len * xysum - xsum * ysum) / (len * xxsum - xsum * xsum) : 0;
 

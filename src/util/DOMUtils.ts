@@ -86,19 +86,22 @@ export const getStringSize = (text: string | number, style: CSSProperties = {}) 
   }
 
   try {
-    let measurementSpan = document.getElementById(MEASUREMENT_SPAN_ID);
-    if (!measurementSpan) {
+    let measurementSpan: HTMLElement;
+    const docMeasurementSpan = document.getElementById(MEASUREMENT_SPAN_ID);
+    if (!docMeasurementSpan) {
       measurementSpan = document.createElement('span');
       measurementSpan.setAttribute('id', MEASUREMENT_SPAN_ID);
       measurementSpan.setAttribute('aria-hidden', 'true');
       document.body.appendChild(measurementSpan);
+    } else {
+      measurementSpan = docMeasurementSpan;
     }
+
     // Need to use CSS Object Model (CSSOM) to be able to comply with Content Security Policy (CSP)
     // https://en.wikipedia.org/wiki/Content_Security_Policy
-    const measurementSpanStyle: Record<string, any> = { ...SPAN_STYLE, ...style };
-    Object.keys(measurementSpanStyle).map(styleKey => {
+    const measurementSpanStyle: Record<string, string | number> = { ...SPAN_STYLE, ...style };
+    (Object.keys(measurementSpanStyle) as Array<keyof typeof measurementSpanStyle>).forEach(styleKey => {
       (measurementSpan.style as Record<string, any>)[styleKey] = measurementSpanStyle[styleKey];
-      return styleKey;
     });
 
     measurementSpan.textContent = str;

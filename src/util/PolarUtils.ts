@@ -57,7 +57,7 @@ export const formatAxisMap = (
   return ids.reduce((result, id) => {
     const axis = axisMap[id];
     const { domain, reversed } = axis;
-    let range;
+    let range: [number, number] = [0, 0];
 
     if (_.isNil(axis.range)) {
       if (axisType === 'angleAxis') {
@@ -106,9 +106,9 @@ export const distanceBetweenPoints = (point: Coordinate, anotherPoint: Coordinat
 };
 
 export const getAngleOfPoint = ({ x, y }: Coordinate, { cx, cy }: GeometrySector) => {
-  const radius = distanceBetweenPoints({ x, y }, { x: cx, y: cy });
+  const radius = distanceBetweenPoints({ x, y }, { x: cx ?? x, y: cy ?? y });
 
-  if (radius <= 0) {
+  if (radius <= 0 || cx === undefined || cy === undefined) {
     return { radius };
   }
 
@@ -123,6 +123,10 @@ export const getAngleOfPoint = ({ x, y }: Coordinate, { cx, cy }: GeometrySector
 };
 
 export const formatAngleOfSector = ({ startAngle, endAngle }: GeometrySector) => {
+  if (startAngle === undefined || endAngle === undefined) {
+    return { startAngle, endAngle };
+  }
+
   const startCnt = Math.floor(startAngle / 360);
   const endCnt = Math.floor(endAngle / 360);
   const min = Math.min(startCnt, endCnt);
@@ -133,7 +137,11 @@ export const formatAngleOfSector = ({ startAngle, endAngle }: GeometrySector) =>
   };
 };
 
-const reverseFormatAngleOfSetor = (angle: number, { startAngle, endAngle }: GeometrySector) => {
+const reverseFormatAngleOfSector = (angle: number, { startAngle, endAngle }: GeometrySector) => {
+  if (startAngle === undefined || endAngle === undefined) {
+    return { startAngle, endAngle };
+  }
+
   const startCnt = Math.floor(startAngle / 360);
   const endCnt = Math.floor(endAngle / 360);
   const min = Math.min(startCnt, endCnt);
@@ -145,7 +153,12 @@ export const inRangeOfSector = ({ x, y }: Coordinate, sector: GeometrySector) =>
   const { radius, angle } = getAngleOfPoint({ x, y }, sector);
   const { innerRadius, outerRadius } = sector;
 
-  if (radius < innerRadius || radius > outerRadius) {
+  if (
+    (innerRadius !== undefined && radius < innerRadius) ||
+    outerRadius === undefined ||
+    radius > outerRadius ||
+    angle === undefined
+  ) {
     return false;
   }
 
@@ -155,7 +168,9 @@ export const inRangeOfSector = ({ x, y }: Coordinate, sector: GeometrySector) =>
 
   const { startAngle, endAngle } = formatAngleOfSector(sector);
   let formatAngle = angle;
-  let inRange;
+  let inRange = false;
+
+  if (startAngle === undefined || endAngle === undefined) return null;
 
   if (startAngle <= endAngle) {
     while (formatAngle > endAngle) {
@@ -176,7 +191,7 @@ export const inRangeOfSector = ({ x, y }: Coordinate, sector: GeometrySector) =>
   }
 
   if (inRange) {
-    return { ...sector, radius, angle: reverseFormatAngleOfSetor(formatAngle, sector) };
+    return { ...sector, radius, angle: reverseFormatAngleOfSector(formatAngle, sector) };
   }
 
   return null;

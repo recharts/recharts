@@ -109,7 +109,7 @@ export const findAllByType = (
   }
 
   toArray(children).forEach(child => {
-    if (typeof child === 'object' && 'type' in child && typeof child.type !== 'string') {
+    if (typeof child === 'object' && child && 'type' in child && typeof child.type !== 'string') {
       const childType = (child.type as FunctionComponent).displayName || child.type.name;
 
       if (types.includes(childType)) {
@@ -272,7 +272,7 @@ export const filterSvgElements = (children: ReactNode): React.ReactElement[] => 
   const svgElements = [] as React.ReactElement[];
 
   toArray(children).forEach(entry => {
-    if (typeof entry === 'object' && 'type' in entry && isSvgElement(entry)) {
+    if (typeof entry === 'object' && entry && 'type' in entry && isSvgElement(entry)) {
       svgElements.push(entry);
     }
   });
