@@ -83,7 +83,7 @@ if (env === 'production') {
 if (env === 'analyse') {
   config.plugins.push(new BundleAnalyzerPlugin());
 } else {
-  config.plugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'static' }));
+  config.plugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: false }));
 }
 
 module.exports = config;
