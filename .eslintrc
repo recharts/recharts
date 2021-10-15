@@ -28,7 +28,7 @@
         "tabWidth": 2,
         "useTabs": false,
         "trailingComma": "all",
-        "arrowParens": "avoid",
+        "arrowParens": "avoid"
       }
     ],
     "import/extensions": "off",
@@ -95,6 +95,11 @@
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/ban-types": "off",
+    "@typescript-eslint/no-unused-vars": ["error", {
+      "args": "after-used",
+      "ignoreRestSiblings": true,
+      "argsIgnorePattern": "^_"
+    }]
   },
   "settings": {
     "import/resolver": {
