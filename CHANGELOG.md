@@ -1,3 +1,11 @@
+## 2.1.5 (oct 15, 2021)
+
+### fix
+
+- Fixed types for legend events (#2267 #2269)
+- Fix the react-is version (#2670)
+- Fix type declaration errors when tsc (#2675)
+- Fix(build-umd): add webpack output options libraryTarget (#2684)
 ## 2.1.4 (sep 19, 2021)
 
 ### fix
