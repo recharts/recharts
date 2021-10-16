@@ -1751,7 +1751,6 @@ export const generateCategoricalChart = ({
       const radiusAxis = getAnyElementOfObject(radiusAxisMap);
       const angleAxis = getAnyElementOfObject(angleAxisMap);
       const { cx, cy, innerRadius, outerRadius } = angleAxis;
-      const props = element.props || {};
 
       return cloneElement(element, {
         polarAngles: isArray(polarAngles)
