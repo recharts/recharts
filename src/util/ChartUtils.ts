@@ -421,7 +421,9 @@ export const getDomainOfErrorBars = (data: any[], item: any, dataKey: any, axisT
     return data.reduce(
       (result, entry) => {
         const entryValue = getValueByDataKey(entry, dataKey, 0);
-        const mainValue = isArray(entryValue) ? [lodashMin(entryValue), lodashMax(entryValue)] : [entryValue, entryValue];
+        const mainValue = isArray(entryValue)
+          ? [lodashMin(entryValue), lodashMax(entryValue)]
+          : [entryValue, entryValue];
         const errorDomain = keys.reduce(
           (prevErrorArr: [number, number], k: any) => {
             const errorValue = getValueByDataKey(entry, k, 0);
