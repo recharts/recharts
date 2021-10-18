@@ -79,12 +79,12 @@ let lastChildren: ReactNode | null = null;
 let lastResult: ReactNode[] | null = null;
 
 export const toArray = <T extends ReactNode>(children: T | T[]): T[] => {
-  if (children === lastChildren && _.isArray(lastResult)) {
+  if (children === lastChildren && isArray(lastResult)) {
     return lastResult as T[];
   }
   let result: T[] = [];
   Children.forEach(children, child => {
-    if (_.isNil(child)) return;
+    if (isNil(child)) return;
     if (isFragment(child)) {
       result = result.concat(toArray(child.props.children));
     } else {
@@ -104,7 +104,7 @@ export const findAllByType = (
   children: ReactNode,
   type: string | string[],
 ): React.DetailedReactHTMLElement<any, HTMLElement>[] => {
-  const result: React.DetailedReactHTMLElement<any, HTMLElement>[] = [];
+  let result: React.DetailedReactHTMLElement<any, HTMLElement>[] = [];
   let types: string[] = [];
 
   if (isArray(type)) {
@@ -118,7 +118,7 @@ export const findAllByType = (
       result = result.concat(findAllByType(child.props.children, type));
     }
     const childType = get(child, 'type.displayName') || get(child, 'type.name');
-    
+
     if (types.indexOf(childType) !== -1) {
       result.push(child);
     }
