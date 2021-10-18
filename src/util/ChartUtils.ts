@@ -2,8 +2,8 @@ import isNil from 'lodash/isNil';
 import get from 'lodash/get';
 import isFunction from 'lodash/isFunction';
 import flatMap from 'lodash/flatMap';
-import min from 'lodash/min';
-import max from 'lodash/max';
+import lodashMin from 'lodash/min';
+import lodashMax from 'lodash/max';
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
 import upperFirst from 'lodash/upperFirst';
@@ -56,7 +56,7 @@ export function getDomainOfDataByKey<T>(data: Array<T>, key: string, type: strin
   if (type === 'number') {
     const domain = flattenData.filter(entry => isNumber(entry) || parseFloat(entry));
 
-    return domain.length ? [min(domain), max(domain)] : [Infinity, -Infinity];
+    return domain.length ? [lodashMin(domain), lodashMax(domain)] : [Infinity, -Infinity];
   }
 
   const validateData = filterNil ? flattenData.filter(entry => !isNil(entry)) : flattenData;
@@ -421,7 +421,7 @@ export const getDomainOfErrorBars = (data: any[], item: any, dataKey: any, axisT
     return data.reduce(
       (result, entry) => {
         const entryValue = getValueByDataKey(entry, dataKey, 0);
-        const mainValue = isArray(entryValue) ? [min(entryValue), max(entryValue)] : [entryValue, entryValue];
+        const mainValue = isArray(entryValue) ? [lodashMin(entryValue), lodashMax(entryValue)] : [entryValue, entryValue];
         const errorDomain = keys.reduce(
           (prevErrorArr: [number, number], k: any) => {
             const errorValue = getValueByDataKey(entry, k, 0);
@@ -728,7 +728,7 @@ export const offsetSign = (series: any) => {
     let negative = 0;
 
     for (let i = 0; i < n; ++i) {
-      const value = isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
+      const value = Number.isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
 
       /* eslint-disable prefer-destructuring */
       if (value >= 0) {
@@ -756,7 +756,7 @@ export const offsetPositive = (series: any) => {
     let positive = 0;
 
     for (let i = 0; i < n; ++i) {
-      const value = isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
+      const value = Number.isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
 
       /* eslint-disable prefer-destructuring */
       if (value >= 0) {
@@ -871,7 +871,7 @@ export const getStackGroupsByAxisId = (
  */
 export const calculateDomainOfTicks = (ticks: Array<TickItem>, type: string) => {
   if (type === 'number') {
-    return [min(ticks), max(ticks)];
+    return [lodashMin(ticks), lodashMax(ticks)];
   }
 
   return ticks;
@@ -1023,8 +1023,8 @@ export const getStackedDataOfItem = (item: any, stackGroups: any) => {
 const getDomainOfSingle = (data: Array<any>) =>
   data.reduce(
     (result, entry) => [
-      min(entry.concat([result[0]]).filter(isNumber)),
-      max(entry.concat([result[1]]).filter(isNumber)),
+      lodashMin(entry.concat([result[0]]).filter(isNumber)),
+      lodashMax(entry.concat([result[1]]).filter(isNumber)),
     ],
     [Infinity, -Infinity],
   );

@@ -48,7 +48,7 @@ const computeNode = ({
     nodeValue = computedChildren.reduce((result: any, child: TreemapNode) => result + child[NODE_VALUE_KEY], 0);
   } else {
     // TODO need to verify valueKey
-    nodeValue = isNaN(node[valueKey as string]) || node[valueKey as string] <= 0 ? 0 : node[valueKey as string];
+    nodeValue = Number.isNaN(node[valueKey as string]) || node[valueKey as string] <= 0 ? 0 : node[valueKey as string];
   }
 
   return {
@@ -71,7 +71,7 @@ const getAreaOfChildren = (children: TreemapNode[], areaValueRatio: number) => {
 
     return {
       ...child,
-      area: isNaN(area) || area <= 0 ? 0 : area,
+      area: Number.isNaN(area) || area <= 0 ? 0 : area,
     };
   });
 };

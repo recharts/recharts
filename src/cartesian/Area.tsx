@@ -8,7 +8,7 @@ import get from 'lodash/get';
 import isArray from 'lodash/isArray';
 import isFunction from 'lodash/isFunction';
 import isNil from 'lodash/isNil';
-import max from 'lodash/max';
+import lodashMax from 'lodash/max';
 import _isNaN from 'lodash/isNaN';
 import isEqual from 'lodash/isEqual';
 import { Curve, CurveType, Point as CurvePoint } from '../shape/Curve';
@@ -348,12 +348,12 @@ export class Area extends PureComponent<Props, State> {
     const startX = points[0].x;
     const endX = points[points.length - 1].x;
     const width = alpha * Math.abs(startX - endX);
-    let maxY = max(points.map(entry => entry.y || 0));
+    let maxY = lodashMax(points.map(entry => entry.y || 0));
 
     if (isNumber(baseLine) && typeof baseLine === 'number') {
       maxY = Math.max(baseLine, maxY);
     } else if (baseLine && isArray(baseLine) && baseLine.length) {
-      maxY = Math.max(max(baseLine.map(entry => entry.y || 0)), maxY);
+      maxY = Math.max(lodashMax(baseLine.map(entry => entry.y || 0)), maxY);
     }
 
     if (isNumber(maxY)) {
@@ -375,12 +375,12 @@ export class Area extends PureComponent<Props, State> {
     const startY = points[0].y;
     const endY = points[points.length - 1].y;
     const height = alpha * Math.abs(startY - endY);
-    let maxX = max(points.map(entry => entry.x || 0));
+    let maxX = lodashMax(points.map(entry => entry.x || 0));
 
     if (isNumber(baseLine) && typeof baseLine === 'number') {
       maxX = Math.max(baseLine, maxX);
     } else if (baseLine && isArray(baseLine) && baseLine.length) {
-      maxX = Math.max(max(baseLine.map(entry => entry.x || 0)), maxX);
+      maxX = Math.max(lodashMax(baseLine.map(entry => entry.x || 0)), maxX);
     }
 
     if (isNumber(maxX)) {

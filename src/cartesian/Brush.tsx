@@ -4,7 +4,7 @@
 import React, { PureComponent, Children, ReactText, MouseEvent, ReactElement, TouchEvent, SVGProps } from 'react';
 import classNames from 'classnames';
 import { scalePoint, ScalePoint } from 'd3-scale';
-import range from 'lodash/range';
+import lodashRange from 'lodash/range';
 import isFunction from 'lodash/isFunction';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
@@ -93,7 +93,7 @@ const createScale = ({
 
   const len = data.length;
   const scale = scalePoint<number>()
-    .domain(range(0, len))
+    .domain(lodashRange(0, len))
     .range([x, x + width - travellerWidth]);
   const scaleValues = scale.domain().map(entry => scale(entry));
 
