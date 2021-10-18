@@ -49,7 +49,7 @@ export const ResponsiveContainer = forwardRef(
     const containerRef = useRef<HTMLDivElement>(null);
     useImperativeHandle(ref, () => containerRef, [containerRef]);
 
-    let mounted: boolean;
+    const [mounted, setMounted] = useState<boolean>(false);
 
     const getContainerSize = () => {
       if (!containerRef.current) {
@@ -139,17 +139,17 @@ export const ResponsiveContainer = forwardRef(
     };
 
     useEffect(() => {
-      mounted = true;
+      if (mounted) {
+        const size = getContainerSize();
 
-      const size = getContainerSize();
-
-      if (size) {
-        setSizes(size);
+        if (size) {
+          setSizes(size);
+        }
       }
+    }, [mounted]);
 
-      return () => {
-        mounted = false;
-      };
+    useEffect(() => {
+      setMounted(true);
     }, []);
 
     const style = { width, height, minWidth, minHeight, maxHeight };

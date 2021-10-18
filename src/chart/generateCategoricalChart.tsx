@@ -688,7 +688,7 @@ export interface CategoricalChartState {
 
   radiusAxisMap?: any;
 
-  formatedGraphicalItems?: any;
+  formattedGraphicalItems?: any;
 
   /** active tooltip payload */
   activePayload?: any[];
@@ -768,7 +768,7 @@ export const generateCategoricalChart = ({
     const { numericAxisName, cateAxisName } = getAxisNameByLayout(layout);
     const hasBar = hasGraphicalBarItem(graphicalItems);
     const sizeList = hasBar && getBarSizeList({ barSize, stackGroups });
-    const formatedItems = [] as any[];
+    const formattedItems = [] as any[];
 
     graphicalItems.forEach((item: any, index: number) => {
       const displayedData = getDisplayedData(props.data, { dataStartIndex, dataEndIndex }, item);
@@ -801,6 +801,7 @@ export const generateCategoricalChart = ({
         // 如果是bar，计算bar的位置
         const maxBarSize = isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
         const barBandSize = getBandSizeOfAxis(cateAxis, cateTicks, true) || maxBarSize;
+
         barPosition = getBarPosition({
           barGap,
           barCategoryGap,
@@ -819,7 +820,7 @@ export const generateCategoricalChart = ({
       const composedFn = item && item.type && item.type.getComposedData;
 
       if (composedFn) {
-        formatedItems.push({
+        formattedItems.push({
           props: {
             ...composedFn({
               ...axisObj,
@@ -846,7 +847,7 @@ export const generateCategoricalChart = ({
       }
     });
 
-    return formatedItems;
+    return formattedItems;
   };
 
   /**
@@ -905,7 +906,7 @@ export const generateCategoricalChart = ({
     const cateAxisMap = axisObj[`${cateAxisName}Map`];
     const ticksObj = tooltipTicksGenerator(cateAxisMap);
 
-    const formatedGraphicalItems = getFormatItems(props, {
+    const formattedGraphicalItems = getFormatItems(props, {
       ...axisObj,
       dataStartIndex,
       dataEndIndex,
@@ -916,7 +917,7 @@ export const generateCategoricalChart = ({
     });
 
     return {
-      formatedGraphicalItems,
+      formattedGraphicalItems,
       graphicalItems,
       offset,
       stackGroups,
@@ -1378,9 +1379,7 @@ export const generateCategoricalChart = ({
 
     /**
      * The handler of mouse entering a scatter
-     * @param {Object} el     The active scatter
-     * @param {Number} index  the index of the item
-     * @param {Object} e      the click event
+     * @param {Object} el The active scatter
      * @return {Object} no return
      */
     handleItemMouseEnter = (el: any) => {
@@ -1605,10 +1604,10 @@ export const generateCategoricalChart = ({
     axesTicksGenerator = (axis?: any) => getTicksOfAxis(axis, true);
 
     filterFormatItem(item: any, displayName: any, childIndex: any) {
-      const { formatedGraphicalItems } = this.state;
+      const { formattedGraphicalItems } = this.state;
 
-      for (let i = 0, len = formatedGraphicalItems.length; i < len; i++) {
-        const entry = formatedGraphicalItems[i];
+      for (let i = 0, len = formattedGraphicalItems.length; i < len; i++) {
+        const entry = formattedGraphicalItems[i];
 
         if (
           entry.item === item ||
@@ -1762,7 +1761,6 @@ export const generateCategoricalChart = ({
       const radiusAxis = getAnyElementOfObject(radiusAxisMap);
       const angleAxis = getAnyElementOfObject(angleAxisMap);
       const { cx, cy, innerRadius, outerRadius } = angleAxis;
-      const props = element.props || {};
 
       return cloneElement(element, {
         polarAngles: isArray(polarAngles)
@@ -1785,13 +1783,13 @@ export const generateCategoricalChart = ({
      * @return {ReactElement}            The instance of Legend
      */
     renderLegend = (): React.ReactElement => {
-      const { formatedGraphicalItems } = this.state;
+      const { formattedGraphicalItems } = this.state;
       const { children, width, height } = this.props;
       const margin = this.props.margin || {};
       const legendWidth: number = width - (margin.left || 0) - (margin.right || 0);
       const props = getLegendProps({
         children,
-        formatedGraphicalItems,
+        formattedGraphicalItems,
         legendWidth,
         legendContent,
       });
@@ -2005,8 +2003,9 @@ export const generateCategoricalChart = ({
       return [graphicalItem, null];
     };
 
-    renderCustomized = (element: React.ReactElement): React.ReactElement =>
+    renderCustomized = (element: React.ReactElement, displayName: string, index: number): React.ReactElement =>
       cloneElement(element, {
+        key: `recharts-customized-${index}`,
         ...this.props,
         ...this.state,
       });
@@ -2061,11 +2060,11 @@ export const generateCategoricalChart = ({
     }
 
     public getItemByXY(chartXY: { x: number; y: number }) {
-      const { formatedGraphicalItems } = this.state;
+      const { formattedGraphicalItems } = this.state;
 
-      if (formatedGraphicalItems && formatedGraphicalItems.length) {
-        for (let i = 0, len = formatedGraphicalItems.length; i < len; i++) {
-          const graphicalItem = formatedGraphicalItems[i];
+      if (formattedGraphicalItems && formattedGraphicalItems.length) {
+        for (let i = 0, len = formattedGraphicalItems.length; i < len; i++) {
+          const graphicalItem = formattedGraphicalItems[i];
           const { props, item } = graphicalItem;
           const itemDisplayName = getDisplayName(item.type);
 

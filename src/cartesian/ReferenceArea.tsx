@@ -44,6 +44,8 @@ export type Props = RectangleProps & ReferenceAreaProps;
 const getRect = (hasX1: boolean, hasX2: boolean, hasY1: boolean, hasY2: boolean, props: Props) => {
   const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2, xAxis, yAxis } = props;
 
+  if (!xAxis || !yAxis) return null;
+
   const scales = createLabeledScales({ x: xAxis.scale, y: yAxis.scale });
 
   const p1 = {

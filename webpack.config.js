@@ -12,8 +12,10 @@ const config = {
 
   output: {
     filename: 'Recharts.js',
+    library: 'Recharts',
+    libraryTarget: 'umd',
+    globalObject: 'this',
   },
-
   module: {
     rules: [
       {
@@ -33,14 +35,6 @@ const config = {
         ],
         loader: 'babel-loader',
       },
-      {
-        test: /\.(ts|tsx)$/,
-        exclude: /node_modules/,
-        include: [
-          path.resolve(__dirname, 'src'),
-        ],
-        loader: 'ts-loader',
-      }
     ],
   },
 
@@ -59,7 +53,7 @@ const config = {
       root: 'ReactDOM',
       commonjs2: 'react-dom',
       commonjs: 'react-dom',
-      amd: 'react-dom'
+      amd: 'react-dom',
     },
     'prop-types': {
       root: 'PropTypes',
@@ -78,20 +72,18 @@ const config = {
   ],
 };
 
-if (env === 'analyse') {
-  config.plugins.push(
-    new BundleAnalyzerPlugin()
-  );
-}
-
 if (env === 'production') {
   config.mode = 'production';
   config.optimization = {
     minimize: true,
-    minimizer: [
-      new TerserPlugin(),
-    ],
+    minimizer: [new TerserPlugin()],
   };
+}
+
+if (env === 'analyse') {
+  config.plugins.push(new BundleAnalyzerPlugin());
+} else {
+  config.plugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: false }));
 }
 
 module.exports = config;

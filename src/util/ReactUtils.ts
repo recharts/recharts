@@ -73,6 +73,29 @@ export const getDisplayName = (Comp: any) => {
   return Comp.displayName || Comp.name || 'Component';
 };
 
+// `toArray` gets called multiple times during the render
+// so we can memoize last invocation (since reference to `children` is the same)
+let lastChildren: ReactNode | null = null;
+let lastResult: ReactNode[] | null = null;
+
+export const toArray = <T extends ReactNode>(children: T | T[]): T[] => {
+  if (children === lastChildren && _.isArray(lastResult)) {
+    return lastResult as T[];
+  }
+  let result: T[] = [];
+  Children.forEach(children, child => {
+    if (_.isNil(child)) return;
+    if (isFragment(child)) {
+      result = result.concat(toArray(child.props.children));
+    } else {
+      result.push(child);
+    }
+  });
+  lastResult = result;
+  lastChildren = children;
+  return result;
+};
+
 /*
  * Find and return all matched children by type. `type` can be a React element class or
  * string
@@ -81,7 +104,7 @@ export const findAllByType = (
   children: ReactNode,
   type: string | string[],
 ): React.DetailedReactHTMLElement<any, HTMLElement>[] => {
-  let result: React.DetailedReactHTMLElement<any, HTMLElement>[] = [];
+  const result: React.DetailedReactHTMLElement<any, HTMLElement>[] = [];
   let types: string[] = [];
 
   if (isArray(type)) {
@@ -95,6 +118,7 @@ export const findAllByType = (
       result = result.concat(findAllByType(child.props.children, type));
     }
     const childType = get(child, 'type.displayName') || get(child, 'type.name');
+    
     if (types.indexOf(childType) !== -1) {
       result.push(child);
     }
@@ -250,7 +274,7 @@ const isSvgElement = (child: any) => child && child.type && isString(child.type)
 export const filterSvgElements = (children: React.ReactElement[]): React.ReactElement[] => {
   const svgElements = [] as React.ReactElement[];
 
-  React.Children.forEach(children, (entry: React.ReactElement) => {
+  toArray(children).forEach((entry: React.ReactElement) => {
     if (isSvgElement(entry)) {
       svgElements.push(entry);
     }
@@ -270,10 +294,10 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
     return true;
   }
 
-  if (Children.count(nextChildren) !== Children.count(prevChildren)) {
+  const count = Children.count(nextChildren);
+  if (count !== Children.count(prevChildren)) {
     return false;
   }
-  const count = Children.count(nextChildren);
 
   if (count === 0) {
     return true;
@@ -327,9 +351,9 @@ export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: Rea
 
 export const renderByOrder = (children: React.ReactElement[], renderMap: any) => {
   const elements: React.ReactElement[] = [];
-  const record: any = {};
+  const record: Record<string, boolean> = {};
 
-  Children.forEach(children, (child, index) => {
+  toArray(children).forEach((child, index) => {
     if (isSvgElement(child)) {
       elements.push(child);
     } else if (child) {
@@ -359,12 +383,5 @@ export const getReactEventByType = (e: any) => {
 };
 
 export const parseChildIndex = (child: any, children: any[]) => {
-  let result = -1;
-  Children.forEach(children, (entry, index) => {
-    if (entry === child) {
-      result = index;
-    }
-  });
-
-  return result;
+  return toArray(children).indexOf(child);
 };

@@ -172,8 +172,7 @@ export const getMainColorOfGraphicItem = (item: ReactElement) => {
   return result;
 };
 
-// TODO: Formated -> Formatted.
-interface FormatedGraphicalItem {
+interface FormattedGraphicalItem {
   props: any;
   childIndex: number;
   item: any;
@@ -181,12 +180,12 @@ interface FormatedGraphicalItem {
 
 export const getLegendProps = ({
   children,
-  formatedGraphicalItems,
+  formattedGraphicalItems,
   legendWidth,
   legendContent,
 }: {
   children: any;
-  formatedGraphicalItems?: Array<FormatedGraphicalItem>;
+  formattedGraphicalItems?: Array<FormattedGraphicalItem>;
   legendWidth: number;
   legendContent?: any;
 }) => {
@@ -199,7 +198,7 @@ export const getLegendProps = ({
   if (legendItem.props && legendItem.props.payload) {
     legendData = legendItem.props && legendItem.props.payload;
   } else if (legendContent === 'children') {
-    legendData = (formatedGraphicalItems || []).reduce((result, { item, props }) => {
+    legendData = (formattedGraphicalItems || []).reduce((result, { item, props }) => {
       const data = props.sectors || props.data || [];
 
       return result.concat(
@@ -212,7 +211,7 @@ export const getLegendProps = ({
       );
     }, []);
   } else {
-    legendData = (formatedGraphicalItems || []).map(({ item }) => {
+    legendData = (formattedGraphicalItems || []).map(({ item }) => {
       const { dataKey, name, legendType, hide } = item.props;
 
       return {
@@ -385,7 +384,7 @@ export const getBarPosition = ({
   return result;
 };
 
-export const appendOffsetOfLegend = (offset: any, items: Array<FormatedGraphicalItem>, props: any, legendBox: any) => {
+export const appendOffsetOfLegend = (offset: any, items: Array<FormattedGraphicalItem>, props: any, legendBox: any) => {
   const { children, width, margin } = props;
   const legendWidth = width - (margin.left || 0) - (margin.right || 0);
   // const legendHeight = height - (margin.top || 0) - (margin.bottom || 0);
@@ -1122,7 +1121,7 @@ export const getBandSizeOfAxis = (axis: any, ticks?: Array<TickItem>, isBar?: bo
     return bandSize === Infinity ? 0 : bandSize;
   }
 
-  return 0;
+  return isBar ? undefined : 0;
 };
 /**
  * parse the domain of a category axis when a domain is specified

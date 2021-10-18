@@ -1,3 +1,37 @@
+## 2.1.5 (oct 15, 2021)
+
+### fix
+
+- Fixed types for legend events (#2267 #2269)
+- Fix the react-is version (#2670)
+- Fix type declaration errors when tsc (#2675)
+- Fix(build-umd): add webpack output options libraryTarget (#2684)
+## 2.1.4 (sep 19, 2021)
+
+### fix
+
+- Fix: ResponsiveContainer makes legend overlapping with chart when re-rendering (#2660)
+- Fix: rendering of a single bar when maxBarSize is absent and barSize is present (#2659)
+
+## 2.1.3 (sep 18, 2021)
+
+### fix
+
+- fix: Customized component has no key (#2637)
+- Fix XAxis scale propery type (#2641)
+
+## 2.1.2 (aug 24, 2021)
+
+### fix
+
+- Fixes undefined field reference when optional variables not supplied (#2630)
+- Fix fragment children (#2481)
+## 2.1.1 (aug 21, 2021)
+
+### fix
+
+- Fix: responsive container
+
 ## 2.1.0 (aug 10, 2021)
 
 ### feat

@@ -19,10 +19,7 @@
   ],
   "env": {
     "test": {
-      "plugins": [
-        "@babel/plugin-transform-modules-commonjs",
-        "istanbul"
-      ]
+      "plugins": ["@babel/plugin-transform-modules-commonjs", "istanbul"]
     },
     "commonjs": {
       "plugins": [
