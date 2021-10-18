@@ -442,9 +442,7 @@ export const getDomainOfErrorBars = (data: any[], item: any, dataKey: any, axisT
   return null;
 };
 export const parseErrorBarsOfAxis = (data: any[], items: any[], dataKey: any, axisType: AxisType) => {
-  const domains = items
-    .map(item => getDomainOfErrorBars(data, item, dataKey, axisType))
-    .filter(entry => !isNil(entry));
+  const domains = items.map(item => getDomainOfErrorBars(data, item, dataKey, axisType)).filter(entry => !isNil(entry));
 
   if (domains && domains.length) {
     return domains.reduce((result, entry) => [Math.min(result[0], entry[0]), Math.max(result[1], entry[1])], [

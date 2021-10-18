@@ -72,9 +72,9 @@ export const formatAxisMap = (props: any, axisMap: any, offset: any, axisType: A
         layout === 'horizontal'
           ? [offset.top + offset.height - (padding.bottom || 0), offset.top + (padding.top || 0)]
           : [
-            offset.top + (padding.top || 0) + (calculatedPadding || 0),
-            offset.top + offset.height - (padding.bottom || 0) - (calculatedPadding || 0),
-          ];
+              offset.top + (padding.top || 0) + (calculatedPadding || 0),
+              offset.top + offset.height - (padding.bottom || 0) - (calculatedPadding || 0),
+            ];
     } else {
       ({ range } = axis);
     }

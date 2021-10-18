@@ -112,8 +112,7 @@ export function findEntryInArray<T>(
 
   return ary.find(
     entry =>
-      entry &&
-      (typeof specifiedKey === 'function' ? specifiedKey(entry) : get(entry, specifiedKey)) === specifiedValue,
+      entry && (typeof specifiedKey === 'function' ? specifiedKey(entry) : get(entry, specifiedKey)) === specifiedValue,
   );
 }
 

@@ -51,9 +51,7 @@ export function LabelList<T extends Data>(props: Props<T>) {
   return (
     <Layer className="recharts-label-list">
       {data.map((entry, index) => {
-        const value = isNil(dataKey)
-          ? valueAccessor(entry, index)
-          : getValueByDataKey(entry && entry.payload, dataKey);
+        const value = isNil(dataKey) ? valueAccessor(entry, index) : getValueByDataKey(entry && entry.payload, dataKey);
         const idProps = isNil(id) ? {} : { id: `${id}-${index}` };
 
         return (

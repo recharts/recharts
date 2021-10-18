@@ -92,14 +92,14 @@ const defer = // eslint-disable-next-line no-nested-ternary
   typeof requestAnimationFrame === 'function'
     ? requestAnimationFrame
     : typeof setImmediate === 'function'
-      ? setImmediate
-      : setTimeout;
+    ? setImmediate
+    : setTimeout;
 const deferClear = // eslint-disable-next-line no-nested-ternary
   typeof cancelAnimationFrame === 'function'
     ? cancelAnimationFrame
     : typeof clearImmediate === 'function'
-      ? clearImmediate
-      : clearTimeout;
+    ? clearImmediate
+    : clearTimeout;
 
 const calculateTooltipPos = (rangeObj: any, layout: LayoutType): any => {
   if (layout === 'horizontal') {
@@ -318,9 +318,7 @@ const getAxisMapByAxes = (
           if (!allowDuplicatedCategory) {
             domain = parseDomainOfCategoryAxis(child.props.domain, domain, child).reduce(
               (finalDomain: any, entry: any) =>
-                finalDomain.indexOf(entry) >= 0 || entry === '' || isNil(entry)
-                  ? finalDomain
-                  : [...finalDomain, entry],
+                finalDomain.indexOf(entry) >= 0 || entry === '' || isNil(entry) ? finalDomain : [...finalDomain, entry],
               [],
             );
           } else {
@@ -1560,9 +1558,9 @@ export const generateCategoricalChart = ({
         const activePayload: any = getTooltipContent(this.state, this.props.data, activeTooltipIndex);
         const activeCoordinate = tooltipTicks[activeTooltipIndex]
           ? {
-            x: layout === 'horizontal' ? tooltipTicks[activeTooltipIndex].coordinate : validateChartX,
-            y: layout === 'horizontal' ? validateChartY : tooltipTicks[activeTooltipIndex].coordinate,
-          }
+              x: layout === 'horizontal' ? tooltipTicks[activeTooltipIndex].coordinate : validateChartX,
+              y: layout === 'horizontal' ? validateChartY : tooltipTicks[activeTooltipIndex].coordinate,
+            }
           : originCoordinate;
 
         this.setState({
@@ -2030,11 +2028,11 @@ export const generateCategoricalChart = ({
 
       return xAxisMap
         ? Object.entries(xAxisMap).reduce(
-          (res: Record<string, Function>, [axisId, axisProps]: [string, BaseAxisProps]) => {
-            return { ...res, [axisId]: (axisProps as BaseAxisProps).scale };
-          },
-          {},
-        )
+            (res: Record<string, Function>, [axisId, axisProps]: [string, BaseAxisProps]) => {
+              return { ...res, [axisId]: (axisProps as BaseAxisProps).scale };
+            },
+            {},
+          )
         : null;
     }
 
@@ -2043,11 +2041,11 @@ export const generateCategoricalChart = ({
 
       return yAxisMap
         ? Object.entries(yAxisMap).reduce(
-          (res: Record<string, Function>, [axisId, axisProps]: [string, BaseAxisProps]) => {
-            return { ...res, [axisId]: (axisProps as BaseAxisProps).scale };
-          },
-          {},
-        )
+            (res: Record<string, Function>, [axisId, axisProps]: [string, BaseAxisProps]) => {
+              return { ...res, [axisId]: (axisProps as BaseAxisProps).scale };
+            },
+            {},
+          )
         : null;
     }
 

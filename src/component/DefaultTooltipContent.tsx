@@ -1,9 +1,9 @@
 /**
  * @fileOverview Default Tooltip Content
  */
- import isArray from 'lodash/isArray';
- import sortBy from 'lodash/sortBy';
- import isNil from 'lodash/isNil';
+import isArray from 'lodash/isArray';
+import sortBy from 'lodash/sortBy';
+import isNil from 'lodash/isNil';
 import React, { PureComponent, CSSProperties, ReactNode } from 'react';
 import classNames from 'classnames';
 import { isNumOrStr } from '../util/DataUtils';

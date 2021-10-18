@@ -18,31 +18,31 @@ interface LabelProps {
   value?: number | string;
   offset?: number;
   position?:
-  | 'top'
-  | 'left'
-  | 'right'
-  | 'bottom'
-  | 'inside'
-  | 'outside'
-  | 'insideLeft'
-  | 'insideRight'
-  | 'insideTop'
-  | 'insideBottom'
-  | 'insideTopLeft'
-  | 'insideBottomLeft'
-  | 'insideTopRight'
-  | 'insideBottomRight'
-  | 'insideStart'
-  | 'insideEnd'
-  | 'end'
-  | 'center'
-  | 'centerTop'
-  | 'centerBottom'
-  | 'middle'
-  | {
-    x?: number;
-    y?: number;
-  };
+    | 'top'
+    | 'left'
+    | 'right'
+    | 'bottom'
+    | 'inside'
+    | 'outside'
+    | 'insideLeft'
+    | 'insideRight'
+    | 'insideTop'
+    | 'insideBottom'
+    | 'insideTopLeft'
+    | 'insideBottomLeft'
+    | 'insideTopRight'
+    | 'insideBottomRight'
+    | 'insideStart'
+    | 'insideEnd'
+    | 'end'
+    | 'center'
+    | 'centerTop'
+    | 'centerBottom'
+    | 'middle'
+    | {
+        x?: number;
+        y?: number;
+      };
   children?: ReactNode;
   className?: string;
   content?: ContentType;
@@ -198,9 +198,9 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       ...attrs,
       ...(parentViewBox
         ? {
-          height: Math.max(y - (parentViewBox as CartesianViewBox).y, 0),
-          width,
-        }
+            height: Math.max(y - (parentViewBox as CartesianViewBox).y, 0),
+            width,
+          }
         : {}),
     };
   }
@@ -217,12 +217,12 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       ...attrs,
       ...(parentViewBox
         ? {
-          height: Math.max(
-            (parentViewBox as CartesianViewBox).y + (parentViewBox as CartesianViewBox).height - (y + height),
-            0,
-          ),
-          width,
-        }
+            height: Math.max(
+              (parentViewBox as CartesianViewBox).y + (parentViewBox as CartesianViewBox).height - (y + height),
+              0,
+            ),
+            width,
+          }
         : {}),
     };
   }
@@ -239,9 +239,9 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       ...attrs,
       ...(parentViewBox
         ? {
-          width: Math.max(attrs.x - (parentViewBox as CartesianViewBox).x, 0),
-          height,
-        }
+            width: Math.max(attrs.x - (parentViewBox as CartesianViewBox).x, 0),
+            height,
+          }
         : {}),
     };
   }
@@ -257,12 +257,12 @@ const getAttrsOfCartesianLabel = (props: Props) => {
       ...attrs,
       ...(parentViewBox
         ? {
-          width: Math.max(
-            (parentViewBox as CartesianViewBox).x + (parentViewBox as CartesianViewBox).width - attrs.x,
-            0,
-          ),
-          height,
-        }
+            width: Math.max(
+              (parentViewBox as CartesianViewBox).x + (parentViewBox as CartesianViewBox).width - attrs.x,
+              0,
+            ),
+            height,
+          }
         : {}),
     };
   }
