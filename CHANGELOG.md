@@ -1,3 +1,9 @@
+## 2.1.6 (oct 26, 2021)
+
+### fix
+
+- Fix types folder missing
+
 ## 2.1.5 (oct 15, 2021)
 
 ### fix
@@ -6,6 +12,7 @@
 - Fix the react-is version (#2670)
 - Fix type declaration errors when tsc (#2675)
 - Fix(build-umd): add webpack output options libraryTarget (#2684)
+
 ## 2.1.4 (sep 19, 2021)
 
 ### fix
