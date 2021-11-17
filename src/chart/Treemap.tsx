@@ -340,7 +340,7 @@ export class Treemap extends PureComponent<Props, State> {
       const formatRoot = squarify(root, nextProps.aspectRatio);
 
       return {
-        ...defaultState,
+        ...prevState,
         formatRoot,
         currentRoot: root,
         nestIndex: [root],
