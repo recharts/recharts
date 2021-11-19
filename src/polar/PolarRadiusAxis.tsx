@@ -15,7 +15,7 @@ import {
   PresentationAttributesAdaptChildEvent,
 } from '../util/types';
 
-export interface PolarRadiusAxisProps extends BaseAxisProps {
+export interface PolarRadiusAxisProps extends Omit<BaseAxisProps, 'unit'> {
   cx?: number;
   cy?: number;
   radiusAxisId?: string | number;
