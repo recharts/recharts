@@ -1,3 +1,14 @@
+## 2.1.7 (dec 14, 2021)
+
+# fix
+
+- Treemap do not render depth (#2718 #2719)
+- Update PolarRadiusAxis.tsx (#2720)
+
+# chore
+
+- Update d3-interpolate, d3-scale and d3-shape (#2707)
+
 ## 2.1.6 (oct 26, 2021)
 
 ### fix
