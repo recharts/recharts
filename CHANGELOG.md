@@ -1,3 +1,9 @@
+## 2.1.8 (dec 14, 2021)
+
+# fix
+
+- Must use import to load ES Module (#2658)
+
 ## 2.1.7 (dec 14, 2021)
 
 # fix
