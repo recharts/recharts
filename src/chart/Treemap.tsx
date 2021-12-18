@@ -1,22 +1,23 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
+import classNames from 'classnames';
+import _ from 'lodash';
 /**
  * @fileOverview TreemapChart
  */
 import React, { PureComponent } from 'react';
 import Smooth from 'react-smooth';
-import classNames from 'classnames';
-import _ from 'lodash';
-import { Surface } from '../container/Surface';
-import { Layer } from '../container/Layer';
-import { Rectangle } from '../shape/Rectangle';
-import { findChildByType, filterSvgElements, validateWidthHeight } from '../util/ReactUtils';
-import { Global } from '../util/Global';
+
 import { Tooltip } from '../component/Tooltip';
+import { Layer } from '../container/Layer';
+import { Surface } from '../container/Surface';
 import { Polygon } from '../shape/Polygon';
+import { Rectangle } from '../shape/Rectangle';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { COLOR_PANEL } from '../util/Constants';
-import { getStringSize } from '../util/DOMUtils';
 import { uniqueId } from '../util/DataUtils';
+import { getStringSize } from '../util/DOMUtils';
+import { Global } from '../util/Global';
+import { filterSvgElements, findChildByType, validateWidthHeight } from '../util/ReactUtils';
 import { DataKey, filterProps, TreemapNode } from '../util/types';
 
 const NODE_VALUE_KEY = 'value';
@@ -208,7 +209,7 @@ const squarify = (node: TreemapNode, aspectRatio: number): TreemapNode => {
   return node;
 };
 
-interface Props {
+export interface Props {
   width?: number;
 
   height?: number;
