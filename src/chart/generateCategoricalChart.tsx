@@ -729,7 +729,7 @@ export interface CategoricalChartProps {
   onClick?: any;
   onMouseLeave?: any;
   onMouseEnter?: any;
-  onMouseMove?: any;
+  onMouseMove?: (nextState: CategoricalChartState, event: any) => void;
   onMouseDown?: any;
   onMouseUp?: any;
   reverseStackOrder?: boolean;
