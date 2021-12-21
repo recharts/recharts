@@ -707,6 +707,8 @@ export interface CategoricalChartState {
   prevChildren?: any;
 }
 
+export type CategoricalChartFunc = (nextState: CategoricalChartState, event: any) => void;
+
 export interface CategoricalChartProps {
   syncId?: number | string;
   syncMethod?: 'index' | 'value' | Function;
@@ -726,12 +728,12 @@ export interface CategoricalChartProps {
   className?: string;
   children?: any;
   defaultShowTooltip?: boolean;
-  onClick?: any;
-  onMouseLeave?: any;
-  onMouseEnter?: any;
-  onMouseMove?: any;
-  onMouseDown?: any;
-  onMouseUp?: any;
+  onClick?: CategoricalChartFunc;
+  onMouseLeave?: CategoricalChartFunc;
+  onMouseEnter?: CategoricalChartFunc;
+  onMouseMove?: CategoricalChartFunc;
+  onMouseDown?: CategoricalChartFunc;
+  onMouseUp?: CategoricalChartFunc;
   reverseStackOrder?: boolean;
   id?: string;
 
@@ -1410,7 +1412,7 @@ export const generateCategoricalChart = ({
      */
     handleMouseLeave = (e: any) => {
       const { onMouseLeave } = this.props;
-      const nextState = { isTooltipActive: false };
+      const nextState: CategoricalChartState = { isTooltipActive: false };
 
       this.setState(nextState);
       this.triggerSyncEvent(nextState);
@@ -1459,9 +1461,8 @@ export const generateCategoricalChart = ({
       const { onMouseDown } = this.props;
 
       if (_.isFunction(onMouseDown)) {
-        const mouse = this.getMouseInfo(e);
-
-        onMouseDown(mouse, e);
+        const nextState: CategoricalChartState = this.getMouseInfo(e);
+        onMouseDown(nextState, e);
       }
     };
 
@@ -1469,9 +1470,8 @@ export const generateCategoricalChart = ({
       const { onMouseUp } = this.props;
 
       if (_.isFunction(onMouseUp)) {
-        const mouse = this.getMouseInfo(e);
-
-        onMouseUp(mouse, e);
+        const nextState: CategoricalChartState = this.getMouseInfo(e);
+        onMouseUp(nextState, e);
       }
     };
 
