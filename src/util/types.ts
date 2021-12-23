@@ -1109,25 +1109,29 @@ export const filterProps = (
   return out;
 };
 
+type RecordString<T> = Record<string, T>;
+
+type AdaptEventHandlersReturn = RecordString<(e?: Event) => any> | RecordString<(e: Event) => void> | null;
+
 export const adaptEventHandlers = (
-  props: Record<string, any> | Component | FunctionComponent | boolean,
+  props: RecordString<any> | Component | FunctionComponent | boolean,
   newHandler?: (e?: Event) => any,
-): Record<string, (e?: Event) => any> => {
+): AdaptEventHandlersReturn => {
   if (!props || typeof props === 'function' || typeof props === 'boolean') {
     return null;
   }
 
-  let inputProps = props as Record<string, any>;
+  let inputProps = props as RecordString<any>;
 
   if (isValidElement(props)) {
-    inputProps = props.props as Record<string, any>;
+    inputProps = props.props as RecordString<any>;
   }
 
   if (!_.isObject(inputProps)) {
     return null;
   }
 
-  const out: Record<string, (e: Event) => void> = {};
+  const out: RecordString<(e: Event) => void> = {};
 
   Object.keys(inputProps).forEach(key => {
     if (EventKeys.includes(key)) {
@@ -1138,30 +1142,33 @@ export const adaptEventHandlers = (
   return out;
 };
 
-const getEventHandlerOfChild = (originalHandler: Function, data: any, index: number) => (e: Event): void => {
+const getEventHandlerOfChild = (originalHandler: Function, data: any, index: number) => (e: Event): null => {
   originalHandler(data, index, e);
 
   return null;
 };
 
 export const adaptEventsOfChild = (
-  props: Record<string, any>,
+  props: RecordString<any>,
   data: any,
   index: number,
-): Record<string, (e?: Event) => any> => {
+): RecordString<(e?: Event) => any> | null => {
   if (!_.isObject(props) || typeof props !== 'object') {
     return null;
   }
 
-  let out: Record<string, (e: Event) => void> = null;
+  let out: RecordString<(e: Event) => void> | null = null;
 
   Object.keys(props).forEach((key: string) => {
     const item = (props as any)[key];
+
     if (EventKeys.includes(key) && typeof item === 'function') {
       if (!out) out = {};
+
       out[key] = getEventHandlerOfChild(item, data, index);
     }
   });
+
   return out;
 };
 
