@@ -75,7 +75,7 @@ interface LineProps extends InternalLineProps {
   id?: string;
 }
 
-export type Props = Omit<CurveProps, 'points' | 'pathRef'> & LineProps;
+export type Props = Omit<CurveProps, 'points' | 'pathRef' | 'ref'> & LineProps & Record<'ref', React.Ref<Line>>;
 
 interface State {
   isAnimationFinished?: boolean;
