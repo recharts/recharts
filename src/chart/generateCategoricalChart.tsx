@@ -1283,7 +1283,7 @@ export const generateCategoricalChart = ({
     };
 
     handleLegendBBoxUpdate = (box: any) => {
-      if (box && this.legendInstance) {
+      if (box) {
         const { dataStartIndex, dataEndIndex, updateId } = this.state;
 
         this.setState({
