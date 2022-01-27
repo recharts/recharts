@@ -44,17 +44,17 @@ describe('parseSpecifiedDomain', () => {
     expect(parseSpecifiedDomain(1, domain)).to.equal(domain);
   });
 
-  it('DataUtils.parseSpecifiedDomain(["auto", "auto"], domain) should return null ', () => {
+  it('DataUtils.parseSpecifiedDomain(["auto", "auto"], domain) should return domain ', () => {
     const result = parseSpecifiedDomain(['auto', 'auto'], domain);
     expect(result).to.deep.equal(domain);
   });
 
-  it('DataUtils.parseSpecifiedDomain([-1, 120], domain) should return null ', () => {
+  it('DataUtils.parseSpecifiedDomain([-1, 120], domain) should return input value ', () => {
     const result = parseSpecifiedDomain([-1, 120], domain);
     expect(result).to.deep.equal([-1, 120]);
   });
 
-  it('DataUtils.parseSpecifiedDomain(["dataMin - 10", "dataMax + 10"], domain) should return null ', () => {
+  it('DataUtils.parseSpecifiedDomain(["dataMin - 10", "dataMax + 10"], domain) should return computed value ', () => {
     const result = parseSpecifiedDomain(['dataMin - 10', 'dataMax + 10'], domain);
     expect(result).to.deep.equal([10, 110]);
   });
@@ -65,6 +65,14 @@ describe('parseSpecifiedDomain', () => {
       domain
     );
     expect(result).to.deep.equal([-20, 200]);
+  });
+
+  it('DataUtils.parseSpecifiedDomain(callback, domain) should execute the callback and return computed value ', () => {
+    const result = parseSpecifiedDomain(
+      ([dataMin, dataMax], _allowDataOverflow) => [dataMin / 4, dataMax * 4],
+      domain
+    );
+    expect(result).to.deep.equal([5, 400]);
   });
 });
 
