@@ -985,7 +985,11 @@ export type D3Scale<T> = D3ScaleContinuousNumeric<T, number>;
 
 export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | 'dataMax';
 /** The domain of axis */
-export type AxisDomain = string[] | number[] | [AxisDomainItem, AxisDomainItem];
+export type AxisDomain =
+  | string[]
+  | number[]
+  | [AxisDomainItem, AxisDomainItem]
+  | (([dataMin, dataMax]: [number, number], allowDataOverflow: boolean) => [number, number]);
 
 /** The props definition of base axis */
 export interface BaseAxisProps {

@@ -1046,6 +1046,10 @@ export const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 export const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 
 export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allowDataOverflow: boolean) => {
+  if (_.isFunction(specifiedDomain)) {
+    return specifiedDomain(dataDomain, allowDataOverflow);
+  }
+
   if (!_.isArray(specifiedDomain)) {
     return dataDomain;
   }
