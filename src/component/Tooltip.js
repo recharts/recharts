@@ -29,8 +29,8 @@ const getUniqPaylod = (option, payload) => {
 
 const propTypes = {
   allowEscapeViewBox: PropTypes.shape({
-    x: PropTypes.boolean,
-    y: PropTypes.boolean,
+    x: PropTypes.bool,
+    y: PropTypes.bool,
   }),
   content: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
   viewBox: PropTypes.shape({
