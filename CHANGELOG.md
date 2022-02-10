@@ -1,3 +1,16 @@
+## 2.1.9 (Feb 10, 2022)
+
+# feat
+
+- feat: allow axis domain to accept a callback (#2770)
+- Categorical chart callback types (#2739)
+
+# fix
+
+- Fixing types in strict mode (#2745) (#2747)
+- Fix: removes overlapping legend for categorical charts (#2752)
+- Categorical chart callback types (#2739)
+
 ## 2.1.8 (dec 14, 2021)
 
 # fix
