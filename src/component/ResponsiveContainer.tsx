@@ -47,7 +47,7 @@ export const ResponsiveContainer = forwardRef(
       containerHeight: -1,
     });
     const containerRef = useRef<HTMLDivElement>(null);
-    useImperativeHandle(ref, () => containerRef, [containerRef]);
+    useImperativeHandle(ref, () => containerRef.current, [containerRef]);
 
     const [mounted, setMounted] = useState<boolean>(false);
 
