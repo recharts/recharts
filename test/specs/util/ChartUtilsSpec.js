@@ -1,20 +1,23 @@
+import React from 'react';
 import { expect } from 'chai';
 import { scaleLinear, scaleBand } from 'd3-scale';
 import {
   calculateActiveTickIndex,
   getDomainOfStackGroups,
   getDomainOfDataByKey,
-  appendOffsetOfLegend,
   getBandSizeOfAxis,
   calculateDomainOfTicks,
   parseSpecifiedDomain,
   parseScale,
   getTicksOfScale,
   getValueByDataKey,
+  getDomainOfErrorBars,
   offsetSign,
   MIN_VALUE_REG,
   MAX_VALUE_REG
 } from '../../../src/util/ChartUtils';
+import { Line, Bar, Scatter, Area, ErrorBar } from 'recharts';
+import { mount } from 'enzyme';
 
 describe('getBandSizeOfAxis', () => {
   it('DataUtils.getBandSizeOfAxis() should return 0 ', () => {
@@ -278,5 +281,129 @@ describe('getDomainOfDataByKey', () => {
       expect(getDomainOfDataByKey(data, 'actual', 'number')).to.deep.equal([35.4, 42.5]);
       expect(getDomainOfDataByKey(data, 'benchmark', 'number')).to.deep.equal([31.86, 35.4]);
     });
+  });
+});
+
+describe('getDomainOfErrorBars', () => {
+  const data = [
+    {
+      x: 1,
+      y: 100,
+      error: 10,
+      error2: 15,
+    },
+    {
+      x: 2,
+      y: 200,
+      error: 20,
+      error2: 15,
+    }
+  ];
+
+  describe('within Line component', () => {
+    const line = mount(
+      <Line>
+        <ErrorBar dataKey="error" />
+      </Line>
+    ).instance();
+
+    describe('with horizontal layout', () => {
+      it('should not include error bars in xAxis domain', () => {
+        expect(getDomainOfErrorBars(data, line, 'x', 'horizontal', 'xAxis')).to.be.null;
+      });
+      it('should include error bars in yAxis domain', () => {
+        expect(getDomainOfErrorBars(data, line, 'y', 'horizontal', 'yAxis')).to.deep.equal([90, 220]);
+      });
+    });
+
+    describe('with vertical layout', () => {
+      it('should include error bars in xAxis domain', () => {
+        expect(getDomainOfErrorBars(data, line, 'x', 'vertical', 'xAxis')).to.deep.equal([-18, 22]);
+      });
+      it('should not include error bars in yAxis domain', () => {
+        expect(getDomainOfErrorBars(data, line, 'y', 'vertical', 'yAxis')).to.be.null;
+      });
+    });
+  });
+
+  describe('within Bar component', () => {
+    const bar = mount(
+      <Bar>
+        <ErrorBar dataKey="error" />
+      </Bar>
+    ).instance();
+
+    describe('with horizontal layout', () => {
+      it('should not include error bars in xAxis domain', () => {
+        expect(getDomainOfErrorBars(data, bar, 'x', 'horizontal', 'xAxis')).to.be.null;
+      });
+      it('should include error bars in yAxis domain', () => {
+        expect(getDomainOfErrorBars(data, bar, 'y', 'horizontal', 'yAxis')).to.deep.equal([90, 220]);
+      });
+    });
+
+    describe('with vertical layout', () => {
+      it('should include error bars in xAxis domain', () => {
+        expect(getDomainOfErrorBars(data, bar, 'x', 'vertical', 'xAxis')).to.deep.equal([-18, 22]);
+      });
+      it('should not include error bars in yAxis domain', () => {
+        expect(getDomainOfErrorBars(data, bar, 'y', 'vertical', 'yAxis')).to.be.null;
+      });
+    });
+  });
+
+  describe('within Area component', () => {
+    const area = mount(
+      <Area>
+        <ErrorBar dataKey="error" />
+      </Area>
+    ).instance();
+
+    describe('with horizontal layout', () => {
+      it('should not include error bars in xAxis domain', () => {
+        expect(getDomainOfErrorBars(data, area, 'x', 'horizontal', 'xAxis')).to.be.null;
+      });
+      it('should include error bars in yAxis domain', () => {
+        expect(getDomainOfErrorBars(data, area, 'y', 'horizontal', 'yAxis')).to.deep.equal([90, 220]);
+      });
+    });
+
+    describe('with vertical layout', () => {
+      it('should include error bars in xAxis domain', () => {
+        expect(getDomainOfErrorBars(data, area, 'x', 'vertical', 'xAxis')).to.deep.equal([-18, 22]);
+      });
+      it('should not include error bars in yAxis domain', () => {
+        expect(getDomainOfErrorBars(data, area, 'y', 'vertical', 'yAxis')).to.be.null;
+      });
+    });
+  });
+
+  describe('within Scatter component', () => {
+    const scatter = mount(
+      <Scatter>
+        <ErrorBar dataKey="error" direction="y"/>
+        <ErrorBar dataKey="error2" direction="x"/>
+      </Scatter>
+    ).instance();
+
+    it('should only include error bars with direction y in xAxis domain', () => {
+      expect(getDomainOfErrorBars(data, scatter, 'x', undefined, 'xAxis')).to.deep.equal([-14, 17]);
+    });
+    it('should only include error bars with direction x in yAxis domain', () => {
+      expect(getDomainOfErrorBars(data, scatter, 'y', undefined, 'yAxis')).to.deep.equal([90, 220]);
+    });
+  });
+
+  describe('with multiple ErrorBar children with same direction', () => {
+    const line = mount(
+      <Line>
+        <ErrorBar dataKey="error"/>
+        <ErrorBar dataKey="error2"/>
+      </Line>
+    ).instance();
+
+    it('should return maximum domain of error bars', () => {
+      expect(getDomainOfErrorBars(data, line, 'y', 'horizontal', 'yAxis')).to.deep.equal([85, 220]);
+    })
   });
 });
