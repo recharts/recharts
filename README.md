@@ -1,5 +1,6 @@
 # Recharts
 
+[![storybook](https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg)](https://dillonreedy.github.io/recharts-storybook/?path=/story/introduction-configure--page)
 [![Sponsors on Open Collective](https://opencollective.com/recharts/sponsors/badge.svg)](https://opencollective.com/recharts#sponsors)
 [![Backers on Open Collective](https://opencollective.com/recharts/backers/badge.svg)](https://opencollective.com/recharts#backer)
 [![Build Status](https://github.com/recharts/recharts/workflows/Node.js%20CI/badge.svg)](https://github.com/recharts/recharts/actions)
@@ -99,7 +100,6 @@ We are looking for like-minded people who share the same idea about Recharts. Th
 <a href="https://opencollective.com/recharts/backer/3/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/3/avatar.svg?requireActive=false"></a>
 <a href="https://opencollective.com/recharts/backer/4/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/4/avatar.svg?requireActive=false"></a>
 <a href="https://opencollective.com/recharts/backer/5/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/5/avatar.svg?requireActive=false"></a>
-<a href="https://dillonreedy.github.io/recharts-storybook/?path=/story/introduction-configure--page" target="_blank"><img src="https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg"></a>
 <a href="https://opencollective.com/recharts/backer/6/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/6/avatar.svg?requireActive=false"></a>
 
 ## Sponsoring
