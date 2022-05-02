@@ -1,7 +1,5 @@
 # Recharts
 
-[![Sponsors on Open Collective](https://opencollective.com/recharts/sponsors/badge.svg)](https://opencollective.com/recharts#sponsors)
-[![Backers on Open Collective](https://opencollective.com/recharts/backers/badge.svg)](https://opencollective.com/recharts#backer)
 [![Build Status](https://github.com/recharts/recharts/workflows/Node.js%20CI/badge.svg)](https://github.com/recharts/recharts/actions)
 [![Coverage Status](https://coveralls.io/repos/recharts/recharts/badge.svg?branch=master&service=github)](https://coveralls.io/github/recharts/recharts?branch=master)
 [![npm version](https://badge.fury.io/js/recharts.svg)](http://badge.fury.io/js/recharts)
@@ -84,30 +82,9 @@ and then browse to http://localhost:3000.
 
 - [babel-plugin-recharts](https://github.com/recharts/babel-plugin-recharts) A simple transform to cherry-pick Recharts modules so you don’t have to.
 
-## Contribution
-
-We'd love :heart: to hear what you think we should build. Please create an issue to write your usage or ideas.
-
-We are looking for like-minded people who share the same idea about Recharts. The goal of this project is to create a more flexible charting library for the  React community.
-
-## Backers
-[Become a backer](https://opencollective.com/recharts#backer) and get your image on our README on Github with a link to your site.
-
-<a href="https://opencollective.com/recharts/backer/0/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/0/avatar.svg?requireActive=false"></a>
-<a href="https://opencollective.com/recharts/backer/1/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/1/avatar.svg?requireActive=false"></a>
-<a href="https://opencollective.com/recharts/backer/2/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/2/avatar.svg?requireActive=false"></a>
-<a href="https://opencollective.com/recharts/backer/3/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/3/avatar.svg?requireActive=false"></a>
-<a href="https://opencollective.com/recharts/backer/4/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/4/avatar.svg?requireActive=false"></a>
-<a href="https://opencollective.com/recharts/backer/5/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/5/avatar.svg?requireActive=false"></a>
-<a href="https://dillonreedy.github.io/recharts-storybook/?path=/story/introduction-configure--page" target="_blank"><img src="https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg"></a>
-<a href="https://opencollective.com/recharts/backer/6/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/6/avatar.svg?requireActive=false"></a>
-
-## Sponsoring
-
-Most of the core team members do this open source work in their free time. If you use recharts for a important work, and you'd like us to invest more time on it, please [donate](https://opencollective.com/recharts#sponsors). Thanks!
 
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2015-2021 Recharts Group.
+Copyright (c) 2015-2022 Recharts Group.
