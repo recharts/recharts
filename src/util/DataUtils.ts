@@ -15,7 +15,7 @@ export const isPercent = (value: string | number) => _.isString(value) && value.
 
 export const isNumber = (value: any) => _.isNumber(value) && !_.isNaN(value);
 
-export const isNumOrStr = (value: number | string) => isNumber(value as number) || _.isString(value);
+export const isNumOrStr = (value: any) => isNumber(value as number) || _.isString(value);
 
 let idCounter = 0;
 export const uniqueId = (prefix?: string) => {
