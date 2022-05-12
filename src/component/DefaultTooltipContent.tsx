@@ -127,7 +127,7 @@ export class DefaultTooltipContent<TValue extends ValueType, TName extends NameT
     const wrapperCN = classNames('recharts-default-tooltip', wrapperClassName);
     const labelCN = classNames('recharts-tooltip-label', labelClassName);
 
-    if (hasLabel && labelFormatter) {
+    if (hasLabel && labelFormatter && !_.isNil(payload)) {
       finalLabel = labelFormatter(label, payload);
     }
 
