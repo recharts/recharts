@@ -1,5 +1,5 @@
 {
-  "name": "dh-recharts",
+  "name": "recharts",
   "version": "2.1.9",
   "description": "React charts",
   "main": "lib/index",
@@ -42,13 +42,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/dhassouni/recharts.git"
+    "url": "https://github.com/recharts/recharts.git"
   },
-  "author": "recharts group, modfied by DHassouni",
+  "author": "recharts group",
   "bugs": {
-    "url": "https://github.com/dhassouni/recharts/issues"
+    "url": "https://github.com/recharts/recharts/issues"
   },
-  "homepage": "https://github.com/dhassouni/recharts",
+  "homepage": "https://github.com/recharts/recharts",
   "peerDependencies": {
     "react": "^16.0.0 || ^17.0.0",
     "react-dom": "^16.0.0 || ^17.0.0"
