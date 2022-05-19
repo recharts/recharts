@@ -15,7 +15,7 @@ export const isPercent = (value: string | number) => _.isString(value) && value.
 
 export const isNumber = (value: any) => _.isNumber(value) && !_.isNaN(value);
 
-export const isNumOrStr = (value: number | string) => isNumber(value as number) || _.isString(value);
+export const isNumOrStr = (value: any) => isNumber(value as number) || _.isString(value);
 
 let idCounter = 0;
 export const uniqueId = (prefix?: string) => {
@@ -130,14 +130,19 @@ export const getLinearRegression = (data: Array<{ cx?: number; cy?: number }>) =
   let xxsum = 0;
   let xmin = Infinity;
   let xmax = -Infinity;
+  let xcurrent = 0;
+  let ycurrent = 0;
 
   for (let i = 0; i < len; i++) {
-    xsum += data[i].cx;
-    ysum += data[i].cy;
-    xysum += data[i].cx * data[i].cy;
-    xxsum += data[i].cx * data[i].cx;
-    xmin = Math.min(xmin, data[i].cx);
-    xmax = Math.max(xmax, data[i].cx);
+    xcurrent = data[i].cx || 0;
+    ycurrent = data[i].cy || 0;
+
+    xsum += xcurrent;
+    ysum += ycurrent;
+    xysum += xcurrent * ycurrent;
+    xxsum += xcurrent * xcurrent;
+    xmin = Math.min(xmin, xcurrent);
+    xmax = Math.max(xmax, xcurrent);
   }
 
   const a = len * xxsum !== xsum * xsum ? (len * xysum - xsum * ysum) / (len * xxsum - xsum * xsum) : 0;
