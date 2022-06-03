@@ -1,3 +1,19 @@
+## 2.1.10 (May 19, 2022)
+
+# feat
+
+- Add ARIA1.2 attributes to the SvgElementPropKeys filter array
+- Added Storybook Badge (#2840)
+- Handling of undefined values and type checks in DefaultTooltipContent…
+
+# fix
+
+- Axis scale=band no longer works as of Recharts 2.x.x (#2742)
+
+# chore
+
+- chore: move type deps into devDependencies (#2843)
+
 ## 2.1.9 (Feb 10, 2022)
 
 # feat
