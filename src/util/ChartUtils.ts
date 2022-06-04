@@ -409,19 +409,27 @@ const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, dir
     return axisType === 'xAxis';
   }
 
-  if (direction == 'x') {
+  if (direction === 'x') {
     return axisType === 'xAxis';
   }
-  if (direction == 'y') {
+  if (direction === 'y') {
     return axisType === 'yAxis';
   }
 
   return true;
-}
+};
 
-export const getDomainOfErrorBars = (data: any[], item: any, dataKey: any, layout?: LayoutType, axisType?: AxisType) => {
+export const getDomainOfErrorBars = (
+  data: any[],
+  item: any,
+  dataKey: any,
+  layout?: LayoutType,
+  axisType?: AxisType,
+) => {
   const { children } = item.props;
-  const errorBars = findAllByType(children, 'ErrorBar').filter((errorBarChild: any) => isErrorBarRelevantForAxis(layout, axisType, errorBarChild.props.direction));
+  const errorBars = findAllByType(children, 'ErrorBar').filter((errorBarChild: any) =>
+    isErrorBarRelevantForAxis(layout, axisType, errorBarChild.props.direction),
+  );
 
   if (errorBars && errorBars.length) {
     const keys = errorBars.map((errorBarChild: any) => errorBarChild.props.dataKey);
@@ -450,7 +458,13 @@ export const getDomainOfErrorBars = (data: any[], item: any, dataKey: any, layou
   return null;
 };
 
-export const parseErrorBarsOfAxis = (data: any[], items: any[], dataKey: any, axisType: AxisType, layout?: LayoutType) => {
+export const parseErrorBarsOfAxis = (
+  data: any[],
+  items: any[],
+  dataKey: any,
+  axisType: AxisType,
+  layout?: LayoutType,
+) => {
   const domains = items
     .map(item => getDomainOfErrorBars(data, item, dataKey, layout, axisType))
     .filter(entry => !_.isNil(entry));
@@ -470,10 +484,17 @@ export const parseErrorBarsOfAxis = (data: any[], items: any[], dataKey: any, ax
  * @param  {Array}   data      The data displayed in the chart
  * @param  {Array}   items     The instances of item
  * @param  {String}  type      The type of axis, number - Number Axis, category - Category Axis
+ * @param  {LayoutType} layout The type of layout
  * @param  {Boolean} filterNil Whether or not filter nil values
  * @return {Array}        Domain
  */
-export const getDomainOfItemsWithSameAxis = (data: any[], items: any[], type: string, layout?: LayoutType, filterNil?: boolean) => {
+export const getDomainOfItemsWithSameAxis = (
+  data: any[],
+  items: any[],
+  type: string,
+  layout?: LayoutType,
+  filterNil?: boolean,
+) => {
   const domains = items.map(item => {
     const { dataKey } = item.props;
 
