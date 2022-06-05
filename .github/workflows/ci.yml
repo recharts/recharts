@@ -24,7 +24,10 @@ jobs:
     - name: Install dependencies
       run: npm install --legacy-peer-deps
 
-    - name: Test
+    - name: Jest Test
+      run: npm run test:jest -- --maxWorkers=4 --runInBand
+
+    - name: Karma Test
       run: |
         tsc --noEmit
         npm run lint

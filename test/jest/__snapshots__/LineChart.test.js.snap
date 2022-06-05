@@ -1,0 +1,620 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Can create a test snapshot 1`] = `
+<div>
+  <div>
+    <div
+      class="recharts-wrapper"
+      style="position: relative; cursor: default; width: 400px; height: 400px;"
+    >
+      <svg
+        class="recharts-surface"
+        height="400"
+        version="1.1"
+        viewBox="0 0 400 400"
+        width="400"
+      >
+        <defs>
+          <clippath
+            id="recharts1-clip"
+          >
+            <rect
+              height="330"
+              width="360"
+              x="20"
+              y="20"
+            />
+          </clippath>
+        </defs>
+        <g
+          class="recharts-layer recharts-line"
+        >
+          <path
+            class="recharts-curve recharts-line-curve"
+            d="M20,20C44,61.25,68,102.5,92,102.5C116,102.5,140,102.5,164,102.5C188,102.5,212,185,236,185C260,185,284,120.65,308,120.65C332,120.65,356,157.3625,380,194.07500000000002"
+            fill="none"
+            height="330"
+            points="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+            stroke="#ff7300"
+            stroke-dasharray="0px 0px"
+            stroke-width="1"
+            type="monotone"
+            width="360"
+          />
+        </g>
+        <g
+          class="recharts-layer recharts-cartesian-axis recharts-xAxis xAxis"
+        >
+          <line
+            class="recharts-cartesian-axis-line"
+            fill="none"
+            height="30"
+            orientation="bottom"
+            stroke="#666"
+            type="category"
+            width="360"
+            x="20"
+            x1="20"
+            x2="380"
+            y="350"
+            y1="350"
+            y2="350"
+          />
+          <g
+            class="recharts-cartesian-axis-ticks"
+          >
+            <g
+              class="recharts-layer recharts-cartesian-axis-tick"
+            >
+              <line
+                class="recharts-cartesian-axis-tick-line"
+                fill="none"
+                height="30"
+                orientation="bottom"
+                stroke="#666"
+                type="category"
+                width="360"
+                x="20"
+                x1="20"
+                x2="20"
+                y="350"
+                y1="356"
+                y2="350"
+              />
+              <text
+                class="recharts-text recharts-cartesian-axis-tick-value"
+                fill="#666"
+                height="30"
+                orientation="bottom"
+                stroke="none"
+                text-anchor="middle"
+                type="category"
+                width="360"
+                x="20"
+                y="358"
+              >
+                <tspan
+                  dy="0.71em"
+                  x="20"
+                >
+                  Page A
+                </tspan>
+              </text>
+            </g>
+            <g
+              class="recharts-layer recharts-cartesian-axis-tick"
+            >
+              <line
+                class="recharts-cartesian-axis-tick-line"
+                fill="none"
+                height="30"
+                orientation="bottom"
+                stroke="#666"
+                type="category"
+                width="360"
+                x="20"
+                x1="92"
+                x2="92"
+                y="350"
+                y1="356"
+                y2="350"
+              />
+              <text
+                class="recharts-text recharts-cartesian-axis-tick-value"
+                fill="#666"
+                height="30"
+                orientation="bottom"
+                stroke="none"
+                text-anchor="middle"
+                type="category"
+                width="360"
+                x="92"
+                y="358"
+              >
+                <tspan
+                  dy="0.71em"
+                  x="92"
+                >
+                  Page B
+                </tspan>
+              </text>
+            </g>
+            <g
+              class="recharts-layer recharts-cartesian-axis-tick"
+            >
+              <line
+                class="recharts-cartesian-axis-tick-line"
+                fill="none"
+                height="30"
+                orientation="bottom"
+                stroke="#666"
+                type="category"
+                width="360"
+                x="20"
+                x1="164"
+                x2="164"
+                y="350"
+                y1="356"
+                y2="350"
+              />
+              <text
+                class="recharts-text recharts-cartesian-axis-tick-value"
+                fill="#666"
+                height="30"
+                orientation="bottom"
+                stroke="none"
+                text-anchor="middle"
+                type="category"
+                width="360"
+                x="164"
+                y="358"
+              >
+                <tspan
+                  dy="0.71em"
+                  x="164"
+                >
+                  Page C
+                </tspan>
+              </text>
+            </g>
+            <g
+              class="recharts-layer recharts-cartesian-axis-tick"
+            >
+              <line
+                class="recharts-cartesian-axis-tick-line"
+                fill="none"
+                height="30"
+                orientation="bottom"
+                stroke="#666"
+                type="category"
+                width="360"
+                x="20"
+                x1="236"
+                x2="236"
+                y="350"
+                y1="356"
+                y2="350"
+              />
+              <text
+                class="recharts-text recharts-cartesian-axis-tick-value"
+                fill="#666"
+                height="30"
+                orientation="bottom"
+                stroke="none"
+                text-anchor="middle"
+                type="category"
+                width="360"
+                x="236"
+                y="358"
+              >
+                <tspan
+                  dy="0.71em"
+                  x="236"
+                >
+                  Page D
+                </tspan>
+              </text>
+            </g>
+            <g
+              class="recharts-layer recharts-cartesian-axis-tick"
+            >
+              <line
+                class="recharts-cartesian-axis-tick-line"
+                fill="none"
+                height="30"
+                orientation="bottom"
+                stroke="#666"
+                type="category"
+                width="360"
+                x="20"
+                x1="308"
+                x2="308"
+                y="350"
+                y1="356"
+                y2="350"
+              />
+              <text
+                class="recharts-text recharts-cartesian-axis-tick-value"
+                fill="#666"
+                height="30"
+                orientation="bottom"
+                stroke="none"
+                text-anchor="middle"
+                type="category"
+                width="360"
+                x="308"
+                y="358"
+              >
+                <tspan
+                  dy="0.71em"
+                  x="308"
+                >
+                  Page E
+                </tspan>
+              </text>
+            </g>
+            <g
+              class="recharts-layer recharts-cartesian-axis-tick"
+            >
+              <line
+                class="recharts-cartesian-axis-tick-line"
+                fill="none"
+                height="30"
+                orientation="bottom"
+                stroke="#666"
+                type="category"
+                width="360"
+                x="20"
+                x1="380"
+                x2="380"
+                y="350"
+                y1="356"
+                y2="350"
+              />
+              <text
+                class="recharts-text recharts-cartesian-axis-tick-value"
+                fill="#666"
+                height="30"
+                orientation="bottom"
+                stroke="none"
+                text-anchor="middle"
+                type="category"
+                width="360"
+                x="380"
+                y="358"
+              >
+                <tspan
+                  dy="0.71em"
+                  x="380"
+                >
+                  Page F
+                </tspan>
+              </text>
+            </g>
+          </g>
+        </g>
+      </svg>
+      <div
+        class="recharts-tooltip-wrapper"
+        style="transform: translate(undefinedpx, undefinedpx); pointer-events: none; visibility: hidden; position: absolute; top: 0px; left: 0px;"
+      >
+        <div
+          class="recharts-default-tooltip"
+          style="margin: 0px; padding: 10px; background-color: rgb(255, 255, 255); border: 1px solid #ccc; white-space: nowrap;"
+        >
+          <p
+            class="recharts-tooltip-label"
+            style="margin: 0px;"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      class="recharts-wrapper"
+      style="position: relative; cursor: default; width: 400px; height: 400px;"
+    >
+      <svg
+        class="recharts-surface"
+        height="400"
+        version="1.1"
+        viewBox="0 0 400 400"
+        width="400"
+      >
+        <defs>
+          <clippath
+            id="recharts4-clip"
+          >
+            <rect
+              height="330"
+              width="360"
+              x="20"
+              y="20"
+            />
+          </clippath>
+        </defs>
+        <g
+          class="recharts-layer recharts-line"
+        >
+          <path
+            class="recharts-curve recharts-line-curve"
+            d="M20,143.75C44,140.3125,68,136.875,92,123.125C116,109.375,140,20,164,20C188,20,212,308.75,236,308.75C260,308.75,284,70.32499999999999,308,70.32499999999999C332,70.32499999999999,356,162.725,380,255.125"
+            fill="none"
+            height="330"
+            points="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+            stroke="#ff7300"
+            stroke-dasharray="0px 0px"
+            stroke-width="1"
+            type="monotone"
+            width="360"
+          />
+        </g>
+        <g
+          class="recharts-layer recharts-cartesian-axis recharts-xAxis xAxis"
+        >
+          <line
+            class="recharts-cartesian-axis-line"
+            fill="none"
+            height="30"
+            orientation="bottom"
+            stroke="#666"
+            type="category"
+            width="360"
+            x="20"
+            x1="20"
+            x2="380"
+            y="350"
+            y1="350"
+            y2="350"
+          />
+          <g
+            class="recharts-cartesian-axis-ticks"
+          >
+            <g
+              class="recharts-layer recharts-cartesian-axis-tick"
+            >
+              <line
+                class="recharts-cartesian-axis-tick-line"
+                fill="none"
+                height="30"
+                orientation="bottom"
+                stroke="#666"
+                type="category"
+                width="360"
+                x="20"
+                x1="20"
+                x2="20"
+                y="350"
+                y1="356"
+                y2="350"
+              />
+              <text
+                class="recharts-text recharts-cartesian-axis-tick-value"
+                fill="#666"
+                height="30"
+                orientation="bottom"
+                stroke="none"
+                text-anchor="middle"
+                type="category"
+                width="360"
+                x="20"
+                y="358"
+              >
+                <tspan
+                  dy="0.71em"
+                  x="20"
+                >
+                  Page F
+                </tspan>
+              </text>
+            </g>
+            <g
+              class="recharts-layer recharts-cartesian-axis-tick"
+            >
+              <line
+                class="recharts-cartesian-axis-tick-line"
+                fill="none"
+                height="30"
+                orientation="bottom"
+                stroke="#666"
+                type="category"
+                width="360"
+                x="20"
+                x1="92"
+                x2="92"
+                y="350"
+                y1="356"
+                y2="350"
+              />
+              <text
+                class="recharts-text recharts-cartesian-axis-tick-value"
+                fill="#666"
+                height="30"
+                orientation="bottom"
+                stroke="none"
+                text-anchor="middle"
+                type="category"
+                width="360"
+                x="92"
+                y="358"
+              >
+                <tspan
+                  dy="0.71em"
+                  x="92"
+                >
+                  Page E
+                </tspan>
+              </text>
+            </g>
+            <g
+              class="recharts-layer recharts-cartesian-axis-tick"
+            >
+              <line
+                class="recharts-cartesian-axis-tick-line"
+                fill="none"
+                height="30"
+                orientation="bottom"
+                stroke="#666"
+                type="category"
+                width="360"
+                x="20"
+                x1="164"
+                x2="164"
+                y="350"
+                y1="356"
+                y2="350"
+              />
+              <text
+                class="recharts-text recharts-cartesian-axis-tick-value"
+                fill="#666"
+                height="30"
+                orientation="bottom"
+                stroke="none"
+                text-anchor="middle"
+                type="category"
+                width="360"
+                x="164"
+                y="358"
+              >
+                <tspan
+                  dy="0.71em"
+                  x="164"
+                >
+                  Page D
+                </tspan>
+              </text>
+            </g>
+            <g
+              class="recharts-layer recharts-cartesian-axis-tick"
+            >
+              <line
+                class="recharts-cartesian-axis-tick-line"
+                fill="none"
+                height="30"
+                orientation="bottom"
+                stroke="#666"
+                type="category"
+                width="360"
+                x="20"
+                x1="236"
+                x2="236"
+                y="350"
+                y1="356"
+                y2="350"
+              />
+              <text
+                class="recharts-text recharts-cartesian-axis-tick-value"
+                fill="#666"
+                height="30"
+                orientation="bottom"
+                stroke="none"
+                text-anchor="middle"
+                type="category"
+                width="360"
+                x="236"
+                y="358"
+              >
+                <tspan
+                  dy="0.71em"
+                  x="236"
+                >
+                  Page C
+                </tspan>
+              </text>
+            </g>
+            <g
+              class="recharts-layer recharts-cartesian-axis-tick"
+            >
+              <line
+                class="recharts-cartesian-axis-tick-line"
+                fill="none"
+                height="30"
+                orientation="bottom"
+                stroke="#666"
+                type="category"
+                width="360"
+                x="20"
+                x1="308"
+                x2="308"
+                y="350"
+                y1="356"
+                y2="350"
+              />
+              <text
+                class="recharts-text recharts-cartesian-axis-tick-value"
+                fill="#666"
+                height="30"
+                orientation="bottom"
+                stroke="none"
+                text-anchor="middle"
+                type="category"
+                width="360"
+                x="308"
+                y="358"
+              >
+                <tspan
+                  dy="0.71em"
+                  x="308"
+                >
+                  Page B
+                </tspan>
+              </text>
+            </g>
+            <g
+              class="recharts-layer recharts-cartesian-axis-tick"
+            >
+              <line
+                class="recharts-cartesian-axis-tick-line"
+                fill="none"
+                height="30"
+                orientation="bottom"
+                stroke="#666"
+                type="category"
+                width="360"
+                x="20"
+                x1="380"
+                x2="380"
+                y="350"
+                y1="356"
+                y2="350"
+              />
+              <text
+                class="recharts-text recharts-cartesian-axis-tick-value"
+                fill="#666"
+                height="30"
+                orientation="bottom"
+                stroke="none"
+                text-anchor="middle"
+                type="category"
+                width="360"
+                x="380"
+                y="358"
+              >
+                <tspan
+                  dy="0.71em"
+                  x="380"
+                >
+                  Page A
+                </tspan>
+              </text>
+            </g>
+          </g>
+        </g>
+      </svg>
+      <div
+        class="recharts-tooltip-wrapper"
+        style="transform: translate(undefinedpx, undefinedpx); pointer-events: none; visibility: hidden; position: absolute; top: 0px; left: 0px;"
+      >
+        <div
+          class="recharts-default-tooltip"
+          style="margin: 0px; padding: 10px; background-color: rgb(255, 255, 255); border: 1px solid #ccc; white-space: nowrap;"
+        >
+          <p
+            class="recharts-tooltip-label"
+            style="margin: 0px;"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
