@@ -1,10 +1,16 @@
+## 2.1.11 (Jun 24, 2022)
+
+# feat
+
+-  Adds react `^18.0.0`  as valid peerDependency (#2820)
+
 ## 2.1.10 (May 19, 2022)
 
 # feat
 
 - Add ARIA1.2 attributes to the SvgElementPropKeys filter array
 - Added Storybook Badge (#2840)
-- Handling of undefined values and type checks in DefaultTooltipContent…
+- Handling of undefined values and type checks in DefaultTooltipContent
 
 # fix
 
