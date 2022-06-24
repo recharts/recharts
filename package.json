@@ -50,8 +50,8 @@
   },
   "homepage": "https://github.com/recharts/recharts",
   "peerDependencies": {
-    "react": "^16.0.0 || ^17.0.0",
-    "react-dom": "^16.0.0 || ^17.0.0"
+    "react": "^16.0.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.0.0 || ^17.0.0 || ^18.0.0"
   },
   "dependencies": {
     "classnames": "^2.2.5",
@@ -61,7 +61,7 @@
     "eventemitter3": "^4.0.1",
     "lodash": "^4.17.19",
     "react-is": "^16.10.2",
-    "react-resize-detector": "^6.6.3",
+    "react-resize-detector": "^7.1.2",
     "react-smooth": "^2.0.0",
     "recharts-scale": "^0.4.4",
     "reduce-css-calc": "^2.1.8"
