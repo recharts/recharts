@@ -1,3 +1,9 @@
+## 2.1.12 (Jun 27, 2022)
+
+# fix
+
+- update react-smooth version
+
 ## 2.1.11 (Jun 24, 2022)
 
 # feat
