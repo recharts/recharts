@@ -52,7 +52,7 @@ export interface CartesianAxisProps {
   interval?: number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
 }
 
-export interface IState {
+interface IState {
   fontSize: string;
   letterSpacing: string;
 }
