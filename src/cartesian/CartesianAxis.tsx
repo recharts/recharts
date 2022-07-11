@@ -85,13 +85,15 @@ export class CartesianAxis extends Component<Props, IState> {
     interval: 'preserveEnd',
   };
 
+  private layerReference: any;
+
   constructor(props: Props) {
     super(props);
-    this.state = { fontSize: '14px', letterSpacing: '0px' };
+    this.state = { fontSize: '', letterSpacing: '' };
   }
 
   // todo Array<Tick>
-  static getTicks(props: Props, fontSize: string, letterSpacing: string): any[] {
+  static getTicks(props: Props, fontSize?: string, letterSpacing?: string): any[] {
     const { tick, ticks, viewBox, minTickGap, orientation, interval, tickFormatter, unit } = props;
 
     if (!ticks || !ticks.length || !tick) {
@@ -298,7 +300,9 @@ export class CartesianAxis extends Component<Props, IState> {
   }
 
   componentDidMount() {
-    const tick: Element = document.getElementsByClassName('recharts-cartesian-axis-tick-value')[0];
+    const htmlLayer: SVGElement = this.layerReference;
+    if (!htmlLayer) return;
+    const tick: Element = htmlLayer.getElementsByClassName('recharts-cartesian-axis-tick-value')[0];
     if (tick) {
       this.setState({
         fontSize: window.getComputedStyle(tick).fontSize,
@@ -521,7 +525,12 @@ export class CartesianAxis extends Component<Props, IState> {
     }
 
     return (
-      <Layer className={classNames('recharts-cartesian-axis', className)}>
+      <Layer
+        className={classNames('recharts-cartesian-axis', className)}
+        ref={ref => {
+          this.layerReference = ref;
+        }}
+      >
         {axisLine && this.renderAxisLine()}
         {this.renderTicks(finalTicks, this.state.fontSize, this.state.letterSpacing)}
         {Label.renderCallByParent(this.props)}
