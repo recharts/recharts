@@ -34,7 +34,7 @@ describe('<Pie />', () => {
     expect(wrapper.find('.recharts-pie-sector').length).to.equal(sectors.length);
   });
 
-  it('Render customized active sector when activeShape is set to be a element', () => {
+  it('Render customized active sector when activeShape is set to be an element', () => {
     const ActiveShape = props =>
       <Sector {...props} fill="#ff7300" className="customized-active-shape" />
     ;
@@ -78,7 +78,7 @@ describe('<Pie />', () => {
     expect(wrapper.find('.customized-active-shape').length).to.equal(1);
   });
 
-  it('Render customized active sector when activeShape is set to be a object', () => {
+  it('Render customized active sector when activeShape is set to be an object', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
         <Pie
@@ -97,6 +97,89 @@ describe('<Pie />', () => {
     expect(wrapper.find('.customized-active-shape').length).to.equal(0);
   });
 
+  it('Render customized active sector when inactiveShape is set to be an element', () => {
+    const ActiveShape = props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
+    const InactiveShape = props => <Sector {...props} fill="#ff7300" className="customized-inactive-shape" />;
+
+    const wrapper = render(
+      <Surface width={500} height={500}>
+        <Pie
+          isAnimationActive={false}
+          activeIndex={0}
+          activeShape={<ActiveShape />}
+          inactiveShape={<InactiveShape />}
+          cx={250}
+          cy={250}
+          innerRadius={0}
+          outerRadius={200}
+          sectors={sectors}
+        />
+      </Surface>,
+    );
+    expect(wrapper.find('.customized-inactive-shape').length).to.equal(4);
+  });
+
+  it('Render customized inactive sector when inactiveShape is set to be a function', () => {
+    const renderActiveShape = props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
+    const renderInactiveShape = props => <Sector {...props} fill="#ff7300" className="customized-inactive-shape" />;
+    const wrapper = render(
+      <Surface width={500} height={500}>
+        <Pie
+          isAnimationActive={false}
+          activeIndex={0}
+          activeShape={renderActiveShape}
+          inactiveShape={renderInactiveShape}
+          cx={250}
+          cy={250}
+          innerRadius={0}
+          outerRadius={200}
+          sectors={sectors}
+        />
+      </Surface>,
+    );
+    expect(wrapper.find('.customized-inactive-shape').length).to.equal(4);
+  });
+
+  it('Render customized inactive sector when inactiveShape is set to be an object', () => {
+    const wrapper = render(
+      <Surface width={500} height={500}>
+        <Pie
+          isAnimationActive={false}
+          activeIndex={0}
+          activeShape={{ fill: '#ff7300' }}
+          inactiveShape={{ fill: '#ff7322' }}
+          cx={250}
+          cy={250}
+          innerRadius={0}
+          outerRadius={200}
+          sectors={sectors}
+        />
+      </Surface>,
+    );
+
+    expect(wrapper.find('.customized-inactive-shape').length).to.equal(0);
+  });
+
+  it('should not render customized inactive sectors if there is no active index', () => {
+    const renderActiveShape = props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
+    const renderInactiveShape = props => <Sector {...props} fill="#ff7300" className="customized-inactive-shape" />;
+    const wrapper = render(
+      <Surface width={500} height={500}>
+        <Pie
+          isAnimationActive={false}
+          activeShape={renderActiveShape}
+          inactiveShape={renderInactiveShape}
+          cx={250}
+          cy={250}
+          innerRadius={0}
+          outerRadius={200}
+          sectors={sectors}
+        />
+      </Surface>,
+    );
+    expect(wrapper.find('.customized-inactive-shape').length).to.equal(0);
+  });
+
   it('Support multiple active sectors', () => {
     const ActiveShape = props =>
       <Sector {...props} fill="#ff7300" className="customized-active-shape" />
@@ -113,7 +196,7 @@ describe('<Pie />', () => {
           outerRadius={200}
           sectors={sectors}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-active-shape').length).to.equal(2);
@@ -135,7 +218,7 @@ describe('<Pie />', () => {
           outerRadius={200}
           sectors={sectors}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-label').length).to.equal(sectors.length);
@@ -157,7 +240,7 @@ describe('<Pie />', () => {
           outerRadius={200}
           sectors={sectors}
         />
-      </Surface>
+      </Surface>,
     );
 
     setTimeout(() => {
@@ -182,7 +265,7 @@ describe('<Pie />', () => {
           outerRadius={200}
           sectors={sectors}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-label').length).to.equal(sectors.length);
@@ -206,7 +289,7 @@ describe('<Pie />', () => {
           outerRadius={200}
           sectors={sectors}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-label-line').length).to.equal(sectors.length);
@@ -230,7 +313,7 @@ describe('<Pie />', () => {
           outerRadius={200}
           sectors={sectors}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-label-line').length).to.equal(sectors.length);
@@ -265,7 +348,7 @@ describe('<Pie />', () => {
           onMouseLeave={onMouseLeave}
           onClick={onClick}
         />
-      </Surface>
+      </Surface>,
     );
     const se = wrapper.find(Layer).at(3);
 
