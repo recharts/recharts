@@ -305,6 +305,7 @@ export class Pie extends PureComponent<Props, State> {
         prevAnimationId: nextProps.animationId,
         curSectors: nextProps.sectors,
         prevSectors: [],
+        isAnimationFinished: true,
       };
     }
     if (nextProps.isAnimationActive && nextProps.animationId !== prevState.prevAnimationId) {
@@ -312,11 +313,13 @@ export class Pie extends PureComponent<Props, State> {
         prevAnimationId: nextProps.animationId,
         curSectors: nextProps.sectors,
         prevSectors: prevState.curSectors,
+        isAnimationFinished: true,
       };
     }
     if (nextProps.sectors !== prevState.curSectors) {
       return {
         curSectors: nextProps.sectors,
+        isAnimationFinished: true,
       };
     }
 
