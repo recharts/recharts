@@ -115,6 +115,8 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   state = {
     boxWidth: -1,
     boxHeight: -1,
+    dismissed: false,
+    dismissedAtCoordinate: { x: 0, y: 0 },
   };
 
   private wrapperNode: HTMLDivElement;
@@ -128,7 +130,18 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   }
 
   updateBBox() {
-    const { boxWidth, boxHeight } = this.state;
+    const { boxWidth, boxHeight, dismissed } = this.state;
+    if (dismissed) {
+      this.wrapperNode.blur();
+      if (
+        this.props.coordinate.x !== this.state.dismissedAtCoordinate.x ||
+        this.props.coordinate.y !== this.state.dismissedAtCoordinate.y
+      ) {
+        this.setState({ dismissed: false });
+      }
+    } else {
+      this.wrapperNode.focus();
+    }
 
     if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
       const box = this.wrapperNode.getBoundingClientRect();
@@ -186,7 +199,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
     const { content, viewBox, coordinate, position, active, wrapperStyle } = this.props;
     let outerStyle: CSSProperties = {
       pointerEvents: 'none',
-      visibility: active && hasPayload ? 'visible' : 'hidden',
+      visibility: !this.state.dismissed && active && hasPayload ? 'visible' : 'hidden',
       position: 'absolute',
       top: 0,
       left: 0,
@@ -246,6 +259,19 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
 
     return (
       <div
+        tabIndex={0}
+        onKeyDown={event => {
+          if (event.key === 'Escape') {
+            this.setState({
+              dismissed: true,
+              dismissedAtCoordinate: {
+                ...this.state.dismissedAtCoordinate,
+                x: this.props.coordinate.x,
+                y: this.props.coordinate.y,
+              },
+            });
+          }
+        }}
         className={cls}
         style={outerStyle}
         ref={node => {
