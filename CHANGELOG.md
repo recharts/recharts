@@ -1,3 +1,15 @@
+## 2.1.13 (Jul 26, 2022)
+
+# fix
+
+- set animate flag before chart data update (#2911)
+- Error bar domain fix (#2863)
+- fix: fix "recharts@… doesn't provide prop-types, requested by react-smooth" warning (#2895)
+
+# chore
+
+- upgrade d3 (#2893)
+
 ## 2.1.12 (Jun 27, 2022)
 
 # fix
