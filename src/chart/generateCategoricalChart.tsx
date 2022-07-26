@@ -325,6 +325,7 @@ const getAxisMapByAxes = (
             graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
             dataKey,
             axisType,
+            layout,
           );
 
           if (errorBarsDomain) {
@@ -349,6 +350,7 @@ const getAxisMapByAxes = (
           displayedData,
           graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
           type,
+          layout,
           true,
         );
       }
@@ -439,6 +441,7 @@ const getAxisMapByItems = (
             displayedData,
             graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
             'number',
+            layout,
           ),
           Axis.defaultProps.allowDataOverflow,
         );
