@@ -120,7 +120,7 @@ interface State {
   prevSectors?: PieSectorDataItem[];
   curSectors?: PieSectorDataItem[];
   prevAnimationId?: number;
-  sectorToFocus: number;
+  sectorToFocus?: number;
 }
 
 export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & PieProps;
