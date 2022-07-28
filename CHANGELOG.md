@@ -3,6 +3,29 @@
 # fix
 
 - update react-smooth version
+- update d3 from 6.x to 7.x it may break some tools like jest
+
+fix config for jest is to add the following configuration
+
+```
+  moduleNameMapper: {
+		'^d3$': path.join(require.resolve('d3'), '../../dist/d3.min.js'),
+		'^d3-shape$': path.join(require.resolve('d3-shape'), '../../dist/d3-shape.min.js'),
+		'^d3-path$': path.join(require.resolve('d3-path'), '../../dist/d3-path.min.js'),
+		'^d3-scale$': path.join(require.resolve('d3-scale'), '../../dist/d3-scale.min.js'),
+		'^d3-array$': path.join(require.resolve('d3-array'), '../../dist/d3-array.min.js'),
+		'^d3-interpolate$': path.join(
+			require.resolve('d3-interpolate'),
+			'../../dist/d3-interpolate.min.js',
+		),
+		'^d3-color$': path.join(require.resolve('d3-color'), '../../dist/d3-color.min.js'),
+		'^d3-format$': path.join(require.resolve('d3-format'), '../../dist/d3-format.min.js'),
+		'^d3-time$': path.join(require.resolve('d3-time'), '../../dist/d3-time.min.js'),
+		'^d3-time-format$': path.join(
+			require.resolve('d3-time-format'),
+			'../../dist/d3-time-format.min.js',
+		),
+```
 
 ## 2.1.11 (Jun 24, 2022)
 
