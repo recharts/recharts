@@ -37,7 +37,7 @@ export interface Props<TValue extends ValueType, TName extends NameType> {
   separator?: string;
   wrapperClassName?: string;
   labelClassName?: string;
-  formatter?: Function;
+  formatter?: Formatter<TValue, TName>;
   contentStyle?: CSSProperties;
   itemStyle?: CSSProperties;
   labelStyle?: CSSProperties;
