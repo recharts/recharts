@@ -7,7 +7,7 @@
 
 fix config for jest is to add the following configuration
 
-```
+```javascript
   moduleNameMapper: {
 		'^d3$': path.join(require.resolve('d3'), '../../dist/d3.min.js'),
 		'^d3-shape$': path.join(require.resolve('d3-shape'), '../../dist/d3-shape.min.js'),
@@ -25,6 +25,7 @@ fix config for jest is to add the following configuration
 			require.resolve('d3-time-format'),
 			'../../dist/d3-time-format.min.js',
 		),
+  }
 ```
 
 ## 2.1.11 (Jun 24, 2022)
