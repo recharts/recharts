@@ -1,43 +1,42 @@
 import React from 'react';
 import { expect } from 'chai';
 import { Surface, Pie, Sector } from 'recharts';
-import { Layer } from '../../../src/container/Layer';
 import { mount, render } from 'enzyme';
+import { fireEvent, render as testingLibraryRender, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import sinon from 'sinon';
+import { Layer } from '../../../src/container/Layer';
 
 describe('<Pie />', () => {
   const sectors = [
     {
-      cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 0,
-      endAngle: 72, name: 'A', value: 40,
+      cx: 250,
+      cy: 250,
+      innerRadius: 50,
+      outerRadius: 100,
+      startAngle: 0,
+      endAngle: 72,
+      name: 'A',
+      value: 40,
     },
-    { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 72, endAngle: 144},
-    { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 144, endAngle: 216},
-    { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 216, endAngle: 288},
-    { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 288, endAngle: 360},
+    { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 72, endAngle: 144 },
+    { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 144, endAngle: 216 },
+    { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 216, endAngle: 288 },
+    { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 288, endAngle: 360 },
   ];
 
   it('Render 5 sectors in a simple Pie', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <Pie
-          isAnimationActive={false}
-          cx={250}
-          cy={250}
-          innerRadius={0}
-          outerRadius={200}
-          sectors={sectors}
-        />
-      </Surface>
+        <Pie isAnimationActive={false} cx={250} cy={250} innerRadius={0} outerRadius={200} sectors={sectors} />
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-pie-sector').length).to.equal(sectors.length);
   });
 
   it('Render customized active sector when activeShape is set to be a element', () => {
-    const ActiveShape = props =>
-      <Sector {...props} fill="#ff7300" className="customized-active-shape" />
-    ;
+    const ActiveShape = props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
     const wrapper = render(
       <Surface width={500} height={500}>
         <Pie
@@ -50,16 +49,14 @@ describe('<Pie />', () => {
           outerRadius={200}
           sectors={sectors}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-active-shape').length).to.equal(1);
   });
 
   it('Render customized active sector when activeShape is set to be a function', () => {
-    const renderActiveShape = props =>
-      <Sector {...props} fill="#ff7300" className="customized-active-shape" />
-    ;
+    const renderActiveShape = props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
     const wrapper = render(
       <Surface width={500} height={500}>
         <Pie
@@ -72,7 +69,7 @@ describe('<Pie />', () => {
           outerRadius={200}
           sectors={sectors}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-active-shape').length).to.equal(1);
@@ -91,16 +88,14 @@ describe('<Pie />', () => {
           outerRadius={200}
           sectors={sectors}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-active-shape').length).to.equal(0);
   });
 
   it('Support multiple active sectors', () => {
-    const ActiveShape = props =>
-      <Sector {...props} fill="#ff7300" className="customized-active-shape" />
-    ;
+    const ActiveShape = props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
     const wrapper = render(
       <Surface width={500} height={500}>
         <Pie
@@ -113,16 +108,20 @@ describe('<Pie />', () => {
           outerRadius={200}
           sectors={sectors}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-active-shape').length).to.equal(2);
   });
 
   it('Render customized label when label is set to be a react element', () => {
-    const Label = (props) => {
+    const Label = props => {
       const { x, y } = props;
-      return <text x={x} y={y} className="customized-label">test</text>;
+      return (
+        <text x={x} y={y} className="customized-label">
+          test
+        </text>
+      );
     };
     const wrapper = render(
       <Surface width={500} height={500}>
@@ -135,14 +134,14 @@ describe('<Pie />', () => {
           outerRadius={200}
           sectors={sectors}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-label').length).to.equal(sectors.length);
   });
 
   it('Render customized label when label is set to be a function that returns the label text', () => {
-    const Label = (props) => {
+    const Label = props => {
       const { name, value } = props;
       return `${name}: ${value}`;
     };
@@ -157,7 +156,7 @@ describe('<Pie />', () => {
           outerRadius={200}
           sectors={sectors}
         />
-      </Surface>
+      </Surface>,
     );
 
     setTimeout(() => {
@@ -167,9 +166,13 @@ describe('<Pie />', () => {
   });
 
   it('Render customized label when label is set to be a react element', () => {
-    const renderLabel = (props) => {
+    const renderLabel = props => {
       const { x, y } = props;
-      return <text x={x} y={y} className="customized-label">test</text>;
+      return (
+        <text x={x} y={y} className="customized-label">
+          test
+        </text>
+      );
     };
     const wrapper = render(
       <Surface width={500} height={500}>
@@ -182,17 +185,19 @@ describe('<Pie />', () => {
           outerRadius={200}
           sectors={sectors}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-label').length).to.equal(sectors.length);
   });
 
   it('Render customized label line when labelLine is set to be a react element', () => {
-    const LabelLine = (props) => {
+    const LabelLine = props => {
       const { points } = props;
 
-      return <path d={`M${points[0].x},${points[0].y}L${points[1].x},${points[1].y}`} className="customized-label-line" />;
+      return (
+        <path d={`M${points[0].x},${points[0].y}L${points[1].x},${points[1].y}`} className="customized-label-line" />
+      );
     };
     const wrapper = render(
       <Surface width={500} height={500}>
@@ -206,17 +211,19 @@ describe('<Pie />', () => {
           outerRadius={200}
           sectors={sectors}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-label-line').length).to.equal(sectors.length);
   });
 
   it('Render customized label line when labelLine is set to be a function', () => {
-    const renderLabelLine = (props) => {
+    const renderLabelLine = props => {
       const { points } = props;
 
-      return <path d={`M${points[0].x},${points[0].y}L${points[1].x},${points[1].y}`} className="customized-label-line" />;
+      return (
+        <path d={`M${points[0].x},${points[0].y}L${points[1].x},${points[1].y}`} className="customized-label-line" />
+      );
     };
     const wrapper = render(
       <Surface width={500} height={500}>
@@ -230,19 +237,17 @@ describe('<Pie />', () => {
           outerRadius={200}
           sectors={sectors}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-label-line').length).to.equal(sectors.length);
   });
 
-  it('Don\'t render any sector when data is empty', () => {
+  it("Don't render any sector when data is empty", () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <Pie
-          sectors={[]}
-        />
-      </Surface>
+        <Pie sectors={[]} />
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-pie').length).to.equal(0);
@@ -265,7 +270,7 @@ describe('<Pie />', () => {
           onMouseLeave={onMouseLeave}
           onClick={onClick}
         />
-      </Surface>
+      </Surface>,
     );
     const se = wrapper.find(Layer).at(3);
 
@@ -275,5 +280,90 @@ describe('<Pie />', () => {
     expect(onMouseLeave.calledOnce).to.equal(true);
     se.simulate('click');
     expect(onClick.calledOnce).to.equal(true);
+  });
+
+  it('Handles keyboard interaction: Tab can focus in and out of the pie chart', async () => {
+    const timeout = 2000;
+    const { container } = testingLibraryRender(
+      <div tabIndex={0} className="container">
+        <Surface width={500} height={500}>
+          <Pie isAnimationActive={false} cx={250} cy={250} label innerRadius={0} outerRadius={200} sectors={sectors} />
+        </Surface>
+      </div>,
+    );
+    const pie = container.getElementsByClassName('recharts-pie')[0];
+    const pieContainer = document.getElementsByClassName('container')[0];
+
+    pieContainer.focus();
+    await waitFor(
+      () => {
+        expect(document.activeElement).equals(pieContainer);
+      },
+      { timeout },
+    );
+
+    // Testing that pressing tab goes into pie chart
+    userEvent.tab();
+    await waitFor(
+      () => {
+        expect(document.activeElement).equals(pie);
+      },
+      { timeout },
+    );
+
+    // Testing that pressing tab goes out of pie chart
+    userEvent.tab();
+    await waitFor(
+      () => {
+        expect(document.activeElement).equals(document.body);
+        it('Handles keyboard interaction: Tab can focus in and out of the pie chart', async () => {
+          const timeout = 2000;
+          const { container } = testingLibraryRender(
+            <div tabIndex={0} className="container">
+              <Surface width={500} height={500}>
+                <Pie
+                  isAnimationActive={false}
+                  cx={250}
+                  cy={250}
+                  label
+                  innerRadius={0}
+                  outerRadius={200}
+                  sectors={sectors}
+                />
+              </Surface>
+            </div>,
+          );
+          const pie = container.getElementsByClassName('recharts-pie')[0];
+          const pieContainer = document.getElementsByClassName('container')[0];
+
+          pieContainer.focus();
+          await waitFor(
+            () => {
+              expect(document.activeElement).equals(pieContainer);
+            },
+            { timeout },
+          );
+
+          // Testing that pressing tab goes into pie chart
+          userEvent.tab();
+          await waitFor(
+            () => {
+              expect(document.activeElement).equals(pie);
+            },
+            { timeout },
+          );
+
+          // Testing that pressing tab goes out of pie chart
+          userEvent.tab();
+          await waitFor(
+            () => {
+              expect(document.activeElement).equals(document.body);
+            },
+            { timeout },
+          );
+        });
+      },
+      { timeout },
+    );
   });
 });
