@@ -366,4 +366,32 @@ describe('<Pie />', () => {
       { timeout },
     );
   });
+
+  it.only('Handles keyboard interaction: left/right arrow keys can move focus within sectors', async () => {
+    const timeout = 2000;
+    const { container } = testingLibraryRender(
+      <div tabIndex={0} className="container">
+        <Surface width={500} height={500}>
+          <Pie isAnimationActive={false} cx={250} cy={250} label innerRadius={0} outerRadius={200} sectors={sectors} />
+        </Surface>
+      </div>,
+    );
+    const pie = container.getElementsByClassName('recharts-pie')[0];
+    pie.focus();
+    await waitFor(
+      () => {
+        expect(document.activeElement.classList.contains('recharts-pie-sector')).to.equal(false);
+      },
+      { timeout },
+    );
+
+    userEvent.keyboard('{ArrowRight}');
+
+    await waitFor(
+      () => {
+        expect(document.activeElement.classList.contains('recharts-pie-sector')).to.equal(true);
+      },
+      { timeout },
+    );
+  });
 });
