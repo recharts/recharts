@@ -257,9 +257,13 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       [`${CLS_PREFIX}-top`]: isNumber(translateY) && coordinate && isNumber(coordinate.y) && translateY < coordinate.y,
     });
 
+    // adding an eslint exception below because we need to listen to 'Escape' key
+
     return (
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
       <div
-        tabIndex={0}
+        tabIndex={-1}
+        role="dialog"
         onKeyDown={event => {
           if (event.key === 'Escape') {
             this.setState({
