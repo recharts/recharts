@@ -367,7 +367,7 @@ describe('<Pie />', () => {
     );
   });
 
-  it.only('Handles keyboard interaction: arrow keys can move focus into sectors', async () => {
+  it('Handles keyboard interaction: arrow keys can move focus into sectors', async () => {
     const timeout = 2000;
     const { container } = testingLibraryRender(
       <div tabIndex={0} className="container">
