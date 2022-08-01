@@ -2,7 +2,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { Surface, Pie, Sector } from 'recharts';
 import { mount, render } from 'enzyme';
-import { fireEvent, render as testingLibraryRender, waitFor } from '@testing-library/react';
+import { render as testingLibraryRender, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import sinon from 'sinon';
 import { Layer } from '../../../src/container/Layer';
