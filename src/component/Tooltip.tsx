@@ -258,8 +258,12 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
     });
 
     return (
+      // ESLint is disabled to allow listening to the `Escape` key. Refer to
+      // https://github.com/recharts/recharts/pull/2925
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
       <div
-        tabIndex={0}
+        tabIndex={-1}
+        role="dialog"
         onKeyDown={event => {
           if (event.key === 'Escape') {
             this.setState({
