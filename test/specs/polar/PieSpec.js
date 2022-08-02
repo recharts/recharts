@@ -285,6 +285,7 @@ describe('<Pie />', () => {
   it('Handles keyboard interaction: Tab can focus in and out of the pie chart', async () => {
     const timeout = 2000;
     const { container } = testingLibraryRender(
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
       <div tabIndex={0} className="container">
         <Surface width={500} height={500}>
           <Pie isAnimationActive={false} cx={250} cy={250} label innerRadius={0} outerRadius={200} sectors={sectors} />
@@ -316,52 +317,6 @@ describe('<Pie />', () => {
     await waitFor(
       () => {
         expect(document.activeElement).equals(document.body);
-        it('Handles keyboard interaction: Tab can focus in and out of the pie chart', async () => {
-          const timeout = 2000;
-          const { container } = testingLibraryRender(
-            <div tabIndex={0} className="container">
-              <Surface width={500} height={500}>
-                <Pie
-                  isAnimationActive={false}
-                  cx={250}
-                  cy={250}
-                  label
-                  innerRadius={0}
-                  outerRadius={200}
-                  sectors={sectors}
-                />
-              </Surface>
-            </div>,
-          );
-          const pie = container.getElementsByClassName('recharts-pie')[0];
-          const pieContainer = document.getElementsByClassName('container')[0];
-
-          pieContainer.focus();
-          await waitFor(
-            () => {
-              expect(document.activeElement).equals(pieContainer);
-            },
-            { timeout },
-          );
-
-          // Testing that pressing tab goes into pie chart
-          userEvent.tab();
-          await waitFor(
-            () => {
-              expect(document.activeElement).equals(pie);
-            },
-            { timeout },
-          );
-
-          // Testing that pressing tab goes out of pie chart
-          userEvent.tab();
-          await waitFor(
-            () => {
-              expect(document.activeElement).equals(document.body);
-            },
-            { timeout },
-          );
-        });
       },
       { timeout },
     );
@@ -370,6 +325,7 @@ describe('<Pie />', () => {
   it('Handles keyboard interaction: arrow keys can move focus into sectors', async () => {
     const timeout = 2000;
     const { container } = testingLibraryRender(
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
       <div tabIndex={0} className="container">
         <Surface width={500} height={500}>
           <Pie isAnimationActive={false} cx={250} cy={250} label innerRadius={0} outerRadius={200} sectors={sectors} />

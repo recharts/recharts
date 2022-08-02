@@ -559,6 +559,7 @@ export class Pie extends PureComponent<Props, State> {
   }
 
   attachKeyboardHandlers(pieRef: HTMLElement) {
+    // eslint-disable-next-line no-param-reassign
     pieRef.onkeydown = (e: KeyboardEvent) => {
       if (!e.altKey) {
         switch (e.key) {
