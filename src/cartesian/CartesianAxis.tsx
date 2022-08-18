@@ -52,9 +52,13 @@ export interface CartesianAxisProps {
   interval?: number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
 }
 
+interface IState {
+  fontSize: string;
+  letterSpacing: string;
+}
 export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'viewBox'> & CartesianAxisProps;
 
-export class CartesianAxis extends Component<Props> {
+export class CartesianAxis extends Component<Props, IState> {
   static displayName = 'CartesianAxis';
 
   static defaultProps = {
@@ -81,8 +85,15 @@ export class CartesianAxis extends Component<Props> {
     interval: 'preserveEnd',
   };
 
+  private layerReference: any;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = { fontSize: '', letterSpacing: '' };
+  }
+
   // todo Array<Tick>
-  static getTicks(props: Props): any[] {
+  static getTicks(props: Props, fontSize?: string, letterSpacing?: string): any[] {
     const { tick, ticks, viewBox, minTickGap, orientation, interval, tickFormatter, unit } = props;
 
     if (!ticks || !ticks.length || !tick) {
@@ -105,6 +116,8 @@ export class CartesianAxis extends Component<Props> {
           orientation,
           minTickGap,
           unit,
+          fontSize,
+          letterSpacing,
         },
         true,
       );
@@ -117,6 +130,8 @@ export class CartesianAxis extends Component<Props> {
         orientation,
         minTickGap,
         unit,
+        fontSize,
+        letterSpacing,
       });
     }
 
@@ -127,6 +142,8 @@ export class CartesianAxis extends Component<Props> {
       orientation,
       minTickGap,
       unit,
+      fontSize,
+      letterSpacing,
     });
   }
 
@@ -135,14 +152,23 @@ export class CartesianAxis extends Component<Props> {
   }
 
   static getTicksStart(
-    { ticks, tickFormatter, viewBox, orientation, minTickGap, unit }: Omit<Props, 'tickMargin'>,
+    {
+      ticks,
+      tickFormatter,
+      viewBox,
+      orientation,
+      minTickGap,
+      unit,
+      fontSize,
+      letterSpacing,
+    }: Omit<Props, 'tickMargin'>,
     preserveEnd?: boolean,
   ) {
     const { x, y, width, height } = viewBox;
     const sizeKey = orientation === 'top' || orientation === 'bottom' ? 'width' : 'height';
     const result = (ticks || []).slice();
     // we need add the width of 'unit' only when sizeKey === 'width'
-    const unitSize = unit && sizeKey === 'width' ? getStringSize(unit)[sizeKey] : 0;
+    const unitSize = unit && sizeKey === 'width' ? getStringSize(unit, { fontSize, letterSpacing })[sizeKey] : 0;
     const len = result.length;
     const sign = len >= 2 ? mathSign(result[1].coordinate - result[0].coordinate) : 1;
 
@@ -160,7 +186,7 @@ export class CartesianAxis extends Component<Props> {
       // Try to guarantee the tail to be displayed
       let tail = ticks[len - 1];
       const tailContent = _.isFunction(tickFormatter) ? tickFormatter(tail.value, len - 1) : tail.value;
-      const tailSize = getStringSize(tailContent)[sizeKey] + unitSize;
+      const tailSize = getStringSize(tailContent, { fontSize, letterSpacing })[sizeKey] + unitSize;
       const tailGap = sign * (tail.coordinate + (sign * tailSize) / 2 - end);
       result[len - 1] = tail = {
         ...tail,
@@ -181,7 +207,7 @@ export class CartesianAxis extends Component<Props> {
     for (let i = 0; i < count; i++) {
       let entry = result[i];
       const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value, i) : entry.value;
-      const size = getStringSize(content)[sizeKey] + unitSize;
+      const size = getStringSize(content, { fontSize, letterSpacing })[sizeKey] + unitSize;
 
       if (i === 0) {
         const gap = sign * (entry.coordinate - (sign * size) / 2 - start);
@@ -206,11 +232,20 @@ export class CartesianAxis extends Component<Props> {
     return result.filter(entry => entry.isShow);
   }
 
-  static getTicksEnd({ ticks, tickFormatter, viewBox, orientation, minTickGap, unit }: Omit<Props, 'tickMargin'>) {
+  static getTicksEnd({
+    ticks,
+    tickFormatter,
+    viewBox,
+    orientation,
+    minTickGap,
+    unit,
+    fontSize,
+    letterSpacing,
+  }: Omit<Props, 'tickMargin'>) {
     const { x, y, width, height } = viewBox;
     const sizeKey = orientation === 'top' || orientation === 'bottom' ? 'width' : 'height';
     // we need add the width of 'unit' only when sizeKey === 'width'
-    const unitSize = unit && sizeKey === 'width' ? getStringSize(unit)[sizeKey] : 0;
+    const unitSize = unit && sizeKey === 'width' ? getStringSize(unit, { fontSize, letterSpacing })[sizeKey] : 0;
     const result = (ticks || []).slice();
     const len = result.length;
     const sign = len >= 2 ? mathSign(result[1].coordinate - result[0].coordinate) : 1;
@@ -228,7 +263,7 @@ export class CartesianAxis extends Component<Props> {
     for (let i = len - 1; i >= 0; i--) {
       let entry = result[i];
       const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value, len - i - 1) : entry.value;
-      const size = getStringSize(content)[sizeKey] + unitSize;
+      const size = getStringSize(content, { fontSize, letterSpacing })[sizeKey] + unitSize;
 
       if (i === len - 1) {
         const gap = sign * (entry.coordinate + (sign * size) / 2 - end);
@@ -253,11 +288,27 @@ export class CartesianAxis extends Component<Props> {
     return result.filter(entry => entry.isShow);
   }
 
-  shouldComponentUpdate({ viewBox, ...restProps }: Props) {
+  shouldComponentUpdate({ viewBox, ...restProps }: Props, nextState: IState) {
     // props.viewBox is sometimes generated every time -
     // check that specially as object equality is likely to fail
     const { viewBox: viewBoxOld, ...restPropsOld } = this.props;
-    return !shallowEqual(viewBox, viewBoxOld) || !shallowEqual(restProps, restPropsOld);
+    return (
+      !shallowEqual(viewBox, viewBoxOld) ||
+      !shallowEqual(restProps, restPropsOld) ||
+      !shallowEqual(nextState, this.state)
+    );
+  }
+
+  componentDidMount() {
+    const htmlLayer: SVGElement = this.layerReference;
+    if (!htmlLayer) return;
+    const tick: Element = htmlLayer.getElementsByClassName('recharts-cartesian-axis-tick-value')[0];
+    if (tick) {
+      this.setState({
+        fontSize: window.getComputedStyle(tick).fontSize,
+        letterSpacing: window.getComputedStyle(tick).letterSpacing,
+      });
+    }
   }
 
   /**
@@ -401,9 +452,9 @@ export class CartesianAxis extends Component<Props> {
    * @param {Array} ticks The ticks to actually render (overrides what was passed in props)
    * @return {ReactComponent} renderedTicks
    */
-  renderTicks(ticks: CartesianTickItem[]) {
+  renderTicks(ticks: CartesianTickItem[], fontSize: string, letterSpacing: string) {
     const { tickLine, stroke, tick, tickFormatter, unit } = this.props;
-    const finalTicks = CartesianAxis.getTicks({ ...this.props, ticks });
+    const finalTicks = CartesianAxis.getTicks({ ...this.props, ticks }, fontSize, letterSpacing);
     const textAnchor = this.getTickTextAnchor();
     const verticalAnchor = this.getTickVerticalAnchor();
     const axisProps = filterProps(this.props);
@@ -474,9 +525,14 @@ export class CartesianAxis extends Component<Props> {
     }
 
     return (
-      <Layer className={classNames('recharts-cartesian-axis', className)}>
+      <Layer
+        className={classNames('recharts-cartesian-axis', className)}
+        ref={ref => {
+          this.layerReference = ref;
+        }}
+      >
         {axisLine && this.renderAxisLine()}
-        {this.renderTicks(finalTicks)}
+        {this.renderTicks(finalTicks, this.state.fontSize, this.state.letterSpacing)}
         {Label.renderCallByParent(this.props)}
       </Layer>
     );

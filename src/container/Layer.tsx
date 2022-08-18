@@ -12,13 +12,13 @@ interface LayerProps {
 
 export type Props = SVGProps<SVGGElement> & LayerProps;
 
-export function Layer(props: Props) {
+export const Layer = React.forwardRef((props: Props, ref: any) => {
   const { children, className, ...others } = props;
   const layerClass = classNames('recharts-layer', className);
 
   return (
-    <g className={layerClass} {...filterProps(others, true)}>
+    <g className={layerClass} {...filterProps(others, true)} ref={ref}>
       {children}
     </g>
   );
-}
+});
