@@ -36,6 +36,16 @@ describe('<LineChart />', () => {
     expect(wrapper.find('.recharts-line .recharts-line-curve').length).to.equal(1);
   });
 
+  it('Sets title and description correctly', () => {
+    const wrapper = mount(
+      <LineChart title="Chart title" desc="Chart description" width={400} height={400} data={data}>
+        <Line type="monotone" dataKey="uv" />
+      </LineChart>,
+    );
+    expect(wrapper.find('title').text()).to.equal('Chart title');
+    expect(wrapper.find('desc').text()).to.equal('Chart description');
+  });
+
   it('Render smooth curve when type of Line is monotone', () => {
     const wrapper = render(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
