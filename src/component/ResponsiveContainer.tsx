@@ -79,7 +79,7 @@ export const ResponsiveContainer = forwardRef(
           setSizes({ containerWidth, containerHeight });
 
           if (onResize) {
-            onResize(containerWidth, containerHeight)
+            onResize(containerWidth, containerHeight);
           }
         }
       }
