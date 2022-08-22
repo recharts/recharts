@@ -150,6 +150,10 @@ export const ResponsiveContainer = forwardRef(
 
         if (size) {
           setSizes(size);
+
+          if (onResize) {
+            onResize(size.containerWidth, size.containerHeight);
+          }
         }
       }
     }, [mounted]);
