@@ -19,6 +19,7 @@ export interface Props {
   debounce?: number;
   id?: string | number;
   className?: string | number;
+  onResize?: (width: number, height: number) => void;
 }
 
 interface State {
@@ -39,6 +40,7 @@ export const ResponsiveContainer = forwardRef(
       debounce = 0,
       id,
       className,
+      onResize,
     }: Props,
     ref,
   ) => {
@@ -75,6 +77,10 @@ export const ResponsiveContainer = forwardRef(
 
         if (containerWidth !== oldWidth || containerHeight !== oldHeight) {
           setSizes({ containerWidth, containerHeight });
+
+          if (onResize) {
+            onResize(containerWidth, containerHeight)
+          }
         }
       }
     };
