@@ -450,6 +450,8 @@ export class CartesianAxis extends Component<Props, IState> {
   /**
    * render the ticks
    * @param {Array} ticks The ticks to actually render (overrides what was passed in props)
+   * @param {string} fontSize The size of the font used in labels
+   * @param {string} letterSpacing The space between letters of the font used in labels
    * @return {ReactComponent} renderedTicks
    */
   renderTicks(ticks: CartesianTickItem[], fontSize: string, letterSpacing: string) {
