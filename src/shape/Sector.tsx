@@ -230,6 +230,11 @@ export class Sector extends PureComponent<Props> {
       path = getSectorPath({ cx, cy, innerRadius, outerRadius, startAngle, endAngle });
     }
 
-    return <path {...filterProps(this.props, true)} className={layerClass} d={path} />;
+    return (
+      <>
+        <path {...filterProps(this.props, true)} className={layerClass} d={path} />
+        <title>{`${(this.props as any).name} ${(this.props as any).value}`}</title>
+      </>
+    );
   }
 }
