@@ -25,9 +25,9 @@ interface LabelListProps<T extends Data> {
   formatter?: Function;
 }
 
-export type Props<T> = SVGProps<SVGElement> & LabelListProps<T>;
+export type Props<T extends Data> = SVGProps<SVGElement> & LabelListProps<T>;
 
-export type ImplicitLabelListType<T> =
+export type ImplicitLabelListType<T extends Data> =
   | boolean
   | ReactElement<SVGElement>
   | ((props: any) => ReactElement<SVGElement>)
