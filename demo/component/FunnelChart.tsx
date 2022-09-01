@@ -9,11 +9,11 @@ const colors1 = scaleOrdinal(schemeCategory10).range();
 const colors2 = scaleOrdinal(schemeCategory10).range();
 
 const data = [
-  { value: 100, name: '展现展现展现展现展现展现展现展现展现展现展现展现' },
-  { value: 80, name: '点击点击点击点击点击点击点击点击点击点击点击点击点击点击' },
-  { value: 50, name: '访问访问访问访问访问访问访问访问访问访问访问访问访问访问访问' },
-  { value: 40, name: '咨询咨询咨询咨询咨询咨询咨询咨询咨询咨询咨询咨询咨询咨询咨询' },
-  { value: 26, name: '订单订单订单订单订单订单订单订单订单订单订单订单订单订单订单订单' },
+  { value: 100, name: '展现' },
+  { value: 80, name: '点击' },
+  { value: 50, name: '访问' },
+  { value: 40, name: '咨询' },
+  { value: 26, name: '订单' },
 ];
 
 const data01 = [

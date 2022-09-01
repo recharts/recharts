@@ -24,9 +24,7 @@ export default class Demo extends Component<any, any> {
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
           ticks={ticks}
           label="test"
-        >
-          <Label>测试</Label>
-        </CartesianAxis>
+        />
         <CartesianAxis
           orientation="top"
           y={200}
