@@ -307,6 +307,7 @@ export class Bar extends PureComponent<Props, State> {
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(this.props, entry, i)}
             key={`rectangle-${i}`} // eslint-disable-line react/no-array-index-key
+            role="img"
           >
             {Bar.renderRectangle(shape, props)}
           </Layer>

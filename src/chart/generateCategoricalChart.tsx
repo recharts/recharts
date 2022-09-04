@@ -2137,6 +2137,7 @@ export const generateCategoricalChart = ({
           ref={node => {
             this.container = node;
           }}
+          role="region"
         >
           <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
             {this.renderClipPath()}

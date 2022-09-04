@@ -230,6 +230,6 @@ export class Sector extends PureComponent<Props> {
       path = getSectorPath({ cx, cy, innerRadius, outerRadius, startAngle, endAngle });
     }
 
-    return <path {...filterProps(this.props, true)} className={layerClass} d={path} />;
+    return <path {...filterProps(this.props, true)} className={layerClass} d={path} role="img" />;
   }
 }
