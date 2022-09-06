@@ -2,6 +2,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { Surface, CartesianAxis } from 'recharts';
 import { mount, render } from 'enzyme';
+import sinon from 'sinon';
 
 describe('<CartesianAxis />', () => {
   const ticks = [
@@ -66,6 +67,24 @@ describe('<CartesianAxis />', () => {
     );
 
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
+  });
+
+  it('gets font states from its ComputedStyle', () => {
+    const stub = sinon.stub(window, 'getComputedStyle').returns({ fontSize: '14px', letterSpacing: '0.5em' });
+    const wrapper = mount(
+      <CartesianAxis
+        orientation="bottom"
+        width={400}
+        height={50}
+        viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
+        ticks={ticks}
+      />,
+    );
+
+    expect(wrapper.state().fontSize).to.equal('14px');
+    expect(wrapper.state().letterSpacing).to.equal('0.5em');
+
+    stub.restore();
   });
 
   it('Renders ticks when interval="preserveStart"', () => {

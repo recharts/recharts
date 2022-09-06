@@ -15,6 +15,71 @@
 # fix
 
 - update react-smooth version
+- update d3 from 6.x to 7.x it may break some tools like jest
+
+fix config for jest is to add the following configuration
+
+```javascript
+const path = require('path');
+// took from d3/package.json
+const d3Pkgs = [
+	'd3',
+	'd3-array',
+	'd3-axis',
+	'd3-brush',
+	'd3-chord',
+	'd3-color',
+	'd3-contour',
+	'd3-delaunay',
+	'd3-dispatch',
+	'd3-drag',
+	'd3-dsv',
+	'd3-ease',
+	'd3-fetch',
+	'd3-force',
+	'd3-format',
+	'd3-geo',
+	'd3-hierarchy',
+	'd3-interpolate',
+	'd3-path',
+	'd3-polygon',
+	'd3-quadtree',
+	'd3-random',
+	'd3-scale',
+	'd3-scale-chromatic',
+	'd3-selection',
+	'd3-shape',
+	'd3-time',
+	'd3-time-format',
+	'd3-timer',
+	'd3-transition',
+	'd3-zoom',
+];
+
+// option 1 map module to an bundled version of the package which is es5
+const moduleNameMapper = d3Pkgs.reduce((acc, pkg) => {
+	acc[`^${pkg}$`] = path.join(require.resolve(pkg), `../../dist/${pkg}.min.js`);
+	return acc;
+}, {});
+
+module.exports = {
+	moduleNameMapper: {
+		// option 1
+		// ...moduleNameMapper
+	},
+	transform: {
+		// match mjs js jsx ts tsx
+		'^.+\\.m?[jt]sx?$': 'babel-jest',
+	},
+	// stop ignore node_modules transform since d3 and others start to put es6 as main of packages
+	transformIgnorePatterns: [
+		// option 2, stop ignore transform on es6 packages
+		`/node_modules/(?!${d3Pkgs.join('|')}|internmap|d3-delaunay|delaunator|robust-predicates)`,
+		// option 3, stop ignore transform on all node_modules
+		// `/node_modules/(?!.*)`,
+	],
+};
+```
 
 ## 2.1.11 (Jun 24, 2022)
 

@@ -17,6 +17,8 @@ interface SurfaceProps {
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
+  title?: string;
+  desc?: string;
 }
 
 export type Props = Omit<SVGProps<SVGSVGElement>, 'viewBox'> & SurfaceProps;
@@ -36,6 +38,8 @@ export function Surface(props: Props) {
       viewBox={`${svgView.x} ${svgView.y} ${svgView.width} ${svgView.height}`}
       version="1.1"
     >
+      <title>{props.title}</title>
+      <desc>{props.desc}</desc>
       {children}
     </svg>
   );
