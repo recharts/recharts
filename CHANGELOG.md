@@ -1,3 +1,12 @@
+## 2.1.14 (Sep 7, 2022)
+# fix
+- Add inactiveShape prop to Pie component (#2900)
+- Revert "chore: move type deps into devDependencies (#2843)" (#2942)
+- Fix typing of default tooltip formatter (#2924)
+- Take letter-spacing and font-size into consideration while rendering ticks (#2898)
+- Add formatter function type to tooltip props (#2916)
+- doc: Update CHANGELOG.md about d3 7.x (#2919)
+
 ## 2.1.13 (Jul 26, 2022)
 
 # fix
