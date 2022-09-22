@@ -397,13 +397,39 @@ export const appendOffsetOfLegend = (offset: any, items: Array<FormattedGraphica
   return newOffset;
 };
 
-export const getDomainOfErrorBars = (data: any[], item: any, dataKey: any, axisType?: AxisType) => {
-  const { children } = item.props;
-  const errorBars = findAllByType(children, 'ErrorBar').filter((errorBarChild: any) => {
-    const { direction } = errorBarChild.props;
+const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, direction?: 'x' | 'y') => {
+  if (_.isNil(axisType)) {
+    return true;
+  }
 
-    return _.isNil(direction) || _.isNil(axisType) ? true : axisType.indexOf(direction) >= 0;
-  });
+  if (layout === 'horizontal') {
+    return axisType === 'yAxis';
+  }
+  if (layout === 'vertical') {
+    return axisType === 'xAxis';
+  }
+
+  if (direction === 'x') {
+    return axisType === 'xAxis';
+  }
+  if (direction === 'y') {
+    return axisType === 'yAxis';
+  }
+
+  return true;
+};
+
+export const getDomainOfErrorBars = (
+  data: any[],
+  item: any,
+  dataKey: any,
+  layout?: LayoutType,
+  axisType?: AxisType,
+) => {
+  const { children } = item.props;
+  const errorBars = findAllByType(children, 'ErrorBar').filter((errorBarChild: any) =>
+    isErrorBarRelevantForAxis(layout, axisType, errorBarChild.props.direction),
+  );
 
   if (errorBars && errorBars.length) {
     const keys = errorBars.map((errorBarChild: any) => errorBarChild.props.dataKey);
@@ -431,9 +457,16 @@ export const getDomainOfErrorBars = (data: any[], item: any, dataKey: any, axisT
 
   return null;
 };
-export const parseErrorBarsOfAxis = (data: any[], items: any[], dataKey: any, axisType: AxisType) => {
+
+export const parseErrorBarsOfAxis = (
+  data: any[],
+  items: any[],
+  dataKey: any,
+  axisType: AxisType,
+  layout?: LayoutType,
+) => {
   const domains = items
-    .map(item => getDomainOfErrorBars(data, item, dataKey, axisType))
+    .map(item => getDomainOfErrorBars(data, item, dataKey, layout, axisType))
     .filter(entry => !_.isNil(entry));
 
   if (domains && domains.length) {
@@ -445,20 +478,28 @@ export const parseErrorBarsOfAxis = (data: any[], items: any[], dataKey: any, ax
 
   return null;
 };
+
 /**
  * Get domain of data by the configuration of item element
  * @param  {Array}   data      The data displayed in the chart
  * @param  {Array}   items     The instances of item
  * @param  {String}  type      The type of axis, number - Number Axis, category - Category Axis
+ * @param  {LayoutType} layout The type of layout
  * @param  {Boolean} filterNil Whether or not filter nil values
  * @return {Array}        Domain
  */
-export const getDomainOfItemsWithSameAxis = (data: any[], items: any[], type: string, filterNil?: boolean) => {
+export const getDomainOfItemsWithSameAxis = (
+  data: any[],
+  items: any[],
+  type: string,
+  layout?: LayoutType,
+  filterNil?: boolean,
+) => {
   const domains = items.map(item => {
     const { dataKey } = item.props;
 
     if (type === 'number' && dataKey) {
-      return getDomainOfErrorBars(data, item, dataKey) || getDomainOfDataByKey(data, dataKey, type, filterNil);
+      return getDomainOfErrorBars(data, item, dataKey, layout) || getDomainOfDataByKey(data, dataKey, type, filterNil);
     }
     return getDomainOfDataByKey(data, dataKey, type, filterNil);
   });

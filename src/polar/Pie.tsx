@@ -87,6 +87,7 @@ interface PieProps extends PieDef {
   data?: any[];
   sectors?: PieSectorDataItem[];
   activeShape?: PieActiveShape;
+  inactiveShape?: PieActiveShape;
   labelLine?: PieLabelLine;
   label?: PieLabel;
 
@@ -311,6 +312,7 @@ export class Pie extends PureComponent<Props, State> {
         prevAnimationId: nextProps.animationId,
         curSectors: nextProps.sectors,
         prevSectors: [],
+        isAnimationFinished: true,
       };
     }
     if (nextProps.isAnimationActive && nextProps.animationId !== prevState.prevAnimationId) {
@@ -318,11 +320,13 @@ export class Pie extends PureComponent<Props, State> {
         prevAnimationId: nextProps.animationId,
         curSectors: nextProps.sectors,
         prevSectors: prevState.curSectors,
+        isAnimationFinished: true,
       };
     }
     if (nextProps.sectors !== prevState.curSectors) {
       return {
         curSectors: nextProps.sectors,
+        isAnimationFinished: true,
       };
     }
 
@@ -350,6 +354,11 @@ export class Pie extends PureComponent<Props, State> {
     }
 
     return i === activeIndex;
+  }
+
+  hasActiveIndex() {
+    const { activeIndex } = this.props;
+    return Array.isArray(activeIndex) ? activeIndex.length !== 0 : activeIndex || activeIndex === 0;
   }
 
   handleAnimationEnd = () => {
@@ -475,10 +484,10 @@ export class Pie extends PureComponent<Props, State> {
   }
 
   renderSectorsStatically(sectors: PieSectorDataItem[]) {
-    const { activeShape, blendStroke } = this.props;
-
+    const { activeShape, blendStroke, inactiveShape: inactiveShapeProp } = this.props;
     return sectors.map((entry, i) => {
-      const sectorOptions = this.isActiveIndex(i) ? activeShape : null;
+      const inactiveShape = inactiveShapeProp && this.hasActiveIndex() ? inactiveShapeProp : null;
+      const sectorOptions = this.isActiveIndex(i) ? activeShape : inactiveShape;
       const sectorProps = {
         ...entry,
         stroke: blendStroke ? entry.fill : entry.stroke,

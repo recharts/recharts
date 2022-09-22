@@ -6,8 +6,8 @@ import React, { PureComponent, CSSProperties, ReactNode } from 'react';
 import classNames from 'classnames';
 import { isNumOrStr } from '../util/DataUtils';
 
-function defaultFormatter<T>(value: T) {
-  return _.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1]) ? value.join(' ~ ') : value;
+function defaultFormatter<TValue extends ValueType>(value: TValue) {
+  return _.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1]) ? (value.join(' ~ ') as TValue) : value;
 }
 
 export type TooltipType = 'none';
@@ -19,7 +19,7 @@ export type Formatter<TValue extends ValueType, TName extends NameType> = (
   item: Payload<TValue, TName>,
   index: number,
   payload: Array<Payload<TValue, TName>>,
-) => [ReactNode, ReactNode] | ReactNode;
+) => [TValue, TName] | TValue;
 
 export interface Payload<TValue extends ValueType, TName extends NameType> {
   type?: TooltipType;
@@ -37,7 +37,7 @@ export interface Props<TValue extends ValueType, TName extends NameType> {
   separator?: string;
   wrapperClassName?: string;
   labelClassName?: string;
-  formatter?: Function;
+  formatter?: Formatter<TValue, TName>;
   contentStyle?: CSSProperties;
   itemStyle?: CSSProperties;
   labelStyle?: CSSProperties;
@@ -82,7 +82,7 @@ export class DefaultTooltipContent<TValue extends ValueType, TName extends NameT
         if (finalFormatter) {
           const formatted = finalFormatter(value, name, entry, i, payload);
           if (Array.isArray(formatted)) {
-            [value, name] = formatted;
+            [value, name] = formatted as [TValue, TName];
           } else {
             value = formatted;
           }

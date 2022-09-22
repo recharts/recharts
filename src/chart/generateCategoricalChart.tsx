@@ -325,6 +325,7 @@ const getAxisMapByAxes = (
             graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
             dataKey,
             axisType,
+            layout,
           );
 
           if (errorBarsDomain) {
@@ -349,6 +350,7 @@ const getAxisMapByAxes = (
           displayedData,
           graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
           type,
+          layout,
           true,
         );
       }
@@ -439,6 +441,7 @@ const getAxisMapByItems = (
             displayedData,
             graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
             'number',
+            layout,
           ),
           Axis.defaultProps.allowDataOverflow,
         );
@@ -743,6 +746,8 @@ export interface CategoricalChartProps {
   cy?: number | string;
   innerRadius?: number | string;
   outerRadius?: number | string;
+  title?: string;
+  desc?: string;
 }
 
 export const generateCategoricalChart = ({
@@ -2088,7 +2093,7 @@ export const generateCategoricalChart = ({
         return null;
       }
 
-      const { children, className, width, height, style, compact, ...others } = this.props;
+      const { children, className, width, height, style, compact, title, desc, ...others } = this.props;
       const attrs = filterProps(others);
       const map = {
         CartesianGrid: { handler: this.renderGrid, once: true },
@@ -2116,7 +2121,7 @@ export const generateCategoricalChart = ({
       // The "compact" mode is mainly used as the panorama within Brush
       if (compact) {
         return (
-          <Surface {...attrs} width={width} height={height}>
+          <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
             {this.renderClipPath()}
             {renderByOrder(children, map)}
           </Surface>
@@ -2133,7 +2138,7 @@ export const generateCategoricalChart = ({
             this.container = node;
           }}
         >
-          <Surface {...attrs} width={width} height={height}>
+          <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
             {this.renderClipPath()}
             {renderByOrder(children, map)}
           </Surface>
