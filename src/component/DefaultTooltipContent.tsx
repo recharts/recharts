@@ -78,8 +78,8 @@ export class DefaultTooltipContent<TValue extends ValueType, TName extends NameT
           ...itemStyle,
         };
         const finalFormatter = entry.formatter || formatter || defaultFormatter;
-        let { name, value } = entry;
-        if (finalFormatter) {
+        let { value, name } = entry;
+        if (finalFormatter && value && name) {
           const formatted = finalFormatter(value, name, entry, i, payload);
           if (Array.isArray(formatted)) {
             [value, name] = formatted as [TValue, TName];
