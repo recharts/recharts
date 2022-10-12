@@ -140,7 +140,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
         this.setState({ dismissed: false });
       }
     } else {
-      this.wrapperNode.focus();
+      this.wrapperNode.focus({ preventScroll: true });
     }
 
     if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
