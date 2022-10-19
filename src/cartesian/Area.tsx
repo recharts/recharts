@@ -118,8 +118,9 @@ export class Area extends PureComponent<Props, State> {
     animationEasing: 'ease',
   };
 
-  static getBaseValue = (props: Props, xAxis: Props['xAxis'], yAxis: Props['yAxis']): number => {
-    const { layout, baseValue } = props;
+  static getBaseValue = (props: Props, item: Area, xAxis: Props['xAxis'], yAxis: Props['yAxis']): number => {
+    const { layout } = props;
+    const { baseValue } = item.props;
 
     if (isNumber(baseValue) && typeof baseValue === 'number') {
       return baseValue;
@@ -154,6 +155,7 @@ export class Area extends PureComponent<Props, State> {
 
   static getComposedData = ({
     props,
+    item,
     xAxis,
     yAxis,
     xAxisTicks,
@@ -180,7 +182,7 @@ export class Area extends PureComponent<Props, State> {
   }) => {
     const { layout } = props;
     const hasStack = stackedData && stackedData.length;
-    const baseValue = Area.getBaseValue(props, xAxis, yAxis);
+    const baseValue = Area.getBaseValue(props, item, xAxis, yAxis);
     let isRange = false;
 
     const points = displayedData.map((entry, index) => {
