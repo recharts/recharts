@@ -1,3 +1,11 @@
+## 2.1.16 (Oct 29, 2022)
+
+### fix
+- Fix incorrect date in CHAGELOG (#3016)
+- Let formatter function run even when value is falsy (#3026)
+- Fix(Sankey): update tooltip active state by trigger type(hover/click) (#3021)
+- Fix Area's `baseValue` prop (#3013)
+
 ## 2.1.15 (Oct 12, 2022)
 
 ### fix
