@@ -1,4 +1,4 @@
-## 2.1.15 (Dec 12, 2022)
+## 2.1.15 (Oct 12, 2022)
 
 ### fix
 - Fix scroll on hover
