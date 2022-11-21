@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { Curve, CurveType, Props as CurveProps, Point as CurvePoint } from '../shape/Curve';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
+import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
 import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
@@ -73,6 +74,7 @@ interface LineProps extends InternalLineProps {
   animationEasing?: AnimationTiming;
   animationId?: number;
   id?: string;
+  label?: ImplicitLabelType;
 }
 
 export type Props = Omit<CurveProps, 'points' | 'pathRef'> & LineProps;
@@ -105,6 +107,7 @@ export class Line extends PureComponent<Props, State> {
     animationDuration: 1500,
     animationEasing: 'ease',
     hide: false,
+    label: false,
   };
 
   /**
