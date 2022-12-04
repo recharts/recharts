@@ -6,8 +6,8 @@ import React, { PureComponent, CSSProperties, ReactNode } from 'react';
 import classNames from 'classnames';
 import { isNumOrStr } from '../util/DataUtils';
 
-function defaultFormatter<TValue extends ValueType>(value: TValue) {
-  return _.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1]) ? (value.join(' ~ ') as TValue) : value;
+function defaultFormatter<T>(value: T) {
+  return _.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1]) ? value.join(' ~ ') : value;
 }
 
 export type TooltipType = 'none';
@@ -19,7 +19,7 @@ export type Formatter<TValue extends ValueType, TName extends NameType> = (
   item: Payload<TValue, TName>,
   index: number,
   payload: Array<Payload<TValue, TName>>,
-) => [TValue, TName] | TValue;
+) => [ReactNode, ReactNode] | ReactNode;
 
 export interface Payload<TValue extends ValueType, TName extends NameType> {
   type?: TooltipType;
@@ -82,7 +82,7 @@ export class DefaultTooltipContent<TValue extends ValueType, TName extends NameT
         if (finalFormatter && value != null && name != null) {
           const formatted = finalFormatter(value, name, entry, i, payload);
           if (Array.isArray(formatted)) {
-            [value, name] = formatted as [TValue, TName];
+            [value, name] = formatted;
           } else {
             value = formatted;
           }
