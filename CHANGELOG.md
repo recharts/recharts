@@ -1,3 +1,14 @@
+## 2.2.0 (Dec 8, 2022)
+### feat
+- Support keyboard navigation in pie chart (#2923) 
+- Allow reversing the tooltip direction (#3056)
+### fix
+- fix rounding leading to hairline gaps (#3075)
+- fix: do not override zero brush end index (#3076)
+- fix: allow dragging brush when the mouse is outside (#3072)
+- fix: add label type to line props (#3068)
+- Ensure LabelList generic extends Data interface (#2954)
+
 ## 2.1.16 (Oct 29, 2022)
 
 ### fix
