@@ -601,6 +601,7 @@ export class Treemap extends PureComponent<Props, State> {
           fill={nodeProps.depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)'}
           stroke="#fff"
           {..._.omit(nodeProps, 'children')}
+          role="img"
         />
         {arrow}
         {text}
@@ -734,6 +735,7 @@ export class Treemap extends PureComponent<Props, State> {
       <div
         className={classNames('recharts-wrapper', className)}
         style={{ ...style, position: 'relative', cursor: 'default', width, height }}
+        role="region"
       >
         <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
           {this.renderAllNodes()}

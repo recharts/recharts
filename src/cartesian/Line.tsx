@@ -340,7 +340,7 @@ export class Line extends PureComponent<Props, State> {
     };
 
     return (
-      <Layer className="recharts-line-dots" key="dots" {...dotsProps}>
+      <Layer className="recharts-line-dots" key="dots" {...dotsProps} role="img">
         {dots}
       </Layer>
     );

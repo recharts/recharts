@@ -615,7 +615,9 @@ export class Sankey extends PureComponent<Props, State> {
       return option(props);
     }
 
-    return <Rectangle className="recharts-sankey-node" fill="#0088fe" fillOpacity="0.8" {...filterProps(props)} />;
+    return (
+      <Rectangle className="recharts-sankey-node" fill="#0088fe" fillOpacity="0.8" {...filterProps(props)} role="img" />
+    );
   }
 
   renderNodes(nodes: SankeyNode[]) {
@@ -690,6 +692,7 @@ export class Sankey extends PureComponent<Props, State> {
       <div
         className={classNames('recharts-wrapper', className)}
         style={{ ...style, position: 'relative', cursor: 'default', width, height }}
+        role="region"
       >
         <Surface {...attrs} width={width} height={height}>
           {filterSvgElements(children)}
