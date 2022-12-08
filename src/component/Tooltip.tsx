@@ -193,14 +193,13 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
         return Math.max(positive, viewBox[key]);
       }
       return Math.max(negative, viewBox[key]);
-    } else {
-      const tooltipBoundary = positive + tooltipDimension;
-      const viewBoxBoundary = viewBox[key] + viewBoxDimension;
-      if (tooltipBoundary > viewBoxBoundary) {
-        return Math.max(negative, viewBox[key]);
-      }
-      return Math.max(positive, viewBox[key]);
     }
+    const tooltipBoundary = positive + tooltipDimension;
+    const viewBoxBoundary = viewBox[key] + viewBoxDimension;
+    if (tooltipBoundary > viewBoxBoundary) {
+      return Math.max(negative, viewBox[key]);
+    }
+    return Math.max(positive, viewBox[key]);
   };
 
   render() {
