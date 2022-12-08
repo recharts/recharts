@@ -57,6 +57,10 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
     x?: boolean;
     y?: boolean;
   };
+  reverseDirection?: {
+    x?: boolean;
+    y?: boolean;
+  };
   content?: ContentType<TValue, TName>;
   viewBox?: {
     x?: number;
@@ -94,6 +98,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   static defaultProps = {
     active: false,
     allowEscapeViewBox: { x: false, y: false },
+    reverseDirection: { x: false, y: false },
     offset: 10,
     viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
     coordinate: { x: 0, y: 0 },
@@ -169,24 +174,33 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
     tooltipDimension: number;
     viewBoxDimension: number;
   }) => {
-    const { allowEscapeViewBox, coordinate, offset, position, viewBox } = this.props;
+    const { allowEscapeViewBox, reverseDirection, coordinate, offset, position, viewBox } = this.props;
 
     if (position && isNumber(position[key])) {
       return position[key];
     }
 
-    const restricted = coordinate[key] - tooltipDimension - offset;
-    const unrestricted = coordinate[key] + offset;
+    const negative = coordinate[key] - tooltipDimension - offset;
+    const positive = coordinate[key] + offset;
     if (allowEscapeViewBox[key]) {
-      return unrestricted;
+      return reverseDirection[key] ? negative : positive;
     }
 
-    const tooltipBoundary = coordinate[key] + tooltipDimension + offset;
-    const viewBoxBoundary = viewBox[key] + viewBoxDimension;
-    if (tooltipBoundary > viewBoxBoundary) {
-      return Math.max(restricted, viewBox[key]);
+    if (reverseDirection[key]) {
+      const tooltipBoundary = negative;
+      const viewBoxBoundary = viewBox[key];
+      if (tooltipBoundary < viewBoxBoundary) {
+        return Math.max(positive, viewBox[key]);
+      }
+      return Math.max(negative, viewBox[key]);
+    } else {
+      const tooltipBoundary = positive + tooltipDimension;
+      const viewBoxBoundary = viewBox[key] + viewBoxDimension;
+      if (tooltipBoundary > viewBoxBoundary) {
+        return Math.max(negative, viewBox[key]);
+      }
+      return Math.max(positive, viewBox[key]);
     }
-    return Math.max(unrestricted, viewBox[key]);
   };
 
   render() {
