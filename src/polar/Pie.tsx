@@ -121,11 +121,16 @@ interface State {
   prevSectors?: PieSectorDataItem[];
   curSectors?: PieSectorDataItem[];
   prevAnimationId?: number;
+  sectorToFocus?: number;
 }
 
 export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & PieProps;
 
 export class Pie extends PureComponent<Props, State> {
+  pieRef: HTMLElement = null;
+
+  sectorRefs: HTMLElement[] = [];
+
   static displayName = 'Pie';
 
   static defaultProps = {
@@ -294,6 +299,7 @@ export class Pie extends PureComponent<Props, State> {
       isAnimationFinished: !props.isAnimationActive,
       prevIsAnimationActive: props.isAnimationActive,
       prevAnimationId: props.animationId,
+      sectorToFocus: 0,
     };
   }
 
@@ -471,10 +477,10 @@ export class Pie extends PureComponent<Props, State> {
       return option(props);
     }
     if (_.isPlainObject(option)) {
-      return <Sector {...props} {...option} />;
+      return <Sector tabIndex={-1} {...props} {...option} />;
     }
 
-    return <Sector {...props} />;
+    return <Sector tabIndex={-1} {...props} />;
   }
 
   renderSectorsStatically(sectors: PieSectorDataItem[]) {
@@ -489,6 +495,12 @@ export class Pie extends PureComponent<Props, State> {
 
       return (
         <Layer
+          ref={(ref: HTMLElement) => {
+            if (ref && !this.sectorRefs.includes(ref)) {
+              this.sectorRefs.push(ref);
+            }
+          }}
+          tabIndex={-1}
           className="recharts-pie-sector"
           {...adaptEventsOfChild(this.props, entry, i)}
           key={`sector-${i}`} // eslint-disable-line react/no-array-index-key
@@ -555,6 +567,39 @@ export class Pie extends PureComponent<Props, State> {
     );
   }
 
+  attachKeyboardHandlers(pieRef: HTMLElement) {
+    // eslint-disable-next-line no-param-reassign
+    pieRef.onkeydown = (e: KeyboardEvent) => {
+      if (!e.altKey) {
+        switch (e.key) {
+          case 'ArrowLeft': {
+            const next = ++this.state.sectorToFocus % this.sectorRefs.length;
+            (this.sectorRefs[next] as HTMLElement).focus();
+            this.setState({ sectorToFocus: next });
+            break;
+          }
+          case 'ArrowRight': {
+            const next =
+              --this.state.sectorToFocus < 0
+                ? this.sectorRefs.length - 1
+                : this.state.sectorToFocus % this.sectorRefs.length;
+            (this.sectorRefs[next] as HTMLElement).focus();
+            this.setState({ sectorToFocus: next });
+            break;
+          }
+          case 'Escape': {
+            (this.sectorRefs[this.state.sectorToFocus] as HTMLElement).blur();
+            this.setState({ sectorToFocus: 0 });
+            break;
+          }
+          default: {
+            // There is nothing to do here
+          }
+        }
+      }
+    };
+  }
+
   renderSectors() {
     const { sectors, isAnimationActive } = this.props;
     const { prevSectors } = this.state;
@@ -563,6 +608,12 @@ export class Pie extends PureComponent<Props, State> {
       return this.renderSectorsWithAnimation();
     }
     return this.renderSectorsStatically(sectors);
+  }
+
+  componentDidMount(): void {
+    if (this.pieRef) {
+      this.attachKeyboardHandlers(this.pieRef);
+    }
   }
 
   render() {
@@ -584,7 +635,13 @@ export class Pie extends PureComponent<Props, State> {
     const layerClass = classNames('recharts-pie', className);
 
     return (
-      <Layer className={layerClass}>
+      <Layer
+        tabIndex={0}
+        className={layerClass}
+        ref={(ref: HTMLElement) => {
+          this.pieRef = ref;
+        }}
+      >
         {this.renderSectors()}
         {label && this.renderLabels(sectors)}
         {Label.renderCallByParent(this.props, null, false)}
