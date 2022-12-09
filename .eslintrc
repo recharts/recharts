@@ -14,10 +14,7 @@
     "node": true
   },
   "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "react",
-    "@typescript-eslint"
-  ],
+  "plugins": ["react", "@typescript-eslint"],
   "rules": {
     "prettier/prettier": [
       "error",
@@ -41,9 +38,6 @@
     "react/jsx-filename-extension": ["error", { "extensions": [".ts", ".tsx"] }],
 
     "no-var": "error",
-
-    // Temporarily disabled for test/* until babel/babel-eslint#33 is resolved
-    "padded-blocks": "off",
     "react/jsx-no-bind": "error",
 
     "strict": "off",
@@ -84,7 +78,7 @@
     "react/state-in-constructor": "off",
     "react/static-property-placement": "off",
     "import/prefer-default-export": "off",
-    "import/no-named-as-default":"error",
+    "import/no-named-as-default": "error",
     "import/no-cycle": "error",
     "import/no-default-export": "error",
 
@@ -95,11 +89,14 @@
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/ban-types": "off",
-    "@typescript-eslint/no-unused-vars": ["error", {
-      "args": "after-used",
-      "ignoreRestSiblings": true,
-      "argsIgnorePattern": "^_"
-    }]
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "args": "after-used",
+        "ignoreRestSiblings": true,
+        "argsIgnorePattern": "^_"
+      }
+    ]
   },
   "settings": {
     "import/resolver": {
