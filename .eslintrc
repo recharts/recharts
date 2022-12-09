@@ -40,15 +40,11 @@
     "no-var": "error",
     "react/jsx-no-bind": "error",
 
-    "strict": "off",
     "no-unused-vars": "off",
     "one-var": ["error", { "uninitialized": "always" }],
     "one-var-declaration-per-line": ["error", "initializations"],
-    "no-mixed-operators": "off",
     "no-plusplus": "off",
-    "react/forbid-prop-types": "off",
     "no-bitwise": "off",
-    "object-property-newline": "off",
     "react/no-unused-prop-types": "off",
     "class-methods-use-this": "error",
     "import/no-extraneous-dependencies": [
@@ -64,7 +60,6 @@
     "function-paren-newline": "off",
     "react/require-default-props": "off",
     "no-restricted-globals": "error",
-    "comma-dangle": "off",
     "react/default-props-match-prop-types": "off",
     "react/no-array-index-key": "warn",
     "no-multi-assign": "off",
@@ -87,7 +82,6 @@
     "no-use-before-define": "off",
 
     "@typescript-eslint/no-use-before-define": ["error"],
-    "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/ban-types": "off",
