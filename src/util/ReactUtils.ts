@@ -295,7 +295,7 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
     return true;
   }
   if (count === 1) {
-    // eslint-disable-next-line no-use-before-define,@typescript-eslint/no-use-before-define
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     return isSingleChildEqual(
       _.isArray(nextChildren) ? nextChildren[0] : nextChildren,
       _.isArray(prevChildren) ? prevChildren[0] : prevChildren,
@@ -310,7 +310,7 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
       if (!isChildrenEqual(nextChild, prevChild)) {
         return false;
       }
-      // eslint-disable-next-line no-use-before-define,@typescript-eslint/no-use-before-define
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
     } else if (!isSingleChildEqual(nextChild, prevChild)) {
       return false;
     }

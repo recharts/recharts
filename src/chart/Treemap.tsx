@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import classNames from 'classnames';
 import _ from 'lodash';
 /**
@@ -701,7 +700,7 @@ export class Treemap extends PureComponent<Props, State> {
           }
 
           return (
-            // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
             <div
               onClick={this.handleNestIndex.bind(this, item, i)}
               key={`nest-index-${uniqueId()}`}
