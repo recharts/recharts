@@ -58,8 +58,7 @@
       }
     ],
     "max-len": ["warn", 120],
-    // Errors introduced while upgrading eslint & plugins
-    "no-restricted-properties": "error",
+
     "prefer-destructuring": "error",
     "object-curly-newline": "off",
     "function-paren-newline": "off",

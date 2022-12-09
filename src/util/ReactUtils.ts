@@ -1,5 +1,5 @@
-import React, { Children, ReactNode } from 'react';
 import _ from 'lodash';
+import React, { Children, ReactNode } from 'react';
 import { isFragment } from 'react-is';
 
 import { isNumber } from './DataUtils';
@@ -328,7 +328,6 @@ export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: Rea
     const { children: prevChildren, ...prevProps } = prevChild.props || {};
 
     if (nextChildren && prevChildren) {
-      // eslint-disable-next-line no-use-before-define
       return shallowEqual(nextProps, prevProps) && isChildrenEqual(nextChildren, prevChildren);
     }
     if (!nextChildren && !prevChildren) {
