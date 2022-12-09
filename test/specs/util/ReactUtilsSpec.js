@@ -1,18 +1,17 @@
 import React from 'react';
 import { expect } from 'chai';
 import { LineChart, Line, Bar } from 'recharts';
+import { mount } from 'enzyme';
 import {
   getDisplayName,
   withoutType,
   validateWidthHeight,
   filterSvgElements,
-  isSingleChildEqual,
   isChildrenEqual,
   findAllByType,
   toArray,
 } from '../../../src/util/ReactUtils';
 import { filterProps, adaptEventHandlers, adaptEventsOfChild } from '../../../src/util/types';
-import { mount, render } from 'enzyme';
 
 describe('ReactUtils', () => {
   it('getDisplayName return empty string when has a null as input', () => {

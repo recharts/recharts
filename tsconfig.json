@@ -13,9 +13,7 @@
     "declaration": true /* Generates corresponding '.d.ts' file. */,
     "target": "es5",
     "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
+    "baseUrl": "."
   },
-  "include": [
-    "./src/**/*", "types.d.ts",
-  ],
+  "include": ["./src/**/*", "types.d.ts"],
 }
