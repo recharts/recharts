@@ -171,7 +171,6 @@ export class Line extends PureComponent<Props, State> {
     totalLength: 0,
   };
 
-  /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
     if (!this.props.isAnimationActive) {
       return;
@@ -352,7 +351,6 @@ export class Line extends PureComponent<Props, State> {
     clipPathId: string,
     props?: { strokeDasharray: string },
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { type, layout, connectNulls, ref, ...others } = this.props;
     const curveProps = {
       ...filterProps(others, true),

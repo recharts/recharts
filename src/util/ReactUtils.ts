@@ -1,5 +1,5 @@
-import React, { Children, ReactNode } from 'react';
 import _ from 'lodash';
+import React, { Children, ReactNode } from 'react';
 import { isFragment } from 'react-is';
 
 import { isNumber } from './DataUtils';
@@ -295,7 +295,7 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
     return true;
   }
   if (count === 1) {
-    // eslint-disable-next-line no-use-before-define,@typescript-eslint/no-use-before-define
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     return isSingleChildEqual(
       _.isArray(nextChildren) ? nextChildren[0] : nextChildren,
       _.isArray(prevChildren) ? prevChildren[0] : prevChildren,
@@ -310,7 +310,7 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
       if (!isChildrenEqual(nextChild, prevChild)) {
         return false;
       }
-      // eslint-disable-next-line no-use-before-define,@typescript-eslint/no-use-before-define
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
     } else if (!isSingleChildEqual(nextChild, prevChild)) {
       return false;
     }
@@ -328,7 +328,6 @@ export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: Rea
     const { children: prevChildren, ...prevProps } = prevChild.props || {};
 
     if (nextChildren && prevChildren) {
-      // eslint-disable-next-line no-use-before-define
       return shallowEqual(nextProps, prevProps) && isChildrenEqual(nextChildren, prevChildren);
     }
     if (!nextChildren && !prevChildren) {
