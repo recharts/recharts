@@ -317,15 +317,8 @@ export class Bar extends PureComponent<Props, State> {
   }
 
   renderRectanglesWithAnimation() {
-    const {
-      data,
-      layout,
-      isAnimationActive,
-      animationBegin,
-      animationDuration,
-      animationEasing,
-      animationId,
-    } = this.props;
+    const { data, layout, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
+      this.props;
     const { prevData } = this.state;
 
     return (
@@ -456,20 +449,8 @@ export class Bar extends PureComponent<Props, State> {
   }
 
   render() {
-    const {
-      hide,
-      data,
-      className,
-      xAxis,
-      yAxis,
-      left,
-      top,
-      width,
-      height,
-      isAnimationActive,
-      background,
-      id,
-    } = this.props;
+    const { hide, data, className, xAxis, yAxis, left, top, width, height, isAnimationActive, background, id } =
+      this.props;
     if (hide || !data || !data.length) {
       return null;
     }

@@ -470,10 +470,10 @@ export const parseErrorBarsOfAxis = (
     .filter(entry => !_.isNil(entry));
 
   if (domains && domains.length) {
-    return domains.reduce((result, entry) => [Math.min(result[0], entry[0]), Math.max(result[1], entry[1])], [
-      Infinity,
-      -Infinity,
-    ]);
+    return domains.reduce(
+      (result, entry) => [Math.min(result[0], entry[0]), Math.max(result[1], entry[1])],
+      [Infinity, -Infinity],
+    );
   }
 
   return null;
@@ -506,10 +506,10 @@ export const getDomainOfItemsWithSameAxis = (
 
   if (type === 'number') {
     // Calculate the domain of number axis
-    return domains.reduce((result, entry) => [Math.min(result[0], entry[0]), Math.max(result[1], entry[1])], [
-      Infinity,
-      -Infinity,
-    ]);
+    return domains.reduce(
+      (result, entry) => [Math.min(result[0], entry[0]), Math.max(result[1], entry[1])],
+      [Infinity, -Infinity],
+    );
   }
 
   const tag: Record<string, any> = {};
