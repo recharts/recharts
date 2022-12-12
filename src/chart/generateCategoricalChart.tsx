@@ -961,7 +961,6 @@ export const generateCategoricalChart = ({
       this.state = {};
     }
 
-    /* eslint-disable  react/no-did-mount-set-state */
     componentDidMount() {
       if (!_.isNil(this.props.syncId)) {
         this.addListener();

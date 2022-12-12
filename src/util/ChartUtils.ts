@@ -781,7 +781,6 @@ export const offsetSign = (series: any) => {
   }
 };
 
-/* eslint no-param-reassign: 0 */
 export const offsetPositive = (series: any) => {
   const n = series.length;
   if (n <= 0) {
