@@ -87,7 +87,11 @@ const getSectorWithCorner = ({
   endAngle,
 }: GeometrySector) => {
   const sign = mathSign(endAngle - startAngle);
-  const { circleTangency: soct, lineTangency: solt, theta: sot } = getTangentCircle({
+  const {
+    circleTangency: soct,
+    lineTangency: solt,
+    theta: sot,
+  } = getTangentCircle({
     cx,
     cy,
     radius: outerRadius,
@@ -96,7 +100,11 @@ const getSectorWithCorner = ({
     cornerRadius,
     cornerIsExternal,
   });
-  const { circleTangency: eoct, lineTangency: eolt, theta: eot } = getTangentCircle({
+  const {
+    circleTangency: eoct,
+    lineTangency: eolt,
+    theta: eot,
+  } = getTangentCircle({
     cx,
     cy,
     radius: outerRadius,
@@ -133,7 +141,11 @@ const getSectorWithCorner = ({
   `;
 
   if (innerRadius > 0) {
-    const { circleTangency: sict, lineTangency: silt, theta: sit } = getTangentCircle({
+    const {
+      circleTangency: sict,
+      lineTangency: silt,
+      theta: sit,
+    } = getTangentCircle({
       cx,
       cy,
       radius: innerRadius,
@@ -143,7 +155,11 @@ const getSectorWithCorner = ({
       cornerRadius,
       cornerIsExternal,
     });
-    const { circleTangency: eict, lineTangency: eilt, theta: eit } = getTangentCircle({
+    const {
+      circleTangency: eict,
+      lineTangency: eilt,
+      theta: eit,
+    } = getTangentCircle({
       cx,
       cy,
       radius: innerRadius,

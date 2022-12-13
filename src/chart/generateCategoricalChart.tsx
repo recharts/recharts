@@ -1442,6 +1442,8 @@ export const generateCategoricalChart = ({
 
         const handler = event;
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         handler(mouse, e);
       }
     };
@@ -1674,7 +1676,7 @@ export const generateCategoricalChart = ({
     renderPolarAxis = (element: any, displayName: string, index: number) => {
       const axisType = _.get(element, 'type.axisType');
       const axisMap = _.get(this.state, `${axisType}Map`);
-      const axisOption = axisMap[element.props[`${axisType}Id`]];
+      const axisOption: BaseAxisProps | undefined = axisMap && axisMap[element.props[`${axisType}Id`]];
 
       return cloneElement(element, {
         ...axisOption,

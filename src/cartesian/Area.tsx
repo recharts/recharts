@@ -448,15 +448,8 @@ export class Area extends PureComponent<Props, State> {
   }
 
   renderAreaWithAnimation(needClip: boolean, clipPathId: string) {
-    const {
-      points,
-      baseLine,
-      isAnimationActive,
-      animationBegin,
-      animationDuration,
-      animationEasing,
-      animationId,
-    } = this.props;
+    const { points, baseLine, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
+      this.props;
     const { prevPoints, prevBaseLine } = this.state;
     // const clipPathId = _.isNil(id) ? this.id : id;
 

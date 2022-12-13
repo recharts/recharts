@@ -301,14 +301,8 @@ export class Funnel extends PureComponent<Props, State> {
   }
 
   renderTrapezoidsWithAnimation() {
-    const {
-      trapezoids,
-      isAnimationActive,
-      animationBegin,
-      animationDuration,
-      animationEasing,
-      animationId,
-    } = this.props;
+    const { trapezoids, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
+      this.props;
     const { prevTrapezoids } = this.state;
 
     return (
