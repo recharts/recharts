@@ -15,8 +15,6 @@ if (eventCenter.setMaxListeners) {
 export { eventCenter };
 export const SYNC_EVENT = 'recharts.syncMouseEvents';
 
-// eslint-disable-next-line no-redeclare
-type SYNC_EVENT = typeof SYNC_EVENT;
 interface EventTypes {
   [SYNC_EVENT](syncId: number | string, uniqueChartId: string, data: CategoricalChartState): void;
 }

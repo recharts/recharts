@@ -83,7 +83,7 @@ describe('<Bar />', () => {
     });
 
     it('Will accept a function for the background prop', () => {
-      const wrapper = render(
+      const wrapper = mount(
         <Surface width={500} height={500}>
           <Bar
             data={composedDataWithBackground}

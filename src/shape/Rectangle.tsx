@@ -144,13 +144,8 @@ export class Rectangle extends PureComponent<Props> {
   render() {
     const { x, y, width, height, radius, className } = this.props;
     const { totalLength } = this.state;
-    const {
-      animationEasing,
-      animationDuration,
-      animationBegin,
-      isAnimationActive,
-      isUpdateAnimationActive,
-    } = this.props;
+    const { animationEasing, animationDuration, animationBegin, isAnimationActive, isUpdateAnimationActive } =
+      this.props;
 
     if (x !== +x || y !== +y || width !== +width || height !== +height || width === 0 || height === 0) {
       return null;

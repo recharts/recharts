@@ -1,6 +1,56 @@
+## 2.2.0 (Dec 8, 2022)
+### feat
+- Support keyboard navigation in pie chart (#2923) 
+- Allow reversing the tooltip direction (#3056)
+### fix
+- fix rounding leading to hairline gaps (#3075)
+- fix: do not override zero brush end index (#3076)
+- fix: allow dragging brush when the mouse is outside (#3072)
+- fix: add label type to line props (#3068)
+- Ensure LabelList generic extends Data interface (#2954)
+
+## 2.1.16 (Oct 29, 2022)
+
+### fix
+- Fix incorrect date in CHAGELOG (#3016)
+- Let formatter function run even when value is falsy (#3026)
+- Fix(Sankey): update tooltip active state by trigger type(hover/click) (#3021)
+- Fix Area's `baseValue` prop (#3013)
+
+## 2.1.15 (Oct 12, 2022)
+
+### fix
+- Fix scroll on hover
+- DefaultTooltipContent.tsx Solving type error for entry.value and entry.name
+
+### chore
+- Revert D3 version
+
+
+## 2.1.14 (Sep 7, 2022)
+### fix
+- Add inactiveShape prop to Pie component (#2900)
+- Revert "chore: move type deps into devDependencies (#2843)" (#2942)
+- Fix typing of default tooltip formatter (#2924)
+- Take letter-spacing and font-size into consideration while rendering ticks (#2898)
+- Add formatter function type to tooltip props (#2916)
+- doc: Update CHANGELOG.md about d3 7.x (#2919)
+
+## 2.1.13 (Jul 26, 2022)
+
+### fix
+
+- set animate flag before chart data update (#2911)
+- Error bar domain fix (#2863)
+- fix: fix "recharts@… doesn't provide prop-types, requested by react-smooth" warning (#2895)
+
+### chore
+
+- upgrade d3 (#2893)
+
 ## 2.1.12 (Jun 27, 2022)
 
-# fix
+### fix
 
 - update react-smooth version
 - update d3 from 6.x to 7.x it may break some tools like jest
@@ -71,34 +121,34 @@ module.exports = {
 
 ## 2.1.11 (Jun 24, 2022)
 
-# feat
+### feat
 
 -  Adds react `^18.0.0`  as valid peerDependency (#2820)
 
 ## 2.1.10 (May 19, 2022)
 
-# feat
+### feat
 
 - Add ARIA1.2 attributes to the SvgElementPropKeys filter array
 - Added Storybook Badge (#2840)
 - Handling of undefined values and type checks in DefaultTooltipContent
 
-# fix
+### fix
 
 - Axis scale=band no longer works as of Recharts 2.x.x (#2742)
 
-# chore
+### chore
 
 - chore: move type deps into devDependencies (#2843)
 
 ## 2.1.9 (Feb 10, 2022)
 
-# feat
+### feat
 
 - feat: allow axis domain to accept a callback (#2770)
 - Categorical chart callback types (#2739)
 
-# fix
+### fix
 
 - Fixing types in strict mode (#2745) (#2747)
 - Fix: removes overlapping legend for categorical charts (#2752)
@@ -106,18 +156,18 @@ module.exports = {
 
 ## 2.1.8 (dec 14, 2021)
 
-# fix
+### fix
 
 - Must use import to load ES Module (#2658)
 
 ## 2.1.7 (dec 14, 2021)
 
-# fix
+### fix
 
 - Treemap do not render depth (#2718 #2719)
 - Update PolarRadiusAxis.tsx (#2720)
 
-# chore
+### chore
 
 - Update d3-interpolate, d3-scale and d3-shape (#2707)
 

@@ -144,14 +144,16 @@ export class CartesianGrid extends PureComponent<Props> {
     }
 
     const { fillOpacity, x, y, width, height } = this.props;
-    const verticalPointsUpdated = verticalPoints.slice().sort((a, b) => a - b);
+    const roundedSortedVerticalPoints = verticalPoints.map(e => Math.round(e + x - x)).sort((a, b) => a - b);
 
-    if (x !== verticalPointsUpdated[0]) {
-      verticalPointsUpdated.unshift(0);
+    if (x !== roundedSortedVerticalPoints[0]) {
+      roundedSortedVerticalPoints.unshift(0);
     }
 
-    const items = verticalPointsUpdated.map((entry, i) => {
-      const lineWidth = verticalPointsUpdated[i + 1] ? verticalPointsUpdated[i + 1] - entry : x + width - entry;
+    const items = roundedSortedVerticalPoints.map((entry, i) => {
+      const lastStripe = !roundedSortedVerticalPoints[i + 1];
+      const lineWidth = lastStripe ? x + width - entry : roundedSortedVerticalPoints[i + 1] - entry;
+
       if (lineWidth <= 0) {
         return null;
       }
@@ -159,7 +161,7 @@ export class CartesianGrid extends PureComponent<Props> {
       return (
         <rect
           key={`react-${i}`} // eslint-disable-line react/no-array-index-key
-          x={Math.round(entry + x - x)}
+          x={entry}
           y={y}
           width={lineWidth}
           height={height}
@@ -186,13 +188,14 @@ export class CartesianGrid extends PureComponent<Props> {
     }
 
     const { fillOpacity, x, y, width, height } = this.props;
-    const horizontalPointsUpdated = horizontalPoints.slice().sort((a, b) => a - b);
-    if (y !== horizontalPointsUpdated[0]) {
-      horizontalPointsUpdated.unshift(0);
+    const roundedSortedHorizontalPoints = horizontalPoints.map(e => Math.round(e + y - y)).sort((a, b) => a - b);
+    if (y !== roundedSortedHorizontalPoints[0]) {
+      roundedSortedHorizontalPoints.unshift(0);
     }
 
-    const items = horizontalPointsUpdated.map((entry, i) => {
-      const lineHeight = horizontalPointsUpdated[i + 1] ? horizontalPointsUpdated[i + 1] - entry : y + height - entry;
+    const items = roundedSortedHorizontalPoints.map((entry, i) => {
+      const lastStripe = !roundedSortedHorizontalPoints[i + 1];
+      const lineHeight = lastStripe ? y + height - entry : roundedSortedHorizontalPoints[i + 1] - entry;
       if (lineHeight <= 0) {
         return null;
       }
@@ -200,7 +203,7 @@ export class CartesianGrid extends PureComponent<Props> {
       return (
         <rect
           key={`react-${i}`} // eslint-disable-line react/no-array-index-key
-          y={Math.round(entry + y - y)}
+          y={entry}
           x={x}
           height={lineHeight}
           width={width}

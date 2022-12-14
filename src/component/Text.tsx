@@ -192,6 +192,7 @@ export class Text extends Component<Props, State> {
     scaleToFit: false,
     textAnchor: 'start',
     verticalAnchor: 'end', // Maintain compat with existing charts / default SVG behavior
+    fill: '#808080',
   };
 
   state: State = {};
@@ -276,6 +277,7 @@ export class Text extends Component<Props, State> {
         y={y}
         className={classNames('recharts-text', className)}
         textAnchor={textAnchor}
+        fill={textProps.fill.includes('url') ? Text.defaultProps.fill : textProps.fill}
       >
         {wordsByLines.map((line, index) => (
           // eslint-disable-next-line react/no-array-index-key

@@ -467,10 +467,11 @@ export class Sankey extends PureComponent<Props, State> {
 
     if (tooltipItem) {
       this.setState(
-        {
-          activeElement: el,
-          activeElementType: type,
-          isTooltipActive: true,
+        prev => {
+          if (tooltipItem.props.trigger === 'hover') {
+            return { ...prev, activeElement: el, activeElementType: type, isTooltipActive: true };
+          }
+          return prev;
         },
         () => {
           if (onMouseEnter) {
@@ -489,8 +490,11 @@ export class Sankey extends PureComponent<Props, State> {
 
     if (tooltipItem) {
       this.setState(
-        {
-          isTooltipActive: false,
+        prev => {
+          if (tooltipItem.props.trigger === 'hover') {
+            return { ...prev, activeElement: undefined, activeElementType: undefined, isTooltipActive: false };
+          }
+          return prev;
         },
         () => {
           if (onMouseLeave) {
@@ -504,7 +508,26 @@ export class Sankey extends PureComponent<Props, State> {
   }
 
   handleClick(el: React.ReactElement, type: string, e: any) {
-    const { onClick } = this.props;
+    const { onClick, children } = this.props;
+    const tooltipItem = findChildByType(children, Tooltip.displayName);
+
+    if (tooltipItem && tooltipItem.props.trigger === 'click') {
+      if (this.state.isTooltipActive) {
+        this.setState(prev => {
+          return { ...prev, activeElement: undefined, activeElementType: undefined, isTooltipActive: false };
+        });
+      } else {
+        this.setState(prev => {
+          return {
+            ...prev,
+            activeElement: el,
+            activeElementType: type,
+            isTooltipActive: true,
+          };
+        });
+      }
+    }
+
     if (onClick) onClick(el, type, e);
   }
 
@@ -592,7 +615,9 @@ export class Sankey extends PureComponent<Props, State> {
       return option(props);
     }
 
-    return <Rectangle className="recharts-sankey-node" fill="#0088fe" fillOpacity="0.8" {...filterProps(props)} />;
+    return (
+      <Rectangle className="recharts-sankey-node" fill="#0088fe" fillOpacity="0.8" {...filterProps(props)} role="img" />
+    );
   }
 
   renderNodes(nodes: SankeyNode[]) {
@@ -667,6 +692,7 @@ export class Sankey extends PureComponent<Props, State> {
       <div
         className={classNames('recharts-wrapper', className)}
         style={{ ...style, position: 'relative', cursor: 'default', width, height }}
+        role="region"
       >
         <Surface {...attrs} width={width} height={height}>
           {filterSvgElements(children)}

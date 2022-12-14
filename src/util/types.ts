@@ -1192,11 +1192,13 @@ export const adaptEventHandlers = (
   return out;
 };
 
-const getEventHandlerOfChild = (originalHandler: Function, data: any, index: number) => (e: Event): null => {
-  originalHandler(data, index, e);
+const getEventHandlerOfChild =
+  (originalHandler: Function, data: any, index: number) =>
+  (e: Event): null => {
+    originalHandler(data, index, e);
 
-  return null;
-};
+    return null;
+  };
 
 export const adaptEventsOfChild = (
   props: RecordString<any>,

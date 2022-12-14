@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import classNames from 'classnames';
 import _ from 'lodash';
 /**
@@ -601,6 +600,7 @@ export class Treemap extends PureComponent<Props, State> {
           fill={nodeProps.depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)'}
           stroke="#fff"
           {..._.omit(nodeProps, 'children')}
+          role="img"
         />
         {arrow}
         {text}
@@ -700,7 +700,7 @@ export class Treemap extends PureComponent<Props, State> {
           }
 
           return (
-            // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
             <div
               onClick={this.handleNestIndex.bind(this, item, i)}
               key={`nest-index-${uniqueId()}`}
@@ -734,6 +734,7 @@ export class Treemap extends PureComponent<Props, State> {
       <div
         className={classNames('recharts-wrapper', className)}
         style={{ ...style, position: 'relative', cursor: 'default', width, height }}
+        role="region"
       >
         <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
           {this.renderAllNodes()}

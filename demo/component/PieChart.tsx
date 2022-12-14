@@ -1,10 +1,9 @@
 import React, { Component, ReactElement, ReactSVGElement } from 'react';
-import { PieChart, Pie, Legend, Cell, Tooltip, ResponsiveContainer, Sector,
-  Label, LabelList } from 'recharts';
+import { PieChart, Pie, Legend, Cell, Tooltip, ResponsiveContainer, Sector, Label, LabelList } from 'recharts';
 import { scaleOrdinal } from 'd3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
-import { changeNumberOfData } from './utils';
 import * as _ from 'lodash';
+import { changeNumberOfData } from './utils';
 
 const colors = scaleOrdinal(schemeCategory10).range();
 
@@ -46,13 +45,18 @@ const data03 = [
   { name: 'F3', value: 51 },
 ];
 
+const data04 = [
+  { name: 'Group A', value: 400, v: 89 },
+  { name: 'Group B', value: 300, v: 100 },
+];
+
 const initialState = { data01, data02, data03 };
 
 const renderLabelContent: React.FunctionComponent = (props: any) => {
   const { value, percent, x, y, midAngle } = props;
 
   return (
-    <g transform={`translate(${x}, ${y})`} textAnchor={ (midAngle < -90 || midAngle >= 90) ? 'end' : 'start'}>
+    <g transform={`translate(${x}, ${y})`} textAnchor={midAngle < -90 || midAngle >= 90 ? 'end' : 'start'}>
       <text x={0} y={0}>{`Count: ${value}`}</text>
       <text x={0} y={20}>{`(Percent: ${(percent * 100).toFixed(2)}%)`}</text>
     </g>
@@ -60,8 +64,7 @@ const renderLabelContent: React.FunctionComponent = (props: any) => {
 };
 const renderActiveShape: React.FunctionComponent = (props: any) => {
   const RADIAN = Math.PI / 180;
-  const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle,
-    fill, payload, percent } = props;
+  const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent } = props;
   const sin = Math.sin(-RADIAN * midAngle);
   const cos = Math.cos(-RADIAN * midAngle);
   const sx = cx + (outerRadius + 10) * cos;
@@ -74,7 +77,9 @@ const renderActiveShape: React.FunctionComponent = (props: any) => {
 
   return (
     <g>
-      <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>{payload.name}</text>
+      <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
+        {payload.name}
+      </text>
       <Sector
         cx={cx}
         cy={cy}
@@ -93,8 +98,8 @@ const renderActiveShape: React.FunctionComponent = (props: any) => {
         outerRadius={outerRadius + 10}
         fill={fill}
       />
-      <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none"/>
-      <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none"/>
+      <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
+      <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
       <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">
         {`Count ${payload.value}`}
       </text>
@@ -106,7 +111,6 @@ const renderActiveShape: React.FunctionComponent = (props: any) => {
 };
 
 export default class Demo extends Component {
-
   static displayName = 'PieChartDemo';
 
   onPieEnter = (data: any, index: number, e: React.MouseEvent) => {
@@ -134,41 +138,27 @@ export default class Demo extends Component {
   handlePieChartEnter = (a: any, b: number, c: React.MouseEvent) => {
     console.log(a, b, c);
   };
+
   handleLeave = () => this.setState({ activeIndex: -1 });
 
-  render () {
+  render() {
     const { data01, data02, data03 } = this.state;
 
     return (
       <div className="pie-charts">
-        <a
-          href="javascript: void(0);"
-          className="btn update"
-          onClick={this.handleChangeData}
-        >
+        <a href="javascript: void(0);" className="btn update" onClick={this.handleChangeData}>
           change data
         </a>
-        <br/>
+        <br />
         <p>Simple PieChart</p>
         <div className="pie-chart-wrapper">
           <button onClick={this.handleChangeAnimation}>change animation</button>
           <PieChart width={800} height={400}>
             <Legend />
-            <Pie
-              data={data01}
-              dataKey="value"
-              cx={200}
-              cy={200}
-              startAngle={180}
-              endAngle={0}
-              outerRadius={80}
-              label
-            >
-              {
-                data01.map((entry, index) => (
-                  <Cell key={`slice-${index}`} fill={colors[index % 10] as string}/>
-                ))
-              }
+            <Pie data={data01} dataKey="value" cx={200} cy={200} startAngle={180} endAngle={0} outerRadius={80} label>
+              {data01.map((entry, index) => (
+                <Cell key={`slice-${index}`} fill={colors[index % 10] as string} />
+              ))}
               <Label value="test" position="outside" />
               <LabelList position="outside" />
             </Pie>
@@ -185,11 +175,9 @@ export default class Demo extends Component {
               paddingAngle={5}
               isAnimationActive={this.state.animation}
             >
-              {
-                data02.map((entry, index) => (
-                  <Cell key={`slice-${index}`} fill={colors[index % 10] as string}/>
-                ))
-              }
+              {data02.map((entry, index) => (
+                <Cell key={`slice-${index}`} fill={colors[index % 10] as string} />
+              ))}
               <Label width={50} position="center">
                 测试换行 测试杭欢
               </Label>
@@ -197,13 +185,12 @@ export default class Demo extends Component {
           </PieChart>
         </div>
 
-
         <p>PieChart with two donut</p>
         <div className="pie-chart-wrapper">
           <PieChart width={400} height={400}>
-            <Legend verticalAlign="top"/>
-            <Pie data={data01} dataKey="value" cx={200} cy={200} innerRadius={50} outerRadius={80}/>
-            <Pie data={data03} dataKey="value" cx={200} cy={200} innerRadius={80} outerRadius={100}/>
+            <Legend verticalAlign="top" />
+            <Pie data={data01} dataKey="value" cx={200} cy={200} innerRadius={50} outerRadius={80} />
+            <Pie data={data03} dataKey="value" cx={200} cy={200} innerRadius={80} outerRadius={100} />
           </PieChart>
         </div>
 
@@ -211,8 +198,8 @@ export default class Demo extends Component {
         <div className="pie-chart-wrapper" style={{ width: '50%', height: '100%', backgroundColor: '#f5f5f5' }}>
           <ResponsiveContainer>
             <PieChart>
-              <Pie data={data01} nameKey="name" dataKey="value" innerRadius="25%" outerRadius="40%"/>
-              <Pie data={data01} dataKey="v" innerRadius="45%" outerRadius="80%"/>
+              <Pie data={data01} nameKey="name" dataKey="value" innerRadius="25%" outerRadius="40%" />
+              <Pie data={data01} dataKey="v" innerRadius="45%" outerRadius="80%" />
               <Tooltip trigger="click" />
             </PieChart>
           </ResponsiveContainer>
@@ -232,11 +219,9 @@ export default class Demo extends Component {
                 onMouseEnter={this.onPieEnter}
                 isAnimationActive={false}
               >
-                {
-                  data01.map((entry, index) => (
-                    <Cell key={`slice-${index}`} fill={colors[index % 10] as string}/>
-                  ))
-                }
+                {data01.map((entry, index) => (
+                  <Cell key={`slice-${index}`} fill={colors[index % 10] as string} />
+                ))}
                 <Label value="test" />
               </Pie>
             </PieChart>
@@ -255,22 +240,43 @@ export default class Demo extends Component {
                 // onMouseEnter={this.handleEnter}
                 onMouseLeave={this.handleLeave}
               >
-                {
-                  data01.map((entry, index) => (
-                    <Cell
-                      key={`slice-${index}`}
-                      fill={colors[index % 10] as string}
-                      fillOpacity={this.state.activeIndex === index ? 1 : 0.25}
-                    />
-                  ))
-                }
+                {data01.map((entry, index) => (
+                  <Cell
+                    key={`slice-${index}`}
+                    fill={colors[index % 10] as string}
+                    fillOpacity={this.state.activeIndex === index ? 1 : 0.25}
+                  />
+                ))}
                 <Label value="test" />
               </Pie>
             </PieChart>
           </ResponsiveContainer>
         </div>
+        <div>
+          <p>
+            Pie chart with pattern fill. This improves accessibility by helping people who have difficulty
+            differentiating colors.
+          </p>
+          <svg>
+            <defs>
+              <pattern id="pattern-checkers" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+                <rect className="checker" x="0" width="5" height="5" y="0" />
+                <rect className="checker" x="10" width="5" height="5" y="10" />
+              </pattern>
+            </defs>
+          </svg>
+          <PieChart width={800} height={400}>
+            <Legend />
+            <Pie data={data04} dataKey="value" cx={200} cy={200} startAngle={180} endAngle={0} outerRadius={80} label>
+              <Cell key="slice-1" fill="url(#pattern-checkers)" />
+              <Cell key="slice-2" fill="blue" />
+
+              <Label className="saghanlabel" value="test" position="outside" fill="black" />
+              <LabelList position="outside" />
+            </Pie>
+          </PieChart>
+        </div>
       </div>
     );
   }
 }
-

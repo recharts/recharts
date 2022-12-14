@@ -307,6 +307,7 @@ export class Bar extends PureComponent<Props, State> {
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(this.props, entry, i)}
             key={`rectangle-${i}`} // eslint-disable-line react/no-array-index-key
+            role="img"
           >
             {Bar.renderRectangle(shape, props)}
           </Layer>
@@ -316,15 +317,8 @@ export class Bar extends PureComponent<Props, State> {
   }
 
   renderRectanglesWithAnimation() {
-    const {
-      data,
-      layout,
-      isAnimationActive,
-      animationBegin,
-      animationDuration,
-      animationEasing,
-      animationId,
-    } = this.props;
+    const { data, layout, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
+      this.props;
     const { prevData } = this.state;
 
     return (
@@ -397,7 +391,6 @@ export class Bar extends PureComponent<Props, State> {
     const backgroundProps = filterProps(this.props.background);
 
     return data.map((entry, i) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { value, background, ...rest } = entry;
 
       if (!background) {
@@ -456,20 +449,8 @@ export class Bar extends PureComponent<Props, State> {
   }
 
   render() {
-    const {
-      hide,
-      data,
-      className,
-      xAxis,
-      yAxis,
-      left,
-      top,
-      width,
-      height,
-      isAnimationActive,
-      background,
-      id,
-    } = this.props;
+    const { hide, data, className, xAxis, yAxis, left, top, width, height, isAnimationActive, background, id } =
+      this.props;
     if (hide || !data || !data.length) {
       return null;
     }

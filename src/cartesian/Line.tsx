@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { Curve, CurveType, Props as CurveProps, Point as CurvePoint } from '../shape/Curve';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
+import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
 import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
@@ -73,6 +74,7 @@ interface LineProps extends InternalLineProps {
   animationEasing?: AnimationTiming;
   animationId?: number;
   id?: string;
+  label?: ImplicitLabelType;
 }
 
 export type Props = Omit<CurveProps, 'points' | 'pathRef'> & LineProps;
@@ -105,6 +107,7 @@ export class Line extends PureComponent<Props, State> {
     animationDuration: 1500,
     animationEasing: 'ease',
     hide: false,
+    label: false,
   };
 
   /**
@@ -168,7 +171,6 @@ export class Line extends PureComponent<Props, State> {
     totalLength: 0,
   };
 
-  /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
     if (!this.props.isAnimationActive) {
       return;
@@ -337,7 +339,7 @@ export class Line extends PureComponent<Props, State> {
     };
 
     return (
-      <Layer className="recharts-line-dots" key="dots" {...dotsProps}>
+      <Layer className="recharts-line-dots" key="dots" {...dotsProps} role="img">
         {dots}
       </Layer>
     );
@@ -349,7 +351,6 @@ export class Line extends PureComponent<Props, State> {
     clipPathId: string,
     props?: { strokeDasharray: string },
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { type, layout, connectNulls, ref, ...others } = this.props;
     const curveProps = {
       ...filterProps(others, true),
