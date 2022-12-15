@@ -23,6 +23,7 @@
     "react-component"
   ],
   "scripts": {
+    "prepare": "husky install",
     "build": "npm run build-types && npm run build-cjs && npm run build-es6 && npm run build-umd",
     "build-cjs": "rimraf lib && cross-env NODE_ENV=commonjs babel ./src -d lib --extensions '.js,.ts,.tsx'",
     "build-es6": "rimraf es6 && cross-env NODE_ENV=es6 babel ./src -d es6 --extensions '.js,.ts,.tsx'",
@@ -37,11 +38,12 @@
     "analyse": "cross-env NODE_ENV=analyse webpack ./src/index.ts -o umd/Recharts.js",
     "tsc": "tsc"
   },
-  "pre-commit": [],
-  "pre-push": [
-    "test",
-    "lint"
-  ],
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/recharts/recharts.git"
@@ -119,8 +121,9 @@
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "jest": "^28.1.3",
-    "jest-environment-jsdom": "^28.1.3",
+    "husky": "^8.0.2",
+    "jest": "^27.5.1",
+    "jest-environment-jsdom": "^27.5.1",
     "json-loader": "^0.5.7",
     "karma": "^6.0.0",
     "karma-chai": "^0.1.0",
@@ -131,8 +134,8 @@
     "karma-mocha": "^2.0.1",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^5.0.0",
+    "lint-staged": "^13.1.0",
     "mocha": "^10.2.0",
-    "pre-commit": "^1.1.3",
     "prettier": "^2.2.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
