@@ -102,11 +102,12 @@ export class Symbols extends PureComponent<Props> {
 
   render() {
     const { className, cx, cy, size } = this.props;
+    const filteredProps = filterProps(this.props, true);
 
     if (cx === +cx && cy === +cy && size === +size) {
       return (
         <path
-          {...filterProps(this.props, true)}
+          {...filteredProps}
           className={classNames('recharts-symbols', className)}
           transform={`translate(${cx}, ${cy})`}
           d={this.getPath()}

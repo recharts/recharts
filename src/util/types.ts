@@ -523,6 +523,7 @@ export type DOMAttributesAdaptChildEvent<P, T> = {
   onTransitionEnd?: AdaptChildTransitionEventHandler<P, T>;
   onTransitionEndCapture?: AdaptChildTransitionEventHandler<P, T>;
 };
+
 const SVGContainerPropKeys = ['viewBox', 'children'];
 const SVGElementPropKeys = [
   'aria-activedescendant',
@@ -721,7 +722,6 @@ const SVGElementPropKeys = [
   'patternTransform',
   'patternUnits',
   'pointerEvents',
-  'points',
   'pointsAtX',
   'pointsAtY',
   'pointsAtZ',
@@ -829,6 +829,14 @@ const SVGElementPropKeys = [
   'key',
   'angle',
 ];
+
+export type FilteredSvgElementType = 'svg' | 'polyline' | 'polygon';
+
+export const FilteredElementKeyMap: Record<FilteredSvgElementType, string[]> = {
+  svg: SVGContainerPropKeys,
+  polygon: ['points'],
+  polyline: ['points'],
+};
 
 const EventKeys = [
   'dangerouslySetInnerHTML',
@@ -1127,7 +1135,7 @@ export type ViewBox = CartesianViewBox | PolarViewBox;
 export const filterProps = (
   props: Record<string, any> | Component | FunctionComponent | boolean,
   includeEvents?: boolean,
-  isSvg?: boolean,
+  svgElementType?: FilteredSvgElementType,
 ) => {
   if (!props || typeof props === 'function' || typeof props === 'boolean') {
     return null;
@@ -1145,14 +1153,20 @@ export const filterProps = (
 
   const out: Record<string, any> = {};
 
+  /**
+   * If the svg element type is explicitly included, check against the filtered element key map
+   * to determine if there are attributes that should only exist on that element type.
+   * @todo Add an internal cjs version of https://github.com/wooorm/svg-element-attributes for full coverage.
+   */
+  const matchingElementTypeKeys = FilteredElementKeyMap?.[svgElementType] ?? [];
+
   Object.keys(inputProps).forEach(key => {
-    // viewBox only exist in <svg />
     if (
+      (svgElementType && matchingElementTypeKeys.includes(key)) ||
       SVGElementPropKeys.includes(key) ||
-      (isSvg && SVGContainerPropKeys.includes(key)) ||
       (includeEvents && EventKeys.includes(key))
     ) {
-      out[key] = (inputProps as any)[key];
+      out[key] = inputProps[key];
     }
   });
 
