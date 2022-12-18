@@ -35,7 +35,7 @@
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
     "react/react-in-jsx-scope": "error",
-    "react/jsx-filename-extension": ["error", { "extensions": [".ts", ".tsx"] }],
+    "react/jsx-filename-extension": ["error", { "extensions": [".ts", ".tsx", ".js", ".jsx"] }],
 
     "no-var": "error",
     "react/jsx-no-bind": "error",
@@ -50,7 +50,7 @@
     "import/no-extraneous-dependencies": [
       "error",
       {
-        "devDependencies": ["demo/**", "test/**", "*.config.js", "scripts/**", "**/Spec.js"]
+        "devDependencies": ["demo/**", "test/**", "test-jest/**", "*.config.js", "scripts/**"]
       }
     ],
     "max-len": ["warn", 120],
