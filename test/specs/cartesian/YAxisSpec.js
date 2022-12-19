@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { Surface, AreaChart, Area, XAxis, YAxis, CartesianAxis, Text, Bar, BarChart } from 'recharts';
+import { Surface, AreaChart, Area, XAxis, YAxis, CartesianAxis, Text, Bar, BarChart, Rectangle } from 'recharts';
 import { mount, render } from 'enzyme';
 
 describe('<YAxis />', () => {
@@ -199,22 +199,22 @@ describe('<YAxis />', () => {
     const wrapperBothShowing = mount(
       <BarChart width={600} height={400} data={data}>
         <YAxis type="number" stroke="#ff7300" includeHidden />
-        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" />
-        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" />
+        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} />
+        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} />
       </BarChart>
     );
     const wrapperFirstHidden = mount(
       <BarChart width={600} height={400} data={data}>
         <YAxis type="number" stroke="#ff7300" includeHidden />
-        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" hide />
-        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" />
+        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} hide />
+        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} />
       </BarChart>
     );
     const wrapperSecondHidden = mount(
       <BarChart width={600} height={400} data={data}>
         <YAxis type="number" stroke="#ff7300" includeHidden />
-        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" />
-        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" hide />
+        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} />
+        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} hide />
       </BarChart>
     );
 
@@ -229,5 +229,14 @@ describe('<YAxis />', () => {
     expect(ticksSecondHidden.length).to.equal(ticksBothShowing.length);
     expect(ticksSecondHidden.first().props().y).to.equal(ticksBothShowing.first().props().y);
     expect(ticksSecondHidden.last().props().y).to.equal(ticksBothShowing.last().props().y);
+
+    const barsBothShowing = wrapperBothShowing.find(Rectangle).map(r => r.props());
+    const barsFirstHidden = wrapperFirstHidden.find(Rectangle).map(r => r.props());
+    const barsSecondHidden = wrapperSecondHidden.find(Rectangle).map(r => r.props());
+
+    // spreading into single array to match indices, as barsBothShowing will get Rectangles from the first Bar, then the second
+    expect([...barsSecondHidden, ...barsFirstHidden].every((bar, i) => {
+      return bar.height === barsBothShowing[i].height
+    })).to.equal(true);
   });
 });
