@@ -194,4 +194,40 @@ describe('<YAxis />', () => {
     expect(wrapper.find('svg').children.length).to.equal(1);
     expect(wrapper.find('svg noscript').children.length).to.equal(1);
   });
+
+  it('Render identical ticks when data is hidden and includeHidden is true', () => {
+    const wrapperBothShowing = mount(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis type="number" stroke="#ff7300" includeHidden />
+        <Area dataKey="pv" stroke="#ff7300" fill="#ff7300" />
+        <Area dataKey="amt" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>
+    );
+    const wrapperFirstHidden = mount(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis type="number" stroke="#ff7300" includeHidden />
+        <Area dataKey="pv" stroke="#ff7300" fill="#ff7300" hide />
+        <Area dataKey="amt" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>
+    );
+    const wrapperSecondHidden = mount(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis type="number" stroke="#ff7300" includeHidden />
+        <Area dataKey="pv" stroke="#ff7300" fill="#ff7300" />
+        <Area dataKey="amt" stroke="#ff7300" fill="#ff7300" hide />
+      </AreaChart>
+    );
+
+    const ticksBothShowing = wrapperBothShowing.find(Text);
+    const ticksFirstHidden = wrapperFirstHidden.find(Text);
+    const ticksSecondHidden = wrapperSecondHidden.find(Text);
+
+    expect(ticksFirstHidden.length).to.equal(ticksBothShowing.length);
+    expect(ticksFirstHidden.first().props().y).to.equal(ticksBothShowing.first().props().y);
+    expect(ticksFirstHidden.last().props().y).to.equal(ticksBothShowing.last().props().y);
+
+    expect(ticksSecondHidden.length).to.equal(ticksBothShowing.length);
+    expect(ticksSecondHidden.first().props().y).to.equal(ticksBothShowing.first().props().y);
+    expect(ticksSecondHidden.last().props().y).to.equal(ticksBothShowing.last().props().y);
+  });
 });
