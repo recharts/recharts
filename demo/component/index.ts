@@ -31,6 +31,8 @@ import FunnelChart from './FunnelChart';
 import Trapezoid from './Trapezoid';
 import BugReproduce from './BugReproduce';
 
+import YAxis from './YAxis';
+
 export default {
   chartWrapper: {
     LineChart,
@@ -75,5 +77,9 @@ export default {
   other: {
     ResponsiveContainer,
     BugReproduce,
-  }
+  },
+
+  axis: {
+    YAxis,
+  },
 };
