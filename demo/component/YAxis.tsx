@@ -33,7 +33,7 @@ const Demo = () => {
         <Bar dataKey="amt" fill="green" hide={!activeKeys.includes('amt')} />
       </ComposedChart>
 
-      <p>Y axis with includeHidden</p>
+      <p>Y axis with includeHidden (toggle data by clicking on legend items)</p>
       <ComposedChart width={500} height={400} data={data} margin={{ top: 20, right: 80, left: 20 }}>
         <XAxis dataKey="name" scale="band" />
         <YAxis label={{ value: 'Index', angle: -90, position: 'insideLeft' }} includeHidden />
