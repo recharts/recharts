@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { Surface, AreaChart, Area, XAxis, YAxis, CartesianAxis, Text } from 'recharts';
+import { Surface, AreaChart, Area, XAxis, YAxis, CartesianAxis, Text, Bar, BarChart } from 'recharts';
 import { mount, render } from 'enzyme';
 
 describe('<YAxis />', () => {
@@ -197,25 +197,25 @@ describe('<YAxis />', () => {
 
   it('Render identical ticks when data is hidden and includeHidden is true', () => {
     const wrapperBothShowing = mount(
-      <AreaChart width={600} height={400} data={data}>
+      <BarChart width={600} height={400} data={data}>
         <YAxis type="number" stroke="#ff7300" includeHidden />
-        <Area dataKey="pv" stroke="#ff7300" fill="#ff7300" />
-        <Area dataKey="amt" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>
+        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" />
+        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" />
+      </BarChart>
     );
     const wrapperFirstHidden = mount(
-      <AreaChart width={600} height={400} data={data}>
+      <BarChart width={600} height={400} data={data}>
         <YAxis type="number" stroke="#ff7300" includeHidden />
-        <Area dataKey="pv" stroke="#ff7300" fill="#ff7300" hide />
-        <Area dataKey="amt" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>
+        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" hide />
+        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" />
+      </BarChart>
     );
     const wrapperSecondHidden = mount(
-      <AreaChart width={600} height={400} data={data}>
+      <BarChart width={600} height={400} data={data}>
         <YAxis type="number" stroke="#ff7300" includeHidden />
-        <Area dataKey="pv" stroke="#ff7300" fill="#ff7300" />
-        <Area dataKey="amt" stroke="#ff7300" fill="#ff7300" hide />
-      </AreaChart>
+        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" />
+        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" hide />
+      </BarChart>
     );
 
     const ticksBothShowing = wrapperBothShowing.find(Text);
