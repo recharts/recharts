@@ -11,7 +11,8 @@
   "env": {
     "browser": true,
     "mocha": true,
-    "node": true
+    "node": true,
+    "jest": true
   },
   "parser": "@typescript-eslint/parser",
   "plugins": ["react", "@typescript-eslint"],
@@ -50,7 +51,7 @@
     "import/no-extraneous-dependencies": [
       "error",
       {
-        "devDependencies": ["demo/**", "test/**", "*.config.js", "scripts/**", "**/Spec.js"]
+        "devDependencies": ["demo/**", "test/**", "test-jest/**", "*.config.js", "scripts/**", "**/Spec.js"]
       }
     ],
     "max-len": ["warn", 120],
