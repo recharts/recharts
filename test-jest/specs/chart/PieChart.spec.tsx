@@ -1,16 +1,8 @@
-/* eslint-disable react/no-unused-state */
-/* eslint-disable max-len */
-/* eslint-disable import/order */
-/* eslint-disable no-return-assign */
-/* eslint-disable react/prop-types */
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable react/jsx-filename-extension */
-/* eslint-disable no-undef */
 import React from 'react';
-import { PieChart, Pie, Sector, Legend, Cell } from '../../../src';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
+import { PieChart, Pie, Legend, Cell } from '../../../src';
 
-describe.only('<PieChart />', () => {
+describe('<PieChart />', () => {
   const data = [
     { name: 'Group A', value: 400 },
     { name: 'Group B', value: 300 },
@@ -20,7 +12,7 @@ describe.only('<PieChart />', () => {
     { name: 'Group F', value: 189 },
   ];
 
-  it('Renders 6 sectors circles in simple PieChart', () => {
+  test('Renders 6 sectors circles in simple PieChart', () => {
     const { container } = render(
       <PieChart width={800} height={400}>
         <Pie
@@ -39,12 +31,12 @@ describe.only('<PieChart />', () => {
     expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(data.length);
   });
 
-  it('Renders 6 sectors circles when add Cell to specified props of eact slice', () => {
+  test('Renders 6 sectors circles when add Cell to specified props of eact slice', () => {
     const { container } = render(
       <PieChart width={800} height={400}>
         <Pie dataKey="value" isAnimationActive={false} cx={200} cy={200} outerRadius={80} fill="#ff7300" label>
           {data.map((entry, index) => (
-            <Cell {...entry} key={`cell-${index}`} strokeWidth={index + 1} />
+            <Cell {...entry} key={`cell-${entry.name}`} strokeWidth={index + 1} />
           ))}
         </Pie>
       </PieChart>,
@@ -53,7 +45,7 @@ describe.only('<PieChart />', () => {
     expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(6);
   });
 
-  it('Renders legend when all the values are 0', () => {
+  test('Renders legend when all the values are 0', () => {
     const emptyData = [
       { name: 'Group A', value: 0 },
       { name: 'Group B', value: 0 },
@@ -72,7 +64,7 @@ describe.only('<PieChart />', () => {
     expect(container.querySelectorAll('.recharts-legend-item')).toHaveLength(emptyData.length);
   });
 
-  it("Don't renders any sectors when width or height is smaller than 0", () => {
+  test("Don't renders any sectors when width or height is smaller than 0", () => {
     const { container } = render(
       <PieChart width={0} height={400}>
         <Pie
@@ -91,7 +83,7 @@ describe.only('<PieChart />', () => {
     expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(0);
   });
 
-  it('Renders 6 legend item when add a Legend element', () => {
+  test('Renders 6 legend item when add a Legend element', () => {
     const { container } = render(
       <PieChart width={800} height={400}>
         <Pie
@@ -112,13 +104,9 @@ describe.only('<PieChart />', () => {
     expect(container.querySelectorAll('.recharts-legend-item')).toHaveLength(6);
   });
 
-  it.skip('click on Sector should invoke onClick callback', () => {
-    const onClick = sinon.spy();
-    const onMouseEnter = sinon.spy();
-    const onMouseLeave = sinon.spy();
-
-    const wrapper = mount(
-      <PieChart width={800} height={400} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+  const getPieChart = (eventProps: { onClick?: jest.Mock; onMouseEnter?: jest.Mock; onMouseLeave?: jest.Mock }) => {
+    return (
+      <PieChart width={800} height={400} {...eventProps}>
         <Pie
           dataKey="value"
           isAnimationActive={false}
@@ -129,20 +117,40 @@ describe.only('<PieChart />', () => {
           fill="#ff7300"
           label
         />
-      </PieChart>,
+      </PieChart>
     );
-    const sectors = wrapper.find(Sector);
-    const se = sectors.at(2);
+  };
 
-    se.simulate('click');
-    expect(onClick.calledOnce).to.equal(true);
+  test('click on Sector should invoke onClick callback', () => {
+    const onClick = jest.fn();
 
-    /*
-    se.simulate('mouseEnter');
-    expect(onMouseEnter.calledOnce).to.equal(true);
+    const { container } = render(getPieChart({ onClick }));
+    const sectors = container.querySelectorAll('.recharts-sector');
+    const se = sectors[2];
 
-    se.simulate('mouseLeave');
-    expect(onMouseLeave.calledOnce).to.equal(true);
-    */
+    fireEvent.click(se);
+    expect(onClick).toBeCalled();
+  });
+
+  test('onMouseEnter Sector should invoke onMouseEnter callback', () => {
+    const onMouseEnter = jest.fn();
+
+    const { container } = render(getPieChart({ onMouseEnter }));
+    const sectors = container.querySelectorAll('.recharts-sector');
+    const se = sectors[2];
+
+    fireEvent.mouseEnter(se);
+    expect(onMouseEnter).toBeCalled();
+  });
+
+  test('onMouseLeave Sector should invoke onMouseLeave callback', () => {
+    const onMouseLeave = jest.fn();
+
+    const { container } = render(getPieChart({ onMouseLeave }));
+    const sectors = container.querySelectorAll('.recharts-sector');
+    const se = sectors[2];
+
+    fireEvent.mouseLeave(se);
+    expect(onMouseLeave).toBeCalled();
   });
 });
