@@ -1,13 +1,9 @@
-/* eslint-disable import/order */
-/* eslint-disable no-return-assign */
-/* eslint-disable react/prop-types */
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable react/jsx-filename-extension */
 /* eslint-disable no-undef */
+import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, Brush, CartesianAxis } from '../../../src';
-import { render, fireEvent } from '@testing-library/react';
 import sinon from 'sinon';
+
+import { Area, AreaChart, Brush, CartesianAxis, Tooltip, XAxis, YAxis } from '../../../src';
 
 describe('AreaChart', () => {
   const data = [
@@ -60,6 +56,7 @@ describe('AreaChart', () => {
   });
 
   test.skip('Renders customized active dot when activeDot is set to be a ReactElement', () => {
+    // eslint-disable-next-line react/prop-types
     const ActiveDot = ({ cx, cy }) => <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
     const { container } = render(
       <AreaChart width={400} height={400} data={data}>
@@ -156,7 +153,9 @@ describe('AreaChart', () => {
 
     // spy on each pure element before each test, and restore the spy afterwards
     beforeEach(() => {
-      pureElements.forEach((el, i) => (spies[i] = sinon.spy(el.prototype, 'render')));
+      pureElements.forEach((el, i) => {
+        spies[i] = sinon.spy(el.prototype, 'render');
+      });
       axisSpy = sinon.spy(CartesianAxis.prototype, 'render');
     });
     afterEach(() => {
