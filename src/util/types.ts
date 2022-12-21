@@ -27,7 +27,7 @@ import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'd3-scale';
 export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette';
 export type LayoutType = 'horizontal' | 'vertical' | 'centric' | 'radial';
 export type PolarLayoutType = 'radial' | 'centric';
-export type AxisType = 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis';
+export type AxisType = 'xAxis' | 'yAxis' | 'zAxis' | 'angleAxis' | 'radiusAxis';
 export type DataKey<T> = string | number | ((obj: T) => any);
 export type PresentationAttributesWithProps<P, T> = AriaAttributes &
   DOMAttributesWithProps<P, T> &

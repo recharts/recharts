@@ -10,7 +10,6 @@ import { XAxis } from '../cartesian/XAxis';
 import { YAxis } from '../cartesian/YAxis';
 import { ZAxis } from '../cartesian/ZAxis';
 import { formatAxisMap } from '../util/CartesianUtils';
-import { CategoricalChartOptions } from '../util/types';
 
 export const ComposedChart = generateCategoricalChart({
   chartName: 'ComposedChart',
@@ -21,4 +20,4 @@ export const ComposedChart = generateCategoricalChart({
     { axisType: 'zAxis', AxisComp: ZAxis },
   ],
   formatAxisMap,
-} as CategoricalChartOptions);
+});
