@@ -1,13 +1,8 @@
-/* eslint-disable import/no-useless-path-segments */
-/* eslint-disable import/order */
-/* eslint-disable no-return-assign */
 /* eslint-disable react/prop-types */
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable react/jsx-filename-extension */
-/* eslint-disable no-undef */
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis } from '../../../src';
 import { render } from '@testing-library/react';
+import React from 'react';
+
+import { Bar, BarChart, XAxis, YAxis } from '../../../src';
 
 describe('<BarChart />', () => {
   const data = [
