@@ -1,13 +1,8 @@
-/* eslint-disable import/no-useless-path-segments */
-/* eslint-disable import/order */
-/* eslint-disable no-return-assign */
 /* eslint-disable react/prop-types */
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable react/jsx-filename-extension */
-/* eslint-disable no-undef */
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis } from '../../../src';
 import { render } from '@testing-library/react';
+import React from 'react';
+
+import { Bar, BarChart, Tooltip, XAxis, YAxis } from '../../../src';
 
 describe('<BarChart />', () => {
   const data = [
@@ -120,27 +115,18 @@ describe('<BarChart />', () => {
     expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(4);
   });
 
-  // test('Renders tooltip when Tooltip item is added', () => {
-  //   const wrapper = mount(
-  //     <BarChart width={100} height={50} data={data}>
-  //       <Bar dataKey="uv" stackId="test" fill="#ff7300" />
-  //       <Bar dataKey="pv" stackId="test" fill="#387908" />
-  //       <Tooltip />
-  //     </BarChart>
-  //   );
-  //   wrapper.setState({
-  //     isTooltipActive: true,
-  //     activeTooltipIndex: 3,
-  //     activeTooltipLabel: 4,
-  //     activeTooltipCoord: {
-  //       x: 95,
-  //       y: 21,
-  //     },
-  //   });
-
-  //   expect(wrapper.find('.recharts-default-tooltip').length).to.equal(1);
-  //   expect(wrapper.find('.recharts-tooltip-wrapper').length).to.equal(1);
-  // });
+  test('Renders tooltip when Tooltip item is added', () => {
+    const { container } = render(
+      <BarChart width={100} height={50} data={data}>
+        <Bar dataKey="uv" stackId="test" fill="#ff7300" />
+        <Bar dataKey="pv" stackId="test" fill="#387908" />
+        <Tooltip />
+      </BarChart>,
+    );
+    // Both the default Tooltip as well as the Tooltip wrapper are rendered even if not visible
+    expect(container.querySelectorAll('.recharts-default-tooltip')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-tooltip-wrapper')).toHaveLength(1);
+  });
 
   test('Render empty when data is empty', () => {
     const { container } = render(
