@@ -274,6 +274,11 @@ const getAxisMapByAxes = (
   const axisMap = axes.reduce((result: any, child: any) => {
     const { type, dataKey, allowDataOverflow, allowDuplicatedCategory, scale, ticks } = child.props;
     const axisId = child.props[axisIdKey];
+
+    if (result[axisId]) {
+      return result;
+    }
+
     const displayedData = getDisplayedData(props.data, {
       graphicalItems: graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId),
       dataStartIndex,
@@ -281,112 +286,105 @@ const getAxisMapByAxes = (
     });
     const len = displayedData.length;
 
-    if (!result[axisId]) {
-      let domain, duplicateDomain, categoricalDomain;
+    let domain, duplicateDomain, categoricalDomain;
 
-      if (dataKey) {
-        // has dataKey in <Axis />
-        domain = getDomainOfDataByKey(displayedData, dataKey, type);
+    if (dataKey) {
+      // has dataKey in <Axis />
+      domain = getDomainOfDataByKey(displayedData, dataKey, type);
 
-        if (type === 'category' && isCategorical) {
-          // the field type is category data and this axis is catrgorical axis
-          const duplicate = hasDuplicate(domain);
+      if (type === 'category' && isCategorical) {
+        // the field type is category data and this axis is catrgorical axis
+        const duplicate = hasDuplicate(domain);
 
-          if (allowDuplicatedCategory && duplicate) {
-            duplicateDomain = domain;
-            // When category axis has duplicated text, serial numbers are used to generate scale
-            domain = _.range(0, len);
-          } else if (!allowDuplicatedCategory) {
-            // remove duplicated category
-            domain = parseDomainOfCategoryAxis(child.props.domain, domain, child).reduce(
-              (finalDomain: any, entry: any) =>
-                finalDomain.indexOf(entry) >= 0 ? finalDomain : [...finalDomain, entry],
-              [],
-            );
-          }
-        } else if (type === 'category') {
-          // the field type is category data and this axis is numerical axis
-          if (!allowDuplicatedCategory) {
-            domain = parseDomainOfCategoryAxis(child.props.domain, domain, child).reduce(
-              (finalDomain: any, entry: any) =>
-                finalDomain.indexOf(entry) >= 0 || entry === '' || _.isNil(entry)
-                  ? finalDomain
-                  : [...finalDomain, entry],
-              [],
-            );
-          } else {
-            // eliminate undefined or null or empty string
-            domain = domain.filter((entry: any) => entry !== '' && !_.isNil(entry));
-          }
-        } else if (type === 'number') {
-          // the field type is numerical
-          const errorBarsDomain = parseErrorBarsOfAxis(
-            displayedData,
-            graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
-            dataKey,
-            axisType,
-            layout,
+        if (allowDuplicatedCategory && duplicate) {
+          duplicateDomain = domain;
+          // When category axis has duplicated text, serial numbers are used to generate scale
+          domain = _.range(0, len);
+        } else if (!allowDuplicatedCategory) {
+          // remove duplicated category
+          domain = parseDomainOfCategoryAxis(child.props.domain, domain, child).reduce(
+            (finalDomain: any, entry: any) => (finalDomain.indexOf(entry) >= 0 ? finalDomain : [...finalDomain, entry]),
+            [],
           );
-
-          if (errorBarsDomain) {
-            domain = errorBarsDomain;
-          }
         }
-
-        if (isCategorical && (type === 'number' || scale !== 'auto')) {
-          categoricalDomain = getDomainOfDataByKey(displayedData, dataKey, 'category');
+      } else if (type === 'category') {
+        // the field type is category data and this axis is numerical axis
+        if (!allowDuplicatedCategory) {
+          domain = parseDomainOfCategoryAxis(child.props.domain, domain, child).reduce(
+            (finalDomain: any, entry: any) =>
+              finalDomain.indexOf(entry) >= 0 || entry === '' || _.isNil(entry) ? finalDomain : [...finalDomain, entry],
+            [],
+          );
+        } else {
+          // eliminate undefined or null or empty string
+          domain = domain.filter((entry: any) => entry !== '' && !_.isNil(entry));
         }
-      } else if (isCategorical) {
-        // the axis is a categorical axis
-        domain = _.range(0, len);
-      } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack && type === 'number') {
-        // when stackOffset is 'expand', the domain may be calculated as [0, 1.000000000002]
-        domain =
-          stackOffset === 'expand'
-            ? [0, 1]
-            : getDomainOfStackGroups(stackGroups[axisId].stackGroups, dataStartIndex, dataEndIndex);
-      } else {
-        domain = getDomainOfItemsWithSameAxis(
+      } else if (type === 'number') {
+        // the field type is numerical
+        const errorBarsDomain = parseErrorBarsOfAxis(
           displayedData,
           graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
-          type,
-          layout,
-          true,
-        );
-      }
-
-      if (type === 'number') {
-        // To detect wether there is any reference lines whose props alwaysShow is true
-        domain = detectReferenceElementsDomain(children, domain, axisId, axisType, ticks);
-
-        if (child.props.domain) {
-          domain = parseSpecifiedDomain(child.props.domain, domain, allowDataOverflow);
-        }
-      } else if (type === 'category' && child.props.domain) {
-        const axisDomain = child.props.domain;
-        const isDomainValidate = domain.every((entry: string | number) => axisDomain.indexOf(entry) >= 0);
-
-        if (isDomainValidate) {
-          domain = axisDomain;
-        }
-      }
-
-      return {
-        ...result,
-        [axisId]: {
-          ...child.props,
+          dataKey,
           axisType,
-          domain,
-          categoricalDomain,
-          duplicateDomain,
-          originalDomain: child.props.domain,
-          isCategorical,
           layout,
-        },
-      };
+        );
+
+        if (errorBarsDomain) {
+          domain = errorBarsDomain;
+        }
+      }
+
+      if (isCategorical && (type === 'number' || scale !== 'auto')) {
+        categoricalDomain = getDomainOfDataByKey(displayedData, dataKey, 'category');
+      }
+    } else if (isCategorical) {
+      // the axis is a categorical axis
+      domain = _.range(0, len);
+    } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack && type === 'number') {
+      // when stackOffset is 'expand', the domain may be calculated as [0, 1.000000000002]
+      domain =
+        stackOffset === 'expand'
+          ? [0, 1]
+          : getDomainOfStackGroups(stackGroups[axisId].stackGroups, dataStartIndex, dataEndIndex);
+    } else {
+      domain = getDomainOfItemsWithSameAxis(
+        displayedData,
+        graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
+        type,
+        layout,
+        true,
+      );
     }
 
-    return result;
+    if (type === 'number') {
+      // To detect wether there is any reference lines whose props alwaysShow is true
+      domain = detectReferenceElementsDomain(children, domain, axisId, axisType, ticks);
+
+      if (child.props.domain) {
+        domain = parseSpecifiedDomain(child.props.domain, domain, allowDataOverflow);
+      }
+    } else if (type === 'category' && child.props.domain) {
+      const axisDomain = child.props.domain;
+      const isDomainValidate = domain.every((entry: string | number) => axisDomain.indexOf(entry) >= 0);
+
+      if (isDomainValidate) {
+        domain = axisDomain;
+      }
+    }
+
+    return {
+      ...result,
+      [axisId]: {
+        ...child.props,
+        axisType,
+        domain,
+        categoricalDomain,
+        duplicateDomain,
+        originalDomain: child.props.domain,
+        isCategorical,
+        layout,
+      },
+    };
   }, {});
   return axisMap;
 };
