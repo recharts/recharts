@@ -7,7 +7,6 @@ import { XAxis } from '../cartesian/XAxis';
 import { YAxis } from '../cartesian/YAxis';
 import { ZAxis } from '../cartesian/ZAxis';
 import { formatAxisMap } from '../util/CartesianUtils';
-import { CategoricalChartOptions } from '../util/types';
 
 export const ScatterChart = generateCategoricalChart({
   chartName: 'ScatterChart',
@@ -20,4 +19,4 @@ export const ScatterChart = generateCategoricalChart({
     { axisType: 'zAxis', AxisComp: ZAxis },
   ],
   formatAxisMap,
-} as CategoricalChartOptions);
+});
