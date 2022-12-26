@@ -830,12 +830,16 @@ const SVGElementPropKeys = [
   'angle',
 ];
 
+const PolyElementKeys = ['points', 'pathLength'];
+
+/** svg element types that have specific attribute filtration requirements */
 export type FilteredSvgElementType = 'svg' | 'polyline' | 'polygon';
 
+/** map of svg element types to unique svg attributes that belong to that element */
 export const FilteredElementKeyMap: Record<FilteredSvgElementType, string[]> = {
   svg: SVGContainerPropKeys,
-  polygon: ['points'],
-  polyline: ['points'],
+  polygon: PolyElementKeys,
+  polyline: PolyElementKeys,
 };
 
 const EventKeys = [
@@ -1132,6 +1136,7 @@ export interface PolarViewBox {
 
 export type ViewBox = CartesianViewBox | PolarViewBox;
 
+// TODO: move function to ReactUtils
 export const filterProps = (
   props: Record<string, any> | Component | FunctionComponent | boolean,
   includeEvents?: boolean,
