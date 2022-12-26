@@ -23,6 +23,7 @@ import ScatterChart from './ScatterChart';
 import RadarChart from './RadarChart';
 import RadialBarChart from './RadialBarChart';
 import Treemap from './Treemap';
+import PrecalculatedTreemap from './PrecalculatedTreemap';
 import Sankey from './Sankey';
 
 import ResponsiveContainer from './ResponsiveContainer';
@@ -43,6 +44,7 @@ export default {
     RadarChart,
     RadialBarChart,
     Treemap,
+    PrecalculatedTreemap,
     Sankey,
     FunnelChart,
   },
@@ -75,5 +77,5 @@ export default {
   other: {
     ResponsiveContainer,
     BugReproduce,
-  }
+  },
 };
