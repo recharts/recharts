@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { scaleLinear, scaleBand } from 'd3-scale';
+import { scaleLinear, scaleBand } from 'victory-vendor/d3-scale';
 import { Line, Bar, Scatter, Area, ErrorBar } from 'recharts';
 import { mount } from 'enzyme';
 import {

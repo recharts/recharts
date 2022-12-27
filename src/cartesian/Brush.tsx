@@ -3,7 +3,7 @@
  */
 import React, { PureComponent, Children, ReactText, ReactElement, TouchEvent, SVGProps } from 'react';
 import classNames from 'classnames';
-import { scalePoint, ScalePoint } from 'd3-scale';
+import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
 import _ from 'lodash';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
