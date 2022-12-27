@@ -16,18 +16,14 @@ class RectangleDemo extends Component<any, any> {
       width: Math.random() * 400,
       height: Math.random() * 400,
     });
-  }
+  };
 
   render() {
     const { width, height, x, y } = this.state;
 
     return (
       <div>
-        <a
-          href="javascript:void(0);"
-          className="btn"
-          onClick={this.changeSize}
-        >
+        <a href="javascript:void(0);" className="btn" onClick={this.changeSize}>
           change size
         </a>
 

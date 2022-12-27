@@ -2,20 +2,14 @@ import React, { Component } from 'react';
 import { Layer } from 'recharts';
 
 export default class Demo extends Component<any, any> {
-
   static displayName = 'SankeyLinkDemo';
 
   state = {
     fill: 'url(#linkGradient)',
-  }
+  };
 
   render() {
-    const { sourceX, targetX,
-      sourceY, targetY,
-      sourceControlX, targetControlX,
-      linkWidth,
-      index,
-    } = this.props;
+    const { sourceX, targetX, sourceY, targetY, sourceControlX, targetControlX, linkWidth, index } = this.props;
     const { fill } = this.state;
 
     return (
@@ -34,11 +28,14 @@ export default class Demo extends Component<any, any> {
           `}
           fill={fill}
           strokeWidth="0"
-          onMouseEnter={() => { this.setState({ fill: 'rgba(0, 136, 254, 0.5)' }); }}
-          onMouseLeave={() => { this.setState({ fill: 'url(#linkGradient)' }); }}
+          onMouseEnter={() => {
+            this.setState({ fill: 'rgba(0, 136, 254, 0.5)' });
+          }}
+          onMouseLeave={() => {
+            this.setState({ fill: 'url(#linkGradient)' });
+          }}
         />
       </Layer>
     );
   }
 }
-

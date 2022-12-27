@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Surface, PolarAngleAxis} from 'recharts';
+import { Surface, PolarAngleAxis } from 'recharts';
 
 const ticks = [
   { value: '100', coordinate: 20 },
@@ -11,14 +11,13 @@ const ticks = [
 ];
 
 export default class Demo extends Component {
-
   static displayName = 'PolarAngleAxisDemo';
 
   handleActive = (data: any, index: number, e: React.MouseEvent) => {
     console.log(data, index);
   };
 
-  render () {
+  render() {
     return (
       <Surface width={500} height={500}>
         <PolarAngleAxis

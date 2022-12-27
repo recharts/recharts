@@ -4,7 +4,7 @@ import { Surface, Pie } from 'recharts';
 const data = [
   { name: 'iphone4', value: 120, fill: '#ff7300' },
   { name: 'iphone4s', value: 500, fill: '#e5671a' },
-  { name: 'iphone5', value: 600, fill: '#907213' }
+  { name: 'iphone5', value: 600, fill: '#907213' },
 ];
 const sectors = [
   { cx: 250, cy: 250, startAngle: 0, endAngle: 60, innerRadius: 100, outerRadius: 200 },
@@ -18,7 +18,7 @@ const sectors = [
 export default class PieDemo extends React.Component {
   static displayName = 'PieDemo';
 
-  render () {
+  render() {
     return (
       <Surface width={500} height={500}>
         <Pie
@@ -35,10 +35,8 @@ export default class PieDemo extends React.Component {
           fill="#fff"
           stroke="#000"
         />
-        <line x1={0} y1={250} x2={500} y2={250} stroke="black"/>
+        <line x1={0} y1={250} x2={500} y2={250} stroke="black" />
       </Surface>
     );
   }
 }
-
-
