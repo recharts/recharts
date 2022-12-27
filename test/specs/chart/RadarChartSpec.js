@@ -20,7 +20,7 @@ describe('<RadarChart />', () => {
     const wrapper = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
         <Radar dataKey="value" />
-      </RadarChart>
+      </RadarChart>,
     );
     expect(wrapper.find('.recharts-polygon').length).to.equal(1);
   });
@@ -29,7 +29,7 @@ describe('<RadarChart />', () => {
     const wrapper = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
         <Radar isAnimationActive={false} dot dataKey="value" />
-      </RadarChart>
+      </RadarChart>,
     );
     expect(wrapper.find('.recharts-radar-dot').length).to.equal(8);
   });
@@ -38,19 +38,28 @@ describe('<RadarChart />', () => {
     const wrapper = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
         <Radar isAnimationActive={false} label dataKey="value" />
-      </RadarChart>
+      </RadarChart>,
     );
     expect(wrapper.find('.recharts-label').length).to.equal(8);
   });
 
   it('Render 1 PolarGrid 1 PolarAngleAxis and 1 PolarRadiusAxis in simple Radar', () => {
     const wrapper = render(
-      <RadarChart cx={300} cy={250} startAngle={45} innerRadius={20} outerRadius={150} width={600} height={500} data={data}>
+      <RadarChart
+        cx={300}
+        cy={250}
+        startAngle={45}
+        innerRadius={20}
+        outerRadius={150}
+        width={600}
+        height={500}
+        data={data}
+      >
         <Radar dataKey="value" fill="#9597E4" fillOpacity={0.6} stroke="#8889DD" strokeWidth={3} />
         <PolarGrid />
         <PolarAngleAxis />
         <PolarRadiusAxis orient="middle" angle={67.5} />
-      </RadarChart>
+      </RadarChart>,
     );
     expect(wrapper.find('.recharts-polar-grid').length).to.equal(1);
     expect(wrapper.find('.recharts-polar-angle-axis').length).to.equal(1);
@@ -59,12 +68,21 @@ describe('<RadarChart />', () => {
 
   it('Render 8 angle grid angle line, 8 angle axis ticks, and 3 radius axis ticks', () => {
     const wrapper = render(
-      <RadarChart cx={300} cy={250} startAngle={45} innerRadius={20} outerRadius={150} width={600} height={500} data={data} >
+      <RadarChart
+        cx={300}
+        cy={250}
+        startAngle={45}
+        innerRadius={20}
+        outerRadius={150}
+        width={600}
+        height={500}
+        data={data}
+      >
         <Radar dataKey="value" fill="#9597E4" fillOpacity={0.6} stroke="#8889DD" strokeWidth={3} />
         <PolarGrid />
         <PolarAngleAxis />
         <PolarRadiusAxis orient="middle" angle={67.5} />
-      </RadarChart>
+      </RadarChart>,
     );
     expect(wrapper.find('.recharts-polar-grid .recharts-polar-grid-angle line').length).to.equal(8);
     expect(wrapper.find('.recharts-polar-angle-axis .recharts-polar-angle-axis-tick').length).to.equal(8);
@@ -76,7 +94,7 @@ describe('<RadarChart />', () => {
     const wrapper = mount(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
         <Radar dataKey="value" onClick={onClick} />
-      </RadarChart>
+      </RadarChart>,
     );
     const radars = wrapper.find(Radar);
     const radar = radars.at(0);

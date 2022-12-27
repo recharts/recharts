@@ -31,17 +31,12 @@ const data02 = [
 ];
 
 describe('<FunnelChart />', () => {
-
   it('Renders 1 funnel in simple FunnelChart', () => {
     const wrapper = render(
       <FunnelChart width={500} height={300}>
         <Tooltip />
-        <Funnel
-          dataKey="value"
-          data={data}
-          isAnimationActive
-        />
-      </FunnelChart>
+        <Funnel dataKey="value" data={data} isAnimationActive />
+      </FunnelChart>,
     );
     expect(wrapper.find('.recharts-trapezoids').length).to.equal(1);
   });
@@ -50,20 +45,10 @@ describe('<FunnelChart />', () => {
     const wrapper = render(
       <FunnelChart margin={{ top: 20, right: 50, left: 20, bottom: 0 }} width={500} height={300}>
         <Tooltip />
-        <Funnel
-          dataKey="value"
-          data={data01}
-          isAnimationActive
-        />
-        <Funnel
-          dataKey="value"
-          data={data02}
-          isAnimationActive={false}
-          width="80%"
-        />
-      </FunnelChart>
+        <Funnel dataKey="value" data={data01} isAnimationActive />
+        <Funnel dataKey="value" data={data02} isAnimationActive={false} width="80%" />
+      </FunnelChart>,
     );
     expect(wrapper.find('.recharts-trapezoids').length).to.equal(2);
   });
-
 });

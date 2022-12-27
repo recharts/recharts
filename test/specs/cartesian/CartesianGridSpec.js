@@ -18,31 +18,25 @@ describe('<CartesianGrid />', () => {
           verticalPoints={verticalPoints}
           horizontalPoints={horizontalPoints}
         />
-      </Surface>
+      </Surface>,
     );
     expect(wrapper.find('line').length).to.equal(9);
   });
 
-  it('Don\'t render any lines when verticalPoints and horizontalPoints are empty', () => {
+  it("Don't render any lines when verticalPoints and horizontalPoints are empty", () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <CartesianGrid
-          width={500}
-          height={500}
-        />
-      </Surface>
+        <CartesianGrid width={500} height={500} />
+      </Surface>,
     );
     expect(wrapper.find('line').length).to.equal(0);
   });
 
-  it('Don\'t render any lines when width or height is smaller than 0', () => {
+  it("Don't render any lines when width or height is smaller than 0", () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <CartesianGrid
-          width={0}
-          height={500}
-        />
-      </Surface>
+        <CartesianGrid width={0} height={500} />
+      </Surface>,
     );
     expect(wrapper.find('line').length).to.equal(0);
   });

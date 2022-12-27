@@ -3,7 +3,6 @@ import { mount, render } from 'enzyme';
 import { expect } from 'chai';
 import { Surface, Label, ScatterChart, Scatter, LabelList, XAxis, YAxis, ZAxis } from 'recharts';
 
-
 describe('<LabelList />', () => {
   it('Render labels in ScatterChart', () => {
     const data = [
@@ -22,7 +21,7 @@ describe('<LabelList />', () => {
         <Scatter name="A school" data={data} isAnimationActive={false}>
           <LabelList dataKey="x" />
         </Scatter>
-      </ScatterChart>
+      </ScatterChart>,
     );
     const label = wrapper.find('.recharts-label');
 

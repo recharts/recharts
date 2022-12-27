@@ -27,20 +27,13 @@ describe('<RadialBarChart />', () => {
         barSize={10}
         data={data}
       >
-        <RadialBar
-          minAngle={15}
-          label={label}
-          background
-          clockWise
-          dataKey="uv"
-          isAnimationActive={false}
-        />
-      </RadialBarChart>
+        <RadialBar minAngle={15} label={label} background clockWise dataKey="uv" isAnimationActive={false} />
+      </RadialBarChart>,
     );
     expect(wrapper.find('.recharts-radial-bar-sector').length).to.equal(data.length);
   });
 
-  it('Don\'t renders any sectors when no RadialBar is added', () => {
+  it("Don't renders any sectors when no RadialBar is added", () => {
     const label = { orientation: 'outer' };
     const wrapper = render(
       <RadialBarChart
@@ -52,12 +45,12 @@ describe('<RadialBarChart />', () => {
         outerRadius={140}
         barSize={10}
         data={data}
-      />
+      />,
     );
     expect(wrapper.find('.recharts-radial-bar-sector').length).to.equal(0);
   });
 
-  it('Don\'t renders any sectors when width or height is smaller than 0', () => {
+  it("Don't renders any sectors when width or height is smaller than 0", () => {
     const label = { orientation: 'outer' };
     const wrapper = render(
       <RadialBarChart
@@ -69,7 +62,7 @@ describe('<RadialBarChart />', () => {
         outerRadius={140}
         barSize={10}
         data={data}
-      />
+      />,
     );
     expect(wrapper.find('.recharts-radial-bar-sector').length).to.equal(0);
   });
@@ -77,24 +70,9 @@ describe('<RadialBarChart />', () => {
   it('Renders sectors when barSize is not specified', () => {
     const label = { orientation: 'outer' };
     const wrapper = render(
-      <RadialBarChart
-        width={500}
-        height={300}
-        cx={150}
-        cy={150}
-        innerRadius={20}
-        outerRadius={140}
-        data={data}
-      >
-        <RadialBar
-          minAngle={15}
-          label={label}
-          background
-          clockWise
-          dataKey="uv"
-          isAnimationActive={false}
-        />
-      </RadialBarChart>
+      <RadialBarChart width={500} height={300} cx={150} cy={150} innerRadius={20} outerRadius={140} data={data}>
+        <RadialBar minAngle={15} label={label} background clockWise dataKey="uv" isAnimationActive={false} />
+      </RadialBarChart>,
     );
     expect(wrapper.find('.recharts-radial-bar-sector').length).to.equal(7);
   });
@@ -122,16 +100,14 @@ describe('<RadialBarChart />', () => {
           dataKey="uv"
           isAnimationActive={false}
         />
-      </RadialBarChart>
+      </RadialBarChart>,
     );
     expect(wrapper.find('.recharts-radial-bar-sector').length).to.equal(7);
   });
 
   it('Renders 7 customized shape when shape is set to be a react element', () => {
     const label = { orientation: 'outer' };
-    const Shape = props =>
-      <Sector {...props} className="customized-shape" />
-    ;
+    const Shape = props => <Sector {...props} className="customized-shape" />;
     const wrapper = render(
       <RadialBarChart
         width={500}
@@ -152,16 +128,14 @@ describe('<RadialBarChart />', () => {
           dataKey="uv"
           isAnimationActive={false}
         />
-      </RadialBarChart>
+      </RadialBarChart>,
     );
     expect(wrapper.find('.customized-shape').length).to.equal(7);
   });
 
   it('Renders 7 customized shape when shape is set to be a function', () => {
     const label = { orientation: 'outer' };
-    const renderShape = props =>
-      <Sector {...props} className="customized-shape" />
-    ;
+    const renderShape = props => <Sector {...props} className="customized-shape" />;
     const wrapper = render(
       <RadialBarChart
         width={500}
@@ -182,7 +156,7 @@ describe('<RadialBarChart />', () => {
           dataKey="uv"
           isAnimationActive={false}
         />
-      </RadialBarChart>
+      </RadialBarChart>,
     );
     expect(wrapper.find('.customized-shape').length).to.equal(7);
   });
@@ -199,15 +173,9 @@ describe('<RadialBarChart />', () => {
         barSize={10}
         data={data}
       >
-        <RadialBar
-          minAngle={15}
-          background
-          clockWise
-          dataKey="uv"
-          isAnimationActive={false}
-        />
+        <RadialBar minAngle={15} background clockWise dataKey="uv" isAnimationActive={false} />
         <Legend />
-      </RadialBarChart>
+      </RadialBarChart>,
     );
     expect(wrapper.find('.recharts-legend-wrapper').length).to.equal(1);
     expect(wrapper.find('.recharts-legend-item').length).to.equal(7);

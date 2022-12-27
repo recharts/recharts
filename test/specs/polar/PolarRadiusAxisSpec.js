@@ -15,14 +15,8 @@ describe('<PolarRadiusAxis />', () => {
   it('Renders 5 ticks when orientation is set to be middle', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <PolarRadiusAxis
-          orientation="middle"
-          cx={250}
-          cy={250}
-          ticks={ticks}
-          label="test"
-        />
-      </Surface>
+        <PolarRadiusAxis orientation="middle" cx={250} cy={250} ticks={ticks} label="test" />
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-polar-radius-axis-tick').length).to.equal(5);
@@ -32,14 +26,8 @@ describe('<PolarRadiusAxis />', () => {
   it('Renders 5 ticks when orientation is set to be left', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <PolarRadiusAxis
-          orientation="left"
-          cx={250}
-          cy={250}
-          ticks={ticks}
-          label="test"
-        />
-      </Surface>
+        <PolarRadiusAxis orientation="left" cx={250} cy={250} ticks={ticks} label="test" />
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-polar-radius-axis-tick').length).to.equal(5);
@@ -47,22 +35,19 @@ describe('<PolarRadiusAxis />', () => {
   });
 
   it('Renders 5 ticks when tick is set to be a function', () => {
-    const renderTick = (props) => {
+    const renderTick = props => {
       const { payload, x, y, fill } = props;
 
-      return <text x={x} y={y} className="customized-tick">{payload.value}</text>;
+      return (
+        <text x={x} y={y} className="customized-tick">
+          {payload.value}
+        </text>
+      );
     };
     const wrapper = render(
       <Surface width={500} height={500}>
-        <PolarRadiusAxis
-          orientation="left"
-          cx={250}
-          cy={250}
-          ticks={ticks}
-          label="test"
-          tick={renderTick}
-        />
-      </Surface>
+        <PolarRadiusAxis orientation="left" cx={250} cy={250} ticks={ticks} label="test" tick={renderTick} />
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-tick').length).to.equal(5);
@@ -70,22 +55,19 @@ describe('<PolarRadiusAxis />', () => {
   });
 
   it('Renders 5 ticks when tick is set to be a react element', () => {
-    const Tick = (props) => {
+    const Tick = props => {
       const { payload, x, y, fill } = props;
 
-      return <text x={x} y={y} className="customized-tick">{payload.value}</text>;
+      return (
+        <text x={x} y={y} className="customized-tick">
+          {payload.value}
+        </text>
+      );
     };
     const wrapper = render(
       <Surface width={500} height={500}>
-        <PolarRadiusAxis
-          orientation="left"
-          cx={250}
-          cy={250}
-          ticks={ticks}
-          label="test"
-          tick={<Tick />}
-        />
-      </Surface>
+        <PolarRadiusAxis orientation="left" cx={250} cy={250} ticks={ticks} label="test" tick={<Tick />} />
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-tick').length).to.equal(5);
@@ -93,59 +75,48 @@ describe('<PolarRadiusAxis />', () => {
   });
 
   it('Renders label when label is set to be a function', () => {
-    const renderLabel = (props) => {
+    const renderLabel = props => {
       const { x, y } = props;
 
-      return <text x={x} y={y} className="customized-label">any</text>;
+      return (
+        <text x={x} y={y} className="customized-label">
+          any
+        </text>
+      );
     };
     const wrapper = render(
       <Surface width={500} height={500}>
-        <PolarRadiusAxis
-          orientation="left"
-          cx={250}
-          cy={250}
-          ticks={ticks}
-          label={renderLabel}
-        />
-      </Surface>
+        <PolarRadiusAxis orientation="left" cx={250} cy={250} ticks={ticks} label={renderLabel} />
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-label').length).to.equal(1);
   });
 
   it('Renders label when label is set to be a react element', () => {
-    const Label = (props) => {
+    const Label = props => {
       const { x, y } = props;
 
-      return <text x={x} y={y} className="customized-label">any</text>;
+      return (
+        <text x={x} y={y} className="customized-label">
+          any
+        </text>
+      );
     };
     const wrapper = render(
       <Surface width={500} height={500}>
-        <PolarRadiusAxis
-          orientation="left"
-          cx={250}
-          cy={250}
-          ticks={ticks}
-          label={<Label />}
-        />
-      </Surface>
+        <PolarRadiusAxis orientation="left" cx={250} cy={250} ticks={ticks} label={<Label />} />
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-label').length).to.equal(1);
   });
 
-
-  it('Don\'t Renders any ticks in when ticks is empty', () => {
+  it("Don't Renders any ticks in when ticks is empty", () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <PolarRadiusAxis
-          orientation="left"
-          cx={250}
-          cy={250}
-          ticks={[]}
-          label="test"
-        />
-      </Surface>
+        <PolarRadiusAxis orientation="left" cx={250} cy={250} ticks={[]} label="test" />
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-polar-radius-axis-tick').length).to.equal(0);

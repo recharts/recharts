@@ -20,25 +20,18 @@ describe('<PolarGrid />', () => {
           polarAngles={polarAngles}
           polarRadius={polarRadius}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-polar-grid-angle line').length).to.equal(9);
     expect(wrapper.find('.recharts-polar-grid-concentric-polygon').length).to.equal(4);
   });
 
-  it('Don\'t render any lines or polygons when polarAngles and polarRadius are not specified', () => {
+  it("Don't render any lines or polygons when polarAngles and polarRadius are not specified", () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <PolarGrid
-          cx={250}
-          cy={250}
-          innerRadius={0}
-          outerRadius={200}
-          width={500}
-          height={500}
-        />
-      </Surface>
+        <PolarGrid cx={250} cy={250} innerRadius={0} outerRadius={200} width={500} height={500} />
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-polar-grid-angle line').length).to.equal(0);
@@ -59,14 +52,14 @@ describe('<PolarGrid />', () => {
           polarAngles={polarAngles}
           polarRadius={polarRadius}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-polar-grid-angle line').length).to.equal(9);
     expect(wrapper.find('.recharts-polar-grid-concentric-circle').length).to.equal(4);
   });
 
-  it('Don\'t render any path when outerRadius is smaller than 0', () => {
+  it("Don't render any path when outerRadius is smaller than 0", () => {
     const wrapper = render(
       <Surface width={500} height={500}>
         <PolarGrid
@@ -80,7 +73,7 @@ describe('<PolarGrid />', () => {
           polarAngles={polarAngles}
           polarRadius={polarRadius}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-polar-grid-angle line').length).to.equal(0);

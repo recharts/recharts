@@ -5,9 +5,7 @@ import { Surface, Cell } from 'recharts';
 
 describe('<Cell />', () => {
   it('Render empty dom', () => {
-    const wrapper = mount(
-      <Cell />
-    );
+    const wrapper = mount(<Cell />);
     expect(wrapper.props().children).to.be.undefined;
   });
 });

@@ -28,7 +28,7 @@ describe('<Label />', () => {
     const wrapper = render(
       <Surface>
         <Label viewBox={polarViewBox} value="text" position="center" />
-      </Surface>
+      </Surface>,
     );
     const label = wrapper.find('.recharts-label');
 
@@ -41,7 +41,7 @@ describe('<Label />', () => {
     const wrapper = render(
       <Surface>
         <Label viewBox={polarViewBox} value="text" position="outside" />
-      </Surface>
+      </Surface>,
     );
     const label = wrapper.find('.recharts-label');
 
@@ -54,7 +54,7 @@ describe('<Label />', () => {
     const wrapper = render(
       <Surface>
         <Label viewBox={polarViewBox} value="text" position="insideStart" />
-      </Surface>
+      </Surface>,
     );
 
     const label = wrapper.find('.recharts-radial-bar-label');
@@ -66,7 +66,7 @@ describe('<Label />', () => {
     const wrapper = render(
       <Surface>
         <Label viewBox={polarViewBox} value="text" position="insideEnd" />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-radial-bar-label').length).to.equal(1);
@@ -75,7 +75,7 @@ describe('<Label />', () => {
     const wrapper = render(
       <Surface>
         <Label viewBox={polarViewBox} value="text" position="end" />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-radial-bar-label').length).to.equal(1);
@@ -92,7 +92,7 @@ describe('<Label />', () => {
     const wrapper = render(
       <Surface>
         <Label viewBox={cartesianViewBox} value="text" position="center" />
-      </Surface>
+      </Surface>,
     );
     const label = wrapper.find('.recharts-label');
 
@@ -104,16 +104,15 @@ describe('<Label />', () => {
   it('Render label when content is a function, and return a simple string.', () => {
     const wrapper = render(
       <Surface>
-        <Label viewBox={cartesianViewBox} value="text" position="center" content={({ value }) => (`${value}%`)} />
-      </Surface>
+        <Label viewBox={cartesianViewBox} value="text" position="center" content={({ value }) => `${value}%`} />
+      </Surface>,
     );
-      
+
     setTimeout(() => {
       const label = wrapper.find('.recharts-label');
       expect(label.length).to.equal(1);
       expect(label.text()).to.equal('text%');
     }, 1000);
-
   });
 
   it('Render label by label = <Label />', () => {
@@ -121,7 +120,7 @@ describe('<Label />', () => {
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         <ReferenceLine y={200} stroke="red" label={<Label value="Max PV PAGE" />} />
-      </LineChart>
+      </LineChart>,
     );
     expect(wrapper.find('.recharts-line .recharts-line-curve').length).to.equal(1);
   });

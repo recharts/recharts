@@ -8,7 +8,7 @@ describe('<Dot />', () => {
     const wrapper = render(
       <Surface width={400} height={400}>
         <Dot cx={100} cy={100} r={5} fill="#ff7300" />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-dot').length).to.equal(1);
@@ -18,7 +18,7 @@ describe('<Dot />', () => {
     const wrapper = render(
       <Surface width={400} height={400}>
         <Dot cy={100} r={5} fill="#ff7300" />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-dot').length).to.equal(0);

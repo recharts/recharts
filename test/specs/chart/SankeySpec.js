@@ -127,9 +127,7 @@ describe('<Sankey />', () => {
     ],
   };
 
-  const wrapper = render(
-    <Sankey width={1000} height={500} data={data} />
-  );
+  const wrapper = render(<Sankey width={1000} height={500} data={data} />);
 
   it('renders 48 nodes in simple SankeyChart', () => {
     expect(wrapper.find('.recharts-sankey-node').length).to.equal(48);
@@ -146,20 +144,13 @@ describe('<Sankey />', () => {
 
     const newData = {
       ...data,
-      nodes: [
-        ...data.nodes,
-        { name: 'New Node' }
-      ],
-      links: [
-        ...data.links,
-        { source: 2, target: data.nodes.length, value: 100.0 }
-      ]
+      nodes: [...data.nodes, { name: 'New Node' }],
+      links: [...data.links, { source: 2, target: data.nodes.length, value: 100.0 }],
     };
     wrapper.setProps({ data: newData });
     setTimeout(() => {
       expect(wrapper.render().find('.recharts-sankey-node').length).to.equal(49);
       expect(wrapper.render().find('.recharts-sankey-link').length).to.equal(69);
     }, 1000);
-
   });
 });

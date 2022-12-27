@@ -15,23 +15,18 @@ describe('<Line />', () => {
   it('Render a path in a simple Line', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <Line
-          isAnimationActive={false}
-          points={data}
-        />
-      </Surface>
+        <Line isAnimationActive={false} points={data} />
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-line-curve').length).to.equal(1);
   });
 
-  it('Don\'t render any path when data is empty', () => {
+  it("Don't render any path when data is empty", () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <Line
-          points={[]}
-        />
-      </Surface>
+        <Line points={[]} />
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-line-curve').length).to.equal(0);

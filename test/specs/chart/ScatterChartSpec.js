@@ -1,7 +1,18 @@
 import React from 'react';
 import { expect } from 'chai';
-import { ScatterChart, Scatter, CartesianGrid, Tooltip, XAxis, YAxis, ZAxis,
-  CartesianAxis, Legend, Cross, Symbols } from 'recharts';
+import {
+  ScatterChart,
+  Scatter,
+  CartesianGrid,
+  Tooltip,
+  XAxis,
+  YAxis,
+  ZAxis,
+  CartesianAxis,
+  Legend,
+  Cross,
+  Symbols,
+} from 'recharts';
 import { mount, render } from 'enzyme';
 
 describe('ScatterChart of three dimension data', () => {
@@ -34,7 +45,7 @@ describe('ScatterChart of three dimension data', () => {
         <Scatter name="B school" data={data02} fill="#347300" />
         <Tooltip />
         <Legend />
-      </ScatterChart>
+      </ScatterChart>,
     );
 
     expect(wrapper.find('.recharts-scatter').length).to.equal(2);
@@ -43,7 +54,7 @@ describe('ScatterChart of three dimension data', () => {
     expect(wrapper.find('.recharts-scatter-symbol path').length).to.equal(data01.length + data02.length);
   });
 
-  it('Don\'t render any symbols when data is empty', () => {
+  it("Don't render any symbols when data is empty", () => {
     const wrapper = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis dataKey="x" name="stature" unit="cm" />
@@ -53,7 +64,7 @@ describe('ScatterChart of three dimension data', () => {
         <Scatter name="A school" data={[]} fillOpacity={0.3} fill="#ff7300" />
         <Tooltip />
         <Legend layout="vertical" />
-      </ScatterChart>
+      </ScatterChart>,
     );
 
     expect(wrapper.find('.recharts-symbol').length).to.equal(0);
@@ -70,14 +81,13 @@ describe('ScatterChart of three dimension data', () => {
         <Scatter name="B school" data={data02} fill="#347300" />
         <Tooltip />
         <Legend />
-      </ScatterChart>
+      </ScatterChart>,
     );
 
     const symbols = wrapper.find(Symbols);
     const firstSymbol = symbols.first();
     firstSymbol.simulate('mouseEnter');
   });
-
 });
 
 describe('ScatterChart of two dimension data', () => {
@@ -92,10 +102,10 @@ describe('ScatterChart of two dimension data', () => {
 
   const wrapper = render(
     <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-      <XAxis dataKey={'x'} name="stature" unit="cm" />
-      <YAxis dataKey={'y'} name="weight" unit="kg" />
+      <XAxis dataKey="x" name="stature" unit="cm" />
+      <YAxis dataKey="y" name="weight" unit="kg" />
       <Scatter line name="A school" data={data} fill="#ff7300" />
-    </ScatterChart>
+    </ScatterChart>,
   );
 
   it('renders 6 circles in simple ScatterChart', () => {
@@ -104,5 +114,4 @@ describe('ScatterChart of two dimension data', () => {
   it('renders 1 jointed line when line is setted to be true', () => {
     expect(wrapper.find('.recharts-scatter-line').length).to.equal(1);
   });
-
 });

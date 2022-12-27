@@ -14,18 +14,18 @@ describe('<Polygon />', () => {
     const wrapper = render(
       <Surface width={400} height={400}>
         <Polygon points={points} fill="#ff7300" />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-polygon').length).to.equal(1);
   });
 
-  it('Dno\'t render any path when points is empty or null', () => {
+  it("Dno't render any path when points is empty or null", () => {
     const wrapper = render(
       <Surface width={400} height={400}>
         <Polygon points={[]} fill="#ff7300" />
         <Polygon fill="#ff7300" />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-polygon').length).to.equal(0);

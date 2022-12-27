@@ -24,7 +24,7 @@ describe('<Curve />', () => {
     const wrapper = render(
       <Surface width={400} height={400}>
         <Curve stroke="#000" fill="none" type="monotone" points={points} />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-curve').length).to.equal(1);
@@ -34,7 +34,7 @@ describe('<Curve />', () => {
     const wrapper = render(
       <Surface width={400} height={400}>
         <Curve stroke="#000" fill="none" type="monotone" points={points} baseLineType="vertical" baseLine={0} />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-curve').length).to.equal(1);
@@ -44,7 +44,7 @@ describe('<Curve />', () => {
     const wrapper = render(
       <Surface width={400} height={400}>
         <Curve stroke="#000" fill="none" type="monotone" points={points} baseLineType="horizontal" baseLine={0} />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-curve').length).to.equal(1);
@@ -54,7 +54,7 @@ describe('<Curve />', () => {
     const wrapper = render(
       <Surface width={400} height={400}>
         <Curve stroke="#000" fill="none" type="monotone" points={points} baseLineType="curve" baseLine={points02} />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-curve').length).to.equal(1);
@@ -64,7 +64,7 @@ describe('<Curve />', () => {
     const wrapper = render(
       <Surface width={400} height={400}>
         <Curve stroke="#000" fill="none" type="monotone" points={[]} />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-curve').length).to.equal(0);
