@@ -3,7 +3,8 @@
  */
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-import { PresentationAttributesWithProps, adaptEventHandlers, filterProps } from '../util/types';
+import { PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 interface DotProps {
   className?: string;

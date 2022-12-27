@@ -3,7 +3,7 @@
  */
 import React, { ReactNode, CSSProperties, SVGProps } from 'react';
 import classNames from 'classnames';
-import { filterProps } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 interface SurfaceProps {
   width: number;

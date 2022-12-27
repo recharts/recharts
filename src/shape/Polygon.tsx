@@ -3,7 +3,8 @@
  */
 import React, { PureComponent, SVGProps } from 'react';
 import classNames from 'classnames';
-import { filterProps, Coordinate } from '../util/types';
+import { Coordinate } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 const isValidatePoint = (point: Coordinate) => {
   return point && point.x === +point.x && point.y === +point.y;

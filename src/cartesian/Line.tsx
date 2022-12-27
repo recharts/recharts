@@ -12,21 +12,12 @@ import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
 import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
-import { findAllByType } from '../util/ReactUtils';
+import { findAllByType, filterProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import {
-  D3Scale,
-  LegendType,
-  TooltipType,
-  AnimationTiming,
-  filterProps,
-  ChartOffset,
-  DataKey,
-  TickItem,
-} from '../util/types';
+import { D3Scale, LegendType, TooltipType, AnimationTiming, ChartOffset, DataKey, TickItem } from '../util/types';
 
 type LineDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
 

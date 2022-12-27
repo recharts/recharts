@@ -10,7 +10,8 @@ import { Text } from '../component/Text';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { isNumber } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
-import { Padding, DataKey, filterProps } from '../util/types';
+import { Padding, DataKey } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
 interface BrushStartEndIndex {

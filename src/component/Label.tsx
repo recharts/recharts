@@ -2,10 +2,10 @@ import React, { cloneElement, isValidElement, ReactNode, ReactElement, createEle
 import _ from 'lodash';
 import classNames from 'classnames';
 import { Text } from './Text';
-import { findAllByType } from '../util/ReactUtils';
+import { findAllByType, filterProps } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-import { filterProps, ViewBox, PolarViewBox, CartesianViewBox } from '../util/types';
+import { ViewBox, PolarViewBox, CartesianViewBox } from '../util/types';
 
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
 

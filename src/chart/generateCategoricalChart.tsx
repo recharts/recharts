@@ -20,6 +20,7 @@ import {
   isChildrenEqual,
   renderByOrder,
   getReactEventByType,
+  filterProps,
 } from '../util/ReactUtils';
 
 import { CartesianAxis } from '../cartesian/CartesianAxis';
@@ -63,7 +64,6 @@ import {
   Coordinate,
   ChartCoordinate,
   TickItem,
-  filterProps,
   adaptEventHandlers,
   GeometrySector,
 } from '../util/types';

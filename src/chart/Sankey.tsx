@@ -9,9 +9,9 @@ import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { shallowEqual } from '../util/ShallowEqual';
-import { filterSvgElements, validateWidthHeight, findChildByType } from '../util/ReactUtils';
+import { filterSvgElements, validateWidthHeight, findChildByType, filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { Margin, DataKey, filterProps, SankeyLink, SankeyNode } from '../util/types';
+import { Margin, DataKey, SankeyLink, SankeyNode } from '../util/types';
 
 const defaultCoordinateOfTooltip = { x: 0, y: 0 };
 

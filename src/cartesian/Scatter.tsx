@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import _ from 'lodash';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
-import { findAllByType } from '../util/ReactUtils';
+import { findAllByType, filterProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { ZAxis, Props as ZAxisProps } from './ZAxis';
 import { Curve, Props as CurveProps, CurveType } from '../shape/Curve';
@@ -20,7 +20,6 @@ import {
   LegendType,
   SymbolType,
   AnimationTiming,
-  filterProps,
   D3Scale,
   ChartOffset,
   DataKey,
