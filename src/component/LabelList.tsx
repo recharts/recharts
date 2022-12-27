@@ -92,25 +92,25 @@ function parseLabelList<T extends Data>(label: any, data: Array<T>) {
   return null;
 }
 
-function renderCallByParent<T extends Data>(parentProps: any, data: Array<T>, ckeckPropsLabel = true) {
-  if (!parentProps || (!parentProps.children && ckeckPropsLabel && !parentProps.label)) {
+function renderCallByParent<T extends Data>(parentProps: any, data: Array<T>, checkPropsLabel = true) {
+  if (!parentProps || (!parentProps.children && checkPropsLabel && !parentProps.label)) {
     return null;
   }
   const { children } = parentProps;
 
-  const explicitChilren = findAllByType(children, LabelList.displayName).map((child: any, index: number) =>
+  const explicitChildren = findAllByType(children, LabelList.displayName).map((child: any, index: number) =>
     cloneElement(child, {
       data,
       key: `labelList-${index}`,
     }),
   );
-  if (!ckeckPropsLabel) {
-    return explicitChilren;
+  if (!checkPropsLabel) {
+    return explicitChildren;
   }
 
   const implicitLabelList = parseLabelList(parentProps.label, data);
 
-  return [implicitLabelList, ...explicitChilren];
+  return [implicitLabelList, ...explicitChildren];
 }
 
 LabelList.renderCallByParent = renderCallByParent;
