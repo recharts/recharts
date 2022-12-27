@@ -17,7 +17,7 @@ describe('<Tooltip />', () => {
       <AreaChart width={100} height={50} data={data}>
         <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
         <Tooltip />
-      </AreaChart>
+      </AreaChart>,
     );
 
     // I simulate to hover on the AreaChart, then the tooltip should show!

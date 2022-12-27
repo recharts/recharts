@@ -12,7 +12,6 @@ describe('<YAxis />', () => {
     { name: 'Page E', uv: 189, pv: 4800, amt: 2400 },
   ];
 
-
   it('Render 3 y-CartesianAxis in AreaChart', () => {
     const wrapper = mount(
       <AreaChart width={600} height={400} data={data}>
@@ -22,7 +21,7 @@ describe('<YAxis />', () => {
         <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" strokeWidth={2} yAxisId={0} />
         <Area dataKey="pv" stroke="#387908" fill="#387908" strokeWidth={2} yAxisId={1} />
         <Area dataKey="amt" stroke="#38abc8" fill="#38abc8" strokeWidth={2} yAxisId={2} />
-      </AreaChart>
+      </AreaChart>,
     );
 
     expect(wrapper.find(CartesianAxis).length).to.equal(3);
@@ -33,7 +32,7 @@ describe('<YAxis />', () => {
       <AreaChart width={600} height={400} data={data}>
         <YAxis type="number" stroke="#ff7300" />
         <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>
+      </AreaChart>,
     );
     const ticks = wrapper.find(Text);
 
@@ -47,7 +46,7 @@ describe('<YAxis />', () => {
         <YAxis type="number" stroke="#ff7300" domain={[0, 10000]} />
         <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
         <Area dataKey="pv" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>
+      </AreaChart>,
     );
     const ticks = wrapper.find(Text);
 
@@ -61,10 +60,10 @@ describe('<YAxis />', () => {
         <YAxis type="number" stroke="#ff7300" domain={[0, 'dataMax']} />
         <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
         <Area dataKey="pv" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>
+      </AreaChart>,
     );
     const ticks = wrapper.find(Text);
-    
+
     expect(ticks.length).to.equal(3);
     expect(ticks.last().props().children).to.equal('9800');
   });
@@ -75,7 +74,7 @@ describe('<YAxis />', () => {
         <YAxis type="number" stroke="#ff7300" domain={[0, 'dataMax - 100']} />
         <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
         <Area dataKey="pv" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>
+      </AreaChart>,
     );
     const ticks = wrapper.find(Text);
 
@@ -88,7 +87,7 @@ describe('<YAxis />', () => {
       <AreaChart width={600} height={400} data={data}>
         <YAxis stroke="#ff7300" domain={[0, 1000]} />
         <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>
+      </AreaChart>,
     );
     const ticks = wrapper.find(Text);
 
@@ -101,7 +100,7 @@ describe('<YAxis />', () => {
       <AreaChart width={600} height={400} data={data}>
         <YAxis stroke="#ff7300" domain={[0, 'dataMax + 100']} />
         <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>
+      </AreaChart>,
     );
     const ticks = wrapper.find(Text);
 
@@ -113,7 +112,7 @@ describe('<YAxis />', () => {
       <AreaChart width={600} height={400} data={data}>
         <YAxis stroke="#ff7300" domain={[0, 'dataMax - 100']} />
         <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>
+      </AreaChart>,
     );
     const ticks = wrapper.find(Text);
 
@@ -123,9 +122,9 @@ describe('<YAxis />', () => {
   it('Render 1 ticks when domain={["auto, "auto"]} and dataKey is "noExist" ', () => {
     const wrapper = mount(
       <AreaChart width={600} height={400} data={data}>
-        <YAxis stroke="#ff7300" domain={["auto", "auto"]} />
+        <YAxis stroke="#ff7300" domain={['auto', 'auto']} />
         <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>
+      </AreaChart>,
     );
     const ticks = wrapper.find(Text);
 
@@ -137,7 +136,7 @@ describe('<YAxis />', () => {
       <AreaChart width={600} height={400} data={data}>
         <YAxis type="number" stroke="#ff7300" ticks={[0, 400, 800, 1200]} />
         <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>
+      </AreaChart>,
     );
     const ticks = wrapper.find(Text);
 
@@ -151,7 +150,7 @@ describe('<YAxis />', () => {
       <AreaChart width={600} height={400} data={data}>
         <YAxis reversed type="number" stroke="#ff7300" />
         <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>
+      </AreaChart>,
     );
     const ticks = wrapper.find(Text);
 
@@ -167,15 +166,11 @@ describe('<YAxis />', () => {
       { day: '05-04', weather: 'rain' },
     ];
     const wrapper = render(
-      <AreaChart
-        width={400}
-        height={400}
-        data={areaData}
-      >
+      <AreaChart width={400} height={400} data={areaData}>
         <XAxis dataKey="day" />
         <YAxis type="category" />
         <Area type="stepAfter" dataKey="weather" stroke="#0088FE" />
-      </AreaChart>
+      </AreaChart>,
     );
 
     setTimeout(() => {
@@ -184,11 +179,11 @@ describe('<YAxis />', () => {
     }, 1000);
   });
 
-  it('Don\'t render anything', () => {
+  it("Don't render anything", () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <YAxis dataKey={'x'} name="stature" unit="cm" />
-      </Surface>
+        <YAxis dataKey="x" name="stature" unit="cm" />
+      </Surface>,
     );
 
     expect(wrapper.find('svg').children.length).to.equal(1);

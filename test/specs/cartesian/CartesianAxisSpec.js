@@ -25,7 +25,7 @@ describe('<CartesianAxis />', () => {
           ticks={ticks}
           label="test"
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
@@ -44,7 +44,7 @@ describe('<CartesianAxis />', () => {
           ticks={[]}
           label="test"
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(0);
@@ -63,7 +63,7 @@ describe('<CartesianAxis />', () => {
           label="test"
           interval="preserveStartEnd"
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
@@ -100,7 +100,7 @@ describe('<CartesianAxis />', () => {
           label="test"
           interval="preserveStart"
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
@@ -118,7 +118,7 @@ describe('<CartesianAxis />', () => {
           ticks={ticks}
           label="top"
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
@@ -137,7 +137,7 @@ describe('<CartesianAxis />', () => {
           ticks={ticks}
           label="left"
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
@@ -156,19 +156,22 @@ describe('<CartesianAxis />', () => {
           ticks={ticks}
           label="right"
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
     expect(wrapper.find('.recharts-label').length).to.equal(1);
   });
 
-
   it('Renders label when label is a function', () => {
-    const renderLabel = (props) => {
+    const renderLabel = props => {
       const { x, y, width, height } = props;
 
-      return <text className="customized-label" x={x} y={y}>test</text>;
+      return (
+        <text className="customized-label" x={x} y={y}>
+          test
+        </text>
+      );
     };
     const wrapper = render(
       <Surface width={500} height={500}>
@@ -181,7 +184,7 @@ describe('<CartesianAxis />', () => {
           ticks={ticks}
           label={renderLabel}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
@@ -189,10 +192,14 @@ describe('<CartesianAxis />', () => {
   });
 
   it('Renders label when label is a react element', () => {
-    const Label = (props) => {
+    const Label = props => {
       const { x, y, width, height } = props;
 
-      return <text className="customized-label" x={x} y={y}>test</text>;
+      return (
+        <text className="customized-label" x={x} y={y}>
+          test
+        </text>
+      );
     };
     const wrapper = render(
       <Surface width={500} height={500}>
@@ -205,16 +212,18 @@ describe('<CartesianAxis />', () => {
           ticks={ticks}
           label={<Label />}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(5);
   });
 
   it('Render customized ticks when tick is set to be a ReactElement', () => {
-    const CustomizedTick = ({ x, y }) =>
-      <text x={x} y={y} className="customized-tick">test</text>
-    ;
+    const CustomizedTick = ({ x, y }) => (
+      <text x={x} y={y} className="customized-tick">
+        test
+      </text>
+    );
     const wrapper = render(
       <Surface width={500} height={500}>
         <CartesianAxis
@@ -227,16 +236,18 @@ describe('<CartesianAxis />', () => {
           tick={<CustomizedTick />}
           interval={0}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-tick').length).to.equal(ticks.length);
   });
 
   it('Render customized ticks when ticks is an array of strings and interval is 0', () => {
-    const CustomizedTick = ({ x, y }) =>
-      <text x={x} y={y} className="customized-tick">test</text>
-    ;
+    const CustomizedTick = ({ x, y }) => (
+      <text x={x} y={y} className="customized-tick">
+        test
+      </text>
+    );
     const wrapper = render(
       <Surface width={500} height={500}>
         <CartesianAxis
@@ -249,16 +260,18 @@ describe('<CartesianAxis />', () => {
           tick={<CustomizedTick />}
           interval={0}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-tick').length).to.equal(3);
   });
 
   it('Render customized ticks when tick is set to be a function', () => {
-    const renderCustomizedTick = ({ x, y }) =>
-      <text x={x} y={y} className="customized-tick">test</text>
-    ;
+    const renderCustomizedTick = ({ x, y }) => (
+      <text x={x} y={y} className="customized-tick">
+        test
+      </text>
+    );
     const wrapper = render(
       <Surface width={500} height={500}>
         <CartesianAxis
@@ -271,7 +284,7 @@ describe('<CartesianAxis />', () => {
           tick={renderCustomizedTick}
           interval={0}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-tick').length).to.equal(ticks.length);
@@ -288,10 +301,9 @@ describe('<CartesianAxis />', () => {
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
           tick={false}
         />
-      </Surface>
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-cartesian-axis-tick').length).to.equal(0);
   });
-
 });

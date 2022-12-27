@@ -1,8 +1,17 @@
 import { expect } from 'chai';
 import { scaleLinear, scaleBand } from 'd3-scale';
-import { getPercentValue, getBandSizeOfAxis, getAnyElementOfObject,
-  calculateDomainOfTicks, parseSpecifiedDomain, hasDuplicate, parseScale,
-  getTicksOfScale, getValueByDataKey, mathSign, offsetSign
+import {
+  getPercentValue,
+  getBandSizeOfAxis,
+  getAnyElementOfObject,
+  calculateDomainOfTicks,
+  parseSpecifiedDomain,
+  hasDuplicate,
+  parseScale,
+  getTicksOfScale,
+  getValueByDataKey,
+  mathSign,
+  offsetSign,
 } from '../../../src/util/DataUtils';
 
 describe('getPercentValue', () => {
@@ -45,7 +54,6 @@ describe('hasDuplicate', () => {
 });
 
 describe('mathSign', () => {
-
   it('(0)', () => {
     expect(mathSign(0)).to.equal(0);
   });

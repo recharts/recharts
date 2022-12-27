@@ -14,26 +14,18 @@ describe('<RadialBar />', () => {
   it('Render 5 sectors', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <RadialBar
-          isAnimationActive={false}
-          cx={250}
-          cy={250}
-          data={data}
-          label
-        />
-      </Surface>
+        <RadialBar isAnimationActive={false} cx={250} cy={250} data={data} label />
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-radial-bar-sector').length).to.equal(data.length);
   });
 
-  it('Don\'t render any sector when data is empty', () => {
+  it("Don't render any sector when data is empty", () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <RadialBar
-          data={[]}
-        />
-      </Surface>
+        <RadialBar data={[]} />
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-pie').length).to.equal(0);
@@ -42,13 +34,8 @@ describe('<RadialBar />', () => {
   it('Render 5 sectors', () => {
     const wrapper = mount(
       <Surface width={500} height={500}>
-        <RadialBar
-          isAnimationActive={false}
-          cx={250}
-          cy={250}
-          data={data}
-        />
-      </Surface>
+        <RadialBar isAnimationActive={false} cx={250} cy={250} data={data} />
+      </Surface>,
     );
 
     const se = wrapper.find(Sector).first();
@@ -57,5 +44,4 @@ describe('<RadialBar />', () => {
     se.simulate('mouseLeave');
     se.simulate('click');
   });
-
 });

@@ -2,7 +2,6 @@ import React from 'react';
 import { expect } from 'chai';
 import { warn } from '../../../src/util/LogUtils';
 
-
 describe('LogUtils', () => {
   it('warn when format is null', () => {
     warn(true);

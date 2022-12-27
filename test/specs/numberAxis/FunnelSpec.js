@@ -20,11 +20,8 @@ describe('<Funnel />', () => {
   it('Render 5 Trapezoid in a simple funnel', () => {
     const wrapper = render(
       <FunnelChart width={500} height={500}>
-        <Funnel
-          dataKey="value"
-          data={data}
-        />
-      </FunnelChart>
+        <Funnel dataKey="value" data={data} />
+      </FunnelChart>,
     );
 
     expect(wrapper.find('.recharts-funnel-trapezoid').length).to.equal(5);
@@ -33,44 +30,32 @@ describe('<Funnel />', () => {
   it('Render 5 Trapezoid with animation in a simple funnel', () => {
     const wrapper = render(
       <FunnelChart width={500} height={500}>
-        <Funnel
-          dataKey="value"
-          data={data}
-          isAnimationActive
-          animationEasing="spring"
-        />
-      </FunnelChart>
+        <Funnel dataKey="value" data={data} isAnimationActive animationEasing="spring" />
+      </FunnelChart>,
     );
 
     expect(wrapper.find('.recharts-funnel-trapezoid').length).to.equal(5);
   });
 
-  it('Don\'t render any Trapezoid when data is empty', () => {
+  it("Don't render any Trapezoid when data is empty", () => {
     const wrapper = render(
       <FunnelChart width={500} height={500}>
-        <Funnel
-          data={[]}
-        />
-      </FunnelChart>
+        <Funnel data={[]} />
+      </FunnelChart>,
     );
 
     expect(wrapper.find('.recharts-funnel-trapezoid').length).to.equal(0);
   });
 
-  it('Don\'t render any Trapezoid when set hide', () => {
+  it("Don't render any Trapezoid when set hide", () => {
     const wrapper = render(
       <FunnelChart width={500} height={500}>
-        <Funnel
-          dataKey="value"
-          data={data}
-          hide
-        />
-      </FunnelChart>
+        <Funnel dataKey="value" data={data} hide />
+      </FunnelChart>,
     );
 
     expect(wrapper.find('.recharts-funnel-trapezoid').length).to.equal(0);
   });
-
 
   it('active shape in simple funnel', () => {
     const wrapper = render(
@@ -93,13 +78,11 @@ describe('<Funnel />', () => {
             />
           )}
         >
-          {
-            data.map((entry, index) => (
-              <Cell key={`slice-${index}`} fill={colors1[index % 10]} opacity={0.5} />
-            ))
-          }
+          {data.map((entry, index) => (
+            <Cell key={`slice-${index}`} fill={colors1[index % 10]} opacity={0.5} />
+          ))}
         </Funnel>
-      </FunnelChart>
+      </FunnelChart>,
     );
 
     expect(wrapper.find('.custom-active-shape').length).to.equal(1);
@@ -108,18 +91,12 @@ describe('<Funnel />', () => {
   it('Renders funnel custom cell in simple FunnelChart', () => {
     const wrapper = render(
       <FunnelChart width={500} height={300}>
-        <Funnel
-          dataKey="value"
-          data={data}
-          isAnimationActive={false}
-        >
-          {
-            data.map((entry, index) => (
-              <Cell key={`slice-${index}`} fill={colors1[index % 10]} className="custom-cell" />
-            ))
-          }
+        <Funnel dataKey="value" data={data} isAnimationActive={false}>
+          {data.map((entry, index) => (
+            <Cell key={`slice-${index}`} fill={colors1[index % 10]} className="custom-cell" />
+          ))}
         </Funnel>
-      </FunnelChart>
+      </FunnelChart>,
     );
     expect(wrapper.find('.custom-cell').length).to.equal(5);
   });
@@ -127,19 +104,13 @@ describe('<Funnel />', () => {
   it('Renders funnel custom label in simple FunnelChart', () => {
     const wrapper = render(
       <FunnelChart width={500} height={300}>
-        <Funnel
-          dataKey="value"
-          data={data}
-          isAnimationActive={false}
-        >
-          {
-            data.map((entry, index) => (
-              <Cell key={`slice-${index}`} fill={colors1[index % 10]} className="custom-cell" />
-            ))
-          }
+        <Funnel dataKey="value" data={data} isAnimationActive={false}>
+          {data.map((entry, index) => (
+            <Cell key={`slice-${index}`} fill={colors1[index % 10]} className="custom-cell" />
+          ))}
           <LabelList position="right" fill="#000" stroke="#000" dataKey="name" className="custom-label" />
         </Funnel>
-      </FunnelChart>
+      </FunnelChart>,
     );
     expect(wrapper.find('.custom-label').length).to.equal(5);
   });
