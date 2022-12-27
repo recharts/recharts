@@ -1,10 +1,32 @@
 import React, { Component } from 'react';
-import { changeNumberOfData } from './utils';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid,
-  Line, LineChart, Legend, ResponsiveContainer, PieChart, Pie, Bar,
-  BarChart, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ComposedChart,
-  RadialBarChart, RadialBar, Treemap } from 'recharts';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  Line,
+  LineChart,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Bar,
+  BarChart,
+  Cell,
+  RadarChart,
+  Radar,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  ComposedChart,
+  RadialBarChart,
+  RadialBar,
+  Treemap,
+} from 'recharts';
 import * as _ from 'lodash';
+import { changeNumberOfData } from './utils';
 
 const data = [
   { name: 'Page A', uv: 4000, pv: 2400, amt: 2400, time: 1 },
@@ -65,22 +87,22 @@ const data05 = [
 ];
 
 const data06 = [
-  { name: 'Page A', uv: 590, pv: 800, amt: 1400},
-  { name: 'Page B', uv: 868, pv: 967, amt: 1506},
-  { name: 'Page C', uv: 1397, pv: 1098, amt: 989},
-  { name: 'Page D', uv: 1480, pv: 1200, amt: 1228},
-  { name: 'Page E', uv: 1520, pv: 1108, amt: 1100},
-  { name: 'Page F', uv: 1400, pv: 680, amt: 1700}
+  { name: 'Page A', uv: 590, pv: 800, amt: 1400 },
+  { name: 'Page B', uv: 868, pv: 967, amt: 1506 },
+  { name: 'Page C', uv: 1397, pv: 1098, amt: 989 },
+  { name: 'Page D', uv: 1480, pv: 1200, amt: 1228 },
+  { name: 'Page E', uv: 1520, pv: 1108, amt: 1100 },
+  { name: 'Page F', uv: 1400, pv: 680, amt: 1700 },
 ];
 
 const data07 = [
-  { name: '18-24', uv: 31.47, pv: 2400, fill: '#8884d8'},
-  { name: '25-29', uv: 26.69, pv: 4567, fill: '#83a6ed'},
-  { name: '30-34', uv: 15.69, pv: 1398, fill: '#8dd1e1'},
-  { name: '35-39', uv: 8.22, pv: 9800, fill: '#82ca9d'},
-  { name: '40-49', uv: 8.63, pv: 3908, fill: '#a4de6c'},
-  { name: '50+', uv: 2.63, pv: 4800, fill: '#d0ed57'},
-  { name: 'unknown', uv: 6.67, pv: 4800, fill: '#ffc658'}
+  { name: '18-24', uv: 31.47, pv: 2400, fill: '#8884d8' },
+  { name: '25-29', uv: 26.69, pv: 4567, fill: '#83a6ed' },
+  { name: '30-34', uv: 15.69, pv: 1398, fill: '#8dd1e1' },
+  { name: '35-39', uv: 8.22, pv: 9800, fill: '#82ca9d' },
+  { name: '40-49', uv: 8.63, pv: 3908, fill: '#a4de6c' },
+  { name: '50+', uv: 2.63, pv: 4800, fill: '#d0ed57' },
+  { name: 'unknown', uv: 6.67, pv: 4800, fill: '#ffc658' },
 ];
 
 const data08 = [
@@ -154,7 +176,7 @@ const data09 = [
   { name: 'Page A', uv: 4000 },
   { name: 'Page B', uv: 3000 },
   { name: 'Page C', uv: 2000 },
-  { name: 'Page D'},
+  { name: 'Page D' },
   { name: 'Page E', uv: 1890 },
   { name: 'Page F', uv: 2390 },
   { name: 'Page G', uv: 3490 },
@@ -163,7 +185,6 @@ const data09 = [
 const initialState = { data, data01, data02 };
 
 export default class Demo extends Component {
-
   static displayName = 'ResponsiveContainerDemo';
 
   state = initialState;
@@ -177,11 +198,7 @@ export default class Demo extends Component {
 
     return (
       <div className="area-charts">
-        <a
-          href="javascript: void(0);"
-          className="btn update"
-          onClick={this.handleChangeData}
-        >
+        <a href="javascript: void(0);" className="btn update" onClick={this.handleChangeData}>
           change data
         </a>
         <br />
@@ -189,11 +206,7 @@ export default class Demo extends Component {
         <p>Stacked AreaChart in ResponseContainer</p>
         <div className="area-chart-wrapper" style={{ width: '100%', height: '400px' }}>
           <ResponsiveContainer>
-            <AreaChart
-              data={this.state.data}
-              margin={{ top: 20, right: 80, left: 20, bottom: 5 }}
-              syncId="test"
-            >
+            <AreaChart data={this.state.data} margin={{ top: 20, right: 80, left: 20, bottom: 5 }} syncId="test">
               <XAxis dataKey="time" type="number" label="province" />
               <YAxis />
               <Tooltip />
@@ -223,7 +236,7 @@ export default class Demo extends Component {
         <p>A simple LineChart</p>
         <div className="line-chart-wrapper" style={{ width: '100%', height: '400px', backgroundColor: '#f5f5f5' }}>
           <ResponsiveContainer>
-            <LineChart data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }} >
+            <LineChart data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
               <CartesianGrid stroke="#f5f5f5" />
               <XAxis />
               <YAxis />
@@ -244,32 +257,27 @@ export default class Demo extends Component {
               <Legend />
               <Tooltip />
               <CartesianGrid vertical={false} />
-              <Bar yAxisId="a" dataKey="uv" >
-                {
-                  data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} />
-                  ))
-                }
+              <Bar yAxisId="a" dataKey="uv">
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} />
+                ))}
               </Bar>
               <Bar yAxisId="b" dataKey="pv" label>
-                {
-                  data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} />
-                  ))
-                }
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} />
+                ))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-
         <p>MORE EXAMPLES!</p>
-        <div className="line-chart-wrapper" style={{ float: 'left', width: '50%', height: '400px', backgroundColor: '#f5f5f5' }}>
+        <div
+          className="line-chart-wrapper"
+          style={{ float: 'left', width: '50%', height: '400px', backgroundColor: '#f5f5f5' }}
+        >
           <ResponsiveContainer>
-            <LineChart
-              data={data04}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
+            <LineChart data={data04} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <XAxis dataKey="name" />
               <YAxis />
               <CartesianGrid strokeDasharray="3 3" />
@@ -280,7 +288,10 @@ export default class Demo extends Component {
             </LineChart>
           </ResponsiveContainer>
         </div>
-        <div className="line-chart-wrapper" style={{ float: 'left', width: '50%', height: '400px', backgroundColor: '#f5f5f5' }}>
+        <div
+          className="line-chart-wrapper"
+          style={{ float: 'left', width: '50%', height: '400px', backgroundColor: '#f5f5f5' }}
+        >
           <ResponsiveContainer>
             <BarChart data={data04}>
               <XAxis dataKey="name" />
@@ -289,39 +300,38 @@ export default class Demo extends Component {
               <Legend />
               <Tooltip />
               <CartesianGrid vertical={false} />
-              <Bar yAxisId="a" dataKey="uv" >
-                {
-                  data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} />
-                  ))
-                }
+              <Bar yAxisId="a" dataKey="uv">
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} />
+                ))}
               </Bar>
               <Bar yAxisId="b" dataKey="pv" label>
-                {
-                  data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} />
-                  ))
-                }
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} />
+                ))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div className="line-chart-wrapper" style={{ float: 'left', width: '50%', height: '400px', backgroundColor: '#f5f5f5' }}>
+        <div
+          className="line-chart-wrapper"
+          style={{ float: 'left', width: '50%', height: '400px', backgroundColor: '#f5f5f5' }}
+        >
           <ResponsiveContainer>
             <RadarChart outerRadius={150} data={data05}>
               <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-              <PolarGrid radialLines={true} />
+              <PolarGrid radialLines />
               <PolarAngleAxis dataKey="subject" />
               <PolarRadiusAxis />
             </RadarChart>
           </ResponsiveContainer>
         </div>
-        <div className="line-chart-wrapper" style={{ float: 'left', width: '50%', height: '400px', backgroundColor: '#f5f5f5' }}>
+        <div
+          className="line-chart-wrapper"
+          style={{ float: 'left', width: '50%', height: '400px', backgroundColor: '#f5f5f5' }}
+        >
           <ResponsiveContainer>
-            <ComposedChart
-              data={data06}
-              margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
-            >
+            <ComposedChart data={data06} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
@@ -333,30 +343,30 @@ export default class Demo extends Component {
             </ComposedChart>
           </ResponsiveContainer>
         </div>
-        <div className="line-chart-wrapper" style={{ float: 'left', width: '100%', height: '400px', backgroundColor: '#f5f5f5' }}>
+        <div
+          className="line-chart-wrapper"
+          style={{ float: 'left', width: '100%', height: '400px', backgroundColor: '#f5f5f5' }}
+        >
           <ResponsiveContainer>
             <RadialBarChart innerRadius={20} outerRadius={140} barSize={20} data={data07}>
               <RadialBar label background dataKey="uv" />
             </RadialBarChart>
           </ResponsiveContainer>
         </div>
-        <div className="line-chart-wrapper" style={{ float: 'left', width: '100%', height: '600px', backgroundColor: '#f5f5f5' }}>
+        <div
+          className="line-chart-wrapper"
+          style={{ float: 'left', width: '100%', height: '600px', backgroundColor: '#f5f5f5' }}
+        >
           <ResponsiveContainer>
-            <Treemap
-              data={data08}
-              dataKey="size"
-              aspectRatio={4 / 3}
-              stroke="#fff"
-              fill="#8884d8"
-            />
+            <Treemap data={data08} dataKey="size" aspectRatio={4 / 3} stroke="#fff" fill="#8884d8" />
           </ResponsiveContainer>
         </div>
-        <div className="line-chart-wrapper" style={{ float: 'left', width: '100%', height: '400px', backgroundColor: '#f5f5f5' }}>
+        <div
+          className="line-chart-wrapper"
+          style={{ float: 'left', width: '100%', height: '400px', backgroundColor: '#f5f5f5' }}
+        >
           <ResponsiveContainer>
-            <AreaChart
-              data={data09}
-              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-            >
+            <AreaChart data={data09} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <XAxis dataKey="name" />
               <YAxis />
               <CartesianGrid strokeDasharray="3 3" />
@@ -365,10 +375,7 @@ export default class Demo extends Component {
             </AreaChart>
           </ResponsiveContainer>
           <ResponsiveContainer>
-            <AreaChart
-              data={data09}
-              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-            >
+            <AreaChart data={data09} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <XAxis dataKey="name" />
               <YAxis />
               <CartesianGrid strokeDasharray="3 3" />

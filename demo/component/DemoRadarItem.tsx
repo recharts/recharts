@@ -15,18 +15,10 @@ const DemoRadarItem = ({ radar }: any) => {
 
   return (
     <g>
-      <Polygon
-        fill="#A5D297"
-        fillOpacity={0.3}
-        stroke="#8DC77B"
-        strokeWidth={2}
-        points={points}
-      />
-      {
-        points.map((v: any, i: number) => {
-          return <Dot key={i} cx={v.x} cy={v.y} r={6} fill="#8889DD" />;
-        })
-      }
+      <Polygon fill="#A5D297" fillOpacity={0.3} stroke="#8DC77B" strokeWidth={2} points={points} />
+      {points.map((v: any, i: number) => {
+        return <Dot key={i} cx={v.x} cy={v.y} r={6} fill="#8889DD" />;
+      })}
     </g>
   );
 };

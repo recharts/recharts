@@ -1,11 +1,27 @@
 import React, { Component } from 'react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine, ReferenceArea,
-  ReferenceDot, Tooltip, CartesianGrid, Legend, Brush, ErrorBar, AreaChart, Area,
-  Label, LabelList } from 'recharts';
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  ReferenceLine,
+  ReferenceArea,
+  ReferenceDot,
+  Tooltip,
+  CartesianGrid,
+  Legend,
+  Brush,
+  ErrorBar,
+  AreaChart,
+  Area,
+  Label,
+  LabelList,
+} from 'recharts';
 import { scalePow, scaleLog } from 'd3-scale';
+import * as _ from 'lodash';
 import CustomLineDot from './CustomLineDot';
 import { changeNumberOfData } from './utils';
-import * as _ from 'lodash';
 
 function Hello() {
   return <div>Hello</div>;
@@ -302,21 +318,30 @@ const data03 = [
 ];
 
 const series = [
-  { name: 'Series 1', data: [
-    { category: 'A', value: Math.random() },
-    { category: 'B', value: Math.random() },
-    { category: 'C', value: Math.random() }
-  ] },
-  { name: 'Series 2', data: [
-    { category: 'B', value: Math.random() },
-    { category: 'C', value: Math.random() },
-    { category: 'D', value: Math.random() }
-  ] },
-  { name: 'Series 3', data: [
-    { category: 'C', value: Math.random() },
-    { category: 'D', value: Math.random() },
-    { category: 'E', value: Math.random() }
-  ] },
+  {
+    name: 'Series 1',
+    data: [
+      { category: 'A', value: Math.random() },
+      { category: 'B', value: Math.random() },
+      { category: 'C', value: Math.random() },
+    ],
+  },
+  {
+    name: 'Series 2',
+    data: [
+      { category: 'B', value: Math.random() },
+      { category: 'C', value: Math.random() },
+      { category: 'D', value: Math.random() },
+    ],
+  },
+  {
+    name: 'Series 3',
+    data: [
+      { category: 'C', value: Math.random() },
+      { category: 'D', value: Math.random() },
+      { category: 'E', value: Math.random() },
+    ],
+  },
 ];
 
 const initialState = {
@@ -341,7 +366,11 @@ const renderLabel: React.FunctionComponent<any> = (props: any) => {
   const { x, y, textAnchor, key, value } = props;
 
   if (x === +x && y === +y) {
-    return <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={key}>{value}</text>;
+    return (
+      <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={key}>
+        {value}
+      </text>
+    );
   }
 
   return null;
@@ -353,7 +382,6 @@ const specifiedTicks = [0.01, 0.1, 1, 10, 100, 1000];
 const specifiedMargin = { top: 20, right: 20, bottom: 20, left: 20 };
 
 export default class Demo extends Component<any, any> {
-
   static displayName = 'LineChartDemo';
 
   state: any = initialState;
@@ -378,7 +406,7 @@ export default class Demo extends Component<any, any> {
 
   handleClickDot = (data: any, e: React.MouseEvent) => {
     console.log('dot click', data, e);
-  }
+  };
 
   handleLegendMouseLeave = () => {
     this.setState({
@@ -397,11 +425,7 @@ export default class Demo extends Component<any, any> {
 
     return (
       <div className="line-charts">
-        <a
-          href="javascript: void(0);"
-          className="btn update"
-          onClick={this.handleChangeData}
-        >
+        <a href="javascript: void(0);" className="btn update" onClick={this.handleChangeData}>
           change data
         </a>
         <button onClick={this.handleChangeAnotherState}>switch another state</button>
@@ -411,10 +435,7 @@ export default class Demo extends Component<any, any> {
         <div className="line-chart-wrapper">
           <LineChart width={400} height={400} data={data02} syncId="test">
             <CartesianGrid stroke="#f5f5f5" fill="#e6e6e6" />
-            <Legend
-              onMouseEnter={this.handleLegendMouseEnter}
-              onMouseLeave={this.handleLegendMouseLeave}
-            />
+            <Legend onMouseEnter={this.handleLegendMouseEnter} onMouseLeave={this.handleLegendMouseLeave} />
             <XAxis type="number" dataKey="pv" height={40} label={<Hello />}>
               <Label value="x轴" position="insideBottom" />
             </XAxis>
@@ -438,7 +459,7 @@ export default class Demo extends Component<any, any> {
         </div>
 
         <p>A simple LineChart with customized line dot</p>
-        <div className='line-chart-wrapper'>
+        <div className="line-chart-wrapper">
           <LineChart
             width={400}
             height={400}
@@ -446,26 +467,25 @@ export default class Demo extends Component<any, any> {
             margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
             syncId="test"
           >
-            <CartesianGrid stroke='#f5f5f5' verticalFill={['rgba(0, 0, 0, 0.2)', 'rgba(255, 255, 255, 0.3)']} horizontalFill={['#ccc', '#fff']} />
+            <CartesianGrid
+              stroke="#f5f5f5"
+              verticalFill={['rgba(0, 0, 0, 0.2)', 'rgba(255, 255, 255, 0.3)']}
+              horizontalFill={['#ccc', '#fff']}
+            />
             <Legend />
             <XAxis dataKey="name" axisLine={{ stroke: 'red' }} />
             <YAxis scale={scale} domain={[0.01, 'auto']} ticks={[0.01, 0.1, 1, 10, 100, 1000]} />
             <Tooltip />
-            <Line type='monotone' dataKey='uv' dot={<CustomLineDot/>} stroke='#ff7300' />
+            <Line type="monotone" dataKey="uv" dot={<CustomLineDot />} stroke="#ff7300" />
           </LineChart>
         </div>
 
         <p>LineChart with two y-axes</p>
-        <button onClick={() => this.setState({newLine: !this.state.newLine})}>Add another line</button>
-        <div className='line-chart-wrapper' style={{ padding: 40 }}>
-          <LineChart
-            width={400}
-            height={400}
-            data={data}
-            margin={{top: 10, bottom: 10, left: 30, right: 30}}
-          >
-            <XAxis dataKey='name' />
-            <CartesianGrid stroke='#f5f5f5'/>
+        <button onClick={() => this.setState({ newLine: !this.state.newLine })}>Add another line</button>
+        <div className="line-chart-wrapper" style={{ padding: 40 }}>
+          <LineChart width={400} height={400} data={data} margin={{ top: 10, bottom: 10, left: 30, right: 30 }}>
+            <XAxis dataKey="name" />
+            <CartesianGrid stroke="#f5f5f5" />
             <Brush />
             <Tooltip filterNull={false} />
             <Line
@@ -478,23 +498,39 @@ export default class Demo extends Component<any, any> {
               activeDot={{ onClick: this.handleClickDot }}
               onClick={this.handleLineClick}
             />
-            {this.state.newLine && <Line type='monotone' key={'1'} dataKey='amt' stroke='#132908' yAxisId={1} activeDot={{fill: '#132908', stroke: 'none', r: 6}}/>}
-            <Line type='monotone' key={'2'} dataKey='pv' stroke='#387908' yAxisId={1} activeDot={{fill: '#387908', stroke: 'none', r: 6}}/>
+            {this.state.newLine && (
+              <Line
+                type="monotone"
+                key="1"
+                dataKey="amt"
+                stroke="#132908"
+                yAxisId={1}
+                activeDot={{ fill: '#132908', stroke: 'none', r: 6 }}
+              />
+            )}
+            <Line
+              type="monotone"
+              key="2"
+              dataKey="pv"
+              stroke="#387908"
+              yAxisId={1}
+              activeDot={{ fill: '#387908', stroke: 'none', r: 6 }}
+            />
           </LineChart>
         </div>
 
         <p>LineChart with three y-axes</p>
-        <div className='line-chart-wrapper' style={{ margin: 40 }}>
+        <div className="line-chart-wrapper" style={{ margin: 40 }}>
           <LineChart width={600} height={400} data={data}>
-            <YAxis type='number' yAxisId={0} domain={[0, 1020]}/>
-            <YAxis type='number' orientation='right' yAxisId={1}/>
-            <YAxis type='number' orientation='right' yAxisId={2}/>
-            <XAxis dataKey='name'/>
-            <Tooltip position={{y: 200}} />
-            <CartesianGrid stroke='#f5f5f5'/>
-            <Line dataKey='uv' stroke='#ff7300' strokeWidth={2} yAxisId={0}/>
-            <Line dataKey='pv' stroke='#387908' strokeWidth={2} yAxisId={1}/>
-            <Line dataKey='amt' stroke='#38abc8' strokeWidth={2} yAxisId={2}/>
+            <YAxis type="number" yAxisId={0} domain={[0, 1020]} />
+            <YAxis type="number" orientation="right" yAxisId={1} />
+            <YAxis type="number" orientation="right" yAxisId={2} />
+            <XAxis dataKey="name" />
+            <Tooltip position={{ y: 200 }} />
+            <CartesianGrid stroke="#f5f5f5" />
+            <Line dataKey="uv" stroke="#ff7300" strokeWidth={2} yAxisId={0} />
+            <Line dataKey="pv" stroke="#387908" strokeWidth={2} yAxisId={1} />
+            <Line dataKey="amt" stroke="#38abc8" strokeWidth={2} yAxisId={2} />
           </LineChart>
         </div>
 
@@ -502,8 +538,9 @@ export default class Demo extends Component<any, any> {
         <a
           href="javascript:void(0)"
           className="btn"
-
-          onClick={() => { this.setState({ data: this.state.data === data ? data02 : data }); }}
+          onClick={() => {
+            this.setState({ data: this.state.data === data ? data02 : data });
+          }}
         >
           change data
         </a>
@@ -519,28 +556,32 @@ export default class Demo extends Component<any, any> {
             <Tooltip />
             <XAxis />
             <YAxis domain={[0, 800]} allowDataOverflow />
-            <Line type="monotone" dataKey="uv" dot={<CustomLineDot/>} stroke="#ff7300" />
+            <Line type="monotone" dataKey="uv" dot={<CustomLineDot />} stroke="#ff7300" />
           </LineChart>
         </div>
 
         <p>LineChart of vertical layout</p>
-        <div className='line-chart-wrapper' style={{ margin: 40 }}>
-          <LineChart width={400} height={400} data={data} layout='vertical'
-            margin={{top: 5, right: 20, left: 20, bottom: 5}}>
-            <YAxis type='category' dataKey='name'/>
-            <XAxis type='number' xAxisId={0} orientation='top'/>
-            <XAxis type='number' xAxisId={1} orientation='bottom'/>
-            <CartesianGrid stroke='#f5f5f5'/>
-            <Line dataKey='uv' type="monotone" stroke='#ff7300' strokeWidth={2} xAxisId={0} />
-            <Line dataKey='pv' type="monotone" stroke='#387908' strokeWidth={2} xAxisId={1} />
+        <div className="line-chart-wrapper" style={{ margin: 40 }}>
+          <LineChart
+            width={400}
+            height={400}
+            data={data}
+            layout="vertical"
+            margin={{ top: 5, right: 20, left: 20, bottom: 5 }}
+          >
+            <YAxis type="category" dataKey="name" />
+            <XAxis type="number" xAxisId={0} orientation="top" />
+            <XAxis type="number" xAxisId={1} orientation="bottom" />
+            <CartesianGrid stroke="#f5f5f5" />
+            <Line dataKey="uv" type="monotone" stroke="#ff7300" strokeWidth={2} xAxisId={0} />
+            <Line dataKey="pv" type="monotone" stroke="#387908" strokeWidth={2} xAxisId={1} />
           </LineChart>
         </div>
 
         <p>LineChart of discrete values</p>
         <div className="line-chart-wrapper">
           <LineChart
-            width={400} height={400} data={data01}
-            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+width={400} height={400} data={data01} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             <XAxis dataKey="day" />
             <YAxis type="category" domain={['cloudy', 'rain', 'sunny']} />
             <Tooltip />
@@ -550,10 +591,7 @@ export default class Demo extends Component<any, any> {
 
         <p>LineChart with panoramic brush and custom tooltip styles</p>
         <div className="line-chart-wrapper">
-          <LineChart
-            width={600} height={400} data={data03}
-            margin={{ top: 40, right: 40, bottom: 20, left: 20 }}
-          >
+          <LineChart width={600} height={400} data={data03} margin={{ top: 40, right: 40, bottom: 20, left: 20 }}>
             <CartesianGrid vertical={false} />
             <XAxis dataKey="date" label="Date" />
             <YAxis domain={['auto', 'auto']} label="Stock Price" />
@@ -580,16 +618,15 @@ export default class Demo extends Component<any, any> {
         <div className="line-chart-wrapper">
           <LineChart width={600} height={300}>
             <XAxis dataKey="category" type="category" allowDuplicatedCategory={false} />
-            <YAxis dataKey="value"/>
-            <CartesianGrid strokeDasharray="3 3"/>
-            <Tooltip/>
+            <YAxis dataKey="value" />
+            <CartesianGrid strokeDasharray="3 3" />
+            <Tooltip />
             <Legend />
             {series.map(s => (
               <Line dataKey="value" data={s.data} name={s.name} key={s.name} />
             ))}
           </LineChart>
         </div>
-
       </div>
     );
   }
