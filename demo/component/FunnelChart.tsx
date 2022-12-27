@@ -40,13 +40,11 @@ const data03 = [
   { value: 150, name: '订单' },
 ];
 
-
 const initialState = {
-  data
+  data,
 };
 
 export default class Demo extends Component {
-
   static displayName = 'FunnelChartDemo';
 
   state = initialState;
@@ -59,7 +57,7 @@ export default class Demo extends Component {
     const { data } = this.state;
     return (
       <div className="funnel-charts">
-        <button type="button" className="btn update" onClick={this.handleChangeData} >
+        <button type="button" className="btn update" onClick={this.handleChangeData}>
           change data
         </button>
         <p>Simple FunnelChart</p>
@@ -67,17 +65,10 @@ export default class Demo extends Component {
           <ResponsiveContainer>
             <FunnelChart>
               <Tooltip />
-              <Funnel
-                dataKey="value"
-                data={data}
-                reversed
-                isAnimationActive
-              >
-                {
-                  data01.map((entry, index) => (
-                    <Cell key={`slice-${index}`} fill={colors1[index % 10] as string} className="custom-cell" />
-                  ))
-                }
+              <Funnel dataKey="value" data={data} reversed isAnimationActive>
+                {data01.map((entry, index) => (
+                  <Cell key={`slice-${index}`} fill={colors1[index % 10] as string} className="custom-cell" />
+                ))}
                 <LabelList position="middle" fill="#000" stroke="none" dataKey="name" textBreakAll />
               </Funnel>
             </FunnelChart>
@@ -88,29 +79,16 @@ export default class Demo extends Component {
           <ResponsiveContainer>
             <FunnelChart margin={{ top: 20, right: 50, left: 20, bottom: 0 }}>
               <Tooltip />
-              <Funnel
-                dataKey="value"
-                data={data01}
-                isAnimationActive
-              >
-                {
-                  data01.map((entry, index) => (
-                    <Cell key={`slice-${index}`} fill={colors1[index % 10] as string} />
-                  ))
-                }
+              <Funnel dataKey="value" data={data01} isAnimationActive>
+                {data01.map((entry, index) => (
+                  <Cell key={`slice-${index}`} fill={colors1[index % 10] as string} />
+                ))}
                 <LabelList position="right" fill="#000" stroke="none" dataKey="name" />
               </Funnel>
-              <Funnel
-                dataKey="value"
-                data={data02}
-                width="80%"
-                isAnimationActive
-              >
-                {
-                  data02.map((entry, index) => (
-                    <Cell key={`slice-${index}`} fill={colors2[index % 10] as string} />
-                  ))
-                }
+              <Funnel dataKey="value" data={data02} width="80%" isAnimationActive>
+                {data02.map((entry, index) => (
+                  <Cell key={`slice-${index}`} fill={colors2[index % 10] as string} />
+                ))}
                 <LabelList position="center" fill="#fff" stroke="none" dataKey="value" />
               </Funnel>
             </FunnelChart>
@@ -137,14 +115,13 @@ export default class Demo extends Component {
                       fill="red"
                       strokeWidth="4"
                       stroke="#fff"
-                    />);
+                    />
+                  );
                 }}
               >
-                {
-                  data.map((entry, index) => (
-                    <Cell key={`slice-${index}`} fill={colors1[index % 10] as string} opacity={0.5} />
-                  ))
-                }
+                {data.map((entry, index) => (
+                  <Cell key={`slice-${index}`} fill={colors1[index % 10] as string} opacity={0.5} />
+                ))}
               </Funnel>
             </FunnelChart>
           </ResponsiveContainer>
@@ -155,17 +132,10 @@ export default class Demo extends Component {
           <ResponsiveContainer>
             <FunnelChart>
               <Tooltip />
-              <Funnel
-                dataKey="value"
-                data={data03}
-                isAnimationActive
-                lastShapeType="rectangle"
-              >
-                {
-                  data03.map((entry, index) => (
-                    <Cell key={`slice-${index}`} fill={colors1[index % 10] as string} className="custom-cell" />
-                  ))
-                }
+              <Funnel dataKey="value" data={data03} isAnimationActive lastShapeType="rectangle">
+                {data03.map((entry, index) => (
+                  <Cell key={`slice-${index}`} fill={colors1[index % 10] as string} className="custom-cell" />
+                ))}
                 <LabelList position="right" fill="#000" stroke="none" dataKey="name" />
               </Funnel>
             </FunnelChart>

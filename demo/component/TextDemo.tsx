@@ -53,7 +53,7 @@ class TextDemo extends Component {
           >
             {this.state.exampleText}
           </Text>
-          { this.state.showAnchor && <circle cx={this.state.x} cy={this.state.y} r="2" fill="red" /> }
+          {this.state.showAnchor && <circle cx={this.state.x} cy={this.state.y} r="2" fill="red" />}
         </svg>
 
         <div>
@@ -76,10 +76,13 @@ class TextDemo extends Component {
           <input
             type="range"
             style={styles.range}
-            min="25" max="300"
+            min="25"
+            max="300"
             value={this.state.width}
             onChange={e => this.setState({ width: Number(e.target.value) })}
-          /> {this.state.width}
+          />
+{' '}
+          {this.state.width}
         </div>
 
         <div>
@@ -90,7 +93,9 @@ class TextDemo extends Component {
               value="start"
               onChange={e => this.setState({ textAnchor: e.target.value })}
               checked={this.state.textAnchor === 'start'}
-            /> start
+            />
+{' '}
+            start
           </label>
           <label>
             <input
@@ -98,7 +103,9 @@ class TextDemo extends Component {
               value="middle"
               onChange={e => this.setState({ textAnchor: e.target.value })}
               checked={this.state.textAnchor === 'middle'}
-            /> middle
+            />
+{' '}
+            middle
           </label>
           <label>
             <input
@@ -106,7 +113,9 @@ class TextDemo extends Component {
               value="end"
               onChange={e => this.setState({ textAnchor: e.target.value })}
               checked={this.state.textAnchor === 'end'}
-            /> end
+            />
+{' '}
+            end
           </label>
         </div>
 
@@ -118,7 +127,9 @@ class TextDemo extends Component {
               value="start"
               onChange={e => this.setState({ verticalAnchor: e.target.value })}
               checked={this.state.verticalAnchor === 'start'}
-            /> start
+            />
+{' '}
+            start
           </label>
           <label>
             <input
@@ -126,7 +137,9 @@ class TextDemo extends Component {
               value="middle"
               onChange={e => this.setState({ verticalAnchor: e.target.value })}
               checked={this.state.verticalAnchor === 'middle'}
-            /> middle
+            />
+{' '}
+            middle
           </label>
           <label>
             <input
@@ -134,17 +147,15 @@ class TextDemo extends Component {
               value="end"
               onChange={e => this.setState({ verticalAnchor: e.target.value })}
               checked={this.state.verticalAnchor === 'end'}
-            /> end
+            />
+{' '}
+            end
           </label>
         </div>
 
         <div>
           fontSize:
-          <input
-            type="text"
-            value={this.state.fontSize}
-            onChange={e => this.setState({ fontSize: e.target.value })}
-          />
+          <input type="text" value={this.state.fontSize} onChange={e => this.setState({ fontSize: e.target.value })} />
         </div>
 
         <div>
@@ -169,7 +180,8 @@ class TextDemo extends Component {
           angle:
           <input
             type="range"
-            min="0" max="360"
+            min="0"
+            max="360"
             value={this.state.angle}
             onChange={e => this.setState({ angle: Number(e.target.value) })}
           />
@@ -282,20 +294,24 @@ class TextDemo extends Component {
 
         <h2>dx && dy</h2>
         <svg width={this.state.resizeSvg ? this.state.width : 300} style={styles.svg}>
-          <Text x={50} y={50} dx={10} dy={-10}  width={this.state.width} verticalAnchor="start">
+          <Text x={50} y={50} dx={10} dy={-10} width={this.state.width} verticalAnchor="start">
             {this.state.exampleText}
           </Text>
         </svg>
 
         <h2>Event Handler</h2>
         <svg width={this.state.resizeSvg ? this.state.width : 300} style={styles.svg}>
-          { /* eslint-disable no-alert */}
-          <Text x={0} width={this.state.width} verticalAnchor="start" onClick={() => window.alert('You clicked a Text Element')}>
+          {/* eslint-disable no-alert */}
+          <Text
+            x={0}
+            width={this.state.width}
+            verticalAnchor="start"
+            onClick={() => window.alert('You clicked a Text Element')}
+          >
             Click me!
           </Text>
-          { /* eslint-enable no-alert */}
+          {/* eslint-enable no-alert */}
         </svg>
-
       </div>
     );
   }

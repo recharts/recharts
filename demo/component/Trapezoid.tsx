@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Surface, Trapezoid } from 'recharts';
 
 export default class Demo extends Component<any> {
-
   static displayName = 'TrapezoidDemo';
 
   render() {
@@ -17,18 +16,8 @@ export default class Demo extends Component<any> {
           height={50}
           isUpdateAnimationActive
         />
-        <Trapezoid
-          fill="#f00"
-          x={300}
-          y={100}
-          upperWidth={100}
-          lowerWidth={0}
-          height={50}
-          isUpdateAnimationActive
-        />
+        <Trapezoid fill="#f00" x={300} y={100} upperWidth={100} lowerWidth={0} height={50} isUpdateAnimationActive />
       </Surface>
     );
   }
 }
-
-

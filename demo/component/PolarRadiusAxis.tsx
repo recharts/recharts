@@ -2,14 +2,13 @@ import React, { Component } from 'react';
 import { Surface, PolarRadiusAxis, Label } from 'recharts';
 
 export default class Demo extends Component {
-
   static displayName = 'PolarRadiusAxisDemo';
 
   handleActive = (data: any, index: number, e: React.MouseEvent) => {
     console.log(data, index);
   };
 
-  render () {
+  render() {
     const ticks = [
       { value: '100', coordinate: 50 },
       { value: '200', coordinate: 100 },
@@ -21,18 +20,12 @@ export default class Demo extends Component {
 
     return (
       <Surface width={1000} height={1000}>
-        <PolarRadiusAxis
-          cx={500}
-          cy={500}
-          angle={30}
-          ticks={ticks}
-          cursor="pointer"
-          onMouseEnter={this.handleActive}
-        >
-          <Label position="outside" offset={20}>test</Label>
+        <PolarRadiusAxis cx={500} cy={500} angle={30} ticks={ticks} cursor="pointer" onMouseEnter={this.handleActive}>
+          <Label position="outside" offset={20}>
+            test
+          </Label>
         </PolarRadiusAxis>
       </Surface>
     );
   }
 }
-

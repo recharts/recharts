@@ -38,7 +38,6 @@ const data5 = [
 ];
 
 export default class Demo extends Component {
-
   static displayName = 'LegendDemo';
 
   render() {
