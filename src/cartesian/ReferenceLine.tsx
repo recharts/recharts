@@ -10,9 +10,10 @@ import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { createLabeledScales, rectWithCoords } from '../util/CartesianUtils';
 import { warn } from '../util/LogUtils';
-import { CartesianViewBox, D3Scale, filterProps } from '../util/types';
+import { CartesianViewBox, D3Scale } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
+import { filterProps } from '../util/ReactUtils';
 
 interface InternalReferenceLineProps {
   viewBox?: CartesianViewBox;

@@ -3,7 +3,8 @@
  */
 import React, { PureComponent, SVGProps } from 'react';
 import classNames from 'classnames';
-import { filterProps, GeometrySector } from '../util/types';
+import { GeometrySector } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';
 import { getPercentValue, mathSign } from '../util/DataUtils';
 

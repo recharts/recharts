@@ -7,7 +7,7 @@ import Animate from 'react-smooth';
 import _ from 'lodash';
 import { Sector, Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
-import { findAllByType } from '../util/ReactUtils';
+import { findAllByType, filterProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
 import { Cell } from '../component/Cell';
@@ -24,7 +24,6 @@ import {
   LegendType,
   TooltipType,
   AnimationTiming,
-  filterProps,
   TickItem,
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,

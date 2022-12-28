@@ -3,7 +3,7 @@
  */
 import React, { PureComponent, SVGProps } from 'react';
 import { polarToCartesian } from '../util/PolarUtils';
-import { filterProps } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 interface PolarGridProps {
   cx?: number;

@@ -4,10 +4,11 @@
 import React, { PureComponent, ReactElement, SVGProps } from 'react';
 import _ from 'lodash';
 import { isNumber } from '../util/DataUtils';
-import { ChartOffset, D3Scale, filterProps } from '../util/types';
+import { ChartOffset, D3Scale } from '../util/types';
 
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
+import { filterProps } from '../util/ReactUtils';
 
 type GridLineType =
   | SVGProps<SVGLineElement>

@@ -10,8 +10,9 @@ import {
   isChildrenEqual,
   findAllByType,
   toArray,
+  filterProps,
 } from '../../../src/util/ReactUtils';
-import { filterProps, adaptEventHandlers, adaptEventsOfChild } from '../../../src/util/types';
+import { adaptEventHandlers, adaptEventsOfChild } from '../../../src/util/types';
 
 describe('ReactUtils', () => {
   it('getDisplayName return empty string when has a null as input', () => {

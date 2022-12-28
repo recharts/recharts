@@ -15,7 +15,8 @@ import {
   SymbolType as D3SymbolType,
 } from 'd3-shape';
 import classNames from 'classnames';
-import { SymbolType, filterProps } from '../util/types';
+import { SymbolType } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 type SizeType = 'area' | 'diameter';
 

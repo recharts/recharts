@@ -19,12 +19,12 @@ import {
   LegendType,
   TooltipType,
   AnimationTiming,
-  filterProps,
   ChartOffset,
   Coordinate,
   DataKey,
   TickItem,
 } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 type AreaDot =
   | ReactElement<SVGElement>
