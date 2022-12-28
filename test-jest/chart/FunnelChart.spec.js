@@ -6,7 +6,7 @@
 /* eslint-disable react/jsx-filename-extension */
 /* eslint-disable no-undef */
 import React from 'react';
-import { FunnelChart, Funnel, Tooltip } from '../../../src/';
+import { FunnelChart, Funnel, Tooltip } from '../../src/';
 import { render } from '@testing-library/react';
 
 const data = [

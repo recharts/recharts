@@ -2,7 +2,7 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 
-import { Bar, BarChart, Tooltip, XAxis, YAxis } from '../../../src';
+import { Bar, BarChart, Tooltip, XAxis, YAxis } from '../../src';
 
 describe('<BarChart />', () => {
   const data = [

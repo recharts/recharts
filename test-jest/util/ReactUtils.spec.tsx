@@ -1,5 +1,5 @@
 import React from 'react';
-import { filterProps } from '../../src/util/types';
+import { filterProps } from '../../src/util/ReactUtils';
 
 describe('ReactUtils unit tests', () => {
   test('should call filterProps with any boolean and return a null result', () => {

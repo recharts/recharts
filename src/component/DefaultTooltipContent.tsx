@@ -31,6 +31,9 @@ export interface Payload<TValue extends ValueType, TName extends NameType> {
   dataKey?: string | number;
   payload?: any;
   chartType?: string;
+  stroke?: string;
+  strokeDasharray?: string | number;
+  strokeWidth?: number | string;
 }
 
 export interface Props<TValue extends ValueType, TName extends NameType> {

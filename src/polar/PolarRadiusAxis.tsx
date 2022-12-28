@@ -7,13 +7,8 @@ import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { Layer } from '../container/Layer';
 import { polarToCartesian } from '../util/PolarUtils';
-import {
-  filterProps,
-  BaseAxisProps,
-  TickItem,
-  adaptEventsOfChild,
-  PresentationAttributesAdaptChildEvent,
-} from '../util/types';
+import { BaseAxisProps, TickItem, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 export interface PolarRadiusAxisProps extends Omit<BaseAxisProps, 'unit'> {
   cx?: number;

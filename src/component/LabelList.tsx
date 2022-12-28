@@ -2,9 +2,9 @@ import React, { cloneElement, ReactElement, SVGProps } from 'react';
 import _ from 'lodash';
 import { Label, ContentType, Props as LabelProps } from './Label';
 import { Layer } from '../container/Layer';
-import { findAllByType } from '../util/ReactUtils';
+import { findAllByType, filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { filterProps, DataKey, ViewBox } from '../util/types';
+import { DataKey, ViewBox } from '../util/types';
 
 interface Data {
   value?: number | string | Array<number | string>;

@@ -3,7 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 import sinon from 'sinon';
 
-import { Area, AreaChart, Brush, CartesianAxis, Tooltip, XAxis, YAxis } from '../../../src';
+import { Area, AreaChart, Brush, CartesianAxis, Tooltip, XAxis, YAxis } from '../../src';
 
 describe('AreaChart', () => {
   const data = [

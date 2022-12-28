@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import _ from 'lodash';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
 import { Global } from '../util/Global';
-import { filterProps } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 import { getStringSize } from '../util/DOMUtils';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;

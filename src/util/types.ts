@@ -525,7 +525,7 @@ export type DOMAttributesAdaptChildEvent<P, T> = {
 };
 
 const SVGContainerPropKeys = ['viewBox', 'children'];
-const SVGElementPropKeys = [
+export const SVGElementPropKeys = [
   'aria-activedescendant',
   'aria-atomic',
   'aria-autocomplete',
@@ -842,7 +842,7 @@ export const FilteredElementKeyMap: Record<FilteredSvgElementType, string[]> = {
   polyline: PolyElementKeys,
 };
 
-const EventKeys = [
+export const EventKeys = [
   'dangerouslySetInnerHTML',
   'onCopy',
   'onCopyCapture',
@@ -1135,48 +1135,6 @@ export interface PolarViewBox {
 }
 
 export type ViewBox = CartesianViewBox | PolarViewBox;
-
-// TODO: move function to ReactUtils
-export const filterProps = (
-  props: Record<string, any> | Component | FunctionComponent | boolean,
-  includeEvents?: boolean,
-  svgElementType?: FilteredSvgElementType,
-) => {
-  if (!props || typeof props === 'function' || typeof props === 'boolean') {
-    return null;
-  }
-
-  let inputProps = props as Record<string, any>;
-
-  if (isValidElement(props)) {
-    inputProps = props.props as Record<string, any>;
-  }
-
-  if (!_.isObject(inputProps)) {
-    return null;
-  }
-
-  const out: Record<string, any> = {};
-
-  /**
-   * If the svg element type is explicitly included, check against the filtered element key map
-   * to determine if there are attributes that should only exist on that element type.
-   * @todo Add an internal cjs version of https://github.com/wooorm/svg-element-attributes for full coverage.
-   */
-  const matchingElementTypeKeys = FilteredElementKeyMap?.[svgElementType] ?? [];
-
-  Object.keys(inputProps).forEach(key => {
-    if (
-      (svgElementType && matchingElementTypeKeys.includes(key)) ||
-      SVGElementPropKeys.includes(key) ||
-      (includeEvents && EventKeys.includes(key))
-    ) {
-      out[key] = inputProps[key];
-    }
-  });
-
-  return out;
-};
 
 type RecordString<T> = Record<string, T>;
 

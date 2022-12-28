@@ -11,13 +11,8 @@ import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { Global } from '../util/Global';
 import { isNumber, mathSign } from '../util/DataUtils';
-import {
-  CartesianViewBox,
-  filterProps,
-  TickItem,
-  adaptEventsOfChild,
-  PresentationAttributesAdaptChildEvent,
-} from '../util/types';
+import { CartesianViewBox, TickItem, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 interface CartesianTickItem extends TickItem {
   tickCoord?: number;

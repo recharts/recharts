@@ -11,7 +11,8 @@ import { isNumOrStr } from '../util/DataUtils';
 import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { createLabeledScales } from '../util/CartesianUtils';
 import { warn } from '../util/LogUtils';
-import { D3Scale, filterProps } from '../util/types';
+import { D3Scale } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 
