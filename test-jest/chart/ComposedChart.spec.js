@@ -6,7 +6,7 @@
 /* eslint-disable react/jsx-filename-extension */
 /* eslint-disable no-undef */
 import React from 'react';
-import { ComposedChart, Line, Bar, Area, XAxis, YAxis, Legend, CartesianGrid, Tooltip } from '../../../src/';
+import { ComposedChart, Line, Bar, Area, XAxis, YAxis, Legend, CartesianGrid, Tooltip } from '../../src/';
 import { render } from '@testing-library/react';
 
 describe('<ComposedChart />', () => {
