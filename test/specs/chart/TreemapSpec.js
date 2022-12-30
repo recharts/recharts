@@ -4,11 +4,15 @@ import { Treemap } from 'recharts';
 import { mount, render } from 'enzyme';
 
 const data = [
-  { rank: '1', name: 'A', children: [
-    { rank: '21', name: 'U', value: 12490887132 },
-    { rank: '22', name: 'V', value: 10772738863 },
-    { rank: '23', name: 'W', value: 8236223813 },
-  ] },
+  {
+    rank: '1',
+    name: 'A',
+    children: [
+      { rank: '21', name: 'U', value: 12490887132 },
+      { rank: '22', name: 'V', value: 10772738863 },
+      { rank: '23', name: 'W', value: 8236223813 },
+    ],
+  },
   { rank: '2', name: 'B', value: 12490887132 },
   { rank: '3', name: 'C', value: 10772738863 },
   { rank: '4', name: 'D', value: 8236223813 },
@@ -33,14 +37,7 @@ const data = [
 describe('<Treemap />', () => {
   it('renders 20 rectangles in simple TreemapChart', () => {
     const wrapper = mount(
-      <Treemap
-        width={500}
-        height={250}
-        data={data}
-        isAnimationActive={false}
-        nameKey="name"
-        dataKey="value"
-      />
+      <Treemap width={500} height={250} data={data} isAnimationActive={false} nameKey="name" dataKey="value" />,
     );
 
     expect(wrapper.find('.recharts-rectangle').length).to.equal(24);
@@ -56,7 +53,7 @@ describe('<Treemap />', () => {
         nameKey="name"
         dataKey="value"
         type="nest"
-      />
+      />,
     );
 
     expect(wrapper.find('.recharts-rectangle').length).to.equal(21);

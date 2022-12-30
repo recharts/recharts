@@ -1,6 +1,8 @@
 import React from 'react';
 import { expect } from 'chai';
 import { scaleLinear, scaleBand } from 'd3-scale';
+import { Line, Bar, Scatter, Area, ErrorBar } from 'recharts';
+import { mount } from 'enzyme';
 import {
   calculateActiveTickIndex,
   getDomainOfStackGroups,
@@ -14,10 +16,8 @@ import {
   getDomainOfErrorBars,
   offsetSign,
   MIN_VALUE_REG,
-  MAX_VALUE_REG
+  MAX_VALUE_REG,
 } from '../../../src/util/ChartUtils';
-import { Line, Bar, Scatter, Area, ErrorBar } from 'recharts';
-import { mount } from 'enzyme';
 
 describe('getBandSizeOfAxis', () => {
   it('DataUtils.getBandSizeOfAxis() should return 0 ', () => {
@@ -27,9 +27,7 @@ describe('getBandSizeOfAxis', () => {
   it('DataUtils.getBandSizeOfAxis({ type: "category", scale }) should return 0 ', () => {
     const axis = {
       type: 'category',
-      scale: scaleBand()
-        .domain([0, 1, 2, 3])
-        .range([0, 100])
+      scale: scaleBand().domain([0, 1, 2, 3]).range([0, 100]),
     };
     expect(getBandSizeOfAxis(axis)).to.equal(25);
   });
@@ -63,18 +61,12 @@ describe('parseSpecifiedDomain', () => {
   });
 
   it('DataUtils.parseSpecifiedDomain([dataMin => (0 - Math.abs(dataMin)), dataMax => (dataMax * 2)], domain) should return [-20, 200] ', () => {
-    const result = parseSpecifiedDomain(
-      [dataMin => 0 - Math.abs(dataMin), dataMax => dataMax * 2],
-      domain
-    );
+    const result = parseSpecifiedDomain([dataMin => 0 - Math.abs(dataMin), dataMax => dataMax * 2], domain);
     expect(result).to.deep.equal([-20, 200]);
   });
 
   it('DataUtils.parseSpecifiedDomain(callback, domain) should execute the callback and return computed value ', () => {
-    const result = parseSpecifiedDomain(
-      ([dataMin, dataMax], _allowDataOverflow) => [dataMin / 4, dataMax * 4],
-      domain
-    );
+    const result = parseSpecifiedDomain(([dataMin, dataMax], _allowDataOverflow) => [dataMin / 4, dataMax * 4], domain);
     expect(result).to.deep.equal([5, 400]);
   });
 });
@@ -107,11 +99,33 @@ describe('getValueByDataKey', () => {
 
 describe('offsetSign', () => {
   describe('of data', () => {
-    const data = [[[0, 1], [0, 2], [0, -5]], [[0, -1], [0, 2], [0, -5]]];
+    const data = [
+      [
+        [0, 1],
+        [0, 2],
+        [0, -5],
+      ],
+      [
+        [0, -1],
+        [0, 2],
+        [0, -5],
+      ],
+    ];
     const offsetData = offsetSign(data);
 
     it('should change', () => {
-      expect(data).to.deep.equal([[[0, 1], [0, 2], [0, -5]], [[0, -1], [2, 4], [-5, -10]]]);
+      expect(data).to.deep.equal([
+        [
+          [0, 1],
+          [0, 2],
+          [0, -5],
+        ],
+        [
+          [0, -1],
+          [2, 4],
+          [-5, -10],
+        ],
+      ]);
     });
   });
 });
@@ -124,7 +138,7 @@ describe('getTicksOfScale', () => {
       type: 'number',
       tickCount: 5,
       originalDomain: ['auto', 'auto'],
-      allowDecimals: true
+      allowDecimals: true,
     };
     const result = getTicksOfScale(scale, opts);
 
@@ -138,7 +152,7 @@ describe('getTicksOfScale', () => {
       type: 'number',
       tickCount: 5,
       originalDomain: [0, 100],
-      allowDecimals: true
+      allowDecimals: true,
     };
     const result = getTicksOfScale(scale, opts);
 
@@ -165,7 +179,7 @@ describe('calculateActiveTickIndex', () => {
     { coordinate: 0, index: 0 },
     { coordinate: 12, index: 1 },
     { coordinate: 14, index: 2 },
-    { coordinate: 15, index: 3 }
+    { coordinate: 15, index: 3 },
   ];
   it('calculateActiveTickIndex(12, ticks) should return 1', () => {
     expect(calculateActiveTickIndex(12, ticks)).to.equal(1);
@@ -186,11 +200,29 @@ describe('getDomainOfStackGroups', () => {
   before(() => {
     stackData = {
       a: {
-        stackedData: [[[10, 14], [12, 16]], [[8, 14], [34, 11]]]
+        stackedData: [
+          [
+            [10, 14],
+            [12, 16],
+          ],
+          [
+            [8, 14],
+            [34, 11],
+          ],
+        ],
       },
       b: {
-        stackedData: [[[9, 13], [11, 15]], [[12, 14], [25, 22]]]
-      }
+        stackedData: [
+          [
+            [9, 13],
+            [11, 15],
+          ],
+          [
+            [12, 14],
+            [25, 22],
+          ],
+        ],
+      },
     };
   });
 
@@ -206,7 +238,7 @@ describe('getDomainOfStackGroups', () => {
 
   it('domain of all nulls should return [0, 0]', () => {
     stackData = {
-      a: { stackedData: [[[null, null]]] }
+      a: { stackedData: [[[null, null]]] },
     };
 
     expect(getDomainOfStackGroups(stackData, 0, 1)).to.deep.equal([0, 0]);
@@ -248,28 +280,28 @@ describe('getDomainOfDataByKey', () => {
         x: 1,
         y: 4,
         actual: 35.4,
-        benchmark: 35.4
+        benchmark: 35.4,
       },
       {
         x: 2,
         y: 3,
-        actual: 40
+        actual: 40,
       },
       {
         x: 3,
         y: 2,
-        actual: 40.7
+        actual: 40.7,
       },
       {
         x: 4,
         y: 1,
-        actual: 42.5
+        actual: 42.5,
       },
       {
         x: 5,
         y: 0,
-        benchmark: 31.86
-      }
+        benchmark: 31.86,
+      },
     ];
 
     it('should calculate the correct domain for a simple linear set', () => {
@@ -297,14 +329,14 @@ describe('getDomainOfErrorBars', () => {
       y: 200,
       error: 20,
       error2: 15,
-    }
+    },
   ];
 
   describe('within Line component', () => {
     const line = mount(
       <Line>
         <ErrorBar dataKey="error" />
-      </Line>
+      </Line>,
     ).instance();
 
     describe('with horizontal layout', () => {
@@ -330,7 +362,7 @@ describe('getDomainOfErrorBars', () => {
     const bar = mount(
       <Bar>
         <ErrorBar dataKey="error" />
-      </Bar>
+      </Bar>,
     ).instance();
 
     describe('with horizontal layout', () => {
@@ -356,7 +388,7 @@ describe('getDomainOfErrorBars', () => {
     const area = mount(
       <Area>
         <ErrorBar dataKey="error" />
-      </Area>
+      </Area>,
     ).instance();
 
     describe('with horizontal layout', () => {
@@ -381,9 +413,9 @@ describe('getDomainOfErrorBars', () => {
   describe('within Scatter component', () => {
     const scatter = mount(
       <Scatter>
-        <ErrorBar dataKey="error" direction="y"/>
-        <ErrorBar dataKey="error2" direction="x"/>
-      </Scatter>
+        <ErrorBar dataKey="error" direction="y" />
+        <ErrorBar dataKey="error2" direction="x" />
+      </Scatter>,
     ).instance();
 
     it('should only include error bars with direction y in xAxis domain', () => {
@@ -397,13 +429,13 @@ describe('getDomainOfErrorBars', () => {
   describe('with multiple ErrorBar children with same direction', () => {
     const line = mount(
       <Line>
-        <ErrorBar dataKey="error"/>
-        <ErrorBar dataKey="error2"/>
-      </Line>
+        <ErrorBar dataKey="error" />
+        <ErrorBar dataKey="error2" />
+      </Line>,
     ).instance();
 
     it('should return maximum domain of error bars', () => {
       expect(getDomainOfErrorBars(data, line, 'y', 'horizontal', 'yAxis')).to.deep.equal([85, 220]);
-    })
+    });
   });
 });

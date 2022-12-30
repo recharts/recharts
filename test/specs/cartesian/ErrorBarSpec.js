@@ -14,11 +14,7 @@ describe('<ErrorBar />', () => {
   it('Renders Error Bars in Bar', () => {
     const wrapper = render(
       <BarChart data={barData} width={500} height={500} layout="vertical">
-        <Bar
-          isAnimationActive={false}
-          label={{ label: 'test' }}
-          dataKey="uv"
-        >
+        <Bar isAnimationActive={false} label={{ label: 'test' }} dataKey="uv">
           <ErrorBar dataKey="uvError" />
         </Bar>
       </BarChart>,
@@ -30,11 +26,7 @@ describe('<ErrorBar />', () => {
   it('Renders Multiple Error Bars in Bar', () => {
     const wrapper = render(
       <BarChart data={barData} width={500} height={500} layout="vertical">
-        <Bar
-          isAnimationActive={false}
-          label={{ label: 'test' }}
-          dataKey="uv"
-        >
+        <Bar isAnimationActive={false} label={{ label: 'test' }} dataKey="uv">
           <ErrorBar dataKey="uvError" />
           <ErrorBar dataKey="pvError" />
         </Bar>
@@ -55,11 +47,7 @@ describe('<ErrorBar />', () => {
   it('Renders Error Bars in Line', () => {
     const wrapper = render(
       <LineChart data={lineData} width={500} height={500}>
-        <Line
-          isAnimationActive={false}
-          label={{ label: 'test' }}
-          dataKey="uv"
-        >
+        <Line isAnimationActive={false} label={{ label: 'test' }} dataKey="uv">
           <ErrorBar dataKey="uvError" />
         </Line>
       </LineChart>,
@@ -71,11 +59,7 @@ describe('<ErrorBar />', () => {
   it('Renders Multiple Error Bars in Line', () => {
     const wrapper = render(
       <LineChart data={lineData} width={500} height={500}>
-        <Line
-          isAnimationActive={false}
-          label={{ label: 'test' }}
-          dataKey="uv"
-        >
+        <Line isAnimationActive={false} label={{ label: 'test' }} dataKey="uv">
           <ErrorBar dataKey="uvError" />
           <ErrorBar dataKey="pvError" />
         </Line>

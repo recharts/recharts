@@ -10,8 +10,9 @@ import {
   isChildrenEqual,
   findAllByType,
   toArray,
+  filterProps,
 } from '../../../src/util/ReactUtils';
-import { filterProps, adaptEventHandlers, adaptEventsOfChild } from '../../../src/util/types';
+import { adaptEventHandlers, adaptEventsOfChild } from '../../../src/util/types';
 
 describe('ReactUtils', () => {
   it('getDisplayName return empty string when has a null as input', () => {
@@ -87,7 +88,7 @@ describe('ReactUtils', () => {
         <Bar dataKey="c" />
       </LineChart>,
     );
-    const children = wrapper.props().children;
+    const { children } = wrapper.props();
 
     expect(withoutType(children, Bar).length).to.equal(2);
     expect(withoutType(children, [Bar, Line]).length).to.equal(0);
@@ -104,7 +105,7 @@ describe('ReactUtils', () => {
         </text>
       </LineChart>,
     );
-    const children = wrapper.props().children;
+    const { children } = wrapper.props();
 
     expect(filterSvgElements(children).length).to.equal(2);
   });
@@ -120,7 +121,7 @@ describe('ReactUtils', () => {
         </text>
       </LineChart>,
     );
-    const children = wrapper.props().children;
+    const { children } = wrapper.props();
 
     expect(isChildrenEqual(children, children)).to.be.true;
   });
@@ -148,7 +149,7 @@ describe('ReactUtils', () => {
         {null}
       </LineChart>,
     );
-    const children = wrapper.props().children;
+    const { children } = wrapper.props();
     const anotherChildren = anotherWrapper.props().children;
 
     expect(isChildrenEqual(children, anotherChildren)).to.be.true;
@@ -286,12 +287,12 @@ describe('ReactUtils', () => {
       const wrapper = mount(
         <ul>
           {null}
-          <li key="1"></li>
+          <li key="1" />
           {null}
           {undefined}
-          <li key="2"></li>
+          <li key="2" />
           {undefined}
-          <li key="3"></li>
+          <li key="3" />
         </ul>,
       );
       const children = toArray(wrapper.props().children);
@@ -301,7 +302,7 @@ describe('ReactUtils', () => {
 
     it('Iterable', () => {
       const iterable = {
-        [Symbol.iterator]: function* () {
+        *[Symbol.iterator]() {
           yield <li key="5">5</li>;
           yield null;
           yield <li key="6">6</li>;
@@ -330,12 +331,12 @@ describe('ReactUtils', () => {
             <li key="2">2</li>
             <li key="3">3</li>
           </>
-          <React.Fragment>
+          <>
             <>
               <li key="4">4</li>
               <li key="5">5</li>
             </>
-          </React.Fragment>
+          </>
         </ul>,
       );
 

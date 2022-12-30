@@ -14,11 +14,8 @@ describe('<Radar />', () => {
   it('Render a polygon in a simple Radar', () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <Radar
-          isAnimationActive={false}
-          points={data}
-        />
-      </Surface>
+        <Radar isAnimationActive={false} points={data} />
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-radar-polygon').length).to.equal(1);
@@ -26,21 +23,18 @@ describe('<Radar />', () => {
 
   it('Render customized shape when shape is set to be a element', () => {
     const Shape = ({ points }) => {
-      const d = (points || []).reduce((result, entry, index) => (
-        result + (index ? `L${entry.x},${entry.y}` : `M${entry.x},${entry.y}`)
-      ), '');
+      const d = (points || []).reduce(
+        (result, entry, index) => result + (index ? `L${entry.x},${entry.y}` : `M${entry.x},${entry.y}`),
+        '',
+      );
 
       return <path d={d} className="customized-shape" />;
     };
 
     const wrapper = render(
       <Surface width={500} height={500}>
-        <Radar
-          isAnimationActive={false}
-          points={data}
-          shape={<Shape />}
-        />
-      </Surface>
+        <Radar isAnimationActive={false} points={data} shape={<Shape />} />
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-shape').length).to.equal(1);
@@ -48,110 +42,82 @@ describe('<Radar />', () => {
 
   it('Render customized shape when shape is set to be a function', () => {
     const Shape = ({ points }) => {
-      const d = (points || []).reduce((result, entry, index) => (
-        result + (index ? `L${entry.x},${entry.y}` : `M${entry.x},${entry.y}`)
-      ), '');
+      const d = (points || []).reduce(
+        (result, entry, index) => result + (index ? `L${entry.x},${entry.y}` : `M${entry.x},${entry.y}`),
+        '',
+      );
 
       return <path d={d} className="customized-shape" />;
     };
 
     const wrapper = render(
       <Surface width={500} height={500}>
-        <Radar
-          isAnimationActive={false}
-          points={data}
-          shape={Shape}
-        />
-      </Surface>
+        <Radar isAnimationActive={false} points={data} shape={Shape} />
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-shape').length).to.equal(1);
   });
 
   it('Render customized label when label is set to be a react element', () => {
-    const Label = ({ x, y }) =>
-      <text x={x} y={y} className="customized-label">test</text>
-    ;
-
+    const Label = ({ x, y }) => (
+      <text x={x} y={y} className="customized-label">
+        test
+      </text>
+    );
     const wrapper = render(
       <Surface width={500} height={500}>
-        <Radar
-          isAnimationActive={false}
-          points={data}
-          label={<Label />}
-        />
-      </Surface>
+        <Radar isAnimationActive={false} points={data} label={<Label />} />
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-label').length).to.equal(data.length);
   });
 
   it('Render customized label when label is set to be a function', () => {
-    const Label = ({ x, y }) =>
-      <text x={x} y={y} className="customized-label">test</text>
-    ;
-
+    const Label = ({ x, y }) => (
+      <text x={x} y={y} className="customized-label">
+        test
+      </text>
+    );
     const wrapper = render(
       <Surface width={500} height={500}>
-        <Radar
-          isAnimationActive={false}
-          points={data}
-          label={Label}
-        />
-      </Surface>
+        <Radar isAnimationActive={false} points={data} label={Label} />
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-label').length).to.equal(data.length);
   });
 
   it('Render customized dot when dot is set to be a react element', () => {
-    const Dot = ({ x, y }) =>
-      <circle cx={x} cy={y} r={10} className="customized-dot" />
-    ;
-
+    const Dot = ({ x, y }) => <circle cx={x} cy={y} r={10} className="customized-dot" />;
     const wrapper = render(
       <Surface width={500} height={500}>
-        <Radar
-          isAnimationActive={false}
-          points={data}
-          dot={<Dot />}
-        />
-      </Surface>
+        <Radar isAnimationActive={false} points={data} dot={<Dot />} />
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-dot').length).to.equal(data.length);
   });
 
   it('Render customized dot when dot is set to be a function', () => {
-    const Dot = ({ x, y }) =>
-      <circle cx={x} cy={y} r={10} className="customized-dot" />
-    ;
-
+    const Dot = ({ x, y }) => <circle cx={x} cy={y} r={10} className="customized-dot" />;
     const wrapper = render(
       <Surface width={500} height={500}>
-        <Radar
-          isAnimationActive={false}
-          points={data}
-          dot={Dot}
-        />
-      </Surface>
+        <Radar isAnimationActive={false} points={data} dot={Dot} />
+      </Surface>,
     );
 
     expect(wrapper.find('.customized-dot').length).to.equal(data.length);
   });
 
-
-  it('Don\'t render polygon when points is empty', () => {
+  it("Don't render polygon when points is empty", () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <Radar
-          isAnimationActive={false}
-          points={[]}
-        />
-      </Surface>
+        <Radar isAnimationActive={false} points={[]} />
+      </Surface>,
     );
 
     expect(wrapper.find('.recharts-radar-polygon').length).to.equal(0);
   });
 });
-

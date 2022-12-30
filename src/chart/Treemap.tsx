@@ -16,8 +16,8 @@ import { COLOR_PANEL } from '../util/Constants';
 import { uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
-import { filterSvgElements, findChildByType, validateWidthHeight } from '../util/ReactUtils';
-import { DataKey, filterProps, TreemapNode } from '../util/types';
+import { filterSvgElements, findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
+import { DataKey, TreemapNode } from '../util/types';
 
 const NODE_VALUE_KEY = 'value';
 

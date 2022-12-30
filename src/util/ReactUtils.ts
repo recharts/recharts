@@ -1,9 +1,10 @@
 import _ from 'lodash';
-import React, { Children, ReactNode } from 'react';
+import React, { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
 import { isFragment } from 'react-is';
 
 import { isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
+import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys } from './types';
 
 const REACT_BROWSER_EVENT_MAP: any = {
   click: 'onClick',
@@ -273,6 +274,47 @@ export const filterSvgElements = (children: React.ReactElement[]): React.ReactEl
   });
 
   return svgElements;
+};
+
+export const filterProps = (
+  props: Record<string, any> | Component | FunctionComponent | boolean,
+  includeEvents?: boolean,
+  svgElementType?: FilteredSvgElementType,
+) => {
+  if (!props || typeof props === 'function' || typeof props === 'boolean') {
+    return null;
+  }
+
+  let inputProps = props as Record<string, any>;
+
+  if (isValidElement(props)) {
+    inputProps = props.props as Record<string, any>;
+  }
+
+  if (!_.isObject(inputProps)) {
+    return null;
+  }
+
+  const out: Record<string, any> = {};
+
+  /**
+   * If the svg element type is explicitly included, check against the filtered element key map
+   * to determine if there are attributes that should only exist on that element type.
+   * @todo Add an internal cjs version of https://github.com/wooorm/svg-element-attributes for full coverage.
+   */
+  const matchingElementTypeKeys = FilteredElementKeyMap?.[svgElementType] ?? [];
+
+  Object.keys(inputProps).forEach(key => {
+    if (
+      (svgElementType && matchingElementTypeKeys.includes(key)) ||
+      SVGElementPropKeys.includes(key) ||
+      (includeEvents && EventKeys.includes(key))
+    ) {
+      out[key] = inputProps[key];
+    }
+  });
+
+  return out;
 };
 
 /**

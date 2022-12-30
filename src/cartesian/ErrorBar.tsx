@@ -5,7 +5,8 @@ import React, { SVGProps } from 'react';
 import { Layer } from '../container/Layer';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { filterProps, D3Scale, DataKey } from '../util/types';
+import { D3Scale, DataKey } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 interface ErrorBarDataItem {
   x: number;

@@ -4,7 +4,7 @@
 import React, { PureComponent, SVGProps } from 'react';
 import classNames from 'classnames';
 import { isNumber } from '../util/DataUtils';
-import { filterProps } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 interface CrossProps {
   x?: number;

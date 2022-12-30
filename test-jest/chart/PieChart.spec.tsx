@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { PieChart, Pie, Legend, Cell } from '../../../src';
+import { PieChart, Pie, Legend, Cell } from '../../src';
 
 describe('<PieChart />', () => {
   const data = [

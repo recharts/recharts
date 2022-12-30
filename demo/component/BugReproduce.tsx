@@ -3,27 +3,25 @@ import { BarChart, Bar, ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip, Leg
 
 const testData = [
   {
-    name: "Hello",
-    value: 20
+    name: 'Hello',
+    value: 20,
   },
   {
-    name: "World",
-    value: 30
-  }
+    name: 'World',
+    value: 30,
+  },
 ];
 
 export default class PieDemo extends React.Component {
   static displayName = 'PieDemo';
 
-  render () {
+  render() {
     return (
       <BarChart data={testData} width={500} height={500}>
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Bar dataKey="value" />
-        </BarChart>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Bar dataKey="value" />
+      </BarChart>
     );
   }
 }
-
-

@@ -20,6 +20,7 @@ import {
   isChildrenEqual,
   renderByOrder,
   getReactEventByType,
+  filterProps,
 } from '../util/ReactUtils';
 
 import { CartesianAxis } from '../cartesian/CartesianAxis';
@@ -63,7 +64,6 @@ import {
   Coordinate,
   ChartCoordinate,
   TickItem,
-  filterProps,
   adaptEventHandlers,
   GeometrySector,
 } from '../util/types';
@@ -1048,7 +1048,7 @@ export const generateCategoricalChart = ({
         };
       }
       if (!isChildrenEqual(children, prevState.prevChildren)) {
-        // update configuration in chilren
+        // update configuration in children
         const hasGlobalData = !_.isNil(data);
         const newUpdateId = hasGlobalData ? prevState.updateId : prevState.updateId + 1;
 

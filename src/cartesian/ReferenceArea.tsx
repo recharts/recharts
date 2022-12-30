@@ -11,7 +11,8 @@ import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
-import { CartesianViewBox, D3Scale, filterProps } from '../util/types';
+import { CartesianViewBox, D3Scale } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';

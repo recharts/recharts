@@ -523,8 +523,9 @@ export type DOMAttributesAdaptChildEvent<P, T> = {
   onTransitionEnd?: AdaptChildTransitionEventHandler<P, T>;
   onTransitionEndCapture?: AdaptChildTransitionEventHandler<P, T>;
 };
+
 const SVGContainerPropKeys = ['viewBox', 'children'];
-const SVGElementPropKeys = [
+export const SVGElementPropKeys = [
   'aria-activedescendant',
   'aria-atomic',
   'aria-autocomplete',
@@ -721,7 +722,6 @@ const SVGElementPropKeys = [
   'patternTransform',
   'patternUnits',
   'pointerEvents',
-  'points',
   'pointsAtX',
   'pointsAtY',
   'pointsAtZ',
@@ -830,7 +830,19 @@ const SVGElementPropKeys = [
   'angle',
 ];
 
-const EventKeys = [
+const PolyElementKeys = ['points', 'pathLength'];
+
+/** svg element types that have specific attribute filtration requirements */
+export type FilteredSvgElementType = 'svg' | 'polyline' | 'polygon';
+
+/** map of svg element types to unique svg attributes that belong to that element */
+export const FilteredElementKeyMap: Record<FilteredSvgElementType, string[]> = {
+  svg: SVGContainerPropKeys,
+  polygon: PolyElementKeys,
+  polyline: PolyElementKeys,
+};
+
+export const EventKeys = [
   'dangerouslySetInnerHTML',
   'onCopy',
   'onCopyCapture',
@@ -1125,41 +1137,6 @@ export interface PolarViewBox {
 }
 
 export type ViewBox = CartesianViewBox | PolarViewBox;
-
-export const filterProps = (
-  props: Record<string, any> | Component | FunctionComponent | boolean,
-  includeEvents?: boolean,
-  isSvg?: boolean,
-) => {
-  if (!props || typeof props === 'function' || typeof props === 'boolean') {
-    return null;
-  }
-
-  let inputProps = props as Record<string, any>;
-
-  if (isValidElement(props)) {
-    inputProps = props.props as Record<string, any>;
-  }
-
-  if (!_.isObject(inputProps)) {
-    return null;
-  }
-
-  const out: Record<string, any> = {};
-
-  Object.keys(inputProps).forEach(key => {
-    // viewBox only exist in <svg />
-    if (
-      SVGElementPropKeys.includes(key) ||
-      (isSvg && SVGContainerPropKeys.includes(key)) ||
-      (includeEvents && EventKeys.includes(key))
-    ) {
-      out[key] = (inputProps as any)[key];
-    }
-  });
-
-  return out;
-};
 
 type RecordString<T> = Record<string, T>;
 
