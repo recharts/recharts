@@ -17,6 +17,7 @@ export interface PolarRadiusAxisProps extends Omit<BaseAxisProps, 'unit'> {
   angle?: number;
   orientation?: 'left' | 'right' | 'middle';
   ticks?: TickItem[];
+  reversed?: boolean;
 }
 
 export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & PolarRadiusAxisProps;
