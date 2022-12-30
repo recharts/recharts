@@ -14,8 +14,12 @@ Recharts is a **Redefined** chart library built with [React](https://facebook.gi
 The main purpose of this library is to help you to write charts in React applications without any pain. Main principles of Recharts are:
 
 1. **Simply** deploy with React components.
-1. **Native** SVG support, lightweight depending only on some D3 submodules.
-1. **Declarative** components, components of charts are purely presentational.
+2. **Native** SVG support, lightweight depending only on some D3 submodules.
+3. **Declarative** components, components of charts are purely presentational.
+
+Documentation at [recharts.org](https://recharts.org)
+
+Please see [the wiki](https://github.com/recharts/recharts/wiki) for FAQ.
 
 ## Examples
 
