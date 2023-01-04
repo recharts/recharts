@@ -51,7 +51,7 @@ describe('ReactUtils untest tests', () => {
       });
     });
 
-    test('should filter out "points" attribute when included wtesthout an svg type that explictestly uses "points"', () => {
+    test('should filter out "points" attribute when included without an svg type that explicitly uses "points"', () => {
       expect(filterProps({ test: '1234', points: '1234', onClick: jest.fn() }, true)).toEqual({
         onClick: expect.any(Function),
       });
@@ -241,14 +241,14 @@ describe('ReactUtils untest tests', () => {
       const childrenOne = [
         <>
           {['A'].map(value => {
-            return <Line dataKey={value} />;
+            return <Line key={value} dataKey={value} />;
           })}
         </>,
       ];
       const childrenTwo = [
         <>
           {['B'].map(value => {
-            return <Line dataKey={value} />;
+            return <Line key={value} dataKey={value} />;
           })}
         </>,
       ];

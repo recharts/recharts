@@ -2,13 +2,13 @@ import { warn } from '../../src/util/LogUtils';
 
 describe('LogUtils', () => {
   test('dont log when condition is true', () => {
-    const logSpy = jest.spyOn(console, 'warn');
+    const logSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     warn(true, 'test');
     expect(logSpy).not.toHaveBeenCalledWith('test');
   });
 
   test('warn when condition is false', () => {
-    const logSpy = jest.spyOn(console, 'warn');
+    const logSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     // log 'format'
     warn(false, 'format');
 
