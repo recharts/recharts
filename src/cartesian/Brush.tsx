@@ -48,7 +48,7 @@ interface BrushProps extends InternalBrushProps {
   alwaysShowText?: boolean;
 }
 
-export type Props = SVGProps<SVGElement> & BrushProps;
+export type Props = Omit<SVGProps<SVGElement>, 'onChange'> & BrushProps;
 
 type BrushTravellerId = 'startX' | 'endX';
 
