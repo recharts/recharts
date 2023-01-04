@@ -135,7 +135,7 @@ export const findChildByType = (
 /*
  * Create a new array of children excluding the ones matched the type
  */
-export const withoutType = (children: ReactNode, type: string) => {
+export const withoutType = (children: ReactNode, type: string | string[]) => {
   const newChildren: ReactNode[] = [];
   let types: string[];
 
