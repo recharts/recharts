@@ -22,7 +22,7 @@ import {
   ReactElement,
 } from 'react';
 import _ from 'lodash';
-import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'd3-scale';
+import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
 
 export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette';
 export type LayoutType = 'horizontal' | 'vertical' | 'centric' | 'radial';

@@ -32,15 +32,7 @@ module.exports = {
         include: [
           __dirname,
           path.join(__dirname, '..', 'src'),
-          path.resolve(__dirname, '/node_modules/d3-scale'),
-          path.resolve(__dirname, '/node_modules/d3-array'),
-          path.resolve(__dirname, '/node_modules/d3-format'),
-          path.resolve(__dirname, '/node_modules/d3-time-format'),
-          path.resolve(__dirname, '/node_modules/d3-time'),
-          path.resolve(__dirname, '/node_modules/d3-shape'),
-          path.resolve(__dirname, '/node_modules/d3-color'),
-          path.resolve(__dirname, '/node_modules/d3-interpolate'),
-          path.resolve(__dirname, '/node_modules/d3-path'),
+          path.resolve(__dirname, '/node_modules/victory-vendor'),
         ],
       },
       {

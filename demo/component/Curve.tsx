@@ -7,8 +7,8 @@ import {
   curveCardinalOpen,
   curveCatmullRomOpen,
   CurveFactory,
-} from 'd3-shape';
-import { scaleOrdinal } from 'd3-scale';
+} from 'victory-vendor/d3-shape';
+import { scaleOrdinal } from 'victory-vendor/d3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
 
 export default class Demo extends Component {

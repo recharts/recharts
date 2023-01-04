@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
-import * as d3Scales from 'd3-scale';
+import * as d3Scales from 'victory-vendor/d3-scale';
 import {
   stack as shapeStack,
   stackOrderNone,
@@ -8,7 +8,7 @@ import {
   stackOffsetNone,
   stackOffsetSilhouette,
   stackOffsetWiggle,
-} from 'd3-shape';
+} from 'victory-vendor/d3-shape';
 import { ReactElement, ReactNode } from 'react';
 import { isNumOrStr, uniqueId, isNumber, getPercentValue, mathSign, findEntryInArray } from './DataUtils';
 import { Legend } from '../component/Legend';
