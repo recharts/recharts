@@ -66,5 +66,4 @@ require('./specs/shape/TrapezoidSpec');
 require('./specs/util/CartesianUtilsSpec');
 require('./specs/util/ShallowEqualSpec');
 require('./specs/util/DataUtilsSpec');
-require('./specs/util/ReactUtilsSpec');
 require('./specs/util/ChartUtilsSpec');
