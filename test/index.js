@@ -43,7 +43,6 @@ require('./specs/chart/SankeySpec');
 require('./specs/chart/FunnelChartSpec');
 
 // general component
-require('./specs/component/CellSpec');
 require('./specs/component/LegendSpec');
 require('./specs/component/TooltipSpec');
 require('./specs/component/ResponsiveContainerSpec');
