@@ -11,11 +11,12 @@ export const mathSign = (value: number) => {
   return -1;
 };
 
-export const isPercent = (value: string | number) => _.isString(value) && value.indexOf('%') === value.length - 1;
+export const isPercent = (value: string | number): value is `${number}%` =>
+  _.isString(value) && value.indexOf('%') === value.length - 1;
 
-export const isNumber = (value: any) => _.isNumber(value) && !_.isNaN(value);
+export const isNumber = (value: unknown): value is number => _.isNumber(value) && !_.isNaN(value);
 
-export const isNumOrStr = (value: any) => isNumber(value as number) || _.isString(value);
+export const isNumOrStr = (value: unknown): value is number | string => isNumber(value as number) || _.isString(value);
 
 let idCounter = 0;
 export const uniqueId = (prefix?: string) => {
@@ -23,23 +24,24 @@ export const uniqueId = (prefix?: string) => {
 
   return `${prefix || ''}${id}`;
 };
+
 /**
  * Get percent value of a total value
- * @param {Number|String} percent A percent
- * @param {Number} totalValue     Total value
- * @param {NUmber} defaultValue   The value returned when percent is undefined or invalid
- * @param {Boolean} validate      If set to be true, the result will be validated
- * @return {Number} value
+ * @param {number|string} percent A percent
+ * @param {number} totalValue     Total value
+ * @param {number} defaultValue   The value returned when percent is undefined or invalid
+ * @param {boolean} validate      If set to be true, the result will be validated
+ * @return {number} value
  */
 export const getPercentValue = (percent: number | string, totalValue: number, defaultValue = 0, validate = false) => {
   if (!isNumber(percent as number) && !_.isString(percent)) {
     return defaultValue;
   }
 
-  let value;
+  let value: number;
 
-  if (isPercent(percent as string)) {
-    const index = (percent as string).indexOf('%');
+  if (isPercent(percent)) {
+    const index = percent.indexOf('%');
     value = (totalValue * parseFloat((percent as string).slice(0, index))) / 100;
   } else {
     value = +percent;
@@ -70,13 +72,13 @@ export const getAnyElementOfObject = (obj: any) => {
   return null;
 };
 
-export const hasDuplicate = (ary: Array<any>) => {
+export const hasDuplicate = (ary: Array<unknown>) => {
   if (!_.isArray(ary)) {
     return false;
   }
 
   const len = ary.length;
-  const cache: Record<string, any> = {};
+  const cache: Record<string, boolean> = {};
 
   for (let i = 0; i < len; i++) {
     if (!cache[ary[i]]) {
@@ -89,6 +91,7 @@ export const hasDuplicate = (ary: Array<any>) => {
   return false;
 };
 
+/* @todo consider to rename this function into `getInterpolator` */
 export const interpolateNumber = (numberA: number, numberB: number) => {
   if (isNumber(numberA) && isNumber(numberB)) {
     return (t: number) => numberA + t * (numberB - numberA);
