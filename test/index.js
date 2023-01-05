@@ -64,4 +64,3 @@ require('./specs/shape/TrapezoidSpec');
 
 // util
 require('./specs/util/DataUtilsSpec');
-require('./specs/util/ChartUtilsSpec');
