@@ -1,7 +1,7 @@
 import { scaleBand, scaleLinear } from 'd3-scale';
 import React from 'react';
 
-import { Bar, ErrorBar, Line, Area, Scatter } from '../../src';
+import { Area, Bar, ErrorBar, Line, Scatter } from '../../src';
 import {
   calculateActiveTickIndex,
   getBandSizeOfAxis,
@@ -12,6 +12,7 @@ import {
   getValueByDataKey,
   MAX_VALUE_REG,
   MIN_VALUE_REG,
+  offsetSign,
   parseScale,
   parseSpecifiedDomain,
 } from '../../src/util/ChartUtils';
@@ -108,6 +109,8 @@ describe('offsetSign', () => {
         [0, -5],
       ],
     ];
+
+    offsetSign(data);
 
     it('should change', () => {
       expect(data).toEqual([
