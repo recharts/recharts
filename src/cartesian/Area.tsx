@@ -119,8 +119,12 @@ export class Area extends PureComponent<Props, State> {
   };
 
   static getBaseValue = (props: Props, item: Area, xAxis: Props['xAxis'], yAxis: Props['yAxis']): number => {
-    const { layout } = props;
-    const { baseValue } = item.props;
+    const { layout, baseValue: chartBaseValue } = props;
+    const { baseValue: itemBaseValue } = item.props;
+
+    // The baseValue can be defined both on the AreaChart as well as on the Area.
+    // The value for the item takes precedence.
+    const baseValue = itemBaseValue ?? chartBaseValue;
 
     if (isNumber(baseValue) && typeof baseValue === 'number') {
       return baseValue;
