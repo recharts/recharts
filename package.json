@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "2.2.0",
+  "version": "2.3.0-alpha.1",
   "description": "React charts",
   "main": "lib/index",
   "module": "es6/index",
@@ -9,11 +9,9 @@
   "sideEffects": false,
   "files": [
     "*.md",
-    "demo",
     "es6",
     "lib",
     "umd",
-    "src",
     "types"
   ],
   "keywords": [
