@@ -67,7 +67,7 @@ export const calculateActiveTickIndex = (
   const len = ticks?.length ?? 0;
 
   if (len === 0) {
-    return index;
+    return 0;
   }
 
   if (axis && axis.axisType === 'angleAxis' && Math.abs(Math.abs(axis.range[1] - axis.range[0]) - 360) <= 1e-6) {
