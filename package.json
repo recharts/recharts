@@ -33,7 +33,6 @@
     "test": "cross-env NODE_ENV=test karma start test/karma.conf.js",
     "lint": "eslint src",
     "autofix": "eslint src --fix",
-    "prepare": "yarn build",
     "analyse": "cross-env NODE_ENV=analyse webpack src/index.js -o umd/Recharts.js"
   },
   "pre-commit": [],
