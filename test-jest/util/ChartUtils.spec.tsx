@@ -1,85 +1,83 @@
+import { scaleBand, scaleLinear } from 'd3-scale';
 import React from 'react';
-import { expect } from 'chai';
-import { scaleLinear, scaleBand } from 'd3-scale';
-import { Line, Bar, Scatter, Area, ErrorBar } from 'recharts';
-import { mount } from 'enzyme';
+
+import { Area, Bar, ErrorBar, Line, Scatter } from '../../src';
 import {
   calculateActiveTickIndex,
-  getDomainOfStackGroups,
-  getDomainOfDataByKey,
   getBandSizeOfAxis,
-  calculateDomainOfTicks,
-  parseSpecifiedDomain,
-  parseScale,
+  getDomainOfDataByKey,
+  getDomainOfErrorBars,
+  getDomainOfStackGroups,
   getTicksOfScale,
   getValueByDataKey,
-  getDomainOfErrorBars,
-  offsetSign,
-  MIN_VALUE_REG,
   MAX_VALUE_REG,
-} from '../../../src/util/ChartUtils';
+  MIN_VALUE_REG,
+  offsetSign,
+  parseScale,
+  parseSpecifiedDomain,
+} from '../../src/util/ChartUtils';
 
 describe('getBandSizeOfAxis', () => {
   it('DataUtils.getBandSizeOfAxis() should return 0 ', () => {
-    expect(getBandSizeOfAxis()).to.equal(0);
+    expect(getBandSizeOfAxis()).toBe(0);
   });
 
   it('DataUtils.getBandSizeOfAxis({ type: "category", scale }) should return 0 ', () => {
     const axis = {
       type: 'category',
-      scale: scaleBand().domain([0, 1, 2, 3]).range([0, 100]),
+      scale: scaleBand().domain(['0', '1', '2', '3']).range([0, 100]),
     };
-    expect(getBandSizeOfAxis(axis)).to.equal(25);
+    expect(getBandSizeOfAxis(axis)).toBe(25);
   });
 
   it('DataUtils.getBandSizeOfAxis({ type: "number", scale }, ticks) should return 0 ', () => {
     const axis = { type: 'number' };
     const ticks = [{ coordinate: 13 }, { coordinate: 15 }, { coordinate: 20 }];
-    expect(getBandSizeOfAxis(axis, ticks)).to.equal(2);
+    expect(getBandSizeOfAxis(axis, ticks)).toBe(2);
   });
 });
 
 describe('parseSpecifiedDomain', () => {
   const domain = [20, 100];
   it('DataUtils.parseSpecifiedDomain(1, domain) should return domain ', () => {
-    expect(parseSpecifiedDomain(1, domain)).to.equal(domain);
+    expect(parseSpecifiedDomain(1, domain)).toBe(domain);
   });
 
   it('DataUtils.parseSpecifiedDomain(["auto", "auto"], domain) should return domain ', () => {
     const result = parseSpecifiedDomain(['auto', 'auto'], domain);
-    expect(result).to.deep.equal(domain);
+    expect(result).toEqual(domain);
   });
 
   it('DataUtils.parseSpecifiedDomain([-1, 120], domain) should return input value ', () => {
     const result = parseSpecifiedDomain([-1, 120], domain);
-    expect(result).to.deep.equal([-1, 120]);
+    expect(result).toEqual([-1, 120]);
   });
 
-  it('DataUtils.parseSpecifiedDomain(["dataMin - 10", "dataMax + 10"], domain) should return computed value ', () => {
+  it('works with ["dataMin - 10", "dataMax + 10"], domain)', () => {
     const result = parseSpecifiedDomain(['dataMin - 10', 'dataMax + 10'], domain);
-    expect(result).to.deep.equal([10, 110]);
+    expect(result).toEqual([10, 110]);
   });
 
-  it('DataUtils.parseSpecifiedDomain([dataMin => (0 - Math.abs(dataMin)), dataMax => (dataMax * 2)], domain) should return [-20, 200] ', () => {
+  it('works with functions ', () => {
     const result = parseSpecifiedDomain([dataMin => 0 - Math.abs(dataMin), dataMax => dataMax * 2], domain);
-    expect(result).to.deep.equal([-20, 200]);
+    expect(result).toEqual([-20, 200]);
   });
 
   it('DataUtils.parseSpecifiedDomain(callback, domain) should execute the callback and return computed value ', () => {
     const result = parseSpecifiedDomain(([dataMin, dataMax], _allowDataOverflow) => [dataMin / 4, dataMax * 4], domain);
-    expect(result).to.deep.equal([5, 400]);
+    expect(result).toEqual([5, 400]);
   });
 });
 
 describe('parseScale', () => {
   it('of "time" ', () => {
     const { scale } = parseScale({ scale: 'time' });
-    expect(scale).to.be.instanceof(Function);
+    expect(scale).toBeInstanceOf(Function);
   });
 
   it('of [12, 12] should return true', () => {
     const { scale } = parseScale({ scale: scaleLinear() });
-    expect(scale).to.be.instanceof(Function);
+    expect(scale).toBeInstanceOf(Function);
   });
 });
 
@@ -89,11 +87,11 @@ describe('getValueByDataKey', () => {
   it('of function', () => {
     const fn = entry => entry.a;
 
-    expect(getValueByDataKey(data, fn)).to.equal(1);
+    expect(getValueByDataKey(data, fn)).toBe(1);
   });
 
-  it('of object', () => {
-    expect(getValueByDataKey(data, {}, 0)).to.equal(0);
+  it('returns default value', () => {
+    expect(getValueByDataKey(data, 'foo', 0)).toBe(0);
   });
 });
 
@@ -111,10 +109,11 @@ describe('offsetSign', () => {
         [0, -5],
       ],
     ];
-    const offsetData = offsetSign(data);
+
+    offsetSign(data);
 
     it('should change', () => {
-      expect(data).to.deep.equal([
+      expect(data).toEqual([
         [
           [0, 1],
           [0, 2],
@@ -142,7 +141,7 @@ describe('getTicksOfScale', () => {
     };
     const result = getTicksOfScale(scale, opts);
 
-    expect(result.niceTicks).to.deep.equal([0, 0.25, 0.5, 0.75, 1]);
+    expect(result?.niceTicks).toEqual([0, 0.25, 0.5, 0.75, 1]);
   });
 
   describe('of linear scale with specified domain', () => {
@@ -156,21 +155,7 @@ describe('getTicksOfScale', () => {
     };
     const result = getTicksOfScale(scale, opts);
 
-    expect(result.niceTicks).to.deep.equal([0, 0.25, 0.5, 0.75, 1]);
-  });
-});
-
-describe('calculateDomainOfTicks', () => {
-  const ticks = [1, 5, 2, 3, 3];
-
-  it('calculateDomainOfTicks([1, 5, 2, 3, 3], "number") should return [1, 5]', () => {
-    const result = calculateDomainOfTicks(ticks, 'number');
-    expect(result).to.deep.equal([1, 5]);
-  });
-
-  it('calculateDomainOfTicks([1, 5, 2, 3, 3], "category") should return [1, 5, 2, 3, 3]', () => {
-    const result = calculateDomainOfTicks(ticks, 'category');
-    expect(result).to.deep.equal(ticks);
+    expect(result?.niceTicks).toEqual([0, 0.25, 0.5, 0.75, 1]);
   });
 });
 
@@ -182,22 +167,22 @@ describe('calculateActiveTickIndex', () => {
     { coordinate: 15, index: 3 },
   ];
   it('calculateActiveTickIndex(12, ticks) should return 1', () => {
-    expect(calculateActiveTickIndex(12, ticks)).to.equal(1);
+    expect(calculateActiveTickIndex(12, ticks)).toBe(1);
   });
 
   it('calculateActiveTickIndex(-1, ticks) should return 0', () => {
-    expect(calculateActiveTickIndex(-1, ticks)).to.equal(0);
+    expect(calculateActiveTickIndex(-1, ticks)).toBe(0);
   });
 
   it('calculateActiveTickIndex(16, ticks) should return 3', () => {
-    expect(calculateActiveTickIndex(16, ticks)).to.equal(3);
+    expect(calculateActiveTickIndex(16, ticks)).toBe(3);
   });
 });
 
 describe('getDomainOfStackGroups', () => {
   let stackData;
 
-  before(() => {
+  beforeEach(() => {
     stackData = {
       a: {
         stackedData: [
@@ -227,13 +212,13 @@ describe('getDomainOfStackGroups', () => {
   });
 
   it('correctly calculates the highest and lowest values in a stack of many values', () => {
-    expect(getDomainOfStackGroups(stackData, 0, 1)).to.deep.equal([8, 34]);
+    expect(getDomainOfStackGroups(stackData, 0, 1)).toEqual([8, 34]);
   });
 
   it('deals with a null value without assuming it should be === 0', () => {
     stackData.a.stackedData[0][0][0] = null;
 
-    expect(getDomainOfStackGroups(stackData, 0, 1)).to.deep.equal([8, 34]);
+    expect(getDomainOfStackGroups(stackData, 0, 1)).toEqual([8, 34]);
   });
 
   it('domain of all nulls should return [0, 0]', () => {
@@ -241,35 +226,35 @@ describe('getDomainOfStackGroups', () => {
       a: { stackedData: [[[null, null]]] },
     };
 
-    expect(getDomainOfStackGroups(stackData, 0, 1)).to.deep.equal([0, 0]);
+    expect(getDomainOfStackGroups(stackData, 0, 1)).toEqual([0, 0]);
   });
 });
 
 describe('MIN_VALUE_REG ', () => {
   it('.exec("dataMin - 0.233") is true', () => {
-    expect(MIN_VALUE_REG.test('dataMin - 0.233')).to.be.true;
+    expect(MIN_VALUE_REG.test('dataMin - 0.233')).toBe(true);
   });
 
   it('.exec("dataMin - 233") is true', () => {
-    expect(MIN_VALUE_REG.test('dataMin - 233')).to.be.true;
+    expect(MIN_VALUE_REG.test('dataMin - 233')).toBe(true);
   });
 
   it('.exec("dataMin - 233,") is false', () => {
-    expect(MIN_VALUE_REG.test('dataMin - 233,')).to.be.false;
+    expect(MIN_VALUE_REG.test('dataMin - 233,')).toBe(false);
   });
 });
 
 describe('MAX_VALUE_REG ', () => {
   it('.exec("dataMax + 0.233") is true', () => {
-    expect(MAX_VALUE_REG.test('dataMax + 0.233')).to.be.true;
+    expect(MAX_VALUE_REG.test('dataMax + 0.233')).toBe(true);
   });
 
   it('.exec("dataMax + 233") is true', () => {
-    expect(MAX_VALUE_REG.test('dataMax + 233')).to.be.true;
+    expect(MAX_VALUE_REG.test('dataMax + 233')).toBe(true);
   });
 
   it('.exec("dataMax + 233,") is false', () => {
-    expect(MAX_VALUE_REG.test('dataMax + 233,')).to.be.false;
+    expect(MAX_VALUE_REG.test('dataMax + 233,')).toBe(false);
   });
 });
 
@@ -305,13 +290,13 @@ describe('getDomainOfDataByKey', () => {
     ];
 
     it('should calculate the correct domain for a simple linear set', () => {
-      expect(getDomainOfDataByKey(data, 'x', 'number')).to.deep.equal([1, 5]);
-      expect(getDomainOfDataByKey(data, 'y', 'number')).to.deep.equal([0, 4]);
+      expect(getDomainOfDataByKey(data, 'x', 'number')).toEqual([1, 5]);
+      expect(getDomainOfDataByKey(data, 'y', 'number')).toEqual([0, 4]);
     });
 
     it('should calculate the correct domain even if there is no data for certain items in the set', () => {
-      expect(getDomainOfDataByKey(data, 'actual', 'number')).to.deep.equal([35.4, 42.5]);
-      expect(getDomainOfDataByKey(data, 'benchmark', 'number')).to.deep.equal([31.86, 35.4]);
+      expect(getDomainOfDataByKey(data, 'actual', 'number')).toEqual([35.4, 42.5]);
+      expect(getDomainOfDataByKey(data, 'benchmark', 'number')).toEqual([31.86, 35.4]);
     });
   });
 });
@@ -333,109 +318,108 @@ describe('getDomainOfErrorBars', () => {
   ];
 
   describe('within Line component', () => {
-    const line = mount(
-      <Line>
+    const line = (
+      <Line dataKey="y">
         <ErrorBar dataKey="error" />
-      </Line>,
-    ).instance();
-
+      </Line>
+    );
     describe('with horizontal layout', () => {
       it('should not include error bars in xAxis domain', () => {
-        expect(getDomainOfErrorBars(data, line, 'x', 'horizontal', 'xAxis')).to.be.null;
+        expect(getDomainOfErrorBars(data, line, 'x', 'horizontal', 'xAxis')).toBeNull();
       });
       it('should include error bars in yAxis domain', () => {
-        expect(getDomainOfErrorBars(data, line, 'y', 'horizontal', 'yAxis')).to.deep.equal([90, 220]);
+        expect(getDomainOfErrorBars(data, line, 'y', 'horizontal', 'yAxis')).toEqual([90, 220]);
       });
     });
 
     describe('with vertical layout', () => {
       it('should include error bars in xAxis domain', () => {
-        expect(getDomainOfErrorBars(data, line, 'x', 'vertical', 'xAxis')).to.deep.equal([-18, 22]);
+        expect(getDomainOfErrorBars(data, line, 'x', 'vertical', 'xAxis')).toEqual([-18, 22]);
       });
       it('should not include error bars in yAxis domain', () => {
-        expect(getDomainOfErrorBars(data, line, 'y', 'vertical', 'yAxis')).to.be.null;
+        expect(getDomainOfErrorBars(data, line, 'y', 'vertical', 'yAxis')).toBeNull();
       });
     });
   });
 
   describe('within Bar component', () => {
-    const bar = mount(
-      <Bar>
+    const bar = (
+      <Bar dataKey="y">
         <ErrorBar dataKey="error" />
-      </Bar>,
-    ).instance();
+      </Bar>
+    );
 
     describe('with horizontal layout', () => {
       it('should not include error bars in xAxis domain', () => {
-        expect(getDomainOfErrorBars(data, bar, 'x', 'horizontal', 'xAxis')).to.be.null;
+        expect(getDomainOfErrorBars(data, bar, 'x', 'horizontal', 'xAxis')).toBeNull();
       });
       it('should include error bars in yAxis domain', () => {
-        expect(getDomainOfErrorBars(data, bar, 'y', 'horizontal', 'yAxis')).to.deep.equal([90, 220]);
+        expect(getDomainOfErrorBars(data, bar, 'y', 'horizontal', 'yAxis')).toEqual([90, 220]);
       });
     });
 
     describe('with vertical layout', () => {
       it('should include error bars in xAxis domain', () => {
-        expect(getDomainOfErrorBars(data, bar, 'x', 'vertical', 'xAxis')).to.deep.equal([-18, 22]);
+        expect(getDomainOfErrorBars(data, bar, 'x', 'vertical', 'xAxis')).toEqual([-18, 22]);
       });
       it('should not include error bars in yAxis domain', () => {
-        expect(getDomainOfErrorBars(data, bar, 'y', 'vertical', 'yAxis')).to.be.null;
+        expect(getDomainOfErrorBars(data, bar, 'y', 'vertical', 'yAxis')).toBeNull();
       });
     });
   });
 
   describe('within Area component', () => {
-    const area = mount(
-      <Area>
+    const area = (
+      <Area dataKey="y">
         <ErrorBar dataKey="error" />
-      </Area>,
-    ).instance();
+      </Area>
+    );
 
     describe('with horizontal layout', () => {
       it('should not include error bars in xAxis domain', () => {
-        expect(getDomainOfErrorBars(data, area, 'x', 'horizontal', 'xAxis')).to.be.null;
+        expect(getDomainOfErrorBars(data, area, 'x', 'horizontal', 'xAxis')).toBeNull();
       });
       it('should include error bars in yAxis domain', () => {
-        expect(getDomainOfErrorBars(data, area, 'y', 'horizontal', 'yAxis')).to.deep.equal([90, 220]);
+        expect(getDomainOfErrorBars(data, area, 'y', 'horizontal', 'yAxis')).toEqual([90, 220]);
       });
     });
 
     describe('with vertical layout', () => {
       it('should include error bars in xAxis domain', () => {
-        expect(getDomainOfErrorBars(data, area, 'x', 'vertical', 'xAxis')).to.deep.equal([-18, 22]);
+        expect(getDomainOfErrorBars(data, area, 'x', 'vertical', 'xAxis')).toEqual([-18, 22]);
       });
       it('should not include error bars in yAxis domain', () => {
-        expect(getDomainOfErrorBars(data, area, 'y', 'vertical', 'yAxis')).to.be.null;
+        expect(getDomainOfErrorBars(data, area, 'y', 'vertical', 'yAxis')).toBeNull();
       });
     });
   });
 
   describe('within Scatter component', () => {
-    const scatter = mount(
+    const scatter = (
       <Scatter>
         <ErrorBar dataKey="error" direction="y" />
         <ErrorBar dataKey="error2" direction="x" />
-      </Scatter>,
-    ).instance();
+      </Scatter>
+    );
 
     it('should only include error bars with direction y in xAxis domain', () => {
-      expect(getDomainOfErrorBars(data, scatter, 'x', undefined, 'xAxis')).to.deep.equal([-14, 17]);
+      expect(getDomainOfErrorBars(data, scatter, 'x', undefined, 'xAxis')).toEqual([-14, 17]);
     });
     it('should only include error bars with direction x in yAxis domain', () => {
-      expect(getDomainOfErrorBars(data, scatter, 'y', undefined, 'yAxis')).to.deep.equal([90, 220]);
+      expect(getDomainOfErrorBars(data, scatter, 'y', undefined, 'yAxis')).toEqual([90, 220]);
     });
   });
 
   describe('with multiple ErrorBar children with same direction', () => {
-    const line = mount(
-      <Line>
+    const line = (
+      <Line dataKey="y">
         <ErrorBar dataKey="error" />
         <ErrorBar dataKey="error2" />
-      </Line>,
-    ).instance();
+      </Line>
+    );
 
     it('should return maximum domain of error bars', () => {
-      expect(getDomainOfErrorBars(data, line, 'y', 'horizontal', 'yAxis')).to.deep.equal([85, 220]);
+      expect(getDomainOfErrorBars(data, line, 'y', 'horizontal', 'yAxis')).toEqual([85, 220]);
     });
   });
 });

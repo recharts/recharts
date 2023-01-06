@@ -1,21 +1,23 @@
-import _ from 'lodash';
-import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
 import * as d3Scales from 'd3-scale';
 import {
   stack as shapeStack,
-  stackOrderNone,
   stackOffsetExpand,
   stackOffsetNone,
   stackOffsetSilhouette,
   stackOffsetWiggle,
+  stackOrderNone,
 } from 'd3-shape';
+import _ from 'lodash';
 import { ReactElement, ReactNode } from 'react';
-import { isNumOrStr, uniqueId, isNumber, getPercentValue, mathSign, findEntryInArray } from './DataUtils';
+import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
+
 import { Legend } from '../component/Legend';
+
+import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
 import { filterProps, findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
-import { LayoutType, PolarLayoutType, AxisType, TickItem, BaseAxisProps, DataKey } from './types';
+import { AxisType, BaseAxisProps, DataKey, LayoutType, PolarLayoutType, TickItem } from './types';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<any>, defaultValue?: any) {
   if (_.isNil(obj) || _.isNil(dataKey)) {
@@ -58,77 +60,77 @@ export function getDomainOfDataByKey<T>(data: Array<T>, key: string, type: strin
 export const calculateActiveTickIndex = (
   coordinate: number,
   ticks: Array<TickItem> = [],
-  unsortedTicks: Array<TickItem>,
-  axis: BaseAxisProps,
+  unsortedTicks?: Array<TickItem>,
+  axis?: BaseAxisProps,
 ) => {
   let index = -1;
   const len = ticks?.length ?? 0;
 
-  if (len > 1) {
-    if (axis && axis.axisType === 'angleAxis' && Math.abs(Math.abs(axis.range[1] - axis.range[0]) - 360) <= 1e-6) {
-      const { range } = axis;
-      // ticks are distributed in a circle
-      for (let i = 0; i < len; i++) {
-        const before = i > 0 ? unsortedTicks[i - 1].coordinate : unsortedTicks[len - 1].coordinate;
-        const cur = unsortedTicks[i].coordinate;
-        const after = i >= len - 1 ? unsortedTicks[0].coordinate : unsortedTicks[i + 1].coordinate;
-        let sameDirectionCoord;
+  if (len === 0) {
+    return 0;
+  }
 
-        if (mathSign(cur - before) !== mathSign(after - cur)) {
-          const diffInterval = [];
-          if (mathSign(after - cur) === mathSign(range[1] - range[0])) {
-            sameDirectionCoord = after;
+  if (axis && axis.axisType === 'angleAxis' && Math.abs(Math.abs(axis.range[1] - axis.range[0]) - 360) <= 1e-6) {
+    const { range } = axis;
+    // ticks are distributed in a circle
+    for (let i = 0; i < len; i++) {
+      const before = i > 0 ? unsortedTicks[i - 1].coordinate : unsortedTicks[len - 1].coordinate;
+      const cur = unsortedTicks[i].coordinate;
+      const after = i >= len - 1 ? unsortedTicks[0].coordinate : unsortedTicks[i + 1].coordinate;
+      let sameDirectionCoord;
 
-            const curInRange = cur + range[1] - range[0];
-            diffInterval[0] = Math.min(curInRange, (curInRange + before) / 2);
-            diffInterval[1] = Math.max(curInRange, (curInRange + before) / 2);
-          } else {
-            sameDirectionCoord = before;
+      if (mathSign(cur - before) !== mathSign(after - cur)) {
+        const diffInterval = [];
+        if (mathSign(after - cur) === mathSign(range[1] - range[0])) {
+          sameDirectionCoord = after;
 
-            const afterInRange = after + range[1] - range[0];
-            diffInterval[0] = Math.min(cur, (afterInRange + cur) / 2);
-            diffInterval[1] = Math.max(cur, (afterInRange + cur) / 2);
-          }
-          const sameInterval = [
-            Math.min(cur, (sameDirectionCoord + cur) / 2),
-            Math.max(cur, (sameDirectionCoord + cur) / 2),
-          ];
-
-          if (
-            (coordinate > sameInterval[0] && coordinate <= sameInterval[1]) ||
-            (coordinate >= diffInterval[0] && coordinate <= diffInterval[1])
-          ) {
-            ({ index } = unsortedTicks[i]);
-            break;
-          }
+          const curInRange = cur + range[1] - range[0];
+          diffInterval[0] = Math.min(curInRange, (curInRange + before) / 2);
+          diffInterval[1] = Math.max(curInRange, (curInRange + before) / 2);
         } else {
-          const min = Math.min(before, after);
-          const max = Math.max(before, after);
+          sameDirectionCoord = before;
 
-          if (coordinate > (min + cur) / 2 && coordinate <= (max + cur) / 2) {
-            ({ index } = unsortedTicks[i]);
-            break;
-          }
+          const afterInRange = after + range[1] - range[0];
+          diffInterval[0] = Math.min(cur, (afterInRange + cur) / 2);
+          diffInterval[1] = Math.max(cur, (afterInRange + cur) / 2);
         }
-      }
-    } else {
-      // ticks are distributed in a single direction
-      for (let i = 0; i < len; i++) {
+        const sameInterval = [
+          Math.min(cur, (sameDirectionCoord + cur) / 2),
+          Math.max(cur, (sameDirectionCoord + cur) / 2),
+        ];
+
         if (
-          (i === 0 && coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2) ||
-          (i > 0 &&
-            i < len - 1 &&
-            coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2 &&
-            coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2) ||
-          (i === len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2)
+          (coordinate > sameInterval[0] && coordinate <= sameInterval[1]) ||
+          (coordinate >= diffInterval[0] && coordinate <= diffInterval[1])
         ) {
-          ({ index } = ticks[i]);
+          ({ index } = unsortedTicks[i]);
+          break;
+        }
+      } else {
+        const min = Math.min(before, after);
+        const max = Math.max(before, after);
+
+        if (coordinate > (min + cur) / 2 && coordinate <= (max + cur) / 2) {
+          ({ index } = unsortedTicks[i]);
           break;
         }
       }
     }
   } else {
-    index = 0;
+    // ticks are distributed in a single direction
+    for (let i = 0; i < len; i++) {
+      if (
+        (i === 0 && coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2) ||
+        (i > 0 &&
+          i < len - 1 &&
+          coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2 &&
+          coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2) ||
+        (i === len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2)
+      ) {
+        ({ index } = ticks[i]);
+        break;
+      }
+    }
   }
 
   return index;
@@ -654,7 +656,7 @@ export const combineEventHandlers = (defaultHandler: Function, parentHandler: Fu
  * @param  {Boolean}  hasBar        if it has a bar
  * @return {Function}               The scale function
  */
-export const parseScale = (axis: any, chartType: string, hasBar?: boolean) => {
+export const parseScale = (axis: any, chartType?: string, hasBar?: boolean) => {
   const { scale, type, layout, axisType } = axis;
   if (scale === 'auto') {
     if (layout === 'radial' && axisType === 'radiusAxis') {
@@ -899,20 +901,6 @@ export const getStackGroupsByAxisId = (
 };
 
 /**
- * get domain of ticks
- * @param  {Array} ticks Ticks of axis
- * @param  {String} type  The type of axis
- * @return {Array} domain
- */
-export const calculateDomainOfTicks = (ticks: Array<TickItem>, type: string) => {
-  if (type === 'number') {
-    return [_.min(ticks), _.max(ticks)];
-  }
-
-  return ticks;
-};
-
-/**
  * Configure the scale function of axis
  * @param {Object} scale The scale function
  * @param {Object} opts  The configuration of axis
@@ -939,7 +927,7 @@ export const getTicksOfScale = (scale: any, opts: any) => {
     }
     const tickValues = getNiceTickValues(domain, tickCount, allowDecimals);
 
-    scale.domain(calculateDomainOfTicks(tickValues, type));
+    scale.domain([_.min(tickValues), _.max(tickValues)]);
 
     return { niceTicks: tickValues };
   }
@@ -1088,7 +1076,7 @@ export const getDomainOfStackGroups = (stackGroups: any, startIndex: number, end
 export const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 export const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 
-export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allowDataOverflow: boolean) => {
+export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allowDataOverflow?: boolean) => {
   if (_.isFunction(specifiedDomain)) {
     return specifiedDomain(dataDomain, allowDataOverflow);
   }
@@ -1135,7 +1123,7 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
  * @param  {Boolean} isBar if items in axis are bars
  * @return {Number} Size
  */
-export const getBandSizeOfAxis = (axis: any, ticks?: Array<TickItem>, isBar?: boolean) => {
+export const getBandSizeOfAxis = (axis?: any, ticks?: Array<TickItem>, isBar?: boolean) => {
   if (axis && axis.scale && axis.scale.bandwidth) {
     const bandWidth = axis.scale.bandwidth();
 

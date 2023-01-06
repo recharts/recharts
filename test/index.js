@@ -59,6 +59,3 @@ require('./specs/shape/SectorSpec');
 require('./specs/shape/PolygonSpec');
 require('./specs/shape/SymbolsSpec');
 require('./specs/shape/TrapezoidSpec');
-
-// util
-require('./specs/util/ChartUtilsSpec');
