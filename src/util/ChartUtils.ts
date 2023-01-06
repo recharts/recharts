@@ -423,7 +423,7 @@ const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, dir
 
 export const getDomainOfErrorBars = (
   data: any[],
-  item: { props: { children: any } },
+  item: any,
   dataKey: any,
   layout?: LayoutType,
   axisType?: AxisType,
