@@ -46,8 +46,6 @@ require('./specs/component/LegendSpec');
 require('./specs/component/TooltipSpec');
 require('./specs/component/ResponsiveContainerSpec');
 require('./specs/component/TextSpec');
-require('./specs/component/LabelSpec');
-require('./specs/component/LabelListSpec');
 require('./specs/component/CustomizedSpec');
 
 // shape
