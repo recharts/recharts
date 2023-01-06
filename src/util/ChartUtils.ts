@@ -11,8 +11,8 @@ import _ from 'lodash';
 import { ReactElement, ReactNode } from 'react';
 import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
 
+import { ErrorBar } from '../cartesian/ErrorBar';
 import { Legend } from '../component/Legend';
-
 import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
 import { filterProps, findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
@@ -24,8 +24,8 @@ export function getValueByDataKey<T>(obj: T, dataKey: DataKey<any>, defaultValue
     return defaultValue;
   }
 
-  if (isNumOrStr(dataKey as string)) {
-    return _.get(obj, dataKey as string, defaultValue);
+  if (isNumOrStr(dataKey)) {
+    return _.get(obj, dataKey, defaultValue);
   }
 
   if (_.isFunction(dataKey)) {
@@ -181,7 +181,7 @@ export const getLegendProps = ({
   legendWidth: number;
   legendContent?: any;
 }) => {
-  const legendItem = findChildByType(children, Legend.displayName);
+  const legendItem = findChildByType(children, Legend);
   if (!legendItem) {
     return null;
   }
@@ -429,7 +429,7 @@ export const getDomainOfErrorBars = (
   axisType?: AxisType,
 ) => {
   const { children } = item.props;
-  const errorBars = findAllByType(children, 'ErrorBar').filter((errorBarChild: any) =>
+  const errorBars = findAllByType(children, ErrorBar).filter(errorBarChild =>
     isErrorBarRelevantForAxis(layout, axisType, errorBarChild.props.direction),
   );
 

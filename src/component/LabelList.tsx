@@ -98,7 +98,7 @@ function renderCallByParent<T extends Data>(parentProps: any, data: Array<T>, ch
   }
   const { children } = parentProps;
 
-  const explicitChildren = findAllByType(children, LabelList.displayName).map((child: any, index: number) =>
+  const explicitChildren = findAllByType(children, LabelList).map((child, index: number) =>
     cloneElement(child, {
       data,
       key: `labelList-${index}`,

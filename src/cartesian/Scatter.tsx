@@ -12,7 +12,7 @@ import { Global } from '../util/Global';
 import { ZAxis, Props as ZAxisProps } from './ZAxis';
 import { Curve, Props as CurveProps, CurveType } from '../shape/Curve';
 import { Symbols, Props as SymbolsProps } from '../shape/Symbols';
-import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
+import { ErrorBar } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { uniqueId, interpolateNumber, getLinearRegression } from '../util/DataUtils';
 import { getValueByDataKey, getCateCoordinateOfLine } from '../util/ChartUtils';
@@ -140,7 +140,7 @@ export class Scatter extends PureComponent<Props, State> {
     offset: ChartOffset;
   }) => {
     const { tooltipType } = item.props;
-    const cells = findAllByType(item.props.children, Cell.displayName);
+    const cells = findAllByType(item.props.children, Cell);
     const xAxisDataKey = _.isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
     const yAxisDataKey = _.isNil(yAxis.dataKey) ? item.props.dataKey : yAxis.dataKey;
     const zAxisDataKey = zAxis && zAxis.dataKey;
@@ -351,7 +351,7 @@ export class Scatter extends PureComponent<Props, State> {
     }
 
     const { points, xAxis, yAxis, children } = this.props;
-    const errorBarItems = findAllByType(children, ErrorBar.displayName);
+    const errorBarItems = findAllByType(children, ErrorBar);
 
     if (!errorBarItems) {
       return null;
@@ -375,7 +375,7 @@ export class Scatter extends PureComponent<Props, State> {
       };
     }
 
-    return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) => {
+    return errorBarItems.map((item, i: number) => {
       const { direction } = item.props;
 
       return React.cloneElement(item, {
