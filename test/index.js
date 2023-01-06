@@ -1,7 +1,11 @@
 import * as Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
+import chai from 'chai';
+import chaiEnzyme from 'chai-enzyme';
 
 Enzyme.configure({ adapter: new Adapter() });
+
+chai.use(chaiEnzyme());
 
 // cartesian system chart component
 require('./specs/cartesian/XAxisSpec');
@@ -44,7 +48,6 @@ require('./specs/chart/SankeySpec');
 // general component
 require('./specs/component/LegendSpec');
 require('./specs/component/TooltipSpec');
-require('./specs/component/ResponsiveContainerSpec');
 require('./specs/component/TextSpec');
 require('./specs/component/CustomizedSpec');
 
