@@ -129,7 +129,9 @@ describe('<LineChart />', () => {
     expect(path.length - path.split('M').join('').length).toEqual(1);
   });
 
-  test.skip('Renders customized active dot when activeDot is set to be a ReactElement', () => {
+  test('Renders customized active dot when activeDot is set to be a ReactElement', () => {
+    jest.useFakeTimers();
+
     const ActiveDot: FC<{ cx?: number; cy?: number }> = ({ cx, cy }) => (
       <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />
     );
@@ -141,10 +143,16 @@ describe('<LineChart />', () => {
       </LineChart>,
     );
 
-    // TODO: figure out how to trigger mouseenter event
-    const mouseEnterEvent = new MouseEvent('mouseenter', { bubbles: true });
+    const mouseEnterEvent = new MouseEvent('mouseover', { bubbles: true, cancelable: true });
     Object.assign(mouseEnterEvent, { pageX: 200, pageY: 200 });
-    fireEvent(container, mouseEnterEvent);
+    const chart = container.querySelector('.recharts-wrapper');
+    if (!chart) {
+      throw new Error('Chart is null');
+    }
+
+    fireEvent(chart, mouseEnterEvent);
+
+    jest.runAllTimers();
 
     const dot = container.querySelectorAll('.customized-active-dot');
     expect(dot).toHaveLength(1);
@@ -412,23 +420,23 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     { name: 'Page A', uv: 230, pv: 2400, amt: 2400 },
   ];
 
-  // const runAllPromises = () => new Promise(resolve => setTimeout(resolve));
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
 
-  // type ActiveDotProps = {
-  //   cx?: number;
-  //   cy?: number;
-  // };
-
-  // eslint-disable-next-line max-len
-  test.skip('should show tooltips for both charts synced by index on MouseEnter and hide on MouseLeave/Escape', async () => {
-    const { container } = render(
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+  test('should show tooltips for both charts synced by index on MouseEnter and hide on MouseLeave/Escape', async () => {
+    jest.useFakeTimers();
+    const { container, getByText } = render(
       <div>
         <LineChart width={width} height={height} data={data} margin={margin} syncId="test">
           <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
           <Tooltip />
           <XAxis dataKey="name" />
         </LineChart>
-        <LineChart width={width} height={height} data={data} margin={margin} syncId="test">
+        <LineChart width={width} height={height} data={data2} margin={margin} syncId="test">
           <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
           <Tooltip />
           <XAxis dataKey="name" />
@@ -436,75 +444,48 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
       </div>,
     );
 
-    // const user = userEvent.setup();
-
-    // const chartWidth = width - margin.left - margin.right;
-    // const dotSpacing = chartWidth / (data.length - 1);
+    const chartWidth = width - margin.left - margin.right;
+    const dotSpacing = chartWidth / (data.length - 1);
 
     // // simulate entering just past Page A of Chart1 to test snapping of the cursor line
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
-
-    const mouseEnterEvent = new MouseEvent('mouseenter', { bubbles: true });
-    Object.assign(mouseEnterEvent, { pageX: 100, pageY: height / 2 });
-
-    // const rect = container.querySelector('.recharts-wrapper');
-    // if (!rect) {
-    //   throw new Error('Rect not found');
-    // }
-
-    // console.log(rect.outerHTML);
-
-    // await user.hover(rect);
 
     const firstChart = container.querySelector('.recharts-wrapper');
     if (!firstChart) {
       throw new Error('Chart not found');
     }
 
+    const mouseEnterEvent = new MouseEvent('mouseover', { bubbles: true, cancelable: true });
+    Object.assign(mouseEnterEvent, { pageX: margin.left + 0.1 * dotSpacing, pageY: height / 2 });
     fireEvent(firstChart, mouseEnterEvent);
 
-    // await runAllPromises();
-    // wrapper.update();
+    jest.runAllTimers();
 
     // There are two tooltips - one for each LineChart as they have the same syncId
     const tooltipCursors = container.querySelectorAll('.recharts-tooltip-cursor');
     expect(tooltipCursors).toHaveLength(2);
 
-    // const tooltipsValueWrapper = wrapper.find('.recharts-tooltip-item-value');
-
     // make sure tooltips display the correct values, i.e. the value of the first item in the data
-    // expect(tooltipsValueWrapper.at(0).text()).to.equal('400');
-    // expect(tooltipsValueWrapper.at(1).text()).to.equal('500');
+    expect(getByText('400')).toBeInTheDocument();
+    expect(getByText('500')).toBeInTheDocument();
 
     // Check the activeDots are highlighted
-    // const activeDotNodes = wrapper.find('.recharts-active-dot').hostNodes();
-    // expect(activeDotNodes.length).to.equal(2);
-
-    // const activeDotWrapper = wrapper.find(ActiveDot);
-    // expect(activeDotWrapper.at(0).props().value).to.equal(400);
-    // expect(activeDotWrapper.at(1).props().value).to.equal(500);
+    const activeDotNodes = container.querySelectorAll('.recharts-active-dot');
+    expect(activeDotNodes).toHaveLength(2);
 
     // simulate leaving the area
-    // wrapper.find(LineChart).at(0).simulate('mouseLeave');
-    // expect(wrapper.find('.recharts-tooltip-cursor').hostNodes.length).to.equal(0);
+    fireEvent.mouseLeave(firstChart);
+    jest.runAllTimers();
+    expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
-    // simulate pressing Escape key
-    // wrapper
-    //   .find(LineChart)
-    //   .at(0)
-    //   .simulate('mouseEnter', {
-    //     pageX: margin.left + 0.1 * dotSpacing,
-    //     pageY: height / 2,
-    //   });
+    fireEvent(firstChart, mouseEnterEvent);
+    jest.runAllTimers();
 
-    // await runAllPromises();
-    // wrapper.update();
-    // wrapper.find(LineChart).at(0).simulate('keydown', { key: 'Escape' });
-    // expect(wrapper.find('.recharts-tooltip-cursor').hostNodes.length).to.equal(0);
+    expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(2);
   });
 
   // eslint-disable-next-line max-len
-  test.skip("should show tooltips using syncMethod: 'value' for both charts on MouseEnter and hide on MouseLeave", async () => {
+  test("should show tooltips using syncMethod: 'value' for both charts on MouseEnter and hide on MouseLeave", async () => {
     const chart1 = (
       <LineChart width={width} height={height} data={data} margin={margin} syncId="test" syncMethod="value">
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
@@ -519,7 +500,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
         <XAxis dataKey="name" />
       </LineChart>
     );
-    const { container } = render(
+    const { container, getByText } = render(
       <div>
         {chart1}
         {chart2}
@@ -532,7 +513,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     // simulate entering just past Page A of Chart1 to test snapping of the cursor line
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
-    const mouseEnterEvent = new MouseEvent('mouseenter', { bubbles: true });
+    const mouseEnterEvent = new MouseEvent('mouseover', { bubbles: true });
     Object.assign(mouseEnterEvent, { pageX: margin.left + 0.1 * dotSpacing, pageY: height / 2 });
 
     const firstChart = container.querySelector('.recharts-wrapper');
@@ -541,37 +522,30 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     }
 
     fireEvent(firstChart, mouseEnterEvent);
+    jest.runAllTimers();
 
     // There are two tooltips - one for each LineChart as they have the same syncId
     const tooltipCursors = container.querySelectorAll('.recharts-tooltip-cursor');
     expect(tooltipCursors).toHaveLength(2);
 
-    /* const tooltipsValueWrapper = wrapper.find('.recharts-tooltip-item-value');
-
     // make sure tooltips display the correct values, synced by data value
-    expect(tooltipsValueWrapper.at(0).text()).to.equal('400');
-    expect(tooltipsValueWrapper.at(1).text()).to.equal('230');
+    expect(getByText('400')).toBeInTheDocument();
+    expect(getByText('230')).toBeInTheDocument();
 
     // Check the activeDots are highlighted
-    const activeDotNodes = wrapper.find('.recharts-active-dot').hostNodes();
-    expect(activeDotNodes.length).to.equal(2);
-
-    const activeDotWrapper = wrapper.find(ActiveDot);
-    expect(activeDotWrapper.at(0).props().value).to.equal(400);
-    expect(activeDotWrapper.at(1).props().value).to.equal(230);
+    expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
 
     // simulate leaving the area
-    wrapper.find(LineChart).at(0).simulate('mouseLeave');
-    expect(wrapper.find('.recharts-tooltip-cursor').hostNodes.length).to.equal(0); */
+    fireEvent.mouseLeave(firstChart);
+    jest.runAllTimers();
+
+    expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
   });
 
-  /*
-  test.skip('should show tooltips using syncMethod: [function] for both charts on MouseEnter and hide on MouseLeave', 
-  async () => {
-    const ActiveDot = ({ cx, cy }) => <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
-
+  // eslint-disable-next-line max-len
+  test('should show tooltips using syncMethod: [function] for both charts on MouseEnter and hide on MouseLeave', async () => {
     const syncMethodFunction = _tooltipTicks => {
-      return data.activeTooltipIndex + 1;
+      return 1;
     };
 
     const chart1 = (
@@ -583,7 +557,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
         syncId="test"
         syncMethod={syncMethodFunction}
       >
-        <Line activeDot={<ActiveDot />} type="monotone" dataKey="uv" stroke="#ff7300" />
+        <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         <Tooltip />
         <XAxis dataKey="name" />
       </LineChart>
@@ -597,12 +571,12 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
         syncId="test"
         syncMethod={syncMethodFunction}
       >
-        <Line activeDot={<ActiveDot />} type="monotone" dataKey="uv" stroke="#ff7300" />
+        <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         <Tooltip />
         <XAxis dataKey="name" />
       </LineChart>
     );
-    const { container } = render(
+    const { container, findByText } = render(
       <div>
         {chart1}
         {chart2}
@@ -613,41 +587,34 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     const dotSpacing = chartWidth / (data.length - 1);
 
     // simulate entering just past Page A of Chart1 to test snapping of the cursor line
-    expect(wrapper.find('.recharts-tooltip-cursor').hostNodes().length).to.equal(0);
-    wrapper
-      .find(LineChart)
-      .at(0)
-      .simulate('mouseEnter', {
-        pageX: margin.left + 0.1 * dotSpacing,
-        pageY: height / 2,
-      });
+    expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
-    await runAllPromises();
-    wrapper.update();
+    const mouseOverEvent = new MouseEvent('mouseover', { bubbles: true });
+    Object.assign(mouseOverEvent, { pageX: margin.left + 0.1 * dotSpacing, pageY: height / 2 });
+
+    const firstChart = container.querySelector('.recharts-wrapper');
+    if (!firstChart) {
+      throw new Error('Chart not found');
+    }
+
+    fireEvent(firstChart, mouseOverEvent);
+    jest.runAllTimers();
 
     // There are two tooltips - one for each LineChart as they have the same syncId
-    const tooltipCursors = wrapper.find('.recharts-tooltip-cursor').hostNodes();
-    expect(tooltipCursors.length).to.equal(2);
-
-    const tooltipsValueWrapper = wrapper.find('.recharts-tooltip-item-value');
+    expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(2);
 
     // make sure tooltips display the correct values, synced by data value
-    expect(tooltipsValueWrapper.at(0).text()).to.equal('400');
-    expect(tooltipsValueWrapper.at(1).text()).to.equal('550');
+    expect(findByText('400')).toBeTruthy();
+    expect(findByText('550')).toBeTruthy();
 
     // Check the activeDots are highlighted
-    const activeDotNodes = wrapper.find('.recharts-active-dot').hostNodes();
-    expect(activeDotNodes.length).to.equal(2);
-
-    const activeDotWrapper = wrapper.find(ActiveDot);
-    expect(activeDotWrapper.at(0).props().value).to.equal(400);
-    expect(activeDotWrapper.at(1).props().value).to.equal(550);
+    expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
 
     // simulate leaving the area
-    wrapper.find(LineChart).at(0).simulate('mouseLeave');
-    expect(wrapper.find('.recharts-tooltip-cursor').hostNodes.length).to.equal(0);
+    fireEvent.mouseLeave(firstChart);
+    jest.runAllTimers();
+    expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
   });
-  */
 });
 
 describe('<LineChart /> - Pure Rendering', () => {
