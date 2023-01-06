@@ -1,7 +1,7 @@
+import { render } from '@testing-library/react';
 import React from 'react';
-import { mount, render } from 'enzyme';
-import { expect } from 'chai';
-import { Surface, Label, ScatterChart, Scatter, LabelList, XAxis, YAxis, ZAxis } from 'recharts';
+
+import { LabelList, Scatter, ScatterChart, XAxis, YAxis, ZAxis } from '../../src';
 
 describe('<LabelList />', () => {
   it('Render labels in ScatterChart', () => {
@@ -13,7 +13,7 @@ describe('<LabelList />', () => {
       { x: 150, y: 400, z: 500 },
       { x: 110, y: 280, z: 200 },
     ];
-    const wrapper = render(
+    const { container } = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20 }}>
         <XAxis dataKey="x" name="stature" unit="cm" />
         <YAxis dataKey="y" name="weight" unit="kg" />
@@ -23,8 +23,9 @@ describe('<LabelList />', () => {
         </Scatter>
       </ScatterChart>,
     );
-    const label = wrapper.find('.recharts-label');
 
-    expect(label.length).to.equal(data.length);
+    const label = container.querySelectorAll('.recharts-label');
+
+    expect(label?.length).toEqual(data.length);
   });
 });
