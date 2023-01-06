@@ -166,7 +166,7 @@ export class Bar extends PureComponent<Props, State> {
     const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
     const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
     const baseValue = getBaseValueOfBar({ numericAxis });
-    const cells = findAllByType(children, Cell.displayName);
+    const cells = findAllByType(children, Cell);
 
     const rects = displayedData.map((entry, index) => {
       let value, x, y, width, height, background;
@@ -417,7 +417,7 @@ export class Bar extends PureComponent<Props, State> {
     }
 
     const { data, xAxis, yAxis, layout, children } = this.props;
-    const errorBarItems = findAllByType(children, ErrorBar.displayName);
+    const errorBarItems = findAllByType(children, ErrorBar);
 
     if (!errorBarItems) {
       return null;

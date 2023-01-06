@@ -3,6 +3,7 @@ import { getTicksOfScale, parseScale, checkDomainOfScale, getBandSizeOfAxis } fr
 import { findChildByType } from './ReactUtils';
 import { Coordinate, AxisType } from './types';
 import { getPercentValue } from './DataUtils';
+import { Bar } from '../cartesian/Bar';
 
 /**
  * Calculate the scale function, position, width, height of axes
@@ -26,7 +27,7 @@ export const formatAxisMap = (props: any, axisMap: any, offset: any, axisType: A
     bottom: height - offset.bottom,
     bottomMirror: height - offset.bottom,
   };
-  const hasBar = !!findChildByType(children, 'Bar');
+  const hasBar = !!findChildByType(children, Bar);
 
   return ids.reduce((result, id) => {
     const axis = axisMap[id];

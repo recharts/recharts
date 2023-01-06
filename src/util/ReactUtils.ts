@@ -60,7 +60,7 @@ export const TOOLTIP_TYPES = ['none'];
  * @param  {Object} Comp Specified Component
  * @return {String}      Display name of Component
  */
-export const getDisplayName = (Comp: any) => {
+export const getDisplayName = (Comp: React.ComponentType | string) => {
   if (typeof Comp === 'string') {
     return Comp;
   }
@@ -94,14 +94,14 @@ export const toArray = <T extends ReactNode>(children: T | T[]): T[] => {
 };
 
 /*
- * Find and return all matched children by type. `type` can be a React element class or
- * string
+ * Find and return all matched children by type.
+ * `type` must be a React.ComponentType
  */
-export const findAllByType = (
-  children: ReactNode,
-  type: string | string[],
-): React.DetailedReactHTMLElement<any, HTMLElement>[] => {
-  const result: React.DetailedReactHTMLElement<any, HTMLElement>[] = [];
+export function findAllByType<
+  ComponentType extends React.ComponentType,
+  DetailedElement = React.DetailedReactHTMLElement<React.ComponentProps<ComponentType>, HTMLElement>,
+>(children: ReactNode, type: ComponentType | ComponentType[]): DetailedElement[] {
+  const result: DetailedElement[] = [];
   let types: string[] = [];
 
   if (_.isArray(type)) {
@@ -110,27 +110,28 @@ export const findAllByType = (
     types = [getDisplayName(type)];
   }
 
-  toArray(children).forEach((child: React.DetailedReactHTMLElement<any, HTMLElement>) => {
+  toArray(children).forEach(child => {
     const childType = _.get(child, 'type.displayName') || _.get(child, 'type.name');
     if (types.indexOf(childType) !== -1) {
-      result.push(child);
+      result.push(child as DetailedElement);
     }
   });
 
   return result;
-};
+}
+
 /*
  * Return the first matched child by type, return null otherwise.
- * `type` can be a React element class or string.
+ * `type` must be a React.ComponentType
  */
-export const findChildByType = (
+export function findChildByType<ComponentType extends React.ComponentType>(
   children: ReactNode[],
-  type: string,
-): React.DetailedReactHTMLElement<any, HTMLElement> => {
+  type: ComponentType | ComponentType[],
+) {
   const result = findAllByType(children, type);
 
   return result && result[0];
-};
+}
 
 /*
  * Create a new array of children excluding the ones matched the type
