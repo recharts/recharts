@@ -387,7 +387,7 @@ export const appendOffsetOfLegend = (offset: any, items: Array<FormattedGraphica
     const box = legendBox || {};
     const { align, verticalAlign, layout } = legendProps;
 
-    if ((layout === 'vertical' || (layout === 'horizontal' && verticalAlign === 'center')) && isNumber(offset[align])) {
+    if ((layout === 'vertical' || (layout === 'horizontal' && verticalAlign === 'middle')) && isNumber(offset[align])) {
       newOffset = { ...offset, [align]: newOffset[align] + (box.width || 0) };
     }
 
