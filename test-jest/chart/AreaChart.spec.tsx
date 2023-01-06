@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import sinon from 'sinon';
+import userEvent from '@testing-library/user-event';
 
 import { Area, AreaChart, Brush, CartesianAxis, Tooltip, XAxis, YAxis } from '../../src';
 
@@ -36,7 +36,7 @@ describe('AreaChart', () => {
     expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(1);
   });
 
-  test('Renders empty path when all the datas are null', () => {
+  test('Renders empty path when all the data are null', () => {
     const { container } = render(
       <AreaChart width={100} height={50} data={data}>
         <Area type="monotone" dataKey="any" stroke="#ff7300" fill="#ff7300" />
@@ -55,50 +55,37 @@ describe('AreaChart', () => {
     });
   });
 
-  test.skip('Renders customized active dot when activeDot is set to be a ReactElement', () => {
+  test.skip('Renders customized active dot when activeDot is set to be a ReactElement', async () => {
     // eslint-disable-next-line react/prop-types
-    const ActiveDot = ({ cx, cy }) => <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
+    const ActiveDot = ({ cx, cy }) => (
+      <circle cx={cx} cy={cy} r={10} className="customized-active-dot">
+        <text>dot-test</text>
+      </circle>
+    );
     const { container } = render(
-      <AreaChart width={400} height={400} data={data}>
-        <Area activeDot={<ActiveDot />} type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
-        <Tooltip />
-      </AreaChart>,
+      <div role="main" style={{ width: '400px', height: '400px' }}>
+        <AreaChart width={400} height={400} data={data}>
+          <Area
+            activeDot={({ cx, cy }) => <ActiveDot cx={cx} cy={cy} />}
+            type="monotone"
+            dataKey="uv"
+            stroke="#ff7300"
+            fill="#ff7300"
+          />
+          <Tooltip />
+        </AreaChart>
+      </div>,
     );
 
-    fireEvent.mouseEnter(container, { clientX: 200, clientY: 200 });
-    // fireEvent.mouseEnter(container.querySelector('.recharts-curve'));
+    const area = container.querySelector('.recharts-area-area');
 
-    expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(1);
+    if (area !== null) {
+      await userEvent.hover(area);
+      screen.debug(area);
+    }
+
+    expect(screen.queryAllByText('dot-test')).toHaveLength(1);
   });
-
-  //   it('Renders customized active dot when activeDot is set to be a function', () => {
-  //     const renderActiveDot = ({ cx, cy }) => <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
-  //     const wrapper = mount(
-  //       <AreaChart width={100} height={50} data={data}>
-  //         <Area
-  //           isAnimationActive={false}
-  //           activeDot={renderActiveDot}
-  //           type="monotone"
-  //           dataKey="uv"
-  //           stroke="#ff7300"
-  //           fill="#ff7300"
-  //         />
-  //         <Tooltip />
-  //       </AreaChart>
-  //     );
-
-  //     wrapper.setState({
-  //       isTooltipActive: true,
-  //       activeTooltipIndex: 4,
-  //       activeTooltipLabel: 4,
-  //       activeTooltipCoord: {
-  //         x: 95,
-  //         y: 21,
-  //       },
-  //     });
-
-  //     expect(wrapper.find('.customized-active-dot').length).to.equal(1);
-  //   });
 
   test('Renders 4 path in a stacked AreaChart', () => {
     const { container } = render(
@@ -123,7 +110,7 @@ describe('AreaChart', () => {
     expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
   });
 
-  test('Renders dots and labels when dot is setted to true', () => {
+  test('Renders dots and labels when dot is set to true', () => {
     const { container } = render(
       <AreaChart width={100} height={50} data={data}>
         <Area isAnimationActive={false} type="monotone" dot label dataKey="uv" stroke="#ff7300" fill="#ff7300" />
@@ -147,20 +134,20 @@ describe('AreaChart', () => {
   describe('<AreaChart /> - Pure Rendering', () => {
     const pureElements = [Area];
 
-    const spies = [];
+    const spies: jest.SpyInstance[] = [];
     // CartesianAxis is what is actually render for XAxis and YAxis
     let axisSpy;
 
     // spy on each pure element before each test, and restore the spy afterwards
     beforeEach(() => {
       pureElements.forEach((el, i) => {
-        spies[i] = sinon.spy(el.prototype, 'render');
+        spies[i] = jest.spyOn(el.prototype, 'render');
       });
-      axisSpy = sinon.spy(CartesianAxis.prototype, 'render');
+      axisSpy = jest.spyOn(CartesianAxis.prototype, 'render');
     });
     afterEach(() => {
-      pureElements.forEach((el, i) => spies[i].restore());
-      axisSpy.restore();
+      pureElements.forEach((el, i) => spies[i].mockRestore());
+      axisSpy.mockRestore();
     });
 
     // protect against the future where someone might mess up our clean rendering
@@ -176,15 +163,15 @@ describe('AreaChart', () => {
       );
       const { container } = render(chart);
 
-      spies.forEach(el => expect(el.callCount).toEqual(1));
-      expect(axisSpy.callCount).toEqual(2);
+      spies.forEach(el => expect(el.mock.calls.length).toBe(1));
+      expect(axisSpy.mock.calls.length).toBe(2);
 
       fireEvent.mouseEnter(container, { clientX: 30, clientY: 200 });
       fireEvent.mouseMove(container, { clientX: 200, clientY: 200 });
       fireEvent.mouseLeave(container);
 
-      spies.forEach(el => expect(el.callCount).toEqual(1));
-      expect(axisSpy.callCount).toEqual(2);
+      spies.forEach(el => expect(el.mock.calls.length).toBe(1));
+      expect(axisSpy.mock.calls.length).toBe(2);
     });
 
     // protect against the future where someone might mess up our clean rendering
@@ -200,7 +187,7 @@ describe('AreaChart', () => {
         </AreaChart>,
       );
 
-      spies.forEach(el => expect(el.callCount).toEqual(1));
+      spies.forEach(el => expect(el.mock.calls.length).toBe(1));
       expect(axisSpy.callCount).toEqual(2);
 
       // onBrushChangeMock.mock.calls[0]({ startIndex: 0, endIndex: data.length - 1 });
