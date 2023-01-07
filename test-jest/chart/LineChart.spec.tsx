@@ -3,16 +3,7 @@ import { render, fireEvent } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { JSX } from '@babel/types';
 
-import {
-  LineChart,
-  Line,
-  /* Curve, */ XAxis,
-  YAxis,
-  /* CartesianAxis, */ Tooltip,
-  Brush /* Legend */,
-  CartesianAxis,
-  Legend,
-} from '../../src';
+import { LineChart, Line, XAxis, YAxis, Tooltip, Brush, CartesianAxis, Legend } from '../../src';
 
 const data = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
