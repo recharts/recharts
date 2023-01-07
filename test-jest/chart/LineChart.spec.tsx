@@ -64,13 +64,8 @@ describe('<LineChart />', () => {
     );
     const curves = container.querySelectorAll('.recharts-line .recharts-line-curve');
     expect(curves).toHaveLength(1);
-    const path = curves[0].getAttribute('d');
 
-    if (!path) {
-      throw new Error('Path is null');
-    }
-
-    expect(path.indexOf('C')).not.toEqual(-1);
+    expect(curves[0].getAttribute('d')?.indexOf('C')).not.toEqual(-1);
   });
 
   test('Render two paths when connectNulls is false', () => {
@@ -405,6 +400,170 @@ describe('<LineChart />', () => {
   });
 });
 
+describe('<LineChart /> - Pure Rendering', () => {
+  const pureElements = [Line];
+
+  const spies: Array<jest.SpyInstance<JSX.Element | null, []>> = [];
+  // CartesianAxis is what is actually render for XAxis and YAxis
+  let axisSpy: jest.SpyInstance<JSX.Element | null, []>;
+
+  // spy on each pure element before each test, and restore the spy afterwards
+  beforeAll(() => {
+    pureElements.forEach((el, i) => {
+      spies[i] = jest.spyOn(el.prototype, 'render');
+    });
+    axisSpy = jest.spyOn(CartesianAxis.prototype, 'render');
+  });
+  afterEach(() => {
+    pureElements.forEach((_el, i) => spies[i].mockReset());
+    axisSpy.mockReset();
+  });
+
+  afterAll(() => {
+    pureElements.forEach((_el, i) => spies[i].mockRestore());
+    axisSpy.mockRestore();
+  });
+
+  const chart = (
+    <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
+      <Tooltip />
+      <XAxis />
+      <YAxis />
+      <Brush />
+    </LineChart>
+  );
+
+  // protect against the future where someone might mess up our clean rendering
+  test('should only render Line once when the mouse enters and moves', () => {
+    const { container } = render(chart);
+
+    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+    expect(axisSpy).toHaveBeenCalledTimes(2);
+
+    const mouseEnterEvent = new MouseEvent('mouseenter', { bubbles: true, cancelable: true });
+    Object.assign(mouseEnterEvent, { pageX: 30, pageY: 200 });
+    fireEvent(container, mouseEnterEvent);
+
+    const mouseMoveEvent = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
+    Object.assign(mouseMoveEvent, { pageX: 200, pageY: 200 });
+    fireEvent(container, mouseMoveEvent);
+
+    fireEvent.mouseLeave(container);
+
+    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+    expect(axisSpy).toHaveBeenCalledTimes(2);
+  });
+
+  // protect against the future where someone might mess up our clean rendering
+  test("should only render Line once when the brush moves but doesn't change start/end indices", () => {
+    const { container } = render(chart);
+
+    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+    expect(axisSpy).toHaveBeenCalledTimes(2);
+
+    const leftCursor = container.querySelector('.recharts-brush-traveller');
+    if (!leftCursor) {
+      throw new Error('Cursor not found');
+    }
+
+    const mouseDownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+    Object.assign(mouseDownEvent, { pageX: 0, pageY: 0 });
+
+    const mouseMoveEvent = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
+    Object.assign(mouseMoveEvent, { pageX: 0, pageY: 0 });
+
+    fireEvent(leftCursor, mouseDownEvent);
+    fireEvent(window, mouseMoveEvent);
+    fireEvent.mouseUp(window);
+
+    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+    expect(axisSpy).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('<LineChart /> - Pure Rendering with legend', () => {
+  const pureElements = [Line];
+
+  const spies: Array<jest.SpyInstance<JSX.Element | null, []>> = [];
+  // CartesianAxis is what is actually render for XAxis and YAxis
+  let axisSpy: jest.SpyInstance<JSX.Element | null, []>;
+
+  // spy on each pure element before each test, and restore the spy afterwards
+  beforeAll(() => {
+    pureElements.forEach((el, i) => {
+      spies[i] = jest.spyOn(el.prototype, 'render');
+    });
+    axisSpy = jest.spyOn(CartesianAxis.prototype, 'render');
+  });
+  afterEach(() => {
+    pureElements.forEach((_el, i) => spies[i].mockReset());
+    axisSpy.mockReset();
+  });
+  afterAll(() => {
+    pureElements.forEach((_el, i) => spies[i].mockRestore());
+    axisSpy.mockRestore();
+  });
+
+  const chart = (
+    <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
+      <Tooltip />
+      <XAxis />
+      <YAxis />
+      <Brush />
+      <Legend />
+    </LineChart>
+  );
+
+  // protect against the future where someone might mess up our clean rendering
+  test('should only render Line once when the mouse enters and moves', () => {
+    const { container } = render(chart);
+
+    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+    expect(axisSpy).toHaveBeenCalledTimes(2);
+
+    const mouseEnterEvent = new MouseEvent('mouseenter', { bubbles: true, cancelable: true });
+    Object.assign(mouseEnterEvent, { pageX: 30, pageY: 200 });
+    fireEvent(container, mouseEnterEvent);
+
+    const mouseMoveEvent = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
+    Object.assign(mouseMoveEvent, { pageX: 200, pageY: 200 });
+    fireEvent(container, mouseMoveEvent);
+
+    fireEvent.mouseLeave(container);
+
+    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+    expect(axisSpy).toHaveBeenCalledTimes(2);
+  });
+
+  // protect against the future where someone might mess up our clean rendering
+  test("should only render Line once when the brush moves but doesn't change start/end indices", () => {
+    const { container } = render(chart);
+
+    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+    expect(axisSpy).toHaveBeenCalledTimes(2);
+
+    const leftCursor = container.querySelector('.recharts-brush-traveller');
+    if (!leftCursor) {
+      throw new Error('Cursor not found');
+    }
+
+    const mouseDownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+    Object.assign(mouseDownEvent, { pageX: 0, pageY: 0 });
+
+    const mouseMoveEvent = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
+    Object.assign(mouseMoveEvent, { pageX: 0, pageY: 0 });
+
+    fireEvent(leftCursor, mouseDownEvent);
+    fireEvent(window, mouseMoveEvent);
+    fireEvent.mouseUp(window);
+
+    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+    expect(axisSpy).toHaveBeenCalledTimes(2);
+  });
+});
+
 describe('<LineChart /> - Rendering two line charts with syncId', () => {
   const margin = { top: 20, right: 20, bottom: 20, left: 20 };
   const height = 400;
@@ -614,169 +773,5 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     fireEvent.mouseLeave(firstChart);
     jest.runAllTimers();
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
-  });
-});
-
-describe('<LineChart /> - Pure Rendering', () => {
-  const pureElements = [Line];
-
-  const spies: Array<jest.SpyInstance<JSX.Element | null, []>> = [];
-  // CartesianAxis is what is actually render for XAxis and YAxis
-  let axisSpy: jest.SpyInstance<JSX.Element | null, []>;
-
-  // spy on each pure element before each test, and restore the spy afterwards
-  beforeAll(() => {
-    pureElements.forEach((el, i) => {
-      spies[i] = jest.spyOn(el.prototype, 'render');
-    });
-    axisSpy = jest.spyOn(CartesianAxis.prototype, 'render');
-  });
-  afterEach(() => {
-    pureElements.forEach((_el, i) => spies[i].mockReset());
-    axisSpy.mockReset();
-  });
-
-  afterAll(() => {
-    pureElements.forEach((_el, i) => spies[i].mockRestore());
-    axisSpy.mockRestore();
-  });
-
-  const chart = (
-    <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-      <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
-      <Tooltip />
-      <XAxis />
-      <YAxis />
-      <Brush />
-    </LineChart>
-  );
-
-  // protect against the future where someone might mess up our clean rendering
-  test('should only render Line once when the mouse enters and moves', () => {
-    const { container } = render(chart);
-
-    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
-    expect(axisSpy).toHaveBeenCalledTimes(2);
-
-    const mouseEnterEvent = new MouseEvent('mouseenter', { bubbles: true, cancelable: true });
-    Object.assign(mouseEnterEvent, { pageX: 30, pageY: 200 });
-    fireEvent(container, mouseEnterEvent);
-
-    const mouseMoveEvent = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
-    Object.assign(mouseMoveEvent, { pageX: 200, pageY: 200 });
-    fireEvent(container, mouseMoveEvent);
-
-    fireEvent.mouseLeave(container);
-
-    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
-    expect(axisSpy).toHaveBeenCalledTimes(2);
-  });
-
-  // protect against the future where someone might mess up our clean rendering
-  test("should only render Line once when the brush moves but doesn't change start/end indices", () => {
-    const { container } = render(chart);
-
-    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
-    expect(axisSpy).toHaveBeenCalledTimes(2);
-
-    const leftCursor = container.querySelector('.recharts-brush-traveller');
-    if (!leftCursor) {
-      throw new Error('Cursor not found');
-    }
-
-    const mouseDownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
-    Object.assign(mouseDownEvent, { pageX: 0, pageY: 0 });
-
-    const mouseMoveEvent = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
-    Object.assign(mouseMoveEvent, { pageX: 0, pageY: 0 });
-
-    fireEvent(leftCursor, mouseDownEvent);
-    fireEvent(window, mouseMoveEvent);
-    fireEvent.mouseUp(window);
-
-    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
-    expect(axisSpy).toHaveBeenCalledTimes(2);
-  });
-});
-
-describe('<LineChart /> - Pure Rendering with legend', () => {
-  const pureElements = [Line];
-
-  const spies: Array<jest.SpyInstance<JSX.Element | null, []>> = [];
-  // CartesianAxis is what is actually render for XAxis and YAxis
-  let axisSpy: jest.SpyInstance<JSX.Element | null, []>;
-
-  // spy on each pure element before each test, and restore the spy afterwards
-  beforeAll(() => {
-    pureElements.forEach((el, i) => {
-      spies[i] = jest.spyOn(el.prototype, 'render');
-    });
-    axisSpy = jest.spyOn(CartesianAxis.prototype, 'render');
-  });
-  afterEach(() => {
-    pureElements.forEach((_el, i) => spies[i].mockReset());
-    axisSpy.mockReset();
-  });
-  afterAll(() => {
-    pureElements.forEach((_el, i) => spies[i].mockRestore());
-    axisSpy.mockRestore();
-  });
-
-  const chart = (
-    <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-      <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
-      <Tooltip />
-      <XAxis />
-      <YAxis />
-      <Brush />
-      <Legend />
-    </LineChart>
-  );
-
-  // protect against the future where someone might mess up our clean rendering
-  test('should only render Line once when the mouse enters and moves', () => {
-    const { container } = render(chart);
-
-    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
-    expect(axisSpy).toHaveBeenCalledTimes(2);
-
-    const mouseEnterEvent = new MouseEvent('mouseenter', { bubbles: true, cancelable: true });
-    Object.assign(mouseEnterEvent, { pageX: 30, pageY: 200 });
-    fireEvent(container, mouseEnterEvent);
-
-    const mouseMoveEvent = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
-    Object.assign(mouseMoveEvent, { pageX: 200, pageY: 200 });
-    fireEvent(container, mouseMoveEvent);
-
-    fireEvent.mouseLeave(container);
-
-    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
-    expect(axisSpy).toHaveBeenCalledTimes(2);
-  });
-
-  // protect against the future where someone might mess up our clean rendering
-  test("should only render Line once when the brush moves but doesn't change start/end indices", () => {
-    const { container } = render(chart);
-
-    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
-    expect(axisSpy).toHaveBeenCalledTimes(2);
-
-    const leftCursor = container.querySelector('.recharts-brush-traveller');
-    if (!leftCursor) {
-      throw new Error('Cursor not found');
-    }
-
-    const mouseDownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
-    Object.assign(mouseDownEvent, { pageX: 0, pageY: 0 });
-
-    const mouseMoveEvent = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
-    Object.assign(mouseMoveEvent, { pageX: 0, pageY: 0 });
-
-    fireEvent(leftCursor, mouseDownEvent);
-    fireEvent(window, mouseMoveEvent);
-    fireEvent.mouseUp(window);
-
-    spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
-    expect(axisSpy).toHaveBeenCalledTimes(2);
   });
 });
