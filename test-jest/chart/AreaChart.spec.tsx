@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
-import { fireEvent, render, screen } from '@testing-library/react';
-import React from 'react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, render } from '@testing-library/react';
+import React, { FC } from 'react';
 
 import { Area, AreaChart, Brush, CartesianAxis, Tooltip, XAxis, YAxis } from '../../src';
 
@@ -55,13 +54,13 @@ describe('AreaChart', () => {
     });
   });
 
-  test.skip('Renders customized active dot when activeDot is set to be a ReactElement', async () => {
-    // eslint-disable-next-line react/prop-types
-    const ActiveDot = ({ cx, cy }) => (
-      <circle cx={cx} cy={cy} r={10} className="customized-active-dot">
-        <text>dot-test</text>
-      </circle>
+  test('Renders customized active dot when activeDot is set to be a ReactElement', () => {
+    jest.useFakeTimers();
+
+    const ActiveDot: FC<{ cx?: number; cy?: number }> = ({ cx, cy }) => (
+      <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />
     );
+
     const { container } = render(
       <div role="main" style={{ width: '400px', height: '400px' }}>
         <AreaChart width={400} height={400} data={data}>
@@ -77,14 +76,48 @@ describe('AreaChart', () => {
       </div>,
     );
 
-    const area = container.querySelector('.recharts-area-area');
-
-    if (area !== null) {
-      await userEvent.hover(area);
-      screen.debug(area);
+    const mouseEnterEvent = new MouseEvent('mouseover', { bubbles: true, cancelable: true });
+    Object.assign(mouseEnterEvent, { pageX: 200, pageY: 200 });
+    const chart = container.querySelector('.recharts-wrapper');
+    if (!chart) {
+      throw new Error('Chart is null');
     }
 
-    expect(screen.queryAllByText('dot-test')).toHaveLength(1);
+    fireEvent(chart, mouseEnterEvent);
+
+    jest.runAllTimers();
+
+    const dot = container.querySelectorAll('.customized-active-dot');
+    expect(dot).toHaveLength(1);
+  });
+
+  test('Renders customized active dot when activeDot is set to be a function', () => {
+    jest.useFakeTimers();
+
+    const activeDotRenderer = ({ cx, cy }) => <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
+
+    const { container } = render(
+      <div role="main" style={{ width: '400px', height: '400px' }}>
+        <AreaChart width={400} height={400} data={data}>
+          <Area activeDot={activeDotRenderer} type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+          <Tooltip />
+        </AreaChart>
+      </div>,
+    );
+
+    const mouseEnterEvent = new MouseEvent('mouseover', { bubbles: true, cancelable: true });
+    Object.assign(mouseEnterEvent, { pageX: 200, pageY: 200 });
+    const chart = container.querySelector('.recharts-wrapper');
+    if (!chart) {
+      throw new Error('Chart is null');
+    }
+
+    fireEvent(chart, mouseEnterEvent);
+
+    jest.runAllTimers();
+
+    const dot = container.querySelectorAll('.customized-active-dot');
+    expect(dot).toHaveLength(1);
   });
 
   test('Renders 4 path in a stacked AreaChart', () => {
@@ -131,6 +164,8 @@ describe('AreaChart', () => {
     expect(container.querySelectorAll('.recharts-area')).toHaveLength(0);
   });
 
+  // TODO: add more tests
+
   describe('<AreaChart /> - Pure Rendering', () => {
     const pureElements = [Area];
 
@@ -174,6 +209,7 @@ describe('AreaChart', () => {
       expect(axisSpy.mock.calls.length).toBe(2);
     });
 
+    // TODO: uncomment this
     // protect against the future where someone might mess up our clean rendering
     test.skip("should only render Area once when the brush moves but doesn't change start/end indices", () => {
       const onBrushChangeMock = jest.fn();
