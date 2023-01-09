@@ -1,8 +1,9 @@
-/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { fireEvent, render } from '@testing-library/react';
 import React, { FC } from 'react';
 
 import { Area, AreaChart, Brush, CartesianAxis, Tooltip, XAxis, YAxis } from '../../src';
+import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 describe('AreaChart', () => {
   const data = [
@@ -79,11 +80,8 @@ describe('AreaChart', () => {
     const mouseEnterEvent = new MouseEvent('mouseover', { bubbles: true, cancelable: true });
     Object.assign(mouseEnterEvent, { pageX: 200, pageY: 200 });
     const chart = container.querySelector('.recharts-wrapper');
-    if (!chart) {
-      throw new Error('Chart is null');
-    }
 
-    fireEvent(chart, mouseEnterEvent);
+    fireEvent(chart!, mouseEnterEvent);
 
     jest.runAllTimers();
 
@@ -108,11 +106,8 @@ describe('AreaChart', () => {
     const mouseEnterEvent = new MouseEvent('mouseover', { bubbles: true, cancelable: true });
     Object.assign(mouseEnterEvent, { pageX: 200, pageY: 200 });
     const chart = container.querySelector('.recharts-wrapper');
-    if (!chart) {
-      throw new Error('Chart is null');
-    }
 
-    fireEvent(chart, mouseEnterEvent);
+    fireEvent(chart!, mouseEnterEvent);
 
     jest.runAllTimers();
 
@@ -131,7 +126,7 @@ describe('AreaChart', () => {
     expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(2);
   });
 
-  test('Renders 4 path in a vertical AreaChart', () => {
+  test('Renders 2 path in a vertical AreaChart', () => {
     const { container } = render(
       <AreaChart width={100} height={50} data={data} layout="vertical">
         <XAxis type="number" />
@@ -164,8 +159,6 @@ describe('AreaChart', () => {
     expect(container.querySelectorAll('.recharts-area')).toHaveLength(0);
   });
 
-  // TODO: add more tests
-
   describe('<AreaChart /> - Pure Rendering', () => {
     const pureElements = [Area];
 
@@ -185,17 +178,18 @@ describe('AreaChart', () => {
       axisSpy.mockRestore();
     });
 
+    const chart = (
+      <AreaChart width={400} height={400} data={data}>
+        <Area isAnimationActive={false} type="monotone" dot label dataKey="uv" />
+        <Tooltip />
+        <XAxis />
+        <YAxis />
+        <Brush />
+      </AreaChart>
+    );
+
     // protect against the future where someone might mess up our clean rendering
     test('should only render Area once when the mouse enters and moves', () => {
-      const chart = (
-        <AreaChart width={400} height={400} data={data}>
-          <Area isAnimationActive={false} type="monotone" dot label dataKey="uv" />
-          <Tooltip />
-          <XAxis />
-          <YAxis />
-          <Brush />
-        </AreaChart>
-      );
       const { container } = render(chart);
 
       spies.forEach(el => expect(el.mock.calls.length).toBe(1));
@@ -209,27 +203,24 @@ describe('AreaChart', () => {
       expect(axisSpy.mock.calls.length).toBe(2);
     });
 
-    // TODO: uncomment this
     // protect against the future where someone might mess up our clean rendering
-    test.skip("should only render Area once when the brush moves but doesn't change start/end indices", () => {
-      const onBrushChangeMock = jest.fn();
-      render(
-        <AreaChart width={400} height={400} data={data}>
-          <Area isAnimationActive={false} type="monotone" dot label dataKey="uv" />
-          <Tooltip />
-          <XAxis />
-          <YAxis />
-          <Brush onChange={onBrushChangeMock} />
-        </AreaChart>,
-      );
+    test("should only render Area once when the brush moves but doesn't change start/end indices", () => {
+      const { container } = render(chart);
 
-      spies.forEach(el => expect(el.mock.calls.length).toBe(1));
-      expect(axisSpy.callCount).toEqual(2);
+      spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+      expect(axisSpy).toHaveBeenCalledTimes(2);
 
-      // onBrushChangeMock.mock.calls[0]({ startIndex: 0, endIndex: data.length - 1 });
-      // wrapper.instance().handleBrushChange({ startIndex: 0, endIndex: data.length - 1 });
-      // spies.forEach(el => expect(el.callCount).toEqual(1));
-      // expect(axisSpy.callCount).toEqual(2);
+      const brushSlide = container.querySelector('.recharts-brush-slide');
+
+      const mouseDownEvent = mockMouseEvent('mousedown', brushSlide!, { pageX: 0, pageY: 0 });
+      const mouseMoveEvent = mockMouseEvent('mousemove', window, { pageX: 0, pageY: 0 });
+
+      mouseDownEvent.fire();
+      mouseMoveEvent.fire();
+      fireEvent.mouseUp(window);
+
+      spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+      expect(axisSpy).toHaveBeenCalledTimes(2);
     });
   });
 });
