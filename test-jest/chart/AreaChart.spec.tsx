@@ -77,11 +77,10 @@ describe('AreaChart', () => {
       </div>,
     );
 
-    const mouseEnterEvent = new MouseEvent('mouseover', { bubbles: true, cancelable: true });
-    Object.assign(mouseEnterEvent, { pageX: 200, pageY: 200 });
     const chart = container.querySelector('.recharts-wrapper');
+    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 200, pageY: 200 });
 
-    fireEvent(chart!, mouseEnterEvent);
+    mouseOverEvent.fire();
 
     jest.runAllTimers();
 
@@ -103,11 +102,10 @@ describe('AreaChart', () => {
       </div>,
     );
 
-    const mouseEnterEvent = new MouseEvent('mouseover', { bubbles: true, cancelable: true });
-    Object.assign(mouseEnterEvent, { pageX: 200, pageY: 200 });
     const chart = container.querySelector('.recharts-wrapper');
+    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 200, pageY: 200 });
 
-    fireEvent(chart!, mouseEnterEvent);
+    mouseOverEvent.fire();
 
     jest.runAllTimers();
 
@@ -221,6 +219,39 @@ describe('AreaChart', () => {
 
       spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
       expect(axisSpy).toHaveBeenCalledTimes(2);
+    });
+
+    test('should only show the last data when the brush travelers all moved to the right', () => {
+      const { container } = render(chart);
+
+      const leftBrushTraveler = container.querySelector('.recharts-brush-traveller');
+
+      const mouseDownEvent = mockMouseEvent('mousedown', leftBrushTraveler!, { pageX: 0, pageY: 0 });
+      const mouseMoveEvent = mockMouseEvent('mousemove', window, { pageX: 400, pageY: 0 });
+
+      mouseDownEvent.fire();
+      mouseMoveEvent.fire();
+      fireEvent.mouseUp(window);
+
+      expect(leftBrushTraveler?.firstChild).toHaveAttribute('x', '390'); // not sure why the drag end at x: 390
+      expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(1);
+    });
+
+    test('should only show the first data when the brush travelers all moved to the left', () => {
+      const { container } = render(chart);
+
+      const rightBrushTraveler = container.querySelectorAll('.recharts-brush-traveller')[1];
+
+      const mouseDownEvent = mockMouseEvent('mousedown', rightBrushTraveler!, { pageX: 400, pageY: 0 });
+      const mouseMoveEvent = mockMouseEvent('mousemove', window, { pageX: 0, pageY: 0 });
+
+      mouseDownEvent.fire();
+      mouseMoveEvent.fire();
+      fireEvent.mouseUp(window);
+
+      // not sure why the drag ended at x: 65, but it did close to the 1st point but not 2nd
+      expect(rightBrushTraveler?.firstChild).toHaveAttribute('x', '65');
+      expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(1);
     });
   });
 });
