@@ -1,3 +1,3 @@
 import '@testing-library/jest-dom';
 
-global.requestAnimationFrame = fn => setTimeout(fn, 0);
+global.requestAnimationFrame = fn => window.setTimeout(fn, 0);

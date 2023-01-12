@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { fireEvent, render } from '@testing-library/react';
-import React, { FC } from 'react';
+import React, { ComponentProps, FC } from 'react';
 
 import { Area, AreaChart, Brush, CartesianAxis, Tooltip, XAxis, YAxis } from '../../src';
 import { mockMouseEvent } from '../helper/mockMouseEvent';
@@ -91,7 +91,9 @@ describe('AreaChart', () => {
   test('Renders customized active dot when activeDot is set to be a function', () => {
     jest.useFakeTimers();
 
-    const activeDotRenderer = ({ cx, cy }) => <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />;
+    const activeDotRenderer: ComponentProps<typeof Area>['activeDot'] = ({ cx, cy }) => (
+      <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />
+    );
 
     const { container } = render(
       <div role="main" style={{ width: '400px', height: '400px' }}>
@@ -162,7 +164,7 @@ describe('AreaChart', () => {
 
     const spies: jest.SpyInstance[] = [];
     // CartesianAxis is what is actually render for XAxis and YAxis
-    let axisSpy;
+    let axisSpy: jest.SpyInstance;
 
     // spy on each pure element before each test, and restore the spy afterwards
     beforeEach(() => {

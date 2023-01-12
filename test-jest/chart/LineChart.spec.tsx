@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { render, fireEvent } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { JSX } from '@babel/types';
+import type { JSX } from '@babel/types';
 
 import { LineChart, Line, XAxis, YAxis, Tooltip, Brush, CartesianAxis, Legend } from '../../src';
 
@@ -174,7 +173,7 @@ describe('<LineChart />', () => {
   });
 
   test('Renders 6 labels when label is setted to be a function', () => {
-    const renderLabel = props => {
+    const renderLabel = (props: { x: number; y: number; key: string }) => {
       const { x, y, key } = props;
       return (
         <text className="customized-label" x={x} y={y} key={key}>
@@ -222,7 +221,7 @@ describe('<LineChart />', () => {
   });
 
   test('Renders 6 dots when dot is setted to be a function', () => {
-    const renderDot = props => {
+    const renderDot = (props: any) => {
       const { cx, cy, key } = props;
 
       return <circle className="customized-dot" key={key} cx={cx} cy={cy} r={10} />;
@@ -694,7 +693,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 
   // eslint-disable-next-line max-len
   test('should show tooltips using syncMethod: [function] for both charts on MouseEnter and hide on MouseLeave', async () => {
-    const syncMethodFunction = _tooltipTicks => {
+    const syncMethodFunction = () => {
       return 1;
     };
 
