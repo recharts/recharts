@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import type { JSX } from '@babel/types';
 
 import { LineChart, Line, XAxis, YAxis, Tooltip, Brush, CartesianAxis, Legend } from '../../src';
@@ -725,7 +725,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
         <XAxis dataKey="name" />
       </LineChart>
     );
-    const { container, findByText } = render(
+    const { container } = render(
       <div>
         {chart1}
         {chart2}
@@ -753,8 +753,8 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(2);
 
     // make sure tooltips display the correct values, synced by data value
-    expect(findByText('400')).toBeTruthy();
-    expect(findByText('550')).toBeTruthy();
+    expect(screen.queryByText('400')).toBeTruthy();
+    expect(screen.queryByText('550')).toBeTruthy();
 
     // Check the activeDots are highlighted
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
