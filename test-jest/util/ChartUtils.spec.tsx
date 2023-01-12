@@ -16,6 +16,7 @@ import {
   parseScale,
   parseSpecifiedDomain,
 } from '../../src/util/ChartUtils';
+import { DataKey } from '../../src/util/types';
 
 describe('getBandSizeOfAxis', () => {
   it('DataUtils.getBandSizeOfAxis() should return 0 ', () => {
@@ -59,12 +60,18 @@ describe('parseSpecifiedDomain', () => {
   });
 
   it('works with functions ', () => {
-    const result = parseSpecifiedDomain([dataMin => 0 - Math.abs(dataMin), dataMax => dataMax * 2], domain);
+    const result = parseSpecifiedDomain(
+      [(dataMin: number) => 0 - Math.abs(dataMin), (dataMax: number) => dataMax * 2],
+      domain,
+    );
     expect(result).toEqual([-20, 200]);
   });
 
   it('DataUtils.parseSpecifiedDomain(callback, domain) should execute the callback and return computed value ', () => {
-    const result = parseSpecifiedDomain(([dataMin, dataMax], _allowDataOverflow) => [dataMin / 4, dataMax * 4], domain);
+    const result = parseSpecifiedDomain(
+      ([dataMin, dataMax]: [number, number], _allowDataOverflow: boolean) => [dataMin / 4, dataMax * 4],
+      domain,
+    );
     expect(result).toEqual([5, 400]);
   });
 });
@@ -85,7 +92,7 @@ describe('getValueByDataKey', () => {
   const data = { a: 1, b: 2, c: 3 };
 
   it('of function', () => {
-    const fn = entry => entry.a;
+    const fn: DataKey<typeof data> = entry => entry.a;
 
     expect(getValueByDataKey(data, fn)).toBe(1);
   });
@@ -180,7 +187,7 @@ describe('calculateActiveTickIndex', () => {
 });
 
 describe('getDomainOfStackGroups', () => {
-  let stackData;
+  let stackData: any;
 
   beforeEach(() => {
     stackData = {
