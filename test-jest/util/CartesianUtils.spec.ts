@@ -1,4 +1,4 @@
-import { scaleLinear, scaleBand } from 'd3-scale';
+import { scaleLinear, scaleBand } from 'victory-vendor/d3-scale';
 import { ScaleHelper, createLabeledScales } from '../../src/util/CartesianUtils';
 
 describe('ScaleHelper', () => {

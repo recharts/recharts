@@ -3,7 +3,7 @@ import { expect } from 'chai';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { FunnelChart, Funnel, Cell, LabelList } from 'recharts';
 import { render } from 'enzyme';
-import { scaleOrdinal } from 'd3-scale';
+import { scaleOrdinal } from 'victory-vendor/d3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
 
 const data = [

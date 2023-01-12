@@ -1,4 +1,4 @@
-import { scaleBand, scaleLinear } from 'd3-scale';
+import { scaleBand, scaleLinear } from 'victory-vendor/d3-scale';
 import React from 'react';
 
 import { Area, Bar, ErrorBar, Line, Scatter } from '../../src';
