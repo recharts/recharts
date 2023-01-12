@@ -3,17 +3,7 @@
  */
 import classNames from 'classnames';
 import _ from 'lodash';
-import React, {
-  ReactElement,
-  forwardRef,
-  cloneElement,
-  useState,
-  useImperativeHandle,
-  useRef,
-  useEffect,
-  useCallback,
-  useMemo,
-} from 'react';
+import React, { ReactElement, forwardRef, cloneElement, useState, useImperativeHandle, useRef, useEffect } from 'react';
 import ReactResizeDetector from 'react-resize-detector';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
@@ -29,6 +19,11 @@ export interface Props {
   debounce?: number;
   id?: string | number;
   className?: string | number;
+}
+
+interface State {
+  containerWidth: number;
+  containerHeight: number;
 }
 
 export const ResponsiveContainer = forwardRef(
@@ -47,18 +42,16 @@ export const ResponsiveContainer = forwardRef(
     }: Props,
     ref,
   ) => {
-    const [sizes, setSizes] = useState<{
-      containerWidth: number;
-      containerHeight: number;
-    }>({
+    const [sizes, setSizes] = useState<State>({
       containerWidth: -1,
       containerHeight: -1,
     });
-
     const containerRef = useRef<HTMLDivElement>(null);
     useImperativeHandle(ref, () => containerRef, [containerRef]);
 
-    const getContainerSize = useCallback(() => {
+    const [mounted, setMounted] = useState<boolean>(false);
+
+    const getContainerSize = () => {
       if (!containerRef.current) {
         return null;
       }
@@ -67,31 +60,28 @@ export const ResponsiveContainer = forwardRef(
         containerWidth: containerRef.current.clientWidth,
         containerHeight: containerRef.current.clientHeight,
       };
-    }, []);
+    };
 
-    const updateDimensionsImmediate = useCallback(() => {
+    const updateDimensionsImmediate = () => {
+      if (!mounted) {
+        return;
+      }
+
       const newSize = getContainerSize();
 
       if (newSize) {
+        const { containerWidth: oldWidth, containerHeight: oldHeight } = sizes;
         const { containerWidth, containerHeight } = newSize;
 
-        setSizes(currentSizes => {
-          const { containerWidth: oldWidth, containerHeight: oldHeight } = currentSizes;
-          if (containerWidth !== oldWidth || containerHeight !== oldHeight) {
-            return { containerWidth, containerHeight };
-          }
-
-          return currentSizes;
-        });
+        if (containerWidth !== oldWidth || containerHeight !== oldHeight) {
+          setSizes({ containerWidth, containerHeight });
+        }
       }
-    }, [getContainerSize]);
+    };
 
-    const handleResize = useMemo(
-      () => (debounce > 0 ? _.debounce(updateDimensionsImmediate, debounce) : updateDimensionsImmediate),
-      [debounce, updateDimensionsImmediate],
-    );
+    const handleResize = debounce > 0 ? _.debounce(updateDimensionsImmediate, debounce) : updateDimensionsImmediate;
 
-    const computedSizes = useMemo(() => {
+    const renderChart = () => {
       const { containerWidth, containerHeight } = sizes;
 
       if (containerWidth < 0 || containerHeight < 0) {
@@ -142,21 +132,27 @@ export const ResponsiveContainer = forwardRef(
         aspect,
       );
 
-      return {
+      return cloneElement(children, {
         width: calculatedWidth,
         height: calculatedHeight,
-      };
-    }, [aspect, height, maxHeight, minHeight, minWidth, sizes, width]);
+      });
+    };
 
     useEffect(() => {
-      const size = getContainerSize();
+      if (mounted) {
+        const size = getContainerSize();
 
-      if (size) {
-        setSizes(size);
+        if (size) {
+          setSizes(size);
+        }
       }
-    }, [getContainerSize]);
+    }, [mounted]);
 
-    const style: React.CSSProperties = { width, height, minWidth, minHeight, maxHeight };
+    useEffect(() => {
+      setMounted(true);
+    }, []);
+
+    const style = { width, height, minWidth, minHeight, maxHeight };
 
     return (
       <ReactResizeDetector handleWidth handleHeight onResize={handleResize} targetRef={containerRef}>
@@ -166,7 +162,7 @@ export const ResponsiveContainer = forwardRef(
           style={style}
           ref={containerRef}
         >
-          {cloneElement(children, computedSizes)}
+          {renderChart()}
         </div>
       </ReactResizeDetector>
     );
