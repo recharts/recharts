@@ -91,7 +91,7 @@ export const ResponsiveContainer = forwardRef(
       [debounce, updateDimensionsImmediate],
     );
 
-    const computedSizes = useMemo(() => {
+    const chartContent = useMemo(() => {
       const { containerWidth, containerHeight } = sizes;
 
       if (containerWidth < 0 || containerHeight < 0) {
@@ -142,11 +142,11 @@ export const ResponsiveContainer = forwardRef(
         aspect,
       );
 
-      return {
+      return cloneElement(children, {
         width: calculatedWidth,
         height: calculatedHeight,
-      };
-    }, [aspect, height, maxHeight, minHeight, minWidth, sizes, width]);
+      });
+    }, [aspect, children, height, maxHeight, minHeight, minWidth, sizes, width]);
 
     useEffect(() => {
       const size = getContainerSize();
@@ -166,7 +166,7 @@ export const ResponsiveContainer = forwardRef(
           style={style}
           ref={containerRef}
         >
-          {cloneElement(children, computedSizes)}
+          {chartContent}
         </div>
       </ReactResizeDetector>
     );
