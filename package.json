@@ -59,20 +59,15 @@
     "react-dom": "^16.0.0 || ^17.0.0 || ^18.0.0"
   },
   "dependencies": {
-    "@types/d3-interpolate": "^2.0.0",
-    "@types/d3-scale": "^3.0.0",
-    "@types/d3-shape": "^2.0.0",
     "classnames": "^2.2.5",
-    "d3-interpolate": "^2.0.0",
-    "d3-scale": "^3.0.0",
-    "d3-shape": "^2.0.0",
     "eventemitter3": "^4.0.1",
     "lodash": "^4.17.19",
     "react-is": "^16.10.2",
     "react-resize-detector": "^7.1.2",
     "react-smooth": "^2.0.1",
     "recharts-scale": "^0.4.4",
-    "reduce-css-calc": "^2.1.8"
+    "reduce-css-calc": "^2.1.8",
+    "victory-vendor": "^36.6.8"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.4",
@@ -89,6 +84,10 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.1.5",
     "@testing-library/user-event": "^14.3.0",
+    "@types/classnames": "^2.2.9",
+    "@types/d3-interpolate": "^3.0.1",
+    "@types/d3-scale": "^4.0.2",
+    "@types/d3-shape": "^3.1.0",
     "@types/jest": "^26.0.24",
     "@types/lodash": "^4.14.144",
     "@types/node": "^14.18.34",
@@ -104,7 +103,7 @@
     "chai": "^4.2.0",
     "chai-enzyme": "^1.0.0-beta.1",
     "cross-env": "^7.0.3",
-    "d3-scale-chromatic": "^2.0.0",
+    "d3-scale-chromatic": "^3.0.0",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.6",
     "eslint": "^7.32.0",

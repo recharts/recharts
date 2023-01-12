@@ -13,7 +13,7 @@ import {
   symbolTriangle,
   symbolWye,
   SymbolType as D3SymbolType,
-} from 'd3-shape';
+} from 'victory-vendor/d3-shape';
 import classNames from 'classnames';
 import { SymbolType } from '../util/types';
 import { filterProps } from '../util/ReactUtils';

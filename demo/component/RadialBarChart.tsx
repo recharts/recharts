@@ -10,7 +10,7 @@ import {
   LabelList,
   PolarAngleAxis,
 } from 'recharts';
-import { scaleOrdinal } from 'd3-scale';
+import { scaleOrdinal } from 'victory-vendor/d3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
 import { changeNumberOfData } from './utils';
 

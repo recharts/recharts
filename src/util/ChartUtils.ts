@@ -1,4 +1,4 @@
-import * as d3Scales from 'd3-scale';
+import * as d3Scales from 'victory-vendor/d3-scale';
 import {
   stack as shapeStack,
   stackOffsetExpand,
@@ -6,7 +6,7 @@ import {
   stackOffsetSilhouette,
   stackOffsetWiggle,
   stackOrderNone,
-} from 'd3-shape';
+} from 'victory-vendor/d3-shape';
 import _ from 'lodash';
 import { ReactElement, ReactNode } from 'react';
 import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
