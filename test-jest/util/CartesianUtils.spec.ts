@@ -14,12 +14,12 @@ describe('ScaleHelper', () => {
 
   it('apply() should return the expected value for band scale', () => {
     const scale = new ScaleHelper(scaleBand().domain(['0', '1', '2', '3']).range([0, 100]));
-    expect(scale.apply(2)).toEqual(50);
+    expect(scale.apply('2')).toEqual(50);
   });
 
   it('apply() should return the expected value for band scale when bandAware = true', () => {
     const scale = new ScaleHelper(scaleBand().domain(['0', '1', '2', '3']).range([0, 100]));
-    expect(scale.apply(2, { bandAware: true })).toEqual(50 + 25 / 2);
+    expect(scale.apply('2', { bandAware: true })).toEqual(50 + 25 / 2);
   });
 
   it('apply() should return undefined for undefined', () => {
@@ -43,17 +43,17 @@ describe('ScaleHelper', () => {
   });
 });
 
-describe('createLabeldScales', () => {
+describe('createLabeledScales', () => {
   it('apply() should return the expected values', () => {
     const scales = createLabeledScales({
       x: scaleBand().domain(['0', '1', '2', '3']).range([0, 100]),
       y: scaleLinear().domain([-200, 200]).range([0, 50]),
     });
-    expect(scales.apply({ x: 2 }, { bandAware: true })).toEqual({ x: 50 + 25 / 2 });
-    expect(scales.apply({ x: 2 }, { bandAware: true, position: 'start' })).toEqual({ x: 50 });
-    expect(scales.apply({ x: 2 }, { bandAware: true, position: 'middle' })).toEqual({ x: 50 + 25 / 2.0 });
-    expect(scales.apply({ x: 2 }, { bandAware: true, position: 'end' })).toEqual({ x: 50 + 25 });
-    expect(scales.apply({ y: 100 }, { bandAware: true })).toEqual({ y: 37.5 });
+    expect(scales.apply({ x: '2' }, { bandAware: true })).toEqual({ x: 50 + 25 / 2 });
+    expect(scales.apply({ x: '2' }, { bandAware: true, position: 'start' })).toEqual({ x: 50 });
+    expect(scales.apply({ x: '2' }, { bandAware: true, position: 'middle' })).toEqual({ x: 50 + 25 / 2.0 });
+    expect(scales.apply({ x: '2' }, { bandAware: true, position: 'end' })).toEqual({ x: 50 + 25 });
+    expect(scales.apply({ y: '100' }, { bandAware: true })).toEqual({ y: 37.5 });
   });
 
   it('isInRange() should return the expected values', () => {

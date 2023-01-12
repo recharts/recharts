@@ -9,11 +9,9 @@
   "sideEffects": false,
   "files": [
     "*.md",
-    "demo",
     "es6",
     "lib",
     "umd",
-    "src",
     "types"
   ],
   "keywords": [
