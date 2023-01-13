@@ -152,7 +152,7 @@ describe('<ResponsiveContainer />', () => {
     expect(container.querySelector('.recharts-responsive-container')).toHaveAttribute('id', 'testing-id-attr');
   });
 
-  it.only('should resize when ResizeObserver notify a change', () => {
+  it('should resize when ResizeObserver notify a change', () => {
     const { container } = render(
       <ResponsiveContainer id="testing-id-attr" width="100%" height={200}>
         <div data-testid="inside" />
@@ -164,6 +164,28 @@ describe('<ResponsiveContainer />', () => {
     expect(element).not.toHaveAttribute('height');
 
     notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
+
+    expect(element).toHaveAttribute('width', '100');
+    expect(element).toHaveAttribute('height', '100');
+  });
+
+  it('should resize when debounced', () => {
+    jest.useFakeTimers('modern');
+    const { container } = render(
+      <ResponsiveContainer id="testing-id-attr" width="100%" height={200} debounce={200}>
+        <div data-testid="inside" />
+      </ResponsiveContainer>,
+    );
+
+    const element = container.querySelector('.recharts-responsive-container');
+
+    notifyResizeObserverChange([{ contentRect: { width: 50, height: 50 } }]);
+    jest.advanceTimersByTime(100);
+    expect(element).not.toHaveAttribute('width');
+    expect(element).not.toHaveAttribute('height');
+
+    notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
+    jest.runAllTimers();
 
     expect(element).toHaveAttribute('width', '100');
     expect(element).toHaveAttribute('height', '100');
