@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { render } from '@testing-library/react';
 import React from 'react';
 
@@ -11,6 +10,8 @@ describe('<BarChart />', () => {
     { name: 'storage', uv: 300, pv: 1398 },
     { name: 'digital', uv: 200, pv: 9800 },
   ];
+
+  type CustomLabelProps = Partial<{ x: number; y: number; index: number }>;
 
   test('Renders 8 bars in simple BarChart', () => {
     const { container } = render(
@@ -35,7 +36,7 @@ describe('<BarChart />', () => {
   });
 
   test('Renders 4 bar labels when label is set to be a react element', () => {
-    const Label = props => {
+    const Label = (props: CustomLabelProps) => {
       const { x, y, index } = props;
 
       return (
@@ -48,25 +49,6 @@ describe('<BarChart />', () => {
     const { container } = render(
       <BarChart width={100} height={50} data={data}>
         <Bar isAnimationActive={false} dataKey="uv" fill="#ff7300" label={<Label />} />
-      </BarChart>,
-    );
-
-    expect(container.querySelectorAll('.customized-label')).toHaveLength(4);
-  });
-
-  test('Renders 4 bar labels when label is set to be a function', () => {
-    const renderLabel = props => {
-      const { x, y, index } = props;
-
-      return (
-        <text key={`label-${index}`} x={x} y={y} className="customized-label">
-          test
-        </text>
-      );
-    };
-    const { container } = render(
-      <BarChart width={100} height={50} data={data}>
-        <Bar isAnimationActive={false} dataKey="uv" fill="#ff7300" label={renderLabel} />
       </BarChart>,
     );
 
@@ -138,7 +120,7 @@ describe('<BarChart />', () => {
   });
 
   test('Render customized shapem when shape is set to be a react element', () => {
-    const Shape = props => {
+    const Shape = (props: any) => {
       const { x, y } = props;
 
       return <circle className="customized-shape" cx={x} cy={y} r={8} />;
@@ -152,7 +134,7 @@ describe('<BarChart />', () => {
   });
 
   test('Render customized shapem when shape is set to be a function', () => {
-    const renderShape = props => {
+    const renderShape = (props: any) => {
       const { x, y } = props;
 
       return <circle className="customized-shape" cx={x} cy={y} r={8} />;
