@@ -60,11 +60,11 @@ describe('<ComposedChart />', () => {
       </ComposedChart>,
     );
 
-    const firstChart = container.querySelector('.recharts-wrapper');
+    const chart = container.querySelector('.recharts-wrapper');
     const mouseEnterEvent = new MouseEvent('mouseover', { bubbles: true, cancelable: true });
     Object.assign(mouseEnterEvent, { pageX: 200, pageY: 100 });
-    expect(firstChart).not.toBeNull();
-    fireEvent(firstChart!, mouseEnterEvent);
+    expect(chart).not.toBeNull();
+    fireEvent(chart!, mouseEnterEvent);
 
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(1);
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
