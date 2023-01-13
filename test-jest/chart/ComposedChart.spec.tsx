@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React from 'react';
-import { render } from '@testing-library/react';
-import { ComposedChart, Line, Bar, Area, XAxis, YAxis, CartesianGrid } from '../../src';
+import { render, fireEvent } from '@testing-library/react';
+import { ComposedChart, Line, Bar, Area, XAxis, YAxis, Legend, CartesianGrid, Tooltip } from '../../src';
 
 describe('<ComposedChart />', () => {
   const data = [
@@ -45,60 +46,27 @@ describe('<ComposedChart />', () => {
     expect(container.querySelectorAll('.recharts-bar .recharts-bar-rectangle')).toHaveLength(1);
   });
 
-  // test.skip('Generate point scale for x-axis, when has no <Bar /> in the ComposedChart', () => {
-  //   const wrapper = render(
-  //     <ComposedChart width={800} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-  //       <XAxis dataKey="name" />
-  //       <YAxis />
-  //       <CartesianGrid stroke="#f5f5f5" />
-  //       <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
-  //       <Line type="monotone" dataKey="uv" stroke="#ff7300" />
-  //     </ComposedChart>,
-  //   );
+  test('MouseEnter ComposedChart should show tooltip, active dot, and cursor', () => {
+    const { container } = render(
+      <ComposedChart width={800} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Legend />
+        <Tooltip />
+        <CartesianGrid stroke="#f5f5f5" />
+        <Area isAnimationActive={false} type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
+        <Bar isAnimationActive={false} dataKey="pv" barSize={20} fill="#413ea0" />
+        <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
+      </ComposedChart>,
+    );
 
-  //   expect(wrapper.state().xAxisMap[0].realScaleType).to.equal('point');
-  // });
+    const chart = container.querySelector('.recharts-wrapper');
+    const mouseEnterEvent = new MouseEvent('mouseover', { bubbles: true, cancelable: true });
+    Object.assign(mouseEnterEvent, { pageX: 200, pageY: 100 });
+    expect(chart).not.toBeNull();
+    fireEvent(chart!, mouseEnterEvent);
 
-  // test.skip('Generate point scale for x-axis, when has <Bar /> in the ComposedChart', () => {
-  //   const wrapper = mount(
-  //     <ComposedChart width={800} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-  //       <XAxis dataKey="name" />
-  //       <YAxis />
-  //       <CartesianGrid stroke="#f5f5f5" />
-  //       <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
-  //       <Bar dataKey="pv" barSize={20} fill="#413ea0" />
-  //       <Line type="monotone" dataKey="uv" stroke="#ff7300" />
-  //     </ComposedChart>,
-  //   );
-
-  //   expect(wrapper.state().xAxisMap[0].realScaleType).to.equal('band');
-  // });
-
-  // test.skip('MouseEnter ComposedChart should show tooltip, active dot, and cursor', () => {
-  //   const wrapper = mount(
-  //     <ComposedChart width={800} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-  //       <XAxis dataKey="name" />
-  //       <YAxis />
-  //       <Legend />
-  //       <Tooltip />
-  //       <CartesianGrid stroke="#f5f5f5" />
-  //       <Area isAnimationActive={false} type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
-  //       <Bar isAnimationActive={false} dataKey="pv" barSize={20} fill="#413ea0" />
-  //       <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
-  //     </ComposedChart>,
-  //   );
-
-  //   wrapper.setState({
-  //     isTooltipActive: true,
-  //     activeTooltipIndex: 1,
-  //     activeTooltipLabel: 'test',
-  //     activeTooltipCoord: {
-  //       x: 100,
-  //       y: 100,
-  //     },
-  //   });
-
-  //   // expect(wrapper.find('.recharts-tooltip-cursor').length).to.equal(1);
-  //   // expect(wrapper.find('.recharts-line-active-dot').length).to.equal(1);
-  // });
+    expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
+  });
 });
