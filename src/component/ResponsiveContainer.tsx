@@ -2,7 +2,6 @@
  * @fileOverview Wrapper component to make charts adapt to the size of parent * DOM
  */
 import classNames from 'classnames';
-import _ from 'lodash';
 import React, {
   ReactElement,
   forwardRef,
@@ -86,12 +85,7 @@ export const ResponsiveContainer = forwardRef(
       }
     }, [getContainerSize]);
 
-    const handleResize = useMemo(
-      () => (debounce > 0 ? _.debounce(updateDimensionsImmediate, debounce) : updateDimensionsImmediate),
-      [debounce, updateDimensionsImmediate],
-    );
-
-    const computedSizes = useMemo(() => {
+    const chartContent = useMemo(() => {
       const { containerWidth, containerHeight } = sizes;
 
       if (containerWidth < 0 || containerHeight < 0) {
@@ -142,11 +136,11 @@ export const ResponsiveContainer = forwardRef(
         aspect,
       );
 
-      return {
+      return cloneElement(children, {
         width: calculatedWidth,
         height: calculatedHeight,
-      };
-    }, [aspect, height, maxHeight, minHeight, minWidth, sizes, width]);
+      });
+    }, [aspect, children, height, maxHeight, minHeight, minWidth, sizes, width]);
 
     useEffect(() => {
       const size = getContainerSize();
@@ -159,14 +153,21 @@ export const ResponsiveContainer = forwardRef(
     const style: React.CSSProperties = { width, height, minWidth, minHeight, maxHeight };
 
     return (
-      <ReactResizeDetector handleWidth handleHeight onResize={handleResize} targetRef={containerRef}>
+      <ReactResizeDetector
+        handleWidth
+        handleHeight
+        onResize={updateDimensionsImmediate}
+        targetRef={containerRef}
+        refreshMode={debounce > 0 ? 'debounce' : undefined}
+        refreshRate={debounce}
+      >
         <div
           {...(id != null ? { id: `${id}` } : {})}
           className={classNames('recharts-responsive-container', className)}
           style={style}
           ref={containerRef}
         >
-          {cloneElement(children, computedSizes)}
+          {chartContent}
         </div>
       </ReactResizeDetector>
     );

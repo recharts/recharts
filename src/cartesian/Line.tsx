@@ -257,7 +257,7 @@ export class Line extends PureComponent<Props, State> {
     }
 
     const { points, xAxis, yAxis, layout, children } = this.props;
-    const errorBarItems = findAllByType(children, ErrorBar.displayName);
+    const errorBarItems = findAllByType(children, ErrorBar);
 
     if (!errorBarItems) {
       return null;

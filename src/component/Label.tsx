@@ -516,7 +516,7 @@ const renderCallByParent = (parentProps: any, viewBox?: ViewBox, checkPropsLabel
   const { children } = parentProps;
   const parentViewBox = parseViewBox(parentProps);
 
-  const explicitChildren = findAllByType(children, Label.displayName).map((child: any, index: number) =>
+  const explicitChildren = findAllByType(children, Label).map((child, index: number) =>
     cloneElement(child, {
       viewBox: viewBox || parentViewBox,
       key: `label-${index}`,

@@ -1,9 +1,9 @@
-/* eslint-disable no-undef */
-import { fireEvent, render, screen } from '@testing-library/react';
-import React from 'react';
-import userEvent from '@testing-library/user-event';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { fireEvent, render } from '@testing-library/react';
+import React, { ComponentProps, FC } from 'react';
 
 import { Area, AreaChart, Brush, CartesianAxis, Tooltip, XAxis, YAxis } from '../../src';
+import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 describe('AreaChart', () => {
   const data = [
@@ -55,13 +55,13 @@ describe('AreaChart', () => {
     });
   });
 
-  test.skip('Renders customized active dot when activeDot is set to be a ReactElement', async () => {
-    // eslint-disable-next-line react/prop-types
-    const ActiveDot = ({ cx, cy }) => (
-      <circle cx={cx} cy={cy} r={10} className="customized-active-dot">
-        <text>dot-test</text>
-      </circle>
+  test('Renders customized active dot when activeDot is set to be a ReactElement', () => {
+    jest.useFakeTimers();
+
+    const ActiveDot: FC<{ cx?: number; cy?: number }> = ({ cx, cy }) => (
+      <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />
     );
+
     const { container } = render(
       <div role="main" style={{ width: '400px', height: '400px' }}>
         <AreaChart width={400} height={400} data={data}>
@@ -77,14 +77,42 @@ describe('AreaChart', () => {
       </div>,
     );
 
-    const area = container.querySelector('.recharts-area-area');
+    const chart = container.querySelector('.recharts-wrapper');
+    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 200, pageY: 200 });
 
-    if (area !== null) {
-      await userEvent.hover(area);
-      screen.debug(area);
-    }
+    mouseOverEvent.fire();
 
-    expect(screen.queryAllByText('dot-test')).toHaveLength(1);
+    jest.runAllTimers();
+
+    const dot = container.querySelectorAll('.customized-active-dot');
+    expect(dot).toHaveLength(1);
+  });
+
+  test('Renders customized active dot when activeDot is set to be a function', () => {
+    jest.useFakeTimers();
+
+    const activeDotRenderer: ComponentProps<typeof Area>['activeDot'] = ({ cx, cy }) => (
+      <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />
+    );
+
+    const { container } = render(
+      <div role="main" style={{ width: '400px', height: '400px' }}>
+        <AreaChart width={400} height={400} data={data}>
+          <Area activeDot={activeDotRenderer} type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+          <Tooltip />
+        </AreaChart>
+      </div>,
+    );
+
+    const chart = container.querySelector('.recharts-wrapper');
+    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 200, pageY: 200 });
+
+    mouseOverEvent.fire();
+
+    jest.runAllTimers();
+
+    const dot = container.querySelectorAll('.customized-active-dot');
+    expect(dot).toHaveLength(1);
   });
 
   test('Renders 4 path in a stacked AreaChart', () => {
@@ -98,7 +126,7 @@ describe('AreaChart', () => {
     expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(2);
   });
 
-  test('Renders 4 path in a vertical AreaChart', () => {
+  test('Renders 2 path in a vertical AreaChart', () => {
     const { container } = render(
       <AreaChart width={100} height={50} data={data} layout="vertical">
         <XAxis type="number" />
@@ -136,7 +164,7 @@ describe('AreaChart', () => {
 
     const spies: jest.SpyInstance[] = [];
     // CartesianAxis is what is actually render for XAxis and YAxis
-    let axisSpy;
+    let axisSpy: jest.SpyInstance;
 
     // spy on each pure element before each test, and restore the spy afterwards
     beforeEach(() => {
@@ -150,17 +178,18 @@ describe('AreaChart', () => {
       axisSpy.mockRestore();
     });
 
+    const chart = (
+      <AreaChart width={400} height={400} data={data}>
+        <Area isAnimationActive={false} type="monotone" dot label dataKey="uv" />
+        <Tooltip />
+        <XAxis />
+        <YAxis />
+        <Brush />
+      </AreaChart>
+    );
+
     // protect against the future where someone might mess up our clean rendering
     test('should only render Area once when the mouse enters and moves', () => {
-      const chart = (
-        <AreaChart width={400} height={400} data={data}>
-          <Area isAnimationActive={false} type="monotone" dot label dataKey="uv" />
-          <Tooltip />
-          <XAxis />
-          <YAxis />
-          <Brush />
-        </AreaChart>
-      );
       const { container } = render(chart);
 
       spies.forEach(el => expect(el.mock.calls.length).toBe(1));
@@ -175,25 +204,56 @@ describe('AreaChart', () => {
     });
 
     // protect against the future where someone might mess up our clean rendering
-    test.skip("should only render Area once when the brush moves but doesn't change start/end indices", () => {
-      const onBrushChangeMock = jest.fn();
-      render(
-        <AreaChart width={400} height={400} data={data}>
-          <Area isAnimationActive={false} type="monotone" dot label dataKey="uv" />
-          <Tooltip />
-          <XAxis />
-          <YAxis />
-          <Brush onChange={onBrushChangeMock} />
-        </AreaChart>,
-      );
+    test("should only render Area once when the brush moves but doesn't change start/end indices", () => {
+      const { container } = render(chart);
 
-      spies.forEach(el => expect(el.mock.calls.length).toBe(1));
-      expect(axisSpy.callCount).toEqual(2);
+      spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+      expect(axisSpy).toHaveBeenCalledTimes(2);
 
-      // onBrushChangeMock.mock.calls[0]({ startIndex: 0, endIndex: data.length - 1 });
-      // wrapper.instance().handleBrushChange({ startIndex: 0, endIndex: data.length - 1 });
-      // spies.forEach(el => expect(el.callCount).toEqual(1));
-      // expect(axisSpy.callCount).toEqual(2);
+      const brushSlide = container.querySelector('.recharts-brush-slide');
+
+      const mouseDownEvent = mockMouseEvent('mousedown', brushSlide!, { pageX: 0, pageY: 0 });
+      const mouseMoveEvent = mockMouseEvent('mousemove', window, { pageX: 0, pageY: 0 });
+
+      mouseDownEvent.fire();
+      mouseMoveEvent.fire();
+      fireEvent.mouseUp(window);
+
+      spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
+      expect(axisSpy).toHaveBeenCalledTimes(2);
+    });
+
+    test('should only show the last data when the brush travelers all moved to the right', () => {
+      const { container } = render(chart);
+
+      const leftBrushTraveler = container.querySelector('.recharts-brush-traveller');
+
+      const mouseDownEvent = mockMouseEvent('mousedown', leftBrushTraveler!, { pageX: 0, pageY: 0 });
+      const mouseMoveEvent = mockMouseEvent('mousemove', window, { pageX: 400, pageY: 0 });
+
+      mouseDownEvent.fire();
+      mouseMoveEvent.fire();
+      fireEvent.mouseUp(window);
+
+      expect(leftBrushTraveler?.firstChild).toHaveAttribute('x', '390'); // not sure why the drag end at x: 390
+      expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(1);
+    });
+
+    test('should only show the first data when the brush travelers all moved to the left', () => {
+      const { container } = render(chart);
+
+      const rightBrushTraveler = container.querySelectorAll('.recharts-brush-traveller')[1];
+
+      const mouseDownEvent = mockMouseEvent('mousedown', rightBrushTraveler!, { pageX: 400, pageY: 0 });
+      const mouseMoveEvent = mockMouseEvent('mousemove', window, { pageX: 0, pageY: 0 });
+
+      mouseDownEvent.fire();
+      mouseMoveEvent.fire();
+      fireEvent.mouseUp(window);
+
+      // not sure why the drag ended at x: 65, but it did close to the 1st point but not 2nd
+      expect(rightBrushTraveler?.firstChild).toHaveAttribute('x', '65');
+      expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(1);
     });
   });
 });

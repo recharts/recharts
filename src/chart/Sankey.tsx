@@ -463,7 +463,7 @@ export class Sankey extends PureComponent<Props, State> {
 
   handleMouseEnter(el: React.ReactElement, type: string, e: any) {
     const { onMouseEnter, children } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip.displayName);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (tooltipItem) {
       this.setState(
@@ -486,7 +486,7 @@ export class Sankey extends PureComponent<Props, State> {
 
   handleMouseLeave(el: React.ReactElement, type: string, e: any) {
     const { onMouseLeave, children } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip.displayName);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (tooltipItem) {
       this.setState(
@@ -509,7 +509,7 @@ export class Sankey extends PureComponent<Props, State> {
 
   handleClick(el: React.ReactElement, type: string, e: any) {
     const { onClick, children } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip.displayName);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (tooltipItem && tooltipItem.props.trigger === 'click') {
       if (this.state.isTooltipActive) {
@@ -657,7 +657,7 @@ export class Sankey extends PureComponent<Props, State> {
 
   renderTooltip() {
     const { children, width, height, nameKey } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip.displayName);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem) {
       return null;

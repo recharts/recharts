@@ -534,7 +534,7 @@ const tooltipTicksGenerator = (axisMap: any) => {
  */
 const createDefaultState = (props: CategoricalChartProps): CategoricalChartState => {
   const { children, defaultShowTooltip } = props;
-  const brushItem = findChildByType(children, Brush.displayName);
+  const brushItem = findChildByType(children, Brush);
   const startIndex = (brushItem && brushItem.props && brushItem.props.startIndex) || 0;
   const endIndex =
     brushItem?.props?.endIndex !== undefined ? brushItem?.props?.endIndex : (props.data && props.data.length - 1) || 0;
@@ -590,8 +590,8 @@ const calculateOffset = (
 ) => {
   const { width, height, children } = props;
   const margin = props.margin || {};
-  const brushItem = findChildByType(children, Brush.displayName);
-  const legendItem = findChildByType(children, Legend.displayName);
+  const brushItem = findChildByType(children, Brush);
+  const legendItem = findChildByType(children, Legend);
 
   const offsetH = Object.keys(yAxisMap).reduce(
     (result: any, id: any) => {
@@ -1095,7 +1095,7 @@ export const generateCategoricalChart = ({
     }
 
     getTooltipEventType() {
-      const tooltipItem = findChildByType(this.props.children, Tooltip.displayName);
+      const tooltipItem = findChildByType(this.props.children, Tooltip);
 
       if (tooltipItem && isBoolean(tooltipItem.props.shared)) {
         const eventType = tooltipItem.props.shared ? 'axis' : 'item';
@@ -1233,7 +1233,7 @@ export const generateCategoricalChart = ({
     parseEventsOfWrapper() {
       const { children } = this.props;
       const tooltipEventType = this.getTooltipEventType();
-      const tooltipItem = findChildByType(children, Tooltip.displayName);
+      const tooltipItem = findChildByType(children, Tooltip);
       let tooltipEvents: any = {};
 
       if (tooltipItem && tooltipEventType === 'axis') {
@@ -1812,7 +1812,7 @@ export const generateCategoricalChart = ({
      */
     renderTooltip = (): React.ReactElement => {
       const { children } = this.props;
-      const tooltipItem = findChildByType(children, Tooltip.displayName);
+      const tooltipItem = findChildByType(children, Tooltip);
 
       if (!tooltipItem) {
         return null;
@@ -1936,7 +1936,7 @@ export const generateCategoricalChart = ({
       const tooltipEventType = this.getTooltipEventType();
       const { isTooltipActive, tooltipAxis, activeTooltipIndex, activeLabel } = this.state;
       const { children } = this.props;
-      const tooltipItem = findChildByType(children, Tooltip.displayName);
+      const tooltipItem = findChildByType(children, Tooltip);
       const { points, isRange, baseLine } = item.props;
       const { activeDot, hide } = item.item.props;
       const hasActive = !hide && isTooltipActive && tooltipItem && activeDot && activeTooltipIndex >= 0;

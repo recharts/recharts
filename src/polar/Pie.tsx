@@ -164,7 +164,7 @@ export class Pie extends PureComponent<Props, State> {
   static getRealPieData = (item: Pie) => {
     const { data, children } = item.props;
     const presentationProps = filterProps(item.props);
-    const cells = findAllByType(children, Cell.displayName);
+    const cells = findAllByType(children, Cell);
 
     if (data && data.length) {
       return data.map((entry, index) => ({

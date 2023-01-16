@@ -137,7 +137,7 @@ export class RadialBar extends PureComponent<Props, State> {
     const numericAxis = layout === 'radial' ? angleAxis : radiusAxis;
     const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
     const baseValue = getBaseValueOfBar({ numericAxis });
-    const cells = findAllByType(children, Cell.displayName);
+    const cells = findAllByType(children, Cell);
     const sectors = displayedData.map((entry: any, index: number) => {
       let value, innerRadius, outerRadius, startAngle, endAngle, backgroundSector;
 

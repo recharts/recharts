@@ -1,4 +1,4 @@
-import * as d3Scales from 'd3-scale';
+import * as d3Scales from 'victory-vendor/d3-scale';
 import {
   stack as shapeStack,
   stackOffsetExpand,
@@ -6,13 +6,13 @@ import {
   stackOffsetSilhouette,
   stackOffsetWiggle,
   stackOrderNone,
-} from 'd3-shape';
+} from 'victory-vendor/d3-shape';
 import _ from 'lodash';
 import { ReactElement, ReactNode } from 'react';
 import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
 
+import { ErrorBar } from '../cartesian/ErrorBar';
 import { Legend } from '../component/Legend';
-
 import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
 import { filterProps, findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
@@ -24,8 +24,8 @@ export function getValueByDataKey<T>(obj: T, dataKey: DataKey<any>, defaultValue
     return defaultValue;
   }
 
-  if (isNumOrStr(dataKey as string)) {
-    return _.get(obj, dataKey as string, defaultValue);
+  if (isNumOrStr(dataKey)) {
+    return _.get(obj, dataKey, defaultValue);
   }
 
   if (_.isFunction(dataKey)) {
@@ -66,7 +66,8 @@ export const calculateActiveTickIndex = (
   let index = -1;
   const len = ticks?.length ?? 0;
 
-  if (len === 0) {
+  // if there are 1 or less ticks ticks then the active tick is at index 0
+  if (len <= 1) {
     return 0;
   }
 
@@ -181,7 +182,7 @@ export const getLegendProps = ({
   legendWidth: number;
   legendContent?: any;
 }) => {
-  const legendItem = findChildByType(children, Legend.displayName);
+  const legendItem = findChildByType(children, Legend);
   if (!legendItem) {
     return null;
   }
@@ -387,7 +388,7 @@ export const appendOffsetOfLegend = (offset: any, items: Array<FormattedGraphica
     const box = legendBox || {};
     const { align, verticalAlign, layout } = legendProps;
 
-    if ((layout === 'vertical' || (layout === 'horizontal' && verticalAlign === 'center')) && isNumber(offset[align])) {
+    if ((layout === 'vertical' || (layout === 'horizontal' && verticalAlign === 'middle')) && isNumber(offset[align])) {
       newOffset = { ...offset, [align]: newOffset[align] + (box.width || 0) };
     }
 
@@ -429,7 +430,7 @@ export const getDomainOfErrorBars = (
   axisType?: AxisType,
 ) => {
   const { children } = item.props;
-  const errorBars = findAllByType(children, 'ErrorBar').filter((errorBarChild: any) =>
+  const errorBars = findAllByType(children, ErrorBar).filter(errorBarChild =>
     isErrorBarRelevantForAxis(layout, axisType, errorBarChild.props.direction),
   );
 

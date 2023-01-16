@@ -35,7 +35,6 @@ require('./specs/polar/RadarSpec');
 require('./specs/numberAxis/FunnelSpec');
 
 // chart
-require('./specs/chart/AreaChartSpec');
 require('./specs/chart/LineChartSpec');
 require('./specs/chart/PieChartSpec');
 require('./specs/chart/RadarChartSpec');

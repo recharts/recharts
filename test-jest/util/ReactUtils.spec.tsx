@@ -72,7 +72,8 @@ describe('ReactUtils untest tests', () => {
 
   describe('getDisplayName', () => {
     test('getDisplayName return empty string when has a null as input', () => {
-      const result = getDisplayName(null);
+      // added never casting to test runtime value
+      const result = getDisplayName(null as never);
 
       expect(result).toEqual('');
     });
@@ -85,6 +86,7 @@ describe('ReactUtils untest tests', () => {
 
     test('getDisplayName return the "Component" when has an object as input', () => {
       const test = {};
+      // @ts-expect-error test runtime value
       const result = getDisplayName(test);
 
       expect(result).toEqual('Component');
@@ -348,7 +350,7 @@ describe('ReactUtils untest tests', () => {
         <Line key="b" />,
         <Line key="c" />,
       ];
-      const lineChildren = findAllByType(children, Line.displayName);
+      const lineChildren = findAllByType(children, Line);
       expect(lineChildren.length).toEqual(3);
       expect(lineChildren.map(child => child.key)).toEqual(['a', 'b', 'c']);
     });
@@ -366,7 +368,7 @@ describe('ReactUtils untest tests', () => {
           </>
         </>,
       ];
-      const lineChildren = findAllByType(children, Line.displayName);
+      const lineChildren = findAllByType(children, Line);
       expect(lineChildren.length).toEqual(4);
       expect(lineChildren.map(child => child.key)).toEqual(['a', 'b', 'c', 'd']);
     });
