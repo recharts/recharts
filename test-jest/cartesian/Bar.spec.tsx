@@ -1,7 +1,8 @@
+import { render } from '@testing-library/react';
+import * as _ from 'lodash';
 import React from 'react';
-import { expect } from 'chai';
-import { Surface, Bar } from 'recharts';
-import { mount, render } from 'enzyme';
+
+import { Bar, Surface } from '../../src';
 
 describe('<Bar />', () => {
   const data = [
@@ -12,34 +13,34 @@ describe('<Bar />', () => {
     { x: 170, y: 50, width: 20, height: 50, value: 100, label: 'test' },
   ];
 
-  it('Render 5 rectangles in a simple Bar', () => {
+  it(`Render ${data.length} rectangles in a simple Bar`, () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <Bar isAnimationActive={false} data={data} label={{ label: 'test' }} />
+        <Bar isAnimationActive={false} layout="horizontal" data={data} dataKey="value" />
       </Surface>,
     );
 
-    expect(wrapper.find('.recharts-bar-rectangle').length).to.equal(5);
+    expect(wrapper.getAllByRole('img')).toHaveLength(data.length);
   });
 
-  it('Render 5 rectangles in a vertical Bar', () => {
+  it(`Render ${data.length} rectangles in a vertical Bar`, () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <Bar isAnimationActive={false} layout="vertical" data={data} label />
+        <Bar isAnimationActive={false} layout="vertical" data={data} dataKey="value" />
       </Surface>,
     );
 
-    expect(wrapper.find('.recharts-bar-rectangle').length).to.equal(5);
+    expect(wrapper.getAllByRole('img')).toHaveLength(data.length);
   });
 
   it("Don't render any rectangle when data is empty", () => {
     const wrapper = render(
       <Surface width={500} height={500}>
-        <Bar data={[]} />
+        <Bar data={[]} dataKey="value" />
       </Surface>,
     );
 
-    expect(wrapper.find('.recharts-bar-rectangle').length).to.equal(0);
+    expect(wrapper.queryAllByRole('img')).toHaveLength(0);
   });
 
   describe('With background', () => {
@@ -65,29 +66,29 @@ describe('<Bar />', () => {
     ];
 
     it('Will create a background Rectangle with the passed in props', () => {
-      const wrapper = render(
+      const { container } = render(
         <Surface width={500} height={500}>
-          <Bar data={composedDataWithBackground} background={{ fill: '#000' }} />
+          <Bar data={composedDataWithBackground} background={{ fill: '#000' }} dataKey="value" />
         </Surface>,
       );
 
-      expect(wrapper.find('.recharts-bar-background-rectangle').length).to.equal(2);
+      expect(container.querySelectorAll('.recharts-bar-background-rectangle')).toHaveLength(
+        composedDataWithBackground.length,
+      );
     });
 
     it('Will accept a function for the background prop', () => {
-      const wrapper = mount(
+      const className = 'test-custom-background';
+      const backgroundComponent = () => {
+        return <div key={_.uniqueId()} className={className} />;
+      };
+      const { container } = render(
         <Surface width={500} height={500}>
-          <Bar
-            data={composedDataWithBackground}
-            background={({ index }) => {
-              return index === 0 ? <div className="test-custom-background" /> : null;
-            }}
-          />
+          <Bar data={composedDataWithBackground} background={backgroundComponent} dataKey="value" />
         </Surface>,
       );
 
-      expect(wrapper.find('.recharts-bar-background-rectangle').length).to.equal(0);
-      expect(wrapper.find('.test-custom-background').length).to.equal(1);
+      expect(container.querySelectorAll(`.${className}`)).toHaveLength(composedDataWithBackground.length);
     });
   });
 });
