@@ -105,8 +105,6 @@ describe('<Funnel />', () => {
       </FunnelChart>,
     );
 
-    screen.debug();
-
     expect(container.querySelectorAll('.custom-label')).toHaveLength(data.length);
   });
 });
