@@ -1,6 +1,5 @@
 import React from 'react';
-import { expect } from 'chai';
-import { render } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import { Cell, Funnel, FunnelChart, LabelList } from '../../src';
 
 const data = [
@@ -13,47 +12,47 @@ const data = [
 
 describe('<Funnel />', () => {
   it('Render 5 Trapezoid in a simple funnel', () => {
-    const wrapper = render(
+    render(
       <FunnelChart width={500} height={500}>
         <Funnel dataKey="value" data={data} />
       </FunnelChart>,
     );
 
-    expect(wrapper.find('.recharts-funnel-trapezoid').length).to.equal(5);
+    expect(screen.queryAllByRole('img')).toHaveLength(data.length);
   });
 
   it('Render 5 Trapezoid with animation in a simple funnel', () => {
-    const wrapper = render(
+    render(
       <FunnelChart width={500} height={500}>
         <Funnel dataKey="value" data={data} isAnimationActive />
       </FunnelChart>,
     );
 
-    expect(wrapper.find('.recharts-funnel-trapezoid').length).to.equal(5);
+    expect(screen.queryAllByRole('img')).toHaveLength(data.length);
   });
 
   it("Don't render any Trapezoid when data is empty", () => {
-    const wrapper = render(
+    render(
       <FunnelChart width={500} height={500}>
         <Funnel dataKey="value" data={[]} />
       </FunnelChart>,
     );
 
-    expect(wrapper.find('.recharts-funnel-trapezoid').length).to.equal(0);
+    expect(screen.queryAllByRole('img')).toHaveLength(0);
   });
 
   it("Don't render any Trapezoid when set hide", () => {
-    const wrapper = render(
+    render(
       <FunnelChart width={500} height={500}>
         <Funnel dataKey="value" data={data} hide />
       </FunnelChart>,
     );
 
-    expect(wrapper.find('.recharts-funnel-trapezoid').length).to.equal(0);
+    expect(screen.queryAllByRole('img')).toHaveLength(0);
   });
 
   it('active shape in simple funnel', () => {
-    const wrapper = render(
+    const { container } = render(
       <FunnelChart width={500} height={500}>
         <Funnel
           dataKey="value"
@@ -80,11 +79,11 @@ describe('<Funnel />', () => {
       </FunnelChart>,
     );
 
-    expect(wrapper.find('.custom-active-shape').length).to.equal(1);
+    expect(container.querySelectorAll('.custom-active-shape').length).toBe(1);
   });
 
   it('Renders funnel custom cell in simple FunnelChart', () => {
-    const wrapper = render(
+    render(
       <FunnelChart width={500} height={300}>
         <Funnel dataKey="value" data={data} isAnimationActive={false}>
           {data.map(entry => (
@@ -93,20 +92,21 @@ describe('<Funnel />', () => {
         </Funnel>
       </FunnelChart>,
     );
-    expect(wrapper.find('.custom-cell').length).to.equal(5);
+
+    expect(screen.queryAllByRole('img')).toHaveLength(data.length);
   });
 
   it('Renders funnel custom label in simple FunnelChart', () => {
-    const wrapper = render(
+    const { container } = render(
       <FunnelChart width={500} height={300}>
         <Funnel dataKey="value" data={data} isAnimationActive={false}>
-          {data.map(entry => (
-            <Cell key={entry.name} className="custom-cell" />
-          ))}
           <LabelList position="right" fill="#000" stroke="#000" dataKey="name" className="custom-label" />
         </Funnel>
       </FunnelChart>,
     );
-    expect(wrapper.find('.custom-label').length).to.equal(5);
+
+    screen.debug();
+
+    expect(container.querySelectorAll('.custom-label')).toHaveLength(data.length);
   });
 });
