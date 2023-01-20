@@ -14,7 +14,6 @@ require('./specs/cartesian/ZAxisSpec');
 require('./specs/cartesian/LineSpec');
 require('./specs/cartesian/ScatterSpec');
 require('./specs/cartesian/BrushSpec');
-require('./specs/cartesian/CartesianGridSpec');
 require('./specs/cartesian/ReferenceLineSpec');
 require('./specs/cartesian/ReferenceDotSpec');
 require('./specs/cartesian/ReferenceAreaSpec');
@@ -28,16 +27,12 @@ require('./specs/polar/PieSpec');
 require('./specs/polar/RadialBarSpec');
 require('./specs/polar/RadarSpec');
 
-// number axis chart component
-require('./specs/numberAxis/FunnelSpec');
-
 // chart
 require('./specs/chart/LineChartSpec');
 require('./specs/chart/PieChartSpec');
 require('./specs/chart/RadarChartSpec');
 require('./specs/chart/ScatterChartSpec');
 require('./specs/chart/TreemapSpec');
-require('./specs/chart/RadialBarChartSpec');
 require('./specs/chart/ComposedChartSpec');
 require('./specs/chart/SankeySpec');
 
