@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { RadialBarChart, RadialBar, Legend, Sector } from '../../src';
+import { RadialBarChart, RadialBar, Legend, Sector, Tooltip } from '../../src';
 
 describe('<RadialBarChart />', () => {
   const data = [
@@ -151,5 +151,26 @@ describe('<RadialBarChart />', () => {
     );
     expect(container.querySelectorAll('.recharts-legend-wrapper')).toHaveLength(1);
     expect(container.querySelectorAll('.recharts-legend-item')).toHaveLength(7);
+  });
+
+  test('Renders tooltip when add a Tooltip element', () => {
+    const { container } = render(
+      <RadialBarChart
+        width={500}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        barSize={10}
+        data={data}
+      >
+        <RadialBar background dataKey="uv" isAnimationActive={false} />
+        <Tooltip />
+      </RadialBarChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-tooltip-wrapper')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-default-tooltip')).toHaveLength(1);
   });
 });
