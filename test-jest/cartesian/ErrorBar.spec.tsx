@@ -10,7 +10,7 @@ describe('<ErrorBar />', () => {
     { name: 'digital', uv: 2800, pv: 2800, time: 4, uvError: 100, pvError: 30 },
   ];
 
-  it('Renders Error Bars in Bar', () => {
+  test('Renders Error Bars in Bar', () => {
     const { container } = render(
       <BarChart data={barData} width={500} height={500} layout="vertical">
         <Bar isAnimationActive={false} label dataKey="uv">
@@ -22,7 +22,7 @@ describe('<ErrorBar />', () => {
     expect(container.querySelectorAll('.recharts-errorBar')).toHaveLength(4);
   });
 
-  it('Renders Multiple Error Bars in Bar', () => {
+  test('Renders Multiple Error Bars in Bar', () => {
     const { container } = render(
       <BarChart data={barData} width={500} height={500} layout="vertical">
         <Bar isAnimationActive={false} label dataKey="uv">
@@ -43,7 +43,7 @@ describe('<ErrorBar />', () => {
     { name: 'Page I', uv: 189, pv: 4800, amt: 2400, uvError: 28, pvError: 40 },
   ];
 
-  it('Renders Error Bars in Line', () => {
+  test('Renders Error Bars in Line', () => {
     const { container } = render(
       <LineChart data={lineData} width={500} height={500}>
         <Line isAnimationActive={false} label dataKey="uv">
@@ -55,7 +55,7 @@ describe('<ErrorBar />', () => {
     expect(container.querySelectorAll('.recharts-errorBar')).toHaveLength(5);
   });
 
-  it('Renders Multiple Error Bars in Line', () => {
+  test('Renders Multiple Error Bars in Line', () => {
     const { container } = render(
       <LineChart data={lineData} width={500} height={500}>
         <Line isAnimationActive={false} label dataKey="uv">
