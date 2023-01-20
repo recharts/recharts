@@ -1,7 +1,6 @@
 import React from 'react';
-import { expect } from 'chai';
-import { Surface, Line } from 'recharts';
-import { mount, render } from 'enzyme';
+import { render } from '@testing-library/react';
+import { Surface, Line } from '../../src';
 
 describe('<Line />', () => {
   const data = [
@@ -13,22 +12,22 @@ describe('<Line />', () => {
   ];
 
   it('Render a path in a simple Line', () => {
-    const wrapper = render(
+    const { container } = render(
       <Surface width={500} height={500}>
         <Line isAnimationActive={false} points={data} />
       </Surface>,
     );
 
-    expect(wrapper.find('.recharts-line-curve').length).to.equal(1);
+    expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
   });
 
   it("Don't render any path when data is empty", () => {
-    const wrapper = render(
+    const { container } = render(
       <Surface width={500} height={500}>
         <Line points={[]} />
       </Surface>,
     );
 
-    expect(wrapper.find('.recharts-line-curve').length).to.equal(0);
+    expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(0);
   });
 });

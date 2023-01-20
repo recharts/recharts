@@ -11,7 +11,6 @@ chai.use(chaiEnzyme());
 require('./specs/cartesian/XAxisSpec');
 require('./specs/cartesian/YAxisSpec');
 require('./specs/cartesian/ZAxisSpec');
-require('./specs/cartesian/LineSpec');
 require('./specs/cartesian/ScatterSpec');
 require('./specs/cartesian/BrushSpec');
 require('./specs/cartesian/CartesianAxisSpec');
