@@ -6,7 +6,7 @@ describe('<CartesianGrid />', () => {
   const horizontalPoints = [10, 20, 30, 100, 400];
   const verticalPoints = [100, 200, 300, 400];
 
-  it('Render 5 horizontal lines and 4 vertical lines in simple CartesianGrid', () => {
+  test('Render 5 horizontal lines and 4 vertical lines in simple CartesianGrid', () => {
     const { container } = render(
       <Surface width={500} height={500}>
         <CartesianGrid
@@ -22,7 +22,7 @@ describe('<CartesianGrid />', () => {
     expect(container.querySelectorAll('line')).toHaveLength(9);
   });
 
-  it("Don't render any lines when verticalPoints and horizontalPoints are empty", () => {
+  test("Don't render any lines when verticalPoints and horizontalPoints are empty", () => {
     const { container } = render(
       <Surface width={500} height={500}>
         <CartesianGrid width={500} height={500} />
@@ -31,7 +31,7 @@ describe('<CartesianGrid />', () => {
     expect(container.querySelectorAll('line')).toHaveLength(0);
   });
 
-  it("Don't render any lines when width or height is smaller than 0", () => {
+  test("Don't render any lines when width or height is smaller than 0", () => {
     const { container } = render(
       <Surface width={500} height={500}>
         <CartesianGrid width={0} height={500} />
