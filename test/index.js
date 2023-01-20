@@ -37,7 +37,6 @@ require('./specs/chart/PieChartSpec');
 require('./specs/chart/RadarChartSpec');
 require('./specs/chart/ScatterChartSpec');
 require('./specs/chart/TreemapSpec');
-require('./specs/chart/RadialBarChartSpec');
 require('./specs/chart/ComposedChartSpec');
 require('./specs/chart/SankeySpec');
 
