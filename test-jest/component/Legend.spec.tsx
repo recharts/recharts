@@ -57,7 +57,7 @@ describe('<Legend />', () => {
     const { container } = render(
       <LineChart width={600} height={300} data={data}>
         <Legend iconType="line" />
-        <Line dataKey="pv">
+        <Line dataKey="pv" />
         <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
       </LineChart>,
     );
