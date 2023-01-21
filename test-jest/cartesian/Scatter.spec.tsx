@@ -58,11 +58,10 @@ describe('<Scatter />', () => {
   });
 
   test('Render customized line when line is set to be a ReactElement', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, react/prop-types
-    const CustomizedLine = ({ points }: { points: any }) => <path d="M0,0L200,200" className="customized-line" />;
+    const CustomizedLine = () => <path d="M0,0L200,200" className="customized-line" />;
     const { container } = render(
       <Surface width={500} height={500}>
-        <Scatter isAnimationActive={false} line={<CustomizedLine points={data as any} />} points={data as any} />
+        <Scatter isAnimationActive={false} line={<CustomizedLine />} points={data as any} />
       </Surface>,
     );
 
@@ -70,8 +69,7 @@ describe('<Scatter />', () => {
   });
 
   test('Render customized line when line is set to be a function', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const renderCustomizedLine = ({ points }: { points: any }) => <path d="M0,0L200,200" className="customized-line" />;
+    const renderCustomizedLine = () => <path d="M0,0L200,200" className="customized-line" />;
     const { container } = render(
       <Surface width={500} height={500}>
         <Scatter isAnimationActive={false} line={renderCustomizedLine} points={data as any} />
