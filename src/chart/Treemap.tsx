@@ -109,7 +109,7 @@ const horizontalPosition = (row: any, parentSize: number, parentRect: TreemapNod
     curX += child.width;
   }
   // what's z
-  child.z = true;
+  child.z = 'true';
   // add the remain x to the last one of row
   child.width += parentRect.x + parentRect.width - curX;
 
@@ -138,7 +138,7 @@ const verticalPosition = (row: any, parentSize: number, parentRect: TreemapNode,
     curY += child.height;
   }
   if (child) {
-    child.z = false;
+    child.z = 'false';
     child.height += parentRect.y + parentRect.height - curY;
   }
 
