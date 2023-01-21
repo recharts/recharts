@@ -169,8 +169,7 @@ describe('<ReferenceArea />', () => {
 
   test('Render custom lable when label is set to react element', () => {
     const Label = ({ text, ...props }: { text: any }) => <text {...props}>{text}</text>;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { container } = render(
+    render(
       <BarChart
         width={1100}
         height={250}
