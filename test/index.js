@@ -29,7 +29,6 @@ require('./specs/polar/RadarSpec');
 // chart
 require('./specs/chart/LineChartSpec');
 require('./specs/chart/PieChartSpec');
-require('./specs/chart/RadarChartSpec');
 require('./specs/chart/ScatterChartSpec');
 require('./specs/chart/TreemapSpec');
 require('./specs/chart/ComposedChartSpec');
