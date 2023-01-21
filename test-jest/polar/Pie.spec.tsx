@@ -1,11 +1,7 @@
 import React from 'react';
-import { expect } from 'chai';
-import { Surface, Pie, Sector } from 'recharts';
-import { mount, render } from 'enzyme';
-import { render as testingLibraryRender, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import sinon from 'sinon';
-import { Layer } from '../../../src/container/Layer';
+import { Surface, Pie, Sector } from '../../src';
 
 describe('<Pie />', () => {
   const sectors = [
@@ -25,19 +21,27 @@ describe('<Pie />', () => {
     { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 288, endAngle: 360 },
   ];
 
-  it('Render 5 sectors in a simple Pie', () => {
-    const wrapper = render(
+  test('Render 5 sectors in a simple Pie', () => {
+    const { container } = render(
       <Surface width={500} height={500}>
-        <Pie isAnimationActive={false} cx={250} cy={250} innerRadius={0} outerRadius={200} sectors={sectors} />
+        <Pie
+          isAnimationActive={false}
+          cx={250}
+          cy={250}
+          innerRadius={0}
+          outerRadius={200}
+          sectors={sectors}
+          dataKey="cy"
+        />
       </Surface>,
     );
 
-    expect(wrapper.find('.recharts-pie-sector').length).to.equal(sectors.length);
+    expect(container.querySelectorAll('.recharts-pie-sector').length).toBe(sectors.length);
   });
 
-  it('Render customized active sector when activeShape is set to be an element', () => {
-    const ActiveShape = props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
-    const wrapper = render(
+  test('Render customized active sector when activeShape is set to be an element', () => {
+    const ActiveShape = (props: any) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
+    const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
@@ -48,16 +52,17 @@ describe('<Pie />', () => {
           innerRadius={0}
           outerRadius={200}
           sectors={sectors}
+          dataKey="cy"
         />
       </Surface>,
     );
 
-    expect(wrapper.find('.customized-active-shape').length).to.equal(1);
+    expect(container.querySelectorAll('.customized-active-shape').length).toBe(1);
   });
 
-  it('Render customized active sector when activeShape is set to be a function', () => {
-    const renderActiveShape = props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
-    const wrapper = render(
+  test('Render customized active sector when activeShape is set to be a function', () => {
+    const renderActiveShape = (props: any) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
+    const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
@@ -68,15 +73,16 @@ describe('<Pie />', () => {
           innerRadius={0}
           outerRadius={200}
           sectors={sectors}
+          dataKey="cy"
         />
       </Surface>,
     );
 
-    expect(wrapper.find('.customized-active-shape').length).to.equal(1);
+    expect(container.querySelectorAll('.customized-active-shape').length).toBe(1);
   });
 
-  it('Render customized active sector when activeShape is set to be an object', () => {
-    const wrapper = render(
+  test('Render customized active sector when activeShape is set to be an object', () => {
+    const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
@@ -87,18 +93,19 @@ describe('<Pie />', () => {
           innerRadius={0}
           outerRadius={200}
           sectors={sectors}
+          dataKey="cy"
         />
       </Surface>,
     );
 
-    expect(wrapper.find('.customized-active-shape').length).to.equal(0);
+    expect(container.querySelectorAll('.customized-active-shape').length).toBe(0);
   });
 
-  it('Render customized active sector when inactiveShape is set to be an element', () => {
-    const ActiveShape = props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
-    const InactiveShape = props => <Sector {...props} fill="#ff7300" className="customized-inactive-shape" />;
+  test('Render customized active sector when inactiveShape is set to be an element', () => {
+    const ActiveShape = (props: any) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
+    const InactiveShape = (props: any) => <Sector {...props} fill="#ff7300" className="customized-inactive-shape" />;
 
-    const wrapper = render(
+    const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
@@ -110,16 +117,19 @@ describe('<Pie />', () => {
           innerRadius={0}
           outerRadius={200}
           sectors={sectors}
+          dataKey="cy"
         />
       </Surface>,
     );
-    expect(wrapper.find('.customized-inactive-shape').length).to.equal(4);
+    expect(container.querySelectorAll('.customized-inactive-shape').length).toBe(4);
   });
 
-  it('Render customized inactive sector when inactiveShape is set to be a function', () => {
-    const renderActiveShape = props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
-    const renderInactiveShape = props => <Sector {...props} fill="#ff7300" className="customized-inactive-shape" />;
-    const wrapper = render(
+  test('Render customized inactive sector when inactiveShape is set to be a function', () => {
+    const renderActiveShape = (props: any) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
+    const renderInactiveShape = (props: any) => (
+      <Sector {...props} fill="#ff7300" className="customized-inactive-shape" />
+    );
+    const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
@@ -131,14 +141,15 @@ describe('<Pie />', () => {
           innerRadius={0}
           outerRadius={200}
           sectors={sectors}
+          dataKey="cy"
         />
       </Surface>,
     );
-    expect(wrapper.find('.customized-inactive-shape').length).to.equal(4);
+    expect(container.querySelectorAll('.customized-inactive-shape').length).toBe(4);
   });
 
-  it('Render customized inactive sector when inactiveShape is set to be an object', () => {
-    const wrapper = render(
+  test('Render customized inactive sector when inactiveShape is set to be an object', () => {
+    const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
@@ -150,17 +161,20 @@ describe('<Pie />', () => {
           innerRadius={0}
           outerRadius={200}
           sectors={sectors}
+          dataKey="cy"
         />
       </Surface>,
     );
 
-    expect(wrapper.find('.customized-inactive-shape').length).to.equal(0);
+    expect(container.querySelectorAll('.customized-inactive-shape').length).toBe(0);
   });
 
-  it('should not render customized inactive sectors if there is no active index', () => {
-    const renderActiveShape = props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
-    const renderInactiveShape = props => <Sector {...props} fill="#ff7300" className="customized-inactive-shape" />;
-    const wrapper = render(
+  test('should not render customized inactive sectors if there is no active index', () => {
+    const renderActiveShape = (props: any) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
+    const renderInactiveShape = (props: any) => (
+      <Sector {...props} fill="#ff7300" className="customized-inactive-shape" />
+    );
+    const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
@@ -171,15 +185,16 @@ describe('<Pie />', () => {
           innerRadius={0}
           outerRadius={200}
           sectors={sectors}
+          dataKey="cy"
         />
       </Surface>,
     );
-    expect(wrapper.find('.customized-inactive-shape').length).to.equal(0);
+    expect(container.querySelectorAll('.customized-inactive-shape').length).toBe(0);
   });
 
-  it('Support multiple active sectors', () => {
-    const ActiveShape = props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
-    const wrapper = render(
+  test('Support multiple active sectors', () => {
+    const ActiveShape = (props: any) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
+    const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
@@ -190,15 +205,16 @@ describe('<Pie />', () => {
           innerRadius={0}
           outerRadius={200}
           sectors={sectors}
+          dataKey="cy"
         />
       </Surface>,
     );
 
-    expect(wrapper.find('.customized-active-shape').length).to.equal(2);
+    expect(container.querySelectorAll('.customized-active-shape').length).toBe(2);
   });
 
-  it('Render customized label when label is set to be a react element', () => {
-    const Label = props => {
+  test('Render customized label when label is set to be a react element', () => {
+    const Label = (props: any) => {
       const { x, y } = props;
       return (
         <text x={x} y={y} className="customized-label">
@@ -206,7 +222,7 @@ describe('<Pie />', () => {
         </text>
       );
     };
-    const wrapper = render(
+    const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
@@ -216,19 +232,20 @@ describe('<Pie />', () => {
           innerRadius={0}
           outerRadius={200}
           sectors={sectors}
+          dataKey="cy"
         />
       </Surface>,
     );
 
-    expect(wrapper.find('.customized-label').length).to.equal(sectors.length);
+    expect(container.querySelectorAll('.customized-label').length).toBe(sectors.length);
   });
 
-  it('Render customized label when label is set to be a function that returns the label text', () => {
-    const Label = props => {
+  test('Render customized label when label is set to be a function that returns the label text', () => {
+    const Label = (props: any) => {
       const { name, value } = props;
       return `${name}: ${value}`;
     };
-    const wrapper = render(
+    const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
@@ -238,18 +255,19 @@ describe('<Pie />', () => {
           innerRadius={0}
           outerRadius={200}
           sectors={sectors}
+          dataKey="cy"
         />
       </Surface>,
     );
 
     setTimeout(() => {
-      expect(wrapper.find('.recharts-pie-label-text').length).to.equal(sectors.length);
-      expect(wrapper.find('.recharts-pie-label-text').first().text()).to.equal('A: 40');
+      expect(container.querySelectorAll('.recharts-pie-label-text').length).toBe(sectors.length);
+      expect(container.querySelectorAll('.recharts-pie-label-text')[0].textContent).toBe('A: 40');
     }, 1000);
   });
 
-  it('Render customized label when label is set to be a react element', () => {
-    const renderLabel = props => {
+  test('Render customized label when label is set to be a react element', () => {
+    const renderLabel = (props: any) => {
       const { x, y } = props;
       return (
         <text x={x} y={y} className="customized-label">
@@ -257,7 +275,7 @@ describe('<Pie />', () => {
         </text>
       );
     };
-    const wrapper = render(
+    const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
@@ -267,22 +285,23 @@ describe('<Pie />', () => {
           innerRadius={0}
           outerRadius={200}
           sectors={sectors}
+          dataKey="cy"
         />
       </Surface>,
     );
 
-    expect(wrapper.find('.customized-label').length).to.equal(sectors.length);
+    expect(container.querySelectorAll('.customized-label').length).toBe(sectors.length);
   });
 
-  it('Render customized label line when labelLine is set to be a react element', () => {
-    const LabelLine = props => {
+  test('Render customized label line when labelLine is set to be a react element', () => {
+    const LabelLine = (props: any) => {
       const { points } = props;
 
       return (
         <path d={`M${points[0].x},${points[0].y}L${points[1].x},${points[1].y}`} className="customized-label-line" />
       );
     };
-    const wrapper = render(
+    const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
@@ -293,22 +312,23 @@ describe('<Pie />', () => {
           innerRadius={0}
           outerRadius={200}
           sectors={sectors}
+          dataKey="cy"
         />
       </Surface>,
     );
 
-    expect(wrapper.find('.customized-label-line').length).to.equal(sectors.length);
+    expect(container.querySelectorAll('.customized-label-line').length).toBe(sectors.length);
   });
 
-  it('Render customized label line when labelLine is set to be a function', () => {
-    const renderLabelLine = props => {
+  test('Render customized label line when labelLine is set to be a function', () => {
+    const renderLabelLine = (props: any) => {
       const { points } = props;
 
       return (
         <path d={`M${points[0].x},${points[0].y}L${points[1].x},${points[1].y}`} className="customized-label-line" />
       );
     };
-    const wrapper = render(
+    const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
@@ -319,28 +339,30 @@ describe('<Pie />', () => {
           innerRadius={0}
           outerRadius={200}
           sectors={sectors}
+          dataKey="cy"
         />
       </Surface>,
     );
 
-    expect(wrapper.find('.customized-label-line').length).to.equal(sectors.length);
+    expect(container.querySelectorAll('.customized-label-line').length).toBe(sectors.length);
   });
 
-  it("Don't render any sector when data is empty", () => {
-    const wrapper = render(
+  test("Don't render any sector when data is empty", () => {
+    const { container } = render(
       <Surface width={500} height={500}>
-        <Pie sectors={[]} />
+        <Pie sectors={[]} dataKey="cy" />
       </Surface>,
     );
 
-    expect(wrapper.find('.recharts-pie').length).to.equal(0);
+    expect(container.querySelectorAll('.recharts-pie').length).toBe(0);
   });
 
-  it('Pie event handler', () => {
-    const onMouseEnter = sinon.spy();
-    const onMouseLeave = sinon.spy();
-    const onClick = sinon.spy();
-    const wrapper = mount(
+  test('Pie event handler', async () => {
+    expect.assertions(3);
+    const onMouseEnter = jest.fn();
+    const onMouseLeave = jest.fn();
+    const onClick = jest.fn();
+    const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
@@ -352,83 +374,110 @@ describe('<Pie />', () => {
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           onClick={onClick}
+          dataKey="cy"
         />
       </Surface>,
     );
-    const se = wrapper.find(Layer).at(3);
 
-    se.simulate('mouseEnter');
-    expect(onMouseEnter.calledOnce).to.equal(true);
-    se.simulate('mouseLeave');
-    expect(onMouseLeave.calledOnce).to.equal(true);
-    se.simulate('click');
-    expect(onClick.calledOnce).to.equal(true);
+    const se = container.querySelectorAll('.recharts-layer')[4];
+    await userEvent.hover(se);
+    await waitFor(() => {
+      expect(onMouseEnter).toHaveBeenCalledTimes(1);
+    });
+    await userEvent.unhover(se);
+    await waitFor(() => {
+      expect(onMouseLeave).toHaveBeenCalledTimes(1);
+    });
+    await userEvent.click(se);
+    await waitFor(() => {
+      expect(onClick).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('Handles keyboard interaction: Tab can focus in and out of the pie chart', async () => {
+  test('Handles keyboard interaction: Tab can focus in and out of the pie chart', async () => {
+    expect.assertions(3);
     const timeout = 2000;
-    const { container } = testingLibraryRender(
+    const { container } = render(
       // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
       <div tabIndex={0} className="container">
         <Surface width={500} height={500}>
-          <Pie isAnimationActive={false} cx={250} cy={250} label innerRadius={0} outerRadius={200} sectors={sectors} />
+          <Pie
+            isAnimationActive={false}
+            cx={250}
+            cy={250}
+            label
+            innerRadius={0}
+            outerRadius={200}
+            sectors={sectors}
+            dataKey="cy"
+          />
         </Surface>
       </div>,
     );
     const pie = container.getElementsByClassName('recharts-pie')[0];
     const pieContainer = document.getElementsByClassName('container')[0];
 
-    pieContainer.focus();
+    (pieContainer as any).focus();
     await waitFor(
       () => {
-        expect(document.activeElement).equals(pieContainer);
+        expect(document.activeElement).toBe(pieContainer);
       },
       { timeout },
     );
 
     // Testing that pressing tab goes into pie chart
-    userEvent.tab();
+    await userEvent.tab();
     await waitFor(
       () => {
-        expect(document.activeElement).equals(pie);
+        expect(document.activeElement).toBe(pie);
       },
       { timeout },
     );
 
     // Testing that pressing tab goes out of pie chart
-    userEvent.tab();
+    await userEvent.tab();
     await waitFor(
       () => {
-        expect(document.activeElement).equals(document.body);
+        expect(document.activeElement).toBe(document.body);
       },
       { timeout },
     );
   });
 
-  it('Handles keyboard interaction: arrow keys can move focus into sectors', async () => {
+  test('Handles keyboard interaction: arrow keys can move focus into sectors', async () => {
+    expect.assertions(2);
     const timeout = 2000;
-    const { container } = testingLibraryRender(
+    const { container } = render(
       // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
       <div tabIndex={0} className="container">
         <Surface width={500} height={500}>
-          <Pie isAnimationActive={false} cx={250} cy={250} label innerRadius={0} outerRadius={200} sectors={sectors} />
+          <Pie
+            isAnimationActive={false}
+            cx={250}
+            cy={250}
+            label
+            innerRadius={0}
+            outerRadius={200}
+            sectors={sectors}
+            dataKey="cy"
+          />
         </Surface>
       </div>,
     );
     const pie = container.getElementsByClassName('recharts-pie')[0];
-    pie.focus();
+    (pie as any).focus();
     await waitFor(
       () => {
-        expect(document.activeElement.classList.contains('recharts-pie-sector')).to.equal(false);
+        expect(document.activeElement.classList.contains('recharts-pie-sector')).toBe(false);
       },
       { timeout },
     );
 
-    userEvent.keyboard('{ArrowRight}');
+    await userEvent.keyboard('{ArrowRight}');
 
     await waitFor(
       () => {
-        expect(document.activeElement.classList.contains('recharts-pie-sector')).to.equal(true);
+        expect(document.activeElement.classList.contains('recharts-pie-sector')).toBe(true);
       },
       { timeout },
     );

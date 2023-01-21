@@ -22,7 +22,6 @@ require('./specs/cartesian/ReferenceAreaSpec');
 require('./specs/polar/PolarRadiusAxisSpec');
 require('./specs/polar/PolarAngleAxisSpec');
 require('./specs/polar/PolarGridSpec');
-require('./specs/polar/PieSpec');
 require('./specs/polar/RadialBarSpec');
 require('./specs/polar/RadarSpec');
 
