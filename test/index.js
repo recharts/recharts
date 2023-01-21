@@ -36,7 +36,6 @@ require('./specs/chart/ComposedChartSpec');
 require('./specs/chart/SankeySpec');
 
 // general component
-require('./specs/component/LegendSpec');
 require('./specs/component/TooltipSpec');
 require('./specs/component/TextSpec');
 require('./specs/component/CustomizedSpec');
