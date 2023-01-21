@@ -95,12 +95,12 @@ describe('<Scatter />', () => {
         />
       </Surface>,
     );
-    const symbols = container.querySelectorAll('.recharts-symbols')[4];
-    fireEvent.mouseEnter(syb);
+    const symbol = container.querySelectorAll('.recharts-symbols')[4];
+    fireEvent.mouseEnter(symbol);
     expect(onMouseEnter).toHaveBeenCalled();
-    fireEvent.mouseLeave(syb);
+    fireEvent.mouseLeave(symbol);
     expect(onMouseLeave).toHaveBeenCalled();
-    fireEvent.click(syb);
+    fireEvent.click(symbol);
     expect(onClick).toHaveBeenCalled();
   });
 });
