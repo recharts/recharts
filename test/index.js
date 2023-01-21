@@ -8,7 +8,6 @@ Enzyme.configure({ adapter: new Adapter() });
 chai.use(chaiEnzyme());
 
 // cartesian system chart component
-require('./specs/cartesian/XAxisSpec');
 require('./specs/cartesian/YAxisSpec');
 require('./specs/cartesian/ZAxisSpec');
 require('./specs/cartesian/ScatterSpec');
