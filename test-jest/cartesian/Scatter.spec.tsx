@@ -95,7 +95,7 @@ describe('<Scatter />', () => {
         />
       </Surface>,
     );
-    const syb = container.querySelectorAll('.recharts-symbols')[4];
+    const symbols = container.querySelectorAll('.recharts-symbols')[4];
     fireEvent.mouseEnter(syb);
     expect(onMouseEnter).toHaveBeenCalled();
     fireEvent.mouseLeave(syb);
