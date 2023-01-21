@@ -102,7 +102,7 @@ describe('<ReferenceDot />', () => {
   });
 
   test('Render custom lable when label is set to be a function', () => {
-    const renderLabel = ({ text, ...props }: { text: any }) => (
+    const renderLabel = ({ text, ...props }: { text: string }) => (
       <text className="customized-label" {...props}>
         Custom Text
       </text>
@@ -126,12 +126,6 @@ describe('<ReferenceDot />', () => {
   });
 
   test("Don't render any label when label is a plain object", () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const renderLabel = ({ text, ...props }: { text: any }) => (
-      <text className="customized-label" {...props}>
-        Custom Text
-      </text>
-    );
     const { container } = render(
       <BarChart
         width={1100}
@@ -151,12 +145,6 @@ describe('<ReferenceDot />', () => {
   });
 
   test("Don't render any dot when x or y is not specified", () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const renderLabel = ({ text, ...props }: { text: any }) => (
-      <text className="customized-label" {...props}>
-        Custom Text
-      </text>
-    );
     const { container } = render(
       <BarChart
         width={1100}
