@@ -55,7 +55,7 @@ describe('<Legend />', () => {
 
   test('Does not render `strokeDasharray` (if not present) in Legend when iconType is set to something else than `plainline`', () => {
     const { container } = render(
-      <LineChart width={600} height={300} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+      <LineChart width={600} height={300} data={data}>
         <Legend iconType="line" />
         <Line dataKey="pv">
         <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
