@@ -99,9 +99,10 @@ describe('<CartesianAxis />', () => {
         />
       </Surface>,
     );
-    const container = document.querySelector('#recharts_measurement_span') as HTMLSpanElement;
 
-    expect(container.style).toMatchObject(myStyle);
+    const container: HTMLSpanElement | null = document.querySelector('#recharts_measurement_span');
+
+    expect(container?.style).toMatchObject(myStyle);
   });
 
   it('Renders ticks when interval="preserveStart"', () => {
