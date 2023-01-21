@@ -14,7 +14,6 @@ require('./specs/cartesian/ZAxisSpec');
 require('./specs/cartesian/ScatterSpec');
 require('./specs/cartesian/BrushSpec');
 require('./specs/cartesian/CartesianAxisSpec');
-require('./specs/cartesian/ReferenceLineSpec');
 require('./specs/cartesian/ReferenceDotSpec');
 require('./specs/cartesian/ReferenceAreaSpec');
 
