@@ -1,7 +1,6 @@
 import React from 'react';
-import { expect } from 'chai';
-import { BarChart, ReferenceDot, Bar, XAxis, YAxis } from 'recharts';
-import { mount, render } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import { BarChart, ReferenceDot, Bar, XAxis, YAxis } from '../../src';
 
 describe('<ReferenceDot />', () => {
   const data = [
@@ -18,8 +17,8 @@ describe('<ReferenceDot />', () => {
     { name: '201112', uv: 4.3, pv: 0 },
   ];
 
-  it('Render 1 dot and 1 label in ReferenceDot', () => {
-    const wrapper = render(
+  test('Render 1 dot and 1 label in ReferenceDot', () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -34,12 +33,12 @@ describe('<ReferenceDot />', () => {
         <ReferenceDot x="201106" y={3} stroke="#666" label="201106" />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-dot-dot').length).to.equal(1);
-    expect(wrapper.find('.recharts-label').length).to.equal(1);
+    expect(container.querySelectorAll('.recharts-reference-dot-dot')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(1);
   });
 
-  it("Don't render any dot or label when reference dot is outside domain in ReferenceDot", () => {
-    const wrapper = render(
+  test("Don't render any dot or label when reference dot is outside domain in ReferenceDot", () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -54,12 +53,12 @@ describe('<ReferenceDot />', () => {
         <ReferenceDot x="201106" y={20} stroke="#666" label="201106" />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-dot-dot').length).to.equal(0);
-    expect(wrapper.find('.recharts-label').length).to.equal(0);
+    expect(container.querySelectorAll('.recharts-reference-dot-dot')).toHaveLength(0);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
   });
 
-  it('Render 1 line and 1 label when alwaysShow is true in ReferenceDot', () => {
-    const wrapper = render(
+  test('Render 1 line and 1 label when alwaysShow is true in ReferenceDot', () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -74,17 +73,17 @@ describe('<ReferenceDot />', () => {
         <ReferenceDot x="201106" y={20} stroke="#666" label="201106" alwaysShow />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-dot-dot').length).to.equal(1);
-    expect(wrapper.find('.recharts-label').length).to.equal(1);
+    expect(container.querySelectorAll('.recharts-reference-dot-dot')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(1);
   });
 
-  it('Render custom lable when label is set to be a react element', () => {
-    const Label = ({ text, ...props }) => (
+  test('Render custom lable when label is set to be a react element', () => {
+    const Label = ({ text, ...props }: { text: any }) => (
       <text className="customized-label" {...props}>
         {text}
       </text>
     );
-    const wrapper = render(
+    render(
       <BarChart
         width={1100}
         height={250}
@@ -99,16 +98,16 @@ describe('<ReferenceDot />', () => {
         <ReferenceDot x="201106" y={20} stroke="#666" label={<Label text="Custom Text" />} alwaysShow />
       </BarChart>,
     );
-    expect(wrapper.find('.customized-label').text()).to.equal('Custom Text');
+    expect(screen.findByText('Custom Text')).toBeTruthy();
   });
 
-  it('Render custom lable when label is set to be a function', () => {
-    const renderLabel = ({ text, ...props }) => (
+  test('Render custom lable when label is set to be a function', () => {
+    const renderLabel = ({ text, ...props }: { text: string }) => (
       <text className="customized-label" {...props}>
         Custom Text
       </text>
     );
-    const wrapper = render(
+    render(
       <BarChart
         width={1100}
         height={250}
@@ -123,16 +122,11 @@ describe('<ReferenceDot />', () => {
         <ReferenceDot x="201106" y={20} stroke="#666" label={renderLabel} alwaysShow />
       </BarChart>,
     );
-    expect(wrapper.find('.customized-label').text()).to.equal('Custom Text');
+    expect(screen.findByText('Custom Text')).toBeTruthy();
   });
 
-  it("Don't render any label when label is a plain object", () => {
-    const renderLabel = ({ text, ...props }) => (
-      <text className="customized-label" {...props}>
-        Custom Text
-      </text>
-    );
-    const wrapper = render(
+  test("Don't render any label when label is a plain object", () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -147,16 +141,11 @@ describe('<ReferenceDot />', () => {
         <ReferenceDot x="201106" y={20} stroke="#666" label={{}} alwaysShow />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-label').length).to.equal(0);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
   });
 
-  it("Don't render any dot when x or y is not specified", () => {
-    const renderLabel = ({ text, ...props }) => (
-      <text className="customized-label" {...props}>
-        Custom Text
-      </text>
-    );
-    const wrapper = render(
+  test("Don't render any dot when x or y is not specified", () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -172,6 +161,6 @@ describe('<ReferenceDot />', () => {
         <ReferenceDot y={20} stroke="#666" alwaysShow />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-dot-dot').length).to.equal(0);
+    expect(container.querySelectorAll('.recharts-reference-dot-dot')).toHaveLength(0);
   });
 });
