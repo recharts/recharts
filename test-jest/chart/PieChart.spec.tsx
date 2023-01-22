@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { PieChart, Pie, Legend, Cell } from '../../src';
+import { PieChart, Pie, Legend, Cell, Tooltip } from '../../src';
 
 describe('<PieChart />', () => {
   const data = [
@@ -120,6 +120,27 @@ describe('<PieChart />', () => {
       </PieChart>
     );
   };
+
+  test('Renders tooltip when add a Tooltip element', () => {
+    const { container } = render(
+      <PieChart width={800} height={400}>
+        <Pie
+          isAnimationActive={false}
+          dataKey="value"
+          data={data}
+          cx={200}
+          cy={200}
+          outerRadius={80}
+          fill="#ff7300"
+          label
+        />
+        <Tooltip />
+      </PieChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-tooltip-wrapper')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-default-tooltip')).toHaveLength(1);
+  });
 
   test('click on Sector should invoke onClick callback', () => {
     const onClick = jest.fn();
