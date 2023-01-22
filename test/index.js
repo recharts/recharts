@@ -43,7 +43,6 @@ require('./specs/component/CustomizedSpec');
 
 // shape
 require('./specs/shape/CrossSpec');
-require('./specs/shape/CurveSpec');
 require('./specs/shape/DotSpec');
 require('./specs/shape/RectangleSpec');
 require('./specs/shape/SectorSpec');
