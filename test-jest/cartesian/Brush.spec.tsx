@@ -22,21 +22,6 @@ describe('<Brush />', () => {
     { date: '2023-01-14', value: 10 },
   ];
 
-  // wrap brush with a bar chart to make brush traveler work
-  const barChartWithBrush = (
-    <BarChart
-      width={500}
-      height={100}
-      data={data}
-      margin={{
-        right: 100,
-        left: 100,
-      }}
-    >
-      <Brush dataKey="date" height={90} stroke="#8884d8" />
-    </BarChart>
-  );
-
   test('Render 2 travellers and 1 slide in simple Brush', () => {
     const { container } = render(<Brush x={100} y={50} width={400} height={40} data={data} />);
     expect(container.querySelectorAll('.recharts-brush-traveller')).toHaveLength(2);
@@ -61,8 +46,38 @@ describe('<Brush />', () => {
     expect(container.querySelectorAll('.recharts-line')).toHaveLength(1);
   });
 
-  test('mouse enter and mouse leave on traveller will set isTextActive true', () => {
-    const { container } = render(barChartWithBrush);
+  test('mouse over on traveller will trigger the brush text display', () => {
+    // wrap brush with a bar chart to make brush traveler work
+    const { container } = render(
+      <BarChart width={500} height={100} data={data}>
+        <Brush dataKey="date" height={90} stroke="#8884d8" />
+      </BarChart>,
+    );
+
+    const brushSlide = container.querySelector('.recharts-brush-slide');
+
+    const mouseOverEvent = mockMouseEvent('mouseover', brushSlide!, { pageX: 0, pageY: 0 });
+    mouseOverEvent.fire();
+    expect(container.querySelectorAll('.recharts-brush-texts')).toHaveLength(1);
+    expect(screen.getAllByText(data[0].date)).toHaveLength(1);
+    expect(screen.getAllByText(data[data.length - 1].date)).toHaveLength(1);
+  });
+
+  test('mouse down on traveller will trigger the brush text display, and mouse move out will hide the brush text', () => {
+    // wrap brush with a bar chart to make brush traveler work
+    const { container } = render(
+      <BarChart
+        width={500}
+        height={100}
+        data={data}
+        margin={{
+          right: 100,
+          left: 100,
+        }}
+      >
+        <Brush dataKey="date" height={90} stroke="#8884d8" />
+      </BarChart>,
+    );
 
     const brushSlide = container.querySelector('.recharts-brush-slide');
 
