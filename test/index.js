@@ -31,7 +31,6 @@ require('./specs/component/TooltipSpec');
 require('./specs/component/TextSpec');
 
 // shape
-require('./specs/shape/CrossSpec');
 require('./specs/shape/CurveSpec');
 require('./specs/shape/DotSpec');
 require('./specs/shape/RectangleSpec');
