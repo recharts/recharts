@@ -36,6 +36,5 @@ require('./specs/shape/CurveSpec');
 require('./specs/shape/DotSpec');
 require('./specs/shape/RectangleSpec');
 require('./specs/shape/SectorSpec');
-require('./specs/shape/PolygonSpec');
 require('./specs/shape/SymbolsSpec');
 require('./specs/shape/TrapezoidSpec');
