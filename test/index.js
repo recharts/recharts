@@ -14,7 +14,6 @@ require('./specs/cartesian/ZAxisSpec');
 require('./specs/cartesian/ScatterSpec');
 require('./specs/cartesian/BrushSpec');
 require('./specs/cartesian/ReferenceLineSpec');
-require('./specs/cartesian/ReferenceDotSpec');
 
 // polar system chart component
 require('./specs/polar/PolarRadiusAxisSpec');
