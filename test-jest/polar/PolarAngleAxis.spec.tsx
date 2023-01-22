@@ -1,20 +1,15 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { Surface, PolarAngleAxis } from '../../src';
+import { TickItem } from '../../src/util/types';
 
 describe('<PolarAngleAxis />', () => {
-  const ticks = [
-    { value: 10, angle: 30 },
-    { value: 1000, angle: 90 },
-    { value: 20, angle: 120 },
-    { value: 40, angle: 200 },
-    { value: 90, angle: 250 },
-  ];
+  const ticks = [{ value: 10 }, { value: 1000 }, { value: 20 }, { value: 40 }, { value: 90 }];
 
   test('Renders 5 ticks in when ticks is not empty', () => {
     const { container } = render(
       <Surface width={500} height={500}>
-        <PolarAngleAxis cx={250} cy={250} radius={50 as any} ticks={ticks as any} />
+        <PolarAngleAxis cx={250} cy={250} radius={50} ticks={ticks as TickItem[]} />
       </Surface>,
     );
 
@@ -32,7 +27,7 @@ describe('<PolarAngleAxis />', () => {
     };
     const { container } = render(
       <Surface width={500} height={500}>
-        <PolarAngleAxis cx={250} cy={250} radius={50} tick={<Tick />} ticks={ticks as any} />
+        <PolarAngleAxis cx={250} cy={250} radius={50} tick={<Tick />} ticks={ticks as TickItem[]} />
       </Surface>,
     );
 
@@ -50,7 +45,7 @@ describe('<PolarAngleAxis />', () => {
     };
     const { container } = render(
       <Surface width={500} height={500}>
-        <PolarAngleAxis cx={250} cy={250} radius={50} tick={Tick} ticks={ticks as any} axisLineType="circle" />
+        <PolarAngleAxis cx={250} cy={250} radius={50} tick={Tick} ticks={ticks as TickItem[]} axisLineType="circle" />
       </Surface>,
     );
 
