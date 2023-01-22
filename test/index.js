@@ -35,7 +35,6 @@ require('./specs/chart/SankeySpec');
 require('./specs/component/LegendSpec');
 require('./specs/component/TooltipSpec');
 require('./specs/component/TextSpec');
-require('./specs/component/CustomizedSpec');
 
 // shape
 require('./specs/shape/CrossSpec');
