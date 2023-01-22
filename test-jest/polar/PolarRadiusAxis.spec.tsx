@@ -1,20 +1,15 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { Surface, PolarRadiusAxis } from '../../src';
+import { TickItem } from '../../src/util/types';
 
 describe('<PolarRadiusAxis />', () => {
-  const ticks = [
-    { value: 10, radius: 50 },
-    { value: 1000, radius: 100 },
-    { value: 20, radius: 150 },
-    { value: 40, radius: 200 },
-    { value: 90, radius: 250 },
-  ];
+  const ticks = [{ value: 10 }, { value: 1000 }, { value: 20 }, { value: 40 }, { value: 90 }];
 
   test('Renders 5 ticks when orientation is set to be middle', () => {
     const { container } = render(
       <Surface width={500} height={500}>
-        <PolarRadiusAxis orientation="middle" cx={250} cy={250} ticks={ticks as any} label="test" />
+        <PolarRadiusAxis orientation="middle" cx={250} cy={250} ticks={ticks as TickItem[]} label="test" />
       </Surface>,
     );
 
@@ -25,7 +20,7 @@ describe('<PolarRadiusAxis />', () => {
   test('Renders 5 ticks when orientation is set to be left', () => {
     const { container } = render(
       <Surface width={500} height={500}>
-        <PolarRadiusAxis orientation="left" cx={250} cy={250} ticks={ticks as any} label="test" />
+        <PolarRadiusAxis orientation="left" cx={250} cy={250} ticks={ticks as TickItem[]} label="test" />
       </Surface>,
     );
 
@@ -45,7 +40,14 @@ describe('<PolarRadiusAxis />', () => {
     };
     const { container } = render(
       <Surface width={500} height={500}>
-        <PolarRadiusAxis orientation="left" cx={250} cy={250} ticks={ticks as any} label="test" tick={renderTick} />
+        <PolarRadiusAxis
+          orientation="left"
+          cx={250}
+          cy={250}
+          ticks={ticks as TickItem[]}
+          label="test"
+          tick={renderTick}
+        />
       </Surface>,
     );
 
@@ -65,7 +67,14 @@ describe('<PolarRadiusAxis />', () => {
     };
     const { container } = render(
       <Surface width={500} height={500}>
-        <PolarRadiusAxis orientation="left" cx={250} cy={250} ticks={ticks as any} label="test" tick={<Tick />} />
+        <PolarRadiusAxis
+          orientation="left"
+          cx={250}
+          cy={250}
+          ticks={ticks as TickItem[]}
+          label="test"
+          tick={<Tick />}
+        />
       </Surface>,
     );
 
@@ -85,7 +94,7 @@ describe('<PolarRadiusAxis />', () => {
     };
     const { container } = render(
       <Surface width={500} height={500}>
-        <PolarRadiusAxis orientation="left" cx={250} cy={250} ticks={ticks as any} label={renderLabel} />
+        <PolarRadiusAxis orientation="left" cx={250} cy={250} ticks={ticks as TickItem[]} label={renderLabel} />
       </Surface>,
     );
 
