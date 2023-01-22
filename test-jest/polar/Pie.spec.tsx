@@ -2,6 +2,10 @@ import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Surface, Pie, Sector } from '../../src';
+import { Point } from '../../src/shape/Curve';
+
+type CustomizedLabelProps = { x?: number; y?: number; name?: string; value?: number };
+type CustomizedLabelLineProps = { points?: Array<Point> };
 
 describe('<Pie />', () => {
   const sectors = [
@@ -36,7 +40,7 @@ describe('<Pie />', () => {
       </Surface>,
     );
 
-    expect(container.querySelectorAll('.recharts-pie-sector').length).toBe(sectors.length);
+    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(sectors.length);
   });
 
   test('Render customized active sector when activeShape is set to be an element', () => {
@@ -57,7 +61,7 @@ describe('<Pie />', () => {
       </Surface>,
     );
 
-    expect(container.querySelectorAll('.customized-active-shape').length).toBe(1);
+    expect(container.querySelectorAll('.customized-active-shape')).toHaveLength(1);
   });
 
   test('Render customized active sector when activeShape is set to be a function', () => {
@@ -78,7 +82,7 @@ describe('<Pie />', () => {
       </Surface>,
     );
 
-    expect(container.querySelectorAll('.customized-active-shape').length).toBe(1);
+    expect(container.querySelectorAll('.customized-active-shape')).toHaveLength(1);
   });
 
   test('Render customized active sector when activeShape is set to be an object', () => {
@@ -98,7 +102,7 @@ describe('<Pie />', () => {
       </Surface>,
     );
 
-    expect(container.querySelectorAll('.customized-active-shape').length).toBe(0);
+    expect(container.querySelectorAll('.customized-active-shape')).toHaveLength(0);
   });
 
   test('Render customized active sector when inactiveShape is set to be an element', () => {
@@ -121,7 +125,7 @@ describe('<Pie />', () => {
         />
       </Surface>,
     );
-    expect(container.querySelectorAll('.customized-inactive-shape').length).toBe(4);
+    expect(container.querySelectorAll('.customized-inactive-shape')).toHaveLength(4);
   });
 
   test('Render customized inactive sector when inactiveShape is set to be a function', () => {
@@ -145,7 +149,7 @@ describe('<Pie />', () => {
         />
       </Surface>,
     );
-    expect(container.querySelectorAll('.customized-inactive-shape').length).toBe(4);
+    expect(container.querySelectorAll('.customized-inactive-shape')).toHaveLength(4);
   });
 
   test('Render customized inactive sector when inactiveShape is set to be an object', () => {
@@ -166,7 +170,7 @@ describe('<Pie />', () => {
       </Surface>,
     );
 
-    expect(container.querySelectorAll('.customized-inactive-shape').length).toBe(0);
+    expect(container.querySelectorAll('.customized-inactive-shape')).toHaveLength(0);
   });
 
   test('should not render customized inactive sectors if there is no active index', () => {
@@ -189,7 +193,7 @@ describe('<Pie />', () => {
         />
       </Surface>,
     );
-    expect(container.querySelectorAll('.customized-inactive-shape').length).toBe(0);
+    expect(container.querySelectorAll('.customized-inactive-shape')).toHaveLength(0);
   });
 
   test('Support multiple active sectors', () => {
@@ -210,11 +214,11 @@ describe('<Pie />', () => {
       </Surface>,
     );
 
-    expect(container.querySelectorAll('.customized-active-shape').length).toBe(2);
+    expect(container.querySelectorAll('.customized-active-shape')).toHaveLength(2);
   });
 
   test('Render customized label when label is set to be a react element', () => {
-    const Label = (props: any) => {
+    const Label = (props: CustomizedLabelProps) => {
       const { x, y } = props;
       return (
         <text x={x} y={y} className="customized-label">
@@ -237,11 +241,11 @@ describe('<Pie />', () => {
       </Surface>,
     );
 
-    expect(container.querySelectorAll('.customized-label').length).toBe(sectors.length);
+    expect(container.querySelectorAll('.customized-label')).toHaveLength(sectors.length);
   });
 
   test('Render customized label when label is set to be a function that returns the label text', () => {
-    const Label = (props: any) => {
+    const Label = (props: CustomizedLabelProps) => {
       const { name, value } = props;
       return `${name}: ${value}`;
     };
@@ -261,13 +265,13 @@ describe('<Pie />', () => {
     );
 
     setTimeout(() => {
-      expect(container.querySelectorAll('.recharts-pie-label-text').length).toBe(sectors.length);
+      expect(container.querySelectorAll('.recharts-pie-label-text')).toHaveLength(sectors.length);
       expect(container.querySelectorAll('.recharts-pie-label-text')[0].textContent).toBe('A: 40');
     }, 1000);
   });
 
   test('Render customized label when label is set to be a react element', () => {
-    const renderLabel = (props: any) => {
+    const renderLabel = (props: CustomizedLabelProps) => {
       const { x, y } = props;
       return (
         <text x={x} y={y} className="customized-label">
@@ -290,11 +294,11 @@ describe('<Pie />', () => {
       </Surface>,
     );
 
-    expect(container.querySelectorAll('.customized-label').length).toBe(sectors.length);
+    expect(container.querySelectorAll('.customized-label')).toHaveLength(sectors.length);
   });
 
   test('Render customized label line when labelLine is set to be a react element', () => {
-    const LabelLine = (props: any) => {
+    const LabelLine = (props: CustomizedLabelLineProps) => {
       const { points } = props;
 
       return (
@@ -317,11 +321,11 @@ describe('<Pie />', () => {
       </Surface>,
     );
 
-    expect(container.querySelectorAll('.customized-label-line').length).toBe(sectors.length);
+    expect(container.querySelectorAll('.customized-label-line')).toHaveLength(sectors.length);
   });
 
   test('Render customized label line when labelLine is set to be a function', () => {
-    const renderLabelLine = (props: any) => {
+    const renderLabelLine = (props: CustomizedLabelLineProps) => {
       const { points } = props;
 
       return (
@@ -344,7 +348,7 @@ describe('<Pie />', () => {
       </Surface>,
     );
 
-    expect(container.querySelectorAll('.customized-label-line').length).toBe(sectors.length);
+    expect(container.querySelectorAll('.customized-label-line')).toHaveLength(sectors.length);
   });
 
   test("Don't render any sector when data is empty", () => {
@@ -354,7 +358,7 @@ describe('<Pie />', () => {
       </Surface>,
     );
 
-    expect(container.querySelectorAll('.recharts-pie').length).toBe(0);
+    expect(container.querySelectorAll('.recharts-pie')).toHaveLength(0);
   });
 
   test('Pie event handler', async () => {
@@ -379,16 +383,16 @@ describe('<Pie />', () => {
       </Surface>,
     );
 
-    const se = container.querySelectorAll('.recharts-layer')[4];
-    await userEvent.hover(se);
+    const sector = container.querySelectorAll('.recharts-layer')[4];
+    await userEvent.hover(sector);
     await waitFor(() => {
       expect(onMouseEnter).toHaveBeenCalledTimes(1);
     });
-    await userEvent.unhover(se);
+    await userEvent.unhover(sector);
     await waitFor(() => {
       expect(onMouseLeave).toHaveBeenCalledTimes(1);
     });
-    await userEvent.click(se);
+    await userEvent.click(sector);
     await waitFor(() => {
       expect(onClick).toHaveBeenCalledTimes(1);
     });
@@ -415,9 +419,9 @@ describe('<Pie />', () => {
       </div>,
     );
     const pie = container.getElementsByClassName('recharts-pie')[0];
-    const pieContainer = document.getElementsByClassName('container')[0];
+    const pieContainer = document.getElementsByClassName('container')[0] as HTMLElement;
 
-    (pieContainer as any).focus();
+    pieContainer.focus();
     await waitFor(
       () => {
         expect(document.activeElement).toBe(pieContainer);
@@ -464,8 +468,8 @@ describe('<Pie />', () => {
         </Surface>
       </div>,
     );
-    const pie = container.getElementsByClassName('recharts-pie')[0];
-    (pie as any).focus();
+    const pie = container.getElementsByClassName('recharts-pie')[0] as HTMLElement;
+    pie.focus();
     await waitFor(
       () => {
         expect(document.activeElement.classList.contains('recharts-pie-sector')).toBe(false);
