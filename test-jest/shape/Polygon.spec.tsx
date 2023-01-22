@@ -19,7 +19,7 @@ describe('<Polygon />', () => {
     expect(container.querySelectorAll('.recharts-polygon')).toHaveLength(1);
   });
 
-  test("Dno't render any path when points is empty or null", () => {
+  test("Don't render any path when points is empty or null", () => {
     const { container } = render(
       <Surface width={400} height={400}>
         <Polygon points={[]} fill="#ff7300" />
