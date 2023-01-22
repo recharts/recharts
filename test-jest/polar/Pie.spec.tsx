@@ -1,10 +1,9 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Surface, Pie, Sector } from '../../src';
+import { Surface, Pie, Sector, LabelProps } from '../../src';
 import { Point } from '../../src/shape/Curve';
 
-type CustomizedLabelProps = { x?: number; y?: number; name?: string; value?: number };
 type CustomizedLabelLineProps = { points?: Array<Point> };
 
 describe('<Pie />', () => {
@@ -218,7 +217,7 @@ describe('<Pie />', () => {
   });
 
   test('Render customized label when label is set to be a react element', () => {
-    const Label = (props: CustomizedLabelProps) => {
+    const Label = (props: LabelProps) => {
       const { x, y } = props;
       return (
         <text x={x} y={y} className="customized-label">
@@ -245,7 +244,7 @@ describe('<Pie />', () => {
   });
 
   test('Render customized label when label is set to be a function that returns the label text', () => {
-    const Label = (props: CustomizedLabelProps) => {
+    const Label = (props: LabelProps) => {
       const { name, value } = props;
       return `${name}: ${value}`;
     };
@@ -271,7 +270,7 @@ describe('<Pie />', () => {
   });
 
   test('Render customized label when label is set to be a react element', () => {
-    const renderLabel = (props: CustomizedLabelProps) => {
+    const renderLabel = (props: LabelProps) => {
       const { x, y } = props;
       return (
         <text x={x} y={y} className="customized-label">
