@@ -20,7 +20,6 @@ require('./specs/cartesian/ReferenceAreaSpec');
 
 // polar system chart component
 require('./specs/polar/PolarRadiusAxisSpec');
-require('./specs/polar/PolarAngleAxisSpec');
 require('./specs/polar/PolarGridSpec');
 require('./specs/polar/PieSpec');
 require('./specs/polar/RadialBarSpec');
