@@ -22,7 +22,6 @@ require('./specs/polar/RadialBarSpec');
 require('./specs/polar/RadarSpec');
 
 // chart
-require('./specs/chart/RadarChartSpec');
 require('./specs/chart/ScatterChartSpec');
 require('./specs/chart/SankeySpec');
 
