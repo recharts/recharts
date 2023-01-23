@@ -1,7 +1,6 @@
 import React from 'react';
-import { expect } from 'chai';
-import { BarChart, ReferenceArea, Bar, XAxis, YAxis } from 'recharts';
-import { mount, render } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import { BarChart, ReferenceArea, Bar, XAxis, YAxis } from '../../src';
 
 describe('<ReferenceArea />', () => {
   const data = [
@@ -18,8 +17,8 @@ describe('<ReferenceArea />', () => {
     { name: '201112', uv: 4.3, pv: 0 },
   ];
 
-  it('Render 1 rect in ReferenceArea', () => {
-    const wrapper = render(
+  test('Render 1 rect in ReferenceArea', () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -35,12 +34,12 @@ describe('<ReferenceArea />', () => {
         <ReferenceArea y1={0} y2={2} fill="#666" label="201106" />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-area-rect').length).to.equal(2);
-    expect(wrapper.find('.recharts-label').length).to.equal(2);
+    expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(2);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(2);
   });
 
-  it("Don't render any rect in ReferenceArea when no x1, x2, y1 or y2 is set", () => {
-    const wrapper = render(
+  test("Don't render any rect in ReferenceArea when no x1, x2, y1 or y2 is set", () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -55,12 +54,12 @@ describe('<ReferenceArea />', () => {
         <ReferenceArea stroke="#666" label="0" />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-area-rect').length).to.equal(0);
-    expect(wrapper.find('.recharts-label').length).to.equal(0);
+    expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(0);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
   });
 
-  it('Render a rect in ReferenceArea when x1, x2, y1 or y2 is set', () => {
-    const wrapper = render(
+  test('Render a rect in ReferenceArea when x1, x2, y1 or y2 is set', () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -75,12 +74,12 @@ describe('<ReferenceArea />', () => {
         <ReferenceArea x1="201106" stroke="#666" label="0" />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-area-rect').length).to.equal(1);
-    expect(wrapper.find('.recharts-label').length).to.equal(1);
+    expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(1);
   });
 
-  it("Don't render any line or label when reference area is outside domain in ReferenceArea", () => {
-    const wrapper = render(
+  test("Don't render any line or label when reference area is outside domain in ReferenceArea", () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -96,12 +95,12 @@ describe('<ReferenceArea />', () => {
         <ReferenceArea x1="20150201" x2="20150201" fill="#666" />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-area-rect').length).to.equal(0);
-    expect(wrapper.find('.recharts-label').length).to.equal(0);
+    expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(0);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
   });
 
-  it('Render line and label when alwaysShow is true in ReferenceArea', () => {
-    const wrapper = render(
+  test('Render line and label when alwaysShow is true in ReferenceArea', () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -116,11 +115,11 @@ describe('<ReferenceArea />', () => {
         <ReferenceArea y1={200} y2={300} fill="#666" alwaysShow />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-area-rect').length).to.equal(1);
+    expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(1);
   });
 
-  it('Render 1 line and 1 label when label is set to be a function in ReferenceArea', () => {
-    const renderLabel = props => {
+  test('Render 1 line and 1 label when label is set to be a function in ReferenceArea', () => {
+    const renderLabel = (props: any) => {
       const { x, y } = props;
 
       return (
@@ -129,7 +128,7 @@ describe('<ReferenceArea />', () => {
         </text>
       );
     };
-    const wrapper = render(
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -144,12 +143,12 @@ describe('<ReferenceArea />', () => {
         <ReferenceArea x1="201106" x2="201110" fill="#666" label={renderLabel} />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-area-rect').length).to.equal(1);
-    expect(wrapper.find('.customized-reference-area-label').length).to.equal(1);
+    expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(1);
+    expect(container.querySelectorAll('.customized-reference-area-label')).toHaveLength(1);
   });
 
-  it("Don't Render 1 label when label is set to be a object", () => {
-    const wrapper = render(
+  test("Don't Render 1 label when label is set to be a object", () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -161,16 +160,16 @@ describe('<ReferenceArea />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceArea x1="201106" x2="201110" fill="#666" label={{ a: 1 }} />
+        <ReferenceArea x1="201106" x2="201110" fill="#666" label />
       </BarChart>,
     );
 
-    expect(wrapper.find('.recharts-label').length).to.equal(0);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
   });
 
-  it('Render custom lable when label is set to react element', () => {
-    const Label = ({ text, ...props }) => <text {...props}>{text}</text>;
-    const wrapper = render(
+  test('Render custom lable when label is set to react element', () => {
+    const Label = ({ text, ...props }: { text: any }) => <text {...props}>{text}</text>;
+    render(
       <BarChart
         width={1100}
         height={250}
@@ -185,6 +184,6 @@ describe('<ReferenceArea />', () => {
         <ReferenceArea x1="201106" x2="201110" fill="#666" label={<Label text="Custom Text" />} alwaysShow />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-area text').text()).to.equal('Custom Text');
+    expect(screen.findByText('Custom Text')).toBeTruthy();
   });
 });

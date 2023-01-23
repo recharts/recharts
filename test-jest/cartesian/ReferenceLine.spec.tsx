@@ -1,7 +1,6 @@
 import React from 'react';
-import { expect } from 'chai';
-import { BarChart, ReferenceLine, Bar, XAxis, YAxis } from 'recharts';
-import { mount, render } from 'enzyme';
+import { screen, render } from '@testing-library/react';
+import { BarChart, ReferenceLine, Bar, XAxis, YAxis } from '../../src';
 
 describe('<ReferenceLine />', () => {
   const data = [
@@ -18,8 +17,8 @@ describe('<ReferenceLine />', () => {
     { name: '201112', uv: 4.3, pv: 0 },
   ];
 
-  it('Renders 1 line in ReferenceLine', () => {
-    const wrapper = render(
+  test('Renders 1 line in ReferenceLine', () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -32,15 +31,15 @@ describe('<ReferenceLine />', () => {
         <YAxis tickCount={7} orientation="right" />
         <Bar dataKey="uv" />
         <ReferenceLine x="201106" stroke="#666" label="201106" />
-        <ReferenceLine y={0} stroke="#666" label="0" labelPosition="start" />
+        <ReferenceLine y={0} stroke="#666" label="0" />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-line-line').length).to.equal(2);
-    expect(wrapper.find('.recharts-label').length).to.equal(2);
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(2);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(2);
   });
 
-  it('Renders 1 line in ReferenceLine in vertical barchart', () => {
-    const wrapper = render(
+  test('Renders 1 line in ReferenceLine in vertical barchart', () => {
+    const { container } = render(
       <BarChart
         layout="vertical"
         width={1100}
@@ -54,14 +53,15 @@ describe('<ReferenceLine />', () => {
         <YAxis type="category" dataKey="name" tickCount={7} orientation="right" />
         <Bar dataKey="uv" />
         <ReferenceLine y="201106" stroke="#666" label="201106" />
-        <ReferenceLine x={0} stroke="#666" label="0" labelPosition="start" />
+        <ReferenceLine x={0} stroke="#666" label="0" />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-line-line').length).to.equal(2);
-    expect(wrapper.find('.recharts-label').length).to.equal(2);
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(2);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(2);
   });
-  it('Renders line segment in ReferenceLine when segment is set', () => {
-    const wrapper = render(
+
+  test('Renders line segment in ReferenceLine when segment is set', () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -74,14 +74,15 @@ describe('<ReferenceLine />', () => {
         <YAxis tickCount={7} orientation="right" />
         <Bar dataKey="uv" />
         <ReferenceLine x="201106" stroke="#666" label="201106" />
-        <ReferenceLine y={0} stroke="#666" label="0" labelPosition="start" />
+        <ReferenceLine y={0} stroke="#666" label="0" />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-line-line').length).to.equal(2);
-    expect(wrapper.find('.recharts-label').length).to.equal(2);
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(2);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(2);
   });
-  it("Don't renders 1 line in ReferenceLine when no x or y is set", () => {
-    const wrapper = render(
+
+  test("Don't renders 1 line in ReferenceLine when no x or y is set", () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -93,15 +94,15 @@ describe('<ReferenceLine />', () => {
         <XAxis dataKey="name" orientation="top" />
         <YAxis tickCount={7} orientation="right" />
         <Bar dataKey="uv" />
-        <ReferenceLine stroke="#666" label="0" labelPosition="start" />
+        <ReferenceLine stroke="#666" label="0" />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-line-line').length).to.equal(0);
-    expect(wrapper.find('.recharts-label').length).to.equal(0);
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
   });
 
-  it("Don't render any line or label when reference line is outside domain in ReferenceLine", () => {
-    const wrapper = render(
+  test("Don't render any line or label when reference line is outside domain in ReferenceLine", () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -117,12 +118,12 @@ describe('<ReferenceLine />', () => {
         <ReferenceLine x="20150201" stroke="#666" />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-line-line').length).to.equal(0);
-    expect(wrapper.find('.recharts-label').length).to.equal(0);
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
   });
 
-  it('Render line and label when ifOverflow is extendDomain in ReferenceLine', () => {
-    const wrapper = render(
+  test('Render line and label when ifOverflow is extendDomain in ReferenceLine', () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -135,14 +136,15 @@ describe('<ReferenceLine />', () => {
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
         <ReferenceLine x="201102" label="test" stroke="#666" />
-        <ReferenceLine y={20} stroke="#666" label="20" ifOverflow="extendDomain" labelPosition="start" />
+        <ReferenceLine y={20} stroke="#666" label="20" ifOverflow="extendDomain" />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-line-line').length).to.equal(2);
-    expect(wrapper.find('.recharts-label').length).to.equal(2);
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(2);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(2);
   });
-  it('Render line and label when (deprecated) alwaysShow is true in ReferenceLine', () => {
-    const wrapper = render(
+
+  test('Render line and label when (deprecated) alwaysShow is true in ReferenceLine', () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -155,15 +157,15 @@ describe('<ReferenceLine />', () => {
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
         <ReferenceLine x="201102" label="test" stroke="#666" />
-        <ReferenceLine y={20} stroke="#666" label="20" alwaysShow labelPosition="start" />
+        <ReferenceLine y={20} stroke="#666" label="20" alwaysShow />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-line-line').length).to.equal(2);
-    expect(wrapper.find('.recharts-label').length).to.equal(2);
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(2);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(2);
   });
 
-  it('Render 1 line and 1 label when label is set to be a function in ReferenceLine', () => {
-    const renderLabel = props => {
+  test('Render 1 line and 1 label when label is set to be a function in ReferenceLine', () => {
+    const renderLabel = (props: any) => {
       const { x, y } = props;
 
       return (
@@ -172,7 +174,7 @@ describe('<ReferenceLine />', () => {
         </text>
       );
     };
-    const wrapper = render(
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -184,15 +186,15 @@ describe('<ReferenceLine />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceLine y={20} stroke="#666" label={renderLabel} ifOverflow="visible" labelPosition="start" />
+        <ReferenceLine y={20} stroke="#666" label={renderLabel} ifOverflow="visible" />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-line-line').length).to.equal(1);
-    expect(wrapper.find('.customized-reference-line-label').length).to.equal(1);
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(1);
+    expect(container.querySelectorAll('.customized-reference-line-label')).toHaveLength(1);
   });
 
-  it("Don't Render 1 label when label is set to be a object", () => {
-    const wrapper = render(
+  test("Don't Render 1 label when label is set to be a object", () => {
+    const { container } = render(
       <BarChart
         width={1100}
         height={250}
@@ -204,16 +206,16 @@ describe('<ReferenceLine />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceLine y={20} stroke="#666" label={{ a: 1 }} labelPosition="start" />
+        <ReferenceLine y={20} stroke="#666" label />
       </BarChart>,
     );
 
-    expect(wrapper.find('.recharts-label').length).to.equal(0);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
   });
 
-  it('Render custom lable when label is set to react element', () => {
-    const Label = ({ text, ...props }) => <text {...props}>{text}</text>;
-    const wrapper = render(
+  test('Render custom lable when label is set to react element', () => {
+    const Label = ({ text, ...props }: { text: any }) => <text {...props}>{text}</text>;
+    render(
       <BarChart
         width={1100}
         height={250}
@@ -228,6 +230,6 @@ describe('<ReferenceLine />', () => {
         <ReferenceLine y={20} stroke="#666" ifOverflow="visible" label={<Label text="Custom Text" />} />
       </BarChart>,
     );
-    expect(wrapper.find('.recharts-reference-line text').text()).to.equal('Custom Text');
+    expect(screen.findByText('Custom Text')).toBeTruthy();
   });
 });

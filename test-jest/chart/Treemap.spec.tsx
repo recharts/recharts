@@ -1,7 +1,6 @@
 import React from 'react';
-import { expect } from 'chai';
-import { Treemap } from 'recharts';
-import { mount, render } from 'enzyme';
+import { render } from '@testing-library/react';
+import { Treemap } from '../../src';
 
 const data = [
   {
@@ -35,16 +34,16 @@ const data = [
 ];
 
 describe('<Treemap />', () => {
-  it('renders 20 rectangles in simple TreemapChart', () => {
-    const wrapper = mount(
+  test('renders 20 rectangles in simple TreemapChart', () => {
+    const { container } = render(
       <Treemap width={500} height={250} data={data} isAnimationActive={false} nameKey="name" dataKey="value" />,
     );
 
-    expect(wrapper.find('.recharts-rectangle').length).to.equal(24);
+    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(24);
   });
 
-  it('renders 21 rectangles in simple TreemapChart', () => {
-    const wrapper = mount(
+  test('renders 21 rectangles in simple TreemapChart', () => {
+    const { container } = render(
       <Treemap
         width={500}
         height={250}
@@ -56,6 +55,6 @@ describe('<Treemap />', () => {
       />,
     );
 
-    expect(wrapper.find('.recharts-rectangle').length).to.equal(21);
+    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(21);
   });
 });
