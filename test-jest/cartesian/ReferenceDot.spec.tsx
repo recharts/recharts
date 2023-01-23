@@ -78,7 +78,7 @@ describe('<ReferenceDot />', () => {
   });
 
   test('Render custom lable when label is set to be a react element', () => {
-    const Label = ({ text, ...props }: { text: any }) => (
+    const Label = ({ text, ...props }: { text: string }) => (
       <text className="customized-label" {...props}>
         {text}
       </text>
