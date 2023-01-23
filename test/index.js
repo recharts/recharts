@@ -12,8 +12,6 @@ require('./specs/cartesian/XAxisSpec');
 require('./specs/cartesian/YAxisSpec');
 
 // polar system chart component
-require('./specs/polar/PolarAngleAxisSpec');
-require('./specs/polar/RadialBarSpec');
 require('./specs/polar/RadarSpec');
 
 // chart
@@ -24,9 +22,5 @@ require('./specs/component/TooltipSpec');
 require('./specs/component/TextSpec');
 
 // shape
-require('./specs/shape/CrossSpec');
-require('./specs/shape/DotSpec');
 require('./specs/shape/SectorSpec');
-require('./specs/shape/PolygonSpec');
 require('./specs/shape/SymbolsSpec');
-require('./specs/shape/TrapezoidSpec');
