@@ -1,7 +1,6 @@
 import React from 'react';
-import { expect } from 'chai';
-import { Sankey } from 'recharts';
-import { mount, render } from 'enzyme';
+import { render } from '@testing-library/react';
+import { Sankey } from '../../src';
 
 describe('<Sankey />', () => {
   const data = {
@@ -127,30 +126,30 @@ describe('<Sankey />', () => {
     ],
   };
 
-  const wrapper = render(<Sankey width={1000} height={500} data={data} />);
-
   it('renders 48 nodes in simple SankeyChart', () => {
-    expect(wrapper.find('.recharts-sankey-node').length).to.equal(48);
+    const { container } = render(<Sankey width={1000} height={500} data={data} />);
+
+    expect(container.querySelectorAll('.recharts-sankey-node')).toHaveLength(48);
   });
 
   it('renders 68 links in simple SankeyChart', () => {
-    expect(wrapper.find('.recharts-sankey-link').length).to.equal(68);
+    const { container } = render(<Sankey width={1000} height={500} data={data} />);
+
+    expect(container.querySelectorAll('.recharts-sankey-link')).toHaveLength(68);
   });
 
   it('re-renders links and nodes when data changes', () => {
-    const wrapper = mount(<Sankey width={1000} height={500} data={data} />);
-    expect(wrapper.render().find('.recharts-sankey-node').length).to.equal(48);
-    expect(wrapper.render().find('.recharts-sankey-link').length).to.equal(68);
+    const { container } = render(<Sankey width={1000} height={500} data={data} />);
 
-    const newData = {
-      ...data,
-      nodes: [...data.nodes, { name: 'New Node' }],
-      links: [...data.links, { source: 2, target: data.nodes.length, value: 100.0 }],
-    };
-    wrapper.setProps({ data: newData });
+    expect(container.querySelectorAll('.recharts-sankey-node')).toHaveLength(48);
+    expect(container.querySelectorAll('.recharts-sankey-link')).toHaveLength(68);
+
+    data.nodes.push({ name: 'New Node' });
+    data.links.push({ source: 2, target: data.nodes.length, value: 100.0 });
+
     setTimeout(() => {
-      expect(wrapper.render().find('.recharts-sankey-node').length).to.equal(49);
-      expect(wrapper.render().find('.recharts-sankey-link').length).to.equal(69);
+      expect(container.querySelectorAll('.recharts-sankey-node')).toHaveLength(49);
+      expect(container.querySelectorAll('.recharts-sankey-link')).toHaveLength(69);
     }, 1000);
   });
 });

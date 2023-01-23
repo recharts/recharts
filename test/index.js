@@ -15,7 +15,6 @@ require('./specs/cartesian/YAxisSpec');
 require('./specs/polar/RadarSpec');
 
 // chart
-require('./specs/chart/SankeySpec');
 
 // general component
 require('./specs/component/TooltipSpec');
