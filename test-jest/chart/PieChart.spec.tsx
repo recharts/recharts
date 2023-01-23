@@ -1,5 +1,6 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { PieChart, Pie, Legend, Cell, Tooltip } from '../../src';
 
 describe('<PieChart />', () => {
@@ -142,36 +143,36 @@ describe('<PieChart />', () => {
     expect(container.querySelectorAll('.recharts-default-tooltip')).toHaveLength(1);
   });
 
-  test('click on Sector should invoke onClick callback', () => {
+  test('click on Sector should invoke onClick callback', async () => {
     const onClick = jest.fn();
 
     const { container } = render(getPieChart({ onClick }));
     const sectors = container.querySelectorAll('.recharts-sector');
-    const se = sectors[2];
+    const sector = sectors[2];
 
-    fireEvent.click(se);
+    await userEvent.click(sector);
     expect(onClick).toBeCalled();
   });
 
-  test('onMouseEnter Sector should invoke onMouseEnter callback', () => {
+  test('onMouseEnter Sector should invoke onMouseEnter callback', async () => {
     const onMouseEnter = jest.fn();
 
     const { container } = render(getPieChart({ onMouseEnter }));
     const sectors = container.querySelectorAll('.recharts-sector');
-    const se = sectors[2];
+    const sector = sectors[2];
 
-    fireEvent.mouseEnter(se);
+    await userEvent.hover(sector);
     expect(onMouseEnter).toBeCalled();
   });
 
-  test('onMouseLeave Sector should invoke onMouseLeave callback', () => {
+  test('onMouseLeave Sector should invoke onMouseLeave callback', async () => {
     const onMouseLeave = jest.fn();
 
     const { container } = render(getPieChart({ onMouseLeave }));
     const sectors = container.querySelectorAll('.recharts-sector');
-    const se = sectors[2];
+    const sector = sectors[2];
 
-    fireEvent.mouseLeave(se);
+    await userEvent.unhover(sector);
     expect(onMouseLeave).toBeCalled();
   });
 });
