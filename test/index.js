@@ -26,7 +26,6 @@ require('./specs/component/TextSpec');
 // shape
 require('./specs/shape/CrossSpec');
 require('./specs/shape/DotSpec');
-require('./specs/shape/RectangleSpec');
 require('./specs/shape/SectorSpec');
 require('./specs/shape/PolygonSpec');
 require('./specs/shape/SymbolsSpec');
