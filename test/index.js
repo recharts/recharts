@@ -24,4 +24,3 @@ require('./specs/component/TextSpec');
 // shape
 require('./specs/shape/RectangleSpec');
 require('./specs/shape/SectorSpec');
-require('./specs/shape/SymbolsSpec');
