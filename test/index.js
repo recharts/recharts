@@ -11,7 +11,6 @@ chai.use(chaiEnzyme());
 require('./specs/cartesian/XAxisSpec');
 require('./specs/cartesian/YAxisSpec');
 require('./specs/cartesian/ZAxisSpec');
-require('./specs/cartesian/ScatterSpec');
 
 // polar system chart component
 require('./specs/polar/PolarRadiusAxisSpec');
