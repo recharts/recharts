@@ -14,8 +14,5 @@ require('./specs/cartesian/YAxisSpec');
 // polar system chart component
 require('./specs/polar/RadarSpec');
 
-// chart
-
 // general component
-require('./specs/component/TooltipSpec');
 require('./specs/component/TextSpec');
