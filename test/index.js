@@ -16,7 +16,7 @@ require('./specs/cartesian/BrushSpec');
 
 // polar system chart component
 require('./specs/polar/PolarRadiusAxisSpec');
-require('./specs/polar/PolarGridSpec');
+require('./specs/polar/PolarAngleAxisSpec');
 require('./specs/polar/PieSpec');
 require('./specs/polar/RadialBarSpec');
 require('./specs/polar/RadarSpec');
