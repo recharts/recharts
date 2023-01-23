@@ -3,6 +3,12 @@ import { screen, render } from '@testing-library/react';
 import { BarChart, ReferenceLine, Bar, XAxis, YAxis } from '../../src';
 
 describe('<ReferenceLine />', () => {
+  const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+  afterEach(() => {
+    consoleSpy.mockReset();
+  });
+
   const data = [
     { name: '201102', uv: -6.11, pv: 0 },
     { name: '201103', uv: 0.39, pv: 0 },
@@ -162,6 +168,29 @@ describe('<ReferenceLine />', () => {
     );
     expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(2);
     expect(container.querySelectorAll('.recharts-label')).toHaveLength(2);
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+
+  test('Render line and label when ifOverflow is "extendDomain" in ReferenceLine', () => {
+    const { container } = render(
+      <BarChart
+        width={1100}
+        height={250}
+        barGap={2}
+        barSize={6}
+        data={data}
+        margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
+      >
+        <XAxis dataKey="name" />
+        <YAxis tickCount={7} />
+        <Bar dataKey="uv" />
+        <ReferenceLine x="201102" label="test" stroke="#666" />
+        <ReferenceLine y={20} stroke="#666" label="20" ifOverflow="extendDomain" />
+      </BarChart>,
+    );
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(2);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(2);
+    expect(consoleSpy).not.toHaveBeenCalled();
   });
 
   test('Render 1 line and 1 label when label is set to be a function in ReferenceLine', () => {

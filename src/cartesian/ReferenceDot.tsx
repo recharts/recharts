@@ -26,6 +26,7 @@ interface ReferenceDotProps extends InternalReferenceDotProps {
   r?: number;
 
   isFront?: boolean;
+  /** @deprecated use ifOverflow="extendDomain"  */
   alwaysShow?: boolean;
   ifOverflow?: 'hidden' | 'visible' | 'discard' | 'extendDomain';
   x?: number | string;

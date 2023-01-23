@@ -57,7 +57,7 @@ describe('<ReferenceDot />', () => {
     expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
   });
 
-  test('Render 1 line and 1 label when alwaysShow is true in ReferenceDot', () => {
+  test('Render 1 line and 1 label when ifOverflow is `extendDomain` in ReferenceDot', () => {
     const { container } = render(
       <BarChart
         width={1100}
@@ -70,7 +70,7 @@ describe('<ReferenceDot />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceDot x="201106" y={20} stroke="#666" label="201106" alwaysShow />
+        <ReferenceDot x="201106" y={20} stroke="#666" label="201106" ifOverflow="extendDomain" />
       </BarChart>,
     );
     expect(container.querySelectorAll('.recharts-reference-dot-dot')).toHaveLength(1);
@@ -95,7 +95,7 @@ describe('<ReferenceDot />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceDot x="201106" y={20} stroke="#666" label={<Label text="Custom Text" />} alwaysShow />
+        <ReferenceDot x="201106" y={20} stroke="#666" label={<Label text="Custom Text" />} ifOverflow="extendDomain" />
       </BarChart>,
     );
     expect(screen.findByText('Custom Text')).toBeTruthy();
@@ -119,7 +119,7 @@ describe('<ReferenceDot />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceDot x="201106" y={20} stroke="#666" label={renderLabel} alwaysShow />
+        <ReferenceDot x="201106" y={20} stroke="#666" label={renderLabel} ifOverflow="extendDomain" />
       </BarChart>,
     );
     expect(screen.findByText('Custom Text')).toBeTruthy();
@@ -138,7 +138,7 @@ describe('<ReferenceDot />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceDot x="201106" y={20} stroke="#666" label={{}} alwaysShow />
+        <ReferenceDot x="201106" y={20} stroke="#666" ifOverflow="extendDomain" />
       </BarChart>,
     );
     expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
@@ -157,8 +157,8 @@ describe('<ReferenceDot />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceDot x="201106" stroke="#666" alwaysShow />
-        <ReferenceDot y={20} stroke="#666" alwaysShow />
+        <ReferenceDot x="201106" stroke="#666" ifOverflow="extendDomain" />
+        <ReferenceDot y={20} stroke="#666" ifOverflow="extendDomain" />
       </BarChart>,
     );
     expect(container.querySelectorAll('.recharts-reference-dot-dot')).toHaveLength(0);
