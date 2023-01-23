@@ -370,7 +370,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
   };
 };
 
-const isPolar = (viewBox: CartesianViewBox | PolarViewBox) => isNumber((viewBox as PolarViewBox).cx);
+const isPolar = (viewBox: CartesianViewBox | PolarViewBox): viewBox is PolarViewBox =>
+  'cx' in viewBox && isNumber(viewBox.cx);
 
 export function Label(props: Props) {
   const { viewBox, position, value, children, content, className = '', textBreakAll } = props;
@@ -420,7 +421,7 @@ Label.defaultProps = {
   offset: 5,
 };
 
-const parseViewBox = (props: any) => {
+const parseViewBox = (props: any): ViewBox => {
   const {
     cx,
     cy,
@@ -477,7 +478,7 @@ const parseViewBox = (props: any) => {
   return {};
 };
 
-const parseLabel = (label: any, viewBox: ViewBox) => {
+const parseLabel = (label: unknown, viewBox: ViewBox) => {
   if (!label) {
     return null;
   }
@@ -492,7 +493,7 @@ const parseLabel = (label: any, viewBox: ViewBox) => {
 
   if (isValidElement(label)) {
     if (label.type === Label) {
-      return cloneElement(label as any, { key: 'label-implicit', viewBox });
+      return cloneElement<LabelProps>(label, { key: 'label-implicit', viewBox });
     }
 
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
@@ -509,16 +510,21 @@ const parseLabel = (label: any, viewBox: ViewBox) => {
   return null;
 };
 
-const renderCallByParent = (parentProps: any, viewBox?: ViewBox, checkPropsLabel = true) => {
+const renderCallByParent = (
+  parentProps: { children?: ReactNode; label?: unknown },
+  viewBox?: ViewBox,
+  checkPropsLabel = true,
+): ReactElement[] | null => {
   if (!parentProps || (!parentProps.children && checkPropsLabel && !parentProps.label)) {
     return null;
   }
   const { children } = parentProps;
   const parentViewBox = parseViewBox(parentProps);
 
-  const explicitChildren = findAllByType(children, Label).map((child, index: number) =>
+  const explicitChildren = findAllByType(children, Label).map((child, index) =>
     cloneElement(child, {
       viewBox: viewBox || parentViewBox,
+      // eslint-disable-next-line react/no-array-index-key
       key: `label-${index}`,
     }),
   );
