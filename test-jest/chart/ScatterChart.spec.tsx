@@ -1,19 +1,6 @@
 import React from 'react';
-import { expect } from 'chai';
-import {
-  ScatterChart,
-  Scatter,
-  CartesianGrid,
-  Tooltip,
-  XAxis,
-  YAxis,
-  ZAxis,
-  CartesianAxis,
-  Legend,
-  Cross,
-  Symbols,
-} from 'recharts';
-import { mount, render } from 'enzyme';
+import { fireEvent, render } from '@testing-library/react';
+import { ScatterChart, Scatter, CartesianGrid, Tooltip, XAxis, YAxis, ZAxis, Legend } from '../../src';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [
@@ -34,8 +21,8 @@ describe('ScatterChart of three dimension data', () => {
     { x: 210, y: 220, z: 230 },
   ];
 
-  it('Render 2 Scatter', () => {
-    const wrapper = render(
+  test('Render 2 Scatter', () => {
+    const { container } = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20 }}>
         <XAxis dataKey="x" name="stature" unit="cm" />
         <YAxis dataKey="y" name="weight" unit="kg" />
@@ -48,14 +35,14 @@ describe('ScatterChart of three dimension data', () => {
       </ScatterChart>,
     );
 
-    expect(wrapper.find('.recharts-scatter').length).to.equal(2);
-    expect(wrapper.find('.recharts-legend-item').length).to.equal(2);
-    expect(wrapper.find('.recharts-scatter-symbol').length).to.equal(data01.length + data02.length);
-    expect(wrapper.find('.recharts-scatter-symbol path').length).to.equal(data01.length + data02.length);
+    expect(container.querySelectorAll('.recharts-scatter')).toHaveLength(2);
+    expect(container.querySelectorAll('.recharts-legend-item')).toHaveLength(2);
+    expect(container.querySelectorAll('.recharts-scatter-symbol')).toHaveLength(data01.length + data02.length);
+    expect(container.querySelectorAll('.recharts-scatter-symbol path')).toHaveLength(data01.length + data02.length);
   });
 
-  it("Don't render any symbols when data is empty", () => {
-    const wrapper = render(
+  test("Don't render any symbols when data is empty", () => {
+    const { container } = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis dataKey="x" name="stature" unit="cm" />
         <YAxis dataKey="y" name="weight" unit="kg" />
@@ -67,26 +54,28 @@ describe('ScatterChart of three dimension data', () => {
       </ScatterChart>,
     );
 
-    expect(wrapper.find('.recharts-symbol').length).to.equal(0);
+    expect(container.querySelectorAll('.recharts-symbol')).toHaveLength(0);
   });
 
-  it('mouse enter on one circle will trigger one Cross', () => {
-    const wrapper = mount(
+  test('mouse enter on one circle will trigger one Cross', () => {
+    const onMouseEnter = jest.fn();
+    const { container } = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis dataKey="x" name="stature" unit="cm" />
         <YAxis dataKey="y" name="weight" unit="kg" />
         <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km" />
         <CartesianGrid />
-        <Scatter name="A school" data={data01} fillOpacity={0.3} fill="#ff7300" />
+        <Scatter name="A school" data={data01} fillOpacity={0.3} fill="#ff7300" onMouseEnter={onMouseEnter} />
         <Scatter name="B school" data={data02} fill="#347300" />
         <Tooltip />
         <Legend />
       </ScatterChart>,
     );
 
-    const symbols = wrapper.find(Symbols);
-    const firstSymbol = symbols.first();
-    firstSymbol.simulate('mouseEnter');
+    const symbol = container.querySelectorAll('.recharts-symbols')[0];
+    fireEvent.mouseEnter(symbol);
+
+    expect(onMouseEnter).toHaveBeenCalled();
   });
 });
 
@@ -100,18 +89,27 @@ describe('ScatterChart of two dimension data', () => {
     { x: 110, y: 280, z: 200 },
   ];
 
-  const wrapper = render(
-    <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-      <XAxis dataKey="x" name="stature" unit="cm" />
-      <YAxis dataKey="y" name="weight" unit="kg" />
-      <Scatter line name="A school" data={data} fill="#ff7300" />
-    </ScatterChart>,
-  );
+  test('renders 6 circles in simple ScatterChart', () => {
+    const { container } = render(
+      <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <XAxis dataKey="x" name="stature" unit="cm" />
+        <YAxis dataKey="y" name="weight" unit="kg" />
+        <Scatter line name="A school" data={data} fill="#ff7300" />
+      </ScatterChart>,
+    );
 
-  it('renders 6 circles in simple ScatterChart', () => {
-    expect(wrapper.find('.recharts-symbols').length).to.equal(6);
+    expect(container.querySelectorAll('.recharts-symbols')).toHaveLength(6);
   });
-  it('renders 1 jointed line when line is setted to be true', () => {
-    expect(wrapper.find('.recharts-scatter-line').length).to.equal(1);
+
+  test('renders 1 jointed line when line is setted to be true', () => {
+    const { container } = render(
+      <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <XAxis dataKey="x" name="stature" unit="cm" />
+        <YAxis dataKey="y" name="weight" unit="kg" />
+        <Scatter line name="A school" data={data} fill="#ff7300" />
+      </ScatterChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-scatter-line')).toHaveLength(1);
   });
 });
