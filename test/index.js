@@ -19,6 +19,3 @@ require('./specs/polar/RadarSpec');
 // general component
 require('./specs/component/TooltipSpec');
 require('./specs/component/TextSpec');
-
-// shape
-require('./specs/shape/SectorSpec');
