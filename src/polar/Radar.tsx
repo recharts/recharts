@@ -64,7 +64,7 @@ interface RadarProps {
 type RadiusAxis = PolarRadiusAxisProps & { scale: (value: any) => number };
 type AngleAxis = PolarAngleAxisProps & { scale: (value: any) => number };
 
-export type Props = Omit<SVGProps<SVGElement>, 'onMouseEnter' | 'onMouseLeave'> & RadarProps;
+export type Props = Omit<SVGProps<SVGElement>, 'onMouseEnter' | 'onMouseLeave' | 'points'> & RadarProps;
 
 interface State {
   isAnimationFinished?: boolean;
