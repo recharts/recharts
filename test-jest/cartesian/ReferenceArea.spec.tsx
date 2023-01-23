@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { BarChart, ReferenceArea, Bar, XAxis, YAxis } from '../../src';
+import { BarChart, ReferenceArea, Bar, XAxis, YAxis, LabelProps } from '../../src';
 
 describe('<ReferenceArea />', () => {
   const data = [
@@ -119,7 +119,7 @@ describe('<ReferenceArea />', () => {
   });
 
   test('Render 1 line and 1 label when label is set to be a function in ReferenceArea', () => {
-    const renderLabel = (props: any) => {
+    const renderLabel = (props: LabelProps) => {
       const { x, y } = props;
 
       return (
@@ -168,7 +168,7 @@ describe('<ReferenceArea />', () => {
   });
 
   test('Render custom lable when label is set to react element', () => {
-    const Label = ({ text, ...props }: { text: any }) => <text {...props}>{text}</text>;
+    const Label = ({ text, ...props }: { text: string }) => <text {...props}>{text}</text>;
     render(
       <BarChart
         width={1100}
