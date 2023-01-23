@@ -77,7 +77,7 @@ describe('<ReferenceDot />', () => {
     expect(container.querySelectorAll('.recharts-label')).toHaveLength(1);
   });
 
-  test('Render custom lable when label is set to be a react element', () => {
+  test('Render custom label when label is set to be a react element', () => {
     const Label = ({ text, ...props }: { text: string }) => (
       <text className="customized-label" {...props}>
         {text}
@@ -101,12 +101,9 @@ describe('<ReferenceDot />', () => {
     expect(screen.findByText('Custom Text')).toBeTruthy();
   });
 
-  test('Render custom lable when label is set to be a function', () => {
-    const renderLabel = ({ text, ...props }: { text: string }) => (
-      <text className="customized-label" {...props}>
-        Custom Text
-      </text>
-    );
+  test('Render custom label when label is set to be a function', () => {
+    const renderLabel = () => <text className="customized-label">Custom Text</text>;
+
     render(
       <BarChart
         width={1100}
