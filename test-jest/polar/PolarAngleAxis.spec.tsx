@@ -4,12 +4,18 @@ import { Surface, PolarAngleAxis } from '../../src';
 import { TickItem } from '../../src/util/types';
 
 describe('<PolarAngleAxis />', () => {
-  const ticks = [{ value: 10 }, { value: 1000 }, { value: 20 }, { value: 40 }, { value: 90 }];
+  const ticks: TickItem[] = [
+    { coordinate: 10 },
+    { coordinate: 1000 },
+    { coordinate: 20 },
+    { coordinate: 40 },
+    { coordinate: 90 },
+  ];
 
   test('Renders 5 ticks in when ticks is not empty', () => {
     const { container } = render(
       <Surface width={500} height={500}>
-        <PolarAngleAxis cx={250} cy={250} radius={50} ticks={ticks as TickItem[]} />
+        <PolarAngleAxis cx={250} cy={250} radius={50} ticks={ticks} />
       </Surface>,
     );
 
@@ -27,7 +33,7 @@ describe('<PolarAngleAxis />', () => {
     };
     const { container } = render(
       <Surface width={500} height={500}>
-        <PolarAngleAxis cx={250} cy={250} radius={50} tick={<Tick />} ticks={ticks as TickItem[]} />
+        <PolarAngleAxis cx={250} cy={250} radius={50} tick={<Tick />} ticks={ticks} />
       </Surface>,
     );
 
