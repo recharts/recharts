@@ -1,5 +1,6 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Surface, RadialBar } from '../../src';
 
 describe('<RadialBar />', () => {
@@ -30,7 +31,7 @@ describe('<RadialBar />', () => {
     expect(container.querySelectorAll('.recharts-pie')).toHaveLength(0);
   });
 
-  test('Render 5 sectors', () => {
+  test('Render 5 sectors', async () => {
     const onMouseEnter = jest.fn();
     const onMouseLeave = jest.fn();
     const onClick = jest.fn();
@@ -52,11 +53,11 @@ describe('<RadialBar />', () => {
 
     const sector = container.querySelectorAll('.recharts-sector')[0];
 
-    fireEvent.mouseEnter(sector);
+    await userEvent.hover(sector);
     expect(onMouseEnter).toHaveBeenCalled();
-    fireEvent.mouseLeave(sector);
+    await userEvent.unhover(sector);
     expect(onMouseLeave).toHaveBeenCalled();
-    fireEvent.click(sector);
+    await userEvent.click(sector);
     expect(onClick).toHaveBeenCalled();
   });
 });
