@@ -9,8 +9,8 @@ describe('<Sector />', () => {
         <Sector fill="#ff7902" cx={200} cy={300} innerRadius={150} outerRadius={200} endAngle={90} />
       </Surface>,
     );
-    const sectorEl = screen.getByRole('img');
-    expect(sectorEl?.classList.contains('recharts-sector')).toBeTruthy();
+    const sector = screen.getByRole('img');
+    expect(sector?.classList.contains('recharts-sector')).toBeTruthy();
   });
 
   test('Render 1 sector when cornerRadius > 0', () => {
@@ -21,7 +21,7 @@ describe('<Sector />', () => {
     );
 
     const sectors = screen.queryAllByRole('img');
-    expect(sectors.length).toBe(1);
+    expect(sectors).toHaveLength(1);
     const path = sectors[0].getAttribute('d') as string;
     expect(path).not.toBeFalsy();
     expect(path.length - path.split('A').join('').length).toBe(6);
