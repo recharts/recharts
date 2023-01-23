@@ -23,7 +23,6 @@ require('./specs/chart/ScatterChartSpec');
 require('./specs/chart/SankeySpec');
 
 // general component
-require('./specs/component/LegendSpec');
 require('./specs/component/TooltipSpec');
 require('./specs/component/TextSpec');
 
