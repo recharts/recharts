@@ -9,7 +9,6 @@ import { ImplicitLabelType, Label } from '../component/Label';
 import { createLabeledScales, rectWithPoints } from '../util/CartesianUtils';
 import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
-import { warn } from '../util/LogUtils';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { CartesianViewBox, D3Scale } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
@@ -26,7 +25,6 @@ interface InternalReferenceAreaProps {
 
 interface ReferenceAreaProps extends InternalReferenceAreaProps {
   isFront?: boolean;
-  alwaysShow?: boolean;
   ifOverflow?: 'hidden' | 'visible' | 'discard' | 'extendDomain';
   x1?: number | string;
   x2?: number | string;
@@ -67,9 +65,7 @@ const getRect = (hasX1: boolean, hasX2: boolean, hasY1: boolean, hasY2: boolean,
 };
 
 export function ReferenceArea(props: Props) {
-  const { x1, x2, y1, y2, className, alwaysShow, clipPathId } = props;
-
-  warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
+  const { x1, x2, y1, y2, className, clipPathId } = props;
 
   const hasX1 = isNumOrStr(x1);
   const hasX2 = isNumOrStr(x2);

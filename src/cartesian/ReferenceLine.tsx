@@ -9,7 +9,6 @@ import { ImplicitLabelType, Label } from '../component/Label';
 import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { createLabeledScales, rectWithCoords } from '../util/CartesianUtils';
-import { warn } from '../util/LogUtils';
 import { CartesianViewBox, D3Scale } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
@@ -24,7 +23,6 @@ interface InternalReferenceLineProps {
 
 interface ReferenceLineProps extends InternalReferenceLineProps {
   isFront?: boolean;
-  alwaysShow?: boolean;
   ifOverflow?: 'hidden' | 'visible' | 'discard' | 'extendDomain';
 
   x?: number | string;
@@ -117,9 +115,7 @@ const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegme
 };
 
 export function ReferenceLine(props: Props) {
-  const { x: fixedX, y: fixedY, segment, xAxis, yAxis, shape, className, alwaysShow, clipPathId } = props;
-
-  warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
+  const { x: fixedX, y: fixedY, segment, xAxis, yAxis, shape, className, clipPathId } = props;
 
   const scales = createLabeledScales({ x: xAxis.scale, y: yAxis.scale });
 
