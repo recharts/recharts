@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { fireEvent, render } from '@testing-library/react';
 import React, { ComponentProps, FC } from 'react';
 

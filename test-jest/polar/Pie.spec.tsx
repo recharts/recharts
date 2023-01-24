@@ -299,6 +299,7 @@ describe('<Pie />', () => {
   test('Render customized label line when labelLine is set to be a react element', () => {
     const LabelLine = (props: CustomizedLabelLineProps) => {
       const { points } = props;
+      if (!points) return <></>;
 
       return (
         <path d={`M${points[0].x},${points[0].y}L${points[1].x},${points[1].y}`} className="customized-label-line" />
@@ -326,6 +327,7 @@ describe('<Pie />', () => {
   test('Render customized label line when labelLine is set to be a function', () => {
     const renderLabelLine = (props: CustomizedLabelLineProps) => {
       const { points } = props;
+      if (!points) return <></>;
 
       return (
         <path d={`M${points[0].x},${points[0].y}L${points[1].x},${points[1].y}`} className="customized-label-line" />
@@ -401,8 +403,7 @@ describe('<Pie />', () => {
     expect.assertions(3);
     const timeout = 2000;
     const { container } = render(
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-      <div tabIndex={0} className="container">
+      <div role="button" tabIndex={0} className="container">
         <Surface width={500} height={500}>
           <Pie
             isAnimationActive={false}
@@ -451,8 +452,7 @@ describe('<Pie />', () => {
     expect.assertions(2);
     const timeout = 2000;
     const { container } = render(
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-      <div tabIndex={0} className="container">
+      <div role="button" tabIndex={0} className="container">
         <Surface width={500} height={500}>
           <Pie
             isAnimationActive={false}
@@ -471,7 +471,7 @@ describe('<Pie />', () => {
     pie.focus();
     await waitFor(
       () => {
-        expect(document.activeElement.classList.contains('recharts-pie-sector')).toBe(false);
+        expect(document.activeElement?.classList.contains('recharts-pie-sector')).toBe(false);
       },
       { timeout },
     );
@@ -480,7 +480,7 @@ describe('<Pie />', () => {
 
     await waitFor(
       () => {
-        expect(document.activeElement.classList.contains('recharts-pie-sector')).toBe(true);
+        expect(document.activeElement?.classList.contains('recharts-pie-sector')).toBe(true);
       },
       { timeout },
     );
