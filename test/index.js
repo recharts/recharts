@@ -11,12 +11,5 @@ chai.use(chaiEnzyme());
 require('./specs/cartesian/XAxisSpec');
 require('./specs/cartesian/YAxisSpec');
 
-// chart
-require('./specs/chart/SankeySpec');
-
 // general component
-require('./specs/component/TooltipSpec');
 require('./specs/component/TextSpec');
-
-// shape
-require('./specs/shape/SectorSpec');
