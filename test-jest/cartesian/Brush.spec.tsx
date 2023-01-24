@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Brush, LineChart, Line, BarChart } from '../../src';
