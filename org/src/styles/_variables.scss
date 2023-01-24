@@ -1,0 +1,54 @@
+@charset "utf-8";
+
+// Base variables
+// --------------------------------------------------
+
+// Color
+// --------------------------------------------------
+$black: #000 !default;
+$white: #fff !default;
+
+$gray-base:     #666 !default;
+$gray-dark:     darken($gray-base, 20%) !default;  // #333
+$gray-light:    lighten($gray-base, 20%) !default; // #999
+$gray-lighter:  lighten($gray-base, 40%) !default; // #ccc
+$gray-lightest: lighten($gray-base, 53.3333%) !default; // #eee
+$whitesmoke:    lighten($gray-base, 56%) !default; // #f5f5f5
+
+$brand-primary: #1281ca !default;
+$brand-second:  #2e96ea !default;
+$brand-third:   #12b5f4 !default;
+$brand-info:    #22b5bf !default;
+$brand-warning: #ff7300 !default;
+
+$link-color:        $gray-base !default;
+$link-color-hover:  $gray-dark !default;
+
+$text-color-title:  $gray-dark !default;
+$text-color-body:   $gray-base !default;
+
+
+// Font Size
+// --------------------------------------------------
+$font-size-base: 14px !default;
+
+$font-size-xs:   10px !default;
+$font-size-sm:   12px !default;
+$font-size-lg:   16px !default;
+$font-size-xl:   18px !default;
+$font-size-xxl:  20px !default;
+$font-size-xxxl: 24px !default;
+
+$font-size-body:   $font-size-base !default;
+$font-size-list:   $font-size-sm !default;
+$font-size-second: $font-size-sm !default;
+
+$font-size-num:    $font-size-sm !default;
+$font-size-num-lg: $font-size-xl !default;
+$font-size-num-xl: $font-size-xxl !default;
+
+// Font
+// --------------------------------------------------
+$font-family-code: "Roboto Mono", Consolas, "Liberation Mono", "Courier New", Courier, monospace !default;
+$font-family-base: "Source Sans Pro", "Hiragino Sans GB", Arial, sans-serif !default;
+$font-family-logo: "Oswald", 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif !default;

@@ -1,0 +1,24 @@
+.page-blog {
+  width: 800px;
+  margin: 0 auto;
+
+  .blog {
+    padding-top: 40px;
+
+    .title {
+      height: 36px;
+      line-height: 36px;
+      font-size: 24px;
+      font-weight: 500;
+    }
+
+    .date {
+      margin: 20px 0;
+    }
+
+    .abstract {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+  }
+}
