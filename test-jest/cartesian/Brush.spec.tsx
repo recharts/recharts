@@ -22,8 +22,13 @@ describe('<Brush />', () => {
     { date: '2023-01-14', value: 10 },
   ];
 
-  test('Render 2 travellers and 1 slide in simple Brush', () => {
-    const { container } = render(<Brush x={100} y={50} width={400} height={40} data={data} />);
+  test('Render 2 travelers and 1 slide in simple Brush', () => {
+    const { container } = render(
+      <BarChart width={400} height={100} data={data}>
+        <Brush dataKey="value" x={100} y={50} width={400} height={40} />
+      </BarChart>,
+    );
+
     expect(container.querySelectorAll('.recharts-brush-traveller')).toHaveLength(2);
     expect(container.querySelectorAll('.recharts-brush-slide')).toHaveLength(1);
   });
@@ -36,11 +41,13 @@ describe('<Brush />', () => {
 
   test('Render panorama when specified LineChart as child', () => {
     const { container } = render(
-      <Brush x={100} y={50} width={400} height={40} data={data}>
-        <LineChart>
-          <Line />
-        </LineChart>
-      </Brush>,
+      <BarChart width={400} height={100} data={data}>
+        <Brush x={100} y={50} width={400} height={40}>
+          <LineChart>
+            <Line />
+          </LineChart>
+        </Brush>
+      </BarChart>,
     );
 
     expect(container.querySelectorAll('.recharts-line')).toHaveLength(1);
@@ -63,6 +70,7 @@ describe('<Brush />', () => {
     expect(screen.getAllByText(data[data.length - 1].date)).toHaveLength(1);
   });
 
+  // eslint-disable-next-line max-len
   test('mouse down on traveller will trigger the brush text display, and mouse move out will hide the brush text', () => {
     // wrap brush with a bar chart to make brush traveler work
     const { container } = render(
@@ -95,7 +103,11 @@ describe('<Brush />', () => {
   });
 
   test('render text when alwaysShowText is true', () => {
-    const { container } = render(<Brush x={100} y={50} width={400} height={40} data={data} alwaysShowText />);
+    const { container } = render(
+      <BarChart width={500} height={100} data={data}>
+        <Brush x={100} y={50} width={400} height={40} data={data} alwaysShowText />
+      </BarChart>,
+    );
 
     expect(container.querySelectorAll('.recharts-layer.recharts-brush-texts')).toHaveLength(1);
   });

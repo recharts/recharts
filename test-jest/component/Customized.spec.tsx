@@ -1,22 +1,28 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Customized } from '../../src';
 
 describe('<Customized />', () => {
   test('Render customized component by React.element', () => {
-    function SvgElement() {
-      return <rect className="customized-svg-element" />;
+    function CustomEl() {
+      return <rect data-testid="customized-svg-element" />;
     }
-    const { container } = render(<Customized component={<SvgElement />} />);
-    expect(container.querySelectorAll('.customized-svg-element')).toHaveLength(1);
+    render(
+      <svg>
+        <Customized component={<CustomEl />} />
+      </svg>,
+    );
+    expect(screen.getByTestId('customized-svg-element')).toBeTruthy();
   });
 
   test('Render customized component by Function', () => {
-    function rect() {
-      return <rect className="customized-svg-element" />;
-    }
-    // eslint-disable-next-line react/jsx-no-bind
-    const { container } = render(<Customized component={rect} />);
-    expect(container.querySelectorAll('.customized-svg-element')).toHaveLength(1);
+    const Custom = () => <rect data-testid="customized-svg-element" />;
+
+    render(
+      <svg>
+        <Customized component={Custom} />
+      </svg>,
+    );
+    expect(screen.getByTestId('customized-svg-element')).toBeTruthy();
   });
 });

@@ -26,6 +26,7 @@ interface InternalReferenceAreaProps {
 
 interface ReferenceAreaProps extends InternalReferenceAreaProps {
   isFront?: boolean;
+  /** @deprecated use ifOverflow="extendDomain"  */
   alwaysShow?: boolean;
   ifOverflow?: 'hidden' | 'visible' | 'discard' | 'extendDomain';
   x1?: number | string;

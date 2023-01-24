@@ -24,6 +24,7 @@ interface InternalReferenceLineProps {
 
 interface ReferenceLineProps extends InternalReferenceLineProps {
   isFront?: boolean;
+  /** @deprecated use ifOverflow="extendDomain"  */
   alwaysShow?: boolean;
   ifOverflow?: 'hidden' | 'visible' | 'discard' | 'extendDomain';
 
