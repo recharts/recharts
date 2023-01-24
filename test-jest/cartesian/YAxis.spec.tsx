@@ -1,5 +1,6 @@
-import { render } from '@testing-library/react';
 import React from 'react';
+import each from 'jest-each';
+import { render } from '@testing-library/react';
 import { Surface, AreaChart, Area, YAxis } from '../../src';
 
 describe('<YAxis />', () => {
@@ -39,49 +40,26 @@ describe('<YAxis />', () => {
     expect(ticks[1].getAttribute('y')).toBe('297.5');
   });
 
-  it('Should render 5 ticks when domain={[0, 10000]}', () => {
+  each([
+    // [ticksLength, domain, textContentOfTickElement]
+    [5, [0, 10000], 10000],
+    [4, [0, 'dataMax'], 9800],
+    [4, [0, 'dataMax - 100'], 9800],
+  ]).it('Should render %s ticks when domain={%s}', (length, domain, textContent) => {
     render(
       <AreaChart width={600} height={400} data={data}>
-        <YAxis type="number" stroke="#ff7300" domain={[0, 10000]} />
+        <YAxis type="number" stroke="#ff7300" domain={domain} />
         <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
         <Area dataKey="pv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>,
     );
     const ticks = document.querySelectorAll('text');
 
-    expect(ticks).toHaveLength(5);
-    expect(ticks[ticks.length - 1]).toHaveTextContent('10000');
+    expect(ticks).toHaveLength(length);
+    expect(ticks[ticks.length - 1]).toHaveTextContent(textContent);
   });
 
-  it('Should render 4 ticks when domain={[0, "dataMax"]}', () => {
-    render(
-      <AreaChart width={600} height={400} data={data}>
-        <YAxis type="number" stroke="#ff7300" domain={[0, 'dataMax']} />
-        <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
-        <Area dataKey="pv" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>,
-    );
-    const ticks = document.querySelectorAll('text');
-
-    expect(ticks).toHaveLength(4);
-    expect(ticks[ticks.length - 1]).toHaveTextContent('9800');
-  });
-
-  it('Should render 4 ticks when domain={[0, "dataMax - 100"]}', () => {
-    render(
-      <AreaChart width={600} height={400} data={data}>
-        <YAxis type="number" stroke="#ff7300" domain={[0, 'dataMax - 100']} />
-        <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
-        <Area dataKey="pv" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>,
-    );
-    const ticks = document.querySelectorAll('text');
-
-    expect(ticks).toHaveLength(4);
-    expect(ticks[ticks.length - 1]).toHaveTextContent('9800');
-  });
-
-  it('Render 1 ticks when domain={[0, 1000]} and dataKey is "noExist" ', () => {
+  it('Render 1 ticks when domain={[0, 1000]} and dataKey is "noExist"', () => {
     render(
       <AreaChart width={600} height={400} data={data}>
         <YAxis stroke="#ff7300" domain={[0, 1000]} />
@@ -94,41 +72,20 @@ describe('<YAxis />', () => {
     expect(ticks[1].getAttribute('y')).toBe('297.5');
   });
 
-  it('Should render 0 ticks when domain={[0, "dataMax + 100"]} and dataKey is "noExist" ', () => {
-    render(
-      <AreaChart width={600} height={400} data={data}>
-        <YAxis stroke="#ff7300" domain={[0, 'dataMax + 100']} />
-        <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>,
-    );
-    const ticks = document.querySelectorAll('text');
+  each([[[0, 'dataMax + 100']], [[0, 'dataMax - 100']], [['auto', 'auto']]]).it(
+    'Should render 0 ticks when domain={%s} and dataKey is "noExist" ',
+    domain => {
+      render(
+        <AreaChart width={600} height={400} data={data}>
+          <YAxis stroke="#ff7300" domain={domain} />
+          <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
+        </AreaChart>,
+      );
+      const ticks = document.querySelectorAll('text');
 
-    expect(ticks).toHaveLength(0);
-  });
-
-  it('Should render 0 ticks when domain={[0, "dataMax - 100"]} and dataKey is "noExist" ', () => {
-    render(
-      <AreaChart width={600} height={400} data={data}>
-        <YAxis stroke="#ff7300" domain={[0, 'dataMax - 100']} />
-        <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>,
-    );
-    const ticks = document.querySelectorAll('text');
-
-    expect(ticks).toHaveLength(0);
-  });
-
-  it('Should render 0 ticks when domain={["auto, "auto"]} and dataKey is "noExist" ', () => {
-    render(
-      <AreaChart width={600} height={400} data={data}>
-        <YAxis stroke="#ff7300" domain={['auto', 'auto']} />
-        <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
-      </AreaChart>,
-    );
-    const ticks = document.querySelectorAll('text');
-
-    expect(ticks).toHaveLength(0);
-  });
+      expect(ticks).toHaveLength(0);
+    },
+  );
 
   it('Render 4 ticks', () => {
     render(
