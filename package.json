@@ -31,8 +31,8 @@
     "test": "npm run test-karma && npm run test-jest",
     "test-karma": "cross-env NODE_ENV=test-karma karma start test/karma.conf.js --watch=false --single-run --browsers=ChromeHeadless",
     "test-jest": "cross-env NODE_ENV=test jest",
-    "lint": "eslint './src/**/*.?(ts|tsx)'",
-    "autofix": "eslint './src/**/*.?(ts|tsx)' --fix",
+    "lint": "eslint \"./src/**/*.{ts,tsx}\"",
+    "autofix": "eslint \"./src/**/*.{ts,tsx}\" --fix",
     "analyse": "cross-env NODE_ENV=analyse webpack ./src/index.ts -o umd/Recharts.js",
     "tsc": "tsc"
   },
