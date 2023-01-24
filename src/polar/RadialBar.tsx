@@ -359,7 +359,6 @@ export class RadialBar extends PureComponent<Props, State> {
     const backgroundProps = filterProps(this.props.background);
 
     return sectors.map((entry, i) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { value, background, ...rest } = entry;
 
       if (!background) {
@@ -398,14 +397,7 @@ export class RadialBar extends PureComponent<Props, State> {
 
         <Layer className="recharts-radial-bar-sectors">{this.renderSectors()}</Layer>
 
-        {(!isAnimationActive || isAnimationFinished) &&
-          LabelList.renderCallByParent(
-            {
-              ...this.props,
-              clockWise: this.getDeltaAngle() < 0,
-            },
-            data,
-          )}
+        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent({ ...this.props }, data)}
       </Layer>
     );
   }
