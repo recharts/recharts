@@ -16,6 +16,11 @@
     "type": "git",
     "url": "git@github.com/recharts/recharts.org.git"
   },
+  "eslintConfig": {
+    "eslintIgnore": [
+      "./docs/**"
+    ]
+  },
   "author": "recharts group",
   "devDependencies": {
     "@babel/cli": "^7.12.10",

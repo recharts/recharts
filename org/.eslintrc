@@ -1,21 +1,24 @@
 {
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
     "eslint-config-airbnb",
-    "prettier/@typescript-eslint",
     "plugin:prettier/recommended",
     "prettier"
   ],
   "env": {
     "browser": true,
     "mocha": true,
-    "node": true,
-    "jest": true
+    "node": true
   },
-  "parser": "@typescript-eslint/parser",
-  "plugins": ["react", "@typescript-eslint"],
+  "parser": "babel-eslint",
+  "plugins": ["react"],
+  "ignorePatterns": ["src/docs/**/*.js"],
+  "ecmaFeatures": {
+    "classes": true,
+    "jsx": true,
+    "experimentalDecorators": true
+  },
   "rules": {
     "prettier/prettier": [
       "error",
@@ -25,8 +28,7 @@
         "singleQuote": true,
         "tabWidth": 2,
         "useTabs": false,
-        "trailingComma": "all",
-        "arrowParens": "avoid"
+        "trailingComma": "all"
       }
     ],
     "import/extensions": "off",
@@ -36,31 +38,42 @@
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
     "react/react-in-jsx-scope": "error",
-    "react/jsx-filename-extension": ["error", { "extensions": [".ts", ".tsx", ".js", ".jsx"] }],
+    "react/jsx-filename-extension": ["off", { "extensions": [".ts", ".tsx", ".js", ".jsx"] }],
 
     "no-var": "error",
+
+    // Temporarily disabled for test/* until babel/babel-eslint#33 is resolved
+    "padded-blocks": "off",
     "react/jsx-no-bind": "error",
 
+    "strict": "off",
     "no-unused-vars": "off",
     "one-var": ["error", { "uninitialized": "always" }],
     "one-var-declaration-per-line": ["error", "initializations"],
+    "no-mixed-operators": "off",
     "no-plusplus": "off",
+    "import/prefer-default-export": "off",
+    "react/forbid-prop-types": "off",
     "no-bitwise": "off",
+    "object-property-newline": "off",
     "react/no-unused-prop-types": "off",
     "class-methods-use-this": "error",
+    "import/no-named-as-default": "off",
     "import/no-extraneous-dependencies": [
       "error",
       {
-        "devDependencies": ["org/** demo/**", "test/**", "test-jest/**", "*.config.js", "scripts/**", "**/Spec.js"]
+        "devDependencies": ["demo/**", "test/**", "*.config.js", "scripts/**", "**/Spec.js"]
       }
     ],
     "max-len": ["warn", 120],
-
+    // Errors introduced while upgrading eslint & plugins
+    "no-restricted-properties": "error",
     "prefer-destructuring": "error",
     "object-curly-newline": "off",
     "function-paren-newline": "off",
     "react/require-default-props": "off",
     "no-restricted-globals": "error",
+    "comma-dangle": "off",
     "react/default-props-match-prop-types": "off",
     "react/no-array-index-key": "warn",
     "no-multi-assign": "off",
@@ -69,31 +82,11 @@
     "react/jsx-closing-tag-location": "error",
     "react/no-unused-state": "error",
     "react/prefer-stateless-function": "error",
+    "import/no-cycle": "warn",
     "react/jsx-props-no-spreading": "off",
     "react/state-in-constructor": "off",
-    "react/static-property-placement": "off",
-    "import/prefer-default-export": "off",
-    "import/no-named-as-default": "error",
-    "import/no-cycle": "error",
-    "import/no-default-export": "error",
-
-    "import/no-import-module-exports": "error",
-    "import/no-relative-packages": "error",
-
-    "no-use-before-define": "off",
-
-    "@typescript-eslint/no-use-before-define": ["error"],
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/ban-types": "off",
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      {
-        "args": "after-used",
-        "ignoreRestSiblings": true,
-        "argsIgnorePattern": "^_"
-      }
-    ]
+    "react/prop-types": "off",
+    "react/static-property-placement": "off"
   },
   "settings": {
     "import/resolver": {
