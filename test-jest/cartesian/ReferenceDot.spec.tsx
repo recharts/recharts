@@ -57,26 +57,6 @@ describe('<ReferenceDot />', () => {
     expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
   });
 
-  test('Render 1 line and 1 label when alwaysShow is true in ReferenceDot', () => {
-    const { container } = render(
-      <BarChart
-        width={1100}
-        height={250}
-        barGap={2}
-        barSize={6}
-        data={data}
-        margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
-      >
-        <XAxis dataKey="name" />
-        <YAxis tickCount={7} />
-        <Bar dataKey="uv" />
-        <ReferenceDot x="201106" y={20} stroke="#666" label="201106" alwaysShow />
-      </BarChart>,
-    );
-    expect(container.querySelectorAll('.recharts-reference-dot-dot')).toHaveLength(1);
-    expect(container.querySelectorAll('.recharts-label')).toHaveLength(1);
-  });
-
   test('Render custom lable when label is set to be a react element', () => {
     const Label = ({ text, ...props }: { text: string }) => (
       <text className="customized-label" {...props}>
@@ -95,7 +75,7 @@ describe('<ReferenceDot />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceDot x="201106" y={20} stroke="#666" label={<Label text="Custom Text" />} alwaysShow />
+        <ReferenceDot x="201106" y={20} stroke="#666" label={<Label text="Custom Text" />} />
       </BarChart>,
     );
     expect(screen.findByText('Custom Text')).toBeTruthy();
@@ -119,7 +99,7 @@ describe('<ReferenceDot />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceDot x="201106" y={20} stroke="#666" label={renderLabel} alwaysShow />
+        <ReferenceDot x="201106" y={20} stroke="#666" label={renderLabel} />
       </BarChart>,
     );
     expect(screen.findByText('Custom Text')).toBeTruthy();
@@ -138,7 +118,7 @@ describe('<ReferenceDot />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceDot x="201106" y={20} stroke="#666" label={{}} alwaysShow />
+        <ReferenceDot x="201106" y={20} stroke="#666" label={{}} />
       </BarChart>,
     );
     expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
@@ -157,8 +137,8 @@ describe('<ReferenceDot />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceDot x="201106" stroke="#666" alwaysShow />
-        <ReferenceDot y={20} stroke="#666" alwaysShow />
+        <ReferenceDot x="201106" stroke="#666" />
+        <ReferenceDot y={20} stroke="#666" />
       </BarChart>,
     );
     expect(container.querySelectorAll('.recharts-reference-dot-dot')).toHaveLength(0);

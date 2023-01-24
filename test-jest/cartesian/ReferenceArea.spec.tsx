@@ -99,25 +99,6 @@ describe('<ReferenceArea />', () => {
     expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
   });
 
-  test('Render line and label when alwaysShow is true in ReferenceArea', () => {
-    const { container } = render(
-      <BarChart
-        width={1100}
-        height={250}
-        barGap={2}
-        barSize={6}
-        data={data}
-        margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
-      >
-        <XAxis dataKey="name" />
-        <YAxis tickCount={7} />
-        <Bar dataKey="uv" />
-        <ReferenceArea y1={200} y2={300} fill="#666" alwaysShow />
-      </BarChart>,
-    );
-    expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(1);
-  });
-
   test('Render 1 line and 1 label when label is set to be a function in ReferenceArea', () => {
     const renderLabel = (props: LabelProps) => {
       const { x, y } = props;
@@ -181,7 +162,7 @@ describe('<ReferenceArea />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceArea x1="201106" x2="201110" fill="#666" label={<Label text="Custom Text" />} alwaysShow />
+        <ReferenceArea x1="201106" x2="201110" fill="#666" label={<Label text="Custom Text" />} />
       </BarChart>,
     );
     expect(screen.findByText('Custom Text')).toBeTruthy();
