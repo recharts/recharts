@@ -32,10 +32,12 @@ jobs:
       - name: Build docs
         uses: actions/jekyll-build-pages@v1
         with:
-          source: org/docs/
+          source: org/
           destination: ./_site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./_site
 
   # Deployment job
   deploy:
@@ -48,6 +50,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
-        with:
-          path: ./_site
           
