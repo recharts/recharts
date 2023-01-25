@@ -49,5 +49,5 @@ jobs:
         id: deployment
         uses: deploy-pages@v1
         with:
-          path: ./_site
+          path: _site/
           
