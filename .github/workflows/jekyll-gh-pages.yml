@@ -36,6 +36,9 @@ jobs:
           cd org
           npm install
           npm run build
+      - name: Checkout
+        uses: actions/checkout@v3
+        
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
