@@ -1,5 +1,7 @@
-import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { uniqueId } from 'lodash';
+import { render, screen } from '@testing-library/react';
+
 import { Surface, Radar } from '../../src';
 
 type point = { x: number; y: number };
@@ -9,14 +11,20 @@ const CustomizedShape = ({ points }: { points: point[] }) => {
     '',
   );
 
-  return <path d={d} data-testid="customized-shape" />;
+  return <path d={d} key={uniqueId()} data-testid="customized-shape" />;
 };
 
 const CustomizedLabel = () => {
-  return <text data-testid="customized-label">test</text>;
+  return (
+    <text key={uniqueId()} data-testid="customized-label">
+      test
+    </text>
+  );
 };
 
-const CustomizedDot = ({ x, y }: point) => <circle cx={x} cy={y} r={10} data-testid="customized-dot" />;
+const CustomizedDot = ({ x, y }: point) => (
+  <circle key={uniqueId()} cx={x} cy={y} r={10} data-testid="customized-dot" />
+);
 
 describe('<Radar />', () => {
   const data = [
@@ -46,10 +54,30 @@ describe('<Radar />', () => {
     expect(screen.getAllByTestId('customized-shape')).toHaveLength(1);
   });
 
+  it('Render customized shape when shape is set to be a element', () => {
+    render(
+      <Surface width={500} height={500}>
+        <Radar dataKey="y" isAnimationActive={false} points={data} shape={props => <CustomizedShape {...props} />} />
+      </Surface>,
+    );
+
+    expect(screen.getAllByTestId('customized-shape')).toHaveLength(1);
+  });
+
   it('Render customized label when label is set to be a function', () => {
     render(
       <Surface width={500} height={500}>
         <Radar dataKey="y" isAnimationActive={false} points={data} label={CustomizedLabel} />
+      </Surface>,
+    );
+
+    expect(screen.getAllByTestId('customized-label')).toHaveLength(data.length);
+  });
+
+  it('Render customized label when label is set to be a react element', () => {
+    render(
+      <Surface width={500} height={500}>
+        <Radar dataKey="y" isAnimationActive={false} points={data} label={<CustomizedLabel />} />
       </Surface>,
     );
 
@@ -66,6 +94,16 @@ describe('<Radar />', () => {
     expect(screen.getAllByTestId('customized-dot')).toHaveLength(data.length);
   });
 
+  it('Render customized dot when dot is set to be a react element', () => {
+    render(
+      <Surface width={500} height={500}>
+        <Radar dataKey="y" isAnimationActive={false} points={data} dot={props => <CustomizedDot {...props} />} />
+      </Surface>,
+    );
+
+    expect(screen.getAllByTestId('customized-dot')).toHaveLength(data.length);
+  });
+
   it("Don't render polygon when points is empty", () => {
     const { container } = render(
       <Surface width={500} height={500}>
@@ -75,37 +113,4 @@ describe('<Radar />', () => {
 
     expect(container.querySelectorAll('.recharts-radar-polygon')).toHaveLength(0);
   });
-
-  // TODO: Need to fix type errors for these test-cases
-  /*
-  it('Render customized shape when shape is set to be a element', () => {
-    render(
-      <Surface width={500} height={500}>
-        <Radar dataKey="y" isAnimationActive={false} points={data} shape={<CustomizedShape />} />
-      </Surface>,
-    );
-
-    expect(screen.getAllByTestId('customized-shape')).toHaveLength(1);
-  });
-
-  it('Render customized label when label is set to be a react element', () => {
-    const { container } = render(
-      <Surface width={500} height={500}>
-        <Radar dataKey="y" isAnimationActive={false} points={data} label={<CustomizedLabel />} />
-      </Surface>,
-    );
-
-    expect(screen.getAllByTestId('customized-label')).toHaveLength(data.length);
-  });
-
-  it('Render customized dot when dot is set to be a react element', () => {
-    const { container } = render(
-      <Surface width={500} height={500}>
-        <Radar dataKey="y" isAnimationActive={false} points={data} dot={<CustomizedDot />} />
-      </Surface>,
-    );
-
-    expect(screen.getAllByTestId('customized-dot')).toHaveLength(data.length);
-  });
-  */
 });
