@@ -33,7 +33,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: |
-          cd ../../org
+          cd org
           npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v2
