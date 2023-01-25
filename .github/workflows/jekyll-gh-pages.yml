@@ -45,11 +45,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: npm init
-        run: npm init -y
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: ptienchuan/deploy-github-pages-action@1.0.0
+        uses: crazy-max/ghaction-github-pages@v3.1.0
         with:
-          source-directory: ./_site
+          build_dir: ./_site
           
