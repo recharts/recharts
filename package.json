@@ -20,6 +20,7 @@
     "chart",
     "react-component"
   ],
+  "workspaces": ["org"],
   "scripts": {
     "prepare": "husky install",
     "build": "npm run build-types && npm run build-cjs && npm run build-es6 && npm run build-umd",
@@ -27,6 +28,7 @@
     "build-es6": "rimraf es6 && cross-env NODE_ENV=es6 babel ./src -d es6 --extensions '.js,.ts,.tsx'",
     "build-umd": "rimraf umd && cross-env NODE_ENV=production webpack --entry ./src/index.ts -o umd",
     "build-types": "rimraf types && npm run tsc",
+    "build:docs": "npm run build --workspace=org",
     "demo": "webpack serve --config demo/webpack.config.js --port 3000 --host 127.0.0.1 --progress --profile --static demo/",
     "test": "npm run test-karma && npm run test-jest",
     "test-karma": "cross-env NODE_ENV=test-karma karma start test/karma.conf.js --watch=false --single-run --browsers=ChromeHeadless",
@@ -37,7 +39,7 @@
     "tsc": "tsc"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
+    "\"./src/**/*.{ts,tsx}\"": [
       "eslint --fix",
       "prettier --write"
     ]
