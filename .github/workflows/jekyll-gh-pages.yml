@@ -29,6 +29,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Setup Pages
         uses: actions/configure-pages@v2
+      - name: npm init
+        run: npm init -y
       - name: Build docs
         uses: actions/jekyll-build-pages@v1
         with:
