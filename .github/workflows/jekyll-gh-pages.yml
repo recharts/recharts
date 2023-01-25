@@ -49,5 +49,5 @@ jobs:
         id: deployment
         uses: crazy-max/ghaction-github-pages@v3.1.0
         with:
-          build_dir: ./_site
+          build_dir: _site/
           
