@@ -9,7 +9,6 @@ chai.use(chaiEnzyme());
 
 // cartesian system chart component
 require('./specs/cartesian/XAxisSpec');
-require('./specs/cartesian/YAxisSpec');
 
 // general component
 require('./specs/component/TextSpec');

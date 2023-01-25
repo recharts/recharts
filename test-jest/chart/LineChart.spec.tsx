@@ -633,7 +633,6 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(2);
   });
 
-  // eslint-disable-next-line max-len
   test("should show tooltips using syncMethod: 'value' for both charts on MouseEnter and hide on MouseLeave", async () => {
     const chart1 = (
       <LineChart width={width} height={height} data={data} margin={margin} syncId="test" syncMethod="value">
@@ -691,7 +690,6 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
   });
 
-  // eslint-disable-next-line max-len
   test('should show tooltips using syncMethod: [function] for both charts on MouseEnter and hide on MouseLeave', async () => {
     const syncMethodFunction = () => {
       return 1;

@@ -99,7 +99,7 @@ describe('<ReferenceArea />', () => {
     expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
   });
 
-  test('Render line and label when alwaysShow is true in ReferenceArea', () => {
+  test('Render line and label when ifOverflow is "extendDomain" in ReferenceArea', () => {
     const { container } = render(
       <BarChart
         width={1100}
@@ -112,7 +112,7 @@ describe('<ReferenceArea />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceArea y1={200} y2={300} fill="#666" alwaysShow />
+        <ReferenceArea y1={200} y2={300} fill="#666" ifOverflow="extendDomain" />
       </BarChart>,
     );
     expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(1);
@@ -181,7 +181,13 @@ describe('<ReferenceArea />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        <ReferenceArea x1="201106" x2="201110" fill="#666" label={<Label text="Custom Text" />} alwaysShow />
+        <ReferenceArea
+          x1="201106"
+          x2="201110"
+          fill="#666"
+          label={<Label text="Custom Text" />}
+          ifOverflow="extendDomain"
+        />
       </BarChart>,
     );
     expect(screen.findByText('Custom Text')).toBeTruthy();

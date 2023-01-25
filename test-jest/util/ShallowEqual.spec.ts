@@ -1,6 +1,5 @@
 import { shallowEqual } from '../../src/util/ShallowEqual';
 
-/* eslint-disable max-len */
 const arrayValue = [1];
 const objectValue = { foo: 'bar' };
 

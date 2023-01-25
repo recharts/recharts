@@ -1,4 +1,4 @@
-import React, { cloneElement, ReactElement, SVGProps } from 'react';
+import React, { cloneElement, ReactElement, ReactNode, SVGProps } from 'react';
 import _ from 'lodash';
 import { Label, ContentType, Props as LabelProps } from './Label';
 import { Layer } from '../container/Layer';
@@ -72,7 +72,7 @@ export function LabelList<T extends Data>(props: Props<T>) {
 
 LabelList.displayName = 'LabelList';
 
-function parseLabelList<T extends Data>(label: any, data: Array<T>) {
+function parseLabelList<T extends Data>(label: unknown, data: Array<T>) {
   if (!label) {
     return null;
   }
@@ -92,15 +92,20 @@ function parseLabelList<T extends Data>(label: any, data: Array<T>) {
   return null;
 }
 
-function renderCallByParent<T extends Data>(parentProps: any, data: Array<T>, checkPropsLabel = true) {
+function renderCallByParent<T extends Data>(
+  parentProps: { children?: ReactNode; label?: unknown },
+  data: Array<T>,
+  checkPropsLabel = true,
+) {
   if (!parentProps || (!parentProps.children && checkPropsLabel && !parentProps.label)) {
     return null;
   }
   const { children } = parentProps;
 
-  const explicitChildren = findAllByType(children, LabelList).map((child, index: number) =>
+  const explicitChildren = findAllByType(children, LabelList).map((child, index) =>
     cloneElement(child, {
       data,
+      // eslint-disable-next-line react/no-array-index-key
       key: `labelList-${index}`,
     }),
   );
