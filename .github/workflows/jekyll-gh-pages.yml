@@ -47,4 +47,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: ptienchuan/deploy-github-pages-action@1.0.0
+        with:
+          source-directory: _site/
+          
