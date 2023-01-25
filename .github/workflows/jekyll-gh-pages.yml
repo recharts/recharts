@@ -49,5 +49,5 @@ jobs:
         id: deployment
         uses: ptienchuan/deploy-github-pages-action@1.0.0
         with:
-          source-directory: _site/
+          source-directory: ./_site
           
