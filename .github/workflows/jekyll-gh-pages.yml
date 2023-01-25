@@ -47,7 +47,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: crazy-max/ghaction-github-pages@v3.1.0
+        uses: deploy-pages@v1
         with:
-          build_dir: org/
+          path: ./_site
           
