@@ -10,7 +10,8 @@
     "start": "npm run sync-examples-dev && webpack serve --config webpack.config.dev.js",
     "autofix": "eslint src --fix",
     "lint": "eslint src",
-    "prettier": "prettier --write src/**/*.js"
+    "prettier": "prettier --write src/**/*.js",
+    "gh-pages:404": "cp build/index.html build/404.html"
   },
   "repository": {
     "type": "git",
