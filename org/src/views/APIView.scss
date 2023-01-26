@@ -1,0 +1,110 @@
+@import '../styles/mixins';
+
+.page.page-api {
+  .examples {
+    padding-right: 20px;
+    .example-list {
+      > li {
+        padding: 10px 0;
+
+        .code {
+          position: relative;
+          .view-data-button {
+            position: absolute;
+            right: 0;
+            top: 0;
+            display: block;
+            padding: 0 10px;
+            line-height: 28px;
+            background-color: #e5e5e5;
+            border: none;
+
+            &:hover {
+              background-color: #e0e0e0;
+            }
+          }
+        }
+      }
+    }
+  }
+  .api-component-item {
+    display: inline-block;
+    margin: 8px 20px 8px 0;
+    font-size: 20px;
+    padding: 0 10px;
+    background-color: rgba(27,31,35,0.05);
+    border-radius: 3px;
+    height: 30px;
+    line-height: 30px;
+  }
+  .props-list {
+    .props-item {
+      border-bottom: 1px solid #f5f5f5;
+      padding: 20px 10px;
+
+      > p {
+        margin: 0;
+      }
+
+      .header {
+        .title {
+          height: 32px;
+          line-height: 32px;
+          margin-right: 20px;
+          color: #1281ca;
+          font-weight: 600;
+          font-size: 20px;
+        }
+
+        &.deprecated {
+          .title {
+            color: #999;
+            text-decoration: line-through;
+          }
+          .deprecated-label {
+            margin-left: 10px;
+          }
+        }
+
+        .type {
+          padding-left: 20px;
+          color: #bf2a5c;
+        }
+        .optional {
+          margin-left: 10px;
+        }
+      }
+
+      .desc {
+        line-height: 1.5;
+      }
+
+      .default {
+        line-height: 1.5;
+
+        .title {
+          font-weight: 700;
+          margin-right: 10px;
+        }
+      }
+      .examples {
+        .title {
+          margin: 0;
+          font-weight: 700;
+        }
+        .list {
+          a {
+            color: #1281ca;
+          }
+        }
+      }
+      .format {
+        margin-bottom: 10px;
+        .title {
+          margin: 0;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+}
