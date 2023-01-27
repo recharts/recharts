@@ -1,6 +1,7 @@
-import { render } from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
 import React from 'react';
-import { Surface, ScatterChart, Scatter, LineChart, Line, XAxis, YAxis } from '../../src';
+import { act } from 'react-dom/test-utils';
+import { Surface, ScatterChart, Scatter, LineChart, Line, XAxis, YAxis, BarChart, Bar } from '../../src';
 
 describe('<XAxis />', () => {
   const data = [
@@ -137,28 +138,29 @@ describe('<XAxis />', () => {
     expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(timeData.length);
   });
 
-  // TODO: need to fix these test cases (padding props not working properly)
-  /* it('Render Bars with gap', () => {
+  it('Render Bars with gap', () => {
     const { container } = render(
-      <LineChart width={300} height={300} data={data}>
-        <Line dataKey="y" />
+      <BarChart width={300} height={300} data={data}>
+        <Bar dataKey="y" isAnimationActive={false} />
         <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding="gap" />
         <YAxis dataKey="y" />
-      </LineChart>,
+      </BarChart>,
     );
 
-    expect(parseInt(container.querySelectorAll(Bar).prop('data')[0].x, 10)).to.equal(70);
+    const bar = container.querySelector('.recharts-rectangle');
+    expect(parseInt(bar?.getAttribute('x') as string, 10)).toEqual(70);
   });
 
   it('Render Bars with no gap', () => {
     const { container } = render(
       <BarChart width={300} height={300} data={data}>
-        <Bar dataKey="y" />
+        <Bar dataKey="y" isAnimationActive={false} />
         <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding="no-gap" />
         <YAxis dataKey="y" />
       </BarChart>,
     );
 
-    expect(parseInt(container.querySelectorAll(Bar).prop('data')[0].x, 10)).to.equal(66);
-  }); */
+    const bar = container.querySelector('.recharts-rectangle');
+    expect(parseInt(bar?.getAttribute('x') as string, 10)).toEqual(66);
+  });
 });
