@@ -1,4 +1,6 @@
 import React from 'react';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 import { LineChart } from '../chart/LineChart';
@@ -6,6 +8,7 @@ import { Line } from '../cartesian/Line';
 import { data } from './data';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
+// eslint-disable-next-line import/no-default-export
 export default {
   title: 'Example/LineChart',
   component: LineChart,
