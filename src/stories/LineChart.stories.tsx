@@ -19,11 +19,9 @@ export default {
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof LineChart> = args => {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart {...args}>
-        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-      </LineChart>
-    </ResponsiveContainer>
+    <LineChart {...args}>
+      <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+    </LineChart>
   );
 };
 
