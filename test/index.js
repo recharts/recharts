@@ -6,6 +6,3 @@ import chaiEnzyme from 'chai-enzyme';
 Enzyme.configure({ adapter: new Adapter() });
 
 chai.use(chaiEnzyme());
-
-// general component
-require('./specs/component/TextSpec');
