@@ -1,8 +1,7 @@
+import { screen, render } from '@testing-library/react';
 import React from 'react';
-import { expect } from 'chai';
-import { Surface, ScatterChart, Scatter, LineChart, Line, XAxis, YAxis, CartesianAxis } from 'recharts';
-import { mount, render } from 'enzyme';
-import { Bar, BarChart } from '../../../src';
+import { act } from 'react-dom/test-utils';
+import { Surface, ScatterChart, Scatter, LineChart, Line, XAxis, YAxis, BarChart, Bar } from '../../src';
 
 describe('<XAxis />', () => {
   const data = [
@@ -23,76 +22,72 @@ describe('<XAxis />', () => {
   ];
 
   it('Render 1 x-CartesianAxis and 1 y-CartesianAxis ticks in ScatterChart', () => {
-    const wrapper = mount(
+    const { container } = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis dataKey="x" name="stature" unit="cm" />
         <YAxis dataKey="y" name="weight" unit="kg" />
         <Scatter name="A school" data={data} fill="#ff7300" />
       </ScatterChart>,
     );
-    expect(wrapper.find(CartesianAxis).length).to.equal(2);
+
+    expect(container.querySelectorAll('.recharts-cartesian-axis-line')).toHaveLength(2);
   });
 
   it("Don't render anything", () => {
-    const wrapper = render(
+    render(
       <Surface width={500} height={500}>
         <XAxis dataKey="x" name="stature" unit="cm" />
       </Surface>,
     );
+    const svg = document.querySelector('svg');
 
-    expect(wrapper.find('svg').children.length).to.equal(1);
-    expect(wrapper.find('svg noscript').children.length).to.equal(1);
+    expect(svg).toBeInTheDocument();
+    expect(svg?.children).toHaveLength(2);
   });
 
-  it("Don't render x-axis when hide is setted to be true", () => {
-    const wrapper = render(
+  it("Don't render x-axis when hide is set to be true", () => {
+    const { container } = render(
       <LineChart width={400} height={400} data={lineData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis hide />
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
-    expect(wrapper.find('.recharts-x-axis').length).to.equal(0);
+
+    expect(container.querySelectorAll('.xAxis .recharts-xAxis')).toHaveLength(0);
   });
 
   it('Render ticks of XAxis when specify ticks', () => {
-    const wrapper = render(
+    const { container } = render(
       <LineChart width={400} height={400} data={lineData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis ticks={[0, 4]} />
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
-    expect(wrapper.find('.xAxis .recharts-cartesian-axis-tick').length).to.equal(2);
+
+    expect(container.querySelectorAll('.xAxis .recharts-cartesian-axis-tick')).toHaveLength(2);
   });
 
   it('Render ticks with tickFormatter', () => {
-    const wrapper = render(
+    const { container } = render(
       <LineChart width={400} height={400} data={lineData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis dataKey="name" tickFormatter={(value, i) => `${i}`} />
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
-    expect(wrapper.find('.xAxis .recharts-cartesian-axis-tick').first()).text().to.equal('0');
+
+    expect(container.querySelectorAll('.xAxis .recharts-cartesian-axis-tick')[0]).toHaveTextContent('0');
   });
 
   it('Render duplicated ticks of XAxis', () => {
-    const lineData = [
-      { name: '03/07/2017', balance: 23126.11 },
-      { name: '03/02/2017', balance: 23137.39 },
-      { name: '03/01/2017', balance: 24609.55 },
-      { name: '03/01/2017', balance: 26827.66 },
-      { name: '02/24/2017', balance: 26807.66 },
-      { name: '02/21/2017', balance: 23835.62 },
-      { name: '02/16/2017', balance: 23829.62 },
-    ];
-
-    const wrapper = render(
+    const { container } = render(
       <LineChart width={600} height={300} data={lineData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
         <XAxis dataKey="name" interval={0} />
         <YAxis />
         <Line type="monotone" dataKey="balance" stroke="#8884d8" activeDot={{ r: 8 }} />
       </LineChart>,
     );
-    expect(wrapper.find('.recharts-xAxis .recharts-cartesian-axis-tick').length).to.equal(lineData.length);
+
+    expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(lineData.length);
   });
 
   it('Render ticks of when the scale of XAxis is time', () => {
@@ -127,7 +122,7 @@ describe('<XAxis />', () => {
       },
     ];
 
-    const wrapper = render(
+    const { container } = render(
       <LineChart width={600} height={300} data={timeData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
         <XAxis
           dataKey="x"
@@ -139,28 +134,33 @@ describe('<XAxis />', () => {
         <Line type="monotone" dataKey="y" stroke="#8884d8" activeDot={{ r: 8 }} />
       </LineChart>,
     );
-    expect(wrapper.find('.recharts-xAxis .recharts-cartesian-axis-tick').length).to.equal(1);
+
+    expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(timeData.length);
   });
 
   it('Render Bars with gap', () => {
-    const wrapper = mount(
+    const { container } = render(
       <BarChart width={300} height={300} data={data}>
-        <Bar dataKey="y" />
+        <Bar dataKey="y" isAnimationActive={false} />
         <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding="gap" />
         <YAxis dataKey="y" />
       </BarChart>,
     );
-    expect(parseInt(wrapper.find(Bar).prop('data')[0].x, 10)).to.equal(70);
+
+    const bar = container.querySelector('.recharts-rectangle');
+    expect(parseInt(bar?.getAttribute('x') as string, 10)).toEqual(70);
   });
 
   it('Render Bars with no gap', () => {
-    const wrapper = mount(
+    const { container } = render(
       <BarChart width={300} height={300} data={data}>
-        <Bar dataKey="y" />
+        <Bar dataKey="y" isAnimationActive={false} />
         <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding="no-gap" />
         <YAxis dataKey="y" />
       </BarChart>,
     );
-    expect(parseInt(wrapper.find(Bar).prop('data')[0].x, 10)).to.equal(66);
+
+    const bar = container.querySelector('.recharts-rectangle');
+    expect(parseInt(bar?.getAttribute('x') as string, 10)).toEqual(66);
   });
 });
