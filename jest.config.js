@@ -4,8 +4,8 @@ module.exports = {
   preset: 'ts-jest',
 
   testEnvironment: 'jsdom',
-  roots: ['<rootDir>/test-jest'],
+  roots: ['<rootDir>/test'],
   maxWorkers: '50%',
-  setupFilesAfterEnv: ['<rootDir>/test-jest/setupTests.ts'],
+  setupFilesAfterEnv: ['<rootDir>/test/setupTests.ts'],
   collectCoverage: true,
 };
