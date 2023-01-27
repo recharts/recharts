@@ -1,3 +1,5 @@
+/* eslint-disable no-script-url */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 import {
   ScatterChart,
@@ -86,9 +88,7 @@ export default class Demo extends Component {
   };
 
   renderSquare = (props: any) => {
-    const { cx, cy, size, xAxis, yAxis, zAxis } = props;
-    const xBandSize = xAxis.bandSize;
-    const yBandSize = yAxis.bandSize;
+    const { cx, cy, size, xAxis, yAxis } = props;
 
     return (
       <rect
@@ -103,8 +103,6 @@ export default class Demo extends Component {
   };
 
   render() {
-    const { data01, data02, data03, data04 } = this.state;
-
     return (
       <div className="scatter-charts">
         <a href="javascript: void(0);" className="btn update" onClick={this.handleChangeData}>
@@ -134,7 +132,7 @@ export default class Demo extends Component {
             <Scatter name="B school" data={data02} fill="#347300" />
             <Tooltip trigger="click" />
             <Legend />
-            <ReferenceArea x1={250} x2={300} alwaysShow label="any label" />
+            <ReferenceArea x1={250} x2={300} label="any label" />
             <ReferenceLine x={159} stroke="red" />
             <ReferenceLine y={237.5} stroke="red" />
             <ReferenceDot x={170} y={290} r={15} label="AB" stroke="none" fill="red" isFront />

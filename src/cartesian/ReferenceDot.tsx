@@ -10,7 +10,6 @@ import { ImplicitLabelType, Label } from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
 import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { createLabeledScales } from '../util/CartesianUtils';
-import { warn } from '../util/LogUtils';
 import { D3Scale } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { Props as XAxisProps } from './XAxis';
@@ -26,8 +25,6 @@ interface ReferenceDotProps extends InternalReferenceDotProps {
   r?: number;
 
   isFront?: boolean;
-  /** @deprecated use ifOverflow="extendDomain"  */
-  alwaysShow?: boolean;
   ifOverflow?: 'hidden' | 'visible' | 'discard' | 'extendDomain';
   x?: number | string;
   y?: number | string;
@@ -55,11 +52,9 @@ const getCoordinate = (props: Props) => {
 };
 
 export function ReferenceDot(props: Props) {
-  const { x, y, r, alwaysShow, clipPathId } = props;
+  const { x, y, r, clipPathId } = props;
   const isX = isNumOrStr(x);
   const isY = isNumOrStr(y);
-
-  warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
   if (!isX || !isY) {
     return null;
