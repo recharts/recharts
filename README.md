@@ -83,6 +83,15 @@ $ npm run[-script] demo
 
 and then browse to http://localhost:3000.
 
+## Storybook
+
+To start storybook locally, execute
+
+```sh
+$ npm run storybook
+```
+and then browse to http://localhost:6006/.
+
 ## Module Formats
 
 - [babel-plugin-recharts](https://github.com/recharts/babel-plugin-recharts) A simple transform to cherry-pick Recharts modules so you don’t have to.
