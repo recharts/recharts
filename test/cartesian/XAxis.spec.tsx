@@ -1,6 +1,5 @@
-import { screen, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 import { Surface, ScatterChart, Scatter, LineChart, Line, XAxis, YAxis, BarChart, Bar } from '../../src';
 
 describe('<XAxis />', () => {
