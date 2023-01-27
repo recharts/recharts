@@ -28,7 +28,7 @@
     "build-umd": "rimraf umd && cross-env NODE_ENV=production webpack --entry ./src/index.ts -o umd",
     "build-types": "rimraf types && npm run tsc",
     "demo": "webpack serve --config demo/webpack.config.js --port 3000 --host 127.0.0.1 --progress --profile --static demo/",
-    "test": "npm run test-karma && npm run test-jest",
+    "test": "cross-env NODE_ENV=test jest",
     "test-karma": "cross-env NODE_ENV=test-karma karma start test/karma.conf.js --watch=false --single-run --browsers=ChromeHeadless",
     "test-jest": "cross-env NODE_ENV=test jest",
     "lint": "eslint \"./src/**/*.{ts,tsx}\"",
