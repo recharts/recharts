@@ -4,7 +4,6 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { LineChart } from '../chart/LineChart';
 import { Line } from '../cartesian/Line';
 import { data } from './data';
-import { ResponsiveContainer } from '../component/ResponsiveContainer';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
