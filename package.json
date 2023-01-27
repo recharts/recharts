@@ -111,7 +111,6 @@
     "jest-each": "^27.5.1",
     "jest-environment-jsdom": "^27.5.1",
     "lint-staged": "^13.1.0",
-    "mocha": "^10.2.0",
     "prettier": "^2.2.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
