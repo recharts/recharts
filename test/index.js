@@ -6,9 +6,3 @@ import chaiEnzyme from 'chai-enzyme';
 Enzyme.configure({ adapter: new Adapter() });
 
 chai.use(chaiEnzyme());
-
-// cartesian system chart component
-require('./specs/cartesian/XAxisSpec');
-
-// general component
-require('./specs/component/TextSpec');
