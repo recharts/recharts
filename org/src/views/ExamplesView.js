@@ -103,7 +103,7 @@ class ExamplesView extends PureComponent {
     this.setState({
       isLoading: true,
     });
-    const url = `/examples/${cateName}/${exampleName}.js`;
+    const url = `${(location.hostname === "localhost" || location.hostname === "127.0.0.1")? '':'.'}/examples/${cateName}/${exampleName}.js`;
 
     fetchFile(url).then(
       (res) => {
