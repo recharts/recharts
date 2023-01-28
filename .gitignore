@@ -12,4 +12,7 @@ npm-debug.log
 .justconf/
 types
 build
-org/docs/
+org/docs/*
+!org/docs/examples/
+!org/docs/index.html
+!org/docs/404.html
