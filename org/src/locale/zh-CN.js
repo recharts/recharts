@@ -33,7 +33,6 @@ const map = {
     guide: '教程',
     api: 'API',
     examples: '示例',
-    blog: '博客',
     contract: '联系我们',
   },
   guide: {

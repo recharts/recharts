@@ -33,7 +33,6 @@ const map = {
     guide: 'Guide',
     api: 'API',
     examples: 'Examples',
-    blog: 'Blog',
     storybook: 'Storybook',
     contract: 'Contact us by',
   },

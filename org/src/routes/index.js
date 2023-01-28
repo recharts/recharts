@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Route, IndexRoute, Redirect, IndexRedirect } from 'react-router';
+import React from 'react';
+import { Route, IndexRedirect } from 'react-router';
 import _ from 'lodash';
 import { IndexView, GuideView, APIView, ExamplesView, BlogView, Storybook } from '../views';
 import Frame from '../layouts/Frame';
@@ -34,7 +34,6 @@ export default (store) => (
     <Route path="/*/guide(/:name)" component={GuideView} />
     <Route path="/*/api(/:name)" component={APIView} />
     <Route path="/*/examples(/:name)" component={ExamplesView} />
-    <Route path="/*/blog" component={BlogView} />
     <Route path="/*/storybook" component={Storybook} />
     <Route path="*" component={IndexView} />
   </Route>

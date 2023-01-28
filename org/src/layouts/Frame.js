@@ -7,7 +7,7 @@ import { getLocaleType, localeGet } from '../utils/LocaleUtils';
 import Affix from '../components/Affix';
 import '../styles/app.scss';
 
-const modules = ['guide', 'api', 'examples', 'blog', 'storybook'];
+const modules = ['guide', 'api', 'examples', 'storybook'];
 
 const locales = [
   { locale: 'en-US', text: 'En' },

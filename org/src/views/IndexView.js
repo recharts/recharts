@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Link } from 'react-router';
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import Highlight from '../utils/Highlight';
 import { getLocaleType, localeGet } from '../utils/LocaleUtils';
 import './IndexView.scss';
