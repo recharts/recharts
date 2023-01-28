@@ -1,13 +1,4 @@
-/* eslint-disable import/no-default-export */
-import React from 'react';
-import BrushComponent from './BrushComponent';
-
-export default {
-  title: 'Recharts/Brush',
-  component: BrushComponent,
-};
-
-const data = [
+const dateData = [
   '2015-10-01',
   '2015-10-02',
   '2015-10-03',
@@ -40,11 +31,4 @@ const data = [
   '2015-10-30',
 ];
 
-function Template(args) {
-  return <BrushComponent {...args} />;
-}
-
-export const Simple = Template.bind({});
-Simple.args = {
-  data,
-};
+export { dateData };

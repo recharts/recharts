@@ -1,11 +1,8 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-useless-constructor */
-/* eslint-disable import/no-default-export */
 import React, { Component } from 'react';
 import { Surface, Brush } from '../../..';
 
 export default class BrushComponent extends Component {
-  constructor(props) {
+  constructor(props: {} | Readonly<{}>) {
     super(props);
   }
 
@@ -20,19 +17,19 @@ export default class BrushComponent extends Component {
     },
   };
 
-  handleChange = res => {
+  handleChange = (res: any) => {
     this.setState({
       simple: res,
     });
   };
 
-  handleGapChange = res => {
+  handleGapChange = (res: any) => {
     this.setState({
       gap: res,
     });
   };
 
-  renderTraveller = props => {
+  renderTraveller = (props: { x: any; y: any; width: any; height: any; }) => {
     const { x, y, width, height } = props;
 
     return (
