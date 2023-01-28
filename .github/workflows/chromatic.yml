@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  visual-testing:
+  deploy-storybook:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
