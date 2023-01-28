@@ -1,35 +1,27 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Surface, Brush } from '../../..';
 
-export default class BrushComponent extends Component {
-  constructor(props: {} | Readonly<{}>) {
-    super(props);
-  }
+export default function BrushComponent(props: any) {
+  const [simple, setSimple] = React.useState({
+    startIndex: 0,
+    endIndex: props.data.length - 1,
+  });
 
-  state = {
-    simple: {
-      startIndex: 0,
-      endIndex: this.props.data.length - 1,
-    },
-    gap: {
-      startIndex: 0,
-      endIndex: this.props.data.length - 1,
-    },
+  const [gap, setGap] = React.useState({
+    startIndex: 0,
+    endIndex: props.data.length - 1,
+  });
+
+  const handleChange = (res: any) => {
+    setSimple(res);
   };
 
-  handleChange = (res: any) => {
-    this.setState({
-      simple: res,
-    });
+  const handleGapChange = (res: any) => {
+    setGap(res);
   };
 
-  handleGapChange = (res: any) => {
-    this.setState({
-      gap: res,
-    });
-  };
-
-  renderTraveller = (props: { x: any; y: any; width: any; height: any }) => {
+  // eslint-disable-next-line no-shadow
+  const renderTraveller = (props: { x: number; y: number; width: number; height: number }) => {
     const { x, y, width, height } = props;
 
     return (
@@ -43,39 +35,36 @@ export default class BrushComponent extends Component {
     );
   };
 
-  render() {
-    const { simple, gap } = this.state;
-    return (
-      <div>
-        <p>Simple Brush</p>
-        <Surface width={800} height={200}>
-          <Brush
-            startIndex={simple.startIndex}
-            endIndex={simple.endIndex}
-            x={100}
-            y={50}
-            width={400}
-            height={40}
-            data={this.props.data}
-            onChange={this.handleChange}
-            traveller={this.renderTraveller}
-          />
-        </Surface>
-        <p>Brush has specified gap</p>
-        <Surface width={800} height={200}>
-          <Brush
-            startIndex={gap.startIndex}
-            endIndex={gap.endIndex}
-            x={100}
-            y={50}
-            width={400}
-            height={40}
-            data={this.props.data}
-            gap={5}
-            onChange={this.handleGapChange}
-          />
-        </Surface>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <p>Simple Brush</p>
+      <Surface width={800} height={200}>
+        <Brush
+          startIndex={simple.startIndex}
+          endIndex={simple.endIndex}
+          x={100}
+          y={50}
+          width={400}
+          height={40}
+          data={props.data}
+          onChange={handleChange}
+          traveller={renderTraveller}
+        />
+      </Surface>
+      <p>Brush has specified gap</p>
+      <Surface width={800} height={200}>
+        <Brush
+          startIndex={gap.startIndex}
+          endIndex={gap.endIndex}
+          x={100}
+          y={50}
+          width={400}
+          height={40}
+          data={props.data}
+          gap={5}
+          onChange={handleGapChange}
+        />
+      </Surface>
+    </div>
+  );
 }
