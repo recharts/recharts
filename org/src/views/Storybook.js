@@ -1,11 +1,10 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
 import { Installation, GettingStarted, Customize } from '../components/GuideView';
-import { getLocaleType, localeGet } from '../utils/LocaleUtils';
+import { getLocaleType } from '../utils/LocaleUtils';
+import './Storybook.scss';
 
 const modules = ['installation', 'getting-started', 'customize'];
-import './Storybook.scss';
 
 @connect((state, ownProps) => {
   const pathname = ownProps.location.pathname || '';
@@ -17,6 +16,7 @@ import './Storybook.scss';
 })
 class Storybook extends PureComponent {
   renderGuide(locale) {
+    // eslint-disable-next-line react/prop-types
     const { page } = this.props;
 
     if (page === 'installation') {
@@ -35,7 +35,7 @@ class Storybook extends PureComponent {
     const { page } = this.props;
     const locale = getLocaleType(this.props);
 
-    return <iframe src="https://dillonreedy.github.io/recharts-storybook/?path=/story/recharts-area-chart--simple"/>;
+    return <iframe src="https://63d24aee84ee7cc215239dcc-yrlgloqamw.chromatic.com/"/>;
   }
 }
 
