@@ -12,3 +12,4 @@ npm-debug.log
 .justconf/
 types
 build
+storybook/public/
