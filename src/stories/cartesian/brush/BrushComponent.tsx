@@ -29,7 +29,7 @@ export default class BrushComponent extends Component {
     });
   };
 
-  renderTraveller = (props: { x: any; y: any; width: any; height: any; }) => {
+  renderTraveller = (props: { x: any; y: any; width: any; height: any }) => {
     const { x, y, width, height } = props;
 
     return (
