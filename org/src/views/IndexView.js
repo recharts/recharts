@@ -74,7 +74,7 @@ class IndexView extends PureComponent {
           </p>
           <iframe
             title="star"
-            src="https://ghbtns.com/github-btn.html?user=recharts&repo=recharts&type=star&count=true&size=median"
+            src="https://63d24aee84ee7cc215239dcc-yrlgloqamw.chromatic.com/"
             frameBorder="0"
             scrolling="0"
             width="120px"
