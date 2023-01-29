@@ -117,7 +117,32 @@ const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegme
   return null;
 };
 
-export function ReferenceLine(props: Props) {
+export function ReferenceLine({
+  isFront = false,
+  ifOverflow = 'discard',
+  xAxisId = 0,
+  yAxisId = 0,
+  position = 'middle',
+  fill = 'none',
+  fillOpacity = 1,
+  stroke = '#ccc',
+  strokeWidth = 1,
+  ...restProps
+}: Props) {
+  // Props with default values added.
+  const props: Props = {
+    isFront,
+    ifOverflow,
+    xAxisId,
+    yAxisId,
+    fill,
+    stroke,
+    fillOpacity,
+    strokeWidth,
+    position,
+    ...restProps,
+  };
+
   const { x: fixedX, y: fixedY, segment, xAxis, yAxis, shape, className, alwaysShow, clipPathId } = props;
 
   warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
@@ -155,14 +180,3 @@ export function ReferenceLine(props: Props) {
 }
 
 ReferenceLine.displayName = 'ReferenceLine';
-ReferenceLine.defaultProps = {
-  isFront: false,
-  ifOverflow: 'discard',
-  xAxisId: 0,
-  yAxisId: 0,
-  fill: 'none',
-  stroke: '#ccc',
-  fillOpacity: 1,
-  strokeWidth: 1,
-  position: 'middle',
-};

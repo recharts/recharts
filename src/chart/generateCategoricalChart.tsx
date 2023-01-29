@@ -1859,8 +1859,8 @@ export const generateCategoricalChart = ({
 
       return cloneElement(element, {
         key: element.key || `${displayName}-${index}`,
-        xAxis: xAxisMap[xAxisId],
-        yAxis: yAxisMap[yAxisId],
+        xAxis: xAxisMap[xAxisId ?? 0],
+        yAxis: yAxisMap[yAxisId ?? 0],
         viewBox: {
           x: offset.left,
           y: offset.top,
