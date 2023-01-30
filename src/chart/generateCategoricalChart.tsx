@@ -66,6 +66,7 @@ import {
   TickItem,
   adaptEventHandlers,
   GeometrySector,
+  AxisDomain,
 } from '../util/types';
 
 const ORIENT_MAP = {
@@ -171,6 +172,37 @@ const getDisplayedData = (data: any[], { graphicalItems, dataStartIndex, dataEnd
 
   return [];
 };
+
+/**
+ * Takes a domain and user props to determine whether we need to computate the domain
+ * or if we can set it via the user's specified domain values directly.
+ * @param   {AxisDomain}  domain              The potential domain from props
+ * @param   {Boolean}     allowDataOverflow   from props
+ * @param   {AxisDomain}  axisType            from props
+ * @returns {Boolean}                         `true` if domain computation is required
+ */
+function isDomainComputationFromDataRequired(
+  domain: AxisDomain,
+  allowDataOverflow: boolean,
+  axisType: 'number' | string,
+): boolean {
+  if (axisType !== 'number' || allowDataOverflow !== true || !Array.isArray(domain)) {
+    return true;
+  }
+
+  const domainStart: unknown | null | undefined = domain?.[0];
+  const domainEnd: unknown | null | undefined = domain?.[1];
+
+  /*
+   * The `isNumber` check is needed because the user could also provide strings like "dataMin" via the domain props.
+   * In such case, we have to compute the domain from the data.
+   */
+  if (!domainStart || !domainEnd || !isNumber(domainStart) || !isNumber(domainEnd)) {
+    return true;
+  }
+
+  return false;
+}
 
 /**
  * Get the content to be displayed in the tooltip
@@ -296,18 +328,8 @@ const getAxisMapByAxes = (
      * The only thing that would prohibit short-circuiting is when the user doesn't allow data overflow,
      * because the axis is supposed to ignore the specified domain that way.
      */
-    if (type === 'number' && allowDataOverflow === true) {
-      const specifiedDomain: unknown[] | null | undefined = child.props.domain;
-      const domainStart: unknown | null | undefined = specifiedDomain?.[0];
-      const domainEnd: unknown | null | undefined = specifiedDomain?.[1];
-
-      /*
-       * The `isNumber` check is needed because the user could also provide strings like "dataMin" via the domain props.
-       * In such case, we cannot short-circuit, as we need to look at the data.
-       */
-      if (!!domainStart && !!domainEnd && isNumber(domainStart) && isNumber(domainEnd)) {
-        domain = parseSpecifiedDomain(child.props.domain, null, allowDataOverflow);
-      }
+    if (isDomainComputationFromDataRequired(domain, allowDataOverflow, type)) {
+      domain = parseSpecifiedDomain(child.props.domain, null, allowDataOverflow);
     }
 
     // we didn't create the domain from user's props above, so we need to calculate it
