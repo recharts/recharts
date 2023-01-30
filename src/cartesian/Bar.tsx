@@ -411,7 +411,7 @@ export class Bar extends PureComponent<Props, State> {
     });
   }
 
-  renderErrorBar() {
+  renderErrorBar(needClip: boolean, clipPathId: string) {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) {
       return null;
     }
@@ -434,16 +434,24 @@ export class Bar extends PureComponent<Props, State> {
       };
     }
 
-    return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) =>
-      React.cloneElement(item, {
-        key: `error-bar-${i}`, // eslint-disable-line react/no-array-index-key
-        data,
-        xAxis,
-        yAxis,
-        layout,
-        offset,
-        dataPointFormatter,
-      }),
+    const errorBarProps = {
+      clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
+    };
+
+    return (
+      <Layer {...errorBarProps}>
+        {errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) =>
+          React.cloneElement(item, {
+            key: `error-bar-${i}`, // eslint-disable-line react/no-array-index-key
+            data,
+            xAxis,
+            yAxis,
+            layout,
+            offset,
+            dataPointFormatter,
+          }),
+        )}
+      </Layer>
     );
   }
 
@@ -472,7 +480,7 @@ export class Bar extends PureComponent<Props, State> {
           {background ? this.renderBackground() : null}
           {this.renderRectangles()}
         </Layer>
-        {this.renderErrorBar()}
+        {this.renderErrorBar(needClip, clipPathId)}
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, data)}
       </Layer>
     );
