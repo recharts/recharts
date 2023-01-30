@@ -174,31 +174,24 @@ const getDisplayedData = (data: any[], { graphicalItems, dataStartIndex, dataEnd
 };
 
 /**
- * Takes a domain and user props to determine whether we need to computate the domain
- * or if we can set it via the user's specified domain values directly.
+ * Takes a domain and user props to determine whether he provided the domain via props or if we need to calculate it.
  * @param   {AxisDomain}  domain              The potential domain from props
  * @param   {Boolean}     allowDataOverflow   from props
- * @param   {AxisDomain}  axisType            from props
- * @returns {Boolean}                         `true` if domain computation is required
+ * @param   {String}      axisType            from props
+ * @returns {Boolean}                         `true` if domain is specified by user
  */
-function isDomainComputationFromDataRequired(
-  domain: AxisDomain,
-  allowDataOverflow: boolean,
-  axisType: 'number' | string,
-): boolean {
-  if (axisType !== 'number' || allowDataOverflow !== true || !Array.isArray(domain)) {
-    return true;
-  }
+function isDomainSpecifiedByUser(domain: AxisDomain, allowDataOverflow: boolean, axisType: 'number' | string): boolean {
+  if (axisType === 'number' && allowDataOverflow === true && Array.isArray(domain)) {
+    const domainStart: unknown | null | undefined = domain?.[0];
+    const domainEnd: unknown | null | undefined = domain?.[1];
 
-  const domainStart: unknown | null | undefined = domain?.[0];
-  const domainEnd: unknown | null | undefined = domain?.[1];
-
-  /*
-   * The `isNumber` check is needed because the user could also provide strings like "dataMin" via the domain props.
-   * In such case, we have to compute the domain from the data.
-   */
-  if (!domainStart || !domainEnd || !isNumber(domainStart) || !isNumber(domainEnd)) {
-    return true;
+    /*
+     * The `isNumber` check is needed because the user could also provide strings like "dataMin" via the domain props.
+     * In such case, we have to compute the domain from the data.
+     */
+    if (!!domainStart && !!domainEnd && isNumber(domainStart) && isNumber(domainEnd)) {
+      return true;
+    }
   }
 
   return false;
@@ -328,7 +321,7 @@ const getAxisMapByAxes = (
      * The only thing that would prohibit short-circuiting is when the user doesn't allow data overflow,
      * because the axis is supposed to ignore the specified domain that way.
      */
-    if (isDomainComputationFromDataRequired(domain, allowDataOverflow, type)) {
+    if (isDomainSpecifiedByUser(child.props.domain, allowDataOverflow, type)) {
       domain = parseSpecifiedDomain(child.props.domain, null, allowDataOverflow);
     }
 
