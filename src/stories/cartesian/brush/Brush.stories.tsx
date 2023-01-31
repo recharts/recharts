@@ -4,7 +4,7 @@ import { Meta } from '@storybook/react';
 import { dateData } from '../../data';
 import { Surface, Brush } from '../../..';
 
-export const SimpleBrush = {
+export default {
   title: 'Recharts/Brush',
   component: Brush,
 } as Meta<typeof Brush>;
