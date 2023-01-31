@@ -94,6 +94,16 @@
       }
     ]
   },
+  "overrides": [
+    {
+      "files": ["./src/**/*.stories.@(ts|tsx)", "./src/**/*.@(ts|tsx)"],
+      "rules": {
+        "react/prop-types": "off",
+        "no-useless-constructor": "off",
+        "import/no-default-export": "off",
+      }
+    }
+  ],
   "settings": {
     "import/resolver": {
       "node": {
