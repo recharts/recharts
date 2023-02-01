@@ -5,7 +5,7 @@ import { dateData } from '../../data';
 import { Surface, Brush } from '../../..';
 
 export default {
-  title: 'Recharts/Brush',
+  title: 'Recharts/Cartesian/Brush',
   component: Brush,
 } as ComponentMeta<typeof Brush>;
 
