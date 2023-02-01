@@ -1,0 +1,32 @@
+# Chromatic action from https://www.chromatic.com/docs/github-actions
+# Using this github action from https://github.com/lightspeedretail/actions-label-prs
+
+name: "chromatic"
+
+on:
+  pull_request:
+    types: [labeled]
+  pull_request_review:
+    types: [submitted]
+  push:
+  workflow_dispatch:
+
+jobs:
+  deploy-storybook:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to Chromatic
+        run: npx chromatic --project-token ${{ secrets.CHROMATIC_PROJECT_TOKEN }} -s storybook/public
