@@ -92,7 +92,7 @@
   },
   "overrides": [
     {
-      "files": ["./storybook/**/*.stories.@(ts|tsx)", "./storybook/**/*.@(ts|tsx)"],
+      "files": ["./storybook/**/*.stories.@(ts|tsx)", "./storybook/**/*.@(ts|tsx)", "*.js"],
       "rules": {
         "react/prop-types": "off",
         "no-useless-constructor": "off",
