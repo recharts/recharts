@@ -58,9 +58,6 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
-    "d3-scale": "^4.0.2",
-    "d3-shape": "^3.2.0",
-    "date-fns": "^2.29.3",
     "eventemitter3": "^4.0.1",
     "lodash": "^4.17.19",
     "react-is": "^16.10.2",
@@ -94,7 +91,6 @@
     "@types/classnames": "^2.2.9",
     "@types/d3-interpolate": "^3.0.1",
     "@types/d3-scale": "^4.0.2",
-    "@types/d3-scale-chromatic": "^3.0.0",
     "@types/d3-shape": "^3.1.0",
     "@types/jest": "^27.5.1",
     "@types/lodash": "^4.14.144",

@@ -31,35 +31,4 @@ const dateData = [
   '2015-10-30',
 ];
 
-const timeData = [
-  {
-    x: new Date('2019-07-04T00:00:00.000Z'),
-    y: 5,
-  },
-  {
-    x: new Date('2019-07-05T00:00:00.000Z'),
-    y: 30,
-  },
-  {
-    x: new Date('2019-07-06T00:00:00.000Z'),
-    y: 50,
-  },
-  {
-    x: new Date('2019-07-07T00:00:00.000Z'),
-    y: 43,
-  },
-  {
-    x: new Date('2019-07-08T00:00:00.000Z'),
-    y: 20,
-  },
-  {
-    x: new Date('2019-07-09T00:00:00.000Z'),
-    y: -20,
-  },
-  {
-    x: new Date('2019-07-10T00:00:00.000Z'),
-    y: 30,
-  },
-];
-
-export { dateData, timeData };
+export { dateData };
