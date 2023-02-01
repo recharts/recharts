@@ -29,4 +29,4 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to Chromatic
-        run: npx chromatic --project-token ${{ vars.CHROMATIC_PROJECT_TOKEN }} -s storybook/public
+        run: npx chromatic --project-token ${{ secrets.CHROMATIC_PROJECT_TOKEN }} -s storybook/public
