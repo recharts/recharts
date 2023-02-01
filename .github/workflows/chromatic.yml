@@ -1,11 +1,9 @@
 # Chromatic action from https://www.chromatic.com/docs/github-actions
 # Using this github action from https://github.com/lightspeedretail/actions-label-prs
 
-name: "chromatic"
+name: 'chromatic'
 
 on:
-  pull_request:
-    types: [labeled]
   pull_request_review:
     types: [submitted]
   push:
@@ -24,9 +22,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: npm install
+      - run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Publish to Chromatic
-        run: npx chromatic --project-token ${{ secrets.CHROMATIC_PROJECT_TOKEN }} -s storybook/public
+        uses: chromaui/action@v1
+        # Chromatic GitHub Action options
+        with:
+          # 👇 Chromatic projectToken, refer to the manage page to obtain it.
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}

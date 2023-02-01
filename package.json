@@ -34,7 +34,8 @@
     "analyse": "cross-env NODE_ENV=analyse webpack ./src/index.ts -o umd/Recharts.js",
     "tsc": "tsc",
     "storybook": "npx storybook dev -p 6006 -c storybook",
-    "build-storybook": "npx storybook build -o storybook/public -c storybook"
+    "build-storybook": "npx storybook build -o storybook/public -c storybook",
+    "chromatic": "npx chromatic"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
@@ -44,9 +45,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/recharts/recharts.git"
+    "url": "git+https://github.com/recharts/recharts.git"
   },
-  "author": "recharts group",
+  "author": {
+    "name": "recharts group"
+  },
   "bugs": {
     "url": "https://github.com/recharts/recharts/issues"
   },
@@ -104,6 +107,7 @@
     "babel-loader": "^8.0.0",
     "babel-plugin-lodash": "^3.3.0",
     "browserslist": "^4.21.0",
+    "chromatic": "^6.15.0",
     "cross-env": "^7.0.3",
     "d3-scale-chromatic": "^3.0.0",
     "eslint": "^7.32.0",
@@ -128,7 +132,7 @@
     "terser-webpack-plugin": "^5.1.1",
     "ts-jest": "^27.1.5",
     "ts-loader": "^8.0.12",
-    "typescript": "^4.1.3",
+    "typescript": "4.1.3",
     "update-browserslist-db": "^1.0.10",
     "webpack": "^5.65.0",
     "webpack-bundle-analyzer": "^4.4.0",
