@@ -54,7 +54,6 @@
       }
     ],
     "max-len": ["warn", 120],
-
     "prefer-destructuring": "error",
     "object-curly-newline": "off",
     "function-paren-newline": "off",
@@ -75,12 +74,9 @@
     "import/no-named-as-default": "error",
     "import/no-cycle": "error",
     "import/no-default-export": "error",
-
     "import/no-import-module-exports": "error",
     "import/no-relative-packages": "error",
-
     "no-use-before-define": "off",
-
     "@typescript-eslint/no-use-before-define": ["error"],
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
@@ -96,11 +92,11 @@
   },
   "overrides": [
     {
-      "files": ["./src/**/*.stories.@(ts|tsx)", "./src/**/*.@(ts|tsx)"],
+      "files": ["./storybook/**/*.stories.@(ts|tsx)", "./storybook/**/*.@(ts|tsx)"],
       "rules": {
         "react/prop-types": "off",
         "no-useless-constructor": "off",
-        "import/no-default-export": "off",
+        "import/no-default-export": "off"
       }
     }
   ],

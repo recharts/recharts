@@ -5,29 +5,31 @@ import {
   Bar,
   Brush,
   CartesianGrid,
-  ComposedChart,
+  ComposedChart as Composed,
   Legend,
   Line,
+  LineChart,
+  ReferenceDot,
+  ReferenceLine,
   ResponsiveContainer,
-  Scatter,
   Tooltip,
   XAxis,
   YAxis,
-} from '../../..';
+} from '../../../..';
 
 export default {
-  title: 'Recharts/Chart/Composed Chart/Line + Bar + Area + Scatter',
-  component: ComposedChart,
+  title: 'Recharts/Chart/Composed Chart/Complex Chart',
+  component: Composed,
 };
 
-export const LineBarAreaScatter = {
+export const ComposedChart = {
   render: (args: any) => {
     return (
       <>
-        <p>A ComposedChart of Line, Bar, Area, Scatter</p>
+        <p>A simple ComposedChart of Line, Bar, Area</p>
         <div className="composed-chart-wrapper">
           <ResponsiveContainer width="100%" height={300}>
-            <ComposedChart
+            <Composed
               width={800}
               height={400}
               data={args.data}
@@ -38,17 +40,22 @@ export const LineBarAreaScatter = {
                 left: 20,
               }}
             >
-              <XAxis dataKey="name" />
+              <XAxis dataKey="name" scale="band" />
               <YAxis />
               <Legend layout="vertical" align="right" verticalAlign="middle" />
               <CartesianGrid stroke="#f5f5f5" />
               <Tooltip />
               <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
-              <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+              <Bar dataKey="uv" fill="#ff7300" />
               <Bar dataKey="pv" barSize={20} fill="#413ea0" />
-              <Scatter dataKey="pv" fill="red" />
-              <Brush />
-            </ComposedChart>
+              <ReferenceLine x="Page C" stroke="red" label="Max PV PAGE" />
+              <ReferenceDot x="Page C" y={1300} stroke="red" />
+              <Brush>
+                <LineChart>
+                  <Line dataKey="uv" stroke="#ff7300" dot={false} />
+                </LineChart>
+              </Brush>
+            </Composed>
           </ResponsiveContainer>
         </div>
       </>

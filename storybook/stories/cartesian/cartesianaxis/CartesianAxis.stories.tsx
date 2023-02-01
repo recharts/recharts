@@ -1,5 +1,5 @@
 import React from 'react';
-import { CartesianAxis, Label, Surface } from '../../..';
+import { CartesianAxis, Label, Surface } from '../../../..';
 import { ticks } from '../../data';
 
 export default {
