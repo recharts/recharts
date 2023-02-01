@@ -15,5 +15,5 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": "."
   },
-  "include": ["./src/**/*", "types.d.ts", "storybook/stories"],
+  "include": ["./src/**/*", "types.d.ts", "storybook/stories"]
 }

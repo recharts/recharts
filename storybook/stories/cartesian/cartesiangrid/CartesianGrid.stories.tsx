@@ -1,5 +1,5 @@
 import React from 'react';
-import { CartesianGrid, Surface } from '../../../..';
+import { CartesianGrid, Surface } from '../../../../src';
 
 export default {
   title: 'Recharts/Cartesian/Cartesian Grid',

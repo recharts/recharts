@@ -1,6 +1,6 @@
 import React from 'react';
 import { pageData, timeData } from '../../data';
-import { Bar, CartesianGrid, ComposedChart, Legend, Line, Tooltip, XAxis, YAxis } from '../../../..';
+import { Bar, CartesianGrid, ComposedChart, Legend, Line, Tooltip, XAxis, YAxis } from '../../../../src';
 
 export default {
   title: 'Recharts/Chart/Composed Chart/Line + Bar (Horizontal)',

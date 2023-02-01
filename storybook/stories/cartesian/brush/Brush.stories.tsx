@@ -1,13 +1,12 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { ComponentMeta } from '@storybook/react';
 import { dateData } from '../../data';
-import { Surface, Brush } from '../../../..';
+import { Surface, Brush } from '../../../../src';
 
 export default {
   title: 'Recharts/Cartesian/Brush',
   component: Brush,
-} as ComponentMeta<typeof Brush>;
+};
 
 export const Simple = {
   render: (args: any) => {

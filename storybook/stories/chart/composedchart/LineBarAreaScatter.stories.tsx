@@ -13,7 +13,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from '../../../..';
+} from '../../../../src';
 
 export default {
   title: 'Recharts/Chart/Composed Chart/Line + Bar + Area + Scatter',
