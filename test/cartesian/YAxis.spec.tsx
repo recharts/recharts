@@ -102,6 +102,40 @@ describe('<YAxis />', () => {
     expect(ticks[3]).toHaveTextContent('1200');
   });
 
+  it('Renders axis based on specified domain when data overflow is allowed', () => {
+    /*
+     * We take domain values that have nothing to do with the test data to make sure they're really used.
+     * We generate a random integer between 1 and 100.
+     */
+    const domainStart = Math.round(Math.random() * 100);
+    const domainEnd = domainStart + Math.round(Math.random() * 100);
+
+    render(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis type="number" stroke="#ff7300" domain={[domainStart, domainEnd]} allowDataOverflow />
+        <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>,
+    );
+
+    // all ticks
+    const ticks = document.querySelectorAll('.recharts-cartesian-axis-tick');
+
+    // value of each tick
+    const tickValues: number[] = [];
+    ticks.forEach(tick => {
+      const tickValueText = tick.textContent;
+      expect(tickValueText).toBeTruthy();
+      // convert string to number
+      if (tickValueText) tickValues.push(Number(tickValueText));
+    });
+
+    const tickValueMax = Math.max(...tickValues);
+    const tickValueMin = Math.min(...tickValues);
+
+    expect(tickValueMin).toBe(domainStart);
+    expect(tickValueMax).toBe(domainEnd);
+  });
+
   it('Render ticks reversed', () => {
     render(
       <AreaChart width={600} height={400} data={data}>
