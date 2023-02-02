@@ -16,22 +16,6 @@ const modules = ['installation', 'getting-started', 'customize'];
   };
 })
 class Storybook extends PureComponent {
-  renderGuide(locale) {
-    // eslint-disable-next-line react/prop-types
-    const { page } = this.props;
-
-    if (page === 'installation') {
-      return <Installation locale={locale} />;
-    }
-    if (page === 'getting-started') {
-      return <GettingStarted locale={locale} />;
-    }
-    if (page === 'customize') {
-      return <Customize locale={locale} />;
-    }
-    return null;
-  }
-
   render() {
     // eslint-disable-next-line jsx-a11y/iframe-has-title
     return <iframe src="https://master--63da8268a0da9970db6992aa.chromatic.com/" />;
