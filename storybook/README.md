@@ -11,3 +11,7 @@ If you are looking for a template from which to write stories, please do align w
 -- edge cases
 
 - Additionally we will want to add stories that document complex usage of recharts with custom components.
+
+Best practice: 
+- A story for a LineChart should not contain a complex brush. Each story should focus on a single component and its behaviour. If the interaction with the brush is to be shown, then any other brush details should ideally be omitted. 
+- Complex interaction effect between multiple component best deserve a separate story. 
