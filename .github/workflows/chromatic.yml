@@ -4,11 +4,7 @@
 name: 'chromatic'
 
 on:
-  pull_request_review:
-    types: [submitted]
   push:
-  workflow_dispatch:
-
 jobs:
   deploy-storybook:
     runs-on: ubuntu-latest
