@@ -1,5 +1,5 @@
 {
-  "name": "recharts.org",
+  "name": "org",
   "version": "0.0.1",
   "description": "the website of recharts",
   "private": true,
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com/recharts/recharts.org.git"
+    "url": "git+ssh://git@github.com/recharts/recharts.git"
   },
   "author": "recharts group",
   "devDependencies": {
@@ -75,7 +75,7 @@
     "oui-dom-events": "^0.2.2",
     "oui-dom-utils": "^0.3.8",
     "prop-types": "^15.6.2",
-    "react": "^16.0.0",
+    "react": "^16.14.0",
     "react-dom": "^16.0.0",
     "react-helmet": "^6.1.0",
     "react-monaco-editor": "0.40.0",
@@ -91,5 +91,9 @@
     "scroll-behavior": "^0.9.12",
     "simple-line-icons": "^2.5.5"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/recharts/recharts/issues"
+  },
+  "homepage": "https://github.com/recharts/recharts#readme"
 }

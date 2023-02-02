@@ -23,7 +23,7 @@ module.exports = {
     rules: [
       {
         test: /\.jsx?$/,
-        include: [path.resolve(__dirname, 'src'), path.resolve(__dirname, 'node_modules/react-monaco-editor/src')],
+        include: [path.resolve(__dirname, 'src'), path.resolve(__dirname, '../node_modules/react-monaco-editor/src')],
         use: ['babel-loader'],
       },
       {
@@ -37,7 +37,7 @@ module.exports = {
       {
         test: /\.css/,
         use: ['style-loader', 'css-loader'],
-        include: [path.resolve(__dirname, 'node_modules/monaco-editor')],
+        include: [path.resolve(__dirname, '../node_modules/monaco-editor')],
       },
       {
         test: /\.scss$/,
@@ -50,7 +50,7 @@ module.exports = {
               sassOptions: {
                 includePaths: [
                   path.resolve(__dirname, './src/styles'),
-                  path.resolve(__dirname, './node_module/simple-line-icons/sass'),
+                  path.resolve(__dirname, '../node_module/simple-line-icons/sass'),
                 ],
               },
             },
@@ -62,7 +62,7 @@ module.exports = {
 
   resolve: {
     alias: {
-      react: path.join(__dirname, 'node_modules', 'react'),
+      react: path.join(__dirname, '../node_modules', 'react'),
       components: path.join(__dirname, './src/components'),
       layouts: path.join(__dirname, './src/layouts'),
       views: path.join(__dirname, './src/views'),

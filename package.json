@@ -35,7 +35,8 @@
     "tsc": "tsc",
     "storybook": "npx storybook dev -p 6006 -c storybook",
     "build-storybook": "npx storybook build -o storybook/public -c storybook",
-    "chromatic": "npx chromatic"
+    "chromatic": "npx chromatic",
+    "start:docs": "npm run start --workspace=org"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
@@ -142,5 +143,8 @@
   "engines": {
     "node": ">=12"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "workspaces": [
+    "org"
+  ]
 }
