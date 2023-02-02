@@ -32,7 +32,10 @@
     "lint": "eslint \"./src/**/*.{ts,tsx}\"",
     "autofix": "eslint \"./src/**/*.{ts,tsx}\" --fix",
     "analyse": "cross-env NODE_ENV=analyse webpack ./src/index.ts -o umd/Recharts.js",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "storybook": "npx storybook dev -p 6006 -c storybook",
+    "build-storybook": "npx storybook build -o storybook/public -c storybook",
+    "chromatic": "npx chromatic"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
@@ -42,9 +45,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/recharts/recharts.git"
+    "url": "git+https://github.com/recharts/recharts.git"
   },
-  "author": "recharts group",
+  "author": {
+    "name": "recharts group"
+  },
   "bugs": {
     "url": "https://github.com/recharts/recharts/issues"
   },
@@ -77,6 +82,12 @@
     "@babel/preset-react": "^7.6.3",
     "@babel/preset-typescript": "^7.6.0",
     "@babel/runtime": "^7.6.3",
+    "@storybook/addon-essentials": "^7.0.0-beta.39",
+    "@storybook/addon-interactions": "^7.0.0-beta.39",
+    "@storybook/addon-links": "^7.0.0-beta.39",
+    "@storybook/react": "^7.0.0-beta.39",
+    "@storybook/react-webpack5": "^7.0.0-beta.39",
+    "@storybook/testing-library": "^0.0.13",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.1.5",
     "@testing-library/user-event": "^14.3.0",
@@ -96,6 +107,7 @@
     "babel-loader": "^8.0.0",
     "babel-plugin-lodash": "^3.3.0",
     "browserslist": "^4.21.0",
+    "chromatic": "^6.15.0",
     "cross-env": "^7.0.3",
     "d3-scale-chromatic": "^3.0.0",
     "eslint": "^7.32.0",
@@ -116,10 +128,11 @@
     "react-dom": "^16.14.0",
     "react-router-dom": "^5.1.2",
     "rimraf": "^3.0.2",
+    "storybook": "^7.0.0-beta.39",
     "terser-webpack-plugin": "^5.1.1",
     "ts-jest": "^27.1.5",
     "ts-loader": "^8.0.12",
-    "typescript": "^4.1.3",
+    "typescript": "4.1.3",
     "update-browserslist-db": "^1.0.10",
     "webpack": "^5.65.0",
     "webpack-bundle-analyzer": "^4.4.0",

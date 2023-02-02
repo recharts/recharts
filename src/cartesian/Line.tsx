@@ -251,7 +251,7 @@ export class Line extends PureComponent<Props, State> {
     }
   };
 
-  renderErrorBar() {
+  renderErrorBar(needClip: boolean, clipPathId: string) {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) {
       return null;
     }
@@ -272,16 +272,24 @@ export class Line extends PureComponent<Props, State> {
       };
     }
 
-    return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) =>
-      React.cloneElement(item, {
-        // eslint-disable-next-line react/no-array-index-key
-        key: `bar-${i}`,
-        data: points,
-        xAxis,
-        yAxis,
-        layout,
-        dataPointFormatter,
-      }),
+    const errorBarProps = {
+      clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
+    };
+
+    return (
+      <Layer {...errorBarProps}>
+        {errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) =>
+          React.cloneElement(item, {
+            // eslint-disable-next-line react/no-array-index-key
+            key: `bar-${i}`,
+            data: points,
+            xAxis,
+            yAxis,
+            layout,
+            dataPointFormatter,
+          }),
+        )}
+      </Layer>
     );
   }
 
@@ -466,7 +474,7 @@ export class Line extends PureComponent<Props, State> {
           </defs>
         ) : null}
         {!hasSinglePoint && this.renderCurve(needClip, clipPathId)}
-        {this.renderErrorBar()}
+        {this.renderErrorBar(needClip, clipPathId)}
         {(hasSinglePoint || dot) && this.renderDots(needClip, clipPathId)}
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
       </Layer>

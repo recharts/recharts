@@ -16,3 +16,4 @@ org/docs/*
 !org/docs/examples/
 !org/docs/index.html
 !org/docs/404.html
+storybook/public/
