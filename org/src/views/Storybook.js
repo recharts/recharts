@@ -35,7 +35,7 @@ class Storybook extends PureComponent {
     const { page } = this.props;
     const locale = getLocaleType(this.props);
 
-    return <iframe src="https://63d24aee84ee7cc215239dcc-yrlgloqamw.chromatic.com/"/>;
+    return <iframe src="https://master--63da8268a0da9970db6992aa.chromatic.com/"/>;
   }
 }
 
