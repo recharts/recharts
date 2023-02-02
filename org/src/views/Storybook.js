@@ -1,9 +1,10 @@
 import React, { PureComponent } from 'react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { connect } from 'react-redux';
 import { Installation, GettingStarted, Customize } from '../components/GuideView';
-import { getLocaleType } from '../utils/LocaleUtils';
 import './Storybook.scss';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const modules = ['installation', 'getting-started', 'customize'];
 
 @connect((state, ownProps) => {
@@ -32,10 +33,8 @@ class Storybook extends PureComponent {
   }
 
   render() {
-    const { page } = this.props;
-    const locale = getLocaleType(this.props);
-
-    return <iframe src="https://master--63da8268a0da9970db6992aa.chromatic.com/"/>;
+    // eslint-disable-next-line jsx-a11y/iframe-has-title
+    return <iframe src="https://master--63da8268a0da9970db6992aa.chromatic.com/" />;
   }
 }
 
