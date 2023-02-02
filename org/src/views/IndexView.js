@@ -72,14 +72,6 @@ class IndexView extends PureComponent {
               &nbsp;v2.3.2
             </Link>
           </p>
-          <iframe
-            title="star"
-            src="https://master--63da8268a0da9970db6992aa.chromatic.com/"
-            frameBorder="0"
-            scrolling="0"
-            width="120px"
-            height="22px"
-          />
         </div>
 
         <div className="examples">
