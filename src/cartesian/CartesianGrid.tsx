@@ -16,7 +16,7 @@ type GridLineType =
   | ((props: any) => ReactElement<SVGElement>)
   | boolean;
 
-interface IntrnalCartesianGridProps {
+interface InternalCartesianGridProps {
   x?: number;
   y?: number;
   width?: number;
@@ -30,7 +30,7 @@ interface IntrnalCartesianGridProps {
   chartHeight?: number;
 }
 
-interface CartesianGridProps extends IntrnalCartesianGridProps {
+interface CartesianGridProps extends InternalCartesianGridProps {
   horizontal?: GridLineType;
   vertical?: GridLineType;
   horizontalPoints?: number[];
