@@ -332,7 +332,7 @@ const getAxisMapByAxes = (
         domain = getDomainOfDataByKey(displayedData, dataKey, type);
 
         if (type === 'category' && isCategorical) {
-          // the field type is category data and this axis is catrgorical axis
+          // the field type is category data and this axis is categorical axis
           const duplicate = hasDuplicate(domain);
 
           if (allowDuplicatedCategory && duplicate) {
@@ -1589,7 +1589,7 @@ export const generateCategoricalChart = ({
           }
         }
         const viewBox: CartesianViewBox = { ...offset, x: offset.left, y: offset.top };
-        // When a categotical chart is combined with another chart, the value of chartX
+        // When a categorical chart is combined with another chart, the value of chartX
         // and chartY may beyond the boundaries.
         const validateChartX = Math.min(chartX, viewBox.x + viewBox.width);
         const validateChartY = Math.min(chartY, viewBox.y + viewBox.height);

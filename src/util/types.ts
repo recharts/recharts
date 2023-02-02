@@ -1080,7 +1080,7 @@ export interface BaseAxisProps {
    */
   allowDataOverflow?: boolean;
   /**
-   * Allow the axis has duplicated categorys or not when the type of axis is "category".
+   * Allow the axis has duplicated categories or not when the type of axis is "category".
    */
   allowDuplicatedCategory?: boolean;
   /**
