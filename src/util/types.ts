@@ -584,7 +584,6 @@ export const SVGElementPropKeys = [
   'name',
   'style',
   'target',
-  'type',
   'width',
   'role',
   'tabIndex',

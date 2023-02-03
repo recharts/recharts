@@ -1,24 +1,19 @@
 import React, { Component } from 'react';
 import {
-  ResponsiveContainer,
   LineChart,
   Line,
   XAxis,
   YAxis,
-  ReferenceLine,
-  ReferenceArea,
-  ReferenceDot,
   Tooltip,
   CartesianGrid,
   Legend,
   Brush,
-  ErrorBar,
   AreaChart,
   Area,
   Label,
   LabelList,
 } from 'recharts';
-import { scalePow, scaleLog } from 'victory-vendor/d3-scale';
+import { scaleLog } from 'victory-vendor/d3-scale';
 import * as _ from 'lodash';
 import CustomLineDot from './CustomLineDot';
 import { changeNumberOfData } from './utils';

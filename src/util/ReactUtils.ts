@@ -305,10 +305,17 @@ export const filterProps = (
    */
   const matchingElementTypeKeys = FilteredElementKeyMap?.[svgElementType] ?? [];
 
+  /**
+   * Props are blindly spread onto SVG elements. This loop filters out properties that we don't want to spread.
+   * Items filtered out are as follows:
+   *   - functions in properties that are SVG attributes
+   *   - props that are SVG attributes but don't matched the passed svgElementType
+   *   - any prop that is not in SVGElementPropKeys (or in EventKeys if includeEvents is true)
+   */
   Object.keys(inputProps).forEach(key => {
     if (
-      (svgElementType && matchingElementTypeKeys.includes(key)) ||
-      SVGElementPropKeys.includes(key) ||
+      (!_.isFunction(inputProps?.[key]) &&
+        ((svgElementType && matchingElementTypeKeys.includes(key)) || SVGElementPropKeys.includes(key))) ||
       (includeEvents && EventKeys.includes(key))
     ) {
       out[key] = inputProps[key];
