@@ -1,8 +1,7 @@
 import React from 'react';
-import { format, parseISO, subDays } from "date-fns";
 import { ComponentMeta } from '@storybook/react';
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
-import { TimeSeriesData } from '../../data';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip } from '../../../../src';
+import { dateData, TimeSeriesData } from '../../data';
 
 export default {
   title: 'Recharts/Chart/Area Chart',
@@ -10,36 +9,26 @@ export default {
 } as ComponentMeta<typeof AreaChart>;
 
 const data: TimeSeriesData[] = [];
-for (let num = 30; num >= 0; num--) {
+dateData.forEach((date: string) => {
   data.push({
-    date: subDays(new Date(), num).toISOString().substring(0, 10),
+    date,
     value: 1 + Math.random(),
   });
-}
+});
 
 export const Simple = {
-  render: (args: any) => {
+  render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={data}>
-          <defs>
-            <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#2451B7" stopOpacity={0.4} />
-              <stop offset="75%" stopColor="#2451B7" stopOpacity={0.05} />
-            </linearGradient>
-          </defs>
-
+        <AreaChart data={args.data}>
           <Area dataKey="value" stroke="#2451B7" fill="url(#color)" />
-
-
           <Tooltip />
-
           <CartesianGrid opacity={0.1} vertical={false} />
         </AreaChart>
       </ResponsiveContainer>
     );
   },
   args: {
-    data
+    data,
   },
 };
