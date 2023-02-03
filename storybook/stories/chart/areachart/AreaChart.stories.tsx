@@ -31,26 +31,6 @@ export const Simple = {
 
           <Area dataKey="value" stroke="#2451B7" fill="url(#color)" />
 
-          <XAxis
-            dataKey="date"
-            axisLine={false}
-            tickLine={false}
-            tickFormatter={(str) => {
-              const date = parseISO(str);
-              if (date.getDate() % 7 === 0) {
-                return format(date, "MMM, d");
-              }
-              return "";
-            }}
-          />
-
-          <YAxis
-            dataKey="value"
-            axisLine={false}
-            tickLine={false}
-            tickCount={8}
-            tickFormatter={(number) => `$${number.toFixed(2)}`}
-          />
 
           <Tooltip />
 
