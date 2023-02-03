@@ -6,7 +6,8 @@
     "eslint-config-airbnb",
     "prettier/@typescript-eslint",
     "plugin:prettier/recommended",
-    "prettier"
+    "prettier",
+    "plugin:storybook/recommended"
   ],
   "env": {
     "browser": true,
