@@ -1,12 +1,10 @@
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { ComponentMeta } from '@storybook/react';
 import { Funnel, FunnelChart, LabelList, ResponsiveContainer } from '../../../../src';
 
 export default {
   title: 'Recharts/Chart/Funnel Chart',
   component: FunnelChart,
-} as ComponentMeta<typeof FunnelChart>;
+};
 
 export const Simple = {
   render: (args: Record<string, any>) => {

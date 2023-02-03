@@ -1,12 +1,11 @@
 import React from 'react';
-import { ComponentMeta } from '@storybook/react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip } from '../../../../src';
 import { dateData, TimeSeriesData } from '../../data';
 
 export default {
   title: 'Recharts/Chart/Area Chart',
   component: AreaChart,
-} as ComponentMeta<typeof AreaChart>;
+};
 
 const data: TimeSeriesData[] = [];
 dateData.forEach((date: string) => {
