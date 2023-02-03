@@ -9,7 +9,7 @@ export default {
 } as ComponentMeta<typeof FunnelChart>;
 
 export const Simple = {
-  render: (args: any) => {
+  render: (args: Record<string, any>) => {
     return (
       <div style={{ height: 200, width: 200 }}>
         <ResponsiveContainer height="100%" width="100%">

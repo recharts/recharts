@@ -9,7 +9,7 @@ export default {
 };
 
 export const Simple = {
-  render: (args: any) => {
+  render: (args: Record<string, any>) => {
     const [simple, setSimple] = React.useState({
       startIndex: 0,
       endIndex: args.data.length - 1,

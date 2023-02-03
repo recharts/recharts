@@ -8,7 +8,7 @@ export default {
 };
 
 export const LineBarAreaScatter = {
-  render: (args: any) => {
+  render: (args: Record<string, any>) => {
     return (
       <>
         <p>A ComposedChart of time scale</p>
