@@ -1,5 +1,4 @@
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { dateData } from '../../data';
 import { Surface, Brush } from '../../../../src';
 
@@ -9,7 +8,7 @@ export default {
 };
 
 export const Simple = {
-  render: (args: any) => {
+  render: (args: Record<string, any>) => {
     const [simple, setSimple] = React.useState({
       startIndex: 0,
       endIndex: args.data.length - 1,

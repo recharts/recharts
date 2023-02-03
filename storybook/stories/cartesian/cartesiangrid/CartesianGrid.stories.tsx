@@ -7,7 +7,7 @@ export default {
 };
 
 export const Simple = {
-  render: (args: any) => {
+  render: (args: Record<string, any>) => {
     return (
       <Surface width={500} height={500}>
         <CartesianGrid
