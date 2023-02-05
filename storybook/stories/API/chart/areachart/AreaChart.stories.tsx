@@ -1,6 +1,6 @@
 import React from 'react';
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip } from '../../../../src';
-import { dateData, TimeSeriesData } from '../../data';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip } from '../../../../../src';
+import { dateData, TimeSeriesData } from '../../../data';
 
 export default {
   component: AreaChart,

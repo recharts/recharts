@@ -1,6 +1,6 @@
 import React from 'react';
-import { pageData, timeData } from '../../data';
-import { Area, Bar, CartesianGrid, ComposedChart, Legend, Line, Tooltip, XAxis, YAxis } from '../../../../src';
+import { pageData, timeData } from '../../../data';
+import { Area, Bar, CartesianGrid, ComposedChart, Legend, Line, Tooltip, XAxis, YAxis } from '../../../../../src';
 
 export default {
   component: ComposedChart,

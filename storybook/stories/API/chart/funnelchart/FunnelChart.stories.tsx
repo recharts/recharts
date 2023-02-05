@@ -1,5 +1,5 @@
 import React from 'react';
-import { Funnel, FunnelChart, LabelList, ResponsiveContainer } from '../../../../src';
+import { Funnel, FunnelChart, LabelList, ResponsiveContainer } from '../../../../../src';
 
 export default {
   component: FunnelChart,

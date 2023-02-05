@@ -1,8 +1,7 @@
 import React from 'react';
-import { PolarGrid, Surface } from '../../../../src';
+import { PolarGrid, Surface } from '../../../../../src';
 
 export default {
-  title: 'Recharts/Polar/Polar Grid',
   component: PolarGrid,
 };
 

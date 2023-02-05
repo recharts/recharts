@@ -1,5 +1,5 @@
 import React from 'react';
-import { pageData } from '../data';
+import { pageData } from '../../data';
 import {
   Area,
   Bar,
@@ -16,7 +16,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from '../../../src';
+} from '../../../../src';
 
 export default {
   component: Composed,
