@@ -327,6 +327,8 @@ const getAxisMapByAxes = (
 
     // we didn't create the domain from user's props above, so we need to calculate it
     if (!domain || domain.length === 0) {
+      const childDomain = child.props.domain ?? (type === 'number' ? [0, 'auto'] : undefined);
+
       if (dataKey) {
         // has dataKey in <Axis />
         domain = getDomainOfDataByKey(displayedData, dataKey, type);
@@ -341,7 +343,7 @@ const getAxisMapByAxes = (
             domain = _.range(0, len);
           } else if (!allowDuplicatedCategory) {
             // remove duplicated category
-            domain = parseDomainOfCategoryAxis(child.props.domain, domain, child).reduce(
+            domain = parseDomainOfCategoryAxis(childDomain, domain, child).reduce(
               (finalDomain: any, entry: any) =>
                 finalDomain.indexOf(entry) >= 0 ? finalDomain : [...finalDomain, entry],
               [],
@@ -350,7 +352,7 @@ const getAxisMapByAxes = (
         } else if (type === 'category') {
           // the field type is category data and this axis is numerical axis
           if (!allowDuplicatedCategory) {
-            domain = parseDomainOfCategoryAxis(child.props.domain, domain, child).reduce(
+            domain = parseDomainOfCategoryAxis(childDomain, domain, child).reduce(
               (finalDomain: any, entry: any) =>
                 finalDomain.indexOf(entry) >= 0 || entry === '' || _.isNil(entry)
                   ? finalDomain
@@ -402,14 +404,14 @@ const getAxisMapByAxes = (
         // To detect wether there is any reference lines whose props alwaysShow is true
         domain = detectReferenceElementsDomain(children, domain, axisId, axisType, ticks);
 
-        if (child.props.domain) {
-          domain = parseSpecifiedDomain(child.props.domain, domain, allowDataOverflow);
+        if (childDomain) {
+          domain = parseSpecifiedDomain(childDomain, domain, allowDataOverflow);
         }
-      } else if (type === 'category' && child.props.domain) {
-        const axisDomain = child.props.domain;
-        const isDomainValidate = domain.every((entry: string | number) => axisDomain.indexOf(entry) >= 0);
+      } else if (type === 'category' && childDomain) {
+        const axisDomain = childDomain;
+        const isDomainValid = domain.every((entry: string | number) => axisDomain.indexOf(entry) >= 0);
 
-        if (isDomainValidate) {
+        if (isDomainValid) {
           domain = axisDomain;
         }
       }
@@ -466,6 +468,8 @@ const getAxisMapByItems = (
   const axisMap = graphicalItems.reduce((result: any, child: any) => {
     const axisId = child.props[axisIdKey];
 
+    const originalDomain = Axis.defaultProps.domain ?? [0, 'auto'];
+
     if (!result[axisId]) {
       index++;
       let domain;
@@ -477,7 +481,7 @@ const getAxisMapByItems = (
         domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
       } else {
         domain = parseSpecifiedDomain(
-          Axis.defaultProps.domain,
+          originalDomain,
           getDomainOfItemsWithSameAxis(
             displayedData,
             graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
@@ -497,7 +501,7 @@ const getAxisMapByItems = (
           hide: true,
           orientation: _.get(ORIENT_MAP, `${axisType}.${index % 2}`, null),
           domain,
-          originalDomain: Axis.defaultProps.domain,
+          originalDomain,
           isCategorical,
           layout,
           // specify scale when no Axis
