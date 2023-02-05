@@ -11,7 +11,7 @@ export const Simple = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <LineChart width={600} height={300} data={args.data}>
+        <LineChart {...args}>
           <Line dataKey="uv" />
         </LineChart>
       </ResponsiveContainer>
