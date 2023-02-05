@@ -3,7 +3,6 @@ import { pageData } from '../../data';
 import { RadialBar, RadialBarChart, ResponsiveContainer } from '../../../../src';
 
 export default {
-  title: 'Recharts/Chart/Radial Bar Chart',
   component: RadialBarChart,
 };
 
