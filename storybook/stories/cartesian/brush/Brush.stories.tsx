@@ -3,7 +3,6 @@ import { dateData } from '../../data';
 import { Surface, Brush } from '../../../../src';
 
 export default {
-  title: 'Recharts/Cartesian/Brush',
   component: Brush,
 };
 

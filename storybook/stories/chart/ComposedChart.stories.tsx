@@ -19,7 +19,6 @@ import {
 } from '../../../src';
 
 export default {
-  title: 'Recharts/Chart/Composed Chart',
   component: Composed,
 };
 

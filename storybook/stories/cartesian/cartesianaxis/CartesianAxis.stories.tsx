@@ -3,7 +3,6 @@ import { CartesianAxis, Label, Surface } from '../../../../src';
 import { ticks } from '../../data';
 
 export default {
-  title: 'Recharts/Cartesian/Cartesian Axis',
   component: CartesianAxis,
 };
 

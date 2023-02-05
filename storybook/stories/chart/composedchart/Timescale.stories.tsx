@@ -3,7 +3,6 @@ import { pageData, timeData } from '../../data';
 import { Area, Bar, CartesianGrid, ComposedChart, Legend, Line, Tooltip, XAxis, YAxis } from '../../../../src';
 
 export default {
-  title: 'Recharts/Chart/Composed Chart/ComposedChart of time scale',
   component: ComposedChart,
 };
 
