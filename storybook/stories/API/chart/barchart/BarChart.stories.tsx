@@ -1,19 +1,18 @@
 import React from 'react';
-import { Line, LineChart, ResponsiveContainer } from '../../../../src';
-import { pageData } from '../../data';
+import { Bar, BarChart, ResponsiveContainer } from '../../../../../src';
+import { pageData } from '../../../data';
 
 export default {
-  title: 'Recharts/Chart/Line Chart',
-  component: LineChart,
+  component: BarChart,
 };
 
 export const Simple = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <LineChart {...args}>
-          <Line dataKey="uv" />
-        </LineChart>
+        <BarChart {...args}>
+          <Bar dataKey="uv" />
+        </BarChart>
       </ResponsiveContainer>
     );
   },

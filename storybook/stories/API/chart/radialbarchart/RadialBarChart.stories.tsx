@@ -1,6 +1,6 @@
 import React from 'react';
-import { RadialBar, RadialBarChart, ResponsiveContainer } from '../../../../src';
-import { pageData } from '../../data';
+import { pageData } from '../../../data';
+import { RadialBar, RadialBarChart, ResponsiveContainer } from '../../../../../src';
 
 export default {
   title: 'Recharts/Chart/Radial Bar Chart',
