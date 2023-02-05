@@ -1,6 +1,6 @@
 import React from 'react';
-import { dateData } from '../../../data';
-import { Surface, Brush } from '../../../../../src';
+import { dateData } from '../../data';
+import { Surface, Brush } from '../../../../src';
 
 export default {
   component: Brush,

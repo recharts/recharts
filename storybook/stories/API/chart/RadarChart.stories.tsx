@@ -1,18 +1,18 @@
 import React from 'react';
-import { pageData } from '../../../data';
-import { Line, LineChart, ResponsiveContainer } from '../../../../../src';
+import { pageData } from '../../data';
+import { Radar, RadarChart, ResponsiveContainer } from '../../../../src';
 
 export default {
-  component: LineChart,
+  component: RadarChart,
 };
 
 export const Simple = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <LineChart {...args}>
-          <Line dataKey="uv" />
-        </LineChart>
+        <RadarChart data={args.data}>
+          <Radar dataKey="uv" />
+        </RadarChart>
       </ResponsiveContainer>
     );
   },

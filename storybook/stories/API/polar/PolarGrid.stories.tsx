@@ -1,5 +1,5 @@
 import React from 'react';
-import { PolarGrid, Surface } from '../../../../../src';
+import { PolarGrid, Surface } from '../../../../src';
 
 export default {
   component: PolarGrid,

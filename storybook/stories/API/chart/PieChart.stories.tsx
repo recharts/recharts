@@ -1,6 +1,6 @@
 import React from 'react';
-import { pageData } from '../../../data';
-import { Pie, PieChart, ResponsiveContainer } from '../../../../../src';
+import { pageData } from '../../data';
+import { Pie, PieChart, ResponsiveContainer } from '../../../../src';
 
 export default {
   component: PieChart,
