@@ -12,7 +12,7 @@ export const Simple = {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <PieChart>
-          <Pie data={args.data} dataKey="uv" />
+          <Pie dataKey="uv" />
         </PieChart>
       </ResponsiveContainer>
     );
