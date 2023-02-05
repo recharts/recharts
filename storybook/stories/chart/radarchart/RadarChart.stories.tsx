@@ -11,7 +11,7 @@ export const Simple = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <RadarChart data={args.data} width={600} height={500} outerRadius={150}>
+        <RadarChart data={args.data} >
           <Radar dataKey="uv" />
         </RadarChart>
       </ResponsiveContainer>
