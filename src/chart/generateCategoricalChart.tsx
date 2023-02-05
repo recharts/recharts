@@ -197,6 +197,10 @@ function isDomainSpecifiedByUser(domain: AxisDomain, allowDataOverflow: boolean,
   return false;
 }
 
+function getDefaultDomainByAxisType(axisType: 'number' | string) {
+  return axisType === 'number' ? [0, 'auto'] : undefined;
+}
+
 /**
  * Get the content to be displayed in the tooltip
  * @param  {Object} state          Current state
@@ -327,7 +331,7 @@ const getAxisMapByAxes = (
 
     // we didn't create the domain from user's props above, so we need to calculate it
     if (!domain || domain.length === 0) {
-      const childDomain = child.props.domain ?? (type === 'number' ? [0, 'auto'] : undefined);
+      const childDomain = child.props.domain ?? getDefaultDomainByAxisType(type);
 
       if (dataKey) {
         // has dataKey in <Axis />
@@ -468,7 +472,7 @@ const getAxisMapByItems = (
   const axisMap = graphicalItems.reduce((result: any, child: any) => {
     const axisId = child.props[axisIdKey];
 
-    const originalDomain = Axis.defaultProps.domain ?? [0, 'auto'];
+    const originalDomain = getDefaultDomainByAxisType('number');
 
     if (!result[axisId]) {
       index++;
