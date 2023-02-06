@@ -1,6 +1,7 @@
 import React from 'react';
+import { curveCardinal } from 'victory-vendor/d3-shape';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip } from '../../../../src';
-import { dateData, TimeSeriesData } from '../../data';
+import { dateData, pageData, TimeSeriesData } from '../../data';
 
 export default {
   component: AreaChart,
@@ -28,5 +29,22 @@ export const Simple = {
   },
   args: {
     data,
+  },
+};
+
+const stepAround = curveCardinal.tension(0.5);
+
+export const CustomType = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <AreaChart data={args.data}>
+          <Area type={stepAround} dataKey="pv" stroke="#ff7300" fill="#ff7300" fillOpacity={0.9} />
+        </AreaChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    data: pageData,
   },
 };

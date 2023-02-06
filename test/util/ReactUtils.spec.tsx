@@ -8,6 +8,7 @@ import {
   findAllByType,
   getDisplayName,
   isChildrenEqual,
+  isValidSpreadableProp,
   toArray,
   validateWidthHeight,
   withoutType,
@@ -67,6 +68,28 @@ describe('ReactUtils untest tests', () => {
       expect(Object.keys(result ?? {})).toContain('stroke');
       expect(Object.keys(result ?? {})).toContain('fill');
       expect(Object.keys(result ?? {})).toContain('r');
+    });
+  });
+
+  describe('isValidSpreadableProp', () => {
+    test('return true for valid SVG element attribute', () => {
+      const isValid = isValidSpreadableProp(42, 'height');
+      expect(isValid).toBeTruthy();
+    });
+
+    test('return false for invalid SVG element attribute', () => {
+      const isValid = isValidSpreadableProp(42, 'type');
+      expect(isValid).toBeFalsy();
+    });
+
+    test('return true for event when includeEvents is true', () => {
+      const isValid = isValidSpreadableProp(() => true, 'onClick', true);
+      expect(isValid).toBeTruthy();
+    });
+
+    test('return true for valid SVGElementType', () => {
+      const isValid = isValidSpreadableProp('00 00 00 00', 'points', false, 'polyline');
+      expect(isValid).toBeTruthy();
     });
   });
 
