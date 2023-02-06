@@ -4,7 +4,6 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip } from '..
 import { dateData, pageData, TimeSeriesData } from '../../data';
 
 export default {
-  title: 'Recharts/Chart/Area Chart',
   component: AreaChart,
 };
 

@@ -2,7 +2,6 @@ import React from 'react';
 import { Pie, Surface } from '../../../../src';
 
 export default {
-  title: 'Recharts/Polar/Pie',
   component: Pie,
 };
 
