@@ -583,8 +583,14 @@ export const SVGElementPropKeys = [
   'min',
   'name',
   'style',
+  /*
+   * removed 'type' SVGElementPropKey because we do not currently use any SVG elements
+   * that can use it and it conflicts with the recharts prop 'type'
+   * https://github.com/recharts/recharts/pull/3327
+   * https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/type
+   */
+  // 'type',
   'target',
-  'type',
   'width',
   'role',
   'tabIndex',

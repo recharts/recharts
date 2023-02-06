@@ -6,7 +6,7 @@ import { isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
 import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys } from './types';
 
-const REACT_BROWSER_EVENT_MAP: any = {
+const REACT_BROWSER_EVENT_MAP: Record<string, string> = {
   click: 'onClick',
   mousedown: 'onMouseDown',
   mouseup: 'onMouseUp',
@@ -261,6 +261,34 @@ const SVG_TAGS: string[] = [
 const isSvgElement = (child: any) => child && child.type && _.isString(child.type) && SVG_TAGS.indexOf(child.type) >= 0;
 
 /**
+ * Checks if the property is valid to spread onto an SVG element or onto a specific component
+ * @param {unknown} property property value currently being compared
+ * @param {string} key property key currently being compared
+ * @param {boolean} includeEvents if events are included in spreadable props
+ * @param {boolean} svgElementType checks against map of SVG element types to attributes
+ * @returns {boolean} is prop valid
+ */
+export const isValidSpreadableProp = (
+  property: unknown,
+  key: string,
+  includeEvents?: boolean,
+  svgElementType?: FilteredSvgElementType,
+) => {
+  /**
+   * If the svg element type is explicitly included, check against the filtered element key map
+   * to determine if there are attributes that should only exist on that element type.
+   * @todo Add an internal cjs version of https://github.com/wooorm/svg-element-attributes for full coverage.
+   */
+  const matchingElementTypeKeys = FilteredElementKeyMap?.[svgElementType] ?? [];
+
+  return (
+    (!_.isFunction(property) &&
+      ((svgElementType && matchingElementTypeKeys.includes(key)) || SVGElementPropKeys.includes(key))) ||
+    (includeEvents && EventKeys.includes(key))
+  );
+};
+
+/**
  * Filter all the svg elements of children
  * @param  {Array} children The children of a react element
  * @return {Array}          All the svg elements
@@ -299,18 +327,14 @@ export const filterProps = (
   const out: Record<string, any> = {};
 
   /**
-   * If the svg element type is explicitly included, check against the filtered element key map
-   * to determine if there are attributes that should only exist on that element type.
-   * @todo Add an internal cjs version of https://github.com/wooorm/svg-element-attributes for full coverage.
+   * Props are blindly spread onto SVG elements. This loop filters out properties that we don't want to spread.
+   * Items filtered out are as follows:
+   *   - functions in properties that are SVG attributes (functions are included when includeEvents is true)
+   *   - props that are SVG attributes but don't matched the passed svgElementType
+   *   - any prop that is not in SVGElementPropKeys (or in EventKeys if includeEvents is true)
    */
-  const matchingElementTypeKeys = FilteredElementKeyMap?.[svgElementType] ?? [];
-
   Object.keys(inputProps).forEach(key => {
-    if (
-      (svgElementType && matchingElementTypeKeys.includes(key)) ||
-      SVGElementPropKeys.includes(key) ||
-      (includeEvents && EventKeys.includes(key))
-    ) {
+    if (isValidSpreadableProp(inputProps?.[key], key, includeEvents, svgElementType)) {
       out[key] = inputProps[key];
     }
   });

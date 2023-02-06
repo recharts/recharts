@@ -15,6 +15,7 @@ import {
   Label,
 } from 'recharts';
 import { changeNumberOfData } from './utils';
+import { curveCardinal } from 'victory-vendor/d3-shape';
 
 const data = [
   { name: 'Page A', uv: 4000, pv: 2400, amt: 2400, time: 1 },
@@ -118,6 +119,9 @@ const renderLabel = (props: any) => {
     </text>
   );
 };
+
+// custom curve cardinal `type` prop
+const stepAround = curveCardinal.tension(0.5);
 
 export default class AreaChartDemo extends React.Component<any, any> {
   static displayName = 'AreaChartDemo';
@@ -269,16 +273,14 @@ export default class AreaChartDemo extends React.Component<any, any> {
 
         <p>Tiny AreaChart</p>
         <div className="area-chart-wrapper">
-          <AreaChart width={100} height={50} data={data.slice(0, 1)} margin={{ top: 5, right: 0, left: 0, bottom: 5 }}
-          >
+          <AreaChart width={100} height={50} data={data.slice(0, 1)} margin={{ top: 5, right: 0, left: 0, bottom: 5 }}>
             <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
           </AreaChart>
         </div>
 
         <p>AreaChart with three y-axes</p>
         <div className="area-chart-wrapper">
-          <AreaChart width={600} height={400} data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-          >
+          <AreaChart width={600} height={400} data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
             <YAxis type="number" yAxisId={0} stroke="#ff7300">
               <Label position="top" offset={10}>
                 uv
@@ -313,18 +315,15 @@ export default class AreaChartDemo extends React.Component<any, any> {
             <YAxis type="category" dataKey="name" />
             <XAxis type="number" xAxisId={0} orientation="top" />
             <XAxis type="number" xAxisId={1} orientation="bottom" />
-            <Area dataKey="uv" type="monotone" stroke="#ff7300" fill="#ff7300" strokeWidth={2} xAxisId={0}
-            />
-            <Area dataKey="pv" type="monotone" stroke="#387908" fill="#387908" strokeWidth={2} xAxisId={1}
-            />
+            <Area dataKey="uv" type="monotone" stroke="#ff7300" fill="#ff7300" strokeWidth={2} xAxisId={0} />
+            <Area dataKey="pv" type="monotone" stroke="#387908" fill="#387908" strokeWidth={2} xAxisId={1} />
             <Tooltip />
           </AreaChart>
         </div>
 
         <p>AreaChart with custom tooltip</p>
         <div className="area-chart-wrapper">
-          <AreaChart width={900} height={250} data={data} margin={{ top: 10, right: 30, bottom: 10, left: 10 }}
-          >
+          <AreaChart width={900} height={250} data={data} margin={{ top: 10, right: 30, bottom: 10, left: 10 }}>
             <XAxis dataKey="name" />
             <YAxis tickCount={7} />
             <Tooltip content={<CustomTooltip external={data} />} />
@@ -332,8 +331,7 @@ export default class AreaChartDemo extends React.Component<any, any> {
             <ReferenceArea x1="Page A" x2="Page E" />
             <ReferenceLine y={7500} stroke="#387908" />
             <ReferenceDot x="Page C" y={1398} r={10} fill="#387908" isFront />
-            <Area type="monotone" dataKey="pv" stroke="#ff7300" fill="#ff7300" fillOpacity={0.9}
-            />
+            <Area type={stepAround} dataKey="pv" stroke="#ff7300" fill="#ff7300" fillOpacity={0.9} />
           </AreaChart>
         </div>
 
@@ -370,8 +368,7 @@ export default class AreaChartDemo extends React.Component<any, any> {
 
         <p>AreaChart of discrete values</p>
         <div className="area-chart-wrapper">
-          <AreaChart
-width={400} height={400} data={data01} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <AreaChart width={400} height={400} data={data01} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             <XAxis dataKey="day" />
             <YAxis type="category" />
             <Tooltip />
