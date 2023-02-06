@@ -1,9 +1,8 @@
 import React from 'react';
-import { Line, LineChart, ResponsiveContainer } from '../../../../src';
 import { pageData } from '../../data';
+import { Line, LineChart, ResponsiveContainer } from '../../../../src';
 
 export default {
-  title: 'Recharts/Chart/Line Chart',
   component: LineChart,
 };
 

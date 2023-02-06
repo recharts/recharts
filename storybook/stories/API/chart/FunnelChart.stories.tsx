@@ -2,7 +2,6 @@ import React from 'react';
 import { Funnel, FunnelChart, LabelList, ResponsiveContainer } from '../../../../src';
 
 export default {
-  title: 'Recharts/Chart/Funnel Chart',
   component: FunnelChart,
 };
 
