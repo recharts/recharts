@@ -38,7 +38,6 @@ export class PolarRadiusAxis extends PureComponent<Props> {
     axisLine: true,
     tick: true,
     tickCount: 5,
-    domain: [0, 'auto'],
     allowDataOverflow: false,
     scale: 'auto',
     allowDuplicatedCategory: true,

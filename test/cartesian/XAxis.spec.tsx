@@ -162,4 +162,16 @@ describe('<XAxis />', () => {
     const bar = container.querySelector('.recharts-rectangle');
     expect(parseInt(bar?.getAttribute('x') as string, 10)).toEqual(66);
   });
+
+  test('Render no ticks if type is category and data is empty', () => {
+    const { container } = render(
+      <BarChart width={300} height={300} data={[]}>
+        <Bar dataKey="y" isAnimationActive={false} />
+        <XAxis dataKey="x" />
+        <YAxis dataKey="y" />
+      </BarChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(0);
+  });
 });
