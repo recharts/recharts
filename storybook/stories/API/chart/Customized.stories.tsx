@@ -95,7 +95,6 @@ export const CustomizedRectangle = {
 // using Customized gives you access to all relevant chart props
 const CustomizedCrossComponent = (props: any) => {
   const { width, height, stroke, fill, formattedGraphicalItems } = props;
-  console.log(props);
   // get first series in chart
   const firstSeries = formattedGraphicalItems[0];
   // get any point at any index in chart
