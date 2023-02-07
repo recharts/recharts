@@ -1,3 +1,4 @@
+export * from './Coordinate';
 export * from './DataProps';
 export * from './NodeAndLink';
 export * from './Page';
