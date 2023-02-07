@@ -90,24 +90,32 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   useTranslate3d?: boolean;
 };
 
-export const Tooltip = <TValue extends ValueType, TName extends NameType>(
+const tooltipDefaultProps = {
+  active: false,
+  allowEscapeViewBox: { x: false, y: false },
+  reverseDirection: { x: false, y: false },
+  offset: 10,
+  viewBox: { x: 100, y: 100, height: 50, width: 50 },
+  coordinate: { x: 0, y: 0 },
+  wrapperStyle: {},
+  // this doesn't exist on TooltipProps
+  //@ts-ignore
+  cursorStyle: {},
+  separator: ' : ',
+  contentStyle: {},
+  itemStyle: {},
+  labelStyle: {},
+  isAnimationActive: !Global.isSsr,
+  animationEasing: 'ease',
+  animationDuration: 400,
+  filterNull: true,
+  useTranslate3d: false,
+  cursor: true,
+};
+
+const Tooltip = <TValue extends ValueType, TName extends NameType>(
   props: TooltipProps<TValue, TName> & { children?: React.ReactNode },
 ) => {
-  const {
-    active = false,
-    allowEscapeViewBox = { x: false, y: false },
-    reverseDirection = { x: false, y: false },
-    offset = 10,
-    viewBox = { x: 100, y: 100, height: 50, width: 50 },
-    coordinate = { x: 0, y: 0 },
-    wrapperStyle = {},
-    isAnimationActive = !Global.isSsr,
-    animationEasing = 'ease',
-    animationDuration = 400,
-    filterNull = true,
-    useTranslate3d = false,
-    position,
-  } = props;
   const [state, setState] = useState({
     boxWidth: -1,
     boxHeight: -1,
@@ -116,6 +124,7 @@ export const Tooltip = <TValue extends ValueType, TName extends NameType>(
   });
 
   const wrapperNode = useRef<HTMLDivElement>();
+  const { allowEscapeViewBox, reverseDirection, coordinate, offset, position, viewBox } = props;
 
   const updateBBox = () => {
     const { boxWidth, boxHeight, dismissed } = state;
@@ -149,7 +158,7 @@ export const Tooltip = <TValue extends ValueType, TName extends NameType>(
 
   useEffect(() => {
     updateBBox();
-  });
+  }, []);
 
   const getTranslate = ({
     key,
@@ -186,7 +195,17 @@ export const Tooltip = <TValue extends ValueType, TName extends NameType>(
     return Math.max(positive, viewBox[key]);
   };
 
-  const { payload, payloadUniqBy } = props;
+  const {
+    payload,
+    payloadUniqBy,
+    filterNull,
+    active,
+    wrapperStyle,
+    useTranslate3d,
+    isAnimationActive,
+    animationDuration,
+    animationEasing,
+  } = props;
   const finalPayload = getUniqPayload(
     payloadUniqBy,
     filterNull && payload && payload.length ? payload.filter(entry => !_.isNil(entry.value)) : payload,
@@ -274,9 +293,22 @@ export const Tooltip = <TValue extends ValueType, TName extends NameType>(
       style={outerStyle}
       ref={wrapperNode}
     >
-      {renderContent(content, { ...props, payload: finalPayload })}
+      {renderContent(content, {
+        ...props,
+        payload: finalPayload,
+      })}
     </div>
   );
 };
 
+// needs to be set so that renderByOrder can find the correct handler function
 Tooltip.displayName = 'Tooltip';
+
+/**
+ * needs to be set so that renderByOrder can access an have default values for
+ * children.props when there are no props set by the consumer
+ * doesn't work if using default parameters
+ */
+Tooltip.defaultProps = tooltipDefaultProps;
+
+export { Tooltip };

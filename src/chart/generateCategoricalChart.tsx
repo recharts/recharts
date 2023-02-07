@@ -2144,6 +2144,7 @@ export const generateCategoricalChart = ({
       }
 
       const { children, className, width, height, style, compact, title, desc, ...others } = this.props;
+
       const attrs = filterProps(others);
       const map = {
         CartesianGrid: { handler: this.renderGrid, once: true },
@@ -2166,7 +2167,7 @@ export const generateCategoricalChart = ({
         PolarAngleAxis: { handler: this.renderPolarAxis },
         PolarRadiusAxis: { handler: this.renderPolarAxis },
         Customized: { handler: this.renderCustomized },
-      } as any;
+      };
 
       // The "compact" mode is mainly used as the panorama within Brush
       if (compact) {

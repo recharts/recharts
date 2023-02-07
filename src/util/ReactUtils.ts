@@ -416,8 +416,8 @@ export const renderByOrder = (children: React.ReactElement[], renderMap: any) =>
       elements.push(child);
     } else if (child) {
       const displayName = getDisplayName(child.type);
-      const { handler, once } = renderMap[displayName] || {};
 
+      const { handler, once } = renderMap[displayName] || {};
       if (handler && (!once || !record[displayName])) {
         const results = handler(child, displayName, index);
 
