@@ -9,7 +9,7 @@ export default {
 export const Simple = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width={500} height={400}>
         <PieChart {...args}>
           <Pie data={pageData} dataKey="uv" />
         </PieChart>
@@ -21,7 +21,7 @@ export const Simple = {
 export const Donut = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width={500} height={400}>
         <PieChart {...args}>
           <Pie data={pageData} dataKey="uv" nameKey="name" innerRadius={50} outerRadius={80} />
         </PieChart>

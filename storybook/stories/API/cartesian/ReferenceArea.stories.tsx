@@ -11,7 +11,7 @@ export const Simple = {
     const { data, ...referenceAreaArgs } = args;
 
     return (
-      <ResponsiveContainer width="100%" height={500}>
+      <ResponsiveContainer width={500} height={500}>
         <LineChart
           width={500}
           height={300}
