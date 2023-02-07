@@ -19,7 +19,7 @@ export const Simple = {
     const { data, ...areaArgs } = args;
 
     return (
-      <Surface width={600} height={300}>
+      <Surface width={700} height={300}>
         <Area dataKey="value" isAnimationActive={false} baseLine={200} points={data} {...areaArgs} />
       </Surface>
     );
@@ -56,5 +56,24 @@ export const CustomizedDot = {
     data: coordinateWithValueData,
     isAnimationActive: true,
     dot: renderDot,
+  },
+};
+
+const renderLabel = (props: { index: number; x: number; y: number }) => {
+  const { index, x, y } = props;
+
+  return (
+    <text key={index} x={x} y={y} className="customized-label">
+      {`${x}, ${y}`}
+    </text>
+  );
+};
+
+export const CustomizedLabel = {
+  ...Simple,
+  args: {
+    data: coordinateWithValueData,
+    isAnimationActive: true,
+    label: renderLabel,
   },
 };
