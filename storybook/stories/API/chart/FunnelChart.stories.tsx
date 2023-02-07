@@ -9,7 +9,7 @@ export const Simple = {
   render: (args: Record<string, any>) => {
     return (
       <div style={{ height: 200, width: 200 }}>
-        <ResponsiveContainer height="100%" width="100%">
+        <ResponsiveContainer height="100%" width={500}>
           <FunnelChart layout="horizontal">
             <Funnel
               data={args.data}

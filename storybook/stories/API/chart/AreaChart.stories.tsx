@@ -18,7 +18,7 @@ dateData.forEach((date: string) => {
 export const Simple = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width={500} height={400}>
         <AreaChart data={args.data}>
           <Area dataKey="value" stroke="#2451B7" fill="url(#color)" />
           <Tooltip />
@@ -37,7 +37,7 @@ const stepAround = curveCardinal.tension(0.5);
 export const CustomType = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width={500} height={400}>
         <AreaChart data={args.data}>
           <Area type={stepAround} dataKey="pv" stroke="#ff7300" fill="#ff7300" fillOpacity={0.9} />
         </AreaChart>
