@@ -7,7 +7,6 @@ export default {
 
 export const Simple = {
   render: (args: Record<string, any>) => {
-    const { polarAngles, polarRadius } = args;
     return (
       <Surface width={500} height={500}>
         <PolarGrid
@@ -15,11 +14,7 @@ export const Simple = {
           cy={250}
           innerRadius={0}
           outerRadius={200}
-          width={500}
-          height={500}
-          polarAngles={polarAngles}
-          polarRadius={polarRadius}
-          radialLines
+          {...args}
         />
       </Surface>
     );
