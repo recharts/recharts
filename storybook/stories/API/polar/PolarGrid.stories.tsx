@@ -9,13 +9,7 @@ export const Simple = {
   render: (args: Record<string, any>) => {
     return (
       <Surface width={500} height={500}>
-        <PolarGrid
-          cx={250}
-          cy={250}
-          innerRadius={0}
-          outerRadius={200}
-          {...args}
-        />
+        <PolarGrid cx={250} cy={250} innerRadius={0} outerRadius={200} {...args} />
       </Surface>
     );
   },
