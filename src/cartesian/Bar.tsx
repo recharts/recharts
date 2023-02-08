@@ -193,7 +193,8 @@ export class Bar extends PureComponent<Props, State> {
         });
         y = currentValueScale ?? baseValueScale ?? undefined;
         width = pos.size;
-        height = baseValueScale - currentValueScale;
+        const computedHeight = baseValueScale - currentValueScale;
+        height = Number.isNaN(computedHeight) ? 0 : computedHeight;
         background = { x, y: yAxis.y, width, height: yAxis.height };
 
         if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
@@ -227,7 +228,7 @@ export class Bar extends PureComponent<Props, State> {
         x,
         y,
         width,
-        height: Number.isNaN(height) ? 0 : height,
+        height,
         value: stackedData ? value : value[1],
         payload: entry,
         background,
