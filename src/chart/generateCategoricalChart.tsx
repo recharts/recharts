@@ -2166,7 +2166,7 @@ export const generateCategoricalChart = ({
         PolarAngleAxis: { handler: this.renderPolarAxis },
         PolarRadiusAxis: { handler: this.renderPolarAxis },
         Customized: { handler: this.renderCustomized },
-      } as any;
+      };
 
       // The "compact" mode is mainly used as the panorama within Brush
       if (compact) {
