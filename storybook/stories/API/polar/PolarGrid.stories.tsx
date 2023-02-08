@@ -14,8 +14,7 @@ export const Simple = {
           cy={250}
           innerRadius={0}
           outerRadius={200}
-          polarAngles={args.polarAngles}
-          polarRadius={args.polarRadius}
+          {...args}
         />
       </Surface>
     );
