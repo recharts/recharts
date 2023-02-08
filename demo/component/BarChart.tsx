@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable react/no-multi-comp */
 /* eslint-disable max-classes-per-file */
 import React, { Component } from 'react';
@@ -126,40 +127,36 @@ const pageData = [
   { name: 'Page G', uv: 189, pv: 4800, amt: 2400 },
 ];
 
-const RenderLabel = (props: any) => {
-  const { x, y, textAnchor, key, value, index, ...others } = props;
-
-  if (x === +x && y === +y) {
-    return (
-      <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={key}>
-        {_.isArray(value) ? value[1] : value}
-      </text>
-    );
-  }
-
-  return null;
-};
-const CustomTick = function () {
-  const { payload, x, y } = this.props;
-
-  return (
-    <text x={x} y={y} fill="#666" textAnchor="middle" dy={-4}>
-      {payload.province}
-    </text>
-  );
-};
-
-const CustomAxisTick = function () {
-  const { x, y, payload } = this.props;
-
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">
-        {payload.value}
-      </text>
-    </g>
-  );
-};
+const noDataCustomBar = [
+  {
+    group: 10,
+    fullName: '9 January',
+    name: '9 Jan',
+    noData: 'group',
+    noDataLabel: 'No Data',
+  },
+  {
+    group: null,
+    fullName: '15 January',
+    name: '15 Jan',
+    noData: 'group',
+    noDataLabel: 'No Data',
+  },
+  {
+    group: null,
+    fullName: '24 January',
+    name: '24 Jan',
+    noData: 'group',
+    noDataLabel: 'No Data',
+  },
+  {
+    group: null,
+    fullName: '30 January',
+    name: '30 Jan',
+    noData: 'group',
+    noDataLabel: 'No Data',
+  },
+];
 
 const CustomBar: React.FunctionComponent<any> = (props: any) => {
   const { x, y, width, height, fill } = props;
@@ -198,7 +195,7 @@ class BarTwo extends Component<any, any> {
               Z`;
     }
 
-    return null;
+    return undefined;
   }
 
   render() {
@@ -254,6 +251,8 @@ class CustomAxis extends Component<any> {
           </svg>
         );
         break;
+      default:
+        break;
     }
 
     return icon;
@@ -279,6 +278,47 @@ const initialState = {
   data02,
 };
 
+const NoDataBar = (props: any) => {
+  const { x, width, value, valueKey, fill, y } = props;
+
+  const noDataYVal = 5 + y / 2;
+  const noDataHeight = y / 2 - 5;
+
+  return (
+    <svg className="NoDataLabel">
+      <defs>
+        <pattern
+          id={`hatch_${valueKey}`}
+          patternUnits="userSpaceOnUse"
+          width="35"
+          height="10"
+          patternTransform="rotate(-45)"
+        >
+          <path d="M0 10 l 35 0" className="NoDataLabel__hatch" strokeWidth="3" stroke={fill} strokeOpacity={0.15} />
+        </pattern>
+      </defs>
+      <g>
+        <rect
+          className="NoDataLabel__background"
+          x={x}
+          y={noDataYVal}
+          width={width}
+          height={noDataHeight}
+          stroke={fill}
+          strokeWidth="1"
+          strokeDasharray="4 4"
+          strokeOpacity={0.8}
+          fill="#ffffff"
+          rx="3"
+        />
+        <rect x={x} y={noDataYVal} width={width} height={noDataHeight} fill={`url(#hatch_${valueKey})`} />
+        <p>{value && value[valueKey] ? value[valueKey] : 'No Data'}</p>
+      </g>
+    </svg>
+  );
+};
+
+// eslint-disable-next-line import/no-default-export
 export default class Demo extends Component<any, any> {
   static displayName = 'BarChartDemo';
 
@@ -288,8 +328,8 @@ export default class Demo extends Component<any, any> {
     this.setState(() => _.mapValues(initialState, changeNumberOfData));
   };
 
-  handlePvBarClick = (data: any, index: number, e: React.MouseEvent) => {
-    console.log(`Pv Bar (${index}) Click: `, data);
+  handlePvBarClick = (onClickData: any, index: number) => {
+    console.log(`Pv Bar (${index}) Click: `, onClickData);
   };
 
   handleBarAnimationStart = () => {
@@ -301,13 +341,13 @@ export default class Demo extends Component<any, any> {
   };
 
   handleMoreData = () => {
-    const { data } = this.state;
+    const { data: stateData } = this.state;
     const count = data.length;
     console.log(count);
 
     this.setState({
       data: [
-        ...data,
+        ...stateData,
         ..._.range(1 + Math.ceil(data.length * Math.random())).map((entry, index) => {
           console.log(index);
           return {
@@ -325,26 +365,26 @@ export default class Demo extends Component<any, any> {
   };
 
   handleLessData = () => {
-    const { data } = this.state;
+    const { data: stateData } = this.state;
 
     this.setState({
-      data: data.slice(0, Math.ceil(data.length * Math.random())),
+      data: stateData.slice(0, Math.ceil(stateData.length * Math.random())),
     });
   };
 
   render() {
-    const { data, data01, data02 } = this.state;
+    const { data: stateData, data02: stateData02 } = this.state;
 
     return (
       <div className="bar-charts">
-        <a href="javascript: void(0);" className="btn update" onClick={this.handleChangeData}>
+        <button className="btn update" onClick={this.handleChangeData} type="button">
           change data
-        </a>
+        </button>
         <br />
 
         <p>BarChart of layout vertical</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={400} height={400} data={data.slice(0, 1)} maxBarSize={10} barSize={10}>
+          <BarChart width={400} height={400} data={stateData.slice(0, 1)} maxBarSize={10} barSize={10}>
             <XAxis padding={{ left: 20, right: 100 }} type="number" dataKey="time" />
             <YAxis type="number" />
             <CartesianGrid horizontal={false} />
@@ -356,12 +396,16 @@ export default class Demo extends Component<any, any> {
 
         <p>Simple BarChart (Click on rectangles and open console )</p>
         <p>
-          <a onClick={this.handleMoreData}>more data</a>
+          <button type="button" onClick={this.handleMoreData}>
+            more data
+          </button>
           <span style={{ margin: '0 20px' }}>|</span>
-          <a onClick={this.handleLessData}>less data</a>
+          <button type="button" onClick={this.handleLessData}>
+            less data
+          </button>
         </p>
         <div className="bar-chart-wrapper" style={{ textAlign: 'right' }}>
-          <BarChart width={400} height={400} data={data} onClick={this.handlePvBarClick}>
+          <BarChart width={400} height={400} data={stateData} onClick={this.handlePvBarClick}>
             <XAxis dataKey="name" />
             <YAxis yAxisId="a" />
             <YAxis yAxisId="b" orientation="right" />
@@ -375,12 +419,12 @@ export default class Demo extends Component<any, any> {
               onAnimationEnd={this.handleBarAnimationEnd}
             >
               <LabelList fill="#000" angle={-45} />
-              {data.map((entry, index) => (
+              {stateData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={colors[index % 20] as string} />
               ))}
             </Bar>
             <Bar yAxisId="b" dataKey="pv" label>
-              {data.map((entry, index) => (
+              {stateData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={colors[index % 20] as string} />
               ))}
             </Bar>
@@ -389,7 +433,7 @@ export default class Demo extends Component<any, any> {
 
         <p>BarChart with error bars</p>
         <div className="bar-chart-wrapper" style={{ textAlign: 'right' }}>
-          <BarChart width={400} height={400} data={data} onClick={this.handlePvBarClick}>
+          <BarChart width={400} height={400} data={stateData} onClick={this.handlePvBarClick}>
             <XAxis dataKey="name" />
             <YAxis yAxisId="a" />
             <YAxis yAxisId="b" orientation="right" />
@@ -402,13 +446,13 @@ export default class Demo extends Component<any, any> {
               onAnimationStart={this.handleBarAnimationStart}
               onAnimationEnd={this.handleBarAnimationEnd}
             >
-              {data.map((entry, index) => (
+              {stateData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={colors[index % 20] as string} />
               ))}
               <ErrorBar dataKey="uvError" />
             </Bar>
             <Bar yAxisId="b" dataKey="pv">
-              {data.map((entry, index) => (
+              {stateData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={colors[index % 20] as string} />
               ))}
               <ErrorBar dataKey="pvError" />
@@ -418,14 +462,14 @@ export default class Demo extends Component<any, any> {
 
         <p>Tiny BarChart</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={150} height={40} data={data}>
+          <BarChart width={150} height={40} data={stateData}>
             <Bar dataKey="uv" fill="#ff7300" onClick={this.handlePvBarClick} background />
           </BarChart>
         </div>
 
         <p>BarChart with tickFormatter</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={500} height={300} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <BarChart width={500} height={300} data={stateData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" tickFormatter={(value: string, i: number) => `${value}.${i}`} />
             <YAxis />
@@ -443,7 +487,7 @@ export default class Demo extends Component<any, any> {
             height={250}
             barGap={2}
             barSize={6}
-            data={data02}
+            data={stateData02}
             margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
           >
             <XAxis dataKey="name" />
@@ -464,7 +508,7 @@ export default class Demo extends Component<any, any> {
             height={250}
             barCategoryGap={0}
             barGap={0}
-            data={data}
+            data={stateData}
             margin={{ top: 20, right: 20, bottom: 0, left: 20 }}
           >
             <XAxis dataKey="name" />
@@ -479,7 +523,7 @@ export default class Demo extends Component<any, any> {
             height={250}
             barCategoryGap={0}
             barGap={0}
-            data={data}
+            data={stateData}
             margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
           >
             <XAxis axisLine={false} tickLine={false} dataKey="name" tick={<CustomAxis />} />
@@ -489,7 +533,7 @@ export default class Demo extends Component<any, any> {
 
         <p>Stack BarChart</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={400} height={400} data={data}>
+          <BarChart width={400} height={400} data={stateData}>
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
@@ -520,7 +564,7 @@ export default class Demo extends Component<any, any> {
           <BarChart
             width={1400}
             height={400}
-            data={data}
+            data={stateData}
             margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
             layout="vertical"
           >
@@ -555,7 +599,7 @@ export default class Demo extends Component<any, any> {
           <BarChart
             width={800}
             height={800}
-            data={data}
+            data={stateData}
             margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
             layout="vertical"
           >
@@ -580,7 +624,7 @@ export default class Demo extends Component<any, any> {
           <BarChart
             width={1000}
             height={400}
-            data={data}
+            data={stateData}
             margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
             layout="horizontal"
           >
@@ -603,13 +647,36 @@ export default class Demo extends Component<any, any> {
 
         <p>Custom cursor with hover action</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={500} height={300} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <BarChart width={500} height={300} data={stateData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip cursor={<CustomCursor />} />
             <Legend />
             <Bar dataKey="pv" fill="#8884d8" />
+          </BarChart>
+        </div>
+        <p>Custom bar when no data - Custom shape</p>
+        <div className="bar-chart-wrapper">
+          <BarChart
+            width={500}
+            height={300}
+            maxBarSize={60}
+            data={noDataCustomBar}
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          >
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Bar
+              dataKey="group"
+              fill="#8884d8"
+              shape={props => {
+                if (props.group) return <Rectangle {...props} />;
+                return <NoDataBar {...props} />;
+              }}
+            >
+              <LabelList dataKey="noDataLabel" position="top" />
+            </Bar>
           </BarChart>
         </div>
       </div>
