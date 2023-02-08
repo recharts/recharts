@@ -182,6 +182,7 @@ export class Bar extends PureComponent<Props, State> {
       }
 
       if (layout === 'horizontal') {
+        const [baseValueScale, currentValueScale] = [yAxis.scale(value[0]), yAxis.scale(value[1])];
         x = getCateCoordinateOfBar({
           axis: xAxis,
           ticks: xAxisTicks,
@@ -190,9 +191,10 @@ export class Bar extends PureComponent<Props, State> {
           entry,
           index,
         });
-        y = yAxis.scale(value[1]);
+        y = currentValueScale ?? baseValueScale ?? undefined;
         width = pos.size;
-        height = yAxis.scale(value[0]) - yAxis.scale(value[1]);
+        const computedHeight = baseValueScale - currentValueScale;
+        height = Number.isNaN(computedHeight) ? 0 : computedHeight;
         background = { x, y: yAxis.y, width, height: yAxis.height };
 
         if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {

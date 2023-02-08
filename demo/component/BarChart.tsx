@@ -667,6 +667,7 @@ export default class Demo extends Component<any, any> {
           >
             <XAxis dataKey="name" />
             <YAxis />
+            <Tooltip />
             <Bar
               dataKey="group"
               fill="#8884d8"
