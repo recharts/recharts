@@ -1,6 +1,6 @@
 import React from 'react';
 import { pageData } from '../../data';
-import { Radar, RadarChart, ResponsiveContainer } from '../../../../src';
+import { Radar, RadarChart } from '../../../../src';
 
 export default {
   component: RadarChart,
@@ -9,11 +9,9 @@ export default {
 export const Simple = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width={500} height={400}>
-        <RadarChart data={args.data}>
-          <Radar dataKey="uv" />
-        </RadarChart>
-      </ResponsiveContainer>
+      <RadarChart data={args.data} width={500} height={400}>
+        <Radar dataKey="uv" />
+      </RadarChart>
     );
   },
   args: {

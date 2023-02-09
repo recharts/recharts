@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bar, BarChart, ResponsiveContainer } from '../../../../src';
+import { Bar, BarChart } from '../../../../src';
 import { pageData } from '../../data';
 
 export default {
@@ -9,11 +9,9 @@ export default {
 export const Simple = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width={500} height={400}>
-        <BarChart {...args}>
-          <Bar dataKey="uv" />
-        </BarChart>
-      </ResponsiveContainer>
+      <BarChart {...args} width={500} height={400}>
+        <Bar dataKey="uv" />
+      </BarChart>
     );
   },
   args: {

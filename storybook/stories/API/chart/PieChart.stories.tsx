@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pie, PieChart, ResponsiveContainer } from '../../../../src';
+import { Pie, PieChart } from '../../../../src';
 import { pageData } from '../../data';
 
 export default {
@@ -9,11 +9,9 @@ export default {
 export const Simple = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width={500} height={400}>
-        <PieChart {...args}>
-          <Pie data={pageData} dataKey="uv" />
-        </PieChart>
-      </ResponsiveContainer>
+      <PieChart {...args} width={500} height={400}>
+        <Pie data={pageData} dataKey="uv" />
+      </PieChart>
     );
   },
 };
@@ -21,11 +19,9 @@ export const Simple = {
 export const Donut = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width={500} height={400}>
-        <PieChart {...args}>
-          <Pie data={pageData} dataKey="uv" nameKey="name" innerRadius={50} outerRadius={80} />
-        </PieChart>
-      </ResponsiveContainer>
+      <PieChart {...args} width={500} height={400}>
+        <Pie data={pageData} dataKey="uv" nameKey="name" innerRadius={50} outerRadius={80} />
+      </PieChart>
     );
   },
 };

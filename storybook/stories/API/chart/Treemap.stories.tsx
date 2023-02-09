@@ -1,6 +1,6 @@
 import React from 'react';
 import { sizeData } from '../../data';
-import { ResponsiveContainer, Treemap } from '../../../../src';
+import { Treemap } from '../../../../src';
 
 export default {
   component: Treemap,
@@ -8,11 +8,7 @@ export default {
 
 export const Simple = {
   render: (args: Record<string, any>) => {
-    return (
-      <ResponsiveContainer width={500} height={400}>
-        <Treemap data={args.data} dataKey="size" />
-      </ResponsiveContainer>
-    );
+    return <Treemap data={args.data} dataKey="size" width={500} height={400} />;
   },
   args: {
     data: sizeData,

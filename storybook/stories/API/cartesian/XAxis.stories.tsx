@@ -1,5 +1,5 @@
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from '../../../../src';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from '../../../../src';
 import { coordinateWithValueData, dateWithValueData, pageData, timeData } from '../../data';
 
 export default {
@@ -14,17 +14,15 @@ export default {
 export const Simple = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width={500} height={500}>
-        <LineChart width={600} height={300} data={args.data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          {args.secondLine}
-          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-        </LineChart>
-      </ResponsiveContainer>
+      <LineChart width={600} height={300} data={args.data}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        {args.secondLine}
+        <Line dataKey="uv" />
+      </LineChart>
     );
   },
   args: {
@@ -45,16 +43,14 @@ const SingleLineChart = {
     const { data, lineDataKey = 'uv', ...xAxisArgs } = args;
 
     return (
-      <ResponsiveContainer width={500} height={500}>
-        <LineChart width={600} height={300} data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" {...xAxisArgs} />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey={lineDataKey} stroke="#82ca9d" />
-        </LineChart>
-      </ResponsiveContainer>
+      <LineChart width={600} height={300} data={data}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" {...xAxisArgs} />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Line dataKey={lineDataKey} />
+      </LineChart>
     );
   },
   args: {

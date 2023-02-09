@@ -11,7 +11,6 @@ import {
   LineChart,
   ReferenceDot,
   ReferenceLine,
-  ResponsiveContainer,
   Scatter,
   Tooltip,
   XAxis,
@@ -25,26 +24,22 @@ export default {
 // This render template can be shared across multiple stories.
 // All stories use the same data, but pass different children.
 const HorizontalChartTemplate = {
-  render: (args: any) => {
+  render: (args: Record<string, any>) => {
     return (
-      <>
-        <div className="composed-chart-wrapper">
-          <ResponsiveContainer width={500} height={300}>
-            <Composed
-              {...args}
-              data={pageData}
-              margin={{
-                top: 20,
-                right: 20,
-                bottom: 20,
-                left: 20,
-              }}
-            >
-              {args.children}
-            </Composed>
-          </ResponsiveContainer>
-        </div>
-      </>
+      <Composed
+        width={500}
+        height={300}
+        {...args}
+        data={pageData}
+        margin={{
+          top: 20,
+          right: 20,
+          bottom: 20,
+          left: 20,
+        }}
+      >
+        {args.children}
+      </Composed>
     );
   },
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { nodeLinkData } from '../../data';
-import { ResponsiveContainer, Sankey } from '../../../../src';
+import { Sankey } from '../../../../src';
 
 export default {
   component: Sankey,
@@ -8,11 +8,7 @@ export default {
 
 export const Simple = {
   render: (args: Record<string, any>) => {
-    return (
-      <ResponsiveContainer width={500} height={400}>
-        <Sankey data={args.data} />
-      </ResponsiveContainer>
-    );
+    return <Sankey data={args.data} width={500} height={400} />;
   },
   args: {
     data: nodeLinkData,
@@ -21,11 +17,7 @@ export const Simple = {
 
 export const Customized = {
   render: (args: Record<string, any>) => {
-    return (
-      <ResponsiveContainer width={500} height={400}>
-        <Sankey data={args.data} width={960} height={500} nodeWidth={10} nodePadding={60} />
-      </ResponsiveContainer>
-    );
+    return <Sankey data={args.data} width={960} height={500} nodeWidth={10} nodePadding={60} />;
   },
   args: {
     data: nodeLinkData,
