@@ -12,7 +12,7 @@ import {
   Rectangle,
   Cross,
 } from '../../../../src';
-import { simpleUvPvData } from '../../data';
+import { pageData } from '../../data';
 
 export default {
   component: Customized,
@@ -49,7 +49,7 @@ const SimpleCustomized = {
     );
   },
   args: {
-    data: simpleUvPvData,
+    data: pageData,
     customizedComponent: <div>CustomizedComponent</div>,
   },
 };
@@ -87,7 +87,7 @@ const CustomizedRectangleComponent = (props: any) => {
 export const CustomizedRectangle = {
   ...SimpleCustomized,
   args: {
-    data: simpleUvPvData,
+    data: pageData,
     customizedComponent: <Customized component={CustomizedRectangleComponent} />,
   },
 };
@@ -118,7 +118,7 @@ const CustomizedCrossComponent = (props: any) => {
 export const CustomizedCross = {
   ...SimpleCustomized,
   args: {
-    data: simpleUvPvData,
+    data: pageData,
     customizedComponent: <Customized component={CustomizedCrossComponent} />,
   },
 };
