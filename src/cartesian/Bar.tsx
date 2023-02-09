@@ -204,7 +204,8 @@ export class Bar extends PureComponent<Props, State> {
           height += delta;
         }
       } else {
-        x = xAxis.scale(value[0]);
+        const [baseValueScale, currentValueScale] = [xAxis.scale(value[0]), xAxis.scale(value[1])];
+        x = baseValueScale;
         y = getCateCoordinateOfBar({
           axis: yAxis,
           ticks: yAxisTicks,
@@ -213,7 +214,7 @@ export class Bar extends PureComponent<Props, State> {
           entry,
           index,
         });
-        width = xAxis.scale(value[1]) - xAxis.scale(value[0]);
+        width = currentValueScale - baseValueScale;
         height = pos.size;
         background = { x: xAxis.x, y, width: xAxis.width, height };
 
