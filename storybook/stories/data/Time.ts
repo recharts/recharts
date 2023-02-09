@@ -62,57 +62,20 @@ const timeData = [
   },
 ];
 
-const simpleUvPvData = [
-  {
-    name: 'Page A',
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'Page C',
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'Page D',
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: 'Page E',
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: 'Page F',
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: 'Page G',
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
-  },
+const dateWithValueData = [
+  { time: 1483142400000, value: 10 },
+  { time: 1483146000000, value: 20 },
+  { time: 1483147800000, value: 20 },
+  { time: 1483149600000, value: 30 },
+  { time: 1483153200000, value: 10 },
+  { time: 1483155000000, value: 40 },
+  { time: 1483156800000, value: 40 },
+  { time: 1483160400000, value: 20 },
+  { time: 1483164000000, value: 30 },
+  { time: 1483167600000, value: 10 },
+  { time: 1483171200000, value: 60 },
+  { time: 1483173000000, value: 60 },
+  { time: 1483178400000, value: 60 },
 ];
 
-const coordinateWithValueData = [
-  { x: 10, y: 50, value: 100 },
-  { x: 150, y: 150, value: 100 },
-  { x: 290, y: 70, value: 100 },
-  { x: 430, y: 60, value: 100 },
-  { x: 570, y: 30, value: 100 },
-];
-
-export { dateData, timeData, simpleUvPvData, coordinateWithValueData };
+export { dateData, timeData, dateWithValueData };
