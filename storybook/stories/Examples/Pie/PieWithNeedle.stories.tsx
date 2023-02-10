@@ -1,6 +1,6 @@
 /* eslint-disable no-shadow */
 import React from 'react';
-import { Cell, Pie, PieChart } from '../../../../src';
+import { Cell, Pie, PieChart, ResponsiveContainer } from '../../../../src';
 
 export default {
   component: Pie,
@@ -49,25 +49,29 @@ const needle = (value: number, data: any[], cx: number, cy: number, iR: number, 
 export const PieWithNeedle = {
   render: (_args: Record<string, any>) => {
     return (
-      <PieChart width={400} height={500}>
-        <Pie
-          dataKey="val"
-          startAngle={180}
-          endAngle={0}
-          data={data}
-          cx={cx}
-          cy={cy}
-          innerRadius={iR}
-          outerRadius={oR}
-          fill="#8884d8"
-          stroke="none"
-        >
-          {data.map(entry => (
-            <Cell key={entry.name} fill={entry.color} />
-          ))}
-        </Pie>
-        {needle(value, data, cx, cy, iR, oR, '#d0d000')}
-      </PieChart>
+      <ResponsiveContainer width="100%" height={500}>
+        <div style={{ width: '300px', height: '300px', display: 'flex', margin: 'auto' }}>
+          <PieChart width={300} height={300}>
+            <Pie
+              dataKey="val"
+              startAngle={180}
+              endAngle={0}
+              data={data}
+              cx={cx}
+              cy={cy}
+              innerRadius={iR}
+              outerRadius={oR}
+              fill="#8884d8"
+              stroke="none"
+            >
+              {data.map(entry => (
+                <Cell key={entry.name} fill={entry.color} />
+              ))}
+            </Pie>
+            {needle(value, data, cx, cy, iR, oR, '#d0d000')}
+          </PieChart>
+        </div>
+      </ResponsiveContainer>
     );
   },
   args: {},

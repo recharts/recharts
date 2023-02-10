@@ -1,16 +1,29 @@
 import React from 'react';
-import { PolarGrid, Surface } from '../../../../src';
+import { PolarGrid, ResponsiveContainer, Surface } from '../../../../src';
 
 export default {
   component: PolarGrid,
 };
 
+const [surfaceWidth, surfaceHeight] = [500, 500];
+
 export const Simple = {
   render: (args: Record<string, any>) => {
     return (
-      <Surface width={500} height={500}>
-        <PolarGrid cx={250} cy={250} innerRadius={0} outerRadius={200} {...args} />
-      </Surface>
+      <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <Surface
+          width={surfaceWidth}
+          height={surfaceHeight}
+          viewBox={{
+            x: 0,
+            y: 0,
+            width: surfaceWidth,
+            height: surfaceHeight,
+          }}
+        >
+          <PolarGrid cx={250} cy={250} innerRadius={0} outerRadius={200} {...args} />
+        </Surface>
+      </ResponsiveContainer>
     );
   },
   args: {

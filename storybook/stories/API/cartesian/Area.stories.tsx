@@ -1,5 +1,5 @@
 import React from 'react';
-import { Surface, Area } from '../../../../src';
+import { Surface, Area, ResponsiveContainer } from '../../../../src';
 import { coordinateWithValueData } from '../../data';
 
 export default {
@@ -18,10 +18,23 @@ export const Simple = {
   render: (args: Record<string, any>) => {
     const { data, ...areaArgs } = args;
 
+    const [surfaceWidth, surfaceHeight] = [600, 300];
+
     return (
-      <Surface width={700} height={300}>
-        <Area dataKey="value" isAnimationActive={false} baseLine={200} points={data} {...areaArgs} />
-      </Surface>
+      <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <Surface
+          width={surfaceWidth}
+          height={surfaceHeight}
+          viewBox={{
+            x: 0,
+            y: 0,
+            width: surfaceWidth,
+            height: surfaceHeight,
+          }}
+        >
+          <Area dataKey="value" isAnimationActive={false} baseLine={200} points={data} {...areaArgs} />
+        </Surface>
+      </ResponsiveContainer>
     );
   },
   args: {
