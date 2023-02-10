@@ -3,7 +3,7 @@
     "jsx": "react",
     "module": "commonjs",
     "noImplicitAny": true,
-    "outDir": "./build/",
+    "noEmit": true,
     "declarationDir": "./types" /* Output directory for generated declaration files. */,
     "preserveConstEnums": true,
     "removeComments": true,
@@ -15,5 +15,5 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": "."
   },
-  "include": ["./src/**/*", "types.d.ts"]
+  "include": ["./stories"]
 }
