@@ -1,10 +1,12 @@
 import React from 'react';
 import { dateData } from '../../data';
-import { Surface, Brush } from '../../../../src';
+import { Surface, Brush, ResponsiveContainer } from '../../../../src';
 
 export default {
   component: Brush,
 };
+
+const [surfaceWidth, surfaceHeight] = [600, 500];
 
 export const Simple = {
   render: (args: Record<string, any>) => {
@@ -42,36 +44,47 @@ export const Simple = {
     };
 
     return (
-      <div>
-        <p>Simple Brush</p>
-        <Surface width={800} height={200}>
-          <Brush
-            startIndex={simple.startIndex}
-            endIndex={simple.endIndex}
-            x={100}
-            y={50}
-            width={400}
-            height={40}
-            data={args.data}
-            onChange={handleChange}
-            traveller={renderTraveller}
-          />
-        </Surface>
-        <p>Brush has specified gap</p>
-        <Surface width={800} height={200}>
-          <Brush
-            startIndex={gap.startIndex}
-            endIndex={gap.endIndex}
-            x={100}
-            y={50}
-            width={400}
-            height={40}
-            data={args.data}
-            gap={5}
-            onChange={handleGapChange}
-          />
-        </Surface>
-      </div>
+      <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <div style={{ margin: 'auto', width: surfaceWidth }}>
+          <p>Simple Brush</p>
+          <Surface
+            width={surfaceWidth}
+            height={200}
+            viewBox={{
+              x: 0,
+              y: 0,
+              width: surfaceWidth,
+              height: 200,
+            }}
+          >
+            <Brush
+              startIndex={simple.startIndex}
+              endIndex={simple.endIndex}
+              x={100}
+              y={50}
+              width={400}
+              height={40}
+              data={args.data}
+              onChange={handleChange}
+              traveller={renderTraveller}
+            />
+          </Surface>
+          <p>Brush has specified gap</p>
+          <Surface width={surfaceWidth} height={200}>
+            <Brush
+              startIndex={gap.startIndex}
+              endIndex={gap.endIndex}
+              x={100}
+              y={50}
+              width={400}
+              height={40}
+              data={args.data}
+              gap={5}
+              onChange={handleGapChange}
+            />
+          </Surface>
+        </div>
+      </ResponsiveContainer>
     );
   },
 

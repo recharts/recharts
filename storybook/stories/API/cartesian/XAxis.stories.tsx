@@ -14,7 +14,7 @@ export default {
 export const Simple = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width={500} height={500}>
+      <ResponsiveContainer width="100%" height={500}>
         <LineChart width={600} height={300} data={args.data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
@@ -45,7 +45,7 @@ const SingleLineChart = {
     const { data, lineDataKey = 'uv', ...xAxisArgs } = args;
 
     return (
-      <ResponsiveContainer width={500} height={500}>
+      <ResponsiveContainer width="100%" height={500}>
         <LineChart width={600} height={300} data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" {...xAxisArgs} />

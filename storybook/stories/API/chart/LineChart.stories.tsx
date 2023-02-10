@@ -9,7 +9,7 @@ export default {
 export const Simple = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width={500} height={400}>
+      <ResponsiveContainer width="100%" height={400}>
         <LineChart {...args}>
           <Line dataKey="uv" />
         </LineChart>
