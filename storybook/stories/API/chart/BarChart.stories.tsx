@@ -1,0 +1,22 @@
+import React from 'react';
+import { Bar, BarChart, ResponsiveContainer } from '../../../../src';
+import { pageData } from '../../data';
+
+export default {
+  component: BarChart,
+};
+
+export const Simple = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width={500} height={400}>
+        <BarChart {...args}>
+          <Bar dataKey="uv" />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    data: pageData,
+  },
+};

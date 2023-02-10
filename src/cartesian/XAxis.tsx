@@ -44,7 +44,6 @@ XAxis.defaultProps = {
   xAxisId: 0,
   tickCount: 5,
   type: 'category',
-  domain: [0, 'auto'],
   padding: { left: 0, right: 0 },
   allowDataOverflow: false,
   scale: 'auto',

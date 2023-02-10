@@ -22,7 +22,7 @@ import {
   ReactElement,
 } from 'react';
 import _ from 'lodash';
-import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'd3-scale';
+import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
 
 export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette';
 export type LayoutType = 'horizontal' | 'vertical' | 'centric' | 'radial';
@@ -583,8 +583,14 @@ export const SVGElementPropKeys = [
   'min',
   'name',
   'style',
+  /*
+   * removed 'type' SVGElementPropKey because we do not currently use any SVG elements
+   * that can use it and it conflicts with the recharts prop 'type'
+   * https://github.com/recharts/recharts/pull/3327
+   * https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/type
+   */
+  // 'type',
   'target',
-  'type',
   'width',
   'role',
   'tabIndex',
@@ -1080,7 +1086,7 @@ export interface BaseAxisProps {
    */
   allowDataOverflow?: boolean;
   /**
-   * Allow the axis has duplicated categorys or not when the type of axis is "category".
+   * Allow the axis has duplicated categories or not when the type of axis is "category".
    */
   allowDuplicatedCategory?: boolean;
   /**

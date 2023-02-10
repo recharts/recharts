@@ -108,8 +108,6 @@ const horizontalPosition = (row: any, parentSize: number, parentRect: TreemapNod
     child.width = Math.min(rowHeight ? Math.round(child.area / rowHeight) : 0, parentRect.x + parentRect.width - curX);
     curX += child.width;
   }
-  // what's z
-  child.z = true;
   // add the remain x to the last one of row
   child.width += parentRect.x + parentRect.width - curX;
 
@@ -138,7 +136,6 @@ const verticalPosition = (row: any, parentSize: number, parentRect: TreemapNode,
     curY += child.height;
   }
   if (child) {
-    child.z = false;
     child.height += parentRect.y + parentRect.height - curY;
   }
 
@@ -358,7 +355,7 @@ export class Treemap extends PureComponent<Props, State> {
 
   handleMouseEnter(node: TreemapNode, e: any) {
     const { onMouseEnter, children } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip.displayName);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (tooltipItem) {
       this.setState(
@@ -379,7 +376,7 @@ export class Treemap extends PureComponent<Props, State> {
 
   handleMouseLeave(node: TreemapNode, e: any) {
     const { onMouseLeave, children } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip.displayName);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (tooltipItem) {
       this.setState(
@@ -644,7 +641,7 @@ export class Treemap extends PureComponent<Props, State> {
 
   renderTooltip(): React.ReactElement {
     const { children, nameKey } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip.displayName);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem) {
       return null;

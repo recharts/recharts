@@ -13,10 +13,10 @@ export const detectReferenceElementsDomain = (
   axisType: string,
   specifiedTicks?: any[],
 ) => {
-  const lines = findAllByType(children, ReferenceLine.displayName);
-  const dots = findAllByType(children, ReferenceDot.displayName);
-  const elements = lines.concat(dots);
-  const areas = findAllByType(children, ReferenceArea.displayName);
+  const lines = findAllByType(children, ReferenceLine);
+  const dots = findAllByType(children, ReferenceDot);
+  const elements = [...lines, ...dots];
+  const areas = findAllByType(children, ReferenceArea);
   const idKey = `${axisType}Id`;
   const valueKey = axisType[0];
   let finalDomain = domain;

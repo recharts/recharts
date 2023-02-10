@@ -45,7 +45,6 @@ YAxis.defaultProps = {
   yAxisId: 0,
   tickCount: 5,
   type: 'number',
-  domain: [0, 'auto'],
   padding: { top: 0, bottom: 0 },
   allowDataOverflow: false,
   scale: 'auto',

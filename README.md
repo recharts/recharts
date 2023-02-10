@@ -1,6 +1,6 @@
 # Recharts
 
-[![storybook](https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg)](https://dillonreedy.github.io/recharts-storybook/?path=/story/introduction-configure--page)
+[![storybook](https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg)](https://master--63da8268a0da9970db6992aa.chromatic.com/)
 [![Build Status](https://github.com/recharts/recharts/workflows/Node.js%20CI/badge.svg)](https://github.com/recharts/recharts/actions)
 [![Coverage Status](https://coveralls.io/repos/recharts/recharts/badge.svg?branch=master&service=github)](https://coveralls.io/github/recharts/recharts?branch=master)
 [![npm version](https://badge.fury.io/js/recharts.svg)](http://badge.fury.io/js/recharts)
@@ -82,6 +82,16 @@ $ npm run[-script] demo
 ```
 
 and then browse to http://localhost:3000.
+
+## Storybook
+
+We are in the process of unifying documentation and examples in storybook. To run it locally, execute
+
+```sh
+$ npm run[-script] storybook
+```
+
+and then browse to http://localhost:6006.
 
 ## Module Formats
 

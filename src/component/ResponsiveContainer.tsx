@@ -2,8 +2,17 @@
  * @fileOverview Wrapper component to make charts adapt to the size of parent * DOM
  */
 import classNames from 'classnames';
-import _ from 'lodash';
-import React, { ReactElement, forwardRef, cloneElement, useState, useImperativeHandle, useRef, useEffect } from 'react';
+import React, {
+  ReactElement,
+  forwardRef,
+  cloneElement,
+  useState,
+  useImperativeHandle,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+} from 'react';
 import ReactResizeDetector from 'react-resize-detector';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
@@ -19,11 +28,6 @@ export interface Props {
   debounce?: number;
   id?: string | number;
   className?: string | number;
-}
-
-interface State {
-  containerWidth: number;
-  containerHeight: number;
 }
 
 export const ResponsiveContainer = forwardRef(
@@ -42,16 +46,18 @@ export const ResponsiveContainer = forwardRef(
     }: Props,
     ref,
   ) => {
-    const [sizes, setSizes] = useState<State>({
+    const [sizes, setSizes] = useState<{
+      containerWidth: number;
+      containerHeight: number;
+    }>({
       containerWidth: -1,
       containerHeight: -1,
     });
+
     const containerRef = useRef<HTMLDivElement>(null);
     useImperativeHandle(ref, () => containerRef, [containerRef]);
 
-    const [mounted, setMounted] = useState<boolean>(false);
-
-    const getContainerSize = () => {
+    const getContainerSize = useCallback(() => {
       if (!containerRef.current) {
         return null;
       }
@@ -60,28 +66,26 @@ export const ResponsiveContainer = forwardRef(
         containerWidth: containerRef.current.clientWidth,
         containerHeight: containerRef.current.clientHeight,
       };
-    };
+    }, []);
 
-    const updateDimensionsImmediate = () => {
-      if (!mounted) {
-        return;
-      }
-
+    const updateDimensionsImmediate = useCallback(() => {
       const newSize = getContainerSize();
 
       if (newSize) {
-        const { containerWidth: oldWidth, containerHeight: oldHeight } = sizes;
         const { containerWidth, containerHeight } = newSize;
 
-        if (containerWidth !== oldWidth || containerHeight !== oldHeight) {
-          setSizes({ containerWidth, containerHeight });
-        }
+        setSizes(currentSizes => {
+          const { containerWidth: oldWidth, containerHeight: oldHeight } = currentSizes;
+          if (containerWidth !== oldWidth || containerHeight !== oldHeight) {
+            return { containerWidth, containerHeight };
+          }
+
+          return currentSizes;
+        });
       }
-    };
+    }, [getContainerSize]);
 
-    const handleResize = debounce > 0 ? _.debounce(updateDimensionsImmediate, debounce) : updateDimensionsImmediate;
-
-    const renderChart = () => {
+    const chartContent = useMemo(() => {
       const { containerWidth, containerHeight } = sizes;
 
       if (containerWidth < 0 || containerHeight < 0) {
@@ -136,33 +140,34 @@ export const ResponsiveContainer = forwardRef(
         width: calculatedWidth,
         height: calculatedHeight,
       });
-    };
+    }, [aspect, children, height, maxHeight, minHeight, minWidth, sizes, width]);
 
     useEffect(() => {
-      if (mounted) {
-        const size = getContainerSize();
+      const size = getContainerSize();
 
-        if (size) {
-          setSizes(size);
-        }
+      if (size) {
+        setSizes(size);
       }
-    }, [mounted]);
+    }, [getContainerSize]);
 
-    useEffect(() => {
-      setMounted(true);
-    }, []);
-
-    const style = { width, height, minWidth, minHeight, maxHeight };
+    const style: React.CSSProperties = { width, height, minWidth, minHeight, maxHeight };
 
     return (
-      <ReactResizeDetector handleWidth handleHeight onResize={handleResize} targetRef={containerRef}>
+      <ReactResizeDetector
+        handleWidth
+        handleHeight
+        onResize={updateDimensionsImmediate}
+        targetRef={containerRef}
+        refreshMode={debounce > 0 ? 'debounce' : undefined}
+        refreshRate={debounce}
+      >
         <div
           {...(id != null ? { id: `${id}` } : {})}
           className={classNames('recharts-responsive-container', className)}
           style={style}
           ref={containerRef}
         >
-          {renderChart()}
+          {chartContent}
         </div>
       </ReactResizeDetector>
     );

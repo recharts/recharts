@@ -166,7 +166,7 @@ export class Bar extends PureComponent<Props, State> {
     const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
     const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
     const baseValue = getBaseValueOfBar({ numericAxis });
-    const cells = findAllByType(children, Cell.displayName);
+    const cells = findAllByType(children, Cell);
 
     const rects = displayedData.map((entry, index) => {
       let value, x, y, width, height, background;
@@ -182,6 +182,7 @@ export class Bar extends PureComponent<Props, State> {
       }
 
       if (layout === 'horizontal') {
+        const [baseValueScale, currentValueScale] = [yAxis.scale(value[0]), yAxis.scale(value[1])];
         x = getCateCoordinateOfBar({
           axis: xAxis,
           ticks: xAxisTicks,
@@ -190,9 +191,10 @@ export class Bar extends PureComponent<Props, State> {
           entry,
           index,
         });
-        y = yAxis.scale(value[1]);
+        y = currentValueScale ?? baseValueScale ?? undefined;
         width = pos.size;
-        height = yAxis.scale(value[0]) - yAxis.scale(value[1]);
+        const computedHeight = baseValueScale - currentValueScale;
+        height = Number.isNaN(computedHeight) ? 0 : computedHeight;
         background = { x, y: yAxis.y, width, height: yAxis.height };
 
         if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
@@ -202,7 +204,8 @@ export class Bar extends PureComponent<Props, State> {
           height += delta;
         }
       } else {
-        x = xAxis.scale(value[0]);
+        const [baseValueScale, currentValueScale] = [xAxis.scale(value[0]), xAxis.scale(value[1])];
+        x = baseValueScale;
         y = getCateCoordinateOfBar({
           axis: yAxis,
           ticks: yAxisTicks,
@@ -211,7 +214,7 @@ export class Bar extends PureComponent<Props, State> {
           entry,
           index,
         });
-        width = xAxis.scale(value[1]) - xAxis.scale(value[0]);
+        width = currentValueScale - baseValueScale;
         height = pos.size;
         background = { x: xAxis.x, y, width: xAxis.width, height };
 
@@ -411,13 +414,13 @@ export class Bar extends PureComponent<Props, State> {
     });
   }
 
-  renderErrorBar() {
+  renderErrorBar(needClip: boolean, clipPathId: string) {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) {
       return null;
     }
 
     const { data, xAxis, yAxis, layout, children } = this.props;
-    const errorBarItems = findAllByType(children, ErrorBar.displayName);
+    const errorBarItems = findAllByType(children, ErrorBar);
 
     if (!errorBarItems) {
       return null;
@@ -434,16 +437,24 @@ export class Bar extends PureComponent<Props, State> {
       };
     }
 
-    return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) =>
-      React.cloneElement(item, {
-        key: `error-bar-${i}`, // eslint-disable-line react/no-array-index-key
-        data,
-        xAxis,
-        yAxis,
-        layout,
-        offset,
-        dataPointFormatter,
-      }),
+    const errorBarProps = {
+      clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
+    };
+
+    return (
+      <Layer {...errorBarProps}>
+        {errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) =>
+          React.cloneElement(item, {
+            key: `error-bar-${i}`, // eslint-disable-line react/no-array-index-key
+            data,
+            xAxis,
+            yAxis,
+            layout,
+            offset,
+            dataPointFormatter,
+          }),
+        )}
+      </Layer>
     );
   }
 
@@ -472,7 +483,7 @@ export class Bar extends PureComponent<Props, State> {
           {background ? this.renderBackground() : null}
           {this.renderRectangles()}
         </Layer>
-        {this.renderErrorBar()}
+        {this.renderErrorBar(needClip, clipPathId)}
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, data)}
       </Layer>
     );
