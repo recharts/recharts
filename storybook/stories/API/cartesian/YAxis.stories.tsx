@@ -21,11 +21,11 @@ const data = [
 ];
 
 export const Simple = {
-  render: (args: Record<string, any>) => {
+  render: () => {
     const allKeys = Object.keys(data[0]);
     const [activeKeys, setActiveKeys] = useState(allKeys);
 
-    /**
+    /*
      * Toggles displayed bars when clicking on a legend item
      */
     const handleLegendClick: ComponentProps<typeof Legend>['onClick'] = e => {
@@ -51,11 +51,11 @@ export const Simple = {
 };
 
 export const WithIncludeHidden = {
-  render: (args: Record<string, any>) => {
+  render: () => {
     const allKeys = Object.keys(data[0]);
     const [activeKeys, setActiveKeys] = useState(allKeys);
 
-    /**
+    /*
      * Toggles displayed bars when clicking on a legend item
      */
     const handleLegendClick: ComponentProps<typeof Legend>['onClick'] = e => {
