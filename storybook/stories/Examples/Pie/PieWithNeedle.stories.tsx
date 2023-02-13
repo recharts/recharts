@@ -30,21 +30,13 @@ const needle = (value: number, data: any[], cx: number, cy: number, iR: number, 
   const r = 5;
   const x0 = cx + 5;
   const y0 = cy + 5;
-  const xba = x0 + r * sin;
-  const yba = y0 - r * cos;
   const xbb = x0 - r * sin;
   const ybb = y0 + r * cos;
   const xp = x0 + length * cos;
-  const yp = y0 + length * sin;
 
   return [
     <circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />,
-    <path
-      d={`M${x0},${y0}L${xbb + 65},${ybb - 65},L${xp},${yp},L${xba},${yba}`}
-      strokeWidth={2}
-      stroke={color}
-      fill={color}
-    />,
+    <path d={`M${x0},${y0}L${xbb + 65},${ybb - 65},L${xp}`} strokeWidth={2} stroke={color} fill={color} />,
   ];
 };
 
