@@ -82,7 +82,7 @@ function multiFormat(date: Date) {
 
 export const WithD3Scale = {
   ...StoryTemplate,
-  render: (args) => {
+  render: args => {
     const timeValues = args.data.map(row => row.x);
     // The d3 scaleTime domain requires numeric values
     const numericValues = timeValues.map(time => time.valueOf());
