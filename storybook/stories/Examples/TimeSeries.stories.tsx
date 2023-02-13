@@ -1,5 +1,5 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-nested-ternary */
-/* eslint-disable no-shadow */
 import React from 'react';
 import { scaleTime } from 'd3-scale';
 import { timeFormat } from 'd3-time-format';
@@ -82,7 +82,7 @@ function multiFormat(date: Date) {
 
 export const WithD3Scale = {
   ...StoryTemplate,
-  render: args => {
+  render: (args) => {
     const timeValues = args.data.map(row => row.x);
     // The d3 scaleTime domain requires numeric values
     const numericValues = timeValues.map(time => time.valueOf());
@@ -116,6 +116,5 @@ export const WithD3Scale = {
       </ResponsiveContainer>
     );
   },
-  // TODO: remove controls
   parameters: { controls: { include: ['data'] } },
 };
