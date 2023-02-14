@@ -1,6 +1,4 @@
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { useTheme } from '@storybook/theming';
 import {
   ResponsiveContainer,
   XAxis,
@@ -21,12 +19,9 @@ export default {
 
 export const MultiChartFlexbox = {
   render: (_args: Record<string, any>) => {
-    const theme = useTheme();
-    console.log(theme);
-
     return (
       <>
-        <p style={{ color: theme?.color?.defaultText }}>Resize the window to </p>
+        <p>Resize the window to test ResponsiveContainer</p>
         <div className="flex-parent">
           <ResponsiveContainer width="100%" className="flex-child">
             <AreaChart
