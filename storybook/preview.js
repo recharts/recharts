@@ -1,4 +1,6 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import './global.css';
+import { DocsPage, DocsContainer } from '@storybook/addon-docs';
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
@@ -8,5 +10,9 @@ export const parameters = {
       date: /Date$/,
     },
   },
-  layout: 'centered',
+  layout: 'padded',
+  docs: {
+    container: DocsContainer,
+    page: DocsPage,
+  },
 };
