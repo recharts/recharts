@@ -15,4 +15,7 @@ export const parameters = {
     container: DocsContainer,
     page: DocsPage,
   },
+  backgrounds: {
+    default: 'light',
+  },
 };
