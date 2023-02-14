@@ -32,7 +32,7 @@ export const Simple = {
             height: surfaceHeight,
           }}
         >
-          <Line dataKey="value" isAnimationActive={false} points={data} {...areaArgs} />
+          <Line dataKey="value" isAnimationActive={false} points={data} {...lineArgs} />
         </Surface>
       </ResponsiveContainer>
     );
