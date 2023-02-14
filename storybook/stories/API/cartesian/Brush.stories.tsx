@@ -1,6 +1,8 @@
 import React from 'react';
-import { dateData } from '../../data';
-import { Surface, Brush, ResponsiveContainer } from '../../../../src';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { fireEvent } from '@storybook/testing-library';
+import { numberData, dateData } from '../../data';
+import { Surface, Brush, ResponsiveContainer, LineChart, Line } from '../../../../src';
 
 export default {
   component: Brush,
@@ -90,5 +92,30 @@ export const Simple = {
 
   args: {
     data: dateData,
+  },
+};
+
+export const PlayBrushMove = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart {...args}>
+          <Line dataKey="uv" />
+          <Brush />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    data: numberData,
+  },
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+    setTimeout(() => {
+      const leftBrushSlide = canvasElement.querySelector('.recharts-brush-traveller');
+
+      fireEvent.mouseDown(leftBrushSlide);
+      fireEvent.mouseMove(leftBrushSlide, { clientX: 200 });
+      fireEvent.mouseUp(leftBrushSlide);
+    }, 0);
   },
 };
