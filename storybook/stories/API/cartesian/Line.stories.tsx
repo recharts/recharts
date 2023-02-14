@@ -16,7 +16,7 @@ export default {
 
 export const Simple = {
   render: (args: Record<string, any>) => {
-    const { data, ...areaArgs } = args;
+    const { data, ...lineArgs } = args;
 
     const [surfaceWidth, surfaceHeight] = [600, 300];
 
