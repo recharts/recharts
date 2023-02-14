@@ -12,13 +12,7 @@ export const parameters = {
   },
   layout: 'padded',
   docs: {
-    container: ({ children, context }) => (
-      // eslint-disable-next-line react/react-in-jsx-scope
-      <div width="100%">
-        {/* eslint-disable-next-line react/react-in-jsx-scope */}
-        <DocsContainer context={context}>{children}</DocsContainer>
-      </div>
-    ),
+    container: DocsContainer,
     page: DocsPage,
   },
 };
