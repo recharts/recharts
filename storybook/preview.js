@@ -10,9 +10,15 @@ export const parameters = {
       date: /Date$/,
     },
   },
-  layout: 'centered',
+  layout: 'padded',
   docs: {
-    container: DocsContainer,
+    container: ({ children, context }) => (
+      // eslint-disable-next-line react/react-in-jsx-scope
+      <div width="100%">
+        {/* eslint-disable-next-line react/react-in-jsx-scope */}
+        <DocsContainer context={context}>{children}</DocsContainer>
+      </div>
+    ),
     page: DocsPage,
   },
 };
