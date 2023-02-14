@@ -190,4 +190,29 @@ describe('<ResponsiveContainer />', () => {
     expect(element).toHaveAttribute('width', '100');
     expect(element).toHaveAttribute('height', '100');
   });
+
+  it('should call onResize when ResizeObserver notifies one or many changes', () => {
+    const onResize = jest.fn();
+
+    const { container } = render(
+      <ResponsiveContainer width="100%" height={200} onResize={onResize}>
+        <div data-testid="inside" />
+      </ResponsiveContainer>,
+    );
+
+    const element = container.querySelector('.recharts-responsive-container');
+    expect(element).not.toHaveAttribute('width');
+    expect(element).not.toHaveAttribute('height');
+
+    notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
+
+    expect(element).toHaveAttribute('width', '100');
+    expect(element).toHaveAttribute('height', '100');
+
+    expect(onResize).toHaveBeenCalledTimes(1);
+
+    notifyResizeObserverChange([{ contentRect: { width: 200, height: 200 } }]);
+
+    expect(onResize).toHaveBeenCalledTimes(2);
+  });
 });
