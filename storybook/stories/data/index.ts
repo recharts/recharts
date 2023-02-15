@@ -6,3 +6,4 @@ export * from './Size';
 export * from './Tick';
 export * from './Time';
 export * from './BoxPlot';
+export * from './Impression';

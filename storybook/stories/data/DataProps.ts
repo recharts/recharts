@@ -22,3 +22,5 @@ export type BoxPlot = {
   max: number;
   average?: number;
 };
+
+export type Impressions = { name: number; cost: number; impression: number };
