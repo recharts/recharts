@@ -30,3 +30,4 @@ jobs:
           tsc --noEmit
           npm run lint
           npm test
+          npm run test-storybook

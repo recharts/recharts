@@ -1,4 +1,7 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
+import { within } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 import { Surface, Line, ResponsiveContainer } from '../../../../src';
 import { coordinateWithValueData } from '../../data';
 
@@ -90,5 +93,13 @@ export const CustomizedLabel = {
     data: coordinateWithValueData,
     isAnimationActive: false,
     label: renderLabel,
+  },
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+    const { getAllByText } = within(canvasElement);
+
+    // to make getAllByText works
+    await new Promise(r => setTimeout(r, 0));
+
+    await expect(getAllByText(/Customized Label/)).toHaveLength(5);
   },
 };
