@@ -327,6 +327,13 @@ const getAxisMapByAxes = (
      */
     if (isDomainSpecifiedByUser(child.props.domain, allowDataOverflow, type)) {
       domain = parseSpecifiedDomain(child.props.domain, null, allowDataOverflow);
+      /* The chart can be categorical and have the domain specified in numbers
+       * we still need to calculate the categorical domain
+       * TODO: refactor this more
+       */
+      if (isCategorical && (type === 'number' || scale !== 'auto')) {
+        categoricalDomain = getDomainOfDataByKey(displayedData, dataKey, 'category');
+      }
     }
 
     // we didn't create the domain from user's props above, so we need to calculate it
