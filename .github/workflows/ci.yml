@@ -30,7 +30,7 @@ jobs:
           tsc --noEmit
           npm run lint
           npm test
-  build-node-version-16-18:
+  build-node-version-16-18-and-test-storybook:
     runs-on: ubuntu-latest
     
     needs: build-node-version-14
