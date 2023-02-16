@@ -292,7 +292,7 @@ const getTooltipData = (state: CategoricalChartState, chartData: any[], layout: 
  * @param {Number} dataEndIndex   The end index of the data series when a brush is applied
  * @return {Object}      Configuration
  */
-const getAxisMapByAxes = (
+export const getAxisMapByAxes = (
   props: CategoricalChartProps,
   { axes, graphicalItems, axisType, axisIdKey, stackGroups, dataStartIndex, dataEndIndex }: any,
 ) => {
@@ -336,9 +336,12 @@ const getAxisMapByAxes = (
       }
     }
 
+    // if the domain is defaulted we need this for `originalDomain` as well
+    const defaultDomain = getDefaultDomainByAxisType(type);
+
     // we didn't create the domain from user's props above, so we need to calculate it
     if (!domain || domain.length === 0) {
-      const childDomain = child.props.domain ?? getDefaultDomainByAxisType(type);
+      const childDomain = child.props.domain ?? defaultDomain;
 
       if (dataKey) {
         // has dataKey in <Axis />
@@ -436,7 +439,7 @@ const getAxisMapByAxes = (
         domain,
         categoricalDomain,
         duplicateDomain,
-        originalDomain: child.props.domain,
+        originalDomain: child.props.domain ?? defaultDomain,
         isCategorical,
         layout,
       },
