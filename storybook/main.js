@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   stories: ['./stories/**/*.stories.mdx', './stories/**/*.stories.@(ts|tsx)'],
   addons: [
     '@storybook/addon-links',
@@ -12,5 +12,8 @@ export default {
   },
   docs: {
     autodocs: true,
+  },
+  features: {
+    interactionsDebugger: true,
   },
 };

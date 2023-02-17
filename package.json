@@ -36,7 +36,10 @@
     "tsc": "tsc",
     "storybook": "npx storybook dev -p 6006 -c storybook",
     "build-storybook": "npx storybook build -o storybook/public -c storybook",
-    "chromatic": "npx chromatic"
+    "chromatic": "npx chromatic",
+    "test-storybook": "test-storybook --config-dir storybook",
+    "test-storybook:url": "test-storybook --url http://127.0.0.1:9009 --config-dir storybook",
+    "test-storybook:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"npm run build-storybook --quiet && npx http-server storybook/public --port 9009 --silent\" \"wait-on tcp:127.0.0.1:9009 && npm run test-storybook:url --maxWorkers=2\""
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
@@ -87,8 +90,10 @@
     "@storybook/addon-essentials": "^7.0.0-beta.47",
     "@storybook/addon-interactions": "^7.0.0-beta.47",
     "@storybook/addon-links": "^7.0.0-beta.47",
+    "@storybook/jest": "^0.0.11-next.0",
     "@storybook/react": "^7.0.0-beta.47",
     "@storybook/react-webpack5": "^7.0.0-beta.47",
+    "@storybook/test-runner": "^0.9.4",
     "@storybook/testing-library": "^0.0.14-next.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.1.5",
@@ -111,6 +116,7 @@
     "babel-plugin-lodash": "^3.3.0",
     "browserslist": "^4.21.0",
     "chromatic": "^6.15.0",
+    "concurrently": "^7.6.0",
     "cross-env": "^7.0.3",
     "d3-scale-chromatic": "^3.0.0",
     "d3-time": "^3.1.0",
