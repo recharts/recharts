@@ -20,7 +20,7 @@ export default {
       control: { type: 'color' },
     },
     type: {
-      // TODO: Generate from type instead.
+      // TODO: These options should be generated from the type directly instead of duplicating the type information here. Will iterate.
       options: [
         'basis',
         'basisClosed',
