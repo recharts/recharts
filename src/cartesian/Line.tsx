@@ -21,6 +21,7 @@ import { D3Scale, LegendType, TooltipType, AnimationTiming, ChartOffset, DataKey
 
 type LineDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
 
+// This is yet another test
 interface LinePointItem extends CurvePoint {
   value?: number;
   payload?: any;
@@ -31,7 +32,8 @@ interface InternalLineProps {
   left?: number;
   width?: number;
   height?: number;
-  points?: LinePointItem[];
+  // test test test
+  points?: LinePointItem[]; // test test
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
 }
