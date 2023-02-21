@@ -75,7 +75,7 @@ export const Simple = {
     controls: { include: ['data', 'dataKey'] },
     docs: {
       description: {
-        story: 'The dataKey defines the y-Values of a Line. Without an xAxis, the index is used for x',
+        story: 'The dataKey defines the y-Values of a Line. Without an xAxis, the index is used for x.',
       },
     },
   },
