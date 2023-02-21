@@ -2,59 +2,121 @@
 import React from 'react';
 import { within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
-import { Surface, Line, ResponsiveContainer } from '../../../../src';
-import { coordinateWithValueData } from '../../data';
+import { Surface, Line, ResponsiveContainer, ComposedChart } from '../../../../src';
+import { coordinateWithNullY, coordinateData, coordinateWithValueData } from '../../data';
 
 export default {
   component: Line,
   argTypes: {
+    connectNulls: {
+      control: {
+        type: 'boolean',
+      },
+    },
     stroke: {
       control: { type: 'color' },
     },
     fill: {
       control: { type: 'color' },
     },
+    type: {
+      // TODO: These options should be generated from the type directly instead of duplicating the type information here. Will iterate.
+      options: [
+        'basis',
+        'basisClosed',
+        'basisOpen',
+        'linear',
+        'linearClosed',
+        'natural',
+        'monotoneX',
+        'monotoneY',
+        'monotone',
+        'step',
+        'stepBefore',
+        'stepAfter',
+      ],
+      control: {
+        type: 'select',
+      },
+    },
   },
 };
 
 export const Simple = {
   render: (args: Record<string, any>) => {
+    const [height, width] = [300, 300];
+
     const { data, ...lineArgs } = args;
-
-    const [surfaceWidth, surfaceHeight] = [600, 300];
-
     return (
-      <ResponsiveContainer width="100%" height={surfaceHeight}>
-        <Surface
-          width={surfaceWidth}
-          height={surfaceHeight}
-          viewBox={{
-            x: 0,
-            y: 0,
-            width: surfaceWidth,
-            height: surfaceHeight,
+      <ResponsiveContainer width="100%" height={height}>
+        <ComposedChart
+          width={width}
+          height={height}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
           }}
+          data={data}
         >
-          <Line dataKey="value" isAnimationActive={false} points={data} {...lineArgs} />
-        </Surface>
+          {/* Setting a default for the dataKey here, allows us to hide the dataKey
+          as a control in other stories, yet reusing the same template. */}
+          <Line isAnimationActive={false} dataKey="y" {...lineArgs} />
+        </ComposedChart>
       </ResponsiveContainer>
     );
   },
   args: {
     data: coordinateWithValueData,
+    dataKey: 'y',
+  },
+  parameters: {
+    controls: { include: ['data', 'dataKey'] },
+    docs: {
+      description: {
+        story: 'The dataKey defines the y-Values of a Line. Without an xAxis, the index is used for x.',
+      },
+    },
   },
 };
 
-export const StrokeAndFill = {
+export const LineFromData = {
+  ...Simple,
+  args: {
+    data: coordinateWithNullY,
+    type: 'linear',
+    connectNulls: false,
+  },
+  parameters: {
+    controls: { include: ['type', 'connectNulls'] },
+    docs: {
+      description: {
+        story:
+          'The line is generated from the data by connecting the dots. ' +
+          'The type and connectNulls define how the dots are used.',
+      },
+    },
+  },
+};
+
+export const Style = {
   ...Simple,
   args: {
     data: coordinateWithValueData,
     stroke: 'red',
     fill: 'teal',
-    isAnimationActive: true,
     dot: { r: 10 },
+    type: 'linear',
   },
-  parameters: { controls: { include: ['stroke', 'fill'] } },
+  parameters: {
+    controls: { include: ['stroke', 'fill', 'type'] },
+    docs: {
+      description: {
+        story: 'The type, fill and stroke define the style of a line.',
+      },
+    },
+  },
 };
 
 const renderDot = (props: { cx: number; cy: number }) => {
@@ -74,6 +136,14 @@ export const CustomizedDot = {
     data: coordinateWithValueData,
     isAnimationActive: true,
     dot: renderDot,
+  },
+  parameters: {
+    controls: {},
+    docs: {
+      description: {
+        story: 'The dot of the line can be customised. Find further possible behaviour on the Dot stories.',
+      },
+    },
   },
 };
 
@@ -101,5 +171,44 @@ export const CustomizedLabel = {
     await new Promise(r => setTimeout(r, 0));
 
     await expect(getAllByText(/Customized Label/)).toHaveLength(5);
+  },
+};
+
+export const Points = {
+  render: (args: Record<string, any>) => {
+    const { points } = args;
+
+    const [surfaceWidth, surfaceHeight] = [600, 300];
+
+    return (
+      <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <Surface
+          width={surfaceWidth}
+          height={surfaceHeight}
+          viewBox={{
+            x: 0,
+            y: 0,
+            width: surfaceWidth,
+            height: surfaceHeight,
+          }}
+        >
+          <Line isAnimationActive={false} points={points} />
+        </Surface>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    points: coordinateData,
+  },
+  parameters: {
+    controls: { include: ['points'] },
+    docs: {
+      description: {
+        story:
+          'You can directly set the x and y coordinates of a Line via points. This overrides dataKey and data. ' +
+          'The coordinate system of the points lies in the top right of the bounding box. ' +
+          'Using points, a Line can even be used within only a Surface, without a Chart.',
+      },
+    },
   },
 };
