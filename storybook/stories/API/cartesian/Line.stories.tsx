@@ -93,7 +93,7 @@ export const LineFromData = {
     docs: {
       description: {
         story:
-          'The line is generated from the data by connecting the dots.' +
+          'The line is generated from the data by connecting the dots. ' +
           'The type and connectNulls define how the dots are used.',
       },
     },
