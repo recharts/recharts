@@ -3,7 +3,7 @@ import React from 'react';
 import { within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 import { Surface, Line, ResponsiveContainer, ComposedChart } from '../../../../src';
-import { ccoordinateWithNullY, coordinateData, coordinateWithValueData } from '../../data';
+import { coordinateWithNullY, coordinateData, coordinateWithValueData } from '../../data';
 
 export default {
   component: Line,
@@ -84,7 +84,7 @@ export const Simple = {
 export const LineFromData = {
   ...Simple,
   args: {
-    data: ccoordinateWithNullY,
+    data: coordinateWithNullY,
     type: 'linear',
     connectNulls: false,
   },

@@ -25,7 +25,7 @@ const coordinateWithValueData = [
   { x: 570, y: 30, value: 100 },
 ];
 
-const ccoordinateWithNullY = [
+const coordinateWithNullY = [
   { x: 10, y: 50 },
   { x: 150, y: 150 },
   { x: 290, y: null },
@@ -33,4 +33,4 @@ const ccoordinateWithNullY = [
   { x: 570, y: 30 },
 ];
 
-export { coordinateData, coordinateWithValueData, ccoordinateWithNullY };
+export { coordinateData, coordinateWithValueData, coordinateWithNullY };
