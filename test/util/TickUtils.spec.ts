@@ -66,11 +66,12 @@ describe('getTicks', () => {
   });
 
   describe('If not all ticks can be shown, the interval is respected', () => {
+    const viewBoxWithSmallWidth = { x: 0, y: 0, width: 30, height: 500 };
     test('preserveEnd', () => {
       const input = {
         ...EXAMPLE_INPUT,
         interval: 'preserveEnd' as const,
-        viewBox: { x: 0, y: 0, width: 30, height: 500 },
+        viewBox: viewBoxWithSmallWidth,
       };
 
       const result = getTicks(input);
@@ -89,8 +90,7 @@ describe('getTicks', () => {
       const input = {
         ...EXAMPLE_INPUT,
         interval: 'preserveStart' as const,
-
-        viewBox: { x: 0, y: 0, width: 30, height: 500 },
+        viewBox: viewBoxWithSmallWidth,
       };
 
       const result = getTicks(input);
@@ -101,22 +101,27 @@ describe('getTicks', () => {
     test('preserveStartEnd', () => {
       const input = {
         ...EXAMPLE_INPUT,
-        interval: 'preserveStart' as const,
-
-        viewBox: { x: 0, y: 0, width: 30, height: 500 },
+        interval: 'preserveStartEnd' as const,
+        viewBox: viewBoxWithSmallWidth,
       };
 
       const result = getTicks(input);
 
-      expect(result).toEqual([]);
+      expect(result).toEqual([
+        {
+          coordinate: 250,
+          isShow: true,
+          tickCoord: 20,
+          value: 90,
+        },
+      ]);
     });
 
     test('0', () => {
       const input = {
         ...EXAMPLE_INPUT,
         interval: 0,
-
-        viewBox: { x: 0, y: 0, width: 30, height: 500 },
+        viewBox: viewBoxWithSmallWidth,
       };
 
       const result = getTicks(input);
@@ -149,8 +154,7 @@ describe('getTicks', () => {
       const input = {
         ...EXAMPLE_INPUT,
         interval: 1,
-
-        viewBox: { x: 0, y: 0, width: 30, height: 500 },
+        viewBox: viewBoxWithSmallWidth,
       };
 
       const result = getTicks(input);
@@ -175,8 +179,7 @@ describe('getTicks', () => {
       const input = {
         ...EXAMPLE_INPUT,
         interval: 2,
-
-        viewBox: { x: 0, y: 0, width: 30, height: 500 },
+        viewBox: viewBoxWithSmallWidth,
       };
 
       const result = getTicks(input);
