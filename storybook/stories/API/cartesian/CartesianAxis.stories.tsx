@@ -138,6 +138,6 @@ export const Combined = {
     );
   },
   args: {
-    data: ticks,
+    data: ticks.slice(0, 5),
   },
 };
