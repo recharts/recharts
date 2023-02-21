@@ -205,8 +205,8 @@ export const Points = {
     docs: {
       description: {
         story:
-          'You can directly set the x and y coordinates of a Line via points. This overrides dataKey and data.' +
-          'The coordinate system of the points lies in the top right of the bounding box.' +
+          'You can directly set the x and y coordinates of a Line via points. This overrides dataKey and data. ' +
+          'The coordinate system of the points lies in the top right of the bounding box. ' +
           'Using points, a Line can even be used within only a Surface, without a Chart.',
       },
     },
