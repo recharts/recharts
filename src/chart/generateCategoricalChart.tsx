@@ -1,6 +1,7 @@
 import React, { Component, cloneElement, isValidElement, createElement } from 'react';
 import classNames from 'classnames';
 import _, { isArray, isBoolean, isNil } from 'lodash';
+import { getTicks } from '../util/TickUtils';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
@@ -68,7 +69,6 @@ import {
   GeometrySector,
   AxisDomain,
 } from '../util/types';
-import { getTicks } from 'src/util/TickUtils';
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
