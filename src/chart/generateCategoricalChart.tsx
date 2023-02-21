@@ -68,6 +68,7 @@ import {
   GeometrySector,
   AxisDomain,
 } from '../util/types';
+import { getTicks } from 'src/util/TickUtils';
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
@@ -1634,7 +1635,7 @@ export const generateCategoricalChart = ({
 
     verticalCoordinatesGenerator = ({ xAxis, width, height, offset }: ChartCoordinate) =>
       getCoordinatesOfGrid(
-        CartesianAxis.getTicks({
+        getTicks({
           ...CartesianAxis.defaultProps,
           ...xAxis,
           ticks: getTicksOfAxis(xAxis, true),
@@ -1646,7 +1647,7 @@ export const generateCategoricalChart = ({
 
     horizontalCoordinatesGenerator = ({ yAxis, width, height, offset }: ChartCoordinate) =>
       getCoordinatesOfGrid(
-        CartesianAxis.getTicks({
+        getTicks({
           ...CartesianAxis.defaultProps,
           ...yAxis,
           ticks: getTicksOfAxis(yAxis, true),
