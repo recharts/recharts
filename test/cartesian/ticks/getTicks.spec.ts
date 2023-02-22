@@ -140,11 +140,6 @@ describe('getTicks', () => {
             tickCoord: 50,
             value: '10',
           },
-          {
-            coordinate: 300,
-            tickCoord: 300,
-            value: 'A',
-          },
         ],
       ],
       [-1, []],
