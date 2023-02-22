@@ -29,7 +29,7 @@ const HorizontalChartTemplate = {
     return (
       <>
         <div className="composed-chart-wrapper">
-          <ResponsiveContainer width={500} height={300}>
+          <ResponsiveContainer width="100%" height={300}>
             <Composed
               {...args}
               data={pageData}

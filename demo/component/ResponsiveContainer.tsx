@@ -193,6 +193,10 @@ export default class Demo extends Component {
     this.setState(() => _.mapValues(initialState, changeNumberOfData));
   };
 
+  resizeListener = (width: string, height: string) => {
+    console.log(`height is: ${height}, width is: ${width}`);
+  };
+
   render() {
     const { data, data01, data02 } = this.state;
 
@@ -235,7 +239,7 @@ export default class Demo extends Component {
 
         <p>A simple LineChart</p>
         <div className="line-chart-wrapper" style={{ width: '100%', height: '400px', backgroundColor: '#f5f5f5' }}>
-          <ResponsiveContainer>
+          <ResponsiveContainer onResize={this.resizeListener}>
             <LineChart data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
               <CartesianGrid stroke="#f5f5f5" />
               <XAxis />
