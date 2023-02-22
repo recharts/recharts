@@ -67,133 +67,117 @@ describe('getTicks', () => {
 
   describe('If not all ticks can be shown, the interval is respected', () => {
     const viewBoxWithSmallWidth = { x: 0, y: 0, width: 30, height: 500 };
-    test('preserveEnd', () => {
+
+    test.each([
+      [
+        EXAMPLE_INPUT.ticks.length + 1,
+        [
+          {
+            coordinate: 50,
+            value: 10,
+          },
+        ],
+      ],
+      [
+        2,
+        [
+          {
+            coordinate: 50,
+            value: 10,
+          },
+          {
+            coordinate: 200,
+            value: 40,
+          },
+        ],
+      ],
+      [
+        1,
+        [
+          {
+            coordinate: 50,
+            value: 10,
+          },
+          {
+            coordinate: 150,
+            value: 20,
+          },
+          {
+            coordinate: 250,
+            value: 90,
+          },
+        ],
+      ],
+      [
+        0,
+        [
+          {
+            coordinate: 50,
+            value: 10,
+          },
+          {
+            coordinate: 100,
+            value: 1000,
+          },
+          {
+            coordinate: 150,
+            value: 20,
+          },
+          {
+            coordinate: 200,
+            value: 40,
+          },
+          {
+            coordinate: 250,
+            value: 90,
+          },
+        ],
+      ],
+      [
+        'preserveStartEnd' as const,
+        [
+          {
+            coordinate: 250,
+            isShow: true,
+            tickCoord: 20,
+            value: 90,
+          },
+        ],
+      ],
+      ['preserveStart' as const, []],
+      [
+        'preserveEnd' as const,
+        [
+          {
+            coordinate: 250,
+            isShow: true,
+            tickCoord: 20,
+            value: 90,
+          },
+        ],
+      ],
+      [-1, []],
+      [
+        undefined,
+        [
+          {
+            coordinate: 250,
+            isShow: true,
+            tickCoord: 20,
+            value: 90,
+          },
+        ],
+      ],
+    ])(`interval %s works`, (interval, expectedResult) => {
       const input = {
         ...EXAMPLE_INPUT,
-        interval: 'preserveEnd' as const,
+        interval,
         viewBox: viewBoxWithSmallWidth,
       };
 
       const result = getTicks(input);
 
-      expect(result).toEqual([
-        {
-          coordinate: 250,
-          isShow: true,
-          tickCoord: 20,
-          value: 90,
-        },
-      ]);
-    });
-
-    test('preserveStart', () => {
-      const input = {
-        ...EXAMPLE_INPUT,
-        interval: 'preserveStart' as const,
-        viewBox: viewBoxWithSmallWidth,
-      };
-
-      const result = getTicks(input);
-
-      expect(result).toEqual([]);
-    });
-
-    test('preserveStartEnd', () => {
-      const input = {
-        ...EXAMPLE_INPUT,
-        interval: 'preserveStartEnd' as const,
-        viewBox: viewBoxWithSmallWidth,
-      };
-
-      const result = getTicks(input);
-
-      expect(result).toEqual([
-        {
-          coordinate: 250,
-          isShow: true,
-          tickCoord: 20,
-          value: 90,
-        },
-      ]);
-    });
-
-    test('0', () => {
-      const input = {
-        ...EXAMPLE_INPUT,
-        interval: 0,
-        viewBox: viewBoxWithSmallWidth,
-      };
-
-      const result = getTicks(input);
-
-      expect(result).toEqual([
-        {
-          coordinate: 50,
-          value: 10,
-        },
-        {
-          coordinate: 100,
-          value: 1000,
-        },
-        {
-          coordinate: 150,
-          value: 20,
-        },
-        {
-          coordinate: 200,
-          value: 40,
-        },
-        {
-          coordinate: 250,
-          value: 90,
-        },
-      ]);
-    });
-
-    test('1', () => {
-      const input = {
-        ...EXAMPLE_INPUT,
-        interval: 1,
-        viewBox: viewBoxWithSmallWidth,
-      };
-
-      const result = getTicks(input);
-
-      expect(result).toEqual([
-        {
-          coordinate: 50,
-          value: 10,
-        },
-        {
-          coordinate: 150,
-          value: 20,
-        },
-        {
-          coordinate: 250,
-          value: 90,
-        },
-      ]);
-    });
-
-    test('2', () => {
-      const input = {
-        ...EXAMPLE_INPUT,
-        interval: 2,
-        viewBox: viewBoxWithSmallWidth,
-      };
-
-      const result = getTicks(input);
-
-      expect(result).toEqual([
-        {
-          coordinate: 50,
-          value: 10,
-        },
-        {
-          coordinate: 200,
-          value: 40,
-        },
-      ]);
+      expect(result).toEqual(expectedResult);
     });
   });
 });
