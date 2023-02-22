@@ -1,6 +1,7 @@
 import React, { Component, cloneElement, isValidElement, createElement } from 'react';
 import classNames from 'classnames';
 import _, { isArray, isBoolean, isNil } from 'lodash';
+import { getTicks } from '../cartesian/TickUtils';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
@@ -1634,7 +1635,7 @@ export const generateCategoricalChart = ({
 
     verticalCoordinatesGenerator = ({ xAxis, width, height, offset }: ChartCoordinate) =>
       getCoordinatesOfGrid(
-        CartesianAxis.getTicks({
+        getTicks({
           ...CartesianAxis.defaultProps,
           ...xAxis,
           ticks: getTicksOfAxis(xAxis, true),
@@ -1646,7 +1647,7 @@ export const generateCategoricalChart = ({
 
     horizontalCoordinatesGenerator = ({ yAxis, width, height, offset }: ChartCoordinate) =>
       getCoordinatesOfGrid(
-        CartesianAxis.getTicks({
+        getTicks({
           ...CartesianAxis.defaultProps,
           ...yAxis,
           ticks: getTicksOfAxis(yAxis, true),
