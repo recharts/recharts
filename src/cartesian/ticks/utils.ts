@@ -30,10 +30,9 @@ function getEveryNth<Type>(array: Type[], n: number): Type[] {
  */
 export function getEveryNThTick(ticks: CartesianTickItem[]) {
   let N = 1;
-  let previous: CartesianTickItem[] = [];
+  let previous: CartesianTickItem[] = ticks;
   while (N < ticks.length) {
     const everyNthTick = getEveryNth(ticks, N);
-
     const visibleTicks = everyNthTick.reduce((previousValue, currentValue) => {
       if (currentValue.isShow === true) {
         return previousValue + 1;
@@ -41,12 +40,17 @@ export function getEveryNThTick(ticks: CartesianTickItem[]) {
       return previousValue;
     }, 0);
 
+    previous = everyNthTick;
     if (visibleTicks === everyNthTick.length) {
       break;
     }
-    previous = everyNthTick;
     N++;
   }
+
+  if (N === ticks.length) {
+    return ticks.slice(0, 1);
+  }
+
   return previous;
 }
 
