@@ -214,7 +214,7 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
 
   let candidates: CartesianTickItem[] = [];
 
-  if (interval === 'startEquidistant') {
+  if (interval === 'equidistantPreserveStart') {
     candidates = getTicksStart({
       ticks,
       tickFormatter,
