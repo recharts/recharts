@@ -62,7 +62,6 @@ function getEveryNThTick(ticks: CartesianTickItem[]) {
 }
 
 function getNumberIntervalTicks(ticks: CartesianTickItem[], interval: number) {
-  console.log(ticks, interval);
   return getEveryNth(ticks, interval + 1);
 }
 
@@ -96,8 +95,7 @@ function getTicksEnd({
 
   for (let i = len - 1; i >= 0; i--) {
     let entry = result[i];
-    const position = len - i - 1;
-    const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value, position) : entry.value;
+    const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value, len - i - 1) : entry.value;
     const size = getStringSize(content, { fontSize, letterSpacing })[sizeKey] + unitSize;
 
     if (i === len - 1) {
@@ -178,8 +176,7 @@ function getTicksStart(
   const count = preserveEnd ? len - 1 : len;
   for (let i = 0; i < count; i++) {
     let entry = result[i];
-    const position = i;
-    const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value, position) : entry.value;
+    const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value, i) : entry.value;
     const size = getStringSize(content, { fontSize, letterSpacing })[sizeKey] + unitSize;
 
     if (i === 0) {
