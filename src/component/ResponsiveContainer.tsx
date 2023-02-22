@@ -37,7 +37,11 @@ export const ResponsiveContainer = forwardRef(
       aspect,
       width = '100%',
       height = '100%',
-      minWidth,
+      /*
+       * default min-width to 0 if not specified - 'auto' causes issues with flexbox
+       * https://github.com/recharts/recharts/issues/172
+       */
+      minWidth = 0,
       minHeight,
       maxHeight,
       children,
