@@ -1,6 +1,5 @@
 import React, { ComponentProps, useState } from 'react';
 import { YAxis, XAxis, Legend, ResponsiveContainer, ComposedChart, Bar } from '../../../../src';
-import { pageData } from '../../data';
 
 export default {
   component: YAxis,
@@ -21,8 +20,8 @@ const data = [
 ];
 
 export const Simple = {
-  render: () => {
-    const allKeys = Object.keys(data[0]);
+  render: (args: ComponentProps<typeof YAxis> & { data: any }) => {
+    const allKeys = Object.keys(args.data[0]);
     const [activeKeys, setActiveKeys] = useState(allKeys);
 
     /*
@@ -35,9 +34,9 @@ export const Simple = {
 
     return (
       <ResponsiveContainer width="100%" height={500}>
-        <ComposedChart data={data} margin={{ top: 20, right: 80, left: 20 }}>
+        <ComposedChart data={args.data} margin={{ top: 20, right: 80, left: 20 }}>
           <XAxis dataKey="name" scale="band" />
-          <YAxis label={{ value: 'Index', angle: -90, position: 'insideLeft' }} />
+          <YAxis label={{ value: 'Index', angle: -90, position: 'insideLeft' }} includeHidden={args.includeHidden} />
           <Legend onClick={handleLegendClick} />
           <Bar dataKey="pv" fill="blue" hide={!activeKeys.includes('pv')} />
           <Bar dataKey="amt" fill="green" hide={!activeKeys.includes('amt')} />
@@ -46,13 +45,21 @@ export const Simple = {
     );
   },
   args: {
-    data: pageData,
+    data,
+  },
+  parameters: {
+    controls: { include: ['data', 'includeHidden'] },
+    docs: {
+      description: {
+        story: 'A simple Y Axis. Click on the legend items to toggle their bars on and off.',
+      },
+    },
   },
 };
 
 export const WithIncludeHidden = {
-  render: () => {
-    const allKeys = Object.keys(data[0]);
+  render: (args: ComponentProps<typeof YAxis> & { data: any }) => {
+    const allKeys = Object.keys(args.data[0]);
     const [activeKeys, setActiveKeys] = useState(allKeys);
 
     /*
@@ -65,9 +72,9 @@ export const WithIncludeHidden = {
 
     return (
       <ResponsiveContainer width="100%" height={500}>
-        <ComposedChart data={data} margin={{ top: 20, right: 80, left: 20 }}>
+        <ComposedChart data={args.data} margin={{ top: 20, right: 80, left: 20 }}>
           <XAxis dataKey="name" scale="band" />
-          <YAxis label={{ value: 'Index', angle: -90, position: 'insideLeft' }} includeHidden />
+          <YAxis label={{ value: 'Index', angle: -90, position: 'insideLeft' }} includeHidden={args.includeHidden} />
           <Legend onClick={handleLegendClick} />
           <Bar dataKey="pv" fill="blue" hide={!activeKeys.includes('pv')} />
           <Bar dataKey="amt" fill="green" hide={!activeKeys.includes('amt')} />
@@ -76,6 +83,16 @@ export const WithIncludeHidden = {
     );
   },
   args: {
-    data: pageData,
+    data,
+    includeHidden: true,
+  },
+  parameters: {
+    controls: { include: ['data', 'includeHidden'] },
+    docs: {
+      description: {
+        story: `A simple Y Axis. Click on the legend items to toggle their bars on and off,
+                and notice how the YAxis domain stays the same, compared to the Simple story above.`,
+      },
+    },
   },
 };
