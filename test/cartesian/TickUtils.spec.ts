@@ -1,4 +1,4 @@
-import { getTicks } from '../../src/util/TickUtils';
+import { getTicks } from '../../src/cartesian/TickUtils';
 
 const EXAMPLE_INPUT = {
   axisLine: true,
