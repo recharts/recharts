@@ -215,4 +215,32 @@ describe('<ResponsiveContainer />', () => {
 
     expect(onResize).toHaveBeenCalledTimes(2);
   });
+
+  it('should have a min-width of 0 when no minWidth is set', () => {
+    const onResize = jest.fn();
+
+    const { container } = render(
+      <ResponsiveContainer width="100%" height={200} onResize={onResize}>
+        <div data-testid="inside" />
+      </ResponsiveContainer>,
+    );
+
+    const element = container.querySelector('.recharts-responsive-container');
+
+    expect(element).toHaveStyle({ width: '100%', height: '200px', 'min-width': '0' });
+  });
+
+  it('should have a min-width of 200px when minWidth is 200', () => {
+    const onResize = jest.fn();
+
+    const { container } = render(
+      <ResponsiveContainer width="100%" height={200} minWidth={200} onResize={onResize}>
+        <div data-testid="inside" />
+      </ResponsiveContainer>,
+    );
+
+    const element = container.querySelector('.recharts-responsive-container');
+
+    expect(element).toHaveStyle({ width: '100%', height: '200px', 'min-width': '200px' });
+  });
 });
