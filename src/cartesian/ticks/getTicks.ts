@@ -4,7 +4,7 @@ import { mathSign, isNumber } from '../../util/DataUtils';
 import { getStringSize } from '../../util/DOMUtils';
 import { Props as CartesianAxisProps } from '../CartesianAxis';
 import { Global } from '../../util/Global';
-import { getEveryNThTick, getNumberIntervalTicks } from './utils';
+import { getNumberIntervalTicks } from './utils';
 
 function getTicksEnd({
   ticks,
@@ -155,21 +155,6 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
   }
 
   let candidates: CartesianTickItem[] = [];
-
-  if (interval === 'equidistantPreserveStart') {
-    candidates = getTicksStart({
-      ticks,
-      tickFormatter,
-      viewBox,
-      orientation,
-      minTickGap,
-      unit,
-      fontSize,
-      letterSpacing,
-    });
-
-    return getEveryNThTick(candidates);
-  }
 
   if (interval === 'preserveStart' || interval === 'preserveStartEnd') {
     candidates = getTicksStart(

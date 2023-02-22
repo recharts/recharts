@@ -1,5 +1,4 @@
 import { getTicks } from '../../../src/cartesian/ticks/getTicks';
-import { CartesianTickItem } from '../../../src/util/types';
 
 const EXAMPLE_INPUT = {
   axisLine: true,
@@ -132,16 +131,6 @@ describe('getTicks', () => {
           },
         ],
       ],
-      [
-        'equidistantPreserveStart' as const,
-        [
-          {
-            coordinate: 50,
-            tickCoord: 50,
-            value: '10',
-          },
-        ],
-      ],
       [-1, []],
       [undefined, [{ coordinate: 300, isShow: true, tickCoord: 29.5, value: 'A' }]],
     ])(`interval %s works`, (interval, expectedResult) => {
@@ -155,41 +144,5 @@ describe('getTicks', () => {
 
       expect(result).toEqual(expectedResult);
     });
-  });
-
-  describe('Equidistant ticks are shown depending on label width and space between ticks', () => {
-    test.each([
-      // With enough space, all ticks are shown.
-      [['11111111111111', '2', '3', '4'], 20, ['11111111111111', '2', '3', '4']],
-      [['1', '22222222222222', '3', '4'], 20, ['1', '22222222222222', '3', '4']],
-      [['1', '2', '33333333333333', '4'], 20, ['1', '2', '33333333333333', '4']],
-      [['1', '2', '3', '44444444444444'], 20, ['1', '2', '3', '44444444444444']],
-
-      // If not enough space is available we show only every nTH.
-      [['11111111111111', '2', '3', '4'], 5, ['11111111111111', '4']], // every 3rd
-      [['1', '22222222222222', '3', '4'], 5, ['1', '3']], // every 2nd
-      [['1', '2', '33333333333333', '4'], 5, ['1', '4']], // every 3rd
-      [['1', '2', '3', '44444444444444'], 5, ['1', '3']], // every 2nd
-
-      // If not enough space is available at all, we only show the first tick.
-      [['11111111111111', '2', '3', '4'], 1, ['11111111111111']],
-      [['1', '22222222222222', '3', '4'], 1, ['1']],
-      [['1', '2', '33333333333333', '4'], 1, ['1']],
-      [['1', '2', '3', '44444444444444'], 1, ['1']],
-    ])(
-      `equidistantPreserveStart spaces nicely for %s and tick step of %s`,
-      (tickValues, tickWidthStep, expectedResult) => {
-        const ticks = tickValues.map((value, index) => ({ value, coordinate: tickWidthStep * (index + 1) }));
-        const input = {
-          ...EXAMPLE_INPUT,
-          interval: 'equidistantPreserveStart' as const,
-          ticks,
-        };
-
-        const resultingTickValues = (getTicks(input) as CartesianTickItem[]).map(tick => tick.value);
-
-        expect(resultingTickValues).toEqual(expectedResult);
-      },
-    );
   });
 });

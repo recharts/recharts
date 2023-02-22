@@ -6,7 +6,7 @@ export default {
   component: CartesianAxis,
   argTypes: {
     interval: {
-      options: ['preserveStart', 'preserveStartEnd', 'preserveEnd', 'equidistantPreserveStart', 0, 1, 2, 3, 4, 5],
+      options: ['preserveStart', 'preserveStartEnd', 'preserveEnd', 0, 1, 2, 3, 4, 5],
       control: {
         type: 'select',
       },
