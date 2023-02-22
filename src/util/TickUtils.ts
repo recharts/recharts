@@ -152,10 +152,6 @@ function getTicksStart(
   return result.filter(entry => entry.isShow);
 }
 
-// todo Array<Tick>
-// TODO: Step 1 - Add unit tests. Document existing behaviour
-// Step 2 - add unit tests for equidistant behaviour.
-// Do it.
 export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpacing?: string): any[] {
   const { tick, ticks, viewBox, minTickGap, orientation, interval, tickFormatter, unit } = props;
 
