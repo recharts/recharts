@@ -116,7 +116,7 @@ function getTicksEnd({
     }
   }
 
-  return result.filter(entry => entry.isShow);
+  return result;
 }
 
 function getTicksStart(
@@ -198,66 +198,7 @@ function getTicksStart(
     }
   }
 
-  return result.filter(entry => entry.isShow);
-}
-
-function getEquidistantTicks({
-  ticks,
-  tickFormatter,
-  viewBox,
-  orientation,
-  minTickGap,
-  unit,
-  fontSize,
-  letterSpacing,
-}: Omit<CartesianAxisProps, 'tickMargin'>): CartesianTickItem[] {
-  const { x, y, width, height } = viewBox;
-  const sizeKey = orientation === 'top' || orientation === 'bottom' ? 'width' : 'height';
-  const result = (ticks || []).slice();
-  // we need add the width of 'unit' only when sizeKey === 'width'
-  const unitSize = unit && sizeKey === 'width' ? getStringSize(unit, { fontSize, letterSpacing })[sizeKey] : 0;
-  const len = result.length;
-  const sign = len >= 2 ? mathSign(result[1].coordinate - result[0].coordinate) : 1;
-
-  let start, end;
-
-  if (sign === 1) {
-    start = sizeKey === 'width' ? x : y;
-    end = sizeKey === 'width' ? x + width : y + height;
-  } else {
-    start = sizeKey === 'width' ? x + width : y + height;
-    end = sizeKey === 'width' ? x : y;
-  }
-
-  const count = len;
-  for (let i = 0; i < count; i++) {
-    let entry = result[i];
-    const position = i;
-    const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value, position) : entry.value;
-    const size = getStringSize(content, { fontSize, letterSpacing })[sizeKey] + unitSize;
-
-    if (i === 0) {
-      const gap = sign * (entry.coordinate - (sign * size) / 2 - start);
-      result[i] = entry = {
-        ...entry,
-        tickCoord: gap < 0 ? entry.coordinate - gap * sign : entry.coordinate,
-      };
-    } else {
-      result[i] = entry = { ...entry, tickCoord: entry.coordinate };
-    }
-
-    const isShow =
-      sign * (entry.tickCoord - (sign * size) / 2 - start) >= 0 &&
-      sign * (entry.tickCoord + (sign * size) / 2 - end) <= 0;
-
-    if (isShow) {
-      start = entry.tickCoord + sign * (size / 2 + minTickGap);
-      result[i] = { ...entry, isShow: true };
-    }
-  }
-  // TODO: Refactor the above to remove duplicate logic.
-
-  return getEveryNThTick(result);
+  return result;
 }
 
 export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpacing?: string): any[] {
@@ -271,8 +212,25 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
     return getNumberIntervalTicks(ticks, typeof interval === 'number' && isNumber(interval) ? interval : 0);
   }
 
-  if (interval === 'preserveStartEnd') {
-    return getTicksStart(
+  let candidates: CartesianTickItem[] = [];
+
+  if (interval === 'startEquidistant') {
+    candidates = getTicksStart({
+      ticks,
+      tickFormatter,
+      viewBox,
+      orientation,
+      minTickGap,
+      unit,
+      fontSize,
+      letterSpacing,
+    });
+
+    return getEveryNThTick(candidates);
+  }
+
+  if (interval === 'preserveStart' || interval === 'preserveStartEnd') {
+    candidates = getTicksStart(
       {
         ticks,
         tickFormatter,
@@ -283,11 +241,10 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
         fontSize,
         letterSpacing,
       },
-      true,
+      interval === 'preserveStartEnd',
     );
-  }
-  if (interval === 'preserveStart') {
-    return getTicksStart({
+  } else {
+    candidates = getTicksEnd({
       ticks,
       tickFormatter,
       viewBox,
@@ -299,27 +256,5 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
     });
   }
 
-  if (interval === 'startEquidistant') {
-    return getEquidistantTicks({
-      ticks,
-      tickFormatter,
-      viewBox,
-      orientation,
-      minTickGap,
-      unit,
-      fontSize,
-      letterSpacing,
-    });
-  }
-
-  return getTicksEnd({
-    ticks,
-    tickFormatter,
-    viewBox,
-    orientation,
-    minTickGap,
-    unit,
-    fontSize,
-    letterSpacing,
-  });
+  return candidates.filter(entry => entry.isShow);
 }
