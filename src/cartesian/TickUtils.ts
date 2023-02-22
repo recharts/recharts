@@ -31,10 +31,10 @@ function getEveryNth<Type>(array: Type[], n: number): Type[] {
 
 /**
  * Given an array of ticks, find N, the lowest possible number for which every
- * nTH tick in the ticks array isShow == true
+ * nTH tick in the ticks array isShow == true and return the array of every nTh tick.
  * @param {CartesianTickItem[]} ticks An array of CartesianTickItem with the
- * information whether they can be shown without overlapping with their neighbour isShow
- * @returns {CartesianTickItem[]} result
+ * information whether they can be shown without overlapping with their neighbour isShow.
+ * @returns {CartesianTickItem[]} Every nTh tick in an array.
  */
 function getEveryNThTick(ticks: CartesianTickItem[]) {
   let N = 1;
