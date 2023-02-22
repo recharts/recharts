@@ -13,12 +13,15 @@ export interface CartesianTickItem extends TickItem {
 
 /**
  * Given an array and a number N, return a new array which contains every nTh
- * element of the input array.
+ * element of the input array. For n below 1, an empty array is returned.
  * @param {any[]} array An input array.
  * @param {integer} n A number
  * @returns {any[]} The result array of the same type as the input array.
  */
 function getEveryNth<Type>(array: Type[], n: number): Type[] {
+  if (n < 1) {
+    return [];
+  }
   if (n === 1) {
     return array;
   }
@@ -59,6 +62,7 @@ function getEveryNThTick(ticks: CartesianTickItem[]) {
 }
 
 function getNumberIntervalTicks(ticks: CartesianTickItem[], interval: number) {
+  console.log(ticks, interval);
   return getEveryNth(ticks, interval + 1);
 }
 
