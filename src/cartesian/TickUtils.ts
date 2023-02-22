@@ -1,9 +1,9 @@
 import _ from 'lodash';
-import { mathSign, isNumber } from './DataUtils';
-import { getStringSize } from './DOMUtils';
-import { Props as CartesianAxisProps } from '../cartesian/CartesianAxis';
-import { TickItem } from './types';
-import { Global } from './Global';
+import { mathSign, isNumber } from '../util/DataUtils';
+import { getStringSize } from '../util/DOMUtils';
+import { Props as CartesianAxisProps } from './CartesianAxis';
+import { TickItem } from '../util/types';
+import { Global } from '../util/Global';
 
 export interface CartesianTickItem extends TickItem {
   tickCoord?: number;

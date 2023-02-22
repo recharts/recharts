@@ -11,7 +11,7 @@ import { Label } from '../component/Label';
 import { isNumber } from '../util/DataUtils';
 import { CartesianViewBox, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { CartesianTickItem, getTicks } from '../util/TickUtils';
+import { CartesianTickItem, getTicks } from './TickUtils';
 
 export interface CartesianAxisProps {
   className?: string;
