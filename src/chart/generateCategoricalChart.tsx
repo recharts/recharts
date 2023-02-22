@@ -1,7 +1,7 @@
 import React, { Component, cloneElement, isValidElement, createElement } from 'react';
 import classNames from 'classnames';
 import _, { isArray, isBoolean, isNil } from 'lodash';
-import { getTicks } from '../cartesian/TickUtils';
+import { getTicks } from '../cartesian/ticks/getTicks';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
