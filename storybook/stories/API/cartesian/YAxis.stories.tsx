@@ -34,8 +34,8 @@ export const Simple = {
     };
 
     return (
-      <ResponsiveContainer width={500} height={500}>
-        <ComposedChart width={500} height={400} data={data} margin={{ top: 20, right: 80, left: 20 }}>
+      <ResponsiveContainer width="100%" height={500}>
+        <ComposedChart data={data} margin={{ top: 20, right: 80, left: 20 }}>
           <XAxis dataKey="name" scale="band" />
           <YAxis label={{ value: 'Index', angle: -90, position: 'insideLeft' }} />
           <Legend onClick={handleLegendClick} />
@@ -64,8 +64,8 @@ export const WithIncludeHidden = {
     };
 
     return (
-      <ResponsiveContainer width={500} height={500}>
-        <ComposedChart width={500} height={400} data={data} margin={{ top: 20, right: 80, left: 20 }}>
+      <ResponsiveContainer width="100%" height={500}>
+        <ComposedChart data={data} margin={{ top: 20, right: 80, left: 20 }}>
           <XAxis dataKey="name" scale="band" />
           <YAxis label={{ value: 'Index', angle: -90, position: 'insideLeft' }} includeHidden />
           <Legend onClick={handleLegendClick} />
