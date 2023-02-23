@@ -16,7 +16,7 @@ import {
   CartesianTickItem,
 } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { getTicks } from './ticks/getTicks';
+import { getTicks } from './getTicks';
 
 export interface CartesianAxisProps {
   className?: string;

@@ -2,9 +2,9 @@
   display: flex;
   flex-direction: row;
   height: 500px;
+  width: 100%;
 }
 
 .flex-child {
-  min-width: 0;
   flex: 1;
 }
