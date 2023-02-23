@@ -1,12 +1,13 @@
 import React from 'react';
 import { CartesianAxis, Label, ResponsiveContainer, Surface } from '../../../../src';
+import { TickItem } from '../../../../src/util/types';
 import { ticks } from '../../data';
 
 export default {
   component: CartesianAxis,
   argTypes: {
     interval: {
-      options: ['preserveStart', 'preserveStartEnd', 'preserveEnd', 0, 1, 2, 3, 4, 5],
+      options: ['preserveStart', 'preserveStartEnd', 'preserveEnd', 'equidistantPreserveStart', 0, 1, 2, 3, 4, 5],
       control: {
         type: 'select',
       },
@@ -31,17 +32,29 @@ export const TickPositioning = {
           }}
         >
           <CartesianAxis
-            y={50}
             width={surfaceHeight}
-            height={400}
+            height={surfaceWidth}
             viewBox={{
               x: 0,
               y: 0,
-              width: surfaceHeight,
+              width: surfaceWidth,
               height: surfaceHeight,
             }}
             ticks={args.data}
             interval={args.interval}
+          />
+          <CartesianAxis
+            width={surfaceHeight}
+            height={surfaceWidth}
+            viewBox={{
+              x: 0,
+              y: 0,
+              width: surfaceWidth,
+              height: surfaceHeight,
+            }}
+            ticks={args.data.map((tick: TickItem) => ({ ...tick, coordinate: tick.coordinate / 2 }))}
+            interval={args.interval}
+            orientation="left"
           />
         </Surface>
       </ResponsiveContainer>

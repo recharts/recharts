@@ -1,4 +1,5 @@
-import { getTicks } from '../../../src/cartesian/ticks/getTicks';
+import { getEveryNThTick, getTicks } from '../../src/cartesian/getTicks';
+import { CartesianTickItem } from '../../src/util/types';
 
 const EXAMPLE_INPUT = {
   axisLine: true,
@@ -28,7 +29,7 @@ const EXAMPLE_INPUT = {
   y: 100,
 };
 
-jest.mock('../../../src/util/DOMUtils', () => ({
+jest.mock('../../src/util/DOMUtils', () => ({
   // We mock string size measurement, because getStringSize else returns 0 in these tests.
   getStringSize: jest.fn((text: string) => ({ width: text.length, height: 20 })),
 }));
@@ -163,6 +164,16 @@ describe('getTicks', () => {
           },
         ],
       ],
+      [
+        'equidistantPreserveStart' as const,
+        [
+          {
+            coordinate: 50,
+            tickCoord: 50,
+            value: '10',
+          },
+        ],
+      ],
       [-1, []],
       [undefined, [{ coordinate: 300, isShow: true, tickCoord: 29.5, value: 'A' }]],
     ])(`interval %s works`, (interval, expectedResult) => {
@@ -176,5 +187,82 @@ describe('getTicks', () => {
 
       expect(result).toEqual(expectedResult);
     });
+  });
+
+  describe('Equidistant ticks are shown depending on label width and space between ticks', () => {
+    test.each([
+      // With enough space, all ticks are shown.
+      [['11111111111111', '2', '3', '4'], 20, ['11111111111111', '2', '3', '4']],
+      [['1', '22222222222222', '3', '4'], 20, ['1', '22222222222222', '3', '4']],
+      [['1', '2', '33333333333333', '4'], 20, ['1', '2', '33333333333333', '4']],
+      [['1', '2', '3', '44444444444444'], 20, ['1', '2', '3', '44444444444444']],
+
+      // If not enough space is available we show only every nTH.
+      [['11111111111111', '2', '3', '4'], 5, ['11111111111111', '4']], // every 3rd
+      [['1', '22222222222222', '3', '4'], 5, ['1', '3']], // every 2nd
+      [['1', '2', '33333333333333', '4'], 5, ['1', '4']], // every 3rd
+      [['1', '2', '3', '44444444444444'], 5, ['1', '3']], // every 2nd
+
+      // If not enough space is available at all, we only show the first tick.
+      [['11111111111111', '2', '3', '4'], 1, ['11111111111111']],
+      [['1', '22222222222222', '3', '4'], 1, ['1']],
+      [['1', '2', '33333333333333', '4'], 1, ['1']],
+      [['1', '2', '3', '44444444444444'], 1, ['1']],
+    ])(
+      `equidistantPreserveStart spaces nicely for %s and tick step of %s`,
+      (tickValues, tickWidthStep, expectedResult) => {
+        const ticks = tickValues.map((value, index) => ({ value, coordinate: tickWidthStep * (index + 1) }));
+        const input = {
+          ...EXAMPLE_INPUT,
+          interval: 'equidistantPreserveStart' as const,
+          ticks,
+        };
+
+        const resultingTickValues = (getTicks(input) as CartesianTickItem[]).map(tick => tick.value);
+
+        expect(resultingTickValues).toEqual(expectedResult);
+      },
+    );
+  });
+});
+
+describe('getEveryNThTick', () => {
+  test.each([
+    // Ever tick can be shown
+    [[true], [0]],
+    [
+      [true, true],
+      [0, 1],
+    ],
+    [
+      [true, true, true],
+      [0, 1, 2],
+    ],
+    // Every 2nd tick
+    [
+      [true, false, true],
+      [0, 2],
+    ],
+    [
+      [true, false, true, false],
+      [0, 2],
+    ],
+
+    [
+      [true, false, true, true],
+      [0, 2],
+    ],
+    // Only the first tick can be shown.
+    [[true], [0]],
+    [[true, false], [0]],
+    [[true, true, false], [0]],
+    // The first tick is returned, even if it is isShow=false
+    [[false], [0]],
+  ])(`getEveryNThTick for visibility %s returns the ticks at index %s`, (tickVisibility, result) => {
+    const ticks = tickVisibility.map((isShow, index) => ({ isShow, coordinate: index }));
+
+    const resultingTickValues = (getEveryNThTick(ticks) ?? []).map(tick => tick.coordinate);
+
+    expect(resultingTickValues).toEqual(result);
   });
 });

@@ -16,7 +16,7 @@ import {
   CartesianTickItem,
 } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { getTicks } from './ticks/getTicks';
+import { getTicks } from './getTicks';
 
 export interface CartesianAxisProps {
   className?: string;
@@ -42,7 +42,7 @@ export interface CartesianAxisProps {
   /** The formatter function of tick */
   tickFormatter?: (value: any, index: number) => string;
   ticksGenerator?: (props?: CartesianAxisProps) => CartesianTickItem[];
-  interval?: number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
+  interval?: number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart';
 }
 
 interface IState {
