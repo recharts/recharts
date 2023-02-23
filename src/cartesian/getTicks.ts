@@ -4,7 +4,7 @@ import { mathSign, isNumber } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Props as CartesianAxisProps } from './CartesianAxis';
 import { Global } from '../util/Global';
-import { getEveryNth } from '../util/getEveryNth';
+import { getEveryNthWithCondition } from '../util/getEveryNthWithCondition';
 
 /**
  * Given an array of ticks, find N, the lowest possible number for which every
@@ -15,32 +15,20 @@ import { getEveryNth } from '../util/getEveryNth';
  */
 export function getEveryNThTick(ticks: CartesianTickItem[]) {
   let N = 1;
-  let previous: CartesianTickItem[] = ticks;
-  while (N < ticks.length) {
-    const everyNthTick = getEveryNth(ticks, N);
-    const visibleTicks = everyNthTick.reduce((previousValue, currentValue) => {
-      if (currentValue.isShow === true) {
-        return previousValue + 1;
-      }
-      return previousValue;
-    }, 0);
-
-    previous = everyNthTick;
-    if (visibleTicks === everyNthTick.length) {
-      break;
+  let previous = getEveryNthWithCondition(ticks, N, tickItem => tickItem.isShow);
+  while (N <= ticks.length) {
+    if (previous !== undefined) {
+      return previous;
     }
     N++;
+    previous = getEveryNthWithCondition(ticks, N, tickItem => tickItem.isShow);
   }
 
-  if (N === ticks.length) {
-    return ticks.slice(0, 1);
-  }
-
-  return previous;
+  return ticks.slice(0, 1);
 }
 
 export function getNumberIntervalTicks(ticks: CartesianTickItem[], interval: number) {
-  return getEveryNth(ticks, interval + 1);
+  return getEveryNthWithCondition(ticks, interval + 1);
 }
 
 function getTicksEnd({

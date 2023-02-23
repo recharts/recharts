@@ -261,7 +261,7 @@ describe('getEveryNThTick', () => {
   ])(`getEveryNThTick for visibility %s returns the ticks at index %s`, (tickVisibility, result) => {
     const ticks = tickVisibility.map((isShow, index) => ({ isShow, coordinate: index }));
 
-    const resultingTickValues = getEveryNThTick(ticks).map(tick => tick.coordinate);
+    const resultingTickValues = (getEveryNThTick(ticks) ?? []).map(tick => tick.coordinate);
 
     expect(resultingTickValues).toEqual(result);
   });
