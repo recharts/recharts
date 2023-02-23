@@ -9,9 +9,14 @@ import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { isNumber } from '../util/DataUtils';
-import { CartesianViewBox, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
+import {
+  CartesianViewBox,
+  adaptEventsOfChild,
+  PresentationAttributesAdaptChildEvent,
+  CartesianTickItem,
+} from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { CartesianTickItem, getTicks } from './TickUtils';
+import { getTicks } from './ticks/getTicks';
 
 export interface CartesianAxisProps {
   className?: string;

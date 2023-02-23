@@ -1,19 +1,10 @@
 import _ from 'lodash';
-import { mathSign, isNumber } from '../util/DataUtils';
-import { getStringSize } from '../util/DOMUtils';
-import { Props as CartesianAxisProps } from './CartesianAxis';
-import { TickItem } from '../util/types';
-import { Global } from '../util/Global';
-
-export interface CartesianTickItem extends TickItem {
-  tickCoord?: number;
-  tickSize?: number;
-  isShow?: boolean;
-}
-
-function getNumberIntervalTicks(ticks: CartesianTickItem[], interval: number) {
-  return ticks.filter((entry, i) => i % (interval + 1) === 0);
-}
+import { CartesianTickItem } from '../../util/types';
+import { mathSign, isNumber } from '../../util/DataUtils';
+import { getStringSize } from '../../util/DOMUtils';
+import { Props as CartesianAxisProps } from '../CartesianAxis';
+import { Global } from '../../util/Global';
+import { getNumberIntervalTicks } from './utils';
 
 function getTicksEnd({
   ticks,
@@ -68,7 +59,7 @@ function getTicksEnd({
     }
   }
 
-  return result.filter(entry => entry.isShow);
+  return result;
 }
 
 function getTicksStart(
@@ -149,7 +140,7 @@ function getTicksStart(
     }
   }
 
-  return result.filter(entry => entry.isShow);
+  return result;
 }
 
 export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpacing?: string): any[] {
@@ -163,8 +154,10 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
     return getNumberIntervalTicks(ticks, typeof interval === 'number' && isNumber(interval) ? interval : 0);
   }
 
-  if (interval === 'preserveStartEnd') {
-    return getTicksStart(
+  let candidates: CartesianTickItem[] = [];
+
+  if (interval === 'preserveStart' || interval === 'preserveStartEnd') {
+    candidates = getTicksStart(
       {
         ticks,
         tickFormatter,
@@ -175,11 +168,10 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
         fontSize,
         letterSpacing,
       },
-      true,
+      interval === 'preserveStartEnd',
     );
-  }
-  if (interval === 'preserveStart') {
-    return getTicksStart({
+  } else {
+    candidates = getTicksEnd({
       ticks,
       tickFormatter,
       viewBox,
@@ -191,14 +183,5 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
     });
   }
 
-  return getTicksEnd({
-    ticks,
-    tickFormatter,
-    viewBox,
-    orientation,
-    minTickGap,
-    unit,
-    fontSize,
-    letterSpacing,
-  });
+  return candidates.filter(entry => entry.isShow);
 }

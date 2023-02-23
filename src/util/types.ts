@@ -1116,6 +1116,12 @@ export interface TickItem {
   index?: number;
 }
 
+export interface CartesianTickItem extends TickItem {
+  tickCoord?: number;
+  tickSize?: number;
+  isShow?: boolean;
+}
+
 export interface Margin {
   top?: number;
   right?: number;
