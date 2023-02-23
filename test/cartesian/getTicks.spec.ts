@@ -29,7 +29,7 @@ const EXAMPLE_INPUT = {
   y: 100,
 };
 
-jest.mock('../../../src/util/DOMUtils', () => ({
+jest.mock('../../src/util/DOMUtils', () => ({
   // We mock string size measurement, because getStringSize else returns 0 in these tests.
   getStringSize: jest.fn((text: string) => ({ width: text.length, height: 20 })),
 }));
