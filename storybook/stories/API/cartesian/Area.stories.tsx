@@ -293,9 +293,9 @@ export const Points = {
     docs: {
       description: {
         story:
-          'You can directly set the x and y coordinates of a Area via points. This overrides dataKey and data. ' +
-          'The coordinate system of the points lies in the top right of the bounding box. ' +
-          'Using points, a Area can even be used within only a Surface, without a Chart.',
+          'You can directly set the x and y coordinates of a Area via `points`. This overrides `dataKey` and `data`. ' +
+          'The coordinate system of the `points` lies in the top right of the bounding box. ' +
+          'Using `points`, an Area can even be used within only a Surface, without a Chart.',
       },
     },
   },
