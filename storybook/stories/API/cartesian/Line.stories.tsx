@@ -141,7 +141,7 @@ export const CustomizedDot = {
     controls: {},
     docs: {
       description: {
-        story: 'The dot of the line can be customised. Find further possible behaviour on the Dot stories.',
+        story: 'The dot of the line can be customized. Find further possible behaviour on the Dot stories.',
       },
     },
   },
