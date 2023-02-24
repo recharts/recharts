@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bar, BarChart, ResponsiveContainer, Tooltip } from '../../../../src';
+import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from '../../../../src';
 import { pageData } from '../../data';
 
 export default {
@@ -13,6 +13,25 @@ export const Simple = {
         <BarChart {...args}>
           <Bar dataKey="uv" />
           <Tooltip reverseDirection={{ x: true }} />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    data: pageData,
+  },
+};
+
+export const BarInBar = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <BarChart {...args}>
+          <Bar dataKey="uv" fill="green" xAxisId="one" barSize={50} />
+          <XAxis xAxisId="one" />
+          {/* The smaller bar must be rendered in front of the larger one to be visible. */}
+          <Bar dataKey="pv" fill="red" xAxisId="two" barSize={30} />
+          <XAxis xAxisId="two" hide />
         </BarChart>
       </ResponsiveContainer>
     );

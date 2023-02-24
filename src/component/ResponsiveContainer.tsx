@@ -28,6 +28,7 @@ export interface Props {
   debounce?: number;
   id?: string | number;
   className?: string | number;
+  onResize?: (width: number, height: number) => void;
 }
 
 export const ResponsiveContainer = forwardRef(
@@ -36,13 +37,18 @@ export const ResponsiveContainer = forwardRef(
       aspect,
       width = '100%',
       height = '100%',
-      minWidth,
+      /*
+       * default min-width to 0 if not specified - 'auto' causes issues with flexbox
+       * https://github.com/recharts/recharts/issues/172
+       */
+      minWidth = 0,
       minHeight,
       maxHeight,
       children,
       debounce = 0,
       id,
       className,
+      onResize,
     }: Props,
     ref,
   ) => {
@@ -73,6 +79,7 @@ export const ResponsiveContainer = forwardRef(
 
       if (newSize) {
         const { containerWidth, containerHeight } = newSize;
+        if (onResize) onResize(containerWidth, containerHeight);
 
         setSizes(currentSizes => {
           const { containerWidth: oldWidth, containerHeight: oldHeight } = currentSizes;

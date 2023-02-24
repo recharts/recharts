@@ -1,27 +1,40 @@
 import React from 'react';
-import { CartesianGrid, Surface } from '../../../../src';
+import { CartesianGrid, ResponsiveContainer, Surface } from '../../../../src';
 
 export default {
   component: CartesianGrid,
 };
 
+const [surfaceWidth, surfaceHeight] = [500, 500];
+
 export const Simple = {
   render: (args: Record<string, any>) => {
     return (
-      <Surface width={500} height={500}>
-        <CartesianGrid
-          x={0}
-          y={0}
-          width={500}
-          height={500}
-          fillOpacity={0.4}
-          strokeDasharray={args.strokeDasharray}
-          verticalPoints={args.verticalPoints}
-          horizontalPoints={args.horizontalPoints}
-          verticalFill={args.verticalFill}
-          horizontalFill={args.horizontalFill}
-        />
-      </Surface>
+      <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <Surface
+          width={surfaceWidth}
+          height={surfaceHeight}
+          viewBox={{
+            x: 0,
+            y: 0,
+            width: surfaceWidth,
+            height: surfaceHeight,
+          }}
+        >
+          <CartesianGrid
+            x={0}
+            y={0}
+            width={500}
+            height={500}
+            fillOpacity={0.4}
+            strokeDasharray={args.strokeDasharray}
+            verticalPoints={args.verticalPoints}
+            horizontalPoints={args.horizontalPoints}
+            verticalFill={args.verticalFill}
+            horizontalFill={args.horizontalFill}
+          />
+        </Surface>
+      </ResponsiveContainer>
     );
   },
   args: {

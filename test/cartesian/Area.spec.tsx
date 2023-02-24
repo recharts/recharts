@@ -73,7 +73,7 @@ describe('<Area />', () => {
     expect(screen.getAllByRole('cell')).toHaveLength(data.length);
   });
 
-  test('Render customized label when dot is set to be a react element', () => {
+  test('Render customized dot when dot is set to be a react element', () => {
     const CustomizedDot: FC<{ cx?: number; cy?: number }> = ({ cx, cy }) => (
       <circle role="cell" cx={cx} cy={cy} r={5} className="customized-dot" />
     );

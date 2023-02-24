@@ -14,8 +14,8 @@ import {
   LabelList,
   Label,
 } from 'recharts';
-import { changeNumberOfData } from './utils';
 import { curveCardinal } from 'victory-vendor/d3-shape';
+import { changeNumberOfData } from './utils';
 
 const data = [
   { name: 'Page A', uv: 4000, pv: 2400, amt: 2400, time: 1 },
@@ -38,13 +38,6 @@ const data01 = [
   { day: '05-08', weather: 'sunny' },
   { day: '05-09', weather: 'sunny' },
 ];
-const data02 = [
-  { name: 'Page A', uv: 4000, pv: 2400, amt: 2400 },
-  { name: 'Page B', uv: 3000, pv: 1398, amt: 2210 },
-  { name: 'Page C', uv: 2000, pv: 9800, amt: 2290 },
-  { name: 'Page D', uv: 2780, pv: 3908, amt: 2000 },
-  { name: 'Page E', uv: 1890, pv: 4800, amt: 2181 },
-];
 
 const rangeData = [
   { day: '05-01', temperature: [-1, 10] },
@@ -58,7 +51,7 @@ const rangeData = [
   { day: '05-09', temperature: [-3, 5] },
 ];
 
-const initialState = { data, data01, data02 };
+const initialState = { data, data01 };
 
 const CustomTooltip: React.FunctionComponent<any> = (props: any) => {
   const { active, payload, external, label } = props;
@@ -90,26 +83,11 @@ const CustomTooltip: React.FunctionComponent<any> = (props: any) => {
 };
 
 const renderCustomizedActiveDot: React.FunctionComponent = (props: any) => {
-  const { cx, cy, stroke, index, dataKey } = props;
+  const { cx, cy, stroke, dataKey } = props;
 
   return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke} key={`dot-${dataKey}`} />;
 };
 
-const RenderRect: React.FunctionComponent<any> = (props: any) => {
-  return <rect x={20} y={20} width={100} height={20} stroke="#000" />;
-};
-
-function CustomizedAxisTick(props: any) {
-  const { x, y, stroke, payload } = props;
-
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={-12} textAnchor="end" fill="#999" fontSize="12">
-        {payload.value}
-      </text>
-    </g>
-  );
-}
 const renderLabel = (props: any) => {
   const { index, x, y } = props;
 
@@ -123,6 +101,7 @@ const renderLabel = (props: any) => {
 // custom curve cardinal `type` prop
 const stepAround = curveCardinal.tension(0.5);
 
+// eslint-disable-next-line import/no-default-export
 export default class AreaChartDemo extends React.Component<any, any> {
   static displayName = 'AreaChartDemo';
 
@@ -133,13 +112,9 @@ export default class AreaChartDemo extends React.Component<any, any> {
   };
 
   render() {
-    const { data, data01, data02 } = this.state;
-
     return (
       <div className="area-charts">
-        <a href="javascript: void(0);" className="btn update" onClick={this.handleChangeData}>
-          change data
-        </a>
+        <button type="button" onClick={this.handleChangeData}>change data</button>
         <br />
 
         <p>Stacked AreaChart</p>

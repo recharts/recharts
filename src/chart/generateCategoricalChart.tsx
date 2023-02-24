@@ -1,6 +1,7 @@
 import React, { Component, cloneElement, isValidElement, createElement } from 'react';
 import classNames from 'classnames';
 import _, { isArray, isBoolean, isNil } from 'lodash';
+import { getTicks } from '../cartesian/getTicks';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
@@ -292,7 +293,7 @@ const getTooltipData = (state: CategoricalChartState, chartData: any[], layout: 
  * @param {Number} dataEndIndex   The end index of the data series when a brush is applied
  * @return {Object}      Configuration
  */
-const getAxisMapByAxes = (
+export const getAxisMapByAxes = (
   props: CategoricalChartProps,
   { axes, graphicalItems, axisType, axisIdKey, stackGroups, dataStartIndex, dataEndIndex }: any,
 ) => {
@@ -327,11 +328,21 @@ const getAxisMapByAxes = (
      */
     if (isDomainSpecifiedByUser(child.props.domain, allowDataOverflow, type)) {
       domain = parseSpecifiedDomain(child.props.domain, null, allowDataOverflow);
+      /* The chart can be categorical and have the domain specified in numbers
+       * we still need to calculate the categorical domain
+       * TODO: refactor this more
+       */
+      if (isCategorical && (type === 'number' || scale !== 'auto')) {
+        categoricalDomain = getDomainOfDataByKey(displayedData, dataKey, 'category');
+      }
     }
+
+    // if the domain is defaulted we need this for `originalDomain` as well
+    const defaultDomain = getDefaultDomainByAxisType(type);
 
     // we didn't create the domain from user's props above, so we need to calculate it
     if (!domain || domain.length === 0) {
-      const childDomain = child.props.domain ?? getDefaultDomainByAxisType(type);
+      const childDomain = child.props.domain ?? defaultDomain;
 
       if (dataKey) {
         // has dataKey in <Axis />
@@ -429,7 +440,7 @@ const getAxisMapByAxes = (
         domain,
         categoricalDomain,
         duplicateDomain,
-        originalDomain: child.props.domain,
+        originalDomain: child.props.domain ?? defaultDomain,
         isCategorical,
         layout,
       },
@@ -1624,7 +1635,7 @@ export const generateCategoricalChart = ({
 
     verticalCoordinatesGenerator = ({ xAxis, width, height, offset }: ChartCoordinate) =>
       getCoordinatesOfGrid(
-        CartesianAxis.getTicks({
+        getTicks({
           ...CartesianAxis.defaultProps,
           ...xAxis,
           ticks: getTicksOfAxis(xAxis, true),
@@ -1636,7 +1647,7 @@ export const generateCategoricalChart = ({
 
     horizontalCoordinatesGenerator = ({ yAxis, width, height, offset }: ChartCoordinate) =>
       getCoordinatesOfGrid(
-        CartesianAxis.getTicks({
+        getTicks({
           ...CartesianAxis.defaultProps,
           ...yAxis,
           ticks: getTicksOfAxis(yAxis, true),

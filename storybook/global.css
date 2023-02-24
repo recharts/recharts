@@ -1,0 +1,7 @@
+#storybook-root {
+  width: 80%;
+  display: flex;
+  align-items: center;
+  height: calc(100vh - 2rem); /* 1rem is the padding of iframe body */
+  margin: auto;
+}

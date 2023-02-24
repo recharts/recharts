@@ -1,6 +1,6 @@
 import React from 'react';
 import { Line, LineChart, ReferenceArea, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from '../../../../src';
-import { simpleUvPvData } from '../../data';
+import { pageData } from '../../data';
 
 export default {
   component: ReferenceArea,
@@ -13,8 +13,6 @@ export const Simple = {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <LineChart
-          width={500}
-          height={300}
           data={args.data}
           margin={{
             top: 5,
@@ -41,14 +39,14 @@ export const Simple = {
     );
   },
   args: {
-    data: simpleUvPvData,
+    data: pageData,
   },
 };
 
 export const IfOverflow = {
   ...Simple,
   args: {
-    data: simpleUvPvData,
+    data: pageData,
     y1: 1890,
     y2: -1000,
   },
