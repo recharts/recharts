@@ -1,7 +1,7 @@
 import React from 'react';
 import each from 'jest-each';
 import { render } from '@testing-library/react';
-import { Surface, AreaChart, Area, YAxis } from '../../src';
+import { Surface, AreaChart, Area, YAxis, BarChart, Bar } from '../../src';
 
 describe('<YAxis />', () => {
   const data = [
@@ -177,5 +177,52 @@ describe('<YAxis />', () => {
 
     expect(svg).toBeInTheDocument();
     expect(svg?.children).toHaveLength(2);
+  });
+
+  it('Render identical ticks when data is hidden and includeHidden is true', () => {
+    const wrapperBothShowing = render(
+      <BarChart width={600} height={400} data={data}>
+        <YAxis type="number" stroke="#ff7300" includeHidden />
+        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} />
+        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} />
+      </BarChart>,
+    );
+
+    const wrapperFirstHidden = render(
+      <BarChart width={600} height={400} data={data}>
+        <YAxis type="number" stroke="#ff7300" includeHidden />
+        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} hide />
+        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} />
+      </BarChart>,
+    );
+
+    const wrapperSecondHidden = render(
+      <BarChart width={600} height={400} data={data}>
+        <YAxis type="number" stroke="#ff7300" includeHidden />
+        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} />
+        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} hide />
+      </BarChart>,
+    );
+
+    const ticksBothShowing = wrapperBothShowing.container.querySelectorAll('text');
+    const ticksFirstHidden = wrapperFirstHidden.container.querySelectorAll('text');
+    const ticksSecondHidden = wrapperSecondHidden.container.querySelectorAll('text');
+
+    expect(ticksFirstHidden.length).toBe(ticksBothShowing.length);
+    expect(ticksFirstHidden[0].getAttribute('y')).toBe(ticksBothShowing[0].getAttribute('y'));
+    expect(ticksFirstHidden[3].getAttribute('y')).toBe(ticksBothShowing[3].getAttribute('y'));
+
+    expect(ticksSecondHidden.length).toBe(ticksBothShowing.length);
+    expect(ticksSecondHidden[0].getAttribute('y')).toBe(ticksBothShowing[0].getAttribute('y'));
+    expect(ticksSecondHidden[3].getAttribute('y')).toBe(ticksBothShowing[3].getAttribute('y'));
+
+    const barsBothShowing = wrapperBothShowing.container.querySelectorAll('recharts-bar-rectangle > path');
+    const barsFirstHidden = wrapperFirstHidden.container.querySelectorAll('recharts-bar-rectangle > path');
+    const barsSecondHidden = wrapperSecondHidden.container.querySelectorAll('recharts-bar-rectangle > path');
+
+    // spreading into single array to match indices, as barsBothShowing will get Rectangles from the first Bar, then the second
+    expect([...Array.from(barsSecondHidden), ...Array.from(barsFirstHidden)].every((bar, i) => {
+      return bar.getAttribute('height') === barsBothShowing[i].getAttribute('height')
+    })).toBe(true);
   });
 });

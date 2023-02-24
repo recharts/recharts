@@ -1095,6 +1095,8 @@ export interface BaseAxisProps {
   allowDecimals?: boolean;
   /** The domain of scale in this axis */
   domain?: AxisDomain;
+  /** Consider hidden elements when computing the domain (defaults to false) */
+  includeHidden?: boolean;
   /** The name of data displayed in the axis */
   name?: string;
   /** The unit of data displayed in the axis */

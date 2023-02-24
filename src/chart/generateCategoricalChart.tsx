@@ -302,7 +302,7 @@ export const getAxisMapByAxes = (
 
   // Eliminate duplicated axes
   const axisMap = axes.reduce((result: any, child: any) => {
-    const { type, dataKey, allowDataOverflow, allowDuplicatedCategory, scale, ticks } = child.props;
+    const { type, dataKey, allowDataOverflow, allowDuplicatedCategory, scale, ticks, includeHidden } = child.props;
     const axisId = child.props[axisIdKey];
 
     if (result[axisId]) {
@@ -382,7 +382,9 @@ export const getAxisMapByAxes = (
           // the field type is numerical
           const errorBarsDomain = parseErrorBarsOfAxis(
             displayedData,
-            graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
+            graphicalItems.filter(
+              (item: any) => item.props[axisIdKey] === axisId && (includeHidden || !item.props.hide),
+            ),
             dataKey,
             axisType,
             layout,
@@ -408,7 +410,7 @@ export const getAxisMapByAxes = (
       } else {
         domain = getDomainOfItemsWithSameAxis(
           displayedData,
-          graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
+          graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && (includeHidden || !item.props.hide)),
           type,
           layout,
           true,
