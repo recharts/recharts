@@ -578,7 +578,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
   });
   test('should show tooltips for both charts synced by index on MouseEnter and hide on MouseLeave/Escape', async () => {
     jest.useFakeTimers();
-    const { container, getByText, debug } = render(
+    const { container, getByText } = render(
       <div>
         <LineChart width={width} height={height} data={data} margin={margin} syncId="test">
           <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
@@ -648,7 +648,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
         <XAxis dataKey="name" />
       </LineChart>
     );
-    const { container, getByText, debug } = render(
+    const { container, getByText } = render(
       <div>
         {chart1}
         {chart2}
@@ -671,7 +671,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 
     fireEvent(firstChart, mouseEnterEvent);
     jest.runAllTimers();
-    debug();
+
     // There are two tooltips - one for each LineChart as they have the same syncId
     const tooltipCursors = container.querySelectorAll('.recharts-tooltip-cursor');
     expect(tooltipCursors).toHaveLength(2);

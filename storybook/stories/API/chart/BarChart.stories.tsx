@@ -11,8 +11,8 @@ export const Simple = {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <BarChart {...args}>
+          <Tooltip />
           <Bar dataKey="uv" />
-          <Tooltip reverseDirection={{ x: true }} />
         </BarChart>
       </ResponsiveContainer>
     );

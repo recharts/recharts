@@ -99,7 +99,8 @@ const tooltipDefaultProps = {
   coordinate: { x: 0, y: 0 },
   wrapperStyle: {},
   // this doesn't exist on TooltipProps
-  //@ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   cursorStyle: {},
   separator: ' : ',
   contentStyle: {},
