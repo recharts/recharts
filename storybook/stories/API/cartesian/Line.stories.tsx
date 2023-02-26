@@ -8,6 +8,59 @@ import { coordinateWithNullY, coordinateData, coordinateWithValueData } from '..
 export default {
   component: Line,
   argTypes: {
+    dataKey: {
+      description:
+        'The key or getter of a group of data which should be unique in a LineChart. It could be an accessor function such as (row)=>value',
+      table: {
+        type: { summary: 'string | number | function' },
+      },
+    },
+    xAxisId: {
+      description: 'The id of x-axis which is corresponding to the data.',
+      table: { type: { summary: 'string | number' } },
+    },
+    yAxisId: {
+      description: 'The id of y-axis which is corresponding to the data.',
+      table: { type: { summary: 'string | number' } },
+    },
+    legendType: {
+      description: "The type of icon in legend. If set to 'none', no legend item will be rendered.",
+      table: {
+        type: {
+          summary:
+            "'line' | 'plainline' | 'square' | 'rect'| 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye' | 'none'",
+        },
+        defaultValue: 'line',
+      },
+    },
+    dot: {
+      description:
+        'If false set, dots will not be drawn. If true set, dots will be drawn which have the props calculated internally. If object set, dots will be drawn which have the props mergered by the internal calculated props and the option. If ReactElement set, the option can be the custom dot element.If set a function, the function will be called to render customized dot.',
+      table: {
+        type: {
+          summary: 'Boolean | Object | ReactElement | Function',
+          detail:
+            '<Line dataKey="value" dot={false} />\n' +
+            '<Line dataKey="value" dot={{ stroke: \'red\', strokeWidth: 2 }} />\n' +
+            '<Line dataKey="value" dot={<CustomizedDot />} />\n' +
+            '<Line dataKey="value" dot={renderDot} />',
+        },
+        defaultValue: true,
+      },
+    },
+    name: {
+      description:
+        'The name of data. This option will be used in tooltip and legend to represent a line. If no value was set to this option, the value of dataKey will be used alternatively.',
+      optional: true,
+    },
+    unit: {
+      type: { name: 'string | number' },
+      // table: {
+      //   type: {
+      //     summary: 'string | number',
+      //   },
+      // },
+    },
     connectNulls: {
       control: {
         type: 'boolean',
@@ -20,7 +73,8 @@ export default {
       control: { type: 'color' },
     },
     type: {
-      // TODO: These options should be generated from the type directly instead of duplicating the type information here. Will iterate.
+      description:
+        "The interpolation type of line. It's the same as type in Area. And customized interpolation function can be set to type. https://github.com/d3/d3-shape#curves",
       options: [
         'basis',
         'basisClosed',
@@ -35,6 +89,7 @@ export default {
         'stepBefore',
         'stepAfter',
       ],
+      default: 'linear',
       control: {
         type: 'select',
       },
