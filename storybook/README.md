@@ -11,7 +11,7 @@ As we want to migrate existing documentation to Storybook, we will want to repro
 ### API
 The API section contains stories for all components. The goal is to communicate a components behaviour as concise and simple as possible.
 
-`storybook/stories/API/cartesian/Line.stories.tsx` can be considered a template for writing stories for the API section.
+[`storybook/stories/API/cartesian/Line.stories.tsx`](https://github.com/recharts/recharts/blob/master/storybook/stories/API/cartesian/Line.stories.tsx) can be considered a template for writing stories for the API section.
 
 Acceptance criteria for API stories:
 - Each component should be documented in a doc file / mdx file.
