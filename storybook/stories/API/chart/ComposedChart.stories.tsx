@@ -27,24 +27,20 @@ export default {
 const HorizontalChartTemplate = {
   render: (args: any) => {
     return (
-      <>
-        <div className="composed-chart-wrapper">
-          <ResponsiveContainer width="100%" height={300}>
-            <Composed
-              {...args}
-              data={pageData}
-              margin={{
-                top: 20,
-                right: 20,
-                bottom: 20,
-                left: 20,
-              }}
-            >
-              {args.children}
-            </Composed>
-          </ResponsiveContainer>
-        </div>
-      </>
+      <ResponsiveContainer width="100%" height={300}>
+        <Composed
+          {...args}
+          data={pageData}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+        >
+          {args.children}
+        </Composed>
+      </ResponsiveContainer>
     );
   },
 };
