@@ -1,6 +1,6 @@
 import React from 'react';
 import { ComposedChart, Area, ResponsiveContainer, Surface } from '../../../../src';
-import { coordinateWithValueData, pageData } from '../../data';
+import { coordinateWithValueData } from '../../data';
 
 export default {
   component: Area,
@@ -129,9 +129,9 @@ export const Stacked = {
     );
   },
   args: {
-    data: pageData,
-    dataKey1: 'uv',
-    dataKey2: 'pv',
+    data: coordinateWithValueData,
+    dataKey1: 'x',
+    dataKey2: 'y',
     areaColor1: 'lightblue',
     areaColor2: 'lightgreen',
     isAnimationActive: false,
@@ -238,9 +238,9 @@ export const FillGradient = {
     );
   },
   args: {
-    data: pageData,
-    dataKey1: 'uv',
-    dataKey2: 'pv',
+    data: coordinateWithValueData,
+    dataKey1: 'x',
+    dataKey2: 'y',
     isAnimationActive: false,
   },
   parameters: {
