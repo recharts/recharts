@@ -3,6 +3,7 @@ export * from './DataProps';
 export * from './NodeAndLink';
 export * from './Page';
 export * from './Size';
+export * from './StockPrice';
 export * from './Tick';
 export * from './Time';
 export * from './BoxPlot';
