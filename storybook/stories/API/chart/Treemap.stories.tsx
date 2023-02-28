@@ -8,9 +8,10 @@ export default {
 
 export const Simple = {
   render: (args: Record<string, any>) => {
+    const { data } = args;
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <Treemap data={args.data} dataKey="size" />
+        <Treemap data={data} dataKey="size" />
       </ResponsiveContainer>
     );
   },
