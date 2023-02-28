@@ -6,31 +6,51 @@ import { Surface, Line, ResponsiveContainer, ComposedChart } from '../../../../s
 import { coordinateWithNullY, coordinateData, coordinateWithValueData } from '../../data';
 
 export default {
-  component: Line,
   argTypes: {
+    activeDot: {
+      description:
+        'The active dot is shown when a user enters a line chart and this chart has tooltip. If set to false, no active dot will be drawn. If set to true, active dot will be drawn with the props calculated internally. If passed an object, active dot will be drawn, and the internally calculated props will be merged with the key value pairs of the passed object. If passed a ReactElement, the option can be the custom active dot element. If passed a function, the function will be called to render a customized active dot.',
+      table: {
+        type: {
+          summary: 'Boolean | Object | ReactElement | Function',
+          detail:
+            '<Line dataKey="value" activeDot={false} />\n' +
+            '<Line dataKey="value" activeDot={{ stroke: \'red\', strokeWidth: 2 }} />\n' +
+            '<Line dataKey="value" activeDot={<CustomizedDot />} />\n' +
+            '<Line dataKey="value" activeDot={renderDot} />',
+        },
+        defaultValue: true,
+      },
+    },
+    animationBegin: {
+      description: 'Specifies when the animation should begin, the unit of this option is ms.',
+      type: { name: 'number' },
+      defaultValue: 0,
+    },
+    animationDuration: {
+      description: 'Specifies the duration of animation, the unit of this option is ms.',
+      type: { name: 'number' },
+      defaultValue: 1500,
+    },
+    animationEasing: {
+      description: 'The type of easing function.',
+      type: { name: 'ease | ease-in | ease-out | ease-in-out | linear' },
+      defaultValue: 'ease',
+    },
+    connectNulls: {
+      description: 'Whether to connect a graph line across null points.',
+      table: {
+        type: {
+          summary: 'boolean',
+        },
+      },
+      defaultValue: false,
+    },
     dataKey: {
       description:
         'The key or getter of a group of data which should be unique in a LineChart. It could be an accessor function such as (row)=>value',
       table: {
         type: { summary: 'string | number | function' },
-      },
-    },
-    xAxisId: {
-      description: 'The id of x-axis which is corresponding to the data.',
-      table: { type: { summary: 'string | number' } },
-    },
-    yAxisId: {
-      description: 'The id of y-axis which is corresponding to the data.',
-      table: { type: { summary: 'string | number' } },
-    },
-    legendType: {
-      description: "The type of icon in legend. If set to 'none', no legend item will be rendered.",
-      table: {
-        type: {
-          summary:
-            "'line' | 'plainline' | 'square' | 'rect'| 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye' | 'none'",
-        },
-        defaultValue: 'line',
       },
     },
     dot: {
@@ -48,20 +68,23 @@ export default {
         defaultValue: true,
       },
     },
-    activeDot: {
+    fill: {
+      control: { type: 'color' },
+    },
+    hide: {
+      description: 'Hides the line when true, useful when toggling visibility state via legend',
+      type: { name: 'boolean' },
+      defaultValue: false,
+    },
+    id: {
       description:
-        'The active dot is shown when a user enters a line chart and this chart has tooltip. If set to false, no active dot will be drawn. If set to true, active dot will be drawn with the props calculated internally. If passed an object, active dot will be drawn, and the internally calculated props will be merged with the key value pairs of the passed object. If passed a ReactElement, the option can be the custom active dot element. If passed a function, the function will be called to render a customized active dot.',
-      table: {
-        type: {
-          summary: 'Boolean | Object | ReactElement | Function',
-          detail:
-            '<Line dataKey="value" activeDot={false} />\n' +
-            '<Line dataKey="value" activeDot={{ stroke: \'red\', strokeWidth: 2 }} />\n' +
-            '<Line dataKey="value" activeDot={<CustomizedDot />} />\n' +
-            '<Line dataKey="value" activeDot={renderDot} />',
-        },
-        defaultValue: true,
-      },
+        'The unique id of this component, which will be used to generate unique clip path id internally. This props is suggested to be set in SSR.',
+      type: { name: 'string' },
+    },
+    isAnimationActive: {
+      description: 'If set false, animation of line will be disabled.',
+      table: { type: { summary: 'boolean' } },
+      defaultValue: 'true in CSR, and false in SSR',
     },
     label: {
       description:
@@ -78,72 +101,46 @@ export default {
         defaultValue: false,
       },
     },
-    hide: {
-      description: 'Hides the line when true, useful when toggling visibility state via legend',
-      type: { name: 'boolean' },
-      defaultValue: false,
-    },
-    points: {
-      description: 'The coordinates of points in the line, usually calculated internally.',
+    layout: {
+      description: 'The layout of line, usually inherited from parent.',
       table: {
         type: {
-          summary: 'array',
-          detail: '[{x: 12, y: 12, value: 240}]',
+          summary: 'horizontal | vertical',
         },
       },
     },
+    legendType: {
+      description: "The type of icon in legend. If set to 'none', no legend item will be rendered.",
+      table: {
+        type: {
+          summary:
+            "'line' | 'plainline' | 'square' | 'rect'| 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye' | 'none'",
+        },
+        defaultValue: 'line',
+      },
+    },
     name: {
+      type: { name: 'string | number' },
       description:
         'The name of data. This option will be used in tooltip and legend to represent a line. If no value was set to this option, the value of dataKey will be used alternatively.',
-      optional: true,
     },
-    unit: {
-      type: { name: 'string | number' },
-      // table: {
-      //   type: {
-      //     summary: 'string | number',
-      //   },
-      // },
-    },
-    connectNulls: {
-      control: {
-        type: 'boolean',
-      },
-    },
-    stroke: {
-      control: { type: 'color' },
-    },
-    fill: {
-      control: { type: 'color' },
-    },
-    type: {
-      description:
-        "The interpolation type of line. It's the same as type in Area. And customized interpolation function can be set to type. https://github.com/d3/d3-shape#curves",
-      options: [
-        'basis',
-        'basisClosed',
-        'basisOpen',
-        'linear',
-        'linearClosed',
-        'natural',
-        'monotoneX',
-        'monotoneY',
-        'monotone',
-        'step',
-        'stepBefore',
-        'stepAfter',
-      ],
-      default: 'linear',
-      control: {
-        type: 'select',
-      },
-    },
+    onAbort: { table: { category: 'EventHandlers' } },
     onAbortCapture: { table: { category: 'EventHandlers' } },
-    onAnimationEnd: { table: { category: 'EventHandlers' } },
+    onAnimationEnd: {
+      table: {
+        category: 'EventHandlers',
+        description: 'The customized event handler of animation end',
+      },
+    },
     onAnimationEndCapture: { table: { category: 'EventHandlers' } },
     onAnimationIteration: { table: { category: 'EventHandlers' } },
     onAnimationIterationCapture: { table: { category: 'EventHandlers' } },
-    onAnimationStart: { table: { category: 'EventHandlers' } },
+    onAnimationStart: {
+      table: {
+        description: 'The customized event handler of animation start',
+        category: 'EventHandlers',
+      },
+    },
     onAnimationStartCapture: { table: { category: 'EventHandlers' } },
     onAuxClick: { table: { category: 'EventHandlers' } },
     onAuxClickCapture: { table: { category: 'EventHandlers' } },
@@ -215,12 +212,12 @@ export default {
     onKeyUpCapture: { table: { category: 'EventHandlers' } },
     onLoad: { table: { category: 'EventHandlers' } },
     onLoadCapture: { table: { category: 'EventHandlers' } },
+    onLoadStart: { table: { category: 'EventHandlers' } },
+    onLoadStartCapture: { table: { category: 'EventHandlers' } },
     onLoadedData: { table: { category: 'EventHandlers' } },
     onLoadedDataCapture: { table: { category: 'EventHandlers' } },
     onLoadedMetadata: { table: { category: 'EventHandlers' } },
     onLoadedMetadataCapture: { table: { category: 'EventHandlers' } },
-    onLoadStart: { table: { category: 'EventHandlers' } },
-    onLoadStartCapture: { table: { category: 'EventHandlers' } },
     onLostPointerCapture: { table: { category: 'EventHandlers' } },
     onLostPointerCaptureCapture: { table: { category: 'EventHandlers' } },
     onMouseDown: { table: { category: 'EventHandlers' } },
@@ -297,8 +294,71 @@ export default {
     onWaitingCapture: { table: { category: 'EventHandlers' } },
     onWheel: { table: { category: 'EventHandlers' } },
     onWheelCapture: { table: { category: 'EventHandlers' } },
-    onAbort: { table: { category: 'EventHandlers' } },
+    points: {
+      description: 'The coordinates of points in the line, usually calculated internally.',
+      table: {
+        type: {
+          summary: 'array',
+          detail: '[{x: 12, y: 12, value: 240}]',
+        },
+      },
+    },
+    stroke: {
+      control: { type: 'color' },
+    },
+    strokeWidth: {
+      description: 'The width of the stroke.',
+      table: {
+        type: {
+          summary: 'String | Number',
+        },
+      },
+      defaultValue: 1,
+    },
+    strokeDasharray: {
+      description: 'The pattern of dashes and gaps used to paint the line',
+      table: {
+        type: {
+          name: 'string',
+          details: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray',
+        },
+      },
+    },
+    type: {
+      description:
+        "The interpolation type of line. It's the same as type in Area. And customized interpolation function can be set to type. https://github.com/d3/d3-shape#curves",
+      options: [
+        'basis',
+        'basisClosed',
+        'basisOpen',
+        'linear',
+        'linearClosed',
+        'natural',
+        'monotoneX',
+        'monotoneY',
+        'monotone',
+        'step',
+        'stepBefore',
+        'stepAfter',
+      ],
+      default: 'linear',
+      control: {
+        type: 'select',
+      },
+    },
+    unit: {
+      type: { name: 'string | number' },
+    },
+    xAxisId: {
+      description: 'The id of x-axis which is corresponding to the data.',
+      table: { type: { summary: 'string | number' } },
+    },
+    yAxisId: {
+      description: 'The id of y-axis which is corresponding to the data.',
+      table: { type: { summary: 'string | number' } },
+    },
   },
+  component: Line,
 };
 
 export const Simple = {
