@@ -1,17 +1,56 @@
-We are following the Component Story Format 3.
-Find more information about it here. https://storybook.js.org/blog/storybook-csf3-is-here
+# Goal
+Storybook is a tool for developing UI components in isolation. It makes building UIs organized and efficient.
+It also documents the components and their usage in an interactive way.
 
-If you are looking for a template from which to write stories, please do align with the ComposedChart.stories.tsx
+We want to migrate our current documentation to Storybook.
+The documentation is currently in the form of a static website, with embedded code sandboxes.
 
-- We want to use templates for rendering, and multiple stories with different parameters, content, data.
+## Structure
+As we want to migrate existing documentation to Storybook, we will want to reproduce the existing structure:
 
-- We want to document every single component in
--- the most simple manner
--- a complex usage
--- edge cases
+### API
+The API section contains stories for all components. The goal is to communicate a components behaviour as concise and simple as possible.
 
-- Additionally we will want to add stories that document complex usage of recharts with custom components.
+[`storybook/stories/API/cartesian/Line.stories.tsx`](https://github.com/recharts/recharts/blob/master/storybook/stories/API/cartesian/Line.stories.tsx) can be considered a template for writing stories for the API section.
 
-Best practice: 
-- A story for a LineChart should not contain a complex brush. Each story should focus on a single component and its behaviour. If the interaction with the brush is to be shown, then any other brush details should ideally be omitted. 
-- Complex interaction effect between multiple component best deserve a separate story. 
+Acceptance criteria for API stories:
+- Each component should be documented in a doc file / mdx file.
+- All stories for a single component are found in a single file.
+- All stories for a single component should use the same data.
+- should default to be as simple as possible (i.e. no complex interaction effects, no custom components, no custom styling, default behaviour)
+- Each story
+  - should show a selected group of props (e.g. all props related to the style of the line)
+  - should have a description
+  - should have controls for all props
+  - Each story should have controls only for the props of that story.
+
+### Examples
+The examples section contains stories that show how to use recharts in a real world scenario. The goal is to show how to use recharts in a complex scenario, and how to use recharts with other libraries.
+
+A good example of an example story is `storybook/stories/Examples/Pie/PieWithNeedle.stories.tsx`
+It shows an non standard usage of a PieChart, with a custom component to achieve a new chart type (Gauge).
+
+Examples stories:
+- are not necessarily tied to a single component
+- use complex and realistic data
+- process data (i.e. histogram, control chart, ...)
+- use custom components
+- use third party libraries (i.e. d3-scale)
+- aim to show the best practice, and best design patterns for using recharts
+- are the place to show edge cases, and how to deal with them
+
+## Technical details
+We are following the Component Story Format 3. https://storybook.js.org/blog/storybook-csf3-is-here
+We are using Storybook 7, and Typescript.
+
+## Best practice
+Please follow the acceptance criteria and structure laid out above.
+Additionally, please follow the best practices of Storybook:
+- https://storybook.js.org/docs/7.0/react/writing-stories/introduction
+- https://storybook.js.org/docs/7.0/react/essentials/controls
+- https://storybook.js.org/docs/7.0/react/essentials/interactions
+
+We are using the storybook test runner to test our stories. https://storybook.js.org/docs/react/writing-tests/test-runner#page-top
+We integrated it into our CI/CD, and it helps us test interaction effects, and other complex behaviour.
+
+If you can, please do add interactions to the stories, because it helps add confidence to feature work, and it helps us catch bugs.

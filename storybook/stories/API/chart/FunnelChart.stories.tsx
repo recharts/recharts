@@ -7,13 +7,14 @@ export default {
 
 export const Simple = {
   render: (args: Record<string, any>) => {
+    const { data } = args;
     return (
       // <div style={{ height: 200, width: 200 }}>
       <ResponsiveContainer width="100%" height={200}>
         <FunnelChart layout="horizontal">
           <Funnel
             width={400}
-            data={args.data}
+            data={data}
             dataKey="value"
             stroke="#424242"
             isAnimationActive

@@ -8,9 +8,10 @@ export default {
 
 export const Simple = {
   render: (args: Record<string, any>) => {
+    const { data } = args;
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <Sankey data={args.data} />
+        <Sankey data={data} />
       </ResponsiveContainer>
     );
   },
@@ -21,9 +22,10 @@ export const Simple = {
 
 export const Customized = {
   render: (args: Record<string, any>) => {
+    const { data } = args;
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <Sankey data={args.data} width={960} height={500} nodeWidth={10} nodePadding={60} />
+        <Sankey data={data} width={960} height={500} nodeWidth={10} nodePadding={60} />
       </ResponsiveContainer>
     );
   },
