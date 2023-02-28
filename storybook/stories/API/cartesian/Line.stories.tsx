@@ -5,6 +5,9 @@ import { expect } from '@storybook/jest';
 import { Surface, Line, ResponsiveContainer, ComposedChart } from '../../../../src';
 import { coordinateWithNullY, coordinateData } from '../../data';
 
+// TODO: We might want to move some of these to a shared file.
+// We have a lot of duplication between the stories. Event Handlers are exposed in multiple components.
+
 export default {
   argTypes: {
     activeDot: {
@@ -20,37 +23,48 @@ export default {
             '<Line dataKey="value" activeDot={renderDot} />',
         },
         defaultValue: true,
+        category: 'Responsive',
       },
     },
+    animateNewValues: { table: { category: 'Animation' } },
     animationBegin: {
       description: 'Specifies when the animation should begin, the unit of this option is ms.',
       type: { name: 'number' },
       defaultValue: 0,
+      table: { category: 'Animation' },
     },
     animationDuration: {
       description: 'Specifies the duration of animation, the unit of this option is ms.',
       type: { name: 'number' },
       defaultValue: 1500,
+      table: { category: 'Animation' },
     },
     animationEasing: {
       description: 'The type of easing function.',
       type: { name: 'ease | ease-in | ease-out | ease-in-out | linear' },
       defaultValue: 'ease',
+      table: { category: 'Animation' },
     },
+    animationId: { table: { category: 'Animation' } },
+    baseLine: { table: { category: 'Other' } },
     connectNulls: {
       description: 'Whether to connect a graph line across null points.',
       table: {
         type: {
           summary: 'boolean',
         },
+        category: 'Data',
       },
       defaultValue: false,
     },
+    dangerouslySetInnerHTML: { table: { category: 'Other' } },
+    data: { table: { category: 'Data' } },
     dataKey: {
       description:
         'The key or getter of a group of data which should be unique in a LineChart. It could be an accessor function such as (row)=>value',
       table: {
         type: { summary: 'string | number | function' },
+        category: 'Data',
       },
     },
     dot: {
@@ -65,25 +79,29 @@ export default {
             '<Line dataKey="value" dot={<CustomizedDot />} />\n' +
             '<Line dataKey="value" dot={renderDot} />',
         },
+        category: 'Style',
         defaultValue: true,
       },
     },
     fill: {
       control: { type: 'color' },
+      table: { category: 'Style' },
     },
     hide: {
       description: 'Hides the line when true, useful when toggling visibility state via legend',
       type: { name: 'boolean' },
       defaultValue: false,
+      table: { category: 'Style' },
     },
     id: {
       description:
         'The unique id of this component, which will be used to generate unique clip path id internally. This props is suggested to be set in SSR.',
       type: { name: 'string' },
+      table: { category: 'General' },
     },
     isAnimationActive: {
       description: 'If set false, animation of line will be disabled.',
-      table: { type: { summary: 'boolean' } },
+      table: { type: { summary: 'boolean' }, category: 'Animation' },
       defaultValue: 'true in CSR, and false in SSR',
     },
     label: {
@@ -99,6 +117,7 @@ export default {
             '<Line dataKey="value" label={renderLabel} />',
         },
         defaultValue: false,
+        category: 'Style',
       },
     },
     layout: {
@@ -107,8 +126,10 @@ export default {
         type: {
           summary: 'horizontal | vertical',
         },
+        category: 'Style',
       },
     },
+    left: { table: { category: 'Other' } },
     legendType: {
       description: "The type of icon in legend. If set to 'none', no legend item will be rendered.",
       table: {
@@ -117,12 +138,14 @@ export default {
             "'line' | 'plainline' | 'square' | 'rect'| 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye' | 'none'",
         },
         defaultValue: 'line',
+        category: 'Style',
       },
     },
     name: {
       type: { name: 'string | number' },
       description:
         'The name of data. This option will be used in tooltip and legend to represent a line. If no value was set to this option, the value of dataKey will be used alternatively.',
+      table: { category: 'General' },
     },
     onAbort: { table: { category: 'EventHandlers' } },
     onAbortCapture: { table: { category: 'EventHandlers' } },
@@ -295,25 +318,19 @@ export default {
     onWheel: { table: { category: 'EventHandlers' } },
     onWheelCapture: { table: { category: 'EventHandlers' } },
     points: {
-      description: 'The coordinates of points in the line, usually calculated internally.',
+      description:
+        'The coordinates of points in the line, usually calculated internally. In most cases this should not be used.',
       table: {
         type: {
           summary: 'array',
           detail: '[{x: 12, y: 12, value: 240}]',
         },
+        category: 'Internal',
       },
     },
     stroke: {
       control: { type: 'color' },
-    },
-    strokeWidth: {
-      description: 'The width of the stroke.',
-      table: {
-        type: {
-          summary: 'String | Number',
-        },
-      },
-      defaultValue: 1,
+      table: { category: 'Style' },
     },
     strokeDasharray: {
       description: 'The pattern of dashes and gaps used to paint the line',
@@ -322,8 +339,21 @@ export default {
           name: 'string',
           details: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray',
         },
+        category: 'Style',
       },
     },
+    strokeWidth: {
+      description: 'The width of the stroke.',
+      table: {
+        type: {
+          summary: 'String | Number',
+        },
+        category: 'Style',
+      },
+      defaultValue: 1,
+    },
+    tooltipType: { table: { category: 'Responsive' } },
+    top: { table: { category: 'Other' } },
     type: {
       description:
         "The interpolation type of line. It's the same as type in Area. And customized interpolation function can be set to type. https://github.com/d3/d3-shape#curves",
@@ -345,17 +375,25 @@ export default {
       control: {
         type: 'select',
       },
+      table: {
+        category: 'Style',
+      },
     },
     unit: {
       type: { name: 'string | number' },
+      table: {
+        category: 'General',
+      },
     },
+    xAxis: { table: { category: 'Other' } },
     xAxisId: {
       description: 'The id of x-axis which is corresponding to the data.',
-      table: { type: { summary: 'string | number' } },
+      table: { type: { summary: 'string | number' }, category: 'General' },
     },
+    yAxis: { table: { category: 'Other' } },
     yAxisId: {
       description: 'The id of y-axis which is corresponding to the data.',
-      table: { type: { summary: 'string | number' } },
+      table: { type: { summary: 'string | number' }, category: 'General' },
     },
   },
   component: Line,
