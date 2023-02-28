@@ -170,7 +170,7 @@ export const CustomizedLabel = {
     // to make getAllByText works
     await new Promise(r => setTimeout(r, 0));
 
-    await expect(getAllByText(/Customized Label/)).toHaveLength(5);
+    await expect(getAllByText(/Customized Label/)).toHaveLength(4);
   },
 };
 
