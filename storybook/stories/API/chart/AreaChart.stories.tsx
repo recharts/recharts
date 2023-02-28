@@ -20,7 +20,7 @@ export const Simple = {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <AreaChart data={args.data}>
-          <Area dataKey="value" stroke="#2451B7" fill="url(#color)" />
+          <Area dataKey="pv" stroke="#2451B7" fill="url(#color)" />
           <Tooltip />
           <CartesianGrid opacity={0.1} vertical={false} />
         </AreaChart>
@@ -28,7 +28,7 @@ export const Simple = {
     );
   },
   args: {
-    data,
+    data: pageData,
   },
 };
 
