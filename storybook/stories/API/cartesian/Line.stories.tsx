@@ -3,7 +3,7 @@ import React from 'react';
 import { within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 import { Surface, Line, ResponsiveContainer, ComposedChart } from '../../../../src';
-import { coordinateWithNullY, coordinateData, coordinateWithValueData } from '../../data';
+import { coordinateWithNullY, coordinateData } from '../../data';
 
 export default {
   component: Line,
@@ -68,7 +68,7 @@ export const Simple = {
     );
   },
   args: {
-    data: coordinateWithValueData,
+    data: coordinateData,
     dataKey: 'y',
   },
   parameters: {
@@ -103,7 +103,7 @@ export const LineFromData = {
 export const Style = {
   ...Simple,
   args: {
-    data: coordinateWithValueData,
+    data: coordinateData,
     stroke: 'red',
     fill: 'teal',
     dot: { r: 10 },
@@ -133,7 +133,7 @@ const renderDot = (props: { cx: number; cy: number }) => {
 export const CustomizedDot = {
   ...Simple,
   args: {
-    data: coordinateWithValueData,
+    data: coordinateData,
     isAnimationActive: true,
     dot: renderDot,
   },
@@ -160,7 +160,7 @@ const renderLabel = (props: { index: number; x: number; y: number }) => {
 export const CustomizedLabel = {
   ...Simple,
   args: {
-    data: coordinateWithValueData,
+    data: coordinateData,
     isAnimationActive: false,
     label: renderLabel,
   },
@@ -170,7 +170,7 @@ export const CustomizedLabel = {
     // to make getAllByText works
     await new Promise(r => setTimeout(r, 0));
 
-    await expect(getAllByText(/Customized Label/)).toHaveLength(5);
+    await expect(getAllByText(/Customized Label/)).toHaveLength(4);
   },
 };
 
