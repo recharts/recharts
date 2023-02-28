@@ -57,7 +57,7 @@ export default {
       },
       defaultValue: false,
     },
-    dangerouslySetInnerHTML: { table: { category: 'Other' } },
+    dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
     data: { table: { category: 'Data' } },
     dataKey: {
       description:
