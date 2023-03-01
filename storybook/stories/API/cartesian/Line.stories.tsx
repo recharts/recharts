@@ -8,8 +8,6 @@ import { EventHandlers } from '../props/EventHandlers';
 import { Animation } from '../props/Animation';
 import { legendType } from '../props/Legend';
 
-// TODO: We might want to move some of these to a shared file.
-// We have a lot of duplication between the stories. Event Handlers are exposed in multiple components.
 
 const GeneralProps = {
   id: {
