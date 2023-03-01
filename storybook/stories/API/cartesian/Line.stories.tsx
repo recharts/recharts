@@ -4,42 +4,216 @@ import { within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 import { Surface, Line, ResponsiveContainer, ComposedChart } from '../../../../src';
 import { coordinateWithNullY, coordinateData } from '../../data';
+import { EventHandlers } from '../props/EventHandlers';
+import { Animation } from '../props/Animation';
+import { legendType } from '../props/Legend';
+
+
+const GeneralProps = {
+  id: {
+    description:
+      'The unique id of this component, which will be used to generate unique clip path id internally. This props is suggested to be set in SSR.',
+    type: { name: 'string' },
+    table: { category: 'General' },
+  },
+  name: {
+    type: { name: 'string | number' },
+    description:
+      'The name of data. This option will be used in tooltip and legend to represent a line. If no value was set to this option, the value of dataKey will be used alternatively.',
+    table: { category: 'General' },
+  },
+  unit: {
+    type: { name: 'string | number' },
+    table: {
+      category: 'General',
+    },
+  },
+  xAxisId: {
+    description: 'The id of x-axis which is corresponding to the data.',
+    table: { type: { summary: 'string | number' }, category: 'General' },
+  },
+  yAxisId: {
+    description: 'The id of y-axis which is corresponding to the data.',
+    table: { type: { summary: 'string | number' }, category: 'General' },
+  },
+};
+
+const ResponsiveProps = {
+  activeDot: {
+    description:
+      'The active dot is shown when a user enters a line chart and this chart has tooltip. If set to false, no active dot will be drawn. If set to true, active dot will be drawn with the props calculated internally. If passed an object, active dot will be drawn, and the internally calculated props will be merged with the key value pairs of the passed object. If passed a ReactElement, the option can be the custom active dot element. If passed a function, the function will be called to render a customized active dot.',
+    table: {
+      type: {
+        summary: 'Boolean | Object | ReactElement | Function',
+        detail:
+          '<Line dataKey="value" activeDot={false} />\n' +
+          '<Line dataKey="value" activeDot={{ stroke: \'red\', strokeWidth: 2 }} />\n' +
+          '<Line dataKey="value" activeDot={<CustomizedDot />} />\n' +
+          '<Line dataKey="value" activeDot={renderDot} />',
+      },
+      defaultValue: true,
+      category: 'Responsive',
+    },
+  },
+  tooltipType: { table: { category: 'Responsive' } },
+};
+
+const StyleProps = {
+  dot: {
+    description:
+      'If false set, dots will not be drawn. If true set, dots will be drawn which have the props calculated internally. If object set, dots will be drawn which have the props mergered by the internal calculated props and the option. If ReactElement set, the option can be the custom dot element.If set a function, the function will be called to render customized dot.',
+    table: {
+      type: {
+        summary: 'Boolean | Object | ReactElement | Function',
+        detail:
+          '<Line dataKey="value" dot={false} />\n' +
+          '<Line dataKey="value" dot={{ stroke: \'red\', strokeWidth: 2 }} />\n' +
+          '<Line dataKey="value" dot={<CustomizedDot />} />\n' +
+          '<Line dataKey="value" dot={renderDot} />',
+      },
+      category: 'Style',
+      defaultValue: true,
+    },
+  },
+  fill: {
+    control: { type: 'color' },
+    table: { category: 'Style' },
+  },
+  hide: {
+    description: 'Hides the line when true, useful when toggling visibility state via legend',
+    type: { name: 'boolean' },
+    defaultValue: false,
+    table: { category: 'Style' },
+  },
+  label: {
+    description:
+      'If false set, labels will not be drawn. If true set, labels will be drawn which have the props calculated internally. If object set, labels will be drawn which have the props mergered by the internal calculated props and the option. If ReactElement set, the option can be the custom label element. If set a function, the function will be called to render customized label.',
+    table: {
+      type: {
+        summary: 'Boolean | Object | ReactElement | Function',
+        detail:
+          '<Line dataKey="value" label />\n' +
+          '<Line dataKey="value" label={{ fill: \'red\', fontSize: 20 }} />\n' +
+          '<Line dataKey="value" label={<CustomizedLabel />} />\n' +
+          '<Line dataKey="value" label={renderLabel} />',
+      },
+      defaultValue: false,
+      category: 'Style',
+    },
+  },
+  layout: {
+    description: 'The layout of line, usually inherited from parent.',
+    table: {
+      type: {
+        summary: 'horizontal | vertical',
+      },
+      category: 'Style',
+    },
+  },
+  stroke: {
+    control: { type: 'color' },
+    table: { category: 'Style' },
+  },
+  strokeDasharray: {
+    description: 'The pattern of dashes and gaps used to paint the line',
+    table: {
+      type: {
+        name: 'string',
+        details: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray',
+      },
+      category: 'Style',
+    },
+  },
+  strokeWidth: {
+    description: 'The width of the stroke.',
+    table: {
+      type: {
+        summary: 'String | Number',
+      },
+      category: 'Style',
+    },
+    defaultValue: 1,
+  },
+  type: {
+    description:
+      "The interpolation type of line. It's the same as type in Area. And customized interpolation function can be set to type. https://github.com/d3/d3-shape#curves",
+    options: [
+      'basis',
+      'basisClosed',
+      'basisOpen',
+      'linear',
+      'linearClosed',
+      'natural',
+      'monotoneX',
+      'monotoneY',
+      'monotone',
+      'step',
+      'stepBefore',
+      'stepAfter',
+    ],
+    default: 'linear',
+    control: {
+      type: 'select',
+    },
+    table: {
+      category: 'Style',
+    },
+  },
+};
+
+const DataProps = {
+  connectNulls: {
+    description: 'Whether to connect a graph line across null points.',
+    table: {
+      type: {
+        summary: 'boolean',
+      },
+      category: 'Data',
+    },
+    defaultValue: false,
+  },
+  data: { table: { category: 'Data' } },
+  dataKey: {
+    description:
+      'The key or getter of a group of data which should be unique in a LineChart. It could be an accessor function such as (row)=>value',
+    table: {
+      type: { summary: 'string | number | function' },
+      category: 'Data',
+    },
+  },
+};
 
 export default {
-  component: Line,
   argTypes: {
-    connectNulls: {
-      control: {
-        type: 'boolean',
-      },
-    },
-    stroke: {
-      control: { type: 'color' },
-    },
-    fill: {
-      control: { type: 'color' },
-    },
-    type: {
-      // TODO: These options should be generated from the type directly instead of duplicating the type information here. Will iterate.
-      options: [
-        'basis',
-        'basisClosed',
-        'basisOpen',
-        'linear',
-        'linearClosed',
-        'natural',
-        'monotoneX',
-        'monotoneY',
-        'monotone',
-        'step',
-        'stepBefore',
-        'stepAfter',
-      ],
-      control: {
-        type: 'select',
+    ...EventHandlers,
+    ...Animation,
+    legendType,
+    ...GeneralProps,
+    ...ResponsiveProps,
+    ...StyleProps,
+    ...DataProps,
+    // Deprecated
+    dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
+    // Other
+    baseLine: { table: { category: 'Other' } },
+    left: { table: { category: 'Other' } },
+    top: { table: { category: 'Other' } },
+    xAxis: { table: { category: 'Other' } },
+    yAxis: { table: { category: 'Other' } },
+    // Internal
+    points: {
+      description:
+        'The coordinates of points in the line, usually calculated internally. In most cases this should not be used.',
+      table: {
+        type: {
+          summary: 'array',
+          detail: '[{x: 12, y: 12, value: 240}]',
+        },
+        category: 'Internal',
       },
     },
   },
+  component: Line,
 };
 
 export const Simple = {
