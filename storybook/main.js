@@ -1,5 +1,10 @@
 module.exports = {
-  stories: ['./stories/**/*.mdx', './stories/**/*.stories.@(ts|tsx)'],
+  stories: [
+    // The first page in this array is the default page that Storybook will open to.
+    './stories/Welcome.mdx',
+    './stories/**/*.mdx',
+    './stories/**/*.stories.@(ts|tsx)',
+  ],
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
