@@ -57,7 +57,16 @@ Additionally, please follow the best practices of Storybook:
 - https://storybook.js.org/docs/7.0/react/essentials/controls
 - https://storybook.js.org/docs/7.0/react/essentials/interactions
 
-When writing a story, best
+When documenting a new component, best:
+1 - add a story to the API section - Component.stories.tsx
+2 - add a mdx file next to it - Component.mdx - which initially only contains
+```mdxjs
+import * as ComponentStories from './Component.stories';
+<ArgTypes of={ComponentStories} sort={'requiredFirst'}/>
+```
+Thereby adding the props table to the mdx file.
+3 - Add descriptions to the props in the mdx file.
+
 
 We are using the storybook test runner to test our stories. https://storybook.js.org/docs/react/writing-tests/test-runner#page-top
 We integrated it into our CI/CD, and it helps us test interaction effects, and other complex behaviour.
