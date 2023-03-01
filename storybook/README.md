@@ -21,6 +21,8 @@ Acceptance criteria for API stories:
   - The mdx file should list the possible child components.
   - The mdx file should list the possible props in a table, grouped by category.
     - Categories should be: `General`, `Data`, `Style`, `Animation`, `Events`, `Responsive`, `Others`, `Internal`, `Deprecated`
+  - Many shared props are already documented and they can be reused, as done in `storybook/stories/API/cartesian/Line.stories.tsx`
+  - Shared props are documented in the `storybook/stories/API/props/*.ts` files.
 
 - All stories for a single component are found in a single file.
 - All stories for a single component should use the same data.
