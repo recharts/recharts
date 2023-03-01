@@ -4,8 +4,10 @@ type CategoricalChartState = import('../chart/generateCategoricalChart').Categor
 
 interface EventCenter extends EventEmitter<EventTypes> {
   setMaxListeners?(maxListeners: number): void;
+
   _maxListeners?: number;
 }
+
 const eventCenter: EventCenter = new EventEmitter();
 
 if (eventCenter.setMaxListeners) {

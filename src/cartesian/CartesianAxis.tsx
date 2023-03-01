@@ -19,6 +19,7 @@ import { filterProps } from '../util/ReactUtils';
 import { getTicks } from './getTicks';
 
 export interface CartesianAxisProps {
+  bandSize?: number;
   className?: string;
   x?: number;
   y?: number;
@@ -271,6 +272,8 @@ export class CartesianAxis extends Component<Props, IState> {
         ...axisProps,
         stroke: 'none',
         fill: stroke,
+        bandSize: this.props.bandSize,
+        interval: this.props.interval,
         ...customTickProps,
         ...tickCoord,
         index: i,

@@ -1,6 +1,7 @@
 import React, { Component, cloneElement, isValidElement, createElement } from 'react';
 import classNames from 'classnames';
 import _, { isArray, isBoolean, isNil } from 'lodash';
+import EventEmitter from 'eventemitter3';
 import { getTicks } from '../cartesian/getTicks';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
@@ -1008,7 +1009,9 @@ export const generateCategoricalChart = ({
       ...defaultProps,
     };
 
-    container?: any;
+    container?: HTMLDivElement;
+
+    chartEventEmitter: EventEmitter;
 
     constructor(props: CategoricalChartProps) {
       super(props);
@@ -1021,6 +1024,7 @@ export const generateCategoricalChart = ({
       }
 
       this.state = {};
+      this.chartEventEmitter = new EventEmitter();
     }
 
     componentDidMount() {
@@ -1910,6 +1914,7 @@ export const generateCategoricalChart = ({
         startIndex: dataStartIndex,
         endIndex: dataEndIndex,
         updateId: `brush-${updateId}`,
+        container: this.container,
       });
     };
 
@@ -2192,6 +2197,7 @@ export const generateCategoricalChart = ({
       }
 
       const events = this.parseEventsOfWrapper();
+
       return (
         <div
           className={classNames('recharts-wrapper', className)}

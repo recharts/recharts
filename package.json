@@ -1,7 +1,8 @@
 {
-  "name": "recharts",
-  "version": "2.4.3",
-  "description": "React charts",
+  "name": "@markrikhter/recharts",
+  "version": "2.4.6-3",
+  "private": false,
+  "description": "React charts fork",
   "main": "lib/index",
   "module": "es6/index",
   "jsnext:main": "es6/index",
@@ -27,19 +28,13 @@
     "build-es6": "rimraf es6 && cross-env NODE_ENV=es6 babel ./src -d es6 --extensions '.js,.ts,.tsx'",
     "build-umd": "rimraf umd && cross-env NODE_ENV=production webpack --entry ./src/index.ts -o umd",
     "build-types": "rimraf types && npm run tsc",
-    "demo": "webpack serve --config demo/webpack.config.js --port 3000 --host 127.0.0.1 --progress --profile --static demo/",
+    "demo": "webpack serve --config demo/webpack.config.js --port 3001 --host 127.0.0.1 --progress --profile --static demo/",
     "test": "cross-env NODE_ENV=test jest",
     "lint": "eslint \"./src/**/*.{ts,tsx}\"",
     "lint-storybook": "eslint \"./storybook/**/*.{ts,tsx}\"",
     "autofix": "eslint \"./src/**/*.{ts,tsx}\" --fix",
     "analyse": "cross-env NODE_ENV=analyse webpack ./src/index.ts -o umd/Recharts.js",
-    "tsc": "tsc",
-    "storybook": "npx storybook dev -p 6006 -c storybook",
-    "build-storybook": "npx storybook build -o storybook/public -c storybook",
-    "chromatic": "npx chromatic",
-    "test-storybook": "test-storybook --config-dir storybook",
-    "test-storybook:url": "test-storybook --url http://127.0.0.1:9009 --config-dir storybook",
-    "test-storybook:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"npm run build-storybook --quiet && npx http-server storybook/public --port 9009 --silent\" \"wait-on tcp:127.0.0.1:9009 && npm run test-storybook:url --maxWorkers=2\""
+    "tsc": "tsc"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
@@ -49,15 +44,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/recharts/recharts.git"
+    "url": "https://github.com/MarkRihter/recharts"
   },
   "author": {
-    "name": "recharts group"
+    "name": "Mark Rikhter",
+    "email": "markrihter98@gmail.com"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "bugs": {
     "url": "https://github.com/recharts/recharts/issues"
   },
-  "homepage": "https://github.com/recharts/recharts",
+  "homepage": "https://github.com/MarkRihter/recharts",
   "peerDependencies": {
     "prop-types": "^15.6.0",
     "react": "^16.0.0 || ^17.0.0 || ^18.0.0",
