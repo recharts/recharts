@@ -3,6 +3,7 @@ module.exports = {
     // The order of stories here reflects the order in the sidebar.
     './stories/Welcome.mdx',
     './stories/Installation.mdx',
+    './stories/GettingStarted.mdx',
     './stories/**/*.mdx',
     './stories/**/*.stories.@(ts|tsx)',
   ],
