@@ -3,7 +3,8 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from '../../src
 
 # Getting started
 
-1. Choose the type of chart you need
+## Choose the type of chart you need.
+
 With the help of babel-plugin-recharts, we can import components we actually need, making the project smaller than otherwise.
 Generate a simple chart by using plain javascript data (usually an array of objects).
 
@@ -24,7 +25,7 @@ const renderLineChart = (
   <Line type="monotone" dataKey="uv" stroke="#8884d8" />
 </LineChart>
 
-2. Add components that you want to be drawn
+## Add components that you want to be drawn
 LineChart can have XAxis, YAxis, Legend, CartesianGrid and so on.
 
 ```tsx
@@ -46,7 +47,7 @@ const renderLineChart = (
   <YAxis />
 </LineChart>
 
-3. Adjust the props of some components
+## Adjust the props of some components
 For example, margin-right should be bigger in order to display the right-most x-axis label and the stroke style of the cartesian grid can be dashed for better readability.
 
 ```tsx
@@ -68,7 +69,7 @@ const renderLineChart = (
   <YAxis />
 </LineChart>
 
-4. Add interactions
+## Add interactions
 We can easily drop-in a Tooltip component and have rich hovering tooltip functionality.
 
 ```tsx
@@ -92,26 +93,23 @@ const renderLineChart = (
   <Tooltip />
 </LineChart>
 
-5. Customize your components
+## Customize your components
 For example, you can edit your x-axis label very easily by passing in a custom axis tick render function. You can do similar things with other graphs as well, such as custom shapes for bar charts and much more!
 
 ```tsx
 import React, { PureComponent } from 'react';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 
-class CustomizedAxisTick extends PureComponent {
-  render() {
-    const { x, y, stroke, payload } = this.props;
-
-    return (
+const CustomizedAxisTick = (...args)=>{
+  const {  x, y, stroke, payload } = args[0];
+  return (
       <g transform={`translate(${x},${y})`}>
         <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">
           {payload.value}
         </text>
       </g>
     );
-  }
-}
+};
 
 const renderLineChart = (
 <LineChart width={600} height={300} data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
@@ -123,6 +121,26 @@ const renderLineChart = (
 </LineChart>
 );
 ```
+
+export const CustomizedAxisTick = (...args)=>{
+  const {  x, y, stroke, payload } = args[0];
+  return (
+      <g transform={`translate(${x},${y})`}>
+        <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">
+          {payload.value}
+        </text>
+      </g>
+    );
+};
+
+
+<LineChart width={600} height={300} data={data} margin={{ top: 5, right: 20, bottom: 20, left: 0 }}>
+  <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+  <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+  <XAxis dataKey="name" tick={<CustomizedAxisTick/>} />
+  <YAxis />
+  <Tooltip />
+</LineChart>
 
 
 

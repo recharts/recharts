@@ -1,7 +1,8 @@
 module.exports = {
   stories: [
-    // The first page in this array is the default page that Storybook will open to.
+    // The order of stories here reflects the order in the sidebar.
     './stories/Welcome.mdx',
+    './stories/Installation.mdx',
     './stories/**/*.mdx',
     './stories/**/*.stories.@(ts|tsx)',
   ],
