@@ -43,6 +43,7 @@ export interface CartesianAxisProps {
   tickFormatter?: (value: any, index: number) => string;
   ticksGenerator?: (props?: CartesianAxisProps) => CartesianTickItem[];
   interval?: number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart';
+  angle?: number;
 }
 
 interface IState {
