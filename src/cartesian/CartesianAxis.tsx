@@ -44,6 +44,7 @@ export interface CartesianAxisProps {
   ticksGenerator?: (props?: CartesianAxisProps) => CartesianTickItem[];
   interval?: number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart';
   angle?: number;
+  verticalAnchor?: 'start' | 'middle' | 'end';
 }
 
 interface IState {
@@ -177,7 +178,10 @@ export class CartesianAxis extends Component<Props, IState> {
   }
 
   getTickVerticalAnchor() {
-    const { orientation, mirror } = this.props;
+    const { orientation, mirror, verticalAnchor: verticalAnchorProp } = this.props;
+    if (verticalAnchorProp) {
+      return verticalAnchorProp;
+    }
     let verticalAnchor = 'end';
 
     switch (orientation) {
