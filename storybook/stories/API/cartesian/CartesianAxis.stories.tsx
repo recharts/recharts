@@ -77,6 +77,78 @@ export const TickPositioning = {
   },
 };
 
+export const TickAlignment = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <Surface
+          width={surfaceWidth}
+          height={surfaceHeight}
+          viewBox={{
+            x: -50,
+            y: -50,
+            width: surfaceWidth + 50,
+            height: surfaceHeight + 50,
+          }}
+        >
+          <CartesianAxis
+            width={surfaceHeight}
+            height={surfaceWidth}
+            viewBox={{
+              x: 0,
+              y: 0,
+              width: surfaceWidth,
+              height: surfaceHeight,
+            }}
+            ticks={args.data}
+            angle={args.angle}
+            textAnchor={args.textAnchor}
+            verticalAnchor={args.verticalAnchor}
+          />
+          <CartesianAxis
+            width={surfaceHeight}
+            height={surfaceWidth}
+            viewBox={{
+              x: 0,
+              y: 0,
+              width: surfaceWidth,
+              height: surfaceHeight,
+            }}
+            ticks={args.data}
+            orientation="left"
+            angle={args.angle}
+            textAnchor={args.textAnchor}
+            verticalAnchor={args.verticalAnchor}
+          />
+        </Surface>
+      </ResponsiveContainer>
+    );
+  },
+
+  args: {
+    data: ticks,
+    angle: -42,
+    textAnchor: 'end',
+    verticalAnchor: 'end',
+  },
+  argTypes: {
+    textAnchor: {
+      options: ['start', 'middle', 'end'],
+      control: { type: 'radio' },
+    },
+  },
+  parameters: {
+    controls: { include: ['angle', 'textAnchor', 'verticalAnchor'] },
+    docs: {
+      description: {
+        story:
+          'The tick labels on a cartesian axis can be rotated around a set vertical and horizontal anchor. These can ' +
+          'be controlled through the `anchor`, `verticalAnchor` and `textAnchor` props.',
+      },
+    },
+  },
+};
+
 export const Combined = {
   render: (args: Record<string, any>) => {
     return (
