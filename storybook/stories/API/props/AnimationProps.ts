@@ -31,7 +31,7 @@ export const isAnimationActive = {
 
 // Caveat: If any prop is added here, it would falsely be add to the documentation of the component where this group is used.
 // If the group is to be extended, then only single props should be imported by each component that does not use all of them.
-export const Animation = {
+export const AnimationProps = {
   animateNewValues,
   animationBegin,
   animationEasing,

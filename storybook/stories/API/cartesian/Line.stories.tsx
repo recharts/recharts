@@ -2,11 +2,12 @@
 import React from 'react';
 import { within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
-import { Surface, Line, ResponsiveContainer, ComposedChart } from '../../../../src';
-import { coordinateWithNullY, coordinateData } from '../../data';
+import { Surface, Line, ResponsiveContainer, ComposedChart, Legend, Tooltip, XAxis, YAxis } from '../../../../src';
+import { coordinateData, pageData } from '../../data';
 import { EventHandlers } from '../props/EventHandlers';
-import { Animation } from '../props/Animation';
+import { AnimationProps } from '../props/AnimationProps';
 import { legendType } from '../props/Legend';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 const GeneralProps = {
   id: {
@@ -35,8 +36,15 @@ const GeneralProps = {
     description: 'The id of y-axis which is corresponding to the data.',
     table: { type: { summary: 'string | number' }, category: 'General' },
   },
+  dataKey: {
+    description:
+      'The key or getter of a group of data which should be unique in a LineChart. It could be an accessor function such as (row)=>value',
+    table: {
+      type: { summary: 'string | number | function' },
+      category: 'General',
+    },
+  },
 };
-
 const ResponsiveProps = {
   activeDot: {
     description:
@@ -54,10 +62,19 @@ const ResponsiveProps = {
       category: 'Responsive',
     },
   },
-  tooltipType: { table: { category: 'Responsive' } },
+  tooltipType: { table: { category: 'Responsive' }, control: { type: 'select' }, options: ['responsive', 'none'] },
 };
-
 const StyleProps = {
+  connectNulls: {
+    description: 'Whether to connect a graph line across null points.',
+    table: {
+      type: {
+        summary: 'boolean',
+      },
+      category: 'Style',
+    },
+    defaultValue: false,
+  },
   dot: {
     description:
       'If false set, dots will not be drawn. If true set, dots will be drawn which have the props calculated internally. If object set, dots will be drawn which have the props mergered by the internal calculated props and the option. If ReactElement set, the option can be the custom dot element.If set a function, the function will be called to render customized dot.',
@@ -100,25 +117,16 @@ const StyleProps = {
       category: 'Style',
     },
   },
-  layout: {
-    description: 'The layout of line, usually inherited from parent.',
-    table: {
-      type: {
-        summary: 'horizontal | vertical',
-      },
-      category: 'Style',
-    },
-  },
   stroke: {
     control: { type: 'color' },
     table: { category: 'Style' },
   },
   strokeDasharray: {
-    description: 'The pattern of dashes and gaps used to paint the line',
+    description:
+      'The pattern of dashes and gaps used to paint the line. https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray',
     table: {
       type: {
-        name: 'string',
-        details: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray',
+        summary: 'string',
       },
       category: 'Style',
     },
@@ -160,37 +168,14 @@ const StyleProps = {
   },
 };
 
-const DataProps = {
-  connectNulls: {
-    description: 'Whether to connect a graph line across null points.',
-    table: {
-      type: {
-        summary: 'boolean',
-      },
-      category: 'Data',
-    },
-    defaultValue: false,
-  },
-  data: { table: { category: 'Data' } },
-  dataKey: {
-    description:
-      'The key or getter of a group of data which should be unique in a LineChart. It could be an accessor function such as (row)=>value',
-    table: {
-      type: { summary: 'string | number | function' },
-      category: 'Data',
-    },
-  },
-};
-
 export default {
   argTypes: {
     ...EventHandlers,
-    ...Animation,
+    ...AnimationProps,
     legendType,
     ...GeneralProps,
     ...ResponsiveProps,
     ...StyleProps,
-    ...DataProps,
     // Deprecated
     dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
     // Other
@@ -211,41 +196,48 @@ export default {
         category: 'Internal',
       },
     },
+    data: { table: { category: 'Internal' } },
+    layout: {
+      description: 'The layout of line, usually inherited from parent.',
+      table: {
+        type: {
+          summary: 'horizontal | vertical',
+        },
+        category: 'Internal',
+      },
+    },
   },
   component: Line,
 };
 
-export const Simple = {
+export const General = {
   render: (args: Record<string, any>) => {
-    const [height, width] = [300, 300];
-
-    const { data, ...lineArgs } = args;
     return (
-      <ResponsiveContainer width="100%" height={height}>
+      <ResponsiveContainer width="100%" height={300}>
         <ComposedChart
-          width={width}
-          height={height}
           margin={{
             top: 20,
             right: 20,
             bottom: 20,
             left: 20,
           }}
-          data={data}
+          data={pageData}
         >
-          {/* Setting a default for the dataKey here, allows us to hide the dataKey
-          as a control in other stories, yet reusing the same template. */}
-          <Line isAnimationActive={false} dataKey="y" {...lineArgs} />
+          <Line isAnimationActive={false} dataKey="uv" {...args} />
+          {/* All further components are added to show the interaction with the Line properties */}
+          <Legend />
+          <Tooltip />
+          <XAxis dataKey="name" />
+          <YAxis />
         </ComposedChart>
       </ResponsiveContainer>
     );
   },
   args: {
-    data: coordinateData,
-    dataKey: 'y',
+    ...getStoryArgsFromArgsTypesObject(GeneralProps),
   },
   parameters: {
-    controls: { include: ['data', 'dataKey'] },
+    controls: { include: Object.keys(GeneralProps) },
     docs: {
       description: {
         story: 'The dataKey defines the y-Values of a Line. Without an xAxis, the index is used for x.',
@@ -254,15 +246,20 @@ export const Simple = {
   },
 };
 
-export const LineFromData = {
-  ...Simple,
+export const Style = {
+  ...General,
   args: {
-    data: coordinateWithNullY,
+    ...getStoryArgsFromArgsTypesObject(StyleProps),
     type: 'linear',
-    connectNulls: false,
+    connectNulls: true,
+    stroke: 'red',
+    fill: 'teal',
+    strokeDasharray: '4 1',
+    label: { fill: 'red', fontSize: 20 },
+    dot: { stroke: 'green', strokeWidth: 2 },
   },
   parameters: {
-    controls: { include: ['type', 'connectNulls'] },
+    controls: { include: Object.keys(StyleProps) },
     docs: {
       description: {
         story:
@@ -273,21 +270,38 @@ export const LineFromData = {
   },
 };
 
-export const Style = {
-  ...Simple,
+export const Responsive = {
+  ...General,
   args: {
-    data: coordinateData,
-    stroke: 'red',
-    fill: 'teal',
-    dot: { r: 10 },
-    type: 'linear',
+    ...getStoryArgsFromArgsTypesObject(ResponsiveProps),
+    activeDot: { stroke: 'green', strokeWidth: 2 },
+    tooltipType: 'responsive',
   },
   parameters: {
-    controls: { include: ['stroke', 'fill', 'type'] },
+    controls: {
+      include: Object.keys(ResponsiveProps),
+      tooltipType: { type: 'select', options: ['responsive', 'none'] },
+    },
     docs: {
       description: {
-        story: 'The type, fill and stroke define the style of a line.',
+        story:
+          'The line is generated from the data by connecting the dots. ' +
+          'The type and connectNulls define how the dots are used.',
       },
+    },
+  },
+};
+
+export const Animation = {
+  ...General,
+  args: {
+    ...getStoryArgsFromArgsTypesObject(AnimationProps),
+    isAnimationActive: true,
+  },
+  parameters: {
+    controls: { include: Object.keys(AnimationProps) },
+    docs: {
+      description: { story: 'Reloading the story triggers the animation.' },
     },
   },
 };
@@ -304,14 +318,12 @@ const renderDot = (props: { cx: number; cy: number }) => {
 };
 
 export const CustomizedDot = {
-  ...Simple,
+  ...General,
   args: {
-    data: coordinateData,
-    isAnimationActive: true,
     dot: renderDot,
   },
   parameters: {
-    controls: {},
+    controls: { include: ['dot'] },
     docs: {
       description: {
         story: 'The dot of the line can be customized. Find further possible behaviour on the Dot stories.',
@@ -331,19 +343,24 @@ const renderLabel = (props: { index: number; x: number; y: number }) => {
 };
 
 export const CustomizedLabel = {
-  ...Simple,
+  ...General,
   args: {
-    data: coordinateData,
     isAnimationActive: false,
     label: renderLabel,
   },
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const { getAllByText } = within(canvasElement);
-
     // to make getAllByText works
     await new Promise(r => setTimeout(r, 0));
-
-    await expect(getAllByText(/Customized Label/)).toHaveLength(4);
+    expect(getAllByText(/Customized Label/)).toHaveLength(pageData.length);
+  },
+  parameters: {
+    controls: { include: ['label'] },
+    docs: {
+      description: {
+        story: 'The dot of the line can be customized. Find further possible behaviour on the Dot stories.',
+      },
+    },
   },
 };
 
