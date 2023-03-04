@@ -8,7 +8,6 @@ import { EventHandlers } from '../props/EventHandlers';
 import { Animation } from '../props/Animation';
 import { legendType } from '../props/Legend';
 
-
 const GeneralProps = {
   id: {
     description:
