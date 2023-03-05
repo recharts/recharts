@@ -3,6 +3,7 @@ import { nodeLinkData } from '../../data';
 import { ResponsiveContainer, Sankey } from '../../../../src';
 
 export default {
+  tags: ['autodocs'],
   component: Sankey,
 };
 

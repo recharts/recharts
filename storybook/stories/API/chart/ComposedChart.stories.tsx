@@ -19,6 +19,7 @@ import {
 } from '../../../../src';
 
 export default {
+  tags: ['autodocs'],
   component: Composed,
 };
 

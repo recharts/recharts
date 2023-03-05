@@ -3,6 +3,7 @@ import { pageData } from '../../data';
 import { Radar, RadarChart, ResponsiveContainer } from '../../../../src';
 
 export default {
+  tags: ['autodocs'],
   component: RadarChart,
 };
 

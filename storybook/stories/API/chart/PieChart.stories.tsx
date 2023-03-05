@@ -3,6 +3,7 @@ import { Pie, PieChart, ResponsiveContainer } from '../../../../src';
 import { pageData } from '../../data';
 
 export default {
+  tags: ['autodocs'],
   component: PieChart,
 };
 

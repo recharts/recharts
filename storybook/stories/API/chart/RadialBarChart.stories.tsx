@@ -3,6 +3,7 @@ import { pageData } from '../../data';
 import { RadialBar, RadialBarChart, ResponsiveContainer } from '../../../../src';
 
 export default {
+  tags: ['autodocs'],
   component: RadialBarChart,
 };
 

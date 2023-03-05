@@ -3,6 +3,7 @@ import { sizeData } from '../../data';
 import { ResponsiveContainer, Treemap } from '../../../../src';
 
 export default {
+  tags: ['autodocs'],
   component: Treemap,
 };
 

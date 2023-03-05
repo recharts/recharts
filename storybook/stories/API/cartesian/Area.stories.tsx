@@ -3,6 +3,7 @@ import { ComposedChart, Area, ResponsiveContainer, Surface } from '../../../../s
 import { coordinateWithValueData } from '../../data';
 
 export default {
+  tags: ['autodocs'],
   component: Area,
   argTypes: {
     connectNulls: {

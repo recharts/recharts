@@ -2,6 +2,7 @@ import React from 'react';
 import { CartesianGrid, ResponsiveContainer, Surface } from '../../../../src';
 
 export default {
+  tags: ['autodocs'],
   component: CartesianGrid,
 };
 

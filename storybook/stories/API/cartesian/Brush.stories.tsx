@@ -6,6 +6,7 @@ import { Surface, Brush, ResponsiveContainer, LineChart, Line } from '../../../.
 
 export default {
   component: Brush,
+  tags: ['autodocs'],
 };
 
 const [surfaceWidth, surfaceHeight] = [600, 500];
