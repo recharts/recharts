@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ComposedChart, Bar, ResponsiveContainer, Cell } from '../../../../src';
-import { coordinateWithValueData, pageData } from '../../data';
+import { pageData } from '../../data';
 
 export default {
   component: Bar,
@@ -45,14 +45,14 @@ const Basic = {
           data={data}
         >
           {defs}
-          <Bar dataKey="y" isAnimationActive={false} {...areaArgs} />
+          <Bar dataKey="uv" isAnimationActive={false} {...areaArgs} />
         </ComposedChart>
       </ResponsiveContainer>
     );
   },
   args: {
-    data: coordinateWithValueData,
-    dataKey: 'y',
+    data: pageData,
+    dataKey: 'uv',
   },
   parameters: { controls: { include: ['data'] } },
 };
@@ -70,7 +70,7 @@ export const Simple = {
 export const Style = {
   ...Basic,
   args: {
-    data: coordinateWithValueData,
+    data: pageData,
     stroke: 'red',
     fill: 'teal',
     background: false,
@@ -108,9 +108,9 @@ export const Stacked = {
     );
   },
   args: {
-    data: coordinateWithValueData,
-    dataKey1: 'x',
-    dataKey2: 'y',
+    data: pageData,
+    dataKey1: 'uv',
+    dataKey2: 'pv',
     areaColor1: '#8884d8',
     areaColor2: '#82ca9d',
     isAnimationActive: false,
@@ -306,9 +306,9 @@ export const FillGradient = {
     );
   },
   args: {
-    data: coordinateWithValueData,
-    dataKey1: 'x',
-    dataKey2: 'y',
+    data: pageData,
+    dataKey1: 'uv',
+    dataKey2: 'pv',
     isAnimationActive: false,
   },
   parameters: {
@@ -321,7 +321,7 @@ export const FillGradient = {
 export const Animation = {
   ...Basic,
   args: {
-    data: coordinateWithValueData,
+    data: pageData,
     isAnimationActive: true,
     animationEasing: 'linear',
     animationBegin: 0,
