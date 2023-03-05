@@ -2,6 +2,7 @@ import React, { ComponentProps, useState } from 'react';
 import { YAxis, XAxis, Legend, ResponsiveContainer, ComposedChart, Bar } from '../../../../src';
 
 export default {
+  tags: ['autodocs'],
   component: YAxis,
   argTypes: {
     stroke: {

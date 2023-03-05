@@ -3,6 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { coordinateWithValueData, dateWithValueData, pageData, timeData } from '../../data';
 
 export default {
+  tags: ['autodocs'],
   component: XAxis,
   argTypes: {
     stroke: {

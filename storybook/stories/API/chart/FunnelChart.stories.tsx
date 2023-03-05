@@ -2,6 +2,7 @@ import React from 'react';
 import { Funnel, FunnelChart, LabelList, ResponsiveContainer } from '../../../../src';
 
 export default {
+  tags: ['autodocs'],
   component: FunnelChart,
 };
 
