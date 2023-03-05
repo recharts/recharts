@@ -281,7 +281,7 @@ export const WithReferenceLines = {
 };
 export const WithCustomizedDot = {
   render: () => {
-    const CustomizedDot = props => {
+    const CustomizedDot = (props: any) => {
       const { cx, cy, value } = props;
 
       if (value > 2500) {
@@ -329,7 +329,7 @@ export const WithCustomizedLabel = {
   render: () => {
     class CustomizedLabel extends PureComponent {
       render() {
-        const { x, y, stroke, value } = this.props;
+        const { x, y, stroke, value } = this.props as any;
 
         return (
           <text x={x} y={y} dy={-4} fill={stroke} fontSize={10} textAnchor="middle">
@@ -341,7 +341,7 @@ export const WithCustomizedLabel = {
 
     class CustomizedAxisTick extends PureComponent {
       render() {
-        const { x, y, payload } = this.props;
+        const { x, y, payload } = this.props as any;
 
         return (
           <g transform={`translate(${x},${y})`}>
@@ -509,18 +509,21 @@ export const HighlightAndZoom = {
       const [bottom, top] = getAxisYDomain(refAreaLeft, refAreaRight, 'cost', 1);
       const [bottom2, top2] = getAxisYDomain(refAreaLeft, refAreaRight, 'impression', 50);
 
-      setZoomGraph(prev => ({
-        ...prev,
-        refAreaLeft: '',
-        refAreaRight: '',
-        data: data?.slice(),
-        left: refAreaLeft,
-        right: refAreaRight,
-        bottom,
-        top,
-        bottom2,
-        top2,
-      }));
+      setZoomGraph(
+        prev =>
+          ({
+            ...prev,
+            refAreaLeft: '',
+            refAreaRight: '',
+            data: data?.slice(),
+            left: refAreaLeft,
+            right: refAreaRight,
+            bottom,
+            top,
+            bottom2,
+            top2,
+          } as any),
+      );
     };
 
     const zoomOut = () => {
