@@ -2,6 +2,7 @@ import React from 'react';
 import { PolarGrid, ResponsiveContainer, Surface } from '../../../../src';
 
 export default {
+  tags: ['autodocs'],
   component: PolarGrid,
 };
 

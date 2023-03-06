@@ -2,6 +2,7 @@ import React from 'react';
 import { Pie, ResponsiveContainer, Surface } from '../../../../src';
 
 export default {
+  tags: ['autodocs'],
   component: Pie,
 };
 

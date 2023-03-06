@@ -4,6 +4,7 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip } from '..
 import { pageData } from '../../data';
 
 export default {
+  tags: ['autodocs'],
   component: AreaChart,
 };
 

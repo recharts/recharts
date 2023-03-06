@@ -4,6 +4,7 @@ import { pageData } from '../../data';
 
 export default {
   component: ReferenceArea,
+  tags: ['autodocs'],
 };
 
 export const Simple = {

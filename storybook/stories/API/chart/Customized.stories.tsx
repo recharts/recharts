@@ -15,6 +15,7 @@ import {
 import { pageData } from '../../data';
 
 export default {
+  tags: ['autodocs'],
   component: Customized,
   parameters: {
     controls: { include: ['data'] },

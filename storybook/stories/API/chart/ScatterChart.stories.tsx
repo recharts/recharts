@@ -3,6 +3,7 @@ import { coordinateData } from '../../data';
 import { ResponsiveContainer, Scatter, ScatterChart, XAxis, YAxis } from '../../../../src';
 
 export default {
+  tags: ['autodocs'],
   component: ScatterChart,
 };
 

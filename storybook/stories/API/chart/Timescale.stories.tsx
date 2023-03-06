@@ -14,6 +14,7 @@ import {
 } from '../../../../src';
 
 export default {
+  tags: ['autodocs'],
   component: ComposedChart,
 };
 

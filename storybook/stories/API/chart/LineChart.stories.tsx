@@ -3,6 +3,7 @@ import { pageData } from '../../data';
 import { Line, LineChart, ResponsiveContainer } from '../../../../src';
 
 export default {
+  tags: ['autodocs'],
   component: LineChart,
 };
 

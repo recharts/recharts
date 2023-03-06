@@ -1,3 +1,5 @@
+## ⚠️ Next versions change notes are available only on the [GitHub Releases](https://github.com/recharts/recharts/releases) page ⚠️
+
 ## 2.2.0 (Dec 8, 2022)
 ### feat
 - Support keyboard navigation in pie chart (#2923) 
