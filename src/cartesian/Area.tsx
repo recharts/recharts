@@ -51,6 +51,7 @@ interface InternalAreaProps {
 interface AreaProps extends InternalAreaProps {
   className?: string;
   dataKey: DataKey<any>;
+  data?: any[];
   type?: CurveType;
   unit?: string | number;
   name?: string | number;
