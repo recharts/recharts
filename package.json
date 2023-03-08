@@ -68,7 +68,7 @@
     "eventemitter3": "^4.0.1",
     "lodash": "^4.17.19",
     "react-is": "^16.10.2",
-    "react-resize-detector": "^7.1.2",
+    "react-resize-detector": "^8.0.4",
     "react-smooth": "^2.0.2",
     "recharts-scale": "^0.4.4",
     "reduce-css-calc": "^2.1.8",

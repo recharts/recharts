@@ -234,7 +234,8 @@ export const General = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(GeneralProps),
+    ...
+    (GeneralProps),
   },
   parameters: {
     controls: { include: Object.keys(GeneralProps) },
