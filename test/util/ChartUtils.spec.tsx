@@ -15,8 +15,106 @@ import {
   offsetSign,
   parseScale,
   parseSpecifiedDomain,
+  getTicksOfAxis,
 } from '../../src/util/ChartUtils';
 import { DataKey } from '../../src/util/types';
+
+describe('getTicksForAxis', () => {
+  // TODO: Create more examples for other types of axis:
+  // - xAxis
+  // - zAxis
+  // - angleAxis
+  // - radiusAxis
+  const Y_AXIS_EXAMPLE = {
+    scale: scaleLinear(),
+    allowDuplicatedCategory: true,
+    allowDecimals: true,
+    hide: false,
+    orientation: 'left' as const,
+    width: 60,
+    height: 211.5,
+    mirror: false,
+    yAxisId: 0,
+    tickCount: 5,
+    type: 'number' as const,
+    padding: {
+      top: 0,
+      bottom: 0,
+    },
+    allowDataOverflow: false,
+    reversed: false,
+    axisType: 'yAxis' as const,
+    domain: [0, 1520],
+    originalDomain: [0, 'auto' as const],
+    isCategorical: false,
+    layout: 'horizontal' as const,
+    niceTicks: [0, 400, 800, 1200, 1600],
+    realScaleType: 'linear' as const,
+    x: 20,
+    y: 20,
+    bandSize: 0,
+    className: 'recharts-yAxis yAxis',
+    viewBox: {
+      x: 0,
+      y: 0,
+      width: 782,
+      height: 300,
+    },
+    stroke: '#666',
+    tickLine: true,
+    axisLine: true,
+    tick: true,
+    minTickGap: 5,
+    tickSize: 6,
+    tickMargin: 2,
+    interval: 'preserveEnd' as const,
+  };
+
+  it('Returns null for null', () => {
+    expect(getTicksOfAxis(null)).toBeNull();
+  });
+
+  it('Works', () => {
+    expect(getTicksOfAxis(Y_AXIS_EXAMPLE, true, undefined)).toEqual([
+      { coordinate: 0, offset: 0, value: 0 },
+      { coordinate: 400, offset: 0, value: 400 },
+      { coordinate: 800, offset: 0, value: 800 },
+      { coordinate: 1200, offset: 0, value: 1200 },
+      { coordinate: 1600, offset: 0, value: 1600 },
+    ]);
+  });
+
+  it('Tick coordinates depend on type', () => {
+    const axis = {
+      ...Y_AXIS_EXAMPLE,
+      axisType: 'angleAxis' as const,
+      scale: scaleBand(),
+    };
+
+    expect(getTicksOfAxis(axis, true, undefined)).toEqual([
+      { coordinate: NaN, offset: 0, value: 0 },
+      { coordinate: NaN, offset: 0, value: 400 },
+      { coordinate: NaN, offset: 0, value: 800 },
+      { coordinate: NaN, offset: 0, value: 1200 },
+      { coordinate: NaN, offset: 0, value: 1600 },
+    ]);
+  });
+
+  it('Tick coordinates depend on scale', () => {
+    const axis = {
+      ...Y_AXIS_EXAMPLE,
+      scale: scaleLinear().domain([0, 1600]).range([0, 1000]),
+    };
+
+    expect(getTicksOfAxis(axis, true, undefined)).toEqual([
+      { coordinate: 0, offset: 0, value: 0 },
+      { coordinate: 250, offset: 0, value: 400 },
+      { coordinate: 500, offset: 0, value: 800 },
+      { coordinate: 750, offset: 0, value: 1200 },
+      { coordinate: 1000, offset: 0, value: 1600 },
+    ]);
+  });
+});
 
 describe('getBandSizeOfAxis', () => {
   it('DataUtils.getBandSizeOfAxis() should return 0 ', () => {
