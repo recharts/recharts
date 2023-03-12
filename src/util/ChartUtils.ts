@@ -573,7 +573,20 @@ export const getCoordinatesOfGrid = (ticks: Array<TickItem>, min: number, max: n
  * @param {Boolean} isAll Return the ticks of all the points or not
  * @return {Array}  Ticks
  */
-export const getTicksOfAxis = (axis: any, isGrid?: boolean, isAll?: boolean): TickItem[] => {
+export const getTicksOfAxis = (
+  axis: BaseAxisProps & {
+    duplicateDomain?: any;
+    realScaleType?: 'scaleBand' | 'band' | 'point' | 'linear';
+    scale?: any;
+    axisType: AxisType;
+    ticks?: any;
+    niceTicks?: any;
+    isCategorical?: boolean;
+    categoricalDomain?: any;
+  },
+  isGrid?: boolean,
+  isAll?: boolean,
+): TickItem[] | null => {
   if (!axis) return null;
   const { scale } = axis;
   const { duplicateDomain, type, range } = axis;
