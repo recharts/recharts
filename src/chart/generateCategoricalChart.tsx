@@ -303,6 +303,7 @@ export const getAxisMapByAxes = (
   // Eliminate duplicated axes
   const axisMap = axes.reduce((result: any, child: any) => {
     const { type, dataKey, allowDataOverflow, allowDuplicatedCategory, scale, ticks, includeHidden } = child.props;
+    console.log('getAxisMapByAxes child.props', child.props);
     const axisId = child.props[axisIdKey];
 
     if (result[axisId]) {

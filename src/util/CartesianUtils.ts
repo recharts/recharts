@@ -15,6 +15,8 @@ import { Bar } from '../cartesian/Bar';
  * @return {Object} Configuration
  */
 export const formatAxisMap = (props: any, axisMap: any, offset: any, axisType: AxisType, chartName: string) => {
+  console.log('formatAxisMap', props, axisMap, offset, axisType, chartName);
+
   const { width, height, layout, children } = props;
   const ids = Object.keys(axisMap);
   const steps: Record<string, any> = {

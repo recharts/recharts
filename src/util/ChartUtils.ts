@@ -587,6 +587,7 @@ export const getTicksOfAxis = (
   isGrid?: boolean,
   isAll?: boolean,
 ): TickItem[] | null => {
+  console.log(axis, isGrid, isAll);
   if (!axis) return null;
   const { scale } = axis;
   const { duplicateDomain, type, range } = axis;
@@ -596,7 +597,7 @@ export const getTicksOfAxis = (
 
   offset = axis.axisType === 'angleAxis' && range?.length >= 2 ? mathSign(range[0] - range[1]) * 2 * offset : offset;
 
-  // The ticks setted by user should only affect the ticks adjacent to axis line
+  // The ticks set by user should only affect the ticks adjacent to axis line
   if (isGrid && (axis.ticks || axis.niceTicks)) {
     return (axis.ticks || axis.niceTicks).map((entry: TickItem) => {
       const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
