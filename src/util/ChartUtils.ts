@@ -578,7 +578,7 @@ export const getTicksOfAxis = (
     duplicateDomain?: any;
     realScaleType?: 'scaleBand' | 'band' | 'point' | 'linear';
     scale?: any;
-    axisType: AxisType;
+    axisType?: AxisType;
     ticks?: any;
     niceTicks?: any;
     isCategorical?: boolean;
@@ -594,7 +594,7 @@ export const getTicksOfAxis = (
   const offsetForBand = axis.realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
   let offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
 
-  offset = axis.axisType === 'angleAxis' ? mathSign(range[0] - range[1]) * 2 * offset : offset;
+  offset = axis.axisType === 'angleAxis' && range?.length >= 2 ? mathSign(range[0] - range[1]) * 2 * offset : offset;
 
   // The ticks setted by user should only affect the ticks adjacent to axis line
   if (isGrid && (axis.ticks || axis.niceTicks)) {
