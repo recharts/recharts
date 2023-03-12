@@ -137,7 +137,7 @@ describe('offsetSign', () => {
 });
 
 describe('getTicksOfScale', () => {
-  describe('of linear scale with auto domain', () => {
+  it('of linear scale with auto domain', () => {
     const scale = scaleLinear();
     const opts = {
       scale: 'linear',
@@ -151,7 +151,7 @@ describe('getTicksOfScale', () => {
     expect(result?.niceTicks).toEqual([0, 0.25, 0.5, 0.75, 1]);
   });
 
-  describe('of linear scale with specified domain', () => {
+  it('of linear scale with specified domain', () => {
     const scale = scaleLinear();
     const opts = {
       scale: 'linear',
