@@ -2,7 +2,7 @@ import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { fireEvent } from '@storybook/testing-library';
 import { numberData, dateData } from '../../data';
-import { Surface, Brush, XAxis, ResponsiveContainer, LineChart, Line } from '../../../../src';
+import { Surface, Brush, ResponsiveContainer, LineChart, Line } from '../../../../src';
 
 export default {
   component: Brush,
@@ -103,8 +103,6 @@ export const PlayBrushMove = {
         <LineChart {...args}>
           <Line dataKey="uv" />
           <Brush />
-          {/* TODO: Revert this change. it only is used to reproduce the bug. */}
-          <XAxis dataKey="name" interval={0} ticks={numberData.map(row => row?.name)} />
         </LineChart>
       </ResponsiveContainer>
     );

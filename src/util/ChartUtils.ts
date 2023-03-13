@@ -587,7 +587,6 @@ export const getTicksOfAxis = (
   isGrid?: boolean,
   isAll?: boolean,
 ): TickItem[] | null => {
-  console.log(axis, isGrid, isAll);
   if (!axis) return null;
   const { scale } = axis;
   const { duplicateDomain, type, range } = axis;
@@ -599,15 +598,19 @@ export const getTicksOfAxis = (
 
   // The ticks set by user should only affect the ticks adjacent to axis line
   if (isGrid && (axis.ticks || axis.niceTicks)) {
-    return (axis.ticks || axis.niceTicks).map((entry: TickItem) => {
+    const result = (axis.ticks || axis.niceTicks).map((entry: TickItem) => {
       const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
       return {
+        // If the scaleContent is not a number, the coordinate will be NaN.
+        // That could be the case for example with a PointScale and a string as domain.
         coordinate: scale(scaleContent) + offset,
         value: entry,
         offset,
       };
     });
+
+    return result.filter((row: TickItem) => !_.isNaN(row.coordinate));
   }
 
   // When axis is a categorial axis, but the type of axis is number or the scale of axis is not "auto"
