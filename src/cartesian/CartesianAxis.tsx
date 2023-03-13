@@ -315,8 +315,6 @@ export class CartesianAxis extends Component<Props, IState> {
     const { ticks, ...noTicksProps } = this.props;
     let finalTicks = ticks;
 
-    console.log('before', finalTicks);
-
     if (_.isFunction(ticksGenerator)) {
       finalTicks = ticks && ticks.length > 0 ? ticksGenerator(this.props) : ticksGenerator(noTicksProps);
     }
