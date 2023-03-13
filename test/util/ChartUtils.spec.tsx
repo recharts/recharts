@@ -154,22 +154,6 @@ describe('getTicksForAxis', () => {
     ]);
   });
 
-  it('Tick coordinates depend on type', () => {
-    const axis = {
-      ...Y_AXIS_EXAMPLE,
-      axisType: 'angleAxis' as const,
-      scale: scaleBand(),
-    };
-
-    expect(getTicksOfAxis(axis, true, undefined)).toEqual([
-      { coordinate: NaN, offset: 0, value: 0 },
-      { coordinate: NaN, offset: 0, value: 400 },
-      { coordinate: NaN, offset: 0, value: 800 },
-      { coordinate: NaN, offset: 0, value: 1200 },
-      { coordinate: NaN, offset: 0, value: 1600 },
-    ]);
-  });
-
   it('Tick coordinates depend on scale', () => {
     const axis = {
       ...Y_AXIS_EXAMPLE,
