@@ -51,15 +51,7 @@
     "import/no-extraneous-dependencies": [
       "error",
       {
-        "devDependencies": [
-          "demo/**",
-          "test/**",
-          "test-jest/**",
-          "*.config.js",
-          "scripts/**",
-          "**/Spec.js",
-          "storybook/**"
-        ]
+        "devDependencies": true
       }
     ],
     "max-len": ["warn", 120],

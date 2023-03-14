@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
