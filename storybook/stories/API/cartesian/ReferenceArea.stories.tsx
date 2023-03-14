@@ -29,8 +29,8 @@ export const Simple = {
           <ReferenceArea
             x1="Page B"
             x2="Page E"
-            y1={1890}
-            y2={3000}
+            y1={1000}
+            y2={1500}
             stroke="red"
             strokeOpacity={0.3}
             {...referenceAreaArgs}
