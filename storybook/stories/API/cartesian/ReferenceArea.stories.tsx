@@ -1,3 +1,5 @@
+import { expect } from '@storybook/jest';
+import { within } from '@storybook/testing-library';
 import React from 'react';
 import { Line, LineChart, ReferenceArea, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from '../../../../src';
 import { pageData } from '../../data';
@@ -50,6 +52,17 @@ export const IfOverflow = {
     data: pageData,
     y1: 1890,
     y2: -1000,
+    ifOverflow: 'extendDomain',
   },
   parameters: { controls: { include: ['ifOverflow'] } },
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+    const { findByText } = within(canvasElement);
+    /**
+     * assert that when ifOverflow="extendDomain" 1900 becomes the new domain y-max.
+     * this test will fail when the user changes the ifOverflow arg, but it will give us confidence
+     * that 'extendDomain' behavior remains the same.
+     */
+    expect(await findByText('1900')).toBeInTheDocument();
+    expect(await findByText('-950')).toBeInTheDocument();
+  },
 };
