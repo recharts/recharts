@@ -1,4 +1,4 @@
-import React, { Component, CSSProperties, SVGProps } from 'react';
+import React, { CSSProperties, SVGProps, useEffect, useState } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -183,109 +183,113 @@ const getWordsByLines = (props: Props, needCalculate: boolean) => {
   return getWordsWithoutCalculate(props.children);
 };
 
-export class Text extends Component<Props, State> {
-  static defaultProps = {
-    x: 0,
-    y: 0,
-    lineHeight: '1em',
-    capHeight: '0.71em', // Magic number from d3
-    scaleToFit: false,
-    textAnchor: 'start',
-    verticalAnchor: 'end', // Maintain compat with existing charts / default SVG behavior
-    fill: '#808080',
-  };
+const textDefaultProps = {
+  x: 0,
+  y: 0,
+  lineHeight: '1em',
+  capHeight: '0.71em', // Magic number from d3
+  scaleToFit: false,
+  textAnchor: 'start',
+  verticalAnchor: 'end', // Maintain compat with existing charts / default SVG behavior
+  fill: '#808080',
+};
 
-  state: State = {};
+export const Text = (props: Props) => {
+  const [state, setState] = useState<State>({
+    prevWidth: props.width,
+    prevScaleToFit: props.scaleToFit,
+    prevChildren: props.children,
+    prevStyle: props.style,
+    wordsByLines: getWordsByLines(props, true),
+  });
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+  useEffect(() => {
     if (
-      nextProps.width !== prevState.prevWidth ||
-      nextProps.scaleToFit !== prevState.prevScaleToFit ||
-      nextProps.children !== prevState.prevChildren ||
-      nextProps.style !== prevState.prevStyle ||
-      nextProps.breakAll !== prevState.prevBreakAll
+      props.width !== state.prevWidth ||
+      props.scaleToFit !== state.prevScaleToFit ||
+      props.children !== state.prevChildren ||
+      props.style !== state.prevStyle ||
+      props.breakAll !== state.prevBreakAll
     ) {
       const needCalculate =
-        nextProps.children !== prevState.prevChildren ||
-        nextProps.style !== prevState.prevStyle ||
-        nextProps.breakAll !== prevState.prevBreakAll;
+        props.children !== state.prevChildren ||
+        props.style !== state.prevStyle ||
+        props.breakAll !== state.prevBreakAll;
 
-      return {
-        prevWidth: nextProps.width,
-        prevScaleToFit: nextProps.scaleToFit,
-        prevChildren: nextProps.children,
-        prevStyle: nextProps.style,
-        wordsByLines: getWordsByLines(nextProps, needCalculate),
-      };
+      setState({
+        prevWidth: props.width,
+        prevScaleToFit: props.scaleToFit,
+        prevChildren: props.children,
+        prevStyle: props.style,
+        wordsByLines: getWordsByLines(props, needCalculate),
+      });
     }
+  }, [props, state.prevBreakAll, state.prevChildren, state.prevScaleToFit, state.prevStyle, state.prevWidth]);
 
+  const {
+    dx,
+    dy,
+    textAnchor,
+    verticalAnchor,
+    scaleToFit,
+    angle,
+    lineHeight,
+    capHeight,
+    className,
+    breakAll,
+    ...textProps
+  } = props;
+  const { wordsByLines } = state;
+
+  if (!isNumOrStr(textProps.x) || !isNumOrStr(textProps.y)) {
     return null;
   }
+  const x = (textProps.x as number) + (isNumber(dx as number) ? (dx as number) : 0);
+  const y = (textProps.y as number) + (isNumber(dy as number) ? (dy as number) : 0);
 
-  render() {
-    const {
-      dx,
-      dy,
-      textAnchor,
-      verticalAnchor,
-      scaleToFit,
-      angle,
-      lineHeight,
-      capHeight,
-      className,
-      breakAll,
-      ...textProps
-    } = this.props;
-    const { wordsByLines } = this.state;
-
-    if (!isNumOrStr(textProps.x) || !isNumOrStr(textProps.y)) {
-      return null;
-    }
-    const x = (textProps.x as number) + (isNumber(dx as number) ? (dx as number) : 0);
-    const y = (textProps.y as number) + (isNumber(dy as number) ? (dy as number) : 0);
-
-    let startDy: number;
-    switch (verticalAnchor) {
-      case 'start':
-        startDy = reduceCSSCalc(`calc(${capHeight})`);
-        break;
-      case 'middle':
-        startDy = reduceCSSCalc(`calc(${(wordsByLines.length - 1) / 2} * -${lineHeight} + (${capHeight} / 2))`);
-        break;
-      default:
-        startDy = reduceCSSCalc(`calc(${wordsByLines.length - 1} * -${lineHeight})`);
-        break;
-    }
-
-    const transforms = [];
-    if (scaleToFit) {
-      const lineWidth = wordsByLines[0].width;
-      const { width } = this.props;
-      transforms.push(`scale(${(isNumber(width as number) ? (width as number) / lineWidth : 1) / lineWidth})`);
-    }
-    if (angle) {
-      transforms.push(`rotate(${angle}, ${x}, ${y})`);
-    }
-    if (transforms.length) {
-      textProps.transform = transforms.join(' ');
-    }
-
-    return (
-      <text
-        {...filterProps(textProps, true)}
-        x={x}
-        y={y}
-        className={classNames('recharts-text', className)}
-        textAnchor={textAnchor}
-        fill={textProps.fill.includes('url') ? Text.defaultProps.fill : textProps.fill}
-      >
-        {wordsByLines.map((line, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={index}>
-            {line.words.join(breakAll ? '' : ' ')}
-          </tspan>
-        ))}
-      </text>
-    );
+  let startDy: number;
+  switch (verticalAnchor) {
+    case 'start':
+      startDy = reduceCSSCalc(`calc(${capHeight})`);
+      break;
+    case 'middle':
+      startDy = reduceCSSCalc(`calc(${(wordsByLines.length - 1) / 2} * -${lineHeight} + (${capHeight} / 2))`);
+      break;
+    default:
+      startDy = reduceCSSCalc(`calc(${wordsByLines.length - 1} * -${lineHeight})`);
+      break;
   }
-}
+
+  const transforms = [];
+  if (scaleToFit) {
+    const lineWidth = wordsByLines[0].width;
+    const { width } = props;
+    transforms.push(`scale(${(isNumber(width as number) ? (width as number) / lineWidth : 1) / lineWidth})`);
+  }
+  if (angle) {
+    transforms.push(`rotate(${angle}, ${x}, ${y})`);
+  }
+  if (transforms.length) {
+    textProps.transform = transforms.join(' ');
+  }
+
+  return (
+    <text
+      {...filterProps(textProps, true)}
+      x={x}
+      y={y}
+      className={classNames('recharts-text', className)}
+      textAnchor={textAnchor}
+      fill={textProps.fill.includes('url') ? textDefaultProps.fill : textProps.fill}
+    >
+      {wordsByLines.map((line, index) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={index}>
+          {line.words.join(breakAll ? '' : ' ')}
+        </tspan>
+      ))}
+    </text>
+  );
+};
+
+Text.defaultProps = textDefaultProps;
