@@ -4,7 +4,6 @@ import { TickItem } from '../../../../src/util/types';
 import { ticks } from '../../data';
 
 export default {
-  tags: ['autodocs'],
   component: CartesianAxis,
   argTypes: {
     interval: {

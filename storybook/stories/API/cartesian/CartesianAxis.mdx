@@ -1,0 +1,21 @@
+import { Canvas, Meta, ArgTypes  } from '@storybook/blocks';
+import * as CartesianAxisStories from './CartesianAxis.stories';
+
+# CartesianAxis
+A lower level component used for building axes on cartesian charts. Usage needs some extra verbosity.
+
+See `<XAxis/>`, `<YAxis/>`, `<ZAxis/>` for cartesian axes with sensible defaults.
+
+## Parent components
+`<Surface/>`, `<Layer/>`.
+
+While technically not a "parent", `<CartesianAxis/>` can be used with the `<Customized/>` component as well.
+
+## Child components
+This component does not accept children.
+
+## Properties
+
+Properties in the groups Other and Internal are not recommended to be used.
+
+<ArgTypes of={CartesianAxisStories} sort={'requiredFirst'}/>
