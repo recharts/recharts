@@ -90,7 +90,7 @@ export const ResponsiveContainer = forwardRef(
           return currentSizes;
         });
       }
-    }, [getContainerSize]);
+    }, [getContainerSize, onResize]);
 
     const chartContent = useMemo(() => {
       const { containerWidth, containerHeight } = sizes;
