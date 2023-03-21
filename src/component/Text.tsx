@@ -1,4 +1,4 @@
-import React, { CSSProperties, SVGProps, useEffect, useState } from 'react';
+import React, { CSSProperties, SVGProps, useMemo } from 'react';
 import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -57,15 +57,6 @@ export type Props = Omit<SVGProps<SVGTextElement>, 'textAnchor' | 'verticalAncho
 interface Words {
   words: Array<string>;
   width?: number;
-}
-
-interface State {
-  wordsByLines?: Array<Words>;
-  prevWidth?: string | number;
-  prevScaleToFit?: boolean;
-  prevChildren?: string | number;
-  prevStyle?: CSSProperties;
-  prevBreakAll?: boolean;
 }
 
 const calculateWordsByLines = (
@@ -160,25 +151,23 @@ const getWordsWithoutCalculate = (children: React.ReactNode): Array<Words> => {
   return [{ words }];
 };
 
-const getWordsByLines = (props: Props, needCalculate: boolean) => {
+const getWordsByLines = (props: Props) => {
   // Only perform calculations if using features that require them (multiline, scaleToFit)
   if ((props.width || props.scaleToFit) && !Global.isSsr) {
     let wordsWithComputedWidth: Array<WordWithComputedWidth>, spaceWidth: number;
 
-    if (needCalculate) {
-      const wordWidths = calculateWordWidths(props);
+    const wordWidths = calculateWordWidths(props);
 
-      if (wordWidths) {
-        const { wordsWithComputedWidth: wcw, spaceWidth: sw } = wordWidths;
+    if (wordWidths) {
+      const { wordsWithComputedWidth: wcw, spaceWidth: sw } = wordWidths;
 
-        wordsWithComputedWidth = wcw;
-        spaceWidth = sw;
-      } else {
-        return getWordsWithoutCalculate(props.children);
-      }
-
-      return calculateWordsByLines(props, wordsWithComputedWidth, spaceWidth, props.width, props.scaleToFit);
+      wordsWithComputedWidth = wcw;
+      spaceWidth = sw;
+    } else {
+      return getWordsWithoutCalculate(props.children);
     }
+
+    return calculateWordsByLines(props, wordsWithComputedWidth, spaceWidth, props.width, props.scaleToFit);
   }
   return getWordsWithoutCalculate(props.children);
 };
@@ -195,36 +184,9 @@ const textDefaultProps = {
 };
 
 export const Text = (props: Props) => {
-  const [state, setState] = useState<State>({
-    prevWidth: props.width,
-    prevScaleToFit: props.scaleToFit,
-    prevChildren: props.children,
-    prevStyle: props.style,
-    wordsByLines: getWordsByLines(props, true),
-  });
-
-  useEffect(() => {
-    if (
-      props.width !== state.prevWidth ||
-      props.scaleToFit !== state.prevScaleToFit ||
-      props.children !== state.prevChildren ||
-      props.style !== state.prevStyle ||
-      props.breakAll !== state.prevBreakAll
-    ) {
-      const needCalculate =
-        props.children !== state.prevChildren ||
-        props.style !== state.prevStyle ||
-        props.breakAll !== state.prevBreakAll;
-
-      setState({
-        prevWidth: props.width,
-        prevScaleToFit: props.scaleToFit,
-        prevChildren: props.children,
-        prevStyle: props.style,
-        wordsByLines: getWordsByLines(props, needCalculate),
-      });
-    }
-  }, [props, state.prevBreakAll, state.prevChildren, state.prevScaleToFit, state.prevStyle, state.prevWidth]);
+  const wordsByLines: Array<Words> = useMemo(() => {
+    return getWordsByLines(props);
+  }, [props.width, props.scaleToFit, props.children, props.style, props.breakAll]);
 
   const {
     dx,
@@ -239,7 +201,6 @@ export const Text = (props: Props) => {
     breakAll,
     ...textProps
   } = props;
-  const { wordsByLines } = state;
 
   if (!isNumOrStr(textProps.x) || !isNumOrStr(textProps.y)) {
     return null;
