@@ -1,53 +1,132 @@
 import React from 'react';
-import { ComposedChart, Area, ResponsiveContainer, Surface } from '../../../../src';
-import { coordinateWithValueData } from '../../data';
+import { StoryObj } from '@storybook/react';
+import { ComposedChart, Area, ResponsiveContainer, Surface, Legend, Tooltip, XAxis, YAxis } from '../../../../src';
+import { coordinateData, coordinateWithValueData, pageData } from '../../data';
+import { LineStyle } from '../props/LineStyle';
+import { AnimationProps } from '../props/AnimationProps';
+import { legendType } from '../props/Legend';
+import { General as GeneralProps, Internal } from '../props/CartesianComponentShared';
+import { ResponsiveProps } from '../props/Responsive';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+
+const AreaSpecificProps = {
+  // These two props are not documented on the website. Further investigation is required to document them.
+  baseValue: { table: { category: 'Other' } },
+  isRange: { table: { category: 'Other' } },
+  stackId: {
+    description: `The id of group which this area should be stacked into. If no id is specified, the area will not be stacked.
+       When two components have the same value axis and same stackId, then they are stacked in order.`,
+    table: {
+      type: {
+        summary: 'string | number',
+      },
+      category: 'General',
+    },
+  },
+};
 
 export default {
-  tags: ['autodocs'],
   component: Area,
   argTypes: {
-    connectNulls: {
-      control: {
-        type: 'boolean',
-      },
-    },
-    stroke: {
-      control: { type: 'color' },
-    },
-    fill: {
-      control: { type: 'color' },
-    },
-    type: {
-      // TODO: These options should be generated from the type directly instead of duplicating the type information here. Will iterate.
-      options: [
-        'basis',
-        'basisClosed',
-        'basisOpen',
-        'linear',
-        'linearClosed',
-        'natural',
-        'monotoneX',
-        'monotoneY',
-        'monotone',
-        'step',
-        'stepBefore',
-        'stepAfter',
-      ],
-      control: {
-        type: 'select',
-      },
-    },
-    animationEasing: {
-      // TODO: These options should be generated from the animationEasing directly instead of duplicating the animationEasing information here. Will iterate.
-      options: ['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear'],
-      control: {
-        type: 'select',
+    ...AreaSpecificProps,
+    ...LineStyle,
+    ...AnimationProps,
+    legendType,
+    ...GeneralProps,
+    ...Internal,
+    ...ResponsiveProps,
+    // Other
+    baseLine: { table: { category: 'Other' } },
+    left: { table: { category: 'Other' } },
+    top: { table: { category: 'Other' } },
+    xAxis: { table: { category: 'Other' } },
+    yAxis: { table: { category: 'Other' } },
+  },
+};
+
+const [surfaceWidth, surfaceHeight] = [600, 300];
+
+export const AllProps = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <ComposedChart
+          width={surfaceWidth}
+          height={surfaceHeight}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+          data={pageData}
+        >
+          <Area dataKey="uv" isAnimationActive={false} {...args} />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+};
+
+export const General: StoryObj = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={300}>
+        <ComposedChart
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+          data={pageData}
+        >
+          <Area isAnimationActive={false} dataKey="uv" {...args} />
+          {/* All further components are added to show the interaction with the Area properties */}
+          <Legend />
+          <Tooltip />
+          <XAxis dataKey="name" />
+          <YAxis />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(GeneralProps),
+  },
+  parameters: {
+    controls: { include: Object.keys(GeneralProps) },
+    docs: {
+      description: {
+        story: 'The dataKey defines the y-Values of a Area. Without an xAxis, the index is used for x.',
       },
     },
   },
 };
 
-const [surfaceWidth, surfaceHeight] = [600, 300];
+export const Style: StoryObj = {
+  ...General,
+  args: {
+    ...getStoryArgsFromArgsTypesObject(LineStyle),
+    type: 'linear',
+    connectNulls: true,
+    stroke: 'red',
+    fill: 'teal',
+    strokeDasharray: '4 1',
+    label: { fill: 'red', fontSize: 20 },
+    dot: { stroke: 'green', strokeWidth: 2 },
+  },
+  parameters: {
+    controls: { include: Object.keys(LineStyle) },
+    docs: {
+      description: {
+        story:
+          'The Area is generated from the data by connecting the dots. ' +
+          'The type and connectNulls define how the dots are used.',
+      },
+    },
+  },
+};
 
 const Basic = {
   render: (args: Record<string, any>) => {
@@ -79,37 +158,42 @@ const Basic = {
   parameters: { controls: { include: ['data'] } },
 };
 
-export const Simple = {
-  ...Basic,
-  parameters: { controls: { include: ['data', 'dataKey'] } },
-  docs: {
-    description: {
-      story: 'The dataKey defines the y-Values of a Line. Without an xAxis, the index is used for x.',
+export const Responsive: StoryObj = {
+  ...General,
+  args: {
+    ...getStoryArgsFromArgsTypesObject(ResponsiveProps),
+    activeDot: { stroke: 'green', strokeWidth: 2 },
+    tooltipType: 'responsive',
+  },
+  parameters: {
+    controls: {
+      include: Object.keys(ResponsiveProps),
+      tooltipType: { type: 'select', options: ['responsive', 'none'] },
+    },
+    docs: {
+      description: {
+        story: '', // TODO
+      },
     },
   },
 };
 
-export const Style = {
-  ...Basic,
+export const Animation: StoryObj = {
+  ...General,
   args: {
-    data: coordinateWithValueData,
-    stroke: 'red',
-    fill: 'teal',
-    type: 'linear',
-    baseline: 200,
-    connectNulls: false,
-    strokeWidth: 2,
+    ...getStoryArgsFromArgsTypesObject(AnimationProps),
     isAnimationActive: true,
   },
   parameters: {
-    controls: { include: ['stroke', 'fill', 'type', 'baseline', 'connectNulls', 'strokeWidth', 'isAnimationActive'] },
+    controls: { include: Object.keys(AnimationProps) },
+    docs: {
+      description: { story: 'Reloading the story triggers the animation.' },
+    },
   },
 };
 
 export const Stacked = {
   render: (args: Record<string, any>) => {
-    const { data, dataKey1, dataKey2, areaColor1, areaColor2, ...areaArgs } = args;
-
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
         <ComposedChart
@@ -121,34 +205,20 @@ export const Stacked = {
             bottom: 20,
             left: 20,
           }}
-          data={data}
+          data={pageData}
         >
-          <Area stackId="pv-uv" dataKey={dataKey1} stroke={areaColor1} fill={areaColor1} {...areaArgs} />
-          <Area stackId="pv-uv" dataKey={dataKey2} stroke={areaColor2} fill={areaColor2} {...areaArgs} />
+          <Area fill="red" isAnimationActive={false} stackId={args.stackId1} dataKey="uv" />
+          <Area fill="green" isAnimationActive={false} stackId={args.stackId2} dataKey="pv" />
         </ComposedChart>
       </ResponsiveContainer>
     );
   },
   args: {
-    data: coordinateWithValueData,
-    dataKey1: 'x',
-    dataKey2: 'y',
-    areaColor1: 'lightblue',
-    areaColor2: 'lightgreen',
-    isAnimationActive: false,
-  },
-  argTypes: {
-    areaColor1: {
-      control: { type: 'color' },
-    },
-    areaColor2: {
-      control: { type: 'color' },
-    },
+    stackId1: '1',
+    stackId2: '1',
   },
   parameters: {
-    controls: {
-      include: ['data', 'dataKey1', 'dataKey2', 'areaColor1', 'areaColor2'],
-    },
+    controls: { include: ['stackId1', 'stackId2'] },
   },
 };
 
@@ -251,20 +321,6 @@ export const FillGradient = {
   },
 };
 
-export const Animation = {
-  ...Basic,
-  args: {
-    data: coordinateWithValueData,
-    isAnimationActive: true,
-    animationEasing: 'linear',
-    animationBegin: 0,
-    animationDuration: 1500,
-  },
-  parameters: {
-    controls: { include: ['animationEasing', 'isAnimationActive', 'animationBegin', 'animationDuration'] },
-  },
-};
-
 export const Points = {
   render: (args: Record<string, any>) => {
     const { points } = args;
@@ -281,13 +337,13 @@ export const Points = {
             height: surfaceHeight,
           }}
         >
-          <Area dataKey="" isAnimationActive={false} points={points} />
+          <Area dataKey={undefined} isAnimationActive={false} points={points} />
         </Surface>
       </ResponsiveContainer>
     );
   },
   args: {
-    points: coordinateWithValueData,
+    points: coordinateData,
   },
   parameters: {
     controls: { include: ['points'] },
