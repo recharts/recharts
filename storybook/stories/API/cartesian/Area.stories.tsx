@@ -98,7 +98,7 @@ export const General: StoryObj = {
     controls: { include: Object.keys(GeneralProps) },
     docs: {
       description: {
-        story: 'The dataKey defines the y-Values of a Line. Without an xAxis, the index is used for x.',
+        story: 'The dataKey defines the y-Values of a Area. Without an xAxis, the index is used for x.',
       },
     },
   },
