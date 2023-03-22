@@ -19,20 +19,22 @@ interface CalculatedWordWidths {
   spaceWidth: number;
 }
 
-const calculateWordWidths = (props: Props): CalculatedWordWidths => {
+type CalculateWordWidthsParam = Pick<Props, 'children' | 'breakAll' | 'style'>;
+
+const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsParam): CalculatedWordWidths => {
   try {
     let words: string[] = [];
-    if (!_.isNil(props.children)) {
-      if (props.breakAll) {
-        words = props.children.toString().split('');
+    if (!_.isNil(children)) {
+      if (breakAll) {
+        words = children.toString().split('');
       } else {
-        words = props.children.toString().split(BREAKING_SPACES);
+        words = children.toString().split(BREAKING_SPACES);
       }
     }
 
-    const wordsWithComputedWidth = words.map(word => ({ word, width: getStringSize(word, props.style).width }));
+    const wordsWithComputedWidth = words.map(word => ({ word, width: getStringSize(word, style).width }));
 
-    const spaceWidth = props.breakAll ? 0 : getStringSize('\u00A0', props.style).width;
+    const spaceWidth = breakAll ? 0 : getStringSize('\u00A0', style).width;
 
     return { wordsWithComputedWidth, spaceWidth };
   } catch (e) {
@@ -59,15 +61,17 @@ interface Words {
   width?: number;
 }
 
+type CalculateWordsByLinesProps = Pick<Props, 'maxLines' | 'children' | 'style' | 'breakAll'>;
+
 const calculateWordsByLines = (
-  props: Props,
+  { maxLines, children, style, breakAll }: CalculateWordsByLinesProps,
   initialWordsWithComputedWith: Array<WordWithComputedWidth>,
   spaceWidth: number,
   lineWidth: number | string,
   scaleToFit?: boolean,
 ): Array<Words> => {
-  const shouldLimitLines = isNumber(props.maxLines);
-  const text = props.children as string;
+  const shouldLimitLines = isNumber(maxLines);
+  const text = children as string;
 
   const calculate = (words: Array<WordWithComputedWidth> = []) =>
     words.reduce((result, { word, width }) => {
@@ -101,13 +105,14 @@ const calculateWordsByLines = (
     const tempText = text.slice(0, index);
 
     const words = calculateWordWidths({
-      ...props,
+      breakAll,
+      style,
       children: tempText + suffix,
     }).wordsWithComputedWidth;
 
     const result = calculate(words);
 
-    const doesOverflow = result.length > props.maxLines || findLongestLine(result).width > lineWidth;
+    const doesOverflow = result.length > maxLines || findLongestLine(result).width > lineWidth;
 
     return [doesOverflow, result];
   };
@@ -151,12 +156,14 @@ const getWordsWithoutCalculate = (children: React.ReactNode): Array<Words> => {
   return [{ words }];
 };
 
-const getWordsByLines = (props: Props) => {
+type GetWordsByLinesProps = Pick<Props, 'width' | 'scaleToFit' | 'children' | 'style' | 'breakAll' | 'maxLines'>;
+
+const getWordsByLines = ({ width, scaleToFit, children, style, breakAll, maxLines }: GetWordsByLinesProps) => {
   // Only perform calculations if using features that require them (multiline, scaleToFit)
-  if ((props.width || props.scaleToFit) && !Global.isSsr) {
+  if ((width || scaleToFit) && !Global.isSsr) {
     let wordsWithComputedWidth: Array<WordWithComputedWidth>, spaceWidth: number;
 
-    const wordWidths = calculateWordWidths(props);
+    const wordWidths = calculateWordWidths({ breakAll, children, style });
 
     if (wordWidths) {
       const { wordsWithComputedWidth: wcw, spaceWidth: sw } = wordWidths;
@@ -164,12 +171,18 @@ const getWordsByLines = (props: Props) => {
       wordsWithComputedWidth = wcw;
       spaceWidth = sw;
     } else {
-      return getWordsWithoutCalculate(props.children);
+      return getWordsWithoutCalculate(children);
     }
 
-    return calculateWordsByLines(props, wordsWithComputedWidth, spaceWidth, props.width, props.scaleToFit);
+    return calculateWordsByLines(
+      { breakAll, children, maxLines, style },
+      wordsWithComputedWidth,
+      spaceWidth,
+      width,
+      scaleToFit,
+    );
   }
-  return getWordsWithoutCalculate(props.children);
+  return getWordsWithoutCalculate(children);
 };
 
 const textDefaultProps = {
@@ -185,8 +198,15 @@ const textDefaultProps = {
 
 export const Text = (props: Props) => {
   const wordsByLines: Array<Words> = useMemo(() => {
-    return getWordsByLines(props);
-  }, [props.width, props.scaleToFit, props.children, props.style, props.breakAll]);
+    return getWordsByLines({
+      breakAll: props.breakAll,
+      children: props.children,
+      maxLines: props.maxLines,
+      scaleToFit: props.scaleToFit,
+      style: props.style,
+      width: props.width,
+    });
+  }, [props.breakAll, props.children, props.maxLines, props.scaleToFit, props.style, props.width]);
 
   const {
     dx,
