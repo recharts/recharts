@@ -18,15 +18,6 @@ interface CrossProps {
 
 export type Props = SVGProps<SVGPathElement> & CrossProps;
 
-const crossDefaultProps = {
-  x: 0,
-  y: 0,
-  top: 0,
-  left: 0,
-  width: 0,
-  height: 0,
-};
-
 const getPath = (x: number, y: number, width: number, height: number, top: number, left: number) => {
   return `M${x},${top}v${height}M${left},${y}h${width}`;
 };
@@ -47,4 +38,11 @@ export const Cross: React.FC<Props> = props => {
   );
 };
 
-Cross.defaultProps = crossDefaultProps;
+Cross.defaultProps = {
+  x: 0,
+  y: 0,
+  top: 0,
+  left: 0,
+  width: 0,
+  height: 0,
+};
