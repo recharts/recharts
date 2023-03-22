@@ -18,7 +18,12 @@ interface PolarGridProps {
 }
 export type Props = SVGProps<SVGPathElement> & PolarGridProps;
 
-type ConcentricProps = Props & { radius: number; index: number };
+type ConcentricProps = Props & {
+  // The radius of circle
+  radius: number;
+  // The index of circle
+  index: number;
+};
 
 const polarGridDefaultProps = {
   cx: 0,
@@ -46,10 +51,7 @@ const getPolygonPath = (radius: number, cx: number, cy: number, polarAngles: num
   return path;
 };
 
-/**
- * Draw axis of radial line
- * @return The lines
- */
+// Draw axis of radial line
 const PolarAngles: React.FC<Props> = props => {
   const { cx, cy, innerRadius, outerRadius, polarAngles, radialLines } = props;
 
@@ -82,12 +84,7 @@ const PolarAngles: React.FC<Props> = props => {
   );
 };
 
-/**
- * Draw concentric circles
- * @param radius The radius of circle
- * @param index  The index of circle
- * @return circle
- */
+// Draw concentric circles
 const ConcentricCircle: React.FC<ConcentricProps> = props => {
   const { cx, cy, radius, index } = props;
   const concentricCircleProps = {
@@ -108,12 +105,7 @@ const ConcentricCircle: React.FC<ConcentricProps> = props => {
   );
 };
 
-/**
- * Draw concentric polygons
- * @param radius     The radius of polygon
- * @param index      The index of polygon
- * @return polygon
- */
+// Draw concentric polygons
 const ConcentricPolygon: React.FC<ConcentricProps> = props => {
   const { radius, index } = props;
   const concentricPolygonProps = {
@@ -132,11 +124,8 @@ const ConcentricPolygon: React.FC<ConcentricProps> = props => {
   );
 };
 
-/**
- * Draw concentric axis
- * @return Concentric axis
- * @todo Optimize the name
- */
+// Draw concentric axis
+// TODO Optimize the name
 const ConcentricPath: React.FC<Props> = props => {
   const { polarRadius, gridType } = props;
 
