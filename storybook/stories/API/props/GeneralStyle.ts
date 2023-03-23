@@ -2,7 +2,7 @@
 
 import { Args } from '@storybook/react';
 
-export const LineStyle: Args = {
+export const GeneralStyle: Args = {
   connectNulls: {
     description: 'Whether to connect a graph line across null points.',
     table: {

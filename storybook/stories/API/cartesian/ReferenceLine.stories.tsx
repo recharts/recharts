@@ -7,6 +7,7 @@ import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { EventHandlers } from '../props/EventHandlers';
 import { AnimationProps } from '../props/AnimationProps';
+import { GeneralStyle } from '../props/GeneralStyle';
 
 const GeneralProps: Args = {
   xAxisId: {
@@ -58,30 +59,11 @@ const LabelProps: Args = {
 
 const StyleProps: Args = {
   stroke: {
-    control: { type: 'color' },
-    table: { category: 'Style' },
+    ...GeneralStyle.stroke,
     defaultValue: '#ccc',
   },
-  strokeWidth: {
-    description: 'The width of the stroke.',
-    table: {
-      type: {
-        summary: 'string | number',
-      },
-      category: 'Style',
-    },
-    defaultValue: 1,
-  },
-  strokeDasharray: {
-    description: `The pattern of dashes and gaps used to paint the line.
-      https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray`,
-    table: {
-      type: {
-        summary: 'string',
-      },
-      category: 'Style',
-    },
-  },
+  strokeWidth: GeneralStyle.strokeWidth,
+  strokeDasharray: GeneralStyle.strokeDasharray,
 };
 
 export default {
@@ -131,16 +113,13 @@ export const General = {
           <XAxis dataKey="name" />
           <YAxis type="number" />
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-          <ReferenceLine {...args} />
+          <ReferenceLine y={1520} stroke="red" strokeDasharray="3 3" {...args} />
         </AreaChart>
       </ResponsiveContainer>
     );
   },
   args: {
     ...getStoryArgsFromArgsTypesObject(GeneralProps),
-    y: 1520,
-    stroke: 'red',
-    strokeDasharray: '3 3',
   },
   parameters: {
     controls: { include: Object.keys(GeneralProps) },
@@ -151,11 +130,10 @@ export const Style: StoryObj = {
   ...General,
   args: {
     ...getStoryArgsFromArgsTypesObject(StyleProps),
-    x: 'Page E',
-    y: 1520,
-    stroke: 'red',
-    label: { fill: 'red', fontSize: 20 },
+    stroke: 'blue',
+    strokeWidth: 2,
     strokeDasharray: '4 1',
+    label: { fill: 'red', fontSize: 20 },
   },
   parameters: {
     controls: { include: Object.keys(StyleProps) },
@@ -165,14 +143,10 @@ export const Style: StoryObj = {
 export const IfOverflow = {
   ...General,
   args: {
-    ...getStoryArgsFromArgsTypesObject(StyleProps),
     ifOverflow: 'extendDomain',
-    x: 'Page E',
     y: 1700,
-    stroke: 'red',
-    strokeDasharray: '3 3',
   },
-  parameters: { controls: { include: ['ifOverflow'] } },
+  parameters: { controls: { include: ['ifOverflow', 'y'] } },
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const { findByText } = within(canvasElement);
     /**
@@ -187,9 +161,6 @@ export const IfOverflow = {
 export const Segment = {
   ...General,
   args: {
-    ...getStoryArgsFromArgsTypesObject(StyleProps),
-    stroke: 'teal',
-    strokeDasharray: '3 3',
     segment: [
       { x: 'Page A', y: 0 },
       { x: 'Page E', y: 1500 },
