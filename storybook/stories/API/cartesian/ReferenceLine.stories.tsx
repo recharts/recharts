@@ -7,7 +7,7 @@ import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { EventHandlers } from '../props/EventHandlers';
 import { AnimationProps } from '../props/AnimationProps';
-import { GeneralStyle } from '../props/GeneralStyle';
+import { GeneralStyle } from '../props/Styles';
 
 const GeneralProps: Args = {
   xAxisId: {

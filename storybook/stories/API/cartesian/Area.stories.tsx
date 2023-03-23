@@ -2,7 +2,7 @@ import React from 'react';
 import { StoryObj } from '@storybook/react';
 import { ComposedChart, Area, ResponsiveContainer, Surface, Legend, Tooltip, XAxis, YAxis } from '../../../../src';
 import { coordinateData, coordinateWithValueData, pageData } from '../../data';
-import { GeneralStyle } from '../props/GeneralStyle';
+import { LineStyle } from '../props/Styles';
 import { AnimationProps } from '../props/AnimationProps';
 import { legendType } from '../props/Legend';
 import { General as GeneralProps, Internal } from '../props/CartesianComponentShared';
@@ -30,7 +30,7 @@ export default {
   component: Area,
   argTypes: {
     ...AreaSpecificProps,
-    ...GeneralStyle,
+    ...LineStyle,
     ...AnimationProps,
     legendType,
     ...GeneralProps,
@@ -108,7 +108,7 @@ export const General: StoryObj = {
 export const Style: StoryObj = {
   ...General,
   args: {
-    ...getStoryArgsFromArgsTypesObject(GeneralStyle),
+    ...getStoryArgsFromArgsTypesObject(LineStyle),
     type: 'linear',
     connectNulls: true,
     stroke: 'red',
@@ -118,7 +118,7 @@ export const Style: StoryObj = {
     dot: { stroke: 'green', strokeWidth: 2 },
   },
   parameters: {
-    controls: { include: Object.keys(GeneralStyle) },
+    controls: { include: Object.keys(LineStyle) },
     docs: {
       description: {
         story:

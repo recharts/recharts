@@ -7,7 +7,7 @@ import { coordinateData, pageData } from '../../data';
 import { EventHandlers } from '../props/EventHandlers';
 import { AnimationProps } from '../props/AnimationProps';
 import { legendType } from '../props/Legend';
-import { GeneralStyle } from '../props/GeneralStyle';
+import { LineStyle } from '../props/Styles';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { General as GeneralProps, Internal } from '../props/CartesianComponentShared';
 import { ResponsiveProps } from '../props/Responsive';
@@ -20,7 +20,7 @@ export default {
     ...GeneralProps,
     ...Internal,
     ...ResponsiveProps,
-    ...GeneralStyle,
+    ...LineStyle,
     // Deprecated
     dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
     // Other
@@ -92,7 +92,7 @@ export const General: StoryObj = {
 export const Style: StoryObj = {
   ...General,
   args: {
-    ...getStoryArgsFromArgsTypesObject(GeneralStyle),
+    ...getStoryArgsFromArgsTypesObject(LineStyle),
     type: 'linear',
     connectNulls: true,
     stroke: 'red',
@@ -102,7 +102,7 @@ export const Style: StoryObj = {
     dot: { stroke: 'green', strokeWidth: 2 },
   },
   parameters: {
-    controls: { include: Object.keys(GeneralStyle) },
+    controls: { include: Object.keys(LineStyle) },
     docs: {
       description: {
         story:
