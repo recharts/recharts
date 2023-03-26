@@ -9,24 +9,37 @@ export const animationBegin = {
   description: 'Specifies when the animation should begin, the unit of this option is ms.',
   type: { name: 'number' },
   defaultValue: 0,
-  table: { category: 'Animation' },
+  table: {
+    defaultValue: { summary: '0' },
+    category: 'Animation',
+  },
 };
 export const animationDuration = {
   description: 'Specifies the duration of animation, the unit of this option is ms.',
   type: { name: 'number' },
   defaultValue: 1500,
-  table: { category: 'Animation' },
+  table: {
+    defaultValue: { summary: '1500' },
+    category: 'Animation',
+  },
 };
 export const animationEasing = {
   description: 'The type of easing function.',
   type: { name: 'ease | ease-in | ease-out | ease-in-out | linear' },
   defaultValue: 'ease',
-  table: { category: 'Animation' },
+  table: {
+    defaultValue: { summary: 'ease' },
+    category: 'Animation',
+  },
 };
 export const animationId = { table: { category: 'Animation' } };
 export const isAnimationActive = {
   description: 'If set false, animation of component will be disabled.',
-  table: { type: { summary: 'boolean' }, category: 'Animation' },
+  table: {
+    type: { summary: 'boolean' },
+    defaultValue: { summary: 'true in CSR, and false in SSR' },
+    category: 'Animation',
+  },
   defaultValue: 'true in CSR, and false in SSR',
 };
 
