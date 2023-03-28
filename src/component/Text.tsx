@@ -77,7 +77,10 @@ const calculateWordsByLines = (
     words.reduce((result, { word, width }) => {
       const currentLine = result[result.length - 1];
 
-      if (currentLine && (lineWidth == null || scaleToFit || currentLine.width + width + spaceWidth < lineWidth)) {
+      if (
+        currentLine &&
+        (lineWidth == null || scaleToFit || currentLine.width + width + spaceWidth < Number(lineWidth))
+      ) {
         // Word can be added to an existing line
         currentLine.words.push(word);
         currentLine.width += width + spaceWidth;
@@ -112,7 +115,7 @@ const calculateWordsByLines = (
 
     const result = calculate(words);
 
-    const doesOverflow = result.length > maxLines || findLongestLine(result).width > lineWidth;
+    const doesOverflow = result.length > maxLines || findLongestLine(result).width > Number(lineWidth);
 
     return [doesOverflow, result];
   };
