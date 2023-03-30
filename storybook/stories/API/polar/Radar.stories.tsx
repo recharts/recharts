@@ -4,6 +4,7 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import { subjectData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { AnimationProps } from '../props/AnimationProps';
+import { legendType } from '../props/Legend';
 
 const GeneralProps: Args = {
   dataKey: {
@@ -20,24 +21,6 @@ const GeneralProps: Args = {
     by the internal calculated props and the option. If ReactElement set, the option can be the custom dot element. 
     If set a function, the function will be called to render customized dot.`,
     table: { type: { summary: 'Bool | Object | Element | Function' }, category: 'General' },
-  },
-  y: {
-    description: `If the y-axis specified by yAxisId is a number axis, the type of y must be Number. 
-      If the y-axis specified by yAxisId is a category axis, the value of y must be one of 
-      the categories, otherwise no dot will be drawn.`,
-    table: { type: { summary: 'number | string' }, category: 'General' },
-  },
-  xAxis: {
-    description: 'The configuration of the corresponding x-axis, usually calculated internally.',
-    table: { type: { summary: 'object' }, category: 'General' },
-  },
-  ifOverflow: {
-    description: `Defines how to draw the reference dot if it falls partly outside the canvas. If set to 'discard', 
-    the reference dot will not be drawn at all. If set to 'hidden', the reference dot will be clipped to the canvas. 
-    If set to 'visible', the reference dot will be drawn completely. If set to 'extendDomain', 
-    the domain of the overflown axis will be extended such that the reference dot fits into the canvas.`,
-    table: { type: { summary: "'discard' | 'hidden' | 'visible' | 'extendDomain'" }, category: 'General' },
-    default: 'discard',
   },
 };
 
@@ -69,6 +52,7 @@ export default {
     ...GeneralProps,
     ...LabelProps,
     ...StyleProps,
+    legendType,
   },
   component: Radar,
 };
