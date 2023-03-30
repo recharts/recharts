@@ -150,7 +150,7 @@ export const IfOverflow = {
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const { findByText } = within(canvasElement);
     /**
-     * assert that when ifOverflow="extendDomain" 1900 becomes the new domain y-max.
+     * assert that when ifOverflow="extendDomain" 1800 becomes the new domain y-max.
      * this test will fail when the user changes the ifOverflow arg, but it will give us confidence
      * that 'extendDomain' behavior remains the same.
      */
