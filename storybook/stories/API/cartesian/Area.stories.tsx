@@ -2,7 +2,7 @@ import React from 'react';
 import { StoryObj } from '@storybook/react';
 import { ComposedChart, Area, ResponsiveContainer, Surface, Legend, Tooltip, XAxis, YAxis } from '../../../../src';
 import { coordinateData, coordinateWithValueData, pageData } from '../../data';
-import { LineStyle } from '../props/LineStyle';
+import { LineStyle } from '../props/Styles';
 import { AnimationProps } from '../props/AnimationProps';
 import { legendType } from '../props/Legend';
 import { General as GeneralProps, Internal } from '../props/CartesianComponentShared';
@@ -14,8 +14,9 @@ const AreaSpecificProps = {
   baseValue: { table: { category: 'Other' } },
   isRange: { table: { category: 'Other' } },
   stackId: {
-    description: `The id of group which this area should be stacked into. If no id is specified, the area will not be stacked.
-       When two components have the same value axis and same stackId, then they are stacked in order.`,
+    description: `The id of group which this area should be stacked into. If no id is specified, 
+    the area will not be stacked. When two components have the same value axis and same stackId, 
+    then they are stacked in order.`,
     table: {
       type: {
         summary: 'string | number',
