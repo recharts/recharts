@@ -3,6 +3,7 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
     "eslint-config-airbnb",
     "prettier/@typescript-eslint",
     "plugin:prettier/recommended",
@@ -97,7 +98,8 @@
       "rules": {
         "react/prop-types": "off",
         "no-useless-constructor": "off",
-        "import/no-default-export": "off"
+        "import/no-default-export": "off",
+        "react-hooks/rules-of-hooks": "off"
       }
     }
   ],
