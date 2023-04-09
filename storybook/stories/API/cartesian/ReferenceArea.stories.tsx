@@ -16,8 +16,10 @@ import {
   onMouseUp,
 } from '../props/EventHandlers';
 import { animationBegin, animationDuration, animationEasing, isAnimationActive } from '../props/AnimationProps';
+import { GeneralStyle } from '../props/Styles';
 
 const StyleProps: Args = {
+  ...GeneralStyle,
   ifOverflow: {
     description: `Defines how to draw the reference area if it falls partly outside the canvas. If set to 'discard', the reference area will not be drawn at all. If set to 'hidden', the reference area will be clipped to the canvas. If set to 'visible', the reference area will be drawn completely. If set to 'extendDomain', the domain of the overflown axis will be extended such that the reference area fits into the canvas.`,
     table: { category: 'Style' },
@@ -45,7 +47,7 @@ const StyleProps: Args = {
     },
   },
   isFront: {
-    description: `If set true, the line will be rendered in front of bars in BarChart, etc.`,
+    description: `If set true, the area will be rendered in front of bars in BarChart, etc.`,
     table: { category: 'Style' },
   },
 };

@@ -6,7 +6,8 @@ import { Bar, BarChart, ReferenceDot, CartesianGrid, XAxis, YAxis, ResponsiveCon
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { EventHandlers } from '../props/EventHandlers';
-import { AnimationProps } from '../props/AnimationProps';
+import { r } from '../props/DotProps';
+import { GeneralStyle } from '../props/Styles';
 
 const GeneralProps: Args = {
   xAxisId: {
@@ -29,9 +30,41 @@ const GeneralProps: Args = {
       the categories, otherwise no dot will be drawn.`,
     table: { type: { summary: 'number | string' }, category: 'General' },
   },
-  xAxis: {
-    description: 'The configuration of the corresponding x-axis, usually calculated internally.',
-    table: { type: { summary: 'object' }, category: 'General' },
+};
+
+const LabelProps: Args = {
+  label: {
+    description: `If set a string or a number, default label will be drawn, and the option is content. 
+    If set a React element, the option is the custom react element of drawing label. If set a function, 
+    the function will be called to render customized label.`,
+    table: {
+      type: {
+        summary: 'string | number | ReactElement | Function',
+        detail:
+          '<ReferenceDot x="a" y={400} label="MAX"/>\n' +
+          '<ReferenceDot x="a" y={400} label={<CustomizedLabel />}/>\n' +
+          '<ReferenceDot x="a" y={400} label={renderLabel} />',
+      },
+      category: 'Label',
+    },
+  },
+};
+
+const StyleProps: Args = {
+  ...GeneralStyle,
+  shape: {
+    description: `If set a ReactElement, the shape of dot can be customized. If set a function, 
+    the function will be called to render customized shape.`,
+    table: {
+      type: {
+        summary: 'ReactElement | Function',
+      },
+      category: 'Style',
+    },
+  },
+  isFront: {
+    description: `If set true, the dot will be rendered in front of bars in BarChart, etc.`,
+    table: { category: 'Style' },
   },
   ifOverflow: {
     description: `Defines how to draw the reference dot if it falls partly outside the canvas. If set to 'discard', 
@@ -43,66 +76,31 @@ const GeneralProps: Args = {
   },
 };
 
-const LabelProps: Args = {
-  label: {
-    description: `If set a string or a number, default label will be drawn, and the option is content. 
-    If set a React element, the option is the custom react element of drawing label. If set a function, 
-    the function will be called to render customized label.`,
-    table: { type: { summary: 'string | number | ReactElement | Function' }, category: 'Label' },
+const InternalProps: Args = {
+  xAxis: {
+    description: 'The configuration of the corresponding x-axis, usually calculated internally.',
+    table: { type: { summary: 'Object' }, category: 'Internal' },
   },
-};
-
-const StyleProps: Args = {
-  r: {
-    description: 'The radius of the dot.',
-    control: { type: 'number' },
-    table: {
-      type: {
-        summary: 'number',
-      },
-      category: 'Style',
-    },
-    defaultValue: 10,
+  yAxis: {
+    description: 'The configuration of the corresponding y-axis, usually calculated internally.',
+    table: { type: { summary: 'Object' }, category: 'Internal' },
   },
-  fill: {
-    control: { type: 'color' },
-    table: { category: 'Style' },
-    defaultValue: '#fff',
-  },
-  stroke: {
-    control: { type: 'color' },
-    table: { category: 'Style' },
-    defaultValue: '#ccc',
-  },
-  strokeWidth: {
-    description: 'The width of the stroke.',
-    table: {
-      type: {
-        summary: 'string | number',
-      },
-      category: 'Style',
-    },
-    defaultValue: 1,
-  },
-  shape: {
-    description: `If set a ReactElement, the shape of dot can be customized. If set a function, 
-    the function will be called to render customized shape.`,
-    table: {
-      type: {
-        summary: 'ReactElement | Function',
-      },
-      category: 'Style',
-    },
+  clipPathId: {
+    description:
+      "Used as the id for the clip path which is used to clip the reference dot if 'ifOverflow' is set to 'hidden'",
+    table: { type: { summary: 'number | string' }, category: 'Internal' },
   },
 };
 
 export default {
   argTypes: {
-    ...EventHandlers,
-    ...AnimationProps,
+    ...StyleProps,
     ...GeneralProps,
     ...LabelProps,
-    ...StyleProps,
+    ...InternalProps,
+    ...EventHandlers,
+    // Dot
+    r,
     // Deprecated
     dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
     alwaysShow: {
@@ -113,11 +111,6 @@ export default {
       disable: true,
       default: false,
     },
-    // Other
-    xAxis: { table: { category: 'Other' } },
-    yAxis: { table: { category: 'Other' } },
-    // Internal
-    data: { table: { category: 'Internal' } },
   },
   component: ReferenceDot,
 };
