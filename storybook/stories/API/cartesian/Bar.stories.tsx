@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Args } from '@storybook/react';
 import { General as GeneralProps } from '../props/CartesianComponentShared';
 import { ComposedChart, Bar, ResponsiveContainer, Cell } from '../../../../src';
-import { pageData } from '../../data';
+import { PageDataType, pageData } from '../../data';
 import { GeneralStyle } from '../props/Styles';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
@@ -30,7 +30,7 @@ export default {
 
 const Base = {
   render: (args: Record<string, any>) => {
-    const { data, defs, ...areaArgs } = args;
+    const { data, defs, ...barArgs } = args;
 
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
@@ -46,7 +46,7 @@ const Base = {
           data={pageData}
         >
           {defs}
-          <Bar dataKey="uv" isAnimationActive={false} {...areaArgs} />
+          <Bar dataKey="uv" isAnimationActive={false} {...barArgs} />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -88,7 +88,7 @@ export const Style = {
 
 export const Stacked = {
   render: (args: Record<string, any>) => {
-    const { data, dataKey1, dataKey2, areaColor1, areaColor2, ...areaArgs } = args;
+    const { dataKey1, dataKey2, barColor1, barColor2, ...barArgs } = args;
 
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
@@ -101,40 +101,39 @@ export const Stacked = {
             bottom: 20,
             left: 20,
           }}
-          data={data}
+          data={pageData}
         >
-          <Bar stackId="pv-uv" dataKey={dataKey1} stroke={areaColor1} fill={areaColor1} {...areaArgs} />
-          <Bar stackId="pv-uv" dataKey={dataKey2} stroke={areaColor2} fill={areaColor2} {...areaArgs} />
+          <Bar stackId="pv-uv" dataKey={dataKey1} stroke={barColor1} fill={barColor1} {...barArgs} />
+          <Bar stackId="pv-uv" dataKey={dataKey2} stroke={barColor2} fill={barColor2} {...barArgs} />
         </ComposedChart>
       </ResponsiveContainer>
     );
   },
   args: {
-    data: pageData,
     dataKey1: 'uv',
     dataKey2: 'pv',
-    areaColor1: '#8884d8',
-    areaColor2: '#82ca9d',
+    barColor1: '#8884d8',
+    barColor2: '#82ca9d',
     isAnimationActive: false,
   },
   argTypes: {
-    areaColor1: {
+    barColor1: {
       control: { type: 'color' },
     },
-    areaColor2: {
+    barColor2: {
       control: { type: 'color' },
     },
   },
   parameters: {
     controls: {
-      include: ['data', 'dataKey1', 'dataKey2', 'areaColor1', 'areaColor2'],
+      include: ['data', 'dataKey1', 'dataKey2', 'barColor1', 'barColor2'],
     },
   },
 };
 
 export const StackedAndUnstacked = {
   render: (args: Record<string, any>) => {
-    const { data, dataKey1, dataKey2, dataKey3, areaColor1, areaColor2, areaColor3, ...areaArgs } = args;
+    const { dataKey1, dataKey2, dataKey3, barColor1, barColor2, barColor3, ...barArgs } = args;
 
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
@@ -147,47 +146,44 @@ export const StackedAndUnstacked = {
             bottom: 20,
             left: 20,
           }}
-          data={data}
+          data={pageData}
         >
-          <Bar stackId="pv-uv" dataKey={dataKey1} stroke={areaColor1} fill={areaColor1} {...areaArgs} />
-          <Bar stackId="pv-uv" dataKey={dataKey2} stroke={areaColor2} fill={areaColor2} {...areaArgs} />
-          <Bar dataKey={dataKey3} stroke={areaColor3} fill={areaColor3} {...areaArgs} />
+          <Bar stackId="pv-uv" dataKey={dataKey1} stroke={barColor1} fill={barColor1} {...barArgs} />
+          <Bar stackId="pv-uv" dataKey={dataKey2} stroke={barColor2} fill={barColor2} {...barArgs} />
+          <Bar dataKey={dataKey3} stroke={barColor3} fill={barColor3} {...barArgs} />
         </ComposedChart>
       </ResponsiveContainer>
     );
   },
   args: {
-    data: pageData,
     dataKey1: 'uv',
     dataKey2: 'pv',
     dataKey3: 'amt',
-    areaColor1: '#8884d8',
-    areaColor2: '#82ca9d',
-    areaColor3: '#ffc658',
+    barColor1: '#8884d8',
+    barColor2: '#82ca9d',
+    barColor3: '#ffc658',
     isAnimationActive: false,
   },
   argTypes: {
-    areaColor1: {
+    barColor1: {
       control: { type: 'color' },
     },
-    areaColor2: {
+    barColor2: {
       control: { type: 'color' },
     },
-    areaColor3: {
+    barColor3: {
       control: { type: 'color' },
     },
   },
   parameters: {
     controls: {
-      include: ['data', 'dataKey1', 'dataKey2', 'dataKey3', 'areaColor1', 'areaColor2', 'areaColor3'],
+      include: ['data', 'dataKey1', 'dataKey2', 'dataKey3', 'barColor1', 'barColor2', 'barColor3'],
     },
   },
 };
 
 export const CustomizedEvent = {
   render: (args: Record<string, any>) => {
-    const { data, ...areaArgs } = args;
-
     const [activeIndex, setActiveIndex] = useState(1);
 
     return (
@@ -201,10 +197,10 @@ export const CustomizedEvent = {
             bottom: 20,
             left: 20,
           }}
-          data={data}
+          data={pageData}
         >
-          <Bar onClick={(_data, index) => setActiveIndex(index)} dataKey="uv" isAnimationActive={false} {...areaArgs}>
-            {data.map((_entry: any, index: number) => (
+          <Bar onClick={(_data, index) => setActiveIndex(index)} dataKey="uv" isAnimationActive={false} {...args}>
+            {pageData.map((_entry: PageDataType, index: number) => (
               <Cell cursor="pointer" fill={index === activeIndex ? '#82ca9d' : '#8884d8'} key={`cell-${index}`} />
             ))}
           </Bar>
@@ -213,7 +209,6 @@ export const CustomizedEvent = {
     );
   },
   args: {
-    data: pageData,
     isAnimationActive: false,
   },
   parameters: { controls: { include: ['data'] } },
@@ -226,7 +221,7 @@ const getPath = (x: number, y: number, width: number, height: number) => {
   Z`;
 };
 
-const TriangleBar = (props: any) => {
+const TriangleBar = (props: { fill: string; x: number; y: number; width: number; height: number }) => {
   const { fill, x, y, width, height } = props;
 
   return <path d={getPath(x, y, width, height)} stroke="none" fill={fill} />;
@@ -236,8 +231,6 @@ const colors = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', 'red', 'pink'];
 
 export const CustomizedShape = {
   render: (args: Record<string, any>) => {
-    const { data, ...areaArgs } = args;
-
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
         <ComposedChart
@@ -249,17 +242,17 @@ export const CustomizedShape = {
             bottom: 20,
             left: 20,
           }}
-          data={data}
+          data={pageData}
         >
           <Bar
             dataKey="uv"
             fill="#8884d8"
-            shape={<TriangleBar />}
+            shape={props => <TriangleBar {...props} />}
             label={{ position: 'top' }}
             isAnimationActive={false}
-            {...areaArgs}
+            {...args}
           >
-            {data.map((_entry: any, index: number) => (
+            {pageData.map((_entry: PageDataType, index: number) => (
               <Cell key={`cell-${index}`} fill={colors[index % 20]} />
             ))}
           </Bar>
@@ -268,7 +261,6 @@ export const CustomizedShape = {
     );
   },
   args: {
-    data: pageData,
     isAnimationActive: false,
   },
   parameters: { controls: { include: ['data'] } },
@@ -276,7 +268,7 @@ export const CustomizedShape = {
 
 export const FillGradient = {
   render: (args: Record<string, any>) => {
-    const { data, dataKey1, dataKey2, ...areaArgs } = args;
+    const { dataKey1, dataKey2, ...barArgs } = args;
 
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
@@ -289,7 +281,7 @@ export const FillGradient = {
             bottom: 20,
             left: 20,
           }}
-          data={data}
+          data={pageData}
         >
           <defs>
             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
@@ -301,14 +293,13 @@ export const FillGradient = {
               <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <Bar dataKey={dataKey1} stroke="#8884d8" fillOpacity={1} fill="url(#colorUv)" {...areaArgs} />
-          <Bar dataKey={dataKey2} stroke="#82ca9d" fillOpacity={1} fill="url(#colorPv)" {...areaArgs} />
+          <Bar dataKey={dataKey1} stroke="#8884d8" fillOpacity={1} fill="url(#colorUv)" {...barArgs} />
+          <Bar dataKey={dataKey2} stroke="#82ca9d" fillOpacity={1} fill="url(#colorPv)" {...barArgs} />
         </ComposedChart>
       </ResponsiveContainer>
     );
   },
   args: {
-    data: pageData,
     dataKey1: 'uv',
     dataKey2: 'pv',
     isAnimationActive: false,

@@ -1,4 +1,11 @@
-const pageData = [
+export type PageDataType = {
+  name: string;
+  uv: number;
+  pv: number;
+  amt: number;
+};
+
+const pageData: PageDataType[] = [
   {
     name: 'Page A',
     uv: 590,
