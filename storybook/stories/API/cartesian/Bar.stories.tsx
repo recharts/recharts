@@ -1,33 +1,34 @@
+/* eslint-disable react/no-array-index-key */
 import React, { useState } from 'react';
+import { Args } from '@storybook/react';
+import { General as GeneralProps } from '../props/CartesianComponentShared';
 import { ComposedChart, Bar, ResponsiveContainer, Cell } from '../../../../src';
 import { pageData } from '../../data';
+import { GeneralStyle } from '../props/Styles';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
-export default {
-  component: Bar,
-  argTypes: {
-    background: {
-      control: {
-        type: 'boolean',
-      },
-    },
-    stroke: {
-      control: { type: 'color' },
-    },
-    fill: {
-      control: { type: 'color' },
-    },
-    animationEasing: {
-      options: ['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear'],
-      control: {
-        type: 'select',
-      },
+const [surfaceWidth, surfaceHeight] = [600, 300];
+
+const StyleProps: Args = {
+  stroke: GeneralStyle.stroke,
+  fill: GeneralStyle.fill,
+  strokeWidth: GeneralStyle.strokeWidth,
+  background: {
+    control: {
+      type: 'boolean',
     },
   },
 };
 
-const [surfaceWidth, surfaceHeight] = [600, 300];
+export default {
+  component: Bar,
+  argTypes: {
+    ...GeneralProps,
+    ...StyleProps,
+  },
+};
 
-const Basic = {
+const Base = {
   render: (args: Record<string, any>) => {
     const { data, defs, ...areaArgs } = args;
 
@@ -42,7 +43,7 @@ const Basic = {
             bottom: 20,
             left: 20,
           }}
-          data={data}
+          data={pageData}
         >
           {defs}
           <Bar dataKey="uv" isAnimationActive={false} {...areaArgs} />
@@ -50,16 +51,17 @@ const Basic = {
       </ResponsiveContainer>
     );
   },
-  args: {
-    data: pageData,
-    dataKey: 'uv',
-  },
   parameters: { controls: { include: ['data'] } },
 };
 
-export const Simple = {
-  ...Basic,
-  parameters: { controls: { include: ['data', 'dataKey'] } },
+export const General = {
+  ...Base,
+  args: {
+    ...getStoryArgsFromArgsTypesObject(GeneralProps),
+  },
+  parameters: {
+    controls: { include: Object.keys(GeneralProps) },
+  },
   docs: {
     description: {
       story: 'The dataKey defines the y-Values of a Line. Without an xAxis, the index is used for x.',
@@ -68,7 +70,7 @@ export const Simple = {
 };
 
 export const Style = {
-  ...Basic,
+  ...Base,
   args: {
     data: pageData,
     stroke: 'red',
@@ -202,7 +204,7 @@ export const CustomizedEvent = {
           data={data}
         >
           <Bar onClick={(_data, index) => setActiveIndex(index)} dataKey="uv" isAnimationActive={false} {...areaArgs}>
-            {data.map((_entry, index: number) => (
+            {data.map((_entry: any, index: number) => (
               <Cell cursor="pointer" fill={index === activeIndex ? '#82ca9d' : '#8884d8'} key={`cell-${index}`} />
             ))}
           </Bar>
@@ -224,7 +226,7 @@ const getPath = (x: number, y: number, width: number, height: number) => {
   Z`;
 };
 
-const TriangleBar = props => {
+const TriangleBar = (props: any) => {
   const { fill, x, y, width, height } = props;
 
   return <path d={getPath(x, y, width, height)} stroke="none" fill={fill} />;
@@ -257,7 +259,7 @@ export const CustomizedShape = {
             isAnimationActive={false}
             {...areaArgs}
           >
-            {data.map((entry, index: number) => (
+            {data.map((_entry: any, index: number) => (
               <Cell key={`cell-${index}`} fill={colors[index % 20]} />
             ))}
           </Bar>
@@ -319,7 +321,7 @@ export const FillGradient = {
 };
 
 export const Animation = {
-  ...Basic,
+  ...Base,
   args: {
     data: pageData,
     isAnimationActive: true,
