@@ -12,6 +12,7 @@ import {
 } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+import { SCALE_TYPES } from '../../../../src/util/ReactUtils';
 
 const GeneralProps: Args = {
   zAxisId: {
@@ -27,6 +28,12 @@ const GeneralProps: Args = {
     table: { type: { summary: 'number[]' }, category: 'General' },
   },
   scale: {
+    description: 'If "auto" set, the scale function is decided by the type of chart, and the props type.',
+    options: SCALE_TYPES,
+    default: 'auto',
+    control: {
+      type: 'select',
+    },
     table: { type: { summary: 'ScaleType | Function' }, category: 'General' },
   },
   domain: {
@@ -62,6 +69,7 @@ export const General = {
     unit: 'km',
     range: [0, 2000],
     type: 'number',
+    scale: 'auto',
   },
   parameters: {
     controls: { include: Object.keys(GeneralProps) },
