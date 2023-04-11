@@ -25,7 +25,17 @@ export const GeneralStyle: Args = {
     description: 'The width of the stroke.',
     table: {
       type: {
-        summary: 'String | Number',
+        summary: 'string | number',
+      },
+      category: 'Style',
+    },
+    defaultValue: 1,
+  },
+  strokeOpacity: {
+    description: 'The opacity of the stroke.',
+    table: {
+      type: {
+        summary: 'string | number',
       },
       category: 'Style',
     },

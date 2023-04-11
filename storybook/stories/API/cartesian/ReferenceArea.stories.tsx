@@ -16,12 +16,16 @@ import {
   onMouseUp,
 } from '../props/EventHandlers';
 import { animationBegin, animationDuration, animationEasing, isAnimationActive } from '../props/AnimationProps';
+import { GeneralStyle } from '../props/Styles';
+import {
+  ReferenceComponentGeneralArgs,
+  ReferenceComponentInternalArgs,
+  ReferenceComponentStyle,
+} from '../props/ReferenceComponentShared';
 
 const StyleProps: Args = {
-  ifOverflow: {
-    description: `Defines how to draw the reference area if it falls partly outside the canvas. If set to 'discard', the reference area will not be drawn at all. If set to 'hidden', the reference area will be clipped to the canvas. If set to 'visible', the reference area will be drawn completely. If set to 'extendDomain', the domain of the overflown axis will be extended such that the reference area fits into the canvas.`,
-    table: { category: 'Style' },
-  },
+  ...GeneralStyle,
+  ...ReferenceComponentStyle,
   label: {
     description: `If set a string or a number, default label will be drawn, and the option is content. If set a React element, the option is the custom react element of drawing label. If set a function, the function will be called to render customized label.`,
     table: {
@@ -44,21 +48,10 @@ const StyleProps: Args = {
       category: 'Style',
     },
   },
-  isFront: {
-    description: `If set true, the line will be rendered in front of bars in BarChart, etc.`,
-    table: { category: 'Style' },
-  },
 };
 
 const GeneralProps: Args = {
-  xAxisId: {
-    description: 'The id of x-axis which is corresponding to the data.',
-    table: { type: { summary: 'string | number' }, category: 'General' },
-  },
-  yAxisId: {
-    description: 'The id of y-axis which is corresponding to the data.',
-    table: { type: { summary: 'string | number' }, category: 'General' },
-  },
+  ...ReferenceComponentGeneralArgs,
   x1: {
     description:
       'A boundary value of the area. If the specified x-axis is a number axis, the type of x must be Number. If the specified x-axis is a category axis, the value of x must be one of the categories. If x1 is not set, the first value on the x-axis is used instead. If one of x1 or x2 is invalid, the area will not be drawn.',
@@ -82,22 +75,10 @@ const GeneralProps: Args = {
 };
 
 const InternalProps: Args = {
+  ...ReferenceComponentInternalArgs,
   viewBox: {
     description: 'The box of the viewing area, usually calculated internally.',
     table: { type: { summary: '{x: number, y: number, width: number, height: number}' }, category: 'Internal' },
-  },
-  xAxis: {
-    description: 'The configuration of the corresponding x-axis, usually calculated internally.',
-    table: { type: { summary: 'Object' }, category: 'Internal' },
-  },
-  yAxis: {
-    description: 'The configuration of the corresponding y-axis, usually calculated internally.',
-    table: { type: { summary: 'Object' }, category: 'Internal' },
-  },
-  clipPathId: {
-    description:
-      "Used as the id for the clip path which is used to clip the reference box if 'ifOverflow' is set to 'hidden'",
-    table: { type: { summary: 'number | string' }, category: 'Internal' },
   },
 };
 

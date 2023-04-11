@@ -6,17 +6,16 @@ import { Bar, BarChart, ReferenceDot, CartesianGrid, XAxis, YAxis, ResponsiveCon
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { EventHandlers } from '../props/EventHandlers';
-import { AnimationProps } from '../props/AnimationProps';
+import { r } from '../props/DotProps';
+import { GeneralStyle } from '../props/Styles';
+import {
+  ReferenceComponentGeneralArgs,
+  ReferenceComponentInternalArgs,
+  ReferenceComponentStyle,
+} from '../props/ReferenceComponentShared';
 
 const GeneralProps: Args = {
-  xAxisId: {
-    description: 'The id of x-axis which is corresponding to the data.',
-    table: { type: { summary: 'string | number' }, category: 'General' },
-  },
-  yAxisId: {
-    description: 'The id of y-axis which is corresponding to the data.',
-    table: { type: { summary: 'string | number' }, category: 'General' },
-  },
+  ...ReferenceComponentGeneralArgs,
   x: {
     description: `If the x-axis specified by xAxisId is a number axis, the type of x must be Number. 
       If the x-axis specified by xAxisId is a category axis, the value of x must be one of 
@@ -29,18 +28,6 @@ const GeneralProps: Args = {
       the categories, otherwise no dot will be drawn.`,
     table: { type: { summary: 'number | string' }, category: 'General' },
   },
-  xAxis: {
-    description: 'The configuration of the corresponding x-axis, usually calculated internally.',
-    table: { type: { summary: 'object' }, category: 'General' },
-  },
-  ifOverflow: {
-    description: `Defines how to draw the reference dot if it falls partly outside the canvas. If set to 'discard', 
-    the reference dot will not be drawn at all. If set to 'hidden', the reference dot will be clipped to the canvas. 
-    If set to 'visible', the reference dot will be drawn completely. If set to 'extendDomain', 
-    the domain of the overflown axis will be extended such that the reference dot fits into the canvas.`,
-    table: { type: { summary: "'discard' | 'hidden' | 'visible' | 'extendDomain'" }, category: 'General' },
-    default: 'discard',
-  },
 };
 
 const LabelProps: Args = {
@@ -48,42 +35,22 @@ const LabelProps: Args = {
     description: `If set a string or a number, default label will be drawn, and the option is content. 
     If set a React element, the option is the custom react element of drawing label. If set a function, 
     the function will be called to render customized label.`,
-    table: { type: { summary: 'string | number | ReactElement | Function' }, category: 'Label' },
+    table: {
+      type: {
+        summary: 'string | number | ReactElement | Function',
+        detail:
+          '<ReferenceDot x="a" y={400} label="MAX"/>\n' +
+          '<ReferenceDot x="a" y={400} label={<CustomizedLabel />}/>\n' +
+          '<ReferenceDot x="a" y={400} label={renderLabel} />',
+      },
+      category: 'Label',
+    },
   },
 };
 
 const StyleProps: Args = {
-  r: {
-    description: 'The radius of the dot.',
-    control: { type: 'number' },
-    table: {
-      type: {
-        summary: 'number',
-      },
-      category: 'Style',
-    },
-    defaultValue: 10,
-  },
-  fill: {
-    control: { type: 'color' },
-    table: { category: 'Style' },
-    defaultValue: '#fff',
-  },
-  stroke: {
-    control: { type: 'color' },
-    table: { category: 'Style' },
-    defaultValue: '#ccc',
-  },
-  strokeWidth: {
-    description: 'The width of the stroke.',
-    table: {
-      type: {
-        summary: 'string | number',
-      },
-      category: 'Style',
-    },
-    defaultValue: 1,
-  },
+  ...GeneralStyle,
+  ...ReferenceComponentStyle,
   shape: {
     description: `If set a ReactElement, the shape of dot can be customized. If set a function, 
     the function will be called to render customized shape.`,
@@ -98,11 +65,13 @@ const StyleProps: Args = {
 
 export default {
   argTypes: {
-    ...EventHandlers,
-    ...AnimationProps,
+    ...StyleProps,
     ...GeneralProps,
     ...LabelProps,
-    ...StyleProps,
+    ...ReferenceComponentInternalArgs,
+    ...EventHandlers,
+    // Dot
+    r,
     // Deprecated
     dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
     alwaysShow: {
@@ -113,11 +82,6 @@ export default {
       disable: true,
       default: false,
     },
-    // Other
-    xAxis: { table: { category: 'Other' } },
-    yAxis: { table: { category: 'Other' } },
-    // Internal
-    data: { table: { category: 'Internal' } },
   },
   component: ReferenceDot,
 };
