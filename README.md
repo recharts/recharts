@@ -101,4 +101,4 @@ and then browse to http://localhost:6006.
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2015-2022 Recharts Group.
+Copyright (c) 2015-2023 Recharts Group.
