@@ -1110,7 +1110,7 @@ export interface BaseAxisProps {
   label?: string | number | ReactElement | object;
 }
 
-export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
+export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart';
 
 export interface TickItem {
   value?: any;
