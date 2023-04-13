@@ -130,14 +130,31 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
     this.updateBBox();
   }
 
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyDown);
+  }
+
   componentDidUpdate() {
     this.updateBBox();
   }
 
+  handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      this.setState({
+        dismissed: true,
+        dismissedAtCoordinate: {
+          ...this.state.dismissedAtCoordinate,
+          x: this.props.coordinate.x,
+          y: this.props.coordinate.y,
+        },
+      });
+    }
+  };
+
   updateBBox() {
     const { boxWidth, boxHeight, dismissed } = this.state;
     if (dismissed) {
-      this.wrapperNode.blur();
+      document.removeEventListener('keydown', this.handleKeyDown);
       if (
         this.props.coordinate.x !== this.state.dismissedAtCoordinate.x ||
         this.props.coordinate.y !== this.state.dismissedAtCoordinate.y
@@ -145,7 +162,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
         this.setState({ dismissed: false });
       }
     } else {
-      this.wrapperNode.focus({ preventScroll: true });
+      document.addEventListener('keydown', this.handleKeyDown);
     }
 
     if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
@@ -277,18 +294,6 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       <div
         tabIndex={-1}
         role="dialog"
-        onKeyDown={event => {
-          if (event.key === 'Escape') {
-            this.setState({
-              dismissed: true,
-              dismissedAtCoordinate: {
-                ...this.state.dismissedAtCoordinate,
-                x: this.props.coordinate.x,
-                y: this.props.coordinate.y,
-              },
-            });
-          }
-        }}
         className={cls}
         style={outerStyle}
         ref={node => {
