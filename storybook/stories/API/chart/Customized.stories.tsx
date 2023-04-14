@@ -15,6 +15,7 @@ import {
 import { pageData } from '../../data';
 
 export default {
+  tags: ['autodocs'],
   component: Customized,
   parameters: {
     controls: { include: ['data'] },
@@ -23,12 +24,13 @@ export default {
 
 const SimpleCustomized = {
   render: (args: Record<string, any>) => {
+    const { data } = args;
     return (
       <ResponsiveContainer width="100%" height={500}>
         <LineChart
           width={500}
           height={300}
-          data={args.data}
+          data={data}
           margin={{
             top: 5,
             right: 30,

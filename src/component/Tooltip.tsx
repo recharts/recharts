@@ -1,7 +1,16 @@
 /**
  * @fileOverview Tooltip
  */
-import React, { CSSProperties, ReactNode, ReactElement, SVGProps, useEffect, useState, useRef } from 'react';
+import React, {
+  CSSProperties,
+  ReactNode,
+  ReactElement,
+  SVGProps,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from 'react';
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import classNames from 'classnames';
@@ -127,39 +136,60 @@ const Tooltip = <TValue extends ValueType, TName extends NameType>(
   const wrapperNode = useRef<HTMLDivElement>();
   const { allowEscapeViewBox, reverseDirection, coordinate, offset, position, viewBox } = props;
 
-  const updateBBox = () => {
-    const { boxWidth, boxHeight, dismissed } = state;
-    if (dismissed) {
-      wrapperNode.current.blur();
-      if (coordinate.x !== state.dismissedAtCoordinate.x || coordinate.y !== state.dismissedAtCoordinate.y) {
-        setState(prev => ({ ...prev, dismissed: false }));
-      }
-    } else {
-      wrapperNode.current?.focus({ preventScroll: true });
-    }
-
-    if (wrapperNode.current && wrapperNode.current.getBoundingClientRect) {
-      const box = wrapperNode.current.getBoundingClientRect();
-
-      if (Math.abs(box.width - boxWidth) > EPS || Math.abs(box.height - boxHeight) > EPS) {
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
         setState(prev => ({
           ...prev,
-          boxWidth: box.width,
-          boxHeight: box.height,
+          dismissed: true,
+          dismissedAtCoordinate: {
+            ...prev.dismissedAtCoordinate,
+            x: coordinate.x,
+            y: coordinate.y,
+          },
         }));
       }
-    } else if (boxWidth !== -1 || boxHeight !== -1) {
-      setState(prev => ({
-        ...prev,
-        boxWidth: -1,
-        boxHeight: -1,
-      }));
-    }
-  };
+    },
+    [coordinate.x, coordinate.y],
+  );
 
   useEffect(() => {
+    const updateBBox = () => {
+      const { boxWidth, boxHeight, dismissed } = state;
+      if (dismissed) {
+        document.removeEventListener('keydown', handleKeyDown);
+        if (coordinate.x !== state.dismissedAtCoordinate.x || coordinate.y !== state.dismissedAtCoordinate.y) {
+          setState(prev => ({ ...prev, dismissed: false }));
+        }
+      } else {
+        document.addEventListener('keydown', handleKeyDown);
+      }
+
+      if (wrapperNode.current && wrapperNode.current.getBoundingClientRect) {
+        const box = wrapperNode.current.getBoundingClientRect();
+
+        if (Math.abs(box.width - boxWidth) > EPS || Math.abs(box.height - boxHeight) > EPS) {
+          setState(prev => ({
+            ...prev,
+            boxWidth: box.width,
+            boxHeight: box.height,
+          }));
+        }
+      } else if (boxWidth !== -1 || boxHeight !== -1) {
+        setState(prev => ({
+          ...prev,
+          boxWidth: -1,
+          boxHeight: -1,
+        }));
+      }
+    };
+
     updateBBox();
-  }, []);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [coordinate.x, coordinate.y, handleKeyDown, state]);
 
   const getTranslate = ({
     key,
@@ -275,25 +305,7 @@ const Tooltip = <TValue extends ValueType, TName extends NameType>(
     // ESLint is disabled to allow listening to the `Escape` key. Refer to
     // https://github.com/recharts/recharts/pull/2925
     // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-    <div
-      role="dialog"
-      onKeyDown={event => {
-        if (event.key === 'Escape') {
-          setState(prev => ({
-            ...prev,
-            dismissed: true,
-            dismissedAtCoordinate: {
-              ...prev.dismissedAtCoordinate,
-              x: coordinate.x,
-              y: coordinate.y,
-            },
-          }));
-        }
-      }}
-      className={cls}
-      style={outerStyle}
-      ref={wrapperNode}
-    >
+    <div tabIndex={-1} role="dialog" className={cls} style={outerStyle} ref={wrapperNode}>
       {renderContent(content, {
         ...props,
         payload: finalPayload,

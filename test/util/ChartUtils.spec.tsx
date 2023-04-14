@@ -1,4 +1,4 @@
-import { scaleBand, scaleLinear } from 'victory-vendor/d3-scale';
+import { scaleBand, scaleLinear, scalePoint } from 'victory-vendor/d3-scale';
 import React from 'react';
 
 import { Area, Bar, ErrorBar, Line, Scatter } from '../../src';
@@ -15,8 +15,160 @@ import {
   offsetSign,
   parseScale,
   parseSpecifiedDomain,
+  getTicksOfAxis,
 } from '../../src/util/ChartUtils';
 import { DataKey } from '../../src/util/types';
+
+describe('getTicksForAxis', () => {
+  const Y_AXIS_EXAMPLE = {
+    scale: scaleLinear(),
+    allowDuplicatedCategory: true,
+    allowDecimals: true,
+    hide: false,
+    orientation: 'left' as const,
+    width: 60,
+    height: 211.5,
+    mirror: false,
+    yAxisId: 0,
+    tickCount: 5,
+    type: 'number' as const,
+    padding: {
+      top: 0,
+      bottom: 0,
+    },
+    allowDataOverflow: false,
+    reversed: false,
+    axisType: 'yAxis' as const,
+    domain: [0, 1520],
+    originalDomain: [0, 'auto' as const],
+    isCategorical: false,
+    layout: 'horizontal' as const,
+    niceTicks: [0, 400, 800, 1200, 1600],
+    realScaleType: 'linear' as const,
+    x: 20,
+    y: 20,
+    bandSize: 0,
+    className: 'recharts-yAxis yAxis',
+    viewBox: {
+      x: 0,
+      y: 0,
+      width: 782,
+      height: 300,
+    },
+    stroke: '#666',
+    tickLine: true,
+    axisLine: true,
+    tick: true,
+    minTickGap: 5,
+    tickSize: 6,
+    tickMargin: 2,
+    interval: 'preserveEnd' as const,
+  };
+
+  it('Returns null for null', () => {
+    expect(getTicksOfAxis(null)).toBeNull();
+  });
+
+  it('Ticks without a valid coordinate are filtered out, such as with a PointScale and an active Brush, filtering the domain.', () => {
+    const XAxisWithActiveBrush = {
+      scale: scalePoint().domain(['13', '14', '15', '16', '17']).range([5, 866]),
+      dataKey: 'name',
+      interval: 0,
+      ticks: ['12', '13', '14', '15', '16', '17', '18', '19'],
+      allowDecimals: true,
+      hide: false,
+      orientation: 'bottom' as const,
+      width: 772,
+      height: 30,
+      mirror: false,
+      xAxisId: 0,
+      tickCount: 5,
+      type: 'category' as const,
+      padding: {
+        left: 0,
+        right: 0,
+      },
+      allowDataOverflow: false,
+      reversed: false,
+      allowDuplicatedCategory: true,
+      axisType: 'xAxis' as const,
+      domain: ['13', '14', '15', '16', '17'],
+      isCategorical: true,
+      layout: 'horizontal' as const,
+      realScaleType: 'point' as const,
+      x: 5,
+      y: 325,
+      bandSize: 0,
+      className: 'recharts-xAxis xAxis',
+      viewBox: {
+        x: 0,
+        y: 0,
+        width: 782,
+        height: 400,
+      },
+      stroke: '#666',
+      tickLine: true,
+      axisLine: true,
+      tick: true,
+      minTickGap: 5,
+      tickSize: 6,
+      tickMargin: 2,
+    };
+
+    expect(getTicksOfAxis(XAxisWithActiveBrush, true, undefined)).toEqual([
+      {
+        coordinate: 5,
+        offset: 0,
+        value: '13',
+      },
+      {
+        coordinate: 220.25,
+        offset: 0,
+        value: '14',
+      },
+      {
+        coordinate: 435.5,
+        offset: 0,
+        value: '15',
+      },
+      {
+        coordinate: 650.75,
+        offset: 0,
+        value: '16',
+      },
+      {
+        coordinate: 866,
+        offset: 0,
+        value: '17',
+      },
+    ]);
+  });
+
+  it('Works for yAxis', () => {
+    expect(getTicksOfAxis(Y_AXIS_EXAMPLE, true, undefined)).toEqual([
+      { coordinate: 0, offset: 0, value: 0 },
+      { coordinate: 400, offset: 0, value: 400 },
+      { coordinate: 800, offset: 0, value: 800 },
+      { coordinate: 1200, offset: 0, value: 1200 },
+      { coordinate: 1600, offset: 0, value: 1600 },
+    ]);
+  });
+
+  it('Tick coordinates depend on scale', () => {
+    const axis = {
+      ...Y_AXIS_EXAMPLE,
+      scale: scaleLinear().domain([0, 1600]).range([0, 1000]),
+    };
+
+    expect(getTicksOfAxis(axis, true, undefined)).toEqual([
+      { coordinate: 0, offset: 0, value: 0 },
+      { coordinate: 250, offset: 0, value: 400 },
+      { coordinate: 500, offset: 0, value: 800 },
+      { coordinate: 750, offset: 0, value: 1200 },
+      { coordinate: 1000, offset: 0, value: 1600 },
+    ]);
+  });
+});
 
 describe('getBandSizeOfAxis', () => {
   it('DataUtils.getBandSizeOfAxis() should return 0 ', () => {
@@ -137,7 +289,7 @@ describe('offsetSign', () => {
 });
 
 describe('getTicksOfScale', () => {
-  describe('of linear scale with auto domain', () => {
+  it('of linear scale with auto domain', () => {
     const scale = scaleLinear();
     const opts = {
       scale: 'linear',
@@ -151,7 +303,7 @@ describe('getTicksOfScale', () => {
     expect(result?.niceTicks).toEqual([0, 0.25, 0.5, 0.75, 1]);
   });
 
-  describe('of linear scale with specified domain', () => {
+  it('of linear scale with specified domain', () => {
     const scale = scaleLinear();
     const opts = {
       scale: 'linear',

@@ -5,14 +5,19 @@ import { scaleTime } from 'd3-scale';
 import { timeFormat } from 'd3-time-format';
 import { timeDay, timeHour, timeMinute, timeMonth, timeSecond, timeWeek, timeYear } from 'd3-time';
 import { timeData } from '../data';
-import { ComposedChart, Line, ResponsiveContainer, XAxis } from '../../../src';
+import { ComposedChart, Line, ResponsiveContainer, XAxis, Tooltip } from '../../../src';
+import { Props as XAxisProps } from '../../../src/cartesian/XAxis';
 
 export default {
   component: XAxis,
 };
 
+interface Args {
+  data: { x: Date; y: number }[];
+}
+
 const StoryTemplate = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <ComposedChart
@@ -82,7 +87,7 @@ function multiFormat(date: Date) {
 
 export const WithD3Scale = {
   ...StoryTemplate,
-  render: args => {
+  render: (args: Args) => {
     const timeValues = args.data.map(row => row.x);
     // The d3 scaleTime domain requires numeric values
     const numericValues = timeValues.map(time => time.valueOf());
@@ -91,11 +96,11 @@ export const WithD3Scale = {
       .domain([Math.min(...numericValues), Math.max(...numericValues)])
       .nice();
 
-    const xAxisArgs = {
+    const xAxisArgs: XAxisProps = {
       domain: timeScale.domain().map(date => date.valueOf()),
       scale: timeScale,
-      xAxisType: 'number' as const,
-      ticks: timeScale.ticks(5) as any,
+      type: 'number',
+      ticks: timeScale.ticks(5).map(date => date.valueOf()),
       tickFormatter: multiFormat,
     };
 
@@ -112,6 +117,7 @@ export const WithD3Scale = {
         >
           <XAxis dataKey="x" {...args} {...xAxisArgs} />
           <Line dataKey="y" />
+          <Tooltip />
         </ComposedChart>
       </ResponsiveContainer>
     );

@@ -573,7 +573,20 @@ export const getCoordinatesOfGrid = (ticks: Array<TickItem>, min: number, max: n
  * @param {Boolean} isAll Return the ticks of all the points or not
  * @return {Array}  Ticks
  */
-export const getTicksOfAxis = (axis: any, isGrid?: boolean, isAll?: boolean): TickItem[] => {
+export const getTicksOfAxis = (
+  axis: BaseAxisProps & {
+    duplicateDomain?: any;
+    realScaleType?: 'scaleBand' | 'band' | 'point' | 'linear';
+    scale?: any;
+    axisType?: AxisType;
+    ticks?: any;
+    niceTicks?: any;
+    isCategorical?: boolean;
+    categoricalDomain?: any;
+  },
+  isGrid?: boolean,
+  isAll?: boolean,
+): TickItem[] | null => {
   if (!axis) return null;
   const { scale } = axis;
   const { duplicateDomain, type, range } = axis;
@@ -581,19 +594,23 @@ export const getTicksOfAxis = (axis: any, isGrid?: boolean, isAll?: boolean): Ti
   const offsetForBand = axis.realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
   let offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
 
-  offset = axis.axisType === 'angleAxis' ? mathSign(range[0] - range[1]) * 2 * offset : offset;
+  offset = axis.axisType === 'angleAxis' && range?.length >= 2 ? mathSign(range[0] - range[1]) * 2 * offset : offset;
 
-  // The ticks setted by user should only affect the ticks adjacent to axis line
+  // The ticks set by user should only affect the ticks adjacent to axis line
   if (isGrid && (axis.ticks || axis.niceTicks)) {
-    return (axis.ticks || axis.niceTicks).map((entry: TickItem) => {
+    const result = (axis.ticks || axis.niceTicks).map((entry: TickItem) => {
       const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
       return {
+        // If the scaleContent is not a number, the coordinate will be NaN.
+        // That could be the case for example with a PointScale and a string as domain.
         coordinate: scale(scaleContent) + offset,
         value: entry,
         offset,
       };
     });
+
+    return result.filter((row: TickItem) => !_.isNaN(row.coordinate));
   }
 
   // When axis is a categorial axis, but the type of axis is number or the scale of axis is not "auto"

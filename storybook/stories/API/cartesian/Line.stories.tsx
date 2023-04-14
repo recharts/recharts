@@ -1,78 +1,86 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
-import { Surface, Line, ResponsiveContainer, ComposedChart } from '../../../../src';
-import { coordinateWithNullY, coordinateData, coordinateWithValueData } from '../../data';
+import { StoryObj } from '@storybook/react';
+import { Surface, Line, ResponsiveContainer, ComposedChart, Legend, Tooltip, XAxis, YAxis } from '../../../../src';
+import { coordinateData, pageData } from '../../data';
+import { EventHandlers } from '../props/EventHandlers';
+import { AnimationProps } from '../props/AnimationProps';
+import { legendType } from '../props/Legend';
+import { LineStyle } from '../props/Styles';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+import { General as GeneralProps, Internal } from '../props/CartesianComponentShared';
+import { ResponsiveProps } from '../props/Responsive';
 
 export default {
-  component: Line,
   argTypes: {
-    connectNulls: {
-      control: {
-        type: 'boolean',
-      },
-    },
-    stroke: {
-      control: { type: 'color' },
-    },
-    fill: {
-      control: { type: 'color' },
-    },
-    type: {
-      // TODO: These options should be generated from the type directly instead of duplicating the type information here. Will iterate.
-      options: [
-        'basis',
-        'basisClosed',
-        'basisOpen',
-        'linear',
-        'linearClosed',
-        'natural',
-        'monotoneX',
-        'monotoneY',
-        'monotone',
-        'step',
-        'stepBefore',
-        'stepAfter',
-      ],
-      control: {
-        type: 'select',
-      },
-    },
+    ...EventHandlers,
+    ...AnimationProps,
+    legendType,
+    ...GeneralProps,
+    ...Internal,
+    ...ResponsiveProps,
+    ...LineStyle,
+    // Deprecated
+    dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
+    // Other
+    baseLine: { table: { category: 'Other' } },
+    left: { table: { category: 'Other' } },
+    top: { table: { category: 'Other' } },
+    xAxis: { table: { category: 'Other' } },
+    yAxis: { table: { category: 'Other' } },
   },
+  component: Line,
 };
 
-export const Simple = {
+export const AllProps = {
   render: (args: Record<string, any>) => {
-    const [height, width] = [300, 300];
-
-    const { data, ...lineArgs } = args;
     return (
-      <ResponsiveContainer width="100%" height={height}>
+      <ResponsiveContainer width="100%" height={300}>
         <ComposedChart
-          width={width}
-          height={height}
           margin={{
             top: 20,
             right: 20,
             bottom: 20,
             left: 20,
           }}
-          data={data}
+          data={pageData}
         >
-          {/* Setting a default for the dataKey here, allows us to hide the dataKey
-          as a control in other stories, yet reusing the same template. */}
-          <Line isAnimationActive={false} dataKey="y" {...lineArgs} />
+          <Line isAnimationActive={false} dataKey="uv" {...args} />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+};
+
+export const General: StoryObj = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={300}>
+        <ComposedChart
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+          data={pageData}
+        >
+          <Line isAnimationActive={false} dataKey="uv" {...args} />
+          {/* All further components are added to show the interaction with the Line properties */}
+          <Legend />
+          <Tooltip />
+          <XAxis dataKey="name" />
+          <YAxis />
         </ComposedChart>
       </ResponsiveContainer>
     );
   },
   args: {
-    data: coordinateWithValueData,
-    dataKey: 'y',
+    ...getStoryArgsFromArgsTypesObject(GeneralProps),
   },
   parameters: {
-    controls: { include: ['data', 'dataKey'] },
+    controls: { include: Object.keys(GeneralProps) },
     docs: {
       description: {
         story: 'The dataKey defines the y-Values of a Line. Without an xAxis, the index is used for x.',
@@ -81,15 +89,20 @@ export const Simple = {
   },
 };
 
-export const LineFromData = {
-  ...Simple,
+export const Style: StoryObj = {
+  ...General,
   args: {
-    data: coordinateWithNullY,
+    ...getStoryArgsFromArgsTypesObject(LineStyle),
     type: 'linear',
-    connectNulls: false,
+    connectNulls: true,
+    stroke: 'red',
+    fill: 'teal',
+    strokeDasharray: '4 1',
+    label: { fill: 'red', fontSize: 20 },
+    dot: { stroke: 'green', strokeWidth: 2 },
   },
   parameters: {
-    controls: { include: ['type', 'connectNulls'] },
+    controls: { include: Object.keys(LineStyle) },
     docs: {
       description: {
         story:
@@ -100,21 +113,36 @@ export const LineFromData = {
   },
 };
 
-export const Style = {
-  ...Simple,
+export const Responsive: StoryObj = {
+  ...General,
   args: {
-    data: coordinateWithValueData,
-    stroke: 'red',
-    fill: 'teal',
-    dot: { r: 10 },
-    type: 'linear',
+    ...getStoryArgsFromArgsTypesObject(ResponsiveProps),
+    activeDot: { stroke: 'green', strokeWidth: 2 },
+    tooltipType: 'responsive',
   },
   parameters: {
-    controls: { include: ['stroke', 'fill', 'type'] },
+    controls: {
+      include: Object.keys(ResponsiveProps),
+      tooltipType: { type: 'select', options: ['responsive', 'none'] },
+    },
     docs: {
       description: {
-        story: 'The type, fill and stroke define the style of a line.',
+        story: '', // TODO
       },
+    },
+  },
+};
+
+export const Animation: StoryObj = {
+  ...General,
+  args: {
+    ...getStoryArgsFromArgsTypesObject(AnimationProps),
+    isAnimationActive: true,
+  },
+  parameters: {
+    controls: { include: Object.keys(AnimationProps) },
+    docs: {
+      description: { story: 'Reloading the story triggers the animation.' },
     },
   },
 };
@@ -131,17 +159,15 @@ const renderDot = (props: { cx: number; cy: number }) => {
 };
 
 export const CustomizedDot = {
-  ...Simple,
+  ...General,
   args: {
-    data: coordinateWithValueData,
-    isAnimationActive: true,
     dot: renderDot,
   },
   parameters: {
-    controls: {},
+    controls: { include: ['dot'] },
     docs: {
       description: {
-        story: 'The dot of the line can be customised. Find further possible behaviour on the Dot stories.',
+        story: 'The dot of the line can be customized. Find further possible behaviour on the Dot stories.',
       },
     },
   },
@@ -157,24 +183,29 @@ const renderLabel = (props: { index: number; x: number; y: number }) => {
   );
 };
 
-export const CustomizedLabel = {
-  ...Simple,
+export const CustomizedLabel: StoryObj = {
+  ...General,
   args: {
-    data: coordinateWithValueData,
     isAnimationActive: false,
     label: renderLabel,
   },
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const { getAllByText } = within(canvasElement);
-
     // to make getAllByText works
     await new Promise(r => setTimeout(r, 0));
-
-    await expect(getAllByText(/Customized Label/)).toHaveLength(5);
+    expect(getAllByText(/Customized Label/)).toHaveLength(pageData.length);
+  },
+  parameters: {
+    controls: { include: ['label'] },
+    docs: {
+      description: {
+        story: 'The dot of the line can be customized. Find further possible behaviour on the Dot stories.',
+      },
+    },
   },
 };
 
-export const Points = {
+export const Points: StoryObj = {
   render: (args: Record<string, any>) => {
     const { points } = args;
 

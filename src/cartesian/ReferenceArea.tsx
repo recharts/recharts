@@ -67,32 +67,7 @@ const getRect = (hasX1: boolean, hasX2: boolean, hasY1: boolean, hasY2: boolean,
   return rectWithPoints(p1, p2);
 };
 
-export function ReferenceArea({
-  isFront = false,
-  ifOverflow = 'discard',
-  xAxisId = 0,
-  yAxisId = 0,
-  r = 10,
-  fill = '#ccc',
-  fillOpacity = 0.5,
-  stroke = 'none',
-  strokeWidth = 1,
-  ...restProps
-}: Props) {
-  // Props with default values added.
-  const props: Props = {
-    isFront,
-    ifOverflow,
-    xAxisId,
-    yAxisId,
-    r,
-    fill,
-    fillOpacity,
-    stroke,
-    strokeWidth,
-    ...restProps,
-  };
-
+export function ReferenceArea(props: Props) {
   const { x1, x2, y1, y2, className, alwaysShow, clipPathId } = props;
 
   warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
@@ -125,6 +100,17 @@ export function ReferenceArea({
 }
 
 ReferenceArea.displayName = 'ReferenceArea';
+ReferenceArea.defaultProps = {
+  isFront: false,
+  ifOverflow: 'discard',
+  xAxisId: 0,
+  yAxisId: 0,
+  r: 10,
+  fill: '#ccc',
+  fillOpacity: 0.5,
+  stroke: 'none',
+  strokeWidth: 1,
+};
 
 ReferenceArea.renderRect = (option: ReferenceAreaProps['shape'], props: any) => {
   let rect;

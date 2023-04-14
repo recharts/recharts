@@ -3,6 +3,7 @@ import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from '../../../../
 import { pageData } from '../../data';
 
 export default {
+  tags: ['autodocs'],
   component: BarChart,
 };
 
