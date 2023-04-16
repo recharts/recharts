@@ -1,17 +1,6 @@
 import { Args } from '@storybook/react';
 import { onClick, onMouseDown, onMouseEnter, onMouseLeave, onMouseMove, onMouseUp } from './EventHandlers';
 
-// These props are shared between the following charts:
-// - AreaChart
-// - BarChart
-// - ComposedChart
-// - LineChart
-// - PieChart
-// - RadarChart
-// - RadialBarChart
-// - ScatterChart
-// - FunnelChart
-
 export const data = {
   description: 'The source data, in which each element is an object.',
   table: {
