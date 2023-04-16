@@ -45,6 +45,17 @@ export const margin = {
   },
 };
 
+
+// These props are shared between the following charts:
+// - AreaChart
+// - BarChart
+// - ComposedChart
+// - LineChart
+// - PieChart
+// - RadarChart
+// - RadialBarChart
+// - ScatterChart
+// - FunnelChart
 export const CategoricalChartProps: Args = {
   ...ChartSizeProps,
   data,
