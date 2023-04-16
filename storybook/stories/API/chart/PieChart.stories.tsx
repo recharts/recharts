@@ -1,74 +1,11 @@
 import React from 'react';
-import { Args } from '@storybook/react';
 import { Pie, PieChart, ResponsiveContainer } from '../../../../src';
 import { pageData } from '../../data';
-
-const GeneralProps: Args = {
-  width: {
-    description: 'The width of chart container.',
-    table: {
-      type: {
-        summary: 'Number',
-        defaultValue: null,
-      },
-      category: 'General',
-    },
-  },
-  height: {
-    description: 'The height of chart container.',
-    table: {
-      type: {
-        summary: 'Number',
-        defaultValue: null,
-      },
-      category: 'General',
-    },
-  },
-  margin: {
-    description: 'The sizes of whitespace around the container.',
-    table: {
-      type: {
-        summary: 'Object',
-        defaultValue: { top: 0, right: 0, bottom: 0, left: 0 },
-      },
-      category: 'General',
-    },
-  },
-  onClick: {
-    description: 'The function will be called when click sectors of a pie chart.',
-    table: {
-      type: {
-        summary: 'Function',
-        defaultValue: null,
-      },
-      category: 'General',
-    },
-  },
-  onMouseEnter: {
-    description: 'The function will be called when mouse enter sectors of a pie chart.',
-    table: {
-      type: {
-        summary: 'Function',
-        defaultValue: null,
-      },
-      category: 'General',
-    },
-  },
-  onMouseLeave: {
-    description: 'The function will be called when mouse leave sectors of a pie chart.',
-    table: {
-      type: {
-        summary: 'Function',
-        defaultValue: null,
-      },
-      category: 'General',
-    },
-  },
-};
+import { CategoricalChartProps } from '../props/ChartProps';
 
 export default {
   argTypes: {
-    ...GeneralProps,
+    ...CategoricalChartProps,
   },
   component: PieChart,
 };
