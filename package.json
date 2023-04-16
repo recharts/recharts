@@ -93,7 +93,7 @@
     "@storybook/jest": "^0.0.11-next.0",
     "@storybook/react": "^7.0.0-beta.47",
     "@storybook/react-webpack5": "^7.0.0-beta.47",
-    "@storybook/test-runner": "^0.9.4",
+    "@storybook/test-runner": "^0.10.0",
     "@storybook/testing-library": "^0.0.14-next.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.1.5",
