@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 import { Surface, Cross } from '../../src';
+import { getPath } from '../../src/shape/Cross';
 
 describe('<Cross />', () => {
   it('Render 1 path in Cross', () => {
@@ -21,5 +22,15 @@ describe('<Cross />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-cross')).toHaveLength(0);
+  });
+
+  it('Renders path with default values when no props are provided', () => {
+    const { container } = render(
+      <Surface width={400} height={400}>
+        <Cross />
+      </Surface>,
+    );
+
+    expect(container.querySelector('.recharts-cross')).toHaveAttribute('d', getPath(0, 0, 0, 0, 0, 0));
   });
 });
