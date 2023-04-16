@@ -1,4 +1,5 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import {
   LineChart,
   XAxis,
@@ -14,8 +15,22 @@ import {
 } from '../../../../src';
 import { pageData } from '../../data';
 
+const GeneralProps: Args = {
+  component: {
+    description: `Use react element or function to render arbitrary customized content 
+      which can use the internal state and props of chart.`,
+    table: {
+      type: {
+        summary: 'ReactElement | Function',
+        defaultValue: null,
+      },
+      category: 'General',
+    },
+  },
+};
+
 export default {
-  tags: ['autodocs'],
+  argTypes: { ...GeneralProps },
   component: Customized,
   parameters: {
     controls: { include: ['data'] },
