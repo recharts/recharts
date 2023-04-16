@@ -1,8 +1,90 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { Funnel, FunnelChart, LabelList, ResponsiveContainer } from '../../../../src';
 
+const GeneralProps: Args = {
+  layout: {
+    description: 'The layout of bars in the chart.',
+    table: {
+      type: {
+        summary: '"centric"',
+        defaultValue: '"centric"',
+      },
+      category: 'General',
+    },
+  },
+  width: {
+    description: 'The width of chart container.',
+    table: {
+      type: {
+        summary: 'Number',
+        defaultValue: undefined,
+      },
+      category: 'General',
+    },
+  },
+  height: {
+    description: 'The height of chart container.',
+    table: {
+      type: {
+        summary: 'Number',
+        defaultValue: undefined,
+      },
+      category: 'General',
+    },
+  },
+  margin: {
+    description: 'The sizes of whitespace around the container.',
+    table: {
+      type: {
+        summary: 'Object',
+        defaultValue: { top: 5, right: 5, bottom: 5, left: 5 },
+      },
+      category: 'General',
+    },
+  },
+  onClick: {
+    description: 'The customized event handler of click in this chart.',
+    table: {
+      type: {
+        summary: 'Function',
+      },
+      category: 'General',
+    },
+  },
+  onMouseEnter: {
+    description: 'The customized event handler of mouseenter in this chart.',
+    table: {
+      type: {
+        summary: 'Function',
+      },
+      category: 'General',
+    },
+  },
+  onMouseMove: {
+    description: 'The customized event handler of mousemove in this chart.',
+    table: {
+      type: {
+        summary: 'Function',
+      },
+      category: 'General',
+    },
+  },
+  onMouseLeave: {
+    description: 'The customized event handler of mouseleave in this chart.',
+    table: {
+      type: {
+        summary: 'Function',
+      },
+      category: 'General',
+    },
+  },
+};
+
 export default {
-  tags: ['autodocs'],
+  argTypes: {
+    ...GeneralProps,
+  },
   component: FunnelChart,
 };
 
