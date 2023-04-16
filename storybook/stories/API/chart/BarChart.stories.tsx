@@ -15,7 +15,7 @@ const GeneralProps: Args = {
     },
   },
   syncId: {
-    description: `If any two categorical charts(LineChart, AreaChart, BarChart, ComposedChart) have the same syncId, 
+    description: `If any two categorical charts (LineChart, AreaChart, BarChart, ComposedChart) have the same syncId, 
     these two charts can sync the position tooltip, and the startIndex, endIndex of Brush.`,
     table: {
       type: {
