@@ -45,7 +45,6 @@ export const margin = {
   },
 };
 
-
 // These props are shared between the following charts:
 // - AreaChart
 // - BarChart
