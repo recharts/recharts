@@ -11,6 +11,7 @@ describe('<Trapezoid />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-trapezoid')).toHaveLength(1);
+    expect(container).toMatchSnapshot();
   });
 
   test('Render 1 Trapezoid with animation in simple Trapezoid', () => {
@@ -21,6 +22,7 @@ describe('<Trapezoid />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-trapezoid')).toHaveLength(1);
+    expect(container).toMatchSnapshot();
   });
 
   test("Don't render any Trapezoid when props is invalid", () => {
@@ -32,5 +34,6 @@ describe('<Trapezoid />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-trapezoid')).toHaveLength(0);
+    expect(container).toMatchSnapshot();
   });
 });
