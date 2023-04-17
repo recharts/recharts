@@ -112,7 +112,7 @@ const GeneralProps: Args = {
       the ticks which is to be shown or hidden will be calculated automatically.`,
     table: {
       type: {
-        summary: '"preserveStart" | "preserveEnd" | "preserveStartEnd" | Number',
+        summary: '"preserveStart" | "preserveEnd" | "preserveStartEnd" | "equidistantPreserveStart" | Number',
         defaultValue: 'preserveEnd',
       },
       category: 'General',
