@@ -18,7 +18,7 @@ interface CrossProps {
 
 export type Props = SVGProps<SVGPathElement> & CrossProps;
 
-export const getPath = (x: number, y: number, width: number, height: number, top: number, left: number) => {
+const getPath = (x: number, y: number, width: number, height: number, top: number, left: number) => {
   return `M${x},${top}v${height}M${left},${y}h${width}`;
 };
 

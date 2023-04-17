@@ -1,7 +1,7 @@
-import { render } from '@testing-library/react';
 import React from 'react';
+import { render } from '@testing-library/react';
+
 import { Surface, Cross } from '../../src';
-import { getPath } from '../../src/shape/Cross';
 
 describe('<Cross />', () => {
   it('Render 1 path in Cross', () => {
@@ -12,6 +12,7 @@ describe('<Cross />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-cross')).toHaveLength(1);
+    expect(container).toMatchSnapshot();
   });
 
   it("Don't render any path when props is invalid", () => {
@@ -22,6 +23,7 @@ describe('<Cross />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-cross')).toHaveLength(0);
+    expect(container).toMatchSnapshot();
   });
 
   it('Renders path with default values when no props are provided', () => {
@@ -31,6 +33,6 @@ describe('<Cross />', () => {
       </Surface>,
     );
 
-    expect(container.querySelector('.recharts-cross')).toHaveAttribute('d', getPath(0, 0, 0, 0, 0, 0));
+    expect(container).toMatchSnapshot();
   });
 });
