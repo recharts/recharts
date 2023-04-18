@@ -48,7 +48,6 @@ export default {
 
 export const Simple = {
   render: (args: Record<string, any>) => {
-    const CustomizedCross = (props: Record<string, any>) => <Cross {...props} />;
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart

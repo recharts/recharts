@@ -3,14 +3,13 @@ import * as CrossStories from './Cross.stories';
 
 # Cross
 
-The Cross is a shape that itself is not a valid child in any component. 
+The Cross is a shape that itself is not a valid child in any component.
 It can be used to implement custom elements, returning it from within a
 
-\```jsx
-<Customized component={<Cross {...crossProps} />}>
-\```
+```jsx
+<Customized component={<Cross {...crossProps} />} />
+```
 
-or other custom components (i.e. shape of a bar) 
+or other custom components (i.e. shape of a bar)
 
-
-<ArgTypes of={CrossStories} sort={'requiredFirst'} />
+<ArgTypes of={CrossStories} sort="requiredFirst" />
