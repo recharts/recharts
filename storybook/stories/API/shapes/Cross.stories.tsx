@@ -61,10 +61,7 @@ export const Simple = {
             bottom: 5,
           }}
         >
-          {/* I have no idea why this is needed. */}
-          <Customized component={() => CustomizedCross(args)} />
-          {/* But this does not work. */}
-          {/* <Cross {...args} /> */}
+          <Customized component={<Cross {...args} />} />
         </ComposedChart>
       </ResponsiveContainer>
     );
