@@ -810,6 +810,7 @@ export interface CategoricalChartProps {
   outerRadius?: number | string;
   title?: string;
   desc?: string;
+  defaultActiveIndex?: number;
 }
 
 export const generateCategoricalChart = ({
@@ -1027,6 +1028,26 @@ export const generateCategoricalChart = ({
       if (!_.isNil(this.props.syncId)) {
         this.addListener();
       }
+
+      this.handleMouseMove({
+        altKey: false,
+        bubbles: true,
+        button: 0,
+        buttons: 0,
+        cancelable: true,
+        clientX: 129,
+        clientY: 631,
+        ctrlKey: false,
+        detail: 0,
+        metaKey: false,
+        movementX: -1,
+        movementY: -9,
+        relatedTarget: null,
+        screenX: 1603,
+        screenY: 755,
+        shiftKey: false,
+      });
+      console.log(this.state.graphicalItems);
     }
 
     static getDerivedStateFromProps = (
@@ -1875,7 +1896,7 @@ export const generateCategoricalChart = ({
      * @return {ReactElement}  The instance of Tooltip
      */
     renderTooltip = (): React.ReactElement => {
-      const { children } = this.props;
+      const { children, defaultActiveIndex } = this.props;
       const tooltipItem = findChildByType(children, Tooltip);
 
       if (!tooltipItem) {
@@ -1883,6 +1904,23 @@ export const generateCategoricalChart = ({
       }
 
       const { isTooltipActive, activeCoordinate, activePayload, activeLabel, offset } = this.state;
+
+      if (!isTooltipActive && defaultActiveIndex >= 0) {
+        const { tooltipTicks } = this.state;
+        const extraActiveLabel = tooltipTicks[defaultActiveIndex].value;
+        const payload = getTooltipContent(this.state, this.props.data, defaultActiveIndex);
+
+        return cloneElement(tooltipItem, {
+          viewBox: { ...offset, x: offset.left, y: offset.top },
+          active: true,
+          label: extraActiveLabel,
+          payload,
+          coordinate: {
+            x: tooltipTicks[defaultActiveIndex].coordinate,
+            y: 0,
+          },
+        });
+      }
 
       return cloneElement(tooltipItem, {
         viewBox: { ...offset, x: offset.left, y: offset.top },
@@ -2056,6 +2094,19 @@ export const generateCategoricalChart = ({
 
       if (isRange) {
         return [graphicalItem, null, null];
+      }
+
+      if (typeof this.props.defaultActiveIndex !== 'undefined') {
+        return [
+          graphicalItem,
+          ...this.renderActivePoints({
+            item,
+            activePoint: points[this.props.defaultActiveIndex],
+            basePoint: false,
+            childIndex: this.props.defaultActiveIndex,
+            isRange: false,
+          }),
+        ];
       }
 
       return [graphicalItem, null];
