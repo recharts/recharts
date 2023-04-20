@@ -24,7 +24,7 @@ export const InteractiveChart = {
             }}
             defaultActiveIndex={index}
             onMouseMove={() => {
-              console.log("mouse move");
+              console.log('mouse move');
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
