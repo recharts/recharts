@@ -22,3 +22,5 @@ export const Layer = React.forwardRef((props: Props, ref: any) => {
     </g>
   );
 });
+
+Layer.displayName = 'Layer';

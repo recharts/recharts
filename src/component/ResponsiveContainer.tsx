@@ -180,3 +180,5 @@ export const ResponsiveContainer = forwardRef(
     );
   },
 );
+
+ResponsiveContainer.displayName = 'ResponsiveContainer';
