@@ -23,7 +23,7 @@ export class AccessibilityManager {
     this.spoofMouse();
   }
 
-  public keyboardEvent(e) {
+  public keyboardEvent(e: any) {
     switch (e.key) {
       case 'ArrowRight': {
         if (this._layout !== 'horizontal') {
