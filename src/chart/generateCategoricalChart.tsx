@@ -69,6 +69,7 @@ import {
   GeometrySector,
   AxisDomain,
 } from '../util/types';
+import { AccessibilityManager } from './AccessibilityManager';
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
@@ -811,6 +812,7 @@ export interface CategoricalChartProps {
   title?: string;
   desc?: string;
   defaultActiveIndex?: number;
+  accessibilityLayer?: boolean;
 }
 
 export const generateCategoricalChart = ({
@@ -997,6 +999,8 @@ export const generateCategoricalChart = ({
 
     deferId: any;
 
+    accessibilityManager = new AccessibilityManager();
+
     // todo join specific chart propTypes
     static defaultProps: CategoricalChartProps = {
       layout: 'horizontal',
@@ -1029,25 +1033,19 @@ export const generateCategoricalChart = ({
         this.addListener();
       }
 
-      this.handleMouseMove({
-        altKey: false,
-        bubbles: true,
-        button: 0,
-        buttons: 0,
-        cancelable: true,
-        clientX: 129,
-        clientY: 631,
-        ctrlKey: false,
-        detail: 0,
-        metaKey: false,
-        movementX: -1,
-        movementY: -9,
-        relatedTarget: null,
-        screenX: 1603,
-        screenY: 755,
-        shiftKey: false,
-      });
-      console.log(this.state.graphicalItems);
+      this.accessibilityManager.container = this.container;
+      this.accessibilityManager.coordinateList = this.state.tooltipTicks;
+      this.accessibilityManager.mouseHandlerCallback = this.handleMouseMove;
+
+      // if (this.props.accessibilityLayer) {
+      //   const { x, y } = this.container.getBoundingClientRect();
+      //   const newX = x + this.state.tooltipTicks[1].coordinate;
+
+      //   this.handleMouseMove({
+      //     pageX: newX,
+      //     pageY: y + 100,
+      //   });
+      // }
     }
 
     static getDerivedStateFromProps = (
@@ -1896,7 +1894,7 @@ export const generateCategoricalChart = ({
      * @return {ReactElement}  The instance of Tooltip
      */
     renderTooltip = (): React.ReactElement => {
-      const { children, defaultActiveIndex } = this.props;
+      const { children } = this.props;
       const tooltipItem = findChildByType(children, Tooltip);
 
       if (!tooltipItem) {
@@ -1904,23 +1902,6 @@ export const generateCategoricalChart = ({
       }
 
       const { isTooltipActive, activeCoordinate, activePayload, activeLabel, offset } = this.state;
-
-      if (!isTooltipActive && defaultActiveIndex >= 0) {
-        const { tooltipTicks } = this.state;
-        const extraActiveLabel = tooltipTicks[defaultActiveIndex].value;
-        const payload = getTooltipContent(this.state, this.props.data, defaultActiveIndex);
-
-        return cloneElement(tooltipItem, {
-          viewBox: { ...offset, x: offset.left, y: offset.top },
-          active: true,
-          label: extraActiveLabel,
-          payload,
-          coordinate: {
-            x: tooltipTicks[defaultActiveIndex].coordinate,
-            y: 0,
-          },
-        });
-      }
 
       return cloneElement(tooltipItem, {
         viewBox: { ...offset, x: offset.left, y: offset.top },
@@ -2240,6 +2221,17 @@ export const generateCategoricalChart = ({
             {renderByOrder(children, map)}
           </Surface>
         );
+      }
+
+      if (this.props.accessibilityLayer) {
+        attrs.tabIndex = 0;
+        attrs.role = 'img';
+        attrs.onKeyDown = e => {
+          this.accessibilityManager.keyboardEvent(e);
+        };
+        attrs.onFocus = e => {
+          this.accessibilityManager.focus(e);
+        };
       }
 
       const events = this.parseEventsOfWrapper();

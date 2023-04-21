@@ -26,6 +26,7 @@ export const InteractiveChart = {
             onMouseMove={() => {
               console.log('mouse move');
             }}
+            accessibilityLayer
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
