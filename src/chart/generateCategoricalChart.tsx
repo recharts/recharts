@@ -1034,18 +1034,13 @@ export const generateCategoricalChart = ({
       }
 
       this.accessibilityManager.container = this.container;
+      this.accessibilityManager.offset = {
+        left: this.props.margin.left ?? 0,
+        top: this.props.margin.top ?? 0,
+      };
       this.accessibilityManager.coordinateList = this.state.tooltipTicks;
       this.accessibilityManager.mouseHandlerCallback = this.handleMouseMove;
-
-      // if (this.props.accessibilityLayer) {
-      //   const { x, y } = this.container.getBoundingClientRect();
-      //   const newX = x + this.state.tooltipTicks[1].coordinate;
-
-      //   this.handleMouseMove({
-      //     pageX: newX,
-      //     pageY: y + 100,
-      //   });
-      // }
+      this.accessibilityManager.layout = this.props.layout;
     }
 
     static getDerivedStateFromProps = (
