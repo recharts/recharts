@@ -2221,7 +2221,7 @@ export const generateCategoricalChart = ({
       if (this.props.accessibilityLayer) {
         attrs.tabIndex = 0;
         attrs.role = 'img';
-        attrs.onKeyDown = e => {
+        attrs.onKeyDown = (e: any) => {
           this.accessibilityManager.keyboardEvent(e);
         };
         attrs.onFocus = () => {
