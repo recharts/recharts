@@ -121,17 +121,16 @@ const tooltipDefaultProps = {
   filterNull: true,
   useTranslate3d: false,
   cursor: true,
+  trigger: 'hover',
 };
 
-const Tooltip = <TValue extends ValueType, TName extends NameType>(
+export const Tooltip = <TValue extends ValueType, TName extends NameType>(
   props: TooltipProps<TValue, TName> & { children?: React.ReactNode },
 ) => {
-  const [state, setState] = useState({
-    boxWidth: -1,
-    boxHeight: -1,
-    dismissed: false,
-    dismissedAtCoordinate: { x: 0, y: 0 },
-  });
+  const [boxWidth, setBoxWidth] = useState(-1);
+  const [boxHeight, setBoxHeight] = useState(-1);
+  const [dismissed, setDismissed] = useState(false);
+  const [dismissedAtCoordinate, setDismissedAtCoordinate] = useState({ x: 0, y: 0 });
 
   const wrapperNode = useRef<HTMLDivElement>();
   const { allowEscapeViewBox, reverseDirection, coordinate, offset, position, viewBox } = props;
@@ -139,14 +138,11 @@ const Tooltip = <TValue extends ValueType, TName extends NameType>(
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setState(prev => ({
+        setDismissed(true);
+        setDismissedAtCoordinate(prev => ({
           ...prev,
-          dismissed: true,
-          dismissedAtCoordinate: {
-            ...prev.dismissedAtCoordinate,
-            x: coordinate.x,
-            y: coordinate.y,
-          },
+          x: coordinate.x,
+          y: coordinate.y,
         }));
       }
     },
@@ -155,11 +151,10 @@ const Tooltip = <TValue extends ValueType, TName extends NameType>(
 
   useEffect(() => {
     const updateBBox = () => {
-      const { boxWidth, boxHeight, dismissed } = state;
       if (dismissed) {
         document.removeEventListener('keydown', handleKeyDown);
-        if (coordinate.x !== state.dismissedAtCoordinate.x || coordinate.y !== state.dismissedAtCoordinate.y) {
-          setState(prev => ({ ...prev, dismissed: false }));
+        if (coordinate.x !== dismissedAtCoordinate.x || coordinate.y !== dismissedAtCoordinate.y) {
+          setDismissed(false);
         }
       } else {
         document.addEventListener('keydown', handleKeyDown);
@@ -169,18 +164,12 @@ const Tooltip = <TValue extends ValueType, TName extends NameType>(
         const box = wrapperNode.current.getBoundingClientRect();
 
         if (Math.abs(box.width - boxWidth) > EPS || Math.abs(box.height - boxHeight) > EPS) {
-          setState(prev => ({
-            ...prev,
-            boxWidth: box.width,
-            boxHeight: box.height,
-          }));
+          setBoxWidth(box.width);
+          setBoxHeight(box.height);
         }
       } else if (boxWidth !== -1 || boxHeight !== -1) {
-        setState(prev => ({
-          ...prev,
-          boxWidth: -1,
-          boxHeight: -1,
-        }));
+        setBoxWidth(-1);
+        setBoxHeight(-1);
       }
     };
 
@@ -189,7 +178,16 @@ const Tooltip = <TValue extends ValueType, TName extends NameType>(
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [coordinate.x, coordinate.y, handleKeyDown, state]);
+  }, [
+    boxHeight,
+    boxWidth,
+    coordinate.x,
+    coordinate.y,
+    dismissed,
+    dismissedAtCoordinate.x,
+    dismissedAtCoordinate.y,
+    handleKeyDown,
+  ]);
 
   const getTranslate = ({
     key,
@@ -245,7 +243,7 @@ const Tooltip = <TValue extends ValueType, TName extends NameType>(
   const { content } = props;
   let outerStyle: CSSProperties = {
     pointerEvents: 'none',
-    visibility: !state.dismissed && active && hasPayload ? 'visible' : 'hidden',
+    visibility: !dismissed && active && hasPayload ? 'visible' : 'hidden',
     position: 'absolute',
     top: 0,
     left: 0,
@@ -256,25 +254,22 @@ const Tooltip = <TValue extends ValueType, TName extends NameType>(
   if (position && isNumber(position.x) && isNumber(position.y)) {
     translateX = position.x;
     translateY = position.y;
+  } else if (boxWidth > 0 && boxHeight > 0 && coordinate) {
+    translateX = getTranslate({
+      key: 'x',
+      tooltipDimension: boxWidth,
+      viewBoxDimension: viewBox.width,
+    });
+
+    translateY = getTranslate({
+      key: 'y',
+      tooltipDimension: boxHeight,
+      viewBoxDimension: viewBox.height,
+    });
   } else {
-    const { boxWidth, boxHeight } = state;
-
-    if (boxWidth > 0 && boxHeight > 0 && coordinate) {
-      translateX = getTranslate({
-        key: 'x',
-        tooltipDimension: boxWidth,
-        viewBoxDimension: viewBox.width,
-      });
-
-      translateY = getTranslate({
-        key: 'y',
-        tooltipDimension: boxHeight,
-        viewBoxDimension: viewBox.height,
-      });
-    } else {
-      outerStyle.visibility = 'hidden';
-    }
+    outerStyle.visibility = 'hidden';
   }
+
   outerStyle = {
     ...translateStyle({
       transform: useTranslate3d
@@ -323,5 +318,3 @@ Tooltip.displayName = 'Tooltip';
  * doesn't work if using default parameters
  */
 Tooltip.defaultProps = tooltipDefaultProps;
-
-export { Tooltip };
