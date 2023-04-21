@@ -2224,8 +2224,8 @@ export const generateCategoricalChart = ({
         attrs.onKeyDown = e => {
           this.accessibilityManager.keyboardEvent(e);
         };
-        attrs.onFocus = e => {
-          this.accessibilityManager.focus(e);
+        attrs.onFocus = () => {
+          this.accessibilityManager.focus();
         };
       }
 
