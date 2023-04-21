@@ -1,9 +1,12 @@
 import React from 'react';
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from '../../../../src';
 import { pageData } from '../../data';
+import { CategoricalChartProps } from '../props/ChartProps';
 
 export default {
-  tags: ['autodocs'],
+  argTypes: {
+    ...CategoricalChartProps,
+  },
   component: BarChart,
 };
 

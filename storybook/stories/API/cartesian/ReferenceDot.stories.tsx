@@ -52,8 +52,8 @@ const StyleProps: Args = {
   ...GeneralStyle,
   ...ReferenceComponentStyle,
   shape: {
-    description: `If set a ReactElement, the shape of dot can be customized. If set a function, 
-    the function will be called to render customized shape.`,
+    description: `If set a ReactElement, the shape of the dot can be customized. If set a function, 
+    the function will be called to render a customized shape.`,
     table: {
       type: {
         summary: 'ReactElement | Function',
