@@ -811,7 +811,6 @@ export interface CategoricalChartProps {
   outerRadius?: number | string;
   title?: string;
   desc?: string;
-  defaultActiveIndex?: number;
   accessibilityLayer?: boolean;
 }
 
@@ -2070,19 +2069,6 @@ export const generateCategoricalChart = ({
 
       if (isRange) {
         return [graphicalItem, null, null];
-      }
-
-      if (typeof this.props.defaultActiveIndex !== 'undefined') {
-        return [
-          graphicalItem,
-          ...this.renderActivePoints({
-            item,
-            activePoint: points[this.props.defaultActiveIndex],
-            basePoint: false,
-            childIndex: this.props.defaultActiveIndex,
-            isRange: false,
-          }),
-        ];
       }
 
       return [graphicalItem, null];
