@@ -43,10 +43,8 @@ export class AccessibilityManager {
   }
 
   public keyboardEvent(e: any) {
-    console.log(e);
     switch (e.key) {
       case 'ArrowRight': {
-        console.log('arrow right', this.layout);
         if (this.layout !== 'horizontal') {
           return;
         }
@@ -85,7 +83,6 @@ export class AccessibilityManager {
   }
 
   private spoofMouse() {
-    console.log('spoof mouse');
     const { x, y } = this.container.getBoundingClientRect();
     const { coordinate } = this.coordinateList[this.activeIndex];
 
