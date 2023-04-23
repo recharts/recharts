@@ -99,29 +99,32 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   useTranslate3d?: boolean;
 };
 
-const tooltipDefaultProps = {
+const tooltipDefaultProps: TooltipProps<number, string> = {
   active: false,
   allowEscapeViewBox: { x: false, y: false },
   reverseDirection: { x: false, y: false },
   offset: 10,
-  viewBox: { x: 100, y: 100, height: 50, width: 50 },
+  // TODO: replace invalid properties
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
   coordinate: { x: 0, y: 0 },
-  wrapperStyle: {},
   // this doesn't exist on TooltipProps
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   cursorStyle: {},
   separator: ' : ',
+  wrapperStyle: {},
   contentStyle: {},
   itemStyle: {},
   labelStyle: {},
+  cursor: true,
+  trigger: 'hover',
   isAnimationActive: !Global.isSsr,
   animationEasing: 'ease',
   animationDuration: 400,
   filterNull: true,
   useTranslate3d: false,
-  cursor: true,
-  trigger: 'hover',
 };
 
 export const Tooltip = <TValue extends ValueType, TName extends NameType>(

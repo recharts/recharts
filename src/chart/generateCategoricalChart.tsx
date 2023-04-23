@@ -2157,7 +2157,6 @@ export const generateCategoricalChart = ({
       }
 
       const { children, className, width, height, style, compact, title, desc, ...others } = this.props;
-
       const attrs = filterProps(others);
       const map = {
         CartesianGrid: { handler: this.renderGrid, once: true },
