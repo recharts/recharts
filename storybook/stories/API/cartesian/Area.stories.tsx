@@ -322,6 +322,50 @@ export const FillGradient = {
   },
 };
 
+export const FillPattern = {
+  render: (args: Record<string, any>) => {
+    const { data, dataKey1, dataKey2, ...areaArgs } = args;
+
+    return (
+      <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <ComposedChart
+          width={surfaceWidth}
+          height={surfaceHeight}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+          data={data}
+        >
+          <defs>
+            <pattern id="left" width="12" height="4" patternUnits="userSpaceOnUse">
+              <rect width="4" height="4" fill="#8884d8" />
+            </pattern>
+            <pattern id="right" width="8" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="4" height="4" fill="#82ca9d" />
+            </pattern>
+          </defs>
+          <Area type="monotone" dataKey={dataKey1} stroke="#8884d8" fillOpacity={1} fill="url(#left)" {...areaArgs} />
+          <Area type="monotone" dataKey={dataKey2} stroke="#82ca9d" fillOpacity={1} fill="url(#right)" {...areaArgs} />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    data: coordinateWithValueData,
+    dataKey1: 'x',
+    dataKey2: 'y',
+    isAnimationActive: false,
+  },
+  parameters: {
+    controls: {
+      include: ['data'],
+    },
+  },
+};
+
 export const Points = {
   render: (args: Record<string, any>) => {
     const { points } = args;

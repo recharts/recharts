@@ -1,9 +1,12 @@
 import React from 'react';
 import { pageData } from '../../data';
 import { RadialBar, RadialBarChart, ResponsiveContainer } from '../../../../src';
+import { CategoricalChartProps } from '../props/ChartProps';
 
 export default {
-  tags: ['autodocs'],
+  argTypes: {
+    ...CategoricalChartProps,
+  },
   component: RadialBarChart,
 };
 

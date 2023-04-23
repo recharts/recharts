@@ -1,6 +1,16 @@
 import { Args } from '@storybook/react';
 
+export const dataKey = {
+  description: `The key or getter of a group of data.
+      It could be an accessor function such as (row)=>value`,
+  table: {
+    type: { summary: 'string | number | function' },
+    category: 'General',
+  },
+};
+
 export const General: Args = {
+  dataKey,
   id: {
     description: `The unique id of this component, which will be used to generate unique clip path id internally.
       This props is suggested to be set in SSR.`,
@@ -26,14 +36,6 @@ export const General: Args = {
   yAxisId: {
     description: 'The id of y-axis which is corresponding to the data.',
     table: { type: { summary: 'string | number' }, category: 'General' },
-  },
-  dataKey: {
-    description: `The key or getter of a group of data which should be unique in a LineChart.
-      It could be an accessor function such as (row)=>value`,
-    table: {
-      type: { summary: 'string | number | function' },
-      category: 'General',
-    },
   },
 };
 
