@@ -32,8 +32,6 @@ jobs:
           npm test
   build-node-version-16-18-and-test-storybook:
     runs-on: ubuntu-latest
-    
-    needs: build-node-version-14
 
     strategy:
       matrix:
@@ -56,6 +54,10 @@ jobs:
           tsc --noEmit
           npm run lint
           npm test
+      - name: Generating coverage badges
+        uses: jpb06/jest-badges-action@latest
+        with:
+          branches: master
       - name: Serve Storybook and run tests
         run: npm run test-storybook:ci
 
