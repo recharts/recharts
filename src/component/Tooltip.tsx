@@ -1,7 +1,16 @@
 /**
  * @fileOverview Tooltip
  */
-import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps } from 'react';
+import React, {
+  CSSProperties,
+  ReactNode,
+  ReactElement,
+  SVGProps,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from 'react';
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import classNames from 'classnames';
@@ -90,99 +99,100 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   useTranslate3d?: boolean;
 };
 
-export class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComponent<
-  TooltipProps<TValue, TName>
-> {
-  static displayName = 'Tooltip';
+const tooltipDefaultProps: TooltipProps<number, string> = {
+  active: false,
+  allowEscapeViewBox: { x: false, y: false },
+  reverseDirection: { x: false, y: false },
+  offset: 10,
+  // TODO: replace invalid properties
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
+  coordinate: { x: 0, y: 0 },
+  // this doesn't exist on TooltipProps
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  cursorStyle: {},
+  separator: ' : ',
+  wrapperStyle: {},
+  contentStyle: {},
+  itemStyle: {},
+  labelStyle: {},
+  cursor: true,
+  trigger: 'hover',
+  isAnimationActive: !Global.isSsr,
+  animationEasing: 'ease',
+  animationDuration: 400,
+  filterNull: true,
+  useTranslate3d: false,
+};
 
-  static defaultProps = {
-    active: false,
-    allowEscapeViewBox: { x: false, y: false },
-    reverseDirection: { x: false, y: false },
-    offset: 10,
-    viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
-    coordinate: { x: 0, y: 0 },
-    cursorStyle: {},
-    separator: ' : ',
-    wrapperStyle: {},
-    contentStyle: {},
-    itemStyle: {},
-    labelStyle: {},
-    cursor: true,
-    trigger: 'hover',
-    isAnimationActive: !Global.isSsr,
-    animationEasing: 'ease',
-    animationDuration: 400,
-    filterNull: true,
-    useTranslate3d: false,
-  };
+export const Tooltip = <TValue extends ValueType, TName extends NameType>(
+  props: TooltipProps<TValue, TName> & { children?: React.ReactNode },
+) => {
+  const [boxWidth, setBoxWidth] = useState(-1);
+  const [boxHeight, setBoxHeight] = useState(-1);
+  const [dismissed, setDismissed] = useState(false);
+  const [dismissedAtCoordinate, setDismissedAtCoordinate] = useState({ x: 0, y: 0 });
 
-  state = {
-    boxWidth: -1,
-    boxHeight: -1,
-    dismissed: false,
-    dismissedAtCoordinate: { x: 0, y: 0 },
-  };
+  const wrapperNode = useRef<HTMLDivElement>();
+  const { allowEscapeViewBox, reverseDirection, coordinate, offset, position, viewBox } = props;
 
-  private wrapperNode: HTMLDivElement;
-
-  componentDidMount() {
-    this.updateBBox();
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown);
-  }
-
-  componentDidUpdate() {
-    this.updateBBox();
-  }
-
-  handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Escape') {
-      this.setState({
-        dismissed: true,
-        dismissedAtCoordinate: {
-          ...this.state.dismissedAtCoordinate,
-          x: this.props.coordinate.x,
-          y: this.props.coordinate.y,
-        },
-      });
-    }
-  };
-
-  updateBBox() {
-    const { boxWidth, boxHeight, dismissed } = this.state;
-    if (dismissed) {
-      document.removeEventListener('keydown', this.handleKeyDown);
-      if (
-        this.props.coordinate.x !== this.state.dismissedAtCoordinate.x ||
-        this.props.coordinate.y !== this.state.dismissedAtCoordinate.y
-      ) {
-        this.setState({ dismissed: false });
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setDismissed(true);
+        setDismissedAtCoordinate(prev => ({
+          ...prev,
+          x: coordinate.x,
+          y: coordinate.y,
+        }));
       }
-    } else {
-      document.addEventListener('keydown', this.handleKeyDown);
-    }
+    },
+    [coordinate.x, coordinate.y],
+  );
 
-    if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
-      const box = this.wrapperNode.getBoundingClientRect();
-
-      if (Math.abs(box.width - boxWidth) > EPS || Math.abs(box.height - boxHeight) > EPS) {
-        this.setState({
-          boxWidth: box.width,
-          boxHeight: box.height,
-        });
+  useEffect(() => {
+    const updateBBox = () => {
+      if (dismissed) {
+        document.removeEventListener('keydown', handleKeyDown);
+        if (coordinate.x !== dismissedAtCoordinate.x || coordinate.y !== dismissedAtCoordinate.y) {
+          setDismissed(false);
+        }
+      } else {
+        document.addEventListener('keydown', handleKeyDown);
       }
-    } else if (boxWidth !== -1 || boxHeight !== -1) {
-      this.setState({
-        boxWidth: -1,
-        boxHeight: -1,
-      });
-    }
-  }
 
-  getTranslate = ({
+      if (wrapperNode.current && wrapperNode.current.getBoundingClientRect) {
+        const box = wrapperNode.current.getBoundingClientRect();
+
+        if (Math.abs(box.width - boxWidth) > EPS || Math.abs(box.height - boxHeight) > EPS) {
+          setBoxWidth(box.width);
+          setBoxHeight(box.height);
+        }
+      } else if (boxWidth !== -1 || boxHeight !== -1) {
+        setBoxWidth(-1);
+        setBoxHeight(-1);
+      }
+    };
+
+    updateBBox();
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [
+    boxHeight,
+    boxWidth,
+    coordinate.x,
+    coordinate.y,
+    dismissed,
+    dismissedAtCoordinate.x,
+    dismissedAtCoordinate.y,
+    handleKeyDown,
+  ]);
+
+  const getTranslate = ({
     key,
     tooltipDimension,
     viewBoxDimension,
@@ -191,19 +201,17 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
     tooltipDimension: number;
     viewBoxDimension: number;
   }) => {
-    const { allowEscapeViewBox, reverseDirection, coordinate, offset, position, viewBox } = this.props;
-
     if (position && isNumber(position[key])) {
       return position[key];
     }
 
     const negative = coordinate[key] - tooltipDimension - offset;
     const positive = coordinate[key] + offset;
-    if (allowEscapeViewBox[key]) {
+    if (allowEscapeViewBox?.[key]) {
       return reverseDirection[key] ? negative : positive;
     }
 
-    if (reverseDirection[key]) {
+    if (reverseDirection?.[key]) {
       const tooltipBoundary = negative;
       const viewBoxBoundary = viewBox[key];
       if (tooltipBoundary < viewBoxBoundary) {
@@ -219,89 +227,97 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
     return Math.max(positive, viewBox[key]);
   };
 
-  render() {
-    const { payload, isAnimationActive, animationDuration, animationEasing, filterNull, payloadUniqBy } = this.props;
-    const finalPayload = getUniqPayload(
-      payloadUniqBy,
-      filterNull && payload && payload.length ? payload.filter(entry => !_.isNil(entry.value)) : payload,
-    );
-    const hasPayload = finalPayload && finalPayload.length;
-    const { content, viewBox, coordinate, position, active, wrapperStyle } = this.props;
-    let outerStyle: CSSProperties = {
-      pointerEvents: 'none',
-      visibility: !this.state.dismissed && active && hasPayload ? 'visible' : 'hidden',
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      ...wrapperStyle,
-    };
-    let translateX, translateY;
+  const {
+    payload,
+    payloadUniqBy,
+    filterNull,
+    active,
+    wrapperStyle,
+    useTranslate3d,
+    isAnimationActive,
+    animationDuration,
+    animationEasing,
+  } = props;
+  const finalPayload = getUniqPayload(
+    payloadUniqBy,
+    filterNull && payload && payload.length ? payload.filter(entry => !_.isNil(entry.value)) : payload,
+  );
+  const hasPayload = finalPayload && finalPayload.length;
+  const { content } = props;
+  let outerStyle: CSSProperties = {
+    pointerEvents: 'none',
+    visibility: !dismissed && active && hasPayload ? 'visible' : 'hidden',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    ...wrapperStyle,
+  };
+  let translateX, translateY;
 
-    if (position && isNumber(position.x) && isNumber(position.y)) {
-      translateX = position.x;
-      translateY = position.y;
-    } else {
-      const { boxWidth, boxHeight } = this.state;
+  if (position && isNumber(position.x) && isNumber(position.y)) {
+    translateX = position.x;
+    translateY = position.y;
+  } else if (boxWidth > 0 && boxHeight > 0 && coordinate) {
+    translateX = getTranslate({
+      key: 'x',
+      tooltipDimension: boxWidth,
+      viewBoxDimension: viewBox.width,
+    });
 
-      if (boxWidth > 0 && boxHeight > 0 && coordinate) {
-        translateX = this.getTranslate({
-          key: 'x',
-          tooltipDimension: boxWidth,
-          viewBoxDimension: viewBox.width,
-        });
+    translateY = getTranslate({
+      key: 'y',
+      tooltipDimension: boxHeight,
+      viewBoxDimension: viewBox.height,
+    });
+  } else {
+    outerStyle.visibility = 'hidden';
+  }
 
-        translateY = this.getTranslate({
-          key: 'y',
-          tooltipDimension: boxHeight,
-          viewBoxDimension: viewBox.height,
-        });
-      } else {
-        outerStyle.visibility = 'hidden';
-      }
-    }
+  outerStyle = {
+    ...translateStyle({
+      transform: useTranslate3d
+        ? `translate3d(${translateX}px, ${translateY}px, 0)`
+        : `translate(${translateX}px, ${translateY}px)`,
+    }),
+    ...outerStyle,
+  };
 
+  if (isAnimationActive && active) {
     outerStyle = {
       ...translateStyle({
-        transform: this.props.useTranslate3d
-          ? `translate3d(${translateX}px, ${translateY}px, 0)`
-          : `translate(${translateX}px, ${translateY}px)`,
+        transition: `transform ${animationDuration}ms ${animationEasing}`,
       }),
       ...outerStyle,
     };
-
-    if (isAnimationActive && active) {
-      outerStyle = {
-        ...translateStyle({
-          transition: `transform ${animationDuration}ms ${animationEasing}`,
-        }),
-        ...outerStyle,
-      };
-    }
-
-    const cls = classNames(CLS_PREFIX, {
-      [`${CLS_PREFIX}-right`]:
-        isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX >= coordinate.x,
-      [`${CLS_PREFIX}-left`]: isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX < coordinate.x,
-      [`${CLS_PREFIX}-bottom`]:
-        isNumber(translateY) && coordinate && isNumber(coordinate.y) && translateY >= coordinate.y,
-      [`${CLS_PREFIX}-top`]: isNumber(translateY) && coordinate && isNumber(coordinate.y) && translateY < coordinate.y,
-    });
-
-    return (
-      // ESLint is disabled to allow listening to the `Escape` key. Refer to
-      // https://github.com/recharts/recharts/pull/2925
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-      <div
-        tabIndex={-1}
-        role="dialog"
-        className={cls}
-        style={outerStyle}
-        ref={node => {
-          this.wrapperNode = node;
-        }}
-      >
-        {renderContent(content, { ...this.props, payload: finalPayload })}
-      </div>
-    );
   }
-}
+
+  const cls = classNames(CLS_PREFIX, {
+    [`${CLS_PREFIX}-right`]: isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX >= coordinate.x,
+    [`${CLS_PREFIX}-left`]: isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX < coordinate.x,
+    [`${CLS_PREFIX}-bottom`]:
+      isNumber(translateY) && coordinate && isNumber(coordinate.y) && translateY >= coordinate.y,
+    [`${CLS_PREFIX}-top`]: isNumber(translateY) && coordinate && isNumber(coordinate.y) && translateY < coordinate.y,
+  });
+
+  return (
+    // ESLint is disabled to allow listening to the `Escape` key. Refer to
+    // https://github.com/recharts/recharts/pull/2925
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+    <div tabIndex={-1} role="dialog" className={cls} style={outerStyle} ref={wrapperNode}>
+      {renderContent(content, {
+        ...props,
+        payload: finalPayload,
+      })}
+    </div>
+  );
+};
+
+// needs to be set so that renderByOrder can find the correct handler function
+Tooltip.displayName = 'Tooltip';
+
+/**
+ * needs to be set so that renderByOrder can access an have default values for
+ * children.props when there are no props set by the consumer
+ * doesn't work if using default parameters
+ */
+Tooltip.defaultProps = tooltipDefaultProps;
