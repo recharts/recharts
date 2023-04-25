@@ -104,10 +104,7 @@ const tooltipDefaultProps: TooltipProps<number, string> = {
   allowEscapeViewBox: { x: false, y: false },
   reverseDirection: { x: false, y: false },
   offset: 10,
-  // TODO: replace invalid properties
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  viewBox: { x1: 0, x2: 0, y1: 0, y2: 0 },
+  viewBox: { x: 0, y: 0, height: 0, width: 0 },
   coordinate: { x: 0, y: 0 },
   // this doesn't exist on TooltipProps
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
