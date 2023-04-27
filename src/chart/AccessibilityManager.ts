@@ -26,7 +26,7 @@ export class AccessibilityManager {
 
   private offset: InitiableOptions['offset'];
 
-  public init({
+  public setDetails({
     coordinateList = [],
     container = null,
     layout = null,

@@ -1034,7 +1034,7 @@ export const generateCategoricalChart = ({
         this.addListener();
       }
 
-      this.accessibilityManager.init({
+      this.accessibilityManager.setDetails({
         container: this.container,
         offset: {
           left: this.props.margin.left ?? 0,
@@ -1055,19 +1055,19 @@ export const generateCategoricalChart = ({
       }
 
       if (this.state.tooltipTicks !== prevState.tooltipTicks) {
-        this.accessibilityManager.init({
+        this.accessibilityManager.setDetails({
           coordinateList: this.state.tooltipTicks,
         });
       }
 
       if (this.props.layout !== prevProps.layout) {
-        this.accessibilityManager.init({
+        this.accessibilityManager.setDetails({
           layout: this.props.layout,
         });
       }
 
       if (this.props.margin !== prevProps.margin) {
-        this.accessibilityManager.init({
+        this.accessibilityManager.setDetails({
           offset: {
             left: this.props.margin.left ?? 0,
             top: this.props.margin.top ?? 0,
