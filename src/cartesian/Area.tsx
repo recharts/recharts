@@ -96,6 +96,9 @@ interface State {
   totalLength?: number;
 }
 
+const isDotProps = (dot: AreaDot): dot is DotProps =>
+  typeof dot === 'object' && 'cx' in dot && 'cy' in dot && 'r' in dot;
+
 export class Area extends PureComponent<Props, State> {
   static displayName = 'Area';
 
@@ -558,7 +561,7 @@ export class Area extends PureComponent<Props, State> {
     const needClip = needClipX || needClipY;
     const clipPathId = _.isNil(id) ? this.id : id;
     const { r, strokeWidth } = filterProps(dot) || { r: 3, strokeWidth: 2 };
-    const { clipDot = true } = dot as DotProps;
+    const { clipDot = true } = isDotProps(dot) ? dot : {};
     const dotSize = r * 2 + strokeWidth;
 
     return (
