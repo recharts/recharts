@@ -3,7 +3,8 @@
  */
 import React, { PureComponent, SVGProps } from 'react';
 import classNames from 'classnames';
-import { filterProps, GeometrySector } from '../util/types';
+import { GeometrySector } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';
 import { getPercentValue, mathSign } from '../util/DataUtils';
 
@@ -87,7 +88,11 @@ const getSectorWithCorner = ({
   endAngle,
 }: GeometrySector) => {
   const sign = mathSign(endAngle - startAngle);
-  const { circleTangency: soct, lineTangency: solt, theta: sot } = getTangentCircle({
+  const {
+    circleTangency: soct,
+    lineTangency: solt,
+    theta: sot,
+  } = getTangentCircle({
     cx,
     cy,
     radius: outerRadius,
@@ -96,7 +101,11 @@ const getSectorWithCorner = ({
     cornerRadius,
     cornerIsExternal,
   });
-  const { circleTangency: eoct, lineTangency: eolt, theta: eot } = getTangentCircle({
+  const {
+    circleTangency: eoct,
+    lineTangency: eolt,
+    theta: eot,
+  } = getTangentCircle({
     cx,
     cy,
     radius: outerRadius,
@@ -133,7 +142,11 @@ const getSectorWithCorner = ({
   `;
 
   if (innerRadius > 0) {
-    const { circleTangency: sict, lineTangency: silt, theta: sit } = getTangentCircle({
+    const {
+      circleTangency: sict,
+      lineTangency: silt,
+      theta: sit,
+    } = getTangentCircle({
       cx,
       cy,
       radius: innerRadius,
@@ -143,7 +156,11 @@ const getSectorWithCorner = ({
       cornerRadius,
       cornerIsExternal,
     });
-    const { circleTangency: eict, lineTangency: eilt, theta: eit } = getTangentCircle({
+    const {
+      circleTangency: eict,
+      lineTangency: eilt,
+      theta: eit,
+    } = getTangentCircle({
       cx,
       cy,
       radius: innerRadius,
@@ -230,6 +247,6 @@ export class Sector extends PureComponent<Props> {
       path = getSectorPath({ cx, cy, innerRadius, outerRadius, startAngle, endAngle });
     }
 
-    return <path {...filterProps(this.props, true)} className={layerClass} d={path} />;
+    return <path {...filterProps(this.props, true)} className={layerClass} d={path} role="img" />;
   }
 }

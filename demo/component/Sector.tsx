@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import { Surface, Sector } from 'recharts';
 
 export default class Demo extends Component {
-
   static displayName = 'SectorDemo';
 
-  render () {
+  render() {
     return (
       <Surface width={500} height={1000}>
         <Sector fill="#ff7902" cx={200} cy={200} innerRadius={150} outerRadius={200} endAngle={90} />
@@ -23,5 +22,3 @@ export default class Demo extends Component {
     );
   }
 }
-
-

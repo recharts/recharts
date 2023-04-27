@@ -4,7 +4,8 @@
 import React, { PureComponent, SVGProps } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
-import { AnimationTiming, filterProps } from '../util/types';
+import { AnimationTiming } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 const getTrapezoidPath = (x: number, y: number, upperWidth: number, lowerWidth: number, height: number) => {
   const widthGap = upperWidth - lowerWidth;

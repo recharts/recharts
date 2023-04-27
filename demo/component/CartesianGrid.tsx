@@ -2,15 +2,14 @@ import React, { Component } from 'react';
 import { Surface, CartesianGrid } from 'recharts';
 
 export default class Demo extends Component<any, any> {
-
   static displayName = 'CartesianGridDemo';
 
-  render () {
-    let horizontalPoints = [10, 20, 30, 100, 400];
-    let verticalPoints = [100, 200, 300, 400];
+  render() {
+    const horizontalPoints = [10, 20, 30, 100, 400];
+    const verticalPoints = [100, 200, 300, 400];
 
-    let verticalFill=['red', '#eee'];
-    let horizontalFill=['#eee', 'yellow'];
+    const verticalFill = ['red', '#eee'];
+    const horizontalFill = ['#eee', 'yellow'];
 
     return (
       <div>
@@ -31,4 +30,3 @@ export default class Demo extends Component<any, any> {
     );
   }
 }
-

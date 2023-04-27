@@ -2,8 +2,17 @@
  * @fileOverview Wrapper component to make charts adapt to the size of parent * DOM
  */
 import classNames from 'classnames';
-import _ from 'lodash';
-import React, { Component, ReactElement } from 'react';
+import React, {
+  ReactElement,
+  forwardRef,
+  cloneElement,
+  useState,
+  useImperativeHandle,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+} from 'react';
 import ReactResizeDetector from 'react-resize-detector';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
@@ -19,157 +28,155 @@ export interface Props {
   debounce?: number;
   id?: string | number;
   className?: string | number;
+  onResize?: (width: number, height: number) => void;
 }
 
-interface State {
-  containerWidth: number;
-  containerHeight: number;
-}
-
-export class ResponsiveContainer extends Component<Props, State> {
-  static defaultProps = {
-    width: '100%',
-    height: '100%',
-    debounce: 0,
-  };
-
-  private handleResize: () => void;
-
-  private mounted: boolean;
-
-  private containerRef: React.RefObject<HTMLDivElement>;
-
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {
+export const ResponsiveContainer = forwardRef(
+  (
+    {
+      aspect,
+      width = '100%',
+      height = '100%',
+      /*
+       * default min-width to 0 if not specified - 'auto' causes issues with flexbox
+       * https://github.com/recharts/recharts/issues/172
+       */
+      minWidth = 0,
+      minHeight,
+      maxHeight,
+      children,
+      debounce = 0,
+      id,
+      className,
+      onResize,
+    }: Props,
+    ref,
+  ) => {
+    const [sizes, setSizes] = useState<{
+      containerWidth: number;
+      containerHeight: number;
+    }>({
       containerWidth: -1,
       containerHeight: -1,
-    };
+    });
 
-    this.handleResize =
-      props.debounce > 0 ? _.debounce(this.updateDimensionsImmediate, props.debounce) : this.updateDimensionsImmediate;
+    const containerRef = useRef<HTMLDivElement>(null);
+    useImperativeHandle(ref, () => containerRef, [containerRef]);
 
-    this.containerRef = React.createRef<HTMLDivElement>();
-  }
-
-  /* eslint-disable  react/no-did-mount-set-state */
-  componentDidMount() {
-    this.mounted = true;
-
-    const size = this.getContainerSize();
-
-    if (size) {
-      this.setState(size);
-    }
-  }
-
-  componentWillUnmount() {
-    this.mounted = false;
-  }
-
-  getContainerSize() {
-    if (!this.containerRef.current) {
-      return null;
-    }
-
-    return {
-      containerWidth: this.containerRef.current.clientWidth,
-      containerHeight: this.containerRef.current.clientHeight,
-    };
-  }
-
-  updateDimensionsImmediate = () => {
-    if (!this.mounted) {
-      return;
-    }
-
-    const newSize = this.getContainerSize();
-
-    if (newSize) {
-      const { containerWidth: oldWidth, containerHeight: oldHeight } = this.state;
-      const { containerWidth, containerHeight } = newSize;
-
-      if (containerWidth !== oldWidth || containerHeight !== oldHeight) {
-        this.setState({ containerWidth, containerHeight });
+    const getContainerSize = useCallback(() => {
+      if (!containerRef.current) {
+        return null;
       }
-    }
-  };
 
-  renderChart() {
-    const { containerWidth, containerHeight } = this.state;
+      return {
+        containerWidth: containerRef.current.clientWidth,
+        containerHeight: containerRef.current.clientHeight,
+      };
+    }, []);
 
-    if (containerWidth < 0 || containerHeight < 0) {
-      return null;
-    }
+    const updateDimensionsImmediate = useCallback(() => {
+      const newSize = getContainerSize();
 
-    const { aspect, width, height, minWidth, minHeight, maxHeight, children } = this.props;
+      if (newSize) {
+        const { containerWidth, containerHeight } = newSize;
+        if (onResize) onResize(containerWidth, containerHeight);
 
-    warn(
-      isPercent(width) || isPercent(height),
-      `The width(%s) and height(%s) are both fixed numbers,
+        setSizes(currentSizes => {
+          const { containerWidth: oldWidth, containerHeight: oldHeight } = currentSizes;
+          if (containerWidth !== oldWidth || containerHeight !== oldHeight) {
+            return { containerWidth, containerHeight };
+          }
+
+          return currentSizes;
+        });
+      }
+    }, [getContainerSize, onResize]);
+
+    const chartContent = useMemo(() => {
+      const { containerWidth, containerHeight } = sizes;
+
+      if (containerWidth < 0 || containerHeight < 0) {
+        return null;
+      }
+
+      warn(
+        isPercent(width) || isPercent(height),
+        `The width(%s) and height(%s) are both fixed numbers,
        maybe you don't need to use a ResponsiveContainer.`,
-      width,
-      height,
-    );
+        width,
+        height,
+      );
 
-    warn(!aspect || aspect > 0, 'The aspect(%s) must be greater than zero.', aspect);
+      warn(!aspect || aspect > 0, 'The aspect(%s) must be greater than zero.', aspect);
 
-    let calculatedWidth: number = isPercent(width) ? containerWidth : (width as number);
-    let calculatedHeight: number = isPercent(height) ? containerHeight : (height as number);
+      let calculatedWidth: number = isPercent(width) ? containerWidth : (width as number);
+      let calculatedHeight: number = isPercent(height) ? containerHeight : (height as number);
 
-    if (aspect && aspect > 0) {
-      // Preserve the desired aspect ratio
-      if (calculatedWidth) {
-        // Will default to using width for aspect ratio
-        calculatedHeight = calculatedWidth / aspect;
-      } else if (calculatedHeight) {
-        // But we should also take height into consideration
-        calculatedWidth = calculatedHeight * aspect;
+      if (aspect && aspect > 0) {
+        // Preserve the desired aspect ratio
+        if (calculatedWidth) {
+          // Will default to using width for aspect ratio
+          calculatedHeight = calculatedWidth / aspect;
+        } else if (calculatedHeight) {
+          // But we should also take height into consideration
+          calculatedWidth = calculatedHeight * aspect;
+        }
+
+        // if maxHeight is set, overwrite if calculatedHeight is greater than maxHeight
+        if (maxHeight && calculatedHeight > maxHeight) {
+          calculatedHeight = maxHeight;
+        }
       }
 
-      // if maxHeight is set, overwrite if calculatedHeight is greater than maxHeight
-      if (maxHeight && calculatedHeight > maxHeight) {
-        calculatedHeight = maxHeight;
-      }
-    }
-
-    warn(
-      calculatedWidth > 0 || calculatedHeight > 0,
-      `The width(%s) and height(%s) of chart should be greater than 0,
+      warn(
+        calculatedWidth > 0 || calculatedHeight > 0,
+        `The width(%s) and height(%s) of chart should be greater than 0,
        please check the style of container, or the props width(%s) and height(%s),
        or add a minWidth(%s) or minHeight(%s) or use aspect(%s) to control the
        height and width.`,
-      calculatedWidth,
-      calculatedHeight,
-      width,
-      height,
-      minWidth,
-      minHeight,
-      aspect,
-    );
+        calculatedWidth,
+        calculatedHeight,
+        width,
+        height,
+        minWidth,
+        minHeight,
+        aspect,
+      );
 
-    return React.cloneElement(children, {
-      width: calculatedWidth,
-      height: calculatedHeight,
-    });
-  }
+      return cloneElement(children, {
+        width: calculatedWidth,
+        height: calculatedHeight,
+      });
+    }, [aspect, children, height, maxHeight, minHeight, minWidth, sizes, width]);
 
-  render() {
-    const { minWidth, minHeight, width, height, maxHeight, id, className } = this.props;
-    const style = { width, height, minWidth, minHeight, maxHeight };
+    useEffect(() => {
+      const size = getContainerSize();
+
+      if (size) {
+        setSizes(size);
+      }
+    }, [getContainerSize]);
+
+    const style: React.CSSProperties = { width, height, minWidth, minHeight, maxHeight };
 
     return (
-      <ReactResizeDetector handleWidth handleHeight onResize={this.handleResize} targetRef={this.containerRef}>
+      <ReactResizeDetector
+        handleWidth
+        handleHeight
+        onResize={updateDimensionsImmediate}
+        targetRef={containerRef}
+        refreshMode={debounce > 0 ? 'debounce' : undefined}
+        refreshRate={debounce}
+      >
         <div
           {...(id != null ? { id: `${id}` } : {})}
           className={classNames('recharts-responsive-container', className)}
           style={style}
-          ref={this.containerRef}
+          ref={containerRef}
         >
-          {this.renderChart()}
+          {chartContent}
         </div>
       </ReactResizeDetector>
     );
-  }
-}
+  },
+);

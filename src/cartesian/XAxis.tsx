@@ -20,7 +20,7 @@ interface XAxisProps extends BaseAxisProps {
    * Ticks must be numbers when the axis is the type of number
    */
   ticks?: (string | number)[];
-  padding?: { left?: number; right?: number };
+  padding?: { left?: number; right?: number } | 'gap' | 'no-gap';
   minTickGap?: number;
   interval?: AxisInterval;
   reversed?: boolean;
@@ -29,7 +29,7 @@ interface XAxisProps extends BaseAxisProps {
   tickMargin?: number;
 }
 
-export type Props = SVGProps<SVGElement> & XAxisProps;
+export type Props = Omit<SVGProps<SVGElement>, 'scale'> & XAxisProps;
 
 export const XAxis: FunctionComponent<Props> = () => null;
 
@@ -44,7 +44,6 @@ XAxis.defaultProps = {
   xAxisId: 0,
   tickCount: 5,
   type: 'category',
-  domain: [0, 'auto'],
   padding: { left: 0, right: 0 },
   allowDataOverflow: false,
   scale: 'auto',

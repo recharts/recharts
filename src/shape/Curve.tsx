@@ -17,10 +17,11 @@ import {
   curveStep,
   curveStepAfter,
   curveStepBefore,
-} from 'd3-shape';
+} from 'victory-vendor/d3-shape';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers, filterProps } from '../util/types';
+import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 import { isNumber } from '../util/DataUtils';
 
 interface CurveFactories {

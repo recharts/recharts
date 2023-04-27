@@ -7,13 +7,8 @@ import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
 import { Polygon } from '../shape/Polygon';
 import { Text } from '../component/Text';
-import {
-  BaseAxisProps,
-  filterProps,
-  TickItem,
-  adaptEventsOfChild,
-  PresentationAttributesAdaptChildEvent,
-} from '../util/types';
+import { BaseAxisProps, TickItem, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 
 const RADIAN = Math.PI / 180;
@@ -41,7 +36,6 @@ export class PolarAngleAxis extends PureComponent<Props> {
     scale: 'auto',
     cx: 0,
     cy: 0,
-    domain: [0, 'auto'],
     orientation: 'outer',
     axisLine: true,
     tickLine: true,

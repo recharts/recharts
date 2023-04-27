@@ -1,16 +1,17 @@
 /**
  * @fileOverview Brush
  */
-import React, { PureComponent, Children, ReactText, MouseEvent, ReactElement, TouchEvent, SVGProps } from 'react';
+import React, { PureComponent, Children, ReactText, ReactElement, TouchEvent, SVGProps } from 'react';
 import classNames from 'classnames';
-import { scalePoint, ScalePoint } from 'd3-scale';
+import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
 import _ from 'lodash';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { isNumber } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
-import { Padding, DataKey, filterProps } from '../util/types';
+import { Padding, DataKey } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
 interface BrushStartEndIndex {
@@ -47,7 +48,7 @@ interface BrushProps extends InternalBrushProps {
   alwaysShowText?: boolean;
 }
 
-export type Props = SVGProps<SVGElement> & BrushProps;
+export type Props = Omit<SVGProps<SVGElement>, 'onChange'> & BrushProps;
 
 type BrushTravellerId = 'startX' | 'endX';
 
@@ -107,7 +108,7 @@ const createScale = ({
   };
 };
 
-const isTouch = (e: TouchEvent<SVGElement> | MouseEvent<SVGElement>): e is TouchEvent<SVGElement> =>
+const isTouch = (e: TouchEvent<SVGElement> | React.MouseEvent<SVGElement>): e is TouchEvent<SVGElement> =>
   (e as TouchEvent<SVGElement>).changedTouches && !!(e as TouchEvent<SVGElement>).changedTouches.length;
 
 export class Brush extends PureComponent<Props, State> {
@@ -139,7 +140,7 @@ export class Brush extends PureComponent<Props, State> {
 
   travellerDragStartHandlers?: Record<
     BrushTravellerId,
-    (event: MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) => void
+    (event: React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) => void
   >;
 
   static renderDefaultTraveller(props: any) {
@@ -255,7 +256,7 @@ export class Brush extends PureComponent<Props, State> {
     return _.isFunction(tickFormatter) ? tickFormatter(text, index) : text;
   }
 
-  handleDrag = (e: React.Touch | MouseEvent<SVGGElement>) => {
+  handleDrag = (e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) => {
     if (this.leaveTimer) {
       clearTimeout(this.leaveTimer);
       this.leaveTimer = null;
@@ -277,11 +278,13 @@ export class Brush extends PureComponent<Props, State> {
   attachDragEndListener() {
     window.addEventListener('mouseup', this.handleDragEnd, true);
     window.addEventListener('touchend', this.handleDragEnd, true);
+    window.addEventListener('mousemove', this.handleDrag, true);
   }
 
   detachDragEndListener() {
     window.removeEventListener('mouseup', this.handleDragEnd, true);
     window.removeEventListener('touchend', this.handleDragEnd, true);
+    window.removeEventListener('mousemove', this.handleDrag, true);
   }
 
   handleDragEnd = () => {
@@ -310,7 +313,7 @@ export class Brush extends PureComponent<Props, State> {
     });
   };
 
-  handleSlideDragStart = (e: TouchEvent<SVGRectElement> | MouseEvent<SVGRectElement>) => {
+  handleSlideDragStart = (e: TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => {
     const event = isTouch(e) ? e.changedTouches[0] : e;
 
     this.setState({
@@ -322,7 +325,7 @@ export class Brush extends PureComponent<Props, State> {
     this.attachDragEndListener();
   };
 
-  handleSlideDrag(e: React.Touch | MouseEvent<SVGGElement>) {
+  handleSlideDrag(e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) {
     const { slideMoveStartX, startX, endX } = this.state;
     const { x, width, travellerWidth, startIndex, endIndex, onChange } = this.props;
     let delta = e.pageX - slideMoveStartX;
@@ -348,7 +351,7 @@ export class Brush extends PureComponent<Props, State> {
     });
   }
 
-  handleTravellerDragStart(id: BrushTravellerId, e: MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) {
+  handleTravellerDragStart(id: BrushTravellerId, e: React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) {
     const event = isTouch(e) ? e.changedTouches[0] : e;
 
     this.setState({
@@ -361,7 +364,7 @@ export class Brush extends PureComponent<Props, State> {
     this.attachDragEndListener();
   }
 
-  handleTravellerMove(e: React.Touch | MouseEvent<SVGGElement>) {
+  handleTravellerMove(e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) {
     const { brushMoveStartX, movingTravellerId, endX, startX } = this.state;
     const prevValue = this.state[movingTravellerId];
 
@@ -538,7 +541,6 @@ export class Brush extends PureComponent<Props, State> {
     return (
       <Layer
         className={layerClass}
-        onMouseMove={this.handleDrag}
         onMouseLeave={this.handleLeaveWrapper}
         onTouchMove={this.handleTouchMove}
         style={style}

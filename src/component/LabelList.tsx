@@ -1,10 +1,10 @@
-import React, { cloneElement, ReactElement, SVGProps } from 'react';
+import React, { cloneElement, ReactElement, ReactNode, SVGProps } from 'react';
 import _ from 'lodash';
 import { Label, ContentType, Props as LabelProps } from './Label';
 import { Layer } from '../container/Layer';
-import { findAllByType } from '../util/ReactUtils';
+import { findAllByType, filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { filterProps, DataKey, ViewBox } from '../util/types';
+import { DataKey, ViewBox } from '../util/types';
 
 interface Data {
   value?: number | string | Array<number | string>;
@@ -22,11 +22,12 @@ interface LabelListProps<T extends Data> {
   textBreakAll?: boolean;
   position?: LabelProps['position'];
   angle?: number;
+  formatter?: Function;
 }
 
-export type Props<T> = SVGProps<SVGElement> & LabelListProps<T>;
+export type Props<T extends Data> = SVGProps<SVGElement> & LabelListProps<T>;
 
-export type ImplicitLabelListType<T> =
+export type ImplicitLabelListType<T extends Data> =
   | boolean
   | ReactElement<SVGElement>
   | ((props: any) => ReactElement<SVGElement>)
@@ -71,7 +72,7 @@ export function LabelList<T extends Data>(props: Props<T>) {
 
 LabelList.displayName = 'LabelList';
 
-function parseLabelList<T extends Data>(label: any, data: Array<T>) {
+function parseLabelList<T extends Data>(label: unknown, data: Array<T>) {
   if (!label) {
     return null;
   }
@@ -91,25 +92,30 @@ function parseLabelList<T extends Data>(label: any, data: Array<T>) {
   return null;
 }
 
-function renderCallByParent<T extends Data>(parentProps: any, data: Array<T>, ckeckPropsLabel = true) {
-  if (!parentProps || (!parentProps.children && ckeckPropsLabel && !parentProps.label)) {
+function renderCallByParent<T extends Data>(
+  parentProps: { children?: ReactNode; label?: unknown },
+  data: Array<T>,
+  checkPropsLabel = true,
+) {
+  if (!parentProps || (!parentProps.children && checkPropsLabel && !parentProps.label)) {
     return null;
   }
   const { children } = parentProps;
 
-  const explicitChilren = findAllByType(children, LabelList.displayName).map((child: any, index: number) =>
+  const explicitChildren = findAllByType(children, LabelList).map((child, index) =>
     cloneElement(child, {
       data,
+      // eslint-disable-next-line react/no-array-index-key
       key: `labelList-${index}`,
     }),
   );
-  if (!ckeckPropsLabel) {
-    return explicitChilren;
+  if (!checkPropsLabel) {
+    return explicitChildren;
   }
 
   const implicitLabelList = parseLabelList(parentProps.label, data);
 
-  return [implicitLabelList, ...explicitChilren];
+  return [implicitLabelList, ...explicitChildren];
 }
 
 LabelList.renderCallByParent = renderCallByParent;

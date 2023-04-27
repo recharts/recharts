@@ -1,4 +1,255 @@
-## 2.0.8 (Feb24, 2021)
+## ⚠️ Next versions change notes are available only on the [GitHub Releases](https://github.com/recharts/recharts/releases) page ⚠️
+
+## 2.2.0 (Dec 8, 2022)
+### feat
+- Support keyboard navigation in pie chart (#2923) 
+- Allow reversing the tooltip direction (#3056)
+### fix
+- fix rounding leading to hairline gaps (#3075)
+- fix: do not override zero brush end index (#3076)
+- fix: allow dragging brush when the mouse is outside (#3072)
+- fix: add label type to line props (#3068)
+- Ensure LabelList generic extends Data interface (#2954)
+
+## 2.1.16 (Oct 29, 2022)
+
+### fix
+- Fix incorrect date in CHAGELOG (#3016)
+- Let formatter function run even when value is falsy (#3026)
+- Fix(Sankey): update tooltip active state by trigger type(hover/click) (#3021)
+- Fix Area's `baseValue` prop (#3013)
+
+## 2.1.15 (Oct 12, 2022)
+
+### fix
+- Fix scroll on hover
+- DefaultTooltipContent.tsx Solving type error for entry.value and entry.name
+
+### chore
+- Revert D3 version
+
+
+## 2.1.14 (Sep 7, 2022)
+### fix
+- Add inactiveShape prop to Pie component (#2900)
+- Revert "chore: move type deps into devDependencies (#2843)" (#2942)
+- Fix typing of default tooltip formatter (#2924)
+- Take letter-spacing and font-size into consideration while rendering ticks (#2898)
+- Add formatter function type to tooltip props (#2916)
+- doc: Update CHANGELOG.md about d3 7.x (#2919)
+
+## 2.1.13 (Jul 26, 2022)
+
+### fix
+
+- set animate flag before chart data update (#2911)
+- Error bar domain fix (#2863)
+- fix: fix "recharts@… doesn't provide prop-types, requested by react-smooth" warning (#2895)
+
+### chore
+
+- upgrade d3 (#2893)
+
+## 2.1.12 (Jun 27, 2022)
+
+### fix
+
+- update react-smooth version
+- update d3 from 6.x to 7.x it may break some tools like jest
+
+fix config for jest is to add the following configuration
+
+```javascript
+const path = require('path');
+// took from d3/package.json
+const d3Pkgs = [
+	'd3',
+	'd3-array',
+	'd3-axis',
+	'd3-brush',
+	'd3-chord',
+	'd3-color',
+	'd3-contour',
+	'd3-delaunay',
+	'd3-dispatch',
+	'd3-drag',
+	'd3-dsv',
+	'd3-ease',
+	'd3-fetch',
+	'd3-force',
+	'd3-format',
+	'd3-geo',
+	'd3-hierarchy',
+	'd3-interpolate',
+	'd3-path',
+	'd3-polygon',
+	'd3-quadtree',
+	'd3-random',
+	'd3-scale',
+	'd3-scale-chromatic',
+	'd3-selection',
+	'd3-shape',
+	'd3-time',
+	'd3-time-format',
+	'd3-timer',
+	'd3-transition',
+	'd3-zoom',
+];
+
+// option 1 map module to an bundled version of the package which is es5
+const moduleNameMapper = d3Pkgs.reduce((acc, pkg) => {
+	acc[`^${pkg}$`] = path.join(require.resolve(pkg), `../../dist/${pkg}.min.js`);
+	return acc;
+}, {});
+
+module.exports = {
+	moduleNameMapper: {
+		// option 1
+		// ...moduleNameMapper
+	},
+	transform: {
+		// match mjs js jsx ts tsx
+		'^.+\\.m?[jt]sx?$': 'babel-jest',
+	},
+	// stop ignore node_modules transform since d3 and others start to put es6 as main of packages
+	transformIgnorePatterns: [
+		// option 2, stop ignore transform on es6 packages
+		`/node_modules/(?!${d3Pkgs.join('|')}|internmap|d3-delaunay|delaunator|robust-predicates)`,
+		// option 3, stop ignore transform on all node_modules
+		// `/node_modules/(?!.*)`,
+	],
+};
+```
+
+## 2.1.11 (Jun 24, 2022)
+
+### feat
+
+-  Adds react `^18.0.0`  as valid peerDependency (#2820)
+
+## 2.1.10 (May 19, 2022)
+
+### feat
+
+- Add ARIA1.2 attributes to the SvgElementPropKeys filter array
+- Added Storybook Badge (#2840)
+- Handling of undefined values and type checks in DefaultTooltipContent
+
+### fix
+
+- Axis scale=band no longer works as of Recharts 2.x.x (#2742)
+
+### chore
+
+- chore: move type deps into devDependencies (#2843)
+
+## 2.1.9 (Feb 10, 2022)
+
+### feat
+
+- feat: allow axis domain to accept a callback (#2770)
+- Categorical chart callback types (#2739)
+
+### fix
+
+- Fixing types in strict mode (#2745) (#2747)
+- Fix: removes overlapping legend for categorical charts (#2752)
+- Categorical chart callback types (#2739)
+
+## 2.1.8 (dec 14, 2021)
+
+### fix
+
+- Must use import to load ES Module (#2658)
+
+## 2.1.7 (dec 14, 2021)
+
+### fix
+
+- Treemap do not render depth (#2718 #2719)
+- Update PolarRadiusAxis.tsx (#2720)
+
+### chore
+
+- Update d3-interpolate, d3-scale and d3-shape (#2707)
+
+## 2.1.6 (oct 26, 2021)
+
+### fix
+
+- Fix types folder missing
+
+## 2.1.5 (oct 15, 2021)
+
+### fix
+
+- Fixed types for legend events (#2267 #2269)
+- Fix the react-is version (#2670)
+- Fix type declaration errors when tsc (#2675)
+- Fix(build-umd): add webpack output options libraryTarget (#2684)
+
+## 2.1.4 (sep 19, 2021)
+
+### fix
+
+- Fix: ResponsiveContainer makes legend overlapping with chart when re-rendering (#2660)
+- Fix: rendering of a single bar when maxBarSize is absent and barSize is present (#2659)
+
+## 2.1.3 (sep 18, 2021)
+
+### fix
+
+- fix: Customized component has no key (#2637)
+- Fix XAxis scale property type (#2641)
+
+## 2.1.2 (aug 24, 2021)
+
+### fix
+
+- Fixes undefined field reference when optional variables not supplied (#2630)
+- Fix fragment children (#2481)
+## 2.1.1 (aug 21, 2021)
+
+### fix
+
+- Fix: responsive container
+
+## 2.1.0 (aug 10, 2021)
+
+### feat
+
+- Wrap ResponsiveContainer with forwardRef
+
+### fix
+
+- Fix for recharts issue #1787
+- Add chart type to tooltip payload
+## 2.0.10 (jul 13, 2021)
+### feat
+
+- Feat: Allow automated axis padding for "gap" and "no-gap" for barcharts with continuous axis #2457
+- Passthrough position attribute on createLabeledScales
+
+### fix
+
+- fix: barchart for a single data point #2512
+- fix: the bar label type definition #2582
+- fix: show scatter chart tooltip cross cursor #2592
+
+## 2.0.9 (mar 24, 2021)
+
+### chore
+
+- update test config and webpack, etc
+
+## fix
+
+- fix for missing sankey tooltips, fix #2496
+- added polyfill for ReactResizeDetector, fix #2504
+- fix condition to actually remove the listener, fix #2498
+- fix typing of <Area type /> prop, fix #2471
+
+## 2.0.8 (Feb 24, 2021)
 
 ### feat
 

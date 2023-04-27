@@ -1,10 +1,24 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable react/no-multi-comp */
+/* eslint-disable max-classes-per-file */
 import React, { Component } from 'react';
 import {
-  BarChart, Bar, Brush, Cell, CartesianGrid, ReferenceLine, ReferenceArea,
-  XAxis, YAxis, Tooltip, Legend, ErrorBar, LabelList, Rectangle
+  BarChart,
+  Bar,
+  Brush,
+  Cell,
+  CartesianGrid,
+  ReferenceLine,
+  ReferenceArea,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ErrorBar,
+  LabelList,
+  Rectangle,
 } from 'recharts';
-import { scaleOrdinal } from 'd3-scale';
+import { scaleOrdinal } from 'victory-vendor/d3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
 import _ from 'lodash';
 import { changeNumberOfData } from './utils';
@@ -69,7 +83,7 @@ const data02 = [
   { name: '201401', uv: 3.63, pv: 4.64 },
   { name: '201402', uv: -4.91, pv: -0.02 },
   { name: '201403', uv: -2.66, pv: 1.54 },
-  { name: '201404', uv: -1.50, pv: 1.86 },
+  { name: '201404', uv: -1.5, pv: 1.86 },
   { name: '201405', uv: -0.19, pv: 2.62 },
   { name: '201406', uv: -0.22, pv: 3.42 },
   { name: '201407', uv: -0.58, pv: 3.35 },
@@ -113,34 +127,36 @@ const pageData = [
   { name: 'Page G', uv: 189, pv: 4800, amt: 2400 },
 ];
 
-const RenderLabel = (props: any) => {
-  const { x, y, textAnchor, key, value, index, ...others } = props;
-
-  if (x === +x && y === +y) {
-    return (
-      <text x={x} y={y} dy={-10} textAnchor={textAnchor} key={key}>
-        {_.isArray(value) ? value[1] : value}
-      </text>
-    );
-  }
-
-  return null;
-};
-const CustomTick = function () {
-  const { payload, x, y } = this.props;
-
-  return <text x={x} y={y} fill="#666" textAnchor="middle" dy={-4}>{payload.province}</text>;
-};
-
-const CustomAxisTick = function () {
-  const { x, y, payload } = this.props;
-
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">{payload.value}</text>
-    </g>
-  );
-};
+const noDataCustomBar = [
+  {
+    group: 10,
+    fullName: '9 January',
+    name: '9 Jan',
+    noData: 'group',
+    noDataLabel: 'No Data',
+  },
+  {
+    group: null,
+    fullName: '15 January',
+    name: '15 Jan',
+    noData: 'group',
+    noDataLabel: 'No Data',
+  },
+  {
+    group: null,
+    fullName: '24 January',
+    name: '24 Jan',
+    noData: 'group',
+    noDataLabel: 'No Data',
+  },
+  {
+    group: null,
+    fullName: '30 January',
+    name: '30 Jan',
+    noData: 'group',
+    noDataLabel: 'No Data',
+  },
+];
 
 const CustomBar: React.FunctionComponent<any> = (props: any) => {
   const { x, y, width, height, fill } = props;
@@ -148,7 +164,7 @@ const CustomBar: React.FunctionComponent<any> = (props: any) => {
   if (x === +x && y === +y) {
     const path = `M${x},${y + height}
           C${x + width / 3},${y + height} ${x + width / 2},${y + height / 3} ${x + width / 2}, ${y}
-          C${x + width / 2},${y + height / 3} ${x + 2 * width / 3},${y + height} ${x + width}, ${y + height}
+          C${x + width / 2},${y + height / 3} ${x + (2 * width) / 3},${y + height} ${x + width}, ${y + height}
           Z`;
 
     return <path d={path} stroke="none" fill={fill} />;
@@ -159,8 +175,10 @@ const CustomBar: React.FunctionComponent<any> = (props: any) => {
 
 const CustomCursor: React.FunctionComponent<any> = (props: any) => {
   const { x, y, width, height, fill, payloadIndex } = props;
-  return (<Rectangle x={x} y={y} fill={fill} width={width} height={height} onMouseEnter={() => console.log(payloadIndex)} />);
-}
+  return (
+    <Rectangle x={x} y={y} fill={fill} width={width} height={height} onMouseEnter={() => console.log(payloadIndex)} />
+  );
+};
 
 class BarTwo extends Component<any, any> {
   getPath() {
@@ -171,11 +189,13 @@ class BarTwo extends Component<any, any> {
 
       return `M${x - extend},${y + height}
               C${x - extend + width / 3},${y + height} ${x + width / 6},${y} ${x + width / 2}, ${y}
-              C${x + 5 * width / 6},${y} ${x + extend + 2 * width / 3},${y + height} ${x + width + extend}, ${y + height}
+              C${x + (5 * width) / 6},${y} ${x + extend + (2 * width) / 3},${y + height} ${x + width + extend}, ${
+        y + height
+      }
               Z`;
     }
 
-    return null;
+    return undefined;
   }
 
   render() {
@@ -194,30 +214,44 @@ class CustomAxis extends Component<any> {
       case 'food':
         icon = (
           <svg x={x - 10} y={y} width={20} height={20} version="1.1" viewBox="0 0 1024 1024">
-            <path fill="#387908" d="M960 682.666667c-8.533333 0-21.333333 0-21.333333 0l-85.333333 0c-23.466667 0-42.666667-19.2-42.666667-42.666667 0-8.533333 0-21.333333 0-21.333333 0-6.4 0-14.933333 0-21.333333 0-164.266667-134.4-298.666667-298.666667-298.666667s-298.666667 134.4-298.666667 298.666667c0 6.4 0 14.933333 2.133333 21.333333 0 0-2.133333 12.8-2.133333 21.333333 0 23.466667-19.2 42.666667-42.666667 42.666667L85.333333 682.666667c0 0-12.8 0-21.333333 0-23.466667 0-42.666667-19.2-42.666667-42.666667s19.2-42.666667 42.666667-42.666667c8.533333 0 21.333333 0 21.333333 0l42.666667 0c0-189.866667 138.666667-347.733333 320-377.6 0-2.133333 0-4.266667 0-6.4 0-36.266667 27.733333-64 64-64s64 27.733333 64 64c0 2.133333 0 4.266667 0 6.4 181.333333 29.866667 320 187.733333 320 377.6l42.666667 0c0 0 12.8 0 21.333333 0 23.466667 0 42.666667 19.2 42.666667 42.666667S983.466667 682.666667 960 682.666667zM469.333333 384 469.333333 384c0 0 6.4 0 10.666667 0 17.066667 0 32 14.933333 32 32S497.066667 448 480 448c-4.266667 0-10.666667 0-10.666667 0l0 0c-70.4 0-128 57.6-128 128 0 0 0 6.4 0 10.666667 0 17.066667-14.933333 32-32 32S277.333333 603.733333 277.333333 586.666667c0-4.266667 0-10.666667 0-10.666667C277.333333 469.333333 362.666667 384 469.333333 384zM64 789.333333l896 0c23.466667 0 42.666667 19.2 42.666667 42.666667s-19.2 42.666667-42.666667 42.666667L64 874.666667c-23.466667 0-42.666667-19.2-42.666667-42.666667S40.533333 789.333333 64 789.333333z" />
+            <path
+              fill="#387908"
+              d="M960 682.666667c-8.533333 0-21.333333 0-21.333333 0l-85.333333 0c-23.466667 0-42.666667-19.2-42.666667-42.666667 0-8.533333 0-21.333333 0-21.333333 0-6.4 0-14.933333 0-21.333333 0-164.266667-134.4-298.666667-298.666667-298.666667s-298.666667 134.4-298.666667 298.666667c0 6.4 0 14.933333 2.133333 21.333333 0 0-2.133333 12.8-2.133333 21.333333 0 23.466667-19.2 42.666667-42.666667 42.666667L85.333333 682.666667c0 0-12.8 0-21.333333 0-23.466667 0-42.666667-19.2-42.666667-42.666667s19.2-42.666667 42.666667-42.666667c8.533333 0 21.333333 0 21.333333 0l42.666667 0c0-189.866667 138.666667-347.733333 320-377.6 0-2.133333 0-4.266667 0-6.4 0-36.266667 27.733333-64 64-64s64 27.733333 64 64c0 2.133333 0 4.266667 0 6.4 181.333333 29.866667 320 187.733333 320 377.6l42.666667 0c0 0 12.8 0 21.333333 0 23.466667 0 42.666667 19.2 42.666667 42.666667S983.466667 682.666667 960 682.666667zM469.333333 384 469.333333 384c0 0 6.4 0 10.666667 0 17.066667 0 32 14.933333 32 32S497.066667 448 480 448c-4.266667 0-10.666667 0-10.666667 0l0 0c-70.4 0-128 57.6-128 128 0 0 0 6.4 0 10.666667 0 17.066667-14.933333 32-32 32S277.333333 603.733333 277.333333 586.666667c0-4.266667 0-10.666667 0-10.666667C277.333333 469.333333 362.666667 384 469.333333 384zM64 789.333333l896 0c23.466667 0 42.666667 19.2 42.666667 42.666667s-19.2 42.666667-42.666667 42.666667L64 874.666667c-23.466667 0-42.666667-19.2-42.666667-42.666667S40.533333 789.333333 64 789.333333z"
+            />
           </svg>
         );
         break;
       case 'cosmetic':
         icon = (
           <svg x={x - 10} y={y} width={20} height={20} version="1.1" viewBox="0 0 1024 1024">
-            <path fill="#387908" d="M874.666667 940.8 149.333333 940.8c-23.466667 0-42.666667-19.2-42.666667-42.666667s19.2-42.666667 42.666667-42.666667l42.666667 0 0-170.666667c0-23.466667 19.2-42.666667 42.666667-42.666667l64 0 0-512c0-23.466667 17.066667-42.666667 38.4-46.933333 8.533333-2.133333 19.2 2.133333 19.2 2.133333S680.533333 256 682.666667 258.133333c25.6 8.533333 42.666667 25.6 42.666667 42.666667l0 341.333333 64 0c23.466667 0 42.666667 19.2 42.666667 42.666667l0 170.666667 42.666667 0c23.466667 0 42.666667 19.2 42.666667 42.666667S898.133333 940.8 874.666667 940.8zM640 334.933333 384 196.266667l0 445.866667 256 0L640 334.933333zM746.666667 727.466667l-21.333333 0-85.333333 0L384 727.466667l-85.333333 0-21.333333 0 0 128 469.333333 0L746.666667 727.466667z" />
+            <path
+              fill="#387908"
+              d="M874.666667 940.8 149.333333 940.8c-23.466667 0-42.666667-19.2-42.666667-42.666667s19.2-42.666667 42.666667-42.666667l42.666667 0 0-170.666667c0-23.466667 19.2-42.666667 42.666667-42.666667l64 0 0-512c0-23.466667 17.066667-42.666667 38.4-46.933333 8.533333-2.133333 19.2 2.133333 19.2 2.133333S680.533333 256 682.666667 258.133333c25.6 8.533333 42.666667 25.6 42.666667 42.666667l0 341.333333 64 0c23.466667 0 42.666667 19.2 42.666667 42.666667l0 170.666667 42.666667 0c23.466667 0 42.666667 19.2 42.666667 42.666667S898.133333 940.8 874.666667 940.8zM640 334.933333 384 196.266667l0 445.866667 256 0L640 334.933333zM746.666667 727.466667l-21.333333 0-85.333333 0L384 727.466667l-85.333333 0-21.333333 0 0 128 469.333333 0L746.666667 727.466667z"
+            />
           </svg>
         );
         break;
       case 'storage':
         icon = (
           <svg x={x - 10} y={y} width={20} height={20} version="1.1" viewBox="0 0 1024 1024">
-            <path fill="#387908" d="M896 928.234667 128 928.234667C104.426667 928.234667 85.333333 909.141333 85.333333 885.568L85.333333 629.568C85.333333 605.994667 104.426667 586.901333 128 586.901333L163.52 586.901333 434.837333 116.970667C446.613333 96.554667 472.704 89.578667 493.12 101.354667L714.816 229.354667C735.232 241.130667 742.208 267.221333 730.432 287.637333L714.176 315.797333 864.426667 402.56C884.842667 414.336 891.84 440.426667 880.042667 460.842667L807.274667 586.901333 896 586.901333C919.573333 586.901333 938.666667 605.994667 938.666667 629.568L938.666667 885.568C938.666667 909.141333 919.573333 928.234667 896 928.234667ZM487.402667 196.586667 262.058667 586.901333 459.114667 586.901333 635.2 281.92 487.402667 196.586667ZM557.653333 586.901333 708.736 586.901333 784.810667 455.125333 671.509333 389.696 557.653333 586.901333ZM853.333333 672.234667 170.666667 672.234667 170.666667 842.901333 853.333333 842.901333 853.333333 672.234667Z" />
+            <path
+              fill="#387908"
+              d="M896 928.234667 128 928.234667C104.426667 928.234667 85.333333 909.141333 85.333333 885.568L85.333333 629.568C85.333333 605.994667 104.426667 586.901333 128 586.901333L163.52 586.901333 434.837333 116.970667C446.613333 96.554667 472.704 89.578667 493.12 101.354667L714.816 229.354667C735.232 241.130667 742.208 267.221333 730.432 287.637333L714.176 315.797333 864.426667 402.56C884.842667 414.336 891.84 440.426667 880.042667 460.842667L807.274667 586.901333 896 586.901333C919.573333 586.901333 938.666667 605.994667 938.666667 629.568L938.666667 885.568C938.666667 909.141333 919.573333 928.234667 896 928.234667ZM487.402667 196.586667 262.058667 586.901333 459.114667 586.901333 635.2 281.92 487.402667 196.586667ZM557.653333 586.901333 708.736 586.901333 784.810667 455.125333 671.509333 389.696 557.653333 586.901333ZM853.333333 672.234667 170.666667 672.234667 170.666667 842.901333 853.333333 842.901333 853.333333 672.234667Z"
+            />
           </svg>
         );
         break;
       case 'digital':
         icon = (
           <svg x={x - 10} y={y} width={20} height={20} version="1.1" viewBox="0 0 1024 1024">
-            <path fill="#387908" d="M896 896 128 896C104.426667 896 85.333333 876.906667 85.333333 853.333333L85.333333 298.666667C85.333333 275.093333 104.426667 256 128 256L896 256C919.573333 256 938.666667 275.093333 938.666667 298.666667L938.666667 853.333333C938.666667 876.906667 919.573333 896 896 896ZM853.333333 341.333333 170.666667 341.333333 170.666667 810.666667 853.333333 810.666667 853.333333 341.333333ZM512 405.333333C606.250667 405.333333 682.666667 481.749333 682.666667 576 682.666667 670.250667 606.250667 746.666667 512 746.666667 417.749333 746.666667 341.333333 670.250667 341.333333 576 341.333333 481.749333 417.749333 405.333333 512 405.333333ZM512 661.333333C559.125333 661.333333 597.333333 623.125333 597.333333 576 597.333333 528.874667 559.125333 490.666667 512 490.666667 464.874667 490.666667 426.666667 528.874667 426.666667 576 426.666667 623.125333 464.874667 661.333333 512 661.333333ZM448 213.333333 234.666667 213.333333C211.093333 213.333333 192 194.24 192 170.666667 192 147.093333 211.093333 128 234.666667 128L448 128C471.573333 128 490.666667 147.093333 490.666667 170.666667 490.666667 194.24 471.573333 213.333333 448 213.333333Z" />
+            <path
+              fill="#387908"
+              d="M896 896 128 896C104.426667 896 85.333333 876.906667 85.333333 853.333333L85.333333 298.666667C85.333333 275.093333 104.426667 256 128 256L896 256C919.573333 256 938.666667 275.093333 938.666667 298.666667L938.666667 853.333333C938.666667 876.906667 919.573333 896 896 896ZM853.333333 341.333333 170.666667 341.333333 170.666667 810.666667 853.333333 810.666667 853.333333 341.333333ZM512 405.333333C606.250667 405.333333 682.666667 481.749333 682.666667 576 682.666667 670.250667 606.250667 746.666667 512 746.666667 417.749333 746.666667 341.333333 670.250667 341.333333 576 341.333333 481.749333 417.749333 405.333333 512 405.333333ZM512 661.333333C559.125333 661.333333 597.333333 623.125333 597.333333 576 597.333333 528.874667 559.125333 490.666667 512 490.666667 464.874667 490.666667 426.666667 528.874667 426.666667 576 426.666667 623.125333 464.874667 661.333333 512 661.333333ZM448 213.333333 234.666667 213.333333C211.093333 213.333333 192 194.24 192 170.666667 192 147.093333 211.093333 128 234.666667 128L448 128C471.573333 128 490.666667 147.093333 490.666667 170.666667 490.666667 194.24 471.573333 213.333333 448 213.333333Z"
+            />
           </svg>
         );
+        break;
+      default:
         break;
     }
 
@@ -230,7 +264,9 @@ class CustomAxis extends Component<any> {
     return (
       <g>
         {this.getIcon()}
-        <text textAnchor="middle" x={x} y={y} dy={34}>{payload.value}</text>
+        <text textAnchor="middle" x={x} y={y} dy={34}>
+          {payload.value}
+        </text>
       </g>
     );
   }
@@ -242,8 +278,48 @@ const initialState = {
   data02,
 };
 
-export default class Demo extends Component<any, any> {
+const NoDataBar = (props: any) => {
+  const { x, width, value, valueKey, fill, y } = props;
 
+  const noDataYVal = 5 + y / 2;
+  const noDataHeight = y / 2 - 5;
+
+  return (
+    <svg className="NoDataLabel">
+      <defs>
+        <pattern
+          id={`hatch_${valueKey}`}
+          patternUnits="userSpaceOnUse"
+          width="35"
+          height="10"
+          patternTransform="rotate(-45)"
+        >
+          <path d="M0 10 l 35 0" className="NoDataLabel__hatch" strokeWidth="3" stroke={fill} strokeOpacity={0.15} />
+        </pattern>
+      </defs>
+      <g>
+        <rect
+          className="NoDataLabel__background"
+          x={x}
+          y={noDataYVal}
+          width={width}
+          height={noDataHeight}
+          stroke={fill}
+          strokeWidth="1"
+          strokeDasharray="4 4"
+          strokeOpacity={0.8}
+          fill="#ffffff"
+          rx="3"
+        />
+        <rect x={x} y={noDataYVal} width={width} height={noDataHeight} fill={`url(#hatch_${valueKey})`} />
+        <p>{value && value[valueKey] ? value[valueKey] : 'No Data'}</p>
+      </g>
+    </svg>
+  );
+};
+
+// eslint-disable-next-line import/no-default-export
+export default class Demo extends Component<any, any> {
   static displayName = 'BarChartDemo';
 
   state = initialState;
@@ -252,8 +328,8 @@ export default class Demo extends Component<any, any> {
     this.setState(() => _.mapValues(initialState, changeNumberOfData));
   };
 
-  handlePvBarClick = (data: any, index: number, e: React.MouseEvent) => {
-    console.log(`Pv Bar (${index}) Click: `, data);
+  handlePvBarClick = (onClickData: any, index: number) => {
+    console.log(`Pv Bar (${index}) Click: `, onClickData);
   };
 
   handleBarAnimationStart = () => {
@@ -265,51 +341,50 @@ export default class Demo extends Component<any, any> {
   };
 
   handleMoreData = () => {
-    const { data } = this.state;
+    const { data: stateData } = this.state;
     const count = data.length;
     console.log(count);
 
     this.setState({
-      data: [...data, ..._.range(1 + Math.ceil(data.length * Math.random())).map((entry, index) => {
-        console.log(index);
-        return {
-          name: `random${Math.random()}`.slice(0, 10),
-          uv: 3000 * Math.random(),
-          pv: 3000 * Math.random(),
-          amt: 5000 * Math.random(),
-          time: count + index,
-          uvError: 100 * Math.random(),
-          pvError: 50 * Math.random()
-        };
-      })],
+      data: [
+        ...stateData,
+        ..._.range(1 + Math.ceil(data.length * Math.random())).map((entry, index) => {
+          console.log(index);
+          return {
+            name: `random${Math.random()}`.slice(0, 10),
+            uv: 3000 * Math.random(),
+            pv: 3000 * Math.random(),
+            amt: 5000 * Math.random(),
+            time: count + index,
+            uvError: 100 * Math.random(),
+            pvError: 50 * Math.random(),
+          };
+        }),
+      ],
     });
   };
 
   handleLessData = () => {
-    const { data } = this.state;
+    const { data: stateData } = this.state;
 
     this.setState({
-      data: data.slice(0, Math.ceil(data.length * Math.random())),
+      data: stateData.slice(0, Math.ceil(stateData.length * Math.random())),
     });
   };
 
   render() {
-    const { data, data01, data02 } = this.state;
+    const { data: stateData, data02: stateData02 } = this.state;
 
     return (
       <div className="bar-charts">
-        <a
-          href="javascript: void(0);"
-          className="btn update"
-          onClick={this.handleChangeData}
-        >
+        <button className="btn update" onClick={this.handleChangeData} type="button">
           change data
-        </a>
+        </button>
         <br />
 
         <p>BarChart of layout vertical</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={400} height={400} data={data.slice(0, 1)} maxBarSize={10} barSize={10}>
+          <BarChart width={400} height={400} data={stateData.slice(0, 1)} maxBarSize={10} barSize={10}>
             <XAxis padding={{ left: 20, right: 100 }} type="number" dataKey="time" />
             <YAxis type="number" />
             <CartesianGrid horizontal={false} />
@@ -321,75 +396,80 @@ export default class Demo extends Component<any, any> {
 
         <p>Simple BarChart (Click on rectangles and open console )</p>
         <p>
-          <a onClick={this.handleMoreData}>more data</a>
+          <button type="button" onClick={this.handleMoreData}>
+            more data
+          </button>
           <span style={{ margin: '0 20px' }}>|</span>
-          <a onClick={this.handleLessData}>less data</a>
+          <button type="button" onClick={this.handleLessData}>
+            less data
+          </button>
         </p>
         <div className="bar-chart-wrapper" style={{ textAlign: 'right' }}>
-          <BarChart width={400} height={400} data={data} onClick={this.handlePvBarClick}>
+          <BarChart width={400} height={400} data={stateData} onClick={this.handlePvBarClick}>
             <XAxis dataKey="name" />
             <YAxis yAxisId="a" />
             <YAxis yAxisId="b" orientation="right" />
             <Legend />
             <Tooltip />
             <CartesianGrid vertical={false} />
-            <Bar yAxisId="a" dataKey="uv" onAnimationStart={this.handleBarAnimationStart} onAnimationEnd={this.handleBarAnimationEnd}>
+            <Bar
+              yAxisId="a"
+              dataKey="uv"
+              onAnimationStart={this.handleBarAnimationStart}
+              onAnimationEnd={this.handleBarAnimationEnd}
+            >
               <LabelList fill="#000" angle={-45} />
-              {
-                data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={colors[index % 20] as string} />
-                ))
-              }
+              {stateData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={colors[index % 20] as string} />
+              ))}
             </Bar>
             <Bar yAxisId="b" dataKey="pv" label>
-              {
-                data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={colors[index % 20] as string} />
-                ))
-              }
+              {stateData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={colors[index % 20] as string} />
+              ))}
             </Bar>
           </BarChart>
         </div>
 
         <p>BarChart with error bars</p>
         <div className="bar-chart-wrapper" style={{ textAlign: 'right' }}>
-          <BarChart width={400} height={400} data={data} onClick={this.handlePvBarClick}>
+          <BarChart width={400} height={400} data={stateData} onClick={this.handlePvBarClick}>
             <XAxis dataKey="name" />
             <YAxis yAxisId="a" />
             <YAxis yAxisId="b" orientation="right" />
             <Legend />
             <Tooltip />
             <CartesianGrid vertical={false} />
-            <Bar yAxisId="a" dataKey="uv" onAnimationStart={this.handleBarAnimationStart} onAnimationEnd={this.handleBarAnimationEnd}>
-              {
-                data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={colors[index % 20] as string} />
-                ))
-              }
+            <Bar
+              yAxisId="a"
+              dataKey="uv"
+              onAnimationStart={this.handleBarAnimationStart}
+              onAnimationEnd={this.handleBarAnimationEnd}
+            >
+              {stateData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={colors[index % 20] as string} />
+              ))}
               <ErrorBar dataKey="uvError" />
             </Bar>
             <Bar yAxisId="b" dataKey="pv">
-              {
-                data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={colors[index % 20] as string} />
-                ))
-              }
+              {stateData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={colors[index % 20] as string} />
+              ))}
               <ErrorBar dataKey="pvError" />
             </Bar>
           </BarChart>
         </div>
 
-
         <p>Tiny BarChart</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={150} height={40} data={data}>
+          <BarChart width={150} height={40} data={stateData}>
             <Bar dataKey="uv" fill="#ff7300" onClick={this.handlePvBarClick} background />
           </BarChart>
         </div>
 
         <p>BarChart with tickFormatter</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={500} height={300} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <BarChart width={500} height={300} data={stateData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" tickFormatter={(value: string, i: number) => `${value}.${i}`} />
             <YAxis />
@@ -402,7 +482,14 @@ export default class Demo extends Component<any, any> {
 
         <p>BarChart of positive and negative values</p>
         <div className="bar-chart-wrapper" style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>
-          <BarChart width={1100} height={250} barGap={2} barSize={6} data={data02} margin={{ top: 20, right: 60, bottom: 0, left: 20 }}>
+          <BarChart
+            width={1100}
+            height={250}
+            barGap={2}
+            barSize={6}
+            data={stateData02}
+            margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
+          >
             <XAxis dataKey="name" />
             <YAxis tickCount={7} />
             <Tooltip />
@@ -416,7 +503,14 @@ export default class Demo extends Component<any, any> {
 
         <p>BarChart of custom bar (1)</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={500} height={250} barCategoryGap={0} barGap={0} data={data} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
+          <BarChart
+            width={500}
+            height={250}
+            barCategoryGap={0}
+            barGap={0}
+            data={stateData}
+            margin={{ top: 20, right: 20, bottom: 0, left: 20 }}
+          >
             <XAxis dataKey="name" />
             <Bar dataKey="uv" fill="#ff7300" shape={CustomBar} />
           </BarChart>
@@ -424,7 +518,14 @@ export default class Demo extends Component<any, any> {
 
         <p>BarChart of custom bar (2)</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={500} height={250} barCategoryGap={0} barGap={0} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <BarChart
+            width={500}
+            height={250}
+            barCategoryGap={0}
+            barGap={0}
+            data={stateData}
+            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+          >
             <XAxis axisLine={false} tickLine={false} dataKey="name" tick={<CustomAxis />} />
             <Bar dataKey="uv" fill="#387908" shape={<BarTwo />} label />
           </BarChart>
@@ -432,7 +533,7 @@ export default class Demo extends Component<any, any> {
 
         <p>Stack BarChart</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={400} height={400} data={data}>
+          <BarChart width={400} height={400} data={stateData}>
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
@@ -450,12 +551,7 @@ export default class Demo extends Component<any, any> {
 
         <p>BarChart of range values</p>
         <div className="area-chart-wrapper">
-          <BarChart
-            width={400}
-            height={400}
-            data={rangeData}
-            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
-          >
+          <BarChart width={400} height={400} data={rangeData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             <XAxis dataKey="day" />
             <YAxis />
             <Tooltip />
@@ -468,7 +564,7 @@ export default class Demo extends Component<any, any> {
           <BarChart
             width={1400}
             height={400}
-            data={data}
+            data={stateData}
             margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
             layout="vertical"
           >
@@ -503,7 +599,7 @@ export default class Demo extends Component<any, any> {
           <BarChart
             width={800}
             height={800}
-            data={data}
+            data={stateData}
             margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
             layout="vertical"
           >
@@ -518,7 +614,7 @@ export default class Demo extends Component<any, any> {
               <LabelList position="left" />
             </Bar>
             <Bar dataKey="bmk" fill="#183a91">
-              <LabelList position="insideRight" fill="#ffffff"/>
+              <LabelList position="insideRight" fill="#ffffff" />
             </Bar>
           </BarChart>
         </div>
@@ -528,14 +624,14 @@ export default class Demo extends Component<any, any> {
           <BarChart
             width={1000}
             height={400}
-            data={data}
+            data={stateData}
             margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
             layout="horizontal"
           >
             <YAxis type="number" />
             <XAxis dataKey="name" type="category" />
             <Tooltip />
-            <ReferenceArea x1="food" x2="cosmetic"/>
+            <ReferenceArea x1="food" x2="cosmetic" />
             <Bar dataKey="uv" fill="#ff7300" label />
             <Bar dataKey="pv" fill="#387908">
               <LabelList position="top" />
@@ -551,7 +647,7 @@ export default class Demo extends Component<any, any> {
 
         <p>Custom cursor with hover action</p>
         <div className="bar-chart-wrapper">
-          <BarChart width={500} height={300} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <BarChart width={500} height={300} data={stateData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
@@ -560,7 +656,30 @@ export default class Demo extends Component<any, any> {
             <Bar dataKey="pv" fill="#8884d8" />
           </BarChart>
         </div>
-
+        <p>Custom bar when no data - Custom shape</p>
+        <div className="bar-chart-wrapper">
+          <BarChart
+            width={500}
+            height={300}
+            maxBarSize={60}
+            data={noDataCustomBar}
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          >
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar
+              dataKey="group"
+              fill="#8884d8"
+              shape={props => {
+                if (props.group) return <Rectangle {...props} />;
+                return <NoDataBar {...props} />;
+              }}
+            >
+              <LabelList dataKey="noDataLabel" position="top" />
+            </Bar>
+          </BarChart>
+        </div>
       </div>
     );
   }

@@ -13,7 +13,8 @@ import { Polygon } from '../shape/Polygon';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
-import { LegendType, TooltipType, AnimationTiming, filterProps, DataKey } from '../util/types';
+import { LegendType, TooltipType, AnimationTiming, DataKey } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 import { Props as PolarAngleAxisProps } from './PolarAngleAxis';
 import { Props as PolarRadiusAxisProps } from './PolarRadiusAxis';
 
@@ -60,7 +61,10 @@ interface RadarProps {
   onMouseLeave?: (props: any, e: MouseEvent<SVGPolygonElement>) => void;
 }
 
-export type Props = Omit<SVGProps<SVGElement>, 'onMouseEnter' | 'onMouseLeave'> & RadarProps;
+type RadiusAxis = PolarRadiusAxisProps & { scale: (value: any) => number };
+type AngleAxis = PolarAngleAxisProps & { scale: (value: any) => number };
+
+export type Props = Omit<SVGProps<SVGElement>, 'onMouseEnter' | 'onMouseLeave' | 'points'> & RadarProps;
 
 interface State {
   isAnimationFinished?: boolean;
@@ -92,8 +96,8 @@ export class Radar extends PureComponent<Props, State> {
     dataKey,
     bandSize,
   }: {
-    radiusAxis: PolarRadiusAxisProps & { scale: (value: any) => number };
-    angleAxis: PolarAngleAxisProps & { scale: (value: any) => number };
+    radiusAxis: RadiusAxis;
+    angleAxis: AngleAxis;
     displayedData: any[];
     dataKey: RadarProps['dataKey'];
     bandSize: number;

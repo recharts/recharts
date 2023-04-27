@@ -3,21 +3,20 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
     "eslint-config-airbnb",
     "prettier/@typescript-eslint",
     "plugin:prettier/recommended",
-    "prettier"
+    "prettier",
+    "plugin:storybook/recommended"
   ],
   "env": {
     "browser": true,
-    "mocha": true,
-    "node": true
+    "node": true,
+    "jest": true
   },
   "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "react",
-    "@typescript-eslint"
-  ],
+  "plugins": ["react", "@typescript-eslint"],
   "rules": {
     "prettier/prettier": [
       "error",
@@ -28,7 +27,7 @@
         "tabWidth": 2,
         "useTabs": false,
         "trailingComma": "all",
-        "arrowParens": "avoid",
+        "arrowParens": "avoid"
       }
     ],
     "import/extensions": "off",
@@ -38,40 +37,30 @@
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
     "react/react-in-jsx-scope": "error",
-    "react/jsx-filename-extension": ["error", { "extensions": [".ts", ".tsx"] }],
+    "react/jsx-filename-extension": ["error", { "extensions": [".ts", ".tsx", ".js", ".jsx"] }],
 
     "no-var": "error",
-
-    // Temporarily disabled for test/* until babel/babel-eslint#33 is resolved
-    "padded-blocks": "off",
     "react/jsx-no-bind": "error",
 
-    "strict": "off",
     "no-unused-vars": "off",
     "one-var": ["error", { "uninitialized": "always" }],
     "one-var-declaration-per-line": ["error", "initializations"],
-    "no-mixed-operators": "off",
     "no-plusplus": "off",
-    "react/forbid-prop-types": "off",
     "no-bitwise": "off",
-    "object-property-newline": "off",
     "react/no-unused-prop-types": "off",
     "class-methods-use-this": "error",
     "import/no-extraneous-dependencies": [
       "error",
       {
-        "devDependencies": ["demo/**", "test/**", "*.config.js", "scripts/**", "**/Spec.js"]
+        "devDependencies": true
       }
     ],
     "max-len": ["warn", 120],
-    // Errors introduced while upgrading eslint & plugins
-    "no-restricted-properties": "error",
     "prefer-destructuring": "error",
     "object-curly-newline": "off",
     "function-paren-newline": "off",
     "react/require-default-props": "off",
     "no-restricted-globals": "error",
-    "comma-dangle": "off",
     "react/default-props-match-prop-types": "off",
     "react/no-array-index-key": "warn",
     "no-multi-assign": "off",
@@ -84,18 +73,36 @@
     "react/state-in-constructor": "off",
     "react/static-property-placement": "off",
     "import/prefer-default-export": "off",
-    "import/no-named-as-default":"error",
+    "import/no-named-as-default": "error",
     "import/no-cycle": "error",
     "import/no-default-export": "error",
-
+    "import/no-import-module-exports": "error",
+    "import/no-relative-packages": "error",
     "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": ["error"],
-
-    "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/ban-types": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "args": "after-used",
+        "ignoreRestSiblings": true,
+        "argsIgnorePattern": "^_"
+      }
+    ]
   },
+  "overrides": [
+    {
+      "files": ["./storybook/**/*.stories.@(ts|tsx)", "./storybook/**/*.@(ts|tsx)", "*.js"],
+      "rules": {
+        "react/prop-types": "off",
+        "no-useless-constructor": "off",
+        "import/no-default-export": "off",
+        "react-hooks/rules-of-hooks": "off"
+      }
+    }
+  ],
   "settings": {
     "import/resolver": {
       "node": {

@@ -9,7 +9,7 @@ import { Layer } from '../container/Layer';
 import { Trapezoid, Props as TrapezoidProps } from '../shape/Trapezoid';
 import { LabelList } from '../component/LabelList';
 import { Cell, Props as CellProps } from '../component/Cell';
-import { findAllByType } from '../util/ReactUtils';
+import { findAllByType, filterProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { interpolateNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -19,7 +19,6 @@ import {
   AnimationTiming,
   ChartOffset,
   DataKey,
-  filterProps,
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
 } from '../util/types';
@@ -87,7 +86,7 @@ export class Funnel extends PureComponent<Props, State> {
   static getRealFunnelData = (item: Funnel) => {
     const { data, children } = item.props;
     const presentationProps = filterProps(item.props);
-    const cells = findAllByType(children, Cell.displayName);
+    const cells = findAllByType(children, Cell);
 
     if (data && data.length) {
       return data.map((entry: any, index: number) => ({
@@ -292,6 +291,7 @@ export class Funnel extends PureComponent<Props, State> {
           className="recharts-funnel-trapezoid"
           {...adaptEventsOfChild(this.props, entry, i)}
           key={`trapezoid-${i}`} // eslint-disable-line react/no-array-index-key
+          role="img"
         >
           {Funnel.renderTrapezoidItem(trapezoidOptions, trapezoidProps)}
         </Layer>
@@ -300,14 +300,8 @@ export class Funnel extends PureComponent<Props, State> {
   }
 
   renderTrapezoidsWithAnimation() {
-    const {
-      trapezoids,
-      isAnimationActive,
-      animationBegin,
-      animationDuration,
-      animationEasing,
-      animationId,
-    } = this.props;
+    const { trapezoids, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
+      this.props;
     const { prevTrapezoids } = this.state;
 
     return (

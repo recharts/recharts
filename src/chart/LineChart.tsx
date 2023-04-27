@@ -6,7 +6,6 @@ import { Line } from '../cartesian/Line';
 import { XAxis } from '../cartesian/XAxis';
 import { YAxis } from '../cartesian/YAxis';
 import { formatAxisMap } from '../util/CartesianUtils';
-import { CategoricalChartOptions } from '../util/types';
 
 export const LineChart = generateCategoricalChart({
   chartName: 'LineChart',
@@ -16,4 +15,4 @@ export const LineChart = generateCategoricalChart({
     { axisType: 'yAxis', AxisComp: YAxis },
   ],
   formatAxisMap,
-} as CategoricalChartOptions);
+});

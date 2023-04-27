@@ -13,9 +13,10 @@ import {
   symbolTriangle,
   symbolWye,
   SymbolType as D3SymbolType,
-} from 'd3-shape';
+} from 'victory-vendor/d3-shape';
 import classNames from 'classnames';
-import { SymbolType, filterProps } from '../util/types';
+import { SymbolType } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 type SizeType = 'area' | 'diameter';
 
@@ -102,11 +103,12 @@ export class Symbols extends PureComponent<Props> {
 
   render() {
     const { className, cx, cy, size } = this.props;
+    const filteredProps = filterProps(this.props, true);
 
     if (cx === +cx && cy === +cy && size === +size) {
       return (
         <path
-          {...filterProps(this.props, true)}
+          {...filteredProps}
           className={classNames('recharts-symbols', className)}
           transform={`translate(${cx}, ${cy})`}
           d={this.getPath()}

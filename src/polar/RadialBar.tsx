@@ -7,7 +7,7 @@ import Animate from 'react-smooth';
 import _ from 'lodash';
 import { Sector, Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
-import { findAllByType } from '../util/ReactUtils';
+import { findAllByType, filterProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
 import { Cell } from '../component/Cell';
@@ -24,7 +24,6 @@ import {
   LegendType,
   TooltipType,
   AnimationTiming,
-  filterProps,
   TickItem,
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
@@ -138,7 +137,7 @@ export class RadialBar extends PureComponent<Props, State> {
     const numericAxis = layout === 'radial' ? angleAxis : radiusAxis;
     const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
     const baseValue = getBaseValueOfBar({ numericAxis });
-    const cells = findAllByType(children, Cell.displayName);
+    const cells = findAllByType(children, Cell);
     const sectors = displayedData.map((entry: any, index: number) => {
       let value, innerRadius, outerRadius, startAngle, endAngle, backgroundSector;
 
@@ -360,7 +359,6 @@ export class RadialBar extends PureComponent<Props, State> {
     const backgroundProps = filterProps(this.props.background);
 
     return sectors.map((entry, i) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { value, background, ...rest } = entry;
 
       if (!background) {
@@ -399,14 +397,7 @@ export class RadialBar extends PureComponent<Props, State> {
 
         <Layer className="recharts-radial-bar-sectors">{this.renderSectors()}</Layer>
 
-        {(!isAnimationActive || isAnimationFinished) &&
-          LabelList.renderCallByParent(
-            {
-              ...this.props,
-              clockWise: this.getDeltaAngle() < 0,
-            },
-            data,
-          )}
+        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent({ ...this.props }, data)}
       </Layer>
     );
   }

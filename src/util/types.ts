@@ -22,12 +22,12 @@ import {
   ReactElement,
 } from 'react';
 import _ from 'lodash';
-import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'd3-scale';
+import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
 
 export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette';
 export type LayoutType = 'horizontal' | 'vertical' | 'centric' | 'radial';
 export type PolarLayoutType = 'radial' | 'centric';
-export type AxisType = 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis';
+export type AxisType = 'xAxis' | 'yAxis' | 'zAxis' | 'angleAxis' | 'radiusAxis';
 export type DataKey<T> = string | number | ((obj: T) => any);
 export type PresentationAttributesWithProps<P, T> = AriaAttributes &
   DOMAttributesWithProps<P, T> &
@@ -523,8 +523,55 @@ export type DOMAttributesAdaptChildEvent<P, T> = {
   onTransitionEnd?: AdaptChildTransitionEventHandler<P, T>;
   onTransitionEndCapture?: AdaptChildTransitionEventHandler<P, T>;
 };
+
 const SVGContainerPropKeys = ['viewBox', 'children'];
-const SVGElementPropKeys = [
+export const SVGElementPropKeys = [
+  'aria-activedescendant',
+  'aria-atomic',
+  'aria-autocomplete',
+  'aria-busy',
+  'aria-checked',
+  'aria-colcount',
+  'aria-colindex',
+  'aria-colspan',
+  'aria-controls',
+  'aria-current',
+  'aria-describedby',
+  'aria-details',
+  'aria-disabled',
+  'aria-errormessage',
+  'aria-expanded',
+  'aria-flowto',
+  'aria-haspopup',
+  'aria-hidden',
+  'aria-invalid',
+  'aria-keyshortcuts',
+  'aria-label',
+  'aria-labelledby',
+  'aria-level',
+  'aria-live',
+  'aria-modal',
+  'aria-multiline',
+  'aria-multiselectable',
+  'aria-orientation',
+  'aria-owns',
+  'aria-placeholder',
+  'aria-posinset',
+  'aria-pressed',
+  'aria-readonly',
+  'aria-relevant',
+  'aria-required',
+  'aria-roledescription',
+  'aria-rowcount',
+  'aria-rowindex',
+  'aria-rowspan',
+  'aria-selected',
+  'aria-setsize',
+  'aria-sort',
+  'aria-valuemax',
+  'aria-valuemin',
+  'aria-valuenow',
+  'aria-valuetext',
   'className',
   'color',
   'height',
@@ -536,8 +583,14 @@ const SVGElementPropKeys = [
   'min',
   'name',
   'style',
+  /*
+   * removed 'type' SVGElementPropKey because we do not currently use any SVG elements
+   * that can use it and it conflicts with the recharts prop 'type'
+   * https://github.com/recharts/recharts/pull/3327
+   * https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/type
+   */
+  // 'type',
   'target',
-  'type',
   'width',
   'role',
   'tabIndex',
@@ -675,7 +728,6 @@ const SVGElementPropKeys = [
   'patternTransform',
   'patternUnits',
   'pointerEvents',
-  'points',
   'pointsAtX',
   'pointsAtY',
   'pointsAtZ',
@@ -784,7 +836,19 @@ const SVGElementPropKeys = [
   'angle',
 ];
 
-const EventKeys = [
+const PolyElementKeys = ['points', 'pathLength'];
+
+/** svg element types that have specific attribute filtration requirements */
+export type FilteredSvgElementType = 'svg' | 'polyline' | 'polygon';
+
+/** map of svg element types to unique svg attributes that belong to that element */
+export const FilteredElementKeyMap: Record<FilteredSvgElementType, string[]> = {
+  svg: SVGContainerPropKeys,
+  polygon: PolyElementKeys,
+  polyline: PolyElementKeys,
+};
+
+export const EventKeys = [
   'dangerouslySetInnerHTML',
   'onCopy',
   'onCopyCapture',
@@ -985,7 +1049,11 @@ export type D3Scale<T> = D3ScaleContinuousNumeric<T, number>;
 
 export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | 'dataMax';
 /** The domain of axis */
-export type AxisDomain = string[] | number[] | [AxisDomainItem, AxisDomainItem];
+export type AxisDomain =
+  | string[]
+  | number[]
+  | [AxisDomainItem, AxisDomainItem]
+  | (([dataMin, dataMax]: [number, number], allowDataOverflow: boolean) => [number, number]);
 
 /** The props definition of base axis */
 export interface BaseAxisProps {
@@ -1018,7 +1086,7 @@ export interface BaseAxisProps {
    */
   allowDataOverflow?: boolean;
   /**
-   * Allow the axis has duplicated categorys or not when the type of axis is "category".
+   * Allow the axis has duplicated categories or not when the type of axis is "category".
    */
   allowDuplicatedCategory?: boolean;
   /**
@@ -1027,6 +1095,8 @@ export interface BaseAxisProps {
   allowDecimals?: boolean;
   /** The domain of scale in this axis */
   domain?: AxisDomain;
+  /** Consider hidden elements when computing the domain (defaults to false) */
+  includeHidden?: boolean;
   /** The name of data displayed in the axis */
   name?: string;
   /** The unit of data displayed in the axis */
@@ -1040,12 +1110,18 @@ export interface BaseAxisProps {
   label?: string | number | ReactElement | object;
 }
 
-export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
+export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart';
 
 export interface TickItem {
   value?: any;
   coordinate: number;
   index?: number;
+}
+
+export interface CartesianTickItem extends TickItem {
+  tickCoord?: number;
+  tickSize?: number;
+  isShow?: boolean;
 }
 
 export interface Margin {
@@ -1074,60 +1150,29 @@ export interface PolarViewBox {
 
 export type ViewBox = CartesianViewBox | PolarViewBox;
 
-export const filterProps = (
-  props: Record<string, any> | Component | FunctionComponent | boolean,
-  includeEvents?: boolean,
-  isSvg?: boolean,
-) => {
-  if (!props || typeof props === 'function' || typeof props === 'boolean') {
-    return null;
-  }
+type RecordString<T> = Record<string, T>;
 
-  let inputProps = props as Record<string, any>;
-
-  if (isValidElement(props)) {
-    inputProps = props.props as Record<string, any>;
-  }
-
-  if (!_.isObject(inputProps)) {
-    return null;
-  }
-
-  const out: Record<string, any> = {};
-
-  Object.keys(inputProps).forEach(key => {
-    // viewBox only exist in <svg />
-    if (
-      SVGElementPropKeys.includes(key) ||
-      (isSvg && SVGContainerPropKeys.includes(key)) ||
-      (includeEvents && EventKeys.includes(key))
-    ) {
-      out[key] = (inputProps as any)[key];
-    }
-  });
-
-  return out;
-};
+type AdaptEventHandlersReturn = RecordString<(e?: Event) => any> | RecordString<(e: Event) => void> | null;
 
 export const adaptEventHandlers = (
-  props: Record<string, any> | Component | FunctionComponent | boolean,
+  props: RecordString<any> | Component | FunctionComponent | boolean,
   newHandler?: (e?: Event) => any,
-): Record<string, (e?: Event) => any> => {
+): AdaptEventHandlersReturn => {
   if (!props || typeof props === 'function' || typeof props === 'boolean') {
     return null;
   }
 
-  let inputProps = props as Record<string, any>;
+  let inputProps = props as RecordString<any>;
 
   if (isValidElement(props)) {
-    inputProps = props.props as Record<string, any>;
+    inputProps = props.props as RecordString<any>;
   }
 
   if (!_.isObject(inputProps)) {
     return null;
   }
 
-  const out: Record<string, (e: Event) => void> = {};
+  const out: RecordString<(e: Event) => void> = {};
 
   Object.keys(inputProps).forEach(key => {
     if (EventKeys.includes(key)) {
@@ -1138,30 +1183,35 @@ export const adaptEventHandlers = (
   return out;
 };
 
-const getEventHandlerOfChild = (originalHandler: Function, data: any, index: number) => (e: Event): void => {
-  originalHandler(data, index, e);
+const getEventHandlerOfChild =
+  (originalHandler: Function, data: any, index: number) =>
+  (e: Event): null => {
+    originalHandler(data, index, e);
 
-  return null;
-};
+    return null;
+  };
 
 export const adaptEventsOfChild = (
-  props: Record<string, any>,
+  props: RecordString<any>,
   data: any,
   index: number,
-): Record<string, (e?: Event) => any> => {
+): RecordString<(e?: Event) => any> | null => {
   if (!_.isObject(props) || typeof props !== 'object') {
     return null;
   }
 
-  let out: Record<string, (e: Event) => void> = null;
+  let out: RecordString<(e: Event) => void> | null = null;
 
   Object.keys(props).forEach((key: string) => {
     const item = (props as any)[key];
+
     if (EventKeys.includes(key) && typeof item === 'function') {
       if (!out) out = {};
+
       out[key] = getEventHandlerOfChild(item, data, index);
     }
   });
+
   return out;
 };
 

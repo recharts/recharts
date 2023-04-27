@@ -1,24 +1,19 @@
 import React, { Component } from 'react';
 import {
-  ResponsiveContainer,
   LineChart,
   Line,
   XAxis,
   YAxis,
-  ReferenceLine,
-  ReferenceArea,
-  ReferenceDot,
   Tooltip,
   CartesianGrid,
   Legend,
   Brush,
-  ErrorBar,
   AreaChart,
   Area,
   Label,
   LabelList,
 } from 'recharts';
-import { scalePow, scaleLog } from 'd3-scale';
+import { scaleLog } from 'victory-vendor/d3-scale';
 import * as _ from 'lodash';
 import CustomLineDot from './CustomLineDot';
 import { changeNumberOfData } from './utils';
@@ -633,18 +628,6 @@ export default class Demo extends Component<any, any> {
             {series.map(s => (
               <Line dataKey="value" data={s.data} name={s.name} key={s.name} />
             ))}
-          </LineChart>
-        </div>
-
-        <p>LineChart with y axis allowDataOverflow and dot clipping turned off</p>
-        <div className="line-chart-wrapper">
-          <LineChart width={600} height={300} data={data04}>
-            <XAxis dataKey="name" />
-            <YAxis domain={[0, 3000]} allowDataOverflow scale="linear" />
-            <CartesianGrid strokeDasharray="3 3" />
-            <Tooltip />
-            <Legend />
-            <Line dataKey="pv" dot={{ clipDot: false, r: 4, strokeWidth: 2, fill: '#ffffff', fillOpacity: 1 }} />
           </LineChart>
         </div>
       </div>

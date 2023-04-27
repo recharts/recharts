@@ -11,7 +11,8 @@ import { ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
-import { CartesianViewBox, D3Scale, filterProps } from '../util/types';
+import { CartesianViewBox, D3Scale } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
@@ -25,6 +26,7 @@ interface InternalReferenceAreaProps {
 
 interface ReferenceAreaProps extends InternalReferenceAreaProps {
   isFront?: boolean;
+  /** @deprecated use ifOverflow="extendDomain"  */
   alwaysShow?: boolean;
   ifOverflow?: 'hidden' | 'visible' | 'discard' | 'extendDomain';
   x1?: number | string;
@@ -43,6 +45,8 @@ export type Props = RectangleProps & ReferenceAreaProps;
 
 const getRect = (hasX1: boolean, hasX2: boolean, hasY1: boolean, hasY2: boolean, props: Props) => {
   const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2, xAxis, yAxis } = props;
+
+  if (!xAxis || !yAxis) return null;
 
   const scales = createLabeledScales({ x: xAxis.scale, y: yAxis.scale });
 

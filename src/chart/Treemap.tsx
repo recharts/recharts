@@ -1,23 +1,23 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
+import classNames from 'classnames';
+import _ from 'lodash';
 /**
  * @fileOverview TreemapChart
  */
 import React, { PureComponent } from 'react';
 import Smooth from 'react-smooth';
-import classNames from 'classnames';
-import _ from 'lodash';
-import { Surface } from '../container/Surface';
-import { Layer } from '../container/Layer';
-import { Rectangle } from '../shape/Rectangle';
-import { findChildByType, filterSvgElements, validateWidthHeight } from '../util/ReactUtils';
-import { Global } from '../util/Global';
+
 import { Tooltip } from '../component/Tooltip';
+import { Layer } from '../container/Layer';
+import { Surface } from '../container/Surface';
 import { Polygon } from '../shape/Polygon';
+import { Rectangle } from '../shape/Rectangle';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { COLOR_PANEL } from '../util/Constants';
-import { getStringSize } from '../util/DOMUtils';
 import { uniqueId } from '../util/DataUtils';
-import { DataKey, filterProps, TreemapNode } from '../util/types';
+import { getStringSize } from '../util/DOMUtils';
+import { Global } from '../util/Global';
+import { filterSvgElements, findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
+import { DataKey, TreemapNode } from '../util/types';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -108,8 +108,6 @@ const horizontalPosition = (row: any, parentSize: number, parentRect: TreemapNod
     child.width = Math.min(rowHeight ? Math.round(child.area / rowHeight) : 0, parentRect.x + parentRect.width - curX);
     curX += child.width;
   }
-  // what's z
-  child.z = true;
   // add the remain x to the last one of row
   child.width += parentRect.x + parentRect.width - curX;
 
@@ -138,7 +136,6 @@ const verticalPosition = (row: any, parentSize: number, parentRect: TreemapNode,
     curY += child.height;
   }
   if (child) {
-    child.z = false;
     child.height += parentRect.y + parentRect.height - curY;
   }
 
@@ -208,7 +205,7 @@ const squarify = (node: TreemapNode, aspectRatio: number): TreemapNode => {
   return node;
 };
 
-interface Props {
+export interface Props {
   width?: number;
 
   height?: number;
@@ -340,7 +337,7 @@ export class Treemap extends PureComponent<Props, State> {
       const formatRoot = squarify(root, nextProps.aspectRatio);
 
       return {
-        ...defaultState,
+        ...prevState,
         formatRoot,
         currentRoot: root,
         nestIndex: [root],
@@ -358,7 +355,7 @@ export class Treemap extends PureComponent<Props, State> {
 
   handleMouseEnter(node: TreemapNode, e: any) {
     const { onMouseEnter, children } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip.displayName);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (tooltipItem) {
       this.setState(
@@ -379,7 +376,7 @@ export class Treemap extends PureComponent<Props, State> {
 
   handleMouseLeave(node: TreemapNode, e: any) {
     const { onMouseLeave, children } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip.displayName);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (tooltipItem) {
       this.setState(
@@ -600,6 +597,7 @@ export class Treemap extends PureComponent<Props, State> {
           fill={nodeProps.depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)'}
           stroke="#fff"
           {..._.omit(nodeProps, 'children')}
+          role="img"
         />
         {arrow}
         {text}
@@ -643,13 +641,13 @@ export class Treemap extends PureComponent<Props, State> {
 
   renderTooltip(): React.ReactElement {
     const { children, nameKey } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip.displayName);
+    const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem) {
       return null;
     }
 
-    const { width, height, dataKey } = this.props;
+    const { width, height } = this.props;
     const { isTooltipActive, activeNode } = this.state;
     const viewBox = { x: 0, y: 0, width, height };
     const coordinate = activeNode
@@ -699,7 +697,7 @@ export class Treemap extends PureComponent<Props, State> {
           }
 
           return (
-            // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
             <div
               onClick={this.handleNestIndex.bind(this, item, i)}
               key={`nest-index-${uniqueId()}`}
@@ -733,6 +731,7 @@ export class Treemap extends PureComponent<Props, State> {
       <div
         className={classNames('recharts-wrapper', className)}
         style={{ ...style, position: 'relative', cursor: 'default', width, height }}
+        role="region"
       >
         <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
           {this.renderAllNodes()}

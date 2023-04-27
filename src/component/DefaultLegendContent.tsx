@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';
 import {
+  DataKey,
   LegendType,
   LayoutType,
   SymbolType,
@@ -15,7 +16,7 @@ import {
 
 const SIZE = 32;
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
-export type IconType = Omit<LegendType, 'none'>;
+export type IconType = Exclude<LegendType, 'none'>;
 export type HorizontalAlignmentType = 'center' | 'left' | 'right';
 export type VerticalAlignmentType = 'top' | 'bottom' | 'middle';
 export type Formatter = (
@@ -54,9 +55,9 @@ interface InternalProps {
   payload?: Array<Payload>;
   inactiveColor?: string;
   formatter?: Formatter;
-  onMouseEnter?: (event: MouseEvent) => void;
-  onMouseLeave?: (event: MouseEvent) => void;
-  onClick?: (event: MouseEvent) => void;
+  onMouseEnter?: (data: Payload & { dataKey?: DataKey<any> }, index: number, event: MouseEvent) => void;
+  onMouseLeave?: (data: Payload & { dataKey?: DataKey<any> }, index: number, event: MouseEvent) => void;
+  onClick?: (data: Payload & { dataKey?: DataKey<any> }, index: number, event: MouseEvent) => void;
 }
 
 export type Props = InternalProps & PresentationAttributesAdaptChildEvent<any, ReactElement>;

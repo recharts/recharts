@@ -1,7 +1,6 @@
 # Recharts
 
-[![Sponsors on Open Collective](https://opencollective.com/recharts/sponsors/badge.svg)](https://opencollective.com/recharts#sponsors)
-[![Backers on Open Collective](https://opencollective.com/recharts/backers/badge.svg)](https://opencollective.com/recharts#backer)
+[![storybook](https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg)](https://master--63da8268a0da9970db6992aa.chromatic.com/)
 [![Build Status](https://github.com/recharts/recharts/workflows/Node.js%20CI/badge.svg)](https://github.com/recharts/recharts/actions)
 [![Coverage Status](https://coveralls.io/repos/recharts/recharts/badge.svg?branch=master&service=github)](https://coveralls.io/github/recharts/recharts?branch=master)
 [![npm version](https://badge.fury.io/js/recharts.svg)](http://badge.fury.io/js/recharts)
@@ -15,8 +14,12 @@ Recharts is a **Redefined** chart library built with [React](https://facebook.gi
 The main purpose of this library is to help you to write charts in React applications without any pain. Main principles of Recharts are:
 
 1. **Simply** deploy with React components.
-1. **Native** SVG support, lightweight depending only on some D3 submodules.
-1. **Declarative** components, components of charts are purely presentational.
+2. **Native** SVG support, lightweight depending only on some D3 submodules.
+3. **Declarative** components, components of charts are purely presentational.
+
+Documentation at [recharts.org](https://recharts.org)
+
+Please see [the wiki](https://github.com/recharts/recharts/wiki) for FAQ.
 
 ## Examples
 
@@ -80,32 +83,22 @@ $ npm run[-script] demo
 
 and then browse to http://localhost:3000.
 
+## Storybook
+
+We are in the process of unifying documentation and examples in storybook. To run it locally, execute
+
+```sh
+$ npm run[-script] storybook
+```
+
+and then browse to http://localhost:6006.
+
 ## Module Formats
 
 - [babel-plugin-recharts](https://github.com/recharts/babel-plugin-recharts) A simple transform to cherry-pick Recharts modules so you don’t have to.
-
-## Contribution
-
-We'd love :heart: to hear what you think we should build. Please create an issue to write your usage or ideas.
-
-We are looking for like-minded people who share the same idea about Recharts. The goal of this project is to create a more flexible charting library for the  React community.
-
-## Backers
-[Become a backer](https://opencollective.com/recharts#backer) and get your image on our README on Github with a link to your site.
-
-<a href="https://opencollective.com/recharts/backer/0/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/0/avatar.svg?requireActive=false"></a>
-<a href="https://opencollective.com/recharts/backer/1/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/1/avatar.svg?requireActive=false"></a>
-<a href="https://opencollective.com/recharts/backer/2/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/2/avatar.svg?requireActive=false"></a>
-<a href="https://opencollective.com/recharts/backer/3/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/3/avatar.svg?requireActive=false"></a>
-<a href="https://opencollective.com/recharts/backer/4/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/4/avatar.svg?requireActive=false"></a>
-<a href="https://opencollective.com/recharts/backer/5/website?requireActive=false" target="_blank"><img src="https://opencollective.com/recharts/backer/5/avatar.svg?requireActive=false"></a>
-
-## Sponsoring
-
-Most of the core team members do this open source work in their free time. If you use recharts for a important work, and you'd like us to invest more time on it, please [donate](https://opencollective.com/recharts#sponsors). Thanks!
 
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2015-2020 Recharts Group.
+Copyright (c) 2015-2023 Recharts Group.

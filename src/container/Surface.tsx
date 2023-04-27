@@ -3,7 +3,7 @@
  */
 import React, { ReactNode, CSSProperties, SVGProps } from 'react';
 import classNames from 'classnames';
-import { filterProps } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 interface SurfaceProps {
   width: number;
@@ -17,6 +17,8 @@ interface SurfaceProps {
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
+  title?: string;
+  desc?: string;
 }
 
 export type Props = Omit<SVGProps<SVGSVGElement>, 'viewBox'> & SurfaceProps;
@@ -28,14 +30,15 @@ export function Surface(props: Props) {
 
   return (
     <svg
-      {...filterProps(others, true, true)}
+      {...filterProps(others, true, 'svg')}
       className={layerClass}
       width={width}
       height={height}
       style={style}
       viewBox={`${svgView.x} ${svgView.y} ${svgView.width} ${svgView.height}`}
-      version="1.1"
     >
+      <title>{props.title}</title>
+      <desc>{props.desc}</desc>
       {children}
     </svg>
   );

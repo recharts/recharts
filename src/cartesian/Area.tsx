@@ -19,12 +19,12 @@ import {
   LegendType,
   TooltipType,
   AnimationTiming,
-  filterProps,
   ChartOffset,
   Coordinate,
   DataKey,
   TickItem,
 } from '../util/types';
+import { filterProps } from '../util/ReactUtils';
 
 type AreaDot =
   | ReactElement<SVGElement>
@@ -51,6 +51,7 @@ interface InternalAreaProps {
 interface AreaProps extends InternalAreaProps {
   className?: string;
   dataKey: DataKey<any>;
+  data?: any[];
   type?: CurveType;
   unit?: string | number;
   name?: string | number;
@@ -83,7 +84,7 @@ interface AreaProps extends InternalAreaProps {
   id?: string;
 }
 
-export type Props = SVGProps<SVGElement> & AreaProps;
+export type Props = Omit<SVGProps<SVGElement>, 'type' | 'points'> & AreaProps;
 
 interface State {
   prevAnimationId?: number;
@@ -118,8 +119,13 @@ export class Area extends PureComponent<Props, State> {
     animationEasing: 'ease',
   };
 
-  static getBaseValue = (props: Props, xAxis: Props['xAxis'], yAxis: Props['yAxis']): number => {
-    const { layout, baseValue } = props;
+  static getBaseValue = (props: Props, item: Area, xAxis: Props['xAxis'], yAxis: Props['yAxis']): number => {
+    const { layout, baseValue: chartBaseValue } = props;
+    const { baseValue: itemBaseValue } = item.props;
+
+    // The baseValue can be defined both on the AreaChart as well as on the Area.
+    // The value for the item takes precedence.
+    const baseValue = itemBaseValue ?? chartBaseValue;
 
     if (isNumber(baseValue) && typeof baseValue === 'number') {
       return baseValue;
@@ -154,6 +160,7 @@ export class Area extends PureComponent<Props, State> {
 
   static getComposedData = ({
     props,
+    item,
     xAxis,
     yAxis,
     xAxisTicks,
@@ -180,7 +187,7 @@ export class Area extends PureComponent<Props, State> {
   }) => {
     const { layout } = props;
     const hasStack = stackedData && stackedData.length;
-    const baseValue = Area.getBaseValue(props, xAxis, yAxis);
+    const baseValue = Area.getBaseValue(props, item, xAxis, yAxis);
     let isRange = false;
 
     const points = displayedData.map((entry, index) => {
@@ -405,7 +412,6 @@ export class Area extends PureComponent<Props, State> {
   }
 
   renderAreaStatically(points: AreaPointItem[], baseLine: Props['baseLine'], needClip: boolean, clipPathId: string) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { layout, type, stroke, connectNulls, isRange, ref, ...others } = this.props;
 
     return (
@@ -447,15 +453,8 @@ export class Area extends PureComponent<Props, State> {
   }
 
   renderAreaWithAnimation(needClip: boolean, clipPathId: string) {
-    const {
-      points,
-      baseLine,
-      isAnimationActive,
-      animationBegin,
-      animationDuration,
-      animationEasing,
-      animationId,
-    } = this.props;
+    const { points, baseLine, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
+      this.props;
     const { prevPoints, prevBaseLine } = this.state;
     // const clipPathId = _.isNil(id) ? this.id : id;
 

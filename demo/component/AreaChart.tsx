@@ -14,6 +14,7 @@ import {
   LabelList,
   Label,
 } from 'recharts';
+import { curveCardinal } from 'victory-vendor/d3-shape';
 import { changeNumberOfData } from './utils';
 
 const data = [
@@ -37,13 +38,6 @@ const data01 = [
   { day: '05-08', weather: 'sunny' },
   { day: '05-09', weather: 'sunny' },
 ];
-const data02 = [
-  { name: 'Page A', uv: 1000, pv: 400, amt: 2400 },
-  { name: 'Page B', uv: 3000, pv: 1398, amt: 2210 },
-  { name: 'Page C', uv: 2000, pv: 0, amt: 2290 },
-  { name: 'Page D', uv: 2780, pv: 0, amt: 2000 },
-  { name: 'Page E', uv: 1890, pv: 3000, amt: 2181 },
-];
 
 const rangeData = [
   { day: '05-01', temperature: [-1, 10] },
@@ -57,7 +51,7 @@ const rangeData = [
   { day: '05-09', temperature: [-3, 5] },
 ];
 
-const initialState = { data, data01, data02 };
+const initialState = { data, data01 };
 
 const CustomTooltip: React.FunctionComponent<any> = (props: any) => {
   const { active, payload, external, label } = props;
@@ -89,26 +83,11 @@ const CustomTooltip: React.FunctionComponent<any> = (props: any) => {
 };
 
 const renderCustomizedActiveDot: React.FunctionComponent = (props: any) => {
-  const { cx, cy, stroke, index, dataKey } = props;
+  const { cx, cy, stroke, dataKey } = props;
 
   return <path d={`M${cx - 2},${cy - 2}h4v4h-4Z`} fill={stroke} key={`dot-${dataKey}`} />;
 };
 
-const RenderRect: React.FunctionComponent<any> = (props: any) => {
-  return <rect x={20} y={20} width={100} height={20} stroke="#000" />;
-};
-
-function CustomizedAxisTick(props: any) {
-  const { x, y, stroke, payload } = props;
-
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={-12} textAnchor="end" fill="#999" fontSize="12">
-        {payload.value}
-      </text>
-    </g>
-  );
-}
 const renderLabel = (props: any) => {
   const { index, x, y } = props;
 
@@ -119,6 +98,10 @@ const renderLabel = (props: any) => {
   );
 };
 
+// custom curve cardinal `type` prop
+const stepAround = curveCardinal.tension(0.5);
+
+// eslint-disable-next-line import/no-default-export
 export default class AreaChartDemo extends React.Component<any, any> {
   static displayName = 'AreaChartDemo';
 
@@ -129,13 +112,11 @@ export default class AreaChartDemo extends React.Component<any, any> {
   };
 
   render() {
-    const { data, data01, data02 } = this.state;
-
     return (
       <div className="area-charts">
-        <a href="javascript: void(0);" className="btn update" onClick={this.handleChangeData}>
+        <button type="button" onClick={this.handleChangeData}>
           change data
-        </a>
+        </button>
         <br />
 
         <p>Stacked AreaChart</p>
@@ -327,7 +308,7 @@ export default class AreaChartDemo extends React.Component<any, any> {
             <ReferenceArea x1="Page A" x2="Page E" />
             <ReferenceLine y={7500} stroke="#387908" />
             <ReferenceDot x="Page C" y={1398} r={10} fill="#387908" isFront />
-            <Area type="monotone" dataKey="pv" stroke="#ff7300" fill="#ff7300" fillOpacity={0.9} />
+            <Area type={stepAround} dataKey="pv" stroke="#ff7300" fill="#ff7300" fillOpacity={0.9} />
           </AreaChart>
         </div>
 
@@ -379,20 +360,6 @@ export default class AreaChartDemo extends React.Component<any, any> {
             <YAxis />
             <Tooltip />
             <Area dataKey="temperature" stroke="#0088FE" />
-          </AreaChart>
-        </div>
-
-        <p>AreaChart with y axis allowDataOverflow and dot clipping turned off</p>
-        <div className="area-chart-wrapper">
-          <AreaChart width={400} height={400} data={data02} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-            <XAxis dataKey="name" />
-            <YAxis domain={[0, 3000]} allowDataOverflow scale="linear" />
-            <Tooltip />
-            <Area
-              dataKey="pv"
-              stroke="#0088FE"
-              dot={{ clipDot: false, r: 4, strokeWidth: 2, fill: '#ffffff', fillOpacity: 1 }}
-            />
           </AreaChart>
         </div>
       </div>

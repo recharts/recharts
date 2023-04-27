@@ -1,4 +1,4 @@
-import * as _ from 'lodash'
+import * as _ from 'lodash';
 
 export function changeNumberOfData(data: any): any {
   if (Array.isArray(data)) {

@@ -8,24 +8,16 @@ import _ from 'lodash';
 import { Curve, CurveType, Props as CurveProps, Point as CurvePoint } from '../shape/Curve';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
+import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
 import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
-import { findAllByType } from '../util/ReactUtils';
+import { findAllByType, filterProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import {
-  D3Scale,
-  LegendType,
-  TooltipType,
-  AnimationTiming,
-  filterProps,
-  ChartOffset,
-  DataKey,
-  TickItem,
-} from '../util/types';
+import { D3Scale, LegendType, TooltipType, AnimationTiming, ChartOffset, DataKey, TickItem } from '../util/types';
 
 type LineDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
 
@@ -73,6 +65,7 @@ interface LineProps extends InternalLineProps {
   animationEasing?: AnimationTiming;
   animationId?: number;
   id?: string;
+  label?: ImplicitLabelType;
 }
 
 export type Props = Omit<CurveProps, 'points' | 'pathRef'> & LineProps;
@@ -105,6 +98,7 @@ export class Line extends PureComponent<Props, State> {
     animationDuration: 1500,
     animationEasing: 'ease',
     hide: false,
+    label: false,
   };
 
   /**
@@ -168,7 +162,6 @@ export class Line extends PureComponent<Props, State> {
     totalLength: 0,
   };
 
-  /* eslint-disable  react/no-did-mount-set-state */
   componentDidMount() {
     if (!this.props.isAnimationActive) {
       return;
@@ -258,13 +251,13 @@ export class Line extends PureComponent<Props, State> {
     }
   };
 
-  renderErrorBar() {
+  renderErrorBar(needClip: boolean, clipPathId: string) {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) {
       return null;
     }
 
     const { points, xAxis, yAxis, layout, children } = this.props;
-    const errorBarItems = findAllByType(children, ErrorBar.displayName);
+    const errorBarItems = findAllByType(children, ErrorBar);
 
     if (!errorBarItems) {
       return null;
@@ -279,16 +272,24 @@ export class Line extends PureComponent<Props, State> {
       };
     }
 
-    return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) =>
-      React.cloneElement(item, {
-        // eslint-disable-next-line react/no-array-index-key
-        key: `bar-${i}`,
-        data: points,
-        xAxis,
-        yAxis,
-        layout,
-        dataPointFormatter,
-      }),
+    const errorBarProps = {
+      clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
+    };
+
+    return (
+      <Layer {...errorBarProps}>
+        {errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) =>
+          React.cloneElement(item, {
+            // eslint-disable-next-line react/no-array-index-key
+            key: `bar-${i}`,
+            data: points,
+            xAxis,
+            yAxis,
+            layout,
+            dataPointFormatter,
+          }),
+        )}
+      </Layer>
     );
   }
 
@@ -337,7 +338,7 @@ export class Line extends PureComponent<Props, State> {
     };
 
     return (
-      <Layer className="recharts-line-dots" key="dots" {...dotsProps}>
+      <Layer className="recharts-line-dots" key="dots" {...dotsProps} role="img">
         {dots}
       </Layer>
     );
@@ -349,7 +350,6 @@ export class Line extends PureComponent<Props, State> {
     clipPathId: string,
     props?: { strokeDasharray: string },
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { type, layout, connectNulls, ref, ...others } = this.props;
     const curveProps = {
       ...filterProps(others, true),
@@ -489,7 +489,7 @@ export class Line extends PureComponent<Props, State> {
           </defs>
         ) : null}
         {!hasSinglePoint && this.renderCurve(needClip, clipPathId)}
-        {this.renderErrorBar()}
+        {this.renderErrorBar(needClip, clipPathId)}
         {(hasSinglePoint || dot) && this.renderDots(needClip, clipDot, clipPathId)}
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
       </Layer>

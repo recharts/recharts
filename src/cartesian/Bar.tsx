@@ -11,7 +11,7 @@ import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { LabelList } from '../component/LabelList';
 import { uniqueId, mathSign, interpolateNumber } from '../util/DataUtils';
-import { findAllByType } from '../util/ReactUtils';
+import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import {
   getCateCoordinateOfBar,
@@ -28,14 +28,13 @@ import {
   TooltipType,
   LegendType,
   AnimationTiming,
-  filterProps,
   ChartOffset,
   DataKey,
   TickItem,
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
 } from '../util/types';
-import { ContentType } from '../component/Label';
+import { ImplicitLabelType } from '../component/Label';
 
 interface BarRectangleItem extends RectangleProps {
   value?: number;
@@ -92,16 +91,7 @@ interface BarProps extends InternalBarProps {
   animationEasing?: AnimationTiming;
   animationId?: number;
   id?: string;
-  label?:
-    | boolean
-    | ReactElement<SVGElement>
-    | ((props: any) => ReactElement<SVGElement>)
-    | {
-        id?: string;
-        valueAccessor?: Function;
-        dataKey?: DataKey<any>;
-        content?: ContentType;
-      };
+  label?: ImplicitLabelType;
 }
 
 export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGPathElement>, 'radius'> & BarProps;
@@ -178,7 +168,7 @@ export class Bar extends PureComponent<Props, State> {
     const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
     const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
     const baseValue = getBaseValueOfBar({ numericAxis });
-    const cells = findAllByType(children, Cell.displayName);
+    const cells = findAllByType(children, Cell);
 
     const rects = displayedData.map((entry, index) => {
       let value, x, y, width, height, background;
@@ -194,6 +184,7 @@ export class Bar extends PureComponent<Props, State> {
       }
 
       if (layout === 'horizontal') {
+        const [baseValueScale, currentValueScale] = [yAxis.scale(value[0]), yAxis.scale(value[1])];
         x = getCateCoordinateOfBar({
           axis: xAxis,
           ticks: xAxisTicks,
@@ -202,9 +193,10 @@ export class Bar extends PureComponent<Props, State> {
           entry,
           index,
         });
-        y = yAxis.scale(value[1]);
+        y = currentValueScale ?? baseValueScale ?? undefined;
         width = pos.size;
-        height = yAxis.scale(value[0]) - yAxis.scale(value[1]);
+        const computedHeight = baseValueScale - currentValueScale;
+        height = Number.isNaN(computedHeight) ? 0 : computedHeight;
         background = { x, y: yAxis.y, width, height: yAxis.height };
 
         if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
@@ -214,7 +206,8 @@ export class Bar extends PureComponent<Props, State> {
           height += delta;
         }
       } else {
-        x = xAxis.scale(value[0]);
+        const [baseValueScale, currentValueScale] = [xAxis.scale(value[0]), xAxis.scale(value[1])];
+        x = baseValueScale;
         y = getCateCoordinateOfBar({
           axis: yAxis,
           ticks: yAxisTicks,
@@ -223,7 +216,7 @@ export class Bar extends PureComponent<Props, State> {
           entry,
           index,
         });
-        width = xAxis.scale(value[1]) - xAxis.scale(value[0]);
+        width = currentValueScale - baseValueScale;
         height = pos.size;
         background = { x: xAxis.x, y, width: xAxis.width, height };
 
@@ -318,6 +311,7 @@ export class Bar extends PureComponent<Props, State> {
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(this.props, entry, i)}
             key={`rectangle-${i}`} // eslint-disable-line react/no-array-index-key
+            role="img"
           >
             {Bar.renderRectangle(shape, props)}
           </Layer>
@@ -327,15 +321,8 @@ export class Bar extends PureComponent<Props, State> {
   }
 
   renderRectanglesWithAnimation() {
-    const {
-      data,
-      layout,
-      isAnimationActive,
-      animationBegin,
-      animationDuration,
-      animationEasing,
-      animationId,
-    } = this.props;
+    const { data, layout, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
+      this.props;
     const { prevData } = this.state;
 
     return (
@@ -408,7 +395,6 @@ export class Bar extends PureComponent<Props, State> {
     const backgroundProps = filterProps(this.props.background);
 
     return data.map((entry, i) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { value, background, ...rest } = entry;
 
       if (!background) {
@@ -430,13 +416,13 @@ export class Bar extends PureComponent<Props, State> {
     });
   }
 
-  renderErrorBar() {
+  renderErrorBar(needClip: boolean, clipPathId: string) {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) {
       return null;
     }
 
     const { data, xAxis, yAxis, layout, children } = this.props;
-    const errorBarItems = findAllByType(children, ErrorBar.displayName);
+    const errorBarItems = findAllByType(children, ErrorBar);
 
     if (!errorBarItems) {
       return null;
@@ -453,34 +439,30 @@ export class Bar extends PureComponent<Props, State> {
       };
     }
 
-    return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) =>
-      React.cloneElement(item, {
-        key: `error-bar-${i}`, // eslint-disable-line react/no-array-index-key
-        data,
-        xAxis,
-        yAxis,
-        layout,
-        offset,
-        dataPointFormatter,
-      }),
+    const errorBarProps = {
+      clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
+    };
+
+    return (
+      <Layer {...errorBarProps}>
+        {errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) =>
+          React.cloneElement(item, {
+            key: `error-bar-${i}`, // eslint-disable-line react/no-array-index-key
+            data,
+            xAxis,
+            yAxis,
+            layout,
+            offset,
+            dataPointFormatter,
+          }),
+        )}
+      </Layer>
     );
   }
 
   render() {
-    const {
-      hide,
-      data,
-      className,
-      xAxis,
-      yAxis,
-      left,
-      top,
-      width,
-      height,
-      isAnimationActive,
-      background,
-      id,
-    } = this.props;
+    const { hide, data, className, xAxis, yAxis, left, top, width, height, isAnimationActive, background, id } =
+      this.props;
     if (hide || !data || !data.length) {
       return null;
     }
@@ -510,7 +492,7 @@ export class Bar extends PureComponent<Props, State> {
           {background ? this.renderBackground() : null}
           {this.renderRectangles()}
         </Layer>
-        {this.renderErrorBar()}
+        {this.renderErrorBar(needClip, clipPathId)}
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, data)}
       </Layer>
     );

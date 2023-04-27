@@ -2,7 +2,6 @@
   "plugins": [
     "@babel/plugin-proposal-export-default-from",
     "@babel/plugin-proposal-export-namespace-from",
-    ["@babel/plugin-proposal-class-properties", { "loose": true }],
     "@babel/plugin-proposal-object-rest-spread",
     "@babel/plugin-proposal-function-bind",
     "babel-plugin-lodash"
@@ -18,11 +17,11 @@
     "@babel/preset-typescript"
   ],
   "env": {
+    "test-karma": {
+      "plugins": ["@babel/plugin-transform-modules-commonjs", "istanbul", "@babel/plugin-transform-runtime"]
+    },
     "test": {
-      "plugins": [
-        "@babel/plugin-transform-modules-commonjs",
-        "istanbul"
-      ]
+      "plugins": ["@babel/plugin-transform-modules-commonjs", "@babel/plugin-transform-runtime"]
     },
     "commonjs": {
       "plugins": [

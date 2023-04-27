@@ -155,13 +155,7 @@ function SankeyDemo() {
       <br />
       <div>
         <pre>2. Customized Sankey.</pre>
-        <Sankey
-          width={960}
-          height={500}
-          data={data0}
-          node={{ fill: '#8a52b6' }}
-          link={{ stroke: '#77c878' }}
-        >
+        <Sankey width={960} height={500} data={data0} node={{ fill: '#8a52b6' }} link={{ stroke: '#77c878' }}>
           {/* <Tooltip /> */}
         </Sankey>
       </div>
@@ -169,17 +163,19 @@ function SankeyDemo() {
       <div>
         <pre>2. Sankey with gradient color, name and value, and use margin to avoid outer-clip.</pre>
         <Sankey
-          width={960} height={500}
+          width={960}
+          height={500}
           margin={{ top: 20, bottom: 20 }}
           data={data1}
-          nodeWidth={10} nodePadding={60}
+          nodeWidth={10}
+          nodePadding={60}
           linkCurvature={0.61}
           iterations={64}
           link={<DemoSankeyLink />}
           node={<DemoSankeyNode containerWidth={960} />}
         >
           <defs>
-            <linearGradient id={'linkGradient'}>
+            <linearGradient id="linkGradient">
               <stop offset="0%" stopColor="rgba(0, 136, 254, 0.5)" />
               <stop offset="100%" stopColor="rgba(0, 197, 159, 0.3)" />
             </linearGradient>

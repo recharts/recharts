@@ -8,6 +8,8 @@ coverage
 npm-debug.log
 *.orig
 .idea/
+.vscode/
 .justconf/
 types
 build
+storybook/public/
