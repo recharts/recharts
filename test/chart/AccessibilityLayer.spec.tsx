@@ -161,69 +161,19 @@ describe('AccessibilityLayer', () => {
       return;
     }
 
-    // Ignore right arrow when you're already at the right
+    // Vertical charts aren't supported, so right arrow key should be ignored
     fireEvent.keyDown(svg, {
       key: 'ArrowRight',
     });
     expect(tooltip).toHaveTextContent('');
     expect(mockMouseMovements.mock.instances).toHaveLength(0);
-  });
 
-  const Counter = () => {
-    const [count, setCount] = useState(0);
-
-    return (
-      <div>
-        <h1>
-          This is:
-          {count}
-        </h1>
-
-        <button type="button" onClick={() => setCount(count + 1)}>
-          Bump counter
-        </button>
-
-        <AreaChart width={100} height={50} data={data} accessibilityLayer>
-          <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
-          <Tooltip />
-          <Legend />
-          <XAxis dataKey="name" />
-          <YAxis />
-        </AreaChart>
-      </div>
-    );
-  };
-
-  // Q: What is the point of this test?
-  // A: Well, I was thinking, what was a way this could break and would be hard to figure out?
-  //    If the elements and their event listeners got disconnected. But how would that happen
-  //    outside of something weird happening with React rendering? I don't know, but if it DID
-  //    happen, it would take a while for someone to notice, and could be potentially hard to
-  //    reproduce or debug. It's not that hard to test, and could potentially save someone some
-  //    stress down the line. That trade-off feels worth it!
-  test('When chart is forced to rerender without a redraw, arrow keys still work', () => {
-    const { container } = render(<Counter />);
-
-    expect(container.querySelectorAll('button')).toHaveLength(1);
-
-    const svg = container.querySelector('svg');
-    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
-
-    expect(tooltip?.textContent).toBe('');
-
-    // Once the chart receives focus, the tooltip should display
-    svg?.focus();
-    expect(tooltip).toHaveTextContent('Page A');
-
-    if (svg === null) {
-      return;
-    }
-
-    // Ignore left arrow when you're already at the left
+    // Left arrow key should also be ignored
     fireEvent.keyDown(svg, {
       key: 'ArrowLeft',
     });
-    expect(tooltip).toHaveTextContent('Page A');
+    expect(tooltip).toHaveTextContent('');
+    expect(mockMouseMovements.mock.instances).toHaveLength(0);
   });
 
   const Expand = () => {
@@ -331,5 +281,62 @@ describe('AccessibilityLayer', () => {
       key: 'ArrowRight',
     });
     expect(tooltip).toHaveTextContent('Page E');
+  });
+
+  const Counter = () => {
+    const [count, setCount] = useState(0);
+
+    return (
+      <div>
+        <h1>
+          This is:
+          {count}
+        </h1>
+
+        <button type="button" onClick={() => setCount(count + 1)}>
+          Bump counter
+        </button>
+
+        <AreaChart width={100} height={50} data={data} accessibilityLayer>
+          <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+          <Tooltip />
+          <Legend />
+          <XAxis dataKey="name" />
+          <YAxis />
+        </AreaChart>
+      </div>
+    );
+  };
+
+  // Q: What is the point of this test?
+  // A: Well, I was thinking, what was a way this could break and would be hard to figure out?
+  //    If the elements and their event listeners got disconnected. But how would that happen
+  //    outside of something weird happening with React rendering? I don't know, but if it DID
+  //    happen, it would take a while for someone to notice, and could be potentially hard to
+  //    reproduce or debug. It's not that hard to test, and could potentially save someone some
+  //    stress down the line. That trade-off feels worth it!
+  test('When chart is forced to rerender without a redraw, arrow keys still work', () => {
+    const { container } = render(<Counter />);
+
+    expect(container.querySelectorAll('button')).toHaveLength(1);
+
+    const svg = container.querySelector('svg');
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+
+    expect(tooltip?.textContent).toBe('');
+
+    // Once the chart receives focus, the tooltip should display
+    svg?.focus();
+    expect(tooltip).toHaveTextContent('Page A');
+
+    if (svg === null) {
+      return;
+    }
+
+    // Ignore left arrow when you're already at the left
+    fireEvent.keyDown(svg, {
+      key: 'ArrowLeft',
+    });
+    expect(tooltip).toHaveTextContent('Page A');
   });
 });
