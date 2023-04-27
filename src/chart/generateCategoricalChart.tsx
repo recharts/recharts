@@ -1054,21 +1054,28 @@ export const generateCategoricalChart = ({
         return null;
       }
 
-      if (this.state.tooltipTicks === prevState.tooltipTicks) {
-        return null;
+      if (this.state.tooltipTicks !== prevState.tooltipTicks) {
+        this.accessibilityManager.init({
+          coordinateList: this.state.tooltipTicks,
+        });
       }
 
-      this.accessibilityManager.init({
-        container: this.container,
-        offset: {
-          left: this.props.margin.left ?? 0,
-          top: this.props.margin.top ?? 0,
-        },
-        coordinateList: this.state.tooltipTicks,
-        mouseHandlerCallback: this.handleMouseMove,
-        layout: this.props.layout,
-      });
+      if (this.props.layout !== prevProps.layout) {
+        this.accessibilityManager.init({
+          layout: this.props.layout,
+        });
+      }
 
+      if (this.props.margin !== prevProps.margin) {
+        this.accessibilityManager.init({
+          offset: {
+            left: this.props.margin.left ?? 0,
+            top: this.props.margin.top ?? 0,
+          },
+        });
+      }
+
+      // Something has to be returned for getSnapshotBeforeUpdate
       return null;
     }
 

@@ -6,11 +6,11 @@ interface ContainerOffset {
 }
 
 interface InitiableOptions {
-  coordinateList: TickItem[];
-  mouseHandlerCallback: (e: any) => void;
-  container: HTMLElement;
-  layout: LayoutType;
-  offset: ContainerOffset;
+  coordinateList?: TickItem[];
+  mouseHandlerCallback?: (e: any) => void;
+  container?: HTMLElement;
+  layout?: LayoutType;
+  offset?: ContainerOffset;
 }
 
 export class AccessibilityManager {
@@ -31,13 +31,13 @@ export class AccessibilityManager {
     container = null,
     layout = null,
     offset = null,
-    mouseHandlerCallback,
+    mouseHandlerCallback = null,
   }: InitiableOptions) {
-    this.coordinateList = coordinateList ?? [];
+    this.coordinateList = coordinateList ?? this.coordinateList;
     this.container = container ?? this.container;
     this.layout = layout ?? this.layout;
     this.offset = offset ?? this.offset;
-    this.mouseHandlerCallback = mouseHandlerCallback;
+    this.mouseHandlerCallback = mouseHandlerCallback ?? this.mouseHandlerCallback;
 
     if (this.activeIndex >= this.coordinateList.length) {
       this.activeIndex = this.coordinateList.length - 1;
