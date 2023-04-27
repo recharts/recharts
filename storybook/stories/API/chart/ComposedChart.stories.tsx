@@ -17,9 +17,12 @@ import {
   XAxis,
   YAxis,
 } from '../../../../src';
+import { CategoricalChartProps } from '../props/ChartProps';
 
 export default {
-  tags: ['autodocs'],
+  argTypes: {
+    ...CategoricalChartProps,
+  },
   component: Composed,
 };
 

@@ -1,9 +1,12 @@
 import React from 'react';
 import { pageData } from '../../data';
 import { Line, LineChart, ResponsiveContainer } from '../../../../src';
+import { CategoricalChartProps } from '../props/ChartProps';
 
 export default {
-  tags: ['autodocs'],
+  argTypes: {
+    ...CategoricalChartProps,
+  },
   component: LineChart,
 };
 

@@ -1,126 +1,92 @@
 import React from 'react';
-import { Args } from '@storybook/react';
 import { sizeData } from '../../data';
 import { ResponsiveContainer, Treemap } from '../../../../src';
-
-const GeneralProps: Args = {
-  width: {
-    description: 'The width of chart container.',
-    table: {
-      type: {
-        summary: 'Number',
-        defaultValue: null,
-      },
-      category: 'General',
-    },
-  },
-  height: {
-    description: 'The height of chart container.',
-    table: {
-      type: {
-        summary: 'Number',
-        defaultValue: null,
-      },
-      category: 'General',
-    },
-  },
-  dataKey: {
-    description: 'The key of a group of data which should be unique in a treemap.',
-    table: {
-      type: {
-        summary: 'String | Number | Function',
-        defaultValue: 'value',
-      },
-      category: 'General',
-    },
-  },
-  aspectRatio: {
-    description: "The treemap will try to keep every single rectangle's aspect ratio near the aspectRatio given.",
-    table: {
-      type: {
-        summary: 'Number',
-        defaultValue: null,
-      },
-      category: 'General',
-    },
-  },
-  isAnimationActive: {
-    description: 'If set false, animation of area will be disabled.',
-    table: {
-      type: {
-        summary: 'Boolean',
-        defaultValue: true,
-      },
-      category: 'General',
-    },
-  },
-  animationBegin: {
-    description: 'Specifies when the animation should begin, the unit of this option is ms.',
-    table: {
-      type: {
-        summary: 'Number',
-        defaultValue: 0,
-      },
-      category: 'General',
-    },
-  },
-  animationDuration: {
-    description: 'Specifies the duration of animation, the unit of this option is ms.',
-    table: {
-      type: {
-        summary: 'Number',
-        defaultValue: 1500,
-      },
-      category: 'General',
-    },
-  },
-  animationEasing: {
-    description: 'The type of easing function.',
-    table: {
-      type: {
-        summary: "'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear'",
-        defaultValue: "'ease'",
-      },
-      category: 'General',
-    },
-  },
-  onAnimationStart: {
-    description: 'The customized event handler of animation start',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onAnimationEnd: {
-    description: 'The customized event handler of animation end',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-};
+import { ChartSizeProps, data } from '../props/ChartProps';
+import {
+  animationBegin,
+  animationDuration,
+  animationEasing,
+  animationId,
+  isAnimationActive,
+} from '../props/AnimationProps';
+import { isUpdateAnimationActive } from '../props/RectangleProps';
+import { onAnimationEnd, onAnimationStart, onClick, onMouseEnter, onMouseLeave } from '../props/EventHandlers';
+import { dataKey } from '../props/CartesianComponentShared';
+import { GeneralStyle } from '../props/Styles';
 
 export default {
   argTypes: {
-    ...GeneralProps,
+    type: { description: 'TODO' },
+    style: {
+      description: 'TODO',
+    },
+    nestIndexContent: {
+      description: 'TODO',
+    },
+    nameKey: {
+      ...dataKey, // The name key is a data key.
+      description: "The accessor of the treemap's rectangles' name.",
+    },
+    content: {
+      description: "The content of the treemap's rectangles.",
+      table: {
+        type: {
+          summary: 'ReactElement | Function',
+          defaultValue: null,
+        },
+        category: 'General',
+      },
+    },
+    className: {
+      table: {
+        category: 'Internal',
+      },
+    },
+    fill: GeneralStyle.fill,
+    stroke: GeneralStyle.stroke,
+    colorPanel: {
+      description: "The color panel is used to render the color of the treemap's rectangles.",
+    },
+    aspectRatio: {
+      description: "The treemap will try to keep every single rectangle's aspect ratio near the aspectRatio given.",
+      table: {
+        type: {
+          summary: 'Number',
+          defaultValue: null,
+        },
+        category: 'General',
+      },
+    },
+    animationBegin,
+    ...ChartSizeProps,
+    animationDuration,
+    animationEasing,
+    animationId,
+    data,
+    dataKey,
+    isAnimationActive,
+    isUpdateAnimationActive,
+    onAnimationEnd,
+    onAnimationStart,
+    onClick,
+    onMouseEnter,
+    onMouseLeave,
   },
   component: Treemap,
 };
 
 export const Simple = {
   render: (args: Record<string, any>) => {
-    const { data } = args;
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <Treemap data={data} dataKey="size" />
+        <Treemap {...args} />
       </ResponsiveContainer>
     );
   },
   args: {
     data: sizeData,
+    dataKey: 'size',
+    nameKey: 'name',
+    isAnimationActive: false,
   },
 };

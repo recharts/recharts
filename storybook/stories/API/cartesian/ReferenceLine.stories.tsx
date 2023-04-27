@@ -5,8 +5,6 @@ import { Args, StoryObj } from '@storybook/react';
 import { Area, AreaChart, ReferenceLine, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { EventHandlers } from '../props/EventHandlers';
-import { AnimationProps } from '../props/AnimationProps';
 import { GeneralStyle } from '../props/Styles';
 import {
   ReferenceComponentGeneralArgs,
@@ -28,6 +26,10 @@ const GeneralProps: Args = {
     is a category axis, the value of y must be one of the catagories, otherwise no line will be drawn.`,
     table: { type: { summary: 'number | string' }, category: 'General' },
   },
+  segment: {
+    description: 'Array of endpoints in { x, y } format. These endpoints would be used to draw the line.',
+    table: { type: { summary: 'array' }, category: 'General' },
+  },
 };
 
 const LabelProps: Args = {
@@ -35,7 +37,15 @@ const LabelProps: Args = {
     description: `If set a string or a number, default label will be drawn, and the option is content. 
     If set a React element, the option is the custom react element of drawing label. If set a function, 
     the function will be called to render customized label.`,
-    table: { type: { summary: 'string | number | ReactElement | Function' }, category: 'Label' },
+    table: {
+      type: {
+        summary: 'string | number | ReactElement | Function',
+        detail:
+          '<ReferenceLine x="05" label="Middle" />\n' +
+          '<ReferenceLine y={400} yAxisId="left" label={<CustomizedLabel />} />',
+      },
+      category: 'Label',
+    },
   },
 };
 
@@ -47,16 +57,38 @@ const StyleProps: Args = {
   },
   strokeWidth: GeneralStyle.strokeWidth,
   strokeDasharray: GeneralStyle.strokeDasharray,
+  position: {
+    description:
+      "Defines at which position of an axis point the line will start/end if the axis does not have type 'number'.",
+    table: { type: { summary: "'start' | 'middle' | 'end'" }, category: 'Style' },
+  },
+  shape: {
+    description: `If set a ReactElement, the shape of the line can be customized. If set a function, 
+    the function will be called to render a customized shape.`,
+    table: {
+      type: {
+        summary: 'ReactElement | Function',
+      },
+      category: 'Style',
+    },
+  },
+};
+
+const InternalProps: Args = {
+  ...ReferenceComponentInternalArgs,
+  viewBox: {
+    description: 'The box of the viewing area, usually calculated internally.',
+    table: { type: { summary: '{x: number, y: number, width: number, height: number}' }, category: 'Internal' },
+  },
 };
 
 export default {
   argTypes: {
-    ...EventHandlers,
-    ...AnimationProps,
     ...GeneralProps,
     ...LabelProps,
     ...StyleProps,
     ...ReferenceComponentInternalArgs,
+    ...InternalProps,
     // Deprecated
     dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
     alwaysShow: {
@@ -67,13 +99,6 @@ export default {
       disable: true,
       default: false,
     },
-    // Other
-    segment: {
-      description: 'Array of endpoints in { x, y } format. These endpoints would be used to draw the ReferenceLine.',
-      table: { type: { summary: 'array' }, category: 'Other' },
-    },
-    // Internal
-    data: { table: { category: 'Internal' } },
   },
   component: ReferenceLine,
 };
