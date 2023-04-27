@@ -7,7 +7,7 @@ interface ContainerOffset {
 
 interface InitiableOptions {
   coordinateList?: TickItem[];
-  mouseHandlerCallback?: (e: any) => void;
+  mouseHandlerCallback?: (e: Partial<MouseEvent>) => void;
   container?: HTMLElement;
   layout?: LayoutType;
   offset?: ContainerOffset;

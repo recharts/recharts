@@ -814,6 +814,8 @@ export interface CategoricalChartProps {
   title?: string;
   desc?: string;
   accessibilityLayer?: boolean;
+  role?: string;
+  tabIndex?: number;
 }
 
 export const generateCategoricalChart = ({
@@ -2242,13 +2244,19 @@ export const generateCategoricalChart = ({
       }
 
       if (this.props.accessibilityLayer) {
-        attrs.tabIndex = 0;
-        attrs.role = 'img';
+        // Set tabIndex to 0 by default (can be overwritten)
+        attrs.tabIndex = 0 ?? this.props.tabIndex;
+        // Set role to img by default (can be overwritten)
+        attrs.role = 'img' ?? this.props.role;
         attrs.onKeyDown = (e: any) => {
           this.accessibilityManager.keyboardEvent(e);
+          // 'onKeyDown' is not currently a supported prop that can be passed through
+          // if it's added, this should be added: this.props.onKeyDown(e);
         };
         attrs.onFocus = () => {
           this.accessibilityManager.focus();
+          // 'onFocus' is not currently a supported prop that can be passed through
+          // if it's added, the focus event should be forwarded to the prop
         };
       }
 
