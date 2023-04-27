@@ -26,11 +26,17 @@ export class AccessibilityManager {
 
   private offset: InitiableOptions['offset'];
 
-  public init({ coordinateList = [], container, layout, offset, mouseHandlerCallback }: InitiableOptions) {
-    this.coordinateList = coordinateList;
-    this.container = container;
-    this.layout = layout;
-    this.offset = offset;
+  public init({
+    coordinateList = [],
+    container = null,
+    layout = null,
+    offset = null,
+    mouseHandlerCallback,
+  }: InitiableOptions) {
+    this.coordinateList = coordinateList ?? [];
+    this.container = container ?? this.container;
+    this.layout = layout ?? this.layout;
+    this.offset = offset ?? this.offset;
     this.mouseHandlerCallback = mouseHandlerCallback;
 
     if (this.activeIndex >= this.coordinateList.length) {
@@ -60,22 +66,6 @@ export class AccessibilityManager {
         this.spoofMouse();
         break;
       }
-      case 'ArrowUp': {
-        if (this.layout !== 'vertical') {
-          return;
-        }
-        this.activeIndex = Math.max(this.activeIndex - 1, 0);
-        this.spoofMouse();
-        break;
-      }
-      case 'ArrowDown': {
-        if (this.layout !== 'vertical') {
-          return;
-        }
-        this.activeIndex = Math.min(this.activeIndex + 1, this.coordinateList.length - 1);
-        this.spoofMouse();
-        break;
-      }
       default: {
         break;
       }
@@ -83,11 +73,15 @@ export class AccessibilityManager {
   }
 
   private spoofMouse() {
+    if (this.layout !== 'horizontal') {
+      return;
+    }
+
     const { x, y } = this.container.getBoundingClientRect();
     const { coordinate } = this.coordinateList[this.activeIndex];
 
-    const pageX = x + (this.layout === 'horizontal' ? coordinate : 100);
-    const pageY = y + (this.layout === 'vertical' ? coordinate : this.offset.top);
+    const pageX = x + coordinate;
+    const pageY = y + this.offset.top;
 
     this.mouseHandlerCallback({ pageX, pageY });
   }

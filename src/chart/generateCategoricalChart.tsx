@@ -758,6 +758,8 @@ export interface CategoricalChartState {
   /** Active label of data */
   activeLabel?: string;
 
+  activeIndex?: number;
+
   xValue?: number;
 
   yValue?: number;
@@ -1032,18 +1034,42 @@ export const generateCategoricalChart = ({
         this.addListener();
       }
 
-      if (this.props.accessibilityLayer) {
-        this.accessibilityManager.init({
-          container: this.container,
-          offset: {
-            left: this.props.margin.left ?? 0,
-            top: this.props.margin.top ?? 0,
-          },
-          coordinateList: this.state.tooltipTicks,
-          mouseHandlerCallback: this.handleMouseMove,
-          layout: this.props.layout,
-        });
+      this.accessibilityManager.init({
+        container: this.container,
+        offset: {
+          left: this.props.margin.left ?? 0,
+          top: this.props.margin.top ?? 0,
+        },
+        coordinateList: this.state.tooltipTicks,
+        mouseHandlerCallback: this.handleMouseMove,
+        layout: this.props.layout,
+      });
+    }
+
+    getSnapshotBeforeUpdate(
+      prevProps: Readonly<CategoricalChartProps>,
+      prevState: Readonly<CategoricalChartState>,
+    ): null {
+      if (!this.props.accessibilityLayer) {
+        return null;
       }
+
+      if (this.state.tooltipTicks === prevState.tooltipTicks) {
+        return null;
+      }
+
+      this.accessibilityManager.init({
+        container: this.container,
+        offset: {
+          left: this.props.margin.left ?? 0,
+          top: this.props.margin.top ?? 0,
+        },
+        coordinateList: this.state.tooltipTicks,
+        mouseHandlerCallback: this.handleMouseMove,
+        layout: this.props.layout,
+      });
+
+      return null;
     }
 
     static getDerivedStateFromProps = (
