@@ -168,9 +168,15 @@ import {
   onWheel,
   onWheelCapture,
 } from '../props/EventHandlers';
-import { AnimationProps } from '../props/AnimationProps';
 import { legendType } from '../props/Legend';
 import { GeneralStyle, hide } from '../props/Styles';
+import {
+  animationBegin,
+  animationDuration,
+  animationEasing,
+  animationId,
+  isAnimationActive,
+} from '../props/AnimationProps';
 
 const [surfaceWidth, surfaceHeight] = [600, 300];
 
@@ -403,15 +409,23 @@ const InternalProps: Args = {
   data: dataProp,
 };
 
+const AnimationPropsForBar: Args = {
+  animationBegin,
+  animationEasing,
+  animationDuration,
+  animationId,
+  isAnimationActive,
+};
+
 export default {
   component: Bar,
   argTypes: {
     ...GeneralBarProps,
     ...StyleProps,
     ...EventHandlersForBar,
-    ...AnimationProps,
     ...InternalProps,
     ...ResponsiveProps,
+    ...AnimationPropsForBar,
     // Deprecated
     dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
     // Other
@@ -527,6 +541,9 @@ export const Stacked = {
     },
   },
 };
+
+// TODO: Remove all controls from all stories that are independent of the story / API.
+// Move those to examples.
 
 export const StackedAndUnstacked = {
   render: (args: Record<string, any>) => {
@@ -663,6 +680,7 @@ export const CustomizedShape = {
   parameters: { controls: { include: ['data'] } },
 };
 
+// TODO: Move FillGradient to examples (because there is no fill related API control)
 export const FillGradient = {
   render: (args: Record<string, any>) => {
     const { dataKey1, dataKey2, ...barArgs } = args;
@@ -708,6 +726,7 @@ export const FillGradient = {
   },
 };
 
+// TODO: Move pattern to examples (because there is no pattern related API control)
 export const FillPattern = {
   render: (args: Record<string, any>) => {
     const { dataKey1, dataKey2, ...barArgs } = args;
@@ -754,13 +773,13 @@ export const FillPattern = {
 export const Animation = {
   ...Base,
   args: {
-    data: pageData,
+    ...getStoryArgsFromArgsTypesObject(AnimationPropsForBar),
     isAnimationActive: true,
     animationEasing: 'linear',
     animationBegin: 0,
     animationDuration: 1500,
   },
   parameters: {
-    controls: { include: ['animationEasing', 'isAnimationActive', 'animationBegin', 'animationDuration'] },
+    controls: { include: Object.keys(AnimationPropsForBar) },
   },
 };
