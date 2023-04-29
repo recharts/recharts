@@ -542,9 +542,6 @@ export const Stacked = {
   },
 };
 
-// TODO: Remove all controls from all stories that are independent of the story / API.
-// Move those to examples.
-
 export const StackedAndUnstacked = {
   render: (args: Record<string, any>) => {
     const { dataKey1, dataKey2, dataKey3, barColor1, barColor2, barColor3, ...barArgs } = args;
@@ -680,7 +677,6 @@ export const CustomizedShape = {
   parameters: { controls: { include: ['data'] } },
 };
 
-// TODO: Move FillGradient to examples (because there is no fill related API control)
 export const FillGradient = {
   render: (args: Record<string, any>) => {
     const { dataKey1, dataKey2, ...barArgs } = args;
@@ -726,7 +722,6 @@ export const FillGradient = {
   },
 };
 
-// TODO: Move pattern to examples (because there is no pattern related API control)
 export const FillPattern = {
   render: (args: Record<string, any>) => {
     const { dataKey1, dataKey2, ...barArgs } = args;
