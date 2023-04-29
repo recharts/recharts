@@ -9,6 +9,19 @@ export const dataKey = {
   },
 };
 
+export const xAxisId = {
+  description: 'The id of x-axis which is corresponding to the data.',
+  table: { type: { summary: 'string | number' }, category: 'General' },
+};
+export const yAxisId = {
+  description: 'The id of y-axis which is corresponding to the data.',
+  table: { type: { summary: 'string | number' }, category: 'General' },
+};
+export const zAxisId = {
+  description: 'The id of z-axis which is corresponding to the data.',
+  table: { type: { summary: 'string | number' }, category: 'General' },
+};
+
 export const General: Args = {
   dataKey,
   id: {
@@ -29,14 +42,8 @@ export const General: Args = {
       category: 'General',
     },
   },
-  xAxisId: {
-    description: 'The id of x-axis which is corresponding to the data.',
-    table: { type: { summary: 'string | number' }, category: 'General' },
-  },
-  yAxisId: {
-    description: 'The id of y-axis which is corresponding to the data.',
-    table: { type: { summary: 'string | number' }, category: 'General' },
-  },
+  xAxisId,
+  yAxisId,
 };
 
 export const points = {
