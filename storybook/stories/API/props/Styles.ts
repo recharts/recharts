@@ -2,6 +2,13 @@
 
 import { Args } from '@storybook/react';
 
+export const hide = {
+  description: 'Hides the component when true, useful when toggling visibility state via legend',
+  type: { name: 'boolean' },
+  defaultValue: false,
+  table: { category: 'Style' },
+};
+
 export const GeneralStyle: Args = {
   fill: {
     control: { type: 'color' },
@@ -73,12 +80,7 @@ export const LineStyle: Args = {
       defaultValue: true,
     },
   },
-  hide: {
-    description: 'Hides the line when true, useful when toggling visibility state via legend',
-    type: { name: 'boolean' },
-    defaultValue: false,
-    table: { category: 'Style' },
-  },
+  hide,
   label: {
     description: `If false set, labels will not be drawn. If true set, labels will be drawn which have
       the props calculated internally. If object set, labels will be drawn which have the props mergered

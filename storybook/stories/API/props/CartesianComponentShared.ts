@@ -39,26 +39,30 @@ export const General: Args = {
   },
 };
 
+export const points = {
+  description:
+    'The coordinates of points in the line, usually calculated internally. In most cases this should not be used.',
+  table: {
+    type: {
+      summary: 'array',
+      detail: '[{x: 12, y: 12, value: 240}]',
+    },
+    category: 'Internal',
+  },
+};
+
+export const data = { table: { category: 'Internal' } };
+export const layout = {
+  description: 'The layout of line, usually inherited from parent.',
+  table: {
+    type: {
+      summary: 'horizontal | vertical',
+    },
+    category: 'Internal',
+  },
+};
 export const Internal = {
-  points: {
-    description:
-      'The coordinates of points in the line, usually calculated internally. In most cases this should not be used.',
-    table: {
-      type: {
-        summary: 'array',
-        detail: '[{x: 12, y: 12, value: 240}]',
-      },
-      category: 'Internal',
-    },
-  },
-  data: { table: { category: 'Internal' } },
-  layout: {
-    description: 'The layout of line, usually inherited from parent.',
-    table: {
-      type: {
-        summary: 'horizontal | vertical',
-      },
-      category: 'Internal',
-    },
-  },
+  points,
+  data,
+  layout,
 };
