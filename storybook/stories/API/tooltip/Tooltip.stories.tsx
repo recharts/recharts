@@ -23,11 +23,10 @@ export const SimpleTooltip = {
   },
 };
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip: React.FC = ({ active, payload, label }: any) => {
   if (active && payload) {
     return (
       <div
-        // className="custom-tooltip"
         style={{
           backgroundColor: '#5b63ffe7',
           padding: '5px',
@@ -36,7 +35,6 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         }}
       >
         <p
-          // className="label"
           style={{
             borderStyle: 'solid 1px',
             fontSize: '13px',
@@ -45,7 +43,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
             color: '#fff',
           }}
         >
-          {`${label} : ${payload[0].value}`}
+          {`${label} : ${payload[0]?.value}`}
         </p>
       </div>
     );
