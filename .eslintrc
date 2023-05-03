@@ -27,7 +27,8 @@
         "tabWidth": 2,
         "useTabs": false,
         "trailingComma": "all",
-        "arrowParens": "avoid"
+        "arrowParens": "avoid",
+        "endOfLine": "auto"
       }
     ],
     "import/extensions": "off",

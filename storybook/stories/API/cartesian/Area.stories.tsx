@@ -402,3 +402,40 @@ export const Points = {
     },
   },
 };
+
+export const WithAccessibilityLayer: StoryObj = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={300}>
+        <ComposedChart
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+          data={pageData}
+          accessibilityLayer
+        >
+          <Area isAnimationActive={false} dataKey="uv" {...args} />
+          {/* All further components are added to show the interaction with the Area properties */}
+          <Legend />
+          <Tooltip />
+          <XAxis dataKey="name" />
+          <YAxis />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(GeneralProps),
+  },
+  parameters: {
+    controls: { include: Object.keys(GeneralProps) },
+    docs: {
+      description: {
+        story: 'You can tab to this chart. From there, you can use the arrow keys to navigate along the chart.',
+      },
+    },
+  },
+};
