@@ -7,10 +7,10 @@ export default {
 };
 
 export const SimpleTooltip = {
-  render: (args: Record<string, any>) => {
+  render: (tootipArgs: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <LineChart {...args}>
+        <LineChart {...tootipArgs}>
           <Line dataKey="uv" />
           <Tooltip />
         </LineChart>
@@ -52,10 +52,10 @@ const CustomTooltip: React.FC = ({ active, payload, label }: any) => {
 };
 
 export const CustomSingleValued = {
-  render: (args: Record<string, any>) => {
+  render: (tooltipArgs: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <LineChart {...args}>
+        <LineChart {...tooltipArgs}>
           <Line dataKey="uv" />
           <Tooltip content={<CustomTooltip />} />
         </LineChart>
