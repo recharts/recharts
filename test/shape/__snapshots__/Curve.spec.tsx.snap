@@ -1,0 +1,95 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Curve /> Not render when points is empty 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="400"
+    viewBox="0 0 400 400"
+    width="400"
+  >
+    <title />
+    <desc />
+  </svg>
+</div>
+`;
+
+exports[`<Curve /> renders 1 area 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="400"
+    viewBox="0 0 400 400"
+    width="400"
+  >
+    <title />
+    <desc />
+    <path
+      class="recharts-curve"
+      d="M10,10L25,40L40,10L55,40L70,10L70,100L55,400L40,100L25,400L10,100Z"
+      fill="none"
+      stroke="#000"
+    />
+  </svg>
+</div>
+`;
+
+exports[`<Curve /> renders 1 curve 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="400"
+    viewBox="0 0 400 400"
+    width="400"
+  >
+    <title />
+    <desc />
+    <path
+      class="recharts-curve"
+      d="M10,10L25,40L40,10L55,40L70,10"
+      fill="none"
+      stroke="#000"
+    />
+  </svg>
+</div>
+`;
+
+exports[`<Curve /> renders 1 horizontal layout area 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="400"
+    viewBox="0 0 400 400"
+    width="400"
+  >
+    <title />
+    <desc />
+    <path
+      class="recharts-curve"
+      d="M10,10L25,40L40,10L55,40L70,10L70,0L55,0L40,0L25,0L10,0Z"
+      fill="none"
+      stroke="#000"
+    />
+  </svg>
+</div>
+`;
+
+exports[`<Curve /> renders 1 vertical layout area 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="400"
+    viewBox="0 0 400 400"
+    width="400"
+  >
+    <title />
+    <desc />
+    <path
+      class="recharts-curve"
+      d="M10,10L25,40L40,10L55,40L70,10L70,0L55,0L40,0L25,0L10,0Z"
+      fill="none"
+      stroke="#000"
+    />
+  </svg>
+</div>
+`;
