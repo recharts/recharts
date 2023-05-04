@@ -1,8 +1,11 @@
 import React from 'react';
 import { Funnel, FunnelChart, LabelList, ResponsiveContainer } from '../../../../src';
+import { CategoricalChartProps } from '../props/ChartProps';
 
 export default {
-  tags: ['autodocs'],
+  argTypes: {
+    ...CategoricalChartProps,
+  },
   component: FunnelChart,
 };
 
