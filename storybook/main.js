@@ -13,6 +13,7 @@ module.exports = {
     '@storybook/addon-interactions',
     '@storybook/addon-docs',
     '@storybook/addon-a11y',
+    '@storybook/addon-mdx-gfm',
   ],
   framework: {
     name: '@storybook/react-webpack5',
@@ -20,5 +21,8 @@ module.exports = {
   },
   features: {
     interactionsDebugger: true,
+  },
+  docs: {
+    autodocs: true,
   },
 };
