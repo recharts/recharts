@@ -1,6 +1,6 @@
 # Recharts
 
-[![storybook](https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg)](https://master--63da8268a0da9970db6992aa.chromatic.com/)
+[![storybook](https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg)](https://release--63da8268a0da9970db6992aa.chromatic.com/)
 [![Build Status](https://github.com/recharts/recharts/workflows/Node.js%20CI/badge.svg)](https://github.com/recharts/recharts/actions)
 [![Coverage Status](https://coveralls.io/repos/recharts/recharts/badge.svg?branch=master&service=github)](https://coveralls.io/github/recharts/recharts?branch=master)
 [![npm version](https://badge.fury.io/js/recharts.svg)](http://badge.fury.io/js/recharts)
@@ -20,6 +20,8 @@ The main purpose of this library is to help you to write charts in React applica
 Documentation at [recharts.org](https://recharts.org)
 
 Please see [the wiki](https://github.com/recharts/recharts/wiki) for FAQ.
+
+All development is done on the `master` branch. The current latest release and storybook documentation reflects what is on the `release` branch.
 
 ## Examples
 
