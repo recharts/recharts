@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { getTicksOfScale, parseScale, checkDomainOfScale, getBandSizeOfAxis } from './ChartUtils';
 import { findChildByType } from './ReactUtils';
-import { Coordinate, AxisType } from './types';
+import { Coordinate, AxisType, Size } from './types';
 import { getPercentValue } from './DataUtils';
 import { Bar } from '../cartesian/Bar';
 
@@ -237,4 +237,19 @@ export const createLabeledScales = (options: Record<string, any>): LabeledScales
       return _.every(coord, (value, label) => scales[label].isInRange(value));
     },
   } as LabeledScales<Record<string, any>>;
+};
+
+/** Calculates the width of the largest horizontal line that fits inside a rectangle that is displayed at an angle.
+ * @param {Object} size Width and height of the text in a horizontal position.
+ * @param {number} angle Angle in degrees in which the text is displayed.
+ * @return {number} The width of the largest horizontal line that fits inside a rectangle that is displayed at an angle.
+ */
+export const getAngledRectangleWidth = ({ width, height }: Size, angle: number | undefined = 0) => {
+  if (angle % 180 === 0) {
+    return width;
+  }
+
+  const minDimension = Math.min(width, height);
+
+  return Math.abs(minDimension / Math.sin((angle * Math.PI) / 180));
 };

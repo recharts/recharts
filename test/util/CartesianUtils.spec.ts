@@ -1,5 +1,5 @@
 import { scaleLinear, scaleBand } from 'victory-vendor/d3-scale';
-import { ScaleHelper, createLabeledScales } from '../../src/util/CartesianUtils';
+import { ScaleHelper, createLabeledScales, getAngledRectangleWidth } from '../../src/util/CartesianUtils';
 
 describe('ScaleHelper', () => {
   it('apply() should return the expected value', () => {
@@ -67,5 +67,42 @@ describe('createLabeledScales', () => {
     expect(scales.isInRange({ y: 100 })).toEqual(false);
     expect(scales.isInRange({ x: 50, y: 100 })).toEqual(false);
     expect(scales.isInRange({})).toEqual(true);
+  });
+});
+
+describe('getAngledStringWidth', () => {
+  describe('when width is larger than height', () => {
+    test.each([[180], [0], [360], [540], [-180]])(
+      'getAngledStringWidth returns width when angle is multiple of 180deg',
+      angle => {
+        expect(getAngledRectangleWidth({ width: 25, height: 17 }, angle)).toBeCloseTo(25);
+      },
+    );
+
+    test.each([
+      // Expected width, angle
+      [34, 30],
+      [34, 330],
+      [34, 150],
+      [34, 210],
+      [34, -30],
+      [24.0416, 45],
+    ])('should return %s when angle is %s', (expectedWidth, angle) => {
+      expect(getAngledRectangleWidth({ width: 25, height: 17 }, angle)).toBeCloseTo(expectedWidth);
+    });
+  });
+
+  describe('when width is smaller than height', () => {
+    test.each([
+      // Expected width, angle
+      [16, 30],
+      [16, 330],
+      [16, 150],
+      [16, 210],
+      [16, -30],
+      [11.3137, 45],
+    ])('should return %s when angle is %s and width is smaller than height', (expectedWidth, angle) => {
+      expect(getAngledRectangleWidth({ width: 8, height: 15 }, angle)).toBeCloseTo(expectedWidth);
+    });
   });
 });

@@ -44,6 +44,8 @@ export interface CartesianAxisProps {
   tickFormatter?: (value: any, index: number) => string;
   ticksGenerator?: (props?: CartesianAxisProps) => CartesianTickItem[];
   interval?: AxisInterval;
+  /** Angle in which ticks will be rendered. */
+  angle?: number;
 }
 
 interface IState {
