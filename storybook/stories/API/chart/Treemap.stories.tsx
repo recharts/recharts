@@ -1,6 +1,6 @@
 import React from 'react';
 import { sizeData } from '../../data';
-import { ResponsiveContainer, Treemap } from '../../../../src';
+import { ResponsiveContainer, Tooltip, Treemap } from '../../../../src';
 import { ChartSizeProps, data } from '../props/ChartProps';
 import {
   animationBegin,
@@ -80,6 +80,24 @@ export const Simple = {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <Treemap {...args} />
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    data: sizeData,
+    dataKey: 'size',
+    nameKey: 'name',
+    isAnimationActive: false,
+  },
+};
+
+export const WithTooltip = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <Treemap {...args}>
+          <Tooltip />
+        </Treemap>
       </ResponsiveContainer>
     );
   },
