@@ -141,19 +141,19 @@ export const Tooltip = <TValue extends ValueType, TName extends NameType>(
         setDismissed(true);
         setDismissedAtCoordinate(prev => ({
           ...prev,
-          x: coordinate.x,
-          y: coordinate.y,
+          x: coordinate?.x,
+          y: coordinate?.y,
         }));
       }
     },
-    [coordinate.x, coordinate.y],
+    [coordinate?.x, coordinate?.y],
   );
 
   useEffect(() => {
     const updateBBox = () => {
       if (dismissed) {
         document.removeEventListener('keydown', handleKeyDown);
-        if (coordinate.x !== dismissedAtCoordinate.x || coordinate.y !== dismissedAtCoordinate.y) {
+        if (coordinate?.x !== dismissedAtCoordinate.x || coordinate?.y !== dismissedAtCoordinate.y) {
           setDismissed(false);
         }
       } else {
@@ -178,16 +178,7 @@ export const Tooltip = <TValue extends ValueType, TName extends NameType>(
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [
-    boxHeight,
-    boxWidth,
-    coordinate.x,
-    coordinate.y,
-    dismissed,
-    dismissedAtCoordinate.x,
-    dismissedAtCoordinate.y,
-    handleKeyDown,
-  ]);
+  }, [boxHeight, boxWidth, coordinate, dismissed, dismissedAtCoordinate.x, dismissedAtCoordinate.y, handleKeyDown]);
 
   const getTranslate = ({
     key,
