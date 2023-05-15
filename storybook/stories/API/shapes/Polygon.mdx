@@ -1,0 +1,15 @@
+import { ArgTypes, Canvas } from '@storybook/blocks';
+import * as PolygonStories from './Polygon.stories';
+
+# Polygon
+
+The Polygon is a shape that itself is not a valid child in any component.
+It can be used to implement custom elements, returning it from within a
+
+```jsx
+<Customized component={<Polygon {...polygonProps} />} />
+```
+
+or other custom components (i.e. a custom line)
+
+<ArgTypes of={PolygonStories} sort="requiredFirst" />
