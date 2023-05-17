@@ -1,5 +1,5 @@
-import { ArgTypes  } from '@storybook/blocks';
-import  * as AreaStories from './Area.stories';
+import { ArgTypes, Meta, Stories } from '@storybook/blocks';
+import * as ComponentStories from './Area.stories';
 
 # Area
 
@@ -12,4 +12,11 @@ The Area can be used with the following child components: `<LabelList/>`
 ## Properties
 Properties in the groups Other and Internal are not recommended to be used.
 
-<ArgTypes of={AreaStories} sort={'requiredFirst'}/>
+<Meta of={ComponentStories} />;
+<ArgTypes of={ComponentStories} sort={'requiredFirst'} />;
+<Stories />;
+
+
+
+
+

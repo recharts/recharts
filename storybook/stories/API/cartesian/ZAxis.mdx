@@ -1,5 +1,5 @@
-import { Canvas, Meta, ArgTypes } from '@storybook/blocks';
-import * as ZAxisStories from './ZAxis.stories';
+import { ArgTypes, Meta, Stories } from '@storybook/blocks';
+import * as ComponentStories from './ZAxis.stories';
 
 # ZAxis
 
@@ -11,4 +11,7 @@ The ZAxis can be used within `<ScatterChart />`.
 
 Properties in the groups Other and Internal are not recommended to be used.
 
-<ArgTypes of={ZAxisStories} sort={'requiredFirst'} />
+<Meta of={ComponentStories} />;
+<ArgTypes of={ComponentStories} sort={'requiredFirst'} />;
+<Stories />;
+

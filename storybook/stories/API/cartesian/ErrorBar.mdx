@@ -1,5 +1,5 @@
-import { Canvas, Meta, ArgTypes } from '@storybook/blocks';
-import * as ErrorBarStories from './ErrorBar.stories';
+import { ArgTypes, Meta, Stories } from '@storybook/blocks';
+import * as ComponentStories from './ErrorBar.stories';
 
 # ErrorBar
 
@@ -11,4 +11,7 @@ The ErrorBar can be used within `<Bar />`, `<Line />` or `<Scatter />`.
 
 Properties in the groups Other and Internal are not recommended to be used.
 
-<ArgTypes of={ErrorBarStories} sort={'requiredFirst'} />
+<Meta of={ComponentStories} />;
+<ArgTypes of={ComponentStories} sort={'requiredFirst'} />;
+<Stories />;
+
