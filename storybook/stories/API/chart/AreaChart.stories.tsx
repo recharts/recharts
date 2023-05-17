@@ -2,9 +2,12 @@ import React from 'react';
 import { curveCardinal } from 'victory-vendor/d3-shape';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip } from '../../../../src';
 import { pageData } from '../../data';
+import { CategoricalChartProps } from '../props/ChartProps';
 
 export default {
-  tags: ['autodocs'],
+  argTypes: {
+    ...CategoricalChartProps,
+  },
   component: AreaChart,
 };
 

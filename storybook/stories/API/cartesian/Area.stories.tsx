@@ -2,7 +2,7 @@ import React from 'react';
 import { StoryObj } from '@storybook/react';
 import { ComposedChart, Area, ResponsiveContainer, Surface, Legend, Tooltip, XAxis, YAxis } from '../../../../src';
 import { coordinateData, coordinateWithValueData, pageData } from '../../data';
-import { LineStyle } from '../props/LineStyle';
+import { LineStyle } from '../props/Styles';
 import { AnimationProps } from '../props/AnimationProps';
 import { legendType } from '../props/Legend';
 import { General as GeneralProps, Internal } from '../props/CartesianComponentShared';
@@ -14,8 +14,9 @@ const AreaSpecificProps = {
   baseValue: { table: { category: 'Other' } },
   isRange: { table: { category: 'Other' } },
   stackId: {
-    description: `The id of group which this area should be stacked into. If no id is specified, the area will not be stacked.
-       When two components have the same value axis and same stackId, then they are stacked in order.`,
+    description: `The id of group which this area should be stacked into. If no id is specified, 
+    the area will not be stacked. When two components have the same value axis and same stackId, 
+    then they are stacked in order.`,
     table: {
       type: {
         summary: 'string | number',
@@ -321,6 +322,50 @@ export const FillGradient = {
   },
 };
 
+export const FillPattern = {
+  render: (args: Record<string, any>) => {
+    const { data, dataKey1, dataKey2, ...areaArgs } = args;
+
+    return (
+      <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <ComposedChart
+          width={surfaceWidth}
+          height={surfaceHeight}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+          data={data}
+        >
+          <defs>
+            <pattern id="left" width="12" height="4" patternUnits="userSpaceOnUse">
+              <rect width="4" height="4" fill="#8884d8" />
+            </pattern>
+            <pattern id="right" width="8" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="4" height="4" fill="#82ca9d" />
+            </pattern>
+          </defs>
+          <Area type="monotone" dataKey={dataKey1} stroke="#8884d8" fillOpacity={1} fill="url(#left)" {...areaArgs} />
+          <Area type="monotone" dataKey={dataKey2} stroke="#82ca9d" fillOpacity={1} fill="url(#right)" {...areaArgs} />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    data: coordinateWithValueData,
+    dataKey1: 'x',
+    dataKey2: 'y',
+    isAnimationActive: false,
+  },
+  parameters: {
+    controls: {
+      include: ['data'],
+    },
+  },
+};
+
 export const Points = {
   render: (args: Record<string, any>) => {
     const { points } = args;
@@ -353,6 +398,43 @@ export const Points = {
           'You can directly set the x and y coordinates of a Area via `points`. This overrides `dataKey` and `data`. ' +
           'The coordinate system of the `points` lies in the top right of the bounding box. ' +
           'Using `points`, an Area can even be used within only a Surface, without a Chart.',
+      },
+    },
+  },
+};
+
+export const WithAccessibilityLayer: StoryObj = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={300}>
+        <ComposedChart
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+          data={pageData}
+          accessibilityLayer
+        >
+          <Area isAnimationActive={false} dataKey="uv" {...args} />
+          {/* All further components are added to show the interaction with the Area properties */}
+          <Legend />
+          <Tooltip />
+          <XAxis dataKey="name" />
+          <YAxis />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(GeneralProps),
+  },
+  parameters: {
+    controls: { include: Object.keys(GeneralProps) },
+    docs: {
+      description: {
+        story: 'You can tab to this chart. From there, you can use the arrow keys to navigate along the chart.',
       },
     },
   },

@@ -69,6 +69,7 @@ import {
   GeometrySector,
   AxisDomain,
 } from '../util/types';
+import { AccessibilityManager } from './AccessibilityManager';
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
@@ -757,6 +758,8 @@ export interface CategoricalChartState {
   /** Active label of data */
   activeLabel?: string;
 
+  activeIndex?: number;
+
   xValue?: number;
 
   yValue?: number;
@@ -810,6 +813,9 @@ export interface CategoricalChartProps {
   outerRadius?: number | string;
   title?: string;
   desc?: string;
+  accessibilityLayer?: boolean;
+  role?: string;
+  tabIndex?: number;
 }
 
 export const generateCategoricalChart = ({
@@ -996,6 +1002,8 @@ export const generateCategoricalChart = ({
 
     deferId: any;
 
+    accessibilityManager = new AccessibilityManager();
+
     // todo join specific chart propTypes
     static defaultProps: CategoricalChartProps = {
       layout: 'horizontal',
@@ -1027,6 +1035,50 @@ export const generateCategoricalChart = ({
       if (!_.isNil(this.props.syncId)) {
         this.addListener();
       }
+
+      this.accessibilityManager.setDetails({
+        container: this.container,
+        offset: {
+          left: this.props.margin.left ?? 0,
+          top: this.props.margin.top ?? 0,
+        },
+        coordinateList: this.state.tooltipTicks,
+        mouseHandlerCallback: this.handleMouseMove,
+        layout: this.props.layout,
+      });
+    }
+
+    getSnapshotBeforeUpdate(
+      prevProps: Readonly<CategoricalChartProps>,
+      prevState: Readonly<CategoricalChartState>,
+    ): null {
+      if (!this.props.accessibilityLayer) {
+        return null;
+      }
+
+      if (this.state.tooltipTicks !== prevState.tooltipTicks) {
+        this.accessibilityManager.setDetails({
+          coordinateList: this.state.tooltipTicks,
+        });
+      }
+
+      if (this.props.layout !== prevProps.layout) {
+        this.accessibilityManager.setDetails({
+          layout: this.props.layout,
+        });
+      }
+
+      if (this.props.margin !== prevProps.margin) {
+        this.accessibilityManager.setDetails({
+          offset: {
+            left: this.props.margin.left ?? 0,
+            top: this.props.margin.top ?? 0,
+          },
+        });
+      }
+
+      // Something has to be returned for getSnapshotBeforeUpdate
+      return null;
     }
 
     static getDerivedStateFromProps = (
@@ -2189,6 +2241,23 @@ export const generateCategoricalChart = ({
             {renderByOrder(children, map)}
           </Surface>
         );
+      }
+
+      if (this.props.accessibilityLayer) {
+        // Set tabIndex to 0 by default (can be overwritten)
+        attrs.tabIndex = 0 ?? this.props.tabIndex;
+        // Set role to img by default (can be overwritten)
+        attrs.role = 'img' ?? this.props.role;
+        attrs.onKeyDown = (e: any) => {
+          this.accessibilityManager.keyboardEvent(e);
+          // 'onKeyDown' is not currently a supported prop that can be passed through
+          // if it's added, this should be added: this.props.onKeyDown(e);
+        };
+        attrs.onFocus = () => {
+          this.accessibilityManager.focus();
+          // 'onFocus' is not currently a supported prop that can be passed through
+          // if it's added, the focus event should be forwarded to the prop
+        };
       }
 
       const events = this.parseEventsOfWrapper();
