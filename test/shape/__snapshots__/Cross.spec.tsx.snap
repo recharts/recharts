@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Cross /> Don't render any path when props is invalid 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="400"
+    viewBox="0 0 400 400"
+    width="400"
+  >
+    <title />
+    <desc />
+  </svg>
+</div>
+`;
+
+exports[`<Cross /> Render 1 path in Cross 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="400"
+    viewBox="0 0 400 400"
+    width="400"
+  >
+    <title />
+    <desc />
+    <path
+      class="recharts-cross"
+      d="M150,50v200M50,180h200"
+      fill="none"
+      height="200"
+      stroke="#000"
+      width="200"
+      x="150"
+      y="180"
+    />
+  </svg>
+</div>
+`;
+
+exports[`<Cross /> Renders path with default values when no props are provided 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="400"
+    viewBox="0 0 400 400"
+    width="400"
+  >
+    <title />
+    <desc />
+    <path
+      class="recharts-cross"
+      d="M0,0v0M0,0h0"
+      height="0"
+      width="0"
+      x="0"
+      y="0"
+    />
+  </svg>
+</div>
+`;

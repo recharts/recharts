@@ -2,7 +2,56 @@
 
 import { Args } from '@storybook/react';
 
+export const hide = {
+  description: 'Hides the component when true, useful when toggling visibility state via legend',
+  type: { name: 'boolean' },
+  defaultValue: false,
+  table: { category: 'Style' },
+};
+
+export const GeneralStyle: Args = {
+  fill: {
+    control: { type: 'color' },
+    table: { category: 'Style' },
+  },
+  stroke: {
+    control: { type: 'color' },
+    table: { category: 'Style' },
+  },
+  strokeDasharray: {
+    description: `The pattern of dashes and gaps used to paint the line.
+      https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray`,
+    table: {
+      type: {
+        summary: 'string',
+      },
+      category: 'Style',
+    },
+  },
+  strokeWidth: {
+    description: 'The width of the stroke.',
+    table: {
+      type: {
+        summary: 'string | number',
+      },
+      category: 'Style',
+    },
+    defaultValue: 1,
+  },
+  strokeOpacity: {
+    description: 'The opacity of the stroke.',
+    table: {
+      type: {
+        summary: 'string | number',
+      },
+      category: 'Style',
+    },
+    defaultValue: 1,
+  },
+};
+
 export const LineStyle: Args = {
+  ...GeneralStyle,
   connectNulls: {
     description: 'Whether to connect a graph line across null points.',
     table: {
@@ -31,16 +80,7 @@ export const LineStyle: Args = {
       defaultValue: true,
     },
   },
-  fill: {
-    control: { type: 'color' },
-    table: { category: 'Style' },
-  },
-  hide: {
-    description: 'Hides the line when true, useful when toggling visibility state via legend',
-    type: { name: 'boolean' },
-    defaultValue: false,
-    table: { category: 'Style' },
-  },
+  hide,
   label: {
     description: `If false set, labels will not be drawn. If true set, labels will be drawn which have
       the props calculated internally. If object set, labels will be drawn which have the props mergered
@@ -58,30 +98,6 @@ export const LineStyle: Args = {
       defaultValue: false,
       category: 'Style',
     },
-  },
-  stroke: {
-    control: { type: 'color' },
-    table: { category: 'Style' },
-  },
-  strokeDasharray: {
-    description: `The pattern of dashes and gaps used to paint the line.
-      https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray`,
-    table: {
-      type: {
-        summary: 'string',
-      },
-      category: 'Style',
-    },
-  },
-  strokeWidth: {
-    description: 'The width of the stroke.',
-    table: {
-      type: {
-        summary: 'String | Number',
-      },
-      category: 'Style',
-    },
-    defaultValue: 1,
   },
   type: {
     description: `The interpolation type of line. It's the same as type in Area.

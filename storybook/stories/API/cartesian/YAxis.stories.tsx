@@ -1,15 +1,7 @@
 import React, { ComponentProps, useState } from 'react';
+import { Args } from '@storybook/react';
 import { YAxis, XAxis, Legend, ResponsiveContainer, ComposedChart, Bar } from '../../../../src';
-
-export default {
-  tags: ['autodocs'],
-  component: YAxis,
-  argTypes: {
-    stroke: {
-      control: { type: 'color' },
-    },
-  },
-};
+import { EventHandlers } from '../props/EventHandlers';
 
 const data = [
   { name: 'Page A', pv: 800, amt: 1400 },
@@ -19,6 +11,42 @@ const data = [
   { name: 'Page E', pv: 1108, amt: 1100 },
   { name: 'Page F', pv: 680, amt: 1700 },
 ];
+
+const GeneralProps: Args = {
+  yAxisId: {
+    description: 'The id of y-axis which is corresponding to the data.',
+    table: { type: { summary: 'string | number' }, category: 'General' },
+  },
+  unit: {
+    description: 'The unit of data displayed in the axis.',
+    table: { type: { summary: 'string | number' }, category: 'General' },
+  },
+  scale: {
+    table: { type: { summary: 'ScaleType | Function' }, category: 'General' },
+  },
+  domain: {
+    description: 'The domain of scale in this axis.',
+    table: { type: { summary: 'AxisDomain' }, category: 'General' },
+  },
+};
+
+const EventProps: Args = {
+  onMouseDown: EventHandlers.onMouseDown,
+  onMouseUp: EventHandlers.onMouseUp,
+  onMouseMove: EventHandlers.onMouseMove,
+  onMouseOver: EventHandlers.onMouseOver,
+  onMouseOut: EventHandlers.onMouseOut,
+  onMouseEnter: EventHandlers.onMouseEnter,
+  onMouseLeave: EventHandlers.onMouseLeave,
+};
+
+export default {
+  argTypes: {
+    ...GeneralProps,
+    ...EventProps,
+  },
+  component: YAxis,
+};
 
 export const Simple = {
   render: (args: ComponentProps<typeof YAxis> & { data: any }) => {
