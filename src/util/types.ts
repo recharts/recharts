@@ -1,25 +1,25 @@
 import {
+  AnimationEvent,
   AriaAttributes,
-  SVGProps,
-  SyntheticEvent,
   ClipboardEvent,
+  Component,
   CompositionEvent,
   DragEvent,
   FocusEvent,
   FormEvent,
+  FunctionComponent,
+  isValidElement,
   KeyboardEvent,
   MouseEvent,
-  TouchEvent,
   PointerEvent,
+  ReactElement,
+  ReactNode,
+  SVGProps,
+  SyntheticEvent,
+  TouchEvent,
+  TransitionEvent,
   UIEvent,
   WheelEvent,
-  AnimationEvent,
-  TransitionEvent,
-  ReactNode,
-  Component,
-  isValidElement,
-  FunctionComponent,
-  ReactElement,
 } from 'react';
 import _ from 'lodash';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
@@ -1110,7 +1110,7 @@ export interface BaseAxisProps {
   label?: string | number | ReactElement | object;
 }
 
-export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd';
+export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart';
 
 export interface TickItem {
   value?: any;
@@ -1255,3 +1255,5 @@ export interface SankeyLink {
   dy: number;
   ty: number;
 }
+
+export type Size = { width: number; height: number };

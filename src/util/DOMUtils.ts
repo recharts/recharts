@@ -1,5 +1,6 @@
 import { CSSProperties, MouseEvent } from 'react';
 import { Global } from './Global';
+import { Size } from './types';
 
 interface StringCache {
   widthCache: Record<string, any>;
@@ -72,7 +73,7 @@ export const getStyleString = (style: CSSProperties) =>
     '',
   );
 
-export const getStringSize = (text: string | number, style: CSSProperties = {}) => {
+export const getStringSize = (text: string | number, style: CSSProperties = {}): Size => {
   if (text === undefined || text === null || Global.isSsr) {
     return { width: 0, height: 0 };
   }
