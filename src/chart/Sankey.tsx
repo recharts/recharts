@@ -655,7 +655,7 @@ export class Sankey extends PureComponent<Props, State> {
     );
   }
 
-  renderTooltip() {
+  renderTooltip(): ReactElement {
     const { children, width, height, nameKey } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 

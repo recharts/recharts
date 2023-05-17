@@ -1,7 +1,7 @@
 /**
  * @fileOverview Curve
  */
-import React, { PureComponent } from 'react';
+import React from 'react';
 import {
   line as shapeLine,
   area as shapeArea,
@@ -92,71 +92,66 @@ interface CurveProps {
 
 export type Props = Omit<PresentationAttributesWithProps<CurveProps, SVGPathElement>, 'type' | 'points'> & CurveProps;
 
-export class Curve extends PureComponent<Props> {
-  static defaultProps = {
-    type: 'linear',
-    points: [] as any[],
-    connectNulls: false,
-  };
+type GetPathProps = Pick<Props, 'type' | 'points' | 'baseLine' | 'layout' | 'connectNulls'>;
 
-  /**
-   * Calculate the path of curve
-   * @return {String} path
-   */
-  getPath() {
-    const { type, points, baseLine, layout, connectNulls } = this.props;
-    const curveFactory = getCurveFactory(type, layout);
-    const formatPoints = connectNulls ? points.filter(entry => defined(entry)) : points;
-    let lineFunction;
+/**
+ * Calculate the path of curve
+ * @return {String} path
+ */
+const getPath = ({ type, points, baseLine, layout, connectNulls }: GetPathProps): string => {
+  const curveFactory = getCurveFactory(type, layout);
+  const formatPoints = connectNulls ? points.filter(entry => defined(entry)) : points;
+  let lineFunction;
 
-    if (_.isArray(baseLine)) {
-      const formatBaseLine = connectNulls ? baseLine.filter(base => defined(base)) : baseLine;
-      const areaPoints = formatPoints.map((entry, index) => ({ ...entry, base: formatBaseLine[index] }));
-      if (layout === 'vertical') {
-        lineFunction = shapeArea<Point & { base: Point }>()
-          .y(getY)
-          .x1(getX)
-          .x0(d => d.base.x);
-      } else {
-        lineFunction = shapeArea<Point & { base: Point }>()
-          .x(getX)
-          .y1(getY)
-          .y0(d => d.base.y);
-      }
-      lineFunction.defined(defined).curve(curveFactory);
-
-      return lineFunction(areaPoints);
-    }
-    if (layout === 'vertical' && isNumber(baseLine)) {
-      lineFunction = shapeArea<Point>().y(getY).x1(getX).x0(baseLine);
-    } else if (isNumber(baseLine)) {
-      lineFunction = shapeArea<Point>().x(getX).y1(getY).y0(baseLine);
+  if (_.isArray(baseLine)) {
+    const formatBaseLine = connectNulls ? baseLine.filter(base => defined(base)) : baseLine;
+    const areaPoints = formatPoints.map((entry, index) => ({ ...entry, base: formatBaseLine[index] }));
+    if (layout === 'vertical') {
+      lineFunction = shapeArea<Point & { base: Point }>()
+        .y(getY)
+        .x1(getX)
+        .x0(d => d.base.x);
     } else {
-      lineFunction = shapeLine<Point>().x(getX).y(getY);
+      lineFunction = shapeArea<Point & { base: Point }>()
+        .x(getX)
+        .y1(getY)
+        .y0(d => d.base.y);
     }
-
     lineFunction.defined(defined).curve(curveFactory);
 
-    return lineFunction(formatPoints);
+    return lineFunction(areaPoints);
+  }
+  if (layout === 'vertical' && isNumber(baseLine)) {
+    lineFunction = shapeArea<Point>().y(getY).x1(getX).x0(baseLine);
+  } else if (isNumber(baseLine)) {
+    lineFunction = shapeArea<Point>().x(getX).y1(getY).y0(baseLine);
+  } else {
+    lineFunction = shapeLine<Point>().x(getX).y(getY);
   }
 
-  render() {
-    const { className, points, path, pathRef } = this.props;
+  lineFunction.defined(defined).curve(curveFactory);
 
-    if ((!points || !points.length) && !path) {
-      return null;
-    }
+  return lineFunction(formatPoints);
+};
 
-    const realPath = points && points.length ? this.getPath() : path;
+export const Curve: React.FC<Props> = props => {
+  const { className, points, path, pathRef } = props;
 
-    return (
-      <path
-        {...filterProps(this.props)}
-        {...adaptEventHandlers(this.props)}
-        className={classNames('recharts-curve', className)}
-        d={realPath}
-        ref={pathRef}
-      />
-    );
+  if ((!points || !points.length) && !path) {
+    return null;
   }
-}
+
+  const realPath = points && points.length ? getPath(props) : path;
+
+  return (
+    <path
+      {...filterProps(props)}
+      {...adaptEventHandlers(props)}
+      className={classNames('recharts-curve', className)}
+      d={realPath}
+      ref={pathRef}
+    />
+  );
+};
+
+Curve.defaultProps = { type: 'linear', points: [], connectNulls: false };

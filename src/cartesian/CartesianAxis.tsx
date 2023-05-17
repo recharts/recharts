@@ -14,6 +14,7 @@ import {
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
   CartesianTickItem,
+  AxisInterval,
 } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { getTicks } from './getTicks';
@@ -42,7 +43,9 @@ export interface CartesianAxisProps {
   /** The formatter function of tick */
   tickFormatter?: (value: any, index: number) => string;
   ticksGenerator?: (props?: CartesianAxisProps) => CartesianTickItem[];
-  interval?: number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart';
+  interval?: AxisInterval;
+  /** Angle in which ticks will be rendered. */
+  angle?: number;
 }
 
 interface IState {

@@ -68,3 +68,40 @@ export const PieWithNeedle = {
   },
   args: {},
 };
+
+export const PieWithPatterns = {
+  render: (_args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={500}>
+        <PieChart>
+          <defs>
+            <pattern id="pattern-A" width="10" height="10" patternUnits="userSpaceOnUse">
+              <polygon points="0,0 2,5 0,10 5,8 10,10 8,5 10,0 5,2" fill="#f00" />
+            </pattern>
+            <pattern id="pattern-B" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="2" height="4" fill="#0f0" />
+            </pattern>
+            <pattern id="pattern-C" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(135)">
+              <rect width="2" height="4" fill="#00f" />
+            </pattern>
+          </defs>
+          <Pie
+            dataKey="value"
+            data={data}
+            cx={cx}
+            cy={cy}
+            innerRadius={iR}
+            outerRadius={oR}
+            fill="#8884d8"
+            stroke="none"
+          >
+            {data.map(entry => (
+              <Cell key={`cell-${entry.name}`} fill={`url(#pattern-${entry.name})`} />
+            ))}
+          </Pie>
+        </PieChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {},
+};

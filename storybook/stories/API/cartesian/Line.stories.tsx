@@ -7,7 +7,7 @@ import { coordinateData, pageData } from '../../data';
 import { EventHandlers } from '../props/EventHandlers';
 import { AnimationProps } from '../props/AnimationProps';
 import { legendType } from '../props/Legend';
-import { LineStyle } from '../props/LineStyle';
+import { LineStyle } from '../props/Styles';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { General as GeneralProps, Internal } from '../props/CartesianComponentShared';
 import { ResponsiveProps } from '../props/Responsive';

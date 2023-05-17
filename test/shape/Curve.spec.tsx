@@ -27,6 +27,7 @@ describe('<Curve />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
+    expect(container).toMatchSnapshot();
   });
 
   test('renders 1 vertical layout area', () => {
@@ -37,6 +38,7 @@ describe('<Curve />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
+    expect(container).toMatchSnapshot();
   });
 
   test('renders 1 horizontal layout area', () => {
@@ -47,6 +49,7 @@ describe('<Curve />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
+    expect(container).toMatchSnapshot();
   });
 
   test('renders 1 area', () => {
@@ -57,6 +60,7 @@ describe('<Curve />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-curve')).toHaveLength(1);
+    expect(container).toMatchSnapshot();
   });
 
   test('Not render when points is empty', () => {
@@ -67,5 +71,6 @@ describe('<Curve />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-curve')).toHaveLength(0);
+    expect(container).toMatchSnapshot();
   });
 });

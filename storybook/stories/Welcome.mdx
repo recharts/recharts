@@ -6,6 +6,7 @@ A composable charting library built on React components
 <LineChart width={500}
            height={300}
            data={data}
+           accessibilityLayer
            margin={{
              top: 5,
              right: 5,
@@ -21,7 +22,7 @@ A composable charting library built on React components
 </LineChart>
 
 ```typescript jsx
-  <LineChart width={500} height={300} data={data}>
+  <LineChart width={500} height={300} data={data} accessibilityLayer>
     <XAxis dataKey="name"/>
     <YAxis/>
     <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
@@ -31,7 +32,7 @@ A composable charting library built on React components
   </LineChart>
 ```
 <iframe src="https://ghbtns.com/github-btn.html?user=recharts&repo=recharts&type=star&count=true&size=median"
-        frameborder="0"
+        frameBorder="0"
         scrolling="0"
         width="150"
         height="20"

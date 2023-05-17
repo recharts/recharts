@@ -1,33 +1,102 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { fireEvent } from '@storybook/testing-library';
+import { Args } from '@storybook/react';
 import { numberData, dateData } from '../../data';
 import { Surface, Brush, ResponsiveContainer, LineChart, Line } from '../../../../src';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+
+interface BrushStartEndIndex {
+  startIndex?: number;
+  endIndex?: number;
+}
+
+const GeneralProps: Args = {
+  dataKey: {
+    description: 'The key of data displayed in Brush.',
+    table: { type: { summary: 'string | number | Function' }, category: 'General' },
+  },
+  x: {
+    description: 'The x-coordinate of brush.',
+    table: { type: { summary: 'number' }, category: 'General' },
+    defaultValue: 0,
+  },
+  y: {
+    description: 'The y-coordinate of brush.',
+    table: { type: { summary: 'number' }, category: 'General' },
+    defaultValue: 0,
+  },
+  width: {
+    description: 'The width of brush.',
+    table: { type: { summary: 'number' }, category: 'General' },
+    defaultValue: 0,
+  },
+  height: {
+    description: 'The height of brush.',
+    table: { type: { summary: 'number' }, category: 'General' },
+    defaultValue: 40,
+  },
+  travellerWidth: {
+    description: 'The width of each traveller.',
+    table: { type: { summary: 'number' }, category: 'General' },
+    defaultValue: 5,
+  },
+  gap: {
+    description: `The data with gap of refreshing chart. If the option is not set, 
+    the chart will be refreshed every time.`,
+    table: { type: { summary: 'number' }, category: 'General' },
+    defaultValue: 1,
+  },
+  startIndex: {
+    description: 'The default start index of brush. If the option is not set, the start index will be 0.',
+    table: { type: { summary: 'number' }, category: 'General' },
+  },
+  endIndex: {
+    description: `The default end index of brush. If the option is not set, 
+    the end index will be calculated by the length of data`,
+    table: { type: { summary: 'number' }, category: 'General' },
+  },
+  tickFormatter: {
+    description: 'The formatter function of ticks.',
+    table: { type: { summary: 'Function' }, category: 'General' },
+  },
+  onChange: {
+    description: 'The handler of changing the active scope of brush.',
+    table: { type: { summary: 'Function' }, category: 'General' },
+  },
+  alwaysShowText: {
+    control: { type: 'boolean' },
+    table: { type: { summary: 'boolean' }, category: 'General' },
+    defaultValue: false,
+  },
+};
 
 export default {
+  argTypes: {
+    ...GeneralProps,
+  },
   component: Brush,
-  tags: ['autodocs'],
 };
 
 const [surfaceWidth, surfaceHeight] = [600, 500];
 
 export const Simple = {
   render: (args: Record<string, any>) => {
-    const [simple, setSimple] = React.useState({
+    const [simple, setSimple] = React.useState<BrushStartEndIndex>({
       startIndex: 0,
       endIndex: args.data.length - 1,
     });
 
-    const [gap, setGap] = React.useState({
+    const [gap, setGap] = React.useState<BrushStartEndIndex>({
       startIndex: 0,
       endIndex: args.data.length - 1,
     });
 
-    const handleChange = (res: any) => {
+    const handleChange = (res: BrushStartEndIndex) => {
       setSimple(res);
     };
 
-    const handleGapChange = (res: any) => {
+    const handleGapChange = (res: BrushStartEndIndex) => {
       setGap(res);
     };
 
@@ -70,6 +139,7 @@ export const Simple = {
               data={args.data}
               onChange={handleChange}
               traveller={renderTraveller}
+              {...args}
             />
           </Surface>
           <p>Brush has specified gap</p>
@@ -84,15 +154,19 @@ export const Simple = {
               data={args.data}
               gap={5}
               onChange={handleGapChange}
+              {...args}
             />
           </Surface>
         </div>
       </ResponsiveContainer>
     );
   },
-
   args: {
+    ...getStoryArgsFromArgsTypesObject(GeneralProps),
     data: dateData,
+  },
+  parameters: {
+    controls: { include: Object.keys(GeneralProps) },
   },
 };
 
@@ -102,13 +176,17 @@ export const PlayBrushMove = {
       <ResponsiveContainer width="100%" height={400}>
         <LineChart {...args}>
           <Line dataKey="uv" />
-          <Brush />
+          <Brush {...args} />
         </LineChart>
       </ResponsiveContainer>
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(GeneralProps),
     data: numberData,
+  },
+  parameters: {
+    controls: { include: Object.keys(GeneralProps) },
   },
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     setTimeout(() => {

@@ -354,6 +354,7 @@ export class Treemap extends PureComponent<Props, State> {
   }
 
   handleMouseEnter(node: TreemapNode, e: any) {
+    e.persist();
     const { onMouseEnter, children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
@@ -375,6 +376,7 @@ export class Treemap extends PureComponent<Props, State> {
   }
 
   handleMouseLeave(node: TreemapNode, e: any) {
+    e.persist();
     const { onMouseLeave, children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 

@@ -1,6 +1,29 @@
 import { Args } from '@storybook/react';
 
+export const dataKey = {
+  description: `The key or getter of a group of data.
+      It could be an accessor function such as (row)=>value`,
+  table: {
+    type: { summary: 'string | number | function' },
+    category: 'General',
+  },
+};
+
+export const xAxisId = {
+  description: 'The id of x-axis which is corresponding to the data.',
+  table: { type: { summary: 'string | number' }, category: 'General' },
+};
+export const yAxisId = {
+  description: 'The id of y-axis which is corresponding to the data.',
+  table: { type: { summary: 'string | number' }, category: 'General' },
+};
+export const zAxisId = {
+  description: 'The id of z-axis which is corresponding to the data.',
+  table: { type: { summary: 'string | number' }, category: 'General' },
+};
+
 export const General: Args = {
+  dataKey,
   id: {
     description: `The unique id of this component, which will be used to generate unique clip path id internally.
       This props is suggested to be set in SSR.`,
@@ -19,44 +42,34 @@ export const General: Args = {
       category: 'General',
     },
   },
-  xAxisId: {
-    description: 'The id of x-axis which is corresponding to the data.',
-    table: { type: { summary: 'string | number' }, category: 'General' },
-  },
-  yAxisId: {
-    description: 'The id of y-axis which is corresponding to the data.',
-    table: { type: { summary: 'string | number' }, category: 'General' },
-  },
-  dataKey: {
-    description: `The key or getter of a group of data which should be unique in a LineChart.
-      It could be an accessor function such as (row)=>value`,
-    table: {
-      type: { summary: 'string | number | function' },
-      category: 'General',
+  xAxisId,
+  yAxisId,
+};
+
+export const points = {
+  description:
+    'The coordinates of points in the line, usually calculated internally. In most cases this should not be used.',
+  table: {
+    type: {
+      summary: 'array',
+      detail: '[{x: 12, y: 12, value: 240}]',
     },
+    category: 'Internal',
   },
 };
 
+export const data = { table: { category: 'Internal' } };
+export const layout = {
+  description: 'The layout of line, usually inherited from parent.',
+  table: {
+    type: {
+      summary: 'horizontal | vertical',
+    },
+    category: 'Internal',
+  },
+};
 export const Internal = {
-  points: {
-    description:
-      'The coordinates of points in the line, usually calculated internally. In most cases this should not be used.',
-    table: {
-      type: {
-        summary: 'array',
-        detail: '[{x: 12, y: 12, value: 240}]',
-      },
-      category: 'Internal',
-    },
-  },
-  data: { table: { category: 'Internal' } },
-  layout: {
-    description: 'The layout of line, usually inherited from parent.',
-    table: {
-      type: {
-        summary: 'horizontal | vertical',
-      },
-      category: 'Internal',
-    },
-  },
+  points,
+  data,
+  layout,
 };
