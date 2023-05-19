@@ -1824,6 +1824,7 @@ export const generateCategoricalChart = ({
      */
     renderAxis(axisOptions: BaseAxisProps, element: any, displayName: string, index: number): React.ReactElement {
       const { width, height } = this.props;
+
       return (
         <CartesianAxis
           {...(axisOptions as any)}
