@@ -1109,7 +1109,7 @@ export interface BaseAxisProps {
   /** Needed to allow usage of the label prop on the X and Y axis */
   label?: string | number | ReactElement | object;
   /** The HTML element's class name */
-  className: string;
+  className?: string;
 }
 
 export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart';
