@@ -1824,11 +1824,13 @@ export const generateCategoricalChart = ({
      */
     renderAxis(axisOptions: BaseAxisProps, element: any, displayName: string, index: number): React.ReactElement {
       const { width, height } = this.props;
-
       return (
         <CartesianAxis
           {...(axisOptions as any)}
-          className={`recharts-${axisOptions.axisType} ${axisOptions.axisType}`}
+          className={classNames(
+            `recharts-${axisOptions.axisType} ${axisOptions.axisType}`,
+            (axisOptions as any).className,
+          )}
           key={element.key || `${displayName}-${index}`}
           viewBox={{ x: 0, y: 0, width, height } as any}
           ticksGenerator={this.axesTicksGenerator}
