@@ -64,6 +64,7 @@
     "react-dom": "^16.0.0 || ^17.0.0 || ^18.0.0"
   },
   "dependencies": {
+    "@storybook/addon-storysource": "^7.0.12",
     "classnames": "^2.2.5",
     "eventemitter3": "^4.0.1",
     "lodash": "^4.17.19",
