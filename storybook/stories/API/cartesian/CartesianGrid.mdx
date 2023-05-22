@@ -1,5 +1,5 @@
-import { ArgTypes } from '@storybook/blocks';
-import * as CartesianGridStories from './CartesianGrid.stories';
+import { ArgTypes, Meta, Stories } from '@storybook/blocks';
+import * as ComponentStories from './CartesianGrid.stories';
 
 # CartesianGrid
 
@@ -11,4 +11,7 @@ The CartesianGrid can be used within a `<AreaChart />`, a `<BarChart />`, a `<Li
 
 Properties in the groups Other and Internal are not recommended to be used.
 
-<ArgTypes of={CartesianGridStories} sort={'requiredFirst'} />
+<Meta of={ComponentStories} />;
+<ArgTypes of={ComponentStories} sort={'requiredFirst'} />;
+<Stories />;
+
