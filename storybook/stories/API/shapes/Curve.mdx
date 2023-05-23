@@ -1,15 +1,23 @@
-import { ArgTypes } from '@storybook/blocks';
-import * as CurveStories from './Curve.stories';
+import { ArgTypes, Meta, Story, Canvas, Controls } from '@storybook/blocks';
+import * as ComponentStories from './Curve.stories';
 
 # Curve
 
-The Curve is a shape that itself is not a valid child in any component.
-It can be used to implement custom elements, returning it from within a
+The Curve is a shape that is valid in the context of any SVG as well as within the `<Customized />` component.
+This is a building block used internally to recharts to create `<Area />`, etc.
 
 ```jsx
 <Customized component={<Curve {...crossProps} />} />
 ```
 
-or other custom components (i.e. shape of a bar)
+<Meta of={ComponentStories} />
 
-<ArgTypes of={CurveStories} sort="requiredFirst" />
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
+
+## Properties
+
+The following table shows a complete list of all properties of the Curve.
+
+<Controls of={ComponentStories.API} />

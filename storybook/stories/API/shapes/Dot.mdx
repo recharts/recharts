@@ -1,15 +1,23 @@
-import { ArgTypes } from '@storybook/blocks';
-import * as DotStories from './Dot.stories';
+import { ArgTypes, Meta, Story, Canvas, Controls } from '@storybook/blocks';
+import * as ComponentStories from './Dot.stories';
 
 # Dot
 
-The Dot is a shape that itself is not a valid child in any component.
-It can be used to implement custom elements, returning it from within a
+The Dot is a shape that is valid in the context of any SVG as well as within the `<Customized />` component.
+This is a building block used internally to recharts to create scatter and line points, etc.
 
 ```jsx
 <Customized component={<Dot {...dotProps} />} />
 ```
 
-or other custom components (i.e. a custom line)
+<Meta of={ComponentStories} />
 
-<ArgTypes of={DotStories} sort="requiredFirst" />
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
+
+## Properties
+
+The following table shows a complete list of all properties of the Dot.
+
+<Controls of={ComponentStories.API} />

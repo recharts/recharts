@@ -346,7 +346,7 @@ export default {
   },
 };
 
-export const Simple = {
+export const API = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
