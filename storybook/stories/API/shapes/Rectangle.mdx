@@ -1,0 +1,31 @@
+import { ArgTypes, Meta, Story, Canvas, Controls } from '@storybook/blocks';
+import * as ComponentStories from './Rectangle.stories';
+
+# Rectangle
+
+The Rectangle is a shape that is valid in the context of any SVG as well as within the `<Customized />` component.
+This is a building block used internally to recharts to create `<Bar />`, etc.
+
+```jsx
+<svg height={100} width="100%">
+  <Rectangle x={0} y={0} height={100} width={200} stroke="#111" fill="red" />
+</svg>
+```
+
+or
+
+```jsx
+<Customized component={<Rectangle {...rectangleProps} />} />
+```
+
+<Meta of={ComponentStories} />
+
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
+
+## Properties
+
+The following table shows a complete list of all properties of the Rectangle.
+
+<Controls of={ComponentStories.API} />
