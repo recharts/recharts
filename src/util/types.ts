@@ -1,25 +1,25 @@
 import {
+  AnimationEvent,
   AriaAttributes,
-  SVGProps,
-  SyntheticEvent,
   ClipboardEvent,
+  Component,
   CompositionEvent,
   DragEvent,
   FocusEvent,
   FormEvent,
+  FunctionComponent,
+  isValidElement,
   KeyboardEvent,
   MouseEvent,
-  TouchEvent,
   PointerEvent,
+  ReactElement,
+  ReactNode,
+  SVGProps,
+  SyntheticEvent,
+  TouchEvent,
+  TransitionEvent,
   UIEvent,
   WheelEvent,
-  AnimationEvent,
-  TransitionEvent,
-  ReactNode,
-  Component,
-  isValidElement,
-  FunctionComponent,
-  ReactElement,
 } from 'react';
 import _ from 'lodash';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
@@ -1108,6 +1108,8 @@ export interface BaseAxisProps {
   AxisComp?: any;
   /** Needed to allow usage of the label prop on the X and Y axis */
   label?: string | number | ReactElement | object;
+  /** The HTML element's class name */
+  className?: string;
 }
 
 export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart';
@@ -1255,3 +1257,5 @@ export interface SankeyLink {
   dy: number;
   ty: number;
 }
+
+export type Size = { width: number; height: number };

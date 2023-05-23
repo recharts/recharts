@@ -59,6 +59,36 @@ export const CategoricalChartProps: Args = {
   ...ChartSizeProps,
   data,
   margin,
+  accessibilityLayer: {
+    description: 'Turn on keyboard accessibility',
+    table: {
+      type: {
+        summary: 'Boolean',
+        defaultValue: 'false',
+      },
+      category: 'General',
+    },
+  },
+  role: {
+    description: 'The ARIA role for the chart, which provides semantic information for screen reader users.',
+    table: {
+      type: {
+        summary: 'String | undefined',
+        defaultValue: 'undefined',
+      },
+      category: 'General',
+    },
+  },
+  tabIndex: {
+    description: 'If and where the chart should appear in the tab order',
+    table: {
+      type: {
+        summary: 'Number | undefined',
+        defaultValue: 'undefined',
+      },
+      category: 'General',
+    },
+  },
   barCategoryGap: {
     description: 'The gap between two bar categories, which can be a percent value or a fixed value.',
     table: {

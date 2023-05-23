@@ -10,7 +10,7 @@ export const r = {
   table: {
     type: { summary: 'number' },
     defaultValue: { summary: 10 },
-    category: 'Style',
+    category: 'General',
   },
   defaultValue: 10,
 };

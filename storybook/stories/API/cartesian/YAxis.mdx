@@ -1,5 +1,5 @@
-import { Canvas, Meta, ArgTypes } from '@storybook/blocks';
-import * as YAxisStories from './YAxis.stories';
+import { ArgTypes, Meta, Stories } from '@storybook/blocks';
+import * as ComponentStories from './YAxis.stories';
 
 # YAxis
 
@@ -15,4 +15,7 @@ The YAxis can be used with the following child components: `<Label />`
 
 Properties in the groups Other and Internal are not recommended to be used.
 
-<ArgTypes of={YAxisStories} sort={'requiredFirst'} />
+<Meta of={ComponentStories} />;
+<ArgTypes of={ComponentStories} sort={'requiredFirst'} />;
+<Stories />;
+

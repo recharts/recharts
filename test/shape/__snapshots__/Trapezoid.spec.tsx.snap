@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Trapezoid /> Don't render any Trapezoid when props is invalid 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="500"
+    viewBox="0 0 500 500"
+    width="500"
+  >
+    <title />
+    <desc />
+  </svg>
+</div>
+`;
+
+exports[`<Trapezoid /> Render 1 Trapezoid in simple Trapezoid 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="500"
+    viewBox="0 0 500 500"
+    width="500"
+  >
+    <title />
+    <desc />
+    <g>
+      <path
+        class="recharts-trapezoid"
+        d="M 300,100L 400,100L 350,150L 350,150L 300,100 Z"
+        fill="#f00"
+        height="50"
+        x="300"
+        y="100"
+      />
+    </g>
+  </svg>
+</div>
+`;
+
+exports[`<Trapezoid /> Render 1 Trapezoid with animation in simple Trapezoid 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="500"
+    viewBox="0 0 500 500"
+    width="500"
+  >
+    <title />
+    <desc />
+    <path
+      class="recharts-trapezoid"
+      d="M 300,100L 300,100L 300,150L 300,150L 300,100 Z"
+      fill="#f00"
+      height="50"
+      style="stroke-dasharray: 0px 1px;"
+      x="300"
+      y="100"
+    />
+  </svg>
+</div>
+`;

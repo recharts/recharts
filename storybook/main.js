@@ -11,8 +11,9 @@ module.exports = {
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
-    '@storybook/addon-docs',
     '@storybook/addon-a11y',
+    '@storybook/addon-storysource',
+    '@storybook/addon-docs',
   ],
   framework: {
     name: '@storybook/react-webpack5',
@@ -20,5 +21,8 @@ module.exports = {
   },
   features: {
     interactionsDebugger: true,
+  },
+  docs: {
+    autodocs: false,
   },
 };

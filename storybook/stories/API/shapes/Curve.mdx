@@ -1,0 +1,15 @@
+import { ArgTypes } from '@storybook/blocks';
+import * as CurveStories from './Curve.stories';
+
+# Curve
+
+The Curve is a shape that itself is not a valid child in any component.
+It can be used to implement custom elements, returning it from within a
+
+```jsx
+<Customized component={<Curve {...crossProps} />} />
+```
+
+or other custom components (i.e. shape of a bar)
+
+<ArgTypes of={CurveStories} sort="requiredFirst" />

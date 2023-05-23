@@ -1,7 +1,7 @@
 /**
  * @fileOverview Rectangle
  */
-import React, { PureComponent, SVGProps } from 'react';
+import React, { SVGProps, useLayoutEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import { AnimationTiming } from '../util/types';
@@ -9,7 +9,7 @@ import { filterProps } from '../util/ReactUtils';
 
 type RectRadius = [number, number, number, number];
 
-const getRectanglePath = (x: number, y: number, width: number, height: number, radius: number | RectRadius) => {
+const getRectanglePath = (x: number, y: number, width: number, height: number, radius: number | RectRadius): string => {
   const maxRadius = Math.min(Math.abs(width) / 2, Math.abs(height) / 2);
   const ySign = height >= 0 ? 1 : -1;
   const xSign = width >= 0 ? 1 : -1;
@@ -81,7 +81,7 @@ interface RectangleProps {
 export const isInRectangle = (
   point: { x: number; y: number },
   rect: { x: number; y: number; width: number; height: number },
-) => {
+): boolean => {
   if (!point || !rect) {
     return false;
   }
@@ -102,98 +102,82 @@ export const isInRectangle = (
 
 export type Props = Omit<SVGProps<SVGPathElement>, 'radius'> & RectangleProps;
 
-export class Rectangle extends PureComponent<Props> {
-  static defaultProps = {
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-    // The radius of border
-    // The radius of four corners when radius is a number
-    // The radius of left-top, right-top, right-bottom, left-bottom when radius is an array
-    radius: 0,
-    isAnimationActive: false,
-    isUpdateAnimationActive: false,
-    animationBegin: 0,
-    animationDuration: 1500,
-    animationEasing: 'ease',
-  };
+export const Rectangle: React.FC<Props> = props => {
+  const pathRef = useRef<SVGPathElement>();
+  const [totalLength, setTotalLength] = useState(-1);
 
-  state = {
-    totalLength: -1,
-  };
-
-  private node: SVGPathElement;
-
-  /* eslint-disable  react/no-did-mount-set-state */
-  componentDidMount() {
-    if (this.node && this.node.getTotalLength) {
+  useLayoutEffect(() => {
+    if (pathRef.current && pathRef.current.getTotalLength) {
       try {
-        const totalLength = this.node.getTotalLength();
+        const pathTotalLength = pathRef.current.getTotalLength();
 
-        if (totalLength) {
-          this.setState({
-            totalLength,
-          });
+        if (pathTotalLength) {
+          setTotalLength(pathTotalLength);
         }
       } catch (err) {
         // calculate total length error
       }
     }
+  }, []);
+
+  const { x, y, width, height, radius, className } = props;
+  const { animationEasing, animationDuration, animationBegin, isAnimationActive, isUpdateAnimationActive } = props;
+
+  if (x !== +x || y !== +y || width !== +width || height !== +height || width === 0 || height === 0) {
+    return null;
   }
 
-  render() {
-    const { x, y, width, height, radius, className } = this.props;
-    const { totalLength } = this.state;
-    const { animationEasing, animationDuration, animationBegin, isAnimationActive, isUpdateAnimationActive } =
-      this.props;
-
-    if (x !== +x || y !== +y || width !== +width || height !== +height || width === 0 || height === 0) {
-      return null;
-    }
-
-    const layerClass = classNames('recharts-rectangle', className);
-    if (!isUpdateAnimationActive) {
-      return (
-        <path
-          {...filterProps(this.props, true)}
-          className={layerClass}
-          d={getRectanglePath(x, y, width, height, radius)}
-        />
-      );
-    }
-
+  const layerClass = classNames('recharts-rectangle', className);
+  if (!isUpdateAnimationActive) {
     return (
-      <Animate
-        canBegin={totalLength > 0}
-        from={{ width, height, x, y }}
-        to={{ width, height, x, y }}
-        duration={animationDuration}
-        animationEasing={animationEasing}
-        isActive={isUpdateAnimationActive}
-      >
-        {({ width: currWidth, height: currHeight, x: currX, y: currY }: any) => (
-          <Animate
-            canBegin={totalLength > 0}
-            from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
-            to={`${totalLength}px 0px`}
-            attributeName="strokeDasharray"
-            begin={animationBegin}
-            duration={animationDuration}
-            isActive={isAnimationActive}
-            easing={animationEasing}
-          >
-            <path
-              {...filterProps(this.props, true)}
-              className={layerClass}
-              d={getRectanglePath(currX, currY, currWidth, currHeight, radius)}
-              ref={node => {
-                this.node = node;
-              }}
-            />
-          </Animate>
-        )}
-      </Animate>
+      <path {...filterProps(props, true)} className={layerClass} d={getRectanglePath(x, y, width, height, radius)} />
     );
   }
-}
+
+  return (
+    <Animate
+      canBegin={totalLength > 0}
+      from={{ width, height, x, y }}
+      to={{ width, height, x, y }}
+      duration={animationDuration}
+      animationEasing={animationEasing}
+      isActive={isUpdateAnimationActive}
+    >
+      {({ width: currWidth, height: currHeight, x: currX, y: currY }: any) => (
+        <Animate
+          canBegin={totalLength > 0}
+          from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
+          to={`${totalLength}px 0px`}
+          attributeName="strokeDasharray"
+          begin={animationBegin}
+          duration={animationDuration}
+          isActive={isAnimationActive}
+          easing={animationEasing}
+        >
+          <path
+            {...filterProps(props, true)}
+            className={layerClass}
+            d={getRectanglePath(currX, currY, currWidth, currHeight, radius)}
+            ref={pathRef}
+          />
+        </Animate>
+      )}
+    </Animate>
+  );
+};
+
+Rectangle.defaultProps = {
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+  // The radius of border
+  // The radius of four corners when radius is a number
+  // The radius of left-top, right-top, right-bottom, left-bottom when radius is an array
+  radius: 0,
+  isAnimationActive: false,
+  isUpdateAnimationActive: false,
+  animationBegin: 0,
+  animationDuration: 1500,
+  animationEasing: 'ease',
+};

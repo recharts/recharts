@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Sector /> Don't render any sector when props is invalid 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="500"
+    viewBox="0 0 500 500"
+    width="500"
+  >
+    <title />
+    <desc />
+  </svg>
+</div>
+`;
+
+exports[`<Sector /> Render 1 sector in simple Sector 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="500"
+    viewBox="0 0 500 500"
+    width="500"
+  >
+    <title />
+    <desc />
+    <path
+      class="recharts-sector"
+      cx="200"
+      cy="300"
+      d="M 400,300
+    A 200,200,0,
+    0,0,
+    200,100
+  L 200,150
+            A 150,150,0,
+            0,1,
+            350,300 Z"
+      fill="#ff7902"
+      role="img"
+    />
+  </svg>
+</div>
+`;
+
+exports[`<Sector /> Render 1 sector when cornerRadius > 0 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="500"
+    viewBox="0 0 500 500"
+    width="500"
+  >
+    <title />
+    <desc />
+    <path
+      class="recharts-sector"
+      cx="200"
+      cy="300"
+      d="M 389.7366596101028,300
+    A10,10,0,0,0,399.7227995895819,289.4736842105263
+    A200,200,0,0,0,210.5263157894737,100.27720041041815
+    A10,10,0,0,0,200,110.26334038989722
+  L200,140.3128057732869
+      A10,10,0,0,0,209.37500000000003,150.29325541245646
+      A150,150,0,0,1,349.70674458754354,290.625
+      A10,10,0,0,0,359.68719422671313,300Z"
+      fill="#ff7902"
+      role="img"
+    />
+  </svg>
+</div>
+`;

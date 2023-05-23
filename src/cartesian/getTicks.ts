@@ -1,10 +1,11 @@
 import _ from 'lodash';
-import { CartesianTickItem } from '../util/types';
+import { CartesianTickItem, Size } from '../util/types';
 import { mathSign, isNumber } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Props as CartesianAxisProps } from './CartesianAxis';
 import { Global } from '../util/Global';
 import { getEveryNthWithCondition } from '../util/getEveryNthWithCondition';
+import { getAngledRectangleWidth } from '../util/CartesianUtils';
 
 /**
  * Given an array of ticks, find N, the lowest possible number for which every
@@ -31,7 +32,14 @@ export function getNumberIntervalTicks(ticks: CartesianTickItem[], interval: num
   return getEveryNthWithCondition(ticks, interval + 1);
 }
 
+function getAngledTickWidth(contentSize: Size, unitSize: Size, angle: number) {
+  const size = { width: contentSize.width + unitSize.width, height: contentSize.height + unitSize.height };
+
+  return getAngledRectangleWidth(size, angle);
+}
+
 function getTicksEnd({
+  angle,
   ticks,
   tickFormatter,
   viewBox,
@@ -44,7 +52,8 @@ function getTicksEnd({
   const { x, y, width, height } = viewBox;
   const sizeKey = orientation === 'top' || orientation === 'bottom' ? 'width' : 'height';
   // we need add the width of 'unit' only when sizeKey === 'width'
-  const unitSize = unit && sizeKey === 'width' ? getStringSize(unit, { fontSize, letterSpacing })[sizeKey] : 0;
+  const unitSize: Size =
+    unit && sizeKey === 'width' ? getStringSize(unit, { fontSize, letterSpacing }) : { width: 0, height: 0 };
   const result = (ticks || []).slice();
   const len = result.length;
   const sign = len >= 2 ? mathSign(result[1].coordinate - result[0].coordinate) : 1;
@@ -62,8 +71,11 @@ function getTicksEnd({
   for (let i = len - 1; i >= 0; i--) {
     let entry = result[i];
     const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value, len - i - 1) : entry.value;
-    const size = getStringSize(content, { fontSize, letterSpacing })[sizeKey] + unitSize;
-
+    // Recharts only supports angles when sizeKey === 'width'
+    const size =
+      sizeKey === 'width'
+        ? getAngledTickWidth(getStringSize(content, { fontSize, letterSpacing }), unitSize, angle)
+        : getStringSize(content, { fontSize, letterSpacing })[sizeKey];
     if (i === len - 1) {
       const gap = sign * (entry.coordinate + (sign * size) / 2 - end);
       result[i] = entry = {
@@ -89,6 +101,7 @@ function getTicksEnd({
 
 function getTicksStart(
   {
+    angle,
     ticks,
     tickFormatter,
     viewBox,
@@ -104,7 +117,8 @@ function getTicksStart(
   const sizeKey = orientation === 'top' || orientation === 'bottom' ? 'width' : 'height';
   const result = (ticks || []).slice();
   // we need add the width of 'unit' only when sizeKey === 'width'
-  const unitSize = unit && sizeKey === 'width' ? getStringSize(unit, { fontSize, letterSpacing })[sizeKey] : 0;
+  const unitSize: Size =
+    unit && sizeKey === 'width' ? getStringSize(unit, { fontSize, letterSpacing }) : { width: 0, height: 0 };
   const len = result.length;
   const sign = len >= 2 ? mathSign(result[1].coordinate - result[0].coordinate) : 1;
 
@@ -122,7 +136,11 @@ function getTicksStart(
     // Try to guarantee the tail to be displayed
     let tail = ticks[len - 1];
     const tailContent = _.isFunction(tickFormatter) ? tickFormatter(tail.value, len - 1) : tail.value;
-    const tailSize = getStringSize(tailContent, { fontSize, letterSpacing })[sizeKey] + unitSize;
+    // Recharts only supports angles when sizeKey === 'width'
+    const tailSize =
+      sizeKey === 'width'
+        ? getAngledTickWidth(getStringSize(tailContent, { fontSize, letterSpacing }), unitSize, angle)
+        : getStringSize(tailContent, { fontSize, letterSpacing })[sizeKey];
     const tailGap = sign * (tail.coordinate + (sign * tailSize) / 2 - end);
     result[len - 1] = tail = {
       ...tail,
@@ -143,7 +161,10 @@ function getTicksStart(
   for (let i = 0; i < count; i++) {
     let entry = result[i];
     const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value, i) : entry.value;
-    const size = getStringSize(content, { fontSize, letterSpacing })[sizeKey] + unitSize;
+    const size =
+      sizeKey === 'width'
+        ? getAngledTickWidth(getStringSize(content, { fontSize, letterSpacing }), unitSize, angle)
+        : getStringSize(content, { fontSize, letterSpacing })[sizeKey];
 
     if (i === 0) {
       const gap = sign * (entry.coordinate - (sign * size) / 2 - start);
@@ -169,7 +190,7 @@ function getTicksStart(
 }
 
 export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpacing?: string): any[] {
-  const { tick, ticks, viewBox, minTickGap, orientation, interval, tickFormatter, unit } = props;
+  const { tick, ticks, viewBox, minTickGap, orientation, interval, tickFormatter, unit, angle } = props;
 
   if (!ticks || !ticks.length || !tick) {
     return [];
@@ -183,6 +204,7 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
 
   if (interval === 'equidistantPreserveStart') {
     candidates = getTicksStart({
+      angle,
       ticks,
       tickFormatter,
       viewBox,
@@ -199,6 +221,7 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
   if (interval === 'preserveStart' || interval === 'preserveStartEnd') {
     candidates = getTicksStart(
       {
+        angle,
         ticks,
         tickFormatter,
         viewBox,
@@ -212,6 +235,7 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
     );
   } else {
     candidates = getTicksEnd({
+      angle,
       ticks,
       tickFormatter,
       viewBox,

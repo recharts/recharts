@@ -1,5 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+
 import { Surface, Polygon } from '../../src';
 
 describe('<Polygon />', () => {
@@ -17,6 +18,7 @@ describe('<Polygon />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-polygon')).toHaveLength(1);
+    expect(container).toMatchSnapshot();
   });
 
   test("Don't render any path when points is empty or null", () => {
@@ -28,5 +30,6 @@ describe('<Polygon />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-polygon')).toHaveLength(0);
+    expect(container).toMatchSnapshot();
   });
 });
