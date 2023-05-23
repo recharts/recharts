@@ -1,0 +1,118 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Rectangle /> Should render 1 rectangle in simple Rectangle when radius is [ 5, 10, 8, 15 ] 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="400"
+    viewBox="0 0 400 400"
+    width="400"
+  >
+    <title />
+    <desc />
+    <path
+      class="recharts-rectangle"
+      d="M50,55A 5,5,0,0,1,55,50L 120,50A 10,10,0,0,1,
+        130,60L 130,142A 8,8,0,0,1,
+        122,150L 65,150A 15,15,0,0,1,
+        50,135Z"
+      fill="#ff7300"
+      height="100"
+      radius="5,10,8,15"
+      width="80"
+      x="50"
+      y="50"
+    />
+  </svg>
+</div>
+`;
+
+exports[`<Rectangle /> Should render 1 rectangle in simple Rectangle when radius is 5 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="400"
+    viewBox="0 0 400 400"
+    width="400"
+  >
+    <title />
+    <desc />
+    <path
+      class="recharts-rectangle"
+      d="M 50,55
+            A 5,5,0,0,1,55,50
+            L 125,50
+            A 5,5,0,0,1,130,55
+            L 130,145
+            A 5,5,0,0,1,125,150
+            L 55,150
+            A 5,5,0,0,1,50,145 Z"
+      fill="#ff7300"
+      height="100"
+      radius="5"
+      width="80"
+      x="50"
+      y="50"
+    />
+  </svg>
+</div>
+`;
+
+exports[`<Rectangle /> Should render 4 arc when height < 0 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="400"
+    viewBox="0 0 400 400"
+    width="400"
+  >
+    <title />
+    <desc />
+    <path
+      class="recharts-rectangle"
+      d="M 50,195
+            A 5,5,0,0,0,55,200
+            L 125,200
+            A 5,5,0,0,0,130,195
+            L 130,105
+            A 5,5,0,0,0,125,100
+            L 55,100
+            A 5,5,0,0,0,50,105 Z"
+      fill="#ff7300"
+      height="-100"
+      radius="5"
+      width="80"
+      x="50"
+      y="200"
+    />
+  </svg>
+</div>
+`;
+
+exports[`<Rectangle /> Shouldn't render any path when x, y, width or height is not a number 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="400"
+    viewBox="0 0 400 400"
+    width="400"
+  >
+    <title />
+    <desc />
+  </svg>
+</div>
+`;
+
+exports[`<Rectangle /> Shouldn't render anything when height === 0 || width === 0 1`] = `
+<div>
+  <svg
+    class="recharts-surface"
+    height="400"
+    viewBox="0 0 400 400"
+    width="400"
+  >
+    <title />
+    <desc />
+  </svg>
+</div>
+`;
