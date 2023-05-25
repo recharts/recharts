@@ -10,7 +10,7 @@ export default {
   },
 };
 
-export const ResponsiveAreaChart: StoryObj = {
+export const API: StoryObj<typeof ResponsiveContainer> = {
   args: {
     width: '100%',
     height: 400,

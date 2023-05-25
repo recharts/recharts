@@ -1,7 +1,13 @@
-import { ArgTypes } from '@storybook/blocks';
-import * as ResponsiveContainerStories from './ResponsiveContainer.stories';
+import { Meta, Story, Canvas, Controls } from '@storybook/blocks';
+import * as ComponentStories from './ResponsiveContainer.stories';
 
 # ResponsiveContainer
+
+<Meta of={ComponentStories} />
+
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
 
 This is a component that can be used to render charts that will be responsive to its parent.
 When you render a chart you have to specify its **width** and **height** for the chart to be
@@ -31,8 +37,8 @@ and only then, renders the child Chart and passes the calculated width to it. So
 rendering a Chart inside ResponsiveContainer, you can omit its width and height and specify
 those on the ResponsiveContainer.
 
-If you're using ResponsiveContainer and you're rendering on the server (SSR) as most JavaScript
-frameworks do, then initially on the Browser, the chart will not be shown until after hydration.
+If you're using ResponsiveContainer and you're rendering on the server (SSR), then initially on
+the Browser, the chart will not be shown until after hydration.
 As mentioned, this is becase while rendering on server, the dimensions cannot be calculated,
 but if you need to have the chart rendered before hydration, you can pass `initialDimension`
 prop, which is an object like `{ width: 500, height: 500 }`, when passed, the chart will
@@ -47,9 +53,8 @@ and the chart will change to its new dimensions.
 </ResponsiveContainer>
 ```
 
-
 > Note: Try to pass initial dimensions with accurate numbers, otherwise you might add some
-> [content layout shift](https://web.dev/cls) that can be annoying for your users.
+> [content layout shift](https://web.dev/cls) which could be annoying for your users.
 
 ## Parent Component
 
@@ -57,10 +62,11 @@ It can be used anywhere you would render another React component.
 
 ## Child component
 
-The ResponsiveContainer can be used to render all types of charts
+The ResponsiveContainer can be used to render recharts charts as
+well as any child that needs to know the dimensions of its parent container.
 
 ## Properties
 
 Properties in the groups Other and Internal are not recommended to be used.
 
-<ArgTypes of={ResponsiveContainerStories} sort={'requiredFirst'} /> 
+<Controls of={ComponentStories.API} />
