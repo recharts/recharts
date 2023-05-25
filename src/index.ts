@@ -9,8 +9,12 @@ export type { Props as LayerProps } from './container/Layer';
 
 export { Legend } from './component/Legend';
 export type { Props as LegendProps } from './component/Legend';
+export { DefaultLegendContent } from './component/DefaultLegendContent';
+export type { Props as DefaultLegendContentProps } from './component/DefaultLegendContent';
 export { Tooltip } from './component/Tooltip';
 export type { TooltipProps } from './component/Tooltip';
+export { DefaultTooltipContent } from './component/DefaultTooltipContent';
+export type { Props as DefaultTooltipContentProps } from './component/DefaultTooltipContent';
 export { ResponsiveContainer } from './component/ResponsiveContainer';
 export type { Props as ResponsiveContainerProps } from './component/ResponsiveContainer';
 export { Cell } from './component/Cell';
