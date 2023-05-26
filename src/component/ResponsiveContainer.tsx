@@ -23,6 +23,10 @@ export interface Props {
   height?: string | number;
   minWidth?: string | number;
   minHeight?: string | number;
+  initialDimension?: {
+    width: number;
+    height: number;
+  };
   maxHeight?: number;
   children: ReactElement;
   debounce?: number;
@@ -35,6 +39,10 @@ export const ResponsiveContainer = forwardRef(
   (
     {
       aspect,
+      initialDimension = {
+        width: -1,
+        height: -1,
+      },
       width = '100%',
       height = '100%',
       /*
@@ -56,8 +64,8 @@ export const ResponsiveContainer = forwardRef(
       containerWidth: number;
       containerHeight: number;
     }>({
-      containerWidth: -1,
-      containerHeight: -1,
+      containerWidth: initialDimension.width,
+      containerHeight: initialDimension.height,
     });
 
     const containerRef = useRef<HTMLDivElement>(null);

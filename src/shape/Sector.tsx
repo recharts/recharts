@@ -1,7 +1,7 @@
 /**
  * @fileOverview Sector
  */
-import React, { PureComponent, SVGProps } from 'react';
+import React, { SVGProps } from 'react';
 import classNames from 'classnames';
 import { GeometrySector } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
@@ -195,58 +195,56 @@ interface SectorProps extends GeometrySector {
 
 export type Props = SVGProps<SVGPathElement> & SectorProps;
 
-export class Sector extends PureComponent<Props> {
-  static defaultProps = {
-    cx: 0,
-    cy: 0,
-    innerRadius: 0,
-    outerRadius: 0,
-    startAngle: 0,
-    endAngle: 0,
-    cornerRadius: 0,
-    forceCornerRadius: false,
-    cornerIsExternal: false,
-  };
+export const Sector: React.FC<Props> = props => {
+  const {
+    cx,
+    cy,
+    innerRadius,
+    outerRadius,
+    cornerRadius,
+    forceCornerRadius,
+    cornerIsExternal,
+    startAngle,
+    endAngle,
+    className,
+  } = props;
 
-  render() {
-    const {
+  if (outerRadius < innerRadius || startAngle === endAngle) {
+    return null;
+  }
+
+  const layerClass = classNames('recharts-sector', className);
+  const deltaRadius = outerRadius - innerRadius;
+  const cr = getPercentValue(cornerRadius, deltaRadius, 0, true);
+  let path;
+
+  if (cr > 0 && Math.abs(startAngle - endAngle) < 360) {
+    path = getSectorWithCorner({
       cx,
       cy,
       innerRadius,
       outerRadius,
-      cornerRadius,
+      cornerRadius: Math.min(cr, deltaRadius / 2),
       forceCornerRadius,
       cornerIsExternal,
       startAngle,
       endAngle,
-      className,
-    } = this.props;
-
-    if (outerRadius < innerRadius || startAngle === endAngle) {
-      return null;
-    }
-
-    const layerClass = classNames('recharts-sector', className);
-    const deltaRadius = outerRadius - innerRadius;
-    const cr = getPercentValue(cornerRadius, deltaRadius, 0, true);
-    let path;
-
-    if (cr > 0 && Math.abs(startAngle - endAngle) < 360) {
-      path = getSectorWithCorner({
-        cx,
-        cy,
-        innerRadius,
-        outerRadius,
-        cornerRadius: Math.min(cr, deltaRadius / 2),
-        forceCornerRadius,
-        cornerIsExternal,
-        startAngle,
-        endAngle,
-      });
-    } else {
-      path = getSectorPath({ cx, cy, innerRadius, outerRadius, startAngle, endAngle });
-    }
-
-    return <path {...filterProps(this.props, true)} className={layerClass} d={path} role="img" />;
+    });
+  } else {
+    path = getSectorPath({ cx, cy, innerRadius, outerRadius, startAngle, endAngle });
   }
-}
+
+  return <path {...filterProps(props, true)} className={layerClass} d={path} role="img" />;
+};
+
+Sector.defaultProps = {
+  cx: 0,
+  cy: 0,
+  innerRadius: 0,
+  outerRadius: 0,
+  startAngle: 0,
+  endAngle: 0,
+  cornerRadius: 0,
+  forceCornerRadius: false,
+  cornerIsExternal: false,
+};

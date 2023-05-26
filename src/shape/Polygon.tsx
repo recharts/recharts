@@ -1,7 +1,7 @@
 /**
  * @fileOverview Polygon
  */
-import React, { PureComponent, SVGProps } from 'react';
+import React, { SVGProps } from 'react';
 import classNames from 'classnames';
 import { Coordinate } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
@@ -73,47 +73,45 @@ interface PolygonProps {
 
 export type Props = Omit<SVGProps<SVGPolygonElement>, 'points'> & PolygonProps;
 
-export class Polygon extends PureComponent<Props> {
-  render() {
-    const { points, className, baseLinePoints, connectNulls, ...others } = this.props;
+export const Polygon: React.FC<Props> = props => {
+  const { points, className, baseLinePoints, connectNulls, ...others } = props;
 
-    if (!points || !points.length) {
-      return null;
-    }
+  if (!points || !points.length) {
+    return null;
+  }
 
-    const layerClass = classNames('recharts-polygon', className);
+  const layerClass = classNames('recharts-polygon', className);
 
-    if (baseLinePoints && baseLinePoints.length) {
-      const hasStroke = others.stroke && others.stroke !== 'none';
-      const rangePath = getRanglePath(points, baseLinePoints, connectNulls);
-
-      return (
-        <g className={layerClass}>
-          <path
-            {...filterProps(others, true)}
-            fill={rangePath.slice(-1) === 'Z' ? others.fill : 'none'}
-            stroke="none"
-            d={rangePath}
-          />
-          {hasStroke ? (
-            <path {...filterProps(others, true)} fill="none" d={getSinglePolygonPath(points, connectNulls)} />
-          ) : null}
-          {hasStroke ? (
-            <path {...filterProps(others, true)} fill="none" d={getSinglePolygonPath(baseLinePoints, connectNulls)} />
-          ) : null}
-        </g>
-      );
-    }
-
-    const singlePath = getSinglePolygonPath(points, connectNulls);
+  if (baseLinePoints && baseLinePoints.length) {
+    const hasStroke = others.stroke && others.stroke !== 'none';
+    const rangePath = getRanglePath(points, baseLinePoints, connectNulls);
 
     return (
-      <path
-        {...filterProps(others, true)}
-        fill={singlePath.slice(-1) === 'Z' ? others.fill : 'none'}
-        className={layerClass}
-        d={singlePath}
-      />
+      <g className={layerClass}>
+        <path
+          {...filterProps(others, true)}
+          fill={rangePath.slice(-1) === 'Z' ? others.fill : 'none'}
+          stroke="none"
+          d={rangePath}
+        />
+        {hasStroke ? (
+          <path {...filterProps(others, true)} fill="none" d={getSinglePolygonPath(points, connectNulls)} />
+        ) : null}
+        {hasStroke ? (
+          <path {...filterProps(others, true)} fill="none" d={getSinglePolygonPath(baseLinePoints, connectNulls)} />
+        ) : null}
+      </g>
     );
   }
-}
+
+  const singlePath = getSinglePolygonPath(points, connectNulls);
+
+  return (
+    <path
+      {...filterProps(others, true)}
+      fill={singlePath.slice(-1) === 'Z' ? others.fill : 'none'}
+      className={layerClass}
+      d={singlePath}
+    />
+  );
+};

@@ -184,8 +184,6 @@ export default {
     fill: GeneralStyle.fill,
     // Deprecated
     dangerouslySetInnerHTML: { table: { category: 'Deprecated', disable: true } },
-    onPointerEnterCapture: { table: { category: 'Deprecated', disable: true } },
-    onPointerLeaveCapture: { table: { category: 'Deprecated', disable: true } },
     // Event Handlers available
     onCopy,
     onCopyCapture,
@@ -348,7 +346,7 @@ export default {
   },
 };
 
-export const Simple = {
+export const API = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
