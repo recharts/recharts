@@ -46,7 +46,6 @@ export default {
 
 const [surfaceWidth, surfaceHeight] = [600, 300];
 
-// TODO: Have this story not show up separately
 export const API = {
   render: (args: Record<string, any>) => {
     return (
