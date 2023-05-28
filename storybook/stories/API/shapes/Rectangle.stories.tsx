@@ -1,7 +1,8 @@
 import React from 'react';
-import { Curve, Customized, ComposedChart, ResponsiveContainer } from '../../../../src';
-import { GeneralStyle, LineStyle } from '../props/Styles';
-import { coordinateData } from '../../data';
+import { Rectangle } from '../../../../src';
+import { GeneralStyle } from '../props/Styles';
+import { animationBegin, animationDuration, animationEasing, isAnimationActive } from '../props/AnimationProps';
+import { RectangleProps } from '../props/RectangleProps';
 import {
   onAbort,
   onAbortCapture,
@@ -114,9 +115,7 @@ import {
   onPointerDown,
   onPointerDownCapture,
   onPointerEnter,
-  onPointerEnterCapture,
   onPointerLeave,
-  onPointerLeaveCapture,
   onPointerMove,
   onPointerMoveCapture,
   onPointerOut,
@@ -166,22 +165,17 @@ import {
 } from '../props/EventHandlers';
 
 export default {
-  component: Curve,
+  component: Rectangle,
   argTypes: {
-    ...GeneralStyle,
-    type: LineStyle.type,
-    connectNulls: LineStyle.connectNulls,
-    points: {
-      description: 'The coordinates of points, like [{ x, y }].',
-      table: { type: { summary: '{ x:number, y:number }[]' }, category: 'General' },
-    },
+    ...RectangleProps,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    isAnimationActive,
+    stroke: GeneralStyle.stroke,
+    fill: GeneralStyle.fill,
     // Deprecated
     dangerouslySetInnerHTML: { table: { category: 'Deprecated', disable: true } },
-    // Other
-    baseLine: { table: { category: 'Other' } },
-    pathRef: { table: { category: 'Other' } },
-    // Internal
-    layout: { table: { category: 'Internal' } },
     // Event Handlers available
     onCopy,
     onCopyCapture,
@@ -320,9 +314,7 @@ export default {
     onPointerCancel,
     onPointerCancelCapture,
     onPointerEnter,
-    onPointerEnterCapture,
     onPointerLeave,
-    onPointerLeaveCapture,
     onPointerOver,
     onPointerOverCapture,
     onPointerOut,
@@ -349,29 +341,18 @@ export default {
 export const API = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width="100%" height={500}>
-        <ComposedChart
-          width={500}
-          height={300}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <Customized component={<Curve {...args} />} />
-        </ComposedChart>
-      </ResponsiveContainer>
+      <svg height={args.height} width="100%">
+        <Rectangle {...args} />
+      </svg>
     );
   },
   args: {
-    points: coordinateData,
-    type: 'step',
+    radius: 0,
+    x: 0,
+    y: 0,
+    height: 200,
+    width: 300,
     stroke: '#000',
     fill: 'red',
-    strokeDasharray: '3 3',
-    strokeWidth: 10,
-    strokeOpacity: 0.5,
   },
 };

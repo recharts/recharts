@@ -1,5 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+
 import { Surface, Dot } from '../../src';
 
 describe('<Dot />', () => {
@@ -11,6 +12,7 @@ describe('<Dot />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-dot')).toHaveLength(1);
+    expect(container).toMatchSnapshot();
   });
 
   test("Don't Render any circle when cx is invalid", () => {
@@ -21,5 +23,6 @@ describe('<Dot />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-dot')).toHaveLength(0);
+    expect(container).toMatchSnapshot();
   });
 });
