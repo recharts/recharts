@@ -11,9 +11,9 @@ module.exports = {
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
-    '@storybook/addon-a11y',
-    '@storybook/addon-storysource',
     '@storybook/addon-docs',
+    '@storybook/addon-a11y',
+    '@storybook/addon-mdx-gfm',
   ],
   framework: {
     name: '@storybook/react-webpack5',
