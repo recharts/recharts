@@ -1,10 +1,11 @@
 import { Args } from '@storybook/react';
 
 export const tooltipType = {
-  table: { category: 'Responsive' },
+  table: { category: 'Tooltip' },
   control: { type: 'select' },
   options: ['responsive', 'none'],
 };
+
 export const activeDot = {
   description: `The active dot is shown when a user enters a line chart and this chart has tooltip.
       If set to false, no active dot will be drawn. If set to true, active dot will be drawn with the
@@ -21,7 +22,7 @@ export const activeDot = {
       '<Line dataKey="value" activeDot={renderDot} />'`,
     },
     defaultValue: true,
-    category: 'Responsive',
+    category: 'Tooltip',
   },
 };
 
