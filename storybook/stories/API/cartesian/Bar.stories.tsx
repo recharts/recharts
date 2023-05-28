@@ -484,12 +484,3 @@ export const API = {
     animationDuration: 1500,
   },
 };
-
-// TODO:
-// Examples: Stacked
-// Examples: Stacked and Unstacked
-// Examples: Custom Shape
-// Examples: Custom Shape with background
-// Examples: Customized Event
-// Examples: FillGradient
-// Examples: FillPattern
