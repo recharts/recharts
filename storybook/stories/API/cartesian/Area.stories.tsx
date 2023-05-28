@@ -5,7 +5,7 @@ import { LineStyle } from '../props/Styles';
 import { AnimationProps } from '../props/AnimationProps';
 import { legendType } from '../props/Legend';
 import { General as GeneralProps, Internal } from '../props/CartesianComponentShared';
-import { ResponsiveProps } from '../props/Responsive';
+import { ResponsiveProps } from '../props/Tooltip';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 const AreaSpecificProps = {
