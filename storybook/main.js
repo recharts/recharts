@@ -23,6 +23,6 @@ module.exports = {
     interactionsDebugger: true,
   },
   docs: {
-    autodocs: true,
+    autodocs: false,
   },
 };
