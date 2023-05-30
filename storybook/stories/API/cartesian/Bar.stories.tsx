@@ -451,7 +451,7 @@ export const API = {
           }}
           data={pageData}
         >
-          {/* All components are added to show the interaction with the Area properties */}
+          {/* All components are added to show the interaction with the Bar properties */}
           <Bar fill="red" stackId="1" dataKey="pv" />
           <Legend />
           <Tooltip />
