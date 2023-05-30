@@ -1,7 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react';
-import { CartesianAxis, Label, ResponsiveContainer, Surface } from '../../../../src';
-import { TickItem } from '../../../../src/util/types';
+import { CartesianAxis, ResponsiveContainer, Surface } from '../../../../src';
 import { ticks } from '../../data';
 
 const GeneralProps: Args = {
@@ -77,7 +76,7 @@ const GeneralProps: Args = {
     },
   },
   tickLine: {
-    description: `If set false, no axis tick lines will be drawn. If set a object, 
+    description: `If set false, no axis tick lines will be drawn. If set a object,
       the option is the configuration of tick lines.`,
     table: {
       type: {
@@ -108,7 +107,7 @@ const GeneralProps: Args = {
     },
   },
   interval: {
-    description: `If set 0, all the ticks will be shown. If set preserveStart", "preserveEnd" or "preserveStartEnd", 
+    description: `If set 0, all the ticks will be shown. If set preserveStart", "preserveEnd" or "preserveStartEnd",
       the ticks which is to be shown or hidden will be calculated automatically.`,
     table: {
       type: {
@@ -123,8 +122,8 @@ const GeneralProps: Args = {
     },
   },
   tick: {
-    description: `If set false, no ticks will be drawn. If set a object, the option is the configuration of ticks. 
-      If set a React element, the option is the custom react element of drawing ticks. If set a function, 
+    description: `If set false, no ticks will be drawn. If set a object, the option is the configuration of ticks.
+      If set a React element, the option is the custom react element of drawing ticks. If set a function,
       the function will be called to render customized tick.`,
     table: {
       type: {
@@ -135,8 +134,8 @@ const GeneralProps: Args = {
     },
   },
   label: {
-    description: `If set a string or a number, default label will be drawn, and the option is content. 
-      If set a React element, the option is the custom react element of drawing label. 
+    description: `If set a string or a number, default label will be drawn, and the option is content.
+      If set a React element, the option is the custom react element of drawing label.
       If set a function, the function will be called to render customized label.`,
     table: {
       type: {
@@ -175,10 +174,9 @@ export default {
   },
 };
 
-const [surfaceWidth, surfaceHeight] = [500, 500];
-
-export const TickPositioning = {
+export const API = {
   render: (args: Record<string, any>) => {
+    const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
         <Surface
@@ -192,125 +190,23 @@ export const TickPositioning = {
           }}
         >
           <CartesianAxis
-            width={surfaceHeight}
-            height={surfaceWidth}
             viewBox={{
               x: 0,
               y: 0,
               width: surfaceWidth,
               height: surfaceHeight,
             }}
-            ticks={args.data}
-            interval={args.interval}
-          />
-          <CartesianAxis
-            width={surfaceHeight}
-            height={surfaceWidth}
-            viewBox={{
-              x: 0,
-              y: 0,
-              width: surfaceWidth,
-              height: surfaceHeight,
-            }}
-            ticks={args.data.map((tick: TickItem) => ({ ...tick, coordinate: tick.coordinate / 2 }))}
-            interval={args.interval}
-            orientation="left"
+            {...args}
           />
         </Surface>
       </ResponsiveContainer>
     );
   },
   args: {
-    data: ticks,
-  },
-  parameters: {
-    controls: { include: ['interval'] },
-    docs: {
-      description: {
-        story:
-          'The ticks of a cartesian axis are positioned using the interval field. ' +
-          'The interval computation can be overridden by setting interval to a number, ' +
-          'which signifies how many ticks should not be shown between two visible ticks. ' +
-          'By default, ticks that overflow their assigned space, are not shown. ',
-      },
-    },
-  },
-};
-
-export const Combined = {
-  render: (args: Record<string, any>) => {
-    return (
-      <ResponsiveContainer width="100%" height={surfaceHeight}>
-        <Surface
-          width={surfaceWidth}
-          height={surfaceHeight}
-          viewBox={{
-            x: 0,
-            y: 0,
-            width: surfaceWidth,
-            height: surfaceHeight,
-          }}
-        >
-          <CartesianAxis
-            orientation="bottom"
-            y={100}
-            width={400}
-            height={50}
-            viewBox={{
-              x: 0,
-              y: 0,
-              width: 500,
-              height: 500,
-            }}
-            ticks={args.data}
-            label="test"
-          >
-            <Label>测试</Label>
-          </CartesianAxis>
-          <CartesianAxis
-            orientation="top"
-            y={200}
-            width={400}
-            height={50}
-            viewBox={{
-              x: 0,
-              y: 0,
-              width: 500,
-              height: 500,
-            }}
-            ticks={args.data}
-          />
-          <CartesianAxis
-            orientation="left"
-            x={50}
-            width={50}
-            height={400}
-            viewBox={{
-              x: 0,
-              y: 0,
-              width: 500,
-              height: 500,
-            }}
-            ticks={args.data}
-          />
-          <CartesianAxis
-            orientation="right"
-            x={150}
-            width={50}
-            height={400}
-            viewBox={{
-              x: 0,
-              y: 0,
-              width: 500,
-              height: 500,
-            }}
-            ticks={args.data}
-          />
-        </Surface>
-      </ResponsiveContainer>
-    );
-  },
-  args: {
-    data: ticks.slice(0, 5),
+    ticks,
+    orientation: 'bottom',
+    interval: 'preserveEnd',
+    width: 500,
+    height: 600,
   },
 };

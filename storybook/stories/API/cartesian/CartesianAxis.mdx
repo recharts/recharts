@@ -1,12 +1,19 @@
-import { ArgTypes, Meta, Stories } from '@storybook/blocks';
+import { Meta, Story, Canvas, Controls } from '@storybook/blocks';
 import * as ComponentStories from './CartesianAxis.stories';
 
 # CartesianAxis
+
+The Cartesian Axis is used for the XAxis and the YAxis.
+In most use cases, users will not need to use this component directly.
+
+<Meta of={ComponentStories} />
+
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
 
 ## Properties
 
 Properties in the groups Other and Internal are not recommended to be used.
 
-<Meta of={ComponentStories} />;
-<ArgTypes of={ComponentStories} sort={'requiredFirst'} />;
-<Stories />;
+<Controls of={ComponentStories.API} />

@@ -1,7 +1,13 @@
-import { ArgTypes, Meta, Stories } from '@storybook/blocks';
+import { Meta, Story, Canvas, Controls } from '@storybook/blocks';
 import * as ComponentStories from './Brush.stories';
 
 # Brush
+
+<Meta of={ComponentStories} />
+
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
 
 ## Parent Component
 
@@ -11,7 +17,4 @@ The Brush can be used within a `<AreaChart />`, a `<BarChart />`, a `<LineChart 
 
 Properties in the groups Other and Internal are not recommended to be used.
 
-<Meta of={ComponentStories} />;
-<ArgTypes of={ComponentStories} sort={'requiredFirst'} />;
-<Stories />;
-
+<Controls of={ComponentStories.API} />
