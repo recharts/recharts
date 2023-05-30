@@ -10,7 +10,7 @@ import { legendType } from '../props/Legend';
 import { LineStyle } from '../props/Styles';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { General as GeneralProps, Internal } from '../props/CartesianComponentShared';
-import { ResponsiveProps } from '../props/Responsive';
+import { ResponsiveProps } from '../props/Tooltip';
 
 export default {
   argTypes: {
