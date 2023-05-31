@@ -312,6 +312,14 @@ const data03 = [
   { date: 'Dec 30 2016', price: 115.82 },
 ];
 
+const data04 = [
+  { name: 'Page A', uv: 1000, pv: 400, amt: 2400 },
+  { name: 'Page B', uv: 3000, pv: 1398, amt: 2210 },
+  { name: 'Page C', uv: 2000, pv: 0, amt: 2290 },
+  { name: 'Page D', uv: 2780, pv: 0, amt: 2000 },
+  { name: 'Page E', uv: 1890, pv: 3000, amt: 2181 },
+];
+
 const series = [
   {
     name: 'Series 1',
@@ -343,6 +351,7 @@ const initialState = {
   data,
   data01,
   data02,
+  data04,
   opacity: 1,
   anotherState: false,
 };
@@ -416,7 +425,7 @@ export default class Demo extends Component<any, any> {
   };
 
   render() {
-    const { data, data01, data02, opacity } = this.state;
+    const { data, data01, data02, data04, opacity } = this.state;
 
     return (
       <div className="line-charts">

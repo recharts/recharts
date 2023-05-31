@@ -114,7 +114,9 @@ export default class AreaChartDemo extends React.Component<any, any> {
   render() {
     return (
       <div className="area-charts">
-        <button type="button" onClick={this.handleChangeData}>change data</button>
+        <button type="button" onClick={this.handleChangeData}>
+          change data
+        </button>
         <br />
 
         <p>Stacked AreaChart</p>

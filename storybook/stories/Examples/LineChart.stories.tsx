@@ -1,5 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import React, { PureComponent, useState } from 'react';
+import { StoryObj } from '@storybook/react';
 import { Impressions, impressionsData, pageData } from '../data';
 import {
   Line,
@@ -322,6 +323,46 @@ export const WithCustomizedDot = {
         </LineChart>
       </ResponsiveContainer>
     );
+  },
+};
+
+export const ClipDot: StoryObj = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+          data={pageData}
+        >
+          <Line
+            isAnimationActive={false}
+            dataKey="uv"
+            {...args}
+            dot={{ clipDot: args.clipDot, r: 4, strokeWidth: 2, fill: '#ffffff', fillOpacity: 1 }}
+          />
+          <Tooltip />
+          <XAxis dataKey="name" allowDataOverflow />
+          <YAxis />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    clipDot: false,
+  },
+  parameters: {
+    controls: { include: ['clipDot'] },
+    docs: {
+      description: {
+        clipDot: `When \`allowDataOverflow\` is true on \`XAxis\` or \`YAxis\`, set
+        \`clipDot\` within the dot object to determine if recharts should clip the dots at the end of the page.`,
+      },
+    },
   },
 };
 

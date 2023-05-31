@@ -11,6 +11,7 @@ interface DotProps {
   cx?: number;
   cy?: number;
   r?: number;
+  clipDot?: boolean;
 }
 
 export type Props = PresentationAttributesWithProps<DotProps, SVGCircleElement> & DotProps;

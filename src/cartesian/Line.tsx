@@ -308,7 +308,7 @@ export class Line extends PureComponent<Props, State> {
     return dotItem;
   }
 
-  renderDots(needClip: boolean, clipPathId: string) {
+  renderDots(needClip: boolean, clipDot: boolean, clipPathId: string) {
     const { isAnimationActive } = this.props;
 
     if (isAnimationActive && !this.state.isAnimationFinished) {
@@ -334,7 +334,7 @@ export class Line extends PureComponent<Props, State> {
       return Line.renderDotItem(dot, dotProps);
     });
     const dotsProps = {
-      clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
+      clipPath: needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : null,
     };
 
     return (
@@ -461,21 +461,36 @@ export class Line extends PureComponent<Props, State> {
     const { isAnimationFinished } = this.state;
     const hasSinglePoint = points.length === 1;
     const layerClass = classNames('recharts-line', className);
-    const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
+    const needClipX = xAxis && xAxis.allowDataOverflow;
+    const needClipY = yAxis && yAxis.allowDataOverflow;
+    const needClip = needClipX || needClipY;
     const clipPathId = _.isNil(id) ? this.id : id;
+    const { r, strokeWidth } = filterProps(dot) || { r: 3, strokeWidth: 2 };
+    const { clipDot = true } = dot as DotProps;
+    const dotSize = r * 2 + strokeWidth;
 
     return (
       <Layer className={layerClass}>
-        {needClip ? (
+        {needClipX || needClipY ? (
           <defs>
             <clipPath id={`clipPath-${clipPathId}`}>
-              <rect x={left} y={top} width={width} height={height} />
+              <rect
+                x={needClipX ? left : left - width / 2}
+                y={needClipY ? top : top - height / 2}
+                width={needClipX ? width : width * 2}
+                height={needClipY ? height : height * 2}
+              />
             </clipPath>
+            {!clipDot && (
+              <clipPath id={`clipPath-dots-${clipPathId}`}>
+                <rect x={left - dotSize / 2} y={top - dotSize / 2} width={width + dotSize} height={height + dotSize} />
+              </clipPath>
+            )}
           </defs>
         ) : null}
         {!hasSinglePoint && this.renderCurve(needClip, clipPathId)}
         {this.renderErrorBar(needClip, clipPathId)}
-        {(hasSinglePoint || dot) && this.renderDots(needClip, clipPathId)}
+        {(hasSinglePoint || dot) && this.renderDots(needClip, clipDot, clipPathId)}
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
       </Layer>
     );

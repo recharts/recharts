@@ -53,6 +53,8 @@ interface InternalBarProps {
   data?: BarRectangleItem[];
   top?: number;
   left?: number;
+  width?: number;
+  height?: number;
 }
 
 type RectangleShapeType =
@@ -467,15 +469,22 @@ export class Bar extends PureComponent<Props, State> {
 
     const { isAnimationFinished } = this.state;
     const layerClass = classNames('recharts-bar', className);
-    const needClip = (xAxis && xAxis.allowDataOverflow) || (yAxis && yAxis.allowDataOverflow);
+    const needClipX = xAxis && xAxis.allowDataOverflow;
+    const needClipY = yAxis && yAxis.allowDataOverflow;
+    const needClip = needClipX || needClipY;
     const clipPathId = _.isNil(id) ? this.id : id;
 
     return (
       <Layer className={layerClass}>
-        {needClip ? (
+        {needClipX || needClipY ? (
           <defs>
             <clipPath id={`clipPath-${clipPathId}`}>
-              <rect x={left} y={top} width={width} height={height} />
+              <rect
+                x={needClipX ? left : left - width / 2}
+                y={needClipY ? top : top - height / 2}
+                width={needClipX ? width : width * 2}
+                height={needClipY ? height : height * 2}
+              />
             </clipPath>
           </defs>
         ) : null}
