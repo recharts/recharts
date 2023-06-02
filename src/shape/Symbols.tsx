@@ -1,7 +1,7 @@
 /**
  * @fileOverview Curve
  */
-import React, { PureComponent, SVGProps } from 'react';
+import React, { SVGProps } from 'react';
 import _ from 'lodash';
 import {
   symbol as shapeSymbol,
@@ -78,44 +78,45 @@ interface SymbolsProp {
 
 export type Props = SVGProps<SVGPathElement> & SymbolsProp;
 
-export class Symbols extends PureComponent<Props> {
-  static defaultProps = {
-    type: 'circle',
-    size: 64,
-    sizeType: 'area',
-  };
+const symbolsDefaultProps = {
+  type: 'circle',
+  size: 64,
+  sizeType: 'area',
+};
 
-  static registerSymbol = (key: string, factory: D3SymbolType) => {
-    symbolFactories[`symbol${_.upperFirst(key)}`] = factory;
-  };
+const registerSymbol = (key: string, factory: D3SymbolType) => {
+  symbolFactories[`symbol${_.upperFirst(key)}`] = factory;
+};
 
+export const Symbols = (props: Props) => {
   /**
    * Calculate the path of curve
    * @return {String} path
    */
-  getPath() {
-    const { size, sizeType, type } = this.props;
+  const getPath = () => {
+    const { size, sizeType, type } = props;
     const symbolFactory = getSymbolFactory(type);
     const symbol = shapeSymbol().type(symbolFactory).size(calculateAreaSize(size, sizeType, type));
 
     return symbol();
+  };
+
+  const { className, cx, cy, size } = props;
+  const filteredProps = filterProps(props, true);
+
+  if (cx === +cx && cy === +cy && size === +size) {
+    return (
+      <path
+        {...filteredProps}
+        className={classNames('recharts-symbols', className)}
+        transform={`translate(${cx}, ${cy})`}
+        d={getPath()}
+      />
+    );
   }
 
-  render() {
-    const { className, cx, cy, size } = this.props;
-    const filteredProps = filterProps(this.props, true);
+  return null;
+};
 
-    if (cx === +cx && cy === +cy && size === +size) {
-      return (
-        <path
-          {...filteredProps}
-          className={classNames('recharts-symbols', className)}
-          transform={`translate(${cx}, ${cy})`}
-          d={this.getPath()}
-        />
-      );
-    }
-
-    return null;
-  }
-}
+Symbols.defaultProps = symbolsDefaultProps;
+Symbols.registerSymbol = registerSymbol;
