@@ -176,6 +176,14 @@ export const validateWidthHeight = (el: any): boolean => {
   return true;
 };
 
+export const validateWidthHeightForLineChart = (width: any, height: any): boolean => {
+  if (!isNumber(width) || width <= 0 || !isNumber(height) || height <= 0) {
+    return false;
+  }
+
+  return true;
+};
+
 const SVG_TAGS: string[] = [
   'a',
   'altGlyph',
