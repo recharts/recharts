@@ -1,12 +1,12 @@
 import React from 'react';
-import { Args, StoryObj } from '@storybook/react';
+import { Args } from '@storybook/react';
 import { ScatterChart, ErrorBar, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Scatter } from '../../../../src';
 import { errorData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 const GeneralProps: Args = {
   dataKey: {
-    description: `The key of a group of error values in data. The error values can be a single value for 
+    description: `The key of a group of error values in data. The error values can be a single value for
     symmetric error bars or an array of a lower and upper error value for asymmetric error bars.`,
     table: { type: { summary: 'string | number | Function' }, category: 'General' },
   },
@@ -48,7 +48,7 @@ const StyleProps: Args = {
     defaultValue: 1.5,
   },
   direction: {
-    description: `Only used for ScatterChart with error bars in two directions. 
+    description: `Only used for ScatterChart with error bars in two directions.
     Only accepts a value of "x" or "y" and makes the error bars lie in that direction.`,
     table: {
       type: {
@@ -60,14 +60,14 @@ const StyleProps: Args = {
 };
 
 export default {
+  component: ErrorBar,
   argTypes: {
     ...GeneralProps,
     ...StyleProps,
   },
-  component: ErrorBar,
 };
 
-export const General = {
+export const API = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
@@ -82,10 +82,10 @@ export const General = {
           height={250}
         >
           <CartesianGrid />
-          <XAxis dataKey="x" type="number" name="stature" unit="cm" />
-          <YAxis dataKey="y" type="number" name="weight" unit="kg" />
-          <Scatter name="A school" data={errorData} fill="#ff7300">
-            <ErrorBar dataKey="errorY" width={4} strokeWidth={2} stroke="green" direction="y" {...args} />
+          <XAxis dataKey="x" type="number" />
+          <YAxis dataKey="y" type="number" />
+          <Scatter data={errorData} fill="#ff7300">
+            <ErrorBar dataKey="errorY" {...args} />
           </Scatter>
         </ScatterChart>
       </ResponsiveContainer>
@@ -93,21 +93,11 @@ export const General = {
   },
   args: {
     ...getStoryArgsFromArgsTypesObject(GeneralProps),
-    dataKey: 'errorY',
-  },
-  parameters: {
-    controls: { include: Object.keys(GeneralProps) },
-  },
-};
-
-export const Style: StoryObj = {
-  ...General,
-  args: {
     ...getStoryArgsFromArgsTypesObject(StyleProps),
-    stroke: 'red',
-    direction: 'x',
-  },
-  parameters: {
-    controls: { include: Object.keys(StyleProps) },
+    width: 4,
+    strokeWidth: 2,
+    stroke: 'green',
+    direction: 'y',
+    dataKey: 'errorY',
   },
 };
