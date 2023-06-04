@@ -514,10 +514,8 @@ export default {
   },
 };
 
-const Base = {
+export const API = {
   render: (args: Record<string, any>) => {
-    const { data, defs, ...scatterArgs } = args;
-
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
         <ComposedChart
@@ -531,46 +529,20 @@ const Base = {
           }}
           data={pageData}
         >
-          {defs}
-          <Scatter {...scatterArgs} />
+          <Scatter {...args} />
           <XAxis dataKey="pv" />
           <YAxis dataKey="uv" />
         </ComposedChart>
       </ResponsiveContainer>
     );
   },
-  parameters: { controls: { include: ['data'] } },
-};
-
-export const General = {
-  ...Base,
   args: {
     ...getStoryArgsFromArgsTypesObject(GeneralPropsForScatter),
-  },
-  parameters: {
-    controls: { include: Object.keys(GeneralPropsForScatter) },
-  },
-};
-
-export const Style = {
-  ...Base,
-  args: {
     ...getStoryArgsFromArgsTypesObject(StyleProps),
+    ...getStoryArgsFromArgsTypesObject(AnimationProps),
     shape: 'square',
     line: { stroke: 'red', strokeWidth: 2 },
     lineJointType: 'monotoneX',
-  },
-  parameters: {
-    controls: { include: Object.keys(StyleProps) },
-  },
-};
-
-export const Animation = {
-  ...Base,
-  args: {
-    ...getStoryArgsFromArgsTypesObject(AnimationProps),
-  },
-  parameters: {
-    controls: { include: Object.keys(AnimationProps) },
+    lineType: 'fitting',
   },
 };
