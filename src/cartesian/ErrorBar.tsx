@@ -7,20 +7,28 @@ import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { D3Scale, DataKey } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
+import { BarRectangleItem } from './Bar';
+import { LinePointItem } from './Line';
+import { ScatterPointItem } from './Scatter';
 
-interface ErrorBarDataItem {
+export interface ErrorBarDataItem {
   x: number;
   y: number;
   value: number;
   errorVal?: number[] | number;
 }
 
+export type ErrorBarDataPointFormatter = (
+  entry: BarRectangleItem | LinePointItem | ScatterPointItem,
+  dataKey: DataKey<any>,
+) => ErrorBarDataItem;
+
 interface InternalErrorBarProps {
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   data?: any[];
   layout?: 'horizontal' | 'vertical';
-  dataPointFormatter?: (entry: any, dataKey: DataKey<any>) => ErrorBarDataItem;
+  dataPointFormatter?: ErrorBarDataPointFormatter;
   /** The offset between central and the given coordinate, often set by <Bar/> */
   offset?: number;
 }

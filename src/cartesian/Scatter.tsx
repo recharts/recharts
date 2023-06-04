@@ -37,7 +37,7 @@ interface ScattterPointNode {
   z?: number | string;
 }
 
-interface ScatterPointItem {
+export interface ScatterPointItem {
   cx?: number;
   cy?: number;
   size?: number;
@@ -359,24 +359,6 @@ export class Scatter extends PureComponent<Props, State> {
       return null;
     }
 
-    function dataPointFormatterY(dataPoint: ScatterPointItem, dataKey: Props['dataKey']) {
-      return {
-        x: dataPoint.cx,
-        y: dataPoint.cy,
-        value: +dataPoint.node.y,
-        errorVal: getValueByDataKey(dataPoint, dataKey),
-      };
-    }
-
-    function dataPointFormatterX(dataPoint: ScatterPointItem, dataKey: Props['dataKey']) {
-      return {
-        x: dataPoint.cx,
-        y: dataPoint.cy,
-        value: +dataPoint.node.x,
-        errorVal: getValueByDataKey(dataPoint, dataKey),
-      };
-    }
-
     return errorBarItems.map((item, i: number) => {
       const { direction } = item.props;
 
@@ -386,7 +368,14 @@ export class Scatter extends PureComponent<Props, State> {
         xAxis,
         yAxis,
         layout: direction === 'x' ? 'vertical' : 'horizontal',
-        dataPointFormatter: direction === 'x' ? dataPointFormatterX : dataPointFormatterY,
+        dataPointFormatter: (dataPoint: ScatterPointItem, dataKey: Props['dataKey']) => {
+          return {
+            x: dataPoint.cx,
+            y: dataPoint.cy,
+            value: direction === 'x' ? +dataPoint.node.x : +dataPoint.node.y,
+            errorVal: getValueByDataKey(dataPoint, dataKey),
+          };
+        },
       });
     });
   }
