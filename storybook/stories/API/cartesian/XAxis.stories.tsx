@@ -1,7 +1,7 @@
 import React from 'react';
 import { Args } from '@storybook/react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from '../../../../src';
-import { coordinateWithValueData, dateWithValueData, pageData, timeData } from '../../data';
+import { coordinateWithValueData } from '../../data';
 
 const GeneralProps: Args = {
   hide: {
@@ -84,10 +84,10 @@ const GeneralProps: Args = {
     },
   },
   allowDataOverflow: {
-    description: `When domain of the axis is specified and the type of the axis is 'number', 
-      if allowDataOverflow is set to be false, the domain will be adjusted when the minimum value 
-      of data is smaller than domain[0] or the maximum value of data is greater than domain[1] 
-      so that the axis displays all data values. If set to true, graphic elements (line, area, bars) 
+    description: `When domain of the axis is specified and the type of the axis is 'number',
+      if allowDataOverflow is set to be false, the domain will be adjusted when the minimum value
+      of data is smaller than domain[0] or the maximum value of data is greater than domain[1]
+      so that the axis displays all data values. If set to true, graphic elements (line, area, bars)
       will be clipped to conform to the specified domain.`,
     table: {
       type: {
@@ -128,12 +128,12 @@ const GeneralProps: Args = {
     },
   },
   domain: {
-    description: `Specify the domain of axis when the axis is a number axis. The length of domain should be 2, 
-      and we will validate the values in domain. And each element in the array can be a number, 
-      'auto', 'dataMin', 'dataMax', a string like 'dataMin - 20', 'dataMax + 100', or a function 
-      that accepts a single argument and returns a number. If any element of domain is set to be 
-      'auto', comprehensible scale ticks will be calculated, and the final domain of axis is generated 
-      by the ticks. If a function, receives '[dataMin, dataMax]', and must return a computed domain 
+    description: `Specify the domain of axis when the axis is a number axis. The length of domain should be 2,
+      and we will validate the values in domain. And each element in the array can be a number,
+      'auto', 'dataMin', 'dataMax', a string like 'dataMin - 20', 'dataMax + 100', or a function
+      that accepts a single argument and returns a number. If any element of domain is set to be
+      'auto', comprehensible scale ticks will be calculated, and the final domain of axis is generated
+      by the ticks. If a function, receives '[dataMin, dataMax]', and must return a computed domain
       as '[min, max]'.`,
     table: {
       type: {
@@ -144,7 +144,7 @@ const GeneralProps: Args = {
     },
   },
   interval: {
-    description: `If set 0, all the ticks will be shown. If set preserveStart", "preserveEnd" or "preserveStartEnd", 
+    description: `If set 0, all the ticks will be shown. If set preserveStart", "preserveEnd" or "preserveStartEnd",
       the ticks which is to be shown or hidden will be calculated automatically.`,
     table: {
       type: {
@@ -225,7 +225,7 @@ const GeneralProps: Args = {
     },
   },
   tick: {
-    description: `If set false, no ticks will be drawn. If set a object, the option is the configuration of ticks. 
+    description: `If set false, no ticks will be drawn. If set a object, the option is the configuration of ticks.
       If set a React element, the option is the custom react element of drawing ticks.`,
     table: {
       type: {
@@ -256,8 +256,8 @@ const GeneralProps: Args = {
     },
   },
   label: {
-    description: `If set a string or a number, default label will be drawn, and the option is content. 
-      If set a React element, the option is the custom react element of drawing label. 
+    description: `If set a string or a number, default label will be drawn, and the option is content.
+      If set a React element, the option is the custom react element of drawing label.
       If an object, the option is the props of a new Label instance.`,
     table: {
       type: {
@@ -271,7 +271,7 @@ const GeneralProps: Args = {
       \nWhen set to 'time', make sure to also set type to 'number' and to include a domain.`,
     table: {
       type: {
-        summary: `'auto' | 'linear' | 'pow' | 'sqrt' | 'log' | 'identity' | 'time' | 
+        summary: `'auto' | 'linear' | 'pow' | 'sqrt' | 'log' | 'identity' | 'time' |
           'band' | 'point' | 'ordinal' | 'quantile' | 'quantize' | 'utc' | 'sequential' | 'threshold' | Function`,
         defaultValue: 'auto',
       },
@@ -298,78 +298,6 @@ const GeneralProps: Args = {
       category: 'General',
     },
   },
-  onClick: {
-    description: 'The customized event handler of click on the ticks of this axis',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseDown: {
-    description: 'The customized event handler of mousedown on the the ticks of this axis',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseUp: {
-    description: 'The customized event handler of mouseup on the ticks of this axis',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseMove: {
-    description: 'The customized event handler of mousemove on the ticks of this axis',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseOver: {
-    description: 'The customized event handler of mouseover on the ticks of this axis',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseOut: {
-    description: 'The customized event handler of mouseout on the ticks of this axis',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseEnter: {
-    description: 'The customized event handler of mouseenter on the ticks of this axis',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseLeave: {
-    description: 'The customized event handler of mouseleave on the ticks of this axis',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
   tickMargin: {
     description: 'The margin between tick line and tick.',
     table: {
@@ -385,209 +313,31 @@ export default {
   component: XAxis,
   argTypes: {
     ...GeneralProps,
-    stroke: {
-      control: { type: 'color' },
-    },
   },
 };
 
-export const Simple = {
+export const API = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
-        <LineChart width={600} height={300} data={args.data}>
+        <LineChart width={600} height={300} data={coordinateWithValueData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
+          <XAxis {...args} />
           <YAxis />
           <Tooltip />
           <Legend />
-          {args.secondLine}
-          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          <Line dataKey="y" />
         </LineChart>
       </ResponsiveContainer>
     );
   },
   args: {
-    data: pageData,
-  },
-};
-
-export const DoubleLine = {
-  ...Simple,
-  args: {
-    data: pageData,
-    secondLine: <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />,
-  },
-};
-
-const SingleLineChart = {
-  render: (args: Record<string, any>) => {
-    const { data, lineDataKey = 'uv', ...xAxisArgs } = args;
-
-    return (
-      <ResponsiveContainer width="100%" height={500}>
-        <LineChart width={600} height={300} data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" {...xAxisArgs} />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey={lineDataKey} stroke="#82ca9d" />
-        </LineChart>
-      </ResponsiveContainer>
-    );
-  },
-  args: {
-    data: pageData,
-  },
-};
-
-export const StringTypeData = {
-  ...SingleLineChart,
-  args: {
-    data: pageData,
-  },
-};
-
-export const NumberTypeData = {
-  ...SingleLineChart,
-  args: {
-    data: coordinateWithValueData,
     dataKey: 'x',
+    domain: [100, 500],
     type: 'number',
-    lineDataKey: 'y',
-  },
-};
-
-export const TimestampTypeData = {
-  ...SingleLineChart,
-  args: {
-    data: dateWithValueData,
-    dataKey: 'time',
-    domain: ['auto', 'auto'],
-    type: 'number',
-    lineDataKey: 'value',
-  },
-};
-
-export const DateTypeData = {
-  ...SingleLineChart,
-  args: {
-    data: timeData,
-    dataKey: 'x',
-    lineDataKey: 'y',
-  },
-};
-
-export const TickFormatterWithTimestamp = {
-  ...SingleLineChart,
-  args: {
-    data: dateWithValueData,
-    dataKey: 'time',
-    domain: ['auto', 'auto'],
-    scale: 'time',
-    type: 'number',
-    lineDataKey: 'value',
-    tickFormatter: (value: number) =>
-      new Date(value).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-      }),
-  },
-};
-
-export const TickFormatterWithRotation = {
-  ...SingleLineChart,
-  args: {
-    data: pageData,
+    allowDataOverflow: true,
     tickMargin: 20,
     angle: 45,
-  },
-  parameters: {
-    controls: {
-      include: ['data', 'angle', 'tickMargin'],
-    },
-  },
-};
-
-export const TimestampTypeDataScaleTime = {
-  ...SingleLineChart,
-  args: {
-    data: dateWithValueData,
-    dataKey: 'time',
-    domain: ['auto', 'auto'],
-    scale: 'time',
-    type: 'number',
-    lineDataKey: 'value',
-  },
-};
-
-export const NumberTypeDataWithCustomDomain = {
-  ...SingleLineChart,
-  args: {
-    data: coordinateWithValueData,
-    dataKey: 'x',
-    domain: [100, 500],
-    type: 'number',
-    lineDataKey: 'y',
-    allowDataOverflow: true,
-  },
-  parameters: {
-    controls: {
-      include: ['data', 'domain'],
-    },
-  },
-};
-
-export const NumberTypeDataAllowDataOverflow = {
-  ...SingleLineChart,
-  args: {
-    data: coordinateWithValueData,
-    dataKey: 'x',
-    domain: [100, 500],
-    type: 'number',
-    lineDataKey: 'y',
-    allowDataOverflow: true,
-  },
-  parameters: {
-    controls: {
-      include: ['data', 'allowDataOverflow'],
-    },
-  },
-};
-
-const customizedAxisTick = (props: { x: number; y: number; payload: { value: string } }) => {
-  const { x, y, payload } = props;
-
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">
-        {payload.value}
-      </text>
-    </g>
-  );
-};
-
-export const CustomizedTicks = {
-  ...SingleLineChart,
-  args: {
-    data: pageData,
-    tick: customizedAxisTick,
-  },
-  parameters: {
-    controls: {
-      include: ['data'],
-    },
-  },
-};
-
-export const CustomizedTickLabel = {
-  ...SingleLineChart,
-  args: {
-    data: pageData,
-    label: { value: 'Pages', position: 'insideBottomRight', offset: 0 },
+    label: { value: 'The Axis Label', position: 'insideBottomRight', offset: 0 },
   },
 };
