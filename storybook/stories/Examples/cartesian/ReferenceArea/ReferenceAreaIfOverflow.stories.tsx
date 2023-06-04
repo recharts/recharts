@@ -1,6 +1,6 @@
+import React from 'react';
 import { expect } from '@storybook/jest';
 import { within } from '@storybook/testing-library';
-import React from 'react';
 import { ComposedChart, ReferenceArea, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from '../../../../../src';
 import { pageData } from '../../../data';
 
