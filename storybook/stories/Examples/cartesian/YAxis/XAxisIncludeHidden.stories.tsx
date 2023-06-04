@@ -24,8 +24,7 @@ export const WithIncludeHidden = {
         <>
           <ComposedChart width={400} height={400} data={pageData}>
             <XAxis dataKey="name" scale="band" />
-            <YAxis orientation="left" includeHidden={false} label="does not include hidden" />
-            <YAxis includeHidden orientation="right" label="does include hidden" />
+            <YAxis includeHidden />
             <Legend onClick={handleLegendClick} />
             <Bar dataKey="pv" fill="blue" hide={!activeKeys.includes('pv')} />
             <Bar dataKey="amt" fill="green" hide={!activeKeys.includes('amt')} />
