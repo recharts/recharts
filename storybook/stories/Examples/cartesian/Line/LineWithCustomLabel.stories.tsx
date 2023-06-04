@@ -11,9 +11,10 @@ export default {
 
 const renderLabel = (props: { index: number; x: number; y: number }) => {
   const { index, x, y } = props;
+
   return (
     <text key={index} x={x} y={y} className="customized-label">
-      {`${x}, ${y}`}
+      {`Customized Label: ${x}, ${y}`}
     </text>
   );
 };
