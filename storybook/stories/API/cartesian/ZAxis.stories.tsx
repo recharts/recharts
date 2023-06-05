@@ -49,17 +49,17 @@ export default {
   component: ZAxis,
 };
 
-export const General = {
+export const API = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
-          <XAxis type="number" dataKey="uv" name="uv" unit="cm" />
-          <YAxis type="number" dataKey="amt" name="amt" unit="kg" />
-          <ZAxis type="number" dataKey="pv" range={[0, 2000]} name="pv" unit="km" {...args} />
+          <XAxis type="number" dataKey="uv" />
+          <YAxis type="number" dataKey="amt" />
+          <ZAxis {...args} />
           <CartesianGrid />
-          <Scatter name="pageData" data={pageData} fill="#347300" />
-          <Tooltip trigger="click" />
+          <Scatter name="pageData" data={pageData} />
+          <Tooltip />
         </ScatterChart>
       </ResponsiveContainer>
     );
@@ -67,11 +67,10 @@ export const General = {
   args: {
     ...getStoryArgsFromArgsTypesObject(GeneralProps),
     unit: 'km',
+    name: 'A name',
+    dataKey: 'pv',
     range: [0, 2000],
     type: 'number',
     scale: 'auto',
-  },
-  parameters: {
-    controls: { include: Object.keys(GeneralProps) },
   },
 };

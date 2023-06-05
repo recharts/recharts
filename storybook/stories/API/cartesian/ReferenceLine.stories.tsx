@@ -1,8 +1,6 @@
-import { expect } from '@storybook/jest';
-import { within } from '@storybook/testing-library';
 import React from 'react';
-import { Args, StoryObj } from '@storybook/react';
-import { Area, AreaChart, ReferenceLine, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from '../../../../src';
+import { Args } from '@storybook/react';
+import { ComposedChart, Line, ReferenceLine, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { GeneralStyle } from '../props/Styles';
@@ -15,14 +13,14 @@ import {
 const GeneralProps: Args = {
   ...ReferenceComponentGeneralArgs,
   x: {
-    description: `If set a string or a number, a vertical line perpendicular to the x-axis specified by xAxisId 
-    will be drawn. If the specified x-axis is a number axis, the type of x must be Number. If the specified x-axis 
+    description: `If set a string or a number, a vertical line perpendicular to the x-axis specified by xAxisId
+    will be drawn. If the specified x-axis is a number axis, the type of x must be Number. If the specified x-axis
     is a category axis, the value of x must be one of the categories, otherwise no line will be drawn.`,
     table: { type: { summary: 'number | string' }, category: 'General' },
   },
   y: {
-    description: `If set a string or a number, a horizontal line perpendicular to the y-axis specified by yAxisId 
-    will be drawn. If the specified y-axis is a number axis, the type of y must be Number. If the specified y-axis 
+    description: `If set a string or a number, a horizontal line perpendicular to the y-axis specified by yAxisId
+    will be drawn. If the specified y-axis is a number axis, the type of y must be Number. If the specified y-axis
     is a category axis, the value of y must be one of the catagories, otherwise no line will be drawn.`,
     table: { type: { summary: 'number | string' }, category: 'General' },
   },
@@ -34,8 +32,8 @@ const GeneralProps: Args = {
 
 const LabelProps: Args = {
   label: {
-    description: `If set a string or a number, default label will be drawn, and the option is content. 
-    If set a React element, the option is the custom react element of drawing label. If set a function, 
+    description: `If set a string or a number, default label will be drawn, and the option is content.
+    If set a React element, the option is the custom react element of drawing label. If set a function,
     the function will be called to render customized label.`,
     table: {
       type: {
@@ -63,7 +61,7 @@ const StyleProps: Args = {
     table: { type: { summary: "'start' | 'middle' | 'end'" }, category: 'Style' },
   },
   shape: {
-    description: `If set a ReactElement, the shape of the line can be customized. If set a function, 
+    description: `If set a ReactElement, the shape of the line can be customized. If set a function,
     the function will be called to render a customized shape.`,
     table: {
       type: {
@@ -103,11 +101,11 @@ export default {
   component: ReferenceLine,
 };
 
-export const General = {
+export const API = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
-        <AreaChart
+        <ComposedChart
           data={pageData}
           margin={{
             top: 5,
@@ -119,59 +117,19 @@ export const General = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis type="number" />
-          <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-          <ReferenceLine y={1520} stroke="red" strokeDasharray="3 3" {...args} />
-        </AreaChart>
+          <ReferenceLine {...args} />
+          <Line dataKey="uv" />
+        </ComposedChart>
       </ResponsiveContainer>
     );
   },
   args: {
     ...getStoryArgsFromArgsTypesObject(GeneralProps),
-  },
-  parameters: {
-    controls: { include: Object.keys(GeneralProps) },
-  },
-};
-
-export const Style: StoryObj = {
-  ...General,
-  args: {
     ...getStoryArgsFromArgsTypesObject(StyleProps),
+    y: 1520,
     stroke: 'blue',
     strokeWidth: 2,
     strokeDasharray: '4 1',
     label: { fill: 'red', fontSize: 20 },
   },
-  parameters: {
-    controls: { include: Object.keys(StyleProps) },
-  },
-};
-
-export const IfOverflow = {
-  ...General,
-  args: {
-    ifOverflow: 'extendDomain',
-    y: 1700,
-  },
-  parameters: { controls: { include: ['ifOverflow', 'y'] } },
-  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
-    const { findByText } = within(canvasElement);
-    /**
-     * assert that when ifOverflow="extendDomain" 1800 becomes the new domain y-max.
-     * this test will fail when the user changes the ifOverflow arg, but it will give us confidence
-     * that 'extendDomain' behavior remains the same.
-     */
-    expect(await findByText('1800')).toBeInTheDocument();
-  },
-};
-
-export const Segment = {
-  ...General,
-  args: {
-    segment: [
-      { x: 'Page A', y: 0 },
-      { x: 'Page E', y: 1500 },
-    ],
-  },
-  parameters: { controls: { include: ['segment'] } },
 };
