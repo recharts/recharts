@@ -10,7 +10,7 @@ import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
-import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
+import { ErrorBar, ErrorBarDataPointFormatter, Props as ErrorBarProps } from './ErrorBar';
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
@@ -21,7 +21,7 @@ import { D3Scale, LegendType, TooltipType, AnimationTiming, ChartOffset, DataKey
 
 type LineDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
 
-interface LinePointItem extends CurvePoint {
+export interface LinePointItem extends CurvePoint {
   value?: number;
   payload?: any;
 }
@@ -263,14 +263,14 @@ export class Line extends PureComponent<Props, State> {
       return null;
     }
 
-    function dataPointFormatter(dataPoint: LinePointItem, dataKey: Props['dataKey']) {
+    const dataPointFormatter: ErrorBarDataPointFormatter = (dataPoint: LinePointItem, dataKey) => {
       return {
         x: dataPoint.x,
         y: dataPoint.y,
         value: dataPoint.value,
         errorVal: getValueByDataKey(dataPoint.payload, dataKey),
       };
-    }
+    };
 
     const errorBarProps = {
       clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,

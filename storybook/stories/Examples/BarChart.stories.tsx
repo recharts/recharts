@@ -15,6 +15,7 @@ import {
   ComposedChart,
   LabelList,
   Brush,
+  ErrorBar,
 } from '../../../src';
 
 export default {
@@ -86,6 +87,39 @@ export const Stacked = {
           <Legend />
           <Bar dataKey="pv" stackId="a" fill="#8884d8" />
           <Bar dataKey="uv" stackId="a" fill="#82ca9d" />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+};
+
+const pvErrorData = pageData.map(d => ({ ...d, pvError: [100, 200] }));
+
+export const StackedWithErrorBar = {
+  render: () => {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          width={500}
+          height={300}
+          data={pvErrorData}
+          margin={{
+            top: 20,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+          layout="vertical"
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis type="number" />
+          <YAxis dataKey="name" type="category" />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="pv" stackId="a" fill="#8884d8" />
+          <Bar dataKey="uv" stackId="a" fill="#82ca9d">
+            <ErrorBar dataKey="pvError" width={5} stroke="red" direction="x" />
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     );
