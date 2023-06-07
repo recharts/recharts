@@ -14,33 +14,33 @@ describe('<Bar />', () => {
   ];
 
   it(`Render ${data.length} rectangles in a simple Bar`, () => {
-    const wrapper = render(
+    const { container } = render(
       <Surface width={500} height={500}>
-        <Bar isAnimationActive={false} layout="horizontal" data={data} dataKey="value" />
+        <Bar isAnimationActive={false} layout="horizontal" data={data} dataKey="value" data-testid="customized-bar" />
       </Surface>,
     );
 
-    expect(wrapper.getAllByRole('img')).toHaveLength(data.length);
+    expect(container.querySelectorAll('.recharts-bar-rectangle')).toHaveLength(data.length);
   });
 
   it(`Render ${data.length} rectangles in a vertical Bar`, () => {
-    const wrapper = render(
+    const { container } = render(
       <Surface width={500} height={500}>
         <Bar isAnimationActive={false} layout="vertical" data={data} dataKey="value" />
       </Surface>,
     );
 
-    expect(wrapper.getAllByRole('img')).toHaveLength(data.length);
+    expect(container.querySelectorAll('.recharts-bar-rectangle')).toHaveLength(data.length);
   });
 
   it("Don't render any rectangle when data is empty", () => {
-    const wrapper = render(
+    const { container } = render(
       <Surface width={500} height={500}>
         <Bar data={[]} dataKey="value" />
       </Surface>,
     );
 
-    expect(wrapper.queryAllByRole('img')).toHaveLength(0);
+    expect(container.querySelectorAll('.recharts-bar-rectangle')).toHaveLength(0);
   });
 
   describe('With background', () => {
