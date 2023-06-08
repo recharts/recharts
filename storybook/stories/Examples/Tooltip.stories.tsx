@@ -15,9 +15,11 @@ export const LockedByClick = {
     // Their update is interrupted by the click event, so we need to store them in a state.
     const [tooltipData, setTooltipData] = React.useState<{ payload?: unknown[]; label?: string; x?: number }>({});
 
-    // A custom Tooltip that updates the payload of the tooltip if the chart is locked, and either way always renders using the normal Tooltip.
+    // A custom Tooltip that updates the payload of the tooltip if the
+    // chart is locked, and either way always renders using the normal Tooltip.
     const CustomTooltip = (props: any) => {
-      // If the chart is locked, and the payload is not empty, and the x position of the tooltip has changed, update the tooltipData.
+      // If the chart is locked, and the payload is not empty, and the
+      // x position of the tooltip has changed, update the tooltipData.
       if (!isLocked && props.payload && props.payload.length > 0 && props.coordinate.x !== tooltipData.x) {
         setTooltipData({ payload: props.payload, x: props.coordinate.x, label: props.label });
       }
