@@ -9,6 +9,8 @@ import {
   curveBasisClosed,
   curveBasisOpen,
   curveBasis,
+  curveBumpX,
+  curveBumpY,
   curveLinearClosed,
   curveLinear,
   curveMonotoneX,
@@ -32,6 +34,8 @@ const CURVE_FACTORIES: CurveFactories = {
   curveBasisClosed,
   curveBasisOpen,
   curveBasis,
+  curveBumpX,
+  curveBumpY,
   curveLinearClosed,
   curveLinear,
   curveMonotoneX,
@@ -46,6 +50,9 @@ export type CurveType =
   | 'basis'
   | 'basisClosed'
   | 'basisOpen'
+  | 'bumpX'
+  | 'bumpY'
+  | 'bump'
   | 'linear'
   | 'linearClosed'
   | 'natural'
@@ -73,7 +80,7 @@ const getCurveFactory = (type: CurveType, layout: LayoutType) => {
 
   const name = `curve${_.upperFirst(type)}`;
 
-  if (name === 'curveMonotone' && layout) {
+  if ((name === 'curveMonotone' || name === 'curveBump') && layout) {
     return CURVE_FACTORIES[`${name}${layout === 'vertical' ? 'Y' : 'X'}`];
   }
   return CURVE_FACTORIES[name] || curveLinear;
