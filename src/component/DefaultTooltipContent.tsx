@@ -19,7 +19,7 @@ export type Formatter<TValue extends ValueType, TName extends NameType> = (
   item: Payload<TValue, TName>,
   index: number,
   payload: Array<Payload<TValue, TName>>,
-) => [React.ReactNode, React.ReactNode] | React.ReactNode;
+) => [React.ReactNode, TName] | React.ReactNode;
 
 export interface Payload<TValue extends ValueType, TName extends NameType> {
   type?: TooltipType;
