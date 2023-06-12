@@ -127,7 +127,11 @@ export class DefaultTooltipContent<TValue extends ValueType, TName extends NameT
                 }
                 return (
                   // eslint-disable-next-line react/no-array-index-key
-                  <li className="recharts-tooltip-item" key={`tooltip-item-${i}`} style={finalItemStyle}>
+                  <li
+                    className="recharts-tooltip-item"
+                    key={`tooltip-item-${payloadLabel}-${i}`}
+                    style={finalItemStyle}
+                  >
                     {isNumOrStr(name) ? <span className="recharts-tooltip-item-name">{name}</span> : null}
                     {isNumOrStr(name) ? <span className="recharts-tooltip-item-separator">{separator}</span> : null}
                     <span className="recharts-tooltip-item-value">{value}</span>
