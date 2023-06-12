@@ -2130,18 +2130,30 @@ export const generateCategoricalChart = ({
         if (activeTooltipIndex >= 0) {
           let activePoint, basePoint;
 
-          if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
-            // number transform to string
-            const specifiedKey =
-              typeof tooltipAxis.dataKey === 'function'
-                ? findWithPayload
-                : 'payload.'.concat(tooltipAxis.dataKey.toString());
-            activePoint = findEntryInArray(points, specifiedKey, activeLabel);
-            basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
-          } else {
-            activePoint = points?.[activeTooltipIndex];
-            basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
-          }
+        if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
+          // number transform to string
+          const specifiedKey =
+            typeof tooltipAxis.dataKey === 'function'
+              ? findWithPayload
+              : 'payload.'.concat(tooltipAxis.dataKey.toString());
+          activePoint = findEntryInArray(points, specifiedKey, activeLabel);
+          basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
+        } else if (tooltipAxis.dataKey && tooltipAxis.allowSelectNearestValue) {
+          const activeValue = tooltipAxis?.categoricalDomain?.[activeTooltipIndex];
+          activePoint = points.reduce((acc, point) =>
+            Math.abs(activeValue - point?.payload[tooltipAxis.dataKey]) <
+            Math.abs(activeValue - acc?.payload[tooltipAxis.dataKey])
+              ? point
+              : acc,
+          );
+          basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+        } else {
+          // activePoint = points[activeTooltipIndex];
+          const activeValue = tooltipAxis?.categoricalDomain?.[activeTooltipIndex];
+          activePoint = points.find(point => point?.payload[tooltipAxis.dataKey] === activeValue);
+
+          basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+        }
 
           if (activeShape || activeBar) {
             const activeIndex =
