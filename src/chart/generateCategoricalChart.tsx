@@ -218,6 +218,7 @@ const getTooltipContent = (
   activeLabel?: string,
 ): any[] => {
   const { graphicalItems, tooltipAxis } = state;
+  const { dataKey } = tooltipAxis;
   const displayedData = getDisplayedData(chartData, state);
 
   if (activeIndex < 0 || !graphicalItems || !graphicalItems.length || activeIndex >= displayedData.length) {
@@ -238,6 +239,21 @@ const getTooltipContent = (
       // graphic child has data props
       const entries = data === undefined ? displayedData : data;
       payload = findEntryInArray(entries, tooltipAxis.dataKey, activeLabel);
+    } else if (tooltipAxis.dataKey && tooltipAxis.allowSelectNearestValue && tooltipAxis?.categoricalDomain) {
+      const entries = data === undefined ? displayedData : data;
+      const value = tooltipAxis?.categoricalDomain?.[activeIndex];
+
+      const matchingData: any = entries.reduce((acc: any, entry: any) =>
+        Math.abs(value - entry[dataKey as string]) < Math.abs(value - acc[dataKey as string]) ? entry : acc,
+      );
+      payload = matchingData;
+    } else if (tooltipAxis.dataKey && tooltipAxis?.categoricalDomain) {
+      const entries = data === undefined ? displayedData : data;
+
+      const value = tooltipAxis?.categoricalDomain?.[activeIndex];
+      const matchingData: any = entries.find((entry: any) => entry[dataKey as string] === value);
+
+      payload = matchingData;
     } else {
       payload = (data && data[activeIndex]) || displayedData[activeIndex];
     }
@@ -270,12 +286,14 @@ const getTooltipData = (state: CategoricalChartState, chartData: any[], layout: 
     const activeLabel = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;
     const activePayload = getTooltipContent(state, chartData, activeIndex, activeLabel);
     const activeCoordinate = getActiveCoordinate(layout, ticks, activeIndex, rangeData);
+    const activeDataKey = state?.tooltipAxis?.dataKey;
 
     return {
       activeTooltipIndex: activeIndex,
       activeLabel,
       activePayload,
       activeCoordinate,
+      activeDataKey,
     };
   }
 
@@ -749,6 +767,9 @@ export interface CategoricalChartState {
 
   /** active tooltip payload */
   activePayload?: any[];
+
+  /** datakey queried for tooltip */
+  activeDataKey?: any;
 
   tooltipAxisBandSize?: number;
 
@@ -1934,7 +1955,7 @@ export const generateCategoricalChart = ({
         return null;
       }
 
-      const { isTooltipActive, activeCoordinate, activePayload, activeLabel, offset } = this.state;
+      const { isTooltipActive, activeCoordinate, activePayload, activeLabel, offset, activeDataKey } = this.state;
 
       return cloneElement(tooltipItem, {
         viewBox: { ...offset, x: offset.left, y: offset.top },
@@ -1942,6 +1963,7 @@ export const generateCategoricalChart = ({
         label: activeLabel,
         payload: isTooltipActive ? activePayload : [],
         coordinate: activeCoordinate,
+        tooltipDatakey: activeDataKey,
       });
     };
 
@@ -2087,8 +2109,20 @@ export const generateCategoricalChart = ({
               : 'payload.'.concat(tooltipAxis.dataKey.toString());
           activePoint = findEntryInArray(points, specifiedKey, activeLabel);
           basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
+        } else if (tooltipAxis.dataKey && tooltipAxis.allowSelectNearestValue) {
+          const activeValue = tooltipAxis?.categoricalDomain?.[activeTooltipIndex];
+          activePoint = points.reduce((acc, point) =>
+            Math.abs(activeValue - point?.payload[tooltipAxis.dataKey]) <
+            Math.abs(activeValue - acc?.payload[tooltipAxis.dataKey])
+              ? point
+              : acc,
+          );
+          basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
         } else {
-          activePoint = points[activeTooltipIndex];
+          // activePoint = points[activeTooltipIndex];
+          const activeValue = tooltipAxis?.categoricalDomain?.[activeTooltipIndex];
+          activePoint = points.find(point => point?.payload[tooltipAxis.dataKey] === activeValue);
+
           basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
         }
 

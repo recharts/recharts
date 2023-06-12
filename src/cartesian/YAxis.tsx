@@ -49,4 +49,5 @@ YAxis.defaultProps = {
   allowDataOverflow: false,
   scale: 'auto',
   reversed: false,
+  allowSelectNearestValue: false,
 };

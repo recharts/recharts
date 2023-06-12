@@ -1110,6 +1110,11 @@ export interface BaseAxisProps {
   label?: string | number | ReactElement | object;
   /** The HTML element's class name */
   className?: string;
+  /**
+   * When the cursor selects a value on the axis which is not present on another dataset,
+   * allow the nearest value to be selected instead.
+   */
+  allowSelectNearestValue?: boolean;
 }
 
 export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart';
