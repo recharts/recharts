@@ -1115,6 +1115,8 @@ export interface BaseAxisProps {
    * allow the nearest value to be selected instead.
    */
   allowSelectNearestValue?: boolean;
+
+  categoricalDomain?: any;
 }
 
 export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart';
