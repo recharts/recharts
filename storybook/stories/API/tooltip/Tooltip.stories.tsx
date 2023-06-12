@@ -88,6 +88,23 @@ export const MultipleValuedTooltip = {
   },
 };
 
+export const TriggerTooltipByClick = {
+  render: (tooltipArgs: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart data={subjectData}>
+          <Tooltip {...tooltipArgs} trigger="click" />
+          <XAxis dataKey="subject" />
+          <YAxis />
+          {Marks.map(({ marks, fill }) => (
+            <Line key={marks} dataKey={marks} fill={fill} />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+};
+
 const CustomMultipleValueTooltip = ({ active, payload }: CustomTooltipProps) => {
   if (active && payload && payload.length > 0) {
     return (
