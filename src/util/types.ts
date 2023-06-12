@@ -1165,6 +1165,8 @@ export interface BaseAxisProps {
    * allow the nearest value to be selected instead.
    */
   allowSelectNearestValue?: boolean;
+
+  categoricalDomain?: any;
 }
 
 /** Defines how ticks are placed and whether / how tick collisions are handled.
