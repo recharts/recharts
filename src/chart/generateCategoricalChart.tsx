@@ -2138,7 +2138,7 @@ export const generateCategoricalChart = ({
               : 'payload.'.concat(tooltipAxis.dataKey.toString());
           activePoint = findEntryInArray(points, specifiedKey, activeLabel);
           basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
-        } else if (tooltipAxis.dataKey && tooltipAxis.allowSelectNearestValue) {
+        } else if (tooltipAxis.dataKey && tooltipAxis.allowSelectNearestValue && tooltipAxis?.categoricalDomain) {
           const activeValue = tooltipAxis?.categoricalDomain?.[activeTooltipIndex];
           activePoint = points.reduce((acc: any, point: any) =>
             Math.abs(activeValue - point?.payload[tooltipAxis.dataKey as string]) <
@@ -2147,11 +2147,12 @@ export const generateCategoricalChart = ({
               : acc,
           );
           basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
-        } else {
-          // activePoint = points[activeTooltipIndex];
+        } else if (tooltipAxis.dataKey && tooltipAxis?.categoricalDomain) {
           const activeValue = tooltipAxis?.categoricalDomain?.[activeTooltipIndex];
           activePoint = points.find((point: any) => point?.payload[tooltipAxis.dataKey as string] === activeValue);
-
+          basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+        } else {
+          activePoint = points[activeTooltipIndex];
           basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
         }
 
