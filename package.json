@@ -64,7 +64,6 @@
     "react-dom": "^16.0.0 || ^17.0.0 || ^18.0.0"
   },
   "dependencies": {
-    "@storybook/addon-storysource": "^7.0.18",
     "classnames": "^2.2.5",
     "eventemitter3": "^4.0.1",
     "lodash": "^4.17.19",
@@ -93,6 +92,7 @@
     "@storybook/addon-interactions": "^7.0.18",
     "@storybook/addon-links": "^7.0.18",
     "@storybook/addon-mdx-gfm": "^7.0.18",
+    "@storybook/addon-storysource": "^7.0.18",
     "@storybook/jest": "^0.1.0",
     "@storybook/react": "^7.0.18",
     "@storybook/react-webpack5": "^7.0.18",
