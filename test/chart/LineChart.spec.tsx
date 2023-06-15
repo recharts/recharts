@@ -762,4 +762,30 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     jest.runAllTimers();
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
   });
+
+  test('Render a line with clipDot option on the dot and expect attributes not to be NaN', () => {
+    const { container } = render(
+      <LineChart width={width} height={height} data={data2}>
+        <Line type="monotone" dataKey="uv" stroke="#ff7300" dot={{ clipDot: false }} />
+        <Tooltip />
+        <XAxis dataKey="name" allowDataOverflow />
+      </LineChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
+    const clipPaths = container.getElementsByTagName('clipPath');
+    for (let i = 0; i < clipPaths.length; i++) {
+      const clipPath = clipPaths.item(i);
+      const rects = clipPath && clipPath.getElementsByTagName('rect');
+      for (let j = 0; j < clipPaths.length; j++) {
+        const rect = rects?.item(j);
+        if (rect) {
+          expect(Number(rect.getAttribute('height'))).not.toBeNaN();
+          expect(Number(rect.getAttribute('width'))).not.toBeNaN();
+          expect(Number(rect.getAttribute('x'))).not.toBeNaN();
+          expect(Number(rect.getAttribute('y'))).not.toBeNaN();
+        }
+      }
+    }
+  });
 });

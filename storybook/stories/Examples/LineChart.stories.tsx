@@ -345,6 +345,7 @@ export const ClipDot: StoryObj = {
             {...args}
             dot={{ clipDot: args.clipDot, r: 4, strokeWidth: 2, fill: '#ffffff', fillOpacity: 1 }}
           />
+          <Line isAnimationActive={false} dataKey="pv" {...args} dot={{ clipDot: args.clipDot }} />
           <Tooltip />
           <XAxis dataKey="name" allowDataOverflow />
           <YAxis />

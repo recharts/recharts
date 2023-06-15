@@ -465,7 +465,7 @@ export class Line extends PureComponent<Props, State> {
     const needClipY = yAxis && yAxis.allowDataOverflow;
     const needClip = needClipX || needClipY;
     const clipPathId = _.isNil(id) ? this.id : id;
-    const { r, strokeWidth } = filterProps(dot) || { r: 3, strokeWidth: 2 };
+    const { r = 3, strokeWidth = 2 } = filterProps(dot) ?? { r: 3, strokeWidth: 2 };
     const { clipDot = true } = dot as DotProps;
     const dotSize = r * 2 + strokeWidth;
 
