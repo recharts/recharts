@@ -188,8 +188,8 @@ export const CustomShape = {
         <XAxis dataKey="name" />
         <YAxis />
         <Bar dataKey="uv" fill="#8884d8" shape={<TriangleBar />} label={{ position: 'top' }}>
-          {pageData.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={colors[index % 20]} />
+          {pageData.map(({ name }, index) => (
+            <Cell key={`cell-${name}`} fill={colors[index % 20]} />
           ))}
         </Bar>
       </BarChart>
@@ -361,8 +361,8 @@ export const WithCustomizedEvent = {
           data={pageData}
         >
           <Bar onClick={(_data, index) => setActiveIndex(index)} dataKey="uv" isAnimationActive={false}>
-            {pageData.map((entry: any, index: number) => (
-              <Cell cursor="pointer" fill={index === activeIndex ? '#82ca9d' : '#8884d8'} key={`cell-${index}`} />
+            {pageData.map(({ name }, index: number) => (
+              <Cell cursor="pointer" fill={index === activeIndex ? '#82ca9d' : '#8884d8'} key={`cell-${name}`} />
             ))}
           </Bar>
         </ComposedChart>
