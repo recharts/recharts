@@ -26,8 +26,8 @@ export const CustomizedEvent = {
             data={pageData}
           >
             <Bar onClick={(_data, index) => setActiveIndex(index)} dataKey="uv" isAnimationActive={false}>
-              {pageData.map((_, index: number) => (
-                <Cell cursor="pointer" fill={index === activeIndex ? '#82ca9d' : '#8884d8'} key={`cell-${index}`} />
+              {pageData.map(({ name }, index: number) => (
+                <Cell cursor="pointer" fill={index === activeIndex ? '#82ca9d' : '#8884d8'} key={`cell-${name}`} />
               ))}
             </Bar>
           </ComposedChart>

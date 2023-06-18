@@ -106,8 +106,8 @@ export const PercentAreaChart = {
         <div className="customized-tooltip-content">
           <p className="total">{`${label} (Total: ${total})`}</p>
           <ul className="list">
-            {payload.map((entry, index) => (
-              <li key={`item-${index}`} style={{ color: entry.color }}>
+            {payload.map(entry => (
+              <li key={`item-${entry.name}`} style={{ color: entry.color }}>
                 {`${entry.name}: ${entry.value}(${getPercent(entry.value, total)})`}
               </li>
             ))}
