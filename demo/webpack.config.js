@@ -3,6 +3,7 @@ const { LoaderOptionsPlugin } = require('webpack');
 
 module.exports = {
   mode: 'development',
+  devServer: { allowedHosts: 'all'},
   context: __dirname,
   devtool: 'inline-source-map',
   entry: ['./index.tsx'],

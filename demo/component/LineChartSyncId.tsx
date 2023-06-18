@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { LineChart, Line, XAxis, YAxis, Tooltip } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, DefaultTooltipContent } from 'recharts';
 
 const data1 = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
@@ -30,7 +30,17 @@ const initialState = {
 
 // Example callback function that can be used to specify the algorithm
 const syncMethodFunction = (_tooltipTicks: [], data: any) => data.activeTooltipIndex + 1;
+const CustomTooltip = ({ active, payload, label, coordinate }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="custom-tooltip" style={{border: '2px solid #000'}}>
+        <p className="label">{`${label} : ${coordinate.value}`}</p>
+      </div>
+    );
+  }
 
+  return null;
+};
 // eslint-disable-next-line import/no-default-export
 export default class Demo extends Component<any, any> {
   static displayName = 'LineChartDemo Sync Method';
@@ -67,23 +77,24 @@ export default class Demo extends Component<any, any> {
         </p>
         <p>A simple LineChart with syncId = test</p>
         <div className="line-chart-wrapper">
-          <LineChart width={width} height={height} data={data1} margin={margin} syncId="test" syncMethod={syncMethod}>
-            <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
-            <Tooltip />
+          <LineChart width={width} height={height} data={data1} margin={margin} syncId="test" onCLick={(a,b,c,d)=>{
+              console.log('a,b,c,d',{a,b,c,d})
+            }}>
+            <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" onCLick={(a,b,c,d)=>{
+              console.log('a,b,c,d',{a,b,c,d})
+            }}/>
+                        <Line isAnimationActive={false} type="monotone" dataKey="pv" stroke="#ff7300" onCLick={(a,b,c,d)=>{
+              console.log('a,b,c,d',{a,b,c,d})
+            }}/>
+            <Tooltip content={(props)=> {
+                console.log('TOOLTIP CONTENT PROPS:::', props)
+              return <CustomTooltip {...props} /> 
+            }}/>
             <XAxis dataKey="name" />
             <YAxis />
           </LineChart>
         </div>
 
-        <p>A simple LineChart with syncId = test with axis labels in reverse order</p>
-        <div className="line-chart-wrapper">
-          <LineChart width={width} height={height} data={data2} margin={margin} syncId="test" syncMethod={syncMethod}>
-            <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
-            <Tooltip />
-            <XAxis dataKey="name" />
-            <YAxis />
-          </LineChart>
-        </div>
       </div>
     );
   }
