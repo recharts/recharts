@@ -410,6 +410,44 @@ export class Brush extends PureComponent<Props, State> {
     );
   }
 
+  handleTravellerMoveKeyboard(direction: 1 | -1, id: BrushTravellerId) {
+    // scaleValues are a list of coordinates. For example: [65, 250, 435, 620, 805, 990].
+    const { scaleValues, startX, endX } = this.state;
+    // currentScaleValue refers to which coordinate the current traveller should be placed at.
+    const currentScaleValue = this.state[id];
+
+    const currentIndex = scaleValues.indexOf(currentScaleValue);
+    if (currentIndex === -1) {
+      return;
+    }
+
+    const newIndex = currentIndex + direction;
+    if (newIndex === -1 || newIndex >= scaleValues.length) {
+      return;
+    }
+
+    const newScaleValue = scaleValues[newIndex];
+
+    // Prevent travellers from being on top of each other or overlapping
+    if ((id === 'startX' && newScaleValue >= endX) || (id === 'endX' && newScaleValue <= startX)) {
+      return;
+    }
+
+    this.setState(
+      {
+        [id]: newScaleValue,
+      },
+      () => {
+        this.props.onChange(
+          this.getIndex({
+            startX: this.state.startX,
+            endX: this.state.endX,
+          }),
+        );
+      },
+    );
+  }
+
   renderBackground() {
     const { x, y, width, height, fill, stroke } = this.props;
 
@@ -448,11 +486,20 @@ export class Brush extends PureComponent<Props, State> {
 
     return (
       <Layer
+        tabIndex={0}
         className="recharts-brush-traveller"
         onMouseEnter={this.handleEnterSlideOrTraveller}
         onMouseLeave={this.handleLeaveSlideOrTraveller}
         onMouseDown={this.travellerDragStartHandlers[id]}
         onTouchStart={this.travellerDragStartHandlers[id]}
+        onKeyDown={e => {
+          if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) {
+            return;
+          }
+          e.preventDefault();
+          e.stopPropagation();
+          this.handleTravellerMoveKeyboard(e.key === 'ArrowRight' ? 1 : -1, id);
+        }}
         style={{ cursor: 'col-resize' }}
       >
         {Brush.renderTraveller(traveller, travellerProps)}
