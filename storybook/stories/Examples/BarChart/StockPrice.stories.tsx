@@ -123,8 +123,8 @@ export const StockPriceChart = {
           <Tooltip content={<CustomTooltip />} />
           <Legend />
           <Bar dataKey="openClose" fill="#8884d8" shape={<Candlestick />}>
-            {data.map((entry: any, index: number) => (
-              <Cell key={`cell-${index}`} />
+            {data.map(({ date }) => (
+              <Cell key={`cell-${date}`} />
             ))}
           </Bar>
         </BarChart>

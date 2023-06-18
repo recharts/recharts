@@ -603,8 +603,8 @@ export const WithCells = {
         <YAxis type="number" dataKey="y" name="weight" unit="kg" />
         <Tooltip cursor={{ strokeDasharray: '3 3' }} />
         <Scatter name="A school" data={data} fill="#8884d8">
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+          {data.map(({ x }, index) => (
+            <Cell key={`cell-${x}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Scatter>
       </ScatterChart>

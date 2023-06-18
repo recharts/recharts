@@ -44,8 +44,8 @@ export const CustomizedShape = {
             label={{ position: 'top' }}
             isAnimationActive={false}
           >
-            {pageData.map((_, index: number) => (
-              <Cell key={`cell-${index}`} fill={colors[index % 20]} />
+            {pageData.map(({ name }, index: number) => (
+              <Cell key={`cell-${name}`} fill={colors[index % 20]} />
             ))}
           </Bar>
         </ComposedChart>
