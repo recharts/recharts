@@ -54,6 +54,7 @@ type BrushTravellerId = 'startX' | 'endX';
 
 interface State {
   isTravellerMoving?: boolean;
+  isTravellerFocused?: boolean;
   isSlideMoving?: boolean;
   startX?: number;
   endX?: number;
@@ -101,6 +102,7 @@ const createScale = ({
     isTextActive: false,
     isSlideMoving: false,
     isTravellerMoving: false,
+    isTravellerFocused: false,
     startX: scale(startIndex),
     endX: scale(endIndex),
     scale,
@@ -487,6 +489,7 @@ export class Brush extends PureComponent<Props, State> {
     return (
       <Layer
         tabIndex={0}
+        role="slider"
         className="recharts-brush-traveller"
         onMouseEnter={this.handleEnterSlideOrTraveller}
         onMouseLeave={this.handleLeaveSlideOrTraveller}
@@ -499,6 +502,12 @@ export class Brush extends PureComponent<Props, State> {
           e.preventDefault();
           e.stopPropagation();
           this.handleTravellerMoveKeyboard(e.key === 'ArrowRight' ? 1 : -1, id);
+        }}
+        onFocus={() => {
+          this.setState({ isTravellerFocused: true });
+        }}
+        onBlur={() => {
+          this.setState({ isTravellerFocused: false });
         }}
         style={{ cursor: 'col-resize' }}
       >
@@ -566,7 +575,7 @@ export class Brush extends PureComponent<Props, State> {
 
   render() {
     const { data, className, children, x, y, width, height, alwaysShowText } = this.props;
-    const { startX, endX, isTextActive, isSlideMoving, isTravellerMoving } = this.state;
+    const { startX, endX, isTextActive, isSlideMoving, isTravellerMoving, isTravellerFocused } = this.state;
 
     if (
       !data ||
@@ -597,7 +606,8 @@ export class Brush extends PureComponent<Props, State> {
         {this.renderSlide(startX, endX)}
         {this.renderTravellerLayer(startX, 'startX')}
         {this.renderTravellerLayer(endX, 'endX')}
-        {(isTextActive || isSlideMoving || isTravellerMoving || alwaysShowText) && this.renderText()}
+        {(isTextActive || isSlideMoving || isTravellerMoving || isTravellerFocused || alwaysShowText) &&
+          this.renderText()}
       </Layer>
     );
   }
