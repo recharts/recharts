@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { Area, AreaChart, Legend, Tooltip, XAxis, YAxis } from '../../src';
+import { Area, AreaChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '../../src';
 
 describe('AccessibilityLayer', () => {
   const data = [
@@ -338,5 +338,74 @@ describe('AccessibilityLayer', () => {
       key: 'ArrowLeft',
     });
     expect(tooltip).toHaveTextContent('Page A');
+  });
+
+  const BugExample = () => {
+    const [toggle, setToggle] = useState(true);
+
+    return (
+      <div>
+        <button type="button" onClick={() => setToggle(!toggle)}>
+          Toggle
+        </button>
+
+        {/* Original bug only appeared when the margin property was used. Do not remove this property. */}
+        <AreaChart
+          width={500}
+          height={400}
+          data={data}
+          margin={{
+            top: 10,
+            right: 30,
+            left: 0,
+            bottom: 0,
+          }}
+          accessibilityLayer
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          {toggle && <Tooltip />}
+          <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
+          <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
+          <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
+        </AreaChart>
+      </div>
+    );
+  };
+
+  test('When a tooltip is removed, the AccessibilityLayer responds gracefully', () => {
+    const { container } = render(<BugExample />);
+
+    const svg = container.querySelector('svg');
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+
+    expect(tooltip?.textContent).toBe('');
+
+    svg?.focus();
+    expect(tooltip).toHaveTextContent('Page A');
+
+    // This makes typescript happy
+    if (svg === null) {
+      return;
+    }
+
+    // Make sure we move around, to get the AccessibilityManager's active index above 0
+    fireEvent.keyDown(svg, {
+      key: 'ArrowRight',
+    });
+    expect(tooltip).toHaveTextContent('Page B');
+
+    // Remove tooltip component
+    fireEvent.click(container.querySelector('button') as HTMLButtonElement);
+
+    expect(container.querySelector('.recharts-tooltip-wrapper')).toBeNull();
+
+    expect(() => {
+      svg?.focus();
+      fireEvent.keyDown(svg, {
+        key: 'ArrowRight',
+      });
+    }).not.toThrowError();
   });
 });
