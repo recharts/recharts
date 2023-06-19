@@ -39,9 +39,8 @@ export class AccessibilityManager {
     this.offset = offset ?? this.offset;
     this.mouseHandlerCallback = mouseHandlerCallback ?? this.mouseHandlerCallback;
 
-    if (this.activeIndex >= this.coordinateList.length) {
-      this.activeIndex = this.coordinateList.length - 1;
-    }
+    // Keep activeIndex in the bounds between 0 and the last coordinate index
+    this.activeIndex = Math.min(Math.max(this.activeIndex, 0), this.coordinateList.length - 1);
   }
 
   public focus() {
@@ -49,6 +48,13 @@ export class AccessibilityManager {
   }
 
   public keyboardEvent(e: any) {
+    // The AccessibilityManager relies on the Tooltip component. When tooltips suddenly stop existing,
+    // it can cause errors. We use this function to check. We don't want arrow keys to be processed
+    // if there are no tooltips, since that will cause unexpected behavior of users.
+    if (this.coordinateList.length === 0) {
+      return;
+    }
+
     switch (e.key) {
       case 'ArrowRight': {
         if (this.layout !== 'horizontal') {
@@ -74,6 +80,12 @@ export class AccessibilityManager {
 
   private spoofMouse() {
     if (this.layout !== 'horizontal') {
+      return;
+    }
+
+    // This can happen when the tooltips suddenly stop existing as children of the component
+    // That update doesn't otherwise fire events, so we have to double check here.
+    if (this.coordinateList.length === 0) {
       return;
     }
 
