@@ -173,12 +173,36 @@ export default {
   component: Polygon,
   argTypes: {
     points: {
-      description: 'The coordinates of all the vertexes of the polygon, like [{ x, y }].',
+      description: `The coordinates of all the verteces of the polygon, like [{ x, y }].<br/> By default. 
+      lines will be drawn to connect all verteces, in order to create a connected shape. If you want to 
+      skip drawing a line between 2 verteces, add a null point.`,
       table: {
         type: { summary: 'Coordinate[]' },
         category: 'General',
       },
       defaultValue: pointDefault,
+    },
+    baseLinePoints: {
+      description: `Provide another polygon to receive the same visual and event handling treatment. This is
+      intended to be used in cases like icons, where multiple shapes may be necessary for the same layer.`,
+      table: {
+        type: {
+          summary: 'Coordinate[]',
+        },
+        category: 'General',
+      },
+      defaultValue: [],
+    },
+    connectNulls: {
+      description: `Determines if null points should be filtered out of the draw order.<br/>If there are
+      null points, and connectNulls is not true, the fill style will be ignored.`,
+      table: {
+        type: {
+          summary: 'boolean',
+        },
+        category: 'General',
+      },
+      defaultValue: false,
     },
     stroke: GeneralStyle.stroke,
     fill: GeneralStyle.fill,
@@ -369,5 +393,71 @@ export const API = {
     points: pointDefault,
     stroke: '#000',
     fill: 'red',
+  },
+};
+
+export const UsingConnectNulls = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={500}>
+        <ComposedChart
+          width={250}
+          height={250}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <Customized component={<Polygon {...args} />} />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    points: [{ x: 50, y: 50 }, { x: 0, y: 100 }, { x: 0, y: 200 }, { x: 100, y: 200 }, { x: 100, y: 100 }, null],
+    stroke: '#000',
+    fill: 'red',
+    connectNulls: true,
+  },
+};
+
+export const UsingBaselinePoints = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={500}>
+        <ComposedChart
+          width={250}
+          height={250}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <Customized component={<Polygon {...args} />} />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    points: [
+      { x: 40, y: 20 },
+      { x: 60, y: 20 },
+      { x: 60, y: 60 },
+      { x: 70, y: 60 },
+      { x: 50, y: 90 },
+      { x: 30, y: 60 },
+      { x: 40, y: 60 },
+    ],
+    baseLinePoints: [
+      { x: 15, y: 95 },
+      { x: 85, y: 95 },
+    ],
+    stroke: '#000',
+    fill: 'red',
+    connectNulls: false,
   },
 };
