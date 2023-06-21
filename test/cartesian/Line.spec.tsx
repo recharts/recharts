@@ -21,6 +21,19 @@ describe('<Line />', () => {
     expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
   });
 
+  it('Does not throw when dot is null', () => {
+    const { container } = render(
+      <Surface width={500} height={500}>
+        {/* Test that the error Cannot read properties of null (reading 'clipDot') does not appear in JS projects */}
+        {/* eslint-disable-next-line */}
+        {/* @ts-ignore */}
+        <Line isAnimationActive={false} points={data} dot={null} />
+      </Surface>,
+    );
+
+    expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
+  });
+
   it("Don't render any path when data is empty", () => {
     const { container } = render(
       <Surface width={500} height={500}>

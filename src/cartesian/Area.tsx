@@ -24,9 +24,9 @@ import {
   DataKey,
   TickItem,
 } from '../util/types';
-import { filterProps } from '../util/ReactUtils';
+import { filterProps, isDotProps } from '../util/ReactUtils';
 
-type AreaDot =
+export type AreaDot =
   | ReactElement<SVGElement>
   | ((props: any) => ReactElement<SVGElement>)
   | ((props: any) => ReactElement<SVGElement>)
@@ -95,9 +95,6 @@ interface State {
   isAnimationFinished?: boolean;
   totalLength?: number;
 }
-
-const isDotProps = (dot: AreaDot): dot is DotProps =>
-  typeof dot === 'object' && 'cx' in dot && 'cy' in dot && 'r' in dot;
 
 export class Area extends PureComponent<Props, State> {
   static displayName = 'Area';
