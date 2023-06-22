@@ -1,10 +1,12 @@
 import _ from 'lodash';
 import React, { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
 import { isFragment } from 'react-is';
-
+import { DotProps } from '..';
 import { isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
 import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys } from './types';
+import { AreaDot } from '../cartesian/Area';
+import { LineDot } from '../cartesian/Line';
 
 const REACT_BROWSER_EVENT_MAP: Record<string, string> = {
   click: 'onClick',
@@ -259,6 +261,9 @@ const SVG_TAGS: string[] = [
 ];
 
 const isSvgElement = (child: any) => child && child.type && _.isString(child.type) && SVG_TAGS.indexOf(child.type) >= 0;
+
+export const isDotProps = (dot: LineDot | AreaDot): dot is DotProps =>
+  dot && typeof dot === 'object' && 'cx' in dot && 'cy' in dot && 'r' in dot;
 
 /**
  * Checks if the property is valid to spread onto an SVG element or onto a specific component

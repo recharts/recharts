@@ -12,14 +12,14 @@ import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
 import { ErrorBar, ErrorBarDataPointFormatter, Props as ErrorBarProps } from './ErrorBar';
 import { uniqueId, interpolateNumber } from '../util/DataUtils';
-import { findAllByType, filterProps } from '../util/ReactUtils';
+import { findAllByType, filterProps, isDotProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { D3Scale, LegendType, TooltipType, AnimationTiming, ChartOffset, DataKey, TickItem } from '../util/types';
 
-type LineDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
+export type LineDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
 
 export interface LinePointItem extends CurvePoint {
   value?: number;
@@ -466,7 +466,7 @@ export class Line extends PureComponent<Props, State> {
     const needClip = needClipX || needClipY;
     const clipPathId = _.isNil(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot) ?? { r: 3, strokeWidth: 2 };
-    const { clipDot = true } = dot as DotProps;
+    const { clipDot = true } = isDotProps(dot) ? dot : {};
     const dotSize = r * 2 + strokeWidth;
 
     return (
