@@ -93,6 +93,21 @@ describe('<Area />', () => {
     expect(screen.getAllByRole('cell')).toHaveLength(data.length);
   });
 
+  test('Does not throw when dot is null', () => {
+    const { container } = render(
+      <Surface width={500} height={500}>
+        {/* Test that the error Cannot read properties of null (reading 'clipDot') does not appear in JS projects */}
+        {/* eslint-disable-next-line */}
+        {/* @ts-ignore */}
+        <Area dataKey="value" points={data} dot={null} />
+      </Surface>,
+    );
+
+    expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(0);
+  });
+
   test("Don't render any path when data is empty", () => {
     const { container } = render(
       <Surface width={500} height={500}>
