@@ -292,7 +292,7 @@ export class RadialBar extends PureComponent<Props, State> {
         ...entry,
         ...adaptEventsOfChild(this.props, entry, i),
         key: `sector-${i}`,
-        className: 'recharts-radial-bar-sector',
+        className: `recharts-radial-bar-sector ${entry.className}`,
         forceCornerRadius: others.forceCornerRadius,
         cornerIsExternal: others.cornerIsExternal,
       };
