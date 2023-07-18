@@ -89,11 +89,11 @@ export class AccessibilityManager {
       return;
     }
 
-    const { x, y } = this.container.getBoundingClientRect();
+    const { x, y, height } = this.container.getBoundingClientRect();
     const { coordinate } = this.coordinateList[this.activeIndex];
 
     const pageX = x + coordinate;
-    const pageY = y + this.offset.top;
+    const pageY = y + this.offset.top + height / 2;
 
     this.mouseHandlerCallback({ pageX, pageY });
   }
