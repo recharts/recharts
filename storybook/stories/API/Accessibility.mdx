@@ -1,5 +1,5 @@
 import { curveCardinal } from 'victory-vendor/d3-shape';
-import { CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, LineChart, Line } from '../../../src';
+import { CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, LineChart, Line, Brush } from '../../../src';
 import { pageData } from '../data';
 import { CategoricalChartProps } from './props/ChartProps';
 
@@ -21,8 +21,11 @@ To see how this works, try the following chart, where the accessibility layer ha
         <XAxis dataKey="name" />
         <YAxis />
         <Tooltip />
+        <Brush />
     </LineChart>
 </ResponsiveContainer>
+
+This chart also contains a "brush", a range slider that lets you control what appears on the X-axis. You can tab to the "travellers" on the brush, and use the left/right arrow keys to adjust them.
 
 The code to generate this example is:
 ```jsx

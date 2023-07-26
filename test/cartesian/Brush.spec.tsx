@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Brush, LineChart, Line, BarChart } from '../../src';
 import { mockMouseEvent } from '../helper/mockMouseEvent';
 
@@ -60,9 +60,9 @@ describe('<Brush />', () => {
       </BarChart>,
     );
 
-    const brushSlide = container.querySelector('.recharts-brush-slide');
+    const brushSlide = container.querySelector('.recharts-brush-slide') as SVGRectElement;
 
-    const mouseOverEvent = mockMouseEvent('mouseover', brushSlide!, { pageX: 0, pageY: 0 });
+    const mouseOverEvent = mockMouseEvent('mouseover', brushSlide, { pageX: 0, pageY: 0 });
     mouseOverEvent.fire();
     expect(container.querySelectorAll('.recharts-brush-texts')).toHaveLength(1);
     expect(screen.getAllByText(data[0].date)).toHaveLength(1);
@@ -109,5 +109,81 @@ describe('<Brush />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-layer.recharts-brush-texts')).toHaveLength(1);
+  });
+
+  describe('Brush a11y features', () => {
+    test('Brush travellers should be marked up correctly', () => {
+      const { container } = render(
+        <BarChart width={400} height={100} data={data}>
+          <Brush dataKey="value" x={100} y={50} width={400} height={40} />
+        </BarChart>,
+      );
+
+      const travellers = container.querySelectorAll('.recharts-brush-traveller');
+      expect(travellers).toHaveLength(2);
+      travellers.forEach(travellerElement => {
+        // tabIndex=0 is necessary for a keyboard user to tab to an element.
+        // If this fails, the component ceases to be accessible in any way.
+        expect(travellerElement).toHaveProperty('tabIndex', 0);
+      });
+    });
+
+    test('Brush text should appear while travellers are in focus', async () => {
+      const { container } = render(
+        <BarChart width={400} height={100} data={data}>
+          <Brush dataKey="value" x={100} y={50} width={400} height={40} />
+        </BarChart>,
+      );
+
+      // By default, no text should appear
+      expect(container.querySelector('.recharts-brush-texts')).toBeNull();
+
+      // After focusing on a traveller, the text should appear
+      const traveller = container.querySelector('.recharts-brush-traveller') as SVGGElement;
+      fireEvent.focus(traveller);
+
+      await waitFor(() => {
+        expect(container.querySelector('.recharts-brush-texts')).not.toBeNull();
+      });
+
+      // After blurring that traveller, the text should disappear again
+      fireEvent.blur(traveller);
+
+      await waitFor(() => {
+        expect(container.querySelector('.recharts-brush-texts')).toBeNull();
+      });
+    });
+
+    test('Travellers should move when valid keyboard events are fired', async () => {
+      const { container } = render(
+        <BarChart width={400} height={100} data={data}>
+          <Brush dataKey="value" x={100} y={50} width={400} height={40} />
+        </BarChart>,
+      );
+
+      const traveller = container.querySelector('.recharts-brush-traveller') as SVGGElement;
+      fireEvent.focus(traveller);
+
+      await waitFor(() => {
+        expect(container.querySelector('.recharts-brush-texts')).not.toBeNull();
+      });
+
+      const text = container.querySelector('.recharts-brush-texts text[text-anchor="end"]') as SVGGElement;
+      expect(text?.textContent).toBe('10');
+
+      fireEvent.keyDown(traveller, {
+        key: 'ArrowRight',
+      });
+      await waitFor(() => {
+        expect(text.textContent).toBe('20');
+      });
+
+      fireEvent.keyDown(traveller, {
+        key: 'ArrowLeft',
+      });
+      await waitFor(() => {
+        expect(text.textContent).toBe('10');
+      });
+    });
   });
 });
