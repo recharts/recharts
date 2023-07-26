@@ -1,7 +1,7 @@
 /**
  * @fileOverview Rectangle
  */
-import React, { SVGProps, useLayoutEffect, useRef, useState } from 'react';
+import React, { SVGProps, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import { AnimationTiming } from '../util/types';
@@ -106,7 +106,7 @@ export const Rectangle: React.FC<Props> = props => {
   const pathRef = useRef<SVGPathElement>();
   const [totalLength, setTotalLength] = useState(-1);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (pathRef.current && pathRef.current.getTotalLength) {
       try {
         const pathTotalLength = pathRef.current.getTotalLength();
