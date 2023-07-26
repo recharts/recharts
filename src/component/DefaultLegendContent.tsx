@@ -28,6 +28,7 @@ export type Formatter = (
     color?: string;
     payload?: {
       strokeDasharray: ReactText;
+      value?: any;
     };
   },
   index: number,
@@ -40,6 +41,7 @@ export interface Payload {
   color?: string;
   payload?: {
     strokeDasharray: ReactText;
+    value?: any;
   };
   formatter?: Formatter;
   inactive?: boolean;
