@@ -105,7 +105,7 @@ type GetPathProps = Pick<Props, 'type' | 'points' | 'baseLine' | 'layout' | 'con
  * Calculate the path of curve
  * @return {String} path
  */
-const getPath = ({ type, points, baseLine, layout, connectNulls }: GetPathProps): string => {
+const getPath = ({ type = 'linear', points = [], baseLine, layout, connectNulls = false }: GetPathProps): string => {
   const curveFactory = getCurveFactory(type, layout);
   const formatPoints = connectNulls ? points.filter(entry => defined(entry)) : points;
   let lineFunction;
@@ -160,5 +160,3 @@ export const Curve: React.FC<Props> = props => {
     />
   );
 };
-
-Curve.defaultProps = { type: 'linear', points: [], connectNulls: false };
