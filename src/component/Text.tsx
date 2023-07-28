@@ -188,48 +188,39 @@ const getWordsByLines = ({ width, scaleToFit, children, style, breakAll, maxLine
   return getWordsWithoutCalculate(children);
 };
 
-const textDefaultProps = {
-  x: 0,
-  y: 0,
-  lineHeight: '1em',
-  capHeight: '0.71em', // Magic number from d3
-  scaleToFit: false,
-  textAnchor: 'start',
-  verticalAnchor: 'end', // Maintain compat with existing charts / default SVG behavior
-  fill: '#808080',
-};
+const DEFAULT_FILL = '#808080';
 
-export const Text = (props: Props) => {
+export const Text = ({
+  x: propsX = 0,
+  y: propsY = 0,
+  lineHeight = '1em',
+  // Magic number from d3
+  capHeight = '0.71em',
+  scaleToFit = false,
+  textAnchor = 'start',
+  // Maintain compat with existing charts / default SVG behavior
+  verticalAnchor = 'end',
+  fill = DEFAULT_FILL,
+  ...props
+}: Props) => {
   const wordsByLines: Array<Words> = useMemo(() => {
     return getWordsByLines({
       breakAll: props.breakAll,
       children: props.children,
       maxLines: props.maxLines,
-      scaleToFit: props.scaleToFit,
+      scaleToFit,
       style: props.style,
       width: props.width,
     });
-  }, [props.breakAll, props.children, props.maxLines, props.scaleToFit, props.style, props.width]);
+  }, [props.breakAll, props.children, props.maxLines, scaleToFit, props.style, props.width]);
 
-  const {
-    dx,
-    dy,
-    textAnchor,
-    verticalAnchor,
-    scaleToFit,
-    angle,
-    lineHeight,
-    capHeight,
-    className,
-    breakAll,
-    ...textProps
-  } = props;
+  const { dx, dy, angle, className, breakAll, ...textProps } = props;
 
-  if (!isNumOrStr(textProps.x) || !isNumOrStr(textProps.y)) {
+  if (!isNumOrStr(propsX) || !isNumOrStr(propsY)) {
     return null;
   }
-  const x = (textProps.x as number) + (isNumber(dx as number) ? (dx as number) : 0);
-  const y = (textProps.y as number) + (isNumber(dy as number) ? (dy as number) : 0);
+  const x = (propsX as number) + (isNumber(dx as number) ? (dx as number) : 0);
+  const y = (propsY as number) + (isNumber(dy as number) ? (dy as number) : 0);
 
   let startDy: number;
   switch (verticalAnchor) {
@@ -264,7 +255,7 @@ export const Text = (props: Props) => {
       y={y}
       className={classNames('recharts-text', className)}
       textAnchor={textAnchor}
-      fill={textProps.fill.includes('url') ? textDefaultProps.fill : textProps.fill}
+      fill={fill.includes('url') ? DEFAULT_FILL : fill}
     >
       {wordsByLines.map((line, index) => (
         // eslint-disable-next-line react/no-array-index-key
@@ -275,5 +266,3 @@ export const Text = (props: Props) => {
     </text>
   );
 };
-
-Text.defaultProps = textDefaultProps;
