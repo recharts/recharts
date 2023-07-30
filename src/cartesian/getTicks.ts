@@ -28,7 +28,7 @@ export function getEveryNThTick(ticks: CartesianTickItem[]) {
   return ticks.slice(0, 1);
 }
 
-export function getNumberIntervalTicks(ticks: CartesianTickItem[], interval: number) {
+function getNumberIntervalTicks(ticks: CartesianTickItem[], interval: number) {
   return getEveryNthWithCondition(ticks, interval + 1);
 }
 

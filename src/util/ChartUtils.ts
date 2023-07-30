@@ -801,7 +801,7 @@ export const offsetSign = (series: any) => {
   }
 };
 
-export const offsetPositive = (series: any) => {
+const offsetPositive = (series: any) => {
   const n = series.length;
   if (n <= 0) {
     return;
@@ -836,7 +836,7 @@ const STACK_OFFSET_MAP: Record<string, any> = {
   positive: offsetPositive,
 };
 
-export const getStackedData = (data: any, stackItems: any, offsetType: string) => {
+const getStackedData = (data: any, stackItems: any, offsetType: string) => {
   const dataKeys = stackItems.map((item: any) => item.props.dataKey);
   const stack = shapeStack()
     .keys(dataKeys)

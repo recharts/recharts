@@ -19,7 +19,7 @@ import {
 import { filterProps } from '../util/ReactUtils';
 import { getTicks } from './getTicks';
 
-export interface CartesianAxisProps {
+interface CartesianAxisProps {
   className?: string;
   x?: number;
   y?: number;

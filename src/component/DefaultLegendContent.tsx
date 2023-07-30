@@ -16,10 +16,10 @@ import {
 
 const SIZE = 32;
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
-export type IconType = Exclude<LegendType, 'none'>;
-export type HorizontalAlignmentType = 'center' | 'left' | 'right';
-export type VerticalAlignmentType = 'top' | 'bottom' | 'middle';
-export type Formatter = (
+type IconType = Exclude<LegendType, 'none'>;
+type HorizontalAlignmentType = 'center' | 'left' | 'right';
+type VerticalAlignmentType = 'top' | 'bottom' | 'middle';
+type Formatter = (
   value: any,
   entry: {
     value: any;

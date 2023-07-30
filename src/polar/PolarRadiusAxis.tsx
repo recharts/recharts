@@ -10,7 +10,7 @@ import { polarToCartesian } from '../util/PolarUtils';
 import { BaseAxisProps, TickItem, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
-export interface PolarRadiusAxisProps extends Omit<BaseAxisProps, 'unit'> {
+interface PolarRadiusAxisProps extends Omit<BaseAxisProps, 'unit'> {
   cx?: number;
   cy?: number;
   radiusAxisId?: string | number;

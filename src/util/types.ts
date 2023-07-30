@@ -111,7 +111,7 @@ type WheelEventHandler<P, T = Element> = EventHandler<P, WheelEvent<T>>;
 type AnimationEventHandler<P, T = Element> = EventHandler<P, AnimationEvent<T>>;
 type TransitionEventHandler<P, T = Element> = EventHandler<P, TransitionEvent<T>>;
 
-export interface DOMAttributesWithProps<P, T> {
+interface DOMAttributesWithProps<P, T> {
   children?: ReactNode;
   dangerouslySetInnerHTML?: {
     __html: string;
@@ -327,7 +327,7 @@ type AdaptChildWheelEventHandler<P, T = Element> = AdaptChildEventHandler<P, Whe
 type AdaptChildAnimationEventHandler<P, T = Element> = AdaptChildEventHandler<P, AnimationEvent<T>>;
 type AdaptChildTransitionEventHandler<P, T = Element> = AdaptChildEventHandler<P, TransitionEvent<T>>;
 
-export type DOMAttributesAdaptChildEvent<P, T> = {
+type DOMAttributesAdaptChildEvent<P, T> = {
   children?: ReactNode;
   dangerouslySetInnerHTML?: {
     __html: string;
@@ -1047,7 +1047,7 @@ export interface GeometrySector {
 
 export type D3Scale<T> = D3ScaleContinuousNumeric<T, number>;
 
-export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | 'dataMax';
+type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | 'dataMax';
 /** The domain of axis */
 export type AxisDomain =
   | string[]

@@ -11,7 +11,7 @@ import { BarRectangleItem } from './Bar';
 import { LinePointItem } from './Line';
 import { ScatterPointItem } from './Scatter';
 
-export interface ErrorBarDataItem {
+interface ErrorBarDataItem {
   x: number;
   y: number;
   value: number;

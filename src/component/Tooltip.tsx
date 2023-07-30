@@ -23,7 +23,7 @@ import { AnimationTiming } from '../util/types';
 const CLS_PREFIX = 'recharts-tooltip-wrapper';
 
 const EPS = 1;
-export type ContentType<TValue extends ValueType, TName extends NameType> =
+type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
   | ((props: TooltipProps<TValue, TName>) => ReactNode);
 

@@ -67,7 +67,7 @@ function camelToMiddleLine(text: string) {
   return formatStrs.join('');
 }
 
-export const getStyleString = (style: CSSProperties) =>
+const getStyleString = (style: CSSProperties) =>
   Object.keys(style).reduce(
     (result, s) => `${result}${camelToMiddleLine(s)}:${autoCompleteStyle(s, (style as Record<string, any>)[s])};`,
     '',

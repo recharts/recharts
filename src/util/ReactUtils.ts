@@ -41,22 +41,6 @@ export const SCALE_TYPES = [
   'threshold',
 ];
 
-export const LEGEND_TYPES = [
-  'plainline',
-  'line',
-  'square',
-  'rect',
-  'circle',
-  'cross',
-  'diamond',
-  'star',
-  'triangle',
-  'wye',
-  'none',
-];
-
-export const TOOLTIP_TYPES = ['none'];
-
 /**
  * Get the display name of a component
  * @param  {Object} Comp Specified Component
@@ -391,7 +375,7 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
   return true;
 };
 
-export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: React.ReactElement): boolean => {
+const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: React.ReactElement): boolean => {
   if (_.isNil(nextChild) && _.isNil(prevChild)) {
     return true;
   }

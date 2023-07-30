@@ -21,6 +21,7 @@
     "react-component"
   ],
   "scripts": {
+    "knip": "knip",
     "prepare": "husky install",
     "build": "npm run build-types && npm run build-cjs && npm run build-es6 && npm run build-umd",
     "build-cjs": "rimraf lib && cross-env NODE_ENV=commonjs babel ./src -d lib --extensions '.js,.ts,.tsx'",
@@ -137,6 +138,7 @@
     "jest": "^27.5.1",
     "jest-each": "^27.5.1",
     "jest-environment-jsdom": "^27.5.1",
+    "knip": "^2.17.1",
     "lint-staged": "^13.2.2",
     "prettier": "^2.2.1",
     "react": "^16.14.0",

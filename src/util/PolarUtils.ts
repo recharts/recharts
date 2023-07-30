@@ -5,9 +5,7 @@ import { Coordinate, ChartOffset, GeometrySector } from './types';
 
 export const RADIAN = Math.PI / 180;
 
-export const degreeToRadian = (angle: number) => (angle * Math.PI) / 180;
-
-export const radianToDegree = (angleInRadian: number) => (angleInRadian * 180) / Math.PI;
+const radianToDegree = (angleInRadian: number) => (angleInRadian * 180) / Math.PI;
 
 export const polarToCartesian = (cx: number, cy: number, radius: number, angle: number): Coordinate => ({
   x: cx + Math.cos(-RADIAN * angle) * radius,
@@ -98,14 +96,14 @@ export const formatAxisMap = (
   }, {});
 };
 
-export const distanceBetweenPoints = (point: Coordinate, anotherPoint: Coordinate) => {
+const distanceBetweenPoints = (point: Coordinate, anotherPoint: Coordinate) => {
   const { x: x1, y: y1 } = point;
   const { x: x2, y: y2 } = anotherPoint;
 
   return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
 };
 
-export const getAngleOfPoint = ({ x, y }: Coordinate, { cx, cy }: GeometrySector) => {
+const getAngleOfPoint = ({ x, y }: Coordinate, { cx, cy }: GeometrySector) => {
   const radius = distanceBetweenPoints({ x, y }, { x: cx, y: cy });
 
   if (radius <= 0) {
@@ -122,7 +120,7 @@ export const getAngleOfPoint = ({ x, y }: Coordinate, { cx, cy }: GeometrySector
   return { radius, angle: radianToDegree(angleInRadian), angleInRadian };
 };
 
-export const formatAngleOfSector = ({ startAngle, endAngle }: GeometrySector) => {
+const formatAngleOfSector = ({ startAngle, endAngle }: GeometrySector) => {
   const startCnt = Math.floor(startAngle / 360);
   const endCnt = Math.floor(endAngle / 360);
   const min = Math.min(startCnt, endCnt);

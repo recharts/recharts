@@ -775,7 +775,7 @@ export interface CategoricalChartState {
   prevChildren?: any;
 }
 
-export type CategoricalChartFunc = (nextState: CategoricalChartState, event: any) => void;
+type CategoricalChartFunc = (nextState: CategoricalChartState, event: any) => void;
 
 export interface CategoricalChartProps {
   syncId?: number | string;
