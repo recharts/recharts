@@ -23,6 +23,7 @@ import {
   Coordinate,
   DataKey,
   TickItem,
+  AnimationDuration,
 } from '../util/types';
 import { filterProps, isDotProps } from '../util/ReactUtils';
 
@@ -78,7 +79,7 @@ interface AreaProps extends InternalAreaProps {
   isAnimationActive?: boolean;
   animateNewValues?: boolean;
   animationBegin?: number;
-  animationDuration?: number;
+  animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
   animationId?: number;
   id?: string;

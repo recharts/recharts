@@ -26,6 +26,7 @@ import {
   TickItem,
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
+  AnimationDuration,
 } from '../util/types';
 import { TooltipType } from '../component/DefaultTooltipContent';
 import { Props as XAxisProps } from './XAxis';
@@ -80,7 +81,7 @@ interface ScatterProps {
   isAnimationActive?: boolean;
   animationId?: number;
   animationBegin?: number;
-  animationDuration?: number;
+  animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
 }
 

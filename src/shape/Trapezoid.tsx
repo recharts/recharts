@@ -4,7 +4,7 @@
 import React, { SVGProps, useLayoutEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
-import { AnimationTiming } from '../util/types';
+import { AnimationDuration, AnimationTiming } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
 const getTrapezoidPath = (x: number, y: number, upperWidth: number, lowerWidth: number, height: number): string => {
@@ -28,7 +28,7 @@ interface TrapezoidProps {
 
   isUpdateAnimationActive?: boolean;
   animationBegin?: number;
-  animationDuration?: number;
+  animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
 }
 

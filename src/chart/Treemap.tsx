@@ -17,7 +17,7 @@ import { uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
 import { filterSvgElements, findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
-import { DataKey, TreemapNode } from '../util/types';
+import { AnimationDuration, AnimationTiming, DataKey, TreemapNode } from '../util/types';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -256,9 +256,9 @@ export interface Props {
 
   animationBegin?: number;
 
-  animationDuration?: number;
+  animationDuration?: AnimationDuration;
 
-  animationEasing?: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
+  animationEasing?: AnimationTiming;
 }
 
 interface State {
