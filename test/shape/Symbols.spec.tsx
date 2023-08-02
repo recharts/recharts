@@ -16,6 +16,8 @@ describe('<Symbols />', () => {
   test('Render 1 symbol when type is wrong', () => {
     const { container } = render(
       <Surface width={400} height={400}>
+        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+        {/* @ts-ignore */}
         <Symbols cx={100} cy={100} type={undefined} />
       </Surface>,
     );

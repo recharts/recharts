@@ -34,7 +34,21 @@ interface TrapezoidProps {
 
 export type Props = SVGProps<SVGPathElement> & TrapezoidProps;
 
+const defaultProps: Props = {
+  x: 0,
+  y: 0,
+  upperWidth: 0,
+  lowerWidth: 0,
+  height: 0,
+  isUpdateAnimationActive: false,
+  animationBegin: 0,
+  animationDuration: 1500,
+  animationEasing: 'ease',
+};
+
 export const Trapezoid: React.FC<Props> = props => {
+  const trapezoidProps: Props = { ...defaultProps, ...props };
+
   const pathRef = useRef<SVGPathElement>();
   const [totalLength, setTotalLength] = useState(-1);
 
@@ -52,8 +66,8 @@ export const Trapezoid: React.FC<Props> = props => {
     }
   }, []);
 
-  const { x, y, upperWidth, lowerWidth, height, className } = props;
-  const { animationEasing, animationDuration, animationBegin, isUpdateAnimationActive } = props;
+  const { x, y, upperWidth, lowerWidth, height, className } = trapezoidProps;
+  const { animationEasing, animationDuration, animationBegin, isUpdateAnimationActive } = trapezoidProps;
 
   if (
     x !== +x ||
@@ -73,7 +87,7 @@ export const Trapezoid: React.FC<Props> = props => {
     return (
       <g>
         <path
-          {...filterProps(props, true)}
+          {...filterProps(trapezoidProps, true)}
           className={layerClass}
           d={getTrapezoidPath(x, y, upperWidth, lowerWidth, height)}
         />
@@ -112,7 +126,7 @@ export const Trapezoid: React.FC<Props> = props => {
           easing={animationEasing}
         >
           <path
-            {...filterProps(props, true)}
+            {...filterProps(trapezoidProps, true)}
             className={layerClass}
             d={getTrapezoidPath(currX, currY, currUpperWidth, currLowerWidth, currHeight)}
             ref={pathRef}
@@ -121,16 +135,4 @@ export const Trapezoid: React.FC<Props> = props => {
       )}
     </Animate>
   );
-};
-
-Trapezoid.defaultProps = {
-  x: 0,
-  y: 0,
-  upperWidth: 0,
-  lowerWidth: 0,
-  height: 0,
-  isUpdateAnimationActive: false,
-  animationBegin: 0,
-  animationDuration: 1500,
-  animationEasing: 'ease',
 };
