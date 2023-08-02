@@ -33,6 +33,7 @@ import {
   TickItem,
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
+  AnimationDuration,
 } from '../util/types';
 import { ImplicitLabelType } from '../component/Label';
 
@@ -87,7 +88,7 @@ interface BarProps extends InternalBarProps {
 
   isAnimationActive?: boolean;
   animationBegin?: number;
-  animationDuration?: number;
+  animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
   animationId?: number;
   id?: string;
@@ -112,7 +113,6 @@ export class Bar extends PureComponent<Props, State> {
     legendType: 'rect',
     minPointSize: 0,
     hide: false,
-    // data of bar
     data: [] as BarRectangleItem[],
     layout: 'vertical',
     isAnimationActive: !Global.isSsr,

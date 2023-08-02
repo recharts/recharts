@@ -13,7 +13,7 @@ import { Polygon } from '../shape/Polygon';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
-import { LegendType, TooltipType, AnimationTiming, DataKey } from '../util/types';
+import { LegendType, TooltipType, AnimationTiming, DataKey, AnimationDuration } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { Props as PolarAngleAxisProps } from './PolarAngleAxis';
 import { Props as PolarRadiusAxisProps } from './PolarRadiusAxis';
@@ -52,7 +52,7 @@ interface RadarProps {
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
   animationBegin?: number;
-  animationDuration?: number;
+  animationDuration?: AnimationDuration;
   isAnimationActive?: boolean;
   animationId?: number;
   animationEasing?: AnimationTiming;

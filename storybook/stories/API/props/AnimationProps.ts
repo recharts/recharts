@@ -15,20 +15,12 @@ export const animationBegin = {
   },
 };
 export const animationDuration = {
-  description: 'Specifies the duration of animation, the unit of this option is ms.',
-  type: { name: 'number' },
-  defaultValue: 1500,
   table: {
-    defaultValue: { summary: '1500' },
     category: 'Animation',
   },
 };
 export const animationEasing = {
-  description: 'The type of easing function.',
-  type: { name: 'ease | ease-in | ease-out | ease-in-out | linear' },
-  defaultValue: 'ease',
   table: {
-    defaultValue: { summary: 'ease' },
     category: 'Animation',
   },
 };

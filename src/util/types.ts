@@ -1012,8 +1012,10 @@ export const EventKeys = [
   'onTransitionEndCapture',
 ];
 
-// Animation Types => TODO: Should be moved when react-smooth is typescriptified.
+/** The type of easing function to use for animations */
 export type AnimationTiming = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
+/** Specifies the duration of animation, the unit of this option is ms. */
+export type AnimationDuration = number;
 
 /** the offset of a chart, which define the blank space all around */
 export interface ChartOffset {

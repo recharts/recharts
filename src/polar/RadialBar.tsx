@@ -27,6 +27,7 @@ import {
   TickItem,
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
+  AnimationDuration,
 } from '../util/types';
 import { polarToCartesian } from '../util/PolarUtils';
 // TODO: Cause of circular dependency. Needs refactoring of functions that need them.
@@ -68,7 +69,7 @@ interface RadialBarProps {
   onAnimationEnd?: () => void;
   isAnimationActive?: boolean;
   animationBegin?: number;
-  animationDuration?: number;
+  animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
 }
 

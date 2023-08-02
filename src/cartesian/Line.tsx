@@ -17,7 +17,16 @@ import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { D3Scale, LegendType, TooltipType, AnimationTiming, ChartOffset, DataKey, TickItem } from '../util/types';
+import {
+  D3Scale,
+  LegendType,
+  TooltipType,
+  AnimationTiming,
+  ChartOffset,
+  DataKey,
+  TickItem,
+  AnimationDuration,
+} from '../util/types';
 
 export type LineDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
 
@@ -61,7 +70,7 @@ interface LineProps extends InternalLineProps {
   isAnimationActive?: boolean;
   animateNewValues?: boolean;
   animationBegin?: number;
-  animationDuration?: number;
+  animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
   animationId?: number;
   id?: string;
