@@ -4,7 +4,7 @@
 import React, { SVGProps, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
-import { AnimationTiming } from '../util/types';
+import { AnimationDuration, AnimationTiming } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
 type RectRadius = [number, number, number, number];
@@ -74,7 +74,7 @@ interface RectangleProps {
   isAnimationActive?: boolean;
   isUpdateAnimationActive?: boolean;
   animationBegin?: number;
-  animationDuration?: number;
+  animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
 }
 

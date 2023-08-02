@@ -21,6 +21,7 @@ import {
   DataKey,
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
+  AnimationDuration,
 } from '../util/types';
 
 interface FunnelTrapezoidItem extends TrapezoidProps {
@@ -52,7 +53,7 @@ interface FunnelProps extends InternalFunnelProps {
   isAnimationActive?: boolean;
   animateNewValues?: boolean;
   animationBegin?: number;
-  animationDuration?: number;
+  animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
   id?: string;
 }

@@ -18,7 +18,7 @@ import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultPr
 
 import { Global } from '../util/Global';
 import { isNumber } from '../util/DataUtils';
-import { AnimationTiming } from '../util/types';
+import { AnimationDuration, AnimationTiming } from '../util/types';
 
 const CLS_PREFIX = 'recharts-tooltip-wrapper';
 
@@ -93,7 +93,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   shared?: boolean;
   payloadUniqBy?: UniqueOption<TValue, TName>;
   isAnimationActive?: boolean;
-  animationDuration?: number;
+  animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
   filterNull?: boolean;
   useTranslate3d?: boolean;

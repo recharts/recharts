@@ -27,6 +27,7 @@ import {
   DataKey,
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
+  AnimationDuration,
 } from '../util/types';
 
 interface PieDef {
@@ -94,7 +95,7 @@ interface PieProps extends PieDef {
   animationEasing?: AnimationTiming;
   isAnimationActive?: boolean;
   animationBegin?: number;
-  animationDuration?: number;
+  animationDuration?: AnimationDuration;
   onAnimationEnd?: () => void;
   onAnimationStart?: () => void;
   id?: string;
