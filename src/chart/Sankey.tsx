@@ -254,7 +254,7 @@ const computeData = ({
   iterations,
   nodeWidth,
   nodePadding,
-  sort
+  sort,
 }: {
   data: SankeyData;
   width: number;
@@ -262,6 +262,7 @@ const computeData = ({
   iterations: any;
   nodeWidth: number;
   nodePadding: number;
+  sort: boolean;
 }): {
   nodes: SankeyNode[];
   links: SankeyLink[];
@@ -383,7 +384,7 @@ interface SankeyProps {
 
   onMouseLeave?: any;
 
-  sort?: boolean
+  sort?: boolean;
 }
 
 type Props = SVGProps<SVGElement> & SankeyProps;
@@ -394,6 +395,7 @@ interface State {
   isTooltipActive: boolean;
   nodes: SankeyNode[];
   links: SankeyLink[];
+  sort?: boolean;
 
   prevData?: SankeyData;
   prevWidth?: number;
@@ -402,6 +404,7 @@ interface State {
   prevIterations?: number;
   prevNodeWidth?: number;
   prevNodePadding?: number;
+  prevSort?: boolean;
 }
 
 export class Sankey extends PureComponent<Props, State> {
@@ -415,7 +418,7 @@ export class Sankey extends PureComponent<Props, State> {
     linkCurvature: 0.5,
     iterations: 32,
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
-    sort: true
+    sort: true,
   };
 
   state = {
@@ -448,7 +451,7 @@ export class Sankey extends PureComponent<Props, State> {
         iterations,
         nodeWidth,
         nodePadding,
-        sort
+        sort,
       });
 
       return {
@@ -463,7 +466,7 @@ export class Sankey extends PureComponent<Props, State> {
         prevNodePadding: nodePadding,
         prevNodeWidth: nodeWidth,
         prevIterations: iterations,
-        prevSort: sort
+        prevSort: sort,
       };
     }
 

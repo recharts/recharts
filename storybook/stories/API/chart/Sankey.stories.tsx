@@ -16,6 +16,7 @@ export default {
     dataKey,
     margin,
     data,
+    sort: { description: 'Whether to sort the data or not (default to true)' },
   },
   component: Sankey,
 };
