@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<Trapezoid /> Don't render any Trapezoid when props is invalid 1`] = `
+exports[`<Trapezoid /> Don't render any Trapezoid when props are invalid 1`] = `
 <div>
   <svg
     class="recharts-surface"

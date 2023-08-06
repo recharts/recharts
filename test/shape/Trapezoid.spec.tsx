@@ -25,7 +25,7 @@ describe('<Trapezoid />', () => {
     expect(container).toMatchSnapshot();
   });
 
-  test("Don't render any Trapezoid when props is invalid", () => {
+  test("Don't render any Trapezoid when props are invalid", () => {
     const { container } = render(
       <Surface width={500} height={500}>
         <Trapezoid fill="#f00" x={300} y={100} upperWidth={0} lowerWidth={0} height={50} />
