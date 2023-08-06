@@ -78,30 +78,25 @@ interface SymbolsProp {
 
 export type Props = SVGProps<SVGPathElement> & SymbolsProp;
 
-const symbolsDefaultProps = {
-  type: 'circle',
-  size: 64,
-  sizeType: 'area',
-};
-
 const registerSymbol = (key: string, factory: D3SymbolType) => {
   symbolFactories[`symbol${_.upperFirst(key)}`] = factory;
 };
 
-export const Symbols = (props: Props) => {
+export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest }: Props) => {
+  const props = { ...rest, type, size, sizeType };
+
   /**
    * Calculate the path of curve
    * @return {String} path
    */
   const getPath = () => {
-    const { size, sizeType, type } = props;
     const symbolFactory = getSymbolFactory(type);
     const symbol = shapeSymbol().type(symbolFactory).size(calculateAreaSize(size, sizeType, type));
 
     return symbol();
   };
 
-  const { className, cx, cy, size } = props;
+  const { className, cx, cy } = props;
   const filteredProps = filterProps(props, true);
 
   if (cx === +cx && cy === +cy && size === +size) {
@@ -118,5 +113,4 @@ export const Symbols = (props: Props) => {
   return null;
 };
 
-Symbols.defaultProps = symbolsDefaultProps;
 Symbols.registerSymbol = registerSymbol;
