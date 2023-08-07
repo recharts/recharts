@@ -22,8 +22,17 @@ const getPath = (x: number, y: number, width: number, height: number, top: numbe
   return `M${x},${top}v${height}M${left},${y}h${width}`;
 };
 
-export const Cross: React.FC<Props> = props => {
-  const { x, y, width, height, top, left, className } = props;
+export const Cross: React.FC<Props> = ({
+  x = 0,
+  y = 0,
+  top = 0,
+  left = 0,
+  width = 0,
+  height = 0,
+  className,
+  ...rest
+}) => {
+  const props = { x, y, top, left, width, height, ...rest };
 
   if (!isNumber(x) || !isNumber(y) || !isNumber(width) || !isNumber(height) || !isNumber(top) || !isNumber(left)) {
     return null;
@@ -36,13 +45,4 @@ export const Cross: React.FC<Props> = props => {
       d={getPath(x, y, width, height, top, left)}
     />
   );
-};
-
-Cross.defaultProps = {
-  x: 0,
-  y: 0,
-  top: 0,
-  left: 0,
-  width: 0,
-  height: 0,
 };
