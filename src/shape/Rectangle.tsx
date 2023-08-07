@@ -102,7 +102,24 @@ export const isInRectangle = (
 
 export type Props = Omit<SVGProps<SVGPathElement>, 'radius'> & RectangleProps;
 
-export const Rectangle: React.FC<Props> = props => {
+const defaultProps = {
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+  // The radius of border
+  // The radius of four corners when radius is a number
+  // The radius of left-top, right-top, right-bottom, left-bottom when radius is an array
+  radius: 0,
+  isAnimationActive: false,
+  isUpdateAnimationActive: false,
+  animationBegin: 0,
+  animationDuration: 1500,
+  animationEasing: 'ease',
+};
+
+export const Rectangle: React.FC<Props> = rectangleProps => {
+  const props = { ...defaultProps, ...rectangleProps };
   const pathRef = useRef<SVGPathElement>();
   const [totalLength, setTotalLength] = useState(-1);
 
@@ -164,20 +181,4 @@ export const Rectangle: React.FC<Props> = props => {
       )}
     </Animate>
   );
-};
-
-Rectangle.defaultProps = {
-  x: 0,
-  y: 0,
-  width: 0,
-  height: 0,
-  // The radius of border
-  // The radius of four corners when radius is a number
-  // The radius of left-top, right-top, right-bottom, left-bottom when radius is an array
-  radius: 0,
-  isAnimationActive: false,
-  isUpdateAnimationActive: false,
-  animationBegin: 0,
-  animationDuration: 1500,
-  animationEasing: 'ease',
 };
