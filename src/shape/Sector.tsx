@@ -195,7 +195,20 @@ interface SectorProps extends GeometrySector {
 
 export type Props = SVGProps<SVGPathElement> & SectorProps;
 
-export const Sector: React.FC<Props> = props => {
+const defaultProps = {
+  cx: 0,
+  cy: 0,
+  innerRadius: 0,
+  outerRadius: 0,
+  startAngle: 0,
+  endAngle: 0,
+  cornerRadius: 0,
+  forceCornerRadius: false,
+  cornerIsExternal: false,
+};
+
+export const Sector: React.FC<Props> = sectorProps => {
+  const props = { ...defaultProps, ...sectorProps };
   const {
     cx,
     cy,
@@ -235,16 +248,4 @@ export const Sector: React.FC<Props> = props => {
   }
 
   return <path {...filterProps(props, true)} className={layerClass} d={path} role="img" />;
-};
-
-Sector.defaultProps = {
-  cx: 0,
-  cy: 0,
-  innerRadius: 0,
-  outerRadius: 0,
-  startAngle: 0,
-  endAngle: 0,
-  cornerRadius: 0,
-  forceCornerRadius: false,
-  cornerIsExternal: false,
 };
