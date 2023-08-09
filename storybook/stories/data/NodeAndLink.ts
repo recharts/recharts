@@ -16,63 +16,25 @@ const nodeLinkData = {
 
 const complexNodeLinkData = {
   nodes: [
-    {
-      name: 'Income',
-    },
-    {
-      name: 'Budget',
-    },
-    {
-      name: 'Investment',
-    },
-    {
-      name: 'Real Estate',
-    },
-    {
-      name: 'Crypto',
-    },
-    {
-      name: 'Stocks & Funds',
-    },
-    {
-      name: 'Saving',
-    },
-    {
-      name: 'Scpi',
-    },
-    {
-      name: 'BTC',
-    },
-    {
-      name: 'ETH',
-    },
-    {
-      name: 'SOL',
-    },
-    {
-      name: 'Housing',
-    },
-    {
-      name: 'Food',
-    },
-    {
-      name: 'Rent',
-    },
-    {
-      name: 'Utility',
-    },
-    {
-      name: 'Mortgage',
-    },
-    {
-      name: 'Groceries',
-    },
-    {
-      name: 'Delivery',
-    },
-    {
-      name: 'Restaurant',
-    },
+    { name: 'Income' },
+    { name: 'Budget' },
+    { name: 'Investment' },
+    { name: 'Real Estate' },
+    { name: 'Crypto' },
+    { name: 'Stocks & Funds' },
+    { name: 'Saving' },
+    { name: 'Scpi' },
+    { name: 'BTC' },
+    { name: 'ETH' },
+    { name: 'SOL' },
+    { name: 'Housing' },
+    { name: 'Food' },
+    { name: 'Rent' },
+    { name: 'Utility' },
+    { name: 'Mortgage' },
+    { name: 'Groceries' },
+    { name: 'Delivery' },
+    { name: 'Restaurant' },
   ],
   links: [
     {
