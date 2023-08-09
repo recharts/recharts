@@ -147,13 +147,15 @@ const updateYOfTree = (depthTree: any, height: number, nodePadding: number, link
   return links.map((link: any) => ({ ...link, dy: getValue(link) * yRatio }));
 };
 
-const resolveCollisions = (depthTree: any[], height: number, nodePadding: number) => {
+const resolveCollisions = (depthTree: any[], height: number, nodePadding: number, sort = true) => {
   for (let i = 0, len = depthTree.length; i < len; i++) {
     const nodes = depthTree[i];
     const n = nodes.length;
 
     // Sort by the value of y
-    nodes.sort(ascendingY);
+    if (sort) {
+      nodes.sort(ascendingY);
+    }
 
     let y0 = 0;
     for (let j = 0; j < n; j++) {
@@ -252,6 +254,7 @@ const computeData = ({
   iterations,
   nodeWidth,
   nodePadding,
+  sort,
 }: {
   data: SankeyData;
   width: number;
@@ -259,6 +262,7 @@ const computeData = ({
   iterations: any;
   nodeWidth: number;
   nodePadding: number;
+  sort: boolean;
 }): {
   nodes: SankeyNode[];
   links: SankeyLink[];
@@ -268,17 +272,17 @@ const computeData = ({
   const depthTree = getDepthTree(tree);
   const newLinks = updateYOfTree(depthTree, height, nodePadding, links);
 
-  resolveCollisions(depthTree, height, nodePadding);
+  resolveCollisions(depthTree, height, nodePadding, sort);
 
   let alpha = 1;
   for (let i = 1; i <= iterations; i++) {
     relaxRightToLeft(tree, depthTree, newLinks, (alpha *= 0.99));
 
-    resolveCollisions(depthTree, height, nodePadding);
+    resolveCollisions(depthTree, height, nodePadding, sort);
 
     relaxLeftToRight(tree, depthTree, newLinks, alpha);
 
-    resolveCollisions(depthTree, height, nodePadding);
+    resolveCollisions(depthTree, height, nodePadding, sort);
   }
 
   updateYOfLinks(tree, newLinks);
@@ -379,6 +383,8 @@ interface SankeyProps {
   onMouseEnter?: any;
 
   onMouseLeave?: any;
+
+  sort?: boolean;
 }
 
 type Props = SVGProps<SVGElement> & SankeyProps;
@@ -389,6 +395,7 @@ interface State {
   isTooltipActive: boolean;
   nodes: SankeyNode[];
   links: SankeyLink[];
+  sort?: boolean;
 
   prevData?: SankeyData;
   prevWidth?: number;
@@ -397,6 +404,7 @@ interface State {
   prevIterations?: number;
   prevNodeWidth?: number;
   prevNodePadding?: number;
+  prevSort?: boolean;
 }
 
 export class Sankey extends PureComponent<Props, State> {
@@ -410,6 +418,7 @@ export class Sankey extends PureComponent<Props, State> {
     linkCurvature: 0.5,
     iterations: 32,
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
+    sort: true,
   };
 
   state = {
@@ -421,7 +430,7 @@ export class Sankey extends PureComponent<Props, State> {
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
-    const { data, width, height, margin, iterations, nodeWidth, nodePadding } = nextProps;
+    const { data, width, height, margin, iterations, nodeWidth, nodePadding, sort } = nextProps;
 
     if (
       data !== prevState.prevData ||
@@ -430,7 +439,8 @@ export class Sankey extends PureComponent<Props, State> {
       !shallowEqual(margin, prevState.prevMargin) ||
       iterations !== prevState.prevIterations ||
       nodeWidth !== prevState.prevNodeWidth ||
-      nodePadding !== prevState.prevNodePadding
+      nodePadding !== prevState.prevNodePadding ||
+      sort !== prevState.sort
     ) {
       const contentWidth = width - ((margin && margin.left) || 0) - ((margin && margin.right) || 0);
       const contentHeight = height - ((margin && margin.top) || 0) - ((margin && margin.bottom) || 0);
@@ -441,6 +451,7 @@ export class Sankey extends PureComponent<Props, State> {
         iterations,
         nodeWidth,
         nodePadding,
+        sort,
       });
 
       return {
@@ -455,6 +466,7 @@ export class Sankey extends PureComponent<Props, State> {
         prevNodePadding: nodePadding,
         prevNodeWidth: nodeWidth,
         prevIterations: iterations,
+        prevSort: sort,
       };
     }
 
