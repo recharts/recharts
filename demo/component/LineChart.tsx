@@ -13,7 +13,7 @@ import {
   Label,
   LabelList,
 } from 'recharts';
-import { scaleLog } from 'victory-vendor/d3-scale';
+import { scaleLog } from 'd3-scale';
 import * as _ from 'lodash';
 import CustomLineDot from './CustomLineDot';
 import { changeNumberOfData } from './utils';
@@ -584,7 +584,8 @@ export default class Demo extends Component<any, any> {
 
         <p>LineChart of discrete values</p>
         <div className="line-chart-wrapper">
-          <LineChart width={400} height={400} data={data01} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <LineChart
+width={400} height={400} data={data01} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             <XAxis dataKey="day" />
             <YAxis type="category" domain={['cloudy', 'rain', 'sunny']} />
             <Tooltip />

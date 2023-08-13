@@ -1,10 +1,8 @@
-import { scaleLinear, scaleBand } from 'victory-vendor/d3-scale';
-import {
-  ScaleHelper,
+import { scaleLinear, scaleBand } from 'd3-scale';
+import {   ScaleHelper,
   createLabeledScales,
   getAngledRectangleWidth,
-  normalizeAngle,
-} from '../../src/util/CartesianUtils';
+  normalizeAngle, } from '../../src/util/CartesianUtils';
 
 describe('ScaleHelper', () => {
   it('apply() should return the expected value', () => {
