@@ -133,7 +133,7 @@ export class Pie extends PureComponent<Props, State> {
 
   static displayName = 'Pie';
 
-  static defaultProps = {
+  static defaultProps: Partial<Props> = {
     stroke: '#fff',
     fill: '#808080',
     legendType: 'rect',
@@ -153,6 +153,7 @@ export class Pie extends PureComponent<Props, State> {
     animationEasing: 'ease',
     nameKey: 'name',
     blendStroke: false,
+    tabIndex: 0,
   };
 
   static parseDeltaAngle = (startAngle: number, endAngle: number) => {
@@ -636,7 +637,7 @@ export class Pie extends PureComponent<Props, State> {
 
     return (
       <Layer
-        tabIndex={0}
+        tabIndex={this.props.tabIndex}
         className={layerClass}
         ref={(ref: HTMLElement) => {
           this.pieRef = ref;
