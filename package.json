@@ -64,7 +64,6 @@
     "react-dom": "^16.0.0 || ^17.0.0 || ^18.0.0"
   },
   "dependencies": {
-    "@types/d3-interpolate": "^2.0.0",
     "@types/d3-scale": "^3.0.0",
     "@types/d3-shape": "^2.0.0",
     "classnames": "^2.2.5",
