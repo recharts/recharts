@@ -1,7 +1,9 @@
 {
+  "type": "module",
   "compilerOptions": {
+    "module": "ES2015",
+    "moduleResolution": "node",
     "jsx": "react",
-    "module": "commonjs",
     "noImplicitAny": true,
     "outDir": "./build/",
     "declarationDir": "./types" /* Output directory for generated declaration files. */,
