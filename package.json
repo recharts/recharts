@@ -65,8 +65,8 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
-    "d3-interpolate": "^2.0.0",
-    "d3-scale": "^3.0.0",
+    "d3-interpolate": "^3.0.1",
+    "d3-scale": "^4.0.2",
     "d3-shape": "^2.0.0",
     "eventemitter3": "^4.0.1",
     "lodash": "^4.17.19",
