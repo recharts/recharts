@@ -102,6 +102,7 @@ interface PieProps extends PieDef {
   onMouseEnter?: (data: any, index: number, e: React.MouseEvent) => void;
   onMouseLeave?: (data: any, index: number, e: React.MouseEvent) => void;
   onClick?: (data: any, index: number, e: React.MouseEvent) => void;
+  rootTabIndex?: number;
 }
 
 export interface PieLabelRenderProps extends PieDef {
@@ -153,6 +154,7 @@ export class Pie extends PureComponent<Props, State> {
     animationEasing: 'ease',
     nameKey: 'name',
     blendStroke: false,
+    rootTabIndex: 0,
   };
 
   static parseDeltaAngle = (startAngle: number, endAngle: number) => {
@@ -636,7 +638,7 @@ export class Pie extends PureComponent<Props, State> {
 
     return (
       <Layer
-        tabIndex={0}
+        tabIndex={this.props.rootTabIndex}
         className={layerClass}
         ref={(ref: HTMLElement) => {
           this.pieRef = ref;
