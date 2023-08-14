@@ -6,12 +6,12 @@ name: Node.js CI
 on: [push, pull_request]
 
 jobs:
-  build-node-version-14:
+  build-node-version-16:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -33,11 +33,11 @@ jobs:
   build-node-version-16-18-and-test-storybook:
     runs-on: ubuntu-latest
     
-    needs: build-node-version-14
+    needs: build-node-version-16
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
+        node-version: [18.x, 20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
