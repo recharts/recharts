@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-import { describe, test, expect, vi, beforeAll, afterEach, afterAll } from 'vitest'
 
 import { LineChart, Line, XAxis, YAxis, Tooltip, Brush, CartesianAxis, Legend } from '../../src';
 

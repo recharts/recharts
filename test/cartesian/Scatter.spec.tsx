@@ -1,7 +1,6 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { Surface, Scatter } from '../../src';
-import { describe, expect, test, vi } from 'vitest';
 
 describe('<Scatter />', () => {
   const data = [

@@ -1,7 +1,6 @@
 import { getEveryNThTick, getTicks } from '../../src/cartesian/getTicks';
 import { CartesianTickItem } from '../../src/util/types';
 import { CartesianAxisProps } from '../../src';
-import { describe, expect, test, vi } from 'vitest';
 
 const EXAMPLE_INPUT: CartesianAxisProps = {
   angle: undefined,

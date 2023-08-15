@@ -2,7 +2,6 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 import { ResponsiveContainer } from '../../src';
-import { describe, it, expect, vi, beforeAll, afterEach } from 'vitest'
 
 declare global {
   interface Window {

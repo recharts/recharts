@@ -2,7 +2,6 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PieChart, Pie, Legend, Cell, Tooltip } from '../../src';
-import { describe, expect, test, vi } from 'vitest';
 
 describe('<PieChart />', () => {
   const data = [

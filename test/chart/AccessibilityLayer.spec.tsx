@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { Area, AreaChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '../../src';
-import { describe, expect, test, vi } from 'vitest';
 
 describe('AccessibilityLayer', () => {
   const data = [

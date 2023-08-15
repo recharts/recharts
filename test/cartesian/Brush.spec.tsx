@@ -2,7 +2,6 @@ import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Brush, LineChart, Line, BarChart } from '../../src';
 import { mockMouseEvent } from '../helper/mockMouseEvent';
-import { describe, expect, test } from 'vitest'
 
 describe('<Brush />', () => {
   const data = [

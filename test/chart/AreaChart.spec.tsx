@@ -3,7 +3,6 @@ import React, { ComponentProps, FC } from 'react';
 
 import { Area, AreaChart, Brush, CartesianAxis, Tooltip, XAxis, YAxis } from '../../src';
 import { mockMouseEvent } from '../helper/mockMouseEvent';
-import { describe, it, expect, vi } from 'vitest'
 
 describe('AreaChart', () => {
   const data = [

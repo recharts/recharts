@@ -1,5 +1,4 @@
 import { warn } from '../../src/util/LogUtils';
-import { describe, test, expect, vi } from 'vitest'
 
 describe('LogUtils', () => {
   test('dont log when condition is true', () => {

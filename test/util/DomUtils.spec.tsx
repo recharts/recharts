@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { getStringSize } from '../../src/util/DOMUtils';
-import { describe, expect, test, vi } from 'vitest';
 
 
 /**
