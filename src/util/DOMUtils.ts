@@ -73,7 +73,7 @@ export const getStyleString = (style: CSSProperties) =>
     '',
   );
 
-export const getStringSize = (text: string | number, style: CSSProperties = {}): Size => {
+export const getStringSize = (text: string | number | undefined, style: CSSProperties = {}): Size => {
   if (text === undefined || text === null || Global.isSsr) {
     return { width: 0, height: 0 };
   }

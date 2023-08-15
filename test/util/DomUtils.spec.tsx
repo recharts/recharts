@@ -10,6 +10,10 @@ import { describe, expect, test, vi } from 'vitest';
  * https://github.com/jsdom/jsdom/issues/1590#issuecomment-578350151
  * */
 describe('DOMUtils', () => {
+  test('getStringSize() returns 0', () => {
+    expect(getStringSize(undefined)).toEqual({ width: 0, height: 0 });
+  });
+
   test('getStringSize() with value returns mocked getBoundingClientRect values', () => {
     render(<span id="recharts_measurement_span">test</span>);
     const span = screen.getByText('test');
@@ -31,7 +35,5 @@ describe('DOMUtils', () => {
     });
   });
 
-  test('getStringSize() returns 0', () => {
-    expect(getStringSize('')).toEqual({ width: 0, height: 0 });
-  });
+
 });
