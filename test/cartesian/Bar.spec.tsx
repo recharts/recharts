@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react';
 import * as _ from 'lodash';
 import React from 'react';
+import { describe, it, expect } from 'vitest'
 
 import { Bar, Surface } from '../../src';
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { Surface, Scatter } from '../../src';
+import { describe, expect, test, vi } from 'vitest';
 
 describe('<Scatter />', () => {
   const data = [
@@ -80,9 +81,9 @@ describe('<Scatter />', () => {
   });
 
   test('mouse enter or mouse leave a symbol', () => {
-    const onClick = jest.fn();
-    const onMouseEnter = jest.fn();
-    const onMouseLeave = jest.fn();
+    const onClick = vi.fn();
+    const onMouseEnter = vi.fn();
+    const onMouseLeave = vi.fn();
 
     const { container } = render(
       <Surface width={500} height={500}>

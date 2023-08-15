@@ -83,7 +83,7 @@ describe('<FunnelChart />', () => {
     ] as const
   ).forEach(({ prop, event }) => {
     test(`should fire ${event} event`, () => {
-      const onEventMock = jest.fn();
+      const onEventMock = vi.fn();
 
       const { container } = render(
         <FunnelChart

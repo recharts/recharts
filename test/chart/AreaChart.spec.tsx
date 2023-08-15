@@ -3,6 +3,7 @@ import React, { ComponentProps, FC } from 'react';
 
 import { Area, AreaChart, Brush, CartesianAxis, Tooltip, XAxis, YAxis } from '../../src';
 import { mockMouseEvent } from '../helper/mockMouseEvent';
+import { describe, it, expect, vi } from 'vitest'
 
 describe('AreaChart', () => {
   const data = [
@@ -168,9 +169,9 @@ describe('AreaChart', () => {
     // spy on each pure element before each test, and restore the spy afterwards
     beforeEach(() => {
       pureElements.forEach((el, i) => {
-        spies[i] = jest.spyOn(el.prototype, 'render');
+        spies[i] = vi.spyOn(el.prototype, 'render');
       });
-      axisSpy = jest.spyOn(CartesianAxis.prototype, 'render');
+      axisSpy = vi.spyOn(CartesianAxis.prototype, 'render');
     });
     afterEach(() => {
       pureElements.forEach((el, i) => spies[i].mockRestore());

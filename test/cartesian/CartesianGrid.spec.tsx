@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { Surface, CartesianGrid } from '../../src';
+import { describe, expect, test } from 'vitest'
 
 describe('<CartesianGrid />', () => {
   const horizontalPoints = [10, 20, 30, 100, 400];

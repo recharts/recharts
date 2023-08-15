@@ -1,14 +1,15 @@
 import { warn } from '../../src/util/LogUtils';
+import { describe, test, expect, vi } from 'vitest'
 
 describe('LogUtils', () => {
   test('dont log when condition is true', () => {
-    const logSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const logSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     warn(true, 'test');
     expect(logSpy).not.toHaveBeenCalledWith('test');
   });
 
   test('warn when condition is false', () => {
-    const logSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const logSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     // log 'format'
     warn(false, 'format');
 
@@ -23,3 +24,4 @@ describe('LogUtils', () => {
     expect(logSpy).toHaveBeenCalledWith('format width variable 0');
   });
 });
+

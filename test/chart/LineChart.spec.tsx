@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-import type { JSX } from '@babel/types';
+import { describe, test, expect, vi, beforeAll, afterEach, afterAll } from 'vitest'
 
 import { LineChart, Line, XAxis, YAxis, Tooltip, Brush, CartesianAxis, Legend } from '../../src';
 
@@ -249,9 +249,9 @@ describe('<LineChart />', () => {
   });
 
   test('click on Curve should invoke onClick callback', () => {
-    const onClick = jest.fn();
-    const onMouseDown = jest.fn();
-    const onMouseUp = jest.fn();
+    const onClick = vi.fn();
+    const onMouseDown = vi.fn();
+    const onMouseUp = vi.fn();
     const { container } = render(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line
@@ -400,9 +400,9 @@ describe('<LineChart /> - Pure Rendering', () => {
   // spy on each pure element before each test, and restore the spy afterwards
   beforeAll(() => {
     pureElements.forEach((el, i) => {
-      spies[i] = jest.spyOn(el.prototype, 'render');
+      spies[i] = vi.spyOn(el.prototype, 'render');
     });
-    axisSpy = jest.spyOn(CartesianAxis.prototype, 'render');
+    axisSpy = vi.spyOn(CartesianAxis.prototype, 'render');
   });
   afterEach(() => {
     pureElements.forEach((_el, i) => spies[i].mockReset());
@@ -482,9 +482,9 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
   // spy on each pure element before each test, and restore the spy afterwards
   beforeAll(() => {
     pureElements.forEach((el, i) => {
-      spies[i] = jest.spyOn(el.prototype, 'render');
+      spies[i] = vi.spyOn(el.prototype, 'render');
     });
-    axisSpy = jest.spyOn(CartesianAxis.prototype, 'render');
+    axisSpy = vi.spyOn(CartesianAxis.prototype, 'render');
   });
   afterEach(() => {
     pureElements.forEach((_el, i) => spies[i].mockReset());

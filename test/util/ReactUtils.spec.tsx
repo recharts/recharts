@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import React from 'react';
+import { describe, expect, test, vi } from 'vitest';
 
 import { Bar, Line, LineChart } from '../../src';
 import {
@@ -45,7 +46,7 @@ describe('ReactUtils untest tests', () => {
 
     test('should include events when includeEvents is true', () => {
       expect(
-        filterProps({ test: '1234', helloWorld: 1234, viewBox: '0 0 0 0', onClick: jest.fn() }, true, 'svg'),
+        filterProps({ test: '1234', helloWorld: 1234, viewBox: '0 0 0 0', onClick: vi.fn() }, true, 'svg'),
       ).toEqual({
         viewBox: '0 0 0 0',
         onClick: expect.any(Function),
@@ -53,7 +54,7 @@ describe('ReactUtils untest tests', () => {
     });
 
     test('should filter out "points" attribute when included without an svg type that explicitly uses "points"', () => {
-      expect(filterProps({ test: '1234', points: '1234', onClick: jest.fn() }, true)).toEqual({
+      expect(filterProps({ test: '1234', points: '1234', onClick: vi.fn() }, true)).toEqual({
         onClick: expect.any(Function),
       });
     });
@@ -120,7 +121,7 @@ describe('ReactUtils untest tests', () => {
     test('adaptEventHandlers return event attributes', () => {
       const result = adaptEventHandlers({
         a: 1,
-        onMouseEnter: jest.fn(),
+        onMouseEnter: vi.fn(),
       });
       expect(Object.keys(result ?? {})).toContain('onMouseEnter');
       expect(Object.keys(result ?? {})).not.toContain('a');
@@ -128,7 +129,7 @@ describe('ReactUtils untest tests', () => {
 
     test('adaptEventHandlers return null when input is not a react element', () => {
       expect(adaptEventHandlers(null as any)).toEqual(null);
-      expect(adaptEventHandlers(jest.fn())).toEqual(null);
+      expect(adaptEventHandlers(vi.fn())).toEqual(null);
       expect(adaptEventHandlers(1 as any)).toEqual(null);
     });
   });
@@ -154,7 +155,7 @@ describe('ReactUtils untest tests', () => {
 
     test('validateWidthHeight return false when input is not a react element', () => {
       expect(validateWidthHeight({ a: 1 })).toEqual(false);
-      expect(validateWidthHeight(jest.fn())).toEqual(false);
+      expect(validateWidthHeight(vi.fn())).toEqual(false);
     });
   });
 

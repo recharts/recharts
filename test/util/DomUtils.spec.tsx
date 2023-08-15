@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { getStringSize } from '../../src/util/DOMUtils';
+import { describe, expect, test, vi } from 'vitest';
+
 
 /**
  * getBoundingClientRect always returns 0 in jsdom, we can't test for actual returned string size
@@ -11,7 +13,7 @@ describe('DOMUtils', () => {
   test('getStringSize() with value returns mocked getBoundingClientRect values', () => {
     render(<span id="recharts_measurement_span">test</span>);
     const span = screen.getByText('test');
-    span.getBoundingClientRect = jest.fn(() => ({
+    span.getBoundingClientRect = vi.fn(() => ({
       x: 200,
       y: 100,
       width: 25,
@@ -20,7 +22,7 @@ describe('DOMUtils', () => {
       right: 10,
       bottom: 10,
       left: 10,
-      toJSON: jest.fn(),
+      toJSON: vi.fn(),
     }));
 
     expect(getStringSize('test')).toEqual({

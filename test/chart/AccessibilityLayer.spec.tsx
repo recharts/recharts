@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { Area, AreaChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '../../src';
+import { describe, expect, test, vi } from 'vitest';
 
 describe('AccessibilityLayer', () => {
   const data = [
@@ -47,7 +48,7 @@ describe('AccessibilityLayer', () => {
   });
 
   test('Chart updates when it receives left/right arrow keystrokes', () => {
-    const mockMouseMovements = jest.fn();
+    const mockMouseMovements = vi.fn();
 
     const { container } = render(
       <AreaChart width={100} height={50} data={data} accessibilityLayer onMouseMove={mockMouseMovements}>
@@ -127,7 +128,7 @@ describe('AccessibilityLayer', () => {
   });
 
   test('Vertical chart ignores arrow keys', () => {
-    const mockMouseMovements = jest.fn();
+    const mockMouseMovements = vi.fn();
 
     const { container } = render(
       <AreaChart

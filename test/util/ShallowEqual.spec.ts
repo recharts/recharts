@@ -1,4 +1,5 @@
 import { shallowEqual } from '../../src/util/ShallowEqual';
+import { describe, it, expect } from 'vitest'
 
 const arrayValue = [1];
 const objectValue = { foo: 'bar' };

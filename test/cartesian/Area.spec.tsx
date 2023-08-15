@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { render, screen } from '@testing-library/react';
 import { Area, Surface } from '../../src';
+import { describe, test, expect } from 'vitest'
 
 describe('<Area />', () => {
   const data = [

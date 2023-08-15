@@ -58,7 +58,7 @@ describe('ScatterChart of three dimension data', () => {
   });
 
   test('mouse enter on one circle will trigger one Cross', () => {
-    const onMouseEnter = jest.fn();
+    const onMouseEnter = vi.fn();
     const { container } = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis dataKey="x" name="stature" unit="cm" />

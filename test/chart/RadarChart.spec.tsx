@@ -1,6 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from '../../src';
+import { describe, expect, test, vi } from 'vitest';
 
 describe('<RadarChart />', () => {
   const data = [
@@ -88,7 +89,7 @@ describe('<RadarChart />', () => {
   });
 
   test('click on Sector should invoke onClick callback', () => {
-    const onClick = jest.fn();
+    const onClick = vi.fn();
     const { container } = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
         <Radar dataKey="value" onClick={onClick} />

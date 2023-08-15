@@ -2,6 +2,7 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 import { ResponsiveContainer } from '../../src';
+import { describe, it, expect, vi, beforeAll, afterEach } from 'vitest'
 
 declare global {
   interface Window {
@@ -26,16 +27,16 @@ describe('<ResponsiveContainer />', () => {
    * This mock also allow us to use {@link notifyResizeObserverChange} to fire changes
    * from inside our test.
    */
-  const resizeObserverMock = jest.fn().mockImplementation(callback => {
+  const resizeObserverMock = vi.fn().mockImplementation(callback => {
     notifyResizeObserverChange = callback;
 
     return {
-      observe: jest.fn().mockImplementation(),
-      unobserve: jest.fn(),
-      disconnect: jest.fn(),
+      observe: vi.fn().mockImplementation(),
+      unobserve: vi.fn(),
+      disconnect: vi.fn(),
     };
   });
-  const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
 
   beforeAll(() => {
     delete window.ResizeObserver;
@@ -192,7 +193,7 @@ describe('<ResponsiveContainer />', () => {
   });
 
   it('should call onResize when ResizeObserver notifies one or many changes', () => {
-    const onResize = jest.fn();
+    const onResize = vi.fn();
 
     const { container } = render(
       <ResponsiveContainer width="100%" height={200} onResize={onResize}>
@@ -217,7 +218,7 @@ describe('<ResponsiveContainer />', () => {
   });
 
   it('should have a min-width of 0 when no minWidth is set', () => {
-    const onResize = jest.fn();
+    const onResize = vi.fn();
 
     const { container } = render(
       <ResponsiveContainer width="100%" height={200} onResize={onResize}>
@@ -231,7 +232,7 @@ describe('<ResponsiveContainer />', () => {
   });
 
   it('should have a min-width of 200px when minWidth is 200', () => {
-    const onResize = jest.fn();
+    const onResize = vi.fn();
 
     const { container } = render(
       <ResponsiveContainer width="100%" height={200} minWidth={200} onResize={onResize}>

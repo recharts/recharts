@@ -12,9 +12,9 @@ describe('<Text />', () => {
     right: 10,
     bottom: 10,
     left: 10,
-    toJSON: jest.fn(),
+    toJSON: vi.fn(),
   };
-  Element.prototype.getBoundingClientRect = jest.fn(() => mock);
+  Element.prototype.getBoundingClientRect = vi.fn(() => mock);
 
   test('Does not wrap long text if enough width', () => {
     render(
@@ -46,7 +46,7 @@ describe('<Text />', () => {
   });
 
   test('Wraps long text if styled but would have had enough room', () => {
-    Element.prototype.getBoundingClientRect = jest.fn(() => ({ ...mock, width: 40 }));
+    Element.prototype.getBoundingClientRect = vi.fn(() => ({ ...mock, width: 40 }));
     render(
       <Surface width={300} height={200}>
         <Text role="img" width={300} style={{ fontSize: '2em', fontFamily: 'Courier' }}>
@@ -218,7 +218,7 @@ describe('<Text />', () => {
     });
 
     // test('adds an ellipsis at the end of a very long word', () => {
-    //   Element.prototype.getBoundingClientRect = jest.fn(() => ({ ...mock, width: 1 }));
+    //   Element.prototype.getBoundingClientRect = vi.fn(() => ({ ...mock, width: 1 }));
     //   const testString =
     //     'longwooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooord';
     //   render(
