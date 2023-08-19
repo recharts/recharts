@@ -2,7 +2,6 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import React, { ComponentProps, FC } from 'react';
 
 import { Area, AreaChart, Brush, CartesianAxis, Tooltip, XAxis, YAxis } from '../../src';
-import { mockMouseEvent } from '../helper/mockMouseEvent';
 import { vi } from 'vitest';
 
 describe('AreaChart', () => {
