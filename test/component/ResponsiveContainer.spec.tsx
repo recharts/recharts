@@ -171,7 +171,7 @@ describe('<ResponsiveContainer />', () => {
   });
 
   it('should resize when debounced', () => {
-    vi.useFakeTimers('modern');
+    vi.useFakeTimers();
     const { container } = render(
       <ResponsiveContainer id="testing-id-attr" width="100%" height={200} debounce={200}>
         <div data-testid="inside" />
@@ -181,13 +181,11 @@ describe('<ResponsiveContainer />', () => {
     const element = container.querySelector('.recharts-responsive-container');
 
     notifyResizeObserverChange([{ contentRect: { width: 50, height: 50 } }]);
-    vi.advanceTimersByTime(100);
     expect(element).not.toHaveAttribute('width');
     expect(element).not.toHaveAttribute('height');
 
     notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
-    vi.runAllTimers();
-
+    vi.advanceTimersByTime(200);
     expect(element).toHaveAttribute('width', '100');
     expect(element).toHaveAttribute('height', '100');
   });
