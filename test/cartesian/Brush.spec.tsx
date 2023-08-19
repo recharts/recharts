@@ -61,9 +61,8 @@ describe('<Brush />', () => {
     );
 
     const brushSlide = container.querySelector('.recharts-brush-slide') as SVGRectElement;
+    fireEvent.mouseOver(brushSlide, { pageX: 0, pageY: 0 });
 
-    const mouseOverEvent = mockMouseEvent('mouseover', brushSlide, { pageX: 0, pageY: 0 });
-    mouseOverEvent.fire();
     expect(container.querySelectorAll('.recharts-brush-texts')).toHaveLength(1);
     expect(screen.getAllByText(data[0].date)).toHaveLength(1);
     expect(screen.getAllByText(data[data.length - 1].date)).toHaveLength(1);
@@ -87,17 +86,14 @@ describe('<Brush />', () => {
     );
 
     const brushSlide = container.querySelector('.recharts-brush-slide');
+    fireEvent.mouseDown(brushSlide!);
 
-    const mouseDownEvent = mockMouseEvent('mousedown', brushSlide!, { pageX: 0, pageY: 0 });
-    mouseDownEvent.fire();
     expect(container.querySelectorAll('.recharts-brush-texts')).toHaveLength(1);
     expect(screen.getAllByText(data[0].date)).toHaveLength(1);
     expect(screen.getAllByText(data[data.length - 1].date)).toHaveLength(1);
 
     fireEvent.mouseUp(window);
 
-    const mouseMoveEvent = mockMouseEvent('mousemove', window, { pageX: 0, pageY: 0 });
-    mouseMoveEvent.fire();
     expect(container.querySelectorAll('.recharts-brush-texts')).toHaveLength(0);
   });
 
