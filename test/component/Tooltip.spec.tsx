@@ -54,7 +54,7 @@ describe('<Tooltip />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart!);
+    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
 
     // After the mouse over event over the chart, the tooltip wrapper still is not set to visible,
     // but the content is already created based on the nearest data point.
