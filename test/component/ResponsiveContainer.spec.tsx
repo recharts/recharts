@@ -2,6 +2,7 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 import { ResponsiveContainer } from '../../src';
+import { vi } from 'vitest';
 
 declare global {
   interface Window {
@@ -170,7 +171,7 @@ describe('<ResponsiveContainer />', () => {
   });
 
   it('should resize when debounced', () => {
-    jest.useFakeTimers('modern');
+    vi.useFakeTimers('modern');
     const { container } = render(
       <ResponsiveContainer id="testing-id-attr" width="100%" height={200} debounce={200}>
         <div data-testid="inside" />
@@ -180,12 +181,12 @@ describe('<ResponsiveContainer />', () => {
     const element = container.querySelector('.recharts-responsive-container');
 
     notifyResizeObserverChange([{ contentRect: { width: 50, height: 50 } }]);
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
     expect(element).not.toHaveAttribute('width');
     expect(element).not.toHaveAttribute('height');
 
     notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
-    jest.runAllTimers();
+    vi.runAllTimers();
 
     expect(element).toHaveAttribute('width', '100');
     expect(element).toHaveAttribute('height', '100');

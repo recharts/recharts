@@ -1,6 +1,7 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { FunnelChart, Funnel } from '../../src';
+import { vi } from 'vitest';
 
 const data = [
   { value: 100, name: '展现' },
@@ -27,8 +28,6 @@ const data02 = [
 ];
 
 describe('<FunnelChart />', () => {
-  jest.useFakeTimers();
-
   test('Renders 1 funnel in simple FunnelChart', () => {
     const { container } = render(
       <FunnelChart width={500} height={300}>
@@ -44,9 +43,10 @@ describe('<FunnelChart />', () => {
   });
 
   test('Renders 1 funnel in FunnelChart with animation', () => {
+    vi.useFakeTimers();
     const { container } = render(
       <FunnelChart width={500} height={300}>
-        <Funnel dataKey="value" data={data} isAnimationActive />
+        <Funnel dataKey="value" data={data} isAnimationActive animationDuration={1} />
       </FunnelChart>,
     );
 
@@ -55,7 +55,7 @@ describe('<FunnelChart />', () => {
     expect(container.querySelectorAll('.recharts-trapezoid')).toHaveLength(0);
 
     // wait animation end
-    jest.advanceTimersByTime(500);
+    vi.runOnlyPendingTimers();
 
     expect(container.querySelectorAll('.recharts-funnel-trapezoid')).toHaveLength(5);
     // all trapezoids are visible
