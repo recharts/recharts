@@ -2121,6 +2121,7 @@ export const generateCategoricalChartFunctional = ({
     };
 
     // FIXME this was a static function
+    // eslint-disable-next-line no-shadow
     const renderActiveDot = (option: any, props: any): React.ReactElement => {
       let dot;
 
@@ -2133,6 +2134,7 @@ export const generateCategoricalChartFunctional = ({
       }
 
       return (
+        // eslint-disable-next-line react/prop-types
         <Layer className="recharts-active-dot" key={props.key}>
           {dot}
         </Layer>
@@ -2269,7 +2271,7 @@ export const generateCategoricalChartFunctional = ({
     };
 
     // This was a public function
-
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const getXScales = () => {
       const { xAxisMap } = state;
 
@@ -2284,6 +2286,7 @@ export const generateCategoricalChartFunctional = ({
     };
 
     // This was a public function
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const getYScales = () => {
       const { yAxisMap } = state;
 
@@ -2298,27 +2301,30 @@ export const generateCategoricalChartFunctional = ({
     };
 
     // This was a public function
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const getXScaleByAxisId = (axisId: string) => {
       return state.xAxisMap?.[axisId]?.scale;
     };
 
     // This was a public function
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const getYScaleByAxisId = (axisId: string) => {
       return state.yAxisMap?.[axisId]?.scale;
     };
 
     // This was a public function
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const getItemByXY = (chartXY: { x: number; y: number }) => {
       const { formattedGraphicalItems } = state;
 
       if (formattedGraphicalItems && formattedGraphicalItems.length) {
         for (let i = 0, len = formattedGraphicalItems.length; i < len; i++) {
           const graphicalItem = formattedGraphicalItems[i];
-          const { props, item } = graphicalItem;
+          const { props: propss, item } = graphicalItem;
           const itemDisplayName = getDisplayName(item.type);
 
           if (itemDisplayName === 'Bar') {
-            const activeBarItem = (props.data || []).find(
+            const activeBarItem = (propss.data || []).find(
               (entry: { x: number; y: number; width: number; height: number }) => {
                 return isInRectangle(chartXY, entry);
               },
@@ -2328,7 +2334,7 @@ export const generateCategoricalChartFunctional = ({
               return { graphicalItem, payload: activeBarItem };
             }
           } else if (itemDisplayName === 'RadialBar') {
-            const activeBarItem = (props.data || []).find((entry: GeometrySector) => {
+            const activeBarItem = (propss.data || []).find((entry: GeometrySector) => {
               return inRangeOfSector(chartXY, entry);
             });
 
