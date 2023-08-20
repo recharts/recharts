@@ -1417,6 +1417,7 @@ export const generateCategoricalChartFunctional = ({
     }, []);
 
     const handleReceiveSyncEvent = useMemo(() => {
+      // eslint-disable-next-line no-console
       console.log('calculating handleReceiveSyncEvent');
       return (cId: number | string, chartId: string, data: CategoricalChartState) => {
         if (props.syncId === cId && chartId !== uniqueChartId) {
@@ -1523,6 +1524,7 @@ export const generateCategoricalChartFunctional = ({
         // of the component passed to, this can be quite an issue
         // for performance since now we're depending on the identity
         // of those objects and they're changing frequently.
+        // eslint-disable-next-line no-console
         console.log('Cleanup deferId');
         clearDeferId();
         if (!_.isNil(props.syncId)) {
