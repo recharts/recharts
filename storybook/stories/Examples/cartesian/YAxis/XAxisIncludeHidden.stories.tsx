@@ -20,21 +20,21 @@ export const WithIncludeHidden = {
     };
 
     return (
-      <ResponsiveContainer width="100%" height={500}>
-        <>
-          <ComposedChart width={400} height={400} data={pageData}>
+      <>
+        <h4>
+          Click on the legend items to toggle their bars on and off, and notice how the YAxis domain stays the same, if
+          `includeHidden`
+        </h4>
+        <ResponsiveContainer width="100%" height={500}>
+          <ComposedChart data={pageData}>
             <XAxis dataKey="name" scale="band" />
             <YAxis includeHidden />
             <Legend onClick={handleLegendClick} />
             <Bar dataKey="pv" fill="blue" hide={!activeKeys.includes('pv')} />
             <Bar dataKey="amt" fill="green" hide={!activeKeys.includes('amt')} />
           </ComposedChart>
-          <h4>
-            Click on the legend items to toggle their bars on and off, and notice how the YAxis domain stays the same,
-            if `includeHidden`
-          </h4>
-        </>
-      </ResponsiveContainer>
+        </ResponsiveContainer>
+      </>
     );
   },
 };
