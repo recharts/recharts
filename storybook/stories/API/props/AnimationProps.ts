@@ -32,7 +32,7 @@ export const isAnimationActive = {
     defaultValue: { summary: 'true in CSR, and false in SSR' },
     category: 'Animation',
   },
-  defaultValue: 'true in CSR, and false in SSR',
+  defaultValue: true,
 };
 
 /**
