@@ -17,7 +17,7 @@ The main purpose of this library is to help you to write charts in React applica
 2. **Native** SVG support, lightweight depending only on some D3 submodules.
 3. **Declarative** components, components of charts are purely presentational.
 
-Documentation at [recharts.org](https://recharts.org)
+Documentation at [recharts.org](https://recharts.org) and our [storybook (WIP)](https://release--63da8268a0da9970db6992aa.chromatic.com/)
 
 Please see [the wiki](https://github.com/recharts/recharts/wiki) for FAQ.
 
@@ -26,12 +26,7 @@ All development is done on the `master` branch. The current latest release and s
 ## Examples
 
 ```jsx
-<LineChart
-  width={400}
-  height={400}
-  data={data}
-  margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
->
+<LineChart width={400} height={400} data={data} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
   <XAxis dataKey="name" />
   <Tooltip />
   <CartesianGrid stroke="#f5f5f5" />
@@ -48,7 +43,6 @@ All the components of Recharts are clearly separated. The lineChart is composed 
 
 NPM is the easiest and fastest way to get started using Recharts. It is also the recommended installation method when building single-page applications (SPAs). It pairs nicely with a CommonJS module bundler such as Webpack.
 
-
 ```sh
 # latest stable
 $ npm install recharts
@@ -59,9 +53,9 @@ $ npm install recharts
 The UMD build is also available on unpkg.com:
 
 ```html
- <script src="https://unpkg.com/react/umd/react.production.min.js"></script>
- <script src="https://unpkg.com/react-dom/umd/react-dom.production.min.js"></script>
- <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+<script src="https://unpkg.com/react/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
 ```
 
 Then you can find the library on `window.Recharts`.
@@ -95,9 +89,29 @@ $ npm run[-script] storybook
 
 and then browse to http://localhost:6006.
 
+## Releases
+
+[Releases](https://github.com/recharts/recharts/releases) are automated via GH Actions - when a new release is created in GH, CI will trigger that:
+
+1. Runs a build
+2. Runs tests
+3. Runs `npm publish`
+
+Version increments and tagging are not automated at this time.
+
+### Release testing
+
+Until we can automate more, it should be preferred to test as close to the results of `npm publish` as we possibly can. This ensures we don't publish unintended breaking changes. One way to do that is using `yalc` - `npm i -g yalc`.
+
+1. Make your changes in recharts
+2. `yalc publish` in recharts
+3. `yalc add recharts` in your test package (ex: in a vite or webpack reach app with recharts installed, imported, and your recent changes used)
+4. `npm install`
+5. Test a local run, a build, etc.
+
 ## Module Formats
 
-- [babel-plugin-recharts](https://github.com/recharts/babel-plugin-recharts) A simple transform to cherry-pick Recharts modules so you don’t have to.
+- [babel-plugin-recharts](https://github.com/recharts/babel-plugin-recharts) A simple transform to cherry-pick Recharts modules so you don’t have to. **Note: this plugin is out of date and may not work with 2.x**
 
 ## License
 
