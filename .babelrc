@@ -4,7 +4,8 @@
     "@babel/plugin-proposal-export-namespace-from",
     "@babel/plugin-proposal-object-rest-spread",
     "@babel/plugin-proposal-function-bind",
-    "babel-plugin-lodash"
+    "babel-plugin-lodash",
+    "babel-plugin-dev-expression"
   ],
   "presets": [
     [
