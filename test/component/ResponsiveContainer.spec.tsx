@@ -230,6 +230,19 @@ describe('<ResponsiveContainer />', () => {
     expect(element).toHaveStyle({ width: '100%', height: '200px', 'min-width': '0' });
   });
 
+  it('should accept and render the style prop if it is set', () => {
+    const { container } = render(
+      <ResponsiveContainer style={{ color: 'red', width: '100px' }}>
+        <div data-testid="inside" />
+      </ResponsiveContainer>,
+    );
+
+    expect(container.querySelector('.recharts-responsive-container')).toHaveStyle({
+      color: 'red',
+      width: '100px',
+    });
+  });
+
   it('should have a min-width of 200px when minWidth is 200', () => {
     const onResize = jest.fn();
 
