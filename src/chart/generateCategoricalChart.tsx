@@ -858,7 +858,7 @@ export const generateCategoricalChart = ({
           axisMap && axisMap[id],
           `Specifying a(n) ${entry.axisType}Id requires a corresponding ${
             entry.axisType
-          }Id on the targeted graphical component ${item?.type?.displayName ? item?.type?.displayName : ''}`,
+          }Id on the targeted graphical component ${item?.type?.displayName ?? ''}`,
         );
 
         // the axis we are currently formatting
