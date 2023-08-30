@@ -1,6 +1,7 @@
 import React, { Component, cloneElement, isValidElement, createElement } from 'react';
 import classNames from 'classnames';
 import _, { isArray, isBoolean, isNil } from 'lodash';
+import invariant from 'tiny-invariant';
 import { getTicks } from '../cartesian/getTicks';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
@@ -860,12 +861,29 @@ export const generateCategoricalChart = ({
     graphicalItems.forEach((item: any, index: number) => {
       const displayedData = getDisplayedData(props.data, { dataStartIndex, dataEndIndex }, item);
       const { dataKey, maxBarSize: childMaxBarSize } = item.props;
+      // axisId of the numerical axis
       const numericAxisId = item.props[`${numericAxisName}Id`];
+      // axisId of the categorical axis
       const cateAxisId = item.props[`${cateAxisName}Id`];
       const axisObj = axisComponents.reduce((result: any, entry: any) => {
+        // map of axisId to axis for a specific axis type
         const axisMap = currentState[`${entry.axisType}Map`];
+        // axisId of axis we are currently computing
         const id = item.props[`${entry.axisType}Id`];
-        const axis = axisMap && axisMap[id];
+
+        /**
+         * tell the user in dev mode that their configuration is incorrect if we cannot find a match between
+         * axisId on the chart and axisId on the axis
+         */
+        invariant(
+          axisMap && axisMap[id],
+          `Specifying a(n) ${entry.axisType}Id requires a corresponding ${
+            entry.axisType
+          }Id on the targeted graphical component ${item?.type?.displayName ?? ''}`,
+        );
+
+        // the axis we are currently formatting
+        const axis = axisMap[id];
 
         return {
           ...result,
