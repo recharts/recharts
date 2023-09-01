@@ -167,7 +167,7 @@ export const ResponsiveContainer = forwardRef(
       }
     }, [getContainerSize]);
 
-    const styles: React.CSSProperties = style ?? { width, height, minWidth, minHeight, maxHeight };
+    const styles: React.CSSProperties = { ...style, width, height, minWidth, minHeight, maxHeight };
 
     return (
       <ReactResizeDetector

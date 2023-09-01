@@ -232,14 +232,29 @@ describe('<ResponsiveContainer />', () => {
 
   it('should accept and render the style prop if it is set', () => {
     const { container } = render(
-      <ResponsiveContainer style={{ color: 'red', width: '100px' }}>
+      <ResponsiveContainer style={{ color: 'red', backgroundColor: '#FF00FF' }}>
         <div data-testid="inside" />
       </ResponsiveContainer>,
     );
 
     expect(container.querySelector('.recharts-responsive-container')).toHaveStyle({
       color: 'red',
+      backgroundColor: '#FF00FF',
+    });
+  });
+
+  it('should accept and render the style prop and any other specified outside of it', () => {
+    const { container } = render(
+      <ResponsiveContainer style={{ backgroundColor: 'red', color: 'red' }} width={100} height={100}>
+        <div data-testid="inside" />
+      </ResponsiveContainer>,
+    );
+
+    expect(container.querySelector('.recharts-responsive-container')).toHaveStyle({
       width: '100px',
+      height: '100px',
+      backgroundColor: 'red',
+      color: 'red',
     });
   });
 
