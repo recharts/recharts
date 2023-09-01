@@ -58,7 +58,7 @@ export const ResponsiveContainer = forwardRef(
       id,
       className,
       onResize,
-      style,
+      style = {},
     }: Props,
     ref,
   ) => {
