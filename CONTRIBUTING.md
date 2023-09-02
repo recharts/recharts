@@ -6,11 +6,15 @@ We'd love for you to contribute to our source code and to make Recharts even bet
 - [Pull Requests](#pr)
 - [License](#license)
 
+## Ongoing Initiatives
+
+We use Github Discussion to organise our discussion along new intiatives and organise ourselves.
+
 ## <a name="issues"></a>Issues and Bugs
 
 ### Where to Find Known Issues
 
-We will be using [GitHub Issues](https://github.com/recharts/recharts/issues) for our public bugs. We will keep a close eye on this and try to make it clear when we have an internal fix in progress. Before filing a new task, try to make sure your problem doesn't already exist.
+We will be using [GitHub Issues](https://github.com/recharts/recharts/issues) for our bugs and feature requests. We will keep a close eye on this and try to make it clear when we have an internal fix in progress. Before filing a new task, try to make sure your problem doesn't already exist.
 
 ### Reporting New Issues
 
@@ -25,8 +29,8 @@ _Before_ submitting a pull request, please make sure the following is done…
 - Search [GitHub](https://github.com/recharts/recharts/pulls) for an open or closed Pull Request that relates to your submission. You don't want to duplicate effort.
 
 - Fork the repo and create your branch from `master`.
-- If you've added code that should be **tested**, add tests!
-- If you've changed APIs, update the [documentation](https://github.com/recharts/recharts.org) and demo.
+- If you have added functionality or changed existing functionality, be sure to add a test. Ideally a unit test for helper function, or a test that includes rendering with RTL.
+- If you've changed APIs, make sure that the stories in Storybook are working as expected.
 - Ensure the test suite passes (`npm run test`).
 - Make sure your code lints (`npm run lint`) - we've done our best to make sure these rules match our internal linting guidelines.
 
