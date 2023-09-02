@@ -4,6 +4,7 @@ We'd love for you to contribute to our source code and to make Recharts even bet
 
 - [Issues and Bugs](#issues)
 - [Pull Requests](#pr)
+- [Code Guide](#code)
 - [License](#license)
 
 ## Ongoing Initiatives
