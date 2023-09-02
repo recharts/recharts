@@ -9,7 +9,7 @@ We'd love for you to contribute to our source code and to make Recharts even bet
 
 ## Ongoing Initiatives
 
-We use Github Discussion to organise our discussion along new intiatives and organise ourselves.
+We use Github Discussion to organise our discussion along new intiatives and organise ourselves. Please do check the [announcements](https://github.com/recharts/recharts/discussions/categories/announcements) section for an overview of recent initiatives. 
 
 ## <a name="issues"></a>Issues and Bugs
 
