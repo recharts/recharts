@@ -232,7 +232,7 @@ const getTooltipContent = (
       return result;
     }
 
-    const { data } = child.props;
+    const { data = chartData } = child.props;
     let payload;
 
     if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
