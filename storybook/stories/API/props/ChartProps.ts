@@ -45,6 +45,16 @@ export const margin = {
   },
 };
 
+export const dataKey = {
+  description: 'The key or getter of a gbroup of data which should be unique in a LineChart',
+  table: {
+    type: {
+      summary: 'String | Number | Function',
+    },
+    category: 'General',
+  },
+};
+
 // These props are shared between the following charts:
 // - AreaChart
 // - BarChart

@@ -9,6 +9,34 @@ export const dataKey = {
   },
 };
 
+export const nameKey = {
+  description: "The key of each sector's name.",
+  table: {
+    type: { summary: 'String' },
+    category: 'General',
+  },
+};
+
+export const activeShape = {
+  description: '',
+  table: {
+    type: {
+      summary: 'Object | ReactElement | Function',
+    },
+    category: 'General',
+  },
+};
+
+export const trapezoids = {
+  description: 'The coordinates of all the trapezoids in the funnel, usually calculated internally',
+  table: {
+    type: {
+      summary: 'Array',
+      detail: '[{x: 12, y: 12, upperWidth: 240, lowerWidth: 22, height: 80,}]',
+    },
+  },
+};
+
 export const xAxisId = {
   description: 'The id of x-axis which is corresponding to the data.',
   table: { type: { summary: 'string | number' }, category: 'General' },
