@@ -28,7 +28,7 @@ export const activeShape = {
 };
 
 export const trapezoids = {
-  description: 'The coordinates of all the trapezoids in the funnel, usually calculated internally',
+  description: 'The coordinates of all trapezoids in the chart, usually calculated internally',
   table: {
     type: {
       summary: 'Array',
