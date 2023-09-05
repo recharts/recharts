@@ -1,0 +1,24 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/blocks';
+import * as ComponentStories from './Funnel.stories';
+
+# Funnel
+
+<Meta of={ComponentStories} />
+
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
+
+## Parent Component
+
+The Funnel component can be used within a `<FunnelChart />`.
+
+## Child Component
+
+The Funnel component can be used with the following child components: `<LabelList />` `<Cell />`.
+
+## Properties
+
+The following table shows a complete list of all properties of the component. Properties in the groups Other and Internal are not recommended to be used.
+
+<Controls of={ComponentStories.API} />
