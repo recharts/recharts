@@ -32,7 +32,7 @@ export const trapezoids = {
   table: {
     type: {
       summary: 'Array',
-      detail: '[{x: 12, y: 12, upperWidth: 240, lowerWidth: 22, height: 80,}]',
+      detail: '[{x: 12, y: 12, upperWidth: 240, lowerWidth: 22, height: 80}]',
     },
   },
 };
