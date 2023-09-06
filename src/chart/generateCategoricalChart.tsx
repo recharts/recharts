@@ -852,10 +852,11 @@ export const generateCategoricalChart = ({
 
         /**
          * tell the user in dev mode that their configuration is incorrect if we cannot find a match between
-         * axisId on the chart and axisId on the axis
+         * axisId on the chart and axisId on the axis. zAxis does not get passed in the map for ComposedChart,
+         * leave it out of the check for now.
          */
         invariant(
-          axisMap && axisMap[id],
+          (axisMap && axisMap[id]) || entry.axisType === 'zAxis',
           `Specifying a(n) ${entry.axisType}Id requires a corresponding ${
             entry.axisType
           }Id on the targeted graphical component ${item?.type?.displayName ?? ''}`,
