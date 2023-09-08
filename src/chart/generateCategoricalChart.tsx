@@ -1706,7 +1706,7 @@ export const generateCategoricalChart = ({
       }
     }
 
-    verticalCoordinatesGenerator = ({ xAxis, width, height, offset }: ChartCoordinate) =>
+    verticalCoordinatesGenerator = ({ xAxis, width, height, offset }: ChartCoordinate, syncWithTicks: Boolean) =>
       getCoordinatesOfGrid(
         getTicks({
           ...CartesianAxis.defaultProps,
@@ -1716,9 +1716,10 @@ export const generateCategoricalChart = ({
         }),
         offset.left,
         offset.left + offset.width,
+        syncWithTicks,
       );
 
-    horizontalCoordinatesGenerator = ({ yAxis, width, height, offset }: ChartCoordinate) =>
+    horizontalCoordinatesGenerator = ({ yAxis, width, height, offset }: ChartCoordinate, syncWithTicks: Boolean) =>
       getCoordinatesOfGrid(
         getTicks({
           ...CartesianAxis.defaultProps,
@@ -1728,6 +1729,7 @@ export const generateCategoricalChart = ({
         }),
         offset.top,
         offset.top + offset.height,
+        syncWithTicks,
       );
 
     axesTicksGenerator = (axis?: any) => getTicksOfAxis(axis, true);

@@ -21,8 +21,8 @@ interface InternalCartesianGridProps {
   y?: number;
   width?: number;
   height?: number;
-  horizontalCoordinatesGenerator?: (props: any) => number[];
-  verticalCoordinatesGenerator?: (props: any) => number[];
+  horizontalCoordinatesGenerator?: (props: any, syncWithTicks: Boolean) => number[];
+  verticalCoordinatesGenerator?: (props: any, syncWithTicks: Boolean) => number[];
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   offset?: ChartOffset;
@@ -37,6 +37,9 @@ interface CartesianGridProps extends InternalCartesianGridProps {
   verticalPoints?: number[];
   verticalFill?: string[];
   horizontalFill?: string[];
+  syncWithTicks?: boolean;
+  horizontalValues?: number[] | string[];
+  verticalValues?: number[] | string[];
 }
 
 export type Props = SVGProps<SVGElement> & CartesianGridProps;
@@ -257,6 +260,9 @@ export class CartesianGrid extends PureComponent<Props> {
       offset,
       chartWidth,
       chartHeight,
+      syncWithTicks,
+      horizontalValues,
+      verticalValues,
     } = this.props;
 
     if (
@@ -276,12 +282,38 @@ export class CartesianGrid extends PureComponent<Props> {
 
     // No horizontal points are specified
     if ((!horizontalPoints || !horizontalPoints.length) && _.isFunction(horizontalCoordinatesGenerator)) {
-      horizontalPoints = horizontalCoordinatesGenerator({ yAxis, width: chartWidth, height: chartHeight, offset });
+      const isHorizontalValues = horizontalValues && horizontalValues.length;
+
+      horizontalPoints = horizontalCoordinatesGenerator(
+        {
+          yAxis: {
+            ...yAxis,
+            ticks: isHorizontalValues ? horizontalValues : yAxis.ticks,
+          },
+          width: chartWidth,
+          height: chartHeight,
+          offset,
+        },
+        isHorizontalValues ? true : syncWithTicks,
+      );
     }
 
     // No vertical points are specified
     if ((!verticalPoints || !verticalPoints.length) && _.isFunction(verticalCoordinatesGenerator)) {
-      verticalPoints = verticalCoordinatesGenerator({ xAxis, width: chartWidth, height: chartHeight, offset });
+      const isVerticalValues = verticalValues && verticalValues.length;
+
+      verticalPoints = verticalCoordinatesGenerator(
+        {
+          xAxis: {
+            ...xAxis,
+            ticks: isVerticalValues ? verticalValues : xAxis.ticks,
+          },
+          width: chartWidth,
+          height: chartHeight,
+          offset,
+        },
+        isVerticalValues ? true : syncWithTicks,
+      );
     }
 
     return (

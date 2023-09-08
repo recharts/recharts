@@ -537,12 +537,17 @@ export const isCategoricalAxis = (layout: LayoutType | PolarLayoutType, axisType
 
 /**
  * Calculate the Coordinates of grid
- * @param  {Array} ticks The ticks in axis
- * @param {Number} min   The minimun value of axis
- * @param {Number} max   The maximun value of axis
- * @return {Array}       Coordinates
+ * @param  {Array} ticks           The ticks in axis
+ * @param {Number} min             The minimun value of axis
+ * @param {Number} max             The maximun value of axis
+ * @param {Boolean} syncWithTicks  Synchronize grid lines with ticks or not
+ * @return {Array}                 Coordinates
  */
-export const getCoordinatesOfGrid = (ticks: Array<TickItem>, min: number, max: number) => {
+export const getCoordinatesOfGrid = (ticks: Array<TickItem>, min: number, max: number, syncWithTicks: Boolean) => {
+  if (syncWithTicks) {
+    return ticks.map(entry => entry.coordinate);
+  }
+
   let hasMin, hasMax;
 
   const values = ticks.map(entry => {
