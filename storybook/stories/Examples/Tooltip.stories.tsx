@@ -1,5 +1,5 @@
 /* eslint-disable no-shadow */
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { pageData } from '../data';
 import { Bar, ComposedChart, Line, ResponsiveContainer, Tooltip } from '../../../src';
 import { DefaultTooltipContent } from '../../../src/component/DefaultTooltipContent';
@@ -56,4 +56,47 @@ export const LockedByClick = {
   controls: {},
   description:
     'This example shows how to lock the tooltip to a specific position. Click on the chart to show fix the Tooltip.',
+};
+
+export const CssScaledParent = {
+  render: () => {
+    const [scale, setScale] = useState(1.2);
+    const handleZoomIn = useCallback(() => setScale(s => s + 0.1), []);
+    const handleZoomOut = useCallback(() => setScale(s => s - 0.1), []);
+    return (
+      <div style={{ width: '100%' }}>
+        <h2>No transform: scale</h2>
+        <div style={{ display: 'flex' }}>
+          <ResponsiveContainer width="100%" height={200}>
+            <ComposedChart data={pageData}>
+              <Line dataKey="uv" />
+              <Bar dataKey="pv" />
+              <Tooltip />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+
+        <h2>
+          Parent container
+          {`<div style={{transform: scale(${scale})}}> ...`}
+        </h2>
+        <button type="button" onClick={handleZoomIn}>
+          Zoom In
+        </button>
+        <button type="button" onClick={handleZoomOut}>
+          Zoom Out
+        </button>
+        <div style={{ transform: `scale(${scale})`, transformOrigin: '50% 0' }}>
+          <ResponsiveContainer width="100%" height={200}>
+            <ComposedChart data={pageData}>
+              <Line dataKey="uv" />
+              <Bar dataKey="pv" />
+              <Tooltip />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    );
+  },
+  description: 'This example shows if Tooltip is shown correctly when parent component use transform:scale styling',
 };
