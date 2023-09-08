@@ -1255,7 +1255,9 @@ export const generateCategoricalChart = ({
       const e = calculateChartCoordinate(event, containerOffset);
 
       const element = this.container;
-      const scale = element.getBoundingClientRect().width / element.offsetWidth;
+      const boundingRectWidth = element?.getBoundingClientRect()?.width;
+      const { offsetWidth } = element;
+      const scale = boundingRectWidth / offsetWidth || 1;
 
       const rangeObj = this.inRange(e.chartX, e.chartY, scale);
       if (!rangeObj) {
