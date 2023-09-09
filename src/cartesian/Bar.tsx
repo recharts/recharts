@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render a group of bar
  */
-import React, { PureComponent, ReactElement } from 'react';
+import React, { PureComponent, ReactElement, SVGProps } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';
@@ -80,6 +80,7 @@ interface BarProps extends InternalBarProps {
   maxBarSize?: number;
   hide?: boolean;
   shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
+  activeBar?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean | SVGProps<SVGElement>;
   background?: RectangleShapeType;
   radius?: number | [number, number, number, number];
 
@@ -115,6 +116,7 @@ export class Bar extends PureComponent<Props, State> {
     hide: false,
     data: [] as BarRectangleItem[],
     layout: 'vertical',
+    activeBar: true,
     isAnimationActive: !Global.isSsr,
     animationBegin: 0,
     animationDuration: 400,

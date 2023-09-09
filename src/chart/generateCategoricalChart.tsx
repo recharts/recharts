@@ -5,6 +5,7 @@ import invariant from 'tiny-invariant';
 import { getTicks } from '../cartesian/getTicks';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
+import { Bar } from '../cartesian/Bar';
 import { Tooltip } from '../component/Tooltip';
 import { Legend } from '../component/Legend';
 import { Curve } from '../shape/Curve';
@@ -2040,6 +2041,24 @@ export const generateCategoricalChart = ({
       );
     };
 
+    static renderActiveBar = (option: any, props: any): React.ReactElement => {
+      let bar;
+
+      if (isValidElement(option)) {
+        bar = cloneElement(option, props);
+      } else if (_.isFunction(option)) {
+        bar = option(props);
+      } else {
+        bar = Bar.renderRectangle(props.shape, props);
+      }
+
+      return (
+        <Layer className="recharts-active-bar" key={props.key}>
+          {bar}
+        </Layer>
+      );
+    };
+
     renderActivePoints = ({ item, activePoint, basePoint, childIndex, isRange }: any) => {
       const result = [];
       const { key } = item.props;
@@ -2078,19 +2097,48 @@ export const generateCategoricalChart = ({
       return result;
     };
 
+    renderActiveBar = ({ item, childIndex }: any) => {
+      const result = [];
+      const { key } = item.props;
+      const { activeBar, dataKey } = item.item.props;
+
+      /**
+       * Default to inheriting props from the parent bar
+       */
+      const inheritedProps = {
+        ...item.item.props,
+        ...item.props.data[childIndex],
+      };
+
+      const barProps = {
+        index: childIndex,
+        dataKey,
+        fill: getMainColorOfGraphicItem(item.item),
+        strokeWidth: 2,
+        stroke: '#fff',
+        key: `${key}-activeBar-${childIndex}`,
+        ...inheritedProps,
+        ...filterProps(activeBar),
+        ...adaptEventHandlers(activeBar),
+      };
+
+      result.push(CategoricalChartWrapper.renderActiveBar(activeBar, barProps));
+
+      return result;
+    };
+
     renderGraphicChild = (element: React.ReactElement, displayName: string, index: number): any[] => {
       const item = this.filterFormatItem(element, displayName, index);
       if (!item) {
         return null;
       }
-
       const tooltipEventType = this.getTooltipEventType();
       const { isTooltipActive, tooltipAxis, activeTooltipIndex, activeLabel } = this.state;
       const { children } = this.props;
       const tooltipItem = findChildByType(children, Tooltip);
       const { points, isRange, baseLine } = item.props;
-      const { activeDot, hide } = item.item.props;
-      const hasActive = !hide && isTooltipActive && tooltipItem && activeDot && activeTooltipIndex >= 0;
+      const { activeDot, hide, activeBar } = item.item.props;
+      const hasActive = !hide && isTooltipActive && tooltipItem && (activeDot || activeBar) && activeTooltipIndex >= 0;
       let itemEvents = {};
 
       if (tooltipEventType !== 'axis' && tooltipItem && tooltipItem.props.trigger === 'click') {
@@ -2123,8 +2171,12 @@ export const generateCategoricalChart = ({
           activePoint = findEntryInArray(points, specifiedKey, activeLabel);
           basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
         } else {
-          activePoint = points[activeTooltipIndex];
+          activePoint = points?.[activeTooltipIndex];
           basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+        }
+
+        if (activeBar) {
+          return [graphicalItem, ...this.renderActiveBar({ item, childIndex: activeTooltipIndex })];
         }
 
         if (!_.isNil(activePoint)) {
