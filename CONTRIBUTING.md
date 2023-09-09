@@ -3,13 +3,14 @@
 We'd love for you to contribute to our source code and to make Recharts even better than it is today! Here are the guidelines we'd like you to follow:
 
 - [Issues and Bugs](#issues)
+- [Testing](#testing)
 - [Pull Requests](#pr)
 - [Code Guide](#code)
 - [License](#license)
 
 ## Ongoing Initiatives
 
-We use Github Discussion to organise our discussion along new intiatives and organise ourselves. Please do check the [announcements](https://github.com/recharts/recharts/discussions/categories/announcements) section for an overview of recent initiatives. 
+We use Github Discussion to organise our discussion along new intiatives and organise ourselves. Please do check the [announcements](https://github.com/recharts/recharts/discussions/categories/announcements) section for an overview of recent initiatives.
 
 ## <a name="issues"></a>Issues and Bugs
 
@@ -20,6 +21,24 @@ We will be using [GitHub Issues](https://github.com/recharts/recharts/issues) fo
 ### Reporting New Issues
 
 The best way to get your bug fixed is to provide a reduced test case. jsFiddle provide a way to give live examples. You can fork our example in [recharts.org](http://recharts.org/) to show your case.
+
+## <a name="testing"></a>Testing
+
+We do cherish tests. They help us move swiftly, and release with confidence.
+In our repo, you will find three types of tests: Unit tests, rendering tests with RTL, and user interaction tests in storybook.
+Wherever possible we prefer the simplest tests - unit tests. Only where needed / useful we would use RTL or storybook tests.
+
+### Unit tests
+
+When implementing a new feature we would prefer to extract pure helper function for data processing. Such functions are found a few utils files. An example is `test/util/ShallowEqual.spec.ts`
+
+### React Testing Library
+
+Some behaviour must be tested upon rendering, such as interactions between components (Line, Tooltip), see `test/component/Tooltip.spec.tsx` for an example.
+
+### Storybook Test Runner
+
+Finally, Storybook also has a great interface for adding tests. By default every story in storybook is a smoke test (rendering without error logs means the test passed). Additionally, it is possible to add actual tests as play functions with an assert to a story. This will often be easier than using React Testing Library, because the natural test debugging tool is Storybook itself. See for example `storybook/stories/Examples/cartesian/ReferenceLine/ReferenceLineIfOverflow.stories.tsx`
 
 ## <a name="pr"></a>Pull Requests
 
