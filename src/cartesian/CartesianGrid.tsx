@@ -37,8 +37,14 @@ interface CartesianGridProps extends InternalCartesianGridProps {
   verticalPoints?: number[];
   verticalFill?: string[];
   horizontalFill?: string[];
+  /**
+   * If true, only the lines that correspond to the axes ticks values will be drawn.
+   * If false, extra lines could be added for each axis (at min and max coordinates), if there will not such ticks
+   */
   syncWithTicks?: boolean;
+  /** Array of values, where horizontal lines will be drawn. Numbers or strings, in dependence on axis type */
   horizontalValues?: number[] | string[];
+  /** Array of values, where vertical lines will be drawn. Numbers or strings, in dependence on axis type */
   verticalValues?: number[] | string[];
 }
 
