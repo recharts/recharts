@@ -33,18 +33,21 @@ interface InternalCartesianGridProps {
 interface CartesianGridProps extends InternalCartesianGridProps {
   horizontal?: GridLineType;
   vertical?: GridLineType;
+  /** Array of coordinates in pixels where to draw horizontal grid lines. Has priority over syncWithTicks and horizontalValues. */
   horizontalPoints?: number[];
+  /** Array of coordinates in pixels where to draw vertical grid lines. Has priority over syncWithTicks and horizontalValues. */
   verticalPoints?: number[];
   verticalFill?: string[];
   horizontalFill?: string[];
   /**
    * If true, only the lines that correspond to the axes ticks values will be drawn.
-   * If false, extra lines could be added for each axis (at min and max coordinates), if there will not such ticks
+   * If false, extra lines could be added for each axis (at min and max coordinates), if there will not such ticks.
+   * horizontalPoints, verticalPoints, horizontalValues, verticalValues have priority over syncWithTicks.
    */
   syncWithTicks?: boolean;
-  /** Array of values, where horizontal lines will be drawn. Numbers or strings, in dependence on axis type */
+  /** Array of values, where horizontal lines will be drawn. Numbers or strings, in dependence on axis type. Has priority over syncWithTicks but not over horizontalValues. */
   horizontalValues?: number[] | string[];
-  /** Array of values, where vertical lines will be drawn. Numbers or strings, in dependence on axis type */
+  /** Array of values, where vertical lines will be drawn. Numbers or strings, in dependence on axis type. Has priority over syncWithTicks but not over verticalValues. */
   verticalValues?: number[] | string[];
 }
 
