@@ -21,7 +21,7 @@ interface InternalCartesianGridProps {
   y?: number;
   width?: number;
   height?: number;
-  horizontalCoordinatesGenerator?: (props: any, syncWithTicks: Boolean) => number[];
+  horizontalCoordinatesGenerator?: (props: any, syncWithTicks: boolean) => number[];
   verticalCoordinatesGenerator?: (props: any, syncWithTicks: Boolean) => number[];
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
