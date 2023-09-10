@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Legend, LineChart, Line } from '../../src';
 
 describe('<Legend />', () => {
@@ -66,5 +66,21 @@ describe('<Legend />', () => {
     expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item')).toHaveLength(2);
     expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item path')).toHaveLength(2);
     expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item line')).toHaveLength(0);
+  });
+
+  test('Renders payload value correctly when passed as a static value', () => {
+    render(<Legend payload={[{ value: 'item name', type: 'line', id: 'ID01' }]} />);
+
+    const legendItem = screen.getByText('item name');
+    expect(legendItem).toBeInTheDocument();
+  });
+
+  test('Calls function before rendering if provided as a payload value', () => {
+    const getItemName = jest.fn().mockImplementation(() => 'item name');
+    render(<Legend payload={[{ value: getItemName, type: 'line', id: 'ID01' }]} />);
+
+    const legendItem = screen.getByText('item name');
+    expect(getItemName).toHaveBeenCalledTimes(1);
+    expect(legendItem).toBeInTheDocument();
   });
 });
