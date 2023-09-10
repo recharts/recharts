@@ -22,7 +22,7 @@ interface InternalCartesianGridProps {
   width?: number;
   height?: number;
   horizontalCoordinatesGenerator?: (props: any, syncWithTicks: boolean) => number[];
-  verticalCoordinatesGenerator?: (props: any, syncWithTicks: Boolean) => number[];
+  verticalCoordinatesGenerator?: (props: any, syncWithTicks: boolean) => number[];
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   offset?: ChartOffset;
