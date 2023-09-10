@@ -232,7 +232,12 @@ const getTooltipContent = (
       return result;
     }
 
-    const { data } = child.props;
+    /**
+     * Fixes: https://github.com/recharts/recharts/issues/3669
+     * Defaulting to chartData below to fix an edge case where the tooltip does not include data from all charts
+     * when a separate dataset is passed to chart prop data and specified on Line/Area/etc prop data
+     */
+    const { data = chartData } = child.props;
     let payload;
 
     if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
