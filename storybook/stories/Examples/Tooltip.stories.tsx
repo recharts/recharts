@@ -1,7 +1,7 @@
 /* eslint-disable no-shadow */
 import React from 'react';
 import { pageData } from '../data';
-import { Bar, ComposedChart, Line, ResponsiveContainer, Tooltip } from '../../../src';
+import { Area, Bar, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../src';
 import { DefaultTooltipContent } from '../../../src/component/DefaultTooltipContent';
 
 export default {
@@ -56,4 +56,39 @@ export const LockedByClick = {
   controls: {},
   description:
     'This example shows how to lock the tooltip to a specific position. Click on the chart to show fix the Tooltip.',
+};
+
+const areaData = [
+  { category: 'A', value: 0.2 },
+  { category: 'B', value: 0.3 },
+  { category: 'B', value: 0.5 },
+  { category: 'C', value: 0.6 },
+  { category: 'C', value: 0.7 },
+  { category: 'D', value: 0.4 },
+];
+
+const lineData = [
+  { category: 'A', value: null },
+  { category: 'B', value: null },
+  { category: 'B', value: null },
+  { category: 'C', value: 0.2 },
+  { category: 'C', value: 0.4 },
+  { category: 'D', value: 0.6 },
+];
+
+export const SeparateDataSetsForChart = {
+  render: () => {
+    return (
+      <ResponsiveContainer width="100%" height={500}>
+        <ComposedChart data={areaData}>
+          <XAxis dataKey="category" type="category" />
+          <YAxis dataKey="value" />
+          <Tooltip />
+
+          <Area dataKey="value" />
+          <Line dataKey="value" data={lineData} />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
 };
