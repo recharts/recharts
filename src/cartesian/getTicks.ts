@@ -6,6 +6,7 @@ import { Props as CartesianAxisProps } from './CartesianAxis';
 import { Global } from '../util/Global';
 import { getEveryNthWithCondition } from '../util/getEveryNthWithCondition';
 import { getAngledRectangleWidth } from '../util/CartesianUtils';
+import { getEquidistantTicks } from './getEquidistantTicks';
 
 /**
  * Given an array of ticks, find N, the lowest possible number for which every
@@ -201,6 +202,20 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
   }
 
   let candidates: CartesianTickItem[] = [];
+
+  if (interval === 'equidistant') {
+    return getEquidistantTicks(
+      angle,
+      ticks,
+      tickFormatter,
+      viewBox,
+      orientation,
+      minTickGap,
+      unit,
+      fontSize,
+      letterSpacing,
+    );
+  }
 
   if (interval === 'equidistantPreserveStart') {
     candidates = getTicksStart({
