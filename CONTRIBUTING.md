@@ -20,7 +20,7 @@ We will be using [GitHub Issues](https://github.com/recharts/recharts/issues) fo
 
 ### Reporting New Issues
 
-The best way to get your bug fixed is to provide a reduced test case. jsFiddle provide a way to give live examples. You can fork our example in [recharts.org](http://recharts.org/) to show your case.
+The best way to get your bug fixed is to provide a reduced test case. codesandbox provide a way to give live examples. You can fork our example in [recharts.org](http://recharts.org/) to show your case.
 
 ## <a name="testing"></a>Testing
 
