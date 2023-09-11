@@ -1,0 +1,18 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/blocks';
+import * as ComponentStories from './Text.stories';
+
+# Text
+
+<Meta of={ComponentStories} />
+
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
+
+
+
+## Properties
+
+Properties in the groups Other and Internal are not recommended to be used.
+
+<Controls of={ComponentStories.API} />
