@@ -1114,7 +1114,21 @@ export interface BaseAxisProps {
   className?: string;
 }
 
-export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart';
+/** Defines how ticks are places and whether / how tick collisions are handled.
+ * 'preserveStart' keeps the left tick on collision and ensures that the first tick is always shown.
+ * 'preserveEnd' keeps the right tick on collision and ensures that the last tick is always shown.
+ * 'preserveStartEnd' keeps the left tick on collision and ensures that the first and last ticks are always shown.
+ * 'equidistantPreserveStart' computes which ticks are shown according to the 'preserveStart' strategy and
+ *  then selects a number N such that every nTh tick will be shown.
+ * 'equidistant' selects a number N such that every nTh tick will be shown without collision.
+ */
+export type AxisInterval =
+  | number
+  | 'preserveStart'
+  | 'preserveEnd'
+  | 'preserveStartEnd'
+  | 'equidistantPreserveStart'
+  | 'equidistant';
 
 export interface TickItem {
   value?: any;
