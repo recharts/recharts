@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render a group of bar
  */
-import React, { PureComponent, ReactElement, SVGProps } from 'react';
+import React, { Key, PureComponent, ReactElement, SVGProps } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';
@@ -64,15 +64,16 @@ type RectangleShapeType =
   | RectangleProps
   | boolean;
 
-interface BarProps extends InternalBarProps {
+export interface BarProps extends InternalBarProps {
   className?: string;
+  index?: Key;
   layout?: 'horizontal' | 'vertical';
   xAxisId?: string | number;
   yAxisId?: string | number;
   stackId?: string | number;
   barSize?: number;
   unit?: string | number;
-  name?: string | number;
+  name?: string;
   dataKey: DataKey<any>;
   tooltipType?: TooltipType;
   legendType?: LegendType;
@@ -80,7 +81,11 @@ interface BarProps extends InternalBarProps {
   maxBarSize?: number;
   hide?: boolean;
   shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
-  activeBar?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean | SVGProps<SVGElement>;
+  activeBar?:
+    | ReactElement<SVGProps<SVGElement>>
+    | ((props: BarProps) => ReactElement<SVGProps<SVGElement>>)
+    | boolean
+    | SVGProps<SVGElement>;
   background?: RectangleShapeType;
   radius?: number | [number, number, number, number];
 

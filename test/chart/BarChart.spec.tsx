@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import React, { ComponentProps } from 'react';
+import React from 'react';
 
 import { Bar, BarChart, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
 import { mockMouseEvent } from '../helper/mockMouseEvent';
@@ -137,14 +137,17 @@ describe('<BarChart />', () => {
   test('Renders customized active bar when activeBar set to be a function', () => {
     jest.useFakeTimers();
 
-    const activeBarRenderer: ComponentProps<typeof Bar>['activeBar'] = props => {
-      return <Rectangle {...props} />;
-    };
-
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
         <BarChart width={700} height={200} data={data}>
-          <Bar dataKey="uv" stackId="test" fill="#ff7300" activeBar={activeBarRenderer} />
+          <Bar
+            dataKey="uv"
+            stackId="test"
+            fill="#ff7300"
+            activeBar={props => {
+              return <Rectangle {...props} />;
+            }}
+          />
           <Tooltip />
         </BarChart>
         ,

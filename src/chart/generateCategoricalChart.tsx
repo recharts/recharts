@@ -1,4 +1,4 @@
-import React, { Component, cloneElement, isValidElement, createElement } from 'react';
+import React, { Component, cloneElement, isValidElement, createElement, ComponentProps, ReactElement } from 'react';
 import classNames from 'classnames';
 import _, { isArray, isBoolean, isNil } from 'lodash';
 import invariant from 'tiny-invariant';
@@ -52,6 +52,7 @@ import {
   parseDomainOfCategoryAxis,
   getTooltipItem,
 } from '../util/ChartUtils';
+import { ActiveBar } from '../util/BarUtils';
 import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDomain';
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/ShallowEqual';
@@ -72,6 +73,13 @@ import {
   AxisDomain,
 } from '../util/types';
 import { AccessibilityManager } from './AccessibilityManager';
+
+export type GraphicalItem<Props = Record<string, any>> = ReactElement<
+  Props,
+  string | React.JSXElementConstructor<Props>
+> & {
+  item: ReactElement<Props, string | React.JSXElementConstructor<Props>>;
+};
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
@@ -2041,24 +2049,6 @@ export const generateCategoricalChart = ({
       );
     };
 
-    static renderActiveBar = (option: any, props: any): React.ReactElement => {
-      let bar;
-
-      if (isValidElement(option)) {
-        bar = cloneElement(option, props);
-      } else if (_.isFunction(option)) {
-        bar = option(props);
-      } else {
-        bar = Bar.renderRectangle(props.shape, props);
-      }
-
-      return (
-        <Layer className="recharts-active-bar" key={props.key}>
-          {bar}
-        </Layer>
-      );
-    };
-
     renderActivePoints = ({ item, activePoint, basePoint, childIndex, isRange }: any) => {
       const result = [];
       const { key } = item.props;
@@ -2097,8 +2087,13 @@ export const generateCategoricalChart = ({
       return result;
     };
 
-    renderActiveBar = ({ item, childIndex }: any) => {
-      const result = [];
+    renderActiveBar = ({
+      item,
+      childIndex,
+    }: {
+      item: GraphicalItem<ComponentProps<typeof Bar>>;
+      childIndex: number;
+    }) => {
       const { key } = item.props;
       const { activeBar, dataKey } = item.item.props;
 
@@ -2120,11 +2115,9 @@ export const generateCategoricalChart = ({
         ...inheritedProps,
         ...filterProps(activeBar),
         ...adaptEventHandlers(activeBar),
-      };
+      } as ComponentProps<typeof Bar>;
 
-      result.push(CategoricalChartWrapper.renderActiveBar(activeBar, barProps));
-
-      return result;
+      return <ActiveBar option={activeBar} {...barProps} />;
     };
 
     renderGraphicChild = (element: React.ReactElement, displayName: string, index: number): any[] => {
@@ -2176,7 +2169,7 @@ export const generateCategoricalChart = ({
         }
 
         if (activeBar) {
-          return [graphicalItem, ...this.renderActiveBar({ item, childIndex: activeTooltipIndex })];
+          return [graphicalItem, this.renderActiveBar({ item, childIndex: activeTooltipIndex })];
         }
 
         if (!_.isNil(activePoint)) {
