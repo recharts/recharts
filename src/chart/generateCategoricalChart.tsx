@@ -1258,7 +1258,13 @@ export const generateCategoricalChart = ({
 
       const containerOffset = getOffset(this.container);
       const e = calculateChartCoordinate(event, containerOffset);
-      const rangeObj = this.inRange(e.chartX, e.chartY);
+
+      const element = this.container;
+      const boundingRectWidth = element?.getBoundingClientRect()?.width;
+      const { offsetWidth } = element;
+      const scale = boundingRectWidth / offsetWidth || 1;
+
+      const rangeObj = this.inRange(e.chartX, e.chartY, scale);
       if (!rangeObj) {
         return null;
       }
@@ -1348,23 +1354,28 @@ export const generateCategoricalChart = ({
       ];
     }
 
-    inRange(x: number, y: number): any {
+    inRange(x: number, y: number, scale = 1): any {
       const { layout } = this.props;
+
+      const [scaledX, scaledY] = [x / scale, y / scale];
 
       if (layout === 'horizontal' || layout === 'vertical') {
         const { offset } = this.state;
-        const isInRange =
-          x >= offset.left && x <= offset.left + offset.width && y >= offset.top && y <= offset.top + offset.height;
 
-        return isInRange ? { x, y } : null;
+        const isInRange =
+          scaledX >= offset.left &&
+          scaledX <= offset.left + offset.width &&
+          scaledY >= offset.top &&
+          scaledY <= offset.top + offset.height;
+
+        return isInRange ? { x: scaledX, y: scaledY } : null;
       }
 
       const { angleAxisMap, radiusAxisMap } = this.state;
 
       if (angleAxisMap && radiusAxisMap) {
         const angleAxis = getAnyElementOfObject(angleAxisMap);
-
-        return inRangeOfSector({ x, y }, angleAxis);
+        return inRangeOfSector({ x: scaledX, y: scaledY }, angleAxis);
       }
 
       return null;

@@ -3,6 +3,7 @@
  */
 import React, { PureComponent, ReactNode, MouseEvent, ReactText, ReactElement } from 'react';
 import classNames from 'classnames';
+import _ from 'lodash';
 import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';
 import {
@@ -169,6 +170,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
         return null;
       }
 
+      const entryValue = _.isFunction(entry.value) ? entry.value() : entry.value;
       const color = entry.inactive ? inactiveColor : entry.color;
 
       return (
@@ -182,7 +184,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
             {this.renderIcon(entry)}
           </Surface>
           <span className="recharts-legend-item-text" style={{ color }}>
-            {finalFormatter ? finalFormatter(entry.value, entry, i) : entry.value}
+            {finalFormatter ? finalFormatter(entryValue, entry, i) : entryValue}
           </span>
         </li>
       );
