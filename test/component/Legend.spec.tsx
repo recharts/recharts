@@ -69,18 +69,43 @@ describe('<Legend />', () => {
   });
 
   test('Renders payload value correctly when passed as a static value', () => {
-    render(<Legend payload={[{ value: 'item name', type: 'line', id: 'ID01' }]} />);
-
-    const legendItem = screen.getByText('item name');
-    expect(legendItem).toBeInTheDocument();
+    render(<Legend payload={[{ value: 'item name' }]} />);
+    screen.getByText(/item name/i);
   });
 
-  test('Calls function before rendering if provided as a payload value', () => {
-    const getItemName = jest.fn().mockImplementation(() => 'item name');
-    render(<Legend payload={[{ value: getItemName, type: 'line', id: 'ID01' }]} />);
+  test('Renders name value of siblings when dataKey is a function', () => {
+    render(
+      <LineChart width={500} height={500} data={data}>
+        <Legend />
+        <Line dataKey={row => row.value} name="My Line Data" />
+        <Line dataKey={row => row.color} name="My Other Line Data" />
+      </LineChart>,
+    );
 
-    const legendItem = screen.getByText('item name');
-    expect(getItemName).toHaveBeenCalledTimes(1);
-    expect(legendItem).toBeInTheDocument();
+    // Select the text that was passed into the siblings as a name prop, but rendered in the Legend component.
+    screen.getByText(/My Line Data/i);
+    screen.getByText(/My Other Line Data/i);
+  });
+
+  test(`Renders '' if sibling's dataKey is a function and name is not provided`, () => {
+    // Warning should be logged. Spy on it so we can confirm it was called.
+    const consoleWarn = jest.spyOn(console, 'warn');
+
+    render(
+      <LineChart width={500} height={500} data={data}>
+        <Legend />
+        <Line dataKey={row => row.value} />
+        <Line dataKey={row => row.color} />
+      </LineChart>,
+    );
+
+    const legendItems = screen.getAllByRole(/listitem/i);
+    legendItems.forEach(item => {
+      expect(item).toHaveTextContent('');
+    });
+
+    expect(consoleWarn).toHaveBeenCalledWith(
+      `The name property is also required when using a function for the dataKey of a chart's cartesian components. Ex: <Bar name="Name of my Data"/>`,
+    );
   });
 });
