@@ -73,7 +73,7 @@ export interface BarProps extends InternalBarProps {
   stackId?: string | number;
   barSize?: number;
   unit?: string | number;
-  name?: string;
+  name?: string | number;
   dataKey: DataKey<any>;
   tooltipType?: TooltipType;
   legendType?: LegendType;
