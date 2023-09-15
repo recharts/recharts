@@ -170,9 +170,15 @@ export class DefaultLegendContent extends PureComponent<Props> {
         return null;
       }
 
-      const entryValue = _.isFunction(entry.value) ? entry.value() : entry.value;
-      const color = entry.inactive ? inactiveColor : entry.color;
+      let entryValue = entry.value;
+      if (_.isFunction(entry.value)) {
+        entryValue = null;
+        console.warn(
+          `The name property is also required when using a function for the dataKey of a chart's cartesian components. Ex: <Bar name="Name of my Data"/>`,
+        );
+      }
 
+      const color = entry.inactive ? inactiveColor : entry.color;
       return (
         <li
           className={className}
