@@ -1,0 +1,27 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/blocks';
+import * as ComponentStories from './Tooltip.stories.tsx';
+
+# Tooltip
+
+<Meta of={ComponentStories} />
+
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
+
+## Parent Component
+
+The Tooltip can be used within:
+`<AreaChart />`,
+`<BarChart />`,
+`<LineChart />`,
+`<ComposedChart />`,
+`<PieChart />`,
+`<RadarChart />`,
+`<RadialBarChart />`,
+`<ScatterChart />`, or
+`<Treemap />`
+
+## Properties
+
+<Controls of={ComponentStories.API} />
