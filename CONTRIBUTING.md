@@ -26,7 +26,7 @@ The best way to get your bug fixed is to provide a reduced test case. jsFiddle  
 
 + Search [GitHub](https://github.com/recharts/recharts/pulls) for an open or closed Pull Request that relates to your submission. You don't want to duplicate effort.
 
-+ Fork the repo and create your branch from `master`.
++ Fork the repo and create your branch from `master` using the branch naming convention: `(bugfix|feature|chore)/i(#ISSUE_ID)-branch-name`. Example: `bugfix/i(#9999)-fixes-very-important-issue`
 + If you've added code that should be **tested**, add tests!
 + If you've changed APIs, update the [documentation](https://github.com/recharts/recharts.org) and demo.
 + Ensure the test suite passes (`npm run test`).
