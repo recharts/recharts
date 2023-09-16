@@ -1,40 +1,37 @@
-import { Args } from '@storybook/react';
+import { StorybookArgs } from '../../../StorybookArgs';
 
-export const TextProps: Args = {
+export const TextProps: StorybookArgs = {
   content: {
     description: 'The content of text.',
   },
   lineHeight: {
     description: 'The height of each line of text in pixels.',
     table: {
-      control: { type: 'string' },
+      type: { summary: 'string' },
     },
   },
   breakAll: {
     description: 'Break words if the text exceeds the width.',
-    table: {
-      control: { type: 'boolean' },
-      defaultValue: false,
-    },
+    defaultValue: true,
   },
   maxLines: {
     description: 'The max number of lines for text wrapping.',
     table: {
-      control: { type: 'number' },
+      type: { summary: 'number' },
     },
   },
   scaleToFit: {
     description: 'Scale the text to fit the width or not.',
     table: {
-      control: { type: 'boolean' },
-      defaultValue: false,
+      type: { summary: 'boolean' },
     },
+    defaultValue: false,
   },
 
   angle: {
     description: 'The rotate angle of Text. (Optional)',
     table: {
-      control: { type: 'number' },
+      type: { summary: 'number' },
     },
   },
 
@@ -43,23 +40,23 @@ export const TextProps: Args = {
       'The width of Text. When the width is specified to be a number,' +
       ' the text will warp auto by calculating the width of text. (Optional)',
     table: {
-      control: { type: 'number' },
+      type: { summary: 'number' },
     },
   },
 
   textAnchor: {
     table: {
-      summary: 'start | middle | end | inherit',
-      control: { type: 'number' },
-      defaultValue: 'start',
+      type: { summary: 'start | middle | end | inherit' },
     },
+    defaultValue: 'start',
   },
 
   verticalAnchor: {
     table: {
-      summary: 'start | middle | end ',
-      control: { type: 'number' },
-      defaultValue: 'end',
+      type: {
+        summary: 'start | middle | end ',
+      },
     },
+    defaultValue: 'end',
   },
 };
