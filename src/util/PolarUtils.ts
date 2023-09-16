@@ -5,9 +5,9 @@ import { Coordinate, ChartOffset, GeometrySector } from './types';
 
 export const RADIAN = Math.PI / 180;
 
-export const degreeToRadian = (angle: number) => (angle * Math.PI) / 180;
+export const degreeToRadian = (angle: number): number => (angle * Math.PI) / 180;
 
-export const radianToDegree = (angleInRadian: number) => (angleInRadian * 180) / Math.PI;
+export const radianToDegree = (angleInRadian: number): number => (angleInRadian * 180) / Math.PI;
 
 export const polarToCartesian = (cx: number, cy: number, radius: number, angle: number): Coordinate => ({
   x: cx + Math.cos(-RADIAN * angle) * radius,
@@ -141,7 +141,15 @@ const reverseFormatAngleOfSetor = (angle: number, { startAngle, endAngle }: Geom
   return angle + min * 360;
 };
 
-export const inRangeOfSector = ({ x, y }: Coordinate, sector: GeometrySector) => {
+export type GeometrySectorInRange = GeometrySector & {
+  radius: number;
+  angle: number;
+};
+
+export const inRangeOfSector = (
+  { x, y }: Coordinate,
+  sector: GeometrySector,
+): boolean | GeometrySectorInRange | null => {
   const { radius, angle } = getAngleOfPoint({ x, y }, sector);
   const { innerRadius, outerRadius } = sector;
 

@@ -1,4 +1,12 @@
-import React, { Component, cloneElement, isValidElement, createElement, ComponentProps, ReactElement } from 'react';
+import React, {
+  Component,
+  cloneElement,
+  isValidElement,
+  createElement,
+  ComponentProps,
+  ReactElement,
+  MouseEvent,
+} from 'react';
 import classNames from 'classnames';
 import _, { isArray, isBoolean, isNil } from 'lodash';
 import invariant from 'tiny-invariant';
@@ -54,7 +62,7 @@ import {
 } from '../util/ChartUtils';
 import { ActiveBar } from '../util/BarUtils';
 import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDomain';
-import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
+import { GeometrySectorInRange, inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
 import {
@@ -1049,7 +1057,7 @@ export const generateCategoricalChart = ({
       ...defaultProps,
     };
 
-    container?: any;
+    container?: HTMLElement | undefined;
 
     constructor(props: CategoricalChartProps) {
       super(props);
@@ -1260,7 +1268,7 @@ export const generateCategoricalChart = ({
      * @param  {Object} event    The event object
      * @return {Object}          Mouse data
      */
-    getMouseInfo(event: any) {
+    getMouseInfo(event: MouseEvent) {
       if (!this.container) {
         return null;
       }
@@ -1363,7 +1371,7 @@ export const generateCategoricalChart = ({
       ];
     }
 
-    inRange(x: number, y: number, scale = 1): any {
+    inRange(x: number, y: number, scale = 1): GeometrySectorInRange | { x: number; y: number } | boolean | null {
       const { layout } = this.props;
 
       const [scaledX, scaledY] = [x / scale, y / scale];
@@ -2346,7 +2354,7 @@ export const generateCategoricalChart = ({
           className={classNames('recharts-wrapper', className)}
           style={{ position: 'relative', cursor: 'default', width, height, ...style }}
           {...events}
-          ref={node => {
+          ref={(node: HTMLElement) => {
             this.container = node;
           }}
           role="region"

@@ -12,7 +12,7 @@ export const mathSign = (value: number) => {
 };
 
 export const isPercent = (value: string | number): value is `${number}%` =>
-  _.isString(value) && value.indexOf('%') === value.length - 1;
+  _.isString(value) && value.length > 1 && value.indexOf('%') === value.length - 1;
 
 export const isNumber = (value: unknown): value is number => _.isNumber(value) && !_.isNaN(value);
 
@@ -42,7 +42,7 @@ export const getPercentValue = (percent: number | string, totalValue: number, de
 
   if (isPercent(percent)) {
     const index = percent.indexOf('%');
-    value = (totalValue * parseFloat((percent as string).slice(0, index))) / 100;
+    value = (totalValue * parseFloat(percent.slice(0, index))) / 100;
   } else {
     value = +percent;
   }

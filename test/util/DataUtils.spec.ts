@@ -20,6 +20,10 @@ describe('mathSign', () => {
     expect(mathSign(0)).toBe(0);
   });
 
+  it('(-0)', () => {
+    expect(mathSign(-0)).toBe(0);
+  });
+
   it('(100)', () => {
     expect(mathSign(100)).toBe(1);
   });
@@ -38,8 +42,12 @@ describe('is functions', () => {
 
   describe('isPercent', () => {
     const tests: IsFunctionTestDefinition<typeof isPercent>[] = [
-      { should: 'return true with valid string', value: '0%', result: true },
+      { should: 'return true with 0%', value: '0%', result: true },
+      { should: 'return true with 10%', value: '10%', result: true },
       { should: 'return false with invalid string', value: '0', result: false },
+      { should: 'return false with %', value: '%', result: false },
+      { should: 'return false with %%', value: '%%', result: false },
+      { should: 'return false with 0%%', value: '0%%', result: false },
     ];
 
     tests.forEach(({ should, value, result }) => {
