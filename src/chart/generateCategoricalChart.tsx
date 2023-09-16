@@ -2126,12 +2126,13 @@ export const generateCategoricalChart = ({
         return null;
       }
       const tooltipEventType = this.getTooltipEventType();
-      const { isTooltipActive, tooltipAxis, activeTooltipIndex, activeLabel } = this.state;
+      const { isTooltipActive, tooltipAxis, activeTooltipIndex, activeLabel, activeItem } = this.state;
       const { children } = this.props;
       const tooltipItem = findChildByType(children, Tooltip);
       const { points, isRange, baseLine } = item.props;
-      const { activeDot, hide, activeBar } = item.item.props;
-      const hasActive = !hide && isTooltipActive && tooltipItem && (activeDot || activeBar) && activeTooltipIndex >= 0;
+      const { activeDot, hide, activeBar, activeShape } = item.item.props;
+      const hasActive = !hide && isTooltipActive && tooltipItem && (activeDot || activeBar || activeShape);
+      const hasActiveWithAxisDefined = hasActive && activeTooltipIndex >= 0;
       let itemEvents = {};
 
       if (tooltipEventType !== 'axis' && tooltipItem && tooltipItem.props.trigger === 'click') {
@@ -2152,7 +2153,7 @@ export const generateCategoricalChart = ({
         return typeof tooltipAxis.dataKey === 'function' ? tooltipAxis.dataKey(entry.payload) : null;
       }
 
-      if (hasActive) {
+      if (hasActiveWithAxisDefined) {
         let activePoint, basePoint;
 
         if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
@@ -2184,6 +2185,18 @@ export const generateCategoricalChart = ({
             }),
           ];
         }
+      } else if (hasActive) {
+        /**
+         * We hit this block if consumer uses a Tooltip without XAxis and/or YAxis.
+         * In which case, this.state.activeTooltipIndex never gets set
+         * because the mouse events that trigger that value getting set never get trigged without the axis components.
+         *
+         * See FunnelChart story for an example use case
+         */
+        const { data: itemData = [] } = graphicalItem.props;
+        const activeData = itemData.find((datum: { value: number }) => datum.value === activeItem.payload.value);
+        const activeIndex = itemData.indexOf(activeData);
+        return [cloneElement(element, { ...item.props, ...itemEvents, activeTooltipIndex: activeIndex }), null, null];
       }
 
       if (isRange) {

@@ -1,12 +1,12 @@
 /**
  * @fileOverview Render sectors of a funnel
  */
-import React, { PureComponent, ReactElement } from 'react';
+import React, { PureComponent, ReactElement, SVGProps } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { Layer } from '../container/Layer';
-import { Trapezoid, Props as TrapezoidProps } from '../shape/Trapezoid';
+import { Props as TrapezoidProps } from '../shape/Trapezoid';
 import { LabelList } from '../component/LabelList';
 import { Cell, Props as CellProps } from '../component/Cell';
 import { findAllByType, filterProps } from '../util/ReactUtils';
@@ -23,24 +23,25 @@ import {
   PresentationAttributesAdaptChildEvent,
   AnimationDuration,
 } from '../util/types';
+import { FunnelTrapezoid } from '../util/FunnelUtils';
 
-interface FunnelTrapezoidItem extends TrapezoidProps {
+export interface FunnelTrapezoidItem extends TrapezoidProps {
   value?: number | string;
   payload?: any;
+  isActive: boolean;
 }
 
 interface InternalFunnelProps {
-  trapezoids?: FunnelTrapezoidItem[];
-  animationId?: number;
-}
-
-interface FunnelProps extends InternalFunnelProps {
   className?: string;
   dataKey: DataKey<any>;
   nameKey?: DataKey<any>;
   data?: any[];
   hide?: boolean;
-  activeShape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | TrapezoidProps;
+  activeShape?:
+    | ReactElement<SVGProps<SVGPathElement>>
+    | ((props: FunnelTrapezoidItem) => ReactElement<SVGProps<SVGPathElement>>)
+    | SVGProps<SVGPathElement>
+    | boolean;
   legendType?: LegendType;
   tooltipType?: TooltipType;
   activeIndex?: number | number[];
@@ -56,9 +57,12 @@ interface FunnelProps extends InternalFunnelProps {
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
   id?: string;
+  trapezoids?: FunnelTrapezoidItem[];
+  animationId?: number;
+  activeTooltipIndex?: number;
 }
 
-export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & TrapezoidProps & FunnelProps;
+export type FunnelProps = PresentationAttributesAdaptChildEvent<any, SVGElement> & TrapezoidProps & InternalFunnelProps;
 
 interface State {
   readonly prevTrapezoids?: FunnelTrapezoidItem[];
@@ -67,7 +71,7 @@ interface State {
   readonly isAnimationFinished?: boolean;
 }
 
-export class Funnel extends PureComponent<Props, State> {
+export class Funnel extends PureComponent<FunnelProps, State> {
   static displayName = 'Funnel';
 
   static defaultProps = {
@@ -218,7 +222,7 @@ export class Funnel extends PureComponent<Props, State> {
 
   state: State = { isAnimationFinished: false };
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+  static getDerivedStateFromProps(nextProps: FunnelProps, prevState: State): State {
     if (nextProps.animationId !== prevState.prevAnimationId) {
       return {
         prevAnimationId: nextProps.animationId,
@@ -254,27 +258,13 @@ export class Funnel extends PureComponent<Props, State> {
   };
 
   isActiveIndex(i: number) {
-    const { activeIndex } = this.props;
+    const { activeIndex, activeTooltipIndex } = this.props;
 
     if (Array.isArray(activeIndex)) {
       return activeIndex.indexOf(i) !== -1;
     }
 
-    return i === activeIndex;
-  }
-
-  static renderTrapezoidItem(option: Props['activeShape'], props: any) {
-    if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
-    }
-    if (_.isFunction(option)) {
-      return option(props);
-    }
-    if (_.isPlainObject(option)) {
-      return <Trapezoid {...props} {...option} />;
-    }
-
-    return <Trapezoid {...props} />;
+    return i === activeIndex || i === activeTooltipIndex;
   }
 
   renderTrapezoidsStatically(trapezoids: FunnelTrapezoidItem[]) {
@@ -284,6 +274,7 @@ export class Funnel extends PureComponent<Props, State> {
       const trapezoidOptions = this.isActiveIndex(i) ? activeShape : null;
       const trapezoidProps = {
         ...entry,
+        isActive: this.isActiveIndex(i),
         stroke: entry.stroke,
       };
 
@@ -294,7 +285,7 @@ export class Funnel extends PureComponent<Props, State> {
           key={`trapezoid-${i}`} // eslint-disable-line react/no-array-index-key
           role="img"
         >
-          {Funnel.renderTrapezoidItem(trapezoidOptions, trapezoidProps)}
+          <FunnelTrapezoid option={trapezoidOptions} {...trapezoidProps} />
         </Layer>
       );
     });

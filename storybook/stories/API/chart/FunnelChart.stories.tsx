@@ -1,5 +1,5 @@
 import React from 'react';
-import { Funnel, FunnelChart, LabelList, ResponsiveContainer } from '../../../../src';
+import { Tooltip, Funnel, FunnelChart, LabelList, ResponsiveContainer } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
 
 export default {
@@ -17,6 +17,7 @@ export const Simple = {
       <ResponsiveContainer width="100%" height={200}>
         <FunnelChart layout="horizontal">
           <Funnel
+            activeIndex={0}
             width={400}
             data={data}
             dataKey="value"
@@ -25,9 +26,11 @@ export const Simple = {
             labelLine
             lastShapeType="rectangle"
             orientation="horizontal"
+            activeShape={{ fill: 'gold', stroke: 'purple' }}
           >
             <LabelList dataKey="name" fill="#000" position="right" stroke="none" />
           </Funnel>
+          <Tooltip />
         </FunnelChart>
       </ResponsiveContainer>
       // </div>
