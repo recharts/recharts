@@ -17,7 +17,16 @@ import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniq
 import { filterProps, findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
-import { AxisType, BaseAxisProps, DataKey, LayoutType, PolarLayoutType, TickItem } from './types';
+import {
+  AxisDomain,
+  AxisType,
+  BaseAxisProps,
+  DataKey,
+  LayoutType,
+  PolarLayoutType,
+  SpecifiedDomain,
+  TickItem,
+} from './types';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<any>, defaultValue?: any) {
   if (_.isNil(obj) || _.isNil(dataKey)) {
@@ -42,7 +51,12 @@ export function getValueByDataKey<T>(obj: T, dataKey: DataKey<any>, defaultValue
  * @param  {Boolean} filterNil Whether or not filter nil values
  * @return {Array} Domain of data
  */
-export function getDomainOfDataByKey<T>(data: Array<T>, key: string, type: string, filterNil?: boolean) {
+export function getDomainOfDataByKey<T>(
+  data: Array<T>,
+  key: string,
+  type: string,
+  filterNil?: boolean,
+): (string | number | Date)[] {
   const flattenData = _.flatMap(data, entry => getValueByDataKey(entry, key));
 
   if (type === 'number') {
@@ -177,7 +191,7 @@ export const getLegendProps = ({
   legendWidth,
   legendContent,
 }: {
-  children: any;
+  children: ReactNode[];
   formattedGraphicalItems?: Array<FormattedGraphicalItem>;
   legendWidth: number;
   legendContent?: any;
@@ -574,16 +588,18 @@ export const getCoordinatesOfGrid = (ticks: Array<TickItem>, min: number, max: n
  * @return {Array}  Ticks
  */
 export const getTicksOfAxis = (
-  axis: BaseAxisProps & {
-    duplicateDomain?: any;
-    realScaleType?: 'scaleBand' | 'band' | 'point' | 'linear';
-    scale?: any;
-    axisType?: AxisType;
-    ticks?: any;
-    niceTicks?: any;
-    isCategorical?: boolean;
-    categoricalDomain?: any;
-  },
+  axis:
+    | null
+    | (BaseAxisProps & {
+        duplicateDomain?: any;
+        realScaleType?: 'scaleBand' | 'band' | 'point' | 'linear';
+        scale?: any;
+        axisType?: AxisType;
+        ticks?: any;
+        niceTicks?: any;
+        isCategorical?: boolean;
+        categoricalDomain?: any;
+      }),
   isGrid?: boolean,
   isAll?: boolean,
 ): TickItem[] | null => {
@@ -847,6 +863,8 @@ export const getStackedData = (data: any, stackItems: any, offsetType: string) =
   return stack(data);
 };
 
+export type StackGroups = any;
+
 export const getStackGroupsByAxisId = (
   data: any,
   _items: Array<any>,
@@ -854,7 +872,7 @@ export const getStackGroupsByAxisId = (
   cateAxisId: string,
   offsetType: any,
   reverseStackOrder: boolean,
-) => {
+): StackGroups | null => {
   if (!data) {
     return null;
   }
@@ -1094,7 +1112,11 @@ export const getDomainOfStackGroups = (stackGroups: any, startIndex: number, end
 export const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 export const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 
-export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allowDataOverflow?: boolean) => {
+export const parseSpecifiedDomain = (
+  specifiedDomain: AxisDomain | unknown,
+  dataDomain: [number, number],
+  allowDataOverflow?: boolean,
+): SpecifiedDomain => {
   if (_.isFunction(specifiedDomain)) {
     return specifiedDomain(dataDomain, allowDataOverflow);
   }
@@ -1103,35 +1125,36 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
     return dataDomain;
   }
 
-  const domain = [];
+  let dataMinParsed: number, dataMaxParsed: number;
 
+  const [dataMin, dataMax] = specifiedDomain;
   /* eslint-disable prefer-destructuring */
-  if (isNumber(specifiedDomain[0])) {
-    domain[0] = allowDataOverflow ? specifiedDomain[0] : Math.min(specifiedDomain[0], dataDomain[0]);
-  } else if (MIN_VALUE_REG.test(specifiedDomain[0])) {
-    const value = +MIN_VALUE_REG.exec(specifiedDomain[0])[1];
+  if (isNumber(dataMin)) {
+    dataMinParsed = allowDataOverflow ? dataMin : Math.min(dataMin, dataDomain[0]);
+  } else if (typeof dataMin === 'string' && MIN_VALUE_REG.test(dataMin)) {
+    const value = +MIN_VALUE_REG.exec(dataMin)[1];
 
-    domain[0] = dataDomain[0] - value;
-  } else if (_.isFunction(specifiedDomain[0])) {
-    domain[0] = specifiedDomain[0](dataDomain[0]);
+    dataMinParsed = dataDomain[0] - value;
+  } else if (_.isFunction(dataMin)) {
+    dataMinParsed = dataMin(dataDomain[0]);
   } else {
-    domain[0] = dataDomain[0];
+    dataMinParsed = dataDomain[0];
   }
 
-  if (isNumber(specifiedDomain[1])) {
-    domain[1] = allowDataOverflow ? specifiedDomain[1] : Math.max(specifiedDomain[1], dataDomain[1]);
-  } else if (MAX_VALUE_REG.test(specifiedDomain[1])) {
-    const value = +MAX_VALUE_REG.exec(specifiedDomain[1])[1];
+  if (isNumber(dataMax)) {
+    dataMaxParsed = allowDataOverflow ? dataMax : Math.max(dataMax, dataDomain[1]);
+  } else if (typeof dataMax === 'string' && MAX_VALUE_REG.test(dataMax)) {
+    const value = +MAX_VALUE_REG.exec(dataMax)[1];
 
-    domain[1] = dataDomain[1] + value;
-  } else if (_.isFunction(specifiedDomain[1])) {
-    domain[1] = specifiedDomain[1](dataDomain[1]);
+    dataMaxParsed = dataDomain[1] + value;
+  } else if (_.isFunction(dataMax)) {
+    dataMaxParsed = dataMax(dataDomain[1]);
   } else {
-    domain[1] = dataDomain[1];
+    dataMaxParsed = dataDomain[1];
   }
   /* eslint-enable prefer-destructuring */
 
-  return domain;
+  return [dataMinParsed, dataMaxParsed];
 };
 
 /**

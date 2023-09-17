@@ -72,13 +72,13 @@ export const getAnyElementOfObject = (obj: any) => {
   return null;
 };
 
-export const hasDuplicate = (ary: Array<any>) => {
+export const hasDuplicate = (ary: Array<string | number>): boolean => {
   if (!_.isArray(ary)) {
     return false;
   }
 
   const len = ary.length;
-  const cache: Record<string, boolean> = {};
+  const cache: Record<string | number, boolean> = {};
 
   for (let i = 0; i < len; i++) {
     if (!cache[ary[i]]) {

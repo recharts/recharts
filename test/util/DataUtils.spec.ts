@@ -137,6 +137,14 @@ describe('hasDuplicate', () => {
   it('of [12, 12] should return true', () => {
     expect(hasDuplicate([12, 12])).toBe(true);
   });
+
+  it('[12, 12] should return true', () => {
+    expect(hasDuplicate(['12', 12])).toBe(true);
+  });
+
+  it('[1, 12] should return false', () => {
+    expect(hasDuplicate([1, 12])).toBe(false);
+  });
 });
 
 describe('interpolateNumber', () => {

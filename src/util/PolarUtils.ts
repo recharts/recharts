@@ -29,6 +29,17 @@ export const getMaxRadius = (
     Math.abs(height - (offset.top || 0) - (offset.bottom || 0)),
   ) / 2;
 
+type FormatAxisMapProps = {
+  width: number;
+  height: number;
+  startAngle: number;
+  endAngle: number;
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+};
+
 /**
  * Calculate the scale function, position, width, height of axes
  * @param  {Object} props     Latest props
@@ -39,7 +50,7 @@ export const getMaxRadius = (
  * @return {Object} Configuration
  */
 export const formatAxisMap = (
-  props: any,
+  props: FormatAxisMapProps,
   axisMap: any,
   offset: ChartOffset,
   axisType: 'angleAxis' | 'radiusAxis',

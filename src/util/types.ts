@@ -1057,6 +1057,8 @@ export type AxisDomain =
   | [AxisDomainItem, AxisDomainItem]
   | (([dataMin, dataMax]: [number, number], allowDataOverflow: boolean) => [number, number]);
 
+export type SpecifiedDomain = [dataMin: number, dataMax: number];
+
 /** The props definition of base axis */
 export interface BaseAxisProps {
   /** The type of axis */
