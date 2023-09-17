@@ -202,7 +202,7 @@ describe('generateCategoricalChart', () => {
             yAxisId: 0,
             tickCount: 2,
             type: 'number',
-            padding: { left: 0, right: 0 },
+            padding: { bottom: 0, top: 0 },
             allowDataOverflow: false,
             scale: 'auto',
             reversed: false,
