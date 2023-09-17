@@ -1,4 +1,6 @@
-import { getAxisMapByAxes, CategoricalChartProps } from '../../src/chart/generateCategoricalChart';
+import { DetailedReactHTMLElement } from 'react';
+import { getAxisMapByAxes, CategoricalChartProps, AxisInput } from '../../src/chart/generateCategoricalChart';
+import { XAxisProps, YAxisProps } from '../../src';
 
 const data = [
   {
@@ -40,7 +42,8 @@ const data = [
 ];
 
 describe('generateCategoricalChart', () => {
-  const graphicalItems = [
+  const graphicalItems: DetailedReactHTMLElement<any, any>[] = [
+    // @ts-expect-error incomplete mock
     {
       props: {
         type: 'monotone',
@@ -64,7 +67,7 @@ describe('generateCategoricalChart', () => {
     },
   ];
 
-  const axisProps = {
+  const axisProps: XAxisProps = {
     allowDecimals: true,
     hide: false,
     orientation: 'bottom',
@@ -80,16 +83,22 @@ describe('generateCategoricalChart', () => {
     allowDuplicatedCategory: true,
   };
 
-  const xAxes = [
+  const xAxes: DetailedReactHTMLElement<XAxisProps, any>[] = [
+    // @ts-expect-error incomplete mock
     {
       props: { ...axisProps, xAxisId: 0, dataKey: 'name' },
     },
   ];
 
-  const yAxes = [
+  const yAxes: DetailedReactHTMLElement<YAxisProps, any>[] = [
+    // @ts-expect-error incomplete mock
     {
       props: {
         ...axisProps,
+        padding: {
+          top: 0,
+          bottom: 0,
+        },
         orientation: 'left',
         width: 0,
         height: 30,
@@ -176,7 +185,7 @@ describe('generateCategoricalChart', () => {
       // eslint-disable-next-line no-underscore-dangle
       stackGroups[0].stackGroups._stackId_49.cateAxisId = 'yAxisId';
 
-      const yAxisInput = { ...input, axisIdKey: 'yAxisId', axisType: 'yAxis', axes: yAxes };
+      const yAxisInput: AxisInput = { ...input, axisIdKey: 'yAxisId', axisType: 'yAxis', axes: yAxes };
 
       const res = getAxisMapByAxes(props, yAxisInput);
 

@@ -307,6 +307,16 @@ const getTooltipData = (state: CategoricalChartState, chartData: any[], layout: 
   return null;
 };
 
+export type AxisInput = {
+  axes: React.DetailedReactHTMLElement<BaseAxisProps & { ticks?: (string | number)[] }, any>[];
+  graphicalItems: React.DetailedReactHTMLElement<any, any>[];
+  axisType: AxisType;
+  axisIdKey: string;
+  stackGroups: false | StackGroups | null;
+  dataStartIndex: number;
+  dataEndIndex: number;
+};
+
 /**
  * Get the configuration of axis by the options of axis instance
  * @param  {Object} props         Latest props
@@ -321,23 +331,7 @@ const getTooltipData = (state: CategoricalChartState, chartData: any[], layout: 
  */
 export const getAxisMapByAxes = (
   props: CategoricalChartProps,
-  {
-    axes,
-    graphicalItems,
-    axisType,
-    axisIdKey,
-    stackGroups,
-    dataStartIndex,
-    dataEndIndex,
-  }: {
-    axes: React.DetailedReactHTMLElement<BaseAxisProps & { ticks?: (string | number)[] }, any>[];
-    graphicalItems: React.DetailedReactHTMLElement<any, any>[];
-    axisType: AxisType;
-    axisIdKey: string;
-    stackGroups: false | StackGroups | null;
-    dataStartIndex: number;
-    dataEndIndex: number;
-  },
+  { axes, graphicalItems, axisType, axisIdKey, stackGroups, dataStartIndex, dataEndIndex }: AxisInput,
 ): AxisMap => {
   const { layout, children, stackOffset } = props;
   const isCategorical = isCategoricalAxis(layout, axisType);
