@@ -2,22 +2,9 @@ import React from 'react';
 import { ResponsiveContainer, Tooltip, LineChart, Line } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+import { StorybookArgs } from '../../../StorybookArgs';
 
-type MyArgType = {
-  [argName: string]: {
-    description: string;
-    defaultValue?: unknown;
-    table: {
-      type: {
-        summary: string;
-        detail?: string;
-      };
-      category: 'Content' | 'Styles' | 'Position' | 'Internal';
-    };
-  };
-};
-
-const TooltipProps: MyArgType = {
+const TooltipProps: StorybookArgs = {
   separator: {
     description: 'The separator between name and value.',
     defaultValue: ' : ',

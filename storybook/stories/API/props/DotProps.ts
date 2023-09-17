@@ -2,9 +2,9 @@
  * This file both exports the documentation of shared props separately, to be reused in places where only single props
  * are documented, as well as grouped in case a whole group is needed.
  */
-import { Args } from '@storybook/react';
+import { StorybookArg, StorybookArgs } from '../../../StorybookArgs';
 
-export const r = {
+export const r: StorybookArg = {
   description: 'The radius of the dot.',
   control: { type: 'number' },
   table: {
@@ -15,7 +15,7 @@ export const r = {
   defaultValue: 10,
 };
 
-export const cx = {
+export const cx: StorybookArg = {
   description: 'The x-coordinate of the dots center.',
   table: {
     type: { summary: 'number' },
@@ -23,7 +23,7 @@ export const cx = {
   },
 };
 
-export const cy = {
+export const cy: StorybookArg = {
   description: 'The y-coordinate of the dots center.',
   table: {
     type: { summary: 'number' },
@@ -36,7 +36,7 @@ export const cy = {
  * is used. If the group is to be extended, then only single props should be imported by each component that does not
  * use all of them.
  * */
-export const DotProps: Args = {
+export const DotProps: StorybookArgs = {
   r,
   cx,
   cy,

@@ -1,12 +1,12 @@
-import { Args } from '@storybook/react';
+import { StorybookArg, StorybookArgs } from '../../../StorybookArgs';
 
-export const tooltipType = {
+export const tooltipType: StorybookArg = {
   table: { category: 'Tooltip' },
   control: { type: 'select' },
   options: ['responsive', 'none'],
 };
 
-export const activeDot = {
+export const activeDot: StorybookArg = {
   description: `The active dot is shown when a user enters a line chart and this chart has tooltip.
       If set to false, no active dot will be drawn. If set to true, active dot will be drawn with the
       props calculated internally. If passed an object, active dot will be drawn, and the internally
@@ -26,7 +26,7 @@ export const activeDot = {
   },
 };
 
-export const ResponsiveProps: Args = {
+export const ResponsiveProps: StorybookArgs = {
   activeDot,
   tooltipType,
 };
