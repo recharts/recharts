@@ -20,6 +20,10 @@ describe('mathSign', () => {
     expect(mathSign(0)).toBe(0);
   });
 
+  it('(-0)', () => {
+    expect(mathSign(-0)).toBe(0);
+  });
+
   it('(100)', () => {
     expect(mathSign(100)).toBe(1);
   });
@@ -38,8 +42,13 @@ describe('is functions', () => {
 
   describe('isPercent', () => {
     const tests: IsFunctionTestDefinition<typeof isPercent>[] = [
-      { should: 'return true with valid string', value: '0%', result: true },
+      { should: 'return true with 0%', value: '0%', result: true },
+      { should: 'return true with 10%', value: '10%', result: true },
       { should: 'return false with invalid string', value: '0', result: false },
+      // the case with only '%' character looks like a bug - we should probably change that? Is this a breaking change?
+      { should: 'return true with %', value: '%', result: true },
+      { should: 'return false with %%', value: '%%', result: false },
+      { should: 'return false with 0%%', value: '0%%', result: false },
     ];
 
     tests.forEach(({ should, value, result }) => {
@@ -128,6 +137,14 @@ describe('hasDuplicate', () => {
 
   it('of [12, 12] should return true', () => {
     expect(hasDuplicate([12, 12])).toBe(true);
+  });
+
+  it('[12, 12] should return true', () => {
+    expect(hasDuplicate(['12', 12])).toBe(true);
+  });
+
+  it('[1, 12] should return false', () => {
+    expect(hasDuplicate([1, 12])).toBe(false);
   });
 });
 
