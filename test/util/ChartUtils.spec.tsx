@@ -69,7 +69,8 @@ describe('getTicksForAxis', () => {
     expect(getTicksOfAxis(null)).toBeNull();
   });
 
-  it('Ticks without a valid coordinate are filtered out, such as with a PointScale and an active Brush, filtering the domain.', () => {
+  it(`Ticks without a valid coordinate are filtered out,
+  such as with a PointScale and an active Brush, filtering the domain.`, () => {
     const XAxisWithActiveBrush = {
       scale: scalePoint().domain(['13', '14', '15', '16', '17']).range([5, 866]),
       dataKey: 'name',
@@ -191,7 +192,7 @@ describe('getBandSizeOfAxis', () => {
 });
 
 describe('parseSpecifiedDomain', () => {
-  const domain = [20, 100];
+  const domain: [number, number] = [20, 100];
   it('DataUtils.parseSpecifiedDomain(1, domain) should return domain ', () => {
     expect(parseSpecifiedDomain(1, domain)).toBe(domain);
   });
