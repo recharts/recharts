@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { CartesianTickItem, CartesianViewBox, Size } from '../util/types';
 import { mathSign } from '../util/DataUtils';
 import { TickFormatter, TickGap } from './CartesianAxis';
@@ -17,10 +16,10 @@ export function getEquidistantTicks(
   letterSpacing?: string,
 ): CartesianTickItem[] {
   const result = (ticks || []).slice();
-  const length = result.length;
+  const { length } = result;
   const sign = length >= 2 ? mathSign(result[1].coordinate - result[0].coordinate) : 1;
 
-  let { start: initialStart, end } = getInitialStartAndEnd(viewBox, sign, sizeKey);
+  const { start: initialStart, end } = getInitialStartAndEnd(viewBox, sign, sizeKey);
   let index = 0;
   // Premature optimisation idea 1: Estimate a lower bound, and start from there.
   // For now, start from every tick
