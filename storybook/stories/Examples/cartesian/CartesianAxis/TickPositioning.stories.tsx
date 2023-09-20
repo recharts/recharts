@@ -1,5 +1,5 @@
 import React from 'react';
-import { CartesianAxis, Line, LineChart, ResponsiveContainer, Surface, XAxis } from '../../../../../src';
+import { Line, LineChart, ResponsiveContainer, XAxis } from '../../../../../src';
 import { ticks } from '../../../data';
 
 export default {
@@ -17,14 +17,13 @@ export const TickPositioning = {
       0,
     ];
 
-    const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
       <ResponsiveContainer>
         <LineChart data={ticks}>
-          <Line dataKey={'coordinate'} />
+          <Line dataKey="coordinate" />
           {intervalOptions.map((intervalOption, index) => (
             <XAxis
-              dataKey={'value'}
+              dataKey="value"
               key={intervalOption}
               interval={intervalOption as any}
               xAxisId={index}
