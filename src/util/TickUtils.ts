@@ -1,9 +1,16 @@
 import _ from 'lodash';
-import { CartesianTickItem, CartesianViewBox, Size } from '../util/types';
-import { getStringSize } from '../util/DOMUtils';
-import { getEveryNthWithCondition } from '../util/getEveryNthWithCondition';
-import { getAngledRectangleWidth } from '../util/CartesianUtils';
+
 import { TickFormatter } from '../cartesian/CartesianAxis';
+import { getAngledRectangleWidth } from './CartesianUtils';
+import { getStringSize } from './DOMUtils';
+import { getEveryNthWithCondition } from './getEveryNthWithCondition';
+import { Size, CartesianViewBox, CartesianTickItem } from './types';
+
+export function getAngledTickWidth(contentSize: Size, unitSize: Size, angle: number) {
+  const size = { width: contentSize.width + unitSize.width, height: contentSize.height + unitSize.height };
+
+  return getAngledRectangleWidth(size, angle);
+}
 
 export function getInitialStartAndEnd(viewBox: CartesianViewBox, sign: number, sizeKey: string) {
   let start, end;
@@ -68,10 +75,4 @@ export function getEveryNThTick(ticks: CartesianTickItem[]) {
 
 export function getNumberIntervalTicks(ticks: CartesianTickItem[], interval: number) {
   return getEveryNthWithCondition(ticks, interval + 1);
-}
-
-export function getAngledTickWidth(contentSize: Size, unitSize: Size, angle: number) {
-  const size = { width: contentSize.width + unitSize.width, height: contentSize.height + unitSize.height };
-
-  return getAngledRectangleWidth(size, angle);
 }
