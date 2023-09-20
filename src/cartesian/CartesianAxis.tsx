@@ -25,8 +25,6 @@ export type Orientation = 'top' | 'bottom' | 'left' | 'right';
 export type Unit = string | number;
 /** The formatter function of tick */
 export type TickFormatter = (value: any, index: number) => string;
-/** The minimum gap between two adjacent labels. */
-export type TickGap = number;
 
 export interface CartesianAxisProps {
   className?: string;
@@ -46,7 +44,7 @@ export interface CartesianAxisProps {
   hide?: boolean;
   label?: any;
 
-  minTickGap?: TickGap;
+  minTickGap?: number;
   ticks?: CartesianTickItem[];
   tickSize?: number;
   tickFormatter?: TickFormatter;

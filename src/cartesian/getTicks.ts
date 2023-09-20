@@ -18,7 +18,7 @@ function getTicksEnd(
   boundaries: { start: number; end: number },
   getTickSize: (tick: CartesianTickItem, index: number) => number,
   ticks: CartesianTickItem[],
-  minTickGap: CartesianAxisProps['minTickGap'],
+  minTickGap: number,
 ): CartesianTickItem[] {
   const result = (ticks || []).slice();
   const len = result.length;
@@ -55,7 +55,7 @@ function getTicksStart(
   boundaries: { start: number; end: number },
   getTickSize: (tick: CartesianTickItem, index: number) => number,
   ticks: CartesianTickItem[],
-  minTickGap: CartesianAxisProps['minTickGap'],
+  minTickGap: number,
   preserveEnd?: boolean,
 ): CartesianTickItem[] {
   const result = (ticks || []).slice();
