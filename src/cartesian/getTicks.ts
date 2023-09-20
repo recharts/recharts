@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { CartesianTickItem, Size } from '../util/types';
 import { mathSign, isNumber } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
@@ -32,7 +31,9 @@ function getTicksEnd({
   const len = result.length;
   const sign = len >= 2 ? mathSign(result[1].coordinate - result[0].coordinate) : 1;
 
-  let { start, end } = getInitialStartAndEnd(viewBox, sign, sizeKey);
+  const boundaries = getInitialStartAndEnd(viewBox, sign, sizeKey);
+  const { start } = boundaries;
+  let { end } = boundaries;
 
   for (let i = len - 1; i >= 0; i--) {
     let entry = result[i];
