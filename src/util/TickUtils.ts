@@ -42,15 +42,6 @@ export function doesTickFitInBetweenStartAndEnd(
   start: number,
   end: number,
 ): boolean {
-  console.log('check start', sign * (tickPosition - (sign * size) / 2 - start) >= 0);
-  console.log('check end', sign * (tickPosition + (sign * size) / 2 - end) <= 0);
-  console.log({
-    sign,
-    tickPosition,
-    size,
-    start,
-    end,
-  });
   return sign * (tickPosition - (sign * size) / 2 - start) >= 0 && sign * (tickPosition + (sign * size) / 2 - end) <= 0;
 }
 
