@@ -12,7 +12,7 @@ import { ReactElement, ReactNode } from 'react';
 import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
 
 import { ErrorBar } from '../cartesian/ErrorBar';
-import { Legend } from '../component/Legend';
+import { Legend, Props as LegendProps } from '../component/Legend';
 import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
 import { filterProps, findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
@@ -177,11 +177,11 @@ export const getLegendProps = ({
   legendWidth,
   legendContent,
 }: {
-  children: any;
+  children: ReactNode[];
   formattedGraphicalItems?: Array<FormattedGraphicalItem>;
   legendWidth: number;
-  legendContent?: any;
-}) => {
+  legendContent?: 'children';
+}): LegendProps & { item: ReactElement } => {
   const legendItem = findChildByType(children, Legend);
   if (!legendItem) {
     return null;
