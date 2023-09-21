@@ -177,7 +177,7 @@ export const getLegendProps = ({
   legendWidth,
   legendContent,
 }: {
-  children: any;
+  children: ReactNode[];
   formattedGraphicalItems?: Array<FormattedGraphicalItem>;
   legendWidth: number;
   legendContent?: any;
