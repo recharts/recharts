@@ -1,8 +1,4 @@
-import _ from 'lodash';
-
-import { TickFormatter } from '../cartesian/CartesianAxis';
 import { getAngledRectangleWidth } from './CartesianUtils';
-import { getStringSize } from './DOMUtils';
 import { getEveryNthWithCondition } from './getEveryNthWithCondition';
 import { Size, CartesianViewBox, CartesianTickItem } from './types';
 
@@ -25,23 +21,6 @@ export function getTickBoundaries(viewBox: CartesianViewBox, sign: number, sizeK
     start: isWidth ? x + width : y + height,
     end: isWidth ? x : y,
   };
-}
-
-export function getSizeOfTick(
-  tickFormatter: TickFormatter,
-  entry: CartesianTickItem,
-  index: number,
-  sizeKey: 'width' | 'height',
-  fontSize: string | number,
-  letterSpacing: string | number,
-  unitSize: Size,
-  angle: number,
-) {
-  const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value, index) : entry.value;
-  // Recharts only supports angles when sizeKey === 'width'
-  return sizeKey === 'width'
-    ? getAngledTickWidth(getStringSize(content, { fontSize, letterSpacing }), unitSize, angle)
-    : getStringSize(content, { fontSize, letterSpacing })[sizeKey];
 }
 
 export function isVisible(sign: number, tickPosition: number, size: number, start: number, end: number): boolean {
