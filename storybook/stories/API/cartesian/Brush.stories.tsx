@@ -58,6 +58,10 @@ const GeneralProps: Args = {
     description: 'The handler of changing the active scope of brush.',
     table: { type: { summary: 'Function' }, category: 'General' },
   },
+  onDragEnd: {
+    description: 'The handler of ending the brush drag.',
+    table: { type: { summary: 'Function' }, category: 'General' },
+  },
   alwaysShowText: {
     control: { type: 'boolean' },
     table: { type: { summary: 'boolean' }, category: 'General' },
