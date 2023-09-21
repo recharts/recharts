@@ -1,8 +1,3 @@
-import _ from 'lodash';
-
-import { TickFormatter } from '../cartesian/CartesianAxis';
-import { getAngledRectangleWidth } from './CartesianUtils';
-import { getStringSize } from './DOMUtils';
 import { getAngledRectangleWidth } from './CartesianUtils';
 import { getEveryNthWithCondition } from './getEveryNthWithCondition';
 import { Size, CartesianViewBox, CartesianTickItem } from './types';

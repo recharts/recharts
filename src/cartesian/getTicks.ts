@@ -1,9 +1,9 @@
+import _ from 'lodash';
 import { CartesianTickItem, Size } from '../util/types';
 import { mathSign, isNumber } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Props as CartesianAxisProps } from './CartesianAxis';
 import { Global } from '../util/Global';
-
 import {
   isVisible,
   getEveryNThTick,
@@ -11,8 +11,9 @@ import {
   getNumberIntervalTicks,
   getAngledTickWidth,
 } from '../util/TickUtils';
+import { getEquidistantTicks } from './getEquidistantTicks';
 
-type Sign = 0 | 1 | -1;
+export type Sign = 0 | 1 | -1;
 
 function getTicksEnd(
   sign: Sign,
@@ -135,21 +136,11 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
 
   const sign = ticks.length >= 2 ? mathSign(ticks[1].coordinate - ticks[0].coordinate) : 1;
   const boundaries = getTickBoundaries(viewBox, sign, sizeKey);
-  
+
   if (interval === 'equidistant') {
-    return getEquidistantTicks(
-      sizeKey,
-      unitSize,
-      angle,
-      ticks,
-      tickFormatter,
-      viewBox,
-      minTickGap,
-      fontSize,
-      letterSpacing,
-    );
+    return getEquidistantTicks(sign, boundaries, getTickSize, ticks, minTickGap);
   }
-  
+
   if (interval === 'equidistantPreserveStart') {
     candidates = getTicksStart(sign, boundaries, getTickSize, ticks, minTickGap);
 

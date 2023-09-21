@@ -1,25 +1,18 @@
-import { CartesianTickItem, CartesianViewBox, Size } from '../util/types';
-import { mathSign } from '../util/DataUtils';
-import { TickFormatter, TickGap } from './CartesianAxis';
+import { isVisible } from '../util/TickUtils';
+import { CartesianTickItem } from '../util/types';
 import { getEveryNthWithCondition } from '../util/getEveryNthWithCondition';
-import { doesTickFitInBetweenStartAndEnd, getInitialStartAndEnd, getSizeOfTick } from '../util/TickUtils';
+import { Sign } from './getTicks';
 
 export function getEquidistantTicks(
-  sizeKey: 'width' | 'height',
-  unitSize: Size,
-  angle?: number,
-  ticks?: CartesianTickItem[],
-  tickFormatter?: TickFormatter,
-  viewBox?: CartesianViewBox,
-  minTickGap?: TickGap,
-  fontSize?: string,
-  letterSpacing?: string,
+  sign: Sign,
+  boundaries: { start: number; end: number },
+  getTickSize: (tick: CartesianTickItem, index: number) => number,
+  ticks: CartesianTickItem[],
+  minTickGap: number,
 ): CartesianTickItem[] {
   const result = (ticks || []).slice();
-  const { length } = result;
-  const sign = length >= 2 ? mathSign(result[1].coordinate - result[0].coordinate) : 1;
 
-  const { start: initialStart, end } = getInitialStartAndEnd(viewBox, sign, sizeKey);
+  const { start: initialStart, end } = boundaries;
   let index = 0;
   // Premature optimisation idea 1: Estimate a lower bound, and start from there.
   // For now, start from every tick
@@ -38,11 +31,11 @@ export function getEquidistantTicks(
     }
 
     // Check if the element collides with the next element
-    const size = getSizeOfTick(tickFormatter, entry, index, sizeKey, fontSize, letterSpacing, unitSize, angle);
+    const size = getTickSize(entry, index);
 
     const tickCoord = entry.coordinate;
     // We will always show the first tick.
-    const isShow = index === 0 || doesTickFitInBetweenStartAndEnd(sign, tickCoord, size, start, end);
+    const isShow = index === 0 || isVisible(sign, tickCoord, size, start, end);
 
     if (!isShow) {
       // Start all over with a largerÍ stepsize
