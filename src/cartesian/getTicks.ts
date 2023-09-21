@@ -6,7 +6,7 @@ import { Global } from '../util/Global';
 import {
   doesTickFitInBetweenStartAndEnd,
   getEveryNThTick,
-  getInitialStartAndEnd,
+  getTickBoundaries,
   getNumberIntervalTicks,
   getSizeOfTick,
 } from '../util/TickUtils';
@@ -129,7 +129,7 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
   };
 
   const sign = ticks.length >= 2 ? mathSign(ticks[1].coordinate - ticks[0].coordinate) : 1;
-  const boundaries = getInitialStartAndEnd(viewBox, sign, sizeKey);
+  const boundaries = getTickBoundaries(viewBox, sign, sizeKey);
 
   if (interval === 'equidistantPreserveStart') {
     candidates = getTicksStart(sign, boundaries, getTickSize, ticks, minTickGap);

@@ -12,19 +12,21 @@ export function getAngledTickWidth(contentSize: Size, unitSize: Size, angle: num
   return getAngledRectangleWidth(size, angle);
 }
 
-export function getInitialStartAndEnd(viewBox: CartesianViewBox, sign: number, sizeKey: string) {
-  let start, end;
-
+export function getTickBoundaries(viewBox: CartesianViewBox, sign: number, sizeKey: string) {
+  const isWidth = sizeKey === 'width';
   const { x, y, width, height } = viewBox;
   if (sign === 1) {
-    start = sizeKey === 'width' ? x : y;
-    end = sizeKey === 'width' ? x + width : y + height;
-  } else {
-    start = sizeKey === 'width' ? x + width : y + height;
-    end = sizeKey === 'width' ? x : y;
+    return {
+      start: isWidth ? x : y,
+      end: isWidth ? x + width : y + height,
+    };
   }
-  return { end, start };
+  return {
+    start: isWidth ? x + width : y + height,
+    end: isWidth ? x : y,
+  };
 }
+
 export function getSizeOfTick(
   tickFormatter: TickFormatter,
   entry: CartesianTickItem,
