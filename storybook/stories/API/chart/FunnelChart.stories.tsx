@@ -5,6 +5,27 @@ import { CategoricalChartProps } from '../props/ChartProps';
 export default {
   argTypes: {
     ...CategoricalChartProps,
+    activeIndex: {
+      description:
+        'The index of the individual shapes that make up the Funnel to be marked as active, and render props.activeShape as a result',
+      table: {
+        type: {
+          summary: 'number',
+        },
+        defaultValue: undefined,
+        category: 'General',
+      },
+    },
+    activeShape: {
+      description: 'The customized shape to be rendered if activeIndex or activeTooltipIndex match',
+      table: {
+        type: {
+          summary: 'Function | boolean | ReactElement | object',
+        },
+        defaultValue: undefined,
+        category: 'General',
+      },
+    },
   },
   component: FunnelChart,
 };
@@ -17,7 +38,7 @@ export const Simple = {
       <ResponsiveContainer width="100%" height={200}>
         <FunnelChart layout="horizontal">
           <Funnel
-            activeIndex={0}
+            activeIndex={args.activeIndex}
             width={400}
             data={data}
             dataKey="value"
@@ -26,7 +47,7 @@ export const Simple = {
             labelLine
             lastShapeType="rectangle"
             orientation="horizontal"
-            activeShape={{ fill: 'gold', stroke: 'purple' }}
+            activeShape={args.activeShape}
           >
             <LabelList dataKey="name" fill="#000" position="right" stroke="none" />
           </Funnel>
@@ -37,6 +58,8 @@ export const Simple = {
     );
   },
   args: {
+    activeShape: { fill: 'gold', stroke: 'purple' },
+    activeIndex: 0,
     data: [
       {
         fill: '#EEEEEE',
