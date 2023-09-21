@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { DefaultLegendContent, Payload, Props as DefaultProps, ContentType } from './DefaultLegendContent';
 
 import { isNumber } from '../util/DataUtils';
+import { LayoutType } from '../util/types';
 
 type UniqueOption = boolean | ((entry: Payload) => Payload);
 function defaultUniqBy(entry: Payload) {
@@ -71,7 +72,10 @@ export class Legend extends PureComponent<Props, State> {
 
   private wrapperNode: HTMLDivElement;
 
-  static getWithHeight(item: any, chartWidth: number) {
+  static getWithHeight(
+    item: { props: { layout?: LayoutType; height?: number; width?: number } },
+    chartWidth: number,
+  ): null | { height: number } | { width: number } {
     const { layout } = item.props;
 
     if (layout === 'vertical' && isNumber(item.props.height)) {
