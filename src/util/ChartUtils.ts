@@ -180,7 +180,7 @@ export const getLegendProps = ({
   children: ReactNode[];
   formattedGraphicalItems?: Array<FormattedGraphicalItem>;
   legendWidth: number;
-  legendContent?: any;
+  legendContent?: 'children';
 }): LegendProps & { item: ReactElement } => {
   const legendItem = findChildByType(children, Legend);
   if (!legendItem) {
