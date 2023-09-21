@@ -1239,7 +1239,7 @@ export interface CategoricalChartOptions {
   defaultTooltipEventType?: string;
   validateTooltipEventTypes?: string[];
   axisComponents?: BaseAxisProps[];
-  legendContent?: any;
+  legendContent?: 'children';
   formatAxisMap?: any;
   defaultProps?: any;
 }

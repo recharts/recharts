@@ -1,6 +1,6 @@
-import { Args } from '@storybook/react';
+import { StorybookArgs } from '../../../StorybookArgs';
 
-export const ReferenceComponentStyle: Args = {
+export const ReferenceComponentStyle: StorybookArgs = {
   isFront: {
     description: `If set true, the reference component will be rendered in front of bars in BarChart, etc.`,
     table: { category: 'Style' },
@@ -12,11 +12,11 @@ export const ReferenceComponentStyle: Args = {
     will be drawn completely. If set to 'extendDomain', the domain of the overflown axis will be 
     extended such that the reference component fits into the canvas.`,
     table: { type: { summary: "'discard' | 'hidden' | 'visible' | 'extendDomain'" }, category: 'Style' },
-    default: 'discard',
+    defaultValue: 'discard',
   },
 };
 
-export const ReferenceComponentGeneralArgs: Args = {
+export const ReferenceComponentGeneralArgs: StorybookArgs = {
   xAxisId: {
     description: 'The id of x-axis which is corresponding to the data.',
     table: { type: { summary: 'string | number' }, category: 'General' },
@@ -27,7 +27,7 @@ export const ReferenceComponentGeneralArgs: Args = {
   },
 };
 
-export const ReferenceComponentInternalArgs: Args = {
+export const ReferenceComponentInternalArgs: StorybookArgs = {
   xAxis: {
     description: 'The configuration of the corresponding x-axis, usually calculated internally.',
     table: { type: { summary: 'Object' }, category: 'Internal' },

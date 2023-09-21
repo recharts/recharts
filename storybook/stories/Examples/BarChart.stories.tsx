@@ -16,6 +16,7 @@ import {
   LabelList,
   Brush,
   ErrorBar,
+  Rectangle,
 } from '../../../src';
 
 export default {
@@ -57,8 +58,8 @@ export const Simple = {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="pv" fill="#8884d8" />
-          <Bar dataKey="uv" fill="#82ca9d" />
+          <Bar dataKey="pv" fill="#8884d8" activeBar={<Rectangle fill="pink" stroke="blue" />} />
+          <Bar dataKey="uv" fill="#82ca9d" activeBar={<Rectangle fill="gold" stroke="purple" />} />
         </BarChart>
       </ResponsiveContainer>
     );
