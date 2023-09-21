@@ -44,7 +44,7 @@ export interface CartesianAxisProps {
   hide?: boolean;
   label?: any;
 
-  minTickGap?: TickGap;
+  minTickGap?: number;
   ticks?: CartesianTickItem[];
   tickSize?: number;
   tickFormatter?: TickFormatter;
