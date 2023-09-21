@@ -1114,7 +1114,7 @@ export interface BaseAxisProps {
   className?: string;
 }
 
-/** Defines how ticks are places and whether / how tick collisions are handled.
+/** Defines how ticks are placed and whether / how tick collisions are handled.
  * 'preserveStart' keeps the left tick on collision and ensures that the first tick is always shown.
  * 'preserveEnd' keeps the right tick on collision and ensures that the last tick is always shown.
  * 'preserveStartEnd' keeps the left tick on collision and ensures that the first and last ticks are always shown.
