@@ -19,7 +19,7 @@ export function getEquidistantTicks(
   let stepsize = 1;
   let start = initialStart;
 
-  while (stepsize < result.length) {
+  while (stepsize <= result.length) {
     // Given stepsize, evaluate whether every stepsize-th tick can be shown.
     // If it can not, then increase the stepsize by 1, and try again.
 
@@ -38,7 +38,7 @@ export function getEquidistantTicks(
     const isShow = index === 0 || isVisible(sign, tickCoord, size, start, end);
 
     if (!isShow) {
-      // Start all over with a largerÍ stepsize
+      // Start all over with a larger stepsize
       index = 0;
       start = initialStart;
       stepsize += 1;
