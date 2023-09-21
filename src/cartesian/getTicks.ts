@@ -4,7 +4,7 @@ import { getStringSize } from '../util/DOMUtils';
 import { Props as CartesianAxisProps } from './CartesianAxis';
 import { Global } from '../util/Global';
 import {
-  doesTickFitInBetweenStartAndEnd,
+  isVisible,
   getEveryNThTick,
   getTickBoundaries,
   getNumberIntervalTicks,
@@ -39,7 +39,7 @@ function getTicksEnd(
       result[i] = entry = { ...entry, tickCoord: entry.coordinate };
     }
 
-    const isShow = doesTickFitInBetweenStartAndEnd(sign, entry.tickCoord, size, start, end);
+    const isShow = isVisible(sign, entry.tickCoord, size, start, end);
 
     if (isShow) {
       end = entry.tickCoord - sign * (size / 2 + minTickGap);
@@ -73,7 +73,7 @@ function getTicksStart(
       tickCoord: tailGap > 0 ? tail.coordinate - tailGap * sign : tail.coordinate,
     };
 
-    const isTailShow = doesTickFitInBetweenStartAndEnd(sign, tail.tickCoord, tailSize, start, end);
+    const isTailShow = isVisible(sign, tail.tickCoord, tailSize, start, end);
 
     if (isTailShow) {
       end = tail.tickCoord - sign * (tailSize / 2 + minTickGap);
@@ -96,7 +96,7 @@ function getTicksStart(
       result[i] = entry = { ...entry, tickCoord: entry.coordinate };
     }
 
-    const isShow = doesTickFitInBetweenStartAndEnd(sign, entry.tickCoord, size, start, end);
+    const isShow = isVisible(sign, entry.tickCoord, size, start, end);
 
     if (isShow) {
       start = entry.tickCoord + sign * (size / 2 + minTickGap);

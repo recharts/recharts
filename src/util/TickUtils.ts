@@ -44,13 +44,7 @@ export function getSizeOfTick(
     : getStringSize(content, { fontSize, letterSpacing })[sizeKey];
 }
 
-export function doesTickFitInBetweenStartAndEnd(
-  sign: number,
-  tickPosition: number,
-  size: number,
-  start: number,
-  end: number,
-): boolean {
+export function isVisible(sign: number, tickPosition: number, size: number, start: number, end: number): boolean {
   return sign * (tickPosition - (sign * size) / 2 - start) >= 0 && sign * (tickPosition + (sign * size) / 2 - end) <= 0;
 }
 
