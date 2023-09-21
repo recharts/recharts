@@ -1121,6 +1121,13 @@ export interface BaseAxisProps {
   categoricalDomain?: any;
 }
 
+/** Defines how ticks are placed and whether / how tick collisions are handled.
+ * 'preserveStart' keeps the left tick on collision and ensures that the first tick is always shown.
+ * 'preserveEnd' keeps the right tick on collision and ensures that the last tick is always shown.
+ * 'preserveStartEnd' keeps the left tick on collision and ensures that the first and last ticks are always shown.
+ * 'equidistantPreserveStart' computes which ticks are shown according to the 'preserveStart' strategy and
+ *  then selects a number N such that every nTh tick will be shown.
+ */
 export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart';
 
 export interface TickItem {
