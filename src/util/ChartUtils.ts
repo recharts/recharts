@@ -17,7 +17,8 @@ import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniq
 import { filterProps, findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
-import { AxisType, BaseAxisProps, DataKey, LayoutType, PolarLayoutType, TickItem } from './types';
+import { AxisType, BaseAxisProps, DataKey, LayoutType, LegendType, PolarLayoutType, TickItem } from './types';
+import { Payload as LegendPayload } from '../component/DefaultLegendContent';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<any>, defaultValue?: any) {
   if (_.isNil(obj) || _.isNil(dataKey)) {
@@ -165,10 +166,18 @@ export const getMainColorOfGraphicItem = (item: ReactElement) => {
   return result;
 };
 
-interface FormattedGraphicalItem {
-  props: any;
+export interface FormattedGraphicalItem {
+  props: {
+    sectors?: ReadonlyArray<any>;
+    data?: ReadonlyArray<any>;
+  };
   childIndex: number;
-  item: any;
+  item: ReactElement<{ legendType?: LegendType; hide: boolean; name?: string; dataKey: unknown }>;
+}
+
+interface SectorOrDataEntry {
+  name: any;
+  fill: any;
 }
 
 export const getLegendProps = ({
@@ -187,15 +196,15 @@ export const getLegendProps = ({
     return null;
   }
 
-  let legendData;
+  let legendData: LegendPayload[];
   if (legendItem.props && legendItem.props.payload) {
     legendData = legendItem.props && legendItem.props.payload;
   } else if (legendContent === 'children') {
     legendData = (formattedGraphicalItems || []).reduce((result, { item, props }) => {
-      const data = props.sectors || props.data || [];
+      const data: ReadonlyArray<SectorOrDataEntry> = props.sectors || props.data || [];
 
       return result.concat(
-        data.map((entry: any) => ({
+        data.map((entry: SectorOrDataEntry) => ({
           type: legendItem.props.iconType || item.props.legendType,
           value: entry.name,
           color: entry.fill,
@@ -204,7 +213,7 @@ export const getLegendProps = ({
       );
     }, []);
   } else {
-    legendData = (formattedGraphicalItems || []).map(({ item }) => {
+    legendData = (formattedGraphicalItems || []).map(({ item }): LegendPayload => {
       const { dataKey, name, legendType, hide } = item.props;
 
       return {
@@ -213,6 +222,7 @@ export const getLegendProps = ({
         type: legendItem.props.iconType || legendType || 'square',
         color: getMainColorOfGraphicItem(item),
         value: name || dataKey,
+        // @ts-expect-error property strokeDasharray is required in Payload but optional in props
         payload: item.props,
       };
     });
