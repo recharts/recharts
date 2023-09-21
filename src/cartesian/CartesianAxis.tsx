@@ -19,14 +19,21 @@ import {
 import { filterProps } from '../util/ReactUtils';
 import { getTicks } from './getTicks';
 
+/** The orientation of the axis in correspondence to the chart */
+export type Orientation = 'top' | 'bottom' | 'left' | 'right';
+/** A unit to be appended to a value */
+export type Unit = string | number;
+/** The formatter function of tick */
+export type TickFormatter = (value: any, index: number) => string;
+
 export interface CartesianAxisProps {
   className?: string;
   x?: number;
   y?: number;
   width?: number;
   height?: number;
-  unit?: string | number;
-  orientation?: 'top' | 'bottom' | 'left' | 'right';
+  unit?: Unit;
+  orientation?: Orientation;
   // The viewBox of svg
   viewBox?: CartesianViewBox;
   tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
@@ -40,8 +47,7 @@ export interface CartesianAxisProps {
   minTickGap?: number;
   ticks?: CartesianTickItem[];
   tickSize?: number;
-  /** The formatter function of tick */
-  tickFormatter?: (value: any, index: number) => string;
+  tickFormatter?: TickFormatter;
   ticksGenerator?: (props?: CartesianAxisProps) => CartesianTickItem[];
   interval?: AxisInterval;
   /** Angle in which ticks will be rendered. */
