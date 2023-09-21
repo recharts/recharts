@@ -26,8 +26,6 @@ export type Unit = string | number;
 /** The formatter function of tick */
 export type TickFormatter = (value: any, index: number) => string;
 
-export type TickGap = number;
-
 export interface CartesianAxisProps {
   className?: string;
   x?: number;

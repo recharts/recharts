@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { TickFormatter } from '../cartesian/CartesianAxis';
 import { getAngledRectangleWidth } from './CartesianUtils';
 import { getStringSize } from './DOMUtils';
+import { getAngledRectangleWidth } from './CartesianUtils';
 import { getEveryNthWithCondition } from './getEveryNthWithCondition';
 import { Size, CartesianViewBox, CartesianTickItem } from './types';
 
@@ -12,43 +13,22 @@ export function getAngledTickWidth(contentSize: Size, unitSize: Size, angle: num
   return getAngledRectangleWidth(size, angle);
 }
 
-export function getInitialStartAndEnd(viewBox: CartesianViewBox, sign: number, sizeKey: string) {
-  let start, end;
-
+export function getTickBoundaries(viewBox: CartesianViewBox, sign: number, sizeKey: string) {
+  const isWidth = sizeKey === 'width';
   const { x, y, width, height } = viewBox;
   if (sign === 1) {
-    start = sizeKey === 'width' ? x : y;
-    end = sizeKey === 'width' ? x + width : y + height;
-  } else {
-    start = sizeKey === 'width' ? x + width : y + height;
-    end = sizeKey === 'width' ? x : y;
+    return {
+      start: isWidth ? x : y,
+      end: isWidth ? x + width : y + height,
+    };
   }
-  return { end, start };
-}
-export function getSizeOfTick(
-  tickFormatter: TickFormatter,
-  entry: CartesianTickItem,
-  index: number,
-  sizeKey: 'width' | 'height',
-  fontSize: string | number,
-  letterSpacing: string | number,
-  unitSize: Size,
-  angle: number,
-) {
-  const content = _.isFunction(tickFormatter) ? tickFormatter(entry.value, index) : entry.value;
-  // Recharts only supports angles when sizeKey === 'width'
-  return sizeKey === 'width'
-    ? getAngledTickWidth(getStringSize(content, { fontSize, letterSpacing }), unitSize, angle)
-    : getStringSize(content, { fontSize, letterSpacing })[sizeKey];
+  return {
+    start: isWidth ? x + width : y + height,
+    end: isWidth ? x : y,
+  };
 }
 
-export function doesTickFitInBetweenStartAndEnd(
-  sign: number,
-  tickPosition: number,
-  size: number,
-  start: number,
-  end: number,
-): boolean {
+export function isVisible(sign: number, tickPosition: number, size: number, start: number, end: number): boolean {
   return sign * (tickPosition - (sign * size) / 2 - start) >= 0 && sign * (tickPosition + (sign * size) / 2 - end) <= 0;
 }
 

@@ -3,41 +3,33 @@ import { mathSign, isNumber } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Props as CartesianAxisProps } from './CartesianAxis';
 import { Global } from '../util/Global';
-import { getEquidistantTicks } from './getEquidistantTicks';
+
 import {
-  doesTickFitInBetweenStartAndEnd,
+  isVisible,
   getEveryNThTick,
-  getInitialStartAndEnd,
+  getTickBoundaries,
   getNumberIntervalTicks,
-  getSizeOfTick,
+  getAngledTickWidth,
 } from '../util/TickUtils';
 
-function getTicksEnd({
-  angle,
-  ticks,
-  tickFormatter,
-  viewBox,
-  orientation,
-  minTickGap,
-  unit,
-  fontSize,
-  letterSpacing,
-}: Omit<CartesianAxisProps, 'tickMargin'>): CartesianTickItem[] {
-  const sizeKey = orientation === 'top' || orientation === 'bottom' ? 'width' : 'height';
-  // we need add the width of 'unit' only when sizeKey === 'width'
-  const unitSize: Size =
-    unit && sizeKey === 'width' ? getStringSize(unit, { fontSize, letterSpacing }) : { width: 0, height: 0 };
+type Sign = 0 | 1 | -1;
+
+function getTicksEnd(
+  sign: Sign,
+  boundaries: { start: number; end: number },
+  getTickSize: (tick: CartesianTickItem, index: number) => number,
+  ticks: CartesianTickItem[],
+  minTickGap: number,
+): CartesianTickItem[] {
   const result = (ticks || []).slice();
   const len = result.length;
-  const sign = len >= 2 ? mathSign(result[1].coordinate - result[0].coordinate) : 1;
 
-  const boundaries = getInitialStartAndEnd(viewBox, sign, sizeKey);
   const { start } = boundaries;
   let { end } = boundaries;
 
   for (let i = len - 1; i >= 0; i--) {
     let entry = result[i];
-    const size = getSizeOfTick(tickFormatter, entry, len - i - 1, sizeKey, fontSize, letterSpacing, unitSize, angle);
+    const size = getTickSize(entry, i);
     if (i === len - 1) {
       const gap = sign * (entry.coordinate + (sign * size) / 2 - end);
       result[i] = entry = {
@@ -48,7 +40,7 @@ function getTicksEnd({
       result[i] = entry = { ...entry, tickCoord: entry.coordinate };
     }
 
-    const isShow = doesTickFitInBetweenStartAndEnd(sign, entry.tickCoord, size, start, end);
+    const isShow = isVisible(sign, entry.tickCoord, size, start, end);
 
     if (isShow) {
       end = entry.tickCoord - sign * (size / 2 + minTickGap);
@@ -60,40 +52,29 @@ function getTicksEnd({
 }
 
 function getTicksStart(
-  {
-    angle,
-    ticks,
-    tickFormatter,
-    viewBox,
-    orientation,
-    minTickGap,
-    unit,
-    fontSize,
-    letterSpacing,
-  }: Omit<CartesianAxisProps, 'tickMargin'>,
+  sign: Sign,
+  boundaries: { start: number; end: number },
+  getTickSize: (tick: CartesianTickItem, index: number) => number,
+  ticks: CartesianTickItem[],
+  minTickGap: number,
   preserveEnd?: boolean,
 ): CartesianTickItem[] {
-  const sizeKey = orientation === 'top' || orientation === 'bottom' ? 'width' : 'height';
   const result = (ticks || []).slice();
-  // we need add the width of 'unit' only when sizeKey === 'width'
-  const unitSize: Size =
-    unit && sizeKey === 'width' ? getStringSize(unit, { fontSize, letterSpacing }) : { width: 0, height: 0 };
   const len = result.length;
-  const sign = len >= 2 ? mathSign(result[1].coordinate - result[0].coordinate) : 1;
 
-  let { start, end } = getInitialStartAndEnd(viewBox, sign, sizeKey);
+  let { start, end } = boundaries;
 
   if (preserveEnd) {
     // Try to guarantee the tail to be displayed
     let tail = ticks[len - 1];
-    const tailSize = getSizeOfTick(tickFormatter, tail, len - 1, sizeKey, fontSize, letterSpacing, unitSize, angle);
+    const tailSize = getTickSize(tail, len - 1);
     const tailGap = sign * (tail.coordinate + (sign * tailSize) / 2 - end);
     result[len - 1] = tail = {
       ...tail,
       tickCoord: tailGap > 0 ? tail.coordinate - tailGap * sign : tail.coordinate,
     };
 
-    const isTailShow = doesTickFitInBetweenStartAndEnd(sign, tail.tickCoord, tailSize, start, end);
+    const isTailShow = isVisible(sign, tail.tickCoord, tailSize, start, end);
 
     if (isTailShow) {
       end = tail.tickCoord - sign * (tailSize / 2 + minTickGap);
@@ -104,7 +85,7 @@ function getTicksStart(
   const count = preserveEnd ? len - 1 : len;
   for (let i = 0; i < count; i++) {
     let entry = result[i];
-    const size = getSizeOfTick(tickFormatter, entry, i, sizeKey, fontSize, letterSpacing, unitSize, angle);
+    const size = getTickSize(entry, i);
 
     if (i === 0) {
       const gap = sign * (entry.coordinate - (sign * size) / 2 - start);
@@ -116,7 +97,7 @@ function getTicksStart(
       result[i] = entry = { ...entry, tickCoord: entry.coordinate };
     }
 
-    const isShow = doesTickFitInBetweenStartAndEnd(sign, entry.tickCoord, size, start, end);
+    const isShow = isVisible(sign, entry.tickCoord, size, start, end);
 
     if (isShow) {
       start = entry.tickCoord + sign * (size / 2 + minTickGap);
@@ -140,11 +121,21 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
 
   let candidates: CartesianTickItem[] = [];
 
-  // TODO: Refactor all methods to take unitSize and sizeKey, since they are shared.
   const sizeKey = orientation === 'top' || orientation === 'bottom' ? 'width' : 'height';
   const unitSize: Size =
     unit && sizeKey === 'width' ? getStringSize(unit, { fontSize, letterSpacing }) : { width: 0, height: 0 };
 
+  const getTickSize = (content: CartesianTickItem, index: number) => {
+    const value = _.isFunction(tickFormatter) ? tickFormatter(content.value, index) : content.value;
+    // Recharts only supports angles when sizeKey === 'width'
+    return sizeKey === 'width'
+      ? getAngledTickWidth(getStringSize(value, { fontSize, letterSpacing }), unitSize, angle)
+      : getStringSize(value, { fontSize, letterSpacing })[sizeKey];
+  };
+
+  const sign = ticks.length >= 2 ? mathSign(ticks[1].coordinate - ticks[0].coordinate) : 1;
+  const boundaries = getTickBoundaries(viewBox, sign, sizeKey);
+  
   if (interval === 'equidistant') {
     return getEquidistantTicks(
       sizeKey,
@@ -158,50 +149,17 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
       letterSpacing,
     );
   }
-
+  
   if (interval === 'equidistantPreserveStart') {
-    candidates = getTicksStart({
-      angle,
-      ticks,
-      tickFormatter,
-      viewBox,
-      orientation,
-      minTickGap,
-      unit,
-      fontSize,
-      letterSpacing,
-    });
+    candidates = getTicksStart(sign, boundaries, getTickSize, ticks, minTickGap);
 
     return getEveryNThTick(candidates);
   }
 
   if (interval === 'preserveStart' || interval === 'preserveStartEnd') {
-    candidates = getTicksStart(
-      {
-        angle,
-        ticks,
-        tickFormatter,
-        viewBox,
-        orientation,
-        minTickGap,
-        unit,
-        fontSize,
-        letterSpacing,
-      },
-      interval === 'preserveStartEnd',
-    );
+    candidates = getTicksStart(sign, boundaries, getTickSize, ticks, minTickGap, interval === 'preserveStartEnd');
   } else {
-    candidates = getTicksEnd({
-      angle,
-      ticks,
-      tickFormatter,
-      viewBox,
-      orientation,
-      minTickGap,
-      unit,
-      fontSize,
-      letterSpacing,
-    });
+    candidates = getTicksEnd(sign, boundaries, getTickSize, ticks, minTickGap);
   }
 
   return candidates.filter(entry => entry.isShow);
