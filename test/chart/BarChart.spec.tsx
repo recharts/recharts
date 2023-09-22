@@ -1,8 +1,7 @@
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
 import { Bar, BarChart, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
-import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 describe('<BarChart />', () => {
   const data = [
@@ -125,9 +124,7 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
 
     jest.runAllTimers();
     const bar = container.querySelectorAll('.recharts-active-bar');
@@ -155,9 +152,7 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
 
     jest.runAllTimers();
     const bar = container.querySelectorAll('.recharts-active-bar');
@@ -178,9 +173,7 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
 
     jest.runAllTimers();
     const bar = container.querySelectorAll('.recharts-active-bar');
@@ -201,9 +194,7 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
 
     jest.runAllTimers();
     const bar = container.querySelectorAll('.recharts-active-bar');
@@ -223,9 +214,7 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
 
     jest.runAllTimers();
     const bar = container.querySelectorAll('.recharts-active-bar');
@@ -246,9 +235,7 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
 
     jest.runAllTimers();
     const bar = container.querySelectorAll('.recharts-active-bar');
