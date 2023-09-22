@@ -1,7 +1,7 @@
-import { Args } from '@storybook/react';
 import { onClick, onMouseDown, onMouseEnter, onMouseLeave, onMouseMove, onMouseUp } from './EventHandlers';
+import { StorybookArg, StorybookArgs } from '../../../StorybookArgs';
 
-export const data = {
+export const data: StorybookArg = {
   description: 'The source data, in which each element is an object.',
   table: {
     type: {
@@ -11,13 +11,12 @@ export const data = {
   },
 };
 
-export const ChartSizeProps: Args = {
+export const ChartSizeProps: StorybookArgs = {
   height: {
     description: 'The height of chart container.',
     table: {
       type: {
-        summary: 'Number',
-        defaultValue: null,
+        summary: 'number',
       },
       category: 'General',
     },
@@ -26,8 +25,7 @@ export const ChartSizeProps: Args = {
     description: 'The width of chart container.',
     table: {
       type: {
-        summary: 'Number',
-        defaultValue: null,
+        summary: 'number',
       },
       category: 'General',
     },
@@ -39,7 +37,17 @@ export const margin = {
   table: {
     type: {
       summary: 'Object',
-      defaultValue: { top: 0, right: 0, bottom: 0, left: 0 },
+    },
+    defaultValue: { top: 0, right: 0, bottom: 0, left: 0 },
+    category: 'General',
+  },
+};
+
+export const dataKey = {
+  description: 'The key or getter of a group of data which should be unique in a chart.',
+  table: {
+    type: {
+      summary: 'string | number | Function',
     },
     category: 'General',
   },
@@ -55,7 +63,7 @@ export const margin = {
 // - RadialBarChart
 // - ScatterChart
 // - FunnelChart
-export const CategoricalChartProps: Args = {
+export const CategoricalChartProps: StorybookArgs = {
   ...ChartSizeProps,
   data,
   margin,
@@ -63,9 +71,9 @@ export const CategoricalChartProps: Args = {
     description: 'Turn on keyboard accessibility',
     table: {
       type: {
-        summary: 'Boolean',
-        defaultValue: 'false',
+        summary: 'boolean',
       },
+      defaultValue: false,
       category: 'General',
     },
   },
@@ -74,8 +82,8 @@ export const CategoricalChartProps: Args = {
     table: {
       type: {
         summary: 'String | undefined',
-        defaultValue: 'undefined',
       },
+      defaultValue: undefined,
       category: 'General',
     },
   },
@@ -83,9 +91,9 @@ export const CategoricalChartProps: Args = {
     description: 'If and where the chart should appear in the tab order',
     table: {
       type: {
-        summary: 'Number | undefined',
-        defaultValue: 'undefined',
+        summary: 'number | undefined',
       },
+      defaultValue: undefined,
       category: 'General',
     },
   },
@@ -93,9 +101,9 @@ export const CategoricalChartProps: Args = {
     description: 'The gap between two bar categories, which can be a percent value or a fixed value.',
     table: {
       type: {
-        summary: 'Percentage | Number',
-        defaultValue: '10%',
+        summary: 'Percentage | number',
       },
+      defaultValue: '10%',
       category: 'Bar',
     },
   },
@@ -121,9 +129,9 @@ export const CategoricalChartProps: Args = {
     description: 'The gap between two bars in the same category.',
     table: {
       type: {
-        summary: 'Number',
-        defaultValue: 4,
+        summary: 'number',
       },
+      defaultValue: 4,
       category: 'Bar',
     },
   },
@@ -132,7 +140,7 @@ export const CategoricalChartProps: Args = {
       will be calculated by the barCategoryGap, barGap and the quantity of bar groups.`,
     table: {
       type: {
-        summary: 'Number',
+        summary: 'number',
       },
       category: 'Bar',
     },
@@ -141,9 +149,9 @@ export const CategoricalChartProps: Args = {
     description: 'The base value of area.',
     table: {
       type: {
-        summary: "Number | 'dataMin' | 'dataMax' | 'auto'",
-        defaultValue: 'auto',
+        summary: "number | 'dataMin' | 'dataMax' | 'auto'",
       },
+      defaultValue: 'auto',
       category: 'Area',
     },
   },
@@ -156,9 +164,9 @@ export const CategoricalChartProps: Args = {
     description: 'If true set, the chart will be rendered in compact mode.',
     table: {
       type: {
-        summary: 'Boolean | undefined',
-        defaultValue: 'undefined',
+        summary: 'boolean | undefined',
       },
+      defaultValue: undefined,
       category: 'General',
     },
   },
@@ -166,7 +174,7 @@ export const CategoricalChartProps: Args = {
     description: 'The x-coordinate of the center of the circle.',
     table: {
       type: {
-        summary: 'Number',
+        summary: 'number',
       },
       category: 'Polar',
     },
@@ -175,7 +183,7 @@ export const CategoricalChartProps: Args = {
     description: 'The y-coordinate of the center of the circle.',
     table: {
       type: {
-        summary: 'Number',
+        summary: 'number',
       },
       category: 'Polar',
     },
@@ -184,7 +192,7 @@ export const CategoricalChartProps: Args = {
     description: 'If true set, the tooltip will be displayed when the chart is rendered.',
     table: {
       type: {
-        summary: 'Boolean',
+        summary: 'boolean',
       },
       category: 'General',
     },
@@ -214,8 +222,8 @@ export const CategoricalChartProps: Args = {
     table: {
       type: {
         summary: "'horizontal' | 'vertical'",
-        defaultValue: "'horizontal'",
       },
+      defaultValue: "'horizontal'",
       category: 'General',
     },
   },
@@ -223,7 +231,7 @@ export const CategoricalChartProps: Args = {
     description: 'The maximum size of bar.',
     table: {
       type: {
-        summary: 'Number',
+        summary: 'number',
       },
       category: 'Bar',
     },
@@ -248,9 +256,9 @@ export const CategoricalChartProps: Args = {
       will be rendered right to left. (Render direction affects SVG layering, not x position.)`,
     table: {
       type: {
-        summary: 'Boolean',
-        defaultValue: false,
+        summary: 'boolean',
       },
+      defaultValue: false,
       category: 'General',
     },
   },
@@ -260,8 +268,8 @@ export const CategoricalChartProps: Args = {
     table: {
       type: {
         summary: "'expand' | 'none' | 'wiggle' | 'silhouette' | 'sign'",
-        defaultValue: "'none'",
       },
+      defaultValue: "'none'",
       category: 'General',
     },
   },
@@ -288,8 +296,8 @@ export const CategoricalChartProps: Args = {
     table: {
       type: {
         summary: "'index' | 'value' | function",
-        defaultValue: "'index'",
       },
+      defaultValue: "'index'",
       category: 'General',
     },
   },

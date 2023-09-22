@@ -1,9 +1,11 @@
-import React, { Component, cloneElement, isValidElement, createElement } from 'react';
+import React, { Component, cloneElement, isValidElement, createElement, ComponentProps, ReactElement } from 'react';
 import classNames from 'classnames';
 import _, { isArray, isBoolean, isNil } from 'lodash';
+import invariant from 'tiny-invariant';
 import { getTicks } from '../cartesian/getTicks';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
+import { Bar } from '../cartesian/Bar';
 import { Tooltip } from '../component/Tooltip';
 import { Legend } from '../component/Legend';
 import { Curve } from '../shape/Curve';
@@ -50,6 +52,7 @@ import {
   parseDomainOfCategoryAxis,
   getTooltipItem,
 } from '../util/ChartUtils';
+import { ActiveBar } from '../util/BarUtils';
 import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDomain';
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/ShallowEqual';
@@ -70,6 +73,13 @@ import {
   AxisDomain,
 } from '../util/types';
 import { AccessibilityManager } from './AccessibilityManager';
+
+export type GraphicalItem<Props = Record<string, any>> = ReactElement<
+  Props,
+  string | React.JSXElementConstructor<Props>
+> & {
+  item: ReactElement<Props, string | React.JSXElementConstructor<Props>>;
+};
 
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
@@ -231,7 +241,12 @@ const getTooltipContent = (
       return result;
     }
 
-    const { data } = child.props;
+    /**
+     * Fixes: https://github.com/recharts/recharts/issues/3669
+     * Defaulting to chartData below to fix an edge case where the tooltip does not include data from all charts
+     * when a separate dataset is passed to chart prop data and specified on Line/Area/etc prop data
+     */
+    const { data = chartData } = child.props;
     let payload;
 
     if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
@@ -839,12 +854,30 @@ export const generateCategoricalChart = ({
     graphicalItems.forEach((item: any, index: number) => {
       const displayedData = getDisplayedData(props.data, { dataStartIndex, dataEndIndex }, item);
       const { dataKey, maxBarSize: childMaxBarSize } = item.props;
+      // axisId of the numerical axis
       const numericAxisId = item.props[`${numericAxisName}Id`];
+      // axisId of the categorical axis
       const cateAxisId = item.props[`${cateAxisName}Id`];
       const axisObj = axisComponents.reduce((result: any, entry: any) => {
+        // map of axisId to axis for a specific axis type
         const axisMap = currentState[`${entry.axisType}Map`];
+        // axisId of axis we are currently computing
         const id = item.props[`${entry.axisType}Id`];
-        const axis = axisMap && axisMap[id];
+
+        /**
+         * tell the user in dev mode that their configuration is incorrect if we cannot find a match between
+         * axisId on the chart and axisId on the axis. zAxis does not get passed in the map for ComposedChart,
+         * leave it out of the check for now.
+         */
+        invariant(
+          (axisMap && axisMap[id]) || entry.axisType === 'zAxis',
+          `Specifying a(n) ${entry.axisType}Id requires a corresponding ${
+            entry.axisType
+          }Id on the targeted graphical component ${item?.type?.displayName ?? ''}`,
+        );
+
+        // the axis we are currently formatting
+        const axis = axisMap[id];
 
         return {
           ...result,
@@ -1234,7 +1267,13 @@ export const generateCategoricalChart = ({
 
       const containerOffset = getOffset(this.container);
       const e = calculateChartCoordinate(event, containerOffset);
-      const rangeObj = this.inRange(e.chartX, e.chartY);
+
+      const element = this.container;
+      const boundingRectWidth = element?.getBoundingClientRect()?.width;
+      const { offsetWidth } = element;
+      const scale = boundingRectWidth / offsetWidth || 1;
+
+      const rangeObj = this.inRange(e.chartX, e.chartY, scale);
       if (!rangeObj) {
         return null;
       }
@@ -1324,23 +1363,28 @@ export const generateCategoricalChart = ({
       ];
     }
 
-    inRange(x: number, y: number): any {
+    inRange(x: number, y: number, scale = 1): any {
       const { layout } = this.props;
+
+      const [scaledX, scaledY] = [x / scale, y / scale];
 
       if (layout === 'horizontal' || layout === 'vertical') {
         const { offset } = this.state;
-        const isInRange =
-          x >= offset.left && x <= offset.left + offset.width && y >= offset.top && y <= offset.top + offset.height;
 
-        return isInRange ? { x, y } : null;
+        const isInRange =
+          scaledX >= offset.left &&
+          scaledX <= offset.left + offset.width &&
+          scaledY >= offset.top &&
+          scaledY <= offset.top + offset.height;
+
+        return isInRange ? { x: scaledX, y: scaledY } : null;
       }
 
       const { angleAxisMap, radiusAxisMap } = this.state;
 
       if (angleAxisMap && radiusAxisMap) {
         const angleAxis = getAnyElementOfObject(angleAxisMap);
-
-        return inRangeOfSector({ x, y }, angleAxis);
+        return inRangeOfSector({ x: scaledX, y: scaledY }, angleAxis);
       }
 
       return null;
@@ -2043,19 +2087,51 @@ export const generateCategoricalChart = ({
       return result;
     };
 
+    renderActiveBar = ({
+      item,
+      childIndex,
+    }: {
+      item: GraphicalItem<ComponentProps<typeof Bar>>;
+      childIndex: number;
+    }) => {
+      const { key } = item.props;
+      const { activeBar, dataKey } = item.item.props;
+
+      /**
+       * Default to inheriting props from the parent bar
+       */
+      const inheritedProps = {
+        ...item.item.props,
+        ...item.props.data[childIndex],
+      };
+
+      const barProps = {
+        index: childIndex,
+        dataKey,
+        fill: getMainColorOfGraphicItem(item.item),
+        strokeWidth: 2,
+        stroke: '#fff',
+        key: `${key}-activeBar-${childIndex}`,
+        ...inheritedProps,
+        ...filterProps(activeBar),
+        ...adaptEventHandlers(activeBar),
+      } as ComponentProps<typeof Bar>;
+
+      return <ActiveBar option={activeBar} {...barProps} />;
+    };
+
     renderGraphicChild = (element: React.ReactElement, displayName: string, index: number): any[] => {
       const item = this.filterFormatItem(element, displayName, index);
       if (!item) {
         return null;
       }
-
       const tooltipEventType = this.getTooltipEventType();
       const { isTooltipActive, tooltipAxis, activeTooltipIndex, activeLabel } = this.state;
       const { children } = this.props;
       const tooltipItem = findChildByType(children, Tooltip);
       const { points, isRange, baseLine } = item.props;
-      const { activeDot, hide } = item.item.props;
-      const hasActive = !hide && isTooltipActive && tooltipItem && activeDot && activeTooltipIndex >= 0;
+      const { activeDot, hide, activeBar } = item.item.props;
+      const hasActive = !hide && isTooltipActive && tooltipItem && (activeDot || activeBar) && activeTooltipIndex >= 0;
       let itemEvents = {};
 
       if (tooltipEventType !== 'axis' && tooltipItem && tooltipItem.props.trigger === 'click') {
@@ -2088,8 +2164,12 @@ export const generateCategoricalChart = ({
           activePoint = findEntryInArray(points, specifiedKey, activeLabel);
           basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
         } else {
-          activePoint = points[activeTooltipIndex];
+          activePoint = points?.[activeTooltipIndex];
           basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+        }
+
+        if (activeBar) {
+          return [graphicalItem, this.renderActiveBar({ item, childIndex: activeTooltipIndex })];
         }
 
         if (!_.isNil(activePoint)) {

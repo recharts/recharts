@@ -1,4 +1,6 @@
-export const legendType = {
+import { StorybookArg, StorybookArgs } from '../../../StorybookArgs';
+
+export const legendType: StorybookArg = {
   description: "The type of icon in legend. If set to 'none', no legend item will be rendered.",
   table: {
     type: {
@@ -14,6 +16,6 @@ export const legendType = {
 // Caveat: If any prop is added here, it would falsely be add to the documentation of the component
 // where this group is used. If the group is to be extended, then only single props should be imported
 // by each component that does not use all of them.
-export const Legend = {
+export const Legend: StorybookArgs = {
   legendType,
 };

@@ -33,12 +33,10 @@ export type ImplicitLabelListType<T extends Data> =
   | ((props: any) => ReactElement<SVGElement>)
   | Props<T>;
 
-const defaultProps = {
-  valueAccessor: (entry: Data) => (_.isArray(entry.value) ? _.last(entry.value) : entry.value),
-};
+const defaultAccessor = (entry: Data) => (_.isArray(entry.value) ? _.last(entry.value) : entry.value);
 
-export function LabelList<T extends Data>(props: Props<T>) {
-  const { data, valueAccessor, dataKey, clockWise, id, textBreakAll, ...others } = props;
+export function LabelList<T extends Data>({ valueAccessor = defaultAccessor, ...restProps }: Props<T>) {
+  const { data, dataKey, clockWise, id, textBreakAll, ...others } = restProps;
 
   if (!data || !data.length) {
     return null;
@@ -119,4 +117,3 @@ function renderCallByParent<T extends Data>(
 }
 
 LabelList.renderCallByParent = renderCallByParent;
-LabelList.defaultProps = defaultProps;

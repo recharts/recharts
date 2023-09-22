@@ -1,7 +1,8 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 
-import { Bar, BarChart, Tooltip, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
+import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 describe('<BarChart />', () => {
   const data = [
@@ -108,6 +109,150 @@ describe('<BarChart />', () => {
     // Both the default Tooltip as well as the Tooltip wrapper are rendered even if not visible
     expect(container.querySelectorAll('.recharts-default-tooltip')).toHaveLength(1);
     expect(container.querySelectorAll('.recharts-tooltip-wrapper')).toHaveLength(1);
+  });
+
+  test('Renders customized active bar by default', () => {
+    jest.useFakeTimers();
+
+    const { container } = render(
+      <div style={{ height: 200, width: 700 }}>
+        <BarChart width={700} height={200} data={data}>
+          <Bar dataKey="uv" stackId="test" fill="#ff7300" />
+          <Tooltip />
+        </BarChart>
+        ,
+      </div>,
+    );
+
+    const chart = container.querySelector('.recharts-wrapper');
+    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+
+    mouseOverEvent.fire();
+
+    jest.runAllTimers();
+    const bar = container.querySelectorAll('.recharts-active-bar');
+    expect(bar).toHaveLength(1);
+  });
+
+  test('Renders customized active bar when activeBar set to be a function', () => {
+    jest.useFakeTimers();
+
+    const { container } = render(
+      <div style={{ height: 200, width: 700 }}>
+        <BarChart width={700} height={200} data={data}>
+          <Bar
+            dataKey="uv"
+            stackId="test"
+            fill="#ff7300"
+            activeBar={props => {
+              return <Rectangle {...props} name={props.name as string} />;
+            }}
+          />
+          <Tooltip />
+        </BarChart>
+        ,
+      </div>,
+    );
+
+    const chart = container.querySelector('.recharts-wrapper');
+    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+
+    mouseOverEvent.fire();
+
+    jest.runAllTimers();
+    const bar = container.querySelectorAll('.recharts-active-bar');
+    expect(bar).toHaveLength(1);
+  });
+
+  test('Renders customized active bar when activeBar set to be a ReactElement', () => {
+    jest.useFakeTimers();
+
+    const { container } = render(
+      <div style={{ height: 200, width: 700 }}>
+        <BarChart width={700} height={200} data={data}>
+          <Bar dataKey="uv" stackId="test" fill="#ff7300" activeBar={<Rectangle />} />
+          <Tooltip />
+        </BarChart>
+        ,
+      </div>,
+    );
+
+    const chart = container.querySelector('.recharts-wrapper');
+    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+
+    mouseOverEvent.fire();
+
+    jest.runAllTimers();
+    const bar = container.querySelectorAll('.recharts-active-bar');
+    expect(bar).toHaveLength(1);
+  });
+
+  test('Renders customized active bar when activeBar is set to be a truthy boolean', () => {
+    jest.useFakeTimers();
+
+    const { container } = render(
+      <div style={{ height: 200, width: 700 }}>
+        <BarChart width={700} height={200} data={data}>
+          <Bar dataKey="uv" stackId="test" fill="#ff7300" activeBar />
+          <Tooltip />
+        </BarChart>
+        ,
+      </div>,
+    );
+
+    const chart = container.querySelector('.recharts-wrapper');
+    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+
+    mouseOverEvent.fire();
+
+    jest.runAllTimers();
+    const bar = container.querySelectorAll('.recharts-active-bar');
+    expect(bar).toHaveLength(1);
+  });
+
+  test('Does not render customized active bar when activeBar set to be a falsy boolean', () => {
+    jest.useFakeTimers();
+
+    const { container } = render(
+      <div style={{ height: 200, width: 700 }}>
+        <BarChart width={700} height={200} data={data}>
+          <Bar dataKey="uv" stackId="test" fill="#ff7300" activeBar={false} />
+          <Tooltip />
+        </BarChart>
+      </div>,
+    );
+
+    const chart = container.querySelector('.recharts-wrapper');
+    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+
+    mouseOverEvent.fire();
+
+    jest.runAllTimers();
+    const bar = container.querySelectorAll('.recharts-active-bar');
+    expect(bar).toHaveLength(0);
+  });
+
+  test('Renders customized active bar when activeBar set to be an object', () => {
+    jest.useFakeTimers();
+
+    const { container } = render(
+      <div style={{ height: 200, width: 700 }}>
+        <BarChart width={700} height={200} data={data}>
+          <Bar dataKey="uv" stackId="test" fill="#ff7300" activeBar={{ strokeWidth: 4, fill: 'green' }} />
+          <Tooltip />
+        </BarChart>
+        ,
+      </div>,
+    );
+
+    const chart = container.querySelector('.recharts-wrapper');
+    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+
+    mouseOverEvent.fire();
+
+    jest.runAllTimers();
+    const bar = container.querySelectorAll('.recharts-active-bar');
+    expect(bar).toHaveLength(1);
   });
 
   test('Render empty when data is empty', () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Legend, LineChart, Line } from '../../src';
 
 describe('<Legend />', () => {
@@ -66,5 +66,46 @@ describe('<Legend />', () => {
     expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item')).toHaveLength(2);
     expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item path')).toHaveLength(2);
     expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item line')).toHaveLength(0);
+  });
+
+  test('Renders payload value correctly when passed as a static value', () => {
+    render(<Legend payload={[{ value: 'item name' }]} />);
+    screen.getByText(/item name/i);
+  });
+
+  test('Renders name value of siblings when dataKey is a function', () => {
+    render(
+      <LineChart width={500} height={500} data={data}>
+        <Legend />
+        <Line dataKey={row => row.value} name="My Line Data" />
+        <Line dataKey={row => row.color} name="My Other Line Data" />
+      </LineChart>,
+    );
+
+    // Select the text that was passed into the siblings as a name prop, but rendered in the Legend component.
+    screen.getByText(/My Line Data/i);
+    screen.getByText(/My Other Line Data/i);
+  });
+
+  test(`Renders '' if sibling's dataKey is a function and name is not provided`, () => {
+    // Warning should be logged. Spy on it so we can confirm it was called.
+    const consoleWarn = jest.spyOn(console, 'warn');
+
+    render(
+      <LineChart width={500} height={500} data={data}>
+        <Legend />
+        <Line dataKey={row => row.value} />
+        <Line dataKey={row => row.color} />
+      </LineChart>,
+    );
+
+    const legendItems = screen.getAllByRole(/listitem/i);
+    legendItems.forEach(item => {
+      expect(item).toHaveTextContent('');
+    });
+
+    expect(consoleWarn).toHaveBeenCalledWith(
+      `The name property is also required when using a function for the dataKey of a chart's cartesian components. Ex: <Bar name="Name of my Data"/>`,
+    );
   });
 });
