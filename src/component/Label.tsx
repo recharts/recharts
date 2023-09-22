@@ -373,7 +373,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
 const isPolar = (viewBox: CartesianViewBox | PolarViewBox): viewBox is PolarViewBox =>
   'cx' in viewBox && isNumber(viewBox.cx);
 
-export function Label(props: Props) {
+export function Label({ offset = 5, ...restProps }: Props) {
+  const props = { offset, ...restProps };
   const { viewBox, position, value, children, content, className = '', textBreakAll } = props;
 
   if (!viewBox || (_.isNil(value) && _.isNil(children) && !isValidElement(content) && !_.isFunction(content))) {
@@ -417,9 +418,6 @@ export function Label(props: Props) {
 }
 
 Label.displayName = 'Label';
-Label.defaultProps = {
-  offset: 5,
-};
 
 const parseViewBox = (props: any): ViewBox => {
   const {
@@ -521,13 +519,13 @@ const renderCallByParent = (
   const { children } = parentProps;
   const parentViewBox = parseViewBox(parentProps);
 
-  const explicitChildren = findAllByType(children, Label).map((child, index) =>
-    cloneElement(child, {
+  const explicitChildren = findAllByType(children, Label).map((child, index) => {
+    return cloneElement(child, {
       viewBox: viewBox || parentViewBox,
       // eslint-disable-next-line react/no-array-index-key
       key: `label-${index}`,
-    }),
-  );
+    });
+  });
 
   if (!checkPropsLabel) {
     return explicitChildren;

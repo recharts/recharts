@@ -344,6 +344,12 @@ const EventHandlersForBar = {
   onWheelCapture,
 };
 
+// declaring this here so that it displays evenly spaced in storybook.
+const activeBarDetailString = `<Bar dataKey="value" activeBar={false} />\n
+<Bar dataKey="value" activeBar={{ stroke: 'red', strokeWidth: 2 }} />\n
+<Bar dataKey="value" activeBar={<CustomizedBar />} />\n
+<Bar dataKey="value" activeBar={renderBar} />`;
+
 const StyleProps: Args = {
   strokeDasharray: GeneralStyle.strokeDasharray,
   stroke: GeneralStyle.stroke,
@@ -373,6 +379,22 @@ const StyleProps: Args = {
   },
   shape: {
     table: { category: 'Style' },
+  },
+  activeBar: {
+    description: `The active bar is shown when a user enters a bar chart and this chart has tooltip.
+    If set to false, no active bar will be drawn.
+    If set to true, active bar will be drawn with the props calculated internally.
+    If passed an object, active bar will be drawn,
+    and the internally calculated props will be merged with the key value pairs of the passed object.
+    If passed a ReactElement, the option can be the custom active bar element.
+    If passed a function, the function will be called to render a customized active bar.`,
+    table: {
+      type: {
+        summary: 'Boolean | Object | ReactElement | Function',
+        detail: activeBarDetailString,
+      },
+      category: 'Tooltip',
+    },
   },
   label: {
     description: `If set a string or a number, default label will be drawn, and the option is content.
@@ -469,6 +491,12 @@ export const API = {
     ...getStoryArgsFromArgsTypesObject(AnimationProps),
     isAnimationActive: true,
     label: { fill: 'red', fontSize: 20 },
+    activeBar: {
+      strokeWidth: 4,
+      stroke: 'blue',
+      fill: 'red',
+      radius: 10,
+    },
     dataKey: 'uv',
     unit: ' Visitors',
     stackId: 1,

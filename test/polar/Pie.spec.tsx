@@ -448,6 +448,56 @@ describe('<Pie />', () => {
     );
   });
 
+  test('Handles keyboard interaction: Tab can not focus in and out of the pie chart', async () => {
+    expect.assertions(3);
+    const timeout = 2000;
+    const { container } = render(
+      <div role="button" tabIndex={0} className="container">
+        <Surface width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            cx={250}
+            cy={250}
+            label
+            innerRadius={0}
+            outerRadius={200}
+            sectors={sectors}
+            dataKey="cy"
+            rootTabIndex={-1}
+          />
+        </Surface>
+      </div>,
+    );
+    const pie = container.getElementsByClassName('recharts-pie')[0];
+    const pieContainer = document.getElementsByClassName('container')[0] as HTMLElement;
+
+    pieContainer.focus();
+    await waitFor(
+      () => {
+        expect(document.activeElement).toBe(pieContainer);
+      },
+      { timeout },
+    );
+
+    // Testing that pressing tab goes into pie chart
+    await userEvent.tab();
+    await waitFor(
+      () => {
+        expect(document.activeElement).not.toBe(pie);
+      },
+      { timeout },
+    );
+
+    // Testing that pressing tab goes out of pie chart
+    await userEvent.tab();
+    await waitFor(
+      () => {
+        expect(document.activeElement).not.toBe(document.body);
+      },
+      { timeout },
+    );
+  });
+
   test('Handles keyboard interaction: arrow keys can move focus into sectors', async () => {
     expect.assertions(2);
     const timeout = 2000;

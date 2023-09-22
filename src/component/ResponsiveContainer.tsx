@@ -32,6 +32,7 @@ export interface Props {
   debounce?: number;
   id?: string | number;
   className?: string | number;
+  style?: React.CSSProperties;
   onResize?: (width: number, height: number) => void;
 }
 
@@ -57,6 +58,7 @@ export const ResponsiveContainer = forwardRef(
       id,
       className,
       onResize,
+      style = {},
     }: Props,
     ref,
   ) => {
@@ -165,7 +167,7 @@ export const ResponsiveContainer = forwardRef(
       }
     }, [getContainerSize]);
 
-    const style: React.CSSProperties = { width, height, minWidth, minHeight, maxHeight };
+    const styles: React.CSSProperties = { ...style, width, height, minWidth, minHeight, maxHeight };
 
     return (
       <ReactResizeDetector
@@ -179,7 +181,7 @@ export const ResponsiveContainer = forwardRef(
         <div
           {...(id != null ? { id: `${id}` } : {})}
           className={classNames('recharts-responsive-container', className)}
-          style={style}
+          style={styles}
           ref={containerRef}
         >
           {chartContent}
