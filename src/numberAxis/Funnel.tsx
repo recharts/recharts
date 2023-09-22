@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render sectors of a funnel
  */
-import React, { PureComponent, ReactElement, SVGProps } from 'react';
+import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -22,6 +22,7 @@ import {
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
   AnimationDuration,
+  ActiveShape,
 } from '../util/types';
 import { FunnelTrapezoid } from '../util/FunnelUtils';
 
@@ -37,11 +38,7 @@ interface InternalFunnelProps {
   nameKey?: DataKey<any>;
   data?: any[];
   hide?: boolean;
-  activeShape?:
-    | ReactElement<SVGProps<SVGPathElement>>
-    | ((props: FunnelTrapezoidItem) => ReactElement<SVGProps<SVGPathElement>>)
-    | SVGProps<SVGPathElement>
-    | boolean;
+  activeShape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   legendType?: LegendType;
   tooltipType?: TooltipType;
   activeIndex?: number | number[];

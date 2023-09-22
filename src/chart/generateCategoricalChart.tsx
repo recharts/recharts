@@ -2132,7 +2132,6 @@ export const generateCategoricalChart = ({
       const { points, isRange, baseLine } = item.props;
       const { activeDot, hide, activeBar, activeShape } = item.item.props;
       const hasActive = !hide && isTooltipActive && tooltipItem && (activeDot || activeBar || activeShape);
-      const hasActiveWithAxisDefined = hasActive && activeTooltipIndex >= 0;
       let itemEvents = {};
 
       if (tooltipEventType !== 'axis' && tooltipItem && tooltipItem.props.trigger === 'click') {
@@ -2153,50 +2152,52 @@ export const generateCategoricalChart = ({
         return typeof tooltipAxis.dataKey === 'function' ? tooltipAxis.dataKey(entry.payload) : null;
       }
 
-      if (hasActiveWithAxisDefined) {
-        let activePoint, basePoint;
+      if (hasActive) {
+        if (activeTooltipIndex >= 0) {
+          let activePoint, basePoint;
 
-        if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
-          // number transform to string
-          const specifiedKey =
-            typeof tooltipAxis.dataKey === 'function'
-              ? findWithPayload
-              : 'payload.'.concat(tooltipAxis.dataKey.toString());
-          activePoint = findEntryInArray(points, specifiedKey, activeLabel);
-          basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
+          if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
+            // number transform to string
+            const specifiedKey =
+              typeof tooltipAxis.dataKey === 'function'
+                ? findWithPayload
+                : 'payload.'.concat(tooltipAxis.dataKey.toString());
+            activePoint = findEntryInArray(points, specifiedKey, activeLabel);
+            basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
+          } else {
+            activePoint = points?.[activeTooltipIndex];
+            basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+          }
+
+          if (activeBar) {
+            return [graphicalItem, this.renderActiveBar({ item, childIndex: activeTooltipIndex })];
+          }
+
+          if (!_.isNil(activePoint)) {
+            return [
+              graphicalItem,
+              ...this.renderActivePoints({
+                item,
+                activePoint,
+                basePoint,
+                childIndex: activeTooltipIndex,
+                isRange,
+              }),
+            ];
+          }
         } else {
-          activePoint = points?.[activeTooltipIndex];
-          basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+          /**
+           * We hit this block if consumer uses a Tooltip without XAxis and/or YAxis.
+           * In which case, this.state.activeTooltipIndex never gets set
+           * because the mouse events that trigger that value getting set never get trigged without the axis components.
+           *
+           * An example usage case is a FunnelChart
+           */
+          const { data: itemData = [] } = graphicalItem.props;
+          const activeData = itemData.find((datum: { value: number }) => datum.value === activeItem.payload.value);
+          const activeIndex = itemData.indexOf(activeData);
+          return [cloneElement(element, { ...item.props, ...itemEvents, activeTooltipIndex: activeIndex }), null, null];
         }
-
-        if (activeBar) {
-          return [graphicalItem, this.renderActiveBar({ item, childIndex: activeTooltipIndex })];
-        }
-
-        if (!_.isNil(activePoint)) {
-          return [
-            graphicalItem,
-            ...this.renderActivePoints({
-              item,
-              activePoint,
-              basePoint,
-              childIndex: activeTooltipIndex,
-              isRange,
-            }),
-          ];
-        }
-      } else if (hasActive) {
-        /**
-         * We hit this block if consumer uses a Tooltip without XAxis and/or YAxis.
-         * In which case, this.state.activeTooltipIndex never gets set
-         * because the mouse events that trigger that value getting set never get trigged without the axis components.
-         *
-         * See FunnelChart story for an example use case
-         */
-        const { data: itemData = [] } = graphicalItem.props;
-        const activeData = itemData.find((datum: { value: number }) => datum.value === activeItem.payload.value);
-        const activeIndex = itemData.indexOf(activeData);
-        return [cloneElement(element, { ...item.props, ...itemEvents, activeTooltipIndex: activeIndex }), null, null];
       }
 
       if (isRange) {
