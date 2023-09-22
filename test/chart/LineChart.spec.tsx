@@ -517,6 +517,14 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     { name: 'Page A', uv: 230, pv: 2400, amt: 2400 },
   ];
 
+  beforeAll(() => {
+    vi.useFakeTimers();
+  });
+
+  afterAll(() => {
+    vi.useRealTimers();
+  });
+
   test('should show tooltips for both charts synced by index on MouseEnter and hide on MouseLeave/Escape', async () => {
     const { container, getByText } = render(
       <div>
@@ -547,6 +555,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
       clientX: margin.left + 0.1 * dotSpacing,
       clientY: height / 2,
     });
+    vi.advanceTimersByTime(100);
 
     // There are two tooltips - one for each LineChart as they have the same syncId
     const tooltipCursors = container.querySelectorAll('.recharts-tooltip-cursor');
@@ -562,6 +571,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 
     // simulate leaving the area
     fireEvent.mouseLeave(firstChart!);
+    vi.advanceTimersByTime(100);
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
     fireEvent.mouseOver(firstChart!, {
@@ -570,7 +580,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
       clientX: margin.left + 0.1 * dotSpacing,
       clientY: height / 2,
     });
-
+    vi.advanceTimersByTime(100);
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(2);
   });
 
@@ -605,6 +615,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     const firstChart = container.querySelector('.recharts-wrapper');
 
     fireEvent.mouseOver(firstChart!, { bubbles: true, clientX: margin.left + 0.1 * dotSpacing, clientY: height / 2 });
+    vi.advanceTimersByTime(100);
 
     // There are two tooltips - one for each LineChart as they have the same syncId
     const tooltipCursors = container.querySelectorAll('.recharts-tooltip-cursor');
@@ -619,6 +630,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 
     // simulate leaving the area
     fireEvent.mouseLeave(firstChart!);
+    vi.advanceTimersByTime(100);
 
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
   });
@@ -672,6 +684,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     const firstChart = container.querySelector('.recharts-wrapper');
 
     fireEvent.mouseOver(firstChart!, { bubbles: true, clientX: margin.left + 0.1 * dotSpacing, clientY: height / 2 });
+    vi.advanceTimersByTime(100);
 
     // There are two tooltips - one for each LineChart as they have the same syncId
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(2);
@@ -685,6 +698,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 
     // simulate leaving the area
     fireEvent.mouseLeave(firstChart!);
+    vi.advanceTimersByTime(100);
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
   });
 
