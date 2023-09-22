@@ -18,6 +18,7 @@ export const WithBrushAndOnDragEnd = {
       endIndex: dateWithValueData.length - 1,
     });
     return (
+      // Calc compensates for the text above the chart
       <div style={{ width: '100%', height: 'calc(100% - 84px)' }}>
         <div>
           Start index:
@@ -34,12 +35,11 @@ export const WithBrushAndOnDragEnd = {
             <Brush
               dataKey="name"
               height={30}
-              stroke="#8884d8"
               onDragEnd={indexes => {
                 setDragIndexes(indexes as BrushStartEndIndex);
               }}
             />
-            <Bar dataKey="value" fill="#8884d8" />
+            <Bar dataKey="value" />
           </BarChart>
         </ResponsiveContainer>
       </div>
