@@ -3,6 +3,8 @@
  */
 import React, { PureComponent, ReactNode, MouseEvent, ReactText, ReactElement } from 'react';
 import classNames from 'classnames';
+import _ from 'lodash';
+import { warn } from '../util/LogUtils';
 import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';
 import {
@@ -169,8 +171,14 @@ export class DefaultLegendContent extends PureComponent<Props> {
         return null;
       }
 
-      const color = entry.inactive ? inactiveColor : entry.color;
+      // Do not render entry.value as functions. Always require static string properties.
+      const entryValue = !_.isFunction(entry.value) ? entry.value : null;
+      warn(
+        !_.isFunction(entry.value),
+        `The name property is also required when using a function for the dataKey of a chart's cartesian components. Ex: <Bar name="Name of my Data"/>`, // eslint-disable-line max-len
+      );
 
+      const color = entry.inactive ? inactiveColor : entry.color;
       return (
         <li
           className={className}
@@ -182,7 +190,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
             {this.renderIcon(entry)}
           </Surface>
           <span className="recharts-legend-item-text" style={{ color }}>
-            {finalFormatter ? finalFormatter(entry.value, entry, i) : entry.value}
+            {finalFormatter ? finalFormatter(entryValue, entry, i) : entryValue}
           </span>
         </li>
       );

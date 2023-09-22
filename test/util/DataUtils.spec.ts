@@ -9,6 +9,7 @@ import {
   interpolateNumber,
   getLinearRegression,
   findEntryInArray,
+  uniqueId,
 } from '../../src/util/DataUtils';
 
 /**
@@ -18,6 +19,10 @@ import {
 describe('mathSign', () => {
   it('(0)', () => {
     expect(mathSign(0)).toBe(0);
+  });
+
+  it('(-0)', () => {
+    expect(mathSign(-0)).toBe(0);
   });
 
   it('(100)', () => {
@@ -38,8 +43,13 @@ describe('is functions', () => {
 
   describe('isPercent', () => {
     const tests: IsFunctionTestDefinition<typeof isPercent>[] = [
-      { should: 'return true with valid string', value: '0%', result: true },
+      { should: 'return true with 0%', value: '0%', result: true },
+      { should: 'return true with 10%', value: '10%', result: true },
       { should: 'return false with invalid string', value: '0', result: false },
+      // the case with only '%' character looks like a bug - we should probably change that? Is this a breaking change?
+      { should: 'return true with %', value: '%', result: true },
+      { should: 'return false with %%', value: '%%', result: false },
+      { should: 'return false with 0%%', value: '0%%', result: false },
     ];
 
     tests.forEach(({ should, value, result }) => {
@@ -80,6 +90,16 @@ describe('is functions', () => {
   });
 });
 
+describe('uniqueId', () => {
+  test('should return unique ID independent of prefix', () => {
+    expect(uniqueId()).toEqual('1');
+    expect(uniqueId(undefined)).toEqual('2');
+    expect(uniqueId('')).toEqual('3');
+    expect(uniqueId('myprefix')).toEqual('myprefix4');
+    expect(uniqueId()).toEqual('5');
+  });
+});
+
 describe('getPercentValue', () => {
   it('getPercentValue("25%", 1) should return 0.25 ', () => {
     expect(getPercentValue('25%', 1)).toBe(0.25);
@@ -98,6 +118,11 @@ describe('getPercentValue', () => {
 
   it('getPercentValue("120%", 100, 0, true)) should return 100', () => {
     expect(getPercentValue('120%', 100, 0, true)).toBe(100);
+  });
+
+  it('should return defaultValue if percent is neither number not string', () => {
+    /** @see noteNeverCasting */
+    expect(getPercentValue(false as never, 0, 5)).toEqual(5);
   });
 });
 
@@ -128,6 +153,14 @@ describe('hasDuplicate', () => {
 
   it('of [12, 12] should return true', () => {
     expect(hasDuplicate([12, 12])).toBe(true);
+  });
+
+  it('["12", 12] should return true due to implicit cast', () => {
+    expect(hasDuplicate(['12', 12])).toBe(true);
+  });
+
+  it('[1, 12] should return false', () => {
+    expect(hasDuplicate([1, 12])).toBe(false);
   });
 });
 
@@ -166,6 +199,14 @@ describe('findEntryInArray', () => {
   it('should work with simple function', () => {
     expect(findEntryInArray(dataList, v => v.address.street, 'here')).toStrictEqual(dataList[2]);
   });
+
+  it('should return null if first argument is null or undefined or empty array', () => {
+    /** @see noteNeverCasting */
+    expect(findEntryInArray(null as never, 0, '0')).toEqual(null);
+    /** @see noteNeverCasting */
+    expect(findEntryInArray(undefined as never, 0, '0')).toEqual(null);
+    expect(findEntryInArray([], 0, '0')).toEqual(null);
+  });
 });
 
 describe('getLinearRegression', () => {
@@ -191,6 +232,42 @@ describe('getLinearRegression', () => {
       b: -22.822966507177018,
       xmax: 170,
       xmin: 100,
+    });
+  });
+
+  it('should return a linear progression without cx or cy in data', () => {
+    const data: Parameters<typeof getLinearRegression>[0] = [
+      { cx: 100 },
+      { cx: 120, cy: 100 },
+      { cx: 170, cy: 300 },
+      { cy: 250 },
+      { cx: 150 },
+      { cx: 110, cy: 280 },
+    ];
+
+    expect(getLinearRegression(data)).toStrictEqual({
+      a: -0.39752144899904673,
+      b: 198.0648236415634,
+      xmax: 170,
+      xmin: 0,
+    });
+  });
+
+  it('should return a linear progression with only cy', () => {
+    const data: Parameters<typeof getLinearRegression>[0] = [
+      { cy: 100 },
+      { cy: 100 },
+      { cy: 300 },
+      { cy: 250 },
+      { cy: 150 },
+      { cy: 280 },
+    ];
+
+    expect(getLinearRegression(data)).toStrictEqual({
+      a: 0,
+      b: 196.66666666666666,
+      xmax: 0,
+      xmin: 0,
     });
   });
 });

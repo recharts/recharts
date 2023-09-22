@@ -14,7 +14,7 @@ interface PolarGridProps {
   polarAngles?: number[];
   polarRadius?: number[];
   gridType?: 'polygon' | 'circle';
-  radialLines: boolean;
+  radialLines?: boolean;
 }
 export type Props = SVGProps<SVGPathElement> & PolarGridProps;
 
@@ -23,15 +23,6 @@ type ConcentricProps = Props & {
   radius: number;
   // The index of circle
   index: number;
-};
-
-const polarGridDefaultProps = {
-  cx: 0,
-  cy: 0,
-  innerRadius: 0,
-  outerRadius: 0,
-  gridType: 'polygon',
-  radialLines: true,
 };
 
 const getPolygonPath = (radius: number, cx: number, cy: number, polarAngles: number[]) => {
@@ -144,20 +135,41 @@ const ConcentricPath: React.FC<Props> = props => {
   );
 };
 
-export const PolarGrid = (props: Props) => {
-  const { outerRadius } = props;
-
+export const PolarGrid = ({
+  cx = 0,
+  cy = 0,
+  innerRadius = 0,
+  outerRadius = 0,
+  gridType = 'polygon',
+  radialLines = true,
+  ...props
+}: Props) => {
   if (outerRadius <= 0) {
     return null;
   }
 
   return (
     <g className="recharts-polar-grid">
-      <PolarAngles {...props} />
-      <ConcentricPath {...props} />
+      <PolarAngles
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius}
+        gridType={gridType}
+        radialLines={radialLines}
+        {...props}
+      />
+      <ConcentricPath
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius}
+        gridType={gridType}
+        radialLines={radialLines}
+        {...props}
+      />
     </g>
   );
 };
 
 PolarGrid.displayName = 'PolarGrid';
-PolarGrid.defaultProps = polarGridDefaultProps;

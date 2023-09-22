@@ -1,6 +1,7 @@
 // The Line props are shared between multiple components, such as the Line and the Area.
 
 import { Args } from '@storybook/react';
+import { StorybookArgs } from '../../../StorybookArgs';
 
 export const hide = {
   description: 'Hides the component when true, useful when toggling visibility state via legend',
@@ -9,7 +10,7 @@ export const hide = {
   table: { category: 'Style' },
 };
 
-export const GeneralStyle: Args = {
+export const GeneralStyle: StorybookArgs = {
   fill: {
     control: { type: 'color' },
     table: { category: 'Style' },

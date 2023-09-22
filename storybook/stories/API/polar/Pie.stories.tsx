@@ -124,6 +124,13 @@ const GeneralProps: Args = {
     description: 'The shape of inactive sector.',
     table: { type: { summary: 'Object | ReactElement | Function' }, category: 'General' },
   },
+  rootTabIndex: {
+    description: 'The tabIndex of the root layer of the Pie component.',
+    table: {
+      type: { summary: 'number', defaultValue: 0 },
+      category: 'General',
+    },
+  },
 };
 
 export default {
@@ -147,7 +154,7 @@ export const Simple = {
   render: (args: Record<string, any>) => {
     const [surfaceWidth, surfaceHeight] = [500, 500];
 
-    const { data, sectors } = args;
+    const { data, sectors, rootTabIndex } = args;
 
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
@@ -174,6 +181,7 @@ export const Simple = {
             dataKey="value"
             fill="#fff"
             stroke="#000"
+            rootTabIndex={rootTabIndex}
           />
           <line x1={0} y1={250} x2={500} y2={250} stroke="black" />
         </Surface>
