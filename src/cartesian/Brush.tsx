@@ -298,12 +298,10 @@ export class Brush extends PureComponent<Props, State> {
       },
       () => {
         const { endIndex, onDragEnd, startIndex } = this.props;
-        if (onDragEnd) {
-          onDragEnd({
+          onDragEnd?.({
             endIndex,
             startIndex,
           });
-        }
       },
     );
     this.detachDragEndListener();
