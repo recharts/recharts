@@ -91,6 +91,11 @@ export const Simple = {
         name: 'F',
         value: 580,
       },
+      {
+        fill: '#424242',
+        name: 'F',
+        value: 580,
+      },
     ],
   },
 };
