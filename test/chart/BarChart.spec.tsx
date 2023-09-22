@@ -1,6 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
+import { vi } from 'vitest';
 import { Bar, BarChart, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
 
 describe('<BarChart />', () => {
@@ -12,6 +13,14 @@ describe('<BarChart />', () => {
   ];
 
   type CustomLabelProps = Partial<{ x: number; y: number; index: number }>;
+
+  beforeAll(() => {
+    vi.useFakeTimers();
+  });
+
+  afterAll(() => {
+    vi.useRealTimers();
+  });
 
   test('Renders 8 bars in simple BarChart', () => {
     const { container } = render(
@@ -111,7 +120,7 @@ describe('<BarChart />', () => {
   });
 
   test('Renders customized active bar by default', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
@@ -126,14 +135,12 @@ describe('<BarChart />', () => {
     const chart = container.querySelector('.recharts-wrapper');
     fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
 
-    jest.runAllTimers();
+    vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(1);
   });
 
   test('Renders customized active bar when activeBar set to be a function', () => {
-    jest.useFakeTimers();
-
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
         <BarChart width={700} height={200} data={data}>
@@ -154,14 +161,12 @@ describe('<BarChart />', () => {
     const chart = container.querySelector('.recharts-wrapper');
     fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
 
-    jest.runAllTimers();
+    vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(1);
   });
 
   test('Renders customized active bar when activeBar set to be a ReactElement', () => {
-    jest.useFakeTimers();
-
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
         <BarChart width={700} height={200} data={data}>
@@ -174,15 +179,13 @@ describe('<BarChart />', () => {
 
     const chart = container.querySelector('.recharts-wrapper');
     fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
+    vi.advanceTimersByTime(100);
 
-    jest.runAllTimers();
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(1);
   });
 
   test('Renders customized active bar when activeBar is set to be a truthy boolean', () => {
-    jest.useFakeTimers();
-
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
         <BarChart width={700} height={200} data={data}>
@@ -196,14 +199,12 @@ describe('<BarChart />', () => {
     const chart = container.querySelector('.recharts-wrapper');
     fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
 
-    jest.runAllTimers();
+    vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(1);
   });
 
   test('Does not render customized active bar when activeBar set to be a falsy boolean', () => {
-    jest.useFakeTimers();
-
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
         <BarChart width={700} height={200} data={data}>
@@ -216,14 +217,12 @@ describe('<BarChart />', () => {
     const chart = container.querySelector('.recharts-wrapper');
     fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
 
-    jest.runAllTimers();
+    vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(0);
   });
 
   test('Renders customized active bar when activeBar set to be an object', () => {
-    jest.useFakeTimers();
-
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
         <BarChart width={700} height={200} data={data}>
@@ -237,7 +236,7 @@ describe('<BarChart />', () => {
     const chart = container.querySelector('.recharts-wrapper');
     fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
 
-    jest.runAllTimers();
+    vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(1);
   });

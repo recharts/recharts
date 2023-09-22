@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 
-import { LineChart, Line, XAxis, YAxis, Tooltip, Brush, CartesianAxis, Legend } from '../../src';
 import { vi } from 'vitest';
+import { LineChart, Line, XAxis, YAxis, Tooltip, Brush, CartesianAxis, Legend } from '../../src';
 
 const data = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
