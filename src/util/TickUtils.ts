@@ -27,27 +27,6 @@ export function isVisible(sign: number, tickPosition: number, size: number, star
   return sign * (tickPosition - (sign * size) / 2 - start) >= 0 && sign * (tickPosition + (sign * size) / 2 - end) <= 0;
 }
 
-/**
- * Given an array of ticks, find N, the lowest possible number for which every
- * nTH tick in the ticks array isShow == true and return the array of every nTh tick.
- * @param {CartesianTickItem[]} ticks An array of CartesianTickItem with the
- * information whether they can be shown without overlapping with their neighbour isShow.
- * @returns {CartesianTickItem[]} Every nTh tick in an array.
- */
-export function getEveryNThTick(ticks: CartesianTickItem[]) {
-  let N = 1;
-  let previous = getEveryNthWithCondition(ticks, N, tickItem => tickItem.isShow);
-  while (N <= ticks.length) {
-    if (previous !== undefined) {
-      return previous;
-    }
-    N++;
-    previous = getEveryNthWithCondition(ticks, N, tickItem => tickItem.isShow);
-  }
-
-  return ticks.slice(0, 1);
-}
-
 export function getNumberIntervalTicks(ticks: CartesianTickItem[], interval: number) {
   return getEveryNthWithCondition(ticks, interval + 1);
 }

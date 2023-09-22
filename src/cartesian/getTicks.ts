@@ -4,13 +4,7 @@ import { mathSign, isNumber } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Props as CartesianAxisProps } from './CartesianAxis';
 import { Global } from '../util/Global';
-import {
-  isVisible,
-  getEveryNThTick,
-  getTickBoundaries,
-  getNumberIntervalTicks,
-  getAngledTickWidth,
-} from '../util/TickUtils';
+import { isVisible, getTickBoundaries, getNumberIntervalTicks, getAngledTickWidth } from '../util/TickUtils';
 import { getEquidistantTicks } from './getEquidistantTicks';
 
 export type Sign = 0 | 1 | -1;
@@ -137,14 +131,8 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
   const sign = ticks.length >= 2 ? mathSign(ticks[1].coordinate - ticks[0].coordinate) : 1;
   const boundaries = getTickBoundaries(viewBox, sign, sizeKey);
 
-  if (interval === 'equidistant') {
-    return getEquidistantTicks(sign, boundaries, getTickSize, ticks, minTickGap);
-  }
-
   if (interval === 'equidistantPreserveStart') {
-    candidates = getTicksStart(sign, boundaries, getTickSize, ticks, minTickGap);
-
-    return getEveryNThTick(candidates);
+    return getEquidistantTicks(sign, boundaries, getTickSize, ticks, minTickGap);
   }
 
   if (interval === 'preserveStart' || interval === 'preserveStartEnd') {

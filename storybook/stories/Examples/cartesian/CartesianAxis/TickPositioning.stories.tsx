@@ -8,14 +8,7 @@ export default {
 
 export const TickPositioning = {
   render: () => {
-    const intervalOptions = [
-      'preserveStart',
-      'preserveEnd',
-      'preserveStartEnd',
-      'equidistantPreserveStart',
-      'equidistant',
-      0,
-    ];
+    const intervalOptions = ['preserveStart', 'preserveEnd', 'preserveStartEnd', 'equidistantPreserveStart', 0];
 
     return (
       <ResponsiveContainer>
