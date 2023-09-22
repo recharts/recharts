@@ -12,7 +12,16 @@ export const TickPositioning = {
 
     return (
       <ResponsiveContainer>
-        <LineChart data={ticks}>
+        <LineChart
+          data={ticks}
+          // Margins are neccessary to show ticks that extend beyond the chart (i.e. last and first tick).
+          margin={{
+            top: 20,
+            right: 30,
+            left: 20,
+            bottom: 20,
+          }}
+        >
           <Line dataKey="coordinate" />
           {intervalOptions.map((intervalOption, index) => (
             <XAxis
