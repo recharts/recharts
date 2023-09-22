@@ -234,7 +234,6 @@ describe('getTicks', () => {
         [
           {
             coordinate: 50,
-            tickCoord: 50,
             value: '10',
           },
         ],
