@@ -44,6 +44,7 @@ interface BrushProps extends InternalBrushProps {
   children?: ReactElement;
 
   onChange?: (newIndex: BrushStartEndIndex) => void;
+  onDragEnd?: (newIndex: BrushStartEndIndex) => void;
   leaveTimeOut?: number;
   alwaysShowText?: boolean;
 }
@@ -290,10 +291,19 @@ export class Brush extends PureComponent<Props, State> {
   }
 
   handleDragEnd = () => {
-    this.setState({
-      isTravellerMoving: false,
-      isSlideMoving: false,
-    });
+    this.setState(
+      {
+        isTravellerMoving: false,
+        isSlideMoving: false,
+      },
+      () => {
+        const { endIndex, onDragEnd, startIndex } = this.props;
+        onDragEnd?.({
+          endIndex,
+          startIndex,
+        });
+      },
+    );
     this.detachDragEndListener();
   };
 
