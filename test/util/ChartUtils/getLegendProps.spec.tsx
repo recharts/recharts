@@ -1,9 +1,9 @@
 import React, { ReactNode } from 'react';
-import { FormattedGraphicalItem, getLegendProps } from '../../src/util/ChartUtils';
-import { findChildByType } from '../../src/util/ReactUtils';
-import { Legend } from '../../src/component/Legend';
+import { FormattedGraphicalItem, getLegendProps } from '../../../src/util/ChartUtils';
+import { findChildByType } from '../../../src/util/ReactUtils';
+import { Legend } from '../../../src/component/Legend';
 
-jest.mock('../../src/util/ReactUtils');
+jest.mock('../../../src/util/ReactUtils');
 
 const spy = jest.mocked(findChildByType);
 
