@@ -30,12 +30,6 @@ export default {
       hide: true,
       disable: true,
     },
-    // Other
-    // baseLine: { table: { category: 'Other' } },
-    // left: { table: { category: 'Other' } },
-    // top: { table: { category: 'Other' } },
-    // xAxis: { table: { category: 'Other' } },
-    // yAxis: { table: { category: 'Other' } },
   },
   component: RadialBar,
 };
