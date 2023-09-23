@@ -36,7 +36,6 @@ export default {
 
 export const API = {
   render: (args: Record<string, any>) => {
-    // const { data } = args;
     return (
       <ResponsiveContainer width="100%" height={400}>
         <RadialBarChart
