@@ -24,7 +24,7 @@ import {
   LayoutType,
   LegendType,
   PolarLayoutType,
-  SpecificDomain,
+  NumberDomain,
   TickItem,
 } from './types';
 import { Payload as LegendPayload } from '../component/DefaultLegendContent';
@@ -447,7 +447,7 @@ export const getDomainOfErrorBars = (
   dataKey: DataKey<any>,
   layout?: LayoutType,
   axisType?: AxisType,
-): SpecificDomain | null => {
+): NumberDomain | null => {
   const { children } = item.props;
   const errorBars = findAllByType(children, ErrorBar).filter(errorBarChild =>
     isErrorBarRelevantForAxis(layout, axisType, errorBarChild.props.direction),
@@ -456,12 +456,12 @@ export const getDomainOfErrorBars = (
   if (errorBars && errorBars.length) {
     const keys: ReadonlyArray<DataKey<any>> = errorBars.map(errorBarChild => errorBarChild.props.dataKey);
 
-    return data.reduce<SpecificDomain>(
-      (result: SpecificDomain, entry: object): SpecificDomain => {
+    return data.reduce<NumberDomain>(
+      (result: NumberDomain, entry: object): NumberDomain => {
         const entryValue = getValueByDataKey(entry, dataKey, 0);
         const mainValue = _.isArray(entryValue) ? [_.min(entryValue), _.max(entryValue)] : [entryValue, entryValue];
         const errorDomain = keys.reduce(
-          (prevErrorArr: [number, number], k: DataKey<any>): SpecificDomain => {
+          (prevErrorArr: [number, number], k: DataKey<any>): NumberDomain => {
             const errorValue = getValueByDataKey(entry, k, 0);
             const lowerValue = mainValue[0] - Math.abs(_.isArray(errorValue) ? errorValue[0] : errorValue);
             const upperValue = mainValue[1] + Math.abs(_.isArray(errorValue) ? errorValue[1] : errorValue);
@@ -486,7 +486,7 @@ export const parseErrorBarsOfAxis = (
   dataKey: any,
   axisType: AxisType,
   layout?: LayoutType,
-): SpecificDomain | null => {
+): NumberDomain | null => {
   const domains = items
     .map(item => getDomainOfErrorBars(data, item, dataKey, layout, axisType))
     .filter(entry => !_.isNil(entry));

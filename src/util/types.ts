@@ -1051,7 +1051,7 @@ export type D3Scale<T> = D3ScaleContinuousNumeric<T, number>;
 
 export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | 'dataMax';
 /**
- * The domain of axis, always defined by an array of exactly two values, for the min and the max of the axis. 
+ * The domain of axis, always defined by an array of exactly two values, for the min and the max of the axis.
  *
  * Can be specified in many ways:
  * - array of numbers
@@ -1061,8 +1061,6 @@ export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | '
  * - or a function
  * - array of functions
  * - or a combination of the above
- *
- * See https://recharts.org/en-US/api/XAxis#domain for examples
  */
 export type AxisDomain =
   | string[]
@@ -1071,13 +1069,15 @@ export type AxisDomain =
   | (([dataMin, dataMax]: [number, number], allowDataOverflow: boolean) => [number, number]);
 
 /**
- * SpecificDomain is an evaluated AxisDomain.
- * Unlike AxisDomain, it has no variety - it's a tuple of two strings.
+ * NumberDomain is an evaluated AxisDomain.
+ * Unlike AxisDomain, it has no variety - it's a tuple of two number.
  * This is after all the keywords and functions were evaluated and what is left is [min, max].
  *
  * Know that the min, max values are not guaranteed to be nice numbers - values like -Infinity or NaN are possible.
+ *
+ * There are also `category` axes that have different things than numbers in their domain.
  */
-export type SpecificDomain = [min: number, max: number];
+export type NumberDomain = [min: number, max: number];
 
 /** The props definition of base axis */
 export interface BaseAxisProps {
