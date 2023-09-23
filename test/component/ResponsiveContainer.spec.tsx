@@ -230,16 +230,17 @@ describe('<ResponsiveContainer />', () => {
   });
 
   it('should accept and render the style prop if it is set', () => {
-    const { container } = render(
-      <ResponsiveContainer style={{ color: 'red', backgroundColor: '#FF00FF' }}>
+    // looks like the ResponsiveContainer style.color prop converts from string to RGB representation
+    // i.e. style.color = 'red' gets converted to rgb(255,0,0)
+    // I checked and changing style.color from 'red' to 'blue' changed the resulting style from
+    // rgb(255,0,0) to rgb(0,0,255) as expected
+    render(
+      <ResponsiveContainer style={{ color: 'red', backgroundColor: '#FF00FF' }} data-testid="container">
         <div data-testid="inside" />
       </ResponsiveContainer>,
     );
-
-    expect(container.querySelector('.recharts-responsive-container')).toHaveStyle({
-      color: 'red',
-      backgroundColor: '#FF00FF',
-    });
+    expect(screen.getByTestId('container')).toHaveStyle('background-color: rgb(255, 0, 255)');
+    expect(screen.getByTestId('container')).toHaveStyle('color: rgb(255,0,0)');
   });
 
   it('should accept and render the style prop and any other specified outside of it', () => {
@@ -252,8 +253,8 @@ describe('<ResponsiveContainer />', () => {
     expect(container.querySelector('.recharts-responsive-container')).toHaveStyle({
       width: '100px',
       height: '100px',
-      backgroundColor: 'red',
-      color: 'red',
+      'background-color': 'rgb(255,0,0)',
+      color: 'rgb(255,0,0)',
     });
   });
 

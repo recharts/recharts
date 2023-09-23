@@ -27,6 +27,7 @@ export interface Props {
     width: number;
     height: number;
   };
+  'data-testid'?: string;
   maxHeight?: number;
   children: ReactElement;
   debounce?: number;
@@ -57,6 +58,7 @@ export const ResponsiveContainer = forwardRef(
       debounce = 0,
       id,
       className,
+      'data-testid': dataTestId,
       onResize,
       style = {},
     }: Props,
@@ -183,6 +185,7 @@ export const ResponsiveContainer = forwardRef(
           className={classNames('recharts-responsive-container', className)}
           style={styles}
           ref={containerRef}
+          data-testid={dataTestId}
         >
           {chartContent}
         </div>
