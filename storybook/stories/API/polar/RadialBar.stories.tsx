@@ -55,7 +55,6 @@ export const API = {
     ...getStoryArgsFromArgsTypesObject(RadialBarStyle),
     ...getStoryArgsFromArgsTypesObject(ResponsivePropsRadialBar),
     ...getStoryArgsFromArgsTypesObject(AnimationProps),
-    // minAngle: 90,
     legendType: 'circle',
     label: { fill: '#333', fontSize: 15, position: 'insideStart' },
     background: true,
