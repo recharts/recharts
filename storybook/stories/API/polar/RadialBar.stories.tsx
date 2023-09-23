@@ -41,11 +41,12 @@ export const API = {
         <RadialBarChart
           width={400}
           height={400}
+          data={pageDataWithFillColor}
         >
           <Legend />
           <Tooltip />
           <PolarAngleAxis />
-          <RadialBar stackId="stack" dataKey="uv" {...args} />
+          <RadialBar dataKey="uv" {...args} />
         </RadialBarChart>
       </ResponsiveContainer>
     );
