@@ -2,6 +2,9 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { Surface, Symbols, LineChart, XAxis, Line, YAxis } from '../../src';
 
+afterAll(() => {
+  clearTimeout();
+});
 describe('<Symbols />', () => {
   test('Render 1 symbol', () => {
     const { container } = render(
