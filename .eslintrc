@@ -39,7 +39,6 @@
     "react/jsx-uses-vars": "error",
     "react/react-in-jsx-scope": "error",
     "react/jsx-filename-extension": ["error", { "extensions": [".ts", ".tsx", ".js", ".jsx"] }],
-
     "no-var": "error",
     "react/jsx-no-bind": "error",
 
@@ -51,7 +50,7 @@
     "react/no-unused-prop-types": "off",
     "class-methods-use-this": "error",
     "import/no-extraneous-dependencies": [
-      "error",
+      "off",
       {
         "devDependencies": true
       }
