@@ -194,31 +194,6 @@ describe('<FunnelChart />', () => {
     expect(activeShape).toHaveLength(1);
   });
 
-  test('renders multiple active shapes when activeIndex is hardcoded and Tooltip is used', () => {
-    const { container } = render(
-      <FunnelChart width={700} height={200}>
-        <Funnel
-          width={400}
-          data={data}
-          dataKey="value"
-          isAnimationActive={false}
-          activeShape={{ fill: 'red' }}
-          activeIndex={2}
-        />
-        <Tooltip />
-      </FunnelChart>,
-    );
-
-    const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
-    const [shape] = Array.from(trapezoids);
-    const mouseOverEvent = mockMouseEvent('mouseover', shape, {});
-
-    mouseOverEvent.fire();
-
-    const activeShape = container.querySelectorAll('.recharts-active-shape');
-    expect(activeShape).toHaveLength(2);
-  });
-
   test('does not render customized active shape when activeShape is set to be a falsy boolean', () => {
     const { container } = render(
       <FunnelChart width={700} height={200}>

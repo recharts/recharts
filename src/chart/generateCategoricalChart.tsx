@@ -2197,7 +2197,7 @@ export const generateCategoricalChart = ({
             graphicalItem: { item: xyItem, childIndex },
           } = this.getItemByXY(this.state.activeCoordinate);
 
-          const elementProps = { ...item.props, ...itemEvents, activeTooltipIndex: childIndex };
+          const elementProps = { ...item.props, ...itemEvents, activeIndex: childIndex };
 
           return [cloneElement(xyItem, elementProps), null, null];
         }
@@ -2315,8 +2315,10 @@ export const generateCategoricalChart = ({
               return valuesMatch && coordinatesMatch;
             });
 
+            const childIndex = item.props.activeIndex === undefined ? activeIndex : item.props.activeIndex;
+
             return {
-              graphicalItem: { ...graphicalItem, childIndex: activeIndex },
+              graphicalItem: { ...graphicalItem, childIndex },
               payload: graphicalItem.props.data[activeIndex],
             };
           }

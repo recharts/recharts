@@ -1,5 +1,6 @@
 import React from 'react';
-import { Tooltip, Funnel, FunnelChart, LabelList, ResponsiveContainer } from '../../../../src';
+import { Meta } from '@storybook/react';
+import { Tooltip, Funnel, FunnelChart, LabelList, ResponsiveContainer, FunnelProps } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
 
 export default {
@@ -30,7 +31,7 @@ export default {
   component: FunnelChart,
 };
 
-export const Simple = {
+export const Simple: Meta<FunnelProps> = {
   render: (args: Record<string, any>) => {
     const { data } = args;
     return (
@@ -59,7 +60,7 @@ export const Simple = {
   },
   args: {
     activeShape: { fill: 'gold', stroke: 'purple' },
-    activeIndex: 0,
+    activeIndex: undefined,
     data: [
       {
         fill: '#EEEEEE',

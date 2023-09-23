@@ -56,7 +56,6 @@ interface InternalFunnelProps {
   id?: string;
   trapezoids?: FunnelTrapezoidItem[];
   animationId?: number;
-  activeTooltipIndex?: number;
 }
 
 export type FunnelProps = PresentationAttributesAdaptChildEvent<any, SVGElement> & TrapezoidProps & InternalFunnelProps;
@@ -255,13 +254,13 @@ export class Funnel extends PureComponent<FunnelProps, State> {
   };
 
   isActiveIndex(i: number) {
-    const { activeIndex, activeTooltipIndex } = this.props;
+    const { activeIndex } = this.props;
 
     if (Array.isArray(activeIndex)) {
       return activeIndex.indexOf(i) !== -1;
     }
 
-    return i === activeIndex || i === activeTooltipIndex;
+    return i === activeIndex;
   }
 
   renderTrapezoidsStatically(trapezoids: FunnelTrapezoidItem[]) {
