@@ -42,9 +42,9 @@ export const API = {
           width={400}
           height={400}
         >
-          <Legend iconSize={10} layout="horizontal" verticalAlign="bottom" />
+          <Legend />
           <Tooltip />
-          <PolarAngleAxis type="number" domain={[0, 50]} angleAxisId={0} tick={false} />
+          <PolarAngleAxis />
           <RadialBar stackId="stack" dataKey="uv" {...args} />
         </RadialBarChart>
       </ResponsiveContainer>
