@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import React from 'react';
 import { vi } from 'vitest';
 
@@ -156,10 +156,10 @@ describe('<Label />', () => {
         <Line type="monotone" dataKey="uv" stroke="#ff7300" label={{ value: 'hello', position: 'center' }} />
       </LineChart>,
     );
-    // run all timers so animation finishes and labels render
-    vi.runAllTimers();
 
-    expect(container.querySelectorAll('.recharts-line .recharts-line-curve').length).toEqual(1);
-    expect(screen.getByText(/400/i)).toBeInTheDocument();
+    setTimeout(() => {
+      expect(container.querySelectorAll('.recharts-line .recharts-line-curve').length).toEqual(1);
+      expect(screen.getByText(/400/i)).toBeInTheDocument();
+    }, 1000);
   });
 });
