@@ -1051,7 +1051,7 @@ export type D3Scale<T> = D3ScaleContinuousNumeric<T, number>;
 
 export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | 'dataMax';
 /**
- * The domain of axis.
+ * The domain of axis, always defined by an array of exactly two values, for the min and the max of the axis. 
  *
  * Can be specified in many ways:
  * - array of numbers
