@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 
 import { Label, Line, LineChart, ReferenceLine, Surface } from '../../src';
 
@@ -12,6 +13,13 @@ const data = [
   { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
 ];
 
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 describe('<Label />', () => {
   const polarViewBox = {
     cx: 50,
@@ -143,15 +151,13 @@ describe('<Label />', () => {
   });
 
   it('Renders label by label props with animation enabled', () => {
-    jest.useFakeTimers();
-
     const { container } = render(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line type="monotone" dataKey="uv" stroke="#ff7300" label={{ value: 'hello', position: 'center' }} />
       </LineChart>,
     );
     // run all timers so animation finishes and labels render
-    jest.runAllTimers();
+    vi.runAllTimers();
 
     expect(container.querySelectorAll('.recharts-line .recharts-line-curve').length).toEqual(1);
     expect(screen.getByText(/400/i)).toBeInTheDocument();

@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { Surface, Text } from '../../src';
-import { vi } from 'vitest'
+import { vi } from 'vitest';
 
 describe('<Text />', () => {
   const mock = {
@@ -74,7 +74,8 @@ describe('<Text />', () => {
 
     expect(text?.children).toHaveLength(1);
     // we know that the children that get rendered under `text` are `tspan` - this is a safe cast if we get a result
-    expect((text?.children[0] as SVGTSpanElement).attributes).not.toContain('transform');
+    const { transform } = (text?.children[0] as SVGTSpanElement).attributes as NamedNodeMap & { transform: unknown };
+    expect(transform).toBeUndefined();
   });
 
   test('Render 0 successfully when width is specified', () => {

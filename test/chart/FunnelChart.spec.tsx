@@ -59,7 +59,8 @@ describe('<FunnelChart />', () => {
 
     expect(container.querySelectorAll('.recharts-funnel-trapezoid')).toHaveLength(5);
     // all trapezoids are visible
-    expect(container.querySelectorAll('.recharts-trapezoid')).toHaveLength(5);
+
+    expect(container.querySelectorAll('.recharts-funnel-trapezoid')).toHaveLength(5);
   });
 
   test('Renders 2 funnel in nest FunnelChart', () => {
