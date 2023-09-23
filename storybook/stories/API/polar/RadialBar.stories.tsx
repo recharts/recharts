@@ -41,11 +41,6 @@ export const API = {
         <RadialBarChart
           width={400}
           height={400}
-          innerRadius="20%"
-          outerRadius="90%"
-          data={pageDataWithFillColor.slice(0, 4)}
-          startAngle={90}
-          endAngle={-270}
         >
           <Legend iconSize={10} layout="horizontal" verticalAlign="bottom" />
           <Tooltip />
