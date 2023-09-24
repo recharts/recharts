@@ -242,16 +242,94 @@ describe('parseScale', () => {
 });
 
 describe('getValueByDataKey', () => {
-  const data = { a: 1, b: 2, c: 3 };
+  const data: Record<string, unknown> = {
+    a: 1,
+    b: 2,
+    c: 3,
+    1: 4,
+    u: undefined,
+    n: null,
+    nested: { obj: { children: 7 } },
+    arr: [{ x: 6 }, { y: 5 }],
+    nan: NaN,
+  };
 
-  it('of function', () => {
+  it('should call dataKey if it is a function', () => {
     const fn: DataKey<typeof data> = entry => entry.a;
-
     expect(getValueByDataKey(data, fn)).toBe(1);
+    expect(getValueByDataKey(data, fn, 9)).toBe(1);
   });
 
-  it('returns default value', () => {
+  it('should return data from object root', () => {
+    expect(getValueByDataKey(data, 'a')).toEqual(1);
+    expect(getValueByDataKey(data, 'a', 9)).toEqual(1);
+  });
+
+  it('should return data nested in the object', () => {
+    expect(getValueByDataKey(data, 'nested.obj.children')).toEqual(7);
+    expect(getValueByDataKey(data, 'nested.obj.children', 9)).toEqual(7);
+  });
+
+  it('should return data nested in the object inside array', () => {
+    expect(getValueByDataKey(data, 'arr[1].y')).toEqual(5);
+    expect(getValueByDataKey(data, 'arr[1].y', 9)).toEqual(5);
+  });
+
+  it('should read numeric keys', () => {
+    expect(getValueByDataKey(data, 1)).toEqual(4);
+    expect(getValueByDataKey(data, 1, 9)).toEqual(4);
+    expect(getValueByDataKey(data, '1')).toEqual(4);
+    expect(getValueByDataKey(data, '1', 9)).toEqual(4);
+  });
+
+  it('should return default value if the data object path is not defined', () => {
     expect(getValueByDataKey(data, 'foo', 0)).toBe(0);
+    expect(getValueByDataKey(data, 'foo')).toBe(undefined);
+  });
+
+  it('should return default value if the data object path exists but contains undefined', () => {
+    expect(getValueByDataKey(data, 'd', 0)).toBe(0);
+    expect(getValueByDataKey(data, 'd')).toBe(undefined);
+  });
+
+  it('should return default value if the data object path exists but contains null', () => {
+    expect(getValueByDataKey(data, 'd', 0)).toBe(0);
+    expect(getValueByDataKey(data, 'd')).toBe(undefined);
+  });
+
+  it('should return NaN if the data object path exists and contains NaN', () => {
+    expect(getValueByDataKey(data, 'nan', 0)).toBe(NaN);
+    expect(getValueByDataKey(data, 'nan')).toBe(NaN);
+  });
+
+  it('should return defaultValue if dataKey is undefined', () => {
+    /*
+     * The function does not really make sense without the dataKey
+     * and so the type says it's mandatory.
+     *
+     * However! Lots of props have the dataKey as optional, the "strictNullChecks" typescript config is turned off,
+     * and many places do not have null runtime checks.
+     */
+    expect(getValueByDataKey(data, undefined as never, 7)).toEqual(7);
+  });
+
+  it('should return undefined if both dataKey and defaultValue are undefined', () => {
+    expect(getValueByDataKey(data, undefined as never, undefined)).toEqual(undefined);
+  });
+
+  test.each([null, undefined])('should return defaultValue if data object is %s', d => {
+    expect(getValueByDataKey(d, () => 1, 7)).toEqual(7);
+  });
+
+  test.each([
+    NaN,
+    [],
+    {},
+    function anon() {
+      return 8;
+    },
+  ])('should return result of function getter if data object is %s', d => {
+    expect(getValueByDataKey(d, () => 1, 7)).toEqual(1);
   });
 });
 
