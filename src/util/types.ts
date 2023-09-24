@@ -1050,12 +1050,34 @@ export interface GeometrySector {
 export type D3Scale<T> = D3ScaleContinuousNumeric<T, number>;
 
 export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | 'dataMax';
-/** The domain of axis */
+/**
+ * The domain of axis, always defined by an array of exactly two values, for the min and the max of the axis.
+ *
+ * Can be specified in many ways:
+ * - array of numbers
+ * - with special strings like 'dataMin' and 'dataMax'
+ * - with special string math like 'dataMin - 100'
+ * - with keyword 'auto'
+ * - or a function
+ * - array of functions
+ * - or a combination of the above
+ */
 export type AxisDomain =
   | string[]
   | number[]
   | [AxisDomainItem, AxisDomainItem]
   | (([dataMin, dataMax]: [number, number], allowDataOverflow: boolean) => [number, number]);
+
+/**
+ * NumberDomain is an evaluated AxisDomain.
+ * Unlike AxisDomain, it has no variety - it's a tuple of two number.
+ * This is after all the keywords and functions were evaluated and what is left is [min, max].
+ *
+ * Know that the min, max values are not guaranteed to be nice numbers - values like -Infinity or NaN are possible.
+ *
+ * There are also `category` axes that have different things than numbers in their domain.
+ */
+export type NumberDomain = [min: number, max: number];
 
 /** The props definition of base axis */
 export interface BaseAxisProps {
