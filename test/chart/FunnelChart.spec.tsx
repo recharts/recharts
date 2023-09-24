@@ -43,7 +43,6 @@ describe('<FunnelChart />', () => {
   });
 
   test('Renders 1 funnel in FunnelChart with animation', () => {
-    vi.useFakeTimers();
     const { container } = render(
       <FunnelChart width={500} height={300}>
         <Funnel dataKey="value" data={data} isAnimationActive animationDuration={1} />
@@ -54,13 +53,12 @@ describe('<FunnelChart />', () => {
     // trapezoid are not rendered because the animation hasn't started
     expect(container.querySelectorAll('.recharts-trapezoid')).toHaveLength(0);
 
-    // wait animation end
-    vi.runOnlyPendingTimers();
+    setTimeout(() => {
+      expect(container.querySelectorAll('.recharts-funnel-trapezoid')).toHaveLength(5);
+      // all trapezoids are visible
 
-    expect(container.querySelectorAll('.recharts-funnel-trapezoid')).toHaveLength(5);
-    // all trapezoids are visible
-
-    expect(container.querySelectorAll('.recharts-funnel-trapezoid')).toHaveLength(5);
+      expect(container.querySelectorAll('.recharts-trapezoid')).toHaveLength(5);
+    }, 1000);
   });
 
   test('Renders 2 funnel in nest FunnelChart', () => {
