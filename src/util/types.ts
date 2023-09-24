@@ -1296,3 +1296,9 @@ export interface SankeyLink {
 }
 
 export type Size = { width: number; height: number };
+
+export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElement> =
+  | ReactElement<SVGProps<ElementType>>
+  | ((props: PropsType) => ReactElement<SVGProps<ElementType>>)
+  | SVGProps<ElementType>
+  | boolean;

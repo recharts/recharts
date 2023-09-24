@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render a group of bar
  */
-import React, { Key, PureComponent, ReactElement, SVGProps } from 'react';
+import React, { Key, PureComponent, ReactElement } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';
@@ -34,6 +34,7 @@ import {
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
   AnimationDuration,
+  ActiveShape,
 } from '../util/types';
 import { ImplicitLabelType } from '../component/Label';
 
@@ -81,11 +82,7 @@ export interface BarProps extends InternalBarProps {
   maxBarSize?: number;
   hide?: boolean;
   shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
-  activeBar?:
-    | ReactElement<SVGProps<SVGElement>>
-    | ((props: BarProps) => ReactElement<SVGProps<SVGElement>>)
-    | boolean
-    | SVGProps<SVGElement>;
+  activeBar?: ActiveShape<BarProps>;
   background?: RectangleShapeType;
   radius?: number | [number, number, number, number];
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { FunnelChart, Funnel } from '../../src';
+import { FunnelChart, Funnel, Tooltip, Trapezoid } from '../../src';
+import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 const data = [
   { value: 100, name: '展现' },
@@ -101,5 +102,131 @@ describe('<FunnelChart />', () => {
 
       expect(onEventMock).toHaveBeenCalled();
     });
+  });
+
+  test('renders customized active shape when activeShape is set to be a function', () => {
+    const { container } = render(
+      <FunnelChart width={700} height={200}>
+        <Funnel
+          width={400}
+          data={data}
+          dataKey="value"
+          isAnimationActive={false}
+          activeShape={props => <Trapezoid {...props} />}
+        />
+        <Tooltip />
+      </FunnelChart>,
+    );
+
+    const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
+    const [shape] = Array.from(trapezoids);
+    const mouseOverEvent = mockMouseEvent('mouseover', shape, {});
+
+    mouseOverEvent.fire();
+
+    const activeShape = container.querySelectorAll('.recharts-active-shape');
+    expect(activeShape).toHaveLength(1);
+  });
+
+  test('renders customized active shape when activeShape is set to be an object', () => {
+    const { container } = render(
+      <FunnelChart width={700} height={200}>
+        <Funnel
+          width={400}
+          data={data}
+          dataKey="value"
+          isAnimationActive={false}
+          activeShape={{ fill: 'red', strokeWidth: 2 }}
+        />
+        <Tooltip />
+      </FunnelChart>,
+    );
+
+    const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
+    const [shape] = Array.from(trapezoids);
+    const mouseOverEvent = mockMouseEvent('mouseover', shape, {});
+
+    mouseOverEvent.fire();
+
+    const activeShape = container.querySelectorAll('.recharts-active-shape');
+    expect(activeShape).toHaveLength(1);
+  });
+
+  test('renders customized active shape when activeShape is set to be a ReactElement', () => {
+    const { container } = render(
+      <FunnelChart width={700} height={200}>
+        <Funnel
+          width={400}
+          data={data}
+          dataKey="value"
+          isAnimationActive={false}
+          activeShape={<Trapezoid fill="red" />}
+        />
+        <Tooltip />
+      </FunnelChart>,
+    );
+
+    const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
+    const [shape] = Array.from(trapezoids);
+    const mouseOverEvent = mockMouseEvent('mouseover', shape, {});
+
+    mouseOverEvent.fire();
+
+    const activeShape = container.querySelectorAll('.recharts-active-shape');
+    expect(activeShape).toHaveLength(1);
+  });
+
+  test('renders customized active shape when activeShape is set to be a truthy boolean', () => {
+    const { container } = render(
+      <FunnelChart width={700} height={200}>
+        <Funnel width={400} data={data} dataKey="value" isAnimationActive={false} activeShape />
+        <Tooltip />
+      </FunnelChart>,
+    );
+
+    const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
+    const [shape] = Array.from(trapezoids);
+    const mouseOverEvent = mockMouseEvent('mouseover', shape, {});
+
+    mouseOverEvent.fire();
+
+    const activeShape = container.querySelectorAll('.recharts-active-shape');
+    expect(activeShape).toHaveLength(1);
+  });
+
+  test('does not render customized active shape when activeShape is set to be a falsy boolean', () => {
+    const { container } = render(
+      <FunnelChart width={700} height={200}>
+        <Funnel width={400} data={data} dataKey="value" isAnimationActive={false} activeShape={false} />
+        <Tooltip />
+      </FunnelChart>,
+    );
+
+    const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
+    const [shape] = Array.from(trapezoids);
+    const mouseOverEvent = mockMouseEvent('mouseover', shape, {});
+
+    mouseOverEvent.fire();
+
+    const activeShape = container.querySelectorAll('.recharts-active-shape');
+    expect(activeShape).toHaveLength(0);
+  });
+
+  test('does not render customized active shape when activeShape is not set', () => {
+    const { container } = render(
+      <FunnelChart width={700} height={200}>
+        <Funnel width={400} data={data} dataKey="value" isAnimationActive={false} />
+        <Tooltip />
+      </FunnelChart>,
+    );
+
+    const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
+    const [shape] = Array.from(trapezoids);
+    const mouseOverEvent = mockMouseEvent('mouseover', shape, {});
+
+    mouseOverEvent.fire();
+
+    const activeShape = container.querySelectorAll('.recharts-active-shape');
+    expect(activeShape).toHaveLength(0);
   });
 });
