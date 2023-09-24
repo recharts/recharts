@@ -1,6 +1,5 @@
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { vi } from 'vitest';
 
 import { Label, Line, LineChart, ReferenceLine, Surface } from '../../src';
 
@@ -13,13 +12,6 @@ const data = [
   { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
 ];
 
-beforeEach(() => {
-  vi.useFakeTimers();
-});
-
-afterEach(() => {
-  vi.useRealTimers();
-});
 describe('<Label />', () => {
   const polarViewBox = {
     cx: 50,
