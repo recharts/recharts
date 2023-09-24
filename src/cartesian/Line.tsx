@@ -26,6 +26,7 @@ import {
   DataKey,
   TickItem,
   AnimationDuration,
+  ActiveShape,
 } from '../util/types';
 
 export type LineDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
@@ -61,7 +62,7 @@ interface LineProps extends InternalLineProps {
   hide?: boolean;
 
   // whether have dot in line
-  activeDot?: LineDot;
+  activeDot?: ActiveShape<DotProps>;
   dot?: LineDot;
 
   onAnimationStart?: () => void;

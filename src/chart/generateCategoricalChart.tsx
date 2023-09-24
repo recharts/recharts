@@ -2130,8 +2130,8 @@ export const generateCategoricalChart = ({
       const { children } = this.props;
       const tooltipItem = findChildByType(children, Tooltip);
       const { points, isRange, baseLine } = item.props;
-      const { activeDot, hide, activeBar } = item.item.props;
-      const hasActive = !hide && isTooltipActive && tooltipItem && (activeDot || activeBar) && activeTooltipIndex >= 0;
+      const { activeDot, hide, activeBar, activeShape } = item.item.props;
+      const hasActive = Boolean(!hide && isTooltipActive && tooltipItem && (activeDot || activeBar || activeShape));
       let itemEvents = {};
 
       if (tooltipEventType !== 'axis' && tooltipItem && tooltipItem.props.trigger === 'click') {
@@ -2153,36 +2153,53 @@ export const generateCategoricalChart = ({
       }
 
       if (hasActive) {
-        let activePoint, basePoint;
+        if (activeTooltipIndex >= 0) {
+          let activePoint, basePoint;
 
-        if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
-          // number transform to string
-          const specifiedKey =
-            typeof tooltipAxis.dataKey === 'function'
-              ? findWithPayload
-              : 'payload.'.concat(tooltipAxis.dataKey.toString());
-          activePoint = findEntryInArray(points, specifiedKey, activeLabel);
-          basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
+          if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
+            // number transform to string
+            const specifiedKey =
+              typeof tooltipAxis.dataKey === 'function'
+                ? findWithPayload
+                : 'payload.'.concat(tooltipAxis.dataKey.toString());
+            activePoint = findEntryInArray(points, specifiedKey, activeLabel);
+            basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
+          } else {
+            activePoint = points?.[activeTooltipIndex];
+            basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+          }
+
+          if (activeBar) {
+            return [graphicalItem, this.renderActiveBar({ item, childIndex: activeTooltipIndex })];
+          }
+
+          if (!_.isNil(activePoint)) {
+            return [
+              graphicalItem,
+              ...this.renderActivePoints({
+                item,
+                activePoint,
+                basePoint,
+                childIndex: activeTooltipIndex,
+                isRange,
+              }),
+            ];
+          }
         } else {
-          activePoint = points?.[activeTooltipIndex];
-          basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
-        }
+          /**
+           * We hit this block if consumer uses a Tooltip without XAxis and/or YAxis.
+           * In which case, this.state.activeTooltipIndex never gets set
+           * because the mouse events that trigger that value getting set never get trigged without the axis components.
+           *
+           * An example usage case is a FunnelChart
+           */
+          const {
+            graphicalItem: { item: xyItem, childIndex },
+          } = this.getItemByXY(this.state.activeCoordinate);
 
-        if (activeBar) {
-          return [graphicalItem, this.renderActiveBar({ item, childIndex: activeTooltipIndex })];
-        }
+          const elementProps = { ...item.props, ...itemEvents, activeIndex: childIndex };
 
-        if (!_.isNil(activePoint)) {
-          return [
-            graphicalItem,
-            ...this.renderActivePoints({
-              item,
-              activePoint,
-              basePoint,
-              childIndex: activeTooltipIndex,
-              isRange,
-            }),
-          ];
+          return [cloneElement(xyItem, elementProps), null, null];
         }
       }
 
@@ -2250,8 +2267,7 @@ export const generateCategoricalChart = ({
     }
 
     public getItemByXY(chartXY: { x: number; y: number }) {
-      const { formattedGraphicalItems } = this.state;
-
+      const { formattedGraphicalItems, activeItem } = this.state;
       if (formattedGraphicalItems && formattedGraphicalItems.length) {
         for (let i = 0, len = formattedGraphicalItems.length; i < len; i++) {
           const graphicalItem = formattedGraphicalItems[i];
@@ -2276,6 +2292,35 @@ export const generateCategoricalChart = ({
             if (activeBarItem) {
               return { graphicalItem, payload: activeBarItem };
             }
+          } else if (itemDisplayName === 'Funnel') {
+            /*
+             * To handle possible duplicates in the data set,
+             * match both the data value of the active item to a data value on a graph item,
+             * and match the mouse coordinates of the active item to the coordinates of a trapezoid.
+             * This assumes equal lengths of trapezoids on a funnel to data items.
+             */
+            const activeIndex = item.props.data.findIndex((funnelData: { value: string }, dataIndex: number) => {
+              const valuesMatch = funnelData.value === activeItem.payload.value;
+
+              const indexOfMouseCoordinates = graphicalItem.props.trapezoids.findIndex(
+                (trapezoid: { x: number; y: number }) => {
+                  const xMatches = trapezoid.x === activeItem.labelViewBox.x || trapezoid.x === activeItem.x;
+                  const yMatches = trapezoid.y === activeItem.labelViewBox.y || trapezoid.y === activeItem.y;
+                  return xMatches && yMatches;
+                },
+              );
+
+              const coordinatesMatch = dataIndex === indexOfMouseCoordinates;
+
+              return valuesMatch && coordinatesMatch;
+            });
+
+            const childIndex = item.props.activeIndex === undefined ? activeIndex : item.props.activeIndex;
+
+            return {
+              graphicalItem: { ...graphicalItem, childIndex },
+              payload: graphicalItem.props.data[activeIndex],
+            };
           }
         }
       }

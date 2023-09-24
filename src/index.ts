@@ -98,7 +98,7 @@ export { RadialBarChart } from './chart/RadialBarChart';
 export { ComposedChart } from './chart/ComposedChart';
 
 export { Funnel } from './numberAxis/Funnel';
-export type { Props as FunnelProps } from './numberAxis/Funnel';
+export type { FunnelProps } from './numberAxis/Funnel';
 export { FunnelChart } from './chart/FunnelChart';
 export { Trapezoid } from './shape/Trapezoid';
 export type { Props as TrapezoidProps } from './shape/Trapezoid';
