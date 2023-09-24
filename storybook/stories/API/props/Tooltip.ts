@@ -31,7 +31,3 @@ export const ResponsiveProps: StorybookArgs = {
   activeDot,
   tooltipType,
 };
-
-export const ResponsivePropsRadialBar: StorybookArgs = {
-  tooltipType,
-};

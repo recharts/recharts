@@ -6,17 +6,17 @@ import { AnimationProps } from '../props/AnimationProps';
 import { legendType } from '../props/Legend';
 import { RadialBarStyle } from '../props/Styles';
 import { General as GeneralProps, Internal } from '../props/PolarComponentShared';
-import { ResponsivePropsRadialBar } from '../props/Tooltip';
+import { tooltipType } from '../props/Tooltip';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 export default {
   argTypes: {
     ...EventHandlers,
     ...AnimationProps,
+    tooltipType,
     legendType,
     ...GeneralProps,
     ...Internal,
-    ...ResponsivePropsRadialBar,
     ...RadialBarStyle,
     // Deprecated
     dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
@@ -38,11 +38,7 @@ export const API = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <RadialBarChart
-          width={400}
-          height={400}
-          data={pageDataWithFillColor}
-        >
+        <RadialBarChart width={400} height={400} data={pageDataWithFillColor}>
           <Legend />
           <Tooltip />
           <PolarAngleAxis />
@@ -54,7 +50,6 @@ export const API = {
   args: {
     ...getStoryArgsFromArgsTypesObject(GeneralProps),
     ...getStoryArgsFromArgsTypesObject(RadialBarStyle),
-    ...getStoryArgsFromArgsTypesObject(ResponsivePropsRadialBar),
     ...getStoryArgsFromArgsTypesObject(AnimationProps),
     legendType: 'circle',
     label: { fill: '#333', fontSize: 15, position: 'insideStart' },
