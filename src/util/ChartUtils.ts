@@ -17,10 +17,19 @@ import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniq
 import { filterProps, findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
-import { AxisType, BaseAxisProps, DataKey, LayoutType, LegendType, PolarLayoutType, TickItem } from './types';
+import {
+  AxisType,
+  BaseAxisProps,
+  DataKey,
+  LayoutType,
+  LegendType,
+  PolarLayoutType,
+  NumberDomain,
+  TickItem,
+} from './types';
 import { Payload as LegendPayload } from '../component/DefaultLegendContent';
 
-export function getValueByDataKey<T>(obj: T, dataKey: DataKey<any>, defaultValue?: any) {
+export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?: any) {
   if (_.isNil(obj) || _.isNil(dataKey)) {
     return defaultValue;
   }
@@ -410,7 +419,7 @@ export const appendOffsetOfLegend = (offset: any, items: Array<FormattedGraphica
   return newOffset;
 };
 
-const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, direction?: 'x' | 'y') => {
+const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, direction?: 'x' | 'y'): boolean => {
   if (_.isNil(axisType)) {
     return true;
   }
@@ -433,26 +442,26 @@ const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, dir
 };
 
 export const getDomainOfErrorBars = (
-  data: any[],
-  item: any,
-  dataKey: any,
+  data: Array<object>,
+  item: ReactElement,
+  dataKey: DataKey<any>,
   layout?: LayoutType,
   axisType?: AxisType,
-) => {
+): NumberDomain | null => {
   const { children } = item.props;
   const errorBars = findAllByType(children, ErrorBar).filter(errorBarChild =>
     isErrorBarRelevantForAxis(layout, axisType, errorBarChild.props.direction),
   );
 
   if (errorBars && errorBars.length) {
-    const keys = errorBars.map((errorBarChild: any) => errorBarChild.props.dataKey);
+    const keys: ReadonlyArray<DataKey<any>> = errorBars.map(errorBarChild => errorBarChild.props.dataKey);
 
-    return data.reduce(
-      (result, entry) => {
+    return data.reduce<NumberDomain>(
+      (result: NumberDomain, entry: object): NumberDomain => {
         const entryValue = getValueByDataKey(entry, dataKey, 0);
         const mainValue = _.isArray(entryValue) ? [_.min(entryValue), _.max(entryValue)] : [entryValue, entryValue];
         const errorDomain = keys.reduce(
-          (prevErrorArr: [number, number], k: any) => {
+          (prevErrorArr: [number, number], k: DataKey<any>): NumberDomain => {
             const errorValue = getValueByDataKey(entry, k, 0);
             const lowerValue = mainValue[0] - Math.abs(_.isArray(errorValue) ? errorValue[0] : errorValue);
             const upperValue = mainValue[1] + Math.abs(_.isArray(errorValue) ? errorValue[1] : errorValue);
@@ -477,7 +486,7 @@ export const parseErrorBarsOfAxis = (
   dataKey: any,
   axisType: AxisType,
   layout?: LayoutType,
-) => {
+): NumberDomain | null => {
   const domains = items
     .map(item => getDomainOfErrorBars(data, item, dataKey, layout, axisType))
     .filter(entry => !_.isNil(entry));
