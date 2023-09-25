@@ -26,6 +26,7 @@ import {
   PolarLayoutType,
   NumberDomain,
   TickItem,
+  CategoricalDomain,
 } from './types';
 import { Payload as LegendPayload } from '../component/DefaultLegendContent';
 
@@ -45,25 +46,31 @@ export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?:
   return defaultValue;
 }
 /**
- * Get domain of data by key
+ * Get domain of data by key.
  * @param  {Array}   data      The data displayed in the chart
  * @param  {String}  key       The unique key of a group of data
  * @param  {String}  type      The type of axis
  * @param  {Boolean} filterNil Whether or not filter nil values
  * @return {Array} Domain of data
  */
-export function getDomainOfDataByKey<T>(data: Array<T>, key: string, type: string, filterNil?: boolean) {
-  const flattenData = _.flatMap(data, entry => getValueByDataKey(entry, key));
+export function getDomainOfDataByKey<T>(
+  data: Array<T>,
+  key: DataKey<T>,
+  type: BaseAxisProps['type'],
+  filterNil?: boolean,
+): NumberDomain | CategoricalDomain {
+  const flattenData: unknown[] = _.flatMap(data, (entry: T): unknown => getValueByDataKey(entry, key));
 
   if (type === 'number') {
-    const domain = flattenData.filter(entry => isNumber(entry) || parseFloat(entry));
+    // @ts-expect-error parseFloat type only accepts strings
+    const domain: number[] = flattenData.filter(entry => isNumber(entry) || parseFloat(entry));
 
     return domain.length ? [_.min(domain), _.max(domain)] : [Infinity, -Infinity];
   }
 
   const validateData = filterNil ? flattenData.filter(entry => !_.isNil(entry)) : flattenData;
 
-  // 支持Date类型的x轴
+  // Supports x-axis of Date type
   return validateData.map(entry => (isNumOrStr(entry) || entry instanceof Date ? entry : ''));
 }
 
@@ -512,12 +519,12 @@ export const parseErrorBarsOfAxis = (
  */
 export const getDomainOfItemsWithSameAxis = (
   data: any[],
-  items: any[],
-  type: string,
+  items: ReactElement[],
+  type: BaseAxisProps['type'],
   layout?: LayoutType,
   filterNil?: boolean,
 ) => {
-  const domains = items.map(item => {
+  const domains: (NumberDomain | CategoricalDomain | null)[] = items.map(item => {
     const { dataKey } = item.props;
 
     if (type === 'number' && dataKey) {
@@ -529,6 +536,8 @@ export const getDomainOfItemsWithSameAxis = (
   if (type === 'number') {
     // Calculate the domain of number axis
     return domains.reduce(
+      // @ts-expect-error if (type === number) means that the domain is numerical type
+      // - but this link is missing in the type definition
       (result, entry) => [Math.min(result[0], entry[0]), Math.max(result[1], entry[1])],
       [Infinity, -Infinity],
     );
@@ -538,9 +547,12 @@ export const getDomainOfItemsWithSameAxis = (
   // Get the union set of category axis
   return domains.reduce((result, entry) => {
     for (let i = 0, len = entry.length; i < len; i++) {
+      // @ts-expect-error Date cannot index an object
       if (!tag[entry[i]]) {
+        // @ts-expect-error Date cannot index an object
         tag[entry[i]] = true;
 
+        // @ts-expect-error Date cannot index an object
         result.push(entry[i]);
       }
     }
