@@ -3,6 +3,15 @@ import React from 'react';
 
 import { Label, Line, LineChart, ReferenceLine, Surface } from '../../src';
 
+beforeEach(() => {
+  let time = 0;
+  global.requestAnimationFrame = fn => {
+    time += 100;
+    fn(time);
+    return 0;
+  };
+});
+
 const data = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
   { name: 'Page B', uv: 300, pv: 4567, amt: 2400 },
@@ -149,9 +158,7 @@ describe('<Label />', () => {
       </LineChart>,
     );
 
-    setTimeout(() => {
-      expect(container.querySelectorAll('.recharts-line .recharts-line-curve').length).toEqual(1);
-      expect(screen.getByText(/400/i)).toBeInTheDocument();
-    }, 1000);
+    expect(container.querySelectorAll('.recharts-line .recharts-line-curve').length).toEqual(1);
+    expect(screen.getByText(/400/i)).toBeInTheDocument();
   });
 });
