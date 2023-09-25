@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { vi } from 'vitest';
 
 import { Label, Line, LineChart, ReferenceLine, Surface } from '../../src';
 import { cleanupMockAnimation, mockAnimation } from '../helper/animation-frame-helper';
