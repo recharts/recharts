@@ -70,9 +70,9 @@ import {
   TickItem,
   adaptEventHandlers,
   GeometrySector,
-  AxisDomain,
 } from '../util/types';
 import { AccessibilityManager } from './AccessibilityManager';
+import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 
 export type GraphicalItem<Props = Record<string, any>> = ReactElement<
   Props,
@@ -184,30 +184,6 @@ const getDisplayedData = (data: any[], { graphicalItems, dataStartIndex, dataEnd
 
   return [];
 };
-
-/**
- * Takes a domain and user props to determine whether he provided the domain via props or if we need to calculate it.
- * @param   {AxisDomain}  domain              The potential domain from props
- * @param   {Boolean}     allowDataOverflow   from props
- * @param   {String}      axisType            from props
- * @returns {Boolean}                         `true` if domain is specified by user
- */
-function isDomainSpecifiedByUser(domain: AxisDomain, allowDataOverflow: boolean, axisType: 'number' | string): boolean {
-  if (axisType === 'number' && allowDataOverflow === true && Array.isArray(domain)) {
-    const domainStart: unknown | null | undefined = domain?.[0];
-    const domainEnd: unknown | null | undefined = domain?.[1];
-
-    /*
-     * The `isNumber` check is needed because the user could also provide strings like "dataMin" via the domain props.
-     * In such case, we have to compute the domain from the data.
-     */
-    if (!!domainStart && !!domainEnd && isNumber(domainStart) && isNumber(domainEnd)) {
-      return true;
-    }
-  }
-
-  return false;
-}
 
 function getDefaultDomainByAxisType(axisType: 'number' | string) {
   return axisType === 'number' ? [0, 'auto'] : undefined;
