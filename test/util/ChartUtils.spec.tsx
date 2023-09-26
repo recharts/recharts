@@ -13,7 +13,6 @@ import {
   MAX_VALUE_REG,
   MIN_VALUE_REG,
   offsetSign,
-  parseScale,
   parseSpecifiedDomain,
   getTicksOfAxis,
 } from '../../src/util/ChartUtils';
@@ -226,18 +225,6 @@ describe('parseSpecifiedDomain', () => {
       domain,
     );
     expect(result).toEqual([5, 400]);
-  });
-});
-
-describe('parseScale', () => {
-  it('of "time" ', () => {
-    const { scale } = parseScale({ scale: 'time' });
-    expect(scale).toBeInstanceOf(Function);
-  });
-
-  it('of [12, 12] should return true', () => {
-    const { scale } = parseScale({ scale: scaleLinear() });
-    expect(scale).toBeInstanceOf(Function);
   });
 });
 
