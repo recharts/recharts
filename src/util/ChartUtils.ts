@@ -698,14 +698,24 @@ export const combineEventHandlers = (defaultHandler: Function, parentHandler: Fu
 
   return null;
 };
+
 /**
  * Parse the scale function of axis
  * @param  {Object}   axis          The option of axis
  * @param  {String}   chartType     The displayName of chart
  * @param  {Boolean}  hasBar        if it has a bar
- * @return {Function}               The scale function
+ * @return {object}               The scale function and resolved name
  */
-export const parseScale = (axis: any, chartType?: string, hasBar?: boolean) => {
+export const parseScale = (
+  axis: {
+    scale: 'auto' | string | Function;
+    type?: BaseAxisProps['type'];
+    layout?: 'radial' | unknown;
+    axisType?: 'radiusAxis' | 'angleAxis' | unknown;
+  },
+  chartType?: string,
+  hasBar?: boolean,
+): { scale: any; realScaleType?: string } => {
   const { scale, type, layout, axisType } = axis;
   if (scale === 'auto') {
     if (layout === 'radial' && axisType === 'radiusAxis') {
