@@ -12,7 +12,6 @@ import {
   getValueByDataKey,
   MAX_VALUE_REG,
   MIN_VALUE_REG,
-  offsetSign,
   parseSpecifiedDomain,
   getTicksOfAxis,
 } from '../../src/util/ChartUtils';
@@ -317,40 +316,6 @@ describe('getValueByDataKey', () => {
     },
   ])('should return result of function getter if data object is %s', d => {
     expect(getValueByDataKey(d, () => 1, 7)).toEqual(1);
-  });
-});
-
-describe('offsetSign', () => {
-  describe('of data', () => {
-    const data = [
-      [
-        [0, 1],
-        [0, 2],
-        [0, -5],
-      ],
-      [
-        [0, -1],
-        [0, 2],
-        [0, -5],
-      ],
-    ];
-
-    offsetSign(data);
-
-    it('should change', () => {
-      expect(data).toEqual([
-        [
-          [0, 1],
-          [0, 2],
-          [0, -5],
-        ],
-        [
-          [0, -1],
-          [2, 4],
-          [-5, -10],
-        ],
-      ]);
-    });
   });
 });
 

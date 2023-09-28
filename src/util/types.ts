@@ -24,7 +24,7 @@ import {
 import _ from 'lodash';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
 
-export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette';
+export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette' | 'positive';
 export type LayoutType = 'horizontal' | 'vertical' | 'centric' | 'radial';
 export type PolarLayoutType = 'radial' | 'centric';
 export type AxisType = 'xAxis' | 'yAxis' | 'zAxis' | 'angleAxis' | 'radiusAxis';
