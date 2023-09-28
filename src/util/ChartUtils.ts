@@ -7,7 +7,6 @@ import {
   stackOffsetSilhouette,
   stackOffsetWiggle,
   stackOrderNone,
-  stackOffsetDiverging,
 } from 'victory-vendor/d3-shape';
 import _ from 'lodash';
 import { ReactElement, ReactNode } from 'react';
@@ -909,8 +908,6 @@ type OffsetAccessor = (series: Array<Series<Record<string, unknown>, string>>, o
 
 const STACK_OFFSET_MAP: Record<string, OffsetAccessor> = {
   sign: offsetSign,
-  // @ts-expect-error definitelytyped types are incorrect
-  d: stackOffsetDiverging,
   // @ts-expect-error definitelytyped types are incorrect
   expand: stackOffsetExpand,
   // @ts-expect-error definitelytyped types are incorrect
