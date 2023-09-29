@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { RadialBarChart, RadialBar, Legend, Sector, Tooltip, Cell } from '../../src';
+import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 describe('<RadialBarChart />', () => {
   const data = [
@@ -194,5 +195,145 @@ describe('<RadialBarChart />', () => {
       </RadialBarChart>,
     );
     expect(container.querySelectorAll('.unit-test-class')).toHaveLength(data.length);
+  });
+
+  test('Renders customized active shape when activeShape set to be a function', () => {
+    const { container } = render(
+      <RadialBarChart
+        width={500}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        barSize={10}
+        data={data}
+      >
+        <RadialBar
+          background
+          dataKey="uv"
+          isAnimationActive={false}
+          activeShape={props => <Sector {...props} fill="red" />}
+        />
+        <Tooltip />
+      </RadialBarChart>,
+    );
+
+    const sectorNodes = container.querySelectorAll('.recharts-sector');
+    const [sector] = Array.from(sectorNodes);
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+
+    mouseOverEvent.fire();
+
+    const activeSector = container.querySelectorAll('.recharts-active-shape');
+    expect(activeSector).toHaveLength(1);
+  });
+
+  test('Renders customized active bar when activeBar set to be a ReactElement', () => {
+    const { container } = render(
+      <RadialBarChart
+        width={500}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        barSize={10}
+        data={data}
+      >
+        <RadialBar background dataKey="uv" isAnimationActive={false} activeShape={<Sector fill="red" />} />
+        <Tooltip />
+      </RadialBarChart>,
+    );
+
+    const sectorNodes = container.querySelectorAll('.recharts-sector');
+    const [sector] = Array.from(sectorNodes);
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+
+    mouseOverEvent.fire();
+
+    const activeSector = container.querySelectorAll('.recharts-active-shape');
+    expect(activeSector).toHaveLength(1);
+  });
+
+  test('Renders customized active bar when activeBar is set to be a truthy boolean', () => {
+    const { container } = render(
+      <RadialBarChart
+        width={500}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        barSize={10}
+        data={data}
+      >
+        <RadialBar background dataKey="uv" isAnimationActive={false} activeShape />
+        <Tooltip />
+      </RadialBarChart>,
+    );
+
+    const sectorNodes = container.querySelectorAll('.recharts-sector');
+    const [sector] = Array.from(sectorNodes);
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+
+    mouseOverEvent.fire();
+
+    const activeSector = container.querySelectorAll('.recharts-active-shape');
+    expect(activeSector).toHaveLength(1);
+  });
+
+  test('Does not render customized active bar when activeBar set to be a falsy boolean', () => {
+    const { container } = render(
+      <RadialBarChart
+        width={500}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        barSize={10}
+        data={data}
+      >
+        <RadialBar background dataKey="uv" isAnimationActive={false} activeShape={false} />
+        <Tooltip />
+      </RadialBarChart>,
+    );
+
+    const sectorNodes = container.querySelectorAll('.recharts-sector');
+    const [sector] = Array.from(sectorNodes);
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+
+    mouseOverEvent.fire();
+
+    const activeSector = container.querySelectorAll('.recharts-active-shape');
+    expect(activeSector).toHaveLength(0);
+  });
+
+  test('Renders customized active bar when activeBar set to be an object', () => {
+    const { container } = render(
+      <RadialBarChart
+        width={500}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        barSize={10}
+        data={data}
+      >
+        <RadialBar background dataKey="uv" isAnimationActive={false} activeShape={{ fill: 'red' }} />
+        <Tooltip />
+      </RadialBarChart>,
+    );
+
+    const sectorNodes = container.querySelectorAll('.recharts-sector');
+    const [sector] = Array.from(sectorNodes);
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+
+    mouseOverEvent.fire();
+
+    const activeSector = container.querySelectorAll('.recharts-active-shape');
+    expect(activeSector).toHaveLength(1);
   });
 });
