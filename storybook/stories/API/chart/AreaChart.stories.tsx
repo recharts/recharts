@@ -55,12 +55,7 @@ export const CategoricalAreaChart = {
       <ResponsiveContainer width="100%" height={400}>
         <AreaChart {...args}>
           <Area dataKey="A" stroke="green" fill="green" fillOpacity={0.5} />
-          <XAxis
-            dataKey="subject"
-            type="category"
-            allowDuplicatedCategory={false}
-            domain={['Math', 'Physics', 'Geography']}
-          />
+          <XAxis dataKey="subject" type="category" allowDuplicatedCategory={false} />
           <Tooltip />
         </AreaChart>
       </ResponsiveContainer>
