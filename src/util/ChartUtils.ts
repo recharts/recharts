@@ -790,7 +790,14 @@ export const findPositionOfBar = (barPosition: any[], child: ReactNode) => {
   return null;
 };
 
-export const truncateByDomain = (value: any[], domain: any[]) => {
+/**
+ * Both value and domain are tuples of two numbers
+ * - but the type stays as array of numbers until we have better support in rest of the app
+ * @param {Array} value input that will be truncated
+ * @param {Array} domain boundaries
+ * @returns {Array} tuple of two numbers
+ */
+export const truncateByDomain = (value: [number, number], domain: number[]) => {
   if (!domain || domain.length !== 2 || !isNumber(domain[0]) || !isNumber(domain[1])) {
     return value;
   }
