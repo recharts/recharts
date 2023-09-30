@@ -157,7 +157,7 @@ export class Bar extends PureComponent<Props, State> {
     yAxis: InternalBarProps['yAxis'];
     xAxisTicks: TickItem[];
     yAxisTicks: TickItem[];
-    stackedData: number[][];
+    stackedData: Array<[number, number]>;
     dataStartIndex: number;
     offset: ChartOffset;
     displayedData: any[];
