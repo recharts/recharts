@@ -1105,15 +1105,8 @@ export const getStackedDataOfItem = <
   if (isNumOrStr(stackId)) {
     const group = stackGroups[stackId];
 
-    if (group && group.items.length) {
-      let itemIndex = -1;
-
-      for (let i = 0, len = group.items.length; i < len; i++) {
-        if (group.items[i] === item) {
-          itemIndex = i;
-          break;
-        }
-      }
+    if (group) {
+      const itemIndex = group.items.indexOf(item);
       return itemIndex >= 0 ? group.stackedData[itemIndex] : null;
     }
   }
