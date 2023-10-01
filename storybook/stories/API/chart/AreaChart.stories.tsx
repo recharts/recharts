@@ -65,5 +65,11 @@ export const CategoricalAreaChart = {
     ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     data: subjectData,
     layout: 'horizontal',
+    margin: {
+      top: 0,
+      bottom: 0,
+      left: 50,
+      right: 50,
+    },
   },
 };
