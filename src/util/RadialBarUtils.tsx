@@ -4,6 +4,14 @@ import { RadialBarProps } from '../polar/RadialBar';
 import { Sector, Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
 
+export function parseCornerRadius(cornerRadius: string | number): number {
+  if (typeof cornerRadius === 'string') {
+    return parseInt(cornerRadius, 10);
+  }
+
+  return cornerRadius;
+}
+
 // Sector props is expecting cx, cy as numbers.
 // When props are being spread in from a user defined component in RadialBar,
 // the prop types of an SVGElement have these typed as string | number.

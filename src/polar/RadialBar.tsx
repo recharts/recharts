@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';
-import { RadialBarSector, RadialBarSectorProps } from '../util/RadialBarUtils';
+import { parseCornerRadius, RadialBarSector, RadialBarSectorProps } from '../util/RadialBarUtils';
 import { Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
 import { findAllByType, filterProps } from '../util/ReactUtils';
@@ -277,7 +277,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
       const isActive = i === activeIndex;
       const props: RadialBarSectorProps = {
         ...baseProps,
-        cornerRadius: typeof cornerRadius === 'string' ? parseInt(cornerRadius, 10) : cornerRadius,
+        cornerRadius: parseCornerRadius(cornerRadius),
         ...entry,
         ...adaptEventsOfChild(this.props, entry, i),
         key: `sector-${i}`,
@@ -357,7 +357,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
       }
 
       const props: RadialBarSectorProps = {
-        cornerRadius: typeof cornerRadius === 'string' ? parseInt(cornerRadius, 10) : cornerRadius,
+        cornerRadius: parseCornerRadius(cornerRadius),
         ...rest,
         fill: '#eee',
         ...background,
