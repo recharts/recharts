@@ -1092,7 +1092,14 @@ export const getBaseValueOfBar = ({
   return domain[0];
 };
 
-export const getStackedDataOfItem = (item: any, stackGroups: any) => {
+export const getStackedDataOfItem = <
+  StackId extends PropertyKey = string,
+  Item extends { props: { stackId?: StackId } } = { props: { stackId?: StackId } },
+  StackedData = unknown,
+>(
+  item: Item,
+  stackGroups: Record<StackId, { items: ReadonlyArray<Item>; stackedData: Record<number, StackedData> }>,
+): StackedData | null => {
   const { stackId } = item.props;
 
   if (isNumOrStr(stackId)) {
