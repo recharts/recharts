@@ -11,7 +11,7 @@ export default {
     ...CategoricalChartProps,
     activeIndex: {
       description:
-        'The index of the individual shapes that make up the Funnel to be marked as active, and render props.activeShape as a result',
+        'The index of the individual shapes of RadialBar to be marked as active, and render props.activeShape',
       table: {
         category: 'General',
       },
