@@ -5,7 +5,7 @@ import React, { Key, PureComponent, ReactElement } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';
-import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
+import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
 import { ErrorBar, Props as ErrorBarProps, ErrorBarDataPointFormatter } from './ErrorBar';
 import { Cell } from '../component/Cell';
@@ -37,6 +37,7 @@ import {
   ActiveShape,
 } from '../util/types';
 import { ImplicitLabelType } from '../component/Label';
+import { BarRectangle } from '../util/BarUtils';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -59,15 +60,10 @@ interface InternalBarProps {
   height?: number;
 }
 
-type RectangleShapeType =
-  | ReactElement<SVGElement>
-  | ((props: any) => ReactElement<SVGElement>)
-  | RectangleProps
-  | boolean;
-
 export interface BarProps extends InternalBarProps {
   className?: string;
   index?: Key;
+  activeIndex?: number;
   layout?: 'horizontal' | 'vertical';
   xAxisId?: string | number;
   yAxisId?: string | number;
@@ -81,9 +77,9 @@ export interface BarProps extends InternalBarProps {
   minPointSize?: number;
   maxBarSize?: number;
   hide?: boolean;
-  shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
-  activeBar?: ActiveShape<BarProps>;
-  background?: RectangleShapeType;
+  shape?: ActiveShape<BarProps, SVGPathElement>;
+  activeBar?: ActiveShape<BarProps, SVGPathElement>;
+  background?: ActiveShape<BarProps, SVGPathElement>;
   radius?: number | [number, number, number, number];
 
   onAnimationStart?: () => void;
@@ -287,36 +283,32 @@ export class Bar extends PureComponent<Props, State> {
     }
   };
 
-  static renderRectangle(option: RectangleShapeType, props: any) {
-    let rectangle;
-
-    if (React.isValidElement(option)) {
-      rectangle = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
-      rectangle = option(props);
-    } else {
-      rectangle = <Rectangle {...props} />;
-    }
-
-    return rectangle;
-  }
-
   renderRectanglesStatically(data: BarRectangleItem[]) {
-    const { shape } = this.props;
+    const { shape, dataKey, activeIndex, activeBar } = this.props;
     const baseProps = filterProps(this.props);
 
     return (
       data &&
       data.map((entry, i) => {
-        const props = { ...baseProps, ...entry, index: i };
-
+        const isActive = i === activeIndex;
+        const option = isActive ? activeBar : shape;
+        const props = {
+          ...baseProps,
+          ...entry,
+          isActive,
+          option,
+          index: i,
+          dataKey,
+          onAnimationStart: this.handleAnimationStart,
+          onAnimationEnd: this.handleAnimationEnd,
+        };
         return (
           <Layer
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(this.props, entry, i)}
             key={`rectangle-${i}`} // eslint-disable-line react/no-array-index-key
           >
-            {Bar.renderRectangle(shape, props)}
+            <BarRectangle {...props} />
           </Layer>
         );
       })
@@ -394,7 +386,7 @@ export class Bar extends PureComponent<Props, State> {
   }
 
   renderBackground() {
-    const { data } = this.props;
+    const { data, dataKey, activeIndex } = this.props;
     const backgroundProps = filterProps(this.props.background);
 
     return data.map((entry, i) => {
@@ -410,12 +402,15 @@ export class Bar extends PureComponent<Props, State> {
         ...background,
         ...backgroundProps,
         ...adaptEventsOfChild(this.props, entry, i),
+        onAnimationStart: this.handleAnimationStart,
+        onAnimationEnd: this.handleAnimationEnd,
+        dataKey,
         index: i,
         key: `background-bar-${i}`,
         className: 'recharts-bar-background-rectangle',
       };
 
-      return Bar.renderRectangle(this.props.background, props);
+      return <BarRectangle option={this.props.background} isActive={i === activeIndex} {...props} />;
     });
   }
 

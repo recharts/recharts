@@ -1,11 +1,10 @@
-import React, { Component, cloneElement, isValidElement, createElement, ComponentProps, ReactElement } from 'react';
+import React, { Component, cloneElement, isValidElement, createElement, ReactElement } from 'react';
 import classNames from 'classnames';
 import _, { isArray, isBoolean, isNil } from 'lodash';
 import invariant from 'tiny-invariant';
 import { getTicks } from '../cartesian/getTicks';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
-import { Bar } from '../cartesian/Bar';
 import { Tooltip } from '../component/Tooltip';
 import { Legend } from '../component/Legend';
 import { Curve } from '../shape/Curve';
@@ -52,7 +51,6 @@ import {
   parseDomainOfCategoryAxis,
   getTooltipItem,
 } from '../util/ChartUtils';
-import { ActiveBar } from '../util/BarUtils';
 import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDomain';
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/ShallowEqual';
@@ -2065,39 +2063,6 @@ export const generateCategoricalChart = ({
       return result;
     };
 
-    renderActiveBar = ({
-      item,
-      childIndex,
-    }: {
-      item: GraphicalItem<ComponentProps<typeof Bar>>;
-      childIndex: number;
-    }) => {
-      const { key } = item.props;
-      const { activeBar, dataKey } = item.item.props;
-
-      /**
-       * Default to inheriting props from the parent bar
-       */
-      const inheritedProps = {
-        ...item.item.props,
-        ...item.props.data[childIndex],
-      };
-
-      const barProps = {
-        index: childIndex,
-        dataKey,
-        fill: getMainColorOfGraphicItem(item.item),
-        strokeWidth: 2,
-        stroke: '#fff',
-        key: `${key}-activeBar-${childIndex}`,
-        ...inheritedProps,
-        ...filterProps(activeBar),
-        ...adaptEventHandlers(activeBar),
-      } as ComponentProps<typeof Bar>;
-
-      return <ActiveBar option={activeBar} {...barProps} />;
-    };
-
     renderGraphicChild = (element: React.ReactElement, displayName: string, index: number): any[] => {
       const item = this.filterFormatItem(element, displayName, index);
       if (!item) {
@@ -2147,11 +2112,7 @@ export const generateCategoricalChart = ({
             basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
           }
 
-          if (activeBar) {
-            return [graphicalItem, this.renderActiveBar({ item, childIndex: activeTooltipIndex })];
-          }
-
-          if (activeShape) {
+          if (activeShape || activeBar) {
             const activeIndex =
               element.props.activeIndex !== undefined ? element.props.activeIndex : activeTooltipIndex;
             return [cloneElement(element, { ...item.props, ...itemEvents, activeIndex }), null, null];
