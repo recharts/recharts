@@ -1,8 +1,7 @@
-import React, { isValidElement, cloneElement, SVGProps } from 'react';
-import _ from 'lodash';
+import React, { SVGProps } from 'react';
 import { RadialBarProps } from '../polar/RadialBar';
-import { Sector, Props as SectorProps } from '../shape/Sector';
-import { Layer } from '../container/Layer';
+import { Props as SectorProps } from '../shape/Sector';
+import { Shape } from './ActiveShapeUtils';
 
 export function parseCornerRadius(cornerRadius: string | number): number {
   if (typeof cornerRadius === 'string') {
@@ -36,22 +35,12 @@ export interface RadialBarSectorProps extends SectorProps {
 }
 
 export function RadialBarSector({ option, ...props }: RadialBarSectorProps) {
-  let sectorShape: React.JSX.Element;
-
-  if (isValidElement(option)) {
-    sectorShape = cloneElement(option, props);
-  } else if (_.isFunction(option)) {
-    sectorShape = option(props);
-  } else if (_.isPlainObject(option) && !_.isBoolean(option)) {
-    const elementProps = typeGuardSectorProps(option, props);
-    sectorShape = <Sector {...elementProps} />;
-  } else {
-    sectorShape = <Sector {...props} />;
-  }
-
-  if (props.isActive) {
-    return <Layer className="recharts-active-shape">{sectorShape}</Layer>;
-  }
-
-  return sectorShape;
+  return (
+    <Shape<RadialBarProps['activeShape'], SectorProps, SectorProps>
+      option={option}
+      shapeType="sector"
+      propTransformer={typeGuardSectorProps}
+      {...props}
+    />
+  );
 }

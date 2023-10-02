@@ -1,9 +1,8 @@
-import _ from 'lodash';
-import React, { SVGProps, isValidElement, cloneElement, ReactElement } from 'react';
-import { Layer } from '../container/Layer';
+import React, { SVGProps } from 'react';
 import { ActiveShape } from './types';
-import { Rectangle } from '../shape/Rectangle';
+import { Props as RectangleProps } from '../shape/Rectangle';
 import { BarProps } from '../cartesian/Bar';
+import { Shape } from './ActiveShapeUtils';
 
 // Rectangle props is expecting x, y, height, width as numbers, name as a string, and radius as a custom type
 // When props are being spread in from a user defined component in Bar,
@@ -38,27 +37,13 @@ export function BarRectangle({
   option: ActiveShape<BarProps, SVGPathElement>;
   isActive: boolean;
 } & BarProps) {
-  let rectangle;
-
-  if (isValidElement(option)) {
-    const { props: optionProps } = option as ReactElement;
-    const elementProps = {
-      ...props,
-      ...(optionProps ?? {}),
-    };
-    rectangle = cloneElement(option, elementProps);
-  } else if (_.isFunction(option)) {
-    rectangle = option(props);
-  } else if (_.isPlainObject(option) && !_.isBoolean(option)) {
-    const rectangleProps = typeguardBarRectangleProps(option, props);
-    rectangle = <Rectangle {...rectangleProps} />;
-  } else {
-    rectangle = <Rectangle {...props} name={props.name as string} />;
-  }
-
-  if (props.isActive) {
-    return <Layer className="recharts-active-bar">{rectangle}</Layer>;
-  }
-
-  return rectangle;
+  return (
+    <Shape<ActiveShape<BarProps, SVGPathElement>, BarProps, RectangleProps>
+      option={option}
+      shapeType="rectangle"
+      propTransformer={typeguardBarRectangleProps}
+      activeClassName="recharts-active-bar"
+      {...props}
+    />
+  );
 }
