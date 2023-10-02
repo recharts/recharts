@@ -9,7 +9,10 @@ import { Shape } from './ActiveShapeUtils';
 // the prop types of an SVGElement have these typed as something else.
 // This function will return the passed in props
 // along with x, y, height as numbers, name as a string, and radius as number | [number, numbe, number, number]
-function typeguardBarRectangleProps({ x: xProp, y: yProp, ...option }: SVGProps<SVGPathElement>, props: BarProps) {
+function typeguardBarRectangleProps(
+  { x: xProp, y: yProp, ...option }: SVGProps<SVGPathElement>,
+  props: BarProps,
+): RectangleProps {
   const xValue = `${xProp}`;
   const x = parseInt(xValue, 10);
   const yValue = `${yProp}`;
@@ -30,16 +33,14 @@ function typeguardBarRectangleProps({ x: xProp, y: yProp, ...option }: SVGProps<
   };
 }
 
-export function BarRectangle({
-  option,
-  ...props
-}: {
+type BarRectangleProps = {
   option: ActiveShape<BarProps, SVGPathElement>;
   isActive: boolean;
-} & BarProps) {
+} & BarProps;
+
+export function BarRectangle(props: BarRectangleProps) {
   return (
-    <Shape<ActiveShape<BarProps, SVGPathElement>, BarProps, RectangleProps>
-      option={option}
+    <Shape
       shapeType="rectangle"
       propTransformer={typeguardBarRectangleProps}
       activeClassName="recharts-active-bar"

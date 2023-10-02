@@ -15,7 +15,7 @@ export function parseCornerRadius(cornerRadius: string | number): number {
 // When props are being spread in from a user defined component in RadialBar,
 // the prop types of an SVGElement have these typed as string | number.
 // This function will return the passed in props along with cx, cy as numbers.
-export function typeGuardSectorProps(option: SVGProps<SVGPathElement>, props: SectorProps) {
+export function typeGuardSectorProps(option: SVGProps<SVGPathElement>, props: SectorProps): SectorProps {
   const cxValue = `${props.cx || option.cx}`;
   const cx = parseInt(cxValue, 10);
   const cyValue = `${props.cy || option.cy}`;
@@ -34,13 +34,6 @@ export interface RadialBarSectorProps extends SectorProps {
   isActive: boolean;
 }
 
-export function RadialBarSector({ option, ...props }: RadialBarSectorProps) {
-  return (
-    <Shape<RadialBarProps['activeShape'], SectorProps, SectorProps>
-      option={option}
-      shapeType="sector"
-      propTransformer={typeGuardSectorProps}
-      {...props}
-    />
-  );
+export function RadialBarSector(props: RadialBarSectorProps) {
+  return <Shape shapeType="sector" propTransformer={typeGuardSectorProps} {...props} />;
 }

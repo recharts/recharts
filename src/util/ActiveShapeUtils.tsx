@@ -37,7 +37,7 @@ function ShapeSelector<ShapePropsType>({
 export function Shape<OptionType, ExtraProps, ShapePropsType>({
   option,
   shapeType,
-  propTransformer = () => ({} as ShapePropsType),
+  propTransformer = (arg1, arg2) => ({ ...arg1, ...arg2 } as unknown as ShapePropsType),
   activeClassName = 'recharts-active-shape',
   isActive,
   ...props
