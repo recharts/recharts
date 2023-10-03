@@ -1,4 +1,4 @@
-import { CSSProperties, MouseEvent } from 'react';
+import { CSSProperties, MouseEvent, Touch } from 'react';
 import { Global } from './Global';
 import { Size } from './types';
 
@@ -147,7 +147,7 @@ export const getOffset = (el: HTMLElement): ContainerOffset => {
  * @param  {Object} offset The offset of main part in the svg element
  * @return {Object}        {chartX, chartY}
  */
-export const calculateChartCoordinate = (event: MouseEvent, offset: ContainerOffset) => ({
+export const calculateChartCoordinate = (event: MouseEvent | Touch, offset: ContainerOffset) => ({
   chartX: Math.round(event.pageX - offset.left),
   chartY: Math.round(event.pageY - offset.top),
 });
