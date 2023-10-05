@@ -3,6 +3,7 @@ import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Surface, Pie, Sector, LabelProps } from '../../src';
 import { Point } from '../../src/shape/Curve';
+import { PieSectorDataItem } from '../../src/polar/Pie';
 
 type CustomizedLabelLineProps = { points?: Array<Point> };
 
@@ -43,13 +44,12 @@ describe('<Pie />', () => {
   });
 
   test('Render customized active sector when activeShape is set to be an element', () => {
-    const ActiveShape = (props: any) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
     const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
           activeIndex={0}
-          activeShape={<ActiveShape />}
+          activeShape={<Sector fill="#ff7300" className="customized-active-shape" />}
           cx={250}
           cy={250}
           innerRadius={0}
@@ -64,13 +64,12 @@ describe('<Pie />', () => {
   });
 
   test('Render customized active sector when activeShape is set to be a function', () => {
-    const renderActiveShape = (props: any) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
     const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
           activeIndex={0}
-          activeShape={renderActiveShape}
+          activeShape={props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />}
           cx={250}
           cy={250}
           innerRadius={0}
@@ -105,16 +104,13 @@ describe('<Pie />', () => {
   });
 
   test('Render customized active sector when inactiveShape is set to be an element', () => {
-    const ActiveShape = (props: any) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
-    const InactiveShape = (props: any) => <Sector {...props} fill="#ff7300" className="customized-inactive-shape" />;
-
     const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
           activeIndex={0}
-          activeShape={<ActiveShape />}
-          inactiveShape={<InactiveShape />}
+          activeShape={<Sector fill="#ff7300" className="customized-active-shape" />}
+          inactiveShape={<Sector fill="#ff7300" className="customized-inactive-shape" />}
           cx={250}
           cy={250}
           innerRadius={0}
@@ -128,8 +124,11 @@ describe('<Pie />', () => {
   });
 
   test('Render customized inactive sector when inactiveShape is set to be a function', () => {
-    const renderActiveShape = (props: any) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
-    const renderInactiveShape = (props: any) => (
+    const renderActiveShape = (props: PieSectorDataItem) => (
+      <Sector {...props} fill="#ff7300" className="customized-active-shape" />
+    );
+
+    const renderInactiveShape = (props: PieSectorDataItem) => (
       <Sector {...props} fill="#ff7300" className="customized-inactive-shape" />
     );
     const { container } = render(
@@ -173,8 +172,10 @@ describe('<Pie />', () => {
   });
 
   test('should not render customized inactive sectors if there is no active index', () => {
-    const renderActiveShape = (props: any) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
-    const renderInactiveShape = (props: any) => (
+    const renderActiveShape = (props: PieSectorDataItem) => (
+      <Sector {...props} fill="#ff7300" className="customized-active-shape" />
+    );
+    const renderInactiveShape = (props: PieSectorDataItem) => (
       <Sector {...props} fill="#ff7300" className="customized-inactive-shape" />
     );
     const { container } = render(
@@ -196,13 +197,12 @@ describe('<Pie />', () => {
   });
 
   test('Support multiple active sectors', () => {
-    const ActiveShape = (props: any) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />;
     const { container } = render(
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
           activeIndex={[0, 2]}
-          activeShape={<ActiveShape />}
+          activeShape={<Sector fill="#ff7300" className="customized-active-shape" />}
           cx={250}
           cy={250}
           innerRadius={0}
