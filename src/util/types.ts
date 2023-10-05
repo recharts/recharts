@@ -24,6 +24,18 @@ import {
 import _ from 'lodash';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
 
+/**
+ * Determines how values are stacked:
+ *
+ * - `none` is the default, it adds values on top of each other. No smarts. Negative values will overlap.
+ * - `expand` make it so that the values always add up to 1 - so the chart will look like a rectangle.
+ * - `wiggle` and `silhouette` tries to keep the chart centered.
+ * - `sign` stacks positive values above zero and negative values below zero. Similar to `none` but handles negatives.
+ * - `positive` ignores all negative values, and then behaves like \`none\`.
+ *
+ * Also see https://d3js.org/d3-shape/stack#stack-offsets
+ * (note that the `diverging` offset in d3 is named `sign` in recharts)
+ */
 export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette' | 'positive';
 export type LayoutType = 'horizontal' | 'vertical' | 'centric' | 'radial';
 export type PolarLayoutType = 'radial' | 'centric';
