@@ -2280,6 +2280,19 @@ export const generateCategoricalChart = ({
               graphicalItem: { ...graphicalItem, childIndex },
               payload: graphicalItem.props.data[activeIndex],
             };
+          } else if (itemDisplayName === 'Pie') {
+            const tooltipPayload = activeItem.tooltipPayload?.[0].payload.payload;
+
+            const activePieIndex = item.props.data.findIndex((datum: typeof tooltipPayload) => {
+              return _.isEqual(tooltipPayload, datum);
+            });
+
+            const childIndex = item.props.activeIndex === undefined ? activePieIndex : item.props.activeIndex;
+
+            return {
+              graphicalItem: { ...graphicalItem, childIndex },
+              payload: graphicalItem.props.data[activePieIndex],
+            };
           }
         }
       }
