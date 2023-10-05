@@ -54,7 +54,7 @@ export type { Props as PieProps, PieLabel, PieLabelRenderProps } from './polar/P
 export { Radar } from './polar/Radar';
 export type { Props as RadarProps } from './polar/Radar';
 export { RadialBar } from './polar/RadialBar';
-export type { Props as RadialBarProps } from './polar/RadialBar';
+export type { RadialBarProps } from './polar/RadialBar';
 
 export { Brush } from './cartesian/Brush';
 export type { Props as BrushProps } from './cartesian/Brush';

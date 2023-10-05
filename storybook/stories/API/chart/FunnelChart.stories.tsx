@@ -8,7 +8,7 @@ export default {
     ...CategoricalChartProps,
     activeIndex: {
       description:
-        'The index of the individual shapes that make up the Funnel to be marked as active, and render props.activeShape as a result',
+        'The index of the individual shapes of Funnel to be marked as active, and render props.activeShape as a result',
       table: {
         type: {
           summary: 'number',
