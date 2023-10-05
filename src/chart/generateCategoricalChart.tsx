@@ -1,6 +1,6 @@
 import React, { Component, cloneElement, isValidElement, createElement, ComponentProps, ReactElement } from 'react';
 import classNames from 'classnames';
-import _, { isArray, isBoolean, isNil } from 'lodash';
+import _, { isArray, isBoolean } from 'lodash';
 import invariant from 'tiny-invariant';
 import { getTicks } from '../cartesian/getTicks';
 import { Surface } from '../container/Surface';
@@ -73,6 +73,7 @@ import {
 } from '../util/types';
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
+import { deferer, CancelFunction } from '../util/deferer';
 
 export type GraphicalItem<Props = Record<string, any>> = ReactElement<
   Props,
@@ -91,19 +92,6 @@ const originCoordinate: Coordinate = { x: 0, y: 0 };
 // use legacy isFinite only if there is a problem (aka IE)
 // eslint-disable-next-line no-restricted-globals
 const isFinit = Number.isFinite ? Number.isFinite : isFinite;
-
-const defer = // eslint-disable-next-line no-nested-ternary
-  typeof requestAnimationFrame === 'function'
-    ? requestAnimationFrame
-    : typeof setImmediate === 'function'
-    ? setImmediate
-    : setTimeout;
-const deferClear = // eslint-disable-next-line no-nested-ternary
-  typeof cancelAnimationFrame === 'function'
-    ? cancelAnimationFrame
-    : typeof clearImmediate === 'function'
-    ? clearImmediate
-    : clearTimeout;
 
 const calculateTooltipPos = (rangeObj: any, layout: LayoutType): any => {
   if (layout === 'horizontal') {
@@ -1012,7 +1000,7 @@ export const generateCategoricalChart = ({
      */
     legendInstance: any;
 
-    deferId: ReturnType<typeof defer> | null;
+    cancelDefer: CancelFunction | null;
 
     accessibilityManager = new AccessibilityManager();
 
@@ -1209,7 +1197,7 @@ export const generateCategoricalChart = ({
     }
 
     componentWillUnmount() {
-      this.clearDeferId();
+      this.clearDefer();
       if (!_.isNil(this.props.syncId)) {
         this.removeListener();
       }
@@ -1418,12 +1406,11 @@ export const generateCategoricalChart = ({
       }
     }
 
-    clearDeferId = () => {
-      if (!isNil(this.deferId) && deferClear) {
-        // @ts-expect-error types miss the relationship between deferClear and defer
-        deferClear(this.deferId);
+    clearDefer = () => {
+      if (this.cancelDefer) {
+        this.cancelDefer();
+        this.cancelDefer = null;
       }
-      this.deferId = null;
     };
 
     handleLegendBBoxUpdate = (box: any) => {
@@ -1449,8 +1436,8 @@ export const generateCategoricalChart = ({
       const { syncId } = this.props;
 
       if (syncId === cId && chartId !== this.uniqueChartId) {
-        this.clearDeferId();
-        this.deferId = defer && defer(this.applySyncEvent.bind(this, data));
+        this.clearDefer();
+        this.cancelDefer = deferer(this.applySyncEvent.bind(this, data));
       }
     };
 
