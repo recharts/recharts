@@ -6,7 +6,7 @@ function dk(dataKey: DataKey<any>) {
   return { props: { dataKey } };
 }
 
-function s(
+function createSeries(
   key: string,
   index: number,
   data: Array<SeriesPoint<Record<string, unknown>>> = [],
@@ -14,7 +14,11 @@ function s(
   return Object.assign(data, { key, index });
 }
 
-function sp(first: number, second: number, data: Record<string, unknown>): SeriesPoint<Record<string, unknown>> {
+function createSeriesPoint(
+  first: number,
+  second: number,
+  data: Record<string, unknown>,
+): SeriesPoint<Record<string, unknown>> {
   return Object.assign([], { data, 0: first, 1: second });
 }
 
@@ -101,13 +105,13 @@ describe('getStackedData', () => {
 
   it('should return one empty array for each dataKey even if it is not part of the data', () => {
     const result = getStackedData([], [dk('x'), dk('y'), dk('z')], 'none');
-    const expected = [s('x', 0), s('y', 1), s('z', 2)];
+    const expected = [createSeries('x', 0), createSeries('y', 1), createSeries('z', 2)];
     expect(result).toEqual(expected);
   });
 
   it('should return one empty array for each data key even if it is not part of the data', () => {
     const result = getStackedData([], [dk('x'), dk('y'), dk('z')], 'none');
-    const expected = [s('x', 0), s('y', 1), s('z', 2)];
+    const expected = [createSeries('x', 0), createSeries('y', 1), createSeries('z', 2)];
     expect(result).toEqual(expected);
   });
 
@@ -146,31 +150,37 @@ describe('getStackedData', () => {
 
   it('should stack numerical data with offset: none', () => {
     const result = getStackedData(mockData, [dk('uv'), dk('pv')], 'none');
-    const firstSeries = s('uv', 0, [sp(0, 590, mockData[0]), sp(0, 868, mockData[1])]);
-    const secondSeries = s('pv', 1, [sp(590, 1390, mockData[0]), sp(868, 1835, mockData[1])]);
+    const firstSeries = createSeries('uv', 0, [
+      createSeriesPoint(0, 590, mockData[0]),
+      createSeriesPoint(0, 868, mockData[1]),
+    ]);
+    const secondSeries = createSeries('pv', 1, [
+      createSeriesPoint(590, 1390, mockData[0]),
+      createSeriesPoint(868, 1835, mockData[1]),
+    ]);
     const expected = [firstSeries, secondSeries];
     expect(result).toEqual(expected);
   });
 
   it('should stack numerical data with offset: sign', () => {
     const result = getStackedData(dataWithNegativeNumbers, [dk('uv'), dk('pv')], 'sign');
-    const uvSeries = s('uv', 0, [
-      sp(0, 4000, dataWithNegativeNumbers[0]),
-      sp(0, -3000, dataWithNegativeNumbers[1]),
-      sp(0, -2000, dataWithNegativeNumbers[2]),
-      sp(0, 2780, dataWithNegativeNumbers[3]),
-      sp(0, -1890, dataWithNegativeNumbers[4]),
-      sp(0, 2390, dataWithNegativeNumbers[5]),
-      sp(0, 3490, dataWithNegativeNumbers[6]),
+    const uvSeries = createSeries('uv', 0, [
+      createSeriesPoint(0, 4000, dataWithNegativeNumbers[0]),
+      createSeriesPoint(0, -3000, dataWithNegativeNumbers[1]),
+      createSeriesPoint(0, -2000, dataWithNegativeNumbers[2]),
+      createSeriesPoint(0, 2780, dataWithNegativeNumbers[3]),
+      createSeriesPoint(0, -1890, dataWithNegativeNumbers[4]),
+      createSeriesPoint(0, 2390, dataWithNegativeNumbers[5]),
+      createSeriesPoint(0, 3490, dataWithNegativeNumbers[6]),
     ]);
-    const pvSeries = s('pv', 1, [
-      sp(4000, 6400, dataWithNegativeNumbers[0]),
-      sp(0, 1398, dataWithNegativeNumbers[1]),
-      sp(-2000, -11800, dataWithNegativeNumbers[2]),
-      sp(2780, 6688, dataWithNegativeNumbers[3]),
-      sp(0, 4800, dataWithNegativeNumbers[4]),
-      sp(0, -3800, dataWithNegativeNumbers[5]),
-      sp(3490, 7790, dataWithNegativeNumbers[6]),
+    const pvSeries = createSeries('pv', 1, [
+      createSeriesPoint(4000, 6400, dataWithNegativeNumbers[0]),
+      createSeriesPoint(0, 1398, dataWithNegativeNumbers[1]),
+      createSeriesPoint(-2000, -11800, dataWithNegativeNumbers[2]),
+      createSeriesPoint(2780, 6688, dataWithNegativeNumbers[3]),
+      createSeriesPoint(0, 4800, dataWithNegativeNumbers[4]),
+      createSeriesPoint(0, -3800, dataWithNegativeNumbers[5]),
+      createSeriesPoint(3490, 7790, dataWithNegativeNumbers[6]),
     ]);
     const expected = [uvSeries, pvSeries];
     expect(result).toEqual(expected);
@@ -179,23 +189,23 @@ describe('getStackedData', () => {
   it('with offset: positive should ignore all negative data points', () => {
     const dataKeys = [dk('uv'), dk('pv')];
     const result = getStackedData(dataWithNegativeNumbers, dataKeys, 'positive');
-    const uvSeries = s('uv', 0, [
-      sp(0, 4000, dataWithNegativeNumbers[0]),
-      sp(0, 0, dataWithNegativeNumbers[1]),
-      sp(0, 0, dataWithNegativeNumbers[2]),
-      sp(0, 2780, dataWithNegativeNumbers[3]),
-      sp(0, 0, dataWithNegativeNumbers[4]),
-      sp(0, 2390, dataWithNegativeNumbers[5]),
-      sp(0, 3490, dataWithNegativeNumbers[6]),
+    const uvSeries = createSeries('uv', 0, [
+      createSeriesPoint(0, 4000, dataWithNegativeNumbers[0]),
+      createSeriesPoint(0, 0, dataWithNegativeNumbers[1]),
+      createSeriesPoint(0, 0, dataWithNegativeNumbers[2]),
+      createSeriesPoint(0, 2780, dataWithNegativeNumbers[3]),
+      createSeriesPoint(0, 0, dataWithNegativeNumbers[4]),
+      createSeriesPoint(0, 2390, dataWithNegativeNumbers[5]),
+      createSeriesPoint(0, 3490, dataWithNegativeNumbers[6]),
     ]);
-    const pvSeries = s('pv', 1, [
-      sp(4000, 6400, dataWithNegativeNumbers[0]),
-      sp(0, 1398, dataWithNegativeNumbers[1]),
-      sp(0, 0, dataWithNegativeNumbers[2]),
-      sp(2780, 6688, dataWithNegativeNumbers[3]),
-      sp(0, 4800, dataWithNegativeNumbers[4]),
-      sp(0, 0, dataWithNegativeNumbers[5]),
-      sp(3490, 7790, dataWithNegativeNumbers[6]),
+    const pvSeries = createSeries('pv', 1, [
+      createSeriesPoint(4000, 6400, dataWithNegativeNumbers[0]),
+      createSeriesPoint(0, 1398, dataWithNegativeNumbers[1]),
+      createSeriesPoint(0, 0, dataWithNegativeNumbers[2]),
+      createSeriesPoint(2780, 6688, dataWithNegativeNumbers[3]),
+      createSeriesPoint(0, 4800, dataWithNegativeNumbers[4]),
+      createSeriesPoint(0, 0, dataWithNegativeNumbers[5]),
+      createSeriesPoint(3490, 7790, dataWithNegativeNumbers[6]),
     ]);
     const expected = [uvSeries, pvSeries];
     expect(result).toEqual(expected);
@@ -203,8 +213,14 @@ describe('getStackedData', () => {
 
   it('should stack data when dataKey is a function with offset: none', () => {
     const result = getStackedData(mockData, [dk(o => o.uv + 100), dk(o => o.pv - 100)], 'none');
-    const firstSeries = s('uv', 0, [sp(0, 690, mockData[0]), sp(0, 968, mockData[1])]);
-    const secondSeries = s('pv', 1, [sp(690, 1390, mockData[0]), sp(968, 1835, mockData[1])]);
+    const firstSeries = createSeries('uv', 0, [
+      createSeriesPoint(0, 690, mockData[0]),
+      createSeriesPoint(0, 968, mockData[1]),
+    ]);
+    const secondSeries = createSeries('pv', 1, [
+      createSeriesPoint(690, 1390, mockData[0]),
+      createSeriesPoint(968, 1835, mockData[1]),
+    ]);
     const expected = [firstSeries, secondSeries];
     /*
      * Direct comparison with .toEqual doesn't work because the `key` property is a function
@@ -235,7 +251,11 @@ describe('getStackedData', () => {
     ];
     const result = getStackedData(mockCategoryData, [dk('x')], 'positive');
     const expected = [
-      s('x', 0, [sp(0, 0, mockCategoryData[0]), sp(0, 0, mockCategoryData[1]), sp(0, 0, mockCategoryData[2])]),
+      createSeries('x', 0, [
+        createSeriesPoint(0, 0, mockCategoryData[0]),
+        createSeriesPoint(0, 0, mockCategoryData[1]),
+        createSeriesPoint(0, 0, mockCategoryData[2]),
+      ]),
     ];
     expect(result).toEqual(expected);
   });
@@ -259,11 +279,11 @@ describe('getStackedData', () => {
     ];
     const result = getStackedData(mockCategoryData, [dk('x')], 'sign');
     const expected = [
-      s('x', 0, [
-        sp(0, 0, mockCategoryData[0]),
-        sp(0, 0, mockCategoryData[1]),
-        sp(0, 0, mockCategoryData[2]),
-        sp(0, 0, mockCategoryData[3]),
+      createSeries('x', 0, [
+        createSeriesPoint(0, 0, mockCategoryData[0]),
+        createSeriesPoint(0, 0, mockCategoryData[1]),
+        createSeriesPoint(0, 0, mockCategoryData[2]),
+        createSeriesPoint(0, 0, mockCategoryData[3]),
       ]),
     ];
     expect(result).toEqual(expected);
@@ -271,12 +291,12 @@ describe('getStackedData', () => {
 
   test('offsetSign should mutate data in place', () => {
     const data = [
-      s('', 0, [sp(0, 1, {}), sp(0, 2, {}), sp(0, -5, {})]),
-      s('', 1, [sp(0, -1, {}), sp(0, 2, {}), sp(0, -5, {})]),
+      createSeries('', 0, [createSeriesPoint(0, 1, {}), createSeriesPoint(0, 2, {}), createSeriesPoint(0, -5, {})]),
+      createSeries('', 1, [createSeriesPoint(0, -1, {}), createSeriesPoint(0, 2, {}), createSeriesPoint(0, -5, {})]),
     ];
     const expected = [
-      s('', 0, [sp(0, 1, {}), sp(0, 2, {}), sp(0, -5, {})]),
-      s('', 1, [sp(0, -1, {}), sp(2, 4, {}), sp(-5, -10, {})]),
+      createSeries('', 0, [createSeriesPoint(0, 1, {}), createSeriesPoint(0, 2, {}), createSeriesPoint(0, -5, {})]),
+      createSeries('', 1, [createSeriesPoint(0, -1, {}), createSeriesPoint(2, 4, {}), createSeriesPoint(-5, -10, {})]),
     ];
     offsetSign(data, []);
     expect(data).toEqual(expected);
