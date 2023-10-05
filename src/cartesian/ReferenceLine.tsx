@@ -6,7 +6,7 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
-import { ifOverflowMatches } from '../util/IfOverflowMatches';
+import { IfOverflow, ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { createLabeledScales, rectWithCoords } from '../util/CartesianUtils';
 import { warn } from '../util/LogUtils';
@@ -26,7 +26,7 @@ interface ReferenceLineProps extends InternalReferenceLineProps {
   isFront?: boolean;
   /** @deprecated use ifOverflow="extendDomain"  */
   alwaysShow?: boolean;
-  ifOverflow?: 'hidden' | 'visible' | 'discard' | 'extendDomain';
+  ifOverflow?: IfOverflow;
 
   x?: number | string;
   y?: number | string;
