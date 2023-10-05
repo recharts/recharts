@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
 import { createLabeledScales, rectWithPoints } from '../util/CartesianUtils';
-import { ifOverflowMatches } from '../util/IfOverflowMatches';
+import { IfOverflow, ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
@@ -28,7 +28,7 @@ interface ReferenceAreaProps extends InternalReferenceAreaProps {
   isFront?: boolean;
   /** @deprecated use ifOverflow="extendDomain"  */
   alwaysShow?: boolean;
-  ifOverflow?: 'hidden' | 'visible' | 'discard' | 'extendDomain';
+  ifOverflow?: IfOverflow;
   x1?: number | string;
   x2?: number | string;
   y1?: number | string;
