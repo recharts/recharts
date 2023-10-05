@@ -995,11 +995,6 @@ export const generateCategoricalChart = ({
 
     clipPathId: string;
 
-    /**
-     * legendInstance appears never used - can we remove it?
-     */
-    legendInstance: any;
-
     cancelDefer: CancelFunction | null;
 
     accessibilityManager = new AccessibilityManager();
@@ -1928,9 +1923,6 @@ export const generateCategoricalChart = ({
         chartWidth: width,
         chartHeight: height,
         margin,
-        ref: (legend: any) => {
-          this.legendInstance = legend;
-        },
         onBBoxUpdate: this.handleLegendBBoxUpdate,
       });
     };
