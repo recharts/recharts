@@ -109,10 +109,10 @@ const calculateTooltipPos = (rangeObj: any, layout: LayoutType): any => {
 const getActiveCoordinate = (
   layout: LayoutType,
   tooltipTicks: TickItem[],
-  activeIndex: any,
+  activeIndex: number,
   rangeObj: any,
 ): ChartCoordinate => {
-  const entry = tooltipTicks.find((tick: any) => tick && tick.index === activeIndex);
+  const entry = tooltipTicks.find(tick => tick && tick.index === activeIndex);
 
   if (entry) {
     if (layout === 'horizontal') {
@@ -147,7 +147,11 @@ const getActiveCoordinate = (
   return originCoordinate;
 };
 
-const getDisplayedData = (data: any[], { graphicalItems, dataStartIndex, dataEndIndex }: any, item?: any): any[] => {
+const getDisplayedData = (
+  data: any[],
+  { graphicalItems, dataStartIndex, dataEndIndex }: CategoricalChartState,
+  item?: any,
+): any[] => {
   const itemsData = (graphicalItems || []).reduce((result: any, child: any) => {
     const itemData = child.props.data;
 
@@ -283,13 +287,13 @@ export const getAxisMapByAxes = (
     dataStartIndex,
     dataEndIndex,
   }: {
-    axes: any;
-    graphicalItems: any;
+    axes: ReadonlyArray<ReactElement>;
+    graphicalItems: ReadonlyArray<ReactElement>;
     axisType: AxisType;
-    axisIdKey: any;
+    axisIdKey: string;
     stackGroups: any;
-    dataStartIndex: any;
-    dataEndIndex: any;
+    dataStartIndex: number;
+    dataEndIndex: number;
   },
 ): AxisMap => {
   const { layout, children, stackOffset } = props;
@@ -305,7 +309,7 @@ export const getAxisMapByAxes = (
     }
 
     const displayedData = getDisplayedData(props.data, {
-      graphicalItems: graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId),
+      graphicalItems: graphicalItems.filter(item => item.props[axisIdKey] === axisId),
       dataStartIndex,
       dataEndIndex,
     });
@@ -377,9 +381,7 @@ export const getAxisMapByAxes = (
           // the field type is numerical
           const errorBarsDomain = parseErrorBarsOfAxis(
             displayedData,
-            graphicalItems.filter(
-              (item: any) => item.props[axisIdKey] === axisId && (includeHidden || !item.props.hide),
-            ),
+            graphicalItems.filter(item => item.props[axisIdKey] === axisId && (includeHidden || !item.props.hide)),
             dataKey,
             axisType,
             layout,
@@ -549,11 +551,11 @@ const getAxisMap = (
     dataEndIndex,
   }: {
     axisType?: AxisType;
-    AxisComp?: any;
-    graphicalItems: any;
+    AxisComp?: React.ComponentType;
+    graphicalItems: ReadonlyArray<ReactElement>;
     stackGroups: any;
-    dataStartIndex: any;
-    dataEndIndex: any;
+    dataStartIndex: number;
+    dataEndIndex: number;
   },
 ): AxisMap => {
   const { children } = props;
@@ -588,7 +590,7 @@ const getAxisMap = (
   return axisMap;
 };
 
-const tooltipTicksGenerator = (axisMap: any) => {
+const tooltipTicksGenerator = (axisMap: AxisMap) => {
   const axis: BaseAxisProps = getAnyElementOfObject(axisMap);
   const tooltipTicks = getTicksOfAxis(axis, false, true);
 
@@ -715,7 +717,11 @@ const calculateOffset = (
 };
 
 type AxisMap = {
-  [k: string]: BaseAxisProps;
+  [axisId: string]: BaseAxisProps;
+};
+
+type AxisMapMap = {
+  [axisMapId: string]: AxisMap;
 };
 
 export interface CategoricalChartState {
@@ -974,7 +980,7 @@ export const generateCategoricalChart = ({
       stackOffset,
       reverseStackOrder,
     );
-    const axisObj = axisComponents.reduce((result: any, entry: BaseAxisProps) => {
+    const axisObj: AxisMapMap = axisComponents.reduce((result: AxisMapMap, entry: BaseAxisProps): AxisMapMap => {
       const name = `${entry.axisType}Map`;
 
       return {
