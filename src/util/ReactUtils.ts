@@ -435,7 +435,7 @@ export const renderByOrder = (children: React.ReactElement[], renderMap: any) =>
   return elements;
 };
 
-export const getReactEventByType = (e: any) => {
+export const getReactEventByType = (e: { type?: string }): string => {
   const type = e && e.type;
 
   if (type && REACT_BROWSER_EVENT_MAP[type]) {
