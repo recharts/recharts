@@ -1,6 +1,6 @@
 import React, { Component, cloneElement, isValidElement, createElement, ReactElement } from 'react';
 import classNames from 'classnames';
-import _, { isArray, isBoolean, isNil } from 'lodash';
+import _, { isArray, isBoolean } from 'lodash';
 import invariant from 'tiny-invariant';
 import { getTicks } from '../cartesian/getTicks';
 import { Surface } from '../container/Surface';
@@ -72,6 +72,7 @@ import {
 } from '../util/types';
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
+import { deferer, CancelFunction } from '../util/deferer';
 
 export type GraphicalItem<Props = Record<string, any>> = ReactElement<
   Props,
@@ -90,19 +91,6 @@ const originCoordinate: Coordinate = { x: 0, y: 0 };
 // use legacy isFinite only if there is a problem (aka IE)
 // eslint-disable-next-line no-restricted-globals
 const isFinit = Number.isFinite ? Number.isFinite : isFinite;
-
-const defer = // eslint-disable-next-line no-nested-ternary
-  typeof requestAnimationFrame === 'function'
-    ? requestAnimationFrame
-    : typeof setImmediate === 'function'
-    ? setImmediate
-    : setTimeout;
-const deferClear = // eslint-disable-next-line no-nested-ternary
-  typeof cancelAnimationFrame === 'function'
-    ? cancelAnimationFrame
-    : typeof clearImmediate === 'function'
-    ? clearImmediate
-    : clearTimeout;
 
 const calculateTooltipPos = (rangeObj: any, layout: LayoutType): any => {
   if (layout === 'horizontal') {
@@ -1053,13 +1041,11 @@ export const generateCategoricalChart = ({
   return class CategoricalChartWrapper extends Component<CategoricalChartProps, CategoricalChartState> {
     static displayName = chartName;
 
-    uniqueChartId: any;
+    uniqueChartId: string;
 
-    clipPathId: any;
+    clipPathId: string;
 
-    legendInstance: any;
-
-    deferId: any;
+    cancelDefer: CancelFunction | null;
 
     accessibilityManager = new AccessibilityManager();
 
@@ -1075,7 +1061,7 @@ export const generateCategoricalChart = ({
       ...defaultProps,
     };
 
-    container?: any;
+    container?: HTMLElement;
 
     constructor(props: CategoricalChartProps) {
       super(props);
@@ -1256,7 +1242,7 @@ export const generateCategoricalChart = ({
     }
 
     componentWillUnmount() {
-      this.clearDeferId();
+      this.clearDefer();
       if (!_.isNil(this.props.syncId)) {
         this.removeListener();
       }
@@ -1286,7 +1272,7 @@ export const generateCategoricalChart = ({
      * @param  {Object} event    The event object
      * @return {Object}          Mouse data
      */
-    getMouseInfo(event: any) {
+    getMouseInfo(event: React.MouseEvent | React.Touch) {
       if (!this.container) {
         return null;
       }
@@ -1438,6 +1424,8 @@ export const generateCategoricalChart = ({
           };
         }
       }
+
+      // @ts-expect-error adaptEventHandlers expects DOM Event but generateCategoricalChart works with React UIEvents
       const outerEvents = adaptEventHandlers(this.props, this.handleOuterEvent);
 
       return {
@@ -1463,11 +1451,11 @@ export const generateCategoricalChart = ({
       }
     }
 
-    clearDeferId = () => {
-      if (!isNil(this.deferId) && deferClear) {
-        deferClear(this.deferId);
+    clearDefer = () => {
+      if (this.cancelDefer) {
+        this.cancelDefer();
+        this.cancelDefer = null;
       }
-      this.deferId = null;
     };
 
     handleLegendBBoxUpdate = (box: any) => {
@@ -1493,12 +1481,12 @@ export const generateCategoricalChart = ({
       const { syncId } = this.props;
 
       if (syncId === cId && chartId !== this.uniqueChartId) {
-        this.clearDeferId();
-        this.deferId = defer && defer(this.applySyncEvent.bind(this, data));
+        this.clearDefer();
+        this.cancelDefer = deferer(this.applySyncEvent.bind(this, data));
       }
     };
 
-    handleBrushChange = ({ startIndex, endIndex }: any) => {
+    handleBrushChange = ({ startIndex, endIndex }: { startIndex: number; endIndex: number }) => {
       // Only trigger changes if the extents of the brush have actually changed
       if (startIndex !== this.state.dataStartIndex || endIndex !== this.state.dataEndIndex) {
         const { updateId } = this.state;
@@ -1529,7 +1517,7 @@ export const generateCategoricalChart = ({
      * @param  {Object} e              Event object
      * @return {Null}                  null
      */
-    handleMouseEnter = (e: any) => {
+    handleMouseEnter = (e: React.MouseEvent) => {
       const { onMouseEnter } = this.props;
       const mouse = this.getMouseInfo(e);
 
@@ -1544,7 +1532,7 @@ export const generateCategoricalChart = ({
       }
     };
 
-    triggeredAfterMouseMove = (e: any): any => {
+    triggeredAfterMouseMove = (e: React.MouseEvent): any => {
       const { onMouseMove } = this.props;
       const mouse = this.getMouseInfo(e);
       const nextState: CategoricalChartState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
@@ -1612,27 +1600,25 @@ export const generateCategoricalChart = ({
       this.cancelThrottledTriggerAfterMouseMove();
     };
 
-    handleOuterEvent = (e: any) => {
+    handleOuterEvent = (e: React.MouseEvent | React.TouchEvent) => {
       const eventName = getReactEventByType(e);
 
       const event = _.get(this.props, `${eventName}`);
       if (eventName && _.isFunction(event)) {
         let mouse;
         if (/.*touch.*/i.test(eventName)) {
-          mouse = this.getMouseInfo(e.changedTouches[0]);
+          mouse = this.getMouseInfo((e as React.TouchEvent).changedTouches[0]);
         } else {
-          mouse = this.getMouseInfo(e);
+          mouse = this.getMouseInfo(e as React.MouseEvent);
         }
 
         const handler = event;
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         handler(mouse, e);
       }
     };
 
-    handleClick = (e: any) => {
+    handleClick = (e: React.MouseEvent) => {
       const { onClick } = this.props;
       const mouse = this.getMouseInfo(e);
 
@@ -1647,7 +1633,7 @@ export const generateCategoricalChart = ({
       }
     };
 
-    handleMouseDown = (e: any) => {
+    handleMouseDown = (e: React.MouseEvent | React.Touch) => {
       const { onMouseDown } = this.props;
 
       if (_.isFunction(onMouseDown)) {
@@ -1656,7 +1642,7 @@ export const generateCategoricalChart = ({
       }
     };
 
-    handleMouseUp = (e: any) => {
+    handleMouseUp = (e: React.MouseEvent | React.Touch) => {
       const { onMouseUp } = this.props;
 
       if (_.isFunction(onMouseUp)) {
@@ -1665,19 +1651,19 @@ export const generateCategoricalChart = ({
       }
     };
 
-    handleTouchMove = (e: any) => {
+    handleTouchMove = (e: React.TouchEvent) => {
       if (e.changedTouches != null && e.changedTouches.length > 0) {
         this.handleMouseMove(e.changedTouches[0]);
       }
     };
 
-    handleTouchStart = (e: any) => {
+    handleTouchStart = (e: React.TouchEvent) => {
       if (e.changedTouches != null && e.changedTouches.length > 0) {
         this.handleMouseDown(e.changedTouches[0]);
       }
     };
 
-    handleTouchEnd = (e: any) => {
+    handleTouchEnd = (e: React.TouchEvent) => {
       if (e.changedTouches != null && e.changedTouches.length > 0) {
         this.handleMouseUp(e.changedTouches[0]);
       }
@@ -1987,9 +1973,6 @@ export const generateCategoricalChart = ({
         chartWidth: width,
         chartHeight: height,
         margin,
-        ref: (legend: any) => {
-          this.legendInstance = legend;
-        },
         onBBoxUpdate: this.handleLegendBBoxUpdate,
       });
     };
@@ -2389,7 +2372,7 @@ export const generateCategoricalChart = ({
           className={classNames('recharts-wrapper', className)}
           style={{ position: 'relative', cursor: 'default', width, height, ...style }}
           {...events}
-          ref={node => {
+          ref={(node: HTMLDivElement) => {
             this.container = node;
           }}
           role="region"
