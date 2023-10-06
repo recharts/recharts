@@ -1,5 +1,6 @@
 import * as d3Scales from 'victory-vendor/d3-scale';
 import {
+  Series,
   stack as shapeStack,
   stackOffsetExpand,
   stackOffsetNone,
@@ -27,6 +28,7 @@ import {
   NumberDomain,
   TickItem,
   CategoricalDomain,
+  StackOffsetType,
 } from './types';
 import { Payload as LegendPayload } from '../component/DefaultLegendContent';
 
@@ -825,8 +827,15 @@ export const truncateByDomain = (value: [number, number], domain: number[]) => {
   return result;
 };
 
-/* eslint no-param-reassign: 0 */
-export const offsetSign = (series: any) => {
+/**
+ * Stacks all positive numbers above zero and all negative numbers below zero.
+ *
+ * If all values in the series are positive then this behaves the same as 'none' stacker.
+ *
+ * @param {Array} series from d3-shape Stack
+ * @return {Array} series with applied offset
+ */
+export const offsetSign: OffsetAccessor = series => {
   const n = series.length;
   if (n <= 0) {
     return;
@@ -839,7 +848,7 @@ export const offsetSign = (series: any) => {
     for (let i = 0; i < n; ++i) {
       const value = _.isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
 
-      /* eslint-disable prefer-destructuring */
+      /* eslint-disable prefer-destructuring, no-param-reassign */
       if (value >= 0) {
         series[i][j][0] = positive;
         series[i][j][1] = positive + value;
@@ -849,12 +858,20 @@ export const offsetSign = (series: any) => {
         series[i][j][1] = negative + value;
         negative = series[i][j][1];
       }
-      /* eslint-enable prefer-destructuring */
+      /* eslint-enable prefer-destructuring, no-param-reassign */
     }
   }
 };
 
-export const offsetPositive = (series: any) => {
+/**
+ * Replaces all negative values with zero when stacking data.
+ *
+ * If all values in the series are positive then this behaves the same as 'none' stacker.
+ *
+ * @param {Array} series from d3-shape Stack
+ * @return {Array} series with applied offset
+ */
+export const offsetPositive: OffsetAccessor = series => {
   const n = series.length;
   if (n <= 0) {
     return;
@@ -866,7 +883,7 @@ export const offsetPositive = (series: any) => {
     for (let i = 0; i < n; ++i) {
       const value = _.isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
 
-      /* eslint-disable prefer-destructuring */
+      /* eslint-disable prefer-destructuring, no-param-reassign */
       if (value >= 0) {
         series[i][j][0] = positive;
         series[i][j][1] = positive + value;
@@ -875,27 +892,54 @@ export const offsetPositive = (series: any) => {
         series[i][j][0] = 0;
         series[i][j][1] = 0;
       }
-      /* eslint-enable prefer-destructuring */
+      /* eslint-enable prefer-destructuring, no-param-reassign */
     }
   }
 };
 
-const STACK_OFFSET_MAP: Record<string, any> = {
+/**
+ * Function type to compute offset for stacked data.
+ *
+ * d3-shape has something fishy going on with its types.
+ * In @definitelytyped/d3-shape, this function (the offset accessor) is typed as Series<> => void.
+ * However! When I actually open the storybook I can see that the offset accessor actually receives Array<Series<>>.
+ * The same I can see in the source code itself:
+ * https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/66042
+ * That one unfortunately has no types but we can tell it passes three-dimensional array.
+ *
+ * Which leads me to believe that definitelytyped is wrong on this one.
+ * There's open discussion on this topic without much attention:
+ * https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/66042
+ */
+type OffsetAccessor = (series: Array<Series<Record<string, unknown>, string>>, order: number[]) => void;
+
+const STACK_OFFSET_MAP: Record<string, OffsetAccessor> = {
   sign: offsetSign,
+  // @ts-expect-error definitelytyped types are incorrect
   expand: stackOffsetExpand,
+  // @ts-expect-error definitelytyped types are incorrect
   none: stackOffsetNone,
+  // @ts-expect-error definitelytyped types are incorrect
   silhouette: stackOffsetSilhouette,
+  // @ts-expect-error definitelytyped types are incorrect
   wiggle: stackOffsetWiggle,
   positive: offsetPositive,
 };
 
-export const getStackedData = (data: any, stackItems: any, offsetType: string) => {
-  const dataKeys = stackItems.map((item: any) => item.props.dataKey);
-  const stack = shapeStack()
+export const getStackedData = (
+  data: ReadonlyArray<Record<string, unknown>>,
+  stackItems: ReadonlyArray<{ props: { dataKey?: DataKey<any> } }>,
+  offsetType: StackOffsetType,
+): ReadonlyArray<Series<Record<string, unknown>, string>> => {
+  const dataKeys = stackItems.map(item => item.props.dataKey);
+  const offsetAccessor: OffsetAccessor = STACK_OFFSET_MAP[offsetType];
+  const stack = shapeStack<Record<string, unknown>>()
+    // @ts-expect-error stack.keys type wants an array of strings, but we provide array of DataKeys
     .keys(dataKeys)
     .value((d, key) => +getValueByDataKey(d, key, 0))
     .order(stackOrderNone)
-    .offset(STACK_OFFSET_MAP[offsetType]);
+    // @ts-expect-error definitelytyped types are incorrect
+    .offset(offsetAccessor);
 
   return stack(data);
 };
