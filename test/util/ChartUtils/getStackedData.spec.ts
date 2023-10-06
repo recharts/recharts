@@ -2,7 +2,7 @@ import { Series, SeriesPoint } from 'victory-vendor/d3-shape';
 import { getStackedData, offsetSign } from '../../../src/util/ChartUtils';
 import { DataKey, StackOffsetType } from '../../../src/util/types';
 
-function dk(dataKey: DataKey<any>) {
+function createDataKeyProps(dataKey: DataKey<any>) {
   return { props: { dataKey } };
 }
 
@@ -104,13 +104,21 @@ describe('getStackedData', () => {
   });
 
   it('should return one empty array for each dataKey even if it is not part of the data', () => {
-    const result = getStackedData([], [dk('x'), dk('y'), dk('z')], 'none');
+    const result = getStackedData(
+      [],
+      [createDataKeyProps('x'), createDataKeyProps('y'), createDataKeyProps('z')],
+      'none',
+    );
     const expected = [createSeries('x', 0), createSeries('y', 1), createSeries('z', 2)];
     expect(result).toEqual(expected);
   });
 
   it('should return one empty array for each data key even if it is not part of the data', () => {
-    const result = getStackedData([], [dk('x'), dk('y'), dk('z')], 'none');
+    const result = getStackedData(
+      [],
+      [createDataKeyProps('x'), createDataKeyProps('y'), createDataKeyProps('z')],
+      'none',
+    );
     const expected = [createSeries('x', 0), createSeries('y', 1), createSeries('z', 2)];
     expect(result).toEqual(expected);
   });
@@ -118,7 +126,7 @@ describe('getStackedData', () => {
   const allOffsets: StackOffsetType[] = ['expand', 'none', 'positive', 'sign', 'silhouette', 'wiggle'];
   describe.each(allOffsets)('with offset %s', offset => {
     it('should stack numerical data', () => {
-      const dataKeys = [dk('uv'), dk('pv')];
+      const dataKeys = [createDataKeyProps('uv'), createDataKeyProps('pv')];
       const result = getStackedData(mockData, dataKeys, offset);
       expect(result).toHaveLength(dataKeys.length);
       result.forEach(series => {
@@ -133,7 +141,7 @@ describe('getStackedData', () => {
     });
 
     it('should stack data when dataKey is a function', () => {
-      const dataKeys = [dk(o => o.uv + 100), dk(o => o.pv - 100)];
+      const dataKeys = [createDataKeyProps(o => o.uv + 100), createDataKeyProps(o => o.pv - 100)];
       const result = getStackedData(mockData, dataKeys, offset);
       expect(result).toHaveLength(dataKeys.length);
       result.forEach(series => {
@@ -149,7 +157,7 @@ describe('getStackedData', () => {
   });
 
   it('should stack numerical data with offset: none', () => {
-    const result = getStackedData(mockData, [dk('uv'), dk('pv')], 'none');
+    const result = getStackedData(mockData, [createDataKeyProps('uv'), createDataKeyProps('pv')], 'none');
     const firstSeries = createSeries('uv', 0, [
       createSeriesPoint(0, 590, mockData[0]),
       createSeriesPoint(0, 868, mockData[1]),
@@ -163,7 +171,11 @@ describe('getStackedData', () => {
   });
 
   it('should stack numerical data with offset: sign', () => {
-    const result = getStackedData(dataWithNegativeNumbers, [dk('uv'), dk('pv')], 'sign');
+    const result = getStackedData(
+      dataWithNegativeNumbers,
+      [createDataKeyProps('uv'), createDataKeyProps('pv')],
+      'sign',
+    );
     const uvSeries = createSeries('uv', 0, [
       createSeriesPoint(0, 4000, dataWithNegativeNumbers[0]),
       createSeriesPoint(0, -3000, dataWithNegativeNumbers[1]),
@@ -187,7 +199,7 @@ describe('getStackedData', () => {
   });
 
   it('with offset: positive should ignore all negative data points', () => {
-    const dataKeys = [dk('uv'), dk('pv')];
+    const dataKeys = [createDataKeyProps('uv'), createDataKeyProps('pv')];
     const result = getStackedData(dataWithNegativeNumbers, dataKeys, 'positive');
     const uvSeries = createSeries('uv', 0, [
       createSeriesPoint(0, 4000, dataWithNegativeNumbers[0]),
@@ -212,7 +224,11 @@ describe('getStackedData', () => {
   });
 
   it('should stack data when dataKey is a function with offset: none', () => {
-    const result = getStackedData(mockData, [dk(o => o.uv + 100), dk(o => o.pv - 100)], 'none');
+    const result = getStackedData(
+      mockData,
+      [createDataKeyProps(o => o.uv + 100), createDataKeyProps(o => o.pv - 100)],
+      'none',
+    );
     const firstSeries = createSeries('uv', 0, [
       createSeriesPoint(0, 690, mockData[0]),
       createSeriesPoint(0, 968, mockData[1]),
@@ -249,7 +265,7 @@ describe('getStackedData', () => {
         name: 'z',
       },
     ];
-    const result = getStackedData(mockCategoryData, [dk('x')], 'positive');
+    const result = getStackedData(mockCategoryData, [createDataKeyProps('x')], 'positive');
     const expected = [
       createSeries('x', 0, [
         createSeriesPoint(0, 0, mockCategoryData[0]),
@@ -277,7 +293,7 @@ describe('getStackedData', () => {
         },
       },
     ];
-    const result = getStackedData(mockCategoryData, [dk('x')], 'sign');
+    const result = getStackedData(mockCategoryData, [createDataKeyProps('x')], 'sign');
     const expected = [
       createSeries('x', 0, [
         createSeriesPoint(0, 0, mockCategoryData[0]),
