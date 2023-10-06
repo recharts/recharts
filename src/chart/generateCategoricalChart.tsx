@@ -2280,6 +2280,17 @@ export const generateCategoricalChart = ({
               graphicalItem: { ...graphicalItem, childIndex },
               payload: graphicalItem.props.data[activeIndex],
             };
+          } else if (itemDisplayName === 'Scatter') {
+            const activeScatterIndex = item.props.data.findIndex((datum: typeof activeItem.payload) => {
+              return _.isEqual(activeItem.payload, datum);
+            });
+
+            const childIndex = item.props.activeIndex === undefined ? activeScatterIndex : item.props.activeIndex;
+
+            return {
+              graphicalItem: { ...graphicalItem, childIndex },
+              payload: item.props.data[activeScatterIndex],
+            };
           }
         }
       }

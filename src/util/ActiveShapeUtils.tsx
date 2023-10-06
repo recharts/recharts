@@ -4,16 +4,24 @@ import { Rectangle } from '../shape/Rectangle';
 import { Trapezoid } from '../shape/Trapezoid';
 import { Sector } from '../shape/Sector';
 import { Layer } from '../container/Layer';
+import { Symbols, Props as SymbolsProps } from '../shape/Symbols';
 
-type ShapeType = 'trapezoid' | 'rectangle' | 'sector';
+type ShapeType = 'trapezoid' | 'rectangle' | 'sector' | 'symbols';
 
 export type ShapeProps<OptionType, ExtraProps, ShapePropsType> = {
   shapeType: ShapeType;
   option: OptionType;
-  propTransformer: (option: OptionType, props: ExtraProps) => ShapePropsType;
   isActive: boolean;
   activeClassName?: string;
+  propTransformer?: (option: OptionType, props: ExtraProps) => ShapePropsType;
 } & ExtraProps;
+
+function defaultPropTransformer<OptionType, ExtraProps, ShapePropsType>(option: OptionType, props: ExtraProps) {
+  return {
+    ...props,
+    ...option,
+  } as unknown as ShapePropsType;
+}
 
 function ShapeSelector<ShapePropsType>({
   shapeType,
@@ -29,6 +37,8 @@ function ShapeSelector<ShapePropsType>({
       return <Trapezoid {...elementProps} />;
     case 'sector':
       return <Sector {...elementProps} />;
+    case 'symbols':
+      return <Symbols {...(elementProps as unknown as SymbolsProps)} />;
     default:
       return null;
   }
@@ -37,7 +47,7 @@ function ShapeSelector<ShapePropsType>({
 export function Shape<OptionType, ExtraProps, ShapePropsType>({
   option,
   shapeType,
-  propTransformer = (arg1, arg2) => ({ ...arg1, ...arg2 } as unknown as ShapePropsType),
+  propTransformer = defaultPropTransformer,
   activeClassName = 'recharts-active-shape',
   isActive,
   ...props
