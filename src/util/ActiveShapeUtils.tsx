@@ -5,6 +5,7 @@ import { Trapezoid } from '../shape/Trapezoid';
 import { Sector } from '../shape/Sector';
 import { Layer } from '../container/Layer';
 import { GraphicalItem } from '../chart/generateCategoricalChart';
+import { Symbols, SymbolsProps } from '../shape/Symbols';
 
 /**
  * This is an abstraction for rendering a user defined prop for a customized shape in several forms.
@@ -14,7 +15,7 @@ import { GraphicalItem } from '../chart/generateCategoricalChart';
  *  - a render prop(inline function that returns jsx)
  *  - a react element
  */
-type ShapeType = 'trapezoid' | 'rectangle' | 'sector';
+type ShapeType = 'trapezoid' | 'rectangle' | 'sector' | 'symbols';
 
 export type ShapeProps<OptionType, ExtraProps, ShapePropsType> = {
   shapeType: ShapeType;
@@ -45,6 +46,8 @@ function ShapeSelector<ShapePropsType>({
       return <Trapezoid {...elementProps} />;
     case 'sector':
       return <Sector {...elementProps} />;
+    case 'symbols':
+      return <Symbols {...(elementProps as unknown as SymbolsProps)} />;
     default:
       return null;
   }
@@ -84,8 +87,6 @@ export function Shape<OptionType, ExtraProps, ShapePropsType>({
  * This is an abstraction to handle identifying the active index from a tooltip mouse interaction
  */
 type GraphicalItemShapeKey = 'trapezoids' | 'sectors' | 'points';
-
-export type ItemDisplayName = 'Funnel' | 'Pie' | 'Scatter';
 
 type FunnelItem = {
   x: number;

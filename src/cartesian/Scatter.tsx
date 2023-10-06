@@ -11,14 +11,12 @@ import { findAllByType, filterProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { ZAxis, Props as ZAxisProps } from './ZAxis';
 import { Curve, Props as CurveProps, CurveType } from '../shape/Curve';
-import { Symbols, Props as SymbolsProps } from '../shape/Symbols';
 import { ErrorBar } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { uniqueId, interpolateNumber, getLinearRegression } from '../util/DataUtils';
 import { getValueByDataKey, getCateCoordinateOfLine } from '../util/ChartUtils';
 import {
   LegendType,
-  SymbolType,
   AnimationTiming,
   D3Scale,
   ChartOffset,
@@ -27,10 +25,14 @@ import {
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
   AnimationDuration,
+  ActiveShape,
+  SymbolType,
 } from '../util/types';
 import { TooltipType } from '../component/DefaultTooltipContent';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
+import { ScatterSymbol } from '../util/ScatterUtils';
+import { InnerSymbolsProp } from '../shape/Symbols';
 
 interface ScattterPointNode {
   x?: number | string;
@@ -45,6 +47,8 @@ export interface ScatterPointItem {
   node?: ScattterPointNode;
   payload?: any;
 }
+
+export type ScatterCustomizedShape = ActiveShape<ScatterPointItem, SVGPathElement & InnerSymbolsProp> | SymbolType;
 
 interface ScatterProps {
   data?: any[];
@@ -72,8 +76,8 @@ interface ScatterProps {
   name?: string | number;
 
   activeIndex?: number;
-  activeShape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | SymbolsProps;
-  shape?: SymbolType | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
+  activeShape?: ScatterCustomizedShape;
+  shape?: ScatterCustomizedShape;
   points?: ScatterPointItem[];
   hide?: boolean;
   label?: ImplicitLabelListType<any>;
@@ -258,25 +262,13 @@ export class Scatter extends PureComponent<Props, State> {
 
   id = uniqueId('recharts-scatter-');
 
-  static renderSymbolItem(option: Props['activeShape'] | Props['shape'], props: any) {
-    let symbol;
-
-    if (React.isValidElement(option)) {
-      symbol = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
-      symbol = option(props);
-    } else if (typeof option === 'string') {
-      symbol = <Symbols {...props} type={option} />;
-    }
-
-    return symbol;
-  }
-
   renderSymbolsStatically(points: ScatterPointItem[]) {
     const { shape, activeShape, activeIndex } = this.props;
     const baseProps = filterProps(this.props);
 
     return points.map((entry, i) => {
+      const isActive = activeIndex === i;
+      const option = isActive ? activeShape : shape;
       const props = { key: `symbol-${i}`, ...baseProps, ...entry };
 
       return (
@@ -286,7 +278,7 @@ export class Scatter extends PureComponent<Props, State> {
           key={`symbol-${i}`} // eslint-disable-line react/no-array-index-key
           role="img"
         >
-          {Scatter.renderSymbolItem(activeIndex === i ? activeShape : shape, props)}
+          <ScatterSymbol option={option} isActive={isActive} {...props} />
         </Layer>
       );
     });
