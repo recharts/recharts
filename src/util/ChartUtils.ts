@@ -251,6 +251,13 @@ export const getLegendProps = ({
     item: legendItem,
   };
 };
+
+export type BarSize = {
+  barSize: number | string;
+  stackList: ReadonlyArray<ReactElement>;
+  item: ReactElement;
+};
+
 /**
  * Calculate the size of all groups for stacked bar graph
  * @param  {Object} stackGroups The items grouped by axisId and stackId
@@ -262,12 +269,12 @@ export const getBarSizeList = ({
 }: {
   barSize: number | string;
   stackGroups: any;
-}) => {
+}): Record<string, ReadonlyArray<BarSize>> => {
   if (!stackGroups) {
     return {};
   }
 
-  const result: Record<string, any> = {};
+  const result: Record<string, Array<BarSize>> = {};
   const numericAxisIds = Object.keys(stackGroups);
 
   for (let i = 0, len = numericAxisIds.length; i < len; i++) {
@@ -299,12 +306,36 @@ export const getBarSizeList = ({
   return result;
 };
 
+export type BarPosition = {
+  item: ReactElement;
+  position: {
+    /**
+     * Offset is returned always from zero position.
+     * So in a way it's "absolute".
+     *
+     * NOT inbetween bars, but always from zero.
+     */
+    offset: number;
+    /**
+     * Size of the bar.
+     * This will be usually a number.
+     * But if the input data is not well formed, undefined or NaN will be on the output too.
+     */
+    size: number | undefined | typeof NaN;
+  };
+};
+
 /**
- * Calculate the size of each bar and the gap between two bars
- * @param  {Number} bandSize  The size of each category
- * @param  {sizeList} sizeList  The size of all groups
- * @param  {maxBarSize} maxBarSize The maximum size of bar
- * @return {Number} The size of each bar and the gap between two bars
+ * Calculate the size of each bar and offset between start of band and the bar
+ *
+ * @param  {number} bandSize is the size of area where bars can render
+ * @param  {number | string} barGap is the gap size, as a percentage of `bandSize`.
+ *                                  Can be defined as number or percent string
+ * @param  {number | string} barCategoryGap is the gap size, as a percentage of `bandSize`.
+ *                                  Can be defined as number or percent string
+ * @param  {Array<object>} sizeList Sizes of all groups
+ * @param  {number} maxBarSize The maximum size of each bar
+ * @return {Array<object>} The size and offset of each bar
  */
 export const getBarPosition = ({
   barGap,
@@ -316,19 +347,21 @@ export const getBarPosition = ({
   barGap: string | number;
   barCategoryGap: string | number;
   bandSize: number;
-  sizeList: Array<any>;
+  sizeList: ReadonlyArray<BarSize>;
   maxBarSize: number;
-}) => {
+}): ReadonlyArray<BarPosition> => {
   const len = sizeList.length;
   if (len < 1) return null;
 
   let realBarGap = getPercentValue(barGap, bandSize, 0, true);
-  let result;
+  let result: ReadonlyArray<BarPosition>;
+  const initialValue: ReadonlyArray<BarPosition> = [];
 
   // whether or not is barSize setted by user
   if (sizeList[0].barSize === +sizeList[0].barSize) {
     let useFull = false;
     let fullBarSize = bandSize / len;
+    // @ts-expect-error the type check above does not check for type number explicitly
     let sum = sizeList.reduce((res, entry) => res + entry.barSize || 0, 0);
     sum += (len - 1) * realBarGap;
 
@@ -343,29 +376,28 @@ export const getBarPosition = ({
     }
 
     const offset = ((bandSize - sum) / 2) >> 0;
-    let prev = { offset: offset - realBarGap, size: 0 };
+    let prev: BarPosition['position'] = { offset: offset - realBarGap, size: 0 };
 
     result = sizeList.reduce((res, entry) => {
-      const newRes = [
-        ...res,
-        {
-          item: entry.item,
-          position: {
-            offset: prev.offset + prev.size + realBarGap,
-            size: useFull ? fullBarSize : entry.barSize,
-          },
+      const newPosition: BarPosition = {
+        item: entry.item,
+        position: {
+          offset: prev.offset + prev.size + realBarGap,
+          // @ts-expect-error the type check above does not check for type number explicitly
+          size: useFull ? fullBarSize : entry.barSize,
         },
-      ];
+      };
+      const newRes: Array<BarPosition> = [...res, newPosition];
 
       prev = newRes[newRes.length - 1].position;
 
       if (entry.stackList && entry.stackList.length) {
-        entry.stackList.forEach((item: any) => {
+        entry.stackList.forEach(item => {
           newRes.push({ item, position: prev });
         });
       }
       return newRes;
-    }, []);
+    }, initialValue);
   } else {
     const offset = getPercentValue(barCategoryGap, bandSize, 0, true);
 
@@ -392,12 +424,12 @@ export const getBarPosition = ({
       ];
 
       if (entry.stackList && entry.stackList.length) {
-        entry.stackList.forEach((item: any) => {
+        entry.stackList.forEach(item => {
           newRes.push({ item, position: newRes[newRes.length - 1].position });
         });
       }
       return newRes;
-    }, []);
+    }, initialValue);
   }
 
   return result;
@@ -1194,8 +1226,14 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
  * @param  {Boolean} isBar if items in axis are bars
  * @return {Number} Size
  */
-export const getBandSizeOfAxis = (axis?: any, ticks?: Array<TickItem>, isBar?: boolean) => {
+export const getBandSizeOfAxis = (
+  axis?: BaseAxisProps,
+  ticks?: Array<TickItem>,
+  isBar?: boolean,
+): number | undefined => {
+  // @ts-expect-error we need to rethink scale type
   if (axis && axis.scale && axis.scale.bandwidth) {
+    // @ts-expect-error we need to rethink scale type
     const bandWidth = axis.scale.bandwidth();
 
     if (!isBar || bandWidth > 0) {

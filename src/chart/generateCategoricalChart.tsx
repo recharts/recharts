@@ -50,6 +50,7 @@ import {
   parseSpecifiedDomain,
   parseDomainOfCategoryAxis,
   getTooltipItem,
+  BarPosition,
 } from '../util/ChartUtils';
 import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDomain';
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
@@ -887,12 +888,12 @@ export const generateCategoricalChart = ({
         getStackedDataOfItem(item, stackGroups[numericAxisId].stackGroups);
       const itemIsBar = getDisplayName(item.type).indexOf('Bar') >= 0;
       const bandSize = getBandSizeOfAxis(cateAxis, cateTicks);
-      let barPosition = [];
+      let barPosition: ReadonlyArray<BarPosition> = [];
 
       if (itemIsBar) {
         // 如果是bar，计算bar的位置
-        const maxBarSize = _.isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
-        const barBandSize = getBandSizeOfAxis(cateAxis, cateTicks, true) ?? maxBarSize ?? 0;
+        const maxBarSize: number = _.isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
+        const barBandSize: number = getBandSizeOfAxis(cateAxis, cateTicks, true) ?? maxBarSize ?? 0;
         barPosition = getBarPosition({
           barGap,
           barCategoryGap,
@@ -902,7 +903,7 @@ export const generateCategoricalChart = ({
         });
 
         if (barBandSize !== bandSize) {
-          barPosition = barPosition.map((pos: { item: any; position: { offset: number; size: number } }) => ({
+          barPosition = barPosition.map(pos => ({
             ...pos,
             position: { ...pos.position, offset: pos.position.offset - barBandSize / 2 },
           }));
