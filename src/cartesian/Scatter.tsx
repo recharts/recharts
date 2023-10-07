@@ -32,6 +32,7 @@ import { TooltipType } from '../component/DefaultTooltipContent';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { ScatterSymbol } from '../util/ScatterUtils';
+import { InnerSymbolsProp } from '../shape/Symbols';
 
 interface ScattterPointNode {
   x?: number | string;
@@ -46,6 +47,8 @@ export interface ScatterPointItem {
   node?: ScattterPointNode;
   payload?: any;
 }
+
+export type ScatterCustomizedShape = ActiveShape<ScatterPointItem, SVGPathElement & InnerSymbolsProp> | SymbolType;
 
 interface ScatterProps {
   data?: any[];
@@ -73,8 +76,8 @@ interface ScatterProps {
   name?: string | number;
 
   activeIndex?: number;
-  activeShape?: ActiveShape<ScatterPointItem> | SymbolType;
-  shape?: ActiveShape<ScatterPointItem> | SymbolType;
+  activeShape?: ScatterCustomizedShape;
+  shape?: ScatterCustomizedShape;
   points?: ScatterPointItem[];
   hide?: boolean;
   label?: ImplicitLabelListType<any>;

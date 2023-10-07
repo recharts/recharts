@@ -134,6 +134,32 @@ describe('ScatterChart of two dimension data', () => {
     expect(activeSector).toHaveLength(1);
   });
 
+  test('Renders customized active shape when activeShape set to be an object as symbols props', () => {
+    const { container } = render(
+      <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <XAxis dataKey="x" name="stature" unit="cm" />
+        <YAxis dataKey="y" name="weight" unit="kg" />
+        <Scatter
+          line
+          name="A school"
+          data={data}
+          fill="#ff7300"
+          activeShape={{ type: 'triangle', className: 'triangle-symbols-type', fill: 'red' }}
+        />
+        <Tooltip />
+      </ScatterChart>,
+    );
+
+    const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
+    const [sector] = Array.from(sectorNodes);
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+
+    mouseOverEvent.fire();
+
+    const activeSector = container.querySelectorAll('.triangle-symbols-type');
+    expect(activeSector).toHaveLength(1);
+  });
+
   test('Renders customized active shape when activeShape set to be a function', () => {
     const { container } = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>

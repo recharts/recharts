@@ -4,7 +4,7 @@ import { Rectangle } from '../shape/Rectangle';
 import { Trapezoid } from '../shape/Trapezoid';
 import { Sector } from '../shape/Sector';
 import { Layer } from '../container/Layer';
-import { Symbols, Props as SymbolsProps } from '../shape/Symbols';
+import { Symbols, SymbolsProps } from '../shape/Symbols';
 
 type ShapeType = 'trapezoid' | 'rectangle' | 'sector' | 'symbols';
 
