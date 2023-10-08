@@ -149,6 +149,7 @@
     "reassure": "^0.9.1",
     "rimraf": "^3.0.2",
     "storybook": "^7.4.6",
+    "storybook-addon-performance": "^0.17.1",
     "terser-webpack-plugin": "^5.1.1",
     "ts-jest": "^27.1.5",
     "ts-loader": "^8.0.12",
