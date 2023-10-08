@@ -28,6 +28,13 @@ export const Simple = {
   args: {
     ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     data: pageData,
+    layout: 'horizontal',
+    margin: {
+      top: 0,
+      bottom: 0,
+      left: 50,
+      right: 50,
+    },
   },
 };
 
@@ -46,6 +53,13 @@ export const CustomType = {
   args: {
     ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     data: pageData,
+    layout: 'horizontal',
+    margin: {
+      top: 0,
+      bottom: 0,
+      left: 50,
+      right: 50,
+    },
   },
 };
 
