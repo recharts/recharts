@@ -32,6 +32,7 @@ export const Simple: Meta<ScatterProps> = {
   render: args => {
     const data = [
       { x: 100, y: 200, z: 200 },
+      { x: 100, y: 200, z: 200 },
       { x: 120, y: 100, z: 260 },
       { x: 170, y: 300, z: 400 },
       { x: 140, y: 250, z: 280 },
