@@ -13,6 +13,12 @@ const pageData: PageDataType[] = [
     amt: 1400,
   },
   {
+    name: 'Page A',
+    uv: 590,
+    pv: 800,
+    amt: 1400,
+  },
+  {
     name: 'Page B',
     uv: 868,
     pv: 967,

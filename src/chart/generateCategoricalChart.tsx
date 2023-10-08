@@ -2283,8 +2283,20 @@ export const generateCategoricalChart = ({
           } else if (itemDisplayName === 'Pie') {
             const tooltipPayload = activeItem.tooltipPayload?.[0].payload.payload;
 
-            const activePieIndex = item.props.data.findIndex((datum: typeof tooltipPayload) => {
-              return _.isEqual(tooltipPayload, datum);
+            const activePieIndex = item.props.data.findIndex((datum: typeof tooltipPayload, dataIndex: number) => {
+              const valuesMatch = _.isEqual(tooltipPayload, datum);
+
+              const indexOfMouseCoordinates = graphicalItem.props.sectors.findIndex(
+                (sector: { endAngle: number; startAngle: number }) => {
+                  const startAngleMatches = sector.endAngle === activeItem.endAngle;
+                  const endAngleMatches = sector.startAngle === activeItem.startAngle;
+                  return startAngleMatches && endAngleMatches;
+                },
+              );
+
+              const coordinatesMatch = dataIndex === indexOfMouseCoordinates;
+
+              return valuesMatch && coordinatesMatch;
             });
 
             const childIndex = item.props.activeIndex === undefined ? activePieIndex : item.props.activeIndex;
