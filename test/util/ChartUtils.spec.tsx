@@ -15,7 +15,7 @@ import {
   parseSpecifiedDomain,
   getTicksOfAxis,
 } from '../../src/util/ChartUtils';
-import { DataKey } from '../../src/util/types';
+import { BaseAxisProps, DataKey } from '../../src/util/types';
 
 describe('getTicksForAxis', () => {
   const Y_AXIS_EXAMPLE = {
@@ -64,7 +64,7 @@ describe('getTicksForAxis', () => {
   };
 
   it('Returns null for null', () => {
-    expect(getTicksOfAxis(null)).toBeNull();
+    expect(getTicksOfAxis(null as never)).toBeNull();
   });
 
   it(`Ticks without a valid coordinate are filtered out,
@@ -175,7 +175,7 @@ describe('getBandSizeOfAxis', () => {
   });
 
   it('DataUtils.getBandSizeOfAxis({ type: "category", scale }) should return 0 ', () => {
-    const axis = {
+    const axis: BaseAxisProps = {
       type: 'category',
       scale: scaleBand().domain(['0', '1', '2', '3']).range([0, 100]),
     };
@@ -183,7 +183,7 @@ describe('getBandSizeOfAxis', () => {
   });
 
   it('DataUtils.getBandSizeOfAxis({ type: "number", scale }, ticks) should return 0 ', () => {
-    const axis = { type: 'number' };
+    const axis: BaseAxisProps = { type: 'number' };
     const ticks = [{ coordinate: 13 }, { coordinate: 15 }, { coordinate: 20 }];
     expect(getBandSizeOfAxis(axis, ticks)).toBe(2);
   });
