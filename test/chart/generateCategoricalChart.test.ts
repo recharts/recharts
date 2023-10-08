@@ -1,3 +1,4 @@
+import { ReactElement } from 'react';
 import { getAxisMapByAxes, CategoricalChartProps } from '../../src/chart/generateCategoricalChart';
 
 const data = [
@@ -40,7 +41,8 @@ const data = [
 ];
 
 describe('generateCategoricalChart', () => {
-  const graphicalItems = [
+  const graphicalItems: ReadonlyArray<ReactElement> = [
+    // @ts-expect-error this isn't a proper ReactElement
     {
       props: {
         type: 'monotone',
@@ -80,13 +82,15 @@ describe('generateCategoricalChart', () => {
     allowDuplicatedCategory: true,
   };
 
-  const xAxes = [
+  const xAxes: ReadonlyArray<ReactElement> = [
+    // @ts-expect-error this isn't a proper ReactElement
     {
       props: { ...axisProps, xAxisId: 0, dataKey: 'name' },
     },
   ];
 
-  const yAxes = [
+  const yAxes: ReadonlyArray<ReactElement> = [
+    // @ts-expect-error this isn't a proper ReactElement
     {
       props: {
         ...axisProps,
