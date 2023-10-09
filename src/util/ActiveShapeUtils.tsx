@@ -5,6 +5,14 @@ import { Trapezoid } from '../shape/Trapezoid';
 import { Sector } from '../shape/Sector';
 import { Layer } from '../container/Layer';
 
+/**
+ * This is an abstraction for rendering a user defined prop for a customized shape in several forms.
+ * It will handle taking in:
+ *  - an object of svg properties
+ *  - a boolean
+ *  - a render prop(inline function that returns jsx)
+ *  - a react element
+ */
 type ShapeType = 'trapezoid' | 'rectangle' | 'sector';
 
 export type ShapeProps<OptionType, ExtraProps, ShapePropsType> = {
@@ -69,4 +77,87 @@ export function Shape<OptionType, ExtraProps, ShapePropsType>({
   }
 
   return shape;
+}
+
+/**
+ * This is an abstraction to handle identifying the active index from a tooltip mouse interaction
+ */
+type GraphicalItemShapeKey = 'trapezoids' | 'sectors';
+
+type ItemDisplayName = 'Funnel' | 'Pie' | 'Scatter';
+
+type ActiveTooltipItem = {
+  startAngle: number;
+  endAngle: number;
+  x: number;
+  y: number;
+  labelViewBox: { x: number; y: number };
+  tooltipPayload: Array<{ payload: { payload: any } }>;
+};
+
+type GetActiveShapeIndexForTooltip = {
+  itemDisplayName: ItemDisplayName;
+  activeTooltipItem: ActiveTooltipItem;
+  graphicalItem: {
+    props: Record<GraphicalItemShapeKey, unknown[]>;
+  };
+  itemData: unknown[];
+};
+
+function getShapeDataKey(itemDisplayName: ItemDisplayName): GraphicalItemShapeKey {
+  let shapeKey: GraphicalItemShapeKey;
+
+  if (itemDisplayName === 'Funnel') {
+    shapeKey = 'trapezoids';
+  } else if (itemDisplayName === 'Pie') {
+    shapeKey = 'sectors';
+  }
+
+  return shapeKey;
+}
+
+/**
+ *
+ * @param {GetActiveShapeIndexForTooltip} an object of incoming attributes from Tooltip
+ * @returns {number}
+ *
+ * To handle possible duplicates in the data set,
+ * match both the data value of the active item to a data value on a graph item,
+ * and match the mouse coordinates of the active item to the coordinates of in a particular components shape data.
+ * This assumes equal lengths of shape objects to data items.
+ */
+export function getActiveShapeIndexForTooltip({
+  itemDisplayName,
+  activeTooltipItem,
+  graphicalItem,
+  itemData,
+}: GetActiveShapeIndexForTooltip): number {
+  const shapeKey = getShapeDataKey(itemDisplayName);
+
+  const tooltipPayload = activeTooltipItem.tooltipPayload?.[0].payload.payload;
+
+  const activeIndex = itemData.findIndex((datum: any, dataIndex: number) => {
+    const valuesMatch = _.isEqual(tooltipPayload, datum);
+
+    const indexOfMouseCoordinates = graphicalItem.props[shapeKey].findIndex((shapeData: typeof tooltipPayload) => {
+      if (itemDisplayName === 'Funnel') {
+        const xMatches = shapeData.x === activeTooltipItem.labelViewBox.x || shapeData.x === activeTooltipItem.x;
+        const yMatches = shapeData.y === activeTooltipItem.labelViewBox.y || shapeData.y === activeTooltipItem.y;
+        return xMatches && yMatches;
+      }
+
+      if (itemDisplayName === 'Pie') {
+        const startAngleMatches = shapeData.endAngle === activeTooltipItem.endAngle;
+        const endAngleMatches = shapeData.startAngle === activeTooltipItem.startAngle;
+        return startAngleMatches && endAngleMatches;
+      }
+      return false;
+    });
+
+    const coordinatesMatch = dataIndex === indexOfMouseCoordinates;
+
+    return valuesMatch && coordinatesMatch;
+  });
+
+  return activeIndex;
 }

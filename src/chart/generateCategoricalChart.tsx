@@ -73,6 +73,7 @@ import {
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { deferer, CancelFunction } from '../util/deferer';
+import { getActiveShapeIndexForTooltip } from '../util/ActiveShapeUtils';
 
 export type GraphicalItem<Props = Record<string, any>> = ReactElement<
   Props,
@@ -2146,11 +2147,13 @@ export const generateCategoricalChart = ({
           }
         } else {
           /**
-           * We hit this block if consumer uses a Tooltip without XAxis and/or YAxis.
-           * In which case, this.state.activeTooltipIndex never gets set
-           * because the mouse events that trigger that value getting set never get trigged without the axis components.
+           * We hit this block if consumer uses a Tooltip and this.state.activeTooltipIndex never gets set
            *
-           * An example usage case is a FunnelChart
+           * One example is usage of Tooltip without XAxis and/or YAxis.
+           * The mouse events that normally trigger this.state.activeTooltipIndex getting set
+           * never get trigged without the axis components.
+           *
+           * An example usage case is a FunnelChart/Pie/Scatter
            */
           const {
             graphicalItem: { item: xyItem = element, childIndex },
@@ -2251,27 +2254,12 @@ export const generateCategoricalChart = ({
             if (activeBarItem) {
               return { graphicalItem, payload: activeBarItem };
             }
-          } else if (itemDisplayName === 'Funnel') {
-            /*
-             * To handle possible duplicates in the data set,
-             * match both the data value of the active item to a data value on a graph item,
-             * and match the mouse coordinates of the active item to the coordinates of a trapezoid.
-             * This assumes equal lengths of trapezoids on a funnel to data items.
-             */
-            const activeIndex = item.props.data.findIndex((funnelData: { value: string }, dataIndex: number) => {
-              const valuesMatch = funnelData.value === activeItem.payload.value;
-
-              const indexOfMouseCoordinates = graphicalItem.props.trapezoids.findIndex(
-                (trapezoid: { x: number; y: number }) => {
-                  const xMatches = trapezoid.x === activeItem.labelViewBox.x || trapezoid.x === activeItem.x;
-                  const yMatches = trapezoid.y === activeItem.labelViewBox.y || trapezoid.y === activeItem.y;
-                  return xMatches && yMatches;
-                },
-              );
-
-              const coordinatesMatch = dataIndex === indexOfMouseCoordinates;
-
-              return valuesMatch && coordinatesMatch;
+          } else if (itemDisplayName === 'Funnel' || itemDisplayName === 'Pie') {
+            const activeIndex = getActiveShapeIndexForTooltip({
+              itemDisplayName,
+              graphicalItem,
+              activeTooltipItem: activeItem,
+              itemData: item.props.data,
             });
 
             const childIndex = item.props.activeIndex === undefined ? activeIndex : item.props.activeIndex;
@@ -2279,31 +2267,6 @@ export const generateCategoricalChart = ({
             return {
               graphicalItem: { ...graphicalItem, childIndex },
               payload: graphicalItem.props.data[activeIndex],
-            };
-          } else if (itemDisplayName === 'Pie') {
-            const tooltipPayload = activeItem.tooltipPayload?.[0].payload.payload;
-
-            const activePieIndex = item.props.data.findIndex((datum: typeof tooltipPayload, dataIndex: number) => {
-              const valuesMatch = _.isEqual(tooltipPayload, datum);
-
-              const indexOfMouseCoordinates = graphicalItem.props.sectors.findIndex(
-                (sector: { endAngle: number; startAngle: number }) => {
-                  const startAngleMatches = sector.endAngle === activeItem.endAngle;
-                  const endAngleMatches = sector.startAngle === activeItem.startAngle;
-                  return startAngleMatches && endAngleMatches;
-                },
-              );
-
-              const coordinatesMatch = dataIndex === indexOfMouseCoordinates;
-
-              return valuesMatch && coordinatesMatch;
-            });
-
-            const childIndex = item.props.activeIndex === undefined ? activePieIndex : item.props.activeIndex;
-
-            return {
-              graphicalItem: { ...graphicalItem, childIndex },
-              payload: graphicalItem.props.data[activePieIndex],
             };
           }
         }
