@@ -2147,13 +2147,11 @@ export const generateCategoricalChart = ({
           }
         } else {
           /**
-           * We hit this block if consumer uses a Tooltip and this.state.activeTooltipIndex never gets set
+           * We hit this block if consumer uses a Tooltip without XAxis and/or YAxis.
+           * In which case, this.state.activeTooltipIndex never gets set
+           * because the mouse events that trigger that value getting set never get trigged without the axis components.
            *
-           * One example is usage of Tooltip without XAxis and/or YAxis.
-           * The mouse events that normally trigger this.state.activeTooltipIndex getting set
-           * never get trigged without the axis components.
-           *
-           * An example usage case is a FunnelChart/Pie/Scatter
+           * An example usage case is a FunnelChart
            */
           const {
             graphicalItem: { item: xyItem = element, childIndex },
@@ -2254,7 +2252,7 @@ export const generateCategoricalChart = ({
             if (activeBarItem) {
               return { graphicalItem, payload: activeBarItem };
             }
-          } else if (itemDisplayName === 'Funnel' || itemDisplayName === 'Pie') {
+          } else if (itemDisplayName === 'Funnel' || itemDisplayName === 'Pie' || itemDisplayName === 'Scatter') {
             const activeIndex = getActiveShapeIndexForTooltip({
               itemDisplayName,
               graphicalItem,
@@ -2266,7 +2264,8 @@ export const generateCategoricalChart = ({
 
             return {
               graphicalItem: { ...graphicalItem, childIndex },
-              payload: graphicalItem.props.data[activeIndex],
+              payload:
+                itemDisplayName === 'Scatter' ? item.props.data[activeIndex] : graphicalItem.props.data[activeIndex],
             };
           }
         }

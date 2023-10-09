@@ -82,7 +82,7 @@ export function Shape<OptionType, ExtraProps, ShapePropsType>({
 /**
  * This is an abstraction to handle identifying the active index from a tooltip mouse interaction
  */
-type GraphicalItemShapeKey = 'trapezoids' | 'sectors';
+type GraphicalItemShapeKey = 'trapezoids' | 'sectors' | 'points';
 
 type ItemDisplayName = 'Funnel' | 'Pie' | 'Scatter';
 
@@ -91,7 +91,9 @@ type ActiveTooltipItem = {
   endAngle: number;
   x: number;
   y: number;
+  z: number;
   labelViewBox: { x: number; y: number };
+  payload?: any;
   tooltipPayload: Array<{ payload: { payload: any } }>;
 };
 
@@ -99,9 +101,9 @@ type GetActiveShapeIndexForTooltip = {
   itemDisplayName: ItemDisplayName;
   activeTooltipItem: ActiveTooltipItem;
   graphicalItem: {
-    props: Record<GraphicalItemShapeKey, unknown[]>;
+    props: Record<GraphicalItemShapeKey, any>;
   };
-  itemData: unknown[];
+  itemData: any;
 };
 
 function getShapeDataKey(itemDisplayName: ItemDisplayName): GraphicalItemShapeKey {
@@ -111,6 +113,8 @@ function getShapeDataKey(itemDisplayName: ItemDisplayName): GraphicalItemShapeKe
     shapeKey = 'trapezoids';
   } else if (itemDisplayName === 'Pie') {
     shapeKey = 'sectors';
+  } else if (itemDisplayName === 'Scatter') {
+    shapeKey = 'points';
   }
 
   return shapeKey;
@@ -134,15 +138,16 @@ export function getActiveShapeIndexForTooltip({
 }: GetActiveShapeIndexForTooltip): number {
   const shapeKey = getShapeDataKey(itemDisplayName);
 
-  const tooltipPayload = activeTooltipItem.tooltipPayload?.[0].payload.payload;
+  const tooltipPayload =
+    itemDisplayName === 'Scatter' ? activeTooltipItem.payload : activeTooltipItem.tooltipPayload?.[0].payload.payload;
 
-  const activeIndex = itemData.findIndex((datum: any, dataIndex: number) => {
+  const activeIndex = itemData.findLastIndex((datum: any, dataIndex: number) => {
     const valuesMatch = _.isEqual(tooltipPayload, datum);
 
-    const indexOfMouseCoordinates = graphicalItem.props[shapeKey].findIndex((shapeData: typeof tooltipPayload) => {
+    const indexOfMouseCoordinates = graphicalItem.props[shapeKey].findLastIndex((shapeData: typeof tooltipPayload) => {
       if (itemDisplayName === 'Funnel') {
-        const xMatches = shapeData.x === activeTooltipItem.labelViewBox.x || shapeData.x === activeTooltipItem.x;
-        const yMatches = shapeData.y === activeTooltipItem.labelViewBox.y || shapeData.y === activeTooltipItem.y;
+        const xMatches = shapeData.x === activeTooltipItem?.labelViewBox?.x || shapeData.x === activeTooltipItem.x;
+        const yMatches = shapeData.y === activeTooltipItem?.labelViewBox?.y || shapeData.y === activeTooltipItem.y;
         return xMatches && yMatches;
       }
 
@@ -151,6 +156,15 @@ export function getActiveShapeIndexForTooltip({
         const endAngleMatches = shapeData.startAngle === activeTooltipItem.startAngle;
         return startAngleMatches && endAngleMatches;
       }
+
+      if (itemDisplayName === 'Scatter') {
+        const xMatches = shapeData.x === activeTooltipItem.x;
+        const yMatches = shapeData.y === activeTooltipItem.y;
+        const zMatches = shapeData.z === activeTooltipItem.z;
+
+        return xMatches && yMatches && zMatches;
+      }
+
       return false;
     });
 
