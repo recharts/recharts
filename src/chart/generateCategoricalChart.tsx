@@ -73,7 +73,7 @@ import {
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { deferer, CancelFunction } from '../util/deferer';
-import { getActiveShapeIndexForTooltip } from '../util/ActiveShapeUtils';
+import { getActiveShapeIndexForTooltip, isFunnel, isPie, isScatter } from '../util/ActiveShapeUtils';
 
 export type GraphicalItem<Props = Record<string, any>> = ReactElement<
   Props,
@@ -2252,9 +2252,12 @@ export const generateCategoricalChart = ({
             if (activeBarItem) {
               return { graphicalItem, payload: activeBarItem };
             }
-          } else if (itemDisplayName === 'Funnel' || itemDisplayName === 'Pie' || itemDisplayName === 'Scatter') {
+          } else if (
+            isFunnel(graphicalItem, activeItem) ||
+            isPie(graphicalItem, activeItem) ||
+            isScatter(graphicalItem, activeItem)
+          ) {
             const activeIndex = getActiveShapeIndexForTooltip({
-              itemDisplayName,
               graphicalItem,
               activeTooltipItem: activeItem,
               itemData: item.props.data,

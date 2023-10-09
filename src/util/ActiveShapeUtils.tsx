@@ -4,6 +4,7 @@ import { Rectangle } from '../shape/Rectangle';
 import { Trapezoid } from '../shape/Trapezoid';
 import { Sector } from '../shape/Sector';
 import { Layer } from '../container/Layer';
+import { GraphicalItem } from '../chart/generateCategoricalChart';
 
 /**
  * This is an abstraction for rendering a user defined prop for a customized shape in several forms.
@@ -84,7 +85,7 @@ export function Shape<OptionType, ExtraProps, ShapePropsType>({
  */
 type GraphicalItemShapeKey = 'trapezoids' | 'sectors' | 'points';
 
-type ItemDisplayName = 'Funnel' | 'Pie' | 'Scatter';
+export type ItemDisplayName = 'Funnel' | 'Pie' | 'Scatter';
 
 type FunnelItem = {
   x: number;
@@ -115,34 +116,31 @@ type ShapeData<DisplayName extends ItemDisplayName> = DisplayName extends 'Funne
   : never;
 
 type GetActiveShapeIndexForTooltip = {
-  itemDisplayName: ItemDisplayName;
   activeTooltipItem: ShapeData<ItemDisplayName>;
-  graphicalItem: {
-    props: Record<GraphicalItemShapeKey, unknown[]>;
-  };
+  graphicalItem: GraphicalItem;
   itemData: unknown[];
 };
 
-function isFunnel(itemDisplayName: ItemDisplayName, _item: unknown): _item is FunnelItem {
-  return itemDisplayName === 'Funnel';
+export function isFunnel(graphicalItem: GraphicalItem, _item: unknown): _item is FunnelItem {
+  return 'trapezoids' in graphicalItem.props;
 }
 
-function isPie(itemDisplayName: ItemDisplayName, _item: unknown): _item is PieItem {
-  return itemDisplayName === 'Pie';
+export function isPie(graphicalItem: GraphicalItem, _item: unknown): _item is PieItem {
+  return 'sectors' in graphicalItem.props;
 }
 
-function isScatter(itemDisplayName: ItemDisplayName, _item: unknown): _item is ScatterItem {
-  return itemDisplayName === 'Scatter';
+export function isScatter(graphicalItem: GraphicalItem, _item: unknown): _item is ScatterItem {
+  return 'points' in graphicalItem.props;
 }
 
-function getShapeDataKey(itemDisplayName: ItemDisplayName): GraphicalItemShapeKey {
+function getShapeDataKey(graphicalItem: GraphicalItem, _item: unknown): GraphicalItemShapeKey {
   let shapeKey: GraphicalItemShapeKey;
 
-  if (itemDisplayName === 'Funnel') {
+  if (isFunnel(graphicalItem, _item)) {
     shapeKey = 'trapezoids';
-  } else if (itemDisplayName === 'Pie') {
+  } else if (isPie(graphicalItem, _item)) {
     shapeKey = 'sectors';
-  } else if (itemDisplayName === 'Scatter') {
+  } else if (isScatter(graphicalItem, _item)) {
     shapeKey = 'points';
   }
 
@@ -160,45 +158,42 @@ function getShapeDataKey(itemDisplayName: ItemDisplayName): GraphicalItemShapeKe
  * This assumes equal lengths of shape objects to data items.
  */
 export function getActiveShapeIndexForTooltip({
-  itemDisplayName,
   activeTooltipItem,
   graphicalItem,
   itemData,
 }: GetActiveShapeIndexForTooltip): number {
-  const shapeKey = getShapeDataKey(itemDisplayName);
+  const shapeKey = getShapeDataKey(graphicalItem, activeTooltipItem);
 
-  const tooltipPayload: Partial<ShapeData<typeof itemDisplayName>> = isScatter(itemDisplayName, activeTooltipItem)
+  const tooltipPayload: Partial<ShapeData<ItemDisplayName>> = isScatter(graphicalItem, activeTooltipItem)
     ? activeTooltipItem.payload
-    : activeTooltipItem.tooltipPayload?.[0].payload.payload;
+    : activeTooltipItem.tooltipPayload?.[0]?.payload?.payload;
 
   const activeItemMatches = itemData.filter((datum: any, dataIndex: number) => {
     const valuesMatch = _.isEqual(tooltipPayload, datum);
 
-    const mouseCoordinateMatches = graphicalItem.props[shapeKey].filter(
-      (shapeData: ShapeData<typeof itemDisplayName>) => {
-        if (isFunnel(itemDisplayName, shapeData) && isFunnel(itemDisplayName, activeTooltipItem)) {
-          const xMatches = shapeData.x === activeTooltipItem?.labelViewBox?.x || shapeData.x === activeTooltipItem.x;
-          const yMatches = shapeData.y === activeTooltipItem?.labelViewBox?.y || shapeData.y === activeTooltipItem.y;
-          return xMatches && yMatches;
-        }
+    const mouseCoordinateMatches = graphicalItem.props[shapeKey].filter((shapeData: ShapeData<ItemDisplayName>) => {
+      if (isFunnel(graphicalItem, shapeData) && isFunnel(graphicalItem, activeTooltipItem)) {
+        const xMatches = shapeData.x === activeTooltipItem?.labelViewBox?.x || shapeData.x === activeTooltipItem.x;
+        const yMatches = shapeData.y === activeTooltipItem?.labelViewBox?.y || shapeData.y === activeTooltipItem.y;
+        return xMatches && yMatches;
+      }
 
-        if (isPie(itemDisplayName, shapeData) && isPie(itemDisplayName, activeTooltipItem)) {
-          const startAngleMatches = shapeData.endAngle === activeTooltipItem.endAngle;
-          const endAngleMatches = shapeData.startAngle === activeTooltipItem.startAngle;
-          return startAngleMatches && endAngleMatches;
-        }
+      if (isPie(graphicalItem, shapeData) && isPie(graphicalItem, activeTooltipItem)) {
+        const startAngleMatches = shapeData.endAngle === activeTooltipItem.endAngle;
+        const endAngleMatches = shapeData.startAngle === activeTooltipItem.startAngle;
+        return startAngleMatches && endAngleMatches;
+      }
 
-        if (isScatter(itemDisplayName, shapeData) && isScatter(itemDisplayName, activeTooltipItem)) {
-          const xMatches = shapeData.x === activeTooltipItem.x;
-          const yMatches = shapeData.y === activeTooltipItem.y;
-          const zMatches = shapeData.z === activeTooltipItem.z;
+      if (isScatter(graphicalItem, shapeData) && isScatter(graphicalItem, activeTooltipItem)) {
+        const xMatches = shapeData.x === activeTooltipItem.x;
+        const yMatches = shapeData.y === activeTooltipItem.y;
+        const zMatches = shapeData.z === activeTooltipItem.z;
 
-          return xMatches && yMatches && zMatches;
-        }
+        return xMatches && yMatches && zMatches;
+      }
 
-        return false;
-      },
-    );
+      return false;
+    });
 
     // get the last index in case of multiple matches
     const indexOfMouseCoordinates = graphicalItem.props[shapeKey].indexOf(
