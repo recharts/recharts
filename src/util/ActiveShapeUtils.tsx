@@ -91,32 +91,26 @@ type FunnelItem = {
   x: number;
   y: number;
   labelViewBox: { x: number; y: number };
-  tooltipPayload: Array<{ payload: { payload: unknown } }>;
+  tooltipPayload: Array<{ payload: { payload: ShapeData } }>;
 };
 
 type PieItem = {
   startAngle: number;
   endAngle: number;
-  tooltipPayload: Array<{ payload: { payload: unknown } }>;
+  tooltipPayload: Array<{ payload: { payload: ShapeData } }>;
 };
 
 type ScatterItem = {
   x: number;
   y: number;
   z: number;
-  payload?: unknown;
+  payload?: ShapeData;
 };
 
-type ShapeData<DisplayName extends ItemDisplayName> = DisplayName extends 'Funnel'
-  ? FunnelItem
-  : DisplayName extends 'Pie'
-  ? PieItem
-  : DisplayName extends 'Scatter'
-  ? ScatterItem
-  : never;
+type ShapeData = FunnelItem | PieItem | ScatterItem;
 
 type GetActiveShapeIndexForTooltip = {
-  activeTooltipItem: ShapeData<ItemDisplayName>;
+  activeTooltipItem: ShapeData;
   graphicalItem: GraphicalItem;
   itemData: unknown[];
 };
@@ -133,20 +127,67 @@ export function isScatter(graphicalItem: GraphicalItem, _item: unknown): _item i
   return 'points' in graphicalItem.props;
 }
 
-function getShapeDataKey(graphicalItem: GraphicalItem, _item: unknown): GraphicalItemShapeKey {
+export function compareFunnel(shapeData: FunnelItem, activeTooltipItem: FunnelItem) {
+  const xMatches = shapeData.x === activeTooltipItem?.labelViewBox?.x || shapeData.x === activeTooltipItem.x;
+  const yMatches = shapeData.y === activeTooltipItem?.labelViewBox?.y || shapeData.y === activeTooltipItem.y;
+  return xMatches && yMatches;
+}
+
+export function comparePie(shapeData: PieItem, activeTooltipItem: PieItem) {
+  const startAngleMatches = shapeData.endAngle === activeTooltipItem.endAngle;
+  const endAngleMatches = shapeData.startAngle === activeTooltipItem.startAngle;
+  return startAngleMatches && endAngleMatches;
+}
+
+export function compareScatter(shapeData: ScatterItem, activeTooltipItem: ScatterItem) {
+  const xMatches = shapeData.x === activeTooltipItem.x;
+  const yMatches = shapeData.y === activeTooltipItem.y;
+  const zMatches = shapeData.z === activeTooltipItem.z;
+  return xMatches && yMatches && zMatches;
+}
+
+function getComparisonFn(graphicalItem: GraphicalItem, activeItem: unknown) {
+  let comparison: (shapeData: unknown, activeTooltipData: unknown) => boolean;
+
+  if (isFunnel(graphicalItem, activeItem)) {
+    comparison = compareFunnel;
+  } else if (isPie(graphicalItem, activeItem)) {
+    comparison = comparePie;
+  } else if (isScatter(graphicalItem, activeItem)) {
+    comparison = compareScatter;
+  }
+
+  return comparison;
+}
+
+function getShapeDataKey(graphicalItem: GraphicalItem, activeItem: unknown): GraphicalItemShapeKey {
   let shapeKey: GraphicalItemShapeKey;
 
-  if (isFunnel(graphicalItem, _item)) {
+  if (isFunnel(graphicalItem, activeItem)) {
     shapeKey = 'trapezoids';
-  } else if (isPie(graphicalItem, _item)) {
+  } else if (isPie(graphicalItem, activeItem)) {
     shapeKey = 'sectors';
-  } else if (isScatter(graphicalItem, _item)) {
+  } else if (isScatter(graphicalItem, activeItem)) {
     shapeKey = 'points';
   }
 
   return shapeKey;
 }
 
+function getActiveShapeTooltipPayload(graphicalItem: GraphicalItem, activeItem: unknown): ShapeData {
+  if (isFunnel(graphicalItem, activeItem)) {
+    return activeItem.tooltipPayload?.[0]?.payload?.payload;
+  }
+  if (isPie(graphicalItem, activeItem)) {
+    return activeItem.tooltipPayload?.[0]?.payload?.payload;
+  }
+
+  if (isScatter(graphicalItem, activeItem)) {
+    return activeItem.payload;
+  }
+
+  return {} as ShapeData;
+}
 /**
  *
  * @param {GetActiveShapeIndexForTooltip} arg an object of incoming attributes from Tooltip
@@ -163,36 +204,14 @@ export function getActiveShapeIndexForTooltip({
   itemData,
 }: GetActiveShapeIndexForTooltip): number {
   const shapeKey = getShapeDataKey(graphicalItem, activeTooltipItem);
+  const tooltipPayload = getActiveShapeTooltipPayload(graphicalItem, activeTooltipItem);
 
-  const tooltipPayload: Partial<ShapeData<ItemDisplayName>> = isScatter(graphicalItem, activeTooltipItem)
-    ? activeTooltipItem.payload
-    : activeTooltipItem.tooltipPayload?.[0]?.payload?.payload;
-
-  const activeItemMatches = itemData.filter((datum: any, dataIndex: number) => {
+  const activeItemMatches = itemData.filter((datum: unknown, dataIndex: number) => {
     const valuesMatch = _.isEqual(tooltipPayload, datum);
 
-    const mouseCoordinateMatches = graphicalItem.props[shapeKey].filter((shapeData: ShapeData<ItemDisplayName>) => {
-      if (isFunnel(graphicalItem, shapeData) && isFunnel(graphicalItem, activeTooltipItem)) {
-        const xMatches = shapeData.x === activeTooltipItem?.labelViewBox?.x || shapeData.x === activeTooltipItem.x;
-        const yMatches = shapeData.y === activeTooltipItem?.labelViewBox?.y || shapeData.y === activeTooltipItem.y;
-        return xMatches && yMatches;
-      }
-
-      if (isPie(graphicalItem, shapeData) && isPie(graphicalItem, activeTooltipItem)) {
-        const startAngleMatches = shapeData.endAngle === activeTooltipItem.endAngle;
-        const endAngleMatches = shapeData.startAngle === activeTooltipItem.startAngle;
-        return startAngleMatches && endAngleMatches;
-      }
-
-      if (isScatter(graphicalItem, shapeData) && isScatter(graphicalItem, activeTooltipItem)) {
-        const xMatches = shapeData.x === activeTooltipItem.x;
-        const yMatches = shapeData.y === activeTooltipItem.y;
-        const zMatches = shapeData.z === activeTooltipItem.z;
-
-        return xMatches && yMatches && zMatches;
-      }
-
-      return false;
+    const mouseCoordinateMatches = graphicalItem.props[shapeKey].filter((shapeData: unknown) => {
+      const comparison = getComparisonFn(graphicalItem, activeTooltipItem);
+      return comparison(shapeData, activeTooltipItem);
     });
 
     // get the last index in case of multiple matches
