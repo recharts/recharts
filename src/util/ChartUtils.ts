@@ -254,7 +254,7 @@ export const getLegendProps = ({
   };
 };
 
-export type BarSize = {
+export type BarSetup = {
   barSize: number | string;
   stackList: ReadonlyArray<ReactElement>;
   item: ReactElement;
@@ -271,12 +271,12 @@ export const getBarSizeList = ({
 }: {
   barSize: number | string;
   stackGroups: any;
-}): Record<string, ReadonlyArray<BarSize>> => {
+}): Record<string, ReadonlyArray<BarSetup>> => {
   if (!stackGroups) {
     return {};
   }
 
-  const result: Record<string, Array<BarSize>> = {};
+  const result: Record<string, Array<BarSetup>> = {};
   const numericAxisIds = Object.keys(stackGroups);
 
   for (let i = 0, len = numericAxisIds.length; i < len; i++) {
@@ -349,7 +349,7 @@ export const getBarPosition = ({
   barGap: string | number;
   barCategoryGap: string | number;
   bandSize: number;
-  sizeList: ReadonlyArray<BarSize>;
+  sizeList: ReadonlyArray<BarSetup>;
   maxBarSize: number;
 }): ReadonlyArray<BarPosition> => {
   const len = sizeList.length;
