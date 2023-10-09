@@ -86,25 +86,54 @@ type GraphicalItemShapeKey = 'trapezoids' | 'sectors' | 'points';
 
 type ItemDisplayName = 'Funnel' | 'Pie' | 'Scatter';
 
-type ActiveTooltipItem = {
+type FunnelItem = {
+  x: number;
+  y: number;
+  labelViewBox: { x: number; y: number };
+  tooltipPayload: Array<{ payload: { payload: unknown } }>;
+};
+
+type PieItem = {
   startAngle: number;
   endAngle: number;
+  tooltipPayload: Array<{ payload: { payload: unknown } }>;
+};
+
+type ScatterItem = {
   x: number;
   y: number;
   z: number;
-  labelViewBox: { x: number; y: number };
-  payload?: any;
-  tooltipPayload: Array<{ payload: { payload: any } }>;
+  payload?: unknown;
 };
+
+type ShapeData<DisplayName extends ItemDisplayName> = DisplayName extends 'Funnel'
+  ? FunnelItem
+  : DisplayName extends 'Pie'
+  ? PieItem
+  : DisplayName extends 'Scatter'
+  ? ScatterItem
+  : never;
 
 type GetActiveShapeIndexForTooltip = {
   itemDisplayName: ItemDisplayName;
-  activeTooltipItem: ActiveTooltipItem;
+  activeTooltipItem: ShapeData<ItemDisplayName>;
   graphicalItem: {
-    props: Record<GraphicalItemShapeKey, any>;
+    props: Record<GraphicalItemShapeKey, unknown[]>;
   };
-  itemData: any;
+  itemData: unknown[];
 };
+
+function isFunnel(itemDisplayName: ItemDisplayName, _item: unknown): _item is FunnelItem {
+  return itemDisplayName === 'Funnel';
+}
+
+function isPie(itemDisplayName: ItemDisplayName, _item: unknown): _item is PieItem {
+  return itemDisplayName === 'Pie';
+}
+
+function isScatter(itemDisplayName: ItemDisplayName, _item: unknown): _item is ScatterItem {
+  return itemDisplayName === 'Scatter';
+}
 
 function getShapeDataKey(itemDisplayName: ItemDisplayName): GraphicalItemShapeKey {
   let shapeKey: GraphicalItemShapeKey;
@@ -122,7 +151,7 @@ function getShapeDataKey(itemDisplayName: ItemDisplayName): GraphicalItemShapeKe
 
 /**
  *
- * @param {GetActiveShapeIndexForTooltip} an object of incoming attributes from Tooltip
+ * @param {GetActiveShapeIndexForTooltip} arg an object of incoming attributes from Tooltip
  * @returns {number}
  *
  * To handle possible duplicates in the data set,
@@ -138,40 +167,51 @@ export function getActiveShapeIndexForTooltip({
 }: GetActiveShapeIndexForTooltip): number {
   const shapeKey = getShapeDataKey(itemDisplayName);
 
-  const tooltipPayload =
-    itemDisplayName === 'Scatter' ? activeTooltipItem.payload : activeTooltipItem.tooltipPayload?.[0].payload.payload;
+  const tooltipPayload: Partial<ShapeData<typeof itemDisplayName>> = isScatter(itemDisplayName, activeTooltipItem)
+    ? activeTooltipItem.payload
+    : activeTooltipItem.tooltipPayload?.[0].payload.payload;
 
-  const activeIndex = itemData.findLastIndex((datum: any, dataIndex: number) => {
+  const activeItemMatches = itemData.filter((datum: any, dataIndex: number) => {
     const valuesMatch = _.isEqual(tooltipPayload, datum);
 
-    const indexOfMouseCoordinates = graphicalItem.props[shapeKey].findLastIndex((shapeData: typeof tooltipPayload) => {
-      if (itemDisplayName === 'Funnel') {
-        const xMatches = shapeData.x === activeTooltipItem?.labelViewBox?.x || shapeData.x === activeTooltipItem.x;
-        const yMatches = shapeData.y === activeTooltipItem?.labelViewBox?.y || shapeData.y === activeTooltipItem.y;
-        return xMatches && yMatches;
-      }
+    const mouseCoordinateMatches = graphicalItem.props[shapeKey].filter(
+      (shapeData: ShapeData<typeof itemDisplayName>) => {
+        if (isFunnel(itemDisplayName, shapeData) && isFunnel(itemDisplayName, activeTooltipItem)) {
+          const xMatches = shapeData.x === activeTooltipItem?.labelViewBox?.x || shapeData.x === activeTooltipItem.x;
+          const yMatches = shapeData.y === activeTooltipItem?.labelViewBox?.y || shapeData.y === activeTooltipItem.y;
+          return xMatches && yMatches;
+        }
 
-      if (itemDisplayName === 'Pie') {
-        const startAngleMatches = shapeData.endAngle === activeTooltipItem.endAngle;
-        const endAngleMatches = shapeData.startAngle === activeTooltipItem.startAngle;
-        return startAngleMatches && endAngleMatches;
-      }
+        if (isPie(itemDisplayName, shapeData) && isPie(itemDisplayName, activeTooltipItem)) {
+          const startAngleMatches = shapeData.endAngle === activeTooltipItem.endAngle;
+          const endAngleMatches = shapeData.startAngle === activeTooltipItem.startAngle;
+          return startAngleMatches && endAngleMatches;
+        }
 
-      if (itemDisplayName === 'Scatter') {
-        const xMatches = shapeData.x === activeTooltipItem.x;
-        const yMatches = shapeData.y === activeTooltipItem.y;
-        const zMatches = shapeData.z === activeTooltipItem.z;
+        if (isScatter(itemDisplayName, shapeData) && isScatter(itemDisplayName, activeTooltipItem)) {
+          const xMatches = shapeData.x === activeTooltipItem.x;
+          const yMatches = shapeData.y === activeTooltipItem.y;
+          const zMatches = shapeData.z === activeTooltipItem.z;
 
-        return xMatches && yMatches && zMatches;
-      }
+          return xMatches && yMatches && zMatches;
+        }
 
-      return false;
-    });
+        return false;
+      },
+    );
+
+    // get the last index in case of multiple matches
+    const indexOfMouseCoordinates = graphicalItem.props[shapeKey].indexOf(
+      mouseCoordinateMatches[mouseCoordinateMatches.length - 1],
+    );
 
     const coordinatesMatch = dataIndex === indexOfMouseCoordinates;
 
     return valuesMatch && coordinatesMatch;
   });
+
+  // get the last index in case of multiple matches
+  const activeIndex = itemData.indexOf(activeItemMatches[activeItemMatches.length - 1]);
 
   return activeIndex;
 }
