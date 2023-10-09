@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { BarPosition, BarSize, getBarPosition } from '../../../src/util/ChartUtils';
+import { BarPosition, BarSetup, getBarPosition } from '../../../src/util/ChartUtils';
 
 describe('getBarPosition', () => {
   it('should return null if sizeList is empty array', () => {
@@ -298,7 +298,7 @@ describe('getBarPosition', () => {
     });
 
     it('should only consider the first item in sizeList', () => {
-      const sizeList: ReadonlyArray<BarSize> = [
+      const sizeList: ReadonlyArray<BarSetup> = [
         {
           item,
           barSize: 5,
@@ -334,7 +334,7 @@ describe('getBarPosition', () => {
     });
 
     it('should shrink and unify sizes, and add 10% gap, if the sizeList sum is larger than bandSize', () => {
-      const sizeList: ReadonlyArray<BarSize> = [
+      const sizeList: ReadonlyArray<BarSetup> = [
         {
           item,
           barSize: 50,
@@ -370,7 +370,7 @@ describe('getBarPosition', () => {
     });
 
     it('should return negative offset if bandSize is negative', () => {
-      const sizeList: ReadonlyArray<BarSize> = [
+      const sizeList: ReadonlyArray<BarSetup> = [
         {
           item,
           barSize: 50,
@@ -460,7 +460,7 @@ describe('getBarPosition', () => {
   describe('when the first barSize is not a number', () => {
     const item: ReactElement = <p>mock item</p>;
     const stackList: ReadonlyArray<ReactElement> = [];
-    const sizeList: ReadonlyArray<BarSize> = [
+    const sizeList: ReadonlyArray<BarSetup> = [
       {
         item,
         barSize: '',
