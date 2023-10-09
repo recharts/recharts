@@ -13,3 +13,4 @@ npm-debug.log
 types
 build
 storybook/public/
+.reassure/*
