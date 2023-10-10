@@ -5,7 +5,14 @@ import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps 
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
+import {
+  DefaultTooltipContent,
+  ValueType,
+  NameType,
+  Payload,
+  Props as DefaultProps,
+  PayloadType,
+} from './DefaultTooltipContent';
 
 import { Global } from '../util/Global';
 import { isNumber } from '../util/DataUtils';
@@ -14,18 +21,24 @@ import { AnimationDuration, AnimationTiming } from '../util/types';
 const CLS_PREFIX = 'recharts-tooltip-wrapper';
 
 const EPS = 1;
-export type ContentType<TValue extends ValueType, TName extends NameType> =
+export type ContentType<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType> =
   | ReactElement
-  | ((props: TooltipProps<TValue, TName>) => ReactNode);
+  | ((props: TooltipProps<TValue, TName, TPayload>) => ReactNode);
 
-type UniqueFunc<TValue extends ValueType, TName extends NameType> = (entry: Payload<TValue, TName>) => unknown;
-type UniqueOption<TValue extends ValueType, TName extends NameType> = boolean | UniqueFunc<TValue, TName>;
-function defaultUniqBy<TValue extends ValueType, TName extends NameType>(entry: Payload<TValue, TName>) {
+type UniqueFunc<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType> = (
+  entry: Payload<TValue, TName, TPayload>,
+) => unknown;
+type UniqueOption<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType> =
+  | boolean
+  | UniqueFunc<TValue, TName, TPayload>;
+function defaultUniqBy<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType>(
+  entry: Payload<TValue, TName, TPayload>,
+) {
   return entry.dataKey;
 }
-function getUniqPayload<TValue extends ValueType, TName extends NameType>(
-  option: UniqueOption<TValue, TName>,
-  payload: Array<Payload<TValue, TName>>,
+function getUniqPayload<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType>(
+  option: UniqueOption<TValue, TName, TPayload>,
+  payload: Array<Payload<TValue, TName, TPayload>>,
 ) {
   if (option === true) {
     return _.uniqBy(payload, defaultUniqBy);
@@ -38,9 +51,9 @@ function getUniqPayload<TValue extends ValueType, TName extends NameType>(
   return payload;
 }
 
-function renderContent<TValue extends ValueType, TName extends NameType>(
-  content: ContentType<TValue, TName>,
-  props: TooltipProps<TValue, TName>,
+function renderContent<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType>(
+  content: ContentType<TValue, TName, TPayload>,
+  props: TooltipProps<TValue, TName, TPayload>,
 ) {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
@@ -52,7 +65,11 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
   return <DefaultTooltipContent {...props} />;
 }
 
-export type TooltipProps<TValue extends ValueType, TName extends NameType> = DefaultProps<TValue, TName> & {
+export type TooltipProps<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType> = DefaultProps<
+  TValue,
+  TName,
+  TPayload
+> & {
   allowEscapeViewBox?: {
     x?: boolean;
     y?: boolean;
@@ -61,7 +78,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
     x?: boolean;
     y?: boolean;
   };
-  content?: ContentType<TValue, TName>;
+  content?: ContentType<TValue, TName, TPayload>;
   viewBox?: {
     x?: number;
     y?: number;
@@ -82,7 +99,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   };
   trigger?: 'hover' | 'click';
   shared?: boolean;
-  payloadUniqBy?: UniqueOption<TValue, TName>;
+  payloadUniqBy?: UniqueOption<TValue, TName, TPayload>;
   isAnimationActive?: boolean;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
@@ -90,9 +107,11 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   useTranslate3d?: boolean;
 };
 
-export class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComponent<
-  TooltipProps<TValue, TName>
-> {
+export class Tooltip<
+  TValue extends ValueType,
+  TName extends NameType,
+  TPayload extends PayloadType,
+> extends PureComponent<TooltipProps<TValue, TName, TPayload>> {
   static displayName = 'Tooltip';
 
   static defaultProps = {
