@@ -13,45 +13,46 @@ function defaultFormatter<TValue extends ValueType>(value: TValue) {
 export type TooltipType = 'none';
 export type ValueType = number | string | Array<number | string>;
 export type NameType = number | string;
-export type Formatter<TValue extends ValueType, TName extends NameType> = (
+export type PayloadType = number | string | Array<number | string> | { [key: string]: any };
+export type Formatter<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType> = (
   value: TValue,
   name: TName,
-  item: Payload<TValue, TName>,
+  item: Payload<TValue, TName, TPayload>,
   index: number,
-  payload: Array<Payload<TValue, TName>>,
+  payload: Array<Payload<TValue, TName, TPayload>>,
 ) => [React.ReactNode, TName] | React.ReactNode;
 
-export interface Payload<TValue extends ValueType, TName extends NameType> {
+export interface Payload<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType> {
   type?: TooltipType;
   color?: string;
-  formatter?: Formatter<TValue, TName>;
+  formatter?: Formatter<TValue, TName, TPayload>;
   name?: TName;
   value?: TValue;
   unit?: ReactNode;
   dataKey?: string | number;
-  payload?: any;
+  payload?: TPayload;
   chartType?: string;
   stroke?: string;
   strokeDasharray?: string | number;
   strokeWidth?: number | string;
 }
 
-export interface Props<TValue extends ValueType, TName extends NameType> {
+export interface Props<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType> {
   separator?: string;
   wrapperClassName?: string;
   labelClassName?: string;
-  formatter?: Formatter<TValue, TName>;
+  formatter?: Formatter<TValue, TName, TPayload>;
   contentStyle?: CSSProperties;
   itemStyle?: CSSProperties;
   labelStyle?: CSSProperties;
-  labelFormatter?: (label: any, payload: Array<Payload<TValue, TName>>) => ReactNode;
+  labelFormatter?: (label: any, payload: Array<Payload<TValue, TName, TPayload>>) => ReactNode;
   label?: any;
-  payload?: Array<Payload<TValue, TName>>;
-  itemSorter?: (item: Payload<TValue, TName>) => number | string;
+  payload?: Array<Payload<TValue, TName, TPayload>>;
+  itemSorter?: (item: Payload<TValue, TName, TPayload>) => number | string;
 }
 
-export const DefaultTooltipContent = <TValue extends ValueType, TName extends NameType>(
-  props: Props<TValue, TName>,
+export const DefaultTooltipContent = <TValue extends ValueType, TName extends NameType, TPayload extends PayloadType>(
+  props: Props<TValue, TName, TPayload>,
 ) => {
   const {
     separator = ' : ',
