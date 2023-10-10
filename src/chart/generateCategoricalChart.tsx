@@ -74,6 +74,7 @@ import {
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { deferer, CancelFunction } from '../util/deferer';
+import { getActiveShapeIndexForTooltip, isFunnel, isPie, isScatter } from '../util/ActiveShapeUtils';
 
 export type GraphicalItem<Props = Record<string, any>> = ReactElement<
   Props,
@@ -2280,34 +2281,23 @@ export const generateCategoricalChart = ({
             if (activeBarItem) {
               return { graphicalItem, payload: activeBarItem };
             }
-          } else if (itemDisplayName === 'Funnel') {
-            /*
-             * To handle possible duplicates in the data set,
-             * match both the data value of the active item to a data value on a graph item,
-             * and match the mouse coordinates of the active item to the coordinates of a trapezoid.
-             * This assumes equal lengths of trapezoids on a funnel to data items.
-             */
-            const activeIndex = item.props.data.findIndex((funnelData: { value: string }, dataIndex: number) => {
-              const valuesMatch = funnelData.value === activeItem.payload.value;
-
-              const indexOfMouseCoordinates = graphicalItem.props.trapezoids.findIndex(
-                (trapezoid: { x: number; y: number }) => {
-                  const xMatches = trapezoid.x === activeItem.labelViewBox.x || trapezoid.x === activeItem.x;
-                  const yMatches = trapezoid.y === activeItem.labelViewBox.y || trapezoid.y === activeItem.y;
-                  return xMatches && yMatches;
-                },
-              );
-
-              const coordinatesMatch = dataIndex === indexOfMouseCoordinates;
-
-              return valuesMatch && coordinatesMatch;
+          } else if (
+            isFunnel(graphicalItem, activeItem) ||
+            isPie(graphicalItem, activeItem) ||
+            isScatter(graphicalItem, activeItem)
+          ) {
+            const activeIndex = getActiveShapeIndexForTooltip({
+              graphicalItem,
+              activeTooltipItem: activeItem,
+              itemData: item.props.data,
             });
 
             const childIndex = item.props.activeIndex === undefined ? activeIndex : item.props.activeIndex;
 
             return {
               graphicalItem: { ...graphicalItem, childIndex },
-              payload: graphicalItem.props.data[activeIndex],
+              payload:
+                itemDisplayName === 'Scatter' ? item.props.data[activeIndex] : graphicalItem.props.data[activeIndex],
             };
           }
         }
