@@ -13,7 +13,7 @@ function defaultFormatter<TValue extends ValueType>(value: TValue) {
 export type TooltipType = 'none';
 export type ValueType = number | string | Array<number | string>;
 export type NameType = number | string;
-export type PayloadType = number | string | Array<number | string> | { [key: string]: any };
+export type PayloadType = number | string | Array<number | string> | Record<string, any>;
 export type Formatter<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType> = (
   value: TValue,
   name: TName,
