@@ -146,7 +146,7 @@ export class Bar extends PureComponent<Props, State> {
     offset,
   }: {
     props: Props;
-    item: Bar;
+    item: ReactElement;
     barPosition: any;
     bandSize: number;
     xAxis: InternalBarProps['xAxis'];

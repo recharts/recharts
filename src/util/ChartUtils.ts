@@ -1323,7 +1323,7 @@ export const parseDomainOfCategoryAxis = <T>(
   return specifiedDomain;
 };
 
-export const getTooltipItem = (graphicalItem: any, payload: any) => {
+export const getTooltipItem = (graphicalItem: ReactElement, payload: any) => {
   const { dataKey, name, unit, formatter, tooltipType, chartType } = graphicalItem.props;
 
   return {

@@ -152,9 +152,9 @@ const getActiveCoordinate = (
 const getDisplayedData = (
   data: any[],
   { graphicalItems, dataStartIndex, dataEndIndex }: CategoricalChartState,
-  item?: any,
+  item?: ReactElement,
 ): any[] => {
-  const itemsData = (graphicalItems || []).reduce((result: any, child: any) => {
+  const itemsData = (graphicalItems || []).reduce((result, child) => {
     const itemData = child.props.data;
 
     if (itemData && itemData.length) {
@@ -203,7 +203,7 @@ const getTooltipContent = (
     return null;
   }
   // get data by activeIndex when the axis don't allow duplicated category
-  return graphicalItems.reduce((result: any, child: any) => {
+  return graphicalItems.reduce((result, child) => {
     const { hide } = child.props;
 
     if (hide) {
@@ -409,7 +409,7 @@ export const getAxisMapByAxes = (
       } else {
         domain = getDomainOfItemsWithSameAxis(
           displayedData,
-          graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && (includeHidden || !item.props.hide)),
+          graphicalItems.filter(item => item.props[axisIdKey] === axisId && (includeHidden || !item.props.hide)),
           type,
           layout,
           true,
@@ -481,7 +481,7 @@ const getAxisMapByItems = (
   // The default contents of x-axis is the serial numbers of data
   // The default type of y-axis is number axis
   // The default contents of y-axis is the domain of data
-  const axisMap: AxisMap = graphicalItems.reduce((result: AxisMap, child: any): AxisMap => {
+  const axisMap: AxisMap = graphicalItems.reduce((result: AxisMap, child: ReactElement): AxisMap => {
     const axisId = child.props[axisIdKey];
 
     const originalDomain = getDefaultDomainByAxisType('number');
@@ -500,7 +500,7 @@ const getAxisMapByItems = (
           originalDomain,
           getDomainOfItemsWithSameAxis(
             displayedData,
-            graphicalItems.filter((item: any) => item.props[axisIdKey] === axisId && !item.props.hide),
+            graphicalItems.filter((item: ReactElement) => item.props[axisIdKey] === axisId && !item.props.hide),
             'number',
             layout,
           ),
@@ -626,12 +626,12 @@ const createDefaultState = (props: CategoricalChartProps): CategoricalChartState
   };
 };
 
-const hasGraphicalBarItem = (graphicalItems: any[]): any[] | boolean => {
+const hasGraphicalBarItem = (graphicalItems: ReadonlyArray<ReactElement>): boolean => {
   if (!graphicalItems || !graphicalItems.length) {
     return false;
   }
 
-  return graphicalItems.some((item: any) => {
+  return graphicalItems.some(item => {
     const name = getDisplayName(item && item.type);
 
     return name && name.indexOf('Bar') >= 0;
@@ -751,7 +751,7 @@ export interface CategoricalChartState {
 
   tooltipTicks?: TickItem[];
 
-  graphicalItems?: any;
+  graphicalItems?: ReadonlyArray<ReactElement>;
 
   activeCoordinate?: ChartCoordinate;
 
@@ -852,7 +852,7 @@ export const generateCategoricalChart = ({
     const sizeList = hasBar && getBarSizeList({ barSize, stackGroups });
     const formattedItems = [] as any[];
 
-    graphicalItems.forEach((item: any, index: number) => {
+    graphicalItems.forEach((item: ReactElement, index: number) => {
       const displayedData = getDisplayedData(props.data, { dataStartIndex, dataEndIndex }, item);
       const { dataKey, maxBarSize: childMaxBarSize } = item.props;
       // axisId of the numerical axis
@@ -874,6 +874,7 @@ export const generateCategoricalChart = ({
           (axisMap && axisMap[id]) || entry.axisType === 'zAxis',
           `Specifying a(n) ${entry.axisType}Id requires a corresponding ${
             entry.axisType
+            // @ts-expect-error we should stop reading data from ReactElements
           }Id on the targeted graphical component ${item?.type?.displayName ?? ''}`,
         );
 
@@ -916,6 +917,7 @@ export const generateCategoricalChart = ({
           }));
         }
       }
+      // @ts-expect-error we should stop reading data from ReactElements
       const composedFn = item && item.type && item.type.getComposedData;
 
       if (composedFn) {
