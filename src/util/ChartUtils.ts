@@ -13,9 +13,8 @@ import { ReactElement, ReactNode } from 'react';
 import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
 
 import { ErrorBar } from '../cartesian/ErrorBar';
-import { Legend, Props as LegendProps } from '../component/Legend';
 import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
-import { filterProps, findAllByType, findChildByType, getDisplayName } from './ReactUtils';
+import { filterProps, findAllByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
 import {
@@ -29,8 +28,13 @@ import {
   TickItem,
   CategoricalDomain,
   StackOffsetType,
+  Margin,
+  ChartOffset,
 } from './types';
-import { Payload as LegendPayload } from '../component/DefaultLegendContent';
+import { getLegendProps } from './getLegendProps';
+
+// Exported for backwards compatibility
+export { getLegendProps };
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?: any) {
   if (_.isNil(obj) || _.isNil(dataKey)) {
@@ -192,67 +196,6 @@ export interface FormattedGraphicalItem {
   childIndex: number;
   item: ReactElement<{ legendType?: LegendType; hide: boolean; name?: string; dataKey: unknown }>;
 }
-
-interface SectorOrDataEntry {
-  name: any;
-  fill: any;
-}
-
-export const getLegendProps = ({
-  children,
-  formattedGraphicalItems,
-  legendWidth,
-  legendContent,
-}: {
-  children: ReactNode[];
-  formattedGraphicalItems?: Array<FormattedGraphicalItem>;
-  legendWidth: number;
-  legendContent?: 'children';
-}): LegendProps & { item: ReactElement } => {
-  const legendItem = findChildByType(children, Legend);
-  if (!legendItem) {
-    return null;
-  }
-
-  let legendData: LegendPayload[];
-  if (legendItem.props && legendItem.props.payload) {
-    legendData = legendItem.props && legendItem.props.payload;
-  } else if (legendContent === 'children') {
-    legendData = (formattedGraphicalItems || []).reduce((result, { item, props }) => {
-      const data: ReadonlyArray<SectorOrDataEntry> = props.sectors || props.data || [];
-
-      return result.concat(
-        data.map((entry: SectorOrDataEntry) => ({
-          type: legendItem.props.iconType || item.props.legendType,
-          value: entry.name,
-          color: entry.fill,
-          payload: entry,
-        })),
-      );
-    }, []);
-  } else {
-    legendData = (formattedGraphicalItems || []).map(({ item }): LegendPayload => {
-      const { dataKey, name, legendType, hide } = item.props;
-
-      return {
-        inactive: hide,
-        dataKey,
-        type: legendItem.props.iconType || legendType || 'square',
-        color: getMainColorOfGraphicItem(item),
-        value: name || dataKey,
-        // @ts-expect-error property strokeDasharray is required in Payload but optional in props
-        payload: item.props,
-      };
-    });
-  }
-
-  return {
-    ...legendItem.props,
-    ...Legend.getWithHeight(legendItem, legendWidth),
-    payload: legendData,
-    item: legendItem,
-  };
-};
 
 export type BarSetup = {
   barSize: number | string;
@@ -437,22 +380,37 @@ export const getBarPosition = ({
   return result;
 };
 
-export const appendOffsetOfLegend = (offset: any, items: Array<FormattedGraphicalItem>, props: any, legendBox: any) => {
+export const appendOffsetOfLegend = (
+  offset: ChartOffset,
+  _unused: unknown,
+  props: {
+    width?: number;
+    margin: Margin;
+    children?: ReactNode[];
+  },
+  legendBox: DOMRect | null,
+): ChartOffset => {
   const { children, width, margin } = props;
   const legendWidth = width - (margin.left || 0) - (margin.right || 0);
   // const legendHeight = height - (margin.top || 0) - (margin.bottom || 0);
   const legendProps = getLegendProps({ children, legendWidth });
-  let newOffset = offset;
-
+  let newOffset: ChartOffset = offset;
   if (legendProps) {
-    const box = legendBox || {};
+    const box = legendBox || ({} as { width?: number; height?: number });
     const { align, verticalAlign, layout } = legendProps;
 
-    if ((layout === 'vertical' || (layout === 'horizontal' && verticalAlign === 'middle')) && isNumber(offset[align])) {
+    if (
+      (layout === 'vertical' || (layout === 'horizontal' && verticalAlign === 'middle')) &&
+      // @ts-expect-error ChartOffset does not support align === 'center' but this code does not check for it
+      isNumber(offset[align])
+    ) {
+      // @ts-expect-error ChartOffset does not support align === 'center' but this code does not check for it
       newOffset = { ...offset, [align]: newOffset[align] + (box.width || 0) };
     }
 
+    // @ts-expect-error ChartOffset does not support verticalAlign === 'middle' but this code does not check for it
     if ((layout === 'horizontal' || (layout === 'vertical' && align === 'center')) && isNumber(offset[verticalAlign])) {
+      // @ts-expect-error ChartOffset does not support verticalAlign === 'middle' but this code does not check for it
       newOffset = { ...offset, [verticalAlign]: newOffset[verticalAlign] + (box.height || 0) };
     }
   }
