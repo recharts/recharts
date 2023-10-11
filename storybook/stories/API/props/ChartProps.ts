@@ -275,7 +275,7 @@ toggling between multiple dataKey.`,
   },
   stackOffset: {
     description: `Determines how values are stacked:
-    
+
 - \`none\` is the default, it adds values on top of each other. No smarts. Negative values will overlap.
 - \`expand\` make it so that the values always add up to 1 - so the chart will look like a rectangle.
 - \`wiggle\` and \`silhouette\` tries to keep the chart centered.
@@ -337,6 +337,18 @@ Also see https://d3js.org/d3-shape/stack#stack-offsets
       type: {
         summary: 'String',
       },
+      category: 'General',
+    },
+  },
+  wrapperLabel: {
+    description: `An optional value to be used as the aria-label for the wrapper element. When no value is provided
+      the aria-label will be set to the value of the \`title\` prop; if present; otherwise
+      the aria-label will be set to a unique generated (human-readable, but not meaningful) value.`,
+    table: {
+      type: {
+        summary: 'String',
+      },
+      defaultValue: false,
       category: 'General',
     },
   },

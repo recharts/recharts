@@ -1121,7 +1121,7 @@ export const generateCategoricalChart = ({
       super(props);
 
       this.clipPathId = `${props.id ?? uniqueId('recharts')}-clip`;
-      this.wrapperLabel = _.isNil(props.wrapperLabel) ? uniqueId(`Recharts ${chartName} `) : props.wrapperLabel;
+      this.wrapperLabel = props.wrapperLabel ?? props.title ?? uniqueId(`Recharts ${chartName} `);
 
       if (props.throttleDelay) {
         this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove, props.throttleDelay);
