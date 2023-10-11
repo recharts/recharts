@@ -392,30 +392,29 @@ export const appendOffsetOfLegend = (
 ): ChartOffset => {
   const { children, width, margin } = props;
   const legendWidth = width - (margin.left || 0) - (margin.right || 0);
-  // const legendHeight = height - (margin.top || 0) - (margin.bottom || 0);
   const legendProps = getLegendProps({ children, legendWidth });
-  let newOffset: ChartOffset = offset;
   if (legendProps) {
-    const box = legendBox || ({} as { width?: number; height?: number });
+    const { width: boxWidth, height: boxHeight } = legendBox || {};
     const { align, verticalAlign, layout } = legendProps;
 
     if (
       (layout === 'vertical' || (layout === 'horizontal' && verticalAlign === 'middle')) &&
-      // @ts-expect-error ChartOffset does not support align === 'center' but this code does not check for it
+      align !== 'center' &&
       isNumber(offset[align])
     ) {
-      // @ts-expect-error ChartOffset does not support align === 'center' but this code does not check for it
-      newOffset = { ...offset, [align]: newOffset[align] + (box.width || 0) };
+      return { ...offset, [align]: offset[align] + (boxWidth || 0) };
     }
 
-    // @ts-expect-error ChartOffset does not support verticalAlign === 'middle' but this code does not check for it
-    if ((layout === 'horizontal' || (layout === 'vertical' && align === 'center')) && isNumber(offset[verticalAlign])) {
-      // @ts-expect-error ChartOffset does not support verticalAlign === 'middle' but this code does not check for it
-      newOffset = { ...offset, [verticalAlign]: newOffset[verticalAlign] + (box.height || 0) };
+    if (
+      (layout === 'horizontal' || (layout === 'vertical' && align === 'center')) &&
+      verticalAlign !== 'middle' &&
+      isNumber(offset[verticalAlign])
+    ) {
+      return { ...offset, [verticalAlign]: offset[verticalAlign] + (boxHeight || 0) };
     }
   }
 
-  return newOffset;
+  return offset;
 };
 
 const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, direction?: 'x' | 'y'): boolean => {
