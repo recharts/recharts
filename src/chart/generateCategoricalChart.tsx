@@ -864,6 +864,7 @@ export interface CategoricalChartProps {
   onMouseUp?: CategoricalChartFunc;
   reverseStackOrder?: boolean;
   id?: string;
+  wrapperLabel?: string;
 
   startAngle?: number;
   endAngle?: number;
@@ -1100,6 +1101,8 @@ export const generateCategoricalChart = ({
 
     accessibilityManager = new AccessibilityManager();
 
+    wrapperLabel: string;
+
     // todo join specific chart propTypes
     static defaultProps: CategoricalChartProps = {
       layout: 'horizontal',
@@ -1118,6 +1121,7 @@ export const generateCategoricalChart = ({
       super(props);
 
       this.clipPathId = `${props.id ?? uniqueId('recharts')}-clip`;
+      this.wrapperLabel = _.isNil(props.wrapperLabel) ? uniqueId(`Recharts ${chartName}`) : props.wrapperLabel;
 
       if (props.throttleDelay) {
         this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove, props.throttleDelay);
@@ -2345,6 +2349,7 @@ export const generateCategoricalChart = ({
             this.container = node;
           }}
           role="region"
+          aria-label={this.wrapperLabel}
         >
           <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
             {this.renderClipPath()}

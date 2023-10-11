@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
 import { isFragment } from 'react-is';
 import { DotProps } from '..';
-import { isNumber } from './DataUtils';
+import { isNumber, uniqueId } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
 import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys } from './types';
 import { AreaDot } from '../cartesian/Area';
@@ -447,4 +447,8 @@ export const getReactEventByType = (e: { type?: string }): string => {
 
 export const parseChildIndex = (child: any, children: any[]) => {
   return toArray(children).indexOf(child);
+};
+
+export const getUniqueWrapperLabel = (component: React.ComponentType) => {
+  return `Recharts ${getDisplayName(component)} ${uniqueId()}`;
 };
