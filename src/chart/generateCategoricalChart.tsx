@@ -2,6 +2,7 @@ import React, { Component, cloneElement, isValidElement, createElement, ReactEle
 import classNames from 'classnames';
 import _, { isArray, isBoolean } from 'lodash';
 import invariant from 'tiny-invariant';
+import { getRadialCursorPoints } from '../util/cursor/getRadialCursorPoints';
 import { getTicks } from '../cartesian/getTicks';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
@@ -1337,7 +1338,7 @@ export const generateCategoricalChart = ({
       return null;
     }
 
-    getCursorRectangle(): any {
+    getCursorRectangle() {
       const { layout } = this.props;
       const { activeCoordinate, offset, tooltipAxisBandSize } = this.state;
       const halfSize = tooltipAxisBandSize / 2;
@@ -1352,7 +1353,7 @@ export const generateCategoricalChart = ({
       };
     }
 
-    getCursorPoints(): any {
+    getCursorPoints() {
       const { layout } = this.props;
       const { activeCoordinate, offset } = this.state;
       let x1, y1, x2, y2;
@@ -1377,18 +1378,7 @@ export const generateCategoricalChart = ({
           x2 = outerPoint.x;
           y2 = outerPoint.y;
         } else {
-          const { cx, cy, radius, startAngle, endAngle } = activeCoordinate;
-          const startPoint = polarToCartesian(cx, cy, radius, startAngle);
-          const endPoint = polarToCartesian(cx, cy, radius, endAngle);
-
-          return {
-            points: [startPoint, endPoint],
-            cx,
-            cy,
-            radius,
-            startAngle,
-            endAngle,
-          };
+          return getRadialCursorPoints(activeCoordinate);
         }
       }
 
@@ -1812,7 +1802,7 @@ export const generateCategoricalChart = ({
       return null;
     }
 
-    renderCursor = (element: any) => {
+    renderCursor = (element: ReactElement) => {
       const { isTooltipActive, activeCoordinate, activePayload, offset, activeTooltipIndex } = this.state;
       const tooltipEventType = this.getTooltipEventType();
 
@@ -1827,7 +1817,7 @@ export const generateCategoricalChart = ({
       }
       const { layout } = this.props;
       let restProps;
-      let cursorComp: any = Curve;
+      let cursorComp: React.ComponentType<any> = Curve;
 
       if (chartName === 'ScatterChart') {
         restProps = activeCoordinate;
@@ -1836,7 +1826,7 @@ export const generateCategoricalChart = ({
         restProps = this.getCursorRectangle();
         cursorComp = Rectangle;
       } else if (layout === 'radial') {
-        const { cx, cy, radius, startAngle, endAngle }: any = this.getCursorPoints();
+        const { cx, cy, radius, startAngle, endAngle } = getRadialCursorPoints(activeCoordinate);
         restProps = {
           cx,
           cy,
