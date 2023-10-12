@@ -9,11 +9,16 @@ import { Symbols, SymbolsProps } from '../shape/Symbols';
 
 /**
  * This is an abstraction for rendering a user defined prop for a customized shape in several forms.
- * It will handle taking in:
+ *
+ * <Shape /> is the root and will handle taking in:
  *  - an object of svg properties
  *  - a boolean
  *  - a render prop(inline function that returns jsx)
  *  - a react element
+ *
+ * <ShapeSelector /> is a subcomponent of <Shape /> and used to match a component
+ * to the value of props.shapeType that is passed to the root.
+ *
  */
 type ShapeType = 'trapezoid' | 'rectangle' | 'sector' | 'symbols';
 
@@ -32,6 +37,10 @@ function defaultPropTransformer<OptionType, ExtraProps, ShapePropsType>(option: 
   } as unknown as ShapePropsType;
 }
 
+function isSymbolsProps(shapeType: ShapeType, _elementProps: unknown): _elementProps is SymbolsProps {
+  return shapeType === 'symbols';
+}
+
 function ShapeSelector<ShapePropsType>({
   shapeType,
   elementProps,
@@ -47,7 +56,10 @@ function ShapeSelector<ShapePropsType>({
     case 'sector':
       return <Sector {...elementProps} />;
     case 'symbols':
-      return <Symbols {...(elementProps as unknown as SymbolsProps)} />;
+      if (isSymbolsProps(shapeType, elementProps)) {
+        return <Symbols {...elementProps} />;
+      }
+      break;
     default:
       return null;
   }
