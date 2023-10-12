@@ -1266,11 +1266,13 @@ export const adaptEventsOfChild = (
   return out;
 };
 
+export type TooltipEventType = 'axis' | 'item';
+
 export interface CategoricalChartOptions {
   chartName?: string;
   GraphicalChild?: any;
-  defaultTooltipEventType?: string;
-  validateTooltipEventTypes?: string[];
+  defaultTooltipEventType?: TooltipEventType;
+  validateTooltipEventTypes?: ReadonlyArray<TooltipEventType>;
   axisComponents?: BaseAxisProps[];
   legendContent?: 'children';
   formatAxisMap?: any;
