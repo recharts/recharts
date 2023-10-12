@@ -14,6 +14,7 @@ import {
   MIN_VALUE_REG,
   parseSpecifiedDomain,
   getTicksOfAxis,
+  getLegendProps,
 } from '../../src/util/ChartUtils';
 import { BaseAxisProps, DataKey } from '../../src/util/types';
 
@@ -611,5 +612,11 @@ describe('getDomainOfErrorBars', () => {
     it('should return maximum domain of error bars', () => {
       expect(getDomainOfErrorBars(data, line, 'y', 'horizontal', 'yAxis')).toEqual([85, 220]);
     });
+  });
+});
+
+describe('exports for backwards-compatibility', () => {
+  test('getLegendProps should be exported', () => {
+    expect(getLegendProps).toBeInstanceOf(Function);
   });
 });
