@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render a group of radial bar
  */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, ReactElement } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';
@@ -115,7 +115,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
     bandSize,
     dataStartIndex,
   }: {
-    item: RadialBar;
+    item: ReactElement;
     props: any;
     radiusAxis: any; // RadiusAxisProps;
     radiusAxisTicks: Array<TickItem>;

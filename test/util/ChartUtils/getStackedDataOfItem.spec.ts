@@ -1,6 +1,8 @@
+import { ReactElement } from 'react';
 import { getStackedDataOfItem } from '../../../src/util/ChartUtils';
 
-function makeItem<T>(stackId: T) {
+function makeItem<T>(stackId: T): ReactElement {
+  // @ts-expect-error incomplete mock of ReactElement
   return {
     props: { stackId },
   };
@@ -8,21 +10,22 @@ function makeItem<T>(stackId: T) {
 
 describe('getStackedDataOfItem', () => {
   it('should return null if stackId is undefined', () => {
-    const item = { props: {} };
+    // @ts-expect-error incomplete mock of ReactElement
+    const item: ReactElement = { props: {} };
     const result = getStackedDataOfItem(item, {});
     expect(result).toBe(null);
   });
 
   it('should return null if stackId is a symbol', () => {
-    const item = { props: { stackId: Symbol('mock symbol') } };
-    expect(getStackedDataOfItem<symbol>(item, {})).toBe(null);
+    const item = makeItem(Symbol('mock symbol'));
+    expect(getStackedDataOfItem(item, {})).toBe(null);
   });
 
   it('should return undefined if stack group is undefined', () => {
     const item = makeItem<string>('a');
     const stackedData: Array<unknown> = [];
     const stackGroups = { a: { stackedData, items: [item] } };
-    const result = getStackedDataOfItem<string>(item, stackGroups);
+    const result = getStackedDataOfItem(item, stackGroups);
     expect(result).toBe(undefined);
   });
 
@@ -31,7 +34,7 @@ describe('getStackedDataOfItem', () => {
     const group = Symbol('my mock group');
     const items: Array<typeof item> = [];
     const stackGroups = { a: { stackedData: [group], items } };
-    const result = getStackedDataOfItem<string>(item, stackGroups);
+    const result = getStackedDataOfItem(item, stackGroups);
     expect(result).toBe(null);
   });
 
@@ -40,7 +43,7 @@ describe('getStackedDataOfItem', () => {
     const item2 = makeItem<string>('a');
     const group = Symbol('my mock group');
     const stackGroups = { a: { stackedData: [group], items: [item1] } };
-    const result = getStackedDataOfItem<string>(item2, stackGroups);
+    const result = getStackedDataOfItem(item2, stackGroups);
     expect(result).toBe(null);
   });
 
@@ -48,7 +51,7 @@ describe('getStackedDataOfItem', () => {
     const item = makeItem<string>('a');
     const group = Symbol('my mock group');
     const stackGroups = { a: { stackedData: [group], items: [item] } };
-    const result = getStackedDataOfItem<string>(item, stackGroups);
+    const result = getStackedDataOfItem(item, stackGroups);
     expect(result).toBe(group);
   });
 
@@ -56,7 +59,7 @@ describe('getStackedDataOfItem', () => {
     const item = makeItem<number>(7);
     const group = Symbol('my mock group');
     const stackGroups = { 7: { stackedData: [group], items: [item] } };
-    const result = getStackedDataOfItem<number>(item, stackGroups);
+    const result = getStackedDataOfItem(item, stackGroups);
     expect(result).toBe(group);
   });
 
@@ -64,7 +67,7 @@ describe('getStackedDataOfItem', () => {
     const item = makeItem<symbol>(Symbol.for('mock stack ID'));
     const group = Symbol('my mock group');
     const stackGroups = { [Symbol.for('mock stack ID')]: { stackedData: [group], items: [item] } };
-    const result = getStackedDataOfItem<symbol>(item, stackGroups);
+    const result = getStackedDataOfItem(item, stackGroups);
     expect(result).toBe(null);
   });
 });
