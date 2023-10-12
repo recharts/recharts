@@ -71,6 +71,7 @@ export default {
     onClick,
     onMouseEnter,
     onMouseLeave,
+    wrapperAriaLabel: { description: 'Optional aria-label applied to the wrapper <div> element of the chart' },
   },
   component: Treemap,
 };

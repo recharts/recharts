@@ -18,6 +18,7 @@ export default {
     margin,
     data,
     sort: { description: 'Whether to sort the data or not' },
+    wrapperAriaLabel: { description: 'Optional aria-label applied to the wrapper <div> element of the chart' },
   },
   component: Sankey,
 };
