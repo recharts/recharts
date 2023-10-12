@@ -259,6 +259,8 @@ export interface Props {
   animationDuration?: AnimationDuration;
 
   animationEasing?: AnimationTiming;
+
+  wrapperAriaLabel?: string;
 }
 
 interface State {
@@ -318,6 +320,14 @@ export class Treemap extends PureComponent<Props, State> {
   state = {
     ...defaultState,
   };
+
+  private wrapperAriaLabel: string;
+
+  constructor(props: Props) {
+    super(props);
+
+    this.wrapperAriaLabel = props.wrapperAriaLabel && uniqueId('Rechards Treemap Chart ');
+  }
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
     if (
@@ -734,6 +744,7 @@ export class Treemap extends PureComponent<Props, State> {
         className={classNames('recharts-wrapper', className)}
         style={{ ...style, position: 'relative', cursor: 'default', width, height }}
         role="region"
+        aria-label={this.wrapperAriaLabel}
       >
         <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
           {this.renderAllNodes()}

@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
 
 import { Global } from '../util/Global';
-import { isNumber } from '../util/DataUtils';
+import { isNumber, uniqueId } from '../util/DataUtils';
 import { AnimationDuration, AnimationTiming } from '../util/types';
 
 const CLS_PREFIX = 'recharts-tooltip-wrapper';
@@ -88,6 +88,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   animationEasing?: AnimationTiming;
   filterNull?: boolean;
   useTranslate3d?: boolean;
+  ariaLabel?: string;
 };
 
 export class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComponent<
@@ -125,6 +126,14 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   };
 
   private wrapperNode: HTMLDivElement;
+
+  private wrapperAriaLabel: string;
+
+  constructor(props: TooltipProps<TValue, TName>) {
+    super(props);
+
+    this.wrapperAriaLabel = props.ariaLabel ?? uniqueId('Recharts Dialog ');
+  }
 
   componentDidMount() {
     this.updateBBox();
@@ -294,6 +303,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       <div
         tabIndex={-1}
         role="dialog"
+        aria-label={this.wrapperAriaLabel}
         className={cls}
         style={outerStyle}
         ref={node => {

@@ -10,6 +10,7 @@ import { Tooltip } from '../component/Tooltip';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { shallowEqual } from '../util/ShallowEqual';
 import { filterSvgElements, validateWidthHeight, findChildByType, filterProps } from '../util/ReactUtils';
+import { uniqueId } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { Margin, DataKey, SankeyLink, SankeyNode } from '../util/types';
 
@@ -385,6 +386,8 @@ interface SankeyProps {
   onMouseLeave?: any;
 
   sort?: boolean;
+
+  wrapperAriaLabel?: string;
 }
 
 type Props = SVGProps<SVGElement> & SankeyProps;
@@ -428,6 +431,13 @@ export class Sankey extends PureComponent<Props, State> {
     nodes: [] as SankeyNode[],
     links: [] as SankeyLink[],
   };
+
+  private wrapperAriaLabel: string;
+
+  constructor(props: Props) {
+    super(props);
+    this.wrapperAriaLabel = props.wrapperAriaLabel ?? uniqueId('Recharts Sankey Chart ');
+  }
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
     const { data, width, height, margin, iterations, nodeWidth, nodePadding, sort } = nextProps;
@@ -705,6 +715,7 @@ export class Sankey extends PureComponent<Props, State> {
         className={classNames('recharts-wrapper', className)}
         style={{ ...style, position: 'relative', cursor: 'default', width, height }}
         role="region"
+        aria-label={this.wrapperAriaLabel}
       >
         <Surface {...attrs} width={width} height={height}>
           {filterSvgElements(children)}
