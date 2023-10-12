@@ -75,6 +75,8 @@ import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { deferer, CancelFunction } from '../util/deferer';
 import { getActiveShapeIndexForTooltip, isFunnel, isPie, isScatter } from '../util/ActiveShapeUtils';
+import { Props as YAxisProps } from '../cartesian/YAxis';
+import { Props as XAxisProps } from '../cartesian/XAxis';
 
 export type GraphicalItem<Props = Record<string, any>> = ReactElement<
   Props,
@@ -672,24 +674,34 @@ const getAxisNameByLayout = (layout: LayoutType) => {
 
 /**
  * Calculate the offset of main part in the svg element
- * @param  {Object} props          Latest props
- * graphicalItems The instances of item
- * xAxisMap       The configuration of x-axis
- * yAxisMap       The configuration of y-axis
- * @param  {Object} prevLegendBBox          the boundary box of legend
+ * @param  {Object} params.props          Latest props
+ * @param  {Array}  params.graphicalItems The instances of item
+ * @param  {Object} params.xAxisMap       The configuration of x-axis
+ * @param  {Object} params.yAxisMap       The configuration of y-axis
+ * @param  {Object} prevLegendBBox        The boundary box of legend
  * @return {Object} The offset of main part in the svg element
  */
 const calculateOffset = (
-  { props, graphicalItems, xAxisMap = {} as BaseAxisProps, yAxisMap = {} as BaseAxisProps }: any,
-  prevLegendBBox?: any,
-) => {
+  {
+    props,
+    graphicalItems,
+    xAxisMap = {},
+    yAxisMap = {},
+  }: {
+    props: CategoricalChartProps;
+    graphicalItems: Array<ReactElement>;
+    xAxisMap?: { [axisId: string]: XAxisProps };
+    yAxisMap?: { [axisId: string]: YAxisProps };
+  },
+  prevLegendBBox?: DOMRect | null,
+): ChartOffset => {
   const { width, height, children } = props;
   const margin = props.margin || {};
   const brushItem = findChildByType(children, Brush);
   const legendItem = findChildByType(children, Legend);
 
   const offsetH = Object.keys(yAxisMap).reduce(
-    (result: any, id: any) => {
+    (result, id) => {
       const entry = yAxisMap[id];
       const { orientation } = entry;
 
@@ -716,7 +728,7 @@ const calculateOffset = (
     { top: margin.top || 0, bottom: margin.bottom || 0 },
   );
 
-  let offset = { ...offsetV, ...offsetH };
+  let offset: ChartOffset = { ...offsetV, ...offsetH };
 
   const brushBottom = offset.bottom;
 
@@ -725,6 +737,7 @@ const calculateOffset = (
   }
 
   if (legendItem && prevLegendBBox) {
+    // @ts-expect-error margin is optional in props but required in appendOffsetOfLegend
     offset = appendOffsetOfLegend(offset, graphicalItems, props, prevLegendBBox);
   }
 
@@ -801,7 +814,7 @@ export interface CategoricalChartState {
 
   yValue?: number;
 
-  legendBBox?: any;
+  legendBBox?: DOMRect | null;
 
   prevData?: any[];
   prevWidth?: number;
@@ -1020,7 +1033,7 @@ export const generateCategoricalChart = ({
       };
     }, {});
 
-    const offset = calculateOffset({ ...axisObj, props, graphicalItems }, prevState?.legendBBox);
+    const offset: ChartOffset = calculateOffset({ ...axisObj, props, graphicalItems }, prevState?.legendBBox);
 
     Object.keys(axisObj).forEach(key => {
       axisObj[key] = formatAxisMap(props, axisObj[key], offset, key.replace('Map', ''), chartName);
@@ -1468,7 +1481,7 @@ export const generateCategoricalChart = ({
       }
     };
 
-    handleLegendBBoxUpdate = (box: any) => {
+    handleLegendBBoxUpdate = (box: DOMRect | null) => {
       if (box) {
         const { dataStartIndex, dataEndIndex, updateId } = this.state;
 
