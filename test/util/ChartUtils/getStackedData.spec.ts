@@ -6,7 +6,7 @@ function createDataKeyProps(dataKey: DataKey<any>) {
   return { props: { dataKey } };
 }
 
-function createSeries(
+export function createSeries(
   key: string,
   index: number,
   data: Array<SeriesPoint<Record<string, unknown>>> = [],
@@ -14,7 +14,7 @@ function createSeries(
   return Object.assign(data, { key, index });
 }
 
-function createSeriesPoint(
+export function createSeriesPoint(
   first: number,
   second: number,
   data: Record<string, unknown>,

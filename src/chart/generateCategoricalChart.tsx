@@ -640,16 +640,16 @@ const hasGraphicalBarItem = (graphicalItems: any[]): any[] | boolean => {
 
 const getAxisNameByLayout = (layout: LayoutType) => {
   if (layout === 'horizontal') {
-    return { numericAxisName: 'yAxis', cateAxisName: 'xAxis' };
+    return { numericAxisName: 'yAxis', cateAxisName: 'xAxis' } as const;
   }
   if (layout === 'vertical') {
-    return { numericAxisName: 'xAxis', cateAxisName: 'yAxis' };
+    return { numericAxisName: 'xAxis', cateAxisName: 'yAxis' } as const;
   }
   if (layout === 'centric') {
-    return { numericAxisName: 'radiusAxis', cateAxisName: 'angleAxis' };
+    return { numericAxisName: 'radiusAxis', cateAxisName: 'angleAxis' } as const;
   }
 
-  return { numericAxisName: 'angleAxis', cateAxisName: 'radiusAxis' };
+  return { numericAxisName: 'angleAxis', cateAxisName: 'radiusAxis' } as const;
 };
 
 /**

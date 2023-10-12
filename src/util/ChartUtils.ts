@@ -976,14 +976,31 @@ export const getStackedData = (
   return stack(data);
 };
 
+type AxisId = string;
+type StackId = string | number | symbol;
+
+export type ParentStackGroup = {
+  hasStack: boolean;
+  stackGroups: Record<StackId, ChildStackGroup>;
+};
+
+export type ChildStackGroup = {
+  numericAxisId: string;
+  cateAxisId: string;
+  items: Array<ReactElement>;
+  stackedData?: ReadonlyArray<Series<Record<string, unknown>, string>>;
+};
+
+export type AxisStackGroups = Record<AxisId, ParentStackGroup>;
+
 export const getStackGroupsByAxisId = (
-  data: any,
-  _items: Array<any>,
+  data: ReadonlyArray<Record<string, unknown>> | undefined,
+  _items: Array<ReactElement>,
   numericAxisId: string,
   cateAxisId: string,
-  offsetType: any,
+  offsetType: StackOffsetType,
   reverseStackOrder: boolean,
-) => {
+): AxisStackGroups => {
   if (!data) {
     return null;
   }
@@ -991,18 +1008,20 @@ export const getStackGroupsByAxisId = (
   // reversing items to affect render order (for layering)
   const items = reverseStackOrder ? _items.reverse() : _items;
 
-  const stackGroups = items.reduce((result, item) => {
+  const parentStackGroupsInitialValue: Record<AxisId, ParentStackGroup> = {};
+
+  const stackGroups: Record<AxisId, ParentStackGroup> = items.reduce((result, item) => {
     const { stackId, hide } = item.props;
 
     if (hide) {
       return result;
     }
 
-    const axisId = item.props[numericAxisId];
-    const parentGroup = result[axisId] || { hasStack: false, stackGroups: {} };
+    const axisId: AxisId = item.props[numericAxisId];
+    const parentGroup: ParentStackGroup = result[axisId] || { hasStack: false, stackGroups: {} };
 
     if (isNumOrStr(stackId)) {
-      const childGroup = parentGroup.stackGroups[stackId] || {
+      const childGroup: ChildStackGroup = parentGroup.stackGroups[stackId] || {
         numericAxisId,
         cateAxisId,
         items: [],
@@ -1022,12 +1041,15 @@ export const getStackGroupsByAxisId = (
     }
 
     return { ...result, [axisId]: parentGroup };
-  }, {});
+  }, parentStackGroupsInitialValue);
+
+  const axisStackGroupsInitialValue: AxisStackGroups = {};
 
   return Object.keys(stackGroups).reduce((result, axisId) => {
     const group = stackGroups[axisId];
 
     if (group.hasStack) {
+      const stackGroupsInitialValue: Record<StackId, ChildStackGroup> = {};
       group.stackGroups = Object.keys(group.stackGroups).reduce((res, stackId) => {
         const g = group.stackGroups[stackId];
 
@@ -1040,11 +1062,11 @@ export const getStackGroupsByAxisId = (
             stackedData: getStackedData(data, g.items, offsetType),
           },
         };
-      }, {});
+      }, stackGroupsInitialValue);
     }
 
     return { ...result, [axisId]: group };
-  }, {});
+  }, axisStackGroupsInitialValue);
 };
 
 /**
@@ -1168,13 +1190,9 @@ export const getBaseValueOfBar = ({
   return domain[0];
 };
 
-export const getStackedDataOfItem = <
-  StackId extends PropertyKey = string,
-  Item extends { props: { stackId?: StackId } } = { props: { stackId?: StackId } },
-  StackedData = unknown,
->(
-  item: Item,
-  stackGroups: Record<StackId, { items: ReadonlyArray<Item>; stackedData: Record<number, StackedData> }>,
+export const getStackedDataOfItem = <StackedData>(
+  item: ReactElement,
+  stackGroups: Record<StackId, { items: ReadonlyArray<ReactElement>; stackedData: Record<number, StackedData> }>,
 ): StackedData | null => {
   const { stackId } = item.props;
 
