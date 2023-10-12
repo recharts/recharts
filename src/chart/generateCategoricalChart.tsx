@@ -656,11 +656,11 @@ const getAxisNameByLayout = (layout: LayoutType) => {
 
 /**
  * Calculate the offset of main part in the svg element
- * @param  {Object} props          Latest props
- * graphicalItems The instances of item
- * xAxisMap       The configuration of x-axis
- * yAxisMap       The configuration of y-axis
- * @param  {Object} prevLegendBBox          the boundary box of legend
+ * @param  {Object} params.props          Latest props
+ * @param  {Array}  params.graphicalItems The instances of item
+ * @param  {Object} params.xAxisMap       The configuration of x-axis
+ * @param  {Object} params.yAxisMap       The configuration of y-axis
+ * @param  {Object} prevLegendBBox        The boundary box of legend
  * @return {Object} The offset of main part in the svg element
  */
 const calculateOffset = (
