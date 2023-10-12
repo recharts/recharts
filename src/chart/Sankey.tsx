@@ -432,7 +432,7 @@ export class Sankey extends PureComponent<Props, State> {
     links: [] as SankeyLink[],
   };
 
-  private wrapperAriaLabel: string;
+  wrapperAriaLabel: string;
 
   constructor(props: Props) {
     super(props);

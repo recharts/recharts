@@ -321,7 +321,7 @@ export class Treemap extends PureComponent<Props, State> {
     ...defaultState,
   };
 
-  private wrapperAriaLabel: string;
+  wrapperAriaLabel: string;
 
   constructor(props: Props) {
     super(props);

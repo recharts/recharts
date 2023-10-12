@@ -1101,7 +1101,7 @@ export const generateCategoricalChart = ({
 
     accessibilityManager = new AccessibilityManager();
 
-    wrapperLabel: string;
+    wrapperAriaLabel: string;
 
     // todo join specific chart propTypes
     static defaultProps: CategoricalChartProps = {
@@ -1121,7 +1121,7 @@ export const generateCategoricalChart = ({
       super(props);
 
       this.clipPathId = `${props.id ?? uniqueId('recharts')}-clip`;
-      this.wrapperLabel = props.wrapperLabel ?? props.title ?? uniqueId(`Recharts ${chartName} `);
+      this.wrapperAriaLabel = props.wrapperLabel ?? props.title ?? uniqueId(`Recharts ${chartName} `);
 
       if (props.throttleDelay) {
         this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove, props.throttleDelay);
@@ -2349,7 +2349,7 @@ export const generateCategoricalChart = ({
             this.container = node;
           }}
           role="region"
-          aria-label={this.wrapperLabel}
+          aria-label={this.wrapperAriaLabel}
         >
           <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
             {this.renderClipPath()}
