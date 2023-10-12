@@ -70,7 +70,7 @@ _Before_ submitting a pull request, please make sure the following is done…
 ## <a name="code"></a>Code Guide
 
 Our linter will catch most styling issues that may exist in your code.
-You can check the status of your code styling by simply running: `npm run lint`
+You can check the status of your code styling by running: `npm run lint`
 
 However, there are still some styles that the linter cannot pick up. If you are unsure about something, looking at [Airbnb's Style Guide](https://github.com/airbnb/javascript) will guide you in the right direction.
 
