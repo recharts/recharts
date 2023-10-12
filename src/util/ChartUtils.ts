@@ -270,7 +270,7 @@ export const getBarSizeList = ({
   stackGroups = {},
 }: {
   barSize: number | string;
-  stackGroups: any;
+  stackGroups: AxisStackGroups;
 }): Record<string, ReadonlyArray<BarSetup>> => {
   if (!stackGroups) {
     return {};
@@ -286,7 +286,7 @@ export const getBarSizeList = ({
     for (let j = 0, sLen = stackIds.length; j < sLen; j++) {
       const { items, cateAxisId } = sgs[stackIds[j]];
 
-      const barItems = items.filter((item: any) => getDisplayName(item.type).indexOf('Bar') >= 0);
+      const barItems = items.filter(item => getDisplayName(item.type).indexOf('Bar') >= 0);
 
       if (barItems && barItems.length) {
         const { barSize: selfSize } = barItems[0].props;
@@ -977,19 +977,21 @@ export const getStackedData = (
 };
 
 type AxisId = string;
-type StackId = string | number | symbol;
+export type StackId = string | number | symbol;
 
 export type ParentStackGroup = {
   hasStack: boolean;
   stackGroups: Record<StackId, ChildStackGroup>;
 };
 
-export type ChildStackGroup = {
+export type GenericChildStackGroup<T> = {
   numericAxisId: string;
   cateAxisId: string;
   items: Array<ReactElement>;
-  stackedData?: ReadonlyArray<Series<Record<string, unknown>, string>>;
+  stackedData?: ReadonlyArray<T>;
 };
+
+export type ChildStackGroup = GenericChildStackGroup<Series<Record<string, unknown>, string>>;
 
 export type AxisStackGroups = Record<AxisId, ParentStackGroup>;
 
@@ -1192,7 +1194,7 @@ export const getBaseValueOfBar = ({
 
 export const getStackedDataOfItem = <StackedData>(
   item: ReactElement,
-  stackGroups: Record<StackId, { items: ReadonlyArray<ReactElement>; stackedData: Record<number, StackedData> }>,
+  stackGroups: Record<StackId, GenericChildStackGroup<StackedData>>,
 ): StackedData | null => {
   const { stackId } = item.props;
 
@@ -1208,23 +1210,27 @@ export const getStackedDataOfItem = <StackedData>(
   return null;
 };
 
-const getDomainOfSingle = (data: Array<any>) =>
+const getDomainOfSingle = (data: Array<Array<any>>): number[] =>
   data.reduce(
-    (result, entry) => [
+    (result: number[], entry: Array<any>): number[] => [
       _.min(entry.concat([result[0]]).filter(isNumber)),
       _.max(entry.concat([result[1]]).filter(isNumber)),
     ],
     [Infinity, -Infinity],
   );
 
-export const getDomainOfStackGroups = (stackGroups: any, startIndex: number, endIndex: number) =>
+export const getDomainOfStackGroups = (
+  stackGroups: Record<StackId, ChildStackGroup>,
+  startIndex: number,
+  endIndex: number,
+) =>
   Object.keys(stackGroups)
     .reduce(
       (result, stackId) => {
         const group = stackGroups[stackId];
         const { stackedData } = group;
         const domain = stackedData.reduce(
-          (res: [number, number], entry: any) => {
+          (res: [number, number], entry) => {
             const s = getDomainOfSingle(entry.slice(startIndex, endIndex + 1));
 
             return [Math.min(res[0], s[0]), Math.max(res[1], s[1])];

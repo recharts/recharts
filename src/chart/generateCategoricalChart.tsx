@@ -51,6 +51,7 @@ import {
   parseDomainOfCategoryAxis,
   getTooltipItem,
   BarPosition,
+  AxisStackGroups,
 } from '../util/ChartUtils';
 import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDomain';
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
@@ -151,7 +152,11 @@ const getActiveCoordinate = (
 
 const getDisplayedData = (
   data: any[],
-  { graphicalItems, dataStartIndex, dataEndIndex }: CategoricalChartState,
+  {
+    graphicalItems,
+    dataStartIndex,
+    dataEndIndex,
+  }: Pick<CategoricalChartState, 'graphicalItems' | 'dataStartIndex' | 'dataEndIndex'>,
   item?: ReactElement,
 ): any[] => {
   const itemsData = (graphicalItems || []).reduce((result, child) => {
@@ -293,7 +298,7 @@ export const getAxisMapByAxes = (
     graphicalItems: ReadonlyArray<ReactElement>;
     axisType: AxisType;
     axisIdKey: string;
-    stackGroups: any;
+    stackGroups: AxisStackGroups;
     dataStartIndex: number;
     dataEndIndex: number;
   },
@@ -465,7 +470,23 @@ export const getAxisMapByAxes = (
  */
 const getAxisMapByItems = (
   props: CategoricalChartProps,
-  { graphicalItems, Axis, axisType, axisIdKey, stackGroups, dataStartIndex, dataEndIndex }: any,
+  {
+    graphicalItems,
+    Axis,
+    axisType,
+    axisIdKey,
+    stackGroups,
+    dataStartIndex,
+    dataEndIndex,
+  }: {
+    axisIdKey: string;
+    axisType?: AxisType;
+    Axis?: React.ComponentType<BaseAxisProps>;
+    graphicalItems: ReadonlyArray<ReactElement>;
+    stackGroups: AxisStackGroups;
+    dataStartIndex: number;
+    dataEndIndex: number;
+  },
 ): AxisMap => {
   const { layout, children } = props;
   const displayedData = getDisplayedData(props.data, {
@@ -555,7 +576,7 @@ const getAxisMap = (
     axisType?: AxisType;
     AxisComp?: React.ComponentType;
     graphicalItems: ReadonlyArray<ReactElement>;
-    stackGroups: any;
+    stackGroups: AxisStackGroups;
     dataStartIndex: number;
     dataEndIndex: number;
   },
@@ -745,6 +766,8 @@ export interface CategoricalChartState {
 
   yAxisMap?: AxisMap;
 
+  zAxisMap?: AxisMap;
+
   orderedTooltipTicks?: any;
 
   tooltipAxis?: BaseAxisProps;
@@ -789,6 +812,8 @@ export interface CategoricalChartState {
   prevStackOffset?: StackOffsetType;
   prevMargin?: Margin;
   prevChildren?: any;
+
+  stackGroups?: AxisStackGroups;
 }
 
 export type CategoricalChartFunc = (nextState: CategoricalChartState, event: any) => void;
@@ -844,7 +869,7 @@ export const generateCategoricalChart = ({
   formatAxisMap,
   defaultProps,
 }: CategoricalChartOptions) => {
-  const getFormatItems = (props: CategoricalChartProps, currentState: any): any[] => {
+  const getFormatItems = (props: CategoricalChartProps, currentState: CategoricalChartState): any[] => {
     const { graphicalItems, stackGroups, offset, updateId, dataStartIndex, dataEndIndex } = currentState;
     const { barSize, layout, barGap, barCategoryGap, maxBarSize: globalMaxBarSize } = props;
     const { numericAxisName, cateAxisName } = getAxisNameByLayout(layout);
@@ -859,11 +884,31 @@ export const generateCategoricalChart = ({
       const numericAxisId = item.props[`${numericAxisName}Id`];
       // axisId of the categorical axis
       const cateAxisId = item.props[`${cateAxisName}Id`];
-      const axisObj = axisComponents.reduce((result: any, entry: BaseAxisProps) => {
+
+      type AxisObj = {
+        xAxis?: BaseAxisProps;
+        xAxisTicks?: Array<TickItem>;
+
+        yAxis?: BaseAxisProps;
+        yAxisTicks?: Array<TickItem>;
+
+        zAxis?: BaseAxisProps;
+        zAxisTicks?: Array<TickItem>;
+
+        angleAxis?: BaseAxisProps;
+        angleAxisTicks?: Array<TickItem>;
+
+        radiusAxis?: BaseAxisProps;
+        radiusAxisTicks?: Array<TickItem>;
+      };
+
+      const axisObjInitialValue: AxisObj = {};
+
+      const axisObj: AxisObj = axisComponents.reduce((result: AxisObj, entry: BaseAxisProps): AxisObj => {
         // map of axisId to axis for a specific axis type
-        const axisMap: AxisMap | undefined = currentState[`${entry.axisType}Map`];
+        const axisMap: AxisMap | undefined = currentState[`${entry.axisType}Map` as const];
         // axisId of axis we are currently computing
-        const id = item.props[`${entry.axisType}Id`];
+        const id: string = item.props[`${entry.axisType}Id`];
 
         /**
          * tell the user in dev mode that their configuration is incorrect if we cannot find a match between
@@ -886,9 +931,9 @@ export const generateCategoricalChart = ({
           [entry.axisType]: axis,
           [`${entry.axisType}Ticks`]: getTicksOfAxis(axis),
         };
-      }, {});
+      }, axisObjInitialValue);
       const cateAxis = axisObj[cateAxisName];
-      const cateTicks = axisObj[`${cateAxisName}Ticks`];
+      const cateTicks = axisObj[`${cateAxisName}Ticks` as const];
       const stackedData =
         stackGroups &&
         stackGroups[numericAxisId] &&
@@ -976,7 +1021,7 @@ export const generateCategoricalChart = ({
     const { children, layout, stackOffset, data, reverseStackOrder } = props;
     const { numericAxisName, cateAxisName } = getAxisNameByLayout(layout);
     const graphicalItems = findAllByType(children, GraphicalChild);
-    const stackGroups = getStackGroupsByAxisId(
+    const stackGroups: AxisStackGroups = getStackGroupsByAxisId(
       data,
       graphicalItems,
       `${numericAxisName}Id`,
