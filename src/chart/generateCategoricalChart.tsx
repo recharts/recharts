@@ -79,6 +79,7 @@ import { getActiveShapeIndexForTooltip, isFunnel, isPie, isScatter } from '../ut
 import { Props as YAxisProps } from '../cartesian/YAxis';
 import { Props as XAxisProps } from '../cartesian/XAxis';
 import { getCursorPoints } from '../util/cursor/getCursorPoints';
+import { getCursorRectangle } from '../util/cursor/getCursorRectangle';
 
 export type GraphicalItem<Props = Record<string, any>> = ReactElement<
   Props,
@@ -1318,21 +1319,6 @@ export const generateCategoricalChart = ({
       return null;
     }
 
-    getCursorRectangle() {
-      const { layout } = this.props;
-      const { activeCoordinate, offset, tooltipAxisBandSize } = this.state;
-      const halfSize = tooltipAxisBandSize / 2;
-
-      return {
-        stroke: 'none',
-        fill: '#ccc',
-        x: layout === 'horizontal' ? activeCoordinate.x - halfSize : offset.left + 0.5,
-        y: layout === 'horizontal' ? offset.top + 0.5 : activeCoordinate.y - halfSize,
-        width: layout === 'horizontal' ? tooltipAxisBandSize : offset.width - 1,
-        height: layout === 'horizontal' ? offset.height - 1 : tooltipAxisBandSize,
-      };
-    }
-
     inRange(x: number, y: number, scale = 1): any {
       const { layout } = this.props;
 
@@ -1748,7 +1734,8 @@ export const generateCategoricalChart = ({
     }
 
     renderCursor = (element: ReactElement) => {
-      const { isTooltipActive, activeCoordinate, activePayload, offset, activeTooltipIndex } = this.state;
+      const { isTooltipActive, activeCoordinate, activePayload, offset, activeTooltipIndex, tooltipAxisBandSize } =
+        this.state;
       const tooltipEventType = this.getTooltipEventType();
 
       if (
@@ -1768,7 +1755,7 @@ export const generateCategoricalChart = ({
         restProps = activeCoordinate;
         cursorComp = Cross;
       } else if (chartName === 'BarChart') {
-        restProps = this.getCursorRectangle();
+        restProps = getCursorRectangle(layout, activeCoordinate, offset, tooltipAxisBandSize);
         cursorComp = Rectangle;
       } else if (layout === 'radial') {
         const { cx, cy, radius, startAngle, endAngle } = getRadialCursorPoints(activeCoordinate);
