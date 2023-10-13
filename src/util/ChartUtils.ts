@@ -33,6 +33,8 @@ import {
 } from './types';
 import { getLegendProps } from './getLegendProps';
 import { Props as XAxisProps } from '../cartesian/XAxis';
+import { Props as YAxisProps } from '../cartesian/YAxis';
+import { Props as ZAxisProps } from '../cartesian/ZAxis';
 
 // Exported for backwards compatibility
 export { getLegendProps };
@@ -1252,7 +1254,12 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
  * @param  {Boolean} isBar if items in axis are bars
  * @return {Number} Size
  */
-export const getBandSizeOfAxis = (axis?: XAxisProps, ticks?: Array<TickItem>, isBar?: boolean): number | undefined => {
+type CartesianAxisProps = XAxisProps | YAxisProps | ZAxisProps;
+export const getBandSizeOfAxis = (
+  axis?: CartesianAxisProps,
+  ticks?: Array<TickItem>,
+  isBar?: boolean,
+): number | undefined => {
   // @ts-expect-error we need to rethink scale type
   if (axis && axis.scale && axis.scale.bandwidth) {
     // @ts-expect-error we need to rethink scale type
@@ -1263,7 +1270,7 @@ export const getBandSizeOfAxis = (axis?: XAxisProps, ticks?: Array<TickItem>, is
     }
   }
 
-  if (axis && axis.width && ticks) {
+  if (axis && 'width' in axis && axis.width && ticks) {
     if (ticks.length === 1) {
       let bandSize = Infinity;
       bandSize = axis.width / 3;
