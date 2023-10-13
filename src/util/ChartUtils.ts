@@ -32,6 +32,7 @@ import {
   ChartOffset,
 } from './types';
 import { getLegendProps } from './getLegendProps';
+import { Props as XAxisProps } from '../cartesian/XAxis';
 
 // Exported for backwards compatibility
 export { getLegendProps };
@@ -1251,11 +1252,7 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
  * @param  {Boolean} isBar if items in axis are bars
  * @return {Number} Size
  */
-export const getBandSizeOfAxis = (
-  axis?: BaseAxisProps,
-  ticks?: Array<TickItem>,
-  isBar?: boolean,
-): number | undefined => {
+export const getBandSizeOfAxis = (axis?: XAxisProps, ticks?: Array<TickItem>, isBar?: boolean): number | undefined => {
   // @ts-expect-error we need to rethink scale type
   if (axis && axis.scale && axis.scale.bandwidth) {
     // @ts-expect-error we need to rethink scale type
@@ -1266,11 +1263,9 @@ export const getBandSizeOfAxis = (
     }
   }
 
-  // @ts-expect-error we need to rethink width type
   if (axis && axis.width && ticks) {
     if (ticks.length === 1) {
       let bandSize = Infinity;
-      // @ts-expect-error we need to rethink width type
       bandSize = axis.width / 3;
       return bandSize === Infinity ? 0 : bandSize;
     }
