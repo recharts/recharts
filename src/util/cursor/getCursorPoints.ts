@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { polarToCartesian } from '../PolarUtils';
 import { ChartCoordinate, Coordinate, ChartOffset, LayoutType } from '../types';
 import { RadialCursorPoints, getRadialCursorPoints } from './getRadialCursorPoints';
@@ -20,7 +19,7 @@ export function getCursorPoints(
     y2 = y1;
     x1 = offset.left;
     x2 = offset.left + offset.width;
-  } else if (!_.isNil(activeCoordinate.cx) || !_.isNil(activeCoordinate.cy)) {
+  } else if (activeCoordinate.cx != null && activeCoordinate.cy != null) {
     if (layout === 'centric') {
       const { cx, cy, innerRadius, outerRadius, angle } = activeCoordinate;
       const innerPoint = polarToCartesian(cx, cy, innerRadius, angle);
