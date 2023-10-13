@@ -17,7 +17,7 @@ import ReactResizeDetector from 'react-resize-detector';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
-export interface Props {
+export interface Props extends React.ComponentProps<'div'> {
   aspect?: number;
   width?: string | number;
   height?: string | number;
@@ -27,12 +27,9 @@ export interface Props {
     width: number;
     height: number;
   };
-  'data-testid'?: string;
   maxHeight?: number;
   children: ReactElement;
   debounce?: number;
-  id?: string | number;
-  className?: string | number;
   style?: React.CSSProperties;
   onResize?: (width: number, height: number) => void;
 }
@@ -58,9 +55,9 @@ export const ResponsiveContainer = forwardRef(
       debounce = 0,
       id,
       className,
-      'data-testid': dataTestId,
       onResize,
       style = {},
+      ...rest
     }: Props,
     ref,
   ) => {
@@ -85,7 +82,17 @@ export const ResponsiveContainer = forwardRef(
         containerHeight: containerRef.current.clientHeight,
       };
     }, []);
+    const getDataProps = (props: Partial<Props>) => {
+      const dataProps: Partial<Record<keyof Omit<Props, 'children'>, any>> = {};
 
+      Object.keys(rest).forEach((prop: keyof Omit<Props, 'children'>) => {
+        if (prop.match(/^data-/)) {
+          dataProps[prop] = props[prop];
+        }
+      });
+
+      return dataProps;
+    };
     const updateDimensionsImmediate = useCallback(() => {
       const newSize = getContainerSize();
 
@@ -181,11 +188,11 @@ export const ResponsiveContainer = forwardRef(
         refreshRate={debounce}
       >
         <div
+          {...getDataProps(rest)}
           {...(id != null ? { id: `${id}` } : {})}
           className={classNames('recharts-responsive-container', className)}
           style={styles}
           ref={containerRef}
-          data-testid={dataTestId}
         >
           {chartContent}
         </div>

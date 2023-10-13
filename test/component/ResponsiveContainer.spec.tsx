@@ -2,7 +2,6 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 import { ResponsiveContainer } from '../../src';
-import { vi } from 'vitest';
 
 declare global {
   interface Window {
@@ -31,12 +30,12 @@ describe('<ResponsiveContainer />', () => {
     notifyResizeObserverChange = callback;
 
     return {
-      observe: vi.fn().mockImplementation(),
+      observe: vi.fn(),
       unobserve: vi.fn(),
       disconnect: vi.fn(),
     };
   });
-  const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+  const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation((): void => undefined);
 
   beforeAll(() => {
     delete window.ResizeObserver;

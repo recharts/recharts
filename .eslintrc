@@ -50,7 +50,7 @@
     "react/no-unused-prop-types": "off",
     "class-methods-use-this": "error",
     "import/no-extraneous-dependencies": [
-      "off",
+      "error",
       {
         "devDependencies": true
       }
