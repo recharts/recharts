@@ -1,43 +1,19 @@
 /**
  * @fileOverview Tooltip
  */
-import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps } from 'react';
-import {
-  DefaultTooltipContent,
-  ValueType,
-  NameType,
-  Payload,
-  Props as ToltipContentProps,
-} from './DefaultTooltipContent';
-import { TooltipBoundingBox } from './TooltipBoundingBox';
+import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps, useContext, useEffect } from 'react';
+import { ValueType, NameType, Payload, Props as TooltipContentProps } from './DefaultTooltipContent';
 
 import { Global } from '../util/Global';
-import { UniqueOption, getUniqPayload } from '../util/payload/getUniqPayload';
+import { UniqueOption } from '../util/payload/getUniqPayload';
 import { AllowInDimension, AnimationDuration, AnimationTiming, CartesianViewBox, Coordinate } from '../util/types';
+import { ChartContext, ChartContextType } from '../context/chartContext';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
   | ((props: TooltipProps<TValue, TName>) => ReactNode);
 
-function defaultUniqBy<TValue extends ValueType, TName extends NameType>(entry: Payload<TValue, TName>) {
-  return entry.dataKey;
-}
-
-function renderContent<TValue extends ValueType, TName extends NameType>(
-  content: ContentType<TValue, TName>,
-  props: TooltipProps<TValue, TName>,
-): ReactNode {
-  if (React.isValidElement(content)) {
-    return React.cloneElement(content, props);
-  }
-  if (typeof content === 'function') {
-    return React.createElement(content as any, props);
-  }
-
-  return <DefaultTooltipContent {...props} />;
-}
-
-export type TooltipProps<TValue extends ValueType, TName extends NameType> = ToltipContentProps<TValue, TName> & {
+export type TooltipProps<TValue extends ValueType, TName extends NameType> = TooltipContentProps<TValue, TName> & {
   active?: boolean;
   allowEscapeViewBox?: AllowInDimension;
   animationDuration?: AnimationDuration;
@@ -57,6 +33,38 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Tol
   viewBox?: CartesianViewBox;
   wrapperStyle?: CSSProperties;
 };
+
+function ContextUpdater(props: TooltipProps<any, any>) {
+  const [, setContext] = useContext(ChartContext);
+  useEffect(() => {
+    const newContext: ChartContextType = {
+      isTooltipPresent: true,
+      content: props.content,
+      cursor: props.cursor,
+      isAnimationActive: props.isAnimationActive,
+      animationDuration: props.animationDuration,
+      animationEasing: props.animationEasing,
+      filterNull: props.filterNull,
+      // @ts-expect-error TODO this function will refine from the "outside, flexible prop" to "inside, strict prop" type
+      payloadUniqBy: props.payloadUniqBy,
+      wrapperStyle: props.wrapperStyle,
+      useTranslate3d: props.useTranslate3d,
+      // @ts-expect-error TODO
+      allowEscapeViewBox: props.allowEscapeViewBox,
+      // @ts-expect-error TODO
+      reverseDirection: props.reverseDirection,
+      offsetTopLeft: props.offset,
+      // @ts-expect-error TODO
+      position: props.position,
+    };
+    setContext(newContext);
+    return function cleanup() {
+      setContext({ isTooltipPresent: false });
+    };
+  }, [props, setContext]);
+
+  return <></>;
+}
 
 export class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComponent<
   TooltipProps<TValue, TName>
@@ -86,54 +94,6 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   };
 
   render() {
-    const {
-      active,
-      allowEscapeViewBox,
-      animationDuration,
-      animationEasing,
-      content,
-      coordinate,
-      filterNull,
-      isAnimationActive,
-      offset,
-      payload,
-      payloadUniqBy,
-      position,
-      reverseDirection,
-      useTranslate3d,
-      viewBox,
-      wrapperStyle,
-    } = this.props;
-    let finalPayload: Payload<TValue, TName>[] = payload ?? [];
-
-    if (filterNull && finalPayload.length) {
-      finalPayload = getUniqPayload(
-        payload.filter(entry => entry.value != null),
-        payloadUniqBy,
-        defaultUniqBy,
-      );
-    }
-
-    const hasPayload = finalPayload.length > 0;
-
-    return (
-      <TooltipBoundingBox
-        allowEscapeViewBox={allowEscapeViewBox}
-        animationDuration={animationDuration}
-        animationEasing={animationEasing}
-        isAnimationActive={isAnimationActive}
-        active={active}
-        coordinate={coordinate}
-        hasPayload={hasPayload}
-        offset={offset}
-        position={position}
-        reverseDirection={reverseDirection}
-        useTranslate3d={useTranslate3d}
-        viewBox={viewBox}
-        wrapperStyle={wrapperStyle}
-      >
-        {renderContent(content, { ...this.props, payload: finalPayload })}
-      </TooltipBoundingBox>
-    );
+    return <ContextUpdater {...this.props} />;
   }
 }

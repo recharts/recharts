@@ -1,4 +1,4 @@
-import React, { Component, cloneElement, isValidElement, createElement, ReactElement } from 'react';
+import React, { Component, cloneElement, isValidElement, ReactElement } from 'react';
 import isNil from 'lodash/isNil';
 import isFunction from 'lodash/isFunction';
 import range from 'lodash/range';
@@ -12,17 +12,13 @@ import clsx from 'clsx';
 // eslint-disable-next-line no-restricted-imports
 import type { DebouncedFunc } from 'lodash';
 import invariant from 'tiny-invariant';
-import { getRadialCursorPoints } from '../util/cursor/getRadialCursorPoints';
 import { getTicks } from '../cartesian/getTicks';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
 import { Legend } from '../component/Legend';
-import { Curve } from '../shape/Curve';
-import { Cross } from '../shape/Cross';
-import { Sector } from '../shape/Sector';
 import { Dot } from '../shape/Dot';
-import { isInRectangle, Rectangle } from '../shape/Rectangle';
+import { isInRectangle } from '../shape/Rectangle';
 
 import {
   filterProps,
@@ -89,8 +85,8 @@ import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { getActiveShapeIndexForTooltip, isFunnel, isPie, isScatter } from '../util/ActiveShapeUtils';
 import { Props as YAxisProps } from '../cartesian/YAxis';
 import { Props as XAxisProps } from '../cartesian/XAxis';
-import { getCursorPoints } from '../util/cursor/getCursorPoints';
-import { getCursorRectangle } from '../util/cursor/getCursorRectangle';
+import { TooltipRenderer } from '../renderer/TooltipRenderer';
+import { ChartContextContainer } from '../context/chartContext';
 
 export interface MousePointer {
   pageX: number;
@@ -112,6 +108,22 @@ const ORIENT_MAP = {
 const FULL_WIDTH_AND_HEIGHT = { width: '100%', height: '100%' };
 
 const originCoordinate: Coordinate = { x: 0, y: 0 };
+
+/**
+ * This function exists as a temporary workaround.
+ *
+ * Why? generateCategoricalChart does not render `{children}` directly;
+ * instead it passes them through `renderByOrder` function which reads their handlers.
+ *
+ * So, this is a handler that does nothing.
+ * Once we get rid of `renderByOrder` and switch to JSX only, we can get rid of this handler too.
+ *
+ * @param {JSX} element as is in JSX
+ * @returns {JSX} the same element
+ */
+function renderAsIs(element: React.ReactElement): React.ReactElement {
+  return element;
+}
 
 const calculateTooltipPos = (rangeObj: any, layout: LayoutType): any => {
   if (layout === 'horizontal') {
@@ -1751,63 +1763,6 @@ export const generateCategoricalChart = ({
       return null;
     }
 
-    renderCursor = (element: ReactElement) => {
-      const { isTooltipActive, activeCoordinate, activePayload, offset, activeTooltipIndex, tooltipAxisBandSize } =
-        this.state;
-      const tooltipEventType = this.getTooltipEventType();
-
-      if (
-        !element ||
-        !element.props.cursor ||
-        !isTooltipActive ||
-        !activeCoordinate ||
-        (chartName !== 'ScatterChart' && tooltipEventType !== 'axis')
-      ) {
-        return null;
-      }
-      const { layout } = this.props;
-      let restProps;
-      let cursorComp: React.ComponentType<any> = Curve;
-
-      if (chartName === 'ScatterChart') {
-        restProps = activeCoordinate;
-        cursorComp = Cross;
-      } else if (chartName === 'BarChart') {
-        restProps = getCursorRectangle(layout, activeCoordinate, offset, tooltipAxisBandSize);
-        cursorComp = Rectangle;
-      } else if (layout === 'radial') {
-        const { cx, cy, radius, startAngle, endAngle } = getRadialCursorPoints(activeCoordinate);
-        restProps = {
-          cx,
-          cy,
-          startAngle,
-          endAngle,
-          innerRadius: radius,
-          outerRadius: radius,
-        };
-        cursorComp = Sector;
-      } else {
-        restProps = { points: getCursorPoints(layout, activeCoordinate, offset) };
-        cursorComp = Curve;
-      }
-      const key = element.key || '_recharts-cursor';
-      const cursorProps = {
-        stroke: '#ccc',
-        pointerEvents: 'none',
-        ...offset,
-        ...restProps,
-        ...filterProps(element.props.cursor),
-        payload: activePayload,
-        payloadIndex: activeTooltipIndex,
-        key,
-        className: 'recharts-tooltip-cursor',
-      };
-
-      return isValidElement(element.props.cursor)
-        ? cloneElement(element.props.cursor, cursorProps)
-        : createElement(cursorComp, cursorProps);
-    };
-
     renderPolarAxis = (element: any, displayName: string, index: number) => {
       const axisType = get(element, 'type.axisType');
       const axisMap = get(this.state, `${axisType}Map`);
@@ -1940,27 +1895,25 @@ export const generateCategoricalChart = ({
       });
     };
 
-    /**
-     * Draw Tooltip
-     * @return {ReactElement}  The instance of Tooltip
-     */
     renderTooltip = (): React.ReactElement => {
-      const { children } = this.props;
-      const tooltipItem = findChildByType(children, Tooltip);
+      const { activeCoordinate, activePayload, offset, isTooltipActive, activeTooltipIndex, activeLabel } = this.state;
 
-      if (!tooltipItem) {
-        return null;
-      }
-
-      const { isTooltipActive, activeCoordinate, activePayload, activeLabel, offset } = this.state;
-
-      return cloneElement(tooltipItem, {
-        viewBox: { ...offset, x: offset.left, y: offset.top },
-        active: isTooltipActive,
-        label: activeLabel,
-        payload: isTooltipActive ? activePayload : [],
-        coordinate: activeCoordinate,
-      });
+      const { layout } = this.props;
+      return (
+        <TooltipRenderer
+          activeCoordinate={activeCoordinate}
+          chartName={chartName}
+          layout={layout}
+          offset={offset}
+          viewBox={{ ...offset, x: offset.left, y: offset.top }}
+          tooltipAxisBandSize={0}
+          activeTooltipIndex={activeTooltipIndex}
+          activeLabel={activeLabel}
+          activePayload={activePayload}
+          isTooltipActive={isTooltipActive}
+          tooltipEventType={this.getTooltipEventType()}
+        />
+      );
     };
 
     renderBrush = (element: React.ReactElement) => {
@@ -2277,11 +2230,11 @@ export const generateCategoricalChart = ({
       Scatter: { handler: this.renderGraphicChild },
       Pie: { handler: this.renderGraphicChild },
       Funnel: { handler: this.renderGraphicChild },
-      Tooltip: { handler: this.renderCursor, once: true },
       PolarGrid: { handler: this.renderPolarGrid, once: true },
       PolarAngleAxis: { handler: this.renderPolarAxis },
       PolarRadiusAxis: { handler: this.renderPolarAxis },
       Customized: { handler: this.renderCustomized },
+      Tooltip: { handler: renderAsIs },
     };
 
     render() {
@@ -2321,22 +2274,24 @@ export const generateCategoricalChart = ({
 
       const events = this.parseEventsOfWrapper();
       return (
-        <div
-          className={clsx('recharts-wrapper', className)}
-          style={{ position: 'relative', cursor: 'default', width, height, ...style }}
-          {...events}
-          ref={(node: HTMLDivElement) => {
-            this.container = node;
-          }}
-          role="region"
-        >
-          <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
-            {this.renderClipPath()}
-            {renderByOrder(children, this.renderMap)}
-          </Surface>
-          {this.renderLegend()}
-          {this.renderTooltip()}
-        </div>
+        <ChartContextContainer>
+          <div
+            className={clsx('recharts-wrapper', className)}
+            style={{ position: 'relative', cursor: 'default', width, height, ...style }}
+            {...events}
+            ref={(node: HTMLDivElement) => {
+              this.container = node;
+            }}
+            role="region"
+          >
+            <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
+              {this.renderClipPath()}
+              {renderByOrder(children, map)}
+            </Surface>
+            {this.renderLegend()}
+            {this.renderTooltip()}
+          </div>
+        </ChartContextContainer>
       );
     }
   };
