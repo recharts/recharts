@@ -1,6 +1,6 @@
 import { fireEvent, render } from '@testing-library/react';
 import React, { ComponentProps, FC } from 'react';
-
+import { vi, SpyInstance } from 'vitest';
 import { Area, AreaChart, Brush, CartesianAxis, Tooltip, XAxis, YAxis } from '../../src';
 
 describe('AreaChart', () => {
@@ -148,9 +148,9 @@ describe('AreaChart', () => {
   describe('<AreaChart /> - Pure Rendering', () => {
     const pureElements = [Area];
 
-    const spies: vi.SpyInstance[] = [];
+    const spies: SpyInstance[] = [];
     // CartesianAxis is what is actually render for XAxis and YAxis
-    let axisSpy: vi.SpyInstance;
+    let axisSpy: SpyInstance;
 
     // spy on each pure element before each test, and restore the spy afterwards
     beforeEach(() => {

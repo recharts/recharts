@@ -18,5 +18,5 @@
     "types": ["vitest/globals"],
     "baseUrl": "."
   },
-  "include": ["./src/**/*", "types.d.ts", "vitest.config.ts", "./test/**/*"]
+  "include": ["./src/**/*", "types.d.ts", "./test/**/*"]
 }
