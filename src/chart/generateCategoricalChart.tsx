@@ -859,6 +859,23 @@ export interface CategoricalChartProps {
   tabIndex?: number;
 }
 
+type AxisObj = {
+  xAxis?: BaseAxisProps;
+  xAxisTicks?: Array<TickItem>;
+
+  yAxis?: BaseAxisProps;
+  yAxisTicks?: Array<TickItem>;
+
+  zAxis?: BaseAxisProps;
+  zAxisTicks?: Array<TickItem>;
+
+  angleAxis?: BaseAxisProps;
+  angleAxisTicks?: Array<TickItem>;
+
+  radiusAxis?: BaseAxisProps;
+  radiusAxisTicks?: Array<TickItem>;
+};
+
 export const generateCategoricalChart = ({
   chartName,
   GraphicalChild,
@@ -884,23 +901,6 @@ export const generateCategoricalChart = ({
       const numericAxisId = item.props[`${numericAxisName}Id`];
       // axisId of the categorical axis
       const cateAxisId = item.props[`${cateAxisName}Id`];
-
-      type AxisObj = {
-        xAxis?: BaseAxisProps;
-        xAxisTicks?: Array<TickItem>;
-
-        yAxis?: BaseAxisProps;
-        yAxisTicks?: Array<TickItem>;
-
-        zAxis?: BaseAxisProps;
-        zAxisTicks?: Array<TickItem>;
-
-        angleAxis?: BaseAxisProps;
-        angleAxisTicks?: Array<TickItem>;
-
-        radiusAxis?: BaseAxisProps;
-        radiusAxisTicks?: Array<TickItem>;
-      };
 
       const axisObjInitialValue: AxisObj = {};
 
