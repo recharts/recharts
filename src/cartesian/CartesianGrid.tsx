@@ -68,8 +68,8 @@ export class CartesianGrid extends PureComponent<Props> {
       lineItem = option(props);
     } else {
       const { x1, y1, x2, y2, key, ...others } = props;
-
-      lineItem = <line {...filterProps(others)} x1={x1} y1={y1} x2={x2} y2={y2} fill="none" key={key} />;
+      const { offset: __, ...restOfFilteredProps } = filterProps(others);
+      lineItem = <line {...restOfFilteredProps} x1={x1} y1={y1} x2={x2} y2={y2} fill="none" key={key} />;
     }
 
     return lineItem;
