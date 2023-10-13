@@ -41,7 +41,7 @@ export type { Props as DotProps } from './shape/Dot';
 export { Cross } from './shape/Cross';
 export type { Props as CrossProps } from './shape/Cross';
 export { Symbols } from './shape/Symbols';
-export type { Props as SymbolsProps } from './shape/Symbols';
+export type { SymbolsProps } from './shape/Symbols';
 
 export { PolarGrid } from './polar/PolarGrid';
 export type { Props as PolarGridProps } from './polar/PolarGrid';
