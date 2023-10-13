@@ -1266,18 +1266,28 @@ export const getBandSizeOfAxis = (
     }
   }
 
-  if (axis && ticks && ticks.length >= 2) {
-    const orderedTicks = _.sortBy(ticks, o => o.coordinate);
-    let bandSize = Infinity;
-
-    for (let i = 1, len = orderedTicks.length; i < len; i++) {
-      const cur = orderedTicks[i];
-      const prev = orderedTicks[i - 1];
-
-      bandSize = Math.min((cur.coordinate || 0) - (prev.coordinate || 0), bandSize);
+  // @ts-expect-error we need to rethink width type
+  if (axis && axis.width && ticks) {
+    if (ticks.length === 1) {
+      let bandSize = Infinity;
+      // @ts-expect-error we need to rethink width type
+      bandSize = axis.width / 3;
+      return bandSize === Infinity ? 0 : bandSize;
     }
 
-    return bandSize === Infinity ? 0 : bandSize;
+    if (ticks.length >= 2) {
+      const orderedTicks = _.sortBy(ticks, o => o.coordinate);
+      let bandSize = Infinity;
+
+      for (let i = 1, len = orderedTicks.length; i < len; i++) {
+        const cur = orderedTicks[i];
+        const prev = orderedTicks[i - 1];
+
+        bandSize = Math.min((cur.coordinate || 0) - (prev.coordinate || 0), bandSize);
+      }
+
+      return bandSize === Infinity ? 0 : bandSize;
+    }
   }
 
   return isBar ? undefined : 0;
