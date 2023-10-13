@@ -4,6 +4,7 @@ import { log } from 'console';
 const MULTIPLY_OR_DIVIDE_REGEX = /(-?\d+(?:\.\d+)?[a-zA-Z%]*)([*/])(-?\d+(?:\.\d+)?[a-zA-Z%]*)/;
 const ADD_OR_SUBTRACT_REGEX = /(-?\d+(?:\.\d+)?[a-zA-Z%]*)([+-])(-?\d+(?:\.\d+)?[a-zA-Z%]*)/;
 const CSS_LENGTH_UNIT_REGEX = /^px|cm|vh|vw|em|rem|%|mm|in|pt|pc|ex|ch|vmin|vmax|Q$/;
+const NUM_SPLIT_REGEX = /(-?\d+(?:\.\d+)?)([a-zA-Z%]+)?/;
 
 const CONVERSION_RATES: Record<string, number> = {
   cm: 96 / 2.54,
@@ -23,19 +24,13 @@ function convertToPx(value: number, unit: string): number {
 }
 
 class DecimalCSS {
-  unit: string;
-
-  num: number;
-
   static parse(str: string) {
-    const decimalMatch = str.match(/(-?\d+(?:\.\d+)?)([a-zA-Z%]+)?/);
-    const num = parseFloat(decimalMatch[1]);
-    const unit = decimalMatch[2] ?? '';
+    const [, numStr, unit] = NUM_SPLIT_REGEX.exec(str) ?? [];
 
-    return new DecimalCSS(num, unit);
+    return new DecimalCSS(parseFloat(numStr), unit ?? '');
   }
 
-  constructor(num: number, unit: string) {
+  constructor(public num: number, public unit: string) {
     this.num = num;
     this.unit = unit;
 
@@ -99,11 +94,12 @@ function calculateArithmetic(expr: string): string {
   if (expr.includes(STR_NAN)) {
     return STR_NAN;
   }
+
   let newExpr = expr;
   while (newExpr.includes('*') || newExpr.includes('/')) {
-    const [, leftOperand, operator, rightOperand] = MULTIPLY_OR_DIVIDE_REGEX.exec(newExpr);
-    const lTs = DecimalCSS.parse(leftOperand);
-    const rTs = DecimalCSS.parse(rightOperand);
+    const [, leftOperand, operator, rightOperand] = MULTIPLY_OR_DIVIDE_REGEX.exec(newExpr) ?? [];
+    const lTs = DecimalCSS.parse(leftOperand ?? '');
+    const rTs = DecimalCSS.parse(rightOperand ?? '');
     const result = operator === '*' ? lTs.multiply(rTs) : lTs.divide(rTs);
     if (result.isNaN()) {
       return STR_NAN;
@@ -112,9 +108,9 @@ function calculateArithmetic(expr: string): string {
   }
 
   while (newExpr.includes('+') || /.-\d+(?:\.\d+)?/.test(newExpr)) {
-    const [, leftOperand, operator, rightOperand] = ADD_OR_SUBTRACT_REGEX.exec(newExpr);
-    const lTs = DecimalCSS.parse(leftOperand);
-    const rTs = DecimalCSS.parse(rightOperand);
+    const [, leftOperand, operator, rightOperand] = ADD_OR_SUBTRACT_REGEX.exec(newExpr) ?? [];
+    const lTs = DecimalCSS.parse(leftOperand ?? '');
+    const rTs = DecimalCSS.parse(rightOperand ?? '');
     const result = operator === '+' ? lTs.add(rTs) : lTs.subtract(rTs);
     if (result.isNaN()) {
       return STR_NAN;
@@ -145,8 +141,28 @@ function evaluateExpression(expression: string): string {
   return newExpr;
 }
 
-describe('calculator', () => {
-  const evaluateExpressionFloat = (str: string) => parseFloat(evaluateExpression(str));
+function safeEvaluateExpression(expression: string): string {
+  try {
+    return evaluateExpression(expression);
+  } catch (e) {
+    // error(e);
+    return STR_NAN;
+  }
+}
+
+function newReduceCSSCalc(expression: string): string {
+  const result = safeEvaluateExpression(expression.slice(5, -1));
+
+  if (result === STR_NAN) {
+    // notify the user
+    return '';
+  }
+
+  return result;
+}
+
+describe('number calculate', () => {
+  const evaluateExpressionFloat = (str: string) => parseFloat(safeEvaluateExpression(str));
   it('without parentheses, simple', () => {
     expect(evaluateExpressionFloat('1 + 2 + 3')).toEqual(6);
     expect(evaluateExpressionFloat('1 - 2 - 3')).toEqual(-4);
@@ -162,6 +178,11 @@ describe('calculator', () => {
     expect(evaluateExpressionFloat('1.111 - 2 - 3.333')).toEqual(-4.222);
     expect(evaluateExpressionFloat('1.111 * 2 * 3.333')).toBeCloseTo(7.405926, 5);
     expect(evaluateExpressionFloat('1.111 / 2 / 3.333')).toBeCloseTo(0.16666666, 5);
+
+    expect(evaluateExpressionFloat('zxcvdf + asdqwe')).toEqual(NaN);
+    expect(evaluateExpressionFloat('zxcvdf - asdqwe')).toEqual(NaN);
+    expect(evaluateExpressionFloat('zxcvdf * asdqwe')).toEqual(NaN);
+    expect(evaluateExpressionFloat('zxcvdf / asdqwe')).toEqual(NaN);
   });
 
   it('without parentheses, composite', () => {
@@ -179,6 +200,11 @@ describe('calculator', () => {
     expect(evaluateExpressionFloat('1.111 * 2.222 + 3.333 - 4.444 / 5.555')).toBeCloseTo(5.001642, 5);
     expect(evaluateExpressionFloat('1.111 / 2.222 * 3.333 + 4.444 - 5.555')).toBeCloseTo(0.5555, 5);
     expect(evaluateExpressionFloat('1.111 - 2.222 / 3.333 * 4.444 + 5.555')).toBeCloseTo(3.70333, 5);
+
+    expect(evaluateExpressionFloat('1.3 + asdqwe - 1 / qwea * zxcv')).toEqual(NaN);
+    expect(evaluateExpressionFloat('1.3 * asdqwe + 1 - qwea / zxcv')).toEqual(NaN);
+    expect(evaluateExpressionFloat('1.3 / asdqwe * 1 + qwea - zxcv')).toEqual(NaN);
+    expect(evaluateExpressionFloat('1.3 - asdqwe / 1 * qwea + zxcv')).toEqual(NaN);
   });
 
   it('with parentheses', () => {
@@ -197,17 +223,11 @@ describe('calculator', () => {
     expect(evaluateExpressionFloat('((10.00001 + 5.1) / 3) * (2 - 1.232)')).toBeCloseTo(3.865602, 5);
     expect(evaluateExpressionFloat('3 + 4 * (2.123 / (1 - 5))')).toBeCloseTo(0.8769999, 5);
     expect(evaluateExpressionFloat('((3 + 2.3) * 5.3) / (4 - 1.3)')).toBeCloseTo(10.403703, 5);
+
+    expect(evaluateExpressionFloat('((asd + 2.3) * 5.d) / (4 - d.3)')).toEqual(NaN);
+    expect(evaluateExpressionFloat('3 + 4 * (2.123 / (1.d - 5))')).toEqual(NaN);
   });
 });
-
-function safeEvaluateExpression(expression: string): string {
-  try {
-    return evaluateExpression(expression);
-  } catch (e) {
-    console.warn('Invalid expression', e);
-    return 'NaN';
-  }
-}
 
 const cssLengthUnits = ['', 'ch', 'em', 'rem', 'vh', 'vw', 'px', '%'];
 const cssLengthPair = cssLengthUnits.reduce((result, unit1, index1) => {
@@ -232,8 +252,7 @@ describe('reduce-css-calc', () => {
           `calc(${wordsByLines - 1} * -${lineHeight})`,
         ].forEach(calcString => {
           const prevCalc = reduceCSSCalc(calcString);
-          const newCalc = safeEvaluateExpression(calcString.slice(5, -1));
-          log(`${calcString} old: ${prevCalc} new: ${newCalc}`);
+          const newCalc = newReduceCSSCalc(calcString);
 
           if (prevCalc.includes('calc') || prevCalc.includes(' ')) {
             log('invalid');
@@ -285,7 +304,7 @@ describe('benchmark', () => {
           `calc(${wordsByLines - 1} * -${lineHeight})`,
         ].forEach(calcString => {
           for (let i = 0; i < 1000; i++) {
-            safeEvaluateExpression(calcString.slice(5, -1));
+            newReduceCSSCalc(calcString);
           }
         });
       });
