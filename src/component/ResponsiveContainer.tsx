@@ -83,8 +83,7 @@ export const ResponsiveContainer = forwardRef(
       };
     }, []);
     const getDataProps = (props: Partial<Props>) => {
-      const dataProps: Partial<Record<keyof Props, any>> = {};
-
+      const dataProps: Partial<Record<keyof Props, Props[keyof Props]>> = {};
       Object.keys(rest).forEach((prop: keyof Props) => {
         if (prop.match(/^data-/)) {
           dataProps[prop] = props[prop];
