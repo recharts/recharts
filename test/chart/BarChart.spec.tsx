@@ -14,6 +14,19 @@ describe('<BarChart />', () => {
 
   type CustomLabelProps = Partial<{ x: number; y: number; index: number }>;
 
+  test('Renders 1 bar in simple BarChart', () => {
+    const { container } = render(
+      <BarChart width={800} height={200} data={[{ x: 1, y: 200 }]}>
+        <XAxis type="number" dataKey="x" />
+        <YAxis />
+        <Tooltip />
+        <Bar dataKey="y" />
+      </BarChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(1);
+  });
+
   test('Renders 8 bars in simple BarChart', () => {
     const { container } = render(
       <BarChart width={100} height={50} data={data}>
