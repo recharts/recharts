@@ -5,16 +5,22 @@ import { Trapezoid } from '../shape/Trapezoid';
 import { Sector } from '../shape/Sector';
 import { Layer } from '../container/Layer';
 import { GraphicalItem } from '../chart/generateCategoricalChart';
+import { Symbols, SymbolsProps } from '../shape/Symbols';
 
 /**
  * This is an abstraction for rendering a user defined prop for a customized shape in several forms.
- * It will handle taking in:
+ *
+ * <Shape /> is the root and will handle taking in:
  *  - an object of svg properties
  *  - a boolean
  *  - a render prop(inline function that returns jsx)
  *  - a react element
+ *
+ * <ShapeSelector /> is a subcomponent of <Shape /> and used to match a component
+ * to the value of props.shapeType that is passed to the root.
+ *
  */
-type ShapeType = 'trapezoid' | 'rectangle' | 'sector';
+type ShapeType = 'trapezoid' | 'rectangle' | 'sector' | 'symbols';
 
 export type ShapeProps<OptionType, ExtraProps, ShapePropsType> = {
   shapeType: ShapeType;
@@ -31,6 +37,10 @@ function defaultPropTransformer<OptionType, ExtraProps, ShapePropsType>(option: 
   } as unknown as ShapePropsType;
 }
 
+function isSymbolsProps(shapeType: ShapeType, _elementProps: unknown): _elementProps is SymbolsProps {
+  return shapeType === 'symbols';
+}
+
 function ShapeSelector<ShapePropsType>({
   shapeType,
   elementProps,
@@ -45,6 +55,11 @@ function ShapeSelector<ShapePropsType>({
       return <Trapezoid {...elementProps} />;
     case 'sector':
       return <Sector {...elementProps} />;
+    case 'symbols':
+      if (isSymbolsProps(shapeType, elementProps)) {
+        return <Symbols {...elementProps} />;
+      }
+      break;
     default:
       return null;
   }
@@ -84,8 +99,6 @@ export function Shape<OptionType, ExtraProps, ShapePropsType>({
  * This is an abstraction to handle identifying the active index from a tooltip mouse interaction
  */
 type GraphicalItemShapeKey = 'trapezoids' | 'sectors' | 'points';
-
-export type ItemDisplayName = 'Funnel' | 'Pie' | 'Scatter';
 
 type FunnelItem = {
   x: number;

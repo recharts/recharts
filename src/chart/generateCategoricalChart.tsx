@@ -2324,8 +2324,9 @@ export const generateCategoricalChart = ({
 
             return {
               graphicalItem: { ...graphicalItem, childIndex },
-              payload:
-                itemDisplayName === 'Scatter' ? item.props.data[activeIndex] : graphicalItem.props.data[activeIndex],
+              payload: isScatter(graphicalItem, activeItem)
+                ? item.props.data[activeIndex]
+                : graphicalItem.props.data[activeIndex],
             };
           }
         }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { ScatterChart, Scatter, CartesianGrid, Tooltip, XAxis, YAxis, ZAxis, Legend } from '../../src';
+import { ScatterChart, Scatter, CartesianGrid, Tooltip, XAxis, YAxis, ZAxis, Legend, Symbols } from '../../src';
+import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [
@@ -111,5 +112,137 @@ describe('ScatterChart of two dimension data', () => {
     );
 
     expect(container.querySelectorAll('.recharts-scatter-line')).toHaveLength(1);
+  });
+
+  test('Renders customized active shape when activeShape set to be an object', () => {
+    const { container } = render(
+      <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <XAxis dataKey="x" name="stature" unit="cm" />
+        <YAxis dataKey="y" name="weight" unit="kg" />
+        <Scatter line name="A school" data={data} fill="#ff7300" activeShape={{ fill: 'red' }} />
+        <Tooltip />
+      </ScatterChart>,
+    );
+
+    const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
+    const [sector] = Array.from(sectorNodes);
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+
+    mouseOverEvent.fire();
+
+    const activeSector = container.querySelectorAll('.recharts-active-shape');
+    expect(activeSector).toHaveLength(1);
+  });
+
+  test('Renders customized active shape when activeShape set to be an object as symbols props', () => {
+    const { container } = render(
+      <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <XAxis dataKey="x" name="stature" unit="cm" />
+        <YAxis dataKey="y" name="weight" unit="kg" />
+        <Scatter
+          line
+          name="A school"
+          data={data}
+          fill="#ff7300"
+          activeShape={{ type: 'triangle', className: 'triangle-symbols-type', fill: 'red' }}
+        />
+        <Tooltip />
+      </ScatterChart>,
+    );
+
+    const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
+    const [sector] = Array.from(sectorNodes);
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+
+    mouseOverEvent.fire();
+
+    const activeSector = container.querySelectorAll('.triangle-symbols-type');
+    expect(activeSector).toHaveLength(1);
+  });
+
+  test('Renders customized active shape when activeShape set to be a function', () => {
+    const { container } = render(
+      <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <XAxis dataKey="x" name="stature" unit="cm" />
+        <YAxis dataKey="y" name="weight" unit="kg" />
+        <Scatter
+          line
+          name="A school"
+          data={data}
+          fill="#ff7300"
+          activeShape={props => <Symbols {...props} type="circle" fill="red" />}
+        />
+        <Tooltip />
+      </ScatterChart>,
+    );
+
+    const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
+    const [sector] = Array.from(sectorNodes);
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+
+    mouseOverEvent.fire();
+
+    const activeSector = container.querySelectorAll('.recharts-active-shape');
+    expect(activeSector).toHaveLength(1);
+  });
+
+  test('Renders customized active bar when activeBar set to be a ReactElement', () => {
+    const { container } = render(
+      <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <XAxis dataKey="x" name="stature" unit="cm" />
+        <YAxis dataKey="y" name="weight" unit="kg" />
+        <Scatter line name="A school" data={data} fill="#ff7300" activeShape={<Symbols type="circle" fill="red" />} />
+        <Tooltip />
+      </ScatterChart>,
+    );
+
+    const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
+    const [sector] = Array.from(sectorNodes);
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+
+    mouseOverEvent.fire();
+
+    const activeSector = container.querySelectorAll('.recharts-active-shape');
+    expect(activeSector).toHaveLength(1);
+  });
+
+  test('Renders customized active bar when activeBar is set to be a truthy boolean', () => {
+    const { container } = render(
+      <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <XAxis dataKey="x" name="stature" unit="cm" />
+        <YAxis dataKey="y" name="weight" unit="kg" />
+        <Scatter line name="A school" data={data} fill="#ff7300" activeShape />
+        <Tooltip />
+      </ScatterChart>,
+    );
+
+    const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
+    const [sector] = Array.from(sectorNodes);
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+
+    mouseOverEvent.fire();
+
+    const activeSector = container.querySelectorAll('.recharts-active-shape');
+    expect(activeSector).toHaveLength(1);
+  });
+
+  test('Does not render customized active bar when activeBar set to be a falsy boolean', () => {
+    const { container } = render(
+      <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <XAxis dataKey="x" name="stature" unit="cm" />
+        <YAxis dataKey="y" name="weight" unit="kg" />
+        <Scatter line name="A school" data={data} fill="#ff7300" activeShape={false} />
+        <Tooltip />
+      </ScatterChart>,
+    );
+
+    const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
+    const [sector] = Array.from(sectorNodes);
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+
+    mouseOverEvent.fire();
+
+    const activeSector = container.querySelectorAll('.recharts-active-shape');
+    expect(activeSector).toHaveLength(0);
   });
 });
