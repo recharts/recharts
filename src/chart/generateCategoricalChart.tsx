@@ -79,6 +79,8 @@ import { deferer, CancelFunction } from '../util/deferer';
 import { getActiveShapeIndexForTooltip, isFunnel, isPie, isScatter } from '../util/ActiveShapeUtils';
 import { Props as YAxisProps } from '../cartesian/YAxis';
 import { Props as XAxisProps } from '../cartesian/XAxis';
+import { getCursorPoints } from '../util/cursor/getCursorPoints';
+import { getCursorRectangle } from '../util/cursor/getCursorRectangle';
 
 export type GraphicalItem<Props = Record<string, any>> = ReactElement<
   Props,
@@ -1362,56 +1364,6 @@ export const generateCategoricalChart = ({
       return null;
     }
 
-    getCursorRectangle() {
-      const { layout } = this.props;
-      const { activeCoordinate, offset, tooltipAxisBandSize } = this.state;
-      const halfSize = tooltipAxisBandSize / 2;
-
-      return {
-        stroke: 'none',
-        fill: '#ccc',
-        x: layout === 'horizontal' ? activeCoordinate.x - halfSize : offset.left + 0.5,
-        y: layout === 'horizontal' ? offset.top + 0.5 : activeCoordinate.y - halfSize,
-        width: layout === 'horizontal' ? tooltipAxisBandSize : offset.width - 1,
-        height: layout === 'horizontal' ? offset.height - 1 : tooltipAxisBandSize,
-      };
-    }
-
-    getCursorPoints() {
-      const { layout } = this.props;
-      const { activeCoordinate, offset } = this.state;
-      let x1, y1, x2, y2;
-
-      if (layout === 'horizontal') {
-        x1 = activeCoordinate.x;
-        x2 = x1;
-        y1 = offset.top;
-        y2 = offset.top + offset.height;
-      } else if (layout === 'vertical') {
-        y1 = activeCoordinate.y;
-        y2 = y1;
-        x1 = offset.left;
-        x2 = offset.left + offset.width;
-      } else if (!_.isNil(activeCoordinate.cx) || !_.isNil(activeCoordinate.cy)) {
-        if (layout === 'centric') {
-          const { cx, cy, innerRadius, outerRadius, angle } = activeCoordinate;
-          const innerPoint = polarToCartesian(cx, cy, innerRadius, angle);
-          const outerPoint = polarToCartesian(cx, cy, outerRadius, angle);
-          x1 = innerPoint.x;
-          y1 = innerPoint.y;
-          x2 = outerPoint.x;
-          y2 = outerPoint.y;
-        } else {
-          return getRadialCursorPoints(activeCoordinate);
-        }
-      }
-
-      return [
-        { x: x1, y: y1 },
-        { x: x2, y: y2 },
-      ];
-    }
-
     inRange(x: number, y: number, scale = 1): any {
       const { layout } = this.props;
 
@@ -1827,7 +1779,8 @@ export const generateCategoricalChart = ({
     }
 
     renderCursor = (element: ReactElement) => {
-      const { isTooltipActive, activeCoordinate, activePayload, offset, activeTooltipIndex } = this.state;
+      const { isTooltipActive, activeCoordinate, activePayload, offset, activeTooltipIndex, tooltipAxisBandSize } =
+        this.state;
       const tooltipEventType = this.getTooltipEventType();
 
       if (
@@ -1847,7 +1800,7 @@ export const generateCategoricalChart = ({
         restProps = activeCoordinate;
         cursorComp = Cross;
       } else if (chartName === 'BarChart') {
-        restProps = this.getCursorRectangle();
+        restProps = getCursorRectangle(layout, activeCoordinate, offset, tooltipAxisBandSize);
         cursorComp = Rectangle;
       } else if (layout === 'radial') {
         const { cx, cy, radius, startAngle, endAngle } = getRadialCursorPoints(activeCoordinate);
@@ -1861,7 +1814,7 @@ export const generateCategoricalChart = ({
         };
         cursorComp = Sector;
       } else {
-        restProps = { points: this.getCursorPoints() };
+        restProps = { points: getCursorPoints(layout, activeCoordinate, offset) };
         cursorComp = Curve;
       }
       const key = element.key || '_recharts-cursor';
