@@ -36,6 +36,8 @@ import { Props as XAxisProps } from '../cartesian/XAxis';
 import { Props as YAxisProps } from '../cartesian/YAxis';
 import { Props as ZAxisProps } from '../cartesian/ZAxis';
 
+type CartesianAxisProps = XAxisProps | YAxisProps | ZAxisProps;
+
 // Exported for backwards compatibility
 export { getLegendProps };
 
@@ -1254,7 +1256,6 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
  * @param  {Boolean} isBar if items in axis are bars
  * @return {Number} Size
  */
-type CartesianAxisProps = XAxisProps | YAxisProps | ZAxisProps;
 export const getBandSizeOfAxis = (
   axis?: CartesianAxisProps,
   ticks?: Array<TickItem>,
