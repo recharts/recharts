@@ -340,7 +340,7 @@ describe('<BarChart />', () => {
       const rectangleProps = rectangles[0];
       expect(rectangleProps).toHaveAttribute('x', '79');
       expect(rectangleProps).toHaveAttribute('y', '5');
-      expect(rectangleProps).toHaveAttribute('width', '32');
+      expect(rectangleProps).toHaveAttribute('width', '40');
       expect(rectangleProps).toHaveAttribute('height', '10');
     });
   });
