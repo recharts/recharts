@@ -1,8 +1,9 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { vi, Mock } from 'vitest';
+
 import userEvent from '@testing-library/user-event';
 import { PieChart, Pie, Legend, Cell, Tooltip } from '../../src';
-import { vi } from 'vitest';
 
 describe('<PieChart />', () => {
   const data = [
@@ -106,7 +107,7 @@ describe('<PieChart />', () => {
     expect(container.querySelectorAll('.recharts-legend-item')).toHaveLength(6);
   });
 
-  const getPieChart = (eventProps: { onClick?: vi.Mock; onMouseEnter?: vi.Mock; onMouseLeave?: vi.Mock }) => {
+  const getPieChart = (eventProps: { onClick?: Mock; onMouseEnter?: Mock; onMouseLeave?: Mock }) => {
     return (
       <PieChart width={800} height={400} {...eventProps}>
         <Pie

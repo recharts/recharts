@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 
-import { vi } from 'vitest';
+import { SpyInstance, vi } from 'vitest';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Brush, CartesianAxis, Legend } from '../../src';
 
 const data = [
@@ -369,9 +369,9 @@ describe('<LineChart />', () => {
 describe('<LineChart /> - Pure Rendering', () => {
   const pureElements = [Line];
 
-  const spies: Array<vi.SpyInstance<JSX.Element | null, []>> = [];
+  const spies: Array<SpyInstance<[], React.JSX.Element | null>> = [];
   // CartesianAxis is what is actually render for XAxis and YAxis
-  let axisSpy: vi.SpyInstance<JSX.Element | null, []>;
+  let axisSpy: SpyInstance<[], React.JSX.Element | null>;
 
   // spy on each pure element before each test, and restore the spy afterwards
   beforeAll(() => {
@@ -437,9 +437,9 @@ describe('<LineChart /> - Pure Rendering', () => {
 describe('<LineChart /> - Pure Rendering with legend', () => {
   const pureElements = [Line];
 
-  const spies: Array<vi.SpyInstance<JSX.Element | null, []>> = [];
+  const spies: Array<SpyInstance<[], React.JSX.Element | null>> = [];
   // CartesianAxis is what is actually render for XAxis and YAxis
-  let axisSpy: vi.SpyInstance<JSX.Element | null, []>;
+  let axisSpy: SpyInstance<[], React.JSX.Element | null>;
 
   // spy on each pure element before each test, and restore the spy afterwards
   beforeAll(() => {
