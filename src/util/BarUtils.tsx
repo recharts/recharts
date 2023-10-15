@@ -1,27 +1,50 @@
-import _ from 'lodash';
-import React, { ComponentProps, isValidElement, cloneElement } from 'react';
-import { Bar, BarProps } from '../cartesian/Bar';
-import { Layer } from '../container/Layer';
+import React, { SVGProps } from 'react';
+import { ActiveShape } from './types';
+import { Props as RectangleProps } from '../shape/Rectangle';
+import { BarProps } from '../cartesian/Bar';
+import { Shape } from './ActiveShapeUtils';
 
-export const ActiveBar = ({
-  option,
-  ...props
-}: {
-  option: BarProps['activeBar'];
-} & ComponentProps<typeof Bar>) => {
-  let bar;
+// Rectangle props is expecting x, y, height, width as numbers, name as a string, and radius as a custom type
+// When props are being spread in from a user defined component in Bar,
+// the prop types of an SVGElement have these typed as something else.
+// This function will return the passed in props
+// along with x, y, height as numbers, name as a string, and radius as number | [number, numbe, number, number]
+function typeguardBarRectangleProps(
+  { x: xProp, y: yProp, ...option }: SVGProps<SVGPathElement>,
+  props: BarProps,
+): RectangleProps {
+  const xValue = `${xProp}`;
+  const x = parseInt(xValue, 10);
+  const yValue = `${yProp}`;
+  const y = parseInt(yValue, 10);
+  const heightValue = `${props.height || option.height}`;
+  const height = parseInt(heightValue, 10);
+  const widthValue = `${props.width || option.width}`;
+  const width = parseInt(widthValue, 10);
+  return {
+    ...props,
+    ...option,
+    ...(x ? { x } : {}),
+    ...(y ? { y } : {}),
+    height,
+    width,
+    name: props.name as string,
+    radius: props.radius,
+  };
+}
 
-  if (isValidElement(option)) {
-    bar = cloneElement<BarProps['activeBar']>(option, props);
-  } else if (_.isFunction(option)) {
-    bar = option(props);
-  } else {
-    bar = Bar.renderRectangle(props.shape, props);
-  }
+type BarRectangleProps = {
+  option: ActiveShape<BarProps, SVGPathElement>;
+  isActive: boolean;
+} & BarProps;
 
+export function BarRectangle(props: BarRectangleProps) {
   return (
-    <Layer className="recharts-active-bar" key={props.key}>
-      {bar}
-    </Layer>
+    <Shape
+      shapeType="rectangle"
+      propTransformer={typeguardBarRectangleProps}
+      activeClassName="recharts-active-bar"
+      {...props}
+    />
   );
-};
+}

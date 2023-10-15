@@ -1,6 +1,7 @@
 import { StorybookArg, StorybookArgs } from '../../../StorybookArgs';
 
 export const tooltipType: StorybookArg = {
+  description: `If set to be 'none', no series data is shown in tooltip.`,
   table: { category: 'Tooltip' },
   control: { type: 'select' },
   options: ['responsive', 'none'],

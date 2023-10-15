@@ -1,6 +1,7 @@
 import React from 'react';
-import { Bar, BarChart, ResponsiveContainer, XAxis } from '../../../../src';
-import { pageData } from '../../data';
+import { Args } from '@storybook/react';
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
+import { pageData, pageDataWithNegativeNumbers } from '../../data';
 import { CategoricalChartProps } from '../props/ChartProps';
 
 export default {
@@ -41,5 +42,27 @@ export const BarInBar = {
   },
   args: {
     data: pageData,
+  },
+};
+
+export const Stacked = {
+  render: (args: Args) => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <BarChart {...args}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="uv" stackId="a" fill="green" barSize={50} />
+          <Bar dataKey="pv" stackId="a" fill="red" barSize={30} />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    data: pageDataWithNegativeNumbers,
+    stackOffset: 'none',
   },
 };
