@@ -14,7 +14,12 @@ export type TooltipType = 'none';
 export type ValueType = number | string | Array<number | string>;
 export type NameType = number | string;
 export type PayloadType = number | string | Array<number | string> | Record<string, any>;
-export type Formatter<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType> = (
+export type DefaultStrictPayloadType = Record<string, any> | string | number;
+export type Formatter<
+  TValue extends ValueType,
+  TName extends NameType,
+  TPayload extends PayloadType = DefaultStrictPayloadType,
+> = (
   value: TValue,
   name: TName,
   item: Payload<TValue, TName, TPayload>,
@@ -22,7 +27,11 @@ export type Formatter<TValue extends ValueType, TName extends NameType, TPayload
   payload: Array<Payload<TValue, TName, TPayload>>,
 ) => [React.ReactNode, TName] | React.ReactNode;
 
-export interface Payload<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType> {
+export interface Payload<
+  TValue extends ValueType,
+  TName extends NameType,
+  TPayload extends PayloadType = DefaultStrictPayloadType,
+> {
   type?: TooltipType;
   color?: string;
   formatter?: Formatter<TValue, TName, TPayload>;
@@ -37,7 +46,11 @@ export interface Payload<TValue extends ValueType, TName extends NameType, TPayl
   strokeWidth?: number | string;
 }
 
-export interface Props<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType> {
+export interface Props<
+  TValue extends ValueType,
+  TName extends NameType,
+  TPayload extends PayloadType = DefaultStrictPayloadType,
+> {
   separator?: string;
   wrapperClassName?: string;
   labelClassName?: string;
@@ -51,7 +64,11 @@ export interface Props<TValue extends ValueType, TName extends NameType, TPayloa
   itemSorter?: (item: Payload<TValue, TName, TPayload>) => number | string;
 }
 
-export const DefaultTooltipContent = <TValue extends ValueType, TName extends NameType, TPayload extends PayloadType>(
+export const DefaultTooltipContent = <
+  TValue extends ValueType,
+  TName extends NameType,
+  TPayload extends PayloadType = DefaultStrictPayloadType,
+>(
   props: Props<TValue, TName, TPayload>,
 ) => {
   const {

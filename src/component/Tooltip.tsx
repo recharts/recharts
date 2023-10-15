@@ -12,6 +12,7 @@ import {
   Payload,
   Props as DefaultProps,
   PayloadType,
+  DefaultStrictPayloadType,
 } from './DefaultTooltipContent';
 
 import { Global } from '../util/Global';
@@ -21,25 +22,34 @@ import { AnimationDuration, AnimationTiming } from '../util/types';
 const CLS_PREFIX = 'recharts-tooltip-wrapper';
 
 const EPS = 1;
-export type ContentType<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType> =
-  | ReactElement
-  | ((props: TooltipProps<TValue, TName, TPayload>) => ReactNode);
+export type ContentType<
+  TValue extends ValueType,
+  TName extends NameType,
+  TPayload extends PayloadType = DefaultStrictPayloadType,
+> = ReactElement | ((props: TooltipProps<TValue, TName, TPayload>) => ReactNode);
 
-type UniqueFunc<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType> = (
-  entry: Payload<TValue, TName, TPayload>,
-) => unknown;
-type UniqueOption<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType> =
-  | boolean
-  | UniqueFunc<TValue, TName, TPayload>;
-function defaultUniqBy<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType>(
-  entry: Payload<TValue, TName, TPayload>,
-) {
+type UniqueFunc<
+  TValue extends ValueType,
+  TName extends NameType,
+  TPayload extends PayloadType = DefaultStrictPayloadType,
+> = (entry: Payload<TValue, TName, TPayload>) => unknown;
+type UniqueOption<
+  TValue extends ValueType,
+  TName extends NameType,
+  TPayload extends PayloadType = DefaultStrictPayloadType,
+> = boolean | UniqueFunc<TValue, TName, TPayload>;
+function defaultUniqBy<
+  TValue extends ValueType,
+  TName extends NameType,
+  TPayload extends PayloadType = DefaultStrictPayloadType,
+>(entry: Payload<TValue, TName, TPayload>) {
   return entry.dataKey;
 }
-function getUniqPayload<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType>(
-  option: UniqueOption<TValue, TName, TPayload>,
-  payload: Array<Payload<TValue, TName, TPayload>>,
-) {
+function getUniqPayload<
+  TValue extends ValueType,
+  TName extends NameType,
+  TPayload extends PayloadType = DefaultStrictPayloadType,
+>(option: UniqueOption<TValue, TName, TPayload>, payload: Array<Payload<TValue, TName, TPayload>>) {
   if (option === true) {
     return _.uniqBy(payload, defaultUniqBy);
   }
@@ -51,10 +61,11 @@ function getUniqPayload<TValue extends ValueType, TName extends NameType, TPaylo
   return payload;
 }
 
-function renderContent<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType>(
-  content: ContentType<TValue, TName, TPayload>,
-  props: TooltipProps<TValue, TName, TPayload>,
-) {
+function renderContent<
+  TValue extends ValueType,
+  TName extends NameType,
+  TPayload extends PayloadType = DefaultStrictPayloadType,
+>(content: ContentType<TValue, TName, TPayload>, props: TooltipProps<TValue, TName, TPayload>) {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
   }
@@ -65,11 +76,11 @@ function renderContent<TValue extends ValueType, TName extends NameType, TPayloa
   return <DefaultTooltipContent {...props} />;
 }
 
-export type TooltipProps<TValue extends ValueType, TName extends NameType, TPayload extends PayloadType> = DefaultProps<
-  TValue,
-  TName,
-  TPayload
-> & {
+export type TooltipProps<
+  TValue extends ValueType,
+  TName extends NameType,
+  TPayload extends PayloadType = DefaultStrictPayloadType,
+> = DefaultProps<TValue, TName, TPayload> & {
   allowEscapeViewBox?: {
     x?: boolean;
     y?: boolean;
@@ -110,7 +121,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType, TPayl
 export class Tooltip<
   TValue extends ValueType,
   TName extends NameType,
-  TPayload extends PayloadType,
+  TPayload extends PayloadType = DefaultStrictPayloadType,
 > extends PureComponent<TooltipProps<TValue, TName, TPayload>> {
   static displayName = 'Tooltip';
 
