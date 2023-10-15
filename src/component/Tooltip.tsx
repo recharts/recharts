@@ -5,6 +5,7 @@ import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps 
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import classNames from 'classnames';
+import { isNil } from '../util/isNil';
 import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
 
 import { Global } from '../util/Global';
@@ -223,7 +224,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
     const { payload, isAnimationActive, animationDuration, animationEasing, filterNull, payloadUniqBy } = this.props;
     const finalPayload = getUniqPayload(
       payloadUniqBy,
-      filterNull && payload && payload.length ? payload.filter(entry => !_.isNil(entry.value)) : payload,
+      filterNull && payload && payload.length ? payload.filter(entry => !isNil(entry.value)) : payload,
     );
     const hasPayload = finalPayload && finalPayload.length;
     const { content, viewBox, coordinate, position, active, wrapperStyle } = this.props;

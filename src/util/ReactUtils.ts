@@ -7,6 +7,7 @@ import { shallowEqual } from './ShallowEqual';
 import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys } from './types';
 import { AreaDot } from '../cartesian/Area';
 import { LineDot } from '../cartesian/Line';
+import { isNil } from './isNil';
 
 const REACT_BROWSER_EVENT_MAP: Record<string, string> = {
   click: 'onClick',
@@ -83,7 +84,7 @@ export const toArray = <T extends ReactNode>(children: T | T[]): T[] => {
   }
   let result: T[] = [];
   Children.forEach(children, child => {
-    if (_.isNil(child)) return;
+    if (isNil(child)) return;
     if (isFragment(child)) {
       result = result.concat(toArray(child.props.children));
     } else {
@@ -392,10 +393,10 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
 };
 
 export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: React.ReactElement): boolean => {
-  if (_.isNil(nextChild) && _.isNil(prevChild)) {
+  if (isNil(nextChild) && isNil(prevChild)) {
     return true;
   }
-  if (!_.isNil(nextChild) && !_.isNil(prevChild)) {
+  if (!isNil(nextChild) && !isNil(prevChild)) {
     const { children: nextChildren, ...nextProps } = nextChild.props || {};
     const { children: prevChildren, ...prevProps } = prevChild.props || {};
 

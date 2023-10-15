@@ -5,6 +5,7 @@ import React, { PureComponent, ReactElement, MouseEvent, SVGProps } from 'react'
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
+import { isNil } from '../util/isNil';
 import { interpolateNumber } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { polarToCartesian } from '../util/PolarUtils';
@@ -111,7 +112,7 @@ export class Radar extends PureComponent<Props, State> {
       const value = getValueByDataKey(entry, dataKey);
       const angle = angleAxis.scale(name) + (bandSize || 0);
       const pointValue = _.isArray(value) ? _.last(value) : value;
-      const radius = _.isNil(pointValue) ? undefined : radiusAxis.scale(pointValue);
+      const radius = isNil(pointValue) ? undefined : radiusAxis.scale(pointValue);
 
       if (_.isArray(value) && value.length >= 2) {
         isRange = true;
@@ -134,7 +135,7 @@ export class Radar extends PureComponent<Props, State> {
       points.forEach(point => {
         if (_.isArray(point.value)) {
           const baseValue = _.first(point.value);
-          const radius = _.isNil(baseValue) ? undefined : radiusAxis.scale(baseValue);
+          const radius = isNil(baseValue) ? undefined : radiusAxis.scale(baseValue);
 
           baseLinePoints.push({
             ...point,

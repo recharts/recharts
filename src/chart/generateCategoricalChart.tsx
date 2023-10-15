@@ -2,6 +2,7 @@ import React, { Component, cloneElement, isValidElement, createElement, ReactEle
 import classNames from 'classnames';
 import _, { isArray, isBoolean } from 'lodash';
 import invariant from 'tiny-invariant';
+import { isNil } from '../util/isNil';
 import { getRadialCursorPoints } from '../util/cursor/getRadialCursorPoints';
 import { getTicks } from '../cartesian/getTicks';
 import { Surface } from '../container/Surface';
@@ -380,14 +381,12 @@ export const getAxisMapByAxes = (
           if (!allowDuplicatedCategory) {
             domain = parseDomainOfCategoryAxis(childDomain, domain, child).reduce(
               (finalDomain: any, entry: any) =>
-                finalDomain.indexOf(entry) >= 0 || entry === '' || _.isNil(entry)
-                  ? finalDomain
-                  : [...finalDomain, entry],
+                finalDomain.indexOf(entry) >= 0 || entry === '' || isNil(entry) ? finalDomain : [...finalDomain, entry],
               [],
             );
           } else {
             // eliminate undefined or null or empty string
-            domain = domain.filter((entry: any) => entry !== '' && !_.isNil(entry));
+            domain = domain.filter((entry: any) => entry !== '' && !isNil(entry));
           }
         } else if (type === 'number') {
           // the field type is numerical
@@ -648,7 +647,7 @@ const createDefaultState = (props: CategoricalChartProps): CategoricalChartState
     dataStartIndex: startIndex,
     dataEndIndex: endIndex,
     activeTooltipIndex: -1,
-    isTooltipActive: !_.isNil(defaultShowTooltip) ? defaultShowTooltip : false,
+    isTooltipActive: !isNil(defaultShowTooltip) ? defaultShowTooltip : false,
   };
 };
 
@@ -961,7 +960,7 @@ export const generateCategoricalChart = ({
 
       if (itemIsBar) {
         // 如果是bar，计算bar的位置
-        const maxBarSize: number = _.isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
+        const maxBarSize: number = isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
         const barBandSize: number = getBandSizeOfAxis(cateAxis, cateTicks, true) ?? maxBarSize ?? 0;
         barPosition = getBarPosition({
           barGap,
@@ -1116,7 +1115,7 @@ export const generateCategoricalChart = ({
     constructor(props: CategoricalChartProps) {
       super(props);
 
-      this.uniqueChartId = _.isNil(props.id) ? uniqueId('recharts') : props.id;
+      this.uniqueChartId = isNil(props.id) ? uniqueId('recharts') : props.id;
       this.clipPathId = `${this.uniqueChartId}-clip`;
 
       if (props.throttleDelay) {
@@ -1127,7 +1126,7 @@ export const generateCategoricalChart = ({
     }
 
     componentDidMount() {
-      if (!_.isNil(this.props.syncId)) {
+      if (!isNil(this.props.syncId)) {
         this.addListener();
       }
 
@@ -1182,7 +1181,7 @@ export const generateCategoricalChart = ({
     ): CategoricalChartState => {
       const { data, children, width, height, layout, stackOffset, margin } = nextProps;
 
-      if (_.isNil(prevState.updateId)) {
+      if (isNil(prevState.updateId)) {
         const defaultState = createDefaultState(nextProps);
 
         return {
@@ -1260,7 +1259,7 @@ export const generateCategoricalChart = ({
       }
       if (!isChildrenEqual(children, prevState.prevChildren)) {
         // update configuration in children
-        const hasGlobalData = !_.isNil(data);
+        const hasGlobalData = !isNil(data);
         const newUpdateId = hasGlobalData ? prevState.updateId : prevState.updateId + 1;
 
         return {
@@ -1282,18 +1281,18 @@ export const generateCategoricalChart = ({
 
     componentDidUpdate(prevProps: CategoricalChartProps) {
       // add syncId
-      if (_.isNil(prevProps.syncId) && !_.isNil(this.props.syncId)) {
+      if (isNil(prevProps.syncId) && !isNil(this.props.syncId)) {
         this.addListener();
       }
       // remove syncId
-      if (!_.isNil(prevProps.syncId) && _.isNil(this.props.syncId)) {
+      if (!isNil(prevProps.syncId) && isNil(this.props.syncId)) {
         this.removeListener();
       }
     }
 
     componentWillUnmount() {
       this.clearDefer();
-      if (!_.isNil(this.props.syncId)) {
+      if (!isNil(this.props.syncId)) {
         this.removeListener();
       }
       this.cancelThrottledTriggerAfterMouseMove();
@@ -1661,7 +1660,7 @@ export const generateCategoricalChart = ({
     triggerSyncEvent(data: CategoricalChartState) {
       const { syncId } = this.props;
 
-      if (!_.isNil(syncId)) {
+      if (!isNil(syncId)) {
         eventCenter.emit(SYNC_EVENT, syncId, this.uniqueChartId, data);
       }
     }
@@ -1671,7 +1670,7 @@ export const generateCategoricalChart = ({
       const { updateId } = this.state;
       const { dataStartIndex, dataEndIndex } = data;
 
-      if (!_.isNil(data.dataStartIndex) || !_.isNil(data.dataEndIndex)) {
+      if (!isNil(data.dataStartIndex) || !isNil(data.dataEndIndex)) {
         this.setState({
           dataStartIndex,
           dataEndIndex,
@@ -1685,7 +1684,7 @@ export const generateCategoricalChart = ({
             this.state,
           ),
         });
-      } else if (!_.isNil(data.activeTooltipIndex)) {
+      } else if (!isNil(data.activeTooltipIndex)) {
         const { chartX, chartY } = data;
         let { activeTooltipIndex } = data;
         const { offset, tooltipTicks } = this.state;
@@ -2143,7 +2142,7 @@ export const generateCategoricalChart = ({
             return [cloneElement(element, { ...item.props, ...itemEvents, activeIndex }), null, null];
           }
 
-          if (!_.isNil(activePoint)) {
+          if (!isNil(activePoint)) {
             return [
               graphicalItem,
               ...this.renderActivePoints({

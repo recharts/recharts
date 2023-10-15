@@ -5,6 +5,7 @@ import React, { PureComponent, ReactElement, ReactNode, SVGProps } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
+import { isNil } from '../util/isNil';
 import { Layer } from '../container/Layer';
 import { Props as SectorProps } from '../shape/Sector';
 import { Curve } from '../shape/Curve';
@@ -212,14 +213,14 @@ export class Pie extends PureComponent<Props, State> {
 
     let realDataKey = dataKey;
 
-    if (_.isNil(dataKey) && _.isNil(valueKey)) {
+    if (isNil(dataKey) && isNil(valueKey)) {
       warn(
         false,
         `Use "dataKey" to specify the value of pie,
       the props "valueKey" will be deprecated in 1.1.0`,
       );
       realDataKey = 'value';
-    } else if (_.isNil(dataKey)) {
+    } else if (isNil(dataKey)) {
       warn(
         false,
         `Use "dataKey" to specify the value of pie,
@@ -454,9 +455,9 @@ export class Pie extends PureComponent<Props, State> {
       };
       let realDataKey = dataKey;
       // TODO: compatible to lower versions
-      if (_.isNil(dataKey) && _.isNil(valueKey)) {
+      if (isNil(dataKey) && isNil(valueKey)) {
         realDataKey = 'value';
-      } else if (_.isNil(dataKey)) {
+      } else if (isNil(dataKey)) {
         realDataKey = valueKey;
       }
 

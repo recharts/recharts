@@ -5,6 +5,7 @@ import _ from 'lodash';
 import React, { CSSProperties, ReactNode } from 'react';
 import classNames from 'classnames';
 import { isNumOrStr } from '../util/DataUtils';
+import { isNil } from '../util/isNil';
 
 function defaultFormatter<TValue extends ValueType>(value: TValue) {
   return _.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1]) ? (value.join(' ~ ') as TValue) : value;
@@ -129,7 +130,7 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
     margin: 0,
     ...labelStyle,
   };
-  const hasLabel = !_.isNil(label);
+  const hasLabel = !isNil(label);
   let finalLabel = hasLabel ? label : '';
   const wrapperCN = classNames('recharts-default-tooltip', wrapperClassName);
   const labelCN = classNames('recharts-tooltip-label', labelClassName);

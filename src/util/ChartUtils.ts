@@ -11,6 +11,7 @@ import {
 import _ from 'lodash';
 import { ReactElement, ReactNode } from 'react';
 import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
+import { isNil } from './isNil';
 
 import { ErrorBar } from '../cartesian/ErrorBar';
 import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
@@ -37,7 +38,7 @@ import { getLegendProps } from './getLegendProps';
 export { getLegendProps };
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?: any) {
-  if (_.isNil(obj) || _.isNil(dataKey)) {
+  if (isNil(obj) || isNil(dataKey)) {
     return defaultValue;
   }
 
@@ -74,7 +75,7 @@ export function getDomainOfDataByKey<T>(
     return domain.length ? [_.min(domain), _.max(domain)] : [Infinity, -Infinity];
   }
 
-  const validateData = filterNil ? flattenData.filter(entry => !_.isNil(entry)) : flattenData;
+  const validateData = filterNil ? flattenData.filter(entry => !isNil(entry)) : flattenData;
 
   // Supports x-axis of Date type
   return validateData.map(entry => (isNumOrStr(entry) || entry instanceof Date ? entry : ''));
@@ -242,7 +243,7 @@ export const getBarSizeList = ({
         result[cateId].push({
           item: barItems[0],
           stackList: barItems.slice(1),
-          barSize: _.isNil(selfSize) ? globalSize : selfSize,
+          barSize: isNil(selfSize) ? globalSize : selfSize,
         });
       }
     }
@@ -418,7 +419,7 @@ export const appendOffsetOfLegend = (
 };
 
 const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, direction?: 'x' | 'y'): boolean => {
-  if (_.isNil(axisType)) {
+  if (isNil(axisType)) {
     return true;
   }
 
@@ -487,7 +488,7 @@ export const parseErrorBarsOfAxis = (
 ): NumberDomain | null => {
   const domains = items
     .map(item => getDomainOfErrorBars(data, item, dataKey, layout, axisType))
-    .filter(entry => !_.isNil(entry));
+    .filter(entry => !isNil(entry));
 
   if (domains && domains.length) {
     return domains.reduce(
@@ -1086,7 +1087,7 @@ export const getCateCoordinateOfLine = ({
 }) => {
   if (axis.type === 'category') {
     // find coordinate of category axis by the value of category
-    if (!axis.allowDuplicatedCategory && axis.dataKey && !_.isNil(entry[axis.dataKey])) {
+    if (!axis.allowDuplicatedCategory && axis.dataKey && !isNil(entry[axis.dataKey])) {
       const matchedTick = findEntryInArray(ticks, 'value', entry[axis.dataKey]);
 
       if (matchedTick) {
@@ -1097,9 +1098,9 @@ export const getCateCoordinateOfLine = ({
     return ticks[index] ? ticks[index].coordinate + bandSize / 2 : null;
   }
 
-  const value = getValueByDataKey(entry, !_.isNil(dataKey) ? dataKey : axis.dataKey);
+  const value = getValueByDataKey(entry, !isNil(dataKey) ? dataKey : axis.dataKey);
 
-  return !_.isNil(value) ? axis.scale(value) : null;
+  return !isNil(value) ? axis.scale(value) : null;
 };
 
 export const getCateCoordinateOfBar = ({
@@ -1122,7 +1123,7 @@ export const getCateCoordinateOfBar = ({
   }
   const value = getValueByDataKey(entry, axis.dataKey, axis.domain[index]);
 
-  return !_.isNil(value) ? axis.scale(value) - bandSize / 2 + offset : null;
+  return !isNil(value) ? axis.scale(value) - bandSize / 2 + offset : null;
 };
 
 export const getBaseValueOfBar = ({

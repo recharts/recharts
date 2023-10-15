@@ -5,6 +5,7 @@ import React, { Key, PureComponent, ReactElement } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';
+import { isNil } from '../util/isNil';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
 import { ErrorBar, Props as ErrorBarProps, ErrorBarDataPointFormatter } from './ErrorBar';
@@ -475,7 +476,7 @@ export class Bar extends PureComponent<Props, State> {
     const needClipX = xAxis && xAxis.allowDataOverflow;
     const needClipY = yAxis && yAxis.allowDataOverflow;
     const needClip = needClipX || needClipY;
-    const clipPathId = _.isNil(id) ? this.id : id;
+    const clipPathId = isNil(id) ? this.id : id;
 
     return (
       <Layer className={layerClass}>

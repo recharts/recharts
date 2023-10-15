@@ -5,6 +5,7 @@ import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
+import { isNil } from '../util/isNil';
 import { Curve, CurveType, Props as CurveProps, Point as CurvePoint } from '../shape/Curve';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
@@ -148,14 +149,14 @@ export class Line extends PureComponent<Props, State> {
       if (layout === 'horizontal') {
         return {
           x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-          y: _.isNil(value) ? null : yAxis.scale(value),
+          y: isNil(value) ? null : yAxis.scale(value),
           value,
           payload: entry,
         };
       }
 
       return {
-        x: _.isNil(value) ? null : xAxis.scale(value),
+        x: isNil(value) ? null : xAxis.scale(value),
         y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
         value,
         payload: entry,
@@ -474,7 +475,7 @@ export class Line extends PureComponent<Props, State> {
     const needClipX = xAxis && xAxis.allowDataOverflow;
     const needClipY = yAxis && yAxis.allowDataOverflow;
     const needClip = needClipX || needClipY;
-    const clipPathId = _.isNil(id) ? this.id : id;
+    const clipPathId = isNil(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot) ?? { r: 3, strokeWidth: 2 };
     const { clipDot = true } = isDotProps(dot) ? dot : {};
     const dotSize = r * 2 + strokeWidth;

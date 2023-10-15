@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { getPercentValue } from './DataUtils';
 import { parseScale, checkDomainOfScale, getTicksOfScale } from './ChartUtils';
 import { Coordinate, ChartOffset, GeometrySector } from './types';
+import { isNil } from './isNil';
 
 export const RADIAN = Math.PI / 180;
 
@@ -59,7 +60,7 @@ export const formatAxisMap = (
     const { domain, reversed } = axis;
     let range;
 
-    if (_.isNil(axis.range)) {
+    if (isNil(axis.range)) {
       if (axisType === 'angleAxis') {
         range = [startAngle, endAngle];
       } else if (axisType === 'radiusAxis') {

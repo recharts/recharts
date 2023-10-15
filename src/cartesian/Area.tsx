@@ -5,6 +5,7 @@ import React, { PureComponent, ReactElement, SVGProps } from 'react';
 import classNames from 'classnames';
 import Animate from 'react-smooth';
 import _ from 'lodash';
+import { isNil } from '../util/isNil';
 import { Curve, CurveType, Point as CurvePoint } from '../shape/Curve';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
@@ -207,7 +208,7 @@ export class Area extends PureComponent<Props, State> {
         }
       }
 
-      const isBreakPoint = _.isNil(value[1]) || (hasStack && _.isNil(originalValue));
+      const isBreakPoint = isNil(value[1]) || (hasStack && isNil(originalValue));
       if (layout === 'horizontal') {
         return {
           x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
@@ -232,13 +233,13 @@ export class Area extends PureComponent<Props, State> {
           return {
             x: entry.x,
             y:
-              !_.isNil(_.get(entry, 'value[0]')) && !_.isNil(_.get(entry, 'y'))
+              !isNil(_.get(entry, 'value[0]')) && !isNil(_.get(entry, 'y'))
                 ? yAxis.scale(_.get(entry, 'value[0]'))
                 : null,
           };
         }
         return {
-          x: !_.isNil(_.get(entry, 'value[0]')) ? xAxis.scale(_.get(entry, 'value[0]')) : null,
+          x: !isNil(_.get(entry, 'value[0]')) ? xAxis.scale(_.get(entry, 'value[0]')) : null,
           y: entry.y,
         };
       });
@@ -457,7 +458,7 @@ export class Area extends PureComponent<Props, State> {
     const { points, baseLine, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
       this.props;
     const { prevPoints, prevBaseLine } = this.state;
-    // const clipPathId = _.isNil(id) ? this.id : id;
+    // const clipPathId = isNil(id) ? this.id : id;
 
     return (
       <Animate
@@ -492,7 +493,7 @@ export class Area extends PureComponent<Props, State> {
             if (isNumber(baseLine) && typeof baseLine === 'number') {
               const interpolator = interpolateNumber(prevBaseLine as number, baseLine);
               stepBaseLine = interpolator(t);
-            } else if (_.isNil(baseLine) || _.isNaN(baseLine)) {
+            } else if (isNil(baseLine) || _.isNaN(baseLine)) {
               const interpolator = interpolateNumber(prevBaseLine as number, 0);
               stepBaseLine = interpolator(t);
             } else {
@@ -557,7 +558,7 @@ export class Area extends PureComponent<Props, State> {
     const needClipX = xAxis && xAxis.allowDataOverflow;
     const needClipY = yAxis && yAxis.allowDataOverflow;
     const needClip = needClipX || needClipY;
-    const clipPathId = _.isNil(id) ? this.id : id;
+    const clipPathId = isNil(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot) ?? { r: 3, strokeWidth: 2 };
     const { clipDot = true } = isDotProps(dot) ? dot : {};
     const dotSize = r * 2 + strokeWidth;
