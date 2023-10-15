@@ -77,7 +77,7 @@ describe('number calculate', () => {
 });
 
 const cssLengthUnits = ['', 'ch', 'em', 'rem', 'vh', 'vw', 'px', '%'];
-const cssLengthPair = cssLengthUnits.reduce((result, unit1, index1) => {
+const cssLengthPair = cssLengthUnits.reduce<string[][]>((result, unit1, index1) => {
   cssLengthUnits.slice(index1).forEach(unit2 => {
     result.push([unit1, unit2]);
   });
