@@ -24,7 +24,7 @@ import {
   scaleThreshold,
   scaleTime,
   scaleUtc,
-} from 'victory-vendor/d3-scale';
+} from 'd3-scale';
 import { parseScale } from '../../../src/util/ChartUtils';
 
 describe('parseScale', () => {
