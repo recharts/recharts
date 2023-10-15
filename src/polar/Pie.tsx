@@ -6,7 +6,7 @@ import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { Layer } from '../container/Layer';
-import { Sector, Props as SectorProps } from '../shape/Sector';
+import { Props as SectorProps } from '../shape/Sector';
 import { Curve } from '../shape/Curve';
 import { Text } from '../component/Text';
 import { Label } from '../component/Label';
@@ -28,7 +28,9 @@ import {
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
   AnimationDuration,
+  ActiveShape,
 } from '../util/types';
+import { Shape } from '../util/ActiveShapeUtils';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -47,7 +49,6 @@ interface PieDef {
   cornerRadius?: number | string;
 }
 
-type PieActiveShape = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | SectorProps;
 type PieLabelLine =
   | ReactElement<SVGElement>
   | ((props: any) => ReactElement<SVGElement>)
@@ -58,7 +59,7 @@ export type PieLabel<P = any> =
   | ((props: P) => ReactNode | ReactElement<SVGElement>)
   | (SVGProps<SVGTextElement> & { offsetRadius?: number })
   | boolean;
-type PieSectorDataItem = SectorProps & {
+export type PieSectorDataItem = SectorProps & {
   percent?: number;
   name?: string | number;
   midAngle?: number;
@@ -86,8 +87,8 @@ interface PieProps extends PieDef {
   /** the input data */
   data?: any[];
   sectors?: PieSectorDataItem[];
-  activeShape?: PieActiveShape;
-  inactiveShape?: PieActiveShape;
+  activeShape?: ActiveShape<PieSectorDataItem>;
+  inactiveShape?: ActiveShape<PieSectorDataItem>;
   labelLine?: PieLabelLine;
   label?: PieLabel;
 
@@ -471,28 +472,16 @@ export class Pie extends PureComponent<Props, State> {
     return <Layer className="recharts-pie-labels">{labels}</Layer>;
   }
 
-  static renderSectorItem(option: PieActiveShape, props: any) {
-    if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
-    }
-    if (_.isFunction(option)) {
-      return option(props);
-    }
-    if (_.isPlainObject(option)) {
-      return <Sector tabIndex={-1} {...props} {...option} />;
-    }
-
-    return <Sector tabIndex={-1} {...props} />;
-  }
-
   renderSectorsStatically(sectors: PieSectorDataItem[]) {
     const { activeShape, blendStroke, inactiveShape: inactiveShapeProp } = this.props;
     return sectors.map((entry, i) => {
+      const isActive = this.isActiveIndex(i);
       const inactiveShape = inactiveShapeProp && this.hasActiveIndex() ? inactiveShapeProp : null;
-      const sectorOptions = this.isActiveIndex(i) ? activeShape : inactiveShape;
+      const sectorOptions = isActive ? activeShape : inactiveShape;
       const sectorProps = {
         ...entry,
         stroke: blendStroke ? entry.fill : entry.stroke,
+        tabIndex: -1,
       };
 
       return (
@@ -507,7 +496,7 @@ export class Pie extends PureComponent<Props, State> {
           {...adaptEventsOfChild(this.props, entry, i)}
           key={`sector-${i}`} // eslint-disable-line react/no-array-index-key
         >
-          {Pie.renderSectorItem(sectorOptions, sectorProps)}
+          <Shape option={sectorOptions} isActive={isActive} shapeType="sector" {...sectorProps} />
         </Layer>
       );
     });
