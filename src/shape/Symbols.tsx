@@ -67,7 +67,7 @@ const calculateAreaSize = (size: number, sizeType: SizeType, type: SymbolType) =
   }
 };
 
-interface SymbolsProp {
+export interface InnerSymbolsProp {
   className?: string;
   type: SymbolType;
   cx?: number;
@@ -76,13 +76,13 @@ interface SymbolsProp {
   sizeType?: SizeType;
 }
 
-export type Props = SVGProps<SVGPathElement> & SymbolsProp;
+export type SymbolsProps = SVGProps<SVGPathElement> & InnerSymbolsProp;
 
 const registerSymbol = (key: string, factory: D3SymbolType) => {
   symbolFactories[`symbol${_.upperFirst(key)}`] = factory;
 };
 
-export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest }: Props) => {
+export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest }: SymbolsProps) => {
   const props = { ...rest, type, size, sizeType };
 
   /**

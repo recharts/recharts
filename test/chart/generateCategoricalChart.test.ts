@@ -1,4 +1,6 @@
+import { ReactElement } from 'react';
 import { getAxisMapByAxes, CategoricalChartProps } from '../../src/chart/generateCategoricalChart';
+import { AxisStackGroups } from '../../src/util/ChartUtils';
 
 const data = [
   {
@@ -40,7 +42,8 @@ const data = [
 ];
 
 describe('generateCategoricalChart', () => {
-  const graphicalItems = [
+  const graphicalItems: Array<ReactElement> = [
+    // @ts-expect-error this isn't a proper ReactElement
     {
       props: {
         type: 'monotone',
@@ -80,13 +83,15 @@ describe('generateCategoricalChart', () => {
     allowDuplicatedCategory: true,
   };
 
-  const xAxes = [
+  const xAxes: ReadonlyArray<ReactElement> = [
+    // @ts-expect-error this isn't a proper ReactElement
     {
       props: { ...axisProps, xAxisId: 0, dataKey: 'name' },
     },
   ];
 
-  const yAxes = [
+  const yAxes: ReadonlyArray<ReactElement> = [
+    // @ts-expect-error this isn't a proper ReactElement
     {
       props: {
         ...axisProps,
@@ -116,9 +121,18 @@ describe('generateCategoricalChart', () => {
       height: 500,
     };
 
-    const stackGroups = [
-      { hasStack: false, stackGroups: { _stackId_49: { cateAxisId: 'xAxisId', items: graphicalItems } } },
-    ];
+    const stackGroups: AxisStackGroups = {
+      '0': {
+        hasStack: false,
+        stackGroups: {
+          _stackId_49: {
+            cateAxisId: 'xAxisId',
+            items: graphicalItems,
+            numericAxisId: '',
+          },
+        },
+      },
+    };
 
     const input = {
       axes: xAxes,
@@ -176,7 +190,13 @@ describe('generateCategoricalChart', () => {
       // eslint-disable-next-line no-underscore-dangle
       stackGroups[0].stackGroups._stackId_49.cateAxisId = 'yAxisId';
 
-      const yAxisInput = { ...input, axisIdKey: 'yAxisId', axisType: 'yAxis', axes: yAxes };
+      type SecondParam<F extends Function> = F extends (...args: infer A) => any ? A[1] : never;
+      const yAxisInput: SecondParam<typeof getAxisMapByAxes> = {
+        ...input,
+        axisIdKey: 'yAxisId',
+        axisType: 'yAxis',
+        axes: yAxes,
+      };
 
       const res = getAxisMapByAxes(props, yAxisInput);
 

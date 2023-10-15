@@ -72,6 +72,15 @@ describe('is functions', () => {
         expect(isNumber(value)).toBe(result);
       });
     });
+
+    it('should allow type refinement', () => {
+      const arr: unknown[] = ['a', 1, false, NaN];
+      // @ts-expect-error typescript should highlight this - invalid assignment
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const invalid: number[] = arr;
+      const result: number[] = arr.filter(isNumber);
+      expect(result).toEqual([1]);
+    });
   });
 
   describe('isNumOrStr', () => {
