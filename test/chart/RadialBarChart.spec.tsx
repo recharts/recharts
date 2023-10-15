@@ -221,7 +221,7 @@ describe('<RadialBarChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { clientX: 200, clientY: 200 });
 
     mouseOverEvent.fire();
 
@@ -248,7 +248,7 @@ describe('<RadialBarChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { clientX: 200, clientY: 200 });
 
     mouseOverEvent.fire();
 
@@ -275,7 +275,7 @@ describe('<RadialBarChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { clientX: 200, clientY: 200 });
 
     mouseOverEvent.fire();
 
@@ -302,7 +302,7 @@ describe('<RadialBarChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { clientX: 200, clientY: 200 });
 
     mouseOverEvent.fire();
 
@@ -330,7 +330,8 @@ describe('<RadialBarChart />', () => {
     const sectorNodes = container.querySelectorAll('.recharts-sector');
 
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
+
+    const mouseOverEvent = mockMouseEvent('mouseover', sector, { clientX: 200, clientY: 200 });
 
     mouseOverEvent.fire();
 
