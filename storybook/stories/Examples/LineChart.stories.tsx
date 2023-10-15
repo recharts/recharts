@@ -651,8 +651,8 @@ export const LineChartHasMultiSeries = {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart width={500} height={300} data={pageData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" type="category" allowDuplicatedCategory={false} />
+          <CartesianGrid />
+          <XAxis dataKey="name" />
           <YAxis />
           <Tooltip />
           <Legend />
