@@ -1,0 +1,22 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/blocks';
+import * as ComponentStories from './LabelList.stories';
+
+# LabelList
+
+The LabelList component is used to display a label for a component.
+
+<Meta of={ComponentStories} />
+
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
+
+## Parent Components
+The LabelList can be used within a `<Area />`, `<Bar />`, `<Line />`, `<Scatter />`, `<Pie />`, `<Radar />` or a `<RadialBar />`
+
+
+## Properties
+
+Properties in the groups Other and Internal are not recommended to be used.
+
+<Controls of={ComponentStories.API} />

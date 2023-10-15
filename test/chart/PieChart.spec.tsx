@@ -1,9 +1,8 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import { vi, Mock } from 'vitest';
-
+import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { PieChart, Pie, Legend, Cell, Tooltip } from '../../src';
+import { vi, Mock } from 'vitest';
+import { PieChart, Pie, Legend, Cell, Tooltip, Sector } from '../../src';
 
 describe('<PieChart />', () => {
   const data = [
@@ -32,6 +31,112 @@ describe('<PieChart />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(data.length);
+  });
+
+  test('With Tooltip render customized active sector when activeShape is set to be an element', () => {
+    const { container } = render(
+      <PieChart width={800} height={400}>
+        <Pie
+          dataKey="value"
+          isAnimationActive={false}
+          activeShape={<Sector fill="#ff7300" className="customized-active-shape" />}
+          data={data}
+          cx={200}
+          cy={200}
+          outerRadius={80}
+          fill="#ff7300"
+          label
+        />
+        <Tooltip />
+      </PieChart>,
+    );
+    const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
+    const [sector] = Array.from(sectorNodes);
+    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
+
+    const activeSector = container.querySelectorAll('.recharts-active-shape');
+    expect(activeSector).toHaveLength(1);
+    expect(container.querySelectorAll('.customized-active-shape')).toHaveLength(1);
+  });
+
+  test('With Tooltip render customized active sector when activeShape is set to be a function', () => {
+    const { container } = render(
+      <PieChart width={800} height={400}>
+        <Pie
+          dataKey="value"
+          isAnimationActive={false}
+          activeShape={props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />}
+          data={data}
+          cx={200}
+          cy={200}
+          outerRadius={80}
+          fill="#ff7300"
+          label
+        />
+        <Tooltip />
+      </PieChart>,
+    );
+
+    const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
+    const [sector] = Array.from(sectorNodes);
+    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
+
+    const activeSector = container.querySelectorAll('.recharts-active-shape');
+    expect(activeSector).toHaveLength(1);
+    expect(container.querySelectorAll('.customized-active-shape')).toHaveLength(1);
+  });
+
+  test('With Tooltip render customized active sector when activeShape is set to be an object', () => {
+    const { container } = render(
+      <PieChart width={800} height={400}>
+        <Pie
+          dataKey="value"
+          isAnimationActive={false}
+          activeShape={{ fill: '#ff7300', className: 'customized-active-shape' }}
+          data={data}
+          cx={200}
+          cy={200}
+          outerRadius={80}
+          fill="#ff7300"
+          label
+        />
+        <Tooltip />
+      </PieChart>,
+    );
+
+    const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
+    const [sector] = Array.from(sectorNodes);
+    fireEvent.mouseOver(sector, { pageX: 100, pageY: 100 });
+
+    const activeSector = container.querySelectorAll('.recharts-active-shape');
+    expect(activeSector).toHaveLength(1);
+    expect(container.querySelectorAll('.customized-active-shape')).toHaveLength(1);
+  });
+
+  test('With Tooltip render customized active sector when activeShape is set to be a truthy boolean', () => {
+    const { container } = render(
+      <PieChart width={800} height={400}>
+        <Pie
+          dataKey="value"
+          isAnimationActive={false}
+          activeShape
+          data={data}
+          cx={200}
+          cy={200}
+          outerRadius={80}
+          fill="#ff7300"
+          label
+        />
+        <Tooltip />
+      </PieChart>,
+    );
+
+    const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
+    const [sector] = Array.from(sectorNodes);
+    fireEvent.mouseOver(sector, { pageX: 100, pageY: 100 });
+
+    const activeSector = container.querySelectorAll('.recharts-active-shape');
+    expect(activeSector).toHaveLength(1);
   });
 
   test('Renders 6 sectors circles when add Cell to specified props of eact slice', () => {

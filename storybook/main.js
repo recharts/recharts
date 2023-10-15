@@ -14,6 +14,7 @@ module.exports = {
     '@storybook/addon-a11y',
     '@storybook/addon-storysource',
     '@storybook/addon-docs',
+    'storybook-addon-performance',
   ],
   framework: {
     name: '@storybook/react-webpack5',

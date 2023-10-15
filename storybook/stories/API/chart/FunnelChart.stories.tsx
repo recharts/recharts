@@ -1,15 +1,37 @@
 import React from 'react';
-import { Funnel, FunnelChart, LabelList, ResponsiveContainer } from '../../../../src';
+import { Meta } from '@storybook/react';
+import { Tooltip, Funnel, FunnelChart, LabelList, ResponsiveContainer, FunnelProps } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
 
 export default {
   argTypes: {
     ...CategoricalChartProps,
+    activeIndex: {
+      description:
+        'The index of the individual shapes of Funnel to be marked as active, and render props.activeShape as a result',
+      table: {
+        type: {
+          summary: 'number',
+        },
+        defaultValue: undefined,
+        category: 'General',
+      },
+    },
+    activeShape: {
+      description: 'The customized shape to be rendered if activeIndex or activeTooltipIndex match',
+      table: {
+        type: {
+          summary: 'Function | boolean | ReactElement | object',
+        },
+        defaultValue: undefined,
+        category: 'General',
+      },
+    },
   },
   component: FunnelChart,
 };
 
-export const Simple = {
+export const Simple: Meta<FunnelProps> = {
   render: (args: Record<string, any>) => {
     const { data } = args;
     return (
@@ -17,6 +39,7 @@ export const Simple = {
       <ResponsiveContainer width="100%" height={200}>
         <FunnelChart layout="horizontal">
           <Funnel
+            activeIndex={args.activeIndex}
             width={400}
             data={data}
             dataKey="value"
@@ -25,15 +48,19 @@ export const Simple = {
             labelLine
             lastShapeType="rectangle"
             orientation="horizontal"
+            activeShape={args.activeShape}
           >
             <LabelList dataKey="name" fill="#000" position="right" stroke="none" />
           </Funnel>
+          <Tooltip />
         </FunnelChart>
       </ResponsiveContainer>
       // </div>
     );
   },
   args: {
+    activeShape: { fill: 'gold', stroke: 'purple' },
+    activeIndex: undefined,
     data: [
       {
         fill: '#EEEEEE',
@@ -59,6 +86,11 @@ export const Simple = {
         fill: '#757575',
         name: 'E',
         value: 602,
+      },
+      {
+        fill: '#424242',
+        name: 'F',
+        value: 580,
       },
       {
         fill: '#424242',

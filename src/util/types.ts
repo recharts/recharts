@@ -24,7 +24,19 @@ import {
 import _ from 'lodash';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'd3-scale';
 
-export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette';
+/**
+ * Determines how values are stacked:
+ *
+ * - `none` is the default, it adds values on top of each other. No smarts. Negative values will overlap.
+ * - `expand` make it so that the values always add up to 1 - so the chart will look like a rectangle.
+ * - `wiggle` and `silhouette` tries to keep the chart centered.
+ * - `sign` stacks positive values above zero and negative values below zero. Similar to `none` but handles negatives.
+ * - `positive` ignores all negative values, and then behaves like \`none\`.
+ *
+ * Also see https://d3js.org/d3-shape/stack#stack-offsets
+ * (note that the `diverging` offset in d3 is named `sign` in recharts)
+ */
+export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette' | 'positive';
 export type LayoutType = 'horizontal' | 'vertical' | 'centric' | 'radial';
 export type PolarLayoutType = 'radial' | 'centric';
 export type AxisType = 'xAxis' | 'yAxis' | 'zAxis' | 'angleAxis' | 'radiusAxis';
@@ -1050,12 +1062,41 @@ export interface GeometrySector {
 export type D3Scale<T> = D3ScaleContinuousNumeric<T, number>;
 
 export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | 'dataMax';
-/** The domain of axis */
+
+/**
+ * The domain of axis.
+ * This is the definition
+ *
+ * Numeric domain is always defined by an array of exactly two values, for the min and the max of the axis.
+ * Categorical domain is defined as array of all possible values.
+ *
+ * Can be specified in many ways:
+ * - array of numbers
+ * - with special strings like 'dataMin' and 'dataMax'
+ * - with special string math like 'dataMin - 100'
+ * - with keyword 'auto'
+ * - or a function
+ * - array of functions
+ * - or a combination of the above
+ */
 export type AxisDomain =
   | string[]
   | number[]
   | [AxisDomainItem, AxisDomainItem]
   | (([dataMin, dataMax]: [number, number], allowDataOverflow: boolean) => [number, number]);
+
+/**
+ * NumberDomain is an evaluated {@link AxisDomain}.
+ * Unlike {@link AxisDomain}, it has no variety - it's a tuple of two number.
+ * This is after all the keywords and functions were evaluated and what is left is [min, max].
+ *
+ * Know that the min, max values are not guaranteed to be nice numbers - values like -Infinity or NaN are possible.
+ *
+ * There are also `category` axes that have different things than numbers in their domain.
+ */
+export type NumberDomain = [min: number, max: number];
+
+export type CategoricalDomain = (number | string | Date)[];
 
 /** The props definition of base axis */
 export interface BaseAxisProps {
@@ -1225,11 +1266,13 @@ export const adaptEventsOfChild = (
   return out;
 };
 
+export type TooltipEventType = 'axis' | 'item';
+
 export interface CategoricalChartOptions {
   chartName?: string;
   GraphicalChild?: any;
-  defaultTooltipEventType?: string;
-  validateTooltipEventTypes?: string[];
+  defaultTooltipEventType?: TooltipEventType;
+  validateTooltipEventTypes?: ReadonlyArray<TooltipEventType>;
   axisComponents?: BaseAxisProps[];
   legendContent?: 'children';
   formatAxisMap?: any;
@@ -1267,3 +1310,9 @@ export interface SankeyLink {
 }
 
 export type Size = { width: number; height: number };
+
+export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElement> =
+  | ReactElement<SVGProps<ElementType>>
+  | ((props: PropsType) => ReactElement<SVGProps<ElementType>>)
+  | SVGProps<ElementType>
+  | boolean;
