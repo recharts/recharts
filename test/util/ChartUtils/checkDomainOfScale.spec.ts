@@ -24,7 +24,7 @@ import {
   scaleOrdinal,
   scaleBand,
   scalePoint,
-} from 'victory-vendor/d3-scale';
+} from 'd3-scale';
 import { checkDomainOfScale } from '../../../src/util/ChartUtils';
 
 describe('checkDomainOfScale', () => {
