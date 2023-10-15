@@ -1,3 +1,4 @@
+import { Meta } from '@storybook/react';
 // eslint-disable-next-line max-classes-per-file
 import React from 'react';
 import {
@@ -14,6 +15,7 @@ import {
   Scatter,
   ZAxis,
 } from '../../../src';
+import { Props as ScatterProps } from '../../../src/cartesian/Scatter';
 
 export default {
   component: LineChart,
@@ -22,9 +24,14 @@ export default {
   },
 };
 
-export const Simple = {
-  render: () => {
+export const Simple: Meta<ScatterProps> = {
+  args: {
+    activeShape: { fill: 'red' },
+    activeIndex: undefined,
+  },
+  render: args => {
     const data = [
+      { x: 100, y: 200, z: 200 },
       { x: 100, y: 200, z: 200 },
       { x: 120, y: 100, z: 260 },
       { x: 170, y: 300, z: 400 },
@@ -47,7 +54,13 @@ export const Simple = {
           <XAxis type="number" dataKey="x" name="stature" unit="cm" />
           <YAxis type="number" dataKey="y" name="weight" unit="kg" />
           <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-          <Scatter name="A school" data={data} fill="#8884d8" />
+          <Scatter
+            activeShape={args.activeShape}
+            activeIndex={args.activeIndex}
+            name="A school"
+            data={data}
+            fill="#8884d8"
+          />
         </ScatterChart>
       </ResponsiveContainer>
     );

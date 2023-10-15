@@ -263,11 +263,20 @@ export const CategoricalChartProps: StorybookArgs = {
     },
   },
   stackOffset: {
-    description: `The type of offset function used to generate the lower and upper
-      values in the series array. The four types are built-in offsets in d3-shape.`,
+    description: `Determines how values are stacked:
+    
+- \`none\` is the default, it adds values on top of each other. No smarts. Negative values will overlap.
+- \`expand\` make it so that the values always add up to 1 - so the chart will look like a rectangle.
+- \`wiggle\` and \`silhouette\` tries to keep the chart centered.
+- \`sign\` stacks positive values above zero and negative values below zero. Similar to \`none\` but handles negatives.
+- \`positive\` ignores all negative values, and then behaves like \`none\`.
+
+Also see https://d3js.org/d3-shape/stack#stack-offsets
+(note that the \`diverging\` offset in d3 is named \`sign\` in recharts)
+`,
     table: {
       type: {
-        summary: "'expand' | 'none' | 'wiggle' | 'silhouette' | 'sign'",
+        summary: "'expand' | 'none' | 'wiggle' | 'silhouette' | 'sign' | 'positive'",
       },
       defaultValue: "'none'",
       category: 'General',

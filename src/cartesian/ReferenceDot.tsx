@@ -8,7 +8,7 @@ import { Layer } from '../container/Layer';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { ImplicitLabelType, Label } from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
-import { ifOverflowMatches } from '../util/IfOverflowMatches';
+import { IfOverflow, ifOverflowMatches } from '../util/IfOverflowMatches';
 import { createLabeledScales } from '../util/CartesianUtils';
 import { warn } from '../util/LogUtils';
 import { D3Scale } from '../util/types';
@@ -28,7 +28,7 @@ interface ReferenceDotProps extends InternalReferenceDotProps {
   isFront?: boolean;
   /** @deprecated use ifOverflow="extendDomain"  */
   alwaysShow?: boolean;
-  ifOverflow?: 'hidden' | 'visible' | 'discard' | 'extendDomain';
+  ifOverflow?: IfOverflow;
   x?: number | string;
   y?: number | string;
 
