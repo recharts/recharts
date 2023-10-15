@@ -1,11 +1,11 @@
 import React, { CSSProperties, SVGProps, useMemo } from 'react';
-import reduceCSSCalc from 'reduce-css-calc';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { filterProps } from '../util/ReactUtils';
 import { getStringSize } from '../util/DOMUtils';
+import { reduceCSSCalc } from '../util/ReduceCSSCalc';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -222,7 +222,7 @@ export const Text = ({
   const x = (propsX as number) + (isNumber(dx as number) ? (dx as number) : 0);
   const y = (propsY as number) + (isNumber(dy as number) ? (dy as number) : 0);
 
-  let startDy: number;
+  let startDy: string;
   switch (verticalAnchor) {
     case 'start':
       startDy = reduceCSSCalc(`calc(${capHeight})`);
