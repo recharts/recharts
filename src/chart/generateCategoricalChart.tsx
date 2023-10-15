@@ -1091,8 +1091,6 @@ export const generateCategoricalChart = ({
   return class CategoricalChartWrapper extends Component<CategoricalChartProps, CategoricalChartState> {
     static displayName = chartName;
 
-    uniqueChartId: string;
-
     clipPathId: string;
 
     cancelDefer: CancelFunction | null;
@@ -1116,8 +1114,7 @@ export const generateCategoricalChart = ({
     constructor(props: CategoricalChartProps) {
       super(props);
 
-      this.uniqueChartId = _.isNil(props.id) ? uniqueId('recharts') : props.id;
-      this.clipPathId = `${this.uniqueChartId}-clip`;
+      this.clipPathId = `${props.id ?? uniqueId('recharts')}-clip`;
 
       if (props.throttleDelay) {
         this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove, props.throttleDelay);
@@ -1423,21 +1420,12 @@ export const generateCategoricalChart = ({
       };
     }
 
-    /* eslint-disable  no-underscore-dangle */
     addListener() {
       eventCenter.on(SYNC_EVENT, this.handleReceiveSyncEvent);
-
-      if (eventCenter.setMaxListeners && eventCenter._maxListeners) {
-        eventCenter.setMaxListeners(eventCenter._maxListeners + 1);
-      }
     }
 
     removeListener() {
       eventCenter.removeListener(SYNC_EVENT, this.handleReceiveSyncEvent);
-
-      if (eventCenter.setMaxListeners && eventCenter._maxListeners) {
-        eventCenter.setMaxListeners(eventCenter._maxListeners - 1);
-      }
     }
 
     clearDefer = () => {
@@ -1466,10 +1454,8 @@ export const generateCategoricalChart = ({
       }
     };
 
-    handleReceiveSyncEvent = (cId: number | string, chartId: string, data: CategoricalChartState) => {
-      const { syncId } = this.props;
-
-      if (syncId === cId && chartId !== this.uniqueChartId) {
+    handleReceiveSyncEvent = (cId: number | string, data: CategoricalChartState) => {
+      if (this.props.syncId === cId) {
         this.clearDefer();
         this.cancelDefer = deferer(this.applySyncEvent.bind(this, data));
       }
@@ -1659,11 +1645,7 @@ export const generateCategoricalChart = ({
     };
 
     triggerSyncEvent(data: CategoricalChartState) {
-      const { syncId } = this.props;
-
-      if (!_.isNil(syncId)) {
-        eventCenter.emit(SYNC_EVENT, syncId, this.uniqueChartId, data);
-      }
+      eventCenter.emit(SYNC_EVENT, this.props.syncId, data);
     }
 
     applySyncEvent(data: CategoricalChartState) {
