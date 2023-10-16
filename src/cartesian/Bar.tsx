@@ -178,7 +178,7 @@ export class Bar extends PureComponent<Props, State> {
       } else {
         value = getValueByDataKey(entry, dataKey);
 
-        if (!_.isArray(value)) {
+        if (!Array.isArray(value)) {
           value = [baseValue, value];
         }
       }
