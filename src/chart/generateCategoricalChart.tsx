@@ -1645,7 +1645,9 @@ export const generateCategoricalChart = ({
     };
 
     triggerSyncEvent(data: CategoricalChartState) {
-      eventCenter.emit(SYNC_EVENT, this.props.syncId, data);
+      if (this.props.syncId !== undefined) {
+        eventCenter.emit(SYNC_EVENT, this.props.syncId, data);
+      }
     }
 
     applySyncEvent(data: CategoricalChartState) {
