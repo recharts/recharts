@@ -1,7 +1,7 @@
 import React from 'react';
+import { vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import { ScatterChart, Scatter, CartesianGrid, Tooltip, XAxis, YAxis, ZAxis, Legend, Symbols } from '../../src';
-import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [
@@ -126,9 +126,7 @@ describe('ScatterChart of two dimension data', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -152,9 +150,7 @@ describe('ScatterChart of two dimension data', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
 
     const activeSector = container.querySelectorAll('.triangle-symbols-type');
     expect(activeSector).toHaveLength(1);
@@ -178,9 +174,7 @@ describe('ScatterChart of two dimension data', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -198,9 +192,7 @@ describe('ScatterChart of two dimension data', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -218,9 +210,7 @@ describe('ScatterChart of two dimension data', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -238,9 +228,7 @@ describe('ScatterChart of two dimension data', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(0);
