@@ -72,6 +72,7 @@ import {
   adaptEventHandlers,
   GeometrySector,
   AxisType,
+  DataKey,
 } from '../util/types';
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
@@ -821,6 +822,7 @@ export interface CategoricalChartState {
 
   legendBBox?: DOMRect | null;
 
+  prevDataKey?: DataKey<any>;
   prevData?: any[];
   prevWidth?: number;
   prevHeight?: number;
@@ -840,6 +842,7 @@ export interface CategoricalChartProps {
   compact?: boolean;
   width?: number;
   height?: number;
+  dataKey?: DataKey<any>;
   data?: any[];
   layout?: LayoutType;
   stackOffset?: StackOffsetType;
@@ -1180,7 +1183,7 @@ export const generateCategoricalChart = ({
       nextProps: CategoricalChartProps,
       prevState: CategoricalChartState,
     ): CategoricalChartState => {
-      const { data, children, width, height, layout, stackOffset, margin } = nextProps;
+      const { dataKey, data, children, width, height, layout, stackOffset, margin } = nextProps;
 
       if (_.isNil(prevState.updateId)) {
         const defaultState = createDefaultState(nextProps);
@@ -1197,6 +1200,7 @@ export const generateCategoricalChart = ({
             prevState,
           ),
 
+          prevDataKey: dataKey,
           prevData: data,
           prevWidth: width,
           prevHeight: height,
@@ -1207,6 +1211,7 @@ export const generateCategoricalChart = ({
         };
       }
       if (
+        dataKey !== prevState.prevDataKey ||
         data !== prevState.prevData ||
         width !== prevState.prevWidth ||
         height !== prevState.prevHeight ||
@@ -1249,6 +1254,7 @@ export const generateCategoricalChart = ({
             },
             prevState,
           ),
+          prevDataKey: dataKey,
           prevData: data,
           prevWidth: width,
           prevHeight: height,
