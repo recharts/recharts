@@ -78,7 +78,7 @@ let lastChildren: ReactNode | null = null;
 let lastResult: ReactNode[] | null = null;
 
 export const toArray = <T extends ReactNode>(children: T | T[]): T[] => {
-  if (children === lastChildren && _.isArray(lastResult)) {
+  if (children === lastChildren && Array.isArray(lastResult)) {
     return lastResult as T[];
   }
   let result: T[] = [];
@@ -106,7 +106,7 @@ export function findAllByType<
   const result: DetailedElement[] = [];
   let types: string[] = [];
 
-  if (_.isArray(type)) {
+  if (Array.isArray(type)) {
     types = type.map(t => getDisplayName(t));
   } else {
     types = [getDisplayName(type)];
@@ -142,7 +142,7 @@ export const withoutType = (children: ReactNode, type: string | string[]) => {
   const newChildren: ReactNode[] = [];
   let types: string[];
 
-  if (_.isArray(type)) {
+  if (Array.isArray(type)) {
     types = type.map(t => getDisplayName(t));
   } else {
     types = [getDisplayName(type)];
@@ -369,8 +369,8 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
   if (count === 1) {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     return isSingleChildEqual(
-      _.isArray(nextChildren) ? nextChildren[0] : nextChildren,
-      _.isArray(prevChildren) ? prevChildren[0] : prevChildren,
+      Array.isArray(nextChildren) ? nextChildren[0] : nextChildren,
+      Array.isArray(prevChildren) ? prevChildren[0] : prevChildren,
     );
   }
 
@@ -378,7 +378,7 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
     const nextChild: any = nextChildren[i];
     const prevChild: any = prevChildren[i];
 
-    if (_.isArray(nextChild) || _.isArray(prevChild)) {
+    if (Array.isArray(nextChild) || Array.isArray(prevChild)) {
       if (!isChildrenEqual(nextChild, prevChild)) {
         return false;
       }
