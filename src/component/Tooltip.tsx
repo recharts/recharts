@@ -9,8 +9,9 @@ import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultPr
 
 import { Global } from '../util/Global';
 import { isNumber } from '../util/DataUtils';
-import { AnimationDuration, AnimationTiming } from '../util/types';
 import { UniqueOption, getUniqPayload } from '../util/payload/getUniqPayload';
+import { AllowInDimension, AnimationDuration, AnimationTiming, Coordinate } from '../util/types';
+import { getTooltipTranslateXY } from '../util/tooltip/translate';
 
 const CLS_PREFIX = 'recharts-tooltip-wrapper';
 
@@ -38,14 +39,8 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
 }
 
 export type TooltipProps<TValue extends ValueType, TName extends NameType> = DefaultProps<TValue, TName> & {
-  allowEscapeViewBox?: {
-    x?: boolean;
-    y?: boolean;
-  };
-  reverseDirection?: {
-    x?: boolean;
-    y?: boolean;
-  };
+  allowEscapeViewBox?: AllowInDimension;
+  reverseDirection?: AllowInDimension;
   content?: ContentType<TValue, TName>;
   viewBox?: {
     x?: number;
@@ -57,14 +52,8 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   offset?: number;
   wrapperStyle?: CSSProperties;
   cursor?: boolean | ReactElement | SVGProps<SVGElement>;
-  coordinate?: {
-    x?: number;
-    y?: number;
-  };
-  position?: {
-    x?: number;
-    y?: number;
-  };
+  coordinate?: Partial<Coordinate>;
+  position?: Partial<Coordinate>;
   trigger?: 'hover' | 'click';
   shared?: boolean;
   payloadUniqBy?: UniqueOption<Payload<TValue, TName>>;
@@ -178,30 +167,17 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   }) => {
     const { allowEscapeViewBox, reverseDirection, coordinate, offset, position, viewBox } = this.props;
 
-    if (position && isNumber(position[key])) {
-      return position[key];
-    }
-
-    const negative = coordinate[key] - tooltipDimension - offset;
-    const positive = coordinate[key] + offset;
-    if (allowEscapeViewBox[key]) {
-      return reverseDirection[key] ? negative : positive;
-    }
-
-    if (reverseDirection[key]) {
-      const tooltipBoundary = negative;
-      const viewBoxBoundary = viewBox[key];
-      if (tooltipBoundary < viewBoxBoundary) {
-        return Math.max(positive, viewBox[key]);
-      }
-      return Math.max(negative, viewBox[key]);
-    }
-    const tooltipBoundary = positive + tooltipDimension;
-    const viewBoxBoundary = viewBox[key] + viewBoxDimension;
-    if (tooltipBoundary > viewBoxBoundary) {
-      return Math.max(negative, viewBox[key]);
-    }
-    return Math.max(positive, viewBox[key]);
+    return getTooltipTranslateXY({
+      key,
+      tooltipDimension,
+      viewBoxDimension,
+      allowEscapeViewBox,
+      reverseDirection,
+      coordinate,
+      offsetTopLeft: offset,
+      position,
+      viewBox,
+    });
   };
 
   render() {
