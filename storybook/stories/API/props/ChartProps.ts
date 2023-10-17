@@ -65,6 +65,17 @@ export const dataKey = {
 // - FunnelChart
 export const CategoricalChartProps: StorybookArgs = {
   ...ChartSizeProps,
+  dataKey: {
+    description: `Can be used to mirror dataKey used on children components, using it as this level will force
+the chart to animate between two states even though the data array stays the same. Useful to animate when
+toggling between multiple dataKey.`,
+    table: {
+      type: {
+        summary: 'string | number | function | undefined',
+      },
+      category: 'General',
+    },
+  },
   data,
   margin,
   accessibilityLayer: {
