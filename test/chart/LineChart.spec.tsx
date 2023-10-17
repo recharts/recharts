@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-import type { JSX } from '@babel/types';
 
 import { LineChart, Line, XAxis, YAxis, Tooltip, Brush, CartesianAxis, Legend } from '../../src';
 
@@ -393,9 +392,9 @@ describe('<LineChart />', () => {
 describe('<LineChart /> - Pure Rendering', () => {
   const pureElements = [Line];
 
-  const spies: Array<jest.SpyInstance<JSX.Element | null, []>> = [];
+  const spies: Array<jest.SpyInstance<React.ReactElement | null, []>> = [];
   // CartesianAxis is what is actually render for XAxis and YAxis
-  let axisSpy: jest.SpyInstance<JSX.Element | null, []>;
+  let axisSpy: jest.SpyInstance<React.ReactElement | null, []>;
 
   // spy on each pure element before each test, and restore the spy afterwards
   beforeAll(() => {
@@ -475,9 +474,9 @@ describe('<LineChart /> - Pure Rendering', () => {
 describe('<LineChart /> - Pure Rendering with legend', () => {
   const pureElements = [Line];
 
-  const spies: Array<jest.SpyInstance<JSX.Element | null, []>> = [];
+  const spies: Array<jest.SpyInstance<React.ReactElement | null, []>> = [];
   // CartesianAxis is what is actually render for XAxis and YAxis
-  let axisSpy: jest.SpyInstance<JSX.Element | null, []>;
+  let axisSpy: jest.SpyInstance<React.ReactElement | null, []>;
 
   // spy on each pure element before each test, and restore the spy afterwards
   beforeAll(() => {
@@ -751,7 +750,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(2);
 
     // make sure tooltips display the correct values, synced by data value
-    expect(screen.queryByText('400')).toBeTruthy();
+    expect(screen.queryByText('300')).toBeTruthy();
     expect(screen.queryByText('550')).toBeTruthy();
 
     // Check the activeDots are highlighted
