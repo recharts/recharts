@@ -1,4 +1,4 @@
-import { Dimension2D, getTooltipTranslateXY } from '../../../src/util/tooltip/translate';
+import { Dimension2D, getTooltipTranslateXY, getTransformStyle } from '../../../src/util/tooltip/translate';
 
 const dimensions: ReadonlyArray<Dimension2D> = ['x', 'y'];
 
@@ -130,6 +130,43 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
         viewBoxDimension: 60,
       });
       expect(result).toBe(172);
+    });
+  });
+});
+
+describe('getTranslateTransform', () => {
+  describe('with translate3d', () => {
+    it('should generate transform string with prefixes', () => {
+      const result = getTransformStyle({
+        translateX: 7,
+        translateY: 18,
+        useTranslate3d: true,
+      });
+      const expected = {
+        MozTransform: 'translate3d(7px, 18px, 0)',
+        OTransform: 'translate3d(7px, 18px, 0)',
+        WebkitTransform: 'translate3d(7px, 18px, 0)',
+        msTransform: 'translate3d(7px, 18px, 0)',
+        transform: 'translate3d(7px, 18px, 0)',
+      };
+      expect(result).toEqual(expected);
+    });
+  });
+  describe('without translate3d', () => {
+    it('should generate transform string with prefixes', () => {
+      const result = getTransformStyle({
+        translateX: 7,
+        translateY: 18,
+        useTranslate3d: false,
+      });
+      const expected = {
+        MozTransform: 'translate(7px, 18px)',
+        OTransform: 'translate(7px, 18px)',
+        WebkitTransform: 'translate(7px, 18px)',
+        msTransform: 'translate(7px, 18px)',
+        transform: 'translate(7px, 18px)',
+      };
+      expect(result).toEqual(expected);
     });
   });
 });

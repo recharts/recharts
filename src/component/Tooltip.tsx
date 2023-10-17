@@ -11,7 +11,7 @@ import { Global } from '../util/Global';
 import { isNumber } from '../util/DataUtils';
 import { UniqueOption, getUniqPayload } from '../util/payload/getUniqPayload';
 import { AllowInDimension, AnimationDuration, AnimationTiming, Coordinate } from '../util/types';
-import { getTooltipTranslateXY } from '../util/tooltip/translate';
+import { getTooltipTranslateXY, getTransformStyle } from '../util/tooltip/translate';
 
 const CLS_PREFIX = 'recharts-tooltip-wrapper';
 
@@ -223,11 +223,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
     }
 
     outerStyle = {
-      ...translateStyle({
-        transform: this.props.useTranslate3d
-          ? `translate3d(${translateX}px, ${translateY}px, 0)`
-          : `translate(${translateX}px, ${translateY}px)`,
-      }),
+      ...getTransformStyle({ translateX, translateY, useTranslate3d: this.props.useTranslate3d }),
       ...outerStyle,
     };
 

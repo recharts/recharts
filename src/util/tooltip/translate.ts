@@ -1,3 +1,5 @@
+import { CSSProperties } from 'react';
+import { translateStyle } from 'react-smooth';
 import { isNumber } from '../DataUtils';
 import { Coordinate, CartesianViewBox, AllowInDimension } from '../types';
 
@@ -48,4 +50,20 @@ export function getTooltipTranslateXY({
     return Math.max(negative, viewBox[key]);
   }
   return Math.max(positive, viewBox[key]);
+}
+
+export function getTransformStyle({
+  translateX,
+  translateY,
+  useTranslate3d,
+}: {
+  useTranslate3d: boolean;
+  translateX: number;
+  translateY: number;
+}): CSSProperties {
+  return translateStyle({
+    transform: useTranslate3d
+      ? `translate3d(${translateX}px, ${translateY}px, 0)`
+      : `translate(${translateX}px, ${translateY}px)`,
+  });
 }
