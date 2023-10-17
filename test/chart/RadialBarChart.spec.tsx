@@ -1,7 +1,6 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { RadialBarChart, RadialBar, Legend, Sector, Tooltip, Cell } from '../../src';
-import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 describe('<RadialBarChart />', () => {
   const data = [
@@ -221,9 +220,7 @@ describe('<RadialBarChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { clientX: 200, clientY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { clientX: 200, clientY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -248,9 +245,7 @@ describe('<RadialBarChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { clientX: 200, clientY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { clientX: 200, clientY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -275,9 +270,7 @@ describe('<RadialBarChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { clientX: 200, clientY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { clientX: 200, clientY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -302,9 +295,7 @@ describe('<RadialBarChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { clientX: 200, clientY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(0);
@@ -330,10 +321,7 @@ describe('<RadialBarChart />', () => {
     const sectorNodes = container.querySelectorAll('.recharts-sector');
 
     const [sector] = Array.from(sectorNodes);
-
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { clientX: 200, clientY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { clientX: 200, clientY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
