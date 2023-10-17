@@ -39,7 +39,6 @@
     "react/jsx-uses-vars": "error",
     "react/react-in-jsx-scope": "error",
     "react/jsx-filename-extension": ["error", { "extensions": [".ts", ".tsx", ".js", ".jsx"] }],
-
     "no-var": "error",
     "react/jsx-no-bind": "error",
 

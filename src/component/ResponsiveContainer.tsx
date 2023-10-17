@@ -17,7 +17,7 @@ import ReactResizeDetector from 'react-resize-detector';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
-export interface Props {
+export interface Props extends React.ComponentProps<'div'> {
   aspect?: number;
   width?: string | number;
   height?: string | number;
@@ -30,8 +30,6 @@ export interface Props {
   maxHeight?: number;
   children: ReactElement;
   debounce?: number;
-  id?: string | number;
-  className?: string | number;
   style?: React.CSSProperties;
   onResize?: (width: number, height: number) => void;
 }

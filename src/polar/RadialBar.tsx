@@ -147,7 +147,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
         value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
       } else {
         value = getValueByDataKey(entry, dataKey);
-        if (!_.isArray(value)) {
+        if (!Array.isArray(value)) {
           value = [baseValue, value];
         }
       }

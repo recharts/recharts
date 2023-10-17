@@ -73,7 +73,7 @@ export const getAnyElementOfObject = (obj: any) => {
 };
 
 export const hasDuplicate = (ary: Array<any>) => {
-  if (!_.isArray(ary)) {
+  if (!Array.isArray(ary)) {
     return false;
   }
 

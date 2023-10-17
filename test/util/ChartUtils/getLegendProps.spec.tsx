@@ -1,12 +1,12 @@
 import React, { ReactNode } from 'react';
-import { FormattedGraphicalItem } from '../../../src/util/ChartUtils';
+import { vi } from 'vitest';
+import { FormattedGraphicalItem, getLegendProps } from '../../../src/util/ChartUtils';
 import { findChildByType } from '../../../src/util/ReactUtils';
 import { Legend } from '../../../src/component/Legend';
-import { getLegendProps } from '../../../src/util/getLegendProps';
 
-jest.mock('../../../src/util/ReactUtils');
+vi.mock('../../../src/util/ReactUtils');
 
-const spy = jest.mocked(findChildByType);
+const spy = vi.mocked(findChildByType);
 
 function mockDomElement(item: ReactNode) {
   // @ts-expect-error I cannot find a way to type DetailedReactHTMLElement properly

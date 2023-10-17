@@ -1,8 +1,7 @@
 import React from 'react';
-
+import { vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ResponsiveContainer } from '../../src';
-import { vi } from 'vitest';
 
 declare global {
   interface Window {
@@ -31,12 +30,12 @@ describe('<ResponsiveContainer />', () => {
     notifyResizeObserverChange = callback;
 
     return {
-      observe: vi.fn().mockImplementation(),
+      observe: vi.fn(),
       unobserve: vi.fn(),
       disconnect: vi.fn(),
     };
   });
-  const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+  const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation((): void => undefined);
 
   beforeAll(() => {
     delete window.ResizeObserver;
@@ -230,16 +229,19 @@ describe('<ResponsiveContainer />', () => {
   });
 
   it('should accept and render the style prop if it is set', () => {
+    // looks like the ResponsiveContainer style.color prop converts from string to RGB representation
+    // i.e. style.color = 'red' gets converted to rgb(255,0,0)
+    // I checked and changing style.color from 'red' to 'blue' changed the resulting style from
+    // rgb(255,0,0) to rgb(0,0,255) as expected
     const { container } = render(
-      <ResponsiveContainer style={{ color: 'red', backgroundColor: '#FF00FF' }}>
+      <ResponsiveContainer style={{ color: 'red', backgroundColor: '#FF00FF' }} data-testid="container">
         <div data-testid="inside" />
       </ResponsiveContainer>,
     );
-
-    expect(container.querySelector('.recharts-responsive-container')).toHaveStyle({
-      color: 'red',
-      backgroundColor: '#FF00FF',
-    });
+    const responsiveContainer = container.getElementsByClassName('recharts-responsive-container');
+    expect(responsiveContainer).toHaveLength(1);
+    expect(responsiveContainer[0]).toHaveStyle('background-color: rgb(255, 0, 255)');
+    expect(responsiveContainer[0]).toHaveStyle('color: rgb(255,0,0)');
   });
 
   it('should accept and render the style prop and any other specified outside of it', () => {
@@ -252,8 +254,8 @@ describe('<ResponsiveContainer />', () => {
     expect(container.querySelector('.recharts-responsive-container')).toHaveStyle({
       width: '100px',
       height: '100px',
-      backgroundColor: 'red',
-      color: 'red',
+      'background-color': 'rgb(255,0,0)',
+      color: 'rgb(255,0,0)',
     });
   });
 

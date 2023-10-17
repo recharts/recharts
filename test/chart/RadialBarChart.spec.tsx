@@ -319,6 +319,7 @@ describe('<RadialBarChart />', () => {
     );
 
     const sectorNodes = container.querySelectorAll('.recharts-sector');
+
     const [sector] = Array.from(sectorNodes);
     fireEvent.mouseOver(sector, { clientX: 200, clientY: 200 });
 

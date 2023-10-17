@@ -2,6 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import { FunnelChart, Funnel, Tooltip, Trapezoid } from '../../src';
+import { cleanupMockAnimation, mockAnimation } from '../helper/animation-frame-helper';
 
 const data = [
   { value: 100, name: '展现' },
@@ -43,7 +44,8 @@ describe('<FunnelChart />', () => {
   });
 
   test('Renders 1 funnel in FunnelChart with animation', () => {
-    vi.useFakeTimers();
+    mockAnimation();
+
     const { container } = render(
       <FunnelChart width={500} height={300}>
         <Funnel dataKey="value" data={data} isAnimationActive animationDuration={1} />
@@ -51,15 +53,10 @@ describe('<FunnelChart />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-funnel-trapezoid')).toHaveLength(5);
-    // trapezoid are not rendered because the animation hasn't started
-    expect(container.querySelectorAll('.recharts-trapezoid')).toHaveLength(0);
-
-    // wait animation end
-    vi.runOnlyPendingTimers();
-
-    expect(container.querySelectorAll('.recharts-funnel-trapezoid')).toHaveLength(5);
     // all trapezoids are visible
     expect(container.querySelectorAll('.recharts-trapezoid')).toHaveLength(5);
+
+    cleanupMockAnimation();
   });
 
   test('Renders 2 funnel in nest FunnelChart', () => {

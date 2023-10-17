@@ -1,9 +1,10 @@
 import React from 'react';
+import { vi } from 'vitest';
 import { screen, render } from '@testing-library/react';
 import { BarChart, ReferenceLine, Bar, XAxis, YAxis } from '../../src';
 
 describe('<ReferenceLine />', () => {
-  const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+  const consoleSpy = vi.spyOn(console, 'warn').mockImplementation((): void => undefined);
 
   afterEach(() => {
     consoleSpy.mockReset();
