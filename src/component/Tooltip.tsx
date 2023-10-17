@@ -4,16 +4,12 @@
 import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps } from 'react';
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
-import classNames from 'classnames';
 import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
 
 import { Global } from '../util/Global';
-import { isNumber } from '../util/DataUtils';
 import { UniqueOption, getUniqPayload } from '../util/payload/getUniqPayload';
 import { AllowInDimension, AnimationDuration, AnimationTiming, Coordinate } from '../util/types';
-import { getTooltipTranslateXY, getTransformStyle } from '../util/tooltip/translate';
-
-const CLS_PREFIX = 'recharts-tooltip-wrapper';
+import { getTooltipTranslate } from '../util/tooltip/translate';
 
 const EPS = 1;
 export type ContentType<TValue extends ValueType, TName extends NameType> =
@@ -156,75 +152,54 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
     }
   }
 
-  getTranslate = ({
-    key,
-    tooltipDimension,
-    viewBoxDimension,
-  }: {
-    key: 'x' | 'y';
-    tooltipDimension: number;
-    viewBoxDimension: number;
-  }) => {
-    const { allowEscapeViewBox, reverseDirection, coordinate, offset, position, viewBox } = this.props;
-
-    return getTooltipTranslateXY({
-      key,
-      tooltipDimension,
-      viewBoxDimension,
-      allowEscapeViewBox,
-      reverseDirection,
-      coordinate,
-      offsetTopLeft: offset,
-      position,
-      viewBox,
-    });
-  };
-
   render() {
-    const { payload, isAnimationActive, animationDuration, animationEasing, filterNull, payloadUniqBy } = this.props;
+    const {
+      active,
+      allowEscapeViewBox,
+      animationDuration,
+      animationEasing,
+      content,
+      coordinate,
+      filterNull,
+      isAnimationActive,
+      offset,
+      payload,
+      payloadUniqBy,
+      position,
+      reverseDirection,
+      useTranslate3d,
+      viewBox,
+      wrapperStyle,
+    } = this.props;
     const finalPayload = getUniqPayload(
       filterNull && payload && payload.length ? payload.filter(entry => !_.isNil(entry.value)) : payload,
       payloadUniqBy,
       defaultUniqBy,
     );
     const hasPayload = finalPayload && finalPayload.length;
-    const { content, viewBox, coordinate, position, active, wrapperStyle } = this.props;
+
+    const { cssClasses, cssProperties } = getTooltipTranslate({
+      allowEscapeViewBox,
+      coordinate,
+      offsetTopLeft: offset,
+      position,
+      reverseDirection,
+      tooltipBox: {
+        height: this.state.boxHeight,
+        width: this.state.boxWidth,
+      },
+      useTranslate3d,
+      viewBox,
+    });
+
     let outerStyle: CSSProperties = {
+      ...cssProperties,
       pointerEvents: 'none',
       visibility: !this.state.dismissed && active && hasPayload ? 'visible' : 'hidden',
       position: 'absolute',
       top: 0,
       left: 0,
       ...wrapperStyle,
-    };
-    let translateX, translateY;
-
-    if (position && isNumber(position.x) && isNumber(position.y)) {
-      translateX = position.x;
-      translateY = position.y;
-    } else {
-      const { boxWidth, boxHeight } = this.state;
-
-      if (boxWidth > 0 && boxHeight > 0 && coordinate) {
-        translateX = this.getTranslate({
-          key: 'x',
-          tooltipDimension: boxWidth,
-          viewBoxDimension: viewBox.width,
-        });
-
-        translateY = this.getTranslate({
-          key: 'y',
-          tooltipDimension: boxHeight,
-          viewBoxDimension: viewBox.height,
-        });
-      } else {
-        outerStyle.visibility = 'hidden';
-      }
-    }
-
-    outerStyle = {
-      ...getTransformStyle({ translateX, translateY, useTranslate3d: this.props.useTranslate3d }),
-      ...outerStyle,
     };
 
     if (isAnimationActive && active) {
@@ -236,15 +211,6 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       };
     }
 
-    const cls = classNames(CLS_PREFIX, {
-      [`${CLS_PREFIX}-right`]:
-        isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX >= coordinate.x,
-      [`${CLS_PREFIX}-left`]: isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX < coordinate.x,
-      [`${CLS_PREFIX}-bottom`]:
-        isNumber(translateY) && coordinate && isNumber(coordinate.y) && translateY >= coordinate.y,
-      [`${CLS_PREFIX}-top`]: isNumber(translateY) && coordinate && isNumber(coordinate.y) && translateY < coordinate.y,
-    });
-
     return (
       // ESLint is disabled to allow listening to the `Escape` key. Refer to
       // https://github.com/recharts/recharts/pull/2925
@@ -252,7 +218,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       <div
         tabIndex={-1}
         role="dialog"
-        className={cls}
+        className={cssClasses}
         style={outerStyle}
         ref={node => {
           this.wrapperNode = node;
