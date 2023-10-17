@@ -3,6 +3,7 @@ import { ResponsiveContainer, Tooltip, LineChart, Line } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { StorybookArgs } from '../../../StorybookArgs';
+import { generateMockData } from '../../../../test/helper/generateMockData';
 
 const TooltipProps: StorybookArgs = {
   separator: {
@@ -247,6 +248,40 @@ export const API = {
           {/* The target component */}
           <Tooltip {...args} />
           <Line dataKey="uv" />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    // This API story should have explicit values for all props
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
+    trigger: 'hover',
+    shared: false,
+    useTranslate3d: false,
+  },
+};
+
+export const LargeDataArray = {
+  render: (args: Record<string, any>) => {
+    const [surfaceWidth, surfaceHeight] = [600, 300];
+    return (
+      <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <LineChart
+          width={surfaceWidth}
+          height={surfaceHeight}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+          data={generateMockData(1000, 334058656)}
+        >
+          {/* The target component */}
+          <Tooltip {...args} />
+          <Line dataKey="x" />
+          <Line dataKey="y" />
+          <Line dataKey="z" />
         </LineChart>
       </ResponsiveContainer>
     );

@@ -110,7 +110,7 @@ const getPath = ({ type = 'linear', points = [], baseLine, layout, connectNulls 
   const formatPoints = connectNulls ? points.filter(entry => defined(entry)) : points;
   let lineFunction;
 
-  if (_.isArray(baseLine)) {
+  if (Array.isArray(baseLine)) {
     const formatBaseLine = connectNulls ? baseLine.filter(base => defined(base)) : baseLine;
     const areaPoints = formatPoints.map((entry, index) => ({ ...entry, base: formatBaseLine[index] }));
     if (layout === 'vertical') {

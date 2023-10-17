@@ -57,7 +57,6 @@ export const ResponsiveContainer = forwardRef(
       className,
       onResize,
       style = {},
-      ...rest
     }: Props,
     ref,
   ) => {
@@ -82,16 +81,7 @@ export const ResponsiveContainer = forwardRef(
         containerHeight: containerRef.current.clientHeight,
       };
     }, []);
-    const getDataProps = (props: Partial<Props>) => {
-      const dataProps: Partial<Record<keyof Props, Props[keyof Props]>> = {};
-      Object.keys(rest).forEach((prop: keyof Props) => {
-        if (prop.match(/^data-/)) {
-          dataProps[prop] = props[prop];
-        }
-      });
 
-      return dataProps;
-    };
     const updateDimensionsImmediate = useCallback(() => {
       const newSize = getContainerSize();
 
@@ -187,7 +177,6 @@ export const ResponsiveContainer = forwardRef(
         refreshRate={debounce}
       >
         <div
-          {...getDataProps(rest)}
           {...(id != null ? { id: `${id}` } : {})}
           className={classNames('recharts-responsive-container', className)}
           style={styles}

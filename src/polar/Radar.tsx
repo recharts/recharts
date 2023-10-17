@@ -110,10 +110,10 @@ export class Radar extends PureComponent<Props, State> {
       const name = getValueByDataKey(entry, angleAxis.dataKey, i);
       const value = getValueByDataKey(entry, dataKey);
       const angle = angleAxis.scale(name) + (bandSize || 0);
-      const pointValue = _.isArray(value) ? _.last(value) : value;
+      const pointValue = Array.isArray(value) ? _.last(value) : value;
       const radius = _.isNil(pointValue) ? undefined : radiusAxis.scale(pointValue);
 
-      if (_.isArray(value) && value.length >= 2) {
+      if (Array.isArray(value) && value.length >= 2) {
         isRange = true;
       }
 
@@ -132,7 +132,7 @@ export class Radar extends PureComponent<Props, State> {
 
     if (isRange) {
       points.forEach(point => {
-        if (_.isArray(point.value)) {
+        if (Array.isArray(point.value)) {
           const baseValue = _.first(point.value);
           const radius = _.isNil(baseValue) ? undefined : radiusAxis.scale(baseValue);
 
