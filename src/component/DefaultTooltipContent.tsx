@@ -8,7 +8,7 @@ import { isNumOrStr } from '../util/DataUtils';
 import { isNil } from '../util/isNil';
 
 function defaultFormatter<TValue extends ValueType>(value: TValue) {
-  return _.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1]) ? (value.join(' ~ ') as TValue) : value;
+  return Array.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1]) ? (value.join(' ~ ') as TValue) : value;
 }
 
 export type TooltipType = 'none';

@@ -146,7 +146,6 @@
     "react-dom": "^16.14.0",
     "react-router-dom": "^5.1.2",
     "reassure": "^0.9.1",
-    "reduce-css-calc": "^2.1.8",
     "rimraf": "^3.0.2",
     "storybook": "^7.4.6",
     "storybook-addon-performance": "^0.17.1",

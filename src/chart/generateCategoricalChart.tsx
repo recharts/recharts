@@ -73,6 +73,7 @@ import {
   adaptEventHandlers,
   GeometrySector,
   AxisType,
+  DataKey,
 } from '../util/types';
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
@@ -820,6 +821,7 @@ export interface CategoricalChartState {
 
   legendBBox?: DOMRect | null;
 
+  prevDataKey?: DataKey<any>;
   prevData?: any[];
   prevWidth?: number;
   prevHeight?: number;
@@ -839,6 +841,7 @@ export interface CategoricalChartProps {
   compact?: boolean;
   width?: number;
   height?: number;
+  dataKey?: DataKey<any>;
   data?: any[];
   layout?: LayoutType;
   stackOffset?: StackOffsetType;
@@ -1090,8 +1093,6 @@ export const generateCategoricalChart = ({
   return class CategoricalChartWrapper extends Component<CategoricalChartProps, CategoricalChartState> {
     static displayName = chartName;
 
-    uniqueChartId: string;
-
     clipPathId: string;
 
     cancelDefer: CancelFunction | null;
@@ -1115,8 +1116,7 @@ export const generateCategoricalChart = ({
     constructor(props: CategoricalChartProps) {
       super(props);
 
-      this.uniqueChartId = isNil(props.id) ? uniqueId('recharts') : props.id;
-      this.clipPathId = `${this.uniqueChartId}-clip`;
+      this.clipPathId = `${props.id ?? uniqueId('recharts')}-clip`;
 
       if (props.throttleDelay) {
         this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove, props.throttleDelay);
@@ -1179,7 +1179,7 @@ export const generateCategoricalChart = ({
       nextProps: CategoricalChartProps,
       prevState: CategoricalChartState,
     ): CategoricalChartState => {
-      const { data, children, width, height, layout, stackOffset, margin } = nextProps;
+      const { dataKey, data, children, width, height, layout, stackOffset, margin } = nextProps;
 
       if (isNil(prevState.updateId)) {
         const defaultState = createDefaultState(nextProps);
@@ -1196,6 +1196,7 @@ export const generateCategoricalChart = ({
             prevState,
           ),
 
+          prevDataKey: dataKey,
           prevData: data,
           prevWidth: width,
           prevHeight: height,
@@ -1206,6 +1207,7 @@ export const generateCategoricalChart = ({
         };
       }
       if (
+        dataKey !== prevState.prevDataKey ||
         data !== prevState.prevData ||
         width !== prevState.prevWidth ||
         height !== prevState.prevHeight ||
@@ -1248,6 +1250,7 @@ export const generateCategoricalChart = ({
             },
             prevState,
           ),
+          prevDataKey: dataKey,
           prevData: data,
           prevWidth: width,
           prevHeight: height,
@@ -1422,21 +1425,12 @@ export const generateCategoricalChart = ({
       };
     }
 
-    /* eslint-disable  no-underscore-dangle */
     addListener() {
       eventCenter.on(SYNC_EVENT, this.handleReceiveSyncEvent);
-
-      if (eventCenter.setMaxListeners && eventCenter._maxListeners) {
-        eventCenter.setMaxListeners(eventCenter._maxListeners + 1);
-      }
     }
 
     removeListener() {
       eventCenter.removeListener(SYNC_EVENT, this.handleReceiveSyncEvent);
-
-      if (eventCenter.setMaxListeners && eventCenter._maxListeners) {
-        eventCenter.setMaxListeners(eventCenter._maxListeners - 1);
-      }
     }
 
     clearDefer = () => {
@@ -1465,10 +1459,8 @@ export const generateCategoricalChart = ({
       }
     };
 
-    handleReceiveSyncEvent = (cId: number | string, chartId: string, data: CategoricalChartState) => {
-      const { syncId } = this.props;
-
-      if (syncId === cId && chartId !== this.uniqueChartId) {
+    handleReceiveSyncEvent = (cId: number | string, data: CategoricalChartState) => {
+      if (this.props.syncId === cId) {
         this.clearDefer();
         this.cancelDefer = deferer(this.applySyncEvent.bind(this, data));
       }
@@ -1658,10 +1650,9 @@ export const generateCategoricalChart = ({
     };
 
     triggerSyncEvent(data: CategoricalChartState) {
-      const { syncId } = this.props;
 
-      if (!isNil(syncId)) {
-        eventCenter.emit(SYNC_EVENT, syncId, this.uniqueChartId, data);
+      if (this.props.syncId !== undefined) {
+        eventCenter.emit(SYNC_EVENT, this.props.syncId, data);
       }
     }
 

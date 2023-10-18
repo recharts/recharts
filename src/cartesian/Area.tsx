@@ -201,7 +201,7 @@ export class Area extends PureComponent<Props, State> {
       } else {
         value = originalValue;
 
-        if (!_.isArray(value)) {
+        if (!Array.isArray(value)) {
           value = [baseValue, value];
         } else {
           isRange = true;
@@ -358,7 +358,7 @@ export class Area extends PureComponent<Props, State> {
 
     if (isNumber(baseLine) && typeof baseLine === 'number') {
       maxY = Math.max(baseLine, maxY);
-    } else if (baseLine && _.isArray(baseLine) && baseLine.length) {
+    } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
       maxY = Math.max(_.max(baseLine.map(entry => entry.y || 0)), maxY);
     }
 
@@ -385,7 +385,7 @@ export class Area extends PureComponent<Props, State> {
 
     if (isNumber(baseLine) && typeof baseLine === 'number') {
       maxX = Math.max(baseLine, maxX);
-    } else if (baseLine && _.isArray(baseLine) && baseLine.length) {
+    } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
       maxX = Math.max(_.max(baseLine.map(entry => entry.x || 0)), maxX);
     }
 

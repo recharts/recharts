@@ -458,12 +458,12 @@ export const getDomainOfErrorBars = (
     return data.reduce<NumberDomain>(
       (result: NumberDomain, entry: object): NumberDomain => {
         const entryValue = getValueByDataKey(entry, dataKey, 0);
-        const mainValue = _.isArray(entryValue) ? [_.min(entryValue), _.max(entryValue)] : [entryValue, entryValue];
+        const mainValue = Array.isArray(entryValue) ? [_.min(entryValue), _.max(entryValue)] : [entryValue, entryValue];
         const errorDomain = keys.reduce(
           (prevErrorArr: [number, number], k: DataKey<any>): NumberDomain => {
             const errorValue = getValueByDataKey(entry, k, 0);
-            const lowerValue = mainValue[0] - Math.abs(_.isArray(errorValue) ? errorValue[0] : errorValue);
-            const upperValue = mainValue[1] + Math.abs(_.isArray(errorValue) ? errorValue[1] : errorValue);
+            const lowerValue = mainValue[0] - Math.abs(Array.isArray(errorValue) ? errorValue[0] : errorValue);
+            const upperValue = mainValue[1] + Math.abs(Array.isArray(errorValue) ? errorValue[1] : errorValue);
 
             return [Math.min(lowerValue, prevErrorArr[0]), Math.max(upperValue, prevErrorArr[1])];
           },
@@ -1210,7 +1210,7 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
     return specifiedDomain(dataDomain, allowDataOverflow);
   }
 
-  if (!_.isArray(specifiedDomain)) {
+  if (!Array.isArray(specifiedDomain)) {
     return dataDomain;
   }
 
