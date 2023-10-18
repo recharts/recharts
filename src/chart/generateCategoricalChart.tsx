@@ -1,6 +1,6 @@
 import React, { Component, cloneElement, isValidElement, createElement, ReactElement } from 'react';
 import classNames from 'classnames';
-import { isArray, isBoolean } from 'lodash';
+import _, { isArray, isBoolean } from 'lodash';
 import invariant from 'tiny-invariant';
 import { isFunction } from '../util/isFunction';
 import { getRadialCursorPoints } from '../util/cursor/getRadialCursorPoints';
