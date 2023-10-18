@@ -6,6 +6,7 @@ import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { Layer } from '../container/Layer';
+import { isFunction } from '../util/isFunction';
 import { Props as TrapezoidProps } from '../shape/Trapezoid';
 import { LabelList } from '../component/LabelList';
 import { Cell, Props as CellProps } from '../component/Cell';
@@ -239,7 +240,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
     const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
 
-    if (_.isFunction(onAnimationEnd)) {
+    if (isFunction(onAnimationEnd)) {
       onAnimationEnd();
     }
   };
@@ -248,7 +249,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
     const { onAnimationStart } = this.props;
     this.setState({ isAnimationFinished: false });
 
-    if (_.isFunction(onAnimationStart)) {
+    if (isFunction(onAnimationStart)) {
       onAnimationStart();
     }
   };

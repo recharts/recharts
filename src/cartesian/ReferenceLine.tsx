@@ -4,6 +4,7 @@
 import React, { ReactElement, SVGProps } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
+import { isFunction } from '../util/isFunction';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
 import { IfOverflow, ifOverflowMatches } from '../util/IfOverflowMatches';
@@ -52,7 +53,7 @@ const renderLine = (option: ReferenceLineProps['shape'], props: any) => {
 
   if (React.isValidElement(option)) {
     line = React.cloneElement(option, props);
-  } else if (_.isFunction(option)) {
+  } else if (isFunction(option)) {
     line = option(props);
   } else {
     line = <line {...props} className="recharts-reference-line-line" />;

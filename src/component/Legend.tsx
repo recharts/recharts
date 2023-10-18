@@ -3,6 +3,7 @@
  */
 import React, { PureComponent, CSSProperties } from 'react';
 import _ from 'lodash';
+import { isFunction } from '../util/isFunction';
 import { DefaultLegendContent, Payload, Props as DefaultProps, ContentType } from './DefaultLegendContent';
 
 import { isNumber } from '../util/DataUtils';
@@ -17,7 +18,7 @@ function getUniqPayload(option: UniqueOption, payload: Array<Payload>) {
     return _.uniqBy(payload, defaultUniqBy);
   }
 
-  if (_.isFunction(option)) {
+  if (isFunction(option)) {
     return _.uniqBy(payload, option);
   }
 
@@ -28,7 +29,7 @@ function renderContent(content: ContentType, props: Props) {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
   }
-  if (_.isFunction(content)) {
+  if (isFunction(content)) {
     return React.createElement(content as any, props);
   }
 

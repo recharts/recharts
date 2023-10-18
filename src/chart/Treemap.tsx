@@ -15,6 +15,7 @@ import { getValueByDataKey } from '../util/ChartUtils';
 import { COLOR_PANEL } from '../util/Constants';
 import { uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
+import { isFunction } from '../util/isFunction';
 import { Global } from '../util/Global';
 import { filterSvgElements, findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
 import { AnimationDuration, AnimationTiming, DataKey, TreemapNode } from '../util/types';
@@ -401,7 +402,7 @@ export class Treemap extends PureComponent<Props, State> {
     const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
 
-    if (_.isFunction(onAnimationEnd)) {
+    if (isFunction(onAnimationEnd)) {
       onAnimationEnd();
     }
   };
@@ -410,7 +411,7 @@ export class Treemap extends PureComponent<Props, State> {
     const { onAnimationStart } = this.props;
     this.setState({ isAnimationFinished: false });
 
-    if (_.isFunction(onAnimationStart)) {
+    if (isFunction(onAnimationStart)) {
       onAnimationStart();
     }
   };
@@ -565,7 +566,7 @@ export class Treemap extends PureComponent<Props, State> {
     if (React.isValidElement(content)) {
       return React.cloneElement(content, nodeProps);
     }
-    if (_.isFunction(content)) {
+    if (isFunction(content)) {
       return content(nodeProps);
     }
     // optimize default shape
@@ -692,7 +693,7 @@ export class Treemap extends PureComponent<Props, State> {
           if (React.isValidElement(nestIndexContent)) {
             content = React.cloneElement(nestIndexContent, item, i);
           }
-          if (_.isFunction(nestIndexContent)) {
+          if (isFunction(nestIndexContent)) {
             content = nestIndexContent(item, i);
           } else {
             content = name;

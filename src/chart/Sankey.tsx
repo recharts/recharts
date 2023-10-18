@@ -4,6 +4,7 @@
 import React, { PureComponent, ReactElement, SVGProps } from 'react';
 import classNames from 'classnames';
 import _ from 'lodash';
+import { isFunction } from '../util/isFunction';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
@@ -547,7 +548,7 @@ export class Sankey extends PureComponent<Props, State> {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     }
-    if (_.isFunction(option)) {
+    if (isFunction(option)) {
       return option(props);
     }
 
@@ -623,7 +624,7 @@ export class Sankey extends PureComponent<Props, State> {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     }
-    if (_.isFunction(option)) {
+    if (isFunction(option)) {
       return option(props);
     }
 

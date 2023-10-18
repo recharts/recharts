@@ -5,6 +5,7 @@ import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
+import { isFunction } from '../util/isFunction';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
 import { findAllByType, filterProps } from '../util/ReactUtils';
@@ -399,7 +400,7 @@ export class Scatter extends PureComponent<Props, State> {
 
     if (React.isValidElement(line)) {
       lineItem = React.cloneElement(line as any, lineProps);
-    } else if (_.isFunction(line)) {
+    } else if (isFunction(line)) {
       lineItem = line(lineProps);
     } else {
       lineItem = <Curve {...lineProps} type={lineJointType} />;

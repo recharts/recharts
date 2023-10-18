@@ -7,6 +7,7 @@ import { shallowEqual } from './ShallowEqual';
 import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys } from './types';
 import { AreaDot } from '../cartesian/Area';
 import { LineDot } from '../cartesian/Line';
+import { isFunction } from './isFunction';
 
 const REACT_BROWSER_EVENT_MAP: Record<string, string> = {
   click: 'onClick',
@@ -287,7 +288,7 @@ export const isValidSpreadableProp = (
   const matchingElementTypeKeys = FilteredElementKeyMap?.[svgElementType] ?? [];
 
   return (
-    (!_.isFunction(property) &&
+    (!isFunction(property) &&
       ((svgElementType && matchingElementTypeKeys.includes(key)) || SVGElementPropKeys.includes(key))) ||
     (includeEvents && EventKeys.includes(key))
   );

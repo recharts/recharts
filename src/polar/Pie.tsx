@@ -5,6 +5,7 @@ import React, { PureComponent, ReactElement, ReactNode, SVGProps } from 'react';
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
+import { isFunction } from '../util/isFunction';
 import { Layer } from '../container/Layer';
 import { Props as SectorProps } from '../shape/Sector';
 import { Curve } from '../shape/Curve';
@@ -371,7 +372,7 @@ export class Pie extends PureComponent<Props, State> {
       isAnimationFinished: true,
     });
 
-    if (_.isFunction(onAnimationEnd)) {
+    if (isFunction(onAnimationEnd)) {
       onAnimationEnd();
     }
   };
@@ -383,7 +384,7 @@ export class Pie extends PureComponent<Props, State> {
       isAnimationFinished: false,
     });
 
-    if (_.isFunction(onAnimationStart)) {
+    if (isFunction(onAnimationStart)) {
       onAnimationStart();
     }
   };
@@ -392,7 +393,7 @@ export class Pie extends PureComponent<Props, State> {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     }
-    if (_.isFunction(option)) {
+    if (isFunction(option)) {
       return option(props);
     }
 
@@ -404,7 +405,7 @@ export class Pie extends PureComponent<Props, State> {
       return React.cloneElement(option, props);
     }
     let label = value;
-    if (_.isFunction(option)) {
+    if (isFunction(option)) {
       label = option(props);
       if (React.isValidElement(label)) {
         return label;

@@ -5,6 +5,7 @@ import React, { PureComponent, ReactElement, MouseEvent, SVGProps } from 'react'
 import Animate from 'react-smooth';
 import classNames from 'classnames';
 import _ from 'lodash';
+import { isFunction } from '../util/isFunction';
 import { interpolateNumber } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { polarToCartesian } from '../util/PolarUtils';
@@ -173,7 +174,7 @@ export class Radar extends PureComponent<Props, State> {
     const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
 
-    if (_.isFunction(onAnimationEnd)) {
+    if (isFunction(onAnimationEnd)) {
       onAnimationEnd();
     }
   };
@@ -183,7 +184,7 @@ export class Radar extends PureComponent<Props, State> {
 
     this.setState({ isAnimationFinished: false });
 
-    if (_.isFunction(onAnimationStart)) {
+    if (isFunction(onAnimationStart)) {
       onAnimationStart();
     }
   };
@@ -209,7 +210,7 @@ export class Radar extends PureComponent<Props, State> {
 
     if (React.isValidElement(option)) {
       dotItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       dotItem = option(props);
     } else {
       dotItem = <Dot {...props} className="recharts-radar-dot" />;
@@ -248,7 +249,7 @@ export class Radar extends PureComponent<Props, State> {
     let radar;
     if (React.isValidElement(shape)) {
       radar = React.cloneElement(shape, { ...this.props, points } as any);
-    } else if (_.isFunction(shape)) {
+    } else if (isFunction(shape)) {
       radar = shape({ ...this.props, points });
     } else {
       radar = (

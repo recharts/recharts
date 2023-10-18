@@ -11,6 +11,7 @@ import {
 import _ from 'lodash';
 import { ReactElement, ReactNode } from 'react';
 import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
+import { isFunction } from './isFunction';
 
 import { ErrorBar } from '../cartesian/ErrorBar';
 import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
@@ -45,7 +46,7 @@ export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?:
     return _.get(obj, dataKey, defaultValue);
   }
 
-  if (_.isFunction(dataKey)) {
+  if (isFunction(dataKey)) {
     return dataKey(obj);
   }
 
@@ -675,18 +676,18 @@ export const getTicksOfAxis = (
 export const combineEventHandlers = (defaultHandler: Function, parentHandler: Function, childHandler: Function) => {
   let customizedHandler: Function;
 
-  if (_.isFunction(childHandler)) {
+  if (isFunction(childHandler)) {
     customizedHandler = childHandler;
-  } else if (_.isFunction(parentHandler)) {
+  } else if (isFunction(parentHandler)) {
     customizedHandler = parentHandler;
   }
 
-  if (_.isFunction(defaultHandler) || customizedHandler) {
+  if (isFunction(defaultHandler) || customizedHandler) {
     return (arg1: any, arg2: any, arg3: any, arg4: any) => {
-      if (_.isFunction(defaultHandler)) {
+      if (isFunction(defaultHandler)) {
         defaultHandler(arg1, arg2, arg3, arg4);
       }
-      if (_.isFunction(customizedHandler)) {
+      if (isFunction(customizedHandler)) {
         customizedHandler(arg1, arg2, arg3, arg4);
       }
     };
@@ -745,7 +746,7 @@ export const parseScale = (
     };
   }
 
-  return _.isFunction(scale) ? { scale } : { scale: d3Scales.scalePoint(), realScaleType: 'point' };
+  return isFunction(scale) ? { scale } : { scale: d3Scales.scalePoint(), realScaleType: 'point' };
 };
 const EPS = 1e-4;
 export const checkDomainOfScale = (scale: any) => {
@@ -1205,7 +1206,7 @@ export const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 export const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 
 export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allowDataOverflow?: boolean) => {
-  if (_.isFunction(specifiedDomain)) {
+  if (isFunction(specifiedDomain)) {
     return specifiedDomain(dataDomain, allowDataOverflow);
   }
 
@@ -1222,7 +1223,7 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
     const value = +MIN_VALUE_REG.exec(specifiedDomain[0])[1];
 
     domain[0] = dataDomain[0] - value;
-  } else if (_.isFunction(specifiedDomain[0])) {
+  } else if (isFunction(specifiedDomain[0])) {
     domain[0] = specifiedDomain[0](dataDomain[0]);
   } else {
     domain[0] = dataDomain[0];
@@ -1234,7 +1235,7 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
     const value = +MAX_VALUE_REG.exec(specifiedDomain[1])[1];
 
     domain[1] = dataDomain[1] + value;
-  } else if (_.isFunction(specifiedDomain[1])) {
+  } else if (isFunction(specifiedDomain[1])) {
     domain[1] = specifiedDomain[1](dataDomain[1]);
   } else {
     domain[1] = dataDomain[1];

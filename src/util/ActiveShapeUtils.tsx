@@ -6,6 +6,7 @@ import { Sector } from '../shape/Sector';
 import { Layer } from '../container/Layer';
 import { GraphicalItem } from '../chart/generateCategoricalChart';
 import { Symbols, SymbolsProps } from '../shape/Symbols';
+import { isFunction } from './isFunction';
 
 /**
  * This is an abstraction for rendering a user defined prop for a customized shape in several forms.
@@ -77,7 +78,7 @@ export function Shape<OptionType, ExtraProps, ShapePropsType>({
 
   if (isValidElement(option)) {
     shape = cloneElement(option, props);
-  } else if (_.isFunction(option)) {
+  } else if (isFunction(option)) {
     shape = option(props);
   } else if (_.isPlainObject(option) && !_.isBoolean(option)) {
     const shapeProps = props as unknown as ExtraProps;

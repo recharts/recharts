@@ -1,6 +1,7 @@
 import React, { cloneElement, isValidElement, ReactNode, ReactElement, createElement, SVGProps } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
+import { isFunction } from '../util/isFunction';
 import { Text } from './Text';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign } from '../util/DataUtils';
@@ -62,7 +63,7 @@ const getLabel = (props: Props) => {
   const { value, formatter } = props;
   const label = _.isNil(props.children) ? value : props.children;
 
-  if (_.isFunction(formatter)) {
+  if (isFunction(formatter)) {
     return formatter(label);
   }
 
@@ -377,7 +378,7 @@ export function Label({ offset = 5, ...restProps }: Props) {
   const props = { offset, ...restProps };
   const { viewBox, position, value, children, content, className = '', textBreakAll } = props;
 
-  if (!viewBox || (_.isNil(value) && _.isNil(children) && !isValidElement(content) && !_.isFunction(content))) {
+  if (!viewBox || (_.isNil(value) && _.isNil(children) && !isValidElement(content) && !isFunction(content))) {
     return null;
   }
 
@@ -386,7 +387,7 @@ export function Label({ offset = 5, ...restProps }: Props) {
   }
 
   let label: ReactNode;
-  if (_.isFunction(content)) {
+  if (isFunction(content)) {
     label = createElement(content as any, props);
 
     if (isValidElement(label)) {
@@ -497,7 +498,7 @@ const parseLabel = (label: unknown, viewBox: ViewBox) => {
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
   }
 
-  if (_.isFunction(label)) {
+  if (isFunction(label)) {
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
   }
 

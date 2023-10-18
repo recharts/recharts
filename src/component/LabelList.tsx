@@ -1,5 +1,6 @@
 import React, { cloneElement, ReactElement, ReactNode, SVGProps } from 'react';
 import _ from 'lodash';
+import { isFunction } from '../util/isFunction';
 import { Label, ContentType, Props as LabelProps } from './Label';
 import { Layer } from '../container/Layer';
 import { findAllByType, filterProps } from '../util/ReactUtils';
@@ -79,7 +80,7 @@ function parseLabelList<T extends Data>(label: unknown, data: Array<T>) {
     return <LabelList key="labelList-implicit" data={data} />;
   }
 
-  if (React.isValidElement(label) || _.isFunction(label)) {
+  if (React.isValidElement(label) || isFunction(label)) {
     return <LabelList key="labelList-implicit" data={data} content={label} />;
   }
 

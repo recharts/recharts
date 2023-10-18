@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { isFunction } from '../util/isFunction';
 import { CartesianTickItem, Size } from '../util/types';
 import { mathSign, isNumber } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
@@ -121,7 +121,7 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
     unit && sizeKey === 'width' ? getStringSize(unit, { fontSize, letterSpacing }) : { width: 0, height: 0 };
 
   const getTickSize = (content: CartesianTickItem, index: number) => {
-    const value = _.isFunction(tickFormatter) ? tickFormatter(content.value, index) : content.value;
+    const value = isFunction(tickFormatter) ? tickFormatter(content.value, index) : content.value;
     // Recharts only supports angles when sizeKey === 'width'
     return sizeKey === 'width'
       ? getAngledTickWidth(getStringSize(value, { fontSize, letterSpacing }), unitSize, angle)

@@ -1,7 +1,8 @@
 import React, { Component, cloneElement, isValidElement, createElement, ReactElement } from 'react';
 import classNames from 'classnames';
-import _, { isArray, isBoolean } from 'lodash';
+import { isArray, isBoolean } from 'lodash';
 import invariant from 'tiny-invariant';
+import { isFunction } from '../util/isFunction';
 import { getRadialCursorPoints } from '../util/cursor/getRadialCursorPoints';
 import { getTicks } from '../cartesian/getTicks';
 import { Surface } from '../container/Surface';
@@ -1507,7 +1508,7 @@ export const generateCategoricalChart = ({
         this.setState(nextState);
         this.triggerSyncEvent(nextState);
 
-        if (_.isFunction(onMouseEnter)) {
+        if (isFunction(onMouseEnter)) {
           onMouseEnter(nextState, e);
         }
       }
@@ -1521,7 +1522,7 @@ export const generateCategoricalChart = ({
       this.setState(nextState);
       this.triggerSyncEvent(nextState);
 
-      if (_.isFunction(onMouseMove)) {
+      if (isFunction(onMouseMove)) {
         onMouseMove(nextState, e);
       }
     };
@@ -1556,7 +1557,7 @@ export const generateCategoricalChart = ({
      * @return {Null} no return
      */
     handleMouseMove = (e: any) => {
-      if (e && _.isFunction(e.persist)) {
+      if (e && isFunction(e.persist)) {
         e.persist();
       }
       this.triggeredAfterMouseMove(e);
@@ -1574,7 +1575,7 @@ export const generateCategoricalChart = ({
       this.setState(nextState);
       this.triggerSyncEvent(nextState);
 
-      if (_.isFunction(onMouseLeave)) {
+      if (isFunction(onMouseLeave)) {
         onMouseLeave(nextState, e);
       }
 
@@ -1585,7 +1586,7 @@ export const generateCategoricalChart = ({
       const eventName = getReactEventByType(e);
 
       const event = _.get(this.props, `${eventName}`);
-      if (eventName && _.isFunction(event)) {
+      if (eventName && isFunction(event)) {
         let mouse;
         if (/.*touch.*/i.test(eventName)) {
           mouse = this.getMouseInfo((e as React.TouchEvent).changedTouches[0]);
@@ -1608,7 +1609,7 @@ export const generateCategoricalChart = ({
         this.setState(nextState);
         this.triggerSyncEvent(nextState);
 
-        if (_.isFunction(onClick)) {
+        if (isFunction(onClick)) {
           onClick(nextState, e);
         }
       }
@@ -1617,7 +1618,7 @@ export const generateCategoricalChart = ({
     handleMouseDown = (e: React.MouseEvent | React.Touch) => {
       const { onMouseDown } = this.props;
 
-      if (_.isFunction(onMouseDown)) {
+      if (isFunction(onMouseDown)) {
         const nextState: CategoricalChartState = this.getMouseInfo(e);
         onMouseDown(nextState, e);
       }
@@ -1626,7 +1627,7 @@ export const generateCategoricalChart = ({
     handleMouseUp = (e: React.MouseEvent | React.Touch) => {
       const { onMouseUp } = this.props;
 
-      if (_.isFunction(onMouseUp)) {
+      if (isFunction(onMouseUp)) {
         const nextState: CategoricalChartState = this.getMouseInfo(e);
         onMouseUp(nextState, e);
       }
@@ -2027,7 +2028,7 @@ export const generateCategoricalChart = ({
 
       if (isValidElement(option)) {
         dot = cloneElement(option, props);
-      } else if (_.isFunction(option)) {
+      } else if (isFunction(option)) {
         dot = option(props);
       } else {
         dot = <Dot {...props} />;

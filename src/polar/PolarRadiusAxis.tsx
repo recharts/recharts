@@ -3,6 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import _ from 'lodash';
+import { isFunction } from '../util/isFunction';
 import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { Layer } from '../container/Layer';
@@ -115,7 +116,7 @@ export class PolarRadiusAxis extends PureComponent<Props> {
 
     if (React.isValidElement(option)) {
       tickItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       tickItem = option(props);
     } else {
       tickItem = (

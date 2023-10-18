@@ -4,6 +4,7 @@
 import React, { ReactElement, ReactNode, Component, SVGProps } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
+import { isFunction } from '../util/isFunction';
 import { shallowEqual } from '../util/ShallowEqual';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
@@ -240,7 +241,7 @@ export class CartesianAxis extends Component<Props, IState> {
 
     if (React.isValidElement(option)) {
       tickItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       tickItem = option(props);
     } else {
       tickItem = (
@@ -305,7 +306,7 @@ export class CartesianAxis extends Component<Props, IState> {
             CartesianAxis.renderTickItem(
               tick,
               tickProps,
-              `${_.isFunction(tickFormatter) ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`,
+              `${isFunction(tickFormatter) ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`,
             )}
         </Layer>
       );
@@ -324,7 +325,7 @@ export class CartesianAxis extends Component<Props, IState> {
     const { ticks, ...noTicksProps } = this.props;
     let finalTicks = ticks;
 
-    if (_.isFunction(ticksGenerator)) {
+    if (isFunction(ticksGenerator)) {
       finalTicks = ticks && ticks.length > 0 ? ticksGenerator(this.props) : ticksGenerator(noTicksProps);
     }
 

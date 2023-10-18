@@ -7,6 +7,7 @@ import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
 import _ from 'lodash';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
+import { isFunction } from '../util/isFunction';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { isNumber } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
@@ -164,7 +165,7 @@ export class Brush extends PureComponent<Props, State> {
 
     if (React.isValidElement(option)) {
       rectangle = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       rectangle = option(props);
     } else {
       rectangle = Brush.renderDefaultTraveller(props);
@@ -256,7 +257,7 @@ export class Brush extends PureComponent<Props, State> {
     const { data, tickFormatter, dataKey } = this.props;
     const text = getValueByDataKey(data[index], dataKey, index);
 
-    return _.isFunction(tickFormatter) ? tickFormatter(text, index) : text;
+    return isFunction(tickFormatter) ? tickFormatter(text, index) : text;
   }
 
   handleDrag = (e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) => {

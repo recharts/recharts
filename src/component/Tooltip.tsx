@@ -5,6 +5,7 @@ import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps 
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
 import classNames from 'classnames';
+import { isFunction } from '../util/isFunction';
 import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
 
 import { Global } from '../util/Global';
@@ -31,7 +32,7 @@ function getUniqPayload<TValue extends ValueType, TName extends NameType>(
     return _.uniqBy(payload, defaultUniqBy);
   }
 
-  if (_.isFunction(option)) {
+  if (isFunction(option)) {
     return _.uniqBy(payload, option);
   }
 
@@ -45,7 +46,7 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
   }
-  if (_.isFunction(content)) {
+  if (isFunction(content)) {
     return React.createElement(content as any, props);
   }
 
