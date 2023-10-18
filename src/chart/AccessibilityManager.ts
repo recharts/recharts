@@ -92,8 +92,8 @@ export class AccessibilityManager {
     const { x, y, height } = this.container.getBoundingClientRect();
     const { coordinate } = this.coordinateList[this.activeIndex];
 
-    const scrollOffsetX = (window && window.scrollX) || 0;
-    const scrollOffsetY = (window && window.scrollY) || 0;
+    const scrollOffsetX = window?.scrollX || 0;
+    const scrollOffsetY = window?.scrollY || 0;
 
     const pageX = x + coordinate + scrollOffsetX;
     const pageY = y + this.offset.top + height / 2 + scrollOffsetY;
