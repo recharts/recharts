@@ -864,7 +864,7 @@ export interface CategoricalChartProps {
   onMouseUp?: CategoricalChartFunc;
   reverseStackOrder?: boolean;
   id?: string;
-  wrapperLabel?: string;
+  wrapperAriaLabel?: string;
 
   startAngle?: number;
   endAngle?: number;
@@ -1121,7 +1121,7 @@ export const generateCategoricalChart = ({
       super(props);
 
       this.clipPathId = `${props.id ?? uniqueId('recharts')}-clip`;
-      this.wrapperAriaLabel = props.wrapperLabel ?? props.title ?? uniqueId(`Recharts ${chartName} `);
+      this.wrapperAriaLabel = props.wrapperAriaLabel ?? props.title ?? uniqueId(`Recharts ${chartName} `);
 
       if (props.throttleDelay) {
         this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove, props.throttleDelay);

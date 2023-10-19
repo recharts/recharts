@@ -88,7 +88,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   animationEasing?: AnimationTiming;
   filterNull?: boolean;
   useTranslate3d?: boolean;
-  ariaLabel?: string;
+  wrapperAriaLabel?: string;
 };
 
 export class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComponent<
@@ -132,7 +132,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   constructor(props: TooltipProps<TValue, TName>) {
     super(props);
 
-    this.wrapperAriaLabel = props.ariaLabel ?? uniqueId('Recharts Dialog ');
+    this.wrapperAriaLabel = props.wrapperAriaLabel ?? uniqueId('Recharts Dialog ');
   }
 
   componentDidMount() {
