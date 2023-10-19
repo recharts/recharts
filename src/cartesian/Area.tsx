@@ -184,6 +184,7 @@ export class Area extends PureComponent<Props, State> {
     const { layout } = props;
     const hasStack = stackedData && stackedData.length;
     const baseValue = Area.getBaseValue(props, item, xAxis, yAxis);
+    const isHorizontalLayout = layout === 'horizontal';
     let isRange = false;
 
     const points = displayedData.map((entry, index) => {
@@ -202,9 +203,9 @@ export class Area extends PureComponent<Props, State> {
       }
 
       const isBreakPoint =
-        _.isNil(value[1]) || (hasStack && !item.props.connectNulls && _.isNil(getValueByDataKey(entry, dataKey)));
+        value[1] == null || (hasStack && !item.props.connectNulls && getValueByDataKey(entry, dataKey) == null);
 
-      if (layout === 'horizontal') {
+      if (isHorizontalLayout) {
         return {
           x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
           y: isBreakPoint ? null : yAxis.scale(value[1]),
@@ -224,24 +225,20 @@ export class Area extends PureComponent<Props, State> {
     let baseLine;
     if (hasStack || isRange) {
       baseLine = points.map((entry: AreaPointItem) => {
-        if (layout === 'horizontal') {
+        const x = Array.isArray(entry.value) ? entry.value[0] : null;
+        if (isHorizontalLayout) {
           return {
             x: entry.x,
-            y:
-              !_.isNil(_.get(entry, 'value[0]')) && !_.isNil(_.get(entry, 'y'))
-                ? yAxis.scale(_.get(entry, 'value[0]'))
-                : null,
+            y: x != null && entry.y != null ? yAxis.scale(x) : null,
           };
         }
         return {
-          x: !_.isNil(_.get(entry, 'value[0]')) ? xAxis.scale(_.get(entry, 'value[0]')) : null,
+          x: x != null ? xAxis.scale(x) : null,
           y: entry.y,
         };
       });
-    } else if (layout === 'horizontal') {
-      baseLine = yAxis.scale(baseValue);
     } else {
-      baseLine = xAxis.scale(baseValue);
+      baseLine = isHorizontalLayout ? yAxis.scale(baseValue) : xAxis.scale(baseValue);
     }
 
     return { points, baseLine, layout, isRange, ...offset };
