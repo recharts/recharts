@@ -27,12 +27,7 @@ import {
 } from '../util/types';
 import { filterProps, isDotProps } from '../util/ReactUtils';
 
-export type AreaDot =
-  | ReactElement<SVGElement>
-  | ((props: any) => ReactElement<SVGElement>)
-  | ((props: any) => ReactElement<SVGElement>)
-  | DotProps
-  | boolean;
+export type AreaDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
 interface AreaPointItem extends CurvePoint {
   value?: number | number[];
   payload?: any;
@@ -192,13 +187,12 @@ export class Area extends PureComponent<Props, State> {
     let isRange = false;
 
     const points = displayedData.map((entry, index) => {
-      const originalValue = getValueByDataKey(entry, dataKey);
       let value;
 
       if (hasStack) {
         value = stackedData[dataStartIndex + index];
       } else {
-        value = originalValue;
+        value = getValueByDataKey(entry, dataKey);
 
         if (!Array.isArray(value)) {
           value = [baseValue, value];
@@ -207,7 +201,9 @@ export class Area extends PureComponent<Props, State> {
         }
       }
 
-      const isBreakPoint = _.isNil(value[1]) || (hasStack && _.isNil(originalValue));
+      const isBreakPoint =
+        _.isNil(value[1]) || (hasStack && !item.props.connectNulls && _.isNil(getValueByDataKey(entry, dataKey)));
+
       if (layout === 'horizontal') {
         return {
           x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
