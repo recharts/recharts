@@ -21,7 +21,7 @@ export const activeShape: StorybookArg = {
   description: '',
   table: {
     type: {
-      summary: 'Object | ReactElement | Function',
+      summary: 'Object | ReactElement | Function | boolean',
     },
     category: 'General',
   },

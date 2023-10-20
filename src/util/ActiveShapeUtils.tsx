@@ -1,4 +1,4 @@
-import React, { isValidElement, cloneElement } from 'react';
+import React, { isValidElement, cloneElement, SVGProps } from 'react';
 import _ from 'lodash';
 import { Rectangle } from '../shape/Rectangle';
 import { Trapezoid } from '../shape/Trapezoid';
@@ -27,7 +27,7 @@ export type ShapeProps<OptionType, ExtraProps, ShapePropsType> = {
   option: OptionType;
   isActive: boolean;
   activeClassName?: string;
-  propTransformer?: (option: OptionType, props: ExtraProps) => ShapePropsType;
+  propTransformer?: (option: OptionType, props: unknown) => ShapePropsType;
 } & ExtraProps;
 
 function defaultPropTransformer<OptionType, ExtraProps, ShapePropsType>(option: OptionType, props: ExtraProps) {
@@ -65,6 +65,14 @@ function ShapeSelector<ShapePropsType>({
   }
 }
 
+export function getPropsFromShapeOption(option: unknown): SVGProps<SVGPathElement> {
+  if (isValidElement(option)) {
+    return option.props;
+  }
+
+  return option;
+}
+
 export function Shape<OptionType, ExtraProps, ShapePropsType>({
   option,
   shapeType,
@@ -74,15 +82,17 @@ export function Shape<OptionType, ExtraProps, ShapePropsType>({
   ...props
 }: ShapeProps<OptionType, ExtraProps, ShapePropsType>) {
   let shape: React.JSX.Element;
+  // eslint-disable-next-line one-var
+  let nextProps: ShapePropsType;
 
   if (isValidElement(option)) {
-    shape = cloneElement(option, props);
+    nextProps = propTransformer(option.props as OptionType, props);
+    shape = cloneElement(option, nextProps);
   } else if (_.isFunction(option)) {
     shape = option(props);
   } else if (_.isPlainObject(option) && !_.isBoolean(option)) {
-    const shapeProps = props as unknown as ExtraProps;
-    const elementProps = propTransformer(option, shapeProps);
-    shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={elementProps} />;
+    nextProps = propTransformer(option, props);
+    shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={nextProps} />;
   } else {
     const elementProps = props as unknown as ShapePropsType;
     shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={elementProps} />;

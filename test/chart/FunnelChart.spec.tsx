@@ -213,4 +213,55 @@ describe('<FunnelChart />', () => {
     const activeShape = container.querySelectorAll('.recharts-active-shape');
     expect(activeShape).toHaveLength(0);
   });
+
+  test('renders customized shape when shape is set to be a function', () => {
+    const { container } = render(
+      <FunnelChart width={700} height={200}>
+        <Funnel
+          width={400}
+          data={data}
+          dataKey="value"
+          isAnimationActive={false}
+          shape={props => <Trapezoid {...props} className="custom-trap-shape" />}
+        />
+      </FunnelChart>,
+    );
+
+    const customShapes = container.querySelectorAll('.custom-trap-shape');
+    expect(customShapes).toHaveLength(5);
+  });
+
+  test('renders customized shape when shape is set to be an object', () => {
+    const { container } = render(
+      <FunnelChart width={700} height={200}>
+        <Funnel
+          width={400}
+          data={data}
+          dataKey="value"
+          isAnimationActive={false}
+          shape={{ className: 'custom-trap-shape' }}
+        />
+      </FunnelChart>,
+    );
+
+    const customShapes = container.querySelectorAll('.custom-trap-shape');
+    expect(customShapes).toHaveLength(5);
+  });
+
+  test('renders customized shape when shape is set to be a ReactElement', () => {
+    const { container } = render(
+      <FunnelChart width={700} height={200}>
+        <Funnel
+          width={400}
+          data={data}
+          dataKey="value"
+          isAnimationActive={false}
+          shape={<Trapezoid fill="red" className="custom-trap-shape" />}
+        />
+      </FunnelChart>,
+    );
+
+    const customShapes = container.querySelectorAll('.custom-trap-shape');
+    expect(customShapes).toHaveLength(5);
+  });
 });

@@ -17,6 +17,16 @@ export default {
         category: 'General',
       },
     },
+    shape: {
+      description: 'The customized shape to be rendered.',
+      table: {
+        type: {
+          summary: 'Function | boolean | ReactElement | object',
+        },
+        defaultValue: undefined,
+        category: 'General',
+      },
+    },
     activeShape: {
       description: 'The customized shape to be rendered if activeIndex or activeTooltipIndex match',
       table: {
@@ -48,6 +58,7 @@ export const Simple: Meta<FunnelProps> = {
             labelLine
             lastShapeType="rectangle"
             orientation="horizontal"
+            shape={args.shape}
             activeShape={args.activeShape}
           >
             <LabelList dataKey="name" fill="#000" position="right" stroke="none" />
@@ -59,6 +70,7 @@ export const Simple: Meta<FunnelProps> = {
     );
   },
   args: {
+    shape: {},
     activeShape: { fill: 'gold', stroke: 'purple' },
     activeIndex: undefined,
     data: [
