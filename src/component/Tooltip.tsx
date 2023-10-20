@@ -10,6 +10,7 @@ import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultPr
 import { Global } from '../util/Global';
 import { isNumber } from '../util/DataUtils';
 import { AnimationDuration, AnimationTiming } from '../util/types';
+import { UniqueOption, getUniqPayload } from '../util/payload/getUniqPayload';
 
 const CLS_PREFIX = 'recharts-tooltip-wrapper';
 
@@ -18,24 +19,8 @@ export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
   | ((props: TooltipProps<TValue, TName>) => ReactNode);
 
-type UniqueFunc<TValue extends ValueType, TName extends NameType> = (entry: Payload<TValue, TName>) => unknown;
-type UniqueOption<TValue extends ValueType, TName extends NameType> = boolean | UniqueFunc<TValue, TName>;
 function defaultUniqBy<TValue extends ValueType, TName extends NameType>(entry: Payload<TValue, TName>) {
   return entry.dataKey;
-}
-function getUniqPayload<TValue extends ValueType, TName extends NameType>(
-  option: UniqueOption<TValue, TName>,
-  payload: Array<Payload<TValue, TName>>,
-) {
-  if (option === true) {
-    return _.uniqBy(payload, defaultUniqBy);
-  }
-
-  if (_.isFunction(option)) {
-    return _.uniqBy(payload, option);
-  }
-
-  return payload;
 }
 
 function renderContent<TValue extends ValueType, TName extends NameType>(
@@ -82,7 +67,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   };
   trigger?: 'hover' | 'click';
   shared?: boolean;
-  payloadUniqBy?: UniqueOption<TValue, TName>;
+  payloadUniqBy?: UniqueOption<Payload<TValue, TName>>;
   isAnimationActive?: boolean;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
@@ -222,8 +207,9 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   render() {
     const { payload, isAnimationActive, animationDuration, animationEasing, filterNull, payloadUniqBy } = this.props;
     const finalPayload = getUniqPayload(
-      payloadUniqBy,
       filterNull && payload && payload.length ? payload.filter(entry => !_.isNil(entry.value)) : payload,
+      payloadUniqBy,
+      defaultUniqBy,
     );
     const hasPayload = finalPayload && finalPayload.length;
     const { content, viewBox, coordinate, position, active, wrapperStyle } = this.props;
