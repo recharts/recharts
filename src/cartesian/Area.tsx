@@ -202,8 +202,7 @@ export class Area extends PureComponent<Props, State> {
         }
       }
 
-      const isBreakPoint =
-        value[1] == null || (hasStack && !item.props.connectNulls && getValueByDataKey(entry, dataKey) == null);
+      const isBreakPoint = value[1] == null || (hasStack && getValueByDataKey(entry, dataKey) == null);
 
       if (isHorizontalLayout) {
         return {
