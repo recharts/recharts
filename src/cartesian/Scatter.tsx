@@ -11,7 +11,7 @@ import { findAllByType, filterProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { ZAxis, Props as ZAxisProps } from './ZAxis';
 import { Curve, Props as CurveProps, CurveType } from '../shape/Curve';
-import { ErrorBar } from './ErrorBar';
+import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { uniqueId, interpolateNumber, getLinearRegression } from '../util/DataUtils';
 import { getValueByDataKey, getCateCoordinateOfLine } from '../util/ChartUtils';
@@ -352,7 +352,7 @@ export class Scatter extends PureComponent<Props, State> {
       return null;
     }
 
-    return errorBarItems.map((item, i: number) => {
+    return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) => {
       const { direction } = item.props;
 
       return React.cloneElement(item, {
