@@ -73,7 +73,7 @@ export function getPropsFromShapeOption(option: unknown): SVGProps<SVGPathElemen
   return option;
 }
 
-export function Shape<OptionType, ExtraProps, ShapePropsType>({
+export function Shape<OptionType, ExtraProps, ShapePropsType extends Partial<OptionType>>({
   option,
   shapeType,
   propTransformer = defaultPropTransformer,
@@ -85,9 +85,9 @@ export function Shape<OptionType, ExtraProps, ShapePropsType>({
   // eslint-disable-next-line one-var
   let nextProps: ShapePropsType;
 
-  if (isValidElement(option)) {
-    nextProps = propTransformer(option.props as OptionType, props);
-    shape = cloneElement(option, nextProps);
+  if (isValidElement<OptionType>(option)) {
+    nextProps = propTransformer(option.props, props);
+    shape = cloneElement<OptionType>(option, nextProps);
   } else if (_.isFunction(option)) {
     shape = option(props);
   } else if (_.isPlainObject(option) && !_.isBoolean(option)) {
