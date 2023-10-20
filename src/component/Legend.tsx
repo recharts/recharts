@@ -7,21 +7,10 @@ import { DefaultLegendContent, Payload, Props as DefaultProps, ContentType } fro
 
 import { isNumber } from '../util/DataUtils';
 import { LayoutType } from '../util/types';
+import { UniqueOption, getUniqPayload } from '../util/payload/getUniqPayload';
 
-type UniqueOption = boolean | ((entry: Payload) => Payload);
 function defaultUniqBy(entry: Payload) {
   return entry.value;
-}
-function getUniqPayload(option: UniqueOption, payload: Array<Payload>) {
-  if (option === true) {
-    return _.uniqBy(payload, defaultUniqBy);
-  }
-
-  if (_.isFunction(option)) {
-    return _.uniqBy(payload, option);
-  }
-
-  return payload;
 }
 
 function renderContent(content: ContentType, props: Props) {
@@ -51,7 +40,7 @@ export type Props = DefaultProps & {
     bottom?: number;
     right?: number;
   };
-  payloadUniqBy?: UniqueOption;
+  payloadUniqBy?: UniqueOption<Payload>;
   onBBoxUpdate?: (box: DOMRect | null) => void;
 };
 
@@ -210,7 +199,7 @@ export class Legend extends PureComponent<Props, State> {
           this.wrapperNode = node;
         }}
       >
-        {renderContent(content, { ...this.props, payload: getUniqPayload(payloadUniqBy, payload) })}
+        {renderContent(content, { ...this.props, payload: getUniqPayload(payload, payloadUniqBy, defaultUniqBy) })}
       </div>
     );
   }
