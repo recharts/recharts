@@ -8,6 +8,6 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['test/vitest.setup.ts'],
-    exclude: ['react-smooth', 'node_modules'],
+    exclude: ['react-smooth', 'node_modules', 'dist', '.idea', '.git', '.cache', 'build'],
   },
 });
