@@ -159,9 +159,8 @@ const getDisplayedData = (
     dataStartIndex,
     dataEndIndex,
   }: Pick<CategoricalChartState, 'graphicalItems' | 'dataStartIndex' | 'dataEndIndex'>,
-  item?: ReactElement,
 ): any[] => {
-  const itemsData = (graphicalItems || []).reduce((result, child) => {
+  const itemsData = (graphicalItems ?? []).reduce<any[]>((result, child) => {
     const itemData = child.props.data;
 
     if (itemData && itemData.length) {
@@ -170,12 +169,8 @@ const getDisplayedData = (
 
     return result;
   }, []);
-  if (itemsData && itemsData.length > 0) {
+  if (itemsData.length > 0) {
     return itemsData;
-  }
-
-  if (item && item.props && item.props.data && item.props.data.length > 0) {
-    return item.props.data;
   }
 
   if (data && data.length && isNumber(dataStartIndex) && isNumber(dataEndIndex)) {
@@ -910,7 +905,7 @@ export const generateCategoricalChart = ({
     const formattedItems = [] as any[];
 
     graphicalItems.forEach((item: ReactElement, index: number) => {
-      const displayedData = getDisplayedData(props.data, { dataStartIndex, dataEndIndex }, item);
+      const displayedData = getDisplayedData(props.data, { graphicalItems: [item], dataStartIndex, dataEndIndex });
       const { dataKey, maxBarSize: childMaxBarSize } = item.props;
       // axisId of the numerical axis
       const numericAxisId = item.props[`${numericAxisName}Id`];
