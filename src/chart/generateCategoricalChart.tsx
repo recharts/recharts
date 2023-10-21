@@ -29,7 +29,7 @@ import {
 import { CartesianAxis } from '../cartesian/CartesianAxis';
 import { Brush } from '../cartesian/Brush';
 import { getOffset, calculateChartCoordinate } from '../util/DOMUtils';
-import { getAnyElementOfObject, hasDuplicate, uniqueId, isNumber, findEntryInArray } from '../util/DataUtils';
+import { getAnyElementOfObject, hasDuplicate, uniqueId, isNumber, findEntryInArray, isFinit } from '../util/DataUtils';
 import {
   calculateActiveTickIndex,
   getMainColorOfGraphicItem,
@@ -96,10 +96,6 @@ const ORIENT_MAP = {
 };
 
 const originCoordinate: Coordinate = { x: 0, y: 0 };
-
-// use legacy isFinite only if there is a problem (aka IE)
-// eslint-disable-next-line no-restricted-globals
-const isFinit = Number.isFinite ? Number.isFinite : isFinite;
 
 const calculateTooltipPos = (rangeObj: any, layout: LayoutType): any => {
   if (layout === 'horizontal') {

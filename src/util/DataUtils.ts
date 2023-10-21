@@ -11,6 +11,10 @@ export const mathSign = (value: number) => {
   return -1;
 };
 
+// use legacy isFinite only if there is a problem (aka IE)
+// eslint-disable-next-line no-restricted-globals
+export const isFinit = Number.isFinite ? Number.isFinite : isFinite;
+
 export const isPercent = (value: string | number): value is `${number}%` =>
   _.isString(value) && value.indexOf('%') === value.length - 1;
 
