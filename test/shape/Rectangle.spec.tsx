@@ -1,7 +1,6 @@
 import React from 'react';
 import each from 'jest-each';
 import { render } from '@testing-library/react';
-
 import { Surface, Rectangle } from '../../src';
 
 describe('<Rectangle />', () => {

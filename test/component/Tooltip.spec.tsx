@@ -1,8 +1,7 @@
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
 import { Area, AreaChart, ComposedChart, Line, Tooltip, XAxis, YAxis } from '../../src';
-import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 describe('<Tooltip />', () => {
   const data = [
@@ -54,9 +53,8 @@ describe('<Tooltip />', () => {
       </div>,
     );
 
-    const chart = (container.querySelector('.recharts-wrapper') ?? {}) as Element;
-    const mouseOverEvent = mockMouseEvent('mouseover', chart, { pageX: 200, pageY: 200 });
-    mouseOverEvent.fire();
+    const chart = container.querySelector('.recharts-wrapper');
+    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
 
     // After the mouse over event over the chart, the tooltip wrapper still is not set to visible,
     // but the content is already created based on the nearest data point.
@@ -98,9 +96,8 @@ describe('<Tooltip />', () => {
       </div>,
     );
 
-    const chart = (container.querySelector('.recharts-wrapper') ?? {}) as Element;
-    const mouseOverEvent = mockMouseEvent('mouseover', chart, { pageX: 200, pageY: 200 });
-    mouseOverEvent.fire();
+    const chart = container.querySelector('.recharts-wrapper');
+    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
 
     // After the mouse over event over the chart, the tooltip wrapper still is not set to visible,
     // but the content is already created based on the nearest data point.
@@ -122,11 +119,8 @@ describe('<Tooltip />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    if (!chart) {
-      throw new Error('Chart is null');
-    }
-    const mouseOverEvent = mockMouseEvent('mouseover', chart, { pageX: 200, pageY: 200 });
-    mouseOverEvent.fire();
+
+    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
 
     const customizedContent = container.querySelector('.customized');
     expect(customizedContent).toBeInTheDocument();

@@ -88,7 +88,7 @@ describe('<RadarChart />', () => {
   });
 
   test('click on Sector should invoke onClick callback', () => {
-    const onClick = jest.fn();
+    const onClick = vi.fn();
     const { container } = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
         <Radar dataKey="value" onClick={onClick} />

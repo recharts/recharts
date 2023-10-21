@@ -1,5 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { Surface, RadialBar } from '../../src';
 
@@ -32,9 +33,9 @@ describe('<RadialBar />', () => {
   });
 
   test('Render 5 sectors', async () => {
-    const onMouseEnter = jest.fn();
-    const onMouseLeave = jest.fn();
-    const onClick = jest.fn();
+    const onMouseEnter = vi.fn();
+    const onMouseLeave = vi.fn();
+    const onClick = vi.fn();
 
     const { container } = render(
       <Surface width={500} height={500}>
