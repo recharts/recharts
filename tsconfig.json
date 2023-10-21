@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "jsx": "react",
+    "module": "commonjs",
     "noImplicitAny": true,
     "outDir": "./build/",
     "declarationDir": "./types" /* Output directory for generated declaration files. */,
