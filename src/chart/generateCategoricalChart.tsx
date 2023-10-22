@@ -643,7 +643,7 @@ const createDefaultState = (props: CategoricalChartProps): CategoricalChartState
     dataStartIndex: startIndex,
     dataEndIndex: endIndex,
     activeTooltipIndex: -1,
-    isTooltipActive: !_.isNil(defaultShowTooltip) ? defaultShowTooltip : false,
+    isTooltipActive: Boolean(defaultShowTooltip),
   };
 };
 
@@ -1173,7 +1173,7 @@ export const generateCategoricalChart = ({
     ): CategoricalChartState => {
       const { dataKey, data, children, width, height, layout, stackOffset, margin } = nextProps;
 
-      if (_.isNil(prevState.updateId)) {
+      if (prevState.updateId === undefined) {
         const defaultState = createDefaultState(nextProps);
 
         return {
@@ -1640,7 +1640,7 @@ export const generateCategoricalChart = ({
       const { updateId } = this.state;
       const { dataStartIndex, dataEndIndex } = data;
 
-      if (!_.isNil(data.dataStartIndex) || !_.isNil(data.dataEndIndex)) {
+      if (data.dataStartIndex !== undefined || data.dataEndIndex !== undefined) {
         this.setState({
           dataStartIndex,
           dataEndIndex,
@@ -1654,7 +1654,7 @@ export const generateCategoricalChart = ({
             this.state,
           ),
         });
-      } else if (!_.isNil(data.activeTooltipIndex)) {
+      } else if (data.activeTooltipIndex !== undefined) {
         const { chartX, chartY } = data;
         let { activeTooltipIndex } = data;
         const { offset, tooltipTicks } = this.state;
