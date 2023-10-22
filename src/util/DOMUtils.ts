@@ -133,13 +133,7 @@ interface ContainerOffset {
 
 export const getOffset = (el: HTMLElement): ContainerOffset => {
   const html = el.ownerDocument.documentElement;
-  let box = { top: 0, left: 0 };
-
-  // If we don't have gBCR, just use 0,0 rather than error
-  // BlackBerry 5, iOS 3 (original iPhone)
-  if (typeof el.getBoundingClientRect !== 'undefined') {
-    box = el.getBoundingClientRect();
-  }
+  const box = el.getBoundingClientRect();
 
   return {
     top: box.top + window.pageYOffset - html.clientTop,
