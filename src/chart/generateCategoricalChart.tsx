@@ -1094,6 +1094,8 @@ export const generateCategoricalChart = ({
 
     accessibilityManager = new AccessibilityManager();
 
+    throttleTriggeredAfterMouseMove: DebouncedFunc<typeof CategoricalChartWrapper.prototype.triggeredAfterMouseMove>;
+
     // todo join specific chart propTypes
     static defaultProps: CategoricalChartProps = {
       layout: 'horizontal',
@@ -1114,7 +1116,7 @@ export const generateCategoricalChart = ({
       this.clipPathId = `${props.id ?? uniqueId('recharts')}-clip`;
 
       // trigger 60fps
-      this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove, props.throttleDelay ?? 1000 / 60);
+      this.throttleTriggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove, props.throttleDelay ?? 1000 / 60);
 
       this.state = {};
     }
@@ -1129,7 +1131,7 @@ export const generateCategoricalChart = ({
           top: this.props.margin.top ?? 0,
         },
         coordinateList: this.state.tooltipTicks,
-        mouseHandlerCallback: this.accessibilityMouseHandler,
+        mouseHandlerCallback: this.triggeredAfterMouseMove,
         layout: this.props.layout,
       });
     }
@@ -1279,9 +1281,7 @@ export const generateCategoricalChart = ({
 
     componentWillUnmount() {
       this.removeListener();
-      (
-        this.triggeredAfterMouseMove as DebouncedFunc<typeof CategoricalChartWrapper.prototype.triggeredAfterMouseMove>
-      ).cancel();
+      this.throttleTriggeredAfterMouseMove.cancel();
     }
 
     getTooltipEventType() {
@@ -1500,19 +1500,6 @@ export const generateCategoricalChart = ({
       }
     };
 
-    accessibilityMouseHandler = (e: MousePointer) => {
-      const mouse = this.getMouseInfo(e);
-      const nextState: CategoricalChartState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
-      this.setState(nextState);
-      this.triggerSyncEvent(nextState);
-
-      // I don't understand why it is receiving keyboard or focus events and triggering mouse events
-      const { onMouseMove } = this.props;
-      if (_.isFunction(onMouseMove)) {
-        onMouseMove(nextState, e);
-      }
-    };
-
     /**
      * The handler of mouse entering a scatter
      * @param {Object} el The active scatter
@@ -1544,7 +1531,7 @@ export const generateCategoricalChart = ({
      */
     handleMouseMove = (e: MousePointer & Partial<Omit<React.MouseEvent, keyof MousePointer>>): void => {
       e.persist();
-      this.triggeredAfterMouseMove(e);
+      this.throttleTriggeredAfterMouseMove(e);
     };
 
     /**
@@ -1613,7 +1600,7 @@ export const generateCategoricalChart = ({
 
     handleTouchMove = (e: React.TouchEvent) => {
       if (e.changedTouches != null && e.changedTouches.length > 0) {
-        this.triggeredAfterMouseMove(e.changedTouches[0]);
+        this.throttleTriggeredAfterMouseMove(e.changedTouches[0]);
       }
     };
 
