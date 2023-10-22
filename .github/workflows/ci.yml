@@ -6,18 +6,10 @@ name: Node.js CI
 on: [push, pull_request]
 
 jobs:
-  satisfy-github:
-    name: Build and Test on ${{ matrix.node-version }}
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "are you satisfied GitHub?"
-
   build-and-test:
     name: Build and Test on ${{ matrix.node-version }}
     runs-on: ubuntu-latest
     
-    needs: build-node-version-14
-
     strategy:
       matrix:
         node-version: [16.x, 18.x, 20.x]
