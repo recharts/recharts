@@ -13,6 +13,7 @@ import React, {
   useMemo,
   CSSProperties,
 } from 'react';
+import { throttle } from 'lodash';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
@@ -31,7 +32,7 @@ export interface Props {
   debounce?: number;
   id?: string | number;
   className?: string | number;
-  style?: CSSProperties;
+  style?: Omit<CSSProperties, keyof Props>;
   onResize?: (width: number, height: number) => void;
 }
 
@@ -43,7 +44,6 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
         width: -1,
         height: -1,
       },
-      // Check Props like width and height are all style attributes. Is there a need to separate them like this??
       width = '100%',
       height = '100%',
       /*
@@ -54,7 +54,7 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
       minHeight,
       maxHeight,
       children,
-      // debounce = 0,
+      debounce = 0,
       id,
       className,
       onResize,
@@ -65,7 +65,9 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
     const containerRef = useRef<HTMLDivElement>(null);
     const onResizeRef = useRef<Props['onResize']>();
     onResizeRef.current = onResize;
-    useImperativeHandle(ref, () => containerRef.current);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    useImperativeHandle(ref, () => containerRef);
 
     const [sizes, setSizes] = useState<{
       containerWidth: number;
@@ -76,11 +78,15 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
     });
 
     useEffect(() => {
-      const observer = new ResizeObserver(entries => {
+      let callback = (entries: ResizeObserverEntry[]) => {
         const { width: containerWidth, height: containerHeight } = entries[0].contentRect;
         setSizes({ containerWidth, containerHeight });
         onResizeRef.current?.(containerWidth, containerHeight);
-      });
+      };
+      if (debounce > 0) {
+        callback = throttle(callback, debounce, { trailing: true, leading: false });
+      }
+      const observer = new ResizeObserver(callback);
 
       const { width: containerWidth, height: containerHeight } = containerRef.current.getBoundingClientRect();
       setSizes({ containerWidth, containerHeight });
@@ -90,7 +96,7 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
       return () => {
         observer.disconnect();
       };
-    }, []);
+    }, [debounce]);
 
     const chartContent = useMemo(() => {
       const { containerWidth, containerHeight } = sizes;
