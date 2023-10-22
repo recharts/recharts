@@ -8,5 +8,5 @@ export { eventCenter };
 export const SYNC_EVENT = 'recharts.syncMouseEvents';
 
 interface EventTypes {
-  [SYNC_EVENT](syncId: number | string, data: CategoricalChartState): void;
+  [SYNC_EVENT](syncId: number | string, data: CategoricalChartState, emitter: Symbol): void;
 }

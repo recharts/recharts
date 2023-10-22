@@ -1,6 +1,7 @@
 import React, { Component, cloneElement, isValidElement, createElement, ReactElement } from 'react';
 import classNames from 'classnames';
 import _, { isArray, isBoolean } from 'lodash';
+import type { DebouncedFunc } from 'lodash';
 import invariant from 'tiny-invariant';
 import { getRadialCursorPoints } from '../util/cursor/getRadialCursorPoints';
 import { getTicks } from '../cartesian/getTicks';
@@ -76,7 +77,6 @@ import {
 } from '../util/types';
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
-import { deferer, CancelFunction } from '../util/deferer';
 import { getActiveShapeIndexForTooltip, isFunnel, isPie, isScatter } from '../util/ActiveShapeUtils';
 import { Props as YAxisProps } from '../cartesian/YAxis';
 import { Props as XAxisProps } from '../cartesian/XAxis';
@@ -1085,9 +1085,9 @@ export const generateCategoricalChart = ({
   return class CategoricalChartWrapper extends Component<CategoricalChartProps, CategoricalChartState> {
     static displayName = chartName;
 
-    clipPathId: string;
+    readonly eventEmitterSymbol: Symbol = Symbol('rechartsEventEmitter');
 
-    cancelDefer: CancelFunction | null;
+    clipPathId: string;
 
     accessibilityManager = new AccessibilityManager();
 
@@ -1110,9 +1110,7 @@ export const generateCategoricalChart = ({
 
       this.clipPathId = `${props.id ?? uniqueId('recharts')}-clip`;
 
-      if (props.throttleDelay) {
-        this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove, props.throttleDelay);
-      }
+      this.triggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove, props.throttleDelay);
 
       this.state = {};
     }
@@ -1276,15 +1274,10 @@ export const generateCategoricalChart = ({
     componentDidUpdate() {}
 
     componentWillUnmount() {
-      this.clearDefer();
       this.removeListener();
-      this.cancelThrottledTriggerAfterMouseMove();
-    }
-
-    cancelThrottledTriggerAfterMouseMove() {
-      if (typeof (this.triggeredAfterMouseMove as any).cancel === 'function') {
-        (this.triggeredAfterMouseMove as any).cancel();
-      }
+      (
+        this.triggeredAfterMouseMove as DebouncedFunc<typeof CategoricalChartWrapper.prototype.triggeredAfterMouseMove>
+      ).cancel();
     }
 
     getTooltipEventType() {
@@ -1412,13 +1405,6 @@ export const generateCategoricalChart = ({
       eventCenter.removeListener(SYNC_EVENT, this.handleReceiveSyncEvent);
     }
 
-    clearDefer = () => {
-      if (this.cancelDefer) {
-        this.cancelDefer();
-        this.cancelDefer = null;
-      }
-    };
-
     handleLegendBBoxUpdate = (box: DOMRect | null) => {
       if (box) {
         const { dataStartIndex, dataEndIndex, updateId } = this.state;
@@ -1438,10 +1424,13 @@ export const generateCategoricalChart = ({
       }
     };
 
-    handleReceiveSyncEvent = (cId: number | string, data: CategoricalChartState) => {
+    handleReceiveSyncEvent = (cId: number | string, data: CategoricalChartState, emitter: Symbol) => {
       if (this.props.syncId === cId) {
-        this.clearDefer();
-        this.cancelDefer = deferer(this.applySyncEvent.bind(this, data));
+        if (emitter === this.eventEmitterSymbol && typeof this.props.syncMethod !== 'function') {
+          return;
+        }
+
+        this.applySyncEvent(data);
       }
     };
 
@@ -1555,8 +1544,6 @@ export const generateCategoricalChart = ({
       if (_.isFunction(onMouseLeave)) {
         onMouseLeave(nextState, e);
       }
-
-      this.cancelThrottledTriggerAfterMouseMove();
     };
 
     handleOuterEvent = (e: React.MouseEvent | React.TouchEvent) => {
@@ -1628,7 +1615,7 @@ export const generateCategoricalChart = ({
 
     triggerSyncEvent(data: CategoricalChartState) {
       if (this.props.syncId !== undefined) {
-        eventCenter.emit(SYNC_EVENT, this.props.syncId, data);
+        eventCenter.emit(SYNC_EVENT, this.props.syncId, data, this.eventEmitterSymbol);
       }
     }
 
