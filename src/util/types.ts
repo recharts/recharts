@@ -62,6 +62,12 @@ export type LegendType =
   | 'wye'
   | 'none';
 export type TooltipType = 'none';
+
+export type AllowInDimension = {
+  x?: boolean;
+  y?: boolean;
+};
+
 export interface Coordinate {
   x: number;
   y: number;
