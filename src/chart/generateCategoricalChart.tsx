@@ -30,7 +30,7 @@ import {
 import { CartesianAxis } from '../cartesian/CartesianAxis';
 import { Brush } from '../cartesian/Brush';
 import { getOffset } from '../util/DOMUtils';
-import { findEntryInArray, getAnyElementOfObject, hasDuplicate, isFinit, isNumber, uniqueId } from '../util/DataUtils';
+import { findEntryInArray, getAnyElementOfObject, hasDuplicate, isNumber, uniqueId } from '../util/DataUtils';
 import {
   appendOffsetOfLegend,
   AxisStackGroups,
@@ -1862,7 +1862,7 @@ export const generateCategoricalChart = ({
       const { xAxisMap, yAxisMap, offset } = this.state;
       const { width, height } = this.props;
       const xAxis = getAnyElementOfObject(xAxisMap);
-      const yAxisWithFiniteDomain = _.find(yAxisMap, axis => _.every(axis.domain, isFinit));
+      const yAxisWithFiniteDomain = _.find(yAxisMap, axis => _.every(axis.domain, Number.isFinite));
       const yAxis = yAxisWithFiniteDomain || getAnyElementOfObject(yAxisMap);
       const props = element.props || {};
 
