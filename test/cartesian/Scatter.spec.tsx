@@ -80,9 +80,9 @@ describe('<Scatter />', () => {
   });
 
   test('mouse enter or mouse leave a symbol', () => {
-    const onClick = jest.fn();
-    const onMouseEnter = jest.fn();
-    const onMouseLeave = jest.fn();
+    const onClick = vi.fn();
+    const onMouseEnter = vi.fn();
+    const onMouseLeave = vi.fn();
 
     const { container } = render(
       <Surface width={500} height={500}>

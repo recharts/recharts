@@ -89,7 +89,7 @@ describe('<Legend />', () => {
 
   test(`Renders '' if sibling's dataKey is a function and name is not provided`, () => {
     // Warning should be logged. Spy on it so we can confirm it was called.
-    const consoleWarn = jest.spyOn(console, 'warn');
+    const consoleWarn = vi.spyOn(console, 'warn');
 
     render(
       <LineChart width={500} height={500} data={data}>
