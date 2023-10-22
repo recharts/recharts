@@ -4,15 +4,12 @@
 import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps } from 'react';
 import { translateStyle } from 'react-smooth';
 import _ from 'lodash';
-import classNames from 'classnames';
 import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
 
 import { Global } from '../util/Global';
-import { isNumber } from '../util/DataUtils';
-import { AnimationDuration, AnimationTiming } from '../util/types';
 import { UniqueOption, getUniqPayload } from '../util/payload/getUniqPayload';
-
-const CLS_PREFIX = 'recharts-tooltip-wrapper';
+import { AllowInDimension, AnimationDuration, AnimationTiming, Coordinate } from '../util/types';
+import { getTooltipTranslate } from '../util/tooltip/translate';
 
 const EPS = 1;
 export type ContentType<TValue extends ValueType, TName extends NameType> =
@@ -38,14 +35,8 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
 }
 
 export type TooltipProps<TValue extends ValueType, TName extends NameType> = DefaultProps<TValue, TName> & {
-  allowEscapeViewBox?: {
-    x?: boolean;
-    y?: boolean;
-  };
-  reverseDirection?: {
-    x?: boolean;
-    y?: boolean;
-  };
+  allowEscapeViewBox?: AllowInDimension;
+  reverseDirection?: AllowInDimension;
   content?: ContentType<TValue, TName>;
   viewBox?: {
     x?: number;
@@ -57,14 +48,8 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Def
   offset?: number;
   wrapperStyle?: CSSProperties;
   cursor?: boolean | ReactElement | SVGProps<SVGElement>;
-  coordinate?: {
-    x?: number;
-    y?: number;
-  };
-  position?: {
-    x?: number;
-    y?: number;
-  };
+  coordinate?: Partial<Coordinate>;
+  position?: Partial<Coordinate>;
   trigger?: 'hover' | 'click';
   shared?: boolean;
   payloadUniqBy?: UniqueOption<Payload<TValue, TName>>;
@@ -167,92 +152,54 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
     }
   }
 
-  getTranslate = ({
-    key,
-    tooltipDimension,
-    viewBoxDimension,
-  }: {
-    key: 'x' | 'y';
-    tooltipDimension: number;
-    viewBoxDimension: number;
-  }) => {
-    const { allowEscapeViewBox, reverseDirection, coordinate, offset, position, viewBox } = this.props;
-
-    if (position && isNumber(position[key])) {
-      return position[key];
-    }
-
-    const negative = coordinate[key] - tooltipDimension - offset;
-    const positive = coordinate[key] + offset;
-    if (allowEscapeViewBox[key]) {
-      return reverseDirection[key] ? negative : positive;
-    }
-
-    if (reverseDirection[key]) {
-      const tooltipBoundary = negative;
-      const viewBoxBoundary = viewBox[key];
-      if (tooltipBoundary < viewBoxBoundary) {
-        return Math.max(positive, viewBox[key]);
-      }
-      return Math.max(negative, viewBox[key]);
-    }
-    const tooltipBoundary = positive + tooltipDimension;
-    const viewBoxBoundary = viewBox[key] + viewBoxDimension;
-    if (tooltipBoundary > viewBoxBoundary) {
-      return Math.max(negative, viewBox[key]);
-    }
-    return Math.max(positive, viewBox[key]);
-  };
-
   render() {
-    const { payload, isAnimationActive, animationDuration, animationEasing, filterNull, payloadUniqBy } = this.props;
+    const {
+      active,
+      allowEscapeViewBox,
+      animationDuration,
+      animationEasing,
+      content,
+      coordinate,
+      filterNull,
+      isAnimationActive,
+      offset,
+      payload,
+      payloadUniqBy,
+      position,
+      reverseDirection,
+      useTranslate3d,
+      viewBox,
+      wrapperStyle,
+    } = this.props;
     const finalPayload = getUniqPayload(
       filterNull && payload && payload.length ? payload.filter(entry => !_.isNil(entry.value)) : payload,
       payloadUniqBy,
       defaultUniqBy,
     );
     const hasPayload = finalPayload && finalPayload.length;
-    const { content, viewBox, coordinate, position, active, wrapperStyle } = this.props;
+
+    const { cssClasses, cssProperties } = getTooltipTranslate({
+      allowEscapeViewBox,
+      coordinate,
+      offsetTopLeft: offset,
+      position,
+      reverseDirection,
+      tooltipBox: {
+        height: this.state.boxHeight,
+        width: this.state.boxWidth,
+      },
+      useTranslate3d,
+      viewBox,
+    });
+
     let outerStyle: CSSProperties = {
+      ...cssProperties,
       pointerEvents: 'none',
       visibility: !this.state.dismissed && active && hasPayload ? 'visible' : 'hidden',
       position: 'absolute',
       top: 0,
       left: 0,
       ...wrapperStyle,
-    };
-    let translateX, translateY;
-
-    if (position && isNumber(position.x) && isNumber(position.y)) {
-      translateX = position.x;
-      translateY = position.y;
-    } else {
-      const { boxWidth, boxHeight } = this.state;
-
-      if (boxWidth > 0 && boxHeight > 0 && coordinate) {
-        translateX = this.getTranslate({
-          key: 'x',
-          tooltipDimension: boxWidth,
-          viewBoxDimension: viewBox.width,
-        });
-
-        translateY = this.getTranslate({
-          key: 'y',
-          tooltipDimension: boxHeight,
-          viewBoxDimension: viewBox.height,
-        });
-      } else {
-        outerStyle.visibility = 'hidden';
-      }
-    }
-
-    outerStyle = {
-      ...translateStyle({
-        transform: this.props.useTranslate3d
-          ? `translate3d(${translateX}px, ${translateY}px, 0)`
-          : `translate(${translateX}px, ${translateY}px)`,
-      }),
-      ...outerStyle,
     };
 
     if (isAnimationActive && active) {
@@ -264,15 +211,6 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       };
     }
 
-    const cls = classNames(CLS_PREFIX, {
-      [`${CLS_PREFIX}-right`]:
-        isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX >= coordinate.x,
-      [`${CLS_PREFIX}-left`]: isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX < coordinate.x,
-      [`${CLS_PREFIX}-bottom`]:
-        isNumber(translateY) && coordinate && isNumber(coordinate.y) && translateY >= coordinate.y,
-      [`${CLS_PREFIX}-top`]: isNumber(translateY) && coordinate && isNumber(coordinate.y) && translateY < coordinate.y,
-    });
-
     return (
       // ESLint is disabled to allow listening to the `Escape` key. Refer to
       // https://github.com/recharts/recharts/pull/2925
@@ -280,7 +218,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       <div
         tabIndex={-1}
         role="dialog"
-        className={cls}
+        className={cssClasses}
         style={outerStyle}
         ref={node => {
           this.wrapperNode = node;
