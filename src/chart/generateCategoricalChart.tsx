@@ -2083,7 +2083,7 @@ export const generateCategoricalChart = ({
 
       if (tooltipEventType !== 'axis' && tooltipItem && tooltipItem.props.trigger === 'click') {
         itemEvents = {
-          onClick: combineEventHandlers(this.handleItemMouseEnter, element.props.onCLick),
+          onClick: combineEventHandlers(this.handleItemMouseEnter, element.props.onClick),
         };
       } else if (tooltipEventType !== 'axis') {
         itemEvents = {
