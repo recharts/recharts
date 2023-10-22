@@ -668,7 +668,7 @@ export const getTicksOfAxis = (
 /**
  * combine the handlers
  * @param  {Function} defaultHandler Internal private handler
- * @param  {Function} combindHandler Handler function specified in child component
+ * @param  {Function} childHandler Handler function specified in child component
  * @return {Function}                The combined handler
  */
 const handlerWeakMap = new WeakMap();
