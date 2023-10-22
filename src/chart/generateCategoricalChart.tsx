@@ -1118,9 +1118,7 @@ export const generateCategoricalChart = ({
     }
 
     componentDidMount() {
-      if (!_.isNil(this.props.syncId)) {
-        this.addListener();
-      }
+      this.addListener();
 
       this.accessibilityManager.setDetails({
         container: this.container,
@@ -1274,22 +1272,12 @@ export const generateCategoricalChart = ({
       return null;
     };
 
-    componentDidUpdate(prevProps: CategoricalChartProps) {
-      // add syncId
-      if (_.isNil(prevProps.syncId) && !_.isNil(this.props.syncId)) {
-        this.addListener();
-      }
-      // remove syncId
-      if (!_.isNil(prevProps.syncId) && _.isNil(this.props.syncId)) {
-        this.removeListener();
-      }
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    componentDidUpdate() {}
 
     componentWillUnmount() {
       this.clearDefer();
-      if (!_.isNil(this.props.syncId)) {
-        this.removeListener();
-      }
+      this.removeListener();
       this.cancelThrottledTriggerAfterMouseMove();
     }
 
