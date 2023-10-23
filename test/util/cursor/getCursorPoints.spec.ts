@@ -1,11 +1,13 @@
+import { vi } from 'vitest';
+
 import { RADIAN } from '../../../src/util/PolarUtils';
 import { getCursorPoints } from '../../../src/util/cursor/getCursorPoints';
 import { ChartCoordinate, ChartOffset, Coordinate } from '../../../src/util/types';
 import { getRadialCursorPoints } from '../../../src/util/cursor/getRadialCursorPoints';
 
-jest.mock('../../../src/util/cursor/getRadialCursorPoints');
+vi.mock('../../../src/util/cursor/getRadialCursorPoints');
 
-const spy = jest.mocked(getRadialCursorPoints);
+const spy = vi.mocked(getRadialCursorPoints);
 
 describe('getCursorPoints', () => {
   describe('horizontal layout', () => {

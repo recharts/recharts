@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 
+import { vi } from 'vitest';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Brush, CartesianAxis, Legend } from '../../src';
 
 const data = [
@@ -114,8 +115,6 @@ describe('<LineChart />', () => {
   });
 
   test('Renders customized active dot when activeDot is set to be a ReactElement', () => {
-    jest.useFakeTimers();
-
     const ActiveDot: FC<{ cx?: number; cy?: number }> = ({ cx, cy }) => (
       <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />
     );
@@ -127,16 +126,9 @@ describe('<LineChart />', () => {
       </LineChart>,
     );
 
-    const mouseEnterEvent = new MouseEvent('mouseover', { bubbles: true, cancelable: true });
-    Object.assign(mouseEnterEvent, { pageX: 200, pageY: 200 });
     const chart = container.querySelector('.recharts-wrapper');
-    if (!chart) {
-      throw new Error('Chart is null');
-    }
 
-    fireEvent(chart, mouseEnterEvent);
-
-    jest.runAllTimers();
+    fireEvent.mouseOver(chart!, { bubbles: true, cancelable: true, clientX: 200, clientY: 200 });
 
     const dot = container.querySelectorAll('.customized-active-dot');
     expect(dot).toHaveLength(1);
@@ -248,9 +240,9 @@ describe('<LineChart />', () => {
   });
 
   test('click on Curve should invoke onClick callback', () => {
-    const onClick = jest.fn();
-    const onMouseDown = jest.fn();
-    const onMouseUp = jest.fn();
+    const onClick = vi.fn();
+    const onMouseDown = vi.fn();
+    const onMouseUp = vi.fn();
     const { container } = render(
       <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line
@@ -348,30 +340,15 @@ describe('<LineChart />', () => {
     const leftCursor = container.querySelectorAll('.recharts-brush-traveller')[0];
     const rightrCursor = container.querySelectorAll('.recharts-brush-traveller')[1];
 
-    if (!leftCursor || !rightrCursor) {
-      throw new Error('Cursors not found');
-    }
-
     // move the left cursor to the right 200px
-    const leftCursorMouseDownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
-    Object.assign(leftCursorMouseDownEvent, { pageX: 0, pageY: 0 });
 
-    const leftCursorMouseMoveEvent = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
-    Object.assign(leftCursorMouseMoveEvent, { pageX: 200, pageY: 0 });
-
-    fireEvent(leftCursor, leftCursorMouseDownEvent);
-    fireEvent(window, leftCursorMouseMoveEvent);
+    fireEvent.mouseDown(leftCursor!, { clientX: 0, clientY: 0, bubbles: true, cancelable: true });
+    fireEvent.mouseMove(window, { clientX: 200, clientY: 0, bubbles: true, cancelable: true });
     fireEvent.mouseUp(window);
 
     // move the right cursor to the left 60px
-    const rightCursorMouseDownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
-    Object.assign(rightCursorMouseDownEvent, { pageX: 400, pageY: 0 });
-
-    const rightCursorMouseMoveEvent = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
-    Object.assign(rightCursorMouseMoveEvent, { pageX: 340, pageY: 0 });
-
-    fireEvent(rightrCursor, rightCursorMouseDownEvent);
-    fireEvent(window, rightCursorMouseMoveEvent);
+    fireEvent.mouseDown(rightrCursor!, { clientX: 400, clientY: 0, bubbles: true, cancelable: true });
+    fireEvent.mouseMove(window, { clientX: 340, clientY: 0, bubbles: true, cancelable: true });
     fireEvent.mouseUp(window);
 
     // we should only have three dots now
@@ -399,9 +376,9 @@ describe('<LineChart /> - Pure Rendering', () => {
   // spy on each pure element before each test, and restore the spy afterwards
   beforeAll(() => {
     pureElements.forEach((el, i) => {
-      spies[i] = jest.spyOn(el.prototype, 'render');
+      spies[i] = vi.spyOn(el.prototype, 'render');
     });
-    axisSpy = jest.spyOn(CartesianAxis.prototype, 'render');
+    axisSpy = vi.spyOn(CartesianAxis.prototype, 'render');
   });
   afterEach(() => {
     pureElements.forEach((_el, i) => spies[i].mockReset());
@@ -430,14 +407,8 @@ describe('<LineChart /> - Pure Rendering', () => {
     spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
     expect(axisSpy).toHaveBeenCalledTimes(2);
 
-    const mouseEnterEvent = new MouseEvent('mouseenter', { bubbles: true, cancelable: true });
-    Object.assign(mouseEnterEvent, { pageX: 30, pageY: 200 });
-    fireEvent(container, mouseEnterEvent);
-
-    const mouseMoveEvent = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
-    Object.assign(mouseMoveEvent, { pageX: 200, pageY: 200 });
-    fireEvent(container, mouseMoveEvent);
-
+    fireEvent.mouseEnter(container, { clientX: 30, clientY: 200, bubbles: true, cancelable: true });
+    fireEvent.mouseMove(container, { clientX: 200, clientY: 200, bubbles: true, cancelable: true });
     fireEvent.mouseLeave(container);
 
     spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
@@ -452,18 +423,10 @@ describe('<LineChart /> - Pure Rendering', () => {
     expect(axisSpy).toHaveBeenCalledTimes(2);
 
     const leftCursor = container.querySelector('.recharts-brush-traveller');
-    if (!leftCursor) {
-      throw new Error('Cursor not found');
-    }
 
-    const mouseDownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
-    Object.assign(mouseDownEvent, { pageX: 0, pageY: 0 });
+    fireEvent.mouseDown(leftCursor!, { clientX: 0, clientY: 0, bubbles: true, cancelable: true });
+    fireEvent.mouseMove(window!, { clientX: 0, clientY: 0, bubbles: true, cancelable: true });
 
-    const mouseMoveEvent = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
-    Object.assign(mouseMoveEvent, { pageX: 0, pageY: 0 });
-
-    fireEvent(leftCursor, mouseDownEvent);
-    fireEvent(window, mouseMoveEvent);
     fireEvent.mouseUp(window);
 
     spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
@@ -481,9 +444,9 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
   // spy on each pure element before each test, and restore the spy afterwards
   beforeAll(() => {
     pureElements.forEach((el, i) => {
-      spies[i] = jest.spyOn(el.prototype, 'render');
+      spies[i] = vi.spyOn(el.prototype, 'render');
     });
-    axisSpy = jest.spyOn(CartesianAxis.prototype, 'render');
+    axisSpy = vi.spyOn(CartesianAxis.prototype, 'render');
   });
   afterEach(() => {
     pureElements.forEach((_el, i) => spies[i].mockReset());
@@ -512,13 +475,9 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
     spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
     expect(axisSpy).toHaveBeenCalledTimes(2);
 
-    const mouseEnterEvent = new MouseEvent('mouseenter', { bubbles: true, cancelable: true });
-    Object.assign(mouseEnterEvent, { pageX: 30, pageY: 200 });
-    fireEvent(container, mouseEnterEvent);
+    fireEvent.mouseEnter(container, { clientX: 30, clientY: 200, bubbles: true, cancelable: true });
 
-    const mouseMoveEvent = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
-    Object.assign(mouseMoveEvent, { pageX: 200, pageY: 200 });
-    fireEvent(container, mouseMoveEvent);
+    fireEvent.mouseMove(container, { clientX: 200, clientY: 200, bubbles: true, cancelable: true });
 
     fireEvent.mouseLeave(container);
 
@@ -534,18 +493,8 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
     expect(axisSpy).toHaveBeenCalledTimes(2);
 
     const leftCursor = container.querySelector('.recharts-brush-traveller');
-    if (!leftCursor) {
-      throw new Error('Cursor not found');
-    }
-
-    const mouseDownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
-    Object.assign(mouseDownEvent, { pageX: 0, pageY: 0 });
-
-    const mouseMoveEvent = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
-    Object.assign(mouseMoveEvent, { pageX: 0, pageY: 0 });
-
-    fireEvent(leftCursor, mouseDownEvent);
-    fireEvent(window, mouseMoveEvent);
+    fireEvent.mouseDown(leftCursor!, { clientX: 0, clientY: 0, bubbles: true, cancelable: true });
+    fireEvent.mouseMove(window, { clientX: 0, clientY: 0, bubbles: true, cancelable: true });
     fireEvent.mouseUp(window);
 
     spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
@@ -569,14 +518,14 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
   ];
 
   beforeAll(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterAll(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
+
   test('should show tooltips for both charts synced by index on MouseEnter and hide on MouseLeave/Escape', async () => {
-    jest.useFakeTimers();
     const { container, getByText } = render(
       <div>
         <LineChart width={width} height={height} data={data} margin={margin} syncId="test">
@@ -599,15 +548,14 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
     const firstChart = container.querySelector('.recharts-wrapper');
-    if (!firstChart) {
-      throw new Error('Chart not found');
-    }
 
-    const mouseEnterEvent = new MouseEvent('mouseover', { bubbles: true, cancelable: true });
-    Object.assign(mouseEnterEvent, { pageX: margin.left + 0.1 * dotSpacing, pageY: height / 2 });
-    fireEvent(firstChart, mouseEnterEvent);
-
-    jest.runAllTimers();
+    fireEvent.mouseOver(firstChart!, {
+      bubbles: true,
+      cancelable: true,
+      clientX: margin.left + 0.1 * dotSpacing,
+      clientY: height / 2,
+    });
+    vi.advanceTimersByTime(100);
 
     // There are two tooltips - one for each LineChart as they have the same syncId
     const tooltipCursors = container.querySelectorAll('.recharts-tooltip-cursor');
@@ -622,13 +570,17 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     expect(activeDotNodes).toHaveLength(2);
 
     // simulate leaving the area
-    fireEvent.mouseLeave(firstChart);
-    jest.runAllTimers();
+    fireEvent.mouseLeave(firstChart!);
+    vi.advanceTimersByTime(100);
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
-    fireEvent(firstChart, mouseEnterEvent);
-    jest.runAllTimers();
-
+    fireEvent.mouseOver(firstChart!, {
+      bubbles: true,
+      cancelable: true,
+      clientX: margin.left + 0.1 * dotSpacing,
+      clientY: height / 2,
+    });
+    vi.advanceTimersByTime(100);
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(2);
   });
 
@@ -660,16 +612,10 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     // simulate entering just past Page A of Chart1 to test snapping of the cursor line
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
-    const mouseEnterEvent = new MouseEvent('mouseover', { bubbles: true });
-    Object.assign(mouseEnterEvent, { pageX: margin.left + 0.1 * dotSpacing, pageY: height / 2 });
-
     const firstChart = container.querySelector('.recharts-wrapper');
-    if (!firstChart) {
-      throw new Error('Chart not found');
-    }
 
-    fireEvent(firstChart, mouseEnterEvent);
-    jest.runAllTimers();
+    fireEvent.mouseOver(firstChart!, { bubbles: true, clientX: margin.left + 0.1 * dotSpacing, clientY: height / 2 });
+    vi.advanceTimersByTime(100);
 
     // There are two tooltips - one for each LineChart as they have the same syncId
     const tooltipCursors = container.querySelectorAll('.recharts-tooltip-cursor');
@@ -683,8 +629,8 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
 
     // simulate leaving the area
-    fireEvent.mouseLeave(firstChart);
-    jest.runAllTimers();
+    fireEvent.mouseLeave(firstChart!);
+    vi.advanceTimersByTime(100);
 
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
   });
@@ -735,16 +681,10 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     // simulate entering just past Page A of Chart1 to test snapping of the cursor line
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
-    const mouseOverEvent = new MouseEvent('mouseover', { bubbles: true });
-    Object.assign(mouseOverEvent, { pageX: margin.left + 0.1 * dotSpacing, pageY: height / 2 });
-
     const firstChart = container.querySelector('.recharts-wrapper');
-    if (!firstChart) {
-      throw new Error('Chart not found');
-    }
 
-    fireEvent(firstChart, mouseOverEvent);
-    jest.runAllTimers();
+    fireEvent.mouseOver(firstChart!, { bubbles: true, clientX: margin.left + 0.1 * dotSpacing, clientY: height / 2 });
+    vi.advanceTimersByTime(100);
 
     // There are two tooltips - one for each LineChart as they have the same syncId
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(2);
@@ -757,8 +697,8 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
 
     // simulate leaving the area
-    fireEvent.mouseLeave(firstChart);
-    jest.runAllTimers();
+    fireEvent.mouseLeave(firstChart!);
+    vi.advanceTimersByTime(100);
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
   });
 

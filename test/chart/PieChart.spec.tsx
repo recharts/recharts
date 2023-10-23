@@ -1,8 +1,8 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi, Mock } from 'vitest';
 import { PieChart, Pie, Legend, Cell, Tooltip, Sector } from '../../src';
-import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 describe('<PieChart />', () => {
   const data = [
@@ -52,9 +52,7 @@ describe('<PieChart />', () => {
     );
     const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -81,9 +79,7 @@ describe('<PieChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -110,9 +106,7 @@ describe('<PieChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 100, pageY: 100 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { pageX: 100, pageY: 100 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -139,9 +133,7 @@ describe('<PieChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 100, pageY: 100 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { pageX: 100, pageY: 100 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -220,7 +212,7 @@ describe('<PieChart />', () => {
     expect(container.querySelectorAll('.recharts-legend-item')).toHaveLength(6);
   });
 
-  const getPieChart = (eventProps: { onClick?: jest.Mock; onMouseEnter?: jest.Mock; onMouseLeave?: jest.Mock }) => {
+  const getPieChart = (eventProps: { onClick?: Mock; onMouseEnter?: Mock; onMouseLeave?: Mock }) => {
     return (
       <PieChart width={800} height={400} {...eventProps}>
         <Pie
@@ -259,7 +251,7 @@ describe('<PieChart />', () => {
   });
 
   test('click on Sector should invoke onClick callback', async () => {
-    const onClick = jest.fn();
+    const onClick = vi.fn();
 
     const { container } = render(getPieChart({ onClick }));
     const sectors = container.querySelectorAll('.recharts-sector');
@@ -270,7 +262,7 @@ describe('<PieChart />', () => {
   });
 
   test('onMouseEnter Sector should invoke onMouseEnter callback', async () => {
-    const onMouseEnter = jest.fn();
+    const onMouseEnter = vi.fn();
 
     const { container } = render(getPieChart({ onMouseEnter }));
     const sectors = container.querySelectorAll('.recharts-sector');
@@ -281,7 +273,7 @@ describe('<PieChart />', () => {
   });
 
   test('onMouseLeave Sector should invoke onMouseLeave callback', async () => {
-    const onMouseLeave = jest.fn();
+    const onMouseLeave = vi.fn();
 
     const { container } = render(getPieChart({ onMouseLeave }));
     const sectors = container.querySelectorAll('.recharts-sector');
