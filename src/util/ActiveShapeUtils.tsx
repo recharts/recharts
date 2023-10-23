@@ -73,7 +73,7 @@ export function getPropsFromShapeOption(option: unknown): SVGProps<SVGPathElemen
   return option;
 }
 
-export function Shape<OptionType, ExtraProps, ShapePropsType extends Partial<OptionType>>({
+export function Shape<OptionType, ExtraProps, ShapePropsType>({
   option,
   shapeType,
   propTransformer = defaultPropTransformer,
@@ -82,16 +82,13 @@ export function Shape<OptionType, ExtraProps, ShapePropsType extends Partial<Opt
   ...props
 }: ShapeProps<OptionType, ExtraProps, ShapePropsType>) {
   let shape: React.JSX.Element;
-  // eslint-disable-next-line one-var
-  let nextProps: ShapePropsType;
 
-  if (isValidElement<OptionType>(option)) {
-    nextProps = propTransformer(option.props, props);
-    shape = cloneElement<OptionType>(option, nextProps);
+  if (isValidElement(option)) {
+    shape = cloneElement(option, { ...props, ...getPropsFromShapeOption(option) });
   } else if (_.isFunction(option)) {
     shape = option(props);
   } else if (_.isPlainObject(option) && !_.isBoolean(option)) {
-    nextProps = propTransformer(option, props);
+    const nextProps = propTransformer(option, props);
     shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={nextProps} />;
   } else {
     const elementProps = props as unknown as ShapePropsType;
