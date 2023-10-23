@@ -14,11 +14,10 @@ const funnelData = [
 
 type ActiveShapeTestParams = {
   element: ReactElement;
-  shapeClass?: string;
   activeClass: string;
-  expectedLength?: number;
-  detail?: string;
-  componentName?: string;
+  expectedLength: number;
+  name: string;
+  shapeClass?: string;
 };
 
 const funnelShapes: ActiveShapeTestParams[] = [
@@ -36,8 +35,7 @@ const funnelShapes: ActiveShapeTestParams[] = [
     ),
     activeClass: '.custom-trap-shape',
     expectedLength: 5,
-    componentName: 'Funnel',
-    detail: 'renders customized shape when shape is set to be a function',
+    name: 'Funnel renders customized shape when shape is set to be a function',
   },
   {
     element: (
@@ -53,8 +51,7 @@ const funnelShapes: ActiveShapeTestParams[] = [
     ),
     activeClass: '.custom-trap-shape',
     expectedLength: 5,
-    componentName: 'Funnel',
-    detail: 'renders customized shape when shape is set to be an object',
+    name: 'Funnel renders customized shape when shape is set to be an object',
   },
   {
     element: (
@@ -70,13 +67,13 @@ const funnelShapes: ActiveShapeTestParams[] = [
     ),
     activeClass: '.custom-trap-shape',
     expectedLength: 5,
-    componentName: 'Funnel',
-    detail: 'renders customized shape when shape is set to be a React Element',
+    name: 'Funnel renders customized shape when shape is set to be a React Element',
   },
 ];
 
 const funnelActiveShapes: ActiveShapeTestParams[] = [
   {
+    name: 'Funnel renders customized active shape when activeShape is set to be a function',
     element: (
       <FunnelChart width={700} height={200}>
         <Funnel
@@ -91,11 +88,10 @@ const funnelActiveShapes: ActiveShapeTestParams[] = [
     ),
     shapeClass: '.recharts-funnel-trapezoid',
     activeClass: '.recharts-active-shape',
-    componentName: 'Funnel',
-    detail: 'renders customized active shape when activeShape is set to be a function',
     expectedLength: 1,
   },
   {
+    name: 'Funnel renders customized active shape when activeShape is set to be an object',
     element: (
       <FunnelChart width={700} height={200}>
         <Funnel
@@ -110,11 +106,10 @@ const funnelActiveShapes: ActiveShapeTestParams[] = [
     ),
     shapeClass: '.recharts-funnel-trapezoid',
     activeClass: '.recharts-active-shape',
-    componentName: 'Funnel',
-    detail: 'renders customized active shape when activeShape is set to be an object',
     expectedLength: 1,
   },
   {
+    name: 'Funnel renders customized active shape when activeShape is set to be a React Element',
     element: (
       <FunnelChart width={700} height={200}>
         <Funnel
@@ -129,11 +124,10 @@ const funnelActiveShapes: ActiveShapeTestParams[] = [
     ),
     shapeClass: '.recharts-funnel-trapezoid',
     activeClass: '.recharts-active-shape',
-    componentName: 'Funnel',
-    detail: 'renders customized active shape when activeShape is set to be a React Element',
     expectedLength: 1,
   },
   {
+    name: 'Funnel renders customized active shape when activeShape is set to be a boolean',
     element: (
       <FunnelChart width={700} height={200}>
         <Funnel width={400} data={funnelData} dataKey="value" isAnimationActive={false} activeShape />
@@ -142,11 +136,10 @@ const funnelActiveShapes: ActiveShapeTestParams[] = [
     ),
     shapeClass: '.recharts-funnel-trapezoid',
     activeClass: '.recharts-active-shape',
-    componentName: 'Funnel',
-    detail: 'renders customized active shape when activeShape is set to be a boolean',
     expectedLength: 1,
   },
   {
+    name: 'Funnel does not render customized active shape when activeShape is set to be a falsy boolean',
     element: (
       <FunnelChart width={700} height={200}>
         <Funnel width={400} data={funnelData} dataKey="value" isAnimationActive={false} activeShape={false} />
@@ -155,11 +148,10 @@ const funnelActiveShapes: ActiveShapeTestParams[] = [
     ),
     shapeClass: '.recharts-funnel-trapezoid',
     activeClass: '.recharts-active-shape',
-    componentName: 'Funnel',
-    detail: 'does not render customized active shape when activeShape is set to be a falsy boolean',
     expectedLength: 0,
   },
   {
+    name: 'Funnel does not render customized active shape when activeShape is not set',
     element: (
       <FunnelChart width={700} height={200}>
         <Funnel width={400} data={funnelData} dataKey="value" isAnimationActive={false} />
@@ -168,38 +160,21 @@ const funnelActiveShapes: ActiveShapeTestParams[] = [
     ),
     shapeClass: '.recharts-funnel-trapezoid',
     activeClass: '.recharts-active-shape',
-    componentName: 'Funnel',
-    detail: 'does not render customized active shape when activeShape is not set',
     expectedLength: 0,
   },
 ];
 
 describe('Active Shape', () => {
   // testing that the shape prop is rendered
-  test.each`
-    name                             | detail                    | args
-    ${funnelShapes[0].componentName} | ${funnelShapes[0].detail} | ${funnelShapes[0]}
-    ${funnelShapes[1].componentName} | ${funnelShapes[1].detail} | ${funnelShapes[1]}
-    ${funnelShapes[2].componentName} | ${funnelShapes[2].detail} | ${funnelShapes[2]}
-  `('$name $detail', ({ element, activeClass, expectedLength = 0 }) => {
+  test.each(funnelShapes)('$name', ({ element, activeClass, expectedLength }) => {
     const { container } = render(element);
     const customShapes = container.querySelectorAll(activeClass);
     expect(customShapes).toHaveLength(expectedLength);
   });
 
   // testing that the activeShape prop is rendered via tooltip
-  test.each`
-    name                                   | detail                          | args
-    ${funnelActiveShapes[0].componentName} | ${funnelActiveShapes[0].detail} | ${funnelActiveShapes[0]}
-    ${funnelActiveShapes[1].componentName} | ${funnelActiveShapes[1].detail} | ${funnelActiveShapes[1]}
-    ${funnelActiveShapes[2].componentName} | ${funnelActiveShapes[2].detail} | ${funnelActiveShapes[2]}
-    ${funnelActiveShapes[3].componentName} | ${funnelActiveShapes[3].detail} | ${funnelActiveShapes[3]}
-    ${funnelActiveShapes[4].componentName} | ${funnelActiveShapes[4].detail} | ${funnelActiveShapes[4]}
-    ${funnelActiveShapes[5].componentName} | ${funnelActiveShapes[5].detail} | ${funnelActiveShapes[5]}
-  `('$name $detail', ({ args }) => {
-    const { element, shapeClass = '', activeClass, expectedLength = 0 } = args;
+  test.each(funnelActiveShapes)('$name', ({ element, activeClass, expectedLength, shapeClass }) => {
     const { container } = render(element);
-
     const shapes = container.querySelectorAll(shapeClass);
     const [shape] = Array.from(shapes);
     fireEvent.mouseOver(shape);
