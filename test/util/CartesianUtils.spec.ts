@@ -139,7 +139,7 @@ describe('combineEventHandlers', () => {
   const test1Function = vi.fn();
 
   describe('when child function being combined is undefined', () => {
-    it('should keep the default function reference', () => {
+    it('should be keeping the default function reference', () => {
       const combineFunction = combineEventHandlers(testFunction, undefined);
       expect(combineFunction).toEqual(testFunction);
     });
@@ -164,6 +164,12 @@ describe('combineEventHandlers', () => {
         combineFunction();
         expect(testFunction).toHaveBeenCalled();
         expect(test1Function).toHaveBeenCalled();
+      });
+    });
+
+    describe('when combined with a new function', () => {
+      it('should return a new function', () => {
+        expect(combineEventHandlers(testFunction, () => 0)).not.toEqual(combineFunction);
       });
     });
   });
