@@ -1,9 +1,8 @@
 /* eslint-disable max-len */
 import React, { ReactElement } from 'react';
 
-import { render } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import { Funnel, FunnelChart, Trapezoid, Tooltip } from '../../src';
-import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 const funnelData = [
   { value: 100, name: '展现' },
@@ -203,10 +202,7 @@ describe('Active Shape', () => {
 
     const shapes = container.querySelectorAll(shapeClass);
     const [shape] = Array.from(shapes);
-    const mouseOverEvent = mockMouseEvent('mouseover', shape, {});
-
-    mouseOverEvent.fire();
-
+    fireEvent.mouseOver(shape);
     const activeShape = container.querySelectorAll(activeClass);
     expect(activeShape).toHaveLength(expectedLength);
   });
