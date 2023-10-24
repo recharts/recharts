@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react';
 import * as _ from 'lodash';
 import React from 'react';
-
 import { Bar, Surface } from '../../src';
 
 describe('<Bar />', () => {

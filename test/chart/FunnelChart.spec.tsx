@@ -1,7 +1,8 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { FunnelChart, Funnel, Tooltip, Trapezoid } from '../../src';
-import { mockMouseEvent } from '../helper/mockMouseEvent';
+import { cleanupMockAnimation, mockAnimation } from '../helper/animation-frame-helper';
 
 const data = [
   { value: 100, name: '展现' },
@@ -28,8 +29,6 @@ const data02 = [
 ];
 
 describe('<FunnelChart />', () => {
-  jest.useFakeTimers();
-
   test('Renders 1 funnel in simple FunnelChart', () => {
     const { container } = render(
       <FunnelChart width={500} height={300}>
@@ -45,22 +44,19 @@ describe('<FunnelChart />', () => {
   });
 
   test('Renders 1 funnel in FunnelChart with animation', () => {
+    mockAnimation();
+
     const { container } = render(
       <FunnelChart width={500} height={300}>
-        <Funnel dataKey="value" data={data} isAnimationActive />
+        <Funnel dataKey="value" data={data} isAnimationActive animationDuration={1} />
       </FunnelChart>,
     );
 
     expect(container.querySelectorAll('.recharts-funnel-trapezoid')).toHaveLength(5);
-    // trapezoid are not rendered because the animation hasn't started
-    expect(container.querySelectorAll('.recharts-trapezoid')).toHaveLength(0);
-
-    // wait animation end
-    jest.advanceTimersByTime(500);
-
-    expect(container.querySelectorAll('.recharts-funnel-trapezoid')).toHaveLength(5);
     // all trapezoids are visible
     expect(container.querySelectorAll('.recharts-trapezoid')).toHaveLength(5);
+
+    cleanupMockAnimation();
   });
 
   test('Renders 2 funnel in nest FunnelChart', () => {
@@ -84,7 +80,7 @@ describe('<FunnelChart />', () => {
     ] as const
   ).forEach(({ prop, event }) => {
     test(`should fire ${event} event`, () => {
-      const onEventMock = jest.fn();
+      const onEventMock = vi.fn();
 
       const { container } = render(
         <FunnelChart
@@ -120,9 +116,7 @@ describe('<FunnelChart />', () => {
 
     const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
     const [shape] = Array.from(trapezoids);
-    const mouseOverEvent = mockMouseEvent('mouseover', shape, {});
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(shape);
 
     const activeShape = container.querySelectorAll('.recharts-active-shape');
     expect(activeShape).toHaveLength(1);
@@ -144,9 +138,7 @@ describe('<FunnelChart />', () => {
 
     const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
     const [shape] = Array.from(trapezoids);
-    const mouseOverEvent = mockMouseEvent('mouseover', shape, {});
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(shape);
 
     const activeShape = container.querySelectorAll('.recharts-active-shape');
     expect(activeShape).toHaveLength(1);
@@ -168,9 +160,7 @@ describe('<FunnelChart />', () => {
 
     const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
     const [shape] = Array.from(trapezoids);
-    const mouseOverEvent = mockMouseEvent('mouseover', shape, {});
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(shape);
 
     const activeShape = container.querySelectorAll('.recharts-active-shape');
     expect(activeShape).toHaveLength(1);
@@ -186,9 +176,7 @@ describe('<FunnelChart />', () => {
 
     const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
     const [shape] = Array.from(trapezoids);
-    const mouseOverEvent = mockMouseEvent('mouseover', shape, {});
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(shape);
 
     const activeShape = container.querySelectorAll('.recharts-active-shape');
     expect(activeShape).toHaveLength(1);
@@ -204,9 +192,7 @@ describe('<FunnelChart />', () => {
 
     const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
     const [shape] = Array.from(trapezoids);
-    const mouseOverEvent = mockMouseEvent('mouseover', shape, {});
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(shape);
 
     const activeShape = container.querySelectorAll('.recharts-active-shape');
     expect(activeShape).toHaveLength(0);
@@ -222,9 +208,7 @@ describe('<FunnelChart />', () => {
 
     const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
     const [shape] = Array.from(trapezoids);
-    const mouseOverEvent = mockMouseEvent('mouseover', shape, {});
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(shape);
 
     const activeShape = container.querySelectorAll('.recharts-active-shape');
     expect(activeShape).toHaveLength(0);

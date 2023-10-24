@@ -1594,9 +1594,7 @@ export const generateCategoricalChart = ({
           mouse = this.getMouseInfo(e as React.MouseEvent);
         }
 
-        const handler = event;
-
-        handler(mouse, e);
+        event(mouse ?? {}, e);
       }
     };
 

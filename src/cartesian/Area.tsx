@@ -28,12 +28,7 @@ import {
 } from '../util/types';
 import { filterProps, isDotProps } from '../util/ReactUtils';
 
-export type AreaDot =
-  | ReactElement<SVGElement>
-  | ((props: any) => ReactElement<SVGElement>)
-  | ((props: any) => ReactElement<SVGElement>)
-  | DotProps
-  | boolean;
+export type AreaDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
 interface AreaPointItem extends CurvePoint {
   value?: number | number[];
   payload?: any;
@@ -190,16 +185,16 @@ export class Area extends PureComponent<Props, State> {
     const { layout } = props;
     const hasStack = stackedData && stackedData.length;
     const baseValue = Area.getBaseValue(props, item, xAxis, yAxis);
+    const isHorizontalLayout = layout === 'horizontal';
     let isRange = false;
 
     const points = displayedData.map((entry, index) => {
-      const originalValue = getValueByDataKey(entry, dataKey);
       let value;
 
       if (hasStack) {
         value = stackedData[dataStartIndex + index];
       } else {
-        value = originalValue;
+        value = getValueByDataKey(entry, dataKey);
 
         if (!Array.isArray(value)) {
           value = [baseValue, value];
@@ -208,8 +203,9 @@ export class Area extends PureComponent<Props, State> {
         }
       }
 
-      const isBreakPoint = _.isNil(value[1]) || (hasStack && _.isNil(originalValue));
-      if (layout === 'horizontal') {
+      const isBreakPoint = value[1] == null || (hasStack && getValueByDataKey(entry, dataKey) == null);
+
+      if (isHorizontalLayout) {
         return {
           x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
           y: isBreakPoint ? null : yAxis.scale(value[1]),
@@ -229,24 +225,20 @@ export class Area extends PureComponent<Props, State> {
     let baseLine;
     if (hasStack || isRange) {
       baseLine = points.map((entry: AreaPointItem) => {
-        if (layout === 'horizontal') {
+        const x = Array.isArray(entry.value) ? entry.value[0] : null;
+        if (isHorizontalLayout) {
           return {
             x: entry.x,
-            y:
-              !_.isNil(_.get(entry, 'value[0]')) && !_.isNil(_.get(entry, 'y'))
-                ? yAxis.scale(_.get(entry, 'value[0]'))
-                : null,
+            y: x != null && entry.y != null ? yAxis.scale(x) : null,
           };
         }
         return {
-          x: !_.isNil(_.get(entry, 'value[0]')) ? xAxis.scale(_.get(entry, 'value[0]')) : null,
+          x: x != null ? xAxis.scale(x) : null,
           y: entry.y,
         };
       });
-    } else if (layout === 'horizontal') {
-      baseLine = yAxis.scale(baseValue);
     } else {
-      baseLine = xAxis.scale(baseValue);
+      baseLine = isHorizontalLayout ? yAxis.scale(baseValue) : xAxis.scale(baseValue);
     }
 
     return { points, baseLine, layout, isRange, ...offset };
