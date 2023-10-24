@@ -1,5 +1,9 @@
 import React, { isValidElement, cloneElement } from 'react';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import isPlainObject from 'lodash/isPlainObject';
+import isBoolean from 'lodash/isBoolean';
+import isEqual from 'lodash/isEqual';
+
 import { Rectangle } from '../shape/Rectangle';
 import { Trapezoid } from '../shape/Trapezoid';
 import { Sector } from '../shape/Sector';
@@ -77,9 +81,9 @@ export function Shape<OptionType, ExtraProps, ShapePropsType>({
 
   if (isValidElement(option)) {
     shape = cloneElement(option, props);
-  } else if (_.isFunction(option)) {
+  } else if (isFunction(option)) {
     shape = option(props);
-  } else if (_.isPlainObject(option) && !_.isBoolean(option)) {
+  } else if (isPlainObject(option) && !isBoolean(option)) {
     const shapeProps = props as unknown as ExtraProps;
     const elementProps = propTransformer(option, shapeProps);
     shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={elementProps} />;
@@ -220,7 +224,7 @@ export function getActiveShapeIndexForTooltip({
   const tooltipPayload = getActiveShapeTooltipPayload(graphicalItem, activeTooltipItem);
 
   const activeItemMatches = itemData.filter((datum: unknown, dataIndex: number) => {
-    const valuesMatch = _.isEqual(tooltipPayload, datum);
+    const valuesMatch = isEqual(tooltipPayload, datum);
 
     const mouseCoordinateMatches = graphicalItem.props[shapeKey].filter((shapeData: unknown) => {
       const comparison = getComparisonFn(graphicalItem, activeTooltipItem);

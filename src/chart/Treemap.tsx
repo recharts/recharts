@@ -1,5 +1,8 @@
 import classNames from 'classnames';
-import _ from 'lodash';
+import isNan from 'lodash/isNaN';
+import isFunction from 'lodash/isFunction';
+import omit from 'lodash/omit';
+import get from 'lodash/get';
 /**
  * @fileOverview TreemapChart
  */
@@ -46,7 +49,7 @@ const computeNode = ({
     nodeValue = computedChildren.reduce((result: any, child: TreemapNode) => result + child[NODE_VALUE_KEY], 0);
   } else {
     // TODO need to verify valueKey
-    nodeValue = _.isNaN(node[valueKey as string]) || node[valueKey as string] <= 0 ? 0 : node[valueKey as string];
+    nodeValue = isNan(node[valueKey as string]) || node[valueKey as string] <= 0 ? 0 : node[valueKey as string];
   }
 
   return {
@@ -69,7 +72,7 @@ const getAreaOfChildren = (children: TreemapNode[], areaValueRatio: number) => {
 
     return {
       ...child,
-      area: _.isNaN(area) || area <= 0 ? 0 : area,
+      area: isNan(area) || area <= 0 ? 0 : area,
     };
   });
 };
@@ -401,7 +404,7 @@ export class Treemap extends PureComponent<Props, State> {
     const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
 
-    if (_.isFunction(onAnimationEnd)) {
+    if (isFunction(onAnimationEnd)) {
       onAnimationEnd();
     }
   };
@@ -410,7 +413,7 @@ export class Treemap extends PureComponent<Props, State> {
     const { onAnimationStart } = this.props;
     this.setState({ isAnimationFinished: false });
 
-    if (_.isFunction(onAnimationStart)) {
+    if (isFunction(onAnimationStart)) {
       onAnimationStart();
     }
   };
@@ -565,7 +568,7 @@ export class Treemap extends PureComponent<Props, State> {
     if (React.isValidElement(content)) {
       return React.cloneElement(content, nodeProps);
     }
-    if (_.isFunction(content)) {
+    if (isFunction(content)) {
       return content(nodeProps);
     }
     // optimize default shape
@@ -598,7 +601,7 @@ export class Treemap extends PureComponent<Props, State> {
         <Rectangle
           fill={nodeProps.depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)'}
           stroke="#fff"
-          {..._.omit(nodeProps, 'children')}
+          {...omit(nodeProps, 'children')}
           role="img"
         />
         {arrow}
@@ -687,12 +690,12 @@ export class Treemap extends PureComponent<Props, State> {
       <div className="recharts-treemap-nest-index-wrapper" style={{ marginTop: '8px', textAlign: 'center' }}>
         {nestIndex.map((item: TreemapNode, i: number) => {
           // TODO need to verify nameKey type
-          const name = _.get(item, nameKey as string, 'root');
+          const name = get(item, nameKey as string, 'root');
           let content = null;
           if (React.isValidElement(nestIndexContent)) {
             content = React.cloneElement(nestIndexContent, item, i);
           }
-          if (_.isFunction(nestIndexContent)) {
+          if (isFunction(nestIndexContent)) {
             content = nestIndexContent(item, i);
           } else {
             content = name;

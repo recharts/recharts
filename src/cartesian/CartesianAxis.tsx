@@ -2,8 +2,10 @@
  * @fileOverview Cartesian Axis
  */
 import React, { ReactElement, ReactNode, Component, SVGProps } from 'react';
-import _ from 'lodash';
+
+import isFunction from 'lodash/isFunction';
 import classNames from 'classnames';
+import get from 'lodash/get';
 import { shallowEqual } from '../util/ShallowEqual';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
@@ -232,7 +234,7 @@ export class CartesianAxis extends Component<Props, IState> {
       };
     }
 
-    return <line {...props} className={classNames('recharts-cartesian-axis-line', _.get(axisLine, 'className'))} />;
+    return <line {...props} className={classNames('recharts-cartesian-axis-line', get(axisLine, 'className'))} />;
   }
 
   static renderTickItem(option: Props['tick'], props: any, value: ReactNode) {
@@ -240,7 +242,7 @@ export class CartesianAxis extends Component<Props, IState> {
 
     if (React.isValidElement(option)) {
       tickItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       tickItem = option(props);
     } else {
       tickItem = (
@@ -298,14 +300,14 @@ export class CartesianAxis extends Component<Props, IState> {
             <line
               {...tickLineProps}
               {...lineCoord}
-              className={classNames('recharts-cartesian-axis-tick-line', _.get(tickLine, 'className'))}
+              className={classNames('recharts-cartesian-axis-tick-line', get(tickLine, 'className'))}
             />
           )}
           {tick &&
             CartesianAxis.renderTickItem(
               tick,
               tickProps,
-              `${_.isFunction(tickFormatter) ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`,
+              `${isFunction(tickFormatter) ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`,
             )}
         </Layer>
       );
@@ -324,7 +326,7 @@ export class CartesianAxis extends Component<Props, IState> {
     const { ticks, ...noTicksProps } = this.props;
     let finalTicks = ticks;
 
-    if (_.isFunction(ticksGenerator)) {
+    if (isFunction(ticksGenerator)) {
       finalTicks = ticks && ticks.length > 0 ? ticksGenerator(this.props) : ticksGenerator(noTicksProps);
     }
 

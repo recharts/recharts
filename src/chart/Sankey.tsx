@@ -3,7 +3,12 @@
  */
 import React, { PureComponent, ReactElement, SVGProps } from 'react';
 import classNames from 'classnames';
-import _ from 'lodash';
+import maxBy from 'lodash/maxBy';
+import min from 'lodash/min';
+import get from 'lodash/get';
+import sumBy from 'lodash/sumBy';
+import isFunction from 'lodash/isFunction';
+
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
@@ -96,7 +101,7 @@ const getNodesTree = ({ nodes, links }: SankeyData, width: number, nodeWidth: nu
       updateDepthOfTargets(tree, node);
     }
   }
-  const maxDepth = _.maxBy(tree, (entry: SankeyNode) => entry.depth).depth;
+  const maxDepth = maxBy(tree, (entry: SankeyNode) => entry.depth).depth;
 
   if (maxDepth >= 1) {
     const childWidth = (width - nodeWidth) / maxDepth;
@@ -131,8 +136,8 @@ const getDepthTree = (tree: any): any[] => {
 };
 
 const updateYOfTree = (depthTree: any, height: number, nodePadding: number, links: any) => {
-  const yRatio: number = _.min(
-    depthTree.map((nodes: any) => (height - (nodes.length - 1) * nodePadding) / _.sumBy(nodes, getValue)),
+  const yRatio: number = min(
+    depthTree.map((nodes: any) => (height - (nodes.length - 1) * nodePadding) / sumBy(nodes, getValue)),
   );
 
   for (let d = 0, maxDepth = depthTree.length; d < maxDepth; d++) {
@@ -547,7 +552,7 @@ export class Sankey extends PureComponent<Props, State> {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     }
-    if (_.isFunction(option)) {
+    if (isFunction(option)) {
       return option(props);
     }
 
@@ -571,8 +576,8 @@ export class Sankey extends PureComponent<Props, State> {
 
   renderLinks(links: SankeyLink[], nodes: SankeyNode[]) {
     const { linkCurvature, link: linkContent, margin } = this.props;
-    const top = _.get(margin, 'top') || 0;
-    const left = _.get(margin, 'left') || 0;
+    const top = get(margin, 'top') || 0;
+    const left = get(margin, 'left') || 0;
 
     return (
       <Layer className="recharts-sankey-links" key="recharts-sankey-links">
@@ -623,7 +628,7 @@ export class Sankey extends PureComponent<Props, State> {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     }
-    if (_.isFunction(option)) {
+    if (isFunction(option)) {
       return option(props);
     }
 
@@ -634,8 +639,8 @@ export class Sankey extends PureComponent<Props, State> {
 
   renderNodes(nodes: SankeyNode[]) {
     const { node: nodeContent, margin } = this.props;
-    const top = _.get(margin, 'top') || 0;
-    const left = _.get(margin, 'left') || 0;
+    const top = get(margin, 'top') || 0;
+    const left = get(margin, 'left') || 0;
 
     return (
       <Layer className="recharts-sankey-nodes" key="recharts-sankey-nodes">

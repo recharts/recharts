@@ -2,7 +2,9 @@
  * @fileOverview Reference Line
  */
 import React, { ReactElement, SVGProps } from 'react';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import some from 'lodash/some';
+
 import classNames from 'classnames';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
@@ -52,7 +54,7 @@ const renderLine = (option: ReferenceLineProps['shape'], props: any) => {
 
   if (React.isValidElement(option)) {
     line = React.cloneElement(option, props);
-  } else if (_.isFunction(option)) {
+  } else if (isFunction(option)) {
     line = option(props);
   } else {
     line = <line {...props} className="recharts-reference-line-line" />;
@@ -107,7 +109,7 @@ const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegme
 
     const points = segment.map(p => scales.apply(p, { position }));
 
-    if (ifOverflowMatches(props, 'discard') && _.some(points, p => !scales.isInRange(p))) {
+    if (ifOverflowMatches(props, 'discard') && some(points, p => !scales.isInRange(p))) {
       return null;
     }
 

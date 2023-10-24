@@ -2,7 +2,10 @@
  * @fileOverview The axis of polar coordinate system
  */
 import React, { PureComponent } from 'react';
-import _ from 'lodash';
+import maxBy from 'lodash/maxBy';
+import minBy from 'lodash/minBy';
+import isFunction from 'lodash/isFunction';
+
 import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { Layer } from '../container/Layer';
@@ -75,8 +78,8 @@ export class PolarRadiusAxis extends PureComponent<Props> {
 
   getViewBox() {
     const { cx, cy, angle, ticks } = this.props;
-    const maxRadiusTick = _.maxBy(ticks, (entry: TickItem) => entry.coordinate || 0);
-    const minRadiusTick = _.minBy(ticks, (entry: TickItem) => entry.coordinate || 0);
+    const maxRadiusTick = maxBy(ticks, (entry: TickItem) => entry.coordinate || 0);
+    const minRadiusTick = minBy(ticks, (entry: TickItem) => entry.coordinate || 0);
 
     return {
       cx,
@@ -115,7 +118,7 @@ export class PolarRadiusAxis extends PureComponent<Props> {
 
     if (React.isValidElement(option)) {
       tickItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       tickItem = option(props);
     } else {
       tickItem = (
