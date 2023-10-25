@@ -2007,7 +2007,7 @@ export const generateCategoricalChart = ({
       // TODO: update brush when children update
       return cloneElement(element, {
         key: element.key || '_recharts-brush',
-        onChange: combineEventHandlers(this.handleBrushChange, null, element.props.onChange),
+        onChange: combineEventHandlers(this.handleBrushChange, element.props.onChange),
         data,
         x: isNumber(element.props.x) ? element.props.x : offset.left,
         y: isNumber(element.props.y)
@@ -2114,12 +2114,12 @@ export const generateCategoricalChart = ({
 
       if (tooltipEventType !== 'axis' && tooltipItem && tooltipItem.props.trigger === 'click') {
         itemEvents = {
-          onClick: combineEventHandlers(this.handleItemMouseEnter, null, element.props.onCLick),
+          onClick: combineEventHandlers(this.handleItemMouseEnter, element.props.onCLick),
         };
       } else if (tooltipEventType !== 'axis') {
         itemEvents = {
-          onMouseLeave: combineEventHandlers(this.handleItemMouseLeave, null, element.props.onMouseLeave),
-          onMouseEnter: combineEventHandlers(this.handleItemMouseEnter, null, element.props.onMouseEnter),
+          onMouseLeave: combineEventHandlers(this.handleItemMouseLeave, element.props.onMouseLeave),
+          onMouseEnter: combineEventHandlers(this.handleItemMouseEnter, element.props.onMouseEnter),
         };
       }
 
