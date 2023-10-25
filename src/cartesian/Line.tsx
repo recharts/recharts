@@ -211,12 +211,18 @@ export class Line extends PureComponent<Props, State> {
   getStrokeDasharray = (length: number, totalLength: number, lines: number[]) => {
     const lineLength = lines.reduce((pre, next) => pre + next);
 
+    // if lineLength is 0 return the default when no strokeDasharray is provided
+    if (!lineLength) {
+      return `${length}px ${totalLength - length}px`;
+    }
+
     const count = Math.floor(length / lineLength);
     const remainLength = length % lineLength;
     const restLength = totalLength - length;
 
-    let remainLines = [];
-    for (let i = 0, sum = 0; ; sum += lines[i], ++i) {
+    let remainLines: number[] = [];
+    // prevent infinite loop by checking length https://github.com/recharts/recharts/issues/3899
+    for (let i = 0, sum = 0; i < lines.length; sum += lines[i], ++i) {
       if (sum + lines[i] > remainLength) {
         remainLines = [...lines.slice(0, i), remainLength - sum];
         break;
