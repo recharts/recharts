@@ -225,7 +225,6 @@ export class Line extends PureComponent<Props, State> {
     const restLength = totalLength - length;
 
     let remainLines: number[] = [];
-    // prevent infinite loop by checking length https://github.com/recharts/recharts/issues/3899
     for (let i = 0, sum = 0; i < lines.length; sum += lines[i], ++i) {
       if (sum + lines[i] > remainLength) {
         remainLines = [...lines.slice(0, i), remainLength - sum];
