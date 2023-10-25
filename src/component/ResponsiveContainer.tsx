@@ -10,10 +10,10 @@ import React, {
   useImperativeHandle,
   useRef,
   useEffect,
-  useCallback,
   useMemo,
+  CSSProperties,
 } from 'react';
-import ReactResizeDetector from 'react-resize-detector';
+import { throttle } from 'lodash';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
@@ -32,11 +32,11 @@ export interface Props {
   debounce?: number;
   id?: string | number;
   className?: string | number;
-  style?: React.CSSProperties;
+  style?: Omit<CSSProperties, keyof Props>;
   onResize?: (width: number, height: number) => void;
 }
 
-export const ResponsiveContainer = forwardRef(
+export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
   (
     {
       aspect,
@@ -59,9 +59,16 @@ export const ResponsiveContainer = forwardRef(
       className,
       onResize,
       style = {},
-    }: Props,
+    },
     ref,
   ) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const onResizeRef = useRef<Props['onResize']>();
+    onResizeRef.current = onResize;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    useImperativeHandle(ref, () => containerRef);
+
     const [sizes, setSizes] = useState<{
       containerWidth: number;
       containerHeight: number;
@@ -70,37 +77,26 @@ export const ResponsiveContainer = forwardRef(
       containerHeight: initialDimension.height,
     });
 
-    const containerRef = useRef<HTMLDivElement>(null);
-    useImperativeHandle(ref, () => containerRef, [containerRef]);
-
-    const getContainerSize = useCallback(() => {
-      if (!containerRef.current) {
-        return null;
-      }
-
-      return {
-        containerWidth: containerRef.current.clientWidth,
-        containerHeight: containerRef.current.clientHeight,
+    useEffect(() => {
+      let callback = (entries: ResizeObserverEntry[]) => {
+        const { width: containerWidth, height: containerHeight } = entries[0].contentRect;
+        setSizes({ containerWidth, containerHeight });
+        onResizeRef.current?.(containerWidth, containerHeight);
       };
-    }, []);
-
-    const updateDimensionsImmediate = useCallback(() => {
-      const newSize = getContainerSize();
-
-      if (newSize) {
-        const { containerWidth, containerHeight } = newSize;
-        if (onResize) onResize(containerWidth, containerHeight);
-
-        setSizes(currentSizes => {
-          const { containerWidth: oldWidth, containerHeight: oldHeight } = currentSizes;
-          if (containerWidth !== oldWidth || containerHeight !== oldHeight) {
-            return { containerWidth, containerHeight };
-          }
-
-          return currentSizes;
-        });
+      if (debounce > 0) {
+        callback = throttle(callback, debounce, { trailing: true, leading: false });
       }
-    }, [getContainerSize, onResize]);
+      const observer = new ResizeObserver(callback);
+
+      const { width: containerWidth, height: containerHeight } = containerRef.current.getBoundingClientRect();
+      setSizes({ containerWidth, containerHeight });
+
+      observer.observe(containerRef.current);
+
+      return () => {
+        observer.disconnect();
+      };
+    }, [debounce]);
 
     const chartContent = useMemo(() => {
       const { containerWidth, containerHeight } = sizes;
@@ -159,34 +155,15 @@ export const ResponsiveContainer = forwardRef(
       });
     }, [aspect, children, height, maxHeight, minHeight, minWidth, sizes, width]);
 
-    useEffect(() => {
-      const size = getContainerSize();
-
-      if (size) {
-        setSizes(size);
-      }
-    }, [getContainerSize]);
-
-    const styles: React.CSSProperties = { ...style, width, height, minWidth, minHeight, maxHeight };
-
     return (
-      <ReactResizeDetector
-        handleWidth
-        handleHeight
-        onResize={updateDimensionsImmediate}
-        targetRef={containerRef}
-        refreshMode={debounce > 0 ? 'debounce' : undefined}
-        refreshRate={debounce}
+      <div
+        id={id ? `${id}` : undefined}
+        className={classNames('recharts-responsive-container', className)}
+        style={{ ...style, width, height, minWidth, minHeight, maxHeight }}
+        ref={containerRef}
       >
-        <div
-          {...(id != null ? { id: `${id}` } : {})}
-          className={classNames('recharts-responsive-container', className)}
-          style={styles}
-          ref={containerRef}
-        >
-          {chartContent}
-        </div>
-      </ReactResizeDetector>
+        {chartContent}
+      </div>
     );
   },
 );
