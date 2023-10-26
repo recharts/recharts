@@ -38,6 +38,7 @@ interface InternalFunnelProps {
   nameKey?: DataKey<any>;
   data?: any[];
   hide?: boolean;
+  shape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   activeShape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   legendType?: LegendType;
   tooltipType?: TooltipType;
@@ -264,10 +265,10 @@ export class Funnel extends PureComponent<FunnelProps, State> {
   }
 
   renderTrapezoidsStatically(trapezoids: FunnelTrapezoidItem[]) {
-    const { activeShape } = this.props;
+    const { shape, activeShape } = this.props;
 
     return trapezoids.map((entry, i) => {
-      const trapezoidOptions = this.isActiveIndex(i) ? activeShape : null;
+      const trapezoidOptions = this.isActiveIndex(i) ? activeShape : shape;
       const trapezoidProps = {
         ...entry,
         isActive: this.isActiveIndex(i),
