@@ -32,8 +32,8 @@ export function Surface(props: Props) {
     <svg
       {...filterProps(others, true, 'svg')}
       className={layerClass}
-      width="100%"
-      height="100%"
+      width={width}
+      height={height}
       style={style}
       viewBox={`${svgView.x} ${svgView.y} ${svgView.width} ${svgView.height}`}
     >

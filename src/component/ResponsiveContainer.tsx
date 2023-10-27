@@ -164,6 +164,7 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
         style={{ ...style, width, height, minWidth, minHeight, maxHeight }}
         ref={containerRef}
       >
+        <style>{`.recharts-wrapper > .recharts-surface {width: 100%; height: 100%;}`}</style>
         {chartContent}
       </div>
     );
