@@ -1,6 +1,8 @@
 // eslint-disable-next-line max-classes-per-file
-import React, { PureComponent, useState } from 'react';
+import { expect } from '@storybook/jest';
 import { StoryObj } from '@storybook/react';
+import React, { PureComponent, useState } from 'react';
+import { userEvent, within } from '@storybook/testing-library';
 import { Impressions, impressionsData, pageData } from '../data';
 import {
   Line,
@@ -816,7 +818,14 @@ export const NegativeValuesWithReferenceLines = {
   },
 };
 
-export const ToggleChildrenComponentsExceptCartesianGrid = {
+export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(canvas.getByText('Page A')).toBeInTheDocument();
+    await userEvent.click(canvas.getByTestId('toggle'));
+    expect(canvas.queryByText('Page A')).not.toBeInTheDocument();
+  },
   render: () => {
     const data = [
       {
@@ -888,11 +897,11 @@ export const ToggleChildrenComponentsExceptCartesianGrid = {
 
     return (
       <div>
-        <button type="button" onClick={() => setBtnClicked(clicked => !clicked)}>
+        <button data-testid="toggle" type="button" onClick={() => setBtnClicked(clicked => !clicked)}>
           Click Me to Simulate Legend
         </button>
         <LineChart width={1300} height={400} margin={{ right: 30, bottom: 40 }} data={data} layout="horizontal">
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid data-testid="cartesian" strokeDasharray="3 3" />
           {isBtnClicked ? null : (
             <>
               <XAxis
