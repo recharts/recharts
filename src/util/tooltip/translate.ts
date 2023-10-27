@@ -1,5 +1,5 @@
+import clsx from 'clsx';
 import { CSSProperties } from 'react';
-import classNames from 'classnames';
 import { translateStyle } from 'react-smooth';
 import { isNumber } from '../DataUtils';
 import { Coordinate, CartesianViewBox, AllowInDimension } from '../types';
@@ -19,7 +19,7 @@ export function getTooltipCSSClassName({
   translateY: number | undefined;
   coordinate: Partial<Coordinate> | undefined;
 }): string {
-  return classNames(CSS_CLASS_PREFIX, {
+  return clsx(CSS_CLASS_PREFIX, {
     [`${CSS_CLASS_PREFIX}-right`]:
       isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX >= coordinate.x,
     [`${CSS_CLASS_PREFIX}-left`]:

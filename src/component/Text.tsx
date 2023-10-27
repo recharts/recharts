@@ -1,5 +1,5 @@
 import React, { CSSProperties, SVGProps, useMemo } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import _ from 'lodash';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
 import { Global } from '../util/Global';
@@ -253,7 +253,7 @@ export const Text = ({
       {...filterProps(textProps, true)}
       x={x}
       y={y}
-      className={classNames('recharts-text', className)}
+      className={clsx('recharts-text', className)}
       textAnchor={textAnchor}
       fill={fill.includes('url') ? DEFAULT_FILL : fill}
     >
