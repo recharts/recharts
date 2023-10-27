@@ -2,10 +2,16 @@ import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
 import { vi } from 'vitest';
-import { Bar, BarChart, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, Rectangle, RectangleProps, Tooltip, XAxis, YAxis } from '../../src';
+
+type DataType = {
+  name: string;
+  uv: number;
+  pv: number;
+};
 
 describe('<BarChart />', () => {
-  const data = [
+  const data: DataType[] = [
     { name: 'food', uv: 400, pv: 2400 },
     { name: 'cosmetic', uv: 300, pv: 4567 },
     { name: 'storage', uv: 300, pv: 1398 },
@@ -148,7 +154,7 @@ describe('<BarChart />', () => {
             dataKey="uv"
             stackId="test"
             fill="#ff7300"
-            activeBar={props => {
+            activeBar={(props: RectangleProps) => {
               return <Rectangle {...props} name={props.name as string} />;
             }}
           />
@@ -265,7 +271,7 @@ describe('<BarChart />', () => {
   });
 
   test('Render customized shapem when shape is set to be a function', () => {
-    const renderShape = (props: any) => {
+    const renderShape = (props: RectangleProps & DataType) => {
       const { x, y } = props;
 
       return <circle className="customized-shape" cx={x} cy={y} r={8} />;
