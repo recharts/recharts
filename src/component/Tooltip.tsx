@@ -88,24 +88,40 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   };
 
   state = {
-    boxWidth: -1,
-    boxHeight: -1,
     dismissed: false,
     dismissedAtCoordinate: { x: 0, y: 0 },
+  };
+
+  bbox = {
+    boxWidth: -1,
+    boxHeight: -1,
   };
 
   private wrapperNode: HTMLDivElement;
 
   componentDidMount() {
-    this.updateBBox();
+    document.addEventListener('keydown', this.handleKeyDown);
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
   }
 
-  componentDidUpdate() {
-    this.updateBBox();
+  componentDidUpdate(
+    props: Readonly<TooltipProps<TValue, TName>>,
+    state: Readonly<{ dismissed: boolean; dismissedAtCoordinate: { x: number; y: number } }>,
+  ) {
+    if (props.active) {
+      this.updateBBox();
+    }
+
+    if (!this.state.dismissed) {
+      return;
+    }
+
+    if (props.coordinate.x !== state.dismissedAtCoordinate.x || props.coordinate.y !== state.dismissedAtCoordinate.y) {
+      this.state.dismissed = false;
+    }
   }
 
   handleKeyDown = (event: KeyboardEvent) => {
@@ -122,33 +138,18 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   };
 
   updateBBox() {
-    const { boxWidth, boxHeight, dismissed } = this.state;
-    if (dismissed) {
-      document.removeEventListener('keydown', this.handleKeyDown);
-      if (
-        this.props.coordinate.x !== this.state.dismissedAtCoordinate.x ||
-        this.props.coordinate.y !== this.state.dismissedAtCoordinate.y
-      ) {
-        this.setState({ dismissed: false });
-      }
-    } else {
-      document.addEventListener('keydown', this.handleKeyDown);
-    }
+    const { boxWidth, boxHeight } = this.bbox;
 
     if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
       const box = this.wrapperNode.getBoundingClientRect();
 
       if (Math.abs(box.width - boxWidth) > EPS || Math.abs(box.height - boxHeight) > EPS) {
-        this.setState({
-          boxWidth: box.width,
-          boxHeight: box.height,
-        });
+        this.bbox.boxWidth = box.width;
+        this.bbox.boxHeight = box.height;
       }
     } else if (boxWidth !== -1 || boxHeight !== -1) {
-      this.setState({
-        boxWidth: -1,
-        boxHeight: -1,
-      });
+      this.bbox.boxWidth = -1;
+      this.bbox.boxHeight = -1;
     }
   }
 
@@ -171,12 +172,17 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       viewBox,
       wrapperStyle,
     } = this.props;
-    const finalPayload = getUniqPayload(
-      filterNull && payload && payload.length ? payload.filter(entry => !_.isNil(entry.value)) : payload,
-      payloadUniqBy,
-      defaultUniqBy,
-    );
-    const hasPayload = finalPayload && finalPayload.length;
+    let finalPayload: Payload<TValue, TName>[] = payload ?? [];
+
+    if (filterNull && finalPayload.length) {
+      finalPayload = getUniqPayload(
+        payload.filter(entry => !_.isNil(entry.value)),
+        payloadUniqBy,
+        defaultUniqBy,
+      );
+    }
+
+    const hasPayload = finalPayload.length;
 
     const { cssClasses, cssProperties } = getTooltipTranslate({
       allowEscapeViewBox,
@@ -185,14 +191,17 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       position,
       reverseDirection,
       tooltipBox: {
-        height: this.state.boxHeight,
-        width: this.state.boxWidth,
+        height: this.bbox.boxHeight,
+        width: this.bbox.boxWidth,
       },
       useTranslate3d,
       viewBox,
     });
 
-    let outerStyle: CSSProperties = {
+    const outerStyle: CSSProperties = {
+      ...(isAnimationActive &&
+        active &&
+        translateStyle({ transition: `transform ${animationDuration}ms ${animationEasing}` })),
       ...cssProperties,
       pointerEvents: 'none',
       visibility: !this.state.dismissed && active && hasPayload ? 'visible' : 'hidden',
@@ -202,19 +211,9 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       ...wrapperStyle,
     };
 
-    if (isAnimationActive && active) {
-      outerStyle = {
-        ...translateStyle({
-          transition: `transform ${animationDuration}ms ${animationEasing}`,
-        }),
-        ...outerStyle,
-      };
-    }
-
     return (
       // ESLint is disabled to allow listening to the `Escape` key. Refer to
       // https://github.com/recharts/recharts/pull/2925
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
       <div
         tabIndex={-1}
         role="dialog"

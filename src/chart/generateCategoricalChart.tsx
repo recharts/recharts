@@ -2244,6 +2244,29 @@ export const generateCategoricalChart = ({
       return null;
     }
 
+    renderMap = {
+      CartesianGrid: { handler: this.renderGrid, once: true },
+      ReferenceArea: { handler: this.renderReferenceElement },
+      ReferenceLine: { handler: this.renderReferenceElement },
+      ReferenceDot: { handler: this.renderReferenceElement },
+      XAxis: { handler: this.renderXAxis },
+      YAxis: { handler: this.renderYAxis },
+      Brush: { handler: this.renderBrush, once: true },
+      Bar: { handler: this.renderGraphicChild },
+      Line: { handler: this.renderGraphicChild },
+      Area: { handler: this.renderGraphicChild },
+      Radar: { handler: this.renderGraphicChild },
+      RadialBar: { handler: this.renderGraphicChild },
+      Scatter: { handler: this.renderGraphicChild },
+      Pie: { handler: this.renderGraphicChild },
+      Funnel: { handler: this.renderGraphicChild },
+      Tooltip: { handler: this.renderCursor, once: true },
+      PolarGrid: { handler: this.renderPolarGrid, once: true },
+      PolarAngleAxis: { handler: this.renderPolarAxis },
+      PolarRadiusAxis: { handler: this.renderPolarAxis },
+      Customized: { handler: this.renderCustomized },
+    };
+
     render() {
       if (!validateWidthHeight(this)) {
         return null;
@@ -2251,35 +2274,13 @@ export const generateCategoricalChart = ({
 
       const { children, className, width, height, style, compact, title, desc, ...others } = this.props;
       const attrs = filterProps(others);
-      const map = {
-        CartesianGrid: { handler: this.renderGrid, once: true },
-        ReferenceArea: { handler: this.renderReferenceElement },
-        ReferenceLine: { handler: this.renderReferenceElement },
-        ReferenceDot: { handler: this.renderReferenceElement },
-        XAxis: { handler: this.renderXAxis },
-        YAxis: { handler: this.renderYAxis },
-        Brush: { handler: this.renderBrush, once: true },
-        Bar: { handler: this.renderGraphicChild },
-        Line: { handler: this.renderGraphicChild },
-        Area: { handler: this.renderGraphicChild },
-        Radar: { handler: this.renderGraphicChild },
-        RadialBar: { handler: this.renderGraphicChild },
-        Scatter: { handler: this.renderGraphicChild },
-        Pie: { handler: this.renderGraphicChild },
-        Funnel: { handler: this.renderGraphicChild },
-        Tooltip: { handler: this.renderCursor, once: true },
-        PolarGrid: { handler: this.renderPolarGrid, once: true },
-        PolarAngleAxis: { handler: this.renderPolarAxis },
-        PolarRadiusAxis: { handler: this.renderPolarAxis },
-        Customized: { handler: this.renderCustomized },
-      };
 
       // The "compact" mode is mainly used as the panorama within Brush
       if (compact) {
         return (
           <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
             {this.renderClipPath()}
-            {renderByOrder(children, map)}
+            {renderByOrder(children, this.renderMap)}
           </Surface>
         );
       }
@@ -2314,7 +2315,7 @@ export const generateCategoricalChart = ({
         >
           <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
             {this.renderClipPath()}
-            {renderByOrder(children, map)}
+            {renderByOrder(children, this.renderMap)}
           </Surface>
           {this.renderLegend()}
           {this.renderTooltip()}
