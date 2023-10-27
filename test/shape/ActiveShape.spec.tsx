@@ -2,7 +2,7 @@
 import React, { ReactElement } from 'react';
 
 import { render, fireEvent } from '@testing-library/react';
-import { Funnel, FunnelChart, Trapezoid, Tooltip } from '../../src';
+import { Funnel, FunnelChart, Trapezoid, Tooltip, TrapezoidProps } from '../../src';
 
 const funnelData = [
   { value: 100, name: '展现' },
@@ -29,7 +29,7 @@ const funnelShapes: ActiveShapeTestParams[] = [
           data={funnelData}
           dataKey="value"
           isAnimationActive={false}
-          shape={props => <Trapezoid {...props} className="custom-trap-shape" />}
+          shape={(props: TrapezoidProps) => <Trapezoid {...props} className="custom-trap-shape" />}
         />
       </FunnelChart>
     ),
@@ -81,7 +81,7 @@ const funnelActiveShapes: ActiveShapeTestParams[] = [
           data={funnelData}
           dataKey="value"
           isAnimationActive={false}
-          activeShape={props => <Trapezoid {...props} />}
+          activeShape={(props: TrapezoidProps) => <Trapezoid {...props} />}
         />
         <Tooltip />
       </FunnelChart>
