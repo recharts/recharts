@@ -1,7 +1,7 @@
 /**
  * @fileOverview Wrapper component to make charts adapt to the size of parent * DOM
  */
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, {
   ReactElement,
   forwardRef,
@@ -160,7 +160,7 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
     return (
       <div
         id={id ? `${id}` : undefined}
-        className={classNames('recharts-responsive-container', className)}
+        className={clsx('recharts-responsive-container', className)}
         style={{ ...style, width, height, minWidth, minHeight, maxHeight }}
         ref={containerRef}
       >
