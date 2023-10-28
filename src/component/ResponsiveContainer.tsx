@@ -12,6 +12,7 @@ import React, {
   useEffect,
   useMemo,
   CSSProperties,
+  useCallback,
 } from 'react';
 import { throttle } from 'lodash';
 import { isPercent } from '../util/DataUtils';
@@ -79,10 +80,22 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
       containerHeight: initialDimension.height,
     });
 
+    const setContainerSize = useCallback((newWidth: number, newHeight: number) => {
+      setSizes(prevState => {
+        const roundedWidth = Math.round(newWidth);
+        const roundedHeight = Math.round(newHeight);
+        if (prevState.containerWidth === roundedWidth && prevState.containerHeight === roundedHeight) {
+          return prevState;
+        }
+
+        return { containerWidth: roundedWidth, containerHeight: roundedHeight };
+      });
+    }, []);
+
     useEffect(() => {
       let callback = (entries: ResizeObserverEntry[]) => {
         const { width: containerWidth, height: containerHeight } = entries[0].contentRect;
-        setSizes({ containerWidth, containerHeight });
+        setContainerSize(containerWidth, containerHeight);
         onResizeRef.current?.(containerWidth, containerHeight);
       };
       if (debounce > 0) {
@@ -91,14 +104,14 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
       const observer = new ResizeObserver(callback);
 
       const { width: containerWidth, height: containerHeight } = containerRef.current.getBoundingClientRect();
-      setSizes({ containerWidth, containerHeight });
+      setContainerSize(containerWidth, containerHeight);
 
       observer.observe(containerRef.current);
 
       return () => {
         observer.disconnect();
       };
-    }, [debounce]);
+    }, [setContainerSize, debounce]);
 
     const chartContent = useMemo(() => {
       const { containerWidth, containerHeight } = sizes;
