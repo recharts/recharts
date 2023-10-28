@@ -1,5 +1,5 @@
 import React, { cloneElement, Component, createElement, isValidElement, ReactElement } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import type { DebouncedFunc } from 'lodash';
 import _ from 'lodash';
 import invariant from 'tiny-invariant';
@@ -1832,7 +1832,7 @@ export const generateCategoricalChart = ({
       return (
         <CartesianAxis
           {...(axisOptions as any)}
-          className={classNames(`recharts-${axisOptions.axisType} ${axisOptions.axisType}`, axisOptions.className)}
+          className={clsx(`recharts-${axisOptions.axisType} ${axisOptions.axisType}`, axisOptions.className)}
           key={element.key || `${displayName}-${index}`}
           viewBox={{ x: 0, y: 0, width, height } as any}
           ticksGenerator={this.axesTicksGenerator}
@@ -2305,7 +2305,7 @@ export const generateCategoricalChart = ({
       const events = this.parseEventsOfWrapper();
       return (
         <div
-          className={classNames('recharts-wrapper', className)}
+          className={clsx('recharts-wrapper', className)}
           style={{ position: 'relative', cursor: 'default', width, height, ...style }}
           {...events}
           ref={(node: HTMLDivElement) => {
@@ -2313,7 +2313,14 @@ export const generateCategoricalChart = ({
           }}
           role="region"
         >
-          <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
+          <Surface
+            {...attrs}
+            width={width}
+            height={height}
+            title={title}
+            desc={desc}
+            style={{ width: '100%', height: '100%' }}
+          >
             {this.renderClipPath()}
             {renderByOrder(children, this.renderMap)}
           </Surface>

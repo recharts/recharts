@@ -165,8 +165,8 @@ describe('<ResponsiveContainer />', () => {
 
     notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
 
-    expect(element.lastElementChild).toHaveAttribute('width', '100');
-    expect(element.lastElementChild).toHaveAttribute('height', '200');
+    expect(element.firstElementChild).toHaveAttribute('width', '100');
+    expect(element.firstElementChild).toHaveAttribute('height', '200');
   });
 
   it('should resize when debounced', () => {
@@ -185,8 +185,8 @@ describe('<ResponsiveContainer />', () => {
 
     notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
     vi.advanceTimersByTime(200);
-    expect(element.lastElementChild).toHaveAttribute('width', '100');
-    expect(element.lastElementChild).toHaveAttribute('height', '200');
+    expect(element.firstElementChild).toHaveAttribute('width', '100');
+    expect(element.firstElementChild).toHaveAttribute('height', '200');
   });
 
   it('should call onResize when ResizeObserver notifies one or many changes', () => {
@@ -204,8 +204,8 @@ describe('<ResponsiveContainer />', () => {
 
     notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
 
-    expect(element.lastElementChild).toHaveAttribute('width', '100');
-    expect(element.lastElementChild).toHaveAttribute('height', '200');
+    expect(element.firstElementChild).toHaveAttribute('width', '100');
+    expect(element.firstElementChild).toHaveAttribute('height', '200');
 
     expect(onResize).toHaveBeenCalledTimes(1);
 

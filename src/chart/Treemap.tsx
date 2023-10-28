@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import _ from 'lodash';
 /**
  * @fileOverview TreemapChart
@@ -731,7 +731,7 @@ export class Treemap extends PureComponent<Props, State> {
 
     return (
       <div
-        className={classNames('recharts-wrapper', className)}
+        className={clsx('recharts-wrapper', className)}
         style={{ ...style, position: 'relative', cursor: 'default', width, height }}
         role="region"
       >
