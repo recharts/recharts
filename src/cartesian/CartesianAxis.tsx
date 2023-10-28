@@ -3,7 +3,7 @@
  */
 import React, { ReactElement, ReactNode, Component, SVGProps } from 'react';
 import _ from 'lodash';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { shallowEqual } from '../util/ShallowEqual';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
@@ -232,7 +232,7 @@ export class CartesianAxis extends Component<Props, IState> {
       };
     }
 
-    return <line {...props} className={classNames('recharts-cartesian-axis-line', _.get(axisLine, 'className'))} />;
+    return <line {...props} className={clsx('recharts-cartesian-axis-line', _.get(axisLine, 'className'))} />;
   }
 
   static renderTickItem(option: Props['tick'], props: any, value: ReactNode) {
@@ -298,7 +298,7 @@ export class CartesianAxis extends Component<Props, IState> {
             <line
               {...tickLineProps}
               {...lineCoord}
-              className={classNames('recharts-cartesian-axis-tick-line', _.get(tickLine, 'className'))}
+              className={clsx('recharts-cartesian-axis-tick-line', _.get(tickLine, 'className'))}
             />
           )}
           {tick &&
@@ -334,7 +334,7 @@ export class CartesianAxis extends Component<Props, IState> {
 
     return (
       <Layer
-        className={classNames('recharts-cartesian-axis', className)}
+        className={clsx('recharts-cartesian-axis', className)}
         ref={ref => {
           this.layerReference = ref;
         }}
