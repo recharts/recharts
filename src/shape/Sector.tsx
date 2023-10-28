@@ -2,7 +2,7 @@
  * @fileOverview Sector
  */
 import React, { SVGProps } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { GeometrySector } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';
@@ -226,7 +226,7 @@ export const Sector: React.FC<Props> = sectorProps => {
     return null;
   }
 
-  const layerClass = classNames('recharts-sector', className);
+  const layerClass = clsx('recharts-sector', className);
   const deltaRadius = outerRadius - innerRadius;
   const cr = getPercentValue(cornerRadius, deltaRadius, 0, true);
   let path;

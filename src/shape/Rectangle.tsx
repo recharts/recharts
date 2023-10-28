@@ -2,7 +2,7 @@
  * @fileOverview Rectangle
  */
 import React, { SVGProps, useEffect, useRef, useState } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Animate from 'react-smooth';
 import { AnimationDuration, AnimationTiming } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
@@ -144,7 +144,7 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
     return null;
   }
 
-  const layerClass = classNames('recharts-rectangle', className);
+  const layerClass = clsx('recharts-rectangle', className);
   if (!isUpdateAnimationActive) {
     return (
       <path {...filterProps(props, true)} className={layerClass} d={getRectanglePath(x, y, width, height, radius)} />

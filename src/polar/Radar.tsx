@@ -3,7 +3,7 @@
  */
 import React, { PureComponent, ReactElement, MouseEvent, SVGProps } from 'react';
 import Animate from 'react-smooth';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import _ from 'lodash';
 import { interpolateNumber } from '../util/DataUtils';
 import { Global } from '../util/Global';
@@ -338,7 +338,7 @@ export class Radar extends PureComponent<Props, State> {
     }
 
     const { isAnimationFinished } = this.state;
-    const layerClass = classNames('recharts-radar', className);
+    const layerClass = clsx('recharts-radar', className);
 
     return (
       <Layer className={layerClass}>
