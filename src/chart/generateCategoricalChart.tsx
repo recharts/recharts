@@ -1306,15 +1306,15 @@ export const generateCategoricalChart = ({
         return null;
       }
 
-      const containerOffset = getOffset(this.container);
+      const element = this.container;
+      const boundingRect = element.getBoundingClientRect();
+      const containerOffset = getOffset(boundingRect);
       const e = {
         chartX: Math.round(event.pageX - containerOffset.left),
         chartY: Math.round(event.pageY - containerOffset.top),
       };
 
-      const element = this.container;
-      const boundingRectWidth = element.getBoundingClientRect().width;
-      const scale = boundingRectWidth / element.offsetWidth || 1;
+      const scale = boundingRect.width / element.offsetWidth || 1;
 
       const rangeObj = this.inRange(e.chartX, e.chartY, scale);
       if (!rangeObj) {

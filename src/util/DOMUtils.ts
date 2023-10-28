@@ -131,12 +131,9 @@ interface ContainerOffset {
   left: number;
 }
 
-export const getOffset = (el: HTMLElement): ContainerOffset => {
-  const html = el.ownerDocument.documentElement;
-  const box = el.getBoundingClientRect();
-
+export const getOffset = (rect: ContainerOffset): ContainerOffset => {
   return {
-    top: box.top + window.pageYOffset - html.clientTop,
-    left: box.left + window.pageXOffset - html.clientLeft,
+    top: rect.top + window.scrollY - document.documentElement.clientTop,
+    left: rect.left + window.scrollX - document.documentElement.clientLeft,
   };
 };
