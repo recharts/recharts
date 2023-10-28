@@ -153,7 +153,7 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
         width: calculatedWidth,
         height: calculatedHeight,
         // calculate the actual size and override it.
-        style: { width: '100%', height: '100%' },
+        style: { height: '100%', width: '100%', maxHeight: calculatedHeight, maxWidth: calculatedWidth },
       });
     }, [aspect, children, height, maxHeight, minHeight, minWidth, sizes, width]);
 
