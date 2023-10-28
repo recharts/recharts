@@ -2267,6 +2267,8 @@ export const generateCategoricalChart = ({
       Customized: { handler: this.renderCustomized },
     };
 
+    surfaceStyle = { width: '100%', height: '100%' };
+
     render() {
       if (!validateWidthHeight(this)) {
         return null;
@@ -2313,14 +2315,7 @@ export const generateCategoricalChart = ({
           }}
           role="region"
         >
-          <Surface
-            {...attrs}
-            width={width}
-            height={height}
-            title={title}
-            desc={desc}
-            style={{ width: '100%', height: '100%' }}
-          >
+          <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={this.surfaceStyle}>
             {this.renderClipPath()}
             {renderByOrder(children, this.renderMap)}
           </Surface>
