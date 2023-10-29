@@ -1,4 +1,4 @@
-import React, { isValidElement, cloneElement } from 'react';
+import React, { isValidElement, cloneElement, SVGProps } from 'react';
 import isFunction from 'lodash/isFunction';
 import isPlainObject from 'lodash/isPlainObject';
 import isBoolean from 'lodash/isBoolean';
@@ -31,7 +31,7 @@ export type ShapeProps<OptionType, ExtraProps, ShapePropsType> = {
   option: OptionType;
   isActive: boolean;
   activeClassName?: string;
-  propTransformer?: (option: OptionType, props: ExtraProps) => ShapePropsType;
+  propTransformer?: (option: OptionType, props: unknown) => ShapePropsType;
 } & ExtraProps;
 
 function defaultPropTransformer<OptionType, ExtraProps, ShapePropsType>(option: OptionType, props: ExtraProps) {
@@ -69,6 +69,14 @@ function ShapeSelector<ShapePropsType>({
   }
 }
 
+export function getPropsFromShapeOption(option: unknown): SVGProps<SVGPathElement> {
+  if (isValidElement(option)) {
+    return option.props;
+  }
+
+  return option;
+}
+
 export function Shape<OptionType, ExtraProps, ShapePropsType>({
   option,
   shapeType,
@@ -80,13 +88,12 @@ export function Shape<OptionType, ExtraProps, ShapePropsType>({
   let shape: React.JSX.Element;
 
   if (isValidElement(option)) {
-    shape = cloneElement(option, props);
+    shape = cloneElement(option, { ...props, ...getPropsFromShapeOption(option) });
   } else if (isFunction(option)) {
     shape = option(props);
   } else if (isPlainObject(option) && !isBoolean(option)) {
-    const shapeProps = props as unknown as ExtraProps;
-    const elementProps = propTransformer(option, shapeProps);
-    shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={elementProps} />;
+    const nextProps = propTransformer(option, props);
+    shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={nextProps} />;
   } else {
     const elementProps = props as unknown as ShapePropsType;
     shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={elementProps} />;

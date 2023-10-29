@@ -2,7 +2,7 @@
  * @fileOverview Area
  */
 import React, { PureComponent, ReactElement, SVGProps } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Animate from 'react-smooth';
 import isFunction from 'lodash/isFunction';
 import max from 'lodash/max';
@@ -549,7 +549,7 @@ export class Area extends PureComponent<Props, State> {
 
     const { isAnimationFinished } = this.state;
     const hasSinglePoint = points.length === 1;
-    const layerClass = classNames('recharts-area', className);
+    const layerClass = clsx('recharts-area', className);
     const needClipX = xAxis && xAxis.allowDataOverflow;
     const needClipY = yAxis && yAxis.allowDataOverflow;
     const needClip = needClipX || needClipY;

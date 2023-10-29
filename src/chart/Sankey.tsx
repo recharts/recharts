@@ -2,13 +2,13 @@
  * @file TreemapChart
  */
 import React, { PureComponent, ReactElement, SVGProps } from 'react';
-import classNames from 'classnames';
 import maxBy from 'lodash/maxBy';
 import min from 'lodash/min';
 import get from 'lodash/get';
 import sumBy from 'lodash/sumBy';
 import isFunction from 'lodash/isFunction';
 
+import clsx from 'clsx';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
@@ -707,7 +707,7 @@ export class Sankey extends PureComponent<Props, State> {
 
     return (
       <div
-        className={classNames('recharts-wrapper', className)}
+        className={clsx('recharts-wrapper', className)}
         style={{ ...style, position: 'relative', cursor: 'default', width, height }}
         role="region"
       >

@@ -684,31 +684,32 @@ export const getTicksOfAxis = (
 /**
  * combine the handlers
  * @param  {Function} defaultHandler Internal private handler
- * @param  {Function} parentHandler  Handler function specified in parent component
- * @param  {Function} childHandler   Handler function specified in child component
+ * @param  {Function} childHandler Handler function specified in child component
  * @return {Function}                The combined handler
  */
-export const combineEventHandlers = (defaultHandler: Function, parentHandler: Function, childHandler: Function) => {
-  let customizedHandler: Function;
 
-  if (isFunction(childHandler)) {
-    customizedHandler = childHandler;
-  } else if (isFunction(parentHandler)) {
-    customizedHandler = parentHandler;
+const handlerWeakMap = new WeakMap();
+export const combineEventHandlers = (defaultHandler: Function, childHandler: Function | undefined): Function => {
+  if (typeof childHandler !== 'function') {
+    return defaultHandler;
   }
 
-  if (isFunction(defaultHandler) || customizedHandler) {
-    return (arg1: any, arg2: any, arg3: any, arg4: any) => {
-      if (isFunction(defaultHandler)) {
-        defaultHandler(arg1, arg2, arg3, arg4);
-      }
-      if (isFunction(customizedHandler)) {
-        customizedHandler(arg1, arg2, arg3, arg4);
-      }
-    };
+  if (!handlerWeakMap.has(defaultHandler)) {
+    handlerWeakMap.set(defaultHandler, new WeakMap());
+  }
+  const childWeakMap = handlerWeakMap.get(defaultHandler);
+
+  if (childWeakMap.has(childHandler)) {
+    return childWeakMap.get(childHandler);
   }
 
-  return null;
+  const combineHandler = (...args: any[]) => {
+    defaultHandler(...args);
+    childHandler(...args);
+  };
+
+  childWeakMap.set(childHandler, combineHandler);
+  return combineHandler;
 };
 
 /**

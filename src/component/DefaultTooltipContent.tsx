@@ -3,9 +3,9 @@
  */
 
 import React, { CSSProperties, ReactNode } from 'react';
-import classNames from 'classnames';
 import sortBy from 'lodash/sortBy';
 import isNil from 'lodash/isNil';
+import clsx from 'clsx';
 import { isNumOrStr } from '../util/DataUtils';
 
 function defaultFormatter<TValue extends ValueType>(value: TValue) {
@@ -133,8 +133,8 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
   };
   const hasLabel = !isNil(label);
   let finalLabel = hasLabel ? label : '';
-  const wrapperCN = classNames('recharts-default-tooltip', wrapperClassName);
-  const labelCN = classNames('recharts-tooltip-label', labelClassName);
+  const wrapperCN = clsx('recharts-default-tooltip', wrapperClassName);
+  const labelCN = clsx('recharts-tooltip-label', labelClassName);
 
   if (hasLabel && labelFormatter && payload !== undefined && payload !== null) {
     finalLabel = labelFormatter(label, payload);

@@ -2,9 +2,8 @@
  * @fileOverview Reference Dot
  */
 import React, { ReactElement } from 'react';
-
 import isFunction from 'lodash/isFunction';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { ImplicitLabelType, Label } from '../component/Label';
@@ -86,7 +85,7 @@ export function ReferenceDot(props: Props) {
   };
 
   return (
-    <Layer className={classNames('recharts-reference-dot', className)}>
+    <Layer className={clsx('recharts-reference-dot', className)}>
       {ReferenceDot.renderDot(shape, dotProps)}
       {Label.renderCallByParent(props, {
         x: cx - r,

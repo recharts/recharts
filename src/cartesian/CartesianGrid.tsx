@@ -308,10 +308,12 @@ export class CartesianGrid extends PureComponent<Props> {
 
       horizontalPoints = horizontalCoordinatesGenerator(
         {
-          yAxis: {
-            ...yAxis,
-            ticks: isHorizontalValues ? horizontalValues : yAxis.ticks,
-          },
+          yAxis: yAxis
+            ? {
+                ...yAxis,
+                ticks: isHorizontalValues ? horizontalValues : yAxis.ticks,
+              }
+            : undefined,
           width: chartWidth,
           height: chartHeight,
           offset,
@@ -326,10 +328,12 @@ export class CartesianGrid extends PureComponent<Props> {
 
       verticalPoints = verticalCoordinatesGenerator(
         {
-          xAxis: {
-            ...xAxis,
-            ticks: isVerticalValues ? verticalValues : xAxis.ticks,
-          },
+          xAxis: xAxis
+            ? {
+                ...xAxis,
+                ticks: isVerticalValues ? verticalValues : xAxis.ticks,
+              }
+            : undefined,
           width: chartWidth,
           height: chartHeight,
           offset,

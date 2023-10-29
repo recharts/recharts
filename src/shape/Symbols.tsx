@@ -15,7 +15,7 @@ import {
   symbolWye,
   SymbolType as D3SymbolType,
 } from 'victory-vendor/d3-shape';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { SymbolType } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
@@ -104,7 +104,7 @@ export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest
     return (
       <path
         {...filteredProps}
-        className={classNames('recharts-symbols', className)}
+        className={clsx('recharts-symbols', className)}
         transform={`translate(${cx}, ${cy})`}
         d={getPath()}
       />

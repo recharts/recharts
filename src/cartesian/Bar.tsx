@@ -2,7 +2,7 @@
  * @fileOverview Render a group of bar
  */
 import React, { Key, PureComponent, ReactElement } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Animate from 'react-smooth';
 import isEqual from 'lodash/isEqual';
 import isNil from 'lodash/isNil';
@@ -473,7 +473,7 @@ export class Bar extends PureComponent<Props, State> {
     }
 
     const { isAnimationFinished } = this.state;
-    const layerClass = classNames('recharts-bar', className);
+    const layerClass = clsx('recharts-bar', className);
     const needClipX = xAxis && xAxis.allowDataOverflow;
     const needClipY = yAxis && yAxis.allowDataOverflow;
     const needClip = needClipX || needClipY;

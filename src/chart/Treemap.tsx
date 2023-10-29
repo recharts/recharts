@@ -1,8 +1,8 @@
-import classNames from 'classnames';
 import isNan from 'lodash/isNaN';
 import isFunction from 'lodash/isFunction';
 import omit from 'lodash/omit';
 import get from 'lodash/get';
+import clsx from 'clsx';
 /**
  * @fileOverview TreemapChart
  */
@@ -734,7 +734,7 @@ export class Treemap extends PureComponent<Props, State> {
 
     return (
       <div
-        className={classNames('recharts-wrapper', className)}
+        className={clsx('recharts-wrapper', className)}
         style={{ ...style, position: 'relative', cursor: 'default', width, height }}
         role="region"
       >

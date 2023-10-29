@@ -4,8 +4,7 @@
 import React, { ReactElement, SVGProps } from 'react';
 import isFunction from 'lodash/isFunction';
 import some from 'lodash/some';
-
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
 import { IfOverflow, ifOverflowMatches } from '../util/IfOverflowMatches';
@@ -149,7 +148,7 @@ export function ReferenceLine(props: Props) {
   };
 
   return (
-    <Layer className={classNames('recharts-reference-line', className)}>
+    <Layer className={clsx('recharts-reference-line', className)}>
       {renderLine(shape, lineProps)}
       {Label.renderCallByParent(props, rectWithCoords({ x1, y1, x2, y2 }))}
     </Layer>

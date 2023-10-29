@@ -20,10 +20,10 @@ import {
   curveStepAfter,
   curveStepBefore,
 } from 'victory-vendor/d3-shape';
-import classNames from 'classnames';
 import upperFirst from 'lodash/upperFirst';
 import isFunction from 'lodash/isFunction';
 
+import clsx from 'clsx';
 import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { isNumber } from '../util/DataUtils';
@@ -156,7 +156,7 @@ export const Curve: React.FC<Props> = props => {
     <path
       {...filterProps(props)}
       {...adaptEventHandlers(props)}
-      className={classNames('recharts-curve', className)}
+      className={clsx('recharts-curve', className)}
       d={realPath}
       ref={pathRef}
     />

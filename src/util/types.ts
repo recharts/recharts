@@ -20,6 +20,7 @@ import {
   TransitionEvent,
   UIEvent,
   WheelEvent,
+  JSX,
 } from 'react';
 import isObject from 'lodash/isObject';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
@@ -1320,5 +1321,6 @@ export type Size = { width: number; height: number };
 export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElement> =
   | ReactElement<SVGProps<ElementType>>
   | ((props: PropsType) => ReactElement<SVGProps<ElementType>>)
+  | ((props: unknown) => JSX.Element)
   | SVGProps<ElementType>
   | boolean;

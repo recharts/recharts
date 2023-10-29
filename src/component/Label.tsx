@@ -1,9 +1,8 @@
 import React, { cloneElement, isValidElement, ReactNode, ReactElement, createElement, SVGProps } from 'react';
-
-import classNames from 'classnames';
 import isNil from 'lodash/isNil';
 import isFunction from 'lodash/isFunction';
 import isObject from 'lodash/isObject';
+import clsx from 'clsx';
 import { Text } from './Text';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign } from '../util/DataUtils';
@@ -108,7 +107,7 @@ const renderRadialLabel = (labelProps: Props, label: ReactNode, attrs: SVGProps<
   const id = isNil(labelProps.id) ? uniqueId('recharts-radial-line-') : labelProps.id;
 
   return (
-    <text {...attrs} dominantBaseline="central" className={classNames('recharts-radial-bar-label', className)}>
+    <text {...attrs} dominantBaseline="central" className={clsx('recharts-radial-bar-label', className)}>
       <defs>
         <path id={id} d={path} />
       </defs>
@@ -409,12 +408,7 @@ export function Label({ offset = 5, ...restProps }: Props) {
   const positionAttrs = isPolarLabel ? getAttrsOfPolarLabel(props) : getAttrsOfCartesianLabel(props);
 
   return (
-    <Text
-      className={classNames('recharts-label', className)}
-      {...attrs}
-      {...(positionAttrs as any)}
-      breakAll={textBreakAll}
-    >
+    <Text className={clsx('recharts-label', className)} {...attrs} {...(positionAttrs as any)} breakAll={textBreakAll}>
       {label}
     </Text>
   );

@@ -2,7 +2,7 @@
  * @fileOverview Brush
  */
 import React, { PureComponent, Children, ReactText, ReactElement, TouchEvent, SVGProps } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
 import isFunction from 'lodash/isFunction';
 import range from 'lodash/range';
@@ -601,7 +601,7 @@ export class Brush extends PureComponent<Props, State> {
       return null;
     }
 
-    const layerClass = classNames('recharts-brush', className);
+    const layerClass = clsx('recharts-brush', className);
     const isPanoramic = React.Children.count(children) === 1;
     const style = generatePrefixStyle('userSelect', 'none');
 

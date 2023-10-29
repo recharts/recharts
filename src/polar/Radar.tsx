@@ -3,13 +3,13 @@
  */
 import React, { PureComponent, ReactElement, MouseEvent, SVGProps } from 'react';
 import Animate from 'react-smooth';
-import classNames from 'classnames';
 import isNil from 'lodash/isNil';
 import last from 'lodash/last';
 import first from 'lodash/first';
 import isEqual from 'lodash/isEqual';
 import isFunction from 'lodash/isFunction';
 
+import clsx from 'clsx';
 import { interpolateNumber } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { polarToCartesian } from '../util/PolarUtils';
@@ -343,7 +343,7 @@ export class Radar extends PureComponent<Props, State> {
     }
 
     const { isAnimationFinished } = this.state;
-    const layerClass = classNames('recharts-radar', className);
+    const layerClass = clsx('recharts-radar', className);
 
     return (
       <Layer className={layerClass}>

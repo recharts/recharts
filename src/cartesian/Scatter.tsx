@@ -3,11 +3,11 @@
  */
 import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
-import classNames from 'classnames';
 
 import isNil from 'lodash/isNil';
 import isEqual from 'lodash/isEqual';
 import isFunction from 'lodash/isFunction';
+import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
 import { findAllByType, filterProps } from '../util/ReactUtils';
@@ -421,7 +421,7 @@ export class Scatter extends PureComponent<Props, State> {
       return null;
     }
     const { isAnimationFinished } = this.state;
-    const layerClass = classNames('recharts-scatter', className);
+    const layerClass = clsx('recharts-scatter', className);
     const needClipX = xAxis && xAxis.allowDataOverflow;
     const needClipY = yAxis && yAxis.allowDataOverflow;
     const needClip = needClipX || needClipY;

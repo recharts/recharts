@@ -4,6 +4,7 @@ import { Pie, ResponsiveContainer, Surface } from '../../../../src';
 import { EventHandlers } from '../props/EventHandlers';
 import { AnimationProps } from '../props/AnimationProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+import { ActiveShapeProps } from '../props/ActiveShapeProps';
 
 const GeneralProps: Args = {
   cx: {
@@ -112,14 +113,8 @@ const GeneralProps: Args = {
     description: 'The source data which each element is an object.',
     table: { type: { summary: 'Array' }, category: 'General' },
   },
-  activeIndex: {
-    description: 'The index of active sector in Pie, this option can be changed in mouse event handlers.',
-    table: { type: { summary: 'Array' }, category: 'General' },
-  },
-  activeShape: {
-    description: 'The shape of active sector.',
-    table: { type: { summary: 'Object | ReactElement | Function' }, category: 'General' },
-  },
+  activeIndex: ActiveShapeProps.activeIndex,
+  activeShape: ActiveShapeProps.activeShape,
   inactiveShape: {
     description: 'The shape of inactive sector.',
     table: { type: { summary: 'Object | ReactElement | Function' }, category: 'General' },

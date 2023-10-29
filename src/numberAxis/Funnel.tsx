@@ -3,13 +3,13 @@
  */
 import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
-import classNames from 'classnames';
 import isFunction from 'lodash/isFunction';
 import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
 
+import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { Props as TrapezoidProps } from '../shape/Trapezoid';
 import { LabelList } from '../component/LabelList';
@@ -43,6 +43,7 @@ interface InternalFunnelProps {
   nameKey?: DataKey<any>;
   data?: any[];
   hide?: boolean;
+  shape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   activeShape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   legendType?: LegendType;
   tooltipType?: TooltipType;
@@ -269,10 +270,10 @@ export class Funnel extends PureComponent<FunnelProps, State> {
   }
 
   renderTrapezoidsStatically(trapezoids: FunnelTrapezoidItem[]) {
-    const { activeShape } = this.props;
+    const { shape, activeShape } = this.props;
 
     return trapezoids.map((entry, i) => {
-      const trapezoidOptions = this.isActiveIndex(i) ? activeShape : null;
+      const trapezoidOptions = this.isActiveIndex(i) ? activeShape : shape;
       const trapezoidProps = {
         ...entry,
         isActive: this.isActiveIndex(i),
@@ -374,7 +375,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
       return null;
     }
 
-    const layerClass = classNames('recharts-trapezoids', className);
+    const layerClass = clsx('recharts-trapezoids', className);
 
     return (
       <Layer className={layerClass}>
