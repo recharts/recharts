@@ -2,8 +2,9 @@
  * @fileOverview Default Legend Content
  */
 import React, { PureComponent, ReactNode, MouseEvent, ReactText, ReactElement } from 'react';
+import isFunction from 'lodash/isFunction';
+
 import clsx from 'clsx';
-import _ from 'lodash';
 import { warn } from '../util/LogUtils';
 import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';
@@ -172,9 +173,9 @@ export class DefaultLegendContent extends PureComponent<Props> {
       }
 
       // Do not render entry.value as functions. Always require static string properties.
-      const entryValue = !_.isFunction(entry.value) ? entry.value : null;
+      const entryValue = !isFunction(entry.value) ? entry.value : null;
       warn(
-        !_.isFunction(entry.value),
+        !isFunction(entry.value),
         `The name property is also required when using a function for the dataKey of a chart's cartesian components. Ex: <Bar name="Name of my Data"/>`, // eslint-disable-line max-len
       );
 

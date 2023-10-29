@@ -1,7 +1,16 @@
-import React, { cloneElement, Component, createElement, isValidElement, ReactElement } from 'react';
+import React, { Component, cloneElement, isValidElement, createElement, ReactElement } from 'react';
+import isNil from 'lodash/isNil';
+import isFunction from 'lodash/isFunction';
+import range from 'lodash/range';
+import get from 'lodash/get';
+import sortBy from 'lodash/sortBy';
+import throttle from 'lodash/throttle';
+import find from 'lodash/find';
+import every from 'lodash/every';
+
 import clsx from 'clsx';
+// eslint-disable-next-line no-restricted-imports
 import type { DebouncedFunc } from 'lodash';
-import _ from 'lodash';
 import invariant from 'tiny-invariant';
 import { getRadialCursorPoints } from '../util/cursor/getRadialCursorPoints';
 import { getTicks } from '../cartesian/getTicks';
@@ -363,7 +372,7 @@ export const getAxisMapByAxes = (
           if (allowDuplicatedCategory && duplicate) {
             duplicateDomain = domain;
             // When category axis has duplicated text, serial numbers are used to generate scale
-            domain = _.range(0, len);
+            domain = range(0, len);
           } else if (!allowDuplicatedCategory) {
             // remove duplicated category
             domain = parseDomainOfCategoryAxis(childDomain, domain, child).reduce(
@@ -377,14 +386,12 @@ export const getAxisMapByAxes = (
           if (!allowDuplicatedCategory) {
             domain = parseDomainOfCategoryAxis(childDomain, domain, child).reduce(
               (finalDomain: any, entry: any) =>
-                finalDomain.indexOf(entry) >= 0 || entry === '' || _.isNil(entry)
-                  ? finalDomain
-                  : [...finalDomain, entry],
+                finalDomain.indexOf(entry) >= 0 || entry === '' || isNil(entry) ? finalDomain : [...finalDomain, entry],
               [],
             );
           } else {
             // eliminate undefined or null or empty string
-            domain = domain.filter((entry: any) => entry !== '' && !_.isNil(entry));
+            domain = domain.filter((entry: any) => entry !== '' && !isNil(entry));
           }
         } else if (type === 'number') {
           // the field type is numerical
@@ -406,7 +413,7 @@ export const getAxisMapByAxes = (
         }
       } else if (isCategorical) {
         // the axis is a categorical axis
-        domain = _.range(0, len);
+        domain = range(0, len);
       } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack && type === 'number') {
         // when stackOffset is 'expand', the domain may be calculated as [0, 1.000000000002]
         domain =
@@ -513,7 +520,7 @@ const getAxisMapByItems = (
       let domain;
 
       if (isCategorical) {
-        domain = _.range(0, len);
+        domain = range(0, len);
       } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack) {
         domain = getDomainOfStackGroups(stackGroups[axisId].stackGroups, dataStartIndex, dataEndIndex);
         domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
@@ -537,7 +544,7 @@ const getAxisMapByItems = (
           axisType,
           ...Axis.defaultProps,
           hide: true,
-          orientation: _.get(ORIENT_MAP, `${axisType}.${index % 2}`, null),
+          orientation: get(ORIENT_MAP, `${axisType}.${index % 2}`, null),
           domain,
           originalDomain,
           isCategorical,
@@ -619,7 +626,7 @@ const tooltipTicksGenerator = (axisMap: AxisMap) => {
 
   return {
     tooltipTicks,
-    orderedTooltipTicks: _.sortBy(tooltipTicks, o => o.coordinate),
+    orderedTooltipTicks: sortBy(tooltipTicks, o => o.coordinate),
     tooltipAxis: axis,
     tooltipAxisBandSize: getBandSizeOfAxis(axis, tooltipTicks),
   };
@@ -721,7 +728,7 @@ const calculateOffset = (
       const { orientation } = entry;
 
       if (!entry.mirror && !entry.hide) {
-        return { ...result, [orientation]: _.get(result, `${orientation}`) + entry.height };
+        return { ...result, [orientation]: get(result, `${orientation}`) + entry.height };
       }
 
       return result;
@@ -958,7 +965,7 @@ export const generateCategoricalChart = ({
 
       if (itemIsBar) {
         // 如果是bar，计算bar的位置
-        const maxBarSize: number = _.isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
+        const maxBarSize: number = isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
         const barBandSize: number = getBandSizeOfAxis(cateAxis, cateTicks, true) ?? maxBarSize ?? 0;
         barPosition = getBarPosition({
           barGap,
@@ -1116,7 +1123,7 @@ export const generateCategoricalChart = ({
       this.clipPathId = `${props.id ?? uniqueId('recharts')}-clip`;
 
       // trigger 60fps
-      this.throttleTriggeredAfterMouseMove = _.throttle(this.triggeredAfterMouseMove, props.throttleDelay ?? 1000 / 60);
+      this.throttleTriggeredAfterMouseMove = throttle(this.triggeredAfterMouseMove, props.throttleDelay ?? 1000 / 60);
 
       this.state = {};
     }
@@ -1256,7 +1263,7 @@ export const generateCategoricalChart = ({
       }
       if (!isChildrenEqual(children, prevState.prevChildren)) {
         // update configuration in children
-        const hasGlobalData = !_.isNil(data);
+        const hasGlobalData = !isNil(data);
         const newUpdateId = hasGlobalData ? prevState.updateId : prevState.updateId + 1;
 
         return {
@@ -1481,7 +1488,7 @@ export const generateCategoricalChart = ({
         this.triggerSyncEvent(nextState);
 
         const { onMouseEnter } = this.props;
-        if (_.isFunction(onMouseEnter)) {
+        if (isFunction(onMouseEnter)) {
           onMouseEnter(nextState, e);
         }
       }
@@ -1495,7 +1502,7 @@ export const generateCategoricalChart = ({
       this.triggerSyncEvent(nextState);
 
       const { onMouseMove } = this.props;
-      if (_.isFunction(onMouseMove)) {
+      if (isFunction(onMouseMove)) {
         onMouseMove(nextState, e);
       }
     };
@@ -1529,6 +1536,7 @@ export const generateCategoricalChart = ({
      * @param  {React.MouseEvent} e        Event object
      * @return {void} no return
      */
+
     handleMouseMove = (e: MousePointer & Partial<Omit<React.MouseEvent, keyof MousePointer>>): void => {
       e.persist();
       this.throttleTriggeredAfterMouseMove(e);
@@ -1546,7 +1554,7 @@ export const generateCategoricalChart = ({
       this.triggerSyncEvent(nextState);
 
       const { onMouseLeave } = this.props;
-      if (_.isFunction(onMouseLeave)) {
+      if (isFunction(onMouseLeave)) {
         onMouseLeave(nextState, e);
       }
     };
@@ -1554,8 +1562,8 @@ export const generateCategoricalChart = ({
     handleOuterEvent = (e: React.MouseEvent | React.TouchEvent) => {
       const eventName = getReactEventByType(e);
 
-      const event = _.get(this.props, `${eventName}`);
-      if (eventName && _.isFunction(event)) {
+      const event = get(this.props, `${eventName}`);
+      if (eventName && isFunction(event)) {
         let mouse;
         if (/.*touch.*/i.test(eventName)) {
           mouse = this.getMouseInfo((e as React.TouchEvent).changedTouches[0]);
@@ -1576,7 +1584,7 @@ export const generateCategoricalChart = ({
         this.triggerSyncEvent(nextState);
 
         const { onClick } = this.props;
-        if (_.isFunction(onClick)) {
+        if (isFunction(onClick)) {
           onClick(nextState, e);
         }
       }
@@ -1584,7 +1592,8 @@ export const generateCategoricalChart = ({
 
     handleMouseDown = (e: React.MouseEvent | React.Touch) => {
       const { onMouseDown } = this.props;
-      if (_.isFunction(onMouseDown)) {
+
+      if (isFunction(onMouseDown)) {
         const nextState: CategoricalChartState = this.getMouseInfo(e);
         onMouseDown(nextState, e);
       }
@@ -1592,7 +1601,8 @@ export const generateCategoricalChart = ({
 
     handleMouseUp = (e: React.MouseEvent | React.Touch) => {
       const { onMouseUp } = this.props;
-      if (_.isFunction(onMouseUp)) {
+
+      if (isFunction(onMouseUp)) {
         const nextState: CategoricalChartState = this.getMouseInfo(e);
         onMouseUp(nextState, e);
       }
@@ -1792,8 +1802,8 @@ export const generateCategoricalChart = ({
     };
 
     renderPolarAxis = (element: any, displayName: string, index: number) => {
-      const axisType = _.get(element, 'type.axisType');
-      const axisMap = _.get(this.state, `${axisType}Map`);
+      const axisType = get(element, 'type.axisType');
+      const axisMap = get(this.state, `${axisType}Map`);
       const axisOption: BaseAxisProps | undefined = axisMap && axisMap[element.props[`${axisType}Id`]];
 
       return cloneElement(element, {
@@ -1849,7 +1859,7 @@ export const generateCategoricalChart = ({
       const { xAxisMap, yAxisMap, offset } = this.state;
       const { width, height } = this.props;
       const xAxis = getAnyElementOfObject(xAxisMap);
-      const yAxisWithFiniteDomain = _.find(yAxisMap, axis => _.every(axis.domain, Number.isFinite));
+      const yAxisWithFiniteDomain = find(yAxisMap, axis => every(axis.domain, Number.isFinite));
       const yAxis = yAxisWithFiniteDomain || getAnyElementOfObject(yAxisMap);
       const props = element.props || {};
 
@@ -1993,7 +2003,7 @@ export const generateCategoricalChart = ({
 
       if (isValidElement(option)) {
         dot = cloneElement(option, props);
-      } else if (_.isFunction(option)) {
+      } else if (isFunction(option)) {
         dot = option(props);
       } else {
         dot = <Dot {...props} />;
@@ -2099,7 +2109,7 @@ export const generateCategoricalChart = ({
             return [cloneElement(element, { ...item.props, ...itemEvents, activeIndex }), null, null];
           }
 
-          if (!_.isNil(activePoint)) {
+          if (!isNil(activePoint)) {
             return [
               graphicalItem,
               ...this.renderActivePoints({
