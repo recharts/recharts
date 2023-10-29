@@ -100,6 +100,8 @@ const ORIENT_MAP = {
   yAxis: ['left', 'right'],
 };
 
+const FULL_WIDTH_AND_HEIGHT = { width: '100%', height: '100%' };
+
 const originCoordinate: Coordinate = { x: 0, y: 0 };
 
 const calculateTooltipPos = (rangeObj: any, layout: LayoutType): any => {
@@ -2267,8 +2269,6 @@ export const generateCategoricalChart = ({
       Customized: { handler: this.renderCustomized },
     };
 
-    surfaceStyle = { width: '100%', height: '100%' };
-
     render() {
       if (!validateWidthHeight(this)) {
         return null;
@@ -2315,7 +2315,7 @@ export const generateCategoricalChart = ({
           }}
           role="region"
         >
-          <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={this.surfaceStyle}>
+          <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
             {this.renderClipPath()}
             {renderByOrder(children, this.renderMap)}
           </Surface>

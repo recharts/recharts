@@ -80,9 +80,9 @@ export class Legend extends PureComponent<Props, State> {
     return null;
   }
 
-  bbox = {
-    boxWidth: -1,
-    boxHeight: -1,
+  lastBoundingBox = {
+    width: -1,
+    height: -1,
   };
 
   public componentDidMount() {
@@ -102,22 +102,24 @@ export class Legend extends PureComponent<Props, State> {
   }
 
   private updateBBox() {
-    const { boxWidth, boxHeight } = this.bbox;
     const { onBBoxUpdate } = this.props;
 
     if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
       const box = this.wrapperNode.getBoundingClientRect();
 
-      if (Math.abs(box.width - boxWidth) > EPS || Math.abs(box.height - boxHeight) > EPS) {
-        this.bbox.boxWidth = box.width;
-        this.bbox.boxHeight = box.height;
+      if (
+        Math.abs(box.width - this.lastBoundingBox.width) > EPS ||
+        Math.abs(box.height - this.lastBoundingBox.height) > EPS
+      ) {
+        this.lastBoundingBox.width = box.width;
+        this.lastBoundingBox.height = box.height;
         if (onBBoxUpdate) {
           onBBoxUpdate(box);
         }
       }
-    } else if (boxWidth !== -1 || boxHeight !== -1) {
-      this.bbox.boxWidth = -1;
-      this.bbox.boxHeight = -1;
+    } else if (this.lastBoundingBox.width !== -1 || this.lastBoundingBox.height !== -1) {
+      this.lastBoundingBox.width = -1;
+      this.lastBoundingBox.height = -1;
       if (onBBoxUpdate) {
         onBBoxUpdate(null);
       }
@@ -125,10 +127,8 @@ export class Legend extends PureComponent<Props, State> {
   }
 
   private getBBoxSnapshot() {
-    const { boxWidth, boxHeight } = this.bbox;
-
-    if (boxWidth >= 0 && boxHeight >= 0) {
-      return { width: boxWidth, height: boxHeight };
+    if (this.lastBoundingBox.width >= 0 && this.lastBoundingBox.height >= 0) {
+      return { ...this.lastBoundingBox };
     }
 
     return { width: 0, height: 0 };
