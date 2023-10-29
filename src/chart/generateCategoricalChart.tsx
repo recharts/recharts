@@ -9,6 +9,7 @@ import find from 'lodash/find';
 import every from 'lodash/every';
 
 import clsx from 'clsx';
+// eslint-disable-next-line no-restricted-imports
 import type { DebouncedFunc } from 'lodash';
 import invariant from 'tiny-invariant';
 import { getRadialCursorPoints } from '../util/cursor/getRadialCursorPoints';
