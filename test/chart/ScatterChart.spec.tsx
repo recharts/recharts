@@ -1,6 +1,17 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { ScatterChart, Scatter, CartesianGrid, Tooltip, XAxis, YAxis, ZAxis, Legend, Symbols } from '../../src';
+import {
+  ScatterChart,
+  Scatter,
+  CartesianGrid,
+  Tooltip,
+  XAxis,
+  YAxis,
+  ZAxis,
+  Legend,
+  Symbols,
+  SymbolsProps,
+} from '../../src';
 import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 describe('ScatterChart of three dimension data', () => {
@@ -170,7 +181,7 @@ describe('ScatterChart of two dimension data', () => {
           name="A school"
           data={data}
           fill="#ff7300"
-          activeShape={props => <Symbols {...props} type="circle" fill="red" />}
+          activeShape={(props: SymbolsProps) => <Symbols {...props} type="circle" fill="red" />}
         />
         <Tooltip />
       </ScatterChart>,

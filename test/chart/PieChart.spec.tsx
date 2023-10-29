@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { PieChart, Pie, Legend, Cell, Tooltip, Sector } from '../../src';
+import { PieChart, Pie, Legend, Cell, Tooltip, Sector, SectorProps } from '../../src';
 import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 describe('<PieChart />', () => {
@@ -67,7 +67,7 @@ describe('<PieChart />', () => {
         <Pie
           dataKey="value"
           isAnimationActive={false}
-          activeShape={props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />}
+          activeShape={(props: SectorProps) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />}
           data={data}
           cx={200}
           cy={200}

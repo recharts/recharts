@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { RadialBarChart, RadialBar, Legend, Sector, Tooltip, Cell } from '../../src';
+import { RadialBarChart, RadialBar, Legend, Sector, Tooltip, Cell, SectorProps } from '../../src';
 import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 describe('<RadialBarChart />', () => {
@@ -213,7 +213,7 @@ describe('<RadialBarChart />', () => {
           background
           dataKey="uv"
           isAnimationActive={false}
-          activeShape={props => <Sector {...props} fill="red" />}
+          activeShape={(props: SectorProps) => <Sector {...props} fill="red" />}
         />
         <Tooltip />
       </RadialBarChart>,

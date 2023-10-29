@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Surface, Pie, Sector, LabelProps } from '../../src';
+import { Surface, Pie, Sector, LabelProps, SectorProps } from '../../src';
 import { Point } from '../../src/shape/Curve';
 import { PieSectorDataItem } from '../../src/polar/Pie';
 
@@ -69,7 +69,7 @@ describe('<Pie />', () => {
         <Pie
           isAnimationActive={false}
           activeIndex={0}
-          activeShape={props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />}
+          activeShape={(props: SectorProps) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />}
           cx={250}
           cy={250}
           innerRadius={0}

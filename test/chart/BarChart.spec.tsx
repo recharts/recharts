@@ -1,11 +1,16 @@
 import { render } from '@testing-library/react';
 import React from 'react';
-
-import { Bar, BarChart, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, Rectangle, RectangleProps, Tooltip, XAxis, YAxis } from '../../src';
 import { mockMouseEvent } from '../helper/mockMouseEvent';
 
+type DataType = {
+  name: string;
+  uv: number;
+  pv: number;
+};
+
 describe('<BarChart />', () => {
-  const data = [
+  const data: DataType[] = [
     { name: 'food', uv: 400, pv: 2400 },
     { name: 'cosmetic', uv: 300, pv: 4567 },
     { name: 'storage', uv: 300, pv: 1398 },
@@ -279,7 +284,7 @@ describe('<BarChart />', () => {
   });
 
   test('Render customized shapem when shape is set to be a function', () => {
-    const renderShape = (props: any) => {
+    const renderShape = (props: RectangleProps & DataType) => {
       const { x, y } = props;
 
       return <circle className="customized-shape" cx={x} cy={y} r={8} />;
