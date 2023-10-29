@@ -3,7 +3,6 @@
  */
 import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps } from 'react';
 import { translateStyle } from 'react-smooth';
-import _ from 'lodash';
 import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
 
 import { Global } from '../util/Global';
@@ -27,7 +26,7 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
   }
-  if (_.isFunction(content)) {
+  if (typeof content === 'function') {
     return React.createElement(content as any, props);
   }
 
@@ -92,9 +91,9 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
     dismissedAtCoordinate: { x: 0, y: 0 },
   };
 
-  bbox = {
-    boxWidth: -1,
-    boxHeight: -1,
+  lastBoundingBox = {
+    width: -1,
+    height: -1,
   };
 
   private wrapperNode: HTMLDivElement;
@@ -138,18 +137,19 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   };
 
   updateBBox() {
-    const { boxWidth, boxHeight } = this.bbox;
-
     if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
       const box = this.wrapperNode.getBoundingClientRect();
 
-      if (Math.abs(box.width - boxWidth) > EPS || Math.abs(box.height - boxHeight) > EPS) {
-        this.bbox.boxWidth = box.width;
-        this.bbox.boxHeight = box.height;
+      if (
+        Math.abs(box.width - this.lastBoundingBox.width) > EPS ||
+        Math.abs(box.height - this.lastBoundingBox.height) > EPS
+      ) {
+        this.lastBoundingBox.width = box.width;
+        this.lastBoundingBox.height = box.height;
       }
-    } else if (boxWidth !== -1 || boxHeight !== -1) {
-      this.bbox.boxWidth = -1;
-      this.bbox.boxHeight = -1;
+    } else if (this.lastBoundingBox.width !== -1 || this.lastBoundingBox.height !== -1) {
+      this.lastBoundingBox.width = -1;
+      this.lastBoundingBox.height = -1;
     }
   }
 
@@ -176,7 +176,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
 
     if (filterNull && finalPayload.length) {
       finalPayload = getUniqPayload(
-        payload.filter(entry => !_.isNil(entry.value)),
+        payload.filter(entry => entry.value != null),
         payloadUniqBy,
         defaultUniqBy,
       );
@@ -191,8 +191,8 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       position,
       reverseDirection,
       tooltipBox: {
-        height: this.bbox.boxHeight,
-        width: this.bbox.boxWidth,
+        height: this.lastBoundingBox.height,
+        width: this.lastBoundingBox.width,
       },
       useTranslate3d,
       viewBox,
