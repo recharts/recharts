@@ -2,7 +2,7 @@
  * @fileOverview Reference Line
  */
 import React, { ReactElement } from 'react';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
@@ -117,7 +117,7 @@ ReferenceArea.renderRect = (option: ReferenceAreaProps['shape'], props: any) => 
 
   if (React.isValidElement(option)) {
     rect = React.cloneElement(option, props);
-  } else if (_.isFunction(option)) {
+  } else if (isFunction(option)) {
     rect = option(props);
   } else {
     rect = <Rectangle {...props} className="recharts-reference-area-rect" />;

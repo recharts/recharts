@@ -3,8 +3,13 @@
  */
 import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
+import isFunction from 'lodash/isFunction';
+import isNumber from 'lodash/isNumber';
+import isString from 'lodash/isString';
+import omit from 'lodash/omit';
+import isEqual from 'lodash/isEqual';
+
 import clsx from 'clsx';
-import _ from 'lodash';
 import { Layer } from '../container/Layer';
 import { Props as TrapezoidProps } from '../shape/Trapezoid';
 import { LabelList } from '../component/LabelList';
@@ -112,9 +117,9 @@ export class Funnel extends PureComponent<FunnelProps, State> {
     const realHeight = height;
     let realWidth = width;
 
-    if (_.isNumber(customWidth)) {
+    if (isNumber(customWidth)) {
       realWidth = customWidth;
-    } else if (_.isString(customWidth)) {
+    } else if (isString(customWidth)) {
       realWidth = (realWidth * parseFloat(customWidth)) / 100;
     }
 
@@ -181,7 +186,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
         val,
         tooltipPayload,
         tooltipPosition,
-        ..._.omit(entry, 'width'),
+        ...omit(entry, 'width'),
         payload: entry,
         parentViewBox,
         labelViewBox: {
@@ -240,7 +245,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
     const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
 
-    if (_.isFunction(onAnimationEnd)) {
+    if (isFunction(onAnimationEnd)) {
       onAnimationEnd();
     }
   };
@@ -249,7 +254,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
     const { onAnimationStart } = this.props;
     this.setState({ isAnimationFinished: false });
 
-    if (_.isFunction(onAnimationStart)) {
+    if (isFunction(onAnimationStart)) {
       onAnimationStart();
     }
   };
@@ -355,7 +360,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
       isAnimationActive &&
       trapezoids &&
       trapezoids.length &&
-      (!prevTrapezoids || !_.isEqual(prevTrapezoids, trapezoids))
+      (!prevTrapezoids || !isEqual(prevTrapezoids, trapezoids))
     ) {
       return this.renderTrapezoidsWithAnimation();
     }

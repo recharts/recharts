@@ -22,7 +22,7 @@ import {
   WheelEvent,
   JSX,
 } from 'react';
-import _ from 'lodash';
+import isObject from 'lodash/isObject';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
 
 /**
@@ -1233,7 +1233,7 @@ export const adaptEventHandlers = (
     inputProps = props.props as RecordString<any>;
   }
 
-  if (!_.isObject(inputProps)) {
+  if (!isObject(inputProps)) {
     return null;
   }
 
@@ -1261,7 +1261,7 @@ export const adaptEventsOfChild = (
   data: any,
   index: number,
 ): RecordString<(e?: Event) => any> | null => {
-  if (!_.isObject(props) || typeof props !== 'object') {
+  if (!isObject(props) || typeof props !== 'object') {
     return null;
   }
 

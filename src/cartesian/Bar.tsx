@@ -4,7 +4,9 @@
 import React, { Key, PureComponent, ReactElement } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
-import _ from 'lodash';
+import isEqual from 'lodash/isEqual';
+import isNil from 'lodash/isNil';
+
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
 import { ErrorBar, Props as ErrorBarProps, ErrorBarDataPointFormatter } from './ErrorBar';
@@ -378,7 +380,7 @@ export class Bar extends PureComponent<Props, State> {
     const { data, isAnimationActive } = this.props;
     const { prevData } = this.state;
 
-    if (isAnimationActive && data && data.length && (!prevData || !_.isEqual(prevData, data))) {
+    if (isAnimationActive && data && data.length && (!prevData || !isEqual(prevData, data))) {
       return this.renderRectanglesWithAnimation();
     }
 
@@ -475,7 +477,7 @@ export class Bar extends PureComponent<Props, State> {
     const needClipX = xAxis && xAxis.allowDataOverflow;
     const needClipY = yAxis && yAxis.allowDataOverflow;
     const needClip = needClipX || needClipY;
-    const clipPathId = _.isNil(id) ? this.id : id;
+    const clipPathId = isNil(id) ? this.id : id;
 
     return (
       <Layer className={layerClass}>

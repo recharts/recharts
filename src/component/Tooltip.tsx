@@ -3,7 +3,9 @@
  */
 import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps } from 'react';
 import { translateStyle } from 'react-smooth';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import isNil from 'lodash/isNil';
+
 import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
 
 import { Global } from '../util/Global';
@@ -27,7 +29,7 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
   }
-  if (_.isFunction(content)) {
+  if (isFunction(content)) {
     return React.createElement(content as any, props);
   }
 
@@ -172,7 +174,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       wrapperStyle,
     } = this.props;
     const finalPayload = getUniqPayload(
-      filterNull && payload && payload.length ? payload.filter(entry => !_.isNil(entry.value)) : payload,
+      filterNull && payload && payload.length ? payload.filter(entry => !isNil(entry.value)) : payload,
       payloadUniqBy,
       defaultUniqBy,
     );
