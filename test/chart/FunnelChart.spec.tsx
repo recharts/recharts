@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { FunnelChart, Funnel, Tooltip, Trapezoid } from '../../src';
+import { FunnelChart, Funnel, Tooltip, Trapezoid, TrapezoidProps } from '../../src';
 import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 const data = [
@@ -112,7 +112,7 @@ describe('<FunnelChart />', () => {
           data={data}
           dataKey="value"
           isAnimationActive={false}
-          activeShape={props => <Trapezoid {...props} />}
+          activeShape={(props: TrapezoidProps) => <Trapezoid {...props} />}
         />
         <Tooltip />
       </FunnelChart>,

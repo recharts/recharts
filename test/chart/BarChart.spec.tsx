@@ -149,8 +149,8 @@ describe('<BarChart />', () => {
             dataKey="uv"
             stackId="test"
             fill="#ff7300"
-            activeBar={props => {
-              return <Rectangle {...props} name={props.name as string} />;
+            activeBar={(props: RectangleProps) => {
+              return <Rectangle {...props} name={props.name} />;
             }}
           />
           <Tooltip />
