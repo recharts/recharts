@@ -63,7 +63,7 @@ export const AccessibleWithButton = {
     return (
       <div>
         <button type="button" onClick={() => setToggle(!toggle)}>
-          Toggle
+          Toggle Tooltip
         </button>
 
         <AreaChart
