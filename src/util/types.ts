@@ -1315,6 +1315,6 @@ export type Size = { width: number; height: number };
 export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElement> =
   | ReactElement<SVGProps<ElementType>>
   | ((props: PropsType) => ReactElement<SVGProps<ElementType>>)
-  | ((props: unknown) => JSX.Element)
+  | ((props: any) => JSX.Element)
   | SVGProps<ElementType>
   | boolean;
