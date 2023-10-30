@@ -165,6 +165,8 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
       return cloneElement(children, {
         width: calculatedWidth,
         height: calculatedHeight,
+        // calculate the actual size and override it.
+        style: { height: '100%', width: '100%', maxHeight: calculatedHeight, maxWidth: calculatedWidth },
       });
     }, [aspect, children, height, maxHeight, minHeight, minWidth, sizes, width]);
 

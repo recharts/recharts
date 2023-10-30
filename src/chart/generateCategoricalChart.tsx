@@ -2322,7 +2322,14 @@ export const generateCategoricalChart = ({
           }}
           role="region"
         >
-          <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
+          <Surface
+            {...attrs}
+            width={width}
+            height={height}
+            title={title}
+            desc={desc}
+            style={{ width: '100%', height: '100%' }}
+          >
             {this.renderClipPath()}
             {renderByOrder(children, map)}
           </Surface>
