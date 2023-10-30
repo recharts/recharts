@@ -4,7 +4,11 @@
 import React, { PureComponent, ReactElement, SVGProps } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import max from 'lodash/max';
+import isNil from 'lodash/isNil';
+import isNan from 'lodash/isNaN';
+import isEqual from 'lodash/isEqual';
 import { Curve, CurveType, Point as CurvePoint } from '../shape/Curve';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
@@ -131,17 +135,17 @@ export class Area extends PureComponent<Props, State> {
     const domain = numericAxis.scale.domain();
 
     if (numericAxis.type === 'number') {
-      const max = Math.max(domain[0], domain[1]);
-      const min = Math.min(domain[0], domain[1]);
+      const domainMax = Math.max(domain[0], domain[1]);
+      const domainMin = Math.min(domain[0], domain[1]);
 
       if (baseValue === 'dataMin') {
-        return min;
+        return domainMin;
       }
       if (baseValue === 'dataMax') {
-        return max;
+        return domainMax;
       }
 
-      return max < 0 ? max : Math.max(Math.min(domain[0], domain[1]), 0);
+      return domainMax < 0 ? domainMax : Math.max(Math.min(domain[0], domain[1]), 0);
     }
 
     if (baseValue === 'dataMin') {
@@ -248,7 +252,7 @@ export class Area extends PureComponent<Props, State> {
 
     if (React.isValidElement(option)) {
       dotItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       dotItem = option(props);
     } else {
       dotItem = <Dot {...props} className="recharts-area-dot" />;
@@ -288,7 +292,7 @@ export class Area extends PureComponent<Props, State> {
 
     this.setState({ isAnimationFinished: true });
 
-    if (_.isFunction(onAnimationEnd)) {
+    if (isFunction(onAnimationEnd)) {
       onAnimationEnd();
     }
   };
@@ -297,7 +301,7 @@ export class Area extends PureComponent<Props, State> {
     const { onAnimationStart } = this.props;
     this.setState({ isAnimationFinished: false });
 
-    if (_.isFunction(onAnimationStart)) {
+    if (isFunction(onAnimationStart)) {
       onAnimationStart();
     }
   };
@@ -345,12 +349,12 @@ export class Area extends PureComponent<Props, State> {
     const startX = points[0].x;
     const endX = points[points.length - 1].x;
     const width = alpha * Math.abs(startX - endX);
-    let maxY = _.max(points.map(entry => entry.y || 0));
+    let maxY = max(points.map(entry => entry.y || 0));
 
     if (isNumber(baseLine) && typeof baseLine === 'number') {
       maxY = Math.max(baseLine, maxY);
     } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
-      maxY = Math.max(_.max(baseLine.map(entry => entry.y || 0)), maxY);
+      maxY = Math.max(max(baseLine.map(entry => entry.y || 0)), maxY);
     }
 
     if (isNumber(maxY)) {
@@ -372,12 +376,12 @@ export class Area extends PureComponent<Props, State> {
     const startY = points[0].y;
     const endY = points[points.length - 1].y;
     const height = alpha * Math.abs(startY - endY);
-    let maxX = _.max(points.map(entry => entry.x || 0));
+    let maxX = max(points.map(entry => entry.x || 0));
 
     if (isNumber(baseLine) && typeof baseLine === 'number') {
       maxX = Math.max(baseLine, maxX);
     } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
-      maxX = Math.max(_.max(baseLine.map(entry => entry.x || 0)), maxX);
+      maxX = Math.max(max(baseLine.map(entry => entry.x || 0)), maxX);
     }
 
     if (isNumber(maxX)) {
@@ -449,7 +453,7 @@ export class Area extends PureComponent<Props, State> {
     const { points, baseLine, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
       this.props;
     const { prevPoints, prevBaseLine } = this.state;
-    // const clipPathId = _.isNil(id) ? this.id : id;
+    // const clipPathId = isNil(id) ? this.id : id;
 
     return (
       <Animate
@@ -484,7 +488,7 @@ export class Area extends PureComponent<Props, State> {
             if (isNumber(baseLine) && typeof baseLine === 'number') {
               const interpolator = interpolateNumber(prevBaseLine as number, baseLine);
               stepBaseLine = interpolator(t);
-            } else if (_.isNil(baseLine) || _.isNaN(baseLine)) {
+            } else if (isNil(baseLine) || isNan(baseLine)) {
               const interpolator = interpolateNumber(prevBaseLine as number, 0);
               stepBaseLine = interpolator(t);
             } else {
@@ -528,7 +532,7 @@ export class Area extends PureComponent<Props, State> {
       isAnimationActive &&
       points &&
       points.length &&
-      ((!prevPoints && totalLength > 0) || !_.isEqual(prevPoints, points) || !_.isEqual(prevBaseLine, baseLine))
+      ((!prevPoints && totalLength > 0) || !isEqual(prevPoints, points) || !isEqual(prevBaseLine, baseLine))
     ) {
       return this.renderAreaWithAnimation(needClip, clipPathId);
     }
@@ -549,7 +553,7 @@ export class Area extends PureComponent<Props, State> {
     const needClipX = xAxis && xAxis.allowDataOverflow;
     const needClipY = yAxis && yAxis.allowDataOverflow;
     const needClip = needClipX || needClipY;
-    const clipPathId = _.isNil(id) ? this.id : id;
+    const clipPathId = isNil(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot) ?? { r: 3, strokeWidth: 2 };
     const { clipDot = true } = isDotProps(dot) ? dot : {};
     const dotSize = r * 2 + strokeWidth;

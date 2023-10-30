@@ -20,8 +20,10 @@ import {
   curveStepAfter,
   curveStepBefore,
 } from 'victory-vendor/d3-shape';
+import upperFirst from 'lodash/upperFirst';
+import isFunction from 'lodash/isFunction';
+
 import clsx from 'clsx';
-import _ from 'lodash';
 import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { isNumber } from '../util/DataUtils';
@@ -74,11 +76,11 @@ const getX = (p: Point) => p.x;
 const getY = (p: Point) => p.y;
 
 const getCurveFactory = (type: CurveType, layout: LayoutType) => {
-  if (_.isFunction(type)) {
+  if (isFunction(type)) {
     return type;
   }
 
-  const name = `curve${_.upperFirst(type)}`;
+  const name = `curve${upperFirst(type)}`;
 
   if ((name === 'curveMonotone' || name === 'curveBump') && layout) {
     return CURVE_FACTORIES[`${name}${layout === 'vertical' ? 'Y' : 'X'}`];

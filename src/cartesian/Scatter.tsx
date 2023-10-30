@@ -3,8 +3,11 @@
  */
 import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
+
+import isNil from 'lodash/isNil';
+import isEqual from 'lodash/isEqual';
+import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
-import _ from 'lodash';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
 import { findAllByType, filterProps } from '../util/ReactUtils';
@@ -148,8 +151,8 @@ export class Scatter extends PureComponent<Props, State> {
   }) => {
     const { tooltipType } = item.props;
     const cells = findAllByType(item.props.children, Cell);
-    const xAxisDataKey = _.isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
-    const yAxisDataKey = _.isNil(yAxis.dataKey) ? item.props.dataKey : yAxis.dataKey;
+    const xAxisDataKey = isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
+    const yAxisDataKey = isNil(yAxis.dataKey) ? item.props.dataKey : yAxis.dataKey;
     const zAxisDataKey = zAxis && zAxis.dataKey;
     const defaultRangeZ = zAxis ? zAxis.range : ZAxis.defaultProps.range;
     const defaultZ = defaultRangeZ && defaultRangeZ[0];
@@ -158,10 +161,10 @@ export class Scatter extends PureComponent<Props, State> {
     const points = displayedData.map((entry, index) => {
       const x = getValueByDataKey(entry, xAxisDataKey);
       const y = getValueByDataKey(entry, yAxisDataKey);
-      const z = (!_.isNil(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
+      const z = (!isNil(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
       const tooltipPayload = [
         {
-          name: _.isNil(xAxis.dataKey) ? item.props.name : xAxis.name || xAxis.dataKey,
+          name: isNil(xAxis.dataKey) ? item.props.name : xAxis.name || xAxis.dataKey,
           unit: xAxis.unit || '',
           value: x,
           payload: entry,
@@ -169,7 +172,7 @@ export class Scatter extends PureComponent<Props, State> {
           type: tooltipType,
         },
         {
-          name: _.isNil(yAxis.dataKey) ? item.props.name : yAxis.name || yAxis.dataKey,
+          name: isNil(yAxis.dataKey) ? item.props.name : yAxis.name || yAxis.dataKey,
           unit: yAxis.unit || '',
           value: y,
           payload: entry,
@@ -332,7 +335,7 @@ export class Scatter extends PureComponent<Props, State> {
     const { points, isAnimationActive } = this.props;
     const { prevPoints } = this.state;
 
-    if (isAnimationActive && points && points.length && (!prevPoints || !_.isEqual(prevPoints, points))) {
+    if (isAnimationActive && points && points.length && (!prevPoints || !isEqual(prevPoints, points))) {
       return this.renderSymbolsWithAnimation();
     }
 
@@ -399,7 +402,7 @@ export class Scatter extends PureComponent<Props, State> {
 
     if (React.isValidElement(line)) {
       lineItem = React.cloneElement(line as any, lineProps);
-    } else if (_.isFunction(line)) {
+    } else if (isFunction(line)) {
       lineItem = line(lineProps);
     } else {
       lineItem = <Curve {...lineProps} type={lineJointType} />;
@@ -422,7 +425,7 @@ export class Scatter extends PureComponent<Props, State> {
     const needClipX = xAxis && xAxis.allowDataOverflow;
     const needClipY = yAxis && yAxis.allowDataOverflow;
     const needClip = needClipX || needClipY;
-    const clipPathId = _.isNil(id) ? this.id : id;
+    const clipPathId = isNil(id) ? this.id : id;
 
     return (
       <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>

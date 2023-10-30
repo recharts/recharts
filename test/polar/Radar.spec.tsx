@@ -1,5 +1,5 @@
 import React from 'react';
-import { uniqueId } from 'lodash';
+import uniqueId from 'lodash/uniqueId';
 import { render, screen } from '@testing-library/react';
 
 import { Surface, Radar } from '../../src';

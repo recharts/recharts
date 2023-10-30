@@ -1,5 +1,7 @@
 import React, { cloneElement, isValidElement, ReactNode, ReactElement, createElement, SVGProps } from 'react';
-import _ from 'lodash';
+import isNil from 'lodash/isNil';
+import isFunction from 'lodash/isFunction';
+import isObject from 'lodash/isObject';
 import clsx from 'clsx';
 import { Text } from './Text';
 import { findAllByType, filterProps } from '../util/ReactUtils';
@@ -60,9 +62,9 @@ export type ImplicitLabelType =
 
 const getLabel = (props: Props) => {
   const { value, formatter } = props;
-  const label = _.isNil(props.children) ? value : props.children;
+  const label = isNil(props.children) ? value : props.children;
 
-  if (_.isFunction(formatter)) {
+  if (isFunction(formatter)) {
     return formatter(label);
   }
 
@@ -102,7 +104,7 @@ const renderRadialLabel = (labelProps: Props, label: ReactNode, attrs: SVGProps<
   const path = `M${startPoint.x},${startPoint.y}
     A${radius},${radius},0,1,${direction ? 0 : 1},
     ${endPoint.x},${endPoint.y}`;
-  const id = _.isNil(labelProps.id) ? uniqueId('recharts-radial-line-') : labelProps.id;
+  const id = isNil(labelProps.id) ? uniqueId('recharts-radial-line-') : labelProps.id;
 
   return (
     <text {...attrs} dominantBaseline="central" className={clsx('recharts-radial-bar-label', className)}>
@@ -348,7 +350,7 @@ const getAttrsOfCartesianLabel = (props: Props) => {
   }
 
   if (
-    _.isObject(position) &&
+    isObject(position) &&
     (isNumber(position.x) || isPercent(position.x)) &&
     (isNumber(position.y) || isPercent(position.y))
   ) {
@@ -377,7 +379,7 @@ export function Label({ offset = 5, ...restProps }: Props) {
   const props = { offset, ...restProps };
   const { viewBox, position, value, children, content, className = '', textBreakAll } = props;
 
-  if (!viewBox || (_.isNil(value) && _.isNil(children) && !isValidElement(content) && !_.isFunction(content))) {
+  if (!viewBox || (isNil(value) && isNil(children) && !isValidElement(content) && !isFunction(content))) {
     return null;
   }
 
@@ -386,7 +388,7 @@ export function Label({ offset = 5, ...restProps }: Props) {
   }
 
   let label: ReactNode;
-  if (_.isFunction(content)) {
+  if (isFunction(content)) {
     label = createElement(content as any, props);
 
     if (isValidElement(label)) {
@@ -492,11 +494,11 @@ const parseLabel = (label: unknown, viewBox: ViewBox) => {
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
   }
 
-  if (_.isFunction(label)) {
+  if (isFunction(label)) {
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
   }
 
-  if (_.isObject(label)) {
+  if (isObject(label)) {
     return <Label viewBox={viewBox} {...label} key="label-implicit" />;
   }
 
