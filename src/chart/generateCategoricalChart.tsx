@@ -2318,9 +2318,9 @@ export const generateCategoricalChart = ({
 
       if (this.props.accessibilityLayer) {
         // Set tabIndex to 0 by default (can be overwritten)
-        attrs.tabIndex = 0 ?? this.props.tabIndex;
+        attrs.tabIndex = this.props.tabIndex ?? 0;
         // Set role to img by default (can be overwritten)
-        attrs.role = 'img' ?? this.props.role;
+        attrs.role = this.props.role ?? 'img';
         attrs.onKeyDown = (e: any) => {
           this.accessibilityManager.keyboardEvent(e);
           // 'onKeyDown' is not currently a supported prop that can be passed through
