@@ -13,9 +13,9 @@ import React, {
   useMemo,
   CSSProperties,
   useCallback,
-  isValidElement,
 } from 'react';
 import throttle from 'lodash/throttle';
+import { isElement } from 'react-is';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { getDisplayName } from '../util/ReactUtils';
@@ -164,38 +164,30 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
         aspect,
       );
 
-      if (Array.isArray(children)) {
-        return React.Children.map(children, child => {
-          if (isValidElement(child)) {
-            return cloneElement(child, {
-              width: calculatedWidth,
-              height: calculatedHeight,
-            });
-          }
-          return child;
-        });
-      }
+      const isCharts =
+        !Array.isArray(children) && isElement(children) && getDisplayName(children.type).endsWith('Chart');
 
-      if (!isValidElement(children)) {
-        return children;
-      }
-
-      const isCharts = getDisplayName(children.type).endsWith('Chart');
-
-      return cloneElement(children, {
-        width: calculatedWidth,
-        height: calculatedHeight,
-        // calculate the actual size and override it.
-        style: isCharts
-          ? {
-              height: '100%',
-              width: '100%',
-              maxHeight: calculatedHeight,
-              maxWidth: calculatedWidth,
-              // keep components style
-              ...children.props.style,
-            }
-          : children.props.style,
+      return React.Children.map(children, child => {
+        if (isElement(child)) {
+          return cloneElement(child, {
+            width: calculatedWidth,
+            height: calculatedHeight,
+            // calculate the actual size and override it.
+            ...(isCharts
+              ? {
+                  style: {
+                    height: '100%',
+                    width: '100%',
+                    maxHeight: calculatedHeight,
+                    maxWidth: calculatedWidth,
+                    // keep components style
+                    ...child.props.style,
+                  },
+                }
+              : {}),
+          });
+        }
+        return child;
       });
     }, [aspect, children, height, maxHeight, minHeight, minWidth, sizes, width]);
 
