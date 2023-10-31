@@ -65,7 +65,7 @@ interface LineProps extends InternalLineProps {
   hide?: boolean;
 
   // whether have dot in line
-  activeDot?: ActiveShape<DotProps>;
+  activeDot?: ActiveShape<DotProps> | DotProps;
   dot?: LineDot;
 
   onAnimationStart?: () => void;
