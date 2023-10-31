@@ -172,7 +172,6 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
               height: calculatedHeight,
             });
           }
-
           return child;
         });
       }
