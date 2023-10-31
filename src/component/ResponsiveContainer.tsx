@@ -13,6 +13,7 @@ import React, {
   useMemo,
   CSSProperties,
   useCallback,
+  isValidElement,
 } from 'react';
 import throttle from 'lodash/throttle';
 import { isPercent } from '../util/DataUtils';
@@ -162,6 +163,23 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
         minHeight,
         aspect,
       );
+
+      if (Array.isArray(children)) {
+        return React.Children.map(children, child => {
+          if (isValidElement(child)) {
+            return cloneElement(child, {
+              width: calculatedWidth,
+              height: calculatedHeight,
+            });
+          }
+
+          return child;
+        });
+      }
+
+      if (!isValidElement(children)) {
+        return children;
+      }
 
       const isCharts = getDisplayName(children.type).endsWith('Chart');
 
