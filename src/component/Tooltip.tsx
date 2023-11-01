@@ -100,6 +100,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
+    this.updateBBox();
   }
 
   componentWillUnmount() {
