@@ -1,4 +1,4 @@
-import { CSSProperties, MouseEvent, Touch } from 'react';
+import { CSSProperties } from 'react';
 import { Global } from './Global';
 import { Size } from './types';
 
@@ -73,14 +73,23 @@ export const getStyleString = (style: CSSProperties) =>
     '',
   );
 
+function removeInvalidKeys(obj: Record<string, any>) {
+  const copyObj = { ...obj };
+  Object.keys(copyObj).forEach(key => {
+    if (!copyObj[key]) {
+      delete copyObj[key];
+    }
+  });
+  return copyObj;
+}
+
 export const getStringSize = (text: string | number, style: CSSProperties = {}): Size => {
   if (text === undefined || text === null || Global.isSsr) {
     return { width: 0, height: 0 };
   }
 
-  const str = `${text}`;
-  const styleString = getStyleString(style);
-  const cacheKey = `${str}-${styleString}`;
+  const copyStyle = removeInvalidKeys(style);
+  const cacheKey = JSON.stringify({ text, copyStyle });
 
   if (stringCache.widthCache[cacheKey]) {
     return stringCache.widthCache[cacheKey];
@@ -96,13 +105,10 @@ export const getStringSize = (text: string | number, style: CSSProperties = {}):
     }
     // Need to use CSS Object Model (CSSOM) to be able to comply with Content Security Policy (CSP)
     // https://en.wikipedia.org/wiki/Content_Security_Policy
-    const measurementSpanStyle: Record<string, any> = { ...SPAN_STYLE, ...style };
-    Object.keys(measurementSpanStyle).map(styleKey => {
-      (measurementSpan.style as Record<string, any>)[styleKey] = measurementSpanStyle[styleKey];
-      return styleKey;
-    });
+    const measurementSpanStyle: Record<string, any> = { ...SPAN_STYLE, ...copyStyle };
+    Object.assign(measurementSpan.style, measurementSpanStyle);
 
-    measurementSpan.textContent = str;
+    measurementSpan.textContent = `${text}`;
 
     const rect = measurementSpan.getBoundingClientRect();
     const result = { width: rect.width, height: rect.height };
@@ -125,29 +131,9 @@ interface ContainerOffset {
   left: number;
 }
 
-export const getOffset = (el: HTMLElement): ContainerOffset => {
-  const html = el.ownerDocument.documentElement;
-  let box = { top: 0, left: 0 };
-
-  // If we don't have gBCR, just use 0,0 rather than error
-  // BlackBerry 5, iOS 3 (original iPhone)
-  if (typeof el.getBoundingClientRect !== 'undefined') {
-    box = el.getBoundingClientRect();
-  }
-
+export const getOffset = (rect: ContainerOffset): ContainerOffset => {
   return {
-    top: box.top + window.pageYOffset - html.clientTop,
-    left: box.left + window.pageXOffset - html.clientLeft,
+    top: rect.top + window.scrollY - document.documentElement.clientTop,
+    left: rect.left + window.scrollX - document.documentElement.clientLeft,
   };
 };
-
-/**
- * Calculate coordinate of cursor in chart
- * @param  {Object} event  Event object
- * @param  {Object} offset The offset of main part in the svg element
- * @return {Object}        {chartX, chartY}
- */
-export const calculateChartCoordinate = (event: MouseEvent | Touch, offset: ContainerOffset) => ({
-  chartX: Math.round(event.pageX - offset.left),
-  chartY: Math.round(event.pageY - offset.top),
-});

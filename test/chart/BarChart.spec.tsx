@@ -1,11 +1,17 @@
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
-import { Bar, BarChart, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
-import { mockMouseEvent } from '../helper/mockMouseEvent';
+import { vi } from 'vitest';
+import { Bar, BarChart, Rectangle, RectangleProps, Tooltip, XAxis, YAxis } from '../../src';
+
+type DataType = {
+  name: string;
+  uv: number;
+  pv: number;
+};
 
 describe('<BarChart />', () => {
-  const data = [
+  const data: DataType[] = [
     { name: 'food', uv: 400, pv: 2400 },
     { name: 'cosmetic', uv: 300, pv: 4567 },
     { name: 'storage', uv: 300, pv: 1398 },
@@ -13,6 +19,14 @@ describe('<BarChart />', () => {
   ];
 
   type CustomLabelProps = Partial<{ x: number; y: number; index: number }>;
+
+  beforeAll(() => {
+    vi.useFakeTimers();
+  });
+
+  afterAll(() => {
+    vi.useRealTimers();
+  });
 
   test('Renders 8 bars in simple BarChart', () => {
     const { container } = render(
@@ -112,7 +126,7 @@ describe('<BarChart />', () => {
   });
 
   test('Renders customized active bar by default', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
@@ -125,18 +139,14 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
 
-    mouseOverEvent.fire();
-
-    jest.runAllTimers();
+    vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(1);
   });
 
   test('Renders customized active bar when activeBar set to be a function', () => {
-    jest.useFakeTimers();
-
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
         <BarChart width={700} height={200} data={data}>
@@ -144,7 +154,7 @@ describe('<BarChart />', () => {
             dataKey="uv"
             stackId="test"
             fill="#ff7300"
-            activeBar={props => {
+            activeBar={(props: RectangleProps) => {
               return <Rectangle {...props} name={props.name as string} />;
             }}
           />
@@ -155,18 +165,14 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
 
-    mouseOverEvent.fire();
-
-    jest.runAllTimers();
+    vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(1);
   });
 
   test('Renders customized active bar when activeBar set to be a ReactElement', () => {
-    jest.useFakeTimers();
-
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
         <BarChart width={700} height={200} data={data}>
@@ -178,18 +184,14 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
+    vi.advanceTimersByTime(100);
 
-    mouseOverEvent.fire();
-
-    jest.runAllTimers();
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(1);
   });
 
   test('Renders customized active bar when activeBar is set to be a truthy boolean', () => {
-    jest.useFakeTimers();
-
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
         <BarChart width={700} height={200} data={data}>
@@ -201,18 +203,14 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
 
-    mouseOverEvent.fire();
-
-    jest.runAllTimers();
+    vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(1);
   });
 
   test('Does not render customized active bar when activeBar set to be a falsy boolean', () => {
-    jest.useFakeTimers();
-
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
         <BarChart width={700} height={200} data={data}>
@@ -223,18 +221,14 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
 
-    mouseOverEvent.fire();
-
-    jest.runAllTimers();
+    vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(0);
   });
 
   test('Renders customized active bar when activeBar set to be an object', () => {
-    jest.useFakeTimers();
-
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
         <BarChart width={700} height={200} data={data}>
@@ -246,11 +240,9 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
 
-    mouseOverEvent.fire();
-
-    jest.runAllTimers();
+    vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(1);
   });
@@ -279,7 +271,7 @@ describe('<BarChart />', () => {
   });
 
   test('Render customized shapem when shape is set to be a function', () => {
-    const renderShape = (props: any) => {
+    const renderShape = (props: RectangleProps & DataType) => {
       const { x, y } = props;
 
       return <circle className="customized-shape" cx={x} cy={y} r={8} />;
