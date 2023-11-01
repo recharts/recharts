@@ -3,9 +3,6 @@
  */
 import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps } from 'react';
 import { translateStyle } from 'react-smooth';
-import isFunction from 'lodash/isFunction';
-import isNil from 'lodash/isNil';
-
 import { DefaultTooltipContent, ValueType, NameType, Payload, Props as DefaultProps } from './DefaultTooltipContent';
 
 import { Global } from '../util/Global';
@@ -29,7 +26,7 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
   }
-  if (isFunction(content)) {
+  if (typeof content === 'function') {
     return React.createElement(content as any, props);
   }
 
@@ -90,24 +87,40 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   };
 
   state = {
-    boxWidth: -1,
-    boxHeight: -1,
     dismissed: false,
     dismissedAtCoordinate: { x: 0, y: 0 },
+  };
+
+  lastBoundingBox = {
+    width: -1,
+    height: -1,
   };
 
   private wrapperNode: HTMLDivElement;
 
   componentDidMount() {
-    this.updateBBox();
+    document.addEventListener('keydown', this.handleKeyDown);
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
   }
 
-  componentDidUpdate() {
-    this.updateBBox();
+  componentDidUpdate(
+    props: Readonly<TooltipProps<TValue, TName>>,
+    state: Readonly<{ dismissed: boolean; dismissedAtCoordinate: { x: number; y: number } }>,
+  ) {
+    if (props.active) {
+      this.updateBBox();
+    }
+
+    if (!this.state.dismissed) {
+      return;
+    }
+
+    if (props.coordinate.x !== state.dismissedAtCoordinate.x || props.coordinate.y !== state.dismissedAtCoordinate.y) {
+      this.state.dismissed = false;
+    }
   }
 
   handleKeyDown = (event: KeyboardEvent) => {
@@ -124,33 +137,19 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   };
 
   updateBBox() {
-    const { boxWidth, boxHeight, dismissed } = this.state;
-    if (dismissed) {
-      document.removeEventListener('keydown', this.handleKeyDown);
-      if (
-        this.props.coordinate.x !== this.state.dismissedAtCoordinate.x ||
-        this.props.coordinate.y !== this.state.dismissedAtCoordinate.y
-      ) {
-        this.setState({ dismissed: false });
-      }
-    } else {
-      document.addEventListener('keydown', this.handleKeyDown);
-    }
-
     if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
       const box = this.wrapperNode.getBoundingClientRect();
 
-      if (Math.abs(box.width - boxWidth) > EPS || Math.abs(box.height - boxHeight) > EPS) {
-        this.setState({
-          boxWidth: box.width,
-          boxHeight: box.height,
-        });
+      if (
+        Math.abs(box.width - this.lastBoundingBox.width) > EPS ||
+        Math.abs(box.height - this.lastBoundingBox.height) > EPS
+      ) {
+        this.lastBoundingBox.width = box.width;
+        this.lastBoundingBox.height = box.height;
       }
-    } else if (boxWidth !== -1 || boxHeight !== -1) {
-      this.setState({
-        boxWidth: -1,
-        boxHeight: -1,
-      });
+    } else if (this.lastBoundingBox.width !== -1 || this.lastBoundingBox.height !== -1) {
+      this.lastBoundingBox.width = -1;
+      this.lastBoundingBox.height = -1;
     }
   }
 
@@ -173,12 +172,17 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       viewBox,
       wrapperStyle,
     } = this.props;
-    const finalPayload = getUniqPayload(
-      filterNull && payload && payload.length ? payload.filter(entry => !isNil(entry.value)) : payload,
-      payloadUniqBy,
-      defaultUniqBy,
-    );
-    const hasPayload = finalPayload && finalPayload.length;
+    let finalPayload: Payload<TValue, TName>[] = payload ?? [];
+
+    if (filterNull && finalPayload.length) {
+      finalPayload = getUniqPayload(
+        payload.filter(entry => entry.value != null),
+        payloadUniqBy,
+        defaultUniqBy,
+      );
+    }
+
+    const hasPayload = finalPayload.length;
 
     const { cssClasses, cssProperties } = getTooltipTranslate({
       allowEscapeViewBox,
@@ -187,14 +191,17 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       position,
       reverseDirection,
       tooltipBox: {
-        height: this.state.boxHeight,
-        width: this.state.boxWidth,
+        height: this.lastBoundingBox.height,
+        width: this.lastBoundingBox.width,
       },
       useTranslate3d,
       viewBox,
     });
 
-    let outerStyle: CSSProperties = {
+    const outerStyle: CSSProperties = {
+      ...(isAnimationActive &&
+        active &&
+        translateStyle({ transition: `transform ${animationDuration}ms ${animationEasing}` })),
       ...cssProperties,
       pointerEvents: 'none',
       visibility: !this.state.dismissed && active && hasPayload ? 'visible' : 'hidden',
@@ -204,19 +211,9 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       ...wrapperStyle,
     };
 
-    if (isAnimationActive && active) {
-      outerStyle = {
-        ...translateStyle({
-          transition: `transform ${animationDuration}ms ${animationEasing}`,
-        }),
-        ...outerStyle,
-      };
-    }
-
     return (
       // ESLint is disabled to allow listening to the `Escape` key. Refer to
       // https://github.com/recharts/recharts/pull/2925
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
       <div
         tabIndex={-1}
         role="dialog"
