@@ -64,6 +64,30 @@ describe('<Tooltip />', () => {
     expect(tooltipContentValue).toBeInTheDocument();
   });
 
+  test('Should move when the mouse moves', async () => {
+    const mock = vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
+      width: 10,
+      height: 10,
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+    } as DOMRect);
+    const { container } = render(
+      <AreaChart width={400} height={400} data={data}>
+        <Area dataKey="uv" />
+        <Tooltip />
+      </AreaChart>,
+    );
+    mock.mockRestore();
+
+    const chart = container.querySelector('.recharts-wrapper');
+    fireEvent.mouseMove(chart, { clientX: 200, clientY: 200 });
+
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    expect(tooltip.getAttribute('style').includes('translate')).toBe(true);
+  });
+
   test('Mouse over renders content with multiple data sets', () => {
     const areaData = [
       { category: 'A', value: 0.2 },
