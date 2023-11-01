@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<Polygon /> Don't render any path when points is empty or null 1`] = `
+exports[`<Polygon /> > Don't render any path when points is empty or null 1`] = `
 <div>
   <svg
     class="recharts-surface"
@@ -14,7 +14,7 @@ exports[`<Polygon /> Don't render any path when points is empty or null 1`] = `
 </div>
 `;
 
-exports[`<Polygon /> Render 1 path in simple Polygon 1`] = `
+exports[`<Polygon /> > Render 1 path in simple Polygon 1`] = `
 <div>
   <svg
     class="recharts-surface"

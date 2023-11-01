@@ -2,8 +2,9 @@
  * @fileOverview Reference Line
  */
 import React, { ReactElement, SVGProps } from 'react';
-import _ from 'lodash';
-import classNames from 'classnames';
+import isFunction from 'lodash/isFunction';
+import some from 'lodash/some';
+import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
 import { IfOverflow, ifOverflowMatches } from '../util/IfOverflowMatches';
@@ -52,7 +53,7 @@ const renderLine = (option: ReferenceLineProps['shape'], props: any) => {
 
   if (React.isValidElement(option)) {
     line = React.cloneElement(option, props);
-  } else if (_.isFunction(option)) {
+  } else if (isFunction(option)) {
     line = option(props);
   } else {
     line = <line {...props} className="recharts-reference-line-line" />;
@@ -107,7 +108,7 @@ const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegme
 
     const points = segment.map(p => scales.apply(p, { position }));
 
-    if (ifOverflowMatches(props, 'discard') && _.some(points, p => !scales.isInRange(p))) {
+    if (ifOverflowMatches(props, 'discard') && some(points, p => !scales.isInRange(p))) {
       return null;
     }
 
@@ -147,7 +148,7 @@ export function ReferenceLine(props: Props) {
   };
 
   return (
-    <Layer className={classNames('recharts-reference-line', className)}>
+    <Layer className={clsx('recharts-reference-line', className)}>
       {renderLine(shape, lineProps)}
       {Label.renderCallByParent(props, rectWithCoords({ x1, y1, x2, y2 }))}
     </Layer>

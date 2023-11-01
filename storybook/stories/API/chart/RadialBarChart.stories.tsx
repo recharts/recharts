@@ -5,23 +5,12 @@ import React, { useState } from 'react';
 import { pageData, pageDataWithFillColor } from '../../data';
 import { Tooltip, RadialBar, RadialBarChart, ResponsiveContainer, Cell, Legend, RadialBarProps } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
+import { ActiveShapeProps } from '../props/ActiveShapeProps';
 
 export default {
   argTypes: {
     ...CategoricalChartProps,
-    activeIndex: {
-      description:
-        'The index of the individual shapes of RadialBar to be marked as active, and render props.activeShape',
-      table: {
-        category: 'General',
-      },
-    },
-    activeShape: {
-      description: 'The customized shape to be rendered if activeIndex or activeTooltipIndex match',
-      table: {
-        category: 'General',
-      },
-    },
+    ...ActiveShapeProps,
   },
   component: RadialBarChart,
 };
