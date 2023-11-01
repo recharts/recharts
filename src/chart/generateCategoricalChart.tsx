@@ -109,6 +109,8 @@ const ORIENT_MAP = {
   yAxis: ['left', 'right'],
 };
 
+const FULL_WIDTH_AND_HEIGHT = { width: '100%', height: '100%' };
+
 const originCoordinate: Coordinate = { x: 0, y: 0 };
 
 const calculateTooltipPos = (rangeObj: any, layout: LayoutType): any => {
@@ -1334,15 +1336,15 @@ export const generateCategoricalChart = ({
         return null;
       }
 
-      const containerOffset = getOffset(this.container);
+      const element = this.container;
+      const boundingRect = element.getBoundingClientRect();
+      const containerOffset = getOffset(boundingRect);
       const e = {
         chartX: Math.round(event.pageX - containerOffset.left),
         chartY: Math.round(event.pageY - containerOffset.top),
       };
 
-      const element = this.container;
-      const boundingRectWidth = element.getBoundingClientRect().width;
-      const scale = boundingRectWidth / element.offsetWidth || 1;
+      const scale = boundingRect.width / element.offsetWidth || 1;
 
       const rangeObj = this.inRange(e.chartX, e.chartY, scale);
       if (!rangeObj) {
@@ -2276,6 +2278,29 @@ export const generateCategoricalChart = ({
       return null;
     }
 
+    renderMap = {
+      CartesianGrid: { handler: this.renderGrid, once: true },
+      ReferenceArea: { handler: this.renderReferenceElement },
+      ReferenceLine: { handler: this.renderReferenceElement },
+      ReferenceDot: { handler: this.renderReferenceElement },
+      XAxis: { handler: this.renderXAxis },
+      YAxis: { handler: this.renderYAxis },
+      Brush: { handler: this.renderBrush, once: true },
+      Bar: { handler: this.renderGraphicChild },
+      Line: { handler: this.renderGraphicChild },
+      Area: { handler: this.renderGraphicChild },
+      Radar: { handler: this.renderGraphicChild },
+      RadialBar: { handler: this.renderGraphicChild },
+      Scatter: { handler: this.renderGraphicChild },
+      Pie: { handler: this.renderGraphicChild },
+      Funnel: { handler: this.renderGraphicChild },
+      Tooltip: { handler: this.renderCursor, once: true },
+      PolarGrid: { handler: this.renderPolarGrid, once: true },
+      PolarAngleAxis: { handler: this.renderPolarAxis },
+      PolarRadiusAxis: { handler: this.renderPolarAxis },
+      Customized: { handler: this.renderCustomized },
+    };
+
     render() {
       if (!validateWidthHeight(this)) {
         return null;
@@ -2283,35 +2308,13 @@ export const generateCategoricalChart = ({
 
       const { children, className, width, height, style, compact, title, desc, ...others } = this.props;
       const attrs = filterProps(others);
-      const map = {
-        CartesianGrid: { handler: this.renderGrid, once: true },
-        ReferenceArea: { handler: this.renderReferenceElement },
-        ReferenceLine: { handler: this.renderReferenceElement },
-        ReferenceDot: { handler: this.renderReferenceElement },
-        XAxis: { handler: this.renderXAxis },
-        YAxis: { handler: this.renderYAxis },
-        Brush: { handler: this.renderBrush, once: true },
-        Bar: { handler: this.renderGraphicChild },
-        Line: { handler: this.renderGraphicChild },
-        Area: { handler: this.renderGraphicChild },
-        Radar: { handler: this.renderGraphicChild },
-        RadialBar: { handler: this.renderGraphicChild },
-        Scatter: { handler: this.renderGraphicChild },
-        Pie: { handler: this.renderGraphicChild },
-        Funnel: { handler: this.renderGraphicChild },
-        Tooltip: { handler: this.renderCursor, once: true },
-        PolarGrid: { handler: this.renderPolarGrid, once: true },
-        PolarAngleAxis: { handler: this.renderPolarAxis },
-        PolarRadiusAxis: { handler: this.renderPolarAxis },
-        Customized: { handler: this.renderCustomized },
-      };
 
       // The "compact" mode is mainly used as the panorama within Brush
       if (compact) {
         return (
           <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
             {this.renderClipPath()}
-            {renderByOrder(children, map)}
+            {renderByOrder(children, this.renderMap)}
           </Surface>
         );
       }
@@ -2344,16 +2347,9 @@ export const generateCategoricalChart = ({
           }}
           role="region"
         >
-          <Surface
-            {...attrs}
-            width={width}
-            height={height}
-            title={title}
-            desc={desc}
-            style={{ width: '100%', height: '100%' }}
-          >
+          <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
             {this.renderClipPath()}
-            {renderByOrder(children, map)}
+            {renderByOrder(children, this.renderMap)}
           </Surface>
           {this.renderLegend()}
           {this.renderTooltip()}

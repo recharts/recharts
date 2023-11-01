@@ -24,7 +24,7 @@ interface SurfaceProps {
 export type Props = Omit<SVGProps<SVGSVGElement>, 'viewBox'> & SurfaceProps;
 
 export function Surface(props: Props) {
-  const { children, width, height, viewBox, className, style, ...others } = props;
+  const { children, width, height, viewBox, className, style, title, desc, ...others } = props;
   const svgView = viewBox || { width, height, x: 0, y: 0 };
   const layerClass = clsx('recharts-surface', className);
 
@@ -37,8 +37,8 @@ export function Surface(props: Props) {
       style={style}
       viewBox={`${svgView.x} ${svgView.y} ${svgView.width} ${svgView.height}`}
     >
-      <title>{props.title}</title>
-      <desc>{props.desc}</desc>
+      <title>{title}</title>
+      <desc>{desc}</desc>
       {children}
     </svg>
   );
