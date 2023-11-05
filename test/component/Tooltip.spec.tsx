@@ -1,7 +1,19 @@
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, getByText, render } from '@testing-library/react';
 import React from 'react';
 
-import { Area, AreaChart, ComposedChart, Line, Tooltip, XAxis, YAxis } from '../../src';
+import {
+  Area,
+  AreaChart,
+  Brush,
+  CartesianGrid,
+  ComposedChart,
+  Legend,
+  Line,
+  LineChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from '../../src';
 
 describe('<Tooltip />', () => {
   const data = [
@@ -148,6 +160,28 @@ describe('<Tooltip />', () => {
 
     const customizedContent = container.querySelector('.customized');
     expect(customizedContent).toBeInTheDocument();
+  });
+
+  describe('Using with Brush', () => {
+    it('Should display the correct data', () => {
+      const { container } = render(
+        <LineChart width={600} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          <Legend />
+          <Brush dataKey="name" startIndex={1} height={30} stroke="#8884d8" />
+          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        </LineChart>,
+      );
+
+      const line = container.querySelector('.recharts-cartesian-grid-horizontal line');
+      const chart = container.querySelector('.recharts-wrapper');
+      fireEvent.mouseOver(chart, { clientX: +line.getAttribute('x') + 1, clientY: 50 });
+      expect(getByText(container, '1398')).toBeVisible();
+    });
   });
 });
 
