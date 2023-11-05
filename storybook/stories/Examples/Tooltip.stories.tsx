@@ -8,6 +8,19 @@ export default {
   component: Tooltip,
 };
 
+// No need to keep this story around, but good for anyone to discuss the PR based on the behaviour here.
+export const ActiveTooltip = {
+  render: () => {
+    return (
+      <ComposedChart data={pageData} height={200} width={300}>
+        <Line dataKey="uv" />
+        <Bar dataKey="pv" />
+        <Tooltip active />
+      </ComposedChart>
+    );
+  },
+};
+
 export const LockedByClick = {
   render: (_args: Record<string, any>) => {
     const [isLocked, setIsLocked] = React.useState(false);

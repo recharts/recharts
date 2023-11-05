@@ -1751,11 +1751,13 @@ export const generateCategoricalChart = ({
       const { isTooltipActive, activeCoordinate, activePayload, offset, activeTooltipIndex, tooltipAxisBandSize } =
         this.state;
       const tooltipEventType = this.getTooltipEventType();
+      // Now the cursor is a part of the Tooltip itself, and it should be shown (by default) when the Tooltip is active.
+      const isActive = isTooltipActive || element.props.active;
 
       if (
         !element ||
         !element.props.cursor ||
-        !isTooltipActive ||
+        !isActive ||
         !activeCoordinate ||
         (chartName !== 'ScatterChart' && tooltipEventType !== 'axis')
       ) {
@@ -1950,11 +1952,16 @@ export const generateCategoricalChart = ({
 
       const { isTooltipActive, activeCoordinate, activePayload, activeLabel, offset } = this.state;
 
+      // The user can set isActive directly on the Tooltip,
+      // and we must respect the users override to enable customisation.
+      // The Tooltip is active if the user has set isActive, or if the tooltip is active due to a mouse event.
+      const isActive = isTooltipActive || tooltipItem.props.active;
+
       return cloneElement(tooltipItem, {
         viewBox: { ...offset, x: offset.left, y: offset.top },
-        active: isTooltipActive,
+        active: isActive,
         label: activeLabel,
-        payload: isTooltipActive ? activePayload : [],
+        payload: isActive ? activePayload : [],
         coordinate: activeCoordinate,
       });
     };
