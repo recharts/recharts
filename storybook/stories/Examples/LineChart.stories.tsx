@@ -967,3 +967,22 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
     );
   },
 };
+
+export const WithBrush: StoryObj = {
+  render: () => {
+    return (
+      <ResponsiveContainer>
+        <LineChart width={0} height={0} data={pageData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          <Legend />
+          <Brush dataKey="name" startIndex={2} height={30} stroke="#8884d8" />
+          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+};
