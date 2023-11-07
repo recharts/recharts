@@ -48,6 +48,7 @@ interface LabelProps {
   content?: ContentType;
   textBreakAll?: boolean;
   angle?: number;
+  index?: number;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;
