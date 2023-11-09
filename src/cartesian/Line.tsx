@@ -184,6 +184,17 @@ export class Line extends PureComponent<Props, State> {
     this.setState({ totalLength });
   }
 
+  componentDidUpdate(): void {
+    if (!this.props.isAnimationActive) {
+      return;
+    }
+
+    const totalLength = this.getTotalLength();
+    if (totalLength != null && totalLength !== this.state.totalLength) {
+      this.setState({ totalLength });
+    }
+  }
+
   static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
     if (nextProps.animationId !== prevState.prevAnimationId) {
       return {

@@ -959,3 +959,32 @@ export const WithBrush: StoryObj = {
     );
   },
 };
+
+export const HideOnLegendClick: StoryObj = {
+  render: () => {
+    const [activeSeries, setActiveSeries] = React.useState<Array<string>>([]);
+
+    const handleLegendClick = (dataKey: string) => {
+      if (activeSeries.includes(dataKey)) {
+        setActiveSeries(activeSeries.filter(el => el !== dataKey));
+      } else {
+        setActiveSeries(prev => [...prev, dataKey]);
+      }
+    };
+
+    return (
+      <ResponsiveContainer height={400}>
+        <LineChart data={pageData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          <Legend height={36} iconType="circle" onClick={props => handleLegendClick(props.dataKey)} />
+
+          <Line hide={activeSeries.includes('uv')} type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+          <Line hide={activeSeries.includes('pv')} type="monotone" dataKey="pv" stroke="#987" fill="#8884d8" />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+};
