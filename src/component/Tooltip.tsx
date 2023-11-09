@@ -107,11 +107,8 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
     document.removeEventListener('keydown', this.handleKeyDown);
   }
 
-  componentDidUpdate(
-    props: Readonly<TooltipProps<TValue, TName>>,
-    state: Readonly<{ dismissed: boolean; dismissedAtCoordinate: { x: number; y: number } }>,
-  ) {
-    if (props.active) {
+  componentDidUpdate() {
+    if (this.props.active) {
       this.updateBBox();
     }
 
@@ -119,7 +116,10 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       return;
     }
 
-    if (props.coordinate.x !== state.dismissedAtCoordinate.x || props.coordinate.y !== state.dismissedAtCoordinate.y) {
+    if (
+      this.props.coordinate?.x !== this.state.dismissedAtCoordinate.x ||
+      this.props.coordinate?.y !== this.state.dismissedAtCoordinate.y
+    ) {
       this.state.dismissed = false;
     }
   }
@@ -129,9 +129,8 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
       this.setState({
         dismissed: true,
         dismissedAtCoordinate: {
-          ...this.state.dismissedAtCoordinate,
-          x: this.props.coordinate.x,
-          y: this.props.coordinate.y,
+          x: this.props.coordinate?.x ?? 0,
+          y: this.props.coordinate?.y ?? 0,
         },
       });
     }
