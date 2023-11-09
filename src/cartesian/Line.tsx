@@ -190,7 +190,7 @@ export class Line extends PureComponent<Props, State> {
     }
 
     const totalLength = this.getTotalLength();
-    if (totalLength != null && totalLength !== this.state.totalLength) {
+    if (totalLength !== this.state.totalLength) {
       this.setState({ totalLength });
     }
   }
