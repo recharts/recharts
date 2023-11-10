@@ -31,6 +31,8 @@ interface InternalBrushProps {
 interface BrushProps extends InternalBrushProps {
   className?: string;
 
+  ariaLabel?: string;
+
   height: number;
   travellerWidth?: number;
   traveller?: BrushTravellerType;
@@ -127,6 +129,7 @@ export class Brush extends PureComponent<Props, State> {
     padding: { top: 1, right: 1, bottom: 1, left: 1 },
     leaveTimeOut: 1000,
     alwaysShowText: false,
+    ariaLabel: 'chart brush',
   };
 
   constructor(props: Props) {
@@ -487,7 +490,7 @@ export class Brush extends PureComponent<Props, State> {
   }
 
   renderTravellerLayer(travellerX: number, id: BrushTravellerId) {
-    const { y, travellerWidth, height, traveller } = this.props;
+    const { y, travellerWidth, height, traveller, ariaLabel } = this.props;
     const x = Math.max(travellerX, this.props.x);
     const travellerProps = {
       ...filterProps(this.props),
@@ -501,6 +504,8 @@ export class Brush extends PureComponent<Props, State> {
       <Layer
         tabIndex={0}
         role="slider"
+        aria-label={ariaLabel}
+        aria-valuenow={travellerX}
         className="recharts-brush-traveller"
         onMouseEnter={this.handleEnterSlideOrTraveller}
         onMouseLeave={this.handleLeaveSlideOrTraveller}
