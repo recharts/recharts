@@ -91,6 +91,7 @@ import { Props as YAxisProps } from '../cartesian/YAxis';
 import { Props as XAxisProps } from '../cartesian/XAxis';
 import { getCursorPoints } from '../util/cursor/getCursorPoints';
 import { getCursorRectangle } from '../util/cursor/getCursorRectangle';
+import { ChartContextContainer, SetChartContext } from '../context/chartContext';
 
 export interface MousePointer {
   pageX: number;
@@ -108,6 +109,22 @@ const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
   yAxis: ['left', 'right'],
 };
+
+/**
+ * This function exists as a temporary workaround.
+ *
+ * Why? generateCategoricalChart does not render `{children}` directly;
+ * instead it passes them through `renderByOrder` function which reads their handlers.
+ *
+ * So, this is a handler that does nothing.
+ * Once we get rid of `renderByOrder` and switch to JSX only, we can get rid of this handler too.
+ *
+ * @param {JSX} element as is in JSX
+ * @returns {JSX} the same element
+ */
+function renderAsIs(element: React.ReactElement): React.ReactElement {
+  return element;
+}
 
 const FULL_WIDTH_AND_HEIGHT = { width: '100%', height: '100%' };
 
@@ -1952,6 +1969,7 @@ export const generateCategoricalChart = ({
      */
     renderTooltip = (): React.ReactElement => {
       const { children } = this.props;
+      // TODO can I skip searching for children now?
       const tooltipItem = findChildByType(children, Tooltip);
 
       if (!tooltipItem) {
@@ -1963,15 +1981,18 @@ export const generateCategoricalChart = ({
       // The user can set isActive on the Tooltip,
       // and we respect the user to enable customisation.
       // The Tooltip is active if the user has set isActive, or if the tooltip is active due to a mouse event.
+      // TODO this looks like something that could be inside the Tooltip component?
       const isActive = tooltipItem.props.active ?? isTooltipActive;
 
-      return cloneElement(tooltipItem, {
-        viewBox: { ...offset, x: offset.left, y: offset.top },
-        active: isActive,
-        label: activeLabel,
-        payload: isActive ? activePayload : [],
-        coordinate: activeCoordinate,
-      });
+      return (
+        <SetChartContext
+          viewBox={{ ...offset, x: offset.left, y: offset.top }}
+          active={isActive}
+          label={activeLabel}
+          payload={isActive ? activePayload : []}
+          coordinate={activeCoordinate}
+        />
+      );
     };
 
     renderBrush = (element: React.ReactElement) => {
@@ -2288,7 +2309,7 @@ export const generateCategoricalChart = ({
       Scatter: { handler: this.renderGraphicChild },
       Pie: { handler: this.renderGraphicChild },
       Funnel: { handler: this.renderGraphicChild },
-      Tooltip: { handler: this.renderCursor, once: true },
+      Tooltip: { handler: renderAsIs },
       PolarGrid: { handler: this.renderPolarGrid, once: true },
       PolarAngleAxis: { handler: this.renderPolarAxis },
       PolarRadiusAxis: { handler: this.renderPolarAxis },
@@ -2332,22 +2353,24 @@ export const generateCategoricalChart = ({
 
       const events = this.parseEventsOfWrapper();
       return (
-        <div
-          className={clsx('recharts-wrapper', className)}
-          style={{ position: 'relative', cursor: 'default', width, height, ...style }}
-          {...events}
-          ref={(node: HTMLDivElement) => {
-            this.container = node;
-          }}
-          role="region"
-        >
-          <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
-            {this.renderClipPath()}
-            {renderByOrder(children, this.renderMap)}
-          </Surface>
-          {this.renderLegend()}
-          {this.renderTooltip()}
-        </div>
+        <ChartContextContainer>
+          <div
+            className={clsx('recharts-wrapper', className)}
+            style={{ position: 'relative', cursor: 'default', width, height, ...style }}
+            {...events}
+            ref={(node: HTMLDivElement) => {
+              this.container = node;
+            }}
+            role="region"
+          >
+            <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
+              {this.renderClipPath()}
+              {renderByOrder(children, this.renderMap)}
+            </Surface>
+            {this.renderLegend()}
+            {this.renderTooltip()}
+          </div>
+        </ChartContextContainer>
       );
     }
   };

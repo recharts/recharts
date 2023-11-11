@@ -1047,6 +1047,11 @@ export interface ChartOffset {
   brushBottom?: number;
 }
 
+export interface ChartOffsetWithXAndY extends ChartOffset {
+  x?: number;
+  y?: number;
+}
+
 export interface Padding {
   top?: number;
   bottom?: number;
