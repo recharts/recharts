@@ -3,6 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { pageData } from '../data';
 import { Area, Bar, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../src';
 import { DefaultTooltipContent } from '../../../src/component/DefaultTooltipContent';
+import { generateMockData } from '../../../test/helper/generateMockData';
 
 export default {
   component: Tooltip,
@@ -202,4 +203,32 @@ export const CustomContentExample = {
     content: <CustomContent />,
     trigger: 'hover',
   },
+};
+
+export const LargeDataArray = {
+  render: (args: Record<string, any>) => {
+    const [surfaceWidth, surfaceHeight] = [600, 300];
+    return (
+      <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <ComposedChart
+          width={surfaceWidth}
+          height={surfaceHeight}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+          data={generateMockData(1000, 334058656)}
+        >
+          {/* The target component */}
+          <Tooltip {...args} />
+          <Line dataKey="x" />
+          <Line dataKey="y" />
+          <Line dataKey="z" />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {},
 };
