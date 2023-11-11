@@ -10,6 +10,22 @@ describe('TooltipBoundingBox', () => {
     hasPayload: true,
     children: 'Hello world!',
     coordinate: undefined,
+    allowEscapeViewBox: {
+      x: false,
+      y: false,
+    },
+    animationDuration: 0,
+    animationEasing: 'ease',
+    isAnimationActive: false,
+    offset: 0,
+    position: undefined,
+    reverseDirection: {
+      x: false,
+      y: false,
+    },
+    useTranslate3d: false,
+    viewBox: undefined,
+    wrapperStyle: undefined,
   };
   it('should render children when active prop is true', () => {
     render(<TooltipBoundingBox {...defaultProps} />);

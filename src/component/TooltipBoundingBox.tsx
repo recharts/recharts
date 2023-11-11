@@ -5,19 +5,19 @@ import { getTooltipTranslate } from '../util/tooltip/translate';
 
 export type TooltipBoundingBoxProps = {
   active: boolean;
-  allowEscapeViewBox?: AllowInDimension;
-  animationDuration?: AnimationDuration;
-  animationEasing?: AnimationTiming;
+  allowEscapeViewBox: AllowInDimension;
+  animationDuration: AnimationDuration;
+  animationEasing: AnimationTiming;
   children: ReactNode;
-  coordinate: Coordinate;
-  isAnimationActive?: boolean;
-  offset?: number;
-  position?: Partial<Coordinate>;
-  reverseDirection?: AllowInDimension;
-  useTranslate3d?: boolean;
-  viewBox?: CartesianViewBox;
-  wrapperStyle?: CSSProperties;
+  coordinate: Partial<Coordinate>;
   hasPayload: boolean;
+  isAnimationActive: boolean;
+  offset: number;
+  position: Partial<Coordinate>;
+  reverseDirection: AllowInDimension;
+  useTranslate3d: boolean;
+  viewBox: CartesianViewBox;
+  wrapperStyle: CSSProperties;
 };
 
 type State = {
