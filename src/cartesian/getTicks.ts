@@ -25,7 +25,13 @@ function getTicksEnd(
   for (let i = len - 1; i >= 0; i--) {
     let entry = result[i];
     let size: number | undefined;
-    const getSize = () => size ?? getTickSize(entry, i);
+    const getSize = () => {
+      if (size === undefined) {
+        size = getTickSize(entry, i);
+      }
+
+      return size;
+    };
 
     if (i === len - 1) {
       const gap = sign * (entry.coordinate + (sign * getSize()) / 2 - end);
@@ -83,7 +89,13 @@ function getTicksStart(
   for (let i = 0; i < count; i++) {
     let entry = result[i];
     let size: number | undefined;
-    const getSize = () => size ?? getTickSize(entry, i);
+    const getSize = () => {
+      if (size === undefined) {
+        size = getTickSize(entry, i);
+      }
+
+      return size;
+    };
 
     if (i === 0) {
       const gap = sign * (entry.coordinate - (sign * getSize()) / 2 - start);

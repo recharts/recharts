@@ -30,6 +30,8 @@ export function isVisible(
   start: number,
   end: number,
 ): boolean {
+  /* Since getSize() is expensive (it reads the ticks' size from the DOM), we do this check first to avoid calculating
+   * the tick's size. */
   if (sign * tickPosition < sign * start || sign * tickPosition > sign * end) {
     return false;
   }
