@@ -35,7 +35,7 @@ export function getEquidistantTicks(
 
     const tickCoord = entry.coordinate;
     // We will always show the first tick.
-    const isShow = index === 0 || isVisible(sign, tickCoord, size, start, end);
+    const isShow = index === 0 || isVisible(sign, tickCoord, () => size, start, end);
 
     if (!isShow) {
       // Start all over with a larger stepsize
