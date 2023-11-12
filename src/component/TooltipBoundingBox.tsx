@@ -25,7 +25,7 @@ type State = {
   dismissedAtCoordinate: Coordinate;
 };
 
-const EPS = 1;
+const EPSILON = 1;
 
 export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, State> {
   state = {
@@ -45,8 +45,8 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
       const box = this.wrapperNode.getBoundingClientRect();
 
       if (
-        Math.abs(box.width - this.lastBoundingBox.width) > EPS ||
-        Math.abs(box.height - this.lastBoundingBox.height) > EPS
+        Math.abs(box.width - this.lastBoundingBox.width) > EPSILON ||
+        Math.abs(box.height - this.lastBoundingBox.height) > EPSILON
       ) {
         this.lastBoundingBox.width = box.width;
         this.lastBoundingBox.height = box.height;
