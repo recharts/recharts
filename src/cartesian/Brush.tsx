@@ -490,7 +490,7 @@ export class Brush extends PureComponent<Props, State> {
   }
 
   renderTravellerLayer(travellerX: number, id: BrushTravellerId) {
-    const { y, travellerWidth, height, traveller, ariaLabel } = this.props;
+    const { y, travellerWidth, height, traveller, ariaLabel, data, startIndex, endIndex } = this.props;
     const x = Math.max(travellerX, this.props.x);
     const travellerProps = {
       ...filterProps(this.props),
@@ -500,9 +500,7 @@ export class Brush extends PureComponent<Props, State> {
       height,
     };
 
-    const ariaValueNow = `Min value: ${this.props.data[this.props.startIndex].name}, Max value: ${
-      this.props.data[this.props.endIndex].name
-    }`;
+    const ariaValueNow = `ID: ${id}, Min value: ${data[startIndex].name}, Max value: ${data[endIndex].name}`;
 
     return (
       <Layer
