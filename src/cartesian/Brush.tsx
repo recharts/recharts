@@ -500,12 +500,16 @@ export class Brush extends PureComponent<Props, State> {
       height,
     };
 
+    const ariaValueNow = `Min value: ${this.props.data[this.props.startIndex].name}, Max value: ${
+      this.props.data[this.props.endIndex].name
+    }`;
+
     return (
       <Layer
         tabIndex={0}
         role="slider"
         aria-label={ariaLabel}
-        aria-valuenow={travellerX}
+        aria-valuenow={ariaValueNow}
         className="recharts-brush-traveller"
         onMouseEnter={this.handleEnterSlideOrTraveller}
         onMouseLeave={this.handleLeaveSlideOrTraveller}
