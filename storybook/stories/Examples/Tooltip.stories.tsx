@@ -31,6 +31,31 @@ export const ActiveTooltip = {
   args: {
     active: true,
   },
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+    setTimeout(() => {
+      const chart = canvasElement.querySelector('.recharts-wrapper');
+      const tooltip = canvasElement.querySelector('.recharts-default-tooltip');
+
+      // The Tooltip is not visible before we enter the chart because no element is active.
+      expect(tooltip).not.toBeVisible();
+
+      fireEvent.mouseEnter(chart);
+
+      // Hovering over the chart shows the tooltip
+      fireEvent.mouseMove(chart, { clientX: 200, clientY: 200 });
+
+      // Now, that an element is active, the Tooltip is visible.
+      expect(tooltip).toBeVisible();
+      expect(screen.getByText('590')).toBeVisible();
+
+      // When the mouse leaves the chart, the Tooltip still stays, but the cursor does not.
+      fireEvent.mouseOut(chart);
+
+      // The Tooltip is still visible, although the mouse is out of the chart.
+      expect(tooltip).toBeVisible();
+      expect(screen.getByText('590')).toBeVisible();
+    }, 0);
+  },
 };
 
 export const LockedByClick = {
