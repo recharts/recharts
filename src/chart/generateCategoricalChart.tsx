@@ -1751,7 +1751,7 @@ export const generateCategoricalChart = ({
       const { isTooltipActive, activeCoordinate, activePayload, offset, activeTooltipIndex, tooltipAxisBandSize } =
         this.state;
       const tooltipEventType = this.getTooltipEventType();
-      // Now the cursor is a part of the Tooltip itself, and it should be shown (by default) when the Tooltip is active.
+      // The cursor is a part of the Tooltip, and it should be shown (by default) when the Tooltip is active.
       const isActive = isTooltipActive || element.props.active;
 
       if (
