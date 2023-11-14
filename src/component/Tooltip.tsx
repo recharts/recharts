@@ -38,6 +38,11 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
 }
 
 export type TooltipProps<TValue extends ValueType, TName extends NameType> = ToltipContentProps<TValue, TName> & {
+  /**
+   * If true, then Tooltip is always displayed, once an activeIndex is set by mouse over, or programmatically.
+   * If false, then Tooltip is never displayed.
+   * If active is undefined, Recharts will control when the Tooltip displays. This includes mouse and keyboard controls.
+   */
   active?: boolean;
   allowEscapeViewBox?: AllowInDimension;
   animationDuration?: AnimationDuration;

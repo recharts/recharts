@@ -86,14 +86,8 @@ const TooltipProps: StorybookArgs = {
     },
   },
   active: {
-    description:
-      'If set true, the tooltip is displayed. If set false, the tooltip is hidden. Usually calculated internally.',
-    defaultValue: false,
     table: {
       category: 'Internal',
-      type: {
-        summary: 'boolean',
-      },
     },
   },
   position: {
