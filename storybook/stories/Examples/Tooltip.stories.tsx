@@ -185,18 +185,7 @@ export const SeparateDataSetsForChart = {
 };
 
 export const TriggerTooltipByClick = {
-  render: (tooltipArgs: Record<string, any>) => {
-    return (
-      <ResponsiveContainer width="100%" height={400}>
-        <ComposedChart data={pageData}>
-          <Tooltip {...tooltipArgs} />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Line dataKey="uv" />
-        </ComposedChart>
-      </ResponsiveContainer>
-    );
-  },
+  ...SimpleTooltipStory,
   args: {
     trigger: 'click',
   },
@@ -245,7 +234,7 @@ const CustomContent = ({ active, payload }: CustomTooltipProps) => {
 };
 
 export const CustomContentExample = {
-  ...TriggerTooltipByClick,
+  ...SimpleTooltipStory,
   args: {
     content: <CustomContent />,
     trigger: 'hover',
