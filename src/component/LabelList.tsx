@@ -29,7 +29,7 @@ interface LabelListProps<T extends Data> {
   formatter?: Function;
 }
 
-export type Props<T extends Data> = SVGProps<SVGElement> & LabelListProps<T>;
+export type Props<T extends Data> = Omit<SVGProps<SVGTextElement>, 'offset'> & LabelListProps<T>;
 
 export type ImplicitLabelListType<T extends Data> =
   | boolean
@@ -54,15 +54,15 @@ export function LabelList<T extends Data>({ valueAccessor = defaultAccessor, ...
 
         return (
           <Label
-            {...(filterProps(entry, true) as any)}
+            {...filterProps(entry, true)}
             {...others}
             {...idProps}
             parentViewBox={entry.parentViewBox}
-            index={index}
             value={value}
             textBreakAll={textBreakAll}
             viewBox={Label.parseViewBox(isNil(clockWise) ? entry : { ...entry, clockWise })}
             key={`label-${index}`} // eslint-disable-line react/no-array-index-key
+            index={index}
           />
         );
       })}

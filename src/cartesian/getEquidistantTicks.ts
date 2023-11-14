@@ -31,11 +31,19 @@ export function getEquidistantTicks(
     }
 
     // Check if the element collides with the next element
-    const size = getTickSize(entry, index);
+    const i = index;
+    let size: number | undefined;
+    const getSize = () => {
+      if (size === undefined) {
+        size = getTickSize(entry, i);
+      }
+
+      return size;
+    };
 
     const tickCoord = entry.coordinate;
     // We will always show the first tick.
-    const isShow = index === 0 || isVisible(sign, tickCoord, size, start, end);
+    const isShow = index === 0 || isVisible(sign, tickCoord, getSize, start, end);
 
     if (!isShow) {
       // Start all over with a larger stepsize
@@ -46,7 +54,7 @@ export function getEquidistantTicks(
 
     if (isShow) {
       // If it can be shown, update the start
-      start = tickCoord + sign * (size / 2 + minTickGap);
+      start = tickCoord + sign * (getSize() / 2 + minTickGap);
       index += stepsize;
     }
   }
