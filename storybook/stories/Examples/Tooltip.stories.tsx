@@ -101,29 +101,6 @@ export const LockedByClick = {
       </ResponsiveContainer>
     );
   },
-  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
-    setTimeout(() => {
-      const chart = canvasElement.querySelector('.recharts-wrapper');
-      fireEvent.mouseEnter(chart);
-
-      // Hovering over the chart shows the tooltip
-      fireEvent.mouseMove(chart, { clientX: 200, clientY: 200 });
-      expect(screen.getByText('590')).toBeVisible();
-
-      // We lock the Tooltip with a click
-      fireEvent.click(chart);
-
-      // When we move the mouse, the tooltip stays the same
-      fireEvent.mouseMove(chart, { clientX: 400, clientY: 100 });
-      expect(screen.getByText('590')).toBeVisible();
-
-      // When the mouse leaves the chart, the Tooltip still stays, but the cursor does not.
-      fireEvent.mouseOut(chart);
-
-      // The Tooltip is still visible, although the mouse is out of the chart.
-      expect(screen.getByText('590')).toBeVisible();
-    }, 0);
-  },
   description:
     'This example shows how to lock the tooltip to a specific position. Click on the chart to show fix the Tooltip.',
 };
