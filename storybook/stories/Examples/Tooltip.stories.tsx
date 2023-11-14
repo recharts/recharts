@@ -91,8 +91,8 @@ export const LockedByClick = {
             setIsLocked(!isLocked);
           }}
         >
-          <Line dataKey="uv" isAnimationActive={false} />
-          <Bar dataKey="pv" isAnimationActive={false} />
+          <Line dataKey="uv" />
+          <Bar dataKey="pv" />
           <Tooltip
             position={{ y: 0, x: tooltipData.x }} // The y position fixes the Tooltip to the top of the chart.
             content={<CustomTooltip tooltipData={tooltipData} />}
