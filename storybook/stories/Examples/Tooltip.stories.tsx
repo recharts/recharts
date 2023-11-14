@@ -1,5 +1,7 @@
+import { expect } from '@storybook/jest';
 /* eslint-disable no-shadow */
 import React, { useCallback, useState } from 'react';
+import { screen, fireEvent } from '@storybook/testing-library';
 import { pageData } from '../data';
 import { Area, Bar, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../src';
 import { DefaultTooltipContent } from '../../../src/component/DefaultTooltipContent';
@@ -8,16 +10,26 @@ export default {
   component: Tooltip,
 };
 
-// No need to keep this story around, but good for anyone to discuss the PR based on the behaviour here.
-export const ActiveTooltip = {
-  render: () => {
+// We do not export this story, but reuse the rendering across multiple examples with various args.
+const SimpleTooltipStory = {
+  render: (tooltipArgs: Record<string, any>) => {
     return (
-      <ComposedChart data={pageData} height={200} width={300}>
-        <Line dataKey="uv" />
-        <Bar dataKey="pv" />
-        <Tooltip active />
-      </ComposedChart>
+      <ResponsiveContainer width="100%" height={400}>
+        <ComposedChart data={pageData}>
+          <Tooltip {...tooltipArgs} />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Line dataKey="uv" />
+        </ComposedChart>
+      </ResponsiveContainer>
     );
+  },
+};
+
+export const ActiveTooltip = {
+  ...SimpleTooltipStory,
+  args: {
+    active: true,
   },
 };
 
@@ -54,9 +66,8 @@ export const LockedByClick = {
             setIsLocked(!isLocked);
           }}
         >
-          <Line dataKey="uv" />
-          <Bar dataKey="pv" />
-
+          <Line dataKey="uv" isAnimationActive={false} />
+          <Bar dataKey="pv" isAnimationActive={false} />
           <Tooltip
             position={{ y: 0, x: tooltipData.x }} // The y position fixes the Tooltip to the top of the chart.
             content={<CustomTooltip tooltipData={tooltipData} />}
@@ -65,8 +76,29 @@ export const LockedByClick = {
       </ResponsiveContainer>
     );
   },
-  args: {},
-  controls: {},
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+    setTimeout(() => {
+      const chart = canvasElement.querySelector('.recharts-wrapper');
+      fireEvent.mouseEnter(chart);
+
+      // Hovering over the chart shows the tooltip
+      fireEvent.mouseMove(chart, { clientX: 200, clientY: 200 });
+      expect(screen.getByText('590')).toBeVisible();
+
+      // We lock the Tooltip with a click
+      fireEvent.click(chart);
+
+      // When we move the mouse, the tooltip stays the same
+      fireEvent.mouseMove(chart, { clientX: 400, clientY: 100 });
+      expect(screen.getByText('590')).toBeVisible();
+
+      // When the mouse leaves the chart, the Tooltip still stays, but the cursor does not.
+      fireEvent.mouseOut(chart);
+
+      // The Tooltip is still visible, although the mouse is out of the chart.
+      expect(screen.getByText('590')).toBeVisible();
+    }, 0);
+  },
   description:
     'This example shows how to lock the tooltip to a specific position. Click on the chart to show fix the Tooltip.',
 };
