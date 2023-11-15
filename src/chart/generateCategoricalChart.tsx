@@ -752,11 +752,15 @@ const calculateOffset = (
     offset = appendOffsetOfLegend(offset, graphicalItems, props, prevLegendBBox);
   }
 
+  const offsetWidth = width - offset.left - offset.right;
+  const offsetHeight = height - offset.top - offset.bottom;
+
   return {
     brushBottom,
     ...offset,
-    width: width - offset.left - offset.right,
-    height: height - offset.top - offset.bottom,
+    // never return negative values for height and width
+    width: Math.max(offsetWidth, 0),
+    height: Math.max(offsetHeight, 0),
   };
 };
 
