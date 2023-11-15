@@ -759,8 +759,8 @@ const calculateOffset = (
     brushBottom,
     ...offset,
     // never return negative values for height and width
-    width: offsetWidth > 0 ? offsetWidth : 0,
-    height: offsetHeight > 0 ? offsetHeight : 0,
+    width: Math.max(offsetWidth, 0),
+    height: Math.max(offsetHeight, 0),
   };
 };
 

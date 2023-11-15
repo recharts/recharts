@@ -324,6 +324,7 @@ describe('<BarChart />', () => {
     });
   });
 
+  // guard against negative values in clipPath - ref https://github.com/recharts/recharts/issues/2009
   test('Renders a (Bar) chart with less width than left, right margin and less height than top, bottom margin', () => {
     const { container } = render(
       <BarChart
