@@ -1,7 +1,5 @@
-import { expect } from '@storybook/jest';
 /* eslint-disable no-shadow */
 import React, { useCallback, useState } from 'react';
-import { screen, fireEvent } from '@storybook/testing-library';
 import { pageData } from '../data';
 import { Area, Bar, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../src';
 import { DefaultTooltipContent } from '../../../src/component/DefaultTooltipContent';
