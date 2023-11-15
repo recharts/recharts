@@ -323,4 +323,35 @@ describe('<BarChart />', () => {
       expect(rectangleProps).toHaveAttribute('height', '10');
     });
   });
+
+  test('Renders a (Bar) chart with less width than left, right margin and less height than top, bottom margin', () => {
+    const { container } = render(
+      <BarChart
+        width={50}
+        height={80}
+        data={data}
+        margin={{
+          top: 50,
+          right: 100,
+          left: 100,
+          bottom: 50,
+        }}
+        layout="vertical"
+      >
+        <XAxis type="number" />
+        <YAxis dataKey="name" type="category" />
+        <Bar dataKey="pv" fill="#8884d8" isAnimationActive={false} />
+      </BarChart>,
+    );
+
+    // expect nothing to render because height and width are 0
+    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(0);
+
+    const clipPath = container.querySelector('#recharts53-clip');
+    expect(clipPath.children[0]).not.toBeNull();
+
+    // expect clipPath rect to have a width and height of 0
+    expect(clipPath.children[0]).toHaveAttribute('width', '0');
+    expect(clipPath.children[0]).toHaveAttribute('height', '0');
+  });
 });
