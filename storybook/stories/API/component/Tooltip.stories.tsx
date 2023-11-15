@@ -85,11 +85,6 @@ const TooltipProps: StorybookArgs = {
       category: 'Styles',
     },
   },
-  active: {
-    table: {
-      category: 'Internal',
-    },
-  },
   position: {
     description: 'If this field is set, the tooltip position will be fixed and will not move anymore.',
     table: {
