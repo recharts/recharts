@@ -183,9 +183,70 @@ describe('<Tooltip />', () => {
       expect(getByText(container, '1398')).toBeVisible();
     });
   });
-});
 
-// Tests to add:
-// Test for each chart type Composed, Area, Line, Scatter, ...
-// Test for Tooltip properties (i.e. shared on BarChart)
-// Test for visibility
+  describe('Tooltip - active', () => {
+    test('True - Should render tooltip even after moving the mouse out of the chart.', () => {
+      const { container } = render(
+        <AreaChart width={400} height={400} data={data}>
+          <Area dataKey="uv" />
+          <Tooltip active />
+        </AreaChart>,
+      );
+
+      const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+      expect(tooltip).not.toBeVisible();
+
+      const chart = container.querySelector('.recharts-wrapper');
+      fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
+
+      expect(tooltip).toBeVisible();
+
+      fireEvent.mouseOut(chart!);
+
+      // Still visible after moving out of the chart, because active is true.
+      expect(tooltip).toBeVisible();
+    });
+  });
+
+  test('False - Should never render tooltip', () => {
+    const { container } = render(
+      <AreaChart width={400} height={400} data={data}>
+        <Area dataKey="uv" />
+        <Tooltip active={false} />
+      </AreaChart>,
+    );
+
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    expect(tooltip).not.toBeVisible();
+
+    const chart = container.querySelector('.recharts-wrapper');
+    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
+
+    expect(tooltip).not.toBeVisible();
+
+    fireEvent.mouseOut(chart!);
+
+    expect(tooltip).not.toBeVisible();
+  });
+
+  test('Unset - Should render the Tooltip only while in the chart', () => {
+    const { container } = render(
+      <AreaChart width={400} height={400} data={data}>
+        <Area dataKey="uv" />
+        <Tooltip />
+      </AreaChart>,
+    );
+
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    expect(tooltip).not.toBeVisible();
+
+    const chart = container.querySelector('.recharts-wrapper');
+    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
+
+    expect(tooltip).toBeVisible();
+
+    fireEvent.mouseOut(chart!);
+
+    expect(tooltip).not.toBeVisible();
+  });
+});

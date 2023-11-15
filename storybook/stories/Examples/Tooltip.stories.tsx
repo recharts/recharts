@@ -9,6 +9,29 @@ export default {
   component: Tooltip,
 };
 
+// We do not export this story, but reuse the rendering across multiple examples with various args.
+const SimpleTooltipStory = {
+  render: (tooltipArgs: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <ComposedChart data={pageData}>
+          <Tooltip {...tooltipArgs} />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Line dataKey="uv" />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+};
+
+export const ActiveTooltip = {
+  ...SimpleTooltipStory,
+  args: {
+    active: true,
+  },
+};
+
 export const LockedByClick = {
   render: (_args: Record<string, any>) => {
     const [isLocked, setIsLocked] = React.useState(false);
@@ -44,7 +67,6 @@ export const LockedByClick = {
         >
           <Line dataKey="uv" />
           <Bar dataKey="pv" />
-
           <Tooltip
             position={{ y: 0, x: tooltipData.x }} // The y position fixes the Tooltip to the top of the chart.
             content={<CustomTooltip tooltipData={tooltipData} />}
@@ -53,8 +75,6 @@ export const LockedByClick = {
       </ResponsiveContainer>
     );
   },
-  args: {},
-  controls: {},
   description:
     'This example shows how to lock the tooltip to a specific position. Click on the chart to show fix the Tooltip.',
 };
@@ -138,18 +158,7 @@ export const SeparateDataSetsForChart = {
 };
 
 export const TriggerTooltipByClick = {
-  render: (tooltipArgs: Record<string, any>) => {
-    return (
-      <ResponsiveContainer width="100%" height={400}>
-        <ComposedChart data={pageData}>
-          <Tooltip {...tooltipArgs} />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Line dataKey="uv" />
-        </ComposedChart>
-      </ResponsiveContainer>
-    );
-  },
+  ...SimpleTooltipStory,
   args: {
     trigger: 'click',
   },
@@ -198,7 +207,7 @@ const CustomContent = ({ active, payload }: CustomTooltipProps) => {
 };
 
 export const CustomContentExample = {
-  ...TriggerTooltipByClick,
+  ...SimpleTooltipStory,
   args: {
     content: <CustomContent />,
     trigger: 'hover',
