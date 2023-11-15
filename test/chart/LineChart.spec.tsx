@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 
-import { vi } from 'vitest';
+import { vi, describe, test } from 'vitest';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Brush, CartesianAxis, Legend } from '../../src';
 
 const data = [
@@ -544,12 +544,14 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     const chartWidth = width - margin.left - margin.right;
     const dotSpacing = chartWidth / (data.length - 1);
 
-    // // simulate entering just past Page A of Chart1 to test snapping of the cursor line
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
     const firstChart = container.querySelector('.recharts-wrapper');
 
-    fireEvent.mouseOver(firstChart!, {
+    expect(firstChart).not.toBeNull();
+
+    // simulate entering just past Page A of Chart1 to test snapping of the cursor line
+    fireEvent.mouseOver(firstChart, {
       bubbles: true,
       cancelable: true,
       clientX: margin.left + 0.1 * dotSpacing,
