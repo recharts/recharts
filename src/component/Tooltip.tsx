@@ -43,7 +43,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Tol
    * If false, then Tooltip is never displayed.
    * If active is undefined, Recharts will control when the Tooltip displays. This includes mouse and keyboard controls.
    */
-  active?: boolean;
+  active?: boolean | undefined;
   allowEscapeViewBox?: AllowInDimension;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
@@ -69,7 +69,6 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   static displayName = 'Tooltip';
 
   static defaultProps = {
-    active: false,
     allowEscapeViewBox: { x: false, y: false },
     animationDuration: 400,
     animationEasing: 'ease',

@@ -1752,7 +1752,7 @@ export const generateCategoricalChart = ({
         this.state;
       const tooltipEventType = this.getTooltipEventType();
       // The cursor is a part of the Tooltip, and it should be shown (by default) when the Tooltip is active.
-      const isActive = isTooltipActive || element.props.active;
+      const isActive = element.props.active ?? isTooltipActive;
 
       if (
         !element ||
@@ -1955,7 +1955,7 @@ export const generateCategoricalChart = ({
       // The user can set isActive on the Tooltip,
       // and we respect the user to enable customisation.
       // The Tooltip is active if the user has set isActive, or if the tooltip is active due to a mouse event.
-      const isActive = isTooltipActive || tooltipItem.props.active;
+      const isActive = tooltipItem.props.active ?? isTooltipActive;
 
       return cloneElement(tooltipItem, {
         viewBox: { ...offset, x: offset.left, y: offset.top },
