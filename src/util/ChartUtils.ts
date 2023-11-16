@@ -98,20 +98,16 @@ export const calculateActiveTickIndex = (
   axis?: BaseAxisProps,
 ) => {
   let index = -1;
-  const len = ticks?.length ?? 0;
 
-  // if there are 1 or less ticks ticks then the active tick is at index 0
-  if (len <= 1) {
-    return 0;
-  }
-
+  //
   if (axis && axis.axisType === 'angleAxis' && Math.abs(Math.abs(axis.range[1] - axis.range[0]) - 360) <= 1e-6) {
     const { range } = axis;
     // ticks are distributed in a circle
-    for (let i = 0; i < len; i++) {
-      const before = i > 0 ? unsortedTicks[i - 1].coordinate : unsortedTicks[len - 1].coordinate;
+    const lastTickIndex = (unsortedTicks?.length ?? 0) - 1;
+    for (let i = 0; i <= lastTickIndex; i++) {
+      const before = i > 0 ? unsortedTicks[i - 1].coordinate : unsortedTicks[lastTickIndex].coordinate;
       const cur = unsortedTicks[i].coordinate;
-      const after = i >= len - 1 ? unsortedTicks[0].coordinate : unsortedTicks[i + 1].coordinate;
+      const after = i === lastTickIndex ? unsortedTicks[0].coordinate : unsortedTicks[i + 1].coordinate;
       let sameDirectionCoord;
 
       if (mathSign(cur - before) !== mathSign(after - cur)) {
@@ -151,20 +147,31 @@ export const calculateActiveTickIndex = (
         }
       }
     }
-  } else {
-    // ticks are distributed in a single direction
-    for (let i = 0; i < len; i++) {
-      if (
-        (i === 0 && coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2) ||
-        (i > 0 &&
-          i < len - 1 &&
-          coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2 &&
-          coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2) ||
-        (i === len - 1 && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2)
-      ) {
-        ({ index } = ticks[i]);
-        break;
-      }
+
+    return index;
+  }
+
+  const lastTickIndex = (ticks?.length ?? 0) - 1;
+  // ticks are distributed in a single direction
+  for (let i = 0; i <= lastTickIndex; i++) {
+    if (i === 0 && coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2) {
+      ({ index } = ticks[i]);
+      break;
+    }
+
+    if (
+      i !== lastTickIndex &&
+      i > 0 &&
+      coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2 &&
+      coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2
+    ) {
+      ({ index } = ticks[i]);
+      break;
+    }
+
+    if (i === lastTickIndex && coordinate > (ticks[i].coordinate + ticks[i - 1].coordinate) / 2) {
+      ({ index } = ticks[i]);
+      break;
     }
   }
 
