@@ -99,7 +99,6 @@ export const calculateActiveTickIndex = (
 ) => {
   let index = -1;
 
-  //
   if (axis && axis.axisType === 'angleAxis' && Math.abs(Math.abs(axis.range[1] - axis.range[0]) - 360) <= 1e-6) {
     const { range } = axis;
     // ticks are distributed in a circle
