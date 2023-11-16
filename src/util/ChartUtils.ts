@@ -151,6 +151,9 @@ export const calculateActiveTickIndex = (
   }
 
   const lastTickIndex = (ticks?.length ?? 0) - 1;
+  if (lastTickIndex === 0) {
+    return 0;
+  }
   // ticks are distributed in a single direction
   for (let i = 0; i <= lastTickIndex; i++) {
     if (i === 0 && coordinate <= (ticks[i].coordinate + ticks[i + 1].coordinate) / 2) {
