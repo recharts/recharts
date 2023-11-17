@@ -66,7 +66,7 @@ describe('<Tooltip />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
     // After the mouse over event over the chart, the tooltip wrapper still is not set to visible,
     // but the content is already created based on the nearest data point.
@@ -133,7 +133,7 @@ describe('<Tooltip />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
     // After the mouse over event over the chart, the tooltip wrapper still is not set to visible,
     // but the content is already created based on the nearest data point.
@@ -141,6 +141,53 @@ describe('<Tooltip />', () => {
     const tooltipContentValue = container.querySelector('.recharts-tooltip-item-value');
     expect(tooltipContentName).toBeInTheDocument();
     expect(tooltipContentValue).toBeInTheDocument();
+  });
+
+  it('Tooltip payload should be correct for multiple datasets', () => {
+    const lineData1 = [
+      { category: 'A', value: 0.2 },
+      { category: 'B', value: 0.3 },
+      { category: 'B', value: 0.5 },
+      { category: 'C', value: 0.6 },
+      { category: 'C', value: 0.7 },
+      { category: 'D', value: 0.4 },
+    ];
+
+    const lineData2 = [
+      { category: 'A', value: null },
+      { category: 'B', value: null },
+      { category: 'B', value: null },
+      { category: 'C', value: 0.2 },
+      { category: 'C', value: 0.4 },
+      { category: 'D', value: 0.6 },
+    ];
+
+    let tooltipPayload: any[] | null = null;
+
+    const { container } = render(
+      <div role="main" style={{ width: '400px', height: '400px' }}>
+        <ComposedChart width={400} height={400}>
+          <XAxis dataKey="category" type="category" />
+          <YAxis dataKey="value" />
+          <Tooltip
+            content={({ payload }) => {
+              tooltipPayload = payload;
+              return null;
+            }}
+          />
+
+          <Line dataKey="value" data={lineData1} />
+          <Line dataKey="value" data={lineData2} />
+        </ComposedChart>
+      </div>,
+    );
+
+    const chart = container.querySelector('.recharts-wrapper');
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+    expect(tooltipPayload).not.toBeNull();
+    expect(tooltipPayload).toHaveLength(2);
+    expect(tooltipPayload[0].payload.value).toEqual(0.7);
+    expect(tooltipPayload[1].payload.value).toEqual(0.4);
   });
 
   it('Render customized tooltip when content is set to be a react element', () => {
@@ -156,7 +203,7 @@ describe('<Tooltip />', () => {
 
     const chart = container.querySelector('.recharts-wrapper');
 
-    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
     const customizedContent = container.querySelector('.customized');
     expect(customizedContent).toBeInTheDocument();
@@ -197,11 +244,11 @@ describe('<Tooltip />', () => {
       expect(tooltip).not.toBeVisible();
 
       const chart = container.querySelector('.recharts-wrapper');
-      fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
+      fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
       expect(tooltip).toBeVisible();
 
-      fireEvent.mouseOut(chart!);
+      fireEvent.mouseOut(chart);
 
       // Still visible after moving out of the chart, because active is true.
       expect(tooltip).toBeVisible();
@@ -220,11 +267,11 @@ describe('<Tooltip />', () => {
     expect(tooltip).not.toBeVisible();
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
     expect(tooltip).not.toBeVisible();
 
-    fireEvent.mouseOut(chart!);
+    fireEvent.mouseOut(chart);
 
     expect(tooltip).not.toBeVisible();
   });
@@ -241,11 +288,11 @@ describe('<Tooltip />', () => {
     expect(tooltip).not.toBeVisible();
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
     expect(tooltip).toBeVisible();
 
-    fireEvent.mouseOut(chart!);
+    fireEvent.mouseOut(chart);
 
     expect(tooltip).not.toBeVisible();
   });
