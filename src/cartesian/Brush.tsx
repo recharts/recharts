@@ -129,7 +129,6 @@ export class Brush extends PureComponent<Props, State> {
     padding: { top: 1, right: 1, bottom: 1, left: 1 },
     leaveTimeOut: 1000,
     alwaysShowText: false,
-    ariaLabel: 'chart brush',
   };
 
   constructor(props: Props) {
@@ -500,7 +499,7 @@ export class Brush extends PureComponent<Props, State> {
       height,
     };
 
-    const ariaLabelBrush = `ID: ${ariaLabel}, Min value: ${data[startIndex].name}, Max value: ${data[endIndex].name}`;
+    const ariaLabelBrush = ariaLabel || `Min value: ${data[startIndex].name}, Max value: ${data[endIndex].name}`;
 
     return (
       <Layer
