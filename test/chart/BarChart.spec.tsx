@@ -19,7 +19,6 @@ describe('<BarChart />', () => {
   ];
 
   type CustomLabelProps = Partial<{ x: number; y: number; index: number }>;
-  
   beforeAll(() => {
     vi.useFakeTimers();
   });
