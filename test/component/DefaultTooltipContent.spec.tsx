@@ -57,7 +57,6 @@ describe('DefaultTooltipContent', () => {
   it('covers "itemSorter" prop', () => {
     // @ts-expect-error ignore payload.type prop for code coverage
     render(<DefaultTooltipContent {...mockProps} />);
-    screen.debug();
   });
   it('covers "labelFormatter" prop', () => {
     // @ts-expect-error ignore payload.type prop for code coverage
