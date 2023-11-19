@@ -1,6 +1,8 @@
 /* eslint-disable no-shadow */
-import React from 'react';
-import { Cell, Pie, PieChart, ResponsiveContainer } from '../../../../src';
+import React, { useState } from 'react';
+import { StoryObj } from '@storybook/react';
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
+import { pageData } from '../../data';
 
 export default {
   component: Pie,
@@ -104,4 +106,37 @@ export const PieWithPatterns = {
     );
   },
   args: {},
+};
+
+export const Test: StoryObj = {
+  render: () => {
+    const [mouseMove, setMouseMove] = useState({});
+    return (
+      <>
+        <ResponsiveContainer height={500}>
+          <PieChart
+            onMouseMove={e => {
+              setMouseMove(e);
+            }}
+          >
+            <Pie data={pageData.slice(-1)} dataKey="uv" />
+
+            <Tooltip />
+          </PieChart>
+        </ResponsiveContainer>
+        <ResponsiveContainer height={500}>
+          <PieChart
+            onMouseMove={e => {
+              setMouseMove(e);
+            }}
+          >
+            <Pie data={pageData} dataKey="uv" />
+
+            <Tooltip />
+          </PieChart>
+        </ResponsiveContainer>
+        <div style={{ width: '100%' }}>{JSON.stringify(mouseMove)}</div>
+      </>
+    );
+  },
 };
