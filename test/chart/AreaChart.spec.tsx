@@ -1,8 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 import React, { ComponentProps, FC } from 'react';
-
+import { vi, SpyInstance } from 'vitest';
 import { Area, AreaChart, Brush, CartesianAxis, Tooltip, XAxis, YAxis } from '../../src';
-import { mockMouseEvent } from '../helper/mockMouseEvent';
 
 describe('AreaChart', () => {
   const data = [
@@ -55,8 +54,6 @@ describe('AreaChart', () => {
   });
 
   test('Renders customized active dot when activeDot is set to be a ReactElement', () => {
-    jest.useFakeTimers();
-
     const ActiveDot: FC<{ cx?: number; cy?: number }> = ({ cx, cy }) => (
       <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />
     );
@@ -77,19 +74,13 @@ describe('AreaChart', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
-
-    jest.runAllTimers();
+    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
 
     const dot = container.querySelectorAll('.customized-active-dot');
     expect(dot).toHaveLength(1);
   });
 
   test('Renders customized active dot when activeDot is set to be a function', () => {
-    jest.useFakeTimers();
-
     const activeDotRenderer: ComponentProps<typeof Area>['activeDot'] = ({ cx, cy }) => (
       <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />
     );
@@ -104,11 +95,7 @@ describe('AreaChart', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
-
-    jest.runAllTimers();
+    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
 
     const dot = container.querySelectorAll('.customized-active-dot');
     expect(dot).toHaveLength(1);
@@ -161,16 +148,16 @@ describe('AreaChart', () => {
   describe('<AreaChart /> - Pure Rendering', () => {
     const pureElements = [Area];
 
-    const spies: jest.SpyInstance[] = [];
+    const spies: SpyInstance[] = [];
     // CartesianAxis is what is actually render for XAxis and YAxis
-    let axisSpy: jest.SpyInstance;
+    let axisSpy: SpyInstance;
 
     // spy on each pure element before each test, and restore the spy afterwards
     beforeEach(() => {
       pureElements.forEach((el, i) => {
-        spies[i] = jest.spyOn(el.prototype, 'render');
+        spies[i] = vi.spyOn(el.prototype, 'render');
       });
-      axisSpy = jest.spyOn(CartesianAxis.prototype, 'render');
+      axisSpy = vi.spyOn(CartesianAxis.prototype, 'render');
     });
     afterEach(() => {
       pureElements.forEach((el, i) => spies[i].mockRestore());
@@ -211,11 +198,8 @@ describe('AreaChart', () => {
 
       const brushSlide = container.querySelector('.recharts-brush-slide');
 
-      const mouseDownEvent = mockMouseEvent('mousedown', brushSlide!, { pageX: 0, pageY: 0 });
-      const mouseMoveEvent = mockMouseEvent('mousemove', window, { pageX: 0, pageY: 0 });
-
-      mouseDownEvent.fire();
-      mouseMoveEvent.fire();
+      fireEvent.mouseDown(brushSlide!);
+      fireEvent.mouseMove(brushSlide!, { clientX: 200, clientY: 200 });
       fireEvent.mouseUp(window);
 
       spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
@@ -227,11 +211,8 @@ describe('AreaChart', () => {
 
       const leftBrushTraveler = container.querySelector('.recharts-brush-traveller');
 
-      const mouseDownEvent = mockMouseEvent('mousedown', leftBrushTraveler!, { pageX: 0, pageY: 0 });
-      const mouseMoveEvent = mockMouseEvent('mousemove', window, { pageX: 400, pageY: 0 });
-
-      mouseDownEvent.fire();
-      mouseMoveEvent.fire();
+      fireEvent.mouseDown(leftBrushTraveler!);
+      fireEvent.mouseMove(window!, { clientX: 400, clientY: 0 });
       fireEvent.mouseUp(window);
 
       expect(leftBrushTraveler?.firstChild).toHaveAttribute('x', '390'); // not sure why the drag end at x: 390
@@ -243,11 +224,8 @@ describe('AreaChart', () => {
 
       const rightBrushTraveler = container.querySelectorAll('.recharts-brush-traveller')[1];
 
-      const mouseDownEvent = mockMouseEvent('mousedown', rightBrushTraveler!, { pageX: 400, pageY: 0 });
-      const mouseMoveEvent = mockMouseEvent('mousemove', window, { pageX: 0, pageY: 0 });
-
-      mouseDownEvent.fire();
-      mouseMoveEvent.fire();
+      fireEvent.mouseDown(rightBrushTraveler!, { clientX: 400, clientY: 0 });
+      fireEvent.mouseMove(window, { clientX: 0, clientY: 0 });
       fireEvent.mouseUp(window);
 
       // not sure why the drag ended at x: 65, but it did close to the 1st point but not 2nd

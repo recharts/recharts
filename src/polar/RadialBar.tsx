@@ -2,9 +2,11 @@
  * @fileOverview Render a group of radial bar
  */
 import React, { PureComponent, ReactElement } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Animate from 'react-smooth';
-import _ from 'lodash';
+import isEqual from 'lodash/isEqual';
+import isFunction from 'lodash/isFunction';
+
 import { parseCornerRadius, RadialBarSector, RadialBarSectorProps } from '../util/RadialBarUtils';
 import { Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
@@ -147,7 +149,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
         value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
       } else {
         value = getValueByDataKey(entry, dataKey);
-        if (!_.isArray(value)) {
+        if (!Array.isArray(value)) {
           value = [baseValue, value];
         }
       }
@@ -254,7 +256,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
     const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
 
-    if (_.isFunction(onAnimationEnd)) {
+    if (isFunction(onAnimationEnd)) {
       onAnimationEnd();
     }
   };
@@ -264,7 +266,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
 
     this.setState({ isAnimationFinished: false });
 
-    if (_.isFunction(onAnimationStart)) {
+    if (isFunction(onAnimationStart)) {
       onAnimationStart();
     }
   };
@@ -338,7 +340,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
     const { data, isAnimationActive } = this.props;
     const { prevData } = this.state;
 
-    if (isAnimationActive && data && data.length && (!prevData || !_.isEqual(prevData, data))) {
+    if (isAnimationActive && data && data.length && (!prevData || !isEqual(prevData, data))) {
       return this.renderSectorsWithAnimation();
     }
 
@@ -382,7 +384,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
     }
 
     const { isAnimationFinished } = this.state;
-    const layerClass = classNames('recharts-area', className);
+    const layerClass = clsx('recharts-area', className);
 
     return (
       <Layer className={layerClass}>

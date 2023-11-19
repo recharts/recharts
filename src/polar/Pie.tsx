@@ -3,8 +3,12 @@
  */
 import React, { PureComponent, ReactElement, ReactNode, SVGProps } from 'react';
 import Animate from 'react-smooth';
-import classNames from 'classnames';
-import _ from 'lodash';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+import isNil from 'lodash/isNil';
+import isFunction from 'lodash/isFunction';
+
+import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { Props as SectorProps } from '../shape/Sector';
 import { Curve } from '../shape/Curve';
@@ -212,14 +216,14 @@ export class Pie extends PureComponent<Props, State> {
 
     let realDataKey = dataKey;
 
-    if (_.isNil(dataKey) && _.isNil(valueKey)) {
+    if (isNil(dataKey) && isNil(valueKey)) {
       warn(
         false,
         `Use "dataKey" to specify the value of pie,
       the props "valueKey" will be deprecated in 1.1.0`,
       );
       realDataKey = 'value';
-    } else if (_.isNil(dataKey)) {
+    } else if (isNil(dataKey)) {
       warn(
         false,
         `Use "dataKey" to specify the value of pie,
@@ -371,7 +375,7 @@ export class Pie extends PureComponent<Props, State> {
       isAnimationFinished: true,
     });
 
-    if (_.isFunction(onAnimationEnd)) {
+    if (isFunction(onAnimationEnd)) {
       onAnimationEnd();
     }
   };
@@ -383,7 +387,7 @@ export class Pie extends PureComponent<Props, State> {
       isAnimationFinished: false,
     });
 
-    if (_.isFunction(onAnimationStart)) {
+    if (isFunction(onAnimationStart)) {
       onAnimationStart();
     }
   };
@@ -392,7 +396,7 @@ export class Pie extends PureComponent<Props, State> {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     }
-    if (_.isFunction(option)) {
+    if (isFunction(option)) {
       return option(props);
     }
 
@@ -404,7 +408,7 @@ export class Pie extends PureComponent<Props, State> {
       return React.cloneElement(option, props);
     }
     let label = value;
-    if (_.isFunction(option)) {
+    if (isFunction(option)) {
       label = option(props);
       if (React.isValidElement(label)) {
         return label;
@@ -454,9 +458,9 @@ export class Pie extends PureComponent<Props, State> {
       };
       let realDataKey = dataKey;
       // TODO: compatible to lower versions
-      if (_.isNil(dataKey) && _.isNil(valueKey)) {
+      if (isNil(dataKey) && isNil(valueKey)) {
         realDataKey = 'value';
-      } else if (_.isNil(dataKey)) {
+      } else if (isNil(dataKey)) {
         realDataKey = valueKey;
       }
 
@@ -525,7 +529,7 @@ export class Pie extends PureComponent<Props, State> {
 
           sectors.forEach((entry, index) => {
             const prev = prevSectors && prevSectors[index];
-            const paddingAngle = index > 0 ? _.get(entry, 'paddingAngle', 0) : 0;
+            const paddingAngle = index > 0 ? get(entry, 'paddingAngle', 0) : 0;
 
             if (prev) {
               const angleIp = interpolateNumber(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle);
@@ -595,7 +599,7 @@ export class Pie extends PureComponent<Props, State> {
     const { sectors, isAnimationActive } = this.props;
     const { prevSectors } = this.state;
 
-    if (isAnimationActive && sectors && sectors.length && (!prevSectors || !_.isEqual(prevSectors, sectors))) {
+    if (isAnimationActive && sectors && sectors.length && (!prevSectors || !isEqual(prevSectors, sectors))) {
       return this.renderSectorsWithAnimation();
     }
     return this.renderSectorsStatically(sectors);
@@ -623,7 +627,7 @@ export class Pie extends PureComponent<Props, State> {
       return null;
     }
 
-    const layerClass = classNames('recharts-pie', className);
+    const layerClass = clsx('recharts-pie', className);
 
     return (
       <Layer

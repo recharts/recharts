@@ -91,6 +91,17 @@
         "ignoreRestSiblings": true,
         "argsIgnorePattern": "^_"
       }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "lodash",
+            "message": "Import [module] from lodash/[module] instead"
+          }
+        ]
+      }
     ]
   },
   "overrides": [

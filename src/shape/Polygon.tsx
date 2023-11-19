@@ -2,7 +2,7 @@
  * @fileOverview Polygon
  */
 import React, { SVGProps } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Coordinate } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
@@ -80,7 +80,7 @@ export const Polygon: React.FC<Props> = props => {
     return null;
   }
 
-  const layerClass = classNames('recharts-polygon', className);
+  const layerClass = clsx('recharts-polygon', className);
 
   if (baseLinePoints && baseLinePoints.length) {
     const hasStroke = others.stroke && others.stroke !== 'none';

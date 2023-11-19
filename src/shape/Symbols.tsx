@@ -2,7 +2,8 @@
  * @fileOverview Curve
  */
 import React, { SVGProps } from 'react';
-import _ from 'lodash';
+import upperFirst from 'lodash/upperFirst';
+
 import {
   symbol as shapeSymbol,
   symbolCircle,
@@ -14,7 +15,7 @@ import {
   symbolWye,
   SymbolType as D3SymbolType,
 } from 'victory-vendor/d3-shape';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { SymbolType } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
@@ -36,7 +37,7 @@ const symbolFactories: SymbolFactory = {
 const RADIAN = Math.PI / 180;
 
 const getSymbolFactory = (type: SymbolType) => {
-  const name = `symbol${_.upperFirst(type)}`;
+  const name = `symbol${upperFirst(type)}`;
 
   return symbolFactories[name] || symbolCircle;
 };
@@ -79,7 +80,7 @@ export interface InnerSymbolsProp {
 export type SymbolsProps = SVGProps<SVGPathElement> & InnerSymbolsProp;
 
 const registerSymbol = (key: string, factory: D3SymbolType) => {
-  symbolFactories[`symbol${_.upperFirst(key)}`] = factory;
+  symbolFactories[`symbol${upperFirst(key)}`] = factory;
 };
 
 export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest }: SymbolsProps) => {
@@ -103,7 +104,7 @@ export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest
     return (
       <path
         {...filteredProps}
-        className={classNames('recharts-symbols', className)}
+        className={clsx('recharts-symbols', className)}
         transform={`translate(${cx}, ${cy})`}
         d={getPath()}
       />

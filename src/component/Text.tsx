@@ -1,11 +1,12 @@
 import React, { CSSProperties, SVGProps, useMemo } from 'react';
-import reduceCSSCalc from 'reduce-css-calc';
-import classNames from 'classnames';
-import _ from 'lodash';
+
+import isNil from 'lodash/isNil';
+import clsx from 'clsx';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { filterProps } from '../util/ReactUtils';
 import { getStringSize } from '../util/DOMUtils';
+import { reduceCSSCalc } from '../util/ReduceCSSCalc';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -24,7 +25,7 @@ type CalculateWordWidthsParam = Pick<Props, 'children' | 'breakAll' | 'style'>;
 const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsParam): CalculatedWordWidths => {
   try {
     let words: string[] = [];
-    if (!_.isNil(children)) {
+    if (!isNil(children)) {
       if (breakAll) {
         words = children.toString().split('');
       } else {
@@ -155,7 +156,7 @@ const calculateWordsByLines = (
 };
 
 const getWordsWithoutCalculate = (children: React.ReactNode): Array<Words> => {
-  const words = !_.isNil(children) ? children.toString().split(BREAKING_SPACES) : [];
+  const words = !isNil(children) ? children.toString().split(BREAKING_SPACES) : [];
   return [{ words }];
 };
 
@@ -222,7 +223,7 @@ export const Text = ({
   const x = (propsX as number) + (isNumber(dx as number) ? (dx as number) : 0);
   const y = (propsY as number) + (isNumber(dy as number) ? (dy as number) : 0);
 
-  let startDy: number;
+  let startDy: string;
   switch (verticalAnchor) {
     case 'start':
       startDy = reduceCSSCalc(`calc(${capHeight})`);
@@ -253,7 +254,7 @@ export const Text = ({
       {...filterProps(textProps, true)}
       x={x}
       y={y}
-      className={classNames('recharts-text', className)}
+      className={clsx('recharts-text', className)}
       textAnchor={textAnchor}
       fill={fill.includes('url') ? DEFAULT_FILL : fill}
     >

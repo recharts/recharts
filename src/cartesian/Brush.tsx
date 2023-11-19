@@ -2,9 +2,10 @@
  * @fileOverview Brush
  */
 import React, { PureComponent, Children, ReactText, ReactElement, TouchEvent, SVGProps } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import range from 'lodash/range';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -95,7 +96,7 @@ const createScale = ({
 
   const len = data.length;
   const scale = scalePoint<number>()
-    .domain(_.range(0, len))
+    .domain(range(0, len))
     .range([x, x + width - travellerWidth]);
   const scaleValues = scale.domain().map(entry => scale(entry));
 
@@ -164,7 +165,7 @@ export class Brush extends PureComponent<Props, State> {
 
     if (React.isValidElement(option)) {
       rectangle = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       rectangle = option(props);
     } else {
       rectangle = Brush.renderDefaultTraveller(props);
@@ -220,22 +221,22 @@ export class Brush extends PureComponent<Props, State> {
     this.detachDragEndListener();
   }
 
-  static getIndexInRange(range: number[], x: number) {
-    const len = range.length;
+  static getIndexInRange(valueRange: number[], x: number) {
+    const len = valueRange.length;
     let start = 0;
     let end = len - 1;
 
     while (end - start > 1) {
       const middle = Math.floor((start + end) / 2);
 
-      if (range[middle] > x) {
+      if (valueRange[middle] > x) {
         end = middle;
       } else {
         start = middle;
       }
     }
 
-    return x >= range[end] ? end : start;
+    return x >= valueRange[end] ? end : start;
   }
 
   getIndex({ startX, endX }: { startX: number; endX: number }) {
@@ -256,7 +257,7 @@ export class Brush extends PureComponent<Props, State> {
     const { data, tickFormatter, dataKey } = this.props;
     const text = getValueByDataKey(data[index], dataKey, index);
 
-    return _.isFunction(tickFormatter) ? tickFormatter(text, index) : text;
+    return isFunction(tickFormatter) ? tickFormatter(text, index) : text;
   }
 
   handleDrag = (e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) => {
@@ -600,7 +601,7 @@ export class Brush extends PureComponent<Props, State> {
       return null;
     }
 
-    const layerClass = classNames('recharts-brush', className);
+    const layerClass = clsx('recharts-brush', className);
     const isPanoramic = React.Children.count(children) === 1;
     const style = generatePrefixStyle('userSelect', 'none');
 

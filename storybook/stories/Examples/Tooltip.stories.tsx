@@ -3,9 +3,33 @@ import React, { useCallback, useState } from 'react';
 import { pageData } from '../data';
 import { Area, Bar, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../src';
 import { DefaultTooltipContent } from '../../../src/component/DefaultTooltipContent';
+import { generateMockData } from '../../../test/helper/generateMockData';
 
 export default {
   component: Tooltip,
+};
+
+// We do not export this story, but reuse the rendering across multiple examples with various args.
+const SimpleTooltipStory = {
+  render: (tooltipArgs: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <ComposedChart data={pageData}>
+          <Tooltip {...tooltipArgs} />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Line dataKey="uv" />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+};
+
+export const ActiveTooltip = {
+  ...SimpleTooltipStory,
+  args: {
+    active: true,
+  },
 };
 
 export const LockedByClick = {
@@ -43,7 +67,6 @@ export const LockedByClick = {
         >
           <Line dataKey="uv" />
           <Bar dataKey="pv" />
-
           <Tooltip
             position={{ y: 0, x: tooltipData.x }} // The y position fixes the Tooltip to the top of the chart.
             content={<CustomTooltip tooltipData={tooltipData} />}
@@ -52,8 +75,6 @@ export const LockedByClick = {
       </ResponsiveContainer>
     );
   },
-  args: {},
-  controls: {},
   description:
     'This example shows how to lock the tooltip to a specific position. Click on the chart to show fix the Tooltip.',
 };
@@ -134,4 +155,89 @@ export const SeparateDataSetsForChart = {
       </ResponsiveContainer>
     );
   },
+};
+
+export const TriggerTooltipByClick = {
+  ...SimpleTooltipStory,
+  args: {
+    trigger: 'click',
+  },
+};
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: payloadType[];
+  label?: number;
+}
+
+type payloadType = {
+  value: string | number;
+  name: string;
+};
+
+const CustomContent = ({ active, payload }: CustomTooltipProps) => {
+  if (active && payload && payload.length > 0) {
+    return (
+      <div
+        style={{
+          backgroundColor: '#5b63ffe7',
+          padding: '10px',
+          borderRadius: '10px',
+          boxShadow: '1px 2px 10px -2px #7873ffb1',
+        }}
+      >
+        {payload.map((pld: payloadType) => (
+          <p
+            key={pld.name}
+            style={{
+              borderStyle: 'solid 1px',
+              fontSize: '13px',
+              fontWeight: '600',
+              fontFamily: 'sans-serif',
+              color: '#fff',
+            }}
+          >
+            {`${pld.name} : ${pld.value}`}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
+export const CustomContentExample = {
+  ...SimpleTooltipStory,
+  args: {
+    content: <CustomContent />,
+    trigger: 'hover',
+  },
+};
+
+export const LargeDataArray = {
+  render: (args: Record<string, any>) => {
+    const [surfaceWidth, surfaceHeight] = [600, 300];
+    return (
+      <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <ComposedChart
+          width={surfaceWidth}
+          height={surfaceHeight}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+          data={generateMockData(1000, 334058656)}
+        >
+          {/* The target component */}
+          <Tooltip {...args} />
+          <Line dataKey="x" />
+          <Line dataKey="y" />
+          <Line dataKey="z" />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {},
 };

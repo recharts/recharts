@@ -1,6 +1,8 @@
 // eslint-disable-next-line max-classes-per-file
-import React, { PureComponent, useState } from 'react';
+import { expect } from '@storybook/jest';
 import { StoryObj } from '@storybook/react';
+import React, { PureComponent, useState } from 'react';
+import { userEvent, within } from '@storybook/testing-library';
 import { Impressions, impressionsData, pageData } from '../data';
 import {
   Line,
@@ -16,6 +18,7 @@ import {
   Area,
   Brush,
   ReferenceArea,
+  DefaultTooltipContent,
 } from '../../../src';
 
 export default {
@@ -648,44 +651,17 @@ export const HighlightAndZoom = {
 
 export const LineChartHasMultiSeries = {
   render: () => {
-    const series = [
-      {
-        name: 'Series 1',
-        data: [
-          { category: 'A', value: Math.random() },
-          { category: 'B', value: Math.random() },
-          { category: 'C', value: Math.random() },
-        ],
-      },
-      {
-        name: 'Series 2',
-        data: [
-          { category: 'B', value: Math.random() },
-          { category: 'C', value: Math.random() },
-          { category: 'D', value: Math.random() },
-        ],
-      },
-      {
-        name: 'Series 3',
-        data: [
-          { category: 'C', value: Math.random() },
-          { category: 'D', value: Math.random() },
-          { category: 'E', value: Math.random() },
-        ],
-      },
-    ];
-
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart width={500} height={300}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="category" type="category" allowDuplicatedCategory={false} />
-          <YAxis dataKey="value" />
+        <LineChart width={500} height={300} data={pageData}>
+          <CartesianGrid />
+          <XAxis dataKey="name" />
+          <YAxis />
           <Tooltip />
           <Legend />
-          {series.map(s => (
-            <Line dataKey="value" data={s.data} name={s.name} key={s.name} />
-          ))}
+          <Line dataKey="uv" />
+          <Line dataKey="pv" />
+          <Line dataKey="amt" />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -836,6 +812,177 @@ export const NegativeValuesWithReferenceLines = {
           {minX < 0 && <ReferenceLine x={0} stroke="gray" strokeWidth={1.5} strokeOpacity={0.65} />}
 
           <Line strokeWidth={2} data={data} dot={false} type="monotone" dataKey="y" stroke="black" tooltipType="none" />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+};
+
+export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(canvas.getByText('Page A')).toBeInTheDocument();
+    await userEvent.click(canvas.getByTestId('toggle'));
+    expect(canvas.queryByText('Page A')).not.toBeInTheDocument();
+  },
+  render: () => {
+    const data = [
+      {
+        name: 'Page A',
+        uv: 4000,
+        pv: 2400,
+        amt: 2400,
+      },
+      {
+        name: 'Page B',
+        uv: 3000,
+        pv: 1398,
+        amt: 2210,
+      },
+      {
+        name: 'Page C',
+        uv: 2000,
+        pv: 9800,
+        amt: 2290,
+      },
+      {
+        name: 'Page D',
+        uv: 2780,
+        pv: 3908,
+        amt: 2000,
+      },
+      {
+        name: 'Page E',
+        uv: 1890,
+        pv: 4800,
+        amt: 2181,
+      },
+      {
+        name: 'Page F',
+        uv: 2390,
+        pv: 3800,
+        amt: 2500,
+      },
+      {
+        name: 'Page G',
+        uv: 3490,
+        pv: 4300,
+        amt: 2100,
+      },
+    ];
+
+    const yAxes = [
+      { yAxisId: 'one', dataKey: 'pv', orientation: 'left' },
+      { yAxisId: 'two', dataKey: 'uv', orientation: 'left' },
+    ] as const;
+
+    const [isBtnClicked, setBtnClicked] = useState(false);
+
+    const yAxisComponents = yAxes.map(({ yAxisId, dataKey, orientation }) => (
+      <YAxis
+        key={dataKey}
+        axisLine={{ display: 'none' }}
+        tickLine={{ display: 'none' }}
+        orientation={orientation}
+        dataKey={dataKey}
+        yAxisId={yAxisId}
+        tick={{
+          fill: '#555',
+          fontSize: 16,
+          fontWeight: 'bold',
+        }}
+      />
+    ));
+
+    return (
+      <div>
+        <button data-testid="toggle" type="button" onClick={() => setBtnClicked(clicked => !clicked)}>
+          Click Me to Simulate Legend
+        </button>
+        <LineChart width={1300} height={400} margin={{ right: 30, bottom: 40 }} data={data} layout="horizontal">
+          <CartesianGrid data-testid="cartesian" strokeDasharray="3 3" />
+          {isBtnClicked ? null : (
+            <>
+              <XAxis
+                dataKey="name"
+                type="category"
+                allowDuplicatedCategory={false}
+                interval={0}
+                ticks={['Page A', 'Page C', 'Page F']}
+                tick={{ fontSize: 14 }}
+                tickMargin={25}
+              />
+              {yAxisComponents}
+              <Tooltip content={<DefaultTooltipContent />} />
+              <Line
+                name="PV"
+                type="monotone"
+                dataKey="pv"
+                stroke="#8884d8"
+                activeDot={{ r: 8 }}
+                yAxisId={yAxisComponents[0].props.yAxisId}
+                dot={false}
+              />
+              <Line
+                name="UV"
+                type="monotone"
+                dataKey="uv"
+                stroke="#82ca9d"
+                yAxisId={yAxisComponents[1].props.yAxisId}
+                dot={false}
+              />
+            </>
+          )}
+        </LineChart>
+        <Legend />
+      </div>
+    );
+  },
+};
+
+export const WithBrush: StoryObj = {
+  render: () => {
+    return (
+      <ResponsiveContainer>
+        <LineChart width={0} height={0} data={pageData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          <Legend />
+          <Brush dataKey="name" startIndex={2} height={30} stroke="#8884d8" />
+          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+};
+
+export const HideOnLegendClick: StoryObj = {
+  render: () => {
+    const [activeSeries, setActiveSeries] = React.useState<Array<string>>([]);
+
+    const handleLegendClick = (dataKey: string) => {
+      if (activeSeries.includes(dataKey)) {
+        setActiveSeries(activeSeries.filter(el => el !== dataKey));
+      } else {
+        setActiveSeries(prev => [...prev, dataKey]);
+      }
+    };
+
+    return (
+      <ResponsiveContainer height={400}>
+        <LineChart data={pageData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          <Legend height={36} iconType="circle" onClick={props => handleLegendClick(props.dataKey)} />
+
+          <Line hide={activeSeries.includes('uv')} type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+          <Line hide={activeSeries.includes('pv')} type="monotone" dataKey="pv" stroke="#987" fill="#8884d8" />
         </LineChart>
       </ResponsiveContainer>
     );
