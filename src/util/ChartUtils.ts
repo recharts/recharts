@@ -1296,7 +1296,7 @@ export const getBandSizeOfAxis = (
     }
 
     if (ticks.length >= 2) {
-      const orderedTicks = _.sortBy(ticks, o => o.coordinate);
+      const orderedTicks = sortBy(ticks, o => o.coordinate);
       let bandSize = Infinity;
 
       for (let i = 1, len = orderedTicks.length; i < len; i++) {
