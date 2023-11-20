@@ -140,15 +140,15 @@ type GetActiveShapeIndexForTooltip = {
 };
 
 export function isFunnel(graphicalItem: GraphicalItem, _item: unknown): _item is FunnelItem {
-  return 'trapezoids' in graphicalItem.props;
+  return _item != null && 'trapezoids' in graphicalItem.props;
 }
 
 export function isPie(graphicalItem: GraphicalItem, _item: unknown): _item is PieItem {
-  return 'sectors' in graphicalItem.props;
+  return _item != null && 'sectors' in graphicalItem.props;
 }
 
 export function isScatter(graphicalItem: GraphicalItem, _item: unknown): _item is ScatterItem {
-  return 'points' in graphicalItem.props;
+  return _item != null && 'points' in graphicalItem.props;
 }
 
 export function compareFunnel(shapeData: FunnelItem, activeTooltipItem: FunnelItem) {
