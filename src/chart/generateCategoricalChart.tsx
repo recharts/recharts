@@ -649,7 +649,9 @@ const createDefaultState = (props: CategoricalChartProps): CategoricalChartState
   const brushItem = findChildByType(children, Brush);
   const startIndex = (brushItem && brushItem.props && brushItem.props.startIndex) || 0;
   const endIndex =
-    brushItem?.props?.endIndex !== undefined ? brushItem?.props?.endIndex : (props.data && props.data.length - 1) || 0;
+    brushItem?.props?.endIndex !== undefined
+      ? brushItem?.props?.endIndex
+      : (props.data && props.data.length !== 0 && props.data.length - 1) || 0;
 
   return {
     chartX: 0,
