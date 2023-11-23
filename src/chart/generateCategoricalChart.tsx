@@ -63,6 +63,8 @@ import {
   parseDomainOfCategoryAxis,
   parseErrorBarsOfAxis,
   parseSpecifiedDomain,
+  getValueByDataKey,
+  getCursorBehaviour,
 } from '../util/ChartUtils';
 import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDomain';
 import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
@@ -215,7 +217,7 @@ const getTooltipContent = (
   activeLabel?: string,
 ): any[] => {
   const { graphicalItems, tooltipAxis } = state;
-  const { dataKey } = tooltipAxis;
+  const { dataKey, selectNearestValue, categoricalDomain, allowDuplicatedCategory, type } = tooltipAxis;
   const displayedData = getDisplayedData(chartData, state);
 
   if (activeIndex < 0 || !graphicalItems || !graphicalItems.length || activeIndex >= displayedData.length) {
@@ -242,27 +244,46 @@ const getTooltipContent = (
 
     let payload;
 
-    if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
-      // graphic child has data props
-      const entries = data === undefined ? displayedData : data;
-      payload = findEntryInArray(entries, tooltipAxis.dataKey, activeLabel);
-    } else if (tooltipAxis.dataKey && tooltipAxis.allowSelectNearestValue && tooltipAxis?.categoricalDomain) {
-      const entries = data === undefined ? displayedData : data;
-      const value = tooltipAxis?.categoricalDomain?.[activeIndex];
+    switch (getCursorBehaviour(dataKey, allowDuplicatedCategory, selectNearestValue, type)) {
+      case 'no duplicated categories':
+        // Comment from PR #3621, this case is likely a double of "select nearest value"
+        // if so the logic of this case is not working as intended for issue #3387
 
-      const matchingData: any = entries.reduce((acc: any, entry: any) =>
-        Math.abs(value - entry[dataKey as string]) < Math.abs(value - acc[dataKey as string]) ? entry : acc,
-      );
-      payload = matchingData;
-    } else if (tooltipAxis.dataKey && tooltipAxis?.categoricalDomain) {
-      const entries = data === undefined ? displayedData : data;
+        {
+          // graphic child has data props
+          const entries = data === undefined ? displayedData : data;
+          payload = findEntryInArray(entries, tooltipAxis.dataKey, activeLabel);
+        }
+        break;
 
-      const value = tooltipAxis?.categoricalDomain?.[activeIndex];
-      const matchingData: any = entries.find((entry: any) => entry[dataKey as string] === value);
+      case 'value-based selection':
+        {
+          const entries = data === undefined || !data?.length ? displayedData : data;
+          const value = categoricalDomain?.[activeIndex];
+          const matchingData: unknown = entries.find((entry: unknown) => getValueByDataKey(entry, dataKey) === value);
+          payload = matchingData;
+        }
+        break;
+      case 'select nearest value':
+        {
+          const entries = data === undefined || !data?.length ? displayedData : data;
+          const value = categoricalDomain?.[activeIndex];
+          const matchingData: unknown = entries.reduce((accumulatedNearestDataPoint: unknown, entry: unknown) => {
+            return Math.abs(value - getValueByDataKey(entry, dataKey)) <
+              Math.abs(value - getValueByDataKey(accumulatedNearestDataPoint, dataKey))
+              ? entry
+              : accumulatedNearestDataPoint;
+          });
+          payload = matchingData;
+        }
+        break;
+      case 'index-based selection':
+        payload = (data && data[activeIndex]) || displayedData[activeIndex];
 
-      payload = matchingData;
-    } else {
-      payload = (data && data[activeIndex]) || displayedData[activeIndex];
+        break;
+      default:
+        // defaults to index-based selection (legacy behaviour)
+        payload = (data && data[activeIndex]) || displayedData[activeIndex];
     }
 
     if (!payload) {
@@ -837,7 +858,7 @@ export interface CategoricalChartState {
   activePayload?: any[];
 
   /** datakey queried for tooltip */
-  activeDataKey?: any;
+  activeDataKey?: unknown;
 
   tooltipAxisBandSize?: number;
 
@@ -1992,7 +2013,7 @@ export const generateCategoricalChart = ({
         label: activeLabel,
         payload: isActive ? activePayload : [],
         coordinate: activeCoordinate,
-        tooltipDatakey: activeDataKey,
+        tooltipDataKey: activeDataKey,
       });
     };
 
@@ -2101,6 +2122,7 @@ export const generateCategoricalChart = ({
       }
       const tooltipEventType = this.getTooltipEventType();
       const { isTooltipActive, tooltipAxis, activeTooltipIndex, activeLabel } = this.state;
+      const { dataKey, allowDuplicatedCategory, selectNearestValue, type, categoricalDomain } = tooltipAxis || {};
       const { children } = this.props;
       const tooltipItem = findChildByType(children, Tooltip);
       const { points, isRange, baseLine } = item.props;
@@ -2123,37 +2145,55 @@ export const generateCategoricalChart = ({
 
       function findWithPayload(entry: any) {
         // TODO needs to verify dataKey is Function
-        return typeof tooltipAxis.dataKey === 'function' ? tooltipAxis.dataKey(entry.payload) : null;
+        return typeof dataKey === 'function' ? dataKey(entry.payload) : null;
       }
 
       if (hasActive) {
         if (activeTooltipIndex >= 0) {
           let activePoint, basePoint;
 
-          if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
-            // number transform to string
-            const specifiedKey =
-              typeof tooltipAxis.dataKey === 'function'
-                ? findWithPayload
-                : 'payload.'.concat(tooltipAxis.dataKey.toString());
-            activePoint = findEntryInArray(points, specifiedKey, activeLabel);
-            basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
-          } else if (tooltipAxis.dataKey && tooltipAxis.allowSelectNearestValue && tooltipAxis?.categoricalDomain) {
-            const activeValue = tooltipAxis?.categoricalDomain?.[activeTooltipIndex];
-            activePoint = points.reduce((acc: any, point: any) =>
-              Math.abs(activeValue - point?.payload[tooltipAxis.dataKey as string]) <
-              Math.abs(activeValue - acc?.payload[tooltipAxis.dataKey as string])
-                ? point
-                : acc,
-            );
-            basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
-          } else if (tooltipAxis.dataKey && tooltipAxis?.categoricalDomain) {
-            const activeValue = tooltipAxis?.categoricalDomain?.[activeTooltipIndex];
-            activePoint = points?.find((point: any) => point?.payload[tooltipAxis.dataKey as string] === activeValue);
-            basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
-          } else {
-            activePoint = points?.[activeTooltipIndex];
-            basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+          switch (getCursorBehaviour(dataKey, allowDuplicatedCategory, selectNearestValue, type)) {
+            case 'no duplicated categories':
+              // Comment from PR #3621, this case is likely a double of "select nearest value"
+              // if so the logic of this case is not working as intended for issue #3387
+
+              {
+                // number transform to string
+                const specifiedKey =
+                  typeof dataKey === 'function' ? findWithPayload : 'payload.'.concat(dataKey.toString());
+                activePoint = findEntryInArray(points, specifiedKey, activeLabel);
+                basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
+              }
+              break;
+
+            case 'value-based selection':
+              {
+                const activeValue = categoricalDomain?.[activeTooltipIndex];
+                activePoint = points?.find((point: any) => getValueByDataKey(point?.payload, dataKey) === activeValue);
+                basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+              }
+              break;
+            case 'select nearest value':
+              {
+                const activeValue = categoricalDomain?.[activeTooltipIndex];
+                activePoint = points?.reduce((accumulatedNearestPoint: any, point: any) =>
+                  Math.abs(activeValue - getValueByDataKey(point?.payload, dataKey)) <
+                  Math.abs(activeValue - getValueByDataKey(accumulatedNearestPoint?.payload, dataKey))
+                    ? point
+                    : accumulatedNearestPoint,
+                );
+                basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+              }
+              break;
+            case 'index-based selection':
+              activePoint = points?.[activeTooltipIndex];
+              basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+
+              break;
+            default:
+              // defaults to index-based selection (legacy behaviour)
+              activePoint = points[activeTooltipIndex];
+              basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
           }
 
           if (activeShape || activeBar) {

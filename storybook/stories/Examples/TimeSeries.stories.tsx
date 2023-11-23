@@ -43,7 +43,7 @@ const StoryTemplate = {
 interface MultipleDataSourceArgs {
   temperatureData: { begin: Date; temp: number }[];
   particulateData: { begin: Date; counts: number }[];
-  allowSelectNearestValue: boolean;
+  selectNearestValue: boolean;
 }
 
 const MultipleDataSourceStoryTemplate = {
@@ -66,7 +66,7 @@ const MultipleDataSourceStoryTemplate = {
     );
   },
   args: {
-    allowSelectNearestValue: true,
+    selectNearestValue: true,
     temperatureData,
     particulateData,
   },
@@ -166,11 +166,11 @@ export const MultipleDataSourceTooltip = {
 
   parameters: {
     controls: {
-      include: ['allowSelectNearestValue', 'temperatureData', 'particulateData'],
+      include: ['selectNearestValue', 'temperatureData', 'particulateData'],
     },
   },
   argTypes: {
-    allowSelectNearestValue: {
+    selectNearestValue: {
       control: 'boolean',
     },
   },
@@ -190,7 +190,7 @@ export const MultipleDataSourceTooltip = {
       type: 'number',
       ticks: timeScale.ticks(5).map(date => date.valueOf()),
       tickFormatter: multiFormat,
-      // allowSelectNearestValue: args.allowSelectNearestValue,
+      // selectNearestValue: args.selectNearestValue,
     };
 
     return (

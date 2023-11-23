@@ -1337,3 +1337,21 @@ export const getTooltipItem = (graphicalItem: ReactElement, payload: any) => {
     chartType,
   };
 };
+
+export const getCursorBehaviour = (
+  dataKey: DataKey<any>,
+  allowDuplicatedCategory: boolean,
+  selectNearestValue: boolean,
+  type: unknown,
+) => {
+  if (dataKey && !allowDuplicatedCategory) {
+    return 'no duplicated categories';
+  }
+  if (dataKey && selectNearestValue && type === 'number') {
+    return 'select nearest value';
+  }
+  if (dataKey && type === 'number') {
+    return 'value-based selection';
+  }
+  return 'index-based selection';
+};

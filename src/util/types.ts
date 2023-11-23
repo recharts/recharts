@@ -1164,7 +1164,7 @@ export interface BaseAxisProps {
    * When the cursor selects a value on the axis which is not present on another dataset,
    * allow the nearest value to be selected instead.
    */
-  allowSelectNearestValue?: boolean;
+  selectNearestValue?: boolean;
 
   categoricalDomain?: any;
 }

@@ -49,5 +49,5 @@ XAxis.defaultProps = {
   scale: 'auto',
   reversed: false,
   allowDuplicatedCategory: true,
-  allowSelectNearestValue: false,
+  selectNearestValue: false,
 };
