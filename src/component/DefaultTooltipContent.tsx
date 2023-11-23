@@ -51,8 +51,7 @@ export interface Props<TValue extends ValueType, TName extends NameType> {
   labelStyle?: CSSProperties;
   labelFormatter?: (label: any, payload: Array<Payload<TValue, TName>>) => ReactNode;
   label?: any;
-  tooltipDatakey?: any;
-  tooltipDatakey?: any;
+  tooltipDataKey?: unknown;
   payload?: Array<Payload<TValue, TName>>;
   itemSorter?: (item: Payload<TValue, TName>) => number | string;
 }
@@ -72,7 +71,7 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
     labelClassName,
     label,
     labelFormatter,
-    tooltipDatakey,
+    tooltipDataKey,
   } = props;
 
   const finalLabelStyle = {
@@ -87,7 +86,7 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
       const run = flow([
         // Group payload by datakey value
         payloadElement => {
-          return groupBy(payloadElement, el => el?.payload[tooltipDatakey]);
+          return groupBy(payloadElement, el => el?.payload[tooltipDataKey]);
         },
 
         labelGroupedPayload => {
@@ -105,7 +104,7 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
             }
             const labelCN = clsx('recharts-tooltip-label', labelClassName);
 
-            if (hasLabel && labelFormatter && payload !== undefined && payloadPayload !== null) {
+            if (hasLabel && labelFormatter && payload !== undefined && payloadPayload != null) {
               finalLabel = labelFormatter(payloadLabel, payloadPayload);
             }
 
