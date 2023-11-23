@@ -42,6 +42,7 @@ export interface Payload {
   id?: string;
   type?: LegendType;
   color?: string;
+  dataKey?: string | number;
   payload?: {
     strokeDasharray: ReactText;
     value?: any;
