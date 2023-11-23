@@ -2149,7 +2149,7 @@ export const generateCategoricalChart = ({
             basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
           } else if (tooltipAxis.dataKey && tooltipAxis?.categoricalDomain) {
             const activeValue = tooltipAxis?.categoricalDomain?.[activeTooltipIndex];
-            activePoint = points.find((point: any) => point?.payload[tooltipAxis.dataKey as string] === activeValue);
+            activePoint = points?.find((point: any) => point?.payload[tooltipAxis.dataKey as string] === activeValue);
             basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
           } else {
             activePoint = points?.[activeTooltipIndex];

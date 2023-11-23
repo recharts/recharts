@@ -70,6 +70,7 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
     itemSorter,
     wrapperClassName,
     labelClassName,
+    label,
     labelFormatter,
     tooltipDatakey,
   } = props;
@@ -93,7 +94,15 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
           return map(labelGroupedPayload, (payloadPayload, payloadLabel) => {
             // Build label from datakey value, undefined comes out as a string since grouping turns it to a key
             const hasLabel = !(isNil(payloadLabel) || payloadLabel === 'undefined');
-            let finalLabel: ReactNode = hasLabel ? payloadLabel : '';
+            let finalLabel: ReactNode;
+
+            if (hasLabel) {
+              finalLabel = payloadLabel;
+            } else if (!isNil(label)) {
+              finalLabel = label;
+            } else {
+              finalLabel = '';
+            }
             const labelCN = clsx('recharts-tooltip-label', labelClassName);
 
             if (hasLabel && labelFormatter && payload !== undefined && payloadPayload !== null) {
