@@ -70,10 +70,14 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
     itemSorter,
     wrapperClassName,
     labelClassName,
-    label,
     labelFormatter,
     tooltipDatakey,
   } = props;
+
+  const finalLabelStyle = {
+    margin: 0,
+    ...labelStyle,
+  };
 
   const renderContent = () => {
     if (payload && payload.length) {
@@ -87,9 +91,10 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
 
         labelGroupedPayload => {
           return map(labelGroupedPayload, (payloadPayload, payloadLabel) => {
-            // Build label from datakey value
-            const hasLabel = !isNil(payloadLabel);
+            // Build label from datakey value, undefined comes out as a string since grouping turns it to a key
+            const hasLabel = !(isNil(payloadLabel) || payloadLabel === 'undefined');
             let finalLabel: ReactNode = hasLabel ? payloadLabel : '';
+            const labelCN = clsx('recharts-tooltip-label', labelClassName);
 
             if (hasLabel && labelFormatter && payload !== undefined && payloadPayload !== null) {
               finalLabel = labelFormatter(payloadLabel, payloadPayload);
@@ -141,44 +146,38 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
             );
 
             return (
-              <ul className="recharts-tooltip-item-list" style={listStyle}>
-                {items}
-              </ul>
+              <>
+                <p className={labelCN} style={finalLabelStyle}>
+                  {React.isValidElement(finalLabel) ? finalLabel : `${finalLabel}`}
+                </p>
+                <ul className="recharts-tooltip-item-list" style={listStyle}>
+                  {items}
+                </ul>
+              </>
             );
           });
         },
       ]);
-      return null;
+      const items = run(payload);
+
+      return items;
     }
-
-    const finalStyle: React.CSSProperties = {
-      margin: 0,
-      padding: 10,
-      backgroundColor: '#fff',
-      border: '1px solid #ccc',
-      whiteSpace: 'nowrap',
-      ...contentStyle,
-    };
-    const finalLabelStyle = {
-      margin: 0,
-      ...labelStyle,
-    };
-    const hasLabel = !isNil(label);
-    let finalLabel = hasLabel ? label : '';
-    const wrapperCN = clsx('recharts-default-tooltip', wrapperClassName);
-    const labelCN = clsx('recharts-tooltip-label', labelClassName);
-
-    if (hasLabel && labelFormatter && payload !== undefined && payload !== null) {
-      finalLabel = labelFormatter(label, payload);
-    }
-
-    return (
-      <div className={wrapperCN} style={finalStyle}>
-        <p className={labelCN} style={finalLabelStyle}>
-          {React.isValidElement(finalLabel) ? finalLabel : `${finalLabel}`}
-        </p>
-        {renderContent()}
-      </div>
-    );
+    return null;
   };
+
+  const finalStyle: React.CSSProperties = {
+    margin: 0,
+    padding: 10,
+    backgroundColor: '#fff',
+    border: '1px solid #ccc',
+    whiteSpace: 'nowrap',
+    ...contentStyle,
+  };
+  const wrapperCN = clsx('recharts-default-tooltip', wrapperClassName);
+
+  return (
+    <div className={wrapperCN} style={finalStyle}>
+      {renderContent()}
+    </div>
+  );
 };

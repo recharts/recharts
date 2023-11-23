@@ -2130,31 +2130,31 @@ export const generateCategoricalChart = ({
         if (activeTooltipIndex >= 0) {
           let activePoint, basePoint;
 
-        if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
-          // number transform to string
-          const specifiedKey =
-            typeof tooltipAxis.dataKey === 'function'
-              ? findWithPayload
-              : 'payload.'.concat(tooltipAxis.dataKey.toString());
-          activePoint = findEntryInArray(points, specifiedKey, activeLabel);
-          basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
-        } else if (tooltipAxis.dataKey && tooltipAxis.allowSelectNearestValue && tooltipAxis?.categoricalDomain) {
-          const activeValue = tooltipAxis?.categoricalDomain?.[activeTooltipIndex];
-          activePoint = points.reduce((acc: any, point: any) =>
-            Math.abs(activeValue - point?.payload[tooltipAxis.dataKey as string]) <
-            Math.abs(activeValue - acc?.payload[tooltipAxis.dataKey as string])
-              ? point
-              : acc,
-          );
-          basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
-        } else if (tooltipAxis.dataKey && tooltipAxis?.categoricalDomain) {
-          const activeValue = tooltipAxis?.categoricalDomain?.[activeTooltipIndex];
-          activePoint = points.find((point: any) => point?.payload[tooltipAxis.dataKey as string] === activeValue);
-          basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
-        } else {
-          activePoint = points[activeTooltipIndex];
-          basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
-        }
+          if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
+            // number transform to string
+            const specifiedKey =
+              typeof tooltipAxis.dataKey === 'function'
+                ? findWithPayload
+                : 'payload.'.concat(tooltipAxis.dataKey.toString());
+            activePoint = findEntryInArray(points, specifiedKey, activeLabel);
+            basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
+          } else if (tooltipAxis.dataKey && tooltipAxis.allowSelectNearestValue && tooltipAxis?.categoricalDomain) {
+            const activeValue = tooltipAxis?.categoricalDomain?.[activeTooltipIndex];
+            activePoint = points.reduce((acc: any, point: any) =>
+              Math.abs(activeValue - point?.payload[tooltipAxis.dataKey as string]) <
+              Math.abs(activeValue - acc?.payload[tooltipAxis.dataKey as string])
+                ? point
+                : acc,
+            );
+            basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+          } else if (tooltipAxis.dataKey && tooltipAxis?.categoricalDomain) {
+            const activeValue = tooltipAxis?.categoricalDomain?.[activeTooltipIndex];
+            activePoint = points.find((point: any) => point?.payload[tooltipAxis.dataKey as string] === activeValue);
+            basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+          } else {
+            activePoint = points?.[activeTooltipIndex];
+            basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+          }
 
           if (activeShape || activeBar) {
             const activeIndex =
