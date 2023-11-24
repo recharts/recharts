@@ -95,10 +95,10 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
             const hasLabel = !(isNil(payloadLabel) || payloadLabel === 'undefined');
             let finalLabel: ReactNode;
 
-            if (hasLabel) {
-              finalLabel = payloadLabel;
-            } else if (!isNil(label)) {
+            if (!isNil(label)) {
               finalLabel = label;
+            } else if (!(isNil(payloadLabel) || payloadLabel === 'undefined')) {
+              finalLabel = payloadLabel;
             } else {
               finalLabel = '';
             }
@@ -134,7 +134,6 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
                     finalValue = formatted;
                   }
                 }
-
                 return (
                   // eslint-disable-next-line react/no-array-index-key
                   <li
