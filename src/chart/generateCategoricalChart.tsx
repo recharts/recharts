@@ -1305,7 +1305,7 @@ export const generateCategoricalChart = ({
     getTooltipEventType() {
       const tooltipItem = findChildByType(this.props.children, Tooltip);
 
-      if (tooltipItem && Boolean(tooltipItem.props.shared)) {
+      if (tooltipItem && typeof tooltipItem.props.shared === 'boolean') {
         const eventType = tooltipItem.props.shared ? 'axis' : 'item';
 
         return validateTooltipEventTypes.indexOf(eventType) >= 0 ? eventType : defaultTooltipEventType;
