@@ -135,9 +135,9 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
                   }
                 }
                 return (
-                  // eslint-disable-next-line react/no-array-index-key
                   <li
                     className="recharts-tooltip-item"
+                    // eslint-disable-next-line react/no-array-index-key
                     key={`tooltip-item-${payloadLabel}-${i}`}
                     style={finalItemStyle}
                   >
