@@ -48,7 +48,8 @@ describe('DefaultTooltipContent', () => {
     itemSorter: (d: { name: string }) => d.name,
     labelFormatter: () => `mock labelFormatter`,
   };
-  it('renders without crashing', () => {
-    render(<DefaultTooltipContent {...mockProps} />);
+  it('renders without crashing, finds div with default class attr', () => {
+    const { container } = render(<DefaultTooltipContent {...mockProps} />);
+    expect(container.querySelectorAll('div.recharts-default-tooltip').length).toBe(1);
   });
 });
