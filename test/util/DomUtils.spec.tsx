@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { getStringSize } from '../../src/util/DOMUtils';
-
 
 /**
  * getBoundingClientRect always returns 0 in jsdom, we can't test for actual returned string size
@@ -33,6 +33,4 @@ describe('DOMUtils', () => {
       height: 17,
     });
   });
-
-
 });
