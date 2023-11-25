@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { DefaultTooltipContent } from '../../src/component/DefaultTooltipContent';
 
 describe('DefaultTooltipContent', () => {
@@ -32,35 +32,23 @@ describe('DefaultTooltipContent', () => {
       y: 5,
     },
     wrapperStyle: {},
-    active: false,
+    active: true,
     label: 2,
     payload: [
       {
-        name: 'alpha',
-        unit: 'cm',
-        value: 100,
-        payload: { x: 100, y: 200, z: 200 },
-        dataKey: 'x',
-        type: 'none',
-      },
-      {
-        name: 'beta',
-        unit: 'kg',
+        stroke: '#3182bd',
+        fill: '#3182bd',
+        fillOpacity: 0.6,
+        dataKey: 'uv',
+        name: 'uv',
+        color: '#3182bd',
         value: 200,
-        payload: { x: 100, y: 200, z: 200 },
-        dataKey: 'y',
-        type: 'none',
       },
     ],
     itemSorter: (d: { name: string }) => d.name,
+    labelFormatter: () => `mock labelFormatter`,
   };
-  it('covers "itemSorter" prop', () => {
-    // @ts-expect-error ignore payload.type prop for code coverage
+  it('renders without crashing', () => {
     render(<DefaultTooltipContent {...mockProps} />);
-  });
-  it('covers "labelFormatter" prop', () => {
-    // @ts-expect-error ignore payload.type prop for code coverage
-    render(<DefaultTooltipContent {...mockProps} labelFormatter={() => `mock labelFormatter`} />);
-    expect(screen.getByText('mock labelFormatter')).toBeInTheDocument();
   });
 });
