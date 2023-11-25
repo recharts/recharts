@@ -41,14 +41,14 @@ describe('<YAxis />', () => {
     expect(ticks[1].getAttribute('y')).toBe('297.5');
   });
 
-  const cases1: [number, AxisDomain, string][] = [
+  const casesThatShowTicks: [number, AxisDomain, string][] = [
     // [ticksLength, domain, textContentOfTickElement]
     [5, [0, 10000], '10000'],
     [4, [0, 'dataMax'], '9800'],
     [4, [0, 'dataMax - 100'], '9800'],
   ];
 
-  test.each(cases1)('Should render %s ticks when domain={%s}', (length, domain, textContent) => {
+  test.each(casesThatShowTicks)('Should render %s ticks when domain={%s}', (length, domain, textContent) => {
     render(
       <AreaChart width={600} height={400} data={data}>
         <YAxis type="number" stroke="#ff7300" domain={domain} />
@@ -75,9 +75,9 @@ describe('<YAxis />', () => {
     expect(ticks[1].getAttribute('y')).toBe('297.5');
   });
 
-  const cases2: [AxisDomain][] = [[[0, 'dataMax + 100']], [[0, 'dataMax - 100']], [['auto', 'auto']]];
+  const casesThatDoNotShowTicks: [AxisDomain][] = [[[0, 'dataMax + 100']], [[0, 'dataMax - 100']], [['auto', 'auto']]];
 
-  test.each(cases2)('Should render 0 ticks when domain={%s} and dataKey is "noExist" ', domain => {
+  test.each(casesThatDoNotShowTicks)('Should render 0 ticks when domain={%s} and dataKey is "noExist" ', domain => {
     render(
       <AreaChart width={600} height={400} data={data}>
         <YAxis stroke="#ff7300" domain={domain} />
