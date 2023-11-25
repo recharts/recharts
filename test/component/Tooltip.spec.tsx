@@ -1,5 +1,6 @@
 import { fireEvent, getByText, render } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 
 import {
   Area,
@@ -14,6 +15,7 @@ import {
   XAxis,
   YAxis,
 } from '../../src';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<Tooltip />', () => {
   const data = [
@@ -66,6 +68,7 @@ describe('<Tooltip />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
+    assertNotNull(chart);
     fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
     // After the mouse over event over the chart, the tooltip wrapper still is not set to visible,
@@ -94,10 +97,14 @@ describe('<Tooltip />', () => {
     mock.mockRestore();
 
     const chart = container.querySelector('.recharts-wrapper');
+    assertNotNull(chart);
     fireEvent.mouseMove(chart, { clientX: 200, clientY: 200 });
 
     const tooltip = container.querySelector('.recharts-tooltip-wrapper');
-    expect(tooltip.getAttribute('style').includes('translate')).toBe(true);
+    assertNotNull(tooltip);
+    const style = tooltip.getAttribute('style');
+    assertNotNull(style);
+    expect(style.includes('translate')).toBe(true);
   });
 
   test('Mouse over renders content with multiple data sets', () => {
@@ -133,6 +140,7 @@ describe('<Tooltip />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
+    assertNotNull(chart);
     fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
     // After the mouse over event over the chart, the tooltip wrapper still is not set to visible,
@@ -183,9 +191,13 @@ describe('<Tooltip />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
+    assertNotNull(chart);
     fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
     expect(tooltipPayload).not.toBeNull();
+    assertNotNull(tooltipPayload);
     expect(tooltipPayload).toHaveLength(2);
+    assertNotNull(tooltipPayload[0]);
+    assertNotNull(tooltipPayload[1]);
     expect(tooltipPayload[0].payload.value).toEqual(0.7);
     expect(tooltipPayload[1].payload.value).toEqual(0.4);
   });
@@ -202,6 +214,7 @@ describe('<Tooltip />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
+    assertNotNull(chart);
 
     fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
@@ -225,8 +238,12 @@ describe('<Tooltip />', () => {
       );
 
       const line = container.querySelector('.recharts-cartesian-grid-horizontal line');
+      assertNotNull(line);
       const chart = container.querySelector('.recharts-wrapper');
-      fireEvent.mouseOver(chart, { clientX: +line.getAttribute('x') + 1, clientY: 50 });
+      assertNotNull(chart);
+      const lineX = line.getAttribute('x');
+      assertNotNull(lineX);
+      fireEvent.mouseOver(chart, { clientX: +lineX + 1, clientY: 50 });
       expect(getByText(container, '1398')).toBeVisible();
     });
   });
@@ -244,6 +261,7 @@ describe('<Tooltip />', () => {
       expect(tooltip).not.toBeVisible();
 
       const chart = container.querySelector('.recharts-wrapper');
+      assertNotNull(chart);
       fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
       expect(tooltip).toBeVisible();
@@ -267,6 +285,7 @@ describe('<Tooltip />', () => {
     expect(tooltip).not.toBeVisible();
 
     const chart = container.querySelector('.recharts-wrapper');
+    assertNotNull(chart);
     fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
     expect(tooltip).not.toBeVisible();
@@ -288,6 +307,7 @@ describe('<Tooltip />', () => {
     expect(tooltip).not.toBeVisible();
 
     const chart = container.querySelector('.recharts-wrapper');
+    assertNotNull(chart);
     fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
     expect(tooltip).toBeVisible();
