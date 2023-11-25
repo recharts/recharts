@@ -104,7 +104,6 @@
     "@types/d3-scale": "^4.0.2",
     "@types/d3-shape": "^3.1.0",
     "@types/d3-time-format": "^4.0.0",
-    "@types/jest": "^27.5.1",
     "@types/lodash": "^4.14.144",
     "@types/node": "^14.18.34",
     "@types/react": "^16.0.0",
