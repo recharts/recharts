@@ -49,20 +49,20 @@ const Needle = ({ cx, cy, midAngle }: { cx: number; cy: number; midAngle: number
 };
 
 export const PieWithNeedle = {
-  render: (_args: Record<string, any>) => {
+  render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
-        <PieChart>
+        <PieChart {...args}>
           <Pie
-            dataKey="value"
-            startAngle={180}
-            endAngle={0}
-            data={data}
             cx={cx}
             cy={cy}
+            data={data}
+            dataKey="value"
+            endAngle={0}
+            fill="#8884d8"
             innerRadius={iR}
             outerRadius={oR}
-            fill="#8884d8"
+            startAngle={180}
             stroke="none"
           >
             {data.map(entry => (
@@ -91,10 +91,10 @@ export const PieWithNeedle = {
 };
 
 export const PieWithPatterns = {
-  render: (_args: Record<string, any>) => {
+  render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
-        <PieChart>
+        <PieChart {...args}>
           <defs>
             <pattern id="pattern-A" width="10" height="10" patternUnits="userSpaceOnUse">
               <polygon points="0,0 2,5 0,10 5,8 10,10 8,5 10,0 5,2" fill="#f00" />
@@ -107,13 +107,13 @@ export const PieWithPatterns = {
             </pattern>
           </defs>
           <Pie
-            dataKey="value"
-            data={data}
             cx={cx}
             cy={cy}
+            data={data}
+            dataKey="value"
+            fill="#8884d8"
             innerRadius={iR}
             outerRadius={oR}
-            fill="#8884d8"
             stroke="none"
           >
             {data.map(entry => (
