@@ -9,7 +9,7 @@ describe('TooltipBoundingBox', () => {
     active: true,
     hasPayload: true,
     children: 'Hello world!',
-    coordinate: undefined,
+    coordinate: {},
     allowEscapeViewBox: {
       x: false,
       y: false,
@@ -18,14 +18,14 @@ describe('TooltipBoundingBox', () => {
     animationEasing: 'ease',
     isAnimationActive: false,
     offset: 0,
-    position: undefined,
+    position: {},
     reverseDirection: {
       x: false,
       y: false,
     },
     useTranslate3d: false,
-    viewBox: undefined,
-    wrapperStyle: undefined,
+    viewBox: {},
+    wrapperStyle: {},
   };
   it('should render children when active prop is true', () => {
     render(<TooltipBoundingBox {...defaultProps} />);
@@ -48,7 +48,6 @@ describe('TooltipBoundingBox', () => {
   it('should hide children when dismissed using Escape key', () => {
     render(<TooltipBoundingBox {...defaultProps} active={false} />);
     userEvent.keyboard('{Escape}');
-    screen.debug();
     expect(screen.getByText('Hello world!')).toBeInTheDocument();
     expect(screen.getByText('Hello world!')).not.toBeVisible();
   });
