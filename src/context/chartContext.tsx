@@ -16,7 +16,7 @@ export type ChartContextType = {
   coordinate: ChartCoordinate;
 };
 
-const defaultValue: ChartContextType = {
+export const defaultValue: ChartContextType = {
   active: false,
   viewBox: undefined,
   label: '',

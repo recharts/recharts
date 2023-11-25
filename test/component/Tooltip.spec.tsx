@@ -16,6 +16,7 @@ import {
   YAxis,
 } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
+import { ChartContext, ChartContextType, defaultValue } from '../../src/context/chartContext';
 
 describe('<Tooltip />', () => {
   const data = [
@@ -315,5 +316,39 @@ describe('<Tooltip />', () => {
     fireEvent.mouseOut(chart);
 
     expect(tooltip).not.toBeVisible();
+  });
+
+  describe('context integration', () => {
+    test('is hidden when context.active is false', () => {
+      const activeContext: ChartContextType = {
+        ...defaultValue,
+        active: false,
+        payload: [{ value: 1 }],
+      };
+      const { container } = render(
+        <ChartContext.Provider value={[activeContext, () => undefined]}>
+          <Tooltip />
+        </ChartContext.Provider>,
+      );
+      const tooltipContentValue = container.querySelector('.recharts-tooltip-item-value');
+      expect(tooltipContentValue).not.toBeVisible();
+    });
+
+    test('is visible when context.active is true', () => {
+      const activeContext: ChartContextType = {
+        ...defaultValue,
+        active: true,
+        payload: [{ value: 1 }],
+      };
+      const { container } = render(
+        <ChartContext.Provider value={[activeContext, () => undefined]}>
+          <Tooltip />
+        </ChartContext.Provider>,
+      );
+      const tooltipContentValue = container.querySelector('.recharts-tooltip-item-value');
+      expect(tooltipContentValue).toBeVisible();
+    });
+
+    test.todo('shows recharts-tooltip-item-name');
   });
 });
