@@ -234,24 +234,33 @@ describe('generateCategoricalChart', () => {
 
   describe('createDefaultState', () => {
     it('Should have the correct dataIndex', () => {
-      let state = createDefaultState({ children: [<Brush endIndex={-1} startIndex={-1} />] });
-      expect(state.dataStartIndex).toEqual(0);
-      expect(state.dataEndIndex).toEqual(0);
+      it('even when invalid brush index(no data)', () => {
+        const state = createDefaultState({ children: [<Brush endIndex={-1} startIndex={-1} />] });
 
-      state = createDefaultState({ children: [<Brush endIndex={-1} startIndex={-1} />], data: [] });
+        expect(state.dataStartIndex).toEqual(0);
+        expect(state.dataEndIndex).toEqual(0);
+      });
 
-      expect(state.dataStartIndex).toEqual(0);
-      expect(state.dataEndIndex).toEqual(0);
+      it('even when invalid brush index', () => {
+        const state = createDefaultState({ children: [<Brush endIndex={-1} startIndex={-1} />], data: [1, 2, 3] });
 
-      state = createDefaultState({ children: [<Brush endIndex={-1} startIndex={-1} />], data: [1, 2, 3] });
+        expect(state.dataStartIndex).toEqual(0);
+        expect(state.dataEndIndex).toEqual(2);
+      });
 
-      expect(state.dataStartIndex).toEqual(0);
-      expect(state.dataEndIndex).toEqual(2);
+      it('even when data length 0', () => {
+        const state = createDefaultState({ children: [<Brush endIndex={-1} startIndex={-1} />], data: [] });
 
-      state = createDefaultState({ children: [<Brush endIndex={1} startIndex={0} />], data: [1, 2, 3] });
+        expect(state.dataStartIndex).toEqual(0);
+        expect(state.dataEndIndex).toEqual(0);
+      });
 
-      expect(state.dataStartIndex).toEqual(0);
-      expect(state.dataEndIndex).toEqual(1);
+      it('when valid brush index', () => {
+        const state = createDefaultState({ children: [<Brush endIndex={1} startIndex={0} />], data: [1, 2, 3] });
+
+        expect(state.dataStartIndex).toEqual(0);
+        expect(state.dataEndIndex).toEqual(1);
+      });
     });
   });
 });
