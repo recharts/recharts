@@ -308,7 +308,7 @@ export class Bar extends PureComponent<Props, State> {
           <Layer
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(this.props, entry, i)}
-            key={`rectangle-${entry?.x}-${entry?.y}`}
+            key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}`}
           >
             <BarRectangle {...props} />
           </Layer>
