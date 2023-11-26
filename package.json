@@ -32,6 +32,7 @@
     "test-coverage": "vitest run --config vitest.config.ts --coverage",
     "test-watch": "vitest --config vitest.config.ts",
     "lint": "eslint \"./src/**/*.{ts,tsx}\"",
+    "lint-test": "eslint \"./test/**/*.{ts,tsx}\"",
     "lint-storybook": "eslint \"./storybook/**/*.{ts,tsx}\"",
     "autofix": "eslint \"./src/**/*.{ts,tsx}\" --fix",
     "analyse": "cross-env NODE_ENV=analyse webpack ./src/index.ts -o umd/Recharts.js",

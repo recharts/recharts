@@ -1,7 +1,8 @@
 import React from 'react';
-import each from 'jest-each';
 import { render } from '@testing-library/react';
+import { describe, test, it, expect } from 'vitest';
 import { Surface, AreaChart, Area, YAxis, BarChart, Bar } from '../../src';
+import { AxisDomain } from '../../src/util/types';
 
 describe('<YAxis />', () => {
   const data = [
@@ -40,12 +41,14 @@ describe('<YAxis />', () => {
     expect(ticks[1].getAttribute('y')).toBe('297.5');
   });
 
-  each([
+  const casesThatShowTicks: [number, AxisDomain, string][] = [
     // [ticksLength, domain, textContentOfTickElement]
-    [5, [0, 10000], 10000],
-    [4, [0, 'dataMax'], 9800],
-    [4, [0, 'dataMax - 100'], 9800],
-  ]).it('Should render %s ticks when domain={%s}', (length, domain, textContent) => {
+    [5, [0, 10000], '10000'],
+    [4, [0, 'dataMax'], '9800'],
+    [4, [0, 'dataMax - 100'], '9800'],
+  ];
+
+  test.each(casesThatShowTicks)('Should render %s ticks when domain={%s}', (length, domain, textContent) => {
     render(
       <AreaChart width={600} height={400} data={data}>
         <YAxis type="number" stroke="#ff7300" domain={domain} />
@@ -72,20 +75,19 @@ describe('<YAxis />', () => {
     expect(ticks[1].getAttribute('y')).toBe('297.5');
   });
 
-  each([[[0, 'dataMax + 100']], [[0, 'dataMax - 100']], [['auto', 'auto']]]).it(
-    'Should render 0 ticks when domain={%s} and dataKey is "noExist" ',
-    domain => {
-      render(
-        <AreaChart width={600} height={400} data={data}>
-          <YAxis stroke="#ff7300" domain={domain} />
-          <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
-        </AreaChart>,
-      );
-      const ticks = document.querySelectorAll('text');
+  const casesThatDoNotShowTicks: [AxisDomain][] = [[[0, 'dataMax + 100']], [[0, 'dataMax - 100']], [['auto', 'auto']]];
 
-      expect(ticks).toHaveLength(0);
-    },
-  );
+  test.each(casesThatDoNotShowTicks)('Should render 0 ticks when domain={%s} and dataKey is "noExist" ', domain => {
+    render(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis stroke="#ff7300" domain={domain} />
+        <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>,
+    );
+    const ticks = document.querySelectorAll('text');
+
+    expect(ticks).toHaveLength(0);
+  });
 
   it('Render 4 ticks', () => {
     render(
@@ -220,9 +222,11 @@ describe('<YAxis />', () => {
     const barsFirstHidden = wrapperFirstHidden.container.querySelectorAll('recharts-bar-rectangle > path');
     const barsSecondHidden = wrapperSecondHidden.container.querySelectorAll('recharts-bar-rectangle > path');
 
-    // spreading into single array to match indices, as barsBothShowing will get Rectangles from the first Bar, then the second
-    expect([...Array.from(barsSecondHidden), ...Array.from(barsFirstHidden)].every((bar, i) => {
-      return bar.getAttribute('height') === barsBothShowing[i].getAttribute('height')
-    })).toBe(true);
+    // spreading to match indices, as barsBothShowing will get Rectangles from the first Bar, then the second
+    expect(
+      [...Array.from(barsSecondHidden), ...Array.from(barsFirstHidden)].every((bar, i) => {
+        return bar.getAttribute('height') === barsBothShowing[i].getAttribute('height');
+      }),
+    ).toBe(true);
   });
 });

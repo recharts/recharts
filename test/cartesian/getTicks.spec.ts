@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { getTicks } from '../../src/cartesian/getTicks';
 import { CartesianTickItem } from '../../src/util/types';
 import { CartesianAxisProps } from '../../src';
