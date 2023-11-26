@@ -32,7 +32,7 @@ import {
 import { FunnelTrapezoid } from '../util/FunnelUtils';
 
 export interface FunnelTrapezoidItem extends TrapezoidProps {
-  value: number | string;
+  value?: number | string;
   payload?: any;
   isActive: boolean;
 }
