@@ -1,6 +1,7 @@
-import { ReactElement } from 'react';
-import { getAxisMapByAxes, CategoricalChartProps } from '../../src/chart/generateCategoricalChart';
+import React, { ReactElement } from 'react';
+import { getAxisMapByAxes, CategoricalChartProps, createDefaultState } from '../../src/chart/generateCategoricalChart';
 import { AxisStackGroups } from '../../src/util/ChartUtils';
+import { Brush } from '../../src';
 
 const data = [
   {
@@ -228,6 +229,29 @@ describe('generateCategoricalChart', () => {
           },
         }),
       );
+    });
+  });
+
+  describe('createDefaultState', () => {
+    it('Should have the correct dataIndex', () => {
+      let state = createDefaultState({ children: [<Brush endIndex={-1} startIndex={-1} />] });
+      expect(state.dataStartIndex).toEqual(0);
+      expect(state.dataEndIndex).toEqual(0);
+
+      state = createDefaultState({ children: [<Brush endIndex={-1} startIndex={-1} />], data: [] });
+
+      expect(state.dataStartIndex).toEqual(0);
+      expect(state.dataEndIndex).toEqual(0);
+
+      state = createDefaultState({ children: [<Brush endIndex={-1} startIndex={-1} />], data: [1, 2, 3] });
+
+      expect(state.dataStartIndex).toEqual(0);
+      expect(state.dataEndIndex).toEqual(2);
+
+      state = createDefaultState({ children: [<Brush endIndex={1} startIndex={0} />], data: [1, 2, 3] });
+
+      expect(state.dataStartIndex).toEqual(0);
+      expect(state.dataEndIndex).toEqual(1);
     });
   });
 });
