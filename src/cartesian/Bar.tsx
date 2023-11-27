@@ -308,7 +308,7 @@ export class Bar extends PureComponent<Props, State> {
           <Layer
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(this.props, entry, i)}
-            key={`rectangle-${i}`} // eslint-disable-line react/no-array-index-key
+            key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}`}
           >
             <BarRectangle {...props} />
           </Layer>
@@ -450,9 +450,9 @@ export class Bar extends PureComponent<Props, State> {
 
     return (
       <Layer {...errorBarProps}>
-        {errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) =>
+        {errorBarItems.map((item: ReactElement<ErrorBarProps>) =>
           React.cloneElement(item, {
-            key: `error-bar-${i}`, // eslint-disable-line react/no-array-index-key
+            key: `error-bar-${clipPathId}-${item.props.dataKey}`,
             data,
             xAxis,
             yAxis,
