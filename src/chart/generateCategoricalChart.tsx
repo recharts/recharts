@@ -644,12 +644,23 @@ const tooltipTicksGenerator = (axisMap: AxisMap) => {
  * @param {Object} props Props object to use when creating the default state
  * @return {Object} Whole new state
  */
-const createDefaultState = (props: CategoricalChartProps): CategoricalChartState => {
+export const createDefaultState = (props: CategoricalChartProps): CategoricalChartState => {
   const { children, defaultShowTooltip } = props;
   const brushItem = findChildByType(children, Brush);
-  const startIndex = (brushItem && brushItem.props && brushItem.props.startIndex) || 0;
-  const endIndex =
-    brushItem?.props?.endIndex !== undefined ? brushItem?.props?.endIndex : (props.data && props.data.length - 1) || 0;
+  let startIndex = 0;
+  let endIndex = 0;
+  if (props.data && props.data.length !== 0) {
+    endIndex = props.data.length - 1;
+  }
+
+  if (brushItem && brushItem.props) {
+    if (brushItem.props.startIndex >= 0) {
+      startIndex = brushItem.props.startIndex;
+    }
+    if (brushItem.props.endIndex >= 0) {
+      endIndex = brushItem.props.endIndex;
+    }
+  }
 
   return {
     chartX: 0,
