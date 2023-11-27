@@ -6,6 +6,10 @@ import { Brush, ResponsiveContainer, ComposedChart, Line } from '../../../../src
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 const GeneralProps: Args = {
+  ariaLabel: {
+    description: 'The ARIA label of the brush.',
+    table: { type: { summary: 'string' }, category: 'General' },
+  },
   dataKey: {
     description: 'The key of data displayed in Brush.',
     table: { type: { summary: 'string | number | Function' }, category: 'General' },
@@ -77,17 +81,15 @@ export default {
 };
 
 export const API = {
-  render: (args: Record<string, any>) => {
-    return (
-      <ResponsiveContainer width="100%" height={400}>
-        <ComposedChart data={pageData}>
-          <Line dataKey="uv" />
+  render: (args: Record<string, any>) => (
+    <ResponsiveContainer width="100%" height={400}>
+      <ComposedChart data={pageData}>
+        <Line dataKey="uv" />
 
-          <Brush {...args} />
-        </ComposedChart>
-      </ResponsiveContainer>
-    );
-  },
+        <Brush {...args} />
+      </ComposedChart>
+    </ResponsiveContainer>
+  ),
   args: {
     ...getStoryArgsFromArgsTypesObject(GeneralProps),
   },
