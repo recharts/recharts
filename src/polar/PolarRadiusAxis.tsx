@@ -154,7 +154,7 @@ export class PolarRadiusAxis extends PureComponent<Props> {
       return (
         <Layer
           className="recharts-polar-radius-axis-tick"
-          key={`tick-${i}`} // eslint-disable-line react/no-array-index-key
+          key={`tick-${entry.coordinate}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
           {PolarRadiusAxis.renderTickItem(tick, tickProps, tickFormatter ? tickFormatter(entry.value, i) : entry.value)}
