@@ -610,7 +610,7 @@ export class Treemap extends PureComponent<Props, State> {
     );
   }
 
-  renderNode(root: TreemapNode, node: TreemapNode, i: number): React.ReactElement {
+  renderNode(root: TreemapNode, node: TreemapNode): React.ReactElement {
     const { content, type } = this.props;
     const nodeProps = { ...filterProps(this.props), ...node, root };
     const isLeaf = !node.children || !node.children.length;
@@ -623,12 +623,15 @@ export class Treemap extends PureComponent<Props, State> {
     if (!isCurrentRootChild.length && root.depth && type === 'nest') {
       return null;
     }
+
     return (
-      // eslint-disable-next-line react/no-array-index-key
-      <Layer key={`recharts-treemap-node-${i}`} className={`recharts-treemap-depth-${node.depth}`}>
+      <Layer
+        key={`recharts-treemap-node-${nodeProps.x}-${nodeProps.y}`}
+        className={`recharts-treemap-depth-${node.depth}`}
+      >
         {this.renderItem(content, nodeProps, isLeaf)}
         {node.children && node.children.length
-          ? node.children.map((child: TreemapNode, index: number) => this.renderNode(node, child, index))
+          ? node.children.map((child: TreemapNode) => this.renderNode(node, child))
           : null}
       </Layer>
     );
