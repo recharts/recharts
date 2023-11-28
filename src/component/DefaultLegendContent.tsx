@@ -161,9 +161,6 @@ export class DefaultLegendContent extends PureComponent<Props> {
     const svgStyle = { display: 'inline-block', verticalAlign: 'middle', marginRight: 4 };
 
     return payload.map((entry, i) => {
-      // console.log('entry');
-      // console.log(entry);
-
       const finalFormatter = entry.formatter || formatter;
       const className = clsx({
         'recharts-legend-item': true,
