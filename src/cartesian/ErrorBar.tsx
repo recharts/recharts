@@ -104,9 +104,8 @@ export function ErrorBar(props: Props) {
     return (
       // eslint-disable-next-line react/no-array-index-key
       <Layer className="recharts-errorBar" key={`bar-${i}`} {...svgProps}>
-        {lineCoordinates.map((coordinates, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <line {...coordinates} key={`line-${index}`} />
+        {lineCoordinates.map(coordinates => (
+          <line {...coordinates} key={`line-${coordinates.x1}-${coordinates.x2}-${coordinates.y1}-${coordinates.y2}`} />
         ))}
       </Layer>
     );

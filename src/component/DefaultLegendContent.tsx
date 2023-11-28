@@ -161,6 +161,9 @@ export class DefaultLegendContent extends PureComponent<Props> {
     const svgStyle = { display: 'inline-block', verticalAlign: 'middle', marginRight: 4 };
 
     return payload.map((entry, i) => {
+      // console.log('entry');
+      // console.log(entry);
+
       const finalFormatter = entry.formatter || formatter;
       const className = clsx({
         'recharts-legend-item': true,
@@ -184,7 +187,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
         <li
           className={className}
           style={itemStyle}
-          key={`legend-item-${i}`} // eslint-disable-line react/no-array-index-key
+          key={`legend-item-${entry.type}-${entry.value}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
           <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
