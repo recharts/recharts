@@ -356,10 +356,9 @@ export class Scatter extends PureComponent<Props, State> {
     }
 
     return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) => {
-      const { direction } = item.props;
-
+      const { direction, dataKey: errorDataKey } = item.props;
       return React.cloneElement(item, {
-        key: i, // eslint-disable-line react/no-array-index-key
+        key: `${direction}-${errorDataKey}-${points[i]}`,
         data: points,
         xAxis,
         yAxis,
