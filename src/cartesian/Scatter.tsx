@@ -278,7 +278,7 @@ export class Scatter extends PureComponent<Props, State> {
         <Layer
           className="recharts-scatter-symbol"
           {...adaptEventsOfChild(this.props, entry, i)}
-          key={`symbol-${i}`} // eslint-disable-line react/no-array-index-key
+          key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}`}
           role="img"
         >
           <ScatterSymbol option={option} isActive={isActive} {...props} />

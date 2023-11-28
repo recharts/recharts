@@ -293,7 +293,7 @@ export class CartesianAxis extends Component<Props, IState> {
       return (
         <Layer
           className="recharts-cartesian-axis-tick"
-          key={`tick-${i}`} // eslint-disable-line react/no-array-index-key
+          key={`tick-${entry.value}-${entry.coordinate}-${entry.tickCoord}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
           {tickLine && (
