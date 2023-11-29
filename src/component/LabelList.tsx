@@ -61,7 +61,7 @@ export function LabelList<T extends Data>({ valueAccessor = defaultAccessor, ...
             value={value}
             textBreakAll={textBreakAll}
             viewBox={Label.parseViewBox(isNil(clockWise) ? entry : { ...entry, clockWise })}
-            key={`label-${JSON.stringify(entry.payload)}`}
+            key={`label-${index}`} // eslint-disable-line react/no-array-index-key
             index={index}
           />
         );
