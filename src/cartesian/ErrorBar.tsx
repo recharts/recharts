@@ -49,7 +49,7 @@ export type Props = SVGProps<SVGLineElement> & ErrorBarProps;
 export function ErrorBar(props: Props) {
   const { offset, layout, width, dataKey, data, dataPointFormatter, xAxis, yAxis, ...others } = props;
   const svgProps = filterProps(others);
-  const errorBars = data.map((entry: any, i: number) => {
+  const errorBars = data.map((entry: any) => {
     const { x, y, value, errorVal } = dataPointFormatter(entry, dataKey);
 
     if (!errorVal) {
@@ -102,8 +102,11 @@ export function ErrorBar(props: Props) {
     }
 
     return (
-      // eslint-disable-next-line react/no-array-index-key
-      <Layer className="recharts-errorBar" key={`bar-${i}`} {...svgProps}>
+      <Layer
+        className="recharts-errorBar"
+        key={`bar-${lineCoordinates.map(c => `${c.x1}-${c.x2}-${c.y1}-${c.y2}`)}`}
+        {...svgProps}
+      >
         {lineCoordinates.map(coordinates => (
           <line {...coordinates} key={`line-${coordinates.x1}-${coordinates.x2}-${coordinates.y1}-${coordinates.y2}`} />
         ))}
