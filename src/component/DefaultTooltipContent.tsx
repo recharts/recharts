@@ -97,10 +97,9 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
             finalValue = formatted;
           }
         }
-
+        const keyVal = isNumOrStr(finalName) ? `${finalValue}-${finalName}` : finalValue;
         return (
-          // eslint-disable-next-line react/no-array-index-key
-          <li className="recharts-tooltip-item" key={`tooltip-item-${i}`} style={finalItemStyle}>
+          <li className="recharts-tooltip-item" key={`tooltip-item-${keyVal}`} style={finalItemStyle}>
             {isNumOrStr(finalName) ? <span className="recharts-tooltip-item-name">{finalName}</span> : null}
             {isNumOrStr(finalName) ? <span className="recharts-tooltip-item-separator">{separator}</span> : null}
             <span className="recharts-tooltip-item-value">{finalValue}</span>

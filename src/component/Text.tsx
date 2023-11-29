@@ -258,12 +258,14 @@ export const Text = ({
       textAnchor={textAnchor}
       fill={fill.includes('url') ? DEFAULT_FILL : fill}
     >
-      {wordsByLines.map((line, index) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={index}>
-          {line.words.join(breakAll ? '' : ' ')}
-        </tspan>
-      ))}
+      {wordsByLines.map((line, index) => {
+        const words = line.words.join(breakAll ? '' : ' ');
+        return (
+          <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={words}>
+            {words}
+          </tspan>
+        );
+      })}
     </text>
   );
 };

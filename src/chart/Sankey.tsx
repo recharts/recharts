@@ -614,8 +614,7 @@ export class Sankey extends PureComponent<Props, State> {
           };
 
           return (
-            // eslint-disable-next-line react/no-array-index-key
-            <Layer key={`link${i}`} {...events}>
+            <Layer key={`link-${link.source}-${link.target}-${link.value}`} {...events}>
               {(this.constructor as any).renderLinkItem(linkContent, linkProps)}
             </Layer>
           );
@@ -662,8 +661,7 @@ export class Sankey extends PureComponent<Props, State> {
           };
 
           return (
-            // eslint-disable-next-line react/no-array-index-key
-            <Layer key={`node${i}`} {...events}>
+            <Layer key={`node-${node.x}-${node.y}-${node.value}`} {...events}>
               {(this.constructor as any).renderNodeItem(nodeContent, nodeProps)}
             </Layer>
           );

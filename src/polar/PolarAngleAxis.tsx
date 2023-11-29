@@ -146,7 +146,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
       return (
         <Layer
           className="recharts-polar-angle-axis-tick"
-          key={`tick-${i}`} // eslint-disable-line react/no-array-index-key
+          key={`tick-${entry.coordinate}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
           {tickLine && <line className="recharts-polar-angle-axis-tick-line" {...tickLineProps} {...lineCoord} />}
