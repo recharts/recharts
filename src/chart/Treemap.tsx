@@ -644,7 +644,7 @@ export class Treemap extends PureComponent<Props, State> {
       return null;
     }
 
-    return this.renderNode(formatRoot, formatRoot, 0);
+    return this.renderNode(formatRoot, formatRoot);
   }
 
   renderTooltip(): React.ReactElement {
