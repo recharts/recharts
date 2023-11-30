@@ -16,28 +16,36 @@ const cx = 150;
 const cy = 200;
 const iR = 50;
 const oR = 100;
-const value = 50;
 
-const needle = (value: number, data: any[], cx: number, cy: number, iR: number, oR: number, color: string) => {
-  let total = 0;
-  data.forEach(v => {
-    total += v.value;
-  });
-  const ang = 180.0 * (1 - value / total);
-  const length = (iR + 2 * oR) / 3;
-  const sin = Math.sin(-RADIAN * ang);
-  const cos = Math.cos(-RADIAN * ang);
-  const r = 5;
-  const x0 = cx + 5;
-  const y0 = cy + 5;
-  const xbb = x0 - r * sin;
-  const ybb = y0 + r * cos;
-  const xp = x0 + length * cos;
+const NEEDLE_BASE_RADIUS_PX = 5;
+const NEEDLE_LENGTH_PX = 35;
+const NEEDLE_COLOR = '#d0d000';
+const Needle = ({ cx, cy, midAngle }: { cx: number; cy: number; midAngle: number }) => {
+  const sin = Math.sin(-RADIAN * midAngle);
+  const cos = Math.cos(-RADIAN * midAngle);
+  const needleBaseCenterX = cx;
+  const needleBaseCenterY = cy;
+  const xbb = needleBaseCenterX - NEEDLE_BASE_RADIUS_PX * sin;
+  const ybb = needleBaseCenterY + NEEDLE_BASE_RADIUS_PX * cos;
+  const xp = needleBaseCenterX + NEEDLE_LENGTH_PX * cos;
 
-  return [
-    <circle cx={x0} cy={y0} r={r} fill={color} stroke="none" />,
-    <path d={`M${x0},${y0}L${xbb + 65},${ybb - 65},L${xp}`} strokeWidth={2} stroke={color} fill={color} />,
-  ];
+  return (
+    <g>
+      <circle
+        cx={needleBaseCenterX}
+        cy={needleBaseCenterY}
+        r={NEEDLE_BASE_RADIUS_PX}
+        fill={NEEDLE_COLOR}
+        stroke="none"
+      />
+      <path
+        d={`M${needleBaseCenterX},${needleBaseCenterY}L${xbb + 65},${ybb - 65},L${xp}`}
+        strokeWidth={2}
+        stroke={NEEDLE_COLOR}
+        fill={NEEDLE_COLOR}
+      />
+    </g>
+  );
 };
 
 export const PieWithNeedle = {
@@ -61,7 +69,20 @@ export const PieWithNeedle = {
               <Cell key={`cell-${entry.name}`} fill={entry.color} />
             ))}
           </Pie>
-          {needle(value, data, cx, cy, iR, oR, '#d0d000')}
+          <Pie
+            dataKey="value"
+            startAngle={180}
+            endAngle={0}
+            data={data}
+            cx={cx}
+            cy={cy}
+            innerRadius={iR}
+            outerRadius={oR}
+            stroke="none"
+            fill="none"
+            activeIndex={1}
+            activeShape={Needle}
+          />
         </PieChart>
       </ResponsiveContainer>
     );
