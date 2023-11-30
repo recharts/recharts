@@ -184,7 +184,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
         <li
           className={className}
           style={itemStyle}
-          key={`legend-item-${entry.type}-${entry.value}`}
+          key={`legend-item-${JSON.stringify(entry)}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
           <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
