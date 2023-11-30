@@ -33,6 +33,26 @@ describe('<PieChart />', () => {
     expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(data.length);
   });
 
+  test('Renders 6 sectors circles in simple PieChart with animation', () => {
+    const { container } = render(
+      <PieChart width={400} height={400}>
+        <Pie
+          dataKey="value"
+          startAngle={180}
+          endAngle={0}
+          data={data}
+          cx="50%"
+          cy="50%"
+          outerRadius={80}
+          fill="#8884d8"
+          label
+        />
+      </PieChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(data.length);
+  });
+
   test('With Tooltip render customized active sector when activeShape is set to be an element', () => {
     const { container } = render(
       <PieChart width={800} height={400}>

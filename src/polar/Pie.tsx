@@ -71,6 +71,7 @@ export type PieSectorDataItem = SectorProps & {
   tooltipPosition?: Coordinate;
   value?: number;
   paddingAngle?: number;
+  dataKey?: string;
 };
 
 interface PieProps extends PieDef {
@@ -486,7 +487,6 @@ export class Pie extends PureComponent<Props, State> {
         stroke: blendStroke ? entry.fill : entry.stroke,
         tabIndex: -1,
       };
-
       return (
         <Layer
           ref={(ref: HTMLElement) => {
@@ -497,7 +497,7 @@ export class Pie extends PureComponent<Props, State> {
           tabIndex={-1}
           className="recharts-pie-sector"
           {...adaptEventsOfChild(this.props, entry, i)}
-          key={`sector-${entry?.startAngle}=${entry?.endAngle}`}
+          key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}`}
         >
           <Shape option={sectorOptions} isActive={isActive} shapeType="sector" {...sectorProps} />
         </Layer>
@@ -507,6 +507,7 @@ export class Pie extends PureComponent<Props, State> {
 
   renderSectorsWithAnimation() {
     const { sectors, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = this.props;
+
     const { prevSectors, prevIsAnimationActive } = this.state;
 
     return (
