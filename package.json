@@ -93,6 +93,7 @@
     "@storybook/addon-links": "^7.6.3",
     "@storybook/addon-mdx-gfm": "^7.6.3",
     "@storybook/addon-storysource": "^7.6.3",
+    "@storybook/source-loader": "^7.6.3",
     "@storybook/jest": "^0.2.3",
     "@storybook/react": "^7.6.3",
     "@storybook/react-webpack5": "^7.6.3",
