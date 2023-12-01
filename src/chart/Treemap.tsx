@@ -626,7 +626,7 @@ export class Treemap extends PureComponent<Props, State> {
 
     return (
       <Layer
-        key={`recharts-treemap-node-${nodeProps.x}-${nodeProps.y}`}
+        key={`recharts-treemap-node-${nodeProps.x}-${nodeProps.y}-${nodeProps.name}`}
         className={`recharts-treemap-depth-${node.depth}`}
       >
         {this.renderItem(content, nodeProps, isLeaf)}
