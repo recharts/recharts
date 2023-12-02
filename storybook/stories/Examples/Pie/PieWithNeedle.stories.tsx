@@ -52,19 +52,8 @@ export const PieWithNeedle = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
-        <PieChart {...args}>
-          <Pie
-            cx={cx}
-            cy={cy}
-            data={data}
-            dataKey="value"
-            endAngle={0}
-            fill="#8884d8"
-            innerRadius={iR}
-            outerRadius={oR}
-            startAngle={180}
-            stroke="none"
-          >
+        <PieChart>
+          <Pie dataKey="value" {...args}>
             {data.map(entry => (
               <Cell key={`cell-${entry.name}`} fill={entry.color} />
             ))}
@@ -87,14 +76,25 @@ export const PieWithNeedle = {
       </ResponsiveContainer>
     );
   },
-  args: {},
+  args: {
+    cx,
+    cy,
+    data,
+    dataKey: 'value',
+    endAngle: 0,
+    fill: '#8884d8',
+    innerRadius: iR,
+    outerRadius: oR,
+    startAngle: 180,
+    stroke: 'none',
+  },
 };
 
 export const PieWithPatterns = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
-        <PieChart {...args}>
+        <PieChart>
           <defs>
             <pattern id="pattern-A" width="10" height="10" patternUnits="userSpaceOnUse">
               <polygon points="0,0 2,5 0,10 5,8 10,10 8,5 10,0 5,2" fill="#f00" />
@@ -106,16 +106,7 @@ export const PieWithPatterns = {
               <rect width="2" height="4" fill="#00f" />
             </pattern>
           </defs>
-          <Pie
-            cx={cx}
-            cy={cy}
-            data={data}
-            dataKey="value"
-            fill="#8884d8"
-            innerRadius={iR}
-            outerRadius={oR}
-            stroke="none"
-          >
+          <Pie dataKey="value" {...args}>
             {data.map(entry => (
               <Cell key={`cell-${entry.name}`} fill={`url(#pattern-${entry.name})`} />
             ))}
@@ -124,5 +115,14 @@ export const PieWithPatterns = {
       </ResponsiveContainer>
     );
   },
-  args: {},
+  args: {
+    cx,
+    cy,
+    data,
+    dataKey: 'value',
+    fill: '#8884d8',
+    innerRadius: iR,
+    outerRadius: oR,
+    stroke: 'none',
+  },
 };

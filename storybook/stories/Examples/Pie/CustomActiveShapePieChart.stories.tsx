@@ -72,22 +72,25 @@ export const CustomActiveShapePie = {
 
     return (
       <ResponsiveContainer width="100%" height={500}>
-        <PieChart width={400} height={400} {...args}>
+        <PieChart width={400} height={400}>
           <Pie
+            dataKey="value"
+            {...args}
             activeIndex={activeIndex}
             activeShape={renderActiveShape}
-            cx="50%"
-            cy="50%"
-            data={data}
-            dataKey="value"
-            fill="#8884d8"
-            innerRadius={60}
             onMouseEnter={onPieEnter}
-            outerRadius={80}
           />
         </PieChart>
       </ResponsiveContainer>
     );
   },
-  args: {},
+  args: {
+    cx: '50%',
+    cy: '50%',
+    data,
+    dataKey: 'value',
+    fill: '#8884d8',
+    innerRadius: 60,
+    outerRadius: 80,
+  },
 };
