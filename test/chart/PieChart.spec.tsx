@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, Mock } from 'vitest';
 import { PieChart, Pie, Legend, Cell, Tooltip, Sector, SectorProps } from '../../src';
@@ -35,20 +35,13 @@ describe('<PieChart />', () => {
   test('Renders 6 sectors circles in simple PieChart', () => {
     const { container } = render(
       <PieChart width={800} height={400}>
-        <Pie
-          dataKey="value"
-          isAnimationActive={false}
-          data={data}
-          cx={200}
-          cy={200}
-          outerRadius={80}
-          fill="#ff7300"
-          label
-        />
+        <Pie dataKey="value" isAnimationActive data={data} cx={200} cy={200} outerRadius={80} fill="#ff7300" label />
       </PieChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(data.length);
+    waitFor(() => {
+      expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(data.length);
+    });
   });
 
   test('Renders 6 sectors circles in simple PieChart with animation', () => {
