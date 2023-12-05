@@ -49,22 +49,11 @@ const Needle = ({ cx, cy, midAngle }: { cx: number; cy: number; midAngle: number
 };
 
 export const PieWithNeedle = {
-  render: (_args: Record<string, any>) => {
+  render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <PieChart>
-          <Pie
-            dataKey="value"
-            startAngle={180}
-            endAngle={0}
-            data={data}
-            cx={cx}
-            cy={cy}
-            innerRadius={iR}
-            outerRadius={oR}
-            fill="#8884d8"
-            stroke="none"
-          >
+          <Pie dataKey="value" {...args}>
             {data.map(entry => (
               <Cell key={`cell-${entry.name}`} fill={entry.color} />
             ))}
@@ -87,11 +76,22 @@ export const PieWithNeedle = {
       </ResponsiveContainer>
     );
   },
-  args: {},
+  args: {
+    cx,
+    cy,
+    data,
+    dataKey: 'value',
+    endAngle: 0,
+    fill: '#8884d8',
+    innerRadius: iR,
+    outerRadius: oR,
+    startAngle: 180,
+    stroke: 'none',
+  },
 };
 
 export const PieWithPatterns = {
-  render: (_args: Record<string, any>) => {
+  render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <PieChart>
@@ -106,16 +106,7 @@ export const PieWithPatterns = {
               <rect width="2" height="4" fill="#00f" />
             </pattern>
           </defs>
-          <Pie
-            dataKey="value"
-            data={data}
-            cx={cx}
-            cy={cy}
-            innerRadius={iR}
-            outerRadius={oR}
-            fill="#8884d8"
-            stroke="none"
-          >
+          <Pie dataKey="value" {...args}>
             {data.map(entry => (
               <Cell key={`cell-${entry.name}`} fill={`url(#pattern-${entry.name})`} />
             ))}
@@ -124,5 +115,14 @@ export const PieWithPatterns = {
       </ResponsiveContainer>
     );
   },
-  args: {},
+  args: {
+    cx,
+    cy,
+    data,
+    dataKey: 'value',
+    fill: '#8884d8',
+    innerRadius: iR,
+    outerRadius: oR,
+    stroke: 'none',
+  },
 };
