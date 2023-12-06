@@ -70,21 +70,11 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement | { current: HTMLDi
     onResizeRef.current = onResize;
     useImperativeHandle(ref, () => {
       return Object.assign(containerRef.current, {
-        current: new Proxy(containerRef.current, {
-          get: (target, prop, receiver) => {
-            // eslint-disable-next-line no-console
-            console.warn('The usage of ref.current.current is deprecated and will no longer be supported.');
-
-            const value = Reflect.get(target, prop, receiver);
-            if (typeof value === 'function') {
-              // eslint-disable-next-line func-names
-              return function (...args: unknown[]) {
-                return value.apply(this === receiver ? target : this, args);
-              };
-            }
-            return value;
-          },
-        }),
+        get current() {
+          // eslint-disable-next-line no-console
+          console.warn('The usage of ref.current.current is deprecated and will no longer be supported.');
+          return containerRef.current;
+        },
       });
     });
 
