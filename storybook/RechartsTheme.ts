@@ -4,7 +4,6 @@ export default create({
   base: 'light',
   brandTitle: 'Recharts',
   brandUrl: 'https://recharts.org/en-US/',
-  brandImage: './recharts_logo.png',
   brandTarget: '_self',
 
   fontBase: '"Source Sans Pro", "Hiragino Sans GB", Arial, sans-serif',
