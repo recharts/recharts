@@ -14,6 +14,12 @@ export interface SunburstChartProps {
   children: React.ReactNode;
 }
 
+interface DrawArcOptions {
+  r: number;
+  pad?: number;
+  innerRadius: number;
+}
+
 const width = 700;
 const height = 500;
 
@@ -24,25 +30,40 @@ export const SunburstChart = ({ data, children }: SunburstChartProps) => {
   const total = data.value;
   const rScale = scaleLinear([0, total], [0, 360]);
 
-  function drawArcs(root: SunburstData['children'], pad?: number): any[] {
-    let startingAngle = 0;
-    const padding = pad ?? 0;
+  function drawAllArcs(root: SunburstData): React.ReactNode[] {
+    const sectors: React.ReactNode[] = [];
 
-    return root.map(d => {
-      const arcLength = rScale(d.value);
-      const start = startingAngle;
-      startingAngle += arcLength;
-      return (
-        <Sector
-          startAngle={start}
-          endAngle={start + arcLength - padding}
-          innerRadius={60}
-          outerRadius={100}
-          cx={cx}
-          cy={cy}
-        />
-      );
-    });
+    // recursively add nodes for each data point and its children
+    function drawArcs(childNodes: SunburstData[] | undefined, options: DrawArcOptions): any {
+      const { pad, r, innerRadius } = options;
+
+      let startingAngle = 0;
+      const padding = pad ?? 0;
+
+      if (!childNodes) return; // base case: no children of this node
+
+      childNodes.forEach(d => {
+        const arcLength = rScale(d.value);
+        const start = startingAngle;
+        startingAngle += arcLength;
+        sectors.push(
+          <Sector
+            startAngle={start}
+            endAngle={start + arcLength - padding}
+            innerRadius={innerRadius}
+            outerRadius={innerRadius + r}
+            cx={cx}
+            cy={cy}
+          />,
+        );
+
+        return drawArcs(d.children, { pad: padding, r, innerRadius: innerRadius + r + 2 });
+      });
+    }
+
+    drawArcs(root.children, { pad: 2, r: 40, innerRadius: 60 });
+
+    return sectors;
   }
 
   return (
@@ -50,7 +71,7 @@ export const SunburstChart = ({ data, children }: SunburstChartProps) => {
       <p>{data.name}</p>
       <Surface width={width} height={height}>
         {children}
-        {drawArcs(data.children, 2)}
+        {drawAllArcs(data)}
       </Surface>
     </div>
   );
