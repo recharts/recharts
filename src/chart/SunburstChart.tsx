@@ -14,13 +14,14 @@ export interface SunburstChartProps {
   data?: SunburstData;
   width?: number;
   height?: number;
+  padding?: number;
+  ringPadding?: number;
   innerRadius?: number;
   children?: React.ReactNode;
 }
 
 interface DrawArcOptions {
   r: number;
-  pad?: number;
   innerRadius: number;
   initialAngle: number;
 }
@@ -31,11 +32,13 @@ interface ArcGroupProps {
   height: number;
   innerR: number;
   outerR: number;
+  padding: number;
+  ringPadding: number;
 }
 
 const treeDepth = 4; // TODO: make this dynamic
 
-function ArcGroup({ root, width, height, innerR, outerR }: ArcGroupProps) {
+function ArcGroup({ root, width, height, innerR, outerR, padding, ringPadding }: ArcGroupProps) {
   const cx = width / 2,
     cy = height / 2;
 
@@ -46,10 +49,9 @@ function ArcGroup({ root, width, height, innerR, outerR }: ArcGroupProps) {
 
   // recursively add nodes for each data point and its children
   function drawArcs(childNodes: SunburstData[] | undefined, options: DrawArcOptions): any {
-    const { pad, r, innerRadius, initialAngle } = options;
+    const { r, innerRadius, initialAngle } = options;
 
     let currentAngle = initialAngle;
-    const padding = pad ?? 0;
 
     if (!childNodes) return; // base case: no children of this node
 
@@ -68,16 +70,24 @@ function ArcGroup({ root, width, height, innerR, outerR }: ArcGroupProps) {
         />,
       );
 
-      return drawArcs(d.children, { pad: padding, r, innerRadius: innerRadius + r + 2, initialAngle: start });
+      return drawArcs(d.children, { r, innerRadius: innerRadius + r + ringPadding, initialAngle: start });
     });
   }
 
-  drawArcs(root.children, { pad: 2, r: thickness, innerRadius: innerR, initialAngle: 0 });
+  drawArcs(root.children, { r: thickness, innerRadius: innerR, initialAngle: 0 });
 
   return <Layer>{sectors}</Layer>;
 }
 
-export const SunburstChart = ({ data, children, width, height, innerRadius = 50 }: SunburstChartProps) => {
+export const SunburstChart = ({
+  data,
+  children,
+  width,
+  height,
+  padding = 2,
+  ringPadding = 2,
+  innerRadius = 50,
+}: SunburstChartProps) => {
   // get the max possible radius for a circle inscribed in the chart container
   const outerRadius = Math.min(width, height) / 2;
 
@@ -86,7 +96,15 @@ export const SunburstChart = ({ data, children, width, height, innerRadius = 50 
       <p>{data.name}</p>
       <Surface width={width} height={height}>
         {children}
-        <ArcGroup innerR={innerRadius} outerR={outerRadius} width={width} height={height} root={data} />
+        <ArcGroup
+          padding={padding}
+          ringPadding={ringPadding}
+          innerR={innerRadius}
+          outerR={outerRadius}
+          width={width}
+          height={height}
+          root={data}
+        />
       </Surface>
     </div>
   );
