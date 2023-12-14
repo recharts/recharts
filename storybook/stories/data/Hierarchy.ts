@@ -47,15 +47,15 @@ const hierarchy: SunburstData = {
       children: [
         {
           name: 'another child',
-          value: 5,
+          value: 10,
         },
         {
           name: 'next child',
-          value: 15,
+          value: 10,
           children: [
             { name: 'level 3 of child 2', value: 5 },
-            { name: 'level 3 of child 2', value: 5 },
-            { name: 'level 3 of child 2', value: 5 },
+            { name: 'level 3 of child 2', value: 3 },
+            { name: 'level 3 of child 2', value: 2 },
           ],
         },
       ],
@@ -67,6 +67,10 @@ const hierarchy: SunburstData = {
     {
       name: 'Child4',
       value: 10,
+      children: [
+        { name: 'child4 child', value: 5 },
+        { name: 'child4 child', value: 5 },
+      ],
     },
     {
       name: 'Child5',

@@ -18,6 +18,7 @@ interface DrawArcOptions {
   r: number;
   pad?: number;
   innerRadius: number;
+  initialAngle: number;
 }
 
 const width = 700;
@@ -35,17 +36,17 @@ export const SunburstChart = ({ data, children }: SunburstChartProps) => {
 
     // recursively add nodes for each data point and its children
     function drawArcs(childNodes: SunburstData[] | undefined, options: DrawArcOptions): any {
-      const { pad, r, innerRadius } = options;
+      const { pad, r, innerRadius, initialAngle } = options;
 
-      let startingAngle = 0;
+      let currentAngle = initialAngle;
       const padding = pad ?? 0;
 
       if (!childNodes) return; // base case: no children of this node
 
       childNodes.forEach(d => {
         const arcLength = rScale(d.value);
-        const start = startingAngle;
-        startingAngle += arcLength;
+        const start = currentAngle;
+        currentAngle += arcLength;
         sectors.push(
           <Sector
             startAngle={start}
@@ -57,11 +58,11 @@ export const SunburstChart = ({ data, children }: SunburstChartProps) => {
           />,
         );
 
-        return drawArcs(d.children, { pad: padding, r, innerRadius: innerRadius + r + 2 });
+        return drawArcs(d.children, { pad: padding, r, innerRadius: innerRadius + r + 2, initialAngle: start });
       });
     }
 
-    drawArcs(root.children, { pad: 2, r: 40, innerRadius: 60 });
+    drawArcs(root.children, { pad: 2, r: 40, innerRadius: 60, initialAngle: 0 });
 
     return sectors;
   }
