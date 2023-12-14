@@ -36,13 +36,20 @@ interface ArcGroupProps {
   ringPadding: number;
 }
 
-const treeDepth = 4; // TODO: make this dynamic
+function maxDepth(node: SunburstData): number {
+  if (!node.children || node.children.length === 0) return 1;
+
+  // Calculate depth for each child and find the maximum
+  const childDepths = node.children.map(d => maxDepth(d));
+  return 1 + Math.max(...childDepths);
+}
 
 function ArcGroup({ root, width, height, innerR, outerR, padding, ringPadding }: ArcGroupProps) {
   const cx = width / 2,
     cy = height / 2;
 
   const rScale = scaleLinear([0, root.value], [0, 360]);
+  const treeDepth = maxDepth(root);
   const thickness = (outerR - innerR) / treeDepth;
 
   const sectors: React.ReactNode[] = [];
@@ -92,20 +99,17 @@ export const SunburstChart = ({
   const outerRadius = Math.min(width, height) / 2;
 
   return (
-    <div>
-      <p>{data.name}</p>
-      <Surface width={width} height={height}>
-        {children}
-        <ArcGroup
-          padding={padding}
-          ringPadding={ringPadding}
-          innerR={innerRadius}
-          outerR={outerRadius}
-          width={width}
-          height={height}
-          root={data}
-        />
-      </Surface>
-    </div>
+    <Surface width={width} height={height}>
+      {children}
+      <ArcGroup
+        padding={padding}
+        ringPadding={ringPadding}
+        innerR={innerRadius}
+        outerR={outerRadius}
+        width={width}
+        height={height}
+        root={data}
+      />
+    </Surface>
   );
 };
