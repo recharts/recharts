@@ -175,7 +175,7 @@ describe('Active Shape', () => {
   // testing that the activeShape prop is rendered via tooltip
   test.each(funnelActiveShapes)('$name', ({ element, activeClass, expectedLength, shapeClass }) => {
     const { container } = render(element);
-    const shapes = container.querySelectorAll(shapeClass);
+    const shapes = container.querySelectorAll(shapeClass ?? '');
     const [shape] = Array.from(shapes);
     fireEvent.mouseOver(shape);
     const activeShape = container.querySelectorAll(activeClass);

@@ -27,7 +27,11 @@ const defaultProps: CursorProps = {
 
 describe('Cursor', () => {
   it('should render curve cursor by default', () => {
-    const { container } = render(<Cursor {...defaultProps} />);
+    const { container } = render(
+      <svg width={100} height={100}>
+        <Cursor {...defaultProps} />
+      </svg>,
+    );
     const cursor = container.querySelector('.recharts-curve');
     assertNotNull(cursor);
     expect(cursor).toBeVisible();
@@ -41,7 +45,11 @@ describe('Cursor', () => {
       ...defaultProps,
       element: getTooltipElement({ cursor: <MyCustomCursor /> }),
     };
-    const { getByText } = render(<Cursor {...props} />);
+    const { getByText } = render(
+      <svg width={100} height={100}>
+        <Cursor {...props} />
+      </svg>,
+    );
     expect(getByText('I am a cursor.')).toBeVisible();
   });
 
@@ -50,7 +58,11 @@ describe('Cursor', () => {
       ...defaultProps,
       chartName: 'ScatterChart',
     };
-    const { container } = render(<Cursor {...props} />);
+    const { container } = render(
+      <svg width={100} height={100}>
+        <Cursor {...props} />
+      </svg>,
+    );
     const cursor = container.querySelector('.recharts-cross');
     assertNotNull(cursor);
     expect(cursor).toBeVisible();
@@ -66,7 +78,11 @@ describe('Cursor', () => {
       tooltipAxisBandSize: 1,
       chartName: 'BarChart',
     };
-    const { container } = render(<Cursor {...props} />);
+    const { container } = render(
+      <svg width={100} height={100}>
+        <Cursor {...props} />
+      </svg>,
+    );
     const cursor = container.querySelector('.recharts-rectangle');
     assertNotNull(cursor);
     expect(cursor).toBeVisible();
@@ -84,7 +100,11 @@ describe('Cursor', () => {
       },
       layout: 'radial',
     };
-    const { container } = render(<Cursor {...props} />);
+    const { container } = render(
+      <svg width={100} height={100}>
+        <Cursor {...props} />
+      </svg>,
+    );
     const cursor = container.querySelector('.recharts-sector');
     assertNotNull(cursor);
     expect(cursor).toBeVisible();

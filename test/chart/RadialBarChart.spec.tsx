@@ -32,6 +32,32 @@ describe('<RadialBarChart />', () => {
     expect(container.querySelectorAll('.recharts-radial-bar-sector')).toHaveLength(data.length);
   });
 
+  test('Adds className when set on radial bar and radial bar background', () => {
+    const label = { orientation: 'outer' };
+    const { container } = render(
+      <RadialBarChart
+        width={500}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        barSize={10}
+        data={data}
+      >
+        <RadialBar
+          className="test-radial-bar"
+          label={label}
+          background={{ className: 'test-custom-background' }}
+          dataKey="uv"
+          isAnimationActive={false}
+        />
+      </RadialBarChart>,
+    );
+    expect(container.querySelectorAll('.test-radial-bar')).toHaveLength(1);
+    expect(container.querySelectorAll('.test-custom-background')).toHaveLength(data.length);
+  });
+
   test("Don't renders any sectors when no RadialBar is added", () => {
     const { container } = render(
       <RadialBarChart
