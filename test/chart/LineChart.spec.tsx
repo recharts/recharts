@@ -3,6 +3,7 @@ import { render, fireEvent, screen } from '@testing-library/react';
 
 import { vi, describe, test, SpyInstance } from 'vitest';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Brush, CartesianAxis, Legend } from '../../src';
+import { assertNotNull } from '../helper/assertNotNull';
 
 const data = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
@@ -127,8 +128,9 @@ describe('<LineChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
+    assertNotNull(chart);
 
-    fireEvent.mouseOver(chart!, { bubbles: true, cancelable: true, clientX: 200, clientY: 200 });
+    fireEvent.mouseOver(chart, { bubbles: true, cancelable: true, clientX: 200, clientY: 200 });
 
     const dot = container.querySelectorAll('.customized-active-dot');
     expect(dot).toHaveLength(1);
@@ -338,16 +340,16 @@ describe('<LineChart />', () => {
     // simulate a brush to only include the data elements at indices 2-4
     // find the left cursors
     const leftCursor = container.querySelectorAll('.recharts-brush-traveller')[0];
-    const rightrCursor = container.querySelectorAll('.recharts-brush-traveller')[1];
+    const rightCursor = container.querySelectorAll('.recharts-brush-traveller')[1];
 
     // move the left cursor to the right 200px
 
-    fireEvent.mouseDown(leftCursor!, { clientX: 0, clientY: 0, bubbles: true, cancelable: true });
+    fireEvent.mouseDown(leftCursor, { clientX: 0, clientY: 0, bubbles: true, cancelable: true });
     fireEvent.mouseMove(window, { clientX: 200, clientY: 0, bubbles: true, cancelable: true });
     fireEvent.mouseUp(window);
 
     // move the right cursor to the left 60px
-    fireEvent.mouseDown(rightrCursor!, { clientX: 400, clientY: 0, bubbles: true, cancelable: true });
+    fireEvent.mouseDown(rightCursor, { clientX: 400, clientY: 0, bubbles: true, cancelable: true });
     fireEvent.mouseMove(window, { clientX: 340, clientY: 0, bubbles: true, cancelable: true });
     fireEvent.mouseUp(window);
 
@@ -423,9 +425,10 @@ describe('<LineChart /> - Pure Rendering', () => {
     expect(axisSpy).toHaveBeenCalledTimes(2);
 
     const leftCursor = container.querySelector('.recharts-brush-traveller');
+    assertNotNull(leftCursor);
 
-    fireEvent.mouseDown(leftCursor!, { clientX: 0, clientY: 0, bubbles: true, cancelable: true });
-    fireEvent.mouseMove(window!, { clientX: 0, clientY: 0, bubbles: true, cancelable: true });
+    fireEvent.mouseDown(leftCursor, { clientX: 0, clientY: 0, bubbles: true, cancelable: true });
+    fireEvent.mouseMove(window, { clientX: 0, clientY: 0, bubbles: true, cancelable: true });
 
     fireEvent.mouseUp(window);
 
@@ -493,7 +496,8 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
     expect(axisSpy).toHaveBeenCalledTimes(2);
 
     const leftCursor = container.querySelector('.recharts-brush-traveller');
-    fireEvent.mouseDown(leftCursor!, { clientX: 0, clientY: 0, bubbles: true, cancelable: true });
+    assertNotNull(leftCursor);
+    fireEvent.mouseDown(leftCursor, { clientX: 0, clientY: 0, bubbles: true, cancelable: true });
     fireEvent.mouseMove(window, { clientX: 0, clientY: 0, bubbles: true, cancelable: true });
     fireEvent.mouseUp(window);
 
@@ -548,7 +552,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 
     const firstChart = container.querySelector('.recharts-wrapper');
 
-    expect(firstChart).not.toBeNull();
+    assertNotNull(firstChart);
 
     // simulate entering just past Page A of Chart1 to test snapping of the cursor line
     fireEvent.mouseOver(firstChart, {
@@ -572,11 +576,11 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     expect(activeDotNodes).toHaveLength(2);
 
     // simulate leaving the area
-    fireEvent.mouseLeave(firstChart!);
+    fireEvent.mouseLeave(firstChart);
     vi.advanceTimersByTime(100);
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
-    fireEvent.mouseOver(firstChart!, {
+    fireEvent.mouseOver(firstChart, {
       bubbles: true,
       cancelable: true,
       clientX: margin.left + 0.1 * dotSpacing,
@@ -616,7 +620,9 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 
     const firstChart = container.querySelector('.recharts-wrapper');
 
-    fireEvent.mouseOver(firstChart!, { bubbles: true, clientX: margin.left + 0.1 * dotSpacing, clientY: height / 2 });
+    assertNotNull(firstChart);
+
+    fireEvent.mouseOver(firstChart, { bubbles: true, clientX: margin.left + 0.1 * dotSpacing, clientY: height / 2 });
     vi.advanceTimersByTime(100);
 
     // There are two tooltips - one for each LineChart as they have the same syncId
@@ -631,7 +637,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
 
     // simulate leaving the area
-    fireEvent.mouseLeave(firstChart!);
+    fireEvent.mouseLeave(firstChart);
     vi.advanceTimersByTime(100);
 
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
@@ -684,8 +690,9 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
     const firstChart = container.querySelector('.recharts-wrapper');
+    assertNotNull(firstChart);
 
-    fireEvent.mouseOver(firstChart!, { bubbles: true, clientX: margin.left + 0.1 * dotSpacing, clientY: height / 2 });
+    fireEvent.mouseOver(firstChart, { bubbles: true, clientX: margin.left + 0.1 * dotSpacing, clientY: height / 2 });
     vi.advanceTimersByTime(100);
 
     // There are two tooltips - one for each LineChart as they have the same syncId
@@ -699,7 +706,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
 
     // simulate leaving the area
-    fireEvent.mouseLeave(firstChart!);
+    fireEvent.mouseLeave(firstChart);
     vi.advanceTimersByTime(100);
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
   });

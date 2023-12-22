@@ -62,6 +62,7 @@ describe('AccessibilityLayer', () => {
     );
 
     const svg = container.querySelector('svg');
+    assertNotNull(svg);
     const tooltip = container.querySelector('.recharts-tooltip-wrapper');
 
     expect(tooltip?.textContent).toBe('');
@@ -313,6 +314,7 @@ describe('AccessibilityLayer', () => {
     expect(container.querySelectorAll('button')).toHaveLength(1);
 
     const svg = container.querySelector('svg');
+    assertNotNull(svg);
     const tooltip = container.querySelector('.recharts-tooltip-wrapper');
 
     expect(tooltip?.textContent).toBe('');

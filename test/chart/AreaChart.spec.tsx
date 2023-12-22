@@ -2,6 +2,7 @@ import { fireEvent, render } from '@testing-library/react';
 import React, { ComponentProps, FC } from 'react';
 import { vi, SpyInstance } from 'vitest';
 import { Area, AreaChart, Brush, CartesianAxis, Tooltip, XAxis, YAxis } from '../../src';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('AreaChart', () => {
   const data = [
@@ -74,7 +75,8 @@ describe('AreaChart', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
     const dot = container.querySelectorAll('.customized-active-dot');
     expect(dot).toHaveLength(1);
@@ -95,7 +97,8 @@ describe('AreaChart', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
     const dot = container.querySelectorAll('.customized-active-dot');
     expect(dot).toHaveLength(1);
@@ -197,9 +200,9 @@ describe('AreaChart', () => {
       expect(axisSpy).toHaveBeenCalledTimes(2);
 
       const brushSlide = container.querySelector('.recharts-brush-slide');
-
-      fireEvent.mouseDown(brushSlide!);
-      fireEvent.mouseMove(brushSlide!, { clientX: 200, clientY: 200 });
+      assertNotNull(brushSlide);
+      fireEvent.mouseDown(brushSlide);
+      fireEvent.mouseMove(brushSlide, { clientX: 200, clientY: 200 });
       fireEvent.mouseUp(window);
 
       spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
@@ -210,9 +213,10 @@ describe('AreaChart', () => {
       const { container } = render(chart);
 
       const leftBrushTraveler = container.querySelector('.recharts-brush-traveller');
-
-      fireEvent.mouseDown(leftBrushTraveler!);
-      fireEvent.mouseMove(window!, { clientX: 400, clientY: 0 });
+      assertNotNull(leftBrushTraveler);
+      assertNotNull(window);
+      fireEvent.mouseDown(leftBrushTraveler);
+      fireEvent.mouseMove(window, { clientX: 400, clientY: 0 });
       fireEvent.mouseUp(window);
 
       expect(leftBrushTraveler?.firstChild).toHaveAttribute('x', '390'); // not sure why the drag end at x: 390
@@ -223,8 +227,8 @@ describe('AreaChart', () => {
       const { container } = render(chart);
 
       const rightBrushTraveler = container.querySelectorAll('.recharts-brush-traveller')[1];
-
-      fireEvent.mouseDown(rightBrushTraveler!, { clientX: 400, clientY: 0 });
+      assertNotNull(rightBrushTraveler);
+      fireEvent.mouseDown(rightBrushTraveler, { clientX: 400, clientY: 0 });
       fireEvent.mouseMove(window, { clientX: 0, clientY: 0 });
       fireEvent.mouseUp(window);
 

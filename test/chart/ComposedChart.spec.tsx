@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { ComposedChart, Line, Bar, Area, XAxis, YAxis, Legend, CartesianGrid, Tooltip } from '../../src';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<ComposedChart />', () => {
   const data = [
@@ -60,7 +61,8 @@ describe('<ComposedChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 100 });
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 100 });
 
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(1);
     expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
