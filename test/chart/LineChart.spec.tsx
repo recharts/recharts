@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 
-import { vi, describe, test } from 'vitest';
+import { vi, describe, test, SpyInstance } from 'vitest';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Brush, CartesianAxis, Legend } from '../../src';
 
 const data = [
@@ -369,9 +369,9 @@ describe('<LineChart />', () => {
 describe('<LineChart /> - Pure Rendering', () => {
   const pureElements = [Line];
 
-  const spies: Array<jest.SpyInstance<React.ReactElement | null, []>> = [];
+  const spies: Array<SpyInstance<[], React.ReactElement | null>> = [];
   // CartesianAxis is what is actually render for XAxis and YAxis
-  let axisSpy: jest.SpyInstance<React.ReactElement | null, []>;
+  let axisSpy: SpyInstance<[], React.ReactElement | null>;
 
   // spy on each pure element before each test, and restore the spy afterwards
   beforeAll(() => {
@@ -437,9 +437,9 @@ describe('<LineChart /> - Pure Rendering', () => {
 describe('<LineChart /> - Pure Rendering with legend', () => {
   const pureElements = [Line];
 
-  const spies: Array<jest.SpyInstance<React.ReactElement | null, []>> = [];
+  const spies: Array<SpyInstance<[], React.ReactElement | null>> = [];
   // CartesianAxis is what is actually render for XAxis and YAxis
-  let axisSpy: jest.SpyInstance<React.ReactElement | null, []>;
+  let axisSpy: SpyInstance<[], React.ReactElement | null>;
 
   // spy on each pure element before each test, and restore the spy afterwards
   beforeAll(() => {
