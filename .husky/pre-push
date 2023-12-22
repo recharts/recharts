@@ -5,3 +5,4 @@ npm test
 
 npm run lint
 npm run lint-storybook
+npm run lint-test
