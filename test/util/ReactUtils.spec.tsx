@@ -18,30 +18,36 @@ import { adaptEventHandlers, adaptEventsOfChild } from '../../src/util/types';
 
 describe('ReactUtils untest tests', () => {
   describe('filterProps', () => {
-    test('should call filterProps wtesth any boolean and return a null result', () => {
-      expect(filterProps(true)).toBeNull();
-      expect(filterProps(false)).toBeNull();
+    test.each([true, false, 125, null, undefined])('should return null when called with %s', input => {
+      expect(filterProps(input)).toBeNull();
     });
 
-    test('should call filterProps wtesth a non-object and return null', () => {
-      expect(filterProps(125 as {})).toBeNull();
-    });
-
-    test('should call filterProps wtesth a react element extract properties and filter out non-svg properties', () => {
+    test('should filter out non-svg properties from react element props', () => {
       expect(filterProps(<input id="test" value={1} />)).toEqual({ id: 'test' });
     });
 
-    test('should pass props and filter out non wanted properties', () => {
+    test('should filter out non wanted properties', () => {
       expect(filterProps({ test: '1234', helloWorld: 1234, viewBox: '0 0 0 0', dx: 1, dy: 1 })).toEqual({
         dx: 1,
         dy: 1,
       });
     });
 
-    test('should expect viewBox on type "svg"', () => {
+    test('should return viewBox string on type "svg"', () => {
       expect(filterProps({ test: '1234', helloWorld: 1234, viewBox: '0 0 0 0' }, false, 'svg')).toEqual({
         viewBox: '0 0 0 0',
       });
+    });
+
+    test('should return viewBox object on type "svg"', () => {
+      // I think this is a bug because SVG wants a string viewBox and this will let the object through
+      expect(filterProps({ test: '1234', helloWorld: 1234, viewBox: { x: 1, y: 2 } }, false, 'svg')).toEqual({
+        viewBox: { x: 1, y: 2 },
+      });
+    });
+
+    test('should filter away viewBox object on undefined type', () => {
+      expect(filterProps({ test: '1234', helloWorld: 1234, viewBox: { x: 1, y: 2 } }, false)).toEqual({});
     });
 
     test('should include events when includeEvents is true', () => {

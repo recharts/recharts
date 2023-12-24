@@ -316,7 +316,7 @@ export const filterSvgElements = (children: React.ReactElement[]): React.ReactEl
 };
 
 export const filterProps = (
-  props: Record<string, any> | Component | FunctionComponent | boolean,
+  props: Record<string, any> | Component | FunctionComponent | boolean | unknown,
   includeEvents?: boolean,
   svgElementType?: FilteredSvgElementType,
 ) => {
