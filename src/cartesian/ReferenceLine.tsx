@@ -23,6 +23,11 @@ interface InternalReferenceLineProps {
   clipPathId?: number | string;
 }
 
+export type Segment = {
+  x?: number | string;
+  y?: number | string;
+};
+
 interface ReferenceLineProps extends InternalReferenceLineProps {
   isFront?: boolean;
   /** @deprecated use ifOverflow="extendDomain"  */
@@ -32,10 +37,7 @@ interface ReferenceLineProps extends InternalReferenceLineProps {
   x?: number | string;
   y?: number | string;
 
-  segment?: Array<{
-    x?: number | string;
-    y?: number | string;
-  }>;
+  segment?: ReadonlyArray<Segment>;
 
   position?: 'middle' | 'start' | 'end';
 
@@ -63,7 +65,7 @@ const renderLine = (option: ReferenceLineProps['shape'], props: any) => {
 };
 
 // TODO: ScaleHelper
-const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegment: boolean, props: Props) => {
+export const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegment: boolean, props: Props) => {
   const {
     viewBox: { x, y, width, height },
     position,
