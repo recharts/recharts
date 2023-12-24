@@ -2,6 +2,7 @@ import React from 'react';
 import { vi } from 'vitest';
 import { screen, render } from '@testing-library/react';
 import { BarChart, ReferenceLine, Bar, XAxis, YAxis } from '../../../src';
+import { CartesianViewBox } from '../../../src/util/types';
 
 describe('<ReferenceLine />', () => {
   const consoleSpy = vi.spyOn(console, 'warn').mockImplementation((): void => undefined);
@@ -261,5 +262,39 @@ describe('<ReferenceLine />', () => {
       </BarChart>,
     );
     expect(screen.findByText('Custom Text')).toBeTruthy();
+  });
+
+  test('viewBox is a string in SVG but object in recharts, but recharts filters the viewBox prop away', () => {
+    const spy = vi.fn();
+    const viewBox: CartesianViewBox = { x: 1, y: 2 };
+    render(
+      <BarChart
+        width={1100}
+        height={250}
+        barGap={2}
+        barSize={6}
+        data={data}
+        margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
+      >
+        <XAxis dataKey="name" />
+        <YAxis tickCount={7} />
+        <Bar dataKey="uv" />
+        {/* @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging */}
+        <ReferenceLine y={20} stroke="#666" ifOverflow="visible" shape={spy} viewBox={viewBox} />
+      </BarChart>,
+    );
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({
+      clipPath: undefined,
+      fill: 'none',
+      fillOpacity: 1,
+      stroke: '#666',
+      strokeWidth: 1,
+      x1: 80,
+      x2: 1040,
+      y: 20,
+      y1: -102.22222222222223,
+      y2: -102.22222222222223,
+    });
   });
 });
