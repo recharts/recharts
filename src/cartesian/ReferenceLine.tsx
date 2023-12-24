@@ -28,7 +28,7 @@ export type Segment = {
   y?: number | string;
 };
 
-type ReferenceLinePosition = 'middle' | 'start' | 'end';
+export type ReferenceLinePosition = 'middle' | 'start' | 'end';
 
 interface ReferenceLineProps extends InternalReferenceLineProps {
   isFront?: boolean;

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { getEndPoints } from '../../../src/cartesian/ReferenceLine';
+import { ReferenceLinePosition, getEndPoints } from '../../../src/cartesian/ReferenceLine';
 import { XAxisProps, YAxisProps } from '../../../src';
 import { CartesianViewBox } from '../../../src/util/types';
 
@@ -420,8 +420,7 @@ describe('getEndPoints', () => {
         apply: vi.fn(_ => _),
         isInRange: vi.fn(),
       };
-      const position = 9;
-      // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
+      const position: ReferenceLinePosition = 'middle';
       getEndPoints(scales, false, false, true, { viewBox: {}, segment, position });
       expect(scales.apply).toHaveBeenCalledTimes(3);
       expect(scales.apply).toHaveBeenCalledWith({ x: 1 }, { position });
