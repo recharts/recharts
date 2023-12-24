@@ -279,7 +279,6 @@ describe('<ReferenceLine />', () => {
         <XAxis dataKey="name" />
         <YAxis tickCount={7} />
         <Bar dataKey="uv" />
-        {/* @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging */}
         <ReferenceLine y={20} stroke="#666" ifOverflow="visible" shape={spy} viewBox={viewBox} />
       </BarChart>,
     );

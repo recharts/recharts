@@ -50,7 +50,13 @@ interface ReferenceLineProps extends InternalReferenceLineProps {
   label?: ImplicitLabelType;
 }
 
-export type Props = SVGProps<SVGLineElement> & ReferenceLineProps;
+/**
+ * This excludes `viewBox` prop from svg for two reasons:
+ * 1. The components wants viewBox of object type, and svg wants string
+ *    - so there's a conflict, and the component will throw if it gets string
+ * 2. Internally the component calls `filterProps` which filters the viewBox away anyway
+ */
+export type Props = Omit<SVGProps<SVGLineElement>, 'viewBox'> & ReferenceLineProps;
 
 const renderLine = (option: ReferenceLineProps['shape'], props: any) => {
   let line;

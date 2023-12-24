@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { getEndPoints } from '../../../src/cartesian/ReferenceLine';
 import { XAxisProps, YAxisProps } from '../../../src';
-import { CartesianViewBox, D3Scale } from '../../../src/util/types';
+import { CartesianViewBox } from '../../../src/util/types';
 
 describe('getEndPoints', () => {
   it('should return null if X, Y are not fixed and isSegment is false too', () => {
@@ -27,8 +27,9 @@ describe('getEndPoints', () => {
     });
 
     it('should return null when set to discard overflow', () => {
-      // @ts-expect-error TODO this mock is incomplete and I am going to fix it before merging
-      const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const yAxis: {
+        orientation?: YAxisProps['orientation'];
+      } = {
         orientation: 'left',
       };
       const lineLocationY = 9;
@@ -49,8 +50,9 @@ describe('getEndPoints', () => {
     });
 
     it('should return gibberish when viewBox is empty', () => {
-      // @ts-expect-error TODO this mock is incomplete and I am going to fix it before merging
-      const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const yAxis: {
+        orientation?: YAxisProps['orientation'];
+      } = {
         orientation: 'left',
       };
       const viewBox: CartesianViewBox = {};
@@ -64,8 +66,9 @@ describe('getEndPoints', () => {
     });
 
     it('should return coordinates when set to display overflow when orientation is "right"', () => {
-      // @ts-expect-error TODO this mock is incomplete and I am going to fix it before merging
-      const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const yAxis: {
+        orientation?: YAxisProps['orientation'];
+      } = {
         orientation: 'right',
       };
       const viewBox: CartesianViewBox = {
@@ -82,8 +85,9 @@ describe('getEndPoints', () => {
     });
 
     it('should reverse first and second point if yAxis orientation is "left"', () => {
-      // @ts-expect-error TODO this mock is incomplete and I am going to fix it before merging
-      const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const yAxis: {
+        orientation?: YAxisProps['orientation'];
+      } = {
         orientation: 'left',
       };
       const viewBox: CartesianViewBox = {
@@ -118,8 +122,9 @@ describe('getEndPoints', () => {
     });
 
     it('should return coordinates when set to discard overflow', () => {
-      // @ts-expect-error TODO this mock is incomplete and I am going to fix it before merging
-      const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const yAxis: {
+        orientation?: YAxisProps['orientation'];
+      } = {
         orientation: 'right',
       };
       const viewBox: CartesianViewBox = {
@@ -148,8 +153,9 @@ describe('getEndPoints', () => {
     });
 
     it('should return gibberish when viewBox is empty', () => {
-      // @ts-expect-error TODO this mock is incomplete and I am going to fix it before merging
-      const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const yAxis: {
+        orientation?: YAxisProps['orientation'];
+      } = {
         orientation: 'left',
       };
       const viewBox: CartesianViewBox = {};
@@ -163,8 +169,9 @@ describe('getEndPoints', () => {
     });
 
     it('should return coordinates when set to display overflow when orientation is "right"', () => {
-      // @ts-expect-error TODO this mock is incomplete and I am going to fix it before merging
-      const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const yAxis: {
+        orientation?: YAxisProps['orientation'];
+      } = {
         orientation: 'right',
       };
       const viewBox: CartesianViewBox = {
@@ -181,8 +188,9 @@ describe('getEndPoints', () => {
     });
 
     it('should reverse first and second point if yAxis orientation is "left"', () => {
-      // @ts-expect-error TODO this mock is incomplete and I am going to fix it before merging
-      const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const yAxis: {
+        orientation?: YAxisProps['orientation'];
+      } = {
         orientation: 'left',
       };
       const viewBox: CartesianViewBox = {
@@ -217,8 +225,9 @@ describe('getEndPoints', () => {
     });
 
     it('should return null when set to discard overflow', () => {
-      // @ts-expect-error TODO this mock is incomplete and I am going to fix it before merging
-      const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const xAxis: {
+        orientation?: XAxisProps['orientation'];
+      } = {
         orientation: 'bottom',
       };
       const lineLocationX = 9;
@@ -239,8 +248,9 @@ describe('getEndPoints', () => {
     });
 
     it('should return gibberish when viewBox is empty', () => {
-      // @ts-expect-error TODO this mock is incomplete and I am going to fix it before merging
-      const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const xAxis: {
+        orientation?: XAxisProps['orientation'];
+      } = {
         orientation: 'bottom',
       };
       const viewBox: CartesianViewBox = {};
@@ -254,8 +264,9 @@ describe('getEndPoints', () => {
     });
 
     it('should return coordinates when set to display overflow when orientation is "top"', () => {
-      // @ts-expect-error TODO this mock is incomplete and I am going to fix it before merging
-      const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const xAxis: {
+        orientation?: XAxisProps['orientation'];
+      } = {
         orientation: 'top',
       };
       const viewBox: CartesianViewBox = {
@@ -272,8 +283,9 @@ describe('getEndPoints', () => {
     });
 
     it('should reverse first and second point if xAxis orientation is "top"', () => {
-      // @ts-expect-error TODO this mock is incomplete and I am going to fix it before merging
-      const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const xAxis: {
+        orientation?: XAxisProps['orientation'];
+      } = {
         orientation: 'top',
       };
       const viewBox: CartesianViewBox = {
@@ -308,8 +320,9 @@ describe('getEndPoints', () => {
     });
 
     it('should return coordinates when set to discard overflow', () => {
-      // @ts-expect-error TODO this mock is incomplete and I am going to fix it before merging
-      const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const xAxis: {
+        orientation?: XAxisProps['orientation'];
+      } = {
         orientation: 'bottom',
       };
       const lineLocationX = 9;
@@ -338,8 +351,9 @@ describe('getEndPoints', () => {
     });
 
     it('should return gibberish when viewBox is empty', () => {
-      // @ts-expect-error TODO this mock is incomplete and I am going to fix it before merging
-      const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const xAxis: {
+        orientation?: XAxisProps['orientation'];
+      } = {
         orientation: 'bottom',
       };
       const viewBox: CartesianViewBox = {};
@@ -353,8 +367,9 @@ describe('getEndPoints', () => {
     });
 
     it('should return coordinates when set to display overflow when orientation is "top"', () => {
-      // @ts-expect-error TODO this mock is incomplete and I am going to fix it before merging
-      const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const xAxis: {
+        orientation?: XAxisProps['orientation'];
+      } = {
         orientation: 'top',
       };
       const viewBox: CartesianViewBox = {
@@ -371,8 +386,9 @@ describe('getEndPoints', () => {
     });
 
     it('should reverse first and second point if xAxis orientation is "top"', () => {
-      // @ts-expect-error TODO this mock is incomplete and I am going to fix it before merging
-      const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const xAxis: {
+        orientation?: XAxisProps['orientation'];
+      } = {
         orientation: 'top',
       };
       const viewBox: CartesianViewBox = {
