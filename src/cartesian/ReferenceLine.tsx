@@ -28,6 +28,8 @@ export type Segment = {
   y?: number | string;
 };
 
+type ReferenceLinePosition = 'middle' | 'start' | 'end';
+
 interface ReferenceLineProps extends InternalReferenceLineProps {
   isFront?: boolean;
   /** @deprecated use ifOverflow="extendDomain"  */
@@ -39,7 +41,7 @@ interface ReferenceLineProps extends InternalReferenceLineProps {
 
   segment?: ReadonlyArray<Segment>;
 
-  position?: 'middle' | 'start' | 'end';
+  position?: ReferenceLinePosition;
 
   className?: number | string;
   yAxisId?: number | string;
@@ -64,8 +66,29 @@ const renderLine = (option: ReferenceLineProps['shape'], props: any) => {
   return line;
 };
 
+type EndPointsPropsSubset = {
+  alwaysShow?: boolean;
+  ifOverflow?: IfOverflow;
+  viewBox?: CartesianViewBox;
+  xAxis?: {
+    orientation?: XAxisProps['orientation'];
+  };
+  yAxis?: {
+    orientation?: YAxisProps['orientation'];
+  };
+  position?: ReferenceLinePosition;
+  segment?: ReadonlyArray<Segment>;
+  x?: number | string;
+  y?: number | string;
+};
 // TODO: ScaleHelper
-export const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegment: boolean, props: Props) => {
+export const getEndPoints = (
+  scales: any,
+  isFixedX: boolean,
+  isFixedY: boolean,
+  isSegment: boolean,
+  props: EndPointsPropsSubset,
+) => {
   const {
     viewBox: { x, y, width, height },
     position,

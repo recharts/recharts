@@ -5,7 +5,7 @@ import { CartesianViewBox, D3Scale } from '../../../src/util/types';
 
 describe('getEndPoints', () => {
   it('should return null if X, Y are not fixed and isSegment is false too', () => {
-    const result = getEndPoints(null, false, false, false, { viewBox: '' });
+    const result = getEndPoints(null, false, false, false, { viewBox: {} });
     expect(result).toEqual(null);
   });
 
@@ -34,7 +34,7 @@ describe('getEndPoints', () => {
       const lineLocationY = 9;
       const result = getEndPoints(scales, false, true, false, {
         position,
-        viewBox: '',
+        viewBox: {},
         yAxis,
         y: lineLocationY,
         ifOverflow: 'discard',
@@ -54,7 +54,6 @@ describe('getEndPoints', () => {
         orientation: 'left',
       };
       const viewBox: CartesianViewBox = {};
-      // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
       const result = getEndPoints(scales, false, true, false, { position, viewBox, yAxis, ifOverflow: 'visible' });
 
       const expected = [
@@ -73,7 +72,6 @@ describe('getEndPoints', () => {
         x: 10,
         width: 5,
       };
-      // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
       const result = getEndPoints(scales, false, true, false, { position, viewBox, yAxis, ifOverflow: 'visible' });
 
       const expected = [
@@ -92,7 +90,6 @@ describe('getEndPoints', () => {
         x: 10,
         width: 5,
       };
-      // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
       const result = getEndPoints(scales, false, true, false, { position, viewBox, yAxis, ifOverflow: 'visible' });
 
       const expected = [
@@ -132,7 +129,6 @@ describe('getEndPoints', () => {
       const lineLocationY = 9;
       const result = getEndPoints(scales, false, true, false, {
         position,
-        // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
         viewBox,
         yAxis,
         y: lineLocationY,
@@ -157,7 +153,6 @@ describe('getEndPoints', () => {
         orientation: 'left',
       };
       const viewBox: CartesianViewBox = {};
-      // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
       const result = getEndPoints(scales, false, true, false, { position, viewBox, yAxis, ifOverflow: 'visible' });
 
       const expected = [
@@ -176,7 +171,6 @@ describe('getEndPoints', () => {
         x: 10,
         width: 5,
       };
-      // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
       const result = getEndPoints(scales, false, true, false, { position, viewBox, yAxis, ifOverflow: 'visible' });
 
       const expected = [
@@ -195,7 +189,6 @@ describe('getEndPoints', () => {
         x: 10,
         width: 5,
       };
-      // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
       const result = getEndPoints(scales, false, true, false, { position, viewBox, yAxis, ifOverflow: 'visible' });
 
       const expected = [
@@ -231,7 +224,7 @@ describe('getEndPoints', () => {
       const lineLocationX = 9;
       const result = getEndPoints(scales, true, false, false, {
         position,
-        viewBox: '',
+        viewBox: {},
         xAxis,
         x: lineLocationX,
         ifOverflow: 'discard',
@@ -251,7 +244,6 @@ describe('getEndPoints', () => {
         orientation: 'bottom',
       };
       const viewBox: CartesianViewBox = {};
-      // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
       const result = getEndPoints(scales, true, false, false, { position, viewBox, xAxis, ifOverflow: 'visible' });
 
       const expected = [
@@ -270,7 +262,6 @@ describe('getEndPoints', () => {
         y: 10,
         height: 5,
       };
-      // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
       const result = getEndPoints(scales, true, false, false, { position, viewBox, xAxis, ifOverflow: 'visible' });
 
       const expected = [
@@ -289,7 +280,6 @@ describe('getEndPoints', () => {
         y: 10,
         height: 5,
       };
-      // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
       const result = getEndPoints(scales, true, false, false, { position, viewBox, xAxis, ifOverflow: 'visible' });
 
       const expected = [
@@ -329,7 +319,6 @@ describe('getEndPoints', () => {
       };
       const result = getEndPoints(scales, true, false, false, {
         position,
-        // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
         viewBox,
         xAxis,
         x: lineLocationX,
@@ -354,7 +343,6 @@ describe('getEndPoints', () => {
         orientation: 'bottom',
       };
       const viewBox: CartesianViewBox = {};
-      // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
       const result = getEndPoints(scales, true, false, false, { position, viewBox, xAxis, ifOverflow: 'visible' });
 
       const expected = [
@@ -373,7 +361,6 @@ describe('getEndPoints', () => {
         y: 10,
         height: 5,
       };
-      // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
       const result = getEndPoints(scales, true, false, false, { position, viewBox, xAxis, ifOverflow: 'visible' });
 
       const expected = [
@@ -392,7 +379,6 @@ describe('getEndPoints', () => {
         y: 10,
         height: 5,
       };
-      // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
       const result = getEndPoints(scales, true, false, false, { position, viewBox, xAxis, ifOverflow: 'visible' });
 
       const expected = [
@@ -407,7 +393,6 @@ describe('getEndPoints', () => {
     it('should return empty array if segment array is empty', () => {
       const result = getEndPoints(null, false, false, true, {
         segment: [],
-        // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
         viewBox: {},
       });
       expect(result).toEqual([]);
@@ -435,7 +420,6 @@ describe('getEndPoints', () => {
         apply: vi.fn(_ => _),
         isInRange: vi.fn(() => true),
       };
-      // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
       getEndPoints(scales, false, false, true, { viewBox: {}, segment, ifOverflow: 'discard' });
       expect(scales.apply).toHaveBeenCalledTimes(3);
       expect(scales.isInRange).toHaveBeenCalledTimes(3);
@@ -447,7 +431,6 @@ describe('getEndPoints', () => {
         apply: vi.fn(_ => _),
         isInRange: vi.fn(() => false),
       };
-      // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
       const result = getEndPoints(scales, false, false, true, { viewBox: {}, segment, ifOverflow: 'discard' });
       expect(result).toEqual(null);
     });
@@ -458,7 +441,6 @@ describe('getEndPoints', () => {
         apply: vi.fn(({ x }) => x * 2),
         isInRange: vi.fn(() => true),
       };
-      // @ts-expect-error TODO viewBox from recharts conflicts with viewBox from svg props; fix before merging
       const result = getEndPoints(scales, false, false, true, { viewBox: {}, segment, ifOverflow: 'discard' });
       expect(result).toEqual([2, 4, 6]);
     });
