@@ -72,6 +72,7 @@ export type PieSectorDataItem = SectorProps & {
   value?: number;
   paddingAngle?: number;
   dataKey?: string;
+  payload?: any[];
 };
 
 interface PieProps extends PieDef {

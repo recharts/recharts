@@ -25,7 +25,6 @@ export const CustomActiveShapePie = {
 
     const renderActiveShape = (props: PieSectorDataItem) => {
       const RADIAN = Math.PI / 180;
-      // @ts-expect-error property payload does not exist on type PieSectorDataItem
       const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
       const sin = Math.sin(-RADIAN * midAngle);
       const cos = Math.cos(-RADIAN * midAngle);
