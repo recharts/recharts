@@ -7,7 +7,7 @@ import Animate from 'react-smooth';
 import { AnimationDuration, AnimationTiming } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
-type RectRadius = [number, number, number, number];
+export type RectRadius = [number, number, number, number];
 
 const getRectanglePath = (x: number, y: number, width: number, height: number, radius: number | RectRadius): string => {
   const maxRadius = Math.min(Math.abs(width) / 2, Math.abs(height) / 2);

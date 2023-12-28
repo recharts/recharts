@@ -213,8 +213,8 @@ describe('<RadialBarChart />', () => {
         data={data}
       >
         <RadialBar background dataKey="uv" isAnimationActive={false}>
-          {data.map((_, index) => (
-            <Cell key={`cell-${index}`} className="unit-test-class" />
+          {data.map(cell => (
+            <Cell key={`cell-${cell.name}`} className="unit-test-class" />
           ))}
         </RadialBar>
       </RadialBarChart>,

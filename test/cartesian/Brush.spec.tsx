@@ -1,6 +1,7 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Brush, LineChart, Line, BarChart } from '../../src';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<Brush />', () => {
   const data = [
@@ -85,7 +86,8 @@ describe('<Brush />', () => {
     );
 
     const brushSlide = container.querySelector('.recharts-brush-slide');
-    fireEvent.mouseDown(brushSlide!);
+    assertNotNull(brushSlide);
+    fireEvent.mouseDown(brushSlide);
 
     expect(container.querySelectorAll('.recharts-brush-texts')).toHaveLength(1);
     expect(screen.getAllByText(data[0].date)).toHaveLength(1);
