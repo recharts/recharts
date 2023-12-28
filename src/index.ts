@@ -58,6 +58,8 @@ export type { RadialBarProps } from './polar/RadialBar';
 
 export { Brush } from './cartesian/Brush';
 export type { Props as BrushProps } from './cartesian/Brush';
+export { BrushY } from './cartesian/BrushY';
+export type { Props as BrushYProps } from './cartesian/BrushY';
 export { ReferenceLine } from './cartesian/ReferenceLine';
 export type { Props as ReferenceLineProps } from './cartesian/ReferenceLine';
 export { ReferenceDot } from './cartesian/ReferenceDot';
