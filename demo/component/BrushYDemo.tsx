@@ -1,99 +1,51 @@
-import React, { Component } from 'react';
-import { Surface, BrushY } from 'recharts';
+import React, { Component, useState } from 'react';
+import { LineChart, Line, Brush, BrushY, XAxis, YAxis } from 'recharts';
 
-export default class Demo extends Component<any, any> {
-  static displayName = 'BrushYDemo';
+const data = [
+  { day: '1', value: 10 },
+  { day: '2', value: 20 },
+  { day: '3', value: 10 },
+  { day: '4', value: 30 },
+  { day: '5', value: 50 },
+  { day: '6', value: 10 },
+  { day: '7', value: 30 },
+  { day: '8', value: 20 },
+  { day: '9', value: 10 },
+  { day: '10', value: 70 },
+  { day: '11', value: 40 },
+  { day: '12', value: 20 },
+  { day: '13', value: 10 },
+  { day: '14', value: 10 },
+];
 
-  data = [
-    '2015-10-01',
-    '2015-10-02',
-    '2015-10-03',
-    '2015-10-04',
-    '2015-10-05',
-    '2015-10-06',
-    '2015-10-07',
-    '2015-10-08',
-    '2015-10-09',
-    '2015-10-10',
-    '2015-10-11',
-    '2015-10-12',
-    '2015-10-13',
-    '2015-10-14',
-    '2015-10-15',
-    '2015-10-16',
-    '2015-10-17',
-    '2015-10-18',
-    '2015-10-19',
-    '2015-10-20',
-    '2015-10-21',
-    '2015-10-22',
-    '2015-10-23',
-    '2015-10-24',
-    '2015-10-25',
-    '2015-10-26',
-    '2015-10-27',
-    '2015-10-28',
-    '2015-10-29',
-    '2015-10-30',
-  ];
+function BrushYDemo() {
+  const displayName = 'BrushYDemo';
 
-  state = {
-    simple: {
-      startIndex: 0,
-      endIndex: this.data.length - 1,
-    },
-    gap: {
-      startIndex: 0,
-      endIndex: this.data.length - 1,
-    },
-  };
+  const bSteps = 100;
+  const range = { min: 0, max: 100 };
+  data.forEach(d => {
+    if (d.value < range.min) range.min = d.value;
+    if (d.value > range.max) range.max = d.value;
+  });
+  const scl = (range.max - range.min) / bSteps;
+  const [dom, setDom] = useState({ min: 0, max: 100 });
 
-  handleChange = (res: any) => {
-    this.setState({
-      simple: res,
+  function handleBrushChange(e: any) {
+    setDom({
+      min: range.min + (bSteps - e.endIndex) * scl,
+      max: range.max - (e.startIndex - 0) * scl,
     });
-  };
-
-  handleGapChange = (res: any) => {
-    this.setState({
-      gap: res,
-    });
-  };
-
-  renderTraveller = (props: any) => {
-    const { x, y, width, height } = props;
-
-    return (
-      <path
-        d={`M${x + width / 2},${y}L${x + width},${y + height / 2}L${x + width / 2},${y + height}L${x},${
-          y + height / 2
-        }Z`}
-        fill="red"
-        stroke="none"
-      />
-    );
-  };
-
-  render() {
-    const { simple, gap } = this.state;
-
-    return (
-      <div>
-        <p>BrushY</p>
-        <Surface width={800} height={200}>
-          <BrushY
-            startIndex={simple.startIndex}
-            endIndex={simple.endIndex}
-            x={100}
-            y={50}
-            width={40}
-            height={400}
-            data={this.data}
-            gap={5}
-            onChange={this.handleGapChange}
-          />
-        </Surface>
-      </div>
-    );
   }
+
+  return (
+    <LineChart width={400} height={300} data={data}>
+      <XAxis type="number" dataKey="day" />
+      <YAxis type="number" dataKey="value" domain={[dom.min, dom.max]} allowDataOverflow />
+      <Brush dataKey="day" x={20} y={0} width={380} height={20} />
+      <BrushY startIndex={0} endIndex={bSteps} x={0} y={20} width={20} height={280} onChange={handleBrushChange} />
+      <Line type="monotone" dataKey="value" />
+    </LineChart>
+  );
 }
+
+export default BrushYDemo;

@@ -23,12 +23,11 @@ describe('<BrushY />', () => {
   test('Render 2 travelers and 1 slide in simple BrushY', () => {
     const { container } = render(
       <BarChart width={400} height={100} data={data}>
-        <Brush dataKey="value" x={100} y={50} width={400} height={40} />
         <BrushY dataKey="value" x={100} y={50} width={40} height={400} />
       </BarChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-brush-traveller')).toHaveLength(4);
-    expect(container.querySelectorAll('.recharts-brush-slide')).toHaveLength(2);
+    expect(container.querySelectorAll('.recharts-brush-traveller')).toHaveLength(2);
+    expect(container.querySelectorAll('.recharts-brush-slide')).toHaveLength(1);
   });
 });

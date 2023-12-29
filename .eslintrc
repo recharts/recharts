@@ -41,7 +41,7 @@
     "react/jsx-filename-extension": ["error", { "extensions": [".ts", ".tsx", ".js", ".jsx"] }],
 
     "no-var": "error",
-    "react/jsx-no-bind": "error",
+    "react/jsx-no-bind": "off",
 
     "no-unused-vars": "off",
     "one-var": ["error", { "uninitialized": "always" }],

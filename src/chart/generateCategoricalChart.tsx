@@ -34,7 +34,6 @@ import {
 
 import { CartesianAxis } from '../cartesian/CartesianAxis';
 import { Brush } from '../cartesian/Brush';
-import { BrushY } from '../cartesian/BrushY';
 import { getOffset } from '../util/DOMUtils';
 import { findEntryInArray, getAnyElementOfObject, hasDuplicate, isNumber, uniqueId } from '../util/DataUtils';
 import {
