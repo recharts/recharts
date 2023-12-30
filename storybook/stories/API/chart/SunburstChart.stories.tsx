@@ -14,7 +14,7 @@ export const Sunburst = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <SunburstChart {...args}>
+        <SunburstChart fill="purple" {...args}>
           <PolarGrid />
         </SunburstChart>
       </ResponsiveContainer>

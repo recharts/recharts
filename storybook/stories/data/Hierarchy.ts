@@ -2,6 +2,7 @@ export interface SunburstData {
   name: string;
   value?: number;
   children?: SunburstData[];
+  fill?: string;
 }
 
 const hierarchy: SunburstData = {
@@ -10,6 +11,7 @@ const hierarchy: SunburstData = {
   children: [
     {
       name: 'Child1',
+      fill: 'steelblue',
       value: 30,
       children: [
         {
@@ -43,6 +45,7 @@ const hierarchy: SunburstData = {
     },
     {
       name: 'Child2',
+      fill: 'green',
       value: 20,
       children: [
         {
@@ -62,10 +65,12 @@ const hierarchy: SunburstData = {
     },
     {
       name: 'Child3',
+      fill: 'red',
       value: 20,
     },
     {
       name: 'Child4',
+      fill: 'purple',
       value: 10,
       children: [
         { name: 'child4 child', value: 5 },
@@ -74,6 +79,7 @@ const hierarchy: SunburstData = {
     },
     {
       name: 'Child5',
+      fill: 'orange',
       value: 20,
     },
   ],

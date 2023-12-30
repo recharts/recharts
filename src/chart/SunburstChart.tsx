@@ -7,6 +7,7 @@ import { Sector } from '../shape/Sector';
 export interface SunburstData {
   name: string;
   value?: number;
+  fill?: string;
   children?: SunburstData[];
 }
 
@@ -18,22 +19,14 @@ export interface SunburstChartProps {
   ringPadding?: number;
   innerRadius?: number;
   children?: React.ReactNode;
+  fill?: string;
 }
 
 interface DrawArcOptions {
   r: number;
-  innerRadius: number;
-  initialAngle: number;
-}
-
-interface ArcGroupProps {
-  root: SunburstData;
-  width: number;
-  height: number;
   innerR: number;
-  outerR: number;
-  padding: number;
-  ringPadding: number;
+  initialAngle: number;
+  childColor?: string;
 }
 
 function maxDepth(node: SunburstData): number {
@@ -44,48 +37,6 @@ function maxDepth(node: SunburstData): number {
   return 1 + Math.max(...childDepths);
 }
 
-function ArcGroup({ root, width, height, innerR, outerR, padding, ringPadding }: ArcGroupProps) {
-  const cx = width / 2,
-    cy = height / 2;
-
-  const rScale = scaleLinear([0, root.value], [0, 360]);
-  const treeDepth = maxDepth(root);
-  const thickness = (outerR - innerR) / treeDepth;
-
-  const sectors: React.ReactNode[] = [];
-
-  // recursively add nodes for each data point and its children
-  function drawArcs(childNodes: SunburstData[] | undefined, options: DrawArcOptions): any {
-    const { r, innerRadius, initialAngle } = options;
-
-    let currentAngle = initialAngle;
-
-    if (!childNodes) return; // base case: no children of this node
-
-    childNodes.forEach(d => {
-      const arcLength = rScale(d.value);
-      const start = currentAngle;
-      currentAngle += arcLength;
-      sectors.push(
-        <Sector
-          startAngle={start}
-          endAngle={start + arcLength - padding}
-          innerRadius={innerRadius}
-          outerRadius={innerRadius + r}
-          cx={cx}
-          cy={cy}
-        />,
-      );
-
-      return drawArcs(d.children, { r, innerRadius: innerRadius + r + ringPadding, initialAngle: start });
-    });
-  }
-
-  drawArcs(root.children, { r: thickness, innerRadius: innerR, initialAngle: 0 });
-
-  return <Layer>{sectors}</Layer>;
-}
-
 export const SunburstChart = ({
   data,
   children,
@@ -94,22 +45,56 @@ export const SunburstChart = ({
   padding = 2,
   ringPadding = 2,
   innerRadius = 50,
+  fill = '#333',
 }: SunburstChartProps) => {
   // get the max possible radius for a circle inscribed in the chart container
   const outerRadius = Math.min(width, height) / 2;
 
+  const cx = width / 2,
+    cy = height / 2;
+
+  const rScale = scaleLinear([0, data.value], [0, 360]);
+  const treeDepth = maxDepth(data);
+  const thickness = (outerRadius - innerRadius) / treeDepth;
+
+  const sectors: React.ReactNode[] = [];
+
+  // recursively add nodes for each data point and its children
+  function drawArcs(childNodes: SunburstData[] | undefined, options: DrawArcOptions): any {
+    const { r, innerR, initialAngle, childColor } = options;
+
+    let currentAngle = initialAngle;
+
+    if (!childNodes) return; // base case: no children of this node
+
+    childNodes.forEach(d => {
+      const arcLength = rScale(d.value);
+      const start = currentAngle;
+      // color priority - if there's a color on the individual point use that, otherwise use parent color or default
+      const fillColor = d?.fill ?? childColor ?? fill;
+      currentAngle += arcLength;
+      sectors.push(
+        <Sector
+          fill={fillColor}
+          startAngle={start}
+          endAngle={start + arcLength - padding}
+          innerRadius={innerR}
+          outerRadius={innerR + r}
+          cx={cx}
+          cy={cy}
+        />,
+      );
+
+      return drawArcs(d.children, { r, innerR: innerR + r + ringPadding, initialAngle: start, childColor: fillColor });
+    });
+  }
+
+  drawArcs(data.children, { r: thickness, innerR: innerRadius, initialAngle: 0 });
+
   return (
     <Surface width={width} height={height}>
       {children}
-      <ArcGroup
-        padding={padding}
-        ringPadding={ringPadding}
-        innerR={innerRadius}
-        outerR={outerRadius}
-        width={width}
-        height={height}
-        root={data}
-      />
+      <Layer>{sectors}</Layer>
     </Surface>
   );
 };
