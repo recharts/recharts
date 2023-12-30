@@ -85,8 +85,10 @@ export const SunburstChart = ({
         <g>
           <Sector
             fill={fillColor}
+            stroke="#FFF"
+            strokeWidth={padding}
             startAngle={start}
-            endAngle={start + arcLength - padding}
+            endAngle={start + arcLength}
             innerRadius={innerR}
             outerRadius={innerR + r}
             cx={cx}
