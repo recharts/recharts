@@ -37,6 +37,13 @@ function maxDepth(node: SunburstData): number {
   return 1 + Math.max(...childDepths);
 }
 
+function polarToCartesian(r: number, angleInDegrees: number): number[] {
+  const angleInRadians = (angleInDegrees * Math.PI) / 180.0;
+  const x = r * Math.cos(angleInRadians);
+  const y = r * Math.sin(angleInRadians);
+  return [x, y];
+}
+
 export const SunburstChart = ({
   data,
   children,
@@ -72,17 +79,35 @@ export const SunburstChart = ({
       const start = currentAngle;
       // color priority - if there's a color on the individual point use that, otherwise use parent color or default
       const fillColor = d?.fill ?? childColor ?? fill;
+      const [textX, textY] = polarToCartesian(innerR + (innerR + r - innerR) / 2, start + arcLength - arcLength / 2);
       currentAngle += arcLength;
       sectors.push(
-        <Sector
-          fill={fillColor}
-          startAngle={start}
-          endAngle={start + arcLength - padding}
-          innerRadius={innerR}
-          outerRadius={innerR + r}
-          cx={cx}
-          cy={cy}
-        />,
+        <g>
+          <Sector
+            fill={fillColor}
+            startAngle={start}
+            endAngle={start + arcLength - padding}
+            innerRadius={innerR}
+            outerRadius={innerR + r}
+            cx={cx}
+            cy={cy}
+          />
+          <text
+            fontSize=".875rem"
+            alignmentBaseline="middle"
+            textAnchor="middle"
+            stroke="#FFF"
+            strokeWidth={0.5}
+            paintOrder="stroke fill"
+            fill="#333"
+            fontFamily="sans-serif"
+            fontWeight="bold"
+            x={textX + cx}
+            y={cy - textY}
+          >
+            {d.value}
+          </text>
+        </g>,
       );
 
       return drawArcs(d.children, { r, innerR: innerR + r + ringPadding, initialAngle: start, childColor: fillColor });

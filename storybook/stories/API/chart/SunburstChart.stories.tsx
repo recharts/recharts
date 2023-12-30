@@ -1,5 +1,5 @@
 import React from 'react';
-import { ResponsiveContainer, PolarGrid, SunburstChart } from '../../../../src';
+import { ResponsiveContainer, SunburstChart, Tooltip } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
 import { hierarchy } from '../../data';
 
@@ -15,7 +15,7 @@ export const Sunburst = {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <SunburstChart fill="purple" {...args}>
-          <PolarGrid />
+          <Tooltip />
         </SunburstChart>
       </ResponsiveContainer>
     );
