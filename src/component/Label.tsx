@@ -11,38 +11,40 @@ import { ViewBox, PolarViewBox, CartesianViewBox } from '../util/types';
 
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
 
+export type LabelPosition =
+  | 'top'
+  | 'left'
+  | 'right'
+  | 'bottom'
+  | 'inside'
+  | 'outside'
+  | 'insideLeft'
+  | 'insideRight'
+  | 'insideTop'
+  | 'insideBottom'
+  | 'insideTopLeft'
+  | 'insideBottomLeft'
+  | 'insideTopRight'
+  | 'insideBottomRight'
+  | 'insideStart'
+  | 'insideEnd'
+  | 'end'
+  | 'center'
+  | 'centerTop'
+  | 'centerBottom'
+  | 'middle'
+  | {
+      x?: number;
+      y?: number;
+    };
+
 interface LabelProps {
   viewBox?: ViewBox;
   parentViewBox?: ViewBox;
   formatter?: Function;
   value?: number | string;
   offset?: number;
-  position?:
-    | 'top'
-    | 'left'
-    | 'right'
-    | 'bottom'
-    | 'inside'
-    | 'outside'
-    | 'insideLeft'
-    | 'insideRight'
-    | 'insideTop'
-    | 'insideBottom'
-    | 'insideTopLeft'
-    | 'insideBottomLeft'
-    | 'insideTopRight'
-    | 'insideBottomRight'
-    | 'insideStart'
-    | 'insideEnd'
-    | 'end'
-    | 'center'
-    | 'centerTop'
-    | 'centerBottom'
-    | 'middle'
-    | {
-        x?: number;
-        y?: number;
-      };
+  position?: LabelPosition;
   children?: ReactNode;
   className?: string;
   content?: ContentType;

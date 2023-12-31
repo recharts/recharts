@@ -4,7 +4,7 @@ import isObject from 'lodash/isObject';
 import isFunction from 'lodash/isFunction';
 import last from 'lodash/last';
 
-import { Label, ContentType, Props as LabelProps } from './Label';
+import { Label, ContentType, Props as LabelProps, LabelPosition } from './Label';
 import { Layer } from '../container/Layer';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -24,12 +24,13 @@ interface LabelListProps<T extends Data> {
   dataKey?: DataKey<T>;
   content?: ContentType;
   textBreakAll?: boolean;
-  position?: LabelProps['position'];
+  position?: LabelPosition;
+  offset?: LabelProps['offset'];
   angle?: number;
   formatter?: Function;
 }
 
-export type Props<T extends Data> = Omit<SVGProps<SVGTextElement>, 'offset'> & LabelListProps<T>;
+export type Props<T extends Data> = SVGProps<SVGTextElement> & LabelListProps<T>;
 
 export type ImplicitLabelListType<T extends Data> =
   | boolean

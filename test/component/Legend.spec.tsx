@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { Legend, LineChart, Line } from '../../src';
 
 describe('<Legend />', () => {
@@ -53,7 +54,7 @@ describe('<Legend />', () => {
     expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item line')).toHaveLength(2);
   });
 
-  test('Does not render `strokeDasharray` (if not present) in Legend when iconType is set to something else than `plainline`', () => {
+  test('Does not render `strokeDasharray` (if not present) when iconType is not set to `plainline`', () => {
     const { container } = render(
       <LineChart width={600} height={300} data={data}>
         <Legend iconType="line" />
@@ -105,7 +106,9 @@ describe('<Legend />', () => {
     });
 
     expect(consoleWarn).toHaveBeenCalledWith(
-      `The name property is also required when using a function for the dataKey of a chart's cartesian components. Ex: <Bar name="Name of my Data"/>`,
+      'The name property is also required when using ' +
+        "a function for the dataKey of a chart's cartesian components. " +
+        'Ex: <Bar name="Name of my Data"/>',
     );
   });
 });

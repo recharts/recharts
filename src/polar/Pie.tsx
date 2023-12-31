@@ -71,6 +71,8 @@ export type PieSectorDataItem = SectorProps & {
   tooltipPosition?: Coordinate;
   value?: number;
   paddingAngle?: number;
+  dataKey?: string;
+  payload?: any[];
 };
 
 interface PieProps extends PieDef {
@@ -465,8 +467,7 @@ export class Pie extends PureComponent<Props, State> {
       }
 
       return (
-        // eslint-disable-next-line react/no-array-index-key
-        <Layer key={`label-${i}`}>
+        <Layer key={`label-${entry.startAngle}-${entry.endAngle}`}>
           {labelLine && Pie.renderLabelLineItem(labelLine, lineProps)}
           {Pie.renderLabelItem(label, labelProps, getValueByDataKey(entry, realDataKey))}
         </Layer>
@@ -479,6 +480,7 @@ export class Pie extends PureComponent<Props, State> {
   renderSectorsStatically(sectors: PieSectorDataItem[]) {
     const { activeShape, blendStroke, inactiveShape: inactiveShapeProp } = this.props;
     return sectors.map((entry, i) => {
+      if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
       const isActive = this.isActiveIndex(i);
       const inactiveShape = inactiveShapeProp && this.hasActiveIndex() ? inactiveShapeProp : null;
       const sectorOptions = isActive ? activeShape : inactiveShape;
@@ -487,7 +489,6 @@ export class Pie extends PureComponent<Props, State> {
         stroke: blendStroke ? entry.fill : entry.stroke,
         tabIndex: -1,
       };
-
       return (
         <Layer
           ref={(ref: HTMLElement) => {
@@ -498,7 +499,7 @@ export class Pie extends PureComponent<Props, State> {
           tabIndex={-1}
           className="recharts-pie-sector"
           {...adaptEventsOfChild(this.props, entry, i)}
-          key={`sector-${i}`} // eslint-disable-line react/no-array-index-key
+          key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}`}
         >
           <Shape option={sectorOptions} isActive={isActive} shapeType="sector" {...sectorProps} />
         </Layer>
@@ -508,6 +509,7 @@ export class Pie extends PureComponent<Props, State> {
 
   renderSectorsWithAnimation() {
     const { sectors, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = this.props;
+
     const { prevSectors, prevIsAnimationActive } = this.state;
 
     return (

@@ -1,5 +1,6 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { Surface, Scatter } from '../../src';
 
 describe('<Scatter />', () => {

@@ -367,7 +367,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
         ...adaptEventsOfChild(this.props, entry, i),
         index: i,
         key: `sector-${i}`,
-        className: 'recharts-radial-bar-background-sector',
+        className: clsx('recharts-radial-bar-background-sector', backgroundProps?.className),
         option: background,
         isActive: false,
       };

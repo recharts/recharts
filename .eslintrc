@@ -56,7 +56,7 @@
         "devDependencies": true
       }
     ],
-    "max-len": ["warn", 120],
+    "max-len": ["warn", 150],
     "prefer-destructuring": "error",
     "object-curly-newline": "off",
     "function-paren-newline": "off",

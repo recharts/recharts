@@ -1,4 +1,5 @@
 import { scaleLinear, scaleBand } from 'victory-vendor/d3-scale';
+import { vi } from 'vitest';
 import {
   ScaleHelper,
   createLabeledScales,

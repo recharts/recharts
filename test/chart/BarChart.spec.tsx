@@ -3,6 +3,7 @@ import React from 'react';
 
 import { vi } from 'vitest';
 import { Bar, BarChart, Rectangle, RectangleProps, Tooltip, XAxis, YAxis } from '../../src';
+import { assertNotNull } from '../helper/assertNotNull';
 
 type DataType = {
   name: string;
@@ -139,7 +140,8 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
 
     vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
@@ -165,7 +167,8 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
 
     vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
@@ -184,7 +187,8 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
     vi.advanceTimersByTime(100);
 
     const bar = container.querySelectorAll('.recharts-active-bar');
@@ -203,7 +207,8 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
 
     vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
@@ -221,7 +226,8 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
 
     vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
@@ -240,7 +246,8 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart!, { clientX: 100, clientY: 100 });
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
 
     vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
@@ -349,6 +356,7 @@ describe('<BarChart />', () => {
     expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(0);
 
     const clipPath = container.querySelector('#recharts53-clip');
+    assertNotNull(clipPath);
     expect(clipPath.children[0]).not.toBeNull();
 
     // expect clipPath rect to have a width and height of 0

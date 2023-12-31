@@ -180,11 +180,13 @@ export class DefaultLegendContent extends PureComponent<Props> {
       );
 
       const color = entry.inactive ? inactiveColor : entry.color;
+
       return (
         <li
           className={className}
           style={itemStyle}
-          key={`legend-item-${i}`} // eslint-disable-line react/no-array-index-key
+          // eslint-disable-next-line react/no-array-index-key
+          key={`legend-item-${i}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
           <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>

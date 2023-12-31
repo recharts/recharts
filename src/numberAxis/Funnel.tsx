@@ -284,7 +284,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
         <Layer
           className="recharts-funnel-trapezoid"
           {...adaptEventsOfChild(this.props, entry, i)}
-          key={`trapezoid-${i}`} // eslint-disable-line react/no-array-index-key
+          key={`trapezoid-${entry?.x}-${entry?.y}-${entry?.name}-${entry?.value}`}
           role="img"
         >
           <FunnelTrapezoid option={trapezoidOptions} {...trapezoidProps} />

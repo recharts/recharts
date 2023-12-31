@@ -1,5 +1,6 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from '../../src';
 
 describe('<RadarChart />', () => {

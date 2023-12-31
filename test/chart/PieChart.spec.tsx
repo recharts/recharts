@@ -1,30 +1,71 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, Mock } from 'vitest';
 import { PieChart, Pie, Legend, Cell, Tooltip, Sector, SectorProps } from '../../src';
 
 describe('<PieChart />', () => {
   const data = [
-    { name: 'Group A', value: 400 },
-    { name: 'Group B', value: 300 },
-    { name: 'Group C', value: 300 },
-    { name: 'Group D', value: 200 },
-    { name: 'Group E', value: 278 },
-    { name: 'Group F', value: 189 },
+    { name: 'Group A', value: 400, v: 89 },
+    { name: 'Group B', value: 300, v: 100 },
+    { name: 'Group C', value: 200, v: 200 },
+    { name: 'Group D', value: 200, v: 20 },
+    { name: 'Group E', value: 278, v: 40 },
+    { name: 'Group F', value: 189, v: 60 },
   ];
 
+  test('Renders 1 sector with animation, simple PieChart', () => {
+    const { container } = render(
+      <PieChart width={800} height={400}>
+        <Pie
+          dataKey="value"
+          isAnimationActive
+          data={[data[0]]}
+          cx={200}
+          cy={200}
+          outerRadius={80}
+          fill="#ff7300"
+          label
+        />
+      </PieChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(1);
+  });
   test('Renders 6 sectors circles in simple PieChart', () => {
     const { container } = render(
       <PieChart width={800} height={400}>
         <Pie
           dataKey="value"
-          isAnimationActive={false}
+          isAnimationActive
           data={data}
+          animationDuration={0}
           cx={200}
           cy={200}
           outerRadius={80}
           fill="#ff7300"
+          label
+        />
+      </PieChart>,
+    );
+
+    waitFor(() => {
+      expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(data.length);
+    });
+  });
+
+  test('Renders 6 sectors circles in simple PieChart with animation', () => {
+    const { container } = render(
+      <PieChart width={400} height={400}>
+        <Pie
+          dataKey="value"
+          startAngle={180}
+          endAngle={0}
+          data={data}
+          cx="50%"
+          cy="50%"
+          outerRadius={80}
+          fill="#8884d8"
           label
         />
       </PieChart>,

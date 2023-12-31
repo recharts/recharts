@@ -1,4 +1,4 @@
-import React, { Component, cloneElement, isValidElement, createElement, ReactElement } from 'react';
+import React, { Component, cloneElement, isValidElement, ReactElement } from 'react';
 import isNil from 'lodash/isNil';
 import isFunction from 'lodash/isFunction';
 import range from 'lodash/range';
@@ -12,17 +12,13 @@ import clsx from 'clsx';
 // eslint-disable-next-line no-restricted-imports
 import type { DebouncedFunc } from 'lodash';
 import invariant from 'tiny-invariant';
-import { getRadialCursorPoints } from '../util/cursor/getRadialCursorPoints';
 import { getTicks } from '../cartesian/getTicks';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
 import { Legend } from '../component/Legend';
-import { Curve } from '../shape/Curve';
-import { Cross } from '../shape/Cross';
-import { Sector } from '../shape/Sector';
 import { Dot } from '../shape/Dot';
-import { isInRectangle, Rectangle } from '../shape/Rectangle';
+import { isInRectangle } from '../shape/Rectangle';
 
 import {
   filterProps,
@@ -83,14 +79,14 @@ import {
   Margin,
   StackOffsetType,
   TickItem,
+  TooltipEventType,
 } from '../util/types';
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { getActiveShapeIndexForTooltip, isFunnel, isPie, isScatter } from '../util/ActiveShapeUtils';
 import { Props as YAxisProps } from '../cartesian/YAxis';
 import { Props as XAxisProps } from '../cartesian/XAxis';
-import { getCursorPoints } from '../util/cursor/getCursorPoints';
-import { getCursorRectangle } from '../util/cursor/getCursorRectangle';
+import { Cursor } from '../component/Cursor';
 
 export interface MousePointer {
   pageX: number;
@@ -655,12 +651,23 @@ const tooltipTicksGenerator = (axisMap: AxisMap) => {
  * @param {Object} props Props object to use when creating the default state
  * @return {Object} Whole new state
  */
-const createDefaultState = (props: CategoricalChartProps): CategoricalChartState => {
+export const createDefaultState = (props: CategoricalChartProps): CategoricalChartState => {
   const { children, defaultShowTooltip } = props;
   const brushItem = findChildByType(children, Brush);
-  const startIndex = (brushItem && brushItem.props && brushItem.props.startIndex) || 0;
-  const endIndex =
-    brushItem?.props?.endIndex !== undefined ? brushItem?.props?.endIndex : (props.data && props.data.length - 1) || 0;
+  let startIndex = 0;
+  let endIndex = 0;
+  if (props.data && props.data.length !== 0) {
+    endIndex = props.data.length - 1;
+  }
+
+  if (brushItem && brushItem.props) {
+    if (brushItem.props.startIndex >= 0) {
+      startIndex = brushItem.props.startIndex;
+    }
+    if (brushItem.props.endIndex >= 0) {
+      endIndex = brushItem.props.endIndex;
+    }
+  }
 
   return {
     chartX: 0,
@@ -1313,10 +1320,10 @@ export const generateCategoricalChart = ({
       this.throttleTriggeredAfterMouseMove.cancel();
     }
 
-    getTooltipEventType() {
+    getTooltipEventType(): TooltipEventType {
       const tooltipItem = findChildByType(this.props.children, Tooltip);
 
-      if (tooltipItem && Boolean(tooltipItem.props.shared)) {
+      if (tooltipItem && typeof tooltipItem.props.shared === 'boolean') {
         const eventType = tooltipItem.props.shared ? 'axis' : 'item';
 
         return validateTooltipEventTypes.indexOf(eventType) >= 0 ? eventType : defaultTooltipEventType;
@@ -1771,58 +1778,23 @@ export const generateCategoricalChart = ({
         this.state;
       const tooltipEventType = this.getTooltipEventType();
       // The cursor is a part of the Tooltip, and it should be shown (by default) when the Tooltip is active.
-      const isActive = element.props.active ?? isTooltipActive;
-
-      if (
-        !element ||
-        !element.props.cursor ||
-        !isActive ||
-        !activeCoordinate ||
-        (chartName !== 'ScatterChart' && tooltipEventType !== 'axis')
-      ) {
-        return null;
-      }
+      const isActive: boolean = element.props.active ?? isTooltipActive;
       const { layout } = this.props;
-      let restProps;
-      let cursorComp: React.ComponentType<any> = Curve;
 
-      if (chartName === 'ScatterChart') {
-        restProps = activeCoordinate;
-        cursorComp = Cross;
-      } else if (chartName === 'BarChart') {
-        restProps = getCursorRectangle(layout, activeCoordinate, offset, tooltipAxisBandSize);
-        cursorComp = Rectangle;
-      } else if (layout === 'radial') {
-        const { cx, cy, radius, startAngle, endAngle } = getRadialCursorPoints(activeCoordinate);
-        restProps = {
-          cx,
-          cy,
-          startAngle,
-          endAngle,
-          innerRadius: radius,
-          outerRadius: radius,
-        };
-        cursorComp = Sector;
-      } else {
-        restProps = { points: getCursorPoints(layout, activeCoordinate, offset) };
-        cursorComp = Curve;
-      }
-      const key = element.key || '_recharts-cursor';
-      const cursorProps = {
-        stroke: '#ccc',
-        pointerEvents: 'none',
-        ...offset,
-        ...restProps,
-        ...filterProps(element.props.cursor),
-        payload: activePayload,
-        payloadIndex: activeTooltipIndex,
-        key,
-        className: 'recharts-tooltip-cursor',
-      };
-
-      return isValidElement(element.props.cursor)
-        ? cloneElement(element.props.cursor, cursorProps)
-        : createElement(cursorComp, cursorProps);
+      return (
+        <Cursor
+          activeCoordinate={activeCoordinate}
+          activePayload={activePayload}
+          activeTooltipIndex={activeTooltipIndex}
+          chartName={chartName}
+          element={element}
+          isActive={isActive}
+          layout={layout}
+          offset={offset}
+          tooltipAxisBandSize={tooltipAxisBandSize}
+          tooltipEventType={tooltipEventType}
+        />
+      );
     };
 
     renderPolarAxis = (element: any, displayName: string, index: number) => {

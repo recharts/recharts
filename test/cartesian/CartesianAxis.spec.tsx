@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { Surface, CartesianAxis } from '../../src';
 
 const CustomizeLabel = ({ x, y }: any) => (

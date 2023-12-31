@@ -39,7 +39,7 @@ export interface Props {
   onResize?: (width: number, height: number) => void;
 }
 
-export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
+export const ResponsiveContainer = forwardRef<HTMLDivElement | { current: HTMLDivElement }, Props>(
   (
     {
       aspect,
@@ -68,9 +68,15 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
     const containerRef = useRef<HTMLDivElement>(null);
     const onResizeRef = useRef<Props['onResize']>();
     onResizeRef.current = onResize;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    useImperativeHandle(ref, () => containerRef);
+    useImperativeHandle(ref, () => {
+      return Object.assign(containerRef.current, {
+        get current() {
+          // eslint-disable-next-line no-console
+          console.warn('The usage of ref.current.current is deprecated and will no longer be supported.');
+          return containerRef.current;
+        },
+      });
+    });
 
     const [sizes, setSizes] = useState<{
       containerWidth: number;
