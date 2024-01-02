@@ -1,7 +1,7 @@
 /**
  * @fileOverview Reference Line
  */
-import React, { ReactElement, SVGProps } from 'react';
+import React, { ReactElement, SVGProps, useContext } from 'react';
 import isFunction from 'lodash/isFunction';
 import some from 'lodash/some';
 import clsx from 'clsx';
@@ -15,6 +15,7 @@ import { CartesianViewBox, D3Scale } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { filterProps } from '../util/ReactUtils';
+import { ChartLayoutContext } from '../context/layoutContext';
 
 interface InternalReferenceLineProps {
   viewBox?: CartesianViewBox;
@@ -75,14 +76,6 @@ const renderLine = (option: ReferenceLineProps['shape'], props: any) => {
 type EndPointsPropsSubset = {
   alwaysShow?: boolean;
   ifOverflow?: IfOverflow;
-  viewBox?: CartesianViewBox;
-  xAxis?: {
-    orientation?: XAxisProps['orientation'];
-  };
-  yAxis?: {
-    orientation?: YAxisProps['orientation'];
-  };
-  position?: ReferenceLinePosition;
   segment?: ReadonlyArray<Segment>;
   x?: number | string;
   y?: number | string;
@@ -93,18 +86,16 @@ export const getEndPoints = (
   isFixedX: boolean,
   isFixedY: boolean,
   isSegment: boolean,
+  viewBox: CartesianViewBox,
+  position: Props['position'],
+  xAxisOrientation: XAxisProps['orientation'],
+  yAxisOrientation: YAxisProps['orientation'],
   props: EndPointsPropsSubset,
 ) => {
-  const {
-    viewBox: { x, y, width, height },
-    position,
-  } = props;
+  const { x, y, width, height } = viewBox;
 
   if (isFixedY) {
-    const {
-      y: yCoord,
-      yAxis: { orientation },
-    } = props;
+    const { y: yCoord } = props;
     const coord = scales.y.apply(yCoord, { position });
 
     if (ifOverflowMatches(props, 'discard') && !scales.y.isInRange(coord)) {
@@ -115,13 +106,10 @@ export const getEndPoints = (
       { x: x + width, y: coord },
       { x, y: coord },
     ];
-    return orientation === 'left' ? points.reverse() : points;
+    return yAxisOrientation === 'left' ? points.reverse() : points;
   }
   if (isFixedX) {
-    const {
-      x: xCoord,
-      xAxis: { orientation },
-    } = props;
+    const { x: xCoord } = props;
     const coord = scales.x.apply(xCoord, { position });
 
     if (ifOverflowMatches(props, 'discard') && !scales.x.isInRange(coord)) {
@@ -132,7 +120,7 @@ export const getEndPoints = (
       { x: coord, y: y + height },
       { x: coord, y },
     ];
-    return orientation === 'top' ? points.reverse() : points;
+    return xAxisOrientation === 'top' ? points.reverse() : points;
   }
   if (isSegment) {
     const { segment } = props;
@@ -150,7 +138,19 @@ export const getEndPoints = (
 };
 
 export function ReferenceLine(props: Props) {
-  const { x: fixedX, y: fixedY, segment, xAxis, yAxis, shape, className, alwaysShow, clipPathId } = props;
+  const { x: fixedX, y: fixedY, segment, xAxisId, yAxisId, shape, className, alwaysShow } = props;
+
+  const [{ xAxisMap, yAxisMap, viewBox, clipPathId }] = useContext(ChartLayoutContext);
+  if (!clipPathId || !xAxisMap || !yAxisMap || !viewBox) {
+    return null;
+  }
+  const xAxis = xAxisMap[xAxisId];
+  const yAxis = yAxisMap[yAxisId];
+
+  warn(
+    xAxis != null,
+    `Could not find xAxis by id ${xAxisId} [${typeof xAxisId}]. Available xAxis are: ${Object.keys(xAxisMap)}`,
+  );
 
   warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
@@ -160,7 +160,17 @@ export function ReferenceLine(props: Props) {
   const isY = isNumOrStr(fixedY);
   const isSegment = segment && segment.length === 2;
 
-  const endPoints = getEndPoints(scales, isX, isY, isSegment, props);
+  const endPoints = getEndPoints(
+    scales,
+    isX,
+    isY,
+    isSegment,
+    viewBox,
+    props.position,
+    xAxis.orientation,
+    yAxis.orientation,
+    props,
+  );
   if (!endPoints) {
     return null;
   }

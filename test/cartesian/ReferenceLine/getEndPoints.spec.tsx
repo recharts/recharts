@@ -1,11 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import { ReferenceLinePosition, getEndPoints } from '../../../src/cartesian/ReferenceLine';
-import { XAxisProps, YAxisProps } from '../../../src';
 import { CartesianViewBox } from '../../../src/util/types';
 
 describe('getEndPoints', () => {
   it('should return null if X, Y are not fixed and isSegment is false too', () => {
-    const result = getEndPoints(null, false, false, false, { viewBox: {} });
+    const result = getEndPoints(null, false, false, false, {}, undefined, undefined, undefined, {});
     expect(result).toEqual(null);
   });
 
@@ -27,16 +26,8 @@ describe('getEndPoints', () => {
     });
 
     it('should return null when set to discard overflow', () => {
-      const yAxis: {
-        orientation?: YAxisProps['orientation'];
-      } = {
-        orientation: 'left',
-      };
       const lineLocationY = 9;
-      const result = getEndPoints(scales, false, true, false, {
-        position,
-        viewBox: {},
-        yAxis,
+      const result = getEndPoints(scales, false, true, false, {}, position, 'bottom', 'left', {
         y: lineLocationY,
         ifOverflow: 'discard',
       });
@@ -50,13 +41,10 @@ describe('getEndPoints', () => {
     });
 
     it('should return gibberish when viewBox is empty', () => {
-      const yAxis: {
-        orientation?: YAxisProps['orientation'];
-      } = {
-        orientation: 'left',
-      };
       const viewBox: CartesianViewBox = {};
-      const result = getEndPoints(scales, false, true, false, { position, viewBox, yAxis, ifOverflow: 'visible' });
+      const result = getEndPoints(scales, false, true, false, viewBox, position, undefined, 'left', {
+        ifOverflow: 'visible',
+      });
 
       const expected = [
         { x: undefined, y: coord },
@@ -66,16 +54,13 @@ describe('getEndPoints', () => {
     });
 
     it('should return coordinates when set to display overflow when orientation is "right"', () => {
-      const yAxis: {
-        orientation?: YAxisProps['orientation'];
-      } = {
-        orientation: 'right',
-      };
       const viewBox: CartesianViewBox = {
         x: 10,
         width: 5,
       };
-      const result = getEndPoints(scales, false, true, false, { position, viewBox, yAxis, ifOverflow: 'visible' });
+      const result = getEndPoints(scales, false, true, false, viewBox, position, undefined, 'right', {
+        ifOverflow: 'visible',
+      });
 
       const expected = [
         { x: 15, y: coord },
@@ -85,16 +70,13 @@ describe('getEndPoints', () => {
     });
 
     it('should reverse first and second point if yAxis orientation is "left"', () => {
-      const yAxis: {
-        orientation?: YAxisProps['orientation'];
-      } = {
-        orientation: 'left',
-      };
       const viewBox: CartesianViewBox = {
         x: 10,
         width: 5,
       };
-      const result = getEndPoints(scales, false, true, false, { position, viewBox, yAxis, ifOverflow: 'visible' });
+      const result = getEndPoints(scales, false, true, false, viewBox, position, undefined, 'left', {
+        ifOverflow: 'visible',
+      });
 
       const expected = [
         { x: 10, y: coord },
@@ -122,20 +104,12 @@ describe('getEndPoints', () => {
     });
 
     it('should return coordinates when set to discard overflow', () => {
-      const yAxis: {
-        orientation?: YAxisProps['orientation'];
-      } = {
-        orientation: 'right',
-      };
       const viewBox: CartesianViewBox = {
         x: 10,
         width: 5,
       };
       const lineLocationY = 9;
-      const result = getEndPoints(scales, false, true, false, {
-        position,
-        viewBox,
-        yAxis,
+      const result = getEndPoints(scales, false, true, false, viewBox, position, undefined, 'right', {
         y: lineLocationY,
         ifOverflow: 'discard',
       });
@@ -153,13 +127,10 @@ describe('getEndPoints', () => {
     });
 
     it('should return gibberish when viewBox is empty', () => {
-      const yAxis: {
-        orientation?: YAxisProps['orientation'];
-      } = {
-        orientation: 'left',
-      };
       const viewBox: CartesianViewBox = {};
-      const result = getEndPoints(scales, false, true, false, { position, viewBox, yAxis, ifOverflow: 'visible' });
+      const result = getEndPoints(scales, false, true, false, viewBox, position, undefined, 'left', {
+        ifOverflow: 'visible',
+      });
 
       const expected = [
         { x: undefined, y: coord },
@@ -169,16 +140,13 @@ describe('getEndPoints', () => {
     });
 
     it('should return coordinates when set to display overflow when orientation is "right"', () => {
-      const yAxis: {
-        orientation?: YAxisProps['orientation'];
-      } = {
-        orientation: 'right',
-      };
       const viewBox: CartesianViewBox = {
         x: 10,
         width: 5,
       };
-      const result = getEndPoints(scales, false, true, false, { position, viewBox, yAxis, ifOverflow: 'visible' });
+      const result = getEndPoints(scales, false, true, false, viewBox, position, undefined, 'right', {
+        ifOverflow: 'visible',
+      });
 
       const expected = [
         { x: 15, y: coord },
@@ -188,16 +156,13 @@ describe('getEndPoints', () => {
     });
 
     it('should reverse first and second point if yAxis orientation is "left"', () => {
-      const yAxis: {
-        orientation?: YAxisProps['orientation'];
-      } = {
-        orientation: 'left',
-      };
       const viewBox: CartesianViewBox = {
         x: 10,
         width: 5,
       };
-      const result = getEndPoints(scales, false, true, false, { position, viewBox, yAxis, ifOverflow: 'visible' });
+      const result = getEndPoints(scales, false, true, false, viewBox, position, undefined, 'left', {
+        ifOverflow: 'visible',
+      });
 
       const expected = [
         { x: 10, y: coord },
@@ -225,16 +190,8 @@ describe('getEndPoints', () => {
     });
 
     it('should return null when set to discard overflow', () => {
-      const xAxis: {
-        orientation?: XAxisProps['orientation'];
-      } = {
-        orientation: 'bottom',
-      };
       const lineLocationX = 9;
-      const result = getEndPoints(scales, true, false, false, {
-        position,
-        viewBox: {},
-        xAxis,
+      const result = getEndPoints(scales, true, false, false, {}, position, 'bottom', undefined, {
         x: lineLocationX,
         ifOverflow: 'discard',
       });
@@ -248,13 +205,10 @@ describe('getEndPoints', () => {
     });
 
     it('should return gibberish when viewBox is empty', () => {
-      const xAxis: {
-        orientation?: XAxisProps['orientation'];
-      } = {
-        orientation: 'bottom',
-      };
       const viewBox: CartesianViewBox = {};
-      const result = getEndPoints(scales, true, false, false, { position, viewBox, xAxis, ifOverflow: 'visible' });
+      const result = getEndPoints(scales, true, false, false, viewBox, position, 'bottom', undefined, {
+        ifOverflow: 'visible',
+      });
 
       const expected = [
         { x: coord, y: NaN },
@@ -264,16 +218,13 @@ describe('getEndPoints', () => {
     });
 
     it('should return coordinates when set to display overflow when orientation is "top"', () => {
-      const xAxis: {
-        orientation?: XAxisProps['orientation'];
-      } = {
-        orientation: 'top',
-      };
       const viewBox: CartesianViewBox = {
         y: 10,
         height: 5,
       };
-      const result = getEndPoints(scales, true, false, false, { position, viewBox, xAxis, ifOverflow: 'visible' });
+      const result = getEndPoints(scales, true, false, false, viewBox, position, 'top', undefined, {
+        ifOverflow: 'visible',
+      });
 
       const expected = [
         { x: coord, y: 10 },
@@ -283,16 +234,13 @@ describe('getEndPoints', () => {
     });
 
     it('should reverse first and second point if xAxis orientation is "top"', () => {
-      const xAxis: {
-        orientation?: XAxisProps['orientation'];
-      } = {
-        orientation: 'top',
-      };
       const viewBox: CartesianViewBox = {
         y: 10,
         height: 5,
       };
-      const result = getEndPoints(scales, true, false, false, { position, viewBox, xAxis, ifOverflow: 'visible' });
+      const result = getEndPoints(scales, true, false, false, viewBox, position, 'top', undefined, {
+        ifOverflow: 'visible',
+      });
 
       const expected = [
         { x: coord, y: 10 },
@@ -320,20 +268,12 @@ describe('getEndPoints', () => {
     });
 
     it('should return coordinates when set to discard overflow', () => {
-      const xAxis: {
-        orientation?: XAxisProps['orientation'];
-      } = {
-        orientation: 'bottom',
-      };
       const lineLocationX = 9;
       const viewBox: CartesianViewBox = {
         y: 10,
         height: 5,
       };
-      const result = getEndPoints(scales, true, false, false, {
-        position,
-        viewBox,
-        xAxis,
+      const result = getEndPoints(scales, true, false, false, viewBox, position, 'bottom', undefined, {
         x: lineLocationX,
         ifOverflow: 'discard',
       });
@@ -351,13 +291,10 @@ describe('getEndPoints', () => {
     });
 
     it('should return gibberish when viewBox is empty', () => {
-      const xAxis: {
-        orientation?: XAxisProps['orientation'];
-      } = {
-        orientation: 'bottom',
-      };
       const viewBox: CartesianViewBox = {};
-      const result = getEndPoints(scales, true, false, false, { position, viewBox, xAxis, ifOverflow: 'visible' });
+      const result = getEndPoints(scales, true, false, false, viewBox, position, 'bottom', undefined, {
+        ifOverflow: 'visible',
+      });
 
       const expected = [
         { x: coord, y: NaN },
@@ -367,16 +304,13 @@ describe('getEndPoints', () => {
     });
 
     it('should return coordinates when set to display overflow when orientation is "top"', () => {
-      const xAxis: {
-        orientation?: XAxisProps['orientation'];
-      } = {
-        orientation: 'top',
-      };
       const viewBox: CartesianViewBox = {
         y: 10,
         height: 5,
       };
-      const result = getEndPoints(scales, true, false, false, { position, viewBox, xAxis, ifOverflow: 'visible' });
+      const result = getEndPoints(scales, true, false, false, viewBox, position, 'top', undefined, {
+        ifOverflow: 'visible',
+      });
 
       const expected = [
         { x: coord, y: 10 },
@@ -386,16 +320,13 @@ describe('getEndPoints', () => {
     });
 
     it('should reverse first and second point if xAxis orientation is "top"', () => {
-      const xAxis: {
-        orientation?: XAxisProps['orientation'];
-      } = {
-        orientation: 'top',
-      };
       const viewBox: CartesianViewBox = {
         y: 10,
         height: 5,
       };
-      const result = getEndPoints(scales, true, false, false, { position, viewBox, xAxis, ifOverflow: 'visible' });
+      const result = getEndPoints(scales, true, false, false, viewBox, position, 'top', undefined, {
+        ifOverflow: 'visible',
+      });
 
       const expected = [
         { x: coord, y: 10 },
@@ -407,9 +338,8 @@ describe('getEndPoints', () => {
 
   describe('segment', () => {
     it('should return empty array if segment array is empty', () => {
-      const result = getEndPoints(null, false, false, true, {
+      const result = getEndPoints(null, false, false, true, {}, undefined, undefined, undefined, {
         segment: [],
-        viewBox: {},
       });
       expect(result).toEqual([]);
     });
@@ -421,7 +351,7 @@ describe('getEndPoints', () => {
         isInRange: vi.fn(),
       };
       const position: ReferenceLinePosition = 'middle';
-      getEndPoints(scales, false, false, true, { viewBox: {}, segment, position });
+      getEndPoints(scales, false, false, true, {}, position, undefined, undefined, { segment });
       expect(scales.apply).toHaveBeenCalledTimes(3);
       expect(scales.apply).toHaveBeenCalledWith({ x: 1 }, { position });
       expect(scales.apply).toHaveBeenCalledWith({ x: 2 }, { position });
@@ -435,7 +365,10 @@ describe('getEndPoints', () => {
         apply: vi.fn(_ => _),
         isInRange: vi.fn(() => true),
       };
-      getEndPoints(scales, false, false, true, { viewBox: {}, segment, ifOverflow: 'discard' });
+      getEndPoints(scales, false, false, true, {}, undefined, undefined, undefined, {
+        segment,
+        ifOverflow: 'discard',
+      });
       expect(scales.apply).toHaveBeenCalledTimes(3);
       expect(scales.isInRange).toHaveBeenCalledTimes(3);
     });
@@ -446,7 +379,10 @@ describe('getEndPoints', () => {
         apply: vi.fn(_ => _),
         isInRange: vi.fn(() => false),
       };
-      const result = getEndPoints(scales, false, false, true, { viewBox: {}, segment, ifOverflow: 'discard' });
+      const result = getEndPoints(scales, false, false, true, {}, undefined, undefined, undefined, {
+        segment,
+        ifOverflow: 'discard',
+      });
       expect(result).toEqual(null);
     });
 
@@ -456,7 +392,10 @@ describe('getEndPoints', () => {
         apply: vi.fn(({ x }) => x * 2),
         isInRange: vi.fn(() => true),
       };
-      const result = getEndPoints(scales, false, false, true, { viewBox: {}, segment, ifOverflow: 'discard' });
+      const result = getEndPoints(scales, false, false, true, {}, undefined, undefined, undefined, {
+        segment,
+        ifOverflow: 'discard',
+      });
       expect(result).toEqual([2, 4, 6]);
     });
   });
