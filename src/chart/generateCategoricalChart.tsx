@@ -1968,7 +1968,7 @@ export const generateCategoricalChart = ({
 
     renderBrushY = (element: React.ReactElement) => {
       const { margin, data } = this.props;
-      const { offset, dataStartIndex, dataEndIndex, updateId } = this.state;
+      const { offset, updateId } = this.state;
 
       // TODO: update brush when children update
       return cloneElement(element, {
@@ -1980,8 +1980,8 @@ export const generateCategoricalChart = ({
           ? element.props.y
           : offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
         width: isNumber(element.props.width) ? element.props.width : offset.width,
-        startIndex: dataStartIndex,
-        endIndex: dataEndIndex,
+        startIndex: element.props.startIndex || 0,
+        endIndex: element.props.endIndex || element.props.steps - 1,
         updateId: `brushY-${updateId}`,
       });
     };
