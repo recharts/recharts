@@ -42,7 +42,7 @@ function BrushYDemo() {
       <XAxis type="number" dataKey="day" />
       <YAxis type="number" dataKey="value" domain={[dom.min, dom.max]} allowDataOverflow />
       <Brush dataKey="day" x={20} y={0} width={380} height={20} />
-      <BrushY startIndex={0} endIndex={bSteps} x={0} y={20} width={20} height={280} onChange={handleBrushChange} />
+      <BrushY x={0} y={20} width={20} height={280} onChange={handleBrushChange} />
       <Line type="monotone" dataKey="value" />
     </LineChart>
   );

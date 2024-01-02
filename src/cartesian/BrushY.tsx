@@ -96,7 +96,7 @@ const createScale = ({
     return {};
   }
 
-  const len = steps + 1;
+  const len = steps;
   const scale = scalePoint<number>()
     .domain(range(0, len))
     .range([y, y + height - travellerHeight]);
