@@ -66,8 +66,7 @@ interface InternalProps {
   onClick?: (data: Payload, index: number, event: MouseEvent) => void;
 }
 
-export type Props = InternalProps &
-  Omit<PresentationAttributesAdaptChildEvent<any, ReactElement>, 'onMouseEnter' | 'onMouseLeave' | 'onClick'>;
+export type Props = InternalProps & Omit<PresentationAttributesAdaptChildEvent<any, ReactElement>, keyof InternalProps>;
 
 export class DefaultLegendContent extends PureComponent<Props> {
   static displayName = 'Legend';
