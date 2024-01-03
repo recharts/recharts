@@ -296,4 +296,62 @@ describe('<ReferenceLine />', () => {
       y2: -102.22222222222223,
     });
   });
+
+  test('throws when passed in invalid xAxisId', () => {
+    const viewBox: CartesianViewBox = { x: 1, y: 2 };
+    expect(() => {
+      render(
+        <BarChart
+          width={1100}
+          height={250}
+          barGap={2}
+          barSize={6}
+          data={data}
+          margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
+        >
+          <XAxis dataKey="name" />
+          <YAxis tickCount={7} />
+          <Bar dataKey="uv" />
+          <ReferenceLine
+            y={20}
+            stroke="#666"
+            ifOverflow="visible"
+            viewBox={viewBox}
+            xAxisId="this ID definitely does not exist anywhere"
+          />
+        </BarChart>,
+      );
+    }).toThrowError(
+      'Invariant failed: Could not find xAxis by id "this ID definitely does not exist anywhere" [string]. Available xAxis are: 0',
+    );
+  });
+
+  test('throws when passed in invalid yAxisId', () => {
+    const viewBox: CartesianViewBox = { x: 1, y: 2 };
+    expect(() => {
+      render(
+        <BarChart
+          width={1100}
+          height={250}
+          barGap={2}
+          barSize={6}
+          data={data}
+          margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
+        >
+          <XAxis dataKey="name" />
+          <YAxis tickCount={7} />
+          <Bar dataKey="uv" />
+          <ReferenceLine
+            y={20}
+            stroke="#666"
+            ifOverflow="visible"
+            viewBox={viewBox}
+            yAxisId="this ID definitely does not exist anywhere"
+          />
+        </BarChart>,
+      );
+    }).toThrowError(
+      'Invariant failed: Could not find yAxis by id "this ID definitely does not exist anywhere" [string]. Available yAxis are: 0',
+    );
+  });
 });

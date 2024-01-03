@@ -5,6 +5,7 @@ import React, { ReactElement, SVGProps, useContext } from 'react';
 import isFunction from 'lodash/isFunction';
 import some from 'lodash/some';
 import clsx from 'clsx';
+import invariant from 'tiny-invariant';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
 import { IfOverflow, ifOverflowMatches } from '../util/IfOverflowMatches';
@@ -144,12 +145,17 @@ export function ReferenceLine(props: Props) {
   if (!clipPathId || !xAxisMap || !yAxisMap || !viewBox) {
     return null;
   }
-  const xAxis = xAxisMap[xAxisId];
-  const yAxis = yAxisMap[yAxisId];
+  const xAxis: XAxisProps | null = xAxisMap[xAxisId];
+  const yAxis: YAxisProps | null = yAxisMap[yAxisId];
 
-  warn(
+  invariant(
     xAxis != null,
-    `Could not find xAxis by id ${xAxisId} [${typeof xAxisId}]. Available xAxis are: ${Object.keys(xAxisMap)}`,
+    `Could not find xAxis by id "${xAxisId}" [${typeof xAxisId}]. Available xAxis are: ${Object.keys(xAxisMap)}`,
+  );
+
+  invariant(
+    yAxis != null,
+    `Could not find yAxis by id "${yAxisId}" [${typeof yAxisId}]. Available yAxis are: ${Object.keys(yAxisMap)}`,
   );
 
   warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
