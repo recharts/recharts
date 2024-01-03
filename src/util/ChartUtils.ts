@@ -205,7 +205,7 @@ export interface FormattedGraphicalItem {
     data?: ReadonlyArray<any>;
   };
   childIndex: number;
-  item: ReactElement<{ legendType?: LegendType; hide: boolean; name?: string; dataKey: unknown }>;
+  item: ReactElement<{ legendType?: LegendType; hide: boolean; name?: string; dataKey: DataKey<any> }>;
 }
 
 export type BarSetup = {
