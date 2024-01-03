@@ -269,6 +269,7 @@ const getTooltipData = (
   layout: LayoutType,
   rangeObj?: any,
 ): object => {
+  // PieChart is temporarily returning null because the 'calculateActiveTickIndex' is returning an incorrect activeIndex
   if (chartName === 'PieChart') {
     return null;
   }
