@@ -49,6 +49,7 @@ export interface Payload {
   formatter?: Formatter;
   inactive?: boolean;
   legendIcon?: ReactElement<SVGElement>;
+  dataKey?: DataKey<any>;
 }
 interface InternalProps {
   content?: ContentType;
@@ -60,12 +61,12 @@ interface InternalProps {
   payload?: Array<Payload>;
   inactiveColor?: string;
   formatter?: Formatter;
-  onMouseEnter?: (data: Payload & { dataKey?: DataKey<any> }, index: number, event: MouseEvent) => void;
-  onMouseLeave?: (data: Payload & { dataKey?: DataKey<any> }, index: number, event: MouseEvent) => void;
-  onClick?: (data: Payload & { dataKey?: DataKey<any> }, index: number, event: MouseEvent) => void;
+  onMouseEnter?: (data: Payload, index: number, event: MouseEvent) => void;
+  onMouseLeave?: (data: Payload, index: number, event: MouseEvent) => void;
+  onClick?: (data: Payload, index: number, event: MouseEvent) => void;
 }
 
-export type Props = InternalProps & PresentationAttributesAdaptChildEvent<any, ReactElement>;
+export type Props = InternalProps & Omit<PresentationAttributesAdaptChildEvent<any, ReactElement>, keyof InternalProps>;
 
 export class DefaultLegendContent extends PureComponent<Props> {
   static displayName = 'Legend';
