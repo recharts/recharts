@@ -270,7 +270,7 @@ const getTooltipData = (
   rangeObj?: any,
 ): object => {
   if (chartName === 'PieChart') {
-    return {};
+    return null;
   }
 
   const rangeData = rangeObj || { x: state.chartX, y: state.chartY };
