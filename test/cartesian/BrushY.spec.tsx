@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { Brush, BrushY, BarChart } from '../../src';
+import { BrushY, BarChart } from '../../src';
 
 describe('<BrushY />', () => {
   const data = [
