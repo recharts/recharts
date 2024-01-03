@@ -1199,10 +1199,10 @@ export const generateCategoricalChart = ({
       prevState: CategoricalChartState,
     ): CategoricalChartState => {
       const { dataKey, data, children, width, height, layout, stackOffset, margin } = nextProps;
+      const { dataStartIndex, dataEndIndex } = prevState;
 
       if (prevState.updateId === undefined) {
         const defaultState = createDefaultState(nextProps);
-
         return {
           ...defaultState,
           updateId: 0,
@@ -1280,9 +1280,16 @@ export const generateCategoricalChart = ({
         };
       }
       if (!isChildrenEqual(children, prevState.prevChildren)) {
+        // specifically check for Brush - if it exists and the start and end indexes are different, re-render with the new ones
+        const brush = findChildByType(children, Brush);
+
+        const startIndex = brush ? brush.props?.startIndex ?? dataStartIndex : dataStartIndex;
+        const endIndex = brush ? brush.props?.endIndex ?? dataEndIndex : dataEndIndex;
+        const hasDifferentStartOrEndIndex = startIndex !== dataStartIndex || endIndex !== dataEndIndex;
+
         // update configuration in children
         const hasGlobalData = !isNil(data);
-        const newUpdateId = hasGlobalData ? prevState.updateId : prevState.updateId + 1;
+        const newUpdateId = hasGlobalData && !hasDifferentStartOrEndIndex ? prevState.updateId : prevState.updateId + 1;
 
         return {
           updateId: newUpdateId,
@@ -1291,10 +1298,14 @@ export const generateCategoricalChart = ({
               props: nextProps,
               ...prevState,
               updateId: newUpdateId,
+              dataStartIndex: startIndex,
+              dataEndIndex: endIndex,
             },
             prevState,
           ),
           prevChildren: children,
+          dataStartIndex: startIndex,
+          dataEndIndex: endIndex,
         };
       }
 
