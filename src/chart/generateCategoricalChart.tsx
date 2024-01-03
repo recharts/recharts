@@ -1981,7 +1981,7 @@ export const generateCategoricalChart = ({
           : offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
         width: isNumber(element.props.width) ? element.props.width : offset.width,
         startIndex: element.props.startIndex || 0,
-        endIndex: element.props.endIndex || element.props.steps - 1,
+        endIndex: element.props.endIndex || element.props.data.length - 1,
         updateId: `brushY-${updateId}`,
       });
     };

@@ -1,7 +1,7 @@
 /**
  * @fileOverview BrushY
  */
-import React, { PureComponent, Children, ReactText, ReactElement, TouchEvent, SVGProps } from 'react';
+import React, { PureComponent, Children, ReactElement, TouchEvent, SVGProps } from 'react';
 import clsx from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
 import isFunction from 'lodash/isFunction';
@@ -40,16 +40,12 @@ interface BrushProps extends InternalBrushProps {
   dataKey?: DataKey<any>;
   startIndex?: number;
   endIndex?: number;
-  tickFormatter?: (value: any, index: number) => ReactText;
 
   children?: ReactElement;
 
   onChange?: (newIndex: BrushStartEndIndex) => void;
   onDragEnd?: (newIndex: BrushStartEndIndex) => void;
   leaveTimeOut?: number;
-  alwaysShowText?: boolean;
-
-  steps?: number;
 }
 
 export type Props = Omit<SVGProps<SVGElement>, 'onChange'> & BrushProps;
@@ -64,7 +60,6 @@ interface State {
   endY?: number;
   slideMoveStartY?: number;
   movingTravellerId?: BrushTravellerId;
-  isTextActive?: boolean;
   brushMoveStartY?: number;
 
   scale?: ScalePoint<number>;
@@ -78,32 +73,29 @@ interface State {
 }
 
 const createScale = ({
-  steps,
   startIndex,
   endIndex,
   y,
   height,
   travellerHeight,
 }: {
-  steps?: number;
   startIndex?: number;
   endIndex?: number;
   y?: number;
   height?: number;
   travellerHeight?: number;
 }) => {
-  if (steps <= 0) {
+  if (endIndex <= 0) {
     return {};
   }
 
-  const len = steps;
+  const len = endIndex + 1;
   const scale = scalePoint<number>()
     .domain(range(0, len))
     .range([y, y + height - travellerHeight]);
   const scaleValues = scale.domain().map(entry => scale(entry));
 
   return {
-    isTextActive: false,
     isSlideMoving: false,
     isTravellerMoving: false,
     isTravellerFocused: false,
@@ -121,15 +113,18 @@ export class BrushY extends PureComponent<Props, State> {
   static displayName = 'BrushY';
 
   static defaultProps = {
+    x: 0,
+    y: 10,
     width: 40,
+    height: 200,
     travellerHeight: 5,
     gap: 1,
     fill: '#fff',
     stroke: '#666',
     padding: { top: 1, right: 1, bottom: 1, left: 1 },
     leaveTimeOut: 1000,
-    alwaysShowText: false,
-    steps: 100,
+    startIndex: 0,
+    endIndex: 100,
   };
 
   constructor(props: Props) {
@@ -178,7 +173,7 @@ export class BrushY extends PureComponent<Props, State> {
   }
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
-    const { data, steps, height, y, travellerHeight, updateId, startIndex, endIndex } = nextProps;
+    const { data, height, y, travellerHeight, updateId, startIndex, endIndex } = nextProps;
 
     if (data !== prevState.prevData || updateId !== prevState.prevUpdateId) {
       return {
@@ -187,8 +182,8 @@ export class BrushY extends PureComponent<Props, State> {
         prevUpdateId: updateId,
         prevY: y,
         prevHeight: height,
-        ...(steps > 0
-          ? createScale({ steps, height, y, travellerHeight, startIndex, endIndex })
+        ...(endIndex > 0
+          ? createScale({ height, y, travellerHeight, startIndex, endIndex })
           : { scale: null, scaleValues: null }),
       };
     }
@@ -244,8 +239,8 @@ export class BrushY extends PureComponent<Props, State> {
 
   getIndex({ startY, endY }: { startY: number; endY: number }) {
     const { scaleValues } = this.state;
-    const { gap, steps } = this.props;
-    const lastIndex = steps - 1;
+    const { gap, endIndex } = this.props;
+    const lastIndex = endIndex - 1;
     const min = Math.min(startY, endY);
     const max = Math.max(startY, endY);
     const minIndex = BrushY.getIndexInRange(scaleValues, min);
@@ -254,12 +249,6 @@ export class BrushY extends PureComponent<Props, State> {
       startIndex: minIndex - (minIndex % gap),
       endIndex: maxIndex === lastIndex ? lastIndex : maxIndex - (maxIndex % gap),
     };
-  }
-
-  getTextOfTick(index: number) {
-    const { tickFormatter } = this.props;
-
-    return isFunction(tickFormatter) ? tickFormatter(index, index) : index;
   }
 
   handleDrag = (e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) => {
@@ -314,18 +303,6 @@ export class BrushY extends PureComponent<Props, State> {
     if (this.state.isTravellerMoving || this.state.isSlideMoving) {
       this.leaveTimer = window.setTimeout(this.handleDragEnd, this.props.leaveTimeOut);
     }
-  };
-
-  handleEnterSlideOrTraveller = () => {
-    this.setState({
-      isTextActive: true,
-    });
-  };
-
-  handleLeaveSlideOrTraveller = () => {
-    this.setState({
-      isTextActive: false,
-    });
   };
 
   handleSlideDragStart = (e: TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => {
@@ -383,7 +360,7 @@ export class BrushY extends PureComponent<Props, State> {
     const { brushMoveStartY, movingTravellerId, endY, startY } = this.state;
     const prevValue = this.state[movingTravellerId];
 
-    const { y, height, travellerHeight, onChange, gap, steps } = this.props;
+    const { y, height, travellerHeight, onChange, gap } = this.props;
     const params = { startY: this.state.startY, endY: this.state.endY };
 
     let delta = e.pageY - brushMoveStartY;
@@ -398,7 +375,7 @@ export class BrushY extends PureComponent<Props, State> {
     const newIndex = this.getIndex(params);
     const { startIndex, endIndex } = newIndex;
     const isFullGap = () => {
-      const lastIndex = steps - 1;
+      const lastIndex = endIndex - 1;
       if (
         (movingTravellerId === 'startY' && (endY > startY ? startIndex % gap === 0 : endIndex % gap === 0)) ||
         (endY < startY && endIndex === lastIndex) ||
@@ -508,8 +485,6 @@ export class BrushY extends PureComponent<Props, State> {
         aria-label={ariaLabelBrush}
         aria-valuenow={travellerY}
         className="recharts-brush-traveller"
-        onMouseEnter={this.handleEnterSlideOrTraveller}
-        onMouseLeave={this.handleLeaveSlideOrTraveller}
         onMouseDown={this.travellerDragStartHandlers[id]}
         onTouchStart={this.travellerDragStartHandlers[id]}
         onKeyDown={e => {
@@ -541,8 +516,6 @@ export class BrushY extends PureComponent<Props, State> {
     return (
       <rect
         className="recharts-brush-slide"
-        onMouseEnter={this.handleEnterSlideOrTraveller}
-        onMouseLeave={this.handleLeaveSlideOrTraveller}
         onMouseDown={this.handleSlideDragStart}
         onTouchStart={this.handleSlideDragStart}
         style={{ cursor: 'move' }}
@@ -558,11 +531,13 @@ export class BrushY extends PureComponent<Props, State> {
   }
 
   render() {
-    const { steps, className, children, x, y, width, height, alwaysShowText } = this.props;
-    const { startY, endY, isTextActive, isSlideMoving, isTravellerMoving, isTravellerFocused } = this.state;
+    const { data, endIndex, className, children, x, y, width, height } = this.props;
+    const { startY, endY } = this.state;
 
     if (
-      steps <= 0 ||
+      endIndex <= 0 ||
+      !data ||
+      !data.length ||
       !isNumber(x) ||
       !isNumber(y) ||
       !isNumber(width) ||
