@@ -87,7 +87,7 @@ import { getActiveShapeIndexForTooltip, isFunnel, isPie, isScatter } from '../ut
 import { Props as YAxisProps } from '../cartesian/YAxis';
 import { Props as XAxisProps } from '../cartesian/XAxis';
 import { Cursor } from '../component/Cursor';
-import { ChartLayoutContextContainer, SetLayoutChartContext } from '../context/layoutContext';
+import { ChartLayoutContext } from '../context/layoutContext';
 
 export interface MousePointer {
   pageX: number;
@@ -2005,23 +2005,6 @@ export const generateCategoricalChart = ({
       });
     };
 
-    updateLayoutContext() {
-      const { xAxisMap, yAxisMap, offset } = this.state;
-      return (
-        <SetLayoutChartContext
-          xAxisMap={xAxisMap}
-          yAxisMap={yAxisMap}
-          viewBox={{
-            x: offset.left,
-            y: offset.top,
-            width: offset.width,
-            height: offset.height,
-          }}
-          clipPathId={this.clipPathId}
-        />
-      );
-    }
-
     static renderActiveDot = (option: any, props: any): React.ReactElement => {
       let dot;
 
@@ -2307,6 +2290,7 @@ export const generateCategoricalChart = ({
       }
 
       const { children, className, width, height, style, compact, title, desc, ...others } = this.props;
+      const { xAxisMap, yAxisMap, offset } = this.state;
       const attrs = filterProps(others);
 
       // The "compact" mode is mainly used as the panorama within Brush
@@ -2338,7 +2322,19 @@ export const generateCategoricalChart = ({
 
       const events = this.parseEventsOfWrapper();
       return (
-        <ChartLayoutContextContainer>
+        <ChartLayoutContext.Provider
+          value={{
+            xAxisMap,
+            yAxisMap,
+            viewBox: {
+              x: offset.left,
+              y: offset.top,
+              width: offset.width,
+              height: offset.height,
+            },
+            clipPathId: this.clipPathId,
+          }}
+        >
           <div
             className={clsx('recharts-wrapper', className)}
             style={{ position: 'relative', cursor: 'default', width, height, ...style }}
@@ -2354,9 +2350,8 @@ export const generateCategoricalChart = ({
             </Surface>
             {this.renderLegend()}
             {this.renderTooltip()}
-            {this.updateLayoutContext()}
           </div>
-        </ChartLayoutContextContainer>
+        </ChartLayoutContext.Provider>
       );
     }
   };

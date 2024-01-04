@@ -141,7 +141,7 @@ export const getEndPoints = (
 export function ReferenceLine(props: Props) {
   const { x: fixedX, y: fixedY, segment, xAxisId, yAxisId, shape, className, alwaysShow } = props;
 
-  const [{ xAxisMap, yAxisMap, viewBox, clipPathId }] = useContext(ChartLayoutContext);
+  const { xAxisMap, yAxisMap, viewBox, clipPathId } = useContext(ChartLayoutContext);
   if (!clipPathId || !xAxisMap || !yAxisMap || !viewBox) {
     return null;
   }

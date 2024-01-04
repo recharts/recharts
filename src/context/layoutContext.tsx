@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, createContext, useContext, useState } from 'react';
+import { createContext } from 'react';
 import { CartesianViewBox } from '../util/types';
 import { XAxisProps, YAxisProps } from '../index';
 
@@ -33,17 +33,4 @@ const defaultValue: ChartLayoutContextType = {
   clipPathId: null,
 };
 
-export const ChartLayoutContext = createContext<
-  [context: ChartLayoutContextType, setContext: (newContext: ChartLayoutContextTypeLoaded) => void]
->([defaultValue, () => undefined]);
-
-export function ChartLayoutContextContainer(props: { children: ReactNode }) {
-  const context = useState<ChartLayoutContextType>(defaultValue);
-  return <ChartLayoutContext.Provider value={context}>{props.children}</ChartLayoutContext.Provider>;
-}
-
-export function SetLayoutChartContext(props: ChartLayoutContextTypeLoaded): ReactElement {
-  const [, setContext] = useContext(ChartLayoutContext);
-  setContext(props);
-  return null;
-}
+export const ChartLayoutContext = createContext<ChartLayoutContextType>(defaultValue);
