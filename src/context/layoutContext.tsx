@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { createContext, useContext } from 'react';
 import { CartesianViewBox } from '../util/types';
 import { XAxisProps, YAxisProps } from '../index';
 
@@ -34,3 +34,5 @@ const defaultValue: ChartLayoutContextType = {
 };
 
 export const ChartLayoutContext = createContext<ChartLayoutContextType>(defaultValue);
+
+export const useChartLayoutContext = () => useContext(ChartLayoutContext);

@@ -1,7 +1,7 @@
 /**
  * @fileOverview Reference Line
  */
-import React, { ReactElement, SVGProps, useContext } from 'react';
+import React, { ReactElement, SVGProps } from 'react';
 import isFunction from 'lodash/isFunction';
 import some from 'lodash/some';
 import clsx from 'clsx';
@@ -16,7 +16,7 @@ import { CartesianViewBox, D3Scale } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { filterProps } from '../util/ReactUtils';
-import { ChartLayoutContext } from '../context/layoutContext';
+import { useChartLayoutContext } from '../context/layoutContext';
 
 interface InternalReferenceLineProps {
   viewBox?: CartesianViewBox;
@@ -141,7 +141,7 @@ export const getEndPoints = (
 export function ReferenceLine(props: Props) {
   const { x: fixedX, y: fixedY, segment, xAxisId, yAxisId, shape, className, alwaysShow } = props;
 
-  const { xAxisMap, yAxisMap, viewBox, clipPathId } = useContext(ChartLayoutContext);
+  const { xAxisMap, yAxisMap, viewBox, clipPathId } = useChartLayoutContext();
   if (!clipPathId || !xAxisMap || !yAxisMap || !viewBox) {
     return null;
   }
