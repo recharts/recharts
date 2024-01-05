@@ -1,14 +1,23 @@
 import React from 'react';
-import { scaleLinear } from 'd3-scale';
+import { scaleLinear } from 'victory-vendor/d3-scale';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Sector } from '../shape/Sector';
+import { Text } from '../component/Text';
 
 export interface SunburstData {
   name: string;
   value?: number;
   fill?: string;
   children?: SunburstData[];
+}
+
+interface TextOptions {
+  fontFamily?: string;
+  fontWeight?: string;
+  paintOrder?: string;
+  stroke?: string;
+  fill?: string;
 }
 
 export interface SunburstChartProps {
@@ -20,6 +29,8 @@ export interface SunburstChartProps {
   innerRadius?: number;
   children?: React.ReactNode;
   fill?: string;
+  stroke?: string;
+  textOptions?: TextOptions;
 }
 
 interface DrawArcOptions {
@@ -28,6 +39,14 @@ interface DrawArcOptions {
   initialAngle: number;
   childColor?: string;
 }
+
+const defaultTextProps = {
+  fontFamily: 'sans-serif',
+  fontWeight: 'bold',
+  paintOrder: 'stroke fill',
+  stroke: '#FFF',
+  fill: 'black',
+};
 
 function maxDepth(node: SunburstData): number {
   if (!node.children || node.children.length === 0) return 1;
@@ -53,6 +72,8 @@ export const SunburstChart = ({
   ringPadding = 2,
   innerRadius = 50,
   fill = '#333',
+  stroke = '#FFF',
+  textOptions = defaultTextProps,
 }: SunburstChartProps) => {
   // get the max possible radius for a circle inscribed in the chart container
   const outerRadius = Math.min(width, height) / 2;
@@ -85,7 +106,7 @@ export const SunburstChart = ({
         <g>
           <Sector
             fill={fillColor}
-            stroke="#FFF"
+            stroke={stroke}
             strokeWidth={padding}
             startAngle={start}
             endAngle={start + arcLength}
@@ -94,21 +115,9 @@ export const SunburstChart = ({
             cx={cx}
             cy={cy}
           />
-          <text
-            fontSize=".875rem"
-            alignmentBaseline="middle"
-            textAnchor="middle"
-            stroke="#FFF"
-            strokeWidth={0.5}
-            paintOrder="stroke fill"
-            fill="#333"
-            fontFamily="sans-serif"
-            fontWeight="bold"
-            x={textX + cx}
-            y={cy - textY}
-          >
+          <Text {...textOptions} alignmentBaseline="middle" textAnchor="middle" x={textX + cx} y={cy - textY}>
             {d.value}
-          </text>
+          </Text>
         </g>,
       );
 
