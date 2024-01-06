@@ -355,4 +355,22 @@ describe('<ReferenceLine />', () => {
       'Invariant failed: Could not find yAxis by id "this ID definitely does not exist anywhere" [string]. Available ids are: 0',
     );
   });
+
+  test('does not return anything when rendered alone, outside of context', () => {
+    const { container } = render(<ReferenceLine x={20} />);
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
+  });
+
+  test('does not return anything when rendered as a nested child', () => {
+    const { container } = render(
+      <BarChart width={1100} height={250}>
+        <XAxis />
+        <YAxis />
+        <p>
+          <ReferenceLine y={20} ifOverflow="visible" />
+        </p>
+      </BarChart>,
+    );
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
+  });
 });
