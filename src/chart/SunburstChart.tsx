@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import clsx from 'clsx';
 import { Surface } from '../container/Surface';
@@ -6,6 +6,7 @@ import { Layer } from '../container/Layer';
 import { Sector } from '../shape/Sector';
 import { Text } from '../component/Text';
 import { polarToCartesian } from '../util/PolarUtils';
+import { Tooltip } from '../component/Tooltip';
 
 export interface SunburstData {
   name: string;
@@ -101,6 +102,9 @@ export const SunburstChart = ({
   onMouseEnter,
   onMouseLeave,
 }: SunburstChartProps) => {
+  const [isTooltipActive, setIsTooltipActive] = useState(false);
+  const [activeNode, setActiveNode] = useState<SunburstData | null>(null);
+
   const rScale = scaleLinear([0, data.value], [0, endAngle]);
   const treeDepth = getMaxDepthOf(data);
   const thickness = (outerRadius - innerRadius) / treeDepth;
@@ -110,10 +114,14 @@ export const SunburstChart = ({
   // event handlers
   function handleMouseEnter(node: SunburstData, e: any) {
     if (onMouseEnter) onMouseEnter(node, e);
+    setActiveNode(activeNode);
+    setIsTooltipActive(true);
   }
 
   function handleMouseLeave(node: SunburstData, e: any) {
     if (onMouseLeave) onMouseLeave(node, e);
+    setActiveNode(null);
+    setIsTooltipActive(false);
   }
 
   function handleClick(node: SunburstData) {
@@ -174,6 +182,7 @@ export const SunburstChart = ({
     <Surface width={width} height={height}>
       {children}
       <Layer className={layerClass}>{sectors}</Layer>
+      <Tooltip active={isTooltipActive} content={<div>Tooltip</div>} />
     </Surface>
   );
 };
