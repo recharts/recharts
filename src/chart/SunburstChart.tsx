@@ -4,6 +4,7 @@ import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Sector } from '../shape/Sector';
 import { Text } from '../component/Text';
+import { polarToCartesian } from '../util/PolarUtils';
 
 export interface SunburstData {
   name: string;
@@ -18,6 +19,7 @@ interface TextOptions {
   paintOrder?: string;
   stroke?: string;
   fill?: string;
+  fontSize?: string;
 }
 
 export interface SunburstChartProps {
@@ -34,7 +36,7 @@ export interface SunburstChartProps {
 }
 
 interface DrawArcOptions {
-  r: number;
+  radius: number;
   innerR: number;
   initialAngle: number;
   childColor?: string;
@@ -44,24 +46,27 @@ const defaultTextProps = {
   fontFamily: 'sans-serif',
   fontWeight: 'bold',
   paintOrder: 'stroke fill',
+  fontSize: '.75rem',
   stroke: '#FFF',
   fill: 'black',
 };
 
-function maxDepth(node: SunburstData): number {
+function getMaxDepthOf(node: SunburstData): number {
   if (!node.children || node.children.length === 0) return 1;
 
   // Calculate depth for each child and find the maximum
-  const childDepths = node.children.map(d => maxDepth(d));
+  const childDepths = node.children.map(d => getMaxDepthOf(d));
   return 1 + Math.max(...childDepths);
 }
 
+/*
 function polarToCartesian(r: number, angleInDegrees: number): number[] {
   const angleInRadians = (angleInDegrees * Math.PI) / 180.0;
   const x = r * Math.cos(angleInRadians);
   const y = r * Math.sin(angleInRadians);
   return [x, y];
 }
+*/
 
 export const SunburstChart = ({
   data,
@@ -82,14 +87,14 @@ export const SunburstChart = ({
     cy = height / 2;
 
   const rScale = scaleLinear([0, data.value], [0, 360]);
-  const treeDepth = maxDepth(data);
+  const treeDepth = getMaxDepthOf(data);
   const thickness = (outerRadius - innerRadius) / treeDepth;
 
   const sectors: React.ReactNode[] = [];
 
   // recursively add nodes for each data point and its children
   function drawArcs(childNodes: SunburstData[] | undefined, options: DrawArcOptions): any {
-    const { r, innerR, initialAngle, childColor } = options;
+    const { radius, innerR, initialAngle, childColor } = options;
 
     let currentAngle = initialAngle;
 
@@ -100,7 +105,7 @@ export const SunburstChart = ({
       const start = currentAngle;
       // color priority - if there's a color on the individual point use that, otherwise use parent color or default
       const fillColor = d?.fill ?? childColor ?? fill;
-      const [textX, textY] = polarToCartesian(innerR + (innerR + r - innerR) / 2, start + arcLength - arcLength / 2);
+      const { x: textX, y: textY } = polarToCartesian(0, 0, innerR + radius / 2, -(start + arcLength - arcLength / 2));
       currentAngle += arcLength;
       sectors.push(
         <g>
@@ -111,7 +116,7 @@ export const SunburstChart = ({
             startAngle={start}
             endAngle={start + arcLength}
             innerRadius={innerR}
-            outerRadius={innerR + r}
+            outerRadius={innerR + radius}
             cx={cx}
             cy={cy}
           />
@@ -121,11 +126,16 @@ export const SunburstChart = ({
         </g>,
       );
 
-      return drawArcs(d.children, { r, innerR: innerR + r + ringPadding, initialAngle: start, childColor: fillColor });
+      return drawArcs(d.children, {
+        radius,
+        innerR: innerR + radius + ringPadding,
+        initialAngle: start,
+        childColor: fillColor,
+      });
     });
   }
 
-  drawArcs(data.children, { r: thickness, innerR: innerRadius, initialAngle: 0 });
+  drawArcs(data.children, { radius: thickness, innerR: innerRadius, initialAngle: 0 });
 
   return (
     <Surface width={width} height={height}>
