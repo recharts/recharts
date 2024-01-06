@@ -1,7 +1,8 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { vi } from 'vitest';
-import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from '../../src';
+import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis } from '../../src';
+import { testChartLayoutContext } from '../util/context';
 
 describe('<RadarChart />', () => {
   const data = [
@@ -101,5 +102,47 @@ describe('<RadarChart />', () => {
     }
     fireEvent.click(radar);
     expect(onClick).toBeCalled();
+  });
+
+  describe('RadarChart layout context', () => {
+    it(
+      'should provide viewBox and clipPathId if there are no axes',
+      testChartLayoutContext(
+        props => (
+          <RadarChart width={100} height={50} barSize={20}>
+            {props.children}
+          </RadarChart>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
+          expect(xAxisMap).toBe(undefined);
+          expect(yAxisMap).toBe(undefined);
+        },
+      ),
+    );
+
+    /**
+     * This test is skipped because generateCategoricalChart throws an error if axes are provided to FunnelChart.
+     * TODO un-skip this level if fixing the exception.
+     */
+    it.skip(
+      'should provide axisMaps: undefined even if axes are specified',
+      testChartLayoutContext(
+        props => (
+          <RadarChart width={100} height={50} barSize={20}>
+            <XAxis dataKey="number" type="number" />
+            <YAxis type="category" dataKey="name" />
+            {props.children}
+          </RadarChart>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 10, width: 30, x: 65, y: 5 });
+          expect(xAxisMap).toBe(undefined);
+          expect(yAxisMap).toBe(undefined);
+        },
+      ),
+    );
   });
 });
