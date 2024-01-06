@@ -39,13 +39,21 @@ export interface SunburstChartProps {
   cx?: number;
   /** The ordinate of pole in polar coordinate  */
   cy?: number;
+  /** Angle in degrees from which the chart should start.  */
   startAngle?: number;
+  /** Angle, in degrees, at which the chart should end. Can be used to generate partial sunbursts.  */
   endAngle?: number;
   children?: React.ReactNode;
   fill?: string;
   stroke?: string;
   /* an object with svg text options to control the appearance of the chart labels. */
   textOptions?: TextOptions;
+
+  onMouseEnter?: (node: SunburstData, e: any) => void;
+
+  onMouseLeave?: (node: SunburstData, e: any) => void;
+
+  onClick: (node: SunburstData) => void;
 }
 
 interface DrawArcOptions {
@@ -89,12 +97,28 @@ export const SunburstChart = ({
   cy = height / 2,
   startAngle = 0,
   endAngle = 360,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
 }: SunburstChartProps) => {
   const rScale = scaleLinear([0, data.value], [0, endAngle]);
   const treeDepth = getMaxDepthOf(data);
   const thickness = (outerRadius - innerRadius) / treeDepth;
 
   const sectors: React.ReactNode[] = [];
+
+  // event handlers
+  function handleMouseEnter(node: SunburstData, e: any) {
+    if (onMouseEnter) onMouseEnter(node, e);
+  }
+
+  function handleMouseLeave(node: SunburstData, e: any) {
+    if (onMouseLeave) onMouseLeave(node, e);
+  }
+
+  function handleClick(node: SunburstData) {
+    if (onClick) onClick(node);
+  }
 
   // recursively add nodes for each data point and its children
   function drawArcs(childNodes: SunburstData[] | undefined, options: DrawArcOptions): any {
@@ -114,6 +138,9 @@ export const SunburstChart = ({
       sectors.push(
         <g>
           <Sector
+            onClick={() => handleClick(d)}
+            onMouseEnter={e => handleMouseEnter(d, e)}
+            onMouseLeave={e => handleMouseLeave(d, e)}
             fill={fillColor}
             stroke={stroke}
             strokeWidth={padding}
