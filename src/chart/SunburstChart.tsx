@@ -1,5 +1,6 @@
 import React from 'react';
 import { scaleLinear } from 'victory-vendor/d3-scale';
+import clsx from 'clsx';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Sector } from '../shape/Sector';
@@ -23,15 +24,25 @@ interface TextOptions {
 }
 
 export interface SunburstChartProps {
+  className?: string;
   data?: SunburstData;
   width?: number;
   height?: number;
   padding?: number;
+  /* Padding between each hierarchical level. */
   ringPadding?: number;
+  /* The radius of the inner circle at the center of the chart. */
   innerRadius?: number;
+  /* Outermost edge of the chart. Defaults to the max possible radius for a circle inscribed in the chart container */
+  outerRadius?: number;
+  /** The abscissa of pole in polar coordinate  */
+  cx?: number;
+  /** The ordinate of pole in polar coordinate  */
+  cy?: number;
   children?: React.ReactNode;
   fill?: string;
   stroke?: string;
+  /* an object with svg text options to control the appearance of the chart labels. */
   textOptions?: TextOptions;
 }
 
@@ -59,16 +70,8 @@ function getMaxDepthOf(node: SunburstData): number {
   return 1 + Math.max(...childDepths);
 }
 
-/*
-function polarToCartesian(r: number, angleInDegrees: number): number[] {
-  const angleInRadians = (angleInDegrees * Math.PI) / 180.0;
-  const x = r * Math.cos(angleInRadians);
-  const y = r * Math.sin(angleInRadians);
-  return [x, y];
-}
-*/
-
 export const SunburstChart = ({
+  className,
   data,
   children,
   width,
@@ -79,13 +82,10 @@ export const SunburstChart = ({
   fill = '#333',
   stroke = '#FFF',
   textOptions = defaultTextProps,
+  outerRadius = Math.min(width, height) / 2,
+  cx = width / 2,
+  cy = height / 2,
 }: SunburstChartProps) => {
-  // get the max possible radius for a circle inscribed in the chart container
-  const outerRadius = Math.min(width, height) / 2;
-
-  const cx = width / 2,
-    cy = height / 2;
-
   const rScale = scaleLinear([0, data.value], [0, 360]);
   const treeDepth = getMaxDepthOf(data);
   const thickness = (outerRadius - innerRadius) / treeDepth;
@@ -137,10 +137,12 @@ export const SunburstChart = ({
 
   drawArcs(data.children, { radius: thickness, innerR: innerRadius, initialAngle: 0 });
 
+  const layerClass = clsx('recharts-sunburst', className);
+
   return (
     <Surface width={width} height={height}>
       {children}
-      <Layer>{sectors}</Layer>
+      <Layer className={layerClass}>{sectors}</Layer>
     </Surface>
   );
 };
