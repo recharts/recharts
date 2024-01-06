@@ -54,7 +54,7 @@ export interface SunburstChartProps {
 
   onMouseLeave?: (node: SunburstData, e: any) => void;
 
-  onClick: (node: SunburstData) => void;
+  onClick?: (node: SunburstData) => void;
 }
 
 interface DrawArcOptions {
