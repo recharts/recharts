@@ -1,14 +1,5 @@
 import { createContext, useContext } from 'react';
-import { CartesianViewBox } from '../util/types';
-import { XAxisProps, YAxisProps } from '../index';
-
-export type XAxisMap = {
-  [axisId: string]: XAxisProps;
-};
-
-export type YAxisMap = {
-  [axisId: string]: YAxisProps;
-};
+import { CartesianViewBox, XAxisMap, YAxisMap } from '../util/types';
 
 type ChartLayoutContextInitializing = {
   xAxisMap: null;

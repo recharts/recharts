@@ -80,12 +80,12 @@ import {
   StackOffsetType,
   TickItem,
   TooltipEventType,
+  XAxisMap,
+  YAxisMap,
 } from '../util/types';
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { getActiveShapeIndexForTooltip, isFunnel, isPie, isScatter } from '../util/ActiveShapeUtils';
-import { Props as YAxisProps } from '../cartesian/YAxis';
-import { Props as XAxisProps } from '../cartesian/XAxis';
 import { Cursor } from '../component/Cursor';
 import { ChartLayoutContext } from '../context/chartLayoutContext';
 
@@ -729,8 +729,8 @@ const calculateOffset = (
   }: {
     props: CategoricalChartProps;
     graphicalItems: Array<ReactElement>;
-    xAxisMap?: { [axisId: string]: XAxisProps };
-    yAxisMap?: { [axisId: string]: YAxisProps };
+    xAxisMap?: XAxisMap;
+    yAxisMap?: YAxisMap;
   },
   prevLegendBBox?: DOMRect | null,
 ): ChartOffset => {

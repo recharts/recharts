@@ -24,6 +24,8 @@ import {
 } from 'react';
 import isObject from 'lodash/isObject';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
+import type { Props as XAxisProps } from '../cartesian/XAxis';
+import type { Props as YAxisProps } from '../cartesian/YAxis';
 
 /**
  * Determines how values are stacked:
@@ -1324,3 +1326,11 @@ export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElemen
   | ((props: unknown) => JSX.Element)
   | SVGProps<ElementType>
   | boolean;
+
+export type XAxisMap = {
+  [axisId: string]: XAxisProps;
+};
+
+export type YAxisMap = {
+  [axisId: string]: YAxisProps;
+};
