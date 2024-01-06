@@ -25,3 +25,21 @@ export const Sunburst = {
     innerRadius: 40,
   },
 };
+
+export const WithStartAndEndAngle = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={450}>
+        <SunburstChart fill="purple" {...args}>
+          <Tooltip />
+        </SunburstChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    data: hierarchy,
+    innerRadius: 40,
+    startAngle: 90,
+    endAngle: 270,
+  },
+};

@@ -39,6 +39,8 @@ export interface SunburstChartProps {
   cx?: number;
   /** The ordinate of pole in polar coordinate  */
   cy?: number;
+  startAngle?: number;
+  endAngle?: number;
   children?: React.ReactNode;
   fill?: string;
   stroke?: string;
@@ -85,8 +87,10 @@ export const SunburstChart = ({
   outerRadius = Math.min(width, height) / 2,
   cx = width / 2,
   cy = height / 2,
+  startAngle = 0,
+  endAngle = 360,
 }: SunburstChartProps) => {
-  const rScale = scaleLinear([0, data.value], [0, 360]);
+  const rScale = scaleLinear([0, data.value], [0, endAngle]);
   const treeDepth = getMaxDepthOf(data);
   const thickness = (outerRadius - innerRadius) / treeDepth;
 
@@ -135,7 +139,7 @@ export const SunburstChart = ({
     });
   }
 
-  drawArcs(data.children, { radius: thickness, innerR: innerRadius, initialAngle: 0 });
+  drawArcs(data.children, { radius: thickness, innerR: innerRadius, initialAngle: startAngle });
 
   const layerClass = clsx('recharts-sunburst', className);
 
