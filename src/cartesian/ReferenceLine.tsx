@@ -138,6 +138,14 @@ export const getEndPoints = (
   return null;
 };
 
+function getKeysForDebug(object: Record<string, unknown>) {
+  const keys = Object.keys(object);
+  if (keys.length === 0) {
+    return 'There are no available ids.';
+  }
+  return `Available ids are: ${keys}.`;
+}
+
 export function ReferenceLine(props: Props) {
   const { x: fixedX, y: fixedY, segment, xAxisId, yAxisId, shape, className, alwaysShow } = props;
 
@@ -148,15 +156,9 @@ export function ReferenceLine(props: Props) {
   const xAxis: XAxisProps | null = xAxisMap[xAxisId];
   const yAxis: YAxisProps | null = yAxisMap[yAxisId];
 
-  invariant(
-    xAxis != null,
-    `Could not find xAxis by id "${xAxisId}" [${typeof xAxisId}]. Available xAxis are: ${Object.keys(xAxisMap)}`,
-  );
+  invariant(xAxis != null, `Could not find xAxis by id "${xAxisId}" [${typeof xAxisId}]. ${getKeysForDebug(xAxisMap)}`);
 
-  invariant(
-    yAxis != null,
-    `Could not find yAxis by id "${yAxisId}" [${typeof yAxisId}]. Available yAxis are: ${Object.keys(yAxisMap)}`,
-  );
+  invariant(yAxis != null, `Could not find yAxis by id "${yAxisId}" [${typeof yAxisId}]. ${getKeysForDebug(yAxisMap)}`);
 
   warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
