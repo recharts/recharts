@@ -87,7 +87,7 @@ import { getActiveShapeIndexForTooltip, isFunnel, isPie, isScatter } from '../ut
 import { Props as YAxisProps } from '../cartesian/YAxis';
 import { Props as XAxisProps } from '../cartesian/XAxis';
 import { Cursor } from '../component/Cursor';
-import { ChartLayoutContext } from '../context/layoutContext';
+import { ChartLayoutContext } from '../context/chartLayoutContext';
 
 export interface MousePointer {
   pageX: number;

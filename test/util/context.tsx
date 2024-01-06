@@ -1,6 +1,6 @@
 import React, { ComponentType, ReactNode } from 'react';
 import { render } from '@testing-library/react';
-import { ChartLayoutContextType, useChartLayoutContext } from '../../src/context/layoutContext';
+import { ChartLayoutContextType, useChartLayoutContext } from '../../src/context/chartLayoutContext';
 import { Tooltip } from '../../src/component/Tooltip';
 
 export function testChartLayoutContext(

@@ -16,7 +16,7 @@ import { CartesianViewBox, D3Scale } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { filterProps } from '../util/ReactUtils';
-import { useChartLayoutContext } from '../context/layoutContext';
+import { useChartLayoutContext } from '../context/chartLayoutContext';
 
 interface InternalReferenceLineProps {
   viewBox?: CartesianViewBox;
