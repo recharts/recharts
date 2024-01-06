@@ -11,7 +11,7 @@ const hierarchy: SunburstData = {
   children: [
     {
       name: 'Child1',
-      fill: 'steelblue',
+      fill: '#264653',
       value: 30,
       children: [
         {
@@ -45,7 +45,7 @@ const hierarchy: SunburstData = {
     },
     {
       name: 'Child2',
-      fill: 'green',
+      fill: '#2a9d8f',
       value: 20,
       children: [
         {
@@ -65,12 +65,12 @@ const hierarchy: SunburstData = {
     },
     {
       name: 'Child3',
-      fill: 'red',
+      fill: '#e9c46a',
       value: 20,
     },
     {
       name: 'Child4',
-      fill: 'purple',
+      fill: '#F4A261',
       value: 10,
       children: [
         { name: 'child4 child', value: 5 },
@@ -79,7 +79,7 @@ const hierarchy: SunburstData = {
     },
     {
       name: 'Child5',
-      fill: 'orange',
+      fill: '#e76f51',
       value: 20,
     },
   ],

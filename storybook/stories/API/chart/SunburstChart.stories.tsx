@@ -13,7 +13,7 @@ export default {
 export const Sunburst = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width="100%" height={450}>
         <SunburstChart fill="purple" {...args}>
           <Tooltip />
         </SunburstChart>
@@ -22,5 +22,6 @@ export const Sunburst = {
   },
   args: {
     data: hierarchy,
+    innerRadius: 40,
   },
 };
