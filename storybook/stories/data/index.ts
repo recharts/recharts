@@ -9,4 +9,3 @@ export * from './Time';
 export * from './BoxPlot';
 export * from './Impression';
 export * from './Error';
-export * from './Hierarchy';
