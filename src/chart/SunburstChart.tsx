@@ -50,9 +50,9 @@ export interface SunburstChartProps {
   /* an object with svg text options to control the appearance of the chart labels. */
   textOptions?: TextOptions;
 
-  onMouseEnter?: (node: SunburstData, e: any) => void;
+  onMouseEnter?: (node: SunburstData, e: React.MouseEvent) => void;
 
-  onMouseLeave?: (node: SunburstData, e: any) => void;
+  onMouseLeave?: (node: SunburstData, e: React.MouseEvent) => void;
 
   onClick?: (node: SunburstData) => void;
 }
@@ -111,13 +111,13 @@ export const SunburstChart = ({
   const sectors: React.ReactNode[] = [];
 
   // event handlers
-  function handleMouseEnter(node: SunburstData, e: any) {
+  function handleMouseEnter(node: SunburstData, e: React.MouseEvent) {
     if (onMouseEnter) onMouseEnter(node, e);
     setActiveNode(activeNode);
     setIsTooltipActive(true);
   }
 
-  function handleMouseLeave(node: SunburstData, e: any) {
+  function handleMouseLeave(node: SunburstData, e: React.MouseEvent) {
     if (onMouseLeave) onMouseLeave(node, e);
     setActiveNode(null);
     setIsTooltipActive(false);
