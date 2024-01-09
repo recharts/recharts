@@ -1,11 +1,27 @@
 import React from 'react';
 import { ResponsiveContainer, SunburstChart, Tooltip } from '../../../../src';
-import { CategoricalChartProps } from '../props/ChartProps';
+import { data, margin, ChartSizeProps, dataKey, CategoricalChartProps } from '../props/ChartProps';
 import { hierarchy } from '../../data';
+
+const { innerRadius, outerRadius, cx, cy, startAngle, endAngle, onClick, onMouseEnter, onMouseLeave, className } =
+  CategoricalChartProps;
 
 export default {
   argTypes: {
-    ...CategoricalChartProps,
+    data,
+    margin,
+    ...ChartSizeProps,
+    dataKey,
+    innerRadius,
+    outerRadius,
+    cx,
+    cy,
+    startAngle,
+    endAngle,
+    onClick,
+    onMouseEnter,
+    onMouseLeave,
+    className,
   },
   component: SunburstChart,
 };

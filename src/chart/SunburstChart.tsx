@@ -65,7 +65,6 @@ interface DrawArcOptions {
 }
 
 const defaultTextProps = {
-  fontFamily: 'sans-serif',
   fontWeight: 'bold',
   paintOrder: 'stroke fill',
   fontSize: '.75rem',
