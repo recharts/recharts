@@ -76,7 +76,7 @@ export function Cursor(props: CursorProps) {
     restProps = { points: getCursorPoints(layout, activeCoordinate, offset) };
     cursorComp = Curve;
   }
-  const key = element.key || '_recharts-cursor';
+
   const cursorProps = {
     stroke: '#ccc',
     pointerEvents: 'none',
@@ -85,7 +85,6 @@ export function Cursor(props: CursorProps) {
     ...filterProps(element.props.cursor),
     payload: activePayload,
     payloadIndex: activeTooltipIndex,
-    key,
     className: 'recharts-tooltip-cursor',
   };
 
