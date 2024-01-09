@@ -9,6 +9,7 @@ import { polarToCartesian } from '../util/PolarUtils';
 import { Tooltip } from '../component/Tooltip';
 
 export interface SunburstData {
+  [key: string]: any;
   name: string;
   value?: number;
   fill?: string;
@@ -30,6 +31,7 @@ export interface SunburstChartProps {
   width?: number;
   height?: number;
   padding?: number;
+  dataKey?: string;
   /* Padding between each hierarchical level. */
   ringPadding?: number;
   /* The radius of the inner circle at the center of the chart. */
@@ -87,6 +89,7 @@ export const SunburstChart = ({
   width,
   height,
   padding = 2,
+  dataKey = 'value',
   ringPadding = 2,
   innerRadius = 50,
   fill = '#333',
@@ -104,7 +107,7 @@ export const SunburstChart = ({
   const [isTooltipActive, setIsTooltipActive] = useState(false);
   const [activeNode, setActiveNode] = useState<SunburstData | null>(null);
 
-  const rScale = scaleLinear([0, data.value], [0, endAngle]);
+  const rScale = scaleLinear([0, data[dataKey]], [0, endAngle]);
   const treeDepth = getMaxDepthOf(data);
   const thickness = (outerRadius - innerRadius) / treeDepth;
 
@@ -136,7 +139,7 @@ export const SunburstChart = ({
     if (!childNodes) return; // base case: no children of this node
 
     childNodes.forEach(d => {
-      const arcLength = rScale(d.value);
+      const arcLength = rScale(d[dataKey]);
       const start = currentAngle;
       // color priority - if there's a color on the individual point use that, otherwise use parent color or default
       const fillColor = d?.fill ?? childColor ?? fill;
@@ -159,7 +162,7 @@ export const SunburstChart = ({
             cy={cy}
           />
           <Text {...textOptions} alignmentBaseline="middle" textAnchor="middle" x={textX + cx} y={cy - textY}>
-            {d.value}
+            {d[dataKey]}
           </Text>
         </g>,
       );

@@ -110,7 +110,7 @@ export const Sunburst = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={450}>
-        <SunburstChart fill="purple" {...args}>
+        <SunburstChart {...args}>
           <Tooltip />
         </SunburstChart>
       </ResponsiveContainer>
@@ -126,7 +126,7 @@ export const WithStartAndEndAngle = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={450}>
-        <SunburstChart fill="purple" {...args}>
+        <SunburstChart {...args}>
           <Tooltip />
         </SunburstChart>
       </ResponsiveContainer>
