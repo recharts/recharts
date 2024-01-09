@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import clsx from 'clsx';
+import { findChildByType } from '../util/ReactUtils';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Sector } from '../shape/Sector';
@@ -23,6 +24,7 @@ interface TextOptions {
   stroke?: string;
   fill?: string;
   fontSize?: string;
+  pointerEvents?: string;
 }
 
 export interface SunburstChartProps {
@@ -72,6 +74,7 @@ const defaultTextProps = {
   fontSize: '.75rem',
   stroke: '#FFF',
   fill: 'black',
+  pointerEvents: 'none',
 };
 
 function getMaxDepthOf(node: SunburstData): number {
@@ -112,11 +115,13 @@ export const SunburstChart = ({
   const thickness = (outerRadius - innerRadius) / treeDepth;
 
   const sectors: React.ReactNode[] = [];
+  const positions = new Map([]);
 
   // event handlers
   function handleMouseEnter(node: SunburstData, e: React.MouseEvent) {
     if (onMouseEnter) onMouseEnter(node, e);
-    setActiveNode(activeNode);
+    setActiveNode(node);
+
     setIsTooltipActive(true);
   }
 
@@ -167,6 +172,9 @@ export const SunburstChart = ({
         </g>,
       );
 
+      const { x: tooltipX, y: tooltipY } = polarToCartesian(cx, cy, innerR + radius / 2, start);
+      positions.set(d.name, { x: tooltipX, y: tooltipY });
+
       return drawArcs(d.children, {
         radius,
         innerR: innerR + radius + ringPadding,
@@ -180,11 +188,28 @@ export const SunburstChart = ({
 
   const layerClass = clsx('recharts-sunburst', className);
 
+  function renderTooltip() {
+    const tooltipComponent = findChildByType([children], Tooltip);
+
+    if (!tooltipComponent || !activeNode) return null;
+
+    const viewBox = { x: 0, y: 0, width, height };
+
+    return React.cloneElement(tooltipComponent as React.DetailedReactHTMLElement<any, HTMLElement>, {
+      viewBox,
+      coordinate: positions.get(activeNode.name),
+      payload: [activeNode],
+      active: isTooltipActive,
+    });
+  }
+
   return (
-    <Surface width={width} height={height}>
-      {children}
-      <Layer className={layerClass}>{sectors}</Layer>
-      <Tooltip active={isTooltipActive} content={<div>Tooltip</div>} />
-    </Surface>
+    <div className={clsx('recharts-wrapper', className)} style={{ position: 'relative', width, height }} role="region">
+      <Surface width={width} height={height}>
+        {children}
+        <Layer className={layerClass}>{sectors}</Layer>
+      </Surface>
+      {renderTooltip()}
+    </div>
   );
 };
