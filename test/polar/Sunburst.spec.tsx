@@ -1,5 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
 import { SunburstChart } from '../../src';
 
 describe('<Sunburst />', () => {
@@ -16,29 +18,6 @@ describe('<Sunburst />', () => {
             name: 'third child',
             value: 10,
           },
-          {
-            name: 'another child',
-            value: 5,
-          },
-          {
-            name: 'next child',
-            value: 15,
-            children: [
-              {
-                name: 'third level child',
-                value: 5,
-              },
-              {
-                name: 'third level child',
-                value: 5,
-              },
-              {
-                name: 'third level child',
-                value: 5,
-                children: [{ name: 'level 4', value: 2 }],
-              },
-            ],
-          },
         ],
       },
       {
@@ -50,15 +29,6 @@ describe('<Sunburst />', () => {
             name: 'another child',
             value: 10,
           },
-          {
-            name: 'next child',
-            value: 10,
-            children: [
-              { name: 'level 3 of child 2', value: 5 },
-              { name: 'level 3 of child 2', value: 3 },
-              { name: 'level 3 of child 2', value: 2 },
-            ],
-          },
         ],
       },
       {
@@ -66,26 +36,36 @@ describe('<Sunburst />', () => {
         fill: '#e9c46a',
         value: 20,
       },
-      {
-        name: 'Child4',
-        fill: '#F4A261',
-        value: 10,
-        children: [
-          { name: 'child4 child', value: 5 },
-          { name: 'child4 child', value: 5 },
-        ],
-      },
-      {
-        name: 'Child5',
-        fill: '#e76f51',
-        value: 20,
-      },
     ],
   };
 
-  it('renders a sector for each data point', () => {
+  it('renders each sector in order under the correct category', () => {
     const { container } = render(<SunburstChart data={data} />);
 
-    expect(container.querySelectorAll('.recharts-sector')).toHaveLength(19);
+    const sectors = container.querySelectorAll('.recharts-sector');
+
+    expect(sectors[0]).toHaveAttribute('fill', '#264653');
+    expect(sectors[1]).toHaveAttribute('fill', '#264653');
+    expect(sectors[2]).toHaveAttribute('fill', '#2a9d8f');
+    expect(sectors[3]).toHaveAttribute('fill', '#2a9d8f');
+    expect(sectors[4]).toHaveAttribute('fill', '#e9c46a');
+  });
+
+  it('fires callbacks upon hover and click events', async () => {
+    const onMouseEnter = vi.fn();
+    const onMouseLeave = vi.fn();
+    const onClick = vi.fn();
+
+    const { container } = render(
+      <SunburstChart onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} data={data} />,
+    );
+    const sector = container.querySelectorAll('.recharts-sector')[0];
+
+    await userEvent.hover(sector);
+    expect(onMouseEnter).toHaveBeenCalled();
+    await userEvent.unhover(sector);
+    expect(onMouseLeave).toHaveBeenCalled();
+    await userEvent.click(sector);
+    expect(onClick).toHaveBeenCalled();
   });
 });
