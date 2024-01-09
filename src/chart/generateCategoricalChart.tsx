@@ -1780,9 +1780,11 @@ export const generateCategoricalChart = ({
       // The cursor is a part of the Tooltip, and it should be shown (by default) when the Tooltip is active.
       const isActive: boolean = element.props.active ?? isTooltipActive;
       const { layout } = this.props;
+      const key = element.key || '_recharts-cursor';
 
       return (
         <Cursor
+          key={key}
           activeCoordinate={activeCoordinate}
           activePayload={activePayload}
           activeTooltipIndex={activeTooltipIndex}
