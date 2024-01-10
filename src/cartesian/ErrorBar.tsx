@@ -51,7 +51,10 @@ export function ErrorBar(props: Props) {
   const { offset, layout, width, dataKey, data, dataPointFormatter, xAxis, yAxis, ...others } = props;
   const svgProps = filterProps(others);
 
-  invariant(!(props.direction === 'x' && xAxis.type !== 'number'), 'Errorbar requires Axis type to be "number".');
+  invariant(
+    !(props.direction === 'x' && xAxis.type !== 'number'),
+    'ErrorBar requires Axis type property to be "number".',
+  );
 
   const errorBars = data.map((entry: any) => {
     const { x, y, value, errorVal } = dataPointFormatter(entry, dataKey);
