@@ -80,13 +80,14 @@ import {
   StackOffsetType,
   TickItem,
   TooltipEventType,
+  XAxisMap,
+  YAxisMap,
 } from '../util/types';
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { getActiveShapeIndexForTooltip, isFunnel, isPie, isScatter } from '../util/ActiveShapeUtils';
-import { Props as YAxisProps } from '../cartesian/YAxis';
-import { Props as XAxisProps } from '../cartesian/XAxis';
 import { Cursor } from '../component/Cursor';
+import { ChartLayoutContext } from '../context/chartLayoutContext';
 
 export interface MousePointer {
   pageX: number;
@@ -108,6 +109,22 @@ const ORIENT_MAP = {
 const FULL_WIDTH_AND_HEIGHT = { width: '100%', height: '100%' };
 
 const originCoordinate: Coordinate = { x: 0, y: 0 };
+
+/**
+ * This function exists as a temporary workaround.
+ *
+ * Why? generateCategoricalChart does not render `{children}` directly;
+ * instead it passes them through `renderByOrder` function which reads their handlers.
+ *
+ * So, this is a handler that does nothing.
+ * Once we get rid of `renderByOrder` and switch to JSX only, we can get rid of this handler too.
+ *
+ * @param {JSX} element as is in JSX
+ * @returns {JSX} the same element
+ */
+function renderAsIs(element: React.ReactElement): React.ReactElement {
+  return element;
+}
 
 const calculateTooltipPos = (rangeObj: any, layout: LayoutType): any => {
   if (layout === 'horizontal') {
@@ -712,8 +729,8 @@ const calculateOffset = (
   }: {
     props: CategoricalChartProps;
     graphicalItems: Array<ReactElement>;
-    xAxisMap?: { [axisId: string]: XAxisProps };
-    yAxisMap?: { [axisId: string]: YAxisProps };
+    xAxisMap?: XAxisMap;
+    yAxisMap?: YAxisMap;
   },
   prevLegendBBox?: DOMRect | null,
 ): ChartOffset => {
@@ -2260,7 +2277,7 @@ export const generateCategoricalChart = ({
     renderMap = {
       CartesianGrid: { handler: this.renderGrid, once: true },
       ReferenceArea: { handler: this.renderReferenceElement },
-      ReferenceLine: { handler: this.renderReferenceElement },
+      ReferenceLine: { handler: renderAsIs },
       ReferenceDot: { handler: this.renderReferenceElement },
       XAxis: { handler: this.renderXAxis },
       YAxis: { handler: this.renderYAxis },
@@ -2286,6 +2303,7 @@ export const generateCategoricalChart = ({
       }
 
       const { children, className, width, height, style, compact, title, desc, ...others } = this.props;
+      const { xAxisMap, yAxisMap, offset } = this.state;
       const attrs = filterProps(others);
 
       // The "compact" mode is mainly used as the panorama within Brush
@@ -2317,22 +2335,36 @@ export const generateCategoricalChart = ({
 
       const events = this.parseEventsOfWrapper();
       return (
-        <div
-          className={clsx('recharts-wrapper', className)}
-          style={{ position: 'relative', cursor: 'default', width, height, ...style }}
-          {...events}
-          ref={(node: HTMLDivElement) => {
-            this.container = node;
+        <ChartLayoutContext.Provider
+          value={{
+            xAxisMap,
+            yAxisMap,
+            viewBox: {
+              x: offset.left,
+              y: offset.top,
+              width: offset.width,
+              height: offset.height,
+            },
+            clipPathId: this.clipPathId,
           }}
-          role="region"
         >
-          <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
-            {this.renderClipPath()}
-            {renderByOrder(children, this.renderMap)}
-          </Surface>
-          {this.renderLegend()}
-          {this.renderTooltip()}
-        </div>
+          <div
+            className={clsx('recharts-wrapper', className)}
+            style={{ position: 'relative', cursor: 'default', width, height, ...style }}
+            {...events}
+            ref={(node: HTMLDivElement) => {
+              this.container = node;
+            }}
+            role="region"
+          >
+            <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
+              {this.renderClipPath()}
+              {renderByOrder(children, this.renderMap)}
+            </Surface>
+            {this.renderLegend()}
+            {this.renderTooltip()}
+          </div>
+        </ChartLayoutContext.Provider>
       );
     }
   };

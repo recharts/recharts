@@ -2,7 +2,8 @@ import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, Mock } from 'vitest';
-import { PieChart, Pie, Legend, Cell, Tooltip, Sector, SectorProps } from '../../src';
+import { PieChart, Pie, Legend, Cell, Tooltip, Sector, SectorProps, XAxis, YAxis } from '../../src';
+import { testChartLayoutContext } from '../util/context';
 
 describe('<PieChart />', () => {
   const data = [
@@ -322,5 +323,47 @@ describe('<PieChart />', () => {
 
     await userEvent.unhover(sector);
     expect(onMouseLeave).toBeCalled();
+  });
+
+  describe('PieChart layout context', () => {
+    it(
+      'should provide viewBox and clipPathId if there are no axes',
+      testChartLayoutContext(
+        props => (
+          <PieChart width={100} height={50} barSize={20}>
+            {props.children}
+          </PieChart>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
+          expect(xAxisMap).toBe(undefined);
+          expect(yAxisMap).toBe(undefined);
+        },
+      ),
+    );
+
+    /**
+     * This test is skipped because generateCategoricalChart throws an error if axes are provided to FunnelChart.
+     * TODO un-skip this level if fixing the exception.
+     */
+    it.skip(
+      'should provide axisMaps: undefined even if axes are specified',
+      testChartLayoutContext(
+        props => (
+          <PieChart width={100} height={50} barSize={20}>
+            <XAxis dataKey="number" type="number" />
+            <YAxis type="category" dataKey="name" />
+            {props.children}
+          </PieChart>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 10, width: 30, x: 65, y: 5 });
+          expect(xAxisMap).toBe(undefined);
+          expect(yAxisMap).toBe(undefined);
+        },
+      ),
+    );
   });
 });

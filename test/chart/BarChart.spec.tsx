@@ -4,6 +4,7 @@ import React from 'react';
 import { vi } from 'vitest';
 import { Bar, BarChart, Rectangle, RectangleProps, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
+import { testChartLayoutContext } from '../util/context';
 
 type DataType = {
   name: string;
@@ -362,5 +363,124 @@ describe('<BarChart />', () => {
     // expect clipPath rect to have a width and height of 0
     expect(clipPath.children[0]).toHaveAttribute('width', '0');
     expect(clipPath.children[0]).toHaveAttribute('height', '0');
+  });
+
+  describe('BarChart layout context', () => {
+    it(
+      'should provide viewBox and clipPathId if there are no axes',
+      testChartLayoutContext(
+        props => (
+          <BarChart width={100} height={50} barSize={20}>
+            {props.children}
+          </BarChart>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
+          expect(xAxisMap).toEqual({});
+          expect(yAxisMap).toEqual({});
+        },
+      ),
+    );
+
+    it(
+      'should provide axisMaps if axes are specified',
+      testChartLayoutContext(
+        props => (
+          <BarChart width={100} height={50} barSize={20}>
+            <XAxis dataKey="number" type="number" />
+            <YAxis type="category" dataKey="name" />
+            {props.children}
+          </BarChart>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 10, width: 30, x: 65, y: 5 });
+          expect(xAxisMap).toMatchInlineSnapshot(`
+            {
+              "0": {
+                "allowDataOverflow": false,
+                "allowDecimals": true,
+                "allowDuplicatedCategory": true,
+                "axisType": "xAxis",
+                "bandSize": 0,
+                "categoricalDomain": [],
+                "dataKey": "number",
+                "domain": [
+                  0,
+                  -Infinity,
+                ],
+                "duplicateDomain": undefined,
+                "height": 30,
+                "hide": false,
+                "isCategorical": true,
+                "layout": "horizontal",
+                "mirror": false,
+                "niceTicks": [
+                  0,
+                  -Infinity,
+                  -Infinity,
+                  -Infinity,
+                  -Infinity,
+                ],
+                "orientation": "bottom",
+                "originalDomain": [
+                  0,
+                  "auto",
+                ],
+                "padding": {
+                  "left": 0,
+                  "right": 0,
+                },
+                "realScaleType": "linear",
+                "reversed": false,
+                "scale": [Function],
+                "tickCount": 5,
+                "type": "number",
+                "width": 30,
+                "x": 65,
+                "xAxisId": 0,
+                "y": 15,
+              },
+            }
+          `);
+          expect(yAxisMap).toMatchInlineSnapshot(`
+            {
+              "0": {
+                "allowDataOverflow": false,
+                "allowDecimals": true,
+                "allowDuplicatedCategory": true,
+                "axisType": "yAxis",
+                "bandSize": 10,
+                "categoricalDomain": undefined,
+                "dataKey": "name",
+                "domain": [],
+                "duplicateDomain": undefined,
+                "height": 10,
+                "hide": false,
+                "isCategorical": false,
+                "layout": "horizontal",
+                "mirror": false,
+                "orientation": "left",
+                "originalDomain": undefined,
+                "padding": {
+                  "bottom": 0,
+                  "top": 0,
+                },
+                "realScaleType": "band",
+                "reversed": false,
+                "scale": [Function],
+                "tickCount": 5,
+                "type": "category",
+                "width": 60,
+                "x": 5,
+                "y": 5,
+                "yAxisId": 0,
+              },
+            }
+          `);
+        },
+      ),
+    );
   });
 });
