@@ -5,7 +5,6 @@ import React, { ReactElement, SVGProps } from 'react';
 import isFunction from 'lodash/isFunction';
 import some from 'lodash/some';
 import clsx from 'clsx';
-import invariant from 'tiny-invariant';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
 import { IfOverflow, ifOverflowMatches } from '../util/IfOverflowMatches';
@@ -16,7 +15,7 @@ import { CartesianViewBox, D3Scale } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { filterProps } from '../util/ReactUtils';
-import { useChartLayoutContext } from '../context/chartLayoutContext';
+import { useClipPathId, useViewBox, useXAxisOrThrow, useYAxisOrThrow } from '../context/chartLayoutContext';
 
 interface InternalReferenceLineProps {
   viewBox?: CartesianViewBox;
@@ -138,27 +137,16 @@ export const getEndPoints = (
   return null;
 };
 
-function getKeysForDebug(object: Record<string, unknown>) {
-  const keys = Object.keys(object);
-  if (keys.length === 0) {
-    return 'There are no available ids.';
-  }
-  return `Available ids are: ${keys}.`;
-}
-
 export function ReferenceLine(props: Props) {
   const { x: fixedX, y: fixedY, segment, xAxisId, yAxisId, shape, className, alwaysShow } = props;
 
-  const { xAxisMap, yAxisMap, viewBox, clipPathId } = useChartLayoutContext();
-  if (!clipPathId || !xAxisMap || !yAxisMap || !viewBox) {
+  const clipPathId = useClipPathId();
+  const xAxis = useXAxisOrThrow(xAxisId);
+  const yAxis = useYAxisOrThrow(yAxisId);
+  const viewBox = useViewBox();
+  if (!clipPathId || !viewBox) {
     return null;
   }
-  const xAxis: XAxisProps | null = xAxisMap[xAxisId];
-  const yAxis: YAxisProps | null = yAxisMap[yAxisId];
-
-  invariant(xAxis != null, `Could not find xAxis by id "${xAxisId}" [${typeof xAxisId}]. ${getKeysForDebug(xAxisMap)}`);
-
-  invariant(yAxis != null, `Could not find yAxis by id "${yAxisId}" [${typeof yAxisId}]. ${getKeysForDebug(yAxisMap)}`);
 
   warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 

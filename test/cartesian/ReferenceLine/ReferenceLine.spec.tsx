@@ -356,9 +356,10 @@ describe('<ReferenceLine />', () => {
     );
   });
 
-  test('does not return anything when rendered alone, outside of context', () => {
-    const { container } = render(<ReferenceLine x={20} />);
-    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
+  test('throws when rendered alone, outside of context', () => {
+    expect(() => render(<ReferenceLine x={20} />)).toThrow(
+      'Invariant failed: Could not find xAxisMap; are you sure this is rendered inside a Recharts context?',
+    );
   });
 
   test('does not return anything when rendered as a nested child', () => {
