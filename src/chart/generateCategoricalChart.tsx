@@ -1756,13 +1756,6 @@ export const generateCategoricalChart = ({
       });
     };
 
-    renderXAxis = (element: any, displayName: string, index: number) => {
-      const { xAxisMap } = this.state;
-      const axisObj = xAxisMap[element.props.xAxisId];
-
-      return this.renderAxis(axisObj, element, displayName, index);
-    };
-
     renderYAxis = (element: any, displayName: string, index: number) => {
       const { yAxisMap } = this.state;
       const axisObj = yAxisMap[element.props.yAxisId];
@@ -2206,7 +2199,7 @@ export const generateCategoricalChart = ({
       ReferenceArea: { handler: this.renderReferenceElement },
       ReferenceLine: { handler: renderAsIs },
       ReferenceDot: { handler: this.renderReferenceElement },
-      XAxis: { handler: this.renderXAxis },
+      XAxis: { handler: renderAsIs },
       YAxis: { handler: this.renderYAxis },
       Brush: { handler: this.renderBrush, once: true },
       Bar: { handler: this.renderGraphicChild },
