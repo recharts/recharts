@@ -3,6 +3,11 @@ import { ChartOffset } from '../../src/util/types';
 import { calculateViewBox } from '../../src/util/calculateViewBox';
 
 describe('calculateViewBox', () => {
+  test('should throw if offset is undefined', () => {
+    // @ts-expect-error this should show an error - the function will not accept undefined, so typescript should highlight that too
+    expect(() => calculateViewBox(undefined)).toThrow();
+  });
+
   test('should memoize results when passed identical offset', () => {
     const offset: ChartOffset = {
       left: 10,

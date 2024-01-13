@@ -4,6 +4,7 @@ import { render } from '@testing-library/react';
 import {
   ChartLayoutContextProvider,
   useClipPathId,
+  useViewBox,
   useXAxisOrThrow,
   useYAxisOrThrow,
 } from '../../src/context/chartLayoutContext';
@@ -11,6 +12,10 @@ import { CategoricalChartState } from '../../src/chart/types';
 import { XAxisMap, YAxisMap } from '../../src/util/types';
 
 describe('ChartLayoutContextProvider', () => {
+  const minimalState: CategoricalChartState = {
+    offset: {},
+  };
+
   describe('ClipPathIdContext', () => {
     it('should add clipPathId to context', () => {
       expect.assertions(1);
@@ -20,7 +25,7 @@ describe('ChartLayoutContextProvider', () => {
         return null;
       };
       render(
-        <ChartLayoutContextProvider clipPathId="my mock ID" state={{}}>
+        <ChartLayoutContextProvider clipPathId="my mock ID" state={minimalState}>
           <MockConsumer />
         </ChartLayoutContextProvider>,
       );
@@ -43,16 +48,15 @@ describe('ChartLayoutContextProvider', () => {
           renderCount++;
           return null;
         };
-        const mockState: CategoricalChartState = {};
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState}>
+          <ChartLayoutContextProvider clipPathId="my mock ID" state={minimalState}>
             <MockConsumer />
           </ChartLayoutContextProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState}>
+          <ChartLayoutContextProvider clipPathId="my mock ID" state={minimalState}>
             <MockConsumer />
           </ChartLayoutContextProvider>,
         );
@@ -67,16 +71,15 @@ describe('ChartLayoutContextProvider', () => {
           renderCount++;
           return null;
         });
-        const mockState: CategoricalChartState = {};
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState}>
+          <ChartLayoutContextProvider clipPathId="my mock ID" state={minimalState}>
             <MockConsumer />
           </ChartLayoutContextProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState}>
+          <ChartLayoutContextProvider clipPathId="my mock ID" state={minimalState}>
             <MockConsumer />
           </ChartLayoutContextProvider>,
         );
@@ -89,16 +92,15 @@ describe('ChartLayoutContextProvider', () => {
           renderCount++;
           return null;
         });
-        const mockState: CategoricalChartState = {};
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState}>
+          <ChartLayoutContextProvider clipPathId="my mock ID" state={minimalState}>
             <MockConsumer />
           </ChartLayoutContextProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider clipPathId="my mock ID but this time different" state={mockState}>
+          <ChartLayoutContextProvider clipPathId="my mock ID but this time different" state={minimalState}>
             <MockConsumer />
           </ChartLayoutContextProvider>,
         );
@@ -107,46 +109,44 @@ describe('ChartLayoutContextProvider', () => {
     });
 
     describe('children that read the context using a hook', () => {
-      it('should render a context-aware children only once', () => {
+      it('should render context-aware children only once', () => {
         let renderCount = 0;
         const MockConsumer = memo(() => {
           useClipPathId();
           renderCount++;
           return null;
         });
-        const mockState: CategoricalChartState = {};
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState}>
+          <ChartLayoutContextProvider clipPathId="my mock ID" state={minimalState}>
             <MockConsumer />
           </ChartLayoutContextProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState}>
+          <ChartLayoutContextProvider clipPathId="my mock ID" state={minimalState}>
             <MockConsumer />
           </ChartLayoutContextProvider>,
         );
         expect(renderCount).toBe(1);
       });
 
-      it('should re-render a context-aware children if the clipPathId changes', () => {
+      it('should re-render context-aware children if the clipPathId changes', () => {
         let renderCount = 0;
         const MockConsumer = memo(() => {
           useClipPathId();
           renderCount++;
           return null;
         });
-        const mockState: CategoricalChartState = {};
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState}>
+          <ChartLayoutContextProvider clipPathId="my mock ID" state={minimalState}>
             <MockConsumer />
           </ChartLayoutContextProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider clipPathId="my mock ID but this time different" state={mockState}>
+          <ChartLayoutContextProvider clipPathId="my mock ID but this time different" state={minimalState}>
             <MockConsumer />
           </ChartLayoutContextProvider>,
         );
@@ -160,8 +160,8 @@ describe('ChartLayoutContextProvider', () => {
           renderCount++;
           return null;
         });
-        const mockState1: CategoricalChartState = {};
-        const mockState2: CategoricalChartState = {};
+        const mockState1: CategoricalChartState = { ...minimalState };
+        const mockState2: CategoricalChartState = { ...minimalState };
         expect(renderCount).toBe(0);
         const { rerender } = render(
           <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState1}>
@@ -195,10 +195,12 @@ describe('ChartLayoutContextProvider', () => {
     };
 
     const mockState1: CategoricalChartState = {
+      ...minimalState,
       xAxisMap: exampleXAxisMap,
     };
 
     const mockState2: CategoricalChartState = {
+      ...minimalState,
       xAxisMap: exampleXAxisMap2,
     };
 
@@ -221,7 +223,7 @@ describe('ChartLayoutContextProvider', () => {
         };
         expect(() =>
           render(
-            <ChartLayoutContextProvider clipPathId="" state={{}}>
+            <ChartLayoutContextProvider clipPathId="" state={minimalState}>
               <MockConsumer />
             </ChartLayoutContextProvider>,
           ),
@@ -247,7 +249,7 @@ describe('ChartLayoutContextProvider', () => {
         const xAxisMap: XAxisMap = {};
         expect(() =>
           render(
-            <ChartLayoutContextProvider clipPathId="" state={{ xAxisMap }}>
+            <ChartLayoutContextProvider clipPathId="" state={{ ...minimalState, xAxisMap }}>
               <MockConsumer />
             </ChartLayoutContextProvider>,
           ),
@@ -271,23 +273,17 @@ describe('ChartLayoutContextProvider', () => {
 
     it('should add xAxis to context', () => {
       expect.assertions(2);
-      const xAxisMap: XAxisMap = {
-        a: {
-          width: 200,
-          height: 10,
-        },
-      };
       const MockConsumer = () => {
         const xAxis = useXAxisOrThrow('a');
         expect(xAxis).toEqual({
           width: 200,
           height: 10,
         });
-        expect(xAxis).toBe(xAxisMap.a);
+        expect(xAxis).toBe(exampleXAxisMap.a);
         return null;
       };
       render(
-        <ChartLayoutContextProvider clipPathId="" state={{ xAxisMap }}>
+        <ChartLayoutContextProvider clipPathId="" state={mockState1}>
           <MockConsumer />
         </ChartLayoutContextProvider>,
       );
@@ -363,7 +359,7 @@ describe('ChartLayoutContextProvider', () => {
     });
 
     describe('children that read the context using a hook', () => {
-      it('should render a context-aware children only once', () => {
+      it('should render context-aware children only once', () => {
         let renderCount = 0;
         const MockConsumer = memo(() => {
           useXAxisOrThrow('a');
@@ -386,7 +382,7 @@ describe('ChartLayoutContextProvider', () => {
         expect(renderCount).toBe(1);
       });
 
-      it('should re-render a context-aware children if the xAxisMap changes', () => {
+      it('should re-render context-aware children if the xAxisMap changes', () => {
         let renderCount = 0;
         const MockConsumer = memo(() => {
           useXAxisOrThrow('a');
@@ -470,10 +466,12 @@ describe('ChartLayoutContextProvider', () => {
     };
 
     const mockState1: CategoricalChartState = {
+      ...minimalState,
       yAxisMap: exampleYAxisMap,
     };
 
     const mockState2: CategoricalChartState = {
+      ...minimalState,
       yAxisMap: exampleYAxisMap2,
     };
 
@@ -496,7 +494,7 @@ describe('ChartLayoutContextProvider', () => {
         };
         expect(() =>
           render(
-            <ChartLayoutContextProvider clipPathId="" state={{}}>
+            <ChartLayoutContextProvider clipPathId="" state={minimalState}>
               <MockConsumer />
             </ChartLayoutContextProvider>,
           ),
@@ -522,7 +520,7 @@ describe('ChartLayoutContextProvider', () => {
         const yAxisMap: YAxisMap = {};
         expect(() =>
           render(
-            <ChartLayoutContextProvider clipPathId="" state={{ yAxisMap }}>
+            <ChartLayoutContextProvider clipPathId="" state={{ ...minimalState, yAxisMap }}>
               <MockConsumer />
             </ChartLayoutContextProvider>,
           ),
@@ -544,25 +542,19 @@ describe('ChartLayoutContextProvider', () => {
       });
     });
 
-    it('should add xAxis to context', () => {
+    it('should add yAxis to context', () => {
       expect.assertions(2);
-      const xAxisMap: XAxisMap = {
-        a: {
-          width: 200,
-          height: 10,
-        },
-      };
       const MockConsumer = () => {
-        const xAxis = useXAxisOrThrow('a');
-        expect(xAxis).toEqual({
+        const yAxis = useYAxisOrThrow('m');
+        expect(yAxis).toEqual({
           width: 200,
           height: 10,
         });
-        expect(xAxis).toBe(xAxisMap.a);
+        expect(yAxis).toBe(exampleYAxisMap.m);
         return null;
       };
       render(
-        <ChartLayoutContextProvider clipPathId="" state={{ xAxisMap }}>
+        <ChartLayoutContextProvider clipPathId="" state={mockState1}>
           <MockConsumer />
         </ChartLayoutContextProvider>,
       );
@@ -638,7 +630,7 @@ describe('ChartLayoutContextProvider', () => {
     });
 
     describe('children that read the context using a hook', () => {
-      it('should render a context-aware children only once', () => {
+      it('should render context-aware children only once', () => {
         let renderCount = 0;
         const MockConsumer = memo(() => {
           useYAxisOrThrow('m');
@@ -661,7 +653,7 @@ describe('ChartLayoutContextProvider', () => {
         expect(renderCount).toBe(1);
       });
 
-      it('should re-render a context-aware children if the yAxisMap changes', () => {
+      it('should re-render context-aware children if the yAxisMap changes', () => {
         let renderCount = 0;
         const MockConsumer = memo(() => {
           useYAxisOrThrow('m');
@@ -707,7 +699,7 @@ describe('ChartLayoutContextProvider', () => {
           </ChartLayoutContextProvider>,
         );
         expect.soft(renderCount).toBe(1);
-        const mockStateWithYAxisMap: CategoricalChartState = {
+        const mockStateWithXAxisMap: CategoricalChartState = {
           ...mockState1,
           xAxisMap: {
             x: {
@@ -719,7 +711,241 @@ describe('ChartLayoutContextProvider', () => {
         rerender(
           <ChartLayoutContextProvider
             clipPathId="my mock ID has changed but that should not affect xAxis hook"
-            state={mockStateWithYAxisMap}
+            state={mockStateWithXAxisMap}
+          >
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+        expect(renderCount).toBe(1);
+      });
+    });
+  });
+
+  describe('ViewBoxContext', () => {
+    const exampleOffset: CategoricalChartState['offset'] = {
+      top: 10,
+      left: 20,
+      width: 100,
+      height: 200,
+    };
+
+    const exampleOffset2: CategoricalChartState['offset'] = {
+      top: 5,
+      left: 19,
+      width: 300,
+      height: 500,
+    };
+
+    const mockState1: CategoricalChartState = {
+      offset: exampleOffset,
+    };
+
+    const mockState2: CategoricalChartState = {
+      offset: exampleOffset2,
+    };
+
+    describe('error cases', () => {
+      it('should throw if there is no offset', () => {
+        expect(() =>
+          render(
+            <ChartLayoutContextProvider clipPathId="" state={{}}>
+              Children are required
+            </ChartLayoutContextProvider>,
+          ),
+        ).toThrow();
+      });
+    });
+
+    it('should set viewBox to all undefined properties if there is offset but it is missing properties', () => {
+      expect.assertions(1);
+      const MockConsumer = () => {
+        const viewBox = useViewBox();
+        expect(viewBox).toEqual({
+          x: undefined,
+          y: undefined,
+          height: undefined,
+          width: undefined,
+        });
+        return null;
+      };
+      render(
+        <ChartLayoutContextProvider clipPathId="" state={{ offset: {} }}>
+          <MockConsumer />
+        </ChartLayoutContextProvider>,
+      );
+    });
+
+    it('should add viewBox to context', () => {
+      expect.assertions(1);
+      const MockConsumer = () => {
+        const viewBox = useViewBox();
+        expect(viewBox).toEqual({
+          y: 10,
+          x: 20,
+          width: 100,
+          height: 200,
+        });
+        return null;
+      };
+      render(
+        <ChartLayoutContextProvider clipPathId="" state={mockState1}>
+          <MockConsumer />
+        </ChartLayoutContextProvider>,
+      );
+    });
+
+    describe('vanilla children', () => {
+      it('should re-render children every time even when nothing changes', () => {
+        let renderCount = 0;
+        const MockConsumer = () => {
+          renderCount++;
+          return null;
+        };
+        expect(renderCount).toBe(0);
+        const { rerender } = render(
+          <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState1}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+        expect(renderCount).toBe(1);
+        rerender(
+          <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState1}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+        expect(renderCount).toBe(2);
+      });
+    });
+
+    describe('children using React.memo()', () => {
+      it('should render memo children only once if the offset does not change', () => {
+        let renderCount = 0;
+        const MockConsumer = memo(() => {
+          renderCount++;
+          return null;
+        });
+
+        expect(renderCount).toBe(0);
+        const { rerender } = render(
+          <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState1}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+        expect(renderCount).toBe(1);
+        rerender(
+          <ChartLayoutContextProvider clipPathId="my mock ID is different now" state={mockState1}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+        expect(renderCount).toBe(1);
+      });
+
+      it('should render memo children only once even if the offset changes!', () => {
+        let renderCount = 0;
+        const MockConsumer = memo(() => {
+          renderCount++;
+          return null;
+        });
+
+        expect(renderCount).toBe(0);
+        const { rerender } = render(
+          <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState1}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+        expect(renderCount).toBe(1);
+        rerender(
+          <ChartLayoutContextProvider clipPathId="my mock ID but this time different" state={mockState2}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+        expect(renderCount).toBe(1);
+      });
+    });
+
+    describe('children that read the context using a hook', () => {
+      it('should render context-aware children only once', () => {
+        let renderCount = 0;
+        const MockConsumer = memo(() => {
+          useViewBox();
+          renderCount++;
+          return null;
+        });
+
+        expect(renderCount).toBe(0);
+        const { rerender } = render(
+          <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState1}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+        expect(renderCount).toBe(1);
+        rerender(
+          <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState1}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+        expect(renderCount).toBe(1);
+      });
+
+      it('should re-render context-aware children if the viewBox changes', () => {
+        let renderCount = 0;
+        const MockConsumer = memo(() => {
+          useViewBox();
+          renderCount++;
+          return null;
+        });
+
+        expect(renderCount).toBe(0);
+        const { rerender } = render(
+          <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState1}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+        expect(renderCount).toBe(1);
+        rerender(
+          <ChartLayoutContextProvider clipPathId="my mock ID is not important for this hook" state={mockState2}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+        expect(renderCount).toBe(2);
+      });
+
+      it('should not re-render context-aware children if unrelated property changes', () => {
+        let renderCount = 0;
+        const MockConsumer = memo(() => {
+          useViewBox();
+          renderCount++;
+          return null;
+        });
+        expect(renderCount).toBe(0);
+        const { rerender } = render(
+          <ChartLayoutContextProvider clipPathId="my mock ID" state={mockState1}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+        expect(renderCount).toBe(1);
+        rerender(
+          <ChartLayoutContextProvider
+            clipPathId="my mock ID has changed but that should not affect viewBox hook"
+            state={mockState1}
+          >
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+        expect.soft(renderCount).toBe(1);
+        const mockStateWithXAxisMap: CategoricalChartState = {
+          ...mockState1,
+          xAxisMap: {
+            x: {
+              allowDecimals: false,
+              label: 'xAxisMap is different and that still should not affect viewBox hook',
+            },
+          },
+        };
+        rerender(
+          <ChartLayoutContextProvider
+            clipPathId="my mock ID has changed but that should not affect viewBox hook"
+            state={mockStateWithXAxisMap}
           >
             <MockConsumer />
           </ChartLayoutContextProvider>,

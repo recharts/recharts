@@ -4,6 +4,7 @@ import { CartesianViewBox, XAxisMap, YAxisMap } from '../util/types';
 import type { CategoricalChartState } from '../chart/types';
 import type { Props as XAxisProps } from '../cartesian/XAxis';
 import type { Props as YAxisProps } from '../cartesian/YAxis';
+import { calculateViewBox } from '../util/calculateViewBox';
 
 type ChartLayoutContextInitializing = {
   xAxisMap: null;
@@ -46,14 +47,7 @@ export const ChartLayoutContextProvider = (props: {
     children,
   } = props;
 
-  const viewBox = offset
-    ? {
-        x: offset.left,
-        y: offset.top,
-        width: offset.width,
-        height: offset.height,
-      }
-    : undefined;
+  const viewBox = calculateViewBox(offset);
 
   return (
     <XAxisContext.Provider value={xAxisMap}>
@@ -102,4 +96,9 @@ export const useYAxisOrThrow = (yAxisId: string): YAxisProps => {
   invariant(yAxis != null, `Could not find yAxis by id "${yAxisId}" [${typeof yAxisId}]. ${getKeysForDebug(yAxisMap)}`);
 
   return yAxis;
+};
+
+export const useViewBox = (): CartesianViewBox => {
+  const viewBox = useContext(ViewBoxContext);
+  return viewBox;
 };
