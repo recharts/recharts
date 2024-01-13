@@ -3,6 +3,7 @@ import invariant from 'tiny-invariant';
 import { CartesianViewBox, XAxisMap, YAxisMap } from '../util/types';
 import type { CategoricalChartState } from '../chart/types';
 import type { Props as XAxisProps } from '../cartesian/XAxis';
+import type { Props as YAxisProps } from '../cartesian/YAxis';
 
 type ChartLayoutContextInitializing = {
   xAxisMap: null;
@@ -89,4 +90,16 @@ export const useXAxisOrThrow = (xAxisId: string): XAxisProps => {
   invariant(xAxis != null, `Could not find xAxis by id "${xAxisId}" [${typeof xAxisId}]. ${getKeysForDebug(xAxisMap)}`);
 
   return xAxis;
+};
+
+export const useYAxisOrThrow = (yAxisId: string): YAxisProps => {
+  const yAxisMap = useContext(YAxisContext);
+
+  invariant(yAxisMap != null, 'Could not find yAxisMap; are you sure this is rendered inside a Recharts context?');
+
+  const yAxis: YAxisProps | undefined = yAxisMap[yAxisId];
+
+  invariant(yAxis != null, `Could not find yAxis by id "${yAxisId}" [${typeof yAxisId}]. ${getKeysForDebug(yAxisMap)}`);
+
+  return yAxis;
 };
