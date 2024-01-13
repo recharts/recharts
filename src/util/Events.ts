@@ -1,6 +1,5 @@
 import EventEmitter from 'eventemitter3';
-
-type CategoricalChartState = import('../chart/generateCategoricalChart').CategoricalChartState;
+import { CategoricalChartState } from '../chart/types';
 
 const eventCenter: EventEmitter<EventTypes> = new EventEmitter();
 
