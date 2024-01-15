@@ -227,7 +227,9 @@ describe('ChartLayoutContextProvider', () => {
               <MockConsumer />
             </ChartLayoutContextProvider>,
           ),
-        ).toThrow('Could not find xAxisMap; are you sure this is rendered inside a Recharts context?');
+        ).toThrow(
+          'Could not find Recharts context; are you sure this is rendered inside a Recharts wrapper component?',
+        );
       });
 
       it('should throw when reading axis outside of Recharts context', () => {
@@ -236,7 +238,7 @@ describe('ChartLayoutContextProvider', () => {
           return null;
         };
         expect(() => render(<MockConsumer />)).toThrow(
-          'Could not find xAxisMap; are you sure this is rendered inside a Recharts context?',
+          'Could not find Recharts context; are you sure this is rendered inside a Recharts wrapper component?',
         );
       });
 
@@ -498,7 +500,9 @@ describe('ChartLayoutContextProvider', () => {
               <MockConsumer />
             </ChartLayoutContextProvider>,
           ),
-        ).toThrow('Could not find yAxisMap; are you sure this is rendered inside a Recharts context?');
+        ).toThrow(
+          'Could not find Recharts context; are you sure this is rendered inside a Recharts wrapper component?',
+        );
       });
 
       it('should throw when reading axis outside of Recharts context', () => {
@@ -507,7 +511,7 @@ describe('ChartLayoutContextProvider', () => {
           return null;
         };
         expect(() => render(<MockConsumer />)).toThrow(
-          'Could not find yAxisMap; are you sure this is rendered inside a Recharts context?',
+          'Could not find Recharts context; are you sure this is rendered inside a Recharts wrapper component?',
         );
       });
 

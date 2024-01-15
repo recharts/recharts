@@ -71,7 +71,10 @@ function getKeysForDebug(object: Record<string, unknown>) {
 export const useXAxisOrThrow = (xAxisId: string | number): XAxisProps => {
   const xAxisMap = useContext(XAxisContext);
 
-  invariant(xAxisMap != null, 'Could not find xAxisMap; are you sure this is rendered inside a Recharts context?');
+  invariant(
+    xAxisMap != null,
+    'Could not find Recharts context; are you sure this is rendered inside a Recharts wrapper component?',
+  );
 
   const xAxis: XAxisProps | undefined = xAxisMap[xAxisId];
 
@@ -83,7 +86,10 @@ export const useXAxisOrThrow = (xAxisId: string | number): XAxisProps => {
 export const useYAxisOrThrow = (yAxisId: string | number): YAxisProps => {
   const yAxisMap = useContext(YAxisContext);
 
-  invariant(yAxisMap != null, 'Could not find yAxisMap; are you sure this is rendered inside a Recharts context?');
+  invariant(
+    yAxisMap != null,
+    'Could not find Recharts context; are you sure this is rendered inside a Recharts wrapper component?',
+  );
 
   const yAxis: YAxisProps | undefined = yAxisMap[yAxisId];
 

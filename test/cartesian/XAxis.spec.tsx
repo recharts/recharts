@@ -34,7 +34,7 @@ describe('<XAxis />', () => {
 
   it('should throw when attempting to render outside of Chart', () => {
     expect(() => render(<XAxis dataKey="x" name="stature" unit="cm" />)).toThrow(
-      'Invariant failed: Could not find xAxisMap; are you sure this is rendered inside a Recharts context?',
+      'Invariant failed: Could not find Recharts context; are you sure this is rendered inside a Recharts wrapper component?',
     );
   });
 

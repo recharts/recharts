@@ -358,7 +358,7 @@ describe('<ReferenceLine />', () => {
 
   test('throws when rendered alone, outside of context', () => {
     expect(() => render(<ReferenceLine x={20} />)).toThrow(
-      'Invariant failed: Could not find xAxisMap; are you sure this is rendered inside a Recharts context?',
+      'Invariant failed: Could not find Recharts context; are you sure this is rendered inside a Recharts wrapper component?',
     );
   });
 
