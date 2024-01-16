@@ -1,8 +1,9 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, test, it, expect } from 'vitest';
-import { Surface, AreaChart, Area, YAxis, BarChart, Bar } from '../../src';
+import { AreaChart, Area, YAxis, BarChart, Bar, LineChart, Line, CartesianGrid, Tooltip } from '../../src';
 import { AxisDomain } from '../../src/util/types';
+import { pageData } from '../../storybook/stories/data/Page';
 
 describe('<YAxis />', () => {
   const data = [
@@ -169,16 +170,10 @@ describe('<YAxis />', () => {
     expect(ticks).toHaveLength(3);
   });
 
-  it("Don't render anything", () => {
-    render(
-      <Surface width={500} height={500}>
-        <YAxis dataKey="x" name="stature" unit="cm" />
-      </Surface>,
+  it('should throw when attempting to render outside of Chart', () => {
+    expect(() => render(<YAxis dataKey="x" name="stature" unit="cm" />)).toThrow(
+      'Invariant failed: Could not find Recharts context; are you sure this is rendered inside a Recharts wrapper component?',
     );
-    const svg = document.querySelector('svg');
-
-    expect(svg).toBeInTheDocument();
-    expect(svg?.children).toHaveLength(2);
   });
 
   it('Render identical ticks when data is hidden and includeHidden is true', () => {
@@ -228,5 +223,61 @@ describe('<YAxis />', () => {
         return bar.getAttribute('height') === barsBothShowing[i].getAttribute('height');
       }),
     ).toBe(true);
+  });
+
+  it('should render all labels in an example', () => {
+    const { getByText } = render(
+      <AreaChart
+        width={500}
+        height={400}
+        data={data}
+        margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0,
+        }}
+      >
+        <YAxis />
+        <Area type="monotone" dataKey="uv" stroke="#000" fill="url(#splitColor)" />
+      </AreaChart>,
+    );
+    expect(getByText('0')).toBeVisible();
+    expect(getByText('100')).toBeVisible();
+    expect(getByText('200')).toBeVisible();
+    expect(getByText('300')).toBeVisible();
+    expect(getByText('400')).toBeVisible();
+  });
+
+  it('should render all labels in another example', () => {
+    const { container } = render(
+      <LineChart
+        width={500}
+        height={300}
+        data={pageData}
+        accessibilityLayer
+        margin={{
+          top: 5,
+          right: 5,
+          bottom: 5,
+          left: 0,
+        }}
+      >
+        <YAxis />
+        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+        <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+        <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
+        <Tooltip />
+      </LineChart>,
+    );
+    const allLabels = container.querySelectorAll('.recharts-yAxis .recharts-text.recharts-cartesian-axis-tick-value');
+    expect.soft(allLabels).toHaveLength(5);
+    const allText = Array.from(allLabels).map(el => el.textContent);
+    expect.soft(allText).toHaveLength(5);
+    expect(allText).toContain('0');
+    expect(allText).toContain('400');
+    expect(allText).toContain('800');
+    expect(allText).toContain('1200');
+    expect(allText).toContain('1600');
   });
 });

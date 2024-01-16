@@ -1756,35 +1756,6 @@ export const generateCategoricalChart = ({
       });
     };
 
-    renderYAxis = (element: any, displayName: string, index: number) => {
-      const { yAxisMap } = this.state;
-      const axisObj = yAxisMap[element.props.yAxisId];
-
-      return this.renderAxis(axisObj, element, displayName, index);
-    };
-
-    /**
-     * Draw axis
-     * @param {Object} axisOptions The options of axis
-     * @param {Object} element      The axis element
-     * @param {String} displayName  The display name of axis
-     * @param {Number} index        The index of element
-     * @return {ReactElement}       The instance of x-axes
-     */
-    renderAxis(axisOptions: BaseAxisProps, element: any, displayName: string, index: number): React.ReactElement {
-      const { width, height } = this.props;
-
-      return (
-        <CartesianAxis
-          {...(axisOptions as any)}
-          className={clsx(`recharts-${axisOptions.axisType} ${axisOptions.axisType}`, axisOptions.className)}
-          key={element.key || `${displayName}-${index}`}
-          viewBox={{ x: 0, y: 0, width, height } as any}
-          ticksGenerator={this.axesTicksGenerator}
-        />
-      );
-    }
-
     /**
      * Draw grid
      * @param  {ReactElement} element the grid item
@@ -2200,7 +2171,7 @@ export const generateCategoricalChart = ({
       ReferenceLine: { handler: renderAsIs },
       ReferenceDot: { handler: this.renderReferenceElement },
       XAxis: { handler: renderAsIs },
-      YAxis: { handler: this.renderYAxis },
+      YAxis: { handler: renderAsIs },
       Brush: { handler: this.renderBrush, once: true },
       Bar: { handler: this.renderGraphicChild },
       Line: { handler: this.renderGraphicChild },
