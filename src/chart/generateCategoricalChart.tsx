@@ -87,7 +87,8 @@ import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { getActiveShapeIndexForTooltip, isFunnel, isPie, isScatter } from '../util/ActiveShapeUtils';
 import { Cursor } from '../component/Cursor';
-import { ChartLayoutContext } from '../context/chartLayoutContext';
+import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
+import { AxisMap, CategoricalChartState } from './types';
 
 export interface MousePointer {
   pageX: number;
@@ -792,83 +793,9 @@ const calculateOffset = (
   };
 };
 
-type AxisMap = {
-  [axisId: string]: BaseAxisProps;
-};
-
 type AxisMapMap = {
   [axisMapId: string]: AxisMap;
 };
-
-export interface CategoricalChartState {
-  chartX?: number;
-
-  chartY?: number;
-
-  dataStartIndex?: number;
-
-  dataEndIndex?: number;
-
-  activeTooltipIndex?: number;
-
-  isTooltipActive?: boolean;
-
-  updateId?: number;
-
-  xAxisMap?: AxisMap;
-
-  yAxisMap?: AxisMap;
-
-  zAxisMap?: AxisMap;
-
-  orderedTooltipTicks?: any;
-
-  tooltipAxis?: BaseAxisProps;
-
-  tooltipTicks?: TickItem[];
-
-  graphicalItems?: ReadonlyArray<ReactElement>;
-
-  activeCoordinate?: ChartCoordinate;
-
-  offset?: ChartOffset;
-
-  angleAxisMap?: any;
-
-  radiusAxisMap?: any;
-
-  formattedGraphicalItems?: any;
-
-  /** active tooltip payload */
-  activePayload?: any[];
-
-  tooltipAxisBandSize?: number;
-
-  /** active item */
-  activeItem?: any;
-
-  /** Active label of data */
-  activeLabel?: string;
-
-  activeIndex?: number;
-
-  xValue?: number;
-
-  yValue?: number;
-
-  legendBBox?: DOMRect | null;
-
-  prevDataKey?: DataKey<any>;
-  prevData?: any[];
-  prevWidth?: number;
-  prevHeight?: number;
-  prevLayout?: LayoutType;
-  prevStackOffset?: StackOffsetType;
-  prevMargin?: Margin;
-  prevChildren?: any;
-
-  stackGroups?: AxisStackGroups;
-}
 
 export type CategoricalChartFunc = (nextState: CategoricalChartState, event: any) => void;
 
@@ -1829,13 +1756,6 @@ export const generateCategoricalChart = ({
       });
     };
 
-    renderXAxis = (element: any, displayName: string, index: number) => {
-      const { xAxisMap } = this.state;
-      const axisObj = xAxisMap[element.props.xAxisId];
-
-      return this.renderAxis(axisObj, element, displayName, index);
-    };
-
     renderYAxis = (element: any, displayName: string, index: number) => {
       const { yAxisMap } = this.state;
       const axisObj = yAxisMap[element.props.yAxisId];
@@ -2279,7 +2199,7 @@ export const generateCategoricalChart = ({
       ReferenceArea: { handler: this.renderReferenceElement },
       ReferenceLine: { handler: renderAsIs },
       ReferenceDot: { handler: this.renderReferenceElement },
-      XAxis: { handler: this.renderXAxis },
+      XAxis: { handler: renderAsIs },
       YAxis: { handler: this.renderYAxis },
       Brush: { handler: this.renderBrush, once: true },
       Bar: { handler: this.renderGraphicChild },
@@ -2303,7 +2223,6 @@ export const generateCategoricalChart = ({
       }
 
       const { children, className, width, height, style, compact, title, desc, ...others } = this.props;
-      const { xAxisMap, yAxisMap, offset } = this.state;
       const attrs = filterProps(others);
 
       // The "compact" mode is mainly used as the panorama within Brush
@@ -2335,19 +2254,7 @@ export const generateCategoricalChart = ({
 
       const events = this.parseEventsOfWrapper();
       return (
-        <ChartLayoutContext.Provider
-          value={{
-            xAxisMap,
-            yAxisMap,
-            viewBox: {
-              x: offset.left,
-              y: offset.top,
-              width: offset.width,
-              height: offset.height,
-            },
-            clipPathId: this.clipPathId,
-          }}
-        >
+        <ChartLayoutContextProvider state={this.state} clipPathId={this.clipPathId}>
           <div
             className={clsx('recharts-wrapper', className)}
             style={{ position: 'relative', cursor: 'default', width, height, ...style }}
@@ -2364,7 +2271,7 @@ export const generateCategoricalChart = ({
             {this.renderLegend()}
             {this.renderTooltip()}
           </div>
-        </ChartLayoutContext.Provider>
+        </ChartLayoutContextProvider>
       );
     }
   };

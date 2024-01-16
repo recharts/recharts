@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import React from 'react';
-import { Surface, ScatterChart, Scatter, LineChart, Line, XAxis, YAxis, BarChart, Bar } from '../../src';
+import { ScatterChart, Scatter, LineChart, Line, XAxis, YAxis, BarChart, Bar } from '../../src';
 
 describe('<XAxis />', () => {
   const data = [
@@ -32,16 +32,10 @@ describe('<XAxis />', () => {
     expect(container.querySelectorAll('.recharts-cartesian-axis-line')).toHaveLength(2);
   });
 
-  it("Don't render anything", () => {
-    render(
-      <Surface width={500} height={500}>
-        <XAxis dataKey="x" name="stature" unit="cm" />
-      </Surface>,
+  it('should throw when attempting to render outside of Chart', () => {
+    expect(() => render(<XAxis dataKey="x" name="stature" unit="cm" />)).toThrow(
+      'Invariant failed: Could not find Recharts context; are you sure this is rendered inside a Recharts wrapper component?',
     );
-    const svg = document.querySelector('svg');
-
-    expect(svg).toBeInTheDocument();
-    expect(svg?.children).toHaveLength(2);
   });
 
   it("Don't render x-axis when hide is set to be true", () => {

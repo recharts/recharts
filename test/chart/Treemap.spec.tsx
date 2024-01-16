@@ -69,10 +69,10 @@ describe('<Treemap />', () => {
           </Treemap>
         ),
         ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
-          expect(clipPathId).toBe(null);
-          expect(viewBox).toBe(null);
-          expect(xAxisMap).toBe(null);
-          expect(yAxisMap).toBe(null);
+          expect(clipPathId).toBe(undefined);
+          expect(viewBox).toBe(undefined);
+          expect(xAxisMap).toBe(undefined);
+          expect(yAxisMap).toBe(undefined);
         },
       ),
     );
@@ -88,10 +88,10 @@ describe('<Treemap />', () => {
           </Treemap>
         ),
         ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
-          expect(clipPathId).toBe(null);
-          expect(viewBox).toBe(null);
-          expect(xAxisMap).toBe(null);
-          expect(yAxisMap).toBe(null);
+          expect(clipPathId).toBe(undefined);
+          expect(viewBox).toBe(undefined);
+          expect(xAxisMap).toBe(undefined);
+          expect(yAxisMap).toBe(undefined);
         },
       ),
     );

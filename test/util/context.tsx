@@ -1,7 +1,15 @@
-import React, { ComponentType, ReactNode } from 'react';
+import React, { ComponentType, ReactNode, useContext } from 'react';
 import { render } from '@testing-library/react';
-import { ChartLayoutContextType, useChartLayoutContext } from '../../src/context/chartLayoutContext';
+import { XAxisContext, YAxisContext, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
 import { Tooltip } from '../../src/component/Tooltip';
+import { CartesianViewBox, XAxisMap, YAxisMap } from '../../src/util/types';
+
+type AllContextPropertiesMixed = {
+  clipPathId: string | undefined;
+  xAxisMap: XAxisMap | undefined;
+  yAxisMap: YAxisMap | undefined;
+  viewBox: CartesianViewBox | undefined;
+};
 
 export function testChartLayoutContext(
   /**
@@ -13,7 +21,7 @@ export function testChartLayoutContext(
   /**
    * Write your `expect(context).toEqual(xyz)` inside this callback
    */
-  assertions: (context: ChartLayoutContextType) => void,
+  assertions: (context: AllContextPropertiesMixed) => void,
 ) {
   return () => {
     /*
@@ -24,7 +32,11 @@ export function testChartLayoutContext(
      */
     expect.hasAssertions();
     function Spy() {
-      const context: ChartLayoutContextType = useChartLayoutContext();
+      const clipPathId = useClipPathId();
+      const viewBox = useViewBox();
+      const xAxisMap = useContext(XAxisContext);
+      const yAxisMap = useContext(YAxisContext);
+      const context: AllContextPropertiesMixed = { clipPathId, viewBox, xAxisMap, yAxisMap };
       assertions(context);
       return <></>;
     }
