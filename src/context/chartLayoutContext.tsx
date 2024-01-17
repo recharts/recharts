@@ -10,6 +10,8 @@ export const XAxisContext = createContext<XAxisMap | undefined>(undefined);
 export const YAxisContext = createContext<YAxisMap | undefined>(undefined);
 export const ViewBoxContext = createContext<CartesianViewBox | undefined>(undefined);
 export const ClipPathIdContext = createContext<string | undefined>(undefined);
+export const ChartHeightContext = createContext<number>(0);
+export const ChartWidthContext = createContext<number>(0);
 
 /**
  * Will add all the properties required to render all individual Recharts components into a React Context.
@@ -23,11 +25,15 @@ export const ChartLayoutContextProvider = (props: {
   state: CategoricalChartState;
   children: ReactNode;
   clipPathId: string;
+  width: number;
+  height: number;
 }) => {
   const {
     state: { xAxisMap, yAxisMap, offset },
     clipPathId,
     children,
+    width,
+    height,
   } = props;
 
   const viewBox = calculateViewBox(offset);
@@ -49,7 +55,11 @@ export const ChartLayoutContextProvider = (props: {
     <XAxisContext.Provider value={xAxisMap}>
       <YAxisContext.Provider value={yAxisMap}>
         <ViewBoxContext.Provider value={viewBox}>
-          <ClipPathIdContext.Provider value={clipPathId}>{children}</ClipPathIdContext.Provider>
+          <ClipPathIdContext.Provider value={clipPathId}>
+            <ChartHeightContext.Provider value={height}>
+              <ChartWidthContext.Provider value={width}>{children}</ChartWidthContext.Provider>
+            </ChartHeightContext.Provider>
+          </ClipPathIdContext.Provider>
         </ViewBoxContext.Provider>
       </YAxisContext.Provider>
     </XAxisContext.Provider>
@@ -101,4 +111,12 @@ export const useYAxisOrThrow = (yAxisId: string | number): YAxisProps => {
 export const useViewBox = (): CartesianViewBox => {
   const viewBox = useContext(ViewBoxContext);
   return viewBox;
+};
+
+export const useChartWidth = (): number => {
+  return useContext(ChartWidthContext);
+};
+
+export const useChartHeight = (): number => {
+  return useContext(ChartWidthContext);
 };

@@ -2254,7 +2254,12 @@ export const generateCategoricalChart = ({
 
       const events = this.parseEventsOfWrapper();
       return (
-        <ChartLayoutContextProvider state={this.state} clipPathId={this.clipPathId}>
+        <ChartLayoutContextProvider
+          state={this.state}
+          width={this.props.width}
+          height={this.props.height}
+          clipPathId={this.clipPathId}
+        >
           <div
             className={clsx('recharts-wrapper', className)}
             style={{ position: 'relative', cursor: 'default', width, height, ...style }}
