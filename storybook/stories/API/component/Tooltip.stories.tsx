@@ -179,16 +179,6 @@ const TooltipProps: StorybookArgs = {
       },
     },
   },
-  animationBegin: {
-    description: 'Specifies (in milliseconds) when the animation should begin.',
-    defaultValue: 0,
-    table: {
-      category: 'Styles',
-      type: {
-        summary: 'number',
-      },
-    },
-  },
   animationDuration: {
     description: 'Specifies (in milliseconds) the duration of animation.',
     defaultValue: 1500,
