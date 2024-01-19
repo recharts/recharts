@@ -78,6 +78,21 @@ describe('<Treemap />', () => {
     );
 
     it(
+      'should not set width and height in context',
+      testChartLayoutContext(
+        props => (
+          <Treemap width={100} height={50}>
+            {props.children}
+          </Treemap>
+        ),
+        ({ width, height }) => {
+          expect(width).toBe(0);
+          expect(height).toBe(0);
+        },
+      ),
+    );
+
+    it(
       'should provide default empty context even if axes are specified',
       testChartLayoutContext(
         props => (

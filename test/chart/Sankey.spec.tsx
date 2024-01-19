@@ -1,4 +1,5 @@
 import React from 'react';
+import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import { Sankey, XAxis, YAxis } from '../../src';
 import { testChartLayoutContext } from '../util/context';
@@ -173,6 +174,26 @@ describe('<Sankey />', () => {
           expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
           expect(xAxisMap).toBe(undefined);
           expect(yAxisMap).toBe(undefined);
+        },
+      ),
+    );
+
+    /**
+     * Okay Sankey is something different, I can't get it to render without throwing
+     * even for the basic example copied from above.
+     * TODO figure out why does it throw and unskip this test.
+     */
+    it.skip(
+      'should not set width and height in context',
+      testChartLayoutContext(
+        props => (
+          <Sankey width={100} height={50} data={data}>
+            {props.children}
+          </Sankey>
+        ),
+        ({ width, height }) => {
+          expect.soft(width).toBe(0);
+          expect.soft(height).toBe(0);
         },
       ),
     );

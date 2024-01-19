@@ -119,6 +119,21 @@ describe('<FunnelChart />', () => {
       ),
     );
 
+    it(
+      'should set width and height in context',
+      testChartLayoutContext(
+        props => (
+          <FunnelChart width={100} height={50} barSize={20}>
+            {props.children}
+          </FunnelChart>
+        ),
+        ({ width, height }) => {
+          expect(width).toBe(100);
+          expect(height).toBe(50);
+        },
+      ),
+    );
+
     /**
      * This test is skipped because generateCategoricalChart throws an error if axes are provided to FunnelChart.
      * TODO un-skip this level if fixing the exception.
