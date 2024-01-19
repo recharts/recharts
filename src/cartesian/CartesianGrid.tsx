@@ -95,6 +95,22 @@ const Background = (props: Pick<SVGProps<SVGElement>, 'fill' | 'fillOpacity' | '
   );
 };
 
+function renderLineItem(option: GridLineType, props: any) {
+  let lineItem;
+
+  if (React.isValidElement(option)) {
+    lineItem = React.cloneElement(option, props);
+  } else if (isFunction(option)) {
+    lineItem = option(props);
+  } else {
+    const { x1, y1, x2, y2, key, ...others } = props;
+    const { offset: __, ...restOfFilteredProps } = filterProps(others, false);
+    lineItem = <line {...restOfFilteredProps} x1={x1} y1={y1} x2={x2} y2={y2} fill="none" key={key} />;
+  }
+
+  return lineItem;
+}
+
 export class CartesianGrid extends PureComponent<Props> {
   static displayName = 'CartesianGrid';
 
@@ -112,22 +128,6 @@ export class CartesianGrid extends PureComponent<Props> {
     verticalFill: [],
     horizontalFill: [],
   };
-
-  static renderLineItem(option: GridLineType, props: any) {
-    let lineItem;
-
-    if (React.isValidElement(option)) {
-      lineItem = React.cloneElement(option, props);
-    } else if (isFunction(option)) {
-      lineItem = option(props);
-    } else {
-      const { x1, y1, x2, y2, key, ...others } = props;
-      const { offset: __, ...restOfFilteredProps } = filterProps(others, false);
-      lineItem = <line {...restOfFilteredProps} x1={x1} y1={y1} x2={x2} y2={y2} fill="none" key={key} />;
-    }
-
-    return lineItem;
-  }
 
   /**
    * Draw the horizontal grid lines
@@ -152,7 +152,7 @@ export class CartesianGrid extends PureComponent<Props> {
         index: i,
       };
 
-      return CartesianGrid.renderLineItem(horizontal, props);
+      return renderLineItem(horizontal, props);
     });
 
     return <g className="recharts-cartesian-grid-horizontal">{items}</g>;
@@ -181,7 +181,7 @@ export class CartesianGrid extends PureComponent<Props> {
         index: i,
       };
 
-      return CartesianGrid.renderLineItem(vertical, props);
+      return renderLineItem(vertical, props);
     });
 
     return <g className="recharts-cartesian-grid-vertical">{items}</g>;
