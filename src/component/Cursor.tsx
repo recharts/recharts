@@ -82,7 +82,7 @@ export function Cursor(props: CursorProps) {
     pointerEvents: 'none',
     ...offset,
     ...restProps,
-    ...filterProps(element.props.cursor),
+    ...filterProps(element.props.cursor, false),
     payload: activePayload,
     payloadIndex: activeTooltipIndex,
     className: 'recharts-tooltip-cursor',

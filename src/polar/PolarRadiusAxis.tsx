@@ -101,9 +101,9 @@ export class PolarRadiusAxis extends PureComponent<Props> {
     const point1 = polarToCartesian(cx, cy, extent[1], angle);
 
     const props = {
-      ...filterProps(others),
+      ...filterProps(others, false),
       fill: 'none',
-      ...filterProps(axisLine),
+      ...filterProps(axisLine, false),
       x1: point0.x,
       y1: point0.y,
       x2: point1.x,
@@ -134,8 +134,8 @@ export class PolarRadiusAxis extends PureComponent<Props> {
   renderTicks() {
     const { ticks, tick, angle, tickFormatter, stroke, ...others } = this.props;
     const textAnchor = this.getTickTextAnchor();
-    const axisProps = filterProps(others);
-    const customTickProps = filterProps(tick);
+    const axisProps = filterProps(others, false);
+    const customTickProps = filterProps(tick, false);
 
     const items = ticks.map((entry, i) => {
       const coord = this.getTickValueCoord(entry);

@@ -1325,7 +1325,7 @@ export const getTooltipItem = (graphicalItem: ReactElement, payload: any) => {
   const { dataKey, name, unit, formatter, tooltipType, chartType } = graphicalItem.props;
 
   return {
-    ...filterProps(graphicalItem),
+    ...filterProps(graphicalItem, false),
     dataKey,
     unit,
     formatter,

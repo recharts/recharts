@@ -49,7 +49,7 @@ export type Props = SVGProps<SVGLineElement> & ErrorBarProps;
 
 export function ErrorBar(props: Props) {
   const { offset, layout, width, dataKey, data, dataPointFormatter, xAxis, yAxis, ...others } = props;
-  const svgProps = filterProps(others);
+  const svgProps = filterProps(others, false);
 
   invariant(
     !(props.direction === 'x' && xAxis.type !== 'number'),

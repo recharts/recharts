@@ -267,7 +267,7 @@ export class Scatter extends PureComponent<Props, State> {
 
   renderSymbolsStatically(points: ScatterPointItem[]) {
     const { shape, activeShape, activeIndex } = this.props;
-    const baseProps = filterProps(this.props);
+    const baseProps = filterProps(this.props, false);
 
     return points.map((entry, i) => {
       const isActive = activeIndex === i;
@@ -377,8 +377,8 @@ export class Scatter extends PureComponent<Props, State> {
 
   renderLine() {
     const { points, line, lineType, lineJointType } = this.props;
-    const scatterProps = filterProps(this.props);
-    const customLineProps = filterProps(line);
+    const scatterProps = filterProps(this.props, false);
+    const customLineProps = filterProps(line, false);
     let linePoints, lineItem;
 
     if (lineType === 'joint') {

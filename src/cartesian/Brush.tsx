@@ -492,7 +492,7 @@ export class Brush extends PureComponent<Props, State> {
     const { y, travellerWidth, height, traveller, ariaLabel, data, startIndex, endIndex } = this.props;
     const x = Math.max(travellerX, this.props.x);
     const travellerProps = {
-      ...filterProps(this.props),
+      ...filterProps(this.props, false),
       x,
       y,
       width: travellerWidth,

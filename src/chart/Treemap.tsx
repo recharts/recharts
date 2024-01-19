@@ -612,7 +612,7 @@ export class Treemap extends PureComponent<Props, State> {
 
   renderNode(root: TreemapNode, node: TreemapNode): React.ReactElement {
     const { content, type } = this.props;
-    const nodeProps = { ...filterProps(this.props), ...node, root };
+    const nodeProps = { ...filterProps(this.props, false), ...node, root };
     const isLeaf = !node.children || !node.children.length;
 
     const { currentRoot } = this.state;
@@ -733,7 +733,7 @@ export class Treemap extends PureComponent<Props, State> {
     }
 
     const { width, height, className, style, children, type, ...others } = this.props;
-    const attrs = filterProps(others);
+    const attrs = filterProps(others, false);
 
     return (
       <div

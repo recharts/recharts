@@ -315,7 +315,7 @@ export class Area extends PureComponent<Props, State> {
     }
 
     const { dot, points, dataKey } = this.props;
-    const areaProps = filterProps(this.props);
+    const areaProps = filterProps(this.props, false);
     const customDotProps = filterProps(dot, true);
 
     const dots = points.map((entry: AreaPointItem, i: number) => {
@@ -425,7 +425,7 @@ export class Area extends PureComponent<Props, State> {
         />
         {stroke !== 'none' && (
           <Curve
-            {...filterProps(this.props)}
+            {...filterProps(this.props, false)}
             className="recharts-area-curve"
             layout={layout}
             type={type}
@@ -436,7 +436,7 @@ export class Area extends PureComponent<Props, State> {
         )}
         {stroke !== 'none' && isRange && (
           <Curve
-            {...filterProps(this.props)}
+            {...filterProps(this.props, false)}
             className="recharts-area-curve"
             layout={layout}
             type={type}
@@ -554,7 +554,7 @@ export class Area extends PureComponent<Props, State> {
     const needClipY = yAxis && yAxis.allowDataOverflow;
     const needClip = needClipX || needClipY;
     const clipPathId = isNil(id) ? this.id : id;
-    const { r = 3, strokeWidth = 2 } = filterProps(dot) ?? { r: 3, strokeWidth: 2 };
+    const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
     const { clipDot = true } = isDotProps(dot) ? dot : {};
     const dotSize = r * 2 + strokeWidth;
 

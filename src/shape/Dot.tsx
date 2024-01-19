@@ -22,7 +22,14 @@ export const Dot: React.FC<Props> = props => {
 
   if (cx === +cx && cy === +cy && r === +r) {
     return (
-      <circle {...filterProps(props)} {...adaptEventHandlers(props)} className={layerClass} cx={cx} cy={cy} r={r} />
+      <circle
+        {...filterProps(props, false)}
+        {...adaptEventHandlers(props)}
+        className={layerClass}
+        cx={cx}
+        cy={cy}
+        r={r}
+      />
     );
   }
 

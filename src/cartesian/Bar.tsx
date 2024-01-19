@@ -287,7 +287,7 @@ export class Bar extends PureComponent<Props, State> {
 
   renderRectanglesStatically(data: BarRectangleItem[]) {
     const { shape, dataKey, activeIndex, activeBar } = this.props;
-    const baseProps = filterProps(this.props);
+    const baseProps = filterProps(this.props, false);
 
     return (
       data &&
@@ -389,7 +389,7 @@ export class Bar extends PureComponent<Props, State> {
 
   renderBackground() {
     const { data, dataKey, activeIndex } = this.props;
-    const backgroundProps = filterProps(this.props.background);
+    const backgroundProps = filterProps(this.props.background, false);
 
     return data.map((entry, i) => {
       const { value, background, ...rest } = entry;
