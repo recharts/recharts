@@ -118,5 +118,5 @@ export const useChartWidth = (): number => {
 };
 
 export const useChartHeight = (): number => {
-  return useContext(ChartWidthContext);
+  return useContext(ChartHeightContext);
 };

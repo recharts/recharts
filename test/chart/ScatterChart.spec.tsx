@@ -265,6 +265,21 @@ describe('ScatterChart of two dimension data', () => {
     );
 
     it(
+      'should set width and height in context',
+      testChartLayoutContext(
+        props => (
+          <ScatterChart width={100} height={50} barSize={20}>
+            {props.children}
+          </ScatterChart>
+        ),
+        ({ width, height }) => {
+          expect(width).toBe(100);
+          expect(height).toBe(50);
+        },
+      ),
+    );
+
+    it(
       'should provide axisMaps if axes are specified',
       testChartLayoutContext(
         props => (

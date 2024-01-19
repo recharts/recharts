@@ -1,6 +1,13 @@
 import React, { ComponentType, ReactNode, useContext } from 'react';
 import { render } from '@testing-library/react';
-import { XAxisContext, YAxisContext, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import {
+  XAxisContext,
+  YAxisContext,
+  useChartHeight,
+  useChartWidth,
+  useClipPathId,
+  useViewBox,
+} from '../../src/context/chartLayoutContext';
 import { Tooltip } from '../../src/component/Tooltip';
 import { CartesianViewBox, XAxisMap, YAxisMap } from '../../src/util/types';
 
@@ -9,6 +16,8 @@ type AllContextPropertiesMixed = {
   xAxisMap: XAxisMap | undefined;
   yAxisMap: YAxisMap | undefined;
   viewBox: CartesianViewBox | undefined;
+  width: number;
+  height: number;
 };
 
 export function testChartLayoutContext(
@@ -36,7 +45,9 @@ export function testChartLayoutContext(
       const viewBox = useViewBox();
       const xAxisMap = useContext(XAxisContext);
       const yAxisMap = useContext(YAxisContext);
-      const context: AllContextPropertiesMixed = { clipPathId, viewBox, xAxisMap, yAxisMap };
+      const width = useChartWidth();
+      const height = useChartHeight();
+      const context: AllContextPropertiesMixed = { clipPathId, viewBox, xAxisMap, yAxisMap, width, height };
       assertions(context);
       return <></>;
     }

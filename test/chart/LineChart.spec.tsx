@@ -757,6 +757,21 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     );
 
     it(
+      'should set width and height in context',
+      testChartLayoutContext(
+        props => (
+          <LineChart width={100} height={50} barSize={20}>
+            {props.children}
+          </LineChart>
+        ),
+        ({ width: w, height: h }) => {
+          expect(w).toBe(100);
+          expect(h).toBe(50);
+        },
+      ),
+    );
+
+    it(
       'should provide axisMaps if axes are specified',
       testChartLayoutContext(
         props => (
