@@ -95,10 +95,20 @@ const Background = (props: Pick<SVGProps<SVGElement>, 'fill' | 'fillOpacity' | '
   );
 };
 
-function renderLineItem(option: GridLineType, props: any) {
+type LineItemProps = Props & {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  key: string;
+  index: number;
+};
+
+function renderLineItem(option: GridLineType, props: LineItemProps) {
   let lineItem;
 
   if (React.isValidElement(option)) {
+    // @ts-expect-error typescript does not see the props type when cloning an element
     lineItem = React.cloneElement(option, props);
   } else if (isFunction(option)) {
     lineItem = option(props);
@@ -142,7 +152,7 @@ export class CartesianGrid extends PureComponent<Props> {
     }
 
     const items = horizontalPoints.map((entry, i) => {
-      const props = {
+      const props: LineItemProps = {
         ...this.props,
         x1: x,
         y1: entry,
@@ -171,7 +181,7 @@ export class CartesianGrid extends PureComponent<Props> {
     }
 
     const items = verticalPoints.map((entry, i) => {
-      const props = {
+      const props: LineItemProps = {
         ...this.props,
         x1: entry,
         y1: y,
