@@ -22,8 +22,14 @@ interface InternalCartesianGridProps {
   y?: number;
   width?: number;
   height?: number;
-  horizontalCoordinatesGenerator?: (props: any, syncWithTicks: boolean) => number[];
-  verticalCoordinatesGenerator?: (props: any, syncWithTicks: boolean) => number[];
+  horizontalCoordinatesGenerator?: (
+    props: { yAxis: any; width: number; height: number; offset: ChartOffset },
+    syncWithTicks: boolean,
+  ) => number[];
+  verticalCoordinatesGenerator?: (
+    props: { xAxis: any; width: number; height: number; offset: ChartOffset },
+    syncWithTicks: boolean,
+  ) => number[];
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   offset?: ChartOffset;
@@ -66,22 +72,45 @@ interface CartesianGridProps extends InternalCartesianGridProps {
 
 export type Props = SVGProps<SVGElement> & CartesianGridProps;
 
+const Background = (props: Pick<SVGProps<SVGElement>, 'fill' | 'fillOpacity' | 'x' | 'y' | 'width' | 'height'>) => {
+  const { fill } = props;
+
+  if (!fill || fill === 'none') {
+    return null;
+  }
+
+  const { fillOpacity, x, y, width, height } = props;
+
+  return (
+    <rect
+      x={x}
+      y={y}
+      width={width}
+      height={height}
+      stroke="none"
+      fill={fill}
+      fillOpacity={fillOpacity}
+      className="recharts-cartesian-grid-bg"
+    />
+  );
+};
+
 export class CartesianGrid extends PureComponent<Props> {
   static displayName = 'CartesianGrid';
 
-  static defaultProps = {
+  static defaultProps: Partial<Props> = {
     horizontal: true,
     vertical: true,
     // The ordinates of horizontal grid lines
-    horizontalPoints: [] as CartesianGridProps['horizontalPoints'],
+    horizontalPoints: [],
     // The abscissas of vertical grid lines
-    verticalPoints: [] as CartesianGridProps['verticalPoints'],
+    verticalPoints: [],
 
     stroke: '#ccc',
     fill: 'none',
     // The fill of colors of grid lines
-    verticalFill: [] as CartesianGridProps['verticalFill'],
-    horizontalFill: [] as CartesianGridProps['horizontalFill'],
+    verticalFill: [],
+    horizontalFill: [],
   };
 
   static renderLineItem(option: GridLineType, props: any) {
@@ -244,29 +273,6 @@ export class CartesianGrid extends PureComponent<Props> {
     return <g className="recharts-cartesian-gridstripes-horizontal">{items}</g>;
   }
 
-  renderBackground() {
-    const { fill } = this.props;
-
-    if (!fill || fill === 'none') {
-      return null;
-    }
-
-    const { fillOpacity, x, y, width, height } = this.props;
-
-    return (
-      <rect
-        x={x}
-        y={y}
-        width={width}
-        height={height}
-        stroke="none"
-        fill={fill}
-        fillOpacity={fillOpacity}
-        className="recharts-cartesian-grid-bg"
-      />
-    );
-  }
-
   render() {
     const {
       x,
@@ -344,7 +350,14 @@ export class CartesianGrid extends PureComponent<Props> {
 
     return (
       <g className="recharts-cartesian-grid">
-        {this.renderBackground()}
+        <Background
+          fill={this.props.fill}
+          fillOpacity={this.props.fillOpacity}
+          x={this.props.x}
+          y={this.props.y}
+          width={this.props.width}
+          height={this.props.height}
+        />
         {horizontal && this.renderHorizontal(horizontalPoints)}
         {vertical && this.renderVertical(verticalPoints)}
 
