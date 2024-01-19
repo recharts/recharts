@@ -145,6 +145,30 @@ function HorizontalGridLines(props: Props) {
   return <g className="recharts-cartesian-grid-horizontal">{items}</g>;
 }
 
+function VerticalGridLines(props: Props) {
+  const { y, height, vertical, verticalPoints } = props;
+
+  if (!vertical || !verticalPoints || !verticalPoints.length) {
+    return null;
+  }
+
+  const items = verticalPoints.map((entry, i) => {
+    const lineItemProps: LineItemProps = {
+      ...props,
+      x1: entry,
+      y1: y,
+      x2: entry,
+      y2: y + height,
+      key: `line-${i}`,
+      index: i,
+    };
+
+    return renderLineItem(vertical, lineItemProps);
+  });
+
+  return <g className="recharts-cartesian-grid-vertical">{items}</g>;
+}
+
 export class CartesianGrid extends PureComponent<Props> {
   static displayName = 'CartesianGrid';
 
@@ -162,35 +186,6 @@ export class CartesianGrid extends PureComponent<Props> {
     verticalFill: [],
     horizontalFill: [],
   };
-
-  /**
-   * Draw vertical grid lines
-   * @param {Array} verticalPoints either passed in as props or generated from function
-   * @return {Group} Vertical lines
-   */
-  renderVertical(verticalPoints: number[]) {
-    const { y, height, vertical } = this.props;
-
-    if (!verticalPoints || !verticalPoints.length) {
-      return null;
-    }
-
-    const items = verticalPoints.map((entry, i) => {
-      const props: LineItemProps = {
-        ...this.props,
-        x1: entry,
-        y1: y,
-        x2: entry,
-        y2: y + height,
-        key: `line-${i}`,
-        index: i,
-      };
-
-      return renderLineItem(vertical, props);
-    });
-
-    return <g className="recharts-cartesian-grid-vertical">{items}</g>;
-  }
 
   /**
    * Draw vertical grid stripes filled by colors
@@ -364,7 +359,7 @@ export class CartesianGrid extends PureComponent<Props> {
           height={this.props.height}
         />
         <HorizontalGridLines {...this.props} />
-        {vertical && this.renderVertical(verticalPoints)}
+        <VerticalGridLines {...this.props} />
 
         {horizontal && this.renderHorizontalStripes(horizontalPoints)}
         {vertical && this.renderVerticalStripes(verticalPoints)}
