@@ -1025,5 +1025,249 @@ describe('<CartesianGrid />', () => {
         expect.soft(allStripes[2]).toHaveAttribute('y', '20');
       });
     });
+    describe('vertical stripes', () => {
+      test.each([true, undefined])('should render vertical stripes if vertical prop = %s', vertical => {
+        const extraSpaceAtTheEndOfChart = 1;
+        const { container } = render(
+          <CartesianGrid
+            x={0}
+            y={0}
+            height={500}
+            width={Math.max(...verticalPoints) + extraSpaceAtTheEndOfChart}
+            verticalPoints={verticalPoints}
+            verticalFill={['red', 'green']}
+            fillOpacity="20%"
+            vertical={vertical}
+          />,
+        );
+        const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
+        expect(allStripes).toHaveLength(verticalPoints.length + 1);
+
+        for (let i = 0; i < allStripes.length; i++) {
+          const element = allStripes[i];
+          expect.soft(element).toHaveAttribute('y', '0');
+          expect.soft(element).toHaveAttribute('height', '500');
+          expect.soft(element).toHaveAttribute('stroke', 'none');
+          expect.soft(element).toHaveAttribute('fill-opacity', '20%');
+          expect.soft(element).toHaveClass('recharts-cartesian-grid-bg');
+        }
+
+        expect.soft(allStripes[0]).toHaveAttribute('fill', 'red');
+        expect.soft(allStripes[0]).toHaveAttribute('x', '0');
+        expect.soft(allStripes[0]).toHaveAttribute('width', '100');
+
+        expect.soft(allStripes[1]).toHaveAttribute('fill', 'green');
+        expect.soft(allStripes[1]).toHaveAttribute('x', '100');
+        expect.soft(allStripes[1]).toHaveAttribute('width', '100');
+
+        expect.soft(allStripes[2]).toHaveAttribute('fill', 'red');
+        expect.soft(allStripes[2]).toHaveAttribute('x', '200');
+        expect.soft(allStripes[2]).toHaveAttribute('width', '100');
+
+        expect.soft(allStripes[3]).toHaveAttribute('fill', 'green');
+        expect.soft(allStripes[3]).toHaveAttribute('x', '300');
+        expect.soft(allStripes[3]).toHaveAttribute('width', '100');
+
+        expect.soft(allStripes[4]).toHaveAttribute('fill', 'red');
+        expect.soft(allStripes[4]).toHaveAttribute('x', '400');
+        expect.soft(allStripes[4]).toHaveAttribute('width', String(extraSpaceAtTheEndOfChart));
+      });
+
+      it('should render one big stripe if there are no verticalPoints', () => {
+        const { container } = render(
+          <CartesianGrid x={0} y={0} width={500} height={500} verticalFill={['red', 'green']} />,
+        );
+        const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
+        expect(allStripes).toHaveLength(1);
+        expect.soft(allStripes[0]).toHaveAttribute('width', '500');
+        expect.soft(allStripes[0]).toHaveAttribute('height', '500');
+        expect.soft(allStripes[0]).toHaveAttribute('x', '0');
+        expect.soft(allStripes[0]).toHaveAttribute('y', '0');
+        expect.soft(allStripes[0]).toHaveAttribute('fill', 'red');
+      });
+
+      it('should render stripes defined by verticalCoordinatesGenerator', () => {
+        const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([1, 2]);
+        const { container } = render(
+          <Surface width={500} height={500}>
+            <CartesianGrid
+              x={0}
+              y={0}
+              width={500}
+              height={500}
+              verticalCoordinatesGenerator={verticalCoordinatesGenerator}
+              verticalFill={['red', 'green']}
+            />
+          </Surface>,
+        );
+
+        expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
+
+        const allLines = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
+        expect(allLines).toHaveLength(3);
+      });
+
+      it('should not render anything if vertical=false', () => {
+        const extraSpaceAtTheTopOfChart = 1;
+        const { container } = render(
+          <CartesianGrid
+            x={0}
+            y={0}
+            height={500}
+            width={Math.max(...verticalPoints) + extraSpaceAtTheTopOfChart}
+            verticalPoints={verticalPoints}
+            verticalFill={['red', 'green']}
+            fillOpacity="20%"
+            vertical={false}
+          />,
+        );
+        const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
+        expect(allStripes).toHaveLength(0);
+      });
+
+      test.each(emptyFillCases)('should render nothing if verticalFill is $fill', ({ fill }) => {
+        const { container } = render(
+          <CartesianGrid
+            x={0}
+            y={0}
+            height={500}
+            width={Math.max(...verticalPoints) + 1}
+            verticalPoints={verticalPoints}
+            verticalFill={fill}
+          />,
+        );
+        const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
+        expect(allStripes).toHaveLength(0);
+      });
+
+      it('should leave out the stripe at the beginning if the smallest verticalPoints happens to be exactly at position x', () => {
+        const { container } = render(
+          <CartesianGrid
+            y={0}
+            x={Math.min(...verticalPoints)}
+            height={500}
+            width={Math.max(...verticalPoints) + 1}
+            verticalPoints={verticalPoints}
+            verticalFill={['red', 'green']}
+          />,
+        );
+        const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
+        expect(allStripes).toHaveLength(verticalPoints.length);
+      });
+
+      it('render the stripe at the beginning if the smallest verticalPoints is smaller than position x', () => {
+        const { container } = render(
+          <CartesianGrid
+            y={0}
+            x={Math.min(...verticalPoints) - 1}
+            height={500}
+            width={Math.max(...verticalPoints) + 1}
+            verticalPoints={verticalPoints}
+            verticalFill={['red', 'green']}
+          />,
+        );
+        const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
+        /*
+         * This feels to me like a bug. This stripe is outside of the rendered Grid, why should it be visible?
+         */
+        expect(allStripes).toHaveLength(verticalPoints.length + 1);
+      });
+
+      it('removes the one stripe at the end if it would render outside of the Grid', () => {
+        const { container } = render(
+          <CartesianGrid
+            x={0}
+            y={0}
+            height={500}
+            width={Math.max(...verticalPoints) - 1}
+            verticalPoints={verticalPoints}
+            verticalFill={['red', 'green']}
+          />,
+        );
+        const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
+        expect(allStripes).toHaveLength(verticalPoints.length);
+      });
+
+      it('removes still only one stripe even if all of them render outside of the grid', () => {
+        const { container } = render(
+          <CartesianGrid
+            x={0}
+            y={0}
+            width={1}
+            height={500}
+            verticalPoints={verticalPoints}
+            verticalFill={['red', 'green']}
+          />,
+        );
+        const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
+        /*
+         * Why remove only one? None of them are visible
+         */
+        expect(allStripes).toHaveLength(verticalPoints.length);
+      });
+
+      it('should round verticalPoints [https://github.com/recharts/recharts/pull/3075]', () => {
+        const { container } = render(
+          <CartesianGrid
+            x={0}
+            y={0}
+            width={500}
+            height={500}
+            verticalPoints={floatingPointPrecisionExamples}
+            verticalFill={['red', 'green']}
+          />,
+        );
+        const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
+        /*
+         * This feels to me like a bug. This stripe is outside of the rendered Grid, why should it be visible?
+         */
+        expect(allStripes).toHaveLength(floatingPointPrecisionExamples.length + 1);
+        for (let i = 0; i < allStripes.length; i++) {
+          const stripe = allStripes[i];
+          expect(stripe).toHaveAttribute('height', '500');
+        }
+
+        expect.soft(allStripes[0]).toHaveAttribute('width', '121');
+        expect.soft(allStripes[1]).toHaveAttribute('width', '110');
+        /*
+         * Without the rounding, these will have width of something like
+         * 268.99999999999994
+         * which makes the browser render a very thin line and it looks ugly.
+         */
+        expect.soft(allStripes[2]).toHaveAttribute('width', '269');
+      });
+
+      it('should ignore stripes that have computed width 0', () => {
+        const { container } = render(
+          <CartesianGrid
+            x={0}
+            y={0}
+            width={500}
+            height={500}
+            verticalPoints={[10, 20, 10, 500]}
+            verticalFill={['red', 'green']}
+          />,
+        );
+        const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
+        expect(allStripes).toHaveLength(3);
+
+        expect.soft(allStripes[0]).toHaveAttribute('width', '10');
+        expect.soft(allStripes[0]).toHaveAttribute('height', '500');
+        expect.soft(allStripes[0]).toHaveAttribute('x', '0');
+        expect.soft(allStripes[0]).toHaveAttribute('y', '0');
+
+        // even though the verticalPoints do define double 10, 10 ... the stripe is not rendered
+
+        expect.soft(allStripes[1]).toHaveAttribute('width', '10');
+        expect.soft(allStripes[1]).toHaveAttribute('height', '500');
+        expect.soft(allStripes[1]).toHaveAttribute('x', '10');
+        expect.soft(allStripes[1]).toHaveAttribute('y', '0');
+
+        expect.soft(allStripes[2]).toHaveAttribute('width', '480');
+        expect.soft(allStripes[2]).toHaveAttribute('height', '500');
+        expect.soft(allStripes[2]).toHaveAttribute('x', '20');
+        expect.soft(allStripes[2]).toHaveAttribute('y', '0');
+      });
+    });
   });
 });
