@@ -15,10 +15,12 @@ import { getCoordinatesOfGrid, getTicksOfAxis } from '../util/ChartUtils';
 import { getTicks } from './getTicks';
 import { CartesianAxis } from './CartesianAxis';
 
+export type GridLineFunctionProps = Omit<LineItemProps, 'offset'>;
+
 type GridLineType =
   | SVGProps<SVGLineElement>
   | ReactElement<SVGElement>
-  | ((props: any) => ReactElement<SVGElement>)
+  | ((props: GridLineFunctionProps) => ReactElement<SVGElement>)
   | boolean;
 
 export type HorizontalCoordinatesGenerator = (
