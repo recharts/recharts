@@ -4,6 +4,7 @@
 import React, { PureComponent, ReactElement, SVGProps } from 'react';
 import isFunction from 'lodash/isFunction';
 
+import { warn } from '../util/LogUtils';
 import { isNumber } from '../util/DataUtils';
 import { ChartOffset, D3Scale } from '../util/types';
 
@@ -17,19 +18,33 @@ type GridLineType =
   | ((props: any) => ReactElement<SVGElement>)
   | boolean;
 
+export type HorizontalCoordinatesGenerator = (
+  props: {
+    yAxis: any;
+    width: number;
+    height: number;
+    offset: ChartOffset;
+  },
+  syncWithTicks: boolean,
+) => number[];
+
+type VerticalCoordinatesGenerator = (
+  props: {
+    xAxis: any;
+    width: number;
+    height: number;
+    offset: ChartOffset;
+  },
+  syncWithTicks: boolean,
+) => number[];
+
 interface InternalCartesianGridProps {
   x?: number;
   y?: number;
   width?: number;
   height?: number;
-  horizontalCoordinatesGenerator?: (
-    props: { yAxis: any; width: number; height: number; offset: ChartOffset },
-    syncWithTicks: boolean,
-  ) => number[];
-  verticalCoordinatesGenerator?: (
-    props: { xAxis: any; width: number; height: number; offset: ChartOffset },
-    syncWithTicks: boolean,
-  ) => number[];
+  horizontalCoordinatesGenerator?: HorizontalCoordinatesGenerator;
+  verticalCoordinatesGenerator?: VerticalCoordinatesGenerator;
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   offset?: ChartOffset;
@@ -312,7 +327,7 @@ export class CartesianGrid extends PureComponent<Props> {
     if ((!horizontalPoints || !horizontalPoints.length) && isFunction(horizontalCoordinatesGenerator)) {
       const isHorizontalValues = horizontalValues && horizontalValues.length;
 
-      horizontalPoints = horizontalCoordinatesGenerator(
+      const generatorResult = horizontalCoordinatesGenerator(
         {
           yAxis: yAxis
             ? {
@@ -326,6 +341,14 @@ export class CartesianGrid extends PureComponent<Props> {
         },
         isHorizontalValues ? true : syncWithTicks,
       );
+      warn(
+        Array.isArray(generatorResult),
+        `horizontalCoordinatesGenerator should return Array but instead it returned [${typeof generatorResult}]`,
+        `horizontalCoordinatesGenerator should return Array but instead it returned [${typeof generatorResult}]`,
+      );
+      if (Array.isArray(generatorResult)) {
+        horizontalPoints = generatorResult;
+      }
     }
 
     // No vertical points are specified
@@ -358,7 +381,8 @@ export class CartesianGrid extends PureComponent<Props> {
           width={this.props.width}
           height={this.props.height}
         />
-        <HorizontalGridLines {...this.props} />
+        <HorizontalGridLines {...this.props} horizontalPoints={horizontalPoints} />
+
         <VerticalGridLines {...this.props} />
 
         {horizontal && this.renderHorizontalStripes(horizontalPoints)}
