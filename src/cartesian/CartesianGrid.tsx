@@ -65,7 +65,29 @@ interface CartesianGridProps extends InternalCartesianGridProps {
    * Has priority over syncWithTicks and horizontalValues.
    */
   verticalPoints?: number[];
+  /**
+   * Defines background color of stripes.
+   *
+   * The values from this array will be passed in as the `fill` property in a `rect` SVG element.
+   * For possible values see: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill#rect
+   *
+   * In case there are more stripes than colors, the colors will start from beginning
+   * So for example: verticalFill['yellow', 'black'] produces a pattern of yellow|black|yellow|black
+   *
+   * If this is undefined, or an empty array, then there is no background fill.
+   */
   verticalFill?: string[];
+  /**
+   * Defines background color of stripes.
+   *
+   * The values from this array will be passed in as the `fill` property in a `rect` SVG element.
+   * For possible values see: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill#rect
+   *
+   * In case there are more stripes than colors, the colors will start from beginning
+   * So for example: horizontalFill['yellow', 'black'] produces a pattern of yellow|black|yellow|black
+   *
+   * If this is undefined, or an empty array, then there is no background fill.
+   */
   horizontalFill?: string[];
   /**
    * If true, only the lines that correspond to the axes ticks values will be drawn.
@@ -258,12 +280,15 @@ export class CartesianGrid extends PureComponent<Props> {
     }
 
     const { fillOpacity, x, y, width, height } = this.props;
+    // Why =y -y? I was trying to find any difference that this makes, with floating point numbers and edge cases but ... nothing.
     const roundedSortedHorizontalPoints = horizontalPoints.map(e => Math.round(e + y - y)).sort((a, b) => a - b);
+    // Why is this condition `!==` instead of `<=` ?
     if (y !== roundedSortedHorizontalPoints[0]) {
       roundedSortedHorizontalPoints.unshift(0);
     }
 
     const items = roundedSortedHorizontalPoints.map((entry, i) => {
+      // Why do we strip only the last stripe if it is invisible, and not all invisible stripes?
       const lastStripe = !roundedSortedHorizontalPoints[i + 1];
       const lineHeight = lastStripe ? y + height - entry : roundedSortedHorizontalPoints[i + 1] - entry;
       if (lineHeight <= 0) {
