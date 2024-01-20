@@ -107,9 +107,11 @@ interface CartesianGridProps extends InternalCartesianGridProps {
   verticalValues?: number[] | string[];
 }
 
-export type Props = SVGProps<SVGElement> & CartesianGridProps;
+type AcceptedSvgProps = Omit<SVGProps<SVGElement>, 'offset'>;
 
-const Background = (props: Pick<SVGProps<SVGElement>, 'fill' | 'fillOpacity' | 'x' | 'y' | 'width' | 'height'>) => {
+export type Props = AcceptedSvgProps & CartesianGridProps;
+
+const Background = (props: Pick<AcceptedSvgProps, 'fill' | 'fillOpacity' | 'x' | 'y' | 'width' | 'height'>) => {
   const { fill } = props;
 
   if (!fill || fill === 'none') {

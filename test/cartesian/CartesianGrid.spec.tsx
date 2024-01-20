@@ -286,7 +286,6 @@ describe('<CartesianGrid />', () => {
           scale: scaleLinear(),
           ticks: ['x', 'y', 'x'],
         };
-        // @ts-expect-error Recharts offset type conflicts with SVG offset type
         const offset: Props['offset'] = {};
         render(
           <Surface width={500} height={500}>
@@ -323,7 +322,6 @@ describe('<CartesianGrid />', () => {
           scale: scaleLinear(),
           ticks: ['x', 'y', 'x'],
         };
-        // @ts-expect-error Recharts offset type conflicts with SVG offset type
         const offset: Props['offset'] = {};
         render(
           <Surface width={500} height={500}>
@@ -367,7 +365,6 @@ describe('<CartesianGrid />', () => {
           const yAxis: Props['yAxis'] = {
             scale: scaleLinear(),
           };
-          // @ts-expect-error Recharts offset type conflicts with SVG offset type
           const offset: Props['offset'] = {};
           render(
             <Surface width={500} height={500}>
@@ -412,7 +409,6 @@ describe('<CartesianGrid />', () => {
           const yAxis: Props['yAxis'] = {
             scale: scaleLinear(),
           };
-          // @ts-expect-error Recharts offset type conflicts with SVG offset type
           const offset: Props['offset'] = {};
           render(
             <Surface width={500} height={500}>
@@ -561,7 +557,6 @@ describe('<CartesianGrid />', () => {
           scale: scaleLinear(),
           ticks: ['x', 'y', 'x'],
         };
-        // @ts-expect-error Recharts offset type conflicts with SVG offset type
         const offset: Props['offset'] = {};
         render(
           <Surface width={500} height={500}>
@@ -598,7 +593,6 @@ describe('<CartesianGrid />', () => {
           scale: scaleLinear(),
           ticks: ['x', 'y', 'x'],
         };
-        // @ts-expect-error Recharts offset type conflicts with SVG offset type
         const offset: Props['offset'] = {};
         render(
           <Surface width={500} height={500}>
@@ -642,7 +636,6 @@ describe('<CartesianGrid />', () => {
           const xAxis: Props['xAxis'] = {
             scale: scaleLinear(),
           };
-          // @ts-expect-error Recharts offset type conflicts with SVG offset type
           const offset: Props['offset'] = {};
           render(
             <Surface width={500} height={500}>
@@ -687,7 +680,6 @@ describe('<CartesianGrid />', () => {
           const xAxis: Props['xAxis'] = {
             scale: scaleLinear(),
           };
-          // @ts-expect-error Recharts offset type conflicts with SVG offset type
           const offset: Props['offset'] = {};
           render(
             <Surface width={500} height={500}>
@@ -1268,6 +1260,41 @@ describe('<CartesianGrid />', () => {
         expect.soft(allStripes[2]).toHaveAttribute('x', '20');
         expect.soft(allStripes[2]).toHaveAttribute('y', '0');
       });
+    });
+  });
+
+  describe('offset prop', () => {
+    it('should not pass the offset prop anywhere', () => {
+      const offset: Props['offset'] = {
+        top: 1,
+        bottom: 2,
+        left: 3,
+        right: 4,
+        width: 5,
+        height: 6,
+        brushBottom: 7,
+      };
+      const { container } = render(
+        <Surface width={500} height={500}>
+          <CartesianGrid
+            x={0}
+            y={0}
+            width={500}
+            height={500}
+            verticalPoints={verticalPoints}
+            horizontalPoints={horizontalPoints}
+            offset={offset}
+          />
+        </Surface>,
+      );
+      // select everything
+      const allElements = container.querySelectorAll('*');
+      // check that the selector worked
+      expect(allElements).toHaveLength(15);
+      for (let i = 0; i < allElements.length; i++) {
+        const element = allElements[0];
+        expect(element).not.toHaveAttribute('offset');
+      }
     });
   });
 });
