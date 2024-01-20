@@ -1671,19 +1671,6 @@ export const generateCategoricalChart = ({
       }
     };
 
-    verticalCoordinatesGenerator = ({ xAxis, width, height, offset }: ChartCoordinate, syncWithTicks: Boolean) =>
-      getCoordinatesOfGrid(
-        getTicks({
-          ...CartesianAxis.defaultProps,
-          ...xAxis,
-          ticks: getTicksOfAxis(xAxis, true),
-          viewBox: { x: 0, y: 0, width, height },
-        }),
-        offset.left,
-        offset.left + offset.width,
-        syncWithTicks,
-      );
-
     horizontalCoordinatesGenerator = ({ yAxis, width, height, offset }: ChartCoordinate, syncWithTicks: Boolean) =>
       getCoordinatesOfGrid(
         getTicks({
@@ -1780,7 +1767,7 @@ export const generateCategoricalChart = ({
         offset,
         chartWidth: width,
         chartHeight: height,
-        verticalCoordinatesGenerator: props.verticalCoordinatesGenerator || this.verticalCoordinatesGenerator,
+        verticalCoordinatesGenerator: props.verticalCoordinatesGenerator,
         horizontalCoordinatesGenerator: props.horizontalCoordinatesGenerator || this.horizontalCoordinatesGenerator,
       });
     };

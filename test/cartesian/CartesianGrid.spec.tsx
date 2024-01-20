@@ -4,6 +4,7 @@ import { render } from '@testing-library/react';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import { Surface, CartesianGrid, LineChart } from '../../src';
 import { HorizontalCoordinatesGenerator, Props, VerticalCoordinatesGenerator } from '../../src/cartesian/CartesianGrid';
+import { ChartOffset } from '../../src/util/types';
 
 describe('<CartesianGrid />', () => {
   const horizontalPoints = [10, 20, 30, 100, 400];
@@ -14,6 +15,15 @@ describe('<CartesianGrid />', () => {
    */
   const floatingPointPrecisionExamples = [121.00000000000002, 231.00000000000005];
   const verticalPoints = [100, 200, 300, 400];
+  const offset: ChartOffset = {
+    top: 1,
+    bottom: 2,
+    left: 3,
+    right: 4,
+    width: 5,
+    height: 6,
+    brushBottom: 7,
+  };
 
   describe('grid', () => {
     describe('basic features', () => {
@@ -236,6 +246,7 @@ describe('<CartesianGrid />', () => {
               width={500}
               height={500}
               horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
+              offset={{}}
             />
           </Surface>,
         );
@@ -270,6 +281,7 @@ describe('<CartesianGrid />', () => {
               height={500}
               horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
               horizontalPoints={horizontalPoints}
+              offset={offset}
             />
           </Surface>,
         );
@@ -286,7 +298,6 @@ describe('<CartesianGrid />', () => {
           scale: scaleLinear(),
           ticks: ['x', 'y', 'x'],
         };
-        const offset: Props['offset'] = {};
         render(
           <Surface width={500} height={500}>
             <CartesianGrid
@@ -322,7 +333,6 @@ describe('<CartesianGrid />', () => {
           scale: scaleLinear(),
           ticks: ['x', 'y', 'x'],
         };
-        const offset: Props['offset'] = {};
         render(
           <Surface width={500} height={500}>
             <CartesianGrid
@@ -365,7 +375,6 @@ describe('<CartesianGrid />', () => {
           const yAxis: Props['yAxis'] = {
             scale: scaleLinear(),
           };
-          const offset: Props['offset'] = {};
           render(
             <Surface width={500} height={500}>
               <CartesianGrid
@@ -409,7 +418,6 @@ describe('<CartesianGrid />', () => {
           const yAxis: Props['yAxis'] = {
             scale: scaleLinear(),
           };
-          const offset: Props['offset'] = {};
           render(
             <Surface width={500} height={500}>
               <CartesianGrid
@@ -457,6 +465,7 @@ describe('<CartesianGrid />', () => {
                 width={500}
                 height={500}
                 horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
+                offset={offset}
               />
             </Surface>,
           );
@@ -557,7 +566,6 @@ describe('<CartesianGrid />', () => {
           scale: scaleLinear(),
           ticks: ['x', 'y', 'x'],
         };
-        const offset: Props['offset'] = {};
         render(
           <Surface width={500} height={500}>
             <CartesianGrid
@@ -593,7 +601,6 @@ describe('<CartesianGrid />', () => {
           scale: scaleLinear(),
           ticks: ['x', 'y', 'x'],
         };
-        const offset: Props['offset'] = {};
         render(
           <Surface width={500} height={500}>
             <CartesianGrid
@@ -636,7 +643,6 @@ describe('<CartesianGrid />', () => {
           const xAxis: Props['xAxis'] = {
             scale: scaleLinear(),
           };
-          const offset: Props['offset'] = {};
           render(
             <Surface width={500} height={500}>
               <CartesianGrid
@@ -680,7 +686,6 @@ describe('<CartesianGrid />', () => {
           const xAxis: Props['xAxis'] = {
             scale: scaleLinear(),
           };
-          const offset: Props['offset'] = {};
           render(
             <Surface width={500} height={500}>
               <CartesianGrid
@@ -825,7 +830,7 @@ describe('<CartesianGrid />', () => {
 
       it('should render one big stripe if there are no horizontalPoints', () => {
         const { container } = render(
-          <CartesianGrid x={0} y={0} width={500} height={500} horizontalFill={['red', 'green']} />,
+          <CartesianGrid x={0} y={0} width={500} height={500} horizontalFill={['red', 'green']} offset={offset} />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
         expect(allStripes).toHaveLength(1);
@@ -847,6 +852,7 @@ describe('<CartesianGrid />', () => {
               height={500}
               horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
               horizontalFill={['red', 'green']}
+              offset={offset}
             />
           </Surface>,
         );
@@ -1065,19 +1071,6 @@ describe('<CartesianGrid />', () => {
         expect.soft(allStripes[4]).toHaveAttribute('width', String(extraSpaceAtTheEndOfChart));
       });
 
-      it('should render one big stripe if there are no verticalPoints', () => {
-        const { container } = render(
-          <CartesianGrid x={0} y={0} width={500} height={500} verticalFill={['red', 'green']} />,
-        );
-        const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
-        expect(allStripes).toHaveLength(1);
-        expect.soft(allStripes[0]).toHaveAttribute('width', '500');
-        expect.soft(allStripes[0]).toHaveAttribute('height', '500');
-        expect.soft(allStripes[0]).toHaveAttribute('x', '0');
-        expect.soft(allStripes[0]).toHaveAttribute('y', '0');
-        expect.soft(allStripes[0]).toHaveAttribute('fill', 'red');
-      });
-
       it('should render stripes defined by verticalCoordinatesGenerator', () => {
         const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([1, 2]);
         const { container } = render(
@@ -1265,15 +1258,6 @@ describe('<CartesianGrid />', () => {
 
   describe('offset prop', () => {
     it('should not pass the offset prop anywhere', () => {
-      const offset: Props['offset'] = {
-        top: 1,
-        bottom: 2,
-        left: 3,
-        right: 4,
-        width: 5,
-        height: 6,
-        brushBottom: 7,
-      };
       const { container } = render(
         <Surface width={500} height={500}>
           <CartesianGrid

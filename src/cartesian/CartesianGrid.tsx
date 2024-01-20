@@ -11,6 +11,9 @@ import { ChartOffset, D3Scale } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { filterProps } from '../util/ReactUtils';
+import { getCoordinatesOfGrid, getTicksOfAxis } from '../util/ChartUtils';
+import { getTicks } from './getTicks';
+import { CartesianAxis } from './CartesianAxis';
 
 type GridLineType =
   | SVGProps<SVGLineElement>
@@ -285,6 +288,22 @@ function VerticalStripes(props: Props) {
   return <g className="recharts-cartesian-gridstripes-vertical">{items}</g>;
 }
 
+const defaultVerticalCoordinatesGenerator: VerticalCoordinatesGenerator = (
+  { xAxis, width, height, offset },
+  syncWithTicks,
+) =>
+  getCoordinatesOfGrid(
+    getTicks({
+      ...CartesianAxis.defaultProps,
+      ...xAxis,
+      ticks: getTicksOfAxis(xAxis, true),
+      viewBox: { x: 0, y: 0, width, height },
+    }),
+    offset.left,
+    offset.left + offset.width,
+    syncWithTicks,
+  );
+
 export class CartesianGrid extends PureComponent<Props> {
   static displayName = 'CartesianGrid';
 
@@ -310,7 +329,6 @@ export class CartesianGrid extends PureComponent<Props> {
       width,
       height,
       horizontalCoordinatesGenerator,
-      verticalCoordinatesGenerator,
       xAxis,
       yAxis,
       offset,
@@ -333,6 +351,8 @@ export class CartesianGrid extends PureComponent<Props> {
     ) {
       return null;
     }
+
+    const verticalCoordinatesGenerator = this.props.verticalCoordinatesGenerator || defaultVerticalCoordinatesGenerator;
 
     let { horizontalPoints, verticalPoints } = this.props;
 
@@ -366,7 +386,6 @@ export class CartesianGrid extends PureComponent<Props> {
     // No vertical points are specified
     if ((!verticalPoints || !verticalPoints.length) && isFunction(verticalCoordinatesGenerator)) {
       const isVerticalValues = verticalValues && verticalValues.length;
-
       const generatorResult = verticalCoordinatesGenerator(
         {
           xAxis: xAxis
