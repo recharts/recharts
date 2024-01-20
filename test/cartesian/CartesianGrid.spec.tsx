@@ -516,6 +516,7 @@ describe('<CartesianGrid />', () => {
               width={500}
               height={500}
               verticalCoordinatesGenerator={verticalCoordinatesGenerator}
+              offset={offset}
             />
           </Surface>,
         );
@@ -550,6 +551,7 @@ describe('<CartesianGrid />', () => {
               height={500}
               verticalCoordinatesGenerator={verticalCoordinatesGenerator}
               verticalPoints={verticalPoints}
+              offset={offset}
             />
           </Surface>,
         );
@@ -733,13 +735,14 @@ describe('<CartesianGrid />', () => {
                 width={500}
                 height={500}
                 verticalCoordinatesGenerator={verticalCoordinatesGenerator}
+                offset={offset}
               />
             </Surface>,
           );
 
           expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
 
-          const allLines = container.querySelectorAll('.recharts-cartesian-grid-horizontal line');
+          const allLines = container.querySelectorAll('.recharts-cartesian-grid-vertical line');
           expect(allLines).toHaveLength(0);
         },
       );
@@ -826,19 +829,6 @@ describe('<CartesianGrid />', () => {
         expect(allStripes[5]).toHaveAttribute('fill', 'green');
         expect(allStripes[5]).toHaveAttribute('y', '400');
         expect(allStripes[5]).toHaveAttribute('height', String(extraSpaceAtTheTopOfChart));
-      });
-
-      it('should render one big stripe if there are no horizontalPoints', () => {
-        const { container } = render(
-          <CartesianGrid x={0} y={0} width={500} height={500} horizontalFill={['red', 'green']} offset={offset} />,
-        );
-        const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
-        expect(allStripes).toHaveLength(1);
-        expect.soft(allStripes[0]).toHaveAttribute('width', '500');
-        expect.soft(allStripes[0]).toHaveAttribute('height', '500');
-        expect.soft(allStripes[0]).toHaveAttribute('x', '0');
-        expect.soft(allStripes[0]).toHaveAttribute('y', '0');
-        expect.soft(allStripes[0]).toHaveAttribute('fill', 'red');
       });
 
       it('should render stripes defined by horizontalCoordinatesGenerator', () => {
@@ -1036,6 +1026,7 @@ describe('<CartesianGrid />', () => {
             verticalFill={['red', 'green']}
             fillOpacity="20%"
             vertical={vertical}
+            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1082,6 +1073,7 @@ describe('<CartesianGrid />', () => {
               height={500}
               verticalCoordinatesGenerator={verticalCoordinatesGenerator}
               verticalFill={['red', 'green']}
+              offset={offset}
             />
           </Surface>,
         );
@@ -1104,6 +1096,7 @@ describe('<CartesianGrid />', () => {
             verticalFill={['red', 'green']}
             fillOpacity="20%"
             vertical={false}
+            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1119,6 +1112,7 @@ describe('<CartesianGrid />', () => {
             width={Math.max(...verticalPoints) + 1}
             verticalPoints={verticalPoints}
             verticalFill={fill}
+            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1134,6 +1128,7 @@ describe('<CartesianGrid />', () => {
             width={Math.max(...verticalPoints) + 1}
             verticalPoints={verticalPoints}
             verticalFill={['red', 'green']}
+            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1149,6 +1144,7 @@ describe('<CartesianGrid />', () => {
             width={Math.max(...verticalPoints) + 1}
             verticalPoints={verticalPoints}
             verticalFill={['red', 'green']}
+            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1167,6 +1163,7 @@ describe('<CartesianGrid />', () => {
             width={Math.max(...verticalPoints) - 1}
             verticalPoints={verticalPoints}
             verticalFill={['red', 'green']}
+            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1182,6 +1179,7 @@ describe('<CartesianGrid />', () => {
             height={500}
             verticalPoints={verticalPoints}
             verticalFill={['red', 'green']}
+            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1200,6 +1198,7 @@ describe('<CartesianGrid />', () => {
             height={500}
             verticalPoints={floatingPointPrecisionExamples}
             verticalFill={['red', 'green']}
+            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1231,6 +1230,7 @@ describe('<CartesianGrid />', () => {
             height={500}
             verticalPoints={[10, 20, 10, 500]}
             verticalFill={['red', 'green']}
+            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');

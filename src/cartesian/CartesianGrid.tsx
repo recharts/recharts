@@ -304,6 +304,22 @@ const defaultVerticalCoordinatesGenerator: VerticalCoordinatesGenerator = (
     syncWithTicks,
   );
 
+const defaultHorizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = (
+  { yAxis, width, height, offset },
+  syncWithTicks,
+) =>
+  getCoordinatesOfGrid(
+    getTicks({
+      ...CartesianAxis.defaultProps,
+      ...yAxis,
+      ticks: getTicksOfAxis(yAxis, true),
+      viewBox: { x: 0, y: 0, width, height },
+    }),
+    offset.top,
+    offset.top + offset.height,
+    syncWithTicks,
+  );
+
 export class CartesianGrid extends PureComponent<Props> {
   static displayName = 'CartesianGrid';
 
@@ -328,7 +344,6 @@ export class CartesianGrid extends PureComponent<Props> {
       y,
       width,
       height,
-      horizontalCoordinatesGenerator,
       xAxis,
       yAxis,
       offset,
@@ -353,6 +368,8 @@ export class CartesianGrid extends PureComponent<Props> {
     }
 
     const verticalCoordinatesGenerator = this.props.verticalCoordinatesGenerator || defaultVerticalCoordinatesGenerator;
+    const horizontalCoordinatesGenerator =
+      this.props.horizontalCoordinatesGenerator || defaultHorizontalCoordinatesGenerator;
 
     let { horizontalPoints, verticalPoints } = this.props;
 

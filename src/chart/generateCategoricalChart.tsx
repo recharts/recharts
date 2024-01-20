@@ -12,7 +12,6 @@ import clsx from 'clsx';
 // eslint-disable-next-line no-restricted-imports
 import type { DebouncedFunc } from 'lodash';
 import invariant from 'tiny-invariant';
-import { getTicks } from '../cartesian/getTicks';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
@@ -32,7 +31,6 @@ import {
   validateWidthHeight,
 } from '../util/ReactUtils';
 
-import { CartesianAxis } from '../cartesian/CartesianAxis';
 import { Brush } from '../cartesian/Brush';
 import { getOffset } from '../util/DOMUtils';
 import { findEntryInArray, getAnyElementOfObject, hasDuplicate, isNumber, uniqueId } from '../util/DataUtils';
@@ -45,7 +43,6 @@ import {
   getBandSizeOfAxis,
   getBarPosition,
   getBarSizeList,
-  getCoordinatesOfGrid,
   getDomainOfDataByKey,
   getDomainOfItemsWithSameAxis,
   getDomainOfStackGroups,
@@ -1671,19 +1668,6 @@ export const generateCategoricalChart = ({
       }
     };
 
-    horizontalCoordinatesGenerator = ({ yAxis, width, height, offset }: ChartCoordinate, syncWithTicks: Boolean) =>
-      getCoordinatesOfGrid(
-        getTicks({
-          ...CartesianAxis.defaultProps,
-          ...yAxis,
-          ticks: getTicksOfAxis(yAxis, true),
-          viewBox: { x: 0, y: 0, width, height },
-        }),
-        offset.top,
-        offset.top + offset.height,
-        syncWithTicks,
-      );
-
     axesTicksGenerator = (axis?: any) => getTicksOfAxis(axis, true);
 
     filterFormatItem(item: any, displayName: any, childIndex: any) {
@@ -1768,7 +1752,7 @@ export const generateCategoricalChart = ({
         chartWidth: width,
         chartHeight: height,
         verticalCoordinatesGenerator: props.verticalCoordinatesGenerator,
-        horizontalCoordinatesGenerator: props.horizontalCoordinatesGenerator || this.horizontalCoordinatesGenerator,
+        horizontalCoordinatesGenerator: props.horizontalCoordinatesGenerator,
       });
     };
 
