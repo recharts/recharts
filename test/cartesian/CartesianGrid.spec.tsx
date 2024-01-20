@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, test, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { scaleLinear } from 'victory-vendor/d3-scale';
-import { Surface, CartesianGrid } from '../../src';
+import { Surface, CartesianGrid, LineChart } from '../../src';
 import { HorizontalCoordinatesGenerator, Props, VerticalCoordinatesGenerator } from '../../src/cartesian/CartesianGrid';
 
 describe('<CartesianGrid />', () => {
@@ -503,7 +503,7 @@ describe('<CartesianGrid />', () => {
         expect.soft(allLines[0]).toHaveAttribute('y1', '0');
         expect.soft(allLines[0]).toHaveAttribute('y2', '500');
         expect.soft(allLines[1]).toHaveAttribute('x', '0');
-        expect.soft(allLines[1]).toHaveAttribute('x2', '2');
+        expect.soft(allLines[1]).toHaveAttribute('x1', '2');
         expect.soft(allLines[1]).toHaveAttribute('x2', '2');
         expect.soft(allLines[1]).toHaveAttribute('y', '0');
         expect.soft(allLines[1]).toHaveAttribute('y1', '0');
@@ -724,7 +724,32 @@ describe('<CartesianGrid />', () => {
         },
       );
 
-      it.todo('should generate its own ticks if neither verticalPoints nor verticalCoordinatesGenerator are provided');
+      it('should generate its own ticks if neither verticalPoints nor verticalCoordinatesGenerator are provided', () => {
+        const xAxis: Props['xAxis'] = {
+          scale: scaleLinear(),
+          ticks: [10, 50, 100],
+        };
+        const { container } = render(
+          <LineChart width={500} height={500}>
+            <CartesianGrid x={0} y={0} width={500} height={500} xAxis={xAxis} />
+          </LineChart>,
+        );
+
+        const allLines = container.querySelectorAll('.recharts-cartesian-grid-vertical line');
+        expect(allLines).toHaveLength(2);
+        expect.soft(allLines[0]).toHaveAttribute('x', '0');
+        expect.soft(allLines[0]).toHaveAttribute('x1', '5');
+        expect.soft(allLines[0]).toHaveAttribute('x2', '5');
+        expect.soft(allLines[0]).toHaveAttribute('y', '0');
+        expect.soft(allLines[0]).toHaveAttribute('y1', '0');
+        expect.soft(allLines[0]).toHaveAttribute('y2', '500');
+        expect.soft(allLines[1]).toHaveAttribute('x', '0');
+        expect.soft(allLines[1]).toHaveAttribute('x1', '495');
+        expect.soft(allLines[1]).toHaveAttribute('x2', '495');
+        expect.soft(allLines[1]).toHaveAttribute('y', '0');
+        expect.soft(allLines[1]).toHaveAttribute('y1', '0');
+        expect.soft(allLines[1]).toHaveAttribute('y2', '500');
+      });
     });
   });
 
@@ -798,7 +823,7 @@ describe('<CartesianGrid />', () => {
 
       it('should render stripes defined by horizontalCoordinatesGenerator', () => {
         const horizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = vi.fn().mockReturnValue([1, 2]);
-        const { container, debug } = render(
+        const { container } = render(
           <Surface width={500} height={500}>
             <CartesianGrid
               x={0}
@@ -810,7 +835,6 @@ describe('<CartesianGrid />', () => {
             />
           </Surface>,
         );
-        debug();
 
         expect(horizontalCoordinatesGenerator).toHaveBeenCalledOnce();
 

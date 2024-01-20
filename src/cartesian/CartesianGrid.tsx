@@ -364,6 +364,7 @@ export class CartesianGrid extends PureComponent<Props> {
         `horizontalCoordinatesGenerator should return Array but instead it returned [${typeof generatorResult}]`,
       );
       if (Array.isArray(generatorResult)) {
+        console.log({ generatorResult });
         horizontalPoints = generatorResult;
       }
     }
