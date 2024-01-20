@@ -3,13 +3,33 @@ import { describe, test, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import { Surface, CartesianGrid } from '../../src';
-import { HorizontalCoordinatesGenerator, Props } from '../../src/cartesian/CartesianGrid';
+import { HorizontalCoordinatesGenerator, Props, VerticalCoordinatesGenerator } from '../../src/cartesian/CartesianGrid';
 
 describe('<CartesianGrid />', () => {
   const horizontalPoints = [10, 20, 30, 100, 400];
   const verticalPoints = [100, 200, 300, 400];
 
   describe('basic features', () => {
+    it('should render on its own, outside of Recharts', () => {
+      const { container } = render(
+        <CartesianGrid
+          x={0}
+          y={0}
+          width={500}
+          height={500}
+          verticalPoints={verticalPoints}
+          horizontalPoints={horizontalPoints}
+        />,
+      );
+      expect.soft(container.querySelectorAll('line')).toHaveLength(9);
+      expect
+        .soft(container.querySelectorAll('.recharts-cartesian-grid-horizontal line'))
+        .toHaveLength(horizontalPoints.length);
+      expect
+        .soft(container.querySelectorAll('.recharts-cartesian-grid-vertical line'))
+        .toHaveLength(verticalPoints.length);
+    });
+
     test('Render 5 horizontal lines and 4 vertical lines in simple CartesianGrid', () => {
       const { container } = render(
         <Surface width={500} height={500}>
@@ -216,10 +236,14 @@ describe('<CartesianGrid />', () => {
       const allLines = container.querySelectorAll('.recharts-cartesian-grid-horizontal line');
       expect(allLines).toHaveLength(2);
       expect.soft(allLines[0]).toHaveAttribute('x', '0');
+      expect.soft(allLines[0]).toHaveAttribute('x1', '0');
+      expect.soft(allLines[0]).toHaveAttribute('x2', '500');
       expect.soft(allLines[0]).toHaveAttribute('y', '0');
       expect.soft(allLines[0]).toHaveAttribute('y1', '1');
       expect.soft(allLines[0]).toHaveAttribute('y2', '1');
       expect.soft(allLines[1]).toHaveAttribute('x', '0');
+      expect.soft(allLines[1]).toHaveAttribute('x1', '0');
+      expect.soft(allLines[1]).toHaveAttribute('x2', '500');
       expect.soft(allLines[1]).toHaveAttribute('y', '0');
       expect.soft(allLines[1]).toHaveAttribute('y1', '2');
       expect.soft(allLines[1]).toHaveAttribute('y2', '2');
@@ -440,5 +464,251 @@ describe('<CartesianGrid />', () => {
     );
   });
 
-  describe.todo('verticalCoordinatesGenerator');
+  describe('verticalCoordinatesGenerator', () => {
+    it('should render lines that the generator returns', () => {
+      const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([1, 2]);
+      const { container } = render(
+        <Surface width={500} height={500}>
+          <CartesianGrid
+            x={0}
+            y={0}
+            width={500}
+            height={500}
+            verticalCoordinatesGenerator={verticalCoordinatesGenerator}
+          />
+        </Surface>,
+      );
+
+      expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
+
+      const allLines = container.querySelectorAll('.recharts-cartesian-grid-vertical line');
+      expect(allLines).toHaveLength(2);
+      expect.soft(allLines[0]).toHaveAttribute('x', '0');
+      expect.soft(allLines[0]).toHaveAttribute('x1', '1');
+      expect.soft(allLines[0]).toHaveAttribute('x2', '1');
+      expect.soft(allLines[0]).toHaveAttribute('y', '0');
+      expect.soft(allLines[0]).toHaveAttribute('y1', '0');
+      expect.soft(allLines[0]).toHaveAttribute('y2', '500');
+      expect.soft(allLines[1]).toHaveAttribute('x', '0');
+      expect.soft(allLines[1]).toHaveAttribute('x2', '2');
+      expect.soft(allLines[1]).toHaveAttribute('x2', '2');
+      expect.soft(allLines[1]).toHaveAttribute('y', '0');
+      expect.soft(allLines[1]).toHaveAttribute('y1', '0');
+      expect.soft(allLines[1]).toHaveAttribute('y2', '500');
+    });
+
+    it('if both verticalCoordinatesGenerator and verticalPoints are present then verticalPoints wins', () => {
+      const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([1, 2]);
+      expect(verticalPoints.length).not.toBe(2);
+      const { container } = render(
+        <Surface width={500} height={500}>
+          <CartesianGrid
+            x={0}
+            y={0}
+            width={500}
+            height={500}
+            verticalCoordinatesGenerator={verticalCoordinatesGenerator}
+            verticalPoints={verticalPoints}
+          />
+        </Surface>,
+      );
+
+      expect(verticalCoordinatesGenerator).not.toHaveBeenCalled();
+
+      const allLines = container.querySelectorAll('.recharts-cartesian-grid-vertical line');
+      expect(allLines).toHaveLength(verticalPoints.length);
+    });
+
+    it('should pass props to the generator', () => {
+      const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([]);
+      const xAxis: Props['xAxis'] = {
+        scale: scaleLinear(),
+        ticks: ['x', 'y', 'x'],
+      };
+      // @ts-expect-error Recharts offset type conflicts with SVG offset type
+      const offset: Props['offset'] = {};
+      render(
+        <Surface width={500} height={500}>
+          <CartesianGrid
+            x={0}
+            y={0}
+            width={500}
+            height={500}
+            xAxis={xAxis}
+            verticalCoordinatesGenerator={verticalCoordinatesGenerator}
+            chartWidth={300}
+            chartHeight={200}
+            offset={offset}
+          />
+        </Surface>,
+      );
+
+      expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
+      expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
+        {
+          xAxis,
+          width: 300,
+          height: 200,
+          offset,
+        },
+        undefined,
+      );
+    });
+
+    it(`should set syncWithTicks=true, and ticks=verticalValues,
+      when verticalValues is provided, even if the explicit syncWithTicks is false`, () => {
+      const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([]);
+      const xAxis: Props['xAxis'] = {
+        scale: scaleLinear(),
+        ticks: ['x', 'y', 'x'],
+      };
+      // @ts-expect-error Recharts offset type conflicts with SVG offset type
+      const offset: Props['offset'] = {};
+      render(
+        <Surface width={500} height={500}>
+          <CartesianGrid
+            x={0}
+            y={0}
+            width={500}
+            height={500}
+            xAxis={xAxis}
+            verticalCoordinatesGenerator={verticalCoordinatesGenerator}
+            chartWidth={300}
+            chartHeight={200}
+            offset={offset}
+            syncWithTicks={false}
+            verticalValues={['a', 'b']}
+          />
+        </Surface>,
+      );
+
+      const xAxisExpected = {
+        ...xAxis,
+        ticks: ['a', 'b'],
+      };
+
+      expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
+      expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
+        {
+          xAxis: xAxisExpected,
+          width: 300,
+          height: 200,
+          offset,
+        },
+        true,
+      );
+    });
+
+    test.each([true, false, undefined])(
+      'should set syncWithTicks as %s when horizontalValues is provided but is empty',
+      syncWithTicks => {
+        const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([]);
+        const xAxis: Props['xAxis'] = {
+          scale: scaleLinear(),
+        };
+        // @ts-expect-error Recharts offset type conflicts with SVG offset type
+        const offset: Props['offset'] = {};
+        render(
+          <Surface width={500} height={500}>
+            <CartesianGrid
+              x={0}
+              y={0}
+              width={500}
+              height={500}
+              xAxis={xAxis}
+              verticalCoordinatesGenerator={verticalCoordinatesGenerator}
+              chartWidth={300}
+              chartHeight={200}
+              offset={offset}
+              syncWithTicks={syncWithTicks}
+              horizontalValues={[]}
+            />
+          </Surface>,
+        );
+
+        const xAxisExpected = {
+          ...xAxis,
+          ticks: undefined,
+        };
+
+        expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
+        expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
+          {
+            xAxis: xAxisExpected,
+            width: 300,
+            height: 200,
+            offset,
+          },
+          syncWithTicks,
+        );
+      },
+    );
+
+    test.each([true, false, undefined])(
+      'should pass props to the generator when syncWithTicks is %s',
+      syncWithTicks => {
+        const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([]);
+        const xAxis: Props['xAxis'] = {
+          scale: scaleLinear(),
+        };
+        // @ts-expect-error Recharts offset type conflicts with SVG offset type
+        const offset: Props['offset'] = {};
+        render(
+          <Surface width={500} height={500}>
+            <CartesianGrid
+              x={0}
+              y={0}
+              width={500}
+              height={500}
+              xAxis={xAxis}
+              verticalCoordinatesGenerator={verticalCoordinatesGenerator}
+              chartWidth={300}
+              chartHeight={200}
+              offset={offset}
+              syncWithTicks={syncWithTicks}
+            />
+          </Surface>,
+        );
+
+        const xAxisExpected = {
+          ...xAxis,
+          ticks: undefined,
+        };
+
+        expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
+        expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
+          {
+            xAxis: xAxisExpected,
+            width: 300,
+            height: 200,
+            offset,
+          },
+          syncWithTicks,
+        );
+      },
+    );
+
+    test.each([{ gen: [] }, { gen: null }, { gen: undefined }, { gen: 'some random string' }, { gen: NaN }])(
+      'should render nothing if the generator returns $gen',
+      ({ gen }) => {
+        const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue(gen);
+        const { container } = render(
+          <Surface width={500} height={500}>
+            <CartesianGrid
+              x={0}
+              y={0}
+              width={500}
+              height={500}
+              verticalCoordinatesGenerator={verticalCoordinatesGenerator}
+            />
+          </Surface>,
+        );
+
+        expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
+
+        const allLines = container.querySelectorAll('.recharts-cartesian-grid-horizontal line');
+        expect(allLines).toHaveLength(0);
+      },
+    );
+  });
 });

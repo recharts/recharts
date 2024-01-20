@@ -28,7 +28,7 @@ export type HorizontalCoordinatesGenerator = (
   syncWithTicks: boolean,
 ) => number[];
 
-type VerticalCoordinatesGenerator = (
+export type VerticalCoordinatesGenerator = (
   props: {
     xAxis: any;
     width: number;
@@ -344,7 +344,6 @@ export class CartesianGrid extends PureComponent<Props> {
       warn(
         Array.isArray(generatorResult),
         `horizontalCoordinatesGenerator should return Array but instead it returned [${typeof generatorResult}]`,
-        `horizontalCoordinatesGenerator should return Array but instead it returned [${typeof generatorResult}]`,
       );
       if (Array.isArray(generatorResult)) {
         horizontalPoints = generatorResult;
@@ -355,7 +354,7 @@ export class CartesianGrid extends PureComponent<Props> {
     if ((!verticalPoints || !verticalPoints.length) && isFunction(verticalCoordinatesGenerator)) {
       const isVerticalValues = verticalValues && verticalValues.length;
 
-      verticalPoints = verticalCoordinatesGenerator(
+      const generatorResult = verticalCoordinatesGenerator(
         {
           xAxis: xAxis
             ? {
@@ -369,6 +368,13 @@ export class CartesianGrid extends PureComponent<Props> {
         },
         isVerticalValues ? true : syncWithTicks,
       );
+      warn(
+        Array.isArray(generatorResult),
+        `verticalCoordinatesGenerator should return Array but instead it returned [${typeof generatorResult}]`,
+      );
+      if (Array.isArray(generatorResult)) {
+        verticalPoints = generatorResult;
+      }
     }
 
     return (
@@ -383,7 +389,7 @@ export class CartesianGrid extends PureComponent<Props> {
         />
         <HorizontalGridLines {...this.props} horizontalPoints={horizontalPoints} />
 
-        <VerticalGridLines {...this.props} />
+        <VerticalGridLines {...this.props} verticalPoints={verticalPoints} />
 
         {horizontal && this.renderHorizontalStripes(horizontalPoints)}
         {vertical && this.renderVerticalStripes(verticalPoints)}
