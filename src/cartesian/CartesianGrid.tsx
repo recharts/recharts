@@ -245,6 +245,44 @@ function HorizontalStripes(props: Props) {
   return <g className="recharts-cartesian-gridstripes-horizontal">{items}</g>;
 }
 
+function VerticalStripes(props: Props) {
+  const { vertical, verticalFill, fillOpacity, x, y, width, height, verticalPoints } = props;
+  if (!vertical || !verticalFill || !verticalFill.length) {
+    return null;
+  }
+
+  const roundedSortedVerticalPoints = verticalPoints.map(e => Math.round(e + x - x)).sort((a, b) => a - b);
+
+  if (x !== roundedSortedVerticalPoints[0]) {
+    roundedSortedVerticalPoints.unshift(0);
+  }
+
+  const items = roundedSortedVerticalPoints.map((entry, i) => {
+    const lastStripe = !roundedSortedVerticalPoints[i + 1];
+    const lineWidth = lastStripe ? x + width - entry : roundedSortedVerticalPoints[i + 1] - entry;
+
+    if (lineWidth <= 0) {
+      return null;
+    }
+    const colorIndex = i % verticalFill.length;
+    return (
+      <rect
+        key={`react-${i}`} // eslint-disable-line react/no-array-index-key
+        x={entry}
+        y={y}
+        width={lineWidth}
+        height={height}
+        stroke="none"
+        fill={verticalFill[colorIndex]}
+        fillOpacity={fillOpacity}
+        className="recharts-cartesian-grid-bg"
+      />
+    );
+  });
+
+  return <g className="recharts-cartesian-gridstripes-vertical">{items}</g>;
+}
+
 export class CartesianGrid extends PureComponent<Props> {
   static displayName = 'CartesianGrid';
 
@@ -263,57 +301,12 @@ export class CartesianGrid extends PureComponent<Props> {
     horizontalFill: [],
   };
 
-  /**
-   * Draw vertical grid stripes filled by colors
-   * @param {Array} verticalPoints either passed in as props or generated from function
-   * @return {Group} Vertical stripes
-   */
-  renderVerticalStripes(verticalPoints: number[]) {
-    const { verticalFill } = this.props;
-    if (!verticalFill || !verticalFill.length) {
-      return null;
-    }
-
-    const { fillOpacity, x, y, width, height } = this.props;
-    const roundedSortedVerticalPoints = verticalPoints.map(e => Math.round(e + x - x)).sort((a, b) => a - b);
-
-    if (x !== roundedSortedVerticalPoints[0]) {
-      roundedSortedVerticalPoints.unshift(0);
-    }
-
-    const items = roundedSortedVerticalPoints.map((entry, i) => {
-      const lastStripe = !roundedSortedVerticalPoints[i + 1];
-      const lineWidth = lastStripe ? x + width - entry : roundedSortedVerticalPoints[i + 1] - entry;
-
-      if (lineWidth <= 0) {
-        return null;
-      }
-      const colorIndex = i % verticalFill.length;
-      return (
-        <rect
-          key={`react-${i}`} // eslint-disable-line react/no-array-index-key
-          x={entry}
-          y={y}
-          width={lineWidth}
-          height={height}
-          stroke="none"
-          fill={verticalFill[colorIndex]}
-          fillOpacity={fillOpacity}
-          className="recharts-cartesian-grid-bg"
-        />
-      );
-    });
-
-    return <g className="recharts-cartesian-gridstripes-vertical">{items}</g>;
-  }
-
   render() {
     const {
       x,
       y,
       width,
       height,
-      vertical,
       horizontalCoordinatesGenerator,
       verticalCoordinatesGenerator,
       xAxis,
@@ -410,7 +403,8 @@ export class CartesianGrid extends PureComponent<Props> {
         <VerticalGridLines {...this.props} verticalPoints={verticalPoints} />
 
         <HorizontalStripes {...this.props} horizontalPoints={horizontalPoints} />
-        {vertical && this.renderVerticalStripes(verticalPoints)}
+
+        <VerticalStripes {...this.props} verticalPoints={verticalPoints} />
       </g>
     );
   }
