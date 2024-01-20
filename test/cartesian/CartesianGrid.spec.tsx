@@ -40,7 +40,13 @@ describe('<CartesianGrid />', () => {
             />
           </Surface>,
         );
-        expect.soft(container.querySelectorAll('line')).toHaveLength(9);
+        const allLines = container.querySelectorAll('line');
+        expect.soft(allLines).toHaveLength(9);
+        for (let i = 0; i < allLines.length; i++) {
+          const line = allLines[i];
+          expect.soft(line).toHaveAttribute('stroke', '#ccc');
+          expect.soft(line).toHaveAttribute('fill', 'none');
+        }
         expect
           .soft(container.querySelectorAll('.recharts-cartesian-grid-horizontal line'))
           .toHaveLength(horizontalPoints.length);
