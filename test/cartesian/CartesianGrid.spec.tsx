@@ -472,9 +472,32 @@ describe('<CartesianGrid />', () => {
         },
       );
 
-      it.todo(
-        'should generate its own ticks if neither horizontalPoints nor horizontalCoordinatesGenerator are provided',
-      );
+      it('should generate its own ticks if neither horizontalPoints nor horizontalCoordinatesGenerator are provided', () => {
+        const xAxis: Props['xAxis'] = {
+          scale: scaleLinear(),
+          ticks: [10, 50, 100],
+        };
+        const { container } = render(
+          <LineChart width={500} height={500}>
+            <CartesianGrid x={0} y={0} width={500} height={500} xAxis={xAxis} />
+          </LineChart>,
+        );
+
+        const allLines = container.querySelectorAll('.recharts-cartesian-grid-horizontal line');
+        expect(allLines).toHaveLength(2);
+        expect.soft(allLines[0]).toHaveAttribute('x', '0');
+        expect.soft(allLines[0]).toHaveAttribute('x1', '0');
+        expect.soft(allLines[0]).toHaveAttribute('x2', '500');
+        expect.soft(allLines[0]).toHaveAttribute('y', '0');
+        expect.soft(allLines[0]).toHaveAttribute('y1', '5');
+        expect.soft(allLines[0]).toHaveAttribute('y2', '5');
+        expect.soft(allLines[1]).toHaveAttribute('x', '0');
+        expect.soft(allLines[1]).toHaveAttribute('x1', '0');
+        expect.soft(allLines[1]).toHaveAttribute('x2', '500');
+        expect.soft(allLines[1]).toHaveAttribute('y', '0');
+        expect.soft(allLines[1]).toHaveAttribute('y1', '495');
+        expect.soft(allLines[1]).toHaveAttribute('y2', '495');
+      });
     });
 
     describe('verticalCoordinatesGenerator', () => {
