@@ -732,7 +732,7 @@ describe('<CartesianGrid />', () => {
     const emptyFillCases: { fill: string[] | undefined }[] = [{ fill: [] }, { fill: undefined }];
 
     describe('horizontal stripes', () => {
-      it('should render horizontal stripes', () => {
+      test.each([true, undefined])('should render horizontal stripes if horizontal prop = %s', horizontal => {
         const extraSpaceAtTheTopOfChart = 1;
         const { container } = render(
           <CartesianGrid
@@ -744,6 +744,7 @@ describe('<CartesianGrid />', () => {
             horizontalPoints={horizontalPoints}
             horizontalFill={['red', 'green']}
             fillOpacity="20%"
+            horizontal={horizontal}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
@@ -780,6 +781,60 @@ describe('<CartesianGrid />', () => {
         expect(allStripes[5]).toHaveAttribute('fill', 'green');
         expect(allStripes[5]).toHaveAttribute('y', '400');
         expect(allStripes[5]).toHaveAttribute('height', String(extraSpaceAtTheTopOfChart));
+      });
+
+      it('should render one big stripe if there are no horizontalPoints', () => {
+        const { container } = render(
+          <CartesianGrid x={0} y={0} width={500} height={500} horizontalFill={['red', 'green']} />,
+        );
+        const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
+        expect(allStripes).toHaveLength(1);
+        expect.soft(allStripes[0]).toHaveAttribute('width', '500');
+        expect.soft(allStripes[0]).toHaveAttribute('height', '500');
+        expect.soft(allStripes[0]).toHaveAttribute('x', '0');
+        expect.soft(allStripes[0]).toHaveAttribute('y', '0');
+        expect.soft(allStripes[0]).toHaveAttribute('fill', 'red');
+      });
+
+      it('should render stripes defined by horizontalCoordinatesGenerator', () => {
+        const horizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = vi.fn().mockReturnValue([1, 2]);
+        const { container, debug } = render(
+          <Surface width={500} height={500}>
+            <CartesianGrid
+              x={0}
+              y={0}
+              width={500}
+              height={500}
+              horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
+              horizontalFill={['red', 'green']}
+            />
+          </Surface>,
+        );
+        debug();
+
+        expect(horizontalCoordinatesGenerator).toHaveBeenCalledOnce();
+
+        const allLines = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
+        expect(allLines).toHaveLength(3);
+      });
+
+      it('should not render anything if horizontal=false', () => {
+        const extraSpaceAtTheTopOfChart = 1;
+        const { container } = render(
+          <CartesianGrid
+            x={0}
+            y={0}
+            width={500}
+            height={Math.max(...horizontalPoints) + extraSpaceAtTheTopOfChart}
+            verticalPoints={verticalPoints}
+            horizontalPoints={horizontalPoints}
+            horizontalFill={['red', 'green']}
+            fillOpacity="20%"
+            horizontal={false}
+          />,
+        );
+        const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
+        expect(allStripes).toHaveLength(0);
       });
 
       test.each(emptyFillCases)('should render nothing if horizontalFill is $fill', ({ fill }) => {

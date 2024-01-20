@@ -206,6 +206,45 @@ function VerticalGridLines(props: Props) {
   return <g className="recharts-cartesian-grid-vertical">{items}</g>;
 }
 
+function HorizontalStripes(props: Props) {
+  const { horizontalFill, fillOpacity, x, y, width, height, horizontalPoints, horizontal } = props;
+  if (!horizontal || !horizontalFill || !horizontalFill.length) {
+    return null;
+  }
+
+  // Why =y -y? I was trying to find any difference that this makes, with floating point numbers and edge cases but ... nothing.
+  const roundedSortedHorizontalPoints = horizontalPoints.map(e => Math.round(e + y - y)).sort((a, b) => a - b);
+  // Why is this condition `!==` instead of `<=` ?
+  if (y !== roundedSortedHorizontalPoints[0]) {
+    roundedSortedHorizontalPoints.unshift(0);
+  }
+
+  const items = roundedSortedHorizontalPoints.map((entry, i) => {
+    // Why do we strip only the last stripe if it is invisible, and not all invisible stripes?
+    const lastStripe = !roundedSortedHorizontalPoints[i + 1];
+    const lineHeight = lastStripe ? y + height - entry : roundedSortedHorizontalPoints[i + 1] - entry;
+    if (lineHeight <= 0) {
+      return null;
+    }
+    const colorIndex = i % horizontalFill.length;
+    return (
+      <rect
+        key={`react-${i}`} // eslint-disable-line react/no-array-index-key
+        y={entry}
+        x={x}
+        height={lineHeight}
+        width={width}
+        stroke="none"
+        fill={horizontalFill[colorIndex]}
+        fillOpacity={fillOpacity}
+        className="recharts-cartesian-grid-bg"
+      />
+    );
+  });
+
+  return <g className="recharts-cartesian-gridstripes-horizontal">{items}</g>;
+}
+
 export class CartesianGrid extends PureComponent<Props> {
   static displayName = 'CartesianGrid';
 
@@ -268,58 +307,12 @@ export class CartesianGrid extends PureComponent<Props> {
     return <g className="recharts-cartesian-gridstripes-vertical">{items}</g>;
   }
 
-  /**
-   * Draw horizontal grid stripes filled by colors
-   * @param {Array} horizontalPoints either passed in as props or generated from function
-   * @return {Group} Horizontal stripes
-   */
-  renderHorizontalStripes(horizontalPoints: number[]) {
-    const { horizontalFill } = this.props;
-    if (!horizontalFill || !horizontalFill.length) {
-      return null;
-    }
-
-    const { fillOpacity, x, y, width, height } = this.props;
-    // Why =y -y? I was trying to find any difference that this makes, with floating point numbers and edge cases but ... nothing.
-    const roundedSortedHorizontalPoints = horizontalPoints.map(e => Math.round(e + y - y)).sort((a, b) => a - b);
-    // Why is this condition `!==` instead of `<=` ?
-    if (y !== roundedSortedHorizontalPoints[0]) {
-      roundedSortedHorizontalPoints.unshift(0);
-    }
-
-    const items = roundedSortedHorizontalPoints.map((entry, i) => {
-      // Why do we strip only the last stripe if it is invisible, and not all invisible stripes?
-      const lastStripe = !roundedSortedHorizontalPoints[i + 1];
-      const lineHeight = lastStripe ? y + height - entry : roundedSortedHorizontalPoints[i + 1] - entry;
-      if (lineHeight <= 0) {
-        return null;
-      }
-      const colorIndex = i % horizontalFill.length;
-      return (
-        <rect
-          key={`react-${i}`} // eslint-disable-line react/no-array-index-key
-          y={entry}
-          x={x}
-          height={lineHeight}
-          width={width}
-          stroke="none"
-          fill={horizontalFill[colorIndex]}
-          fillOpacity={fillOpacity}
-          className="recharts-cartesian-grid-bg"
-        />
-      );
-    });
-
-    return <g className="recharts-cartesian-gridstripes-horizontal">{items}</g>;
-  }
-
   render() {
     const {
       x,
       y,
       width,
       height,
-      horizontal,
       vertical,
       horizontalCoordinatesGenerator,
       verticalCoordinatesGenerator,
@@ -416,7 +409,7 @@ export class CartesianGrid extends PureComponent<Props> {
 
         <VerticalGridLines {...this.props} verticalPoints={verticalPoints} />
 
-        {horizontal && this.renderHorizontalStripes(horizontalPoints)}
+        <HorizontalStripes {...this.props} horizontalPoints={horizontalPoints} />
         {vertical && this.renderVerticalStripes(verticalPoints)}
       </g>
     );
