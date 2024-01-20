@@ -880,8 +880,96 @@ describe('<CartesianGrid />', () => {
     });
 
     describe('vertical as a function', () => {
-      it.todo('should call once for each horizontal line, and render result');
-      it.todo('should pass through props, and add default stroke');
+      it('should pass props, add default stroke, and then render result of the function', () => {
+        const vertical = vi.fn().mockReturnValue(<g data-testid="my_mock_line" />);
+        const { container } = render(
+          <Surface width={500} height={500}>
+            <CartesianGrid
+              x={0}
+              y={0}
+              width={500}
+              height={500}
+              verticalPoints={verticalPoints}
+              horizontalPoints={horizontalPoints}
+              vertical={vertical}
+            />
+          </Surface>,
+        );
+        expect(vertical).toHaveBeenCalledTimes(verticalPoints.length);
+
+        const expectedProps: GridLineFunctionProps = {
+          stroke: '#ccc',
+          fill: 'none',
+          height: 500,
+          width: 500,
+          horizontal: true,
+          horizontalFill: [],
+          horizontalPoints,
+          verticalFill: [],
+          verticalPoints,
+          vertical,
+          key: expect.stringMatching(/line-[0-9]/),
+          x: 0,
+          y: 0,
+          x1: expect.any(Number),
+          x2: expect.any(Number),
+          y1: 0,
+          y2: 500,
+          index: expect.any(Number),
+        };
+        expect(vertical).toHaveBeenCalledWith(expectedProps);
+
+        expect(container.querySelectorAll('[data-testid=my_mock_line]')).toHaveLength(verticalPoints.length);
+      });
+    });
+
+    describe('vertical as an element', () => {
+      it('should pass props, add default stroke, and then render result of the function', () => {
+        const spy = vi.fn();
+        const Vertical = (props: any) => {
+          spy(props);
+          return <g data-testid="my_mock_line" />;
+        };
+        const { container } = render(
+          <Surface width={500} height={500}>
+            <CartesianGrid
+              x={0}
+              y={0}
+              width={500}
+              height={500}
+              verticalPoints={verticalPoints}
+              horizontalPoints={horizontalPoints}
+              vertical={<Vertical />}
+            />
+          </Surface>,
+        );
+        expect(spy).toHaveBeenCalledTimes(verticalPoints.length);
+
+        const expectedProps: GridLineFunctionProps = {
+          stroke: '#ccc',
+          fill: 'none',
+          height: 500,
+          width: 500,
+          horizontal: true,
+          horizontalFill: [],
+          horizontalPoints,
+          verticalFill: [],
+          verticalPoints,
+          vertical: <Vertical />,
+          // @ts-expect-error React does not pass the key through when calling cloneElement
+          key: undefined,
+          x: 0,
+          y: 0,
+          x1: expect.any(Number),
+          x2: expect.any(Number),
+          y1: 0,
+          y2: 500,
+          index: expect.any(Number),
+        };
+        expect(spy).toHaveBeenCalledWith(expectedProps);
+
+        expect(container.querySelectorAll('[data-testid=my_mock_line]')).toHaveLength(verticalPoints.length);
+      });
     });
   });
 
