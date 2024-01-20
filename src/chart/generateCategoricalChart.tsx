@@ -1668,8 +1668,6 @@ export const generateCategoricalChart = ({
       }
     };
 
-    axesTicksGenerator = (axis?: any) => getTicksOfAxis(axis, true);
-
     filterFormatItem(item: any, displayName: any, childIndex: any) {
       const { formattedGraphicalItems } = this.state;
 
