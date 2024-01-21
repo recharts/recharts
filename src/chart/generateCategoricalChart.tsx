@@ -831,6 +831,7 @@ export interface CategoricalChartProps {
   accessibilityLayer?: boolean;
   role?: string;
   tabIndex?: number;
+  defaultIndex?: number;
 }
 
 export const generateCategoricalChart = ({
@@ -1079,6 +1080,42 @@ export const generateCategoricalChart = ({
         mouseHandlerCallback: this.handleMouseMove,
         layout: this.props.layout,
       });
+      this.displayDefaultTooltip();
+    }
+
+    displayDefaultTooltip() {
+      const { defaultIndex } = this.props;
+      if (
+        typeof this.props.defaultIndex !== 'number' ||
+        defaultIndex < this.state.dataStartIndex ||
+        defaultIndex > this.state.dataEndIndex
+      ) {
+        return;
+      }
+
+      const tooltipElem = (Array.isArray(this.props.children) ? this.props.children : [this.props.children]).find(
+        (child: any) => child.type.name === 'Tooltip',
+      );
+      if (!tooltipElem) {
+        return;
+      }
+
+      const activeLabel = this.state.tooltipTicks[defaultIndex] && this.state.tooltipTicks[defaultIndex].value;
+      const activePayload = getTooltipContent(this.state, this.props.data, defaultIndex, activeLabel);
+
+      const nextState = {
+        activeTooltipIndex: defaultIndex,
+        isTooltipActive: true,
+        activeLabel,
+        activePayload,
+        activeCoordinate: {
+          x: this.state.orderedTooltipTicks[defaultIndex].coordinate,
+          y: (this.state.offset.top + this.props.height) / 2,
+        },
+      };
+
+      this.setState(nextState);
+      this.renderCursor(tooltipElem);
     }
 
     getSnapshotBeforeUpdate(
@@ -1226,6 +1263,10 @@ export const generateCategoricalChart = ({
       // remove syncId
       if (!_.isNil(prevProps.syncId) && _.isNil(this.props.syncId)) {
         this.removeListener();
+      }
+
+      if (this.props.defaultIndex !== prevProps.defaultIndex) {
+        this.displayDefaultTooltip();
       }
     }
 
@@ -1523,8 +1564,11 @@ export const generateCategoricalChart = ({
       const mouse = this.getMouseInfo(e);
       const nextState: CategoricalChartState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
 
-      this.setState(nextState);
-      this.triggerSyncEvent(nextState);
+      // If the dev set a defaultIndex, don't set `isTooltipActive` to false
+      if (nextState.isTooltipActive || typeof this.props.defaultIndex === 'number') {
+        this.setState(nextState);
+        this.triggerSyncEvent(nextState);
+      }
 
       if (_.isFunction(onMouseMove)) {
         onMouseMove(nextState, e);
@@ -1576,8 +1620,10 @@ export const generateCategoricalChart = ({
       const { onMouseLeave } = this.props;
       const nextState: CategoricalChartState = { isTooltipActive: false };
 
-      this.setState(nextState);
-      this.triggerSyncEvent(nextState);
+      if (typeof this.props.defaultIndex !== 'number') {
+        this.setState(nextState);
+        this.triggerSyncEvent(nextState);
+      }
 
       if (_.isFunction(onMouseLeave)) {
         onMouseLeave(nextState, e);
