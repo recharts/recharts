@@ -1083,7 +1083,7 @@ export const generateCategoricalChart = ({
       this.displayDefaultTooltip();
     }
 
-    displayDefaultTooltip(optCoords = {}) {
+    displayDefaultTooltip() {
       const { defaultIndex } = this.props;
       if (
         typeof this.props.defaultIndex !== 'number' ||
@@ -1104,18 +1104,29 @@ export const generateCategoricalChart = ({
       const activePayload = getTooltipContent(this.state, this.props.data, defaultIndex, activeLabel);
 
       const isHorizontal = this.props.layout === 'horizontal';
-      let activeCoordinate = {
-        // Grab the coordinates for the independent axis (X-axis when horizontal)
-        [isHorizontal ? 'x' : 'y']: this.state.tooltipTicks[defaultIndex].coordinate,
-        // The dependent axis's coordinate usually doesn't matter, so we'll just select the center of the chart
-        [isHorizontal ? 'y' : 'x']: (this.state.offset.top + this.props.height) / 2,
-        ...optCoords,
-      };
+
+      const independentAxisCoord = this.state.tooltipTicks[defaultIndex].coordinate;
+      const dependentAxisCoord = (this.state.offset.top + this.props.height) / 2;
+
+      let activeCoordinate = isHorizontal
+        ? {
+            x: independentAxisCoord,
+            y: dependentAxisCoord,
+          }
+        : {
+            y: independentAxisCoord,
+            x: dependentAxisCoord,
+          };
 
       // If there's a scatter plot, we'll want to grab the
-      const ScatterPlotElement = this.state.formattedGraphicalItems.find(({ item }) => item.type.name === 'Scatter');
+      const ScatterPlotElement = this.state.formattedGraphicalItems.find(
+        ({ item }: { item: any }) => item.type.name === 'Scatter',
+      );
       if (ScatterPlotElement) {
-        activeCoordinate = ScatterPlotElement.props.points[defaultIndex].tooltipPosition;
+        activeCoordinate = {
+          ...activeCoordinate,
+          ...ScatterPlotElement.props.points[defaultIndex].tooltipPosition,
+        };
       }
 
       const nextState = {
