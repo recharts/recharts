@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
 import { CartesianTickItem, Size } from '../util/types';
 import { mathSign, isNumber } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
@@ -24,9 +24,17 @@ function getTicksEnd(
 
   for (let i = len - 1; i >= 0; i--) {
     let entry = result[i];
-    const size = getTickSize(entry, i);
+    let size: number | undefined;
+    const getSize = () => {
+      if (size === undefined) {
+        size = getTickSize(entry, i);
+      }
+
+      return size;
+    };
+
     if (i === len - 1) {
-      const gap = sign * (entry.coordinate + (sign * size) / 2 - end);
+      const gap = sign * (entry.coordinate + (sign * getSize()) / 2 - end);
       result[i] = entry = {
         ...entry,
         tickCoord: gap > 0 ? entry.coordinate - gap * sign : entry.coordinate,
@@ -35,10 +43,10 @@ function getTicksEnd(
       result[i] = entry = { ...entry, tickCoord: entry.coordinate };
     }
 
-    const isShow = isVisible(sign, entry.tickCoord, size, start, end);
+    const isShow = isVisible(sign, entry.tickCoord, getSize, start, end);
 
     if (isShow) {
-      end = entry.tickCoord - sign * (size / 2 + minTickGap);
+      end = entry.tickCoord - sign * (getSize() / 2 + minTickGap);
       result[i] = { ...entry, isShow: true };
     }
   }
@@ -69,7 +77,7 @@ function getTicksStart(
       tickCoord: tailGap > 0 ? tail.coordinate - tailGap * sign : tail.coordinate,
     };
 
-    const isTailShow = isVisible(sign, tail.tickCoord, tailSize, start, end);
+    const isTailShow = isVisible(sign, tail.tickCoord, () => tailSize, start, end);
 
     if (isTailShow) {
       end = tail.tickCoord - sign * (tailSize / 2 + minTickGap);
@@ -80,10 +88,17 @@ function getTicksStart(
   const count = preserveEnd ? len - 1 : len;
   for (let i = 0; i < count; i++) {
     let entry = result[i];
-    const size = getTickSize(entry, i);
+    let size: number | undefined;
+    const getSize = () => {
+      if (size === undefined) {
+        size = getTickSize(entry, i);
+      }
+
+      return size;
+    };
 
     if (i === 0) {
-      const gap = sign * (entry.coordinate - (sign * size) / 2 - start);
+      const gap = sign * (entry.coordinate - (sign * getSize()) / 2 - start);
       result[i] = entry = {
         ...entry,
         tickCoord: gap < 0 ? entry.coordinate - gap * sign : entry.coordinate,
@@ -92,10 +107,10 @@ function getTicksStart(
       result[i] = entry = { ...entry, tickCoord: entry.coordinate };
     }
 
-    const isShow = isVisible(sign, entry.tickCoord, size, start, end);
+    const isShow = isVisible(sign, entry.tickCoord, getSize, start, end);
 
     if (isShow) {
-      start = entry.tickCoord + sign * (size / 2 + minTickGap);
+      start = entry.tickCoord + sign * (getSize() / 2 + minTickGap);
       result[i] = { ...entry, isShow: true };
     }
   }
@@ -121,7 +136,7 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
     unit && sizeKey === 'width' ? getStringSize(unit, { fontSize, letterSpacing }) : { width: 0, height: 0 };
 
   const getTickSize = (content: CartesianTickItem, index: number) => {
-    const value = _.isFunction(tickFormatter) ? tickFormatter(content.value, index) : content.value;
+    const value = isFunction(tickFormatter) ? tickFormatter(content.value, index) : content.value;
     // Recharts only supports angles when sizeKey === 'width'
     return sizeKey === 'width'
       ? getAngledTickWidth(getStringSize(value, { fontSize, letterSpacing }), unitSize, angle)

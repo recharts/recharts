@@ -1,6 +1,8 @@
 import React, { cloneElement, isValidElement, ReactNode, ReactElement, createElement, SVGProps } from 'react';
-import _ from 'lodash';
-import classNames from 'classnames';
+import isNil from 'lodash/isNil';
+import isFunction from 'lodash/isFunction';
+import isObject from 'lodash/isObject';
+import clsx from 'clsx';
 import { Text } from './Text';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign } from '../util/DataUtils';
@@ -9,43 +11,46 @@ import { ViewBox, PolarViewBox, CartesianViewBox } from '../util/types';
 
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
 
+export type LabelPosition =
+  | 'top'
+  | 'left'
+  | 'right'
+  | 'bottom'
+  | 'inside'
+  | 'outside'
+  | 'insideLeft'
+  | 'insideRight'
+  | 'insideTop'
+  | 'insideBottom'
+  | 'insideTopLeft'
+  | 'insideBottomLeft'
+  | 'insideTopRight'
+  | 'insideBottomRight'
+  | 'insideStart'
+  | 'insideEnd'
+  | 'end'
+  | 'center'
+  | 'centerTop'
+  | 'centerBottom'
+  | 'middle'
+  | {
+      x?: number;
+      y?: number;
+    };
+
 interface LabelProps {
   viewBox?: ViewBox;
   parentViewBox?: ViewBox;
   formatter?: Function;
   value?: number | string;
   offset?: number;
-  position?:
-    | 'top'
-    | 'left'
-    | 'right'
-    | 'bottom'
-    | 'inside'
-    | 'outside'
-    | 'insideLeft'
-    | 'insideRight'
-    | 'insideTop'
-    | 'insideBottom'
-    | 'insideTopLeft'
-    | 'insideBottomLeft'
-    | 'insideTopRight'
-    | 'insideBottomRight'
-    | 'insideStart'
-    | 'insideEnd'
-    | 'end'
-    | 'center'
-    | 'centerTop'
-    | 'centerBottom'
-    | 'middle'
-    | {
-        x?: number;
-        y?: number;
-      };
+  position?: LabelPosition;
   children?: ReactNode;
   className?: string;
   content?: ContentType;
   textBreakAll?: boolean;
   angle?: number;
+  index?: number;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;
@@ -60,9 +65,9 @@ export type ImplicitLabelType =
 
 const getLabel = (props: Props) => {
   const { value, formatter } = props;
-  const label = _.isNil(props.children) ? value : props.children;
+  const label = isNil(props.children) ? value : props.children;
 
-  if (_.isFunction(formatter)) {
+  if (isFunction(formatter)) {
     return formatter(label);
   }
 
@@ -102,10 +107,10 @@ const renderRadialLabel = (labelProps: Props, label: ReactNode, attrs: SVGProps<
   const path = `M${startPoint.x},${startPoint.y}
     A${radius},${radius},0,1,${direction ? 0 : 1},
     ${endPoint.x},${endPoint.y}`;
-  const id = _.isNil(labelProps.id) ? uniqueId('recharts-radial-line-') : labelProps.id;
+  const id = isNil(labelProps.id) ? uniqueId('recharts-radial-line-') : labelProps.id;
 
   return (
-    <text {...attrs} dominantBaseline="central" className={classNames('recharts-radial-bar-label', className)}>
+    <text {...attrs} dominantBaseline="central" className={clsx('recharts-radial-bar-label', className)}>
       <defs>
         <path id={id} d={path} />
       </defs>
@@ -348,7 +353,7 @@ const getAttrsOfCartesianLabel = (props: Props) => {
   }
 
   if (
-    _.isObject(position) &&
+    isObject(position) &&
     (isNumber(position.x) || isPercent(position.x)) &&
     (isNumber(position.y) || isPercent(position.y))
   ) {
@@ -377,7 +382,7 @@ export function Label({ offset = 5, ...restProps }: Props) {
   const props = { offset, ...restProps };
   const { viewBox, position, value, children, content, className = '', textBreakAll } = props;
 
-  if (!viewBox || (_.isNil(value) && _.isNil(children) && !isValidElement(content) && !_.isFunction(content))) {
+  if (!viewBox || (isNil(value) && isNil(children) && !isValidElement(content) && !isFunction(content))) {
     return null;
   }
 
@@ -386,7 +391,7 @@ export function Label({ offset = 5, ...restProps }: Props) {
   }
 
   let label: ReactNode;
-  if (_.isFunction(content)) {
+  if (isFunction(content)) {
     label = createElement(content as any, props);
 
     if (isValidElement(label)) {
@@ -406,12 +411,7 @@ export function Label({ offset = 5, ...restProps }: Props) {
   const positionAttrs = isPolarLabel ? getAttrsOfPolarLabel(props) : getAttrsOfCartesianLabel(props);
 
   return (
-    <Text
-      className={classNames('recharts-label', className)}
-      {...attrs}
-      {...(positionAttrs as any)}
-      breakAll={textBreakAll}
-    >
+    <Text className={clsx('recharts-label', className)} {...attrs} {...(positionAttrs as any)} breakAll={textBreakAll}>
       {label}
     </Text>
   );
@@ -497,11 +497,11 @@ const parseLabel = (label: unknown, viewBox: ViewBox) => {
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
   }
 
-  if (_.isFunction(label)) {
+  if (isFunction(label)) {
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
   }
 
-  if (_.isObject(label)) {
+  if (isObject(label)) {
     return <Label viewBox={viewBox} {...label} key="label-implicit" />;
   }
 

@@ -1,6 +1,8 @@
 import React from 'react';
+import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
-import { Sankey } from '../../src';
+import { Sankey, XAxis, YAxis } from '../../src';
+import { testChartLayoutContext } from '../util/context';
 
 describe('<Sankey />', () => {
   const data = {
@@ -151,5 +153,72 @@ describe('<Sankey />', () => {
       expect(container.querySelectorAll('.recharts-sankey-node')).toHaveLength(49);
       expect(container.querySelectorAll('.recharts-sankey-link')).toHaveLength(69);
     }, 1000);
+  });
+
+  describe('Sankey layout context', () => {
+    /**
+     * Okay Sankey is something different, I can't get it to render without throwing
+     * even for the basic example copied from above.
+     * TODO figure out why does it throw and unskip this test.
+     */
+    it.skip(
+      'should provide viewBox and clipPathId if there are no axes',
+      testChartLayoutContext(
+        props => (
+          <Sankey width={1000} height={500} data={data}>
+            {props.children}
+          </Sankey>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
+          expect(xAxisMap).toBe(undefined);
+          expect(yAxisMap).toBe(undefined);
+        },
+      ),
+    );
+
+    /**
+     * Okay Sankey is something different, I can't get it to render without throwing
+     * even for the basic example copied from above.
+     * TODO figure out why does it throw and unskip this test.
+     */
+    it.skip(
+      'should not set width and height in context',
+      testChartLayoutContext(
+        props => (
+          <Sankey width={100} height={50} data={data}>
+            {props.children}
+          </Sankey>
+        ),
+        ({ width, height }) => {
+          expect.soft(width).toBe(0);
+          expect.soft(height).toBe(0);
+        },
+      ),
+    );
+
+    /**
+     * This test is skipped because generateCategoricalChart throws an error if axes are provided to FunnelChart.
+     * TODO un-skip this level if fixing the exception.
+     */
+    it.skip(
+      'should provide axisMaps: undefined even if axes are specified',
+      testChartLayoutContext(
+        props => (
+          <Sankey width={1000} height={500} data={data}>
+            <XAxis dataKey="number" type="number" />
+            <YAxis type="category" dataKey="name" />
+            {props.children}
+          </Sankey>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 10, width: 30, x: 65, y: 5 });
+          expect(xAxisMap).toBe(undefined);
+          expect(yAxisMap).toBe(undefined);
+        },
+      ),
+    );
   });
 });

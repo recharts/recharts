@@ -2,12 +2,12 @@
  * @fileOverview Reference Line
  */
 import React, { ReactElement } from 'react';
-import _ from 'lodash';
-import classNames from 'classnames';
+import isFunction from 'lodash/isFunction';
+import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
 import { createLabeledScales, rectWithPoints } from '../util/CartesianUtils';
-import { ifOverflowMatches } from '../util/IfOverflowMatches';
+import { IfOverflow, ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
@@ -28,7 +28,7 @@ interface ReferenceAreaProps extends InternalReferenceAreaProps {
   isFront?: boolean;
   /** @deprecated use ifOverflow="extendDomain"  */
   alwaysShow?: boolean;
-  ifOverflow?: 'hidden' | 'visible' | 'discard' | 'extendDomain';
+  ifOverflow?: IfOverflow;
   x1?: number | string;
   x2?: number | string;
   y1?: number | string;
@@ -92,7 +92,7 @@ export function ReferenceArea(props: Props) {
   const clipPath = ifOverflowMatches(props, 'hidden') ? `url(#${clipPathId})` : undefined;
 
   return (
-    <Layer className={classNames('recharts-reference-area', className)}>
+    <Layer className={clsx('recharts-reference-area', className)}>
       {ReferenceArea.renderRect(shape, { clipPath, ...filterProps(props, true), ...rect })}
       {Label.renderCallByParent(props, rect)}
     </Layer>
@@ -117,7 +117,7 @@ ReferenceArea.renderRect = (option: ReferenceAreaProps['shape'], props: any) => 
 
   if (React.isValidElement(option)) {
     rect = React.cloneElement(option, props);
-  } else if (_.isFunction(option)) {
+  } else if (isFunction(option)) {
     rect = option(props);
   } else {
     rect = <Rectangle {...props} className="recharts-reference-area-rect" />;

@@ -1,0 +1,19 @@
+import { Canvas, Meta, ArgTypes } from '@storybook/blocks';
+import * as SunburstStories from './SunburstChart.stories';
+
+# Sunburst
+
+The sunburst is a hierarchical chart, similar to a treemap, plotted in polar coordinates.
+Sunburst charts effectively convey the hierarchical relationships and proportions within each level.
+It is easy to see all the middle layers in the hierarchy, which might get lost in other visualizations.
+For some datasets, the radial layout may be more visually appealing and intuitive than a traditional treemap.
+
+## Parent Component
+
+The Sunburst can be used within: `<ResponsiveContainer />`.
+
+## Properties
+
+Properties in the groups Other and Internal are not recommended to be used.
+
+<ArgTypes of={SunburstStories} sort={'requiredFirst'} />

@@ -2,7 +2,8 @@
  * @fileOverview Cartesian Grid
  */
 import React, { PureComponent, ReactElement, SVGProps } from 'react';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+
 import { isNumber } from '../util/DataUtils';
 import { ChartOffset, D3Scale } from '../util/types';
 
@@ -21,8 +22,8 @@ interface InternalCartesianGridProps {
   y?: number;
   width?: number;
   height?: number;
-  horizontalCoordinatesGenerator?: (props: any) => number[];
-  verticalCoordinatesGenerator?: (props: any) => number[];
+  horizontalCoordinatesGenerator?: (props: any, syncWithTicks: boolean) => number[];
+  verticalCoordinatesGenerator?: (props: any, syncWithTicks: boolean) => number[];
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   offset?: ChartOffset;
@@ -33,10 +34,34 @@ interface InternalCartesianGridProps {
 interface CartesianGridProps extends InternalCartesianGridProps {
   horizontal?: GridLineType;
   vertical?: GridLineType;
+  /**
+   * Array of coordinates in pixels where to draw horizontal grid lines.
+   * Has priority over syncWithTicks and horizontalValues.
+   */
   horizontalPoints?: number[];
+  /**
+   * Array of coordinates in pixels where to draw vertical grid lines.
+   * Has priority over syncWithTicks and horizontalValues.
+   */
   verticalPoints?: number[];
   verticalFill?: string[];
   horizontalFill?: string[];
+  /**
+   * If true, only the lines that correspond to the axes ticks values will be drawn.
+   * If false, extra lines could be added for each axis (at min and max coordinates), if there will not such ticks.
+   * horizontalPoints, verticalPoints, horizontalValues, verticalValues have priority over syncWithTicks.
+   */
+  syncWithTicks?: boolean;
+  /**
+   * Array of values, where horizontal lines will be drawn. Numbers or strings, in dependence on axis type.
+   * Has priority over syncWithTicks but not over horizontalValues.
+   */
+  horizontalValues?: number[] | string[];
+  /**
+   * Array of values, where vertical lines will be drawn. Numbers or strings, in dependence on axis type.
+   * Has priority over syncWithTicks but not over verticalValues.
+   */
+  verticalValues?: number[] | string[];
 }
 
 export type Props = SVGProps<SVGElement> & CartesianGridProps;
@@ -64,12 +89,12 @@ export class CartesianGrid extends PureComponent<Props> {
 
     if (React.isValidElement(option)) {
       lineItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       lineItem = option(props);
     } else {
       const { x1, y1, x2, y2, key, ...others } = props;
-
-      lineItem = <line {...filterProps(others)} x1={x1} y1={y1} x2={x2} y2={y2} fill="none" key={key} />;
+      const { offset: __, ...restOfFilteredProps } = filterProps(others);
+      lineItem = <line {...restOfFilteredProps} x1={x1} y1={y1} x2={x2} y2={y2} fill="none" key={key} />;
     }
 
     return lineItem;
@@ -257,6 +282,9 @@ export class CartesianGrid extends PureComponent<Props> {
       offset,
       chartWidth,
       chartHeight,
+      syncWithTicks,
+      horizontalValues,
+      verticalValues,
     } = this.props;
 
     if (
@@ -275,13 +303,43 @@ export class CartesianGrid extends PureComponent<Props> {
     let { horizontalPoints, verticalPoints } = this.props;
 
     // No horizontal points are specified
-    if ((!horizontalPoints || !horizontalPoints.length) && _.isFunction(horizontalCoordinatesGenerator)) {
-      horizontalPoints = horizontalCoordinatesGenerator({ yAxis, width: chartWidth, height: chartHeight, offset });
+    if ((!horizontalPoints || !horizontalPoints.length) && isFunction(horizontalCoordinatesGenerator)) {
+      const isHorizontalValues = horizontalValues && horizontalValues.length;
+
+      horizontalPoints = horizontalCoordinatesGenerator(
+        {
+          yAxis: yAxis
+            ? {
+                ...yAxis,
+                ticks: isHorizontalValues ? horizontalValues : yAxis.ticks,
+              }
+            : undefined,
+          width: chartWidth,
+          height: chartHeight,
+          offset,
+        },
+        isHorizontalValues ? true : syncWithTicks,
+      );
     }
 
     // No vertical points are specified
-    if ((!verticalPoints || !verticalPoints.length) && _.isFunction(verticalCoordinatesGenerator)) {
-      verticalPoints = verticalCoordinatesGenerator({ xAxis, width: chartWidth, height: chartHeight, offset });
+    if ((!verticalPoints || !verticalPoints.length) && isFunction(verticalCoordinatesGenerator)) {
+      const isVerticalValues = verticalValues && verticalValues.length;
+
+      verticalPoints = verticalCoordinatesGenerator(
+        {
+          xAxis: xAxis
+            ? {
+                ...xAxis,
+                ticks: isVerticalValues ? verticalValues : xAxis.ticks,
+              }
+            : undefined,
+          width: chartWidth,
+          height: chartHeight,
+          offset,
+        },
+        isVerticalValues ? true : syncWithTicks,
+      );
     }
 
     return (

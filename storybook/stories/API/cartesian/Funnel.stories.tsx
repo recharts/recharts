@@ -25,6 +25,7 @@ export default {
   argTypes: {
     nameKey,
     legendType,
+    shape: activeShape,
     activeShape,
     trapezoids,
     ...AnimationProps,

@@ -3,10 +3,14 @@
  */
 import React, { PureComponent, ReactElement, ReactNode, SVGProps } from 'react';
 import Animate from 'react-smooth';
-import classNames from 'classnames';
-import _ from 'lodash';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+import isNil from 'lodash/isNil';
+import isFunction from 'lodash/isFunction';
+
+import clsx from 'clsx';
 import { Layer } from '../container/Layer';
-import { Sector, Props as SectorProps } from '../shape/Sector';
+import { Props as SectorProps } from '../shape/Sector';
 import { Curve } from '../shape/Curve';
 import { Text } from '../component/Text';
 import { Label } from '../component/Label';
@@ -28,7 +32,9 @@ import {
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
   AnimationDuration,
+  ActiveShape,
 } from '../util/types';
+import { Shape } from '../util/ActiveShapeUtils';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -47,7 +53,6 @@ interface PieDef {
   cornerRadius?: number | string;
 }
 
-type PieActiveShape = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | SectorProps;
 type PieLabelLine =
   | ReactElement<SVGElement>
   | ((props: any) => ReactElement<SVGElement>)
@@ -58,7 +63,7 @@ export type PieLabel<P = any> =
   | ((props: P) => ReactNode | ReactElement<SVGElement>)
   | (SVGProps<SVGTextElement> & { offsetRadius?: number })
   | boolean;
-type PieSectorDataItem = SectorProps & {
+export type PieSectorDataItem = SectorProps & {
   percent?: number;
   name?: string | number;
   midAngle?: number;
@@ -66,6 +71,8 @@ type PieSectorDataItem = SectorProps & {
   tooltipPosition?: Coordinate;
   value?: number;
   paddingAngle?: number;
+  dataKey?: string;
+  payload?: any[];
 };
 
 interface PieProps extends PieDef {
@@ -86,8 +93,8 @@ interface PieProps extends PieDef {
   /** the input data */
   data?: any[];
   sectors?: PieSectorDataItem[];
-  activeShape?: PieActiveShape;
-  inactiveShape?: PieActiveShape;
+  activeShape?: ActiveShape<PieSectorDataItem>;
+  inactiveShape?: ActiveShape<PieSectorDataItem>;
   labelLine?: PieLabelLine;
   label?: PieLabel;
 
@@ -211,14 +218,14 @@ export class Pie extends PureComponent<Props, State> {
 
     let realDataKey = dataKey;
 
-    if (_.isNil(dataKey) && _.isNil(valueKey)) {
+    if (isNil(dataKey) && isNil(valueKey)) {
       warn(
         false,
         `Use "dataKey" to specify the value of pie,
       the props "valueKey" will be deprecated in 1.1.0`,
       );
       realDataKey = 'value';
-    } else if (_.isNil(dataKey)) {
+    } else if (isNil(dataKey)) {
       warn(
         false,
         `Use "dataKey" to specify the value of pie,
@@ -370,7 +377,7 @@ export class Pie extends PureComponent<Props, State> {
       isAnimationFinished: true,
     });
 
-    if (_.isFunction(onAnimationEnd)) {
+    if (isFunction(onAnimationEnd)) {
       onAnimationEnd();
     }
   };
@@ -382,7 +389,7 @@ export class Pie extends PureComponent<Props, State> {
       isAnimationFinished: false,
     });
 
-    if (_.isFunction(onAnimationStart)) {
+    if (isFunction(onAnimationStart)) {
       onAnimationStart();
     }
   };
@@ -391,7 +398,7 @@ export class Pie extends PureComponent<Props, State> {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     }
-    if (_.isFunction(option)) {
+    if (isFunction(option)) {
       return option(props);
     }
 
@@ -403,7 +410,7 @@ export class Pie extends PureComponent<Props, State> {
       return React.cloneElement(option, props);
     }
     let label = value;
-    if (_.isFunction(option)) {
+    if (isFunction(option)) {
       label = option(props);
       if (React.isValidElement(label)) {
         return label;
@@ -453,15 +460,14 @@ export class Pie extends PureComponent<Props, State> {
       };
       let realDataKey = dataKey;
       // TODO: compatible to lower versions
-      if (_.isNil(dataKey) && _.isNil(valueKey)) {
+      if (isNil(dataKey) && isNil(valueKey)) {
         realDataKey = 'value';
-      } else if (_.isNil(dataKey)) {
+      } else if (isNil(dataKey)) {
         realDataKey = valueKey;
       }
 
       return (
-        // eslint-disable-next-line react/no-array-index-key
-        <Layer key={`label-${i}`}>
+        <Layer key={`label-${entry.startAngle}-${entry.endAngle}`}>
           {labelLine && Pie.renderLabelLineItem(labelLine, lineProps)}
           {Pie.renderLabelItem(label, labelProps, getValueByDataKey(entry, realDataKey))}
         </Layer>
@@ -471,30 +477,18 @@ export class Pie extends PureComponent<Props, State> {
     return <Layer className="recharts-pie-labels">{labels}</Layer>;
   }
 
-  static renderSectorItem(option: PieActiveShape, props: any) {
-    if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
-    }
-    if (_.isFunction(option)) {
-      return option(props);
-    }
-    if (_.isPlainObject(option)) {
-      return <Sector tabIndex={-1} {...props} {...option} />;
-    }
-
-    return <Sector tabIndex={-1} {...props} />;
-  }
-
   renderSectorsStatically(sectors: PieSectorDataItem[]) {
     const { activeShape, blendStroke, inactiveShape: inactiveShapeProp } = this.props;
     return sectors.map((entry, i) => {
+      if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
+      const isActive = this.isActiveIndex(i);
       const inactiveShape = inactiveShapeProp && this.hasActiveIndex() ? inactiveShapeProp : null;
-      const sectorOptions = this.isActiveIndex(i) ? activeShape : inactiveShape;
+      const sectorOptions = isActive ? activeShape : inactiveShape;
       const sectorProps = {
         ...entry,
         stroke: blendStroke ? entry.fill : entry.stroke,
+        tabIndex: -1,
       };
-
       return (
         <Layer
           ref={(ref: HTMLElement) => {
@@ -505,9 +499,9 @@ export class Pie extends PureComponent<Props, State> {
           tabIndex={-1}
           className="recharts-pie-sector"
           {...adaptEventsOfChild(this.props, entry, i)}
-          key={`sector-${i}`} // eslint-disable-line react/no-array-index-key
+          key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}`}
         >
-          {Pie.renderSectorItem(sectorOptions, sectorProps)}
+          <Shape option={sectorOptions} isActive={isActive} shapeType="sector" {...sectorProps} />
         </Layer>
       );
     });
@@ -515,6 +509,7 @@ export class Pie extends PureComponent<Props, State> {
 
   renderSectorsWithAnimation() {
     const { sectors, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = this.props;
+
     const { prevSectors, prevIsAnimationActive } = this.state;
 
     return (
@@ -536,7 +531,7 @@ export class Pie extends PureComponent<Props, State> {
 
           sectors.forEach((entry, index) => {
             const prev = prevSectors && prevSectors[index];
-            const paddingAngle = index > 0 ? _.get(entry, 'paddingAngle', 0) : 0;
+            const paddingAngle = index > 0 ? get(entry, 'paddingAngle', 0) : 0;
 
             if (prev) {
               const angleIp = interpolateNumber(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle);
@@ -606,7 +601,7 @@ export class Pie extends PureComponent<Props, State> {
     const { sectors, isAnimationActive } = this.props;
     const { prevSectors } = this.state;
 
-    if (isAnimationActive && sectors && sectors.length && (!prevSectors || !_.isEqual(prevSectors, sectors))) {
+    if (isAnimationActive && sectors && sectors.length && (!prevSectors || !isEqual(prevSectors, sectors))) {
       return this.renderSectorsWithAnimation();
     }
     return this.renderSectorsStatically(sectors);
@@ -634,7 +629,7 @@ export class Pie extends PureComponent<Props, State> {
       return null;
     }
 
-    const layerClass = classNames('recharts-pie', className);
+    const layerClass = clsx('recharts-pie', className);
 
     return (
       <Layer

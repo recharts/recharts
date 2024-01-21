@@ -2,7 +2,8 @@
  * @fileOverview Axis of radial direction
  */
 import React, { PureComponent } from 'react';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+
 import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
 import { Polygon } from '../shape/Polygon';
@@ -104,7 +105,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
 
     if (React.isValidElement(option)) {
       tickItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       tickItem = option(props);
     } else {
       tickItem = (
@@ -145,7 +146,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
       return (
         <Layer
           className="recharts-polar-angle-axis-tick"
-          key={`tick-${i}`} // eslint-disable-line react/no-array-index-key
+          key={`tick-${entry.coordinate}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
           {tickLine && <line className="recharts-polar-angle-axis-tick-line" {...tickLineProps} {...lineCoord} />}

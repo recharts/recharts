@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<Curve /> Not render when points is empty 1`] = `
+exports[`<Curve /> > Not render when points is empty 1`] = `
 <div>
   <svg
     class="recharts-surface"
@@ -14,7 +14,7 @@ exports[`<Curve /> Not render when points is empty 1`] = `
 </div>
 `;
 
-exports[`<Curve /> renders 1 area 1`] = `
+exports[`<Curve /> > renders 1 area 1`] = `
 <div>
   <svg
     class="recharts-surface"
@@ -34,7 +34,7 @@ exports[`<Curve /> renders 1 area 1`] = `
 </div>
 `;
 
-exports[`<Curve /> renders 1 curve 1`] = `
+exports[`<Curve /> > renders 1 curve 1`] = `
 <div>
   <svg
     class="recharts-surface"
@@ -54,7 +54,7 @@ exports[`<Curve /> renders 1 curve 1`] = `
 </div>
 `;
 
-exports[`<Curve /> renders 1 horizontal layout area 1`] = `
+exports[`<Curve /> > renders 1 horizontal layout area 1`] = `
 <div>
   <svg
     class="recharts-surface"
@@ -74,7 +74,7 @@ exports[`<Curve /> renders 1 horizontal layout area 1`] = `
 </div>
 `;
 
-exports[`<Curve /> renders 1 vertical layout area 1`] = `
+exports[`<Curve /> > renders 1 vertical layout area 1`] = `
 <div>
   <svg
     class="recharts-surface"

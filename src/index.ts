@@ -1,6 +1,7 @@
 // "export type" declarations on separate lines are in use
 // to workaround babel issue(s) 11465 12578
 //
+
 // see https://github.com/babel/babel/issues/11464#issuecomment-617606898
 export { Surface } from './container/Surface';
 export type { Props as SurfaceProps } from './container/Surface';
@@ -41,7 +42,7 @@ export type { Props as DotProps } from './shape/Dot';
 export { Cross } from './shape/Cross';
 export type { Props as CrossProps } from './shape/Cross';
 export { Symbols } from './shape/Symbols';
-export type { Props as SymbolsProps } from './shape/Symbols';
+export type { SymbolsProps } from './shape/Symbols';
 
 export { PolarGrid } from './polar/PolarGrid';
 export type { Props as PolarGridProps } from './polar/PolarGrid';
@@ -54,7 +55,7 @@ export type { Props as PieProps, PieLabel, PieLabelRenderProps } from './polar/P
 export { Radar } from './polar/Radar';
 export type { Props as RadarProps } from './polar/Radar';
 export { RadialBar } from './polar/RadialBar';
-export type { Props as RadialBarProps } from './polar/RadialBar';
+export type { RadialBarProps } from './polar/RadialBar';
 
 export { Brush } from './cartesian/Brush';
 export type { Props as BrushProps } from './cartesian/Brush';
@@ -96,9 +97,10 @@ export { ScatterChart } from './chart/ScatterChart';
 export { AreaChart } from './chart/AreaChart';
 export { RadialBarChart } from './chart/RadialBarChart';
 export { ComposedChart } from './chart/ComposedChart';
+export { SunburstChart } from './chart/SunburstChart';
 
 export { Funnel } from './numberAxis/Funnel';
-export type { Props as FunnelProps } from './numberAxis/Funnel';
+export type { FunnelProps } from './numberAxis/Funnel';
 export { FunnelChart } from './chart/FunnelChart';
 export { Trapezoid } from './shape/Trapezoid';
 export type { Props as TrapezoidProps } from './shape/Trapezoid';

@@ -1,11 +1,14 @@
 /**
  * @fileOverview Render a group of radial bar
  */
-import React, { PureComponent, ReactElement, ReactNode } from 'react';
-import classNames from 'classnames';
+import React, { PureComponent, ReactElement } from 'react';
+import clsx from 'clsx';
 import Animate from 'react-smooth';
-import _ from 'lodash';
-import { Sector, Props as SectorProps } from '../shape/Sector';
+import isEqual from 'lodash/isEqual';
+import isFunction from 'lodash/isFunction';
+
+import { parseCornerRadius, RadialBarSector, RadialBarSectorProps } from '../util/RadialBarUtils';
+import { Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
@@ -28,6 +31,7 @@ import {
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
   AnimationDuration,
+  ActiveShape,
 } from '../util/types';
 import { polarToCartesian } from '../util/PolarUtils';
 // TODO: Cause of circular dependency. Needs refactoring of functions that need them.
@@ -39,18 +43,17 @@ type RadialBarDataItem = SectorProps & {
   background?: SectorProps;
 };
 
-type RadialBarShape = ReactElement | ((props: Props) => ReactNode);
-type RadialBarBackground = ReactElement | ((props: Props) => ReactNode) | SectorProps | boolean;
+type RadialBarBackground = ActiveShape<SectorProps>;
 
-interface RadialBarProps {
+interface InternalRadialBarProps {
   animationId?: string | number;
   className?: string;
   angleAxisId?: string | number;
   radiusAxisId?: string | number;
   startAngle?: number;
   endAngle?: number;
-  shape?: RadialBarShape;
-  activeShape?: RadialBarShape;
+  shape?: ActiveShape<SectorProps, SVGPathElement>;
+  activeShape?: ActiveShape<SectorProps, SVGPathElement>;
   activeIndex?: number;
   dataKey: string | number | ((obj: any) => any);
   cornerRadius?: string | number;
@@ -73,7 +76,7 @@ interface RadialBarProps {
   animationEasing?: AnimationTiming;
 }
 
-export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & RadialBarProps;
+export type RadialBarProps = PresentationAttributesAdaptChildEvent<any, SVGElement> & InternalRadialBarProps;
 
 interface State {
   readonly isAnimationFinished?: boolean;
@@ -82,7 +85,7 @@ interface State {
   readonly prevAnimationId?: string | number;
 }
 
-export class RadialBar extends PureComponent<Props, State> {
+export class RadialBar extends PureComponent<RadialBarProps, State> {
   static displayName = 'RadialBar';
 
   static defaultProps = {
@@ -114,14 +117,14 @@ export class RadialBar extends PureComponent<Props, State> {
     bandSize,
     dataStartIndex,
   }: {
-    item: RadialBar;
+    item: ReactElement;
     props: any;
     radiusAxis: any; // RadiusAxisProps;
     radiusAxisTicks: Array<TickItem>;
     angleAxis: any; // AngleAxisProps;
     angleAxisTicks: Array<TickItem>;
     displayedData: any[];
-    dataKey: Props['dataKey'];
+    dataKey: RadialBarProps['dataKey'];
     stackedData?: any[];
     barPosition?: any[];
     bandSize?: number;
@@ -146,7 +149,7 @@ export class RadialBar extends PureComponent<Props, State> {
         value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
       } else {
         value = getValueByDataKey(entry, dataKey);
-        if (!_.isArray(value)) {
+        if (!Array.isArray(value)) {
           value = [baseValue, value];
         }
       }
@@ -224,7 +227,7 @@ export class RadialBar extends PureComponent<Props, State> {
     isAnimationFinished: false,
   };
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+  static getDerivedStateFromProps(nextProps: RadialBarProps, prevState: State): State {
     if (nextProps.animationId !== prevState.prevAnimationId) {
       return {
         prevAnimationId: nextProps.animationId,
@@ -253,7 +256,7 @@ export class RadialBar extends PureComponent<Props, State> {
     const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
 
-    if (_.isFunction(onAnimationEnd)) {
+    if (isFunction(onAnimationEnd)) {
       onAnimationEnd();
     }
   };
@@ -263,42 +266,31 @@ export class RadialBar extends PureComponent<Props, State> {
 
     this.setState({ isAnimationFinished: false });
 
-    if (_.isFunction(onAnimationStart)) {
+    if (isFunction(onAnimationStart)) {
       onAnimationStart();
     }
   };
-
-  static renderSectorShape(shape: RadialBarBackground, props: any) {
-    let sectorShape;
-
-    if (React.isValidElement(shape)) {
-      sectorShape = React.cloneElement(shape, props);
-    } else if (_.isFunction(shape)) {
-      sectorShape = shape(props);
-    } else {
-      sectorShape = React.createElement(Sector, props);
-    }
-
-    return sectorShape;
-  }
 
   renderSectorsStatically(sectors: SectorProps[]) {
     const { shape, activeShape, activeIndex, cornerRadius, ...others } = this.props;
     const baseProps = filterProps(others);
 
     return sectors.map((entry, i) => {
-      const props = {
+      const isActive = i === activeIndex;
+      const props: RadialBarSectorProps = {
         ...baseProps,
-        cornerRadius,
+        cornerRadius: parseCornerRadius(cornerRadius),
         ...entry,
         ...adaptEventsOfChild(this.props, entry, i),
         key: `sector-${i}`,
         className: `recharts-radial-bar-sector ${entry.className}`,
         forceCornerRadius: others.forceCornerRadius,
         cornerIsExternal: others.cornerIsExternal,
+        isActive,
+        option: isActive ? activeShape : shape,
       };
 
-      return RadialBar.renderSectorShape(i === activeIndex ? activeShape : shape, props);
+      return <RadialBarSector {...props} />;
     });
   }
 
@@ -348,7 +340,7 @@ export class RadialBar extends PureComponent<Props, State> {
     const { data, isAnimationActive } = this.props;
     const { prevData } = this.state;
 
-    if (isAnimationActive && data && data.length && (!prevData || !_.isEqual(prevData, data))) {
+    if (isAnimationActive && data && data.length && (!prevData || !isEqual(prevData, data))) {
       return this.renderSectorsWithAnimation();
     }
 
@@ -366,8 +358,8 @@ export class RadialBar extends PureComponent<Props, State> {
         return null;
       }
 
-      const props = {
-        cornerRadius,
+      const props: RadialBarSectorProps = {
+        cornerRadius: parseCornerRadius(cornerRadius),
         ...rest,
         fill: '#eee',
         ...background,
@@ -375,10 +367,12 @@ export class RadialBar extends PureComponent<Props, State> {
         ...adaptEventsOfChild(this.props, entry, i),
         index: i,
         key: `sector-${i}`,
-        className: 'recharts-radial-bar-background-sector',
+        className: clsx('recharts-radial-bar-background-sector', backgroundProps?.className),
+        option: background,
+        isActive: false,
       };
 
-      return RadialBar.renderSectorShape(background, props);
+      return <RadialBarSector {...props} />;
     });
   }
 
@@ -390,7 +384,7 @@ export class RadialBar extends PureComponent<Props, State> {
     }
 
     const { isAnimationFinished } = this.state;
-    const layerClass = classNames('recharts-area', className);
+    const layerClass = clsx('recharts-area', className);
 
     return (
       <Layer className={layerClass}>

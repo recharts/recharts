@@ -1,7 +1,9 @@
-import React from 'react';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import React, { useState } from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { Brush, LineChart, Line, BarChart } from '../../src';
-import { mockMouseEvent } from '../helper/mockMouseEvent';
+import userEvent from '@testing-library/user-event';
+import { Brush, LineChart, Line, BarChart, ComposedChart } from '../../src';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<Brush />', () => {
   const data = [
@@ -61,9 +63,8 @@ describe('<Brush />', () => {
     );
 
     const brushSlide = container.querySelector('.recharts-brush-slide') as SVGRectElement;
+    fireEvent.mouseOver(brushSlide, { pageX: 0, pageY: 0 });
 
-    const mouseOverEvent = mockMouseEvent('mouseover', brushSlide, { pageX: 0, pageY: 0 });
-    mouseOverEvent.fire();
     expect(container.querySelectorAll('.recharts-brush-texts')).toHaveLength(1);
     expect(screen.getAllByText(data[0].date)).toHaveLength(1);
     expect(screen.getAllByText(data[data.length - 1].date)).toHaveLength(1);
@@ -87,17 +88,15 @@ describe('<Brush />', () => {
     );
 
     const brushSlide = container.querySelector('.recharts-brush-slide');
+    assertNotNull(brushSlide);
+    fireEvent.mouseDown(brushSlide);
 
-    const mouseDownEvent = mockMouseEvent('mousedown', brushSlide!, { pageX: 0, pageY: 0 });
-    mouseDownEvent.fire();
     expect(container.querySelectorAll('.recharts-brush-texts')).toHaveLength(1);
     expect(screen.getAllByText(data[0].date)).toHaveLength(1);
     expect(screen.getAllByText(data[data.length - 1].date)).toHaveLength(1);
 
     fireEvent.mouseUp(window);
 
-    const mouseMoveEvent = mockMouseEvent('mousemove', window, { pageX: 0, pageY: 0 });
-    mouseMoveEvent.fire();
     expect(container.querySelectorAll('.recharts-brush-texts')).toHaveLength(0);
   });
 
@@ -184,6 +183,68 @@ describe('<Brush />', () => {
       await waitFor(() => {
         expect(text.textContent).toBe('10');
       });
+    });
+
+    const ControlledBrush = () => {
+      const [startIndex, setStartIndex] = useState<number | undefined>(3);
+      const [endIndex, setEndIndex] = useState<number | undefined>(data.length - 1);
+
+      return (
+        <>
+          <ComposedChart data={data} height={400} width={400}>
+            <Line dataKey="uv" isAnimationActive={false} />
+
+            <Brush
+              startIndex={startIndex}
+              endIndex={endIndex}
+              onChange={e => {
+                setEndIndex(e.endIndex);
+                setStartIndex(e.startIndex);
+              }}
+              alwaysShowText
+            />
+          </ComposedChart>
+          <input
+            type="number"
+            aria-label="startIndex"
+            value={startIndex}
+            onChange={evt => {
+              const num = Number(evt.target.value);
+              if (Number.isInteger(num)) setStartIndex(num);
+            }}
+          />
+          <input
+            aria-label="endIndex"
+            value={endIndex}
+            onChange={evt => {
+              const num = Number(evt.target.value);
+              if (Number.isInteger(num)) setEndIndex(num);
+            }}
+          />
+        </>
+      );
+    };
+
+    test('Travellers should move and chart should update when brush start and end indexes are controlled', async () => {
+      const user = userEvent.setup();
+      const { container } = render(<ControlledBrush />);
+
+      const traveller = container.querySelector('.recharts-brush-traveller') as SVGGElement;
+      fireEvent.focus(traveller);
+
+      const startIndexInput = screen.getByLabelText<HTMLInputElement>('startIndex');
+      const endIndexInput = screen.getByLabelText<HTMLInputElement>('endIndex');
+
+      await user.clear(startIndexInput);
+      await user.type(startIndexInput, '2');
+      await user.clear(endIndexInput);
+      await user.type(endIndexInput, '5');
+
+      const brushTexts = container.getElementsByClassName('recharts-brush-texts').item(0)!.children;
+      expect(brushTexts.item(0)).toBeInTheDocument();
+
+      expect(brushTexts.item(0)?.textContent).toContain('2');
+      expect(brushTexts.item(1)?.textContent).toContain('5');
     });
   });
 });

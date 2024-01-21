@@ -1,10 +1,12 @@
 import { scaleLinear, scaleBand } from 'victory-vendor/d3-scale';
+import { vi } from 'vitest';
 import {
   ScaleHelper,
   createLabeledScales,
   getAngledRectangleWidth,
   normalizeAngle,
 } from '../../src/util/CartesianUtils';
+import { combineEventHandlers } from '../../src/util/ChartUtils';
 
 describe('ScaleHelper', () => {
   it('apply() should return the expected value', () => {
@@ -129,6 +131,47 @@ describe('getAngledStringWidth', () => {
       [5 / (Math.sqrt(2) / 2), 45],
     ])('should return %s when angle is %s and width is smaller than height', (expectedWidth, angle) => {
       expect(getAngledRectangleWidth({ width: 5, height: 20 }, angle)).toBeCloseTo(expectedWidth);
+    });
+  });
+});
+
+describe('combineEventHandlers', () => {
+  const testFunction = vi.fn();
+  const test1Function = vi.fn();
+
+  describe('when child function being combined is undefined', () => {
+    it('should be keeping the default function reference', () => {
+      const combineFunction = combineEventHandlers(testFunction, undefined);
+      expect(combineFunction).toEqual(testFunction);
+    });
+  });
+
+  describe('when combining functions that kept references.', () => {
+    const combineFunction = combineEventHandlers(testFunction, test1Function);
+    it('should return combined function', () => {
+      expect(combineFunction).not.toEqual(testFunction);
+      expect(combineFunction).not.toEqual(test1Function);
+    });
+
+    describe('when combining function again', () => {
+      const combineFunction2 = combineEventHandlers(testFunction, test1Function);
+      it('should be the same as the function when it was first combined', () => {
+        expect(combineFunction).toEqual(combineFunction2);
+      });
+    });
+
+    describe('when calling the combined function', () => {
+      it('original functions should be called', () => {
+        combineFunction();
+        expect(testFunction).toHaveBeenCalled();
+        expect(test1Function).toHaveBeenCalled();
+      });
+    });
+
+    describe('when combined with a new function', () => {
+      it('should return a new function', () => {
+        expect(combineEventHandlers(testFunction, () => 0)).not.toEqual(combineFunction);
+      });
     });
   });
 });

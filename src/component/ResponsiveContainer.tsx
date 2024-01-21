@@ -1,7 +1,7 @@
 /**
  * @fileOverview Wrapper component to make charts adapt to the size of parent * DOM
  */
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, {
   ReactElement,
   forwardRef,
@@ -10,12 +10,15 @@ import React, {
   useImperativeHandle,
   useRef,
   useEffect,
-  useCallback,
   useMemo,
+  CSSProperties,
+  useCallback,
 } from 'react';
-import ReactResizeDetector from 'react-resize-detector';
+import throttle from 'lodash/throttle';
+import { isElement } from 'react-is';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
+import { getDisplayName } from '../util/ReactUtils';
 
 export interface Props {
   aspect?: number;
@@ -32,11 +35,11 @@ export interface Props {
   debounce?: number;
   id?: string | number;
   className?: string | number;
-  style?: React.CSSProperties;
+  style?: Omit<CSSProperties, keyof Props>;
   onResize?: (width: number, height: number) => void;
 }
 
-export const ResponsiveContainer = forwardRef(
+export const ResponsiveContainer = forwardRef<HTMLDivElement | { current: HTMLDivElement }, Props>(
   (
     {
       aspect,
@@ -59,9 +62,22 @@ export const ResponsiveContainer = forwardRef(
       className,
       onResize,
       style = {},
-    }: Props,
+    },
     ref,
   ) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const onResizeRef = useRef<Props['onResize']>();
+    onResizeRef.current = onResize;
+    useImperativeHandle(ref, () => {
+      return Object.assign(containerRef.current, {
+        get current() {
+          // eslint-disable-next-line no-console
+          console.warn('The usage of ref.current.current is deprecated and will no longer be supported.');
+          return containerRef.current;
+        },
+      });
+    });
+
     const [sizes, setSizes] = useState<{
       containerWidth: number;
       containerHeight: number;
@@ -70,37 +86,38 @@ export const ResponsiveContainer = forwardRef(
       containerHeight: initialDimension.height,
     });
 
-    const containerRef = useRef<HTMLDivElement>(null);
-    useImperativeHandle(ref, () => containerRef, [containerRef]);
+    const setContainerSize = useCallback((newWidth: number, newHeight: number) => {
+      setSizes(prevState => {
+        const roundedWidth = Math.round(newWidth);
+        const roundedHeight = Math.round(newHeight);
+        if (prevState.containerWidth === roundedWidth && prevState.containerHeight === roundedHeight) {
+          return prevState;
+        }
 
-    const getContainerSize = useCallback(() => {
-      if (!containerRef.current) {
-        return null;
-      }
-
-      return {
-        containerWidth: containerRef.current.clientWidth,
-        containerHeight: containerRef.current.clientHeight,
-      };
+        return { containerWidth: roundedWidth, containerHeight: roundedHeight };
+      });
     }, []);
 
-    const updateDimensionsImmediate = useCallback(() => {
-      const newSize = getContainerSize();
-
-      if (newSize) {
-        const { containerWidth, containerHeight } = newSize;
-        if (onResize) onResize(containerWidth, containerHeight);
-
-        setSizes(currentSizes => {
-          const { containerWidth: oldWidth, containerHeight: oldHeight } = currentSizes;
-          if (containerWidth !== oldWidth || containerHeight !== oldHeight) {
-            return { containerWidth, containerHeight };
-          }
-
-          return currentSizes;
-        });
+    useEffect(() => {
+      let callback = (entries: ResizeObserverEntry[]) => {
+        const { width: containerWidth, height: containerHeight } = entries[0].contentRect;
+        setContainerSize(containerWidth, containerHeight);
+        onResizeRef.current?.(containerWidth, containerHeight);
+      };
+      if (debounce > 0) {
+        callback = throttle(callback, debounce, { trailing: true, leading: false });
       }
-    }, [getContainerSize, onResize]);
+      const observer = new ResizeObserver(callback);
+
+      const { width: containerWidth, height: containerHeight } = containerRef.current.getBoundingClientRect();
+      setContainerSize(containerWidth, containerHeight);
+
+      observer.observe(containerRef.current);
+
+      return () => {
+        observer.disconnect();
+      };
+    }, [setContainerSize, debounce]);
 
     const chartContent = useMemo(() => {
       const { containerWidth, containerHeight } = sizes;
@@ -153,40 +170,42 @@ export const ResponsiveContainer = forwardRef(
         aspect,
       );
 
-      return cloneElement(children, {
-        width: calculatedWidth,
-        height: calculatedHeight,
+      const isCharts =
+        !Array.isArray(children) && isElement(children) && getDisplayName(children.type).endsWith('Chart');
+
+      return React.Children.map(children, child => {
+        if (isElement(child)) {
+          return cloneElement(child, {
+            width: calculatedWidth,
+            height: calculatedHeight,
+            // calculate the actual size and override it.
+            ...(isCharts
+              ? {
+                  style: {
+                    height: '100%',
+                    width: '100%',
+                    maxHeight: calculatedHeight,
+                    maxWidth: calculatedWidth,
+                    // keep components style
+                    ...child.props.style,
+                  },
+                }
+              : {}),
+          });
+        }
+        return child;
       });
     }, [aspect, children, height, maxHeight, minHeight, minWidth, sizes, width]);
 
-    useEffect(() => {
-      const size = getContainerSize();
-
-      if (size) {
-        setSizes(size);
-      }
-    }, [getContainerSize]);
-
-    const styles: React.CSSProperties = { ...style, width, height, minWidth, minHeight, maxHeight };
-
     return (
-      <ReactResizeDetector
-        handleWidth
-        handleHeight
-        onResize={updateDimensionsImmediate}
-        targetRef={containerRef}
-        refreshMode={debounce > 0 ? 'debounce' : undefined}
-        refreshRate={debounce}
+      <div
+        id={id ? `${id}` : undefined}
+        className={clsx('recharts-responsive-container', className)}
+        style={{ ...style, width, height, minWidth, minHeight, maxHeight }}
+        ref={containerRef}
       >
-        <div
-          {...(id != null ? { id: `${id}` } : {})}
-          className={classNames('recharts-responsive-container', className)}
-          style={styles}
-          ref={containerRef}
-        >
-          {chartContent}
-        </div>
-      </ReactResizeDetector>
+        {chartContent}
+      </div>
     );
   },
 );

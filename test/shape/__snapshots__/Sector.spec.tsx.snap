@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<Sector /> Don't render any sector when props is invalid 1`] = `
+exports[`<Sector /> > Don't render any sector when props is invalid 1`] = `
 <div>
   <svg
     class="recharts-surface"
@@ -14,7 +14,7 @@ exports[`<Sector /> Don't render any sector when props is invalid 1`] = `
 </div>
 `;
 
-exports[`<Sector /> Render 1 sector in simple Sector 1`] = `
+exports[`<Sector /> > Render 1 sector in simple Sector 1`] = `
 <div>
   <svg
     class="recharts-surface"
@@ -43,7 +43,7 @@ exports[`<Sector /> Render 1 sector in simple Sector 1`] = `
 </div>
 `;
 
-exports[`<Sector /> Render 1 sector when cornerRadius > 0 1`] = `
+exports[`<Sector /> > Render 1 sector when cornerRadius > 0 1`] = `
 <div>
   <svg
     class="recharts-surface"

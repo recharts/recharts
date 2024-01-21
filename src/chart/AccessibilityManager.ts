@@ -96,8 +96,11 @@ export class AccessibilityManager {
     const { x, y, height } = this.container.getBoundingClientRect();
     const { coordinate } = this.coordinateList[this.activeIndex];
 
-    const pageX = x + coordinate;
-    const pageY = y + this.offset.top + height / 2;
+    const scrollOffsetX = window?.scrollX || 0;
+    const scrollOffsetY = window?.scrollY || 0;
+
+    const pageX = x + coordinate + scrollOffsetX;
+    const pageY = y + this.offset.top + height / 2 + scrollOffsetY;
 
     this.mouseHandlerCallback({ pageX, pageY });
   }

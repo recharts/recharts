@@ -1,8 +1,20 @@
-import { render } from '@testing-library/react';
+import { fireEvent, getByText, render } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 
-import { Area, AreaChart, ComposedChart, Line, Tooltip, XAxis, YAxis } from '../../src';
-import { mockMouseEvent } from '../helper/mockMouseEvent';
+import {
+  Area,
+  AreaChart,
+  Brush,
+  CartesianGrid,
+  ComposedChart,
+  Legend,
+  Line,
+  LineChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from '../../src';
 
 describe('<Tooltip />', () => {
   const data = [
@@ -54,9 +66,8 @@ describe('<Tooltip />', () => {
       </div>,
     );
 
-    const chart = (container.querySelector('.recharts-wrapper') ?? {}) as Element;
-    const mouseOverEvent = mockMouseEvent('mouseover', chart, { pageX: 200, pageY: 200 });
-    mouseOverEvent.fire();
+    const chart = container.querySelector('.recharts-wrapper');
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
     // After the mouse over event over the chart, the tooltip wrapper still is not set to visible,
     // but the content is already created based on the nearest data point.
@@ -64,6 +75,30 @@ describe('<Tooltip />', () => {
     const tooltipContentValue = container.querySelector('.recharts-tooltip-item-value');
     expect(tooltipContentName).toBeInTheDocument();
     expect(tooltipContentValue).toBeInTheDocument();
+  });
+
+  test('Should move when the mouse moves', async () => {
+    const mock = vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
+      width: 10,
+      height: 10,
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+    } as DOMRect);
+    const { container } = render(
+      <AreaChart width={400} height={400} data={data}>
+        <Area dataKey="uv" />
+        <Tooltip />
+      </AreaChart>,
+    );
+    mock.mockRestore();
+
+    const chart = container.querySelector('.recharts-wrapper');
+    fireEvent.mouseMove(chart, { clientX: 200, clientY: 200 });
+
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    expect(tooltip.getAttribute('style').includes('translate')).toBe(true);
   });
 
   test('Mouse over renders content with multiple data sets', () => {
@@ -98,9 +133,8 @@ describe('<Tooltip />', () => {
       </div>,
     );
 
-    const chart = (container.querySelector('.recharts-wrapper') ?? {}) as Element;
-    const mouseOverEvent = mockMouseEvent('mouseover', chart, { pageX: 200, pageY: 200 });
-    mouseOverEvent.fire();
+    const chart = container.querySelector('.recharts-wrapper');
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
     // After the mouse over event over the chart, the tooltip wrapper still is not set to visible,
     // but the content is already created based on the nearest data point.
@@ -108,6 +142,53 @@ describe('<Tooltip />', () => {
     const tooltipContentValue = container.querySelector('.recharts-tooltip-item-value');
     expect(tooltipContentName).toBeInTheDocument();
     expect(tooltipContentValue).toBeInTheDocument();
+  });
+
+  it('Tooltip payload should be correct for multiple datasets', () => {
+    const lineData1 = [
+      { category: 'A', value: 0.2 },
+      { category: 'B', value: 0.3 },
+      { category: 'B', value: 0.5 },
+      { category: 'C', value: 0.6 },
+      { category: 'C', value: 0.7 },
+      { category: 'D', value: 0.4 },
+    ];
+
+    const lineData2 = [
+      { category: 'A', value: null },
+      { category: 'B', value: null },
+      { category: 'B', value: null },
+      { category: 'C', value: 0.2 },
+      { category: 'C', value: 0.4 },
+      { category: 'D', value: 0.6 },
+    ];
+
+    let tooltipPayload: any[] | null = null;
+
+    const { container } = render(
+      <div role="main" style={{ width: '400px', height: '400px' }}>
+        <ComposedChart width={400} height={400}>
+          <XAxis dataKey="category" type="category" />
+          <YAxis dataKey="value" />
+          <Tooltip
+            content={({ payload }) => {
+              tooltipPayload = payload;
+              return null;
+            }}
+          />
+
+          <Line dataKey="value" data={lineData1} />
+          <Line dataKey="value" data={lineData2} />
+        </ComposedChart>
+      </div>,
+    );
+
+    const chart = container.querySelector('.recharts-wrapper');
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+    expect(tooltipPayload).not.toBeNull();
+    expect(tooltipPayload).toHaveLength(2);
+    expect(tooltipPayload[0].payload.value).toEqual(0.7);
+    expect(tooltipPayload[1].payload.value).toEqual(0.4);
   });
 
   it('Render customized tooltip when content is set to be a react element', () => {
@@ -122,18 +203,98 @@ describe('<Tooltip />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    if (!chart) {
-      throw new Error('Chart is null');
-    }
-    const mouseOverEvent = mockMouseEvent('mouseover', chart, { pageX: 200, pageY: 200 });
-    mouseOverEvent.fire();
+
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
     const customizedContent = container.querySelector('.customized');
     expect(customizedContent).toBeInTheDocument();
   });
-});
 
-// Tests to add:
-// Test for each chart type Composed, Area, Line, Scatter, ...
-// Test for Tooltip properties (i.e. shared on BarChart)
-// Test for visibility
+  describe('Using with Brush', () => {
+    it('Should display the correct data', () => {
+      const { container } = render(
+        <LineChart width={600} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          <Legend />
+          <Brush dataKey="name" startIndex={1} height={30} stroke="#8884d8" />
+          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        </LineChart>,
+      );
+
+      const line = container.querySelector('.recharts-cartesian-grid-horizontal line');
+      const chart = container.querySelector('.recharts-wrapper');
+      fireEvent.mouseOver(chart, { clientX: +line.getAttribute('x') + 1, clientY: 50 });
+      expect(getByText(container, '1398')).toBeVisible();
+    });
+  });
+
+  describe('Tooltip - active', () => {
+    test('True - Should render tooltip even after moving the mouse out of the chart.', () => {
+      const { container } = render(
+        <AreaChart width={400} height={400} data={data}>
+          <Area dataKey="uv" />
+          <Tooltip active />
+        </AreaChart>,
+      );
+
+      const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+      expect(tooltip).not.toBeVisible();
+
+      const chart = container.querySelector('.recharts-wrapper');
+      fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+
+      expect(tooltip).toBeVisible();
+
+      fireEvent.mouseOut(chart);
+
+      // Still visible after moving out of the chart, because active is true.
+      expect(tooltip).toBeVisible();
+    });
+  });
+
+  test('False - Should never render tooltip', () => {
+    const { container } = render(
+      <AreaChart width={400} height={400} data={data}>
+        <Area dataKey="uv" />
+        <Tooltip active={false} />
+      </AreaChart>,
+    );
+
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    expect(tooltip).not.toBeVisible();
+
+    const chart = container.querySelector('.recharts-wrapper');
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+
+    expect(tooltip).not.toBeVisible();
+
+    fireEvent.mouseOut(chart);
+
+    expect(tooltip).not.toBeVisible();
+  });
+
+  test('Unset - Should render the Tooltip only while in the chart', () => {
+    const { container } = render(
+      <AreaChart width={400} height={400} data={data}>
+        <Area dataKey="uv" />
+        <Tooltip />
+      </AreaChart>,
+    );
+
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    expect(tooltip).not.toBeVisible();
+
+    const chart = container.querySelector('.recharts-wrapper');
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+
+    expect(tooltip).toBeVisible();
+
+    fireEvent.mouseOut(chart);
+
+    expect(tooltip).not.toBeVisible();
+  });
+});

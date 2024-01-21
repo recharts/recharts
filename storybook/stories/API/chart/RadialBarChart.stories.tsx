@@ -1,30 +1,36 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+import { Meta } from '@storybook/react';
 import React, { useState } from 'react';
 import { pageData, pageDataWithFillColor } from '../../data';
-import { RadialBar, RadialBarChart, ResponsiveContainer, Cell, Legend } from '../../../../src';
+import { Tooltip, RadialBar, RadialBarChart, ResponsiveContainer, Cell, Legend, RadialBarProps } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
+import { ActiveShapeProps } from '../props/ActiveShapeProps';
 
 export default {
   argTypes: {
     ...CategoricalChartProps,
+    ...ActiveShapeProps,
   },
   component: RadialBarChart,
 };
 
-export const Simple = {
+export const Simple: Meta<RadialBarProps> = {
   render: (args: Record<string, any>) => {
     const { data } = args;
     return (
       <ResponsiveContainer width="100%" height={400}>
         <RadialBarChart data={data}>
-          <RadialBar dataKey="uv" />
+          <RadialBar dataKey="uv" activeShape={args.activeShape} activeIndex={args.activeIndex} />
+          <Tooltip />
         </RadialBarChart>
       </ResponsiveContainer>
     );
   },
   args: {
     data: pageData,
+    activeShape: { fill: 'red' },
+    activeIndex: undefined,
   },
 };
 

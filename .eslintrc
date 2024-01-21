@@ -56,7 +56,7 @@
         "devDependencies": true
       }
     ],
-    "max-len": ["warn", 120],
+    "max-len": ["warn", 150],
     "prefer-destructuring": "error",
     "object-curly-newline": "off",
     "function-paren-newline": "off",
@@ -90,6 +90,17 @@
         "args": "after-used",
         "ignoreRestSiblings": true,
         "argsIgnorePattern": "^_"
+      }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "lodash",
+            "message": "Import [module] from lodash/[module] instead"
+          }
+        ]
       }
     ]
   },

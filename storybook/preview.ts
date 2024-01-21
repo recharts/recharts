@@ -1,6 +1,8 @@
 import { Preview } from '@storybook/react';
 import './global.css';
 import { DocsPage, DocsContainer } from '@storybook/addon-docs';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { withPerformance } from 'storybook-addon-performance';
 
 const preview: Preview = {
   parameters: {
@@ -25,3 +27,5 @@ const preview: Preview = {
 };
 
 export default preview;
+
+export const decorators = [withPerformance];

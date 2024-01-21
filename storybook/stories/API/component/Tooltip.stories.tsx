@@ -85,17 +85,6 @@ const TooltipProps: StorybookArgs = {
       category: 'Styles',
     },
   },
-  active: {
-    description:
-      'If set true, the tooltip is displayed. If set false, the tooltip is hidden. Usually calculated internally.',
-    defaultValue: false,
-    table: {
-      category: 'Internal',
-      type: {
-        summary: 'boolean',
-      },
-    },
-  },
   position: {
     description: 'If this field is set, the tooltip position will be fixed and will not move anymore.',
     table: {
@@ -187,16 +176,6 @@ const TooltipProps: StorybookArgs = {
       category: 'Content',
       type: {
         summary: 'boolean',
-      },
-    },
-  },
-  animationBegin: {
-    description: 'Specifies (in milliseconds) when the animation should begin.',
-    defaultValue: 0,
-    table: {
-      category: 'Styles',
-      type: {
-        summary: 'number',
       },
     },
   },
