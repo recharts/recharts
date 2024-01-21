@@ -78,6 +78,10 @@ export class AccessibilityManager {
     }
   }
 
+  public setIndex(newIndex: number) {
+    this.activeIndex = newIndex;
+  }
+
   private spoofMouse() {
     if (this.layout !== 'horizontal') {
       return;

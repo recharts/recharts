@@ -1087,8 +1087,8 @@ export const generateCategoricalChart = ({
       const { defaultIndex } = this.props;
       if (
         typeof this.props.defaultIndex !== 'number' ||
-        defaultIndex < this.state.dataStartIndex ||
-        defaultIndex > this.state.dataEndIndex
+        defaultIndex < 0 ||
+        defaultIndex > this.state.tooltipTicks.length
       ) {
         return;
       }
@@ -1103,19 +1103,24 @@ export const generateCategoricalChart = ({
       const activeLabel = this.state.tooltipTicks[defaultIndex] && this.state.tooltipTicks[defaultIndex].value;
       const activePayload = getTooltipContent(this.state, this.props.data, defaultIndex, activeLabel);
 
+      const isHorizontal = this.props.layout === 'horizontal';
       const nextState = {
         activeTooltipIndex: defaultIndex,
         isTooltipActive: true,
         activeLabel,
         activePayload,
         activeCoordinate: {
-          x: this.state.orderedTooltipTicks[defaultIndex].coordinate,
-          y: (this.state.offset.top + this.props.height) / 2,
+          [isHorizontal ? 'x' : 'y']: this.state.orderedTooltipTicks[defaultIndex].coordinate,
+          [isHorizontal ? 'y' : 'x']: (this.state.offset.top + this.props.height) / 2,
         },
       };
 
       this.setState(nextState);
       this.renderCursor(tooltipElem);
+
+      // Make sure that anyone who keyboard-only users who tab to the chart will start their
+      // cursors at defaultIndex
+      this.accessibilityManager.setIndex(defaultIndex);
     }
 
     getSnapshotBeforeUpdate(
@@ -1201,6 +1206,11 @@ export const generateCategoricalChart = ({
           // The tooltip should stay active when it was active in the previous render. If this is not
           // the case, the tooltip disappears and immediately re-appears, causing a flickering effect
           isTooltipActive: prevState.isTooltipActive,
+
+          activeTooltipIndex: prevState.activeTooltipIndex,
+          activeCoordinate: prevState.activeCoordinate,
+          activeLabel: prevState.activeLabel,
+          activePayload: prevState.activePayload,
         };
 
         const updatesToState = {
@@ -1211,8 +1221,8 @@ export const generateCategoricalChart = ({
 
         const newState = {
           ...defaultState,
-          ...keepFromPrevState,
           ...updatesToState,
+          ...keepFromPrevState,
         };
 
         return {
@@ -1565,7 +1575,7 @@ export const generateCategoricalChart = ({
       const nextState: CategoricalChartState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
 
       // If the dev set a defaultIndex, don't set `isTooltipActive` to false
-      if (nextState.isTooltipActive || typeof this.props.defaultIndex === 'number') {
+      if (nextState.isTooltipActive || typeof this.props.defaultIndex !== 'number') {
         this.setState(nextState);
         this.triggerSyncEvent(nextState);
       }
@@ -1594,9 +1604,11 @@ export const generateCategoricalChart = ({
      * @return {Object} no return
      */
     handleItemMouseLeave = () => {
-      this.setState(() => ({
-        isTooltipActive: false,
-      }));
+      if (typeof this.props.defaultIndex === 'number') {
+        this.setState(() => ({
+          isTooltipActive: false,
+        }));
+      }
     };
 
     /**
