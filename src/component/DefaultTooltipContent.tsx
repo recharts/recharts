@@ -36,6 +36,7 @@ export interface Payload<TValue extends ValueType, TName extends NameType> {
   stroke?: string;
   strokeDasharray?: string | number;
   strokeWidth?: number | string;
+  className?: string;
 }
 
 export interface Props<TValue extends ValueType, TName extends NameType> {
