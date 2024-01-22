@@ -347,7 +347,7 @@ export class Line extends PureComponent<Props, State> {
       return null;
     }
     const { dot, points, dataKey } = this.props;
-    const lineProps = filterProps(this.props);
+    const lineProps = filterProps(this.props, false);
     const customDotProps = filterProps(dot, true);
     const dots = points.map((entry, i) => {
       const dotProps = {
@@ -497,7 +497,7 @@ export class Line extends PureComponent<Props, State> {
     const needClipY = yAxis && yAxis.allowDataOverflow;
     const needClip = needClipX || needClipY;
     const clipPathId = isNil(id) ? this.id : id;
-    const { r = 3, strokeWidth = 2 } = filterProps(dot) ?? { r: 3, strokeWidth: 2 };
+    const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
     const { clipDot = true } = isDotProps(dot) ? dot : {};
     const dotSize = r * 2 + strokeWidth;
 

@@ -569,7 +569,7 @@ export class Sankey extends PureComponent<Props, State> {
         stroke="#333"
         strokeWidth={linkWidth}
         strokeOpacity="0.2"
-        {...filterProps(others)}
+        {...filterProps(others, false)}
       />
     );
   }
@@ -605,7 +605,7 @@ export class Sankey extends PureComponent<Props, State> {
             linkWidth,
             index: i,
             payload: { ...link, source, target },
-            ...filterProps(linkContent),
+            ...filterProps(linkContent, false),
           };
           const events = {
             onMouseEnter: this.handleMouseEnter.bind(this, linkProps, 'link'),
@@ -632,7 +632,13 @@ export class Sankey extends PureComponent<Props, State> {
     }
 
     return (
-      <Rectangle className="recharts-sankey-node" fill="#0088fe" fillOpacity="0.8" {...filterProps(props)} role="img" />
+      <Rectangle
+        className="recharts-sankey-node"
+        fill="#0088fe"
+        fillOpacity="0.8"
+        {...filterProps(props, false)}
+        role="img"
+      />
     );
   }
 
@@ -646,7 +652,7 @@ export class Sankey extends PureComponent<Props, State> {
         {nodes.map((node, i) => {
           const { x, y, dx, dy } = node;
           const nodeProps = {
-            ...filterProps(nodeContent),
+            ...filterProps(nodeContent, false),
             x: x + left,
             y: y + top,
             width: dx,
@@ -701,7 +707,7 @@ export class Sankey extends PureComponent<Props, State> {
 
     const { width, height, className, style, children, ...others } = this.props;
     const { links, nodes } = this.state;
-    const attrs = filterProps(others);
+    const attrs = filterProps(others, false);
 
     return (
       <div

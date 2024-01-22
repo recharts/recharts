@@ -226,7 +226,7 @@ export class Radar extends PureComponent<Props, State> {
 
   renderDots(points: RadarPoint[]) {
     const { dot, dataKey } = this.props;
-    const baseProps = filterProps(this.props);
+    const baseProps = filterProps(this.props, false);
     const customDotProps = filterProps(dot, true);
 
     const dots = points.map((entry, i) => {

@@ -19,15 +19,15 @@ import { adaptEventHandlers, adaptEventsOfChild } from '../../src/util/types';
 describe('ReactUtils untest tests', () => {
   describe('filterProps', () => {
     test.each([true, false, 125, null, undefined])('should return null when called with %s', input => {
-      expect(filterProps(input)).toBeNull();
+      expect(filterProps(input, false)).toBeNull();
     });
 
     test('should filter out non-svg properties from react element props', () => {
-      expect(filterProps(<input id="test" value={1} />)).toEqual({ id: 'test' });
+      expect(filterProps(<input id="test" value={1} />, false)).toEqual({ id: 'test' });
     });
 
     test('should filter out non wanted properties', () => {
-      expect(filterProps({ test: '1234', helloWorld: 1234, viewBox: '0 0 0 0', dx: 1, dy: 1 })).toEqual({
+      expect(filterProps({ test: '1234', helloWorld: 1234, viewBox: '0 0 0 0', dx: 1, dy: 1 }, false)).toEqual({
         dx: 1,
         dy: 1,
       });
@@ -66,11 +66,14 @@ describe('ReactUtils untest tests', () => {
     });
 
     test('filterProps return presentation attributes', () => {
-      const result = filterProps({
-        stroke: '#000',
-        fill: '#000',
-        r: 6,
-      });
+      const result = filterProps(
+        {
+          stroke: '#000',
+          fill: '#000',
+          r: 6,
+        },
+        false,
+      );
 
       expect(Object.keys(result ?? {})).toContain('stroke');
       expect(Object.keys(result ?? {})).toContain('fill');

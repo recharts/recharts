@@ -92,7 +92,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
 
   static getRealFunnelData = (item: Funnel) => {
     const { data, children } = item.props;
-    const presentationProps = filterProps(item.props);
+    const presentationProps = filterProps(item.props, false);
     const cells = findAllByType(children, Cell);
 
     if (data && data.length) {

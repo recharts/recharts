@@ -173,7 +173,7 @@ export class Pie extends PureComponent<Props, State> {
 
   static getRealPieData = (item: Pie) => {
     const { data, children } = item.props;
-    const presentationProps = filterProps(item.props);
+    const presentationProps = filterProps(item.props, false);
     const cells = findAllByType(children, Cell);
 
     if (data && data.length) {
@@ -431,9 +431,9 @@ export class Pie extends PureComponent<Props, State> {
       return null;
     }
     const { label, labelLine, dataKey, valueKey } = this.props;
-    const pieProps = filterProps(this.props);
-    const customLabelProps = filterProps(label);
-    const customLabelLineProps = filterProps(labelLine);
+    const pieProps = filterProps(this.props, false);
+    const customLabelProps = filterProps(label, false);
+    const customLabelLineProps = filterProps(labelLine, false);
     const offsetRadius = (label && (label as any).offsetRadius) || 20;
 
     const labels = sectors.map((entry, i) => {

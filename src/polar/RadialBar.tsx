@@ -273,7 +273,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
 
   renderSectorsStatically(sectors: SectorProps[]) {
     const { shape, activeShape, activeIndex, cornerRadius, ...others } = this.props;
-    const baseProps = filterProps(others);
+    const baseProps = filterProps(others, false);
 
     return sectors.map((entry, i) => {
       const isActive = i === activeIndex;
@@ -349,7 +349,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
 
   renderBackground(sectors?: RadialBarDataItem[]) {
     const { cornerRadius } = this.props;
-    const backgroundProps = filterProps(this.props.background);
+    const backgroundProps = filterProps(this.props.background, false);
 
     return sectors.map((entry, i) => {
       const { value, background, ...rest } = entry;

@@ -86,9 +86,9 @@ export class PolarAngleAxis extends PureComponent<Props> {
   renderAxisLine() {
     const { cx, cy, radius, axisLine, axisLineType } = this.props;
     const props = {
-      ...filterProps(this.props),
+      ...filterProps(this.props, false),
       fill: 'none',
-      ...filterProps(axisLine),
+      ...filterProps(axisLine, false),
     };
 
     if (axisLineType === 'circle') {
@@ -120,12 +120,12 @@ export class PolarAngleAxis extends PureComponent<Props> {
 
   renderTicks() {
     const { ticks, tick, tickLine, tickFormatter, stroke } = this.props;
-    const axisProps = filterProps(this.props);
-    const customTickProps = filterProps(tick);
+    const axisProps = filterProps(this.props, false);
+    const customTickProps = filterProps(tick, false);
     const tickLineProps = {
       ...axisProps,
       fill: 'none',
-      ...filterProps(tickLine),
+      ...filterProps(tickLine, false),
     };
 
     const items = ticks.map((entry, i) => {

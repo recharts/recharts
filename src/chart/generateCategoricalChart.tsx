@@ -1943,7 +1943,7 @@ export const generateCategoricalChart = ({
         payload: activePoint.payload,
         value: activePoint.value,
         key: `${key}-activePoint-${childIndex}`,
-        ...filterProps(activeDot),
+        ...filterProps(activeDot, false),
         ...adaptEventHandlers(activeDot),
       };
 
@@ -2194,7 +2194,7 @@ export const generateCategoricalChart = ({
       }
 
       const { children, className, width, height, style, compact, title, desc, ...others } = this.props;
-      const attrs = filterProps(others);
+      const attrs = filterProps(others, false);
 
       // The "compact" mode is mainly used as the panorama within Brush
       if (compact) {

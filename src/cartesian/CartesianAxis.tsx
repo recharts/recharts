@@ -209,8 +209,8 @@ export class CartesianAxis extends Component<Props, IState> {
   renderAxisLine() {
     const { x, y, width, height, orientation, mirror, axisLine } = this.props;
     let props: SVGProps<SVGLineElement> = {
-      ...filterProps(this.props),
-      ...filterProps(axisLine),
+      ...filterProps(this.props, false),
+      ...filterProps(axisLine, false),
       fill: 'none',
     };
 
@@ -267,12 +267,12 @@ export class CartesianAxis extends Component<Props, IState> {
     const finalTicks = getTicks({ ...this.props, ticks }, fontSize, letterSpacing);
     const textAnchor = this.getTickTextAnchor();
     const verticalAnchor = this.getTickVerticalAnchor();
-    const axisProps = filterProps(this.props);
-    const customTickProps = filterProps(tick);
+    const axisProps = filterProps(this.props, false);
+    const customTickProps = filterProps(tick, false);
     const tickLineProps = {
       ...axisProps,
       fill: 'none',
-      ...filterProps(tickLine),
+      ...filterProps(tickLine, false),
     };
     const items = finalTicks.map((entry, i) => {
       const { line: lineCoord, tick: tickCoord } = this.getTickLineCoord(entry);

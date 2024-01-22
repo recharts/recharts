@@ -154,7 +154,7 @@ export const Curve: React.FC<Props> = props => {
 
   return (
     <path
-      {...filterProps(props)}
+      {...filterProps(props, false)}
       {...adaptEventHandlers(props)}
       className={clsx('recharts-curve', className)}
       d={realPath}

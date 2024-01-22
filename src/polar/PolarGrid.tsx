@@ -51,7 +51,7 @@ const PolarAngles: React.FC<Props> = props => {
   }
   const polarAnglesProps = {
     stroke: '#ccc',
-    ...filterProps(props),
+    ...filterProps(props, false),
   };
 
   return (
@@ -71,7 +71,7 @@ const ConcentricCircle: React.FC<ConcentricProps> = props => {
   const { cx, cy, radius, index } = props;
   const concentricCircleProps = {
     stroke: '#ccc',
-    ...filterProps(props),
+    ...filterProps(props, false),
     fill: 'none',
   };
 
@@ -92,7 +92,7 @@ const ConcentricPolygon: React.FC<ConcentricProps> = props => {
   const { radius, index } = props;
   const concentricPolygonProps = {
     stroke: '#ccc',
-    ...filterProps(props),
+    ...filterProps(props, false),
     fill: 'none',
   };
 
