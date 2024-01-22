@@ -1144,7 +1144,9 @@ export const generateCategoricalChart = ({
             x: dependentAxisCoord,
           };
 
-      // If there's a scatter plot, we'll want to grab the
+      // Unlike other chart types, scatter plot's tooltip positions rely on both X and Y coordinates. Only the scatter plot
+      // element knows its own Y coordinates.
+      // If there's a scatter plot, we'll want to grab that element for an interrogation.
       const ScatterPlotElement = this.state.formattedGraphicalItems.find(
         ({ item }: { item: any }) => item.type.name === 'Scatter',
       );
