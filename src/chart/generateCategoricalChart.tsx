@@ -1109,6 +1109,8 @@ export const generateCategoricalChart = ({
 
     displayDefaultTooltip() {
       const { defaultIndex } = this.props;
+
+      // Protect against runtime errors
       if (
         typeof this.props.defaultIndex !== 'number' ||
         defaultIndex < 0 ||
@@ -1117,6 +1119,7 @@ export const generateCategoricalChart = ({
         return;
       }
 
+      // If the chart doesn't include a <Tooltip /> element, there's no tooltip to display
       const tooltipElem = (Array.isArray(this.props.children) ? this.props.children : [this.props.children]).find(
         (child: any) => child.type.name === 'Tooltip',
       );
@@ -1127,11 +1130,10 @@ export const generateCategoricalChart = ({
       const activeLabel = this.state.tooltipTicks[defaultIndex] && this.state.tooltipTicks[defaultIndex].value;
       const activePayload = getTooltipContent(this.state, this.props.data, defaultIndex, activeLabel);
 
-      const isHorizontal = this.props.layout === 'horizontal';
-
       const independentAxisCoord = this.state.tooltipTicks[defaultIndex].coordinate;
       const dependentAxisCoord = (this.state.offset.top + this.props.height) / 2;
 
+      const isHorizontal = this.props.layout === 'horizontal';
       let activeCoordinate = isHorizontal
         ? {
             x: independentAxisCoord,
@@ -1543,11 +1545,8 @@ export const generateCategoricalChart = ({
       const mouse = this.getMouseInfo(e);
       const nextState: CategoricalChartState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
 
-      // If the dev set a defaultIndex, don't set `isTooltipActive` to false
-      if (nextState.isTooltipActive || typeof this.props.defaultIndex !== 'number') {
-        this.setState(nextState);
-        this.triggerSyncEvent(nextState);
-      }
+      this.setState(nextState);
+      this.triggerSyncEvent(nextState);
 
       const { onMouseMove } = this.props;
       if (isFunction(onMouseMove)) {
@@ -1574,11 +1573,9 @@ export const generateCategoricalChart = ({
      * @return {Object} no return
      */
     handleItemMouseLeave = () => {
-      if (typeof this.props.defaultIndex === 'number') {
-        this.setState(() => ({
-          isTooltipActive: false,
-        }));
-      }
+      this.setState(() => ({
+        isTooltipActive: false,
+      }));
     };
 
     /**
@@ -1600,10 +1597,8 @@ export const generateCategoricalChart = ({
     handleMouseLeave = (e: any) => {
       const nextState: CategoricalChartState = { isTooltipActive: false };
 
-      if (typeof this.props.defaultIndex !== 'number') {
-        this.setState(nextState);
-        this.triggerSyncEvent(nextState);
-      }
+      this.setState(nextState);
+      this.triggerSyncEvent(nextState);
 
       const { onMouseLeave } = this.props;
       if (isFunction(onMouseLeave)) {
