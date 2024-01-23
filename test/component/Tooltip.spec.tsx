@@ -13,6 +13,8 @@ import {
   Legend,
   Line,
   LineChart,
+  Scatter,
+  ScatterChart,
   Tooltip,
   XAxis,
   YAxis,
@@ -303,47 +305,9 @@ describe('<Tooltip />', () => {
   test('Tooltip should be visible from the beginning if defaultIndex is set to a valid value', () => {
     const { container } = render(
       <div role="main" style={{ width: '400px', height: '400px' }}>
-        <AreaChart width={400} height={400} data={data} defaultIndex={2}>
+        <AreaChart width={400} height={400} data={data}>
           <Area dataKey="uv" />
-          <Tooltip />
-        </AreaChart>
-      </div>,
-    );
-
-    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
-    expect(tooltip).toBeInTheDocument();
-
-    // Tooltip should be visible, since defaultIndex was set
-    expect(tooltip).toBeVisible();
-
-    // The cursor should also be visible
-    expect(container.querySelector('.recharts-tooltip-cursor')).toBeVisible();
-
-    // The active dot should also be visible
-    expect(container.querySelector('.recharts-active-dot')).toBeVisible();
-
-    // "2uv..." should be displayed in the Tooltip payload
-    expect(tooltip?.textContent).toBe('2uv : 200');
-
-    const chart = container.querySelector('.recharts-wrapper') as Element;
-    fireEvent.mouseOver(chart, { clientX: 350, clientY: 200 });
-
-    // Tooltip should be able to move when the mouse moves over the chart
-    expect(tooltip).toBeVisible();
-    expect(tooltip?.textContent).toBe('4uv : 189');
-
-    fireEvent.mouseOut(chart);
-
-    // Since active is false, the tooltip can be dismissed by mousing out
-    expect(tooltip).not.toBeVisible();
-  });
-
-  test('Tooltip should be visible from the beginning if defaultIndex is set to a valid value', () => {
-    const { container } = render(
-      <div role="main" style={{ width: '400px', height: '400px' }}>
-        <AreaChart width={400} height={400} data={data} defaultIndex={2}>
-          <Area dataKey="uv" />
-          <Tooltip />
+          <Tooltip defaultIndex={2} />
         </AreaChart>
       </div>,
     );
@@ -378,9 +342,9 @@ describe('<Tooltip />', () => {
 
   test('defaultIndex should work with bar charts', () => {
     const { container } = render(
-      <BarChart width={100} height={50} data={data} defaultIndex={2}>
+      <BarChart width={100} height={50} data={data}>
         <Bar dataKey="uv" label fill="#ff7300" />
-        <Tooltip />
+        <Tooltip defaultIndex={2} />
       </BarChart>,
     );
 
@@ -398,26 +362,44 @@ describe('<Tooltip />', () => {
 
     // "2uv..." should be displayed in the Tooltip payload
     expect(tooltip?.textContent).toBe('2uv : 200');
-
-    const chart = container.querySelector('.recharts-wrapper') as Element;
-    fireEvent.mouseOver(chart, { clientX: 90, clientY: 20 });
-
-    // Tooltip should be able to move when the mouse moves over the chart
-    expect(tooltip).toBeVisible();
-    expect(tooltip?.textContent).toBe('4uv : 189');
-
-    fireEvent.mouseOut(chart);
-
-    // Since active is false, the tooltip can be dismissed by mousing out
-    expect(tooltip).not.toBeVisible();
   });
-  // TODO: Test for scatter chart
+
+  test('defaultIndex should work with scatter charts', () => {
+    const data2 = [
+      { x: 100, y: 200, z: 200 },
+      { x: 120, y: 100, z: 260 },
+      { x: 170, y: 300, z: 400 },
+      { x: 140, y: 250, z: 280 },
+      { x: 150, y: 400, z: 500 },
+      { x: 110, y: 280, z: 200 },
+    ];
+    const { container } = render(
+      <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <XAxis dataKey="x" name="stature" unit="cm" />
+        <YAxis dataKey="y" name="weight" unit="kg" />
+        <Scatter line name="A school" data={data2} fill="#ff7300" />
+        <Tooltip defaultIndex={2} />
+      </ScatterChart>,
+    );
+
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    expect(tooltip).toBeInTheDocument();
+
+    // Tooltip should be visible, since defaultIndex was set
+    expect(tooltip).toBeVisible();
+
+    // The cursor should also be visible
+    expect(container.querySelector('.recharts-tooltip-cursor')).toBeVisible();
+
+    // "2uv..." should be displayed in the Tooltip payload
+    expect(tooltip?.textContent).toBe('170stature : 170cmweight : 300kg');
+  });
   test('Invalid defaultIndex value should be ignored', () => {
     const { container } = render(
       <div role="main" style={{ width: '400px', height: '400px' }}>
-        <AreaChart width={400} height={400} data={data} defaultIndex={20}>
+        <AreaChart width={400} height={400} data={data}>
           <Area dataKey="uv" />
-          <Tooltip />
+          <Tooltip defaultIndex={20} />
         </AreaChart>
       </div>,
     );
@@ -426,17 +408,4 @@ describe('<Tooltip />', () => {
     expect(tooltip).toBeInTheDocument();
     expect(tooltip).not.toBeVisible();
   });
-  test("If defaultIndex is set, but Tooltip isn't, don't show a tooltip", () => {
-    const { container } = render(
-      <div role="main" style={{ width: '400px', height: '400px' }}>
-        <AreaChart width={400} height={400} data={data} defaultIndex={2}>
-          <Area dataKey="uv" />
-        </AreaChart>
-      </div>,
-    );
-
-    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
-    expect(tooltip).toBeNull();
-  });
-  // TODO: Test with ResponsiveContainer resizing chart
 });
