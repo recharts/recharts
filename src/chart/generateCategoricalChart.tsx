@@ -1108,21 +1108,23 @@ export const generateCategoricalChart = ({
     }
 
     displayDefaultTooltip() {
-      const { defaultIndex, children, data, height, layout } = this.props;
+      const { children, data, height, layout } = this.props;
+
+      const tooltipElem = findChildByType(children, Tooltip);
+      // If the chart doesn't include a <Tooltip /> element, there's no tooltip to display
+      if (!tooltipElem) {
+        return;
+      }
+
+      const { defaultIndex } = tooltipElem.props;
 
       // Protect against runtime errors
       if (typeof defaultIndex !== 'number' || defaultIndex < 0 || defaultIndex > this.state.tooltipTicks.length) {
         return;
       }
 
-      // If the chart doesn't include a <Tooltip /> element, there's no tooltip to display
-      const tooltipElem = findChildByType(children, Tooltip);
-      if (!tooltipElem) {
-        return;
-      }
-
       const activeLabel = this.state.tooltipTicks[defaultIndex] && this.state.tooltipTicks[defaultIndex].value;
-      const activePayload = getTooltipContent(this.state, data, defaultIndex, activeLabel);
+      let activePayload = getTooltipContent(this.state, data, defaultIndex, activeLabel);
 
       const independentAxisCoord = this.state.tooltipTicks[defaultIndex].coordinate;
       const dependentAxisCoord = (this.state.offset.top + height) / 2;
@@ -1141,14 +1143,15 @@ export const generateCategoricalChart = ({
       // Unlike other chart types, scatter plot's tooltip positions rely on both X and Y coordinates. Only the scatter plot
       // element knows its own Y coordinates.
       // If there's a scatter plot, we'll want to grab that element for an interrogation.
-      const ScatterPlotElement = this.state.formattedGraphicalItems.find(
+      const scatterPlotElement = this.state.formattedGraphicalItems.find(
         ({ item }: { item: any }) => item.type.name === 'Scatter',
       );
-      if (ScatterPlotElement) {
+      if (scatterPlotElement) {
         activeCoordinate = {
           ...activeCoordinate,
-          ...ScatterPlotElement.props.points[defaultIndex].tooltipPosition,
+          ...scatterPlotElement.props.points[defaultIndex].tooltipPosition,
         };
+        activePayload = scatterPlotElement.props.points[defaultIndex].tooltipPayload;
       }
 
       const nextState = {

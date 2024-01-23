@@ -47,7 +47,6 @@ export const SettingTooltipIndex = {
   render: () => (
     <LineChart
       width={500}
-      defaultIndex={2}
       height={300}
       data={pageData}
       accessibilityLayer
@@ -63,7 +62,7 @@ export const SettingTooltipIndex = {
       <YAxis />
       <Line type="monotone" dataKey="uv" stroke="#8884d8" />
       <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
-      <Tooltip />
+      <Tooltip defaultIndex={2} />
     </LineChart>
   ),
 };
