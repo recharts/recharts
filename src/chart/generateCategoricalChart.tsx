@@ -1108,32 +1108,26 @@ export const generateCategoricalChart = ({
     }
 
     displayDefaultTooltip() {
-      const { defaultIndex } = this.props;
+      const { defaultIndex, children, data, height, layout } = this.props;
 
       // Protect against runtime errors
-      if (
-        typeof this.props.defaultIndex !== 'number' ||
-        defaultIndex < 0 ||
-        defaultIndex > this.state.tooltipTicks.length
-      ) {
+      if (typeof defaultIndex !== 'number' || defaultIndex < 0 || defaultIndex > this.state.tooltipTicks.length) {
         return;
       }
 
       // If the chart doesn't include a <Tooltip /> element, there's no tooltip to display
-      const tooltipElem = (Array.isArray(this.props.children) ? this.props.children : [this.props.children]).find(
-        (child: any) => child.type.name === 'Tooltip',
-      );
+      const tooltipElem = findChildByType(children, Tooltip);
       if (!tooltipElem) {
         return;
       }
 
       const activeLabel = this.state.tooltipTicks[defaultIndex] && this.state.tooltipTicks[defaultIndex].value;
-      const activePayload = getTooltipContent(this.state, this.props.data, defaultIndex, activeLabel);
+      const activePayload = getTooltipContent(this.state, data, defaultIndex, activeLabel);
 
       const independentAxisCoord = this.state.tooltipTicks[defaultIndex].coordinate;
-      const dependentAxisCoord = (this.state.offset.top + this.props.height) / 2;
+      const dependentAxisCoord = (this.state.offset.top + height) / 2;
 
-      const isHorizontal = this.props.layout === 'horizontal';
+      const isHorizontal = layout === 'horizontal';
       let activeCoordinate = isHorizontal
         ? {
             x: independentAxisCoord,
@@ -1258,23 +1252,27 @@ export const generateCategoricalChart = ({
           // The tooltip should stay active when it was active in the previous render. If this is not
           // the case, the tooltip disappears and immediately re-appears, causing a flickering effect
           isTooltipActive: prevState.isTooltipActive,
-
-          activeTooltipIndex: prevState.activeTooltipIndex,
-          activeCoordinate: prevState.activeCoordinate,
-          activeLabel: prevState.activeLabel,
-          activePayload: prevState.activePayload,
         };
 
         const updatesToState = {
           // Update the current tooltip data (in case it changes without mouse interaction)
-          ...getTooltipData(prevState, data, layout),
           updateId: prevState.updateId + 1,
         };
 
+        // If defaultIndex has been set, ignore the tooltip updates. Otherwise...
+        // Update the current tooltip data (in case it changes without mouse interaction)
+        const tooltipData =
+          typeof nextProps.defaultIndex === 'number'
+            ? {}
+            : {
+                ...getTooltipData(prevState, data, layout),
+              };
+
         const newState = {
           ...defaultState,
-          ...updatesToState,
           ...keepFromPrevState,
+          ...updatesToState,
+          ...tooltipData,
         };
 
         return {
