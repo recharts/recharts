@@ -1818,7 +1818,6 @@ export const generateCategoricalChart = ({
         height: isNumber(props.height) ? props.height : offset.height,
         xAxis,
         yAxis,
-        offset,
         verticalCoordinatesGenerator: props.verticalCoordinatesGenerator,
         horizontalCoordinatesGenerator: props.horizontalCoordinatesGenerator,
       });

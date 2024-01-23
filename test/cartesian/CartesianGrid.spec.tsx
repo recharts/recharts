@@ -4,7 +4,7 @@ import { render } from '@testing-library/react';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import { CartesianGrid, LineChart, ComposedChart, BarChart, ScatterChart, AreaChart, Surface } from '../../src';
 import {
-  GridLineFunctionProps,
+  GridLineTypeFunctionProps,
   HorizontalCoordinatesGenerator,
   Props,
   VerticalCoordinatesGenerator,
@@ -28,15 +28,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
    */
   const floatingPointPrecisionExamples = [121.00000000000002, 231.00000000000005];
   const verticalPoints = [100, 200, 300, 400];
-  const offset: ChartOffset = {
-    top: 1,
-    bottom: 2,
-    left: 3,
-    right: 4,
-    width: 5,
-    height: 6,
-    brushBottom: 7,
-  };
 
   const chartMargin: Margin = {
     bottom: 11,
@@ -401,7 +392,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
-              offset={{}}
             />
           </ChartElement>,
         );
@@ -433,7 +423,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               {...exampleCartesianGridDimensions}
               horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
               horizontalPoints={horizontalPoints}
-              offset={offset}
             />
           </ChartElement>,
         );
@@ -456,7 +445,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               {...exampleCartesianGridDimensions}
               yAxis={yAxis}
               horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
-              offset={offset}
             />
           </ChartElement>,
         );
@@ -486,7 +474,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               {...exampleCartesianGridDimensions}
               yAxis={yAxis}
               horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
-              offset={offset}
               syncWithTicks={false}
               horizontalValues={['a', 'b']}
             />
@@ -518,7 +505,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
                 {...exampleCartesianGridDimensions}
                 yAxis={yAxis}
                 horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
-                offset={offset}
                 syncWithTicks={syncWithTicks}
                 horizontalValues={[]}
               />
@@ -551,7 +537,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
                 {...exampleCartesianGridDimensions}
                 yAxis={yAxis}
                 horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
-                offset={offset}
                 syncWithTicks={syncWithTicks}
               />
             </ChartElement>,
@@ -579,7 +564,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               <CartesianGrid
                 {...exampleCartesianGridDimensions}
                 horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
-                offset={offset}
               />
             </ChartElement>,
           );
@@ -627,7 +611,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               verticalCoordinatesGenerator={verticalCoordinatesGenerator}
-              offset={offset}
             />
           </ChartElement>,
         );
@@ -659,7 +642,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               {...exampleCartesianGridDimensions}
               verticalCoordinatesGenerator={verticalCoordinatesGenerator}
               verticalPoints={verticalPoints}
-              offset={offset}
             />
           </ChartElement>,
         );
@@ -682,7 +664,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               {...exampleCartesianGridDimensions}
               xAxis={xAxis}
               verticalCoordinatesGenerator={verticalCoordinatesGenerator}
-              offset={offset}
             />
           </ChartElement>,
         );
@@ -712,7 +693,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               {...exampleCartesianGridDimensions}
               xAxis={xAxis}
               verticalCoordinatesGenerator={verticalCoordinatesGenerator}
-              offset={offset}
               syncWithTicks={false}
               verticalValues={['a', 'b']}
             />
@@ -744,7 +724,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
                 {...exampleCartesianGridDimensions}
                 xAxis={xAxis}
                 verticalCoordinatesGenerator={verticalCoordinatesGenerator}
-                offset={offset}
                 syncWithTicks={syncWithTicks}
                 horizontalValues={[]}
               />
@@ -777,7 +756,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
                 {...exampleCartesianGridDimensions}
                 xAxis={xAxis}
                 verticalCoordinatesGenerator={verticalCoordinatesGenerator}
-                offset={offset}
                 syncWithTicks={syncWithTicks}
               />
             </ChartElement>,
@@ -805,7 +783,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               <CartesianGrid
                 {...exampleCartesianGridDimensions}
                 verticalCoordinatesGenerator={verticalCoordinatesGenerator}
-                offset={offset}
               />
             </ChartElement>,
           );
@@ -860,7 +837,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         );
         expect(horizontal).toHaveBeenCalledTimes(horizontalPoints.length);
 
-        const expectedProps: GridLineFunctionProps = {
+        const expectedProps: GridLineTypeFunctionProps = {
           stroke: '#ccc',
           fill: 'none',
           height: 200,
@@ -918,7 +895,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         );
         expect(spy).toHaveBeenCalledTimes(horizontalPoints.length);
 
-        const expectedProps: GridLineFunctionProps = {
+        const expectedProps: GridLineTypeFunctionProps = {
           stroke: '#ccc',
           fill: 'none',
           height: 200,
@@ -972,7 +949,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         );
         expect(vertical).toHaveBeenCalledTimes(verticalPoints.length);
 
-        const expectedProps: GridLineFunctionProps = {
+        const expectedProps: GridLineTypeFunctionProps = {
           stroke: '#ccc',
           fill: 'none',
           height: 200,
@@ -1030,7 +1007,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         );
         expect(spy).toHaveBeenCalledTimes(verticalPoints.length);
 
-        const expectedProps: GridLineFunctionProps = {
+        const expectedProps: GridLineTypeFunctionProps = {
           stroke: '#ccc',
           fill: 'none',
           height: 200,
@@ -1134,7 +1111,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               {...exampleCartesianGridDimensions}
               horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
               horizontalFill={['red', 'green']}
-              offset={offset}
             />
           </ChartElement>,
         );
@@ -1304,7 +1280,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             verticalFill={['red', 'green']}
             fillOpacity="20%"
             vertical={vertical}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1353,7 +1328,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               height={500}
               verticalCoordinatesGenerator={verticalCoordinatesGenerator}
               verticalFill={['red', 'green']}
-              offset={offset}
             />
           </ChartElement>,
         );
@@ -1374,7 +1348,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             verticalFill={['red', 'green']}
             fillOpacity="20%"
             vertical={false}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1388,7 +1361,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             width={Math.max(...verticalPoints) + 1}
             verticalPoints={verticalPoints}
             verticalFill={fill}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1403,7 +1375,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             width={Math.max(...verticalPoints) + 1}
             verticalPoints={verticalPoints}
             verticalFill={['red', 'green']}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1418,7 +1389,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             width={Math.max(...verticalPoints) + 1}
             verticalPoints={verticalPoints}
             verticalFill={['red', 'green']}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1435,7 +1405,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             width={Math.max(...verticalPoints) - 1}
             verticalPoints={verticalPoints}
             verticalFill={['red', 'green']}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1449,7 +1418,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             width={1}
             verticalPoints={verticalPoints}
             verticalFill={['red', 'green']}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1468,7 +1436,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             height={500}
             verticalPoints={floatingPointPrecisionExamples}
             verticalFill={['red', 'green']}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1497,7 +1464,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             {...exampleCartesianGridDimensions}
             verticalPoints={[10, 20, 10, 500]}
             verticalFill={['red', 'green']}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1531,7 +1497,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             {...exampleCartesianGridDimensions}
             verticalPoints={verticalPoints}
             horizontalPoints={horizontalPoints}
-            offset={offset}
           />
         </ChartElement>,
       );
