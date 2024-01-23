@@ -44,8 +44,6 @@ export type VerticalCoordinatesGenerator = (
 ) => number[];
 
 interface InternalCartesianGridProps {
-  x?: number;
-  y?: number;
   width?: number;
   height?: number;
   horizontalCoordinatesGenerator?: HorizontalCoordinatesGenerator;
@@ -58,6 +56,16 @@ interface InternalCartesianGridProps {
 }
 
 interface CartesianGridProps extends InternalCartesianGridProps {
+  /**
+   * The x-coordinate of grid.
+   * If left undefined, it will be computed from the chart's offset and margins.
+   */
+  x?: number;
+  /**
+   * The y-coordinate of grid.
+   * If left undefined, it will be computed from the chart's offset and margins.
+   */
+  y?: number;
   horizontal?: GridLineType;
   vertical?: GridLineType;
   /**
