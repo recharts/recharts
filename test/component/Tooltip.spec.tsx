@@ -412,7 +412,20 @@ describe('<Tooltip />', () => {
     expect(tooltip).not.toBeVisible();
   });
   // TODO: Test for scatter chart
-  // TODO: Test for out-of-bounds defaultIndex
+  test('Invalid defaultIndex value should be ignored', () => {
+    const { container } = render(
+      <div role="main" style={{ width: '400px', height: '400px' }}>
+        <AreaChart width={400} height={400} data={data} defaultIndex={20}>
+          <Area dataKey="uv" />
+          <Tooltip />
+        </AreaChart>
+      </div>,
+    );
+
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    expect(tooltip).toBeInTheDocument();
+    expect(tooltip).not.toBeVisible();
+  });
   test("If defaultIndex is set, but Tooltip isn't, don't show a tooltip", () => {
     const { container } = render(
       <div role="main" style={{ width: '400px', height: '400px' }}>
