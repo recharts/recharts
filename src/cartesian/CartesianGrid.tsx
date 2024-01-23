@@ -14,7 +14,7 @@ import { filterProps } from '../util/ReactUtils';
 import { getCoordinatesOfGrid, getTicksOfAxis } from '../util/ChartUtils';
 import { getTicks } from './getTicks';
 import { CartesianAxis } from './CartesianAxis';
-import { useChartHeight, useChartWidth } from '../context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useOffset } from '../context/chartLayoutContext';
 
 export type GridLineFunctionProps = Omit<LineItemProps, 'key'> & {
   // React does not pass the key through when calling cloneElement - so it might be undefined when cloning
@@ -350,6 +350,7 @@ const defaultProps: Partial<Props> = {
 export function CartesianGrid(props: Props) {
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
+  const offset = useOffset();
   const propsIncludingDefaults: Props = {
     ...props,
     stroke: props.stroke ?? defaultProps.stroke,
@@ -360,8 +361,7 @@ export function CartesianGrid(props: Props) {
     verticalFill: props.verticalFill ?? defaultProps.verticalFill,
   };
 
-  const { x, y, width, height, xAxis, yAxis, offset, syncWithTicks, horizontalValues, verticalValues } =
-    propsIncludingDefaults;
+  const { x, y, width, height, xAxis, yAxis, syncWithTicks, horizontalValues, verticalValues } = propsIncludingDefaults;
 
   if (
     !isNumber(width) ||

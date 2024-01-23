@@ -1,6 +1,6 @@
 import React, { ReactNode, createContext, useContext } from 'react';
 import invariant from 'tiny-invariant';
-import { CartesianViewBox, XAxisMap, YAxisMap } from '../util/types';
+import { CartesianViewBox, ChartOffset, XAxisMap, YAxisMap } from '../util/types';
 import type { CategoricalChartState } from '../chart/types';
 import type { Props as XAxisProps } from '../cartesian/XAxis';
 import type { Props as YAxisProps } from '../cartesian/YAxis';
@@ -9,6 +9,7 @@ import { calculateViewBox } from '../util/calculateViewBox';
 export const XAxisContext = createContext<XAxisMap | undefined>(undefined);
 export const YAxisContext = createContext<YAxisMap | undefined>(undefined);
 export const ViewBoxContext = createContext<CartesianViewBox | undefined>(undefined);
+export const OffsetContext = createContext<ChartOffset | null>(null);
 export const ClipPathIdContext = createContext<string | undefined>(undefined);
 export const ChartHeightContext = createContext<number>(0);
 export const ChartWidthContext = createContext<number>(0);
@@ -36,6 +37,9 @@ export const ChartLayoutContextProvider = (props: {
     height,
   } = props;
 
+  /**
+   * Perhaps we should compute this property when reading? Let's see what is more often used
+   */
   const viewBox = calculateViewBox(offset);
 
   /*
@@ -54,13 +58,15 @@ export const ChartLayoutContextProvider = (props: {
   return (
     <XAxisContext.Provider value={xAxisMap}>
       <YAxisContext.Provider value={yAxisMap}>
-        <ViewBoxContext.Provider value={viewBox}>
-          <ClipPathIdContext.Provider value={clipPathId}>
-            <ChartHeightContext.Provider value={height}>
-              <ChartWidthContext.Provider value={width}>{children}</ChartWidthContext.Provider>
-            </ChartHeightContext.Provider>
-          </ClipPathIdContext.Provider>
-        </ViewBoxContext.Provider>
+        <OffsetContext.Provider value={offset}>
+          <ViewBoxContext.Provider value={viewBox}>
+            <ClipPathIdContext.Provider value={clipPathId}>
+              <ChartHeightContext.Provider value={height}>
+                <ChartWidthContext.Provider value={width}>{children}</ChartWidthContext.Provider>
+              </ChartHeightContext.Provider>
+            </ClipPathIdContext.Provider>
+          </ViewBoxContext.Provider>
+        </OffsetContext.Provider>
       </YAxisContext.Provider>
     </XAxisContext.Provider>
   );
@@ -111,6 +117,10 @@ export const useYAxisOrThrow = (yAxisId: string | number): YAxisProps => {
 export const useViewBox = (): CartesianViewBox => {
   const viewBox = useContext(ViewBoxContext);
   return viewBox;
+};
+
+export const useOffset = (): ChartOffset => {
+  return useContext(OffsetContext);
 };
 
 export const useChartWidth = (): number => {
