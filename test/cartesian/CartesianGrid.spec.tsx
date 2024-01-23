@@ -2,14 +2,14 @@ import React from 'react';
 import { describe, test, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { scaleLinear } from 'victory-vendor/d3-scale';
-import { Surface, CartesianGrid, LineChart } from '../../src';
+import { Surface, CartesianGrid, LineChart, AreaChart } from '../../src';
 import {
   GridLineFunctionProps,
   HorizontalCoordinatesGenerator,
   Props,
   VerticalCoordinatesGenerator,
 } from '../../src/cartesian/CartesianGrid';
-import { ChartOffset } from '../../src/util/types';
+import { ChartOffset, Margin } from '../../src/util/types';
 
 describe('<CartesianGrid />', () => {
   const horizontalPoints = [10, 20, 30, 100, 400];
@@ -29,6 +29,162 @@ describe('<CartesianGrid />', () => {
     height: 6,
     brushBottom: 7,
   };
+
+  describe('layout and size when set explicitly', () => {
+    it('should put x, y, width and height as coordinates to the background', () => {
+      const { container } = render(
+        <Surface width={500} height={500}>
+          <CartesianGrid
+            x={1}
+            y={2}
+            width={100}
+            height={200}
+            fill="green"
+            verticalPoints={verticalPoints}
+            horizontalPoints={horizontalPoints}
+          />
+        </Surface>,
+      );
+      const background = container.querySelector('rect.recharts-cartesian-grid-bg');
+      expect.soft(background).toHaveAttribute('x', '1');
+      expect.soft(background).toHaveAttribute('y', '2');
+      expect.soft(background).toHaveAttribute('width', '100');
+      expect.soft(background).toHaveAttribute('height', '200');
+    });
+
+    it('should put x, y, width and height as coordinates to all lines', () => {
+      const { container } = render(
+        <Surface width={500} height={500}>
+          <CartesianGrid
+            x={1}
+            y={2}
+            width={100}
+            height={200}
+            fill="green"
+            verticalPoints={verticalPoints}
+            horizontalPoints={horizontalPoints}
+          />
+        </Surface>,
+      );
+      const horizontalLines = container.querySelectorAll('.recharts-cartesian-grid-horizontal line');
+      expect(horizontalLines).toHaveLength(5);
+      horizontalLines.forEach(line => {
+        expect.soft(line).toHaveAttribute('x', '1');
+        expect.soft(line).toHaveAttribute('y', '2');
+        expect.soft(line).toHaveAttribute('x1', '1');
+        expect.soft(line).toHaveAttribute('x2', '101');
+      });
+      const verticalLines = container.querySelectorAll('.recharts-cartesian-grid-vertical line');
+      expect(verticalLines).toHaveLength(4);
+      verticalLines.forEach(line => {
+        expect.soft(line).toHaveAttribute('x', '1');
+        expect.soft(line).toHaveAttribute('y', '2');
+        expect.soft(line).toHaveAttribute('y1', '2');
+        expect.soft(line).toHaveAttribute('y2', '202');
+      });
+    });
+
+    it('should put x, y, width and height as coordinates to all stripes', () => {
+      const { container } = render(
+        <Surface width={500} height={500}>
+          <CartesianGrid
+            x={1}
+            y={2}
+            width={100}
+            height={200}
+            fill="green"
+            verticalPoints={verticalPoints}
+            horizontalPoints={horizontalPoints}
+            horizontalFill={['red', 'black']}
+            verticalFill={['green', 'blue']}
+          />
+        </Surface>,
+      );
+      const horizontalStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
+      expect(horizontalStripes).toHaveLength(5);
+      horizontalStripes.forEach(stripe => {
+        expect.soft(stripe).toHaveAttribute('x', '1');
+        expect.soft(stripe).toHaveAttribute('width', '100');
+      });
+      const verticalStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
+      expect(verticalStripes).toHaveLength(4);
+      verticalStripes.forEach(stripe => {
+        expect.soft(stripe).toHaveAttribute('y', '2');
+        expect.soft(stripe).toHaveAttribute('height', '200');
+      });
+    });
+  });
+
+  describe('layout and size when inherited from parent chart', () => {
+    const exampleMargin: Margin = {
+      bottom: 1,
+      left: 2,
+      right: 4,
+      top: 8,
+    };
+    it('should put x, y, width and height as coordinates to the background', () => {
+      const { container } = render(
+        <AreaChart margin={exampleMargin} width={500} height={400}>
+          <CartesianGrid fill="green" verticalPoints={verticalPoints} horizontalPoints={horizontalPoints} />
+        </AreaChart>,
+      );
+      const background = container.querySelector('rect.recharts-cartesian-grid-bg');
+      expect.soft(background).toHaveAttribute('x', '2');
+      expect.soft(background).toHaveAttribute('y', '8');
+      expect.soft(background).toHaveAttribute('width', '494');
+      expect.soft(background).toHaveAttribute('height', '391');
+    });
+
+    it('should put x, y, width and height as coordinates to all lines', () => {
+      const { container } = render(
+        <AreaChart margin={exampleMargin} width={500} height={400}>
+          <CartesianGrid fill="green" verticalPoints={verticalPoints} horizontalPoints={horizontalPoints} />
+        </AreaChart>,
+      );
+      const horizontalLines = container.querySelectorAll('.recharts-cartesian-grid-horizontal line');
+      expect(horizontalLines).toHaveLength(5);
+      horizontalLines.forEach(line => {
+        expect.soft(line).toHaveAttribute('x', '2');
+        expect.soft(line).toHaveAttribute('y', '8');
+        expect.soft(line).toHaveAttribute('x1', '2');
+        expect.soft(line).toHaveAttribute('x2', '496');
+      });
+      const verticalLines = container.querySelectorAll('.recharts-cartesian-grid-vertical line');
+      expect(verticalLines).toHaveLength(4);
+      verticalLines.forEach(line => {
+        expect.soft(line).toHaveAttribute('x', '2');
+        expect.soft(line).toHaveAttribute('y', '8');
+        expect.soft(line).toHaveAttribute('y1', '8');
+        expect.soft(line).toHaveAttribute('y2', '399');
+      });
+    });
+
+    it('should put x, y, width and height as coordinates to all stripes', () => {
+      const { container } = render(
+        <AreaChart margin={exampleMargin} width={500} height={400}>
+          <CartesianGrid
+            fill="green"
+            verticalPoints={verticalPoints}
+            horizontalPoints={horizontalPoints}
+            horizontalFill={['red', 'black']}
+            verticalFill={['green', 'blue']}
+          />
+        </AreaChart>,
+      );
+      const horizontalStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
+      expect(horizontalStripes).toHaveLength(5);
+      horizontalStripes.forEach(stripe => {
+        expect.soft(stripe).toHaveAttribute('x', '2');
+        expect.soft(stripe).toHaveAttribute('width', '494');
+      });
+      const verticalStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
+      expect(verticalStripes).toHaveLength(5);
+      verticalStripes.forEach(stripe => {
+        expect.soft(stripe).toHaveAttribute('y', '8');
+        expect.soft(stripe).toHaveAttribute('height', '391');
+      });
+    });
+  });
 
   describe('grid', () => {
     describe('basic features', () => {
