@@ -5,6 +5,8 @@ import { vi } from 'vitest';
 import {
   Area,
   AreaChart,
+  Bar,
+  BarChart,
   Brush,
   CartesianGrid,
   ComposedChart,
@@ -297,4 +299,131 @@ describe('<Tooltip />', () => {
 
     expect(tooltip).not.toBeVisible();
   });
+
+  test('Tooltip should be visible from the beginning if defaultIndex is set to a valid value', () => {
+    const { container } = render(
+      <div role="main" style={{ width: '400px', height: '400px' }}>
+        <AreaChart width={400} height={400} data={data} defaultIndex={2}>
+          <Area dataKey="uv" />
+          <Tooltip />
+        </AreaChart>
+      </div>,
+    );
+
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    expect(tooltip).toBeInTheDocument();
+
+    // Tooltip should be visible, since defaultIndex was set
+    expect(tooltip).toBeVisible();
+
+    // The cursor should also be visible
+    expect(container.querySelector('.recharts-tooltip-cursor')).toBeVisible();
+
+    // The active dot should also be visible
+    expect(container.querySelector('.recharts-active-dot')).toBeVisible();
+
+    // "2uv..." should be displayed in the Tooltip payload
+    expect(tooltip?.textContent).toBe('2uv : 200');
+
+    const chart = container.querySelector('.recharts-wrapper') as Element;
+    fireEvent.mouseOver(chart, { clientX: 350, clientY: 200 });
+
+    // Tooltip should be able to move when the mouse moves over the chart
+    expect(tooltip).toBeVisible();
+    expect(tooltip?.textContent).toBe('4uv : 189');
+
+    fireEvent.mouseOut(chart);
+
+    // Since active is false, the tooltip can be dismissed by mousing out
+    expect(tooltip).not.toBeVisible();
+  });
+
+  test('Tooltip should be visible from the beginning if defaultIndex is set to a valid value', () => {
+    const { container } = render(
+      <div role="main" style={{ width: '400px', height: '400px' }}>
+        <AreaChart width={400} height={400} data={data} defaultIndex={2}>
+          <Area dataKey="uv" />
+          <Tooltip />
+        </AreaChart>
+      </div>,
+    );
+
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    expect(tooltip).toBeInTheDocument();
+
+    // Tooltip should be visible, since defaultIndex was set
+    expect(tooltip).toBeVisible();
+
+    // The cursor should also be visible
+    expect(container.querySelector('.recharts-tooltip-cursor')).toBeVisible();
+
+    // The active dot should also be visible
+    expect(container.querySelector('.recharts-active-dot')).toBeVisible();
+
+    // "2uv..." should be displayed in the Tooltip payload
+    expect(tooltip?.textContent).toBe('2uv : 200');
+
+    const chart = container.querySelector('.recharts-wrapper') as Element;
+    fireEvent.mouseOver(chart, { clientX: 350, clientY: 200 });
+
+    // Tooltip should be able to move when the mouse moves over the chart
+    expect(tooltip).toBeVisible();
+    expect(tooltip?.textContent).toBe('4uv : 189');
+
+    fireEvent.mouseOut(chart);
+
+    // Since active is false, the tooltip can be dismissed by mousing out
+    expect(tooltip).not.toBeVisible();
+  });
+
+  test('defaultIndex should work with bar charts', () => {
+    const { container } = render(
+      <BarChart width={100} height={50} data={data} defaultIndex={2}>
+        <Bar dataKey="uv" label fill="#ff7300" />
+        <Tooltip />
+      </BarChart>,
+    );
+
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    expect(tooltip).toBeInTheDocument();
+
+    // Tooltip should be visible, since defaultIndex was set
+    expect(tooltip).toBeVisible();
+
+    // The cursor should also be visible
+    expect(container.querySelector('.recharts-tooltip-cursor')).toBeVisible();
+
+    // The box around the active bar should also be visible
+    expect(container.querySelector('.recharts-active-bar')).toBeVisible();
+
+    // "2uv..." should be displayed in the Tooltip payload
+    expect(tooltip?.textContent).toBe('2uv : 200');
+
+    const chart = container.querySelector('.recharts-wrapper') as Element;
+    fireEvent.mouseOver(chart, { clientX: 90, clientY: 20 });
+
+    // Tooltip should be able to move when the mouse moves over the chart
+    expect(tooltip).toBeVisible();
+    expect(tooltip?.textContent).toBe('4uv : 189');
+
+    fireEvent.mouseOut(chart);
+
+    // Since active is false, the tooltip can be dismissed by mousing out
+    expect(tooltip).not.toBeVisible();
+  });
+  // TODO: Test for scatter chart
+  // TODO: Test for out-of-bounds defaultIndex
+  test("If defaultIndex is set, but Tooltip isn't, don't show a tooltip", () => {
+    const { container } = render(
+      <div role="main" style={{ width: '400px', height: '400px' }}>
+        <AreaChart width={400} height={400} data={data} defaultIndex={2}>
+          <Area dataKey="uv" />
+        </AreaChart>
+      </div>,
+    );
+
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    expect(tooltip).toBeNull();
+  });
+  // TODO: Test with ResponsiveContainer resizing chart
 });
