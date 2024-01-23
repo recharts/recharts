@@ -30,6 +30,23 @@ describe('<CartesianGrid />', () => {
     brushBottom: 7,
   };
 
+  const chartMargin: Margin = {
+    bottom: 11,
+    left: 12,
+    right: 13,
+    top: 14,
+  };
+
+  const expectedOffset: ChartOffset = {
+    bottom: 11,
+    brushBottom: 11,
+    height: 175,
+    left: 12,
+    right: 13,
+    top: 14,
+    width: 275,
+  };
+
   describe('layout and size when set explicitly', () => {
     it('should put x, y, width and height as coordinates to the background', () => {
       const { container } = render(
@@ -466,7 +483,7 @@ describe('<CartesianGrid />', () => {
           ticks: ['x', 'y', 'x'],
         };
         render(
-          <Surface width={500} height={500}>
+          <AreaChart width={300} height={200} margin={chartMargin}>
             <CartesianGrid
               x={0}
               y={0}
@@ -478,16 +495,16 @@ describe('<CartesianGrid />', () => {
               chartHeight={200}
               offset={offset}
             />
-          </Surface>,
+          </AreaChart>,
         );
 
         expect(horizontalCoordinatesGenerator).toHaveBeenCalledOnce();
         expect(horizontalCoordinatesGenerator).toHaveBeenCalledWith(
           {
-            yAxis,
+            yAxis: undefined,
             width: 300,
             height: 200,
-            offset,
+            offset: expectedOffset,
           },
           undefined,
         );
@@ -501,7 +518,7 @@ describe('<CartesianGrid />', () => {
           ticks: ['x', 'y', 'x'],
         };
         render(
-          <Surface width={500} height={500}>
+          <AreaChart width={300} height={200} margin={chartMargin}>
             <CartesianGrid
               x={0}
               y={0}
@@ -515,21 +532,16 @@ describe('<CartesianGrid />', () => {
               syncWithTicks={false}
               horizontalValues={['a', 'b']}
             />
-          </Surface>,
+          </AreaChart>,
         );
-
-        const yAxisExpected = {
-          ...yAxis,
-          ticks: ['a', 'b'],
-        };
 
         expect(horizontalCoordinatesGenerator).toHaveBeenCalledOnce();
         expect(horizontalCoordinatesGenerator).toHaveBeenCalledWith(
           {
-            yAxis: yAxisExpected,
+            yAxis: undefined,
             width: 300,
             height: 200,
-            offset,
+            offset: expectedOffset,
           },
           true,
         );
@@ -543,7 +555,7 @@ describe('<CartesianGrid />', () => {
             scale: scaleLinear(),
           };
           render(
-            <Surface width={500} height={500}>
+            <AreaChart width={300} height={200} margin={chartMargin}>
               <CartesianGrid
                 x={0}
                 y={0}
@@ -557,21 +569,16 @@ describe('<CartesianGrid />', () => {
                 syncWithTicks={syncWithTicks}
                 horizontalValues={[]}
               />
-            </Surface>,
+            </AreaChart>,
           );
-
-          const yAxisExpected = {
-            ...yAxis,
-            ticks: undefined,
-          };
 
           expect(horizontalCoordinatesGenerator).toHaveBeenCalledOnce();
           expect(horizontalCoordinatesGenerator).toHaveBeenCalledWith(
             {
-              yAxis: yAxisExpected,
+              yAxis: undefined,
               width: 300,
               height: 200,
-              offset,
+              offset: expectedOffset,
             },
             syncWithTicks,
           );
@@ -586,7 +593,7 @@ describe('<CartesianGrid />', () => {
             scale: scaleLinear(),
           };
           render(
-            <Surface width={500} height={500}>
+            <AreaChart width={300} height={200} margin={chartMargin}>
               <CartesianGrid
                 x={0}
                 y={0}
@@ -599,21 +606,16 @@ describe('<CartesianGrid />', () => {
                 offset={offset}
                 syncWithTicks={syncWithTicks}
               />
-            </Surface>,
+            </AreaChart>,
           );
-
-          const yAxisExpected = {
-            ...yAxis,
-            ticks: undefined,
-          };
 
           expect(horizontalCoordinatesGenerator).toHaveBeenCalledOnce();
           expect(horizontalCoordinatesGenerator).toHaveBeenCalledWith(
             {
-              yAxis: yAxisExpected,
+              yAxis: undefined,
               width: 300,
               height: 200,
-              offset,
+              offset: { bottom: 11, brushBottom: 11, height: 175, left: 12, right: 13, top: 14, width: 275 },
             },
             syncWithTicks,
           );
@@ -736,7 +738,7 @@ describe('<CartesianGrid />', () => {
           ticks: ['x', 'y', 'x'],
         };
         render(
-          <Surface width={500} height={500}>
+          <AreaChart width={300} height={200} margin={chartMargin}>
             <CartesianGrid
               x={0}
               y={0}
@@ -748,16 +750,16 @@ describe('<CartesianGrid />', () => {
               chartHeight={200}
               offset={offset}
             />
-          </Surface>,
+          </AreaChart>,
         );
 
         expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
         expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
           {
-            xAxis,
+            xAxis: undefined,
             width: 300,
             height: 200,
-            offset,
+            offset: expectedOffset,
           },
           undefined,
         );
@@ -771,7 +773,7 @@ describe('<CartesianGrid />', () => {
           ticks: ['x', 'y', 'x'],
         };
         render(
-          <Surface width={500} height={500}>
+          <AreaChart width={300} height={200} margin={chartMargin}>
             <CartesianGrid
               x={0}
               y={0}
@@ -785,21 +787,16 @@ describe('<CartesianGrid />', () => {
               syncWithTicks={false}
               verticalValues={['a', 'b']}
             />
-          </Surface>,
+          </AreaChart>,
         );
-
-        const xAxisExpected = {
-          ...xAxis,
-          ticks: ['a', 'b'],
-        };
 
         expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
         expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
           {
-            xAxis: xAxisExpected,
+            xAxis: undefined,
             width: 300,
             height: 200,
-            offset,
+            offset: expectedOffset,
           },
           true,
         );
@@ -813,7 +810,7 @@ describe('<CartesianGrid />', () => {
             scale: scaleLinear(),
           };
           render(
-            <Surface width={500} height={500}>
+            <AreaChart width={300} height={200} margin={chartMargin}>
               <CartesianGrid
                 x={0}
                 y={0}
@@ -827,21 +824,16 @@ describe('<CartesianGrid />', () => {
                 syncWithTicks={syncWithTicks}
                 horizontalValues={[]}
               />
-            </Surface>,
+            </AreaChart>,
           );
-
-          const xAxisExpected = {
-            ...xAxis,
-            ticks: undefined,
-          };
 
           expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
           expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
             {
-              xAxis: xAxisExpected,
+              xAxis: undefined,
               width: 300,
               height: 200,
-              offset,
+              offset: expectedOffset,
             },
             syncWithTicks,
           );
@@ -856,7 +848,7 @@ describe('<CartesianGrid />', () => {
             scale: scaleLinear(),
           };
           render(
-            <Surface width={500} height={500}>
+            <AreaChart width={300} height={200} margin={chartMargin}>
               <CartesianGrid
                 x={0}
                 y={0}
@@ -869,21 +861,16 @@ describe('<CartesianGrid />', () => {
                 offset={offset}
                 syncWithTicks={syncWithTicks}
               />
-            </Surface>,
+            </AreaChart>,
           );
-
-          const xAxisExpected = {
-            ...xAxis,
-            ticks: undefined,
-          };
 
           expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
           expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
             {
-              xAxis: xAxisExpected,
+              xAxis: undefined,
               width: 300,
               height: 200,
-              offset,
+              offset: expectedOffset,
             },
             syncWithTicks,
           );
