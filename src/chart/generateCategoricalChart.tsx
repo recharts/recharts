@@ -1259,23 +1259,14 @@ export const generateCategoricalChart = ({
 
         const updatesToState = {
           // Update the current tooltip data (in case it changes without mouse interaction)
+          ...getTooltipData(prevState, data, layout),
           updateId: prevState.updateId + 1,
         };
-
-        // If defaultIndex has been set, ignore the tooltip updates. Otherwise...
-        // Update the current tooltip data (in case it changes without mouse interaction)
-        const tooltipData =
-          typeof nextProps.defaultIndex === 'number'
-            ? {}
-            : {
-                ...getTooltipData(prevState, data, layout),
-              };
 
         const newState = {
           ...defaultState,
           ...keepFromPrevState,
           ...updatesToState,
-          ...tooltipData,
         };
 
         return {
