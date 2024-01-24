@@ -92,7 +92,7 @@ describe('<CartesianGrid />', () => {
         expect.soft(line).toHaveAttribute('x2', '101');
       });
       const verticalLines = container.querySelectorAll('.recharts-cartesian-grid-vertical line');
-      expect(verticalLines).toHaveLength(4);
+      expect(verticalLines).toHaveLength(verticalPoints.length);
       verticalLines.forEach(line => {
         expect.soft(line).toHaveAttribute('x', '1');
         expect.soft(line).toHaveAttribute('y', '2');
