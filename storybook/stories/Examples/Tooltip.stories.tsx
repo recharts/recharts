@@ -179,7 +179,7 @@ export const SeparateDataSetsForChart = {
   render: () => {
     return (
       <ResponsiveContainer width="100%" height={500}>
-        <ComposedChart data={areaData} defaultIndex={2}>
+        <ComposedChart data={areaData}>
           <XAxis dataKey="category" type="category" />
           <YAxis dataKey="value" />
           <Tooltip />
