@@ -839,7 +839,6 @@ export interface CategoricalChartProps {
   accessibilityLayer?: boolean;
   role?: string;
   tabIndex?: number;
-  defaultIndex?: number;
 }
 
 type AxisObj = {
