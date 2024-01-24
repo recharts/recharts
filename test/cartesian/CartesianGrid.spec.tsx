@@ -139,52 +139,46 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
   });
 
   describe('layout and size when inherited from parent chart', () => {
-    const exampleMargin: Margin = {
-      bottom: 1,
-      left: 2,
-      right: 4,
-      top: 8,
-    };
     it('should put x, y, width and height as coordinates to the background', () => {
       const { container } = render(
-        <ChartElement margin={exampleMargin} width={500} height={400}>
+        <ChartElement margin={chartMargin} width={500} height={400}>
           <CartesianGrid fill="green" verticalPoints={verticalPoints} horizontalPoints={horizontalPoints} />
         </ChartElement>,
       );
       const background = container.querySelector('rect.recharts-cartesian-grid-bg');
-      expect.soft(background).toHaveAttribute('x', '2');
-      expect.soft(background).toHaveAttribute('y', '8');
-      expect.soft(background).toHaveAttribute('width', '494');
-      expect.soft(background).toHaveAttribute('height', '391');
+      expect.soft(background).toHaveAttribute('x', '12');
+      expect.soft(background).toHaveAttribute('y', '14');
+      expect.soft(background).toHaveAttribute('width', '475');
+      expect.soft(background).toHaveAttribute('height', '375');
     });
 
     it('should put x, y, width and height as coordinates to all lines', () => {
       const { container } = render(
-        <ChartElement margin={exampleMargin} width={500} height={400}>
+        <ChartElement margin={chartMargin} width={500} height={400}>
           <CartesianGrid fill="green" verticalPoints={verticalPoints} horizontalPoints={horizontalPoints} />
         </ChartElement>,
       );
       const horizontalLines = container.querySelectorAll('.recharts-cartesian-grid-horizontal line');
       expect(horizontalLines).toHaveLength(5);
       horizontalLines.forEach(line => {
-        expect.soft(line).toHaveAttribute('x', '2');
-        expect.soft(line).toHaveAttribute('y', '8');
-        expect.soft(line).toHaveAttribute('x1', '2');
-        expect.soft(line).toHaveAttribute('x2', '496');
+        expect.soft(line).toHaveAttribute('x', '12');
+        expect.soft(line).toHaveAttribute('y', '14');
+        expect.soft(line).toHaveAttribute('x1', '12');
+        expect.soft(line).toHaveAttribute('x2', '487');
       });
       const verticalLines = container.querySelectorAll('.recharts-cartesian-grid-vertical line');
       expect(verticalLines).toHaveLength(4);
       verticalLines.forEach(line => {
-        expect.soft(line).toHaveAttribute('x', '2');
-        expect.soft(line).toHaveAttribute('y', '8');
-        expect.soft(line).toHaveAttribute('y1', '8');
-        expect.soft(line).toHaveAttribute('y2', '399');
+        expect.soft(line).toHaveAttribute('x', '12');
+        expect.soft(line).toHaveAttribute('y', '14');
+        expect.soft(line).toHaveAttribute('y1', '14');
+        expect.soft(line).toHaveAttribute('y2', '389');
       });
     });
 
     it('should put x, y, width and height as coordinates to all stripes', () => {
       const { container } = render(
-        <ChartElement margin={exampleMargin} width={500} height={400}>
+        <ChartElement margin={chartMargin} width={500} height={400}>
           <CartesianGrid
             fill="green"
             verticalPoints={verticalPoints}
@@ -197,14 +191,14 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       const horizontalStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
       expect(horizontalStripes).toHaveLength(5);
       horizontalStripes.forEach(stripe => {
-        expect.soft(stripe).toHaveAttribute('x', '2');
-        expect.soft(stripe).toHaveAttribute('width', '494');
+        expect.soft(stripe).toHaveAttribute('x', '12');
+        expect.soft(stripe).toHaveAttribute('width', '475');
       });
       const verticalStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
       expect(verticalStripes).toHaveLength(5);
       verticalStripes.forEach(stripe => {
-        expect.soft(stripe).toHaveAttribute('y', '8');
-        expect.soft(stripe).toHaveAttribute('height', '391');
+        expect.soft(stripe).toHaveAttribute('y', '14');
+        expect.soft(stripe).toHaveAttribute('height', '375');
       });
     });
   });
