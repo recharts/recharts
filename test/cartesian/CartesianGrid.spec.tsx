@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, test, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { scaleLinear } from 'victory-vendor/d3-scale';
-import { Surface, CartesianGrid, LineChart, AreaChart } from '../../src';
+import { Surface, CartesianGrid, LineChart, ComposedChart, BarChart, ScatterChart, AreaChart } from '../../src';
 import {
   GridLineFunctionProps,
   HorizontalCoordinatesGenerator,
@@ -11,7 +11,15 @@ import {
 } from '../../src/cartesian/CartesianGrid';
 import { ChartOffset, Margin } from '../../src/util/types';
 
-describe('<CartesianGrid />', () => {
+const allChartsThatSupportCartesianGrid = [
+  { ChartElement: AreaChart, testName: 'AreaElement' },
+  { ChartElement: ComposedChart, testName: 'ComposedChart' },
+  { ChartElement: BarChart, testName: 'BarChart' },
+  { ChartElement: LineChart, testName: 'LineChart' },
+  { ChartElement: ScatterChart, testName: 'ScatterChart' },
+];
+
+describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child of $testName', ({ ChartElement }) => {
   const horizontalPoints = [10, 20, 30, 100, 400];
   /**
    * JavaScript produces numbers like this when multiplying floats, for example:
@@ -47,10 +55,10 @@ describe('<CartesianGrid />', () => {
     width: 275,
   };
 
-  describe('layout and size when set explicitly', () => {
+  describe('layout and size when set explicitly in $testName', () => {
     it('should put x, y, width and height as coordinates to the background', () => {
       const { container } = render(
-        <Surface width={500} height={500}>
+        <ChartElement width={500} height={500}>
           <CartesianGrid
             x={1}
             y={2}
@@ -60,7 +68,7 @@ describe('<CartesianGrid />', () => {
             verticalPoints={verticalPoints}
             horizontalPoints={horizontalPoints}
           />
-        </Surface>,
+        </ChartElement>,
       );
       const background = container.querySelector('rect.recharts-cartesian-grid-bg');
       expect.soft(background).toHaveAttribute('x', '1');
@@ -71,7 +79,7 @@ describe('<CartesianGrid />', () => {
 
     it('should put x, y, width and height as coordinates to all lines', () => {
       const { container } = render(
-        <Surface width={500} height={500}>
+        <ChartElement width={500} height={500}>
           <CartesianGrid
             x={1}
             y={2}
@@ -81,7 +89,7 @@ describe('<CartesianGrid />', () => {
             verticalPoints={verticalPoints}
             horizontalPoints={horizontalPoints}
           />
-        </Surface>,
+        </ChartElement>,
       );
       const horizontalLines = container.querySelectorAll('.recharts-cartesian-grid-horizontal line');
       expect(horizontalLines).toHaveLength(horizontalPoints.length);
@@ -103,7 +111,7 @@ describe('<CartesianGrid />', () => {
 
     it('should put x, y, width and height as coordinates to all stripes', () => {
       const { container } = render(
-        <Surface width={500} height={500}>
+        <ChartElement width={500} height={500}>
           <CartesianGrid
             x={1}
             y={2}
@@ -115,7 +123,7 @@ describe('<CartesianGrid />', () => {
             horizontalFill={['red', 'black']}
             verticalFill={['green', 'blue']}
           />
-        </Surface>,
+        </ChartElement>,
       );
       const horizontalStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
       expect(horizontalStripes).toHaveLength(5);
@@ -141,9 +149,9 @@ describe('<CartesianGrid />', () => {
     };
     it('should put x, y, width and height as coordinates to the background', () => {
       const { container } = render(
-        <AreaChart margin={exampleMargin} width={500} height={400}>
+        <ChartElement margin={exampleMargin} width={500} height={400}>
           <CartesianGrid fill="green" verticalPoints={verticalPoints} horizontalPoints={horizontalPoints} />
-        </AreaChart>,
+        </ChartElement>,
       );
       const background = container.querySelector('rect.recharts-cartesian-grid-bg');
       expect.soft(background).toHaveAttribute('x', '2');
@@ -154,9 +162,9 @@ describe('<CartesianGrid />', () => {
 
     it('should put x, y, width and height as coordinates to all lines', () => {
       const { container } = render(
-        <AreaChart margin={exampleMargin} width={500} height={400}>
+        <ChartElement margin={exampleMargin} width={500} height={400}>
           <CartesianGrid fill="green" verticalPoints={verticalPoints} horizontalPoints={horizontalPoints} />
-        </AreaChart>,
+        </ChartElement>,
       );
       const horizontalLines = container.querySelectorAll('.recharts-cartesian-grid-horizontal line');
       expect(horizontalLines).toHaveLength(5);
@@ -178,7 +186,7 @@ describe('<CartesianGrid />', () => {
 
     it('should put x, y, width and height as coordinates to all stripes', () => {
       const { container } = render(
-        <AreaChart margin={exampleMargin} width={500} height={400}>
+        <ChartElement margin={exampleMargin} width={500} height={400}>
           <CartesianGrid
             fill="green"
             verticalPoints={verticalPoints}
@@ -186,7 +194,7 @@ describe('<CartesianGrid />', () => {
             horizontalFill={['red', 'black']}
             verticalFill={['green', 'blue']}
           />
-        </AreaChart>,
+        </ChartElement>,
       );
       const horizontalStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
       expect(horizontalStripes).toHaveLength(5);
@@ -483,7 +491,7 @@ describe('<CartesianGrid />', () => {
           ticks: ['x', 'y', 'x'],
         };
         render(
-          <AreaChart width={300} height={200} margin={chartMargin}>
+          <ChartElement width={300} height={200} margin={chartMargin}>
             <CartesianGrid
               x={0}
               y={0}
@@ -493,7 +501,7 @@ describe('<CartesianGrid />', () => {
               horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
               offset={offset}
             />
-          </AreaChart>,
+          </ChartElement>,
         );
 
         expect(horizontalCoordinatesGenerator).toHaveBeenCalledOnce();
@@ -516,7 +524,7 @@ describe('<CartesianGrid />', () => {
           ticks: ['x', 'y', 'x'],
         };
         render(
-          <AreaChart width={300} height={200} margin={chartMargin}>
+          <ChartElement width={300} height={200} margin={chartMargin}>
             <CartesianGrid
               x={0}
               y={0}
@@ -528,7 +536,7 @@ describe('<CartesianGrid />', () => {
               syncWithTicks={false}
               horizontalValues={['a', 'b']}
             />
-          </AreaChart>,
+          </ChartElement>,
         );
 
         expect(horizontalCoordinatesGenerator).toHaveBeenCalledOnce();
@@ -551,7 +559,7 @@ describe('<CartesianGrid />', () => {
             scale: scaleLinear(),
           };
           render(
-            <AreaChart width={300} height={200} margin={chartMargin}>
+            <ChartElement width={300} height={200} margin={chartMargin}>
               <CartesianGrid
                 x={0}
                 y={0}
@@ -563,7 +571,7 @@ describe('<CartesianGrid />', () => {
                 syncWithTicks={syncWithTicks}
                 horizontalValues={[]}
               />
-            </AreaChart>,
+            </ChartElement>,
           );
 
           expect(horizontalCoordinatesGenerator).toHaveBeenCalledOnce();
@@ -587,7 +595,7 @@ describe('<CartesianGrid />', () => {
             scale: scaleLinear(),
           };
           render(
-            <AreaChart width={300} height={200} margin={chartMargin}>
+            <ChartElement width={300} height={200} margin={chartMargin}>
               <CartesianGrid
                 x={0}
                 y={0}
@@ -598,7 +606,7 @@ describe('<CartesianGrid />', () => {
                 offset={offset}
                 syncWithTicks={syncWithTicks}
               />
-            </AreaChart>,
+            </ChartElement>,
           );
 
           expect(horizontalCoordinatesGenerator).toHaveBeenCalledOnce();
@@ -730,7 +738,7 @@ describe('<CartesianGrid />', () => {
           ticks: ['x', 'y', 'x'],
         };
         render(
-          <AreaChart width={300} height={200} margin={chartMargin}>
+          <ChartElement width={300} height={200} margin={chartMargin}>
             <CartesianGrid
               x={0}
               y={0}
@@ -740,7 +748,7 @@ describe('<CartesianGrid />', () => {
               verticalCoordinatesGenerator={verticalCoordinatesGenerator}
               offset={offset}
             />
-          </AreaChart>,
+          </ChartElement>,
         );
 
         expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
@@ -763,7 +771,7 @@ describe('<CartesianGrid />', () => {
           ticks: ['x', 'y', 'x'],
         };
         render(
-          <AreaChart width={300} height={200} margin={chartMargin}>
+          <ChartElement width={300} height={200} margin={chartMargin}>
             <CartesianGrid
               x={0}
               y={0}
@@ -775,7 +783,7 @@ describe('<CartesianGrid />', () => {
               syncWithTicks={false}
               verticalValues={['a', 'b']}
             />
-          </AreaChart>,
+          </ChartElement>,
         );
 
         expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
@@ -798,7 +806,7 @@ describe('<CartesianGrid />', () => {
             scale: scaleLinear(),
           };
           render(
-            <AreaChart width={300} height={200} margin={chartMargin}>
+            <ChartElement width={300} height={200} margin={chartMargin}>
               <CartesianGrid
                 x={0}
                 y={0}
@@ -810,7 +818,7 @@ describe('<CartesianGrid />', () => {
                 syncWithTicks={syncWithTicks}
                 horizontalValues={[]}
               />
-            </AreaChart>,
+            </ChartElement>,
           );
 
           expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
@@ -834,7 +842,7 @@ describe('<CartesianGrid />', () => {
             scale: scaleLinear(),
           };
           render(
-            <AreaChart width={300} height={200} margin={chartMargin}>
+            <ChartElement width={300} height={200} margin={chartMargin}>
               <CartesianGrid
                 x={0}
                 y={0}
@@ -845,7 +853,7 @@ describe('<CartesianGrid />', () => {
                 offset={offset}
                 syncWithTicks={syncWithTicks}
               />
-            </AreaChart>,
+            </ChartElement>,
           );
 
           expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
