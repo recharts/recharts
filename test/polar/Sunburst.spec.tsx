@@ -3,42 +3,9 @@ import { render } from '@testing-library/react';
 import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { SunburstChart } from '../../src';
+import { SunburstData as data } from '../_data';
 
 describe('<Sunburst />', () => {
-  const data = {
-    name: 'Root',
-    value: 100,
-    children: [
-      {
-        name: 'Child1',
-        fill: '#264653',
-        value: 30,
-        children: [
-          {
-            name: 'third child',
-            value: 10,
-          },
-        ],
-      },
-      {
-        name: 'Child2',
-        fill: '#2a9d8f',
-        value: 20,
-        children: [
-          {
-            name: 'another child',
-            value: 10,
-          },
-        ],
-      },
-      {
-        name: 'Child3',
-        fill: '#e9c46a',
-        value: 20,
-      },
-    ],
-  };
-
   it('renders each sector in order under the correct category', () => {
     const { container } = render(<SunburstChart data={data} />);
 
