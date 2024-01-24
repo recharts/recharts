@@ -2211,7 +2211,7 @@ export const generateCategoricalChart = ({
         // Set tabIndex to 0 by default (can be overwritten)
         attrs.tabIndex = this.props.tabIndex ?? 0;
         // Set role to img by default (can be overwritten)
-        attrs.role = this.props.role ?? 'img';
+        attrs.role = this.props.role ?? 'application';
         attrs.onKeyDown = (e: any) => {
           this.accessibilityManager.keyboardEvent(e);
           // 'onKeyDown' is not currently a supported prop that can be passed through
@@ -2239,7 +2239,7 @@ export const generateCategoricalChart = ({
             ref={(node: HTMLDivElement) => {
               this.container = node;
             }}
-            role={this.props.accessibilityLayer ? 'application' : 'region'}
+            role={attrs.role ?? 'region'}
           >
             <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
               {this.renderClipPath()}
