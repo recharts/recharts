@@ -85,7 +85,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             y={2}
             width={100}
             height={200}
-            fill="green"
             verticalPoints={verticalPoints}
             horizontalPoints={horizontalPoints}
           />
@@ -117,7 +116,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             y={2}
             width={100}
             height={200}
-            fill="green"
             verticalPoints={verticalPoints}
             horizontalPoints={horizontalPoints}
             horizontalFill={['red', 'black']}
