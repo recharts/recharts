@@ -607,7 +607,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               yAxis: undefined,
               width: 300,
               height: 200,
-              offset: { bottom: 11, brushBottom: 11, height: 175, left: 12, right: 13, top: 14, width: 275 },
+              offset: expectedOffset,
             },
             syncWithTicks,
           );
