@@ -1331,7 +1331,13 @@ export const generateCategoricalChart = ({
     };
 
     componentDidUpdate(prevProps: CategoricalChartProps) {
-      if (this.props.defaultIndex !== prevProps.defaultIndex) {
+      // Check to see if the Tooltip updated. If so, re-check default tooltip position
+      if (
+        !isChildrenEqual(
+          [findChildByType(prevProps.children, Tooltip)],
+          [findChildByType(this.props.children, Tooltip)],
+        )
+      ) {
         this.displayDefaultTooltip();
       }
     }
