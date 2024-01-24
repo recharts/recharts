@@ -145,7 +145,6 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
       // See https://github.com/recharts/recharts/pull/2925
       <div
         tabIndex={-1}
-        role="dialog"
         className={cssClasses}
         style={outerStyle}
         ref={node => {

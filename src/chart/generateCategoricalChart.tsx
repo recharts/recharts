@@ -1844,7 +1844,7 @@ export const generateCategoricalChart = ({
      * @return {ReactElement}  The instance of Tooltip
      */
     renderTooltip = (): React.ReactElement => {
-      const { children } = this.props;
+      const { children, accessibilityLayer } = this.props;
       const tooltipItem = findChildByType(children, Tooltip);
 
       if (!tooltipItem) {
@@ -1864,6 +1864,7 @@ export const generateCategoricalChart = ({
         label: activeLabel,
         payload: isActive ? activePayload : [],
         coordinate: activeCoordinate,
+        accessibilityLayer,
       });
     };
 
@@ -2238,7 +2239,7 @@ export const generateCategoricalChart = ({
             ref={(node: HTMLDivElement) => {
               this.container = node;
             }}
-            role="region"
+            role={this.props.accessibilityLayer ? 'application' : 'region'}
           >
             <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
               {this.renderClipPath()}
