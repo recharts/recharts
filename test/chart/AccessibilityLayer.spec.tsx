@@ -24,7 +24,7 @@ describe('AccessibilityLayer', () => {
     const svg = container.querySelector('svg');
     expect(svg).not.toBeNull();
     expect(svg).not.toBeUndefined();
-    expect(svg).toHaveAttribute('role', 'img');
+    expect(svg).toHaveAttribute('role', 'application');
     expect(svg).toHaveAttribute('tabindex', '0');
   });
 
