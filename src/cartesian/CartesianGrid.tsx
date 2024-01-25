@@ -16,7 +16,10 @@ import { getTicks } from './getTicks';
 import { CartesianAxis } from './CartesianAxis';
 import { useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 
-export type GridLineFunctionProps = Omit<LineItemProps, 'offset'>;
+export type GridLineFunctionProps = Omit<LineItemProps, 'key'> & {
+  // React does not pass the key through when calling cloneElement - so it might be undefined when cloning
+  key: LineItemProps['key'] | undefined;
+};
 
 type GridLineType =
   | SVGProps<SVGLineElement>
@@ -49,8 +52,8 @@ interface InternalCartesianGridProps {
   height?: number;
   horizontalCoordinatesGenerator?: HorizontalCoordinatesGenerator;
   verticalCoordinatesGenerator?: VerticalCoordinatesGenerator;
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  xAxis?: null | (Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> });
+  yAxis?: null | (Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> });
   offset?: ChartOffset;
 }
 
