@@ -44,6 +44,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Tol
    * If active is undefined, Recharts will control when the Tooltip displays. This includes mouse and keyboard controls.
    */
   active?: boolean | undefined;
+  includeHidden?: boolean | undefined;
   allowEscapeViewBox?: AllowInDimension;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
@@ -112,7 +113,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
 
     if (filterNull && finalPayload.length) {
       finalPayload = getUniqPayload(
-        payload.filter(entry => entry.value != null),
+        payload.filter(entry => entry.value != null && (entry.hide !== true || this.props.includeHidden)),
         payloadUniqBy,
         defaultUniqBy,
       );

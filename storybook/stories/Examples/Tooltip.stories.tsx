@@ -241,3 +241,30 @@ export const LargeDataArray = {
   },
   args: {},
 };
+
+export const IncludeHidden = {
+  render: (args: Record<string, any>) => {
+    const [surfaceWidth, surfaceHeight] = [600, 300];
+    return (
+      <ResponsiveContainer width="100%" height={surfaceHeight}>
+        <ComposedChart
+          width={surfaceWidth}
+          height={surfaceHeight}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+          data={pageData}
+        >
+          {/* The target component */}
+          <Tooltip includeHidden {...args} />
+          <Line dataKey="uv" />
+          <Line dataKey="pv" hide />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {},
+};
