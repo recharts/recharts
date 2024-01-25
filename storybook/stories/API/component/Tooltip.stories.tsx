@@ -5,6 +5,14 @@ import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { StorybookArgs } from '../../../StorybookArgs';
 
 const TooltipProps: StorybookArgs = {
+  active: {
+    description:
+      'When set to true, the tooltip will remain visible, even after the user has moved off of the chart. Set `defaultIndex` if you want the tooltip to always be visible.',
+    defaultValue: false,
+  },
+  defaultIndex: {
+    description: 'The index where the Tooltip should appear *before* the user has interacted with the chart.',
+  },
   separator: {
     description: 'The separator between name and value.',
     defaultValue: ' : ',

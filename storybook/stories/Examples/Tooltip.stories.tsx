@@ -1,7 +1,18 @@
 /* eslint-disable no-shadow */
 import React, { useCallback, useState } from 'react';
 import { pageData } from '../data';
-import { Area, Bar, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../src';
+import {
+  Area,
+  Bar,
+  CartesianGrid,
+  ComposedChart,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from '../../../src';
 import { DefaultTooltipContent } from '../../../src/component/DefaultTooltipContent';
 import { generateMockData } from '../../../test/helper/generateMockData';
 
@@ -30,6 +41,30 @@ export const ActiveTooltip = {
   args: {
     active: true,
   },
+};
+
+export const SettingTooltipIndex = {
+  render: () => (
+    <LineChart
+      width={500}
+      height={300}
+      data={pageData}
+      accessibilityLayer
+      margin={{
+        top: 5,
+        right: 5,
+        bottom: 5,
+        left: 0,
+      }}
+    >
+      <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+      <XAxis dataKey="name" />
+      <YAxis />
+      <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+      <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
+      <Tooltip defaultIndex={2} />
+    </LineChart>
+  ),
 };
 
 export const LockedByClick = {
@@ -99,7 +134,7 @@ export const CssScaledParent = {
 
         <h2>
           Parent container
-          {`<div style={{transform: scale(${scale})}}> ...`}
+          {` <div style={{transform: scale(${scale})}}> ...`}
         </h2>
         <button type="button" onClick={handleZoomIn}>
           Zoom In
