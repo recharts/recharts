@@ -159,14 +159,6 @@ export default {
   argTypes: {
     ...GeneralProps,
     ...EventHandlers,
-    // Deprecated
-    dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
-    valueKey: {
-      description: "Use 'dataKey' alternatively, The key of each sector's value.",
-      table: { type: { summary: 'string', defaultValue: 'value' }, category: 'Deprecated' },
-      hide: true,
-      disable: true,
-    },
   },
   component: PolarRadiusAxis,
 };
