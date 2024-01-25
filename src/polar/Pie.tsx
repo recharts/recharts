@@ -58,7 +58,7 @@ type PieLabelLine =
   | ((props: any) => ReactElement<SVGElement>)
   | SVGProps<SVGPathElement>
   | boolean;
-export type PieLabel<P = any> =
+export type PieLabel<P extends PieSectorDataItem = PieSectorDataItem> =
   | ReactElement<SVGElement>
   | ((props: P) => ReactNode | ReactElement<SVGElement>)
   | (SVGProps<SVGTextElement> & { offsetRadius?: number })
