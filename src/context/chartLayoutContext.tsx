@@ -9,7 +9,7 @@ import { calculateViewBox } from '../util/calculateViewBox';
 export const XAxisContext = createContext<XAxisMap | undefined>(undefined);
 export const YAxisContext = createContext<YAxisMap | undefined>(undefined);
 export const ViewBoxContext = createContext<CartesianViewBox | undefined>(undefined);
-export const OffsetContext = createContext<ChartOffset | null>(null);
+export const OffsetContext = createContext<ChartOffset>({});
 export const ClipPathIdContext = createContext<string | undefined>(undefined);
 export const ChartHeightContext = createContext<number>(0);
 export const ChartWidthContext = createContext<number>(0);
