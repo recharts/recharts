@@ -14,6 +14,7 @@ import { filterProps } from '../util/ReactUtils';
 import { getCoordinatesOfGrid, getTicksOfAxis } from '../util/ChartUtils';
 import { getTicks } from './getTicks';
 import { CartesianAxis } from './CartesianAxis';
+import { useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 
 export type GridLineFunctionProps = Omit<LineItemProps, 'offset'>;
 
@@ -44,8 +45,6 @@ export type VerticalCoordinatesGenerator = (
 ) => number[];
 
 interface InternalCartesianGridProps {
-  x?: number;
-  y?: number;
   width?: number;
   height?: number;
   horizontalCoordinatesGenerator?: HorizontalCoordinatesGenerator;
@@ -53,11 +52,19 @@ interface InternalCartesianGridProps {
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   offset?: ChartOffset;
-  chartWidth?: number;
-  chartHeight?: number;
 }
 
 interface CartesianGridProps extends InternalCartesianGridProps {
+  /**
+   * The x-coordinate of grid.
+   * If left undefined, it will be computed from the chart's offset and margins.
+   */
+  x?: number;
+  /**
+   * The y-coordinate of grid.
+   * If left undefined, it will be computed from the chart's offset and margins.
+   */
+  y?: number;
   horizontal?: GridLineType;
   vertical?: GridLineType;
   /**
@@ -338,6 +345,8 @@ const defaultProps: Partial<Props> = {
 };
 
 export function CartesianGrid(props: Props) {
+  const chartWidth = useChartWidth();
+  const chartHeight = useChartHeight();
   const propsIncludingDefaults: Props = {
     ...props,
     stroke: props.stroke ?? defaultProps.stroke,
@@ -348,20 +357,8 @@ export function CartesianGrid(props: Props) {
     verticalFill: props.verticalFill ?? defaultProps.verticalFill,
   };
 
-  const {
-    x,
-    y,
-    width,
-    height,
-    xAxis,
-    yAxis,
-    offset,
-    chartWidth,
-    chartHeight,
-    syncWithTicks,
-    horizontalValues,
-    verticalValues,
-  } = propsIncludingDefaults;
+  const { x, y, width, height, xAxis, yAxis, offset, syncWithTicks, horizontalValues, verticalValues } =
+    propsIncludingDefaults;
 
   if (
     !isNumber(width) ||

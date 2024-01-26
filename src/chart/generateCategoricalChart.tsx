@@ -1094,6 +1094,70 @@ export const generateCategoricalChart = ({
         mouseHandlerCallback: this.triggeredAfterMouseMove,
         layout: this.props.layout,
       });
+      this.displayDefaultTooltip();
+    }
+
+    displayDefaultTooltip() {
+      const { children, data, height, layout } = this.props;
+
+      const tooltipElem = findChildByType(children, Tooltip);
+      // If the chart doesn't include a <Tooltip /> element, there's no tooltip to display
+      if (!tooltipElem) {
+        return;
+      }
+
+      const { defaultIndex } = tooltipElem.props;
+
+      // Protect against runtime errors
+      if (typeof defaultIndex !== 'number' || defaultIndex < 0 || defaultIndex > this.state.tooltipTicks.length) {
+        return;
+      }
+
+      const activeLabel = this.state.tooltipTicks[defaultIndex] && this.state.tooltipTicks[defaultIndex].value;
+      let activePayload = getTooltipContent(this.state, data, defaultIndex, activeLabel);
+
+      const independentAxisCoord = this.state.tooltipTicks[defaultIndex].coordinate;
+      const dependentAxisCoord = (this.state.offset.top + height) / 2;
+
+      const isHorizontal = layout === 'horizontal';
+      let activeCoordinate = isHorizontal
+        ? {
+            x: independentAxisCoord,
+            y: dependentAxisCoord,
+          }
+        : {
+            y: independentAxisCoord,
+            x: dependentAxisCoord,
+          };
+
+      // Unlike other chart types, scatter plot's tooltip positions rely on both X and Y coordinates. Only the scatter plot
+      // element knows its own Y coordinates.
+      // If there's a scatter plot, we'll want to grab that element for an interrogation.
+      const scatterPlotElement = this.state.formattedGraphicalItems.find(
+        ({ item }: { item: any }) => item.type.name === 'Scatter',
+      );
+      if (scatterPlotElement) {
+        activeCoordinate = {
+          ...activeCoordinate,
+          ...scatterPlotElement.props.points[defaultIndex].tooltipPosition,
+        };
+        activePayload = scatterPlotElement.props.points[defaultIndex].tooltipPayload;
+      }
+
+      const nextState = {
+        activeTooltipIndex: defaultIndex,
+        isTooltipActive: true,
+        activeLabel,
+        activePayload,
+        activeCoordinate,
+      };
+
+      this.setState(nextState);
+      this.renderCursor(tooltipElem);
+
+      // Make sure that anyone who keyboard-only users who tab to the chart will start their
+      // cursors at defaultIndex
+      this.accessibilityManager.setIndex(defaultIndex);
     }
 
     getSnapshotBeforeUpdate(
@@ -1247,8 +1311,17 @@ export const generateCategoricalChart = ({
       return null;
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    componentDidUpdate() {}
+    componentDidUpdate(prevProps: CategoricalChartProps) {
+      // Check to see if the Tooltip updated. If so, re-check default tooltip position
+      if (
+        !isChildrenEqual(
+          [findChildByType(prevProps.children, Tooltip)],
+          [findChildByType(this.props.children, Tooltip)],
+        )
+      ) {
+        this.displayDefaultTooltip();
+      }
+    }
 
     componentWillUnmount() {
       this.removeListener();
@@ -1726,7 +1799,6 @@ export const generateCategoricalChart = ({
      */
     renderGrid = (element: React.ReactElement): React.ReactElement => {
       const { xAxisMap, yAxisMap, offset } = this.state;
-      const { width, height } = this.props;
       const xAxis = getAnyElementOfObject(xAxisMap);
       const yAxisWithFiniteDomain = find(yAxisMap, axis => every(axis.domain, Number.isFinite));
       const yAxis = yAxisWithFiniteDomain || getAnyElementOfObject(yAxisMap);
@@ -1741,8 +1813,6 @@ export const generateCategoricalChart = ({
         xAxis,
         yAxis,
         offset,
-        chartWidth: width,
-        chartHeight: height,
         verticalCoordinatesGenerator: props.verticalCoordinatesGenerator,
         horizontalCoordinatesGenerator: props.horizontalCoordinatesGenerator,
       });

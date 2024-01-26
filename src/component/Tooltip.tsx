@@ -55,6 +55,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Tol
   coordinate?: Partial<Coordinate>;
   cursor?: boolean | ReactElement | SVGProps<SVGElement>;
   filterNull?: boolean;
+  defaultIndex?: number;
   isAnimationActive?: boolean;
   offset?: number;
   payloadUniqBy?: UniqueOption<Payload<TValue, TName>>;

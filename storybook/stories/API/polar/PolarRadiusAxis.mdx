@@ -1,0 +1,22 @@
+import { ArgTypes, Meta, Story, Canvas, } from '@storybook/blocks';
+import * as PolarRadiusAxisStories from './PolarRadiusAxis.stories';
+
+# PolarRadiusAxis
+<Meta of={PolarRadiusAxisStories} />
+
+<Canvas>
+  <Story name="API" of={PolarRadiusAxisStories} />
+</Canvas>
+## Parent Component
+
+The PolarRadiusAxis can be used within a `<RadarChart />` or `<RadialBarChart />`.
+
+## Child component
+
+The PolarRadiusAxis can be used with the following child components: `<Label />`
+
+## Properties
+
+Properties in the groups Other and Internal are not recommended to be used.
+
+<ArgTypes of={PolarRadiusAxisStories} sort={'requiredFirst'} />
