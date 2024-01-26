@@ -358,8 +358,8 @@ describe('<Tooltip />', () => {
 
       expect(tooltipPayload.map(({ name }) => name).join('')).toBe('5');
     });
-  });    
-  
+  });
+
   test('Tooltip should be visible from the beginning if defaultIndex is set to a valid value', () => {
     const { container } = render(
       <div role="main" style={{ width: '400px', height: '400px' }}>
