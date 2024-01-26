@@ -32,7 +32,10 @@
       }
     ],
     "import/extensions": "off",
-    "valid-jsdoc": "error",
+    "valid-jsdoc": ["error", {
+      "requireReturnType": false,
+      "requireParamType": false
+    }],
     "react/no-did-update-set-state": "warn",
     "react/sort-comp": "off",
     "react/jsx-uses-react": "error",
