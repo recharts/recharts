@@ -1798,7 +1798,7 @@ export const generateCategoricalChart = ({
      * @return {ReactElement} The instance of grid
      */
     renderGrid = (element: React.ReactElement): React.ReactElement => {
-      const { xAxisMap, yAxisMap, offset } = this.state;
+      const { xAxisMap, yAxisMap } = this.state;
       const xAxis = getAnyElementOfObject(xAxisMap);
       const yAxisWithFiniteDomain = find(yAxisMap, axis => every(axis.domain, Number.isFinite));
       const yAxis = yAxisWithFiniteDomain || getAnyElementOfObject(yAxisMap);
@@ -1806,10 +1806,10 @@ export const generateCategoricalChart = ({
 
       return cloneElement(element, {
         key: element.key || 'grid',
-        x: isNumber(props.x) ? props.x : offset.left,
-        y: isNumber(props.y) ? props.y : offset.top,
-        width: isNumber(props.width) ? props.width : offset.width,
-        height: isNumber(props.height) ? props.height : offset.height,
+        x: props.x,
+        y: props.y,
+        width: props.width,
+        height: props.height,
         xAxis,
         yAxis,
         verticalCoordinatesGenerator: props.verticalCoordinatesGenerator,
