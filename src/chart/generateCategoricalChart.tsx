@@ -1919,6 +1919,26 @@ export const generateCategoricalChart = ({
       });
     };
 
+    renderBrushY = (element: React.ReactElement) => {
+      const { margin, data } = this.props;
+      const { offset, updateId } = this.state;
+
+      // TODO: update brush when children update
+      return cloneElement(element, {
+        key: element.key || '_recharts-brushY',
+        onChange: element.props.onChange,
+        data,
+        x: isNumber(element.props.x) ? element.props.x : offset.left,
+        y: isNumber(element.props.y)
+          ? element.props.y
+          : offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
+        width: isNumber(element.props.width) ? element.props.width : offset.width,
+        startIndex: element.props.startIndex || 0,
+        endIndex: element.props.endIndex || element.props.data.length - 1,
+        updateId: `brushY-${updateId}`,
+      });
+    };
+
     renderReferenceElement = (element: React.ReactElement, displayName: string, index: number): React.ReactElement => {
       if (!element) {
         return null;
@@ -2205,6 +2225,7 @@ export const generateCategoricalChart = ({
       XAxis: { handler: renderAsIs },
       YAxis: { handler: renderAsIs },
       Brush: { handler: this.renderBrush, once: true },
+      BrushY: { handler: this.renderBrushY, once: true },
       Bar: { handler: this.renderGraphicChild },
       Line: { handler: this.renderGraphicChild },
       Area: { handler: this.renderGraphicChild },

@@ -7,6 +7,7 @@ import PolarGrid from './PolarGrid';
 import PolarRadiusAxis from './PolarRadiusAxis';
 import PolarAngleAxis from './PolarAngleAxis';
 import Brush from './BrushDemo';
+import BrushY from './BrushYDemo';
 import Text from './TextDemo';
 
 import Curve from './Curve';
@@ -56,6 +57,7 @@ export default {
 
   cartesian: {
     Brush,
+    BrushY,
     CartesianAxis,
     CartesianGrid,
   },
