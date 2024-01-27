@@ -1790,25 +1790,6 @@ export const generateCategoricalChart = ({
       });
     };
 
-    /**
-     * Draw grid
-     * @param  {ReactElement} element the grid item
-     * @return {ReactElement} The instance of grid
-     */
-    renderGrid = (element: React.ReactElement): React.ReactElement => {
-      const props = element.props || {};
-
-      return cloneElement(element, {
-        key: element.key || 'grid',
-        x: props.x,
-        y: props.y,
-        width: props.width,
-        height: props.height,
-        verticalCoordinatesGenerator: props.verticalCoordinatesGenerator,
-        horizontalCoordinatesGenerator: props.horizontalCoordinatesGenerator,
-      });
-    };
-
     renderPolarGrid = (element: React.ReactElement): React.ReactElement => {
       const { radialLines, polarAngles, polarRadius } = element.props;
       const { radiusAxisMap, angleAxisMap } = this.state;
@@ -2190,7 +2171,7 @@ export const generateCategoricalChart = ({
     }
 
     renderMap = {
-      CartesianGrid: { handler: this.renderGrid, once: true },
+      CartesianGrid: { handler: renderAsIs, once: true },
       ReferenceArea: { handler: this.renderReferenceElement },
       ReferenceLine: { handler: renderAsIs },
       ReferenceDot: { handler: this.renderReferenceElement },
