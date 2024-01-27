@@ -5,8 +5,6 @@ import range from 'lodash/range';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 import throttle from 'lodash/throttle';
-import find from 'lodash/find';
-import every from 'lodash/every';
 
 import clsx from 'clsx';
 // eslint-disable-next-line no-restricted-imports
@@ -1798,9 +1796,6 @@ export const generateCategoricalChart = ({
      * @return {ReactElement} The instance of grid
      */
     renderGrid = (element: React.ReactElement): React.ReactElement => {
-      const { yAxisMap } = this.state;
-      const yAxisWithFiniteDomain = find(yAxisMap, axis => every(axis.domain, Number.isFinite));
-      const yAxis = yAxisWithFiniteDomain || getAnyElementOfObject(yAxisMap);
       const props = element.props || {};
 
       return cloneElement(element, {
@@ -1809,7 +1804,6 @@ export const generateCategoricalChart = ({
         y: props.y,
         width: props.width,
         height: props.height,
-        yAxis,
         verticalCoordinatesGenerator: props.verticalCoordinatesGenerator,
         horizontalCoordinatesGenerator: props.horizontalCoordinatesGenerator,
       });

@@ -23,6 +23,7 @@ import {
 } from '../context/chartLayoutContext';
 
 type XAxisWithD3Scale = Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+type YAxisWithD3Scale = Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
 
 /**
  * The <CartesianGrid horizontal
@@ -36,9 +37,15 @@ export type GridLineTypeFunctionProps = Omit<LineItemProps, 'key'> & {
    * The first available xAxis. This is rather arbitrary - if there's one XAxis then it's the first one,
    * if there are multiple then it's a random one.
    *
-   * If there are no AXis present then this will be null.
+   * If there are no XAxis present then this will be null.
    */
   xAxis: null | XAxisWithD3Scale;
+  /**
+   * The first available yAxis. The axes with finite domain will be preferred.
+   *
+   * If there are no YAxis present then this will be null.
+   */
+  yAxis: null | YAxisWithD3Scale;
 };
 
 type GridLineType =
@@ -72,7 +79,6 @@ interface InternalCartesianGridProps {
   height?: number;
   horizontalCoordinatesGenerator?: HorizontalCoordinatesGenerator;
   verticalCoordinatesGenerator?: VerticalCoordinatesGenerator;
-  yAxis?: null | (Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> });
 }
 
 interface CartesianGridProps extends InternalCartesianGridProps {
@@ -170,6 +176,7 @@ const Background = (props: Pick<AcceptedSvgProps, 'fill' | 'fillOpacity' | 'x' |
 type LineItemProps = Props & {
   offset: ChartOffset;
   xAxis: null | XAxisWithD3Scale;
+  yAxis: null | YAxisWithD3Scale;
   x1: number;
   y1: number;
   x2: number;
@@ -198,6 +205,7 @@ function renderLineItem(option: GridLineType, props: LineItemProps) {
 type GridLinesProps = Props & {
   offset: GridLineTypeFunctionProps['offset'];
   xAxis: GridLineTypeFunctionProps['xAxis'];
+  yAxis: GridLineTypeFunctionProps['yAxis'];
 };
 
 function HorizontalGridLines(props: GridLinesProps) {
@@ -394,7 +402,8 @@ export function CartesianGrid(props: Props) {
 
   // @ts-expect-error the scale prop is mixed up - we need to untagle this at some point
   const xAxis: XAxisWithD3Scale = useArbitraryXAxis();
-  const yAxis = useYAxisWithFiniteDomainOrRandom();
+  // @ts-expect-error the scale prop is mixed up - we need to untagle this at some point
+  const yAxis: YAxisWithD3Scale = useYAxisWithFiniteDomainOrRandom();
 
   if (
     !isNumber(width) ||
@@ -491,9 +500,16 @@ export function CartesianGrid(props: Props) {
         offset={offset}
         horizontalPoints={horizontalPoints}
         xAxis={xAxis}
+        yAxis={yAxis}
       />
 
-      <VerticalGridLines {...propsIncludingDefaults} offset={offset} verticalPoints={verticalPoints} xAxis={xAxis} />
+      <VerticalGridLines
+        {...propsIncludingDefaults}
+        offset={offset}
+        verticalPoints={verticalPoints}
+        xAxis={xAxis}
+        yAxis={yAxis}
+      />
 
       <HorizontalStripes {...propsIncludingDefaults} horizontalPoints={horizontalPoints} />
 

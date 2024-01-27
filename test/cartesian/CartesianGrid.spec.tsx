@@ -1,12 +1,10 @@
 import React from 'react';
 import { describe, test, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { scaleLinear } from 'victory-vendor/d3-scale';
 import { CartesianGrid, LineChart, ComposedChart, BarChart, ScatterChart, AreaChart, Surface } from '../../src';
 import {
   GridLineTypeFunctionProps,
   HorizontalCoordinatesGenerator,
-  Props,
   VerticalCoordinatesGenerator,
 } from '../../src/cartesian/CartesianGrid';
 import { ChartOffset, Margin } from '../../src/util/types';
@@ -435,15 +433,10 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('should pass props to the generator', () => {
         const horizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = vi.fn().mockReturnValue([]);
-        const yAxis: Props['yAxis'] = {
-          scale: scaleLinear(),
-          ticks: ['x', 'y', 'x'],
-        };
         render(
           <ChartElement width={300} height={200} margin={chartMargin}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
-              yAxis={yAxis}
               horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
             />
           </ChartElement>,
@@ -464,15 +457,10 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       it(`should set syncWithTicks=true, and ticks=horizontalValues,
       when horizontalValues is provided, even if the explicit syncWithTicks is false`, () => {
         const horizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = vi.fn().mockReturnValue([]);
-        const yAxis: Props['yAxis'] = {
-          scale: scaleLinear(),
-          ticks: ['x', 'y', 'x'],
-        };
         render(
           <ChartElement width={300} height={200} margin={chartMargin}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
-              yAxis={yAxis}
               horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
               syncWithTicks={false}
               horizontalValues={['a', 'b']}
@@ -496,14 +484,10 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         'should set syncWithTicks as %s when horizontalValues is provided but is empty',
         syncWithTicks => {
           const horizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = vi.fn().mockReturnValue([]);
-          const yAxis: Props['yAxis'] = {
-            scale: scaleLinear(),
-          };
           render(
             <ChartElement width={300} height={200} margin={chartMargin}>
               <CartesianGrid
                 {...exampleCartesianGridDimensions}
-                yAxis={yAxis}
                 horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
                 syncWithTicks={syncWithTicks}
                 horizontalValues={[]}
@@ -528,14 +512,10 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         'should pass props to the generator when syncWithTicks is %s',
         syncWithTicks => {
           const horizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = vi.fn().mockReturnValue([]);
-          const yAxis: Props['yAxis'] = {
-            scale: scaleLinear(),
-          };
           render(
             <ChartElement width={300} height={200} margin={chartMargin}>
               <CartesianGrid
                 {...exampleCartesianGridDimensions}
-                yAxis={yAxis}
                 horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
                 syncWithTicks={syncWithTicks}
               />
