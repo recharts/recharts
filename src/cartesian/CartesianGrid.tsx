@@ -14,7 +14,13 @@ import { filterProps } from '../util/ReactUtils';
 import { getCoordinatesOfGrid, getTicksOfAxis } from '../util/ChartUtils';
 import { getTicks } from './getTicks';
 import { CartesianAxis } from './CartesianAxis';
-import { useArbitraryXAxis, useChartHeight, useChartWidth, useOffset } from '../context/chartLayoutContext';
+import {
+  useArbitraryXAxis,
+  useChartHeight,
+  useChartWidth,
+  useOffset,
+  useYAxisWithFiniteDomainOrRandom,
+} from '../context/chartLayoutContext';
 
 type XAxisWithD3Scale = Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
 
@@ -384,10 +390,11 @@ export function CartesianGrid(props: Props) {
     height: isNumber(props.height) ? props.height : offset.height,
   };
 
-  const { x, y, width, height, yAxis, syncWithTicks, horizontalValues, verticalValues } = propsIncludingDefaults;
+  const { x, y, width, height, syncWithTicks, horizontalValues, verticalValues } = propsIncludingDefaults;
 
   // @ts-expect-error the scale prop is mixed up - we need to untagle this at some point
   const xAxis: XAxisWithD3Scale = useArbitraryXAxis();
+  const yAxis = useYAxisWithFiniteDomainOrRandom();
 
   if (
     !isNumber(width) ||

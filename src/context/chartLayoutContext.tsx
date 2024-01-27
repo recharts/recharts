@@ -1,5 +1,7 @@
 import React, { ReactNode, createContext, useContext } from 'react';
 import invariant from 'tiny-invariant';
+import find from 'lodash/find';
+import every from 'lodash/every';
 import { CartesianViewBox, ChartOffset, XAxisMap, YAxisMap } from '../util/types';
 import type { CategoricalChartState } from '../chart/types';
 import type { Props as XAxisProps } from '../cartesian/XAxis';
@@ -131,6 +133,20 @@ export const useArbitraryXAxis = (): XAxisProps | undefined => {
 export const useArbitraryYAxis = (): XAxisProps | undefined => {
   const yAxisMap = useContext(YAxisContext);
   return getAnyElementOfObject(yAxisMap);
+};
+
+/**
+ * This hooks will:
+ * 1st attempt to find an YAxis that has all elements in its domain finite
+ * If no such axis exists, it will return an arbitrary YAxis
+ * if there are no Y axes then it returns undefined
+ *
+ * @returns Either Y axisOptions, or undefined if there are no Y axes
+ */
+export const useYAxisWithFiniteDomainOrRandom = (): YAxisProps | undefined => {
+  const yAxisMap = useContext(YAxisContext);
+  const yAxisWithFiniteDomain = find(yAxisMap, axis => every(axis.domain, Number.isFinite));
+  return yAxisWithFiniteDomain || getAnyElementOfObject(yAxisMap);
 };
 
 /**
