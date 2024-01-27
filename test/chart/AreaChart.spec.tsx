@@ -241,18 +241,27 @@ describe('AreaChart', () => {
 
   describe('AreaChart layout context', () => {
     it(
-      'should provide viewBox and clipPathId if there are no axes',
+      'should provide viewBox and offset and clipPathId if there are no axes',
       testChartLayoutContext(
         props => (
           <AreaChart width={100} height={50} barSize={20}>
             {props.children}
           </AreaChart>
         ),
-        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap, offset }) => {
           expect(clipPathId).toMatch(/recharts\d+-clip/);
           expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
           expect(xAxisMap).toEqual({});
           expect(yAxisMap).toEqual({});
+          expect(offset).toEqual({
+            bottom: 5,
+            brushBottom: 5,
+            height: 40,
+            left: 5,
+            right: 5,
+            top: 5,
+            width: 90,
+          });
         },
       ),
     );

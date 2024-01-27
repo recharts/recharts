@@ -302,6 +302,64 @@ describe('<Tooltip />', () => {
     expect(tooltip).not.toBeVisible();
   });
 
+  describe('Tooltip - includeHidden', () => {
+    test('False - Should not render tooltip for hidden items', () => {
+      let tooltipPayload: any[] | undefined = [];
+
+      const { container } = render(
+        <ComposedChart width={400} height={400} data={data}>
+          <Area dataKey="uv" hide name="1" />
+          <Bar dataKey="uv" hide name="2" />
+          <Line dataKey="uv" hide name="3" />
+          <Scatter dataKey="uv" hide name="4" />
+          <Line dataKey="uv" name="5" />
+          <Tooltip
+            includeHidden
+            content={({ payload }) => {
+              tooltipPayload = payload;
+              return null;
+            }}
+          />
+        </ComposedChart>,
+      );
+
+      expect(tooltipPayload).toHaveLength(0);
+
+      const chart = container.querySelector('.recharts-wrapper');
+      fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+
+      expect(tooltipPayload.map(({ name }) => name).join('')).toBe('12345');
+    });
+
+    test('True - Should render tooltip for hidden items', () => {
+      let tooltipPayload: any[] | undefined = [];
+
+      const { container } = render(
+        <ComposedChart width={400} height={400} data={data}>
+          <Area dataKey="uv" hide name="1" />
+          <Bar dataKey="uv" hide name="2" />
+          <Line dataKey="uv" hide name="3" />
+          <Scatter dataKey="uv" hide name="4" />
+          <Line dataKey="uv" name="5" />
+          <Tooltip
+            includeHidden={false}
+            content={({ payload }) => {
+              tooltipPayload = payload;
+              return null;
+            }}
+          />
+        </ComposedChart>,
+      );
+
+      expect(tooltipPayload).toHaveLength(0);
+
+      const chart = container.querySelector('.recharts-wrapper');
+      fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+
+      expect(tooltipPayload.map(({ name }) => name).join('')).toBe('5');
+    });
+  });
+
   test('Tooltip should be visible from the beginning if defaultIndex is set to a valid value', () => {
     const { container } = render(
       <div role="main" style={{ width: '400px', height: '400px' }}>

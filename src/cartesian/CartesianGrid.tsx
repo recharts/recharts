@@ -14,14 +14,19 @@ import { filterProps } from '../util/ReactUtils';
 import { getCoordinatesOfGrid, getTicksOfAxis } from '../util/ChartUtils';
 import { getTicks } from './getTicks';
 import { CartesianAxis } from './CartesianAxis';
-import { useChartHeight, useChartWidth } from '../context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useOffset } from '../context/chartLayoutContext';
 
-export type GridLineFunctionProps = Omit<LineItemProps, 'offset'>;
+export type GridLineTypeFunctionProps = Omit<LineItemProps, 'key'> & {
+  // React does not pass the key through when calling cloneElement - so it might be undefined when cloning
+  key: LineItemProps['key'] | undefined;
+  // offset is not present in LineItemProps but it is read from context and then passed to the GridLineType function and element
+  offset: ChartOffset;
+};
 
 type GridLineType =
   | SVGProps<SVGLineElement>
   | ReactElement<SVGElement>
-  | ((props: GridLineFunctionProps) => ReactElement<SVGElement>)
+  | ((props: GridLineTypeFunctionProps) => ReactElement<SVGElement>)
   | boolean;
 
 export type HorizontalCoordinatesGenerator = (
@@ -49,9 +54,8 @@ interface InternalCartesianGridProps {
   height?: number;
   horizontalCoordinatesGenerator?: HorizontalCoordinatesGenerator;
   verticalCoordinatesGenerator?: VerticalCoordinatesGenerator;
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  offset?: ChartOffset;
+  xAxis?: null | (Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> });
+  yAxis?: null | (Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> });
 }
 
 interface CartesianGridProps extends InternalCartesianGridProps {
@@ -147,6 +151,7 @@ const Background = (props: Pick<AcceptedSvgProps, 'fill' | 'fillOpacity' | 'x' |
 };
 
 type LineItemProps = Props & {
+  offset: ChartOffset;
   x1: number;
   y1: number;
   x2: number;
@@ -172,7 +177,11 @@ function renderLineItem(option: GridLineType, props: LineItemProps) {
   return lineItem;
 }
 
-function HorizontalGridLines(props: Props) {
+type GridLinesProps = Props & {
+  offset: ChartOffset;
+};
+
+function HorizontalGridLines(props: GridLinesProps) {
   const { x, width, horizontal = true, horizontalPoints } = props;
 
   if (!horizontal || !horizontalPoints || !horizontalPoints.length) {
@@ -196,7 +205,7 @@ function HorizontalGridLines(props: Props) {
   return <g className="recharts-cartesian-grid-horizontal">{items}</g>;
 }
 
-function VerticalGridLines(props: Props) {
+function VerticalGridLines(props: GridLinesProps) {
   const { y, height, vertical = true, verticalPoints } = props;
 
   if (!vertical || !verticalPoints || !verticalPoints.length) {
@@ -347,6 +356,7 @@ const defaultProps: Partial<Props> = {
 export function CartesianGrid(props: Props) {
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
+  const offset = useOffset();
   const propsIncludingDefaults: Props = {
     ...props,
     stroke: props.stroke ?? defaultProps.stroke,
@@ -357,8 +367,7 @@ export function CartesianGrid(props: Props) {
     verticalFill: props.verticalFill ?? defaultProps.verticalFill,
   };
 
-  const { x, y, width, height, xAxis, yAxis, offset, syncWithTicks, horizontalValues, verticalValues } =
-    propsIncludingDefaults;
+  const { x, y, width, height, xAxis, yAxis, syncWithTicks, horizontalValues, verticalValues } = propsIncludingDefaults;
 
   if (
     !isNumber(width) ||
@@ -450,9 +459,9 @@ export function CartesianGrid(props: Props) {
         width={propsIncludingDefaults.width}
         height={propsIncludingDefaults.height}
       />
-      <HorizontalGridLines {...propsIncludingDefaults} horizontalPoints={horizontalPoints} />
+      <HorizontalGridLines {...propsIncludingDefaults} offset={offset} horizontalPoints={horizontalPoints} />
 
-      <VerticalGridLines {...propsIncludingDefaults} verticalPoints={verticalPoints} />
+      <VerticalGridLines {...propsIncludingDefaults} offset={offset} verticalPoints={verticalPoints} />
 
       <HorizontalStripes {...propsIncludingDefaults} horizontalPoints={horizontalPoints} />
 

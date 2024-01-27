@@ -6,10 +6,11 @@ import {
   useChartHeight,
   useChartWidth,
   useClipPathId,
+  useOffset,
   useViewBox,
 } from '../../src/context/chartLayoutContext';
 import { Tooltip } from '../../src/component/Tooltip';
-import { CartesianViewBox, XAxisMap, YAxisMap } from '../../src/util/types';
+import { CartesianViewBox, ChartOffset, XAxisMap, YAxisMap } from '../../src/util/types';
 
 type AllContextPropertiesMixed = {
   clipPathId: string | undefined;
@@ -18,6 +19,7 @@ type AllContextPropertiesMixed = {
   viewBox: CartesianViewBox | undefined;
   width: number;
   height: number;
+  offset: ChartOffset | null;
 };
 
 export function testChartLayoutContext(
@@ -47,7 +49,8 @@ export function testChartLayoutContext(
       const yAxisMap = useContext(YAxisContext);
       const width = useChartWidth();
       const height = useChartHeight();
-      const context: AllContextPropertiesMixed = { clipPathId, viewBox, xAxisMap, yAxisMap, width, height };
+      const offset = useOffset();
+      const context: AllContextPropertiesMixed = { clipPathId, viewBox, xAxisMap, yAxisMap, width, height, offset };
       assertions(context);
       return <></>;
     }
