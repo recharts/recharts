@@ -2,9 +2,9 @@ import React from 'react';
 import { describe, test, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { scaleLinear } from 'victory-vendor/d3-scale';
-import { Surface, CartesianGrid, LineChart, ComposedChart, BarChart, ScatterChart, AreaChart } from '../../src';
+import { CartesianGrid, LineChart, ComposedChart, BarChart, ScatterChart, AreaChart, Surface } from '../../src';
 import {
-  GridLineFunctionProps,
+  GridLineTypeFunctionProps,
   HorizontalCoordinatesGenerator,
   Props,
   VerticalCoordinatesGenerator,
@@ -28,15 +28,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
    */
   const floatingPointPrecisionExamples = [121.00000000000002, 231.00000000000005];
   const verticalPoints = [100, 200, 300, 400];
-  const offset: ChartOffset = {
-    top: 1,
-    bottom: 2,
-    left: 3,
-    right: 4,
-    width: 5,
-    height: 6,
-    brushBottom: 7,
-  };
 
   const chartMargin: Margin = {
     bottom: 11,
@@ -205,13 +196,13 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
     describe('basic features', () => {
       it('should render on its own, outside of Recharts', () => {
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               verticalPoints={verticalPoints}
               horizontalPoints={horizontalPoints}
             />
-          </Surface>,
+          </ChartElement>,
         );
         const allLines = container.querySelectorAll('line');
         expect.soft(allLines).toHaveLength(9);
@@ -230,13 +221,13 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       test('Render 5 horizontal lines and 4 vertical lines in simple CartesianGrid', () => {
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               verticalPoints={verticalPoints}
               horizontalPoints={horizontalPoints}
             />
-          </Surface>,
+          </ChartElement>,
         );
         expect.soft(container.querySelectorAll('line')).toHaveLength(9);
         expect
@@ -256,20 +247,20 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         expect(container.querySelectorAll('line')).toHaveLength(0);
       });
 
-      test.each([0, -1, NaN, Infinity])("Don't render any lines when width is %s", w => {
+      test.each([0, -1, NaN, -Infinity])("Don't render any lines when width is %s", w => {
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={w} height={500}>
             <CartesianGrid width={w} height={500} verticalPoints={verticalPoints} horizontalPoints={horizontalPoints} />
-          </Surface>,
+          </ChartElement>,
         );
         expect(container.querySelectorAll('line')).toHaveLength(0);
       });
 
-      test.each([0, -1, NaN, Infinity])("Don't render any lines when height is %s", h => {
+      test.each([0, -1, NaN, -Infinity])("Don't render any lines when height is %s", h => {
         const { container } = render(
-          <Surface width={500} height={500}>
-            <CartesianGrid width={h} height={500} verticalPoints={verticalPoints} horizontalPoints={horizontalPoints} />
-          </Surface>,
+          <ChartElement width={500} height={h}>
+            <CartesianGrid width={500} height={h} verticalPoints={verticalPoints} horizontalPoints={horizontalPoints} />
+          </ChartElement>,
         );
         expect(container.querySelectorAll('line')).toHaveLength(0);
       });
@@ -278,14 +269,14 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
     describe('horizontalPoints without generator', () => {
       it('should not render any lines if horizontal=false', () => {
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               horizontal={false}
               verticalPoints={verticalPoints}
               horizontalPoints={horizontalPoints}
             />
-          </Surface>,
+          </ChartElement>,
         );
         expect.soft(container.querySelectorAll('line')).toHaveLength(verticalPoints.length);
         expect.soft(container.querySelectorAll('.recharts-cartesian-grid-horizontal line')).toHaveLength(0);
@@ -296,14 +287,14 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('should render all lines if horizontal=true', () => {
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               horizontal
               verticalPoints={verticalPoints}
               horizontalPoints={horizontalPoints}
             />
-          </Surface>,
+          </ChartElement>,
         );
         expect.soft(container.querySelectorAll('line')).toHaveLength(9);
         expect
@@ -316,13 +307,13 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('should render all lines if horizontal is undefined', () => {
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               verticalPoints={verticalPoints}
               horizontalPoints={horizontalPoints}
             />
-          </Surface>,
+          </ChartElement>,
         );
         expect.soft(container.querySelectorAll('line')).toHaveLength(9);
         expect
@@ -337,14 +328,14 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
     describe('verticalPoints without generator', () => {
       it('should not render any lines if vertical=false', () => {
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               vertical={false}
               verticalPoints={verticalPoints}
               horizontalPoints={horizontalPoints}
             />
-          </Surface>,
+          </ChartElement>,
         );
         expect.soft(container.querySelectorAll('line')).toHaveLength(horizontalPoints.length);
         expect
@@ -355,14 +346,14 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('should render all lines if vertical=true', () => {
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               vertical
               verticalPoints={verticalPoints}
               horizontalPoints={horizontalPoints}
             />
-          </Surface>,
+          </ChartElement>,
         );
         expect.soft(container.querySelectorAll('line')).toHaveLength(9);
         expect
@@ -375,13 +366,13 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('should render all lines if vertical is undefined', () => {
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               verticalPoints={verticalPoints}
               horizontalPoints={horizontalPoints}
             />
-          </Surface>,
+          </ChartElement>,
         );
         expect.soft(container.querySelectorAll('line')).toHaveLength(9);
         expect
@@ -397,13 +388,12 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       it('should render lines that the generator returns', () => {
         const horizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = vi.fn().mockReturnValue([3, 4]);
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
-              offset={{}}
             />
-          </Surface>,
+          </ChartElement>,
         );
 
         expect(horizontalCoordinatesGenerator).toHaveBeenCalledOnce();
@@ -428,14 +418,13 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         const horizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = vi.fn().mockReturnValue([1, 2]);
         expect(horizontalPoints.length).not.toBe(2);
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
               horizontalPoints={horizontalPoints}
-              offset={offset}
             />
-          </Surface>,
+          </ChartElement>,
         );
 
         expect(horizontalCoordinatesGenerator).not.toHaveBeenCalled();
@@ -456,7 +445,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               {...exampleCartesianGridDimensions}
               yAxis={yAxis}
               horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
-              offset={offset}
             />
           </ChartElement>,
         );
@@ -486,7 +474,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               {...exampleCartesianGridDimensions}
               yAxis={yAxis}
               horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
-              offset={offset}
               syncWithTicks={false}
               horizontalValues={['a', 'b']}
             />
@@ -518,7 +505,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
                 {...exampleCartesianGridDimensions}
                 yAxis={yAxis}
                 horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
-                offset={offset}
                 syncWithTicks={syncWithTicks}
                 horizontalValues={[]}
               />
@@ -551,7 +537,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
                 {...exampleCartesianGridDimensions}
                 yAxis={yAxis}
                 horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
-                offset={offset}
                 syncWithTicks={syncWithTicks}
               />
             </ChartElement>,
@@ -575,13 +560,12 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         ({ gen }) => {
           const horizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = vi.fn().mockReturnValue(gen);
           const { container } = render(
-            <Surface width={500} height={500}>
+            <ChartElement width={500} height={500}>
               <CartesianGrid
                 {...exampleCartesianGridDimensions}
                 horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
-                offset={offset}
               />
-            </Surface>,
+            </ChartElement>,
           );
 
           expect(horizontalCoordinatesGenerator).toHaveBeenCalledOnce();
@@ -597,9 +581,9 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           ticks: [10, 50, 100],
         };
         const { container } = render(
-          <LineChart width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid x={0} y={0} width={500} height={500} xAxis={xAxis} />
-          </LineChart>,
+          </ChartElement>,
         );
 
         const allLines = container.querySelectorAll('.recharts-cartesian-grid-horizontal line');
@@ -623,13 +607,12 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       it('should render lines that the generator returns', () => {
         const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([3, 4]);
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               verticalCoordinatesGenerator={verticalCoordinatesGenerator}
-              offset={offset}
             />
-          </Surface>,
+          </ChartElement>,
         );
 
         expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
@@ -654,14 +637,13 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([1, 2]);
         expect(verticalPoints.length).not.toBe(2);
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               verticalCoordinatesGenerator={verticalCoordinatesGenerator}
               verticalPoints={verticalPoints}
-              offset={offset}
             />
-          </Surface>,
+          </ChartElement>,
         );
 
         expect(verticalCoordinatesGenerator).not.toHaveBeenCalled();
@@ -682,7 +664,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               {...exampleCartesianGridDimensions}
               xAxis={xAxis}
               verticalCoordinatesGenerator={verticalCoordinatesGenerator}
-              offset={offset}
             />
           </ChartElement>,
         );
@@ -712,7 +693,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               {...exampleCartesianGridDimensions}
               xAxis={xAxis}
               verticalCoordinatesGenerator={verticalCoordinatesGenerator}
-              offset={offset}
               syncWithTicks={false}
               verticalValues={['a', 'b']}
             />
@@ -744,7 +724,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
                 {...exampleCartesianGridDimensions}
                 xAxis={xAxis}
                 verticalCoordinatesGenerator={verticalCoordinatesGenerator}
-                offset={offset}
                 syncWithTicks={syncWithTicks}
                 horizontalValues={[]}
               />
@@ -777,7 +756,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
                 {...exampleCartesianGridDimensions}
                 xAxis={xAxis}
                 verticalCoordinatesGenerator={verticalCoordinatesGenerator}
-                offset={offset}
                 syncWithTicks={syncWithTicks}
               />
             </ChartElement>,
@@ -801,13 +779,12 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         ({ gen }) => {
           const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue(gen);
           const { container } = render(
-            <Surface width={500} height={500}>
+            <ChartElement width={500} height={500}>
               <CartesianGrid
                 {...exampleCartesianGridDimensions}
                 verticalCoordinatesGenerator={verticalCoordinatesGenerator}
-                offset={offset}
               />
-            </Surface>,
+            </ChartElement>,
           );
 
           expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
@@ -849,18 +826,18 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       it('should pass props, add default stroke, and then render result of the function', () => {
         const horizontal = vi.fn().mockReturnValue(<g data-testid="my_mock_line" />);
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               verticalPoints={verticalPoints}
               horizontalPoints={horizontalPoints}
               horizontal={horizontal}
             />
-          </Surface>,
+          </ChartElement>,
         );
         expect(horizontal).toHaveBeenCalledTimes(horizontalPoints.length);
 
-        const expectedProps: GridLineFunctionProps = {
+        const expectedProps: GridLineTypeFunctionProps = {
           stroke: '#ccc',
           fill: 'none',
           height: 200,
@@ -879,6 +856,19 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           y1: expect.any(Number),
           y2: expect.any(Number),
           index: expect.any(Number),
+          horizontalCoordinatesGenerator: undefined,
+          verticalCoordinatesGenerator: undefined,
+          offset: {
+            bottom: 5,
+            brushBottom: 5,
+            height: 490,
+            left: 5,
+            right: 5,
+            top: 5,
+            width: 490,
+          },
+          xAxis: null,
+          yAxis: null,
         };
         expect(horizontal).toHaveBeenCalledWith(expectedProps);
 
@@ -889,23 +879,23 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
     describe('horizontal as an element', () => {
       it('should pass props, add default stroke, and then render result of the function', () => {
         const spy = vi.fn();
-        const Horizontal = (props: any) => {
+        const Horizontal = (props: unknown) => {
           spy(props);
           return <g data-testid="my_mock_line" />;
         };
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               verticalPoints={verticalPoints}
               horizontalPoints={horizontalPoints}
               horizontal={<Horizontal />}
             />
-          </Surface>,
+          </ChartElement>,
         );
         expect(spy).toHaveBeenCalledTimes(horizontalPoints.length);
 
-        const expectedProps: GridLineFunctionProps = {
+        const expectedProps: GridLineTypeFunctionProps = {
           stroke: '#ccc',
           fill: 'none',
           height: 200,
@@ -916,7 +906,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           verticalFill: [],
           verticalPoints,
           horizontal: <Horizontal />,
-          // @ts-expect-error React does not pass the key through when calling cloneElement
           key: undefined,
           x: 1,
           y: 2,
@@ -925,6 +914,19 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           y1: expect.any(Number),
           y2: expect.any(Number),
           index: expect.any(Number),
+          horizontalCoordinatesGenerator: undefined,
+          verticalCoordinatesGenerator: undefined,
+          offset: {
+            bottom: 5,
+            brushBottom: 5,
+            height: 490,
+            left: 5,
+            right: 5,
+            top: 5,
+            width: 490,
+          },
+          xAxis: null,
+          yAxis: null,
         };
         expect(spy).toHaveBeenCalledWith(expectedProps);
 
@@ -936,18 +938,18 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       it('should pass props, add default stroke, and then render result of the function', () => {
         const vertical = vi.fn().mockReturnValue(<g data-testid="my_mock_line" />);
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               verticalPoints={verticalPoints}
               horizontalPoints={horizontalPoints}
               vertical={vertical}
             />
-          </Surface>,
+          </ChartElement>,
         );
         expect(vertical).toHaveBeenCalledTimes(verticalPoints.length);
 
-        const expectedProps: GridLineFunctionProps = {
+        const expectedProps: GridLineTypeFunctionProps = {
           stroke: '#ccc',
           fill: 'none',
           height: 200,
@@ -966,6 +968,19 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           y1: 2,
           y2: 202,
           index: expect.any(Number),
+          horizontalCoordinatesGenerator: undefined,
+          verticalCoordinatesGenerator: undefined,
+          offset: {
+            bottom: 5,
+            brushBottom: 5,
+            height: 490,
+            left: 5,
+            right: 5,
+            top: 5,
+            width: 490,
+          },
+          xAxis: null,
+          yAxis: null,
         };
         expect(vertical).toHaveBeenCalledWith(expectedProps);
 
@@ -976,23 +991,23 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
     describe('vertical as an element', () => {
       it('should pass props, add default stroke, and then render result of the function', () => {
         const spy = vi.fn();
-        const Vertical = (props: any) => {
+        const Vertical = (props: unknown) => {
           spy(props);
           return <g data-testid="my_mock_line" />;
         };
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               verticalPoints={verticalPoints}
               horizontalPoints={horizontalPoints}
               vertical={<Vertical />}
             />
-          </Surface>,
+          </ChartElement>,
         );
         expect(spy).toHaveBeenCalledTimes(verticalPoints.length);
 
-        const expectedProps: GridLineFunctionProps = {
+        const expectedProps: GridLineTypeFunctionProps = {
           stroke: '#ccc',
           fill: 'none',
           height: 200,
@@ -1003,7 +1018,19 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           verticalFill: [],
           verticalPoints,
           vertical: <Vertical />,
-          // @ts-expect-error React does not pass the key through when calling cloneElement
+          horizontalCoordinatesGenerator: undefined,
+          verticalCoordinatesGenerator: undefined,
+          offset: {
+            bottom: 5,
+            brushBottom: 5,
+            height: 490,
+            left: 5,
+            right: 5,
+            top: 5,
+            width: 490,
+          },
+          xAxis: null,
+          yAxis: null,
           key: undefined,
           x: 1,
           y: 2,
@@ -1079,14 +1106,13 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       it('should render stripes defined by horizontalCoordinatesGenerator', () => {
         const horizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = vi.fn().mockReturnValue([1, 2]);
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               horizontalCoordinatesGenerator={horizontalCoordinatesGenerator}
               horizontalFill={['red', 'green']}
-              offset={offset}
             />
-          </Surface>,
+          </ChartElement>,
         );
 
         expect(horizontalCoordinatesGenerator).toHaveBeenCalledOnce();
@@ -1254,7 +1280,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             verticalFill={['red', 'green']}
             fillOpacity="20%"
             vertical={vertical}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1295,7 +1320,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       it('should render stripes defined by verticalCoordinatesGenerator', () => {
         const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([1, 2]);
         const { container } = render(
-          <Surface width={500} height={500}>
+          <ChartElement width={500} height={500}>
             <CartesianGrid
               x={0}
               y={0}
@@ -1303,9 +1328,8 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               height={500}
               verticalCoordinatesGenerator={verticalCoordinatesGenerator}
               verticalFill={['red', 'green']}
-              offset={offset}
             />
-          </Surface>,
+          </ChartElement>,
         );
 
         expect(verticalCoordinatesGenerator).toHaveBeenCalledOnce();
@@ -1324,7 +1348,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             verticalFill={['red', 'green']}
             fillOpacity="20%"
             vertical={false}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1338,7 +1361,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             width={Math.max(...verticalPoints) + 1}
             verticalPoints={verticalPoints}
             verticalFill={fill}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1353,7 +1375,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             width={Math.max(...verticalPoints) + 1}
             verticalPoints={verticalPoints}
             verticalFill={['red', 'green']}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1368,7 +1389,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             width={Math.max(...verticalPoints) + 1}
             verticalPoints={verticalPoints}
             verticalFill={['red', 'green']}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1385,7 +1405,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             width={Math.max(...verticalPoints) - 1}
             verticalPoints={verticalPoints}
             verticalFill={['red', 'green']}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1399,7 +1418,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             width={1}
             verticalPoints={verticalPoints}
             verticalFill={['red', 'green']}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1418,7 +1436,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             height={500}
             verticalPoints={floatingPointPrecisionExamples}
             verticalFill={['red', 'green']}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1447,7 +1464,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             {...exampleCartesianGridDimensions}
             verticalPoints={[10, 20, 10, 500]}
             verticalFill={['red', 'green']}
-            offset={offset}
           />,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
@@ -1476,19 +1492,18 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
   describe('offset prop', () => {
     it('should not pass the offset prop anywhere', () => {
       const { container } = render(
-        <Surface width={500} height={500}>
+        <ChartElement width={500} height={500}>
           <CartesianGrid
             {...exampleCartesianGridDimensions}
             verticalPoints={verticalPoints}
             horizontalPoints={horizontalPoints}
-            offset={offset}
           />
-        </Surface>,
+        </ChartElement>,
       );
       // select everything
       const allElements = container.querySelectorAll('*');
       // check that the selector worked
-      expect(allElements).toHaveLength(15);
+      expect(allElements).toHaveLength(19);
       for (let i = 0; i < allElements.length; i++) {
         const element = allElements[0];
         expect(element).not.toHaveAttribute('offset');
