@@ -233,12 +233,6 @@ const getTooltipContent = (
   }
   // get data by activeIndex when the axis don't allow duplicated category
   return graphicalItems.reduce((result, child) => {
-    const { hide } = child.props;
-
-    if (hide) {
-      return result;
-    }
-
     /**
      * Fixes: https://github.com/recharts/recharts/issues/3669
      * Defaulting to chartData below to fix an edge case where the tooltip does not include data from all charts
