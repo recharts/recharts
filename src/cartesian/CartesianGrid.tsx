@@ -14,7 +14,7 @@ import { filterProps } from '../util/ReactUtils';
 import { getCoordinatesOfGrid, getTicksOfAxis } from '../util/ChartUtils';
 import { getTicks } from './getTicks';
 import { CartesianAxis } from './CartesianAxis';
-import { useChartHeight, useChartWidth, useOffset } from '../context/chartLayoutContext';
+import { useArbitraryXAxis, useChartHeight, useChartWidth, useOffset } from '../context/chartLayoutContext';
 
 export type GridLineTypeFunctionProps = Omit<LineItemProps, 'key'> & {
   // React does not pass the key through when calling cloneElement - so it might be undefined when cloning
@@ -371,7 +371,9 @@ export function CartesianGrid(props: Props) {
     height: isNumber(props.height) ? props.height : offset.height,
   };
 
-  const { x, y, width, height, xAxis, yAxis, syncWithTicks, horizontalValues, verticalValues } = propsIncludingDefaults;
+  const { x, y, width, height, yAxis, syncWithTicks, horizontalValues, verticalValues } = propsIncludingDefaults;
+
+  const xAxis = useArbitraryXAxis();
 
   if (
     !isNumber(width) ||
