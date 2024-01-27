@@ -1798,8 +1798,7 @@ export const generateCategoricalChart = ({
      * @return {ReactElement} The instance of grid
      */
     renderGrid = (element: React.ReactElement): React.ReactElement => {
-      const { xAxisMap, yAxisMap } = this.state;
-      const xAxis = getAnyElementOfObject(xAxisMap);
+      const { yAxisMap } = this.state;
       const yAxisWithFiniteDomain = find(yAxisMap, axis => every(axis.domain, Number.isFinite));
       const yAxis = yAxisWithFiniteDomain || getAnyElementOfObject(yAxisMap);
       const props = element.props || {};
@@ -1810,7 +1809,6 @@ export const generateCategoricalChart = ({
         y: props.y,
         width: props.width,
         height: props.height,
-        xAxis,
         yAxis,
         verticalCoordinatesGenerator: props.verticalCoordinatesGenerator,
         horizontalCoordinatesGenerator: props.horizontalCoordinatesGenerator,
