@@ -576,13 +576,9 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       );
 
       it('should generate its own ticks if neither horizontalPoints nor horizontalCoordinatesGenerator are provided', () => {
-        const xAxis: Props['xAxis'] = {
-          scale: scaleLinear(),
-          ticks: [10, 50, 100],
-        };
         const { container } = render(
           <ChartElement width={500} height={500}>
-            <CartesianGrid x={0} y={0} width={500} height={500} xAxis={xAxis} />
+            <CartesianGrid x={0} y={0} width={500} height={500} />
           </ChartElement>,
         );
 
@@ -654,15 +650,10 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('should pass props to the generator', () => {
         const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([]);
-        const xAxis: Props['xAxis'] = {
-          scale: scaleLinear(),
-          ticks: ['x', 'y', 'x'],
-        };
         render(
           <ChartElement width={300} height={200} margin={chartMargin}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
-              xAxis={xAxis}
               verticalCoordinatesGenerator={verticalCoordinatesGenerator}
             />
           </ChartElement>,
@@ -683,15 +674,10 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       it(`should set syncWithTicks=true, and ticks=verticalValues,
       when verticalValues is provided, even if the explicit syncWithTicks is false`, () => {
         const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([]);
-        const xAxis: Props['xAxis'] = {
-          scale: scaleLinear(),
-          ticks: ['x', 'y', 'x'],
-        };
         render(
           <ChartElement width={300} height={200} margin={chartMargin}>
             <CartesianGrid
               {...exampleCartesianGridDimensions}
-              xAxis={xAxis}
               verticalCoordinatesGenerator={verticalCoordinatesGenerator}
               syncWithTicks={false}
               verticalValues={['a', 'b']}
@@ -715,14 +701,10 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         'should set syncWithTicks as %s when horizontalValues is provided but is empty',
         syncWithTicks => {
           const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([]);
-          const xAxis: Props['xAxis'] = {
-            scale: scaleLinear(),
-          };
           render(
             <ChartElement width={300} height={200} margin={chartMargin}>
               <CartesianGrid
                 {...exampleCartesianGridDimensions}
-                xAxis={xAxis}
                 verticalCoordinatesGenerator={verticalCoordinatesGenerator}
                 syncWithTicks={syncWithTicks}
                 horizontalValues={[]}
@@ -747,14 +729,10 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         'should pass props to the generator when syncWithTicks is %s',
         syncWithTicks => {
           const verticalCoordinatesGenerator: VerticalCoordinatesGenerator = vi.fn().mockReturnValue([]);
-          const xAxis: Props['xAxis'] = {
-            scale: scaleLinear(),
-          };
           render(
             <ChartElement width={300} height={200} margin={chartMargin}>
               <CartesianGrid
                 {...exampleCartesianGridDimensions}
-                xAxis={xAxis}
                 verticalCoordinatesGenerator={verticalCoordinatesGenerator}
                 syncWithTicks={syncWithTicks}
               />
@@ -795,13 +773,9 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       );
 
       it('should generate its own ticks if neither verticalPoints nor verticalCoordinatesGenerator are provided', () => {
-        const xAxis: Props['xAxis'] = {
-          scale: scaleLinear(),
-          ticks: [10, 50, 100],
-        };
         const { container } = render(
           <LineChart width={500} height={500}>
-            <CartesianGrid {...exampleCartesianGridDimensions} xAxis={xAxis} />
+            <CartesianGrid {...exampleCartesianGridDimensions} />
           </LineChart>,
         );
 

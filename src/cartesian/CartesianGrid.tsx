@@ -16,11 +16,23 @@ import { getTicks } from './getTicks';
 import { CartesianAxis } from './CartesianAxis';
 import { useArbitraryXAxis, useChartHeight, useChartWidth, useOffset } from '../context/chartLayoutContext';
 
+type XAxisWithD3Scale = Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+
+/**
+ * The <CartesianGrid horizontal
+ */
 export type GridLineTypeFunctionProps = Omit<LineItemProps, 'key'> & {
   // React does not pass the key through when calling cloneElement - so it might be undefined when cloning
   key: LineItemProps['key'] | undefined;
   // offset is not present in LineItemProps but it is read from context and then passed to the GridLineType function and element
   offset: ChartOffset;
+  /**
+   * The first available xAxis. This is rather arbitrary - if there's one XAxis then it's the first one,
+   * if there are multiple then it's a random one.
+   *
+   * If there are no AXis present then this will be null.
+   */
+  xAxis: null | XAxisWithD3Scale;
 };
 
 type GridLineType =
@@ -54,7 +66,6 @@ interface InternalCartesianGridProps {
   height?: number;
   horizontalCoordinatesGenerator?: HorizontalCoordinatesGenerator;
   verticalCoordinatesGenerator?: VerticalCoordinatesGenerator;
-  xAxis?: null | (Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> });
   yAxis?: null | (Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> });
 }
 
@@ -152,6 +163,7 @@ const Background = (props: Pick<AcceptedSvgProps, 'fill' | 'fillOpacity' | 'x' |
 
 type LineItemProps = Props & {
   offset: ChartOffset;
+  xAxis: null | XAxisWithD3Scale;
   x1: number;
   y1: number;
   x2: number;
@@ -178,7 +190,8 @@ function renderLineItem(option: GridLineType, props: LineItemProps) {
 }
 
 type GridLinesProps = Props & {
-  offset: ChartOffset;
+  offset: GridLineTypeFunctionProps['offset'];
+  xAxis: GridLineTypeFunctionProps['xAxis'];
 };
 
 function HorizontalGridLines(props: GridLinesProps) {
@@ -373,7 +386,8 @@ export function CartesianGrid(props: Props) {
 
   const { x, y, width, height, yAxis, syncWithTicks, horizontalValues, verticalValues } = propsIncludingDefaults;
 
-  const xAxis = useArbitraryXAxis();
+  // @ts-expect-error the scale prop is mixed up - we need to untagle this at some point
+  const xAxis: XAxisWithD3Scale = useArbitraryXAxis();
 
   if (
     !isNumber(width) ||
@@ -465,9 +479,14 @@ export function CartesianGrid(props: Props) {
         width={propsIncludingDefaults.width}
         height={propsIncludingDefaults.height}
       />
-      <HorizontalGridLines {...propsIncludingDefaults} offset={offset} horizontalPoints={horizontalPoints} />
+      <HorizontalGridLines
+        {...propsIncludingDefaults}
+        offset={offset}
+        horizontalPoints={horizontalPoints}
+        xAxis={xAxis}
+      />
 
-      <VerticalGridLines {...propsIncludingDefaults} offset={offset} verticalPoints={verticalPoints} />
+      <VerticalGridLines {...propsIncludingDefaults} offset={offset} verticalPoints={verticalPoints} xAxis={xAxis} />
 
       <HorizontalStripes {...propsIncludingDefaults} horizontalPoints={horizontalPoints} />
 
