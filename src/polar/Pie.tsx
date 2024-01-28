@@ -33,6 +33,7 @@ import {
   PresentationAttributesAdaptChildEvent,
   AnimationDuration,
   ActiveShape,
+  GeometrySector,
 } from '../util/types';
 import { Shape } from '../util/ActiveShapeUtils';
 
@@ -58,12 +59,19 @@ type PieLabelLine =
   | ((props: any) => ReactElement<SVGElement>)
   | SVGProps<SVGPathElement>
   | boolean;
-export type PieLabel<P extends PieSectorDataItem = PieSectorDataItem> =
+
+type PieLabelProps = PieSectorData &
+  GeometrySector & {
+    tooltipPayload?: any;
+  } & PieLabelRenderProps;
+
+export type PieLabel<P extends PieLabelProps = PieLabelProps> =
   | ReactElement<SVGElement>
   | ((props: P) => ReactNode | ReactElement<SVGElement>)
   | (SVGProps<SVGTextElement> & { offsetRadius?: number })
   | boolean;
-export type PieSectorDataItem = SectorProps & {
+
+export type PieSectorData = {
   percent?: number;
   name?: string | number;
   midAngle?: number;
@@ -74,6 +82,7 @@ export type PieSectorDataItem = SectorProps & {
   dataKey?: string;
   payload?: any[];
 };
+export type PieSectorDataItem = SectorProps & PieSectorData;
 
 interface PieProps extends PieDef {
   className?: string;
