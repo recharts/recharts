@@ -60,7 +60,7 @@ type PieLabelLine =
   | SVGProps<SVGPathElement>
   | boolean;
 
-type PieLabelProps = PieSectorData &
+export type PieLabelProps = PieSectorData &
   GeometrySector & {
     tooltipPayload?: any;
   } & PieLabelRenderProps;
@@ -82,6 +82,7 @@ export type PieSectorData = {
   dataKey?: string;
   payload?: any[];
 };
+
 export type PieSectorDataItem = SectorProps & PieSectorData;
 
 interface PieProps extends PieDef {
