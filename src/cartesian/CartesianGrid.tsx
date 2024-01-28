@@ -14,13 +14,38 @@ import { filterProps } from '../util/ReactUtils';
 import { getCoordinatesOfGrid, getTicksOfAxis } from '../util/ChartUtils';
 import { getTicks } from './getTicks';
 import { CartesianAxis } from './CartesianAxis';
-import { useChartHeight, useChartWidth, useOffset } from '../context/chartLayoutContext';
+import {
+  useArbitraryXAxis,
+  useChartHeight,
+  useChartWidth,
+  useOffset,
+  useYAxisWithFiniteDomainOrRandom,
+} from '../context/chartLayoutContext';
 
+type XAxisWithD3Scale = Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+type YAxisWithD3Scale = Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+
+/**
+ * The <CartesianGrid horizontal
+ */
 export type GridLineTypeFunctionProps = Omit<LineItemProps, 'key'> & {
   // React does not pass the key through when calling cloneElement - so it might be undefined when cloning
   key: LineItemProps['key'] | undefined;
   // offset is not present in LineItemProps but it is read from context and then passed to the GridLineType function and element
   offset: ChartOffset;
+  /**
+   * The first available xAxis. This is rather arbitrary - if there's one XAxis then it's the first one,
+   * if there are multiple then it's a random one.
+   *
+   * If there are no XAxis present then this will be null.
+   */
+  xAxis: null | XAxisWithD3Scale;
+  /**
+   * The first available yAxis. The axes with finite domain will be preferred.
+   *
+   * If there are no YAxis present then this will be null.
+   */
+  yAxis: null | YAxisWithD3Scale;
 };
 
 type GridLineType =
@@ -54,8 +79,6 @@ interface InternalCartesianGridProps {
   height?: number;
   horizontalCoordinatesGenerator?: HorizontalCoordinatesGenerator;
   verticalCoordinatesGenerator?: VerticalCoordinatesGenerator;
-  xAxis?: null | (Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> });
-  yAxis?: null | (Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> });
 }
 
 interface CartesianGridProps extends InternalCartesianGridProps {
@@ -152,6 +175,8 @@ const Background = (props: Pick<AcceptedSvgProps, 'fill' | 'fillOpacity' | 'x' |
 
 type LineItemProps = Props & {
   offset: ChartOffset;
+  xAxis: null | XAxisWithD3Scale;
+  yAxis: null | YAxisWithD3Scale;
   x1: number;
   y1: number;
   x2: number;
@@ -178,7 +203,9 @@ function renderLineItem(option: GridLineType, props: LineItemProps) {
 }
 
 type GridLinesProps = Props & {
-  offset: ChartOffset;
+  offset: GridLineTypeFunctionProps['offset'];
+  xAxis: GridLineTypeFunctionProps['xAxis'];
+  yAxis: GridLineTypeFunctionProps['yAxis'];
 };
 
 function HorizontalGridLines(props: GridLinesProps) {
@@ -371,7 +398,12 @@ export function CartesianGrid(props: Props) {
     height: isNumber(props.height) ? props.height : offset.height,
   };
 
-  const { x, y, width, height, xAxis, yAxis, syncWithTicks, horizontalValues, verticalValues } = propsIncludingDefaults;
+  const { x, y, width, height, syncWithTicks, horizontalValues, verticalValues } = propsIncludingDefaults;
+
+  // @ts-expect-error the scale prop is mixed up - we need to untagle this at some point
+  const xAxis: XAxisWithD3Scale = useArbitraryXAxis();
+  // @ts-expect-error the scale prop is mixed up - we need to untagle this at some point
+  const yAxis: YAxisWithD3Scale = useYAxisWithFiniteDomainOrRandom();
 
   if (
     !isNumber(width) ||
@@ -463,9 +495,21 @@ export function CartesianGrid(props: Props) {
         width={propsIncludingDefaults.width}
         height={propsIncludingDefaults.height}
       />
-      <HorizontalGridLines {...propsIncludingDefaults} offset={offset} horizontalPoints={horizontalPoints} />
+      <HorizontalGridLines
+        {...propsIncludingDefaults}
+        offset={offset}
+        horizontalPoints={horizontalPoints}
+        xAxis={xAxis}
+        yAxis={yAxis}
+      />
 
-      <VerticalGridLines {...propsIncludingDefaults} offset={offset} verticalPoints={verticalPoints} />
+      <VerticalGridLines
+        {...propsIncludingDefaults}
+        offset={offset}
+        verticalPoints={verticalPoints}
+        xAxis={xAxis}
+        yAxis={yAxis}
+      />
 
       <HorizontalStripes {...propsIncludingDefaults} horizontalPoints={horizontalPoints} />
 

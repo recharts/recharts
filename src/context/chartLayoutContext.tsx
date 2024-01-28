@@ -1,10 +1,13 @@
 import React, { ReactNode, createContext, useContext } from 'react';
 import invariant from 'tiny-invariant';
+import find from 'lodash/find';
+import every from 'lodash/every';
 import { CartesianViewBox, ChartOffset, XAxisMap, YAxisMap } from '../util/types';
 import type { CategoricalChartState } from '../chart/types';
 import type { Props as XAxisProps } from '../cartesian/XAxis';
 import type { Props as YAxisProps } from '../cartesian/YAxis';
 import { calculateViewBox } from '../util/calculateViewBox';
+import { getAnyElementOfObject } from '../util/DataUtils';
 
 export const XAxisContext = createContext<XAxisMap | undefined>(undefined);
 export const YAxisContext = createContext<YAxisMap | undefined>(undefined);
@@ -104,6 +107,46 @@ export const useXAxisOrThrow = (xAxisId: string | number): XAxisProps => {
   invariant(xAxis != null, `Could not find xAxis by id "${xAxisId}" [${typeof xAxisId}]. ${getKeysForDebug(xAxisMap)}`);
 
   return xAxis;
+};
+
+/**
+ * This will find an arbitrary first XAxis. If there's exactly one it always returns that one
+ * - but if there are multiple then it can return any of those.
+ *
+ * If you want specific XAxis out of multiple then prefer using useXAxisOrThrow
+ *
+ * @returns X axisOptions, or undefined - if there are no X axes
+ */
+export const useArbitraryXAxis = (): XAxisProps | undefined => {
+  const xAxisMap = useContext(XAxisContext);
+  return getAnyElementOfObject(xAxisMap);
+};
+
+/**
+ * This will find an arbitrary first YAxis. If there's exactly one it always returns that one
+ * - but if there are multiple then it can return any of those.
+ *
+ * If you want specific YAxis out of multiple then prefer using useXAxisOrThrow
+ *
+ * @returns Y axisOptions, or undefined - if there are no Y axes
+ */
+export const useArbitraryYAxis = (): XAxisProps | undefined => {
+  const yAxisMap = useContext(YAxisContext);
+  return getAnyElementOfObject(yAxisMap);
+};
+
+/**
+ * This hooks will:
+ * 1st attempt to find an YAxis that has all elements in its domain finite
+ * If no such axis exists, it will return an arbitrary YAxis
+ * if there are no Y axes then it returns undefined
+ *
+ * @returns Either Y axisOptions, or undefined if there are no Y axes
+ */
+export const useYAxisWithFiniteDomainOrRandom = (): YAxisProps | undefined => {
+  const yAxisMap = useContext(YAxisContext);
+  const yAxisWithFiniteDomain = find(yAxisMap, axis => every(axis.domain, Number.isFinite));
+  return yAxisWithFiniteDomain || getAnyElementOfObject(yAxisMap);
 };
 
 /**
