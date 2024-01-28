@@ -365,6 +365,10 @@ export function CartesianGrid(props: Props) {
     horizontalFill: props.horizontalFill ?? defaultProps.horizontalFill,
     vertical: props.vertical ?? defaultProps.vertical,
     verticalFill: props.verticalFill ?? defaultProps.verticalFill,
+    x: isNumber(props.x) ? props.x : offset.left,
+    y: isNumber(props.y) ? props.y : offset.top,
+    width: isNumber(props.width) ? props.width : offset.width,
+    height: isNumber(props.height) ? props.height : offset.height,
   };
 
   const { x, y, width, height, xAxis, yAxis, syncWithTicks, horizontalValues, verticalValues } = propsIncludingDefaults;
