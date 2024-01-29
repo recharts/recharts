@@ -1,6 +1,6 @@
 # Recharts
 
-[![storybook](https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg)](https://release--63da8268a0da9970db6992aa.chromatic.com/)
+[![storybook](https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg)](https://63da8268a0da9970db6992aa-suzbuiufbn.chromatic.com.chromatic.com/)
 [![Build Status](https://github.com/recharts/recharts/workflows/Node.js%20CI/badge.svg)](https://github.com/recharts/recharts/actions)
 [![Coverage Status](https://coveralls.io/repos/recharts/recharts/badge.svg?branch=master&service=github)](https://coveralls.io/github/recharts/recharts?branch=master)
 [![npm version](https://badge.fury.io/js/recharts.svg)](http://badge.fury.io/js/recharts)
@@ -17,7 +17,7 @@ The main purpose of this library is to help you to write charts in React applica
 2. **Native** SVG support, lightweight depending only on some D3 submodules.
 3. **Declarative** components, components of charts are purely presentational.
 
-Documentation at [recharts.org](https://recharts.org) and our [storybook (WIP)](https://release--63da8268a0da9970db6992aa.chromatic.com/)
+Documentation at [recharts.org](https://recharts.org) and our [storybook (WIP)](https://63da8268a0da9970db6992aa-suzbuiufbn.chromatic.com.chromatic.com/)
 
 Please see [the wiki](https://github.com/recharts/recharts/wiki) for FAQ.
 
