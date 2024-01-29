@@ -1,5 +1,4 @@
 import React, { CSSProperties, PureComponent, ReactNode } from 'react';
-import { translateStyle } from 'react-smooth';
 import { AllowInDimension, AnimationDuration, AnimationTiming, CartesianViewBox, Coordinate } from '../util/types';
 import { getTooltipTranslate } from '../util/tooltip/translate';
 
@@ -128,9 +127,7 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
     });
 
     const outerStyle: CSSProperties = {
-      ...(isAnimationActive &&
-        active &&
-        translateStyle({ transition: `transform ${animationDuration}ms ${animationEasing}` })),
+      transition: isAnimationActive && active ? `transform ${animationDuration}ms ${animationEasing}` : undefined,
       ...cssProperties,
       pointerEvents: 'none',
       visibility: !this.state.dismissed && active && hasPayload ? 'visible' : 'hidden',
