@@ -1583,6 +1583,7 @@ export const generateCategoricalChart = ({
      * @return {Null} no return
      */
     handleMouseLeave = (e: any) => {
+      this.throttleTriggeredAfterMouseMove.cancel();
       const nextState: CategoricalChartState = { isTooltipActive: false };
 
       this.setState(nextState);
