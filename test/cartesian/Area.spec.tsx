@@ -46,98 +46,102 @@ const data = [
 ];
 
 describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ ChartElement }) => {
-  test('Render customized label when label is set to be a function', () => {
-    const renderLabel = (props: { index: number; x: number; y: number }) => {
-      const { index, x, y } = props;
+  describe('label', () => {
+    test('Render customized label when label is set to be a function', () => {
+      const renderLabel = (props: { index: number; x: number; y: number }) => {
+        const { index, x, y } = props;
 
-      return (
-        <text key={index} x={x} y={y} className="customized-label">
-          Customized Label
-        </text>
+        return (
+          <text key={index} x={x} y={y} className="customized-label">
+            Customized Label
+          </text>
+        );
+      };
+
+      render(
+        <ChartElement width={500} height={500} data={data}>
+          <Area dataKey="value" isAnimationActive={false} baseLine={200} label={renderLabel} />
+        </ChartElement>,
       );
-    };
 
-    render(
-      <ChartElement width={500} height={500} data={data}>
-        <Area dataKey="value" isAnimationActive={false} baseLine={200} label={renderLabel} />
-      </ChartElement>,
-    );
+      expect(screen.getAllByText('Customized Label')).toHaveLength(data.length);
+    });
 
-    expect(screen.getAllByText('Customized Label')).toHaveLength(data.length);
-  });
+    test('Render customized label when label is set to be a react element', () => {
+      const Label: FC<{ index: number; x: number; y: number }> = props => {
+        const { index, x, y } = props;
 
-  test('Render customized label when label is set to be a react element', () => {
-    const Label: FC<{ index: number; x: number; y: number }> = props => {
-      const { index, x, y } = props;
+        return (
+          <text key={index} x={x} y={y} className="customized-label">
+            Customized Label
+          </text>
+        );
+      };
 
-      return (
-        <text key={index} x={x} y={y} className="customized-label">
-          Customized Label
-        </text>
+      render(
+        <ChartElement width={500} height={500} data={data}>
+          <Area
+            dataKey="value"
+            isAnimationActive={false}
+            baseLine={200}
+            label={({ index, x, y }: { index: number; x: number; y: number }) => <Label index={index} x={x} y={y} />}
+          />
+        </ChartElement>,
       );
-    };
 
-    render(
-      <ChartElement width={500} height={500} data={data}>
-        <Area
-          dataKey="value"
-          isAnimationActive={false}
-          baseLine={200}
-          label={({ index, x, y }: { index: number; x: number; y: number }) => <Label index={index} x={x} y={y} />}
-        />
-      </ChartElement>,
-    );
-
-    expect(screen.getAllByText('Customized Label')).toHaveLength(data.length);
+      expect(screen.getAllByText('Customized Label')).toHaveLength(data.length);
+    });
   });
 
-  test('Render customized dot when dot is set to be a function', () => {
-    const renderDot = (props: { cx: number; cy: number }) => {
-      const { cx, cy } = props;
+  describe('dot', () => {
+    test('Render customized dot when dot is set to be a function', () => {
+      const renderDot = (props: { cx: number; cy: number }) => {
+        const { cx, cy } = props;
 
-      return <circle role="cell" key={cx} x={cx} y={cy} r={5} className="customized-dot" />;
-    };
+        return <circle role="cell" key={cx} x={cx} y={cy} r={5} className="customized-dot" />;
+      };
 
-    render(
-      <ChartElement width={500} height={500} data={data}>
-        <Area dataKey="value" isAnimationActive={false} baseLine={200} dot={renderDot} />
-      </ChartElement>,
-    );
+      render(
+        <ChartElement width={500} height={500} data={data}>
+          <Area dataKey="value" isAnimationActive={false} baseLine={200} dot={renderDot} />
+        </ChartElement>,
+      );
 
-    expect(screen.getAllByRole('cell')).toHaveLength(data.length);
-  });
+      expect(screen.getAllByRole('cell')).toHaveLength(data.length);
+    });
 
-  test('Render customized dot when dot is set to be a react element', () => {
-    const CustomizedDot: FC<{ cx?: number; cy?: number }> = ({ cx, cy }) => (
-      <circle role="cell" cx={cx} cy={cy} r={5} className="customized-dot" />
-    );
+    test('Render customized dot when dot is set to be a react element', () => {
+      const CustomizedDot: FC<{ cx?: number; cy?: number }> = ({ cx, cy }) => (
+        <circle role="cell" cx={cx} cy={cy} r={5} className="customized-dot" />
+      );
 
-    render(
-      <ChartElement width={500} height={500} data={data}>
-        <Area
-          dataKey="value"
-          isAnimationActive={false}
-          baseLine={200}
-          dot={({ cx, cy }) => <CustomizedDot key={`${cx}-${cy}`} cx={cx} cy={cy} />}
-        />
-      </ChartElement>,
-    );
+      render(
+        <ChartElement width={500} height={500} data={data}>
+          <Area
+            dataKey="value"
+            isAnimationActive={false}
+            baseLine={200}
+            dot={({ cx, cy }) => <CustomizedDot key={`${cx}-${cy}`} cx={cx} cy={cy} />}
+          />
+        </ChartElement>,
+      );
 
-    expect(screen.getAllByRole('cell')).toHaveLength(data.length);
-  });
+      expect(screen.getAllByRole('cell')).toHaveLength(data.length);
+    });
 
-  test('Does not throw when dot is null', () => {
-    const { container } = render(
-      <ChartElement width={500} height={500} data={data}>
-        {/* Test that the error Cannot read properties of null (reading 'clipDot') does not appear in JS projects */}
-        {/* @ts-expect-error TypeScript correctly flags this as an error, but we want to have a test for it regardless */}
-        <Area dataKey="value" dot={null} />
-      </ChartElement>,
-    );
+    test('Does not throw when dot is null', () => {
+      const { container } = render(
+        <ChartElement width={500} height={500} data={data}>
+          {/* Test that the error Cannot read properties of null (reading 'clipDot') does not appear in JS projects */}
+          {/* @ts-expect-error TypeScript correctly flags this as an error, but we want to have a test for it regardless */}
+          <Area dataKey="value" dot={null} />
+        </ChartElement>,
+      );
 
-    expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
-    expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
-    expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(0);
+      expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
+      expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
+      expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(0);
+    });
   });
 
   test.each([{ myData: undefined }, { myData: [] }])("Don't render any path when data is $myData", ({ myData }) => {
