@@ -759,3 +759,54 @@ export const NoPadding = {
     );
   },
 };
+
+const dataWithSmallValuesAndZero = [
+  {
+    name: 'Page D',
+    uv: 1397,
+    pv: 0,
+  },
+  {
+    name: 'Page E',
+    uv: 0,
+    pv: 1,
+  },
+  {
+    name: 'Page F',
+    uv: 1520,
+    pv: 1108,
+  },
+  {
+    name: 'Page G',
+    uv: 2,
+    pv: 680,
+  },
+];
+
+export const WithMinPointSize = {
+  render: () => {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          width={500}
+          height={300}
+          data={dataWithSmallValuesAndZero}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Bar dataKey="pv" fill="purple" minPointSize={value => (value === 0 ? 0 : 2)} stackId="a" />
+          <Bar dataKey="uv" fill="green" minPointSize={value => (value === 0 ? 0 : 2)} stackId="a" />
+          <Bar dataKey="uv" fill="blue" minPointSize={value => (value === 0 ? 0 : 2)} />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+};
