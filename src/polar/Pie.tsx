@@ -484,7 +484,7 @@ export class Pie extends PureComponent<Props, State> {
 
   renderSectorsStatically(sectors: PieSectorDataItem[]) {
     const { activeShape, blendStroke, inactiveShape: inactiveShapeProp, ignoreZeroSegments } = this.props;
-    const renderableSectors = sectors
+    return sectors
       .map((entry, i) => {
         if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
         if (entry?.value === 0 && ignoreZeroSegments) return null;
@@ -506,14 +506,14 @@ export class Pie extends PureComponent<Props, State> {
             tabIndex={-1}
             className="recharts-pie-sector"
             {...adaptEventsOfChild(this.props, entry, i)}
-            key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}`}
+            // eslint-disable-next-line react/no-array-index-key
+            key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
           >
             <Shape option={sectorOptions} isActive={isActive} shapeType="sector" {...sectorProps} />
           </Layer>
         );
       })
       .filter(d => d);
-    return renderableSectors;
   }
 
   renderSectorsWithAnimation() {
