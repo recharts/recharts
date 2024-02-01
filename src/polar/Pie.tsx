@@ -110,6 +110,8 @@ interface PieProps extends PieDef {
   onMouseLeave?: (data: any, index: number, e: React.MouseEvent) => void;
   onClick?: (data: any, index: number, e: React.MouseEvent) => void;
   rootTabIndex?: number;
+  /** skip rendering elements with "zero" value */
+  ignoreZeroSegments?: boolean;
 }
 
 export interface PieLabelRenderProps extends PieDef {
@@ -436,79 +438,94 @@ export class Pie extends PureComponent<Props, State> {
     const customLabelLineProps = filterProps(labelLine, false);
     const offsetRadius = (label && (label as any).offsetRadius) || 20;
 
-    const labels = sectors.map((entry, i) => {
-      const midAngle = (entry.startAngle + entry.endAngle) / 2;
-      const endPoint = polarToCartesian(entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle);
-      const labelProps = {
-        ...pieProps,
-        ...entry,
-        stroke: 'none',
-        ...customLabelProps,
-        index: i,
-        textAnchor: Pie.getTextAnchor(endPoint.x, entry.cx),
-        ...endPoint,
-      };
-      const lineProps = {
-        ...pieProps,
-        ...entry,
-        fill: 'none',
-        stroke: entry.fill,
-        ...customLabelLineProps,
-        index: i,
-        points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
-        key: 'line',
-      };
-      let realDataKey = dataKey;
-      // TODO: compatible to lower versions
-      if (isNil(dataKey) && isNil(valueKey)) {
-        realDataKey = 'value';
-      } else if (isNil(dataKey)) {
-        realDataKey = valueKey;
-      }
+    const labels = sectors
+      .map((entry, i) => {
+        if (entry?.value === 0 && this.props.ignoreZeroSegments) return null;
+        const midAngle = (entry.startAngle + entry.endAngle) / 2;
+        const endPoint = polarToCartesian(entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle);
+        const labelProps = {
+          ...pieProps,
+          ...entry,
+          stroke: 'none',
+          ...customLabelProps,
+          index: i,
+          textAnchor: Pie.getTextAnchor(endPoint.x, entry.cx),
+          ...endPoint,
+        };
+        const lineProps = {
+          ...pieProps,
+          ...entry,
+          fill: 'none',
+          stroke: entry.fill,
+          ...customLabelLineProps,
+          index: i,
+          points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
+          key: 'line',
+        };
+        let realDataKey = dataKey;
+        // TODO: compatible to lower versions
+        if (isNil(dataKey) && isNil(valueKey)) {
+          realDataKey = 'value';
+        } else if (isNil(dataKey)) {
+          realDataKey = valueKey;
+        }
 
-      return (
-        <Layer key={`label-${entry.startAngle}-${entry.endAngle}`}>
-          {labelLine && Pie.renderLabelLineItem(labelLine, lineProps)}
-          {Pie.renderLabelItem(label, labelProps, getValueByDataKey(entry, realDataKey))}
-        </Layer>
-      );
-    });
+        return (
+          <Layer key={`label-${entry.startAngle}-${entry.endAngle}`}>
+            {labelLine && Pie.renderLabelLineItem(labelLine, lineProps)}
+            {Pie.renderLabelItem(label, labelProps, getValueByDataKey(entry, realDataKey))}
+          </Layer>
+        );
+      })
+      .filter(d => d);
 
     return <Layer className="recharts-pie-labels">{labels}</Layer>;
   }
 
   renderSectorsStatically(sectors: PieSectorDataItem[]) {
-    const { activeShape, blendStroke, inactiveShape: inactiveShapeProp } = this.props;
-    return sectors.map((entry, i) => {
-      if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
-      const isActive = this.isActiveIndex(i);
-      const inactiveShape = inactiveShapeProp && this.hasActiveIndex() ? inactiveShapeProp : null;
-      const sectorOptions = isActive ? activeShape : inactiveShape;
-      const sectorProps = {
-        ...entry,
-        stroke: blendStroke ? entry.fill : entry.stroke,
-        tabIndex: -1,
-      };
-      return (
-        <Layer
-          ref={(ref: HTMLElement) => {
-            if (ref && !this.sectorRefs.includes(ref)) {
-              this.sectorRefs.push(ref);
-            }
-          }}
-          tabIndex={-1}
-          className="recharts-pie-sector"
-          {...adaptEventsOfChild(this.props, entry, i)}
-          key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}`}
-        >
-          <Shape option={sectorOptions} isActive={isActive} shapeType="sector" {...sectorProps} />
-        </Layer>
-      );
-    });
+    const { activeShape, blendStroke, inactiveShape: inactiveShapeProp, ignoreZeroSegments } = this.props;
+    const renderableSectors = sectors
+      .map((entry, i) => {
+        if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
+        if (entry?.value === 0 && ignoreZeroSegments) return null;
+        const isActive = this.isActiveIndex(i);
+        const inactiveShape = inactiveShapeProp && this.hasActiveIndex() ? inactiveShapeProp : null;
+        const sectorOptions = isActive ? activeShape : inactiveShape;
+        const sectorProps = {
+          ...entry,
+          stroke: blendStroke ? entry.fill : entry.stroke,
+          tabIndex: -1,
+        };
+        return (
+          <Layer
+            ref={(ref: HTMLElement) => {
+              if (ref && !this.sectorRefs.includes(ref)) {
+                this.sectorRefs.push(ref);
+              }
+            }}
+            tabIndex={-1}
+            className="recharts-pie-sector"
+            {...adaptEventsOfChild(this.props, entry, i)}
+            key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}`}
+          >
+            <Shape option={sectorOptions} isActive={isActive} shapeType="sector" {...sectorProps} />
+          </Layer>
+        );
+      })
+      .filter(d => d);
+    return renderableSectors;
   }
 
   renderSectorsWithAnimation() {
-    const { sectors, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = this.props;
+    const {
+      sectors,
+      isAnimationActive,
+      animationBegin,
+      animationDuration,
+      animationEasing,
+      animationId,
+      ignoreZeroSegments,
+    } = this.props;
 
     const { prevSectors, prevIsAnimationActive } = this.state;
 
@@ -551,6 +568,7 @@ export class Pie extends PureComponent<Props, State> {
                 ...entry,
                 startAngle: curAngle + paddingAngle,
                 endAngle: curAngle + deltaAngle + paddingAngle,
+                ignoreZeroSegments: Boolean(ignoreZeroSegments),
               };
 
               stepData.push(latest);

@@ -1,8 +1,9 @@
-import React, { Component, ReactElement, ReactSVGElement } from 'react';
+import React, { Component } from 'react';
+// eslint-disable-next-line import/no-unresolved
 import { PieChart, Pie, Legend, Cell, Tooltip, ResponsiveContainer, Sector, Label, LabelList } from 'recharts';
 import { scaleOrdinal } from 'victory-vendor/d3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
-import * as _ from 'lodash';
+import mapValues from 'lodash/mapValues';
 import { changeNumberOfData } from './utils';
 
 const colors = scaleOrdinal(schemeCategory10).range();
@@ -48,6 +49,12 @@ const data03 = [
 const data04 = [
   { name: 'Group A', value: 400, v: 89 },
   { name: 'Group B', value: 300, v: 100 },
+];
+
+const dataUniqueKey = [
+  { name: 'Group A', value: 400, v: 89 },
+  { name: 'Group B', value: 0, v: 100 },
+  { name: 'Group B', value: 0, v: 100 },
 ];
 
 const initialState = { data01, data02, data03 };
@@ -110,10 +117,11 @@ const renderActiveShape: React.FunctionComponent = (props: any) => {
   );
 };
 
+// eslint-disable-next-line import/no-default-export
 export default class Demo extends Component {
   static displayName = 'PieChartDemo';
 
-  onPieEnter = (data: any, index: number, e: React.MouseEvent) => {
+  onPieEnter = (data: any, index: number) => {
     this.setState({
       activeIndex: index,
     });
@@ -126,7 +134,7 @@ export default class Demo extends Component {
   };
 
   handleChangeData = () => {
-    this.setState(() => _.mapValues(initialState, changeNumberOfData));
+    this.setState(() => mapValues(initialState, changeNumberOfData));
   };
 
   handleChangeAnimation = () => {
@@ -142,21 +150,22 @@ export default class Demo extends Component {
   handleLeave = () => this.setState({ activeIndex: -1 });
 
   render() {
-    const { data01, data02, data03 } = this.state;
-
     return (
       <div className="pie-charts">
-        <a href="javascript: void(0);" className="btn update" onClick={this.handleChangeData}>
+        <button className="btn update" onClick={this.handleChangeData} type="button">
           change data
-        </a>
+        </button>
         <br />
         <p>Simple PieChart</p>
         <div className="pie-chart-wrapper">
-          <button onClick={this.handleChangeAnimation}>change animation</button>
+          <button onClick={this.handleChangeAnimation} type="button">
+            change animation
+          </button>
           <PieChart width={800} height={400}>
             <Legend />
             <Pie data={data01} dataKey="value" cx={200} cy={200} startAngle={180} endAngle={0} outerRadius={80} label>
               {data01.map((entry, index) => (
+                // eslint-disable-next-line react/no-array-index-key
                 <Cell key={`slice-${index}`} fill={colors[index % 10] as string} />
               ))}
               <Label value="test" position="outside" />
@@ -176,6 +185,7 @@ export default class Demo extends Component {
               isAnimationActive={this.state.animation}
             >
               {data02.map((entry, index) => (
+                // eslint-disable-next-line react/no-array-index-key
                 <Cell key={`slice-${index}`} fill={colors[index % 10] as string} />
               ))}
               <Label width={50} position="center">
@@ -220,6 +230,7 @@ export default class Demo extends Component {
                 isAnimationActive={false}
               >
                 {data01.map((entry, index) => (
+                  // eslint-disable-next-line react/no-array-index-key
                   <Cell key={`slice-${index}`} fill={colors[index % 10] as string} />
                 ))}
                 <Label value="test" />
@@ -242,6 +253,7 @@ export default class Demo extends Component {
               >
                 {data01.map((entry, index) => (
                   <Cell
+                    // eslint-disable-next-line react/no-array-index-key
                     key={`slice-${index}`}
                     fill={colors[index % 10] as string}
                     fillOpacity={this.state.activeIndex === index ? 1 : 0.25}
@@ -273,6 +285,29 @@ export default class Demo extends Component {
 
               <Label className="saghanlabel" value="test" position="outside" fill="black" />
               <LabelList position="outside" />
+            </Pie>
+          </PieChart>
+        </div>
+
+        <div>
+          <p>Pie chart with key prop.</p>
+          <PieChart width={800} height={400}>
+            <Legend />
+            <Pie
+              data={dataUniqueKey}
+              uniqueKey={({ name, value }) => `${name}-${value}`}
+              dataKey="value"
+              // isAnimationActive={false}
+              cx={200}
+              cy={200}
+              startAngle={180}
+              endAngle={0}
+              outerRadius={80}
+              label
+              ignoreZeroSegments
+            >
+              <Cell key="slice-1" fill="green" />
+              <Cell key="slice-2" fill="blue" />
             </Pie>
           </PieChart>
         </div>
