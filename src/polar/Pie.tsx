@@ -499,7 +499,8 @@ export class Pie extends PureComponent<Props, State> {
           tabIndex={-1}
           className="recharts-pie-sector"
           {...adaptEventsOfChild(this.props, entry, i)}
-          key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}`}
+          // eslint-disable-next-line react/no-array-index-key
+          key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
         >
           <Shape option={sectorOptions} isActive={isActive} shapeType="sector" {...sectorProps} />
         </Layer>
