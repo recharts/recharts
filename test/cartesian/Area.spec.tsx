@@ -1,4 +1,5 @@
 import React, { ComponentType, FC, ReactNode } from 'react';
+import { describe, test, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import {
   Area,
@@ -11,10 +12,18 @@ import {
   RadarChart,
   RadialBarChart,
   ScatterChart,
+  YAxis,
 } from '../../src';
+import { LayoutType } from '../../src/util/types';
 
 type TestCase = {
-  ChartElement: ComponentType<{ children?: ReactNode; width?: number; height?: number; data?: any[] }>;
+  ChartElement: ComponentType<{
+    children?: ReactNode;
+    width?: number;
+    height?: number;
+    data?: any[];
+    layout?: LayoutType;
+  }>;
   testName: string;
 };
 
@@ -141,6 +150,142 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
       expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
       expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(0);
+    });
+  });
+
+  describe('baseValue', () => {
+    describe('horizontal layout with numeric Y axis', () => {
+      const layout = 'horizontal';
+      it('should default baseValue to zero if no domain is defined in the axis', () => {
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data} layout={layout}>
+            <Area dataKey="value" />
+            <YAxis />
+          </ChartElement>,
+        );
+        const curves = container.querySelectorAll('.recharts-curve');
+        expect(curves).toHaveLength(2);
+        expect
+          .soft(curves[0])
+          .toHaveAttribute('d', 'M65,5L172.5,5L280,5L387.5,5L495,5L495,495L387.5,495L280,495L172.5,495L65,495Z');
+        expect.soft(curves[1]).toHaveAttribute('d', 'M65,5L172.5,5L280,5L387.5,5L495,5');
+      });
+
+      it('should default baseValue to the first number in domain', () => {
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data} layout={layout}>
+            <Area dataKey="value" />
+            <YAxis domain={[20, 300]} />
+          </ChartElement>,
+        );
+        const curves = container.querySelectorAll('.recharts-curve');
+        expect(curves).toHaveLength(2);
+        expect
+          .soft(curves[0])
+          .toHaveAttribute(
+            'd',
+            'M65,355L172.5,355L280,355L387.5,355L495,355L495,495L387.5,495L280,495L172.5,495L65,495Z',
+          );
+        expect.soft(curves[1]).toHaveAttribute('d', 'M65,355L172.5,355L280,355L387.5,355L495,355');
+      });
+
+      it('should set baseValue to dataMin', () => {
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data} layout={layout}>
+            <Area dataKey="value" baseValue="dataMin" />
+            <YAxis domain={[20, 300]} />
+          </ChartElement>,
+        );
+        const curves = container.querySelectorAll('.recharts-curve');
+        expect(curves).toHaveLength(2);
+        expect
+          .soft(curves[0])
+          .toHaveAttribute(
+            'd',
+            'M65,355L172.5,355L280,355L387.5,355L495,355L495,495L387.5,495L280,495L172.5,495L65,495Z',
+          );
+        expect.soft(curves[1]).toHaveAttribute('d', 'M65,355L172.5,355L280,355L387.5,355L495,355');
+      });
+
+      it('should set baseValue to dataMax', () => {
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data} layout={layout}>
+            <Area dataKey="value" baseValue="dataMax" />
+            <YAxis domain={[20, 300]} />
+          </ChartElement>,
+        );
+        const curves = container.querySelectorAll('.recharts-curve');
+        expect(curves).toHaveLength(2);
+        expect
+          .soft(curves[0])
+          .toHaveAttribute('d', 'M65,355L172.5,355L280,355L387.5,355L495,355L495,5L387.5,5L280,5L172.5,5L65,5Z');
+        expect.soft(curves[1]).toHaveAttribute('d', 'M65,355L172.5,355L280,355L387.5,355L495,355');
+      });
+    });
+
+    describe.todo('horizontal layout with categorical Y axis');
+    describe.todo('vertical layout with numeric X axis');
+    describe.todo('vertical layout with categorical X axis');
+
+    describe('with no axes', () => {
+      it('should default baseValue to 0', () => {
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data}>
+            <Area dataKey="value" />
+          </ChartElement>,
+        );
+        const curves = container.querySelectorAll('.recharts-curve');
+        expect(curves).toHaveLength(2);
+        expect
+          .soft(curves[0])
+          .toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5L495,495L372.5,495L250,495L127.5,495L5,495Z');
+        expect.soft(curves[1]).toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5');
+      });
+
+      it('should set baseValue to a number', () => {
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data}>
+            <Area dataKey="value" baseValue={9} />
+          </ChartElement>,
+        );
+        const curves = container.querySelectorAll('.recharts-curve');
+        expect(curves).toHaveLength(2);
+        expect
+          .soft(curves[0])
+          .toHaveAttribute(
+            'd',
+            'M5,5L127.5,5L250,5L372.5,5L495,5L495,450.9L372.5,450.9L250,450.9L127.5,450.9L5,450.9Z',
+          );
+        expect.soft(curves[1]).toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5');
+      });
+
+      it('should set baseValue to 0 when dataMin', () => {
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data}>
+            <Area dataKey="value" baseValue="dataMin" />
+          </ChartElement>,
+        );
+        const curves = container.querySelectorAll('.recharts-curve');
+        expect(curves).toHaveLength(2);
+        expect
+          .soft(curves[0])
+          .toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5L495,495L372.5,495L250,495L127.5,495L5,495Z');
+        expect.soft(curves[1]).toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5');
+      });
+
+      it('should set baseValue to dataMax', () => {
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data}>
+            <Area dataKey="value" baseValue="dataMax" />
+          </ChartElement>,
+        );
+        const curves = container.querySelectorAll('.recharts-curve');
+        expect(curves).toHaveLength(2);
+        expect
+          .soft(curves[0])
+          .toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5L495,5L372.5,5L250,5L127.5,5L5,5Z');
+        expect.soft(curves[1]).toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5');
+      });
     });
   });
 
