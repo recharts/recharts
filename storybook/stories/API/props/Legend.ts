@@ -75,49 +75,10 @@ export const LegendProps: StorybookArgs = {
   },
   iconType: {
     description: 'The type of icon in each legend item.',
-    defaultValue: 14,
+    defaultValue: 'line',
     table: {
       type: {
         summary: 'line | plainline | square | rect | circle | cross | diamond | star | triangle | wye',
-      },
-      category: 'General',
-    },
-  },
-  payload: {
-    description: 'The source data of the content to be displayed in the legend, usually calculated internally.',
-    defaultValue: [],
-    table: {
-      type: {
-        summary: 'Array',
-        detail: `[{ value: 'item name', type: 'line', id: 'ID01' }]`,
-      },
-      category: 'General',
-    },
-  },
-  chartWidth: {
-    description: 'The width of chart container, usually calculated internally.',
-    table: {
-      type: {
-        summary: 'Number',
-      },
-      category: 'General',
-    },
-  },
-  chartHeight: {
-    description: 'The height of chart container, usually calculated internally.',
-    table: {
-      type: {
-        summary: 'Number',
-      },
-      category: 'General',
-    },
-  },
-  margin: {
-    description: 'The margin of chart container, usually calculated internally.',
-    table: {
-      type: {
-        summary: 'Object',
-        detail: `{ top: 0, left: 0, right: 0, bottom: 0 }`,
       },
       category: 'General',
     },
@@ -132,7 +93,7 @@ export const LegendProps: StorybookArgs = {
 
         const renderLegend = (props) => {
           const { payload } = props;
-        
+
           return (
             <ul>
               {
@@ -159,84 +120,12 @@ export const LegendProps: StorybookArgs = {
     },
   },
   wrapperStyle: {
-    description: `The style of legend container which is a "position: absolute;" div element. 
+    description: `The style of legend container which is a "position: absolute;" div element.
     Because the position of legend is quite flexible, so you can change the position by the value of top, left, right, bottom in this option.
     And the format of wrapperStyle is the same as React inline style.`,
     table: {
       type: {
         summary: 'Object',
-      },
-      category: 'General',
-    },
-  },
-  onClick: {
-    description: 'The customized event handler of click on the items in this group',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseDown: {
-    description: 'The customized event handler of mousedown on the items in this group',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseUp: {
-    description: 'The customized event handler of mouseup on the items in this group',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseMove: {
-    description: 'The customized event handler of mousemove on the items in this group',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseOver: {
-    description: 'The customized event handler of mouseover on the items in this group',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseOut: {
-    description: 'The customized event handler of mouseout on the items in this group',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseEnter: {
-    description: 'The customized event handler of moustenter on the items in this group',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseLeave: {
-    description: 'The customized event handler of mouseleave on the items in this group',
-    table: {
-      type: {
-        summary: 'Function',
       },
       category: 'General',
     },
