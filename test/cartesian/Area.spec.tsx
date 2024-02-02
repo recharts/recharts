@@ -14,6 +14,7 @@ import {
   ScatterChart,
   YAxis,
 } from '../../src';
+import type { Props } from '../../src/cartesian/Area';
 import { LayoutType } from '../../src/util/types';
 
 type TestCase = {
@@ -53,6 +54,14 @@ const data = [
   { x: 130, y: 50, value: 100 },
   { x: 170, y: 50, value: 100 },
 ];
+
+const emptyBaseValues: ReadonlyArray<Props['baseValue']> = [undefined, NaN];
+
+type BaseValueTestCase = {
+  domain: [number, number];
+  expected: number;
+  axisType: 'number' | 'category' | undefined;
+};
 
 describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ ChartElement }) => {
   describe('label', () => {
@@ -327,5 +336,363 @@ describe.each(chartsThatDoNotSupportArea)('<Area /> as a child of $testName', ({
     );
 
     expect(container.querySelectorAll('.recharts-curve')).toHaveLength(0);
+  });
+});
+
+describe('getBaseValue', () => {
+  describe('when defined explicitly in props', () => {
+    it('should return number if baseValue is a number', () => {
+      // @ts-expect-error incomplete mock
+      const props: Props = {};
+      const item: Area = {
+        // @ts-expect-error incomplete mock
+        props: { baseValue: 8 },
+      };
+      // @ts-expect-error incomplete mock
+      const xAxis: Props['xAxis'] = {};
+      // @ts-expect-error incomplete mock
+      const yAxis: Props['yAxis'] = {};
+      const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+      expect(actual).toBe(8);
+    });
+
+    it('should read baseValue from chart props, if item.props.baseValue is undefined', () => {
+      // @ts-expect-error incomplete mock
+      const props: Props = {
+        baseValue: 9,
+      };
+      const item: Area = {
+        // @ts-expect-error incomplete mock
+        props: { baseValue: undefined },
+      };
+      // @ts-expect-error incomplete mock
+      const xAxis: Props['xAxis'] = {};
+      // @ts-expect-error incomplete mock
+      const yAxis: Props['yAxis'] = {};
+      const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+      expect(actual).toBe(9);
+    });
+
+    it('should prefer baseValue from Area props, if both are provided', () => {
+      // @ts-expect-error incomplete mock
+      const props: Props = {
+        baseValue: 9,
+      };
+      const item: Area = {
+        // @ts-expect-error incomplete mock
+        props: { baseValue: 10 },
+      };
+      // @ts-expect-error incomplete mock
+      const xAxis: Props['xAxis'] = {};
+      // @ts-expect-error incomplete mock
+      const yAxis: Props['yAxis'] = {};
+      const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+      expect(actual).toBe(10);
+    });
+
+    it('should return number from domain when baseValue is NaN', () => {
+      // @ts-expect-error incomplete mock
+      const props: Props = {
+        layout: 'horizontal',
+      };
+      const item: Area = {
+        // @ts-expect-error incomplete mock
+        props: { baseValue: NaN },
+      };
+      // @ts-expect-error incomplete mock
+      const xAxis: Props['xAxis'] = {};
+      const yAxis: Props['yAxis'] = {
+        scale: {
+          // @ts-expect-error incomplete mock
+          domain: () => [30, 40],
+        },
+      };
+      const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+      expect(actual).toBe(30);
+    });
+  });
+
+  describe.each(emptyBaseValues)('when baseValue is %s', baseValue => {
+    const testCases: ReadonlyArray<BaseValueTestCase> = [
+      { domain: [4, 5], expected: 4, axisType: 'number' },
+      { domain: [5, 4], expected: 4, axisType: 'number' },
+      { domain: [5, 4], expected: 5, axisType: 'category' },
+      { domain: [5, 4], expected: 5, axisType: undefined },
+      {
+        domain: [-10, -20],
+        expected: -10,
+        axisType: 'number',
+      },
+      {
+        domain: [-20, -10],
+        expected: -10,
+        axisType: 'number',
+      },
+      {
+        domain: [-10, -20],
+        expected: -10,
+        axisType: 'category',
+      },
+      {
+        domain: [-20, -10],
+        expected: -20,
+        axisType: 'category',
+      },
+      {
+        domain: [-10, -20],
+        expected: -10,
+        axisType: undefined,
+      },
+      {
+        domain: [-20, -10],
+        expected: -20,
+        axisType: undefined,
+      },
+    ];
+    describe('in horizontal layout uses Y axis', () => {
+      test.each(testCases)(
+        'should return $expected when $axisType axis domain is $domain',
+        ({ domain, axisType, expected }) => {
+          // @ts-expect-error incomplete mock
+          const props: Props = {
+            baseValue,
+            layout: 'horizontal',
+          };
+          const item: Area = {
+            // @ts-expect-error incomplete mock
+            props: { baseValue },
+          };
+          // @ts-expect-error incomplete mock
+          const xAxis: Props['xAxis'] = {};
+          const yAxis: Props['yAxis'] = {
+            scale: {
+              // @ts-expect-error incomplete mock
+              domain: () => domain,
+            },
+            type: axisType,
+          };
+          const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+          expect(actual).toBe(expected);
+        },
+      );
+    });
+    describe('in vertical layout behaves the same but uses X axis instead of Y', () => {
+      test.each(testCases)(
+        'should return $expected when $axisType axis domain is $domain',
+        ({ domain, axisType, expected }) => {
+          // @ts-expect-error incomplete mock
+          const props: Props = {
+            baseValue,
+            layout: 'vertical',
+          };
+          const item: Area = {
+            // @ts-expect-error incomplete mock
+            props: { baseValue },
+          };
+          const xAxis: Props['xAxis'] = {
+            scale: {
+              // @ts-expect-error incomplete mock
+              domain: () => domain,
+            },
+            type: axisType,
+          };
+          // @ts-expect-error incomplete mock
+          const yAxis: Props['yAxis'] = {};
+          const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+          expect(actual).toBe(expected);
+        },
+      );
+    });
+  });
+
+  describe('when baseValue is "dataMin"', () => {
+    const baseValue = 'dataMin';
+    const testCases: ReadonlyArray<BaseValueTestCase> = [
+      { domain: [4, 5], expected: 4, axisType: 'number' },
+      { domain: [5, 4], expected: 4, axisType: 'number' },
+      { domain: [5, 4], expected: 5, axisType: 'category' },
+      { domain: [5, 4], expected: 5, axisType: undefined },
+      {
+        domain: [-10, -20],
+        expected: -20, // this is different from the 'undefined' behaviour!
+        axisType: 'number',
+      },
+      {
+        domain: [-20, -10],
+        expected: -20, // this is different from the 'undefined' behaviour!
+        axisType: 'number',
+      },
+      {
+        domain: [-10, -20],
+        expected: -10,
+        axisType: 'category',
+      },
+      {
+        domain: [-20, -10],
+        expected: -20,
+        axisType: 'category',
+      },
+      {
+        domain: [-10, -20],
+        expected: -10,
+        axisType: undefined,
+      },
+      {
+        domain: [-20, -10],
+        expected: -20,
+        axisType: undefined,
+      },
+    ];
+    describe('in horizontal layout uses Y axis', () => {
+      test.each(testCases)(
+        'should return $expected when $axisType axis domain is $domain',
+        ({ domain, axisType, expected }) => {
+          // @ts-expect-error incomplete mock
+          const props: Props = {
+            baseValue,
+            layout: 'horizontal',
+          };
+          const item: Area = {
+            // @ts-expect-error incomplete mock
+            props: { baseValue },
+          };
+          // @ts-expect-error incomplete mock
+          const xAxis: Props['xAxis'] = {};
+          const yAxis: Props['yAxis'] = {
+            scale: {
+              // @ts-expect-error incomplete mock
+              domain: () => domain,
+            },
+            type: axisType,
+          };
+          const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+          expect(actual).toBe(expected);
+        },
+      );
+    });
+    describe('in vertical layout behaves the same but uses X axis instead of Y', () => {
+      test.each(testCases)(
+        'should return $expected when $axisType axis domain is $domain',
+        ({ domain, axisType, expected }) => {
+          // @ts-expect-error incomplete mock
+          const props: Props = {
+            baseValue,
+            layout: 'vertical',
+          };
+          const item: Area = {
+            // @ts-expect-error incomplete mock
+            props: { baseValue },
+          };
+          const xAxis: Props['xAxis'] = {
+            scale: {
+              // @ts-expect-error incomplete mock
+              domain: () => domain,
+            },
+            type: axisType,
+          };
+          // @ts-expect-error incomplete mock
+          const yAxis: Props['yAxis'] = {};
+          const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+          expect(actual).toBe(expected);
+        },
+      );
+    });
+  });
+
+  describe('when baseValue is "dataMax"', () => {
+    const baseValue = 'dataMax';
+    const testCases: ReadonlyArray<BaseValueTestCase> = [
+      // "max" means mathematical maximum for numerical axis
+      { domain: [4, 5], expected: 5, axisType: 'number' },
+      { domain: [5, 4], expected: 5, axisType: 'number' },
+      // but it means "second" in categorical axis
+      { domain: [5, 4], expected: 4, axisType: 'category' },
+      { domain: [5, 4], expected: 4, axisType: undefined },
+      // and same for negative numbers
+      {
+        domain: [-10, -20],
+        expected: -10,
+        axisType: 'number',
+      },
+      {
+        domain: [-20, -10],
+        expected: -10,
+        axisType: 'number',
+      },
+      {
+        domain: [-10, -20],
+        expected: -20,
+        axisType: 'category',
+      },
+      {
+        domain: [-20, -10],
+        expected: -10,
+        axisType: 'category',
+      },
+      {
+        domain: [-10, -20],
+        expected: -20,
+        axisType: undefined,
+      },
+      {
+        domain: [-20, -10],
+        expected: -10,
+        axisType: undefined,
+      },
+    ];
+    describe('in horizontal layout uses Y axis', () => {
+      test.each(testCases)(
+        'should return $expected when $axisType axis domain is $domain',
+        ({ domain, axisType, expected }) => {
+          // @ts-expect-error incomplete mock
+          const props: Props = {
+            baseValue,
+            layout: 'horizontal',
+          };
+          const item: Area = {
+            // @ts-expect-error incomplete mock
+            props: { baseValue },
+          };
+          // @ts-expect-error incomplete mock
+          const xAxis: Props['xAxis'] = {};
+          const yAxis: Props['yAxis'] = {
+            scale: {
+              // @ts-expect-error incomplete mock
+              domain: () => domain,
+            },
+            type: axisType,
+          };
+          const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+          expect(actual).toBe(expected);
+        },
+      );
+    });
+    describe('in vertical layout behaves the same but uses X axis instead of Y', () => {
+      test.each(testCases)(
+        'should return $expected when $axisType axis domain is $domain',
+        ({ domain, axisType, expected }) => {
+          // @ts-expect-error incomplete mock
+          const props: Props = {
+            baseValue,
+            layout: 'vertical',
+          };
+          const item: Area = {
+            // @ts-expect-error incomplete mock
+            props: { baseValue },
+          };
+          const xAxis: Props['xAxis'] = {
+            scale: {
+              // @ts-expect-error incomplete mock
+              domain: () => domain,
+            },
+            type: axisType,
+          };
+          // @ts-expect-error incomplete mock
+          const yAxis: Props['yAxis'] = {};
+          const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+          expect(actual).toBe(expected);
+        },
+      );
+    });
   });
 });
