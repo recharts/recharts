@@ -46,7 +46,14 @@ export const LegendProps: StorybookArgs = {
     },
   },
   align: {
-    description: 'The alignment of legend items in `horizontal` direction',
+    description: `Sets horizontal position of the Legend relative to the chart:
+
+- \`left\` shows the Legend to the left of the chart, and chart width reduces automatically to make space for it.
+- \`right\` shows the Legend to the right of the chart, and chart width reduces automatically.
+- \`center\` shows the Legend in the middle of chart, and chart width remains unchanged.
+
+The exact behavior changes depending on \`verticalAlign\` prop.`,
+    defaultValue: 'center',
     table: {
       type: {
         summary: 'left | center | right',
@@ -55,7 +62,13 @@ export const LegendProps: StorybookArgs = {
     },
   },
   verticalAlign: {
-    description: 'The alignment of legend items in `vertical` direction',
+    description: `Sets vertical position of the Legend relative to the chart:
+    
+- \`bottom\` shows the Legend below chart, and chart height reduces automatically to make space for it.
+- \`top\` shows the Legend above chart, and chart height reduces automatically.
+- \`middle\` shows the Legend in the middle of chart, covering other content, and chart height remains unchanged.
+
+The exact behavior changes depending on \`align\` prop.`,
     table: {
       type: {
         summary: 'top | middle | bottom',
