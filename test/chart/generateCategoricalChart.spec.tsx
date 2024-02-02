@@ -233,7 +233,7 @@ describe('generateCategoricalChart', () => {
   });
 
   describe('createDefaultState', () => {
-    it('Should have the correct dataIndex', () => {
+    describe('Should have the correct dataIndex', () => {
       it('even when invalid brush index(no data)', () => {
         const state = createDefaultState({ children: [<Brush endIndex={-1} startIndex={-1} />] });
 
