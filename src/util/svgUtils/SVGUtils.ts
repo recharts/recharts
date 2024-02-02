@@ -8,7 +8,7 @@ import { SVGElementAttributeTypes } from './types';
  * @param {SVGElementAttributeTypes} svgElementAttributes - An object with svg elements and their attributes in kebab-case
  * @returns {SVGElementAttributeTypes} - An object with svg elements and their attributes in camelCase
  */
-export const svgElementAttributesInCamelCase = (
+export const getSVGElementAttributesInCamelCase = (
   svgElementAttributes: SVGElementAttributeTypes,
 ): SVGElementAttributeTypes => {
   return Object.keys(svgElementAttributes).reduce((acc, key: keyof SVGElementAttributeTypes) => {
@@ -23,6 +23,6 @@ export const svgElementAttributesInCamelCase = (
  * @param {SVGElementAttributeTypes} svgElementAttributes :An object that mapped svg elements to their respective attributes
  * @returns {string[]} - An array of svg element tags
  */
-export const SVGElementTags = (svgElementAttributes: SVGElementAttributeTypes) => {
+export const getSVGElementTags = (svgElementAttributes: SVGElementAttributeTypes) => {
   return Object.keys(svgElementAttributes).slice(1);
 };
