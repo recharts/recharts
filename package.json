@@ -107,7 +107,7 @@
     "@types/d3-shape": "^3.1.0",
     "@types/d3-time-format": "^4.0.0",
     "@types/lodash": "^4.14.144",
-    "@types/node": "^14.18.34",
+    "@types/node": "18.x.x",
     "@types/react": "^16.0.0",
     "@types/react-dom": "^16.0.0",
     "@types/react-is": "^17.0.0",
@@ -157,7 +157,7 @@
     "webpack-dev-server": "^4.6.0"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   },
   "license": "MIT"
 }
