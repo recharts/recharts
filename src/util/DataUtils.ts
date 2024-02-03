@@ -106,7 +106,7 @@ export const interpolateNumber = (numberA: number, numberB: number) => {
 export function findEntryInArray<T>(
   ary: Array<T>,
   specifiedKey: number | string | ((entry: T) => unknown),
-  specifiedValue: any,
+  specifiedValue: unknown,
 ) {
   if (!ary || !ary.length) {
     return null;
