@@ -1,4 +1,5 @@
 import camelCase from 'lodash/camelCase';
+import union from 'lodash/union';
 
 // @Types
 import { SVGElementAttributeTypes } from './types';
@@ -25,4 +26,21 @@ export const getSVGElementAttributesInCamelCase = (
  */
 export const getSVGElementTags = (svgElementAttributes: SVGElementAttributeTypes) => {
   return Object.keys(svgElementAttributes).slice(1);
+};
+
+export const findAllAttributesPresent = (
+  attributesMap: Record<string | keyof SVGElementAttributeTypes, ReadonlyArray<string>>,
+) => {
+  // remove universal attributes
+  const { '*': _, ...rest } = attributesMap;
+  const attributesArray = Object.values(rest);
+  // Filter out empty attribute arrays
+  const nonEmptyArrays = attributesArray.filter(arr => !!arr.length);
+  if (nonEmptyArrays.length === 0) {
+    return [];
+  }
+
+  return union(...nonEmptyArrays)
+    .filter(attr => attr !== 'type')
+    .sort();
 };

@@ -95,3 +95,5 @@ export type SVGElementAttributeTypes = {
   view: ReadonlyArray<string>;
   vkern: ReadonlyArray<string>;
 };
+
+export type SVGElementType = keyof SVGElementAttributeTypes;

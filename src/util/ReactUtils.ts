@@ -9,9 +9,14 @@ import { isFragment } from 'react-is';
 import { DotProps } from '..';
 import { isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
-import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys } from './types';
 import { AreaDot } from '../cartesian/Area';
 import { LineDot } from '../cartesian/Line';
+import { getSVGElementAttributesInCamelCase, getSVGElementTags, findAllAttributesPresent } from './svgUtils/SVGUtils';
+import { svgElementAttributes } from './svgUtils/SVGElementAttributes';
+
+// @Types
+import { FilteredSvgElementType, EventKeys } from './types';
+import { SVGElementType } from './svgUtils/types';
 
 const REACT_BROWSER_EVENT_MAP: Record<string, string> = {
   click: 'onClick',
@@ -183,87 +188,7 @@ export const validateWidthHeight = (el: any): boolean => {
   return true;
 };
 
-const SVG_TAGS: string[] = [
-  'a',
-  'altGlyph',
-  'altGlyphDef',
-  'altGlyphItem',
-  'animate',
-  'animateColor',
-  'animateMotion',
-  'animateTransform',
-  'circle',
-  'clipPath',
-  'color-profile',
-  'cursor',
-  'defs',
-  'desc',
-  'ellipse',
-  'feBlend',
-  'feColormatrix',
-  'feComponentTransfer',
-  'feComposite',
-  'feConvolveMatrix',
-  'feDiffuseLighting',
-  'feDisplacementMap',
-  'feDistantLight',
-  'feFlood',
-  'feFuncA',
-  'feFuncB',
-  'feFuncG',
-  'feFuncR',
-  'feGaussianBlur',
-  'feImage',
-  'feMerge',
-  'feMergeNode',
-  'feMorphology',
-  'feOffset',
-  'fePointLight',
-  'feSpecularLighting',
-  'feSpotLight',
-  'feTile',
-  'feTurbulence',
-  'filter',
-  'font',
-  'font-face',
-  'font-face-format',
-  'font-face-name',
-  'font-face-url',
-  'foreignObject',
-  'g',
-  'glyph',
-  'glyphRef',
-  'hkern',
-  'image',
-  'line',
-  'lineGradient',
-  'marker',
-  'mask',
-  'metadata',
-  'missing-glyph',
-  'mpath',
-  'path',
-  'pattern',
-  'polygon',
-  'polyline',
-  'radialGradient',
-  'rect',
-  'script',
-  'set',
-  'stop',
-  'style',
-  'svg',
-  'switch',
-  'symbol',
-  'text',
-  'textPath',
-  'title',
-  'tref',
-  'tspan',
-  'use',
-  'view',
-  'vkern',
-];
+const SVG_TAGS: string[] = getSVGElementTags(svgElementAttributes);
 
 const isSvgElement = (child: any) => child && child.type && isString(child.type) && SVG_TAGS.indexOf(child.type) >= 0;
 
@@ -282,18 +207,22 @@ export const isValidSpreadableProp = (
   property: unknown,
   key: string,
   includeEvents?: boolean,
-  svgElementType?: FilteredSvgElementType,
+  svgElementType?: SVGElementType,
 ) => {
   /**
    * If the svg element type is explicitly included, check against the filtered element key map
    * to determine if there are attributes that should only exist on that element type.
    * @todo Add an internal cjs version of https://github.com/wooorm/svg-element-attributes for full coverage.
    */
-  const matchingElementTypeKeys = FilteredElementKeyMap?.[svgElementType] ?? [];
+  const svgElementAttributesInCamelCase = getSVGElementAttributesInCamelCase(svgElementAttributes);
+  const matchingElementTypeKeys = svgElementAttributesInCamelCase?.[svgElementType] ?? [];
+
+  const { polygon, polyline, svg, ...rest } = svgElementAttributesInCamelCase;
+  const svgAttributes = findAllAttributesPresent(rest);
 
   return (
     (!isFunction(property) &&
-      ((svgElementType && matchingElementTypeKeys.includes(key)) || SVGElementPropKeys.includes(key))) ||
+      ((svgElementType && matchingElementTypeKeys.includes(key)) || svgAttributes.includes(key))) ||
     (includeEvents && EventKeys.includes(key))
   );
 };
