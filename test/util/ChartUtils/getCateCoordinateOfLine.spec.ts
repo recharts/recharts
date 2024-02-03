@@ -8,7 +8,7 @@ describe('getCateCoordinateOfLine', () => {
     it('should return null when passed empty params', () => {
       // @ts-expect-error incomplete mock data
       const actual = getCateCoordinateOfLine({
-        axis: {},
+        axis: { scale: mockScale },
       });
       expect(actual).toBeNull();
     });
@@ -47,7 +47,7 @@ describe('getCateCoordinateOfLine', () => {
     it('should return null if there are no ticks', () => {
       // @ts-expect-error incomplete mock data
       const actual = getCateCoordinateOfLine({
-        axis: { type: 'category' },
+        axis: { type: 'category', scale: mockScale },
         ticks: [],
       });
       expect(actual).toBeNull();
@@ -56,7 +56,7 @@ describe('getCateCoordinateOfLine', () => {
     it('should return first tick coordinate with half of bandSize added, if axis.dataKey is undefined', () => {
       // @ts-expect-error incomplete mock data
       const actual = getCateCoordinateOfLine({
-        axis: { type: 'category' },
+        axis: { type: 'category', scale: mockScale },
         ticks: [{ coordinate: 8 }],
         index: 0,
         bandSize: 2,
@@ -67,7 +67,7 @@ describe('getCateCoordinateOfLine', () => {
     it('should follow axis.dataKey -> ticks.value -> tick.coordinate and return that', () => {
       // @ts-expect-error incomplete mock data
       const actual = getCateCoordinateOfLine({
-        axis: { type: 'category', dataKey: 'foo' },
+        axis: { type: 'category', dataKey: 'foo', scale: mockScale },
         entry: { foo: 'bar' },
         ticks: [{ coordinate: 8 }, { coordinate: 16, value: 'bar' }],
         bandSize: 4,
