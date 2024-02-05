@@ -1086,7 +1086,7 @@ export const getTicksOfScale = (scale: any, opts: any) => {
   return null;
 };
 
-export const getCateCoordinateOfLine = ({
+export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
   axis,
   ticks,
   bandSize,
@@ -1094,16 +1094,23 @@ export const getCateCoordinateOfLine = ({
   index,
   dataKey,
 }: {
-  axis: any;
+  axis: {
+    dataKey?: DataKey<T>;
+    allowDuplicatedCategory?: boolean;
+    type?: BaseAxisProps['type'];
+    scale: (v: number) => number;
+  };
   ticks: Array<TickItem>;
   bandSize: number;
-  entry: any;
+  entry: T;
   index: number;
-  dataKey?: string | number | ((obj: any) => any);
-}) => {
+  dataKey?: DataKey<T>;
+}): number | null {
   if (axis.type === 'category') {
     // find coordinate of category axis by the value of category
+    // @ts-expect-error why does this use direct object access instead of getValueByDataKey?
     if (!axis.allowDuplicatedCategory && axis.dataKey && !isNil(entry[axis.dataKey])) {
+      // @ts-expect-error why does this use direct object access instead of getValueByDataKey?
       const matchedTick = findEntryInArray(ticks, 'value', entry[axis.dataKey]);
 
       if (matchedTick) {
@@ -1117,7 +1124,7 @@ export const getCateCoordinateOfLine = ({
   const value = getValueByDataKey(entry, !isNil(dataKey) ? dataKey : axis.dataKey);
 
   return !isNil(value) ? axis.scale(value) : null;
-};
+}
 
 export const getCateCoordinateOfBar = ({
   axis,
