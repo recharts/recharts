@@ -2,7 +2,7 @@ import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
 import { vi } from 'vitest';
-import { Bar, BarChart, Rectangle, RectangleProps, Tooltip, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, BarProps, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { testChartLayoutContext } from '../util/context';
 
@@ -127,7 +127,7 @@ describe('<BarChart />', () => {
     expect(container.querySelectorAll('.recharts-tooltip-wrapper')).toHaveLength(1);
   });
 
-  test('Renders customized active bar by default', () => {
+  test('Does not render an active bar by default', () => {
     vi.useFakeTimers();
 
     const { container } = render(
@@ -146,7 +146,7 @@ describe('<BarChart />', () => {
 
     vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
-    expect(bar).toHaveLength(1);
+    expect(bar).toHaveLength(0);
   });
 
   test('Renders customized active bar when activeBar set to be a function', () => {
@@ -157,8 +157,9 @@ describe('<BarChart />', () => {
             dataKey="uv"
             stackId="test"
             fill="#ff7300"
-            activeBar={(props: RectangleProps) => {
-              return <Rectangle {...props} name={props.name as string} />;
+            activeBar={(props: BarProps) => {
+              // @ts-expect-error this should work but it doesn't because of the events injected into BarProps
+              return <Rectangle {...props} name={String(props.name)} />;
             }}
           />
           <Tooltip />
@@ -279,14 +280,14 @@ describe('<BarChart />', () => {
   });
 
   test('Render customized shapem when shape is set to be a function', () => {
-    const renderShape = (props: RectangleProps & DataType) => {
+    const renderShape = (props: BarProps): React.ReactElement => {
       const { x, y } = props;
 
       return <circle className="customized-shape" cx={x} cy={y} r={8} />;
     };
     const { container } = render(
       <BarChart width={100} height={50} data={data}>
-        <Bar dataKey="uv" label fill="#ff7300" shape={renderShape} />
+        <Bar dataKey="uv" label fill="#ff7300" shape={(props: BarProps) => renderShape(props)} />
       </BarChart>,
     );
     expect(container.querySelectorAll('.customized-shape')).toHaveLength(4);
