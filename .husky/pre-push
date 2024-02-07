@@ -1,7 +1,7 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npm test
+npm run tsc && npm test
 
 npm run lint
 npm run lint-storybook

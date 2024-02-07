@@ -9,7 +9,7 @@ jobs:
   build-and-test:
     name: Build and Test on ${{ matrix.node-version }}
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         node-version: [16.x, 18.x, 20.x]
@@ -28,9 +28,8 @@ jobs:
         run: npm run build --if-present
       - name: Test
         run: |
-          tsc --noEmit
+          tsc
           npm run lint
           npm test
       - name: Serve Storybook and run tests
         run: npm run test-storybook:ci
-
