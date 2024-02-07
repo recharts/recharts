@@ -28,7 +28,7 @@ jobs:
         run: npm run build --if-present
       - name: Test
         run: |
-          tsc
+          npm run tsc
           npm run lint
           npm test
       - name: Serve Storybook and run tests
