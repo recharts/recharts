@@ -23,7 +23,8 @@ const files = await getFiles('types');
 
 files.forEach(fileName => {
   const content = fs.readFileSync(fileName).toString();
-  test(`should match ${fileName} snapshot`, () => {
+  const testDisambiguator = fileName.split('/types/')[1];
+  test(`should match ${testDisambiguator} snapshot`, () => {
     const stringContent = JSON.stringify(content);
     expect(stringContent).toMatchSnapshot();
   });
