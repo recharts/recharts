@@ -7,10 +7,11 @@ on: [push, pull_request]
 
 jobs:
   build-and-test:
-    name: Build and Test on ${{ matrix.node-version }}
+    name: Build and Test on ${{ matrix.node-version }} with react@${{ matrix.react }}
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false # I only want this for experimenting with the build; remove this before merging
       matrix:
         node-version: [16.x, 18.x, 20.x]
         react: [16.0, 16.8, 17.x, 18.x]
@@ -26,7 +27,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Install react@${{ matrix.react }}
-        run: npm install --no-save react@${{ matrix.react }}
+        # the --force is for debugging only; remove it before merging
+        run: |
+          npm uninstall --no-save react
+          npm install --no-save --force react@${{ matrix.react }}
       - name: Run build
         run: npm run build --if-present
       - name: Test
