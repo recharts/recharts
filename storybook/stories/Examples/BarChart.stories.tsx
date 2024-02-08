@@ -187,6 +187,7 @@ export const CustomShape = {
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
+        <Tooltip />
         <YAxis />
         <Bar dataKey="uv" fill="#8884d8" shape={<TriangleBar />} label={{ position: 'top' }}>
           {pageData.map(({ name }, index) => (

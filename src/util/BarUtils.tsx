@@ -9,7 +9,7 @@ import { Shape } from './ActiveShapeUtils';
 // When props are being spread in from a user defined component in Bar,
 // the prop types of an SVGElement have these typed as something else.
 // This function will return the passed in props
-// along with x, y, height as numbers, name as a string, and radius as number | [number, numbe, number, number]
+// along with x, y, height as numbers, name as a string, and radius as number | [number, number, number, number]
 function typeguardBarRectangleProps(
   { x: xProp, y: yProp, ...option }: SVGProps<SVGPathElement>,
   props: BarProps,
