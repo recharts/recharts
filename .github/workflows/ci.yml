@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      max-parallel: 1
       fail-fast: false # I only want this for experimenting with the build; remove this before merging
       matrix:
         node-version: [16.x, 18.x, 20.x]
