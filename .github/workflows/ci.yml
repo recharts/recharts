@@ -24,9 +24,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
       - name: Install dependencies
-        run: |
-          npm ci
-          npm install --no-save react@${{ matrix.react }}
+        run: npm ci
+      - name: Install react@${{ matrix.react }}
+        run: npm install --no-save react@${{ matrix.react }}
       - name: Run build
         run: npm run build --if-present
       - name: Test
