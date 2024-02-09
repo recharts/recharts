@@ -24,7 +24,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
    * 1.1 * 1.1 * 100
    * 1.1 * 2.1 * 100
    */
-  const floatingPointPrecisionExamples = [121.00000000000002, 231.00000000000005];
+  const floatingPointPrecisionExamples = [121.0000000000002, 231.0000000000005];
   const verticalPoints = [100, 200, 300, 400];
 
   const chartMargin: Margin = {
