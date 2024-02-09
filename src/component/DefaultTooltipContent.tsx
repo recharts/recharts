@@ -2,7 +2,7 @@
  * @fileOverview Default Tooltip Content
  */
 
-import React, { CSSProperties, ReactNode } from 'react';
+import React, { CSSProperties, HTMLAttributes, ReactNode } from 'react';
 import sortBy from 'lodash/sortBy';
 import isNil from 'lodash/isNil';
 import clsx from 'clsx';
@@ -52,6 +52,7 @@ export interface Props<TValue extends ValueType, TName extends NameType> {
   label?: any;
   payload?: Array<Payload<TValue, TName>>;
   itemSorter?: (item: Payload<TValue, TName>) => number | string;
+  accessibilityLayer?: boolean;
 }
 
 export const DefaultTooltipContent = <TValue extends ValueType, TName extends NameType>(
@@ -69,6 +70,7 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
     labelClassName,
     label,
     labelFormatter,
+    accessibilityLayer = false,
   } = props;
 
   const renderContent = () => {
@@ -142,8 +144,15 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
     finalLabel = labelFormatter(label, payload);
   }
 
+  const accessibilityAttributes = accessibilityLayer
+    ? ({
+        role: 'status',
+        'aria-live': 'assertive',
+      } as HTMLAttributes<HTMLDivElement>)
+    : {};
+
   return (
-    <div className={wrapperCN} style={finalStyle}>
+    <div className={wrapperCN} style={finalStyle} {...accessibilityAttributes}>
       <p className={labelCN} style={finalLabelStyle}>
         {React.isValidElement(finalLabel) ? finalLabel : `${finalLabel}`}
       </p>
