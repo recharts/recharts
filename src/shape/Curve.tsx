@@ -104,10 +104,16 @@ export type Props = Omit<PresentationAttributesWithProps<CurveProps, SVGPathElem
 type GetPathProps = Pick<Props, 'type' | 'points' | 'baseLine' | 'layout' | 'connectNulls'>;
 
 /**
- * Calculate the path of curve
- * @return {String} path
+ * Calculate the path of curve. Returns null if points is an empty array.
+ * @return path or null
  */
-const getPath = ({ type = 'linear', points = [], baseLine, layout, connectNulls = false }: GetPathProps): string => {
+export const getPath = ({
+  type = 'linear',
+  points = [],
+  baseLine,
+  layout,
+  connectNulls = false,
+}: GetPathProps): string | null => {
   const curveFactory = getCurveFactory(type, layout);
   const formatPoints = connectNulls ? points.filter(entry => defined(entry)) : points;
   let lineFunction;

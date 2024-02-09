@@ -71,7 +71,7 @@ describe('<Tooltip />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
 
     // After the mouse over event over the chart, the tooltip wrapper still is not set to visible,
     // but the content is already created based on the nearest data point.
@@ -99,10 +99,10 @@ describe('<Tooltip />', () => {
     mock.mockRestore();
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseMove(chart, { clientX: 200, clientY: 200 });
+    fireEvent.mouseMove(chart!, { clientX: 200, clientY: 200 });
 
-    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
-    expect(tooltip.getAttribute('style').includes('translate')).toBe(true);
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper')!;
+    expect(tooltip.getAttribute('style')!.includes('translate')).toBe(true);
   });
 
   test('Mouse over renders content with multiple data sets', () => {
@@ -138,7 +138,7 @@ describe('<Tooltip />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
 
     // After the mouse over event over the chart, the tooltip wrapper still is not set to visible,
     // but the content is already created based on the nearest data point.
@@ -167,7 +167,7 @@ describe('<Tooltip />', () => {
       { category: 'D', value: 0.6 },
     ];
 
-    let tooltipPayload: any[] | null = null;
+    let tooltipPayload: any[] | null | undefined = null;
 
     const { container } = render(
       <div role="main" style={{ width: '400px', height: '400px' }}>
@@ -188,11 +188,11 @@ describe('<Tooltip />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
     expect(tooltipPayload).not.toBeNull();
     expect(tooltipPayload).toHaveLength(2);
-    expect(tooltipPayload[0].payload.value).toEqual(0.7);
-    expect(tooltipPayload[1].payload.value).toEqual(0.4);
+    expect(tooltipPayload![0]?.payload.value).toEqual(0.7);
+    expect(tooltipPayload![1]?.payload.value).toEqual(0.4);
   });
 
   it('Render customized tooltip when content is set to be a react element', () => {
@@ -208,7 +208,7 @@ describe('<Tooltip />', () => {
 
     const chart = container.querySelector('.recharts-wrapper');
 
-    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
 
     const customizedContent = container.querySelector('.customized');
     expect(customizedContent).toBeInTheDocument();
@@ -229,9 +229,9 @@ describe('<Tooltip />', () => {
         </LineChart>,
       );
 
-      const line = container.querySelector('.recharts-cartesian-grid-horizontal line');
+      const line = container.querySelector('.recharts-cartesian-grid-horizontal line')!;
       const chart = container.querySelector('.recharts-wrapper');
-      fireEvent.mouseOver(chart, { clientX: +line.getAttribute('x') + 1, clientY: 50 });
+      fireEvent.mouseOver(chart!, { clientX: +line.getAttribute('x')! + 1, clientY: 50 });
       expect(getByText(container, '1398')).toBeVisible();
     });
   });
@@ -249,11 +249,11 @@ describe('<Tooltip />', () => {
       expect(tooltip).not.toBeVisible();
 
       const chart = container.querySelector('.recharts-wrapper');
-      fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+      fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
 
       expect(tooltip).toBeVisible();
 
-      fireEvent.mouseOut(chart);
+      fireEvent.mouseOut(chart!);
 
       // Still visible after moving out of the chart, because active is true.
       expect(tooltip).toBeVisible();
@@ -272,11 +272,11 @@ describe('<Tooltip />', () => {
     expect(tooltip).not.toBeVisible();
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
 
     expect(tooltip).not.toBeVisible();
 
-    fireEvent.mouseOut(chart);
+    fireEvent.mouseOut(chart!);
 
     expect(tooltip).not.toBeVisible();
   });
@@ -293,11 +293,11 @@ describe('<Tooltip />', () => {
     expect(tooltip).not.toBeVisible();
 
     const chart = container.querySelector('.recharts-wrapper');
-    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+    fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
 
     expect(tooltip).toBeVisible();
 
-    fireEvent.mouseOut(chart);
+    fireEvent.mouseOut(chart!);
 
     expect(tooltip).not.toBeVisible();
   });
@@ -326,7 +326,7 @@ describe('<Tooltip />', () => {
       expect(tooltipPayload).toHaveLength(0);
 
       const chart = container.querySelector('.recharts-wrapper');
-      fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+      fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
 
       expect(tooltipPayload.map(({ name }) => name).join('')).toBe('12345');
     });
@@ -354,7 +354,7 @@ describe('<Tooltip />', () => {
       expect(tooltipPayload).toHaveLength(0);
 
       const chart = container.querySelector('.recharts-wrapper');
-      fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+      fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
 
       expect(tooltipPayload.map(({ name }) => name).join('')).toBe('5');
     });
@@ -449,7 +449,7 @@ describe('<Tooltip />', () => {
   test('defaultIndex should work with bar charts', () => {
     const { container } = render(
       <BarChart width={100} height={50} data={data}>
-        <Bar dataKey="uv" label fill="#ff7300" />
+        <Bar dataKey="uv" label fill="#ff7300" activeBar />
         <Tooltip defaultIndex={2} />
       </BarChart>,
     );
@@ -463,7 +463,7 @@ describe('<Tooltip />', () => {
     // The cursor should also be visible
     expect(container.querySelector('.recharts-tooltip-cursor')).toBeVisible();
 
-    // The box around the active bar should also be visible
+    // The box around the active bar should also be visible (if set)
     expect(container.querySelector('.recharts-active-bar')).toBeVisible();
 
     // "2uv..." should be displayed in the Tooltip payload

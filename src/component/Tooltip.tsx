@@ -38,6 +38,7 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
 }
 
 export type TooltipProps<TValue extends ValueType, TName extends NameType> = ToltipContentProps<TValue, TName> & {
+  accessibilityLayer?: boolean;
   /**
    * If true, then Tooltip is always displayed, once an activeIndex is set by mouse over, or programmatically.
    * If false, then Tooltip is never displayed.
@@ -74,6 +75,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   static displayName = 'Tooltip';
 
   static defaultProps = {
+    accessibilityLayer: false,
     allowEscapeViewBox: { x: false, y: false },
     animationDuration: 400,
     animationEasing: 'ease',

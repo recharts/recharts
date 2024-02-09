@@ -95,7 +95,7 @@ export interface BarProps extends InternalBarProps {
   label?: ImplicitLabelType;
 }
 
-export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGPathElement>, 'radius'> & BarProps;
+export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGPathElement>, 'radius' | 'name'> & BarProps;
 
 interface State {
   readonly isAnimationFinished?: boolean;
@@ -115,7 +115,7 @@ export class Bar extends PureComponent<Props, State> {
     hide: false,
     data: [] as BarRectangleItem[],
     layout: 'vertical',
-    activeBar: true,
+    activeBar: false,
     isAnimationActive: !Global.isSsr,
     animationBegin: 0,
     animationDuration: 400,

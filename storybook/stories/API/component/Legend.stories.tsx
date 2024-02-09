@@ -1,16 +1,17 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { ResponsiveContainer, LineChart, Line, Legend } from '../../../../src';
 import { pageData } from '../../data';
 import { LegendProps } from '../props/Legend';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 export default {
-  argTypes: { ...LegendProps },
+  argTypes: LegendProps,
   component: Legend,
 };
 
 export const API = {
-  render: () => {
+  render: (args: Args) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
@@ -26,14 +27,12 @@ export const API = {
           data={pageData}
         >
           {/* The target component */}
-          <Legend />
+          <Legend {...args} />
           <Line dataKey="uv" stroke="#8884d8" />
           <Line dataKey="pv" stroke="#82ca9d" />
         </LineChart>
       </ResponsiveContainer>
     );
   },
-  args: {
-    ...getStoryArgsFromArgsTypesObject(LegendProps),
-  },
+  args: getStoryArgsFromArgsTypesObject(LegendProps),
 };
