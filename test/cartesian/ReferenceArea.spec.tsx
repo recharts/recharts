@@ -39,6 +39,45 @@ describe('<ReferenceArea />', () => {
     expect(container.querySelectorAll('.recharts-label')).toHaveLength(2);
   });
 
+  it('should render nothing if neither XAxis not Bar are present', () => {
+    const { container } = render(
+      <BarChart
+        width={1100}
+        height={250}
+        barGap={2}
+        barSize={6}
+        data={data}
+        margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
+      >
+        <YAxis tickCount={7} orientation="right" />
+        <ReferenceArea x1="201106" x2="201110" fill="#666" />
+        <ReferenceArea y1={0} y2={2} fill="#999" />
+      </BarChart>,
+    );
+    expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(0);
+  });
+
+  it('should hallucinate XAxis props from Bar', () => {
+    const { container } = render(
+      <BarChart
+        width={1100}
+        height={250}
+        barGap={2}
+        barSize={6}
+        data={data}
+        margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
+      >
+        <YAxis tickCount={7} orientation="right" />
+        <Bar dataKey="uv" />
+        <ReferenceArea y1={0} y2={2} fill="#999" />
+      </BarChart>,
+    );
+    const allAreas = container.querySelectorAll('.recharts-reference-area-rect');
+    expect(allAreas).toHaveLength(1);
+    const area = allAreas[0];
+    expect(area).toHaveAttribute('d', 'M 20,109.44444444444444 h 960 v 25.555555555555557 h -960 Z');
+  });
+
   test("Don't render any rect in ReferenceArea when no x1, x2, y1 or y2 is set", () => {
     const { container } = render(
       <BarChart
