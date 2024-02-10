@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { describe, test, expect } from 'vitest';
+import { render } from '@testing-library/react';
 import { BarChart, ReferenceArea, Bar, XAxis, YAxis, LabelProps } from '../../src';
 
 describe('<ReferenceArea />', () => {
@@ -118,17 +119,17 @@ describe('<ReferenceArea />', () => {
     expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(1);
   });
 
-  test('Render 1 line and 1 label when label is set to be a function in ReferenceArea', () => {
+  test('Render 1 line and 1 label when label is set to be a function', () => {
     const renderLabel = (props: LabelProps) => {
       const { x, y } = props;
 
       return (
         <text className="customized-reference-area-label" x={x} y={y}>
-          any
+          My custom label text
         </text>
       );
     };
-    const { container } = render(
+    const { container, getByText } = render(
       <BarChart
         width={1100}
         height={250}
@@ -145,9 +146,10 @@ describe('<ReferenceArea />', () => {
     );
     expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(1);
     expect(container.querySelectorAll('.customized-reference-area-label')).toHaveLength(1);
+    expect(getByText('My custom label text')).toBeVisible();
   });
 
-  test("Don't Render 1 label when label is set to be a object", () => {
+  test("Don't render label when label is true", () => {
     const { container } = render(
       <BarChart
         width={1100}
@@ -167,9 +169,9 @@ describe('<ReferenceArea />', () => {
     expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
   });
 
-  test('Render custom lable when label is set to react element', () => {
+  test('Render custom label when label is react element', () => {
     const Label = ({ text, ...props }: { text: string }) => <text {...props}>{text}</text>;
-    render(
+    const { getByText } = render(
       <BarChart
         width={1100}
         height={250}
@@ -190,6 +192,6 @@ describe('<ReferenceArea />', () => {
         />
       </BarChart>,
     );
-    expect(screen.findByText('Custom Text')).toBeTruthy();
+    expect(getByText('Custom Text')).toBeVisible();
   });
 });
