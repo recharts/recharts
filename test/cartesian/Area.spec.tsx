@@ -12,6 +12,7 @@ import {
   RadarChart,
   RadialBarChart,
   ScatterChart,
+  XAxis,
   YAxis,
 } from '../../src';
 import type { Props } from '../../src/cartesian/Area';
@@ -162,7 +163,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
     });
   });
 
-  describe('baseValue', () => {
+  describe('baseValue and curve paths', () => {
     describe('horizontal layout with numeric Y axis', () => {
       const layout = 'horizontal';
       it('should default baseValue to zero if no domain is defined in the axis', () => {
@@ -232,8 +233,121 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       });
     });
 
+    describe('vertical layout with numeric X axis requires dataKey on YAxis to be defined', () => {
+      const layout = 'vertical';
+      it('should default baseValue to zero if no domain is defined in the axis', () => {
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data} layout={layout}>
+            <Area dataKey="value" />
+            <XAxis type="number" />
+            <YAxis dataKey="y" />
+          </ChartElement>,
+        );
+        const curves = container.querySelectorAll('.recharts-curve');
+        expect(curves).toHaveLength(2);
+        expect
+          .soft(curves[0])
+          .toHaveAttribute(
+            'd',
+            'M495,388.333L495,388.333L495,388.333L495,388.333L495,388.333L65,388.333L65,388.333L65,388.333L65,388.333L65,388.333Z',
+          );
+        expect.soft(curves[1]).toHaveAttribute('d', 'M495,388.333L495,388.333L495,388.333L495,388.333L495,388.333');
+      });
+
+      it('should not set curve path if YAxis is not present', () => {
+        /*
+         * This feels like a bug - why render the curves at all?
+         * But at this point I am only writing tests, not fixing bugs.
+         */
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data} layout={layout}>
+            <Area dataKey="value" />
+            <XAxis type="number" />
+          </ChartElement>,
+        );
+        const curves = container.querySelectorAll('.recharts-curve');
+        expect(curves).toHaveLength(2);
+        expect.soft(curves[0]).not.toHaveAttribute('d');
+        expect.soft(curves[1]).not.toHaveAttribute('d');
+      });
+
+      it('should set curve path to null if YAxis is present but it has no dataKey', () => {
+        /*
+         * This feels like a bug - why render the curves at all?
+         * But at this point I am only writing tests, not fixing bugs.
+         */
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data} layout={layout}>
+            <Area dataKey="value" />
+            <XAxis type="number" />
+            <YAxis />
+          </ChartElement>,
+        );
+        const curves = container.querySelectorAll('.recharts-curve');
+        expect(curves).toHaveLength(2);
+        expect.soft(curves[0]).not.toHaveAttribute('d');
+        expect.soft(curves[1]).not.toHaveAttribute('d');
+      });
+
+      it('should default baseValue to the first number in domain', () => {
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data} layout={layout}>
+            <Area dataKey="value" />
+            <XAxis type="number" />
+            <YAxis dataKey="y" domain={[20, 300]} />
+          </ChartElement>,
+        );
+        const curves = container.querySelectorAll('.recharts-curve');
+        expect(curves).toHaveLength(2);
+        expect
+          .soft(curves[0])
+          .toHaveAttribute(
+            'd',
+            'M495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L65,54.286L65,54.286L65,54.286L65,54.286L65,54.286Z',
+          );
+        expect.soft(curves[1]).toHaveAttribute('d', 'M495,54.286L495,54.286L495,54.286L495,54.286L495,54.286');
+      });
+
+      it('should set baseValue to dataMin', () => {
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data} layout={layout}>
+            <Area dataKey="value" baseValue="dataMin" />
+            <XAxis type="number" />
+            <YAxis dataKey="y" domain={[20, 300]} />
+          </ChartElement>,
+        );
+        const curves = container.querySelectorAll('.recharts-curve');
+        expect(curves).toHaveLength(2);
+        expect
+          .soft(curves[0])
+          .toHaveAttribute(
+            'd',
+            'M495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L65,54.286L65,54.286L65,54.286L65,54.286L65,54.286Z',
+          );
+        expect.soft(curves[1]).toHaveAttribute('d', 'M495,54.286L495,54.286L495,54.286L495,54.286L495,54.286');
+      });
+
+      it('should set baseValue to dataMax', () => {
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data} layout={layout}>
+            <Area dataKey="value" baseValue="dataMax" />
+            <XAxis type="number" />
+            <YAxis dataKey="y" domain={[20, 300]} />
+          </ChartElement>,
+        );
+        const curves = container.querySelectorAll('.recharts-curve');
+        expect(curves).toHaveLength(2);
+        expect
+          .soft(curves[0])
+          .toHaveAttribute(
+            'd',
+            'M495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L495,54.286L495,54.286Z',
+          );
+        expect.soft(curves[1]).toHaveAttribute('d', 'M495,54.286L495,54.286L495,54.286L495,54.286L495,54.286');
+      });
+    });
+
     describe.todo('horizontal layout with categorical Y axis');
-    describe.todo('vertical layout with numeric X axis');
     describe.todo('vertical layout with categorical X axis');
 
     describe('with no axes', () => {
@@ -938,6 +1052,67 @@ describe('getComposedData', () => {
             ],
             "x": 18,
             "y": 6,
+          },
+        ]
+      `);
+    });
+
+    it('should return .y coordinate set to null in vertical chart when YAxis dataKey is undefined', () => {
+      const { points } = Area.getComposedData({
+        displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
+        stackedData: [
+          [1, 2],
+          [2, 4],
+          [3, 6],
+          [4, 8],
+          [5, 10],
+          [6, 12],
+        ],
+        dataKey: 'v',
+        dataStartIndex: 0,
+        // @ts-expect-error incomplete mock
+        props: { layout: 'vertical' },
+        // @ts-expect-error incomplete mock
+        item: { props: {} },
+        // @ts-expect-error incomplete mock
+        yAxis: { scale: mockScale },
+        // @ts-expect-error incomplete mock
+        xAxis: { scale: mockScale2 },
+      });
+      expect(points).toMatchInlineSnapshot(`
+        [
+          {
+            "payload": {
+              "v": 1,
+            },
+            "value": [
+              1,
+              2,
+            ],
+            "x": 6,
+            "y": null,
+          },
+          {
+            "payload": {
+              "v": 2,
+            },
+            "value": [
+              2,
+              4,
+            ],
+            "x": 12,
+            "y": null,
+          },
+          {
+            "payload": {
+              "v": 3,
+            },
+            "value": [
+              3,
+              6,
+            ],
+            "x": 18,
+            "y": null,
           },
         ]
       `);
