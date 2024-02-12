@@ -67,6 +67,20 @@ const getRect = (hasX1: boolean, hasX2: boolean, hasY1: boolean, hasY2: boolean,
   return rectWithPoints(p1, p2);
 };
 
+const renderRect = (option: ReferenceAreaProps['shape'], props: any) => {
+  let rect;
+
+  if (React.isValidElement(option)) {
+    rect = React.cloneElement(option, props);
+  } else if (isFunction(option)) {
+    rect = option(props);
+  } else {
+    rect = <Rectangle {...props} className="recharts-reference-area-rect" />;
+  }
+
+  return rect;
+};
+
 export function ReferenceArea(props: Props) {
   const { x1, x2, y1, y2, className, alwaysShow, clipPathId } = props;
 
@@ -93,7 +107,7 @@ export function ReferenceArea(props: Props) {
 
   return (
     <Layer className={clsx('recharts-reference-area', className)}>
-      {ReferenceArea.renderRect(shape, { clipPath, ...filterProps(props, true), ...rect })}
+      {renderRect(shape, { clipPath, ...filterProps(props, true), ...rect })}
       {Label.renderCallByParent(props, rect)}
     </Layer>
   );
@@ -110,18 +124,4 @@ ReferenceArea.defaultProps = {
   fillOpacity: 0.5,
   stroke: 'none',
   strokeWidth: 1,
-};
-
-ReferenceArea.renderRect = (option: ReferenceAreaProps['shape'], props: any) => {
-  let rect;
-
-  if (React.isValidElement(option)) {
-    rect = React.cloneElement(option, props);
-  } else if (isFunction(option)) {
-    rect = option(props);
-  } else {
-    rect = <Rectangle {...props} className="recharts-reference-area-rect" />;
-  }
-
-  return rect;
 };

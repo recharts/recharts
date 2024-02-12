@@ -1934,6 +1934,9 @@ export const generateCategoricalChart = ({
       );
     };
 
+    /*
+     * This method is used for rendering AreaChart, LineChart, and Tooltip
+     */
     renderActivePoints = ({ item, activePoint, basePoint, childIndex, isRange }: any) => {
       const result = [];
       const { key } = item.props;
