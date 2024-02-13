@@ -1,0 +1,30 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: 'npm'
+    # Look for `package.json` and `lock` files in the `root` directory
+    directory: '/'
+    # Check the npm registry for updates every day (weekdays)
+    schedule:
+      interval: 'daily'
+    # ignore all major version updates
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+    versioning-strategy: auto
+    # add the 'dependencies' label to PRs
+    labels:
+      - 'dependencies'
+    # max of 10 PRs at a time from dependabot
+    open-pull-requests-limit: 10
+    # request maintainers to review
+    reviewers:
+      - 'recharts/maintainers'
+    groups:
+      storybook:
+        patterns:
+          - '@storybook*'
+          - 'storybook'
+      babel:
+        patterns:
+          - '@babel*'

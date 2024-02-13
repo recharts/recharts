@@ -415,7 +415,8 @@ const StyleProps: Args = {
     in a vertical BarChart. By default, 0 values are not shown. To visualize a 0 (or close to zero) point,
     set the minimal point size to a pixel value like 3. In stacked bar charts,
     minPointSize might not be respected for tightly packed values.
-      So we strongly recommend not using this props in stacked BarChart.`,
+      So we strongly recommend not using this props in stacked BarChart.
+      You may provide a function to conditionally change this prop based on Bar value.`,
   },
 };
 

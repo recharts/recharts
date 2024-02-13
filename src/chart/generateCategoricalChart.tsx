@@ -5,8 +5,6 @@ import range from 'lodash/range';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 import throttle from 'lodash/throttle';
-import find from 'lodash/find';
-import every from 'lodash/every';
 
 import clsx from 'clsx';
 // eslint-disable-next-line no-restricted-imports
@@ -1585,6 +1583,7 @@ export const generateCategoricalChart = ({
      * @return {Null} no return
      */
     handleMouseLeave = (e: any) => {
+      this.throttleTriggeredAfterMouseMove.cancel();
       const nextState: CategoricalChartState = { isTooltipActive: false };
 
       this.setState(nextState);
@@ -1792,31 +1791,6 @@ export const generateCategoricalChart = ({
       });
     };
 
-    /**
-     * Draw grid
-     * @param  {ReactElement} element the grid item
-     * @return {ReactElement} The instance of grid
-     */
-    renderGrid = (element: React.ReactElement): React.ReactElement => {
-      const { xAxisMap, yAxisMap, offset } = this.state;
-      const xAxis = getAnyElementOfObject(xAxisMap);
-      const yAxisWithFiniteDomain = find(yAxisMap, axis => every(axis.domain, Number.isFinite));
-      const yAxis = yAxisWithFiniteDomain || getAnyElementOfObject(yAxisMap);
-      const props = element.props || {};
-
-      return cloneElement(element, {
-        key: element.key || 'grid',
-        x: isNumber(props.x) ? props.x : offset.left,
-        y: isNumber(props.y) ? props.y : offset.top,
-        width: isNumber(props.width) ? props.width : offset.width,
-        height: isNumber(props.height) ? props.height : offset.height,
-        xAxis,
-        yAxis,
-        verticalCoordinatesGenerator: props.verticalCoordinatesGenerator,
-        horizontalCoordinatesGenerator: props.horizontalCoordinatesGenerator,
-      });
-    };
-
     renderPolarGrid = (element: React.ReactElement): React.ReactElement => {
       const { radialLines, polarAngles, polarRadius } = element.props;
       const { radiusAxisMap, angleAxisMap } = this.state;
@@ -1876,7 +1850,7 @@ export const generateCategoricalChart = ({
      * @return {ReactElement}  The instance of Tooltip
      */
     renderTooltip = (): React.ReactElement => {
-      const { children } = this.props;
+      const { children, accessibilityLayer } = this.props;
       const tooltipItem = findChildByType(children, Tooltip);
 
       if (!tooltipItem) {
@@ -1896,6 +1870,7 @@ export const generateCategoricalChart = ({
         label: activeLabel,
         payload: isActive ? activePayload : [],
         coordinate: activeCoordinate,
+        accessibilityLayer,
       });
     };
 
@@ -1959,6 +1934,9 @@ export const generateCategoricalChart = ({
       );
     };
 
+    /*
+     * This method is used for rendering AreaChart, LineChart, and Tooltip
+     */
     renderActivePoints = ({ item, activePoint, basePoint, childIndex, isRange }: any) => {
       const result = [];
       const { key } = item.props;
@@ -2198,7 +2176,7 @@ export const generateCategoricalChart = ({
     }
 
     renderMap = {
-      CartesianGrid: { handler: this.renderGrid, once: true },
+      CartesianGrid: { handler: renderAsIs, once: true },
       ReferenceArea: { handler: this.renderReferenceElement },
       ReferenceLine: { handler: renderAsIs },
       ReferenceDot: { handler: this.renderReferenceElement },
@@ -2242,7 +2220,7 @@ export const generateCategoricalChart = ({
         // Set tabIndex to 0 by default (can be overwritten)
         attrs.tabIndex = this.props.tabIndex ?? 0;
         // Set role to img by default (can be overwritten)
-        attrs.role = this.props.role ?? 'img';
+        attrs.role = this.props.role ?? 'application';
         attrs.onKeyDown = (e: any) => {
           this.accessibilityManager.keyboardEvent(e);
           // 'onKeyDown' is not currently a supported prop that can be passed through
@@ -2270,7 +2248,7 @@ export const generateCategoricalChart = ({
             ref={(node: HTMLDivElement) => {
               this.container = node;
             }}
-            role="region"
+            role={attrs.role ?? 'region'}
           >
             <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
               {this.renderClipPath()}

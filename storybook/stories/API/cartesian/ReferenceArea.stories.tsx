@@ -20,6 +20,7 @@ import {
   ReferenceComponentInternalArgs,
   ReferenceComponentStyle,
 } from '../props/ReferenceComponentShared';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 const StyleProps: Args = {
   ...GeneralStyle,
@@ -39,10 +40,11 @@ const StyleProps: Args = {
     },
   },
   shape: {
-    description: `Renders a svg returned by the react element or function.`,
+    description: `Renders a svg returned by the react element or function.
+    If undefined, it will default to rectangle controlled by other props, like \`radius\` and \`strokeWidth\`.`,
     table: {
       type: {
-        summary: 'ReactElement | Function',
+        summary: 'ReactElement | Function | undefined',
         detail: '<ReferenceArea shape={<CustomSvgShape/>}/>',
       },
       category: 'Style',
@@ -95,36 +97,38 @@ const InternalProps: Args = {
   },
 };
 
-export default {
-  argTypes: {
-    ...StyleProps,
-    ...GeneralProps,
-    ...InternalProps,
-    // Rectangle
-    radius,
-    // Deprecated
-    alwaysShow: {
-      description: "Use 'ifOverflow' instead.",
-      table: { category: 'Deprecated' },
-      hide: true,
-      disable: true,
-    },
-    // Event handlers
-    onClick,
-    onMouseDown,
-    onMouseUp,
-    onMouseMove,
-    onMouseOver,
-    onMouseOut,
-    onMouseEnter,
-    onMouseLeave,
-    // Animation
-    animationBegin,
-    animationDuration,
-    animationEasing,
-    isAnimationActive,
-    isUpdateAnimationActive,
+const referenceAreaArgTypes = {
+  ...StyleProps,
+  ...GeneralProps,
+  ...InternalProps,
+  // Rectangle
+  radius,
+  // Deprecated
+  alwaysShow: {
+    description: "Use 'ifOverflow' instead.",
+    table: { category: 'Deprecated' },
+    hide: true,
+    disable: true,
   },
+  // Event handlers
+  onClick,
+  onMouseDown,
+  onMouseUp,
+  onMouseMove,
+  onMouseOver,
+  onMouseOut,
+  onMouseEnter,
+  onMouseLeave,
+  // Animation
+  animationBegin,
+  animationDuration,
+  animationEasing,
+  isAnimationActive,
+  isUpdateAnimationActive,
+};
+
+export default {
+  argTypes: referenceAreaArgTypes,
   component: ReferenceArea,
 };
 
@@ -151,6 +155,7 @@ export const API = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(referenceAreaArgTypes),
     x1: 'Page B',
     x2: 'Page E',
     y1: 1000,

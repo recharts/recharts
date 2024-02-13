@@ -12,7 +12,7 @@ export const radius: StorybookArg = {
     ' corner.',
   table: {
     type: { summary: 'number | number[]' },
-    defaultValue: { summary: 0 },
+    defaultValue: 0,
     category: 'Style',
   },
 };

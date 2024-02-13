@@ -79,7 +79,7 @@ toggling between multiple dataKey.`,
   data,
   margin,
   accessibilityLayer: {
-    description: 'Turn on keyboard accessibility',
+    description: 'Turn on accessibility support for keyboard-only and screen reader users.',
     table: {
       type: {
         summary: 'boolean',

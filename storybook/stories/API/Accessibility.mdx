@@ -48,10 +48,17 @@ The accessibility layer is not currently available for all charts. The accessibi
 2. The chart must include a tooltip.
 3. The chart must have a horizontal layout.
 
+## Screen reader support
+The accessibility layer works with the tooltip to provide feedback to screen reader users.
+
+If you are using a default tooltip, it will work with the `accessibilityLayer` to support screen reader users. The default tooltip will turn into a "live region", which means that screen readers will read the contents of the region as it updates. This will give blind users access to the underlying data in a chart, alongside sighted users.
+
+If you are building your own custom tooltip, you can turn it into a live region by using the attributes `role="status" aria-live="assertive"`. Keep in mind that the full content of the tooltip will be read for every data point that the user interacts with, so it's best practices to keep the content in the tooltip to a minimum.
+
 ## Technical notes
 
 When you apply the `accessibilityLayer` to a chart, it will do a couple of things:
-1. By default, it will set the `role="img"`. This can be overwritten if you pass in your own `role` prop.
+1. By default, it will set the `role="application"`. This can be overwritten if you pass in your own `role` prop.
 2. By default, it will set the `tabIndex={0}`. This can be overwritten if you pass in your own `tabIndex` prop.
 
 The accessibility layer works by spoofing mouse movements. 
