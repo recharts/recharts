@@ -586,7 +586,7 @@ describe('ChartLayoutContextProvider', () => {
       yAxisMap: exampleYAxisMap2,
     };
 
-    describe('error cases', () => {
+    describe('useYAxisOrThrow', () => {
       let originalConsoleError;
       beforeAll(() => {
         originalConsoleError = console.error;
@@ -653,24 +653,24 @@ describe('ChartLayoutContextProvider', () => {
           ),
         ).toThrow('Invariant failed: Could not find yAxis by id "wrong ID" [string]. Available ids are: m.');
       });
-    });
 
-    it('should add yAxis to context', () => {
-      expect.assertions(2);
-      const MockConsumer = () => {
-        const yAxis = useYAxisOrThrow('m');
-        expect(yAxis).toEqual({
-          width: 200,
-          height: 10,
-        });
-        expect(yAxis).toBe(exampleYAxisMap.m);
-        return null;
-      };
-      render(
-        <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-          <MockConsumer />
-        </ChartLayoutContextProvider>,
-      );
+      it('should read yAxis from context', () => {
+        expect.assertions(2);
+        const MockConsumer = () => {
+          const yAxis = useYAxisOrThrow('m');
+          expect(yAxis).toEqual({
+            width: 200,
+            height: 10,
+          });
+          expect(yAxis).toBe(exampleYAxisMap.m);
+          return null;
+        };
+        render(
+          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+      });
     });
 
     describe('vanilla children', () => {
