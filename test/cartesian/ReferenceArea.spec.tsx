@@ -58,6 +58,24 @@ describe('<ReferenceArea />', () => {
     expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(0);
   });
 
+  it('should render nothing if neither YAxis not Bar are present', () => {
+    const { container } = render(
+      <BarChart
+        width={1100}
+        height={250}
+        barGap={2}
+        barSize={6}
+        data={data}
+        margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
+      >
+        <XAxis dataKey="name" orientation="top" />
+        <ReferenceArea x1="201106" x2="201110" fill="#666" />
+        <ReferenceArea y1={0} y2={2} fill="#999" />
+      </BarChart>,
+    );
+    expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(0);
+  });
+
   it('should hallucinate XAxis props from Bar', () => {
     const { container } = render(
       <BarChart
@@ -488,7 +506,8 @@ describe('<ReferenceArea />', () => {
       const allAreas = container.querySelectorAll('.recharts-reference-area-rect');
       expect(allAreas).toHaveLength(1);
       const area = allAreas[0];
-      expect(area).toHaveAttribute('clip-path', 'url(#recharts56-clip)');
+      expect(area).toHaveAttribute('clip-path');
+      expect(area.getAttribute('clip-path')).toMatch(/url\(#recharts(\d+)-clip\)/);
     });
 
     it('should pass no clip-path when ifOverflow=hidden and alwaysShow=true', () => {
