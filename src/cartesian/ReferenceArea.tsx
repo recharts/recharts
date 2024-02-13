@@ -22,7 +22,6 @@ interface InternalReferenceAreaProps {
   viewBox?: CartesianViewBox;
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  clipPathId?: number | string;
 }
 
 interface ReferenceAreaProps extends InternalReferenceAreaProps {
