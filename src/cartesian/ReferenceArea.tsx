@@ -14,14 +14,10 @@ import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { CartesianViewBox, D3Scale } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
-import { Props as XAxisProps } from './XAxis';
-import { Props as YAxisProps } from './YAxis';
 import { useClipPathId, useMaybeXAxis, useMaybeYAxis } from '../context/chartLayoutContext';
 
 interface InternalReferenceAreaProps {
   viewBox?: CartesianViewBox;
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
 }
 
 interface ReferenceAreaProps extends InternalReferenceAreaProps {
