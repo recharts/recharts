@@ -20,3 +20,11 @@ updates:
     # request maintainers to review
     reviewers:
       - 'recharts/maintainers'
+    groups:
+      storybook:
+        patterns:
+          - '@storybook*'
+          - 'storybook'
+      babel:
+        patterns:
+          - '@babel*'
